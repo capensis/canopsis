@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from pymongo import Connection
+from pymongo import Connection, MongoClient
 import json
 from bson.json_util import dumps
 
@@ -34,9 +34,12 @@ class Formatter(object):
     STATE = (0, 1, 2, 3, 4)
     CONTEXT = ('type', 'connector', 'connector_name', 'component', 'resource')
     TOPOQ = "{'crecord_type':'topology', 'crecord_name':'internal'}"
+    MONGO_PORT = 27017
+    MONGO_URL = "localhost"
 
-    def __init__(self, datasource=None):
-        self.arg = datasource
+    def __init__(self, username=None, password=None):
+        self.username = username
+        self.password = password
         self.cursor = self.connection()
         self.data = self.loads()
 
@@ -49,8 +52,16 @@ class Formatter(object):
          :return: a cursor of topology or events.
          :rtype: Cursor of elements dictionnary or NoneType.
         '''
-        connection = Connection()
-        db = connection.canopsis
+        if self.username is None:
+            connection = Connection()
+            db = connection['canopsis']
+        else:
+            connection = MongoClient(self.MONGO_URL, self.MONGO_PORT)
+            db = connection["canopsis"]
+            # Do the authentication
+            db.authenticate(self.username, self.password)
+        #connection = Connection()
+        #db = connection.canopsis
         if kind == 0:
             query = self.TOPOQ
             # Format string
@@ -74,13 +85,19 @@ class Formatter(object):
          :return: a dictionnary of elements.
          :rtype: dictionnary.
         '''
-        str = dumps(self.connection(kind))
+        #str = dumps(self.connection(kind))
+        str = self.dump(kind)
         if len(json.loads(str)) > 0:
             # catch exception here
             res = json.loads(str)[0]
         else:
             res = {}
         return res
+
+    def dump(self, kind=0):
+        '''
+        '''
+        return dumps(self.connection(kind))
 
     def print_keys(self):
         tdata = self.data
@@ -314,3 +331,21 @@ class Formatter(object):
         Get Component form items.
         '''
         return op_dict.values().get('form').get('items')
+
+    def iequal(self, a, b):
+        '''
+        Verify equality with case sensitive.
+        :param a : first element.
+        :param b: second element.
+
+        :return: a boolean.
+        :rtype: Boolean.
+        '''
+        try:
+            return a.lower() == b.lower()
+        except AttributeError, e:
+            return a == b
+
+if __name__ == '__main__':
+    f = Formatter('cpsmongo', 'canopsis')
+    print f.loads()
