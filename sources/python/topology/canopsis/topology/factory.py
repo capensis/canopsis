@@ -112,9 +112,9 @@ class Factory(object):
         conn_list = []
         # Create components
         for c in components.get(f.EVENT_TYPE[1]):
-            node_list.append(self.create_component(c.keys()[0], c.values[0]))
+            node_list.append(self.create_component(c.keys()[0], c.values()[0]))
         for c in components.get(f.EVENT_TYPE[2]):
-            node_list.append(self.create_component(c.keys()[0], c.values[0]))
+            node_list.append(self.create_component(c.keys()[0], c.values()[0]))
         # OPERATOR_ID[0] --> Cluster
         for cmps in opcomps.get(f.OPERATOR_ID[0]):
             for c in cmps:
