@@ -64,6 +64,7 @@ class engine(Engine):
 
     def compute_states(self):
 
+        # Event count computation by state
         for state in [0, 1, 2, 3]:
             # There is an index on state field in events collection,
             # that would keep the query efficient
@@ -77,6 +78,38 @@ class engine(Engine):
                 'metric': 'states_{}'.format(state_str),
                 'value': count
             })
+
+        for source_type in ['resource', 'component']:
+            # Event count source type
+            count = self.storage.get_backend().find(
+                {'source_type': source_type}
+            ).count()
+
+            self.perf_data_array.append({
+                'metric': 'states_{}'.format(
+                    source_type
+                ),
+                'value': count
+            })
+
+            # Event count by source type and state
+            for state in [0, 1, 2, 3]:
+
+                # There is an index on state and source_type field in
+                # events collection, that would keep the query efficient
+                count = self.storage.get_backend().find(
+                    {'source_type': source_type, 'state': state}
+                ).count()
+
+                state_str = self.states_str[state]
+
+                self.perf_data_array.append({
+                    'metric': 'states_{}_{}'.format(
+                        source_type,
+                        state_str
+                    ),
+                    'value': count
+                })
 
         self.logger.debug('perf_data_array {}'.format(self.perf_data_array))
 
