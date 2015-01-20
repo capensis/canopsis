@@ -391,8 +391,6 @@ if __name__ == '__main__':
     
     print t.get_comp_graph()
 
-    t.topology_format()
-
     print t.query_generator()
 
     print t.get_connector_name()
