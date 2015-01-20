@@ -29,8 +29,8 @@ from canopsis.topology.rule import action, condition
 
 class Factory(object):
     """docstring for Factory"""
-    def __init__(self, arg):
-        self.arg = arg
+    def __init__(self):
+        pass
 
     def create_topology(self, topo_name, topoEdge, topoNode):
         '''
