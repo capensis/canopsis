@@ -116,10 +116,10 @@ class engine(Engine):
     def publish_states(self):
 
         stats_event = forger(
-            connector='canopsis',
+            connector='engine',
             connector_name='engine',
-            event_type="check",
-            source_type="resource",
+            event_type='check',
+            source_type='resource',
             component='stats',
             resource='internal',
             state=0,
