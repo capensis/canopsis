@@ -108,7 +108,7 @@ class Factory(object):
         opcomps = f.match_operator(components)
         # List of Nodes (TopoNodes)
         node_list = []
-        # List of connections (topoEdge)
+        # List of connections between components (topoEdge)
         conn_list = []
         # Create components
         for c in components.get(f.EVENT_TYPE[1]):
