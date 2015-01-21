@@ -75,7 +75,7 @@ class engine(Engine):
             state_str = self.states_str[state]
 
             self.perf_data_array.append({
-                'metric': 'states_{}'.format(state_str),
+                'metric': 'cps_states_{}'.format(state_str),
                 'value': count
             })
 
@@ -86,7 +86,7 @@ class engine(Engine):
             ).count()
 
             self.perf_data_array.append({
-                'metric': 'states_{}'.format(
+                'metric': 'cps_states_{}'.format(
                     source_type
                 ),
                 'value': count
@@ -104,7 +104,7 @@ class engine(Engine):
                 state_str = self.states_str[state]
 
                 self.perf_data_array.append({
-                    'metric': 'states_{}_{}'.format(
+                    'metric': 'cps_states_{}_{}'.format(
                         source_type,
                         state_str
                     ),
@@ -120,8 +120,7 @@ class engine(Engine):
             connector_name='engine',
             event_type='check',
             source_type='resource',
-            component='stats',
-            resource='internal',
+            resource='Engine_stats',
             state=0,
             perf_data_array=self.perf_data_array
         )
