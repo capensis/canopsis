@@ -326,13 +326,13 @@ class Formatter(object):
     def comp_formatter(self):
         '''
         '''
-        comps = self.get_components()
+        comps = self.get_components().copy()
         for c in self.get_component_keys():
             q, lst = self.query_generator(c)
             # Loads the context information
             res = self.loads(1)
             if len(res) != 0:
-                print "Component with event data ", res
+                #print "Component with event data ", res
                 for d in lst:
                     if d == 'type':
                         comps.get(c)[unicode(d)] = unicode(comps.get(c).get(self.TYPE[0]))
