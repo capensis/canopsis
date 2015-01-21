@@ -114,9 +114,11 @@ class Factory(object):
         for c in components.get(f.EVENT_TYPE[1]):
             print c.keys()[0]
             print c.values()[0]
-            node_list.append(self.create_component(c.keys()[0], c.values()[0]))
+            entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
+            entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))            
+            node_list.append(self.create_component(c.keys()[0], entity))
         for c in components.get(f.EVENT_TYPE[2]):
-            node_list.append(self.create_component(c.keys()[0], c.values()[0]))
+            node_list.append(self.create_component(c.keys()[0], entity))
         # OPERATOR_ID[0] --> Cluster
         for cmps in opcomps.get(f.OPERATOR_ID[0]):
             for c in cmps:
