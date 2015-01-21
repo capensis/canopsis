@@ -1,48 +1,149 @@
 {
     "_id" : "view.series",
     "id" : "view.series",
-    "crecord_write_time" : 1412152177,
+    "crecord_write_time" : 1421855062,
     "enable" : true,
-    "aaa_access_group" : [
-        "r"
-    ],
     "description" : "Configure series",
     "parent" : [ ],
     "containerwidget" : {
         "widgetId" : null,
-        "xtype": "widgetcontainer",
-        "mixins": [
-          { "name": "verticallayout" }
-        ],
+        "xtype" : "widgetcontainer",
         "title" : null,
+        "mixins" : [
+            {
+                "name" : "verticallayout"
+            }
+        ],
+        "widgetslotTemplate" : null,
+        "tagName" : null,
         "items" : [
             {
                 "widget" : {
-                    "tagName" : null,
-                    "widgetId" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb023",
-                    "id" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb023",
+                    "widgetId" : "item_0207ba39-5f29-a175-badd-45c1293b0fce",
                     "default_column_sort" : {
                         "direction" : "ASC"
                     },
-                    "item_actions" : [
-                        "actionbutton-removeselection",
-                        "actionbutton-edit"
-                    ],
-                    "title" : "Series",
-                    "maximized_column_index" : 0,
+                    "xtype" : "list",
+                    "title" : "Metrics",
+                    "listed_crecord_type" : "ctxmetric",
                     "mixins" : [
-                        { "name": "Crud" },
-                        { "name": "Pagination" },
-                        { "name": "Arraysearch" }
+                        {
+                            "name" : "pagination",
+                            "EmberClass" : {
+                                "__ember1421854831723_name" : ".PaginationMixin",
+                                "mixins" : [
+                                    {
+                                        "properties" : {
+                                            "itemsPerPagePropositions" : {
+                                                "_dependentKeys" : [
+                                                    "itemsPerPagePropositionSelected"
+                                                ],
+                                                "_readOnly" : false,
+                                                "_cacheable" : true
+                                            },
+                                            "itemsDivided" : {
+                                                "_dependentKeys" : [
+                                                    "itemsTotal",
+                                                    "mixinOptions.pagination.itemsPerPage"
+                                                ],
+                                                "_readOnly" : false,
+                                                "_cacheable" : true
+                                            },
+                                            "itemsTotal" : {
+                                                "_dependentKeys" : [
+                                                    "widgetDataMetas",
+                                                    "widgetData"
+                                                ],
+                                                "_readOnly" : false,
+                                                "_cacheable" : true
+                                            },
+                                            "itemsPerPage" : {
+                                                "_dependentKeys" : [
+                                                    "mixinOptions.pagination.itemsPerPage"
+                                                ],
+                                                "_readOnly" : false,
+                                                "_cacheable" : true
+                                            },
+                                            "paginationFirstItemIndex" : {
+                                                "_dependentKeys" : [
+                                                    "widgetData"
+                                                ],
+                                                "_readOnly" : false,
+                                                "_cacheable" : true
+                                            },
+                                            "partials" : {
+                                                "subHeader" : [
+                                                    "itemsperpage"
+                                                ],
+                                                "footer" : [
+                                                    "pagination"
+                                                ]
+                                            },
+                                            "paginationLastItemIndex" : {
+                                                "_dependentKeys" : [
+                                                    "widgetData"
+                                                ],
+                                                "_readOnly" : false,
+                                                "_cacheable" : true
+                                            },
+                                            "currentPage" : 1,
+                                            "totalPages" : {
+                                                "_dependentKeys" : [
+                                                    "itemsTotal"
+                                                ],
+                                                "_readOnly" : false,
+                                                "_cacheable" : true
+                                            },
+                                            "_actions" : {
+                                                
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name" : "arraysearch"
+                        }
                     ],
-                    "itemsPerPage" : 10,
-                    "cssClass" : null,
-                    "default_filter" : null,
-                    "cloaking" : false,
-                    "filters" : [ ],
-                    "selection_toolbar" : [
-                        "actionbutton-removeselection"
+                    "columnsOrder" : [ ],
+                    "tagName" : null,
+                    "display_record_field" : null,
+                    "displayed_columns" : [
+                        "component",
+                        "resource",
+                        "cid"
                     ],
+                    "refreshInterval" : 0,
+                    "contentTruncatedLength" : 0,
+                    "record_template" : null
+                },
+                "xtype" : "widgetwrapper",
+                "title" : "wrapper"
+            },
+            {
+                "widget" : {
+                    "widgetId" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb023",
+                    "default_column_sort" : {
+                        "direction" : "ASC"
+                    },
+                    "xtype" : "list",
+                    "title" : "Series",
+                    "listed_crecord_type" : "serie",
+                    "mixins" : [
+                        {
+                            "name" : "Crud"
+                        },
+                        {
+                            "name" : "Pagination"
+                        },
+                        {
+                            "name" : "Arraysearch"
+                        }
+                    ],
+                    "columnsOrder" : [ ],
+                    "tagName" : null,
+                    "display_record_field" : null,
                     "displayed_columns" : [
                         "crecord_name",
                         "formula",
@@ -53,43 +154,36 @@
                         "aggregate_method",
                         "aggregate_interval"
                     ],
-                    "refreshableWidget" : false,
-                    "actions_toolbar" : [ ],
                     "refreshInterval" : 0,
-                    "listed_crecord_type" : "serie",
                     "contentTruncatedLength" : 0,
-                    "xtype" : "list"
+                    "record_template" : null
                 },
                 "xtype" : "widgetwrapper",
                 "title" : "wrapper"
             },
             {
                 "widget" : {
-                    "tagName" : null,
-                    "id" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb024",
                     "widgetId" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb024",
                     "default_column_sort" : {
                         "direction" : "ASC"
                     },
-                    "item_actions" : [
-                        "actionbutton-removeselection",
-                        "actionbutton-edit"
-                    ],
+                    "xtype" : "list",
                     "title" : "Curves",
-                    "maximized_column_index" : 0,
+                    "listed_crecord_type" : "curve",
                     "mixins" : [
-                        { "name": "Pagination" },
-                        { "name": "Crud" },
-                        { "name": "Arraysearch" }
+                        {
+                            "name" : "Pagination"
+                        },
+                        {
+                            "name" : "Crud"
+                        },
+                        {
+                            "name" : "Arraysearch"
+                        }
                     ],
-                    "itemsPerPage" : 10,
-                    "cssClass" : null,
-                    "default_filter" : null,
-                    "cloaking" : false,
-                    "filters" : [ ],
-                    "selection_toolbar" : [
-                        "actionbutton-removeselection"
-                    ],
+                    "columnsOrder" : [ ],
+                    "tagName" : null,
+                    "display_record_field" : null,
                     "displayed_columns" : [
                         "crecord_name",
                         "stacked",
@@ -97,41 +191,24 @@
                         "areas",
                         "points",
                         "bars",
+                        "valueLabels",
                         "line_width",
                         "bar_width",
                         "point_shape",
                         "area_opacity"
                     ],
-                    "refreshableWidget" : false,
-                    "actions_toolbar" : [ ],
                     "refreshInterval" : 0,
-                    "listed_crecord_type" : "curve",
                     "contentTruncatedLength" : 0,
-                    "xtype" : "list"
+                    "record_template" : null
                 },
                 "xtype" : "widgetwrapper",
                 "title" : "wrapper"
             }
         ],
-        "widgetslotTemplate" : null,
-        "tagName" : null,
-        "refreshInterval" : 0,
-        "cssClass" : null
+        "refreshInterval" : 0
     },
-    "aaa_access_owner" : [
-        "r",
-        "w"
-    ],
-    "aaa_group" : "group.CPS_view",
     "internal" : false,
-    "aaa_admin_group" : "group.CPS_view_admin",
-    "children" : [ ],
     "crecord_name" : "series.json",
-    "aaa_access_unauth" : [ ],
-    "aaa_owner" : "account.root",
     "crecord_type" : "view",
-    "aaa_access_other" : [
-        "r"
-    ],
-    "crecord_creation_time" : 1411378757
+    "crecord_creation_time" : 1421685120
 }
