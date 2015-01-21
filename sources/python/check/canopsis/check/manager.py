@@ -21,6 +21,7 @@
 __version__ = "0.1"
 
 from canopsis.common.init import basestring
+from canopsis.configuration.parameters import Parameter
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
@@ -34,7 +35,7 @@ CATEGORY = 'CHECK'
 CONF_PATH = 'check/check.conf'
 
 
-@add_category(CATEGORY)
+@add_category(CATEGORY, content=Parameter('types', parser=Parameter.array()))
 @conf_paths(CONF_PATH)
 class CheckManager(MiddlewareRegistry):
     """
@@ -60,6 +61,12 @@ class CheckManager(MiddlewareRegistry):
         HARD: 1,
         SOFT: 3
     }
+
+    def __init__(self, types=None, *args, **kwargs):
+
+        super(CheckManager, self).__init__(*args, **kwargs)
+
+        self.types = types
 
     def state(self, ids, state=None, criticity=HARD, cache=False):
         """

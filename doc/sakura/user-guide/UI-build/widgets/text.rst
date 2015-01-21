@@ -1,45 +1,41 @@
 Text cell
 =========
 
-"Display a message with a html template."
-This widget primary purpose is to display an arbitrary string of text.
-It can also display html code and event variables.
+This widget's purpose is to display arbitrary information written by a Canopsis administrator.
+Availables features in the widget text are:
 
-.. image:: ../../../_static/images/widgets/text_widget1.png
-.. image:: ../../../_static/images/widgets/text_widget2.png
+ - display arbitrary html content
+ - display computed metric values
+ - display events information
 
-Displaying Variables
---------------------
 
-The text cell widget allows to display event variables.
+Arbitrary html content display
+------------------------------
 
-The list of variables can be seen on [Event specification](https://github.com/capensis/canopsis/wiki/Event-specification) page, Event structure paragraph.
-Possible uses of the text cell widget are: add labels on our custom Views, display some html frame (like twitter, icinga etc..) or print variables from the inventory tab as shown on the grabs below. You can use for example {output} to display output of a resource, or directly use {perfdata:%metric_name%:value} ( {perfdata:cps_sel_total:value} ) to display a specific perfdata.
+When editing the widget text, it is possible to write custom HTML in the text editor. Using the editor buttons would make easier the html edition and it is also possible to write raw html directly.
 
-Available Variables
-^^^^^^^^^^^^^^^^^^^
+.. image:: ../../../_static/images/widgets/text_html_edition.png
 
-Example
-^^^^^^^
 
-.. code-block:: text
 
-	{perfdata:cps_sel_total:value}
+Metric display system
+---------------------
 
-Mathematical Operations
------------------------
+The text widget edition allow selecting performance data series. For more information on how create series from metrics see `series <../../UIv2/serie.html>`_ .
+Metrics displayed are the last value for the serie metric computation from the selected date interval witch is by default between **now** and **now - 300 seconds**. If no metric available in this interval, the template value will display `No metric available` as value in the render.
 
-The widget also allows to parse mathematical operations.
+.. image:: ../../../_static/images/widgets/select_series.png
 
-To do so, juste create an html element with a class attribute "mathexpression". When rendering the widget, a math parser will try to evaluate the expression.
+Once serie is selected, it is possible to display it's value in the text area by using the handlebars template system as long as the metric value is embed in the template rendering context under the `serie.serie_name` name.
 
-This feature can be used to display the addition of two metrics values, to multiply a metric value by a factor, and so on.
-
-Example
-^^^^^^^
+The code bellow will allow the widget text to display the value of the serie1
 
 .. code-block:: html
 
-	<div class="mathexpression">
-		{perfdata:metric_1:value} + {perfdata:metric_2:value}
-	</div>
+	<p>Metric value for serie1 is : {{serie.serie1}}</p>
+
+
+Event display system
+--------------------
+
+.. TODO event value display system

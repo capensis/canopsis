@@ -74,12 +74,15 @@ from canopsis.task import run_task, TASK, new_conf
 from canopsis.check import Check
 from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context
+from canopsis.topology.manager import TopologyManager
+from canopsis.event import forger, Event
 
 _context = Context()
 _check = CheckManager()
+_topology = TopologyManager()
 
 
-class TopoOp(object):
+class TopoVertice(object):
 
     STATE = Check.STATE  #: state field name in data
     ENTITY = 'entity'  #: entity field name in data
@@ -95,7 +98,7 @@ class TopoOp(object):
         :return: self entity id.
         :rtype: str
         """
-        return self.data[TopoOp.ENTITY]
+        return self.data[TopoVertice.ENTITY]
 
     @entity.setter
     def entity(self, value):
@@ -113,35 +116,55 @@ class TopoOp(object):
             entity_id = value
 
         # update entity
-        self.data[TopoOp.ENTITY] = entity_id
+        self.data[TopoVertice.ENTITY] = entity_id
         # update entity state
-        self.data[TopoOp.STATE] = _check.state(ids=entity_id)
+        self.data[TopoVertice.STATE] = _check.state(ids=entity_id)
+
+    def get_context_w_entity(self):
+        """
+        Get self entity structure and its context.
+
+        :return: tuple of self context and entity.
+        :rtype: tuple
+        """
+
+        context = {
+            'connector': Event.CONNECTOR,
+            'connector_name': Event.CONNECTOR_NAME,
+            'component': self.id
+        }
+
+        entity = {
+            Context.NAME: self.name
+        }
+
+        return context, entity
 
     @property
     def name(self):
-        return self.data.get(TopoOp.NAME, self.id)
+        return self.data.get(TopoVertice.NAME, self.id)
 
     @name.setter
     def name(self, value):
-        self.data[TopoOp.NAME] = value
+        self.data[TopoVertice.NAME] = value
 
     @property
     def state(self):
-        result = self.data.get(TopoOp.STATE)
+        result = self.data.get(TopoVertice.STATE)
         return result
 
     @state.setter
     def state(self, value):
-        self.data[TopoOp.STATE] = value
+        self.data[TopoVertice.STATE] = value
 
     @property
     def operator(self):
-        result = self.data.get(TopoOp.OPERATOR)
+        result = self.data.get(TopoVertice.OPERATOR)
         return result
 
     @operator.setter
     def operator(self, value):
-        self.data[TopoOp.OPERATOR] = value
+        self.data[TopoVertice.OPERATOR] = value
 
     def process(self, event, **kwargs):
         """
@@ -159,19 +182,32 @@ class TopoOp(object):
 
         return result
 
+    def get_event(self, state, source):
+        """
+        Get topo element event.
+        :param int state: new state to apply.
+        """
 
-class Topology(Graph, TopoOp):
+        result = forger(
+            event_type=self.type,
+            component=self.id if self.type == Topology.TYPE else None,
+            resource=self.id if self.type == TopoNode.TYPE else None,
+            state=state,
+            state_type=1,
+            id=self.id,
+            source=source
+        )
+        return result
+
+
+class Topology(Graph, TopoVertice):
 
     TYPE = 'topology'  #: topology type name
 
     __slots__ = Graph.__slots__
 
-    CONNECTOR = 'canopsis'
-    CONNECTOR_NAME = 'canopsis'
-    COMPONENT = 'canopsis'
-
     def __init__(
-        self, operator=None, state=TopoOp.DEFAULT_STATE, *args, **kwargs
+        self, operator=None, state=TopoVertice.DEFAULT_STATE, *args, **kwargs
     ):
 
         super(Topology, self).__init__(*args, **kwargs)
@@ -201,27 +237,7 @@ class Topology(Graph, TopoOp):
         :rtype: str
         """
 
-        return self.data[TopoOp.ENTITY]
-
-    def get_context_w_entity(self):
-        """
-        Get self entity structure and its context.
-
-        :return: tuple of self context and entity.
-        :rtype: tuple
-        """
-
-        context = {
-            'connector': Topology.CONNECTOR,
-            'connector_name': Topology.CONNECTOR_NAME,
-            'component': Topology.COMPONENT
-        }
-
-        entity = {
-            Context.NAME: self.name
-        }
-
-        return context, entity
+        return self.data[TopoVertice.ENTITY]
 
     def save(self, context=None, *args, **kwargs):
 
@@ -236,7 +252,7 @@ class Topology(Graph, TopoOp):
         context.put(_type=self.type, entity=entity, context=ctx)
 
 
-class TopoNode(Vertice, TopoOp):
+class TopoNode(Vertice, TopoVertice):
     """
     Class representation of a topology node.
 
@@ -255,7 +271,7 @@ class TopoNode(Vertice, TopoOp):
 
     def __init__(
         self,
-        entity=None, state=TopoOp.DEFAULT_STATE, operator=None,
+        entity=None, state=TopoVertice.DEFAULT_STATE, operator=None,
         *args, **kwargs
     ):
         """
@@ -279,8 +295,45 @@ class TopoNode(Vertice, TopoOp):
         if operator is not None:
             self.operator = operator
 
+    def get_event(self, state, source, *args, **kwargs):
+        """
+        Get topo element event.
+        :param int state: new state to apply.
+        """
 
-class TopoEdge(Edge, TopoOp):
+        result = super(TopoNode, self).get_event(
+            state, source, *args, **kwargs
+        )
+
+        # get topology id
+        topologies = _topology.get_graphs(elts=self.id)
+        if topologies:
+            topology = topologies[0]
+            # update component field
+            result['component'] = topology.id
+
+        return result
+
+    def get_context_w_entity(self, *args, **kwargs):
+
+        ctx, entity = super(TopoNode, self).get_context_w_entity(
+            *args, **kwargs
+        )
+
+        ctx['resource'] = self.id
+        ctx['component'] = None
+
+        # get topology id
+        topologies = _topology.get_graphs(elts=self.id)
+        if topologies:
+            topology = topologies[0]
+            # update component field
+            ctx['component'] = topology.id
+
+        return ctx, entity
+
+
+class TopoEdge(Edge):
     """
     Topology edge.
     """
@@ -289,9 +342,9 @@ class TopoEdge(Edge, TopoOp):
 
     TYPE = 'topoedge'  #: topology edge type name
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
 
-        super(TopoEdge, self).__init__(
-            data={} if data is None else data,
-            *args, **kwargs
-        )
+        super(TopoEdge, self).__init__(*args, **kwargs)
+
+        if self.data is None:
+            self.data = {}
