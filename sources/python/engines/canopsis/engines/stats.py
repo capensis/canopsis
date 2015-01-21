@@ -118,7 +118,7 @@ class engine(Engine):
         stats_event = forger(
             connector='engine',
             connector_name='engine',
-            event_type='check',
+            event_type='perf',
             source_type='resource',
             resource='Engine_stats',
             state=0,
