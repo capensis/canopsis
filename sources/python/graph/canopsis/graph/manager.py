@@ -239,7 +239,7 @@ class GraphManager(MiddlewareRegistry):
             if isinstance(elt, dict):
                 elt = GraphElement.new_element(**elt)
             # save elt
-            elt.save(self, cache=cache, graph_ids=graph_ids)
+            elt.save(manager=self, cache=cache, graph_ids=graph_ids)
 
     def remove_elts(self, ids, graph_ids=None, cache=False):
         """

@@ -3,7 +3,9 @@ from unittest import main, TestCase
 from canopsis.timeserie import TimeSerie
 from canopsis.timeserie.timewindow import TimeWindow, Period
 from random import random, randint
-from time import time
+from time import time, mktime
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 
 class TimeSerieTest(TestCase):
@@ -41,9 +43,12 @@ class TimeSerieTest(TestCase):
     def _five_years_timewidow(self):
 
         now = time()
-        # create an interval of 5 year every 30 minutes
-        five_year = 60 * 60 * 24 * 365 * 5  # five years in seconds
-        result = TimeWindow(start=now - five_year, stop=now)
+        rd = relativedelta(years=5)
+        now = datetime.now()
+        past = now - rd
+        past_ts = mktime(past.timetuple())
+        now_ts = mktime(now.timetuple())
+        result = TimeWindow(start=past_ts, stop=now_ts)
 
         return result
 
@@ -68,12 +73,14 @@ class TimeSerieTest(TestCase):
                     Period.MICROSECOND,
                     Period.SECOND,
                     Period.MINUTE,
+                    Period.WEEK,
                     Period.MONTH,
                     Period.YEAR
                 ):
                     continue
 
                 value = randint(2, max_value_unit)
+
                 period = Period(**{unit: value})
                 kwargs = {'period': period}
                 period_length = unit_length * value
@@ -99,8 +106,13 @@ class TimeSerieTest(TestCase):
 
                     aggregated_points = timeserie.calculate(points, timewindow)
                     len_aggregated_points = len(aggregated_points)
-                    self.assertIn(len(timesteps) - 1, (
-                        len_aggregated_points, len_aggregated_points + 1))
+                    self.assertIn(
+                        len(timesteps) - 1,
+                        (
+                            len_aggregated_points,
+                            len_aggregated_points + 1
+                        )
+                    )
 
                 unit_length *= max_value_unit
 

@@ -68,14 +68,13 @@ def add_aggregation(name, function, push=False):
     _AGGREGATIONS[name] = function
 
 
-def _none(points):
-    return points
-add_aggregation('NONE', _none)
+add_aggregation('NONE', None)
 
 
 def _mean(points):
     return sum(points) / len(points)
 add_aggregation('MEAN', _mean)
+add_aggregation('AVERAGE', _mean)
 
 
 def _last(points):
