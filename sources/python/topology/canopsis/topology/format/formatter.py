@@ -331,13 +331,16 @@ class Formatter(object):
             q, lst = self.query_generator(c)
             # Loads the context information
             res = self.loads(1)
-            if res is None:
-                return
-            for d in lst:
-                if d == 'type':
-                    comps.get(c)[unicode(d)] = unicode(comps.get(c).get(self.TYPE[0]))
-                else:
-                    comps.get(c)[unicode(d)] = res.get(unicode(d))
+            if len(res) != 0:
+                print "Component without event data ", res
+                for d in lst:
+                    if d == 'type':
+                        comps.get(c)[unicode(d)] = unicode(comps.get(c).get(self.TYPE[0]))
+                    else:
+                        comps.get(c)[unicode(d)] = res.get(unicode(d))
+            else:
+                print "Component without event data ", c
+                print res
         return comps
 
     def get_root(self):
