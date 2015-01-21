@@ -21,7 +21,7 @@ do
     fi
 
     sleep 1
-    STATE=`launch_cmd 0 service rabbitmq-server status | grep RUNNING | wc -l`
+    STATE=`service rabbitmq-server status | grep -v FATAL | grep RUNNING | wc -l`
     TRY=$((TRY + 1))
     echo -n "."
 done
@@ -37,7 +37,7 @@ mkdir -p $HOME/var/log/unittest
 UNITTESTDIR="$HOME/var/lib/canopsis/unittest"
 
 UNITTESTS=`find $UNITTESTDIR -name "*.py" | grep -v "__init__.py"`
-UNITTESTS="$UNITTESTS $HOME/bin/functional-test.py"
+UNITTESTS="$UNITTESTS"
 
 FAIL=0
 
