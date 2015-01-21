@@ -86,7 +86,7 @@ class engine(Engine):
             ).count()
 
             self.perf_data_array.append({
-                'metric': 'cps_states_{}'.format(
+                'metric': 'cps_count_{}'.format(
                     source_type
                 ),
                 'value': count
