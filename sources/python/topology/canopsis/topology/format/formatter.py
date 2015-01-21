@@ -146,22 +146,22 @@ class Formatter(object):
         else:
             componenents = self.comp_formatter()
         for d in self.get_components().keys():
-            if componenents.get(d).get(self.TYPE[0]) == self.EVENT_TYPE[0]:
+            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[0]):
                 tmp_dict = {}
                 tmp_dict[d] = componenents.get(d)
                 ops_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[0]] = ops_list
-            if componenents.get(d).get(self.TYPE[0]) == self.EVENT_TYPE[1]:
+            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[1]):
                 tmp_dict = {}
                 tmp_dict[d] = componenents.get(d)
                 chk_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[1]] = chk_list
-            if componenents.get(d).get(self.TYPE[0]) == self.EVENT_TYPE[2]:
+            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[2]):
                 tmp_dict = {}
                 tmp_dict[d] = componenents.get(d)
                 sel_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[2]] = sel_list
-            if componenents.get(d).get(self.TYPE[0]) == self.EVENT_TYPE[3]:
+            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[3]):
                 tmp_dict = {}
                 tmp_dict[d] = componenents.get(d)
                 top_list.append(tmp_dict)
@@ -179,10 +179,10 @@ class Formatter(object):
         resr_list = []
         comp_list = []
         for d in self.get_components().keys():
-            if self.get_components().get(d).get(self.TYPE[1]) == self.SOURCE_TYPE[0]:
+            if self.iequal(self.get_components().get(d).get(self.TYPE[1]), self.SOURCE_TYPE[0]):
                 resr_list.append(self.get_components().get(d))
                 source_type[self.SOURCE_TYPE[0]] = resr_list
-            if self.get_components().get(d).get(self.TYPE[1]) == self.SOURCE_TYPE[1]:
+            if self.iequal(self.get_components().get(d).get(self.TYPE[1]), self.SOURCE_TYPE[1]):
                 comp_list.append(self.get_components().get(d))
                 source_type[self.SOURCE_TYPE[1]] = comp_list
         return source_type
@@ -198,19 +198,19 @@ class Formatter(object):
         operators = {}
         components = comps
         for comp in components.get(self.EVENT_TYPE[0]):
-            if comp.values()[0].get('label') == self.OPERATOR_ID[0]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[0]):
                 clt_list.append(comp)
                 operators[self.OPERATOR_ID[0]] = clt_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[1]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[1]):
                 wst_list.append(comp)
                 operators[self.OPERATOR_ID[1]] = wst_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[2]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[2]):
                 and_list.append(comp)
                 operators[self.OPERATOR_ID[2]] = and_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[3]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[3]):
                 or_list.append(comp)
                 operators[self.OPERATOR_ID[3]] = or_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[4]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[4]):
                 bes_list.append(comp)
                 operators[self.OPERATOR_ID[4]] = bes_list
         return operators
@@ -226,19 +226,19 @@ class Formatter(object):
         operators = {}
         components = self.get_event_type(kind)
         for comp in components.get(self.EVENT_TYPE[0]):
-            if comp.values()[0].get('label') == self.OPERATOR_ID[0]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[0]):
                 clt_list.append(comp)
                 operators[self.OPERATOR_ID[0]] = clt_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[1]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[1]):
                 wst_list.append(comp)
                 operators[self.OPERATOR_ID[1]] = wst_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[2]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[2]):
                 and_list.append(comp)
                 operators[self.OPERATOR_ID[2]] = and_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[3]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[3]):
                 or_list.append(comp)
                 operators[self.OPERATOR_ID[3]] = or_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[4]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[4]):
                 bes_list.append(comp)
                 operators[self.OPERATOR_ID[4]] = bes_list
         return operators
