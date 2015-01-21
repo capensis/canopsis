@@ -9,3 +9,4 @@ This Chapter describes how to use the new frontend system.
    :titlesonly:
 
    userviews
+   widgets/index

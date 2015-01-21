@@ -22,7 +22,8 @@
 from pymongo import Connection, MongoClient
 import json
 from bson.json_util import dumps
-
+from canopsis.old.storage import get_storage
+from canopsis.old.account import Account
 
 class Formatter(object):
     """docstring for ClassName"""
@@ -34,14 +35,57 @@ class Formatter(object):
     STATE = (0, 1, 2, 3, 4)
     CONTEXT = ('type', 'connector', 'connector_name', 'component', 'resource')
     TOPOQ = "{'crecord_type':'topology', 'crecord_name':'internal'}"
+    # The collections name
+    NAMESPACES = ('objectv1', 'eventsv1')
     MONGO_PORT = 27017
     MONGO_URL = "localhost"
 
     def __init__(self, username=None, password=None):
         self.username = username
         self.password = password
-        self.cursor = self.connection()
+        self.cursor = self.get_data()
         self.data = self.loads()
+
+    def storage_connection(self, namespace):
+        '''
+        Get the cconnection to canopsis DataBase.
+
+        :param namespace: specify teh collection name.
+
+        :return: a connection.
+        :rtype: Mongo Connection.
+        '''
+        connection = get_storage(
+            namespace=namespace,
+            account=Account(
+                user="root",
+                group="root"
+            )
+        ).get_backend()     
+        return connection
+
+    def get_data(self, kind=0):
+        '''
+         Access MongoDB and load topology or events data.
+
+         :param kink: specify which request should be running in the DataBase.
+
+         :return: a cursor of topology or events.
+         :rtype: Cursor of elements dictionnary or empty dictionnary.        
+        '''
+        if kind == 0:
+            query = self.TOPOQ
+            # Format String
+            json_acceptable = query.replace("'", "\"")
+            query = json.loads(json_acceptable)
+            cursor = self.storage_connection(self.NAMESPACES[0]).find(query)
+        else:
+            query = self.query_generator()[0]
+            # Format String
+            json_acceptable = query.replace("'", "\"")
+            query = json.loads(json_acceptable)
+            cursor = self.storage_connection(self.NAMESPACES[1]).find(query)
+        return cursor
 
     def connection(self, kind=0):
         '''
@@ -60,8 +104,6 @@ class Formatter(object):
             db = connection["canopsis"]
             # Do the authentication
             db.authenticate(self.username, self.password)
-        #connection = Connection()
-        #db = connection.canopsis
         if kind == 0:
             query = self.TOPOQ
             # Format string
@@ -85,7 +127,6 @@ class Formatter(object):
          :return: a dictionnary of elements.
          :rtype: dictionnary.
         '''
-        #str = dumps(self.connection(kind))
         str = self.dump(kind)
         if len(json.loads(str)) > 0:
             # catch exception here
@@ -97,7 +138,7 @@ class Formatter(object):
     def dump(self, kind=0):
         '''
         '''
-        return dumps(self.connection(kind))
+        return dumps(self.get_data(kind))
 
     def print_keys(self):
         tdata = self.data
@@ -146,22 +187,22 @@ class Formatter(object):
         else:
             componenents = self.comp_formatter()
         for d in self.get_components().keys():
-            if componenents.get(d).get(self.TYPE[0]) == self.EVENT_TYPE[0]:
+            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[0]):
                 tmp_dict = {}
                 tmp_dict[d] = componenents.get(d)
                 ops_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[0]] = ops_list
-            if componenents.get(d).get(self.TYPE[0]) == self.EVENT_TYPE[1]:
+            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[1]):
                 tmp_dict = {}
                 tmp_dict[d] = componenents.get(d)
                 chk_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[1]] = chk_list
-            if componenents.get(d).get(self.TYPE[0]) == self.EVENT_TYPE[2]:
+            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[2]):
                 tmp_dict = {}
                 tmp_dict[d] = componenents.get(d)
                 sel_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[2]] = sel_list
-            if componenents.get(d).get(self.TYPE[0]) == self.EVENT_TYPE[3]:
+            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[3]):
                 tmp_dict = {}
                 tmp_dict[d] = componenents.get(d)
                 top_list.append(tmp_dict)
@@ -179,10 +220,10 @@ class Formatter(object):
         resr_list = []
         comp_list = []
         for d in self.get_components().keys():
-            if self.get_components().get(d).get(self.TYPE[1]) == self.SOURCE_TYPE[0]:
+            if self.iequal(self.get_components().get(d).get(self.TYPE[1]), self.SOURCE_TYPE[0]):
                 resr_list.append(self.get_components().get(d))
                 source_type[self.SOURCE_TYPE[0]] = resr_list
-            if self.get_components().get(d).get(self.TYPE[1]) == self.SOURCE_TYPE[1]:
+            if self.iequal(self.get_components().get(d).get(self.TYPE[1]), self.SOURCE_TYPE[1]):
                 comp_list.append(self.get_components().get(d))
                 source_type[self.SOURCE_TYPE[1]] = comp_list
         return source_type
@@ -198,19 +239,19 @@ class Formatter(object):
         operators = {}
         components = comps
         for comp in components.get(self.EVENT_TYPE[0]):
-            if comp.values()[0].get('label') == self.OPERATOR_ID[0]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[0]):
                 clt_list.append(comp)
                 operators[self.OPERATOR_ID[0]] = clt_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[1]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[1]):
                 wst_list.append(comp)
                 operators[self.OPERATOR_ID[1]] = wst_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[2]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[2]):
                 and_list.append(comp)
                 operators[self.OPERATOR_ID[2]] = and_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[3]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[3]):
                 or_list.append(comp)
                 operators[self.OPERATOR_ID[3]] = or_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[4]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[4]):
                 bes_list.append(comp)
                 operators[self.OPERATOR_ID[4]] = bes_list
         return operators
@@ -226,19 +267,19 @@ class Formatter(object):
         operators = {}
         components = self.get_event_type(kind)
         for comp in components.get(self.EVENT_TYPE[0]):
-            if comp.values()[0].get('label') == self.OPERATOR_ID[0]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[0]):
                 clt_list.append(comp)
                 operators[self.OPERATOR_ID[0]] = clt_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[1]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[1]):
                 wst_list.append(comp)
                 operators[self.OPERATOR_ID[1]] = wst_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[2]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[2]):
                 and_list.append(comp)
                 operators[self.OPERATOR_ID[2]] = and_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[3]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[3]):
                 or_list.append(comp)
                 operators[self.OPERATOR_ID[3]] = or_list
-            if comp.values()[0].get('label') == self.OPERATOR_ID[4]:
+            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[4]):
                 bes_list.append(comp)
                 operators[self.OPERATOR_ID[4]] = bes_list
         return operators

@@ -1,0 +1,48 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["title", "refreshInterval", "human_readable", "legend", "tooltip"]
+    },{
+        "title": "Categories",
+        "keys": ["categories"]
+    }],
+    "properties": {
+        "title":  {
+            "type": "string"
+        },
+        "refreshableWidget": {
+            "type": "boolean",
+            "default": true
+        },
+        "isRefreshable": {
+            "type": "boolean",
+            "default": true
+        },
+        "human_readable": {
+            "type": "boolean",
+            "default": false,
+            "title": "Human readable values"
+        },
+        "legend": {
+            "type": "boolean",
+            "default": true,
+            "title": "Show legend"
+        },
+        "tooltip": {
+            "type": "boolean",
+            "default": true,
+            "title": "Show tooltips"
+        },
+        "categories": {
+            "type": "array",
+            "role": "array",
+            "items": {
+                "type": "object",
+                "role": "categoryitem",
+                "relationship": "belongsTo",
+                "model": "categorychartitem"
+            }
+        }
+    }
+}
