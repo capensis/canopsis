@@ -36,18 +36,17 @@ If this condition is checked, then other specific conditions can be applied
 such as those defined in the canopsis.topology.rule.action module.
 """
 
-from canopsis.old.event import forger
 from canopsis.topology.elements import Topology, TopoNode
 from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
 from canopsis.task import register_task
 from canopsis.event import Event
-from canopsis.check import Check
 from canopsis.engines import publish
-
+from canopsis.check.manager import CheckManager
 
 context = Context()
 tm = TopologyManager()
+_check = CheckManager()
 
 SOURCE = 'source'
 PUBLISHER = 'publisher'
@@ -70,13 +69,11 @@ def event_processing(engine, event, manager=None, **kwargs):
 
     event_type = event[Event.TYPE]
 
+    # TODO: add other check elements
     # apply processing only in case of check event
-    if event_type == Check.get_type():
-
-        source_type = event[Event.SOURCE_TYPE]
-
+    if event_type in _check.types:
         # in case of topology element
-        if source_type in [Topology.TYPE, TopoNode.TYPE]:
+        if event_type in [Topology.TYPE, TopoNode.TYPE]:
             elt = manager.get_elts(ids=event[Topology.ID])
             if elt is not None:
                 elts = [elt]
@@ -119,15 +116,8 @@ def event_processing(engine, event, manager=None, **kwargs):
                     # send check events
                     for target in targets:
                         # create event to propagate with source and elt ids
-                        event_to_propagate = forger(
-                            connector=Topology.CONNECTOR,
-                            connector_name=Topology.CONNECTOR_NAME,
-                            event_type=Check.get_type(),
-                            component=Topology.COMPONENT,
-                            state=new_state,
-                            source_type=target.type,
-                            id=target.id,
-                            source=elt.id
+                        event_to_propagate = target.get_event(
+                            state=new_state, source=elt.id
                         )
                         # publish the event in the context of the engine
                         publish(event=event_to_propagate, engine=engine)

@@ -20,6 +20,8 @@
 
 __version__ = "0.1"
 
+from canopsis.old.event import forger as eforger
+
 
 class Event(object):
     """
@@ -33,6 +35,9 @@ class Event(object):
     SOURCE = 'source'  #: source field name
     DATA = 'data'  #: data field name
     META = 'meta'  #: meta field name
+
+    CONNECTOR = 'canopsis'  #: default connector value
+    CONNECTOR_NAME = 'engine'  #: default connector name
 
     __slots__ = (TYPE, SOURCE, DATA, META)
 
@@ -74,3 +79,37 @@ class Event(object):
         result = cls.__name__.lower()
 
         return result
+
+
+def forger(
+    event_type,
+    connector=None, connector_name=None, component=None, resource=None,
+    **kwargs
+):
+    """
+    Forge an event from input parameters.
+    """
+
+    # init parameters
+    if connector is None:
+        connector = Event.CONNECTOR
+    if connector_name is None:
+        connector_name = Event.CONNECTOR_NAME
+    # construct the event
+    result = eforger(
+        connector=connector,
+        connector_name=connector_name,
+        event_type=event_type,
+        component=component
+    )
+    # try to put resource
+    if resource is not None:
+        result['resource'] = resource
+        result['source_type'] = 'resource'
+    else:
+        # or specify source type is a component
+        result['source_type'] = 'component'
+
+    result.update(kwargs)
+
+    return result
