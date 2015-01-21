@@ -332,7 +332,7 @@ class Formatter(object):
             # Loads the context information
             res = self.loads(1)
             if len(res) != 0:
-                print "Component without event data ", res
+                print "Component with event data ", res
                 for d in lst:
                     if d == 'type':
                         comps.get(c)[unicode(d)] = unicode(comps.get(c).get(self.TYPE[0]))
