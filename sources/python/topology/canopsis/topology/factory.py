@@ -48,11 +48,14 @@ class Factory(object):
         # Save the topology
         topo.save(manager=manager)
 
-    def create_component(self, id_component, top_ctx, dict_op=None):
+    def create_component(self, id_component, top_ctx=None, dict_op=None):
         '''
             Create a component
         '''
-        id = self.get_topo_id(top_ctx)
+        if top_ctx is not None:
+            id = self.get_topo_id(top_ctx)
+        else:
+            id = None
         topoNode = TopoNode(_id=id_component, entity=id, operator=dict_op)
         return topoNode
 
@@ -116,6 +119,9 @@ class Factory(object):
             node_list.append(self.create_component(c.keys()[0], entity))
         for c in components.get(f.EVENT_TYPE[2]):
             node_list.append(self.create_component(c.keys()[0], entity))
+        # Create Topology
+        for c in components.get(f.EVENT_TYPE[3]):
+            node_list.append(self.create_component(c.keys()[0], entity))
         # OPERATOR_ID[0] --> Cluster
         for cmps in opcomps.get(f.OPERATOR_ID[0]):
             tmpdict = cmps.values()[0]
@@ -125,8 +131,6 @@ class Factory(object):
             stat_value = value.get('then')
             else_value = value.get('else')
 
-            dict_cluster = {}
-            dict_cluster['state'] = int(cond_value)
             # Create at_least (Voir avec Jonathan)
             least_conf = new_conf(at_least, min_weight=int(least_value), state=int(cond_value))
             # Create statement/action
@@ -139,12 +143,10 @@ class Factory(object):
                 _else = new_conf(action.change_state, state=int(else_value))
             else:
                 _else = new_conf(action.worst_state)
-            node_list.append(self.create_component(cmps.keys()[0], self.cluster(least_conf, statement, _else), dict_op=dict_cluster))
+            node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(least_conf, statement, _else)))
         # OPERATOR_ID[1] --> Worst Sate
         for cmps in opcomps.get(f.OPERATOR_ID[1]):
-            for c in cmps:
-                node_list.append(new_conf(action.worst_state))
-
+            node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.worst_state)))
         # OPERATOR_ID[2] --> And
         for cmps in opcomps.get(f.OPERATOR_ID[2]):
             mydict = cmps.values()[0]
@@ -159,8 +161,7 @@ class Factory(object):
             dict_and = {}
             dict_and['state'] = int(cond_value)
             # Create the condition
-            conf = new_conf(at_least, **dict_and)
-            condition = self.create_component(cmps.keys()[0], entity, conf)
+            condition = new_conf(at_least, **dict_and)
             # Create the statement/action
             if stat_value != '-1':
                 statement = new_conf(action.change_state, state=int(stat_value))
@@ -171,7 +172,7 @@ class Factory(object):
                 _else = new_conf(action.change_state, state=int(else_value))
             else:
                 _else = new_conf(action.worst_state)
-            node_list.append(self.create_component(cmps.keys()[0], self.cluster(condition, statement, _else), dict_op=dict_and))
+            node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else)))
 
         # OPERATOR_ID[3] --> Or
         for cmps in opcomps.get(f.OPERATOR_ID[3]):
@@ -191,8 +192,8 @@ class Factory(object):
             entity['id'] = mydict.get(mydict.get('source_type'))
 
             # Create the condition
-            conf = new_conf(at_least, **dict_or)
-            condition = self.create_component(cmps.keys()[0], entity, conf)
+            condition = new_conf(at_least, **dict_or)
+            #condition = self.create_component(cmps.keys()[0], entity, conf)
 
             # Create the statement/action
             if stat_value != '-1':
@@ -204,29 +205,31 @@ class Factory(object):
                 _else = new_conf(action.change_state, state=int(else_value))
             else:
                 _else = new_conf(action.worst_state)
-            node_list.append(self.create_component(cmps.keys()[0],self.cluster(condition, statement, _else)))
+            node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else)))
         # OPERATOR_ID[4] --> Best State
         for cmps in opcomps.get(f.OPERATOR_ID[4]):
-            for c in cmps:
-                node_list.append(new_conf(action.best_state))
+            node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.best_state)))
 
         # Create connections between components
         for tween in f.get_comp_graph():
-            for val in tween:
-                conn_list.append(self.create_connections(val[0], val[1]))
-
+            conn_list.append(self.create_connections(tween[0], tween[1]))
         # Create the Topology
         root_id = f.get_root_id()
         self.create_topology(root_id, conn_list, node_list)
 
-    def dete_topology(self, comp_ID):
+    def delete_topology(self, comp_ID):
         # Initialize the Toplogy Manager
         manager = TopologyManager()
         # Create the topology name
-        manager.get_graphs(ids=comp_ID).delete(manager)
-        print "component: ", comp_ID, " is deleted ..."
+        top = manager.get_graphs(ids=comp_ID)
+        if top is not None:
+            top.delete(manager)
+            print "component: ", comp_ID, " is deleted ..."
+        else:
+            print "component: ", comp_ID, " does no exist in the Database ..."
+            
 
 if __name__ == '__main__':
     fact = Factory()
     fact.build()
-    #fact.dete_topology('component-1370')
+    #fact.delete_topology('component-1370')
