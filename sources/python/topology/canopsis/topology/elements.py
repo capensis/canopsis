@@ -202,15 +202,17 @@ class TopoVertice(object):
 
 class Topology(Graph, TopoVertice):
 
-    TYPE = 'topology'  #: topology type name
+    TYPE = 'topo'  #: topology type name
 
     __slots__ = Graph.__slots__
 
     def __init__(
-        self, operator=None, state=TopoVertice.DEFAULT_STATE, *args, **kwargs
+        self,
+        operator=None, state=TopoVertice.DEFAULT_STATE, _type=TYPE,
+        *args, **kwargs
     ):
 
-        super(Topology, self).__init__(*args, **kwargs)
+        super(Topology, self).__init__(_type=_type, *args, **kwargs)
 
         if self.data is None:
             self.data = {}
