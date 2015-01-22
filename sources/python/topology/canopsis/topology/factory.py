@@ -219,6 +219,14 @@ class Factory(object):
         root_id = f.get_root_id()
         self.create_topology(root_id, conn_list, node_list)
 
+    def dete_topology(self, comp_ID):
+        # Initialize the Toplogy Manager
+        manager = TopologyManager()
+        # Create the topology name
+        manager.get_graphs(ids=comp_ID).delete(manager)
+        print "component: ", comp_ID, " is deleted ..."
+
 if __name__ == '__main__':
     fact = Factory()
     fact.build()
+    #fact.dete_topology('component-1370')

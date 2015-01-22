@@ -11,6 +11,9 @@
 		"title": "Series",
 		"keys":["series"]
 	},{
+		"title": "Events",
+		"keys":["events"]
+	},{
 		"title": "Mixins",
 		"keys":["mixins"]
 	}],
@@ -31,6 +34,15 @@
 			"crecordtype": "serie",
 			"multiselect": true
         },
+		"events": {
+			"type": "array",
+			"items": {
+				"type": "object"
+			},
+			"role": "eventselector",
+			"labelled": true,
+			"description": "Choose events to include in selector computation, and associate them a label"
+		},
    		"mixins": {
 			"type": "array",
 			"role": "mixins",

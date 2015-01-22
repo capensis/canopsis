@@ -8,13 +8,13 @@
     }],
     "properties": {
         "crecord_type": {
-            "default": "topology"
+            "default": "topo"
         },
         "_cls": {
             "default": "canopsis.topology.elements.Topology"
         },
         "type": {
-            "default": "topology"
+            "default": "topo"
         }
     }
 }

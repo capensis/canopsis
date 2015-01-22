@@ -38,4 +38,29 @@ The code bellow will allow the widget text to display the value of the serie1
 Event display system
 --------------------
 
-.. TODO event value display system
+Event display system in the widget text allow users to display event information content as text information.
+
+Below an example of what it is possible to do with the event feature
+
+.. image:: ../../../_static/images/widgets/text_event_edition.png
+
+This can be done because in the widget text form editor, the event from collectd is registed (with the event selector editor) and is aliased with ``my_event`` value in the event selector panel as shown in the picture below. Don't forget while aliasing an event to click save button at the bottom.
+
+.. image:: ../../../_static/images/widgets/text_event_edition_1.png
+
+The template created for this widget text is the one shown below. It displays events information from the ``event`` context thanks to an handlebars tag.Make reference to the selected event by using the ``my_event`` alias name in the handlebars tag. and then choose one property of the event that mainly can be one of:
+
+ - id
+ - component
+ - resource
+ - state
+ - domain
+ - perimeter
+ - connector_name
+ - connector
+
+.. image:: ../../../_static/images/widgets/text_event_edition_2.png
+
+
+Widget text helpers
+-------------------
