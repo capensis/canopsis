@@ -3,8 +3,7 @@ How to use TimeGraph
 
 This document describe how to insert and configure a *TimeGraph* widget.
 
-The first step is to create some series and/or curves.
-See `this document <../serie>`_ for more informations.
+The first step is to create some `series and/or curves <../perfdata.html>`_.
 
 Configuring the widget
 ----------------------
@@ -58,7 +57,7 @@ Configure data sources
 
 You can use two types of data source :
 
- * serie: it will plot a pre-configured serie (see `this document <../serie>`_) ;
+ * serie: it will plot a pre-configured serie (see `how to create a serie <../perfdata.html>`_) ;
  * metric: it will plot a single metric.
 
 Click on the *Series* tab:
