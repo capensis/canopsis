@@ -1,5 +1,5 @@
-Weather
-=======
+How to use Weather
+==================
 
 Overview
 --------

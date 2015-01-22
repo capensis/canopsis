@@ -1,4 +1,0 @@
-Report Intro
-============
-
-Bla bla
