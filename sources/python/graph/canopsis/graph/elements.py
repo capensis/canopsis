@@ -738,3 +738,22 @@ class Graph(Vertice):
                 result[source_edge] += targets
 
         return result
+
+    def save(self, manager, graph_ids=None, cache=False, *args, **kwargs):
+
+        super(Graph, self).save(
+            manager=manager,
+            graph_ids=graph_ids,
+            cache=cache,
+            *args, **kwargs
+        )
+        # save graph elements
+        if self._gelts:
+            for elt_id in self._gelts:
+                elt = self._gelts[elt_id]
+                elt.save(manager=manager, cache=cache)
+
+        elif self._delts:
+            for elt in self._delts:
+                elt = Graph.new_element(**elt)
+                elt.save(manager=manager, cache=cache)
