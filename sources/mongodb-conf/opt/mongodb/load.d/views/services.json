@@ -15,7 +15,7 @@
         "widget": {
           "xtype": "text",
           "title": "text cell",
-          "html": "<a {{action showView 'view.events'}}>plop</a>",
+          "html": "This is a text cell",
           "filters": [
             "actionbutton-create",
             "actionbutton-removeselection"

@@ -16,7 +16,7 @@
         "crecord_type": {
             "type": "string",
             "required": true,
-            "default": "wtopology"
+            "default": "topology"
         },
         "graph_type": {
             "default": "topology"

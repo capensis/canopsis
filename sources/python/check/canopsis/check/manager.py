@@ -83,6 +83,7 @@ class CheckManager(MiddlewareRegistry):
             is required.
         :rtype: int or dict
         """
+
         # default result is None
         result = {}
         # get state document
