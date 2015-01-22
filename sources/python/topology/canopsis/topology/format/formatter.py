@@ -361,6 +361,9 @@ class Formatter(object):
         if top.get(self.CONTEXT[3]) is not None:
             missing_ctx.append(self.CONTEXT[3])
             data += quote + self.CONTEXT[3] + quote + separator + quote + top.get(self.CONTEXT[3]) + quote + comma
+        if top.get(self.CONTEXT[4]) is not None:
+            missing_ctx.append(self.CONTEXT[4])
+            data += quote + self.CONTEXT[4] + quote + separator + quote + top.get(self.CONTEXT[4]) + quote + comma            
         query = start + data.rstrip(comma) + end
         return query, self.diff(missing_ctx)
 
@@ -419,6 +422,14 @@ class Formatter(object):
 
 if __name__ == '__main__':
     t = Formatter('cpsmongo', 'canopsis')
+    #print type(t.get_comp_graph())
+    components = t.get_event_type(kind=1)
+    opcomps = t.match_operator(components)
+    for cmps in opcomps.get(t.OPERATOR_ID[1]):
+        #mydict = cmps.values()[0]
+        #print mydict.get('form').get('items')
+        print cmps
+    """
     print t.loads()
 
     for k, v in t.get_event_type().iteritems():
@@ -464,3 +475,4 @@ if __name__ == '__main__':
         print c.values()[0].get('form').get('items')[0].get('value')
         print c.values()[0].get('form').get('items')[1].get('value')
         print c.values()[0].get('form').get('items')[2].get('value')
+    """
