@@ -647,6 +647,8 @@ class Graph(Vertice):
                         self._delts.append(elt_dict)
                         if elt_id not in self.elts:
                             self.elts.append(elt_id)
+            elif isinstance(elt, Iterable):
+                self.add_elts(*elt)
 
     def remove_elts(self, *elts):
         """
