@@ -26,68 +26,96 @@ from canopsis.old.record import Record
 import os
 import json
 
-##set root account
+# Set root account
 root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
 json_path = os.path.expanduser('~/opt/mongodb/load.d')
 
 """
-Upserts json documents files within json_<collection> folder of the load.d folder
-Json files are upserted if they contains a 'loader_id' field
-If json files contains 'no_update_document' field set to true, upsert is avoided
+Upserts json documents files within json_<collection> folder of the load.d
+folder Json files are upserted if they contains a 'loader_id' field If json
+files contains 'no_update_document' field set to true, upsert is avoided
 """
 
-def init():
 
+def init():
+    # Iterating over json documents to manage and create paths variables.
     for filename in os.listdir(json_path):
         absolute_path = '{}/{}'.format(json_path, filename)
         if os.path.isdir(absolute_path) and filename.startswith('json_'):
             collection = filename.replace('json_', '')
             for json_filename in os.listdir(absolute_path):
                 if json_filename.endswith('.json'):
-                    absolute_json_path = '{}/{}'.format(absolute_path, json_filename)
+                    absolute_json_path = '{}/{}'.format(
+                        absolute_path,
+                        json_filename
+                    )
                     try:
                         with open(absolute_json_path) as f:
                             json_data = json.loads(f.read())
 
                             if type(json_data) == list:
                                 for json_document in json_data:
-                                    load_document(json_document, collection, json_filename)
+                                    load_document(
+                                        json_document,
+                                        collection,
+                                        json_filename
+                                    )
                             elif type(json_data) == dict:
-                                load_document(json_data, collection, json_filename)
+                                load_document(
+                                    json_data,
+                                    collection,
+                                    json_filename
+                                )
                     except Exception as e:
-                        print ('Unable to load json file {} : {}'.format(absolute_json_path, e))
+                        print ('Unable to load json file {} : {}'.format(
+                            absolute_json_path,
+                            e
+                        ))
 
 
 def load_document(json_data, collection, json_filename):
 
     if 'loader_id' not in json_data:
 
-        print (' + Loader_id key not exists in json {} file,\n' \
-        ' It must be a uniq document id for your custom json documents.\n' \
-        ' Cannot process database upsert'.format(json_filename))
+        print (
+            ' + Loader_id key not exists in json {} file,\n' +
+            ' It must be a uniq document id for your custom documents.\n' +
+            ' Cannot process database upsert'.format(json_filename)
+        )
 
     else:
-        exists_document = storage.get_backend(collection).find({'loader_id': json_data['loader_id']}).count()
+        exists_document = storage.get_backend(collection).find({
+            'loader_id': json_data['loader_id']
+        }).count()
 
         if not exists_document:
             do_update(json_data, collection)
-            print ('Document not existing, process insert {}'.format(json_filename))
+            print ('Document not existing, process insert {}'.format(
+                json_filename
+            ))
         else:
-            if 'loader_no_update' not in json_data or not json_data['loader_no_update']:
-                print ('Document exists, process update {}'.format(json_filename))
+            if ('loader_no_update' not in json_data or
+                    not json_data['loader_no_update']):
+                print ('Document exists, process update {}'.format(
+                    json_filename
+                ))
                 do_update(json_data, collection)
             else:
-                print ('Document is marked as no updatable, nothing is done for {}'.format(json_filename))
+                print ('Document is marked as no updatable,' +
+                       ' nothing is done for {}'.format(json_filename))
 
 
 def do_update(json_data, collection):
     record = Record({}).dump()
-    #cheating these useless records
     for key in json_data:
         record[key] = json_data[key]
-    storage.get_backend(collection).update({'loader_id': json_data['loader_id']}, record, upsert=True)
+    storage.get_backend(collection).update(
+        {'loader_id': json_data['loader_id']},
+        record,
+        upsert=True
+    )
 
 
 def update():
