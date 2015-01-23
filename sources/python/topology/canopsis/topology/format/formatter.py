@@ -80,10 +80,7 @@ class Formatter(object):
             query = json.loads(json_acceptable)
             cursor = self.storage_connection(self.NAMESPACES[0]).find(query)
         else:
-            #query = self.query_generator()[0]
             query = q
-            #print q, "query ....."
-            # Format String
             json_acceptable = query.replace("'", "\"")
             query = json.loads(json_acceptable)
             cursor = self.storage_connection(self.NAMESPACES[1]).find(query)
@@ -241,47 +238,19 @@ class Formatter(object):
         operators = {}
         components = comps
         for comp in components.get(self.EVENT_TYPE[0]):
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[0]):
+            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[0]):
                 clt_list.append(comp)
                 operators[self.OPERATOR_ID[0]] = clt_list
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[1]):
+            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[1]):
                 wst_list.append(comp)
                 operators[self.OPERATOR_ID[1]] = wst_list
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[2]):
+            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[2]):
                 and_list.append(comp)
                 operators[self.OPERATOR_ID[2]] = and_list
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[3]):
+            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[3]):
                 or_list.append(comp)
                 operators[self.OPERATOR_ID[3]] = or_list
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[4]):
-                bes_list.append(comp)
-                operators[self.OPERATOR_ID[4]] = bes_list
-        return operators
-
-    def match_operator(self, kind=0):
-        '''
-        '''
-        clt_list = []
-        wst_list = []
-        and_list = []
-        or_list = []
-        bes_list = []
-        operators = {}
-        components = self.get_event_type(kind)
-        for comp in components.get(self.EVENT_TYPE[0]):
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[0]):
-                clt_list.append(comp)
-                operators[self.OPERATOR_ID[0]] = clt_list
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[1]):
-                wst_list.append(comp)
-                operators[self.OPERATOR_ID[1]] = wst_list
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[2]):
-                and_list.append(comp)
-                operators[self.OPERATOR_ID[2]] = and_list
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[3]):
-                or_list.append(comp)
-                operators[self.OPERATOR_ID[3]] = or_list
-            if self.iequal(comp.values()[0].get('label'), self.OPERATOR_ID[4]):
+            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[4]):
                 bes_list.append(comp)
                 operators[self.OPERATOR_ID[4]] = bes_list
         return operators
@@ -375,13 +344,9 @@ class Formatter(object):
         comps = self.get_components().copy()
         for c in self.get_component_keys():
             q, lst = self.query_generator(c)
-            print 'Component: ', c
-            print 'Query: ', q
-            print 'List: ', lst
             # Loads the context information
             res = self.loads(1, q)
             if len(res) != 0:
-                #print "Component with event data ", res
                 for d in lst:
                     if d == 'type':
                         comps.get(c)[unicode(d)] = unicode(comps.get(c).get(self.TYPE[0]))
