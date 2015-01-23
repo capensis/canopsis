@@ -1,4 +1,4 @@
-How to use widget text
+How to use widget Text
 ======================
 
 This widget's purpose is to display arbitrary information written by a Canopsis administrator.
@@ -32,7 +32,7 @@ The code bellow will allow the widget text to display the value of the serie1
 
 .. code-block:: html
 
-	<p>Metric value for serie1 is : {{serie.serie1}}</p>
+	Metric value for serie1 is : {{serie.serie1}}
 
 
 Event display system
@@ -64,3 +64,17 @@ The template created for this widget text is the one shown below. It displays ev
 
 Widget text helpers
 -------------------
+
+ - The helper **human readable** is available in the widget text. It is usefull when metric information deals with huge numbers and have to be displayed in a smarter way. It can be used as follow.
+
+.. code-block:: html
+
+   Space disk on the server X {{hr value=1000000000}}
+
+This will result in the following output display : ``Space disk on the server X 1 M``. Of course, the value can be a variable from a serie and should then look like the following:
+
+.. code-block:: html
+
+   Space disk on the server X {{hr value=serie.diskSerie}}
+
+
