@@ -1,0 +1,25 @@
+{
+    "id": "cservice.frontend",
+    "_id": "cservice.frontend",
+    "title": "Canopsis",
+    "cfilter_allow_only_optimized_filters": true,
+    "debug_mode": true,
+    "list_info_button_pattern": "http://localhost:8082/#/userview/view.event",
+    "login_footer": "Canopsis by Capensis",
+    "keybindings" : [{
+        "value" : "toggleEditMode",
+        "label" : "ctrl+e"
+    },{
+        "value" : "toggleFullscreen",
+        "label" : "ctrl+y"
+    },{
+        "value" : "refresh",
+        "label" : "ctrl+r"
+    },{
+        "value" : "toggleDevTools",
+        "label" : "²"
+    }],
+    "crecord_name" : "frontent",
+    "loader_id": "cservice.frontent",
+    "loader_no_update": true
+}

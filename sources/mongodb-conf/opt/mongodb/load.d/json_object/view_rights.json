@@ -1,0 +1,66 @@
+{
+  "crecord_name" : "rights.json",
+  "loader_id": "view.rights",
+  "loader_no_update": true,
+  "id": "view.rights",
+  "_id": "view.rights",
+  "crecord_type": "view",
+  "crecord_write_time": 1400853201,
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],
+    "title": "container title vbox",
+    "_id": "test_view_vertical_container",
+    "items": [
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb66",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb66",
+          "xtype": "list",
+          "listed_crecord_type": "action",
+          "itemsPerPage": 5,
+          "title": "Rights",
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ],
+          "mixins": [
+            "Sortablearray",
+            "Arraysearch",
+            "Pagination",
+            "Crud"
+          ],
+          "displayed_columns": [
+            "crecord_type",
+            "_id",
+            "action_desc"
+          ]
+        }
+      }
+    ]
+  },
+  "parent": [],
+  "aaa_access_owner": [
+    "r",
+    "w"
+  ],
+  "aaa_group": "group.CPS_view_admin",
+  "crecord_creation_time": 1400853201,
+  "aaa_access_unauth": [],
+  "aaa_owner": "account.root",
+  "internal": false,
+  "aaa_access_other": [
+    "r"
+  ],
+  "aaa_access_group": [
+    "r"
+  ],
+  "aaa_admin_group": "group.CPS_view_admin",
+  "children": [],
+  "crecord_name": "Accounts view"
+}

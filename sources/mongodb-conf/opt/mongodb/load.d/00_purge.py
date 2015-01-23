@@ -22,7 +22,6 @@
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
 
-##set root account
 root = Account(user="root", group="root")
 storage = Storage(account=root)
 
@@ -30,7 +29,13 @@ logger = None
 
 
 def init():
-    collections = ['cache', 'events', 'events_log', 'object', 'userpreferences']
+    collections = [
+        'cache',
+        'events',
+        'events_log',
+        'object',
+        'userpreferences'
+    ]
 
     for collection in collections:
         logger.info(" + Drop '%s' collection" % collection)

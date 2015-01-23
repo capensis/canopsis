@@ -117,12 +117,6 @@ class Factory(object):
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
                 node_list.append(self.create_component(c.keys()[0], entity))
-        """
-        for c in components.get(f.EVENT_TYPE[1]):
-            entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
-            entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
-            node_list.append(self.create_component(c.keys()[0], entity))
-        """
         # Create components (type=selector)
         comp_selct = components.get(f.EVENT_TYPE[2])
         if comp_selct is not None:
@@ -130,12 +124,6 @@ class Factory(object):
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
                 node_list.append(self.create_component(c.keys()[0], entity))
-        """
-        for c in components.get(f.EVENT_TYPE[2]):
-            entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
-            entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
-            node_list.append(self.create_component(c.keys()[0], entity))
-        """
         # Create components (type=topology)
         comp_topo = components.get(f.EVENT_TYPE[3])
         if comp_topo is not None:
@@ -143,12 +131,6 @@ class Factory(object):
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
                 node_list.append(self.create_component(c.keys()[0], entity))
-        """
-        for c in components.get(f.EVENT_TYPE[3]):
-            entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
-            entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
-            node_list.append(self.create_component(c.keys()[0], entity))
-        """
         # Create components (type=operator)
         # OPERATOR_ID[0] --> Cluster
         comp_opera = opcomps.get(f.OPERATOR_ID[0])
@@ -228,7 +210,6 @@ class Factory(object):
 
                 # Create the condition
                 condition = new_conf(at_least, **dict_or)
-                #condition = self.create_component(cmps.keys()[0], entity, conf)
 
                 # Create the statement/action
                 if stat_value != '-1':
@@ -270,4 +251,4 @@ class Factory(object):
 if __name__ == '__main__':
     fact = Factory()
     fact.build()
-    #fact.delete_topology('component-1370')
+    #fact.delete_topology('component-1852')
