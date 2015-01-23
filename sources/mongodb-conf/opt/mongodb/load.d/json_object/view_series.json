@@ -1,4 +1,7 @@
 {
+    "crecord_name" : "series.json",
+    "loader_id": "view.series",
+    "loader_no_update": true,
     "_id" : "view.series",
     "id" : "view.series",
     "crecord_write_time" : 1421855062,
@@ -208,7 +211,6 @@
         "refreshInterval" : 0
     },
     "internal" : false,
-    "crecord_name" : "series.json",
     "crecord_type" : "view",
     "crecord_creation_time" : 1421685120
 }

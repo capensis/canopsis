@@ -1,6 +1,9 @@
 {
-  "id": "view.rights",
-  "_id": "view.rights",
+  "crecord_name" : "jobs.json",
+  "loader_id": "view.jobs",
+  "loader_no_update": true,
+  "id": "view.jobs",
+  "_id": "view.jobs",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
@@ -8,34 +11,36 @@
     "xtype": "widgetcontainer",
     "mixins": [
       { "name": "verticallayout" }
-    ],
-    "title": "container title vbox",
-    "_id": "test_view_vertical_container",
+    ],    "title": "container title vbox",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb66",
-          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb66",
-          "xtype": "list",
-          "listed_crecord_type": "action",
+          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ab0029",
+          "xtype": "jobmanager",
           "itemsPerPage": 5,
-          "title": "Rights",
-          "selection_toolbar": [
-            "actionbutton-create",
+          "title": "Scheduled Jobs",
+          "item_actions": [
+            "actionbutton-edit",
             "actionbutton-removeselection"
           ],
+          "selection_toolbar": [
+            "actionbutton-removeselection"
+          ],
+          "actions_toolbar": [
+            "actionbutton-create"
+          ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" }
           ],
           "displayed_columns": [
-            "crecord_type",
-            "_id",
-            "action_desc"
+            "task",
+            "start",
+            "rrule",
+            "last_execution"
           ]
         }
       }
@@ -46,7 +51,7 @@
     "r",
     "w"
   ],
-  "aaa_group": "group.CPS_view_admin",
+  "aaa_group": "group.CPS_view",
   "crecord_creation_time": 1400853201,
   "aaa_access_unauth": [],
   "aaa_owner": "account.root",
@@ -59,5 +64,5 @@
   ],
   "aaa_admin_group": "group.CPS_view_admin",
   "children": [],
-  "crecord_name": "Accounts view"
+  "crecord_name": "Scheduled Jobs"
 }

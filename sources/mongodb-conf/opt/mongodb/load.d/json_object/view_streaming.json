@@ -1,6 +1,9 @@
 {
-  "id": "view.event-history",
-  "_id": "view.event-history",
+  "crecord_name" : "streaming.json",
+  "loader_id": "view.streaming",
+  "loader_no_update": true,
+  "id": "view.streaming",
+  "_id": "view.streaming",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
@@ -8,66 +11,37 @@
     "xtype": "widgetcontainer",
     "mixins": [
       { "name": "verticallayout" }
-    ],
-    "title": "container title vbox",
+    ],    "title": "container title vbox",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "id" : "item-fd5a-1ede-8ac2-6a1d66ad0023",
-          "widgetId" : "item-fd5a-1ede-8ac2-6a1d66ad0023",
-          "refreshInterval": 40,
+          "id" : "item-fd5a-1ede-8ac2-6a1d66ad0100",
+          "refreshInterval": 10,
           "refreshableWidget" : false,
-          "itemsPerPage": 50,
+          "itemsPerPage": 15,
           "xtype": "list",
           "listed_crecord_type": "eventlog",
           "display_record_field": "resource",
           "record_template" : "<div>Connecteur : {{connector}}</div><div>Composant : {{component}} / Adresse IP : {{address}}</div><div>Hostgroups : {{hostgroups}}</div><div>Ressource : {{resource}}</div><div>Message :&nbsp;<span style=\"line-height: 1.428571429;\">{{output}}</span></div>",
-          "title": "Historique",
-          "actions_toolbar": [
-            "actionbutton-eventnavigation"
-          ],
+          "title": "Streaming",
+          "default_filter" : "{\n    \"$or\": [\n        {\n            \"event_type\": { \"$eq\" : \"comment\"\n        }},\n    {\n            \"event_type\": { \"$eq\" : \"user\"\n        }}]\n}",
+          "actions_toolbar": [],
           "default_column_sort" : {
             "direction" : "DESC",
             "property" : "timestamp"
           },
-          "filters" : [
-            {
-              "filter" : "{\"$or\":[{\"$and\":[{\"component\":{\"$ne\":\"__canopsis__\"}},{\"connector_name\":{\"$ne\":\"engine\"}}]}]}",
-              "cfilter" : "",
-              "title" : "No internal"
-            }
-          ],
+          "filters" : [],
           "mixins": [
-            {"name": "Customfilterlist"},
-            {"name": "Sortablearray"},
-            {"name": "Arraysearch"},
-            {"name": "Pagination"},
-            {"name": "History"},
-            {"name": "Eventhistory"}
+            { "name" : "Customfilterlist" },
+            { "name" : "Sortablearray" },
+            { "name" : "Pagination" }
           ],
           "displayed_columns": [
-            "domain",
-            "perimeter",
-            "connector",
-            "component",
-            "resource",
             "output",
-            "status",
-            "criticity",
-            "ack",
-            "timestamp",
             "author",
-            "event_type"
-          ],
-          "searchable_columns": [
-            "connector_name",
-            "connector",
-            "component",
-            "resource",
-            "domain",
-            "perimeter"
+            "timestamp"
           ]
         }
       }

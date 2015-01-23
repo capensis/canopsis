@@ -1,6 +1,9 @@
 {
-  "id": "view.profiles",
-  "_id": "view.profiles",
+  "crecord_name" : "weather.json",
+  "loader_id": "view.weather",
+  "loader_no_update": true,
+  "id": "view.weather",
+  "_id": "view.weather",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
@@ -9,28 +12,16 @@
     "mixins": [
       { "name": "verticallayout" }
     ],
-    "title": "container title vbox",
-    "_id": "test_view_vertical_container",
+    "title": "container title hbox",
+    "_id": "test_view_horizontal_container",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb65",
-          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb65",
-          "xtype": "list",
-          "listed_crecord_type": "profile",
-          "itemsPerPage": 5,
-          "title": "Profiles",
-          "selection_toolbar": [
-            "actionbutton-create",
-            "actionbutton-removeselection"
-          ],
-          "mixins": [
-            { "name" : "Sortablearray" },
-            { "name" : "Arraysearch" },
-            { "name" : "Pagination" }
-          ]
+          "xtype": "weather",
+          "title": "Weather widget 1",
+          "event_selection" : []
         }
       }
     ]

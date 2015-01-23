@@ -1,6 +1,9 @@
 {
-  "id": "view.groups",
-  "_id": "view.groups",
+  "crecord_name" : "rights.json",
+  "loader_id": "view.rights",
+  "loader_no_update": true,
+  "id": "view.rights",
+  "_id": "view.rights",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
@@ -8,37 +11,34 @@
     "xtype": "widgetcontainer",
     "mixins": [
       { "name": "verticallayout" }
-    ],    "title": "container title vbox",
+    ],
+    "title": "container title vbox",
+    "_id": "test_view_vertical_container",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb64",
-          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb64",
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb66",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb66",
           "xtype": "list",
-          "listed_crecord_type": "group",
+          "listed_crecord_type": "action",
           "itemsPerPage": 5,
-          "title": "Groups",
-          "item_actions": [
-            "actionbutton-edit",
-            "actionbutton-removeselection"
-          ],
+          "title": "Rights",
           "selection_toolbar": [
+            "actionbutton-create",
             "actionbutton-removeselection"
-          ],
-          "actions_toolbar": [
-            "actionbutton-create"
           ],
           "mixins": [
-            { "name" : "Sortablearray" },
-            { "name" : "Arraysearch" },
-            { "name" : "Pagination" }
+            "Sortablearray",
+            "Arraysearch",
+            "Pagination",
+            "Crud"
           ],
           "displayed_columns": [
-            "internal",
-            "crecord_name",
-            "description"
+            "crecord_type",
+            "_id",
+            "action_desc"
           ]
         }
       }
@@ -49,7 +49,7 @@
     "r",
     "w"
   ],
-  "aaa_group": "group.CPS_view",
+  "aaa_group": "group.CPS_view_admin",
   "crecord_creation_time": 1400853201,
   "aaa_access_unauth": [],
   "aaa_owner": "account.root",
@@ -62,5 +62,5 @@
   ],
   "aaa_admin_group": "group.CPS_view_admin",
   "children": [],
-  "crecord_name": "Groups"
+  "crecord_name": "Accounts view"
 }

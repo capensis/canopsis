@@ -1,6 +1,9 @@
 {
-  "id": "view.jobs",
-  "_id": "view.jobs",
+  "crecord_name" : "profiles.json",
+  "loader_id": "view.profiles",
+  "loader_no_update": true,
+  "id": "view.profiles",
+  "_id": "view.profiles",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
@@ -8,36 +11,28 @@
     "xtype": "widgetcontainer",
     "mixins": [
       { "name": "verticallayout" }
-    ],    "title": "container title vbox",
+    ],
+    "title": "container title vbox",
+    "_id": "test_view_vertical_container",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ab0029",
-          "xtype": "jobmanager",
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb65",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb65",
+          "xtype": "list",
+          "listed_crecord_type": "profile",
           "itemsPerPage": 5,
-          "title": "Scheduled Jobs",
-          "item_actions": [
-            "actionbutton-edit",
-            "actionbutton-removeselection"
-          ],
+          "title": "Profiles",
           "selection_toolbar": [
+            "actionbutton-create",
             "actionbutton-removeselection"
-          ],
-          "actions_toolbar": [
-            "actionbutton-create"
           ],
           "mixins": [
             { "name" : "Sortablearray" },
             { "name" : "Arraysearch" },
             { "name" : "Pagination" }
-          ],
-          "displayed_columns": [
-            "task",
-            "start",
-            "rrule",
-            "last_execution"
           ]
         }
       }
@@ -48,7 +43,7 @@
     "r",
     "w"
   ],
-  "aaa_group": "group.CPS_view",
+  "aaa_group": "group.CPS_view_admin",
   "crecord_creation_time": 1400853201,
   "aaa_access_unauth": [],
   "aaa_owner": "account.root",
@@ -61,5 +56,5 @@
   ],
   "aaa_admin_group": "group.CPS_view_admin",
   "children": [],
-  "crecord_name": "Scheduled Jobs"
+  "crecord_name": "Accounts view"
 }

@@ -1,4 +1,7 @@
 {
+  "crecord_name" : "404.json",
+  "loader_id": "view.404",
+  "loader_no_update": true,
   "id": "view.404",
   "_id": "view.404",
   "crecord_type": "view",

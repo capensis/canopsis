@@ -1,4 +1,7 @@
 {
+  "crecord_name" : "permissions.json",
+  "loader_id": "view.permissions",
+  "loader_no_update": true,
   "id": "view.permissions",
   "_id": "view.permissions",
   "crecord_type": "view",

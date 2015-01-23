@@ -1,4 +1,7 @@
 {
+  "crecord_name" : "selectors.json",
+  "loader_id": "view.selectors",
+  "loader_no_update": true,
   "id": "view.selectors",
   "_id": "view.selectors",
   "crecord_write_time": 1408625322,
@@ -116,7 +119,6 @@
   "internal": false,
   "aaa_admin_group": "group.CPS_view_admin",
   "children": [],
-  "crecord_name": "services.json",
   "aaa_access_unauth": [],
   "aaa_owner": "account.root",
   "crecord_type": "view",

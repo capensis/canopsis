@@ -1,6 +1,9 @@
 {
-  "id": "view.accounts",
-  "_id": "view.accounts",
+  "crecord_name" : "userviews.json",
+  "loader_id": "view.userviews",
+  "loader_no_update": true,
+  "id": "view.userviews",
+  "_id": "view.userviews",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
@@ -15,32 +18,26 @@
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0024",
-          "xtype": "list",
-          "listed_crecord_type": "user",
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb63",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb63",
           "itemsPerPage": 5,
-          "title": "Accounts",
-          "item_actions": [
-            "actionbutton-edit",
-            "actionbutton-removeselection"
-          ],
+          "xtype": "list",
+          "listed_crecord_type": "userview",
+          "title": "Userviews",
+          "item_actions": ["actionbutton-show", "actionbutton-removeselection"],
+          "displayed_columns": ["crecord_type", "internal", "enable", "description", "crecord_write_time", "crecord_name"],
           "selection_toolbar": [
-            "actionbutton-create",
             "actionbutton-removeselection"
           ],
           "mixins": [
             { "name": "Sortablearray" },
             { "name": "Arraysearch" },
             { "name": "Pagination" },
-            { "name": "Crud" }
+            { "name": "Crud" },
+            { "name": "Showviewbutton" }
           ],
-          "displayed_columns": [
-            "_id",
-            "role",
-            "groups",
-            "rights",
-            "enable",
-            "external"
+          "searchable_columns": [
+            "crecord_name"
           ]
         }
       }
@@ -51,7 +48,7 @@
     "r",
     "w"
   ],
-  "aaa_group": "group.CPS_view",
+  "aaa_group": "group.CPS_view_admin",
   "crecord_creation_time": 1400853201,
   "aaa_access_unauth": [],
   "aaa_owner": "account.root",
@@ -64,5 +61,6 @@
   ],
   "aaa_admin_group": "group.CPS_view_admin",
   "children": [],
-  "crecord_name": "Accounts"
+  "crecord_name": "Userviews view",
+  "name": "Userviews view"
 }

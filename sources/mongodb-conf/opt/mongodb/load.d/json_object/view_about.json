@@ -1,6 +1,9 @@
 {
-  "id": "view.app_index",
-  "_id": "view.app_index",
+  "crecord_name" : "about.json",
+  "loader_id": "view.about",
+  "loader_no_update": true,
+  "id": "view.about",
+  "_id": "view.about",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
@@ -10,14 +13,19 @@
       { "name": "verticallayout" }
     ],
     "title": "container title vbox",
+    "_id": "test_view_vertical_container",
     "items": [
       {
-        "title": "wrapper",
+        "title": "about",
         "xtype": "widgetwrapper",
         "widget": {
-          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0028",
           "xtype": "text",
-          "html" : "<center><img src=\"http://www.canopsis.org/wp-content/uploads/2014/02/opensourcehypervision.jpg\" alt=\"\" /></center>"
+          "title": "About canopsis",
+          "html": "<a target='_blank' href='http://canopsis.org'>canopsis.org</a><br><a target='_blank' href='http://canopsis.com'>canopsis.com</a><br><a target='_blank' href='https://twitter.com/canopsis'>twitter</a>",
+          "filters": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ]
         }
       }
     ]
@@ -27,7 +35,7 @@
     "r",
     "w"
   ],
-  "aaa_group": "group.CPS_view",
+  "aaa_group": "group.CPS_view_admin",
   "crecord_creation_time": 1400853201,
   "aaa_access_unauth": [],
   "aaa_owner": "account.root",
@@ -40,7 +48,5 @@
   ],
   "aaa_admin_group": "group.CPS_view_admin",
   "children": [],
-  "crecord_name": "Dashboard"
+  "crecord_name": "About view"
 }
-
-
