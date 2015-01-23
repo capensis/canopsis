@@ -5,5 +5,8 @@
     "job": {
         "xtype": "job",
         "crecord_type": "job"
-    }
+    },
+    "crecord_name" : "ticket",
+    "loader_id": "cservice.ticket",
+    "loader_no_update": true
 }

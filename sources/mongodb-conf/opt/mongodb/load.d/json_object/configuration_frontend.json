@@ -18,5 +18,8 @@
     },{
         "value" : "toggleDevTools",
         "label" : "²"
-    }]
+    }],
+    "crecord_name" : "frontent",
+    "loader_id": "cservice.frontent",
+    "loader_no_update": true
 }
