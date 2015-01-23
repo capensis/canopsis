@@ -8,6 +8,6 @@ Engines
    filter-spec
    rights
    rule
-   state-spec
+   status-spec
    scheduler
    eventstore

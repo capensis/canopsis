@@ -1,4 +1,0 @@
-Scheduled reports
-=================
-
-Bla bla
