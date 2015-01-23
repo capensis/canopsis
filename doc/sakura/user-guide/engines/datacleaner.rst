@@ -13,8 +13,8 @@ Changeable options ``retention duration`` witch is a duration from now where dat
 
 |image2|
 
-For more technical information about data cleaner engine parameters, please refer to `administrator guide for datacleaner engine <../../../administrator-guide/administration/engines-management/datacleaner.html>`_
+For more technical information about data cleaner engine parameters, please refer to `administrator guide for datacleaner engine <../../administrator-guide/administration/engines-management/datacleaner.html>`_
 
-.. |image1| image:: ../../../_static/images/datacleaner/menuaccess.png
-.. |image2| image:: ../../../_static/images/datacleaner/formdisplay.png
+.. |image1| image:: ../../_static/images/datacleaner/menuaccess.png
+.. |image2| image:: ../../_static/images/datacleaner/formdisplay.png
 

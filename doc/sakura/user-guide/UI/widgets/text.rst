@@ -1,5 +1,5 @@
-Text cell
-=========
+How to use widget text
+======================
 
 This widget's purpose is to display arbitrary information written by a Canopsis administrator.
 Availables features in the widget text are:

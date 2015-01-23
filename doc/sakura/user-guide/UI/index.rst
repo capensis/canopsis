@@ -1,5 +1,5 @@
-UIv2
-====
+User Interface
+==============
 
 The frontend of sakura has been completely rewritten in a brand new way.
 This Chapter describes how to use the new frontend system.
