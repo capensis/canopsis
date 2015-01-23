@@ -6,7 +6,7 @@ Consolidation
 .. |sla| raw:: html
 
    <font color="red">sla</font>
-   
+
 A `consolidation <#consolidation2>`__ permits to generate a new metric in
 `aggregating <#aggregation>`__ a set of metrics and in crushing
 aggregated values in one final metric.
@@ -172,9 +172,9 @@ ___
 
 Select the sum value.
 
-.. |image1| image:: ../../../_static/images/consolidation/consolidation.png
-.. |image2| image:: ../../../_static/images/consolidation/consolidation_menu.png
-.. |image3| image:: ../../../_static/images/consolidation/consolidation_view.png
-.. |image4| image:: ../../../_static/images/consolidation/consolidation_options.png
-.. |image5| image:: ../../../_static/images/consolidation/consolidation_consolidation.png
-.. |image6| image:: ../../../_static/images/consolidation/consolidation_filter.png
+.. |image1| image:: ../../_static/images/consolidation/consolidation.png
+.. |image2| image:: ../../_static/images/consolidation/consolidation_menu.png
+.. |image3| image:: ../../_static/images/consolidation/consolidation_view.png
+.. |image4| image:: ../../_static/images/consolidation/consolidation_options.png
+.. |image5| image:: ../../_static/images/consolidation/consolidation_consolidation.png
+.. |image6| image:: ../../_static/images/consolidation/consolidation_filter.png

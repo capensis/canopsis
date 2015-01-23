@@ -1,4 +1,4 @@
-﻿.. include:: ../../../includes/links.rst
+﻿.. include:: ../../includes/links.rst
 
 Event Requalification
 =====================
@@ -83,6 +83,6 @@ See |derogation| .
 In the tab "Requalificate", you will see the list of all your *state
 maps*, just select the one you want.
 
-.. |image1| image:: ../../../_static/images/requalification/menu_statemap_manager.png
-.. |image2| image:: ../../../_static/images/requalification/statemap_manager.png
-.. |image3| image:: ../../../_static/images/requalification/add_statemap.png
+.. |image1| image:: ../../_static/images/requalification/menu_statemap_manager.png
+.. |image2| image:: ../../_static/images/requalification/statemap_manager.png
+.. |image3| image:: ../../_static/images/requalification/add_statemap.png

@@ -1,4 +1,4 @@
-.. include:: /includes/links.rst
+.. include:: ../../includes/links.rst
 
 Upgrade from packages
 =====================

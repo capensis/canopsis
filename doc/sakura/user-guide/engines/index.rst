@@ -4,9 +4,7 @@
 .. toctree::
    :maxdepth: 2
 
-   engines
    consolidation
-   derogation
    datacleaner
    event-filter
    event-requalification
@@ -15,19 +13,19 @@
 
 
 
-.. include:: ../../../includes/links.rst
+.. include:: ../../includes/links.rst
 
-Engines
-=======
+Engines information
+===================
 
 .. |sla| raw:: html
 
    <font color="red">SLA</font>
-   
+
 .. |Topology| raw:: html
 
    <font color="red">Topology</font>
-   
+
 Canopsis process system events thanks to a set of engines.
 
 Description
@@ -195,4 +193,4 @@ Others
 +-------------------+------------------------------------------------+------+------+
 
 
-.. |image1| image:: ../../../_static/images/engine/engines_map.png
+.. |image1| image:: ../../_static/images/engine/engines_map.png
