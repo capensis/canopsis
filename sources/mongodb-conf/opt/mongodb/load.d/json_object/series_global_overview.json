@@ -17,7 +17,7 @@
     "children": [],
     "unit": null,
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_count_component"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_count_component"
     ],
     "min": null,
     "aggregate_method": "none",
@@ -26,7 +26,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_count_component",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_count_component",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_count_component",
     "crecord_creation_time": 1422004862
   },
   {
@@ -47,7 +47,7 @@
     "children": [],
     "unit": null,
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_count_resource"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_count_resource"
     ],
     "min": null,
     "aggregate_method": "none",
@@ -56,7 +56,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_count_resource",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_count_resource",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_count_resource",
     "crecord_creation_time": 1422004887
   },
   {
@@ -70,7 +70,7 @@
     "max": null,
     "aaa_access_owner": [],
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_states_component_info"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_states_component_info"
     ],
     "aaa_group": null,
     "aggregate_interval": 0,
@@ -86,7 +86,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_states_component_info",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_states_component_info",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_states_component_info",
     "crecord_creation_time": 1422004988
   },
   {
@@ -100,7 +100,7 @@
     "max": null,
     "aaa_access_owner": [],
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_states_component_minor"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_states_component_minor"
     ],
     "aaa_group": null,
     "aggregate_interval": 0,
@@ -116,7 +116,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_states_component_minor",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_states_component_minor",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_states_component_minor",
     "crecord_creation_time": 1422005021
   },
   {
@@ -130,7 +130,7 @@
     "max": null,
     "aaa_access_owner": [],
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_states_component_major"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_states_component_major"
     ],
     "aaa_group": null,
     "aggregate_interval": 0,
@@ -146,7 +146,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_states_component_major",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_states_component_major",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_states_component_major",
     "crecord_creation_time": 1422005043
   },
   {
@@ -160,7 +160,7 @@
     "max": null,
     "aaa_access_owner": [],
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_states_component_critical"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_states_component_critical"
     ],
     "aaa_group": null,
     "aggregate_interval": 0,
@@ -176,7 +176,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_states_component_critical",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_states_component_critical",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_states_component_critical",
     "crecord_creation_time": 1422005071
   },
   {
@@ -190,7 +190,7 @@
     "max": null,
     "aaa_access_owner": [],
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_states_resource_info"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_states_resource_info"
     ],
     "aaa_group": null,
     "aggregate_interval": 0,
@@ -206,7 +206,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_states_resource_info",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_states_resource_info",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_states_resource_info",
     "crecord_creation_time": 1422005148
   },
   {
@@ -220,7 +220,7 @@
     "max": null,
     "aaa_access_owner": [],
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_states_resource_minor"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_states_resource_minor"
     ],
     "aaa_group": null,
     "aggregate_interval": 0,
@@ -236,7 +236,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_states_resource_minor",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_states_resource_minor",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_states_resource_minor",
     "crecord_creation_time": 1422005188
   },
   {
@@ -250,7 +250,7 @@
     "max": null,
     "aaa_access_owner": [],
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_states_resource_major"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_states_resource_major"
     ],
     "aaa_group": null,
     "aggregate_interval": 0,
@@ -266,7 +266,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_states_resource_major",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_states_resource_major",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_states_resource_major",
     "crecord_creation_time": 1422005211
   },
   {
@@ -280,7 +280,7 @@
     "max": null,
     "aaa_access_owner": [],
     "metrics": [
-      "/metric/engine/engine/Sphinx/Engine_stats/cps_states_resource_critical"
+      "/metric/engine/engine/[[HOSTNAME]]/Engine_stats/cps_states_resource_critical"
     ],
     "aaa_group": null,
     "aggregate_interval": 0,
@@ -296,7 +296,7 @@
     "crecord_type": "serie",
     "crecord_name": "cps_states_resource_critical",
     "aaa_access_other": [],
-    "formula": "/Sphinx/Engine_stats/cps_states_resource_critical",
+    "formula": "/[[HOSTNAME]]/Engine_stats/cps_states_resource_critical",
     "crecord_creation_time": 1422005226
   }
 ]
