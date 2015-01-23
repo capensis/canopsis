@@ -1,5 +1,5 @@
-How to use widget Text
-======================
+How to use Text
+===============
 
 This widget's purpose is to display arbitrary information written by a Canopsis administrator.
 Availables features in the widget text are:
@@ -21,7 +21,7 @@ When editing the widget text, it is possible to write custom HTML in the text ed
 Metric display system
 ---------------------
 
-The text widget edition allow selecting performance data series. For more information on how create series from metrics see `series <../../UIv2/serie.html>`_ .
+The text widget edition allow selecting performance data series. For more information on how create series from metrics see `series <../../UI/serie.html>`_ .
 Metrics displayed are the last value for the serie metric computation from the selected date interval witch is by default between **now** and **now - 300 seconds**. If no metric available in this interval, the template value will display `No metric available` as value in the render.
 
 .. image:: ../../../_static/images/widgets/select_series.png
