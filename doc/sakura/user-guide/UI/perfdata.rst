@@ -37,3 +37,70 @@ A **curve** describe how to plot a serie or a metric:
  * do we want lines, areas, points, and/or bars ?
  * do we want to plot the values with the curve ?
  * how does look lines, areas, points, and/or bars ?
+
+How to make a serie
+-------------------
+
+.. image:: ../../_static/images/uiv2/series/listseries.png
+
+First, click on the *Create* button, a new form will appears:
+
+.. image:: ../../_static/images/uiv2/series/serieform0.png
+
+Detailed form:
+
+ * **Name:** serie's name, will be used to labelize the serie on a chart ;
+ * **Data source:** metrics that will be fetched to feed the serie ;
+ * **formula**:
+    * mathematical formula that will be used to consolidate the fetched metrics in a single point ;
+    * each metric is identified by the following format : ``/<component>/<resource>/<metric>``.
+
+.. image:: ../../_static/images/uiv2/series/serieform1.png
+
+Detailed form:
+
+ * **min:** defines the minimum value this serie will take ;
+ * **max:** defines the maximum value this serie will take ;
+ * **warn:** warning threshold ;
+ * **crit:** critical threshold ;
+ * **unit:** serie's unit.
+
+.. image:: ../../_static/images/uiv2/series/serieform2.png
+
+Detailed form:
+
+ * **aggregation method:** method used to aggregate metrics points ;
+ * **aggregation interval:** time interval between two aggregated points.
+
+How to make a curve
+-------------------
+
+.. image:: ../../_static/images/uiv2/series/listcurves.png
+
+First, click on the *Create* button, a new form will appears:
+
+.. image:: ../../_static/images/uiv2/series/curveform0.png
+
+Detailed form:
+
+ * **name:** curve's name.
+
+.. image:: ../../_static/images/uiv2/series/curveform1.png
+
+Detailed form:
+
+ * **Show line:** if checked, will plot a line chart ;
+ * **Fill area under line:** if checked, will plot an area on the chart ;
+ * **Show points:** if checked, will plot each point on the chart ;
+ * **Show bars:** if checked, will plot a bar chart ;
+ * **Show values:** if checked, will display values above each point.
+
+.. image:: ../../_static/images/uiv2/series/curveform2.png
+
+Detailed form:
+
+ * **Line width:** line/bar width in pixel ;
+ * **Bar width:** bar width in X unit ;
+ * **Lines style:** if the line is continuous, dashed, ... ;
+ * **Point's shape:** shape used to plot a point ;
+ * **Area opacity:** number from 0 to 1, 0 being transparent and 1 being opaque.
