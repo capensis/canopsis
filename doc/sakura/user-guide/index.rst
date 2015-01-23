@@ -6,7 +6,7 @@ User guide
    :titlesonly:
 
    engines/index
-   UIv2/index
+   UI/index
    event-spec
    internal-metrics
    event-workflows

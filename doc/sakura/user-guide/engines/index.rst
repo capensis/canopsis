@@ -9,8 +9,6 @@
    event-filter
    event-requalification
    selector
-   amqp2engines
-
 
 
 .. include:: ../../includes/links.rst
