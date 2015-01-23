@@ -119,6 +119,9 @@ class Selector(Record):
         self.sla_rk = dump.get('sla_rk', default_template)
         self.output_tpl = dump.get('output_tpl', default_template)
 
+        if not self.output_tpl:
+        	self.output_tpl = "No output template defined"
+
         self.data = dump
 
     # Build MongoDB query to find every id matching event
