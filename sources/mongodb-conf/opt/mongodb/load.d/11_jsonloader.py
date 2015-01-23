@@ -22,7 +22,7 @@
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.record import Record
-
+from socket import gethostname
 import os
 import json
 
@@ -107,10 +107,44 @@ def load_document(json_data, collection, json_filename):
                        ' nothing is done for {}'.format(json_filename))
 
 
+def setHostname(json_data):
+    """
+    Set replace [[HOSTNAME]] macro by the current host value
+    Not recursive at the moment
+    """
+    if isinstance(json_data, dict):
+        for key in json_data:
+            # case it is a simple string
+            if isinstance(json_data[key], basestring):
+                json_data[key] = json_data[key].replace(
+                    '[[HOSTNAME]]',
+                    gethostname()
+                )
+            # case it is a list that may contain string
+            if isinstance(json_data[key], list):
+                for x in xrange(len(json_data[key])):
+                    if isinstance(json_data[key][x], basestring):
+                        json_data[key][x] = json_data[key][x].replace(
+                            '[[HOSTNAME]]',
+                            gethostname()
+                        )
+
+
+def hooks(json_data):
+    """
+    This function is a hook on json document that are being updated
+    into database and allow call transformation method that may change
+    records
+    """
+    # Set hostname in record
+    setHostname(json_data)
+
+
 def do_update(json_data, collection):
     record = Record({}).dump()
     for key in json_data:
         record[key] = json_data[key]
+    hooks(record)
     storage.get_backend(collection).update(
         {'loader_id': json_data['loader_id']},
         record,
