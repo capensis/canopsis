@@ -34,7 +34,7 @@ class Formatter(object):
     OPERATOR_ID = ('Cluster', 'Worst State', 'And', 'Or', 'Best State')
     STATE = (0, 1, 2, 3, 4)
     CONTEXT = ('type', 'connector', 'connector_name', 'component', 'resource')
-    TOPOQ = "{'crecord_type':'topology', 'crecord_name':'internal'}"
+    TOPOQ = "{'crecord_type':'topology', 'crecord_name':'canopsis_arbre'}"
     # The collections name
     NAMESPACES = ('objectv1', 'eventsv1')
     MONGO_PORT = 27017
@@ -61,17 +61,17 @@ class Formatter(object):
                 user="root",
                 group="root"
             )
-        ).get_backend()     
+        ).get_backend()
         return connection
 
-    def get_data(self, kind=0):
+    def get_data(self, kind=0, q=None):
         '''
          Access MongoDB and load topology or events data.
 
          :param kink: specify which request should be running in the DataBase.
 
          :return: a cursor of topology or events.
-         :rtype: Cursor of elements dictionnary or empty dictionnary.        
+         :rtype: Cursor of elements dictionnary or empty dictionnary.
         '''
         if kind == 0:
             query = self.TOPOQ
@@ -80,14 +80,16 @@ class Formatter(object):
             query = json.loads(json_acceptable)
             cursor = self.storage_connection(self.NAMESPACES[0]).find(query)
         else:
-            query = self.query_generator()[0]
+            #query = self.query_generator()[0]
+            query = q
+            #print q, "query ....."
             # Format String
             json_acceptable = query.replace("'", "\"")
             query = json.loads(json_acceptable)
             cursor = self.storage_connection(self.NAMESPACES[1]).find(query)
         return cursor
 
-    def connection(self, kind=0):
+    def connection(self, kind=0, q=None):
         '''
          Access MongoDB and load topology or events data.
 
@@ -111,7 +113,7 @@ class Formatter(object):
             query = json.loads(json_acceptable)
             cursor = db.objectv1.find(query)
         else:
-            query = self.query_generator()[0]
+            query = q
             # Format string
             json_acceptable = query.replace("'", "\"")
             query = json.loads(json_acceptable)
@@ -119,7 +121,7 @@ class Formatter(object):
         connection.close()
         return cursor
 
-    def loads(self, kind=0):
+    def loads(self, kind=0, q=None):
         '''
          Serealize cursor data into JSON.
          :param kind: specify which request should be running in the DataBase.
@@ -127,7 +129,7 @@ class Formatter(object):
          :return: a dictionnary of elements.
          :rtype: dictionnary.
         '''
-        str = self.dump(kind)
+        str = self.dump(kind, q)
         if len(json.loads(str)) > 0:
             # catch exception here
             res = json.loads(str)[0]
@@ -135,10 +137,10 @@ class Formatter(object):
             res = {}
         return res
 
-    def dump(self, kind=0):
+    def dump(self, kind=0, q=None):
         '''
         '''
-        return dumps(self.get_data(kind))
+        return dumps(self.get_data(kind, q))
 
     def print_keys(self):
         tdata = self.data
@@ -363,7 +365,7 @@ class Formatter(object):
             data += quote + self.CONTEXT[3] + quote + separator + quote + top.get(self.CONTEXT[3]) + quote + comma
         if top.get(self.CONTEXT[4]) is not None:
             missing_ctx.append(self.CONTEXT[4])
-            data += quote + self.CONTEXT[4] + quote + separator + quote + top.get(self.CONTEXT[4]) + quote + comma            
+            data += quote + self.CONTEXT[4] + quote + separator + quote + top.get(self.CONTEXT[4]) + quote + comma
         query = start + data.rstrip(comma) + end
         return query, self.diff(missing_ctx)
 
@@ -373,8 +375,11 @@ class Formatter(object):
         comps = self.get_components().copy()
         for c in self.get_component_keys():
             q, lst = self.query_generator(c)
+            print 'Component: ', c
+            print 'Query: ', q
+            print 'List: ', lst
             # Loads the context information
-            res = self.loads(1)
+            res = self.loads(1, q)
             if len(res) != 0:
                 #print "Component with event data ", res
                 for d in lst:
@@ -442,7 +447,6 @@ if __name__ == '__main__':
         print ('\n\n')
         print v
     print t.get_component_keys()
-    
     print t.get_comp_graph()
 
     print t.query_generator()

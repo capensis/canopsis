@@ -4,8 +4,8 @@ How to manage data load on canopsis build
 When canopsis is build, some documents are inserted into database. These files are the canopsis basis that make canopsis work with default parameters.
 It is possible to customize how Canopsis documents are loaded, and finally, how Canopsis behaves.
 
-1. filldb
----------
+filldb
+------
 
 The filldb command makes canopsis to run some python scripts located in ``/opt/canopsis/opt/mongodb/load.d`` in sequential order. These files contains instructions in python format on how to load default configuration into canopsis.
 
@@ -16,8 +16,8 @@ This script can be run with two parameters (logged as canopsis user):
 Init parameter will erase all previous information from database, whereas update will only update the database.
 
 
-2. json loader
---------------
+json loader
+-----------
 
 The file module ``11_jsonloader.py`` enables to tell canopsis to load custom files into the database depending in upsert mode following below considerations:
 
@@ -53,3 +53,33 @@ or in a document list:
 
 
 it is possible to prevent a document for beiing updated by the json loader by adding the ``loader_no_update`` key equals to **true** in the json document.
+
+**json loader hooks**
+
+When the json loader is about to upsert a json document, some processing is called. The feature this brings is for example to replace a macro with a specific computed value.
+
+ - Macro ``[[HOSTNAME]]`` will tell the server where filldb is ran to replace strings in records with the hostname value in place of the macro. for example, when the following record is processed :
+
+
+.. code-block:: javascript
+
+   {
+      "loader_id":"000",
+      "document_key_1": "document_value_1"
+      "my_key" : "canopsis runs on [[HOSTNAME]]"
+      "my_list" : ["canopsis runs on [[HOSTNAME]]"]
+   }
+
+Will upsert in database the following document in case ``myhostname`` is the server hostname:
+
+.. code-block:: javascript
+
+   {
+      "loader_id":"000",
+      "document_key_1": "document_value_1"
+      "my_key" : "canopsis runs on myhostname"
+      "my_list" : ["canopsis runs on myhostname"]
+   }
+
+
+It is possible in json documents that the jsonloader will proceed to use a special macro that will replace record string in

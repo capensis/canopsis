@@ -110,105 +110,142 @@ class Factory(object):
         node_list = []
         # List of connections between components (topoEdge)
         conn_list = []
-        # Create components
+        # Create components (type=check)
+        comp_check  = components.get(f.EVENT_TYPE[1])
+        if comp_check is not None:
+            for c in comp_check:
+                entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
+                entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
+                node_list.append(self.create_component(c.keys()[0], entity))
+        """
         for c in components.get(f.EVENT_TYPE[1]):
-            print c.keys()[0]
-            print c.values()[0]
             entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
-            entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))            
+            entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
             node_list.append(self.create_component(c.keys()[0], entity))
+        """
+        # Create components (type=selector)
+        comp_selct = components.get(f.EVENT_TYPE[2])
+        if comp_selct is not None:
+            for c in comp_selct:
+                entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
+                entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
+                node_list.append(self.create_component(c.keys()[0], entity))
+        """
         for c in components.get(f.EVENT_TYPE[2]):
+            entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
+            entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
             node_list.append(self.create_component(c.keys()[0], entity))
-        # Create Topology
+        """
+        # Create components (type=topology)
+        comp_topo = components.get(f.EVENT_TYPE[3])
+        if comp_topo is not None:
+            for c in comp_topo:
+                entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
+                entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
+                node_list.append(self.create_component(c.keys()[0], entity))
+        """
         for c in components.get(f.EVENT_TYPE[3]):
+            entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
+            entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
             node_list.append(self.create_component(c.keys()[0], entity))
+        """
+        # Create components (type=operator)
         # OPERATOR_ID[0] --> Cluster
-        for cmps in opcomps.get(f.OPERATOR_ID[0]):
-            tmpdict = cmps.values()[0]
-            value = tmpdict.get('options')
-            least_value = value.get('least')
-            cond_value = value.get('state')
-            stat_value = value.get('then')
-            else_value = value.get('else')
+        comp_opera = opcomps.get(f.OPERATOR_ID[0])
+        if comp_opera is not None:
+            for cmps in comp_opera:
+                tmpdict = cmps.values()[0]
+                value = tmpdict.get('options')
+                least_value = value.get('least')
+                cond_value = value.get('state')
+                stat_value = value.get('then')
+                else_value = value.get('else')
 
-            # Create at_least (Voir avec Jonathan)
-            least_conf = new_conf(at_least, min_weight=int(least_value), state=int(cond_value))
-            # Create statement/action
-            if stat_value != '-1':
-                statement = new_conf(action.change_state, state=int(stat_value))
-            else:
-                statement = new_conf(action.worst_state)
-            # Create the else
-            if else_value != '-1':
-                _else = new_conf(action.change_state, state=int(else_value))
-            else:
-                _else = new_conf(action.worst_state)
-            node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(least_conf, statement, _else)))
+                least_conf = new_conf(at_least, min_weight=int(least_value), state=int(cond_value))
+                # Create statement/action
+                if stat_value != '-1':
+                    statement = new_conf(action.change_state, state=int(stat_value))
+                else:
+                    statement = new_conf(action.worst_state)
+                # Create the else
+                if else_value != '-1':
+                    _else = new_conf(action.change_state, state=int(else_value))
+                else:
+                    _else = new_conf(action.worst_state)
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(least_conf, statement, _else)))
         # OPERATOR_ID[1] --> Worst Sate
-        for cmps in opcomps.get(f.OPERATOR_ID[1]):
-            node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.worst_state)))
+        comp_worst = opcomps.get(f.OPERATOR_ID[1])
+        if comp_worst is not None:
+            for cmps in comp_worst:
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.worst_state)))
         # OPERATOR_ID[2] --> And
-        for cmps in opcomps.get(f.OPERATOR_ID[2]):
-            mydict = cmps.values()[0]
-            value = mydict.get('form').get('items')
-            cond_value = value[0].get('value')
-            stat_value = value[1].get('value')
-            else_value = value[2].get('value')
+        comp_and = opcomps.get(f.OPERATOR_ID[2])
+        if comp_and is not None:
+            for cmps in comp_and:
+                mydict = cmps.values()[0]
+                value = mydict.get('form').get('items')
+                cond_value = value[0].get('value')
+                stat_value = value[1].get('value')
+                else_value = value[2].get('value')
 
-            entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
-            entity['id'] = mydict.get(mydict.get('source_type'))
+                entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
+                entity['id'] = mydict.get(mydict.get('source_type'))
 
-            dict_and = {}
-            dict_and['state'] = int(cond_value)
-            # Create the condition
-            condition = new_conf(at_least, **dict_and)
-            # Create the statement/action
-            if stat_value != '-1':
-                statement = new_conf(action.change_state, state=int(stat_value))
-            else:
-                statement = new_conf(action.worst_state)
-            # Create the else
-            if else_value != '-1':
-                _else = new_conf(action.change_state, state=int(else_value))
-            else:
-                _else = new_conf(action.worst_state)
-            node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else)))
+                dict_and = {}
+                dict_and['state'] = int(cond_value)
+                # Create the condition
+                condition = new_conf(at_least, **dict_and)
+                # Create the statement/action
+                if stat_value != '-1':
+                    statement = new_conf(action.change_state, state=int(stat_value))
+                else:
+                    statement = new_conf(action.worst_state)
+                # Create the else
+                if else_value != '-1':
+                    _else = new_conf(action.change_state, state=int(else_value))
+                else:
+                    _else = new_conf(action.worst_state)
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else)))
 
         # OPERATOR_ID[3] --> Or
-        for cmps in opcomps.get(f.OPERATOR_ID[3]):
-            mydict = cmps.values()[0]
-            value = mydict.get('form').get('items')
-            cond_value = value[0].get('value')
-            stat_value = value[1].get('value')
-            else_value = value[2].get('value')
-            condition = ""
-            statement = ""
-            _else = ""
+        comp_or = opcomps.get(f.OPERATOR_ID[3])
+        if comp_or is not None:
+            for cmps in comp_or:
+                mydict = cmps.values()[0]
+                value = mydict.get('form').get('items')
+                cond_value = value[0].get('value')
+                stat_value = value[1].get('value')
+                else_value = value[2].get('value')
+                condition = ""
+                statement = ""
+                _else = ""
 
-            dict_or = {}
-            dict_or['state'] = int(cond_value)
+                dict_or = {}
+                dict_or['state'] = int(cond_value)
 
-            entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
-            entity['id'] = mydict.get(mydict.get('source_type'))
+                entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
+                entity['id'] = mydict.get(mydict.get('source_type'))
 
-            # Create the condition
-            condition = new_conf(at_least, **dict_or)
-            #condition = self.create_component(cmps.keys()[0], entity, conf)
+                # Create the condition
+                condition = new_conf(at_least, **dict_or)
+                #condition = self.create_component(cmps.keys()[0], entity, conf)
 
-            # Create the statement/action
-            if stat_value != '-1':
-                statement = new_conf(action.change_state, state=int(stat_value))
-            else:
-                statement = new_conf(action.worst_state)
-            # Create the _else
-            if else_value != '-1':
-                _else = new_conf(action.change_state, state=int(else_value))
-            else:
-                _else = new_conf(action.worst_state)
-            node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else)))
+                # Create the statement/action
+                if stat_value != '-1':
+                    statement = new_conf(action.change_state, state=int(stat_value))
+                else:
+                    statement = new_conf(action.worst_state)
+                # Create the _else
+                if else_value != '-1':
+                    _else = new_conf(action.change_state, state=int(else_value))
+                else:
+                    _else = new_conf(action.worst_state)
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else)))
         # OPERATOR_ID[4] --> Best State
-        for cmps in opcomps.get(f.OPERATOR_ID[4]):
-            node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.best_state)))
+        comp_best = opcomps.get(f.OPERATOR_ID[4])
+        if comp_best is not None:
+            for cmps in comp_best:
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.best_state)))
 
         # Create connections between components
         for tween in f.get_comp_graph():
@@ -228,7 +265,7 @@ class Factory(object):
             print "component: ", comp_ID, " is deleted ..."
         else:
             print "component: ", comp_ID, " does no exist in the Database ..."
-            
+
 
 if __name__ == '__main__':
     fact = Factory()
