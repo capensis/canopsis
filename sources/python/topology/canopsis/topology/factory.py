@@ -216,6 +216,7 @@ class Factory(object):
         # Create the Topology
         root_id = f.get_root_id()
         self.create_topology(root_id, conn_list, node_list)
+        print "Toplogy ", root_id, " is created successfully."
 
     def delete_topology(self, comp_ID):
         # Initialize the Toplogy Manager

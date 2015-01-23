@@ -56,13 +56,13 @@ Please refer to the right management to get more.
 Selector configuration can be reached from the engine menu as shown on
 the picture below
 
-.. image:: ../../../_static/images/frontend/selector_configuration_1.png
+.. image:: ../../_static/images/frontend/selector_configuration_1.png
 
 Clicking on this menu item will lead to display the selector view. There
 is two lists on this view: The selector configuration list at the top
 and the event produced events view at the bottom.
 
-.. image:: ../../../_static/images/frontend/selector_renderer_1.png
+.. image:: ../../_static/images/frontend/selector_renderer_1.png
 
 The selector configuration list displays configuration element that will
 tell the canopsis backend selector engine to compute selector event and
@@ -80,7 +80,7 @@ selector list at the top of the picture.
 Then a form appears. This form tells the selector engine in the backend
 how to behave.
 
-.. image:: ../../../_static/images/frontend/selector_configuration_2.png
+.. image:: ../../_static/images/frontend/selector_configuration_2.png
 
 All field are explained when the on mouse over the ask icon.
 

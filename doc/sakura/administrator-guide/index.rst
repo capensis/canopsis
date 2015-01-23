@@ -7,6 +7,6 @@ Administrator guide
   
    setup/index
    administration/index
-   accounts-management/index
    best-practices/index
    troubleshooting/index
+   accounts-management/index
