@@ -1,4 +1,5 @@
--*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
@@ -166,10 +167,17 @@ class Factory(object):
             for cmps in comp_opera:
                 tmpdict = cmps.values()[0]
                 value = tmpdict.get('options')
-                least_value = value.get('least')
-                cond_value = value.get('state')
-                stat_value = value.get('then')
-                else_value = value.get('else')
+                clt_list = tmpdict.get('form').get('items')
+                if value is None:
+                    least_value = clt_list[0].get('value')
+                    cond_value = clt_list[1].get('value')
+                    stat_value = clt_list[2].get('value')
+                    else_value = clt_list[3].get('value')
+                else:
+                    least_value = value.get('least')
+                    cond_value = value.get('state')
+                    stat_value = value.get('then')
+                    else_value = value.get('else')
 
                 least_conf = new_conf(at_least, min_weight=int(least_value), state=int(cond_value))
                 # Create statement/action
