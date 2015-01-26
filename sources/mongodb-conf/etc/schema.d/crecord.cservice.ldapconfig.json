@@ -39,7 +39,8 @@
             "type": "string",
             "required": true,
             "title": "Admin password",
-            "description": "Password used to identify to LDAP Server for user research"
+            "description": "Password used to identify to LDAP Server for user research",
+            "role": "password"
         },
         "attrs": {
             "type": "object",
