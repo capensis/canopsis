@@ -1,41 +1,116 @@
 {
-    "type": "object",
-    "metadata": {
-        "icon": "cloud"
-    },
-    "categories": [{
-        "title": "General",
-        "keys":["title", "refreshInterval", "event_selection", "destination_view", "filter_pattern" , "inline"]
+	"type": "object",
+	"metadata": {
+		"icon": "stats"
+	},
+	"categories": [{
+		"title": "General",
+		"keys":["title", "min_value", "warn_value", "crit_value", "max_value"]
     },{
-        "title": "Rendering",
-        "keys":["refreshableWidget"]
-    }],
-    "properties": {
-        "title":  {
-            "type": "string"
+        "title": "Time Window",
+        "keys": ["time_window", "time_window_offset", "aggregate_method", "aggregate_interval"]
+    },{
+        "title": "Style",
+        "keys": ["background_color", "warn_color", "critic_color", "thickness", "vertical", "height", "show_value"]
+    },{
+        "title": "Label",
+        "keys": ["label", "labeldisplay", "labelalign", "labelvertical"]
+    },{
+        "title": "Metrics",
+        "keys": ["metrics"]
+	}],
+	"properties": {
+		"title":  {
+			"type": "string"
+		},
+		"time_window":  {
+			"type": "number",
+			"role": "duration",
+			"default": 86400,
+			"title": "Time Window"
+		},
+		"time_window_offset":  {
+			"type": "number",
+			"role": "duration",
+			"default": 0,
+			"title": "Time Window offset from now"
+		},
+		"warn_color":  {
+			"type": "string",
+			"role": "color",
+			"title": "Warn Color"
+		},
+		"critic_color":  {
+			"type": "string",
+			"role": "color",
+			"title" : "Critic Color"
+		},
+		"background_color":  {
+			"type": "string",
+			"role": "color",
+			"title" : "Bar Color"
+		},
+		"thickness" : {
+			"type": "number",
+			"title" : "Bar Thickness"
+		},
+		"height":  {
+			"type": "number",
+			"title" : "Vertical Height"
+		},
+		"min_value":  {
+			"type": "number",
+			"title" : "Min Value"
+		},
+		"warn_value":  {
+			"type": "number",
+			"title" : "Warn Value"
+		},
+		"crit_value":  {
+			"type": "number",
+			"title" : "Critic Value"
+		},
+		"max_value":  {
+			"type": "number",
+			"title" : "Max Value"
+		},
+		"label":  {
+			"type": "string"
+		},
+        "labelalign": {
+            "title": "Label Align",
+            "role": "simplelist",
+            "enum": ["left", "right", "above", "below"],
+            "default": "left"
         },
-        "destination_view":  {
-            "type": "string",
-            "default": "view.event"
+		"labeldisplay": {
+			"type": "boolean"
+		},
+		"labelvertical": {
+			"type": "boolean"
+		},
+		"show_value": {
+			"type": "boolean"
+		},
+        "aggregate_method": {
+            "title": "Aggregation Method",
+            "role": "simplelist",
+            "enum": ["first", "last", "average", "min", "max", "sum"],
+            "default": "last"
         },
-        "event_selection":  {
+        "aggregate_interval": {
+            "title": "Interval of aggregation",
+            "type": "integer",
+            "role": "duration",
+            "default": 0
+        },
+        "metrics": {
             "type": "array",
             "items": {
                 "type": "string"
             },
-            "role" : "eventselector"
-        },
-        "inline":  {
-            "type": "boolean",
-            "default": "true"
-        },
-        "filter_pattern": {
-            "type": "string",
-            "default": "{{#if isSelector}}{{{selector_filter}}}{{else}}{ \"rk\" : \"{{rk}}\" }{{/if}}"
-        },
-        "refreshableWidget":  {
-            "type": "boolean",
-            "default": true
+            "role": "cmetric",
+            "title": "Metrics"
         }
-    }
+	}
 }
