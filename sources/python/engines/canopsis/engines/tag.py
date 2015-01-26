@@ -30,30 +30,35 @@ class engine(Engine):
 
     def __init__(self, *args, **kargs):
         super(engine, self).__init__(*args, **kargs)
-        self.nb_beat = 0
         self.selectors = []
 
     def pre_run(self):
-        self.storage = get_storage(namespace='object', account=Account(user="root", group="root"))
+        self.storage = get_storage(
+            namespace='object',
+            account=Account(user="root", group="root")
+        )
         self.reload_selectors()
         self.beat()
 
     def reload_selectors(self):
 
         """
-        Loads selectors crecords to find out witch event in work method match selector.
-        When an event match, selector name and dispay name fields are added to the event tag list
+        Loads selectors crecords to find out witch event in work method match
+        selector. When an event match, selector name and dispay name fields
+        are added to the event tag list
         """
         self.selectors = []
         self.selByRk = {}
-        selectors_json = self.storage.find(
-            {'crecord_type': 'selector', 'enable': True}, namespace="object")
+        selectors_json = self.storage.find({
+            'crecord_type': 'selector',
+            'enable': True
+        }, namespace="object")
 
         for selector_json in selectors_json:
             selector_dump = selector_json.dump()
             # add selector name to tag when
             if 'rk' in selector_dump:
-                ## Extract ids resolved by selectors
+                # Extract ids resolved by selectors
                 sel = selector_dump.get('crecord_name')
                 ids = selector_dump.get('ids', [])
 
@@ -75,7 +80,8 @@ class engine(Engine):
                 selector.tags = []
 
                 for selector_tag in ['crecord_name', 'display_name']:
-                    if selector_tag in selector_dump and selector_dump[selector_tag]:
+                    if (selector_tag in selector_dump
+                            and selector_dump[selector_tag]):
                         selector.tags.append(selector_dump[selector_tag])
                 self.selectors.append(selector)
 
@@ -99,8 +105,9 @@ class engine(Engine):
 
     def work(self, event, *args, **kargs):
         """
-        Each event comming to tag work method is beeing tagged with many informations.
-        Those tags aim to display tags into UI to enhence information search.
+        Each event comming to tag work method is beeing tagged with many
+        informations. Those tags aim to display tags into UI to enhence
+        information search.
         """
 
         event['tags'] = event.get('tags', [])
@@ -112,18 +119,25 @@ class engine(Engine):
         event = self.add_tag(event, 'resource')
 
         # Adds tag to event if selector crecord matches current event.
-        self.logger.debug('Will process selector tag on event %s ' % (event['rk']))
+        self.logger.debug('Will process selector tag on event {} '.format(
+            event['rk']
+        ))
 
         for selector in self.selectors:
 
             add_tag = False
             cfilter = False
-            self.logger.debug('Filter %s: type %s' % (selector.mfilter, type(selector.mfilter)) )
+            self.logger.debug('Filter {}: type {}'.format(
+                selector.mfilter,
+                type(selector.mfilter))
+            )
+
             if selector.mfilter:
                 cfilter = check(selector.mfilter, event)
 
             if 'rk' in event:
-                if event['rk'] not in selector.exclude_ids and (event['rk'] in selector.include_ids or cfilter):
+                if event['rk'] not in selector.exclude_ids and (
+                        event['rk'] in selector.include_ids or cfilter):
                     add_tag = True
             elif cfilter:
                 add_tag = True
@@ -135,7 +149,7 @@ class engine(Engine):
                     if tag not in event['tags']:
                         event['tags'].append(tag)
 
-        ### Tag with dynamic tags
+        # Tag with dynamic tags
         sels = self.selByRk.get(event['rk'], [])
 
         for sel in sels:
@@ -150,7 +164,5 @@ class engine(Engine):
         selectors are implied in tag definition
         """
 
-        self.nb_beat += 1
-
-        self.logger.debug('Refresh selector records cache for event tag by selector purposes.')
+        self.logger.debug('Refresh selector records cache for event tag.')
         self.reload_selectors()

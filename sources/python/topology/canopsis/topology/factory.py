@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+-*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
@@ -48,15 +48,24 @@ class Factory(object):
         # Save the topology
         topo.save(manager=manager)
 
-    def create_component(self, id_component, top_ctx=None, dict_op=None):
+    def create_component(self, id_component, top_ctx=None, dict_op=None, data=None):
         '''
             Create a component
+
+            :param id_component: the component ID.
+            :param top_ctx: the topology context.
+            :param dict_op: the operator dictionnary.
+            :param data: the label of each component.
+
+            :return: a TopoNode.
+            :rtype: TopoNode.
         '''
+        #data = {'label':'value'}
         if top_ctx is not None:
             id = self.get_topo_id(top_ctx)
         else:
             id = None
-        topoNode = TopoNode(_id=id_component, entity=id, operator=dict_op)
+        topoNode = TopoNode(_id=id_component, entity=id, operator=dict_op, data=data)
         return topoNode
 
     def create_connections(self, source, target):
@@ -74,17 +83,18 @@ class Factory(object):
     def get_topo_id(self, top_ctx):
         '''
             Get the context ID
+            :param top_ctx: the context.
+            :return: Context ID.
+            :rtype: Context.
         '''
         # Initialize the context
         ctx = Context()
         return ctx.get_entity_id(top_ctx)
 
-    def matcher(self):
-        top = self.create_topology()
-        top.add_elts('topoNode')
-        top.add_elts('topoEdge')
-
     def at_least(self, dict_data):
+        '''
+        Create the condition statement.
+        '''
         return new_conf(condition.at_least, **dict_data)
 
     def cluster(self, condition, statement, _else):
@@ -98,10 +108,11 @@ class Factory(object):
         '''
         return new_conf(cond, condition=condition, statement=statement, _else=_else)
 
-    def build(self):
+    def build(self, topo_id):
         '''
+        Create the topology V2 using the topology V1 data.
         '''
-        f = formatter.Formatter('cpsmongo', 'canopsis')
+        f = formatter.Formatter(topo_id)
         # kind=1 means to get formatted components
         components = f.get_event_type(kind=1)
         # Operator components
@@ -110,27 +121,44 @@ class Factory(object):
         node_list = []
         # List of connections between components (topoEdge)
         conn_list = []
+        # Label dictionnary
+        data = {}
         # Create components (type=check)
         comp_check  = components.get(f.EVENT_TYPE[1])
         if comp_check is not None:
             for c in comp_check:
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
-                node_list.append(self.create_component(c.keys()[0], entity))
+                if c.values()[0].get('label') is None:
+                    data['label'] = c.values()[0].get('component')
+                else:
+                    data['label'] = c.values()[0].get('label')
+                node_list.append(self.create_component(c.keys()[0], entity, data=data))
+                data = {}
         # Create components (type=selector)
         comp_selct = components.get(f.EVENT_TYPE[2])
         if comp_selct is not None:
             for c in comp_selct:
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
-                node_list.append(self.create_component(c.keys()[0], entity))
+                if c.values()[0].get('label') is None:
+                    data['label'] = c.values()[0].get('component')
+                else:
+                    data['label'] = c.values()[0].get('label')
+                node_list.append(self.create_component(c.keys()[0], entity, data=data))
+                data = {}
         # Create components (type=topology)
         comp_topo = components.get(f.EVENT_TYPE[3])
         if comp_topo is not None:
             for c in comp_topo:
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
-                node_list.append(self.create_component(c.keys()[0], entity))
+                if c.values()[0].get('label') is None:
+                    data['label'] = c.values()[0].get('component')
+                else:
+                    data['label'] = c.values()[0].get('label')
+                node_list.append(self.create_component(c.keys()[0], entity, data=data))
+                data = {}
         # Create components (type=operator)
         # OPERATOR_ID[0] --> Cluster
         comp_opera = opcomps.get(f.OPERATOR_ID[0])
@@ -154,12 +182,23 @@ class Factory(object):
                     _else = new_conf(action.change_state, state=int(else_value))
                 else:
                     _else = new_conf(action.worst_state)
-                node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(least_conf, statement, _else)))
+                if tmpdict.get('label') is None:
+                    data['label'] = tmpdict.get('component')
+                else:
+                    data['label'] = tmpdict.get('label')
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(least_conf, statement, _else), data=data))
+                data = {}
         # OPERATOR_ID[1] --> Worst Sate
         comp_worst = opcomps.get(f.OPERATOR_ID[1])
         if comp_worst is not None:
             for cmps in comp_worst:
-                node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.worst_state)))
+                tmpdict = cmps.values()[0]
+                if tmpdict.get('label') is None:
+                    data['label'] = tmpdict.get('component')
+                else:
+                    data['label'] = tmpdict.get('label')
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.worst_state), data=data))
+                data = {}
         # OPERATOR_ID[2] --> And
         comp_and = opcomps.get(f.OPERATOR_ID[2])
         if comp_and is not None:
@@ -187,7 +226,12 @@ class Factory(object):
                     _else = new_conf(action.change_state, state=int(else_value))
                 else:
                     _else = new_conf(action.worst_state)
-                node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else)))
+                if tmpdict.get('label') is None:
+                    data['label'] = tmpdict.get('component')
+                else:
+                    data['label'] = tmpdict.get('label')
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else), data=data))
+                data = {}
 
         # OPERATOR_ID[3] --> Or
         comp_or = opcomps.get(f.OPERATOR_ID[3])
@@ -221,12 +265,23 @@ class Factory(object):
                     _else = new_conf(action.change_state, state=int(else_value))
                 else:
                     _else = new_conf(action.worst_state)
-                node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else)))
+                if tmpdict.get('label') is None:
+                    data['label'] = tmpdict.get('component')
+                else:
+                    data['label'] = tmpdict.get('label')
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else), data=data))
+                data = {}
         # OPERATOR_ID[4] --> Best State
         comp_best = opcomps.get(f.OPERATOR_ID[4])
         if comp_best is not None:
             for cmps in comp_best:
-                node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.best_state)))
+                mydict = cmps.values()[0]
+                if tmpdict.get('label') is None:
+                    data['label'] = tmpdict.get('component')
+                else:
+                    data['label'] = tmpdict.get('label')
+                node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.best_state), data=data))
+                data = {}
 
         # Create connections between components
         for tween in f.get_comp_graph():
@@ -250,5 +305,5 @@ class Factory(object):
 
 if __name__ == '__main__':
     fact = Factory()
-    fact.build()
-    #fact.delete_topology('component-1852')
+    fact.build('canopsis_arbre') # create the topology 'canopsis_arbre'
+    #fact.delete_topology('component-1852') # delete the topology 'canopsis_arbre'
