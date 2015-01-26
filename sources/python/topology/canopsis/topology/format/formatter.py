@@ -21,6 +21,7 @@
 
 from pymongo import Connection, MongoClient
 import json
+import sys
 from bson.json_util import dumps
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
@@ -34,16 +35,15 @@ class Formatter(object):
     OPERATOR_ID = ('Cluster', 'Worst State', 'And', 'Or', 'Best State')
     STATE = (0, 1, 2, 3, 4)
     CONTEXT = ('type', 'connector', 'connector_name', 'component', 'resource')
-    TOPOQ = "{'crecord_type':'topology', 'crecord_name':'canopsis_arbre'}"
+    #TOPOQ = "{'crecord_type':'topology', 'crecord_name':'canopsis_arbre'}"
+    TOPOQ = "{{'crecord_type':'topology', 'crecord_name':{!r}}}"
     # The collections name
     NAMESPACES = ('objectv1', 'eventsv1')
     MONGO_PORT = 27017
     MONGO_URL = "localhost"
 
-    def __init__(self, username=None, password=None):
-        self.username = username
-        self.password = password
-        self.cursor = self.get_data()
+    def __init__(self, query):
+        self.qr = query
         self.data = self.loads()
 
     def storage_connection(self, namespace):
@@ -74,7 +74,7 @@ class Formatter(object):
          :rtype: Cursor of elements dictionnary or empty dictionnary.
         '''
         if kind == 0:
-            query = self.TOPOQ
+            query = self.TOPOQ.format(self.qr)
             # Format String
             json_acceptable = query.replace("'", "\"")
             query = json.loads(json_acceptable)
@@ -104,7 +104,7 @@ class Formatter(object):
             # Do the authentication
             db.authenticate(self.username, self.password)
         if kind == 0:
-            query = self.TOPOQ
+            query = self.qr
             # Format string
             json_acceptable = query.replace("'", "\"")
             query = json.loads(json_acceptable)
@@ -180,30 +180,30 @@ class Formatter(object):
         chk_list = []
         sel_list = []
         top_list = []
-        componenents = {}
+        components = {}
         if kind == 0:
-            componenents = self.get_components()
+            components = self.get_components()
         else:
-            componenents = self.comp_formatter()
+            components = self.comp_formatter()
         for d in self.get_components().keys():
-            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[0]):
+            if self.iequal(components.get(d).get(self.TYPE[0]), self.EVENT_TYPE[0]):
                 tmp_dict = {}
-                tmp_dict[d] = componenents.get(d)
+                tmp_dict[d] = components.get(d)
                 ops_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[0]] = ops_list
-            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[1]):
+            if self.iequal(components.get(d).get(self.TYPE[0]), self.EVENT_TYPE[1]):
                 tmp_dict = {}
-                tmp_dict[d] = componenents.get(d)
+                tmp_dict[d] = components.get(d)
                 chk_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[1]] = chk_list
-            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[2]):
+            if self.iequal(components.get(d).get(self.TYPE[0]), self.EVENT_TYPE[2]):
                 tmp_dict = {}
-                tmp_dict[d] = componenents.get(d)
+                tmp_dict[d] = components.get(d)
                 sel_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[2]] = sel_list
-            if self.iequal(componenents.get(d).get(self.TYPE[0]), self.EVENT_TYPE[3]):
+            if self.iequal(components.get(d).get(self.TYPE[0]), self.EVENT_TYPE[3]):
                 tmp_dict = {}
-                tmp_dict[d] = componenents.get(d)
+                tmp_dict[d] = components.get(d)
                 top_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[3]] = top_list
         return event_comp
@@ -341,14 +341,19 @@ class Formatter(object):
     def comp_formatter(self):
         '''
         '''
-        comps = self.get_components().copy()
+        if self.get_components() is not None:
+            comps = self.get_components().copy()
+        else:
+            print "The topology: ", self.qr, " does not exist in the database ..."
+            comps = {}
+        #comps = self.get_components().copy()
         for c in self.get_component_keys():
             q, lst = self.query_generator(c)
             # Loads the context information
             res = self.loads(1, q)
             if len(res) != 0:
                 for d in lst:
-                    if d == 'type':
+                    if self.iequal(d, 'type'):
                         comps.get(c)[unicode(d)] = unicode(comps.get(c).get(self.TYPE[0]))
                     else:
                         comps.get(c)[unicode(d)] = res.get(unicode(d))
@@ -391,57 +396,4 @@ class Formatter(object):
             return a == b
 
 if __name__ == '__main__':
-    t = Formatter('cpsmongo', 'canopsis')
-    #print type(t.get_comp_graph())
-    components = t.get_event_type(kind=1)
-    opcomps = t.match_operator(components)
-    for cmps in opcomps.get(t.OPERATOR_ID[1]):
-        #mydict = cmps.values()[0]
-        #print mydict.get('form').get('items')
-        print cmps
-    """
-    print t.loads()
-
-    for k, v in t.get_event_type().iteritems():
-        print k
-        print v
-    print ('\n\n\n')
-
-    for k, v in t.get_source_type().iteritems():
-        print k
-        print ('\n\n')
-        print v
-    print t.get_component_keys()
-    print t.get_comp_graph()
-
-    print t.query_generator()
-
-    print t.get_connector_name()
-
-    print t.is_context_compatible('component-1371')
-
-    for c in t.get_component_keys():
-        print t.is_context_compatible(c)
-
-    for c in t.get_component_keys():
-        q, lst = t.query_generator(c)
-        print t.get_connector_name()
-        print q, lst
-    print t.comp_formatter()
-
-    print t.comp_formatter().keys()
-
-    print t.match_operator(1).get(t.OPERATOR_ID[3])
-
-    for c in t.match_operator(1).get(t.OPERATOR_ID[3]):
-        print c.keys()[0]
-        print c.values()[0]
-        print c.values()[0].get('form')
-        print len(c.values()[0].get('form'))
-        print c.values()[0].get('form').get('items')
-        print len(c.values()[0].get('form').get('items'))
-        print ('data')
-        print c.values()[0].get('form').get('items')[0].get('value')
-        print c.values()[0].get('form').get('items')[1].get('value')
-        print c.values()[0].get('form').get('items')[2].get('value')
-    """
+    pass
