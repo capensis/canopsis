@@ -26,7 +26,7 @@ from time import time
 from dateutil.relativedelta import relativedelta as rd
 from dateutil.tz import tzoffset
 
-import calendar
+from calendar import timegm, monthcalendar
 
 from collections import Iterable
 
@@ -187,7 +187,7 @@ class Period(object):
         datetime = self.round_datetime(datetime=datetime, normalize=normalize)
 
         utctimetuple = datetime.utctimetuple()
-        result = calendar.timegm(utctimetuple)
+        result = timegm(utctimetuple)
 
         # restore microsecond because utctimetuple() does not
         microseconds = datetime.microsecond * 0.000001
@@ -210,10 +210,10 @@ class Period(object):
         for unit in unit_values:
             value = unit_values[unit]
             if unit is Period.WEEK:
-                monthcalendar = calendar.monthcalendar(
+                _monthcalendar = monthcalendar(
                     datetime.year, datetime.month
                 )
-                for week_index, week in enumerate(monthcalendar):
+                for week_index, week in enumerate(_monthcalendar):
                     if datetime.day in week:
                         datetime_value = week_index
                         break
@@ -426,6 +426,13 @@ class Interval(object):
 
         return iter(self.sub_intervals)
 
+    def __getitem__(self, key):
+        """
+        Get the right sub interval.
+        """
+
+        return self.sub_intervals[key]
+
     def min(self):
         """
         Get minimal point or None if no sub intervals.
@@ -520,6 +527,35 @@ class Interval(object):
 
         return result
 
+    def reduce(self, lower, upper):
+        """
+        Returns an interval reduced with input lower and upper bounds.
+
+        :param float lower: lower bound.
+        :param float upper: upper bound.
+        :return: intersection of this and [lower; upper].
+        :rtype: Interval
+        """
+        # list which will be used to return an interval
+        intervals = []
+
+        for sub_interval in self:
+            sub_lower, sub_upper = sub_interval
+            # do something until sub interval & [lower, upper] != 0
+            if sub_upper < lower:
+                continue
+            if upper < sub_lower:
+                break
+            # update sub interval if inside [lower, upper]
+            if sub_lower < lower < sub_upper:
+                sub_lower = lower
+            if sub_upper > upper > sub_lower:
+                sub_upper = upper
+            # add sub interval in final intervals
+            intervals.append((sub_lower, sub_upper))
+
+        return Interval(*intervals)
+
 
 class TimeWindow(object):
     """
@@ -535,17 +571,30 @@ class TimeWindow(object):
 
     def __init__(self, start=None, stop=None, intervals=None, timezone=0):
         """
-        this interval is created from:
+        This interval is created from:
 
         - an interval with stop, start :
-            - stop is now if None.
-            - start is stop - TimeWindow.DEFAULT_DURATION if None.
+            - stop is now if None,
+            - start is stop - TimeWindow.DEFAULT_DURATION if None,
             - if intervals is not empty and start and stop equal None
             then they are not calculated.
-        - intervals is a list of (lower timestamp, upper timestamp) or Interval
+        - intervals is a list of (lower timestamp, upper timestamp) or
+            Interval.
         """
 
         super(TimeWindow, self).__init__()
+
+        # initialize intervals
+        if intervals is None:
+            intervals = []
+        elif isinstance(intervals, Interval):
+            intervals = [intervals]
+        # initialize start/stop related to intervals
+        if len(intervals):
+            if start is None:
+                start = intervals[0][0]
+            if stop is None:
+                stop = intervals[-1][0]
 
         # if stop is None, stop = now
         if stop is None:
@@ -555,18 +604,16 @@ class TimeWindow(object):
         if start is None:
             start = stop - TimeWindow.DEFAULT_DURATION
 
-        if intervals is None:
-            intervals = []
+        # if no interval is proposed, initialize it with start and stop
+        if not intervals:
+            intervals.append((start, stop))
 
-        # if no interval is proposed
-        intervals.append((start, stop))
+        interval = Interval(*intervals)
 
-        self.interval = Interval(*intervals)
-
-        if self.interval.is_empty():
+        if interval.is_empty():
             raise TimeWindow.TimeWindowError("Interval can not be empty")
 
-        self.interval = TimeWindow.convert_to_seconds_interval(self.interval)
+        self.interval = TimeWindow.convert_to_seconds_interval(interval)
 
         self.timezone = timezone
 
@@ -598,7 +645,8 @@ class TimeWindow(object):
         """
 
         result = TimeWindow(
-            intervals=[Interval(self.interval)], timezone=self.timezone)
+            intervals=[Interval(self.interval)], timezone=self.timezone
+        )
 
         return result
 
@@ -617,7 +665,8 @@ class TimeWindow(object):
         """
 
         result = TimeWindow.get_datetime(
-            self.start(), self.timezone if utc else 0)
+            self.start(), - self.timezone if utc else 0
+        )
 
         return result
 
@@ -636,7 +685,8 @@ class TimeWindow(object):
         """
 
         result = TimeWindow.get_datetime(
-            self.stop(), self.timezone if utc else 0)
+            self.stop(), self.timezone if utc else 0
+        )
 
         return result
 
@@ -646,6 +696,16 @@ class TimeWindow(object):
         """
 
         result = len(self.interval)
+
+        return result
+
+    @staticmethod
+    def get_timestamp(datetime):
+        """
+        Get the timestamp corresponding to input datetime.
+        """
+
+        result = timegm(datetime.timetuple())
 
         return result
 
@@ -668,10 +728,25 @@ class TimeWindow(object):
 
         sub_intervals = [
             (int(sub_interval[0]), int(sub_interval[1]))
-            for sub_interval in interval]
+            for sub_interval in interval
+        ]
 
         result = Interval(*sub_intervals)
 
+        return result
+
+    def reduce(self, start, stop):
+        """
+        Returns a timewindow where start and stop are redefined.
+
+        :param float start: new start time.
+        :param float stop: new stop time.
+        :returns: new timewindow with start/stop such as lower/upper bounds.
+        :rtype: TimeWindow
+        """
+
+        interval = self.interval.reduce(start, stop)
+        result = TimeWindow(intervals=interval, timezone=self.timezone)
         return result
 
 

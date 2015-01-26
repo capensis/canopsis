@@ -162,7 +162,7 @@ class TimeSerie(Configurable):
         delta = period.get_delta()
 
         while current_datetime < stop_datetime:
-            ts = mktime(current_datetime.timetuple())
+            ts = TimeWindow.get_timestamp(current_datetime)
             result.append(ts)
             current_datetime += delta
 
@@ -177,7 +177,7 @@ class TimeSerie(Configurable):
         Return points su as follow:
         Let fn self aggregation function and
         input points of the form: [(T0, V0), ..., (Tn, Vn)]
-        then the result is [(T0, fn(V0, V1)), (T2, fn(V2, V3), ...]
+        then the result is [(T0, fn(V0, V1)), (T2, fn(V2, V3), ...].
         """
 
         result = []
@@ -190,10 +190,9 @@ class TimeSerie(Configurable):
                 timestamp=timewindow.start(),
                 normalize=True
             )
-            timewindow = TimeWindow(
+            timewindow = timewindow.reduce(
                 start=round_starttimestamp,
-                stop=timewindow.stop(),
-                timezone=timewindow.timezone
+                stop=timewindow.stop()
             )
 
         # start to exclude points which are not in timewindow
@@ -221,7 +220,6 @@ class TimeSerie(Configurable):
 
             # get timesteps
             timesteps = self.timesteps(timewindow)
-
             # initialize variables for loop
             i = 0
             values_to_aggregate = []
@@ -282,9 +280,10 @@ class TimeSerie(Configurable):
         """
         Apply DERIVE, ABSOLUTE, COUNTER, GAUGE transforms to points.
 
-        :param points: list of points
-        :param str method: method (it's the "type" metadata of perfdata)
-        :returns: list of points
+        :param list points: list of points.
+        :param str method: method (it's the "type" metadata of perfdata).
+        :returns: list of points.
+        :rtype: list
         """
 
         def gauge(pts):
@@ -341,10 +340,12 @@ class TimeSerie(Configurable):
             'COUNTER': counter
         }
 
-        if not method or method not in methods:
-            return points
+        result = points
 
-        return methods[method](points)
+        if method and method in methods:
+            result = methods[method](points)
+
+        return result
 
     def _conf(self, *args, **kwargs):
 

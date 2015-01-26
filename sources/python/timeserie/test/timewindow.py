@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest
+from unittest import TestCase, main
 
 from datetime import datetime
 from time import time, mktime, timezone
@@ -30,7 +30,7 @@ from random import random, randint
 from canopsis.timeserie.timewindow import Period, Interval, TimeWindow
 
 
-class PeriodTest(unittest.TestCase):
+class PeriodTest(TestCase):
 
     @staticmethod
     def _new_period():
@@ -260,7 +260,7 @@ class PeriodTest(unittest.TestCase):
         )
 
 
-class IntervalTest(unittest.TestCase):
+class IntervalTest(TestCase):
 
     def test_copy(self):
 
@@ -491,18 +491,78 @@ class IntervalTest(unittest.TestCase):
         self.assertEqual(len(interval), 4)
 
 
-class TimeWindowTest(unittest.TestCase):
+class IntervalReductionTest(TestCase):
+    """
+    Test to reduce an interval.
+    """
+
+    def setUp(self):
+        """
+        Initialize lower, upper
+        """
+
+        self.lower, self.upper = 0, 5000
+        self.length = self.upper - self.lower
+
+    def test_empty(self):
+        """
+        Test to reduce empty interval.
+        """
+
+        # start with empty intervals
+        interval = Interval()
+        reduced = interval.reduce(self.lower, self.upper)
+        self.assertEqual(len(reduced), 0)
+
+    def test_one(self):
+        """
+        Test to reduce one interval.
+        """
+
+        # test same interval
+        interval = Interval((self.lower, self.upper))
+        reduced = interval.reduce(self.lower, self.upper)
+        self.assertEqual(len(reduced), self.length)
+
+        # remove 2 points
+        interval = Interval((self.lower + 1, self.upper - 1))
+        reduced = interval.reduce(self.lower, self.upper)
+        self.assertEqual(len(reduced), self.length - 2)
+
+        # add 2 points
+        interval = Interval((self.lower - 1, self.upper + 1))
+        reduced = interval.reduce(self.lower, self.upper)
+        self.assertEqual(len(reduced), self.length)
+
+    def test_intervals(self):
+        """
+        Test intervals.
+        """
+
+        # use five intervals where union & reduced interval = reduced interval
+        interval = Interval(
+            (self.lower - 5, self.lower - 2),
+            (self.lower - 1, self.lower + 1),
+            (self.lower + 2, self.upper - 2),
+            (self.upper - 1, self.upper + 1),
+            (self.upper + 2, self.upper + 5)
+        )
+        reduced = interval.reduce(self.lower, self.upper)
+        self.assertEqual(len(reduced), self.length - 2)
+
+
+class TimeWindowTest(TestCase):
 
     def setUp(self):
         self.timewindow = TimeWindow()
 
-    def _test_copy(self):
+    def test_copy(self):
 
         copy = self.timewindow.copy()
 
         self.assertEqual(copy, self.timewindow)
 
-    def _test_total_seconds(self):
+    def test_total_seconds(self):
         self.assertEqual(
             self.timewindow.total_seconds(),
             TimeWindow.DEFAULT_DURATION)
@@ -517,7 +577,7 @@ class TimeWindowTest(unittest.TestCase):
         self.assertEqual(timewindow.start(), int(start))
         self.assertEqual(timewindow.stop(), int(stop))
 
-    def _test_get_datetime(self):
+    def test_get_datetime(self):
 
         now = time()
 
@@ -534,5 +594,14 @@ class TimeWindowTest(unittest.TestCase):
 
         self.assertEqual(ts, ts_now + timezone)
 
+    def test_no_startstop(self):
+
+        start, stop = 5, 10
+        intervals = Interval((start, stop))
+        timewindow = TimeWindow(intervals=intervals)
+        self.assertEqual(timewindow.start(), start)
+        self.assertEqual(timewindow.stop(), stop)
+
+
 if __name__ == '__main__':
-    unittest.main()
+    main()
