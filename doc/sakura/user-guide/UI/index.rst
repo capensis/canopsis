@@ -11,3 +11,4 @@ This Chapter describes how to use the new frontend system.
    userviews
    perfdata
    widgets/index
+   auth/index
