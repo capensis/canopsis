@@ -5,5 +5,5 @@
 
 [submodule "sources/webcore"]
 	path = sources/webcore
-	url = https://github.com/capensis/canopsis-webcore
+	url = https://github.com/srassinoux/canopsis-webcore
 	ignore = dirty
