@@ -5,16 +5,13 @@
 	},
 	"categories": [{
 		"title": "General",
-		"keys":["title", "min_value", "warn_value", "crit_value", "max_value"]
+		"keys":["title", "label", "labeldisplay", "labelalign", "show_value"]
     },{
         "title": "Time Window",
-        "keys": ["time_window", "time_window_offset", "aggregate_method", "aggregate_interval"]
+        "keys": ["time_window", "time_window_offset"]
     },{
-        "title": "Style",
-        "keys": ["background_color", "warn_color", "critic_color", "thickness", "vertical", "height", "show_value"]
-    },{
-        "title": "Label",
-        "keys": ["label", "labeldisplay", "labelalign", "labelvertical"]
+        "title": "Series",
+        "keys": ["series"]
     },{
         "title": "Metrics",
         "keys": ["metrics"]
@@ -35,45 +32,6 @@
 			"default": 0,
 			"title": "Time Window offset from now"
 		},
-		"warn_color":  {
-			"type": "string",
-			"role": "color",
-			"title": "Warn Color"
-		},
-		"critic_color":  {
-			"type": "string",
-			"role": "color",
-			"title" : "Critic Color"
-		},
-		"background_color":  {
-			"type": "string",
-			"role": "color",
-			"title" : "Bar Color"
-		},
-		"thickness" : {
-			"type": "number",
-			"title" : "Bar Thickness"
-		},
-		"height":  {
-			"type": "number",
-			"title" : "Vertical Height"
-		},
-		"min_value":  {
-			"type": "number",
-			"title" : "Min Value"
-		},
-		"warn_value":  {
-			"type": "number",
-			"title" : "Warn Value"
-		},
-		"crit_value":  {
-			"type": "number",
-			"title" : "Critic Value"
-		},
-		"max_value":  {
-			"type": "number",
-			"title" : "Max Value"
-		},
 		"label":  {
 			"type": "string"
 		},
@@ -86,23 +44,18 @@
 		"labeldisplay": {
 			"type": "boolean"
 		},
-		"labelvertical": {
-			"type": "boolean"
-		},
 		"show_value": {
 			"type": "boolean"
 		},
-        "aggregate_method": {
-            "title": "Aggregation Method",
-            "role": "simplelist",
-            "enum": ["first", "last", "average", "min", "max", "sum"],
-            "default": "last"
-        },
-        "aggregate_interval": {
-            "title": "Interval of aggregation",
-            "type": "integer",
-            "role": "duration",
-            "default": 0
+        "series": {
+            "type": "array",
+            "role": "array",
+            "items": {
+                "type": "object",
+                "role": "serieitem",
+                "relationship": "belongsTo",
+                "model": "stylizedserie"
+            }
         },
         "metrics": {
             "type": "array",
