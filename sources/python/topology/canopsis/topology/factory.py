@@ -28,7 +28,6 @@ from canopsis.task.condition import condition as cond
 from canopsis.topology.rule import action
 from canopsis.topology.rule.condition import at_least
 import logging
-import time
 
 
 class Factory(object):
