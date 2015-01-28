@@ -28,4 +28,5 @@ from canopsis.common.setup import setup
 
 setup(
     description=('Common library'),
-    keywords='common library')
+    keywords='common library'
+)
