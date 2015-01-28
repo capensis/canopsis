@@ -42,8 +42,7 @@
     "r"
   ],
   "aaa_admin_group": "group.CPS_view_admin",
-  "children": [],
-  "crecord_name": "Dashboard"
+  "children": []
 }
 
 
