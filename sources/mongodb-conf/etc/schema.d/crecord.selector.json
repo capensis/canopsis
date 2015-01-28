@@ -14,7 +14,7 @@
 		"keys":["exclude_ids"]
 	},{
 		"title": "Sla",
-		"keys":["dosla", "sla_timewindow", "thd_warn_sla_timewindow", "thd_crit_sla_timewindow", "sla_output_tpl"]
+		"keys":["dosla", "sla_timewindow", "sla_warning", "sla_critical", "sla_output_tpl"]
 	}],
 	"properties": {
 		"state_when_all_ack": {
@@ -97,36 +97,23 @@
 		"state_algorithm": {
 			"type": "integer"
 		},
-		"sla_rk": {
-			"type": "string"
-		},
-		"sla_state": {
-			"type": "integer",
-			"default": false
-		},
 		"sla_timewindow": {
-			"type": "integer"
+			"type": "number",
+			"default" : 31536000,
+			"description" : "Delay until take care of sla information for this selector.",
+			"role": "duration"
 		},
-		"sla_timewindow_value": {
-			"type": "number"
+		"sla_warning": {
+			"type": "number",
+			"role": "percent"
 		},
-		"sla_timewindow_unit": {
-			"type": "integer"
-		},
-		"sla_timewindow_doUnknown": {
-			"type": "boolean",
-			"default": true,
-			"title": "Consider unknown time"
-		},
-		"thd_warn_sla_timewindow": {
-			"type": "number"
-		},
-		"thd_crit_sla_timewindow": {
-			"type": "number"
+		"sla_critical": {
+			"type": "number",
+			"role": "percent"
 		},
 		"sla_output_tpl": {
 			"type": "string",
-			"default" :"Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL], Ack count [ACK], Total: [TOTAL]"
+			"default" :"Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL], Alerts [ALERTS]"
 		},
 		"output_tpl": {
 			"type": "string",

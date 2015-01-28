@@ -31,6 +31,8 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=2)
 
+DEFAULT_SLA_TIMEWINDOW = 3600*24
+
 
 class Selector(Record):
     def __init__(
@@ -108,21 +110,59 @@ class Selector(Record):
         self._id = dump.get('_id')
         self.namespace = dump.get('namespace', self.namespace)
         self.dostate = dump.get('dostate')
+        self.dosla = dump.get('dosla')
         self.display_name = dump.get('display_name', 'noname')
         self.rk = dump.get('rk', self.rk)
         self.include_ids = dump.get('include_ids', self.include_ids)
         self.exclude_ids = dump.get('exclude_ids', self.exclude_ids)
         self.state_when_all_ack = dump.get('state_when_all_ack', 'worststate')
 
-        default_template = 'Off: [OFF], Minor: [MINOR], Major: [MAJOR]' + \
-            ', Critical: [CRITICAL]'
-        self.sla_rk = dump.get('sla_rk', default_template)
-        self.output_tpl = dump.get('output_tpl', default_template)
+        self.output_tpl = self.get_output_tpl()
+        self.sla_output_tpl = self.get_sla_output_tpl()
 
         if not self.output_tpl:
-        	self.output_tpl = "No output template defined"
+            self.output_tpl = "No output template defined"
 
         self.data = dump
+
+    def get_output_tpl(self):
+
+        default_template = 'Off: [OFF], Minor: [MINOR], Major: [MAJOR]' + \
+            ', Critical: [CRITICAL]'
+
+        if ('output_tpl' not in self.data or
+                self.data['output_tpl'] is None):
+            return default_template
+        else:
+            return self.data['output_tpl']
+
+    def get_sla_output_tpl(self):
+
+        # Defines default sla template if no one exists
+        default_sla_template = (
+            'Off: [OFF], Minor: [MINOR], Major: [MAJOR],' +
+            ' Critical: [CRITICAL], Alerts [ALERTS]'
+        )
+        if ('sla_output_tpl' not in self.data or
+                self.data['sla_output_tpl'] is None):
+            return default_sla_template
+        else:
+            return self.data['sla_output_tpl']
+
+    def get_sla_timewindow(self):
+
+        timewindow = self.data.get('sla_timewindow', None)
+        if timewindow is None:
+            self.logger.info(
+                'No timewindow set for selector {}, use default'.format(
+                    self.display_name
+                ))
+            return DEFAULT_SLA_TIMEWINDOW
+        else:
+            return timewindow
+
+    def get_previous_selector_state(self):
+        return self.data.get('previous_selector_state', None)
 
     # Build MongoDB query to find every id matching event
     def makeMfilter(self):
