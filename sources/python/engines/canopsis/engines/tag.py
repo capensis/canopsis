@@ -37,6 +37,7 @@ class engine(Engine):
             namespace='object',
             account=Account(user="root", group="root")
         )
+        self.selByRk = {}
         self.reload_selectors()
         self.beat()
 
