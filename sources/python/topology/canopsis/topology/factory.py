@@ -27,12 +27,14 @@ from canopsis.task import new_conf
 from canopsis.task.condition import condition as cond
 from canopsis.topology.rule import action
 from canopsis.topology.rule.condition import at_least
+import logging
 
 
 class Factory(object):
     """docstring for Factory"""
     def __init__(self):
-        pass
+        # logger is initialized by Factory
+        self.logger = logging.getLogger('Factory')
 
     def create_topology(self, topo_name, topoEdge, topoNode):
         '''
@@ -129,7 +131,8 @@ class Factory(object):
         if comp_check is not None:
             for c in comp_check:
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
-                entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
+                src_type_value = c.values()[0].get('source_type')
+                entity['id'] = c.values()[0].get(src_type_value)
                 if c.values()[0].get('label') is None:
                     data['label'] = c.values()[0].get('component')
                 else:
@@ -141,7 +144,8 @@ class Factory(object):
         if comp_selct is not None:
             for c in comp_selct:
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
-                entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
+                src_type_value = c.values()[0].get('source_type')
+                entity['id'] = c.values()[0].get(src_type_value)
                 if c.values()[0].get('label') is None:
                     data['label'] = c.values()[0].get('component')
                 else:
@@ -153,7 +157,8 @@ class Factory(object):
         if comp_topo is not None:
             for c in comp_topo:
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
-                entity['id'] = c.values()[0].get(c.values()[0].get('source_type'))
+                src_type_value = c.values()[0].get('source_type')
+                entity['id'] = c.values()[0].get(src_type_value)
                 if c.values()[0].get('label') is None:
                     data['label'] = c.values()[0].get('component')
                 else:
@@ -297,7 +302,16 @@ class Factory(object):
         # Create the Topology
         root_id = f.get_root_id()
         self.create_topology(root_id, conn_list, node_list)
-        print "Toplogy ", root_id, " is created successfully."
+        self.logger.info('Topology {} is created successfully.'.format(root_id))
+        print 'Topology {} is created successfully.'.format(root_id)
+
+    def build_all(self):
+        '''
+        '''
+        topo_ids = formatter.Formatter.get_all_comp_ids()
+        for topo in topo_ids:
+            print 'Processing ', topo
+            self.build(topo)
 
     def delete_topology(self, comp_ID):
         # Initialize the Toplogy Manager
@@ -306,12 +320,15 @@ class Factory(object):
         top = manager.get_graphs(ids=comp_ID)
         if top is not None:
             top.delete(manager)
-            print "component: ", comp_ID, " is deleted ..."
+            self.logger.info('Component {} is deleted ...'.format(comp_ID))
+            print 'Component {} is deleted'.format(comp_ID)
         else:
-            print "component: ", comp_ID, " does no exist in the Database ..."
+            self.logger.info('Component {} does no exist in the Database ...'.format(comp_ID))
+            print 'Component {} does no exist in the Database ...'.format(comp_ID)
 
 
 if __name__ == '__main__':
     fact = Factory()
-    fact.build('canopsis_arbre') # create the topology 'canopsis_arbre'
-    #fact.delete_topology('component-1852') # delete the topology 'canopsis_arbre'
+    fact.build_all() # Create all topology inside the database
+    #fact.build('canopsis_arbre') # create a single topology 'canopsis_arbre'
+    #fact.delete_topology('component-1370') # delete the topology 'canopsis_arbre'
