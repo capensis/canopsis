@@ -25,6 +25,7 @@ import sys
 from bson.json_util import dumps
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
+import logging
 
 class Formatter(object):
     """docstring for ClassName"""
@@ -35,7 +36,8 @@ class Formatter(object):
     OPERATOR_ID = ('Cluster', 'Worst State', 'And', 'Or', 'Best State')
     STATE = (0, 1, 2, 3, 4)
     CONTEXT = ('type', 'connector', 'connector_name', 'component', 'resource')
-    #TOPOQ = "{'crecord_type':'topology', 'crecord_name':'canopsis_arbre'}"
+    #TOPALL = "{'crecord_type':'topology'}, {crecord_name:1}"
+    TOPALL = "{'crecord_type':'topology'}"
     TOPOQ = "{{'crecord_type':'topology', 'crecord_name':{!r}}}"
     # The collections name
     NAMESPACES = ('objectv1', 'eventsv1')
@@ -45,7 +47,10 @@ class Formatter(object):
     def __init__(self, query):
         self.qr = query
         self.data = self.loads()
+        # logger is initialized by Formatter
+        self.logger = logging.getLogger('formatter')
 
+    @classmethod
     def storage_connection(self, namespace):
         '''
         Get the cconnection to canopsis DataBase.
@@ -85,6 +90,20 @@ class Formatter(object):
             query = json.loads(json_acceptable)
             cursor = self.storage_connection(self.NAMESPACES[1]).find(query)
         return cursor
+
+    @classmethod
+    def get_all_comp_ids(self):
+        '''
+        '''
+        # Format String
+        json_acceptable = self.TOPALL.replace("'", "\"")
+        query = json.loads(json_acceptable)
+        cursor = self.storage_connection(self.NAMESPACES[0]).find(query)
+        res = []
+        for comp in list(cursor):
+            res.append(str(comp.get('crecord_name')))
+        return res
+
 
     def connection(self, kind=0, q=None):
         '''
@@ -142,7 +161,7 @@ class Formatter(object):
     def print_keys(self):
         tdata = self.data
         for k, v in tdata.iteritems():
-            print k, v
+            self.logger.info('Key: {} - Value: {}'.format(k,v))
 
     def get_value(self, value):
         '''
@@ -344,9 +363,8 @@ class Formatter(object):
         if self.get_components() is not None:
             comps = self.get_components().copy()
         else:
-            print "The topology: ", self.qr, " does not exist in the database ..."
+            self.logger.info('The topology: {} does not exist the database ...'.format(self.qr))
             comps = {}
-        #comps = self.get_components().copy()
         for c in self.get_component_keys():
             q, lst = self.query_generator(c)
             # Loads the context information
@@ -358,8 +376,8 @@ class Formatter(object):
                     else:
                         comps.get(c)[unicode(d)] = res.get(unicode(d))
             if len(res) == 0:
-                print "Component without event data ", c
-                print res
+                self.logger.info('Component whithout event data {}'.format(c))
+                #print res
         return comps
 
     def get_root(self):
