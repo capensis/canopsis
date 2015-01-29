@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.engines import Engine
-from canopsis.old.archiver import Archiver
+from canopsis.check.archiver import Archiver
 from canopsis.old.downtime import Downtime
 from canopsis.old.storage import CONFIG
 
@@ -35,7 +35,8 @@ class engine(Engine):
 
         self.archiver = Archiver(
             namespace='events', confnamespace='object',
-            autolog=False, logging_level=self.logging_level)
+            autolog=False, log_lvl=self.logging_level
+        )
 
         self.event_types = reader([CONFIG.get('events', 'types')]).next()
         self.check_types = reader([CONFIG.get('events', 'checks')]).next()
