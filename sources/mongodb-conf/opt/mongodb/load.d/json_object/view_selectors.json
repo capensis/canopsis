@@ -87,13 +87,57 @@
             {
               "name": "Customfilterlist",
               "filters" : [],
-              "default_filter" : "{\"event_type\":\"selector\"}"
+              "default_filter" : "{\"$or\":[{\"event_type\":{\"$eq\":\"selector\"}}]}"
             },
             { "name": "History" },
             { "name": "Infobutton" },
-            { "name": "Sendevent" },
-            { "name": "Responsivelist" },
-            { "name": "Eventnavigation" }],
+            { "name": "Responsivelist" }
+          ],
+          "listed_crecord_type" : "event",
+          "actions_toolbar" : [ ],
+          "refreshInterval" : 30,
+          "contentTruncatedLength" : null,
+          "xtype" : "list"
+        },
+        "xtype" : "widgetwrapper",
+        "title" : "wrapper"
+      },
+      {
+        "widget" : {
+          "tagName" : null,
+          "id" : "item_13019673-ebdf-6271-e595-6be7338cbc50",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338cbc50",
+          "refreshableWidget" : true,
+          "item_actions" : [ ],
+          "title" : "Computed sla",
+          "maximized_column_index" : null,
+          "itemsPerPage" : 10,
+          "mixins" : [ ],
+          "cssClass" : null,
+          "cloaking" : false,
+          "filters" : [ ],
+          "selection_toolbar" : [ ],
+          "displayed_columns" : [
+            "component",
+            "resource",
+            "output",
+            "state",
+            "status",
+            "timestamp"
+          ],
+          "mixins": [
+            { "name": "Sortablearray" },
+            { "name": "Arraysearch" },
+            { "name": "Pagination" },
+            {
+              "name": "Customfilterlist",
+              "filters" : [],
+              "default_filter" : "{\"$or\":[{\"event_type\":{\"$eq\":\"sla\"}}]}"
+            },
+            { "name": "History" },
+            { "name": "Infobutton" },
+            { "name": "Responsivelist" }
+          ],
           "listed_crecord_type" : "event",
           "actions_toolbar" : [ ],
           "refreshInterval" : 30,
