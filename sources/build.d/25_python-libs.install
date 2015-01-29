@@ -4,7 +4,7 @@ function build(){
 	true
 }
 
-function install(){
+function easy_install_all_libs() {
 	easy_install_pylib simplejson
 	easy_install_pylib pymongo
 	easy_install_pylib pycurl
@@ -33,10 +33,20 @@ function install(){
 	easy_install_pylib PyMeta
 	easy_install_pylib greenlet
 	easy_install_pylib mock
+	easy_install_pylib lxml
+}
+
+function install(){
+	easy_install_all_libs
 
 	# Todo: Very dirty patch, see https://github.com/Supervisor/supervisor/issues/141
 	sed -i "156i\            if isinstance(value, bool):\n                value = xmlrpclib.boolean(value)" $PREFIX/lib/python2.7/site-packages/supervisor-3.0a12-py2.7.egg/supervisor/xmlrpc.py
 	rm $PREFIX/lib/python2.7/site-packages/supervisor-3.0a12-py2.7.egg/supervisor/*.pyc
 
 	install_conf "supervisord.conf"
+}
+
+
+function update() {
+	easy_install_all_libs
 }
