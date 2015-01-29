@@ -21,6 +21,7 @@
 __version__ = "0.1"
 
 from canopsis.common.init import basestring
+from canopsis.common.utils import lookup
 from canopsis.configuration.parameters import Parameter
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
@@ -62,13 +63,16 @@ class CheckManager(MiddlewareRegistry):
         SOFT: 3
     }
 
+    #: default function to apply when changing of state
+    DEFAULT_F = 'canopsis.check.task.criticity'
+
     def __init__(self, types=None, *args, **kwargs):
 
         super(CheckManager, self).__init__(*args, **kwargs)
 
         self.types = types
 
-    def state(self, ids, state=None, criticity=HARD, cache=False):
+    def state(self, ids, state=None, criticity=HARD, f=DEFAULT_F, cache=False):
         """
         Get entity states.
 
@@ -83,6 +87,8 @@ class CheckManager(MiddlewareRegistry):
             is required.
         :rtype: int or dict
         """
+
+        f = lookup(f) if isinstance(f, basestring) else f
 
         # default result is None
         result = {}
@@ -127,35 +133,17 @@ class CheckManager(MiddlewareRegistry):
                     _id = state_document[id_name]
                     # remove _id from entity_ids
                     entity_ids.remove(_id)
-                    # get current entity state
-                    entity_state = state_document[state_name]
-                    # if state != entity_state
-                    if state != entity_state:
-                        # get count and last state
-                        last_state = state_document[last_name]
-                        count = state_document[count_name]
-                        if last_state != state:  # if state != last state
-                            count = 1  # initialize count
-                            last_state = state
-                        else:  # else increment count
-                            count += 1
-                        # if state count is equal or greater than crit count
-                        if count >= criticity_count:
-                            count = 1  # initialize count
-                            entity_state = state  # state entity is state
-                    # construct a new document with state, count and last state
-                    new_state_document = {
-                        id_name: _id,
-                        state_name: entity_state,
-                        count_name: count,
-                        last_name: last_state
-                    }
+                    new_state_document = f(
+                        state_document=state_document,
+                        state=state,
+                        criticity=criticity
+                    )
                     # save new state_document
                     storage.put_element(
                         _id=_id, element=new_state_document, cache=cache
                     )
                     # save state entity in result
-                    result[_id] = entity_state
+                    result[_id] = new_state_document[state_name]
             # for all not found documents
             for entity_id in entity_ids:
                 count = 1
