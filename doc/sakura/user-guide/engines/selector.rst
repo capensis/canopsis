@@ -92,3 +92,38 @@ other tabs are
 
 Once saved, the selector engine loads the newly configured selector and
 computes it in order to produce it's associated event.
+
+Sla system
+----------
+
+It is possible to tell Canopsis to compute Service Level Agreement for selectors.
+Computing SLA consists in the following rules:
+
+- SLA computation can be done only if selector is **enabled** and **dostate** and
+**dosla** are activated.
+- SLA are computed for the selector it is associated
+- SLA computes percent of time a selector spend in a given state for each of the
+following **info, minor, major, critical**
+- SLA produces an event where ``event_type`` is **sla** and witch resource is the
+selector name.
+- SLA allows to choose a timewindow witch is a duration until now where SLA are
+computed
+
+SLA Thresholds
+--------------
+
+SLA takes care of a warning and a critical percent level that defines what value
+the computed event state will be. These values have to be **between 0 and 100** percents
+and if the threshold of one of these value is reached, the event takes a special
+state.
+
+for exemple, when a selector spend **90%** of it's time in alert in the given
+timewindow (one of minor, major or critical state) and the critical threshold value
+is 85, then the sla event will hold the critical state.
+
+SLA minor state is reached when the alert percent value is greater than the warning
+threshold and lower than the warning threshold.
+
+SLA configuration sample:
+
+.. image:: ../../_static/images/frontend/sla_configuration.png
