@@ -168,7 +168,8 @@ class KnownValues(unittest.TestCase):
         sla.update_sla_information(100, 1, 0, info)
         sleep(1)
 
-        result = sla.compute_sla(2, info, 0)
+        tw_prev_state = 0
+        result = sla.compute_sla(2, info, 0, tw_prev_state)
         result1 = result[0] - 0.5
         result2 = result[1] - 0.5
 
@@ -176,7 +177,7 @@ class KnownValues(unittest.TestCase):
         self.assertTrue(result1 < 0.05)
         self.assertTrue(result2 < 0.05)
 
-    def test_04_compute_sla_missing_time(self):
+    def test_05_compute_sla_missing_time(self):
         # It should compute sla with specific values and expected results
         # Missing time at between last state change and now
         sla = self.get_sla()
@@ -190,13 +191,13 @@ class KnownValues(unittest.TestCase):
             u'3': []
         }
 
-        result = sla.compute_sla(100, info, 0)
+        prev_state_tw_start = 0
+        result = sla.compute_sla(100, info, 0, prev_state_tw_start)
 
         # result 1 is 30% because of start missing time and result 2 is 70%
         # we got a total of about 100%
         result1 = result[0] - 0.3
         result2 = result[2] - 0.7
-
         # sla measure (approx 1%)
         self.assertTrue(abs(result1) < 0.01)
         self.assertTrue(abs(result2) < 0.01)
@@ -215,7 +216,8 @@ class KnownValues(unittest.TestCase):
         }
 
         # Set missing time on minor state
-        result = sla.compute_sla(100, info, minor)
+        prev_state_tw_start = 1
+        result = sla.compute_sla(100, info, minor, prev_state_tw_start)
         # result 1 is 30% because of start missing time and result 2 is 70%
         # we got a total of about 100%
         result1 = result[0] - 0.2
@@ -227,20 +229,116 @@ class KnownValues(unittest.TestCase):
         self.assertTrue(abs(result2) < 0.01)
         self.assertTrue(abs(result3) < 0.01)
 
-    def test_04_compute_sla_output(self):
+    def test_06_compute_timewindow_start_state(self):
+        # It should compute state at start of timewindow on update
+        # It should add entries when a change state appends
+        now = time()
+        sla = self.get_sla()
+
+        # It should produce the 1 state as sla information is out of timewindow
+        info = self.sla_information.copy()
+        info['1'] = [{'start': now - 15, 'stop': now - 14}]
+        tw_start_state = sla.update_sla_information(10, 0, 0, info)
+        self.assertEqual(tw_start_state, 1)
+
+        # It should produce the 2 state as sla information is out of timewindow
+        info = self.sla_information.copy()
+        info['2'] = [{'start': now - 15, 'stop': now - 14}]
+        tw_start_state = sla.update_sla_information(10, 0, 0, info)
+        self.assertEqual(tw_start_state, 2)
+
+        # It should produce the None state as sla information is in timewindow
+        timewindow = 20
+        info = self.sla_information.copy()
+        info['2'] = [{'start': now - 15, 'stop': now - 14}]
+        info['3'] = [{'start': now - 14, 'stop': now - 10}]
+        tw_start_state = sla.update_sla_information(timewindow, 0, 0, info)
+        self.assertEqual(tw_start_state, None)
+
+        # It should produce the 3 state as sla information are in timewindow
+        # and state 1 is the latest to be excluded
+        info = self.sla_information.copy()
+        info['2'] = [{'start': now - 15, 'stop': now - 14}]
+        info['3'] = [{'start': now - 14, 'stop': now - 10}]
+        tw_start_state = sla.update_sla_information(10, 0, 0, info)
+        self.assertEqual(tw_start_state, 3)
+
+    def test_07_compute_sla_output(self):
 
         # It should generate a specific string with given data structure
         sla = self.get_sla()
         template = '[OFF],[MINOR],[MAJOR],[CRITICAL],[ALERTS]'
-        output = sla.compute_output(template, {0: 0, 1: 1.2, 2: 2.23333, 3: 3})
-        self.assertEqual(output, '0,1.2,2.23333,3,6.43333')
+        output = sla.compute_output(template, {
+            0: 0,
+            1: 0.012,
+            2: 0.0223333,
+            3: 0.03
+        })
+        self.assertEqual(output, '0.00,1.20,2.23,3.00,6.43')
 
         # User may not fill all fields, alert should always compute properly
         template = '[OFF] - [MAJOR] - [ALERTS]'
-        output = sla.compute_output(template, {0: 11, 1: 1.2, 2: 11, 3: 3})
-        self.assertEqual(output, '11 - 11 - 15.2')
+        output = sla.compute_output(template, {
+            0: 0.11,
+            1: 0.012,
+            2: 0.11,
+            3: 0.03
+        })
+        self.assertEqual(output, '11.00 - 11.00 - 15.20')
 
-    def test_04_prepare_event(self):
+    def test_08_compute_sla_output_accuracy(self):
+        # It should make sla repartition to 25% on each state
+        sla = self.get_sla()
+        now = time()
+        timewindow = 40
+        info = {
+            u'0': [{u'start': now - 40, u'stop': now - 30}],
+            u'1': [{u'start': now - 30, u'stop': now - 20}],
+            u'2': [{u'start': now - 20, u'stop': now - 10}],
+            u'3': [{u'start': now - 10, u'stop': now}]
+        }
+
+        result = sla.compute_sla(timewindow, info, 0, None)
+
+        # we got a total of about 100%
+        result0 = result[0] - 0.25
+        result1 = result[1] - 0.25
+        result2 = result[2] - 0.25
+        result3 = result[3] - 0.25
+
+        # sla measure (approx 1%)
+        self.assertTrue(abs(result0) < 0.01)
+        self.assertTrue(abs(result1) < 0.01)
+        self.assertTrue(abs(result2) < 0.01)
+        self.assertTrue(abs(result3) < 0.01)
+
+        # It should make sla repartition to 25% on each state
+        # Becaule missing time is attribued to the previous state
+        sla = self.get_sla()
+        now = time()
+        timewindow = 40
+        info = {
+            u'0': [],
+            u'1': [{u'start': now - 30, u'stop': now - 20}],
+            u'2': [{u'start': now - 20, u'stop': now - 10}],
+            u'3': [{u'start': now - 10, u'stop': now}]
+        }
+
+        result = sla.compute_sla(timewindow, info, 0, None)
+
+        # we got a total of about 100%
+        result0 = result[0] - 0.25
+        result1 = result[1] - 0.25
+        result2 = result[2] - 0.25
+        result3 = result[3] - 0.25
+
+        # sla measure (approx 1%)
+        self.assertTrue(abs(result0) < 0.01)
+        self.assertTrue(abs(result1) < 0.01)
+        self.assertTrue(abs(result2) < 0.01)
+        self.assertTrue(abs(result3) < 0.01)
+
+    def test_09_prepare_event(self):
 
         class MockSelector(object):
             display_name = 'test_display'

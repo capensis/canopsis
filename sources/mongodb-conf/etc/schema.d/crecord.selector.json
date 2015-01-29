@@ -113,7 +113,7 @@
 		},
 		"sla_output_tpl": {
 			"type": "string",
-			"default" :"Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL], Alerts [ALERTS]"
+			"default" :"Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%, Critical: [CRITICAL]%, Alerts [ALERTS]%"
 		},
 		"output_tpl": {
 			"type": "string",

@@ -140,8 +140,8 @@ class Selector(Record):
 
         # Defines default sla template if no one exists
         default_sla_template = (
-            'Off: [OFF], Minor: [MINOR], Major: [MAJOR],' +
-            ' Critical: [CRITICAL], Alerts [ALERTS]'
+            'Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%,' +
+            ' Critical: [CRITICAL]%, Alerts [ALERTS]%'
         )
         if ('sla_output_tpl' not in self.data or
                 self.data['sla_output_tpl'] is None):
@@ -160,6 +160,11 @@ class Selector(Record):
             return DEFAULT_SLA_TIMEWINDOW
         else:
             return timewindow
+
+    def get_state_at_timewindow_start(self):
+        state = self.data.get('state_at_timewindow_start', None)
+        self.logger.debug('state_at_timewindow_start {}'.format(state))
+        return state
 
     def get_previous_selector_state(self):
         return self.data.get('previous_selector_state', None)

@@ -60,12 +60,14 @@ class Sla(object):
         self.logger.debug('Timewindow is {}'.format(timewindow))
 
         previous_selector_state = selector_record.get_previous_selector_state()
+        prev_state_tw_start = selector_record.get_state_at_timewindow_start()
+
         current_state = event['state']
 
         previous_sla_information = sla_information.copy()
 
         # sla_information is updated in this method
-        self.update_sla_information(
+        state_at_timewindow_start = self.update_sla_information(
             timewindow,
             current_state,
             previous_selector_state,
@@ -79,6 +81,7 @@ class Sla(object):
             self.update_selector_record(
                 current_state,
                 previous_selector_state,
+                state_at_timewindow_start,
                 sla_information,
                 storage,
                 record_id
@@ -88,7 +91,8 @@ class Sla(object):
         sla_measures = self.compute_sla(
             timewindow,
             sla_information,
-            previous_selector_state
+            previous_selector_state,
+            prev_state_tw_start
         )
         self.logger.debug('Sla measures is {}'.format(sla_measures))
 
@@ -101,6 +105,7 @@ class Sla(object):
         self,
         current_state,
         previous_selector_state,
+        state_at_timewindow_start,
         sla_information,
         storage,
         record_id
@@ -118,6 +123,9 @@ class Sla(object):
         }
         if current_state != previous_selector_state:
             update['previous_selector_state'] = current_state
+
+        if state_at_timewindow_start is not None:
+            update['state_at_timewindow_start'] = state_at_timewindow_start
 
         storage.update(record_id, update)
 
@@ -159,18 +167,36 @@ class Sla(object):
         removing entries that are not part of the given timewindow
         It also adds new information to this dict when the current
         selector state changed.
+        It modifies the sla information dict given as param and returns
+        the state where the selector was at start of timewindow.
         """
         now = time()
         start_date = now - timewindow
 
+        # Allow computing last state whose sla missing time is attribued
+        latest_date_clear = 0
+        # This state is the one in witch selector was before the timewindow.
+        state_at_timewindow_start = None
+
         # Clear timewindow that are out of sla scope.
         for state in self.states:
             cleaned_state_info = []
+
             # Keep only information that remains in the current timewindow
             for window in sla_information[str(state)]:
-                if (window.get('start', None) >= start_date or
-                        window.get('stop', None) >= start_date):
+                start = window.get('start', None)
+                stop = window.get('stop', None)
+                if start >= start_date or stop >= start_date:
                     cleaned_state_info.append(window)
+                else:
+                    # latest date clear just help retrieving the good state
+                    if start > latest_date_clear:
+                        latest_date_clear = start
+                        state_at_timewindow_start = state
+                    # stop date may not exist
+                    if stop > latest_date_clear:
+                        latest_date_clear = stop
+                        state_at_timewindow_start = state
 
             # New information computed
             sla_information[str(state)] = cleaned_state_info
@@ -189,7 +215,18 @@ class Sla(object):
                     len(sla_information[str(previous_selector_state)])):
                 sla_information[str(previous_selector_state)][-1]['stop'] = now
 
-    def compute_sla(self, timewindow, sla_information, previous_state):
+        self.logger.debug('computed state_at_timewindow_start is {}'.format(
+            state_at_timewindow_start
+        ))
+        return state_at_timewindow_start
+
+    def compute_sla(
+        self,
+        timewindow,
+        sla_information,
+        previous_state,
+        prev_state_tw_start
+    ):
 
         """
         From a sla informatio dict, a new dict is computed and looks like
@@ -228,11 +265,8 @@ class Sla(object):
                 # Stop can be not already defined ,
                 # and then computation is done until now
                 if 'stop' not in window:
-                    stop = start
-                    previous_state_missing_time += now - window['start']
-                    self.logger.debug('previous_state_missing_time {}'.format(
-                        previous_state_missing_time
-                    ))
+                    # stop is set same as start then difference equals 0
+                    stop = now
                 else:
                     stop = window['stop']
 
@@ -243,44 +277,57 @@ class Sla(object):
 
                 total_duration += duration
 
-            # Avoids division by 0
+            # Avoids division by 0, may introduce precision errors
             if timewindow == 0:
                 timewindow = 1
                 self.logger.warning(
                     'timewindow for sla computation is 0,' +
                     ' this may not be normal'
                 )
+
             # Keys are not string
             results[state] = float(total_duration) / float(timewindow)
 
+        # When state at start of time window is not defined,
+        # then take the previous state instead
+        if prev_state_tw_start is None:
+
+            # Consider that missing time is for previous state.
+            if previous_state is None:
+                previous_state = 0
+            missing_time_state_target = previous_state
+        else:
+            missing_time_state_target = prev_state_tw_start
+
         # Add difference between first date and now - timewindow
-        missing_time = lowest_date - (now - timewindow)
-        missing_time += previous_state_missing_time
+        missing_time = lowest_date - timewindow_date_start
         missing_time_percent = float(missing_time) / float(timewindow)
+
         self.logger.debug('missing time is {}, represents {} %'.format(
             missing_time,
             missing_time_percent * 100
         ))
 
-        # Consider that missing time is for previous state.
-        if previous_state is None:
-            previous_state = 0
-        results[previous_state] += missing_time_percent
+        results[missing_time_state_target] += missing_time_percent
 
         return results
 
     def compute_output(self, template, sla_measures):
 
+        def to_percent(value):
+            value = value * 100
+            return ("%0.2f" % value)
+
         if isinstance(template, basestring):
-            output = template.replace('[OFF]', str(sla_measures[0]))
-            output = output.replace('[MINOR]', str(sla_measures[1]))
-            output = output.replace('[MAJOR]', str(sla_measures[2]))
-            output = output.replace('[CRITICAL]', str(sla_measures[3]))
+            output = template.replace('[OFF]', to_percent(sla_measures[0]))
+            output = output.replace('[MINOR]', to_percent(sla_measures[1]))
+            output = output.replace('[MAJOR]', to_percent(sla_measures[2]))
+            output = output.replace('[CRITICAL]', to_percent(sla_measures[3]))
             output = output.replace(
                 '[ALERTS]',
-                str(sla_measures[1] + sla_measures[2] + sla_measures[3])
+                to_percent(sla_measures[1] + sla_measures[2] + sla_measures[3])
             )
-
+            self.logger.debug('SLA computed output is : {}'.format(output))
             return output
         else:
             self.logger.warning('Sla template is not a string, nothing done.')
