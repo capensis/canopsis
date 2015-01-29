@@ -125,16 +125,26 @@ class Selector(Record):
 
         self.data = dump
 
+    def get_value(self, property_name, default_value):
+        """
+        Allow accessing record property with set of a default value
+        instead of None value
+        """
+        # Dealing with the old strange record system.
+        if (property_name not in self.data or
+                self.data[property_name] is None):
+            return default_value
+        else:
+            return self.data[property_name]
+
     def get_output_tpl(self):
 
-        default_template = 'Off: [OFF], Minor: [MINOR], Major: [MAJOR]' + \
+        default_template = (
+            'Off: [OFF], Minor: [MINOR], Major: [MAJOR]' +
             ', Critical: [CRITICAL]'
+        )
 
-        if ('output_tpl' not in self.data or
-                self.data['output_tpl'] is None):
-            return default_template
-        else:
-            return self.data['output_tpl']
+        return self.get_value('output_tpl', default_template)
 
     def get_sla_output_tpl(self):
 
@@ -143,11 +153,7 @@ class Selector(Record):
             'Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%,' +
             ' Critical: [CRITICAL]%, Alerts [ALERTS]%'
         )
-        if ('sla_output_tpl' not in self.data or
-                self.data['sla_output_tpl'] is None):
-            return default_sla_template
-        else:
-            return self.data['sla_output_tpl']
+        return self.get_value('sla_output_tpl', default_sla_template)
 
     def get_sla_timewindow(self):
 
@@ -167,7 +173,27 @@ class Selector(Record):
         return state
 
     def get_previous_selector_state(self):
+
         return self.data.get('previous_selector_state', None)
+
+    def get_percent_property(self, property_name, default_value):
+        """
+        Allow accessing percent values from a record property
+        """
+        value = self.get_value(property_name, default_value)
+
+        if value >= 0 and value <= 100:
+            return value
+        else:
+            return default_value
+
+    def get_sla_warning(self):
+
+        return self.get_percent_property('sla_warning', 40)
+
+    def get_sla_critical(self):
+
+        return self.get_percent_property('sla_critical', 80)
 
     # Build MongoDB query to find every id matching event
     def makeMfilter(self):

@@ -345,7 +345,7 @@ class KnownValues(unittest.TestCase):
 
         sla = self.get_sla()
         measures = {0: 0, 1: 1, 2: 2, 3: 3}
-        event = sla.prepare_event(MockSelector(), measures, 'output')
+        event = sla.prepare_event(MockSelector(), measures, 'output', 0)
         self.assertEqual(event['event_type'], 'sla')
         self.assertEqual(event['component'], 'sla')
         self.assertEqual(event['source_type'], 'resource')
@@ -364,6 +364,57 @@ class KnownValues(unittest.TestCase):
         self.assertEqual(event['state'], 0)
         self.assertEqual(event['output'], 'output')
         self.assertEqual(event['connector_name'], 'engine')
+
+    def test_10_compute_sla_state(self):
+
+        # Create and test mock
+        class MockSelector(object):
+            def __init__(self, warning, critical):
+
+                def warn():
+                    return warning
+                self.get_sla_warning = warn
+
+                def crit():
+                    return critical
+                self.get_sla_critical = crit
+
+        mock = MockSelector(2, 3)
+        self.assertEqual(mock.get_sla_warning(), 2)
+        self.assertEqual(mock.get_sla_critical(), 3)
+
+        # It compute state for sla depending on given thresholds
+        sla = self.get_sla()
+        now = time()
+
+        # Alerts mesaure is sum(M[1],M[2],M[3]) witch is tested below
+        sla_measures = {
+            0: 0.25,
+            1: 0.25,
+            2: 0.25,
+            3: 0.25
+        }
+
+        # It should compute a state equal to 0 because no limit passed
+        state = sla.compute_state(
+            sla_measures,
+            MockSelector(80, 90)
+        )
+        self.assertEqual(state, 0)
+
+        # It should compute a state equal to 1
+        state = sla.compute_state(
+            sla_measures,
+            MockSelector(70, 90)
+        )
+        self.assertEqual(state, 1)
+
+        # It should compute a state equal to 3
+        state = sla.compute_state(
+            sla_measures,
+            MockSelector(70, 71)
+        )
+        self.assertEqual(state, 3)
 
 
 if __name__ == "__main__":
