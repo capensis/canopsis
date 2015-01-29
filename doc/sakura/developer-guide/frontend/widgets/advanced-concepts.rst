@@ -49,7 +49,7 @@ For example :
          }
       }, widgetoptions);
    
-      return widget
+      return widget;
    });
 
 Make your widget interactive
