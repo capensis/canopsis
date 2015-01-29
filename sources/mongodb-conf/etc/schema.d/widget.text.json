@@ -22,7 +22,7 @@
 			"type": "string"
 		},
 		"html": {
-			"description": "Allow writting widget text template with some helpers. Refer to the documentation to get information about all availables features.",
+			"description": "Allow display event or metric values<ul><li>event component : {{event.event_label.component}}</li><li>serie's value {{serie.serie_name}}</li><li>human readable value {{hr value=serie.serie_name}}</li></ul>",
 			"type": "string",
 			"role": "richtext"
 		},

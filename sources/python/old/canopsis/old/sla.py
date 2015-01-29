@@ -99,7 +99,37 @@ class Sla(object):
         # Compute template from sla measures
         output = self.compute_output(template, sla_measures)
 
-        self.event = self.prepare_event(selector_record, sla_measures, output)
+        state = self.compute_state(sla_measures, selector_record)
+        self.logger.debug('Sla computed state is {}'.format(state))
+        self.logger.debug('thresholds : warning {}, critical {}'.format(
+            selector_record.get_sla_warning(),
+            selector_record.get_sla_critical()
+        ))
+
+        self.event = self.prepare_event(
+            selector_record,
+            sla_measures,
+            output,
+            state
+        )
+
+    def compute_state(self, sla_measures, selector_record):
+
+        warning = selector_record.get_sla_warning()
+        critical = selector_record.get_sla_critical()
+        alerts_percent = sla_measures[1] + sla_measures[2] + sla_measures[3]
+
+        CRITICAL = 3
+        MINOR = 1
+        INFO = 0
+
+        if alerts_percent > float(critical) / 100.0:
+            return CRITICAL
+
+        if alerts_percent > float(warning) / 100.0:
+            return MINOR
+
+        return INFO
 
     def update_selector_record(
         self,
@@ -333,7 +363,7 @@ class Sla(object):
             self.logger.warning('Sla template is not a string, nothing done.')
             return ''
 
-    def prepare_event(self, selector_record, sla_measures, output):
+    def prepare_event(self, selector_record, sla_measures, output, sla_state):
 
         perf_data_array = []
 
@@ -359,7 +389,7 @@ class Sla(object):
             source_type="resource",
             component='sla',
             resource=selector_record.display_name,
-            state=0,
+            state=sla_state,
             output=output,
             perf_data=None,
             perf_data_array=perf_data_array,
