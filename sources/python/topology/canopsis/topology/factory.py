@@ -118,7 +118,7 @@ class Factory(object):
         f = formatter.Formatter(topo_id)
         # kind=1 means to get formatted components
         components = f.get_event_type(kind=1)
-        # Operator components
+        # Components by operator
         opcomps = f.match_operator(components)
         # List of Nodes (TopoNodes)
         node_list = []
