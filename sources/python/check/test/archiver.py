@@ -18,18 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest
-from logging import DEBUG as loggingDEBUG, basicConfig as loggingBasicConfig
-from logging import INFO
+from unittest import TestCase, main
 
-from canopsis.old.archiver import Archiver
+from canopsis.check.archiver import Archiver
 
 ARCHIVER = None
-
-loggingBasicConfig(
-    level=loggingDEBUG,
-    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-    )
 
 # Statuses
 OFF = 0
@@ -44,69 +37,73 @@ def setFields(_map, **kwargs):
         _map[key] = kwargs[key]
 
 
-class KnownValues(unittest.TestCase):
+class KnownValues(TestCase):
     def setUp(self):
-        self.Archiver = Archiver(namespace='unittest',
-                                 autolog=True,
-                                 logging_level=loggingDEBUG)
-        self.Archiver.beat()
+        self.archiver = Archiver(
+            namespace='unittest',
+            autolog=True
+        )
+        self.archiver.beat()
+        self.archiver.reset_stealthy_event()
 
     def test_01_check_statuses(self):
 
-        devent = {'rk': 'test_03_check_statuses',
-                  'status': 0,
-                  'timestamp': 14389,
-                  'state': 0}
+        devent = {
+            'rk': 'test_03_check_statuses',
+            'status': 0,
+            'timestamp': 14389,
+            'state': 0
+        }
 
-        event = {'rk': 'test_03_check_statuses',
-                 'status': 0,
-                 'timestamp': 14400,
-                 'state': 0}
+        event = {
+            'rk': 'test_03_check_statuses',
+            'status': 0,
+            'timestamp': 14400,
+            'state': 0
+        }
 
         # Check that event stays off even if it appears
         # more than the bagot freq in the stealthy/bagot interval
-        for x in xrange(1, 50):
-            self.Archiver.check_statuses(event, devent)
+        for x in range(1, 50):
+            self.archiver.check_statuses(event, devent)
             devent = event.copy()
-            setFields(event, timestamp=(event['timestamp']+1))
+            setFields(event, timestamp=(event['timestamp'] + 1))
             self.assertEqual(event['status'], OFF)
 
         # Set state to alarm, event should be On Going
         setFields(event, state=1)
-        self.Archiver.check_statuses(event, devent)
+        self.archiver.check_statuses(event, devent)
         self.assertEqual(event['status'], ONGOING)
         devent = event.copy()
 
         # Set state back to Ok, event should be Stealthy
         setFields(event, state=0)
-        self.Archiver.check_statuses(event, devent)
+        self.archiver.check_statuses(event, devent)
         self.assertEqual(event['status'], STEALTHY)
         devent = event.copy()
 
         # Move TS out of stealthy range, event should be On Going
-        setFields(event, state=1, timestamp=event['timestamp']+1000)
-        self.Archiver.check_statuses(event, devent)
+        setFields(event, state=1, timestamp=event['timestamp'] + 1000)
+        self.archiver.check_statuses(event, devent)
         self.assertEqual(event['status'], ONGOING)
         devent = event.copy()
 
         # Check that the event is at Bagot when the requirments are met
-        for x in xrange(1, 14):
+        for x in range(1, 14):
             if x % 2:
-                setFields(event, state=0 if event['state'] else 1);
-            self.Archiver.check_statuses(event, devent)
-            setFields(event, timestamp=(event['timestamp']+1))
-            if devent['bagot_freq'] >= self.Archiver.bagot_freq:
+                setFields(event, state=0 if event['state'] else 1)
+            self.archiver.check_statuses(event, devent)
+            setFields(event, timestamp=(event['timestamp'] + 1))
+            if devent['bagot_freq'] >= self.archiver.bagot_freq:
                 self.assertEqual(event['status'], BAGOT)
             devent = event.copy()
 
         # Check that the event is On Going if out of the Bagot time interval
-        setFields(event, state=1, timestamp=event['timestamp']+4000)
-        self.Archiver.check_statuses(event, devent)
+        setFields(event, state=1, timestamp=event['timestamp'] + 4000)
+        self.archiver.check_statuses(event, devent)
         self.assertEqual(event['status'], ONGOING)
         devent = event.copy()
 
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
-
-
+    main(verbosity=2)

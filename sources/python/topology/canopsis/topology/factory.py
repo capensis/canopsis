@@ -118,7 +118,7 @@ class Factory(object):
         f = formatter.Formatter(topo_id)
         # kind=1 means to get formatted components
         components = f.get_event_type(kind=1)
-        # Operator components
+        # Components by operator
         opcomps = f.match_operator(components)
         # List of Nodes (TopoNodes)
         node_list = []
@@ -195,6 +195,7 @@ class Factory(object):
                     _else = new_conf(action.change_state, state=int(else_value))
                 else:
                     _else = new_conf(action.worst_state)
+                # Add the component label
                 if tmpdict.get('label') is None:
                     data['label'] = tmpdict.get('component')
                 else:
@@ -206,6 +207,7 @@ class Factory(object):
         if comp_worst is not None:
             for cmps in comp_worst:
                 tmpdict = cmps.values()[0]
+                # Add the component label
                 if tmpdict.get('label') is None:
                     data['label'] = tmpdict.get('component')
                 else:
@@ -239,10 +241,11 @@ class Factory(object):
                     _else = new_conf(action.change_state, state=int(else_value))
                 else:
                     _else = new_conf(action.worst_state)
-                if tmpdict.get('label') is None:
-                    data['label'] = tmpdict.get('component')
+                # Add the component label
+                if mydict.get('label') is None:
+                    data['label'] = mydict.get('component')
                 else:
-                    data['label'] = tmpdict.get('label')
+                    data['label'] = mydict.get('label')
                 node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else), data=data))
                 data = {}
 
@@ -278,10 +281,11 @@ class Factory(object):
                     _else = new_conf(action.change_state, state=int(else_value))
                 else:
                     _else = new_conf(action.worst_state)
-                if tmpdict.get('label') is None:
-                    data['label'] = tmpdict.get('component')
+                # Add the component label
+                if mydict.get('label') is None:
+                    data['label'] = mydict.get('component')
                 else:
-                    data['label'] = tmpdict.get('label')
+                    data['label'] = mydict.get('label')
                 node_list.append(self.create_component(cmps.keys()[0], dict_op=self.cluster(condition, statement, _else), data=data))
                 data = {}
         # OPERATOR_ID[4] --> Best State
@@ -289,10 +293,10 @@ class Factory(object):
         if comp_best is not None:
             for cmps in comp_best:
                 mydict = cmps.values()[0]
-                if tmpdict.get('label') is None:
-                    data['label'] = tmpdict.get('component')
+                if mydict.get('label') is None:
+                    data['label'] = mydict.get('component')
                 else:
-                    data['label'] = tmpdict.get('label')
+                    data['label'] = mydict.get('label')
                 node_list.append(self.create_component(cmps.keys()[0], dict_op=new_conf(action.best_state), data=data))
                 data = {}
 
@@ -325,7 +329,6 @@ class Factory(object):
         else:
             self.logger.info('Component {} does no exist in the Database ...'.format(comp_ID))
             print 'Component {} does no exist in the Database ...'.format(comp_ID)
-
 
 if __name__ == '__main__':
     fact = Factory()

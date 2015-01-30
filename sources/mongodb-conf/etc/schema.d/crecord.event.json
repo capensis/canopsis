@@ -79,7 +79,6 @@
 		},
 		"output": {
 			"type": "string",
-			"role": "richtext",
 			"required": true,
 			"description": "output of the event",
 			"title": "Output"

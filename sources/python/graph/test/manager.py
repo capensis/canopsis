@@ -421,6 +421,31 @@ class GraphTest(TestCase):
 
         # test target_query
 
+    def test_orphans(self):
+        """
+        Test get orphans method.
+        """
+        # check if no orphans exist
+        orphans = self.manager.get_orphans()
+        self.assertFalse(orphans)
+        # generate self.count vertices and edges
+        [Vertice().save(self.manager) for i in range(self.count)]
+        [Edge().save(self.manager) for i in range(self.count)]
+        # check if previous vertices and edges are orphans
+        orphans = self.manager.get_orphans()
+        self.assertEqual(len(orphans), 2 * self.count)
+        # create a graph and add orphans to the graph
+        graph = Graph()
+        graph.add_elts(orphans)
+        graph.save(manager=self.manager)
+        # check if only the graph is an orphan
+        orphans = self.manager.get_orphans()
+        self.assertEqual(len(orphans), 1)
+        # delete the graph and check if vertices and edges became orphans
+        graph.delete(manager=self.manager)
+        orphans = self.manager.get_orphans()
+        self.assertEqual(len(orphans), 2 * self.count)
+
 
 class PutEltsTest(TestCase):
 

@@ -382,16 +382,24 @@ class Sla(object):
                 'value': sla_measures[state]
             })
 
-        return forger(
+        event = forger(
             connector="sla",
             connector_name="engine",
             event_type="sla",
             source_type="resource",
-            component='sla',
-            resource=selector_record.display_name,
+            component=selector_record.display_name,
+            resource='sla',
             state=sla_state,
             output=output,
-            perf_data=None,
             perf_data_array=perf_data_array,
             display_name=selector_record.display_name
         )
+
+        self.logger.info('publishing sla {}, states {}'.format(
+            selector_record.display_name,
+            sla_measures
+        ))
+        self.logger.debug('event: {}'.format(event))
+
+        return event
+

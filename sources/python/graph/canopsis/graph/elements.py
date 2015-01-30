@@ -675,6 +675,8 @@ class Graph(Vertice):
                         self._delts.remove(elt_dict)
                         if elt_id in self.elts:
                             self.elts.remove(elt_id)
+            elif isinstance(elt, Iterable):
+                self.remove_elts(*elt)
 
     def to_dict(self):
 
@@ -757,3 +759,14 @@ class Graph(Vertice):
             for elt in self._delts:
                 elt = Graph.new_element(**elt)
                 elt.save(manager=manager, cache=cache)
+
+    def delete(self, manager, cache=False, del_orphans=True, *args, **kwargs):
+
+        super(Graph, self).delete(
+            manager=manager, cache=cache, *args, **kwargs
+        )
+
+        if del_orphans:
+            manager.remove_elts(
+                ids=self.elts, del_orphans=del_orphans, cache=cache
+            )
