@@ -26,8 +26,8 @@ from canopsis.old.record import Record
 from canopsis.old.rabbitmq import Amqp
 from canopsis.old.event import get_routingkey
 
-from canopsis.context.manager import Context
-from canopsis.check.manager import CheckManager
+#from canopsis.context.manager import Context
+#from canopsis.check.manager import CheckManager
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
@@ -51,14 +51,14 @@ CATEGORY = 'ARCHIVER'
 class Archiver(Configurable):
 
     def __init__(
-        self, namespace, confnamespace, storage=None, autolog=False,
+        self, namespace, confnamespace='object', storage=None, autolog=False,
         *args, **kwargs
     ):
 
         super(Archiver, self).__init__(*args, **kwargs)
 
-        self.context = Context()
-        self.check = CheckManager()
+        #self.context = Context()
+        #self.check = CheckManager()
 
         self.namespace = namespace
         self.namespace_log = namespace + '_log'
@@ -433,8 +433,8 @@ class Archiver(Configurable):
         self.incoming_events[_id] = event
 
         # use the check manager in order to save the state
-        entity = self.context.get_entity_id(event)
-        self.check.state(ids=entity['id'], state=event['state'], cache=True)
+        #entity_id = self.context.get_entity_id(event)
+        #self.check.state(ids=entity_id['id'], state=event['state'], cache=True)
 
         # Processing many events condition computation
         bulk_modulo = len(self.bulk_ids) % self.bulk_amount
