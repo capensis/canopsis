@@ -341,6 +341,9 @@ class Context(MiddlewareRegistry):
         Get the right context related to input entity
         """
 
+        if Context.NAME not in entity:
+            entity[Context.NAME] = entity[entity[Context.TYPE]]
+
         result = self[Context.CTX_STORAGE].get_path_with_id(entity)
 
         return result
