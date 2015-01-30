@@ -50,12 +50,19 @@ First, click on the *Create* button, a new form will appears:
 Detailed form:
 
  * **Name:** serie's name, will be used to labelize the serie on a chart ;
- * **Data source:** metrics that will be fetched to feed the serie ;
- * **formula**:
-    * mathematical formula that will be used to consolidate the fetched metrics in a single point ;
-    * each metric is identified by the following format : ``/<component>/<resource>/<metric>``.
+ * **Data source:** metrics that will be fetched to feed the serie.
 
 .. image:: ../../_static/images/uiv2/series/serieform1.png
+
+Detailed form:
+
+ * **aggregation method:** method used to aggregate metrics points ;
+ * **aggregation interval:** time interval between two aggregated points.
+ * **formula**:
+    * mathematical formula that will be used to consolidate the fetched metrics in a single point ;
+    * click on a metric in the list to add it in the formula.
+
+.. image:: ../../_static/images/uiv2/series/serieform2.png
 
 Detailed form:
 
@@ -64,13 +71,6 @@ Detailed form:
  * **warn:** warning threshold ;
  * **crit:** critical threshold ;
  * **unit:** serie's unit.
-
-.. image:: ../../_static/images/uiv2/series/serieform2.png
-
-Detailed form:
-
- * **aggregation method:** method used to aggregate metrics points ;
- * **aggregation interval:** time interval between two aggregated points.
 
 How to make a curve
 -------------------

@@ -1,13 +1,13 @@
 {
     "categories": [{
-        "title": "General",
-        "keys": ["crecord_name", "metrics", "formula"]
+        "title": "Data Source",
+        "keys": ["crecord_name", "metrics"]
+    },{
+        "title": "Advanced Computation",
+        "keys": ["aggregate_method", "aggregate_interval", "formula"]
     },{
         "title": "Metadata",
         "keys": ["min", "max", "warn", "crit", "unit"]
-    },{
-        "title": "Advanced Computation",
-        "keys": ["aggregate_method", "aggregate_interval"]
     }],
     "type": "object",
     "properties": {
@@ -30,7 +30,7 @@
         },
         "formula": {
             "type": "string",
-            "role": "math",
+            "role": "serieformula",
             "required": true
         },
         "min": {"type": "number"},
