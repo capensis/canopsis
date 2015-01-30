@@ -78,7 +78,9 @@ class TopologyGraphTest(TestCase):
         self.manager.del_elts()
 
     def test_save(self):
-
+        """
+        Test if an entity exists after saving a topology.
+        """
         _id = 'test'
 
         topology = Topology(_id=_id)
@@ -87,6 +89,24 @@ class TopologyGraphTest(TestCase):
         topology = self.context.get(_type=topology.type, names=_id)
 
         self.assertEqual(topology[Context.NAME], _id)
+
+    def test_delete(self):
+        """
+        Test if topology nodes exist after deleting a topology.
+        """
+
+        topology = Topology()
+        node = TopoNode()
+        topology.add_elts(node)
+
+        topology.save(manager=self.manager)
+
+        node = self.manager.get_elts(node.id)
+        self.assertIsNotNone(node)
+
+        topology.delete(manager=self.manager)
+        node = self.manager.get_elts(node.id)
+        self.assertIsNone(node)
 
 
 if __name__ == '__main__':

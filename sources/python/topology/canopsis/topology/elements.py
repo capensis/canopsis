@@ -253,6 +253,14 @@ class Topology(Graph, TopoVertice):
         # put the topology in the context by default
         context.put(_type=self.type, entity=entity, context=ctx)
 
+    def delete(self, manager, cache=False, *args, **kwargs):
+
+        super(Topology, self).delete(
+            manager=manager, cache=cache, *args, **kwargs
+        )
+        # delete all elements
+        manager.del_elts(ids=self.elts, cache=cache)
+
 
 class TopoNode(Vertice, TopoVertice):
     """
