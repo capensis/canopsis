@@ -106,4 +106,4 @@ class KnownValues(TestCase):
 
 
 if __name__ == "__main__":
-    main(verbosity=2)
+    main()
