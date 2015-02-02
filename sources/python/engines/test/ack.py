@@ -28,15 +28,28 @@ from sys import path
 
 from time import time, sleep
 
-from kombu import Connection
-from kombu.pools import producers
+from canopsis.old.rabbitmq import Amqp
+from canopsis.old.event import get_routingkey
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 
+from logging import INFO
+
 path.append(expanduser('~/opt/amqp2engines/engines/'))
 
 before_ack_sent = time()
+
+
+# Mock ready function for amqp
+def ready():
+    self.logger.info(" Amqp Ready!")
+
+amqp = Amqp(
+    logging_level=INFO,
+    logging_name='ack-amqp',
+    on_ready=ready
+)
 
 
 def get_rk(event):
@@ -49,15 +62,13 @@ def get_rk(event):
 
 
 def publish(event):
-    with Connection(
-        hostname='localhost', userid='guest', virtual_host='canopsis') \
-            as conn:
-        with producers[conn].acquire(block=True) as producer:
-            producer.publish(
-                event,
-                serializer='json',
-                exchange='canopsis.events',
-                routing_key=get_rk(event))
+    rk = get_routingkey(event)
+
+    amqp.publish(
+        event,
+        rk,
+        amqp.exchange_name_events
+    )
 
 
 def log(message):
