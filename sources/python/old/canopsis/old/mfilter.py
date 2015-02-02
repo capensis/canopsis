@@ -25,6 +25,7 @@
 from re import I, search
 from operator import lt, le, gt, ge, ne, eq
 
+
 def field_check(mfilter, event, key):
     cond = {'$lt': lt,
             '$lte': le,
@@ -35,11 +36,11 @@ def field_check(mfilter, event, key):
 
     for op in mfilter[key]:
         if op == '$exists':
-            #check if key is in event
+            # check if key is in event
             if mfilter[key][op]:
                 if key not in event:
                     return False
-            #check if key is not in event
+            # check if key is not in event
             else:
                 if key in event:
                     return False
@@ -49,7 +50,10 @@ def field_check(mfilter, event, key):
                 return False
 
         elif op == '$regex' or (op == '$options' and "$regex" in mfilter[key]):
-            if not regex_match(event[key], mfilter[key]["$regex"], mfilter[key].get("$options", None)):
+            if not regex_match(
+                event[key], mfilter[key]["$regex"],
+                mfilter[key].get("$options", None)
+            ):
                 return False
 
         elif op == '$in':
@@ -85,6 +89,7 @@ def field_check(mfilter, event, key):
 
     return True
 
+
 def check(mfilter, event):
 
     # Check connector_name
@@ -111,7 +116,7 @@ def check(mfilter, event):
             # Check match for each elements in the list
             if isinstance(mfilter[key], list):
                 result = True
-                #testing len of filter
+                # testing len of filter
                 if len(mfilter[key]):
                     result = check(mfilter[key][0], event)
                     for sub_filter in mfilter[key][1:]:
@@ -137,10 +142,16 @@ def check(mfilter, event):
         # For each other case, just test the equality
         elif key in event:
             if isinstance(mfilter[key], dict):
-                if ((isinstance(event[key], dict) or isinstance(event[key], list)) and
-                    '$in' in mfilter[key]):
-                    if isinstance(event[key], list) and isinstance(event[key][0], dict):
-                        #For each elem of event[key], check if it's in mfilter[key]['$in']
+                if ((isinstance(event[key], dict) or
+                        isinstance(event[key], list)) and
+                        '$in' in mfilter[key]):
+
+                    if (isinstance(event[key], list) and
+                            len(event[key]) and
+                            isinstance(event[key][0], dict)):
+
+                        # For each elem of event[key],
+                        # check if it's in mfilter[key]['$in']
                         if not len([x for x in event[key] if any(y in x['name'] for y in mfilter[key]['$in'])]):
                             return False
                     else:
@@ -181,12 +192,14 @@ def check(mfilter, event):
     # If we arrive here, everything matched
     return True
 
+
 def regex_computeoptions(options):
     if isinstance(options, basestring):
         if "i" in options:
             return I
 
     return 0
+
 
 def regex_match(phrase, pattern, options=None):
     options = regex_computeoptions(options)
