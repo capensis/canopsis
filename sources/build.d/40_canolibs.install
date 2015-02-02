@@ -24,6 +24,7 @@ PROJECTS[20]='check'
 PROJECTS[21]='monitoring'
 PROJECTS[22]='graph'
 PROJECTS[23]='topology'
+PROJECTS[24]='sla'
 
 function build(){
 	true

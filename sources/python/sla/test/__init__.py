@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 'Capensis' [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -16,13 +17,14 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ----------------------
+# ---------------------------------
+
 
 from time import time, sleep
 import unittest
 from canopsis.old.selector import Selector
 from canopsis.old.record import Record
-from canopsis.old.sla import Sla
+from canopsis.sla import Sla
 
 
 class MockStorage(object):
@@ -347,9 +349,9 @@ class KnownValues(unittest.TestCase):
         measures = {0: 0, 1: 1, 2: 2, 3: 3}
         event = sla.prepare_event(MockSelector(), measures, 'output', 0)
         self.assertEqual(event['event_type'], 'sla')
-        self.assertEqual(event['component'], 'sla')
+        self.assertEqual(event['component'], 'test_display')
         self.assertEqual(event['source_type'], 'resource')
-        self.assertEqual(event['source_type'], 'resource')
+        self.assertEqual(event['resource'], 'sla')
         self.assertEqual(
             event['perf_data_array'],
             [
@@ -419,3 +421,5 @@ class KnownValues(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
