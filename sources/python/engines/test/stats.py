@@ -53,20 +53,20 @@ class StatsTest(TestCase):
     def test_compute_states(self):
         # Test all following metrics are produced and their values are positive
         metric_list = [
-            'states_info',
-            'states_minor',
-            'states_major',
-            'states_critical',
-            'states_resource',
-            'states_resource_info',
-            'states_resource_minor',
-            'states_resource_major',
-            'states_resource_critical',
-            'states_component',
-            'states_component_info',
-            'states_component_minor',
-            'states_component_major',
-            'states_component_critical'
+            'cps_states_info',
+            'cps_states_minor',
+            'cps_states_major',
+            'cps_states_critical',
+            'cps_count_resource',
+            'cps_states_resource_info',
+            'cps_states_resource_minor',
+            'cps_states_resource_major',
+            'cps_states_resource_critical',
+            'cps_count_component',
+            'cps_states_component_info',
+            'cps_states_component_minor',
+            'cps_states_component_major',
+            'cps_states_component_critical'
         ]
 
         self.engine.perf_data_array = []
@@ -88,7 +88,7 @@ class StatsTest(TestCase):
         )
         self.assertEqual(
             self.engine.amqp.rk,
-            'canopsis.engine.check.resource.stats.internal'
+            'engine.engine.perf.resource.Sphinx.Engine_stats'
         )
 
 if __name__ == "__main__":
