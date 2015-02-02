@@ -65,6 +65,7 @@ class ProcessingTest(TestCase):
         self.context = Context(data_scope='test_context')
         self.manager = TopologyManager(data_scope='test_topology')
         self.check = {
+            'type': 'check',
             'event_type': 'check',
             'connector': 'c',
             'connector_name': 'c',

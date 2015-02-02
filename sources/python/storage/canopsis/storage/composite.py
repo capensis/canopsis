@@ -268,7 +268,7 @@ class CompositeStorage(Storage):
 
         return result
 
-    def get_absolute_path(self, path, data_id):
+    def get_absolute_path(self, path, data_id=None):
         """
         Get input data absolute path.
 
@@ -284,15 +284,18 @@ class CompositeStorage(Storage):
         for n, field in enumerate(self.path):
             if field in path:
                 result = '%s%s%s' % (
-                    result, CompositeStorage.PATH_SEPARATOR,
-                        path[field])
+                    result,
+                    CompositeStorage.PATH_SEPARATOR,
+                    path[field]
+                )
             else:
                 break
 
-        if result:
+        if data_id is not None and result:
             result = '%s%s%s' % (
                 result, CompositeStorage.PATH_SEPARATOR,
-                data_id)
+                data_id
+            )
 
         return result
 
