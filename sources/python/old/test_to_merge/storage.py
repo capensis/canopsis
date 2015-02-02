@@ -24,7 +24,6 @@ from unittest import TestCase, main
 from canopsis.old.storage import Storage
 from canopsis.old.record import Record
 from canopsis.old.account import Account
-from canopsis.old.group import Group
 
 from logging import DEBUG, basicConfig
 
@@ -279,22 +278,6 @@ class KnownValues(TestCase):
         records = STORAGE.find(account=self.root_account)
         STORAGE.remove(records, account=self.root_account)
         pass
-
-    def test_22_admin_group_access(self):
-        root_account = Account(user="root", group="root")
-        storage = STORAGE
-        group = Group(name='administrator')
-        record = Record(_id='test_record',admin_group='group.administrator')
-        account = Account(user='tk', group='user')
-
-        storage.put(record, account=root_account)
-        group.add_accounts(account)
-        storage.put(account, account=root_account)
-
-        try:
-            output = storage.get(record._id, account=account)
-        except:
-            raise Exception('admin group can\'t access all the ressources of his group')
 
     def test_99_DropNamespace(self):
         STORAGE.drop_namespace('unittest')

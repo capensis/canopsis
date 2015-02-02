@@ -146,9 +146,6 @@ class KnownValues(unittest.TestCase):
         record = Record(data=conf,
                         name="event state specifications",
                         _type='statusmanagement')
-        record.chmod("g+w")
-        record.chmod("o+r")
-        record.chgrp('group.CPS_root')
         self.storage.put(record,
                          namespace='object',
                          account=self.account)

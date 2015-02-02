@@ -25,7 +25,6 @@ from json import dumps
 
 from canopsis.old.record import Record
 from canopsis.old.account import Account
-from canopsis.old.group import Group
 
 
 class KnownValues(TestCase):
