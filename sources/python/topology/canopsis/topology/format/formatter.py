@@ -36,7 +36,6 @@ class Formatter(object):
     OPERATOR_ID = ('Cluster', 'Worst State', 'And', 'Or', 'Best State')
     STATE = (0, 1, 2, 3, 4)
     CONTEXT = ('type', 'connector', 'connector_name', 'component', 'resource')
-    #TOPALL = "{'crecord_type':'topology'}, {crecord_name:1}"
     TOPALL = "{'crecord_type':'topology'}"
     TOPOQ = "{{'crecord_type':'topology', 'crecord_name':{!r}}}"
     # The collections name
