@@ -335,7 +335,7 @@ class TopoNode(Vertice, TopoVertice):
         return ctx, entity
 
 
-class TopoEdge(Edge):
+class TopoEdge(Edge, TopoVertice):
     """
     Topology edge.
     """
