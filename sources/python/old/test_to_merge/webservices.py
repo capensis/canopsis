@@ -20,119 +20,38 @@
 
 import unittest
 import json
+import requests
 
-from canopsis.old.webservices import Webservices
 
-WS = None
+webserver = 'http://127.0.0.1:8082'
 
-get_auth_uri = [
-    # account
-    '/account/me',
-    '/account/',
-    '/account/account.root',
-    # rest
-    '/rest/object',
-    '/rest/object/account',
-    '/rest/object/account/account.root',
-]
+# TODO All
 
 
 class KnownValues(unittest.TestCase):
+
     def setUp(self):
-        self.view_id = 'root.view.mytest'
-        self.view_name = 'mytest'
-
-        self.directory_id = 'root.view.mydir'
-        self.directory_name = 'mydir'
-
-        self.parent_directory = 'directory.root.root'
         pass
 
-    def test_01_Init(self):
-        global WS
-        WS = Webservices()
+    def login(self):
+        pass
 
-    def test_02_TestURL(self):
-        for uri in get_auth_uri:
-            success = False
-            try:
-                WS.get(uri)
-                success = True
-            except:
-                pass
+    def logout(self):
+        pass
 
-            if success:
-                raise Exception("%s is open !" % uri)
+    def test_01_init(self):
+        pass
 
-    def test_03_Login(self):
-        WS.login('root', 'root')
+    def test_02_test_url(self):
+        self.login()
+        urls_to_test = [
+            '/'
+        ]
 
-    def test_04_TestURLAuthed(self):
-        WS.login('root', 'root')
-
-        for uri in get_auth_uri:
-            WS.get(uri)
-
-    def test_05_Putting_View(self):
-        WS.login('root', 'root')
-        output = WS.put_view(
-            self.view_id, self.view_name, self.parent_directory)
-        try:
-            output = json.loads(output)
-        except:
-            raise Exception('Invalid webserver output')
-        WS.valid_server_response(output)
-
-    def test_06_Putting_Directory(self):
-        WS.login('root', 'root')
-        output = WS.put_view(
-            self.directory_id, self.directory_name, self.parent_directory,
-            leaf=False)
-        try:
-            output = json.loads(output)
-        except:
-            raise Exception('Invalid webserver output')
-        WS.valid_server_response(output)
-
-    def test_07_renaming_view(self):
-        WS.login('root', 'root')
-        output = WS.rename_view(self.view_id, 'myNewName')
-        try:
-            output = json.loads(output)
-        except:
-            raise Exception('Invalid webserver output')
-        WS.valid_server_response(output)
-
-    def test_08_Changing_directory(self):
-        WS.login('root', 'root')
-        output = WS.change_view_parent(self.view_id, self.directory_id)
-        try:
-            output = json.loads(output)
-        except:
-            raise Exception('Invalid webserver output')
-        WS.valid_server_response(output)
-
-    def test_09_Moving_back_view(self):
-        WS.login('root', 'root')
-        output = WS.change_view_parent(self.view_id, self.parent_directory)
-        try:
-            output = json.loads(output)
-        except:
-            raise Exception('Invalid webserver output')
-        WS.valid_server_response(output)
-
-    def test_10_delete_view_or_dir(self):
-        WS.login('root', 'root')
-        output = WS.delete_view_or_dir([self.view_id, self.directory_id])
-        try:
-            output = json.loads(output)
-        except:
-            raise Exception('Invalid webserver output')
-        WS.valid_server_response(output)
-
-    def test_99_Logout(self):
-        WS.logout()
-
+        for uri in urls_to_test:
+            r = requests.get(webserver + uri)
+            self.assertEqual(r.status_code, 200)
+        self.logout()
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
