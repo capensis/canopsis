@@ -742,7 +742,7 @@ class Graph(Vertice):
         return result
 
     def save(self, manager, graph_ids=None, cache=False, *args, **kwargs):
-
+        self.elts = list(set(self.elts))
         super(Graph, self).save(
             manager=manager,
             graph_ids=graph_ids,

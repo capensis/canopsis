@@ -325,10 +325,11 @@ class GraphTest(TestCase):
                 self.manager.remove_elts(ids=first_elt, graph_ids=graph.id)
                 graph = self.manager.get_graphs(ids=graph_id)
                 self.assertEqual(len(graph.elts), len(graph_elts) - 1)
-                # check remove two elts
-                self.manager.remove_elts(ids=graph.elts[:2])
-                graph = self.manager.get_graphs(ids=graph_id)
-                self.assertEqual(len(graph.elts), len(graph_elts) - 3)
+                if len(graph.elts) > 1:
+                    # check remove two elts
+                    self.manager.remove_elts(ids=graph.elts[:2])
+                    graph = self.manager.get_graphs(ids=graph_id)
+                    self.assertEqual(len(graph.elts), len(graph_elts) - 3)
 
         # check remove one elt from multiple graphs
         for index in range(len(self.graph_ids)):
@@ -442,7 +443,7 @@ class GraphTest(TestCase):
         orphans = self.manager.get_orphans()
         self.assertEqual(len(orphans), 1)
         # delete the graph and check if vertices and edges became orphans
-        graph.delete(manager=self.manager)
+        graph.delete(manager=self.manager, del_orphans=False)
         orphans = self.manager.get_orphans()
         self.assertEqual(len(orphans), 2 * self.count)
 
