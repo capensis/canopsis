@@ -86,10 +86,16 @@ class StatsTest(TestCase):
             len(self.engine.amqp.event['perf_data_array']),
             14
         )
-        self.assertEqual(
-            self.engine.amqp.rk,
-            'engine.engine.perf.resource.Sphinx.Engine_stats'
+        self.assertIn(
+            'engine.engine.perf.resource',
+            self.engine.amqp.rk
         )
+        self.assertIn(
+            'Engine_stats',
+            self.engine.amqp.rk
+        )
+
+
 
 if __name__ == "__main__":
     main()
