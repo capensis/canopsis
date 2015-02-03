@@ -107,27 +107,53 @@ def load_document(json_data, collection, json_filename):
                        ' nothing is done for {}'.format(json_filename))
 
 
-def setHostname(json_data):
-    """
-    Set replace [[HOSTNAME]] macro by the current host value
-    Not recursive at the moment
-    """
-    if isinstance(json_data, dict):
-        for key in json_data:
-            # case it is a simple string
-            if isinstance(json_data[key], basestring):
-                json_data[key] = json_data[key].replace(
-                    '[[HOSTNAME]]',
-                    gethostname()
-                )
-            # case it is a list that may contain string
-            if isinstance(json_data[key], list):
-                for x in xrange(len(json_data[key])):
-                    if isinstance(json_data[key][x], basestring):
-                        json_data[key][x] = json_data[key][x].replace(
-                            '[[HOSTNAME]]',
-                            gethostname()
-                        )
+# Replace system should be externalized
+def replace_value(replace_string):
+
+    # Macro to replace in documents with the value as tuple (MACRO, REPLACE)
+    replacements = [
+        ('[[HOSTNAME]]', gethostname()),
+    ]
+
+    for replacement in replacements:
+        replace_string = replace_string.replace(
+            replacement[0],
+            replacement[1]
+        )
+
+    return replace_string
+
+
+def set_list_value(replace_list):
+
+    length = len(replace_list)
+
+    for x in xrange(length):
+
+        if isinstance(replace_list[x], basestring):
+            replace_list[x] = replace_value(replace_list[x])
+
+        if isinstance(replace_list[x], dict):
+            set_dict_value(replace_list[x])
+
+        if isinstance(replace_list[x], list):
+            set_list_value(replace_list[x])
+
+
+def set_dict_value(replace_dict):
+
+    if isinstance(replace_dict, dict):
+
+        for key in replace_dict:
+
+            if isinstance(replace_dict[key], basestring):
+                replace_dict[key] = replace_value(replace_dict[key])
+
+            if isinstance(replace_dict[key], dict):
+                replace_dict[key] = set_dict_value(replace_dict[key])
+
+            if isinstance(replace_dict[key], list):
+                set_list_value(replace_dict[key])
 
 
 def hooks(json_data):
@@ -136,8 +162,8 @@ def hooks(json_data):
     into database and allow call transformation method that may change
     records
     """
-    # Set hostname in record
-    setHostname(json_data)
+    # replace [[HOSTNAME]] macro by the current host value in record
+    set_dict_value(json_data)
 
 
 def do_update(json_data, collection):
