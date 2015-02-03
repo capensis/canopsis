@@ -1,8 +1,10 @@
 <a href="http://www.canopsis.org" >
-<img src="https://github.com/capensis/canopsis/wiki/images/logo_canopsis.png"/> 
+    <img src="https://github.com/capensis/canopsis/wiki/images/logo_canopsis.png"/> 
 </a>
 
-<img src="https://travis-ci.org/capensis/canopsis.svg?branch=NRPUIV2"/>
+<a href="https://travis-ci.org/capensis/canopsis">
+    <img src="https://travis-ci.org/capensis/canopsis.svg?branch=NRPUIV2"/>
+</a>
 
 ## What is Canopsis ? 
 
