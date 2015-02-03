@@ -266,10 +266,8 @@ def new_conf(task, **params):
     :type task: str or routine
     :param dict params: task parameters.
 
-    :return: task conf depending on params:
-        - empty: _id
-        - not empty: {TASK_ID: _id, TASK_PARAMS: params}
-    :rtype: str or dict
+    :return: {TASK_ID: _id, TASK_PARAMS: params}
+    :rtype: dict
     """
 
     result = None
