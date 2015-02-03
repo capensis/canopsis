@@ -32,14 +32,17 @@ class TopoNodeTest(TestCase):
     Test event processing function.
     """
 
-    def test_empty(self):
+    def test_default(self):
         """
-        Test to process a toponode without task.
+        Test to process a toponode without default task.
         """
 
         toponode = TopoNode()
-        result = toponode.process(event=None)
+        self.assertEqual(toponode.state, 0)
+        event = {'state': 1}
+        result = toponode.process(event=event)
         self.assertIsNone(result)
+        self.assertEqual(toponode.state, 1)
 
     def test_process_task(self):
         """
