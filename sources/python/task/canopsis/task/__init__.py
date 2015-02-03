@@ -281,14 +281,10 @@ def new_conf(task, **params):
             if _task == task:
                 task = task_id
 
-    if not params:
-        result = task
-
-    else:
-        result = {
-            TASK_ID: task,
-            TASK_PARAMS: params
-        }
+    result = {
+        TASK_ID: task,
+        TASK_PARAMS: params
+    }
 
     return result
 
