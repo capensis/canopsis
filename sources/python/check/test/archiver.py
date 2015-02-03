@@ -85,7 +85,7 @@ class KnownValues(TestCase):
         # Move TS out of stealthy range, event should be On Going
         setFields(event, state=1, timestamp=event['timestamp'] + 1000)
         self.archiver.check_statuses(event, devent)
-        self.assertEqual(event['status'], BAGOT)
+        self.assertEqual(event['status'], ONGOING)
         devent = event.copy()
 
         # Check that the event is at Bagot when the requirments are met
