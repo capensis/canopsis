@@ -15,6 +15,9 @@
     },{
         "title": "Metrics",
         "keys": ["metrics"]
+	},{
+		"title": "Mixins",
+		"keys":["mixins"]
 	}],
 	"properties": {
 		"title":  {
@@ -38,7 +41,7 @@
         "labelalign": {
             "title": "Label Align",
             "role": "simplelist",
-            "enum": ["left", "right", "above", "below"],
+            "enum": ["left", "right"],
             "default": "left"
         },
 		"labeldisplay": {
@@ -48,14 +51,12 @@
 			"type": "boolean"
 		},
         "series": {
+        	"description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
             "type": "array",
-            "role": "array",
-            "items": {
-                "type": "object",
-                "role": "serieitem",
-                "relationship": "belongsTo",
-                "model": "stylizedserie"
-            }
+            "role": "arrayclassifiedcrecordselector",
+            "model": "serie",
+			"crecordtype": "serie",
+			"multiselect": true
         },
         "metrics": {
             "type": "array",
@@ -64,6 +65,14 @@
             },
             "role": "cmetric",
             "title": "Metrics"
-        }
+        },
+   		"mixins": {
+			"type": "array",
+			"role": "mixins",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
+		}
 	}
 }
