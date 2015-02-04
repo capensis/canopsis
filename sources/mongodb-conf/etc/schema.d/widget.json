@@ -5,11 +5,13 @@
 		"xtype": {"type": "string"},
 		"widgetId": {"type": "string"},
 		"tagName": {"type": "string"},
-		"refreshInterval": {
-			"type": "integer",
-			"default": 60,
-			"title": "Widget refresh interval",
-			"role": "duration"
+		"mixins": {
+			"type": "array",
+			"role": "mixins",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
 		}
 	}
 }

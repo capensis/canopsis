@@ -8,10 +8,13 @@
 		"keys":["title", "refreshInterval", "event_selection"]
 	},{
 		"title": "Rendering",
-		"keys":["refreshableWidget", "show_output"]
+		"keys":["refreshableWidget", "show_title", "show_output"]
 	},{
 		"title": "Click event",
 		"keys":["filter_pattern", "destination_view"]
+	},{
+		"title": "Mixins",
+		"keys":["mixins"]
 	}],
 	"properties": {
 		"title":  {
@@ -42,6 +45,10 @@
 			"default": true
 		},
 		"show_output": {
+			"type": "boolean",
+			"default": true
+		},
+		"show_title": {
 			"type": "boolean",
 			"default": true
 		}
