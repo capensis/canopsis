@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "permissions.json",
   "loader_id": "view.permissions",
   "loader_no_update": true,
   "id": "view.permissions",
@@ -118,5 +117,6 @@
     "r"
   ],
   "aaa_admin_group": "group.CPS_view_admin",
-  "children": []
+  "children": [],
+  "crecord_name": "Permissions"
 }

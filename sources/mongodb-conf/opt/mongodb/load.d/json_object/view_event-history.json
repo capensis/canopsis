@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "event-history.json",
   "loader_id": "view.event-history",
   "loader_no_update": true,
   "id": "view.event-history",
@@ -93,5 +92,6 @@
     "r"
   ],
   "aaa_admin_group": "group.CPS_view_admin",
-  "children": []
+  "children": [],
+  "crecord_name": "Event history"
 }

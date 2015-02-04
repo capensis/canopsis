@@ -64,14 +64,6 @@
 			},
 			"reorderable": true
 		},
-		"mixins": {
-			"type": "array",
-			"role": "mixins",
-			"items": {
-				"type": "string"
-			},
-			"reorderable": true
-		},
 		"xtype": {
 			"type": "string"
 		},

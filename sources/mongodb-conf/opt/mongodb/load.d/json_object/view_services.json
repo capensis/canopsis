@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "services.json",
   "loader_id": "view.services",
   "loader_no_update": true,
   "id": "view.services",
@@ -60,5 +59,6 @@
     "r"
   ],
   "aaa_admin_group": "group.CPS_view_admin",
-  "children": []
+  "children": [],
+  "crecord_name": "Services"
 }

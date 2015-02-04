@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "weather.json",
   "loader_id": "view.weather",
   "loader_no_update": true,
   "id": "view.weather",
@@ -43,5 +42,6 @@
     "r"
   ],
   "aaa_admin_group": "group.CPS_view_admin",
-  "children": []
+  "children": [],
+  "crecord_name": "Weather"
 }

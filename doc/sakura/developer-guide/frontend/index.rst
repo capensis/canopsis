@@ -19,3 +19,4 @@ Frontend
    routes-system
    model-layer
    user-preferences
+   javascript-and-ember/index

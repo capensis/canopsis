@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "404.json",
   "loader_id": "view.404",
   "loader_no_update": true,
   "id": "view.404",
@@ -47,5 +46,6 @@
     "r"
   ],
   "aaa_admin_group": "group.CPS_view_admin",
-  "children": []
+  "children": [],
+  "crecord_name": "404 error view"
 }

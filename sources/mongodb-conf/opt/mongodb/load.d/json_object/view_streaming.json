@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "streaming.json",
   "loader_id": "view.streaming",
   "loader_no_update": true,
   "id": "view.streaming",
@@ -64,5 +63,6 @@
     "r"
   ],
   "aaa_admin_group": "group.CPS_view_admin",
-  "children": []
+  "children": [],
+  "crecord_name": "Streaming"
 }
