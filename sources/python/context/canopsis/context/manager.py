@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -106,15 +106,15 @@ class Context(MiddlewareRegistry):
 
         result = {}
 
-        _type = event['source_type']
+        _type = event['event_type']
 
         if Context.NAME in event:
             name = event[Context.NAME]
         else:
-            name = event[_type]
+            name = event[event['source_type']]
 
         # get the right context
-        context = {Context.TYPE: _type}
+        context = {}
         for ctx in self.context:
             if ctx in event:
                 context[ctx] = event[ctx]
@@ -341,6 +341,9 @@ class Context(MiddlewareRegistry):
         Get the right context related to input entity
         """
 
+        if Context.NAME not in entity:
+            entity[Context.NAME] = entity[entity[Context.TYPE]]
+
         result = self[Context.CTX_STORAGE].get_path_with_id(entity)
 
         return result
@@ -352,6 +355,8 @@ class Context(MiddlewareRegistry):
 
         path, data_id = self.get_entity_context_and_name(entity=entity)
 
+        if path[Context.TYPE] in path:
+            data_id = None
         result = self[Context.CTX_STORAGE].get_absolute_path(
             path=path, data_id=data_id
         )

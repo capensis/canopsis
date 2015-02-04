@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -22,6 +22,8 @@ from canopsis.engines import Engine
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.selector import Selector
+from canopsis.sla import Sla
+from canopsis.old.event import get_routingkey
 import time
 
 
@@ -74,10 +76,25 @@ class engine(Engine):
                 name
             ))
 
-            # do I publish a selector event ? Yes if selector have to
-            # and it is time or we got to update status
+            # Selector event have to be published when do state is true.
             if selector.dostate:
-                self.publish_event(selector)
+                rk, selector_event, publish_ack = selector.event()
+                self.publish_event(selector, rk, selector_event, publish_ack)
+                # When selector computed, sla may be asked to be computed.
+                if selector.dosla:
+                    self.logger.debug('Will proceed sla for this selector')
+                    sla = Sla(
+                        selector,
+                        selector_event,
+                        self.storage,
+                        event_id,
+                        self.logger
+                    )
+                    self.publish_sla_event(
+                        sla.get_event(),
+                        selector.display_name
+                    )
+
             else:
                 self.logger.debug('Nothing to do with selector {}'.format(
                     name
@@ -89,9 +106,22 @@ class engine(Engine):
         self.nb_beat += 1
         # Set record free for dispatcher engine
 
-    def publish_event(self, selector):
+    def publish_sla_event(self, event, display_name):
 
-        rk, selector_event, publish_ack = selector.event()
+        rk = get_routingkey(event)
+
+        self.amqp.publish(
+            event,
+            rk,
+            self.amqp.exchange_name_events
+        )
+
+        self.logger.debug("published event sla selector {}".format(
+            display_name
+        ))
+
+    def publish_event(self, selector, rk, selector_event, publish_ack):
+
         selector_event['selector_id'] = selector._id
 
         self.logger.info(
@@ -119,10 +149,6 @@ class engine(Engine):
             # Define or reset ack key for selector generated event
             selector_event['ack'] = {}
             self.logger.debug(' + Selector event is NOT ack')
-
-        # Publish Sla information when available
-        if selector.sla_rk:
-            selector_event['sla_rk'] = selector.sla_rk
 
         self.amqp.publish(
             selector_event,

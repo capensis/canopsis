@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "profiles.json",
   "loader_id": "view.profiles",
   "loader_no_update": true,
   "id": "view.profiles",

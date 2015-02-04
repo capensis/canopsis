@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -30,6 +30,8 @@ from logging import getLogger
 import pprint
 
 pp = pprint.PrettyPrinter(indent=2)
+
+DEFAULT_SLA_TIMEWINDOW = 3600*24
 
 
 class Selector(Record):
@@ -108,21 +110,90 @@ class Selector(Record):
         self._id = dump.get('_id')
         self.namespace = dump.get('namespace', self.namespace)
         self.dostate = dump.get('dostate')
+        self.dosla = dump.get('dosla')
         self.display_name = dump.get('display_name', 'noname')
         self.rk = dump.get('rk', self.rk)
         self.include_ids = dump.get('include_ids', self.include_ids)
         self.exclude_ids = dump.get('exclude_ids', self.exclude_ids)
         self.state_when_all_ack = dump.get('state_when_all_ack', 'worststate')
 
-        default_template = 'Off: [OFF], Minor: [MINOR], Major: [MAJOR]' + \
-            ', Critical: [CRITICAL]'
-        self.sla_rk = dump.get('sla_rk', default_template)
-        self.output_tpl = dump.get('output_tpl', default_template)
+        self.output_tpl = self.get_output_tpl()
+        self.sla_output_tpl = self.get_sla_output_tpl()
 
         if not self.output_tpl:
-        	self.output_tpl = "No output template defined"
+            self.output_tpl = "No output template defined"
 
         self.data = dump
+
+    def get_value(self, property_name, default_value):
+        """
+        Allow accessing record property with set of a default value
+        instead of None value
+        """
+        # Dealing with the old strange record system.
+        if (property_name not in self.data or
+                self.data[property_name] is None):
+            return default_value
+        else:
+            return self.data[property_name]
+
+    def get_output_tpl(self):
+
+        default_template = (
+            'Off: [OFF], Minor: [MINOR], Major: [MAJOR]' +
+            ', Critical: [CRITICAL]'
+        )
+
+        return self.get_value('output_tpl', default_template)
+
+    def get_sla_output_tpl(self):
+
+        # Defines default sla template if no one exists
+        default_sla_template = (
+            'Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%,' +
+            ' Critical: [CRITICAL]%, Alerts [ALERTS]%'
+        )
+        return self.get_value('sla_output_tpl', default_sla_template)
+
+    def get_sla_timewindow(self):
+
+        timewindow = self.data.get('sla_timewindow', None)
+        if timewindow is None:
+            self.logger.info(
+                'No timewindow set for selector {}, use default'.format(
+                    self.display_name
+                ))
+            return DEFAULT_SLA_TIMEWINDOW
+        else:
+            return timewindow
+
+    def get_state_at_timewindow_start(self):
+        state = self.data.get('state_at_timewindow_start', None)
+        self.logger.debug('state_at_timewindow_start {}'.format(state))
+        return state
+
+    def get_previous_selector_state(self):
+
+        return self.data.get('previous_selector_state', None)
+
+    def get_percent_property(self, property_name, default_value):
+        """
+        Allow accessing percent values from a record property
+        """
+        value = self.get_value(property_name, default_value)
+
+        if value >= 0 and value <= 100:
+            return value
+        else:
+            return default_value
+
+    def get_sla_warning(self):
+
+        return self.get_percent_property('sla_warning', 40)
+
+    def get_sla_critical(self):
+
+        return self.get_percent_property('sla_critical', 80)
 
     # Build MongoDB query to find every id matching event
     def makeMfilter(self):

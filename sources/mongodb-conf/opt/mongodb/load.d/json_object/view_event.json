@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "event.json",
   "loader_id": "view.event",
   "loader_no_update": true,
   "id": "view.event",

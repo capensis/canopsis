@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -37,6 +37,7 @@ class engine(Engine):
             namespace='object',
             account=Account(user="root", group="root")
         )
+        self.selByRk = {}
         self.reload_selectors()
         self.beat()
 

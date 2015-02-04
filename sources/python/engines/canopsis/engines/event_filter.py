@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -40,14 +40,10 @@ class engine(Engine):
                                    account=account)
         self.derogations = []
         self.name = kargs['name']
-
-    def pre_run(self):
-        """
-        Init vars and call beat method
-        """
-
         self.drop_event_count = 0
         self.pass_event_count = 0
+
+    def pre_run(self):
         self.beat()
 
     def time_conditions(self, derogation):
@@ -64,8 +60,8 @@ class engine(Engine):
         now = time()
         for condition in conditions:
             if (condition['type'] == 'time_interval'
-                and condition['startTs']
-                and condition['stopTs']):
+                    and condition['startTs']
+                    and condition['stopTs']):
                 always = condition.get('always', False)
 
                 if always:
@@ -249,15 +245,15 @@ class engine(Engine):
         rules = self.configuration.get('rules', [])
         to_apply = []
 
+        self.logger.debug(u'event {}'.format(event))
+
         # When list configuration then check black and
         # white lists depending on json configuration
         for filterItem in rules:
             actions = filterItem.get('actions')
             name = filterItem.get('name', 'no_name')
 
-            self.logger.debug(
-                u'Event: {}, will apply rule {}'.format(event, filterItem)
-                )
+            self.logger.debug(u'rule {}'.format(filterItem))
             self.logger.debug(u'filter is {}'.format(filterItem['mfilter']))
             # Try filter rules on current event
             if check(filterItem['mfilter'], event):
@@ -308,7 +304,8 @@ class engine(Engine):
                               'default_action': self.find_default_action()}
 
         self.logger.debug('Reload configuration rules')
-        try:
+        if 1:
+        #try:
             records = self.storage.find(
                 {'crecord_type': 'filter', 'enable': True}, sort='priority'
                 )
@@ -325,8 +322,8 @@ class engine(Engine):
             )
             self.send_stat_event()
 
-        except Exception as e:
-            self.logger.warning(str(e))
+        #except Exception as e:
+            self.logger.error(e)
 
     def set_loaded(self, record):
         if 'run_once' in record and not record['run_once']:
@@ -347,21 +344,22 @@ class engine(Engine):
             self.beat_interval
         )
         event = forger(
-            connector = "Engine",
-            connector_name = "engine",
-            event_type = "check",
-            source_type = "resource",
-            resource = self.amqp_queue + '_data',
-            state = 0,
-            state_type = 1,
-            output = message_dropped,
-            perf_data_array = [
+            connector='Engine',
+            connector_name='engine',
+            event_type='check',
+            source_type='resource',
+            resource=self.amqp_queue + '_data',
+            state=0,
+            state_type=1,
+            output=message_dropped,
+            perf_data_array=[
                 {'metric': 'pass_event',
                  'value': self.pass_event_count,
                  'type': 'GAUGE'},
                 {'metric': 'drop_event',
                  'value': self.drop_event_count,
-                 'type': 'GAUGE'}])
+                 'type': 'GAUGE'}
+            ])
 
         self.logger.debug(message_dropped)
         self.logger.debug(message_passed)

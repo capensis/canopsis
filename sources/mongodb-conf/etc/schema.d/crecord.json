@@ -28,68 +28,10 @@
 			"type": "string",
 			"required": true
 		},
-
-		"aaa_owner": {
-			"type": "string",
-			"required": true
-		},
-		"aaa_group": {
-			"type": "string"
-		},
-		"aaa_admin_group": {
-			"type": "string",
-			"required": true
-		},
-		"aaa_access_owner": {
-			"type": "array",
-			"items": {
-				"enum": ["r", "w"]
-			},
-			"role" : "rights",
-			"required": false
-		},
-		"aaa_access_group": {
-			"type": "array",
-			"items": {
-				"enum": ["r", "w"]
-			},
-			"required": true,
-			"role" : "rights"
-		},
-		"aaa_access_other": {
-			"type": "array",
-			"items": {
-				"enum": ["r", "w"]
-			},
-			"required": true,
-			"role" : "rights"
-		},
-		"aaa_access_unauth": {
-			"type": "array",
-			"items": {
-				"enum": ["r", "w"]
-			},
-			"required": true,
-			"role" : "rights"
-		},
 		"enable": {
 			"type": "boolean",
 			"required": true,
 			"default": true
-		},
-		"parent": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			},
-			"required": true
-		},
-		"children": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			},
-			"required": true
 		}
 	}
 }

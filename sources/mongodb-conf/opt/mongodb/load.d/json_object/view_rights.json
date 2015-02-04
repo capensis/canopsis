@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "rights.json",
   "loader_id": "view.rights",
   "loader_no_update": true,
   "id": "view.rights",

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -65,6 +65,7 @@ class ProcessingTest(TestCase):
         self.context = Context(data_scope='test_context')
         self.manager = TopologyManager(data_scope='test_topology')
         self.check = {
+            'type': 'check',
             'event_type': 'check',
             'connector': 'c',
             'connector_name': 'c',

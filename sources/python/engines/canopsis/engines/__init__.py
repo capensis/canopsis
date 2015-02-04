@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -441,11 +441,14 @@ class Engine(object):
             return False
 
         def __enter__(self):
-            self.lock = self.storage.find_and_modify(
+            lock = self.storage.find_and_modify(
                 query={'_id': self.lock_id},
                 update={'$set': {'l': True}},
                 upsert=True
             )
+
+            if lock is not None:
+                self.lock = lock
 
             if 't' not in self.lock:
                 self.lock['t'] = 0

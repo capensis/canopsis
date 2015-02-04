@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,15 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from logging import ERROR, getLogger
 from time import time
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.record import Record
-from canopsis.old.tools import legend, uniq
 from canopsis.old.rabbitmq import Amqp
 from canopsis.old.event import get_routingkey
+
+#from canopsis.context.manager import Context
+#from canopsis.check.manager import CheckManager
+from canopsis.configuration.configurable import Configurable
+from canopsis.configuration.configurable.decorator import (
+    add_category, conf_paths
+)
 
 from pymongo.errors import BulkWriteError
 
@@ -37,14 +42,23 @@ STEALTHY = 2
 BAGOT = 3
 CANCELED = 4
 
+CONF_PATH = 'check/archiver.conf'
+CATEGORY = 'ARCHIVER'
 
-class Archiver(object):
 
-    def __init__(self, namespace, confnamespace, storage=None,
-                 autolog=False, logging_level=ERROR):
+@conf_paths(CONF_PATH)
+@add_category(CATEGORY)
+class Archiver(Configurable):
 
-        self.logger = getLogger('Archiver')
-        self.logger.setLevel(logging_level)
+    def __init__(
+        self, namespace, confnamespace='object', storage=None, autolog=False,
+        *args, **kwargs
+    ):
+
+        super(Archiver, self).__init__(*args, **kwargs)
+
+        #self.context = Context()
+        #self.check = CheckManager()
 
         self.namespace = namespace
         self.namespace_log = namespace + '_log'
@@ -66,21 +80,24 @@ class Archiver(object):
 
         if not storage:
             self.logger.debug(" + Get storage")
-            self.storage = get_storage(namespace=namespace,
-                                       logging_level=logging_level)
+            self.storage = get_storage(
+                namespace=namespace,
+                logging_level=self.log_lvl
+            )
         else:
             self.storage = storage
 
         self.conf_storage = get_storage(
             namespace=confnamespace,
-            logging_level=logging_level)
+            logging_level=self.log_lvl
+        )
         self.conf_collection = self.conf_storage.get_backend(confnamespace)
         self.collection = self.storage.get_backend(namespace)
 
         self.amqp = Amqp(
-            logging_level=logging_level,
+            logging_level=self.log_lvl,
             logging_name='archiver-amqp'
-            )
+        )
 
         self.reset_stealthy_event_duration = time()
         self.reset_stats()
@@ -94,15 +111,17 @@ class Archiver(object):
 
     def beat(self):
 
-        self.logger.info((
-            'DB documents stats : ' +
-            'update: {} in events, ' +
-            'insert: {} in events, ' +
-            'insert: {} in events_log').format(
-            self.stats['update'],
-            self.stats['insert ' + self.namespace],
-            self.stats['insert ' + self.namespace_log]
-        ))
+        self.logger.info(
+            (
+                'DB documents stats : ' +
+                'update: {} in events, ' +
+                'insert: {} in events, ' +
+                'insert: {} in events_log').format(
+                self.stats['update'],
+                self.stats['insert ' + self.namespace],
+                self.stats['insert ' + self.namespace_log]
+            )
+        )
         self.reset_stats()
 
     def process_insert_operations_collection(self, operations, collection):
@@ -147,7 +166,9 @@ class Archiver(object):
             if '_id' not in operation['event']:
                 self.logger.error(
                     'Unable to find _id value in event {}'.format(
-                        operation['event']))
+                        operation['event']
+                    )
+                )
             else:
                 _id = operation['event']['_id']
 
@@ -158,8 +179,11 @@ class Archiver(object):
                     operation['event']['_id'] = _id
                     events_log[_id] = operation
                 else:
-                    self.logger.critical('Wrong operation type {}'.format(
-                        operation['collection']))
+                    self.logger.critical(
+                        'Wrong operation type {}'.format(
+                            operation['collection']
+                        )
+                    )
 
         self.process_insert_operations_collection(
             events.values(),
@@ -206,12 +230,14 @@ class Archiver(object):
 
         self.logger.debug(
             "Checking stealthy events in collection {}".format(self.namespace)
-            )
+        )
 
-        event_cursor = self.collection.find({
-            'crecord_type': 'event',
-            'status': STEALTHY
-        })
+        event_cursor = self.collection.find(
+            {
+                'crecord_type': 'event',
+                'status': STEALTHY
+            }
+        )
 
         for event in event_cursor:
             # This is a stealthy event.
@@ -221,9 +247,11 @@ class Archiver(object):
             # Check the stealthy intervals
             if is_stealthy_show_delay_passed:
 
-                self.logger.info('Event {} no longer Stealthy'.format(
-                    event['rk']
-                ))
+                self.logger.info(
+                    'Event {} no longer Stealthy'.format(
+                        event['rk']
+                    )
+                )
 
                 new_status = ONGOING if event['state'] else OFF
                 self.set_status(event, new_status)
@@ -244,9 +272,9 @@ class Archiver(object):
         ts_diff_bagot = (ts_curr - ts_first_bagot)
         freq = event.get('bagot_freq', -1)
 
-        if ts_diff_bagot <= self.bagot_time and freq >= self.bagot_freq:
-            return True
-        return False
+        result = ts_diff_bagot <= self.bagot_time and freq >= self.bagot_freq
+
+        return result
 
     def is_stealthy(self, event, d_status):
         """
@@ -259,7 +287,8 @@ class Archiver(object):
         """
 
         ts_diff = event['timestamp'] - event['ts_first_stealthy']
-        return ts_diff <= self.stealthy_time and d_status != 2
+        result = ts_diff <= self.stealthy_time and d_status != STEALTHY
+        return result
 
     def set_status(self, event, status):
         """
@@ -273,24 +302,24 @@ class Archiver(object):
             OFF: {
                 'freq': event.get('bagot_freq', 0),
                 'name': 'Off'
-                },
+            },
             ONGOING: {
                 'freq': event.get('bagot_freq', 0),
                 'name': 'On going'
-                },
+            },
             STEALTHY: {
                 'freq': event.get('bagot_freq', 0),
                 'name': 'Stealthy'
-                },
+            },
             BAGOT: {
                 'freq': event.get('bagot_freq', 0) + 1,
                 'name': 'Bagot'
-                },
+            },
             CANCELED: {
                 'freq': event.get('bagot_freq', 0),
                 'name': 'Cancelled'
-                }
             }
+        }
 
         self.logger.debug(log.format(values[status]['name']))
 
@@ -309,10 +338,12 @@ class Archiver(object):
             ``True`` if the event should stay stealthy
             ``False`` otherwise
         """
+        result = False
 
         if devent['status'] == STEALTHY:
-            return not (ts - devent['ts_first_stealthy']) > self.stealthy_show
-        return False
+            result = (ts - devent['ts_first_stealthy']) <= self.stealthy_show
+
+        return result
 
     def check_statuses(self, event, devent):
         """
@@ -354,8 +385,8 @@ class Archiver(object):
         if (devent.get('status', ONGOING) != CANCELED
             or (devent['state'] != event['state']
                 and (self.restore_event
-                     or state == OFF
-                     or devent['state'] == OFF))):
+                    or state == OFF
+                    or devent['state'] == OFF))):
             # Check the stealthy intervals
             if self.check_stealthy(devent, event_ts):
                 if self.is_bagot(event):
@@ -389,7 +420,6 @@ class Archiver(object):
             self.set_status(event, CANCELED)
 
     def check_event(self, _id, event):
-
         """
             This method aims to buffer and process incoming events.
             Processing is done on buffer to reduce database operations.
@@ -401,6 +431,10 @@ class Archiver(object):
         # Buffering event informations
         self.bulk_ids.append(_id)
         self.incoming_events[_id] = event
+
+        # use the check manager in order to save the state
+        #entity_id = self.context.get_entity_id(event)
+        #self.check.state(ids=entity_id['id'], state=event['state'], cache=True)
 
         # Processing many events condition computation
         bulk_modulo = len(self.bulk_ids) % self.bulk_amount
@@ -479,8 +513,10 @@ class Archiver(object):
 
             old_state = devent['state']
             old_state_type = devent['state_type']
-            event['last_state_change'] = devent.get('last_state_change',
-                                                    event['timestamp'])
+            event['last_state_change'] = devent.get(
+                'last_state_change',
+                event['timestamp']
+            )
 
             if state != old_state:
                 event['previous_state'] = old_state
@@ -575,12 +611,14 @@ class Archiver(object):
                 change['output'] = devent.get('output', '')
 
             if change:
-                operations.append({
-                    'type': 'update',
-                    'update': {'$set': change},
-                    'query': {'_id': _id},
-                    'collection': 'events'
-                })
+                operations.append(
+                    {
+                        'type': 'update',
+                        'update': {'$set': change},
+                        'query': {'_id': _id},
+                        'collection': 'events'
+                    }
+                )
 
         # I think that is the right condition to log
         have_to_log = event.get('previous_state', state) != state
@@ -593,10 +631,12 @@ class Archiver(object):
             self.logger.info(' + State changed, have to log {}'.format(_id))
 
             # copy avoid side effects
-            operations.append({
-                'type': 'insert',
-                'event': event.copy(),
-                'collection': 'events_log'
-            })
+            operations.append(
+                {
+                    'type': 'insert',
+                    'event': event.copy(),
+                    'collection': 'events_log'
+                }
+            )
 
         return operations

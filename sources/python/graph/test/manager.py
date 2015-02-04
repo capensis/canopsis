@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -325,10 +325,11 @@ class GraphTest(TestCase):
                 self.manager.remove_elts(ids=first_elt, graph_ids=graph.id)
                 graph = self.manager.get_graphs(ids=graph_id)
                 self.assertEqual(len(graph.elts), len(graph_elts) - 1)
-                # check remove two elts
-                self.manager.remove_elts(ids=graph.elts[:2])
-                graph = self.manager.get_graphs(ids=graph_id)
-                self.assertEqual(len(graph.elts), len(graph_elts) - 3)
+                if len(graph.elts) > 1:
+                    # check remove two elts
+                    self.manager.remove_elts(ids=graph.elts[:2])
+                    graph = self.manager.get_graphs(ids=graph_id)
+                    self.assertEqual(len(graph.elts), len(graph_elts) - 3)
 
         # check remove one elt from multiple graphs
         for index in range(len(self.graph_ids)):
@@ -420,6 +421,31 @@ class GraphTest(TestCase):
         # test source_query
 
         # test target_query
+
+    def test_orphans(self):
+        """
+        Test get orphans method.
+        """
+        # check if no orphans exist
+        orphans = self.manager.get_orphans()
+        self.assertFalse(orphans)
+        # generate self.count vertices and edges
+        [Vertice().save(self.manager) for i in range(self.count)]
+        [Edge().save(self.manager) for i in range(self.count)]
+        # check if previous vertices and edges are orphans
+        orphans = self.manager.get_orphans()
+        self.assertEqual(len(orphans), 2 * self.count)
+        # create a graph and add orphans to the graph
+        graph = Graph()
+        graph.add_elts(orphans)
+        graph.save(manager=self.manager)
+        # check if only the graph is an orphan
+        orphans = self.manager.get_orphans()
+        self.assertEqual(len(orphans), 1)
+        # delete the graph and check if vertices and edges became orphans
+        graph.delete(manager=self.manager, del_orphans=False)
+        orphans = self.manager.get_orphans()
+        self.assertEqual(len(orphans), 2 * self.count)
 
 
 class PutEltsTest(TestCase):

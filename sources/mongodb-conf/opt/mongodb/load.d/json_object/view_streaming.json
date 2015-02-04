@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "streaming.json",
   "loader_id": "view.streaming",
   "loader_no_update": true,
   "id": "view.streaming",

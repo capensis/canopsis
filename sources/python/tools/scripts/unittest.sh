@@ -8,7 +8,7 @@ else
     exit 1
 fi
 
-hypcontrol restart
+hypcontrol start
 
 echo -n "Wait for RabbitMQ server "
 STATE=0

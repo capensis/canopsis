@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -19,18 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from logging import INFO, getLogger
-
-
-class ManagerMock(object):
-	def __init__(self, logging_level=INFO):
-
-		self.exchange_name_events = 'managerMock'
-		self.logger = getLogger(self.exchange_name_events)
-		self.data = []
-
-	def push(self, name=None, value=None, meta_data=None):
-		self.data.append({'name': name, 'value': value, 'meta_data': 'meta_data'})
-
-	def clean(self):
-		self.data = []
+# hack for attaching this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

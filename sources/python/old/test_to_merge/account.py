@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -22,7 +22,6 @@
 import unittest
 
 from canopsis.old.account import Account, caccount_get
-from canopsis.old.group import Group
 from canopsis.old.storage import Storage
 
 STORAGE = None

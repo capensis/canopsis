@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -25,7 +25,6 @@ from json import dumps
 
 from canopsis.old.record import Record
 from canopsis.old.account import Account
-from canopsis.old.group import Group
 
 
 class KnownValues(TestCase):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -70,7 +70,7 @@ A topology inherits from both grapg and to and contains.
 __all__ = ['Topology', 'TopoEdge', 'TopoNode']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
-from canopsis.task import run_task, TASK, new_conf
+from canopsis.task import run_task, TASK, new_conf, TASK_PARAMS
 from canopsis.check import Check
 from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context
@@ -90,6 +90,15 @@ class TopoVertice(object):
     NAME = 'name'  #: element name.
 
     DEFAULT_STATE = Check.OK  #: default state value
+
+    DEFAULT_TASK = 'canopsis.topology.rule.action.change_state'
+
+    def get_default_task(self):
+        """
+        Get default task.
+        """
+
+        return new_conf(TopoVertice.DEFAULT_TASK)
 
     @property
     def entity(self):
@@ -175,10 +184,10 @@ class TopoVertice(object):
 
         task = self.operator
 
-        if task is not None:
-            result = run_task(
-                conf=task, toponode=self, event=event, **kwargs
-            )
+        if task is None:  # process change_state by default
+            task = self.get_default_task()
+
+        result = run_task(conf=task, toponode=self, event=event, **kwargs)
 
         return result
 
@@ -230,6 +239,14 @@ class Topology(Graph, TopoVertice):
             self.operator = operator
         # set state
         self.state = state
+
+    def get_default_task(self, *args, **kwargs):
+
+        result = super(Topology, self).get_default_task(*args, **kwargs)
+
+        result[TASK_PARAMS]['update_entity'] = True
+
+        return result
 
     @property
     def entity(self):
@@ -335,7 +352,7 @@ class TopoNode(Vertice, TopoVertice):
         return ctx, entity
 
 
-class TopoEdge(Edge):
+class TopoEdge(Edge, TopoVertice):
     """
     Topology edge.
     """

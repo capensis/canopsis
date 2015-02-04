@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -108,9 +108,24 @@ class GraphElementTest(TestCase):
 
     def test_delete(self):
 
+        # ensure generated elements are not in the manager
+        elts = self.manager.get_elts(ids=self.elt_ids)
+        self.assertFalse(elts)
+
         # save all managers
         for elt in self.elts:
             elt.save(manager=self.manager)
+
+        # ensure generated elements are in the manager
+        elts = self.manager.get_elts(ids=self.elt_ids)
+        self.assertEqual(len(elts), len(self.elts))
+
+        for elt in self.elts:
+            elt.delete(manager=self.manager)
+
+        # ensure generated elements are not in the manager
+        elts = self.manager.get_elts(ids=self.elt_ids)
+        self.assertFalse(elts)
 
     def test_resolve_refs(self):
         """
@@ -162,6 +177,23 @@ class GraphTest(VerticeTest):
 
         return Graph
 
+    def test_delete_orphans(self):
+        """
+        Test if graph vertices exist after deleting a graph.
+        """
+
+        graph = Graph()
+        vertice = Vertice()
+        graph.add_elts(vertice)
+
+        graph.save(manager=self.manager)
+
+        vertice = self.manager.get_elts(vertice.id)
+        self.assertIsNotNone(vertice)
+
+        graph.delete(manager=self.manager)
+        vertice = self.manager.get_elts(vertice.id)
+        self.assertIsNone(vertice)
 
 if __name__ == '__main__':
     main()

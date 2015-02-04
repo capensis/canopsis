@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -35,10 +35,6 @@ class DataCleanerTest(TestCase):
 
         self.assertIn('events', self.engine.clean_collection)
         self.assertIn('events_log', self.engine.clean_collection)
-
-    def test_beat_interval(self):
-        one_day = 3600 * 24
-        self.assertEqual(self.engine.beat_interval, one_day)
 
     def test_db_connection(self):
 

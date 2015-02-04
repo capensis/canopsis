@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -84,14 +84,13 @@ def event_processing(engine, event, manager=None, **kwargs):
             if entity is not None:
                 entity_id = context.get_entity_id(entity)
                 elts = manager.get_elts(data={TopoNode.ENTITY: entity_id})
-
         # iterate on elts
         for elt in elts:
             # save old state in order to check for its modification
             old_state = elt.state
 
             # process task
-            TopoNode.process(elt, event=event, manager=manager, **kwargs)
+            elt.process(event=event, manager=manager, engine=engine, **kwargs)
 
             new_state = elt.state
             # propagate the change of state in case of new state

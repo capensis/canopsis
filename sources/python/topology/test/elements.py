@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -32,14 +32,17 @@ class TopoNodeTest(TestCase):
     Test event processing function.
     """
 
-    def test_empty(self):
+    def test_default(self):
         """
-        Test to process a toponode without task.
+        Test to process a toponode without default task.
         """
 
         toponode = TopoNode()
-        result = toponode.process(event=None)
+        self.assertEqual(toponode.state, 0)
+        event = {'state': 1}
+        result = toponode.process(event=event)
         self.assertIsNone(result)
+        self.assertEqual(toponode.state, 1)
 
     def test_process_task(self):
         """
@@ -78,7 +81,9 @@ class TopologyGraphTest(TestCase):
         self.manager.del_elts()
 
     def test_save(self):
-
+        """
+        Test if an entity exists after saving a topology.
+        """
         _id = 'test'
 
         topology = Topology(_id=_id)
@@ -87,6 +92,24 @@ class TopologyGraphTest(TestCase):
         topology = self.context.get(_type=topology.type, names=_id)
 
         self.assertEqual(topology[Context.NAME], _id)
+
+    def test_delete(self):
+        """
+        Test if topology nodes exist after deleting a topology.
+        """
+
+        topology = Topology()
+        node = TopoNode()
+        topology.add_elts(node)
+
+        topology.save(manager=self.manager)
+
+        node = self.manager.get_elts(node.id)
+        self.assertIsNotNone(node)
+
+        topology.delete(manager=self.manager)
+        node = self.manager.get_elts(node.id)
+        self.assertIsNone(node)
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -321,7 +321,7 @@ class NewConfTest(TestCase):
         """
 
         conf = new_conf('a')
-        self.assertEqual(conf, 'a')
+        self.assertEqual(conf, {'id': 'a', 'params': {}})
 
     def test_with_empty_params(self):
         """
@@ -330,7 +330,7 @@ class NewConfTest(TestCase):
 
         conf = new_conf('a', **{})
 
-        self.assertEqual(conf, 'a')
+        self.assertEqual(conf, {'id': 'a', 'params': {}})
 
     def test_with_params(self):
         """
@@ -350,7 +350,7 @@ class NewConfTest(TestCase):
 
         conf = new_conf(run_task)
 
-        self.assertEqual(conf, path(run_task))
+        self.assertEqual(conf['id'], path(run_task))
 
     def test_with_routine_and_params(self):
         """
@@ -362,6 +362,7 @@ class NewConfTest(TestCase):
 
         self.assertEqual(conf[TASK_ID], path(run_task))
         self.assertEqual(conf[TASK_PARAMS], params)
+
 
 class TasksTest(TestCase):
     """

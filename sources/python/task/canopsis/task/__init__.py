@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -266,10 +266,8 @@ def new_conf(task, **params):
     :type task: str or routine
     :param dict params: task parameters.
 
-    :return: task conf depending on params:
-        - empty: _id
-        - not empty: {TASK_ID: _id, TASK_PARAMS: params}
-    :rtype: str or dict
+    :return: {TASK_ID: _id, TASK_PARAMS: params}
+    :rtype: dict
     """
 
     result = None
@@ -281,14 +279,10 @@ def new_conf(task, **params):
             if _task == task:
                 task = task_id
 
-    if not params:
-        result = task
-
-    else:
-        result = {
-            TASK_ID: task,
-            TASK_PARAMS: params
-        }
+    result = {
+        TASK_ID: task,
+        TASK_PARAMS: params
+    }
 
     return result
 

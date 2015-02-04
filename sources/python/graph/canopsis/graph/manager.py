@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -52,6 +52,8 @@ from canopsis.configuration.configurable.decorator import (
 )
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.graph.elements import Graph, Edge, GraphElement, Vertice
+
+from itertools import chain
 
 CONF_PATH = 'graph/graph.conf'
 CATEGORY = 'GRAPH'
@@ -178,7 +180,7 @@ class GraphManager(MiddlewareRegistry):
         if types is not None:
             query[GraphElement.TYPE] = types
         # remove references in graph
-        self.remove_elts(ids=ids, cache=cache)
+        self.remove_elts(ids=ids, cache=cache, del_orphans=False)
         # remove edge references
         self.del_edge_refs(vids=ids, cache=cache)
         # remove elements
@@ -241,7 +243,9 @@ class GraphManager(MiddlewareRegistry):
             # save elt
             elt.save(manager=self, cache=cache, graph_ids=graph_ids)
 
-    def remove_elts(self, ids, graph_ids=None, cache=False):
+    def remove_elts(
+        self, ids=None, graph_ids=None, cache=False, del_orphans=True
+    ):
         """
         Remove vertices from graphs.
 
@@ -250,6 +254,7 @@ class GraphManager(MiddlewareRegistry):
         :param graph_ids: graph ids from where remove self.
         :type graph_ids: list or str
         :param bool cache: use query cache if True (False by default).
+        :param bool del_orphans: delete vertices which are orphans.
         """
 
         # get graphs in order to remove references to self from them
@@ -258,17 +263,45 @@ class GraphManager(MiddlewareRegistry):
             # ensure graps is a list
             if isinstance(graphs, Graph):
                 graphs = [graphs]
-            if ids is None:
-                ids = []
-            elif isinstance(ids, basestring):
+            # ensure ids is a list
+            if isinstance(ids, basestring):
                 ids = [ids]
+            # if del orphans
+            if del_orphans:
+                # save graph ids such as a set
+                graph_ids = set(graph.id for graph in graphs)
+                # save elt_ids to remove in a list
+                elt_ids = [] if ids is None else ids
             for graph in graphs:
-                for _id in ids:
-                    if _id in graph.elts:
-                        # remove elf from graph.elts
-                        graph.remove_elts(_id)
-                        # save the graph
-                        graph.save(manager=self, cache=cache)
+                if ids is None:  # if ids is None, remove all graph elts
+                    if del_orphans:
+                        elt_ids += graph.elts
+                    graph.remove_elts(graph.elts)
+                else:  # else remove specific elt ids
+                    graph.remove_elts(ids)
+                    graph.save(manager=self, cache=cache)
+            # delete orphans
+            if del_orphans:
+                # save elts to delete
+                elts_to_delete = []
+                # for all removed elt ids
+                elts = self.get_elts(ids=elt_ids)
+                for elt in elts:
+                    # delete elts which are not graphs
+                    if isinstance(elt, Graph):
+                        continue
+                    # find a graph
+                    graphs = self.get_graphs(elts=elt.id)
+                    # keep graphs which are not in graph_ids
+                    elt_graphs = [
+                        graph for graph in graphs
+                        if graph.id not in graph_ids
+                    ]
+                    if not elt_graphs:  # if elt graphs do not exist
+                        elts_to_delete.append(elt)
+                # if there are elts to delete
+                for elt in elts_to_delete:
+                    elt.delete(manager=self, cache=cache)
 
     def del_edge_refs(
         self, ids=None, vids=None, sources=None, targets=None, cache=False
@@ -311,6 +344,8 @@ class GraphManager(MiddlewareRegistry):
         :type ids: list or str
         :param types: graph types to retrieve.
         :type types: list or str
+        :param elts: graph elt ids.
+        :type elts: basestring or list
         :param graph_ids: graph ids from where get graphs.
         :type graph_ids: list or str
         :param data: data to find among graphs.
@@ -794,4 +829,31 @@ class GraphManager(MiddlewareRegistry):
             serialize=serialize
         )
 
+        return result
+
+    def get_orphans(self, serialize=True, query=None, data=None, types=None):
+        """
+        Get all elements which are not associated to graphs.
+        """
+        # get all elt ids
+        graphs = self.get_graphs()
+        elt_ids = list(chain(*(graph.elts for graph in graphs)))
+        # init query
+        nin = {'$nin': elt_ids}
+        if query is None:
+            query = {}
+        # get graph element id for quick access
+        elt_id = GraphElement.ID
+        # if elt_id is already in query, add 'nin' in an '$and' query
+        if elt_id in query:
+            query[elt_id] = {'$and': [query['id'], nin]}
+        else:  # else use nin such as the elt_id query
+            query[elt_id] = nin
+        # find elts
+        result = self.get_elts(
+            types=types,
+            query=query,
+            serialize=serialize,
+            data=data
+        )
         return result

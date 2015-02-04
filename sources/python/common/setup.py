@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -28,4 +28,5 @@ from canopsis.common.setup import setup
 
 setup(
     description=('Common library'),
-    keywords='common library')
+    keywords='common library'
+)

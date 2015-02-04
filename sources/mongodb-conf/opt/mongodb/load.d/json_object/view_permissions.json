@@ -1,5 +1,4 @@
 {
-  "crecord_name" : "permissions.json",
   "loader_id": "view.permissions",
   "loader_no_update": true,
   "id": "view.permissions",
