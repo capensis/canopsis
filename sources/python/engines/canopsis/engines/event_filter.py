@@ -300,15 +300,18 @@ class engine(Engine):
     def beat(self, *args, **kargs):
         """ Configuration reload for realtime ui changes handling """
         self.derogations = []
-        self.configuration = {'rules': [],
-                              'default_action': self.find_default_action()}
+        self.configuration = {
+            'rules': [],
+            'default_action': self.find_default_action()
+        }
 
         self.logger.debug('Reload configuration rules')
-        if 1:
-        #try:
+
+        try:
             records = self.storage.find(
-                {'crecord_type': 'filter', 'enable': True}, sort='priority'
-                )
+                {'crecord_type': 'filter', 'enable': True},
+                sort='priority'
+            )
 
             for record in records:
                 record_dump = record.dump()
@@ -322,7 +325,7 @@ class engine(Engine):
             )
             self.send_stat_event()
 
-        #except Exception as e:
+        except Exception as e:
             self.logger.error(e)
 
     def set_loaded(self, record):
