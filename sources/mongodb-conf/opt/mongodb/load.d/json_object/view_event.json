@@ -22,7 +22,6 @@
           "xtype": "list",
           "refreshInterval": 40,
           "refreshableWidget" : true,
-          "itemsPerPage" : 50,
           "listed_crecord_type": "event",
           "title": "Bac à évenements",
           "maximized_column_index": 5,
@@ -35,7 +34,10 @@
           "mixins": [
             { "name": "Sortablearray" },
             { "name": "Arraysearch" },
-            { "name": "Pagination" },
+            {
+              "name": "Pagination",
+              "itemsPerPage" : 50
+            },
             {
               "name": "Customfilterlist",
               "filters" : [
