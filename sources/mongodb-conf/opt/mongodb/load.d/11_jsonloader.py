@@ -163,7 +163,8 @@ def hooks(json_data):
     records
     """
     # replace [[HOSTNAME]] macro by the current host value in record
-    set_dict_value(json_data)
+    # set_dict_value(json_data)
+    pass
 
 
 def do_update(json_data, collection):
