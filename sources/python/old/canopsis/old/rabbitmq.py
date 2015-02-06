@@ -38,12 +38,24 @@ from threading import Thread
 from os.path import join
 from traceback import print_exc
 
+# Number of tries to re-publish an event before it is lost
+# when connection problems
+MAX_RETRIES = 5
+
 
 class Amqp(Thread):
     def __init__(
-        self, host="localhost", port=5672, userid="guest", password="guest",
-        virtual_host="canopsis", exchange_name="canopsis", logging_name="Amqp",
-        logging_level=INFO, read_config_file=True, auto_connect=True,
+        self,
+        host="localhost",
+        port=5672,
+        userid="guest",
+        password="guest",
+        virtual_host="canopsis",
+        exchange_name="canopsis",
+        logging_name="Amqp",
+        logging_level=INFO,
+        read_config_file=True,
+        auto_connect=True,
         on_ready=None
     ):
         super(Amqp, self).__init__()
@@ -90,12 +102,12 @@ class Amqp(Thread):
             IOError,
             OSError)
 
-        ## create exchange
+        # Create exchange
         self.logger.debug("Create exchanges object")
         for exchange_name in [
                 self.exchange_name, self.exchange_name_events,
                 self.exchange_name_alerts, self.exchange_name_incidents]:
-            self.logger.debug(" + {0}".format(exchange_name))
+            self.logger.debug(' + {0}'.format(exchange_name))
             self.get_exchange(exchange_name)
 
         if auto_connect:
@@ -110,8 +122,6 @@ class Amqp(Thread):
         while self.RUN:
 
             self.connect()
-
-            #self.wait_connection()
 
             if self.connected:
                 self.init_queue(reconnect=reconnect)
@@ -132,8 +142,10 @@ class Amqp(Thread):
                         break
 
                     except Exception as err:
-                        self.logger.error(
-                            "Unknown error: %s (%s)" % (err, type(err)))
+                        self.logger.error("Error: {} ({})".format(
+                            err,
+                            type(err)
+                        ))
                         print_exc(file=stdout)
                         break
 
@@ -141,7 +153,8 @@ class Amqp(Thread):
 
             if self.RUN:
                 self.logger.error(
-                    "Connection loss, try to reconnect in few seconds ...")
+                    'Connection lost, try to reconnect in few seconds ...'
+                )
                 reconnect = True
                 self.wait_connection(timeout=5)
 
@@ -177,7 +190,7 @@ class Amqp(Thread):
                         "Channel openned. Ready to send messages")
 
                     try:
-                        ## declare exchange
+                        # Declare exchange
                         self.logger.debug("Declare exchanges")
                         for exchange_name in self.exchanges:
                             self.logger.debug(" + %s" % exchange_name)
@@ -230,9 +243,13 @@ class Amqp(Thread):
                             and not routing_key:
                         routing_key = queue_name
 
-                    #self.logger.debug("   + exchange: '%s', routing_key: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
                     self.logger.debug(
-                        "   + exchange: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
+                        " + exchange: '{}', exclusive: {}, auto_delete: {}, no_ack: {}".format(
+                            qsettings['exchange_name'],
+                            qsettings['exclusive'],
+                            qsettings['auto_delete'],
+                            qsettings['no_ack'])
+                    )
                     qsettings['queue'] = Queue(
                         queue_name,
                         exchange=exchange,
@@ -248,13 +265,17 @@ class Amqp(Thread):
                         self.logger.debug(" + Bind on all routing keys")
                         for routing_key in routing_keys:
                             self.logger.debug(
-                                " + routing_key: '%s'" % routing_key)
+                                " + routing_key: '{}'".format(routing_key)
+                            )
                             try:
                                 qsettings['queue'].bind_to(
-                                    exchange=exchange, routing_key=routing_key)
+                                    exchange=exchange,
+                                    routing_key=routing_key
+                                )
                             except:
                                 self.logger.error(
-                                    "You need upgrade your Kombu version (%s)" % __version__)
+                                    "You need upgrade your Kombu version ({})".format(__version__)
+                                )
 
                 if not qsettings['consumer']:
                     self.logger.debug("   + Create Consumer")
@@ -268,11 +289,15 @@ class Amqp(Thread):
                 self.on_ready()
 
     def add_queue(
-        self, queue_name, routing_keys, callback, exchange_name=None,
-        no_ack=True, exclusive=False, auto_delete=True
+        self,
+        queue_name,
+        routing_keys,
+        callback,
+        exchange_name=None,
+        no_ack=True,
+        exclusive=False,
+        auto_delete=True
     ):
-        #if exchange_name == "amq.direct":
-        #   routing_keys = queue_name
 
         c_routing_keys = []
 
@@ -298,30 +323,63 @@ class Amqp(Thread):
         }
 
     def publish(
-        self, msg, routing_key, exchange_name=None, serializer="json",
-        compression=None, content_type=None, content_encoding=None
+        self,
+        msg,
+        routing_key,
+        exchange_name=None,
+        serializer="json",
+        compression=None,
+        content_type=None,
+        content_encoding=None
     ):
-        self.wait_connection()
-        if self.connected:
-            if not exchange_name:
-                exchange_name = self.exchange_name
 
-            rk = msg.get('rk', '')
-            self.logger.debug(
-                "{} -> {} in {}".format(rk, routing_key, exchange_name))
-            with self.producers[self.conn].acquire(block=True) as producer:
-                try:
-                    _msg = msg.copy()
-                    Amqp._clean_msg_for_serialization(_msg)
-                    producer.publish(
-                        _msg, serializer=serializer, compression=compression,
-                        routing_key=routing_key,
-                        exchange=self.get_exchange(exchange_name))
-                    self.logger.debug(" + Sent")
-                except Exception as err:
-                    self.logger.error(" + Impossible to send (%s)" % err)
-        else:
-            self.logger.error("You are not connected ...")
+        operation_success = False
+        retries = 0
+
+        while not operation_success and retries < MAX_RETRIES:
+            retries += 1
+
+            if self.connected:
+
+                if not exchange_name:
+                    exchange_name = self.exchange_name
+
+                with self.producers[self.conn].acquire(block=True) as producer:
+                    try:
+                        _msg = msg.copy()
+
+                        Amqp._clean_msg_for_serialization(_msg)
+
+                        producer.publish(
+                            _msg,
+                            serializer=serializer,
+                            compression=compression,
+                            routing_key=routing_key,
+                            exchange=self.get_exchange(exchange_name))
+
+                        self.logger.debug('publish {} in exchange {}'.format(
+                            routing_key,
+                            exchange_name
+                        ))
+
+                        operation_success = True
+
+                    except Exception as e:
+                        self.logger.error(' + Impossible to send {}'.format(e))
+            else:
+                self.logger.error('Not connected ...')
+
+            if not operation_success:
+                # Event and it's information are buffered until next send retry
+                self.logger.info('Retry count {}'.format(
+                    retries
+                ))
+
+        if not operation_success:
+            # Event and it's information are buffered until next send retry
+            self.logger.error('Too much retries for event {}, give up'.format(
+                routing_key
+            ))
 
     @staticmethod
     def _clean_msg_for_serialization(msg):
@@ -402,8 +460,9 @@ class Amqp(Thread):
 
         except Exception as err:
             self.logger.error(
-                "Impossible to load configurations (%s), use default ..." %
-                err)
+                "Can't to load configurations ({}), use default ...".format(
+                    err
+                ))
 
     def __del__(self):
         self.stop()
