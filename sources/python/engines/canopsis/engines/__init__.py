@@ -467,6 +467,17 @@ class Engine(object):
                     't': time()
                 })
 
+        @classmethod
+        def release(cls, lock_id, object_storage):
+            object_storage.update(
+                {'_id': lock_id},
+                {'$set': {
+                    'l': False,
+                    't': time()
+                }},
+                upsert=True
+            )
+
 
 class TaskHandler(Engine):
     etype = 'Task'

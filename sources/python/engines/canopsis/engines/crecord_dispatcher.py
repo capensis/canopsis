@@ -36,7 +36,7 @@ class engine(Engine):
 
         self.crecords = []
         self.delays = {}
-        self.beat_interval = 5
+        self.beat_interval = 15
         self.nb_beat = 0
         self.crecords_types = [
             'selector',
@@ -46,10 +46,6 @@ class engine(Engine):
         ]
 
         self.beat_interval_trigger = {
-            'eventstore': {
-                'delay': 60,
-                'elapsed_since_last_beat': 0
-            },
             'eventstore': {
                 'delay': 60,
                 'elapsed_since_last_beat': 0
@@ -74,6 +70,9 @@ class engine(Engine):
             ))
 
         self.backend = self.storage.get_backend('object')
+
+        self.logger.info('Release crecrord dispatcher lock')
+        self.Lock.release('load_crecords', self.backend)
 
         self.ha_engine_triggers = {}
 

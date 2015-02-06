@@ -21,7 +21,6 @@
           "widgetId" : "item-fd5a-1ede-8ac2-6a1d66ad0023",
           "refreshInterval": 40,
           "refreshableWidget" : false,
-          "itemsPerPage": 50,
           "xtype": "list",
           "listed_crecord_type": "eventlog",
           "display_record_field": "resource",
@@ -45,7 +44,10 @@
             {"name": "Customfilterlist"},
             {"name": "Sortablearray"},
             {"name": "Arraysearch"},
-            {"name": "Pagination"},
+            {
+              "name": "Pagination",
+              "itemsPerPage": 50
+            },
             {"name": "History"},
             {"name": "Eventhistory"}
           ],
