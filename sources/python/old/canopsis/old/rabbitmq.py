@@ -40,7 +40,6 @@ from traceback import print_exc
 
 # Number of tries to re-publish an event before it is lost
 # when connection problems
-MAX_RETRIES = 5
 
 
 class Amqp(Thread):
@@ -56,7 +55,8 @@ class Amqp(Thread):
         logging_level=INFO,
         read_config_file=True,
         auto_connect=True,
-        on_ready=None
+        on_ready=None,
+        max_retries=5
     ):
         super(Amqp, self).__init__()
 
@@ -78,6 +78,14 @@ class Amqp(Thread):
             self.virtual_host)
 
         self.logger.setLevel(logging_level)
+
+        # Event sent try count before event drop in case of connection problem
+        if max_retries != 5:
+            self.logger.info('Custom retries value : {} {}'.format(
+                max_retries,
+                type(max_retries)
+            ))
+        self.max_retries = max_retries
 
         self.exchange_name_events = exchange_name + ".events"
         self.exchange_name_alerts = exchange_name + ".alerts"
@@ -336,7 +344,7 @@ class Amqp(Thread):
         operation_success = False
         retries = 0
 
-        while not operation_success and retries < MAX_RETRIES:
+        while not operation_success and retries < self.max_retries:
             retries += 1
 
             if self.connected:
