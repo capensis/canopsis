@@ -30,8 +30,6 @@ from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.parameters import Parameter
 
-from time import mktime
-
 CONF_PATH = 'timeserie/timeserie.conf'
 
 

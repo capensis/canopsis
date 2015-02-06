@@ -25,12 +25,18 @@ from canopsis.old.record import Record
 from socket import gethostname
 import os
 import json
+import pprint
+
+pp = pprint.PrettyPrinter(indent=2)
 
 # Set root account
 root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
 json_path = os.path.expanduser('~/opt/mongodb/load.d')
+
+# Can enable debug trace
+DEBUG = False
 
 """
 Upserts json documents files within json_<collection> folder of the load.d
@@ -150,7 +156,7 @@ def set_dict_value(replace_dict):
                 replace_dict[key] = replace_value(replace_dict[key])
 
             if isinstance(replace_dict[key], dict):
-                replace_dict[key] = set_dict_value(replace_dict[key])
+                set_dict_value(replace_dict[key])
 
             if isinstance(replace_dict[key], list):
                 set_list_value(replace_dict[key])
@@ -167,10 +173,22 @@ def hooks(json_data):
 
 
 def do_update(json_data, collection):
+
     record = Record({}).dump()
+
     for key in json_data:
         record[key] = json_data[key]
+
+    compare_record = record.copy()
+
     hooks(record)
+
+    if DEBUG and record != compare_record:
+        print 'Differences found\n # before \n{}\n\n # after\n {}'.format(
+            pp.pformat(compare_record),
+            pp.pformat(record)
+        )
+
     storage.get_backend(collection).update(
         {'loader_id': json_data['loader_id']},
         record,
@@ -180,3 +198,5 @@ def do_update(json_data, collection):
 
 def update():
     init()
+
+init()

@@ -19,6 +19,7 @@
         "value" : "toggleDevTools",
         "label" : "²"
     }],
+    "defaultview" : "view.event",
     "crecord_name" : "frontent",
     "loader_id": "cservice.frontent",
     "loader_no_update": true

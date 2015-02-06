@@ -208,7 +208,7 @@ class Period(object):
         unit_values = self.unit_values
 
         for unit in unit_values:
-            value = unit_values[unit]
+            value = max(1, unit_values[unit])
             if unit is Period.WEEK:
                 _monthcalendar = monthcalendar(
                     datetime.year, datetime.month
