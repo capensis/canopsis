@@ -60,6 +60,7 @@ class Engine(object):
         exchange_name='amq.direct',
         routing_keys=[],
         camqp_custom=None,
+        max_retries=5,
         *args, **kwargs
     ):
 
@@ -108,6 +109,8 @@ class Engine(object):
 
         # Log in file
         self.logger.addHandler(logHandler)
+
+        self.max_retries = max_retries
 
         self.counter_error = 0
         self.counter_event = 0
@@ -201,7 +204,10 @@ class Engine(object):
 
         self.amqp = self.amqpcls(
             logging_level=self.logging_level,
-            logging_name="{0}-amqp".format(self.name), on_ready=ready)
+            logging_name="{0}-amqp".format(self.name),
+            on_ready=ready,
+            max_retries=self.max_retries
+        )
 
         if self.create_queue:
             self.new_amqp_queue(

@@ -146,7 +146,8 @@ class EngineLauncher(object):
             'beat_interval': parser.int,
             'exchange_name': parser.str,
             'routing_keys': parser.list,
-            'event_processing': parser.str
+            'event_processing': parser.str,
+            'max_retries': parser.int
         }
 
         engine_conf = {}
