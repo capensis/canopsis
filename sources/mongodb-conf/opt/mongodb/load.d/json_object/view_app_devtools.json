@@ -12,7 +12,78 @@
     "description" : null,
     "parent" : [ ],
    "containerwidget" : {
-    "items" : [],
+    "items" : [{
+            "widget" : {
+                "title" : "Object inspector",
+                "xtype" : "objectinspector"
+            },
+            "xtype" : "widgetwrapper",
+            "title" : "wrapper"
+        },{
+            "widget" : {
+                "title" : "Requests",
+                "xtype" : "requestsmanager"
+            },
+            "xtype" : "widgetwrapper",
+            "title" : "wrapper"
+        },{
+        "widget": {
+          "items": [
+            {
+              "widget": {
+                "xtype": "text",
+                "title": "Actions",
+                "html": "{{component-table data=controller.controllers.application.actionsRegistry.all columns=controller.controllers.application.actionsRegistry.tableColumns}}"
+              },
+              "xtype": "widgetwrapper",
+              "title": "wrapper"
+            },
+            {
+              "widget": {
+                "xtype": "text",
+                "title": "Widgets",
+                "html": "{{component-table data=controller.controllers.application.widgetsRegistry.all columns=controller.controllers.application.widgetsRegistry.tableColumns}}"
+              },
+              "xtype": "widgetwrapper",
+              "title": "wrapper"
+            },
+            {
+              "widget": {
+                "xtype": "text",
+                "title": "Inflections",
+                "html": "Inflections<br/>{{component-table data=controller.controllers.application.inflectionsRegistry.all columns=controller.controllers.application.inflectionsRegistry.tableColumns}}"
+              },
+              "xtype": "widgetwrapper",
+              "title": "wrapper"
+            },
+            {
+              "widget": {
+                "xtype": "text",
+                "title": "Mixins",
+                "html": "{{component-table data=controller.controllers.application.mixinsRegistry.all columns=controller.controllers.application.mixinsRegistry.tableColumns}}"
+              },
+              "xtype": "widgetwrapper",
+              "title": "wrapper"
+            },
+            {
+              "widget": {
+                "xtype": "text",
+                "title": "Forms",
+                "html": "{{component-table data=controller.controllers.application.formsRegistry.all columns=controller.controllers.application.formsRegistry.tableColumns}}"
+              },
+              "xtype": "widgetwrapper",
+              "title": "wrapper"
+            }
+          ],
+          "xtype": "widgetcontainer",
+            "mixins": [{
+               "name": "tablayout"
+            }],
+          "title": "Symbols"
+        },
+        "xtype": "widgetwrapper",
+        "title": "wrapper"
+      }],
     "xtype" : "widgetcontainer",
     "mixins": [{
        "name": "tablayout"

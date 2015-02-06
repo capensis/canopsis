@@ -94,40 +94,42 @@ class PeriodTest(TestCase):
 
         for unit in Period.UNITS:
 
-            period = Period(**{unit: 1})
+            for i in range(0, 5):
 
-            round_dt = period.round_datetime(dt)
-            self.assertEqual(round_dt, dt)
+                period = Period(**{unit: i})
 
-            value = getattr(dt, unit, None)
-            if value is not None:
-                value_to_set = value + 1 if unit != Period.YEAR else 2000
-                period.unit_values[unit] = value_to_set
                 round_dt = period.round_datetime(dt)
-                round_value = getattr(round_dt, unit)
 
-                if round_value is not None:
-                    if unit is Period.YEAR:
-                        self.assertEqual(round_value, 2000)
-                    elif unit is Period.DAY:
-                        month = dt.month - 1
-                        if month == 0:
-                            month = 12
-                        _, monthday = monthrange(dt.year, month)
-                        self.assertEqual(round_value, monthday)
-                    elif unit is Period.MONTH:
-                        self.assertEqual(round_value, 12)
-                    else:
-                        self.assertEqual(round_value, 0)
+                value = getattr(dt, unit, None)
+                if value is not None:
+                    value_to_set = value + 1 if unit != Period.YEAR else 2000
+                    period.unit_values[unit] = value_to_set
+                    round_dt = period.round_datetime(dt)
+                    round_value = getattr(round_dt, unit)
 
-            if Period.MICROSECOND is not unit:
-                normalized_dt = period.round_datetime(dt, normalize=True)
-                for _unit in Period.UNITS[0:Period.UNITS.index(unit) - 1]:
-                    if _unit is not Period.WEEK:
-                        if _unit is Period.MONTH or _unit is Period.DAY:
-                            self.assertEqual(getattr(normalized_dt, _unit), 1)
+                    if round_value is not None:
+                        if unit is Period.YEAR:
+                            self.assertEqual(round_value, 2000)
+                        elif unit is Period.DAY:
+                            month = dt.month - 1
+                            if month == 0:
+                                month = 12
+                            _, monthday = monthrange(dt.year, month)
+                            self.assertEqual(round_value, monthday)
+                        elif unit is Period.MONTH:
+                            self.assertEqual(round_value, 12)
                         else:
-                            self.assertEqual(getattr(normalized_dt, _unit), 0)
+                            self.assertEqual(round_value, 0)
+
+                if Period.MICROSECOND is not unit:
+                    normalized_dt = period.round_datetime(dt, normalize=True)
+                    for _unit in Period.UNITS[0:Period.UNITS.index(unit) - 1]:
+                        if _unit is not Period.WEEK:
+                            normalized_dt_unit = getattr(normalized_dt, _unit)
+                            if _unit is Period.MONTH or _unit is Period.DAY:
+                                self.assertEqual(normalized_dt_unit, 1)
+                            else:
+                                self.assertEqual(normalized_dt_unit, 0)
 
     def test_round_timestamp(self):
 
