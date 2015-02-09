@@ -387,7 +387,7 @@ class Sla(object):
         event = forger(
             connector='sla',
             connector_name='engine',
-            event_type='check',
+            event_type='sla',
             source_type='resource',
             component=selector_record.display_name,
             resource='sla',
@@ -404,4 +404,3 @@ class Sla(object):
         self.logger.debug('event: {}'.format(event))
 
         return event
-
