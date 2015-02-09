@@ -9,7 +9,7 @@
 		"customItemsPerPage": {
 			"type": "array",
 			"title": "Custom items per page",
-			"description": "List of number allowing user to select custom items per page",
+			"description": "List of number allowing user to select custom items per page"
 		}
 	}
 }
