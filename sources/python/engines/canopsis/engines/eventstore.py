@@ -22,7 +22,7 @@ from canopsis.engines import Engine
 from canopsis.check.archiver import Archiver
 from canopsis.old.downtime import Downtime
 from canopsis.old.storage import CONFIG
-
+from copy import deepcopy
 from csv import reader
 from time import time
 
@@ -81,7 +81,7 @@ class engine(Engine):
         event['_id'] = event['rk']
 
         # Prepare log event collection async insert
-        log_event = event.copy()
+        log_event = deepcopy(event)
         self.events_log_buffer.append({
             'event': log_event,
             'collection': 'events_log'
