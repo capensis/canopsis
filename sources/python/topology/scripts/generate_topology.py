@@ -25,10 +25,20 @@ from canopsis.topology.elements import TopoEdge, TopoNode, Topology
 
 from argparse import ArgumentParser
 
+manager = TopologyManager()
+
+
+def generate_topology(name, _type):
+    """Generate a topology related to a name and type.
+    """
+    if _type == 'context':
+        generate_context_topology(name=name)
+    else:
+        generate_rules_topology(name=name)
+
 
 def generate_context_topology(name='context'):
-    """
-    Generate a context topology where nodes are components and resources,
+    """Generate a context topology where nodes are components and resources,
     and edges are dependencies from components to resources, or from resources
     to the topology.
 
@@ -37,7 +47,6 @@ def generate_context_topology(name='context'):
 
     # initialize context and topology
     context = Context()
-    manager = TopologyManager()
 
     # clean old topology
     manager.del_elts(ids=name)
@@ -94,6 +103,25 @@ def generate_context_topology(name='context'):
     topology.save(manager=manager)
 
 
+def generate_rules_topology(name):
+    """Generate a topology with rules.
+    """
+
+    topo = Topology(name=name)
+
+    elts = []
+    # create a simple rule
+    toponode = TopoNode()
+    # and bind it to the topo
+    edge = TopoEdge(sources=toponode, targets=topo)
+    elts += [toponode, edge]
+    # add rules in the topo
+    topo.add_elts(elts)
+    # save the topology
+    topo.save(manager=manager)
+    print(topo)
+
+
 if __name__ == '__main__':
 
     parser = ArgumentParser(description='Generate a topology')
@@ -102,7 +130,13 @@ if __name__ == '__main__':
         help='topology name to generate (default: context)',
         default='context'
     )
+    parser.add_argument(
+        dest='type',
+        help='topology type among context, rules, random (default: context)',
+        default='context'
+    )
     args = parser.parse_args()
 
     topology_name = args.name
-    generate_context_topology(topology_name)
+    topology_type = args.type
+    generate_topology(name=topology_name, _type=topology_type)

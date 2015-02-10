@@ -18,10 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-"""
-Module in charge of defining main topological rule conditions.
+"""Module in charge of defining main topological rule conditions.
 
-A topological toponode doesn't require a condition.
+A topological vertice doesn't require a condition.
 
 In addition to this condition, it is possible to test another condition which
 refers to source nodes if they exist.
@@ -40,7 +39,6 @@ Related rule actions are defined in ``canopsis.topology.rule.action`` module.
 
 from canopsis.common.init import basestring
 from canopsis.topology.manager import TopologyManager
-from canopsis.topology.elements import TopoNode
 from canopsis.check import Check
 from canopsis.task import register_task
 
@@ -51,50 +49,50 @@ SOURCES_BY_EDGES = 'sources_by_edges'
 
 
 @register_task
-def new_state(event, toponode, state=None, manager=None, **kwargs):
+def new_state(event, vertice, state=None, manager=None, **kwargs):
     """
-    Condition triggered when state is different than toponode state.
+    Condition triggered when state is different than vertice state.
 
     :param dict event: event from where get state if input state is None.
-    :param TopoNode toponode: toponode from where check if toponode state != input state.
-    :param int state: state to compare with input toponode state.
+    :param TopoNode vertice: vertice from where check if vertice state != input state.
+    :param int state: state to compare with input vertice state.
     """
 
     if manager is None:
         manager = tm
 
-    if isinstance(toponode, basestring):
-        toponode = manager.get_elts(ids=toponode)
+    if isinstance(vertice, basestring):
+        vertice = manager.get_elts(ids=vertice)
 
     # if state is None, use event state
     if state is None:
         state = event[Check.STATE]
 
-    # True if toponode state is different than state
-    result = toponode.state != state
+    # True if vertice state is different than state
+    result = vertice.state != state
 
     return result
 
 
 @register_task
 def at_least(
-    event, ctx, toponode, state=Check.OK, min_weight=1, rrule=None, f=None,
+    event, ctx, vertice, state=Check.OK, min_weight=1, rrule=None, f=None,
     manager=None, **kwargs
 ):
     """
-    Generic condition applied on sources of toponode which check if at least source
+    Generic condition applied on sources of vertice which check if at least source
         nodes check a condition.
 
     :param dict event: processed event.
-    :param dict ctx: rule context which must contain rule toponode.
-    :param TopoNode toponode: toponode to check.
+    :param dict ctx: rule context which must contain rule vertice.
+    :param TopoNode vertice: vertice to check.
     :param int state: state to check among sources nodes.
     :param float min_weight: minimal weight (default 1) to reach in order to
         validate this condition. If None, condition results in checking all
             sources.
     :param rrule rrule: rrule to consider in order to check condition in time.
-    :param f: function to apply on source toponode state. If None, use equality
-        between input state and source toponode state.
+    :param f: function to apply on source vertice state. If None, use equality
+        between input state and source vertice state.
 
     :return: True if condition is checked among source nodes.
     :rtype: bool
@@ -105,10 +103,10 @@ def at_least(
     if manager is None:
         manager = tm
 
-    if isinstance(toponode, basestring):
-        toponode = manager.get_elts(ids=toponode)
+    if isinstance(vertice, basestring):
+        vertice = manager.get_elts(ids=vertice)
 
-    sources_by_edges = manager.get_sources(ids=toponode.id, add_edges=True)
+    sources_by_edges = manager.get_sources(ids=vertice.id, add_edges=True)
 
     if sources_by_edges and min_weight is None:
         # if edges & checking all nodes is required, result is True by default
@@ -145,13 +143,13 @@ def _all(**kwargs):
     Check if all source nodes match with input check_state.
 
     :param dict event: processed event.
-    :param dict ctx: rule context which must contain rule toponode.
-    :param TopoNode toponode: toponode to check.
-    :param int min_weight: minimal toponode weight to check.
+    :param dict ctx: rule context which must contain rule vertice.
+    :param TopoNode vertice: vertice to check.
+    :param int min_weight: minimal vertice weight to check.
     :param int state: state to check among sources nodes.
     :param rrule rrule: rrule to consider in order to check condition in time.
-    :param f: function to apply on source toponode state. If None, use equality
-        between input state and source toponode state.
+    :param f: function to apply on source vertice state. If None, use equality
+        between input state and source vertice state.
 
     :return: True if condition is checked among source nodes.
     :rtype: bool
@@ -171,13 +169,13 @@ def nok(**kwargs):
     Condition which check if source nodes are not ok.
 
     :param dict event: processed event.
-    :param dict ctx: rule context which must contain rule toponode.
-    :param TopoNode toponode: toponode to check.
-    :param int min_weight: minimal toponode weight to check.
+    :param dict ctx: rule context which must contain rule vertice.
+    :param TopoNode vertice: vertice to check.
+    :param int min_weight: minimal vertice weight to check.
     :param int state: state to check among sources nodes.
     :param rrule rrule: rrule to consider in order to check condition in time.
-    :param f: function to apply on source toponode state. If None, use equality
-        between input state and source toponode state.
+    :param f: function to apply on source vertice state. If None, use equality
+        between input state and source vertice state.
 
     :return: True if condition is checked among source nodes.
     :rtype: bool

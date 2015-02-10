@@ -70,19 +70,20 @@ A topology inherits from both grapg and to and contains.
 __all__ = ['Topology', 'TopoEdge', 'TopoNode']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
-from canopsis.task import run_task, TASK, new_conf, TASK_PARAMS
+from canopsis.task import new_conf, TASK_PARAMS
 from canopsis.check import Check
 from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context
 from canopsis.topology.manager import TopologyManager
-from canopsis.event import forger, Event
+from canopsis.graph.event import TaskedVertice
+
 
 _context = Context()
 _check = CheckManager()
 _topology = TopologyManager()
 
 
-class TopoVertice(object):
+class TopoVertice(TaskedVertice):
 
     STATE = Check.STATE  #: state field name in data
     ENTITY = 'entity'  #: entity field name in data
@@ -90,122 +91,55 @@ class TopoVertice(object):
     NAME = 'name'  #: element name.
 
     DEFAULT_STATE = Check.OK  #: default state value
-
     DEFAULT_TASK = 'canopsis.topology.rule.action.change_state'
 
     def get_default_task(self):
-        """
-        Get default task.
+        """Get default task.
         """
 
         return new_conf(TopoVertice.DEFAULT_TASK)
 
-    @property
-    def entity(self):
-        """
-        Get self entity id.
-        :return: self entity id.
-        :rtype: str
-        """
-        return self.data[TopoVertice.ENTITY]
+    def set_entity(self, entity_id, *args, **kwargs):
 
-    @entity.setter
-    def entity(self, value):
-        """
-        Change of entity id and update state.
+        super(TopoVertice, self).set_entity(
+            entity_id=entity_id, *args, **kwargs
+        )
 
-        :param value: new entity (id) to use.
-        :type value: dict or str
-        """
-
-        if isinstance(value, dict):
-            # get entity id
-            entity_id = _context.get_entity_id(value)
-        else:
-            entity_id = value
-
-        # update entity
-        self.data[TopoVertice.ENTITY] = entity_id
         # update entity state
         self.data[TopoVertice.STATE] = _check.state(ids=entity_id)
 
-    def get_context_w_entity(self):
-        """
-        Get self entity structure and its context.
-
-        :return: tuple of self context and entity.
-        :rtype: tuple
-        """
-
-        context = {
-            'connector': Event.CONNECTOR,
-            'connector_name': Event.CONNECTOR_NAME,
-            'component': self.id
-        }
-
-        entity = {
-            Context.NAME: self.name
-        }
-
-        return context, entity
-
-    @property
-    def name(self):
-        return self.data.get(TopoVertice.NAME, self.id)
-
-    @name.setter
-    def name(self, value):
-        self.data[TopoVertice.NAME] = value
-
     @property
     def state(self):
+
         result = self.data.get(TopoVertice.STATE)
         return result
 
     @state.setter
     def state(self, value):
+
         self.data[TopoVertice.STATE] = value
 
     @property
     def operator(self):
-        result = self.data.get(TopoVertice.OPERATOR)
+
+        result = self.task
         return result
 
     @operator.setter
     def operator(self, value):
-        self.data[TopoVertice.OPERATOR] = value
 
-    def process(self, event, **kwargs):
-        """
-        Process this node task.
-        """
+        self.task = value
 
-        result = None
+    def get_event(self, state, source, *args, **kwargs):
 
-        task = self.operator
-
-        if task is None:  # process change_state by default
-            task = self.get_default_task()
-
-        result = run_task(conf=task, toponode=self, event=event, **kwargs)
-
-        return result
-
-    def get_event(self, state, source):
-        """
-        Get topo element event.
-        :param int state: new state to apply.
-        """
-
-        result = forger(
-            event_type=self.type,
-            component=self.id if self.type == Topology.TYPE else None,
-            resource=self.id if self.type == TopoNode.TYPE else None,
-            state=state,
-            state_type=1,
-            id=self.id,
-            source=source
+        result = super(TopoVertice, self).get_event(
+            *args, **kwargs
         )
+
+        result['state'] = state
+        result['state_type'] = 1
+        result['source'] = source
+
         return result
 
 
@@ -226,14 +160,6 @@ class Topology(Graph, TopoVertice):
         if self.data is None:
             self.data = {}
 
-        # ensure change state is the default task
-        if TASK not in self.data:
-            self.data[TASK] = new_conf(
-                'canopsis.topology.rule.action.change_state',
-                **{
-                    'update_entity': True
-                }
-            )
         # set operator
         if operator is not None:
             self.operator = operator
@@ -247,16 +173,6 @@ class Topology(Graph, TopoVertice):
         result[TASK_PARAMS]['update_entity'] = True
 
         return result
-
-    @property
-    def entity(self):
-        """
-        Get self entity id.
-        :return: self entity id.
-        :rtype: str
-        """
-
-        return self.data[TopoVertice.ENTITY]
 
     def save(self, context=None, *args, **kwargs):
 
@@ -272,8 +188,7 @@ class Topology(Graph, TopoVertice):
 
 
 class TopoNode(Vertice, TopoVertice):
-    """
-    Class representation of a topology node.
+    """Class representation of a topology node.
 
     Contains:
         - (optionnally) an entity id.
@@ -315,8 +230,8 @@ class TopoNode(Vertice, TopoVertice):
             self.operator = operator
 
     def get_event(self, state, source, *args, **kwargs):
-        """
-        Get topo element event.
+        """Get topo element event.
+
         :param int state: new state to apply.
         """
 
@@ -353,8 +268,7 @@ class TopoNode(Vertice, TopoVertice):
 
 
 class TopoEdge(Edge, TopoVertice):
-    """
-    Topology edge.
+    """Topology edge.
     """
 
     __slots__ = Edge.__slots__

@@ -18,8 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-"""
-Module in charge of defining topology processing in engines.
+"""Module in charge of defining topology processing in engines.
 
 When an event occured, the related entity is retrieved and all bound
 topological nodes are retrieved as well in order to execute theirs rules.
@@ -54,8 +53,8 @@ PUBLISHER = 'publisher'
 
 @register_task
 def event_processing(engine, event, manager=None, **kwargs):
-    """
-    Process input event in getting topology nodes bound to input event entity.
+    """Process input event in getting topology nodes bound to input event
+    entity.
 
     One topology nodes are founded, executing related rules.
 

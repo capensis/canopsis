@@ -21,7 +21,7 @@
 """
 Module in charge of defining main topological rule actions.
 
-A topological toponode has at least one of four actions in charge of changing
+A topological vertice has at least one of four actions in charge of changing
 of state::
 
     - ``change_state``: change of state related to an input or event state.
@@ -34,7 +34,6 @@ from canopsis.task import register_task
 from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
 from canopsis.topology.manager import TopologyManager
-from canopsis.topology.elements import TopoNode
 from canopsis.topology.rule.condition import SOURCES_BY_EDGES
 from canopsis.check import Check
 from canopsis.check.manager import CheckManager
@@ -47,7 +46,7 @@ check = CheckManager()
 
 @register_task
 def change_state(
-    event, toponode,
+    event, vertice,
     state=None, update_entity=False, criticity=CheckManager.HARD,
     manager=None, check_manager=None,
     **kwargs
@@ -57,8 +56,8 @@ def change_state(
         if necessary.
 
     :param event: event to process in order to change of state.
-    :param toponode: toponode to change of state.
-    :param state: new state to apply on input toponode. If None, get state from
+    :param vertice: vertice to change of state.
+    :param state: new state to apply on input vertice. If None, get state from
         input event.
     :param bool update_entity: update entity state if True (False by default).
         The topology graph may have this flag to True.
@@ -74,25 +73,25 @@ def change_state(
     # init check manager
     if check_manager is None:
         check_manager = check
-    # init toponode
-    if isinstance(toponode, basestring):
-        toponode = manager.get_elts(ids=toponode)
+    # init vertice
+    if isinstance(vertice, basestring):
+        vertice = manager.get_elts(ids=vertice)
 
-    # update toponode state from ctx
-    toponode.state = state
-    toponode.save(manager=manager)
+    # update vertice state from ctx
+    vertice.state = state
+    vertice.save(manager=manager)
 
     # update entity if necessary
     if update_entity:
-        entity = TopoNode.entity(toponode)
+        entity = vertice.entity
         if entity is not None:
             check_manager.state(ids=entity, state=state, criticity=criticity)
 
 
 @register_task
-def state_from_sources(event, toponode, ctx, f, manager=None, *args, **kwargs):
+def state_from_sources(event, vertice, ctx, f, manager=None, *args, **kwargs):
     """
-    Change ctx toponode state which equals to f result on source nodes.
+    Change ctx vertice state which equals to f result on source nodes.
     """
 
     # get function f
@@ -101,15 +100,15 @@ def state_from_sources(event, toponode, ctx, f, manager=None, *args, **kwargs):
     # init manager
     if manager is None:
         manager = tm
-    # init toponode
-    if isinstance(toponode, basestring):
-        toponode = manager.get_elts(ids=toponode)
+    # init vertice
+    if isinstance(vertice, basestring):
+        vertice = manager.get_elts(ids=vertice)
 
     # if sources are in ctx, get them
     if SOURCES_BY_EDGES in ctx:
         sources_by_edges = ctx[SOURCES_BY_EDGES]
     else:  # else get them with the topology object
-        sources_by_edges = manager.get_sources(ids=toponode.id, add_edges=True)
+        sources_by_edges = manager.get_sources(ids=vertice.id, add_edges=True)
 
     if sources_by_edges:  # do something only if sources exist
         # calculate the state
@@ -120,7 +119,7 @@ def state_from_sources(event, toponode, ctx, f, manager=None, *args, **kwargs):
         state = f(source_node.data[Check.STATE] for source_node in sources)
         # change state
         change_state(
-            state=state, event=event, toponode=toponode, ctx=ctx,
+            state=state, event=event, vertice=vertice, ctx=ctx,
             manager=manager, *args, **kwargs
         )
 
