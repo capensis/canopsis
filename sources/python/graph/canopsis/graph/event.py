@@ -24,17 +24,17 @@ When an event occured, the related entity is retrieved with its bound
 graph nodes in order to execute theirs tasks.
 """
 
-from canopsis.graph.elements import Vertice
-from canopsis.graph.manager import Graph
+from canopsis.graph.elements import Vertice, Edge, Graph
+from canopsis.graph.manager import GraphManager
 from canopsis.context.manager import Context
 from canopsis.task import register_task, run_task
 from canopsis.event import forger, Event
 
 _context = Context()
-graph = Graph()
+graph = GraphManager()
 
 
-class TaskedVertice(object):
+class BaseTaskedVertice(object):
 
     TASK = 'task'  #: task field name in data
     ENTITY = 'entity'  #: entity field name in data
@@ -49,11 +49,11 @@ class TaskedVertice(object):
 
     @property
     def name(self):
-        return self.data.get(TaskedVertice.NAME, self.id)
+        return self.data.get(BaseTaskedVertice.NAME, self.id)
 
     @name.setter
     def name(self, value):
-        self.data[TaskedVertice.NAME] = value
+        self.data[BaseTaskedVertice.NAME] = value
 
     @property
     def entity(self):
@@ -63,7 +63,7 @@ class TaskedVertice(object):
         :rtype: str
         """
 
-        return self.data[TaskedVertice.ENTITY]
+        return self.data.get(BaseTaskedVertice.ENTITY)
 
     @entity.setter
     def entity(self, value):
@@ -73,16 +73,21 @@ class TaskedVertice(object):
         :type value: dict or str
         """
 
-        if isinstance(value, dict):
-            # get entity id
-            entity_id = _context.get_entity_id(value)
-        else:
-            entity_id = value
+        if value is None:
+            if BaseTaskedVertice.ENTITY in self.data:
+                del self.data[BaseTaskedVertice.ENTITY]
 
-        # update entity
-        self.data[TaskedVertice.ENTITY] = entity_id
-        # call specific set entity
-        self.set_entity(entity_id)
+        else:
+            if isinstance(value, dict):
+                # get entity id
+                entity_id = _context.get_entity_id(value)
+            else:
+                entity_id = value
+
+            # update entity
+            self.data[BaseTaskedVertice.ENTITY] = entity_id
+            # call specific set entity
+            self.set_entity(entity_id)
 
     def set_entity(self, entity_id):
         """Specific setting of entity.
@@ -113,7 +118,8 @@ class TaskedVertice(object):
     def task(self):
         """Get self task or default task if task is not setted.
         """
-        result = self.data.get(TaskedVertice.TASK, self.get_default_task())
+
+        result = self.data.get(BaseTaskedVertice.TASK, self.get_default_task())
 
         return result
 
@@ -124,7 +130,11 @@ class TaskedVertice(object):
         :param value: new task to use.
         """
 
-        self.data[TaskedVertice.TASK] = value
+        if value is None:
+            if BaseTaskedVertice.TASK in self.data:
+                del self.data[BaseTaskedVertice.TASK]
+        else:
+            self.data[BaseTaskedVertice.TASK] = value
 
     def process(self, event, **kwargs):
         """Process this vertice task in a context of event processing.
@@ -152,10 +162,50 @@ class TaskedVertice(object):
             id=self.id,
             *args, **kwargs
         )
+
         return result
 
 
-@register_task('graph.event_processing')
+class TaskedVertice(Vertice, BaseTaskedVertice):
+
+    def __init__(self, task=None, entity=None, *args, **kwargs):
+
+        super(TaskedVertice, self).__init__(*args, **kwargs)
+
+        if self.data is None:
+            self.data = {}
+
+        self.task = task
+        self.entity = entity
+
+
+class TaskedEdge(Edge, BaseTaskedVertice):
+
+    def __init__(self, task=None, entity=None, *args, **kwargs):
+
+        super(TaskedEdge, self).__init__(*args, **kwargs)
+
+        if self.data is None:
+            self.data = {}
+
+        self.task = task
+        self.entity = entity
+
+
+class TaskedGraph(Graph, BaseTaskedVertice):
+
+    def __init__(self, task=None, entity=None, *args, **kwargs):
+
+        super(TaskedGraph, self).__init__(*args, **kwargs)
+
+        if self.data is None:
+            self.data = {}
+
+        self.task = task
+        self.entity = entity
+
+
+@register_task()
 def event_processing(event, ctx=None, *args, **kwargs):
     """Process input event in getting graph nodes bound to input event entity.
 
@@ -170,8 +220,8 @@ def event_processing(event, ctx=None, *args, **kwargs):
     if entity is not None:
         entity_id = _context.get_entity_id(entity)
         vertices = graph.get_elts(
-            data={TaskedVertice.ENTITY: entity_id},
-            cls=TaskedVertice
+            data={BaseTaskedVertice.ENTITY: entity_id},
+            cls=BaseTaskedVertice
         )
 
         for vertice in vertices:
