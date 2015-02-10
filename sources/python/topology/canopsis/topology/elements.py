@@ -75,7 +75,7 @@ from canopsis.check import Check
 from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context
 from canopsis.topology.manager import TopologyManager
-from canopsis.graph.event import TaskedVertice
+from canopsis.graph.event import BaseTaskedVertice
 
 
 _context = Context()
@@ -83,7 +83,7 @@ _check = CheckManager()
 _topology = TopologyManager()
 
 
-class TopoVertice(TaskedVertice):
+class TopoVertice(BaseTaskedVertice):
 
     STATE = Check.STATE  #: state field name in data
     ENTITY = 'entity'  #: entity field name in data
