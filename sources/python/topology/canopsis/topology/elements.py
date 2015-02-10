@@ -130,7 +130,7 @@ class TopoVertice(BaseTaskedVertice):
 
         self.task = value
 
-    def get_event(self, state, source, *args, **kwargs):
+    def get_event(self, state=DEFAULT_STATE, source=None, *args, **kwargs):
 
         result = super(TopoVertice, self).get_event(
             *args, **kwargs
@@ -138,7 +138,9 @@ class TopoVertice(BaseTaskedVertice):
 
         result['state'] = state
         result['state_type'] = 1
-        result['source'] = source
+        if source is not None:
+            result['source'] = source
+        result[Context.TYPE] = self.type
 
         return result
 
@@ -152,19 +154,31 @@ class Topology(Graph, TopoVertice):
     def __init__(
         self,
         operator=None, state=TopoVertice.DEFAULT_STATE, _type=TYPE,
-        *args, **kwargs
+        entity=None, *args, **kwargs
     ):
 
         super(Topology, self).__init__(_type=_type, *args, **kwargs)
-
+        # set data
         if self.data is None:
             self.data = {}
-
         # set operator
         if operator is not None:
             self.operator = operator
         # set state
         self.state = state
+        # set entity
+        self.entity = entity
+
+    def set_entity(self, entity_id, *args, **kwargs):
+
+        super(Topology, self).set_entity(entity_id=entity_id, *args, **kwargs)
+
+        # set default entity if entity_id is None
+        if entity_id is None:
+            # set entity
+            event = self.get_event(source=0, state=0)
+            entity_id = _context.get_entity_id(event)
+            self.entity = entity_id
 
     def get_default_task(self, *args, **kwargs):
 
@@ -182,7 +196,9 @@ class Topology(Graph, TopoVertice):
         if context is None:
             context = _context
         # get self entity
-        ctx, entity = self.get_context_w_entity()
+        event = self.get_event()
+        ctx, _id = context.get_entity_context_and_name(entity=event)
+        entity = {Context.NAME: _id}
         # put the topology in the context by default
         context.put(_type=self.type, entity=entity, context=ctx)
 
@@ -209,62 +225,21 @@ class TopoNode(Vertice, TopoVertice):
         *args, **kwargs
     ):
         """
-        :param str entity: bound entity id.
         :param int state: state to use.
-        :param task: task configuration.
-        :type task: dict or str
         :param float weight: node weight.
         """
 
         super(TopoNode, self).__init__(*args, **kwargs)
-        # init data
+        # set data
         if self.data is None:
             self.data = {}
         # set entity
-        if entity is not None:
-            self.entity = entity
+        self.entity = entity
         # set state
         self.state = state
         # set operator
         if operator is not None:
             self.operator = operator
-
-    def get_event(self, state, source, *args, **kwargs):
-        """Get topo element event.
-
-        :param int state: new state to apply.
-        """
-
-        result = super(TopoNode, self).get_event(
-            state, source, *args, **kwargs
-        )
-
-        # get topology id
-        topologies = _topology.get_graphs(elts=self.id)
-        if topologies:
-            topology = topologies[0]
-            # update component field
-            result['component'] = topology.id
-
-        return result
-
-    def get_context_w_entity(self, *args, **kwargs):
-
-        ctx, entity = super(TopoNode, self).get_context_w_entity(
-            *args, **kwargs
-        )
-
-        ctx['resource'] = self.id
-        ctx['component'] = None
-
-        # get topology id
-        topologies = _topology.get_graphs(elts=self.id)
-        if topologies:
-            topology = topologies[0]
-            # update component field
-            ctx['component'] = topology.id
-
-        return ctx, entity
 
 
 class TopoEdge(Edge, TopoVertice):
@@ -278,6 +253,6 @@ class TopoEdge(Edge, TopoVertice):
     def __init__(self, *args, **kwargs):
 
         super(TopoEdge, self).__init__(*args, **kwargs)
-
+        # set data
         if self.data is None:
             self.data = {}

@@ -48,7 +48,7 @@ check = CheckManager()
 def change_state(
     event, vertice,
     state=None, update_entity=False, criticity=CheckManager.HARD,
-    manager=None, check_manager=None,
+    manager=None, check_manager=None, engine=None,
     **kwargs
 ):
     """
@@ -76,7 +76,6 @@ def change_state(
     # init vertice
     if isinstance(vertice, basestring):
         vertice = manager.get_elts(ids=vertice)
-
     # update vertice state from ctx
     vertice.state = state
     vertice.save(manager=manager)

@@ -124,15 +124,17 @@ class Context(MiddlewareRegistry):
 
         if from_db:
             result = self.get(_type=_type, names=name, context=context)
-
         else:
             result = context.copy()
             result[Context.NAME] = name
+            result[Context.TYPE] = _type
 
         # if entity does not exists, create it if specified
         if result is None and create_if_not_exists:
             result = {Context.NAME: name}
             self.put(_type=_type, entity=result, context=context, cache=cache)
+            result.update(context)
+            result[Context.TYPE] = _type
 
         return result
 
@@ -342,6 +344,8 @@ class Context(MiddlewareRegistry):
         """
 
         if Context.NAME not in entity:
+            if Context.TYPE not in entity:
+                entity[Context.TYPE] = entity['event_type']
             entity[Context.NAME] = entity[entity[Context.TYPE]]
 
         result = self[Context.CTX_STORAGE].get_path_with_id(entity)
@@ -349,14 +353,14 @@ class Context(MiddlewareRegistry):
         return result
 
     def get_entity_id(self, entity):
-        """
-        Get unique entity id related to its context and name.
+        """Get unique entity id related to its context and name.
         """
 
         path, data_id = self.get_entity_context_and_name(entity=entity)
 
         if path[Context.TYPE] in path:
             data_id = None
+
         result = self[Context.CTX_STORAGE].get_absolute_path(
             path=path, data_id=data_id
         )
@@ -364,8 +368,7 @@ class Context(MiddlewareRegistry):
         return result
 
     def unify_entities(self, entities, extended=False, cache=False):
-        """
-        Unify input entities as the same entity.
+        """Unify input entities as the same entity.
 
         :param bool cache: use query cache if True (False by default).
         """

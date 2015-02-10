@@ -83,14 +83,14 @@ def event_processing(engine, event, manager=None, **kwargs):
             if entity is not None:
                 entity_id = context.get_entity_id(entity)
                 elts = manager.get_elts(data={TopoNode.ENTITY: entity_id})
+
         # iterate on elts
         for elt in elts:
             # save old state in order to check for its modification
             old_state = elt.state
-
             # process task
             elt.process(event=event, manager=manager, engine=engine, **kwargs)
-
+            # save new state in order to compare with the old one
             new_state = elt.state
             # propagate the change of state in case of new state
             if old_state != new_state:
@@ -119,5 +119,10 @@ def event_processing(engine, event, manager=None, **kwargs):
                         )
                         # publish the event in the context of the engine
                         publish(event=event_to_propagate, engine=engine)
+                        # if target is a topology, then send a check
+                        if isinstance(target, Topology):
+                            check_event = event_to_propagate.copy()
+                            check_event['event_type'] = 'check'
+                            publish(event=check_event, engine=engine)
 
     return event

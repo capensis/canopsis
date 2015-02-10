@@ -31,13 +31,20 @@ manager = TopologyManager()
 def generate_topology(name, _type):
     """Generate a topology related to a name and type.
     """
-    if _type == 'context':
-        generate_context_topology(name=name)
+
+    topo = manager.get_graphs(ids=name)
+    if topo is not None:
+        topo.delete(manager=manager)
     else:
-        generate_rules_topology(name=name)
+        topo = Topology(_id=name)
+
+    if _type == 'context':
+        generate_context_topology(topo=topo, name=name)
+    else:
+        generate_rules_topology(topo=topo, name=name)
 
 
-def generate_context_topology(name='context'):
+def generate_context_topology(topo, name='context'):
     """Generate a context topology where nodes are components and resources,
     and edges are dependencies from components to resources, or from resources
     to the topology.
@@ -48,18 +55,6 @@ def generate_context_topology(name='context'):
     # initialize context and topology
     context = Context()
 
-    # clean old topology
-    manager.del_elts(ids=name)
-
-    topology = manager.get_graphs(ids=name, add_elts=True)
-    if topology is not None:  # if topology already exists, delete content
-        for elt_id in topology._gelts:
-            elt = topology._gelts[elt_id]
-            elt.delete(manager=manager)
-        topology.delete(manager=manager)
-    # init the topology
-    topology = Topology(_id=name)
-
     def addElt(elt):
         """
         Add input elt in topology.
@@ -67,7 +62,7 @@ def generate_context_topology(name='context'):
         :param GraphElement elt: elt to add to topology.
         """
 
-        topology.add_elts(elt.id)
+        topo.add_elts(elt.id)
         elt.save(manager)
 
     components = context.find('component')
@@ -89,37 +84,37 @@ def generate_context_topology(name='context'):
                 # add resource from component
                 edge.targets.append(resource_node.id)
                 res2topo = TopoEdge(
-                    sources=resource_node.id, targets=topology.id
+                    sources=resource_node.id, targets=topo.id
                 )
                 addElt(res2topo)
             if not edge.targets:  # bind topology from component if not sources
-                edge.targets.append(topology.id)
+                edge.targets.append(topo.id)
             addElt(edge)  # save edge in all cases
         else:  # if no resources, link the component to the topology
-            edge = TopoEdge(sources=component_node.id, targets=topology.id)
+            edge = TopoEdge(sources=component_node.id, targets=topo.id)
             addElt(edge)  # add edge in topology
 
     # save topology
-    topology.save(manager=manager)
+    topo.save(manager=manager)
 
 
-def generate_rules_topology(name):
+def generate_rules_topology(topo, name):
     """Generate a topology with rules.
     """
 
-    topo = Topology(name=name)
-
     elts = []
     # create a simple rule
-    toponode = TopoNode()
+    tn1 = TopoNode()
     # and bind it to the topo
-    edge = TopoEdge(sources=toponode, targets=topo)
-    elts += [toponode, edge]
+    tn1topo = TopoEdge(sources=tn1, targets=topo)
+    elts += [tn1, tn1topo]
+    tn0 = TopoNode()
+    tn0tn1 = TopoEdge(sources=tn0, targets=tn1)
+    elts += [tn0, tn0tn1]
     # add rules in the topo
     topo.add_elts(elts)
     # save the topology
     topo.save(manager=manager)
-    print(topo)
 
 
 if __name__ == '__main__':

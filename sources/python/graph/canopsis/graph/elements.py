@@ -346,7 +346,7 @@ class Edge(Vertice):
             self.sources = []
         else:
             # ensure sources and targets are list if they are string
-            if isinstance(sources, basestring):
+            if isinstance(sources, (basestring, GraphElement)):
                 sources = [sources]
             self.sources = list(
                 source.id if isinstance(source, GraphElement) else source
@@ -356,7 +356,7 @@ class Edge(Vertice):
         if targets is None:
             self.targets = []
         else:
-            if isinstance(targets, basestring):
+            if isinstance(targets, (basestring, GraphElement)):
                 targets = [targets]
             self.targets = list(
                 target.id if isinstance(target, GraphElement) else target

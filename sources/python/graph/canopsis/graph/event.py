@@ -48,14 +48,6 @@ class BaseTaskedVertice(object):
         return {}
 
     @property
-    def name(self):
-        return self.data.get(BaseTaskedVertice.NAME, self.id)
-
-    @name.setter
-    def name(self, value):
-        self.data[BaseTaskedVertice.NAME] = value
-
-    @property
     def entity(self):
         """Get self entity id.
 
@@ -80,39 +72,18 @@ class BaseTaskedVertice(object):
         else:
             if isinstance(value, dict):
                 # get entity id
-                entity_id = _context.get_entity_id(value)
-            else:
-                entity_id = value
+                value = _context.get_entity_id(value)
 
             # update entity
-            self.data[BaseTaskedVertice.ENTITY] = entity_id
-            # call specific set entity
-            self.set_entity(entity_id)
+            self.data[BaseTaskedVertice.ENTITY] = value
+        # call specific set entity
+        self.set_entity(value)
 
     def set_entity(self, entity_id):
         """Specific setting of entity.
         """
 
         pass
-
-    def get_context_w_entity(self):
-        """Get self entity structure and its context.
-
-        :return: tuple of self context and entity.
-        :rtype: tuple
-        """
-
-        context = {
-            'connector': Event.CONNECTOR,
-            'connector_name': Event.CONNECTOR_NAME,
-            'component': self.id
-        }
-
-        entity = {
-            Context.NAME: self.name
-        }
-
-        return context, entity
 
     @property
     def task(self):
@@ -157,8 +128,8 @@ class BaseTaskedVertice(object):
 
         result = forger(
             event_type=self.type,
-            component=self.id if self.type == Vertice.TYPE else None,
-            resource=self.id if self.type == Vertice.TYPE else None,
+            component=None,
+            resource=self.id,
             id=self.id,
             *args, **kwargs
         )
