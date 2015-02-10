@@ -464,7 +464,6 @@ class Selector(Record):
             resource=self.display_name,
             state=computed_state,
             output=output,
-            perf_data=None,
             perf_data_array=perf_data_array,
             display_name=self.display_name
         )

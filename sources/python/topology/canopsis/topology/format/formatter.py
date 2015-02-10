@@ -21,11 +21,11 @@
 
 from pymongo import Connection, MongoClient
 import json
-import sys
 from bson.json_util import dumps
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 import logging
+
 
 class Formatter(object):
     """docstring for ClassName"""
@@ -103,7 +103,6 @@ class Formatter(object):
             res.append(str(comp.get('crecord_name')))
         return res
 
-
     def connection(self, kind=0, q=None):
         '''
          Access MongoDB and load topology or events data.
@@ -160,7 +159,7 @@ class Formatter(object):
     def print_keys(self):
         tdata = self.data
         for k, v in tdata.iteritems():
-            self.logger.info('Key: {} - Value: {}'.format(k,v))
+            self.logger.info('Key: {} - Value: {}'.format(k, v))
 
     def get_value(self, value):
         '''

@@ -24,7 +24,7 @@ from time import time, sleep
 import unittest
 from canopsis.old.selector import Selector
 from canopsis.old.record import Record
-from canopsis.sla import Sla
+from canopsis.sla.sla import Sla
 
 
 class MockStorage(object):

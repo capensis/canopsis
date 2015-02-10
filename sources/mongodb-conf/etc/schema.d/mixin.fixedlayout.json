@@ -1,0 +1,16 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["rowNumber", "columnNumber"]
+	}],
+
+	"properties": {
+		"rowNumber": {
+			"type": "integer"
+		},
+		"columnNumber": {
+			"type": "integer"
+		}
+	}
+}
