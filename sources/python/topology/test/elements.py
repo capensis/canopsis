@@ -50,9 +50,9 @@ class TopoNodeTest(TestCase):
         """
 
         @register_task('process')
-        def process_node(toponode, ctx, event=None, **kwargs):
+        def process_node(vertice, ctx, event=None, **kwargs):
 
-            return toponode, ctx, kwargs
+            return vertice, ctx, kwargs
 
         ctx, entity, state, operator = {'b': 1}, 'e', 0, 'process'
 

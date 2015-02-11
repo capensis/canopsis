@@ -38,8 +38,8 @@ class ChangeStateTest(TestCase):
 
     def setUp(self):
 
-        self.toponode = TopoNode()
-        self.assertEqual(self.toponode.state, 0)
+        self.vertice = TopoNode()
+        self.assertEqual(self.vertice.state, 0)
         self.new_state = 1
 
     def test_state(self):
@@ -48,7 +48,7 @@ class ChangeStateTest(TestCase):
         """
 
         change_state(
-            toponode=self.toponode, event={}, state=self.new_state, manager=tm
+            vertice=self.vertice, event={}, state=self.new_state, manager=tm
         )
 
     def test_event(self):
@@ -57,12 +57,12 @@ class ChangeStateTest(TestCase):
         """
 
         event = {'state': self.new_state}
-        change_state(toponode=self.toponode, event=event, manager=tm)
+        change_state(vertice=self.vertice, event=event, manager=tm)
 
     def tearDown(self):
 
-        toponode = tm.get_vertices(ids=self.toponode.id)
-        self.assertEqual(toponode.state, self.new_state)
+        vertice = tm.get_vertices(ids=self.vertice.id)
+        self.assertEqual(vertice.state, self.new_state)
         tm.del_elts()
 
 
@@ -106,21 +106,21 @@ class StateFromSourcesTest(TestCase):
         Test to change of state without sources.
         """
 
-        toponode = TopoNode()
+        vertice = TopoNode()
         event = {}
 
         self.get_function()(
-            toponode=toponode, event=event, manager=tm, ctx={},
+            vertice=vertice, event=event, manager=tm, ctx={},
             **self.get_kwargs()
         )
-        self.assertEqual(toponode.state, 0)
+        self.assertEqual(vertice.state, 0)
 
     def test_sources(self):
         """
         Test to change of state with sources.
         """
 
-        toponode = TopoNode()
+        vertice = TopoNode()
         event = {}
 
         count = 5
@@ -129,15 +129,15 @@ class StateFromSourcesTest(TestCase):
         for source in sources:
             source.save(manager=tm)
         edge = TopoEdge(
-            targets=[toponode.id],
+            targets=[vertice.id],
             sources=list(source.id for source in sources)
         )
         edge.save(manager=tm)
         self.get_function()(
-            toponode=toponode, event=event, manager=tm, ctx={},
+            vertice=vertice, event=event, manager=tm, ctx={},
             **self.get_kwargs()
         )
-        self.assertEqual(toponode.state, self.get_new_state())
+        self.assertEqual(vertice.state, self.get_new_state())
         edge.delete(manager=tm)
         for source in sources:
             source.delete(manager=tm)
