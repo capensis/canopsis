@@ -101,7 +101,6 @@ class engine(Engine):
         elif source_type == 'resource':
             is_status_entity = True
             context['component'] = component
-            status_entity[Context.NAME] = resource
             status_entity['servicegroups'] = servicegroups
 
         else:
@@ -146,36 +145,36 @@ class engine(Engine):
         else:
             context['component'] = component
 
-        # add authored entity data (downtime, ack, metric, etc.)
-        authored_data = entity.copy()
-        event_type = event['event_type']
-
         if 'author' in event:
+            # add authored entity data (downtime, ack, metric, etc.)
+            authored_data = entity.copy()
+            event_type = event['event_type']
+
             authored_data['author'] = event['author']
             authored_data['comment'] = event.get('output', None)
 
             if authored_data['comment'] is None:
                 del authored_data['comment']
 
-        if event_type == 'ack':
-            authored_data['timestamp'] = event['timestamp']
-            authored_data[Context.NAME] = str(event['timestamp'])
+            if event_type == 'ack':
+                authored_data['timestamp'] = event['timestamp']
+                authored_data[Context.NAME] = str(event['timestamp'])
 
-        elif event_type == 'downtime':
-            authored_data['downtime_id'] = event['downtime_id']
-            authored_data['start'] = event['start']
-            authored_data['end'] = event['end']
-            authored_data['duration'] = event['duration']
-            authored_data['fixed'] = event['fixed']
-            authored_data['entry'] = event['entry']
-            authored_data[Context.NAME] = event['rk']
+            elif event_type == 'downtime':
+                authored_data['downtime_id'] = event['downtime_id']
+                authored_data['start'] = event['start']
+                authored_data['end'] = event['end']
+                authored_data['duration'] = event['duration']
+                authored_data['fixed'] = event['fixed']
+                authored_data['entry'] = event['entry']
+                authored_data[Context.NAME] = event['rk']
 
-        self.context.put(
-            _type=event_type,
-            entity=authored_data,
-            context=context,
-            cache=True
-        )
+            self.context.put(
+                _type=event_type,
+                entity=authored_data,
+                context=context,
+                cache=True
+            )
 
         # add perf data
         for perfdata in event.get('perf_data_array', []):
