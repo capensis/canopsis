@@ -262,7 +262,11 @@ class CompositeStorage(Storage):
         :rtype: tuple
         """
 
-        path = {field: data[field] for field in data if field in self.path}
+        path = {
+            field: data[field]
+            for field in data
+            if field in self.path and data[field] not in [None, 'None']
+        }
 
         result = path, data[Storage.DATA_ID]
 
@@ -272,17 +276,14 @@ class CompositeStorage(Storage):
         """
         Get input data absolute path.
 
-        :param path: path to remove
-        :type path: storage filter
-
-        :param data_id: data id
-        :type data_id: str
+        :param dict path: path from where get absolute path.
+        :param str data_id: data id
         """
 
         result = ''
 
         for n, field in enumerate(self.path):
-            if field in path:
+            if path.get(field) not in [None, 'None']:
                 result = '%s%s%s' % (
                     result,
                     CompositeStorage.PATH_SEPARATOR,
