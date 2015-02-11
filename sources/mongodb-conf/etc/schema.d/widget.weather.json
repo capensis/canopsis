@@ -5,7 +5,7 @@
 	},
 	"categories": [{
 		"title": "General",
-		"keys":["title", "refreshInterval", "event_selection"]
+		"keys":["title", "event_selection"]
 	},{
 		"title": "Rendering",
 		"keys":["refreshableWidget", "show_title", "show_output"]
