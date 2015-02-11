@@ -33,7 +33,16 @@
           },
           "mixins": [
             { "name": "Sortablearray" },
-            { "name": "Arraysearch" },
+            { "name": "Arraysearch",
+              "searchable_columns": [
+                "connector_name",
+                "connector",
+                "component",
+                "resource",
+                "domain",
+                "perimeter"
+              ]
+            },
             {
               "name": "Pagination",
               "itemsPerPage" : 50
@@ -75,14 +84,6 @@
             "state",
             "ack",
             "last_state_change"
-          ],
-          "searchable_columns": [
-            "connector_name",
-            "connector",
-            "component",
-            "resource",
-            "domain",
-            "perimeter"
           ]
         }
       }
