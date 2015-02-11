@@ -43,7 +43,16 @@
           "mixins": [
             {"name": "Customfilterlist"},
             {"name": "Sortablearray"},
-            {"name": "Arraysearch"},
+            { "name": "Arraysearch",
+              "searchable_columns": [
+                "connector_name",
+                "connector",
+                "component",
+                "resource",
+                "domain",
+                "perimeter"
+              ]
+            },
             {
               "name": "Pagination",
               "itemsPerPage": 50
@@ -64,14 +73,6 @@
             "timestamp",
             "author",
             "event_type"
-          ],
-          "searchable_columns": [
-            "connector_name",
-            "connector",
-            "component",
-            "resource",
-            "domain",
-            "perimeter"
           ]
         }
       }
