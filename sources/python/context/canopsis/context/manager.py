@@ -364,6 +364,22 @@ class Context(MiddlewareRegistry):
 
         return result
 
+    def get_entity_id_context_name(self, entity):
+        """
+        Get the right id, context and name of input entity.
+        """
+
+        path, data_id = self.get_entity_context_and_name(entity=entity)
+
+        if path[Context.TYPE] in path:
+            data_id = None
+
+        result = self[Context.CTX_STORAGE].get_absolute_path(
+            path=path, data_id=data_id
+        ), path, data_id
+
+        return result
+
     def unify_entities(self, entities, extended=False, cache=False):
         """Unify input entities as the same entity.
 

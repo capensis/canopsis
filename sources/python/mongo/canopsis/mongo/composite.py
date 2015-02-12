@@ -65,13 +65,23 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                 query[Storage.DATA_ID] = data_ids
             else:
                 query[Storage.DATA_ID] = {"$in": data_ids}
+        # get the right hint
+        self_path = self.path
+        hint = []
+        for p in self_path:
+            if p in path:
+                hint.append((p, 1))
+        else:
+            hint.append((Storage.DATA_ID, 1))
+
         # get elements
         result = self.find_elements(
             query=query,
             limit=limit,
             skip=skip,
             sort=sort,
-            with_count=with_count
+            with_count=with_count,
+            hint=hint
         )
         if with_count:
             count = result[1]
@@ -106,7 +116,8 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         result = self.get(
             path=path, _filter=_filter, shared=shared,
-            limit=limit, skip=skip, sort=sort, with_count=with_count)
+            limit=limit, skip=skip, sort=sort, with_count=with_count
+        )
 
         return result
 
