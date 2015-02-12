@@ -111,6 +111,14 @@ class Factory(object):
         '''
         return new_conf(cond, condition=condition, statement=statement, _else=_else)
 
+    def track_nonetype(self, dico):
+        '''
+        '''
+        for k in dico:
+            if dico[k] == 'None':
+                dico[k] = None
+        return dico
+
     def build(self, topo_id):
         '''
         Create the topology V2 using the topology V1 data.
@@ -133,6 +141,7 @@ class Factory(object):
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 src_type_value = c.values()[0].get('source_type')
                 entity['id'] = c.values()[0].get(src_type_value)
+                entity = self.track_nonetype(entity)
                 if c.values()[0].get('label') is None:
                     data['label'] = c.values()[0].get('component')
                 else:
@@ -146,6 +155,7 @@ class Factory(object):
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 src_type_value = c.values()[0].get('source_type')
                 entity['id'] = c.values()[0].get(src_type_value)
+                entity = self.track_nonetype(entity)
                 if c.values()[0].get('label') is None:
                     data['label'] = c.values()[0].get('component')
                 else:
@@ -159,6 +169,7 @@ class Factory(object):
                 entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 src_type_value = c.values()[0].get('source_type')
                 entity['id'] = c.values()[0].get(src_type_value)
+                entity = self.track_nonetype(entity)
                 if c.values()[0].get('label') is None:
                     data['label'] = c.values()[0].get('component')
                 else:
@@ -226,6 +237,7 @@ class Factory(object):
 
                 entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
                 entity['id'] = mydict.get(mydict.get('source_type'))
+                entity = self.track_nonetype(entity)
 
                 dict_and = {}
                 dict_and['state'] = int(cond_value)
@@ -267,6 +279,7 @@ class Factory(object):
 
                 entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
                 entity['id'] = mydict.get(mydict.get('source_type'))
+                entity = self.track_nonetype(entity)
 
                 # Create the condition
                 condition = new_conf(at_least, **dict_or)
