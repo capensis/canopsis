@@ -1,0 +1,21 @@
+{
+	"type": "object",
+	"properties": {
+		"event_type": {
+			"enum": ["selector"],
+			"required": true
+		},
+		"state": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 3,
+			"required": true
+		},
+		"state_type": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 1,
+			"required": true
+		}
+	}
+}
