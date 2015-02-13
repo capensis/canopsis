@@ -215,7 +215,7 @@ class Sla(object):
             'state': 1,
             'timestamp': 1,
             '_id': 0
-        })
+        }, sort=[('timestamp', 1)])
 
         for sla_info in sla_infos:
             sla.append(sla_info)

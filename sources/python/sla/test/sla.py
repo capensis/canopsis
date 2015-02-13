@@ -68,8 +68,34 @@ class KnownValues(unittest.TestCase):
         )
         return sla
 
-    def test_01_init(self):
+    def test_init(self):
         self.get_sla()
+
+    def test_compute_sla(self):
+        sla = self.get_sla()
+
+        sla_info = []
+        now = time()
+
+        sla_measures, first_timestamp = sla.compute_sla(sla_info, now)
+        self.assertEqual(
+            sla_measures,
+            {0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+        )
+        self.assertEqual(first_timestamp, now)
+
+        sla_info = [
+            {'timestamp': now - 10, 'state': 3},
+            {'timestamp': now - 5, 'state': 2},
+            {'timestamp': now, 'state': 2},
+        ]
+
+        sla_measures, first_timestamp = sla.compute_sla(sla_info, now)
+        self.assertEqual(
+            sla_measures,
+            {0: 0.0, 1: 0.0, 2: 0.5, 3: 0.5}
+        )
+        self.assertEqual(first_timestamp, now - 10)
 
     def test_compute_sla_output(self):
 
@@ -87,7 +113,10 @@ class KnownValues(unittest.TestCase):
             0.98,
             1423753091
         )
-        self.assertEqual(output, '0.00,1.20,2.23,3.00,98.00,2015-02-12 15:58:11')
+        self.assertEqual(
+            output,
+            '0.00,1.20,2.23,3.00,98.00,2015-02-12 15:58:11'
+        )
 
         # User may not fill all fields, alert should always compute properly
         template = '[OFF] - [MAJOR] - [ALERTS]'
@@ -111,7 +140,8 @@ class KnownValues(unittest.TestCase):
 
         sla = self.get_sla()
         measures = {0: 0, 1: 1, 2: 2, 3: 3}
-        event = sla.prepare_event(MockSelector(), measures, 'output', 0)
+
+        event = sla.prepare_event('test_display', measures, 'output', 0, 0.5)
         self.assertEqual(event['event_type'], 'sla')
         self.assertEqual(event['component'], 'test_display')
         self.assertEqual(event['source_type'], 'resource')
@@ -119,10 +149,11 @@ class KnownValues(unittest.TestCase):
         self.assertEqual(
             event['perf_data_array'],
             [
-                {'metric': 'cps_sla_off', 'value': 0},
-                {'metric': 'cps_sla_minor', 'value': 1},
-                {'metric': 'cps_sla_major', 'value': 2},
-                {'metric': 'cps_sla_critical', 'value': 3}
+                {'max': 100, 'metric': 'cps_pct_by_0', 'value': 0.0},
+                {'max': 100, 'metric': 'cps_pct_by_1', 'value': 100.0},
+                {'max': 100, 'metric': 'cps_pct_by_2', 'value': 200.0},
+                {'max': 100, 'metric': 'cps_pct_by_3', 'value': 300.0},
+                {'max': 100, 'metric': 'cps_avail', 'value': 50.0}
             ]
         )
         self.assertEqual(event['display_name'], 'test_display')
@@ -134,5 +165,3 @@ class KnownValues(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
-
-
