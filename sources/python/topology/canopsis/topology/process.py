@@ -96,7 +96,7 @@ def event_processing(engine, event, manager=None, **kwargs):
             entity = context.get_entity(event)
             if entity is not None:
                 entity_id = context.get_entity_id(entity)
-                elts = manager.get_elts(data={TopoNode.ENTITY: entity_id})
+                elts = manager.get_elts(info={TopoNode.ENTITY: entity_id})
                 # process all elts
                 for elt in elts:
                     elt.process(

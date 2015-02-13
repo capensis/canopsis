@@ -73,7 +73,7 @@ edges.
 
 A graph vertice contains::
 
-    - data: vertice information.
+    - info: vertice information.
     - _type: equals vertice.
 
 Graph edge
@@ -256,23 +256,23 @@ class GraphElement(object):
 class Vertice(GraphElement):
     """In charge of managing a Vertice.
 
-    Contains a data.
+    Contains an information.
     """
 
-    DATA = 'data'  #: data attribute name
+    INFO = 'info'  #: info attribute name
 
     BASE_TYPE = 'vertice'  # base type name
 
-    __slots__ = GraphElement.__slots__ + (DATA,)
+    __slots__ = GraphElement.__slots__ + (INFO,)
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, info=None, *args, **kwargs):
         """
-        :param data: self data.
+        :param info: self info.
         """
 
         super(Vertice, self).__init__(*args, **kwargs)
 
-        self.data = data
+        self.info = info
 
     def delete(self, manager, cache=False):
 

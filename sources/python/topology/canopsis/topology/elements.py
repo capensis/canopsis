@@ -53,10 +53,10 @@ independently to the entity state.
 
 A topology operator (to) contains::
 
-- data.state: to state which change at runtime depending on bound entity
+- info.state: to state which change at runtime depending on bound entity
     state and event propagation.
-- data.entity: to entity.
-- data.operator: to operator.
+- info.entity: to entity.
+- info.operator: to operator.
 
 A topology node inherits from both vertice and to.
 
@@ -86,9 +86,9 @@ _topology = TopologyManager()
 
 class TopoVertice(BaseTaskedVertice):
 
-    STATE = Check.STATE  #: state field name in data
-    ENTITY = 'entity'  #: entity field name in data
-    OPERATOR = 'operator'  #: operator field name in data
+    STATE = Check.STATE  #: state field name in info
+    ENTITY = 'entity'  #: entity field name in info
+    OPERATOR = 'operator'  #: operator field name in info
     NAME = 'name'  #: element name.
 
     DEFAULT_STATE = Check.OK  #: default state value
@@ -107,18 +107,18 @@ class TopoVertice(BaseTaskedVertice):
         )
 
         # update entity state
-        self.data[TopoVertice.STATE] = _check.state(ids=entity_id)
+        self.info[TopoVertice.STATE] = _check.state(ids=entity_id)
 
     @property
     def state(self):
 
-        result = self.data.get(TopoVertice.STATE)
+        result = self.info.get(TopoVertice.STATE)
         return result
 
     @state.setter
     def state(self, value):
 
-        self.data[TopoVertice.STATE] = value
+        self.info[TopoVertice.STATE] = value
 
     @property
     def operator(self):
@@ -182,9 +182,9 @@ class Topology(Graph, TopoVertice):
     ):
 
         super(Topology, self).__init__(_type=_type, *args, **kwargs)
-        # set data
-        if self.data is None:
-            self.data = {}
+        # set info
+        if self.info is None:
+            self.info = {}
         # set operator
         if operator is not None:
             self.operator = operator
@@ -254,9 +254,9 @@ class TopoNode(Vertice, TopoVertice):
         """
 
         super(TopoNode, self).__init__(*args, **kwargs)
-        # set data
-        if self.data is None:
-            self.data = {}
+        # set info
+        if self.info is None:
+            self.info = {}
         # set entity
         self.entity = entity
         # set state
@@ -277,6 +277,6 @@ class TopoEdge(Edge, TopoVertice):
     def __init__(self, *args, **kwargs):
 
         super(TopoEdge, self).__init__(*args, **kwargs)
-        # set data
-        if self.data is None:
-            self.data = {}
+        # set info
+        if self.info is None:
+            self.info = {}

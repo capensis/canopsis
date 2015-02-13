@@ -71,7 +71,7 @@ class GraphManager(MiddlewareRegistry):
 
     def get_elts(
         self,
-        ids=None, types=None, graph_ids=None, data=None, base_type=None,
+        ids=None, types=None, graph_ids=None, info=None, base_type=None,
         query=None, serialize=True, cls=None
     ):
         """
@@ -84,7 +84,7 @@ class GraphManager(MiddlewareRegistry):
         :type types: list or str
         :param graph_ids: graph ids from where find elts.
         :type graph_ids: list or str
-        :param data: data query
+        :param info: info query
         :param dict query: element search query.
         :param str base_type: elt base type.
         :param bool serialize: serialize result in GraphElements if True
@@ -108,14 +108,14 @@ class GraphManager(MiddlewareRegistry):
             if not isinstance(types, basestring):
                 types = {'$in': types}
             query[GraphElement.TYPE] = types
-        # put data if not None
-        if data is not None:
-            if isinstance(data, dict):
-                for name in data:
-                    data_name = 'data.{0}'.format(name)
-                    query[data_name] = data[name]
+        # put info if not None
+        if info is not None:
+            if isinstance(info, dict):
+                for name in info:
+                    data_name = 'info.{0}'.format(name)
+                    query[data_name] = info[name]
             else:
-                query[Vertice.DATA] = data
+                query[Vertice.DATA] = info
         # find ids among graphs
         if graph_ids is not None:
             result = []
@@ -334,7 +334,7 @@ class GraphManager(MiddlewareRegistry):
                 edge.save(manager=self, cache=cache)
 
     def get_graphs(
-        self, ids=None, types=None, elts=None, graph_ids=None, data=None,
+        self, ids=None, types=None, elts=None, graph_ids=None, info=None,
         query=None, add_elts=False, serialize=True
     ):
         """
@@ -348,9 +348,9 @@ class GraphManager(MiddlewareRegistry):
         :type elts: basestring or list
         :param graph_ids: graph ids from where get graphs.
         :type graph_ids: list or str
-        :param data: data to find among graphs.
+        :param info: info to find among graphs.
         :param dict query: additional graph search query. Could help to search
-            specific data information.
+            specific info information.
         :param bool add_elts: (False by default) add elts in the result. Works
             only if serialize is True.
         :param bool serialize: serialize result in GraphElements if True
@@ -375,7 +375,7 @@ class GraphManager(MiddlewareRegistry):
             query=query,
             types=types,
             graph_ids=graph_ids,
-            data=data,
+            info=info,
             base_type=Graph.BASE_TYPE,
             serialize=serialize
         )
@@ -409,7 +409,7 @@ class GraphManager(MiddlewareRegistry):
     def get_targets(
         self,
         ids=None, graph_ids=None,
-        data=None, query=None,
+        info=None, query=None,
         types=None, edge_ids=None, add_edges=False, edge_types=None,
         edge_data=None, edge_query=None, serialize=True
     ):
@@ -423,9 +423,9 @@ class GraphManager(MiddlewareRegistry):
         :type types: list or str
         :param graph_ids: graph ids from where get graphs.
         :type graph_ids: list or str
-        :param data: data to find among graphs.
+        :param info: info to find among graphs.
         :param dict query: additional graph search query. Could help to search
-            specific data information.
+            specific info information.
         :param bool serialize: serialize result in GraphElements if True
             (by default).
 
@@ -435,7 +435,7 @@ class GraphManager(MiddlewareRegistry):
 
         return self.get_neighbourhood(
             ids=ids, graph_ids=graph_ids, sources=False, targets=True,
-            target_data=data, target_query=query, target_types=types,
+            target_data=info, target_query=query, target_types=types,
             edge_ids=edge_ids, add_edges=add_edges,
             target_edge_types=edge_types, target_edge_data=edge_data,
             edge_query=edge_query, serialize=serialize
@@ -444,7 +444,7 @@ class GraphManager(MiddlewareRegistry):
     def get_sources(
         self,
         ids=None, graph_ids=None,
-        data=None, query=None,
+        info=None, query=None,
         types=None, edge_ids=None, add_edges=False, edge_types=None,
         edge_data=None, edge_query=None, serialize=True
     ):
@@ -458,9 +458,9 @@ class GraphManager(MiddlewareRegistry):
         :type types: list or str
         :param graph_ids: graph ids from where get graphs.
         :type graph_ids: list or str
-        :param data: data to find among graphs.
+        :param info: info to find among graphs.
         :param dict query: additional graph search query. Could help to search
-            specific data information.
+            specific info information.
         :param bool serialize: serialize result in GraphElements if True
             (by default).
 
@@ -470,7 +470,7 @@ class GraphManager(MiddlewareRegistry):
 
         return self.get_neighbourhood(
             ids=ids, graph_ids=graph_ids, sources=True, targets=False,
-            source_data=data, source_query=query, source_types=types,
+            source_data=info, source_query=query, source_types=types,
             edge_ids=edge_ids, add_edges=add_edges,
             source_edge_types=edge_types, source_edge_data=edge_data,
             edge_query=edge_query, serialize=serialize
@@ -480,7 +480,7 @@ class GraphManager(MiddlewareRegistry):
         self,
         ids=None, sources=False, targets=True,
         graph_ids=None,
-        data=None, source_data=None, target_data=None,
+        info=None, source_data=None, target_data=None,
         types=None, source_types=None, target_types=None,
         edge_ids=None, edge_types=None, add_edges=False,
         source_edge_types=None, target_edge_types=None,
@@ -499,9 +499,9 @@ class GraphManager(MiddlewareRegistry):
         :param bool targets: if True (default) add target vertices.
         :param graph_ids: vertice graph ids.
         :type graph_ids: list or str
-        :param dict data: neighbourhood data to find.
-        :param dict source_data: source neighbourhood data to find.
-        :param dict target_data: target neighbourhood data to find.
+        :param dict info: neighbourhood info to find.
+        :param dict source_data: source neighbourhood info to find.
+        :param dict target_data: target neighbourhood info to find.
         :param types: vertice type(s).
         :type types: list or str
         :param types: neighbourhood types to retrieve.
@@ -520,9 +520,9 @@ class GraphManager(MiddlewareRegistry):
         :type source_edge_types: list or str
         :param target_edge_types: edge types from where find target vertices.
         :type target_edge_types: list or str
-        :param dict edge_data: edge data to find.
-        :param dict source_edge_data: source edge data to find.
-        :param dict target_edge_data: target edge data to find.
+        :param dict edge_data: edge info to find.
+        :param dict source_edge_data: source edge info to find.
+        :param dict target_edge_data: target edge info to find.
         :param dict query: additional search query.
         :param dict edge_query: additional edge query.
         :param dict source_query: additional source query.
@@ -569,7 +569,7 @@ class GraphManager(MiddlewareRegistry):
                     source_edge_types += edge_types
         else:
             source_edge_types = edge_types
-        # init source edge data
+        # init source edge info
         if source_edge_data is not None:
             if edge_data is not None:
                 source_edge_data.update(edge_data)
@@ -581,7 +581,7 @@ class GraphManager(MiddlewareRegistry):
             graph_ids=graph_ids,
             types=source_edge_types,
             targets=ids,
-            data=source_edge_data,
+            info=source_edge_data,
             query=source_query,
             serialize=False
         )
@@ -627,7 +627,7 @@ class GraphManager(MiddlewareRegistry):
                     target_edge_types += edge_types
         else:
             target_edge_types = edge_types
-        # init target edge data
+        # init target edge info
         if target_edge_data is not None:
             if edge_data is not None:
                 target_edge_data.update(edge_data)
@@ -639,7 +639,7 @@ class GraphManager(MiddlewareRegistry):
             graph_ids=graph_ids,
             types=target_edge_types,
             sources=ids,
-            data=target_edge_data,
+            info=target_edge_data,
             query=target_query,
             serialize=False
         )
@@ -678,7 +678,7 @@ class GraphManager(MiddlewareRegistry):
                     elts = self.get_elts(
                         ids=edge[Edge.SOURCES],
                         graph_ids=graph_ids,
-                        data=source_data,
+                        info=source_data,
                         types=source_types,
                         query=source_query,
                         serialize=serialize
@@ -697,7 +697,7 @@ class GraphManager(MiddlewareRegistry):
                     elts = self.get_elts(
                         ids=edge[Edge.TARGETS],
                         graph_ids=graph_ids,
-                        data=target_data,
+                        info=target_data,
                         types=target_types,
                         query=target_query,
                         serialize=serialize
@@ -719,7 +719,7 @@ class GraphManager(MiddlewareRegistry):
                 elts = self.get_elts(
                     ids=edge_sources,
                     graph_ids=graph_ids,
-                    data=source_data,
+                    info=source_data,
                     types=source_types,
                     query=source_query,
                     serialize=serialize
@@ -731,7 +731,7 @@ class GraphManager(MiddlewareRegistry):
                 elts = self.get_elts(
                     ids=edge_targets,
                     graph_ids=graph_ids,
-                    data=target_data,
+                    info=target_data,
                     types=target_types,
                     query=target_query,
                     serialize=serialize
@@ -742,7 +742,7 @@ class GraphManager(MiddlewareRegistry):
 
     def get_vertices(
         self,
-        ids=None, graph_ids=None, types=None, data=None, query=None,
+        ids=None, graph_ids=None, types=None, info=None, query=None,
         serialize=True
     ):
         """
@@ -754,7 +754,7 @@ class GraphManager(MiddlewareRegistry):
         :type graph_ids: list or str
         :param types: vertice type(s).
         :type types: list or str
-        :param data: data to find among vertices.
+        :param info: info to find among vertices.
         :param dict query: additional search query.
         :param bool serialize: serialize result in GraphElements if True
             (by default).
@@ -768,7 +768,7 @@ class GraphManager(MiddlewareRegistry):
             ids=ids,
             graph_ids=graph_ids,
             types=types,
-            data=data,
+            info=info,
             base_type=Vertice.BASE_TYPE,
             query=query,
             serialize=serialize
@@ -779,7 +779,7 @@ class GraphManager(MiddlewareRegistry):
     def get_edges(
         self,
         ids=None, types=None, sources=None, targets=None, graph_ids=None,
-        data=None, query=None, serialize=True
+        info=None, query=None, serialize=True
     ):
         """
         Get edges related to input ids, types and source/target ids.
@@ -824,14 +824,14 @@ class GraphManager(MiddlewareRegistry):
             types=types,
             query=query,
             graph_ids=graph_ids,
-            data=data,
+            info=info,
             base_type=Edge.BASE_TYPE,
             serialize=serialize
         )
 
         return result
 
-    def get_orphans(self, serialize=True, query=None, data=None, types=None):
+    def get_orphans(self, serialize=True, query=None, info=None, types=None):
         """
         Get all elements which are not associated to graphs.
         """
@@ -854,6 +854,6 @@ class GraphManager(MiddlewareRegistry):
             types=types,
             query=query,
             serialize=serialize,
-            data=data
+            info=info
         )
         return result

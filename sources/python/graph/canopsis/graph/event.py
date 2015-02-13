@@ -36,8 +36,8 @@ graph = GraphManager()
 
 class BaseTaskedVertice(object):
 
-    TASK = 'task'  #: task field name in data
-    ENTITY = 'entity'  #: entity field name in data
+    TASK = 'task'  #: task field name in info
+    ENTITY = 'entity'  #: entity field name in info
     DEFAULT_TASK = 'canopsis.topology.rule.action.change_state'
     NAME = 'name'  #: element name.
 
@@ -55,7 +55,7 @@ class BaseTaskedVertice(object):
         :rtype: str
         """
 
-        return self.data.get(BaseTaskedVertice.ENTITY)
+        return self.info.get(BaseTaskedVertice.ENTITY)
 
     @entity.setter
     def entity(self, value):
@@ -66,8 +66,8 @@ class BaseTaskedVertice(object):
         """
 
         if value is None:
-            if BaseTaskedVertice.ENTITY in self.data:
-                del self.data[BaseTaskedVertice.ENTITY]
+            if BaseTaskedVertice.ENTITY in self.info:
+                del self.info[BaseTaskedVertice.ENTITY]
 
         else:
             if isinstance(value, dict):
@@ -75,7 +75,7 @@ class BaseTaskedVertice(object):
                 value = _context.get_entity_id(value)
 
             # update entity
-            self.data[BaseTaskedVertice.ENTITY] = value
+            self.info[BaseTaskedVertice.ENTITY] = value
         # call specific set entity
         self.set_entity(value)
 
@@ -90,7 +90,7 @@ class BaseTaskedVertice(object):
         """Get self task or default task if task is not setted.
         """
 
-        result = self.data.get(BaseTaskedVertice.TASK, self.get_default_task())
+        result = self.info.get(BaseTaskedVertice.TASK, self.get_default_task())
 
         return result
 
@@ -102,10 +102,10 @@ class BaseTaskedVertice(object):
         """
 
         if value is None:
-            if BaseTaskedVertice.TASK in self.data:
-                del self.data[BaseTaskedVertice.TASK]
+            if BaseTaskedVertice.TASK in self.info:
+                del self.info[BaseTaskedVertice.TASK]
         else:
-            self.data[BaseTaskedVertice.TASK] = value
+            self.info[BaseTaskedVertice.TASK] = value
 
     def process(self, event, **kwargs):
         """Process this vertice task in a context of event processing.
@@ -143,8 +143,8 @@ class TaskedVertice(Vertice, BaseTaskedVertice):
 
         super(TaskedVertice, self).__init__(*args, **kwargs)
 
-        if self.data is None:
-            self.data = {}
+        if self.info is None:
+            self.info = {}
 
         self.task = task
         self.entity = entity
@@ -156,8 +156,8 @@ class TaskedEdge(Edge, BaseTaskedVertice):
 
         super(TaskedEdge, self).__init__(*args, **kwargs)
 
-        if self.data is None:
-            self.data = {}
+        if self.info is None:
+            self.info = {}
 
         self.task = task
         self.entity = entity
@@ -169,8 +169,8 @@ class TaskedGraph(Graph, BaseTaskedVertice):
 
         super(TaskedGraph, self).__init__(*args, **kwargs)
 
-        if self.data is None:
-            self.data = {}
+        if self.info is None:
+            self.info = {}
 
         self.task = task
         self.entity = entity
@@ -191,7 +191,7 @@ def event_processing(event, ctx=None, *args, **kwargs):
     if entity is not None:
         entity_id = _context.get_entity_id(entity)
         vertices = graph.get_elts(
-            data={BaseTaskedVertice.ENTITY: entity_id},
+            info={BaseTaskedVertice.ENTITY: entity_id},
             cls=BaseTaskedVertice
         )
 

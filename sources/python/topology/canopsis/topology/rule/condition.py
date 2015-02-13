@@ -54,7 +54,8 @@ def new_state(event, vertice, state=None, manager=None, **kwargs):
     Condition triggered when state is different than vertice state.
 
     :param dict event: event from where get state if input state is None.
-    :param TopoNode vertice: vertice from where check if vertice state != input state.
+    :param TopoNode vertice: vertice from where check if vertice state != input
+    state.
     :param int state: state to compare with input vertice state.
     """
 
