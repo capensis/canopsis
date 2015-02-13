@@ -14,7 +14,7 @@
 		"keys":["exclude_ids"]
 	},{
 		"title": "Sla",
-		"keys":["dosla", "sla_timewindow", "sla_warning", "sla_critical", "sla_output_tpl"]
+		"keys":["dosla", "sla_timewindow", "sla_warning", "sla_critical", "alert_level", "sla_output_tpl"]
 	}],
 	"properties": {
 		"state_when_all_ack": {
@@ -30,6 +30,18 @@
 			"role": "simplelist",
 			"description": "Allow to set what state is applied to this selector produced selector event when all event are acknowleged. worst state compute all events worste state with no care about acknowlegement statement"
 		},
+		"alert_level": {
+			"type": "string",
+			"enum": [
+				"minor",
+				"major",
+				"critical"
+			],
+			"default": "minor",
+			"role": "simplelist",
+			"description": "Allow to set what state is applied to this sla to compute total time in alert"
+		},
+
 		"crecord_type": {
 			"enum": ["selector"],
 			"required": true
@@ -113,7 +125,7 @@
 		},
 		"sla_output_tpl": {
 			"type": "string",
-			"default" :"Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%, Critical: [CRITICAL]%, Alerts [ALERTS]%"
+			"default" :"Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%, Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART]"
 		},
 		"output_tpl": {
 			"type": "string",

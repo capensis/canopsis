@@ -25,21 +25,51 @@ from time import time
 from logging import getLogger
 from canopsis.old.event import forger
 from json import dumps, loads
+import datetime
 import pprint
-
 pp = pprint.PrettyPrinter(indent=2)
 
 
 class Sla(object):
 
+    """
+        parameters:
+        :param storage: topology ids from where find elts.
+        :type storage: canopsis storage
+        :param rk: the rk to build sla from in the event_log collection
+        :type rk: string
+        :param template: the sla event template to fill with alert computation
+        :type template: string
+        :param timewindow: sla timewindow to consider for given rk in seconds
+        :type timewindow: int
+        :param sla_warning: thresholds beyond witch the alerts percent
+            pass the event in warning state
+        :type sla_warning: int
+        :param sla_critical: thresholds beyond witch the alerts percent
+            pass the event in critical state
+        :type sla_critical: int
+        :param alert_level: defining what is minimum level to consider state
+            in alert total time.
+        :type alert_level: string one value between minor, major or critical
+        :param display_name: used as the sla component name
+        :type display_name: string
+        :param logger: a logger instance to where the module can write output
+        :type logger: logger
+    """
     def __init__(
         self,
-        selector_record,
-        event,
         storage,
-        record_id,
+        rk,
+        template,
+        timewindow,
+        sla_warning,
+        sla_critical,
+        alert_level,
+        display_name,
         logger=None
     ):
+
+        self.storage = storage
 
         self.type = 'sla'
 
@@ -50,322 +80,260 @@ class Sla(object):
 
         self.states = [0, 1, 2, 3]
 
-        # This template should be always set
-        template = selector_record.get_sla_output_tpl()
+        now = time()
 
-        # Retrieve sla information from selector record
-        sla_information = self.get_sla_information(selector_record)
-        self.logger.debug('Sla information is {}'.format(sla_information))
-
-        # Timewindow computation duration
-        timewindow = selector_record.get_sla_timewindow()
-        self.logger.debug('Timewindow is {}'.format(timewindow))
-
-        previous_selector_state = selector_record.get_previous_selector_state()
-        prev_state_tw_start = selector_record.get_state_at_timewindow_start()
-
-        current_state = event['state']
-
-        previous_sla_information = sla_information.copy()
-
-        # sla_information is updated in this method
-        state_at_timewindow_start = self.update_sla_information(
+        timewindow_date_start = now - timewindow
+        self.logger.debug('Timewindow is {}, timestamp is {}'.format(
             timewindow,
-            current_state,
-            previous_selector_state,
-            sla_information
+            timewindow_date_start
+        ))
+
+        self.logger.debug('Computing sla for selector {}'.format(rk))
+        # Retrieve sla information from selector record
+        sla_information = self.get_sla_information(
+            rk,
+            timewindow_date_start,
+            now
         )
 
-        sla_information_changed = previous_sla_information != sla_information
-        # When new sla information computed
-        # save new selector record new information
-        if current_state != previous_selector_state or sla_information_changed:
-            self.update_selector_record(
-                current_state,
-                previous_selector_state,
-                state_at_timewindow_start,
-                sla_information,
-                storage,
-                record_id
-            )
+        self.logger.debug('Sla length information is {}'.format(
+            len(sla_information)
+        ))
 
         # Compute effective sla dict to be able to fill the ouput template
-        sla_measures = self.compute_sla(
-            timewindow,
-            sla_information,
-            previous_selector_state,
-            prev_state_tw_start
-        )
+        sla_measures, first_timestamp = self.compute_sla(sla_information, now)
         self.logger.debug('Sla measures is {}'.format(sla_measures))
 
-        # Compute template from sla measures
-        output = self.compute_output(template, sla_measures)
+        self.logger.debug('Alert level is {}'.format(alert_level))
+        # Compute alerts precent depending on user algorithm
+        alerts_percent = self.get_alert_percent(sla_measures, alert_level)
 
-        state = self.compute_state(sla_measures, selector_record)
+        # Compute template from sla measures
+        output = self.compute_output(
+            template,
+            sla_measures,
+            alerts_percent,
+            first_timestamp
+        )
+
+        state = self.compute_state(
+            alerts_percent,
+            sla_warning,
+            sla_critical
+        )
+
         self.logger.debug('Sla computed state is {}'.format(state))
+
         self.logger.debug('thresholds : warning {}, critical {}'.format(
-            selector_record.get_sla_warning(),
-            selector_record.get_sla_critical()
+            sla_warning,
+            sla_critical
         ))
 
         self.event = self.prepare_event(
-            selector_record,
+            display_name,
             sla_measures,
             output,
             state
         )
 
-    def compute_state(self, sla_measures, selector_record):
+    def get_alert_percent(self, sla_measures, alert_level):
 
-        warning = selector_record.get_sla_warning()
-        critical = selector_record.get_sla_critical()
-        alerts_percent = sla_measures[1] + sla_measures[2] + sla_measures[3]
+        # alert_level should never be something else than minor,major,critical
+
+        if alert_level == 'minor':
+            return sla_measures[1] + sla_measures[2] + sla_measures[3]
+
+        if alert_level == 'major':
+            return sla_measures[2] + sla_measures[3]
+
+        if alert_level == 'critical':
+            return sla_measures[3]
+
+    def compute_state(self, alerts_percent, warning, critical):
 
         CRITICAL = 3
         MINOR = 1
         INFO = 0
 
-        if alerts_percent > float(critical) / 100.0:
+        availability = 1.0 - alerts_percent
+
+        self.logger.debug('availability {} warning {}, critical {}'.format(
+            availability,
+            warning,
+            critical
+        ))
+
+        if availability < float(critical) / 100.0:
             return CRITICAL
 
-        if alerts_percent > float(warning) / 100.0:
+        if availability < float(warning) / 100.0:
             return MINOR
 
         return INFO
-
-    def update_selector_record(
-        self,
-        current_state,
-        previous_selector_state,
-        state_at_timewindow_start,
-        sla_information,
-        storage,
-        record_id
-    ):
-        self.logger.debug(
-            'Change found!, Updating selector record with id {},' +
-            ' previous state {} and sla information {}'.format(
-                record_id,
-                current_state,
-                sla_information
-            ))
-
-        update = {
-            'sla_information': dumps(sla_information)
-        }
-        if current_state != previous_selector_state:
-            update['previous_selector_state'] = current_state
-
-        if state_at_timewindow_start is not None:
-            update['state_at_timewindow_start'] = state_at_timewindow_start
-
-        storage.update(record_id, update)
 
     def get_event(self):
         # may have any modifiers here
         return self.event
 
-    def get_sla_information(self, selector_record):
+    def get_sla_information(
+        self,
+        selector_rk,
+        timewindow_date_start,
+        now
+    ):
+
+        """Sla information is a list containing all state in the timewindow for
+        current sla event."""
+
+        sla = []
+
+        events_log = self.storage.get_backend('events_log')
+
+        # Fetch previous state
+        state_before = events_log.find_one({
+            'rk': selector_rk,
+            'timestamp': {'$lte': timewindow_date_start}
+        }, {
+            'state': 1,
+            'timestamp': 1,
+            '_id': 0
+        }, sort=[('timestamp', -1)])
+
+        self.logger.debug('state_before {}'.format(state_before))
+
+        if state_before:
+            self.logger.debug('State before found ! {}'.format(state_before))
+            state_before['timestamp'] = timewindow_date_start
+            sla.append(state_before)
+
+        # Fetch all state between before and now
+        sla_infos = events_log.find({
+            'rk': selector_rk,
+            'timestamp': {'$gte': timewindow_date_start}
+        }, {
+            'state': 1,
+            'timestamp': 1,
+            '_id': 0
+        })
+
+        for sla_info in sla_infos:
+            sla.append(sla_info)
+
+        # Add last delta time because state may remain until now
+        if len(sla) and sla[-1]['timestamp'] < now:
+            delta_time = now - sla[-1]['timestamp']
+            sla.append({
+                'timestamp': now,
+                'state': sla[-1]['state']
+            })
+            self.logger.debug('Add time until now for last state')
+
+        self.logger.debug('Sla information from events_log : {}'.format(
+            pp.pformat(sla)
+        ))
+
+        return sla
+
+    def compute_sla(self, sla_information, now):
+
         """
-        Sla information is a dict that contains a list for each possible state.
-        These lists are made of dict that contains a start and a stop date and
-        looks like {'start': XXX, 'stop': YYY}
+        Allow computing percents time portion where the
+        selector state were. sla_information is a list of
+        state and timestamp dict representing selector state
+        evolution
         """
-        # When serialized, key are converted to string,
-        # so on init they are declared as string
-        info = {
-            '0': [],
-            '1': [],
-            '2': [],
-            '3': [],
+
+        sla_times = {
+            0: 0.0,
+            1: 0.0,
+            2: 0.0,
+            3: 0.0,
+        }
+        sla_measures = {
+            0: 0.0,
+            1: 0.0,
+            2: 0.0,
+            3: 0.0,
         }
 
-        if 'sla_information' in selector_record.data:
-            info = selector_record.data['sla_information']
-            if isinstance(selector_record.data['sla_information'], basestring):
-                info = loads(info)
+        # Compute duration between eache state change
+        # default value for first timestamp
+        first_timestamp = now
+        if len(sla_information):
 
-        return info
+            # Allow computing the percentage inside the timewindow
+            first_timestamp = date_start = sla_information[0]['timestamp']
+            previous_state = sla_information[0]['state']
 
-    def update_sla_information(
+            self.logger.debug('Compute since {}, state were {}'.format(
+                date_start,
+                previous_state
+            ))
+
+            for sla_info in sla_information:
+                delta_time = sla_info['timestamp'] - date_start
+                date_start = sla_info['timestamp']
+                sla_times[previous_state] += delta_time
+                previous_state = sla_info['state']
+
+                self.logger.debug('Add time {} to state {}'.format(
+                    delta_time,
+                    sla_info['state'],
+                ))
+
+            self.logger.debug('Computed sla times are {}'.format(
+                sla_times
+            ))
+
+            total_time = now - first_timestamp
+            self.logger.debug('total_time {}, now {}, date_start {}'.format(
+                total_time,
+                now,
+                first_timestamp
+            ))
+
+            if total_time == 0:
+                # Avoids divid by 0 error
+                self.logger.warning('Tried to divide by 0 in compute sla')
+                total_time = 1
+
+            for state in sla_times:
+                percent = float(sla_times[state]) / float(total_time)
+                sla_measures[state] = percent
+
+        return sla_measures, first_timestamp
+
+    def compute_output(
         self,
-        timewindow,
-        current_state,
-        previous_selector_state,
-        sla_information
+        template,
+        sla_measures,
+        alerts_percent,
+        first_timestamp
     ):
-        """
-        This method aims to clean a sla information dict by
-        removing entries that are not part of the given timewindow
-        It also adds new information to this dict when the current
-        selector state changed.
-        It modifies the sla information dict given as param and returns
-        the state where the selector was at start of timewindow.
-        """
-        now = time()
-        start_date = now - timewindow
-
-        # Allow computing last state whose sla missing time is attribued
-        latest_date_clear = 0
-        # This state is the one in witch selector was before the timewindow.
-        state_at_timewindow_start = None
-
-        # Clear timewindow that are out of sla scope.
-        for state in self.states:
-            cleaned_state_info = []
-
-            # Keep only information that remains in the current timewindow
-            for window in sla_information[str(state)]:
-                start = window.get('start', None)
-                stop = window.get('stop', None)
-                if start >= start_date or stop >= start_date:
-                    cleaned_state_info.append(window)
-                else:
-                    # latest date clear just help retrieving the good state
-                    if start > latest_date_clear:
-                        latest_date_clear = start
-                        state_at_timewindow_start = state
-                    # stop date may not exist
-                    if stop > latest_date_clear:
-                        latest_date_clear = stop
-                        state_at_timewindow_start = state
-
-            # New information computed
-            sla_information[str(state)] = cleaned_state_info
-
-        # Add timewindow infomation to the sla information when state changed
-        if current_state != previous_selector_state:
-
-            # Append a new window for current_state
-            sla_information[str(current_state)].append({
-                'start': now
-            })
-
-            # Ends a timewindow for previous state information
-            # when previsous state exists
-            if (previous_selector_state is not None and
-                    len(sla_information[str(previous_selector_state)])):
-                sla_information[str(previous_selector_state)][-1]['stop'] = now
-
-        self.logger.debug('computed state_at_timewindow_start is {}'.format(
-            state_at_timewindow_start
-        ))
-        return state_at_timewindow_start
-
-    def compute_sla(
-        self,
-        timewindow,
-        sla_information,
-        previous_state,
-        prev_state_tw_start
-    ):
-
-        """
-        From a sla informatio dict, a new dict is computed and looks like
-        {state: percent} where state can be one of [0, 1, 2, 3] values and
-        percent value is computed depending on the time a selector remained
-        in a state or another for the timewindow whole duration.
-        """
-        results = {}
-
-        # Lowest date allow compute sla difference between the first
-        # state change and current date for sla to get at end sla
-        # sum equal to 100%. This algorithm consider the first sla
-        # range as ok state.
-        now = lowest_date = time()
-        timewindow_date_start = now - timewindow
-
-        previous_state_missing_time = 0
-
-        # Clear timewindow that are out of sla scope.
-        for state in self.states:
-
-            total_duration = 0.0
-            # Keep only information that remains in the current timewindow
-            for window in sla_information[str(state)]:
-
-                if window['start'] < lowest_date:
-                    lowest_date = window['start']
-
-                # case where sla information exists but
-                # starts before timewindow
-                if window['start'] < timewindow_date_start:
-                    start = timewindow_date_start
-                else:
-                    start = window['start']
-
-                # Stop can be not already defined ,
-                # and then computation is done until now
-                if 'stop' not in window:
-                    # stop is set same as start then difference equals 0
-                    stop = now
-                else:
-                    stop = window['stop']
-
-                # Check duration is positive value
-                duration = float(stop) - float(start)
-                if duration <= 0:
-                    self.logger.error('Sla error when computing duration.')
-
-                total_duration += duration
-
-            # Avoids division by 0, may introduce precision errors
-            if timewindow == 0:
-                timewindow = 1
-                self.logger.warning(
-                    'timewindow for sla computation is 0,' +
-                    ' this may not be normal'
-                )
-
-            # Keys are not string
-            results[state] = float(total_duration) / float(timewindow)
-
-        # When state at start of time window is not defined,
-        # then take the previous state instead
-        if prev_state_tw_start is None:
-
-            # Consider that missing time is for previous state.
-            if previous_state is None:
-                previous_state = 0
-            missing_time_state_target = previous_state
-        else:
-            missing_time_state_target = prev_state_tw_start
-
-        # Add difference between first date and now - timewindow
-        missing_time = lowest_date - timewindow_date_start
-        missing_time_percent = float(missing_time) / float(timewindow)
-
-        self.logger.debug('missing time is {}, represents {} %'.format(
-            missing_time,
-            missing_time_percent * 100
-        ))
-
-        results[missing_time_state_target] += missing_time_percent
-
-        return results
-
-    def compute_output(self, template, sla_measures):
 
         def to_percent(value):
             value = value * 100
             return ("%0.2f" % value)
+
+        # Timestamp to date string
+        TSTART = datetime.datetime.fromtimestamp(
+            first_timestamp
+        ).strftime('%Y-%m-%d %H:%M:%S')
 
         if isinstance(template, basestring):
             output = template.replace('[OFF]', to_percent(sla_measures[0]))
             output = output.replace('[MINOR]', to_percent(sla_measures[1]))
             output = output.replace('[MAJOR]', to_percent(sla_measures[2]))
             output = output.replace('[CRITICAL]', to_percent(sla_measures[3]))
-            output = output.replace(
-                '[ALERTS]',
-                to_percent(sla_measures[1] + sla_measures[2] + sla_measures[3])
-            )
-            self.logger.debug('SLA computed output is : {}'.format(output))
+            output = output.replace('[ALERTS]', to_percent(alerts_percent))
+            output = output.replace('[TSTART]', TSTART)
+            self.logger.info('SLA computed output is : {}'.format(output))
             return output
         else:
             self.logger.warning('Sla template is not a string, nothing done.')
             return ''
 
-    def prepare_event(self, selector_record, sla_measures, output, sla_state):
+    def prepare_event(self, display_name, sla_measures, output, sla_state):
 
         perf_data_array = []
 
@@ -389,18 +357,19 @@ class Sla(object):
             connector_name='engine',
             event_type='sla',
             source_type='resource',
-            component=selector_record.display_name,
+            component=display_name,
             resource='sla',
             state=sla_state,
             output=output,
             perf_data_array=perf_data_array,
-            display_name=selector_record.display_name
+            display_name=display_name
         )
 
         self.logger.info('publishing sla {}, states {}'.format(
-            selector_record.display_name,
+            display_name,
             sla_measures
         ))
-        self.logger.debug('event: {}'.format(event))
+
+        self.logger.debug('event : {}'.format(pp.pformat(event)))
 
         return event

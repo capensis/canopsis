@@ -83,16 +83,35 @@ class engine(Engine):
                 # When selector computed, sla may be asked to be computed.
                 if selector.dosla:
                     self.logger.debug('Will proceed sla for this selector')
+
+                    # Retrieve user ui settings
+
+                    # This template should be always set
+                    template = selector.get_sla_output_tpl()
+                    # Timewindow computation duration
+                    timewindow = selector.get_sla_timewindow()
+
+                    sla_warning = selector.get_sla_warning()
+                    sla_critical = selector.get_sla_critical()
+                    alert_level = selector.get_alert_level()
+                    display_name = selector.display_name
+
+                    rk = get_routingkey(selector_event)
+
                     sla = Sla(
-                        selector,
-                        selector_event,
                         self.storage,
-                        event_id,
-                        self.logger
+                        rk,
+                        template,
+                        timewindow,
+                        sla_warning,
+                        sla_critical,
+                        alert_level,
+                        display_name,
+                        logger=self.logger
                     )
                     self.publish_sla_event(
                         sla.get_event(),
-                        selector.display_name
+                        display_name
                     )
 
             else:
