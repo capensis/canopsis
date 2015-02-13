@@ -62,7 +62,7 @@ class engine(Engine):
         # Add status informations
         event_type = event.get('event_type')
 
-        handled_event_types = ['check', 'selected', 'sla']
+        handled_event_types = ['check', 'selector', 'sla']
 
         if event_type is not None and event_type in handled_event_types:
 
