@@ -113,6 +113,7 @@ class Factory(object):
 
     def track_nonetype(self, dico):
         '''
+        Change None string into NoneType.
         '''
         for k in dico:
             if dico[k] == 'None':
