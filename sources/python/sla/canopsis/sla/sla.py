@@ -133,7 +133,8 @@ class Sla(object):
             display_name,
             sla_measures,
             output,
-            state
+            state,
+            alerts_percent
         )
 
     def get_alert_percent(self, sla_measures, alert_level):
@@ -270,6 +271,8 @@ class Sla(object):
                 previous_state
             ))
 
+            # compute what proportion of time the event
+            # remained in the same state
             for sla_info in sla_information:
                 delta_time = sla_info['timestamp'] - date_start
                 date_start = sla_info['timestamp']
@@ -333,24 +336,31 @@ class Sla(object):
             self.logger.warning('Sla template is not a string, nothing done.')
             return ''
 
-    def prepare_event(self, display_name, sla_measures, output, sla_state):
-
+    def prepare_event(
+        self,
+        display_name,
+        sla_measures,
+        output,
+        sla_state,
+        alerts_percent
+    ):
         perf_data_array = []
 
         # Compute metrics to publish
         for state in self.states:
 
-            state_name = {
-                0: 'off',
-                1: 'minor',
-                2: 'major',
-                3: 'critical',
-            }[state]
-
             perf_data_array.append({
-                'metric': 'cps_sla_{}'.format(state_name),
-                'value': sla_measures[state]
+                'metric': 'cps_pct_by_{}'.format(state),
+                'value': round(sla_measures[state] * 100.0, 2),
+                'max': 100
             })
+
+        availability = (1.0 - alerts_percent) * 100.0
+        perf_data_array.append({
+            'metric': 'cps_avail',
+            'value': round(availability, 2),
+            'max': 100
+        })
 
         event = forger(
             connector='sla',

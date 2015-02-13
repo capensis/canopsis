@@ -39,7 +39,7 @@
 			],
 			"default": "minor",
 			"role": "simplelist",
-			"description": "Allow to set what state is applied to this sla to compute total time in alert"
+			"description": "Set alert level beyond witch sla percent is computed. <ul><li>If minor, sla alerts will consider time spent in minor, major and critical state.</li><li>If major, sla alert will consider time spent in major and critical state.</li></ul>"
 		},
 
 		"crecord_type": {
