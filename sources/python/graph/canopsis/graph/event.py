@@ -28,7 +28,7 @@ from canopsis.graph.elements import Vertice, Edge, Graph
 from canopsis.graph.manager import GraphManager
 from canopsis.context.manager import Context
 from canopsis.task import register_task, run_task
-from canopsis.event import forger, Event
+from canopsis.event import forger
 
 _context = Context()
 graph = GraphManager()

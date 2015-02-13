@@ -44,8 +44,8 @@ class Context(MiddlewareRegistry):
     which have the same name and type but different context.
 
     For example, in following entities:
-        - component: name is component_id and type is component
-        - connector: name is connector and type is connector
+        - component: name is component_id and type is component.
+        - connector: name is connector and type is connector.
     """
 
     DATA_SCOPE = 'context'  #: default data scope
@@ -73,18 +73,18 @@ class Context(MiddlewareRegistry):
 
     @property
     def context(self):
+        """List of context element name.
         """
-        List of context element name.
-        """
+
         return self._context
 
     @context.setter
     def context(self, value):
+
         self._context = value
 
     def get_entities(self, ids):
-        """
-        Get entities by id
+        """Get entities by id.
 
         :param ids: one id or a set of ids.
         """
@@ -94,8 +94,7 @@ class Context(MiddlewareRegistry):
     def get_entity(
         self, event, from_db=False, create_if_not_exists=False, cache=False
     ):
-        """
-        Get event entity.
+        """Get event entity.
 
         :param bool from_base: If True (False by default), check return entity
             from base, otherwise, return entity information from the event.

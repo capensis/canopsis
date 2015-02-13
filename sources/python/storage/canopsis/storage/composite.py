@@ -265,7 +265,7 @@ class CompositeStorage(Storage):
         path = {
             field: data[field]
             for field in data
-            if field in self.path and data[field] not in [None, 'None']
+            if field in self.path and data[field] is not None
         }
 
         result = path, data[Storage.DATA_ID]
@@ -283,7 +283,7 @@ class CompositeStorage(Storage):
         result = ''
 
         for n, field in enumerate(self.path):
-            if path.get(field) not in [None, 'None']:
+            if path.get(field) is not None:
                 result = '%s%s%s' % (
                     result,
                     CompositeStorage.PATH_SEPARATOR,

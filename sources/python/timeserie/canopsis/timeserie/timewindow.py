@@ -95,14 +95,37 @@ class Period(object):
         return result
 
     def __len__(self):
-        """
-        Get number of seconds.
+        """Get number of seconds.
+
         :return: this period in seconds. Approximation if period is in months
             or years.
         :rtype: int
         """
 
         return self.total_seconds()
+
+    def __mul__(self, value):
+        """Get a new period which is a factor of value by self.
+
+        :param float value: new multiplicative factor.
+        :return: new period equals to value * self.
+        :rtype: Period
+        """
+
+        result_unit_values = {
+            k: self.unit_values[k] * value for k in self.unit_values
+        }
+
+        result = Period(**result_unit_values)
+
+        return result
+
+    def __imul__(self, value):
+
+        for unit in self.unit_values.copy():
+            self.unit_values[unit] *= value
+
+        return self
 
     def total_seconds(self):
         """
