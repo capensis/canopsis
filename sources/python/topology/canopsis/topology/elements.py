@@ -76,6 +76,7 @@ from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context
 from canopsis.topology.manager import TopologyManager
 from canopsis.graph.event import BaseTaskedVertice
+from canopsis.engines import publish
 
 
 _context = Context()
@@ -141,6 +142,29 @@ class TopoVertice(BaseTaskedVertice):
         if source is not None:
             result['source'] = source
         result[Context.TYPE] = self.type
+
+        return result
+
+    def process(self, event, engine=None, manager=None, source=None, **kwargs):
+
+        if manager is None:
+            manager = _topology
+
+        # save old state
+        old_state = self.state
+        # process task
+        result = super(TopoVertice, self).process(
+            event=event, engine=engine, **kwargs
+        )
+        # compare old state and new state
+        if self.state != old_state:
+            # if not equal
+            event = self.get_event(state=self.state, source=source)
+            # publish a new event
+            if engine is not None:
+                publish(event=event, engine=engine)
+            # save self
+            self.save(manager=manager)
 
         return result
 
