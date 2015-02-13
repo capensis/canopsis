@@ -173,7 +173,7 @@ class PerfData(MiddlewareRegistry):
                 points = (points,)
 
             period = self.get_period(metric_id=metric_id, period=period)
-
+            # update data in a cache (a)synchronous way
             self[PerfData.PERFDATA_STORAGE].put(
                 data_id=metric_id, period=period, points=points, cache=cache
             )
@@ -181,12 +181,11 @@ class PerfData(MiddlewareRegistry):
             if meta is not None:
 
                 min_timestamp = min(point[0] for point in points)
-
+                # update meta data in a synchronous way
                 self[PerfData.META_STORAGE].put(
                     data_id=metric_id,
                     value=meta,
-                    timestamp=min_timestamp,
-                    cache=cache
+                    timestamp=min_timestamp
                 )
 
     def remove(

@@ -230,6 +230,7 @@ class MongoStorage(MongoDataBase, Storage):
     def get_elements(
         self,
         ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
+        hint=None,
         *args, **kwargs
     ):
 
@@ -254,12 +255,12 @@ class MongoStorage(MongoDataBase, Storage):
             MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
-        hint = self._get_hint(query=_query, cursor=cursor)
+        if hint is None:
+            hint = self._get_hint(query=_query, cursor=cursor)
 
         if hint is not None:
             cursor.hint(hint)
 
-        # TODO: enrich a cursor with methods to use it such as a tuple
         #result = list(cursor)
         result = MongoCursor(cursor)
 
@@ -328,7 +329,9 @@ class MongoStorage(MongoDataBase, Storage):
             limit=limit,
             skip=skip,
             sort=sort,
-            with_count=with_count)
+            with_count=with_count,
+            *args, **kwargs
+        )
 
     def remove_elements(
         self, ids=None, _filter=None, cache=False, *args, **kwargs

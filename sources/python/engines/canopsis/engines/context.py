@@ -20,6 +20,11 @@
 
 from canopsis.engines import Engine
 from canopsis.context.manager import Context
+try:
+    from threading import Lock
+except ImportError:
+    from dummy_threading import Lock
+
 """
 TODO: sla
 from canopsis.middleware import Middleware
@@ -42,9 +47,10 @@ class engine(Engine):
 
         #self.sla = None
         """
-        self.beat()
 
-        #self.cache = set()
+        self.entities_by_entity_ids = {}
+        self.lock = Lock()
+        self.beat()
 
     def beat(self):
         """
@@ -57,6 +63,38 @@ class engine(Engine):
         if sla:
             self.sla = sla[0]
         """
+
+        self.lock.acquire()
+        entities_by_entity_ids = self.entities_by_entity_ids.copy()
+        self.entities_by_entity_ids = {}
+        self.lock.release()
+
+        entities = self.context[Context.CTX_STORAGE].get_elements(
+            ids=entities_by_entity_ids.keys()
+        )
+
+        for entity in entities:
+            del entities_by_entity_ids[entity['_id']]
+
+        if entities_by_entity_ids:
+            context = self.context
+            for entity_id in entities_by_entity_ids:
+                _type, entity, ctx = entities_by_entity_ids[entity_id]
+                context.put(
+                    _type=_type, entity=entity, context=ctx
+                )
+
+    def put(self, _type, entity, ctx=None):
+
+        context = self.context
+        full_entity = entity.copy()
+        full_entity[Context.TYPE] = _type
+        if ctx is not None:
+            full_entity.update(ctx)
+        eid = context.get_entity_id(full_entity)
+        self.lock.acquire()
+        self.entities_by_entity_ids[eid] = _type, entity, ctx
+        self.lock.release()
 
     def work(self, event, *args, **kwargs):
         mCrit = 'PROC_CRITICAL'
@@ -115,29 +153,20 @@ class engine(Engine):
 
         # add hostgroups
         for hostgroup in hostgroups:
-            hostgroup_data = {Context.NAME: hostgroup}
-            self.context.put(
-                _type='hostgroup',
-                entity=hostgroup_data,
-                cache=True
-            )
+            hostgroup_data = {
+                Context.NAME: hostgroup
+            }
+            self.put(_type='hostgroup', entity=hostgroup_data)
 
         # add servicegroups
         for servicegroup in servicegroups:
-            servicegroup_data = {Context.NAME: servicegroup}
-            self.context.put(
-                _type='servicegroup',
-                entity=servicegroup_data,
-                cache=True
-            )
+            servgroup_data = {
+                Context.NAME: servicegroup
+            }
+            self.put(_type='servicegroup', entity=servgroup_data)
 
-        # put the entity in the context
-        self.context.put(
-            _type=source_type,
-            context=context,
-            entity=status_entity,
-            cache=True
-        )
+        # put the status entity in the context
+        self.put(_type=source_type, entity=status_entity, ctx=context)
 
         # udpdate context information with resource or component
         if resource is not None:
@@ -145,11 +174,11 @@ class engine(Engine):
         else:
             context['component'] = component
 
-        if 'author' in event:
-            # add authored entity data (downtime, ack, metric, etc.)
-            authored_data = entity.copy()
-            event_type = event['event_type']
+        authored_data = entity.copy()
+        event_type = event['event_type']
 
+        if 'author' in event:
+            # add authored entity data (downtime, ack, etc.)
             authored_data['author'] = event['author']
             authored_data['comment'] = event.get('output', None)
 
@@ -169,12 +198,7 @@ class engine(Engine):
                 authored_data['entry'] = event['entry']
                 authored_data[Context.NAME] = event['rk']
 
-            self.context.put(
-                _type=event_type,
-                entity=authored_data,
-                context=context,
-                cache=True
-            )
+        self.put(_type=event_type, entity=authored_data, ctx=context)
 
         # add perf data
         for perfdata in event.get('perf_data_array', []):
@@ -182,11 +206,6 @@ class engine(Engine):
             name = perfdata['metric']
             perfdata_entity[Context.NAME] = name
             perfdata_entity['internal'] = perfdata['metric'].startswith('cps')
-            self.context.put(
-                _type='metric',
-                entity=perfdata_entity,
-                context=context,
-                cache=True
-            )
+            self.put(_type='metric', entity=perfdata_entity, ctx=context)
 
         return event
