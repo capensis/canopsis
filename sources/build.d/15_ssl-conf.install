@@ -40,6 +40,11 @@ function install() {
         OPENSSL_ARGS="$OPENSSL_ARGS -keyout $PREFIX/etc/ssl/cakey.pem"
         OPENSSL_ARGS="$OPENSSL_ARGS -out $PREFIX/etc/ssl/ca.pem"
 
+        if [ ! -z $SSL_KEY_PASS ]
+        then
+            OPENSSL_ARGS="$OPENSSL_ARGS -passout pass:$SSL_KEY_PASS"
+        fi
+
         launch_cmd 1 "openssl req $OPENSSL_ARGS"
     fi
 
@@ -58,10 +63,15 @@ function install() {
     echo "===> Signing server certificate..."
     echo
 
-    OPENSSL_ARGS="-out $PREFIX/etc/ssl/cert.pem"
+    OPENSSL_ARGS="-batch -out $PREFIX/etc/ssl/cert.pem"
     OPENSSL_ARGS="$OPENSSL_ARGS -config $PREFIX/etc/ssl/openssl.cnf"
     OPENSSL_ARGS="$OPENSSL_ARGS -cert $PREFIX/etc/ssl/ca.pem"
     OPENSSL_ARGS="$OPENSSL_ARGS -infiles $PREFIX/etc/ssl/openssl/cert.csr"
+
+    if [ ! -z $SSL_KEY_PASS ]
+    then
+        OPENSSL_ARGS="-passin pass:$SSL_KEY_PASS $OPENSSL_ARGS"
+    fi
 
     launch_cmd 1 "openssl ca $OPENSSL_ARGS"
 
