@@ -1,6 +1,6 @@
 
-PREFIX="/opt/canopsis"
-HUSER="canopsis"
+PREFIX="/opt/canopsis/nrp"
+HUSER="canopsis-nrp"
 HGROUP="canopsis"
 ARCH=`uname -m`
 SUDO="sudo -E"
