@@ -226,6 +226,20 @@ class Topology(Graph, TopoVertice):
         # put the topology in the context by default
         context.put(_type=self.type, entity=entity, context=ctx)
 
+    def process(self, event, engine=None, manager=None, source=None, **kwargs):
+
+        super(Topology, self).process(
+            event=event, engine=engine, manager=manager, source=source,
+            **kwargs
+        )
+
+        # update entity
+        entity = self.entity
+        if entity is not None:
+            _check.state(
+                ids=entity, state=self.state, criticity=1
+            )
+
 
 class TopoNode(Vertice, TopoVertice):
     """Class representation of a topology node.

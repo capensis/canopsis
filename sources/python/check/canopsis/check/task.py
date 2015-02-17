@@ -41,6 +41,9 @@ def criticity(state_document, state, criticity=CheckManager.HARD):
     criticity_count = CheckManager.CRITICITY_COUNT[criticity]
     # get current entity state
     entity_state = state_document[state_name]
+    result = {
+        id_name: _id
+    }
     # if state != entity_state
     if state != entity_state:
         # get count and last state
@@ -55,11 +58,11 @@ def criticity(state_document, state, criticity=CheckManager.HARD):
         if count >= criticity_count:
             count = 1  # initialize count
             entity_state = state  # state entity is state
-    # construct a new document with state, count and last state
-    result = {
-        id_name: _id,
-        state_name: entity_state,
-        count_name: count,
-        last_name: last_state
-    }
+        # construct a new document with state, count and last state
+        result.update({
+            id_name: _id,
+            state_name: entity_state,
+            count_name: count,
+            last_name: last_state
+        })
     return result
