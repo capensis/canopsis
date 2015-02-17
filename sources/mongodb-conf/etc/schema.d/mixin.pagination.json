@@ -7,6 +7,12 @@
 
 	"properties": {
 		"itemsPerPage": {
+			"isUserPreference": true,
+			"type": "integer",
+			"required": true,
+			"default": 5
+		},
+		"defaultItemsPerPage": {
 			"type": "integer",
 			"required": true,
 			"default": 5
