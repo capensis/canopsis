@@ -26,7 +26,7 @@ from canopsis.sla.sla import Sla
 
 
 class MongoQuery(object):
-    def find(self, query, projection):
+    def find(self, query, projection, sort=[]):
         return []
 
     def find_one(self, query, projection, sort=[]):
