@@ -22,12 +22,12 @@
             "default": "topology"
         },
         "width": {
-            "type": "int",
+            "type": "integer",
             "required": false,
             "default": 0
         },
         "height": {
-            "type": "int",
+            "type": "integer",
             "required": false,
             "default": 0
         }
