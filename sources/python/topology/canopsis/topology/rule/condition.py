@@ -81,8 +81,8 @@ def at_least(
     manager=None, **kwargs
 ):
     """
-    Generic condition applied on sources of vertice which check if at least source
-        nodes check a condition.
+    Generic condition applied on sources of vertice which check if at least
+    source nodes check a condition.
 
     :param dict event: processed event.
     :param dict ctx: rule context which must contain rule vertice.

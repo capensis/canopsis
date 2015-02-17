@@ -8,7 +8,7 @@
 		"keys":["title", "event_selection"]
 	},{
 		"title": "Rendering",
-		"keys":["refreshableWidget", "show_title", "show_output"]
+		"keys":["show_title", "show_output"]
 	},{
 		"title": "Click event",
 		"keys":["filter_pattern", "destination_view"]
@@ -39,10 +39,6 @@
 		"filter_pattern": {
 			"type": "string",
 			"default": "{{#if isSelector}}{{{selector_filter}}}{{else}}{ \"rk\" : \"{{rk}}\" }{{/if}}"
-		},
-		"refreshableWidget":  {
-			"type": "boolean",
-			"default": true
 		},
 		"show_output": {
 			"type": "boolean",

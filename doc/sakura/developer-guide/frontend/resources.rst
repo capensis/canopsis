@@ -21,6 +21,12 @@ Fiddles
 
 - `Drag and drop <http://jsfiddle.net/ud3323/5uX9H/>`_
 
+Ember tricks
+============
+
+- `Ember computed properties and Merged arrays <http://dev.billysbilling.com/blog/How-to-optimize-inefficient-computed-properties-in-Ember-js>`_
+
+
 UI (general)
 ============
 
