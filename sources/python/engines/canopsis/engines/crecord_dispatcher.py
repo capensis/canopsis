@@ -153,6 +153,10 @@ class engine(Engine):
         # Event are triggered only at engine's delay duration
         for trigger_engine in self.beat_interval_trigger:
 
+            self.logger.debug('Processing engine trigger for {}'.format(
+                trigger_engine
+            ))
+
             tengine = self.beat_interval_trigger[trigger_engine]
 
             if tengine['elapsed_since_last_beat'] > tengine['delay']:

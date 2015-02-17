@@ -122,7 +122,8 @@ class engine(Engine):
         return compare_duration
 
     def consume_dispatcher(self, event, *args, **kargs):
-        self.logger.warning('enter datacleaner beat')
+
+        self.logger.debug('enter datacleaner beat')
         # getting retention date limit
         retention_date_limit = self.get_retention_date()
 

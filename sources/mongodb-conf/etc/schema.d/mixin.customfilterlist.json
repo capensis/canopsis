@@ -16,6 +16,15 @@
 				"role": "cfilterwithproperties"
 			}
 		},
+		"user_filters": {
+			"type": "array",
+			"isUserPreference": true,
+			"items": {
+				"type": "object",
+				"objectDict": { "title": "untitled filter", "cfilter": ""},
+				"role": "cfilterwithproperties"
+			}
+		},
 		"default_filter": {
 			"type": "string",
 			"role": "cfilter"
@@ -23,6 +32,10 @@
 		"additional_filter": {
 			"type": "string",
 			"role": "cfilter"
+		},
+		"selected_filter": {
+			"isUserPreference": true,
+			"type": "object"
 		}
 	}
 }
