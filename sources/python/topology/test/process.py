@@ -155,7 +155,7 @@ class ProcessingTest(TestCase):
         self_node.save(self.manager)
 
         event_processing(event=self.check, engine=self, manager=self.manager)
-        self.assertEqual(self.count, 2)
+        self.assertEqual(self.count, 3)
 
         self.node = self.manager.get_elts(ids=self.node.id)
         self.assertEqual(self.node.state, Check.WARNING)

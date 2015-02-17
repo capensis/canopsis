@@ -73,7 +73,7 @@ edges.
 
 A graph vertice contains::
 
-    - data: vertice information.
+    - info: vertice information.
     - _type: equals vertice.
 
 Graph edge
@@ -114,8 +114,7 @@ CATEGORY = 'GRAPH'
 
 
 class GraphElement(object):
-    """
-    Base class for all graph elements.
+    """Base class for all graph elements.
 
     Contains an ID and a type.
     """
@@ -150,7 +149,7 @@ class GraphElement(object):
 
     def __eq__(self, other):
         """
-        True if other is a GraphElement and public attributes sames.
+        :return: True if other is a GraphElement and public attributes sames.
         """
 
         # check other type and id
@@ -160,22 +159,21 @@ class GraphElement(object):
 
     def __ne__(self, other):
         """
-        Return not self.__eq__ == other
+        :return: not self.__eq__ == other.
         """
 
         return not self.__eq__(other)
 
     def __hash__(self):
         """
-        Return self.id hash
+        :return: self.id hash.
         """
 
         return hash(self.id)
 
     @classmethod
     def new(cls, **kwargs):
-        """
-        Instantiate a new element where kwargs contains element attributes.
+        """Instantiate a new element where kwargs contains element attributes.
 
         :param dict kwargs: new element attributes.
         :return: new element.
@@ -191,8 +189,7 @@ class GraphElement(object):
 
     @staticmethod
     def new_element(**elt_properties):
-        """
-        Instantiate a new graph element related to elt properties.
+        """Instantiate a new graph element related to elt properties.
 
         :param dict elt_properties: serialized elt properties.
         :return: new elt instance.
@@ -209,8 +206,7 @@ class GraphElement(object):
         return result
 
     def to_dict(self):
-        """
-        Transform self to a dict in storing public attributes.
+        """Transform self to a dict in storing public attributes.
         """
 
         result = {}
@@ -226,8 +222,7 @@ class GraphElement(object):
         return result
 
     def resolve_refs(self, elts, manager):
-        """
-        Resolve self references with input elts.
+        """Resolve self references with input elts.
 
         :param dict elts: elts by id.
         """
@@ -235,8 +230,7 @@ class GraphElement(object):
         pass
 
     def save(self, manager, graph_ids=None, cache=False):
-        """
-        Save self into manager graphs.
+        """Save self into manager graphs.
 
         :param GraphManager manager: manager to use in order to save self.
         :param graph_ids: graph ids where save self.
@@ -249,8 +243,7 @@ class GraphElement(object):
         manager.put_elt(elt=elt, graph_ids=graph_ids, cache=cache)
 
     def delete(self, manager, cache=False):
-        """
-        Delete self from manager.
+        """Delete self from manager.
 
         :param GraphManager manager: manager from where delete self.
         :param bool cache: use query cache if True (False by default).
@@ -261,26 +254,25 @@ class GraphElement(object):
 
 
 class Vertice(GraphElement):
-    """
-    In charge of managing a Vertice.
+    """In charge of managing a Vertice.
 
-    Contains a data.
+    Contains an information.
     """
 
-    DATA = 'data'  #: data attribute name
+    INFO = 'info'  #: info attribute name
 
     BASE_TYPE = 'vertice'  # base type name
 
-    __slots__ = GraphElement.__slots__ + (DATA,)
+    __slots__ = GraphElement.__slots__ + (INFO,)
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, info=None, *args, **kwargs):
         """
-        :param data: self data.
+        :param info: self info.
         """
 
         super(Vertice, self).__init__(*args, **kwargs)
 
-        self.data = data
+        self.info = info
 
     def delete(self, manager, cache=False):
 
@@ -305,8 +297,7 @@ class Vertice(GraphElement):
 
 
 class Edge(Vertice):
-    """
-    In charge of managing an Edge.
+    """In charge of managing an Edge.
 
     Contains sources, targets and a directed information.
     """
@@ -355,7 +346,7 @@ class Edge(Vertice):
             self.sources = []
         else:
             # ensure sources and targets are list if they are string
-            if isinstance(sources, basestring):
+            if isinstance(sources, (basestring, GraphElement)):
                 sources = [sources]
             self.sources = list(
                 source.id if isinstance(source, GraphElement) else source
@@ -365,7 +356,7 @@ class Edge(Vertice):
         if targets is None:
             self.targets = []
         else:
-            if isinstance(targets, basestring):
+            if isinstance(targets, (basestring, GraphElement)):
                 targets = [targets]
             self.targets = list(
                 target.id if isinstance(target, GraphElement) else target
@@ -400,8 +391,7 @@ class Edge(Vertice):
             self._gtargets[target] = elt
 
     def del_refs(self, ids=None, sources=None, targets=None):
-        """
-        Del references of vertices.
+        """Del references of vertices.
 
         :param ids: vertice ids to remove from self references.
         :type ids: list or str
@@ -463,8 +453,7 @@ class Edge(Vertice):
 
 
 class Graph(Vertice):
-    """
-    In charge of managing a Graph.
+    """In charge of managing a Graph.
 
     Contains graph elements.
     """
@@ -520,8 +509,7 @@ class Graph(Vertice):
         self._targets = {} if _targets is None else _targets
 
     def __contains__(self, other):
-        """
-        True if other is a vertice inside self.
+        """True if other is a vertice inside self.
 
         :param other: possible vertice(s) or vertice(s) id(s) in self graph.
         :type other: str or dict or GraphElement or list of other.
@@ -584,8 +572,7 @@ class Graph(Vertice):
             self._updating = False
 
     def update_gelts(self, manager, depth=0, _added_elts=None):
-        """
-        Update self graph elts with self elt ids and input manager.
+        """Update self graph elts with self elt ids and input manager.
 
         :param manager: self manager to use.
         :param int depth: graph depth (add "depth" levels of graphs).
@@ -621,8 +608,7 @@ class Graph(Vertice):
         self.resolve_refs(_added_elts, manager=manager)
 
     def add_elts(self, *elts):
-        """
-        Add elts in self.
+        """Add elts in self.
 
         :param elts: elts to add.
         :type elts: tuple of int or dict or GraphElement
@@ -700,8 +686,7 @@ class Graph(Vertice):
         return result
 
     def get_neighbours(self, vertice):
-        """
-        Get neighbours vertices by edges of input vertices in respecting
+        """Get neighbours vertices by edges of input vertices in respecting
         directed edges.
 
         :param Vertice vertice: vertice from where find linked vertices by
@@ -742,7 +727,9 @@ class Graph(Vertice):
         return result
 
     def save(self, manager, graph_ids=None, cache=False, *args, **kwargs):
+
         self.elts = list(set(self.elts))
+
         super(Graph, self).save(
             manager=manager,
             graph_ids=graph_ids,

@@ -9,20 +9,17 @@
     "description" : "Configure series",
     "parent" : [ ],
     "containerwidget" : {
-        "widgetId" : null,
+        "widgetId" : "item_000001-5f29-a175-badd-45c1293b0fce",
         "xtype" : "widgetcontainer",
-        "title" : null,
         "mixins" : [
             {
                 "name" : "verticallayout"
             }
         ],
-        "widgetslotTemplate" : null,
-        "tagName" : null,
         "items" : [
             {
                 "widget" : {
-                    "widgetId" : "item_0207ba39-5f29-a175-badd-45c1293b0fce",
+                    "widgetId" : "item_123456-5f29-a175-badd-45c1293b0fce",
                     "default_column_sort" : {
                         "direction" : "ASC"
                     },
@@ -31,95 +28,21 @@
                     "listed_crecord_type" : "ctxmetric",
                     "mixins" : [
                         {
-                            "name" : "pagination",
-                            "EmberClass" : {
-                                "__ember1421854831723_name" : ".PaginationMixin",
-                                "mixins" : [
-                                    {
-                                        "properties" : {
-                                            "itemsPerPagePropositions" : {
-                                                "_dependentKeys" : [
-                                                    "itemsPerPagePropositionSelected"
-                                                ],
-                                                "_readOnly" : false,
-                                                "_cacheable" : true
-                                            },
-                                            "itemsDivided" : {
-                                                "_dependentKeys" : [
-                                                    "itemsTotal",
-                                                    "mixinOptions.pagination.itemsPerPage"
-                                                ],
-                                                "_readOnly" : false,
-                                                "_cacheable" : true
-                                            },
-                                            "itemsTotal" : {
-                                                "_dependentKeys" : [
-                                                    "widgetDataMetas",
-                                                    "widgetData"
-                                                ],
-                                                "_readOnly" : false,
-                                                "_cacheable" : true
-                                            },
-                                            "itemsPerPage" : {
-                                                "_dependentKeys" : [
-                                                    "mixinOptions.pagination.itemsPerPage"
-                                                ],
-                                                "_readOnly" : false,
-                                                "_cacheable" : true
-                                            },
-                                            "paginationFirstItemIndex" : {
-                                                "_dependentKeys" : [
-                                                    "widgetData"
-                                                ],
-                                                "_readOnly" : false,
-                                                "_cacheable" : true
-                                            },
-                                            "partials" : {
-                                                "subHeader" : [
-                                                    "itemsperpage"
-                                                ],
-                                                "footer" : [
-                                                    "pagination"
-                                                ]
-                                            },
-                                            "paginationLastItemIndex" : {
-                                                "_dependentKeys" : [
-                                                    "widgetData"
-                                                ],
-                                                "_readOnly" : false,
-                                                "_cacheable" : true
-                                            },
-                                            "currentPage" : 1,
-                                            "totalPages" : {
-                                                "_dependentKeys" : [
-                                                    "itemsTotal"
-                                                ],
-                                                "_readOnly" : false,
-                                                "_cacheable" : true
-                                            },
-                                            "_actions" : {
-                                                
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
+                            "name" : "Pagination"
                         },
-                        {
-                            "name" : "arraysearch"
+                        { "name": "Arraysearch",
+                          "searchable_columns": [
+                            "component",
+                            "resource",
+                            "cid"
+                          ]
                         }
                     ],
-                    "columnsOrder" : [ ],
-                    "tagName" : null,
-                    "display_record_field" : null,
                     "displayed_columns" : [
                         "component",
                         "resource",
                         "cid"
-                    ],
-                    "refreshInterval" : 0,
-                    "contentTruncatedLength" : 0,
-                    "record_template" : null
+                    ]
                 },
                 "xtype" : "widgetwrapper",
                 "title" : "wrapper"
@@ -140,8 +63,13 @@
                         {
                             "name" : "Pagination"
                         },
-                        {
-                            "name" : "Arraysearch"
+                        { "name": "Arraysearch",
+                          "searchable_columns": [
+                            "crecord_name",
+                            "formula",
+                            "aggregate_method",
+                            "aggregate_interval"
+                          ]
                         }
                     ],
                     "columnsOrder" : [ ],

@@ -34,6 +34,7 @@ function easy_install_all_libs() {
 	easy_install_pylib greenlet
 	easy_install_pylib mock
 	easy_install_pylib lxml
+	easy_install_pylib requests
 }
 
 function install(){

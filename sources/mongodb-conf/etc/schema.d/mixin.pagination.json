@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["itemsPerPage"]
+		"keys":["customItemsPerPage"]
 	}],
 
 	"properties": {
@@ -16,6 +16,11 @@
 			"type": "integer",
 			"required": true,
 			"default": 5
+		},
+		"customItemsPerPage": {
+			"type": "array",
+			"title": "Custom items per page",
+			"description": "List of number allowing user to select custom items per page"
 		}
 	}
 }

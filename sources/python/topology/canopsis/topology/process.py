@@ -18,8 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-"""
-Module in charge of defining topology processing in engines.
+"""Module in charge of defining topology processing in engines.
 
 When an event occured, the related entity is retrieved and all bound
 topological nodes are retrieved as well in order to execute theirs rules.
@@ -41,7 +40,6 @@ from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
 from canopsis.task import register_task
 from canopsis.event import Event
-from canopsis.engines import publish
 from canopsis.check.manager import CheckManager
 
 context = Context()
@@ -54,8 +52,8 @@ PUBLISHER = 'publisher'
 
 @register_task
 def event_processing(engine, event, manager=None, **kwargs):
-    """
-    Process input event in getting topology nodes bound to input event entity.
+    """Process input event in getting topology nodes bound to input event
+    entity.
 
     One topology nodes are founded, executing related rules.
 
@@ -69,56 +67,40 @@ def event_processing(engine, event, manager=None, **kwargs):
 
     event_type = event[Event.TYPE]
 
-    # TODO: add other check elements
     # apply processing only in case of check event
     if event_type in _check.types:
-        # in case of topology element
-        if event_type in [Topology.TYPE, TopoNode.TYPE]:
+        # in case of topology node
+        if event_type == TopoNode.TYPE:
+            # process all targets
             elt = manager.get_elts(ids=event[Topology.ID])
             if elt is not None:
-                elts = [elt]
+                targets_by_edge = manager.get_targets(
+                    ids=elt.id, add_edges=True
+                )
+                # get elt state in order to update all edges
+                state = elt.state
+                for edge_id in targets_by_edge:
+                    edge, targets = targets_by_edge[edge_id]
+                    # update edge state
+                    edge.state = state
+                    edge.save(manager=manager)
+                    # process and save all targets
+                    for target in targets:
+                        target.process(
+                            event=event, engine=engine, manager=manager,
+                            **kwargs
+                        )
 
         else:  # in case of entity event
             # get elts from entity
             entity = context.get_entity(event)
             if entity is not None:
                 entity_id = context.get_entity_id(entity)
-                elts = manager.get_elts(data={TopoNode.ENTITY: entity_id})
-        # iterate on elts
-        for elt in elts:
-            # save old state in order to check for its modification
-            old_state = elt.state
-
-            # process task
-            elt.process(event=event, manager=manager, engine=engine, **kwargs)
-
-            new_state = elt.state
-            # propagate the change of state in case of new state
-            if old_state != new_state:
-                # get next elts
-                targets_by_edge = manager.get_targets(
-                    ids=elt.id,
-                    add_edges=True
-                )
-                # send the event_to_propagate to all targets
-                for edge_id in targets_by_edge:
-                    # get edge and targets
-                    edge, targets = targets_by_edge[edge_id]
-                    # update the edge state
-                    if edge.data is None:
-                        edge.data = {
-                            'state': new_state
-                        }
-                    elif isinstance(edge.data, dict):
-                        edge.data['state'] = new_state
-                    edge.save(manager=manager)
-                    # send check events
-                    for target in targets:
-                        # create event to propagate with source and elt ids
-                        event_to_propagate = target.get_event(
-                            state=new_state, source=elt.id
-                        )
-                        # publish the event in the context of the engine
-                        publish(event=event_to_propagate, engine=engine)
+                elts = manager.get_elts(info={TopoNode.ENTITY: entity_id})
+                # process all elts
+                for elt in elts:
+                    elt.process(
+                        event=event, engine=engine, manager=manager, **kwargs
+                    )
 
     return event

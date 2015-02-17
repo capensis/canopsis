@@ -32,6 +32,14 @@ class TopoNodeTest(TestCase):
     Test event processing function.
     """
 
+    def setUp(self):
+
+        self.manager = TopologyManager(data_scope='test')
+
+    def tearDown(self):
+
+        self.manager.del_elts()
+
     def test_default(self):
         """
         Test to process a toponode without default task.
@@ -40,7 +48,7 @@ class TopoNodeTest(TestCase):
         toponode = TopoNode()
         self.assertEqual(toponode.state, 0)
         event = {'state': 1}
-        result = toponode.process(event=event)
+        result = toponode.process(event=event, manager=self.manager)
         self.assertIsNone(result)
         self.assertEqual(toponode.state, 1)
 
@@ -50,15 +58,17 @@ class TopoNodeTest(TestCase):
         """
 
         @register_task('process')
-        def process_node(toponode, ctx, event=None, **kwargs):
+        def process_node(vertice, ctx, event=None, engine=None, **kwargs):
 
-            return toponode, ctx, kwargs
+            return vertice, ctx, kwargs
 
         ctx, entity, state, operator = {'b': 1}, 'e', 0, 'process'
 
         toponode = TopoNode(state=state, entity=entity, operator=operator)
 
-        _node, _ctx, _kwargs = toponode.process(ctx=ctx, event=None)
+        _node, _ctx, _kwargs = toponode.process(
+            ctx=ctx, event=None, manager=self.manager
+        )
 
         self.assertIs(_node, toponode)
         self.assertIs(_ctx, ctx)

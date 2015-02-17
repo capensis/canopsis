@@ -3,7 +3,12 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "info"
+            "operator",
+            "in_state",
+            "min_weight",
+            "then_state",
+            "else_state",
+            "label"
         ]
     }],
     "properties": {
@@ -15,6 +20,44 @@
         },
         "type": {
             "default": "topo"
+        },
+        "operator": {
+            "enum": ["change_state", "worst_state", "best_state", "at_least", "_all"],
+            "type": "string",
+            "role": "simplelist",
+            "default": "change_state",
+            "required": false,
+            "description": "Topology operator"
+        },
+        "min_weight": {
+            "type": "float",
+            "default": 1,
+            "description": "Minimal weight in case of at_least operator",
+            "required": false
+        },
+        "in_state": {
+            "enum": ["nok", "ok", "warning", "critical", "unknown"],
+            "type": "string",
+            "default": "nok",
+            "role": "simplelist",
+            "description": "State of child nodes in case of at_least/_all operator",
+            "required": false
+        },
+        "then_state": {
+            "enum": ["worst_state", "ok", "warning", "critical", "unknown", "best_state"],
+            "type": "string",
+            "default": "worst_state",
+            "role": "simplelist",
+            "description": "State to set if at_least/_all operator is checked",
+            "required": false
+        },
+        "else_state": {
+            "enum": ["ok", "warning", "critical", "unknown", "worst_state", "best_state"],
+            "type": "string",
+            "default": "ok",
+            "role": "simplelist",
+            "description": "State to set if at_least/_all operator is unchecked",
+            "required": false
         }
     }
 }

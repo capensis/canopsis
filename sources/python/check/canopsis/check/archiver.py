@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
@@ -293,7 +293,7 @@ class Archiver(Configurable):
     def set_status(self, event, status):
         """
         Args:
-            event map of the current evet
+            event map of the current event
             status status of the current event
         """
 
@@ -385,7 +385,7 @@ class Archiver(Configurable):
         if (devent.get('status', ONGOING) != CANCELED
             or (devent['state'] != event['state']
                 and (self.restore_event
-                    or state == OFF
+                    or event['state'] == OFF
                     or devent['state'] == OFF))):
             # Check the stealthy intervals
             if self.check_stealthy(devent, event_ts):

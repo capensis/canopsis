@@ -146,12 +146,16 @@ class Selector(Record):
 
         return self.get_value('output_tpl', default_template)
 
+    def get_alert_level(self):
+        level = self.get_value('alert_level', 'minor')
+        return level
+
     def get_sla_output_tpl(self):
 
         # Defines default sla template if no one exists
         default_sla_template = (
             'Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%,' +
-            ' Critical: [CRITICAL]%, Alerts [ALERTS]%'
+            ' Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART]'
         )
         return self.get_value('sla_output_tpl', default_sla_template)
 
@@ -460,11 +464,9 @@ class Selector(Record):
             connector_name="engine",
             event_type="selector",
             source_type="component",
-            component='selector',
-            resource=self.display_name,
+            component=self.display_name,
             state=computed_state,
             output=output,
-            perf_data=None,
             perf_data_array=perf_data_array,
             display_name=self.display_name
         )

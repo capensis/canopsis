@@ -132,7 +132,7 @@
             {
               "name": "Customfilterlist",
               "filters" : [],
-              "default_filter" : "{\"$or\":[{\"event_type\":{\"$eq\":\"sla\"}}]}"
+              "default_filter" : "{\"$or\":[{\"resource\":{\"$eq\":\"sla\"}}]}"
             },
             { "name": "History" },
             { "name": "Infobutton" },

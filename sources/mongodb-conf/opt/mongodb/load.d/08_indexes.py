@@ -77,6 +77,7 @@ INDEXES = {
             ('state', 1)
         ], [('source_type', 1), ('tags', 1)],
         [('event_type', 1), ('component', 1), ('resource', 1)],
+        [('rk', 1), ('timestamp', 1)],
         [('event_type', 1), ('resource', 1)],
         [('event_type', 1)],
         [('tags', 1)],

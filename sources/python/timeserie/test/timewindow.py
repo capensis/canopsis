@@ -261,6 +261,14 @@ class PeriodTest(TestCase):
             0.000000001 + 1 + 60 + 3600 + 86400 + 604800 + 2592000 + 31536000
         )
 
+    def test_mul(self):
+
+        p = Period(s=5, mn=10)
+
+        p1 = p * 5
+
+        self.assertEqual(p1.unit_values, {'s': 5 * 5, 'mn': 10 * 5})
+
 
 class IntervalTest(TestCase):
 

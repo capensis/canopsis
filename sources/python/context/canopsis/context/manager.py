@@ -44,8 +44,8 @@ class Context(MiddlewareRegistry):
     which have the same name and type but different context.
 
     For example, in following entities:
-        - component: name is component_id and type is component
-        - connector: name is connector and type is connector
+        - component: name is component_id and type is component.
+        - connector: name is connector and type is connector.
     """
 
     DATA_SCOPE = 'context'  #: default data scope
@@ -73,18 +73,18 @@ class Context(MiddlewareRegistry):
 
     @property
     def context(self):
+        """List of context element name.
         """
-        List of context element name.
-        """
+
         return self._context
 
     @context.setter
     def context(self, value):
+
         self._context = value
 
     def get_entities(self, ids):
-        """
-        Get entities by id
+        """Get entities by id.
 
         :param ids: one id or a set of ids.
         """
@@ -94,8 +94,7 @@ class Context(MiddlewareRegistry):
     def get_entity(
         self, event, from_db=False, create_if_not_exists=False, cache=False
     ):
-        """
-        Get event entity.
+        """Get event entity.
 
         :param bool from_base: If True (False by default), check return entity
             from base, otherwise, return entity information from the event.
@@ -124,15 +123,17 @@ class Context(MiddlewareRegistry):
 
         if from_db:
             result = self.get(_type=_type, names=name, context=context)
-
         else:
             result = context.copy()
             result[Context.NAME] = name
+            result[Context.TYPE] = _type
 
         # if entity does not exists, create it if specified
         if result is None and create_if_not_exists:
             result = {Context.NAME: name}
             self.put(_type=_type, entity=result, context=context, cache=cache)
+            result.update(context)
+            result[Context.TYPE] = _type
 
         return result
 
@@ -236,11 +237,12 @@ class Context(MiddlewareRegistry):
         :param bool cache: use query cache if True (False by default).
         """
 
-        path = {Context.TYPE: _type}
+        path = {}
 
         if context is not None:
             path.update(context)
-            path[Context.TYPE] = _type
+
+        path[Context.TYPE] = _type
 
         name = entity[Context.NAME]
 
@@ -256,32 +258,28 @@ class Context(MiddlewareRegistry):
             parent_path = path.copy()
             # ensure all parent context exist, or create them if necessary
             # get key context without type
-            keys = self._context[1:]
-            keys.reverse()
+            keys = [k for k in reversed(self._context[1:]) if k in context]
             for key in keys:
-                if key in context:
-                    # update path type with input key
-                    parent_path['type'] = key
-                    # parent name is path[key]
-                    parent_name = parent_path[key]
-                    # del path[key] in order to avoid wrong path resolution
-                    del parent_path[key]
-                    # get entity
-                    parent_entity = self[Context.CTX_STORAGE].get(
-                        path=parent_path, data_ids=parent_name
+                # update path type with input key
+                parent_path['type'] = key
+                # parent name is path[key]
+                parent_name = parent_path.pop(key)
+                # get entity
+                parent_entity = self[Context.CTX_STORAGE].get(
+                    path=parent_path, data_ids=parent_name
+                )
+                # if entity does not exist
+                if parent_entity is None:
+                    # put a new entity in DB
+                    parent_entity = {Context.NAME: parent_name}
+                    self[Context.CTX_STORAGE].put(
+                        path=parent_path,
+                        data_id=parent_name,
+                        data=parent_entity,
+                        cache=cache
                     )
-                    # if entity does not exist
-                    if parent_entity is None:
-                        # put a new entity in DB
-                        parent_entity = {Context.NAME: parent_name}
-                        self[Context.CTX_STORAGE].put(
-                            path=parent_path,
-                            data_id=parent_name,
-                            data=parent_entity,
-                            cache=cache
-                        )
-                    else:
-                        break
+                else:
+                    break
 
         # initialize entity db for future update
         if entity_db is None:
@@ -342,6 +340,8 @@ class Context(MiddlewareRegistry):
         """
 
         if Context.NAME not in entity:
+            if Context.TYPE not in entity:
+                entity[Context.TYPE] = entity['event_type']
             entity[Context.NAME] = entity[entity[Context.TYPE]]
 
         result = self[Context.CTX_STORAGE].get_path_with_id(entity)
@@ -349,23 +349,38 @@ class Context(MiddlewareRegistry):
         return result
 
     def get_entity_id(self, entity):
-        """
-        Get unique entity id related to its context and name.
+        """Get unique entity id related to its context and name.
         """
 
         path, data_id = self.get_entity_context_and_name(entity=entity)
 
         if path[Context.TYPE] in path:
             data_id = None
+
         result = self[Context.CTX_STORAGE].get_absolute_path(
             path=path, data_id=data_id
         )
 
         return result
 
-    def unify_entities(self, entities, extended=False, cache=False):
+    def get_entity_id_context_name(self, entity):
         """
-        Unify input entities as the same entity.
+        Get the right id, context and name of input entity.
+        """
+
+        path, data_id = self.get_entity_context_and_name(entity=entity)
+
+        if path[Context.TYPE] in path:
+            data_id = None
+
+        result = self[Context.CTX_STORAGE].get_absolute_path(
+            path=path, data_id=data_id
+        ), path, data_id
+
+        return result
+
+    def unify_entities(self, entities, extended=False, cache=False):
+        """Unify input entities as the same entity.
 
         :param bool cache: use query cache if True (False by default).
         """

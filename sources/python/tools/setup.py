@@ -21,9 +21,10 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common', 'pyperfstore2']
+install_requires = ['canopsis.common']
 
 setup(
     description='Canopsis tools',
     install_requires=install_requires,
-    keywords='tools')
+    keywords='tools'
+)

@@ -45,7 +45,7 @@ class GraphTest(TestCase):
         for index in range(self.count):
             self.vertices[index] = Vertice(
                 _id='vertice-{0}'.format(index),
-                data=None if index % 2 else {'index': index},
+                info=None if index % 2 else {'index': index},
                 _type='tvertice-{0}'.format(index),
             )
         self.vertice_ids = [vertice.id for vertice in self.vertices]
@@ -56,7 +56,7 @@ class GraphTest(TestCase):
         for index in range(self.count):
             self.edges[index] = Edge(
                 _id='edge-{0}'.format(index),
-                data=None if index % 2 else {'index': index},
+                info=None if index % 2 else {'index': index},
                 _type='tedge-{0}'.format(index),
                 sources=self.vertice_ids[index:],
                 targets=self.vertice_ids[:-index],
@@ -70,7 +70,7 @@ class GraphTest(TestCase):
         for index in range(self.count):
             self.graphs[index] = Graph(
                 _id='graph-{0}'.format(index),
-                data=None if index % 2 else {'index': index},
+                info=None if index % 2 else {'index': index},
                 _type='tgraph-{0}'.format(index),
                 elts=self.edge_ids[index:] + self.vertice_ids[index:]
             )
@@ -170,13 +170,13 @@ class GraphTest(TestCase):
         )
         self.assertTrue(isinstance(vertice, Vertice))
 
-        # check get data
+        # check get info
         for elt in self.elts:
-            _elt = self.manager.get_elts(ids=elt.id, data=elt.data)
+            _elt = self.manager.get_elts(ids=elt.id, info=elt.info)
             self.assertIsNotNone(_elt)
             self.assertEqual(_elt.id, elt.id)
-            if elt.data is not None:
-                elts = self.manager.get_elts(data=elt.data)
+            if elt.info is not None:
+                elts = self.manager.get_elts(info=elt.info)
                 self.assertEqual(len(elts), 3)
 
     def test_get_edges(self):
@@ -392,7 +392,7 @@ class GraphTest(TestCase):
             ids=v0.id))
         self.assertEqual(neighbourhood, {g0, g1, g2, v0, v1, v2})
 
-        # test data
+        # test info
 
         # test source_data
 
