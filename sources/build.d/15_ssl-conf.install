@@ -55,6 +55,7 @@ function install() {
     OPENSSL_ARGS="-new -nodes"
     OPENSSL_ARGS="$OPENSSL_ARGS -config $PREFIX/etc/ssl/openssl.cnf"
     OPENSSL_ARGS="$OPENSSL_ARGS -keyout $PREFIX/etc/ssl/key.pem"
+    OPENSSL_ARGS="$OPENSSL_ARGS -newkey rsa:$SSL_KEY_BITS"
     OPENSSL_ARGS="$OPENSSL_ARGS -out $PREFIX/etc/ssl/openssl/cert.csr"
 
     launch_cmd 1 "openssl req $OPENSSL_ARGS"
