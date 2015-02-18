@@ -1,13 +1,13 @@
 # 
 # Translators:
-# eric regnier <eregnier@capensis.fr>, 2014
+# eric regnier <eregnier@capensis.fr>, 2014-2015
 # Mourcia Mikael <mmourcia@yahoo.fr>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-11-24 10:36+0000\n"
+"PO-Revision-Date: 2015-02-18 16:02+0000\n"
 "Last-Translator: eric regnier <eregnier@capensis.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -182,10 +182,10 @@ msgid "sla_timewindow"
 msgstr "fenêtre de temps pour sla"
 
 msgid "aaa_access_group"
-msgstr ""
+msgstr "groupe d'accès"
 
 msgid "thd_crit_sla_timewindow"
-msgstr ""
+msgstr "seuil de criticité sla"
 
 msgid "records per page"
 msgstr "enregistrements par page"
@@ -209,7 +209,7 @@ msgid "downtimes_as_ok"
 msgstr "définir downtimes en ok"
 
 msgid "aaa_access_unauth"
-msgstr ""
+msgstr "accès non autorisé"
 
 msgid "state"
 msgstr "Etat"
@@ -329,7 +329,7 @@ msgid "thd_warn_sla_timewindow"
 msgstr "seuil de warning pour la fenêtre de temps SLA"
 
 msgid "aaa_group"
-msgstr ""
+msgstr "group"
 
 msgid "Critical"
 msgstr "Critique"
@@ -452,7 +452,7 @@ msgid "Edit settings"
 msgstr "Editer les paramètres"
 
 msgid "aaa_access_other"
-msgstr ""
+msgstr "accès divers"
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -476,7 +476,7 @@ msgid "Remote handling"
 msgstr "Prise en charge à distance"
 
 msgid "aaa_access_owner"
-msgstr ""
+msgstr "accès détenteur"
 
 msgid "crecord_write_time"
 msgstr "date d'écriture de l'enregistrement"
@@ -1251,7 +1251,7 @@ msgid "Metric"
 msgstr "Métrique"
 
 msgid "last state change"
-msgstr "Durée"
+msgstr "dernier changement d'état"
 
 msgid "Filter remains incomplete"
 msgstr "Le filtre est incomplet"
@@ -1314,3 +1314,148 @@ msgstr "Publication du dernier évènement"
 
 msgid "Acknowleged"
 msgstr "Acquitté"
+
+msgid "Week"
+msgstr "Semaine"
+
+msgid "Month"
+msgstr "Mois"
+
+msgid "look for a component"
+msgstr "Chercher un composant"
+
+msgid "look for a resource"
+msgstr "Chercher une resource"
+
+msgid "Auth systems"
+msgstr "Système d'authentification"
+
+msgid "Not a valid number"
+msgstr "Nombre invalide"
+
+msgid "Remove ack"
+msgstr "Supprimer ack"
+
+msgid "Undo cancel"
+msgstr "Défaire annulation"
+
+msgid "Groups"
+msgstr "Groupes"
+
+msgid "User preferences"
+msgstr "Préférences utilisateur"
+
+msgid "userpreferences"
+msgstr "préférences utilisateur"
+
+msgid "Add "
+msgstr "Ajouter"
+
+msgid "Impact"
+msgstr "Impacte"
+
+msgid "Emergency"
+msgstr "Urgence"
+
+msgid "Strong"
+msgstr "Fort"
+
+msgid "Medium"
+msgstr "Moyen"
+
+msgid "Weak"
+msgstr "Faible"
+
+msgid "output of the event"
+msgstr "output de l'évènement"
+
+msgid "No values"
+msgstr "Pas de valeurs"
+
+msgid "No data available"
+msgstr "Pas de données disponibles"
+
+msgid "cid"
+msgstr "cid"
+
+msgid "Data Source"
+msgstr "Source de données"
+
+msgid "Advanced Computation"
+msgstr "Calcul avancé"
+
+msgid "Metadata"
+msgstr "Méta données"
+
+msgid "unit"
+msgstr "unité"
+
+msgid "Mail"
+msgstr "Email"
+
+msgid "Series"
+msgstr "Series"
+
+msgid "Mixins"
+msgstr "Mixins"
+
+msgid "html"
+msgstr "html"
+
+msgid "series"
+msgstr "series"
+
+msgid "events"
+msgstr "évènements"
+
+msgid "Search for a resource"
+msgstr "Chercher une ressource"
+
+msgid "Search for a component"
+msgstr "Chercher un composant"
+
+msgid "Associate a label to this event"
+msgstr "Associer un label à cet évènement"
+
+msgid ""
+"Event labels aims to create shortcut in a templating system. They have to "
+"contains only chars, numbers or underscores."
+msgstr "Les labels d'évènements permettent de créer des raccourcis dans le système de template. Ils doivent contenir seulement des chiffres, lettres  ou underscores."
+
+msgid "Save labels"
+msgstr "Sauvegarder les labels"
+
+msgid ""
+"Choose events to include in selector computation, and associate them a label"
+msgstr "Choisir des évènements à inclure dans le calcul du selector et les associer à un label"
+
+msgid ""
+"Select computed metric values usable in the texteditor. When many points "
+"selected for the serie interval, the last one's value only is displayed."
+msgstr "Sélectionner des métriques utilisables dans l'éditeur de texte. Quand plusieurs points sont selectionnés pour la serie, Seul la dernière valeur en date est affichée."
+
+msgid ""
+"Allow display event or metric values<ul><li>event component : "
+"{{event.event_label.component}}</li><li>serie's value "
+"{{serie.serie_name}}</li><li>human readable value {{hr "
+"value=serie.serie_name}}</li></ul>"
+msgstr "Permet d'afficher des valeurs d'évènements ou des métriques<ul><li>composant d'évènement : {{event.event_label.component}}</li><li>valeur de série {{serie.serie_name}}</li><li>Valeur simplifiées {{hr value=serie.serie_name}}</li></ul>"
+
+msgid "sla_warning"
+msgstr "seuil de warning sla"
+
+msgid "sla_critical"
+msgstr "seuil critique de sla"
+
+msgid "alert_level"
+msgstr "niveau d'alerte"
+
+msgid ""
+"Set alert level beyond witch sla percent is computed. <ul><li>If minor, sla "
+"alerts will consider time spent in minor, major and critical "
+"state.</li><li>If major, sla alert will consider time spent in major and "
+"critical state.</li></ul>"
+msgstr "Définit le niveau d'alerte en fonction du niveau d'alerte choisi<ul><li>Si mineur, les alertes sla vont prendre en compte les temps passés en état mineur, majeur et critique.</li><li>Si majeur, les alertes sla vont prendre en compte les temps passés en état majeur et critique.</li></ul>"
+
+msgid "Delay until take care of sla information for this selector."
+msgstr "Délai jusqu' auquel calculer les informations de sla pour ce selecteur."

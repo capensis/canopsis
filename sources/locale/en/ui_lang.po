@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-11-24 11:24+0100\n"
+"PO-Revision-Date: 2015-02-18 16:18+0100\n"
 "Last-Translator: teamcanopsis <teamcanopsis@capensis.fr>\n"
 "Language-Team: English <teamcanopsis@capensis.fr>\n"
 "MIME-Version: 1.0\n"
@@ -1327,3 +1327,161 @@ msgstr "Last event publication"
 
 msgid "Acknowleged"
 msgstr "Acknowleged"
+
+msgid "Week"
+msgstr "Week"
+
+msgid "Month"
+msgstr "Month"
+
+msgid "look for a component"
+msgstr "look for a component"
+
+msgid "look for a resource"
+msgstr "look for a resource"
+
+msgid "Auth systems"
+msgstr "Auth systems"
+
+msgid "Not a valid number"
+msgstr "Not a valid number"
+
+msgid "Remove ack"
+msgstr "Remove ack"
+
+msgid "Undo cancel"
+msgstr "Undo cancel"
+
+msgid "Groups"
+msgstr "Groups"
+
+msgid "User preferences"
+msgstr "User preferences"
+
+msgid "userpreferences"
+msgstr "userpreferences"
+
+msgid "Add "
+msgstr "Add "
+
+msgid "Impact"
+msgstr "Impact"
+
+msgid "Emergency"
+msgstr "Emergency"
+
+msgid "Strong"
+msgstr "Strong"
+
+msgid "Medium"
+msgstr "Medium"
+
+msgid "Weak"
+msgstr "Weak"
+
+msgid "output of the event"
+msgstr "output of the event"
+
+msgid "No values"
+msgstr "No values"
+
+msgid "No data available"
+msgstr "No data available"
+
+msgid "cid"
+msgstr "cid"
+
+msgid "Data Source"
+msgstr "Data Source"
+
+msgid "Advanced Computation"
+msgstr "Advanced Computation"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "unit"
+msgstr "unit"
+
+msgid "Mail"
+msgstr "Mail"
+
+msgid "Series"
+msgstr "Series"
+
+msgid "Mixins"
+msgstr "Mixins"
+
+msgid "html"
+msgstr "html"
+
+msgid "series"
+msgstr "series"
+
+msgid "events"
+msgstr "events"
+
+msgid "Search for a resource"
+msgstr "Search for a resource"
+
+msgid "Search for a component"
+msgstr "Search for a component"
+
+msgid "Associate a label to this event"
+msgstr "Associate a label to this event"
+
+msgid ""
+"Event labels aims to create shortcut in a templating system. They have to "
+"contains only chars, numbers or underscores."
+msgstr ""
+"Event labels aims to create shortcut in a templating system. They have to "
+"contains only chars, numbers or underscores."
+
+msgid "Save labels"
+msgstr "Save labels"
+
+msgid ""
+"Choose events to include in selector computation, and associate them a label"
+msgstr ""
+"Choose events to include in selector computation, and associate them a label"
+
+msgid ""
+"Select computed metric values usable in the texteditor. When many points "
+"selected for the serie interval, the last one's value only is displayed."
+msgstr ""
+"Select computed metric values usable in the texteditor. When many points "
+"selected for the serie interval, the last one's value only is displayed."
+
+msgid ""
+"Allow display event or metric values<ul><li>event component : "
+"{{event.event_label.component}}</li><li>serie's value "
+"{{serie.serie_name}}</li><li>human readable value {{hr "
+"value=serie.serie_name}}</li></ul>"
+msgstr ""
+"Allow display event or metric values<ul><li>event component : "
+"{{event.event_label.component}}</li><li>serie's value "
+"{{serie.serie_name}}</li><li>human readable value {{hr "
+"value=serie.serie_name}}</li></ul>"
+
+msgid "sla_warning"
+msgstr "sla_warning"
+
+msgid "sla_critical"
+msgstr "sla_critical"
+
+msgid "alert_level"
+msgstr "alert_level"
+
+msgid ""
+"Set alert level beyond witch sla percent is computed. <ul><li>If minor, sla "
+"alerts will consider time spent in minor, major and critical "
+"state.</li><li>If major, sla alert will consider time spent in major and "
+"critical state.</li></ul>"
+msgstr ""
+"Set alert level beyond witch sla percent is computed. <ul><li>If minor, sla "
+"alerts will consider time spent in minor, major and critical "
+"state.</li><li>If major, sla alert will consider time spent in major and "
+"critical state.</li></ul>"
+
+msgid "Delay until take care of sla information for this selector."
+msgstr "Delay until take care of sla information for this selector."
