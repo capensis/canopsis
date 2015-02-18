@@ -102,7 +102,7 @@ def main(argv):
     opener = urllib.request.build_opener(
         urllib.request.HTTPCookieProcessor(cj))
     #print('http://%s/autoLogin/%s' % (server,authkey))
-    r = opener.open('http://%s/autoLogin/%s' % (server, authkey))
+    r = opener.open('http://%s/autologin/%s' % (server, authkey))
     r = opener.open('http://%s/account/me' % server)
 
     charset = r.info().get_param('charset', 'utf8')
