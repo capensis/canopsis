@@ -41,6 +41,10 @@
             }
           ],
           "mixins": [
+            {
+              "name" : "periodicrefresh",
+              "refreshInterval" : "60"
+            },
             {"name": "Customfilterlist"},
             {"name": "Sortablearray"},
             { "name": "Arraysearch",

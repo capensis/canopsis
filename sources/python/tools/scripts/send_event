@@ -104,7 +104,7 @@ def main(argv):
     cj = cookielib.CookieJar()
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
     #print('http://%s/autoLogin/%s' % (server,authkey))
-    r = opener.open('http://%s/autoLogin/%s' % (server, authkey))
+    r = opener.open('http://%s/autologin/%s' % (server, authkey))
     r = opener.open('http://%s/account/me' % server)
 
     try:

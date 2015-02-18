@@ -31,13 +31,13 @@ class engine(Engine):
     def __init__(self, *args, **kargs):
         super(engine, self).__init__(*args, **kargs)
         self.selectors = []
+        self.selByRk = {}
 
     def pre_run(self):
         self.storage = get_storage(
             namespace='object',
             account=Account(user="root", group="root")
         )
-        self.selByRk = {}
         self.reload_selectors()
         self.beat()
 
@@ -49,7 +49,7 @@ class engine(Engine):
         are added to the event tag list
         """
         self.selectors = []
-        self.selByRk = {}
+        self.selByRk.clear()
         selectors_json = self.storage.find({
             'crecord_type': 'selector',
             'enable': True

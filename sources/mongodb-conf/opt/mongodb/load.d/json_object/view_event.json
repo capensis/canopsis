@@ -41,6 +41,10 @@
               ]
             },
             {
+              "name" : "periodicrefresh",
+              "refreshInterval" : "60"
+            },
+            {
               "name": "Pagination",
               "itemsPerPage" : 50
             },
