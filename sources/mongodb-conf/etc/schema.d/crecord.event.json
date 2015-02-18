@@ -85,7 +85,8 @@
 		},
 		"state": {
 			"type": "number",
-			"required": true
+			"required": true,
+			"role": "criticity"
 		},
 		"perimeter": {
 			"type": "string"
