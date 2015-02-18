@@ -35,7 +35,7 @@ cert_opt = ca_default
 
 default_days = 365
 default_crl_days = 30
-default_md = sha1
+default_md = sha256
 
 ### Ensure server certificate matches CA certificate when signing
 
@@ -73,6 +73,7 @@ authorityKeyIdentifier = keyid,issuer
 
 defaults_bits = 2048
 default_keyfile = $ENV::HOME/key.pem
+default_md = sha256
 
 distinguished_name = req_dn
 attributes = req_attrs
