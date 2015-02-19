@@ -104,6 +104,7 @@ class BaseTaskedVertice(object):
         if value is None:
             if BaseTaskedVertice.TASK in self.info:
                 del self.info[BaseTaskedVertice.TASK]
+
         else:
             self.info[BaseTaskedVertice.TASK] = value
 
@@ -128,8 +129,7 @@ class BaseTaskedVertice(object):
 
         result = forger(
             event_type=self.type,
-            component=None,
-            resource=self.id,
+            component=self.id,
             id=self.id,
             *args, **kwargs
         )
