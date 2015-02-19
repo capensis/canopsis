@@ -92,7 +92,8 @@ class Context(MiddlewareRegistry):
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
 
     def get_entity(
-        self, event, from_db=False, create_if_not_exists=False, cache=False
+        self, event, from_db=False, create_if_not_exists=False, cache=False,
+        cr=False
     ):
         """Get event entity.
 
@@ -101,6 +102,7 @@ class Context(MiddlewareRegistry):
         :param bool create_if_not_exists: Create the event entity if it does
             not exists (False by default).
         :param bool cache: use query cache if True (False by default).
+        :param bool cr: get only related component/resource.
         """
 
         result = {}
@@ -120,6 +122,17 @@ class Context(MiddlewareRegistry):
         # remove field which is the name
         if _type in context:
             del context[_type]
+
+        # get only component/resource
+        if cr:
+            if 'resource' in context:
+                if context['resource']:
+                    _type = 'resource'
+                else:
+                    _type = 'component'
+                    del context['resource']
+            else:
+                _type = 'component'
 
         if from_db:
             result = self.get(_type=_type, names=name, context=context)
