@@ -1,0 +1,14 @@
+{
+	"type": "object",
+
+	"properties": {
+		"user_displayed_columns": {
+			"type": "array",
+			"isUserPreference": true,
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
+		}
+	}
+}
