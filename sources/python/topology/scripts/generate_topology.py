@@ -122,8 +122,8 @@ def generate_context_topology(topo, name='context'):
         component_node = TopoNode(entity=component_id)
         addElt(component_node)
 
-        ctx, _ = context.get_entity_context_and_name(component)
-
+        ctx, name = context.get_entity_context_and_name(component)
+        ctx['component'] = name
         resources = context.find('resource', context=ctx)
         if resources:  # link component to all its resources with the same edge
             edge = TopoEdge(sources=component_node.id, targets=[])
