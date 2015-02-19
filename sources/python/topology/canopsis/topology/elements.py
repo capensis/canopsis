@@ -269,10 +269,14 @@ class TopoNode(Vertice, TopoVertice):
 
         result = super(TopoNode, self).get_event(*args, **kwargs)
 
-        graphs = _topology.get_graphs(elt_ids=self.id)[0]
+        graphs = _topology.get_graphs(elts=self.id)
+        # iterate on existing graphs
         for graph in graphs:
+            # update result as soon as a graph has been founded
             result['component'] = graph.id
+            break
         result['resource'] = self.id
+        result['source_type'] = 'resource'
 
         return result
 
