@@ -40,8 +40,6 @@
           "displayed_columns": [
             "_id",
             "role",
-            "groups",
-            "rights",
             "enable",
             "external"
           ]

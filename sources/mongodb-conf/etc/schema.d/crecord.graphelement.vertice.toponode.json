@@ -37,7 +37,7 @@
             "description": "Topology operator"
         },
         "min_weight": {
-            "type": "float",
+            "type": "number",
             "default": 1,
             "required": false,
             "description": "Minimal weight in case of at_least operator"

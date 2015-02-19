@@ -36,7 +36,7 @@
             "required": true
         },
         "weight": {
-            "type": "float",
+            "type": "number",
             "default": 1,
             "required": true
         },
