@@ -2,5 +2,9 @@
 	"type": "object",
 
 	"properties": {
+		"user_sortedAttribute": {
+			"isUserPreference": true,
+			"type": "string"
+		}
 	}
 }

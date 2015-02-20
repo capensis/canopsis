@@ -7,6 +7,7 @@
 	"properties": {
 		"searchable_columns": {
 			"type": "array",
+			"description": "List of columns to allow search on",
 			"items": {
 				"type": "string"
 			},

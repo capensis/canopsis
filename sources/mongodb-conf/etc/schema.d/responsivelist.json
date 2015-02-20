@@ -8,6 +8,7 @@
 	"properties": {
 		"stackableColumnsPriority": {
 			"reorderable": true,
+			"description": "Sorted list of columns to stack when there is not enough space to display every shown column",
 			"type": "array"
 		}
 	}
