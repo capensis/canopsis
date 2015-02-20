@@ -22,7 +22,7 @@
             "default": "topo"
         },
         "operator": {
-            "enum": ["change_state", "worst_state", "best_state", "at_least", "_all"],
+            "enum": ["change_state", "worst_state", "best_state", "at_least", "_all", "nok"],
             "type": "string",
             "role": "simplelist",
             "default": "change_state",
