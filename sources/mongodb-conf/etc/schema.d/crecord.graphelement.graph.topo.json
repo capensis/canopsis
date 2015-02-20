@@ -36,7 +36,7 @@
             "required": false
         },
         "in_state": {
-            "enum": ["nok", "ok", "warning", "critical", "unknown"],
+            "enum": ["nok", "ok", "minor", "major", "critical"],
             "type": "string",
             "default": "nok",
             "role": "simplelist",
@@ -44,7 +44,7 @@
             "required": false
         },
         "then_state": {
-            "enum": ["worst_state", "ok", "warning", "critical", "unknown", "best_state"],
+            "enum": ["worst_state", "ok", "minor", "major", "critical", "best_state"],
             "type": "string",
             "default": "worst_state",
             "role": "simplelist",
@@ -52,7 +52,7 @@
             "required": false
         },
         "else_state": {
-            "enum": ["ok", "warning", "critical", "unknown", "worst_state", "best_state"],
+            "enum": ["ok", "minor", "major", "critical", "worst_state", "best_state"],
             "type": "string",
             "default": "ok",
             "role": "simplelist",

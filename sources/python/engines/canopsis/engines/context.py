@@ -133,16 +133,14 @@ class engine(Engine):
         source_type = event['source_type']
 
         # create an entity status which is a component or a resource
-        if source_type == 'component':
-            is_status_entity = True
-
-        elif source_type == 'resource':
-            is_status_entity = True
-            context['component'] = component
+        if source_type == 'resource':
             status_entity['servicegroups'] = servicegroups
 
-        else:
+        if source_type not in ['resource', 'component']:
             self.logger.warning('source_type unknown %s' % source_type)
+
+        is_status_entity = True
+        context['component'] = component
 
         if is_status_entity:
             # add status entity

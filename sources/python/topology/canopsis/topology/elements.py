@@ -226,15 +226,6 @@ class Topology(Graph, TopoVertice):
         # put the topology in the context by default
         context.put(_type=self.type, entity=entity, context=ctx)
 
-    def process(self, event, **kwargs):
-
-        super(Topology, self).process(event=event, **kwargs)
-
-        # update entity
-        entity = self.entity
-        if entity is not None:
-            _check.state(ids=entity, state=self.state)
-
 
 class TopoNode(Vertice, TopoVertice):
     """Class representation of a topology node.
@@ -273,6 +264,21 @@ class TopoNode(Vertice, TopoVertice):
         # set operator
         if operator is not None:
             self.operator = operator
+
+    def get_event(self, *args, **kwargs):
+
+        result = super(TopoNode, self).get_event(*args, **kwargs)
+
+        graphs = _topology.get_graphs(elts=self.id)
+        # iterate on existing graphs
+        for graph in graphs:
+            # update result as soon as a graph has been founded
+            result['component'] = graph.id
+            break
+        result['resource'] = self.id
+        result['source_type'] = 'resource'
+
+        return result
 
 
 class TopoEdge(Edge, TopoVertice):

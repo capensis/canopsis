@@ -32,37 +32,41 @@ def criticity(state_document, state, criticity=CheckManager.HARD):
     :rtype: dict
     """
 
-    id_name = CheckManager.ID
     state_name = CheckManager.STATE
     last_name = CheckManager.LAST_STATE
     count_name = CheckManager.COUNT
-    _id = state_document[id_name]
     # get criticity count by criticity level
     criticity_count = CheckManager.CRITICITY_COUNT[criticity]
-    # get current entity state
-    entity_state = state_document[state_name]
-    result = {
-        id_name: _id
-    }
-    # if state != entity_state
-    if state != entity_state:
-        # get count and last state
-        last_state = state_document[last_name]
-        count = state_document[count_name]
-        if last_state != state:  # if state != last state
-            count = 1  # initialize count
-            last_state = state
-        else:  # else increment count
-            count += 1
-        # if state count is equal or greater than crit count
-        if count >= criticity_count:
-            count = 1  # initialize count
-            entity_state = state  # state entity is state
-        # construct a new document with state, count and last state
+    # by default, result is a copy of state_document
+    result = state_document.copy()
+    # if state document does not contain state information
+    if state_name not in state_document:
         result.update({
-            id_name: _id,
-            state_name: entity_state,
-            count_name: count,
-            last_name: last_state
+            state_name: state,
+            last_name: state,
+            count_name: 1
         })
+    else:
+        # get current entity state
+        entity_state = state_document[state_name]
+        # if state != entity_state
+        if state != entity_state:
+            # get count and last state
+            last_state = state_document[last_name]
+            count = state_document[count_name]
+            if last_state != state:  # if state != last state
+                count = 1  # initialize count
+                last_state = state
+            else:  # else increment count
+                count += 1
+            # if state count is equal or greater than crit count
+            if count >= criticity_count:
+                count = 1  # initialize count
+                entity_state = state  # state entity is state
+            # construct a new document with state, count and last state
+            result.update({
+                state_name: entity_state,
+                count_name: count,
+                last_name: last_state
+            })
     return result

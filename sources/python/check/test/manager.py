@@ -86,7 +86,7 @@ class StateTest(CheckManagerTest):
 
         hard = CheckManager.HARD
         ok = Check.OK
-        warning = Check.WARNING
+        minor = Check.MINOR
 
         state = self.manager.state(ids=entity_id)
         self.assertEqual(state, None)
@@ -98,12 +98,12 @@ class StateTest(CheckManagerTest):
         self.assertEqual(state, ok)
 
         state = self.manager.state(
-            ids=entity_id, criticity=hard, state=warning
+            ids=entity_id, criticity=hard, state=minor
         )
-        self.assertEqual(state, warning)
+        self.assertEqual(state, minor)
 
         state = self.manager.state(ids=entity_id)
-        self.assertEqual(state, warning)
+        self.assertEqual(state, minor)
 
     def test_soft_criticity(self):
         """
@@ -114,22 +114,25 @@ class StateTest(CheckManagerTest):
         soft = CheckManager.SOFT
         soft_count = CheckManager.CRITICITY_COUNT[soft]
         ok = Check.OK
-        warning = Check.WARNING
-        unknown = Check.UNKNOWN
+        minor = Check.MINOR
+        critical = Check.CRITICAL
 
         state = self.manager.state(ids=entity_id)
         self.assertEqual(state, None)
 
+        state = self.manager.state(ids=entity_id, state=critical)
+        self.assertEqual(state, Check.CRITICAL)
+
         state = self.manager.state(ids=entity_id, criticity=soft, state=ok)
-        self.assertEqual(state, Check.UNKNOWN)
+        self.assertEqual(state, Check.CRITICAL)
 
         for i in range(1, soft_count - 1):
             state = self.manager.state(
                 ids=entity_id, criticity=soft, state=ok
             )
-            self.assertEqual(state, unknown)
+            self.assertEqual(state, critical)
             state = self.manager.state(ids=entity_id)
-            self.assertEqual(state, unknown)
+            self.assertEqual(state, critical)
 
         state = self.manager.state(ids=entity_id, criticity=soft, state=ok)
         self.assertEqual(state, ok)
@@ -138,18 +141,18 @@ class StateTest(CheckManagerTest):
 
         for i in range(soft_count - 1):
             state = self.manager.state(
-                ids=entity_id, criticity=soft, state=warning
+                ids=entity_id, criticity=soft, state=minor
             )
             self.assertEqual(state, ok)
             state = self.manager.state(ids=entity_id)
             self.assertEqual(state, ok)
 
         state = self.manager.state(
-            ids=entity_id, criticity=soft, state=warning
+            ids=entity_id, criticity=soft, state=minor
         )
-        self.assertEqual(state, warning)
+        self.assertEqual(state, minor)
         state = self.manager.state(ids=entity_id)
-        self.assertEqual(state, warning)
+        self.assertEqual(state, minor)
 
 
 if __name__ == '__main__':
