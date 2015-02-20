@@ -93,7 +93,7 @@ def event_processing(engine, event, manager=None, **kwargs):
 
         else:  # in case of entity event
             # get elts from entity
-            entity = context.get_entity(event)
+            entity = context.get_entity(event, cr=True)
             if entity is not None:
                 entity_id = context.get_entity_id(entity)
                 elts = manager.get_elts(info={TopoNode.ENTITY: entity_id})

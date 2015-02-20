@@ -103,29 +103,27 @@ class CheckManager(MiddlewareRegistry):
                 state_documents = [state_documents]
             # save id and state field name
             id_field, state_field = CheckManager.ID, CheckManager.STATE
-            #result a dictionary of entity id, state value
+            #result is a dictionary of entity id, state value
             result = {}
             for state_document in state_documents:
                 entity_id = state_document[id_field]
                 entity_state = state_document[state_field]
                 result[entity_id] = entity_state
-
         # if state has to be updated
         if state is not None:
             # save field name for quick access
             id_name = CheckManager.ID
             state_name = CheckManager.STATE
-            last_name = CheckManager.LAST_STATE
-            count_name = CheckManager.COUNT
             # save storage for quick access
             storage = self[CheckManager.CHECK_STORAGE]
-            # get criticity count by criticity level
-            criticity_count = CheckManager.CRITICITY_COUNT[criticity]
             # save entity ids
             entity_ids = ids
-            # in ensuring it is a set
+            # and ensure it is a set
             if isinstance(entity_ids, basestring):
                 entity_ids = {entity_ids}
+            else:
+                entity_ids = set(ids)
+            # if states exist in DB
             if state_documents is not None:
                 # for all found documents
                 for state_document in state_documents:
@@ -133,38 +131,36 @@ class CheckManager(MiddlewareRegistry):
                     _id = state_document[id_name]
                     # remove _id from entity_ids
                     entity_ids.remove(_id)
+                    # get new state with f
                     new_state_document = f(
                         state_document=state_document,
                         state=state,
                         criticity=criticity
                     )
-                    # save new state_document
-                    storage.put_element(
-                        _id=_id, element=new_state_document, cache=cache
-                    )
+                    # save new state_document if old != new
+                    if state_document != new_state_document:
+                        storage.put_element(
+                            _id=_id, element=new_state_document, cache=cache
+                        )
                     # save state entity in result
                     result[_id] = new_state_document[state_name]
             # for all not found documents
             for entity_id in entity_ids:
-                count = 1
-                # if criticity is high, entity_state is state
-                if criticity_count <= count:
-                    entity_state = state
-                else:  # else it is unknown
-                    entity_state = Check.UNKNOWN
                 # create a new document
-                new_state_document = {
+                state_document = {
                     id_name: entity_id,
-                    state_name: entity_state,
-                    count_name: count,
-                    last_name: state
                 }
+                new_state_document = f(
+                    state_document=state_document,
+                    state=state,
+                    criticity=criticity
+                )
                 # save it in storage
                 storage.put_element(
                     _id=entity_id, element=new_state_document, cache=cache
                 )
                 # and put entity state in the result
-                result[entity_id] = entity_state
+                result[entity_id] = state
 
         # ensure result is a state if ids is a basestring
         if result is not None and isinstance(ids, basestring):
