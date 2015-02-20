@@ -37,8 +37,8 @@ class Context(MiddlewareRegistry):
     It uses a composite storage in order to modelise composite data.
 
     For example, let a resource ``R`` in the component ``C`` and connector
-    ``K`` is identified through the context [``K``, ``C``], the name ``R`` and
-    the type ``resource``.
+    ``K``. ``R`` is identified through the context [``K``, ``C``],
+    the name ``R`` and the type ``resource``.
 
     In addition to those composable data, it is possible to extend two entities
     which have the same name and type but different context.
