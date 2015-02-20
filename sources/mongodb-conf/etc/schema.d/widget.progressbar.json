@@ -1,11 +1,17 @@
 {
-	"type": "object",
-	"metadata": {
-		"icon": "stats"
-	},
-	"categories": [{
-		"title": "General",
-		"keys":["title", "label", "labeldisplay", "labelalign", "show_value"]
+    "type": "object",
+    "metadata": {
+        "icon": "stats"
+    },
+    "categories": [{
+        "title": "General",
+        "keys":["title"]
+    },{
+        "title": "Style",
+        "keys":["display_as", "show_value", "pb_thickness", "gg_width", "gg_thickness"]
+    },{
+        "title": "Label",
+        "keys":["label_display", "label_width", "label_unit", "label_align"]
     },{
         "title": "Time Window",
         "keys": ["time_window", "time_window_offset"]
@@ -15,48 +21,76 @@
     },{
         "title": "Metrics",
         "keys": ["metrics"]
-	},{
-		"title": "Mixins",
-		"keys":["mixins"]
-	}],
-	"properties": {
-		"title":  {
-			"type": "string"
-		},
-		"time_window":  {
-			"type": "number",
-			"role": "duration",
-			"default": 86400,
-			"title": "Time Window"
-		},
-		"time_window_offset":  {
-			"type": "number",
-			"role": "duration",
-			"default": 0,
-			"title": "Time Window offset from now"
-		},
-		"label":  {
-			"type": "string"
-		},
-        "labelalign": {
+    },{
+        "title": "Mixins",
+        "keys":["mixins"]
+    }],
+    "properties": {
+        "title":  {
+            "type": "string"
+        },
+        "label_align": {
             "title": "Label Align",
             "role": "simplelist",
             "enum": ["left", "right"],
             "default": "left"
         },
-		"labeldisplay": {
-			"type": "boolean"
-		},
-		"show_value": {
-			"type": "boolean"
-		},
+        "label_display": {
+            "title" : "Diplay Label",
+            "type": "boolean"
+        },
+        "label_width":  {
+            "type": "number",
+            "title" : "Label Width"
+        },
+        "label_unit":  {
+            "title" : "Label Width Unit",
+            "role": "simplelist",
+            "enum": ["%", "px", "em"],
+            "default": "%"
+        },
+        "show_value": {
+            "title": "Show Value",
+            "type": "boolean"
+        },
+        "pb_thickness": {
+            "type": "number",
+            "title" : "Thickness (px)"
+        },
+        "gg_width": {
+            "type": "number",
+            "title" : "Gauge Dimension (px)"
+        },
+        "gg_thickness": {
+            "type": "number",
+            "title" : "Thickness (px)"
+        },
+        "display_as": {
+            "title": "Display as",
+            "role": "simplelist",
+            "enum": ["progressbar", "gauge", "halfgauge"],
+            "default": "progressbar"
+        },
+        "time_window":  {
+            "type": "number",
+            "role": "duration",
+            "default": 86400,
+            "title": "Time Window"
+        },
+        "time_window_offset":  {
+            "type": "number",
+            "role": "duration",
+            "default": 0,
+            "title": "Time Window offset from now"
+        },
         "series": {
-        	"description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
+            "description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
             "type": "array",
             "role": "arrayclassifiedcrecordselector",
             "model": "serie",
-			"crecordtype": "serie",
-			"multiselect": true
+            "crecordtype": "serie",
+            "valueKey": "id",
+            "multiselect": true
         },
         "metrics": {
             "type": "array",
@@ -66,13 +100,13 @@
             "role": "cmetric",
             "title": "Metrics"
         },
-   		"mixins": {
-			"type": "array",
-			"role": "mixins",
-			"items": {
-				"type": "string"
-			},
-			"reorderable": true
-		}
-	}
+        "mixins": {
+            "type": "array",
+            "role": "mixins",
+            "items": {
+                "type": "string"
+            },
+            "reorderable": true
+        }
+    }
 }

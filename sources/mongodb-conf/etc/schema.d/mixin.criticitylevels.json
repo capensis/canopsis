@@ -5,8 +5,8 @@
 		"keys":["warn_value","crit_value","unit_or_percent"]
     },{
 		"title": "Style",
-		"keys":["background_color","warn_color", "critic_color"]
-	}],
+		"keys":["display_as", "standard_color", "warn_color", "critic_color"]
+    }],
 	"properties": {
         "warn_color":  {
             "type": "string",
@@ -18,7 +18,7 @@
             "role": "color",
             "title" : "Critic Color"
         },
-        "background_color":  {
+        "standard_color":  {
             "type": "string",
             "role": "color",
             "title" : "Standard Color"
