@@ -229,6 +229,21 @@ class Archiver(Configurable):
             )
 
         self.logger.debug(
+            (
+                'Archiver configuration ->\n' +
+                ' bagot_freq {}\n' +
+                ' bagot_time {}\n' +
+                ' stealthy_show {}\n' +
+                ' stealthy_time {}'
+            ).format(
+                self.bagot_freq,
+                self.bagot_time,
+                self.stealthy_show,
+                self.stealthy_time
+            )
+        )
+
+        self.logger.debug(
             "Checking stealthy events in collection {}".format(self.namespace)
         )
 
@@ -298,25 +313,26 @@ class Archiver(Configurable):
         """
 
         log = 'Status is set to {} for event {}'.format(status, event['rk'])
+        bagot_freq = event.get('bagot_freq', 0)
         values = {
             OFF: {
-                'freq': event.get('bagot_freq', 0),
+                'freq': bagot_freq,
                 'name': 'Off'
             },
             ONGOING: {
-                'freq': event.get('bagot_freq', 0),
+                'freq': bagot_freq,
                 'name': 'On going'
             },
             STEALTHY: {
-                'freq': event.get('bagot_freq', 0),
+                'freq': bagot_freq,
                 'name': 'Stealthy'
             },
             BAGOT: {
-                'freq': event.get('bagot_freq', 0) + 1,
+                'freq': bagot_freq + 1,
                 'name': 'Bagot'
             },
             CANCELED: {
-                'freq': event.get('bagot_freq', 0),
+                'freq': bagot_freq,
                 'name': 'Cancelled'
             }
         }
