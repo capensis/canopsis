@@ -81,6 +81,7 @@ class engine(Engine):
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Start metrics consolidation")
         serie = self.get_ready_record(event)
+        self.logger.debug(event)
 
         if not serie:
             # Show error message
