@@ -84,7 +84,7 @@ class engine(Engine):
 
         if not s_record:
             # Affichre message d'erreur
-            self.logger.errpr('Je naffiche')
+            self.logger.error('No record found')
         self.fetch(s_record)
         event_id = event['_id']
         # Update crecords informations
