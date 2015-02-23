@@ -79,13 +79,15 @@ class engine(Engine):
         self.logger.debug("Je passe dans fetch \n\n\n\n\n")
 
     def consume_dispatcher(self, event, *args, **kargs):
-        self.logger.debug("Consolidate metrics dispatcher")
-        s_record = self.get_ready_record(event)
+        self.logger.debug("Start metrics consolidation")
+        serie = self.get_ready_record(event)
 
-        if not s_record:
-            # Affichre message d'erreur
+        if not serie:
+            # Show error message
             self.logger.error('No record found')
-        self.fetch(s_record)
+
+        self.logger.debug(serie)
+        #self.fetch(serie)
         event_id = event['_id']
         # Update crecords informations
         self.crecord_task_complete(event_id)
