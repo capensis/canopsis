@@ -84,10 +84,10 @@ class engine(Engine):
 
         if not serie:
             # Show error message
-            self.logger.error('No record found')
+            self.logger.error('No record found.')
 
         self.logger.debug(serie)
-        #self.fetch(serie)
+        self.fetch(serie, 'from', 'to')
         event_id = event['_id']
         # Update crecords informations
         self.crecord_task_complete(event_id)
