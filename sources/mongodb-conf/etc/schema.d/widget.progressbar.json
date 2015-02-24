@@ -87,10 +87,8 @@
             "description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
             "type": "array",
             "role": "arrayclassifiedcrecordselector",
-            "model": "serie",
             "crecordtype": "serie",
-            "valueKey": "id",
-            "multiselect": true
+            "valueKey": "_id"
         },
         "metrics": {
             "type": "array",
