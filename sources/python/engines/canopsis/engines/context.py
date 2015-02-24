@@ -110,46 +110,12 @@ class engine(Engine):
         context = {}
 
         # Get event informations
-        connector = event['connector']
-        connector_name = event['connector_name']
-        component = event['component']
-        resource = event.get('resource', None)
         hostgroups = event.get('hostgroups', [])
         servicegroups = event.get('servicegroups', [])
-
-        entity = self.context.get_entity(
-            event, from_db=True, create_if_not_exists=True
-        )
-
-        # add connector
-        entity = {}
-        # add connector_name
-        context['connector'] = connector
-        context['connector_name'] = connector_name
-
-        # add status entity which is a component or a resource
-        entity[Context.NAME] = component if resource is None else resource
-
-        status_entity = entity.copy()
-        status_entity['hostgroups'] = hostgroups
-
-        is_status_entity = False
         source_type = event['source_type']
 
-        # create an entity status which is a component or a resource
-        if source_type == 'resource':
-            context['component'] = component
-            status_entity['servicegroups'] = servicegroups
-
-        if source_type not in ['resource', 'component']:
-            self.logger.warning('source_type unknown %s' % source_type)
-
-        is_status_entity = True
-
-        if is_status_entity:
-            # add status entity
-            status_entity['mCrit'] = event.get(mCrit, None)
-            status_entity['mWarn'] = event.get(mWarn, None)
+        # get a copy of event
+        _event = event.copy()
 
         # add hostgroups
         for hostgroup in hostgroups:
@@ -157,7 +123,6 @@ class engine(Engine):
                 Context.NAME: hostgroup
             }
             self.put(_type='hostgroup', entity=hostgroup_data)
-
         # add servicegroups
         for servicegroup in servicegroups:
             servgroup_data = {
@@ -165,42 +130,45 @@ class engine(Engine):
             }
             self.put(_type='servicegroup', entity=servgroup_data)
 
+        # get related entity
+        entity = self.context.get_entity(
+            _event, from_db=True, create_if_not_exists=False
+        )
+
+        # get hostgroups
+        entity['hostgroups'] = hostgroups
+        # and service groups
+        # create an entity status which is a component or a resource
+        if source_type == 'resource':
+            entity['servicegroups'] = servicegroups
+
+        # create an entity status which is a component or a resource
+        if source_type == 'resource':
+            context['component'] = _event['component']
+            entity['servicegroups'] = servicegroups
+
+        if source_type not in ['resource', 'component']:
+            self.logger.warning('source_type unknown %s' % source_type)
+
+        # set mCrit and mWarn
+        entity['mCrit'] = _event.get(mCrit, None)
+        entity['mWarn'] = _event.get(mWarn, None)
+
+        context, name = self.context.get_entity_context_and_name(entity)
+
         # put the status entity in the context
-        self.put(_type=source_type, entity=status_entity, ctx=context)
+        self.put(_type=source_type, entity=entity, ctx=context)
 
-        # udpdate context information with resource or component
-        if resource is not None:
-            context['resource'] = resource
+        # udpdate context information with resource and component
+        if source_type == 'resource':
+            context['resource'] = name
         else:
-            context['component'] = component
-        """
-        authored_data = entity.copy()
-        event_type = event['event_type']
+            context['component'] = name
 
-        if 'author' in event:
-            # add authored entity data (downtime, ack, etc.)
-            authored_data['author'] = event['author']
-            authored_data['comment'] = event.get('output', None)
+        # remove type from context because type will be metric
+        del context['type']
 
-            if authored_data['comment'] is None:
-                del authored_data['comment']
-
-            if event_type == 'ack':
-                authored_data['timestamp'] = event['timestamp']
-                authored_data[Context.NAME] = str(event['timestamp'])
-
-            elif event_type == 'downtime':
-                authored_data['downtime_id'] = event['downtime_id']
-                authored_data['start'] = event['start']
-                authored_data['end'] = event['end']
-                authored_data['duration'] = event['duration']
-                authored_data['fixed'] = event['fixed']
-                authored_data['entry'] = event['entry']
-                authored_data[Context.NAME] = event['rk']
-
-        self.put(_type=event_type, entity=authored_data, ctx=context)
-        """
-        # add perf data
+        # add perf data (may be done in the engine perfdata)
         for perfdata in event.get('perf_data_array', []):
             perfdata_entity = entity.copy()
             name = perfdata['metric']

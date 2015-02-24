@@ -229,6 +229,21 @@ class Archiver(Configurable):
             )
 
         self.logger.debug(
+            (
+                'Archiver configuration ->\n' +
+                ' bagot_freq {}\n' +
+                ' bagot_time {}\n' +
+                ' stealthy_show {}\n' +
+                ' stealthy_time {}'
+            ).format(
+                self.bagot_freq,
+                self.bagot_time,
+                self.stealthy_show,
+                self.stealthy_time
+            )
+        )
+
+        self.logger.debug(
             "Checking stealthy events in collection {}".format(self.namespace)
         )
 
@@ -290,7 +305,7 @@ class Archiver(Configurable):
         result = ts_diff <= self.stealthy_time and d_status != STEALTHY
         return result
 
-    def set_status(self, event, status):
+    def set_status(self, event, status, devent=None):
         """
         Args:
             event map of the current event
@@ -298,32 +313,41 @@ class Archiver(Configurable):
         """
 
         log = 'Status is set to {} for event {}'.format(status, event['rk'])
+        bagot_freq = event.get('bagot_freq', 0)
         values = {
             OFF: {
-                'freq': event.get('bagot_freq', 0),
+                'freq': bagot_freq,
                 'name': 'Off'
             },
             ONGOING: {
-                'freq': event.get('bagot_freq', 0),
+                'freq': bagot_freq,
                 'name': 'On going'
             },
             STEALTHY: {
-                'freq': event.get('bagot_freq', 0),
+                'freq': bagot_freq,
                 'name': 'Stealthy'
             },
             BAGOT: {
-                'freq': event.get('bagot_freq', 0) + 1,
+                'freq': bagot_freq + 1,
                 'name': 'Bagot'
             },
             CANCELED: {
-                'freq': event.get('bagot_freq', 0),
+                'freq': bagot_freq,
                 'name': 'Cancelled'
             }
         }
 
         self.logger.debug(log.format(values[status]['name']))
 
-        event['status'] = status
+        # This is an additional check as stealthy
+        # status is not properly managed until now
+        if status != STEALTHY:
+            event['status'] = status
+        elif devent['state'] != 0 and event['state'] == 0:
+            delta = time() - event['last_state_change']
+            if delta < self.stealthy_time:
+                event['status'] = status
+
         event['bagot_freq'] = values[status]['freq']
 
         if status not in [STEALTHY, BAGOT]:
@@ -361,10 +385,10 @@ class Archiver(Configurable):
         event['bagot_freq'] = devent.get('bagot_freq', 0)
         event['ts_first_stealthy'] = devent.get('ts_first_stealthy', 0)
         event['ts_first_bagot'] = devent.get('ts_first_bagot', 0)
-
+        dstate = devent['state']
         # Increment frequency if state changed and set first occurences
-        if ((not devent['state'] and event['state']) or
-                devent['state'] and not event['state']):
+        if ((not dstate and event['state']) or
+                dstate and not event['state']):
 
             if event['state']:
                 event['ts_first_stealthy'] = event_ts
@@ -383,16 +407,16 @@ class Archiver(Configurable):
 
         # If not canceled, proceed to check the status
         if (devent.get('status', ONGOING) != CANCELED
-            or (devent['state'] != event['state']
+            or (dstate != event['state']
                 and (self.restore_event
                     or event['state'] == OFF
-                    or devent['state'] == OFF))):
+                    or dstate == OFF))):
             # Check the stealthy intervals
             if self.check_stealthy(devent, event_ts):
                 if self.is_bagot(event):
                     self.set_status(event, BAGOT)
                 else:
-                    self.set_status(event, STEALTHY)
+                    self.set_status(event, STEALTHY, devent=devent)
             # Else proceed normally
             else:
                 if (event['state'] == OFF):
@@ -403,7 +427,7 @@ class Archiver(Configurable):
                     elif self.is_bagot(event):
                         self.set_status(event, BAGOT)
                     elif self.is_stealthy(event, devent['status']):
-                        self.set_status(event, STEALTHY)
+                        self.set_status(event, STEALTHY, devent=devent)
                 else:
                     # If not bagot/stealthy, can only be ONGOING
                     if (not self.is_bagot(event)
@@ -415,7 +439,7 @@ class Archiver(Configurable):
                         if devent['status'] == OFF:
                             self.set_status(event, ONGOING)
                         else:
-                            self.set_status(event, STEALTHY)
+                            self.set_status(event, STEALTHY, devent=devent)
         else:
             self.set_status(event, CANCELED)
 

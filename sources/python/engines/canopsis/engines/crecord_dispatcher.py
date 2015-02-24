@@ -42,7 +42,7 @@ class engine(Engine):
             'selector',
             'topology',
             'derogation',
-            'consolidation'
+            'serie'
         ]
 
         self.beat_interval_trigger = {
@@ -129,8 +129,12 @@ class engine(Engine):
     def publish_record(self, event, crecord_type):
 
         try:
+            if crecord_type == 'serie':
+                rk = 'dispatcher.{0}'.format('consolidation')
+            else:
+                rk = 'dispatcher.{0}'.format(crecord_type)
 
-            rk = 'dispatcher.{0}'.format(crecord_type)
+            #rk = 'dispatcher.{0}'.format(crecord_type)
 
             self.amqp.get_exchange('media')
             self.amqp.publish(event, rk, exchange_name='media')
