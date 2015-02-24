@@ -116,7 +116,7 @@ def generate_context_topology(topo, name='context'):
         topo.add_elts(elt.id)
         elt.save(manager)
 
-    components = context.find('component')
+    components = context.find({'$in': ['component', 'topo', 'selector']})
     for component in components:
         component_id = context.get_entity_id(component)
         component_node = TopoNode(entity=component_id)
