@@ -117,6 +117,10 @@ class engine(Engine):
         hostgroups = event.get('hostgroups', [])
         servicegroups = event.get('servicegroups', [])
 
+        entity = self.context.get_entity(
+            event, from_db=True, create_if_not_exists=True
+        )
+
         # add connector
         entity = {}
         # add connector_name
@@ -134,20 +138,18 @@ class engine(Engine):
 
         # create an entity status which is a component or a resource
         if source_type == 'resource':
+            context['component'] = component
             status_entity['servicegroups'] = servicegroups
 
         if source_type not in ['resource', 'component']:
             self.logger.warning('source_type unknown %s' % source_type)
 
         is_status_entity = True
-        context['component'] = component
 
         if is_status_entity:
             # add status entity
             status_entity['mCrit'] = event.get(mCrit, None)
             status_entity['mWarn'] = event.get(mWarn, None)
-            status_entity['state'] = event['state']
-            status_entity['state_type'] = event['state_type']
 
         # add hostgroups
         for hostgroup in hostgroups:
@@ -171,7 +173,7 @@ class engine(Engine):
             context['resource'] = resource
         else:
             context['component'] = component
-
+        """
         authored_data = entity.copy()
         event_type = event['event_type']
 
@@ -197,7 +199,7 @@ class engine(Engine):
                 authored_data[Context.NAME] = event['rk']
 
         self.put(_type=event_type, entity=authored_data, ctx=context)
-
+        """
         # add perf data
         for perfdata in event.get('perf_data_array', []):
             perfdata_entity = entity.copy()
