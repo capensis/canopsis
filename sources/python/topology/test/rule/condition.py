@@ -43,7 +43,7 @@ class NewStateTest(TestCase):
 
         result = new_state(
             vertice=self.vertice,
-            event={'state': Check.WARNING}
+            event={'state': Check.MINOR}
         )
 
         self.assertTrue(result)
@@ -68,7 +68,7 @@ class NewStateTest(TestCase):
         result = new_state(
             vertice=self.vertice,
             event={},
-            state=Check.WARNING
+            state=Check.MINOR
         )
 
         self.assertTrue(result)
@@ -154,7 +154,7 @@ class AtLeastTest(_AtLeastTest):
         check = at_least(
             event={},
             ctx={},
-            state=Check.WARNING,
+            state=Check.MINOR,
             vertice=target,
             manager=self.manager
         )
@@ -162,13 +162,13 @@ class AtLeastTest(_AtLeastTest):
 
         edge.weight = 0.5
         edge.save(self.manager)
-        source.state = Check.WARNING
+        source.state = Check.MINOR
         source.save(self.manager)
 
         check = at_least(
             event={},
             ctx={},
-            state=Check.WARNING,
+            state=Check.MINOR,
             vertice=target,
             manager=self.manager
         )
@@ -180,7 +180,7 @@ class AtLeastTest(_AtLeastTest):
         check = at_least(
             event={},
             ctx={},
-            state=Check.WARNING,
+            state=Check.MINOR,
             vertice=target,
             manager=self.manager
         )
@@ -207,7 +207,7 @@ class AllTest(_AtLeastTest):
         check = _all(event={}, ctx={}, vertice=target, manager=self.manager)
         self.assertTrue(check)
 
-        source.state = Check.WARNING
+        source.state = Check.MINOR
         source.save(self.manager)
 
         check = _all(event={}, ctx={}, vertice=target, manager=self.manager)
@@ -229,7 +229,7 @@ class AllTest(_AtLeastTest):
         check = _all(event={}, ctx={}, vertice=target, manager=self.manager)
         self.assertTrue(check)
 
-        sources[0].state = Check.WARNING
+        sources[0].state = Check.MINOR
         sources[0].save(self.manager)
 
         check = _all(event={}, ctx={}, vertice=target, manager=self.manager)
@@ -256,7 +256,7 @@ class NOKTest(_AtLeastTest):
         check = nok(event={}, ctx={}, vertice=target, manager=self.manager)
         self.assertFalse(check)
 
-        source.state = Check.WARNING
+        source.state = Check.MINOR
         source.save(self.manager)
 
         check = nok(event={}, ctx={}, vertice=target, manager=self.manager)
@@ -284,7 +284,7 @@ class NOKTest(_AtLeastTest):
         )
         self.assertFalse(check)
 
-        sources[0].state = Check.WARNING
+        sources[0].state = Check.MINOR
         sources[0].save(self.manager)
 
         check = nok(event={}, ctx={}, vertice=target, manager=self.manager)
@@ -299,7 +299,7 @@ class NOKTest(_AtLeastTest):
         self.assertFalse(check)
 
         for source in sources:
-            source.state = Check.WARNING
+            source.state = Check.MINOR
             source.save(self.manager)
 
         check = nok(
