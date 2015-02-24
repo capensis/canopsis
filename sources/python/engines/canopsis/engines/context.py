@@ -84,18 +84,6 @@ class engine(Engine):
                     _type=_type, entity=entity, context=ctx
                 )
 
-    def put(self, _type, entity, ctx=None):
-
-        context = self.context
-        full_entity = entity.copy()
-        full_entity[Context.TYPE] = _type
-        if ctx is not None:
-            full_entity.update(ctx)
-        eid = context.get_entity_id(full_entity)
-        self.lock.acquire()
-        self.entities_by_entity_ids[eid] = _type, entity, ctx
-        self.lock.release()
-
     def work(self, event, *args, **kwargs):
         mCrit = 'PROC_CRITICAL'
         mWarn = 'PROC_WARNING'
@@ -122,17 +110,21 @@ class engine(Engine):
             hostgroup_data = {
                 Context.NAME: hostgroup
             }
-            self.put(_type='hostgroup', entity=hostgroup_data)
+            self.context.put(
+                _type='hostgroup', entity=hostgroup_data, cache=True
+            )
         # add servicegroups
         for servicegroup in servicegroups:
             servgroup_data = {
                 Context.NAME: servicegroup
             }
-            self.put(_type='servicegroup', entity=servgroup_data)
+            self.context.put(
+                _type='servicegroup', entity=servgroup_data, cache=True
+            )
 
         # get related entity
         entity = self.context.get_entity(
-            _event, from_db=True, create_if_not_exists=False
+            _event, from_db=True, create_if_not_exists=True, cache=True
         )
 
         # get hostgroups
@@ -157,7 +149,9 @@ class engine(Engine):
         context, name = self.context.get_entity_context_and_name(entity)
 
         # put the status entity in the context
-        self.put(_type=source_type, entity=entity, ctx=context)
+        self.context.put(
+            _type=source_type, entity=entity, context=context, cache=True
+        )
 
         # udpdate context information with resource and component
         if source_type == 'resource':
@@ -174,6 +168,8 @@ class engine(Engine):
             name = perfdata['metric']
             perfdata_entity[Context.NAME] = name
             perfdata_entity['internal'] = perfdata['metric'].startswith('cps')
-            self.put(_type='metric', entity=perfdata_entity, ctx=context)
+            self.context.put(
+                _type='metric', entity=perfdata_entity, context=context, cache=True
+            )
 
         return event

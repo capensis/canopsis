@@ -98,7 +98,7 @@ class TopoVertice(BaseTaskedVertice):
         """Get default task.
         """
 
-        return new_conf(TopoVertice.DEFAULT_TASK)
+        return new_conf(self.DEFAULT_TASK)
 
     def set_entity(self, entity_id, *args, **kwargs):
 
@@ -173,6 +173,8 @@ class Topology(Graph, TopoVertice):
 
     TYPE = 'topo'  #: topology type name
 
+    DEFAULT_TASK = 'canopsis.topology.rule.action.worst_state'
+
     __slots__ = Graph.__slots__
 
     def __init__(
@@ -203,14 +205,6 @@ class Topology(Graph, TopoVertice):
             event = self.get_event(source=0, state=0)
             entity_id = _context.get_entity_id(event)
             self.entity = entity_id
-
-    def get_default_task(self, *args, **kwargs):
-
-        result = super(Topology, self).get_default_task(*args, **kwargs)
-
-        result[TASK_PARAMS]['update_entity'] = True
-
-        return result
 
     def save(self, context=None, *args, **kwargs):
 
