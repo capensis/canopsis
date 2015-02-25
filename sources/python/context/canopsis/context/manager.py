@@ -109,8 +109,10 @@ class Context(MiddlewareRegistry):
 
         # get the right type which is type, or event_type or component/resource
         # if event_type is not an entity
-        _type = _event.get('type', _event.get('event_type'))
-        if _type in ['check', 'downtime', 'ack']:
+        event_type = _event['event_type']
+        if event_type not in ['check', 'downtime', 'ack']:
+            _type = event_type
+        else:
             _type = _event['source_type']
 
         # set type in event

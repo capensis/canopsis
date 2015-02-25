@@ -69,8 +69,10 @@ def event_processing(engine, event, manager=None, **kwargs):
 
     # apply processing only in case of check event
     if event_type in _check.types:
+        # get source type
+        source_type = event[Event.SOURCE_TYPE]
         # in case of topology node
-        if event_type == TopoNode.TYPE:
+        if source_type in [TopoNode.TYPE, Topology.TYPE]:
             # process all targets
             elt = manager.get_elts(ids=event[Topology.ID])
             if elt is not None:

@@ -141,7 +141,7 @@ class TopoVertice(BaseTaskedVertice):
         result['state_type'] = 1
         if source is not None:
             result['source'] = source
-        result[Context.TYPE] = self.type
+        result['event_type'] = 'check'
 
         return result
 
@@ -159,12 +159,23 @@ class TopoVertice(BaseTaskedVertice):
         # compare old state and new state
         if self.state != old_state:
             # if not equal
-            event = self.get_event(state=self.state, source=source)
+            new_event = self.get_event(state=self.state, source=source)
+            engine.logger.error(
+                "{0}, {1}, {2}, {3}".format(
+                    self.id, old_state, self.state, new_event
+                )
+            )
             # publish a new event
             if engine is not None:
-                publish(event=event, engine=engine)
+                publish(event=new_event, engine=engine)
             # save self
             self.save(manager=manager)
+
+        engine.logger.error(
+            "{0}, {1}, {2}, {3}".format(
+                self.id, old_state, self.state, event
+            )
+        )
 
         return result
 
@@ -270,7 +281,6 @@ class TopoNode(Vertice, TopoVertice):
             result['component'] = graph.id
             break
         result['resource'] = self.id
-        result['source_type'] = 'resource'
 
         return result
 

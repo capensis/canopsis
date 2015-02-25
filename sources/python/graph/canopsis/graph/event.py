@@ -134,6 +134,8 @@ class BaseTaskedVertice(object):
             *args, **kwargs
         )
 
+        result['source_type'] = self.type
+
         return result
 
 

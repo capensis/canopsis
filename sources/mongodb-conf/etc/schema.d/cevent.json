@@ -7,10 +7,6 @@
 		"source_type": {"type": "string", "required": true},
 		"component": {"type": "string", "required": true},
 		"resource": {"type": "string"},
-		"type": {
-			"type": "string",
-			"required": false
-		},
 		"path": {
 			"type": "array",
 			"default": [],
