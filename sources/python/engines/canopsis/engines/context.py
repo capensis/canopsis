@@ -140,7 +140,6 @@ class engine(Engine):
             self.logger.warning('source_type unknown %s' % source_type)
 
         is_status_entity = True
-        context['component'] = component
 
         if is_status_entity:
             # add status entity
@@ -166,11 +165,10 @@ class engine(Engine):
         # put the status entity in the context
         self.put(_type=source_type, entity=status_entity, ctx=context)
 
-        # udpdate context information with resource or component
+        # udpdate context information with resource and component
+        context['component'] = component
         if resource is not None:
             context['resource'] = resource
-        else:
-            context['component'] = component
 
         authored_data = entity.copy()
         event_type = event['event_type']
