@@ -55,7 +55,7 @@ class Formulas(object):
 
     def bnf(self):
         '''
-        The BNF grammar is described bellow.
+        The BNF grammar is defined bellow.
         expop   :: '^'
         multop  :: '*' | '/'
         addop   :: '+' | '-'
@@ -66,23 +66,23 @@ class Formulas(object):
         expr    :: term [ addop term ]*
         '''
         if not self._bnf:
-            point = Literal( "." )
-            e = CaselessLiteral( "E" )
+            point = Literal(".")
+            e = CaselessLiteral("E")
             fnumber = Combine( Word( "+-"+nums, nums ) + Optional( point + Optional( Word( nums ) ) ) + Optional( e + Word( "+-"+nums, nums ) ) )
             ident = Word(alphas, alphas+nums+"_$")
-            minus = Literal( "-" )
-            plus  = Literal( "+" )
-            div   = Literal( "/" )
-            mult  = Literal( "*" )
-            rpar  = Literal( ")" ).suppress()
-            lpar  = Literal( "(" ).suppress()
+            minus = Literal("-")
+            plus  = Literal("+")
+            div   = Literal("/")
+            mult  = Literal("*")
+            rpar  = Literal(")").suppress()
+            lpar  = Literal("(").suppress()
             addop  = plus | minus
             multop = mult | div
-            expop = Literal( "^" )
-            pi    = CaselessLiteral( "PI" )
+            expop = Literal("^")
+            pi    = CaselessLiteral("PI")
 
             expr = Forward()
-            atom = (Optional("-") + ( pi | e | fnumber | ident + lpar + expr + rpar ).setParseAction( self.push_first ) | ( lpar + expr.suppress() + rpar )).setParseAction(self.push_minus) 
+            atom = (Optional("-") + ( pi | e | fnumber | ident + lpar + expr + rpar ).setParseAction( self.push_first ) | ( lpar + expr.suppress() + rpar )).setParseAction(self.push_minus)
 
             # The right way to define exponentiation is -> 2^3^2 = 2^(3^2), not (2^3)^2.
             factor = Forward()
