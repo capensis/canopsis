@@ -25,9 +25,8 @@ import operator
 
 class Formulas(object):
     """Class that read formulas and via EBNF to define the python grammar"""
-    #global exprStack
-    #global _bnf
     # map operator symbols to corresponding arithmetic operations
+    global epsilon
     epsilon = 1e-12
     opn = { "+" : operator.add,
             "-" : operator.sub,
