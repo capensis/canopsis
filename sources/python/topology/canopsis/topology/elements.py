@@ -98,7 +98,7 @@ class TopoVertice(BaseTaskedVertice):
         """Get default task.
         """
 
-        return new_conf(TopoVertice.DEFAULT_TASK)
+        return new_conf(self.DEFAULT_TASK)
 
     def set_entity(self, entity_id, *args, **kwargs):
 
@@ -141,7 +141,7 @@ class TopoVertice(BaseTaskedVertice):
         result['state_type'] = 1
         if source is not None:
             result['source'] = source
-        result[Context.TYPE] = self.type
+        result['event_type'] = 'check'
 
         return result
 
@@ -159,12 +159,23 @@ class TopoVertice(BaseTaskedVertice):
         # compare old state and new state
         if self.state != old_state:
             # if not equal
-            event = self.get_event(state=self.state, source=source)
+            new_event = self.get_event(state=self.state, source=source)
+            engine.logger.error(
+                "{0}, {1}, {2}, {3}".format(
+                    self.id, old_state, self.state, new_event
+                )
+            )
             # publish a new event
             if engine is not None:
-                publish(event=event, engine=engine)
+                publish(event=new_event, engine=engine)
             # save self
             self.save(manager=manager)
+
+        engine.logger.error(
+            "{0}, {1}, {2}, {3}".format(
+                self.id, old_state, self.state, event
+            )
+        )
 
         return result
 
@@ -172,6 +183,8 @@ class TopoVertice(BaseTaskedVertice):
 class Topology(Graph, TopoVertice):
 
     TYPE = 'topo'  #: topology type name
+
+    DEFAULT_TASK = 'canopsis.topology.rule.action.worst_state'
 
     __slots__ = Graph.__slots__
 
@@ -203,14 +216,6 @@ class Topology(Graph, TopoVertice):
             event = self.get_event(source=0, state=0)
             entity_id = _context.get_entity_id(event)
             self.entity = entity_id
-
-    def get_default_task(self, *args, **kwargs):
-
-        result = super(Topology, self).get_default_task(*args, **kwargs)
-
-        result[TASK_PARAMS]['update_entity'] = True
-
-        return result
 
     def save(self, context=None, *args, **kwargs):
 
@@ -276,7 +281,6 @@ class TopoNode(Vertice, TopoVertice):
             result['component'] = graph.id
             break
         result['resource'] = self.id
-        result['source_type'] = 'resource'
 
         return result
 

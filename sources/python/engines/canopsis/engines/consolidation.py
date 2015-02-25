@@ -46,6 +46,7 @@ class engine(Engine):
                 group="root"
             )
         )
+        self.manager = PerfData()
 
 
     def pre_run(self):
@@ -75,13 +76,31 @@ class engine(Engine):
             self.amqp.exchange_name_events
         )
 
-    def fetch(self, series, _from, _to):
+    def fetch(self, serie, _from, _to):
         self.logger.debug("Je passe dans fetch \n\n\n\n\n")
+        if serie['metrics'] is None and serie['aggregate_method'] == 'none':
+            self.logger.debug('More than one metric in serie, performing an aggregation')
+            self.logger.debug('serie:', serie)
+            self.logger.debug('aggregation: average - 60s')
+            #set(serie, 'aggregate_method', 'average');
+            #set(serie, 'aggregate_interval', 60);
+            '''
+                    var promise = get(this, 'perfdata').fetchMany(
+                    get(serie, 'metrics'),
+                    from, to
+                );
+
+            def perfdata(
+                metric_id, timewindow=None, period=None, with_meta=True,
+                limit=0, skip=0, timeserie=None
+            ):
+            '''
+        if serie['aggregate_method'] == 'none':
+            promise = ""
 
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Start metrics consolidation")
-        serie = self.get_ready_record(event)
-        self.logger.debug(event)
+        serie = event
 
         if not serie:
             # Show error message
