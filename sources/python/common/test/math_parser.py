@@ -31,7 +31,7 @@ class FormulasTest(TestCase):
 
     def test(self):
         '''abs'''
-        expressions = {"9":9, "-9": -9, "-E":-math.e, "9 + 3 + 6":18, "2*3.14159": 2*3.14159, "PI * PI / 10": math.pi * math.pi / 10, "PI^2": math.pi**2, "E^PI": math.e**math.pi, "2^3^2": 2**3**2}
+        expressions = {"9":9, "-9": -9, "-E":-math.e, "9 + 3 + 6":18, "2*3.14159": 2*3.14159, "PI * PI / 10": math.pi * math.pi / 10, "PI^2": math.pi**2, "E^PI": math.e**math.pi, "2^3^2": 2**3**2, "sgn(-2)": -1}
 
         for k, v in expressions.iteritems():
             self.assertEqual(self.formula.evaluate(k),v)
