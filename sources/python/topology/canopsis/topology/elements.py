@@ -160,22 +160,11 @@ class TopoVertice(BaseTaskedVertice):
         if self.state != old_state:
             # if not equal
             new_event = self.get_event(state=self.state, source=source)
-            engine.logger.error(
-                "{0}, {1}, {2}, {3}".format(
-                    self.id, old_state, self.state, new_event
-                )
-            )
             # publish a new event
             if engine is not None:
                 publish(event=new_event, engine=engine)
             # save self
             self.save(manager=manager)
-
-        engine.logger.error(
-            "{0}, {1}, {2}, {3}".format(
-                self.id, old_state, self.state, event
-            )
-        )
 
         return result
 
