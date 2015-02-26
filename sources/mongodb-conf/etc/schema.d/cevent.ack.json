@@ -50,6 +50,7 @@
 		},
 		"author": {
 			"type": "string",
+			"description": "Name of the author of the ack",
 			"required": true,
 			"readOnly": true
 		},
