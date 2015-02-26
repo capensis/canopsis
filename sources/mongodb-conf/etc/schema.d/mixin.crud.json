@@ -1,0 +1,25 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["hideEdit", "hideRemove", "hideCreate"]
+	}],
+
+	"properties": {
+		"hideEdit": {
+			"type": "boolean",
+			"role": "boolean",
+			"default": false
+		},
+		"hideCreate": {
+			"type": "boolean",
+			"role": "boolean",
+			"default": false
+		},
+		"hideRemove": {
+			"type": "boolean",
+			"role": "boolean",
+			"default": false
+		}
+	}
+}
