@@ -1,6 +1,10 @@
 [{
 	"_id": "admin",
 	"rights": {
+		"actionbutton_editconnector": {
+			"checksum": 15,
+			"desc": ""
+		},
 		"showview_service": {
 			"checksum": 15,
 			"desc": ""
