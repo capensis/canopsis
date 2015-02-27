@@ -70,7 +70,7 @@ A topology inherits from both grapg and to and contains.
 __all__ = ['Topology', 'TopoEdge', 'TopoNode']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
-from canopsis.task import new_conf, TASK_PARAMS
+from canopsis.task import new_conf
 from canopsis.check import Check
 from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context

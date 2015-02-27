@@ -25,7 +25,7 @@
           "listed_crecord_type": "userview",
           "title": "Userviews",
           "item_actions": ["actionbutton-show", "actionbutton-removeselection"],
-          "displayed_columns": ["crecord_type", "internal", "enable", "description", "crecord_write_time", "crecord_name"],
+          "displayed_columns": ["crecord_type", "internal", "enable", "crecord_name", "description", "crecord_write_time", "tags"],
           "selection_toolbar": [
             "actionbutton-removeselection"
           ],
@@ -33,7 +33,10 @@
             { "name": "Sortablearray" },
             { "name": "Arraysearch" },
             { "name": "Pagination" },
-            { "name": "Crud" },
+            {
+              "name": "Crud",
+              "hideCreate": true
+            },
             { "name": "Showviewbutton" }
           ],
           "searchable_columns": [

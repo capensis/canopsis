@@ -21,13 +21,13 @@
 			"type": "string"
 		},
 		"destination_view":  {
-			"type": "string",
 			"default": "view.event",
-			"valueKey": "id",
 			"type": "string",
-			"role": "stringclassifiedcrecordselector",
-			"crecordtype": "view"
-
+			"role": "restobject",
+			"crecordtype": "view",
+			"schemaType":"userview",
+			"valueField":"id",
+			"labelField":"crecord_name"
 		},
 		"event_selection":  {
 			"type": "array",

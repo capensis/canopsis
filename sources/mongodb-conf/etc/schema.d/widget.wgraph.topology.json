@@ -3,15 +3,16 @@
     "metadata": {
         "classes": []
     },
-    "categories": [
-        {
-            "title": "General",
-            "keys":["title", "graph_id"]
-        }, {
-            "title": "Options",
-            "keys":["refreshableWidget", "refreshInterval", "width", "height"]
-        }
-    ],
+    "categories": [{
+        "title": "General",
+        "keys":["title", "graph_id", "layout"]
+    }, {
+        "title": "Options",
+        "keys":["refreshableWidget", "refreshInterval", "width", "height"]
+    },{
+        "title": "Mixins",
+        "keys":["mixins"]
+    }],
     "properties": {
         "crecord_type": {
             "type": "string",

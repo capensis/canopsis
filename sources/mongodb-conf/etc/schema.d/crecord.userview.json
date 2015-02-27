@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["crecord_name","description", "enable"]
+		"keys":["crecord_name","description", "enable", "tags"]
 	},{
 		"title": "Permissions",
 		"keys": []
@@ -32,6 +32,13 @@
 		"enable": {
 			"type": "boolean",
 			"default": true
+		},
+		"tags": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role": "tags"
 		}
 	}
 }
