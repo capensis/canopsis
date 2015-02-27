@@ -9,6 +9,7 @@ Data Storage
    timed
    periodic
    file
+   default
 
 Data Manager
 ============

@@ -15,11 +15,24 @@
                 "items" : [
                         {
                                 "widget" : {
+                                        "widgetId" : "item_54ebc8fc-5ba4-6fc3-7100-ccbf93285ab6",
+                                        "preference_id" : null,
                                         "xtype" : "text",
-                                        "html" : "<p>footer</p>",
-                                        "events" : null,
-                                        "filters" : [ ],
-                                        "title" : "app footer."
+                                        "title" : "Footer",
+                                        "series" : [
+                                                "cps_states_component_info",
+                                                "cps_states_component_minor",
+                                                "cps_states_component_major",
+                                                "cps_states_component_critical",
+                                                "cps_states_resource_info",
+                                                "cps_states_resource_minor",
+                                                "cps_states_resource_major",
+                                                "cps_states_resource_critical"
+                                        ],
+                                        "mixins" : [ ],
+                                        "html" : "<img src=\"/static/canopsis/media/sakura.png\" width=\"90\" class=\"fleft\"><div class=\"fright\"> <span class=\"label eventLikeGreen\"><i class=\"fa fa-check\"></i> {{serie.cps_states_component_info}} / {{serie.cps_states_resource_info}}</span> <span class=\"label eventLikeYellow\"><i class=\"fa fa-bolt\"></i> {{serie.cps_states_component_minor}} / {{serie.cps_states_resource_minor}}</span> <span class=\"label eventLikeOrange\"><i class=\"fa fa-exclamation-triangle\"></i> {{serie.cps_states_component_major}} / {{serie.cps_states_resource_major}}</span> <span class=\"label eventLikeRed\"><i class=\"fa fa-minus-circle\"></i> {{serie.cps_states_component_critical}} / {{serie.cps_states_resource_critical}}</span></div>",
+                                        "tagName" : null,
+                                        "events" : [ ]
                                 },
                                 "xtype" : "widgetwrapper",
                                 "title" : "wrapper"
