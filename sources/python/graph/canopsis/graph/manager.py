@@ -389,20 +389,26 @@ class GraphManager(MiddlewareRegistry):
                         graph.update_gelts(manager=self)
             else:  # add elts in _delts
                 if isinstance(result, dict):
-                    result[Graph._DELTS] = list(
-                        self.get_elts(
+                    _delts = {}
+                    elts = self.get_elts(
+                        ids=result[Graph.ELTS],
+                        serialize=False
+                    )
+                    for elt in elts:
+                        elt_id = elt[GraphElement.ID]
+                        _delts[elt_id] = elt
+                    result[Graph._DELTS] = _delts
+                else:
+                    for graph in result:
+                        _delts = {}
+                        elts = self.get_elts(
                             ids=result[Graph.ELTS],
                             serialize=False
                         )
-                    )
-                else:
-                    for graph in result:
-                        graph[Graph._DELTS] = list(
-                            self.get_elts(
-                                ids=graph[Graph.ELTS],
-                                serialize=False
-                            )
-                        )
+                        for elt in elts:
+                            elt_id = elt[GraphElement.ID]
+                            _delts[elt_id] = elt
+                        graph[Graph._DELTS] = _delts
 
         return result
 

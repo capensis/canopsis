@@ -45,7 +45,7 @@ class BaseTaskedVertice(object):
         """Get default task.
         """
 
-        return {}
+        raise NotImplementedError()
 
     @property
     def entity(self):
@@ -90,7 +90,10 @@ class BaseTaskedVertice(object):
         """Get self task or default task if task is not setted.
         """
 
-        result = self.info.get(BaseTaskedVertice.TASK, self.get_default_task())
+        result = self.info.get(BaseTaskedVertice.TASK)
+
+        if not result:
+            result = self.get_default_task()
 
         return result
 
