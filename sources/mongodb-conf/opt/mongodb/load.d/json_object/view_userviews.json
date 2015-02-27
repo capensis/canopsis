@@ -33,7 +33,10 @@
             { "name": "Sortablearray" },
             { "name": "Arraysearch" },
             { "name": "Pagination" },
-            { "name": "Crud" },
+            {
+              "name": "Crud",
+              "hideCreate": true
+            },
             { "name": "Showviewbutton" }
           ],
           "searchable_columns": [
