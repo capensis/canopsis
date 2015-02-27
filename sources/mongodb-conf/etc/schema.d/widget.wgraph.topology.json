@@ -6,7 +6,7 @@
     "categories": [
         {
             "title": "General",
-            "keys":["title", "graph_id"]
+            "keys":["title", "graph_id", "layout"]
         }, {
             "title": "Options",
             "keys":["refreshableWidget", "refreshInterval", "width", "height"]

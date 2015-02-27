@@ -483,7 +483,7 @@ class Graph(Vertice):
     ):
         """
         :param list elts: self graph elt ids.
-        :param list _delts: self dict graph elts.
+        :param dict _delts: self dict graph elts by id.
         :param dict _gelts: self graph elements by id.
         :param dict _sources: edges by source vertice id.
         :param dict _targets: edges by target vertice id.
@@ -502,7 +502,7 @@ class Graph(Vertice):
                 for elt in elts
             )
 
-        self._delts = [] if _delts is None else _delts
+        self._delts = {} if _delts is None else _delts
         self._gelts = {} if _gelts is None else _gelts
         self._updating = False
         self._sources = {} if _sources is None else _sources
@@ -619,9 +619,9 @@ class Graph(Vertice):
                 if elt not in self.elts:
                     self.elts.append(elt)
             elif isinstance(elt, dict):
-                if elt not in self._delts:
-                    self._delts.append(elt)
-                    elt_id = elt[GraphElement.ID]
+                elt_id = elt[GraphElement.ID]
+                if elt_id not in self._delts:
+                    self._delts[elt_id] = elt
                     if elt_id in self.elts:
                         self.elts.remove(elt_id)
             elif isinstance(elt, GraphElement):
@@ -629,8 +629,8 @@ class Graph(Vertice):
                 if elt_id not in self._gelts:
                     self._gelts[elt_id] = elt
                     elt_dict = elt.to_dict()
-                    if elt_dict not in self._delts:
-                        self._delts.append(elt_dict)
+                    if elt_id not in self._delts:
+                        self._delts[elt_id] = elt_dict
                         if elt_id not in self.elts:
                             self.elts.append(elt_id)
             elif isinstance(elt, Iterable):
@@ -647,18 +647,17 @@ class Graph(Vertice):
                 if elt in self.elts:
                     self.elts.remove(elt)
             elif isinstance(elt, dict):
-                if elt in self._delts:
-                    self._delts.remove(elt)
-                    elt_id = elt[GraphElement.ID]
+                elt_id = elt[GraphElement.ID]
+                if elt_id in self._delts:
+                    del self._delts[elt_id]
                     if elt_id in self.elts:
                         self.elts.remove(elt_id)
             elif isinstance(elt, GraphElement):
                 elt_id = elt.id
                 if elt_id in self._gelt:
                     del self._gelt[elt_id]
-                    elt_dict = elt.to_dict()
-                    if elt_dict in self._delts:
-                        self._delts.remove(elt_dict)
+                    if elt_id in self._delts:
+                        del self._delts[elt_id]
                         if elt_id in self.elts:
                             self.elts.remove(elt_id)
             elif isinstance(elt, Iterable):
@@ -671,8 +670,7 @@ class Graph(Vertice):
         # if self _elts not empty
         if self._delts:  # add delts ids which are not present in elts
             elts = result[Graph.ELTS]
-            for delt in self._delts:
-                delt_id = delt[Graph.ID]
+            for delt_id in self._delts:
                 if delt_id not in elts:
                     elts.append(delt_id)
 
@@ -743,7 +741,8 @@ class Graph(Vertice):
                 elt.save(manager=manager, cache=cache)
 
         elif self._delts:
-            for elt in self._delts:
+            for elt_id in self._delts:
+                elt = self._delts[elt_id]
                 elt = Graph.new_element(**elt)
                 elt.save(manager=manager, cache=cache)
 

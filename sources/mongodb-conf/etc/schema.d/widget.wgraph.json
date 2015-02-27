@@ -6,7 +6,7 @@
     "categories": [
         {
             "title": "General",
-            "keys": ["title", "graph_type", "graph_id"]
+            "keys": ["title", "graph_type", "graph_id", "layout"]
         }, {
             "title": "Options",
             "keys": ["refreshableWidget", "refreshInterval"]
@@ -26,6 +26,13 @@
         },
         "graph_id": {
             "type": "string"
+        },
+        "layout": {
+            "type": "string",
+            "enum": ["natural", "tree", "map"],
+            "default": "natural",
+            "role": "simplelist",
+            "description": "graph layout"
         }
     }
 }
