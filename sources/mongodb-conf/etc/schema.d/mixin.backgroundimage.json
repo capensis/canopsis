@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["imageUrl", "displayMode"]
+		"keys":["imageUrl", "position"]
 	}],
 
 	"properties": {
