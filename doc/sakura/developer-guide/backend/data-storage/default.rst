@@ -17,7 +17,7 @@ Here is the minimal code for the manager
    # Allow retrieve configuration from configuration files
    from canopsis.configuration.configurable.decorator import (
        conf_paths, add_category)
-   # Base class allowing to manage data storage is a easy way
+   # Base class allowing to manage data storage in an easy way
    from canopsis.middleware.registry import MiddlewareRegistry
 
    # The file where the configuration is retrieved
