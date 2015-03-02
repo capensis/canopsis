@@ -27,7 +27,7 @@ class FormulasTest(TestCase):
     """docstring for FormulasTest"""
 
     def setUp(self):
-        _dict = {'x': 4, 'y':5} # Variables values
+        _dict = {'x':4, 'y':5} # Variables values
         self.formula = Formulas(_dict)
 
     def test(self):
