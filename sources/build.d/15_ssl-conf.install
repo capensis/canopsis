@@ -28,8 +28,10 @@ function install() {
         echo "===> Installing CA..."
         echo
 
-        cp $SSL_CA_PATH $PREFIX/etc/ssl/ca.pem || exit 1
+        cp -v $SSL_CA_PATH $PREFIX/etc/ssl/ca.pem || exit 1
+        chown -v $HUSER:$HGROUP $PREFIX/etc/ssl/ca.pem || exit 1
         cp $SSL_CAKEY_PATH $PREFIX/etc/ssl/cakey.pem || exit 1
+        chown -v $HUSER:$HGROUP $PREFIX/etc/ssl/cakey.pem || exit 1
     else
         echo
         echo "===> Generating CA..."
