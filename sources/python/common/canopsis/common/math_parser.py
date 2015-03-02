@@ -54,6 +54,18 @@ class Formulas(object):
         if toks and toks[0] == '-':
             self.exprStack.append('unary -')
 
+    def _import(self, _dict):
+        '''
+        set variables data.
+        '''
+        self._dict = _dict
+
+    def reset(self):
+        '''
+        Reset the variables dictionnary.
+        '''
+        self._dict = None
+
     def bnf(self):
         '''
         The BNF grammar is defined bellow.
