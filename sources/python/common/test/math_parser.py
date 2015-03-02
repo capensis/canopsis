@@ -24,10 +24,10 @@ import math
 from canopsis.common.math_parser import Formulas
 
 class FormulasTest(TestCase):
-    """docstring for ClassName"""
+    """docstring for FormulasTest"""
 
     def setUp(self):
-        _dict = {'x':4, 'y':5}
+        _dict = {'x': 4, 'y':5} # Variables values
         self.formula = Formulas(_dict)
 
     def test(self):
