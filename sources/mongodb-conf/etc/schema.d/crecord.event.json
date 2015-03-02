@@ -48,6 +48,13 @@
 			"title": "last state change"
 
 		},
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "role" : "tags"
+        },
 		"ticket_date": {
 			"type": "number"
 		},

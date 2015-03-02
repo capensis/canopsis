@@ -26,11 +26,13 @@ from canopsis.old.tools import roundSignifiantDigit
 from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie import TimeSerie
 from canopsis.timeserie.timewindow import TimeWindow, Period
+from canopsis.common.math_parser import Formulas
 
 from json import loads
 
 from time import time
 from datetime import datetime
+import hashlib
 
 
 class engine(Engine):
@@ -68,7 +70,7 @@ class engine(Engine):
 
         rk = get_routingkey(series_event)
 
-        self.logger.debug('Publishing {} : {}'.format(rk, series_event))
+        self.logger.debug('Publishing {0} : {1}'.format(rk, series_event))
 
         self.amqp.publish(
             series_event,
@@ -78,10 +80,21 @@ class engine(Engine):
 
     def fetch(self, serie, _from, _to):
         self.logger.debug("Je passe dans fetch \n\n\n\n\n")
-        if serie['metrics'] is None and serie['aggregate_method'] == 'none':
+        t_serie = serie.copy()
+        if len(t_serie['metrics']) > 1 and t_serie['aggregate_method'] == 'none':
             self.logger.debug('More than one metric in serie, performing an aggregation')
-            self.logger.debug('serie:', serie)
+            self.logger.debug('serie:', t_serie)
             self.logger.debug('aggregation: average - 60s')
+            t_serie['aggregate_method'] = 'average'
+            t_serie['aggregate_interval'] = 60
+        if t_serie['aggregate_method'] == 'none':
+            results = "todo"
+            pass
+        else:
+            results = "todo"
+            pass
+
+        formula = t_serie['formula']
             #set(serie, 'aggregate_method', 'average');
             #set(serie, 'aggregate_interval', 60);
             '''
@@ -94,9 +107,68 @@ class engine(Engine):
                 metric_id, timewindow=None, period=None, with_meta=True,
                 limit=0, skip=0, timeserie=None
             ):
+            if(get(serie, 'aggregate_method') === 'none') {
+                var promise = get(this, 'perfdata').fetchMany(
+                    get(serie, 'metrics'),
+                    from, to
+                );
+            }
             '''
-        if serie['aggregate_method'] == 'none':
+        if t_serie['aggregate_method'] == 'none':
             promise = ""
+
+    def metric_raw(self, results, formula):
+        nmetric = results[1]
+        metrics = result
+        #  build points dictionnary
+        points = {}
+        length = False
+        for m in metrics:
+            cid = m.meta.data_id
+            mid = 'metric_' + hashlib.md5(cid)
+            mname = self.retreive_metric_name(cid)
+            # replace metric name in formula by the unique id
+            formula = formula.replace(mname, mid)
+            self.logger.debug("Metric {} - {}".format(mname, mid))
+            points[mid] = m.points
+            # make sure we treat the same amount of points by selecting
+            # the metric with less points.
+            if not length or len(m.points) < length:
+                length = len(m.points)
+        self.logger.debug('formula:', formula)
+        self.logger.debug('points:', points)
+
+        mids = points.keys()
+        finalSerie = []
+
+        for i in range(length):
+            data = {}
+            ts = 0
+            for j in range(len(mids)):
+                mid = mids[j]
+                # get point value at timestamp "i" for metric "mid"
+                data[mid] = points[mid][i][1]
+
+                # set timestamp
+                ts = points[mid][i][0]
+
+            # import data in math context
+            formula = Formulas()
+
+        # now loop over all points to calculate the final serie
+        pass
+
+    def retreive_metric_name(self, name):
+        '''
+        Impove this method with the Context ID.
+        '''
+        if name is None:
+            return None
+        li = name.split('/')
+        for i in range(3):
+            li.pop(i)
+        name = '/'+'/'.join(li)
+        return name
 
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Start metrics consolidation")
