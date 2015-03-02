@@ -28,7 +28,7 @@ import logging
 
 
 class Formatter(object):
-    """docstring for ClassName"""
+    """docstring for Formatter"""
     TOPOIDS = ('conns', 'nodes', 'root')
     EVENT_TYPE = ('operator', 'check', 'selector', 'topology')
     SOURCE_TYPE = ('resource', 'component')

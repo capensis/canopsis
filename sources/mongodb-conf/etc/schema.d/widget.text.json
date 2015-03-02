@@ -26,14 +26,14 @@
 			"type": "string",
 			"role": "richtext"
 		},
-        "series": {
-        	"description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
-            "type": "array",
-            "role": "arrayclassifiedcrecordselector",
-            "model": "serie",
+		"series": {
+			"description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
+			"type": "array",
+			"role": "arrayclassifiedcrecordselector",
+			"model": "serie",
 			"crecordtype": "serie",
 			"multiselect": true
-        },
+		},
 		"events": {
 			"type": "array",
 			"items": {
@@ -43,7 +43,7 @@
 			"labelled": true,
 			"description": "Choose events to include in selector computation, and associate them a label"
 		},
-   		"mixins": {
+		"mixins": {
 			"type": "array",
 			"role": "mixins",
 			"items": {

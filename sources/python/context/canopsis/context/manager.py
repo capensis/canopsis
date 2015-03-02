@@ -37,8 +37,8 @@ class Context(MiddlewareRegistry):
     It uses a composite storage in order to modelise composite data.
 
     For example, let a resource ``R`` in the component ``C`` and connector
-    ``K`` is identified through the context [``K``, ``C``], the name ``R`` and
-    the type ``resource``.
+    ``K``. ``R`` is identified through the context [``K``, ``C``],
+    the name ``R`` and the type ``resource``.
 
     In addition to those composable data, it is possible to extend two entities
     which have the same name and type but different context.
@@ -105,34 +105,51 @@ class Context(MiddlewareRegistry):
 
         result = {}
 
-        _type = event['event_type']
+        _event = event.copy()
 
-        if Context.NAME in event:
-            name = event[Context.NAME]
+        # get the right type which is type, or event_type or component/resource
+        # if event_type is not an entity
+        event_type = _event['event_type']
+        if event_type not in ['check', 'downtime', 'ack']:
+            _type = event_type
         else:
-            name = event[event['source_type']]
+            _type = _event['source_type']
 
-        # get the right context
-        context = {}
-        for ctx in self.context:
-            if ctx in event:
-                context[ctx] = event[ctx]
-        # remove field which is the name
-        if _type in context:
-            del context[_type]
+        # set type in event
+        _event[Context.TYPE] = _type
+
+        # set name if not given
+        if Context.NAME not in _event:
+            if _type in _event:
+                _event[Context.NAME] = _event[_type]
+            else:
+                for ctx in reversed(self.context):
+                    if ctx in _event and _event[ctx]:
+                        _event[Context.NAME] = _event[ctx]
+                        break
+        else:  # delete ctx field which matches with the ctx
+            for ctx in reversed(self.context):
+                if ctx in _event and _event[ctx] == _event[Context.NAME]:
+                    del _event[ctx]
+                    break
+
+        ctx, name = self.get_entity_context_and_name(_event)
+
+        # remove type from ctx
+        _type = ctx[Context.TYPE]
+        del ctx[Context.TYPE]
 
         if from_db:
-            result = self.get(_type=_type, names=name, context=context)
+            result = self.get(_type=_type, names=name, context=ctx)
+            # if entity does not exists, create it if specified
+            if result is None and create_if_not_exists:
+                result = {Context.NAME: name}
+                self.put(_type=_type, entity=result, context=ctx, cache=cache)
+                result.update(ctx)
+                result[Context.TYPE] = _type
         else:
-            result = context.copy()
+            result = ctx.copy()
             result[Context.NAME] = name
-            result[Context.TYPE] = _type
-
-        # if entity does not exists, create it if specified
-        if result is None and create_if_not_exists:
-            result = {Context.NAME: name}
-            self.put(_type=_type, entity=result, context=context, cache=cache)
-            result.update(context)
             result[Context.TYPE] = _type
 
         return result
@@ -336,26 +353,32 @@ class Context(MiddlewareRegistry):
 
     def get_entity_context_and_name(self, entity):
         """
-        Get the right context related to input entity
+        Get the right context related to input entity.
+
+        :param dict entity: must contain at least name and type fields.
         """
 
-        if Context.NAME not in entity:
-            if Context.TYPE not in entity:
-                entity[Context.TYPE] = entity['event_type']
-            entity[Context.NAME] = entity[entity[Context.TYPE]]
+        _entity = entity.copy()
 
-        result = self[Context.CTX_STORAGE].get_path_with_id(entity)
+        # ensure name exists once
+        _name = entity[Context.NAME]
+        # remove useless fields where ctx field is the name
+        for ctx in reversed(self.context):
+            if ctx in _entity and _entity[ctx] == _name:
+                del _entity[ctx]
+                break
+
+        result = self[Context.CTX_STORAGE].get_path_with_id(_entity)
 
         return result
 
     def get_entity_id(self, entity):
         """Get unique entity id related to its context and name.
+
+        :param dict entity: must contain at least name and type fields.
         """
 
         path, data_id = self.get_entity_context_and_name(entity=entity)
-
-        if path[Context.TYPE] in path:
-            data_id = None
 
         result = self[Context.CTX_STORAGE].get_absolute_path(
             path=path, data_id=data_id
@@ -369,9 +392,6 @@ class Context(MiddlewareRegistry):
         """
 
         path, data_id = self.get_entity_context_and_name(entity=entity)
-
-        if path[Context.TYPE] in path:
-            data_id = None
 
         result = self[Context.CTX_STORAGE].get_absolute_path(
             path=path, data_id=data_id

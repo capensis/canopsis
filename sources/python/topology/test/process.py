@@ -112,7 +112,7 @@ class ProcessingTest(TestCase):
 
         change_state_conf = new_conf(
             change_state,
-            state=Check.WARNING
+            state=Check.MINOR
         )
         self.node.operator = change_state_conf
         self.node.save(self.manager)
@@ -120,7 +120,7 @@ class ProcessingTest(TestCase):
         event_processing(event=self.check, engine=self, manager=self.manager)
 
         target = self.manager.get_elts(ids=self.node.id)
-        self.assertEqual(target.state, Check.WARNING)
+        self.assertEqual(target.state, Check.MINOR)
 
     def test_chain_change_state(self):
         """
@@ -135,7 +135,7 @@ class ProcessingTest(TestCase):
         # create a simple task which consists to change of state
         change_state_conf = new_conf(
             change_state,
-            state=Check.WARNING
+            state=Check.MINOR
         )
 
         # create a root node with the change state task
@@ -158,7 +158,7 @@ class ProcessingTest(TestCase):
         self.assertEqual(self.count, 3)
 
         self.node = self.manager.get_elts(ids=self.node.id)
-        self.assertEqual(self.node.state, Check.WARNING)
+        self.assertEqual(self.node.state, Check.MINOR)
 
 if __name__ == '__main__':
     main()

@@ -5,10 +5,10 @@
 	},
 	"categories": [{
 		"title": "General",
-		"keys":["title", "listed_crecord_type", "default_column_sort"]
+		"keys":["title", "listed_crecord_type", "default_column_sort", "useRenderers"]
 	},{
 		"title": "Columns",
-		"keys":["displayed_columns", "record_template", "display_record_field"]
+		"keys":["displayed_columns"]
 	},{
 		"title": "Mixins",
 		"keys":["mixins"]
@@ -49,14 +49,14 @@
 			"type": "object",
 			"role": "sortable"
 		},
-		"record_template": {
-			"type": "string",
-			"role":"richtext"
-		},
-		"display_record_field": {
-			"type": "string"
-		},
 		"displayed_columns": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
+		},
+		"user_displayed_columns": {
 			"isUserPreference": true,
 			"type": "array",
 			"items": {
@@ -76,6 +76,11 @@
 		},
 		"columnsOrder": {
 			"type": "array"
+		},
+		"useRenderers": {
+			"type": "boolean",
+			"description": "Whether the renderer system must be used on the list. The renderer system makes the list takes more time to render, but with a more understandable content.",
+			"default": true
 		}
 	}
 }

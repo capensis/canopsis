@@ -7,7 +7,14 @@
 		"source_type": {"type": "string", "required": true},
 		"component": {"type": "string", "required": true},
 		"resource": {"type": "string"},
-
+		"path": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"type": "string"
+			},
+			"required": false
+		},
 		"hostgroups": {
 			"type": "array",
 			"items": {

@@ -46,3 +46,7 @@ RABBITMQ_USER_PASSWD="canopsis"
 # - Variable SSL_KEY_PASS
 # Password for CA certificate key if we are generating one. Will prompt the user if empty
 SSL_KEY_PASS="cpsnode"
+
+# - Variable SSL_KEY_BITS
+# Key size in bits
+SSL_KEY_BITS="1024"

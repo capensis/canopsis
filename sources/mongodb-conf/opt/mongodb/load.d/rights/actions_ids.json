@@ -32,6 +32,9 @@
     "actionbutton_ack": {
         "desc": ""
     },
+    "actionbutton_editconnector": {
+        "desc": ""
+    },
     "actionbutton_cancel": {
         "desc": ""
     },

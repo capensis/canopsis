@@ -8,7 +8,7 @@
 		"keys":["title", "event_selection"]
 	},{
 		"title": "Rendering",
-		"keys":["refreshableWidget", "show_title", "show_output"]
+		"keys":["show_title", "show_output"]
 	},{
 		"title": "Click event",
 		"keys":["filter_pattern", "destination_view"]
@@ -21,13 +21,13 @@
 			"type": "string"
 		},
 		"destination_view":  {
-			"type": "string",
 			"default": "view.event",
-			"valueKey": "id",
 			"type": "string",
-			"role": "stringclassifiedcrecordselector",
-			"crecordtype": "view"
-
+			"role": "restobject",
+			"crecordtype": "view",
+			"schemaType":"userview",
+			"valueField":"id",
+			"labelField":"crecord_name"
 		},
 		"event_selection":  {
 			"type": "array",
@@ -39,10 +39,6 @@
 		"filter_pattern": {
 			"type": "string",
 			"default": "{{#if isSelector}}{{{selector_filter}}}{{else}}{ \"rk\" : \"{{rk}}\" }{{/if}}"
-		},
-		"refreshableWidget":  {
-			"type": "boolean",
-			"default": true
 		},
 		"show_output": {
 			"type": "boolean",

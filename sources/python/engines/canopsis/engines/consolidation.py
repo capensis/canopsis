@@ -22,15 +22,11 @@ from canopsis.engines import Engine
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.event import forger, get_routingkey
-from canopsis.old.tools import roundSignifiantDigit
 from canopsis.perfdata.manager import PerfData
-from canopsis.timeserie import TimeSerie
-from canopsis.timeserie.timewindow import TimeWindow, Period
+from canopsis.common.math_parser import Formulas
+from canopsis.engines.perfdata_utils import perfDataUtils
 
-from json import loads
-
-from time import time
-from datetime import datetime
+import hashlib
 
 
 class engine(Engine):
@@ -39,227 +35,134 @@ class engine(Engine):
     def __init__(self, *args, **kargs):
         super(engine, self).__init__(*args, **kargs)
 
-        self.metrics_list = {}
-        self.timestamps = {}
-        self.default_interval = 60
+        self.storage = get_storage(
+            namespace='events',
+            account=Account(
+                user="root",
+                group="root"
+            )
+        )
+        self.manager = PerfData()
 
-        self.thd_warn_sec_per_evt = 8
-        self.thd_crit_sec_per_evt = 10
 
     def pre_run(self):
         self.storage = get_storage(namespace='object',
             account=Account(user="root", group="root"))
         self.manager = PerfData()
 
-    def consume_dispatcher(self, event, *args, **kargs):
-        self.logger.debug("Consolidate metrics:")
+    def publish_aggre_stats(self):
 
-        now = time()
-        beat_elapsed = 0
+        series_event = forger(
+            connector='engine',
+            connector_name='engine',
+            event_type='perf',
+            source_type='resource',
+            resource='series_events',
+            state=0,
+            perf_data_array=self.perf_data_array
+        )
 
-        record = self.get_ready_record(event)
+        rk = get_routingkey(series_event)
 
-        if record:
-            record = record.dump()
+        self.logger.debug('Publishing {0} : {1}'.format(rk, series_event))
 
-            _id = record.get('_id')
-            name = record.get('crecord_name')
+        self.amqp.publish(
+            series_event,
+            rk,
+            self.amqp.exchange_name_events
+        )
 
-            aggregation_interval = record.get('aggregation_interval')
-            period = Period(second=aggregation_interval)
-
-            self.logger.debug(" + name: {0}':".format(name))
-            self.logger.debug(" + interval: %s" % aggregation_interval)
-            self.logger.debug(" + period: {0}".format(aggregation_interval))
-
-            last_run = record.get('consolidation_ts', now)
-
-            elapsed = now - last_run
-
-            timewindow = TimeWindow(start=last_run, stop=now)
-
-            self.logger.debug(" + elapsed: {0}, timewindow: {1}".format(
-                elapsed, timewindow))
-
-            mfilter = record.get('mfilter')
-
-            #Nothing to do if no filter set
-            if mfilter and (elapsed == 0 or elapsed >= aggregation_interval):
-                self.logger.debug("Step 1: Select metrics")
-
-                mfilter = loads(mfilter)
-
-                self.logger.debug(' + mfilter: {0}'.format(mfilter))
-
-                mfilter['internal'] = False
-
-                metric_list = self.manager.entities.find(mfilter=mfilter)
-                metric_list.hint([('type', 1), ('component', 1), ('resource', 1), ('name', 1)])
-
-                self.logger.debug(" + {0} metrics found".format(metric_list.count()))
-
-                if not metric_list.count():
-                    self.storage.update(_id, {'output_engine': "No metrics, check your filter" })
-
-                else:
-
-                    aggregation_method = record.get('aggregation_method')
-                    aggregation_timeserie = TimeSerie(
-                        aggregation=aggregation_method)
-                    self.logger.debug(
-                        " + aggregation_method: %s" % aggregation_method)
-                    self.logger.debug(
-                        " + aggregation_method: {0}:".format(
-                            aggregation_method))
-
-                    consolidation_methods = record.get('consolidation_method')
-                    if not isinstance(consolidation_methods, list):
-                        consolidation_methods = [consolidation_methods]
-
-                    self.logger.debug(
-                        " + consolidation_methods: %s" % consolidation_methods)
-
-                    mType = mUnit = mMin = mMax = None
-                    sum_in_consolidation_methods = 'sum' in consolidation_methods
-                    maxSum = 0
-                    # Get metrics
-                    metrics = []
-                    for index, metric in enumerate(metric_list):
-                        if index == 0 :
-                            #mType = metric.get('t')
-                            mMin = metric.get('mi')
-                            mMax = metric.get('ma')
-                            mUnit = metric.get('u')
-                            if sum_in_consolidation_methods and mMax is not None:
-                                maxSum = mMax
-                        else:
-                            mi = metric.get('mi')
-                            if mi is not None and (mMin is None or mi < mMin):
-                                mMin = mi
-                            ma = metric.get('ma')
-                            if ma is not None:
-                                if mMax is None or ma > mMax:
-                                    mMax = ma
-                                if sum_in_consolidation_methods and mMax is not None:
-                                    maxSum += ma
-                            if metric.get('u') != mUnit:
-                                self.logger.warning(
-                                    "%s: too many units" % name)
-                                output_message = "warning : too many units"
-
-                        self.logger.debug(' + %s , %s , %s, %s' % (
-                            metric.get('_id'),
-                            metric.get('co'),
-                            metric.get('re', ''),
-                            metric.get('me'))
-                        )
-
-                        metrics.append(metric.get('_id'))
-
-                    self.logger.debug(' + mMin: %s' % mMin)
-                    self.logger.debug(' + mMax: %s' % mMax)
-                    self.logger.debug(' + mUnit: %s' % mUnit)
-
-                    self.logger.debug(
-                        "Step 2: Aggregate (%s)" % aggregation_method)
-
-                    # Set time range
-                    tstart = last_run
-
-                    if elapsed == 0 or last_run < (now - 2 * aggregation_interval):
-                        tstart = now - aggregation_interval
-
-                    self.logger.debug(
-                        " + From: %s To %s " %
-                        (datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'),
-                        datetime.fromtimestamp(time()).strftime('%Y-%m-%d %H:%M:%S'))
-                    )
-
-                    values = []
-                    for mid in metrics:
-                        points = self.manager.get_points(
-                            tstart=tstart, tstop=now, _id=mid)
-                        fn = self.get_math_function(aggregation_method)
-
-                        pValues = [point[1] for point in points]
-
-                        if not len(pValues):
-                            continue
-
-                        values.append(fn(pValues))
-
-                    self.logger.debug(" + %s values" % len(values))
-
-                    if not len(values):
-                        self.storage.update(_id, { 'output_engine': "No values, check your interval" })
-                    else:
-                        self.logger.debug("Step 3: Consolidate (%s)" % consolidation_methods)
-
-                        perf_data_array = []
-
-                        for consolidation_method in consolidation_methods:
-                            fn = self.get_math_function(consolidation_method)
-                            value = fn(values)
-
-                            self.logger.debug(
-                                " + %s: %s %s" % (
-                                    consolidation_method, value, mUnit))
-
-                            perf_data_array.append({
-                                'metric': consolidation_method,
-                                'value': roundSignifiantDigit(value, 3),
-                                "unit": mUnit,
-                                'max': maxSum if consolidation_method == 'sum' else mMax,
-                                'min': mMin,
-                                'type': 'GAUGE'
-                            })
-
-                        self.logger.debug("Step 4: Send event")
-
-                        event = forger(
-                            connector="consolidation",
-                            connector_name="engine",
-                            event_type="consolidation",
-                            source_type="resource",
-                            component=record['component'],
-                            resource=record['resource'],
-                            state=0,
-                            timestamp=now,
-                            state_type=1,
-                            output="Consolidation: '%s' successfully computed" % name,
-                            long_output="",
-                            perf_data=None,
-                            perf_data_array=perf_data_array,
-                            display_name=name
-                        )
-                        rk = get_routingkey(event)
-                        self.counter_event += 1
-                        self.amqp.publish(
-                            event, rk, self.amqp.exchange_name_events)
-
-                        self.timestamps[_id] = now
-
-                        self.logger.debug("Step 5: Update configuration")
-
-                        beat_elapsed = time() - now
-
-                        self.storage.update(_id, {
-                            'consolidation_ts': int(now),
-                            'nb_items': len(metrics),
-                            'output_engine': "Computation done in %.2fs (%s/%s)" % (beat_elapsed, len(values), len(metrics))
-                        })
-            else:
-                self.logger.debug(
-                    "Not the moment to process this consolidation")
-
+    def fetch(self, serie, _from, _to):
+        self.logger.debug("Je passe dans fetch \n\n\n")
+        t_serie = serie.copy()
+        perfdata_utils = perfDataUtils.PerfDataUtils()
+        if len(t_serie['metrics']) > 1 and t_serie['aggregate_method'].lower() == 'none':
+            self.logger.debug('More than one metric in serie, performing an aggregation')
+            self.logger.debug('serie:', t_serie)
+            self.logger.debug('aggregation: average - 60s')
+            t_serie['aggregate_method'] = 'average'
+            t_serie['aggregate_interval'] = 60
+        if t_serie['aggregate_method'].lower() == 'none':
+            results = perfdata_utils.perfdata(t_serie['metrics'], _from, _to)
         else:
-            self.logger.warning(
-                'Dispatch error: engine unable to load consolidation crecord properly')
+            results = perfdata_utils.perfdata(t_serie['metrics'], _from, _to, t_serie['aggregate_method'], t_serie['aggregate_interval'])
 
-        #set record free for dispatcher engine
-        self.crecord_task_complete(_id)
+        formula = t_serie['formula']
 
-        if not beat_elapsed:
-            beat_elapsed = time() - now
+        finalserie = self.metric_raw(results, formula)
 
-        self.counter_worktime += beat_elapsed
+        return finalserie
+
+    def metric_raw(self, results, formula):
+        #nmetric = results[1]
+        metrics = results
+        #  build points dictionnary
+        points = {}
+        length = False
+        for m in metrics:
+            cid = m.meta.data_id
+            mid = 'metric_' + hashlib.md5(cid)
+            mname = self.retreive_metric_name(cid)
+            # replace metric name in formula by the unique id
+            formula = formula.replace(mname, mid)
+            self.logger.debug("Metric {0} - {1}".format(mname, mid))
+            points[mid] = m.points
+            # make sure we treat the same amount of points by selecting
+            # the metric with less points.
+            if not length or len(m.points) < length:
+                length = len(m.points)
+        self.logger.debug('formula:', formula)
+        self.logger.debug('points:', points)
+
+        mids = points.keys()
+        finalSerie = []
+
+        # now loop over all points to calculate the final serie
+        for i in range(length):
+            data = {}
+            ts = 0
+            for j in range(len(mids)):
+                mid = mids[j]
+                # get point value at timestamp "i" for metric "mid"
+                data[mid] = points[mid][i][1]
+
+                # set timestamp
+                ts = points[mid][i][0]
+
+            # import data in math context
+            math = Formulas(data)
+            pointval = math.evaluate(formula)
+
+            # Add computed point in the serie
+            finalSerie.append([ts * 1000, pointval])
+
+        self.logger.debug('finalserie:', finalSerie)
+
+        return finalSerie
+
+    def retreive_metric_name(self, name):
+        '''
+        Impove this method with the Context ID.
+        '''
+        if name is None:
+            return None
+        li = name.split('/')
+        for i in range(3):
+            li.pop(i)
+        name = '/'+'/'.join(li)
+        return name
+
+    def consume_dispatcher(self, event, *args, **kargs):
+        self.logger.debug("Start metrics consolidation")
+        serie = event
+
+        if not serie:
+            # Show error message
+            self.logger.error('No record found.')
+
+        self.logger.debug(type(serie))
+        self.logger.debug(serie)
+        self.fetch(serie, 'from', 'to')
+        event_id = event['_id']
+        # Update crecords informations
+        self.crecord_task_complete(event_id)

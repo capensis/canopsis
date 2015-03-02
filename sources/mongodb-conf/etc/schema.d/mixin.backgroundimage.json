@@ -1,0 +1,29 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["imageUrl", "position", "repeat", "size"]
+	}],
+
+	"properties": {
+		"imageUrl": {
+			"type": "string"
+		},
+		"position": {
+			"type": "string"
+		},
+		"repeat": {
+			"type": "string",
+			"enum": [
+				"no-repeat",
+				"repeat-x",
+				"repeat-y",
+				"repeat"
+			],
+			"role": "simplelist"
+		},
+		"size": {
+			"type": "string"
+		}
+	}
+}

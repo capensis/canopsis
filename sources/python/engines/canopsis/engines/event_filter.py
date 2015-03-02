@@ -25,7 +25,7 @@ from canopsis.old.storage import get_storage
 from canopsis.old.event import forger, get_routingkey
 from canopsis.old.mfilter import check
 
-from ast import literal_eval
+import json
 from time import time
 
 
@@ -256,7 +256,7 @@ class engine(Engine):
             self.logger.debug(u'rule {}'.format(filterItem))
             self.logger.debug(u'filter is {}'.format(filterItem['mfilter']))
             # Try filter rules on current event
-            if check(filterItem['mfilter'], event):
+            if filterItem['mfilter'] and check(filterItem['mfilter'], event):
 
                 self.logger.debug(
                     u'Event: {}, filter matches'.format(event['rk'])
@@ -306,27 +306,33 @@ class engine(Engine):
         }
 
         self.logger.debug('Reload configuration rules')
+        records = self.storage.find(
+            {'crecord_type': 'filter', 'enable': True},
+            sort='priority'
+        )
 
-        try:
-            records = self.storage.find(
-                {'crecord_type': 'filter', 'enable': True},
-                sort='priority'
-            )
+        for record in records:
 
-            for record in records:
-                record_dump = record.dump()
-                self.set_loaded(record_dump)
-                record_dump["mfilter"] = literal_eval(record_dump["mfilter"])
-                self.logger.debug('Loading record_dump:')
-                self.logger.debug(record_dump)
-                self.configuration['rules'].append(record_dump)
-            self.logger.info('Loaded {} rules'.format(
-                len(self.configuration['rules']))
-            )
-            self.send_stat_event()
+            record_dump = record.dump()
+            self.set_loaded(record_dump)
 
-        except Exception as e:
-            self.logger.error(e)
+            try:
+                record_dump["mfilter"] = json.loads(record_dump["mfilter"])
+            except Exception as e:
+                self.logger.info('Invalid mfilter {}, filter {}'.format(
+                    record_dump['mfilter'],
+                    record_dump['name'],
+
+                ))
+
+            self.logger.debug('Loading record_dump:')
+            self.logger.debug(record_dump)
+            self.configuration['rules'].append(record_dump)
+
+        self.logger.info('Loaded {} rules'.format(
+            len(self.configuration['rules']))
+        )
+        self.send_stat_event()
 
     def set_loaded(self, record):
         if 'run_once' in record and not record['run_once']:

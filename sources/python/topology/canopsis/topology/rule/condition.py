@@ -38,6 +38,7 @@ Related rule actions are defined in ``canopsis.topology.rule.action`` module.
 """
 
 from canopsis.common.init import basestring
+from canopsis.common.utils import lookup
 from canopsis.topology.manager import TopologyManager
 from canopsis.check import Check
 from canopsis.task import register_task
@@ -81,8 +82,8 @@ def at_least(
     manager=None, **kwargs
 ):
     """
-    Generic condition applied on sources of vertice which check if at least source
-        nodes check a condition.
+    Generic condition applied on sources of vertice which check if at least
+    source nodes check a condition.
 
     :param dict event: processed event.
     :param dict ctx: rule context which must contain rule vertice.
@@ -112,6 +113,9 @@ def at_least(
     if sources_by_edges and min_weight is None:
         # if edges & checking all nodes is required, result is True by default
         result = True
+
+    if isinstance(f, basestring):
+        f = lookup(f)
 
     # for all edges
     for edge_id in sources_by_edges:
@@ -183,6 +187,11 @@ def nok(**kwargs):
     """
 
     return at_least(
-        f=lambda x: x != Check.OK,
+        f=is_nok,
         **kwargs
     )
+
+
+def is_nok(state):
+
+    return state != Check.OK

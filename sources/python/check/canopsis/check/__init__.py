@@ -33,9 +33,9 @@ class Check(Event):
     STATUS = 'status'
 
     OK = 0
-    WARNING = 1
-    CRITICAL = 2
-    UNKNOWN = 3
+    MINOR = 1
+    MAJOR = 2
+    CRITICAL = 3
 
     def __init__(self, source, state, status, meta):
 

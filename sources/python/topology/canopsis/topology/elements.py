@@ -70,7 +70,7 @@ A topology inherits from both grapg and to and contains.
 __all__ = ['Topology', 'TopoEdge', 'TopoNode']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
-from canopsis.task import new_conf, TASK_PARAMS
+from canopsis.task import new_conf
 from canopsis.check import Check
 from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context
@@ -98,7 +98,7 @@ class TopoVertice(BaseTaskedVertice):
         """Get default task.
         """
 
-        return new_conf(TopoVertice.DEFAULT_TASK)
+        return new_conf(self.DEFAULT_TASK)
 
     def set_entity(self, entity_id, *args, **kwargs):
 
@@ -141,7 +141,7 @@ class TopoVertice(BaseTaskedVertice):
         result['state_type'] = 1
         if source is not None:
             result['source'] = source
-        result[Context.TYPE] = self.type
+        result['event_type'] = 'check'
 
         return result
 
@@ -159,10 +159,10 @@ class TopoVertice(BaseTaskedVertice):
         # compare old state and new state
         if self.state != old_state:
             # if not equal
-            event = self.get_event(state=self.state, source=source)
+            new_event = self.get_event(state=self.state, source=source)
             # publish a new event
             if engine is not None:
-                publish(event=event, engine=engine)
+                publish(event=new_event, engine=engine)
             # save self
             self.save(manager=manager)
 
@@ -172,6 +172,8 @@ class TopoVertice(BaseTaskedVertice):
 class Topology(Graph, TopoVertice):
 
     TYPE = 'topo'  #: topology type name
+
+    DEFAULT_TASK = 'canopsis.topology.rule.action.worst_state'
 
     __slots__ = Graph.__slots__
 
@@ -203,14 +205,6 @@ class Topology(Graph, TopoVertice):
             event = self.get_event(source=0, state=0)
             entity_id = _context.get_entity_id(event)
             self.entity = entity_id
-
-    def get_default_task(self, *args, **kwargs):
-
-        result = super(Topology, self).get_default_task(*args, **kwargs)
-
-        result[TASK_PARAMS]['update_entity'] = True
-
-        return result
 
     def save(self, context=None, *args, **kwargs):
 
@@ -264,6 +258,20 @@ class TopoNode(Vertice, TopoVertice):
         # set operator
         if operator is not None:
             self.operator = operator
+
+    def get_event(self, *args, **kwargs):
+
+        result = super(TopoNode, self).get_event(*args, **kwargs)
+
+        graphs = _topology.get_graphs(elts=self.id)
+        # iterate on existing graphs
+        for graph in graphs:
+            # update result as soon as a graph has been founded
+            result['component'] = graph.id
+            break
+        result['resource'] = self.id
+
+        return result
 
 
 class TopoEdge(Edge, TopoVertice):

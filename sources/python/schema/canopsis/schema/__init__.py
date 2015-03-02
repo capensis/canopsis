@@ -76,6 +76,7 @@ def validate(dictionary, schema_id):
         :type schema_id: str
 
         :returns: True if the validation succeed, False otherwise.
+        WARNING: disabled, always returns True.
     """
 
     schema = get(schema_id)
@@ -85,4 +86,4 @@ def validate(dictionary, schema_id):
         return True
 
     except validictory.ValidationError:
-        return False
+        return True

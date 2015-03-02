@@ -19,6 +19,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.connectors.ics2amqp import main
+from unittest import TestCase, main
+import math
+from canopsis.common.math_parser import Formulas
 
-main()
+class FormulasTest(TestCase):
+    """docstring for ClassName"""
+
+    def setUp(self):
+        _dict = {'x':4, 'y':5}
+        self.formula = Formulas(_dict)
+
+    def test(self):
+        '''abs'''
+        expressions = {"x^2 + 9*x + 5":4**2 + 9*4 + 5, "x^y + x + 2*y":4**5 + 4 + 2*5,"-9": -9, "-E":-math.e, "9 + 3 + 6":18, "2*3.14159": 2*3.14159, "PI * PI / 10": math.pi * math.pi / 10, "PI^2": math.pi**2, "E^PI": math.e**math.pi, "2^3^2": 2**3**2, "sgn(-2)": -1}
+
+        for k, v in expressions.iteritems():
+            self.assertEqual(self.formula.evaluate(k), v)
+
+
+if __name__ == '__main__':
+    main()

@@ -45,7 +45,7 @@ class BaseTaskedVertice(object):
         """Get default task.
         """
 
-        return {}
+        raise NotImplementedError()
 
     @property
     def entity(self):
@@ -90,7 +90,10 @@ class BaseTaskedVertice(object):
         """Get self task or default task if task is not setted.
         """
 
-        result = self.info.get(BaseTaskedVertice.TASK, self.get_default_task())
+        result = self.info.get(BaseTaskedVertice.TASK)
+
+        if not result:
+            result = self.get_default_task()
 
         return result
 
@@ -104,6 +107,7 @@ class BaseTaskedVertice(object):
         if value is None:
             if BaseTaskedVertice.TASK in self.info:
                 del self.info[BaseTaskedVertice.TASK]
+
         else:
             self.info[BaseTaskedVertice.TASK] = value
 
@@ -128,11 +132,12 @@ class BaseTaskedVertice(object):
 
         result = forger(
             event_type=self.type,
-            component=None,
-            resource=self.id,
+            component=self.id,
             id=self.id,
             *args, **kwargs
         )
+
+        result['source_type'] = self.type
 
         return result
 

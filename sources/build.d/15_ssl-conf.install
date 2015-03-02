@@ -20,7 +20,7 @@ function install() {
     echo "===> Generating SSL files..."
     echo
 
-    launch_cmd 1 "openssl dhparam -outform PEM -out $PREFIX/etc/ssl/dhfile.pem 2048"
+    launch_cmd 1 "openssl dhparam -outform PEM -out $PREFIX/etc/ssl/dhfile.pem $SSL_KEY_BITS"
 
     if [ ! -z $SSL_CA_PATH ] && [ -f $SSL_CA_PATH ] && [ ! -z $SSL_CAKEY_PATH ] && [ -f $SSL_CAKEY_PATH ]
     then
@@ -37,7 +37,7 @@ function install() {
 
         OPENSSL_ARGS="-new -x509 -extensions ca_gen"
         OPENSSL_ARGS="$OPENSSL_ARGS -config $PREFIX/etc/ssl/openssl.cnf"
-        OPENSSL_ARGS="$OPENSSL_ARGS -newkey rsa:2048"
+        OPENSSL_ARGS="$OPENSSL_ARGS -newkey rsa:$SSL_KEY_BITS"
         OPENSSL_ARGS="$OPENSSL_ARGS -keyout $PREFIX/etc/ssl/cakey.pem"
         OPENSSL_ARGS="$OPENSSL_ARGS -out $PREFIX/etc/ssl/ca.pem"
 
@@ -56,6 +56,7 @@ function install() {
     OPENSSL_ARGS="-new -nodes"
     OPENSSL_ARGS="$OPENSSL_ARGS -config $PREFIX/etc/ssl/openssl.cnf"
     OPENSSL_ARGS="$OPENSSL_ARGS -keyout $PREFIX/etc/ssl/key.pem"
+    OPENSSL_ARGS="$OPENSSL_ARGS -newkey rsa:$SSL_KEY_BITS"
     OPENSSL_ARGS="$OPENSSL_ARGS -out $PREFIX/etc/ssl/openssl/cert.csr"
 
     launch_cmd 1 "openssl req $OPENSSL_ARGS"
@@ -82,7 +83,7 @@ function install() {
 
     find $PREFIX/etc/ssl -type f | while read f
     do
-        chmod 400 $f || exit 1
+        chmod 600 $f || exit 1
     done
 
     chown -R $HUSER:$HGROUP $PREFIX/etc/ssl || exit 1
