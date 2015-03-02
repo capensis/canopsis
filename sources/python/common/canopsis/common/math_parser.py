@@ -24,7 +24,7 @@ import math
 import operator
 
 class Formulas(object):
-    """Class that read formulas and parse it with EBNF to define the python grammar"""
+    """Class that reads formulas and parse it with EBNF defined as grammar"""
     # map operator symbols to corresponding arithmetic operations
     global epsilon
     epsilon = 1e-12
