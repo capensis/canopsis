@@ -22,16 +22,10 @@ from canopsis.engines import Engine
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.event import forger, get_routingkey
-from canopsis.old.tools import roundSignifiantDigit
 from canopsis.perfdata.manager import PerfData
-from canopsis.timeserie import TimeSerie
-from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.common.math_parser import Formulas
+from canopsis.engines.perfdata_utils import perfDataUtils
 
-from json import loads
-
-from time import time
-from datetime import datetime
 import hashlib
 
 
@@ -79,47 +73,29 @@ class engine(Engine):
         )
 
     def fetch(self, serie, _from, _to):
-        self.logger.debug("Je passe dans fetch \n\n\n\n\n")
+        self.logger.debug("Je passe dans fetch \n\n\n")
         t_serie = serie.copy()
-        if len(t_serie['metrics']) > 1 and t_serie['aggregate_method'] == 'none':
+        perfdata_utils = perfDataUtils.PerfDataUtils()
+        if len(t_serie['metrics']) > 1 and t_serie['aggregate_method'].lower() == 'none':
             self.logger.debug('More than one metric in serie, performing an aggregation')
             self.logger.debug('serie:', t_serie)
             self.logger.debug('aggregation: average - 60s')
             t_serie['aggregate_method'] = 'average'
             t_serie['aggregate_interval'] = 60
-        if t_serie['aggregate_method'] == 'none':
-            results = "todo"
-            pass
+        if t_serie['aggregate_method'].lower() == 'none':
+            results = perfdata_utils.perfdata(t_serie['metrics'], _from, _to)
         else:
-            results = "todo"
-            pass
+            results = perfdata_utils.perfdata(t_serie['metrics'], _from, _to, t_serie['aggregate_method'], t_serie['aggregate_interval'])
 
         formula = t_serie['formula']
-            #set(serie, 'aggregate_method', 'average');
-            #set(serie, 'aggregate_interval', 60);
-            '''
-                    var promise = get(this, 'perfdata').fetchMany(
-                    get(serie, 'metrics'),
-                    from, to
-                );
 
-            def perfdata(
-                metric_id, timewindow=None, period=None, with_meta=True,
-                limit=0, skip=0, timeserie=None
-            ):
-            if(get(serie, 'aggregate_method') === 'none') {
-                var promise = get(this, 'perfdata').fetchMany(
-                    get(serie, 'metrics'),
-                    from, to
-                );
-            }
-            '''
-        if t_serie['aggregate_method'] == 'none':
-            promise = ""
+        finalserie = self.metric_raw(results, formula)
+
+        return finalserie
 
     def metric_raw(self, results, formula):
-        nmetric = results[1]
-        metrics = result
+        #nmetric = results[1]
+        metrics = results
         #  build points dictionnary
         points = {}
         length = False
@@ -129,7 +105,7 @@ class engine(Engine):
             mname = self.retreive_metric_name(cid)
             # replace metric name in formula by the unique id
             formula = formula.replace(mname, mid)
-            self.logger.debug("Metric {} - {}".format(mname, mid))
+            self.logger.debug("Metric {0} - {1}".format(mname, mid))
             points[mid] = m.points
             # make sure we treat the same amount of points by selecting
             # the metric with less points.
@@ -141,6 +117,7 @@ class engine(Engine):
         mids = points.keys()
         finalSerie = []
 
+        # now loop over all points to calculate the final serie
         for i in range(length):
             data = {}
             ts = 0
@@ -153,10 +130,15 @@ class engine(Engine):
                 ts = points[mid][i][0]
 
             # import data in math context
-            formula = Formulas()
+            math = Formulas(data)
+            pointval = math.evaluate(formula)
 
-        # now loop over all points to calculate the final serie
-        pass
+            # Add computed point in the serie
+            finalSerie.append([ts * 1000, pointval])
+
+        self.logger.debug('finalserie:', finalSerie)
+
+        return finalSerie
 
     def retreive_metric_name(self, name):
         '''
@@ -178,6 +160,7 @@ class engine(Engine):
             # Show error message
             self.logger.error('No record found.')
 
+        self.logger.debug(type(serie))
         self.logger.debug(serie)
         self.fetch(serie, 'from', 'to')
         event_id = event['_id']
