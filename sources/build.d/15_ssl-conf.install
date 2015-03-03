@@ -21,14 +21,17 @@ function install() {
     echo
 
     launch_cmd 1 "openssl dhparam -outform PEM -out $PREFIX/etc/ssl/dhfile.pem $SSL_KEY_BITS"
-    
-    if [ ! -z $SSL_CA_PATH ] && [ -f $SSL_CA_PATH ]
+
+    if [ ! -z $SSL_CA_PATH ] && [ -f $SSL_CA_PATH ] && [ ! -z $SSL_CAKEY_PATH ] && [ -f $SSL_CAKEY_PATH ]
     then
         echo
         echo "===> Installing CA..."
         echo
 
-        cp $SSL_CA_PATH $PREFIX/etc/ssl/ca.pem || exit 1
+        cp -v $SSL_CA_PATH $PREFIX/etc/ssl/ca.pem || exit 1
+        chown -v $HUSER:$HGROUP $PREFIX/etc/ssl/ca.pem || exit 1
+        cp $SSL_CAKEY_PATH $PREFIX/etc/ssl/cakey.pem || exit 1
+        chown -v $HUSER:$HGROUP $PREFIX/etc/ssl/cakey.pem || exit 1
     else
         echo
         echo "===> Generating CA..."

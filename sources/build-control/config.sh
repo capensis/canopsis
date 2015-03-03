@@ -39,6 +39,10 @@ RABBITMQ_USER_PASSWD="canopsis"
 # If defined and path exists, will copy the CA to Canopsis instead of generate a new one
 # SSL_CA_PATH=""
 
+# - Variable SSL_CAKEY_PATH
+# If defined and path exists, will copy the CA key to Canopsis instead of generate a new one
+# SSL_CAKEY_PATH=""
+
 # - Variable SSL_KEY_PASS
 # Password for CA certificate key if we are generating one. Will prompt the user if empty
 SSL_KEY_PASS="cpsnode"

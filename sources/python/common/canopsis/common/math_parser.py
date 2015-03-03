@@ -41,9 +41,10 @@ class Formulas(object):
             "round" : round,
             "sgn" : lambda a: abs(a)>epsilon and cmp(a,0) or 0}
 
-    def __init__(self):
+    def __init__(self, _dict=None):
         self.exprStack = []
         self._bnf = None
+        self._dict = _dict  # The dictionnary value as dictionnary {'x':2}
 
     def push_first(self, strg, loc, toks):
         '''abs'''
@@ -52,6 +53,18 @@ class Formulas(object):
     def push_minus(self, strg, loc, toks):
         if toks and toks[0] == '-':
             self.exprStack.append('unary -')
+
+    def _import(self, _dict):
+        '''
+        set variables data.
+        '''
+        self._dict = _dict
+
+    def reset(self):
+        '''
+        Reset the variables dictionnary.
+        '''
+        self._dict = None
 
     def bnf(self):
         '''
@@ -68,18 +81,18 @@ class Formulas(object):
         if not self._bnf:
             point = Literal(".")
             e = CaselessLiteral("E")
-            fnumber = Combine( Word( "+-"+nums, nums ) + Optional( point + Optional( Word( nums ) ) ) + Optional( e + Word( "+-"+nums, nums ) ) )
+            fnumber = Combine(Word("+-"+nums, nums) + Optional(point + Optional(Word(nums))) + Optional(e + Word("+-"+nums, nums)))
             ident = Word(alphas, alphas+nums+"_$")
             minus = Literal("-")
-            plus  = Literal("+")
-            div   = Literal("/")
-            mult  = Literal("*")
-            rpar  = Literal(")").suppress()
-            lpar  = Literal("(").suppress()
-            addop  = plus | minus
+            plus = Literal("+")
+            div = Literal("/")
+            mult = Literal("*")
+            rpar = Literal(")").suppress()
+            lpar = Literal("(").suppress()
+            addop = plus | minus
             multop = mult | div
             expop = Literal("^")
-            pi    = CaselessLiteral("PI")
+            pi = CaselessLiteral("PI")
 
             expr = Forward()
             atom = (Optional("-") + ( pi | e | fnumber | ident + lpar + expr + rpar ).setParseAction( self.push_first ) | ( lpar + expr.suppress() + rpar )).setParseAction(self.push_minus)
@@ -117,6 +130,9 @@ class Formulas(object):
     def evaluate(self, formula):
         '''
         '''
+        if self._dict is not None:
+            for k , v in self._dict.iteritems():
+                formula = formula.replace(str(k), str(v))
         self.exprStack = []
         results = self.bnf().parseString(formula)
         val = self.evaluate_parsing(self.exprStack[:])
