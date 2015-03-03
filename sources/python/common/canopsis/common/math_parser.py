@@ -18,13 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,\
-    ZeroOrMore,Forward,nums,alphas
+from pyparsing import Literal, CaselessLiteral, Word, Combine, Optional,\
+    ZeroOrMore, Forward, nums, alphas, ParseException
 import math
 import operator
 
 class Formulas(object):
-    """Class that reads formulas and parse it with EBNF defined as grammar"""
+    """Class that reads formulas and parse it using EBNF grammar"""
     # map operator symbols to corresponding arithmetic operations
     global epsilon
     epsilon = 1e-12
@@ -131,9 +131,14 @@ class Formulas(object):
         '''
         '''
         if self._dict is not None:
-            for k , v in self._dict.iteritems():
+            for k, v in self._dict.iteritems():
                 formula = formula.replace(str(k), str(v))
         self.exprStack = []
-        results = self.bnf().parseString(formula)
+        try:
+            results = self.bnf().parseString(formula)
+        except ParseException, e:
+            results = ['Parse Failure', formula]
+        if len(results) == 0 or results[0] == 'Parse Failure':
+            return results
         val = self.evaluate_parsing(self.exprStack[:])
         return val
