@@ -101,6 +101,8 @@ class engine(Engine):
         hostgroups = event.get('hostgroups', [])
         servicegroups = event.get('servicegroups', [])
         source_type = event['source_type']
+        component = event.get('component')
+        resource = event.get('resource')
 
         # get a copy of event
         _event = event.copy()
@@ -127,20 +129,11 @@ class engine(Engine):
             _event, from_db=True, create_if_not_exists=True, cache=True
         )
 
-        # get hostgroups
+        # set service groups and hostgroups
+        if resource:
+            context['component'] = component
+            entity['servicegroups'] = servicegroups
         entity['hostgroups'] = hostgroups
-        # and service groups
-        # create an entity status which is a component or a resource
-        if source_type == 'resource':
-            entity['servicegroups'] = servicegroups
-
-        # create an entity status which is a component or a resource
-        if source_type == 'resource':
-            context['component'] = _event['component']
-            entity['servicegroups'] = servicegroups
-
-        if source_type not in ['resource', 'component']:
-            self.logger.warning('source_type unknown %s' % source_type)
 
         # set mCrit and mWarn
         entity['mCrit'] = _event.get(mCrit, None)
@@ -150,26 +143,28 @@ class engine(Engine):
 
         # put the status entity in the context
         self.context.put(
-            _type=source_type, entity=entity, context=context, cache=True
+            _type=entity[Context.TYPE], entity=entity, context=context,
+            cache=True
         )
 
         # udpdate context information with resource and component
-        if source_type == 'resource':
+        if resource:
             context['resource'] = name
         else:
             context['component'] = name
 
         # remove type from context because type will be metric
-        del context['type']
+        del context[Context.TYPE]
 
         # add perf data (may be done in the engine perfdata)
         for perfdata in event.get('perf_data_array', []):
-            perfdata_entity = entity.copy()
+            perfdata_entity = {}
             name = perfdata['metric']
             perfdata_entity[Context.NAME] = name
             perfdata_entity['internal'] = perfdata['metric'].startswith('cps')
             self.context.put(
-                _type='metric', entity=perfdata_entity, context=context, cache=True
+                _type='metric', entity=perfdata_entity, context=context,
+                cache=True
             )
 
         return event
