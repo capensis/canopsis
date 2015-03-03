@@ -24,9 +24,10 @@ from canopsis.old.storage import get_storage
 from canopsis.old.event import forger, get_routingkey
 from canopsis.perfdata.manager import PerfData
 from canopsis.common.math_parser import Formulas
-from canopsis.engines.perfdata_utils import perfDataUtils
+from canopsis.engines.perfdata_utils.perfDataUtils import PerfDataUtils
 
 import hashlib
+from time import gmtime
 
 
 class engine(Engine):
@@ -43,7 +44,7 @@ class engine(Engine):
             )
         )
         self.manager = PerfData()
-
+        self.perf_data = PerfDataUtils()
 
     def pre_run(self):
         self.storage = get_storage(namespace='object',
@@ -75,7 +76,7 @@ class engine(Engine):
     def fetch(self, serie, _from, _to):
         self.logger.debug("Je passe dans fetch \n\n\n")
         t_serie = serie.copy()
-        perfdata_utils = perfDataUtils.PerfDataUtils()
+        timewindow = {'start': _from/1000, 'stop': _to/1000, 'timezone':gmtime()}
         if len(t_serie['metrics']) > 1 and t_serie['aggregate_method'].lower() == 'none':
             self.logger.debug('More than one metric in serie, performing an aggregation')
             self.logger.debug('serie:', t_serie)
@@ -83,9 +84,11 @@ class engine(Engine):
             t_serie['aggregate_method'] = 'average'
             t_serie['aggregate_interval'] = 60
         if t_serie['aggregate_method'].lower() == 'none':
-            results = perfdata_utils.perfdata(t_serie['metrics'], _from, _to)
+            timeserie = {'aggregation':'NONE'}
+            results = self.perf_data.perfdata(metric_id=t_serie['metrics'], timewindow=timewindow, timeserie=timeserie)
         else:
-            results = perfdata_utils.perfdata(t_serie['metrics'], _from, _to, t_serie['aggregate_method'], t_serie['aggregate_interval'])
+            timeserie = {'aggregation':t_serie['aggregate_method'], 'period':{'second':t_serie['aggregate_interval']}}
+            results = self.perf_data.perfdata(metric_id=t_serie['metrics'], timewindow=timewindow, timeserie=timeserie)
 
         formula = t_serie['formula']
 
@@ -95,7 +98,7 @@ class engine(Engine):
 
     def metric_raw(self, results, formula):
         #nmetric = results[1]
-        metrics = results
+        metrics, _ = results
         #  build points dictionnary
         points = {}
         length = False
@@ -155,14 +158,18 @@ class engine(Engine):
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Start metrics consolidation")
         serie = event
+        #manager = PerfData()
 
         if not serie:
             # Show error message
             self.logger.error('No record found.')
 
-        self.logger.debug(type(serie))
-        self.logger.debug(serie)
-        self.fetch(serie, 'from', 'to')
+        s_id = serie['metrics']
+        self.logger.debug(s_id)
+        results, _ = self.perf_data.perfdata(metric_id=s_id)
+        #results, count = self.manager.get(metric_id=s_id)
+        self.logger.debug(results[0]['points'])
+        #self.fetch(serie, 'from', 'to')
         event_id = event['_id']
         # Update crecords informations
         self.crecord_task_complete(event_id)
