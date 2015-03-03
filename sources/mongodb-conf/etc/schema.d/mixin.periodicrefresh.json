@@ -9,7 +9,7 @@
 		"refreshInterval": {
 			"type": "integer",
 			"description": "Refresh interval, in seconds",
-			"default": 30
+			"default": 180
 		}
 	}
 }
