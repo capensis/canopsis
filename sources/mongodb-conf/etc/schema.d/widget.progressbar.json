@@ -84,11 +84,12 @@
             "title": "Time Window offset from now"
         },
         "series": {
-            "description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
+        	"description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
             "type": "array",
             "role": "arrayclassifiedcrecordselector",
-            "crecordtype": "serie",
-            "valueKey": "_id"
+            "model": "serie",
+			"crecordtype": "serie",
+			"multiselect": true
         },
         "metrics": {
             "type": "array",
