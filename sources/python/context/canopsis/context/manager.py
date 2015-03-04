@@ -192,7 +192,8 @@ class Context(MiddlewareRegistry):
         Get entities by name.
 
         :param str _type: entity type (connector, component, etc.)
-        :param str names: entity names.
+        :param names: entity name(s).
+        :type names: list or str
         :param dict context: entity context such as couples of name, value.
         :param bool extended: get extended entities if entity is shared.
 
