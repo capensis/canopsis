@@ -29,6 +29,7 @@ from canopsis.graph.manager import GraphManager
 from canopsis.context.manager import Context
 from canopsis.task import register_task, run_task
 from canopsis.event import forger
+from canopsis.check import Check
 
 _context = Context()
 graph = GraphManager()
@@ -131,7 +132,8 @@ class BaseTaskedVertice(object):
         """
 
         result = forger(
-            event_type=self.type,
+            event_type=Check.EVENT_TYPE,
+            source_type=self.type,
             component=self.id,
             id=self.id,
             *args, **kwargs

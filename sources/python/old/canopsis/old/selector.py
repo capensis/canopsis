@@ -21,17 +21,16 @@
 
 from canopsis.old.record import Record
 from canopsis.old.downtime import Downtime
-from canopsis.old.event import get_routingkey, forger
+from canopsis.event import get_routingkey, forger
 from canopsis.old.cfilter import Filter
 
-from time import time
 from json import loads
 from logging import getLogger
 import pprint
 
 pp = pprint.PrettyPrinter(indent=2)
 
-DEFAULT_SLA_TIMEWINDOW = 3600*24
+DEFAULT_SLA_TIMEWINDOW = 3600 * 24
 
 
 class Selector(Record):
@@ -369,7 +368,8 @@ class Selector(Record):
         if state == -1 and ack_count == -1:
             state = 0
             information = 'No event matched by selector {}'.format(
-                self.display_name)
+                self.display_name
+            )
 
         # Build output
         total = 0

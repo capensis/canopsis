@@ -21,7 +21,7 @@
 from canopsis.engines import Engine
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.old.event import get_routingkey, forger
+from canopsis.event import get_routingkey, forger
 from canopsis.old.statemap import Statemap
 from canopsis.old.mfilter import check
 
@@ -39,7 +39,9 @@ class engine(Engine):
         self.derogations = []
 
     def pre_run(self):
-        self.storage = get_storage(namespace='object', account=Account(user="root", group="root"))
+        self.storage = get_storage(
+            namespace='object', account=Account(user="root", group="root")
+        )
         self.beat()
 
     def time_conditions(self, derogation):

@@ -120,8 +120,9 @@ class Context(MiddlewareRegistry):
 
         # set name if not given
         if Context.NAME not in _event:
-            if _type in _event:
-                _event[Context.NAME] = _event[_type]
+            source_type = _event['source_type']
+            if source_type in _event:
+                _event[Context.NAME] = _event[source_type]
             else:
                 for ctx in reversed(self.context):
                     if ctx in _event and _event[ctx]:
@@ -129,8 +130,9 @@ class Context(MiddlewareRegistry):
                         break
         else:  # delete ctx field which matches with the ctx
             for ctx in reversed(self.context):
-                if ctx in _event and _event[ctx] == _event[Context.NAME]:
-                    del _event[ctx]
+                if ctx in _event:
+                    if _event[ctx] == _event[Context.NAME]:
+                        del _event[ctx]
                     break
 
         ctx, name = self.get_entity_context_and_name(_event)
@@ -362,13 +364,13 @@ class Context(MiddlewareRegistry):
         _entity = entity.copy()
 
         # ensure name exists once
-        _name = entity[Context.NAME]
+        #_name = entity[Context.NAME]
         # remove useless fields where ctx field is the name
-        for ctx in reversed(self.context):
+        """for ctx in reversed(self.context):
             if ctx in _entity and _entity[ctx] == _name:
                 del _entity[ctx]
                 break
-
+        """
         result = self[Context.CTX_STORAGE].get_path_with_id(_entity)
 
         return result

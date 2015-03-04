@@ -21,8 +21,7 @@
 from canopsis.engines import Engine
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.old.event import get_routingkey, forger
-from time import time
+from canopsis.event import get_routingkey, forger
 
 
 class engine(Engine):

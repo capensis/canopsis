@@ -26,7 +26,9 @@ install_requires = [
     'canopsis.timeserie',
     'canopsis.perfdata',
     'canopsis.rule',
-    'canopsis.tools']
+    'canopsis.tools',
+    'canopsis.event'
+]
 
 setup(
     description='Engines library',

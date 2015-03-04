@@ -22,7 +22,7 @@ from canopsis.engines import Engine, DROP
 
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
-from canopsis.old.event import forger, get_routingkey
+from canopsis.event import forger, get_routingkey
 from canopsis.old.mfilter import check
 
 import json
@@ -260,7 +260,7 @@ class engine(Engine):
 
                 self.logger.debug(
                     u'Event: {}, filter matches'.format(event['rk'])
-                    )
+                )
 
                 for action in actions:
                     if action['type'].lower() == 'drop':
@@ -280,7 +280,7 @@ class engine(Engine):
             if self.apply_actions(event, to_apply):
                 self.logger.debug(
                     u'Event before sent to next engine: %s' % event
-                    )
+                )
                 event['rk'] = event['_id'] = get_routingkey(event)
                 return event
 

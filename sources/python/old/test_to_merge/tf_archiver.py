@@ -19,14 +19,13 @@
 # ----------------------
 
 import sys
-import imp
 import time
 import unittest
 from os.path import join
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.old.event import get_routingkey, forger
+from canopsis.event import get_routingkey
 from canopsis.old.rabbitmq import Amqp
 from canopsis.old.record import Record
 
@@ -68,7 +67,7 @@ def event(name, state, **kwargs):
         'crecord_type': 'event',
         'state_type': 1,
         'pass_event': 1,
-        }
+    }
     for key in kwargs:
         event[key] = kwargs[key]
     return (name, event)
@@ -93,8 +92,9 @@ class KnownValues(unittest.TestCase):
         stdout_handler.setLevel(LOGGING_LEVEL)
         stdout_handler.setFormatter(
             logging.Formatter(
-                '%(asctime)s [%(name)s] [%(levelname)s] %(message)s')
+                '%(asctime)s [%(name)s] [%(levelname)s] %(message)s'
             )
+        )
         cls.logger.addHandler(stdout_handler)
 
         cls.logger.debug(' + Init TF_Archiver on {}'.format(NAMESPACE))
@@ -108,7 +108,7 @@ class KnownValues(unittest.TestCase):
         cls.default_conf = cls.collection.find(
             {'crecord_type': 'statusmanagement'},
             namespace='object'
-            )
+        )
 
         if cls.default_conf.count():
             cls.default_conf = cls.default_conf[0]
@@ -121,7 +121,7 @@ class KnownValues(unittest.TestCase):
                 'bagot_freq': 10,
                 'stealthy_time': 300,
                 'stealthy_show': 300
-                }
+            }
 
         cls.amqp = Amqp(logging_level=LOGGING_LEVEL,
                         logging_name='Amqp')
@@ -149,7 +149,7 @@ class KnownValues(unittest.TestCase):
         self.storage.put(record,
                          namespace='object',
                          account=self.account)
-        time.sleep(BEAT_INTERVAL+sleep)
+        time.sleep(BEAT_INTERVAL + sleep)
 
     def publish_event(self, name, event, sleep=2):
         rk = get_routingkey(event)
