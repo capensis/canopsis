@@ -27,10 +27,12 @@ manager = PerfData()
 
 class PerfDataUtils(object):
     """docstring for PerfDataUtils"""
+
     def __init__(self):
+        #self.manager = PerfData()
         pass
 
-    def perfdata_count(metric_id, timewindow=None):
+    def perfdata_count(self, metric_id, timewindow=None):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
@@ -39,8 +41,9 @@ class PerfDataUtils(object):
         )
 
         return result
+
     def perfdata(
-        metric_id, timewindow=None, period=None, with_meta=True,
+        self, metric_id, timewindow=None, period=None, with_meta=True,
         limit=0, skip=0, timeserie=None
     ):
         if timewindow is not None:
@@ -86,7 +89,7 @@ class PerfDataUtils(object):
 
         return (result, len(result))
 
-    def perfdata_meta(metric_id, timewindow=None, limit=0, sort=None):
+    def perfdata_meta(self, metric_id, timewindow=None, limit=0, sort=None):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
