@@ -8,7 +8,7 @@
         "keys":["title", "graph_id", "layout"]
     }, {
         "title": "Options",
-        "keys":["refreshableWidget", "refreshInterval", "width", "height"]
+        "keys":["width", "height"]
     },{
         "title": "Mixins",
         "keys":["mixins"]

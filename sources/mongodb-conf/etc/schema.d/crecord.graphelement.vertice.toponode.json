@@ -26,6 +26,7 @@
             "type": "string",
             "required": false,
             "default": "",
+            "role": "contextselector",
             "description": "Bound entity id (ex: /topo/canopsis/deby/mytopo/mytopo)"
         },
         "operator": {
