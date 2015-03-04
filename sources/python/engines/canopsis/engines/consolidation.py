@@ -74,7 +74,7 @@ class engine(Engine):
         )
 
     def fetch(self, serie, _from, _to):
-        self.logger.debug("Start fetch")
+        self.logger.debug("*Start fetch*")
         t_serie = serie.copy()
         timewindow = {'start': _from, 'stop': _to, 'timezone':gmtime()}
         if len(t_serie['metrics']) > 1 and t_serie['aggregate_method'].lower() == 'none':
@@ -93,7 +93,7 @@ class engine(Engine):
         formula = t_serie['formula']
 
         finalserie = self.metric_raw(results, formula)
-        self.logger.debug("End fetch")
+        self.logger.debug("*End fetch*")
 
         return finalserie
 
@@ -115,22 +115,22 @@ class engine(Engine):
             # The metric with less points.
             if not length or len(m['points']) < length:
                 length = len(m['points'])
-        self.logger.debug('formula:{}'.format(formula))
-        self.logger.debug('points: {}'.format(points))
+        self.logger.debug('formula: {}'.format(formula))
+        #self.logger.debug('points: {}'.format(points))
 
         mids = points.keys()
         finalSerie = []
 
-        # now loop over all points to calculate the final serie
+        # Now loop over all points to calculate the final serie
         for i in range(length):
             data = {}
             ts = 0
             for j in range(len(mids)):
                 mid = mids[j]
-                # get point value at timestamp "i" for metric "mid"
+                # Get point value at timestamp "i" for metric "mid"
                 data[mid] = points[mid][i][1]
 
-                # set timestamp
+                # Set timestamp
                 ts = points[mid][i][0]
 
             # import data in math context
@@ -140,11 +140,12 @@ class engine(Engine):
 
             # Add computed point in the serie
             finalSerie.append([ts * 1000, pointval])
+            # Remove data from math context
             math.reset()
 
         self.logger.debug('finalserie: {}'.format(finalSerie))
 
-        return finalSerie
+        return finalSerie, points[mid]
 
     def retreive_metric_name(self, name):
         '''
@@ -162,19 +163,27 @@ class engine(Engine):
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Start metrics consolidation")
         serie = event
-
         if not serie:
             # Show error message
             self.logger.error('No record found.')
-
-        m_id = serie['metrics']
-        #self.logger.debug(m_id)
-        results, _ = self.perf_data.perfdata(metric_id=m_id)
-        #results, count = self.manager.get(metric_id=s_id)
-        #self.logger.debug(results[0])
+        # Test Settings
+        t_serie = serie.copy()
         _from = 1425394522
         _to = 1425402296
-        self.fetch(serie, _from, _to)
+        t_serie['aggregate_interval'] = 60
+        t_serie['aggregate_method'] = 'average'
+        timewindow = {'start': _from, 'stop': _to, 'timezone':gmtime()}        
+
+        m_id = serie['metrics']
+        timeserie = {'aggregation':t_serie['aggregate_method'], 'period':{'second':t_serie['aggregate_interval']}}
+        results, _ = self.perf_data.perfdata(metric_id=t_serie['metrics'], timewindow=timewindow, timeserie=timeserie)
+        # End test
+        #results, _ = self.perf_data.perfdata(metric_id=m_id)
+        self.logger.debug(results[0])
+        _, points = self.fetch(serie, _from, _to)
+        # Update time series data
+        self.manager.put(metric_id=serie['_id'], points=points)
+
         event_id = event['_id']
         # Update crecords informations
         self.crecord_task_complete(event_id)
