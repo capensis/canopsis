@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["title", "cfilter_allow_only_optimized_filters", "defaultview"]
+		"keys":["title", "cfilter_allow_only_optimized_filters", "defaultview", "safe_mode"]
 	},{
 		"title": "Events",
 		"keys":["list_info_button_pattern"]
