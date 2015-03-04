@@ -115,8 +115,8 @@ class engine(Engine):
             # The metric with less points.
             if not length or len(m['points']) < length:
                 length = len(m['points'])
-        #self.logger.debug('formula:{}'.format(formula))
-        #self.logger.debug('points: {}'.format(points))
+        self.logger.debug('formula:{}'.format(formula))
+        self.logger.debug('points: {}'.format(points))
 
         mids = points.keys()
         finalSerie = []
@@ -167,9 +167,9 @@ class engine(Engine):
             # Show error message
             self.logger.error('No record found.')
 
-        s_id = serie['metrics']
-        #self.logger.debug(s_id)
-        #results, _ = self.perf_data.perfdata(metric_id=s_id)
+        m_id = serie['metrics']
+        #self.logger.debug(m_id)
+        results, _ = self.perf_data.perfdata(metric_id=m_id)
         #results, count = self.manager.get(metric_id=s_id)
         #self.logger.debug(results[0])
         _from = 1425394522
