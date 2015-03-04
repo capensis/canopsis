@@ -22,21 +22,20 @@ from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.timeserie import TimeSerie
 
-manager = PerfData()
+#manager = PerfData()
 
 
 class PerfDataUtils(object):
     """docstring for PerfDataUtils"""
 
     def __init__(self):
-        #self.manager = PerfData()
-        pass
+        self.manager = PerfData()
 
     def perfdata_count(self, metric_id, timewindow=None):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
-        result = manager.count(
+        result = self.manager.count(
             metric_id=metric_id, timewindow=timewindow
         )
 
@@ -67,10 +66,11 @@ class PerfDataUtils(object):
         result = []
 
         for metric_id in metrics:
-            pts, meta = manager.get(
+            pts, meta = self.manager.get(
                 metric_id=metric_id, with_meta=True,
                 timewindow=timewindow, limit=limit, skip=skip
             )
+
             meta = meta[0]
 
             if timeserie is not None:
@@ -93,7 +93,7 @@ class PerfDataUtils(object):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
-        result = manager.get_meta(
+        result = self.manager.get_meta(
             metric_id=metric_id, timewindow=timewindow, limit=limit, sort=sort
         )
 
