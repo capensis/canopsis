@@ -1,11 +1,11 @@
 NAME="canolibs"
 
 PROJECTS[0]='common'
-PROJECTS[1]='configuration'
-PROJECTS[2]='event'
-PROJECTS[3]='timeserie'
-PROJECTS[4]='middleware'
-PROJECTS[5]='old'
+PROJECTS[1]='old'
+PROJECTS[2]='configuration'
+PROJECTS[3]='event'
+PROJECTS[4]='timeserie'
+PROJECTS[5]='middleware'
 PROJECTS[6]='schema'
 PROJECTS[7]='task'
 PROJECTS[8]='rpc'

@@ -619,49 +619,49 @@ class GetNameTest(BaseContextTest):
 
         self.assertEqual(name, result)
 
-    def get_type_none(self):
+    def test_type_none(self):
         """Test with _type is None.
         """
 
         self._assert_name(_type=None, result='f')
 
-    def get_type(self):
+    def test_type(self):
         """Test with _type is type.
         """
 
         self._assert_name(_type='type', result='a')
 
-    def get_connector(self):
+    def test_connector(self):
         """Test with _type is connector.
         """
 
         self._assert_name(_type='connector', result='b')
 
-    def get_connector_name(self):
+    def test_connector_name(self):
         """Test with _type is connector_name.
         """
 
         self._assert_name(_type='connector_name', result='c')
 
-    def get_component(self):
+    def test_component(self):
         """Test with _type is component.
         """
 
         self._assert_name(_type='component', result='d')
 
-    def get_resource(self):
+    def test_resource(self):
         """Test with _type is resource.
         """
 
         self._assert_name(_type='resource', result='e')
 
-    def get_other(self):
+    def test_other(self):
         """Test with _type is other.
         """
 
         self._assert_name(_type='other', result='f')
 
-    def get_error(self):
+    def test_error(self):
         """Test with _type is not in entity_id.
         """
 

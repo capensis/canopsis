@@ -170,7 +170,7 @@ class Context(MiddlewareRegistry):
         names = entity_id.split('/')[1:]  # get names after the first '/'
         try:
             index = self.context.index(_type)  # get name index
-        except IndexError:
+        except ValueError:
             result = names[-1]  # in case of index error, get the last name
         else:
             if index < len(names):  # else get names[index]

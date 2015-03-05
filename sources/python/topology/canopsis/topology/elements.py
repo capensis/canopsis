@@ -134,14 +134,9 @@ class TopoVertice(BaseTaskedVertice):
     def get_event(self, state=DEFAULT_STATE, source=None, *args, **kwargs):
 
         result = super(TopoVertice, self).get_event(
+            state=state, source=source,
             *args, **kwargs
         )
-
-        result['state'] = state
-        result['state_type'] = 1
-        if source is not None:
-            result['source'] = source
-        result['event_type'] = 'check'
 
         return result
 
@@ -203,7 +198,8 @@ class Topology(Graph, TopoVertice):
         if entity_id is None:
             # set entity
             event = self.get_event(source=0, state=0)
-            entity_id = _context.get_entity_id(event)
+            entity = _context.get_entity(event)
+            entity_id = _context.get_entity_id(entity)
             self.entity = entity_id
 
     def save(self, context=None, *args, **kwargs):
@@ -215,7 +211,8 @@ class Topology(Graph, TopoVertice):
             context = _context
         # get self entity
         event = self.get_event()
-        ctx, _id = context.get_entity_context_and_name(entity=event)
+        entity = context.get_entity(event)
+        ctx, _id = context.get_entity_context_and_name(entity=entity)
         entity = {Context.NAME: _id}
         # put the topology in the context by default
         context.put(_type=self.type, entity=entity, context=ctx)
