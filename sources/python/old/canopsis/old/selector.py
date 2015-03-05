@@ -27,6 +27,7 @@ from canopsis.old.cfilter import Filter
 from json import loads
 from logging import getLogger
 import pprint
+from copy import deepcopy
 
 pp = pprint.PrettyPrinter(indent=2)
 
@@ -308,6 +309,7 @@ class Selector(Record):
             ack_count = -1
         self.logger.debug(" + result for ack : {}".format(result))
 
+        infobagotmfilter = deepcopy(mfilter)
         # Find worst state for events not ack, mfilter is modified
         ack_clause = {'ack.isAck': {'$ne': True}}
         if '$and' in mfilter:
@@ -351,18 +353,28 @@ class Selector(Record):
             if s in states_for_ack:
                 worst_state_for_ack = s
 
+        infobagot = self.storage.get_backend(namespace=self.namespace).find({
+            '$and': [
+                {'state': 0, 'status': 3},
+                infobagotmfilter
+            ]}
+        ).count()
+
+        if infobagot:
+            self.logger.info('infobagot count : {}'.format(infobagot))
+
         # Bit dirty return value
         # states are dict containing event count depending on state for mfilter
         # state is the worst state for both ack and not ack events
         # ack_count is the count of event that are ack for current mfilter
         # worst_state_for_ack is the worst state for mfilter
         # selected event that are ack
-        return (states, state, ack_count, worst_state_for_ack)
+        return (states, state, ack_count, worst_state_for_ack, infobagot)
 
     def event(self):
 
         # Get state information form aggregation
-        states, state, ack_count, worst_state_for_ack = self.getState()
+        states, state, ack_count, worst_state_for_ack, infobagot = self.getState()
 
         information = None
         if state == -1 and ack_count == -1:
@@ -385,7 +397,7 @@ class Selector(Record):
         computed_state = worst_state_for_ack
 
         # Is selector produced event acknowleged
-        if ack_count >= total_error and ack_count > 0:
+        if ack_count >= (total_error + infobagot) and ack_count > 0:
             send_ack = True
             # All matched event were acknowleged,
             # then user chose what kind of state to use. it is either:
