@@ -135,7 +135,6 @@ class BaseTaskedVertice(object):
             event_type=Check.EVENT_TYPE,
             source_type=self.type,
             component=self.id,
-            id=self.id,
             *args, **kwargs
         )
 

@@ -45,6 +45,8 @@ class Event(object):
     CONNECTOR = 'canopsis'  #: default connector value
     CONNECTOR_NAME = 'engine'  #: default connector name
 
+    ENTITY = 'entity'  #: entity id item name
+
     __slots__ = (TYPE, SOURCE, DATA, META)
 
     def __init__(self, source, data, meta, _type=None):
@@ -101,6 +103,7 @@ logger = getLogger('event')
 
 def forger(
     event_type,
+    entity=None,
     connector=Event.CONNECTOR,
     connector_name=Event.CONNECTOR_NAME,
     source_type='component',
@@ -195,6 +198,9 @@ def forger(
         'output': output,
         'long_output': long_output,
     }
+
+    if entity:
+        dump[Event.ENTITY] = entity
 
     if resource:
         if source_type == 'component':

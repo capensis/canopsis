@@ -22,6 +22,7 @@ from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.storage import Storage
+from canopsis.event import Event
 
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
@@ -60,6 +61,8 @@ class Context(MiddlewareRegistry):
     DEFAULT_CONTEXT = [
         TYPE, 'connector', 'connector_name', 'component', 'resource'
     ]
+
+    ENTITY = Event.ENTITY  #: entity id in event
 
     def __init__(
         self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
@@ -109,29 +112,27 @@ class Context(MiddlewareRegistry):
 
         # get the right type which is type, or event_type or component/resource
         # if event_type is not an entity
-        event_type = _event['event_type']
-        if event_type not in ['check', 'downtime', 'ack']:
-            _type = event_type
-        else:
-            _type = _event['source_type']
+        _type = _event['source_type']
+        # try to get the right type if the event corresponds to the old system
+        if _type in self.context:
+            event_type = _event['event_type']
+            if event_type not in ['check', 'downtime', 'ack']:
+                _type = event_type
 
         # set type in event
         _event[Context.TYPE] = _type
 
         # set name if not given
-        if Context.NAME not in _event:
-            source_type = _event['source_type']
-            if source_type in _event:
-                _event[Context.NAME] = _event[source_type]
-            else:
-                for ctx in reversed(self.context):
-                    if ctx in _event and _event[ctx]:
-                        _event[Context.NAME] = _event[ctx]
-                        break
+        if Context.ENTITY not in _event:
+            for ctx in reversed(self.context):
+                if ctx in _event and _event[ctx]:
+                    _event[Context.NAME] = _event[ctx]
+                    del _event[ctx]
+                    break
         else:  # delete ctx field which matches with the ctx
             for ctx in reversed(self.context):
                 if ctx in _event:
-                    if _event[ctx] == _event[Context.NAME]:
+                    if _event[ctx] == _event[Context.ENTITY]:
                         del _event[ctx]
                     break
 
@@ -153,6 +154,27 @@ class Context(MiddlewareRegistry):
             result = ctx.copy()
             result[Context.NAME] = name
             result[Context.TYPE] = _type
+
+        return result
+
+    def get_name(self, entity_id, _type=None):
+        """Get entity name related to an entity_id.
+
+        :param str entity_id: entity id (in the form '/a/b/c/...').
+        :param str _type: context type such as component, resource, other, etc.
+            If None, get last entity name in entity_id.
+        """
+
+        result = None
+
+        names = entity_id.split('/')[1:]  # get names after the first '/'
+        try:
+            index = self.context.index(_type)  # get name index
+        except IndexError:
+            result = names[-1]  # in case of index error, get the last name
+        else:
+            if index < len(names):  # else get names[index]
+                result = names[index]
 
         return result
 
