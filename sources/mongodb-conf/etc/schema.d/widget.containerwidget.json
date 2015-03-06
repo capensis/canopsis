@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"metadata": {
-		"classes": ["system", "container"]
+		"classes": ["container"]
 	},
 	"properties": {
 		"title": {"type": "string"},

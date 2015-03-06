@@ -1,5 +1,8 @@
 {
 	"type": "object",
+	"metadata": {
+		"classes": ["system"]
+	},
 	"properties": {
 		"title": {"type": "string"},
 		"xtype": {"type": "string"},

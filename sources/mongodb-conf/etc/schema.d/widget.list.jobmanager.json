@@ -1,5 +1,8 @@
 {
     "type": "object",
+    "metadata": {
+        "classes": ["system"]
+    },
     "categories": [{
         "title": "General",
         "keys":["title", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
