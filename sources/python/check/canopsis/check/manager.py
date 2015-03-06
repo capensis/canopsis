@@ -36,6 +36,18 @@ CATEGORY = 'CHECK'
 CONF_PATH = 'check/check.conf'
 
 
+class InvalidState(Exception):
+    def __init__(self, state, states):
+        self.state = state
+        self.states = states
+
+    def __str__(self):
+        return 'Invalid state: got value {}, expected one of {}'.format(
+            self.state,
+            self.states
+        )
+
+
 @add_category(CATEGORY, content=Parameter('types', parser=Parameter.array()))
 @conf_paths(CONF_PATH)
 class CheckManager(MiddlewareRegistry):
@@ -65,6 +77,7 @@ class CheckManager(MiddlewareRegistry):
 
     #: default function to apply when changing of state
     DEFAULT_F = 'canopsis.check.task.criticity'
+    valid_states = [0, 1, 2, 3]
 
     def __init__(self, types=None, *args, **kwargs):
 
@@ -72,6 +85,7 @@ class CheckManager(MiddlewareRegistry):
 
         self.types = types
 
+    # TODO , is it used, is it usefull to manage state this way
     def state(self, ids, state=None, criticity=HARD, f=DEFAULT_F, cache=False):
         """
         Get entity states.
@@ -168,6 +182,12 @@ class CheckManager(MiddlewareRegistry):
 
         return result
 
+    """
+    Simple way to manage states.
+    The following methods allow crud operation on a state in database
+    with only a data couple of on identifier and an ID
+    """
+
     def del_state(self, ids=None, cache=False):
         """
         Delete states related to input ids. If ids is None, delete all states.
@@ -178,3 +198,29 @@ class CheckManager(MiddlewareRegistry):
         """
 
         self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids, cache=cache)
+
+    def put_state(self, entity_id, state, cache=False):
+        """
+        Allow persistance of a state
+
+        :param entity_id: the identifier for the entity
+        :param state: the state to persist
+        """
+
+        if state not in self.valid_states or not type(state) == int:
+            raise InvalidState(state, self.valid_states)
+
+        self[CheckManager.CHECK_STORAGE].put_element(
+            _id=entity_id, element={'state': state}, cache=cache
+        )
+
+    def get_state(self, ids=None):
+        """
+        Retrieve state from database depending on an id list
+
+        :param ids: a list of identifier that may have a state in database
+        """
+        states = self[CheckManager.CHECK_STORAGE].get_elements(
+            ids=ids
+        )
+        return states
