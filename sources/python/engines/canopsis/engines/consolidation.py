@@ -172,7 +172,7 @@ class engine(Engine):
         _to = 1425402296
         t_serie['aggregate_interval'] = 60
         t_serie['aggregate_method'] = 'average'
-        timewindow = {'start': _from, 'stop': _to, 'timezone':gmtime()}        
+        timewindow = {'start':_from, 'stop':_to, 'timezone':gmtime()}        
 
         m_id = serie['metrics']
         timeserie = {'aggregation':t_serie['aggregate_method'], 'period':{'second':t_serie['aggregate_interval']}}
@@ -181,7 +181,7 @@ class engine(Engine):
         #results, _ = self.perf_data.perfdata(metric_id=m_id)
         self.logger.debug(results[0])
         _, points = self.fetch(serie, _from, _to)
-        # Update time series data
+        # Update time series consolidation data
         self.manager.put(metric_id=serie['_id'], points=points)
 
         event_id = event['_id']
