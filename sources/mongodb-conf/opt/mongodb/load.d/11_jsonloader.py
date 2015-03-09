@@ -22,7 +22,7 @@
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.record import Record
-from socket import gethostname
+from socket import getfqdn
 import os
 import json
 import pprint
@@ -118,7 +118,7 @@ def replace_value(replace_string):
 
     # Macro to replace in documents with the value as tuple (MACRO, REPLACE)
     replacements = [
-        ('[[HOSTNAME]]', gethostname()),
+        ('[[HOSTNAME]]', getfqdn()),
     ]
 
     for replacement in replacements:
