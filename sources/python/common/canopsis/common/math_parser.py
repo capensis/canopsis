@@ -47,16 +47,28 @@ class Formulas(object):
         self._dict = _dict  # The dictionnary value as dictionnary {'x':2}
 
     def push_first(self, strg, loc, toks):
-        '''abs'''
+        '''
+        Define an action to apply on the matched tokens
+        :param strg: is the original parse string
+        :param loc: is the location in the string where matching started
+        :param toks: is the lis of the matched tokens
+        '''
         self.exprStack.append(toks[0])
 
     def push_minus(self, strg, loc, toks):
+        '''
+        Define an action to apply on the matched tokens
+        :param strg: is the original parse string.
+        :param loc: is the location in the string where matching started.
+        :param toks: is the lis of the matched tokens.
+        '''
         if toks and toks[0] == '-':
             self.exprStack.append('unary -')
 
     def _import(self, _dict):
         '''
         set variables data.
+        :param _dict: variables dictionnary.
         '''
         self._dict = _dict
 
