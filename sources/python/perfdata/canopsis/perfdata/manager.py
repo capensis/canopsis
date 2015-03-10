@@ -263,7 +263,7 @@ class PerfData(MiddlewareRegistry):
         parser = PerfDataParser(perf_data_raw)
         result = parser.perf_data_array
 
-        return perf_data_array
+        return result
 
     def is_internal(self, metric):
 
