@@ -1,5 +1,110 @@
 #!/opt/canopsis/bin/python
-# EASY-INSTALL-SCRIPT: 'canopsis.tools==0.1','webmodulemanager'
-__requires__ = 'canopsis.tools==0.1'
-import pkg_resources
-pkg_resources.run_script('canopsis.tools==0.1', 'webmodulemanager')
+# -*- coding: utf-8 -*-
+
+# --------------------------------
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+import os
+import sys
+from json import loads, dumps
+
+import argparse
+
+"""
+This module aims to manager registed webcore modules in canopsis
+by allowing to add/remove module from enabled.json list in webcore.
+"""
+
+enabled_json = os.path.join(
+    sys.prefix,
+    'var',
+    'www',
+    'canopsis',
+    'enabled.json'
+)
+
+
+def log(message):
+    print(message)
+
+
+def load_list():
+    with open(enabled_json) as f:
+        enabled_list = loads(f.read())
+        return enabled_list
+
+
+def save_list(enabled_list):
+    with open(enabled_json, 'w') as f:
+        f.write(dumps(enabled_list))
+
+
+def add_module(module_name):
+    enabled_list = load_list()
+    if module_name not in enabled_list:
+        enabled_list.append(module_name)
+        save_list(enabled_list)
+        log('Added {} module'.format(module_name))
+    else:
+        log('Module {} already registered'.format(module_name))
+
+
+def remove_module(module_name):
+    enabled_list = load_list()
+    if module_name in enabled_list:
+        enabled_list.remove(module_name)
+        save_list(enabled_list)
+        log('Removed {} module'.format(module_name))
+    else:
+        log('Could not remove module {} as not registered'.format(module_name))
+
+if __name__ == '__main__':
+
+    if not os.path.isfile(enabled_json):
+        log('File not found {}'.format(enabled_json))
+        sys.exit(1)
+
+    parser = argparse.ArgumentParser(
+        description='Canopsis webcore module manager'
+    )
+    parser.add_argument(
+        'action',
+        type=str,
+        help='What operation to perform on web modules',
+        choices=['add', 'remove']
+    )
+    parser.add_argument(
+        'module_name',
+        type=str,
+        help='The module to manage'
+    )
+
+    args = vars(parser.parse_args())
+
+    action = {
+        'add': add_module,
+        'remove': remove_module,
+    }[args['action']]
+
+    try:
+        action(args['module_name'])
+    except Exception as e:
+        log('Unable to perform action {}'.format(
+            args['action']
+        ))
