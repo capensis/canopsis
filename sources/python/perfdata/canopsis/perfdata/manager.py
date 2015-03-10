@@ -169,7 +169,7 @@ class PerfData(MiddlewareRegistry):
             first_point = points[0]
             # if first_point is a timestamp, points is one point
             if isinstance(first_point, (int, float, str)):
-                # transform points into a tuple
+                # transform points into a tuple
                 points = (points,)
 
             period = self.get_period(metric_id=metric_id, period=period)
@@ -242,23 +242,26 @@ class PerfData(MiddlewareRegistry):
 
             result = DEFAULT_PERIOD
             # TODO: restore when the period will be specified by entity
-            #entity = self.context.get_entities(ids=metric_id)
+            # entity = self.context.get_entities(ids=metric_id)
 
-            #if entity is not None and 'period' in entity:
-                #result = Period(**entity['period'])
+            # if entity is not None and 'period' in entity:
+            #     result = Period(**entity['period'])
 
         return result
 
     def parse_perfdata(self, perf_data_raw):
+        """Try to get a perf data array from input perf_data_raw.
+
+        :param str perf_data_raw: perf_data_raw to parse.
+        :return: array of perfdata.
+        :rtype: list
+        :raises: parsing error if perf_data_raw is not in an understood format.
+        """
+
         self.logger.debug("Parse: {0}".format(perf_data_raw))
 
-        try:
-            parser = PerfDataParser(perf_data_raw)
-            perf_data_array = parser.perf_data_array
-
-        except Exception as err:
-            self.logger.error('Impossible to parse perfdata: {0}'.format(err))
-            perf_data_array = []
+        parser = PerfDataParser(perf_data_raw)
+        result = parser.perf_data_array
 
         return perf_data_array
 
