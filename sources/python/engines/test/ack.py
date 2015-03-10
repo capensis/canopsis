@@ -29,7 +29,7 @@ from sys import path
 from time import time, sleep
 
 from canopsis.old.rabbitmq import Amqp
-from canopsis.old.event import get_routingkey
+from canopsis.event import get_routingkey
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
@@ -43,7 +43,7 @@ before_ack_sent = time()
 
 # Mock ready function for amqp
 def ready():
-    self.logger.info(" Amqp Ready!")
+    pass
 
 amqp = Amqp(
     logging_level=INFO,

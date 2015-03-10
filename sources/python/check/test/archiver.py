@@ -21,6 +21,7 @@
 from unittest import TestCase, main
 
 from canopsis.check.archiver import Archiver
+from time import time
 
 ARCHIVER = None
 
@@ -59,7 +60,8 @@ class KnownValues(TestCase):
             'rk': 'test_03_check_statuses',
             'status': 0,
             'timestamp': 14400,
-            'state': 0
+            'state': 0,
+            'last_state_change': 14090
         }
 
         # Check that event stays off even if it appears

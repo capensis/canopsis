@@ -21,7 +21,7 @@
 from canopsis.engines import Engine
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
-from canopsis.old.event import forger, get_routingkey
+from canopsis.event import forger, get_routingkey
 from canopsis.perfdata.manager import PerfData
 from canopsis.common.math_parser import Formulas
 from canopsis.engines.perfdata_utils.perfDataUtils import PerfDataUtils

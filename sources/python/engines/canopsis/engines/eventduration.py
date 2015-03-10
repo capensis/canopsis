@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.engines import Engine
-from canopsis.old.event import get_routingkey
+from canopsis.event import get_routingkey
 
 from time import time
 

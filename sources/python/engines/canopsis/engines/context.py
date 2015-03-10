@@ -100,9 +100,11 @@ class engine(Engine):
         # Get event informations
         hostgroups = event.get('hostgroups', [])
         servicegroups = event.get('servicegroups', [])
-        source_type = event['source_type']
         component = event.get('component')
         resource = event.get('resource')
+        # quick fix when an event has an empty resource
+        if 'resource' in event and not resource:
+            del event['resource']
 
         # get a copy of event
         _event = event.copy()

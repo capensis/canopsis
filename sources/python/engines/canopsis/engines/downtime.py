@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.engines import Engine
-from canopsis.old.event import get_routingkey, forger
+from canopsis.event import get_routingkey, forger
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.record import Record

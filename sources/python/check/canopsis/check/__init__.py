@@ -29,13 +29,14 @@ class Check(Event):
     Manage checking event with state and status information
     """
 
-    STATE = 'state'
-    STATUS = 'status'
+    STATE = 'state'  #: event state field name
+    STATUS = 'status'  #: event status field name
+    EVENT_TYPE = 'check'  #: check event type
 
-    OK = 0
-    MINOR = 1
-    MAJOR = 2
-    CRITICAL = 3
+    OK = 0  #: ok state value
+    MINOR = 1  #: minor state value
+    MAJOR = 2  #: major state value
+    CRITICAL = 3  #: critical state value
 
     def __init__(self, source, state, status, meta):
 

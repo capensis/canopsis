@@ -231,7 +231,7 @@ class GetEntityTest(BaseContextTest):
 
         event = {
             'event_type': 'test',
-            'src_type': 'component',
+            'source_type': 'component',
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'example'
@@ -240,7 +240,7 @@ class GetEntityTest(BaseContextTest):
             'type': 'test',
             'connector': 'c',
             'connector_name': 'cn',
-            'id': 'example'
+            Context.NAME: 'example'
         }
         self._assert_entity_id(event, entity)
 
@@ -250,12 +250,12 @@ class GetEntityTest(BaseContextTest):
 
         event = {
             'event_type': 'test',
-            'src_type': 'connector',
+            'source_type': 'connector',
             'connector': 'c',
         }
         entity = {
             'type': 'test',
-            'id': 'c',
+            Context.NAME: 'c',
         }
         self._assert_entity_id(event, entity)
 
@@ -266,14 +266,14 @@ class GetEntityTest(BaseContextTest):
         # assert to get a connector name id
         event = {
             'event_type': 'test',
-            'src_type': 'connector_name',
+            'source_type': 'connector_name',
             'connector': 'c',
             'connector_name': 'cn'
         }
         entity = {
             'type': 'test',
             'connector': 'c',
-            'id': 'cn',
+            Context.NAME: 'cn',
         }
         self._assert_entity_id(event, entity)
 
@@ -283,7 +283,7 @@ class GetEntityTest(BaseContextTest):
 
         event = {
             'event_type': 'test',
-            'src_type': 'component',
+            'source_type': 'component',
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'k'
@@ -292,7 +292,7 @@ class GetEntityTest(BaseContextTest):
             'type': 'test',
             'connector': 'c',
             'connector_name': 'cn',
-            'id': 'k',
+            Context.NAME: 'k',
         }
         self._assert_entity_id(event, entity)
 
@@ -302,7 +302,7 @@ class GetEntityTest(BaseContextTest):
 
         event = {
             'event_type': 'test',
-            'src_type': 'resource',
+            'source_type': 'resource',
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'k',
@@ -313,7 +313,7 @@ class GetEntityTest(BaseContextTest):
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'k',
-            'id': 'r',
+            Context.NAME: 'r',
         }
         self._assert_entity_id(event, entity)
 
@@ -323,18 +323,16 @@ class GetEntityTest(BaseContextTest):
 
         event = {
             'event_type': 'test',
-            'src_type': 'component',
+            'source_type': 'component',
             'connector': 'c',
             'connector_name': 'cn',
-            'component': 'k',
-            'id': 'o'
+            'component': 'k'
         }
         entity = {
             'type': 'test',
             'connector': 'c',
             'connector_name': 'cn',
-            'component': 'k',
-            'id': 'o',
+            Context.NAME: 'k'
         }
         self._assert_entity_id(event, entity)
 
@@ -344,20 +342,60 @@ class GetEntityTest(BaseContextTest):
 
         event = {
             'event_type': 'test',
-            'src_type': 'resource',
+            'source_type': 'resource',
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'k',
-            'resource': 'r',
-            'id': 'o'
+            'resource': 'r'
         }
         entity = {
             'type': 'test',
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'k',
-            'resource': 'r',
-            'id': 'o',
+            Context.NAME: 'r',
+        }
+        self._assert_entity_id(event, entity)
+
+    def test_get_entity_id_other_check_type(self):
+        """Test get_entity_id from a resource other data.
+        """
+
+        event = {
+            'event_type': 'check',
+            'source_type': 'resource',
+            'connector': 'c',
+            'connector_name': 'cn',
+            'component': 'k',
+            'resource': 'r'
+        }
+        entity = {
+            'type': 'resource',
+            'connector': 'c',
+            'connector_name': 'cn',
+            'component': 'k',
+            Context.NAME: 'r',
+        }
+        self._assert_entity_id(event, entity)
+
+    def test_get_entity_id_other_other_check_type(self):
+        """Test get_entity_id from a resource other data.
+        """
+
+        event = {
+            'event_type': 'check',
+            'source_type': 'other',
+            'connector': 'c',
+            'connector_name': 'cn',
+            'component': 'k',
+            'resource': 'r'
+        }
+        entity = {
+            'type': 'other',
+            'connector': 'c',
+            'connector_name': 'cn',
+            'component': 'k',
+            Context.NAME: 'r'
         }
         self._assert_entity_id(event, entity)
 
@@ -378,14 +416,7 @@ class ContextEntityTest(BaseContextTest):
         # assert to get a connector id
         entity = {
             'type': 'connector',
-            'id': 'c'
-        }
-        self._assert_entity_id(entity, '/connector/c')
-
-        entity = {
-            'type': 'connector',
-            'connector': 'c',
-            'id': 'c'
+            Context.NAME: 'c'
         }
         self._assert_entity_id(entity, '/connector/c')
 
@@ -397,15 +428,7 @@ class ContextEntityTest(BaseContextTest):
         entity = {
             'type': 'connector_name',
             'connector': 'c',
-            'id': 'cn'
-        }
-        self._assert_entity_id(entity, '/connector_name/c/cn')
-
-        entity = {
-            'type': 'connector_name',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'id': 'cn'
+            Context.NAME: 'cn'
         }
         self._assert_entity_id(entity, '/connector_name/c/cn')
 
@@ -417,16 +440,7 @@ class ContextEntityTest(BaseContextTest):
             'type': 'component',
             'connector': 'c',
             'connector_name': 'cn',
-            'id': 'k'
-        }
-        self._assert_entity_id(entity, '/component/c/cn/k')
-
-        entity = {
-            'type': 'component',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'k',
-            'id': 'k'
+            Context.NAME: 'k'
         }
         self._assert_entity_id(entity, '/component/c/cn/k')
 
@@ -439,17 +453,7 @@ class ContextEntityTest(BaseContextTest):
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'k',
-            'id': 'r'
-        }
-        self._assert_entity_id(entity, '/resource/c/cn/k/r')
-
-        entity = {
-            'type': 'resource',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'k',
-            'resource': 'r',
-            'id': 'r'
+            Context.NAME: 'r'
         }
         self._assert_entity_id(entity, '/resource/c/cn/k/r')
 
@@ -462,17 +466,7 @@ class ContextEntityTest(BaseContextTest):
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'k',
-            'id': 'o'
-        }
-        self._assert_entity_id(entity, '/other/c/cn/k/o')
-
-        entity = {
-            'type': 'other',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'k',
-            'other': 'o',
-            'id': 'o'
+            Context.NAME: 'o'
         }
         self._assert_entity_id(entity, '/other/c/cn/k/o')
 
@@ -487,17 +481,7 @@ class ContextEntityTest(BaseContextTest):
             'component': 'k',
             'resource': 'r',
             'other': 'o',
-            'id': 'o'
-        }
-        self._assert_entity_id(entity, '/other/c/cn/k/r/o')
-
-        entity = {
-            'type': 'other',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'k',
-            'resource': 'r',
-            'id': 'o'
+            Context.NAME: 'o'
         }
         self._assert_entity_id(entity, '/other/c/cn/k/r/o')
 
@@ -522,7 +506,7 @@ class EntityIdContextTest(BaseContextTest):
         result = {}
 
         for ctx in self.context.context:
-            if ctx in entity and entity['id'] != entity[ctx]:
+            if ctx in entity and entity[Context.NAME] != entity[ctx]:
                 result[ctx] = entity[ctx]
 
         return result
@@ -534,15 +518,7 @@ class EntityIdContextTest(BaseContextTest):
         # assert to get a connector id
         entity = {
             'type': 'connector',
-            'id': 'c'
-        }
-        path = self._get_path(entity)
-        self._assert_entity_id(entity, '/connector/c', path, 'c')
-
-        entity = {
-            'type': 'connector',
-            'connector': 'c',
-            'id': 'c'
+            Context.NAME: 'c'
         }
         path = self._get_path(entity)
         self._assert_entity_id(entity, '/connector/c', path, 'c')
@@ -555,17 +531,7 @@ class EntityIdContextTest(BaseContextTest):
         entity = {
             'type': 'connector_name',
             'connector': 'c',
-            'id': 'cn'
-        }
-        path = self._get_path(entity)
-        self._assert_entity_id(entity, '/connector_name/c/cn', path, 'cn')
-
-        # assert to get a connector name id
-        entity = {
-            'type': 'connector_name',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'id': 'cn'
+            Context.NAME: 'cn'
         }
         path = self._get_path(entity)
         self._assert_entity_id(entity, '/connector_name/c/cn', path, 'cn')
@@ -578,17 +544,7 @@ class EntityIdContextTest(BaseContextTest):
             'type': 'component',
             'connector': 'c',
             'connector_name': 'cn',
-            'id': 'k'
-        }
-        path = self._get_path(entity)
-        self._assert_entity_id(entity, '/component/c/cn/k', path, 'k')
-
-        entity = {
-            'type': 'component',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'k',
-            'id': 'k'
+            Context.NAME: 'k'
         }
         path = self._get_path(entity)
         self._assert_entity_id(entity, '/component/c/cn/k', path, 'k')
@@ -602,18 +558,7 @@ class EntityIdContextTest(BaseContextTest):
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'k',
-            'id': 'r'
-        }
-        path = self._get_path(entity)
-        self._assert_entity_id(entity, '/resource/c/cn/k/r', path, 'r')
-
-        entity = {
-            'type': 'resource',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'k',
-            'resource': 'r',
-            'id': 'r'
+            Context.NAME: 'r'
         }
         path = self._get_path(entity)
         self._assert_entity_id(entity, '/resource/c/cn/k/r', path, 'r')
@@ -627,18 +572,7 @@ class EntityIdContextTest(BaseContextTest):
             'connector': 'c',
             'connector_name': 'cn',
             'component': 'k',
-            'id': 'o'
-        }
-        path = self._get_path(entity)
-        self._assert_entity_id(entity, '/other/c/cn/k/o', path, 'o')
-
-        entity = {
-            'type': 'other',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'k',
-            'other': 'o',
-            'id': 'o'
+            Context.NAME: 'o'
         }
         path = self._get_path(entity)
         self._assert_entity_id(entity, '/other/c/cn/k/o', path, 'o')
@@ -653,23 +587,85 @@ class EntityIdContextTest(BaseContextTest):
             'connector_name': 'cn',
             'component': 'k',
             'resource': 'r',
-            'id': 'o'
+            Context.NAME: 'o'
         }
         path = self._get_path(entity)
         self._assert_entity_id(entity, '/other/c/cn/k/r/o', path, 'o')
 
-        entity = {
-            'type': 'other',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'k',
-            'resource': 'r',
-            'other': 'o',
-            'id': 'o'
-        }
-        path = self._get_path(entity)
-        self._assert_entity_id(entity, '/other/c/cn/k/r/o', path, 'o')
 
+class GetNameTest(BaseContextTest):
+    """Test get_name method.
+    """
+
+    def setUp(self):
+
+        super(GetNameTest, self).setUp()
+
+        self.entity_id = '/a/b/c/d/e/f'
+
+    def _assert_name(self, _type, result, entity_id=None):
+        """Assert get_name(self.entity_id) result with input result.
+
+        :param str _type: get_name parameter _type.
+        :param str result: value to compare with get_name result.
+        :param str entity_id: first get_name parameter. If None, use
+            self.entity_id.
+        """
+
+        if entity_id is None:
+            entity_id = self.entity_id
+
+        name = self.context.get_name(entity_id, _type=_type)
+
+        self.assertEqual(name, result)
+
+    def test_type_none(self):
+        """Test with _type is None.
+        """
+
+        self._assert_name(_type=None, result='f')
+
+    def test_type(self):
+        """Test with _type is type.
+        """
+
+        self._assert_name(_type='type', result='a')
+
+    def test_connector(self):
+        """Test with _type is connector.
+        """
+
+        self._assert_name(_type='connector', result='b')
+
+    def test_connector_name(self):
+        """Test with _type is connector_name.
+        """
+
+        self._assert_name(_type='connector_name', result='c')
+
+    def test_component(self):
+        """Test with _type is component.
+        """
+
+        self._assert_name(_type='component', result='d')
+
+    def test_resource(self):
+        """Test with _type is resource.
+        """
+
+        self._assert_name(_type='resource', result='e')
+
+    def test_other(self):
+        """Test with _type is other.
+        """
+
+        self._assert_name(_type='other', result='f')
+
+    def test_error(self):
+        """Test with _type is not in entity_id.
+        """
+
+        self._assert_name(_type='resource', result=None, entity_id='/a/b')
 
 if __name__ == '__main__':
     main()

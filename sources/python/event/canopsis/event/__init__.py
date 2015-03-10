@@ -20,7 +20,13 @@
 
 __version__ = "0.1"
 
-from canopsis.old.event import forger as eforger
+from socket import setdefaulttimeout, getfqdn, gethostname, gethostbyaddr
+from time import time
+from re import compile as re_compile
+from logging import getLogger
+
+from canopsis.old.storage import get_storage
+from canopsis.old.account import Account
 
 
 class Event(object):
@@ -38,6 +44,8 @@ class Event(object):
 
     CONNECTOR = 'canopsis'  #: default connector value
     CONNECTOR_NAME = 'engine'  #: default connector name
+
+    ENTITY = 'entity'  #: entity id item name
 
     __slots__ = (TYPE, SOURCE, DATA, META)
 
@@ -81,35 +89,207 @@ class Event(object):
         return result
 
 
+# Change default timeout from 1 to 3 , conflict with gunicorn
+setdefaulttimeout(3)
+
+regexp_ip = re_compile(
+    "([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})")
+
+dns_cache = {}
+cache_time = 60 * 30  # 30min
+
+logger = getLogger('event')
+
+
 def forger(
     event_type,
-    connector=None, connector_name=None, component=None, resource=None,
+    entity=None,
+    connector=Event.CONNECTOR,
+    connector_name=Event.CONNECTOR_NAME,
+    source_type='component',
+    component=None,
+    resource=None,
+    timestamp=None,
+    state=0,
+    state_type=1,
+    output=None,
+    long_output=None,
+    perf_data=None,
+    perf_data_array=None,
+    address=None,
+    domain=None,
+    reverse_lookup=True,
+    display_name=None,
+    tags=[],
+    ticket=None,
+    ref_rk=None,
+    component_problem=False,
+    author=None,
+    perimeter=None,
+    keep_state=None,
     **kwargs
 ):
-    """
-    Forge an event from input parameters.
-    """
 
-    # init parameters
-    if connector is None:
-        connector = Event.CONNECTOR
-    if connector_name is None:
-        connector_name = Event.CONNECTOR_NAME
-    # construct the event
-    result = eforger(
-        connector=connector,
-        connector_name=connector_name,
-        event_type=event_type,
-        component=component
-    )
-    # try to put resource
-    if resource is not None:
-        result['resource'] = resource
-        result['source_type'] = 'resource'
-    else:
-        # or specify source type is a component
-        result['source_type'] = 'component'
+    if not timestamp:
+        timestamp = int(time())
 
-    result.update(kwargs)
+    if not component:
+        component = getfqdn()
+        if not component:
+            component = gethostname()
 
-    return result
+    if not state:
+        state = 0
+
+    if not address:
+        if bool(regexp_ip.match(component)):
+            address = component
+            if reverse_lookup:
+                dns = None
+
+                # get from cache
+                try:
+                    (timestamp, dns) = dns_cache[address.replace('.', '-')]
+                    logger.info("Use DNS lookup from cache")
+                    if (timestamp + cache_time) < int(time()):
+                        logger.info(" + Cache is too old")
+                        del dns_cache[address.replace('.', '-')]
+                        dns = None
+                except:
+                    logger.info(" + '%s' not in cache" % address)
+
+                # reverse lookup
+                if not dns:
+                    try:
+                        logger.info(
+                            "DNS reverse lookup for '%s' ..." % address)
+                        dns = gethostbyaddr(address)
+                        logger.info(" + Succes: '%s'" % dns[0])
+                        dns_cache[address.replace('.', '-')] = \
+                            (int(time()), dns)
+                    except:
+                        logger.info(" + Failed")
+
+                # Dns ok
+                if dns:
+                    # Split FQDN
+                    fqdn = dns[0]
+                    component = fqdn.split('.', 1)[0]
+                    if not domain:
+                        try:
+                            domain = fqdn.split('.', 1)[1]
+                        except:
+                            pass
+
+                if dns:
+                    logger.info(" + Component: %s" % component)
+                    logger.info(" + Address:   %s" % address)
+                    logger.info(" + Domain:    %s" % domain)
+
+    dump = {
+        'connector': connector,
+        'connector_name': connector_name,
+        'event_type': event_type,
+        'source_type': source_type,
+        'component': component,
+        'timestamp': timestamp,
+        'state': state,
+        'state_type': state_type,
+        'output': output,
+        'long_output': long_output,
+    }
+
+    if entity:
+        dump[Event.ENTITY] = entity
+
+    if resource:
+        if source_type == 'component':
+            dump['source_type'] = 'resource'
+        dump['resource'] = resource
+
+    if author is not None:
+        dump["author"] = author
+
+    if perimeter:
+        dump["perimeter"] = perimeter
+
+    if keep_state:
+        dump["keep_state"] = keep_state
+
+    if perf_data:
+        dump["perf_data"] = perf_data
+
+    if perf_data_array:
+        dump["perf_data_array"] = perf_data_array
+
+    if address:
+        dump["address"] = address
+
+    if domain:
+        dump["domain"] = domain
+
+    if tags:
+        dump["tags"] = tags
+
+    if display_name:
+        dump["display_name"] = display_name
+
+    if ticket:
+        dump["ticket"] = ticket
+
+    if ref_rk:
+        dump["ref_rk"] = ref_rk
+
+    if event_type == 'check' and resource:
+        dump['component_problem'] = component_problem
+
+    if kwargs:
+        dump.update(kwargs)
+
+    return dump
+
+
+def get_routingkey(event):
+    rk = "%s.%s.%s.%s.%s" % (
+        event['connector'], event['connector_name'], event['event_type'],
+        event['source_type'], event['component'])
+
+    if 'resource' in event and event['resource']:
+        rk += ".%s" % event['resource']
+
+    return rk
+
+
+def is_component_problem(event):
+    if event.get('resource', False) and event['state'] != 0:
+        storage = get_storage(
+            namespace='entities',
+            account=Account(user='root', group='root')).get_backend()
+
+        component = storage.find_one({
+            'type': 'component',
+            'name': event['component']
+        })
+
+        if component and 'state' in component and component['state'] != 0:
+            return True
+
+    return False
+
+
+def is_host_acknowledged(event):
+    if is_component_problem(event):
+        storage = get_storage(
+            namespace='entities',
+            account=Account(user='root', group='root')).get_backend()
+
+        ack = storage.find_one({
+            'type': 'ack',
+            'component': event['component'],
+            'resource': None
+        })
+
+        if ack:
+            return True
+
+    return False
