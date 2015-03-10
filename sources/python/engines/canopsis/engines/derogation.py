@@ -24,6 +24,7 @@ from canopsis.old.account import Account
 from canopsis.event import get_routingkey, forger
 from canopsis.old.statemap import Statemap
 from canopsis.old.mfilter import check
+from canopsis.common.init import basestring
 
 from time import time
 
@@ -48,7 +49,11 @@ class engine(Engine):
         conditions = derogation.get('time_conditions', None)
 
         if not isinstance(conditions, list):
-            self.logger.error("Invalid time conditions field in '%s': %s" % (derogation['_id'], conditions))
+            self.logger.error(
+                "Invalid time conditions field in '%s': %s" % (
+                    derogation['_id'], conditions
+                )
+            )
             self.logger.debug(derogation)
             return False
 
@@ -76,7 +81,11 @@ class engine(Engine):
             conditions = loads(conditions_json)
 
         except ValueError:
-            self.logger.error("Invalid conditions field in '%s': %s" % (derogation['_id'], conditions_json))
+            self.logger.error(
+                "Invalid conditions field in '%s': %s" % (
+                    derogation['_id'], conditions_json
+                )
+            )
             self.logger.debug(derogation)
 
             return False
@@ -119,7 +128,11 @@ class engine(Engine):
                 afield = action.get('field', None)
                 avalue = action.get('value', None)
 
-                self.logger.debug("    + %s: Override: '%s' -> '%s'" % (event['rk'], afield, avalue))
+                self.logger.debug(
+                    "    + %s: Override: '%s' -> '%s'" % (
+                        event['rk'], afield, avalue
+                    )
+                )
 
                 if afield and avalue:
                     event[afield] = avalue
@@ -127,28 +140,46 @@ class engine(Engine):
                     derogated = True
 
                 else:
-                    self.logger.error("Action malformed (needs 'field' and 'value'): %s" % action)
+                    self.logger.error(
+                        "Action malformed (needs 'field' and 'value'): %s" %
+                        action
+                    )
 
             elif atype == "requalificate":
                 statemap_id = action.get('statemap', None)
 
-                self.logger.debug("    + %s: Requalificate using statemap '%s'" % (event['rk'], statemap_id))
+                self.logger.debug(
+                    "+ %s: Requalificate using statemap '%s'" % (
+                        event['rk'], statemap_id
+                    )
+                )
 
                 if statemap_id:
-                    record = self.storage.find_one(mfilter={'crecord_type': 'statemap', '_id': statemap_id})
+                    record = self.storage.find_one(
+                        mfilter={
+                            'crecord_type': 'statemap',
+                            '_id': statemap_id
+                        }
+                    )
 
                     if not record:
-                        self.logger.error("Statemap '%s' not found" % statemap_id)
+                        self.logger.error(
+                            "Statemap '%s' not found" % statemap_id
+                        )
 
                     statemap = Statemap(record=record)
 
                     event['real_state'] = event['state']
-                    event['state'] = statemap.get_mapped_state(event['real_state'])
+                    event['state'] = statemap.get_mapped_state(
+                        event['real_state']
+                    )
 
                     derogated = True
 
                 else:
-                    self.logger.error("Action malformed (needs 'statemap'): %s" % action)
+                    self.logger.error(
+                        "Action malformed (needs 'statemap'): %s" % action
+                    )
 
             else:
                 self.logger.warning("Unknown action '%s'" % atype)
@@ -168,14 +199,19 @@ class engine(Engine):
             event['state'] = 0
             self.logger.debug('derogation to apply on event')
         else:
-            self.logger.debug('no derogation to apply on event %s ' , (str(event)) )
+            self.logger.debug(
+                'no derogation to apply on event {0}'.format(event)
+            )
 
         for derogation in self.derogations:
             # Check Time
             if self.time_conditions(derogation):
                 # Check conditions
                 if self.conditions(event, derogation):
-                    self.logger.debug("%s is in %s (%s)" % (event['rk'], derogation['crecord_name'], derogation['_id']))
+                    self.logger.debug("%s is in %s (%s)" % (
+                        event['rk'], derogation['crecord_name'],
+                        derogation['_id'])
+                    )
 
                     # Actions
                     return self.actions(event, derogation)
@@ -190,12 +226,16 @@ class engine(Engine):
 
         if active:
             if not dactive:
-                self.logger.info("%s (%s) is now active" % (derogation['crecord_name'], derogation['_id']))
+                self.logger.info("%s (%s) is now active" % (
+                    derogation['crecord_name'], derogation['_id'])
+                )
                 self.storage.update(derogation['_id'], {'active': True})
                 notify = True
         else:
             if dactive:
-                self.logger.info("%s (%s) is now inactive" % (derogation['crecord_name'], derogation['_id']))
+                self.logger.info("%s (%s) is now inactive" % (
+                    derogation['crecord_name'], derogation['_id'])
+                )
                 self.storage.update(derogation['_id'], {'active': False})
                 notify = True
 
@@ -223,14 +263,16 @@ class engine(Engine):
     def beat(self):
         self.derogations = []
 
-        ## Extract ids
-        records = self.storage.find(
+        # Extract ids
+        self.storage.find(
             {
                 'crecord_type': 'derogation',
                 'enable': True,
                 'actions': {'$exists': True},
-                'conditions': {'$exists': True}},
-                namespace="object")
+                'conditions': {'$exists': True}
+            },
+            namespace="object"
+        )
 
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Consolidate metrics:")
