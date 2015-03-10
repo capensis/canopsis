@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines import Engine
+from canopsis.engines.core import Engine
 from canopsis.perfdata.manager import PerfData
 from canopsis.context.manager import Context
 
