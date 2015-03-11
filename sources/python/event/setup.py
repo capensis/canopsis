@@ -21,7 +21,7 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common']
+install_requires = ['canopsis.old', 'canopsis.common']
 
 setup(
     description='Canopsis event library',

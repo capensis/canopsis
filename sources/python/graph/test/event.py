@@ -22,7 +22,6 @@
 from unittest import TestCase, main
 
 from canopsis.task import register_task
-from canopsis.graph.elements import Vertice
 from canopsis.graph.event import TaskedVertice, TaskedEdge, TaskedGraph
 
 

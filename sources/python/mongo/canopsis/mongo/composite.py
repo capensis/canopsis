@@ -68,7 +68,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         # get the right hint
         self_path = self.path
         hint = []
-        for p in self_path:
+        for index, p in enumerate(self_path):
             if p in path:
                 hint.append((p, 1))
         else:

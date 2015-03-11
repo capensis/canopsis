@@ -28,7 +28,8 @@ from canopsis.graph.elements import Vertice, Edge, Graph
 from canopsis.graph.manager import GraphManager
 from canopsis.context.manager import Context
 from canopsis.task import register_task, run_task
-from canopsis.event import forger
+from canopsis.event import forger, Event
+from canopsis.check import Check
 
 _context = Context()
 graph = GraphManager()
@@ -37,7 +38,7 @@ graph = GraphManager()
 class BaseTaskedVertice(object):
 
     TASK = 'task'  #: task field name in info
-    ENTITY = 'entity'  #: entity field name in info
+    ENTITY = Event.ENTITY  #: entity field name in info
     DEFAULT_TASK = 'canopsis.topology.rule.action.change_state'
     NAME = 'name'  #: element name.
 
@@ -131,13 +132,11 @@ class BaseTaskedVertice(object):
         """
 
         result = forger(
-            event_type=self.type,
+            event_type=Check.EVENT_TYPE,
+            source_type=self.type,
             component=self.id,
-            id=self.id,
             *args, **kwargs
         )
-
-        result['source_type'] = self.type
 
         return result
 

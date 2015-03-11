@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines import Engine
-from canopsis.old.event import get_routingkey
+from canopsis.engines.core import Engine
+from canopsis.event import get_routingkey
 
 from time import time
 

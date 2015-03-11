@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines import Engine
+from canopsis.engines.core import Engine
 from canopsis.context.manager import Context
 try:
     from threading import Lock
@@ -100,9 +100,11 @@ class engine(Engine):
         # Get event informations
         hostgroups = event.get('hostgroups', [])
         servicegroups = event.get('servicegroups', [])
-        source_type = event['source_type']
         component = event.get('component')
         resource = event.get('resource')
+        # quick fix when an event has an empty resource
+        if 'resource' in event and not resource:
+            del event['resource']
 
         # get a copy of event
         _event = event.copy()
