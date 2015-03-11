@@ -18,8 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = "0.1"
-
 from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
 from canopsis.configuration.parameters import Parameter
@@ -29,6 +27,8 @@ from canopsis.configuration.configurable.decorator import (
 from canopsis.storage import Storage
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.check import Check
+
+__version__ = "0.1"
 
 #: check manager configuration category
 CATEGORY = 'CHECK'
@@ -117,7 +117,7 @@ class CheckManager(MiddlewareRegistry):
                 state_documents = [state_documents]
             # save id and state field name
             id_field, state_field = CheckManager.ID, CheckManager.STATE
-            #result is a dictionary of entity id, state value
+            # result is a dictionary of entity id, state value
             result = {}
             for state_document in state_documents:
                 entity_id = state_document[id_field]
@@ -203,8 +203,8 @@ class CheckManager(MiddlewareRegistry):
         """
         Allow persistance of a state
 
-        :param entity_id: the identifier for the entity
-        :param state: the state to persist
+        :param entity_id: the identifier for the entity.
+        :param state: the state to persist.
         """
 
         if state not in self.valid_states or not type(state) == int:
@@ -218,7 +218,7 @@ class CheckManager(MiddlewareRegistry):
         """
         Retrieve state from database depending on an id list
 
-        :param ids: a list of identifier that may have a state in database
+        :param ids: a list of identifier that may have a state in database.
         """
         states = self[CheckManager.CHECK_STORAGE].get_elements(
             ids=ids

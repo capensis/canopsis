@@ -78,7 +78,6 @@ from canopsis.topology.manager import TopologyManager
 from canopsis.graph.event import BaseTaskedVertice
 from canopsis.engines.core import publish
 
-
 _context = Context()
 _check = CheckManager()
 _topology = TopologyManager()
