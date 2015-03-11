@@ -8,7 +8,7 @@
         "keys":["title"]
     },{
         "title": "Style",
-        "keys":["display_as", "show_value", "pb_thickness", "gg_width", "gg_thickness"]
+        "keys":["display_as", "show_value", "value_color", "value_in_column", "pb_thickness", "gg_width", "gg_thickness"]
     },{
         "title": "Label",
         "keys":["label_display", "label_width", "label_unit", "label_align"]
@@ -64,6 +64,28 @@
         "gg_thickness": {
             "type": "number",
             "title" : "Thickness (px)"
+        },
+        "gg_fill": {
+            "type": "string",
+            "role": "color",
+            "title": "Fill Gauge",
+            "default": "#ffffff"
+        },
+        "gg_border": {
+            "type": "string",
+            "role": "color",
+            "title": "Border Gauge",
+            "default": "#cccccc"
+        },
+        "value_color": {
+            "type": "string",
+            "role": "color",
+            "title": "Value Color",
+            "default": "#000000"
+        },
+        "value_in_column": {
+            "title" : "Display value in a column (instead of within the bar/gauge",
+            "type": "boolean"
         },
         "display_as": {
             "title": "Display as",
