@@ -151,6 +151,6 @@ class Formulas(object):
         except ParseException, e:
             results = ['Parse Failure', formula]
         if len(results) == 0 or results[0] == 'Parse Failure':
-            return results
+            return 'Parse Failure-{}'.format(e)
         val = self.evaluate_parsing(self.exprStack[:])
         return val
