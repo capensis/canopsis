@@ -26,7 +26,6 @@ from canopsis.old.storage import get_storage
 root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
-<<<<<<< HEAD
 """
     This file is copied to canopsis libs folder,
     so there should no have direct canopsis import here
@@ -125,90 +124,3 @@ def update():
 
     if user_input == 'Y' or user_input == 'y':
         init()
-=======
-INDEXES = {
-	'object': [
-		[('crecord_type', 1)]
-	],
-	'perfdata2': [
-		[('co', 1), ('re', 1), ('me', 1)],
-		[('re', 1), ('me', 1)],
-		[('co', 1), ('me', 1)],
-		[('me', 1)],
-		[('tg', 1)]
-	],
-	'perfdata2_daily': [
-		[('insert_date', 1)]
-	],
-	'events': [
-		[
-			('connector_name', 1),
-			('event_type', 1),
-			('component', 1),
-			('resource', 1),
-			('state_type', 1),
-			('state', 1)
-		],[
-			('source_type', 1),
-			('tags', 1)
-		],[
-			('event_type', 1),
-			('component', 1),
-			('resource', 1)
-		],[
-			('event_type', 1),
-			('resource', 1)
-		],[
-			('event_type', 1)
-		]
-	],
-	'events_log': [
-		[
-			('connector_name', 1),
-			('event_type', 1),
-			('component', 1),
-			('resource', 1),
-			('state_type', 1),
-			('state', 1)
-		],[
-			('source_type', 1),
-			('tags', 1)
-		],[
-			('event_type', 1),
-			('component', 1),
-			('resource', 1)
-		],[
-			('event_type', 1),
-			('resource', 1)
-		],[
-			('event_type', 1)
-		],[
-			('state_type', 1)
-		],[
-			('tags', 1)
-		],[
-			('referer', 1)
-		]
-	],
-	'entities': [
-		[('type', 1)],
-		[('type', 1), ('name', 1)],
-		[('type', 1), ('component', 1), ('name', 1)],
-		[('type', 1), ('component', 1), ('resource', 1), ('id', 1)],
-		[('type', 1), ('component', 1), ('resource', 1)],
-		[('type', 1), ('nodeid', 1)]
-	]
-}
-
-def init():
-	for collection in INDEXES:
-		logger.info(' + Create indexes for collection {0}'.format(collection))
-		col = storage.get_backend(collection)
-		col.drop_indexes()
-
-		for index in INDEXES[collection]:
-			col.ensure_index(index)
-
-def update():
-	init()
->>>>>>> 7707a2dce38eab0a670d3df7782ba46f84182ef4
