@@ -24,7 +24,7 @@ from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.record import Record
 from canopsis.old.rabbitmq import Amqp
-from canopsis.old.event import get_routingkey
+from canopsis.event import get_routingkey
 
 #from canopsis.context.manager import Context
 #from canopsis.check.manager import CheckManager

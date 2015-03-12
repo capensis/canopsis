@@ -71,10 +71,14 @@ def event_processing(engine, event, manager=None, **kwargs):
     if event_type in _check.types:
         # get source type
         source_type = event[Event.SOURCE_TYPE]
+        # get entity and entity id
+        entity = context.get_entity(event)
+        entity_id = context.get_entity_id(entity)
         # in case of topology node
         if source_type in [TopoNode.TYPE, Topology.TYPE]:
+            ids = context.get_name(entity_id)
             # process all targets
-            elt = manager.get_elts(ids=event[Topology.ID])
+            elt = manager.get_elts(ids=ids)
             if elt is not None:
                 targets_by_edge = manager.get_targets(
                     ids=elt.id, add_edges=True

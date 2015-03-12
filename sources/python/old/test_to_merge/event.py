@@ -19,22 +19,26 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest
+from unittest import TestCase, main
 
-from canopsis.old.event import get_routingkey, forger
+from canopsis.event import get_routingkey, forger
 
 
-class KnownValues(unittest.TestCase):
+class KnownValues(TestCase):
     def setUp(self):
         pass
 
     def test_01(self):
         event = forger(
-            connector='unittest', connector_name='test1', event_type='log')
+            connector='unittest',
+            source_type='component',
+            connector_name='test1',
+            event_type='log'
+        )
         rk = get_routingkey(event)
 
         print(rk)
         print(event)
 
 if __name__ == "__main__":
-    unittest.main(verbosity=1)
+    main(verbosity=1)

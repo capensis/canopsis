@@ -21,13 +21,14 @@
 __version__ = '0.1'
 
 
+from canopsis.common.init import basestring
 from time import time
 from logging import getLogger
-from canopsis.old.event import forger
-from json import dumps, loads
-import datetime
-import pprint
-pp = pprint.PrettyPrinter(indent=2)
+from canopsis.event import forger
+from datetime import datetime
+from pprint import PrettyPrinter
+
+pp = PrettyPrinter(indent=2)
 
 
 class Sla(object):
@@ -222,7 +223,6 @@ class Sla(object):
 
         # Add last delta time because state may remain until now
         if len(sla) and sla[-1]['timestamp'] < now:
-            delta_time = now - sla[-1]['timestamp']
             sla.append({
                 'timestamp': now,
                 'state': sla[-1]['state']
@@ -319,7 +319,7 @@ class Sla(object):
             return ("%0.2f" % value)
 
         # Timestamp to date string
-        TSTART = datetime.datetime.fromtimestamp(
+        TSTART = datetime.fromtimestamp(
             first_timestamp
         ).strftime('%Y-%m-%d %H:%M:%S')
 

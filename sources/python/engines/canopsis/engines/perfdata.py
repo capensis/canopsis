@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines import Engine
+from canopsis.engines.core import Engine
 from canopsis.perfdata.manager import PerfData
 from canopsis.context.manager import Context
 
@@ -50,11 +50,12 @@ class engine(Engine):
             self.logger.debug(' + perf_data: {0}'.format(perf_data))
 
             try:
-                perf_data_array = self.perfdata.parse_perfdata(perf_data)
+                perf_data_array += self.perfdata.parse_perfdata(perf_data)
 
             except Exception as err:
                 self.logger.error(
-                    "Impossible to parse: {0} ('{1}')".format(perf_data, err)
+                    "Impossible to parse perfdata from: {0} ({1})"
+                    .format(event, err)
                 )
 
         self.logger.debug(' + perf_data_array: {0}'.format(perf_data_array))

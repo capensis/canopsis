@@ -514,6 +514,7 @@ class Graph(Vertice):
         :param other: possible vertice(s) or vertice(s) id(s) in self graph.
         :type other: str or dict or GraphElement or list of other.
         """
+
         # by default, result is False
         result = False
 

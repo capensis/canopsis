@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.check import Check
-from canopsis.check.manager import CheckManager
+from canopsis.check.manager import CheckManager, InvalidState
 
 
 class CheckManagerTest(TestCase):
@@ -154,6 +154,77 @@ class StateTest(CheckManagerTest):
         state = self.manager.state(ids=entity_id)
         self.assertEqual(state, minor)
 
+    def clean(self):
+        # ensure state collection clean
+        self.manager.del_state()
+        states = self.manager.get_state()
+        self.assertEqual(list(states), [])
+
+    def test_put_state(self):
+        self.clean()
+
+        # Test can start here
+        # Test is : insert a state an retrieve it then check data content
+        self.manager.put_state('state_id', 1)
+        states = list(self.manager[CheckManager.CHECK_STORAGE].get_elements(
+            ids=None
+        ))
+        self.assertEqual(len(states), 1)
+        self.assertEqual(states[0]['state'], 1)
+        self.assertEqual(states[0]['_id'], 'state_id')
+
+        # Tests state change for given id
+        self.manager.put_state('state_id', 0)
+
+        states = list(self.manager[CheckManager.CHECK_STORAGE].get_elements(
+            ids=None
+        ))
+        self.assertEqual(states[0]['state'], 0)
+
+        # Test valid state values
+        for wrong_value in [-1, 4, True, 'test', object()]:
+            def test_state_raises():
+                self.manager.put_state('state_id', wrong_value)
+            self.assertRaises(InvalidState, test_state_raises)
+
+        # Tests no exception raised for valid states
+        for state in [0, 1, 2, 3]:
+            self.manager.put_state('state_id', state)
+
+    def test_get_state(self):
+        self.clean()
+
+        self.manager[CheckManager.CHECK_STORAGE].put_element(
+            _id='entity_id_1', element={'state': 1}
+        )
+        self.manager[CheckManager.CHECK_STORAGE].put_element(
+            _id='entity_id_2', element={'state': 2}
+        )
+
+        # Test single element matching
+        states = list(self.manager.get_state(ids=['entity_id_1']))
+        self.assertEqual(len(states), 1)
+        self.assertIn(states[0]['_id'], 'entity_id_1')
+
+        states = list(self.manager.get_state())
+
+        # Test we have 2 state saved and value are properly set
+        self.assertEqual(len(states), 2)
+        for state in states:
+            self.assertIn(state['state'], [1, 2])
+            self.assertIn(state['_id'], ['entity_id_1', 'entity_id_2'])
+
+    def test_del_state(self):
+        self.clean()
+
+        self.manager[CheckManager.CHECK_STORAGE].put_element(
+            _id='entity_id', element={'state': 1}
+        )
+        states = list(self.manager.get_state())
+        self.assertEqual(len(states), 1)
+        self.manager.del_state(['entity_id'])
+        states = list(self.manager.get_state())
+        self.assertEqual(len(states), 0)
 
 if __name__ == '__main__':
     main()

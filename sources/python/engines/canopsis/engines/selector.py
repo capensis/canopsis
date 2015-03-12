@@ -18,13 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines import Engine
+from canopsis.engines.core import Engine
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.old.selector import Selector
+from canopsis.event.selector import Selector
 from canopsis.sla.sla import Sla
-from canopsis.old.event import get_routingkey
-import time
+from canopsis.event import get_routingkey
+from time import time
 
 
 class engine(Engine):
@@ -152,7 +152,7 @@ class engine(Engine):
 
         if publish_ack:
             # Define a clean ack information to the event
-            now = int(time.time())
+            now = int(time())
             selector_event['ack'] = {
                 'timestamp': now,
                 'rk': rk,
