@@ -1,6 +1,7 @@
 {
 	"type": "object",
 	"metadata": {
+		"classes": ["system"],
 		"icon": "list-alt"
 	},
 	"categories": [{
