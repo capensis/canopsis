@@ -155,7 +155,8 @@ class Selector(Record):
         # Defines default sla template if no one exists
         default_sla_template = (
             'Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%,' +
-            ' Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART]'
+            ' Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART]' +
+            ' time available [T_AVAIL], time alert [T_ALERT]'
         )
         return self.get_value('sla_output_tpl', default_sla_template)
 

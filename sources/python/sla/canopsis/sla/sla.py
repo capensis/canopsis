@@ -102,19 +102,37 @@ class Sla(object):
         ))
 
         # Compute effective sla dict to be able to fill the ouput template
-        sla_measures, first_timestamp = self.compute_sla(sla_information, now)
+        sla_measures, first_timestamp, sla_times = self.compute_sla(
+            sla_information,
+            now
+        )
         self.logger.debug('Sla measures is {}'.format(sla_measures))
+        self.logger.debug('Sla times is {}'.format(sla_times))
 
         self.logger.debug('Alert level is {}'.format(alert_level))
         # Compute alerts precent depending on user algorithm
-        alerts_percent = self.get_alert_percent(sla_measures, alert_level)
+        alerts_percent, alerts_duration = \
+            self.get_alert_percent(
+                sla_measures,
+                sla_times,
+                alert_level
+            )
+
+        self.logger.debug('Alert percent : {} , Alert duration : {}'.format(
+            alerts_percent,
+            alerts_duration
+        ))
+
+        avail_duration = timewindow - alerts_duration
 
         # Compute template from sla measures
         output = self.compute_output(
             template,
             sla_measures,
             alerts_percent,
-            first_timestamp
+            alerts_duration,
+            avail_duration,
+            first_timestamp,
         )
 
         state = self.compute_state(
@@ -135,21 +153,32 @@ class Sla(object):
             sla_measures,
             output,
             state,
-            alerts_percent
+            alerts_percent,
+            alerts_duration,
+            avail_duration
         )
 
-    def get_alert_percent(self, sla_measures, alert_level):
+    def get_alert_percent(self, sla_measures, sla_times, alert_level):
 
         # alert_level should never be something else than minor,major,critical
+        alerts_percent = 0.0
+        alerts_duration = 0.0
 
         if alert_level == 'minor':
-            return sla_measures[1] + sla_measures[2] + sla_measures[3]
+            alerts_percent = (sla_measures[1] + sla_measures[2] +
+                              sla_measures[3])
+
+            alerts_duration = sla_times[1] + sla_times[2] + sla_times[3]
 
         if alert_level == 'major':
-            return sla_measures[2] + sla_measures[3]
+            alerts_percent = sla_measures[2] + sla_measures[3]
+            alerts_duration = sla_times[2] + sla_times[3]
 
         if alert_level == 'critical':
-            return sla_measures[3]
+            alerts_percent = sla_measures[3]
+            alerts_duration = sla_times[3]
+
+        return (alerts_percent, alerts_duration)
 
     def compute_state(self, alerts_percent, warning, critical):
 
@@ -192,14 +221,21 @@ class Sla(object):
         events_log = self.storage.get_backend('events_log')
 
         # Fetch previous state
-        state_before = events_log.find_one({
+        find_query = {
             'rk': selector_rk,
             'timestamp': {'$lte': timewindow_date_start}
-        }, {
+        }
+        projection = {
             'state': 1,
             'timestamp': 1,
             '_id': 0
-        }, sort=[('timestamp', -1)])
+        }
+
+        state_before = events_log.find_one(
+            find_query,
+            projection,
+            sort=[('timestamp', -1)]
+        )
 
         self.logger.debug('state_before {}'.format(state_before))
 
@@ -304,14 +340,16 @@ class Sla(object):
                 percent = float(sla_times[state]) / float(total_time)
                 sla_measures[state] = percent
 
-        return sla_measures, first_timestamp
+        return sla_measures, first_timestamp, sla_times
 
     def compute_output(
         self,
         template,
         sla_measures,
         alerts_percent,
-        first_timestamp
+        alerts_duration,
+        avail_duration,
+        first_timestamp,
     ):
 
         def to_percent(value):
@@ -323,12 +361,29 @@ class Sla(object):
             first_timestamp
         ).strftime('%Y-%m-%d %H:%M:%S')
 
+        def duration_to_time(seconds):
+            # duration in seconds
+            m, s = divmod(seconds, 60)
+            h, m = divmod(m, 60)
+            return "%dh%02dm%02ds" % (h, m, s)
+
         if isinstance(template, basestring):
+            # Embed sla measures percents in the output
             output = template.replace('[OFF]', to_percent(sla_measures[0]))
             output = output.replace('[MINOR]', to_percent(sla_measures[1]))
             output = output.replace('[MAJOR]', to_percent(sla_measures[2]))
             output = output.replace('[CRITICAL]', to_percent(sla_measures[3]))
             output = output.replace('[ALERTS]', to_percent(alerts_percent))
+
+            # Embed sla measures durations in the output
+            output = output.replace('[T_AVAIL]', duration_to_time(
+                avail_duration)
+            )
+            output = output.replace('[T_ALERT]', duration_to_time(
+                alerts_duration)
+            )
+
+            # Embed sla measures first date in the output
             output = output.replace('[TSTART]', TSTART)
             self.logger.info('SLA computed output is : {}'.format(output))
             return output
@@ -342,7 +397,9 @@ class Sla(object):
         sla_measures,
         output,
         sla_state,
-        alerts_percent
+        alerts_percent,
+        alerts_duration,
+        avail_duration
     ):
         perf_data_array = []
 
@@ -360,6 +417,14 @@ class Sla(object):
             'metric': 'cps_avail',
             'value': round(availability, 2),
             'max': 100
+        })
+        perf_data_array.append({
+            'metric': 'cps_avail_duration',
+            'value': avail_duration,
+        })
+        perf_data_array.append({
+            'metric': 'cps_alerts_duration',
+            'value': alerts_duration,
         })
 
         event = forger(
