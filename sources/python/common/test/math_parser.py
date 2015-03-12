@@ -28,7 +28,11 @@ class FormulasTest(TestCase):
     """docstring for FormulasTest"""
 
     def setUp(self):
-        _dict = {'x': 4, 'y': 5}  # Variables values
+        # Variables values
+        _dict = {'x': 4, 'y': 5,\
+         'metric_687a68bb895125cb02f768473985569f': 120004608.0,\
+          'metric_f64a796c2e49d9ac3ba8cd1cdf350795': 3212440371.0,\
+           'metric_02bc472f705c074b4156850e1b5adcf4': 90193784012.0}  
         self.formula = Formulas(_dict)
 
     def test(self):
@@ -39,7 +43,8 @@ class FormulasTest(TestCase):
           "PI * PI / 10": math.pi * math.pi / 10, "PI^2": math.pi**2,\
            "E^PI": math.e**math.pi, "2^3^2": 2**3**2, "sgn(-2)": -1,\
             "sin(PI/2)": math.sin(math.pi/2), "trunc(E)": int(math.e),\
-             "round(E)": round(math.e), "(x + y + 1)/3": float(10)/float(3)}
+             "round(E)": round(math.e), "(x + y + 1)/3": float(10)/float(3),\
+             "( metric_02bc472f705c074b4156850e1b5adcf4+ metric_687a68bb895125cb02f768473985569f+ metric_f64a796c2e49d9ac3ba8cd1cdf350795)/3":31175409663.666668}
 
         for k, v in expressions.iteritems():
             self.assertEqual(self.formula.evaluate(k), v)
