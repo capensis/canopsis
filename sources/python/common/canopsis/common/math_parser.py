@@ -19,9 +19,10 @@
 # ---------------------------------
 
 from pyparsing import Literal, CaselessLiteral, Word, Combine, Optional,\
-    ZeroOrMore, Forward, nums, alphas, ParseException
+    ZeroOrMore, Forward, nums, alphas, ParseException, delimitedList
 import math
 import operator
+
 
 class Formulas(object):
     """Class that reads formulas and parse it using EBNF grammar"""
@@ -39,6 +40,9 @@ class Formulas(object):
             "abs" : abs,
             "trunc" : lambda a: int(a),
             "round" : round,
+            "max" : max,
+            "min" : min,
+            "sum" : lambda l: sum(int(i) for i in l),
             "sgn" : lambda a: abs(a)>epsilon and cmp(a,0) or 0}
 
     def __init__(self, _dict=None):
@@ -76,7 +80,7 @@ class Formulas(object):
         '''
         Reset the variables dictionnary.
         '''
-        self._dict = None
+        self._dict = {}
 
     def bnf(self):
         '''
@@ -107,7 +111,7 @@ class Formulas(object):
             pi = CaselessLiteral("PI")
 
             expr = Forward()
-            atom = (Optional("-") + ( pi | e | fnumber | ident + lpar + expr + rpar ).setParseAction( self.push_first ) | ( lpar + expr.suppress() + rpar )).setParseAction(self.push_minus)
+            atom = (Optional("-") + ( pi | e | fnumber | ident + lpar + delimitedList(expr) + rpar ).setParseAction( self.push_first ) | ( lpar + expr.suppress() + rpar )).setParseAction(self.push_minus)
 
             # The right way to define exponentiation is -> 2^3^2 = 2^(3^2), not (2^3)^2.
             factor = Forward()
@@ -122,6 +126,7 @@ class Formulas(object):
         '''
         '''
         op = parsing_result.pop()
+        print parsing_result
         if op == 'unary -':
             return -self.evaluate_parsing(parsing_result)
         if op in "+-*/^":
@@ -133,6 +138,8 @@ class Formulas(object):
         elif op == "E":
             return math.e  # 2.718281828
         elif op in self.fn:
+            if op.lower() == 'max' or op.lower() == 'min' or op.lower() == 'sum':
+                return self.fn[op](parsing_result)
             return self.fn[op](self.evaluate_parsing(parsing_result))
         elif op[0].isalpha():
             return 0
@@ -141,13 +148,14 @@ class Formulas(object):
 
     def evaluate(self, formula):
         '''
+        Evaluate the formula
         '''
         if self._dict is not None:
             for k, v in self._dict.iteritems():
                 formula = formula.replace(str(k), str(v))
-        self.exprStack = []
         try:
             results = self.bnf().parseString(formula)
+            print results
         except ParseException, e:
             results = ['Parse Failure', formula]
         if len(results) == 0 or results[0] == 'Parse Failure':
