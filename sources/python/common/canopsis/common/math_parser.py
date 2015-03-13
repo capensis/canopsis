@@ -22,6 +22,7 @@ from pyparsing import Literal, CaselessLiteral, Word, Combine, Optional,\
     ZeroOrMore, Forward, nums, alphas, ParseException, delimitedList
 import math
 import operator
+import re
 
 
 class Formulas(object):
@@ -40,22 +41,23 @@ class Formulas(object):
             "abs" : abs,
             "trunc" : lambda a: int(a),
             "round" : round,
-            "max" : max,
-            "min" : min,
-            "sum" : lambda l: sum(int(i) for i in l),
+            "max" : lambda l: max(float(i) for i in l),
+            "min" : lambda l: min(float(i) for i in l),
+            "sum" : lambda l: sum(float(i) for i in l),
             "sgn" : lambda a: abs(a)>epsilon and cmp(a,0) or 0}
 
     def __init__(self, _dict=None):
         self.exprStack = []
         self._bnf = None
         self._dict = _dict  # The dictionnary value as dictionnary {'x':2}
+        self.variables = _dict
 
     def push_first(self, strg, loc, toks):
         '''
         Define an action to apply on the matched tokens
         :param strg: is the original parse string
         :param loc: is the location in the string where matching started
-        :param toks: is the lis of the matched tokens
+        :param toks: is the list of the matched tokens
         '''
         self.exprStack.append(toks[0])
 
@@ -64,7 +66,7 @@ class Formulas(object):
         Define an action to apply on the matched tokens
         :param strg: is the original parse string.
         :param loc: is the location in the string where matching started.
-        :param toks: is the lis of the matched tokens.
+        :param toks: is the list of the matched tokens.
         '''
         if toks and toks[0] == '-':
             self.exprStack.append('unary -')
@@ -72,13 +74,13 @@ class Formulas(object):
     def _import(self, _dict):
         '''
         set variables data.
-        :param _dict: variables dictionnary.
+        :param _dict: variables and thier values.
         '''
         self._dict = _dict
 
     def reset(self):
         '''
-        Reset the variables dictionnary.
+        Reset the variables and thier values.
         '''
         self._dict = {}
 
@@ -126,21 +128,26 @@ class Formulas(object):
         '''
         '''
         op = parsing_result.pop()
-        print parsing_result
         if op == 'unary -':
             return -self.evaluate_parsing(parsing_result)
         if op in "+-*/^":
             op2 = self.evaluate_parsing(parsing_result)
             op1 = self.evaluate_parsing(parsing_result)
             return self.opn[op](op1, op2)
-        elif op == "PI":
+        elif op.lower() == "pi":
             return math.pi  # 3.1415926535
-        elif op == "E":
+        elif op.lower() == "e":
             return math.e  # 2.718281828
-        elif op in self.fn:
-            if op.lower() == 'max' or op.lower() == 'min' or op.lower() == 'sum':
-                return self.fn[op](parsing_result)
+        elif op.lower() in self.fn:
+            t_op = op.lower()
+            if t_op in ('max', 'min', 'sum'):
+                return self.fn[t_op](parsing_result)
             return self.fn[op](self.evaluate_parsing(parsing_result))
+        elif re.search('^[a-zA-Z][a-zA-Z0-9_]*$', op):
+            if op in self._dict:
+                return self._dict[op]
+            else:
+                return 0
         elif op[0].isalpha():
             return 0
         else:
@@ -153,9 +160,10 @@ class Formulas(object):
         if self._dict is not None:
             for k, v in self._dict.iteritems():
                 formula = formula.replace(str(k), str(v))
+
+        self.exprStack = []  # reset the stack before each eval
         try:
             results = self.bnf().parseString(formula)
-            print results
         except ParseException, e:
             results = ['Parse Failure', formula]
         if len(results) == 0 or results[0] == 'Parse Failure':
