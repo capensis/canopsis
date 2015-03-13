@@ -201,7 +201,6 @@ class engine(Engine):
             c_event['perf_data_array'] = {'metric': t_serie['_id'], 'value': v, 'unit': t_serie['unit'], 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
             publish(c_event, self)
 
-
         event_id = event['_id']
         # Update crecords informations
         self.crecord_task_complete(event_id)
