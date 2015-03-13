@@ -32,7 +32,22 @@
     "actionbutton_ack": {
         "desc": ""
     },
-    "actionbutton_editconnector": {
+    "actionbutton_connectoredit": {
+        "desc": ""
+    },
+    "actionbutton_connectordisable": {
+        "desc": ""
+    },
+    "actionbutton_connectorenable": {
+        "desc": ""
+    },
+    "actionbutton_connectorgetconf": {
+        "desc": ""
+    },
+    "actionbutton_connectorgetstate": {
+        "desc": ""
+    },
+    "actionbutton_connectorsetconf": {
         "desc": ""
     },
     "actionbutton_cancel": {
