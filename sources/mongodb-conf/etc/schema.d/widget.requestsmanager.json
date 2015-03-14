@@ -1,7 +1,8 @@
 {
 	"type": "object",
 	"metadata": {
-		"icon": "terminal"
+		"icon": "terminal",
+		"classes": ["system"]
 	},
 	"categories": [{
 		"title": "General",

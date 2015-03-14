@@ -1,11 +1,35 @@
 [{
 	"_id": "admin",
 	"rights": {
-		"actionbutton_editconnector": {
+		"actionbutton_connectoredit": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_connectordisable": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_connectorenable": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_connectorgetconf": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_connectorgetstate": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_connectorsetconf": {
 			"checksum": 15,
 			"desc": ""
 		},
 		"showview_service": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_connectors": {
 			"checksum": 15,
 			"desc": ""
 		},

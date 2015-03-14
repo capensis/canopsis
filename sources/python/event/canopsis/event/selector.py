@@ -155,7 +155,8 @@ class Selector(Record):
         # Defines default sla template if no one exists
         default_sla_template = (
             'Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%,' +
-            ' Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART]'
+            ' Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART]' +
+            ' time available [T_AVAIL], time alert [T_ALERT]'
         )
         return self.get_value('sla_output_tpl', default_sla_template)
 
@@ -230,7 +231,7 @@ class Selector(Record):
         # Adds default check clause as selector have to be done
         # on check event only
         # This constraint have to be available for all aggregation queries
-        check_clause = {'event_type': 'check'}
+        check_clause = {'event_type': {'$in': ['check', 'eue']}}
 
         if '$and' in mfilter:
             mfilter['$and'].append(check_clause)
