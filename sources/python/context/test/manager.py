@@ -667,5 +667,122 @@ class GetNameTest(BaseContextTest):
 
         self._assert_name(_type='resource', result=None, entity_id='/a/b')
 
+
+class GetEntityByIdTest(BaseContextTest):
+    """Test get_entity_by_id method.
+    """
+
+    def _assert_entity(self, _id, entity):
+        """Assert get_entity_by_id() result with input result.
+
+        :param str _id: value to use such as parameter of get_entity_by_id.
+        :param str entity: value to compare with get_entity_by_id result.
+        """
+
+        entity_to_compare = self.context.get_entity_by_id(_id)
+
+        self.assertEqual(entity_to_compare, entity)
+
+    def test_entity_empty(self):
+        """Test with empty name entity.
+        """
+
+        self._assert_entity(_id='', entity={})
+
+    def test_connector(self):
+        """Test with connector.
+        """
+
+        self._assert_entity(
+            _id='/connector/a', entity={'id': 'a', 'type': 'connector'}
+        )
+
+    def test_connector_name(self):
+        """Test with connector_name.
+        """
+
+        self._assert_entity(
+            _id='/connector_name/a/b',
+            entity={'id': 'b', 'connector': 'a', 'type': 'connector_name'}
+        )
+
+    def test_component(self):
+        """Test with component.
+        """
+
+        self._assert_entity(
+            _id='/component/a/b/c',
+            entity={
+                'id': 'c',
+                'connector': 'a',
+                'type': 'component',
+                'connector_name': 'b'
+            }
+        )
+
+    def test_resource(self):
+        """Test with resource.
+        """
+
+        self._assert_entity(
+            _id='/resource/a/b/c/d',
+            entity={
+                'id': 'd',
+                'connector': 'a',
+                'connector_name': 'b',
+                'component': 'c',
+                'type': 'resource'
+            }
+        )
+
+    def test_component_other(self):
+        """Test with other.
+        """
+
+        self._assert_entity(
+            _id='/other/a/b/c/d',
+            entity={
+                'id': 'd',
+                'connector': 'a',
+                'connector_name': 'b',
+                'component': 'c',
+                'type': 'other'
+            }
+        )
+
+    def test_resource_error(self):
+        """Test with _type is not in entity_id.
+        """
+
+        self._assert_entity(
+            _id='/other/a/b/c/d/e',
+            entity={
+                'id': 'e',
+                'connector': 'a',
+                'connector_name': 'b',
+                'component': 'c',
+                'resource': 'd',
+                'type': 'other'
+            }
+        )
+
+
+class GetEvent(BaseContextTest):
+    """Test get_event method.
+    """
+
+    def test_get_check_event(self):
+
+        entity_id = '/other/a/b/c'
+
+        entity = self.context.get_entity_by_id(entity_id)
+
+        event = self.context.get_event(
+            entity, event_type='check', output='test'
+        )
+
+        self.assertEqual(event['event_type'], 'check')
+        self.assertEqual(event['output'], 'test')
+
 if __name__ == '__main__':
     main()

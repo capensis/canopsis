@@ -22,7 +22,7 @@ from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.storage import Storage
-from canopsis.event import Event
+from canopsis.event import Event, forger
 
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
@@ -175,6 +175,50 @@ class Context(MiddlewareRegistry):
         else:
             if index < len(names):  # else get names[index]
                 result = names[index]
+
+        return result
+
+    def get_entity_by_id(self, _id):
+        """Generate an entity related to input id.
+
+        :param str _id: entity id from where get entity properties.
+        """
+
+        result = {}
+        # get ctx values from _id
+        ctx_values = _id.split('/')[1:]
+
+        if ctx_values:
+            # use static resolution of self.context to improve algo. eff.
+            self_context = self.context
+            self_context_len = len(self_context)
+
+            for index, ctx_value in enumerate(ctx_values):
+                if index < self_context_len:
+                    ctx = self.context[index]
+                    result[ctx] = ctx_value
+                else:
+                    result[Context.NAME] = ctx_value
+                    break
+            else:
+                # replace last ctx by name property
+                del result[ctx]
+                result[Context.NAME] = ctx_value
+
+        return result
+
+    def get_event(self, entity, **kwargs):
+        """Get an event from an entity.
+
+        :param dict entity: entity to convert to an event.
+        :param dict kwargs: additional fields to put in the event.
+        """
+
+        # fill kwargs with entity values
+        for field in entity:
+            kwargs[field] = entity[field]
+        # forge the event
+        result = forger(**kwargs)
 
         return result
 
