@@ -60,7 +60,7 @@ class CheckManager(MiddlewareRegistry):
 
     CHECK_STORAGE = 'check_storage'  #: storage name
 
-    ID = Storage.DATA_ID  #: state id field name
+    ID = '_id'  # Storage.DATA_ID  #: state id field name
 
     STATE = Check.STATE  #: state field name
     LAST_STATE = 'last'  #: last state field name if criticity != HARD
@@ -212,7 +212,7 @@ class CheckManager(MiddlewareRegistry):
 
         self[CheckManager.CHECK_STORAGE].put_element(
             _id=entity_id,
-            element={'state': state, CheckManager.ID: entity_id},
+            element={'state': state},
             cache=cache
         )
 
