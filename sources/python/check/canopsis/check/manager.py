@@ -211,7 +211,9 @@ class CheckManager(MiddlewareRegistry):
             raise InvalidState(state, self.valid_states)
 
         self[CheckManager.CHECK_STORAGE].put_element(
-            _id=entity_id, element={'state': state}, cache=cache
+            _id=entity_id,
+            element={'state': state, CheckManager.ID: entity_id},
+            cache=cache
         )
 
     def get_state(self, ids=None):
