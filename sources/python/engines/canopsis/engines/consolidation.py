@@ -18,13 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.event import forger, get_routingkey
 from canopsis.perfdata.manager import PerfData
 from canopsis.common.math_parser import Formulas
 from canopsis.engines.perfdata_utils.perfDataUtils import PerfDataUtils
+from canopsis.context.manager import Context
+
 
 import hashlib
 from time import gmtime
@@ -45,6 +47,7 @@ class engine(Engine):
         )
         self.manager = PerfData()
         self.perf_data = PerfDataUtils()
+        self.context = Context()
 
     def pre_run(self):
         self.storage = get_storage(namespace='object',
@@ -170,19 +173,33 @@ class engine(Engine):
         t_serie = serie.copy()
         _from = 1425394522
         _to = 1425402296
+        '''
         t_serie['aggregate_interval'] = 60
         t_serie['aggregate_method'] = 'average'
-        timewindow = {'start':_from, 'stop':_to, 'timezone':gmtime()}        
+        timewindow = {'start': _from, 'stop': _to, 'timezone': gmtime()}
 
         m_id = serie['metrics']
-        timeserie = {'aggregation':t_serie['aggregate_method'], 'period':{'second':t_serie['aggregate_interval']}}
+        timeserie = {'aggregation': t_serie['aggregate_method'],\
+         'period': {'second': t_serie['aggregate_interval']}}
         results, _ = self.perf_data.perfdata(metric_id=t_serie['metrics'], timewindow=timewindow, timeserie=timeserie)
         # End test
-        #results, _ = self.perf_data.perfdata(metric_id=m_id)
+        results, _ = self.perf_data.perfdata(metric_id=m_id)
         self.logger.debug(results[0])
+        '''
         _, points = self.fetch(serie, _from, _to)
-        # Update time series consolidation data
-        self.manager.put(metric_id=serie['_id'], points=points)
+
+        #self.manager.put(metric_id=t_serie['_id'], points=points)
+
+        # Publish the consolidation metrics
+        entity = self.context.get_entity_by_id(t_serie['_id'])
+        event = self.context.get_event(entity, event_type='perfdata'\
+            , long_output=None, output= 'myoutput')
+        c_event = event.copy()
+        for t, v in points:
+            c_event = event.copy()
+            c_event['timestamp'] = t
+            c_event['perf_data_array'] = {'metric': t_serie['_id'], 'value': v, 'unit': t_serie['unit'], 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
+            publish(c_event, self)
 
         event_id = event['_id']
         # Update crecords informations

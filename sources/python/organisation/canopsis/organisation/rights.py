@@ -204,8 +204,8 @@ class Rights(MiddlewareRegistry):
         # Action not referenced, can't create a right
         if not self.get_action(right_id):
             self.logger.error(
-                'Can not create right, the action {0} ' +
-                'is not referenced'.format(right_id)
+                ('Can not create right, the action {0} ' +
+                    'is not referenced').format(right_id)
                 )
             return 0
 
@@ -218,8 +218,8 @@ class Rights(MiddlewareRegistry):
 
         if not entity:
             self.logger.error(
-                'Can not create right, entity {0} ' +
-                'is empty or does not exist'.format(e_name))
+                ('Can not create right, entity {0} ' +
+                    'is empty or does not exist').format(e_name))
             return 0
 
         if not entity.get('rights', None):
@@ -227,10 +227,12 @@ class Rights(MiddlewareRegistry):
 
         # If it does not exist, create it
         if not self.check(entity, right_id, 0):
-            entity['rights'].update({right_id: {'crecord_type': 'right',
-                                                'checksum': checksum
-                                                }
-                                     })
+            entity['rights'].update({
+                right_id: {
+                    'crecord_type': 'right',
+                    'checksum': checksum
+                }
+            })
         else:
             entity['rights'][right_id]['checksum'] |= checksum
 
