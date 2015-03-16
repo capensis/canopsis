@@ -32,6 +32,9 @@
     "actionbutton_ack": {
         "desc": ""
     },
+    "showview_view_connectors": {
+        "desc": ""
+    },
     "actionbutton_connectoredit": {
         "desc": ""
     },
