@@ -153,6 +153,8 @@ class engine(Engine):
         if resource:
             context['resource'] = name
         else:
+            if 'resource' in context:
+                del context['resource']
             context['component'] = name
 
         # remove type from context because type will be metric
