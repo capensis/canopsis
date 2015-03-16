@@ -1,67 +1,158 @@
 {
-  "crecord_name" : "jobs.json",
-  "loader_id": "view.jobs",
-  "loader_no_update": true,
-  "id": "view.jobs",
-  "_id": "view.jobs",
-  "crecord_type": "view",
-  "crecord_write_time": 1400853201,
-  "enable": true,
-  "containerwidget": {
-    "xtype": "widgetcontainer",
-    "mixins": [
-      { "name": "verticallayout" }
-    ],    "title": "container title vbox",
-    "items": [
+  "_id" : "view.jobs",
+  "loader_id" : "view.jobs",
+  "enable" : true,
+  "aaa_access_group" : [
+    "r"
+  ],
+  "description" : null,
+  "parent" : [ ],
+  "tags" : [ ],
+  "containerwidget" : {
+    "widgetId" : null,
+    "preference_id" : null,
+    "xtype" : "widgetcontainer",
+    "title" : "container title vbox",
+    "widgetslotTemplate" : null,
+    "mixins" : [
       {
-        "title": "wrapper",
-        "xtype": "widgetwrapper",
-        "widget": {
-          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ab0029",
-          "xtype": "jobmanager",
-          "itemsPerPage": 5,
-          "title": "Scheduled Jobs",
-          "item_actions": [
-            "actionbutton-edit",
-            "actionbutton-removeselection"
+        "name" : "verticallayout"
+      }
+    ],
+    "tagName" : null,
+    "items" : [
+      {
+        "id" : "widgetwrapper_190e931a-f9d6-2d19-4b22-f2756647b581",
+        "widget" : {
+          "widgetId" : "widget_list_d44e145b-2ead-b03a-e8fd-a3ff1d95b62f",
+          "preference_id" : "64e0881b-2b5b-d06e-87c4-0761d89c592a",
+          "xtype" : "list",
+          "title" : "Scheduled Jobs",
+          "listed_crecord_type" : "job",
+          "mixins" : [
+            {
+              "name" : "pagination",
+              "EmberClass" : {
+                "mixins" : [
+                  {
+                    "properties" : {
+                      "itemsPerPagePropositions" : {
+                        "_dependentKeys" : [
+                          "itemsPerPagePropositionSelected"
+                        ],
+                        "_readOnly" : false,
+                        "_cacheable" : true
+                      },
+                      "itemsDivided" : {
+                        "_dependentKeys" : [
+                          "itemsTotal",
+                          "itemsPerPage"
+                        ],
+                        "_readOnly" : false,
+                        "_cacheable" : true
+                      },
+                      "itemsTotal" : {
+                        "_dependentKeys" : [
+                          "widgetDataMetas",
+                          "widgetData"
+                        ],
+                        "_readOnly" : false,
+                        "_cacheable" : true
+                      },
+                      "itemsPerPage" : {
+                        "_dependentKeys" : [
+                          "model.itemsPerPage",
+                          "mixinOptions.pagination.defaultItemsPerPage"
+                        ],
+                        "_readOnly" : false,
+                        "_cacheable" : true
+                      },
+                      "paginationFirstItemIndex" : {
+                        "_dependentKeys" : [
+                          "widgetData"
+                        ],
+                        "_readOnly" : false,
+                        "_cacheable" : true
+                      },
+                      "partials" : {
+                        "subHeader" : [
+                          "pagination",
+                          "itemsperpage"
+                        ],
+                        "footer" : [
+                          "pagination",
+                          "pagination-infos"
+                        ]
+                      },
+                      "paginationLastItemIndex" : {
+                        "_dependentKeys" : [
+                          "widgetData",
+                          "itemsTotal"
+                        ],
+                        "_readOnly" : false,
+                        "_cacheable" : true
+                      },
+                      "currentPage" : 1,
+                      "totalPages" : {
+                        "_dependentKeys" : [
+                          "itemsTotal"
+                        ],
+                        "_readOnly" : false,
+                        "_cacheable" : true
+                      },
+                      "_actions" : {
+                        
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name" : "sortablearray"
+            },
+            {
+              "name" : "arraysearch"
+            }
           ],
-          "selection_toolbar": [
-            "actionbutton-removeselection"
-          ],
-          "actions_toolbar": [
-            "actionbutton-create"
-          ],
-          "mixins": [
-            { "name" : "Sortablearray" },
-            { "name" : "Arraysearch" },
-            { "name" : "Pagination" }
-          ],
-          "displayed_columns": [
+          "useRenderers" : true,
+          "id" : "widget_list_d44e145b-2ead-b03a-e8fd-a3ff1d95b62f",
+          "columnsOrder" : [ ],
+          "tagName" : null,
+          "displayed_columns" : [
             "task",
             "start",
             "rrule",
             "last_execution"
-          ]
-        }
+          ],
+          "default_column_sort" : {
+            "direction" : "ASC"
+          },
+          "contentTruncatedLength" : 150
+        },
+        "xtype" : "widgetwrapper",
+        "title" : "wrapper"
       }
-    ]
+    ],
+    "id" : "item_ffc332f0-2440-8a74-ac0f-81496ba2da6e"
   },
-  "parent": [],
-  "aaa_access_owner": [
+  "aaa_access_owner" : [
     "r",
     "w"
   ],
-  "aaa_group": "group.CPS_view",
-  "crecord_creation_time": 1400853201,
-  "aaa_access_unauth": [],
-  "aaa_owner": "account.root",
-  "internal": false,
-  "aaa_access_other": [
+  "crecord_write_time" : 1426524183,
+  "aaa_group" : "group.CPS_view",
+  "internal" : false,
+  "aaa_admin_group" : "group.CPS_view_admin",
+  "children" : [ ],
+  "crecord_name" : "jobs.json",
+  "loader_no_update" : true,
+  "id" : "view.jobs",
+  "aaa_access_unauth" : [ ],
+  "aaa_owner" : "account.root",
+  "crecord_type" : "view",
+  "aaa_access_other" : [
     "r"
   ],
-  "aaa_access_group": [
-    "r"
-  ],
-  "aaa_admin_group": "group.CPS_view_admin",
-  "children": []
+  "crecord_creation_time" : 1400853201
 }
