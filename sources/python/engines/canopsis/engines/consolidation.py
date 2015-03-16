@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine, publish
+from canopsis.engines.core import Engine
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.event import forger, get_routingkey
@@ -26,7 +26,6 @@ from canopsis.perfdata.manager import PerfData
 from canopsis.common.math_parser import Formulas
 from canopsis.engines.perfdata_utils.perfDataUtils import PerfDataUtils
 from canopsis.context.manager import Context
-
 
 import hashlib
 from time import gmtime
@@ -165,42 +164,41 @@ class engine(Engine):
 
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Start metrics consolidation")
-        serie = event
-        if not serie:
+        t_serie = event.copy()
+        if not t_serie:
             # Show error message
             self.logger.error('No record found.')
         # Test Settings
-        t_serie = serie.copy()
         _from = 1425394522
         _to = 1425402296
-        '''
-        t_serie['aggregate_interval'] = 60
-        t_serie['aggregate_method'] = 'average'
-        timewindow = {'start': _from, 'stop': _to, 'timezone': gmtime()}
+        perf_data_array = []
+        _, points = self.fetch(t_serie, _from, _to)
 
-        m_id = serie['metrics']
-        timeserie = {'aggregation': t_serie['aggregate_method'],\
-         'period': {'second': t_serie['aggregate_interval']}}
-        results, _ = self.perf_data.perfdata(metric_id=t_serie['metrics'], timewindow=timewindow, timeserie=timeserie)
-        # End test
-        results, _ = self.perf_data.perfdata(metric_id=m_id)
-        self.logger.debug(results[0])
-        '''
-        _, points = self.fetch(serie, _from, _to)
-
+        # This method allow us to update an metric or a list of metrics
         #self.manager.put(metric_id=t_serie['_id'], points=points)
 
         # Publish the consolidation metrics
-        entity = self.context.get_entity_by_id(t_serie['_id'])
-        event = self.context.get_event(entity, event_type='perfdata'\
-            , long_output=None, output= 'myoutput')
-        c_event = event.copy()
+        metric_name = 'metric_name'  # Change the value with UI data
         for t, v in points:
-            c_event = event.copy()
-            c_event['timestamp'] = t
-            c_event['perf_data_array'] = {'metric': t_serie['_id'], 'value': v, 'unit': t_serie['unit'], 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
-            publish(c_event, self)
+            #c_event['timestamp'] = t
+            perf_data_array.append({'metric': t_serie['_id'],\
+             'value': v, 'unit': t_serie['_id'], 'min': None,\
+              'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' })
+            conso_event = forger(
+                timestamp=t,
+                component='conso',
+                connector='Engine',
+                connector_name='consolidation',
+                event_type='perf',
+                source_type='component',
+                perf_data_array=perf_data_array
+                )
 
-        event_id = event['_id']
+            rk = get_routingkey(conso_event)
+            self.logger.debug('Publishing {} : {}'.format(rk, conso_event))
+            self.amqp.publish(conso_event, rk, self.amqp.exchange_name_events)
+            perf_data_array = []  # reset the perf_data_array data
+
         # Update crecords informations
+        event_id = t_serie['_id']
         self.crecord_task_complete(event_id)
