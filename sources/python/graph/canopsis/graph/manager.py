@@ -399,10 +399,11 @@ class GraphManager(MiddlewareRegistry):
                         _delts[elt_id] = elt
                     result[Graph._DELTS] = _delts
                 else:
+                    result = list(result)
                     for graph in result:
                         _delts = {}
                         elts = self.get_elts(
-                            ids=result[Graph.ELTS],
+                            ids=graph[Graph.ELTS],
                             serialize=False
                         )
                         for elt in elts:
