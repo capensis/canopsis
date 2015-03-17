@@ -25,7 +25,6 @@ from canopsis.event import forger, get_routingkey
 from canopsis.perfdata.manager import PerfData
 from canopsis.common.math_parser import Formulas
 from canopsis.engines.perfdata_utils.perfDataUtils import PerfDataUtils
-from canopsis.context.manager import Context
 
 import hashlib
 from time import gmtime
@@ -46,34 +45,11 @@ class engine(Engine):
         )
         self.manager = PerfData()
         self.perf_data = PerfDataUtils()
-        self.context = Context()
 
     def pre_run(self):
         self.storage = get_storage(namespace='object',
             account=Account(user="root", group="root"))
         self.manager = PerfData()
-
-    def publish_aggre_stats(self):
-
-        series_event = forger(
-            connector='engine',
-            connector_name='engine',
-            event_type='perf',
-            source_type='resource',
-            resource='series_events',
-            state=0,
-            perf_data_array=self.perf_data_array
-        )
-
-        rk = get_routingkey(series_event)
-
-        self.logger.debug('Publishing {0} : {1}'.format(rk, series_event))
-
-        self.amqp.publish(
-            series_event,
-            rk,
-            self.amqp.exchange_name_events
-        )
 
     def fetch(self, serie, _from, _to):
         self.logger.debug("*Start fetch*")
@@ -137,12 +113,12 @@ class engine(Engine):
 
             # import data in math context
             math = Formulas(data)
-            # describe the mathematic formula here.
+            # Evaluate the mathematic formula
             pointval = math.evaluate(formula)
 
             # Add computed point in the serie
             finalSerie.append([ts * 1000, pointval])
-            # Remove data from math context
+            # Remove variables values from math context
             math.reset()
 
         self.logger.debug('finalserie: {}'.format(finalSerie))
