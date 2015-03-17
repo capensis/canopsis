@@ -10,3 +10,4 @@ Administrator guide
    best-practices/index
    troubleshooting/index
    accounts-management/index
+   cat/index
