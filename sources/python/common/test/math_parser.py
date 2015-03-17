@@ -48,7 +48,6 @@ class FormulasTest(TestCase):
              "( metric_02bc472f705c074b4156850e1b5adcf4+ metric_687a68bb895125cb02f768473985569f+ metric_f64a796c2e49d9ac3ba8cd1cdf350795)/3":31175409663.666668,\
              "MIN(2,5, y, x)":2, "MAX(2,8,45)": 45, "sum(7,13.56,0.04)":20.60}
 
-        #expressions = {"sum(2,5)":7, "-E" :-math.e}
         for k, v in expressions.iteritems():
             self.assertEqual(self.formula.evaluate(k), v)
 

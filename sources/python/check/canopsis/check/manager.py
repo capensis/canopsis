@@ -60,7 +60,7 @@ class CheckManager(MiddlewareRegistry):
 
     CHECK_STORAGE = 'check_storage'  #: storage name
 
-    ID = Storage.DATA_ID  #: state id field name
+    ID = '_id'  # Storage.DATA_ID  #: state id field name
 
     STATE = Check.STATE  #: state field name
     LAST_STATE = 'last'  #: last state field name if criticity != HARD
@@ -211,7 +211,9 @@ class CheckManager(MiddlewareRegistry):
             raise InvalidState(state, self.valid_states)
 
         self[CheckManager.CHECK_STORAGE].put_element(
-            _id=entity_id, element={'state': state}, cache=cache
+            _id=entity_id,
+            element={'state': state},
+            cache=cache
         )
 
     def get_state(self, ids=None):

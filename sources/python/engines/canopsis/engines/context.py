@@ -143,6 +143,11 @@ class engine(Engine):
 
         context, name = self.context.get_entity_context_and_name(entity)
 
+        if 'resource' in context and not context['resource']:
+            del context['resource']
+        if 'resource' in entity and not entity['resource']:
+            del entity['resource']
+
         # put the status entity in the context
         self.context.put(
             _type=entity[Context.TYPE], entity=entity, context=context,

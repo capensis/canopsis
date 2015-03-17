@@ -374,6 +374,8 @@ class Amqp(Thread):
 
                     except Exception as e:
                         self.logger.error(' + Impossible to send {}'.format(e))
+                        self.disconnect()
+                        self.connect()
             else:
                 self.logger.error('Not connected ... try reconnecting')
                 self.connect()
