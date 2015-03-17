@@ -137,12 +137,12 @@ class engine(Engine):
 
             # import data in math context
             math = Formulas(data)
-            # describe the mathematic formula here.
+            # Evaluate the mathematic formula
             pointval = math.evaluate(formula)
 
             # Add computed point in the serie
             finalSerie.append([ts * 1000, pointval])
-            # Remove data from math context
+            # Remove variables values from math context
             math.reset()
 
         self.logger.debug('finalserie: {}'.format(finalSerie))
