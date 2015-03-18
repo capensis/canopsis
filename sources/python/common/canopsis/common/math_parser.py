@@ -141,7 +141,7 @@ class Formulas(object):
         elif op.lower() in self.fn:
             t_op = op.lower()
             if t_op in ('max', 'min', 'sum'):
-                return self.fn[t_op](parsing_result)
+                return self.fn[t_op](self.evaluate_parsing(parsing_result))
             return self.fn[op](self.evaluate_parsing(parsing_result))
         elif re.search('^[a-zA-Z][a-zA-Z0-9_]*$', op):
             if op in self._dict:
