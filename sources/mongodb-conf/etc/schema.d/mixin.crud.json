@@ -3,6 +3,9 @@
 	"categories": [{
 		"title": "General",
 		"keys":["hideEdit", "hideRemove", "hideCreate"]
+	},{
+		"title": "Form",
+		"keys":["form", "formoptions"]
 	}],
 
 	"properties": {
@@ -20,6 +23,18 @@
 			"type": "boolean",
 			"role": "boolean",
 			"default": false
+		},
+		"form": {
+			"type": "string",
+			"title": "Form class",
+			"description": "Form class to use for creation/edition",
+			"default": "modelform"
+		},
+		"formoptions": {
+			"type": "object",
+			"title": "Form options",
+			"description": "Extra options for form class",
+			"role": "simpledict"
 		}
 	}
 }
