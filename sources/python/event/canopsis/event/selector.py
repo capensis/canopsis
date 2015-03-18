@@ -231,7 +231,7 @@ class Selector(Record):
         # Adds default check clause as selector have to be done
         # on check event only
         # This constraint have to be available for all aggregation queries
-        check_clause = {'event_type': {'$in': ['check', 'eue']}}
+        check_clause = {'event_type': {'$in': ['check', 'eue', 'selector']}}
 
         if '$and' in mfilter:
             mfilter['$and'].append(check_clause)
