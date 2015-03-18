@@ -23,6 +23,17 @@
             "default": "graph",
             "type": "string",
             "required": false
+        },
+        "elts": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "required": true
+        },
+        "_delts": {
+            "type": "object",
+            "required": false
         }
     }
 }

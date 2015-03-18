@@ -151,7 +151,7 @@ class engine(Engine):
         _, points = self.fetch(t_serie, _from, _to)
 
         # This method allow us to update an metric or a list of metrics
-        #self.manager.put(metric_id=t_serie['_id'], points=points)
+        self.manager.put(metric_id=t_serie['_id'], points=points)
 
         # Publish the consolidation metrics
         metric_name = 'metric_name'  # Change the value with UI data
