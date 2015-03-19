@@ -33,29 +33,29 @@ pp = PrettyPrinter(indent=2)
 
 class Sla(object):
 
-    """
-        parameters:
-        :param storage: topology ids from where find elts.
-        :type storage: canopsis storage
-        :param rk: the rk to build sla from in the event_log collection
-        :type rk: string
-        :param template: the sla event template to fill with alert computation
-        :type template: string
-        :param timewindow: sla timewindow to consider for given rk in seconds
-        :type timewindow: int
-        :param sla_warning: thresholds beyond witch the alerts percent
-            pass the event in warning state
-        :type sla_warning: int
-        :param sla_critical: thresholds beyond witch the alerts percent
-            pass the event in critical state
-        :type sla_critical: int
-        :param alert_level: defining what is minimum level to consider state
-            in alert total time.
-        :type alert_level: string one value between minor, major or critical
-        :param display_name: used as the sla component name
-        :type display_name: string
-        :param logger: a logger instance to where the module can write output
-        :type logger: logger
+    """Enable Sla computation based on event's states history
+
+    :param storage: topology ids from where find elts.
+    :type storage: canopsis storage
+    :param rk: the rk to build sla from in the event_log collection
+    :type rk: string
+    :param template: the sla event template to fill with alert computation
+    :type template: string
+    :param timewindow: sla timewindow to consider for given rk in seconds
+    :type timewindow: int
+    :param sla_warning: thresholds beyond witch the alerts percent
+        pass the event in warning state
+    :type sla_warning: int
+    :param sla_critical: thresholds beyond witch the alerts percent
+        pass the event in critical state
+    :type sla_critical: int
+    :param alert_level: defining what is minimum level to consider state
+        in alert total time.
+    :type alert_level: string one value between minor, major or critical
+    :param display_name: used as the sla component name
+    :type display_name: string
+    :param logger: a logger instance to where the module can write output
+    :type logger: logger
     """
     def __init__(
         self,
@@ -273,8 +273,7 @@ class Sla(object):
 
     def compute_sla(self, sla_information, now):
 
-        """
-        Allow computing percents time portion where the
+        """Allow computing percents time portion where the
         selector state were. sla_information is a list of
         state and timestamp dict representing selector state
         evolution
