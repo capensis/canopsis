@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-02-18 16:02+0000\n"
+"PO-Revision-Date: 2015-03-19 14:56+0000\n"
 "Last-Translator: eric regnier <eregnier@capensis.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -689,7 +689,7 @@ msgid "Ack"
 msgstr "Ack"
 
 msgid "Cancel ack"
-msgstr "Annuler Ack"
+msgstr "Effacer Ack"
 
 msgid "Output"
 msgstr "Message"
@@ -878,10 +878,10 @@ msgid "event sent: "
 msgstr "Evènement envoyé"
 
 msgid "Removed ack for event:"
-msgstr "Ack supprimé pour cet évènement"
+msgstr "Ack annulé pour cet évènement"
 
 msgid "Ack removed"
-msgstr "Ack supprimé"
+msgstr "Ack annulé"
 
 msgid "Associated ticket number"
 msgstr "Numéro de ticket associé"
@@ -1334,7 +1334,7 @@ msgid "Not a valid number"
 msgstr "Nombre invalide"
 
 msgid "Remove ack"
-msgstr "Supprimer ack"
+msgstr "Annuler ack"
 
 msgid "Undo cancel"
 msgstr "Défaire annulation"
@@ -1459,3 +1459,231 @@ msgstr "Définit le niveau d'alerte en fonction du niveau d'alerte choisi<ul><li
 
 msgid "Delay until take care of sla information for this selector."
 msgstr "Délai jusqu' auquel calculer les informations de sla pour ce selecteur."
+
+msgid "Get configuration"
+msgstr "Récupérer configuration"
+
+msgid "Set configuration"
+msgstr "Définir configuration"
+
+msgid "Get state"
+msgstr "Récupérer l'état"
+
+msgid "Enable connector"
+msgstr "Activer connecteur"
+
+msgid "Disable connector"
+msgstr "Desactiver connecteur"
+
+msgid "hostname"
+msgstr "Hostname"
+
+msgid "connection type"
+msgstr "Type de connection"
+
+msgid "last update date"
+msgstr "Date de dernière mise à jour"
+
+msgid "enabled"
+msgstr "activé"
+
+msgid "Get connector state"
+msgstr "Récupérer l'état du connecteur"
+
+msgid "Set connector configuration"
+msgstr "Définir la configuration du connecteur"
+
+msgid "Get connector configuration"
+msgstr "Récupérer la configuration du connecteur"
+
+msgid "Edit connector"
+msgstr "Editer le connecteur"
+
+msgid "remote_user"
+msgstr "utilisateur distant"
+
+msgid "remote_port"
+msgstr "port distant"
+
+msgid "A port to use for remote connection"
+msgstr "Port à utiliser pour la connection à distance"
+
+msgid "The user to use for remote connection"
+msgstr "Utilisateur de la connexion à distance"
+
+msgid "The connector adress to reach over network"
+msgstr "Adresse de connection"
+
+msgid ""
+"A connector name to identify the connector, must be uniq between all "
+"connectors."
+msgstr "Nom du connecteur, doit être unique entre tous les connecteurs"
+
+msgid "How the remote connector should be reached"
+msgstr "Comment le connecteur distant doit être atteint"
+
+msgid "What connector type is it"
+msgstr "Quel type de connecteur est-ce"
+
+msgid "Unknown"
+msgstr "Inconnu"
+
+msgid "Amqp"
+msgstr "Amqp"
+
+msgid "Nagios"
+msgstr "Nagios"
+
+msgid "version"
+msgstr "version"
+
+msgid "userid"
+msgstr "identifiant utilisateur"
+
+msgid "password"
+msgstr "mot de passe"
+
+msgid "host"
+msgstr "hôte"
+
+msgid "port"
+msgstr "port"
+
+msgid "virtual_host"
+msgstr "virtual host"
+
+msgid "exchange_name"
+msgstr "nom de l'exchange"
+
+msgid "broker_module"
+msgstr "module du broker"
+
+msgid "max_size"
+msgstr "taille maximale"
+
+msgid "cache_file"
+msgstr "fichier de cache"
+
+msgid "cache_size"
+msgstr "taille du cache"
+
+msgid "autosync"
+msgstr "synchronisation automatique"
+
+msgid "autoflush"
+msgstr "purge automatique"
+
+msgid "rate"
+msgstr "taux"
+
+msgid "flush"
+msgstr "purge"
+
+msgid "purge"
+msgstr "purge"
+
+msgid "hostgroups"
+msgstr "host groups"
+
+msgid "servicegroups"
+msgstr "service groups"
+
+msgid "acknowledgement"
+msgstr "acquittement"
+
+msgid "downtime"
+msgstr "downtime"
+
+msgid "custom_variables"
+msgstr "variable personnalisées"
+
+msgid "urls"
+msgstr "urls"
+
+msgid "amqp_wait_time"
+msgstr "temps d'attente amqp"
+
+msgid "Number of seconds before a reconnection to AMQP"
+msgstr "Nombre de secondes avant la reconnection à AMQP"
+
+msgid "If 1, add action_url and notes_url to event (default: 0)"
+msgstr "Si 1, inclut action_url et notes_url à l'évènement (défaut: 0)"
+
+msgid "If 1, add Nagios macros to event (default: 0)"
+msgstr "Si 1, inclut les macros Nagios aux évènements (défaut: 0) "
+
+msgid "If 1, handle downtime events (default: 0)"
+msgstr "Si 1, inclut les événements en downtime (défaut: 0)"
+
+msgid "If 1, handle acknowledgement events (default: 0)"
+msgstr "Si 1, inclut les événements d'acquittement (défaut: 0)"
+
+msgid "If 1, send service groups on service-check events (default: 0)"
+msgstr "Si 1, inclut service groups on service-check aux événements (défaut: 0)"
+
+msgid "If 1, send host groups on host-check events (default: 0)"
+msgstr "Si 1, inclut host groups on host-check aux évènements (défaut: 0)"
+
+msgid ""
+"If 1, purge cache at startup. /!\\ This will increase Nagios' startup time. "
+"(default: 0)"
+msgstr "Si 1, purge le cache au démarrage du broker. /!\\ Augmente le temps de démarrage de Nagios. (défaut: 0)"
+
+msgid ""
+"Number of messages to send when depiling (-1: means it is calculated at "
+"runtime)"
+msgstr "Nombre de messages à envoyer durant le dépilement (-1 signifie que c'est calculé au runtime)"
+
+msgid "Delay in ms between two messages when depiling (5)"
+msgstr "Délais en millisecondes entre l'envoi de deux événements (défaut: 5)"
+
+msgid ""
+"Delay in seconds between two automatic flush of the cache into the AMQP bus "
+"if it is available (60)"
+msgstr "Délais en secondes entre deux purges du cache dans le bus AMQP si disponible (défaut: 60)"
+
+msgid ""
+"Delay in seconds between two automatic sync of the cache into 'cache_file'. "
+"If < 0 disable autosync (note: the cache will always be stored when the "
+"module is unloaded). If = 0 cache every time (this is not recommended as it "
+"may consumes lot of I/O) (default: 60)"
+msgstr "Délai en secondes entre deux synchronisations du cache dans le fichier de cache. Si < 0, la synchronisation automatique est désactivée (note: le cache sera toujours stocké lorsque le module est déchargé). Si = 0 cache tout le temps (Pas recommandé car gourmand en I/O) (défaut: 60)"
+
+msgid "Number of messages to store in cache (1000)"
+msgstr "Nombre de messages à stocker dans le cache (défaut: 1000)"
+
+msgid ""
+"File in which faulty messages are stored "
+"(/usr/local/nagios/var/canopsis.cache) (note: if we cannot read/create the "
+"file, the cache will only run in memory)"
+msgstr "Ficher dans lequel les messages en erreur sont stockés (défaut: /usr/local/nagios/var/canopsis.cache) (note: s'il n'est pas possible de lire ou créer le ficher, le cache sera fait en mémoire)"
+
+msgid "Maximum message size to send to the AMQP bus"
+msgstr "Taille maximale des messages envoyés dans le bus AMQP"
+
+msgid "broker option line"
+msgstr "Ligne d'option du broker"
+
+msgid "The amqp port where to connect"
+msgstr "Le port AMQP auquel se connecter"
+
+msgid "AMQP Virtual host"
+msgstr "Virtual host de l'AMQP"
+
+msgid "The amqp target where to connect"
+msgstr "L'adresse de l'AMQP de destination où se connecter"
+
+msgid "The amqp pass to connect with"
+msgstr "Le mot de passe pour AMQP"
+
+msgid "The amqp user to connect with"
+msgstr "Le user pour AMQP"
+
+msgid "Connector"
+msgstr "Connecteur"
+
+msgid "information saved"
+msgstr "Information sauvegardée"
+
+msgid "Delete this record ?"
+msgstr "Supprimer cet enregistrement ?"

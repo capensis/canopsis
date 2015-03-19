@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-02-18 16:18+0100\n"
+"PO-Revision-Date: 2015-03-19 15:25+0100\n"
 "Last-Translator: teamcanopsis <teamcanopsis@capensis.fr>\n"
 "Language-Team: English <teamcanopsis@capensis.fr>\n"
 "MIME-Version: 1.0\n"
@@ -1485,3 +1485,246 @@ msgstr ""
 
 msgid "Delay until take care of sla information for this selector."
 msgstr "Delay until take care of sla information for this selector."
+
+msgid "Get configuration"
+msgstr "Get configuration"
+
+msgid "Set configuration"
+msgstr "Set configuration"
+
+msgid "Get state"
+msgstr "Get state"
+
+msgid "Enable connector"
+msgstr "Enable connector"
+
+msgid "Disable connector"
+msgstr "Disable connector"
+
+msgid "hostname"
+msgstr "hostname"
+
+msgid "connection type"
+msgstr "connection type"
+
+msgid "last update date"
+msgstr "last update date"
+
+msgid "enabled"
+msgstr "enabled"
+
+msgid "Get connector state"
+msgstr "Get connector state"
+
+msgid "Set connector configuration"
+msgstr "Set connector configuration"
+
+msgid "Get connector configuration"
+msgstr "Get connector configuration"
+
+msgid "Edit connector"
+msgstr "Edit connector"
+
+msgid "remote_user"
+msgstr "remote_user"
+
+msgid "remote_port"
+msgstr "remote_port"
+
+msgid "A port to use for remote connection"
+msgstr "A port to use for remote connection"
+
+msgid "The user to use for remote connection"
+msgstr "The user to use for remote connection"
+
+msgid "The connector adress to reach over network"
+msgstr "The connector adress to reach over network"
+
+msgid ""
+"A connector name to identify the connector, must be uniq between all "
+"connectors."
+msgstr ""
+"A connector name to identify the connector, must be uniq between all "
+"connectors."
+
+msgid "How the remote connector should be reached"
+msgstr "How the remote connector should be reached"
+
+msgid "What connector type is it"
+msgstr "What connector type is it"
+
+msgid "Unknown"
+msgstr "Unknown"
+
+msgid "Amqp"
+msgstr "Amqp"
+
+msgid "Nagios"
+msgstr "Nagios"
+
+msgid "version"
+msgstr "version"
+
+msgid "userid"
+msgstr "userid"
+
+msgid "password"
+msgstr "password"
+
+msgid "host"
+msgstr "host"
+
+msgid "port"
+msgstr "port"
+
+msgid "virtual_host"
+msgstr "virtual_host"
+
+msgid "exchange_name"
+msgstr "exchange_name"
+
+msgid "broker_module"
+msgstr "broker_module"
+
+msgid "max_size"
+msgstr "max_size"
+
+msgid "cache_file"
+msgstr "cache_file"
+
+msgid "cache_size"
+msgstr "cache_size"
+
+msgid "autosync"
+msgstr "autosync"
+
+msgid "autoflush"
+msgstr "autoflush"
+
+msgid "rate"
+msgstr "rate"
+
+msgid "flush"
+msgstr "flush"
+
+msgid "purge"
+msgstr "purge"
+
+msgid "hostgroups"
+msgstr "hostgroups"
+
+msgid "servicegroups"
+msgstr "servicegroups"
+
+msgid "acknowledgement"
+msgstr "acknowledgement"
+
+msgid "downtime"
+msgstr "downtime"
+
+msgid "custom_variables"
+msgstr "custom_variables"
+
+msgid "urls"
+msgstr "urls"
+
+msgid "amqp_wait_time"
+msgstr "amqp_wait_time"
+
+msgid "Number of seconds before a reconnection to AMQP"
+msgstr "Number of seconds before a reconnection to AMQP"
+
+msgid "If 1, add action_url and notes_url to event (default: 0)"
+msgstr "If 1, add action_url and notes_url to event (default: 0)"
+
+msgid "If 1, add Nagios macros to event (default: 0)"
+msgstr "If 1, add Nagios macros to event (default: 0)"
+
+msgid "If 1, handle downtime events (default: 0)"
+msgstr "If 1, handle downtime events (default: 0)"
+
+msgid "If 1, handle acknowledgement events (default: 0)"
+msgstr "If 1, handle acknowledgement events (default: 0)"
+
+msgid "If 1, send service groups on service-check events (default: 0)"
+msgstr "If 1, send service groups on service-check events (default: 0)"
+
+msgid "If 1, send host groups on host-check events (default: 0)"
+msgstr "If 1, send host groups on host-check events (default: 0)"
+
+msgid ""
+"If 1, purge cache at startup. /!\\ This will increase Nagios' startup time. "
+"(default: 0)"
+msgstr ""
+"If 1, purge cache at startup. /!\\ This will increase Nagios' startup time. "
+"(default: 0)"
+
+msgid ""
+"Number of messages to send when depiling (-1: means it is calculated at "
+"runtime)"
+msgstr ""
+"Number of messages to send when depiling (-1: means it is calculated at "
+"runtime)"
+
+msgid "Delay in ms between two messages when depiling (5)"
+msgstr "Delay in ms between two messages when depiling (5)"
+
+msgid ""
+"Delay in seconds between two automatic flush of the cache into the AMQP bus "
+"if it is available (60)"
+msgstr ""
+"Delay in seconds between two automatic flush of the cache into the AMQP bus "
+"if it is available (60)"
+
+msgid ""
+"Delay in seconds between two automatic sync of the cache into 'cache_file'. "
+"If < 0 disable autosync (note: the cache will always be stored when the "
+"module is unloaded). If = 0 cache every time (this is not recommended as it "
+"may consumes lot of I/O) (default: 60)"
+msgstr ""
+"Delay in seconds between two automatic sync of the cache into 'cache_file'. "
+"If < 0 disable autosync (note: the cache will always be stored when the "
+"module is unloaded). If = 0 cache every time (this is not recommended as it "
+"may consumes lot of I/O) (default: 60)"
+
+msgid "Number of messages to store in cache (1000)"
+msgstr "Number of messages to store in cache (1000)"
+
+msgid ""
+"File in which faulty messages are stored "
+"(/usr/local/nagios/var/canopsis.cache) (note: if we cannot read/create the "
+"file, the cache will only run in memory)"
+msgstr ""
+"File in which faulty messages are stored "
+"(/usr/local/nagios/var/canopsis.cache) (note: if we cannot read/create the "
+"file, the cache will only run in memory)"
+
+msgid "Maximum message size to send to the AMQP bus"
+msgstr "Maximum message size to send to the AMQP bus"
+
+msgid "broker option line"
+msgstr "broker option line"
+
+msgid "The amqp port where to connect"
+msgstr "The amqp port where to connect"
+
+msgid "AMQP Virtual host"
+msgstr "AMQP Virtual host"
+
+msgid "The amqp target where to connect"
+msgstr "The amqp target where to connect"
+
+msgid "The amqp pass to connect with"
+msgstr "The amqp pass to connect with"
+
+msgid "The amqp user to connect with"
+msgstr "The amqp user to connect with"
+
+msgid "Connector"
+msgstr "Connector"
+
+msgid "information saved"
+msgstr "information saved"
+
+msgid "Delete this record ?"
+msgstr "Delete this record ?"
