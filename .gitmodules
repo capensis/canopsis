@@ -7,3 +7,6 @@
 	path = sources/webcore
 	url = https://github.com/capensis/canopsis-webcore
 	ignore = dirty
+[submodule "sources/reporting/opt/casperjs"]
+	path = sources/reporting/opt/casperjs
+	url = https://github.com/n1k0/casperjs
