@@ -23,11 +23,17 @@
         "sources": {
             "type": "array",
             "default": [],
+            "items": {
+                "type": "string"
+            },
             "required": true
         },
         "targets": {
             "type": "array",
             "default": [],
+            "items": {
+                "type": "string"
+            },
             "required": true
         },
         "_type": {
