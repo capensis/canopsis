@@ -164,9 +164,9 @@ class Formulas(object):
         self.exprStack = []  # reset the stack before each eval
         try:
             results = self.bnf().parseString(formula)
-        except ParseException, e:
+        except ParseException:
             results = ['Parse Failure', formula]
         if len(results) == 0 or results[0] == 'Parse Failure':
-            return 'Parse Failure-{}'.format(e)
+            return 'Parse Failure-{}'.format(formula)
         val = self.evaluate_parsing(self.exprStack[:])
         return val
