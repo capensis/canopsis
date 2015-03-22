@@ -57,14 +57,16 @@ class engine(Engine):
         timewindow = {'start': _from, 'stop': _to, 'timezone':gmtime()}
         if len(t_serie['metrics']) > 1 and t_serie['aggregate_method'].lower() == 'none':
             self.logger.debug('More than one metric in serie, performing an aggregation')
-            self.logger.debug('serie:', t_serie)
+            self.logger.debug('serie:'.format(t_serie))
             self.logger.debug('aggregation: average - 60s')
             t_serie['aggregate_method'] = 'average'
             t_serie['aggregate_interval'] = 60
         if t_serie['aggregate_method'].lower() == 'none':
-            timeserie = {'aggregation':'NONE'}
+            self.logger.debug('serie:'.format(t_serie))
+            timeserie = {'aggregation': 'NONE'}
             results = self.perf_data.perfdata(metric_id=t_serie['metrics'], timewindow=timewindow, timeserie=timeserie)
         else:
+            self.logger.debug('serie:', t_serie)
             timeserie = {'aggregation':t_serie['aggregate_method'], 'period':{'second':t_serie['aggregate_interval']}}
             results = self.perf_data.perfdata(metric_id=t_serie['metrics'], timewindow=timewindow, timeserie=timeserie)
 
@@ -141,6 +143,7 @@ class engine(Engine):
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Start metrics consolidation")
         t_serie = event.copy()
+        self.logger.debug('\n\n\n\n----->serie: {}'.format(t_serie))
         if not t_serie:
             # Show error message
             self.logger.error('No record found.')
