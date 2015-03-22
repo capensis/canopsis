@@ -25,12 +25,13 @@
             "role": "simplelist"
         },
         "graph_id": {
-            "type": "string"
+            "type": "string",
+            "required": true
         },
         "layout": {
             "type": "string",
-            "enum": ["natural", "tree", "map"],
-            "default": "natural",
+            "enum": ["force", "cluster", "tree", "pack", "partition"],
+            "default": "force",
             "role": "simplelist",
             "description": "graph layout"
         }

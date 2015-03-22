@@ -186,7 +186,8 @@ class route(object):
                         self.op.__name__.upper(),
                         self.url,
                         dumps(args), dumps(kwargs),
-                        dumps(dict(request.params)))
+                        dumps(dict(request.params))
+                    )
                 )
 
             if self.raw_body:
@@ -195,14 +196,27 @@ class route(object):
             else:
                 # add body parameters in kwargs
                 for body_param in self.payload:
-                    # TODO: remove reference from bottle
-                    param = request.params.get(body_param)
+                    # if param is an array of values
+                    array_body_param = '{0}[]'.format(body_param)
+                    if array_body_param in request.params:
+                        param = request.params.getall(array_body_param)
+                        # try to convert all json param values to python
+                        for i in range(len(param)):
+                            try:
+                                p = loads(param[i])
+                            except Exception:
+                                pass
+                            else:
+                                param[i] = p
+                    else:
+                        # TODO: remove reference from bottle
+                        param = request.params.get(body_param)
                     # if param exists add it in kwargs in deserializing it
                     if param is not None:
                         try:
                             kwargs[body_param] = loads(param)
 
-                        except ValueError:  # error while deserializing
+                        except Exception:  # error while deserializing
                             # get the str value and cross fingers ...
                             kwargs[body_param] = param
 
