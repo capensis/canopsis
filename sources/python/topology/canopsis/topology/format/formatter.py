@@ -29,7 +29,7 @@ import logging
 
 class Formatter(object):
     """docstring for Formatter"""
-    TOPOIDS = ('conns', 'nodes', 'root')
+    TOPOIDS = ('conns', 'nodes', 'root', 'crecord_name')
     EVENT_TYPE = ('operator', 'check', 'selector', 'topology')
     SOURCE_TYPE = ('resource', 'component')
     TYPE = ('event_type', 'source_type')
@@ -143,10 +143,21 @@ class Formatter(object):
          :return: a dictionnary of elements.
          :rtype: dictionnary.
         '''
-        str = self.dump(kind, q)
-        if len(json.loads(str)) > 0:
+        root_id = ""
+        crecord_name = ""
+        _str = self.dump(kind, q)
+        comp_json = json.loads(_str)
+        if len(comp_json) > 0:
             # catch exception here
-            res = json.loads(str)[0]
+            res = comp_json[0]
+            # Retreive the root_id and the crecord_name
+            root_id = res.get(self.TOPOIDS[2])
+            crecord_name = res.get(self.TOPOIDS[3])
+            # Change the root_id with the crecord_name
+            _str = _str.replace(str(root_id), str(crecord_name))
+            # load the new dict
+            comp_json = json.loads(_str)
+            res = comp_json[0]
         else:
             res = {}
         return res
@@ -361,7 +372,7 @@ class Formatter(object):
         if self.get_components() is not None:
             comps = self.get_components().copy()
         else:
-            self.logger.info('The topology: {} does not exist the database ...'.format(self.qr))
+            self.logger.info('The topology: {} does not exist in the database ...'.format(self.qr))
             comps = {}
         for c in self.get_component_keys():
             q, lst = self.query_generator(c)
@@ -412,4 +423,4 @@ class Formatter(object):
             return a == b
 
 if __name__ == '__main__':
-    pass
+	pass
