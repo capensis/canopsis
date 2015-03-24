@@ -359,5 +359,5 @@ class Factory(object):
 if __name__ == '__main__':
     fact = Factory()
     fact.build_all() # Create all topology inside the database
-    #fact.build('COD_STCIA_Metz') # create a single topology 'canopsis_arbre'
+    #fact.build('test') # create a single topology 'canopsis_arbre'
     #fact.delete_topology('component-1370') # delete the topology 'canopsis_arbre'
