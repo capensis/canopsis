@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.engines.core import Engine
-from canopsis.check.archiver import Archiver
+from canopsis.check.archiver import Archiver, BAGOT, STEALTHY
 from canopsis.old.downtime import Downtime
 from canopsis.old.storage import CONFIG
 from copy import deepcopy
@@ -131,7 +131,9 @@ class engine(Engine):
     def consume_dispatcher(self, event, *args, **kargs):
 
         # Process this each minute only
-        self.logger.info('proceed stealthy reset')
+        self.logger.info('proceed status reset')
 
         self.reset_stealthy_event_duration = time()
-        self.archiver.reset_stealthy_event()
+        self.archiver.reload_configuration()
+        self.archiver.reset_status_event(BAGOT)
+        self.archiver.reset_status_event(STEALTHY)
