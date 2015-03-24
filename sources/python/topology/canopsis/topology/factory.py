@@ -161,13 +161,10 @@ class Factory(object):
         comp_selct = components.get(f.EVENT_TYPE[2])
         if comp_selct is not None:
             for c in comp_selct:
-                entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
+                entity = {'component': unicode(None),'resource': unicode(c.values()[0].get('resource')),'connector': unicode('canopsis'),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 src_type_value = c.values()[0].get('source_type')
                 entity['id'] = c.values()[0].get(src_type_value)
                 entity = self.track_nonetype(entity)
-                # Affichage topoID
-                print 'params selector:', entity
-                print 'values:',self.get_topo_id(entity)
                 if c.values()[0].get('label') is None:
                     info['label'] = c.values()[0].get('component')
                 else:
@@ -178,7 +175,7 @@ class Factory(object):
         comp_topo = components.get(f.EVENT_TYPE[3])
         if comp_topo is not None:
             for c in comp_topo:
-            	entity = {'component': unicode(c.values()[0].get('display_name')),'resource': unicode(None),'connector': unicode('canopsis'),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode('topo')}
+            	entity = {'component': unicode(None),'resource': unicode(None),'connector': unicode('canopsis'),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode('topo')}
                 #entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 src_type_value = c.values()[0].get('source_type')
                 entity['id'] = c.values()[0].get(src_type_value)
