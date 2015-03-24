@@ -190,35 +190,47 @@ class route(object):
                     )
                 )
 
+            params = request.params  # request params
+
             if self.raw_body:
                 kwargs['body'] = request.body
 
             else:
-                # add body parameters in kwargs
-                for body_param in self.payload:
-                    # if param is an array of values
-                    array_body_param = '{0}[]'.format(body_param)
-                    if array_body_param in request.params:
-                        param = request.params.getall(array_body_param)
-                        # try to convert all json param values to python
-                        for i in range(len(param)):
-                            try:
-                                p = loads(param[i])
-                            except Exception:
-                                pass
-                            else:
-                                param[i] = p
-                    else:
-                        # TODO: remove reference from bottle
-                        param = request.params.get(body_param)
-                    # if param exists add it in kwargs in deserializing it
-                    if param is not None:
-                        try:
-                            kwargs[body_param] = loads(param)
+                # params are request params
+                try:
+                    loaded_body = loads(request.body.readline())
+                except ValueError as ve:
+                    self.logger.info(ve)
+                else:
+                    for lb in loaded_body:
+                        value = loaded_body[lb]
+                        params[lb] = value
 
-                        except Exception:  # error while deserializing
-                            # get the str value and cross fingers ...
-                            kwargs[body_param] = param
+            # add body parameters in kwargs
+            for body_param in self.payload:
+                # if param is an array of values
+                array_body_param = '{0}[]'.format(body_param)
+                if array_body_param in params:
+                    param = params.getall(array_body_param)
+                    # try to convert all json param values to python
+                    for i in range(len(param)):
+                        try:
+                            p = loads(param[i])
+                        except Exception:
+                            pass
+                        else:
+                            param[i] = p
+                else:
+                    # TODO: remove reference from bottle
+                    param = params.get(body_param)
+                # if param exists add it in kwargs in deserializing it
+                if param is not None:
+                    try:
+                        kwargs[body_param] = loads(param)
+
+                    except Exception:  # error while deserializing
+                        # get the str value and cross fingers ...
+                        kwargs[body_param] = param
 
             if self.adapt:
                 # adapt ember data to canopsis data
