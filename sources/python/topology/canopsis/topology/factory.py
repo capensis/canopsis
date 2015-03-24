@@ -151,9 +151,6 @@ class Factory(object):
                 src_type_value = c.values()[0].get('source_type')
                 entity['id'] = c.values()[0].get(src_type_value)
                 entity = self.track_nonetype(entity)
-                # Affichage topo ID
-                print 'param check: ', entity
-                print 'values:', self.get_topo_id(entity)
                 if c.values()[0].get('label') is None:
                     info['label'] = c.values()[0].get('component')
                 else:
@@ -186,9 +183,6 @@ class Factory(object):
                 src_type_value = c.values()[0].get('source_type')
                 entity['id'] = c.values()[0].get(src_type_value)
                 entity = self.track_nonetype(entity)
-                # Affichage topoID
-                print 'params: topology', entity
-                print 'values:',self.get_topo_id(entity)
                 if c.values()[0].get('label') is None:
                     info['label'] = c.values()[0].get('component')
                 else:
@@ -257,9 +251,6 @@ class Factory(object):
                 entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
                 entity['id'] = mydict.get(mydict.get('source_type'))
                 entity = self.track_nonetype(entity)
-                # Affichage topoID
-                print 'params operator AND:', entity
-                print 'values:', self.get_topo_id(entity)
 
                 dict_and = {}
                 dict_and['state'] = int(cond_value)
@@ -302,9 +293,6 @@ class Factory(object):
                 entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
                 entity['id'] = mydict.get(mydict.get('source_type'))
                 entity = self.track_nonetype(entity)
-                # Affichage topoID
-                print 'params operator or:', values
-                print 'values:',self.get_topo_id(entity)
 
                 # Create the condition
                 condition = new_conf(at_least, **dict_or)
@@ -370,6 +358,6 @@ class Factory(object):
 
 if __name__ == '__main__':
     fact = Factory()
-    #fact.build_all() # Create all topology inside the database
-    fact.build('COD_STCIA_Metz') # create a single topology 'canopsis_arbre'
+    fact.build_all() # Create all topology inside the database
+    #fact.build('COD_STCIA_Metz') # create a single topology 'canopsis_arbre'
     #fact.delete_topology('component-1370') # delete the topology 'canopsis_arbre'
