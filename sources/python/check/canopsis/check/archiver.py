@@ -56,10 +56,6 @@ class Archiver(Configurable):
     ):
 
         super(Archiver, self).__init__(*args, **kwargs)
-
-        #self.context = Context()
-        #self.check = CheckManager()
-
         self.namespace = namespace
         self.namespace_log = namespace + '_log'
 
@@ -194,14 +190,8 @@ class Archiver(Configurable):
             'events_log'
         )
 
-    def reset_stealthy_event(self):
-
-        def _publish_event(event):
-            rk = event.get('rk', get_routingkey(event))
-            self.logger.info("Sending event {}".format(rk))
-            self.amqp.publish(event, rk, 'canopsis.events')
-
-        # Default values
+    def reload_configuration(self):
+                # Default values
         self.restore_event = True
         self.bagot_freq = 10
         self.bagot_time = 3600
@@ -243,28 +233,55 @@ class Archiver(Configurable):
             )
         )
 
-        self.logger.debug(
-            "Checking stealthy events in collection {}".format(self.namespace)
-        )
+    def reset_status_event(self, reset_type):
+
+        """Trigger event status reset to off/on going status if event are in
+        BAGOT or STEALTHY status.
+
+        :param reset_type: event status to consider and change.
+        :type int: This is en enum, can be either BAGOT or STEALTHY
+        """
+
+        def _publish_event(event):
+            rk = event.get('rk', get_routingkey(event))
+            self.logger.info("Sending event {}".format(rk))
+            self.amqp.publish(event, rk, 'canopsis.events')
+
+        if reset_type not in [BAGOT, STEALTHY]:
+            self.logger.info('wrong reset type given, will not process')
+            return
+
+        # Dynamic method parameter depends on reset type input
+        compare_property = {
+            BAGOT: 'last_state_change',
+            STEALTHY: 'ts_first_stealthy'
+        }[reset_type]
+
+        configuration_delay = {
+            BAGOT: self.bagot_time,
+            STEALTHY: self.stealthy_show
+        }[reset_type]
 
         event_cursor = self.collection.find(
             {
                 'crecord_type': 'event',
-                'status': STEALTHY
+                'status': reset_type
             }
         )
 
+        # Change all potention reset type events
         for event in event_cursor:
-            # This is a stealthy event.
-            is_stealthy_show_delay_passed = \
-                time() - event['ts_first_stealthy'] >= self.stealthy_show
+            # This is a bagot event.
+            is_show_delay_passed = \
+                time() - event[compare_property] >= configuration_delay
 
             # Check the stealthy intervals
-            if is_stealthy_show_delay_passed:
+            if is_show_delay_passed:
 
                 self.logger.info(
-                    'Event {} no longer Stealthy'.format(
-                        event['rk']
+                    'Event {} no longer in status {}'.format(
+                        event['rk'],
+                        reset_type
                     )
                 )
 
