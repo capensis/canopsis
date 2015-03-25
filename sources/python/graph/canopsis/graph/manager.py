@@ -201,6 +201,9 @@ class GraphManager(MiddlewareRegistry):
         # ensure elt is a dict
         if isinstance(elt, GraphElement):
             elt = elt.to_dict()
+        # get elt uuid
+        if GraphElement.ID not in elt:
+            elt[GraphElement.ID] = GraphElement.new_id()
         elt_id = elt[GraphElement.ID]
 
         # put elt value in storage
@@ -231,17 +234,19 @@ class GraphManager(MiddlewareRegistry):
         :param bool cache: use query cache if True (False by default).
         """
 
-        # ensure elts is a list of GraphElements
-        if isinstance(elts, dict):
-            elts = [GraphElement.new_element(**elts)]
-        elif isinstance(elts, GraphElement):
+        # ensure elts is a list
+        if isinstance(elts, (dict, GraphElement)):
             elts = [elts]
 
         for elt in elts:
             if isinstance(elt, dict):
+                if not elt.get(GraphElement.ID):
+                    elt[GraphElement.ID] = GraphElement.new_id()
                 elt = GraphElement.new_element(**elt)
             # save elt
             elt.save(manager=self, cache=cache, graph_ids=graph_ids)
+
+        return elts
 
     def remove_elts(
         self, ids=None, graph_ids=None, cache=False, del_orphans=True

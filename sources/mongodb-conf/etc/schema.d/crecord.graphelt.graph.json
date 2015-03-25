@@ -24,6 +24,9 @@
             "type": "string",
             "required": false
         },
+        "_type": {
+            "default": "graph"
+        },
         "elts": {
             "type": "array",
             "items": {
