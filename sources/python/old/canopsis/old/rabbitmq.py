@@ -252,7 +252,8 @@ class Amqp(Thread):
                         routing_key = queue_name
 
                     self.logger.debug(
-                        " + exchange: '{}', exclusive: {}, auto_delete: {}, no_ack: {}".format(
+                        "exchange: '{}', exclusive: {}, auto_delete: {},no_ack: {}"
+                        .format(
                             qsettings['exchange_name'],
                             qsettings['exclusive'],
                             qsettings['auto_delete'],
@@ -282,7 +283,8 @@ class Amqp(Thread):
                                 )
                             except:
                                 self.logger.error(
-                                    "You need upgrade your Kombu version ({})".format(__version__)
+                                    "You need upgrade your Kombu version ({})"
+                                    .format(__version__)
                                 )
 
                 if not qsettings['consumer']:
@@ -363,7 +365,8 @@ class Amqp(Thread):
                             serializer=serializer,
                             compression=compression,
                             routing_key=routing_key,
-                            exchange=self.get_exchange(exchange_name))
+                            exchange=self.get_exchange(exchange_name)
+                        )
 
                         self.logger.debug('publish {} in exchange {}'.format(
                             routing_key,

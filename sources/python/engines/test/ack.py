@@ -28,8 +28,8 @@ from sys import path
 
 from time import time, sleep
 
+from canopsis.engines.core import publish as _publish
 from canopsis.old.rabbitmq import Amqp
-from canopsis.event import get_routingkey
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
@@ -62,13 +62,8 @@ def get_rk(event):
 
 
 def publish(event):
-    rk = get_routingkey(event)
 
-    amqp.publish(
-        event,
-        rk,
-        amqp.exchange_name_events
-    )
+    _publish(publisher=amqp, event=event)
 
 
 def log(message):
@@ -117,7 +112,9 @@ class KnownValues(TestCase):
         log('Wait for ack event beeing threaten')
         sleep(3)
 
-        log('Now entities collection should contain an ack event for this scenario')
+        log(
+            'Now entities collection should contain an ack event for this scenario'
+        )
 
         ack_insert = self.ack.find_one({'rk': self.rk})
         self.assertTrue(ack_insert)

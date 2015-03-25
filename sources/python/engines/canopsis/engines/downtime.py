@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
-from canopsis.event import get_routingkey, forger
+from canopsis.engines.core import Engine, publish
+from canopsis.event import forger
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.record import Record
@@ -147,9 +147,7 @@ class engine(Engine):
             logevent['downtime_connector'] = event['connector']
             logevent['downtime_source'] = event['connector_name']
 
-            self.amqp.publish(
-                logevent, get_routingkey(logevent),
-                exchange_name='canopsis.events')
+            publish(publisher=self.amqp, event=logevent)
 
             # Set downtime for events already in database
             self.evt_backend.update(

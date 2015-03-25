@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.event import get_routingkey, forger
+from canopsis.event import forger
 from canopsis.old.statemap import Statemap
 from canopsis.old.mfilter import check
 from canopsis.common.init import basestring
@@ -256,9 +256,8 @@ class engine(Engine):
                 output=output,
                 long_output=derogation.get('description', None)
             )
-            rk = get_routingkey(event)
 
-            self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+            publish(publisher=self.amqp, event=event)
 
     def beat(self):
         self.derogations = []

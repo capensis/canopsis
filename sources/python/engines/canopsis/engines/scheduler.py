@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis import schema
@@ -86,10 +86,9 @@ class engine(Engine):
         job['params']['jobid'] = job['_id']
         job['params']['jobctx'] = job.get('context', {})
 
-        self.amqp.publish(
-            job['params'],
-            'task_{0}'.format(job['task'][4:]),
-            'amq.direct'
+        publish(
+            publisher=self.amqp, event=job['params'],
+            rk='task_{0}'.format(job['task'][4:]), exchange='amq.direct'
         )
 
         now = int(time())

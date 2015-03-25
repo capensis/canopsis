@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.record import Record
@@ -137,7 +137,7 @@ class engine(Engine):
             #rk = 'dispatcher.{0}'.format(crecord_type)
 
             self.amqp.get_exchange('media')
-            self.amqp.publish(event, rk, exchange_name='media')
+            publish(publiher=self.amqp, event=event, rk=rk, exchange='media')
 
             return True
 

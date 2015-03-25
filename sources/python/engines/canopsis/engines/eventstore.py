@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.check.archiver import Archiver, BAGOT, STEALTHY
 from canopsis.old.downtime import Downtime
 from canopsis.old.storage import CONFIG
@@ -67,8 +67,10 @@ class engine(Engine):
             event['_id'] = _id
             event['event_id'] = event['rk']
             # Event to Alert
-            self.amqp.publish(
-                event, event['rk'], self.amqp.exchange_name_alerts)
+            publish(
+                publisher=self.amqp, event=event, rk=event['rk'],
+                exchange=self.amqp.exchange_name_alerts
+            )
 
     def store_log(self, event, store_new_event=True):
 
@@ -99,7 +101,10 @@ class engine(Engine):
 
         # Event to Alert
         event['event_id'] = event['rk']
-        self.amqp.publish(event, event['rk'], self.amqp.exchange_name_alerts)
+        publish(
+            publisher=self.amqp, event=event, rk=event['rk'],
+            exchange=self.amqp.exchange_name_alerts
+        )
 
     def work(self, event, *args, **kargs):
 

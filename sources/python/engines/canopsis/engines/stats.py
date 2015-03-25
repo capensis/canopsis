@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.event import get_routingkey, forger
+from canopsis.event import forger
 
 
 class engine(Engine):
@@ -124,12 +124,6 @@ class engine(Engine):
             perf_data_array=self.perf_data_array
         )
 
-        rk = get_routingkey(stats_event)
+        self.logger.debug('Publishing {}'.format(stats_event))
 
-        self.logger.debug('Publishing {} : {}'.format(rk, stats_event))
-
-        self.amqp.publish(
-            stats_event,
-            rk,
-            self.amqp.exchange_name_events
-        )
+        publish(publisher=self.amqp, event=stats_event)
