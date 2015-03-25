@@ -8,7 +8,7 @@
 		"services": {
 			"type": "array",
 			"title": "Activated services",
-			"description": "List of auth services enabled in Canopsis. Changes require a restart of Canopsis UI"
+			"description": "List of auth services enabled in Canopsis. Changes require a restart of Canopsis UI.<br/>Availables modules are <ul><li>casconfig</li><li>ldapconfig</li></ul>"
 		}
 	}
 }
