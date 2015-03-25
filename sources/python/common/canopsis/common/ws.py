@@ -49,7 +49,7 @@ def adapt_canopsis_data_to_ember(data):
     if isinstance(data, dict):
         if 'id' in data:
             data['cid'] = data['id']
-            del data['id']
+            #del data['id']
         if 'eid' in data:
             data['id'] = data['eid']
         for item in data.values():
@@ -199,8 +199,8 @@ class route(object):
                 # params are request params
                 try:
                     loaded_body = loads(request.body.readline())
-                except ValueError as ve:
-                    self.logger.info(ve)
+                except ValueError:
+                    pass
                 else:
                     for lb in loaded_body:
                         value = loaded_body[lb]

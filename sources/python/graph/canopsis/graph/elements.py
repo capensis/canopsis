@@ -126,14 +126,23 @@ class GraphElement(object):
 
     __slots__ = (ID, TYPE)
 
+    @staticmethod
+    def new_id():
+        """Generate a new graph element id.
+
+        :return: new graph element id.
+        :rtype: str
+        """
+        return str(uuid())
+
     def __init__(self, _id=None, _type=None):
         """
-        :param str _id: element id. generated if None.
+        :param str _id: element id. Generated if None.
         :param str _type: element type name. self lower type name if None.
         """
 
         self.type = type(self).__name__.lower() if _type is None else _type
-        self.id = str(uuid()) if _id is None else _id
+        self.id = GraphElement.new_id() if _id is None else _id
 
     def __repr__(self):
 
