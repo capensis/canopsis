@@ -1,5 +1,5 @@
 {
-    "enabled" : ["core" ,"uibase", "monitoring", "development", "uiv1_themes"],
+    "enabled" : ["core" ,"uibase", "monitoring", "development", "uiv1_themes", "canopsis-backend-ui-connector", "userpreferences"],
     "crecord_name" : "enabledmodules",
     "crecord_type" : "enabledmodules",
     "loader_id": "enabledmodules",
