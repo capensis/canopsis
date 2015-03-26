@@ -8,7 +8,7 @@
 	"properties": {
 		"cellCssClass": {
 			"type": "string",
-			"enum": ["", "halfwidth", "col-xs-15", "col-sm-15", "col-md-15", "col-lg-15"],
+			"enum": ["", "halfwidth", "col-xs-15", "col-sm-15", "col-md-15", "col-lg-15", "col-xs-13", "col-sm-13", "col-md-13", "col-lg-13"],
 			"role": "simplelist"
 		}
 	}
