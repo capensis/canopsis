@@ -18,8 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
-from canopsis.event import get_routingkey
+from canopsis.engines.core import Engine, publish
 
 from time import time
 
@@ -61,11 +60,19 @@ class engine(Engine):
                 'source_type': 'component',
                 'component': '__canopsis__',
                 'perf_data_array': [
-                    {'metric': 'cps_evt_duration_min', 'value': durmin, 'unit': 's', 'type': 'GAUGE'},
-                    {'metric': 'cps_evt_duration_max', 'value': durmax, 'unit': 's', 'type': 'GAUGE'},
-                    {'metric': 'cps_evt_duration_avg', 'value': duravg, 'unit': 's', 'type': 'GAUGE'}
+                    {
+                        'metric': 'cps_evt_duration_min',
+                        'value': durmin, 'unit': 's', 'type': 'GAUGE'
+                    },
+                    {
+                        'metric': 'cps_evt_duration_max',
+                        'value': durmax, 'unit': 's', 'type': 'GAUGE'
+                    },
+                    {
+                        'metric': 'cps_evt_duration_avg', 'value': duravg,
+                        'unit': 's', 'type': 'GAUGE'
+                    }
                 ]
             }
 
-            self.amqp.publish(
-                event, get_routingkey(event), self.amqp.exchange_name_events)
+            publish(publisher=self.amqp, event=event)

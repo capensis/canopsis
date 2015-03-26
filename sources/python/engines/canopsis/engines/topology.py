@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
-from canopsis.event import forger, get_routingkey
+from canopsis.engines.core import Engine, publish
+from canopsis.event import forger
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
@@ -104,7 +104,7 @@ class engine(Engine):
         ### Recursive function
         def parseChilds(parent, level=0):
 
-            _id  = parent['_id']
+            _id = parent['_id']
             state = self.stateById.get(_id, {})
             childIds = parent.get('childs', [])
 
@@ -127,7 +127,9 @@ class engine(Engine):
                     state = parent['calcul_state'](
                         states=states, options=parent.get("options", {}))
                 except Exception as err:
-                    self.logger.error("Impossible to calcul state of %s (%s)" % (_id, err))
+                    self.logger.error(
+                        "Impossible to calcul state of %s (%s)" % (_id, err)
+                    )
                     state = self.default_Operator_fn(states=states)
 
                 # Set state
@@ -157,7 +159,10 @@ class engine(Engine):
             label = parent.get('label')
             if not label:
                 if parent.get('resource'):
-                    label = "%s %s" % (parent.get('component', ''), parent.get('resource', ''))
+                    label = "%s %s" % (
+                        parent.get('component', ''),
+                        parent.get('resource', '')
+                    )
                 else:
                     label = parent.get('component', '')
 
@@ -241,14 +246,24 @@ class engine(Engine):
             self.stateById = {}
 
             records = self.storage.find(
-                mfilter={'$and': [{'_id': {'$in': ids}}]}, mfields=['state', 'state_type', 'previous_state', 'component', 'resource'], namespace='events')
+                mfilter={
+                    '$and': [{'_id': {'$in': ids}}]
+                },
+                mfields=[
+                    'state', 'state_type', 'previous_state',
+                    'component', 'resource'
+                ],
+                namespace='events'
+            )
             for record in records:
 
                 self.logger.debug({'record': record})
                 state = record['state']
 
                 if 'downtime' in event and event['downtime']:
-                    self.logger.debug('downtime detected, will set state to 0 for this event')
+                    self.logger.debug(
+                        'downtime detected, will set state to 0 for this event'
+                    )
                     state = 0
 
                 self.stateById[record['_id']] = {
@@ -284,14 +299,12 @@ class engine(Engine):
             # Extra fields
             event['nestedTree'] = self.topo_dump4Ui(topo)
 
-            rk = get_routingkey(event)
-
-            self.logger.debug("Publish event on %s" % rk)
-            self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+            publish(publisher=self.amqp, event=event)
             self.crecord_task_complete(event_id)
         else:
             self.logger.warning(
-                'topology not able to load crecord properly, topology not threaten.')
+                'topology not able to load crecord properly, topology not threaten.'
+                )
 
     def work(self, event, *args, **kargs):
         return event

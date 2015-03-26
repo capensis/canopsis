@@ -21,6 +21,12 @@
         "type": {
             "default": "topo"
         },
+        "info": {
+            "default": {
+                "task": "canopsis.topology.rule.action.worst_state",
+                "state": 0
+            }
+        },
         "operator": {
             "enum": ["change_state", "worst_state", "best_state", "at_least", "_all", "nok"],
             "type": "string",

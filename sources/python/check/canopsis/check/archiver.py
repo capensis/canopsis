@@ -26,6 +26,7 @@ from canopsis.old.record import Record
 from canopsis.old.rabbitmq import Amqp
 from canopsis.event import get_routingkey
 
+from canopsis.engines.core import publish
 #from canopsis.context.manager import Context
 #from canopsis.check.manager import CheckManager
 from canopsis.configuration.configurable import Configurable
@@ -245,7 +246,9 @@ class Archiver(Configurable):
         def _publish_event(event):
             rk = event.get('rk', get_routingkey(event))
             self.logger.info("Sending event {}".format(rk))
-            self.amqp.publish(event, rk, 'canopsis.events')
+            publish(
+                event=event, rk=rk, publisher=self.amqp
+            )
 
         if reset_type not in [BAGOT, STEALTHY]:
             self.logger.info('wrong reset type given, will not process')

@@ -48,7 +48,7 @@ check = CheckManager()
 def change_state(
     event, vertice,
     state=None, update_entity=False, criticity=CheckManager.HARD,
-    manager=None, check_manager=None, engine=None,
+    manager=None, check_manager=None,
     **kwargs
 ):
     """

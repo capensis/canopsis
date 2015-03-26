@@ -66,6 +66,10 @@
             "role": "simplelist",
             "description": "State to set if at_least/_all operator is unchecked",
             "required": false
+        },
+        "info": {
+            "task": "canopsis.topology.rule.action.change_state",
+            "state": 0
         }
     }
 }

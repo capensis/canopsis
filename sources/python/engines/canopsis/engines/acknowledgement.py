@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.event import get_routingkey, forger, is_host_acknowledged
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
@@ -234,11 +234,11 @@ class engine(Engine):
                 ]
             )
 
-            self.amqp.publish(
-                alerts_event,
-                get_routingkey(alerts_event),
-                self.amqp.exchange_name_events
+            publish(
+                publisher=self.amqp,
+                event=alerts_event
             )
+
             self.logger.debug('Ack internal metric sent.')
 
             for hostgroup in event.get('hostgroups', []):
@@ -264,9 +264,7 @@ class engine(Engine):
                     ]
                 )
 
-                self.amqp.publish(
-                    alerts_event, get_routingkey(alerts_event),
-                    self.amqp.exchange_name_events)
+                publish(publisher=self.amqp, event=alerts_event)
 
             self.logger.debug('Reloading ack cache')
             self.reload_ack_cache()
@@ -350,8 +348,9 @@ class engine(Engine):
             )
 
         if logevent:
-            self.amqp.publish(
-                logevent, get_routingkey(logevent),
-                exchange_name=self.acknowledge_on)
+            publish(
+                publisher=self.amqp, event=logevent,
+                exchange=self.acknowledge_on
+            )
 
         return event

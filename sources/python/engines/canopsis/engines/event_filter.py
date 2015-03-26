@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine, DROP
+from canopsis.engines.core import Engine, DROP, publish
 
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
@@ -270,7 +270,8 @@ class engine(Engine):
 
                 if filterItem.get('break', 0):
                     self.logger.debug(
-                        u' + Filter {} broke the next filters processing'.format(
+                        u' + Filter {} broke the next filters processing'
+                        .format(
                             filterItem.get('name', 'filter')
                         )
                     )
@@ -318,7 +319,7 @@ class engine(Engine):
 
             try:
                 record_dump["mfilter"] = json.loads(record_dump["mfilter"])
-            except Exception as e:
+            except Exception:
                 self.logger.info('Invalid mfilter {}, filter {}'.format(
                     record_dump['mfilter'],
                     record_dump['name'],
@@ -372,8 +373,7 @@ class engine(Engine):
 
         self.logger.debug(message_dropped)
         self.logger.debug(message_passed)
-        rk = get_routingkey(event)
-        self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+        publish(publisher=self.amqp, event=event)
         self.drop_event_count = 0
         self.pass_event_count = 0
 

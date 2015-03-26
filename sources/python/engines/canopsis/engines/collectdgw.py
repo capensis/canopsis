@@ -18,9 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.old.tools import Str2Number
-from canopsis.event import get_routingkey, forger
+from canopsis.event import forger
 
 from time import time
 
@@ -127,9 +127,12 @@ class engine(Engine):
                             i += 1
 
                             perf_data_array.append(
-                                {'metric': name, 'value': value,
-                                'type': data_type, 'unit': unit, 'min': vmin,
-                                'max': vmax})
+                                {
+                                    'metric': name, 'value': value,
+                                    'type': data_type, 'unit': unit,
+                                    'min': vmin, 'max': vmax
+                                }
+                            )
 
                     except Exception as err:
                         self.logger.error(
@@ -141,24 +144,21 @@ class engine(Engine):
                         ' + perf_data_array: %s', perf_data_array)
 
                     event = forger(
-                            connector='collectd',
-                            connector_name='collectd2event',
-                            component=component,
-                            resource=resource,
-                            timestamp=None,
-                            source_type='resource',
-                            event_type='check',
-                            state=0,
-                            perf_data_array=perf_data_array
-                            )
-
-                    rk = get_routingkey(event)
+                        connector='collectd',
+                        connector_name='collectd2event',
+                        component=component,
+                        resource=resource,
+                        timestamp=None,
+                        source_type='resource',
+                        event_type='check',
+                        state=0,
+                        perf_data_array=perf_data_array
+                    )
 
                     self.logger.debug("Send Event: %s" % event)
 
                     ## send event on amqp
-                    self.amqp.publish(
-                        event, rk, self.amqp.exchange_name_events)
+                    publish(publisher=self.amqp, event=event)
 
             else:
                 error = True

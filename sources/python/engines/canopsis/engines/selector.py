@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.event.selector import Selector
@@ -127,13 +127,7 @@ class engine(Engine):
 
     def publish_sla_event(self, event, display_name):
 
-        rk = get_routingkey(event)
-
-        self.amqp.publish(
-            event,
-            rk,
-            self.amqp.exchange_name_events
-        )
+        publish(publisher=self.amqp, event=event)
 
         self.logger.debug("published event sla selector {}".format(
             display_name
@@ -169,11 +163,7 @@ class engine(Engine):
             selector_event['ack'] = {}
             self.logger.debug(' + Selector event is NOT ack')
 
-        self.amqp.publish(
-            selector_event,
-            rk,
-            self.amqp.exchange_name_events
-        )
+        publish(publisher=self.amqp, event=selector_event, rk=rk)
 
         self.logger.debug("published event selector {}".format(
             selector.display_name

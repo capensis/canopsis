@@ -76,12 +76,12 @@ def event_processing(engine, event, manager=None, **kwargs):
         entity_id = context.get_entity_id(entity)
         # in case of topology node
         if source_type in [TopoNode.TYPE, Topology.TYPE]:
-            ids = context.get_name(entity_id)
+            elt_id = context.get_name(entity_id)
             # process all targets
-            elt = manager.get_elts(ids=ids)
+            elt = manager.get_elts(ids=elt_id)
             if elt is not None:
                 targets_by_edge = manager.get_targets(
-                    ids=elt.id, add_edges=True
+                    ids=elt_id, add_edges=True
                 )
                 # get elt state in order to update all edges
                 state = elt.state
@@ -93,8 +93,8 @@ def event_processing(engine, event, manager=None, **kwargs):
                     # process and save all targets
                     for target in targets:
                         target.process(
-                            event=event, engine=engine, manager=manager,
-                            **kwargs
+                            event=event, publisher=engine.amqp,
+                            manager=manager, **kwargs
                         )
 
         else:  # in case of entity event
@@ -106,7 +106,8 @@ def event_processing(engine, event, manager=None, **kwargs):
                 # process all elts
                 for elt in elts:
                     elt.process(
-                        event=event, engine=engine, manager=manager, **kwargs
+                        event=event, publisher=engine.amqp,
+                        manager=manager, **kwargs
                     )
 
     return event

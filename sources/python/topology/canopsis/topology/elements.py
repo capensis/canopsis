@@ -139,7 +139,9 @@ class TopoVertice(BaseTaskedVertice):
 
         return result
 
-    def process(self, event, engine=None, manager=None, source=None, **kwargs):
+    def process(
+        self, event, publisher=None, manager=None, source=None, **kwargs
+    ):
 
         if manager is None:
             manager = _topology
@@ -148,15 +150,15 @@ class TopoVertice(BaseTaskedVertice):
         old_state = self.state
         # process task
         result = super(TopoVertice, self).process(
-            event=event, engine=engine, **kwargs
+            event=event, publisher=publisher, **kwargs
         )
         # compare old state and new state
         if self.state != old_state:
             # if not equal
             new_event = self.get_event(state=self.state, source=source)
             # publish a new event
-            if engine is not None:
-                publish(event=new_event, engine=engine)
+            if publisher is not None:
+                publish(event=new_event, publisher=publisher)
             # save self
             self.save(manager=manager)
 

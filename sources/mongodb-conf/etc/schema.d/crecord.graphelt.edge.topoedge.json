@@ -12,6 +12,9 @@
         },
         "type": {
             "default": "topoedge"
+        },
+        "info": {
+            "state": 0
         }
     }
 }

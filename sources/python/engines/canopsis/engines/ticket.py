@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine
+from canopsis.engines.core import Engine, publish
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
@@ -55,7 +55,9 @@ class engine(Engine):
                 self.logger.debug('Declare Ticket')
 
                 try:
-                    refevt = self.store.get(event['ref_rk'], namespace='events')
+                    refevt = self.store.get(
+                        event['ref_rk'], namespace='events'
+                    )
                     refevt = refevt.dump()
 
                 except KeyError:
@@ -65,9 +67,15 @@ class engine(Engine):
                 job['_id'] = self.config['_id']
                 job['context'] = refevt
 
-                self.amqp.publish(job, 'Engine_scheduler', 'amq.direct')
+                publish(
+                    publisher=self.amqp, event=job, rk='Engine_scheduler',
+                    exchange='amq.direct'
+                )
 
-                self.logger.info('Setting ticked received for {}'.format(event['ref_rk']))
+                self.logger.info(
+                    'Setting ticked received for {}'
+                    .format(event['ref_rk'])
+                )
 
                 self.store.get_backend('events').update({
                     'rk': event['ref_rk']
@@ -78,14 +86,20 @@ class engine(Engine):
                     }
                 })
 
+            elif (event['event_type'] in ['ack', 'assocticket']
+                    and 'ticket' in event):
 
-            elif event['event_type'] in ['ack', 'assocticket'] and 'ticket' in event:
-
-                self.logger.info('Associate ticket for event type {}'.format(event['event_type']))
+                self.logger.info(
+                    'Associate ticket for event type {}'
+                    .format(event['event_type'])
+                )
 
                 events = self.store.get_backend('events')
 
-                self.logger.info('Update events with rk {0}'.format(event['ref_rk']))
+                self.logger.info(
+                    'Update events with rk {0}'
+                    .format(event['ref_rk'])
+                )
                 events.update({
                     'rk': event['ref_rk']
                 }, {

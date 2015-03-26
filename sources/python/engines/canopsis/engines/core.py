@@ -316,12 +316,17 @@ class Engine(object):
         if self.next_balanced:
             queue_name = self.get_amqp_queue.next()
             if queue_name:
-                self.amqp.publish(event, queue_name, "amq.direct")
+                publish(
+                    publisher=self.amqp, event=event, rk=queue_name,
+                    exchange='amq.direct'
+                )
 
         else:
             for queue_name in self.next_amqp_queues:
-
-                self.amqp.publish(event, queue_name, "amq.direct")
+                publish(
+                    publisher=self.amqp, event=event, rk=queue_name,
+                    exchange="amq.direct"
+                )
 
     def _beat(self):
         now = int(time())
@@ -379,7 +384,7 @@ class Engine(object):
                     perf_data_array=perf_data_array
                 )
 
-                publish(event=event, engine=self)
+                publish(event=event, publisher=self.amqp)
 
             self.counter_error = 0
             self.counter_event = 0
@@ -539,7 +544,7 @@ class TaskHandler(Engine):
             'execution_time': end - start
         }
 
-        publish(event=event, engine=self)
+        publish(event=event, publisher=self.amqp)
 
     def handle_task(self, job):
         """
@@ -553,15 +558,26 @@ class TaskHandler(Engine):
 
 
 @register_task
-def publish(event, engine, **kwargs):
+def publish(event, publisher, rk=None, exchange=None, **kwargs):
     """
     Task dedicated to publish an event from an engine.
 
     :param dict event to send.
-    :param Engine engine: engine to use in order to send the event.
+    :param publisher: resource able to publish the event with a
+        publish method. This method takes three parameters, the event,
+        the rk related to the event and en exchange name.
+    :param str rk: routing key to use. If None, use
+        get_routingkey(event).
+    :param str exchange: exchange name. If None, use
+        publisher.exchange_name_events.
     """
 
-    rk = get_routingkey(event)
-    engine.amqp.publish(
-        event, rk, engine.amqp.exchange_name_events
+    if exchange is None:
+        exchange = publisher.exchange_name_events
+
+    if rk is None:
+        rk = get_routingkey(event)
+
+    publisher.publish(
+        event, rk, exchange
     )
