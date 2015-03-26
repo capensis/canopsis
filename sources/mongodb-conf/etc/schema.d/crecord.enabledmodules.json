@@ -1,0 +1,14 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["enabled"]
+	}],
+	"properties": {
+		"enabled": {
+			"type": "array",
+			"title": "Enabled plugins",
+			"description": "List of Canopsis UI plugins enabled.<br/><i class=\"fa fa-warning\"></i> BEWARE, if core or uibase module removed, Canopsis UI may not start properly"
+		}
+	}
+}
