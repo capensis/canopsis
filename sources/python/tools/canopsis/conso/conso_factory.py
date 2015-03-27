@@ -97,15 +97,11 @@ class ConsoFactory(object):
          :return: a cursor of topology or events.
          :rtype: Cursor of elements dictionnary or empty dictionnary.
         '''
-        print 'le regex: ', regex
         if regex:
-            print 'il match ', regex
             q = q.format(regex)
             q = q.replace("\"", "")
-            print 'Q******************* ', q
-        json_acceptable = q.replace("'", "\"")
 
-        print json_acceptable
+        json_acceptable = q.replace("'", "\"")
         query = json.loads(json_acceptable)
         cursor = self.storage_connection(namespace).find(query)
         return cursor
@@ -124,7 +120,6 @@ class ConsoFactory(object):
 
     def factory(self, conso):
         serie = {}
-        #print conso
         # retreive data
         for k in self.ORDINAR_KEYS:
             try:
@@ -152,10 +147,10 @@ class ConsoFactory(object):
         # Convert regex here
         all_metrics = self.convert_regex_to_metrics(conso['mfilter'])
         # Set metrcis data
-        #serie["metrics"] = all_metrics
-        #formula = self.build_formula(serie['consolidation_method'], all_metrics)
+        serie["metrics"] = all_metrics
+        formula = self.build_formula(conso['consolidation_method'], all_metrics)
         # Set formula
-        #serie['serie'] = formula
+        serie['serie'] = formula
 
         return serie
 
@@ -164,9 +159,8 @@ class ConsoFactory(object):
         component = mfilter[self.OPERATOR][0][self.COMP]
         resource = mfilter[self.OPERATOR][1][self.RESR]
         metric = mfilter[self.OPERATOR][2][self.METR]
-        #components, resources, metrics = [], [], []
+
         if isinstance(component, dict):
-            print '---------------> ', component
             if 'regex' in component:
                 components = self.run_regex(str(component['regex']), self.COMP)
             else:
@@ -192,15 +186,12 @@ class ConsoFactory(object):
             metrics = metric
 
         all_metrics = self.build_metrics(components, resources, metrics)
-        print all_metrics
-        print '\n\n\n\n\n'
 
         return all_metrics
 
     def run_regex(self, regex, identifier):
         result = []
         if identifier == self.COMP:
-            print (regex)
             jsons = self.loads(self.NAMESPACE[1], self.QUERY_COMP, regex)
             result = self.get_att(jsons)
         if identifier == self.RESR:
@@ -226,11 +217,11 @@ class ConsoFactory(object):
     def build_metrics(self, components, resources, metrics):
         c_metrics = []
         c_metric = ""
-        if isinstance(components, collections.Iterable):
+        if self.is_collection(components):
             for c in components:
-                if isinstance(resources, collections.Iterable):
+                if self.is_collection(resources):
                     for r in resources:
-                        if isinstance(metrics, collections.Iterable):
+                        if self.is_collection(metrics):
                             for m in metrics:
                                 c_metric = "/" + c + "/" + r + "/" + m
                                 c_metrics.append(c_metric)
@@ -238,7 +229,7 @@ class ConsoFactory(object):
                             c_metric = "/" + c + "/" + r + "/" + metrics
                             c_metrics.append(c_metric)
                 else:
-                    if isinstance(metrics, collections.Iterable):
+                    if self.is_collection(metrics):
                         for m in metrics:
                             c_metric = "/" + c + "/" + resources + "/" + m
                             c_metrics.append(c_metric)
@@ -246,22 +237,23 @@ class ConsoFactory(object):
                         c_metric = "/" + c + "/" + resources + "/" + metrics
                         c_metrics.append(c_metric)
         else:
-            if isinstance(resources, collections.Iterable):
+            if self.is_collection(resources):
                 for r in resources:
-                    if isinstance(metrics, collections.Iterable):
+                    if self.is_collection(metrics):
                         c_metric = "/" + components + "/" + r + "/" + m
                         c_metrics.append(c_metric)
                     else:
                         c_metric = "/" + components + "/" + r + "/" + metrics
                         c_metrics.append(c_metric)
             else:
-                if isinstance(metrics, collections.Iterable):
+                if self.is_collection(metrics):
                     for m in metrics:
                         c_metric = "/" + components + "/" + resources + "/" + m
                         c_metrics.append(c_metric)
                 else:
                     c_metric = "/" + components + "/" + resources + "/" + metrics
                     c_metrics.append(c_metric)
+
         return c_metrics
 
     def build_formula(self, formula, metrics):
@@ -278,6 +270,26 @@ class ConsoFactory(object):
 
         return series
 
+    def is_collection(self, obj):
+        """ Returns true for any iterable
+        which is not a string or byte sequence.
+        """
+        try:
+            if isinstance(obj, unicode):
+                return False
+        except NameError:
+            pass
+        if isinstance(obj, bytes):
+            return False
+        try:
+            iter(obj)
+        except TypeError:
+            return False
+        try:
+            hasattr(None, obj)
+        except TypeError:
+            return True
+        return False
 
 if __name__ == '__main__':
     c = ConsoFactory()
