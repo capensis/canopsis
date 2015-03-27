@@ -4,7 +4,18 @@ function build(){
 	true
 }
 
+function register_modules() {
+    webmodulemanager add core
+    webmodulemanager add uibase
+    webmodulemanager add monitoring
+    webmodulemanager add development
+    webmodulemanager add uiv1_themes
+    webmodulemanager add canopsis-backend-ui-connector
+    webmodulemanager add userpreferences
+}
+
 function install(){
+    register_modules
 	cd $SRC_PATH/$NAME
 
 	tar c var | tar xhv -C $PREFIX/
@@ -17,6 +28,7 @@ function install(){
 }
 
 function update(){
+    register_modules
     cd $SRC_PATH/$NAME
 
     tar c var | tar xhv -C $PREFIX/
