@@ -137,7 +137,7 @@ class engine(Engine):
             #rk = 'dispatcher.{0}'.format(crecord_type)
 
             self.amqp.get_exchange('media')
-            publish(publiher=self.amqp, event=event, rk=rk, exchange='media')
+            publish(publisher=self.amqp, event=event, rk=rk, exchange='media')
 
             return True
 
