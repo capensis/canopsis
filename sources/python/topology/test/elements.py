@@ -58,13 +58,13 @@ class TopoNodeTest(TestCase):
         """
 
         @register_task('process')
-        def process_node(vertice, ctx, event=None, engine=None, **kwargs):
+        def process_node(vertice, ctx, event=None, publisher=None, **kwargs):
 
             return vertice, ctx, kwargs
 
-        ctx, entity, state, operator = {'b': 1}, 'e', 0, 'process'
+        ctx, entity, state, operation = {'b': 1}, 'e', 0, 'process'
 
-        toponode = TopoNode(state=state, entity=entity, operator=operator)
+        toponode = TopoNode(state=state, entity=entity, operation=operation)
 
         _node, _ctx, _kwargs = toponode.process(
             ctx=ctx, event=None, manager=self.manager

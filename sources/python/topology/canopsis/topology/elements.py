@@ -51,12 +51,12 @@ Both permits to update the node state. The first one will update its state
 related to the bound entity state, while the task can update the state
 independently to the entity state.
 
-A topology operator (to) contains::
+A topology operation (to) contains::
 
 - info.state: to state which change at runtime depending on bound entity
     state and event propagation.
 - info.entity: to entity.
-- info.operator: to operator.
+- info.operation: to operation.
 
 A topology node inherits from both vertice and to.
 
@@ -87,7 +87,7 @@ class TopoVertice(BaseTaskedVertice):
 
     STATE = Check.STATE  #: state field name in info
     ENTITY = 'entity'  #: entity field name in info
-    OPERATOR = 'operator'  #: operator field name in info
+    OPERATION = 'operation'  #: operation field name in info
     NAME = 'name'  #: element name.
 
     DEFAULT_STATE = Check.OK  #: default state value
@@ -120,13 +120,13 @@ class TopoVertice(BaseTaskedVertice):
         self.info[TopoVertice.STATE] = value
 
     @property
-    def operator(self):
+    def operation(self):
 
         result = self.task
         return result
 
-    @operator.setter
-    def operator(self, value):
+    @operation.setter
+    def operation(self, value):
 
         self.task = value
 
@@ -175,7 +175,7 @@ class Topology(Graph, TopoVertice):
 
     def __init__(
         self,
-        operator=None, state=TopoVertice.DEFAULT_STATE, _type=TYPE,
+        operation=None, state=TopoVertice.DEFAULT_STATE, _type=TYPE,
         entity=None, *args, **kwargs
     ):
 
@@ -183,9 +183,9 @@ class Topology(Graph, TopoVertice):
         # set info
         if self.info is None:
             self.info = {}
-        # set operator
-        if operator is not None:
-            self.operator = operator
+        # set operation
+        if operation is not None:
+            self.operation = operation
         # set state
         self.state = state
         # set entity
@@ -237,7 +237,7 @@ class TopoNode(Vertice, TopoVertice):
 
     def __init__(
         self,
-        entity=None, state=TopoVertice.DEFAULT_STATE, operator=None,
+        entity=None, state=TopoVertice.DEFAULT_STATE, operation=None,
         *args, **kwargs
     ):
         """
@@ -253,9 +253,9 @@ class TopoNode(Vertice, TopoVertice):
         self.entity = entity
         # set state
         self.state = state
-        # set operator
-        if operator is not None:
-            self.operator = operator
+        # set operation
+        if operation is not None:
+            self.operation = operation
 
     def get_event(self, *args, **kwargs):
 

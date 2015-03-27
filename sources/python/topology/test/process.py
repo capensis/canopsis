@@ -110,11 +110,12 @@ class ProcessingTest(TestCase):
         Test in case of change state.
         """
 
+        # create a change state operation with minor state
         change_state_conf = new_conf(
             change_state,
             state=Check.MINOR
         )
-        self.node.operator = change_state_conf
+        self.node.operation = change_state_conf
         self.node.save(self.manager)
 
         event_processing(event=self.check, engine=self, manager=self.manager)
@@ -145,7 +146,7 @@ class ProcessingTest(TestCase):
         node = TopoNode(operator=change_state_conf)
         node.save(self.manager)
         # create a leaf with the change state task
-        self.node.operator = change_state_conf
+        self.node.operation = change_state_conf
         self.node.save(self.manager)
         # link node to root
         rootnode = TopoEdge(targets=root.id, sources=node.id)
