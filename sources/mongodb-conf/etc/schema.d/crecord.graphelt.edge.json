@@ -16,9 +16,7 @@
             "default": "edge"
         },
         "_cls": {
-            "type": "string",
-            "default": "canopsis.graph.elements.Edge",
-            "required": true
+            "default": "canopsis.graph.elements.Edge"
         },
         "sources": {
             "type": "array",

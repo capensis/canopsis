@@ -15,9 +15,7 @@
             "required": false
         },
         "_cls": {
-            "type": "string",
-            "default": "canopsis.graph.elements.Graph",
-            "required": true
+            "default": "canopsis.graph.elements.Graph"
         },
         "type": {
             "default": "graph",

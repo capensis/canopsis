@@ -29,7 +29,8 @@
         },
         "_cls": {
             "type": "string",
-            "required": true
+            "required": true,
+            "default": "canopsis.graph.elements.GraphElement"
         },
         "info": {
             "type": "object",

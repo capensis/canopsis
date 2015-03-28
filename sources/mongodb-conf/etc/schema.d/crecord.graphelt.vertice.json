@@ -10,9 +10,7 @@
     }],
     "properties": {
         "_cls": {
-            "type": "string",
-            "default": "canopsis.graph.elements.Vertice",
-            "required": true
+            "default": "canopsis.graph.elements.Vertice"
         },
         "_type": {
             "type": "string",
