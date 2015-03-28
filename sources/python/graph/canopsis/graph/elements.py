@@ -135,16 +135,16 @@ class GraphElement(object):
         """
         return str(uuid())
 
-    def __init__(self, _id=None, _type=None, **kwargs):
+    def __init__(self, id=None, type=None, **kwargs):
         """
-        :param str _id: element id. Generated if None.
-        :param str _type: element type name. self lower type name if None.
+        :param str id: element id. Generated if None.
+        :param str type: element type name. self lower type name if None.
         """
 
         super(GraphElement, self).__init__()
 
-        self.type = type(self).__name__.lower() if _type is None else _type
-        self.id = GraphElement.new_id() if _id is None else _id
+        self.type = self.__class__.__name__.lower() if type is None else type
+        self.id = GraphElement.new_id() if id is None else id
 
     def __repr__(self):
 
@@ -191,11 +191,7 @@ class GraphElement(object):
         :raises: TypeError if kwargs can not be used in cls.new
         """
 
-        result = cls()
-        for name in kwargs:
-            if not name.startswith('_'):
-                value = kwargs[name]
-                setattr(result, name, value)
+        result = cls(**kwargs)
         return result
 
     @staticmethod
@@ -539,12 +535,12 @@ class Graph(Vertice):
             # ids is a set of graph element ids to compare with self.elts
             ids = set()
             # quick access to the field name GraphElement ID
-            _id = GraphElement.ID
+            id = GraphElement.ID
             for item in other:
                 if isinstance(item, basestring):
                     ids.add(item)
                 elif isinstance(item, dict):
-                    ids.add(item[_id])
+                    ids.add(item[id])
                 elif isinstance(item, GraphElement):
                     ids.add(item.id)
                 else:

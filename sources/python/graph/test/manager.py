@@ -44,9 +44,9 @@ class GraphTest(TestCase):
         self.vertices = [None] * self.count
         for index in range(self.count):
             self.vertices[index] = Vertice(
-                _id='vertice-{0}'.format(index),
+                id='vertice-{0}'.format(index),
                 info=None if index % 2 else {'index': index},
-                _type='tvertice-{0}'.format(index),
+                type='tvertice-{0}'.format(index),
             )
         self.vertice_ids = [vertice.id for vertice in self.vertices]
         self.vertice_types = [vertice.type for vertice in self.vertices]
@@ -55,9 +55,9 @@ class GraphTest(TestCase):
         self.edges = [None] * self.count
         for index in range(self.count):
             self.edges[index] = Edge(
-                _id='edge-{0}'.format(index),
+                id='edge-{0}'.format(index),
                 info=None if index % 2 else {'index': index},
-                _type='tedge-{0}'.format(index),
+                type='tedge-{0}'.format(index),
                 sources=self.vertice_ids[index:],
                 targets=self.vertice_ids[:-index],
                 directed=index % 2 == 0
@@ -69,9 +69,9 @@ class GraphTest(TestCase):
         self.graphs = [None] * self.count
         for index in range(self.count):
             self.graphs[index] = Graph(
-                _id='graph-{0}'.format(index),
+                id='graph-{0}'.format(index),
                 info=None if index % 2 else {'index': index},
-                _type='tgraph-{0}'.format(index),
+                type='tgraph-{0}'.format(index),
                 elts=self.edge_ids[index:] + self.vertice_ids[index:]
             )
         self.graph_ids = [graph.id for graph in self.graphs]
@@ -357,9 +357,9 @@ class GraphTest(TestCase):
         self.assertEqual(len(neighbourhood), len(self.elts))
 
         # let's play with few vertices, edges and graphs
-        v0, v1, v2 = Vertice(_type='0'), Vertice(_type='1'), Vertice(_type='2')
-        e0, e1, e2 = Edge(_type='0'), Edge(_type='1'), Edge(_type='2')
-        g0, g1, g2 = Graph(_type='0'), Graph(_type='1'), Graph(_type='2')
+        v0, v1, v2 = Vertice(type='0'), Vertice(type='1'), Vertice(type='2')
+        e0, e1, e2 = Edge(type='0'), Edge(type='1'), Edge(type='2')
+        g0, g1, g2 = Graph(type='0'), Graph(type='1'), Graph(type='2')
 
         # connect v0 to v1
         e0.directed = True

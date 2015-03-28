@@ -94,14 +94,14 @@ class TopologyGraphTest(TestCase):
         """
         Test if an entity exists after saving a topology.
         """
-        _id = 'test'
+        id = 'test'
 
-        topology = Topology(_id=_id)
+        topology = Topology(id=id)
         topology.save(manager=self.manager, context=self.context)
 
-        topology = self.context.get(_type=topology.type, names=_id)
+        topology = self.context.get(_type=topology.type, names=id)
 
-        self.assertEqual(topology[Context.NAME], _id)
+        self.assertEqual(topology[Context.NAME], id)
 
     def test_delete(self):
         """

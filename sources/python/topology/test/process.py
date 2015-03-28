@@ -109,7 +109,6 @@ class ProcessingTest(TestCase):
         """
         Test in case of change state.
         """
-
         # create a change state operation with minor state
         change_state_conf = new_conf(
             change_state,
@@ -118,6 +117,7 @@ class ProcessingTest(TestCase):
         self.node.operation = change_state_conf
         self.node.save(self.manager)
 
+        self.node.process(event=self.check, manager=self.manager)
         event_processing(event=self.check, engine=self, manager=self.manager)
 
         target = self.manager.get_elts(ids=self.node.id)

@@ -82,6 +82,8 @@ class BaseTaskedVertice(object):
 
     def set_entity(self, entity_id):
         """Specific setting of entity.
+
+        :param str entity_id: new entity id. If None, entity_id is removed.
         """
 
         pass

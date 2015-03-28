@@ -104,20 +104,26 @@ class TopoVertice(BaseTaskedVertice):
         super(TopoVertice, self).set_entity(
             entity_id=entity_id, *args, **kwargs
         )
-
         # update entity state
-        self.info[TopoVertice.STATE] = _check.state(ids=entity_id)
+        if entity_id is not None:
+            state = _check.state(ids=entity_id)
+            if state is None:
+                state = TopoVertice.DEFAULT_STATE
+            self.info[TopoVertice.STATE] = state
 
     @property
     def state(self):
 
-        result = self.info.get(TopoVertice.STATE)
+        result = self.info.get(
+            TopoVertice.STATE, TopoVertice.DEFAULT_STATE
+        )
         return result
 
     @state.setter
     def state(self, value):
 
-        self.info[TopoVertice.STATE] = value
+        if value is not None:
+            self.info[TopoVertice.STATE] = value
 
     @property
     def operation(self):
@@ -175,11 +181,12 @@ class Topology(Graph, TopoVertice):
 
     def __init__(
         self,
-        operation=None, state=TopoVertice.DEFAULT_STATE, _type=TYPE,
+        operation=None, state=None, type=TYPE,
         entity=None, *args, **kwargs
     ):
 
-        super(Topology, self).__init__(_type=_type, *args, **kwargs)
+        super(Topology, self).__init__(type=type, *args, **kwargs)
+
         # set info
         if self.info is None:
             self.info = {}
@@ -237,7 +244,7 @@ class TopoNode(Vertice, TopoVertice):
 
     def __init__(
         self,
-        entity=None, state=TopoVertice.DEFAULT_STATE, operation=None,
+        entity=None, state=None, operation=None,
         *args, **kwargs
     ):
         """
@@ -246,13 +253,14 @@ class TopoNode(Vertice, TopoVertice):
         """
 
         super(TopoNode, self).__init__(*args, **kwargs)
+
         # set info
         if self.info is None:
             self.info = {}
-        # set entity
-        self.entity = entity
         # set state
         self.state = state
+        # set entity
+        self.entity = entity
         # set operation
         if operation is not None:
             self.operation = operation
@@ -280,9 +288,11 @@ class TopoEdge(Edge, TopoVertice):
 
     TYPE = 'topoedge'  #: topology edge type name
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, state=None, *args, **kwargs):
 
         super(TopoEdge, self).__init__(*args, **kwargs)
         # set info
         if self.info is None:
             self.info = {}
+        # set state
+        self.state = state
