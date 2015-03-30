@@ -150,7 +150,6 @@ class ConsoFactory(object):
         all_metrics = self.loads(self.NAMESPACE[2], query)
         # Set metrcis data
         serie["metrics"] = self.retreive_metrics(all_metrics)
-        print self.retreive_metrics(all_metrics)
         if len(all_metrics) > 0:
             formula = self.build_formula(conso['consolidation_method'], all_metrics)
             # Set formula
