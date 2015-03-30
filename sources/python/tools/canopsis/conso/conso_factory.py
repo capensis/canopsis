@@ -19,14 +19,21 @@
 # ---------------------------------
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
+from canopsis.old.storage import Storage
+from canopsis.old.record import Record
 
-import collections
 import json
 from bson.json_util import dumps
+from logging import DEBUG, basicConfig
+
+basicConfig(
+    level=DEBUG,
+    format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
 
 class ConsoFactory(object):
     FILE_NAME = "object.json"
+    COLLECTION = "object.json"
     SUBSTRING = "consolidation"
     QUERY_CONSO = "{'crecord_type':'consolidation'}"
     QUERY_COMP = "{{'source_type':'component', 'component':{!r}}}"
@@ -47,6 +54,7 @@ class ConsoFactory(object):
     def __init__(self):
         super(ConsoFactory, self).__init__()
         self.data = self.loads(self.NAMESPACE[0], self.QUERY_CONSO, regex=None)
+        self.root_account = Account(user="root", group="root")
 
     @classmethod
     def storage_connection(self, namespace):
@@ -60,10 +68,7 @@ class ConsoFactory(object):
         '''
         connection = get_storage(
             namespace=namespace,
-            account=Account(
-                user="root",
-                group="root"
-            )
+            account=lambda: self.root_account
         ).get_backend()
         return connection
 
@@ -145,8 +150,9 @@ class ConsoFactory(object):
             serie["aggregate_method"] = None
 
         # Convert regex here
-        #all_metrics = self.convert_regex_to_metrics(conso['mfilter'])
         query = self.clean_mfilter(conso['mfilter'])
+        #all_metrics = self.convert_regex_to_metrics(conso['mfilter'])
+        #serie["metrics"] = all_metrics
         all_metrics = self.loads(self.NAMESPACE[2], query)
         # Set metrcis data
         serie["metrics"] = self.retreive_metrics(all_metrics)
@@ -230,7 +236,7 @@ class ConsoFactory(object):
         c_metric = ""
 
         for d in data:
-            c_metric = "/" + d['co'] + "/" + d['re'] + "/" + d['me']
+            c_metric = "/" + d[self.COMP] + "/" + d[self.RESR] + "/" + d[self.METR]
             c_metrics.append(c_metric)
 
         return c_metrics
@@ -260,14 +266,13 @@ class ConsoFactory(object):
         return formula
 
     def build(self):
-        #consos = self.conso_data_json()
         consos = self.data
-        series = []
+        storage = Storage(self.root_account, namespace=self.COLLECTION, logging_level=DEBUG)
         for conso in consos:
             serie = self.factory(conso)
-            series.append(serie)
-
-        return series
+            # Store the consolidation into the database
+            current_record = Record(serie, storage=storage)
+            storage.put(current_record)
 
     def is_collection(self, obj):
         return ((isinstance(obj, dict)) or (isinstance(obj, list)))
@@ -276,7 +281,3 @@ class ConsoFactory(object):
 if __name__ == '__main__':
     c = ConsoFactory()
     c.build()
-    """
-    for s in c.build():
-        print s
-    """
