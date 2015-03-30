@@ -146,11 +146,13 @@ class ConsoFactory(object):
 
         # Convert regex here
         all_metrics = self.convert_regex_to_metrics(conso['mfilter'])
+        print conso['mfilter']
         # Set metrcis data
         serie["metrics"] = all_metrics
-        formula = self.build_formula(conso['consolidation_method'], all_metrics)
-        # Set formula
-        serie['serie'] = formula
+        if len(all_metrics) > 0:
+            formula = self.build_formula(conso['consolidation_method'], all_metrics)
+            # Set formula
+            serie['serie'] = formula
 
         return serie
 
@@ -217,41 +219,19 @@ class ConsoFactory(object):
     def build_metrics(self, components, resources, metrics):
         c_metrics = []
         c_metric = ""
-        if self.is_collection(components):
-            for c in components:
-                if self.is_collection(resources):
-                    for r in resources:
-                        if self.is_collection(metrics):
-                            for m in metrics:
-                                c_metric = "/" + c + "/" + r + "/" + m
-                                c_metrics.append(c_metric)
-                        else:
-                            c_metric = "/" + c + "/" + r + "/" + metrics
-                            c_metrics.append(c_metric)
-                else:
-                    if self.is_collection(metrics):
-                        for m in metrics:
-                            c_metric = "/" + c + "/" + resources + "/" + m
-                            c_metrics.append(c_metric)
-                    else:
-                        c_metric = "/" + c + "/" + resources + "/" + metrics
-                        c_metrics.append(c_metric)
-        else:
-            if self.is_collection(resources):
-                for r in resources:
-                    if self.is_collection(metrics):
-                        c_metric = "/" + components + "/" + r + "/" + m
-                        c_metrics.append(c_metric)
-                    else:
-                        c_metric = "/" + components + "/" + r + "/" + metrics
-                        c_metrics.append(c_metric)
-            else:
-                if self.is_collection(metrics):
-                    for m in metrics:
-                        c_metric = "/" + components + "/" + resources + "/" + m
-                        c_metrics.append(c_metric)
-                else:
-                    c_metric = "/" + components + "/" + resources + "/" + metrics
+
+        # Transform all parameters into Iterable
+        if not self.is_collection(components):
+            components = [components]
+        if not self.is_collection(resources):
+            resources = [resources]
+        if not self.is_collection(metrics):
+            metrics = [metrics]
+
+        for c in components:
+            for r in resources:
+                for m in metrics:
+                    c_metric = "/" + c + "/" + r + "/" + m
                     c_metrics.append(c_metric)
 
         return c_metrics
@@ -271,25 +251,8 @@ class ConsoFactory(object):
         return series
 
     def is_collection(self, obj):
-        """ Returns true for any iterable
-        which is not a string or byte sequence.
-        """
-        try:
-            if isinstance(obj, unicode):
-                return False
-        except NameError:
-            pass
-        if isinstance(obj, bytes):
-            return False
-        try:
-            iter(obj)
-        except TypeError:
-            return False
-        try:
-            hasattr(None, obj)
-        except TypeError:
-            return True
-        return False
+        return ((isinstance(obj, dict)) or (isinstance(obj, list)))
+
 
 if __name__ == '__main__':
     c = ConsoFactory()
