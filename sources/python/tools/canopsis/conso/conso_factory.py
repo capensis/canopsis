@@ -31,7 +31,7 @@ class ConsoFactory(object):
     QUERY_CONSO = "{'crecord_type':'consolidation'}"
     QUERY_COMP = "{{'source_type':'component', 'component':{!r}}}"
     QUERY_RESR = "{{'source_type':'resource', 'component':{!r}}}"
-    NAMESPACE = ('objectv1', 'eventsv1')
+    NAMESPACE = ('objectv1', 'eventsv1', 'perfdata2')
     OPERATOR = 'and'
     COMP = 'co'
     RESR = 're'
@@ -145,10 +145,12 @@ class ConsoFactory(object):
             serie["aggregate_method"] = None
 
         # Convert regex here
-        all_metrics = self.convert_regex_to_metrics(conso['mfilter'])
-        print conso['mfilter']
+        #all_metrics = self.convert_regex_to_metrics(conso['mfilter'])
+        query = self.clean_mfilter(conso['mfilter'])
+        all_metrics = self.loads(self.NAMESPACE[2], query)
         # Set metrcis data
-        serie["metrics"] = all_metrics
+        serie["metrics"] = self.retreive_metrics(all_metrics)
+        print self.retreive_metrics(all_metrics)
         if len(all_metrics) > 0:
             formula = self.build_formula(conso['consolidation_method'], all_metrics)
             # Set formula
@@ -215,6 +217,24 @@ class ConsoFactory(object):
         data = data.replace("in", "$in")
         data = data.replace("u\'", "'")
         return data
+
+    def clean_mfilter(self, data):
+        data = data.replace("in", "$in")
+        data = data.replace("regex", "$regex")
+        data = data.replace("and", "$and")
+        data = data.replace("or", "$or")
+        data = data.replace("not", "$not")
+        return data
+
+    def retreive_metrics(self, data):
+        c_metrics = []
+        c_metric = ""
+
+        for d in data:
+            c_metric = "/" + d['co'] + "/" + d['re'] + "/" + d['me']
+            c_metrics.append(c_metric)
+
+        return c_metrics
 
     def build_metrics(self, components, resources, metrics):
         c_metrics = []
