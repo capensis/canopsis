@@ -68,7 +68,7 @@ def new_state(event, vertice, state=None, manager=None, **kwargs):
 
     # if state is None, use event state
     if state is None:
-        state = event[Check.STATE]
+        state = event.get(Check.STATE, Check.OK)
 
     # True if vertice state is different than state
     result = vertice.state != state
