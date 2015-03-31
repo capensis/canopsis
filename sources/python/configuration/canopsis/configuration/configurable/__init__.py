@@ -178,12 +178,17 @@ class Configurable(object):
         result = getLogger(self.log_name)
         result.setLevel(self.log_lvl)
 
-        def setHandler(logger, lvl, path, format):
+        def setHandler(logger, lvl, path, _format):
             """
-            Set right handler related to input lvl, path and format
+            Set right handler related to input lvl, path and format.
+
+            :param Logger logger: logger on which add an handler.
+            :param str lvl: logging level.
+            :param str path: file path.
+            :param str _format: logging message format.
             """
 
-            class filter(Filter):
+            class _Filter(Filter):
                 """
                 Ensure message will be given for specific lvl
                 """
@@ -192,9 +197,9 @@ class Configurable(object):
 
             # get the rights formatter and filter to set on a file handler
             handler = FileHandler(path)
-            handler.addFilter(Filter())
+            handler.addFilter(_Filter())
             handler.setLevel(lvl)
-            formatter = Formatter(format)
+            formatter = Formatter(_format)
             handler.setFormatter(formatter)
 
             # if an old handler exist, remove it from logger
