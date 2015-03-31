@@ -1,7 +1,7 @@
 {
     "type": "object",
     "metadata": {
-        "icon": "stats"
+        "icon": "fa fa-tasks"
     },
     "categories": [{
         "title": "General",
