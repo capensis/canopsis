@@ -19,18 +19,18 @@
 # ---------------------------------
 
 from canopsis.engines.core import Engine
-from canopsis.check.manager import CheckManager
+from canopsis.snmp.manager import SnmpManager
 from canopsis.context.manager import Context
 from canopsis.event import get_routingkey, forger
 from time import time
 from json import loads
 from functools import partial
 import re
+import socket
 
-context_manager = Context()
-check_manager = CheckManager()
+manager = SnmpManager()
 
-TEMPLATE_PATTERN = re.compile(r"\{\{([\d\.]+)\}\}")
+TEMPLATE_PATTERN = re.compile(r"\{\{([^}]+)\}\}")
 
 RULES = {
     "1.3.6.1.6.3.1.1.5.3": {
@@ -40,7 +40,7 @@ RULES = {
         "output": "Link down on interface {{1.3.6.1.2.1.2.2.1.1}}"
     },
     "1.3.6.1.6.3.1.1.5.4": {
-        "component": None,
+        "component": "{{1.3.6.1.2.1.1.5|resolveip}}",
         "resource": "link:{{1.3.6.1.2.1.2.2.1.1}}",
         "state": "0",
         "output": "Link up on interface {{1.3.6.1.2.1.2.2.1.1}}"
@@ -53,12 +53,26 @@ class engine(Engine):
 
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
+        self.funcmap = {
+            "resolveip": self._func_resolveip,
+            "upper": self._func_upper,
+            "lower": self._func_lower
+        }
         self.rules = {}
         self.beat()
 
     def beat(self):
-        # TODO: load rules from database
-        self.rules = RULES
+        # load in storage
+        self.rules = {rule["_id"]: rule for rule in manager.get()}
+        self.logger.info("Loaded {} rules".format(len(self.rules)))
+
+        if not self.rules:
+            # FIXME: put some data into the db before using it.
+            self.logger.info("Insert default rules to starts with.")
+            for oid, rule in RULES.items():
+                manager.put(oid, rule)
+            self.rules = RULES
+            self.logger.info("Inserted {} rules".format(len(self.rules)))
 
     def work(self, event, *args, **kwargs):
         # this engine works only on snmp trap.
@@ -80,6 +94,7 @@ class engine(Engine):
 
         # prepare the templating function
         self.logger.info("Found a rule for trap {}".format(trap_oid))
+        errors = []
         f_repl = partial(self._template_repl, rule, snmp.get("vars"))
 
         # generate a new event
@@ -105,19 +120,54 @@ class engine(Engine):
             # a template has been found for the key
             # do the rendering!
             # meaning, replace the {{oid}} with the vars of the snmp trap
+            self.error = None
             value = re.sub(TEMPLATE_PATTERN, f_repl, tpl)
             tt_event[key] = value
-
-        # publish the new event
-        self.logger.info("Publish a new event: {}".format(tt_event))
-        rk = get_routingkey(tt_event)
-        self.amqp.publish(
-            tt_event, rk, self.amqp.exchange_name_events)
+            if self.error is not None:
+                errors.append("{}: {}".format(key, self.error))
 
         # and show that the event got a match in our trap/rules db.
         event["snmp_trap_match"] = True
+        if errors:
+            event["snmp_trap_errors"] = errors
+            self.logger.info("No new events, trap as errors: {}".format(errors))
+        else:
+            # publish the new event
+            self.logger.info("Publish a new event: {}".format(tt_event))
+            rk = get_routingkey(tt_event)
+            self.amqp.publish(
+                tt_event, rk, self.amqp.exchange_name_events)
+
         return event
 
     def _template_repl(self, rule, vars, matchobj):
-        oid = matchobj.group(1)
-        return vars.get(oid)
+        m = matchobj.group(1)
+        items = [item.strip() for item in m.split("|")]
+        oid = items[0]
+        value = vars.get(oid)
+        if value is None:
+            self.error = "variable {} missing".format(oid)
+            return ""
+        for funcname in items[1:]:
+            f = self.funcmap.get(funcname)
+            if not f:
+                self.error = "unknown function {}".format(funcname)
+                return
+            value = f(value)
+        return value
+
+    def _func_resolveip(self, value):
+        # dns resolve
+        try:
+            hostname = socket.gethostbyaddr(value)
+        except:
+            pass
+        else:
+            value = hostname[0]
+        return value
+
+    def _func_upper(self, value):
+        return value.upper()
+
+    def _func_lower(self, value):
+        return value.lower()
