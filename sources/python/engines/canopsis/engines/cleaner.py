@@ -76,6 +76,8 @@ class engine(Engine):
                 event['resource'] = ''
             else:
                 event['resource'] = ensure_unicode(event['resource'])
+            if not event['resource']:
+                del event['resource']
 
         # Clean tags field
         event['tags'] = event.get('tags', [])

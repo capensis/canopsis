@@ -47,10 +47,10 @@ def adapt_canopsis_data_to_ember(data):
     """
 
     if isinstance(data, dict):
-        if 'id' in data:
+        if 'id' in data and data['id']:
             data['cid'] = data['id']
             #del data['id']
-        if 'eid' in data:
+        if 'eid' in data and data['eid']:
             data['id'] = data['eid']
         for item in data.values():
             adapt_canopsis_data_to_ember(item)
@@ -62,11 +62,11 @@ def adapt_canopsis_data_to_ember(data):
 def adapt_ember_data_to_canopsis(data):
 
     if isinstance(data, dict):
-        if 'id' in data:
+        if 'id' in data and data['id']:
             data['eid'] = data['id']
-        if 'cid' in data:
+        if 'cid' in data and data['cid']:
             data['id'] = data['cid']
-            del data['cid']
+            #del data['cid']
         for item in data.values():
             adapt_ember_data_to_canopsis(item)
     elif isiterable(data, is_str=False):

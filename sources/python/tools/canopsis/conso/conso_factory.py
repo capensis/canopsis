@@ -19,19 +19,26 @@
 # ---------------------------------
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
+from canopsis.old.storage import Storage
+from canopsis.old.record import Record
 
-import collections
 import json
 from bson.json_util import dumps
+from logging import DEBUG, basicConfig
+
+basicConfig(
+    level=DEBUG,
+    format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
 
 class ConsoFactory(object):
     FILE_NAME = "object.json"
+    COLLECTION = "object.json"
     SUBSTRING = "consolidation"
     QUERY_CONSO = "{'crecord_type':'consolidation'}"
     QUERY_COMP = "{{'source_type':'component', 'component':{!r}}}"
     QUERY_RESR = "{{'source_type':'resource', 'component':{!r}}}"
-    NAMESPACE = ('objectv1', 'eventsv1')
+    NAMESPACE = ('objectv1', 'eventsv1', 'perfdata2')
     OPERATOR = 'and'
     COMP = 'co'
     RESR = 're'
@@ -47,6 +54,7 @@ class ConsoFactory(object):
     def __init__(self):
         super(ConsoFactory, self).__init__()
         self.data = self.loads(self.NAMESPACE[0], self.QUERY_CONSO, regex=None)
+        self.root_account = Account(user="root", group="root")
 
     @classmethod
     def storage_connection(self, namespace):
@@ -60,10 +68,7 @@ class ConsoFactory(object):
         '''
         connection = get_storage(
             namespace=namespace,
-            account=Account(
-                user="root",
-                group="root"
-            )
+            account=lambda: self.root_account
         ).get_backend()
         return connection
 
@@ -145,10 +150,12 @@ class ConsoFactory(object):
             serie["aggregate_method"] = None
 
         # Convert regex here
-        all_metrics = self.convert_regex_to_metrics(conso['mfilter'])
-        print conso['mfilter']
+        query = self.clean_mfilter(conso['mfilter'])
+        #all_metrics = self.convert_regex_to_metrics(conso['mfilter'])
+        #serie["metrics"] = all_metrics
+        all_metrics = self.loads(self.NAMESPACE[2], query)
         # Set metrcis data
-        serie["metrics"] = all_metrics
+        serie["metrics"] = self.retreive_metrics(all_metrics)
         if len(all_metrics) > 0:
             formula = self.build_formula(conso['consolidation_method'], all_metrics)
             # Set formula
@@ -216,6 +223,24 @@ class ConsoFactory(object):
         data = data.replace("u\'", "'")
         return data
 
+    def clean_mfilter(self, data):
+        data = data.replace("in", "$in")
+        data = data.replace("regex", "$regex")
+        data = data.replace("and", "$and")
+        data = data.replace("or", "$or")
+        data = data.replace("not", "$not")
+        return data
+
+    def retreive_metrics(self, data):
+        c_metrics = []
+        c_metric = ""
+
+        for d in data:
+            c_metric = "/" + d[self.COMP] + "/" + d[self.RESR] + "/" + d[self.METR]
+            c_metrics.append(c_metric)
+
+        return c_metrics
+
     def build_metrics(self, components, resources, metrics):
         c_metrics = []
         c_metric = ""
@@ -241,14 +266,13 @@ class ConsoFactory(object):
         return formula
 
     def build(self):
-        #consos = self.conso_data_json()
         consos = self.data
-        series = []
+        storage = Storage(self.root_account, namespace=self.COLLECTION, logging_level=DEBUG)
         for conso in consos:
             serie = self.factory(conso)
-            series.append(serie)
-
-        return series
+            # Store the consolidation into the database
+            current_record = Record(serie, storage=storage)
+            storage.put(current_record)
 
     def is_collection(self, obj):
         return ((isinstance(obj, dict)) or (isinstance(obj, list)))
@@ -257,7 +281,3 @@ class ConsoFactory(object):
 if __name__ == '__main__':
     c = ConsoFactory()
     c.build()
-    """
-    for s in c.build():
-        print s
-    """
