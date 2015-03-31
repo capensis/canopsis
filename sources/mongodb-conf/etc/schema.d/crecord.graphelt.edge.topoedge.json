@@ -14,7 +14,9 @@
             "default": "topoedge"
         },
         "info": {
-            "state": 0
+            "default": {
+                "state": 0
+            }
         }
     }
 }
