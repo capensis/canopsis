@@ -12,6 +12,7 @@ function register_modules() {
     webmodulemanager add uiv1_themes
     webmodulemanager add canopsis-backend-ui-connector
     webmodulemanager add userpreferences
+    webmodulemanager add charts
 }
 
 function install(){
