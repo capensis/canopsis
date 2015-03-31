@@ -1,5 +1,8 @@
 {
     "type": "object",
+    "metadata": {
+        "icon": "fa fa-line-chart"
+    },
     "categories": [{
         "title": "General",
         "keys": ["title", "refreshInterval", "human_readable", "legend", "tooltip"]

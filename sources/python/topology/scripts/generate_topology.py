@@ -83,7 +83,7 @@ def generate_topology(name, _type):
     if topo is not None:
         topo.delete(manager=manager)
     else:
-        topo = Topology(_id=name)
+        topo = Topology(id=name)
 
     if _type == 'context':
         generate_context_topology(topo=topo, name=name)

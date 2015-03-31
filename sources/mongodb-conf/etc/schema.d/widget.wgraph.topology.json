@@ -1,6 +1,7 @@
 {
     "type": "object",
     "metadata": {
+        "icon": "fa fa-sitemap",
         "classes": []
     },
     "categories": [{
