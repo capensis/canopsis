@@ -23,7 +23,6 @@ from canopsis.snmp.manager import SnmpManager
 from canopsis.context.manager import Context
 from canopsis.event import get_routingkey, forger
 from time import time
-from json import loads
 from functools import partial
 import re
 import socket
@@ -78,14 +77,10 @@ class engine(Engine):
         # this engine works only on snmp trap.
         if event["event_type"] != "trap":
             return
-
-        # load the snmp serialized message embedded in the output
-        # (done by snmp2canopsis connector)
-        snmp = loads(event["output"])
-        self.logger.info("Got a trap: {}".format(snmp))
+        self.logger.info("Got a trap: {}".format(event))
 
         # search a rule for the trap OID
-        trap_oid = snmp["trap_oid"]
+        trap_oid = event["snmp_trap_oid"]
         rule = self.rules.get(trap_oid)
         if not rule:
             self.logger.info("No rules for trap {}".format(trap_oid))
@@ -95,7 +90,7 @@ class engine(Engine):
         # prepare the templating function
         self.logger.info("Found a rule for trap {}".format(trap_oid))
         errors = []
-        f_repl = partial(self._template_repl, rule, snmp.get("vars"))
+        f_repl = partial(self._template_repl, rule, event["snmp_vars"])
 
         # generate a new event
         tt_event = forger(

@@ -23,6 +23,7 @@ that contains theses fields:
 - `snmp_trap_oid`: OID of the SNMP trap
 - `snmp_version`: version of SNMP used for the trap ("1" or "2c")
 - `snmp_vars`: OID/values used in the trap
+- `snmp_timeticks` for SNMP v1
 
 Rule definitions
 ----------------
