@@ -11,6 +11,14 @@
 		},
 		"xtype": {
 			"type": "string"
+		},
+		"mixins": {
+			"type": "array",
+			"role": "mixins",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
 		}
 	}
 }

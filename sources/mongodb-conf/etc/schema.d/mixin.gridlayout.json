@@ -1,0 +1,41 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["columnXS", "columnMD", "columnLG", "offset"]
+	}],
+
+	"properties": {
+		"columnXS": {
+			"type": "integer",
+			"max": 12,
+			"tick": 1,
+			"default": 12,
+			"role": "slider",
+			"description": "Width of the widget in columns unit  for small definition screens"
+		},
+		"columnMD": {
+			"type": "integer",
+			"max": 12,
+			"tick": 1,
+			"default": 6,
+			"role": "slider",
+			"description": "Width of the widget in columns unit for medium definition screens"
+		},
+		"columnLG": {
+			"type": "integer",
+			"max": 12,
+			"tick": 1,
+			"default": 3,
+			"role": "slider",
+			"description": "Width of the widget in columns unit for large definition screens"
+		},
+		"offset": {
+			"type": "integer",
+			"max": 12,
+			"tick": 1,
+			"role": "slider",
+			"description": "Columns number to skip before placing the widget"
+		}
+	}
+}
