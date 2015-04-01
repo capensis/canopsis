@@ -2,10 +2,16 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["columnXS", "columnMD", "columnLG", "offset"]
+		"keys":["columnXS", "columnMD", "columnLG", "offset", "forcelegacy"]
 	}],
 
 	"properties": {
+		"forcelegacy": {
+			"type": "boolean",
+			"default": true,
+			"description": "force children widgets to use parent placement values",
+			"title": "force legacy position"
+		},
 		"columnXS": {
 			"type": "integer",
 			"max": 12,
