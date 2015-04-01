@@ -8,10 +8,10 @@
         "keys":["title"]
     },{
         "title": "Style",
-        "keys":["display_as", "show_value", "value_color", "value_in_column", "pb_thickness", "gg_width", "gg_thickness"]
+        "keys":["display_as", "show_value", "value_color", "label_width", "bar_width", "value_width", "pb_thickness", "gg_width", "gg_thickness"]
     },{
-        "title": "Label",
-        "keys":["label_display", "label_width", "label_unit", "label_align"]
+        "title": "Order",
+        "keys":["label_pos", "bar_pos", "value_pos"]
     },{
         "title": "Time Window",
         "keys": ["time_window", "time_window_offset"]
@@ -29,25 +29,35 @@
         "title":  {
             "type": "string"
         },
-        "label_align": {
-            "title": "Label Align",
+        "label_pos": {
+            "title": "Cell Label Position",
             "role": "simplelist",
-            "enum": ["left", "right"],
-            "default": "left"
+            "enum": ["0", "1", "2"],
+            "default": "0"
         },
-        "label_display": {
-            "title" : "Diplay Label",
-            "type": "boolean"
+        "bar_pos": {
+            "title": "Cell Bar/Gauge Position",
+            "role": "simplelist",
+            "enum": ["0", "1", "2"],
+            "default": "1"
+        },
+        "value_pos": {
+            "title": "Cell Value Position",
+            "role": "simplelist",
+            "enum": ["0", "1", "2"],
+            "default": "2"
         },
         "label_width":  {
             "type": "number",
-            "title" : "Label Width"
+            "title" : "Cell Label Width (%) - 0 to hide"
         },
-        "label_unit":  {
-            "title" : "Label Width Unit",
-            "role": "simplelist",
-            "enum": ["%", "px", "em"],
-            "default": "%"
+        "bar_width":  {
+            "type": "number",
+            "title" : "Cell Bar/Gauge Width (%) - 0 to hide"
+        },
+        "value_width":  {
+            "type": "number",
+            "title" : "Cell Value Width (%) - 0 to hide"
         },
         "show_value": {
             "title": "Show Value",
@@ -82,10 +92,6 @@
             "role": "color",
             "title": "Value Color",
             "default": "#000000"
-        },
-        "value_in_column": {
-            "title" : "Display value in a column (instead of within the bar/gauge",
-            "type": "boolean"
         },
         "display_as": {
             "title": "Display as",
