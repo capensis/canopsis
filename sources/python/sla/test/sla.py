@@ -20,9 +20,9 @@
 # ---------------------------------
 
 
-from time import time, sleep
+from time import time
 import unittest
-from canopsis.sla.sla import Sla
+from canopsis.sla.core import Sla
 
 
 class MongoQuery(object):

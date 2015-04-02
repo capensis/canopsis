@@ -22,7 +22,7 @@ from canopsis.engines.core import Engine, publish
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.event.selector import Selector
-from canopsis.sla.sla import Sla
+from canopsis.sla import Sla
 from canopsis.event import get_routingkey
 from time import time
 
