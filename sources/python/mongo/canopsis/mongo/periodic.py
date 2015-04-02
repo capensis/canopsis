@@ -141,6 +141,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
             ts = int(ts)
             id_timestamp = int(period.round_timestamp(ts, normalize=True))
+
             document_properties = doc_props_by_id_ts.setdefault(
                 id_timestamp, {}
             )
@@ -189,8 +190,9 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
         *args, **kwargs
     ):
 
-        query = self._get_documents_query(data_id=data_id,
-            timewindow=timewindow, period=period)
+        query = self._get_documents_query(
+            data_id=data_id, timewindow=timewindow, period=period
+        )
 
         if timewindow is not None:
 

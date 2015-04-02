@@ -261,12 +261,17 @@ class Period(object):
                         parameters[Period.MINUTE] = 0
                         if Period.HOUR not in self:
                             parameters[Period.HOUR] = 0
-                            if Period.DAY not in self:
+                            # check week have to be normalized
+                            if Period.WEEK in self:
+                                day = (((result.day - 1) // 7) * 7) + 1
+                                parameters[Period.DAY] = day
+                            elif Period.DAY not in self:
                                 parameters[Period.DAY] = 1
                                 if Period.MONTH not in self:
                                     parameters[Period.MONTH] = 1
+                                    if Period.YEAR not in self:
+                                        parameters[Period.YEAR] = 0
             result = result.replace(**parameters)
-
         return result
 
     def get_max_unit(self):
