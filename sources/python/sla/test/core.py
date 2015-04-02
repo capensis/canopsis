@@ -21,7 +21,7 @@
 
 
 from time import time
-import unittest
+from unittest import main, TestCase
 from canopsis.sla.core import Sla
 
 
@@ -41,7 +41,7 @@ class MockStorage(object):
         return MongoQuery()
 
 
-class KnownValues(unittest.TestCase):
+class KnownValues(TestCase):
 
     def setUp(self):
         pass
@@ -164,4 +164,4 @@ class KnownValues(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    main(verbosity=2)
