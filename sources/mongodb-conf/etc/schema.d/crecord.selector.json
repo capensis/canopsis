@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["display_name", "description", "enable", "dostate", "output_tpl", "state_when_all_ack" ,"sla_timewindow_doUnknown"]
+		"keys":["display_name", "description", "enable", "dostate", "output_tpl", "state_when_all_ack"]
 	},{
 		"title": "Event filter",
 		"keys":["mfilter"]

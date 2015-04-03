@@ -76,9 +76,21 @@ class engine(Engine):
                 name
             ))
 
+            update_extra_fields = {}
             # Selector event have to be published when do state is true.
             if selector.dostate:
                 rk, selector_event, publish_ack = selector.event()
+
+                # Compute previous event to know if any difference next turn
+                previous_metrics = {}
+                for metric in selector_event['perf_data_array']:
+                    previous_metrics[metric['metric']] = metric['value']
+                update_extra_fields['previous_metrics'] = previous_metrics
+
+                selector.do_publish_metrics(selector_event)
+                update_extra_fields['last_publication_date'] = \
+                    selector.last_publication_date
+
                 self.publish_event(selector, rk, selector_event, publish_ack)
                 # When selector computed, sla may be asked to be computed.
                 if selector.dosla:
@@ -120,7 +132,7 @@ class engine(Engine):
                 ))
 
             # Update crecords informations
-            self.crecord_task_complete(event_id)
+            self.crecord_task_complete(event_id, update_extra_fields)
 
         self.nb_beat += 1
         # Set record free for dispatcher engine
@@ -155,13 +167,13 @@ class engine(Engine):
                 'isAck': True
             }
             self.logger.debug(
-                ' + Selector event is ack because ' +
+                'Selector event is ack because ' +
                 'all matched NOK event are ack'
             )
         else:
             # Define or reset ack key for selector generated event
             selector_event['ack'] = {}
-            self.logger.debug(' + Selector event is NOT ack')
+            self.logger.debug('Selector event is NOT ack')
 
         publish(publisher=self.amqp, event=selector_event, rk=rk)
 
