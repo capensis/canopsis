@@ -9,4 +9,3 @@ Developer guide
    specifications/index
    backend/index
    frontend/index
-   cat-how-to
