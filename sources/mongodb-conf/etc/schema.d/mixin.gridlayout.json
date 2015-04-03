@@ -9,7 +9,7 @@
 		"forcelegacy": {
 			"type": "boolean",
 			"default": true,
-			"description": "force children widgets to use parent placement values",
+			"description": "<br/><i class=\"fa fa-warning\"></i> BEWARE, force children widgets to use parent values (position reset) values if checked",
 			"title": "force legacy position"
 		},
 		"columnXS": {
