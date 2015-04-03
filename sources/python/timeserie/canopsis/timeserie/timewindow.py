@@ -36,8 +36,7 @@ from datetime import datetime as dt
 
 
 class Period(object):
-    """
-    Period management with a value and an unitself.
+    """Period management with a value and an unitself.
     """
 
     __slots__ = ['unit_values']
@@ -128,8 +127,8 @@ class Period(object):
         return self
 
     def total_seconds(self):
-        """
-        Get number of seconds.
+        """Get number of seconds.
+
         :return: this period in seconds. Approximation if this period has
             months.
         :rtype: int
@@ -164,8 +163,10 @@ class Period(object):
         return result
 
     def get_delta(self):
-        """
-        Get a delta object in order to add/remove a period on a datetime.
+        """Get a delta object in order to add/remove a period on a datetime.
+
+        :return: delta object in order to add/remove a period on a datetime.
+        :rtype: relativedelta
         """
 
         unit_values = self.unit_values
@@ -179,9 +180,10 @@ class Period(object):
         return result
 
     def next_period(self):
-        """
-        Get next period with input step or none if next period can't be
+        """Get next period with input step or none if next period can't be
         associated to a specific unit.
+
+        Example: Period(minute=60).next_period() == Period(hour=1)
         """
 
         result = Period()
@@ -202,8 +204,15 @@ class Period(object):
         return result
 
     def round_timestamp(self, timestamp, normalize=False):
-        """
-        Get round timestamp relative to an input timestamp.
+        """Get round timestamp relative to an input timestamp.
+
+        :param long timestamp: timestamp to round.
+        :param bool normalize: normalization property.
+
+        Example: Let a timestamp ``t`` related to the date: 2015/03/04 15:05.
+        r = Period(week=1).round_timestamp(timestamp=t)
+        In this case, r corresponds to "2015/03/01 15:05".
+        If normalize equals True, r corresponds to "2015/03/01 00:00"
         """
 
         datetime = dt.utcfromtimestamp(float(timestamp))
@@ -219,9 +228,17 @@ class Period(object):
         return result
 
     def round_datetime(self, datetime, normalize=False):
-        """
-        Calculate roudtime relative to an UTC date.
+        """Calculate roudtime relative to an UTC date.
         normalize unsure to set to 0 for not given units under the minimal unit
+
+        :param datetime datetime: datetime to round.
+        :param bool normalize: normalize.
+
+        Example: Let a datetime ``d`` related to the date: 2015/03/04 15:05.
+        r = Period(week=1).round_datetime(datetime=d)
+        In this case, r corresponds to "2015/m/d 15:05" where m/d is first
+        monday before 2015/03/01.
+        If normalize equals True, r corresponds to "2015/m/d 00:00"
         """
 
         result = None
@@ -263,7 +280,39 @@ class Period(object):
                             parameters[Period.HOUR] = 0
                             # check week have to be normalized
                             if Period.WEEK in self:
-                                day = (((result.day - 1) // 7) * 7) + 1
+                                # get the right monday
+                                # save day, month and year which can change
+                                day = datetime.day
+                                month = datetime.month
+                                year = datetime.year
+                                # get week value
+                                v = self[Period.WEEK]
+                                # find the right week which corresponds to day
+                                for week_index, week in enumerate(
+                                    _monthcalendar
+                                ):
+                                    if day in week:
+                                        # get the right normalized  week index
+                                        norm_idx = (week_index // v) * v
+                                        # get the right normalized week
+                                        norm_week = _monthcalendar[norm_idx]
+                                        # get last monday
+                                        day = norm_week[0]
+                                        # if monday appeared previous month
+                                        if day == 0:
+                                            month -= 1
+                                            if month == 0:
+                                                month = 12
+                                                year -= 1
+                                                # update year
+                                                parameters[Period.YEAR] = year
+                                            # update month
+                                            parameters[Period.MONTH] = month
+                                            # get previous month calendar
+                                            mc = monthcalendar(year, month)
+                                            # get last old monday
+                                            day = mc[-1][0]
+                                        break
                                 parameters[Period.DAY] = day
                             elif Period.DAY not in self:
                                 parameters[Period.DAY] = 1
@@ -272,12 +321,15 @@ class Period(object):
                                     if Period.YEAR not in self:
                                         parameters[Period.YEAR] = 0
             result = result.replace(**parameters)
+
         return result
 
     def get_max_unit(self):
-        """
-        Get a dictionary which contains a unit and a value
+        """Get a dictionary which contains a unit and a value
         where unit is the last among Period.UNITS.
+
+        Example: period=Period(minute=10, hour=13)
+        period.get_max_unit()  # equals {'hour': 13}
         """
 
         result = None
@@ -292,8 +344,7 @@ class Period(object):
         return result
 
     def copy(self):
-        """
-        Get a period which is a copy of self.
+        """Get a period which is a copy of self.
         """
 
         result = Period(**self.unit_values)
@@ -302,10 +353,17 @@ class Period(object):
 
     @staticmethod
     def from_str(serialized):
+        """Get a Period from a string of shape "(unit=value,)+".
 
+        :param str serialized: serialized period of shape "(unit=value,)+"
+        :return: period from a str.
+        :rtype: Period
+        """
         params = {}
 
-        for s in serialized.split(','):
+        splitted = serialized.split(',')
+
+        for s in splitted:
             args = s.split('=')
             if len(args) == 2:
                 params[args[0]] = float(args[1])
@@ -319,8 +377,7 @@ class Period(object):
 
 
 class Interval(object):
-    """
-    Manage points interval with sub intervals
+    """Manage points interval with sub intervals
     which are (lower value, upper value).
     """
 
@@ -350,8 +407,7 @@ class Interval(object):
         return result
 
     def __contains__(self, numbers_or_intervals):
-        """
-        True iif input values or intervals are in this interval.
+        """True iif input values or intervals are in this interval.
         values_or_interval must be numbers or Intervals.
         """
 
@@ -359,8 +415,7 @@ class Interval(object):
         result = False
 
         def check_number_or_interval(number_or_interval, pos=None):
-            """
-            Check if input number_or_interval is in self.sub_intervals.
+            """Check if input number_or_interval is in self.sub_intervals.
             """
 
             result = False
@@ -412,8 +467,7 @@ class Interval(object):
         return result
 
     def __len__(self):
-        """
-        Get number of values between all sub intervals.
+        """Get number of values between all sub intervals.
         """
         result = 0
 
@@ -448,36 +502,31 @@ class Interval(object):
         raise NotImplementedError()
 
     def __iter__(self):
-        """
-        Get self sub_intervals iterator.
+        """Get self sub_intervals iterator.
         """
 
         return iter(self.sub_intervals)
 
     def __getitem__(self, key):
-        """
-        Get the right sub interval.
+        """Get the right sub interval.
         """
 
         return self.sub_intervals[key]
 
     def min(self):
-        """
-        Get minimal point or None if no sub intervals.
+        """Get minimal point or None if no sub intervals.
         """
 
         return self.sub_intervals[0][0] if self.sub_intervals else None
 
     def max(self):
-        """
-        Get maximal point or None if no sub intervals.
+        """Get maximal point or None if no sub intervals.
         """
 
         return self.sub_intervals[-1][1] if self.sub_intervals else None
 
     def is_empty(self):
-        """
-        True iif this interval does not contain sub intervals.
+        """True iif this interval does not contain sub intervals.
         """
 
         result = len(self.sub_intervals) == 0
@@ -486,8 +535,7 @@ class Interval(object):
 
     @staticmethod
     def sort_and_join_intersections(*intervals):
-        """
-        Get intervals which are the result of a clean, sort and a join
+        """Get intervals which are the result of a clean, sort and a join
         intersection operation on input intervals.
         Get an interval which is a cleanable version of all input intervals.
 
@@ -556,8 +604,7 @@ class Interval(object):
         return result
 
     def reduce(self, lower, upper):
-        """
-        Returns an interval reduced with input lower and upper bounds.
+        """Returns an interval reduced with input lower and upper bounds.
 
         :param float lower: lower bound.
         :param float upper: upper bound.
@@ -586,8 +633,7 @@ class Interval(object):
 
 
 class TimeWindow(object):
-    """
-    Manage second intervals with a timezone.
+    """Manage second intervals with a timezone.
     """
 
     class TimeWindowError(Exception):
@@ -598,8 +644,7 @@ class TimeWindow(object):
     __slots__ = ['interval', 'timezone']
 
     def __init__(self, start=None, stop=None, intervals=None, timezone=0):
-        """
-        This interval is created from:
+        """This interval is created from:
 
         - an interval with stop, start :
             - stop is now if None,
@@ -659,8 +704,7 @@ class TimeWindow(object):
         return result
 
     def __contains__(self, *timestamps):
-        """
-        True if input timestamps are in this timewindow.
+        """True if input timestamps are in this timewindow.
         """
 
         result = timestamps in self.interval
@@ -668,8 +712,7 @@ class TimeWindow(object):
         return result
 
     def copy(self):
-        """
-        Get a copy of self.
+        """Get a copy of self.
         """
 
         result = TimeWindow(
@@ -679,8 +722,7 @@ class TimeWindow(object):
         return result
 
     def start(self):
-        """
-        Get first timestamp.
+        """Get first timestamp.
         """
 
         result = float(self.interval.min())
@@ -688,8 +730,7 @@ class TimeWindow(object):
         return result
 
     def start_datetime(self, utc=False):
-        """
-        Get start datetime.
+        """Get start datetime.
         """
 
         result = TimeWindow.get_datetime(
@@ -699,8 +740,7 @@ class TimeWindow(object):
         return result
 
     def stop(self):
-        """
-        Get last timestamp.
+        """Get last timestamp.
         """
 
         result = float(self.interval.max())
@@ -708,8 +748,7 @@ class TimeWindow(object):
         return result
 
     def stop_datetime(self, utc=False):
-        """
-        Get stop datetime.
+        """Get stop datetime.
         """
 
         result = TimeWindow.get_datetime(
@@ -719,8 +758,7 @@ class TimeWindow(object):
         return result
 
     def total_seconds(self):
-        """
-        Returns seconds inside this timewindow.
+        """Returns seconds inside this timewindow.
         """
 
         result = len(self.interval)
@@ -729,8 +767,7 @@ class TimeWindow(object):
 
     @staticmethod
     def get_timestamp(datetime):
-        """
-        Get the timestamp corresponding to input datetime.
+        """Get the timestamp corresponding to input datetime.
         """
 
         result = timegm(datetime.timetuple())
@@ -739,8 +776,7 @@ class TimeWindow(object):
 
     @staticmethod
     def get_datetime(timestamp, timezone=0):
-        """
-        Get the datetime corresponding to both input timestamp and timezone.
+        """Get the datetime corresponding to both input timestamp and timezone.
         """
 
         tz = tzoffset(None, timezone)
@@ -750,8 +786,7 @@ class TimeWindow(object):
 
     @staticmethod
     def convert_to_seconds_interval(interval):
-        """
-        Get interval in seconds from an interval.
+        """Get interval in seconds from an interval.
         """
 
         sub_intervals = [
@@ -764,8 +799,7 @@ class TimeWindow(object):
         return result
 
     def reduce(self, start, stop):
-        """
-        Returns a timewindow where start and stop are redefined.
+        """Returns a timewindow where start and stop are redefined.
 
         :param float start: new start time.
         :param float stop: new stop time.
@@ -779,8 +813,7 @@ class TimeWindow(object):
 
 
 def get_offset_timewindow(offset=time()):
-    """
-    Get a timewindow with one point.
+    """Get a timewindow with one point.
     """
 
     return TimeWindow(start=offset, stop=offset)
