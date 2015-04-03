@@ -10,3 +10,4 @@ This section explains how to use the different kind of widgets
    timegraph
    weather
    text
+   containers
