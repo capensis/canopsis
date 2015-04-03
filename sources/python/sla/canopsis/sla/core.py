@@ -27,6 +27,7 @@ from logging import getLogger
 from canopsis.event import forger
 from datetime import datetime
 from pprint import PrettyPrinter
+from canopsis.timeserie.timewindow import Period
 
 pp = PrettyPrinter(indent=2)
 
@@ -155,7 +156,9 @@ class Sla(object):
             state,
             alerts_percent,
             alerts_duration,
-            avail_duration
+            avail_duration,
+            timewindow,
+            now
         )
 
     def get_alert_percent(self, sla_measures, sla_times, alert_level):
@@ -398,7 +401,9 @@ class Sla(object):
         sla_state,
         alerts_percent,
         alerts_duration,
-        avail_duration
+        avail_duration,
+        timewindow,
+        now
     ):
         perf_data_array = []
 
@@ -426,6 +431,15 @@ class Sla(object):
             'value': alerts_duration,
         })
 
+        period = Period(second=timewindow)
+        periodic_timestamp = period.round_timestamp(now, normalize=True)
+        self.logger.debug(
+            'periodic timestamp {}, timewindow {}, now {}'.format(
+                periodic_timestamp,
+                timewindow,
+                now
+            ))
+
         event = forger(
             connector='sla',
             connector_name='engine',
@@ -436,7 +450,8 @@ class Sla(object):
             state=sla_state,
             output=output,
             perf_data_array=perf_data_array,
-            display_name=display_name
+            display_name=display_name,
+            timestamp=periodic_timestamp
         )
 
         self.logger.info('publishing sla {}, states {}'.format(

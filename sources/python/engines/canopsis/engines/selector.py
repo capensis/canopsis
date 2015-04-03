@@ -56,8 +56,6 @@ class engine(Engine):
         self.logger.debug('entered in selector BEAT')
 
     def consume_dispatcher(self, event, *args, **kargs):
-        self.logger.debug('entered in selector consume dispatcher')
-        # Gets crecord from amqp distribution
 
         selector = self.get_ready_record(event)
 
@@ -71,6 +69,8 @@ class engine(Engine):
                 logging_level=self.logging_level)
 
             name = selector.display_name
+
+            self.logger.debug('----------SELECTOR----------\n')
 
             self.logger.debug('Selector {} found, start processing..'.format(
                 name
@@ -94,15 +94,14 @@ class engine(Engine):
                 self.publish_event(selector, rk, selector_event, publish_ack)
                 # When selector computed, sla may be asked to be computed.
                 if selector.dosla:
-                    self.logger.debug('Will proceed sla for this selector')
+
+                    self.logger.debug('----------SLA----------\n')
 
                     # Retrieve user ui settings
-
                     # This template should be always set
                     template = selector.get_sla_output_tpl()
                     # Timewindow computation duration
                     timewindow = selector.get_sla_timewindow()
-
                     sla_warning = selector.get_sla_warning()
                     sla_critical = selector.get_sla_critical()
                     alert_level = selector.get_alert_level()
