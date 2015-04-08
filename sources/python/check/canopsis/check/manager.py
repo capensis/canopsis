@@ -188,7 +188,7 @@ class CheckManager(MiddlewareRegistry):
     with only a data couple of on identifier and an ID
     """
 
-    def del_state(self, ids=None, cache=False):
+    def del_state(self, ids=None):
         """
         Delete states related to input ids. If ids is None, delete all states.
 
@@ -197,7 +197,7 @@ class CheckManager(MiddlewareRegistry):
         :param bool cache: storage cache when udpate state.
         """
 
-        self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids, cache=cache)
+        self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids)
 
     def put_state(self, entity_id, state, cache=False):
         """
