@@ -239,12 +239,14 @@ class GraphManager(MiddlewareRegistry):
             elts = [elts]
 
         for elt in elts:
-            if isinstance(elt, dict):
-                if not elt.get(GraphElement.ID):
-                    elt[GraphElement.ID] = GraphElement.new_id()
-                elt = GraphElement.new_element(**elt)
+            gelt = elt
+            if isinstance(gelt, dict):
+                if not gelt.get(GraphElement.ID):
+                    gelt[GraphElement.ID] = GraphElement.new_id()
+                gelt = GraphElement.new_element(**gelt)
+                self.logger.warning("{0}, {1}".format(gelt, elt))
             # save elt
-            elt.save(manager=self, cache=cache, graph_ids=graph_ids)
+            gelt.save(manager=self, cache=cache, graph_ids=graph_ids)
 
         return elts
 
