@@ -34,14 +34,14 @@
                           "searchable_columns": [
                             "component",
                             "resource",
-                            "cid"
+                            "id"
                           ]
                         }
                     ],
                     "displayed_columns" : [
                         "component",
                         "resource",
-                        "cid"
+                        "id"
                     ]
                 },
                 "xtype" : "widgetwrapper",
