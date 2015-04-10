@@ -34,11 +34,12 @@ class engine(Engine):
 
     def consume_dispatcher(self, event, *args, **kargs):
 
-        self.logger.debug('enter filterlink beat')
+        self.logger.debug('Enter filterlink dispatch')
         filterlink = self.get_ready_record(event)
 
         if filterlink:
 
+            self.logger.debug('{}: {}'.format(event_id, filterlink))
             event_id = event['_id']
 
             self.crecord_task_complete(event_id)
