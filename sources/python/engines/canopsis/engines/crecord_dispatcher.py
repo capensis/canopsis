@@ -43,6 +43,7 @@ class engine(Engine):
             'topology',
             'derogation',
             'serie'
+            'filterlink',
         ]
 
         self.beat_interval_trigger = {
