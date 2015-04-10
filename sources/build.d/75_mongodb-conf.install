@@ -4,27 +4,16 @@ function build(){
 	true
 }
 
-function register_modules() {
-    webmodulemanager add core
-    webmodulemanager add uibase
-    webmodulemanager add monitoring
-    webmodulemanager add development
-    webmodulemanager add uiv1_themes
-    webmodulemanager add canopsis-backend-ui-connector
-    webmodulemanager add userpreferences
-    webmodulemanager add charts
-}
 
 function install(){
 	echo " + Post install configurations ..."
 
-	cd $SRC_PATH
-	install_basic_source $NAME
+    cd $SRC_PATH
+    install_basic_source $NAME
 
-	sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
+    sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
 
-	install_conf "mongodb.conf"
-    register_modules
+    install_conf "mongodb.conf"
 
 }
 
@@ -35,5 +24,4 @@ function update(){
     update_basic_source $NAME
 
     sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
-    register_modules
 }
