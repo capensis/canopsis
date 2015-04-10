@@ -38,8 +38,7 @@ CATEGORY = 'PERFDATA'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class PerfData(MiddlewareRegistry):
-    """
-    Dedicated to access to perfdata (via periodic and timed stores).
+    """Dedicated to access to perfdata (via periodic and timed stores).
     """
 
     PERFDATA_STORAGE = 'perfdata_storage'
