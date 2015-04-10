@@ -1,0 +1,21 @@
+{
+    "categories": [{
+        "title": "General",
+        "keys": ["linklist", "mfilter"]
+    }],
+    "type": "object",
+    "properties": {
+        "linklist": {
+            "type": "array",
+            "role": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "mfilter": {
+            "type": "string",
+            "required": true,
+            "role": "cfilter"
+        }
+    }
+}

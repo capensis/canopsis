@@ -1,0 +1,25 @@
+{
+    "categories": [{
+        "title": "General",
+        "keys": ["filterlinklist"]
+    },
+    {
+        "title": "Management",
+        "keys": ["linkcomputation"]
+    }],
+    "type": "object",
+    "properties": {
+        "filterlinklist": {
+            "type": "array",
+            "role": "array",
+            "items": {
+                "type": "object",
+                "role": "filterlinkitem"
+            }
+        },
+        "linkcomputation": {
+            "type": "boolean",
+            "description": "Tell the Canopsis backend to compute once link association soon after this form is saved."
+        }
+    }
+}
