@@ -198,5 +198,3 @@ def do_update(json_data, collection):
 
 def update():
     init()
-
-init()

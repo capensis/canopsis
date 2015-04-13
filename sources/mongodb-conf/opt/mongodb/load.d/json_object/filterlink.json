@@ -1,9 +1,0 @@
-{
-    "filterlinkitem" : [],
-    "crecord_name" : "filterlink",
-    "crecord_type" : "filterlink",
-    "loader_id": "filterlink",
-    "loader_no_update": true,
-    "_id": "filterlink",
-    "linkcomputation" : false
-}

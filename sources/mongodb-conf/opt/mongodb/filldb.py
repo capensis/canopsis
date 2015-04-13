@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#--------------------------------
+# --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -35,10 +35,10 @@ if action != "update" and action != "init":
     print("Invalid option")
     sys.exit(1)
 
-## Logger
+# Logger
 logger = init.getLogger('filldb')
 
-## Load
+# Load
 modules = dynmodloads("~/opt/mongodb/load.d")
 
 for name in sorted(modules):

@@ -1,25 +1,31 @@
 {
     "categories": [{
         "title": "General",
-        "keys": ["filterlinklist"]
-    },
-    {
-        "title": "Management",
-        "keys": ["linkcomputation"]
+        "keys": ["name", "mfilter", "filterlink"]
     }],
     "type": "object",
     "properties": {
-        "filterlinklist": {
+        "crecord_type": {
+            "enum": ["filterlink"],
+            "required": true
+        },
+        "name": {
+            "type": "string"
+        },
+        "filterlink": {
             "type": "array",
             "role": "array",
+            "renderer": "labelledlink",
+            "description": "A list of labelled links that will be associated to an event.",
             "items": {
                 "type": "object",
-                "role": "filterlinkitem"
+                "role": "labelledlink"
             }
         },
-        "linkcomputation": {
-            "type": "boolean",
-            "description": "Tell the Canopsis backend to compute once link association soon after this form is saved."
+        "mfilter": {
+            "type": "string",
+            "role": "cfilter",
+            "description": "Matching events whose link list have to be computed."
         }
     }
 }
