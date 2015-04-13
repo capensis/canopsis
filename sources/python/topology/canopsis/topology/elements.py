@@ -279,6 +279,20 @@ class TopoNode(Vertice, TopoVertice):
 
         return result
 
+    def delete(self, manager, cache=False, *args, **kwargs):
+
+        super(TopoNode, self).delete(
+            manager=manager, cache=cache, *args, **kwargs
+        )
+
+        # delete edges where source is self
+        edges = manager.get_edges(sources=self.id)
+        for edge in edges:
+            edge.delete(manager=manager, cache=cache)
+
+        # delete reference of self in edges
+        manager.del_edge_refs(targets=self.id, del_empty=True, cache=cache)
+
 
 class TopoEdge(Edge, TopoVertice):
     """Topology edge.

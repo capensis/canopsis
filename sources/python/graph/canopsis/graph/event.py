@@ -66,11 +66,7 @@ class BaseTaskedVertice(object):
         :type value: dict or str
         """
 
-        if value is None:
-            if BaseTaskedVertice.ENTITY in self.info:
-                del self.info[BaseTaskedVertice.ENTITY]
-
-        else:
+        if value is not None:
             if isinstance(value, dict):
                 # get entity id
                 value = _context.get_entity_id(value)
@@ -107,11 +103,7 @@ class BaseTaskedVertice(object):
         :param value: new task to use.
         """
 
-        if value is None:
-            if BaseTaskedVertice.TASK in self.info:
-                del self.info[BaseTaskedVertice.TASK]
-
-        else:
+        if value is not None:
             self.info[BaseTaskedVertice.TASK] = value
 
     def process(self, event, **kwargs):

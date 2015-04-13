@@ -239,12 +239,14 @@ class GraphManager(MiddlewareRegistry):
             elts = [elts]
 
         for elt in elts:
-            if isinstance(elt, dict):
-                if not elt.get(GraphElement.ID):
-                    elt[GraphElement.ID] = GraphElement.new_id()
-                elt = GraphElement.new_element(**elt)
+            gelt = elt
+            if isinstance(gelt, dict):
+                if not gelt.get(GraphElement.ID):
+                    gelt[GraphElement.ID] = GraphElement.new_id()
+                gelt = GraphElement.new_element(**gelt)
+                self.logger.warning("{0}, {1}".format(gelt, elt))
             # save elt
-            elt.save(manager=self, cache=cache, graph_ids=graph_ids)
+            gelt.save(manager=self, cache=cache, graph_ids=graph_ids)
 
         return elts
 
@@ -309,7 +311,8 @@ class GraphManager(MiddlewareRegistry):
                     elt.delete(manager=self, cache=cache)
 
     def del_edge_refs(
-        self, ids=None, vids=None, sources=None, targets=None, cache=False
+        self, ids=None, vids=None, sources=None, targets=None, del_empty=False,
+        cache=False
     ):
         """
         Delete references of vertices from edges.
@@ -322,21 +325,28 @@ class GraphManager(MiddlewareRegistry):
         :type sources: list or str
         :param targets: target ids to remove.
         :type targets: list or str
+        :param bool del_empty: if True and edges are not connected, delete
+            them.
         :param bool cache: use query cache if True (False by default).
         """
 
         edges = self.get_edges(ids=ids, sources=sources, targets=targets)
 
         if edges is not None:
-            # ensure edges is a list
-            if isinstance(edges, basestring):
+            # ensure edges is a list of edges
+            if isinstance(edges, Edge):
                 edges = [edges]
             # for all edges
             for edge in edges:
                 # del refs
                 edge.del_refs(ids=vids, sources=sources, targets=targets)
-                # and save them
-                edge.save(manager=self, cache=cache)
+
+                # if del_empty and sources and targets are empty
+                if del_empty and not (edge.sources or edge.targets):
+                    # delete the edge
+                    edge.delete(manager=self, cache=cache)
+                else:  # save the edge
+                    edge.save(manager=self, cache=cache)
 
     def get_graphs(
         self, ids=None, types=None, elts=None, graph_ids=None, info=None,

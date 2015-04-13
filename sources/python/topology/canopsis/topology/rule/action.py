@@ -115,10 +115,15 @@ def state_from_sources(event, vertice, ctx, f, manager=None, *args, **kwargs):
         for edge_id in sources_by_edges:
             _, edge_sources = sources_by_edges[edge_id]
             sources += edge_sources
-        state = f(
-            source_node.info.get(Check.STATE, Check.OK)
-            for source_node in sources
-        )
+
+        if sources:  # if sources exist, check state
+            state = f(
+                source_node.info.get(Check.STATE, Check.OK)
+                for source_node in sources
+            )
+        else:  # else get OK
+            state = Check.OK
+
         # change state
         change_state(
             state=state, event=event, vertice=vertice, ctx=ctx,
