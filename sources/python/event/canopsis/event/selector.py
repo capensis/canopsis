@@ -232,7 +232,7 @@ class Selector(Record):
         mfilter = self.makeMfilter()
         if not mfilter:
             self.logger.debug(" + Invalid filter")
-            return ({}, 0, 0, 0)
+            return ({}, 0, 0, 0, 0)
         # Adds default check clause as selector have to be done
         # on check event only
         # This constraint have to be available for all aggregation queries

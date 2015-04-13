@@ -110,10 +110,9 @@
 			"type": "integer"
 		},
 		"sla_timewindow": {
-			"type": "number",
-			"default" : 31536000,
+			"type": "object",
 			"description" : "Delay until take care of sla information for this selector.",
-			"role": "duration"
+			"role": "durationWithUnits"
 		},
 		"sla_warning": {
 			"type": "number",

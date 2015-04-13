@@ -63,7 +63,7 @@ class Sla(object):
         storage,
         rk,
         template,
-        timewindow,
+        timewindow_dict,
         sla_warning,
         sla_critical,
         alert_level,
@@ -83,6 +83,8 @@ class Sla(object):
         self.states = [0, 1, 2, 3]
 
         now = time()
+
+        timewindow = timewindow_dict['seconds']
 
         timewindow_date_start = now - timewindow
         self.logger.debug('Timewindow is {}, timestamp is {}'.format(
@@ -157,7 +159,7 @@ class Sla(object):
             alerts_percent,
             alerts_duration,
             avail_duration,
-            timewindow,
+            timewindow_dict,
             now
         )
 
@@ -402,7 +404,7 @@ class Sla(object):
         alerts_percent,
         alerts_duration,
         avail_duration,
-        timewindow,
+        timewindow_dict,
         now
     ):
         perf_data_array = []
@@ -431,12 +433,15 @@ class Sla(object):
             'value': alerts_duration,
         })
 
-        period = Period(second=timewindow)
+        period_options = {
+            timewindow_dict['durationType']: timewindow_dict['value']
+        }
+        period = Period(**period_options)
         periodic_timestamp = period.round_timestamp(now, normalize=True)
         self.logger.debug(
             'periodic timestamp {}, timewindow {}, now {}'.format(
                 periodic_timestamp,
-                timewindow,
+                timewindow_dict,
                 now
             ))
 
