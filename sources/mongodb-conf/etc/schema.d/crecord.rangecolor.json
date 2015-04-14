@@ -1,0 +1,18 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["colors"]
+	}],
+	"properties": {
+		"colors": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "simpledict"
+			},
+			"reorderable": true
+		}
+	}
+	
+}

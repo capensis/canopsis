@@ -19,6 +19,7 @@
 			"enum": [
 				"topology",
 				"filter",
+				"rangecolor",
 				"widgetpreferences",
 				"userview",
 				"profile",
