@@ -54,11 +54,12 @@ class MongoDataBase(DataBase):
         # if self host is given
         if self.host:
             connection_args['host'] = self.host
-
+        # if self port is given
         if self.port:
             connection_args['port'] = self.port
-
-        self.logger.debug('Trying to connect to %s' % (connection_args))
+        # if self replica set is given
+        if self.replicaSet:
+            connection_args['replicaSet'] = self.replicaSet
 
         connection_args['j'] = self.journaling
         connection_args['w'] = 1 if self.safe else 0
@@ -71,6 +72,8 @@ class MongoDataBase(DataBase):
                     'ssl_certfile': self.ssl_cert
                 }
             )
+
+        self.logger.debug('Trying to connect to %s' % (connection_args))
 
         try:
             result = MongoClient(**connection_args)

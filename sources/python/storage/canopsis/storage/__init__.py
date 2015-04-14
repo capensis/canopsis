@@ -54,6 +54,7 @@ class DataBase(Middleware):
     JOURNALING = 'journaling'
 
     SHARDING = 'sharding'
+    REPLICASET = 'replicaSet'
 
     CONF_RESOURCE = 'storage/storage.conf'
 
@@ -101,6 +102,15 @@ class DataBase(Middleware):
     @sharding.setter
     def sharding(self, value):
         self._sharding = value
+        self.reconnect()
+
+    @property
+    def replicaSet(self):
+        return self._replicaSet
+
+    @replicaSet.setter
+    def replicaSet(self, value):
+        self._replicaSet = value
         self.reconnect()
 
     def drop(self, table=None, *args, **kwargs):
@@ -151,9 +161,12 @@ class DataBase(Middleware):
             new_content=(
                 Parameter(DataBase.DB, critical=True),
                 Parameter(
-                    DataBase.JOURNALING, parser=Parameter.bool, critical=True),
+                    DataBase.JOURNALING, parser=Parameter.bool, critical=True
+                ),
                 Parameter(
-                    DataBase.SHARDING, critical=True, parser=Parameter.bool)
+                    DataBase.SHARDING, critical=True, parser=Parameter.bool
+                ),
+                Parameter(DataBase.REPLICASET, critical=True)
             )
         )
 
