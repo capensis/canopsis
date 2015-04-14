@@ -1,11 +1,11 @@
 [submodule "sources/externals"]
 	path = sources/externals
-	url = https://github.com/capensis/canopsis-externals
+	url = https://git.canopsis.net/canopsis/canopsis-externals
 	ignore = dirty
 
 [submodule "sources/webcore"]
 	path = sources/webcore
-	url = https://github.com/capensis/canopsis-webcore
+	url = https://git.canopsis.net/canopsis/canopsis-webcore
 	ignore = dirty
 [submodule "sources/reporting/opt/casperjs"]
 	path = sources/reporting/opt/casperjs
