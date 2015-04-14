@@ -1,0 +1,61 @@
+{
+  "crecord_type": "view",
+  "crecord_name" : "filterlink.json",
+  "loader_id": "view.filterlink",
+  "loader_no_update": true,
+  "id": "view.filterlink",
+  "_id": "view.filterlink",
+  "crecord_write_time": 1408625322,
+  "enable": true,
+  "containerwidget": {
+    "items": [
+      {
+        "widget": {
+          "item_actions": [
+            "actionbutton-edit",
+            "actionbutton-show",
+            "actionbutton-removeselection"
+          ],
+          "id" : "item_13019673-ebdf-6271-e595-6be734632b61",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be734632b61",
+          "title": "Selectors",
+          "itemsPerPage": 10,
+          "filters": [],
+          "default_filter": null,
+          "cloaking": false,
+          "listed_crecord_type": "filterlink",
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ],
+          "mixins": [
+            { "name" : "Sortablearray" },
+            {
+              "name": "Arraysearch",
+              "searchable_columns": ["name"]
+            },
+            { "name" : "Pagination" },
+            { "name" : "Crud" }
+          ],
+          "displayed_columns": [
+            "name",
+            "mfilter",
+            "filterlink"
+          ],
+          "actions_toolbar": [
+            "actionbutton-removeselection"
+          ],
+          "xtype": "list"
+        },
+        "xtype": "widgetwrapper",
+        "title": "wrapper"
+      }
+    ],
+    "widgetslotTemplate": null,
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],
+    "title": "container title vbox"
+  }
+}
