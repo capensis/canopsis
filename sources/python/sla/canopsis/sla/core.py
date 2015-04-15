@@ -443,7 +443,12 @@ class Sla(object):
 
         period = Period(**period_options)
 
-        periodic_timestamp = period.round_timestamp(now, normalize=True)
+        periodic_timestamp = period.round_timestamp(
+            now,
+            normalize=True,
+            next_period=True
+        )
+
         self.logger.debug('periodic timestamp {}'.format(periodic_timestamp))
 
         event = forger(
