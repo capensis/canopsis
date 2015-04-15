@@ -28,10 +28,13 @@ from json import loads
 from logging import getLogger
 import pprint
 from copy import deepcopy
+from time import time
+from datetime import datetime
 
 pp = pprint.PrettyPrinter(indent=2)
 
 DEFAULT_SLA_TIMEWINDOW = 3600 * 24
+DELTA_PUBLICATION = 60 * 5
 
 
 class Selector(Record):
@@ -115,6 +118,8 @@ class Selector(Record):
         self.rk = dump.get('rk', self.rk)
         self.include_ids = dump.get('include_ids', self.include_ids)
         self.exclude_ids = dump.get('exclude_ids', self.exclude_ids)
+        self.previous_metrics = dump.get('previous_metrics', [])
+        self.last_publication_date = dump.get('last_publication_date', time())
         self.state_when_all_ack = dump.get('state_when_all_ack', 'worststate')
 
         self.output_tpl = self.get_output_tpl()
@@ -227,7 +232,7 @@ class Selector(Record):
         mfilter = self.makeMfilter()
         if not mfilter:
             self.logger.debug(" + Invalid filter")
-            return ({}, 0, 0, 0)
+            return ({}, 0, 0, 0, 0)
         # Adds default check clause as selector have to be done
         # on check event only
         # This constraint have to be available for all aggregation queries
@@ -320,7 +325,7 @@ class Selector(Record):
         elif isinstance(mfilter, dict):
             mfilter['ack.isAck'] = {'$ne': True}
 
-        self.logger.debug('mfilter for worst state')
+        self.logger.debug('Selector mfilter')
         self.logger.debug(pp.pformat(mfilter))
 
         # Computes worst state for events that are not acknowleged
@@ -467,10 +472,6 @@ class Selector(Record):
 
         output_data['total'] = total
 
-        self.logger.debug(" + Display Name: %s" % self.display_name)
-        self.logger.debug(" + output: %s" % output)
-        self.logger.debug(" + perf_data_array: %s" % perf_data_array)
-
         # Build Event
         event = forger(
             connector="selector",
@@ -488,3 +489,45 @@ class Selector(Record):
         rk = get_routingkey(event)
 
         return (rk, event, send_ack)
+
+    def have_to_publish(self, event):
+
+        self.logger.debug('Previous metrics\n{}'.format(
+            pp.pformat(self.previous_metrics)
+        ))
+
+        is_different = False
+
+        new_metrics = event['perf_data_array']
+        for metric in new_metrics:
+            if metric['metric'] not in self.previous_metrics:
+                is_different = True
+                break
+            elif metric['value'] != self.previous_metrics[metric['metric']]:
+                is_different = True
+                break
+
+        self.logger.debug('Metrics are different: {}'.format(is_different))
+
+        seconds_since_last_publication = time() - self.last_publication_date
+        time_to_publish = seconds_since_last_publication > DELTA_PUBLICATION
+
+        self.logger.debug('Time to publish: {}'.format(time_to_publish))
+
+        self.logger.debug('Last publication date : {}'.format(
+            datetime.fromtimestamp(
+                self.last_publication_date
+            ).strftime('%Y-%m-%d %H:%M:%S')
+        ))
+        self.logger.debug('Seconds since last publication: {}'.format(
+            seconds_since_last_publication
+        ))
+
+        # Do not publish metrics by removing them from event
+        if not time_to_publish and not is_different:
+            self.logger.debug('Will not publish selector event')
+            return False
+        else:
+            self.logger.info('Selector event publication')
+            self.last_publication_date = int(time())
+            return True
