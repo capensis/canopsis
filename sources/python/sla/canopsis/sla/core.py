@@ -436,14 +436,15 @@ class Sla(object):
         period_options = {
             timewindow_dict['durationType']: timewindow_dict['value']
         }
+        self.logger.debug('period options {}, now {}'.format(
+            period_options,
+            now
+        ))
+
         period = Period(**period_options)
+
         periodic_timestamp = period.round_timestamp(now, normalize=True)
-        self.logger.debug(
-            'periodic timestamp {}, timewindow {}, now {}'.format(
-                periodic_timestamp,
-                timewindow_dict,
-                now
-            ))
+        self.logger.debug('periodic timestamp {}'.format(periodic_timestamp))
 
         event = forger(
             connector='sla',
