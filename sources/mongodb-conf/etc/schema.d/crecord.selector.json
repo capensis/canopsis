@@ -115,12 +115,22 @@
 			"role": "durationWithUnits"
 		},
 		"sla_warning": {
-			"type": "number",
-			"role": "percent"
+			"type": "integer",
+			"max": 100,
+			"min": 0,
+			"tick": 1,
+			"default": 90,
+			"role": "slider",
+			"description": "Warning level that when sla available goes below, the sla produced event is in state minor"
 		},
 		"sla_critical": {
-			"type": "number",
-			"role": "percent"
+			"type": "integer",
+			"max": 100,
+			"min": 0,
+			"tick": 1,
+			"default": 75,
+			"role": "slider",
+			"description": "Warning level that when sla available goes below, the sla produced event is in state critical"
 		},
 		"sla_output_tpl": {
 			"type": "string",
