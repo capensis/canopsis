@@ -249,7 +249,7 @@ class Period(object):
 
         for unit in unit_values:
             value = max(1, unit_values[unit])
-            if unit is Period.WEEK:
+            if unit == Period.WEEK:
                 _monthcalendar = monthcalendar(
                     datetime.year, datetime.month
                 )
