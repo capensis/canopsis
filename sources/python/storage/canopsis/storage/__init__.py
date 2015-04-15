@@ -62,12 +62,15 @@ class DataBase(Middleware):
         pass
 
     def __init__(
-        self, db='canopsis', journaling=False, sharding=False, *args, **kwargs
+        self,
+        db='canopsis', journaling=False, sharding=False, replicaSet=None,
+        *args, **kwargs
     ):
         """
         :param str db: db name
         :param bool journaling: journaling mode enabling.
         :param bool sharding: db sharding mode enabling.
+        :param str replicaSet: db replicaSet.
         """
 
         super(DataBase, self).__init__(*args, **kwargs)
@@ -76,6 +79,7 @@ class DataBase(Middleware):
         self._db = db
         self._journaling = journaling
         self._sharding = sharding
+        self._replicaSet = replicaSet
 
     @property
     def db(self):
