@@ -87,11 +87,19 @@ class engine(Engine):
                     previous_metrics[metric['metric']] = metric['value']
                 update_extra_fields['previous_metrics'] = previous_metrics
 
-                selector.do_publish_metrics(selector_event)
-                update_extra_fields['last_publication_date'] = \
-                    selector.last_publication_date
+                do_publish_event = selector.have_to_publish(selector_event)
 
-                self.publish_event(selector, rk, selector_event, publish_ack)
+                if do_publish_event:
+                    update_extra_fields['last_publication_date'] = \
+                        selector.last_publication_date
+
+                    self.publish_event(
+                        selector,
+                        rk,
+                        selector_event,
+                        publish_ack
+                    )
+
                 # When selector computed, sla may be asked to be computed.
                 if selector.dosla:
 

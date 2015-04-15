@@ -490,7 +490,7 @@ class Selector(Record):
 
         return (rk, event, send_ack)
 
-    def do_publish_metrics(self, event):
+    def have_to_publish(self, event):
 
         self.logger.debug('Previous metrics\n{}'.format(
             pp.pformat(self.previous_metrics)
@@ -525,8 +525,9 @@ class Selector(Record):
 
         # Do not publish metrics by removing them from event
         if not time_to_publish and not is_different:
-            self.logger.debug('Removing perfdata from selector event')
-            del event['perf_data_array']
+            self.logger.debug('Will not publish selector event')
+            return False
         else:
-            self.logger.info('Reset last publication date')
+            self.logger.info('Selector event publication')
             self.last_publication_date = int(time())
+            return True
