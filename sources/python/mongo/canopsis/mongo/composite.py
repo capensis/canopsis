@@ -37,7 +37,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
             sub_path = self.path[:n + 1]
             index = [(path_name, Storage.ASC) for path_name in sub_path]
-            index.append((Storage.DATA_ID, Storage.ASC))
+            index.append((CompositeStorage.NAME, Storage.ASC))
 
             result.append(index)
 
@@ -45,7 +45,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
     def get(
         self,
-        path, data_ids=None, _filter=None, shared=False,
+        path, names=None, _filter=None, shared=False,
         limit=0, skip=0, sort=None, with_count=False,
         *args, **kwargs
     ):
@@ -57,14 +57,14 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         if _filter is not None:
             query.update(_filter)
         # check if only one element is asked
-        one_result = isinstance(data_ids, basestring)
-        # if data_ids is given
-        if data_ids is not None:
+        one_result = isinstance(names, basestring)
+        # if names is given
+        if names is not None:
             # if one element is asked
             if one_result:
-                query[Storage.DATA_ID] = data_ids
+                query[CompositeStorage.NAME] = names
             else:
-                query[Storage.DATA_ID] = {"$in": data_ids}
+                query[CompositeStorage.NAME] = {"$in": names}
         # get the right hint
         self_path = self.path
         hint = []
@@ -72,7 +72,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
             if p in path:
                 hint.append((p, 1))
         else:
-            hint.append((Storage.DATA_ID, 1))
+            hint.append((CompositeStorage.NAME, 1))
 
         # get elements
         result = self.find_elements(
@@ -122,11 +122,11 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         return result
 
     def put(
-        self, path, data_id, data, share_id=None, cache=False, *args, **kwargs
+        self, path, name, data, share_id=None, cache=False, *args, **kwargs
     ):
 
         # get unique id
-        _id = self.get_absolute_path(path=path, data_id=data_id)
+        _id = self.get_absolute_path(path=path, name=name)
 
         data_to_put = data.copy()
 
@@ -135,7 +135,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         query = {MongoStorage.ID: _id}
         query.update(path)
-        query[Storage.DATA_ID] = data_id
+        query[CompositeStorage.NAME] = name
 
         _set = {
             '$set': data_to_put
@@ -143,19 +143,19 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         self._update(spec=query, document=_set, multi=False, cache=cache)
 
     def remove(
-        self, path, data_ids=None, shared=False, cache=False, *args, **kwargs
+        self, path, names=None, shared=False, cache=False, *args, **kwargs
     ):
 
         query = path.copy()
 
         parameters = {}
 
-        if data_ids is not None:
-            if isiterable(data_ids, is_str=False):
-                query[Storage.DATA_ID] = {'$in': data_ids}
+        if names is not None:
+            if isiterable(names, is_str=False):
+                query[CompositeStorage.NAME] = {'$in': names}
             else:
                 parameters = {'justOne': 1}
-                query[Storage.DATA_ID] = data_ids
+                query[CompositeStorage.NAME] = names
 
         self._remove(document=query, cache=cache, **parameters)
 
@@ -163,10 +163,10 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         if shared:
             _ids = []
             data_to_remove = self.get(
-                path=path, data_ids=data_ids, shared=True)
+                path=path, names=names, shared=True)
             for dtr in data_to_remove:
-                path, data_id = self.get_path_with_id(dtr)
-                extended = self.get(path=path, data_id=data_id, shared=True)
+                path, name = self.get_path_with_id(dtr)
+                extended = self.get(path=path, name=name, shared=True)
                 _ids.append([data[MongoStorage.ID] for data in extended])
             document = {MongoStorage.ID: {'$in': _ids}}
             self._remove(document=document, cache=cache)
