@@ -4,21 +4,23 @@ function build(){
 	true
 }
 
+
 function install(){
 	echo " + Post install configurations ..."
 
-	cd $SRC_PATH	
-	install_basic_source $NAME
+    cd $SRC_PATH
+    install_basic_source $NAME
 
-	sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
+    sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
 
-	install_conf "mongodb.conf"
+    install_conf "mongodb.conf"
+
 }
 
 function update(){
     echo " + Post install configurations ..."
 
-    cd $SRC_PATH    
+    cd $SRC_PATH
     update_basic_source $NAME
 
     sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
