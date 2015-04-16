@@ -1,10 +1,10 @@
 {
   "crecord_type": "view",
-  "crecord_name" : "filterlink.json",
-  "loader_id": "view.filterlink",
+  "crecord_name" : "linklist.json",
+  "loader_id": "view.linklist",
   "loader_no_update": true,
-  "id": "view.filterlink",
-  "_id": "view.filterlink",
+  "id": "view.linklist",
+  "_id": "view.linklist",
   "crecord_write_time": 1408625322,
   "enable": true,
   "containerwidget": {
@@ -23,7 +23,7 @@
           "filters": [],
           "default_filter": null,
           "cloaking": false,
-          "listed_crecord_type": "filterlink",
+          "listed_crecord_type": "linklist",
           "selection_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection"
@@ -40,7 +40,7 @@
           "displayed_columns": [
             "name",
             "mfilter",
-            "filterlink"
+            "linklist"
           ],
           "actions_toolbar": [
             "actionbutton-removeselection"
