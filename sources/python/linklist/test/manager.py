@@ -23,6 +23,8 @@ from unittest import TestCase, main
 
 from canopsis.linklist.manager import Linklist
 
+DEBUG = False
+
 
 class CheckManagerTest(TestCase):
     """
@@ -35,14 +37,78 @@ class CheckManagerTest(TestCase):
         """
 
         self.manager = Linklist()
+        self.name = 'testlinklist'
+        self.ids = [self.manager.get_document_id(
+            {'name': self.name}
+        )]
+
+    def clean(self):
+        self.manager.remove(self.ids)
+
+    def get_linklist(self):
+        return self.manager.find(ids=self.ids)
+
+    def linklist_count_equals(self, count):
+        result = list(self.get_linklist())
+        if DEBUG:
+            print result
+        result = len(result)
+        self.assertEqual(result, count)
 
 
 class LinkListTest(CheckManagerTest):
-    """
-    """
 
-    def test_01(self):
-	pass
+    def test_put(self):
+        self.clean()
+
+        self.manager.put({
+            'name': self.name,
+            'linklist': ['http://canopsis.org'],
+            'mfilter': '{"$and": [{"connector": "collectd"}]}'
+        })
+
+        self.linklist_count_equals(1)
+
+    def test_get(self):
+        self.clean()
+
+        self.manager.put({
+            'name': self.name,
+            'linklist': ['http://canopsis.org'],
+            'mfilter': '{"$and": [{"connector": "collectd"}]}'
+        })
+
+        self.manager.put({
+            'name': self.name + '1',
+            'linklist': ['http://canopsis.org'],
+            'mfilter': '{"$and": [{"connector": "collectd"}]}'
+        })
+
+        self.linklist_count_equals(1)
+
+        result = self.manager.find()
+        self.assertEqual(len(list(result)), 2)
+
+        result = self.manager.find(limit=1)
+        self.assertEqual(len(list(result)), 1)
+
+    def test_remove(self):
+        self.clean()
+
+        self.linklist_count_equals(0)
+
+        self.manager.put({
+            'name': self.name,
+            'linklist': ['http://canopsis.org'],
+            'mfilter': '{"$and": [{"connector": "collectd"}]}'
+        })
+
+        self.linklist_count_equals(1)
+
+        self.manager.remove(self.ids)
+
+        self.linklist_count_equals(0)
+
 
 if __name__ == '__main__':
     main()
