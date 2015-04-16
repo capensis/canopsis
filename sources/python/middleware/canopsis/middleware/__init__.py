@@ -39,8 +39,7 @@ DEFAULT_DATA_SCOPE = 'canopsis'  #: default data_scope
 
 
 def parse_scheme(uri):
-    """
-    Get a tuple of protocol, data_type names from input uri
+    """Get a tuple of protocol, data_type names from input uri
 
     :return: (protocol, data_type, data_scope) from uri scheme
     :rtype: tuple
@@ -76,8 +75,7 @@ def get_uri(
     protocol, data_type=None, data_scope=None, host=None, port=None, user=None,
     pwd=None, path=None, parameters=None
 ):
-    """
-    Get a scheme related to input protocol, data_type and data_scope.
+    """Get a scheme related to input protocol, data_type and data_scope.
 
     :return: {protocol[-{data_type}[-{data_scope}]]}://[{user}[:{pwd}]]@{host}?
     localhost[:port][/{path}][?{parameters}]
@@ -124,8 +122,7 @@ def get_uri(
 
 
 class MetaMiddleware(MetaConfigurable):
-    """
-    Middleware meta class which register all middleware in a global
+    """Middleware meta class which register all middleware in a global
     set of middlewares.
     """
 
@@ -139,8 +136,7 @@ class MetaMiddleware(MetaConfigurable):
 
 
 class Middleware(Configurable):
-    """
-    Abstract class which aims to manage middleware.
+    """Abstract class which aims to manage middleware.
 
     A middleware is a resource which connects itself to a foreign resource
         such as a database, a mom broker, etc.
@@ -197,8 +193,7 @@ class Middleware(Configurable):
     CONF_RESOURCE = 'middleware/middleware.conf'
 
     class Error(Exception):
-        """
-        Errors raised by the Middleware class.
+        """Errors raised by the Middleware class.
         """
 
         pass
@@ -293,9 +288,9 @@ class Middleware(Configurable):
         return result
 
     def _get_uri(self):
+        """Get uri in constructing it from individual uri parameters
         """
-        Get uri in constructing it from individual uri parameters
-        """
+
         result = self._uri
 
         # if self._uri is not resolved, generate it related to other parameters
@@ -329,9 +324,9 @@ class Middleware(Configurable):
         self._set_uri(value)
 
     def _set_uri(self, value):
+        """Set uri in getting values from uri parameters if value is None or empty
         """
-        Set uri in getting values from uri parameters if value is None or empty
-        """
+
         self._uri = value
 
         # update other properties if value is not None
@@ -474,8 +469,7 @@ class Middleware(Configurable):
         self._pwd = value
 
     def connect(self):
-        """
-        Connect this database.
+        """Connect this database.
 
         .. seealso:: disconnect(self), connected(self), reconnect(self)
 
@@ -502,8 +496,7 @@ class Middleware(Configurable):
         return self.connected()
 
     def _connect(self):
-        """
-        Protected connection which has to be implemented by specialization
+        """Protected connection which has to be implemented by specialization
         classes.
 
         :return: new connection object, or None if it does not exist
@@ -512,8 +505,7 @@ class Middleware(Configurable):
         raise NotImplementedError()
 
     def _init_env(self, conn):
-        """
-        Initialize the environement related to a newly connection.
+        """Initialize the environement related to a newly connection.
 
         :param conn: newly created connection.
         """
@@ -521,8 +513,7 @@ class Middleware(Configurable):
         pass
 
     def disconnect(self):
-        """
-        Disconnect this database.
+        """Disconnect this database.
 
         .. seealso:: connect(self), connected(self), reconnect(self)
         """
@@ -541,8 +532,7 @@ class Middleware(Configurable):
             self.logger.debug("%s is already disconnected" % self)
 
     def _disconnect(self):
-        """
-        Method to implement in order to disconnect this middleware.
+        """Method to implement in order to disconnect this middleware.
         """
 
         raise NotImplementedError()
@@ -555,8 +545,7 @@ class Middleware(Configurable):
         return False
 
     def reconnect(self):
-        """
-        Try to reconnect and returns connection result
+        """Try to reconnect and returns connection result
 
         :return: True if connected
         :rtype: bool
@@ -640,8 +629,7 @@ class Middleware(Configurable):
 
     @classmethod
     def register_middleware(cls, protocol=None, data_type=None):
-        """
-        Register a middleware class with input protocol name and data_type.
+        """Register a middleware class with input protocol name and data_type.
 
         :param protocol: one or many protocols to add to protocols of input cls
         :type protocol: str or Iterable(protocol)
@@ -670,8 +658,7 @@ class Middleware(Configurable):
 
     @classmethod
     def get_protocols(cls):
-        """
-        Get all protocols declared in the class hierarchy of cls
+        """Get all protocols declared in the class hierarchy of cls
 
         :return: set of protocols registered in the class tree
          of input cls
@@ -692,8 +679,7 @@ class Middleware(Configurable):
 
     @staticmethod
     def resolve_middleware(protocol, data_type=None):
-        """
-        Get a reference to a middleware class registered by a protocol and a
+        """Get a reference to a middleware class registered by a protocol and a
         data_scope.
 
         :param protocol: protocol name
@@ -738,8 +724,7 @@ class Middleware(Configurable):
 
     @staticmethod
     def resolve_middleware_by_uri(uri):
-        """
-        Get a reference to a middleware class corresponding to input uri.
+        """Get a reference to a middleware class corresponding to input uri.
 
         :param uri: the uri may contains a protocol of type 'protocol' or
             'protocol-data_type'.
@@ -767,20 +752,19 @@ class Middleware(Configurable):
         protocol, data_type=None, data_scope=None, auto_connect=True,
         *args, **kwargs
     ):
-        """
-        Instantiate the right middleware related to input protocol, data_type
-        and specific parameters (in args and kwargs).
+        """Instantiate the right middleware related to input protocol,
+        data_type and specific parameters (in args and kwargs).
 
-        :param protocol: protocol name
+        :param protocol: protocol name.
         :type protocol: str
 
-        :param data_type: data type name
+        :param data_type: data type name.
         :type data_type: str
 
         :param args: list of args given to the middleware to instantiate.
         :param kwargs: kwargs given to the middleware to instantiate.
 
-        :return: Middleware
+        :return: Middleware.
         :rtype: Middleware
 
         :raise: Middleware.Error if no middleware is registered related to
@@ -815,8 +799,7 @@ class Middleware(Configurable):
 
     @staticmethod
     def get_middleware_by_uri(uri, *args, **kwargs):
-        """
-        Instantiate the right middleware related to input uri.
+        """Instantiate the right middleware related to input uri.
 
         :param uri: the uri may contains a protocol of type 'protocol' or
             'protocol-data_type' or 'protocol-data_type-data_scope.
@@ -825,7 +808,7 @@ class Middleware(Configurable):
         :param args: list of args given to the middleware to instantiate.
         :param kwargs: kwargs given to the middleware to instantiate.
 
-        :return: Middleware type
+        :return: Middleware type.
         :rtype: type
 
         :raise: Middleware.Error if the uri is not reliable to a registered
