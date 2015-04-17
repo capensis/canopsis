@@ -4,6 +4,7 @@ from time import time
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
+import uuid
 
 CONF_PATH = 'linklist/linklist.conf'
 CATEGORY = 'LINKLIST'
@@ -65,14 +66,15 @@ class Linklist(MiddlewareRegistry):
         :param extra_keys: documents extra information depending on specific
         schema.
         """
-        _id = self.get_document_id(document)
+        if 'id' not in document or not document['id']:
+            document['_id'] = str(uuid.uuid4())
+        else:
+            document['_id'] = document['id']
+            del document['id']
 
         self[Linklist.LINKLIST_STORAGE].put_element(
-            _id=_id, element=document, cache=cache
+            _id=document['_id'], element=document, cache=cache
         )
-
-    def get_document_id(self, document):
-        return 'linklist_{}'.format(document['name'])
 
     def remove(
         self,

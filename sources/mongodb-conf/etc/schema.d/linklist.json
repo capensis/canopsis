@@ -5,6 +5,13 @@
     }],
     "type": "object",
     "properties": {
+        "_id": {
+            "type": "string"
+        },
+        "crecord_type": {
+            "enum": ["linklist"],
+            "required": true
+        },
         "name": {
             "type": "string"
         },
