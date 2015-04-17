@@ -30,7 +30,8 @@ class Linklist(MiddlewareRegistry):
         skip=None,
         ids=None,
         sort=None,
-        with_count=False
+        with_count=False,
+        _filter={},
     ):
 
         """
@@ -44,9 +45,10 @@ class Linklist(MiddlewareRegistry):
 
         result = self[Linklist.LINKLIST_STORAGE].get_elements(
             ids=ids,
-            limit=limit,
             skip=skip,
             sort=sort,
+            limit=limit,
+            _fitler=_filter,
             with_count=with_count
         )
         return result

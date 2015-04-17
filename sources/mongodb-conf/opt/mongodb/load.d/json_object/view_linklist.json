@@ -29,7 +29,6 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            { "name" : "Sortablearray" },
             {
               "name": "Arraysearch",
               "searchable_columns": ["name"]
@@ -40,7 +39,7 @@
           "displayed_columns": [
             "name",
             "mfilter",
-            "linklist"
+            "filterlink"
           ],
           "actions_toolbar": [
             "actionbutton-removeselection"
