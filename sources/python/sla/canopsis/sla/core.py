@@ -27,6 +27,7 @@ from logging import getLogger
 from canopsis.event import forger
 from datetime import datetime
 from pprint import PrettyPrinter
+from canopsis.timeserie.timewindow import Period
 
 pp = PrettyPrinter(indent=2)
 
@@ -62,7 +63,7 @@ class Sla(object):
         storage,
         rk,
         template,
-        timewindow,
+        timewindow_dict,
         sla_warning,
         sla_critical,
         alert_level,
@@ -82,6 +83,8 @@ class Sla(object):
         self.states = [0, 1, 2, 3]
 
         now = time()
+
+        timewindow = timewindow_dict['seconds']
 
         timewindow_date_start = now - timewindow
         self.logger.debug('Timewindow is {}, timestamp is {}'.format(
@@ -155,7 +158,9 @@ class Sla(object):
             state,
             alerts_percent,
             alerts_duration,
-            avail_duration
+            avail_duration,
+            timewindow_dict,
+            now
         )
 
     def get_alert_percent(self, sla_measures, sla_times, alert_level):
@@ -398,7 +403,9 @@ class Sla(object):
         sla_state,
         alerts_percent,
         alerts_duration,
-        avail_duration
+        avail_duration,
+        timewindow_dict,
+        now
     ):
         perf_data_array = []
 
@@ -426,6 +433,24 @@ class Sla(object):
             'value': alerts_duration,
         })
 
+        period_options = {
+            timewindow_dict['durationType']: timewindow_dict['value']
+        }
+        self.logger.debug('period options {}, now {}'.format(
+            period_options,
+            now
+        ))
+
+        period = Period(**period_options)
+
+        periodic_timestamp = period.round_timestamp(
+            now,
+            normalize=True,
+            next_period=True
+        )
+
+        self.logger.debug('periodic timestamp {}'.format(periodic_timestamp))
+
         event = forger(
             connector='sla',
             connector_name='engine',
@@ -436,7 +461,8 @@ class Sla(object):
             state=sla_state,
             output=output,
             perf_data_array=perf_data_array,
-            display_name=display_name
+            display_name=display_name,
+            timestamp=periodic_timestamp
         )
 
         self.logger.info('publishing sla {}, states {}'.format(
