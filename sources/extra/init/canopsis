@@ -33,7 +33,7 @@ case $1 in
 		
 	status)
 		echo "State of $NAME:"
-		su - $USER -c "$CANOPSIS_PATH/bin/supervisorctl status"
+		su - $USER -c "$CANOPSIS_PATH/bin/hypcontrol status"
 	;;
 
 	*)
