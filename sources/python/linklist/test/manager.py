@@ -20,8 +20,8 @@
 # ---------------------------------
 
 from unittest import TestCase, main
-
 from canopsis.linklist.manager import Linklist
+from uuid import uuid4
 
 DEBUG = False
 
@@ -38,9 +38,8 @@ class CheckManagerTest(TestCase):
 
         self.manager = Linklist()
         self.name = 'testlinklist'
-        self.ids = [self.manager.get_document_id(
-            {'name': self.name}
-        )]
+        self.id = str(uuid4())
+        self.ids = [self.id]
 
     def clean(self):
         self.manager.remove(self.ids)
@@ -62,6 +61,7 @@ class LinkListTest(CheckManagerTest):
         self.clean()
 
         self.manager.put({
+            'id': self.id,
             'name': self.name,
             'linklist': ['http://canopsis.org'],
             'mfilter': '{"$and": [{"connector": "collectd"}]}'
@@ -73,6 +73,7 @@ class LinkListTest(CheckManagerTest):
         self.clean()
 
         self.manager.put({
+            'id': self.id,
             'name': self.name,
             'linklist': ['http://canopsis.org'],
             'mfilter': '{"$and": [{"connector": "collectd"}]}'
@@ -87,7 +88,7 @@ class LinkListTest(CheckManagerTest):
         self.linklist_count_equals(1)
 
         result = self.manager.find()
-        self.assertEqual(len(list(result)), 2)
+        self.assertGreaterEqual(len(list(result)), 2)
 
         result = self.manager.find(limit=1)
         self.assertEqual(len(list(result)), 1)
@@ -98,6 +99,7 @@ class LinkListTest(CheckManagerTest):
         self.linklist_count_equals(0)
 
         self.manager.put({
+            'id': self.id,
             'name': self.name,
             'linklist': ['http://canopsis.org'],
             'mfilter': '{"$and": [{"connector": "collectd"}]}'
