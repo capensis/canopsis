@@ -8,10 +8,10 @@
         "keys":["title"]
     },{
         "title": "Style",
-        "keys":["display_as", "show_value", "value_color", "value_in_column", "pb_thickness", "gg_width", "gg_thickness"]
+        "keys":["display_as", "show_value", "value_in_column", "valueLabelColor", "backgroundColor", "pb_thickness", "gg_width", "gg_thickness"]
     },{
         "title": "Label",
-        "keys":["label_display", "label_width", "label_unit", "label_align"]
+        "keys":["label_display", "label_in_percent", "label_unit"]
     },{
         "title": "Time Window",
         "keys": ["time_window", "time_window_offset"]
@@ -29,19 +29,13 @@
         "title":  {
             "type": "string"
         },
-        "label_align": {
-            "title": "Label Align",
-            "role": "simplelist",
-            "enum": ["left", "right"],
-            "default": "left"
-        },
         "label_display": {
-            "title" : "Diplay Label",
+            "title" : "Display Label",
             "type": "boolean"
         },
-        "label_width":  {
-            "type": "number",
-            "title" : "Label Width"
+        "label_in_percent": {
+            "title" : "Label in percent",
+            "type": "boolean"
         },
         "label_unit":  {
             "title" : "Label Width Unit",
@@ -77,10 +71,16 @@
             "title": "Border Gauge",
             "default": "#cccccc"
         },
-        "value_color": {
+        "valueLabelColor": {
             "type": "string",
             "role": "color",
-            "title": "Value Color",
+            "title": "Value label color",
+            "default": "#000000"
+        },
+        "backgroundColor": {
+            "type": "string",
+            "role": "color",
+            "title": "Background color",
             "default": "#000000"
         },
         "value_in_column": {
