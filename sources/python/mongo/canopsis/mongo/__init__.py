@@ -233,7 +233,7 @@ class MongoStorage(MongoDataBase, Storage):
     def get_elements(
         self,
         ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
-        hint=None,
+        hint=None, projection=None,
         *args, **kwargs
     ):
 
@@ -247,7 +247,7 @@ class MongoStorage(MongoDataBase, Storage):
             else:
                 _query[MongoStorage.ID] = {'$in': ids}
 
-        cursor = self._find(_query)
+        cursor = self._find(_query, projection)
 
         # set limit, skip and sort properties
         if limit:
@@ -323,7 +323,8 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def find_elements(
-        self, query, limit=0, skip=0, sort=None, with_count=False,
+        self, query, limit=0, skip=0, sort=None, projection=None,
+        with_count=False,
         *args, **kwargs
     ):
 
@@ -333,6 +334,7 @@ class MongoStorage(MongoDataBase, Storage):
             skip=skip,
             sort=sort,
             with_count=with_count,
+            projection=projection,
             *args, **kwargs
         )
 
@@ -443,7 +445,7 @@ class MongoStorage(MongoDataBase, Storage):
     def _find(self, document=None, projection=None, **kwargs):
 
         result = self._run_command(
-            command='find', spec=document, projection=projection, **kwargs
+            'find', self.get_table(), document, projection, **kwargs
         )
 
         return result
@@ -510,24 +512,24 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _run_command(self, command, **kwargs):
-        """
-        Run a specific command on a given backend.
+    def _run_command(self, command, table=None, *args, **kwargs):
+        """Run a specific command on a given backend.
 
-        :param command: command to run
-        :type command: str
-
-        :param backend: backend to use
-        :type backend: str
+        :param str command: command to run.
+        :param str table: table to use. self table if None.
         """
 
         result = None
 
         try:
-            backend = self._get_backend(backend=self.get_table())
+            if table is None:
+                table = self.get_table()
+            backend = self._get_backend(backend=table)
             backend_command = getattr(backend, command)
             w = 1 if self.safe else 0
-            result = backend_command(w=w, wtimeout=self.out_timeout, **kwargs)
+            result = backend_command(
+                w=w, wtimeout=self.out_timeout, *args, **kwargs
+            )
 
         except TimeoutError:
             self.logger.warning(
