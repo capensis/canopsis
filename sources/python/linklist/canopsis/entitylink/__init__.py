@@ -18,6 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[LINKLIST]
-linklist_storage_uri=mongodb-default-linklist://
-entitylink_storage_uri=mongodb-default-entitylink://
+# attach this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

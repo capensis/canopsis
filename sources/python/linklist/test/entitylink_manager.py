@@ -20,7 +20,7 @@
 # ---------------------------------
 
 from unittest import TestCase, main
-from canopsis.linklist.manager import Linklist
+from canopsis.entitylink.manager import Entitylink
 from uuid import uuid4
 
 DEBUG = False
@@ -36,10 +36,16 @@ class CheckManagerTest(TestCase):
         initialize a manager.
         """
 
-        self.manager = Linklist()
-        self.name = 'testlinklist'
+        self.manager = Entitylink()
+        self.name = 'testentitylink'
         self.id = str(uuid4())
         self.ids = [self.id]
+        self.document_content = {
+            'computed_links': [{
+                'label': 'link1',
+                'url': 'http://www.canopsis.org'
+            }]
+        }
 
     def clean(self):
         self.manager.remove(self.ids)
@@ -60,30 +66,25 @@ class LinkListTest(CheckManagerTest):
     def test_put(self):
         self.clean()
 
-        self.manager.put({
-            'id': self.id,
-            'name': self.name,
-            'linklist': ['http://canopsis.org'],
-            'mfilter': '{"$and": [{"connector": "collectd"}]}'
-        })
+        self.manager.put(
+            self.id,
+            self.document_content
+        )
 
         self.linklist_count_equals(1)
 
     def test_get(self):
         self.clean()
 
-        self.manager.put({
-            'id': self.id,
-            'name': self.name,
-            'linklist': ['http://canopsis.org'],
-            'mfilter': '{"$and": [{"connector": "collectd"}]}'
-        })
+        self.manager.put(
+            self.id,
+            self.document_content
+        )
 
-        self.manager.put({
-            'name': self.name + '1',
-            'linklist': ['http://canopsis.org'],
-            'mfilter': '{"$and": [{"connector": "collectd"}]}'
-        })
+        self.manager.put(
+            self.id + '1',
+            self.document_content
+        )
 
         self.linklist_count_equals(1)
 
@@ -98,12 +99,10 @@ class LinkListTest(CheckManagerTest):
 
         self.linklist_count_equals(0)
 
-        self.manager.put({
-            'id': self.id,
-            'name': self.name,
-            'linklist': ['http://canopsis.org'],
-            'mfilter': '{"$and": [{"connector": "collectd"}]}'
-        })
+        self.manager.put(
+            self.id,
+            self.document_content
+        )
 
         self.linklist_count_equals(1)
 

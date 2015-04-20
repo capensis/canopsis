@@ -105,13 +105,23 @@ class engine(Engine):
         self.logger.debug(' + links')
         self.logger.debug(links)
 
-        # element initialization
-        if 'links' not in entity:
-            entity['links'] = {}
+        context = {
+            'links': {}
+        }
 
-        entity['links']['computed_links'] = links
+        # prepare old information update
+        if 'links' in entity:
+            context['links'] = entity['links']
 
-        self.context.put(entity['type'], entity)
+        # Set computed link to entity
+        # behavior for computed links is override only
+        context['links']['computed_links'] = links
+
+        self.context.put(
+            _type=entity['type'],
+            entity=entity,
+            context=context
+        )
 
     def get_ids_for_filter(self, l_filter):
 
