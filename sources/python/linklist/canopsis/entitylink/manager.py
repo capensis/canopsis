@@ -5,6 +5,7 @@ from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
 import uuid
+from canopsis.context.manager import Context
 
 CONF_PATH = 'linklist/linklist.conf'
 CATEGORY = 'LINKLIST'
@@ -23,6 +24,12 @@ class Entitylink(MiddlewareRegistry):
     def __init__(self, *args, **kwargs):
 
         super(Entitylink, self).__init__(*args, **kwargs)
+        self.context = Context()
+
+    def get_links_from_event(self, event):
+        entity = self.context.get_entity(event)
+        entity_id = self.context.get_entity_id(entity)
+        return self.find(ids=[entity_id])
 
     def find(
         self,

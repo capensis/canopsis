@@ -23,9 +23,12 @@ from datetime import datetime
 from time import time
 from json import loads
 from canopsis.linklist.manager import Linklist
+from canopsis.entitylink.manager import Entitylink
 from canopsis.context.manager import Context
+
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
+
 # TODO remove
 from canopsis.old.storage import get_storage
 s = get_storage().get_backend('events')
@@ -47,7 +50,8 @@ class engine(Engine):
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
         self.context = Context()
-        self.manager = Linklist()
+        self.link_list_manager = Linklist()
+        self.entity_link_manager = Entitylink()
         self.logger.debug = self.logger.info
 
     def consume_dispatcher(self, event, *args, **kargs):
@@ -64,7 +68,7 @@ class engine(Engine):
 
         # Computes links for all context elements
         # may cost some memory depending on filters and context size
-        for linklist in self.manager.find():
+        for linklist in self.link_list_manager.find():
 
             # condition to proceed a list link is they must be set
             name = linklist['name']
@@ -106,22 +110,12 @@ class engine(Engine):
         self.logger.debug(links)
 
         context = {
-            'links': {}
+            'computed_links': links
         }
 
-        # prepare old information update
-        if 'links' in entity:
-            context['links'] = entity['links']
+        _id = self.context.get_entity_id(entity)
 
-        # Set computed link to entity
-        # behavior for computed links is override only
-        context['links']['computed_links'] = links
-
-        self.context.put(
-            _type=entity['type'],
-            entity=entity,
-            context=context
-        )
+        self.entity_link_manager.put(_id, context)
 
     def get_ids_for_filter(self, l_filter):
 
@@ -142,6 +136,7 @@ class engine(Engine):
         ))
 
         for event in events:
+            self.logger.debug('rk : {}'.format(event['_id']))
             entity = self.context.get_entity(event)
             entity_id = self.context.get_entity_id(entity)
             context_ids.append(entity_id)
