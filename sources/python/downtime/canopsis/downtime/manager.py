@@ -24,6 +24,8 @@ from canopsis.configuration.configurable.decorator import (
 )
 from canopsis.middleware.registry import MiddlewareRegistry
 
+from time import time
+
 from date.rrule import rrulestr
 
 from datetime import datetime
@@ -35,7 +37,10 @@ CATEGORY = 'DOWNTIME'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class DowntimeManager(MiddlewareRegistry):
-    """Dedicated to manage downtime.
+    """Dedicated to manage entity downtimes.
+
+    A downtime is an expression which respects the icalendar specification
+    ftp://ftp.rfc-editor.org/in-notes/rfc2445.txt.
     """
 
     DOWNTIME_STORAGE = 'downtime_storage'  #: downtime storage name
@@ -54,6 +59,12 @@ class DowntimeManager(MiddlewareRegistry):
 
         :param entity_ids: entity id(s) bound to downtime.
         :type entity_ids: list or str
+        :return: depending on entity_ids type:
+            - str: one dictionary with two fields, entity_id which contains
+                the entity id, and ``value`` which contains the downtime
+                expression.
+            - list: list of previous dictionaries.
+        :rtype: list or dict
         """
 
         result = self[DowntimeManager.DOWNTIME_STORAGE].get_elements(
@@ -68,13 +79,17 @@ class DowntimeManager(MiddlewareRegistry):
         :param str entity_id: downtime entity id.
         :param str downtime: downtime value respecting icalendar format.
         :param bool cache: if True (False by default), use storage cache.
+        :return: entity_id if input downtime has been putted. Otherwise None.
+        :rtype: str
         """
 
         element = {DowntimeManager.VALUE: downtime}
 
-        self[DowntimeManager.DOWNTIME_STORAGE].put_element(
+        result = self[DowntimeManager.DOWNTIME_STORAGE].put_element(
             _id=entity_id, element=element, cache=cache
         )
+
+        return result
 
     def remove(self, entity_ids, cache=False):
         """Remove entity downtime(s) related to input entity id(s).
@@ -82,16 +97,20 @@ class DowntimeManager(MiddlewareRegistry):
         :param entity_ids: downtime entity id(s).
         :type entity_ids: list or str
         :param bool cache: if True (False by default), use storage cache.
+        :return: entity id(s) of removed downtime(s).
+        :rtype: list
         """
 
-        self.del_elements(ids=entity_ids, cache=cache)
+        result = self.del_elements(ids=entity_ids, cache=cache)
 
-    def isdown(self, entity_ids, ts):
+        return result
+
+    def isdown(self, entity_ids, ts=None):
         """Check if entitie(s) is/are down ts.
 
         :param entity_ids: entity id(s).
         :type entity_ids: list or str
-        :param long ts: timestamp to check.
+        :param long ts: timestamp to check. If None, use now.
         :return: depending on entity_ids type:
             - str: True/False if related entity is down at ts. None if entity
                 ids is not in Storage.
@@ -100,21 +119,30 @@ class DowntimeManager(MiddlewareRegistry):
         :rtype: dict or bool or NoneType
         """
 
-        downtimes = self.get(entity_ids=entity_ids)
-
-        isunique = isinstance(entity_ids, basestring)
-
+        # initialize result
         result = {}
-
-        if isunique:
+        # initialize ts
+        if ts is None:
+            ts = time.time()
+        # calculate ts datetime
+        dtts = datetime.fromtimestamp(ts)
+        # get entity downtime(s)
+        downtimes = self.get(entity_ids=entity_ids)
+        # check if one entity downtime is asked
+        isunique = isinstance(entity_ids, basestring)
+        if isunique:  # ensure downtimes is a list
             downtimes = [downtimes]
-
+        # check all downtime related to input ts
         for downtime in downtimes:
             # check downtime if not None
             if downtime is not None:
-                dtts = datetime.fromtimestamp(ts)
+                # get rrule object
                 rrule = rrulestr(downtimes, cache=True, dtstart=dtts)
-                isdown = rrule.after(ts, inc=True)
+                # calculate first date after dtts including dtts
+                after = rrule.after(ts, inc=True)[:1]
+                # check if after equals dtts
+                isdown = len(after) and after == dtts
+                # update isdown flag in the result
                 result[downtimes['id']] = isdown
 
         if isunique:
