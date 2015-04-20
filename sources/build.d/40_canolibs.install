@@ -16,15 +16,16 @@ PROJECTS[12]='kombu'
 PROJECTS[13]='context'
 PROJECTS[14]='perfdata'
 PROJECTS[15]='tools'
-PROJECTS[16]='engines'
-PROJECTS[17]='connectors'
-PROJECTS[18]='cli'
-PROJECTS[19]='organisation'
-PROJECTS[20]='check'
-PROJECTS[21]='monitoring'
-PROJECTS[22]='graph'
-PROJECTS[23]='topology'
-PROJECTS[24]='sla'
+PROJECTS[16]='downtime'
+PROJECTS[17]='engines'
+PROJECTS[18]='connectors'
+PROJECTS[19]='cli'
+PROJECTS[20]='organisation'
+PROJECTS[21]='check'
+PROJECTS[22]='monitoring'
+PROJECTS[23]='graph'
+PROJECTS[24]='topology'
+PROJECTS[25]='sla'
 
 function build(){
 	true
@@ -73,7 +74,7 @@ function update(){
         echo "-- Update project: $project"
         export CPS_PREFIX="$PREFIX/etc/"
         cd $SRC_PATH/python/$project
-        
+
         launch_log $NAME "python setup.py install --no-conf"
         check_code $? "Impossible to update $project"
 
