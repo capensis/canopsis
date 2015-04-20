@@ -34,7 +34,7 @@ from logging import INFO, DEBUG, FileHandler, Formatter
 
 from time import time, sleep
 from json import loads
-
+from datetime import datetime
 from os import getpid
 from os.path import join
 from sys import prefix as sys_prefix
@@ -135,14 +135,25 @@ class Engine(object):
             'downtime', 'eventstore', 'stats', 'datacleaner', 'linklist'
         ]
 
-    def crecord_task_complete(self, crecord_id):
+    def crecord_task_complete(self, crecord_id, extra_fields={}):
+
         next_ready = time() + DISPATCHER_READY_TIME
+        update_information = {'loaded': False, 'next_ready_time': next_ready}
+
+        # Allow update extra information to the record.
+        for key in extra_fields:
+            update_information[key] = extra_fields[key]
+
         self.storage.update(
-            crecord_id, {'loaded': False, 'next_ready_time': next_ready}
+            crecord_id, update_information
         )
         self.logger.debug(
             'next ready time for crecord {0} : {1}'.format(
-                crecord_id, next_ready)
+                crecord_id,
+                datetime.fromtimestamp(
+                    next_ready
+                ).strftime('%Y-%m-%d %H:%M:%S')
+            )
         )
 
     def get_ready_record(self, record_event):
