@@ -72,7 +72,7 @@ class engine(Engine):
 
             self.logger.debug('----------SELECTOR----------\n')
 
-            self.logger.debug('Selector {} found, start processing..'.format(
+            self.logger.debug(u'Selector {} found, start processing..'.format(
                 name
             ))
 
@@ -134,7 +134,7 @@ class engine(Engine):
                     )
 
             else:
-                self.logger.debug('Nothing to do with selector {}'.format(
+                self.logger.debug(u'Nothing to do with selector {}'.format(
                     name
                 ))
 
@@ -148,7 +148,7 @@ class engine(Engine):
 
         publish(publisher=self.amqp, event=event)
 
-        self.logger.debug("published event sla selector {}".format(
+        self.logger.debug(u'published event sla selector {}'.format(
             display_name
         ))
 
@@ -157,7 +157,7 @@ class engine(Engine):
         selector_event['selector_id'] = selector._id
 
         self.logger.info(
-            'Ready to publish selector {} event with state {}'.format(
+            u'Ready to publish selector {} event with state {}'.format(
                 selector.display_name,
                 selector_event['state']
             )
@@ -184,6 +184,6 @@ class engine(Engine):
 
         publish(publisher=self.amqp, event=selector_event, rk=rk)
 
-        self.logger.debug("published event selector {}".format(
+        self.logger.debug(u'published event selector {}'.format(
             selector.display_name
         ))
