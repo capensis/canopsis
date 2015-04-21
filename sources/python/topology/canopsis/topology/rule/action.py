@@ -78,7 +78,6 @@ def change_state(
         vertice = manager.get_elts(ids=vertice)
     # update vertice state from ctx
     vertice.state = state
-    vertice.save(manager=manager)
 
     # update entity if necessary
     if update_entity:
