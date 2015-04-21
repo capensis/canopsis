@@ -28,10 +28,13 @@ from json import loads
 from logging import getLogger
 import pprint
 from copy import deepcopy
+from time import time
+from datetime import datetime
 
 pp = pprint.PrettyPrinter(indent=2)
 
 DEFAULT_SLA_TIMEWINDOW = 3600 * 24
+DELTA_PUBLICATION = 60 * 5
 
 
 class Selector(Record):
@@ -103,7 +106,7 @@ class Selector(Record):
                 self.mfilter = loads(mfilter)
             except Exception as e:
                 self.logger.warning(
-                    'invalid mfilter for selector {} : {} '.format(
+                    u'invalid mfilter for selector {} : {} '.format(
                         dump.get('display_name', 'noname'), e))
                 self.mfilter = {}
 
@@ -115,6 +118,8 @@ class Selector(Record):
         self.rk = dump.get('rk', self.rk)
         self.include_ids = dump.get('include_ids', self.include_ids)
         self.exclude_ids = dump.get('exclude_ids', self.exclude_ids)
+        self.previous_metrics = dump.get('previous_metrics', [])
+        self.last_publication_date = dump.get('last_publication_date', time())
         self.state_when_all_ack = dump.get('state_when_all_ack', 'worststate')
 
         self.output_tpl = self.get_output_tpl()
@@ -165,7 +170,7 @@ class Selector(Record):
         timewindow = self.data.get('sla_timewindow', None)
         if timewindow is None:
             self.logger.info(
-                'No timewindow set for selector {}, use default'.format(
+                u'No timewindow set for selector {}, use default'.format(
                     self.display_name
                 ))
             return DEFAULT_SLA_TIMEWINDOW
@@ -174,7 +179,7 @@ class Selector(Record):
 
     def get_state_at_timewindow_start(self):
         state = self.data.get('state_at_timewindow_start', None)
-        self.logger.debug('state_at_timewindow_start {}'.format(state))
+        self.logger.debug(u'state_at_timewindow_start {}'.format(state))
         return state
 
     def get_previous_selector_state(self):
@@ -227,7 +232,7 @@ class Selector(Record):
         mfilter = self.makeMfilter()
         if not mfilter:
             self.logger.debug(" + Invalid filter")
-            return ({}, 0, 0, 0)
+            return ({}, 0, 0, 0, 0)
         # Adds default check clause as selector have to be done
         # on check event only
         # This constraint have to be available for all aggregation queries
@@ -261,7 +266,7 @@ class Selector(Record):
                 },
                 'count': {'$sum': 1}}}])
 
-        self.logger.debug(" + result: %s" % result)
+        self.logger.debug(u' + result: {}'.format(result))
 
         states = {}
         state = -1
@@ -271,7 +276,7 @@ class Selector(Record):
 
             states[key] = states.get(key, 0) + state['count']
 
-        self.logger.debug(" + states: {}".format(states))
+        self.logger.debug(u' + states: {}'.format(states))
 
         # Compute worst state
         for s in [0, 1, 2, 3]:
@@ -308,7 +313,7 @@ class Selector(Record):
                 ack_count += ack_result['count']
         else:
             ack_count = -1
-        self.logger.debug(" + result for ack : {}".format(result))
+        self.logger.debug(u' + result for ack : {}'.format(result))
 
         infobagotmfilter = deepcopy(mfilter)
         # Find worst state for events not ack, mfilter is modified
@@ -320,7 +325,7 @@ class Selector(Record):
         elif isinstance(mfilter, dict):
             mfilter['ack.isAck'] = {'$ne': True}
 
-        self.logger.debug('mfilter for worst state')
+        self.logger.debug('Selector mfilter')
         self.logger.debug(pp.pformat(mfilter))
 
         # Computes worst state for events that are not acknowleged
@@ -346,7 +351,7 @@ class Selector(Record):
             states_for_ack[key] = \
                 states_for_ack.get(key, 0) + state_result['count']
 
-        self.logger.debug(" + states for ack: {}".format(states_for_ack))
+        self.logger.debug(u' + states for ack: {}'.format(states_for_ack))
 
         # Compute worst state
         worst_state_for_ack = 0
@@ -362,7 +367,7 @@ class Selector(Record):
         ).count()
 
         if infobagot:
-            self.logger.info('infobagot count : {}'.format(infobagot))
+            self.logger.info(u'infobagot count : {}'.format(infobagot))
 
         # Bit dirty return value
         # states are dict containing event count depending on state for mfilter
@@ -380,7 +385,7 @@ class Selector(Record):
         information = None
         if state == -1 and ack_count == -1:
             state = 0
-            information = 'No event matched by selector {}'.format(
+            information = u'No event matched by selector {}'.format(
                 self.display_name
             )
 
@@ -422,11 +427,11 @@ class Selector(Record):
         if ack_count == -1:
             ack_count = 0
 
-        self.logger.debug(" + state: {}".format(state))
+        self.logger.debug(u' + state: {}'.format(state))
 
         perf_data_array = []
 
-        self.logger.debug(" + total: {}".format(total))
+        self.logger.debug(u' + total: {}'.format(total))
 
         # Create perfdata array and generate output data
         output = self.output_tpl.replace('[TOTAL]', str(total))
@@ -450,7 +455,7 @@ class Selector(Record):
             if i in states:
                 value = states[i]
 
-            metric = 'cps_sel_state_{}'.format(i)
+            metric = u'cps_sel_state_{}'.format(i)
             output = output.replace(self.template_replace[i], str(value))
             output_data[metric] = value
             perf_data_array.append({
@@ -458,7 +463,7 @@ class Selector(Record):
                 "value": value,
                 "max": total
             })
-            self.logger.info('metric {} : {}'.format(metric, value))
+            self.logger.info(u'metric {} : {}'.format(metric, value))
 
         perf_data_array.append({
             "metric": "cps_sel_total",
@@ -466,10 +471,6 @@ class Selector(Record):
         })
 
         output_data['total'] = total
-
-        self.logger.debug(" + Display Name: %s" % self.display_name)
-        self.logger.debug(" + output: %s" % output)
-        self.logger.debug(" + perf_data_array: %s" % perf_data_array)
 
         # Build Event
         event = forger(
@@ -488,3 +489,45 @@ class Selector(Record):
         rk = get_routingkey(event)
 
         return (rk, event, send_ack)
+
+    def have_to_publish(self, event):
+
+        self.logger.debug(u'Previous metrics\n{}'.format(
+            pp.pformat(self.previous_metrics)
+        ))
+
+        is_different = False
+
+        new_metrics = event['perf_data_array']
+        for metric in new_metrics:
+            if metric['metric'] not in self.previous_metrics:
+                is_different = True
+                break
+            elif metric['value'] != self.previous_metrics[metric['metric']]:
+                is_different = True
+                break
+
+        self.logger.debug(u'Metrics are different: {}'.format(is_different))
+
+        seconds_since_last_publication = time() - self.last_publication_date
+        time_to_publish = seconds_since_last_publication > DELTA_PUBLICATION
+
+        self.logger.debug(u'Time to publish: {}'.format(time_to_publish))
+
+        self.logger.debug(u'Last publication date : {}'.format(
+            datetime.fromtimestamp(
+                self.last_publication_date
+            ).strftime('%Y-%m-%d %H:%M:%S')
+        ))
+        self.logger.debug(u'Seconds since last publication: {}'.format(
+            seconds_since_last_publication
+        ))
+
+        # Do not publish metrics by removing them from event
+        if not time_to_publish and not is_different:
+            self.logger.debug('Will not publish selector event')
+            return False
+        else:
+            self.logger.info('Selector event publication')
+            self.last_publication_date = int(time())
+            return True

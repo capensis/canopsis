@@ -23,14 +23,12 @@ from unittest import TestCase, main
 
 from functools import reduce
 
-from canopsis.storage import Storage
 from canopsis.storage.composite import CompositeStorage
 from canopsis.mongo.composite import MongoCompositeStorage
 
 
 class MongoCompositeStorageTest(TestCase):
-    """
-    MongoCompositeStorage UT on data_scope = "test"
+    """MongoCompositeStorage UT on data_scope = "test".
     """
 
     def setUp(self):
@@ -67,7 +65,7 @@ class MongoCompositeStorageTest(TestCase):
 
             # compare absolute path
             absolute_path = self.storage.get_absolute_path(
-                path=_path, data_id=name
+                path=_path, name=name
             )
             __path = [path for path in self.storage.path if path in _path]
             _absolute_path = reduce(
@@ -82,7 +80,7 @@ class MongoCompositeStorageTest(TestCase):
             )
             self.assertEqual(absolute_path, _absolute_path)
             # put new entry
-            self.storage.put(path=_path, data_id=name, data={'value': n})
+            self.storage.put(path=_path, name=name, data={'value': n})
 
         # get all data related to path[n-1]
         for n, _ in enumerate(self.path):
@@ -106,13 +104,13 @@ class MongoCompositeStorageTest(TestCase):
 
         for n in range(10):
             d = path.copy()
-            d[Storage.DATA_ID] = str(n)
+            d[CompositeStorage.NAME] = str(n)
             data.append(d)
 
         # check unary data sharing
         for n, d in enumerate(data):
-            self.storage.put(path=path, data_id=str(n), data=d)
-            ds = self.storage.get(path=path, data_ids=str(n), shared=True)
+            self.storage.put(path=path, name=str(n), data=d)
+            ds = self.storage.get(path=path, names=str(n), shared=True)
             self.assertEqual(len(ds), 1)
 
             shared_id = self.storage.share_data(data=d)

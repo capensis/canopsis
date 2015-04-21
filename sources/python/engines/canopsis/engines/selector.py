@@ -56,8 +56,6 @@ class engine(Engine):
         self.logger.debug('entered in selector BEAT')
 
     def consume_dispatcher(self, event, *args, **kargs):
-        self.logger.debug('entered in selector consume dispatcher')
-        # Gets crecord from amqp distribution
 
         selector = self.get_ready_record(event)
 
@@ -72,25 +70,46 @@ class engine(Engine):
 
             name = selector.display_name
 
-            self.logger.debug('Selector {} found, start processing..'.format(
+            self.logger.debug('----------SELECTOR----------\n')
+
+            self.logger.debug(u'Selector {} found, start processing..'.format(
                 name
             ))
 
+            update_extra_fields = {}
             # Selector event have to be published when do state is true.
             if selector.dostate:
                 rk, selector_event, publish_ack = selector.event()
-                self.publish_event(selector, rk, selector_event, publish_ack)
+
+                # Compute previous event to know if any difference next turn
+                previous_metrics = {}
+                for metric in selector_event['perf_data_array']:
+                    previous_metrics[metric['metric']] = metric['value']
+                update_extra_fields['previous_metrics'] = previous_metrics
+
+                do_publish_event = selector.have_to_publish(selector_event)
+
+                if do_publish_event:
+                    update_extra_fields['last_publication_date'] = \
+                        selector.last_publication_date
+
+                    self.publish_event(
+                        selector,
+                        rk,
+                        selector_event,
+                        publish_ack
+                    )
+
                 # When selector computed, sla may be asked to be computed.
                 if selector.dosla:
-                    self.logger.debug('Will proceed sla for this selector')
+
+                    self.logger.debug('----------SLA----------\n')
 
                     # Retrieve user ui settings
-
                     # This template should be always set
                     template = selector.get_sla_output_tpl()
                     # Timewindow computation duration
                     timewindow = selector.get_sla_timewindow()
-
                     sla_warning = selector.get_sla_warning()
                     sla_critical = selector.get_sla_critical()
                     alert_level = selector.get_alert_level()
@@ -115,12 +134,12 @@ class engine(Engine):
                     )
 
             else:
-                self.logger.debug('Nothing to do with selector {}'.format(
+                self.logger.debug(u'Nothing to do with selector {}'.format(
                     name
                 ))
 
             # Update crecords informations
-            self.crecord_task_complete(event_id)
+            self.crecord_task_complete(event_id, update_extra_fields)
 
         self.nb_beat += 1
         # Set record free for dispatcher engine
@@ -129,7 +148,7 @@ class engine(Engine):
 
         publish(publisher=self.amqp, event=event)
 
-        self.logger.debug("published event sla selector {}".format(
+        self.logger.debug(u'published event sla selector {}'.format(
             display_name
         ))
 
@@ -138,7 +157,7 @@ class engine(Engine):
         selector_event['selector_id'] = selector._id
 
         self.logger.info(
-            'Ready to publish selector {} event with state {}'.format(
+            u'Ready to publish selector {} event with state {}'.format(
                 selector.display_name,
                 selector_event['state']
             )
@@ -155,16 +174,16 @@ class engine(Engine):
                 'isAck': True
             }
             self.logger.debug(
-                ' + Selector event is ack because ' +
+                'Selector event is ack because ' +
                 'all matched NOK event are ack'
             )
         else:
             # Define or reset ack key for selector generated event
             selector_event['ack'] = {}
-            self.logger.debug(' + Selector event is NOT ack')
+            self.logger.debug('Selector event is NOT ack')
 
         publish(publisher=self.amqp, event=selector_event, rk=rk)
 
-        self.logger.debug("published event selector {}".format(
+        self.logger.debug(u'published event selector {}'.format(
             selector.display_name
         ))

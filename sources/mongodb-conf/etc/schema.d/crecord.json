@@ -1,6 +1,9 @@
 {
 	"type": "object",
 	"properties": {
+		"id": {
+			"type": "string"
+		},
 		"crecord_type": {
 			"type": "string",
 			"optiontest": "test",

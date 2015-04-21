@@ -21,8 +21,8 @@
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.storage import Storage
 from canopsis.event import Event, forger
+from canopsis.storage.composite import CompositeStorage
 
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
@@ -55,7 +55,7 @@ class Context(MiddlewareRegistry):
     CONTEXT = 'context'
 
     TYPE = 'type'  #: entity type field name
-    NAME = Storage.DATA_ID  #: entity name field name
+    NAME = CompositeStorage.NAME  #: entity name field name
     EXTENDED = 'extended'  #: extended field name
 
     DEFAULT_CONTEXT = [
@@ -278,7 +278,7 @@ class Context(MiddlewareRegistry):
             path[Context.TYPE] = _type
 
         result = self[Context.CTX_STORAGE].get(
-            path=path, data_ids=names, shared=extended
+            path=path, names=names, shared=extended
         )
 
         return result
@@ -352,7 +352,7 @@ class Context(MiddlewareRegistry):
                 parent_name = parent_path.pop(key)
                 # get entity
                 parent_entity = self[Context.CTX_STORAGE].get(
-                    path=parent_path, data_ids=parent_name
+                    path=parent_path, names=parent_name
                 )
                 # if entity does not exist
                 if parent_entity is None:
@@ -360,7 +360,7 @@ class Context(MiddlewareRegistry):
                     parent_entity = {Context.NAME: parent_name}
                     self[Context.CTX_STORAGE].put(
                         path=parent_path,
-                        data_id=parent_name,
+                        name=parent_name,
                         data=parent_entity,
                         cache=cache
                     )
@@ -384,7 +384,7 @@ class Context(MiddlewareRegistry):
             # finally, put the entity if necessary
             self[Context.CTX_STORAGE].put(
                 path=path,
-                data_id=name,
+                name=name,
                 data=entity,
                 shared_id=extended_id,
                 cache=cache
@@ -437,7 +437,7 @@ class Context(MiddlewareRegistry):
                 del _entity[ctx]
                 break
         """
-        result = self[Context.CTX_STORAGE].get_path_with_id(_entity)
+        result = self[Context.CTX_STORAGE].get_path_with_name(_entity)
 
         return result
 
@@ -447,10 +447,10 @@ class Context(MiddlewareRegistry):
         :param dict entity: must contain at least name and type fields.
         """
 
-        path, data_id = self.get_entity_context_and_name(entity=entity)
+        path, name = self.get_entity_context_and_name(entity=entity)
 
         result = self[Context.CTX_STORAGE].get_absolute_path(
-            path=path, data_id=data_id
+            path=path, name=name
         )
 
         return result
@@ -460,11 +460,11 @@ class Context(MiddlewareRegistry):
         Get the right id, context and name of input entity.
         """
 
-        path, data_id = self.get_entity_context_and_name(entity=entity)
+        path, name = self.get_entity_context_and_name(entity=entity)
 
         result = self[Context.CTX_STORAGE].get_absolute_path(
-            path=path, data_id=data_id
-        ), path, data_id
+            path=path, name=name
+        ), path, name
 
         return result
 
