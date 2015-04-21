@@ -4,140 +4,34 @@
 		"_id": "range1",
 		"loader_id": "range1",
 		"loader_no_update": true,
-		"colors": [{
-				"name": "darkblue",
-				"code": "#113F59"
-			},
-			{
-				"name": "seablue",
-				"code": "#19BEC0"
-			},
-			{
-				"name": "skyblue",
-				"code": "#20D6C7"
-			},
-			{
-				"name": "off-white",
-				"code": "#F3EDD3"
-			},
-			{
-				"name": "pastelred",
-				"code": "#D54F58"
-			}
-		]
-
+		"colors": ["#113F59", "#19BEC0", "#20D6C7", "#F3EDD3", "#D54F58"]
 	},
 	{
 		"crecord_type": "rangecolor",
 		"_id": "range2",
 		"loader_id": "range2",
 		"loader_no_update": true,
-		"colors": [{
-				"name": "darkblue",
-				"code": "#0A2A3F"
-			},
-			{
-				"name": "greyblue",
-				"code": "#6593A0"
-			},
-			{
-				"name": "beige",
-				"code": "#B9CCB8"
-			},
-			{
-				"name": "off-white",
-				"code": "#FFEFA7"
-			},
-			{
-				"name": "pastelred",
-				"code": "#DB1522"
-			}
-		]
-
+		"colors": ["#0A2A3F", "#6593A0", "#B9CCB8", "#FFEFA7", "#DB1522"]
 	},
 	{
 		"crecord_type": "rangecolor",
 		"_id": "range3",
 		"loader_id": "range3",
 		"loader_no_update": true,
-		"colors": [{
-				"name": "green",
-				"code": "#529214"
-			},
-			{
-				"name": "pastelgreen",
-				"code": "#AACF81"
-			},
-			{
-				"name": "pastelyellow",
-				"code": "#FFD059"
-			},
-			{
-				"name": "orange",
-				"code": "#E5753D"
-			},
-			{
-				"name": "naranja",
-				"code": "#C73924"
-			}
-		]
-
+		"colors": ["#529214", "#AACF81", "#FFD059", "#E5753D", "#C73924"]
 	},
 	{
 		"crecord_type": "rangecolor",
 		"_id": "range4",
 		"loader_id": "range4",
 		"loader_no_update": true,
-		"colors": [{
-				"name": "navyblue",
-				"code": "#005572"
-			},
-			{
-				"name": "greyblue",
-				"code": "#006573"
-			},
-			{
-				"name": "pastelblue",
-				"code": "#008B8D"
-			},
-			{
-				"name": "skyblue",
-				"code": "#81BEAA"
-			},
-			{
-				"name": "beige",
-				"code": "#F4D4AD"
-			}
-		]
-
+		"colors": ["#005572", "#006573", "#008B8D", "#81BEAA", "#F4D4AD"]
 	},
 	{
 		"crecord_type": "rangecolor",
 		"_id": "range5",
 		"loader_id": "range5",
 		"loader_no_update": true,
-		"colors": [{
-				"name": "skin",
-				"code": "#E29665"
-			},
-			{
-				"name": "purple",
-				"code": "#54597F"
-			},
-			{
-				"name": "darkpurple",
-				"code": "#232641"
-			},
-			{
-				"name": "blackpurple",
-				"code": "#0E1020"
-			},
-			{
-				"name": "brown",
-				"code": "#894831"
-			}
-		]
-
+		"colors": ["#E29665", "#54597F", "#232641", "#0E1020", "#894831"]
 	}
-
 ]
