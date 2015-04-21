@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "properties": {
+        "connector": {
+        	"type": "string",
+        	"required": true
+        },
+        "connector_name": {
+        	"type": "string",
+        	"required": true
+        },
+        "name": {
+        	"type": "string",
+        	"required": true
+        }
+    }
+}
