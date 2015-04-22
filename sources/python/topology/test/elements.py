@@ -55,7 +55,11 @@ class TopoNodeTest(TestCase):
         """
 
         @register_task('process')
-        def process_node(vertice, ctx, event=None, publisher=None, **kwargs):
+        def process_node(
+            vertice, ctx,
+            event=None, publisher=None, source=None, manager=None, logger=None,
+            **kwargs
+        ):
 
             return vertice, ctx, kwargs
 

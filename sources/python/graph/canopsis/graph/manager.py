@@ -244,7 +244,6 @@ class GraphManager(MiddlewareRegistry):
                 if not gelt.get(GraphElement.ID):
                     gelt[GraphElement.ID] = GraphElement.new_id()
                 gelt = GraphElement.new_element(**gelt)
-                self.logger.warning("{0}, {1}".format(gelt, elt))
             # save elt
             gelt.save(manager=self, cache=cache, graph_ids=graph_ids)
 

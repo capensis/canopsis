@@ -51,7 +51,7 @@ PUBLISHER = 'publisher'
 
 
 @register_task
-def event_processing(engine, event, manager=None, **kwargs):
+def event_processing(engine, event, manager=None, logger=None, **kwargs):
     """Process input event in getting topology nodes bound to input event
     entity.
 
@@ -60,6 +60,7 @@ def event_processing(engine, event, manager=None, **kwargs):
     :param dict event: event to process.
     :param Engine engine: engine which consumes the event.
     :param TopologyManager manager: topology manager to use.
+    :param Logger logger: logger to use in this task.
     """
 
     if manager is None:
@@ -86,6 +87,7 @@ def event_processing(engine, event, manager=None, **kwargs):
                     target.process(
                         event=event, publisher=engine.amqp,
                         manager=manager, source=elt_id,
+                        logger=logger,
                         **kwargs
                     )
 
@@ -99,7 +101,8 @@ def event_processing(engine, event, manager=None, **kwargs):
                 for elt in elts:
                     elt.process(
                         event=event, publisher=engine.amqp,
-                        manager=manager, **kwargs
+                        manager=manager, logger=logger,
+                        **kwargs
                     )
 
     return event

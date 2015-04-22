@@ -146,7 +146,8 @@ class TopoVertice(BaseTaskedVertice):
         return result
 
     def process(
-        self, event, publisher=None, manager=None, source=None, **kwargs
+        self, event, publisher=None, manager=None, source=None, logger=None,
+        **kwargs
     ):
 
         if manager is None:
@@ -156,7 +157,9 @@ class TopoVertice(BaseTaskedVertice):
         old_state = self.state
         # process task
         result = super(TopoVertice, self).process(
-            event=event, publisher=publisher, **kwargs
+            event=event, publisher=publisher, manager=manager, source=source,
+            logger=logger,
+            **kwargs
         )
         # compare old state and new state
         if self.state != old_state:
@@ -212,7 +215,7 @@ class Topology(Graph, TopoVertice):
         super(Topology, self).set_entity(entity_id=entity_id, *args, **kwargs)
 
         # set default entity if entity_id is None
-        if entity_id is None:
+        if entity_id is None and self.entity is None:
             # set entity
             event = self.get_event(source=0, state=0)
             entity = _context.get_entity(event)
