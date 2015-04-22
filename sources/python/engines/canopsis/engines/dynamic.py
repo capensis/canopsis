@@ -98,7 +98,8 @@ class engine(Engine, Configurable):
     def work(self, event, msg, *args, **kwargs):
 
         result = self._event_processing(
-            engine=self, event=event, msg=msg, *args, **kwargs
+            engine=self, event=event, msg=msg, logger=self.logger,
+            *args, **kwargs
         )
 
         return result
