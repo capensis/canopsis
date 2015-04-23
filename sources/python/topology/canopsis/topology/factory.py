@@ -163,7 +163,7 @@ class Factory(object):
             for c in comp_selct:
                 entity = {'component': unicode(None),'resource': unicode(c.values()[0].get('resource')),'connector': unicode('canopsis'),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 src_type_value = c.values()[0].get('source_type')
-                entity[Context.NAME] = c.values()[0].get(src_type_value).replace('_', ' ')
+                entity[Context.NAME] = c.values()[0].get('display_name')
                 entity = self.track_nonetype(entity)
                 if c.values()[0].get('label') is None:
                     info['label'] = c.values()[0].get('component')
