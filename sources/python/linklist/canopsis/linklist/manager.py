@@ -49,7 +49,7 @@ class Linklist(MiddlewareRegistry):
             skip=skip,
             sort=sort,
             limit=limit,
-            _fitler=_filter,
+            query=_filter,
             with_count=with_count
         )
         return result

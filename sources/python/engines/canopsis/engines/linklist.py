@@ -25,19 +25,16 @@ from json import loads
 from canopsis.linklist.manager import Linklist
 from canopsis.entitylink.manager import Entitylink
 from canopsis.context.manager import Context
+from canopsis.event.manager import Event
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-# TODO remove
-from canopsis.old.storage import get_storage
-s = get_storage().get_backend('events')
-
 
 class engine(Engine):
+
     etype = 'linklist'
-    FILTER = 'mfilter'
-    LINKS = 'filterlink'
+
     event_projection = {
         'resource': 1,
         'source_type': 1,
@@ -50,14 +47,12 @@ class engine(Engine):
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
         self.context = Context()
+        self.event = Event()
         self.link_list_manager = Linklist()
         self.entity_link_manager = Entitylink()
-        self.logger.debug = self.logger.info
-
-    def consume_dispatcher(self, event, *args, **kargs):
-        pass
 
     def pre_run(self):
+        #TODO swith to task handler
         from time import sleep
         sleep(1)
         self.beat()
@@ -72,8 +67,8 @@ class engine(Engine):
 
             # condition to proceed a list link is they must be set
             name = linklist['name']
-            l_filter = linklist.get(self.FILTER)
-            l_list = linklist.get(self.LINKS)
+            l_filter = linklist.get('mfilter')
+            l_list = linklist.get('filterlink')
 
             self.logger.debug('proceed linklist {}'.format(name))
 
@@ -120,7 +115,6 @@ class engine(Engine):
     def get_ids_for_filter(self, l_filter):
 
         context_ids = []
-        a = l_filter
         try:
             l_filter = loads(l_filter)
         except Exception as e:
@@ -129,11 +123,10 @@ class engine(Engine):
             )
             return context_ids
 
-        events = s.find(l_filter, self.event_projection)
-        self.logger.debug('{} elements matches filter {}'.format(
-            events.count(),
-            a
-        ))
+        events = self.event.find(
+            query=l_filter,
+            projection=self.event_projection
+        )
 
         for event in events:
             self.logger.debug('rk : {}'.format(event['_id']))
