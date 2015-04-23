@@ -168,11 +168,14 @@ class MiddlewareRegistry(ConfigurableRegistry):
             data_scopes = data_types.setdefault(data_type, {})
 
             try:
-                result = data_scopes.setdefault(data_scope,
+                result = data_scopes.setdefault(
+                    data_scope,
                     Middleware.get_middleware(
                         protocol=protocol, data_type=data_type,
                         data_scope=data_scope, auto_connect=auto_connect,
-                        *args, **kwargs))
+                        *args, **kwargs
+                    )
+                )
 
             except Exception as e:
                 # clean memory in case of error
