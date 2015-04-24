@@ -31,6 +31,8 @@ from collections import Iterable
 from sys import version as PYVER
 from os.path import expanduser
 
+from .init import basestring
+
 __RESOLVED_ELEMENTS = {}  #: dictionary of resolved elements by name
 
 
@@ -107,7 +109,9 @@ def lookup(path, cached=True):
         try:
             result = import_module(module_name)
         except ImportError as e:
-            print 'Error while importing module {} : {}'.format(module_name, e)
+            print(
+                'Error while importing module {} : {}'.format(module_name, e)
+            )
 
         if result is not None:
 
@@ -207,8 +211,7 @@ def isunicode(s):
 
 
 def ensure_unicode(s):
-    """
-    Convert string to unicode.
+    """Convert string to unicode.
 
     :param s: string to convert
     :type s: basestring
@@ -224,6 +227,59 @@ def ensure_unicode(s):
                 result = s.decode()
         else:
             raise TypeError('Expecting a string as argument')
+
+    return result
+
+
+def forceUTF8(data, _memory=None):
+    """Return a copy of data where all embedded strings are UTF8.
+
+    :param data: data from where convert str to UTF8 format.
+    :return: data copy where all str are in UTF8 format.
+    """
+
+    # by default, result is data
+    result = data
+    # do something only if python version is 2
+    if PYVER < '3':
+        # initialize memory
+        if _memory is None:
+            _memory = {}
+        # if data has already been processed
+        data_id = id(data)
+        if data_id in _memory:
+            # result is the previous result
+            result = _memory[data_id]
+        else:  # else process data
+            # if data is a basestring, decode it to an utf8
+            if isinstance(data, basestring):
+                if not isinstance(data, unicode):
+                    result = data.decode('utf-8', 'ignore')
+            # if data is a dict
+            elif isinstance(data, dict):
+                data_id = id(data)
+                if data_id in _memory:
+                    result = _memory[data_id]
+                else:
+                    # copy data
+                    result = data.copy()
+                    for param in data:
+                        value = data[param]
+                        # convert param and value
+                        param = forceUTF8(param)
+                        value = forceUTF8(value)
+                        result[param] = value
+            # if data is an iterable
+            elif isinstance(data, Iterable):
+                result = []
+                # convert all values of data
+                for d in data:
+                    value = forceUTF8(d)
+                    result.append(value)
+                # and convert result to data type
+                result = type(data)(result)
+            # save the result in memory
+            _memory[data_id] = result
 
     return result
 
