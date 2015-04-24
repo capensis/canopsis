@@ -263,6 +263,7 @@ class Storage(DataBase):
         self._data = data
         self._table = table
 
+        self._cache = None
         self._cache_size = cache_size
         self._cache_count = 0
         self._cache_ordered = cache_ordered
