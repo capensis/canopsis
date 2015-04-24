@@ -43,7 +43,7 @@ class Factory(object):
         # Initialize the Toplogy Manager
         manager = TopologyManager()
         # Create the topology name
-        topo = Topology(_id=topo_name)
+        topo = Topology(id=topo_name)
         # Add the topology Edge
         topo.add_elts(topoEdge)
         # Add the topology nodes
@@ -71,7 +71,7 @@ class Factory(object):
         else:
             id = None
         topoNode = TopoNode(
-            _id=id_component, entity=id, operator=dict_op, info=info
+            id=id_component, entity=id, operator=dict_op, info=info
         )
         return topoNode
 
