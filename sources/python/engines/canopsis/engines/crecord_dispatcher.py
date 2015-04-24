@@ -42,8 +42,7 @@ class engine(Engine):
             'selector',
             'topology',
             'derogation',
-            'serie'
-            'linklist',
+            'serie',
         ]
 
         self.beat_interval_trigger = {

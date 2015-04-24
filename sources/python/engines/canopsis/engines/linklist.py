@@ -44,20 +44,72 @@ class engine(Engine):
         'event_type': 1,
     }
 
+    # Search fields in the event for possible url information
+    link_field = [
+        'action_url'
+    ]
+
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
+        #TODO REMOVE BEAT INERVAL AND SWITCH TO SCHEDULED JOB THE BEAT PROCESS
+        self.beat_interval = 3600
+
         self.context = Context()
         self.event = Event()
         self.link_list_manager = Linklist()
         self.entity_link_manager = Entitylink()
 
-    def pre_run(self):
-        #TODO swith to task handler
-        from time import sleep
-        sleep(1)
-        self.beat()
+    def work(self, event, *args, **kwargs):
+        """
+        Check if event contains any url interesting keys.
+        When one of self.link_field found, it is added to the event entity link
+        """
+
+        link_key = 'event_links'
+
+        event_links = {}
+        for key in self.link_field:
+            if key in event and event[key]:
+                event_links[key] = event[key]
+
+        if event_links:
+
+            self.logger.debug('found links into the event {}: {}'.format(
+                event['rk'],
+                event_links
+            ))
+
+            # Proceed link update in case some link found in the event
+            entity = self.entity_link_manager.get_or_create_from_event(event)
+            _id = entity['_id']
+
+            links_to_integrate = {}
+
+            # integrate previous links if any
+            if link_key in entity:
+                for link in entity[link_key]:
+                    links_to_integrate[link['label']] = link['url']
+
+            # New event link definition upsert (override)
+            links_to_integrate.update(event_links)
+
+            # Define new data context as in upsert mode
+            context = {link_key: []}
+            for key in links_to_integrate:
+                context[link_key].append({
+                    'label': key,
+                    'url': links_to_integrate[key]
+                })
+
+            # Push changes to db
+            self.entity_link_manager.put(_id, context)
 
     def beat(self):
+
+        """
+        This task computes all links associated to an entity.
+        Link association are managed by entity link system.
+        """
 
         links = {}
 
@@ -99,6 +151,10 @@ class engine(Engine):
 
     def update_context_with_links(self, entity, links):
 
+        """
+        Upsert computed links to the entity link storage
+        """
+
         self.logger.debug(' + entity')
         self.logger.debug(entity)
         self.logger.debug(' + links')
@@ -114,7 +170,14 @@ class engine(Engine):
 
     def get_ids_for_filter(self, l_filter):
 
+        """
+        Retrieve a list of id from event collection.
+        Can be performance killer as matching mfilter
+        is only available on the event collection at the moment
+        """
+
         context_ids = []
+
         try:
             l_filter = loads(l_filter)
         except Exception as e:

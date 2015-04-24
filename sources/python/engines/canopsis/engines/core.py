@@ -132,7 +132,7 @@ class Engine(object):
 
         self.dispatcher_crecords = [
             'selector', 'topology', 'derogation', 'consolidation', 'sla',
-            'downtime', 'eventstore', 'stats', 'datacleaner', 'linklist'
+            'downtime', 'eventstore', 'stats', 'datacleaner'
         ]
 
     def crecord_task_complete(self, crecord_id, extra_fields={}):
