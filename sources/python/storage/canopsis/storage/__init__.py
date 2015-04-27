@@ -263,6 +263,7 @@ class Storage(DataBase):
         self._data = data
         self._table = table
 
+        self._cache = None
         self._cache_size = cache_size
         self._cache_count = 0
         self._cache_ordered = cache_ordered
@@ -599,7 +600,7 @@ class Storage(DataBase):
 
         :param ids: element ids or an element id to get if is a string.
         :type ids: list of str
-
+        :param dict query: set of couple of (field name, field value).
         :param int limit: max number of elements to get.
         :param int skip: first element index among searched list.
         :param sort: contains a list of couples of field (name, ASC/DESC)
@@ -646,13 +647,13 @@ class Storage(DataBase):
 
     def find_elements(
         self,
-        request, limit=0, skip=0, sort=None, projection=None, with_count=False
+        query, limit=0, skip=0, sort=None, projection=None, with_count=False
     ):
         """
         Find elements corresponding to input request and in taking care of
         limit, skip and sort find parameters.
 
-        :param dict request: set of couple of (field name, field value).
+        :param dict query: set of couple of (field name, field value).
         :param int limit: max number of elements to get.
         :param int skip: first element index among searched list.
         :param list sort: contains a list of couples of field (name, ASC/DESC)

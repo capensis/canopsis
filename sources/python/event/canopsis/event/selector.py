@@ -474,7 +474,7 @@ class Selector(Record):
 
         # Build Event
         event = forger(
-            connector="selector",
+            connector="canopsis",
             connector_name="engine",
             event_type="selector",
             source_type="component",

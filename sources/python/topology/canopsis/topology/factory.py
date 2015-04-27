@@ -43,7 +43,7 @@ class Factory(object):
         # Initialize the Toplogy Manager
         manager = TopologyManager()
         # Create the topology name
-        topo = Topology(_id=topo_name)
+        topo = Topology(id=topo_name)
         # Add the topology Edge
         topo.add_elts(topoEdge)
         # Add the topology nodes
@@ -71,7 +71,7 @@ class Factory(object):
         else:
             id = None
         topoNode = TopoNode(
-            _id=id_component, entity=id, operator=dict_op, info=info
+            id=id_component, entity=id, operator=dict_op, info=info
         )
         return topoNode
 
@@ -149,7 +149,7 @@ class Factory(object):
             		entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(None),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode('component')}
                 #entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 src_type_value = c.values()[0].get('source_type')
-                entity['id'] = c.values()[0].get(src_type_value)
+                entity[Context.NAME] = c.values()[0].get(src_type_value)
                 entity = self.track_nonetype(entity)
                 if c.values()[0].get('label') is None:
                     info['label'] = c.values()[0].get('component')
@@ -163,7 +163,7 @@ class Factory(object):
             for c in comp_selct:
                 entity = {'component': unicode(None),'resource': unicode(c.values()[0].get('resource')),'connector': unicode('canopsis'),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 src_type_value = c.values()[0].get('source_type')
-                entity['id'] = c.values()[0].get(src_type_value)
+                entity[Context.NAME] = c.values()[0].get('display_name')
                 entity = self.track_nonetype(entity)
                 if c.values()[0].get('label') is None:
                     info['label'] = c.values()[0].get('component')
@@ -178,7 +178,7 @@ class Factory(object):
             	entity = {'component': unicode(None),'resource': unicode(None),'connector': unicode('canopsis'),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode('topo')}
                 #entity = {'component': unicode(c.values()[0].get('component')),'resource': unicode(c.values()[0].get('resource')),'connector': unicode(c.values()[0].get('connector')),'connector_name':unicode(c.values()[0].get('connector_name')),'type':unicode(c.values()[0].get('type'))}
                 src_type_value = c.values()[0].get('source_type')
-                entity['id'] = c.values()[0].get(src_type_value)
+                entity[Context.NAME] = c.values()[0].get(src_type_value)
                 entity = self.track_nonetype(entity)
                 if c.values()[0].get('label') is None:
                     info['label'] = c.values()[0].get('component')
@@ -246,7 +246,7 @@ class Factory(object):
                 else_value = value[2].get('value')
 
                 entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
-                entity['id'] = mydict.get(mydict.get('source_type'))
+                entity[Context.NAME] = mydict.get(mydict.get('source_type'))
                 entity = self.track_nonetype(entity)
                 dict_and = {}
                 dict_and['state'] = int(cond_value)
@@ -287,7 +287,7 @@ class Factory(object):
                 dict_or['state'] = int(cond_value)
 
                 entity = {'component': unicode(mydict.get('component')),'resource': unicode(mydict.get('resource')),'connector': unicode(mydict.get('connector')),'connector_name':unicode(mydict.get('connector_name')),'type':unicode(mydict.get('type'))}
-                entity['id'] = mydict.get(mydict.get('source_type'))
+                entity[Context.NAME] = mydict.get(mydict.get('source_type'))
                 entity = self.track_nonetype(entity)
 
                 # Create the condition

@@ -181,6 +181,10 @@ class MongoStorage(MongoDataBase, Storage):
 
         result = super(MongoStorage, self)._connect(*args, **kwargs)
 
+        # initialize cache
+        if not hasattr(self, '_cache'):
+            self._cache = None
+
         if result:
             table = self.get_table()
             self._backend = self._database[table]
@@ -199,10 +203,6 @@ class MongoStorage(MongoDataBase, Storage):
                     self._backend.ensure_index(index)
                 except Exception as e:
                     self.logger.error(e)
-
-            # initialize cache
-            if not hasattr(self, '_cache'):
-                self._cache = None
 
         return result
 
