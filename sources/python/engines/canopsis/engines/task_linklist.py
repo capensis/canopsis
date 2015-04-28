@@ -22,17 +22,29 @@ from canopsis.engines.core import TaskHandler
 from canopsis.linklist.manager import Linklist
 from canopsis.context.manager import Context
 from canopsis.event.manager import Event
+from canopsis.entitylink.manager import Entitylink
+from json import loads
 
 
 class engine(TaskHandler):
 
     etype = 'tasklinklist'
 
+    event_projection = {
+        'resource': 1,
+        'source_type': 1,
+        'component': 1,
+        'connector_name': 1,
+        'connector': 1,
+        'event_type': 1,
+    }
+
     def handle_task(self, job):
 
         self.link_list_manager = Linklist()
         self.context = Context()
         self.event = Event()
+        self.entity_link_manager = Entitylink()
 
         """
         This task computes all links associated to an entity.

@@ -20,23 +20,11 @@
 
 from canopsis.engines.core import Engine
 from canopsis.entitylink.manager import Entitylink
-from datetime import datetime
-from time import time
-from json import loads
 
 
 class engine(Engine):
 
     etype = 'linklist'
-
-    event_projection = {
-        'resource': 1,
-        'source_type': 1,
-        'component': 1,
-        'connector_name': 1,
-        'connector': 1,
-        'event_type': 1,
-    }
 
     # Search fields in the event for possible url information
     link_field = [
