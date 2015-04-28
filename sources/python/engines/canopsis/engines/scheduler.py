@@ -55,10 +55,13 @@ class engine(Engine):
         now = int(time())
         prev = now - self.beat_interval
 
-        jobs = self.storage.find({
-            'crecord_type': 'job',
-            'last_execution': {'$lte': prev}
-        })
+        jobs = self.storage.find({'$and': [
+            {'crecord_type': 'job'},
+            {'$or': [
+                {'last_execution': {'$lte': prev}},
+                {'last_execution': None},
+            ]}
+        ]})
 
         for job in jobs:
             job = job.dump()
