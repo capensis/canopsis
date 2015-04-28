@@ -37,7 +37,7 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kwargs)
 
         account = Account(user='root', group='root')
-        self.storage = get_storage('jobs', account=account)
+        self.storage = get_storage('object', account=account)
 
     def work(self, job, *args, **kwargs):
         if schema.validate(job, 'crecord.job'):
@@ -56,6 +56,7 @@ class engine(Engine):
         prev = now - self.beat_interval
 
         jobs = self.storage.find({
+            'crecord_type': 'job',
             'last_execution': {'$lte': prev}
         })
 
