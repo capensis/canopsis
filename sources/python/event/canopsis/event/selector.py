@@ -233,6 +233,9 @@ class Selector(Record):
         if not mfilter:
             self.logger.debug(" + Invalid filter")
             return ({}, 0, 0, 0, 0)
+
+        include_check_types = {'$in': ['check', 'eue', 'selector']}
+
         # Adds default check clause as selector have to be done
         # on check event only
         # This constraint have to be available for all aggregation queries
@@ -243,13 +246,13 @@ class Selector(Record):
         elif '$or' in mfilter:
             mfilter = {'$and': [mfilter, check_clause]}
         elif isinstance(mfilter, dict):
-            mfilter['event_type'] = 'check'
+            mfilter['event_type'] = {'$in': ['check', 'eue', 'selector']}
 
         # Main aggregation query, gets information about
         # how many events are in what state
         # information are aggregated for output computation
         # and does not takes care about acknowleged events
-        self.logger.debug(" + selector statment agregation")
+        self.logger.debug(" + selector statment agregation {}".format(mfilter))
         result = self.storage.get_backend(namespace=self.namespace).aggregate([
             {'$match': mfilter},
             {'$project': {
