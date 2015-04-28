@@ -64,7 +64,7 @@ class engine(Engine):
 
             self.logger.info('Job: {0}'.format(job))
 
-            if job['last_execution'] < 0:
+            if job['last_execution'] <= 0:
                 self.do_job(job)
 
             else:

@@ -29,6 +29,11 @@ from time import time
 class engine(TaskHandler):
     etype = "taskdataclean"
 
+    def __init__(self, *args, **kwargs):
+        super(engine, self).__init__(*args, **kwargs)
+
+        self.clean_collection = {}
+
     def get_collection(self, collection):
         if collection not in self.clean_collection:
             self.clean_collection[collection] = get_storage(
@@ -88,10 +93,10 @@ class engine(TaskHandler):
 
     def handle_task(self, job):
         self.logger.debug('taskdataclean.handle_task()')
-        self.logger.dbeug('job: {0}'.format(job))
+        self.logger.debug('job: {0}'.format(job))
 
         # getting retention date limit
-        retention_date_limit = self.get_retention_date()
+        retention_date_limit = self.get_retention_date(job)
 
         # formating query for deletion
         query = {
@@ -102,7 +107,7 @@ class engine(TaskHandler):
 
         # iteration over collections to clean
         for collection in job['storages']:
-            clean_collection = self.get_collection()
+            clean_collection = self.get_collection(collection)
 
             count = clean_collection.find(query).count()
             total = clean_collection.find().count()
