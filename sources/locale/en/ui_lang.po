@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-03-19 15:25+0100\n"
+"PO-Revision-Date: 2015-04-27 11:24+0100\n"
 "Last-Translator: teamcanopsis <teamcanopsis@capensis.fr>\n"
 "Language-Team: English <teamcanopsis@capensis.fr>\n"
 "MIME-Version: 1.0\n"
@@ -1728,3 +1728,52 @@ msgstr "information saved"
 
 msgid "Delete this record ?"
 msgstr "Delete this record ?"
+
+msgid "label"
+msgstr "label"
+
+msgid "url"
+msgstr "url"
+
+msgid "Link list"
+msgstr "Link list"
+
+msgid "mobile"
+msgstr "mobile"
+
+msgid "tablet"
+msgstr "tablet"
+
+msgid "desktop"
+msgstr "desktop"
+
+msgid "mocks applied"
+msgstr "mocks applied"
+
+msgid "add mock"
+msgstr "add mock"
+
+msgid "Enabled plugins"
+msgstr "Enabled plugins"
+
+msgid "External links"
+msgstr "External links"
+
+msgid "filterlink"
+msgstr "filterlink"
+
+msgid "Url"
+msgstr "Url"
+
+msgid "A list of labelled links that will be associated to an event."
+msgstr "A list of labelled links that will be associated to an event."
+
+msgid "Matching events whose link list have to be computed."
+msgstr "Matching events whose link list have to be computed."
+
+msgid "Ticket number"
+msgstr "Ticket number"
+
+msgid "Filter Links"
+msgstr "Filter Links"
+
