@@ -60,12 +60,6 @@ def new_state(event, vertice, state=None, manager=None, **kwargs):
     :param int state: state to compare with input vertice state.
     """
 
-    if manager is None:
-        manager = tm
-
-    if isinstance(vertice, basestring):
-        vertice = manager.get_elts(ids=vertice)
-
     # if state is None, use event state
     if state is None:
         state = event.get(Check.STATE, Check.OK)
@@ -104,9 +98,6 @@ def at_least(
 
     if manager is None:
         manager = tm
-
-    if isinstance(vertice, basestring):
-        vertice = manager.get_elts(ids=vertice)
 
     sources_by_edges = manager.get_sources(ids=vertice.id, add_edges=True)
 

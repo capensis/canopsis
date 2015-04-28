@@ -21,8 +21,10 @@
 
 from unittest import TestCase, main
 
-from canopsis.common.utils import \
-    lookup, path, isiterable, isunicode, ensure_unicode, ensure_iterable
+from canopsis.common.utils import (
+    lookup, path, isiterable, isunicode, ensure_unicode, ensure_iterable,
+    forceUTF8
+)
 
 from sys import version as PYVER
 
@@ -118,6 +120,32 @@ class UtilsTest(TestCase):
         self.assertEqual(ensure_iterable("2"), ["2"])
         self.assertEqual(ensure_iterable([2]), [2])
         self.assertEqual(ensure_iterable([2], iterable=set), {2})
+
+    def test_forceUTF8(self):
+
+        notUTF8 = "é"
+        utf8 = unicode(notUTF8, "utf-8") if PYVER < "3" else notUTF8
+
+        data_to_check = notUTF8
+        result = forceUTF8(data_to_check)
+        self.assertEqual(result, utf8)
+
+        data_to_check = {notUTF8: notUTF8, utf8: utf8, 1: 1}
+        result = forceUTF8(data_to_check)
+        data_to_compere = data_to_check if PYVER < "3" else {utf8: utf8, 1: 1}
+        self.assertEqual(str(result), str(data_to_compere))
+
+        data_to_check = [notUTF8, utf8, 1]
+        result = forceUTF8(data_to_check)
+        self.assertEqual(result, [utf8, utf8, 1])
+
+        data_to_check = (notUTF8, utf8, 1)
+        result = forceUTF8(data_to_check)
+        self.assertEqual(result, (utf8, utf8, 1))
+
+        data_to_check = {notUTF8, utf8, 1}
+        result = forceUTF8(data_to_check)
+        self.assertEqual(result, {utf8, 1})
 
 if __name__ == '__main__':
     main()

@@ -48,7 +48,7 @@ check = CheckManager()
 def change_state(
     event, vertice,
     state=None, update_entity=False, criticity=CheckManager.HARD,
-    manager=None, check_manager=None,
+    check_manager=None,
     **kwargs
 ):
     """
@@ -67,23 +67,16 @@ def change_state(
     # if state is None, use event state
     if state is None:
         state = event.get(Check.STATE, Check.OK)
-    # init manager
-    if manager is None:
-        manager = tm
-    # init check manager
-    if check_manager is None:
-        check_manager = check
-    # init vertice
-    if isinstance(vertice, basestring):
-        vertice = manager.get_elts(ids=vertice)
     # update vertice state from ctx
     vertice.state = state
-    vertice.save(manager=manager)
 
     # update entity if necessary
     if update_entity:
         entity = vertice.entity
         if entity is not None:
+            # init check manager
+            if check_manager is None:
+                check_manager = check
             check_manager.state(ids=entity, state=state, criticity=criticity)
 
 
@@ -99,9 +92,6 @@ def state_from_sources(event, vertice, ctx, f, manager=None, *args, **kwargs):
     # init manager
     if manager is None:
         manager = tm
-    # init vertice
-    if isinstance(vertice, basestring):
-        vertice = manager.get_elts(ids=vertice)
 
     # if sources are in ctx, get them
     if SOURCES_BY_EDGES in ctx:
@@ -118,7 +108,7 @@ def state_from_sources(event, vertice, ctx, f, manager=None, *args, **kwargs):
 
         if sources:  # if sources exist, check state
             state = f(
-                source_node.info.get(Check.STATE, Check.OK)
+                source_node.state
                 for source_node in sources
             )
         else:  # else get OK
@@ -127,7 +117,7 @@ def state_from_sources(event, vertice, ctx, f, manager=None, *args, **kwargs):
         # change state
         change_state(
             state=state, event=event, vertice=vertice, ctx=ctx,
-            manager=manager, *args, **kwargs
+            *args, **kwargs
         )
 
 
