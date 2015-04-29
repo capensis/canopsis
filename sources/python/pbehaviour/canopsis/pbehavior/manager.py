@@ -143,33 +143,42 @@ class PBehaviorManager(MiddlewareRegistry):
 
         # initialize result
         result = {}
+
         # initialize ts
         if ts is None:
             ts = time.time()
+
         # calculate ts datetime
         dtts = datetime.fromtimestamp(ts)
         # get entity documents(s)
         documents = self.get(entity_ids=entity_ids)
         # check if one entity document is asked
         isunique = isinstance(entity_ids, basestring)
+
         if isunique:  # ensure documents is a list
             documents = [] if documents is None else [documents]
+
         # are many behaviors asked ?
         isbunique = isinstance(behaviors, basestring)
+
         # get sbehaviors such as a behaviors set
         if isbunique:
             sbehaviors = {behaviors}
+
         else:
             sbehaviors = set(behaviors)
+
         # check all downtime related to input ts
         for document in documents:
             values = document.get(PBehaviorManager.VALUES)
             behavior_result = {}
+
             for value in values:
                 rrule = value[PBehaviorManager.RRULE]
                 duration = value[PBehaviorManager.DURATION]
                 dbehaviors = set(value[PBehaviorManager.BEHAVIORS])
                 behaviors_to_check = sbehaviors & dbehaviors
+
                 for behavior in behaviors_to_check:
                     rrule = rrulestr(rrule)
                     duration = vDuration.from_ical(duration)
@@ -177,21 +186,27 @@ class PBehaviorManager(MiddlewareRegistry):
                     rrule = rrulestr(rrule, cache=True, dtstart=dtts)
                     # calculate first date after dtts including dtts
                     before = rrule.before(dt=ts, inc=True)
+
                     if before:
                         first = before[-1]
                         # add duration
                         end = first + duration
+
                         if first <= dtts <= end:
                             # update end in the behavior result
                             endts = timegm(end.timetuple())
                             behavior_result[behavior] = endts
+
             # update result only if behavior result
             if behavior_result:
                 document_id = document[PBehaviorManager.ID]
+
                 if isbunique:
                     result[document_id] = behavior_result[behaviors]
+
                 else:
                     result[document_id] = behavior_result
+
         # update result is isunique
         if isunique:
             # convert result to a bool or None if entity_ids is str
