@@ -21,7 +21,7 @@
 """Module in charge of defining downtime processing in engines."""
 
 from canopsis.context.manager import Context
-from canopsis.downtime.manager import DowntimeManager
+from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task import register_task
 from canopsis.event import Event
 
@@ -29,11 +29,11 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
 from datetime import datetime
-import icalendar
+from icalendar import icalEvent
 
 
 context = Context()
-dm = DowntimeManager()
+dm = PBehaviorManager()
 
 events = get_storage(
     namespace='events',
@@ -47,7 +47,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
 
     :param dict event: event to process.
     :param Engine engine: engine which consumes the event.
-    :param DowntimeManager manager: downtime manager to use.
+    :param PBehaviorManager manager: pbehavior manager to use.
     :param Logger logger: logger to use in this task.
     """
 
@@ -59,7 +59,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
     entity_id = context.get_entity_id(entity)
 
     if evtype == 'downtime':
-        ev = icalendar.Event()
+        ev = icalEvent()
         ev.add('summary', event['output'])
         ev.add('dtstart', datetime.fromtimestamp(event['start']))
         ev.add('dtend', datetime.fromtimestamp(event['end']))
@@ -85,6 +85,6 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             )
 
     else:
-        event['downtime'] = manager.isdown(entity_id)
+        event['downtime'] = manager.until(entity_id, 'downtime') is not None
 
     return event

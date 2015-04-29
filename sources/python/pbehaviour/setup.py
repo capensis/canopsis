@@ -21,7 +21,9 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['python-dateutil', 'canopsis.context', 'canopsis.storage']
+install_requires = [
+    'python-dateutil', 'icalendar', 'canopsis.storage'
+]
 
 setup(
     description='Canopsis periodic behavior',

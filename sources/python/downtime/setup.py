@@ -21,7 +21,10 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['python-dateutil', 'canopsis.context', 'canopsis.storage']
+install_requires = [
+    'python-dateutil', 'icalendar',
+    'canopsis.context', 'canopsis.pbehavior'
+]
 
 setup(
     description='Canopsis downtime',
