@@ -15,16 +15,6 @@ function pre_install(){
 	check_code $?
 }
 
-function register_modules() {
-    webmodulemanager add core
-    webmodulemanager add uibase
-    webmodulemanager add monitoring
-    webmodulemanager add development
-    webmodulemanager add uiv1_themes
-    webmodulemanager add canopsis-backend-ui-connector
-    webmodulemanager add userpreferences
-    webmodulemanager add charts
-}
 
 function wait_for_mongo() {
 
@@ -140,7 +130,7 @@ function post_install(){
 	launch_cmd 1 schema2db
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py init
 
-    register_modules
+    $PREFIX/bin/webmoduleinstallall
 
 	launch_cmd 1 service mongodb stop
 }
@@ -175,7 +165,7 @@ function post_update(){
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	check_code $?
 
-    register_modules
+    $PREFIX/bin/webmoduleinstallall
 }
 
 function purge(){
