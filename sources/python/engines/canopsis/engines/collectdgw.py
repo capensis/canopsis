@@ -83,7 +83,7 @@ class engine(Engine):
                         return None
 
                 try:
-                    timestamp = int(Str2Number(values[0]))
+                    timestamp = int(values[0])
                     values = values[1:]
                     self.logger.debug("   + Timestamp: %s" % timestamp)
                     self.logger.debug("   + Values: %s" % values)
@@ -119,7 +119,7 @@ class engine(Engine):
 
                             data_type = ctype[i]['type']
 
-                            value = Str2Number(value)
+                            value = float(value)
 
                             self.logger.debug("     + %s" % name)
                             self.logger.debug(
