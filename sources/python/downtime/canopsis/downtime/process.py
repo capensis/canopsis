@@ -28,7 +28,7 @@ from canopsis.event import Event
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from icalendar import Event as vEvent
 
 
@@ -60,12 +60,12 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
 
     if evtype == 'downtime':
         ev = vEvent()
-        ev.add('X-Canopsis-EventType', 'downtime')
+        ev.add('X-Canopsis-BehaviorType', 'downtime')
         ev.add('summary', event['output'])
         ev.add('dtstart', datetime.fromtimestamp(event['start']))
         ev.add('dtend', datetime.fromtimestamp(event['end']))
         ev.add('dtstamp', datetime.fromtimestamp(event['entry']))
-        ev.add('duration', event['duration'])
+        ev.add('duration', timedelta(event['duration']))
         ev.add('contact', event['author'])
 
         manager.put(eid, ev.to_ical())
