@@ -25,9 +25,20 @@ from canopsis.downtime.manager import DowntimeManager
 from canopsis.task import register_task
 from canopsis.event import Event
 
+from canopsis.old.account import Account
+from canopsis.old.storage import get_storage
+
+from datetime import datetime
+import icalendar
+
 
 context = Context()
 dm = DowntimeManager()
+
+events = get_storage(
+    namespace='events',
+    account=Account(user='root', group='root')
+).get_backend()
 
 
 @register_task
@@ -48,8 +59,30 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
     entity_id = context.get_entity_id(entity)
 
     if evtype == 'downtime':
-        # manager.put(entity_id, ical_downtime)
-        pass
+        ev = icalendar.Event()
+        ev.add('summary', event['output'])
+        ev.add('dtstart', datetime.fromtimestamp(event['start']))
+        ev.add('dtend', datetime.fromtimestamp(event['end']))
+        ev.add('dtstamp', datetime.fromtimestamp(event['entry']))
+        ev.add('duration', event['duration'])
+        ev.add('contact', event['author'])
+
+        manager.put(entity_id, ev.to_ical())
+
+        if manager.until(entity_id, 'downtime', event['timestamp']):
+            events.update(
+                {
+                    'connector': event['connector'],
+                    'connector_name': event['connector_name'],
+                    'component': event['component'],
+                    'resource': event.get('resource', None)
+                },
+                {
+                    '$set': {
+                        'downtime': True
+                    }
+                }
+            )
 
     else:
         event['downtime'] = manager.isdown(entity_id)
