@@ -29,6 +29,7 @@ from time import time
 
 from icalendar import vDuration
 from date.rrule import rrulestr
+from calendar import timegm
 
 from datetime import datetime
 
@@ -182,7 +183,8 @@ class PBehaviorManager(MiddlewareRegistry):
                         end = first + duration
                         if first <= dtts <= end:
                             # update end in the behavior result
-                            behavior_result[behavior] = end
+                            endts = timegm(end.timetuple())
+                            behavior_result[behavior] = endts
             # update result only if behavior result
             if behavior_result:
                 document_id = document[PBehaviorManager.ID]

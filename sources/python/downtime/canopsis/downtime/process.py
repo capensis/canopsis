@@ -29,7 +29,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
 from datetime import datetime
-from icalendar import Event as icalEvent
+from icalendar import Event as vEvent
 
 
 context = Context()
@@ -59,7 +59,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
     eid = context.get_entity_id(entity)
 
     if evtype == 'downtime':
-        ev = icalEvent()
+        ev = vEvent()
         ev.add('summary', event['output'])
         ev.add('dtstart', datetime.fromtimestamp(event['start']))
         ev.add('dtend', datetime.fromtimestamp(event['end']))
