@@ -60,6 +60,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
 
     if evtype == 'downtime':
         ev = vEvent()
+        ev.add('X-Canopsis-EventType', 'downtime')
         ev.add('summary', event['output'])
         ev.add('dtstart', datetime.fromtimestamp(event['start']))
         ev.add('dtend', datetime.fromtimestamp(event['end']))
