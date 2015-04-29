@@ -29,7 +29,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
 from datetime import datetime
-from icalendar import icalEvent
+from icalendar import Event as icalEvent
 
 
 context = Context()
