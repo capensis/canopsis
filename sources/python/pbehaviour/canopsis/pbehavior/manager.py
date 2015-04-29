@@ -118,7 +118,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
         return result
 
-    def until(self, entity_ids, behaviors, ts=None):
+    def getending(self, entity_ids, behaviors, ts=None):
         """Get end date of corresponding behaviors if a timestamp is in a
         behavior period.
 

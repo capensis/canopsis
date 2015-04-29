@@ -56,7 +56,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
 
     evtype = event[Event.TYPE]
     entity = context.get_entity(event)
-    entity_id = context.get_entity_id(entity)
+    eid = context.get_entity_id(entity)
 
     if evtype == 'downtime':
         ev = icalEvent()
@@ -67,9 +67,9 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
         ev.add('duration', event['duration'])
         ev.add('contact', event['author'])
 
-        manager.put(entity_id, ev.to_ical())
+        manager.put(eid, ev.to_ical())
 
-        if manager.until(entity_id, 'downtime', event['timestamp']):
+        if manager.getending(eid, 'downtime', event['timestamp']):
             events.update(
                 {
                     'connector': event['connector'],
@@ -85,6 +85,6 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             )
 
     else:
-        event['downtime'] = manager.until(entity_id, 'downtime') is not None
+        event['downtime'] = manager.getending(eid, 'downtime') is not None
 
     return event
