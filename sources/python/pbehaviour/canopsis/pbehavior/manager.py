@@ -213,3 +213,16 @@ class PBehaviorManager(MiddlewareRegistry):
             result = result[entity_ids] if entity_ids in result else None
 
         return result
+
+    def whois(self, behaviors):
+        """
+        Get entities which currently have specific behaviors.
+
+        :param behaviors: behavior(s) to look for.
+        :type behaviors: list or str
+
+        :return: list of entities ids with the specified behaviors
+        :rtype: list
+        """
+
+        raise NotImplementedError('whois() not implemented')
