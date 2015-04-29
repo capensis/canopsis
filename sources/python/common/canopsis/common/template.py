@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -19,9 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-# TODO: move this to canopsis.common.utils
-
-from canopsis.old.init import ensure_unicode
+from canopsis.common.utils import ensure_unicode
 from pybars import Compiler, _compiler
 from datetime import datetime
 

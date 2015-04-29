@@ -19,12 +19,11 @@
 # ---------------------------------
 
 from canopsis.engines.core import TaskHandler
-from canopsis.old.template import Template
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
 from canopsis.old.file import File
-from canopsis.old.init import ensure_unicode
-
+from canopsis.common.utils import ensure_unicode
+from canopsis.common.template import Template
 
 from email import Encoders
 from email.MIMEBase import MIMEBase

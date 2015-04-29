@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.init import Init
+from canopsis.common.init import Init
 
 from unittest import TestCase, main
 
