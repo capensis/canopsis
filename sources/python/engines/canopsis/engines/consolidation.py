@@ -24,7 +24,7 @@ from canopsis.old.storage import get_storage
 from canopsis.event import forger
 from canopsis.perfdata.manager import PerfData
 from canopsis.common.math_parser import Formulas
-from canopsis.engines.perfdata_utils.perfDataUtils import PerfDataUtils
+from canopsis.perfdata.utils import PerfDataInterface
 
 import hashlib
 from time import gmtime
@@ -37,21 +37,14 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kargs)
 
         self.storage = get_storage(
-            namespace='events',
+            namespace='object',
             account=Account(
                 user="root",
                 group="root"
             )
         )
         self.manager = PerfData()
-        self.perf_data = PerfDataUtils()
-
-    def pre_run(self):
-        self.storage = get_storage(
-            namespace='object',
-            account=Account(user="root", group="root")
-        )
-        self.manager = PerfData()
+        self.perf_data = PerfDataInterface(manager=self.manager)
 
     def fetch(self, serie, _from, _to):
         self.logger.debug("*Start fetch*")
@@ -69,7 +62,7 @@ class engine(Engine):
         if t_serie['aggregate_method'].lower() == 'none':
             self.logger.debug('serie:'.format(t_serie))
             timeserie = {'aggregation': 'NONE'}
-            results = self.perf_data.perfdata(
+            results = self.perf_data.get(
                 metric_id=t_serie['metrics'], timewindow=timewindow,
                 timeserie=timeserie
             )
@@ -79,7 +72,7 @@ class engine(Engine):
                 'aggregation': t_serie['aggregate_method'],
                 'period': {'second': t_serie['aggregate_interval']}
             }
-            results = self.perf_data.perfdata(
+            results = self.perf_data.get(
                 metric_id=t_serie['metrics'], timewindow=timewindow,
                 timeserie=timeserie
             )

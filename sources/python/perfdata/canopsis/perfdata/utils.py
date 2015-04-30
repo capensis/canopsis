@@ -22,26 +22,26 @@ from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.timeserie import TimeSerie
 
-#manager = PerfData()
 
+class PerfDataInterface(object):
+    """
+    Implement common interactions with perfdata.
+    """
 
-class PerfDataUtils(object):
-    """docstring for PerfDataUtils"""
+    def __init__(self, manager=None, *args, **kwargs):
+        super(PerfDataInterface, self).__init__(*args, **kwargs)
 
-    def __init__(self):
-        self.manager = PerfData()
+        self.manager = manager if manager is not None else PerfData()
 
-    def perfdata_count(self, metric_id, timewindow=None):
+    def count(self, metric_id, timewindow=None):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
-        result = self.manager.count(
+        return self.manager.count(
             metric_id=metric_id, timewindow=timewindow
         )
 
-        return result
-
-    def perfdata(
+    def get(
         self, metric_id, timewindow=None, period=None, with_meta=True,
         limit=0, skip=0, timeserie=None
     ):
@@ -89,12 +89,26 @@ class PerfDataUtils(object):
 
         return (result, len(result))
 
-    def perfdata_meta(self, metric_id, timewindow=None, limit=0, sort=None):
+    def meta(self, metric_id, timewindow=None, limit=0, sort=None):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
-        result = self.manager.get_meta(
+        return self.manager.get_meta(
             metric_id=metric_id, timewindow=timewindow, limit=limit, sort=sort
         )
 
-        return result
+    def put(self, metric_id, points, meta=None):
+        self.manager.put(
+            metric_id=metric_id, points=points, meta=meta
+        )
+
+        return points
+
+    def remove(self, metric_id, with_meta=False, timewindow=None):
+        if timewindow is not None:
+            timewindow = TimeWindow(**timewindow)
+
+        self.manager.remove(
+            metric_id=metric_id, with_meta=with_meta,
+            timewindow=timewindow
+        )
