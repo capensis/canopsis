@@ -26,6 +26,18 @@ from json import loads, dumps
 from canopsis.old.storage import get_storage
 import argparse
 
+# Default install module list in Canopsis
+modules = [
+    'core',
+    'uibase',
+    'monitoring',
+    'development',
+    'uiv1_themes',
+    'canopsis-backend-ui-connector',
+    'userpreferences',
+    'charts',
+]
+
 """
 This module aims to manager registed webcore modules in canopsis
 by allowing to add/remove module from enabled.json list in webcore.
@@ -86,6 +98,12 @@ def remove_module(module_name):
     else:
         log('Could not remove module {} as not registered'.format(module_name))
 
+
+def init_modules(module_name):
+    #module name is not used here
+    for module in modules:
+        add_module(module)
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
@@ -95,7 +113,7 @@ if __name__ == '__main__':
         'action',
         type=str,
         help='What operation to perform on web modules',
-        choices=['add', 'remove', 'show']
+        choices=['add', 'remove', 'show', 'init']
     )
     parser.add_argument(
         'module_name',
@@ -114,6 +132,7 @@ if __name__ == '__main__':
         'add': add_module,
         'remove': remove_module,
         'show': show_module,
+        'init': init_modules
     }[args['action']]
 
     try:

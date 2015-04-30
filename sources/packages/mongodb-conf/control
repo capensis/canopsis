@@ -130,7 +130,7 @@ function post_install(){
 	launch_cmd 1 schema2db
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py init
 
-    $PREFIX/bin/webmoduleinstallall
+    $PREFIX/bin/webmodulemanager init
 
 	launch_cmd 1 service mongodb stop
 }
@@ -165,7 +165,7 @@ function post_update(){
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	check_code $?
 
-    $PREFIX/bin/webmoduleinstallall
+    $PREFIX/bin/webmodulemanager init
 }
 
 function purge(){

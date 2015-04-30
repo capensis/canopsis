@@ -33,6 +33,7 @@
               "name": "Arraysearch",
               "searchable_columns": ["name"]
             },
+            { "name" : "editurlfield" },
             { "name" : "Pagination" },
             { "name" : "Crud" }
           ],

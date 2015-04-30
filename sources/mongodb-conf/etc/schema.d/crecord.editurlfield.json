@@ -8,7 +8,7 @@
         "field_list": {
             "type": "array",
             "role": "array",
-            "description": "A field list that events should contains where some url information can be collected.",
+            "description": "A field list that events should contain where some url information can be collected.",
             "items": {
                 "type": "string"
             }
