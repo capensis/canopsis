@@ -4,12 +4,6 @@
 		"title": "General",
 		"keys":["_id", "description"]
 	},{
-		"title": "profile",
-		"keys": ["profile"]
-	},{
-		"title": "groups",
-		"keys": ["groups"]
-	},{
 		"title": "rights",
 		"keys": ["rights"]
 	}],
@@ -24,23 +18,6 @@
 		},
 		"description": {
 			"type": "string"
-		},
-		"groups": {
-			"type": "array",
-			"items": { "type": "object" },
-			"role": "classifiedcrecordselector",
-			"crecordtype": "group",
-			"multiselect": false,
-			"required": false
-		},
-		"profile": {
-			"type": "string",
-			"title": "Assigned profile",
-			"role": "stringclassifiedcrecordselector",
-			"multiselect": false,
-			"crecordtype": "profile",
-			"valuekey" : "_id",
-			"namekey" : "_id"
 		},
 		"rights": {
 			"type": "object",
