@@ -38,7 +38,7 @@ class engine(Engine):
 
     def reload_configuration(self):
         configuration = self.db_configuration_manager.find_one(
-            query={'crecord_type': 'editurlfield'}
+            query={'crecord_type': 'linklistfieldsurl'}
         )
         if configuration is not None:
             self.link_field = configuration['field_list']
