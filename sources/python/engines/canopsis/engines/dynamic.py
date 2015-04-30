@@ -40,6 +40,7 @@ class engine(Engine, Configurable):
     """
 
     EVENT_PROCESSING = 'event_processing'  #: event_processing field name
+    BEAT_PROCESSING = 'beat_processing'  #: beat_processing field name
     PARAMS = 'params'  #: event processing params field name
 
     NEXT_AMQP_QUEUES = 'next_amqp_queues'  #: next amqp queues
@@ -53,6 +54,7 @@ class engine(Engine, Configurable):
     def __init__(
         self,
         event_processing=None,
+        beat_processing=None,
         params=None,
         *args,
         **kwargs
@@ -61,6 +63,7 @@ class engine(Engine, Configurable):
         super(engine, self).__init__(*args, **kwargs)
 
         self.event_processing = event_processing
+        self.beat_processing = beat_processing
         self.params = params
 
     @property
@@ -95,6 +98,38 @@ class engine(Engine, Configurable):
         # set _event_processing and work
         self._event_processing = value
 
+    @property
+    def beat_processing(self):
+        """
+        Task executed in the beat
+        """
+
+        return self._beat_processing
+
+    @beat_processing.setter
+    def beat_processing(self, value):
+        """
+        Change of beat_processing.
+
+        :param value: new beat_processing to use. If None or wrong value,
+            beat_processing is used
+        :type value: NoneType, str or function
+        """
+
+        # by default, load default beat processing
+        if value is None:
+            value = beat_processing
+        # if str, load the related function
+        elif isinstance(value, basestring):
+            try:
+                value = get_task(value)
+            except ImportError:
+                self.logger.error('Impossible to load %s' % value)
+                value = beat_processing
+
+        # set _beat_processing and work
+        self._beat_processing = value
+
     def work(self, event, msg, *args, **kwargs):
 
         result = self._event_processing(
@@ -103,6 +138,12 @@ class engine(Engine, Configurable):
         )
 
         return result
+
+    def beat(self, *args, **kwargs):
+        self._beat_processing(
+            engine=self, logger=self.logger,
+            *args, **kwargs
+        )
 
     @property
     def params(self):
@@ -136,6 +177,7 @@ class engine(Engine, Configurable):
             name=CATEGORY,
             new_content=(
                 Parameter(engine.EVENT_PROCESSING),
+                Parameter(engine.BEAT_PROCESSING),
                 Parameter(engine.PARAMS, parser=eval),
                 Parameter(engine.NEXT_AMQP_QUEUES),
                 Parameter(engine.NEXT_BALANCED),
@@ -188,3 +230,14 @@ def event_processing(engine, event, ctx=None, **params):
     """
 
     return event
+
+
+def beat_processing(engine, **params):
+    """
+    Beat processing signature to respect in order to execute a periodic task.
+
+    :param Engine engine: engine which executes the beat.
+    :param dict params: beat processing additional parameters.
+    """
+
+    pass

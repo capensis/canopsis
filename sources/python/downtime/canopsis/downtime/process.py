@@ -33,7 +33,7 @@ from icalendar import Event as vEvent
 
 
 context = Context()
-dm = PBehaviorManager()
+pbmgr = PBehaviorManager()
 
 events = get_storage(
     namespace='events',
@@ -52,7 +52,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
     """
 
     if manager is None:
-        manager = dm
+        manager = pbmgr
 
     evtype = event[Event.TYPE]
     entity = context.get_entity(event)
@@ -89,3 +89,31 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
         event['downtime'] = manager.getending(eid, 'downtime') is not None
 
     return event
+
+
+@register_task
+def beat_processing(engine, manager=None, logger=None, **kwargs):
+    """Process periodic task.
+
+    :param Engine engine: engine which consumes the event.
+    :param PBehaviorManager manager: pbehavior manager to use.
+    :param Logger logger: logger to use in this task.
+    """
+
+    if manager is None:
+        manager = pbmgr
+
+    entity_ids = manager.whois('downtime')
+    entities = context.get_entities(entity_ids)
+
+    spec = {}
+
+    for key in ['connector', 'connector_name', 'component', 'resource']:
+        spec[key] = {
+            '$nin': [
+                e.get(key, None)
+                for e in entities
+            ]
+        }
+
+    events.update(spec, {'$set': {'downtime': False}})
