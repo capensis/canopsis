@@ -23,17 +23,66 @@ Python utility library.
 """
 
 from importlib import import_module
+from imp import load_source
 
 from inspect import ismodule
 
 from collections import Iterable
 
 from sys import version as PYVER
-from os.path import expanduser
+
+from os.path import expanduser, splitext
+from os.path import join as joinpath
+from os import listdir
+
+from re import search as regsearch
 
 from .init import basestring
 
 __RESOLVED_ELEMENTS = {}  #: dictionary of resolved elements by name
+
+
+def dynmodloads(_path='.', subdef=False, pattern='.*', logger=None):
+    loaded = {}
+    _path = expanduser(_path)
+
+    for mfile in listdir(_path):
+        name, ext = splitext(mfile)
+
+        # Ignore "." and "__init__.py" and everything not matched by "*.py"
+        if name in ['.', '__init__'] or ext != '.py':
+            continue
+
+        logger.info("Load '{0}' ...".format(name))
+
+        try:
+            module = load_source(name, joinpath(_path, mfile))
+
+        except ImportError as err:
+            logger.error('Impossible to import {0}: {1}'.format(name, err))
+
+        else:
+            loaded[name] = module
+
+            if subdef:
+                alldefs = dir(module)
+                builtindefs =  [
+                    '__builtins__',
+                    '__doc__',
+                    '__file__',
+                    '__name__',
+                    '__package__'
+                ]
+
+                for mydef in alldefs:
+                    if mydef not in builtindefs and regsearch(pattern, mydef):
+                        logger.debug('from {0} import {1}'.format(
+                            name, mydef
+                        ))
+
+                        loaded[mydef] = getattr(module, mydef)
+
+    return loaded
 
 
 def setdefaultattr(obj, attr, value):
