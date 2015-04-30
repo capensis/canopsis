@@ -36,8 +36,6 @@
             "crecord_type",
             "_id",
             "description",
-            "profile",
-            "groups",
             "rights"
           ]
         }
