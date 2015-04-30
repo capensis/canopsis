@@ -27,7 +27,7 @@ from canopsis.storage import Storage
 
 from time import time
 
-from icalendar import vDuration
+from icalendar import Event
 from date.rrule import rrulestr
 from calendar import timegm
 
@@ -46,12 +46,12 @@ class PBehaviorManager(MiddlewareRegistry):
     specification ftp://ftp.rfc-editor.org/in-notes/rfc2445.txt.
 
     A pbehavior document contains several values. Each value contains
-    a icalendar rrule expression, a icalendar duration expression and an
-    array of behavior entries:
+    an icalendar expression (dtstart, rrule, duration) and an array of
+    behavior entries:
 
     {
         id: document_id,
-        values: [{rrule: ..., duration: ..., behaviors: [...]}*]
+        values: [{period: ..., behaviors: [...]}*]
     }.
     """
 
@@ -59,9 +59,8 @@ class PBehaviorManager(MiddlewareRegistry):
 
     ID = Storage.DATA_ID  #: document id
     VALUES = 'values'  #: document values field name
-    RRULE = 'rrule'  #: rrule document value field name
-    DURATION = 'duration'  #: duration value field name
-    BEHAVIORS = 'BEHAVIORS'  #: behaviors value field name
+    PERIOD = 'period'  #: period value field name
+    BEHAVIORS = 'behaviors'  #: behaviors value field name
 
     def __init__(self, PBEHAVIOR_storage=None, *args, **kwargs):
 
@@ -147,9 +146,9 @@ class PBehaviorManager(MiddlewareRegistry):
         # initialize ts
         if ts is None:
             ts = time.time()
-
         # calculate ts datetime
         dtts = datetime.fromtimestamp(ts)
+
         # get entity documents(s)
         documents = self.get(entity_ids=entity_ids)
         # check if one entity document is asked
@@ -171,31 +170,9 @@ class PBehaviorManager(MiddlewareRegistry):
         # check all downtime related to input ts
         for document in documents:
             values = document.get(PBehaviorManager.VALUES)
-            behavior_result = {}
-
-            for value in values:
-                rrule = value[PBehaviorManager.RRULE]
-                duration = value[PBehaviorManager.DURATION]
-                dbehaviors = set(value[PBehaviorManager.BEHAVIORS])
-                behaviors_to_check = sbehaviors & dbehaviors
-
-                for behavior in behaviors_to_check:
-                    rrule = rrulestr(rrule)
-                    duration = vDuration.from_ical(duration)
-                    # get rrule object
-                    rrule = rrulestr(rrule, cache=True, dtstart=dtts)
-                    # calculate first date after dtts including dtts
-                    before = rrule.before(dt=ts, inc=True)
-
-                    if before:
-                        first = before[-1]
-                        # add duration
-                        end = first + duration
-
-                        if first <= dtts <= end:
-                            # update end in the behavior result
-                            endts = timegm(end.timetuple())
-                            behavior_result[behavior] = endts
+            behavior_result = self._get_ending(
+                behaviors=sbehaviors, values=values, dtts=dtts
+            )
 
             # update result only if behavior result
             if behavior_result:
@@ -214,7 +191,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
         return result
 
-    def whois(self, behaviors):
+    def whois(self, behaviors, ts=None):
         """
         Get entities which currently have specific behaviors.
 
@@ -225,4 +202,75 @@ class PBehaviorManager(MiddlewareRegistry):
         :rtype: list
         """
 
-        raise NotImplementedError('whois() not implemented')
+        result = []
+
+        if ts is None:
+            ts = time()
+
+        # calculate ts datetime
+        dtts = datetime.fromtimestamp(ts)
+
+        documents = self[PBehaviorManager.PBEHAVIOR_STORAGE].find_elements()
+
+        if isinstance(behaviors, basestring):
+            behaviors = [behaviors]
+
+        len_behaviors = len(behaviors)
+
+        for document in documents:
+            values = document.get(PBehaviorManager.VALUES)
+            ending = self._get_ending(
+                behaviors=behaviors, values=values, dtts=dtts
+            )
+            if len(ending) != len_behaviors:
+                document_id = document[PBehaviorManager.ID]
+                result.append(document_id)
+
+        return result
+
+    def _get_ending(self, behaviors, values, dtts):
+        """Get ending date of occured behavior(s) at a timestamp among value
+        periods.
+
+        :param set behaviors: behavior(s) to check.
+        :param value: (list of) period(s) and behaviors.
+        :type value: dict or list
+        :param datetime dtts: date time moment.
+        """
+
+        result = {}
+
+        if isinstance(values, dict):
+            values = [values]
+
+        for value in values:
+            # get period
+            period = value[PBehaviorManager.PERIOD]
+            period = Event.from_ical(period)
+            # get behaviors intersection
+            dbehaviors = set(value[PBehaviorManager.BEHAVIORS])
+            behaviors_to_check = behaviors & dbehaviors
+            # if intersection contains elements
+            for behavior in behaviors_to_check:
+                # get duration, dtstart and rrule
+                duration = period.get('duration')
+                duration = duration.dt
+                dtstart = period.get('dtstart')
+                dtstart = dtstart.dt
+                rrule = period.get('rrule')
+                rrule = rrulestr(rrule.to_ical(), cache=True, dtstart=dtstart)
+                # calculate first date after dtts including dtts
+                before = rrule.before(dt=dtts, inc=True, count=1)
+                # if before datetimes exist
+                if before:
+                    # first date is the first before
+                    first = before[1]
+                    # add duration
+                    end = first + duration
+                    # and check if dtstart is in [first; end]
+                    if first <= dtts <= end:
+                        # update end in the result
+                        endts = timegm(end.timetuple())
+                        result[behavior] = endts
+
+        return result
