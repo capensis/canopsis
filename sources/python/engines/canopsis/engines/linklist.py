@@ -20,20 +20,33 @@
 
 from canopsis.engines.core import Engine
 from canopsis.entitylink.manager import Entitylink
+from canopsis.configuration.dbconfigurationmanager import DBConfiguration
 
 
 class engine(Engine):
 
     etype = 'linklist'
 
-    # Search fields in the event for possible url information
-    link_field = [
-        'action_url'
-    ]
-
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
         self.entity_link_manager = Entitylink()
+        self.db_configuration_manager = DBConfiguration()
+        self.reload_configuration()
+
+    def beat(self):
+        self.reload_configuration()
+
+    def reload_configuration(self):
+        configuration = self.db_configuration_manager.find_one(
+            query={'crecord_type': 'editurlfield'}
+        )
+        if configuration is not None:
+            self.link_field = configuration['field_list']
+            self.logger.debug(
+                'searching for urls in events fields : {}'.format(
+                    self.link_field
+                )
+            )
 
     def work(self, event, *args, **kwargs):
 
