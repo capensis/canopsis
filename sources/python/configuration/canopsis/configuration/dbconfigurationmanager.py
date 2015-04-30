@@ -78,8 +78,7 @@ class DBConfiguration(MiddlewareRegistry):
     def put(
         self,
         _id,
-        document,
-        cache=False
+        document
     ):
         """
         Persistance layer for upsert operations
@@ -89,7 +88,7 @@ class DBConfiguration(MiddlewareRegistry):
         """
 
         self[DBConfiguration.DBCONFIGURATION_STORAGE].put_element(
-            _id=_id, element=document, cache=cache
+            _id=_id, element=document
         )
 
     # Not tested with old object collection system: TODO
