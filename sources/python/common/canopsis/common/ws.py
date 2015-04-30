@@ -344,6 +344,6 @@ class route(object):
 
 
 def apply_routes(ws, urls):
-    for method, name, kwargs, handler in urls:
-        decorator = route(method, name=name, **kwargs)
-        decorator(handler)
+    for url in urls:
+        decorator = route(url['method'], name=url['name'], **url['params'])
+        decorator(url['handler'])
