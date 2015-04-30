@@ -28,7 +28,7 @@ from canopsis.storage import Storage
 from time import time
 
 from icalendar import Event
-from date.rrule import rrulestr
+from dateutil.rrule import rrulestr
 from calendar import timegm
 
 from datetime import datetime
@@ -114,7 +114,9 @@ class PBehaviorManager(MiddlewareRegistry):
         :rtype: list
         """
 
-        result = self.del_elements(ids=entity_ids, cache=cache)
+        result = self[PBehaviorManager.PBEHAVIOR_STORAGE].remove_elements(
+            ids=entity_ids, cache=cache
+        )
 
         return result
 
