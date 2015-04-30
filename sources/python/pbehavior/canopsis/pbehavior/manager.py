@@ -268,7 +268,7 @@ class PBehaviorManager(MiddlewareRegistry):
                     # add duration
                     end = first + duration
                     # and check if dtstart is in [first; end]
-                    if first <= dtstart <= end:
+                    if first <= dtts <= end:
                         # update end in the result
                         endts = timegm(end.timetuple())
                         result[behavior] = endts
