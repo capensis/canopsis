@@ -99,6 +99,12 @@ def at_least(
     if manager is None:
         manager = tm
 
+    # ensure min_weight is exclusively a float or None
+    if min_weight:
+        min_weight = float(min_weight)
+    elif min_weight != 0:
+        min_weight = None
+
     sources_by_edges = manager.get_sources(ids=vertice.id, add_edges=True)
 
     if sources_by_edges and min_weight is None:
@@ -117,7 +123,6 @@ def at_least(
             source_state = source.state
             if (source_state == state if f is None else f(source_state)):
                 if min_weight is not None:  # if min_weight is not None
-                    min_weight = float(min_weight)
                     min_weight -= edge.weight  # remove edge_weight from result
                     if min_weight <= 0:  # if min_weight is negative, ends loop
                         result = True
