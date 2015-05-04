@@ -31,7 +31,7 @@ from icalendar import Event
 from dateutil.rrule import rrulestr
 from calendar import timegm
 
-from datetime import datetime
+from datetime import datetime, time as datetime_time
 
 CONF_PATH = 'pbehavior/pbehavior.conf'
 CATEGORY = 'PBEHAVIOR'
@@ -259,14 +259,19 @@ class PBehaviorManager(MiddlewareRegistry):
                 duration = duration.dt
                 dtstart = period.get('dtstart')
                 dtstart = dtstart.dt
+                if isinstance(dtstart, datetime_time):
+                    dtstart = datetime.now().replace(
+                        hour=dtstart.hour, minute=dtstart.minute,
+                        second=dtstart.second, tzinfo=dtstart.tzinfo
+                    )
                 rrule = period.get('rrule')
                 rrule = rrulestr(rrule.to_ical(), cache=True, dtstart=dtstart)
                 # calculate first date after dtts including dtts
-                before = rrule.before(dt=dtts, inc=True, count=1)
+                before = rrule.before(dt=dtts, inc=True)
                 # if before datetimes exist
-                if before:
+                if before is not None:
                     # first date is the first before
-                    first = before[1]
+                    first = before[-1]
                     # add duration
                     end = first + duration
                     # and check if dtstart is in [first; end]
