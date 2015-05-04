@@ -117,6 +117,7 @@ def at_least(
             source_state = source.state
             if (source_state == state if f is None else f(source_state)):
                 if min_weight is not None:  # if min_weight is not None
+                    min_weight = float(min_weight)
                     min_weight -= edge.weight  # remove edge_weight from result
                     if min_weight <= 0:  # if min_weight is negative, ends loop
                         result = True
