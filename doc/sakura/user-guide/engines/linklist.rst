@@ -17,6 +17,12 @@ In the end, the final user will be able to see a list of link associated to an s
 .. image:: ../../_static/images/frontend/linklist_2.png
 
 
+Rights
+------
+
+The linklist feature comes with a right management system. Link list actions are enabled if the user is allowed for the ``actionbutton_canediturlfield`` right. This right allow to schedule a new linklist computation task and to create a rule for link list computation.
+
+
 How to associate links
 ----------------------
 
