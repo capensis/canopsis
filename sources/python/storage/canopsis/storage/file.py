@@ -22,48 +22,49 @@ from canopsis.storage import Storage
 
 
 class FileStream(object):
-    """
-    File stream object stored in a file storage
+    """File stream object stored in a FileStorage.
     """
 
     def close(self):
-        """
-        Close this file stream.
+        """Close this file stream.
         """
 
         raise NotImplementedError()
 
     def write(self, data):
-        """
-        Write data in this file stream.
+        """Write data in this file stream.
+
+        :param str data: data to write.
         """
 
         raise NotImplementedError()
 
     def read(self, size=1):
-        """
-        Read size characters from file content.
+        """Read size characters from file content.
+
+        :param int size: number of characters to read.
         """
 
         raise NotImplementedError()
 
     def seek(self, pos, from_beginning=False):
-        """
-        Set the current position in this file stream.
+        """Set the current position in this file stream.
+
+        :param int pos: seek position.
+        :param bool from_beginning: start to seek from the beginning of the
+            file.
         """
 
         raise NotImplementedError()
 
     def teel(self):
-        """
-        Get the current position of this file.
+        """Get the current position of this file.
         """
 
         raise NotImplementedError()
 
     def next(self):
-        """
-        Get next file stream version.
+        """Get next file stream version.
         """
 
         raise NotImplementedError()
@@ -77,56 +78,51 @@ class FileStorage(Storage):
     __datatype__ = 'file'  #: registered such as a file storage
 
     def get(self, names, version=-1):
-        """
-        Get file stream(s) related to input name(s).
+        """Get file stream(s) related to input name(s).
 
-        :param names: file stream names
+        :param names: file stream names.
         :type names: str or list of str
-
-        :param int version: file stream version. last if -1 (by default)
+        :param int version: file stream version. last if -1 (by default).
 
         :rtype: FileStream or list of FileStream
         """
         raise NotImplementedError()
 
     def exists(self, name):
-        """
-        True if input file name exists.
+        """True if input file name exists.
 
-        :param str name: file name to check existance
+        :param str name: file name to check existance.
 
-        :return: True iif a file name equals to input name exists
+        :return: True iif a file name equals to input name exists.
         :rtype: bool
         """
 
         raise NotImplementedError()
 
     def find(self, names=None, meta=None, sort=None, limit=-1, skip=0):
-        """
-        Try to find file streams where names match with input names or meta
+        """Try to find file streams where names match with input names or meta
         data match with input meta.
 
-        :param names: file names.
+        :param names: file name(s). If str, return one FileStream, list
+            otherwise.
         :type names: str or list of str
-
         :param canopsis.storage.filter.Filter meta: meta information to find.
+        :param dict sort: sort criteria.
+        :param int limit: limit criteria.
+        :param int skip: skip criteria.
 
-        :param dict sort:
-        :param int limit:
-        :param int skip:
-
-        :return: file streams
+        :return: file stream(s) depending on input names value.
+        :rtype: list or FileStream
         """
 
         raise NotImplementedError()
 
     def new_file(self, name=None, meta=None, data=None):
-        """
-        Put a file stream with its name and meta data.
+        """Put a file stream with its name and meta data.
 
-        :param str name: file name
-        :param dict meta: file meta data
-        :param str data: file content
+        :param str name: file name.
+        :param dict meta: file meta data.
+        :param str data: file content.
 
         :rtype: FileStream
         """
@@ -134,10 +130,9 @@ class FileStorage(Storage):
         raise NotImplementedError()
 
     def delete(self, names):
-        """
-        Delete file streams related to their names
+        """Delete file streams related to their names
 
-        :param names: file name(s) to delete
+        :param names: file name(s) to delete.
         :type names: str or list of str
         """
 

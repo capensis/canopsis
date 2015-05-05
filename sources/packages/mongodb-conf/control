@@ -15,14 +15,32 @@ function pre_install(){
 	check_code $?
 }
 
-function post_install(){
-	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
-	launch_cmd 0 service mongodb stop
+function wait_for_mongo() {
 
-	rm /tmp/mongodb-*.sock &> /dev/null || true
+	echo -n "Safe wait (may be long the first time) "
 
-	launch_cmd 1 service mongodb start
+	mongo_user=$($PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf DATABASE user)
+	mongo_pass=$($PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf DATABASE pwd)
+
+	mongo_ready=false
+	while ! $mongo_ready
+	do
+		echo "show collections" | $PREFIX/bin/mongo canopsis -u $mongo_user -p $mongo_pass >/dev/null 2>&1
+
+		if [ $? -eq 0 ]
+		then
+			echo " ready"
+			mongo_ready=true
+		else
+			echo -n "."
+			sleep 1
+		fi
+	done
+}
+
+
+function wait_for_mongo_install() {
 
 	echo -n "Safe wait (may be long the first time) "
 
@@ -40,6 +58,17 @@ function post_install(){
 			sleep 1
 		fi
 	done
+}
+
+function post_install(){
+	echo "Post-install $NAME $VERSION-$RELEASE ..."
+
+	launch_cmd 0 service mongodb stop
+
+	rm /tmp/mongodb-*.sock &> /dev/null || true
+
+	launch_cmd 1 service mongodb start
+	wait_for_mongo_install
 
 	# Define user
 	if [ "x$MONGODB_ADMIN_PASSWD" == "x" ]
@@ -101,6 +130,8 @@ function post_install(){
 	launch_cmd 1 schema2db
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py init
 
+    $PREFIX/bin/webmodulemanager init
+
 	launch_cmd 1 service mongodb stop
 }
 
@@ -121,26 +152,8 @@ function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
 
 	launch_cmd 1 service mongodb start
+	wait_for_mongo
 
-	echo -n "Safe wait (may be long the first time) "
-
-	mongo_user=$($PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf DATABASE user)
-	mongo_pass=$($PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf DATABASE pwd)
-
-	mongo_ready=false
-	while ! $mongo_ready
-	do
-		echo "show collections" | $PREFIX/bin/mongo canopsis -u $mongo_user -p $mongo_pass >/dev/null 2>&1
-
-		if [ $? -eq 0 ]
-		then
-			echo " ready"
-			mongo_ready=true
-		else
-			echo -n "."
-			sleep 1
-		fi
-	done
 	echo "   + Update JSON schemas"
 
 	launch_cmd 1 schema2db
@@ -151,6 +164,8 @@ function post_update(){
 
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	check_code $?
+
+    $PREFIX/bin/webmodulemanager init
 }
 
 function purge(){

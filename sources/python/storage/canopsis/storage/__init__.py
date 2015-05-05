@@ -54,6 +54,7 @@ class DataBase(Middleware):
     JOURNALING = 'journaling'
 
     SHARDING = 'sharding'
+    REPLICASET = 'replicaSet'
 
     CONF_RESOURCE = 'storage/storage.conf'
 
@@ -61,12 +62,15 @@ class DataBase(Middleware):
         pass
 
     def __init__(
-        self, db='canopsis', journaling=False, sharding=False, *args, **kwargs
+        self,
+        db='canopsis', journaling=False, sharding=False, replicaSet=None,
+        *args, **kwargs
     ):
         """
         :param str db: db name
         :param bool journaling: journaling mode enabling.
         :param bool sharding: db sharding mode enabling.
+        :param str replicaSet: db replicaSet.
         """
 
         super(DataBase, self).__init__(*args, **kwargs)
@@ -75,6 +79,7 @@ class DataBase(Middleware):
         self._db = db
         self._journaling = journaling
         self._sharding = sharding
+        self._replicaSet = replicaSet
 
     @property
     def db(self):
@@ -101,6 +106,15 @@ class DataBase(Middleware):
     @sharding.setter
     def sharding(self, value):
         self._sharding = value
+        self.reconnect()
+
+    @property
+    def replicaSet(self):
+        return self._replicaSet
+
+    @replicaSet.setter
+    def replicaSet(self, value):
+        self._replicaSet = value
         self.reconnect()
 
     def drop(self, table=None, *args, **kwargs):
@@ -151,9 +165,12 @@ class DataBase(Middleware):
             new_content=(
                 Parameter(DataBase.DB, critical=True),
                 Parameter(
-                    DataBase.JOURNALING, parser=Parameter.bool, critical=True),
+                    DataBase.JOURNALING, parser=Parameter.bool, critical=True
+                ),
                 Parameter(
-                    DataBase.SHARDING, critical=True, parser=Parameter.bool)
+                    DataBase.SHARDING, critical=True, parser=Parameter.bool
+                ),
+                Parameter(DataBase.REPLICASET, critical=True)
             )
         )
 
@@ -192,6 +209,7 @@ class Storage(DataBase):
     DATA_ID = 'id'  #: db data id
 
     DATA = 'data'  #: collection/table data struct
+    TABLE = 'table'  #: table field name
 
     INDEXES = 'indexes'  #: storage indexes
     CACHE_SIZE = 'cache_size'  #: query cache size to send to the server
@@ -223,10 +241,11 @@ class Storage(DataBase):
         self,
         indexes=None, data=None,
         cache_size=DEFAULT_CACHE_SIZE, cache_ordered=DEFAULT_CACHE_ORDERED,
-        cache_autocommit=DEFAULT_CACHE_AUTOCOMMIT,
+        cache_autocommit=DEFAULT_CACHE_AUTOCOMMIT, table=None,
         *args, **kwargs
     ):
         """
+        :param str table: default table name.
         :param indexes: indexes to use.
         :type indexes: list or str
         :param dict data: data structure with expected fields, keys, etc.
@@ -242,7 +261,9 @@ class Storage(DataBase):
         self._indexes = [] if indexes is None else indexes
 
         self._data = data
+        self._table = table
 
+        self._cache = None
         self._cache_size = cache_size
         self._cache_count = 0
         self._cache_ordered = cache_ordered
@@ -306,6 +327,16 @@ class Storage(DataBase):
                 "wrong indexes value %s. str, tuple or list accepted" % value)
 
         self._indexes = indexes
+        self.reconnect()
+
+    @property
+    def table(self):
+        return self._table
+
+    @table.setter
+    def table(self, value):
+
+        self._table = value
         self.reconnect()
 
     @property
@@ -561,19 +592,21 @@ class Storage(DataBase):
 
     def get_elements(
         self,
-        ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
+        ids=None, query=None, limit=0, skip=0, sort=None, projection=None,
+        with_count=False,
     ):
         """
         Get a list of elements where id are input ids
 
         :param ids: element ids or an element id to get if is a string.
         :type ids: list of str
-
+        :param dict query: set of couple of (field name, field value).
         :param int limit: max number of elements to get.
         :param int skip: first element index among searched list.
         :param sort: contains a list of couples of field (name, ASC/DESC)
             or field name which denots an implicitelly ASC order.
         :type sort: list of {(str, {ASC, DESC}}), or str}
+        :param dict projection: key names to keep from elements.
         :param bool with_count: If True (False by default), add count to the
             result.
 
@@ -614,17 +647,18 @@ class Storage(DataBase):
 
     def find_elements(
         self,
-        request, limit=0, skip=0, sort=None, with_count=False
+        query, limit=0, skip=0, sort=None, projection=None, with_count=False
     ):
         """
         Find elements corresponding to input request and in taking care of
         limit, skip and sort find parameters.
 
-        :param dict request: set of couple of (field name, field value).
+        :param dict query: set of couple of (field name, field value).
         :param int limit: max number of elements to get.
         :param int skip: first element index among searched list.
         :param list sort: contains a list of couples of field (name, ASC/DESC)
             or field name which denots an implicitelly ASC order.
+        :param dict projection: key names to keep from elements.
         :param bool with_count: If True (False by default), add count to the
             result.
 
@@ -751,18 +785,23 @@ class Storage(DataBase):
 
     def get_table(self):
         """
-        Table name related to self type and data_scope.
+        Table name related to self table or type and data_scope.
 
-        :return: table name
+        :return: table name.
         :rtype: str
         """
 
-        prefix = self.data_type
+        # try to use local table
+        result = self.table
 
-        if isiterable(prefix, is_str=False):
-            prefix = reduce(lambda x, y: '%s_%s' % (x, y), prefix)
+        if not result:
 
-        result = "{0}_{1}".format(prefix, self.data_scope).lower()
+            prefix = self.data_type
+
+            if isiterable(prefix, is_str=False):
+                prefix = reduce(lambda x, y: '%s_%s' % (x, y), prefix)
+
+            result = "{0}_{1}".format(prefix, self.data_scope).lower()
 
         return result
 
@@ -851,6 +890,7 @@ Storage types must be of the same type.'.format(self, target))
             new_content=(
                 Parameter(Storage.INDEXES, parser=eval),
                 Parameter(Storage.DATA, parser=eval),
+                Parameter(Storage.TABLE),
                 Parameter(Storage.CACHE_SIZE, parser=int, critical=True),
                 Parameter(
                     Storage.CACHE_ORDERED, parser=Parameter.bool, critical=True

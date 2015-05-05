@@ -24,8 +24,8 @@ from bson import BSON
 from json import loads
 from time import time
 
-from canopsis.common.init import basestring
-from canopsis.common.utils import ensure_unicode
+from canopsis.common.init import basestring, PYVER
+from canopsis.common.utils import ensure_unicode, forceUTF8
 
 
 class engine(Engine):
@@ -41,6 +41,9 @@ class engine(Engine):
         ## Try to decode event
         if isinstance(body, dict):
             event = body
+            # force utf8 only if python version is 2
+            if PYVER < '3':
+                event = forceUTF8(event)
         else:
             self.logger.debug(" + Decode JSON")
             try:

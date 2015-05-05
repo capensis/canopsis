@@ -24,11 +24,8 @@ from canopsis.configuration.parameters import Parameter
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
-from canopsis.storage import Storage
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.check import Check
-
-__version__ = "0.1"
 
 #: check manager configuration category
 CATEGORY = 'CHECK'
@@ -87,13 +84,13 @@ class CheckManager(MiddlewareRegistry):
 
     # TODO , is it used, is it usefull to manage state this way
     def state(self, ids, state=None, criticity=HARD, f=DEFAULT_F, cache=False):
-        """
-        Get entity states.
+        """Get/update entity state(s).
 
-        :param ids: entity ids.
+        :param ids: entity id(s).
         :type ids: str or list
         :param int state: state to update if not None.
         :param int criticity: state criticity level (HARD by default).
+        :param f: new state calculation function if state is not None.
         :param bool cache: storage cache when udpate state.
 
         :return: entity states by entity id or one state value if ids is a str.
@@ -101,8 +98,6 @@ class CheckManager(MiddlewareRegistry):
             is required.
         :rtype: int or dict
         """
-
-        f = lookup(f) if isinstance(f, basestring) else f
 
         # default result is None
         result = {}
@@ -125,6 +120,8 @@ class CheckManager(MiddlewareRegistry):
                 result[entity_id] = entity_state
         # if state has to be updated
         if state is not None:
+            # get the right state function
+            f = lookup(f) if isinstance(f, basestring) else f
             # save field name for quick access
             id_name = CheckManager.ID
             state_name = CheckManager.STATE
@@ -188,7 +185,7 @@ class CheckManager(MiddlewareRegistry):
     with only a data couple of on identifier and an ID
     """
 
-    def del_state(self, ids=None, cache=False):
+    def del_state(self, ids=None):
         """
         Delete states related to input ids. If ids is None, delete all states.
 
@@ -197,7 +194,7 @@ class CheckManager(MiddlewareRegistry):
         :param bool cache: storage cache when udpate state.
         """
 
-        self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids, cache=cache)
+        self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids)
 
     def put_state(self, entity_id, state, cache=False):
         """

@@ -146,7 +146,8 @@ class TopoVertice(BaseTaskedVertice):
         return result
 
     def process(
-        self, event, publisher=None, manager=None, source=None, **kwargs
+        self, event, publisher=None, manager=None, source=None, logger=None,
+        **kwargs
     ):
 
         if manager is None:
@@ -156,10 +157,21 @@ class TopoVertice(BaseTaskedVertice):
         old_state = self.state
         # process task
         result = super(TopoVertice, self).process(
-            event=event, publisher=publisher, **kwargs
+            event=event, publisher=publisher, manager=manager, source=source,
+            logger=logger,
+            **kwargs
         )
         # compare old state and new state
         if self.state != old_state:
+            # update edges
+            targets_by_edge = manager.get_targets(
+                ids=self.id, add_edges=True
+            )
+            for edge_id in targets_by_edge:
+                    edge, _ = targets_by_edge[edge_id]
+                    # update edge state
+                    edge.state = self.state
+                    edge.save(manager=manager)
             # if not equal
             new_event = self.get_event(state=self.state, source=source)
             # publish a new event
@@ -203,7 +215,7 @@ class Topology(Graph, TopoVertice):
         super(Topology, self).set_entity(entity_id=entity_id, *args, **kwargs)
 
         # set default entity if entity_id is None
-        if entity_id is None:
+        if entity_id is None and self.entity is None:
             # set entity
             event = self.get_event(source=0, state=0)
             entity = _context.get_entity(event)
@@ -278,6 +290,20 @@ class TopoNode(Vertice, TopoVertice):
         result['resource'] = self.id
 
         return result
+
+    def delete(self, manager, cache=False, *args, **kwargs):
+
+        super(TopoNode, self).delete(
+            manager=manager, cache=cache, *args, **kwargs
+        )
+
+        # delete edges where source is self
+        edges = manager.get_edges(sources=self.id)
+        for edge in edges:
+            edge.delete(manager=manager, cache=cache)
+
+        # delete reference of self in edges
+        manager.del_edge_refs(targets=self.id, del_empty=True, cache=cache)
 
 
 class TopoEdge(Edge, TopoVertice):

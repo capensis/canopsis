@@ -31,82 +31,11 @@
           "listed_crecord_type" : "job",
           "mixins" : [
             {
-              "name" : "pagination",
-              "EmberClass" : {
-                "mixins" : [
-                  {
-                    "properties" : {
-                      "itemsPerPagePropositions" : {
-                        "_dependentKeys" : [
-                          "itemsPerPagePropositionSelected"
-                        ],
-                        "_readOnly" : false,
-                        "_cacheable" : true
-                      },
-                      "itemsDivided" : {
-                        "_dependentKeys" : [
-                          "itemsTotal",
-                          "itemsPerPage"
-                        ],
-                        "_readOnly" : false,
-                        "_cacheable" : true
-                      },
-                      "itemsTotal" : {
-                        "_dependentKeys" : [
-                          "widgetDataMetas",
-                          "widgetData"
-                        ],
-                        "_readOnly" : false,
-                        "_cacheable" : true
-                      },
-                      "itemsPerPage" : {
-                        "_dependentKeys" : [
-                          "model.itemsPerPage",
-                          "mixinOptions.pagination.defaultItemsPerPage"
-                        ],
-                        "_readOnly" : false,
-                        "_cacheable" : true
-                      },
-                      "paginationFirstItemIndex" : {
-                        "_dependentKeys" : [
-                          "widgetData"
-                        ],
-                        "_readOnly" : false,
-                        "_cacheable" : true
-                      },
-                      "partials" : {
-                        "subHeader" : [
-                          "pagination",
-                          "itemsperpage"
-                        ],
-                        "footer" : [
-                          "pagination",
-                          "pagination-infos"
-                        ]
-                      },
-                      "paginationLastItemIndex" : {
-                        "_dependentKeys" : [
-                          "widgetData",
-                          "itemsTotal"
-                        ],
-                        "_readOnly" : false,
-                        "_cacheable" : true
-                      },
-                      "currentPage" : 1,
-                      "totalPages" : {
-                        "_dependentKeys" : [
-                          "itemsTotal"
-                        ],
-                        "_readOnly" : false,
-                        "_cacheable" : true
-                      },
-                      "_actions" : {
-                        
-                      }
-                    }
-                  }
-                ]
-              }
+              "name" : "crud",
+              "form" : "jobform"
+            },
+            {
+              "name" : "pagination"
             },
             {
               "name" : "sortablearray"

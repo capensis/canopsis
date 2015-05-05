@@ -1,0 +1,17 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["field_list"]
+	}],
+	"properties": {
+        "field_list": {
+            "type": "array",
+            "role": "array",
+            "description": "A field list that events should contain where some url information can be collected.",
+            "items": {
+                "type": "string"
+            }
+        }
+	}
+}
