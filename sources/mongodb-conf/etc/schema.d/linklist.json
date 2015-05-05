@@ -1,0 +1,34 @@
+{
+    "categories": [{
+        "title": "General",
+        "keys": ["name", "mfilter", "filterlink"]
+    }],
+    "type": "object",
+    "properties": {
+        "_id": {
+            "type": "string"
+        },
+        "crecord_type": {
+            "enum": ["linklist"],
+            "required": true
+        },
+        "name": {
+            "type": "string"
+        },
+        "filterlink": {
+            "type": "array",
+            "role": "array",
+            "renderer": "labelledlink",
+            "description": "A list of labelled links that will be associated to an event.",
+            "items": {
+                "type": "object",
+                "role": "labelledlink"
+            }
+        },
+        "mfilter": {
+            "type": "string",
+            "role": "cfilter",
+            "description": "Matching events whose link list have to be computed."
+        }
+    }
+}

@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-04-27 09:36+0000\n"
+"PO-Revision-Date: 2015-05-04 12:55+0000\n"
 "Last-Translator: eric regnier <eregnier@capensis.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -1735,3 +1735,32 @@ msgstr "Numéro de ticket"
 
 msgid "Filter Links"
 msgstr "Filtres de liens"
+
+msgid "Data clean"
+msgstr "Nettoyage de données"
+
+msgid "Schedule"
+msgstr "Programmation"
+
+msgid "Edit url fields"
+msgstr "Edition des champs d'url"
+
+msgid "Edit wich fields in event should contains links"
+msgstr "Editer quels champs dans les évènements contiennent des liens"
+
+msgid "information not registered in database."
+msgstr "Information non enregistrée en base de données"
+
+msgid "field_list"
+msgstr "liste de champs"
+
+msgid ""
+"A field list that events should contain where some url information can be "
+"collected."
+msgstr "Décrire une liste de champs pour lesquels des url peuvent apparaître dans un évènement"
+
+msgid "done"
+msgstr "fait"
+
+msgid "Ticket declared"
+msgstr "Ticket déclaré"
