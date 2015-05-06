@@ -1,0 +1,62 @@
+{
+  "crecord_type": "view",
+  "crecord_name" : "snmprule.json",
+  "loader_id": "view.snmprule",
+  "loader_no_update": true,
+  "id": "view.snmprule",
+  "_id": "view.snmprule",
+  "crecord_write_time": 1430833907,
+  "enable": true,
+  "containerwidget": {
+    "items": [
+      {
+        "widget": {
+          "item_actions": [
+            "actionbutton-edit",
+            "actionbutton-show",
+            "actionbutton-removeselection"
+          ],
+          "id" : "d725b743-3cca-4d73-897f-3ea802c61011",
+          "widgetId" : "d725b743-3cca-4d73-897f-3ea802c61011",
+          "title": "Snmp rules",
+          "itemsPerPage": 10,
+          "filters": [],
+          "default_filter": null,
+          "cloaking": false,
+          "listed_crecord_type": "snmprule",
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ],
+          "mixins": [
+            {
+              "name": "Arraysearch",
+              "searchable_columns": ["_id"]
+            },
+            { "name" : "Pagination" },
+            { "name" : "Crud" }
+          ],
+          "displayed_columns": [
+            "_id",
+            "output",
+            "resource",
+            "component",
+            "state"
+          ],
+          "actions_toolbar": [
+            "actionbutton-removeselection"
+          ],
+          "xtype": "list"
+        },
+        "xtype": "widgetwrapper",
+        "title": "wrapper"
+      }
+    ],
+    "widgetslotTemplate": null,
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],
+    "title": ""
+  }
+}

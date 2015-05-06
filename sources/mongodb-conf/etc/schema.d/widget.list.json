@@ -42,7 +42,8 @@
 				"group",
 				"eventlog",
 				"ctxmetric",
-				"linklist"
+				"linklist",
+				"snmprule"
 			],
 			"default": "group",
 			"role": "simplelist"

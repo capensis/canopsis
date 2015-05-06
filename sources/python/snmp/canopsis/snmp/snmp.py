@@ -24,6 +24,7 @@ from canopsis.context.manager import Context
 from canopsis.event import get_routingkey, forger
 from time import time
 from functools import partial
+from json import dumps
 import re
 import socket
 
@@ -48,7 +49,10 @@ RULES = {
 
 
 class engine(Engine):
+
     etype = "snmp"
+
+    normal_exchange = 'canopsis.events'
 
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
@@ -85,7 +89,9 @@ class engine(Engine):
         if not rule:
             self.logger.info("No rules for trap {}".format(trap_oid))
             event["snmp_trap_match"] = False
-            return event
+            self.vars_to_string(event)
+            self.make_follow(event)
+            return
 
         # prepare the templating function
         self.logger.info("Found a rule for trap {}".format(trap_oid))
@@ -125,7 +131,9 @@ class engine(Engine):
         event["snmp_trap_match"] = True
         if errors:
             event["snmp_trap_errors"] = errors
-            self.logger.info("No new events, trap as errors: {}".format(errors))
+            self.logger.info("No new events, trap as errors: {}".format(
+                errors
+            ))
         else:
             # publish the new event
             self.logger.info("Publish a new event: {}".format(tt_event))
@@ -133,7 +141,20 @@ class engine(Engine):
             self.amqp.publish(
                 tt_event, rk, self.amqp.exchange_name_events)
 
-        return event
+        self.vars_to_string(event)
+
+        self.make_follow(event)
+
+    def vars_to_string(self, event):
+        key = 'snmp_vars'
+        if key in event and isinstance(event[key], dict):
+            event[key] = dumps(event[key])
+
+    def make_follow(self, event):
+        rk = get_routingkey(event)
+        event['_id'] = rk
+        self.amqp.publish(
+            event, rk, self.normal_exchange)
 
     def _template_repl(self, rule, vars, matchobj):
         m = matchobj.group(1)
