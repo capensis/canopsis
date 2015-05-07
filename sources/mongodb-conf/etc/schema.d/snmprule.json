@@ -13,16 +13,20 @@
             "required": true
         },
         "oid": {
-            "type": "string"
+            "type": "string",
+            "role": "snmpoid"
         },
         "output": {
-            "type": "string"
+            "type": "string",
+            "role": "snmpfield"
         },
         "resource": {
-            "type": "string"
+            "type": "string",
+            "role": "snmpfield"
         },
         "component": {
-            "type": "string"
+            "type": "string",
+            "role": "snmpfield"
         },
         "state": {
             "type": "integer",

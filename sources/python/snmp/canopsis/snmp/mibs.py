@@ -48,8 +48,13 @@ class MibsManager(MiddlewareRegistry):
         self[MibsManager.MIBS_STORAGE].put_element(
             _id=oid, element=info)
 
-    def get(self, oids=None):
-        return self[MibsManager.MIBS_STORAGE].get_elements(ids=oids)
+    def get(self, oids=None, limit=None, query={}, projection=None):
+        return self[MibsManager.MIBS_STORAGE].get_elements(
+            ids=oids,
+            query=query,
+            limit=limit,
+            projection=projection
+        )
 
     def remove(self, oids=None):
         self[MibsManager.MIBS_STORAGE].remove_elements(ids=oids)
