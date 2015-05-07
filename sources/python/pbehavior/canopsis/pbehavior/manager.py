@@ -258,7 +258,7 @@ class PBehaviorManager(MiddlewareRegistry):
         dtts = datetime.fromtimestamp(ts)
 
         # get entity documents(s)
-        documents = self.get(entity_ids=entity_ids)
+        documents = self.find(entity_ids=entity_ids, behaviors=behaviors)
         # check if one entity document is asked
         isunique = isinstance(entity_ids, basestring)
 
@@ -277,20 +277,19 @@ class PBehaviorManager(MiddlewareRegistry):
 
         # check all pbehavior related to input ts
         for document in documents:
-            values = document.get(PBehaviorManager.VALUES)
             behavior_result = self._get_ending(
-                behaviors=sbehaviors, values=values, dtts=dtts
+                behaviors=sbehaviors, documents=[document], dtts=dtts
             )
 
             # update result only if behavior result
             if behavior_result:
-                document_id = document[PBehaviorManager.ID]
+                entity_id = document[PBehaviorManager.ENTITY]
 
                 if isbunique:
-                    result[document_id] = behavior_result[behaviors]
+                    result[entity_id] = behavior_result[behaviors]
 
                 else:
-                    result[document_id] = behavior_result
+                    result[entity_id] = behavior_result
 
         # update result is isunique
         if isunique:
@@ -299,7 +298,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
         return result
 
-    def whois(self, behaviors, ts=None):
+    def whois(self, behaviors, ts=None, entity_ids=None):
         """Get entities which currently have specific behaviors.
 
         :param behaviors: behavior(s) to look for.
@@ -317,7 +316,14 @@ class PBehaviorManager(MiddlewareRegistry):
         # calculate ts datetime
         dtts = datetime.fromtimestamp(ts)
 
-        documents = self[PBehaviorManager.PBEHAVIOR_STORAGE].find_elements({})
+        # prepare filter
+        _filter = {} if entity_ids is None else {
+            PBehaviorManager.ENTITY: entity_ids
+        }
+
+        documents = self[PBehaviorManager.PBEHAVIOR_STORAGE].find_elements(
+            _filter=_filter
+        )
 
         if isinstance(behaviors, basestring):
             behaviors = [behaviors]
@@ -325,9 +331,8 @@ class PBehaviorManager(MiddlewareRegistry):
         len_behaviors = len(behaviors)
 
         for document in documents:
-            values = document.get(PBehaviorManager.VALUES)
             ending = self._get_ending(
-                behaviors=behaviors, values=values, dtts=dtts
+                behaviors=behaviors, documents=[document], dtts=dtts
             )
             if len(ending) != len_behaviors:
                 document_id = document[PBehaviorManager.ID]
@@ -335,27 +340,25 @@ class PBehaviorManager(MiddlewareRegistry):
 
         return result
 
-    def _get_ending(self, behaviors, values, dtts):
+    def _get_ending(self, behaviors, documents, dtts):
         """Get ending date of occured behavior(s) at a timestamp among value
         periods.
 
         :param set behaviors: behavior(s) to check.
-        :param value: (list of) period(s) and behaviors.
-        :type value: dict or list
+        :param list documents: document(s).
         :param datetime dtts: date time moment.
         """
 
         result = {}
 
-        if isinstance(values, dict):
-            values = [values]
+        for document in documents:
 
-        for value in values:
+            period = document[PBehaviorManager.PERIOD]
+
             # get period
-            period = value[PBehaviorManager.PERIOD]
             period = Event.from_ical(period)
             # get behaviors intersection
-            dbehaviors = set(value[PBehaviorManager.BEHAVIORS])
+            dbehaviors = set(document[PBehaviorManager.BEHAVIORS])
             behaviors_to_check = behaviors & dbehaviors
             # if intersection contains elements
             for behavior in behaviors_to_check:
