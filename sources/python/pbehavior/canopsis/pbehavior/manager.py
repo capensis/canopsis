@@ -25,6 +25,8 @@ from canopsis.configuration.configurable.decorator import (
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.storage import Storage
 
+from json import loads
+
 from time import time
 
 from icalendar import Event
@@ -33,7 +35,11 @@ from calendar import timegm
 
 from datetime import datetime, time as datetime_time
 
+from uuid import uuid4 as uuid
+
+#: pbehavior manager configuration path
 CONF_PATH = 'pbehavior/pbehavior.conf'
+#: pbehavior manager configuration category name
 CATEGORY = 'PBEHAVIOR'
 
 
@@ -51,14 +57,18 @@ class PBehaviorManager(MiddlewareRegistry):
 
     {
         id: document_id,
-        values: [{period: ..., behaviors: [...]}*]
+        entity_id: entity id,
+        period: period,
+        behaviors: behavior ids
     }.
     """
 
-    PBEHAVIOR_STORAGE = 'pbehavior_storage'  #: downtime storage name
+    PBEHAVIOR_STORAGE = 'pbehavior_storage'  #: pbehavior storage name
+
+    BEHAVIOR = 'X-Canopsis-BehaviorType'  #: behavior type key in period
 
     ID = Storage.DATA_ID  #: document id
-    VALUES = 'values'  #: document values field name
+    ENTITY = 'entity_id'  #: entity id
     PERIOD = 'period'  #: period value field name
     BEHAVIORS = 'behaviors'  #: behaviors value field name
 
@@ -69,53 +79,149 @@ class PBehaviorManager(MiddlewareRegistry):
         if PBEHAVIOR_storage is not None:
             self[PBehaviorManager.PBEHAVIOR_STORAGE] = PBEHAVIOR_storage
 
-    def get(self, entity_ids):
-        """Get a downtime related to input entity id(s).
+    def get(self, ids):
+        """Get a document related to input id(s).
 
-        :param entity_ids: entity id(s) bound to downtime.
-        :type entity_ids: list or str
-        :return: depending on entity_ids type:
-            - str: one dictionary with two fields, entity_id which contains
-                the entity id, and ``value`` which contains the downtime
-                expression.
-            - list: list of previous dictionaries.
+        :param ids: document id(s) to get.
+        :type ids: list or str
+        :return: depending on ids type:
+            - str: one document.
+            - list: list of documents.
         :rtype: list or dict
         """
 
         result = self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
-            ids=entity_ids
+            ids=ids
         )
 
         return result
 
-    def put(self, entity_id, document, cache=False):
-        """Put a downtime related to an entity id.
+    def find(self, entity_ids, behaviors=None):
+        """Find documents related to input entity id(s) and behavior(s).
 
-        :param str entity_id: downtime entity id.
+        :param entity_ids:
+        :type entity_ids: list or str
+        :param behaviors:
+        :type behaviors: list or str
+        :return: entity documents with input behaviors.
+        :rtype: list
+        """
+
+        # prepare filter
+        _filter = {
+            PBehaviorManager.ENTITY: entity_ids,
+            PBehaviorManager.BEHAVIORS: behaviors
+        }
+
+        result = self[PBehaviorManager.PBEHAVIOR_STORAGE].find_elements(
+            _filter=_filter
+        )
+
+        return result
+
+    def put(self, _id, document, cache=False):
+        """Put a pbehavior document.
+
+        :param str _id: document entity id.
         :param dict document: pbehavior document.
         :param bool cache: if True (False by default), use storage cache.
-        :return: entity_id if input downtime has been putted. Otherwise None.
+        :return: _id if input pbehavior document has been putted. Otherwise
+            None.
         :rtype: str
         """
 
         result = self[PBehaviorManager.PBEHAVIOR_STORAGE].put_element(
-            _id=entity_id, element=document, cache=cache
+            _id=_id, element=document, cache=cache
         )
 
         return result
 
-    def remove(self, entity_ids, cache=False):
-        """Remove entity downtime(s) related to input entity id(s).
+    def add(self, entity_id, values, behaviors=None):
+        """Add a pbehavior entry related to input entity_id and values.
 
-        :param entity_ids: downtime entity id(s).
-        :type entity_ids: list or str
+        :param str entity_id: entity id.
+        :param values: value(s) to add.
+        :type values: str, Event or list of str/Event.
+        :param behaviors: value(s) behavior(s) to add. If None, behaviors are
+            retrieved from values with the PBehaviorManager.BEHAVIOR key.
+        :type behaviors: list or str
+        :return: added document ids
+        :rtype: list
+        """
+
+        # initialize result
+        result = []
+
+        # ensure values is a list
+        if isinstance(values, (basestring, Event)):
+            values = [values]
+
+        # ensure behaviors is a list
+        if behaviors is None:
+            behaviors = []
+        elif isinstance(behaviors, basestring):
+            behaviors = [behaviors]
+
+        for value in values:
+            event = value
+            # ensure value is an event
+            if isinstance(value, basestring):
+                event = Event.from_ical(value)
+
+            value_behaviors = list(behaviors)
+            # update value behaviors
+            if PBehaviorManager.BEHAVIOR in event:
+                event_behaviors = event.get(PBehaviorManager.BEHAVIOR)
+                event_behaviors = loads(event_behaviors)
+                if isinstance(event_behaviors, basestring):
+                    value_behaviors.append(event_behaviors)
+                else:
+                    value_behaviors += event_behaviors
+
+            # prepare a document to put
+            document = {
+                PBehaviorManager.ENTITY: entity_id,
+                PBehaviorManager.PERIOD: event.to_ical(),
+                PBehaviorManager.BEHAVIORS: value_behaviors
+            }
+
+            # put a new document with a new id
+            _id = str(uuid())
+            self.put(_id=_id, document=document)
+            # add _id to result
+            result.append(_id)
+
+        return result
+
+    def remove(self, ids=None, cache=False):
+        """Remove document(s) by id.
+
+        :param ids: pbehavior document id(s). If None, remove all documents.
+        :type ids: list or str
         :param bool cache: if True (False by default), use storage cache.
-        :return: entity id(s) of removed downtime(s).
+        :return: removed document id(s).
         :rtype: list
         """
 
         result = self[PBehaviorManager.PBEHAVIOR_STORAGE].remove_elements(
-            ids=entity_ids, cache=cache
+            ids=ids, cache=cache
+        )
+
+        return result
+
+    def remove_by_entity(self, entity_ids, cache=False):
+        """Remove document(s) by entity ids.
+
+        :param entity_ids: document entity id(s) to remove.
+        :type entity_ids: list or str
+        :param bool cache: if True (False by default), use storage cache.
+        :return: removed document id(s).
+        :rtype: list
+
+        """
+
+        result = self[PBehaviorManager.PBEHAVIOR_STORAGE].remove_elements(
+            _filter={PBehaviorManager.ENTITY: entity_ids}
         )
 
         return result
@@ -147,7 +253,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
         # initialize ts
         if ts is None:
-            ts = time.time()
+            ts = time()
         # calculate ts datetime
         dtts = datetime.fromtimestamp(ts)
 
@@ -169,7 +275,7 @@ class PBehaviorManager(MiddlewareRegistry):
         else:
             sbehaviors = set(behaviors)
 
-        # check all downtime related to input ts
+        # check all pbehavior related to input ts
         for document in documents:
             values = document.get(PBehaviorManager.VALUES)
             behavior_result = self._get_ending(
@@ -194,8 +300,7 @@ class PBehaviorManager(MiddlewareRegistry):
         return result
 
     def whois(self, behaviors, ts=None):
-        """
-        Get entities which currently have specific behaviors.
+        """Get entities which currently have specific behaviors.
 
         :param behaviors: behavior(s) to look for.
         :type behaviors: list or str
@@ -212,7 +317,7 @@ class PBehaviorManager(MiddlewareRegistry):
         # calculate ts datetime
         dtts = datetime.fromtimestamp(ts)
 
-        documents = self[PBehaviorManager.PBEHAVIOR_STORAGE].find_elements()
+        documents = self[PBehaviorManager.PBEHAVIOR_STORAGE].find_elements({})
 
         if isinstance(behaviors, basestring):
             behaviors = [behaviors]
@@ -268,14 +373,12 @@ class PBehaviorManager(MiddlewareRegistry):
                 rrule = rrulestr(rrule.to_ical(), cache=True, dtstart=dtstart)
                 # calculate first date after dtts including dtts
                 before = rrule.before(dt=dtts, inc=True)
-                # if before datetimes exist
+                # if before datetime exist
                 if before is not None:
-                    # first date is the first before
-                    first = before[-1]
                     # add duration
-                    end = first + duration
+                    end = before + duration
                     # and check if dtstart is in [first; end]
-                    if first <= dtts <= end:
+                    if before <= dtts <= end:
                         # update end in the result
                         endts = timegm(end.timetuple())
                         result[behavior] = endts
