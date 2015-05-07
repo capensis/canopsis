@@ -18,15 +18,15 @@
         },
         "output": {
             "type": "string",
-            "role": "snmpfield"
+            "role": "snmpelement"
         },
         "resource": {
             "type": "string",
-            "role": "snmpfield"
+            "role": "snmpelement"
         },
         "component": {
             "type": "string",
-            "role": "snmpfield"
+            "role": "snmpelement"
         },
         "state": {
             "type": "integer",
