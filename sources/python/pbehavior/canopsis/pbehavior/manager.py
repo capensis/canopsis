@@ -226,30 +226,20 @@ class PBehaviorManager(MiddlewareRegistry):
 
         return result
 
-    def getending(self, entity_ids, behaviors, ts=None):
+    def getending(self, entity_id, behaviors, ts=None):
         """Get end date of corresponding behaviors if a timestamp is in a
         behavior period.
 
-        :param entity_ids: entity id(s).
-        :type entity_ids: list or str
+        :param str entity_ids: entity id.
         :param behaviors: behavior(s) to check at timestamp.
         :type behaviors: list or str
         :param long ts: timestamp to check. If None, use now.
-        :return: depending on entity_ids and behaviors types:
+        :return: depending on behaviors types:
             - behaviors:
                 + str: behavior end timestamp.
                 + array: dict of end timestamp by behavior.
-            - entity_ids:
-                + str: one end dates of behaviors if related entity is in
-                    behavior at ts. None if entity ids is not in Storage.
-                + list: set of (entity id: behaviors). If entity is not
-                    registered in behavior state, no entry is added in the
-                    result.
         :rtype: dict or long or NoneType
         """
-
-        # initialize result
-        result = {}
 
         # initialize ts
         if ts is None:
@@ -258,43 +248,26 @@ class PBehaviorManager(MiddlewareRegistry):
         dtts = datetime.fromtimestamp(ts)
 
         # get entity documents(s)
-        documents = self.find(entity_ids=entity_ids, behaviors=behaviors)
+        documents = self.find(entity_ids=entity_id, behaviors=behaviors)
         # check if one entity document is asked
-        isunique = isinstance(entity_ids, basestring)
-
-        if isunique:  # ensure documents is a list
-            documents = [] if documents is None else [documents]
-
-        # are many behaviors asked ?
-        isbunique = isinstance(behaviors, basestring)
+        isunique = isinstance(behaviors, basestring)
 
         # get sbehaviors such as a behaviors set
-        if isbunique:
+        if isunique:
             sbehaviors = {behaviors}
 
         else:
             sbehaviors = set(behaviors)
 
         # check all pbehavior related to input ts
-        for document in documents:
-            behavior_result = self._get_ending(
-                behaviors=sbehaviors, documents=[document], dtts=dtts
-            )
-
-            # update result only if behavior result
-            if behavior_result:
-                entity_id = document[PBehaviorManager.ENTITY]
-
-                if isbunique:
-                    result[entity_id] = behavior_result[behaviors]
-
-                else:
-                    result[entity_id] = behavior_result
+        result = self._get_ending(
+            behaviors=sbehaviors, documents=documents, dtts=dtts
+        )
 
         # update result is isunique
         if isunique:
-            # convert result to a bool or None if entity_ids is str
-            result = result[entity_ids] if entity_ids in result else None
+            # convert result to a bool or None if behaviors is str
+            result = result[behaviors] if behaviors in result else None
 
         return result
 
