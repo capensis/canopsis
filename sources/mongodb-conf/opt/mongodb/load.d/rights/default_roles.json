@@ -5,6 +5,10 @@
 			"checksum": 15,
 			"desc": ""
 		},
+		"view_event": {
+			"checksum": 7,
+			"desc": ""
+		},
 		"actionbutton_connectordisable": {
 			"checksum": 15,
 			"desc": ""

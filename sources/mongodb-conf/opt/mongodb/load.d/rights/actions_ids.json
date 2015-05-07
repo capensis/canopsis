@@ -277,5 +277,8 @@
     },
     "job_delete": {
         "desc": "Delete jobs"
+    },
+    "view_event": {
+        "desc": "Event view actions"
     }
 }
