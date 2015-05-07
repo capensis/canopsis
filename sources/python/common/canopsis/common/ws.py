@@ -341,3 +341,9 @@ class route(object):
         in_route_name = ':{0}/'.format(param) in route_name
 
         return in_payload or in_route_name
+
+
+def apply_routes(urls):
+    for url in urls:
+        decorator = route(url['method'], name=url['name'], **url['params'])
+        decorator(url['handler'])
