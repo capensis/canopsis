@@ -1,0 +1,23 @@
+[
+    {
+        "_id" : "55423bad2998842c4e22a41b",
+        "last_execution" : null,
+        "crecord_write_time" : 1430404013,
+        "enable" : true,
+        "start" : 1430404008,
+        "task" : "tasklinklist",
+        "params" : {
+            "jobctx" : null,
+            "crecord_type" : "tasklinklist",
+            "xtype" : "tasklinklist",
+            "jobid" : null
+        },
+        "rrule" : "FREQ=DAILY",
+        "context" : null,
+        "crecord_type" : "job",
+        "crecord_creation_time" : 1430404013,
+        "crecord_name" : null,
+        "loader_id" : "job_linklist_1",
+        "loader_no_update": true
+    }
+]

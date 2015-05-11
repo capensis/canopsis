@@ -97,10 +97,13 @@ class engine(Engine):
 
         now = int(time())
 
-        self.storage.get_backend().update({
-            '_id': job['_id'],
-            'last_execution': {'$lte': now}
-        }, {
+        self.storage.get_backend().update({'$and': [
+            {'_id': job['_id']},
+            {'$or': [
+                {'last_execution': {'$lte': now}},
+                {'last_execution': None},
+            ]}
+        ]}, {
             '$set': {
                 'last_execution': now
             }

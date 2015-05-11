@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-04-27 11:24+0100\n"
+"PO-Revision-Date: 2015-05-04 14:48+0100\n"
 "Last-Translator: teamcanopsis <teamcanopsis@capensis.fr>\n"
 "Language-Team: English <teamcanopsis@capensis.fr>\n"
 "MIME-Version: 1.0\n"
@@ -1777,3 +1777,33 @@ msgstr "Ticket number"
 msgid "Filter Links"
 msgstr "Filter Links"
 
+msgid "Data clean"
+msgstr "Data clean"
+
+msgid "Schedule"
+msgstr "Schedule"
+
+msgid "Edit url fields"
+msgstr "Edit url fields"
+
+msgid "Edit wich fields in event should contains links"
+msgstr "Edit wich fields in event should contains links"
+
+msgid "information not registered in database."
+msgstr "information not registered in database."
+
+msgid "field_list"
+msgstr "field_list"
+
+msgid ""
+"A field list that events should contain where some url information can be "
+"collected."
+msgstr ""
+"A field list that events should contain where some url information can be "
+"collected."
+
+msgid "done"
+msgstr "done"
+
+msgid "Ticket declared"
+msgstr "Ticket declared"
