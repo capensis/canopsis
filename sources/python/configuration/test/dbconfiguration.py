@@ -19,35 +19,28 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import dynmodloads
-from canopsis.common.init import Init
+from unittest import TestCase, main
+from canopsis.configuration.dbconfigurationmanager import DBConfiguration
+from uuid import uuid4
 
-import sys
-import os
+DEBUG = False
+
+
+class DBConfigurationTest(TestCase):
+    """
+    Base class for all check manager tests.
+    """
+
+    def setUp(self):
+        """
+        initialize a manager.
+        """
+        self.dbconfigurationmanager = DBConfiguration()
+
+
+class DBConfigurationTest(CheckManagerTest):
+    pass
 
 
 if __name__ == '__main__':
-    init = Init()
-    logger = init.getLogger('filldb')
-
-    if len(sys.argv) != 2:
-        print('Usage: {0} [init|update]'.format(sys.argv[0]))
-        sys.exit(1)
-
-    action = sys.argv[1].lower()
-
-    if action not in ['update', 'init']:
-        print('Invalid option: {0}'.format(action))
-        sys.exit(1)
-
-    modules = dynmodloads(
-        os.path.join(sys.prefix, 'opt', 'mongodb', 'load.d'),
-        logger=logger
-    )
-
-    for name in sorted(modules):
-        module = modules[name]
-        module.logger = logger
-        logger.info("{0} {1} ...".format(action, name))
-
-        getattr(module, action)()
+    main()

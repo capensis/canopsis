@@ -19,35 +19,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import dynmodloads
-from canopsis.common.init import Init
+from canopsis.common.setup import setup
 
-import sys
-import os
+install_requires = ['canopsis.common']
 
-
-if __name__ == '__main__':
-    init = Init()
-    logger = init.getLogger('filldb')
-
-    if len(sys.argv) != 2:
-        print('Usage: {0} [init|update]'.format(sys.argv[0]))
-        sys.exit(1)
-
-    action = sys.argv[1].lower()
-
-    if action not in ['update', 'init']:
-        print('Invalid option: {0}'.format(action))
-        sys.exit(1)
-
-    modules = dynmodloads(
-        os.path.join(sys.prefix, 'opt', 'mongodb', 'load.d'),
-        logger=logger
-    )
-
-    for name in sorted(modules):
-        module = modules[name]
-        module.logger = logger
-        logger.info("{0} {1} ...".format(action, name))
-
-        getattr(module, action)()
+setup(
+    description='Canopsis linklist library',
+    install_requires=install_requires,
+    keywords='link list')
