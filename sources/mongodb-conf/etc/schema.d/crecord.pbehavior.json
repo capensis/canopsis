@@ -1,0 +1,33 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "general",
+        "keys":["start", "start", "end", "freq", "duration"]
+    }],
+    "properties": {
+        "entity_id": {
+            "type": "string",
+            "required": true
+        },
+        "start": {
+            "type": "string",
+            "required": false,
+            "role": "datetime"
+        },
+        "end": {
+            "type": "string",
+            "required": false,
+            "role": "datetime"
+        },
+        "freq": {
+            "type": "string",
+            "required": false,
+            "role": "freq"
+        },
+        "duration": {
+            "type": "datetime",
+            "required": false,
+            "role": "duration"
+        }
+    }
+}
