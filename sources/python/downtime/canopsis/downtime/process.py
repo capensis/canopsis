@@ -32,24 +32,33 @@ from datetime import datetime, timedelta
 from icalendar import Event as vEvent
 
 
-context = Context()
-pbmgr = PBehaviorManager()
+ctxmgr = Context()  #: default context manager
+pbmgr = PBehaviorManager()  #: default pbehavior manager
 
 events = get_storage(
     namespace='events',
     account=Account(user='root', group='root')
 ).get_backend()
 
+DOWNTIME = 'downtime'  #: downtime pbehavior value
+
 
 @register_task
-def event_processing(engine, event, manager=None, logger=None, **kwargs):
+def event_processing(
+    engine, event, context=None, manager=None, logger=None, **kwargs
+):
     """Process input event.
 
     :param dict event: event to process.
     :param Engine engine: engine which consumes the event.
-    :param PBehaviorManager manager: pbehavior manager to use.
+    :param Context manager: context manager to use. Default is shared ctxmgr.
+    :param PBehaviorManager manager: pbehavior manager to use. Default is
+        pbmgr.
     :param Logger logger: logger to use in this task.
     """
+
+    if context is None:
+        context = ctxmgr
 
     if manager is None:
         manager = pbmgr
@@ -58,9 +67,9 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
     entity = context.get_entity(event)
     eid = context.get_entity_id(entity)
 
-    if evtype == 'downtime':
+    if evtype == DOWNTIME:
         ev = vEvent()
-        ev.add('X-Canopsis-BehaviorType', 'downtime')
+        ev.add('X-Canopsis-BehaviorType', DOWNTIME)
         ev.add('summary', event['output'])
         ev.add('dtstart', datetime.fromtimestamp(event['start']))
         ev.add('dtend', datetime.fromtimestamp(event['end']))
@@ -68,9 +77,9 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
         ev.add('duration', timedelta(event['duration']))
         ev.add('contact', event['author'])
 
-        manager.put(eid, ev.to_ical())
+        manager.add(entity_id=eid, values=ev, behaviors='downtime')
 
-        if manager.getending(eid, 'downtime', event['timestamp']):
+        if manager.getending(eid, DOWNTIME, event['timestamp']):
             events.update(
                 {
                     'connector': event['connector'],
@@ -80,30 +89,35 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
                 },
                 {
                     '$set': {
-                        'downtime': True
+                        DOWNTIME: True
                     }
                 }
             )
 
     else:
-        event['downtime'] = manager.getending(eid, 'downtime') is not None
+        event[DOWNTIME] = manager.getending(eid, DOWNTIME) is not None
 
     return event
 
 
 @register_task
-def beat_processing(engine, manager=None, logger=None, **kwargs):
+def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
     """Process periodic task.
 
     :param Engine engine: engine which consumes the event.
-    :param PBehaviorManager manager: pbehavior manager to use.
+    :param Context manager: context manager to use. Default is shared ctxmgr.
+    :param PBehaviorManager manager: pbehavior manager to use. Default is
+        pbmgr.
     :param Logger logger: logger to use in this task.
     """
+
+    if context is None:
+        context = ctxmgr
 
     if manager is None:
         manager = pbmgr
 
-    entity_ids = manager.whois('downtime')
+    entity_ids = manager.whois(DOWNTIME)
     entities = context.get_entities(entity_ids)
 
     spec = {}
@@ -116,4 +130,4 @@ def beat_processing(engine, manager=None, logger=None, **kwargs):
             ]
         }
 
-    events.update(spec, {'$set': {'downtime': False}})
+    events.update(spec, {'$set': {DOWNTIME: False}})

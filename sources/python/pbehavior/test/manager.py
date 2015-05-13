@@ -38,7 +38,7 @@ class PBehaviorManagerTest(TestCase):
         # UTs check period with(out) behaviors on periods in one hour.
         self.now = datetime.now()
         # use same rrule which is checked every day
-        rrule = "FREQ=DAILY"  # recurrence for 2 days
+        rrule = "FREQ=DAILY"
         # use same duration which lasts 1 jour
         duration = "PT1H"  # 1 hour duration
         # construct events
@@ -64,7 +64,7 @@ class PBehaviorManagerTest(TestCase):
         self.behaviors = [str(i) for i in range(self.count)]
         # construct documents such as:
         # {id: i, values: [{period: events[j], behaviors: behaviors[j]}]}
-        self.documents = [
+        self.values = [
             {
                 PBehaviorManager.ID: self.behaviors[i],
                 PBehaviorManager.VALUES: [
@@ -123,34 +123,34 @@ class PBehaviorManagerTest(TestCase):
         rd = relativedelta(minutes=1)
         dtts = self.now - rd
 
-        for document in self.documents:
-            values = document[PBehaviorManager.VALUES]
-            # check each behavior
-            for behavior in self.behaviors:
-                # check to get endings outside periods
-                endings = self.manager._get_ending(
-                    behaviors={behavior}, values=values, dtts=dtts
-                )
-                self.assertFalse(endings)
-                # check to get endings inside periods
-                endings = self.manager._get_ending(
-                    behaviors={behavior}, values=values, dtts=self.now + rd
-                )
-                self.assertTrue(endings)
-            # check set of behaviors
-            for i in range(self.count):
-                # get first i behaviors
-                sub_behaviors = set(self.behaviors[:i])
-                # check to get endings outside periods
-                endings = self.manager._get_ending(
-                    behaviors=sub_behaviors, values=values, dtts=dtts
-                )
-                self.assertFalse(endings)
-                # check to get endings inside periods
-                endings = self.manager._get_ending(
-                    behaviors=sub_behaviors, values=values, dtts=self.now
-                )
-                self.assertEqual(len(endings), len(sub_behaviors))
+        # check each behavior
+        for behavior in self.behaviors:
+            # check to get endings outside periods
+            endings = self.manager._get_ending(
+                behaviors={behavior}, documents=self.documents, dtts=dtts
+            )
+            self.assertFalse(endings)
+            # check to get endings inside periods
+            endings = self.manager._get_ending(
+                behaviors={behavior}, documents=self.documents,
+                dtts=self.now + rd
+            )
+            self.assertTrue(endings)
+        # check set of behaviors
+        for i in range(self.count):
+            # get first i behaviors
+            sub_behaviors = set(self.behaviors[:i])
+            # check to get endings outside periods
+            endings = self.manager._get_ending(
+                behaviors=sub_behaviors, documents=self.documents, dtts=dtts
+            )
+            self.assertFalse(endings)
+            # check to get endings inside periods
+            endings = self.manager._get_ending(
+                behaviors=sub_behaviors, documents=self.documents,
+                dtts=self.now
+            )
+            self.assertEqual(len(endings), len(sub_behaviors))
 
     def test_get_ending(self):
         """Test get_ending method.
