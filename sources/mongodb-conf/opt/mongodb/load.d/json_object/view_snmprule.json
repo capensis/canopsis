@@ -37,7 +37,7 @@
             { "name" : "Crud" }
           ],
           "displayed_columns": [
-            "_id",
+            "oid",
             "output",
             "resource",
             "component",
