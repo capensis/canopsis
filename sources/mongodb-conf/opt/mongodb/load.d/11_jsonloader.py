@@ -188,6 +188,8 @@ def do_update(json_data, collection):
             pp.pformat(compare_record),
             pp.pformat(record)
         )
+    if '_id' in record:
+        del record['_id']
 
     storage.get_backend(collection).update(
         {'loader_id': json_data['loader_id']},
@@ -198,5 +200,3 @@ def do_update(json_data, collection):
 
 def update():
     init()
-
-init()

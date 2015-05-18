@@ -25,6 +25,8 @@ PROJECTS[21]='monitoring'
 PROJECTS[22]='graph'
 PROJECTS[23]='topology'
 PROJECTS[24]='sla'
+PROJECTS[25]='linklist'
+PROJECTS[26]='entitylink'
 
 function build(){
 	true

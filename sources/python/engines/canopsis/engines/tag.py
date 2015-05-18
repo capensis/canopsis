@@ -120,7 +120,7 @@ class engine(Engine):
         event = self.add_tag(event, 'resource')
 
         # Adds tag to event if selector crecord matches current event.
-        self.logger.debug('Will process selector tag on event {} '.format(
+        self.logger.debug(u'Will process selector tag on event {} '.format(
             event['rk']
         ))
 

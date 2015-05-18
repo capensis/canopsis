@@ -1,6 +1,10 @@
 [{
 	"_id": "admin",
 	"rights": {
+		"actionbutton_canediturlfield": {
+			"checksum": 15,
+			"desc": ""
+		},
 		"actionbutton_connectoredit": {
 			"checksum": 15,
 			"desc": ""

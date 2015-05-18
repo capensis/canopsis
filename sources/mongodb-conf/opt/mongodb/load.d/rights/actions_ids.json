@@ -1,12 +1,15 @@
 {
+    "actionbutton_canediturlfield": {
+        "desc": "Edit filter to associate filter to entities"
+    },
     "showview_view_permissions": {
-        "desc": ""
+        "desc": "See permission view"
     },
     "showview_view_accounts": {
-        "desc": ""
+        "desc": "See view accounts"
     },
     "showview_service": {
-        "desc": ""
+        "desc": "See view service"
     },
     "list_search": {
         "desc": "Use search on list"
@@ -33,10 +36,10 @@
         "desc": "Acknowledge an event"
     },
     "showview_view_connectors": {
-        "desc": ""
+        "desc": "See connector view"
     },
     "actionbutton_connectoredit": {
-        "desc": "Edit connectors"
+        "desc": "Edit connector settings"
     },
     "actionbutton_connectordisable": {
         "desc": "Disable connector"
@@ -54,231 +57,225 @@
         "desc": "Set connector configuration"
     },
     "actionbutton_cancel": {
-        "desc": ""
+        "desc": "Cancel event"
     },
     "actionbutton_uncancel": {
-        "desc": ""
+        "desc": "Restore event"
     },
     "actionbutton_changestate": {
-        "desc": ""
+        "desc": "Change event state"
     },
     "actionbutton_eventnavigation": {
-        "desc": ""
+        "desc": "Go to event view"
     },
     "actionbutton_history": {
-        "desc": ""
+        "desc": "Go to event history view"
     },
     "actionbutton_incident": {
-        "desc": ""
+        "desc": "Declare an incident"
     },
     "actionbutton_info": {
-        "desc": ""
+        "desc": "Show entities link associations"
     },
     "actionbutton_ticketnumber": {
-        "desc": ""
+        "desc": "Declare ticket number"
     },
     "showview_view_event": {
-        "desc": ""
+        "desc": "See event view"
     },
     "showview_view_selectors": {
-        "desc": ""
+        "desc": "See selector view"
     },
     "showview_view_jobs": {
-        "desc": ""
+        "desc": "See jobs view"
     },
     "showview_view_filters": {
-        "desc": ""
+        "desc": "See filters view"
     },
     "showview_view_services": {
-        "desc": ""
+        "desc": "See services view"
     },
     "showview_view_series": {
-        "desc": ""
-    },
-    "showview_view_series": {
-        "desc": ""
+        "desc": "See series view"
     },
     "userview_create": {
-        "desc": "Create views"
+        "desc": "Create a custom view"
     },
     "userview_read": {
-        "desc": "Read views"
+        "desc": "Access a custom view"
     },
     "userview_update": {
-        "desc": "Update views"
+        "desc": "Update a custom view"
     },
     "userview_delete": {
-        "desc": "Delete views"
+        "desc": "Delete a userview"
     },
     "selector_create": {
-        "desc": "Create selectors"
+        "desc": "Create a selector record"
     },
     "selector_read": {
-        "desc": "Read selectors"
+        "desc": "Access a selector record"
     },
     "selector_update": {
-        "desc": "Update selectors"
+        "desc": "Update a selector record"
     },
     "selector_delete": {
-        "desc": "Delete selectors"
+        "desc": "Remove a selector record"
     },
     "role_create": {
-        "desc": "Create roles"
+        "desc": "Create a role"
     },
     "role_read": {
-        "desc": "Read roles"
+        "desc": "Access a role"
     },
     "role_update": {
-        "desc": "Update roles"
+        "desc": "Update a role"
     },
     "role_delete": {
-        "desc": "Delete roles"
+        "desc": "Delete a role"
     },
     "action_create": {
-        "desc": "Create actions"
+        "desc": "Create an action"
     },
     "action_read": {
-        "desc": "Read actions"
+        "desc": "Access an action"
     },
     "action_update": {
-        "desc": "Update actions"
+        "desc": "Update an action"
     },
     "action_delete": {
-        "desc": "Delete actions"
+        "desc": "Delete an action"
     },
     "filter_create": {
-        "desc": "Create filters"
+        "desc": "Create a filter"
     },
     "filter_read": {
-        "desc": "Read filters"
+        "desc": "Access a filter"
     },
     "filter_update": {
-        "desc": "Update filters"
+        "desc": "Update a filter"
     },
     "filter_delete": {
-        "desc": "Delete filters"
+        "desc": "Delete a filter"
     },
     "curve_create": {
-        "desc": "Create curves"
+        "desc": "Create a curve"
     },
     "curve_read": {
-        "desc": "Read curves"
+        "desc": "Access a curve"
     },
     "curve_update": {
-        "desc": "Update curves"
+        "desc": "Update a curve"
     },
     "curve_delete": {
-        "desc": "Delete curves"
+        "desc": "Delete a curve"
     },
     "account_create": {
-        "desc": "Create accounts"
+        "desc": "Create an account"
     },
     "account_read": {
-        "desc": "Read accounts"
+        "desc": "Access an account"
     },
     "account_update": {
-        "desc": "Update accounts"
+        "desc": "Update an account"
     },
     "account_delete": {
-        "desc": "Delete accounts"
+        "desc": "Delete an account"
     },
     "user_create": {
-        "desc": "Create users"
+        "desc": "Create a user"
     },
     "user_read": {
-        "desc": "Read users"
+        "desc": "Access a user"
     },
     "user_update": {
-        "desc": "Update users"
+        "desc": "Update a user"
     },
     "user_delete": {
-        "desc": "Delete users"
+        "desc": "Delete a user"
     },
     "serie_create": {
-        "desc": "Create series"
+        "desc": "Create a serie"
     },
     "serie_read": {
-        "desc": "Read series"
+        "desc": "Access a serie"
     },
     "serie_update": {
-        "desc": "Update series"
+        "desc": "Update a serie"
     },
     "serie_delete": {
-        "desc": "Delete series"
+        "desc": "Delete a serie"
     },
     "topology_create": {
-        "desc": "Create topologies"
+        "desc": "Create a topology"
     },
     "topology_read": {
-        "desc": "Read topologies"
+        "desc": "Access a topology"
     },
     "topology_update": {
-        "desc": "Update topologies"
+        "desc": "Update a topology"
     },
     "topology_delete": {
-        "desc": "Delete topologies"
+        "desc": "Delete a topology"
     },
     "profile_create": {
-        "desc": "Create profiles"
+        "desc": "Create a profile"
     },
     "profile_read": {
-        "desc": "Read profiles"
+        "desc": "Access a profile"
     },
     "profile_update": {
-        "desc": "Update profiles"
+        "desc": "Update a profile"
     },
     "profile_delete": {
-        "desc": "Delete profiles"
+        "desc": "Delete a profile"
     },
     "derogation_create": {
-        "desc": "Create derogations"
+        "desc": "Create a derogation"
     },
     "derogation_read": {
-        "desc": "Read derogations"
+        "desc": "Access a derogation"
     },
     "derogation_update": {
-        "desc": "Update derogations"
+        "desc": "Update a derogation"
     },
     "derogation_delete": {
-        "desc": "Delete derogations"
+        "desc": "Delete a derogation"
     },
     "event_create": {
-        "desc": "Create events"
+        "desc": "Create an event"
     },
     "event_read": {
-        "desc": "Read events"
+        "desc": "Access an event"
     },
     "event_update": {
-        "desc": "Update events"
+        "desc": "Update an event"
     },
     "event_delete": {
-        "desc": "Delete events"
+        "desc": "Delete an event"
     },
     "eventlog_create": {
-        "desc": "Create log events"
+        "desc": "Create an event log"
     },
     "eventlog_read": {
-        "desc": "Read log events"
+        "desc": "Access an event log"
     },
     "eventlog_update": {
-        "desc": "Update log events"
+        "desc": "Update an event log"
     },
     "eventlog_delete": {
-        "desc": "Delete log events"
+        "desc": "Delete an event log"
     },
     "job_create": {
-        "desc": "Create jobs"
+        "desc": "Create a scheduled job"
     },
     "job_read": {
-        "desc": "Read jobs"
+        "desc": "Access a scheduled job"
     },
     "job_update": {
-        "desc": "Update jobs"
+        "desc": "Update a scheduled job"
     },
     "job_delete": {
-        "desc": "Delete jobs"
-    },
-    "view_event": {
-        "desc": "Event view actions"
+        "desc": "Delete a scheduled job"
     }
 }

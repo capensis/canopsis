@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-03-19 14:56+0000\n"
+"PO-Revision-Date: 2015-05-18 08:57+0000\n"
 "Last-Translator: eric regnier <eregnier@capensis.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -689,7 +689,7 @@ msgid "Ack"
 msgstr "Ack"
 
 msgid "Cancel ack"
-msgstr "Effacer Ack"
+msgstr "Annuler Ack"
 
 msgid "Output"
 msgstr "Message"
@@ -1334,7 +1334,7 @@ msgid "Not a valid number"
 msgstr "Nombre invalide"
 
 msgid "Remove ack"
-msgstr "Annuler ack"
+msgstr "Effacer ack"
 
 msgid "Undo cancel"
 msgstr "Défaire annulation"
@@ -1687,3 +1687,121 @@ msgstr "Information sauvegardée"
 
 msgid "Delete this record ?"
 msgstr "Supprimer cet enregistrement ?"
+
+msgid "label"
+msgstr "label"
+
+msgid "url"
+msgstr "url"
+
+msgid "Link list"
+msgstr "Liste de liens"
+
+msgid "mobile"
+msgstr "mobile"
+
+msgid "tablet"
+msgstr "tablette"
+
+msgid "desktop"
+msgstr "bureau"
+
+msgid "mocks applied"
+msgstr "mock appliqué"
+
+msgid "add mock"
+msgstr "ajouter mock"
+
+msgid "Enabled plugins"
+msgstr "Plugins activés"
+
+msgid "External links"
+msgstr "Liens externes"
+
+msgid "filterlink"
+msgstr "filtre de lien"
+
+msgid "Url"
+msgstr "Url"
+
+msgid "A list of labelled links that will be associated to an event."
+msgstr "Liste de liens avec label qui sera associés à un évènement"
+
+msgid "Matching events whose link list have to be computed."
+msgstr "Evènements filtrés dont les liens doivent être calculés"
+
+msgid "Ticket number"
+msgstr "Numéro de ticket"
+
+msgid "Filter Links"
+msgstr "Filtres de liens"
+
+msgid "Data clean"
+msgstr "Nettoyage de données"
+
+msgid "Schedule"
+msgstr "Programmation"
+
+msgid "Edit url fields"
+msgstr "Edition des champs d'url"
+
+msgid "Edit wich fields in event should contains links"
+msgstr "Editer quels champs dans les évènements contiennent des liens"
+
+msgid "information not registered in database."
+msgstr "Information non enregistrée en base de données"
+
+msgid "field_list"
+msgstr "liste de champs"
+
+msgid ""
+"A field list that events should contain where some url information can be "
+"collected."
+msgstr "Décrire une liste de champs pour lesquels des url peuvent apparaître dans un évènement"
+
+msgid "done"
+msgstr "fait"
+
+msgid "Ticket declared"
+msgstr "Ticket déclaré"
+
+msgid ""
+"List of Canopsis UI plugins enabled.<br/><i class=\"fa fa-warning\"></i> "
+"BEWARE, if core or uibase module removed, Canopsis UI may not start properly"
+msgstr "Liste des plugins Canopsis activés <br/><i class=\"fa fa-warning\"></i> ATTENTION, if les modules core ou uibase sont supprimés, Canopsis UI ne pourra pas fonctionner."
+
+msgid "Rendering"
+msgstr "Rendu"
+
+msgid "Click event"
+msgstr "Evènement au click"
+
+msgid "show_title"
+msgstr "afficher titre"
+
+msgid "show_output"
+msgstr "montrer output"
+
+msgid "Delete this widget ?"
+msgstr "Supprimer ce widget ?"
+
+msgid "use_labels"
+msgstr "utiliser labels"
+
+msgid "Snmp rules"
+msgstr "Règles Snmp"
+
+msgid "Delete these records ?"
+msgstr "Supprimer ces enregistrements ?"
+
+msgid "oid"
+msgstr "oid"
+
+msgid "Remove alarm"
+msgstr "Effacer alarme"
+
+msgid "Restore alarm"
+msgstr "Rétablir alarme"
+
+msgid "general"
+msgstr "général"
