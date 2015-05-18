@@ -2,13 +2,13 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["_id", "action_desc"]
+		"keys":["_id", "desc"]
 	}],
 	"properties": {
 		"_id": {
 			"type": "string"
 		},
-		"action_desc": {
+		"desc": {
 			"type": "string"
 		}
 	}
