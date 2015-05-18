@@ -1,6 +1,7 @@
 {
         "crecord_name" : "app_footer.json",
         "loader_id": "view.app_footer",
+        "crecord_type": "view",
         "loader_no_update": true,
         "id" : "view.app_footer",
         "_id" : "view.app_footer",

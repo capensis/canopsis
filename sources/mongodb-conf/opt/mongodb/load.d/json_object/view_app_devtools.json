@@ -1,5 +1,6 @@
 {
     "crecord_name" : "app_devtools.json",
+    "crecord_type" : "view",
     "loader_id": "view.app_devtools",
     "loader_no_update": true,
     "id" : "view.app_devtools",

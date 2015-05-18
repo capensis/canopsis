@@ -2,6 +2,7 @@
     "crecord_name" : "app_header.json",
     "loader_id": "view.app_header",
     "loader_no_update": true,
+    "crecord_type": "view",
     "id" : "view.app_header",
     "_id" : "view.app_header",
     "crecord_write_time" : 1406205401,
