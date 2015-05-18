@@ -8,7 +8,7 @@
 		"_id": {
 			"type": "string"
 		},
-		"action_desc": {
+		"desc": {
 			"type": "string"
 		}
 	}

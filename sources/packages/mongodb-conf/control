@@ -15,7 +15,6 @@ function pre_install(){
 	check_code $?
 }
 
-
 function wait_for_mongo() {
 
 	echo -n "Safe wait (may be long the first time) "
