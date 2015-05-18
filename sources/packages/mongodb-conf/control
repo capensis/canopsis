@@ -24,6 +24,7 @@ function register_modules() {
     webmodulemanager add canopsis-backend-ui-connector
     webmodulemanager add userpreferences
     webmodulemanager add charts
+    webmodulemanager add canopsis-rights
 }
 
 function wait_for_mongo() {
