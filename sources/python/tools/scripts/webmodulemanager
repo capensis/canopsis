@@ -37,6 +37,7 @@ modules = [
     'canopsis-backend-ui-connector',
     'userpreferences',
     'charts',
+    'canopsis-rights',
 ]
 
 """
