@@ -19,19 +19,21 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from copy import deepcopy
+from canopsis.configuration.dbconfigurationmanager import DBConfiguration
+from canopsis.organisation.rights import Rights
+
 from time import time
-from json import dumps
+import json
+import sys
+import os
 
-from canopsis.old.storage import get_storage
 
-storage = get_storage(
-    namespace='object'
-)
+dbconf = DBConfiguration()
+rights = Rights()
 
 
 def log(message):
-    print (message)
+    print(message)
 
 
 def init():
@@ -39,39 +41,50 @@ def init():
 
 
 def update():
-
-    objects = storage.get_backend('object')
-
     # Get views
-    views = objects.find({'crecord_type': 'view'})
+    views = dbconf.find(query={'crecord_type': 'view'})
     backup = []
 
     for view in views:
-        # Prepare backup
-        backup.append(deepcopy(view))
-
         # Go through the view
         if 'containerwidget' in view:
-            if view['loader_id'] == 'view.services':
-                if 'items' in view['containerwidget']:
-                    find_weathers(view['containerwidget']['items'])
+            if 'items' in view['containerwidget']:
+                find_weathers(view['containerwidget']['items'])
 
-        log('db update {}'.format(view['_id']))
+        log('Updating view: {0}'.format(view['_id']))
 
-        objects.update(
-            {'_id': view['_id']},
-            {'$set': {'containerwidget': view['containerwidget']}}
+        try:
+            dbconf.update(view['_id'], view)
+
+        except Exception as err:
+            log('Error updating view {0}: {1}'.format(view['_id'], err))
+            backup.append(view)
+
+        log('Ensure rights for view: {0}'.format(view['_id']))
+
+        actions = rights.get_action([view['_id']])
+
+        if not actions:
+            rights.add_action(view['_id'], 'Access to view {0}'.format(
+                view.get('title', view['_id'])
+            ))
+
+    if backup:
+        bakdir = os.path.join(
+            sys.prefix, 'var', 'cache', 'canopsis', 'migration'
         )
 
-    # Proceed backup
-    filepath = '/tmp/canopsis_migration_view_backup_{}'.format(int(time()))
+        filepath = os.path.join(bakdir, 'view.{0}.bak'.format(int(time())))
 
-    with open(filepath, 'w') as f:
-        f.write(dumps(backup, indent=2))
+        os.makedirs(bakdir)
+
+        with open(filepath, 'w') as f:
+            json.dump(backup, f)
+
+        log('Backup found at: {0}'.format(filepath))
 
 
 def find_weathers(items):
-
     # Recursively find all weathers in the view
     for item in items:
         widget = item['widget']
@@ -81,21 +94,28 @@ def find_weathers(items):
             find_weathers(widget['items'])
 
         if widget['xtype'] == 'weather' and 'event_selection' in widget:
-            log(' processing weather'.format(widget['title']))
+            log('Processing weather in widget: {0}'.format(widget['title']))
+
             widget['event_selection'] = transform_event_selection(
                 widget['event_selection']
             )
 
 
 def transform_event_selection(event_selection):
-
     # Business code, update weather content
     selection = []
+
     while event_selection:
         value = event_selection.pop()
+
         if isinstance(value, basestring):
-            value = {'label': 'label', 'rk': value}
+            value = {
+                'label': 'label',
+                'rk': value
+            }
+
         selection.append(value)
+
     return selection
 
 
