@@ -7,7 +7,7 @@ from canopsis.middleware.registry import MiddlewareRegistry
 import uuid
 
 CONF_PATH = 'calendar/calendar.conf'
-CATEGORY = 'calendar'
+CATEGORY = 'CALENDAR'
 
 
 @conf_paths(CONF_PATH)
