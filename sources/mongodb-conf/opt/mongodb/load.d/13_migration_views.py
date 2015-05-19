@@ -65,7 +65,7 @@ def update():
         actions = rights.get_action([view['_id']])
 
         if not actions:
-            rights.add_action(view['_id'], 'Access to view {0}'.format(
+            rights.add(view['_id'], 'Access to view {0}'.format(
                 view.get('title', view['_id'])
             ))
 
