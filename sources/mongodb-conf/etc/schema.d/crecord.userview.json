@@ -29,6 +29,9 @@
 			"model": "widget.containerwidget.widgetcontainer",
 			"embedded": true
 		},
+		"author": {
+			"type": "string"
+		},
 		"enable": {
 			"type": "boolean",
 			"default": true
