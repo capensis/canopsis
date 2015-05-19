@@ -98,6 +98,3 @@ def transform_event_selection(event_selection):
         selection.append(value)
     return selection
 
-
-#TODO REMOVE
-update()
