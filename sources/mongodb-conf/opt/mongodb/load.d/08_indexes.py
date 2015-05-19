@@ -22,6 +22,8 @@
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
+import signal
+
 # Set root account
 root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
@@ -102,10 +104,10 @@ INDEXES = {
 
 
 def init():
-    print ('Starting indexes update...')
+    print('Starting indexes update...')
 
     for collection in INDEXES:
-        print (' + Create indexes for collection {0}'.format(collection))
+        print(' + Create indexes for collection {0}'.format(collection))
         col = storage.get_backend(collection)
         col.drop_indexes()
 
@@ -116,11 +118,28 @@ def init():
 def update():
     answered = False
     user_input = 'N'
+
+    def timeout(sig, frame):
+        raise Exception('')
+
+    signal.signal(signal.SIGALRM, timeout)
+
     while not answered:
-        user_input = raw_input(
-            'Add/Update indexes (update may take time)? Y/N (default=N): ')
-        if user_input in ['Y', 'y', 'N', 'n', '']:
+        signal.alarm(30)
+
+        try:
+            user_input = raw_input(
+                'Add/Update indexes (update may take time)? Y/N (default=N): '
+            )
+
+            if user_input in ['Y', 'y', 'N', 'n', '']:
+                answered = True
+
+        except Exception as err:
+            user_input = 'N'
             answered = True
+
+        signal.alarm(0)
 
     if user_input == 'Y' or user_input == 'y':
         init()
