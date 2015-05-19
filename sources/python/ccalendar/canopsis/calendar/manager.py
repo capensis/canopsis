@@ -18,71 +18,29 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from time import time
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
-import uuid
-from canopsis.context.manager import Context
 
-CONF_PATH = 'linklist/linklist.conf'
-CATEGORY = 'LINKLIST'
+CONF_PATH = 'calendar/calendar.conf'
+CATEGORY = 'CALENDAR'
 
 
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
-class Entitylink(MiddlewareRegistry):
+class Calendar(MiddlewareRegistry):
 
-    ENTITY_STORAGE = 'entitylink_storage'
+    CALENDAR_STORAGE = 'calendar_storage'
+    CONTEXT_CONFIGURABLE = 'configurable_calendar'
+    TYPE = 'calendar'
 
     """
-    Manage entity link information in Canopsis
+    Manage calendar information in Canopsis
     """
 
     def __init__(self, *args, **kwargs):
 
-        super(Entitylink, self).__init__(*args, **kwargs)
-        self.context = Context()
-
-    def get_or_create_from_event(self, event):
-        """
-        Find or create an entity link document
-
-        :param event: an event that may have an entity link stored
-        if not, an entity link entry is created and is returned
-        """
-
-        entity_list = list(self.get_links_from_event(event))
-
-        if entity_list:
-            return entity_list[0]
-        else:
-            _id = self.get_id_from_event(event)
-            self.put(_id, {
-                'computed_links': [],
-                'event_links': []
-            })
-            return list(self.get_links_from_event(event))[0]
-
-    def get_id_from_event(self, event):
-        """
-        Find a context id from an event
-
-        :param event: an event to search a context id from
-        """
-        entity = self.context.get_entity(event)
-        entity_id = self.context.get_entity_id(entity)
-        return entity_id
-
-    def get_links_from_event(self, event):
-        """
-        Try to find an entity link from a given event
-
-        :param event: a canopsis event
-        """
-
-        entity_id = self.get_id_from_event(event)
-        return self.find(ids=[entity_id])
+        super(Calendar, self).__init__(*args, **kwargs)
 
     def find(
         self,
@@ -91,7 +49,7 @@ class Entitylink(MiddlewareRegistry):
         ids=None,
         sort=None,
         with_count=False,
-        _filter={},
+        query={},
     ):
 
         """
@@ -103,12 +61,12 @@ class Entitylink(MiddlewareRegistry):
         :param with_count: compute selection count when True
         """
 
-        result = self[Entitylink.ENTITY_STORAGE].get_elements(
+        result = self[Calendar.CALENDAR_STORAGE].get_elements(
             ids=ids,
             skip=skip,
             sort=sort,
             limit=limit,
-            query=_filter,
+            query=query,
             with_count=with_count
         )
         return result
@@ -126,7 +84,7 @@ class Entitylink(MiddlewareRegistry):
         :param document: contains link information for entities
         """
 
-        self[Entitylink.ENTITY_STORAGE].put_element(
+        self[Calendar.CALENDAR_STORAGE].put_element(
             _id=_id, element=document, cache=cache
         )
 
@@ -140,4 +98,4 @@ class Entitylink(MiddlewareRegistry):
         :param element_id: identifier for the document to remove
         """
 
-        self[Entitylink.ENTITY_STORAGE].remove_elements(ids=ids)
+        self[Calendar.CALENDAR_STORAGE].remove_elements(ids=ids)
