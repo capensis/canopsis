@@ -54,7 +54,7 @@ def update():
         log('Updating view: {0}'.format(view['_id']))
 
         try:
-            dbconf.update(view['_id'], view)
+            dbconf.put(view['_id'], view)
 
         except Exception as err:
             log('Error updating view {0}: {1}'.format(view['_id'], err))
