@@ -139,6 +139,12 @@ function extract_archive() {
     fi
 }
 
+function replace_env() {
+    sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/$1
+    sed "s#@HUSER@#$HUSER#g" -i $PREFIX/$1
+    sed "s#@HGROUP@#$HGROUP#g" -i $PREFIX/$1
+}
+
 function install_init() {
     if [ -e "$SRC_PATH/extra/init/$1.$DIST" ]
     then
@@ -154,10 +160,7 @@ function install_init() {
         cp $IFILE $PREFIX/etc/init.d/$1
         check_code $? "Copy init file into init.d failure"
 
-        sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/init.d/$1
-        sed "s#@HUSER@#$HUSER#g" -i $PREFIX/etc/init.d/$1
-        sed "s#@HGROUP@#$HGROUP#g" -i $PREFIX/etc/init.d/$1
-
+        replace_env etc/init.d/$1
         check_code $? "Sed \$PREFIX,\$HUSER and \$HGROUP in init.d failure"
     else
         echo "No specific init file for $DIST"
@@ -174,10 +177,7 @@ function install_conf() {
         cp $IFILE $PREFIX/etc/$1
         check_code $? "Copy conf into etc failure"
 
-        sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/$1
-        sed "s#@HUSER@#$HUSER#g" -i $PREFIX/etc/$1
-        sed "s#@HGROUP@#$HGROUP#g" -i $PREFIX/etc/$1
-
+        replace_env etc/$1
         check_code $? "Sed \$PREFIX,\$HUSER and \$HGROUP in etc failure"
     else
         echo "Error: Impossible to find '$IFILE'"
@@ -195,10 +195,7 @@ function install_bin() {
         cp $IFILE $PREFIX/bin/$1
         check_code $? "Copy bin into bin failure"
 
-        sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/bin/$1
-        sed "s#@HUSER@#$HUSER#g" -i $PREFIX/bin/$1
-        sed "s#@HGROUP@#$HGROUP#g" -i $PREFIX/bin/$1
-
+        replace_env bin/$1
         check_code $? "Sed \$PREFIX,\$HUSER and \$HGROUP in bin failure"
     else
         echo "Error: Impossible to find '$IFILE'"
