@@ -151,7 +151,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
         return result
 
-    def add(self, entity_id, values, behaviors):
+    def add(self, entity_id, values, behaviors, cache=False):
         """Add a pbehavior entry related to input entity_id and values.
 
         :param str entity_id: entity id.
@@ -160,6 +160,7 @@ class PBehaviorManager(MiddlewareRegistry):
         :param behaviors: value(s) behavior(s) to add. If None, behaviors are
             retrieved from values with the PBehaviorManager.BEHAVIOR key.
         :type behaviors: list or str
+        :param bool cache: if True (False by default), use storage cache.
         :return: added document ids
         :rtype: list
         """
@@ -211,7 +212,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
             # put a new document with a new id
             _id = str(uuid())
-            self.put(_id=_id, document=document)
+            self.put(_id=_id, document=document, cache=cache)
             # add _id to result
             result.append(_id)
 
@@ -241,7 +242,6 @@ class PBehaviorManager(MiddlewareRegistry):
         :param bool cache: if True (False by default), use storage cache.
         :return: removed document id(s).
         :rtype: list
-
         """
 
         result = self[PBehaviorManager.PBEHAVIOR_STORAGE].remove_elements(
