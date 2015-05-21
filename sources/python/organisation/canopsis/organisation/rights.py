@@ -403,7 +403,7 @@ class Rights(MiddlewareRegistry):
                 query={'crecord_type': 'user'}
             ):
                 if user and 'role' in user and r_name == user['role']:
-                    entity.pop('role', None)
+                    user.pop('role', None)
                     self['user_storage'].put_element(user['_id'], user)
 
             self['role_storage'].remove_elements(r_name)
