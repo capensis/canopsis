@@ -80,24 +80,6 @@
     "actionbutton_ticketnumber": {
         "desc": "Declare ticket number"
     },
-    "showview_view_event": {
-        "desc": "See event view"
-    },
-    "showview_view_selectors": {
-        "desc": "See selector view"
-    },
-    "showview_view_jobs": {
-        "desc": "See jobs view"
-    },
-    "showview_view_filters": {
-        "desc": "See filters view"
-    },
-    "showview_view_services": {
-        "desc": "See services view"
-    },
-    "showview_view_series": {
-        "desc": "See series view"
-    },
     "userview_create": {
         "desc": "Create a custom view"
     },
@@ -277,5 +259,8 @@
     },
     "job_delete": {
         "desc": "Delete a scheduled job"
+    },
+    "view_event": {
+        "desc": "rights on view: Events"
     }
 }
