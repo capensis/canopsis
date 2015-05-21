@@ -115,17 +115,21 @@ class PBehaviorManager(MiddlewareRegistry):
 
         # prepare filter
         _filter = {}
+
         if entity_ids is not None:
             _filter[PBehaviorManager.ENTITY] = entity_ids
+
         if behaviors is not None:
             _filter[PBehaviorManager.BEHAVIORS] = behaviors
+
         if start is not None:
             _filter[PBehaviorManager.START] = {'$geq': start}
+
         if end is not None:
             _filter[PBehaviorManager.END] = {'$leq': end}
 
         result = self[PBehaviorManager.PBEHAVIOR_STORAGE].find_elements(
-            _filter=_filter
+            query=_filter
         )
 
         return result
@@ -173,17 +177,21 @@ class PBehaviorManager(MiddlewareRegistry):
 
         for value in values:
             event = value
+
             # ensure value is an event
             if isinstance(value, basestring):
                 event = Event.from_ical(value)
 
             value_behaviors = list(behaviors)
+
             # update value behaviors
             if PBehaviorManager.BEHAVIOR in event:
                 event_behaviors = event.get(PBehaviorManager.BEHAVIOR)
                 event_behaviors = loads(event_behaviors)
+
                 if isinstance(event_behaviors, basestring):
                     value_behaviors.append(event_behaviors)
+
                 else:
                     value_behaviors += event_behaviors
 
@@ -325,6 +333,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
         for entity_id in endings:
             ending = endings[entity_id]
+
             if len(ending) == len_behaviors:
                 result.append(entity_id)
 
@@ -349,6 +358,7 @@ class PBehaviorManager(MiddlewareRegistry):
             # get behaviors intersection
             dbehaviors = set(document[PBehaviorManager.BEHAVIORS])
             behaviors_to_check = behaviors & dbehaviors
+
             # if intersection contains elements
             if behaviors_to_check:
                 # get duration, dtstart and rrule
@@ -356,26 +366,33 @@ class PBehaviorManager(MiddlewareRegistry):
                 duration = duration.dt
                 dtstart = event.get('dtstart')
                 dtstart = dtstart.dt
+
                 if isinstance(dtstart, datetime_time):
                     dtstart = datetime.now().replace(
                         hour=dtstart.hour, minute=dtstart.minute,
                         second=dtstart.second, tzinfo=dtstart.tzinfo
                     )
+
                 rrule = event.get('rrule')
                 rrule = rrulestr(rrule.to_ical(), cache=True, dtstart=dtstart)
                 # calculate first date after dtts including dtts
                 before = rrule.before(dt=dtts, inc=True)
+
                 # if before datetime exist
                 if before is not None:
                     entity_id = document[PBehaviorManager.ENTITY]
+
                     if entity_id not in result:
                         result[entity_id] = {}
+
                     # add duration
                     end = before + duration
+
                     # and check if dtstart is in [first; end]
                     if before <= dtts <= end:
                         # update end in the result
                         endts = timegm(end.timetuple())
+
                         for behavior in behaviors_to_check:
                             result[entity_id][behavior] = endts
 
