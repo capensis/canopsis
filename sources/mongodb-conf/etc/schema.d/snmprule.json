@@ -30,7 +30,9 @@
         },
         "state": {
             "type": "integer",
-            "role": "state"
+            "role": "state",
+            "showAll": true,
+            "default": 2
         }
     }
 }
