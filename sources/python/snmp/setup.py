@@ -21,7 +21,12 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.event', 'canopsis.common']
+install_requires = [
+    'canopsis.event',
+    'canopsis.common',
+    'canopsis.old',
+    'canopsis.context'
+]
 
 setup(
     description='SNMP Engine',

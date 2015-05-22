@@ -23,16 +23,16 @@ from canopsis.snmp.rulesmanager import RulesManager
 from canopsis.snmp.mibs import MibsManager
 from canopsis.context.manager import Context
 from canopsis.event import get_routingkey, forger
+from canopsis.old.template import Template
 from time import time
 from functools import partial
 from json import dumps
 import re
 import socket
 
+
 manager = RulesManager()
 mibs_manager = MibsManager()
-
-TEMPLATE_PATTERN = re.compile(r"\{\{([^}]+)\}\}")
 
 
 class engine(Engine):
@@ -43,15 +43,11 @@ class engine(Engine):
 
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
-        self.funcmap = {
-            "resolveip": self._func_resolveip,
-            "upper": self._func_upper,
-            "lower": self._func_lower
-        }
+
         self.rules = {}
         # self oids is a cache dict, it only grows with time.
         # It should be cleaned sometime if this engine encounter memory leaks
-        self.oids = {}
+        self.mibs = {}
 
     def pre_run(self):
         self.beat()
@@ -81,10 +77,8 @@ class engine(Engine):
             self.make_follow(event)
             return
 
-        # prepare the templating function
         self.logger.info("Found a rule for trap {}".format(trap_oid))
         errors = []
-        f_repl = partial(self._template_repl, rule, event["snmp_vars"])
 
         # generate a new event
         tt_event = forger(
@@ -94,6 +88,12 @@ class engine(Engine):
             source_type="resource",
             timestamp=event["timestamp"],
             state_type=0,
+        )
+
+        self.logger.debug('start computing template context')
+        trap_context = self.get_rule_context(
+            rule,
+            event.get('snmp_vars', None)
         )
 
         # if a template exists for any of theses fields, render it.
@@ -110,7 +110,25 @@ class engine(Engine):
             # do the rendering!
             # meaning, replace the {{oid}} with the vars of the snmp trap
             self.error = None
-            value = re.sub(TEMPLATE_PATTERN, f_repl, tpl)
+
+            try:
+                # Try to convert the template to unicode
+                unicode_template = unicode(str(tpl).decode('utf-8'))
+                value = Template(unicode_template)(trap_context)
+            except Exception as e:
+                self.logger.error(
+                    'Error, encoding problem in this field {}'.format(e)
+                )
+                value = tpl
+
+            self.logger.debug(
+                '"{}" field had template "{}" set to "{}"'.format(
+                    key,
+                    tpl,
+                    value
+                )
+            )
+
             tt_event[key] = value
             if self.error is not None:
                 errors.append("{}: {}".format(key, self.error))
@@ -134,18 +152,67 @@ class engine(Engine):
 
         self.make_follow(event)
 
-    def get_and_cache_oid(self, _id):
-
-        if _id in self.oids:
-            return self.oids[_id]
+    def get_rule_context(self, rule, snmp_vars):
+        # Computes the template context from event information
+        # and snmp rules information
+        if snmp_vars is None:
+            self.logger.debug('no snmp vars in event')
+            return {}
         else:
-            result = list(mibs_manager.get(ids=[_id]))
-            if len(result):
-                oid = result['oid']
+            context = {}
+            mib = self.get_and_cache_mib(rule)
+            # When unable to retrieve mib information
+            if mib is None:
+                self.logger.debug('no mib info found')
+                return context
             else:
-                oid = None
-            self.oids[_id] = oid
-            return oid
+                for mibobject in mib['objects']:
+                    context[mibobject] = snmp_vars.get(mib['oid'], '')
+                self.logger.debug('generated context {}'.format(context))
+                return context
+
+    def get_and_cache_mib(self, rule):
+
+        _id = '{}::{}'.format(
+            rule['oid']['moduleName'],
+            rule['oid']['mibName']
+        )
+
+        if _id in self.mibs:
+            self.logger.debug('mib found in cache')
+            return self.mibs[_id]
+        else:
+            result = list(mibs_manager.get(oids=[_id]))
+            oid = None
+            if len(result):
+                oid = result[0]['oid']
+
+            query = {
+                'moduleName': rule['oid']['moduleName'],
+                'name': rule['oid']['mibName']
+            }
+
+            result = list(mibs_manager.get(query=query))
+            objects = None
+            if len(result):
+                objects = result[0]['objects'].keys()
+
+            self.logger.debug('fetch oid {}, objects {}'.format(
+                oid,
+                len(objects)
+            ))
+
+            #Test oid TODO remove
+            oid = '1.3.6.1.4.1.20006.1.3.1.17'
+            if oid is not None and objects is not None:
+
+                self.mibs[_id] = {
+                    'oid': oid,
+                    'objects': objects
+                }
+                return self.mibs[_id]
+            else:
+                return None
 
     def vars_to_string(self, event):
         key = 'snmp_vars'
@@ -157,43 +224,3 @@ class engine(Engine):
         event['_id'] = rk
         self.amqp.publish(
             event, rk, self.normal_exchange)
-
-    def _template_repl(self, rule, vars, matchobj):
-
-        m = matchobj.group(1)
-        items = [item.strip() for item in m.split("|")]
-
-        # Find oids the way data are stored
-        _id = '{}::{}'.format(rule['moduleName'], rule['mibName'])
-        oid = self.get_and_cache_oid(_id)
-
-        value = vars.get(oid)
-
-        if value is None:
-            self.error = "variable {} missing".format(oid)
-            return ""
-
-        for funcname in items[1:]:
-            f = self.funcmap.get(funcname)
-            if not f:
-                self.error = "unknown function {}".format(funcname)
-                return
-            value = f(value)
-
-        return value
-
-    def _func_resolveip(self, value):
-        # dns resolve
-        try:
-            hostname = socket.gethostbyaddr(value)
-        except:
-            pass
-        else:
-            value = hostname[0]
-        return value
-
-    def _func_upper(self, value):
-        return value.upper()
-
-    def _func_lower(self, value):
-        return value.lower()

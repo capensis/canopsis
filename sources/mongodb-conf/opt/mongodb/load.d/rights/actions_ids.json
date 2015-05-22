@@ -1,4 +1,7 @@
 {
+    "actionbutton_canuploadmibfile": {
+        "desc": "Upload mib file to canopsis system"
+    },
     "actionbutton_canediturlfield": {
         "desc": ""
     },

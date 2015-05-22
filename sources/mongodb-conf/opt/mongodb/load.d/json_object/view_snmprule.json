@@ -2,7 +2,7 @@
   "crecord_type": "view",
   "crecord_name" : "snmprule.json",
   "loader_id": "view.snmprule",
-  "loader_no_update": true,
+  "loader_no_update": false,
   "id": "view.snmprule",
   "_id": "view.snmprule",
   "crecord_write_time": 1430833907,
@@ -34,6 +34,7 @@
               "searchable_columns": ["_id"]
             },
             { "name" : "Pagination" },
+            { "name" : "uploadmib" },
             { "name" : "Crud" }
           ],
           "displayed_columns": [
