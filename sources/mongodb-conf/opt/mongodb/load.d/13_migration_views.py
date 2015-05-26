@@ -54,7 +54,7 @@ def update():
         log('Updating view: {0}'.format(view['_id']))
 
         try:
-            dbconf.update(view['_id'], view)
+            dbconf.put(view['_id'], view)
 
         except Exception as err:
             log('Error updating view {0}: {1}'.format(view['_id'], err))
@@ -65,7 +65,7 @@ def update():
         actions = rights.get_action([view['_id']])
 
         if not actions:
-            rights.add_action(view['_id'], 'Access to view {0}'.format(
+            rights.add(view['_id'], 'Access to view {0}'.format(
                 view.get('title', view['_id'])
             ))
 
