@@ -29,7 +29,7 @@ from functools import partial
 from json import dumps
 import re
 import socket
-
+from time import time
 
 manager = RulesManager()
 mibs_manager = MibsManager()
@@ -37,139 +37,201 @@ mibs_manager = MibsManager()
 
 class engine(Engine):
 
-    etype = "snmp"
+    etype = 'snmp'
 
     normal_exchange = 'canopsis.events'
+
+    # clean cache every day
+    CACHE_CLEAN_TIMEOUT = 60 * 60 * 24
 
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
 
         self.rules = {}
-        # self oids is a cache dict, it only grows with time.
-        # It should be cleaned sometime if this engine encounter memory leaks
+
+        # Cache dicts, avoid too much db queries.
         self.mibs = {}
+        self.mib_objects = {}
+
+        self.last_cache_clean = time()
 
     def pre_run(self):
         self.beat()
 
     def beat(self):
 
-        # load from storage
-        self.rules = {rule['oid']['oid']: rule for rule in manager.find()}
+        # Load snmp rules from database
+        self.rules = {}
+        for rule in manager.find():
+            oid = rule.get('oid', None).get('oid', None)
+            if oid is not None:
+                self.rules[oid] = rule
+
         self.logger.info("Loaded {} rules".format(len(self.rules)))
         self.logger.debug(self.rules)
 
+        if time() - self.last_cache_clean > self.CACHE_CLEAN_TIMEOUT:
+            # Clean cache, allow memory free and fresh data
+            self.last_cache_clean = time()
+            self.mibs = {}
+            self.mib_objects = {}
+
     def work(self, event, *args, **kwargs):
 
-        # this engine works only on snmp trap.
-        if event["event_type"] != "trap":
+        # This engine works only on snmp trap.
+        if event['event_type'] != 'trap':
             return
 
-        self.logger.info("Got a trap: {}".format(event))
+        self.logger.debug('Got a trap event: {}'.format(event))
 
-        # search a rule for the trap OID
-        trap_oid = event["snmp_trap_oid"]
+        # Search a rule for the trap OID
+        trap_oid = event['snmp_trap_oid']
+
         rule = self.rules.get(trap_oid)
         if not rule:
-            self.logger.info("No rules for trap {}".format(trap_oid))
-            event["snmp_trap_match"] = False
-            self.vars_to_string(event)
-            self.make_follow(event)
-            return
+            message = 'No rules for trap {}'.format(trap_oid)
+            return self.on_trap_error(event, message)
 
-        self.logger.info("Found a rule for trap {}".format(trap_oid))
+        self.logger.info('Found a rule for trap {}'.format(trap_oid))
         errors = []
 
         # generate a new event
-        tt_event = forger(
-            connector="Engine",
+        translated_event = forger(
+            connector='Engine',
             connector_name=self.etype,
-            event_type="check",
-            source_type="resource",
-            timestamp=event["timestamp"],
+            event_type='check',
+            source_type='resource',
+            timestamp=event['timestamp'],
             state_type=0,
         )
 
-        self.logger.debug('start computing template context')
-        trap_context = self.get_rule_context(
+        self.logger.debug('Start computing template context')
+        trap_context = self.get_trap_context(
             rule,
-            event.get('snmp_vars', None)
+            event.get('snmp_vars', None),
+            errors
         )
 
+        if errors:
+            message = 'Unable to get context for trap {}'.format(trap_oid)
+            return self.on_trap_error(event, message, errors)
+
         # if a template exists for any of theses fields, render it.
-        for key in ("state", "component", "resource", "output"):
+        for key in ('state', 'component', 'resource', 'output'):
             # is the rule have something we want to change?
-            tpl = rule.get(key)
-            if tpl is None:
+            template = rule.get(key)
+            if template is None:
                 # rule have no template for this key,
                 # just reuse the one in the event if available
-                tt_event[key] = event.get(key)
-                continue
+                translated_event[key] = event.get(key)
+                message = 'Key not managed in rule {}'.format(key)
+                return self.on_trap_error(event, message)
 
             # a template has been found for the key
             # do the rendering!
             # meaning, replace the {{oid}} with the vars of the snmp trap
-            self.error = None
 
             try:
                 # Try to convert the template to unicode
-                unicode_template = unicode(str(tpl).decode('utf-8'))
+                unicode_template = unicode(str(template).decode('utf-8'))
                 value = Template(unicode_template)(trap_context)
             except Exception as e:
-                self.logger.error(
-                    'Error, encoding problem in this field {}'.format(e)
-                )
-                value = tpl
+                message = 'Key {}, Template {}: {}'.format(key, template, e)
+                return self.on_trap_error(event, message)
 
             self.logger.debug(
                 '"{}" field had template "{}" set to "{}"'.format(
                     key,
-                    tpl,
+                    template,
                     value
                 )
             )
 
-            tt_event[key] = value
-            if self.error is not None:
-                errors.append("{}: {}".format(key, self.error))
+            translated_event[key] = value
 
+        return self.on_trap_translated(translated_event)
+
+    def on_trap_translated(self, event):
         # and show that the event got a match in our trap/rules db.
         event["snmp_trap_match"] = True
-        if errors:
-            event["snmp_trap_errors"] = errors
-            self.logger.info("No new events, trap as errors: {}".format(
-                errors
-            ))
-        else:
-            # publish the new event
-            self.logger.info("Publish a new event: {}".format(tt_event))
-            rk = get_routingkey(tt_event)
-            self.amqp.publish(
-                tt_event, rk, self.amqp.exchange_name_events)
-
-        # Allow mongo json with dotted key values persistance
-        self.vars_to_string(event)
-
         self.make_follow(event)
+        return event
 
-    def get_rule_context(self, rule, snmp_vars):
+    def on_trap_error(self, event, reason, errors=[]):
+        self.logger.info(reason)
+        event["snmp_trap_match"] = False
+        if errors:
+            event['errors'] = errors
+        self.make_follow(event)
+        return event
+
+    def get_trap_context(self, rule, snmp_vars, errors):
         # Computes the template context from event information
         # and snmp rules information
         if snmp_vars is None:
-            self.logger.debug('no snmp vars in event')
-            return {}
+            message = 'No snmp vars in event'
+            errors.append(message)
+            self.logger.debug(message)
+            return None
         else:
-            context = {}
             mib = self.get_and_cache_mib(rule)
             # When unable to retrieve mib information
             if mib is None:
-                self.logger.debug('no mib info found')
-                return context
+                message = 'No mib info found'
+                errors.append(message)
+                self.logger.error(message)
+                return None
             else:
-                for mibobject in mib['objects']:
-                    context[mibobject] = snmp_vars.get(mib['oid'], '')
+                context = self.get_and_cache_mibs_objects(
+                    rule,
+                    mib.get('objects', None)
+                    snmp_vars,
+                    errors
+                )
                 self.logger.debug('generated context {}'.format(context))
                 return context
+
+    def get_and_cache_mibs_objects(self, rule, mib_objects, snmp_vars, errors):
+
+        # Data validation
+        if objects is None:
+            message = 'Mib does not contains objects'
+            errors.append(message)
+            self.logger.error(message)
+            return None
+
+        # Template context generation and mib module objects caching
+        context = {}
+        for mib_object in mib_objects:
+
+            _id = '{}::{}'.format(
+                rule['oid']['moduleName'],
+                mib_object
+            )
+
+            if _id in self.mib_objects:
+
+                self.logger.debug(
+                    'mib object information cached: {}'.format(_id)
+                )
+                context[mib_object] = self.mib_objects[_id]
+
+            else:
+
+                result = list(mibs_manager.get(oids=[_id]))
+
+                if len(result):
+                    oid = result[0]['oid']
+                    # Put oid translation in cache whenever possible.
+                    self.mib_objects[_id] = snmp_vars.get(oid, '')
+                    context[mib_object] = self.mib_objects[_id]
+                else:
+                    errors.append('Mib object oid not found in db : {}'.format(
+                        _id
+                    ))
+                    context[mib_object] = None
+
+        return context
 
     def get_and_cache_mib(self, rule):
 
@@ -214,12 +276,14 @@ class engine(Engine):
             else:
                 return None
 
-    def vars_to_string(self, event):
+    def make_follow(self, event):
+
+        # Allow mongo json with dotted key values persistance
         key = 'snmp_vars'
         if key in event and isinstance(event[key], dict):
             event[key] = dumps(event[key])
 
-    def make_follow(self, event):
+        # Publish event
         rk = get_routingkey(event)
         event['_id'] = rk
         self.amqp.publish(

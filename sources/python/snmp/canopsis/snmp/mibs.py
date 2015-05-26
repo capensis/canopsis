@@ -192,6 +192,7 @@ if __name__ == "__main__":
         print("- {} notifications definitions".format(notif_count))
         print("- {} objects definitions".format(object_count))
         if errors:
+            ret = 1
             print("- {} error{}".format(len(errors), "s" if len(errors) > 1 else ""))
             for error in errors:
                 print("  - {}: {}".format(*error))
