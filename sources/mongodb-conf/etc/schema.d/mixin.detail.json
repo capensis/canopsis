@@ -5,6 +5,6 @@
         "keys": ["template"]
     }],
     "properties": {
-        "template": {"type": "string", "required": true}
+        "template": {"type": "string", "role": "textarea", "required": true}
     }
 }
