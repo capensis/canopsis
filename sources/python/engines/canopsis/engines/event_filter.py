@@ -83,7 +83,8 @@ class engine(Engine):
         afield = action.get('field', None)
         avalue = action.get('value', None)
 
-        if afield and avalue:
+        # This mus be a hard check because value can be a boolean or a null integer
+        if afield is not None and avalue is not None:
             if afield in event and isinstance(event[afield], list):
                 event[afield].append(avalue)
             else:
