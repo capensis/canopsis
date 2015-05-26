@@ -7,7 +7,8 @@
     "properties": {
         "entity_id": {
             "type": "string",
-            "required": true
+            "required": true,
+            "role": "context"
         },
         "start": {
             "type": "string",
@@ -28,6 +29,12 @@
             "type": "datetime",
             "required": false,
             "role": "duration"
+        },
+        "behaviors": {
+            "type": "array",
+            "required": true,
+            "default": [],
+            "role": "behaviors"
         }
     }
 }
