@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-05-04 14:48+0100\n"
+"PO-Revision-Date: 2015-05-18 10:50+0100\n"
 "Last-Translator: teamcanopsis <teamcanopsis@capensis.fr>\n"
 "Language-Team: English <teamcanopsis@capensis.fr>\n"
 "MIME-Version: 1.0\n"
@@ -1807,3 +1807,47 @@ msgstr "done"
 
 msgid "Ticket declared"
 msgstr "Ticket declared"
+
+msgid ""
+"List of Canopsis UI plugins enabled.<br/><i class=\"fa fa-warning\"></i> "
+"BEWARE, if core or uibase module removed, Canopsis UI may not start properly"
+msgstr ""
+"List of Canopsis UI plugins enabled.<br/><i class=\"fa fa-warning\"></i> "
+"BEWARE, if core or uibase module removed, Canopsis UI may not start properly"
+
+msgid "Rendering"
+msgstr "Rendering"
+
+msgid "Click event"
+msgstr "Click event"
+
+msgid "show_title"
+msgstr "show_title"
+
+msgid "show_output"
+msgstr "show_output"
+
+msgid "Delete this widget ?"
+msgstr "Delete this widget ?"
+
+msgid "use_labels"
+msgstr "use_labels"
+
+msgid "Snmp rules"
+msgstr "Snmp rules"
+
+msgid "Delete these records ?"
+msgstr "Delete these records ?"
+
+msgid "oid"
+msgstr "oid"
+
+msgid "Remove alarm"
+msgstr "Remove alarm"
+
+msgid "Restore alarm"
+msgstr "Restore alarm"
+
+msgid "general"
+msgstr "general"
+

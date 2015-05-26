@@ -3,285 +3,282 @@
         "desc": "Upload mib file to canopsis system"
     },
     "actionbutton_canediturlfield": {
-        "desc": ""
+        "desc": "Edit filter to associate filter to entities"
     },
     "showview_view_permissions": {
-        "desc": ""
+        "desc": "See permission view"
     },
     "showview_view_accounts": {
-        "desc": ""
+        "desc": "See view accounts"
     },
     "showview_service": {
-        "desc": ""
+        "desc": "See view service"
     },
     "list_search": {
-        "desc": ""
+        "desc": "Perform a search on any list widgets"
     },
     "list_filters": {
-        "desc": ""
+        "desc": "Use custom filters on list widgets"
     },
     "menu_aclconfig": {
-        "desc": ""
+        "desc": "Display acl menu link"
     },
     "menu_authsystems": {
-        "desc": ""
+        "desc": "Display auth system menu link"
     },
     "menu_enginesconfig": {
-        "desc": ""
+        "desc": "Edit engine configuration"
     },
     "menu_pluginsconfig": {
-        "desc": ""
+        "desc": "Edit Canopsis UI plugins"
     },
     "menu_uisettings": {
-        "desc": ""
+        "desc": "Edit Canopsis UI settings"
     },
     "actionbutton_ack": {
-        "desc": ""
+        "desc": "Ack event"
     },
     "showview_view_connectors": {
-        "desc": ""
+        "desc": "See connector view"
     },
     "actionbutton_connectoredit": {
-        "desc": ""
+        "desc": "Edit connector settings"
     },
     "actionbutton_connectordisable": {
-        "desc": ""
+        "desc": "Disable connector"
     },
     "actionbutton_connectorenable": {
-        "desc": ""
+        "desc": "Enable connector"
     },
     "actionbutton_connectorgetconf": {
-        "desc": ""
+        "desc": "Get connector configuration"
     },
     "actionbutton_connectorgetstate": {
-        "desc": ""
+        "desc": "Get connector state"
     },
     "actionbutton_connectorsetconf": {
-        "desc": ""
+        "desc": "Set connector configuration"
     },
     "actionbutton_cancel": {
-        "desc": ""
+        "desc": "Cancel event"
     },
     "actionbutton_uncancel": {
-        "desc": ""
+        "desc": "Restore event"
     },
     "actionbutton_changestate": {
-        "desc": ""
+        "desc": "Change event state"
     },
     "actionbutton_eventnavigation": {
-        "desc": ""
+        "desc": "Go to event view"
     },
     "actionbutton_history": {
-        "desc": ""
+        "desc": "Go to event history view"
     },
     "actionbutton_incident": {
-        "desc": ""
+        "desc": "Declare an incident"
     },
     "actionbutton_info": {
-        "desc": ""
+        "desc": "Show entities link associations"
     },
     "actionbutton_ticketnumber": {
-        "desc": ""
+        "desc": "Declare ticket number"
     },
     "showview_view_event": {
-        "desc": ""
+        "desc": "See event view"
     },
     "showview_view_selectors": {
-        "desc": ""
+        "desc": "See selector view"
     },
     "showview_view_jobs": {
-        "desc": ""
+        "desc": "See jobs view"
     },
     "showview_view_filters": {
-        "desc": ""
+        "desc": "See filters view"
     },
     "showview_view_services": {
-        "desc": ""
+        "desc": "See services view"
     },
     "showview_view_series": {
-        "desc": ""
-    },
-    "showview_view_series": {
-        "desc": ""
+        "desc": "See series view"
     },
     "userview_create": {
-        "desc": ""
+        "desc": "Create a custom view"
     },
     "userview_read": {
-        "desc": ""
+        "desc": "Access a custom view"
     },
     "userview_update": {
-        "desc": ""
+        "desc": "Update a custom view"
     },
     "userview_delete": {
-        "desc": ""
+        "desc": "Delete a userview"
     },
     "selector_create": {
-        "desc": ""
+        "desc": "Create a selector record"
     },
     "selector_read": {
-        "desc": ""
+        "desc": "Access a selector record"
     },
     "selector_update": {
-        "desc": ""
+        "desc": "Update a selector record"
     },
     "selector_delete": {
-        "desc": ""
+        "desc": "Remove a selector record"
     },
     "role_create": {
-        "desc": ""
+        "desc": "Create a role"
     },
     "role_read": {
-        "desc": ""
+        "desc": "Access a role"
     },
     "role_update": {
-        "desc": ""
+        "desc": "Update a role"
     },
     "role_delete": {
-        "desc": ""
+        "desc": "Delete a role"
     },
     "action_create": {
-        "desc": ""
+        "desc": "Create an action"
     },
     "action_read": {
-        "desc": ""
+        "desc": "Access an action"
     },
     "action_update": {
-        "desc": ""
+        "desc": "Update an action"
     },
     "action_delete": {
-        "desc": ""
+        "desc": "Delete an action"
     },
     "filter_create": {
-        "desc": ""
+        "desc": "Create a filter"
     },
     "filter_read": {
-        "desc": ""
+        "desc": "Access a filter"
     },
     "filter_update": {
-        "desc": ""
+        "desc": "Update a filter"
     },
     "filter_delete": {
-        "desc": ""
+        "desc": "Delete a filter"
     },
     "curve_create": {
-        "desc": ""
+        "desc": "Create a curve"
     },
     "curve_read": {
-        "desc": ""
+        "desc": "Access a curve"
     },
     "curve_update": {
-        "desc": ""
+        "desc": "Update a curve"
     },
     "curve_delete": {
-        "desc": ""
+        "desc": "Delete a curve"
     },
     "account_create": {
-        "desc": ""
+        "desc": "Create an account"
     },
     "account_read": {
-        "desc": ""
+        "desc": "Access an account"
     },
     "account_update": {
-        "desc": ""
+        "desc": "Update an account"
     },
     "account_delete": {
-        "desc": ""
+        "desc": "Delete an account"
     },
     "user_create": {
-        "desc": ""
+        "desc": "Create a user"
     },
     "user_read": {
-        "desc": ""
+        "desc": "Access a user"
     },
     "user_update": {
-        "desc": ""
+        "desc": "Update a user"
     },
     "user_delete": {
-        "desc": ""
+        "desc": "Delete a user"
     },
     "serie_create": {
-        "desc": ""
+        "desc": "Create a serie"
     },
     "serie_read": {
-        "desc": ""
+        "desc": "Access a serie"
     },
     "serie_update": {
-        "desc": ""
+        "desc": "Update a serie"
     },
     "serie_delete": {
-        "desc": ""
+        "desc": "Delete a serie"
     },
     "topology_create": {
-        "desc": ""
+        "desc": "Create a topology"
     },
     "topology_read": {
-        "desc": ""
+        "desc": "Access a topology"
     },
     "topology_update": {
-        "desc": ""
+        "desc": "Update a topology"
     },
     "topology_delete": {
-        "desc": ""
+        "desc": "Delete a topology"
     },
     "profile_create": {
-        "desc": ""
+        "desc": "Create a profile"
     },
     "profile_read": {
-        "desc": ""
+        "desc": "Access a profile"
     },
     "profile_update": {
-        "desc": ""
+        "desc": "Update a profile"
     },
     "profile_delete": {
-        "desc": ""
+        "desc": "Delete a profile"
     },
     "derogation_create": {
-        "desc": ""
+        "desc": "Create a derogation"
     },
     "derogation_read": {
-        "desc": ""
+        "desc": "Access a derogation"
     },
     "derogation_update": {
-        "desc": ""
+        "desc": "Update a derogation"
     },
     "derogation_delete": {
-        "desc": ""
+        "desc": "Delete a derogation"
     },
     "event_create": {
-        "desc": ""
+        "desc": "Create an event"
     },
     "event_read": {
-        "desc": ""
+        "desc": "Access an event"
     },
     "event_update": {
-        "desc": ""
+        "desc": "Update an event"
     },
     "event_delete": {
-        "desc": ""
+        "desc": "Delete an event"
     },
     "eventlog_create": {
-        "desc": ""
+        "desc": "Create an event log"
     },
     "eventlog_read": {
-        "desc": ""
+        "desc": "Access an event log"
     },
     "eventlog_update": {
-        "desc": ""
+        "desc": "Update an event log"
     },
     "eventlog_delete": {
-        "desc": ""
+        "desc": "Delete an event log"
     },
     "job_create": {
-        "desc": ""
+        "desc": "Create a scheduled job"
     },
     "job_read": {
-        "desc": ""
+        "desc": "Access a scheduled job"
     },
     "job_update": {
-        "desc": ""
+        "desc": "Update a scheduled job"
     },
     "job_delete": {
-        "desc": ""
+        "desc": "Delete a scheduled job"
     }
 }

@@ -47,8 +47,6 @@ def load(path):
 actions = load('opt/mongodb/load.d/rights/actions_ids.json')
 users = load('opt/mongodb/load.d/rights/default_users.json')
 roles = load('opt/mongodb/load.d/rights/default_roles.json')
-groups = load('opt/mongodb/load.d/rights/default_groups.json')
-profiles = load('opt/mongodb/load.d/rights/default_profiles.json')
 
 
 def add_actions(data, clear):
@@ -97,41 +95,10 @@ def add_roles(data, clear):
                 )
 
 
-def add_profiles(data, clear):
-    for profile in data:
-        if right_module.get_profile(profile['_id']) is None or clear:
-
-            print('Profile initialization : {}'.format(profile['_id']))
-
-            right_module.create_profile(profile['_id'], None)
-            record = right_module.get_profile(profile['_id'])
-            right_module.update_rights(
-                profile['_id'], 'profile', profile.get('rights', {}), record
-                )
-            right_module.update_group(
-                profile['_id'], 'profile', profile.get('groups', []), record
-                )
-
-
-def add_groups(data, clear):
-    for group in data:
-        if right_module.get_group(group['_id']) is None or clear:
-
-            print('Group initialization : {}'.format(group['_id']))
-
-            right_module.create_group(group['_id'], None)
-            record = right_module.get_group(group['_id'])
-            right_module.update_rights(
-                group['_id'], 'group', group.get('rights', {}), record
-                )
-
-
 def init(clear=True):
-    add_actions(actions, clear)
+    add_actions(actions, True)
     add_users(users, clear)
     add_roles(roles, clear)
-    # add_groups(groups, clear)
-    # add_profiles(profiles, clear)
 
 
 def update():
