@@ -30,7 +30,10 @@ perfdatamgr = PerfData()
 
 
 @register_task
-def event_processing(engine, event, manager=None, logger=None):
+def event_processing(engine, event, manager=None, logger=None, **kwargs):
+    """Perfdata engine synchronous processing.
+    """
+
     if manager is None:
         manager = perfdatamgr
 
