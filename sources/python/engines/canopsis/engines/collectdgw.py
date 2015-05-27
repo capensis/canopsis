@@ -19,7 +19,6 @@
 # ---------------------------------
 
 from canopsis.engines.core import Engine, publish
-from canopsis.old.tools import Str2Number
 from canopsis.event import forger
 
 from time import time
