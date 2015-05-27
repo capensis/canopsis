@@ -1,8 +1,8 @@
 {
     "type": "object",
     "categories": [{
-        "title": "general",
-        "keys":["start", "start", "end", "freq", "duration"]
+        "title": "General",
+        "keys": ["start", "end", "freq", "duration"]
     }],
     "properties": {
         "entity_id": {
@@ -32,9 +32,12 @@
         },
         "behaviors": {
             "type": "array",
+            "items": {
+                "type": "string",
+                "enum": ["downtime"]
+            },
             "required": true,
-            "default": [],
-            "role": "behaviors"
+            "default": []
         }
     }
 }
