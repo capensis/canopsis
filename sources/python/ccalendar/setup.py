@@ -21,9 +21,10 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common']
+install_requires = ['canopsis.common', 'canopsis.storage', 'dateutil']
 
 setup(
     description='Canopsis calendar library',
     install_requires=install_requires,
-    keywords='ccalendar')
+    keywords='ccalendar'
+)

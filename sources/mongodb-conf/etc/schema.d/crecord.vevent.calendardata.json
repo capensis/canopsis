@@ -1,0 +1,49 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["crecord_type","category","output"]
+	}],
+	"properties": {
+		"_id": {
+			"type": "string"
+		},
+		"crecord_type": {
+            "enum": ["calendarevent"],
+            "required": true
+        },
+        "source":{
+        	"type":"string",
+        	"required":true,
+        	"description":"publishing entity id"
+        },
+        "start":{
+        	"type":"integer",
+        	"required": false,
+        	"default":0
+        },
+        "end":{
+        	"type":"integer",
+        	"required": false,
+        	"default":0
+        },
+        "freq":{
+        	"type":"string",
+        	"required": false,
+        	"default":""
+        },
+        "duration":{
+        	"type":"string",
+        	"required": false,
+        	"default":""
+        },
+		"category": {
+			"type": "string",
+			"required": true
+		},
+		"output": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

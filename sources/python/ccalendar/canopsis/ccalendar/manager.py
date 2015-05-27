@@ -19,7 +19,8 @@
 # ---------------------------------
 
 from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
+    conf_paths, add_category
+)
 from canopsis.middleware.registry import MiddlewareRegistry
 
 CONF_PATH = 'calendar/calendar.conf'
@@ -29,18 +30,10 @@ CATEGORY = 'CALENDAR'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class Calendar(MiddlewareRegistry):
+    """Manage calendar information in Canopsis.
+    """
 
     CALENDAR_STORAGE = 'calendar_storage'
-    CONTEXT_CONFIGURABLE = 'configurable_calendar'
-    TYPE = 'calendar'
-
-    """
-    Manage calendar information in Canopsis
-    """
-
-    def __init__(self, *args, **kwargs):
-
-        super(Calendar, self).__init__(*args, **kwargs)
 
     def find(
         self,
@@ -49,16 +42,14 @@ class Calendar(MiddlewareRegistry):
         ids=None,
         sort=None,
         with_count=False,
-        query={},
+        query={}
     ):
+        """Retrieve information from data sources
 
-        """
-        Retrieve information from data sources
-
-        :param ids: an id list for document to search
-        :param limit: maximum record fetched at once
-        :param skip: ordinal number where selection should start
-        :param with_count: compute selection count when True
+        :param str ids: an id list for document to search.
+        :param int limit: maximum record fetched at once.
+        :param int skip: ordinal number where selection should start.
+        :param bool with_count: compute selection count when True.
         """
 
         result = self[Calendar.CALENDAR_STORAGE].get_elements(
@@ -69,6 +60,7 @@ class Calendar(MiddlewareRegistry):
             query=query,
             with_count=with_count
         )
+
         return result
 
     def put(
@@ -77,8 +69,7 @@ class Calendar(MiddlewareRegistry):
         document,
         cache=False
     ):
-        """
-        Persistance layer for upsert operations
+        """Persistance layer for upsert operations
 
         :param _id: entity id
         :param document: contains link information for entities
@@ -90,12 +81,12 @@ class Calendar(MiddlewareRegistry):
 
     def remove(
         self,
-        ids
+        ids,
+        cache=False
     ):
-        """
-        Remove fields persisted in a default storage.
+        """Remove fields persisted in a default storage.
 
         :param element_id: identifier for the document to remove
         """
 
-        self[Calendar.CALENDAR_STORAGE].remove_elements(ids=ids)
+        self[Calendar.CALENDAR_STORAGE].remove_elements(ids=ids, cache=cache)
