@@ -51,6 +51,47 @@
         },
         "xtype": "widgetwrapper",
         "title": "wrapper"
+      },
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "id" : "item-fd5a-1ede-8ac2-6a1d66ad004012",
+          "widgetId" : "item-fd5a-1ede-8ac2-6a1d66ad004012",
+          "xtype": "list",
+          "listed_crecord_type": "eventlog",
+          "display_record_field": "resource",
+          "title": "Trap events",
+          "actions_toolbar": [
+            "actionbutton-eventnavigation"
+          ],
+          "default_column_sort" : {
+            "direction" : "DESC",
+            "property" : "timestamp"
+          },
+          "mixins": [
+            {
+              "name": "Customfilterlist",
+              "filters" : [],
+              "default_filter" : "{\"$or\":[{\"event_type\":{\"$eq\":\"trap\"}}]}"
+            },
+            { "name": "Arraysearch",
+              "searchable_columns": [
+                "snmp_trap_oid"
+              ]
+            },
+            {
+              "name": "Pagination",
+              "itemsPerPage": 20
+            }
+          ],
+          "displayed_columns": [
+            "event_type",
+            "snmp_trap_oid",
+            "timestamp",
+            "snmp_vars"
+          ]
+        }
       }
     ],
     "widgetslotTemplate": null,

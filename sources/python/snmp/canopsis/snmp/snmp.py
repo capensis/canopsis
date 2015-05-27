@@ -139,6 +139,10 @@ class engine(Engine):
                 message = 'Key {}, Template {}: {}'.format(key, template, e)
                 return self.on_trap_error(event, message)
 
+            if not value.strip():
+                message = 'Empty key value : {}'.format(key)
+                return self.on_trap_error(event, message)
+
             self.logger.debug(
                 '"{}" field had template "{}" set to "{}"'.format(
                     key,
@@ -184,7 +188,7 @@ class engine(Engine):
             else:
                 context = self.get_and_cache_mibs_objects(
                     rule,
-                    mib.get('objects', None)
+                    mib.get('objects', None),
                     snmp_vars,
                     errors
                 )
@@ -194,7 +198,7 @@ class engine(Engine):
     def get_and_cache_mibs_objects(self, rule, mib_objects, snmp_vars, errors):
 
         # Data validation
-        if objects is None:
+        if mib_objects is None:
             message = 'Mib does not contains objects'
             errors.append(message)
             self.logger.error(message)
@@ -265,7 +269,7 @@ class engine(Engine):
             ))
 
             #Test oid TODO remove
-            oid = '1.3.6.1.4.1.20006.1.3.1.17'
+            #oid = '1.3.6.1.4.1.20006.1.3.1.17'
             if oid is not None and objects is not None:
 
                 self.mibs[_id] = {
