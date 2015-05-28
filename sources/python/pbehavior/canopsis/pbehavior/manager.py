@@ -66,3 +66,19 @@ class PBehaviorManager(VEventManager):
         }
 
         return result
+
+
+def get_query(behaviors):
+    """Get a query related to input behaviors.
+
+    :param behaviors: behaviors to find.
+    :type behaviors: str or list
+    :return: query.
+    :rtype: dict
+    """
+    result = {}
+
+    if behaviors is not None:
+        result[PBehaviorManager.BEHAVIORS] = behaviors
+
+    return result

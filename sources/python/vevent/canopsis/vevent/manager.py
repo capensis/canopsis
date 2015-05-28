@@ -170,14 +170,14 @@ class VEventManager(MiddlewareRegistry):
         query['$and'] = [
             {
                 '$or': [
-                    {VEventManager.DTSTART: {'$geq': dtstart}},
-                    {VEventManager.DTSTART: {'$leq': dtend}}
+                    {VEventManager.DTSTART: {'$gte': dtstart}},
+                    {VEventManager.DTSTART: {'$lte': dtend}}
                 ]
             },
             {
                 '$or': [
-                    {VEventManager.DTEND: {'$geq': dtstart}},
-                    {VEventManager.DTEND: {'$leq': dtend}}
+                    {VEventManager.DTEND: {'$gte': dtstart}},
+                    {VEventManager.DTEND: {'$lte': dtend}}
                 ]
             }
         ]
@@ -271,7 +271,7 @@ class VEventManager(MiddlewareRegistry):
             result.append(document)
 
             self[VEventManager.STORAGE].put_element(
-                _id=uid, document=document
+                _id=uid, element=document
             )
 
         return result

@@ -22,11 +22,13 @@
         "dtstart": {
             "type": "integer",
             "required": false,
+            "role": "timestamp",
             "default": 0
         },
         "dtend": {
             "type": "integer",
             "required": false,
+            "role": "timestamp",
             "default": 2147483648
         },
         "freq": {
