@@ -78,7 +78,6 @@ class VEventManager(MiddlewareRegistry):
     DURATION = 'duration'  #: duration field name
     FREQ = 'freq'  #: freq field name
     VEVENT = 'vevent'  #: vevent value field name
-    INFO = 'info'  #: data field name
 
     def __init__(self, vevent_storage=None, *args, **kwargs):
         """
@@ -94,8 +93,8 @@ class VEventManager(MiddlewareRegistry):
         """Get information from an ical Event.
 
         :param Event vevent: vevent from where get information.
-        :return:
-        :rtype: vevent information.
+        :return: vevent information in a dictionary.
+        :rtype: dict
         """
 
         return None
@@ -133,7 +132,7 @@ class VEventManager(MiddlewareRegistry):
         return result
 
     def values(
-        self, sources=None, dtstart=None, dtend=None, info=None,
+        self, sources=None, dtstart=None, dtend=None, query=None,
         limit=0, skip=0, sort=None, projection=None, with_count=False
     ):
         """Get source vevent document values.
@@ -142,7 +141,7 @@ class VEventManager(MiddlewareRegistry):
             sources.
         :param int dtstart: vevent dtstart (default 0).
         :param int dtend: vevent dtend (default sys.maxsize).
-        :param dict info: vevent information if given.
+        :param dict query: additional filtering query to apply in the search.
         :param int limit: max number of elements to get.
         :param int skip: first element index among searched list.
         :param sort: contains a list of couples of field (name, ASC/DESC)
@@ -155,7 +154,9 @@ class VEventManager(MiddlewareRegistry):
         :rtype: list
         """
 
-        query = {}
+        # initialize query
+        if query is None:
+            query = {}
 
         # put sources in query if necessary
         if sources is not None:
@@ -180,9 +181,6 @@ class VEventManager(MiddlewareRegistry):
                 ]
             }
         ]
-        # put info in query if necessary
-        if info is not None:
-            query[VEventManager.INFO] = info
 
         documents = self[VEventManager.STORAGE].find_elements(
             query=query,
@@ -197,20 +195,20 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
-    def whois(self, sources=None, dtstart=None, dtend=None, info=None):
+    def whois(self, sources=None, dtstart=None, dtend=None, query=None):
         """Get a set of sources which match with timed condition and query.
 
         :param list sources: sources from where get values. If None, use all
             sources.
         :param int dtstart: vevent dtstart (default 0).
         :param int dtend: vevent dtend (default sys.maxsize).
-        :param dict info: vevent information if given.
+        :param dict query: additional filtering query to apply in the search.
         :return: sources.
         :rtype: set
         """
 
         values = self.values(
-            sources=sources, dtstart=dtstart, dtend=dtend, info=info
+            sources=sources, dtstart=dtstart, dtend=dtend, query=query
         )
 
         result = set([value[VEventManager.SOURCE] for value in values])
@@ -255,12 +253,12 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.DTSTART: dtstart,
                     VEventManager.DTEND: dtend,
                     VEventManager.DURATION: duration,
-                    VEventManager.VEVENT: vevent.to_ical(),
+                    VEventManager.VEVENT: vevent.to_ical()
                 }
                 # get info
                 document_info = self._get_info(vevent)
                 if document_info is not None:
-                    document[VEventManager.INFO] = document_info
+                    document.update(document_info)
 
             # get document uid
             if VEventManager.UID in document:
@@ -309,7 +307,7 @@ class VEventManager(MiddlewareRegistry):
         return result
 
     def get_before(
-        self, sources=None, ts=None, dtstart=None, dtstop=None, info=None
+        self, sources=None, ts=None, dtstart=None, dtstop=None, query=None
     ):
         """Get before date related to one timestamp and additional parameters.
 
@@ -317,19 +315,19 @@ class VEventManager(MiddlewareRegistry):
         :param int ts: timestamp from when find vevent documents.
         :param int dtstart: vevent dtstart.
         :param int dtend: vevent dtend.
-        :param dict info: document information.
+        :param dict query: additional filtering query to apply in the search.
         :return: list of before date per source.
         """
 
         result = self._get_around(
-            sources=sources, ts=ts, dtstart=dtstart, dtstop=dtstop, info=info,
-            after=False
+            sources=sources, ts=ts, dtstart=dtstart, dtstop=dtstop,
+            query=query, after=False
         )
 
         return result
 
     def get_after(
-        self, sources=None, ts=None, dtstart=None, dtstop=None, info=None
+        self, sources=None, ts=None, dtstart=None, dtstop=None, query=None
     ):
         """Get afer date related to one timestamp and additional parameters.
 
@@ -337,20 +335,20 @@ class VEventManager(MiddlewareRegistry):
         :param int ts: timestamp from when find vevent documents.
         :param int dtstart: vevent dtstart.
         :param int dtend: vevent dtend.
-        :param dict info: document information.
+        :param dict query: additional filtering query to apply in the search.
         :return: list of after date per source.
         """
 
         result = self._get_around(
-            sources=sources, ts=ts, dtstart=dtstart, dtstop=dtstop, info=info,
-            after=True
+            sources=sources, ts=ts, dtstart=dtstart, dtstop=dtstop,
+            query=query, after=True
         )
 
         return result
 
     def _get_around(
         self,
-        sources=None, ts=None, dtstart=None, dtend=None, info=None,
+        sources=None, ts=None, dtstart=None, dtend=None, query=None,
         after=True
     ):
         """Get around date related to one timestamp and additional parameters.
@@ -359,7 +357,7 @@ class VEventManager(MiddlewareRegistry):
         :param int ts: timestamp from when find vevent documents.
         :param int dtstart: vevent dtstart.
         :param int dtend: vevent dtend.
-        :param dict info: document information.
+        :param dict query: additional filtering query to apply in the search.
         :param bool after: if True (default), get period after ts (included),
             otherwise, before ts.
         :return: list of around date per source.
@@ -375,7 +373,7 @@ class VEventManager(MiddlewareRegistry):
 
         # get entity documents(s)
         documents = self.values(
-            sources=sources, dtstart=dtstart, dtend=dtend, info=info
+            sources=sources, dtstart=dtstart, dtend=dtend, query=query
         )
 
         for document in documents:
