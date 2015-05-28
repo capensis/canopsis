@@ -19,9 +19,9 @@
 			"required": true
 		},
 		"crecord_type": {
-			"enum": ["account"],
+			"enum": ["event"],
 			"required": true,
-			"default": "account",
+			"default": "event",
 			"icon": "flag"
 		},
 		"ack": {
