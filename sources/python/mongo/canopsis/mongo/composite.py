@@ -41,6 +41,8 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
             result.append(index)
 
+        result.append([(CompositeStorage.NAME, Storage.ASC)])
+
         return result
 
     def get(
