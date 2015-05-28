@@ -128,7 +128,6 @@ class VEventManager(MiddlewareRegistry):
     ):
         """Get source vevent document values.
 
-        :param list
         :param list sources: sources from where get values. If None, use all
             sources.
         :param int dtstart: vevent dtstart (default 0).
@@ -207,10 +206,10 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
-    def add(self, source, vevents, info=None, cache=False):
+    def put(self, vevents, source=None, info=None, cache=False):
         """Add vevents (and optionally data) related to input source.
 
-        :param str source: vevent source.
+        :param str source: vevent source if not None.
         :param list vevents: vevents (document, str or ical vevent).
         :param dict info: vevent info.
         :param bool cache: if True (default False), use storage cache.
