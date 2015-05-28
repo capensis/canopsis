@@ -42,7 +42,7 @@ events = get_storage(
 
 DOWNTIME = 'downtime'  #: downtime pbehavior value
 
-INFO_QUERY = {PBehaviorManager.BEHAVIORS: [DOWNTIME]}
+DOWNTIME_QUERY = {PBehaviorManager.BEHAVIORS: DOWNTIME}
 
 
 @register_task
@@ -79,10 +79,10 @@ def event_processing(
         ev.add('duration', timedelta(event['duration']))
         ev.add('contact', event['author'])
 
-        manager.put(source=eid, vevents=[ev], info=INFO_QUERY)
+        manager.put(source=eid, vevents=[ev])
 
         if manager.get_after(
-            source=eid, info=INFO_QUERY, ts=event['timestamp']
+            source=eid, query=DOWNTIME_QUERY, ts=event['timestamp']
         ):
             events.update(
                 {
@@ -100,7 +100,7 @@ def event_processing(
 
     else:
         event[DOWNTIME] = (
-            manager.get_after(source=eid, info=INFO_QUERY) is not None
+            manager.get_after(source=eid, query=DOWNTIME_QUERY) is not None
         )
 
     return event
@@ -123,7 +123,7 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
     if manager is None:
         manager = pbmgr
 
-    entity_ids = manager.whois(info=INFO_QUERY)
+    entity_ids = manager.whois(query=DOWNTIME_QUERY)
     entities = context.get_entities(entity_ids)
 
     spec = {}

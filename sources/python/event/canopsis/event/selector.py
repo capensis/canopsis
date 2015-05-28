@@ -218,7 +218,9 @@ class Selector(Record):
         )
 
         entities = self.context.get_entities(
-            self.pbehavior.whois(info={PBehaviorManager.BEHAVIORS: 'downtime'})
+            self.pbehavior.whois(
+                query={PBehaviorManager.BEHAVIORS: 'downtime'}
+            )
         )
 
         if entities:
