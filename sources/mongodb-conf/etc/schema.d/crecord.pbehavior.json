@@ -3,6 +3,9 @@
     "categories": [{
         "title": "General",
         "keys": ["start", "end", "freq", "duration"]
+    },{
+        "title": "Behaviors",
+        "keys": ["behaviors"]
     }],
     "properties": {
         "entity_id": {
@@ -11,14 +14,14 @@
             "role": "context"
         },
         "start": {
-            "type": "string",
+            "type": "integer",
             "required": false,
-            "role": "datetime"
+            "role": "timestamp"
         },
         "end": {
-            "type": "string",
+            "type": "integer",
             "required": false,
-            "role": "datetime"
+            "role": "timestamp"
         },
         "freq": {
             "type": "string",
@@ -26,7 +29,7 @@
             "role": "freq"
         },
         "duration": {
-            "type": "datetime",
+            "type": "integer",
             "required": false,
             "role": "duration"
         },
