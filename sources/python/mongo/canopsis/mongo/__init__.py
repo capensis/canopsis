@@ -264,7 +264,6 @@ class MongoStorage(MongoDataBase, Storage):
         if hint is not None:
             cursor.hint(hint)
 
-        #result = list(cursor)
         result = MongoCursor(cursor)
 
         if one_element:
