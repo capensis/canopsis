@@ -39,11 +39,6 @@
             "required": false,
             "default": ""
         },
-        "info": {
-            "type": "object",
-            "required": false,
-            "default": {}
-        },
         "vevent": {
             "type": "string",
             "required": false,
