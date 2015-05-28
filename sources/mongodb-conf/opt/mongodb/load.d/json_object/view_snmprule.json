@@ -75,6 +75,7 @@
               "filters" : [],
               "default_filter" : "{\"$and\":[{\"event_type\":{\"$eq\":\"trap\"}}, {\"snmp_trap_match\":{\"$eq\": false}}]}"
             },
+            { "name": "Sortablearray" },
             { "name": "Arraysearch",
               "searchable_columns": [
                 "snmp_trap_oid"

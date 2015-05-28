@@ -143,6 +143,13 @@ class engine(Engine):
                 message = 'Empty key value : {}'.format(key)
                 return self.on_trap_error(event, message)
 
+            if key == 'state' and value.strip() not in ['0', '1', '2', '3']:
+                message = 'Invalid state : {}'.format(value)
+                return self.on_trap_error(event, message)
+            elif key == 'state':
+                # Parse state to int
+                value = int(value)
+
             self.logger.debug(
                 '"{}" field had template "{}" set to "{}"'.format(
                     key,
@@ -268,8 +275,6 @@ class engine(Engine):
                 len(objects)
             ))
 
-            #Test oid TODO remove
-            #oid = '1.3.6.1.4.1.20006.1.3.1.17'
             if oid is not None and objects is not None:
 
                 self.mibs[_id] = {
@@ -291,4 +296,5 @@ class engine(Engine):
         rk = get_routingkey(event)
         event['_id'] = rk
         self.amqp.publish(
-            event, rk, self.normal_exchange)
+            event, rk, self.normal_exchange
+        )
