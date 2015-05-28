@@ -24,7 +24,7 @@
                     "widgetId" : "widget_list_9cd47cab-d585-ed27-e84f-310eb914ba41",
                     "xtype" : "list",
                     "title" : "Entities",
-                    "listed_crecord_type" : "ctxmetric",
+                    "listed_crecord_type" : "context",
                     "mixins" : [
                         {
                             "name" : "crud"
