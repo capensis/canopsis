@@ -35,6 +35,7 @@ modules = [
     'development',
     'uiv1_themes',
     'canopsis-backend-ui-connector',
+    'canopsis-ui',
     'userpreferences',
     'charts',
 ]

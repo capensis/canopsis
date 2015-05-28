@@ -20,9 +20,11 @@
 # ---------------------------------
 
 from canopsis.old.record import Record
-from canopsis.old.downtime import Downtime
 from canopsis.event import get_routingkey, forger
 from canopsis.old.cfilter import Filter
+
+from canopsis.context.manager import Context
+from canopsis.pbehavior.manager import PBehaviorManager
 
 from json import loads
 from logging import getLogger
@@ -82,7 +84,8 @@ class Selector(Record):
         }
 
         self.logger = getLogger('Selector')
-        self.cdowntime = Downtime()
+        self.context = Context()
+        self.pbehavior = PBehaviorManager()
         # Canopsis filter management for mongo
         self.cfilter = Filter()
 
@@ -214,10 +217,22 @@ class Selector(Record):
             excludes=self.exclude_ids,
         )
 
-        downtime = self.cdowntime.get_filter()
-        if downtime:
+        entities = self.context.get_entities(
+            self.pbehavior.whois(info={PBehaviorManager.BEHAVIORS: 'downtime'})
+        )
+
+        if entities:
+            downtime = [
+                {
+                    'component': {'$ne': entity['component']},
+                    'resource': {'$ne': entity['resource']}
+                }
+                for entity in entities
+            ]
+
             if '$and' in cfilter:
-                cfilter['$and'].append(downtime)
+                cfilter['$and'] += downtime
+
             else:
                 cfilter = {'$and': [downtime, cfilter]}
 

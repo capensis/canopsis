@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.init import Init
+from canopsis.common.init import Init
 from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account

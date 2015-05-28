@@ -5,6 +5,7 @@ Engines
    :maxdepth: 2
    :titlesonly:
 
+   new-spec
    filter-spec
    rights
    rule

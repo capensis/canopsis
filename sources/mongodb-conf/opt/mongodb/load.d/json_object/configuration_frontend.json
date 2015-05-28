@@ -20,7 +20,7 @@
         "label" : "²"
     }],
     "defaultview" : "view.event",
-    "crecord_name" : "frontent",
+    "crecord_name" : "frontend",
     "loader_id": "cservice.frontend",
     "loader_no_update": true
 }

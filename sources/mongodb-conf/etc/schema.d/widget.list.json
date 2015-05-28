@@ -42,6 +42,7 @@
 				"derogation",
 				"group",
 				"eventlog",
+				"context",
 				"ctxmetric",
 				"linklist"
 			],
