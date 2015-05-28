@@ -73,7 +73,7 @@
             {
               "name": "Customfilterlist",
               "filters" : [],
-              "default_filter" : "{\"$or\":[{\"event_type\":{\"$eq\":\"trap\"}}]}"
+              "default_filter" : "{\"$and\":[{\"event_type\":{\"$eq\":\"trap\"}}, {\"snmp_trap_match\":{\"$eq\": false}}]}"
             },
             { "name": "Arraysearch",
               "searchable_columns": [

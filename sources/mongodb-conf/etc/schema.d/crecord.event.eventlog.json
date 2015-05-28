@@ -2,80 +2,16 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["timestamp", "component", "resource", "state", "output"]
+		"keys":["timestamp", "component", "resource", "state", "output", "snmp_trap_oid", "snmp_vars"]
 	}],
 	"showEditButton": true,
 	"properties": {
-		"source_type": {
-			"type": "string",
-			"required": true
-		},
-		"crecord_type": {
-			"enum": ["account"],
-			"required": true,
-			"default": "account",
-			"icon": "flag"
-		},
-		"ack": {
-			"type": "object",
-			"role": "ack"
-		},
-		"ticket_declared": {
-			"type": "object",
-			"title":"ticket"
-		},
-		"timestamp": {
-			"type": "number",
-			"role": "timestamp",
-			"canDisplayAgo" : true
-		},
-		"component": {
-			"type": "string",
-			"required": true
-		},
-		"resource": {
-			"type": "string",
-			"required": true,
-			"readOnly": true
-		},
-		"connector": {
-			"type": "string",
-			"required": true,
-			"role": "source"
-		},
-		"connector_name": {
-			"type": "string",
-			"required": true
-		},
-		"output": {
-			"type": "string",
-			"role": "richtext",
-			"required": true,
-			"description": "output of the event",
-			"title": "Output"
-		},
-		"state": {
-			"type": "number",
-			"required": true,
-			"role": "criticity",
-			"title":"criticity"
-		},
-		"perimeter": {
+		"snmp_trap_oid": {
 			"type": "string"
 		},
-		"domain": {
-			"type": "string"
-		},
-		"status": {
-			"type": "number",
-			"role": "status"
-		},
-		"cancel": {
-			"type": "object",
-			"role": "object"
-		},
-		"author": {
-			"type": "string"
+		"snmp_vars": {
+			"type": "string",
+			"role": "snmpvars"
 		}
 	}
 }
