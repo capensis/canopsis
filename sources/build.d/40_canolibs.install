@@ -27,6 +27,7 @@ PROJECTS[23]='topology'
 PROJECTS[24]='sla'
 PROJECTS[25]='linklist'
 PROJECTS[26]='entitylink'
+PROJECTS[27]='vevent'
 
 function build(){
 	true
@@ -75,7 +76,7 @@ function update(){
         echo "-- Update project: $project"
         export CPS_PREFIX="$PREFIX/etc/"
         cd $SRC_PATH/python/$project
-        
+
         launch_log $NAME "python setup.py install --no-conf"
         check_code $? "Impossible to update $project"
 
