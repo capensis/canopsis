@@ -90,6 +90,16 @@ class VEventManager(MiddlewareRegistry):
         if vevent_storage is not None:
             self[VEventManager.STORAGE] = vevent_storage
 
+    def _get_info(self, vevent):
+        """Get information from an ical Event.
+
+        :param Event vevent: vevent from where get information.
+        :return:
+        :rtype: vevent information.
+        """
+
+        return None
+
     def get_by_uids(
         self, uids,
         limit=0, skip=0, sort=None, projection=None, with_count=False
@@ -155,6 +165,7 @@ class VEventManager(MiddlewareRegistry):
             dtstart = 0
         if dtend is None:
             dtend = maxsize
+
         query['$and'] = [
             {
                 '$or': [
@@ -206,7 +217,7 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
-    def put(self, vevents, source=None, info=None, cache=False):
+    def put(self, vevents, source=None, cache=False):
         """Add vevents (and optionally data) related to input source.
 
         :param str source: vevent source if not None.
@@ -246,10 +257,10 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.DURATION: duration,
                     VEventManager.VEVENT: vevent.to_ical(),
                 }
-
-            # update information on vevent
-            if info is not None:
-                document[VEventManager.INFO].update(info)
+                # get info
+                document_info = self._get_info(vevent)
+                if document_info is not None:
+                    document[VEventManager.INFO] = document_info
 
             # get document uid
             if VEventManager.UID in document:
@@ -267,14 +278,33 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
-    def remove(self, uids=None):
+    def remove(self, uids=None, cache=False):
         """Remove elements from storage where uids are given.
 
         :param list uids: list of document uids to remove from storage
             (default all empty storage documents).
         """
 
-        result = self[VEventManager.STORAGE].remove_elements(ids=uids)
+        result = self[VEventManager.STORAGE].remove_elements(
+            ids=uids, cache=cache
+        )
+
+        return result
+
+    def remove_by_source(self, sources=None, cache=False):
+        """Remove vevent documents related to input sources.
+
+        :param list sources: sources from where remove related vevent
+            documents.
+        """
+        _filter = {}
+
+        if sources is not None:
+            _filter[VEventManager.SOURCE] = {'$in': sources}
+
+        result = self[VEventManager.STORAGE].remove_elements(
+            _filter=_filter, cache=cache
+        )
 
         return result
 

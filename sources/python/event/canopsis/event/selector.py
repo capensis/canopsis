@@ -217,7 +217,9 @@ class Selector(Record):
             excludes=self.exclude_ids,
         )
 
-        entities = self.context.get_entities(self.pbehavior.whois('downtime'))
+        entities = self.context.get_entities(
+            self.pbehavior.whois(info={PBehaviorManager.BEHAVIORS: 'downtime'})
+        )
 
         if entities:
             downtime = [
