@@ -59,7 +59,10 @@ class PBehaviorManager(VEventManager):
     def _get_info(self, vevent, *args, **kwargs):
 
         serialized_behaviors = vevent[PBehaviorManager.BEHAVIOR]
+        behaviors = loads(serialized_behaviors)
 
-        result = loads(serialized_behaviors)
+        result = {
+            PBehaviorManager.BEHAVIORS: behaviors
+        }
 
         return result
