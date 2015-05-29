@@ -69,8 +69,7 @@ If a rule is find:
 - the original event will have a new field named `snmp_trap_match` set to True
 
 During the processing on the fields, if any errors happen:
-- the original event will have a new field named `snmp_trap_errors`, containing
-  a list of the errors.
+- the original event will have a new field named `snmp_trap_errors`, containing a list of the errors.
 
 If anything success, a new event will be generated.
 
