@@ -56,7 +56,17 @@ class PBehaviorManager(VEventManager):
 
     BEHAVIORS = 'behaviors'  #: behaviors value field name
 
-    def _get_info(self, vevent, *args, **kwargs):
+    def _get_document_properties(self, document, *args, **kwargs):
+
+        behaviors = document[PBehaviorManager.BEHAVIORS]
+
+        result = {
+            PBehaviorManager.BEHAVIORS: behaviors
+        }
+
+        return result
+
+    def _get_vevent_properties(self, vevent, *args, **kwargs):
 
         serialized_behaviors = vevent[PBehaviorManager.BEHAVIOR]
         behaviors = loads(serialized_behaviors)
