@@ -1,13 +1,12 @@
 {
   "_id" : "view.jobs",
+  "id" : "view.jobs",
+  "crecord_write_time" : 1426524183,
+  "crecord_name" : "jobs.json",
+  "loader_no_update" : false,
+  "crecord_type" : "view",
   "loader_id" : "view.jobs",
   "enable" : true,
-  "aaa_access_group" : [
-    "r"
-  ],
-  "description" : null,
-  "parent" : [ ],
-  "tags" : [ ],
   "containerwidget" : {
     "widgetId" : null,
     "preference_id" : null,
@@ -64,24 +63,5 @@
       }
     ],
     "id" : "item_ffc332f0-2440-8a74-ac0f-81496ba2da6e"
-  },
-  "aaa_access_owner" : [
-    "r",
-    "w"
-  ],
-  "crecord_write_time" : 1426524183,
-  "aaa_group" : "group.CPS_view",
-  "internal" : false,
-  "aaa_admin_group" : "group.CPS_view_admin",
-  "children" : [ ],
-  "crecord_name" : "jobs.json",
-  "loader_no_update" : true,
-  "id" : "view.jobs",
-  "aaa_access_unauth" : [ ],
-  "aaa_owner" : "account.root",
-  "crecord_type" : "view",
-  "aaa_access_other" : [
-    "r"
-  ],
-  "crecord_creation_time" : 1400853201
+  }
 }

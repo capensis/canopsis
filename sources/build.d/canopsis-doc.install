@@ -4,14 +4,24 @@ function build(){
     true
 }
 
+function update_documentation(){
+	cd $SRC_PATH/../doc/sakura
+	make html
+	echo "Installing doc"
+	rm -rf $PREFIX/var/www/doc
+	cp -rv _build/html $PREFIX/var/www/doc
+}
+
 function install(){
     easy_install_pylib MarkupSafe
     easy_install_pylib docutils
     easy_install_pylib Pygments
     easy_install_pylib jinja2
     easy_install_pylib Sphinx
+    update_documentation
 }
 
 function update(){
-        true
+	update_documentation
+    true
 }

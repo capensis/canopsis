@@ -1,13 +1,13 @@
 {
     "crecord_name" : "series.json",
     "loader_id": "view.series",
-    "loader_no_update": true,
+    "loader_no_update": false,
     "_id" : "view.series",
     "id" : "view.series",
     "crecord_write_time" : 1421855062,
     "enable" : true,
     "description" : "Configure series",
-    "parent" : [ ],
+    "crecord_type" : "view",
     "containerwidget" : {
         "widgetId" : "item_000001-5f29-a175-badd-45c1293b0fce",
         "xtype" : "widgetcontainer",
@@ -137,8 +137,5 @@
             }
         ],
         "refreshInterval" : 0
-    },
-    "internal" : false,
-    "crecord_type" : "view",
-    "crecord_creation_time" : 1421685120
+    }
 }
