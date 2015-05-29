@@ -1,9 +1,10 @@
 {
   "loader_id": "view.weather",
-  "loader_no_update": true,
+  "loader_no_update": false,
   "id": "view.weather",
   "_id": "view.weather",
   "crecord_type": "view",
+  "crecord_name": "weather",
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
@@ -24,24 +25,5 @@
         }
       }
     ]
-  },
-  "parent": [],
-  "aaa_access_owner": [
-    "r",
-    "w"
-  ],
-  "aaa_group": "group.CPS_view_admin",
-  "crecord_creation_time": 1400853201,
-  "aaa_access_unauth": [],
-  "aaa_owner": "account.root",
-  "internal": false,
-  "aaa_access_other": [
-    "r"
-  ],
-  "aaa_access_group": [
-    "r"
-  ],
-  "aaa_admin_group": "group.CPS_view_admin",
-  "children": [],
-  "crecord_name": "Weather"
+  }
 }

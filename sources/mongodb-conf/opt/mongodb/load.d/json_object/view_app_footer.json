@@ -1,16 +1,12 @@
 {
         "crecord_name" : "app_footer.json",
         "loader_id": "view.app_footer",
+        "crecord_type": "view",
         "loader_no_update": true,
         "id" : "view.app_footer",
         "_id" : "view.app_footer",
         "crecord_write_time" : 1406205401,
         "enable" : true,
-        "aaa_access_group" : [
-                "r"
-        ],
-        "description" : null,
-        "parent" : [ ],
         "containerwidget" : {
                 "items" : [
                         {
@@ -44,20 +40,5 @@
                 { "name": "lightlayout" }
                 ],
                 "title" : "container title vbox"
-        },
-        "aaa_access_owner" : [
-                "r",
-                "w"
-        ],
-        "aaa_group" : "group.CPS_view_admin",
-        "internal" : false,
-        "aaa_admin_group" : "group.CPS_view_admin",
-        "children" : [ ],
-        "aaa_access_unauth" : [ ],
-        "aaa_owner" : "account.root",
-        "crecord_type" : "view",
-        "aaa_access_other" : [
-                "r"
-        ],
-        "crecord_creation_time" : 1406205356
+        }
 }
