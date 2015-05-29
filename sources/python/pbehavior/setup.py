@@ -22,7 +22,7 @@
 from canopsis.common.setup import setup
 
 install_requires = [
-    'python-dateutil', 'icalendar', 'canopsis.storage'
+    'python-dateutil', 'icalendar', 'canopsis.storage', 'canopsis.vevent'
 ]
 
 setup(

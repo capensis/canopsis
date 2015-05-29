@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -18,5 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[PBEHAVIOR]
-vevent_storage_uri=mongodb-default-pbehavior://
+from canopsis.common.setup import setup
+
+install_requires = ['canopsis.common', 'canopsis.storage', 'dateutil']
+
+setup(
+    description='Canopsis calendar library',
+    install_requires=install_requires,
+    keywords='ccalendar'
+)

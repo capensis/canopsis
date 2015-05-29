@@ -1,47 +1,50 @@
 {
-    "type": "object",
-    "categories": [{
-        "title": "General",
-        "keys":["crecord_type","category","description"]
-    }],
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys": ["crecord_type", "category", "description"]
+	}],
     "properties": {
         "uid": {
             "type": "string",
-            "required": false
+            "required": false,
+            "description": "vevent unique id"
         },
         "crecord_type": {
             "enum": ["vevent"],
             "required": true
         },
-        "source":{
-            "type":"string",
-            "required": true,
-            "description": "publishing entity id"
+        "source": {
+        	"type": "string",
+        	"required": true,
+        	"description": "publishing entity id"
         },
-        "dtstart":{
-            "type":"integer",
+        "dtstart": {
+            "type": "integer",
             "required": false,
+            "role": "timestamp",
             "default": 0
         },
-        "dtend":{
-            "type":"integer",
+        "dtend": {
+            "type": "integer",
             "required": false,
-            "default": 0
+            "role": "timestamp",
+            "default": 2147483648
         },
-        "freq":{
-            "type":"string",
+        "freq": {
+            "type": "string",
             "required": false,
             "default": ""
         },
-        "duration":{
-            "type":"string",
+        "duration": {
+            "type": "string",
             "required": false,
             "default": ""
         },
-        "info": {
-            "type": "object",
+        "vevent": {
+            "type": "string",
             "required": false,
-            "default": {}
+            "default": ""
         }
     }
 }

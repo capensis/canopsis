@@ -19,27 +19,21 @@
 # ---------------------------------
 
 from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
+    conf_paths, add_category
+)
 from canopsis.middleware.registry import MiddlewareRegistry
-import uuid
 
-CONF_PATH = 'linklist/linklist.conf'
-CATEGORY = 'LINKLIST'
+CONF_PATH = 'calendar/calendar.conf'
+CATEGORY = 'CALENDAR'
 
 
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
-class Linklist(MiddlewareRegistry):
-
-    LINKLIST_STORAGE = 'linklist_storage'
-
-    """
-    Manage linklist information in Canopsis
+class Calendar(MiddlewareRegistry):
+    """Manage calendar information in Canopsis.
     """
 
-    def __init__(self, *args, **kwargs):
-
-        super(Linklist, self).__init__(*args, **kwargs)
+    CALENDAR_STORAGE = 'calendar_storage'
 
     def find(
         self,
@@ -48,58 +42,51 @@ class Linklist(MiddlewareRegistry):
         ids=None,
         sort=None,
         with_count=False,
-        _filter={},
+        query={}
     ):
+        """Retrieve information from data sources
 
-        """
-        Retrieve information from data sources
-
-        :param ids: an id list for document to search
-        :param limit: maximum record fetched at once
-        :param skip: ordinal number where selection should start
-        :param with_count: compute selection count when True
+        :param str ids: an id list for document to search.
+        :param int limit: maximum record fetched at once.
+        :param int skip: ordinal number where selection should start.
+        :param bool with_count: compute selection count when True.
         """
 
-        result = self[Linklist.LINKLIST_STORAGE].get_elements(
+        result = self[Calendar.CALENDAR_STORAGE].get_elements(
             ids=ids,
             skip=skip,
             sort=sort,
             limit=limit,
-            query=_filter,
+            query=query,
             with_count=with_count
         )
+
         return result
 
     def put(
         self,
+        _id,
         document,
         cache=False
     ):
-        """
-        Persistance layer for upsert operations
+        """Persistance layer for upsert operations
 
-        :param context: contains data identifiers
-        :param extra_keys: documents extra information depending on specific
-        schema.
+        :param _id: entity id
+        :param document: contains link information for entities
         """
-        if 'id' not in document or not document['id']:
-            document['_id'] = str(uuid.uuid4())
-        else:
-            document['_id'] = document['id']
-            del document['id']
 
-        self[Linklist.LINKLIST_STORAGE].put_element(
-            _id=document['_id'], element=document, cache=cache
+        self[Calendar.CALENDAR_STORAGE].put_element(
+            _id=_id, element=document, cache=cache
         )
 
     def remove(
         self,
-        ids
+        ids,
+        cache=False
     ):
-        """
-        Remove fields persisted in a default storage.
+        """Remove fields persisted in a default storage.
 
         :param element_id: identifier for the document to remove
         """
 
-        self[Linklist.LINKLIST_STORAGE].remove_elements(ids=ids)
+        self[Calendar.CALENDAR_STORAGE].remove_elements(ids=ids, cache=cache)
