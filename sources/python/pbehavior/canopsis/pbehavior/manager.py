@@ -122,8 +122,8 @@ class PBehaviorManager(VEventManager):
         result = {}
 
         for vevent in vevents:
-            vbehaviors = vevent['behaviors']
-            dtend = vevent['dtend']
+            vbehaviors = vevent[PBehaviorManager.BEHAVIORS]
+            dtend = vevent[VEventManager.DTEND]
 
             for behavior in vbehaviors:
                 if behavior in behaviors and dtend > result.get(behavior, -1):
