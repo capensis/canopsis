@@ -71,7 +71,7 @@ class PBehaviorManager(VEventManager):
 
     def _get_vevent_properties(self, vevent, *args, **kwargs):
 
-        serialized_behaviors = vevent[PBehaviorManager.BEHAVIOR]
+        serialized_behaviors = vevent.get(PBehaviorManager.BEHAVIOR, "[]")
         behaviors = loads(serialized_behaviors)
 
         result = {

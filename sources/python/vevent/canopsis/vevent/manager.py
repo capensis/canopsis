@@ -242,11 +242,11 @@ class VEventManager(MiddlewareRegistry):
 
             document = None
 
-            if isinstance(document, dict):
+            if isinstance(vevent, dict):
 
                 document = vevent
                 # get uid
-                uid = document[VEventManager.UID]
+                uid = document.get(VEventManager.UID)
                 if not uid:
                     uid = str(uuid())
                     document[VEventManager.UID] = uid
@@ -320,11 +320,11 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.VEVENT: vevent.to_ical()
                 })
 
-            document['_id'] = uid
-
             self[VEventManager.STORAGE].put_element(
                 _id=uid, element=document
             )
+
+            document['_id'] = uid
 
             result.append(document)
 
