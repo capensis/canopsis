@@ -37,24 +37,6 @@ A rule is defined as
 - a optional `component` field
 - a optional `output` field
 
-All the fields are a string template used to replace fill the new event.
-A template can contain variables to replace in the format `{{OID}}`, for
-example::
-
-    "resource": "link:{{1.3.6.1.2.1.2.2.1.1}}"
-    "output": "Link down on interface {{1.3.6.1.2.1.2.2.1.1}}"
-
-Within the `{{}}`, you can add optional processor to change the variable, for
-example::
-
-    "component": "{{1.3.6.1.2.1.1.5|resolveip}}",
-
-Current available processors:
-
-- upper: convert the string to uppercase
-- lower: convert the string to lowercase
-- resolveip: perform a dns lookup to find the name of the ip
-
 
 Processing
 ----------
@@ -66,13 +48,62 @@ If no rule are linked to the oid:
 - the original event will have a new field named `snmp_trap_match` set to False
 
 If a rule is find:
-- the original event will have a new field named `snmp_trap_match` set to True
-
+- Translated event will have a new field named `snmp_trap_match` set to True
+- Translating event consists in compiling rules templates for rules fields. the template compilation context is set with both mib objects oids and event snmp_vars values (see section below: mib object translation)
+- Translated event is sent to the normal canopsis event processing if translation succeeded
 During the processing on the fields, if any errors happen:
 - the original event will have a new field named `snmp_trap_errors`, containing a list of the errors.
 
-If anything success, a new event will be generated.
+Mib object translation
+----------------------
 
+First, rule fields may contain an Mib module object reference, for instance the following template works for a Nagios module and objects definitions
+
+.. code-block:: javascript
+
+   //A rule sample
+   {
+      ...
+      component: 'customcomponent_{{ nSvcEvent }}'
+      ...
+   }
+
+As the rule's module is ``NAGIOS-NOTIFY-MIB``, the UI editor shows all names availables in mib collection where ``nodetype = 'notification'``.
+Selecting a name for a module let the UI find all the selected mib document **objects**. These objects are then available to edit templates.
+
+By knowing in the rule witch module and witch name are used, it is possible to build the template compilation context. When the engine meets a rule for the current trap, it is able to get the mib information and objects related to this rule. When object list is retrieved, the engine search for object oids by building a document id like ``modulename::objectname`` where in database a document shoud live and be like:
+
+.. code-block:: javascript
+
+   //A rule sample
+   {
+      _id: 'module_name::object_name',
+      'oid': 'x.y.z'
+   }
+
+When the object **oid** is retrieved, the template context is set with the the following information:
+
+.. code-block:: python
+
+   # Arbitrary values
+   object_name = 'object_name'
+   object_oid = 'x.y.z'
+
+   # Template context building
+   template_context_value = event['snmp_vars'][object_oid]
+   template_context[object_name] = template_context_value
+
+This way, the template context should looks like in our case
+
+.. code-block:: javascript
+
+   {
+      'nSvcEvent': 'componentinfo',
+      ...
+
+   }
+
+Then the translated event will have a component value equal to **customcomponent_componentinfo**
 
 Mibs
 ----
