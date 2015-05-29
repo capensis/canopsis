@@ -90,7 +90,8 @@
             "event_type",
             "snmp_trap_oid",
             "timestamp",
-            "snmp_vars"
+            "snmp_vars",
+            "errors"
           ]
         }
       }

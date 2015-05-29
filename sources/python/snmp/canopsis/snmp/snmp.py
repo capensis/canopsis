@@ -171,8 +171,8 @@ class engine(Engine):
     def on_trap_error(self, event, reason, errors=[]):
         self.logger.info(reason)
         event["snmp_trap_match"] = False
-        if errors:
-            event['errors'] = errors
+        errors.append(reason)
+        event['errors'] = errors
         self.make_follow(event)
         return event
 
