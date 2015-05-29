@@ -1,11 +1,10 @@
 {
   "crecord_name" : "userviews.json",
   "loader_id": "view.userviews",
-  "loader_no_update": true,
+  "loader_no_update": false,
   "id": "view.userviews",
   "_id": "view.userviews",
   "crecord_type": "view",
-  "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
     "xtype": "widgetcontainer",
@@ -45,24 +44,5 @@
         }
       }
     ]
-  },
-  "parent": [],
-  "aaa_access_owner": [
-    "r",
-    "w"
-  ],
-  "aaa_group": "group.CPS_view_admin",
-  "crecord_creation_time": 1400853201,
-  "aaa_access_unauth": [],
-  "aaa_owner": "account.root",
-  "internal": false,
-  "aaa_access_other": [
-    "r"
-  ],
-  "aaa_access_group": [
-    "r"
-  ],
-  "aaa_admin_group": "group.CPS_view_admin",
-  "children": [],
-  "name": "Userviews view"
+  }
 }

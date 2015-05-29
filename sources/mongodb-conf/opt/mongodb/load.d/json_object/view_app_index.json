@@ -24,25 +24,7 @@
         }
       }
     ]
-  },
-  "parent": [],
-  "aaa_access_owner": [
-    "r",
-    "w"
-  ],
-  "aaa_group": "group.CPS_view",
-  "crecord_creation_time": 1400853201,
-  "aaa_access_unauth": [],
-  "aaa_owner": "account.root",
-  "internal": false,
-  "aaa_access_other": [
-    "r"
-  ],
-  "aaa_access_group": [
-    "r"
-  ],
-  "aaa_admin_group": "group.CPS_view_admin",
-  "children": []
+  }
 }
 
 
