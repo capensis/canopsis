@@ -75,6 +75,8 @@ class VEventManager(MiddlewareRegistry):
     FREQ = 'freq'  #: freq field name
     VEVENT = 'vevent'  #: vevent value field name
 
+    SOURCE_TYPE = 'X-Canopsis-SourceType'  #: source type field name
+
     def __init__(self, vevent_storage=None, *args, **kwargs):
         """
         :param Storage vevent_storage: vevent storage.
@@ -104,6 +106,46 @@ class VEventManager(MiddlewareRegistry):
         """
 
         return {}
+
+    def get_vevent(self, document):
+        """Get a vevent from a document.
+
+        :param dict document: document to transform into an Event.
+        :return: document vevent.
+        :rtype: Event
+        """
+
+        # prepare vevent kwargs
+        kwargs = self._get_document_properties(document=document)
+
+        # get uid
+        uid = document.get(VEventManager.UID)
+        if uid:
+            kwargs[VEventManager.UID] = uid
+        # get source
+        source = document.get(VEventManager.SOURCE)
+        if source:
+            kwargs[VEventManager.SOURCE_TYPE] = source
+        # get dtstart
+        dtstart = document[VEventManager.DTSTART]
+        if dtstart:
+            kwargs[VEventManager.DTSTART] = datetime.fromtimestamp(dtstart)
+        # get dtend
+        dtend = document[VEventManager.DTEND]
+        if dtend:
+            kwargs[VEventManager.DTEND] = datetime.fromtimestamp(dtend)
+        # get duration
+        duration = document[VEventManager.DURATION]
+        if duration:
+            kwargs[VEventManager.DURATION] = timedelta(duration)
+        # get freq
+        freq = document[VEventManager.FREQ]
+        if freq:
+            kwargs[VEventManager.FREQ] = freq
+
+        result = Event(**kwargs)
+
+        return result
 
     def get_by_uids(
         self, uids,
@@ -266,7 +308,7 @@ class VEventManager(MiddlewareRegistry):
                     # prepare vevent properties
                     kwargs[VEventManager.UID] = uid
                     if source:
-                        kwargs[VEventManager.SOURCE] = source
+                        kwargs[VEventManager.SOURCE_TYPE] = source
                     if dtstart:
                         kwargs[VEventManager.DTSTART] = datetime.fromtimestamp(
                             dtstart
@@ -305,6 +347,9 @@ class VEventManager(MiddlewareRegistry):
                 uid = vevent.get(VEventManager.UID)
                 if not uid:
                     uid = str(uuid())
+                # get source
+                if not source:
+                    source = vevent.get(VEventManager.SOURCE_TYPE)
                 # prepare the document
                 document.update({
                     VEventManager.UID: uid,

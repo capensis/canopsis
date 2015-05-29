@@ -22,6 +22,7 @@ from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
 from canopsis.vevent.manager import VEventManager
+from canopsis.common.init import basestring
 
 from json import loads
 
@@ -38,21 +39,8 @@ CATEGORY = 'PBEHAVIOR'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class PBehaviorManager(VEventManager):
-    """Dedicated to manage periodic behavior.
-
-    Such period are technically an expression which respects the icalendar
-    specification ftp://ftp.rfc-editor.org/in-notes/rfc2445.txt.
-
-    A pbehavior document contains several values. Each value contains
-    an icalendar expression (dtstart, rrule, duration) and an array of
-    behavior entries:
-
-    {
-        id: document_id,
-        entity_id: entity id,
-        period: period,
-        behaviors: behavior ids
-    }.
+    """Dedicated to manage periodic behaviors documents which inherits from
+    the vevent documents.
     """
 
     BEHAVIOR = 'X-Canopsis-BehaviorType'  #: behavior type key in period
@@ -97,6 +85,8 @@ class PBehaviorManager(VEventManager):
         :rtype: dict or long or NoneType
         """
 
+        # initialize the result
+        result = {}
         # initialize ts
         if ts is None:
             ts = time()
@@ -113,9 +103,8 @@ class PBehaviorManager(VEventManager):
         # get sbehaviors such as a behaviors set
         sbehaviors = {behaviors} if isunique else set(behaviors)
         # check all pbehavior related to input ts
-        result = self._get_ending(
-            behaviors=sbehaviors, documents=documents, dtts=dtts
-        )
+        for document in documents:
+
 
         # keep only entity_id ending dates
         if entity_id in result:

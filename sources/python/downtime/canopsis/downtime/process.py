@@ -99,9 +99,9 @@ def event_processing(
             )
 
     else:
-        event[DOWNTIME] = (
-            manager.get_after(source=eid, query=DOWNTIME_QUERY) is not None
-        )
+        event[DOWNTIME] = manager.getending(
+            source=eid, behaviors=DOWNTIME_QUERY
+        ) is not None
 
     return event
 
