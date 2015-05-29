@@ -35,7 +35,7 @@ from dateutil.rrule import rrulestr
 
 from calendar import timegm
 
-from datetime import datetime, time as datetime_time
+from datetime import datetime, time as datetime_time, timedelta
 
 from uuid import uuid4 as uuid
 
@@ -89,15 +89,25 @@ class VEventManager(MiddlewareRegistry):
         if vevent_storage is not None:
             self[VEventManager.STORAGE] = vevent_storage
 
-    def _get_info(self, vevent):
-        """Get information from an ical Event.
+    def _get_document_properties(self, document):
+        """Get properties from a document.
+
+        :param dict document: document from where get properties.
+        :return: document properties in a dictionary.
+        :rtype: dict
+        """
+
+        return {}
+
+    def _get_vevent_properties(self, vevent):
+        """Get information from a vevent.
 
         :param Event vevent: vevent from where get information.
         :return: vevent information in a dictionary.
         :rtype: dict
         """
 
-        return None
+        return {}
 
     def get_by_uids(
         self, uids,
@@ -230,13 +240,59 @@ class VEventManager(MiddlewareRegistry):
 
         for vevent in vevents:
 
-            document = vevent if isinstance(vevent, dict) else None
+            document = None
+
+            if isinstance(document, dict):
+
+                document = vevent
+                # get uid
+                uid = document[VEventManager.UID]
+                if not uid:
+                    uid = str(uuid())
+                    document[VEventManager.UID] = uid
+                # get source
+                source = document.get(VEventManager.SOURCE, source)
+                # get dtstart
+                dtstart = document[VEventManager.DTSTART]
+                # get dtend
+                dtend = document[VEventManager.DTEND]
+                # get duration
+                duration = document[VEventManager.DURATION]
+                # get freq
+                freq = document[VEventManager.FREQ]
+                # get vevent
+                vevent = document[VEventManager.VEVENT]
+
+                # construct the right vevent if False
+                if not vevent:
+                    # prepare vevent kwargs with specific parameters
+                    kwargs = self._get_document_properties(document=document)
+                    # prepare vevent properties
+                    kwargs[VEventManager.UID] = uid
+                    if source:
+                        kwargs[VEventManager.SOURCE] = source
+                    if dtstart:
+                        kwargs[VEventManager.DTSTART] = datetime.fromtimestamp(
+                            dtstart
+                        )
+                    if dtend:
+                        kwargs[VEventManager.DTEND] = datetime.fromtimestamp(
+                            dtend
+                        )
+                    if duration:
+                        kwargs[VEventManager.DURATION] = timedelta(duration)
+                    if freq:
+                        kwargs[VEventManager.FREQ] = freq
+                    # updat vevent field in document
+                    document[VEventManager.VEVENT] = Event(**kwargs).to_ical()
 
             # if document has to be generated ...
-            if document is None:
+            else:
                 # ensure vevent is an ical format
                 if isinstance(vevent, basestring):
                     vevent = Event.from_ical(vevent)
+                # prepare the document with specific properties
+                document = self._get_vevent_properties(vevent=vevent)
                 # get dtstart
                 dtstart = vevent.get(VEventManager.DTSTART, 0)
                 if isinstance(dtstart, datetime):
@@ -246,33 +302,31 @@ class VEventManager(MiddlewareRegistry):
                 if isinstance(dtend, datetime):
                     dtend = timegm(dtend.timetuple())
                 # get duration
-                duration = vevent.get([VEventManager.DURATION])
+                duration = vevent.get(VEventManager.DURATION)
+                # get freq
+                freq = vevent.get(VEventManager.FREQ)
+                # get uid
+                uid = vevent.get(VEventManager.UID)
+                if not uid:
+                    uid = str(uuid())
                 # prepare the document
-                document = {
+                document.update({
+                    VEventManager.UID: uid,
                     VEventManager.SOURCE: source,
                     VEventManager.DTSTART: dtstart,
                     VEventManager.DTEND: dtend,
                     VEventManager.DURATION: duration,
+                    VEventManager.FREQ: freq,
                     VEventManager.VEVENT: vevent.to_ical()
-                }
-                # get info
-                document_info = self._get_info(vevent)
-                if document_info is not None:
-                    document.update(document_info)
+                })
 
-            # get document uid
-            if VEventManager.UID in document:
-                uid = document[VEventManager.UID]
-            else:
-                uid = str(uuid())
-                # put it in document if not already present
-                document[VEventManager.UID] = uid
-
-            result.append(document)
+            document['_id'] = uid
 
             self[VEventManager.STORAGE].put_element(
                 _id=uid, element=document
             )
+
+            result.append(document)
 
         return result
 
