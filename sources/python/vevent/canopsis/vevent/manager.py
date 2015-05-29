@@ -27,15 +27,11 @@ from canopsis.configuration.configurable.decorator import (
 )
 from canopsis.middleware.registry import MiddlewareRegistry
 
-from time import time
-
 from icalendar import Event
-
-from dateutil.rrule import rrulestr
 
 from calendar import timegm
 
-from datetime import datetime, time as datetime_time, timedelta
+from datetime import datetime, timedelta
 
 from uuid import uuid4 as uuid
 
@@ -58,14 +54,14 @@ class VEventManager(MiddlewareRegistry):
     behavior entries:
 
     {
-        id: document_id,
+        uid: document id,
         source: source element id,
         dtstart: datetime start,
         dtend: datetime end,
         duration: vevent duration,
         freq: vevent freq,
         vevent: vevent ical format value,
-        info: data information
+        ... # specific properties
     }.
     """
 
@@ -349,6 +345,7 @@ class VEventManager(MiddlewareRegistry):
         :param list sources: sources from where remove related vevent
             documents.
         """
+
         _filter = {}
 
         if sources is not None:
