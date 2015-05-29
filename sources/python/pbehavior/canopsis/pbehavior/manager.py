@@ -88,8 +88,8 @@ class PBehaviorManager(VEventManager):
         :param behaviors: behavior(s) to check at timestamp.
         :type behaviors: list or str
         :param long ts: timestamp to check. If None, use now.
-        :param int start: start timestamp.
-        :param int end: end timestamp.
+        :param int dtstart: start timestamp.
+        :param int dtend: end timestamp.
         :return: depending on behaviors types:
             - behaviors:
                 + str: behavior end timestamp.
@@ -102,19 +102,16 @@ class PBehaviorManager(VEventManager):
             ts = time()
         # calculate ts datetime
         dtts = datetime.fromtimestamp(ts)
-
+        # prepare query with input behaviors
         query = get_query(behaviors)
-
-        # get entity documents(s)
+        # get vevent documents(s)
         documents = self.values(
-            sources=source, query=query, dtstart=dtstart, dtend=dtend
+            sources=[source], query=query, dtstart=dtstart, dtend=dtend
         )
         # check if one entity document is asked
         isunique = isinstance(behaviors, basestring)
-
         # get sbehaviors such as a behaviors set
         sbehaviors = {behaviors} if isunique else set(behaviors)
-
         # check all pbehavior related to input ts
         result = self._get_ending(
             behaviors=sbehaviors, documents=documents, dtts=dtts
