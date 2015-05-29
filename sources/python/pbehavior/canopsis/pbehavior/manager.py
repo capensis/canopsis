@@ -22,6 +22,7 @@ from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
 from canopsis.vevent.manager import VEventManager
+from canopsis.common.utils import ensure_iterable
 
 from json import loads
 
@@ -33,6 +34,22 @@ from datetime import datetime
 CONF_PATH = 'pbehavior/pbehavior.conf'
 #: pbehavior manager configuration category name
 CATEGORY = 'PBEHAVIOR'
+
+
+def get_query(behaviors):
+    """Get a query related to input behaviors.
+
+    :param behaviors: behaviors to find.
+    :type behaviors: str or list
+    :return: query.
+    :rtype: dict
+    """
+    result = {}
+
+    if behaviors is not None:
+        result[PBehaviorManager.BEHAVIORS] = behaviors
+
+    return result
 
 
 @conf_paths(CONF_PATH)
@@ -80,7 +97,7 @@ class PBehaviorManager(VEventManager):
 
         return result
 
-    def getending(self, source, behaviors, ts=None, dtstart=None, dtend=None):
+    def getending(self, source, behaviors, ts=None):
         """Get end date of corresponding behaviors if a timestamp is in a
         behavior period.
 
@@ -88,199 +105,28 @@ class PBehaviorManager(VEventManager):
         :param behaviors: behavior(s) to check at timestamp.
         :type behaviors: list or str
         :param long ts: timestamp to check. If None, use now.
-        :param int dtstart: start timestamp.
-        :param int dtend: end timestamp.
-        :return: depending on behaviors types:
-            - behaviors:
-                + str: behavior end timestamp.
-                + array: dict of end timestamp by behavior.
-        :rtype: dict or long or NoneType
-        """
-
-        # initialize ts
-        if ts is None:
-            ts = time()
-        # calculate ts datetime
-        dtts = datetime.fromtimestamp(ts)
-        # prepare query with input behaviors
-        query = get_query(behaviors)
-        # get vevent documents(s)
-        documents = self.values(
-            sources=[source], query=query, dtstart=dtstart, dtend=dtend
-        )
-        # check if one entity document is asked
-        isunique = isinstance(behaviors, basestring)
-        # get sbehaviors such as a behaviors set
-        sbehaviors = {behaviors} if isunique else set(behaviors)
-        # check all pbehavior related to input ts
-        result = self._get_ending(
-            behaviors=sbehaviors, documents=documents, dtts=dtts
-        )
-
-        # keep only entity_id ending dates
-        if entity_id in result:
-            result = result[entity_id]
-
-        # update result is isunique
-        if isunique:
-            # convert result to a bool or None if behaviors is str
-            result = result[behaviors] if behaviors in result else None
-
-        return result
-
-    def _get_ending(self, behaviors, documents, dtts):
-        """Get ending date of occured behavior(s) at a timestamp among value
-        periods per entity id.
-
-        :param set behaviors: behavior(s) to check.
-        :param list documents: document(s).
-        :param datetime dtts: date time moment.
-        :return: dict of ending date per entity and behavior.
-        """
-
-        result = {}
-
-        for document in documents:
-            # get event
-            vevent = document[PBehaviorManager.VEVENT]
-            event = Event.from_ical(vevent)
-            # get behaviors intersection
-            dbehaviors = set(document[PBehaviorManager.BEHAVIORS])
-            behaviors_to_check = behaviors & dbehaviors
-
-            # if intersection contains elements
-            if behaviors_to_check:
-                # get duration, dtstart and rrule
-                duration = event.get('duration')
-                duration = duration.dt
-                dtstart = event.get('dtstart')
-                dtstart = dtstart.dt
-
-                if isinstance(dtstart, datetime_time):
-                    dtstart = datetime.now().replace(
-                        hour=dtstart.hour, minute=dtstart.minute,
-                        second=dtstart.second, tzinfo=dtstart.tzinfo
-                    )
-
-                rrule = event.get('rrule')
-                rrule = rrulestr(rrule.to_ical(), cache=True, dtstart=dtstart)
-                # calculate first date after dtts including dtts
-                before = rrule.before(dt=dtts, inc=True)
-
-                # if before datetime exist
-                if before is not None:
-                    entity_id = document[PBehaviorManager.ENTITY]
-
-                    if entity_id not in result:
-                        result[entity_id] = {}
-
-                    # add duration
-                    end = before + duration
-
-                    # and check if dtstart is in [first; end]
-                    if before <= dtts <= end:
-                        # update end in the result
-                        endts = timegm(end.timetuple())
-
-                        for behavior in behaviors_to_check:
-                            result[entity_id][behavior] = endts
-
-        return result
-
-    def getending(
-        self,
-        sources=None, ts=None, dtstart=None, dtend=None, behaviors=None
-    ):
-        """Get around period dates related to one timestamp and additional
-        parameters.
-
-        :param list sources: sources from where parse vevent documents.
-        :param int ts: timestamp from when find vevent documents.
-        :param int dtstart: vevent dtstart.
-        :param int dtend: vevent dtend.
-        :param dict query: additional filtering query to apply in the search.
-        :param bool after: if True (default), get period after ts (included),
-            otherwise, before ts.
-        :return: list of around date per source.
+        :return: dict of end timestamp by behavior.
         :rtype: dict
         """
 
-        result = {}
-
-        # initialize ts
         if ts is None:
             ts = time()
-        # calculate ts datetime
-        dtts = datetime.fromtimestamp(ts)
 
-        # get entity documents(s)
-        documents = self.values(
-            sources=sources, dtstart=dtstart, dtend=dtend, query=query
+        behaviors = ensure_iterable(behaviors)
+        vevents = self.values(
+            sources=[source],
+            dtstart=ts,
+            query=self.get_query(behaviors)
         )
 
-        for document in documents:
-            # get event
-            vevent = document[VEventManager.VEVENT]
-            event = Event.from_ical(vevent)
+        result = {}
 
-            # if rrule/duration are in event
-            if (
-                VEventManager.DURATION in event
-                and VEventManager.RRULE in event
-            ):
+        for vevent in vevents:
+            vbehaviors = vevent['behaviors']
+            dtend = vevent['dtend']
 
-
-                # get duration, dtstart and rrule
-                duration = event.get(VEventManager.DURATION)
-                duration = duration.dt
-                dtstart = event.get(VEventManager.DTSTART)
-                dtstart = dtstart.dt
-
-                if isinstance(dtstart, datetime_time):
-                    dtstart = datetime.now().replace(
-                        hour=dtstart.hour, minute=dtstart.minute,
-                        second=dtstart.second, tzinfo=dtstart.tzinfo
-                    )
-
-                rrule = event.get('rrule')
-                rrule = rrulestr(rrule.to_ical(), cache=True, dtstart=dtstart)
-                # calculate first date after dtts including dtts
-                if after:
-                    around = rrule.after(dt=dtts, inc=True)
-                else:
-                    around = rrule.before(dt=dtts, inc=True)
-
-                # if around datetime exist
-                if around is not None:
-                    source = document[VEventManager.SOURCE]
-
-                    if source not in result:
-                        result[source] = {}
-
-                    # add duration
-                    end = around + duration
-
-                    # and check if dtstart is in [first; end]
-                    if around <= dtts <= end:
-                        # update end in the result
-                        endts = timegm(end.timetuple())
-
-                        result[source] = endts
+            for behavior in vbehaviors:
+                if behavior in behaviors and dtend > result.get(behavior, -1):
+                    result[behavior] = dtend
 
         return result
-
-
-def get_query(behaviors):
-    """Get a query related to input behaviors.
-
-    :param behaviors: behaviors to find.
-    :type behaviors: str or list
-    :return: query.
-    :rtype: dict
-    """
-    result = {}
-
-    if behaviors is not None:
-        result[PBehaviorManager.BEHAVIORS] = behaviors
-
-    return result
