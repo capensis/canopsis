@@ -28,7 +28,7 @@ from json import loads
 
 from time import time
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from dateutil import rrulestr
 
@@ -134,6 +134,7 @@ class PBehaviorManager(VEventManager):
             if DURATION in document:
                 dtstart = document[DTSTART]
                 duration = document[DURATION]
+                duration = timedelta(seconds=duration)
                 if FREQ in document:
                     freq = document[FREQ]
                     dtts = datetime.fromtimestamp(dtstart)

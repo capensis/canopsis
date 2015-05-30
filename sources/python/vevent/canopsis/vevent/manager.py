@@ -341,6 +341,8 @@ class VEventManager(MiddlewareRegistry):
                     dtend = timegm(dtend.timetuple())
                 # get duration
                 duration = vevent.get(VEventManager.DURATION)
+                if duration:
+                    duration = duration.total_seconds()
                 # get freq
                 freq = vevent.get(VEventManager.FREQ)
                 # get uid
