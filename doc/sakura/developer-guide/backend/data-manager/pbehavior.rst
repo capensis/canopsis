@@ -80,6 +80,20 @@ Determine if an entity is in a periodic behavior:
    if 'benchmark' in result:
        print('End of benchmark:', result['benchmark'])
 
+Or:
+
+.. code-block:: python
+
+   from canopsis.pbehavior.manager import PBehaviorManager, get_query
+
+   manager = PBehaviorManager()
+
+   entity_id = '...''
+   result = manager.getending(entity_id, 'downtime')
+
+   if 'downtime' in result:
+       print('End of downtime:', result['downtime'])
+
 Get all entities which are actually in a periodic behavior:
 
 .. code-block:: python
