@@ -2,13 +2,13 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys": ["crecord_type", "category", "description"]
+		"keys": ["crecord_type", "uid", "source", "dtstart", "dtend", "freq", "duration", "ical"]
 	}],
     "properties": {
         "uid": {
             "type": "string",
             "required": false,
-            "description": "vevent unique id"
+            "description": "Unique id."
         },
         "crecord_type": {
             "enum": ["vevent"],
@@ -17,34 +17,39 @@
         "source": {
         	"type": "string",
         	"required": true,
-        	"description": "publishing entity id"
+        	"description": "publishing entity id."
         },
         "dtstart": {
-            "type": "integer",
+            "type": "float",
             "required": false,
             "role": "timestamp",
-            "default": 0
+            "default": 0,
+            "description": "Start timestamp."
         },
         "dtend": {
-            "type": "integer",
+            "type": "float",
             "required": false,
             "role": "timestamp",
-            "default": 2147483648
+            "default": 2147483648,
+            "description": "End timestamp."
         },
         "freq": {
             "type": "string",
             "required": false,
-            "default": ""
+            "default": "",
+            "description": "Recurrent rule."
         },
         "duration": {
-            "type": "string",
+            "type": "float",
             "required": false,
-            "default": ""
+            "default": "",
+            "description": "Period duration in seconds."
         },
-        "vevent": {
+        "iCal": {
             "type": "string",
             "required": false,
-            "default": ""
+            "default": "",
+            "description": "iCal format."
         }
     }
 }

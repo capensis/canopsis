@@ -73,7 +73,7 @@ class VEventManager(MiddlewareRegistry):
     DTEND = 'dtend'  #: dtend field name
     DURATION = 'duration'  #: duration field name
     FREQ = 'freq'  #: freq field name
-    VEVENT = 'vevent'  #: vevent value field name
+    ICAL = 'iCal'  #: iCal value field name
 
     SOURCE_TYPE = 'X-Canopsis-SourceType'  #: source type field name
 
@@ -299,7 +299,7 @@ class VEventManager(MiddlewareRegistry):
                 # get freq
                 freq = document[VEventManager.FREQ]
                 # get vevent
-                vevent = document[VEventManager.VEVENT]
+                vevent = document[VEventManager.ICAL]
 
                 # construct the right vevent if False
                 if not vevent:
@@ -322,7 +322,7 @@ class VEventManager(MiddlewareRegistry):
                     if freq:
                         kwargs[VEventManager.FREQ] = freq
                     # updat vevent field in document
-                    document[VEventManager.VEVENT] = Event(**kwargs).to_ical()
+                    document[VEventManager.ICAL] = Event(**kwargs).to_ical()
 
             # if document has to be generated ...
             else:
@@ -360,7 +360,7 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.DTEND: dtend,
                     VEventManager.DURATION: duration,
                     VEventManager.FREQ: freq,
-                    VEventManager.VEVENT: vevent.to_ical()
+                    VEventManager.ICAL: vevent.to_ical()
                 })
 
             self[VEventManager.STORAGE].put_element(
