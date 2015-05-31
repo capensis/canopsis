@@ -107,11 +107,10 @@ class PBehaviorManager(VEventManager):
 
         # check if behaviors is unique and ensure it is a set
         isunique = isinstance(behaviors, basestring)
-        if isunique:
-            behaviors = [behaviors]
+        _behaviors = [behaviors] if isunique else behaviors
         # prepare query
-        query = self.get_query(behaviors)
-        behaviors = set(behaviors)
+        query = self.get_query(_behaviors)
+        _behaviors = set(_behaviors)
         # get documents
         documents = self.values(
             sources=[source],
@@ -129,7 +128,7 @@ class PBehaviorManager(VEventManager):
             # prepare end ts to update in result
             endts = None
             # prepare doc_behaviors such as a conjuguaison with behaviors
-            doc_behaviors = set(document[BEHAVIORS]) & behaviors
+            doc_behaviors = set(document[BEHAVIORS]) & _behaviors
             # get the right end ts
             if DURATION in document:
                 dtstart = document[DTSTART]
@@ -157,5 +156,9 @@ class PBehaviorManager(VEventManager):
             for behavior in doc_behaviors:
                 if behavior not in result or result[behavior] < endts:
                     result[behavior] = endts
+
+        # update result if isunique
+        if isunique:
+            result = result[behaviors] if result else None
 
         return result
