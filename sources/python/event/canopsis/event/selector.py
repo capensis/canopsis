@@ -217,11 +217,11 @@ class Selector(Record):
             excludes=self.exclude_ids,
         )
 
-        entities = self.context.get_entities(
-            self.pbehavior.whois(
-                query={PBehaviorManager.BEHAVIORS: 'downtime'}
-            )
-        )
+        query = self.pbehavior.get_query(behaviors='downtime')
+
+        entityids = self.pbehavior.whois(query=query)
+
+        entities = self.context.get_entities(entityids)
 
         if entities:
             downtime = [

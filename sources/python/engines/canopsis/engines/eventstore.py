@@ -62,7 +62,9 @@ class engine(Engine):
         if event.get('downtime', False):
             entity = self.context.get_entity(event)
             entity_id = self.context.get_entity_id(entity)
-            endts = self.pbehavior.getending(entity_id, 'downtime')
+            endts = self.pbehavior.getending(
+                source=entity_id, behaviors='downtime'
+            )
 
             event['previous_state_change_ts'] = endts
 
