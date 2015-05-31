@@ -42,7 +42,7 @@ events = get_storage(
 
 DOWNTIME = 'downtime'  #: downtime pbehavior value
 
-DOWNTIME_QUERY = {PBehaviorManager.BEHAVIORS: DOWNTIME}
+DOWNTIME_QUERY = pbmgr.get_query(behaviors=DOWNTIME)
 
 
 @register_task
@@ -81,8 +81,8 @@ def event_processing(
 
         manager.put(source=eid, vevents=[ev])
 
-        if manager.get_after(
-            source=eid, query=DOWNTIME_QUERY, ts=event['timestamp']
+        if manager.getending(
+            source=eid, behaviors=DOWNTIME, ts=event['timestamp']
         ):
             events.update(
                 {
@@ -100,7 +100,7 @@ def event_processing(
 
     else:
         event[DOWNTIME] = manager.getending(
-            source=eid, behaviors=DOWNTIME_QUERY
+            source=eid, behaviors=DOWNTIME
         ) is not None
 
     return event

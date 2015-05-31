@@ -80,6 +80,7 @@ class PBehaviorManager(VEventManager):
         :return: query.
         :rtype: dict
         """
+
         result = {}
 
         if behaviors is not None:
