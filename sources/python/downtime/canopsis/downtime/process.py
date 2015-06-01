@@ -42,7 +42,7 @@ events = get_storage(
 
 DOWNTIME = 'downtime'  #: downtime pbehavior value
 
-DOWNTIME_QUERY = pbmgr.get_query(behaviors=DOWNTIME)
+DOWNTIME_QUERY = PBehaviorManager.get_query(behaviors=DOWNTIME)
 
 
 @register_task
@@ -124,7 +124,7 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
         manager = pbmgr
 
     entity_ids = manager.whois(query=DOWNTIME_QUERY)
-    entities = context.get_entities(entity_ids)
+    entities = context.get_entities(list(entity_ids))
 
     spec = {}
 

@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys": ["crecord_type", "uid", "source", "dtstart", "dtend", "freq", "duration", "ical"]
+		"keys": ["crecord_type", "uid", "source", "dtstart", "dtend", "rrule", "duration", "ical"]
 	}],
     "properties": {
         "uid": {
@@ -33,17 +33,18 @@
             "default": 2147483648,
             "description": "End timestamp."
         },
-        "freq": {
+        "rrule": {
             "type": "string",
             "required": false,
             "default": "",
             "description": "Recurrent rule."
         },
         "duration": {
-            "type": "number",
+            "type": "integer",
             "required": false,
-            "default": "",
-            "description": "Period duration in seconds."
+            "role": "duration",
+            "default": 0,
+            "description": "Duration in seconds (warning: 1 month = 365 days / 12)."
         },
         "iCal": {
             "type": "string",

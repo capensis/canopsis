@@ -7,9 +7,6 @@
 		"title": "Role",
 		"keys": ["role"]
 	},{
-		"title": "Groups",
-		"keys": ["user_groups"]
-	},{
 		"title": "Rights",
 		"keys": ["rights"]
 	},{
@@ -41,9 +38,6 @@
 			"type": "string",
 			"required": true,
 			"role": "passwordsha1"
-		},
-		"user_groups": {
-			"type": "object"
 		},
 		"role": {
 			"title": "Role",

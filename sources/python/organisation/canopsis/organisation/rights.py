@@ -234,7 +234,7 @@ class Rights(MiddlewareRegistry):
                 }
             })
         else:
-            entity['rights'][right_id]['checksum'] |= checksum
+            entity['rights'][right_id]['checksum'] = checksum
 
         # Add the new context and other fields, if any
         for key in kwargs:

@@ -47,13 +47,13 @@ class PBehaviorManager(VEventManager):
     the vevent documents.
     """
 
-    BEHAVIOR = 'X-Canopsis-BehaviorType'  #: behavior type key in period
+    BEHAVIOR_TYPE = 'X-Canopsis-BehaviorType'  #: behavior type key in period
 
     BEHAVIORS = 'behaviors'  #: behaviors value field name
 
     def _get_document_properties(self, document, *args, **kwargs):
 
-        behaviors = document[PBehaviorManager.BEHAVIORS]
+        behaviors = document.get(PBehaviorManager.BEHAVIORS, [])
 
         result = {
             PBehaviorManager.BEHAVIORS: behaviors
@@ -63,7 +63,7 @@ class PBehaviorManager(VEventManager):
 
     def _get_vevent_properties(self, vevent, *args, **kwargs):
 
-        serialized_behaviors = vevent.get(PBehaviorManager.BEHAVIOR, "[]")
+        serialized_behaviors = vevent.get(PBehaviorManager.BEHAVIOR_TYPE, "[]")
         behaviors = loads(serialized_behaviors)
 
         result = {
@@ -89,12 +89,13 @@ class PBehaviorManager(VEventManager):
 
         return result
 
-    def getending(self, source, behaviors, ts=None):
+    def getending(self, source, behaviors=None, ts=None):
         """Get end date of corresponding behaviors if a timestamp is in a
         behavior period.
 
         :param str source: source id.
-        :param behaviors: behavior(s) to check at timestamp.
+        :param behaviors: behavior(s) to check at timestamp. If None, use all
+            behaviors.
         :type behaviors: list or str
         :param float ts: timestamp to check. If None, use now.
         :return: dict of end timestamp by behavior.
@@ -111,8 +112,11 @@ class PBehaviorManager(VEventManager):
         isunique = isinstance(behaviors, basestring)
         _behaviors = [behaviors] if isunique else behaviors
         # prepare query
-        query = self.get_query(_behaviors)
-        _behaviors = set(_behaviors)
+        if _behaviors is None:
+            query = {}
+        else:
+            query = PBehaviorManager.get_query(behaviors=_behaviors)
+            _behaviors = set(_behaviors)
         # get documents
         documents = self.values(
             sources=[source],
@@ -121,7 +125,7 @@ class PBehaviorManager(VEventManager):
         )
         # prepare CONSTS
         DURATION = PBehaviorManager.DURATION
-        FREQ = PBehaviorManager.FREQ
+        RRULE = PBehaviorManager.RRULE
         DTEND = PBehaviorManager.DTEND
         DTSTART = PBehaviorManager.DTSTART
         BEHAVIORS = PBehaviorManager.BEHAVIORS
@@ -129,35 +133,41 @@ class PBehaviorManager(VEventManager):
         for document in documents:
             # prepare end ts to update in result
             endts = None
-            # prepare doc_behaviors such as a conjuguaison with behaviors
-            doc_behaviors = set(document[BEHAVIORS]) & _behaviors
-            # get the right end ts
-            if DURATION in document:
-                dtstart = document[DTSTART]
-                duration = document[DURATION]
-                duration = timedelta(seconds=duration)
-                if FREQ in document:
-                    freq = document[FREQ]
-                    dtts = datetime.fromtimestamp(dtstart)
-                    rrule = rrulestr(freq, dtts=dtts)
-                    before = rrule.before(dtts=ts, inc=True)
-                    if before:
-                        endbefore = before + duration
-                        if endbefore >= dtts:
-                            endts = timegm(endbefore.timetuple())
-            elif FREQ in document:  # check if ts in freq
-                freq = document[FREQ]
-                dtts = datetime.fromtimestamp(dtstart)
-                rrule = rrulestr(freq, dtts=ts)
-                if rrule[0] == dtts:
-                    endts = ts
-            else:  # get simply dtend
-                endts = document[DTEND]
+            # prepare doc_behaviors such as a set
+            doc_behaviors = set(document.get(BEHAVIORS, []))
+            if _behaviors is not None:
+                # and a conjuguaison with behaviors if behaviors is not None
+                doc_behaviors &= _behaviors
+            # if doc_behaviors is not empty
+            if doc_behaviors:
+                duration = document.get(DURATION)
+                rrule = document.get(RRULE)
+                # get the right end ts
+                if duration:
+                    dtstart = document[DTSTART]
+                    duration = timedelta(seconds=duration)
+                    rrule = document.get(RRULE)
+                    if rrule:
+                        dtts = datetime.fromtimestamp(dtstart)
+                        rrule = rrulestr(rrule, dtstart=dtts)
+                        before = rrule.before(dtts=ts, inc=True)
+                        if before:
+                            endbefore = before + duration
+                            if endbefore >= dtts:
+                                endts = timegm(endbefore.timetuple())
+                elif rrule:  # check if ts in rrule
+                    dtts = datetime.fromtimestamp(int(ts))
+                    rrule = rrulestr(rrule, dtstart=dtts)
+                    if rrule[0] == dtts:
+                        endts = document[DTEND]
+                else:  # get simply dtend
+                    endts = document[DTEND]
 
-            # update result with upper values
-            for behavior in doc_behaviors:
-                if behavior not in result or result[behavior] < endts:
-                    result[behavior] = endts
+                if endts is not None:
+                    # update result with upper values
+                    for behavior in doc_behaviors:
+                        if behavior not in result or result[behavior] < endts:
+                            result[behavior] = endts
 
         # update result if isunique
         if isunique:
