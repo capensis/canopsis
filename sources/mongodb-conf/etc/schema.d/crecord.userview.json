@@ -26,8 +26,11 @@
 		},
 		"containerwidget": {
 			"relationship": "belongsTo",
-			"model": "widget.containerwidget",
-			"polymorphic":true
+			"model": "widget.containerwidget.widgetcontainer",
+			"embedded": true
+		},
+		"author": {
+			"type": "string"
 		},
 		"enable": {
 			"type": "boolean",
