@@ -30,7 +30,7 @@ from time import time
 
 from datetime import datetime, timedelta
 
-from dateutil import rrulestr
+from dateutil.rrule import rrulestr
 
 from calendar import timegm
 
@@ -72,6 +72,7 @@ class PBehaviorManager(VEventManager):
 
         return result
 
+    @staticmethod
     def get_query(behaviors):
         """Get a query related to input behaviors.
 
