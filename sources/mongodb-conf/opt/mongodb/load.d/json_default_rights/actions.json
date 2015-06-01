@@ -1,17 +1,17 @@
 [
     {
+        "_id" : "actionbutton_canuploadmibfile",
+        "loader_id" : "actionbutton_canuploadmibfile",
+        "crecord_name": "actionbutton_canuploadmibfile",
+        "crecord_type" : "action",
+        "desc": "Upload mib file to canopsis system"
+    },
+    {
         "_id" : "actionbutton_canediturlfield",
         "loader_id" : "actionbutton_canediturlfield",
         "crecord_name": "actionbutton_canediturlfield",
         "crecord_type" : "action",
         "desc": "Edit filter to associate filter to entities"
-    },
-    {
-        "_id" : "showview_service",
-        "loader_id" : "showview_service",
-        "crecord_name": "showview_service",
-        "crecord_type" : "action",
-        "desc": "See view service"
     },
     {
         "_id" : "list_search",
@@ -68,13 +68,6 @@
         "crecord_name": "actionbutton_ack",
         "crecord_type" : "action",
         "desc": "Acknowledge an event"
-    },
-    {
-        "_id" : "showview_view_connectors",
-        "loader_id" : "showview_view_connectors",
-        "crecord_name": "showview_view_connectors",
-        "crecord_type" : "action",
-        "desc": "See connector view"
     },
     {
         "_id" : "actionbutton_connectoredit",
