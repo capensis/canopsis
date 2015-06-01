@@ -46,7 +46,7 @@
 				"eventlog",
 				"ctxmetric",
 				"linklist",
-				"snmprule"
+				"snmprule",
 				"userview",
 				"widgetpreferences"
 			],
