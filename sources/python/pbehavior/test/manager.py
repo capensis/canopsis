@@ -158,8 +158,8 @@ class GetEnding(PBehaviorManagerTest):
                 entity_id=document[PBehaviorManager.ID], document=document
             )
 
-    def test__get_ending(self):
-        """Test _get_ending method.
+    def test_getending(self):
+        """Test getending method.
         """
 
         # remove one minute from self.now in order to not match with any period
@@ -194,14 +194,6 @@ class GetEnding(PBehaviorManagerTest):
                 dtts=self.now
             )
             self.assertEqual(len(endings), len(sub_behaviors))
-
-    def test_get_ending(self):
-        """Test get_ending method.
-        """
-
-    def test_whois(self):
-        """Test whois method.
-        """
 
 if __name__ == '__main__':
     main()

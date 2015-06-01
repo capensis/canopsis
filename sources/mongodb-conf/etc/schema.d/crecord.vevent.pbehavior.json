@@ -2,7 +2,7 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["dtstart", "dtend", "freq", "duration"]
+        "keys": ["dtstart", "dtend", "rrule", "duration"]
     },{
         "title": "Behaviors",
         "keys": ["behaviors"]
