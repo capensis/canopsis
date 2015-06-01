@@ -187,8 +187,8 @@ class VEventManager(MiddlewareRegistry):
 
         :param list sources: sources from where get values. If None, use all
             sources.
-        :param int dtstart: vevent dtstart (default 0).
-        :param int dtend: vevent dtend (default sys.maxsize).
+        :param float dtstart: vevent dtstart (default 0).
+        :param float dtend: vevent dtend (default sys.maxsize).
         :param dict query: additional filtering query to apply in the search.
         :param int limit: max number of elements to get.
         :param int skip: first element index among searched list.
@@ -215,20 +215,8 @@ class VEventManager(MiddlewareRegistry):
         if dtend is None:
             dtend = maxsize
 
-        query['$and'] = [
-            {
-                '$or': [
-                    {VEventManager.DTSTART: {'$gte': dtstart}},
-                    {VEventManager.DTSTART: {'$lte': dtend}}
-                ]
-            },
-            {
-                '$or': [
-                    {VEventManager.DTEND: {'$gte': dtstart}},
-                    {VEventManager.DTEND: {'$lte': dtend}}
-                ]
-            }
-        ]
+        query[VEventManager.DTSTART] = {'$lte': dtend}
+        query[VEventManager.DTEND] = {'$gte': dtstart}
 
         documents = self[VEventManager.STORAGE].find_elements(
             query=query,
