@@ -20,14 +20,14 @@
         	"description": "publishing entity id."
         },
         "dtstart": {
-            "type": "float",
+            "type": "number",
             "required": false,
             "role": "timestamp",
             "default": 0,
             "description": "Start timestamp."
         },
         "dtend": {
-            "type": "float",
+            "type": "number",
             "required": false,
             "role": "timestamp",
             "default": 2147483648,
@@ -40,7 +40,7 @@
             "description": "Recurrent rule."
         },
         "duration": {
-            "type": "float",
+            "type": "number",
             "required": false,
             "default": "",
             "description": "Period duration in seconds."

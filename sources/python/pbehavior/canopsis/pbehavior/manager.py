@@ -72,6 +72,23 @@ class PBehaviorManager(VEventManager):
 
         return result
 
+    @staticmethod
+    def get_query(behaviors):
+        """Get a query related to input behaviors.
+
+        :param behaviors: behaviors to find.
+        :type behaviors: str or list
+        :return: query.
+        :rtype: dict
+        """
+
+        result = {}
+
+        if behaviors is not None:
+            result[PBehaviorManager.BEHAVIORS] = behaviors
+
+        return result
+
     def getending(self, source, behaviors, ts=None):
         """Get end date of corresponding behaviors if a timestamp is in a
         behavior period.
@@ -145,22 +162,5 @@ class PBehaviorManager(VEventManager):
         # update result if isunique
         if isunique:
             result = result[behaviors] if result else None
-
-        return result
-
-    @staticmethod
-    def get_query(behaviors):
-        """Get a query related to input behaviors.
-
-        :param behaviors: behaviors to find.
-        :type behaviors: str or list
-        :return: query.
-        :rtype: dict
-        """
-
-        result = {}
-
-        if behaviors is not None:
-            result[PBehaviorManager.BEHAVIORS] = behaviors
 
         return result
