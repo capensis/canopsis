@@ -95,6 +95,17 @@ class Entitylink(MiddlewareRegistry):
         )
         return result
 
+    def clear_computed_links(self):
+
+        """
+        Remove computed links field in all records
+        """
+
+        self[Entitylink.ENTITY_STORAGE].put_element(
+            element={'$unset': {'computed_links': 1}},
+            cache=True
+        )
+
     def put(
         self,
         _id,
