@@ -44,7 +44,7 @@
         },
         "attrs": {
             "type": "object",
-            "role": "json",
+            "role": "simpledict",
             "required": true,
             "title": "LDAP attributes",
             "description": "Map user fields to LDAP fields"

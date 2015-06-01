@@ -37,7 +37,8 @@
           ],
           "displayed_columns": [
             "_id",
-            "desc"
+            "desc",
+            "type"
           ]
         }
       }

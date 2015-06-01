@@ -10,6 +10,9 @@
 		},
 		"desc": {
 			"type": "string"
+		},
+		"type": {
+			"type": "string"
 		}
 	}
 }
