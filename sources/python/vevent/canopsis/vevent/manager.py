@@ -73,7 +73,6 @@ class VEventManager(MiddlewareRegistry):
     DTEND = 'dtend'  #: dtend field name
     RRULE = 'rrule'  #: rrule vevent field name
     DURATION = 'duration'  #: duration field name
-    ICAL = 'iCal'  #: iCal value field name
 
     SOURCE_TYPE = 'X-Canopsis-SourceType'  #: source type field name
 
@@ -106,6 +105,28 @@ class VEventManager(MiddlewareRegistry):
         """
 
         return {}
+
+    @staticmethod
+    def get_document(
+        uid=None, source=None,
+        duration=0, rrule=None, dtstart=0, dtend=maxsize,
+        **kwargs
+    ):
+        """Get a document related to input values.
+        """
+
+        result = kwargs
+
+        result.update({
+            VEventManager.UID: str(uuid()) if uid is None else uid,
+            VEventManager.SOURCE: source,
+            VEventManager.DURATION: duration,
+            VEventManager.RRULE: rrule,
+            VEventManager.DTSTART: dtstart,
+            VEventManager.DTEND: dtend
+        })
+
+        return result
 
     def get_vevent(self, document):
         """Get a vevent from a document.
@@ -286,31 +307,6 @@ class VEventManager(MiddlewareRegistry):
                 duration = document[VEventManager.DURATION]
                 # get rrule
                 rrule = document[VEventManager.RRULE]
-                # get vevent
-                vevent = document[VEventManager.ICAL]
-
-                # construct the right vevent if False
-                if not vevent:
-                    # prepare vevent kwargs with specific parameters
-                    kwargs = self._get_document_properties(document=document)
-                    # prepare vevent properties
-                    kwargs[VEventManager.UID] = uid
-                    if source:
-                        kwargs[VEventManager.SOURCE_TYPE] = source
-                    if dtstart:
-                        kwargs[VEventManager.DTSTART] = datetime.fromtimestamp(
-                            dtstart
-                        )
-                    if dtend:
-                        kwargs[VEventManager.DTEND] = datetime.fromtimestamp(
-                            dtend
-                        )
-                    if duration:
-                        kwargs[VEventManager.DURATION] = timedelta(duration)
-                    if rrule:
-                        kwargs[VEventManager.RRULE] = rrule
-                    # updat vevent field in document
-                    document[VEventManager.ICAL] = Event(**kwargs).to_ical()
 
             # if document has to be generated ...
             else:
@@ -353,8 +349,7 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.DTSTART: dtstart,
                     VEventManager.DTEND: dtend,
                     VEventManager.DURATION: duration,
-                    VEventManager.RRULE: rrule,
-                    VEventManager.ICAL: vevent.to_ical()
+                    VEventManager.RRULE: rrule
                 })
 
             self[VEventManager.STORAGE].put_element(

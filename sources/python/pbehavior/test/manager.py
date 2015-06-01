@@ -25,6 +25,7 @@ from canopsis.pbehavior.manager import PBehaviorManager
 
 from icalendar import Event
 from datetime import datetime
+from time import time
 from dateutil.relativedelta import relativedelta
 
 
@@ -110,58 +111,69 @@ class GetEnding(PBehaviorManagerTest):
     def setUp(self):
 
         super(GetEnding, self).setUp()
-        # UTs check period with(out) behaviors on periods in one hour.
-        self.now = datetime.now()
-        # use same rrule which is checked every day
-        rrule = "FREQ=DAILY"
-        # use same duration which lasts 1 jour
-        duration = "PT1H"  # 1 hour duration
-        # construct events
-        self.events = []
-        # with count events
-        self.count = 5
-        # prepare sources
-        self.sources = [str(i) for i in range(self.count)]
-        # and (60 mn / (self.count - 1)) different minutes between date
-        minutes = int(60 / self.count)
-        # get an ical template with dtstart, rrule andd duration
-        ical = "BEGIN:VEVENT\nDTSTART:{0}\nRRULE:{1}\nDURATION:{2}\nEND:VEVENT"
-        # construct (self.count) events in order to leave event period once
-        for i in range(self.count):
-            rd = relativedelta(minutes=minutes * (i + 1))
-            dtstart = self.now + rd
-            dtstart = "{0}{1}{2}".format(
-                dtstart.year, dtstart.month, dtstart.day
-            )
-            event_ical = ical.format(dtstart, rrule, duration)
-            event = Event.from_ical(event_ical)
-            self.events.append(event)
 
-        # construct behaviors such as ["1", "2", ..., "self.count - 1"]
-        self.behaviors = [str(i) for i in range(self.count)]
-        # construct documents such as:
-        # {id: i, values: [{period: events[j], behaviors: behaviors[j]}]}
-        self.values = [
-            {
-                PBehaviorManager.UID: self.behaviors[i],
-                PBehaviorManager.VALUES: [
-                    {
-                        PBehaviorManager.PERIOD: self.events[j].to_ical(),
-                        PBehaviorManager.BEHAVIORS: self.behaviors[:j]
-                    } for j in range(self.count)
-                ]
-            } for i in range(self.count)
-        ]
+        self.source = 'test'
+        self.behaviors = ['behavior']
+        self.document = PBehaviorManager.get_document(
+            source=self.source,
+            behaviors=self.behaviors
+        )
 
-        for document in self.documents:
-            self.manager.put(
-                entity_id=document[PBehaviorManager.ID], document=document
-            )
-
-    def test_getending(self):
-        """Test getending method.
+    def test_alltime(self):
+        """Test getending method where time is everytime.
         """
 
+        # check all time
+        self.manager.put(vevents=[self.document])
+        ending = self.manager.getending(source=self.source)
+        self.assertEqual(
+            ending,
+            {self.behaviors[0]: self.document[PBehaviorManager.DTEND]}
+        )
+
+    def test_wrong_source(self):
+        """Test when source does not exist.
+        """
+
+        ending = self.manager.getending(source='wrong source')
+        self.assertFalse(ending)
+
+    def test_excluded_time(self):
+        """Test in a time which does not exist at ts.
+        """
+
+        self.document[PBehaviorManager.DTEND] = time()
+        self.manager.put(vevents=[self.document])
+        ending = self.manager.getending(source=self.source)
+        self.assertFalse(ending)
+
+    def test_included_time(self):
+        """Test to get ending date when dtstart and dtend are given.
+        """
+
+        self.document[PBehaviorManager.DTSTART] = time()
+        self.document[PBehaviorManager.DTEND] = time() + 10000
+
+        self.manager.put(vevents=[self.document])
+        ending = self.manager.getending(source=self.source)
+        self.assertEqual(
+            ending, {self.behaviors[0]: self.document[PBehaviorManager.DTEND]}
+        )
+
+    def test_rrule(self):
+        """Test to get ending date when an rrule.
+        """
+
+        self.document[PBehaviorManager.DTSTART] = time()
+        self.document[PBehaviorManager.DTEND] = time() + 10000
+        self.document[PBehaviorManager.RRULE] = "FREQ=DAILY"
+        self.manager.put(vevents=[self.document])
+        ending = self.manager.getending(source=self.source)
+        self.assertEqual(
+            ending, {self.behaviors[0]: self.document[PBehaviorManager.DTEND]}
+        )
+
+    def _(self):
         # remove one minute from self.now in order to not match with any period
         rd = relativedelta(minutes=1)
         dtts = self.now - rd
