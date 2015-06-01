@@ -2,11 +2,11 @@
   "crecord_type": "view",
   "crecord_name" : "linklist.json",
   "loader_id": "view.linklist",
-  "loader_no_update": true,
+  "loader_no_update": false,
+  "enable": true,
   "id": "view.linklist",
   "_id": "view.linklist",
   "crecord_write_time": 1408625322,
-  "enable": true,
   "containerwidget": {
     "items": [
       {

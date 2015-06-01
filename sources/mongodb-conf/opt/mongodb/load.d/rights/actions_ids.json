@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
     "actionbutton_canuploadmibfile": {
         "desc": "Upload mib file to canopsis system"
@@ -282,3 +283,6 @@
         "desc": "Delete a scheduled job"
     }
 }
+=======
+{}
+>>>>>>> develop
