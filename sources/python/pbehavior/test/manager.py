@@ -24,9 +24,8 @@ from unittest import main, TestCase
 from canopsis.pbehavior.manager import PBehaviorManager
 
 from icalendar import Event
-from datetime import datetime
+
 from time import time
-from dateutil.relativedelta import relativedelta
 
 
 class PBehaviorManagerTest(TestCase):
@@ -131,6 +130,28 @@ class GetEnding(PBehaviorManagerTest):
             {self.behaviors[0]: self.document[PBehaviorManager.DTEND]}
         )
 
+    def test_alltimes(self):
+        """Test getending method where several times exist in everytime.
+        """
+
+        future = time() + 10000
+        count = 5
+
+        documents = [
+            self.document.copy()
+            for i in range(count)
+        ]
+        for i in range(len(documents)):
+            documents[i][PBehaviorManager.UID] = str(i)
+            documents[i][PBehaviorManager.DTEND] = future - i
+        # check all time
+        self.manager.put(vevents=documents)
+        ending = self.manager.getending(source=self.source)
+        self.assertEqual(
+            ending,
+            {self.behaviors[0]: future}
+        )
+
     def test_wrong_source(self):
         """Test when source does not exist.
         """
@@ -172,40 +193,6 @@ class GetEnding(PBehaviorManagerTest):
         self.assertEqual(
             ending, {self.behaviors[0]: self.document[PBehaviorManager.DTEND]}
         )
-
-    def _(self):
-        # remove one minute from self.now in order to not match with any period
-        rd = relativedelta(minutes=1)
-        dtts = self.now - rd
-
-        # check each behavior
-        for behavior in self.behaviors:
-            # check to get endings outside periods
-            endings = self.manager.getending(
-                behaviors={behavior}, documents=self.documents, dtts=dtts
-            )
-            self.assertFalse(endings)
-            # check to get endings inside periods
-            endings = self.manager.getending(
-                behaviors={behavior}, documents=self.documents,
-                dtts=self.now + rd
-            )
-            self.assertTrue(endings)
-        # check set of behaviors
-        for i in range(self.count):
-            # get first i behaviors
-            sub_behaviors = set(self.behaviors[:i])
-            # check to get endings outside periods
-            endings = self.manager._get_ending(
-                behaviors=sub_behaviors, documents=self.documents, dtts=dtts
-            )
-            self.assertFalse(endings)
-            # check to get endings inside periods
-            endings = self.manager._get_ending(
-                behaviors=sub_behaviors, documents=self.documents,
-                dtts=self.now
-            )
-            self.assertEqual(len(endings), len(sub_behaviors))
 
 if __name__ == '__main__':
     main()
