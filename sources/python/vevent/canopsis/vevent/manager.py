@@ -71,8 +71,8 @@ class VEventManager(MiddlewareRegistry):
     SOURCE = 'source'  #: source field name
     DTSTART = 'dtstart'  #: dtstart field name
     DTEND = 'dtend'  #: dtend field name
+    RRULE = 'rrule'  #: rrule vevent field name
     DURATION = 'duration'  #: duration field name
-    FREQ = 'freq'  #: freq field name
     ICAL = 'iCal'  #: iCal value field name
 
     SOURCE_TYPE = 'X-Canopsis-SourceType'  #: source type field name
@@ -139,9 +139,9 @@ class VEventManager(MiddlewareRegistry):
         if duration:
             kwargs[VEventManager.DURATION] = timedelta(duration)
         # get freq
-        freq = document[VEventManager.FREQ]
-        if freq:
-            kwargs[VEventManager.FREQ] = freq
+        rrule = document[VEventManager.RRULE]
+        if rrule:
+            kwargs[VEventManager.RRULE] = rrule
 
         result = Event(**kwargs)
 
@@ -284,8 +284,8 @@ class VEventManager(MiddlewareRegistry):
                 dtend = document[VEventManager.DTEND]
                 # get duration
                 duration = document[VEventManager.DURATION]
-                # get freq
-                freq = document[VEventManager.FREQ]
+                # get rrule
+                rrule = document[VEventManager.RRULE]
                 # get vevent
                 vevent = document[VEventManager.ICAL]
 
@@ -307,8 +307,8 @@ class VEventManager(MiddlewareRegistry):
                         )
                     if duration:
                         kwargs[VEventManager.DURATION] = timedelta(duration)
-                    if freq:
-                        kwargs[VEventManager.FREQ] = freq
+                    if rrule:
+                        kwargs[VEventManager.RRULE] = rrule
                     # updat vevent field in document
                     document[VEventManager.ICAL] = Event(**kwargs).to_ical()
 
@@ -327,12 +327,18 @@ class VEventManager(MiddlewareRegistry):
                 dtend = vevent.get(VEventManager.DTEND, 0)
                 if isinstance(dtend, datetime):
                     dtend = timegm(dtend.timetuple())
+                # get rrule
+                rrule = vevent.get(VEventManager.RRULE)
+                if rrule is not None:
+                    _rrule = ""
+                    for rrule_key in rrule:
+                        rrule_value = rrule[rrule_key]
+                        _rrule += "{0}={1};".format(rrule_key, rrule_value)
+                    rrule = _rrule
                 # get duration
                 duration = vevent.get(VEventManager.DURATION)
                 if duration:
                     duration = duration.total_seconds()
-                # get freq
-                freq = vevent.get(VEventManager.FREQ)
                 # get uid
                 uid = vevent.get(VEventManager.UID)
                 if not uid:
@@ -347,7 +353,7 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.DTSTART: dtstart,
                     VEventManager.DTEND: dtend,
                     VEventManager.DURATION: duration,
-                    VEventManager.FREQ: freq,
+                    VEventManager.RRULE: rrule,
                     VEventManager.ICAL: vevent.to_ical()
                 })
 

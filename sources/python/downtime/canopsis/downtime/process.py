@@ -42,7 +42,7 @@ events = get_storage(
 
 DOWNTIME = 'downtime'  #: downtime pbehavior value
 
-DOWNTIME_QUERY = pbmgr.get_query(behaviors=DOWNTIME)
+DOWNTIME_QUERY = PBehaviorManager.get_query(behaviors=DOWNTIME)
 
 
 @register_task

@@ -30,7 +30,7 @@ from time import time
 
 from datetime import datetime, timedelta
 
-from dateutil import rrulestr
+from dateutil.rrule import rrulestr
 
 from calendar import timegm
 
@@ -47,13 +47,13 @@ class PBehaviorManager(VEventManager):
     the vevent documents.
     """
 
-    BEHAVIOR = 'X-Canopsis-BehaviorType'  #: behavior type key in period
+    BEHAVIOR_TYPE = 'X-Canopsis-BehaviorType'  #: behavior type key in period
 
     BEHAVIORS = 'behaviors'  #: behaviors value field name
 
     def _get_document_properties(self, document, *args, **kwargs):
 
-        behaviors = document[PBehaviorManager.BEHAVIORS]
+        behaviors = document.get(PBehaviorManager.BEHAVIORS, [])
 
         result = {
             PBehaviorManager.BEHAVIORS: behaviors
@@ -63,28 +63,12 @@ class PBehaviorManager(VEventManager):
 
     def _get_vevent_properties(self, vevent, *args, **kwargs):
 
-        serialized_behaviors = vevent.get(PBehaviorManager.BEHAVIOR, "[]")
+        serialized_behaviors = vevent.get(PBehaviorManager.BEHAVIOR_TYPE, "[]")
         behaviors = loads(serialized_behaviors)
 
         result = {
             PBehaviorManager.BEHAVIORS: behaviors
         }
-
-        return result
-
-    def get_query(behaviors):
-        """Get a query related to input behaviors.
-
-        :param behaviors: behaviors to find.
-        :type behaviors: str or list
-        :return: query.
-        :rtype: dict
-        """
-
-        result = {}
-
-        if behaviors is not None:
-            result[PBehaviorManager.BEHAVIORS] = behaviors
 
         return result
 
@@ -110,7 +94,7 @@ class PBehaviorManager(VEventManager):
         isunique = isinstance(behaviors, basestring)
         _behaviors = [behaviors] if isunique else behaviors
         # prepare query
-        query = self.get_query(_behaviors)
+        query = PBehaviorManager.get_query(_behaviors)
         _behaviors = set(_behaviors)
         # get documents
         documents = self.values(
@@ -120,7 +104,7 @@ class PBehaviorManager(VEventManager):
         )
         # prepare CONSTS
         DURATION = PBehaviorManager.DURATION
-        FREQ = PBehaviorManager.FREQ
+        RRULE = PBehaviorManager.RRULE
         DTEND = PBehaviorManager.DTEND
         DTSTART = PBehaviorManager.DTSTART
         BEHAVIORS = PBehaviorManager.BEHAVIORS
@@ -135,19 +119,19 @@ class PBehaviorManager(VEventManager):
                 dtstart = document[DTSTART]
                 duration = document[DURATION]
                 duration = timedelta(seconds=duration)
-                if FREQ in document:
-                    freq = document[FREQ]
+                if RRULE in document:
+                    rrule = document[RRULE]
                     dtts = datetime.fromtimestamp(dtstart)
-                    rrule = rrulestr(freq, dtts=dtts)
+                    rrule = rrulestr(rrule, dtstart=dtts)
                     before = rrule.before(dtts=ts, inc=True)
                     if before:
                         endbefore = before + duration
                         if endbefore >= dtts:
                             endts = timegm(endbefore.timetuple())
-            elif FREQ in document:  # check if ts in freq
-                freq = document[FREQ]
+            elif RRULE in document:  # check if ts in rrule
+                rrule = document[RRULE]
                 dtts = datetime.fromtimestamp(dtstart)
-                rrule = rrulestr(freq, dtts=ts)
+                rrule = rrulestr(rrule, dtstart=ts)
                 if rrule[0] == dtts:
                     endts = ts
             else:  # get simply dtend
@@ -161,5 +145,22 @@ class PBehaviorManager(VEventManager):
         # update result if isunique
         if isunique:
             result = result[behaviors] if result else None
+
+        return result
+
+    @staticmethod
+    def get_query(behaviors):
+        """Get a query related to input behaviors.
+
+        :param behaviors: behaviors to find.
+        :type behaviors: str or list
+        :return: query.
+        :rtype: dict
+        """
+
+        result = {}
+
+        if behaviors is not None:
+            result[PBehaviorManager.BEHAVIORS] = behaviors
 
         return result

@@ -33,7 +33,7 @@
             "default": 2147483648,
             "description": "End timestamp."
         },
-        "freq": {
+        "rrule": {
             "type": "string",
             "required": false,
             "default": "",

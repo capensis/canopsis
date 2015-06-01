@@ -33,8 +33,83 @@ class PBehaviorManagerTest(TestCase):
     """
 
     def setUp(self):
+
         # create a new PBehaviorManager
         self.manager = PBehaviorManager(data_scope='test_pbehavior')
+
+    def tearDown(self):
+        # drop behaviors
+        self.manager.remove()
+
+
+class GetDocumentProperties(PBehaviorManagerTest):
+    """Test method _get_document_properties.
+    """
+
+    def test_empty(self):
+        """Test with an empty document.
+        """
+
+        document = {}
+        result = self.manager._get_document_properties(document=document)
+        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: []})
+
+    def test(self):
+        """Test with pbehaviors.
+        """
+
+        document = {PBehaviorManager.BEHAVIORS: ['test']}
+        result = self.manager._get_document_properties(document=document)
+        self.assertEqual(result, document)
+
+
+class GetVeventProperties(PBehaviorManagerTest):
+    """Test method _get_vevent_properties.
+    """
+
+    def test_empty(self):
+        """Test with an empty vevent.
+        """
+
+        vevent = Event()
+        result = self.manager._get_vevent_properties(vevent=vevent)
+        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: []})
+
+    def test(self):
+        """Test with a vevent containing pbehaviors.
+        """
+
+        iCalvevent = 'BEGIN:VEVENT\n{0}:["test"]\nEND:VEVENT'.format(
+            PBehaviorManager.BEHAVIOR_TYPE
+        )
+        vevent = Event.from_ical(iCalvevent)
+        result = self.manager._get_vevent_properties(vevent=vevent)
+        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: ['test']})
+
+
+class GetQuery(PBehaviorManagerTest):
+    """Test method get_query.
+    """
+
+    def test_empty(self):
+
+        result = PBehaviorManager.get_query(behaviors=[])
+        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: []})
+
+    def test(self):
+
+        behaviors = ['test']
+        result = PBehaviorManager.get_query(behaviors=behaviors)
+        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: behaviors})
+
+
+class GetEnding(PBehaviorManagerTest):
+    """Test method getending.
+    """
+
+    def setUp(self):
+
+        super(GetEnding, self).setUp()
         # UTs check period with(out) behaviors on periods in one hour.
         self.now = datetime.now()
         # use same rrule which is checked every day
@@ -45,6 +120,8 @@ class PBehaviorManagerTest(TestCase):
         self.events = []
         # with count events
         self.count = 5
+        # prepare sources
+        self.sources = [str(i) for i in range(self.count)]
         # and (60 mn / (self.count - 1)) different minutes between date
         minutes = int(60 / self.count)
         # get an ical template with dtstart, rrule andd duration
@@ -66,7 +143,7 @@ class PBehaviorManagerTest(TestCase):
         # {id: i, values: [{period: events[j], behaviors: behaviors[j]}]}
         self.values = [
             {
-                PBehaviorManager.ID: self.behaviors[i],
+                PBehaviorManager.UID: self.behaviors[i],
                 PBehaviorManager.VALUES: [
                     {
                         PBehaviorManager.PERIOD: self.events[j].to_ical(),
@@ -81,40 +158,6 @@ class PBehaviorManagerTest(TestCase):
                 entity_id=document[PBehaviorManager.ID], document=document
             )
 
-    def tearDown(self):
-        # drop behaviors
-        self.manager.remove(entity_ids=self.behaviors)
-
-    def test_CRUD(self):
-        """Test CRUD methods.
-        """
-
-        # check to retrieve one document
-        documents = self.manager.get(self.behaviors[0])
-        self.assertIsInstance(documents, dict)
-
-        # check to retrieve several documents
-        documents = self.manager.get(self.behaviors)
-        self.assertEqual(len(documents), self.count)
-
-        # remove one document
-        self.manager.remove(entity_ids=self.behaviors[0])
-
-        # check to retrieve one document which does not exist
-        documents = self.manager.get(self.behaviors[0])
-        self.assertIsNone(documents)
-
-        # check to retrieve several documents
-        documents = self.manager.get(self.behaviors)
-        self.assertEqual(len(documents), self.count - 1)
-
-        # remove all documents except one
-        self.manager.remove(entity_ids=self.behaviors[:-1])
-
-        # check to retrieve several documents
-        documents = self.manager.get(self.behaviors)
-        self.assertEqual(len(documents), 1)
-
     def test__get_ending(self):
         """Test _get_ending method.
         """
@@ -126,12 +169,12 @@ class PBehaviorManagerTest(TestCase):
         # check each behavior
         for behavior in self.behaviors:
             # check to get endings outside periods
-            endings = self.manager._get_ending(
+            endings = self.manager.getending(
                 behaviors={behavior}, documents=self.documents, dtts=dtts
             )
             self.assertFalse(endings)
             # check to get endings inside periods
-            endings = self.manager._get_ending(
+            endings = self.manager.getending(
                 behaviors={behavior}, documents=self.documents,
                 dtts=self.now + rd
             )
