@@ -90,6 +90,7 @@ class Context(MiddlewareRegistry):
         """Get entities by id.
 
         :param ids: one id or a set of ids.
+        :type ids: list or str
         """
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)

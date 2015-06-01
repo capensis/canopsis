@@ -124,7 +124,7 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
         manager = pbmgr
 
     entity_ids = manager.whois(query=DOWNTIME_QUERY)
-    entities = context.get_entities(entity_ids)
+    entities = context.get_entities(list(entity_ids))
 
     spec = {}
 
