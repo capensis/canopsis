@@ -555,7 +555,7 @@ class TaskHandler(Engine):
             'execution_time': end - start
         }
 
-        publish(event=event, publisher=self.amqp)
+        publish(event=event, publisher=self.amqp, logger=self.logger)
 
     def handle_task(self, job):
         """
@@ -569,9 +569,8 @@ class TaskHandler(Engine):
 
 
 @register_task
-def publish(event, publisher, rk=None, exchange=None, **kwargs):
-    """
-    Task dedicated to publish an event from an engine.
+def publish(event, publisher, rk=None, exchange=None, logger=None, **kwargs):
+    """Task dedicated to publish an event from an engine.
 
     :param dict event to send.
     :param publisher: resource able to publish the event with a
