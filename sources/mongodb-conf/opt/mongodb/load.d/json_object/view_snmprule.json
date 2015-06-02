@@ -59,14 +59,14 @@
           "id" : "item-fd5a-1ede-8ac2-6a1d66ad004012",
           "widgetId" : "item-fd5a-1ede-8ac2-6a1d66ad004012",
           "xtype": "list",
-          "listed_crecord_type": "eventlog",
+          "listed_crecord_type": "trap",
           "display_record_field": "resource",
           "title": "Trap events",
           "actions_toolbar": [
             "actionbutton-eventnavigation"
           ],
           "default_column_sort" : {
-            "direction" : "DESC",
+            "direction" : "ASC",
             "property" : "timestamp"
           },
           "mixins": [

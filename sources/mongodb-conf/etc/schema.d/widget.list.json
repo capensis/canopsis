@@ -48,7 +48,8 @@
 				"linklist",
 				"snmprule",
 				"userview",
-				"widgetpreferences"
+				"widgetpreferences",
+				"trap"
 			],
 			"default": "group",
 			"role": "simplelist"
