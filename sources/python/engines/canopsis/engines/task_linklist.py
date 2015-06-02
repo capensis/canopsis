@@ -51,9 +51,6 @@ class engine(TaskHandler):
         Link association are managed by entity link system.
         """
 
-        # Clear user settings in all documents before processing
-        self.entity_link_manager.clear_computed_links()
-
         links = {}
 
         # Computes links for all context elements
