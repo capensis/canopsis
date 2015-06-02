@@ -224,19 +224,26 @@ class Selector(Record):
         entities = self.context.get_entities(list(entityids))
 
         if entities:
-            downtime = [
-                {
-                    'component': {'$ne': entity['component']},
-                    'resource': {'$ne': entity['resource']}
-                }
-                for entity in entities
-            ]
+            downtime = []
 
-            if '$and' in cfilter:
+            for entity in entities:
+                if entity[Context.TYPE] == 'component':
+                    downtime.append({
+                        'component': entity['name'],
+                        'resource': None
+                    })
+
+                elif entity[Context.TYPE] == 'resource':
+                    downtime.append({
+                        'component': entity['component'],
+                        'resource': entity['name']
+                    })
+
+            if downtime:
+                if '$and' not in cfilter:
+                    cfilter = {'$and': [cfilter]}
+
                 cfilter['$and'] += downtime
-
-            else:
-                cfilter = {'$and': [downtime, cfilter]}
 
         self.logger.debug('Generated cfilter is')
         self.logger.debug(pp.pformat(cfilter))
@@ -256,14 +263,14 @@ class Selector(Record):
         # Adds default check clause as selector have to be done
         # on check event only
         # This constraint have to be available for all aggregation queries
-        check_clause = {'event_type': {'$in': ['check', 'eue', 'selector']}}
+        check_clause = {'event_type': include_check_types}
 
         if '$and' in mfilter:
             mfilter['$and'].append(check_clause)
         elif '$or' in mfilter:
             mfilter = {'$and': [mfilter, check_clause]}
         elif isinstance(mfilter, dict):
-            mfilter['event_type'] = {'$in': ['check', 'eue', 'selector']}
+            mfilter['event_type'] = include_check_types
 
         # Main aggregation query, gets information about
         # how many events are in what state
