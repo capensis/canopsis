@@ -49,10 +49,6 @@ class engine(Engine):
 
         self.rules = {}
 
-        # Cache dicts, avoid too much db queries.
-        self.mibs = {}
-        self.mib_objects = {}
-
         self.last_cache_clean = time()
 
     def pre_run(self):
@@ -73,8 +69,6 @@ class engine(Engine):
         if time() - self.last_cache_clean > self.CACHE_CLEAN_TIMEOUT:
             # Clean cache, allow memory free and fresh data
             self.last_cache_clean = time()
-            self.mibs = {}
-            self.mib_objects = {}
 
     def work(self, event, *args, **kwargs):
 
@@ -185,7 +179,7 @@ class engine(Engine):
             self.logger.debug(message)
             return None
         else:
-            mib = self.get_and_cache_mib(rule)
+            mib = self.get_mib(rule)
             # When unable to retrieve mib information
             if mib is None:
                 message = 'No mib info found'
@@ -193,7 +187,7 @@ class engine(Engine):
                 self.logger.error(message)
                 return None
             else:
-                context = self.get_and_cache_mibs_objects(
+                context = self.get_mibs_objects(
                     rule,
                     mib.get('objects', None),
                     snmp_vars,
@@ -202,7 +196,7 @@ class engine(Engine):
                 self.logger.debug('generated context {}'.format(context))
                 return context
 
-    def get_and_cache_mibs_objects(self, rule, mib_objects, snmp_vars, errors):
+    def get_mibs_objects(self, rule, mib_objects, snmp_vars, errors):
 
         # Data validation
         if mib_objects is None:
@@ -220,70 +214,54 @@ class engine(Engine):
                 mib_object
             )
 
-            if _id in self.mib_objects:
+            result = list(mibs_manager.get(oids=[_id]))
 
-                self.logger.debug(
-                    'mib object information cached: {}'.format(_id)
-                )
-                context[mib_object] = self.mib_objects[_id]
-
+            if len(result):
+                oid = result[0]['oid']
+                context[mib_object] = snmp_vars.get(oid, '')
             else:
-
-                result = list(mibs_manager.get(oids=[_id]))
-
-                if len(result):
-                    oid = result[0]['oid']
-                    # Put oid translation in cache whenever possible.
-                    self.mib_objects[_id] = snmp_vars.get(oid, '')
-                    context[mib_object] = self.mib_objects[_id]
-                else:
-                    errors.append('Mib object oid not found in db : {}'.format(
-                        _id
-                    ))
-                    context[mib_object] = None
+                errors.append('Mib object oid not found in db : {}'.format(
+                    _id
+                ))
+                context[mib_object] = None
 
         return context
 
-    def get_and_cache_mib(self, rule):
+    def get_mib(self, rule):
 
         _id = '{}::{}'.format(
             rule['oid']['moduleName'],
             rule['oid']['mibName']
         )
 
-        if _id in self.mibs:
-            self.logger.debug('mib found in cache')
-            return self.mibs[_id]
-        else:
-            result = list(mibs_manager.get(oids=[_id]))
-            oid = None
-            if len(result):
-                oid = result[0]['oid']
+        result = list(mibs_manager.get(oids=[_id]))
+        oid = None
+        if len(result):
+            oid = result[0]['oid']
 
-            query = {
-                'moduleName': rule['oid']['moduleName'],
-                'name': rule['oid']['mibName']
+        query = {
+            'moduleName': rule['oid']['moduleName'],
+            'name': rule['oid']['mibName']
+        }
+
+        result = list(mibs_manager.get(query=query))
+        objects = None
+        if len(result):
+            objects = result[0]['objects'].keys()
+
+        self.logger.debug('fetch oid {}, objects {}'.format(
+            oid,
+            len(objects)
+        ))
+
+        if oid is not None and objects is not None:
+
+            return {
+                'oid': oid,
+                'objects': objects
             }
-
-            result = list(mibs_manager.get(query=query))
-            objects = None
-            if len(result):
-                objects = result[0]['objects'].keys()
-
-            self.logger.debug('fetch oid {}, objects {}'.format(
-                oid,
-                len(objects)
-            ))
-
-            if oid is not None and objects is not None:
-
-                self.mibs[_id] = {
-                    'oid': oid,
-                    'objects': objects
-                }
-                return self.mibs[_id]
-            else:
-                return None
+        else:
+            return None
 
     def make_follow(self, event):
 
