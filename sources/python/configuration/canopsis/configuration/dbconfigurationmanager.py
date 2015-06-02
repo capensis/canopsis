@@ -18,10 +18,19 @@ class DBConfiguration(MiddlewareRegistry):
     Manage Canopsis database configuration information
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, dbconfiguration_storage=None, *args, **kwargs):
 
         super(DBConfiguration, self).__init__(*args, **kwargs)
 
+<<<<<<< HEAD
+=======
+        if dbconfiguration_storage is not None:
+            self[DBConfiguration.DBCONFIGURATION_STORAGE] = dbconfiguration_storage
+
+    def get(self, _id, default=None):
+        return self.find_one(query={'_id': _id}) or default
+
+>>>>>>> 9862f4c... update: start downtime unittest
     def find_one(
         self,
         skip=None,
