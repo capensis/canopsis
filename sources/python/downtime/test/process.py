@@ -30,19 +30,24 @@ from canopsis.downtime.process import DOWNTIME
 
 
 class DowntimeProcessingTest(TestCase):
+
     def setUp(self):
+
         self.downtimes = PBehaviorManager(data_scope='test_pbehavior')
         self.events = Event(data_scope='test_events')
         self.context = Context(data_scope='test_context')
 
     def tearDown(self):
+
         self.downtimes.remove()
         self.events.remove()
         self.context.remove()
 
 
 class EventProcessingTest(DowntimeProcessingTest):
+
     def setUp(self):
+
         super(EventProcessingTest, self).setUp()
 
         self.test_event = {
@@ -57,6 +62,7 @@ class EventProcessingTest(DowntimeProcessingTest):
         self.test_rk = self.events.get_rk(self.test_event)
 
     def _process(self):
+
         event = event_processing(
             self, self.test_event,
             downtimes=self.downtimes,
@@ -67,6 +73,7 @@ class EventProcessingTest(DowntimeProcessingTest):
         return event, dbevent
 
     def test_without_downtime(self):
+
         event, dbevent = self._process()
 
         self.assertIsNotNone(dbevent)
@@ -84,7 +91,9 @@ class EventProcessingTest(DowntimeProcessingTest):
 
 
 class BeatProcessingTest(DowntimeProcessingTest):
+
     def _process(self):
+
         beat_processing(
             self,
             downtimes=self.downtimes,
@@ -95,6 +104,7 @@ class BeatProcessingTest(DowntimeProcessingTest):
         return self.events.find(query={DOWNTIME: True})
 
     def test_no_downtime(self):
+
         result = self._process()
 
         self.assertFalse(result)
@@ -105,3 +115,7 @@ class BeatProcessingTest(DowntimeProcessingTest):
         result = self._process()
 
         self.assertTrue(result)
+
+
+if __name__ == '__main__':
+    main()
