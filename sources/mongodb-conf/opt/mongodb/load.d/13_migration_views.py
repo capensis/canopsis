@@ -55,7 +55,6 @@ def update():
 
         try:
             dbconf.put(view['_id'], view)
-
         except Exception as err:
             log('Error updating view {0}: {1}'.format(view['_id'], err))
             backup.append(view)
@@ -117,4 +116,3 @@ def transform_event_selection(event_selection):
         selection.append(value)
 
     return selection
-
