@@ -45,12 +45,6 @@
             "role": "duration",
             "default": 0,
             "description": "Duration in seconds (warning: 1 month = 365 days / 12)."
-        },
-        "iCal": {
-            "type": "string",
-            "required": false,
-            "default": "",
-            "description": "iCal format."
         }
     }
 }

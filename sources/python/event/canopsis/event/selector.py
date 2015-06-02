@@ -221,7 +221,7 @@ class Selector(Record):
 
         entityids = self.pbehavior.whois(query=query)
 
-        entities = self.context.get_entities(entityids)
+        entities = self.context.get_entities(list(entityids))
 
         if entities:
             downtime = [
