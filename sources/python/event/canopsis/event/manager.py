@@ -23,8 +23,6 @@ class Event(MiddlewareRegistry):
 
         super(Event, self).__init__(*args, **kwargs)
 
-<<<<<<< HEAD
-=======
     @staticmethod
     def get_rk(event):
         rk = '{0}.{1}.{2}.{3}.{4}'.format(
@@ -45,7 +43,6 @@ class Event(MiddlewareRegistry):
 
         return result[0] if len(result) else default
 
->>>>>>> 9862f4c... update: start downtime unittest
     def find(
         self,
         limit=None,
