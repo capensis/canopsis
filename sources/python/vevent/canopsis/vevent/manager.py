@@ -35,7 +35,7 @@ from datetime import datetime, timedelta
 
 from uuid import uuid4 as uuid
 
-MAXTS = 199999999999  #: maximal timestamp
+MAXTS = 2147483647  #: maximal timestamp
 
 CONF_PATH = 'vevent/vevent.conf'
 CATEGORY = 'VEVENT'
