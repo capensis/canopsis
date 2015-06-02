@@ -203,11 +203,13 @@ class Period(object):
 
         return result
 
-    def round_timestamp(self, timestamp, normalize=False):
+    def round_timestamp(self, timestamp, normalize=False, next_period=False):
         """Get round timestamp relative to an input timestamp.
 
         :param long timestamp: timestamp to round.
         :param bool normalize: normalization property.
+        :param bool next_period: computes current period next timestamp.
+
 
         Example: Let a timestamp ``t`` related to the date: 2015/03/04 15:05.
         r = Period(week=1).round_timestamp(timestamp=t)
@@ -224,6 +226,9 @@ class Period(object):
         # restore microsecond because utctimetuple() does not
         microseconds = datetime.microsecond * 0.000001
         result += microseconds
+
+        if next_period:
+            result += len(self)
 
         return result
 
@@ -249,7 +254,7 @@ class Period(object):
 
         for unit in unit_values:
             value = max(1, unit_values[unit])
-            if unit is Period.WEEK:
+            if unit == Period.WEEK:
                 _monthcalendar = monthcalendar(
                     datetime.year, datetime.month
                 )

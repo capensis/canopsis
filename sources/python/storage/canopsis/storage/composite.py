@@ -27,7 +27,7 @@ from canopsis.storage import Storage
 
 class CompositeStorage(Storage):
     """
-    Storage dedicated to manage composite data identified by a data id in a
+    Storage dedicated to manage composite data identified by a name in a
     path of ordered fields.
 
     For example, a metric is identified by a unique name in the path
@@ -46,6 +46,8 @@ class CompositeStorage(Storage):
     SHARED = 'shared'  #: shared field name
     VALUE = 'value'  #: data value
     PATH = 'path'  #: path value
+
+    NAME = 'name'  #: name field name
 
     def __init__(self, path=None, *args, **kwargs):
         """
@@ -133,9 +135,9 @@ class CompositeStorage(Storage):
         for dts in data_to_share:
             # update extended data if necessary
             if share_extended:
-                path, data_id = self.get_path_with_id(dts)
+                path, name = self.get_path_with_name(dts)
                 extended_data = self.get(
-                    path=path, data_ids=data_id, shared=True
+                    path=path, names=name, shared=True
                 )
                 # decompose extended data into a list
                 dts = []
@@ -145,9 +147,9 @@ class CompositeStorage(Storage):
                 dts = [dts]
 
             for dt in dts:
-                path, data_id = self.get_path_with_id(dt)
+                path, name = self.get_path_with_name(dt)
                 dt[CompositeStorage.SHARED] = result
-                self.put(path=path, data_id=data_id, data=dt, cache=cache)
+                self.put(path=path, name=name, data=dt, cache=cache)
 
         return result
 
@@ -163,25 +165,25 @@ class CompositeStorage(Storage):
         for d in data:
             if CompositeStorage.SHARED in d:
                 d[CompositeStorage.SHARED] = str(uuid())
-                path, data_id = self.get_path_with_id(d)
-                self.put(path=path, data_id=data_id, data=d, cache=cache)
+                path, name = self.get_path_with_name(d)
+                self.put(path=path, name=name, data=d, cache=cache)
 
     def get(
         self,
-        path, data_ids=None, _filter=None, shared=False,
+        path, names=None, _filter=None, shared=False,
         limit=0, skip=0, sort=None, with_count=False
     ):
         """
-        Get data related to input data_ids, input path and input filter.
+        Get data related to input names, input path and input filter.
 
         :param dict path: dictionnary of path valut by path name
-        :param data_ids: data ids in the input path.
-        :type data_ids: str or iterable of str
+        :param names: data names in the input path.
+        :type names: str or iterable of str
         :param _filter: additional filter condition to input path
         :type _filter: storage filter
         :param bool shared: if True, convert result to list of list of data
             where list of data are list of shared data.
-        :param int limit: max number of data to get. Useless if data_id exists.
+        :param int limit: max number of data to get. Useless if name exists.
         :param int skip: starting index of research if multi data to get
         :param dict sort: couples of field (name, value) to sort with ASC/DESC
             Storage fields
@@ -209,7 +211,7 @@ class CompositeStorage(Storage):
         :type _filter: storage filter
         :param bool shared: if True, convert result to list of list of data
             where list of data are list of shared data.
-        :param int limit: max number of data to get. Useless if data_id exists.
+        :param int limit: max number of data to get. Useless if name exists.
         :param int skip: starting index of research if multi data to get
         :param dict sort: couples of field (name, value) to sort with ASC/DESC
             Storage fields
@@ -222,13 +224,13 @@ class CompositeStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, path, data_id, data, shared_id=None, cache=False):
+    def put(self, path, name, data, shared_id=None, cache=False):
         """
         Put a data related to an id and a path.
 
         :param path: path
         :type path: storage filter
-        :param str data_id: data id
+        :param str name: data id
         :param dict data: data to update
         :param str shared_id: shared_id id not None
         :param bool cache: use query cache if True (False by default).
@@ -236,14 +238,14 @@ class CompositeStorage(Storage):
 
         raise NotImplementedError()
 
-    def remove(self, path, data_ids=None, shared=False, cache=False):
+    def remove(self, path, names=None, shared=False, cache=False):
         """
         Remove data from ids or type
 
         :param path: path to remove
         :type path: storage filter
-        :param data_ids: data id or list of data id
-        :type data_ids: list or str
+        :param names: data id or list of data id
+        :type names: list or str
 
         :param bool shared: remove shared data if data ids are related to
             shared data.
@@ -252,7 +254,7 @@ class CompositeStorage(Storage):
 
         raise NotImplementedError()
 
-    def get_path_with_id(self, data):
+    def get_path_with_name(self, data):
         """
         Get input data path and id
 
@@ -268,16 +270,16 @@ class CompositeStorage(Storage):
             if field in self.path and data[field] is not None
         }
 
-        result = path, data[Storage.DATA_ID]
+        result = path, data[CompositeStorage.NAME]
 
         return result
 
-    def get_absolute_path(self, path, data_id=None):
+    def get_absolute_path(self, path, name=None):
         """
         Get input data absolute path.
 
         :param dict path: path from where get absolute path.
-        :param str data_id: data id
+        :param str name: data id
         """
 
         result = ''
@@ -292,10 +294,10 @@ class CompositeStorage(Storage):
             else:
                 break
 
-        if data_id is not None and result:
+        if name is not None and result:
             result = '%s%s%s' % (
                 result, CompositeStorage.PATH_SEPARATOR,
-                data_id
+                name
             )
 
         return result

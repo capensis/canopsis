@@ -80,6 +80,20 @@ function install() {
     launch_cmd 1 "openssl ca $OPENSSL_ARGS"
 
     echo
+    echo "===> Generate bundles..."
+    echo
+    
+    for i in ca cakey
+    do
+        cat $PREFIX/etc/ssl/$i.pem >> $PREFIX/etc/ssl/cabundle.pem
+    done
+    
+    for i in cert key
+    do
+        cat $PREFIX/etc/ssl/$i.pem >> $PREFIX/etc/ssl/bundle.pem
+    done
+
+    echo
     echo "===> Fix permissions..."
     echo
 

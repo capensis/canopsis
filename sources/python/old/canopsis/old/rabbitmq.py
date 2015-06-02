@@ -287,7 +287,7 @@ class Amqp(Thread):
                                     .format(__version__)
                                 )
 
-                if not qsettings['consumer']:
+                if not qsettings['consumer'] or reconnect:
                     self.logger.debug("   + Create Consumer")
                     qsettings['consumer'] = self.conn.Consumer(
                         qsettings['queue'], callbacks=[qsettings['callback']])
@@ -391,7 +391,7 @@ class Amqp(Thread):
 
         if not operation_success:
             # Event and it's information are buffered until next send retry
-            self.logger.error('Too much retries for event {}, give up'.format(
+            self.logger.error(u'Too much retries for event {}, give up'.format(
                 routing_key
             ))
 

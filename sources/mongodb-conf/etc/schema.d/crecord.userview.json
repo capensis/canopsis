@@ -26,8 +26,8 @@
 		},
 		"containerwidget": {
 			"relationship": "belongsTo",
-			"model": "widget.containerwidget",
-			"polymorphic":true
+			"model": "widget.containerwidget.widgetcontainer",
+			"embedded": true
 		},
 		"enable": {
 			"type": "boolean",

@@ -8,7 +8,7 @@
 		"keys":["title", "event_selection"]
 	},{
 		"title": "Rendering",
-		"keys":["show_title", "show_output"]
+		"keys":["show_title", "show_output", "use_labels"]
 	},{
 		"title": "Click event",
 		"keys":["filter_pattern", "destination_view"]
@@ -20,6 +20,9 @@
 		"title":  {
 			"type": "string"
 		},
+		"use_labels": {
+			"type": "boolean"
+		},
 		"destination_view":  {
 			"default": "view.event",
 			"type": "string",
@@ -29,12 +32,14 @@
 			"valueField":"id",
 			"labelField":"crecord_name"
 		},
-		"event_selection":  {
+		"event_selection": {
 			"type": "array",
 			"items": {
-				"type": "string"
+				"type": "object"
 			},
-			"role" : "eventselector"
+			"role": "eventselector",
+			"labelled": true,
+			"description": "Choose events to include in selector computation, and associate them a label"
 		},
 		"filter_pattern": {
 			"type": "string",

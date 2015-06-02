@@ -22,14 +22,13 @@
 from unittest import TestCase, main
 
 from canopsis.task import register_task
-from canopsis.topology.elements import TopoNode, Topology
+from canopsis.topology.elements import TopoNode, Topology, TopoEdge
 from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
 
 
 class TopoNodeTest(TestCase):
-    """
-    Test event processing function.
+    """Test event processing function.
     """
 
     def setUp(self):
@@ -41,8 +40,7 @@ class TopoNodeTest(TestCase):
         self.manager.del_elts()
 
     def test_default(self):
-        """
-        Test to process a toponode without default task.
+        """Test to process a toponode without default task.
         """
 
         toponode = TopoNode()
@@ -53,12 +51,15 @@ class TopoNodeTest(TestCase):
         self.assertEqual(toponode.state, 1)
 
     def test_process_task(self):
-        """
-        Process a task which returns all toponode data.
+        """Process a task which returns all toponode data.
         """
 
         @register_task('process')
-        def process_node(vertice, ctx, event=None, publisher=None, **kwargs):
+        def process_node(
+            vertice, ctx,
+            event=None, publisher=None, source=None, manager=None, logger=None,
+            **kwargs
+        ):
 
             return vertice, ctx, kwargs
 
@@ -74,10 +75,35 @@ class TopoNodeTest(TestCase):
         self.assertIs(_ctx, ctx)
         self.assertFalse(_kwargs)
 
+    def test_proccess_task_with_propagation(self):
+        """Process a node and check if node and edge states have changed.
+        """
+
+        state = 0
+        new_state = state + 1
+        operation = {
+            'id': 'canopsis.topology.rule.action.change_state',
+            'params': {'state': new_state}
+        }
+
+        toponode = TopoNode(state=state, operation=operation)
+        toponode.save(manager=self.manager)
+        edge = TopoEdge(sources=toponode)
+        edge.save(manager=self.manager)
+
+        self.assertEqual(toponode.state, state)
+        self.assertEqual(edge.state, state)
+
+        toponode.process(event={}, manager=self.manager)
+        elts = self.manager.get_elts(ids=[toponode.id, edge.id])
+        toponode = elts[0]
+        edge = elts[1]
+        self.assertEqual(toponode.state, new_state)
+        self.assertEqual(edge.state, new_state)
+
 
 class TopologyGraphTest(TestCase):
-    """
-    Test topology element.
+    """Test topology element.
     """
 
     def setUp(self):
@@ -91,8 +117,7 @@ class TopologyGraphTest(TestCase):
         self.manager.del_elts()
 
     def test_save(self):
-        """
-        Test if an entity exists after saving a topology.
+        """Test if an entity exists after saving a topology.
         """
         id = 'test'
 
@@ -104,8 +129,7 @@ class TopologyGraphTest(TestCase):
         self.assertEqual(topology[Context.NAME], id)
 
     def test_delete(self):
-        """
-        Test if topology nodes exist after deleting a topology.
+        """Test if topology nodes exist after deleting a topology.
         """
 
         topology = Topology()

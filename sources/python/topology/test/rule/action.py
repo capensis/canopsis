@@ -59,12 +59,6 @@ class ChangeStateTest(TestCase):
         event = {'state': self.new_state}
         change_state(vertice=self.vertice, event=event, manager=tm)
 
-    def tearDown(self):
-
-        vertice = tm.get_vertices(ids=self.vertice.id)
-        self.assertEqual(vertice.state, self.new_state)
-        tm.del_elts()
-
 
 class StateFromSourcesTest(TestCase):
     """

@@ -40,7 +40,9 @@
 				"user",
 				"derogation",
 				"group",
-				"eventlog"
+				"eventlog",
+				"ctxmetric",
+				"linklist"
 			],
 			"default": "group",
 			"role": "simplelist"

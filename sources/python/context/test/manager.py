@@ -694,7 +694,7 @@ class GetEntityByIdTest(BaseContextTest):
         """
 
         self._assert_entity(
-            _id='/connector/a', entity={'id': 'a', 'type': 'connector'}
+            _id='/connector/a', entity={'name': 'a', 'type': 'connector'}
         )
 
     def test_connector_name(self):
@@ -703,7 +703,7 @@ class GetEntityByIdTest(BaseContextTest):
 
         self._assert_entity(
             _id='/connector_name/a/b',
-            entity={'id': 'b', 'connector': 'a', 'type': 'connector_name'}
+            entity={'name': 'b', 'connector': 'a', 'type': 'connector_name'}
         )
 
     def test_component(self):
@@ -713,7 +713,7 @@ class GetEntityByIdTest(BaseContextTest):
         self._assert_entity(
             _id='/component/a/b/c',
             entity={
-                'id': 'c',
+                'name': 'c',
                 'connector': 'a',
                 'type': 'component',
                 'connector_name': 'b'
@@ -727,7 +727,7 @@ class GetEntityByIdTest(BaseContextTest):
         self._assert_entity(
             _id='/resource/a/b/c/d',
             entity={
-                'id': 'd',
+                'name': 'd',
                 'connector': 'a',
                 'connector_name': 'b',
                 'component': 'c',
@@ -742,7 +742,7 @@ class GetEntityByIdTest(BaseContextTest):
         self._assert_entity(
             _id='/other/a/b/c/d',
             entity={
-                'id': 'd',
+                'name': 'd',
                 'connector': 'a',
                 'connector_name': 'b',
                 'component': 'c',
@@ -757,7 +757,7 @@ class GetEntityByIdTest(BaseContextTest):
         self._assert_entity(
             _id='/other/a/b/c/d/e',
             entity={
-                'id': 'e',
+                'name': 'e',
                 'connector': 'a',
                 'connector_name': 'b',
                 'component': 'c',

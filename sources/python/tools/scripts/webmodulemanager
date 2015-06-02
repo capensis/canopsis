@@ -20,11 +20,25 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.configuration.dbconfigurationmanager import DBConfiguration
 import os
 import sys
 from json import loads, dumps
-from canopsis.old.storage import get_storage
 import argparse
+
+
+# Default install module list in Canopsis
+modules = [
+    'core',
+    'uibase',
+    'monitoring',
+    'development',
+    'uiv1_themes',
+    'canopsis-backend-ui-connector',
+    'userpreferences',
+    'charts',
+    'canopsis-rights'
+]
 
 """
 This module aims to manager registed webcore modules in canopsis
@@ -32,8 +46,9 @@ by allowing to add/remove module from enabled.json list in webcore.
 """
 
 DEBUG = False
-objects = get_storage().get_backend('object')
-query = {'crecord_type': 'enabledmodules'}
+# Database access
+db_configuration_manager = DBConfiguration()
+_id = 'enabledmodules'
 
 
 def log(message):
@@ -46,8 +61,10 @@ def debug(message):
 
 
 def load_list():
-    record = objects.find_one(query)
-    enabled_list = record['enabled']
+    configuration = db_configuration_manager.find_one(
+        query={'_id': _id}
+    )
+    enabled_list = configuration['enabled']
     debug('load enabled_list')
     debug(enabled_list)
     return enabled_list
@@ -56,9 +73,9 @@ def load_list():
 def save_list(enabled_list):
     debug('save enabled_list')
     debug(enabled_list)
-    objects.update(
-        {'crecord_type': 'enabledmodules'},
-        {'$set': {'enabled': enabled_list}}
+    db_configuration_manager.put(
+        _id,
+        {'enabled': enabled_list}
     )
 
 
@@ -86,6 +103,12 @@ def remove_module(module_name):
     else:
         log('Could not remove module {} as not registered'.format(module_name))
 
+
+def init_modules(module_name):
+    # module name is not used here
+    for module in modules:
+        add_module(module)
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
@@ -95,7 +118,7 @@ if __name__ == '__main__':
         'action',
         type=str,
         help='What operation to perform on web modules',
-        choices=['add', 'remove', 'show']
+        choices=['add', 'remove', 'show', 'init']
     )
     parser.add_argument(
         'module_name',
@@ -114,11 +137,7 @@ if __name__ == '__main__':
         'add': add_module,
         'remove': remove_module,
         'show': show_module,
+        'init': init_modules
     }[args['action']]
 
-    try:
-        action(args['module_name'])
-    except Exception as e:
-        log('Unable to perform action {}'.format(
-            args['action']
-        ))
+    action(args['module_name'])
