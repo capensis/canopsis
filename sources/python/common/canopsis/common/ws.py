@@ -179,7 +179,7 @@ class route(object):
             params = request.params  # request params
 
             if self.raw_body:
-                kwargs['body'] = request.body
+                kwargs['body'] = request.body.readline()
 
             else:
                 # params are request params

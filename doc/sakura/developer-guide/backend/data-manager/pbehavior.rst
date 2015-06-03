@@ -72,7 +72,7 @@ Determine if an entity is in a periodic behavior:
    manager = PBehaviorManager()
 
    entity_id = '...''
-   result = manager.get_after(
+   result = manager.getending(
        sources=[entity_id],
        query=get_query('benchmark')
    )
