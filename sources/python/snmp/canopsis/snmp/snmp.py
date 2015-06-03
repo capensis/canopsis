@@ -41,21 +41,20 @@ class engine(Engine):
 
     normal_exchange = 'canopsis.events'
 
-    # clean cache every day
-    CACHE_CLEAN_TIMEOUT = 60 * 60 * 24
-
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
 
         self.rules = {}
-
-        self.last_cache_clean = time()
 
     def pre_run(self):
         self.beat()
 
     def beat(self):
 
+        """
+        On beat the engine gets all snmp rules from database
+        and put them in memory as a dict with key equals an oid
+        """
         # Load snmp rules from database
         self.rules = {}
         for rule in manager.find():
@@ -66,11 +65,15 @@ class engine(Engine):
         self.logger.info("Loaded {} rules".format(len(self.rules)))
         self.logger.debug(self.rules)
 
-        if time() - self.last_cache_clean > self.CACHE_CLEAN_TIMEOUT:
-            # Clean cache, allow memory free and fresh data
-            self.last_cache_clean = time()
-
     def work(self, event, *args, **kwargs):
+
+        """
+        When a trap event is received, if a rule matches it s oid,
+        then the rule describes event component, resource, output and state
+        transformation. If the transformation succeeds the translated event is
+        sent to the normal canopsis event exchange, otherwise, the trap is
+        tagged as untranslated and is sent to the event log collection
+        """
 
         # This engine works only on snmp trap.
         if event['event_type'] != 'trap':
@@ -157,12 +160,26 @@ class engine(Engine):
         return self.on_trap_translated(translated_event)
 
     def on_trap_translated(self, event):
-        # and show that the event got a match in our trap/rules db.
+
+        """
+        :param: event, the translated event to send to canopsis exchange
+        When trap translation succeeds
+        """
+
+        # Show that the event got a match in our trap/rules db.
         event["snmp_trap_match"] = True
         self.make_follow(event)
         return event
 
     def on_trap_error(self, event, reason, errors=None):
+
+        """
+        :param: event the untranslated event to send to canopsis exchange
+        :param: reason is a string that describes why translation is wrong
+        :param: errors can be a list of string that is put in the sent event
+        When trap translation fails, event is tagged and
+        error information is set to the event.
+        """
 
         if errors is None:
             errors = []
@@ -175,6 +192,16 @@ class engine(Engine):
         return event
 
     def get_trap_context(self, rule, snmp_vars, errors):
+
+        """
+        :param: rule is the current event matching rule as dict
+        :param: snmp_vars are oid information holded by current event
+        :param: errors is a list of string error to fill when error occurs
+        Fetch data base from specific rule and event information in order to
+        replace oid values by objects names from mib definition
+        for human readability
+        """
+
         # Computes the template context from event information
         # and snmp rules information
         if snmp_vars is None:
@@ -183,9 +210,9 @@ class engine(Engine):
             self.logger.debug(message)
             return None
         else:
-            mib = self.get_mib(rule)
+            objects = self.get_mib(rule)
             # When unable to retrieve mib information
-            if mib is None:
+            if objects is None:
                 message = 'No mib info found'
                 errors.append(message)
                 self.logger.error(message)
@@ -193,7 +220,7 @@ class engine(Engine):
             else:
                 context = self.get_mibs_objects(
                     rule,
-                    mib.get('objects', None),
+                    objects,
                     snmp_vars,
                     errors
                 )
@@ -201,6 +228,14 @@ class engine(Engine):
                 return context
 
     def get_mibs_objects(self, rule, mib_objects, snmp_vars, errors):
+
+        """
+        :param: rule is the current event matching rule as dict
+        :param: mib_objects are objects name in mib database for a given module
+        :param: snmp_vars are oid information holded by current event
+        :param: errors is a list of string error to fill when error occurs
+        Same as get_trap_context method, for mib object information
+        """
 
         # Data validation
         if mib_objects is None:
@@ -233,6 +268,11 @@ class engine(Engine):
 
     def get_mib(self, rule):
 
+        """
+        :param: rule is the current event matching rule as dict
+        Fetch mib information from storage from a matchin rule
+        """
+
         _id = '{}::{}'.format(
             rule['oid']['moduleName'],
             rule['oid']['mibName']
@@ -243,6 +283,7 @@ class engine(Engine):
         if len(result):
             oid = result[0]['oid']
 
+        # Query storage from mib identifiers
         query = {
             'moduleName': rule['oid']['moduleName'],
             'name': rule['oid']['mibName']
@@ -258,16 +299,14 @@ class engine(Engine):
             len(objects)
         ))
 
-        if oid is not None and objects is not None:
-
-            return {
-                'oid': oid,
-                'objects': objects
-            }
-        else:
-            return None
+        return objects
 
     def make_follow(self, event):
+
+        """
+        Sends an event to the normal canopsis exchange as event
+        from this engine are bind to an alternative exchange
+        """
 
         # Allow mongo json with dotted key values persistance
         key = 'snmp_vars'
