@@ -6,7 +6,7 @@ function build(){
 
 function smi(){
 	install_conf "smi.conf"
-	ln -s $PREFIX/etc/smi.conf $PREFIX/.smirc
+	ln -sf $PREFIX/etc/smi.conf $PREFIX/.smirc
 }
 
 function install(){
