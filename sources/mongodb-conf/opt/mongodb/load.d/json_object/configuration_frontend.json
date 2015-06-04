@@ -19,6 +19,9 @@
         "value" : "toggleDevTools",
         "label" : "²"
     }],
+    "editors": {
+        "behaviors": "array"
+    },
     "defaultview" : "view.event",
     "crecord_name" : "frontend",
     "loader_id": "cservice.frontend",
