@@ -23,6 +23,26 @@ class Event(MiddlewareRegistry):
 
         super(Event, self).__init__(*args, **kwargs)
 
+    @staticmethod
+    def get_rk(event):
+        rk = '{0}.{1}.{2}.{3}.{4}'.format(
+            event['connector'],
+            event['connector_name'],
+            event['event_type'],
+            event['source_type'],
+            event['component']
+        )
+
+        if event['source_type'] == 'resource':
+            rk = '{0}.{1}'.format(rk, event['resource'])
+
+        return rk
+
+    def get(self, rk, default=None):
+        result = self.find(query={'rk': rk}, limit=1)
+
+        return result[0] if len(result) else default
+
     def find(
         self,
         limit=None,

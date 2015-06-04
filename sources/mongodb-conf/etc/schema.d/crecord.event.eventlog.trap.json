@@ -1,0 +1,20 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["timestamp", "component", "resource", "state", "output"]
+	}],
+	"showEditButton": true,
+	"properties": {
+		"snmp_trap_oid": {
+			"type": "string"
+		},
+		"snmp_vars": {
+			"type": "string",
+			"role": "snmpvars"
+		},
+		"errors": {
+			"type": "array"
+		}
+	}
+}

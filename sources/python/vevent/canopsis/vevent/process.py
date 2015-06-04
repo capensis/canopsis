@@ -33,7 +33,7 @@ vem = VEventManager()
 
 
 @register_task(name='vevent.event_processing')
-def event_processing(event, get_info=None, veventmanager=None, **params):
+def event_processing(event, veventmanager=None, **params):
     """Add vevent information in VEventManager from input event.
 
     :param dict event: event to process.
@@ -49,7 +49,5 @@ def event_processing(event, get_info=None, veventmanager=None, **params):
     source = context.get_entity_id(entity)
     # get vevent from the event
     vevent = event[VEventManager.VEVENT]
-    # get info
-    info = None if get_info is None else get_info(event)
     # add event information into veventmanager
-    veventmanager.add(source=source, vevents=[vevent], info=info, cache=True)
+    veventmanager.put(source=source, vevents=[vevent], cache=True)

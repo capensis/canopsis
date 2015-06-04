@@ -1,47 +1,50 @@
 {
-    "type": "object",
-    "categories": [{
-        "title": "General",
-        "keys":["crecord_type","category","description"]
-    }],
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys": ["crecord_type", "uid", "source", "dtstart", "dtend", "rrule", "duration", "ical"]
+	}],
     "properties": {
         "uid": {
             "type": "string",
-            "required": false
+            "required": false,
+            "description": "Unique id."
         },
         "crecord_type": {
             "enum": ["vevent"],
             "required": true
         },
-        "source":{
-            "type":"string",
-            "required": true,
-            "description": "publishing entity id"
+        "source": {
+        	"type": "string",
+        	"required": true,
+        	"description": "publishing entity id."
         },
-        "dtstart":{
-            "type":"integer",
+        "dtstart": {
+            "type": "number",
             "required": false,
-            "default": 0
+            "role": "timestamp",
+            "default": 0,
+            "description": "Start timestamp."
         },
-        "dtend":{
-            "type":"integer",
+        "dtend": {
+            "type": "number",
             "required": false,
-            "default": 0
+            "role": "timestamp",
+            "default": 2147483648,
+            "description": "End timestamp."
         },
-        "freq":{
-            "type":"string",
+        "rrule": {
+            "type": "string",
             "required": false,
-            "default": ""
+            "default": "",
+            "description": "Recurrent rule."
         },
-        "duration":{
-            "type":"string",
+        "duration": {
+            "type": "integer",
             "required": false,
-            "default": ""
-        },
-        "info": {
-            "type": "object",
-            "required": false,
-            "default": {}
+            "role": "duration",
+            "default": 0,
+            "description": "Duration in seconds (warning: 1 month = 365 days / 12)."
         }
     }
 }

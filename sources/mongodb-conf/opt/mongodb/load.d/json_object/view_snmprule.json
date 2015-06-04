@@ -1,0 +1,106 @@
+{
+  "crecord_type": "view",
+  "crecord_name" : "snmprule.json",
+  "loader_id": "view.snmprule",
+  "loader_no_update": false,
+  "id": "view.snmprule",
+  "_id": "view.snmprule",
+  "crecord_write_time": 1430833907,
+  "enable": true,
+  "containerwidget": {
+    "items": [
+      {
+        "widget": {
+          "item_actions": [
+            "actionbutton-edit",
+            "actionbutton-show",
+            "actionbutton-removeselection"
+          ],
+          "id" : "d725b743-3cca-4d73-897f-3ea802c61011",
+          "widgetId" : "d725b743-3cca-4d73-897f-3ea802c61011",
+          "title": "Snmp rules",
+          "itemsPerPage": 10,
+          "filters": [],
+          "default_filter": null,
+          "cloaking": false,
+          "listed_crecord_type": "snmprule",
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ],
+          "mixins": [
+            {
+              "name": "Arraysearch",
+              "searchable_columns": ["_id"]
+            },
+            { "name" : "Pagination" },
+            { "name" : "uploadmib" },
+            { "name" : "Crud" }
+          ],
+          "displayed_columns": [
+            "oid",
+            "output",
+            "resource",
+            "component",
+            "state"
+          ],
+          "actions_toolbar": [
+            "actionbutton-removeselection"
+          ],
+          "xtype": "list"
+        },
+        "xtype": "widgetwrapper",
+        "title": "wrapper"
+      },
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "id" : "item-fd5a-1ede-8ac2-6a1d66ad004012",
+          "widgetId" : "item-fd5a-1ede-8ac2-6a1d66ad004012",
+          "xtype": "list",
+          "listed_crecord_type": "trap",
+          "display_record_field": "resource",
+          "title": "Trap events",
+          "actions_toolbar": [
+            "actionbutton-eventnavigation"
+          ],
+          "default_column_sort" : {
+            "direction" : "DESC",
+            "property" : "timestamp"
+          },
+          "mixins": [
+            {
+              "name": "Customfilterlist",
+              "filters" : [],
+              "default_filter" : "{\"$and\":[{\"event_type\":{\"$eq\":\"trap\"}}, {\"snmp_trap_match\":{\"$eq\": false}}]}"
+            },
+            { "name": "Sortablearray" },
+            { "name": "Arraysearch",
+              "searchable_columns": [
+                "snmp_trap_oid"
+              ]
+            },
+            {
+              "name": "Pagination",
+              "itemsPerPage": 20
+            }
+          ],
+          "displayed_columns": [
+            "event_type",
+            "snmp_trap_oid",
+            "timestamp",
+            "snmp_vars",
+            "errors"
+          ]
+        }
+      }
+    ],
+    "widgetslotTemplate": null,
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],
+    "title": ""
+  }
+}

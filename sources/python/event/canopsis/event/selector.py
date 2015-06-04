@@ -20,9 +20,12 @@
 # ---------------------------------
 
 from canopsis.old.record import Record
-from canopsis.old.downtime import Downtime
 from canopsis.event import get_routingkey, forger
 from canopsis.old.cfilter import Filter
+
+from canopsis.context.manager import Context
+from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.downtime.process import DOWNTIME  #TODO: in configuration please
 
 from json import loads
 from logging import getLogger
@@ -82,7 +85,8 @@ class Selector(Record):
         }
 
         self.logger = getLogger('Selector')
-        self.cdowntime = Downtime()
+        self.context = Context()
+        self.pbehavior = PBehaviorManager()
         # Canopsis filter management for mongo
         self.cfilter = Filter()
 
@@ -152,7 +156,9 @@ class Selector(Record):
         return self.get_value('output_tpl', default_template)
 
     def get_alert_level(self):
+
         level = self.get_value('alert_level', 'minor')
+
         return level
 
     def get_sla_output_tpl(self):
@@ -163,23 +169,27 @@ class Selector(Record):
             ' Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART]' +
             ' time available [T_AVAIL], time alert [T_ALERT]'
         )
+
         return self.get_value('sla_output_tpl', default_sla_template)
 
     def get_sla_timewindow(self):
 
-        timewindow = self.data.get('sla_timewindow', None)
-        if timewindow is None:
+        result = self.data.get('sla_timewindow', None)
+
+        if result is None:
             self.logger.info(
                 u'No timewindow set for selector {}, use default'.format(
                     self.display_name
                 ))
-            return DEFAULT_SLA_TIMEWINDOW
-        else:
-            return timewindow
+            result = DEFAULT_SLA_TIMEWINDOW
+
+        return result
 
     def get_state_at_timewindow_start(self):
+
         state = self.data.get('state_at_timewindow_start', None)
         self.logger.debug(u'state_at_timewindow_start {}'.format(state))
+
         return state
 
     def get_previous_selector_state(self):
@@ -187,9 +197,9 @@ class Selector(Record):
         return self.data.get('previous_selector_state', None)
 
     def get_percent_property(self, property_name, default_value):
+        """Allow accessing percent values from a record property.
         """
-        Allow accessing percent values from a record property
-        """
+
         value = self.get_value(property_name, default_value)
 
         if value >= 0 and value <= 100:
@@ -214,22 +224,37 @@ class Selector(Record):
             excludes=self.exclude_ids,
         )
 
-        downtime = self.cdowntime.get_filter()
-        if downtime:
-            if '$and' in cfilter:
-                cfilter['$and'].append(downtime)
-            else:
-                cfilter = {'$and': [downtime, cfilter]}
+        query = PBehaviorManager.get_query(behaviors='downtime')
+
+        entityids = self.pbehavior.whois(query=query)
+
+        entities = self.context.get_entities(list(entityids))
+
+        if entities:
+            downtime = {
+                '$or': [
+                    {DOWNTIME: False},
+                    {DOWNTIME: {'$exists': False}}
+                ]
+            }
+
+            if '$and' not in cfilter:
+                cfilter = {'$and': [cfilter]}
+
+            cfilter['$and'].append(downtime)
 
         self.logger.debug('Generated cfilter is')
         self.logger.debug(pp.pformat(cfilter))
+
         return cfilter
 
     def getState(self):
+
         self.logger.debug("getStates:")
 
         # Build MongoDB filter
         mfilter = self.makeMfilter()
+
         if not mfilter:
             self.logger.debug(" + Invalid filter")
             return ({}, 0, 0, 0, 0)
@@ -239,14 +264,14 @@ class Selector(Record):
         # Adds default check clause as selector have to be done
         # on check event only
         # This constraint have to be available for all aggregation queries
-        check_clause = {'event_type': {'$in': ['check', 'eue', 'selector']}}
+        check_clause = {'event_type': include_check_types}
 
         if '$and' in mfilter:
             mfilter['$and'].append(check_clause)
         elif '$or' in mfilter:
             mfilter = {'$and': [mfilter, check_clause]}
         elif isinstance(mfilter, dict):
-            mfilter['event_type'] = {'$in': ['check', 'eue', 'selector']}
+            mfilter['event_type'] = include_check_types
 
         # Main aggregation query, gets information about
         # how many events are in what state
@@ -274,6 +299,7 @@ class Selector(Record):
         states = {}
         state = -1
         total = 0
+
         for state in result['result']:
             key = state['_id']['state']
 
@@ -316,11 +342,13 @@ class Selector(Record):
                 ack_count += ack_result['count']
         else:
             ack_count = -1
+
         self.logger.debug(u' + result for ack : {}'.format(result))
 
         infobagotmfilter = deepcopy(mfilter)
         # Find worst state for events not ack, mfilter is modified
         ack_clause = {'ack.isAck': {'$ne': True}}
+
         if '$and' in mfilter:
             mfilter['$and'].append(ack_clause)
         elif '$or' in mfilter:
@@ -348,6 +376,7 @@ class Selector(Record):
             }}])
 
         states_for_ack = {}
+
         for state_result in result_ack_worst_state['result']:
             key = state_result['_id']['state']
 
@@ -357,10 +386,11 @@ class Selector(Record):
         self.logger.debug(u' + states for ack: {}'.format(states_for_ack))
 
         # Compute worst state
-        worst_state_for_ack = 0
+        wstate_for_ack = 0
+
         for s in [0, 1, 2, 3]:
             if s in states_for_ack:
-                worst_state_for_ack = s
+                wstate_for_ack = s
 
         infobagot = self.storage.get_backend(namespace=self.namespace).find({
             '$and': [
@@ -376,16 +406,17 @@ class Selector(Record):
         # states are dict containing event count depending on state for mfilter
         # state is the worst state for both ack and not ack events
         # ack_count is the count of event that are ack for current mfilter
-        # worst_state_for_ack is the worst state for mfilter
+        # wstate_for_ack is the worst state for mfilter
         # selected event that are ack
-        return (states, state, ack_count, worst_state_for_ack, infobagot)
+        return states, state, ack_count, wstate_for_ack, infobagot
 
     def event(self):
 
         # Get state information form aggregation
-        states, state, ack_count, worst_state_for_ack, infobagot = self.getState()
+        states, state, ack_count, wstate_for_ack, infobagot = self.getState()
 
         information = None
+
         if state == -1 and ack_count == -1:
             state = 0
             information = u'No event matched by selector {}'.format(
@@ -396,6 +427,7 @@ class Selector(Record):
         total = 0
         total_error = 0
         worst_state_with_ack = 0
+
         for s in states:
             states[s] = int(states[s])
             total += states[s]
@@ -403,7 +435,7 @@ class Selector(Record):
                 total_error += states[s]
 
         # Computed state when all events are not ack
-        computed_state = worst_state_for_ack
+        computed_state = wstate_for_ack
 
         # Is selector produced event acknowleged
         if ack_count >= (total_error + infobagot) and ack_count > 0:

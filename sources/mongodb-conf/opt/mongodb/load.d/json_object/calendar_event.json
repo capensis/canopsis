@@ -1,0 +1,35 @@
+[
+	{
+		"crecord_type": "calendarevent",
+		"_id": "event1",
+		"loader_id": "event1",
+		"loader_no_update": true,
+		"calendrier": "cal1",
+		"output": "test de description"
+	},
+	{
+		"crecord_type": "calendarevent",
+		"_id": "event2",
+		"loader_id": "event2",
+		"loader_no_update": true,
+		"calendrier": "cal2",
+		"output": "test de description"
+	},
+	{
+		"crecord_type": "calendarevent",
+		"_id": "event3",
+		"loader_id": "event3",
+		"loader_no_update": true,
+		"calendrier": "cal3",
+		"output": "test de description"
+	},
+	{
+		"crecord_type": "calendarevent",
+		"_id": "event4",
+		"loader_id": "event4",
+		"loader_no_update": true,
+		"calendrier": "cal4",
+		"output": "test de description"
+	}
+]
+

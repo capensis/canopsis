@@ -1,6 +1,10 @@
 [{
 	"_id": "admin",
 	"rights": {
+		"actionbutton_canuploadmibfile": {
+			"checksum": 15,
+			"desc": "Upload mib file to canopsis system"
+		},
 		"actionbutton_canediturlfield": {
 			"checksum": 15,
 			"desc": ""

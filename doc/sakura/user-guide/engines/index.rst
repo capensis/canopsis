@@ -10,7 +10,7 @@
    event-requalification
    selector
    linklist
-
+   snmp
 
 .. include:: ../../includes/links.rst
 

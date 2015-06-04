@@ -46,7 +46,8 @@ projects = (
     'cli',
     'topology',
     'organisation',
-    'auth')
+    'auth',
+    'snmp')
 
 
 def setup(cmd="install", projects=projects):

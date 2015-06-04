@@ -40,8 +40,7 @@ from uuid import uuid4 as uuid
 
 
 def adapt_canopsis_data_to_ember(data):
-    """
-    Transform canopsis data to ember data (in changing ``id`` to ``cid``).
+    """Transform canopsis data to ember data (in changing ``id`` to ``cid``).
 
     :param data: data to transform
     """
@@ -75,8 +74,7 @@ def adapt_ember_data_to_canopsis(data):
 
 
 def response(data, adapt=True):
-    """
-    Construct a REST response from input data.
+    """Construct a REST response from input data.
 
     :param data: data to convert into a REST response.
     :param kwargs: service function parameters.
@@ -106,8 +104,7 @@ def response(data, adapt=True):
 
 
 def route_name(operation_name, *parameters):
-    """
-    Get the right route related to input operation_name
+    """Get the right route related to input operation_name.
     """
 
     result = '/{0}'.format(operation_name.replace('_', '-'))
@@ -119,8 +116,7 @@ def route_name(operation_name, *parameters):
 
 
 class route(object):
-    """
-    Decorator which add ws routes to a callable object.
+    """Decorator which add ws routes to a callable object.
 
     Example::
 
@@ -180,20 +176,10 @@ class route(object):
         # generate an interceptor
         @wraps(function)
         def interceptor(*args, **kwargs):
-            if not self.nolog:
-                self.logger.info(
-                    'Request: {} - {} - {}, {} (params: {})'.format(
-                        self.op.__name__.upper(),
-                        self.url,
-                        dumps(args), dumps(kwargs),
-                        dumps(dict(request.params))
-                    )
-                )
-
             params = request.params  # request params
 
             if self.raw_body:
-                kwargs['body'] = request.body
+                kwargs['body'] = request.body.readline()
 
             else:
                 # params are request params
@@ -231,6 +217,16 @@ class route(object):
                     except Exception:  # error while deserializing
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
+
+            if not self.nolog:
+                self.logger.info(
+                    'Request: {} - {} - {}, {} (params: {})'.format(
+                        self.op.__name__.upper(),
+                        self.url,
+                        dumps(args), dumps(kwargs),
+                        dumps(dict(params))
+                    )
+                )
 
             if self.adapt:
                 # adapt ember data to canopsis data
@@ -341,3 +337,9 @@ class route(object):
         in_route_name = ':{0}/'.format(param) in route_name
 
         return in_payload or in_route_name
+
+
+def apply_routes(urls):
+    for url in urls:
+        decorator = route(url['method'], name=url['name'], **url['params'])
+        decorator(url['handler'])

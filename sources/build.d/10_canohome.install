@@ -4,10 +4,17 @@ function build(){
 	true
 }
 
+function smi(){
+	install_conf "smi.conf"
+	ln -sf $PREFIX/etc/smi.conf $PREFIX/.smirc
+}
+
 function install(){
 	install_basic_source $NAME
+	smi
 }
 
 function update(){
     update_basic_source $NAME
+    smi
 }

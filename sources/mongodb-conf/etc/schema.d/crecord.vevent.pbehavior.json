@@ -1,0 +1,27 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["dtstart", "dtend", "rrule", "duration"]
+    },{
+        "title": "Behaviors",
+        "keys": ["behaviors"]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["pbehavior"],
+            "required": true
+        },
+        "behaviors": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": ["downtime"],
+                "role": "simplelist"
+            },
+            "role": "periodicbehaviors",
+            "required": true,
+            "default": []
+        }
+    }
+}

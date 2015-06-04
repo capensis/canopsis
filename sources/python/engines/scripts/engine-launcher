@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.init import Init
+from canopsis.common.init import Init
 
 from ConfigParser import ConfigParser, ParsingError
 from importlib import import_module
@@ -102,9 +102,14 @@ class EngineLauncher(object):
         """
 
         try:
-            self.module = import_module(
-                'canopsis.engines.{0}'.format(self.etype)
-            )
+            try:
+                self.module = import_module(
+                    'canopsis.engines.{0}'.format(self.etype)
+                )
+            except ImportError as err:
+                self.module = import_module(
+                    'canopsis.{0}.{0}'.format(self.etype)
+                )
 
         except ImportError as err:
             self.logger.error(

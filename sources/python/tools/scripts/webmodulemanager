@@ -38,7 +38,9 @@ modules = [
     'canopsis-ui',
     'userpreferences',
     'charts',
-    'canopsis-rights',
+    'canopsis-vevent',
+    'canopsis-pbehavior',
+    'canopsis-rights'
 ]
 
 """
