@@ -22,6 +22,7 @@ from canopsis.context.manager import Context
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
+import os
 
 #: snmp manager configuration category
 CATEGORY = 'MIBS'
@@ -58,6 +59,10 @@ class MibsManager(MiddlewareRegistry):
 
     def remove(self, oids=None):
         self[MibsManager.MIBS_STORAGE].remove_elements(ids=oids)
+
+    def check_mib(self, filename):
+        r = os.system('smilint {} 2>/dev/null'.format(filename))
+        return r == 0
 
     def import_mib(self, filename):
         from subprocess import Popen, PIPE
