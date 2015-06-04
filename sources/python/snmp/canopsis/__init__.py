@@ -18,47 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from fabric.api import run
-from os.path import dirname, expanduser
-
-projects = (
-    'common',
-    'configuration',
-    'timeserie',
-    'event',
-    'check',
-    'middleware',
-    'rpc',
-    'mom',
-    'storage',
-    'schema',
-    'mongo',
-    'kombu',
-    'context',
-    'perfdata',
-    'old',
-    'task',
-    'graph',
-    'topology',
-    'engines',
-    'connectors',
-    'tools',
-    'cli',
-    'topology',
-    'organisation',
-    'auth',
-    'snmp')
-
-
-def setup(cmd="install", projects=projects):
-    """
-    Run setup cmd on all projects.
-    """
-    # find __file__ directory
-    path = dirname(expanduser(__file__))
-
-    cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
-
-    for project in projects:
-        # run setup command
-        run(cmd_path.format(project))
+# hack for attaching this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

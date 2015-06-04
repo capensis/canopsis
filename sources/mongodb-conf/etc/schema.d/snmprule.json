@@ -1,0 +1,37 @@
+{
+    "categories": [{
+        "title": "General",
+        "keys": ["oid", "output", "component", "resource", "state"]
+    }],
+    "type": "object",
+    "properties": {
+        "_id": {
+            "type": "string"
+        },
+        "crecord_type": {
+            "enum": ["snmprule"],
+            "required": true
+        },
+        "oid": {
+            "type": "object",
+            "role": "snmpoid"
+        },
+        "output": {
+            "type": "string",
+            "role": "snmpelement"
+        },
+        "resource": {
+            "type": "string",
+            "role": "snmpelement"
+        },
+        "component": {
+            "type": "string",
+            "role": "snmpelement"
+        },
+        "state": {
+            "type": "integer",
+            "role": "state",
+            "showAll": true
+        }
+    }
+}

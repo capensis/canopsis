@@ -30,6 +30,7 @@ PROJECTS[26]='vevent'
 PROJECTS[27]='ccalendar'
 PROJECTS[28]='pbehavior'
 PROJECTS[29]='downtime'
+PROJECTS[30]='snmp'
 
 function build(){
 	true

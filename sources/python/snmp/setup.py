@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -18,47 +19,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from fabric.api import run
-from os.path import dirname, expanduser
+from canopsis.common.setup import setup
 
-projects = (
-    'common',
-    'configuration',
-    'timeserie',
-    'event',
-    'check',
-    'middleware',
-    'rpc',
-    'mom',
-    'storage',
-    'schema',
-    'mongo',
-    'kombu',
-    'context',
-    'perfdata',
-    'old',
-    'task',
-    'graph',
-    'topology',
-    'engines',
-    'connectors',
-    'tools',
-    'cli',
-    'topology',
-    'organisation',
-    'auth',
-    'snmp')
+install_requires = [
+    'canopsis.event',
+    'canopsis.common',
+    'canopsis.old',
+    'canopsis.context'
+]
 
-
-def setup(cmd="install", projects=projects):
-    """
-    Run setup cmd on all projects.
-    """
-    # find __file__ directory
-    path = dirname(expanduser(__file__))
-
-    cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
-
-    for project in projects:
-        # run setup command
-        run(cmd_path.format(project))
+setup(
+    description='SNMP Engine',
+    install_requires=install_requires,
+    keywords='snmp')
