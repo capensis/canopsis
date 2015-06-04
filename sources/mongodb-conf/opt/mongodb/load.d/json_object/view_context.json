@@ -36,10 +36,15 @@
                             "name" : "sortablearray"
                         },
                         {
-                            "name" : "arraysearch"
+                            "name" : "arraysearch",
+                            "searchable_columns": [
+                                "type",
+                                "name",
+                                "_id"
+                            ]
                         },
                         {
-                            "name" : "detail",
+                            "name" : "listlinedetail",
                             "template" : "{{component-periodicbehaviormanager contextId=_id}}"
                         }
                     ],
