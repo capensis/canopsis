@@ -74,7 +74,11 @@
             { "name": "Infobutton" },
             { "name": "Sendevent" },
             { "name": "Responsivelist" },
-            { "name": "Eventnavigation" }],
+            { "name": "Eventnavigation" },
+            {
+              "name": "listlinedetail",
+              "template": "{{component-periodicbehaviormanager contextId=entity_id}}"
+            }],
           "displayed_columns": [
             "domain",
             "perimeter",
