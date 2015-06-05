@@ -23,7 +23,7 @@ from canopsis.snmp.rulesmanager import RulesManager
 from canopsis.snmp.mibs import MibsManager
 from canopsis.context.manager import Context
 from canopsis.event import get_routingkey, forger
-from canopsis.old.template import Template
+from canopsis.common.template import Template
 from time import time
 from functools import partial
 from json import dumps
