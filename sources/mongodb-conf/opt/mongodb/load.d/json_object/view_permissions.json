@@ -28,10 +28,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            { "name" : "Sortablearray" },
-            { "name" : "Arraysearch" },
-            { "name" : "Pagination" },
-            { "name" : "Crud" }
+            { "name" : "sortablearray" },
+            { "name" : "arraysearch" },
+            { "name" : "pagination" },
+            { "name" : "crud" }
           ],
           "displayed_columns": [
             "crecord_type",

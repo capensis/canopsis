@@ -29,14 +29,14 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            { "name": "Sortablearray" },
-            { "name": "Arraysearch" },
-            { "name": "Pagination" },
+            { "name": "sortablearray" },
+            { "name": "arraysearch" },
+            { "name": "pagination" },
             {
-              "name": "Crud",
+              "name": "crud",
               "hideCreate": true
             },
-            { "name": "Showviewbutton" }
+            { "name": "showviewbutton" }
           ],
           "searchable_columns": [
             "crecord_name"

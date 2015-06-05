@@ -30,8 +30,8 @@
             "property" : "last_state_change"
           },
           "mixins": [
-            { "name": "Sortablearray" },
-            { "name": "Arraysearch",
+            { "name": "sortablearray" },
+            { "name": "arraysearch",
               "searchable_columns": [
                 "connector_name",
                 "connector",
@@ -46,11 +46,11 @@
               "refreshInterval" : "60"
             },
             {
-              "name": "Pagination",
+              "name": "pagination",
               "itemsPerPage" : 50
             },
             {
-              "name": "Customfilterlist",
+              "name": "customfilterlist",
               "filters" : [
                 {
                   "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
@@ -70,11 +70,11 @@
               ],
               "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}"
             },
-            { "name": "History" },
-            { "name": "Infobutton" },
-            { "name": "Sendevent" },
-            { "name": "Responsivelist" },
-            { "name": "Eventnavigation" },
+            { "name": "history" },
+            { "name": "infobutton" },
+            { "name": "sendevent" },
+            { "name": "responsivelist" },
+            { "name": "eventnavigation" },
             {
               "name": "listlinedetail",
               "template": "{{component-periodicbehaviormanager contextId=entity_id}}"

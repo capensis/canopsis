@@ -30,12 +30,12 @@
           ],
           "mixins": [
             {
-              "name": "Arraysearch",
+              "name": "arraysearch",
               "searchable_columns": ["name"]
             },
             { "name" : "editurlfield" },
-            { "name" : "Pagination" },
-            { "name" : "Crud" }
+            { "name" : "pagination" },
+            { "name" : "crud" }
           ],
           "displayed_columns": [
             "name",

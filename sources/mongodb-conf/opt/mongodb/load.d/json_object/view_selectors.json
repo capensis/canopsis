@@ -30,10 +30,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            { "name" : "Sortablearray" },
-            { "name" : "Arraysearch" },
-            { "name" : "Pagination" },
-            { "name" : "Crud" }
+            { "name" : "sortablearray" },
+            { "name" : "arraysearch" },
+            { "name" : "pagination" },
+            { "name" : "crud" }
           ],
           "displayed_columns": [
             "display_name",
@@ -77,17 +77,17 @@
             "timestamp"
           ],
           "mixins": [
-            { "name": "Sortablearray" },
-            { "name": "Arraysearch" },
-            { "name": "Pagination" },
+            { "name": "sortablearray" },
+            { "name": "arraysearch" },
+            { "name": "pagination" },
             {
-              "name": "Customfilterlist",
+              "name": "customfilterlist",
               "filters" : [],
               "default_filter" : "{\"$or\":[{\"event_type\":{\"$eq\":\"selector\"}}]}"
             },
-            { "name": "History" },
-            { "name": "Infobutton" },
-            { "name": "Responsivelist" }
+            { "name": "history" },
+            { "name": "infobutton" },
+            { "name": "responsivelist" }
           ],
           "listed_crecord_type" : "event",
           "actions_toolbar" : [ ],
@@ -122,17 +122,17 @@
             "timestamp"
           ],
           "mixins": [
-            { "name": "Sortablearray" },
-            { "name": "Arraysearch" },
-            { "name": "Pagination" },
+            { "name": "sortablearray" },
+            { "name": "arraysearch" },
+            { "name": "pagination" },
             {
-              "name": "Customfilterlist",
+              "name": "customfilterlist",
               "filters" : [],
               "default_filter" : "{\"$or\":[{\"resource\":{\"$eq\":\"sla\"}}]}"
             },
-            { "name": "History" },
-            { "name": "Infobutton" },
-            { "name": "Responsivelist" }
+            { "name": "history" },
+            { "name": "infobutton" },
+            { "name": "responsivelist" }
           ],
           "listed_crecord_type" : "event",
           "actions_toolbar" : [ ],

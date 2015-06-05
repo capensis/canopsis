@@ -30,9 +30,9 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            { "name" : "Sortablearray" },
-            { "name" : "Arraysearch" },
-            { "name" : "Pagination" }
+            { "name" : "sortablearray" },
+            { "name" : "arraysearch" },
+            { "name" : "pagination" }
           ]
         }
       }

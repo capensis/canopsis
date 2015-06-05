@@ -33,9 +33,9 @@
           },
           "filters" : [],
           "mixins": [
-            { "name" : "Customfilterlist" },
-            { "name" : "Sortablearray" },
-            { "name" : "Pagination" }
+            { "name" : "customfilterlist" },
+            { "name" : "sortablearray" },
+            { "name" : "pagination" }
           ],
           "displayed_columns": [
             "output",

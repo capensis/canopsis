@@ -34,9 +34,9 @@
             "actionbutton-create"
           ],
           "mixins": [
-            { "name" : "Sortablearray" },
-            { "name" : "Arraysearch" },
-            { "name" : "Pagination" }
+            { "name" : "sortablearray" },
+            { "name" : "arraysearch" },
+            { "name" : "pagination" }
           ],
           "displayed_columns": [
             "internal",

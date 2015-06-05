@@ -46,9 +46,9 @@
               "name" : "periodicrefresh",
               "refreshInterval" : "60"
             },
-            {"name": "Customfilterlist"},
-            {"name": "Sortablearray"},
-            { "name": "Arraysearch",
+            {"name": "customfilterlist"},
+            {"name": "sortablearray"},
+            { "name": "arraysearch",
               "searchable_columns": [
                 "connector_name",
                 "connector",
@@ -59,11 +59,11 @@
               ]
             },
             {
-              "name": "Pagination",
+              "name": "pagination",
               "itemsPerPage": 50
             },
-            {"name": "History"},
-            {"name": "Eventhistory"}
+            {"name": "history"},
+            {"name": "eventhistory"}
           ],
           "displayed_columns": [
             "domain",

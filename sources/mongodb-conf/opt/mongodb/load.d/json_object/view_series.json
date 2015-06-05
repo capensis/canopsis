@@ -28,9 +28,9 @@
                     "listed_crecord_type" : "ctxmetric",
                     "mixins" : [
                         {
-                            "name" : "Pagination"
+                            "name" : "pagination"
                         },
-                        { "name": "Arraysearch",
+                        { "name": "arraysearch",
                           "searchable_columns": [
                             "component",
                             "resource",
@@ -58,10 +58,10 @@
                     "listed_crecord_type" : "serie",
                     "mixins" : [
                         {
-                            "name" : "Crud"
+                            "name" : "crud"
                         },
                         {
-                            "name" : "Pagination"
+                            "name" : "pagination"
                         },
                         { "name": "Arraysearch",
                           "searchable_columns": [
@@ -103,13 +103,13 @@
                     "listed_crecord_type" : "curve",
                     "mixins" : [
                         {
-                            "name" : "Pagination"
+                            "name" : "pagination"
                         },
                         {
-                            "name" : "Crud"
+                            "name" : "crud"
                         },
                         {
-                            "name" : "Arraysearch"
+                            "name" : "arraysearch"
                         }
                     ],
                     "columnsOrder" : [ ],
