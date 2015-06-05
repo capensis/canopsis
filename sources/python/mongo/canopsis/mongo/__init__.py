@@ -255,7 +255,7 @@ class MongoStorage(MongoDataBase, Storage):
         if skip:
             cursor.skip(skip)
         if sort is not None:
-            Storage._update_sort(sort)
+            sort = Storage._resolve_sort(sort)
             cursor.sort(sort)
 
         if hint is None:

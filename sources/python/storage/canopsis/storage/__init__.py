@@ -31,6 +31,8 @@ try:
 except ImportError:
     from dummy_threading import Thread, current_thread
 
+from collections import Iterable
+
 from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
 from canopsis.configuration.parameters import Parameter
@@ -904,18 +906,40 @@ Storage types must be of the same type.'.format(self, target))
         return result
 
     @staticmethod
-    def _update_sort(sort):
-        """
-        Add ASC values by default if not specified in input sort.
+    def _resolve_sort(sort):
+        """Resolve input sort in transforming it to a list of tuple of (name,
+        direction).
 
-        :param sort: sort configuration
+        :param sort: sort configuration. Can be a string, or
         :type sort: list of {tuple(str, int), str}
+        :return: depending on type of sort:
+            - str: [(sort, Storage.ASC)]
+            - dict: [(sort['property'], sort.get('direction', Storage.ASC))]
+            - tuple: [(sort[0], sort[1])]
+            - list:
+                - str
+        :rtype: str, dict, tuple or list
         """
 
-        sort[:] = [
-            item if isinstance(item, tuple) else (item, Storage.ASC)
-            for item in sort
-        ]
+        result = []
+
+        if isinstance(sort, basestring):
+            result.append((sort, Storage.ASC))
+        elif isinstance(sort, dict):
+            direction = sort.get('direction', Storage.ASC)
+            if isinstance(direction, basestring):
+                direction = getattr(Storage, direction.upper())
+            result.append((sort['property'], direction))
+        elif isinstance(sort, tuple):
+            direction = sort[1]
+            if isinstance(direction, basestring):
+                direction = getattr(Storage, direction.upper())
+            result.append((sort[0], direction))
+        elif isinstance(sort, Iterable):
+            for item in sort:
+                result += Storage._resolve_sort(item)
+
+        return result
 
 
 class Cursor(object):

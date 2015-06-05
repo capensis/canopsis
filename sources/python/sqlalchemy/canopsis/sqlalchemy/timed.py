@@ -70,7 +70,7 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
         if skip:
             cursor.skip(skip)
         if sort is not None:
-            MongoStorage._update_sort(sort)
+            sort = MongoStorage._resolve_sort(sort)
             cursor.sort(sort)
 
         # apply a specific index

@@ -70,7 +70,7 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
         if skip:
             cursor.skip(skip)
         if sort is not None:
-            MongoStorage._update_sort(sort)
+            sort = MongoStorage._resolve_sort(sort)
             cursor.sort(sort)
 
         # apply a specific index
@@ -132,9 +132,9 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
         if value != data_value:  # new entry to insert
 
             values_to_insert = {
-                    MongoTimedStorage.Key.DATA_ID: data_id,
-                    MongoTimedStorage.Key.TIMESTAMP: timestamp,
-                    MongoTimedStorage.Key.VALUE: value
+                MongoTimedStorage.Key.DATA_ID: data_id,
+                MongoTimedStorage.Key.TIMESTAMP: timestamp,
+                MongoTimedStorage.Key.VALUE: value
             }
             self._insert(document=values_to_insert, cache=cache)
 
