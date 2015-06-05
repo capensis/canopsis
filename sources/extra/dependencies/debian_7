@@ -1,4 +1,4 @@
 #!/bin/sh
 apt-get update
 
-apt-get install -y xz-utils libssl1.0.0 libevent-dev bzip2 build-essential zlib1g-dev libreadline-gplv2-dev libdb5.1-dev libncurses5-dev libexpat1-dev xmlto libcurl4-gnutls-dev git-core libssl-dev libpcre3-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev xsltproc curl libbz2-dev xvfb libmysqlclient-dev libsasl2-dev nettle-dev libxml2-dev libxslt1-dev smitools
+apt-get install -y xz-utils libssl1.0.0 libevent-dev bzip2 build-essential zlib1g-dev libreadline-gplv2-dev libdb5.1-dev libncurses5-dev libexpat1-dev xmlto libcurl4-gnutls-dev git-core libssl-dev libpcre3-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev xsltproc curl libbz2-dev xvfb libmysqlclient-dev libsasl2-dev nettle-dev libxml2-dev libxslt1-dev smitools snmp-mibs-downloader
