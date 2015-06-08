@@ -101,7 +101,7 @@ class Context(MiddlewareRegistry):
         """
 
         cursor = self[Context.CTX_STORAGE].get_elements(projection={
-            Context.DATA_ID=True
+            Context.DATA_ID: True
         })
 
         for doc in cursor:
