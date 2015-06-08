@@ -51,6 +51,11 @@ class engine(TaskHandler):
         Link association are managed by entity link system.
         """
 
+        for entity_id in self.context.iter_ids():
+            self.entity_link_manager.put(entity_id, {
+                'computed_links': []
+            })
+
         links = {}
 
         # Computes links for all context elements
