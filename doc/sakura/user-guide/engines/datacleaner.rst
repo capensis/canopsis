@@ -1,8 +1,7 @@
-.. _datacleaner:
+Datacleaner Engine
+==================
 
-Data cleaner
-============
-
+*NB: need update to taskhandler dataclean*
 
 Changing engine configuration from user interface is reachable via the ui settings panel and by clicking on the Data cleaner sub menu as shown on the below picture.
 

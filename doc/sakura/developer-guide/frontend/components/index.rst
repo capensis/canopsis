@@ -7,3 +7,4 @@ Components
 
    internal
    external
+   editors

@@ -10,3 +10,4 @@ Widgets
    managing-plug-ins-in-mixins
    advanced-concepts
    perfdata
+   user-preferences

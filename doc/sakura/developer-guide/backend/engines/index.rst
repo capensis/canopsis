@@ -1,14 +1,11 @@
 Engines
-*******
+=======
 
 .. toctree::
    :maxdepth: 2
    :titlesonly:
 
-   new-spec
-   filter-spec
-   rights
-   rule
-   status-spec
+   howto
    scheduler
-   eventstore
+   filter
+   rights

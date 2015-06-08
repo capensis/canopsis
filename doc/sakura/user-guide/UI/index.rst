@@ -8,7 +8,6 @@ This Chapter describes how to use the new frontend system.
    :maxdepth: 3
    :titlesonly:
 
-   userviews
-   perfdata
+   views/index
    widgets/index
    auth/index

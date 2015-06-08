@@ -1,1 +1,0 @@
-../developer-guide/backend/events/event-spec.rst

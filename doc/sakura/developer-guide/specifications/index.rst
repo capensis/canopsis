@@ -6,6 +6,5 @@ Specifications
    :titlesonly:
 
    packaging
-   graph
-   topology
-   snmp
+   event
+   status

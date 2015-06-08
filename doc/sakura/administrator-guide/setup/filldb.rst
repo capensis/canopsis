@@ -1,7 +1,7 @@
-How to manage data load on canopsis build
-=========================================
+Data Injector
+=============
 
-When canopsis is build, some documents are inserted into database. These files are the canopsis basis that make canopsis work with default parameters.
+When canopsis is built, some documents are inserted into database. These files are the canopsis basics that make canopsis work with default parameters.
 It is possible to customize how Canopsis documents are loaded, and finally, how Canopsis behaves.
 
 filldb
