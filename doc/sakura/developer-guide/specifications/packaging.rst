@@ -1,3 +1,5 @@
+.. _dev-spec-buildinstall:
+
 Build System Specification
 ==========================
 

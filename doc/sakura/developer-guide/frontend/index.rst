@@ -1,5 +1,7 @@
+.. _dev-frontend:
+
 Frontend
-********
+========
 
 This document contains several guides about specific parts of the web interface.
 Its goal is to help the newbie Canopsis developer to dive into the Canopsis webcore.

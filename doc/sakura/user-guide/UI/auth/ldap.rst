@@ -1,3 +1,5 @@
+.. _user-ui-auth-ldap:
+
 LDAP Authentication Backend
 ===========================
 

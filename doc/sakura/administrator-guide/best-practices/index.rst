@@ -1,3 +1,5 @@
+.. _admin-practices:
+
 Best practices
 ==============
 

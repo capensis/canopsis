@@ -1,3 +1,5 @@
+.. _dev-backend-engines-howto:
+
 How to write an Engine
 ======================
 

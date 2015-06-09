@@ -1,4 +1,4 @@
-﻿.. _linklist:
+﻿.. _user-engines-linklist:
 
 Linklist
 ========
@@ -39,4 +39,6 @@ A link is made of a **label** and an **url**.
 
 Once done, link list are ready to be computed. The only left action to perform is to trigger a link association computation thanks to the scheduled job system. for more information about the job system go to `scheduled jobs <scheduledjobs.html>`_
 
-.. TODO a good link for a user guide for scheduled jobs
+.. NOTE::
+
+   TODO: a good link for a user guide for scheduled jobs

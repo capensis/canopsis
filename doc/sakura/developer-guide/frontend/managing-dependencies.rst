@@ -1,3 +1,5 @@
+.. _dev-frontend-deps:
+
 Managing externals dependencies and JS libs
 *******************************************
 
@@ -44,4 +46,6 @@ the ``--save`` option registers the library into the webcore-libs' ``bower.json`
 
 Now you can publish the changes to the ``bower.json`` file and add the library folder to the ``canopsis-externals`` repository.
 
-.. TODO library wrappers
+.. NOTE::
+
+   TODO: library wrappers

@@ -1,3 +1,5 @@
+.. _admin-manage-engines-amqp2engines:
+
 Configure amqp2engines
 ======================
 

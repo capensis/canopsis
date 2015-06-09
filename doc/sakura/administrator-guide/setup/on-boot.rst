@@ -1,3 +1,5 @@
+.. _admin-setup-onboot:
+
 Canopsis on boot
 ================
 

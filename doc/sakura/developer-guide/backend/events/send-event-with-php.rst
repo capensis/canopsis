@@ -1,4 +1,6 @@
-﻿Send Event with PHP
+﻿.. _dev-backend-event-php:
+
+Send Event with PHP
 ===================
 
 Install requirements

@@ -1,4 +1,6 @@
-﻿Reverse proxy with nginx
+﻿.. _admin-setup-proxy-nginx:
+
+Reverse proxy with nginx
 ========================
 
 For use another port for webserver, you can use Nginx as a reverse proxy

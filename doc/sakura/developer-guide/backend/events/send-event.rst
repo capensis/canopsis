@@ -1,4 +1,6 @@
-﻿Send event command
+﻿.. _dev-backend-event-bash:
+
+Send event command
 ==================
 
 With the ``send_event`` command you can send events (via webservice) to Canopsis.

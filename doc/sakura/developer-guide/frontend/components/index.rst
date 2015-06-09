@@ -1,5 +1,7 @@
+.. _dev-frontend-cmp:
+
 Components
-**********
+==========
 
 .. toctree::
    :maxdepth: 2

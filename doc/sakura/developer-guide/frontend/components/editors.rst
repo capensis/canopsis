@@ -1,5 +1,7 @@
+.. _dev-frontend-cmp-editors:
+
 Editors
--------
+=======
 
 An editor is a simple template, eventually made of Ember components.
 It is used to define how data, in a JSON schema, will be edited.

@@ -1,3 +1,5 @@
+.. _admin-account-ldap:
+
 Authentication with ldap
 ========================
 

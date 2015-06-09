@@ -1,3 +1,5 @@
+.. _dev-backend-engines:
+
 Engines
 =======
 
@@ -8,4 +10,3 @@ Engines
    howto
    scheduler
    filter
-   rights

@@ -1,3 +1,5 @@
+.. _user-engines-datacleaner:
+
 Datacleaner Engine
 ==================
 
