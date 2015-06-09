@@ -85,6 +85,8 @@ Below the code to manage data deletion from the manager:
 
 And in the end here is how to select data from the storage:
 
+.. code-block:: python
+
    def get(self):
       ids = ['entity_id']
       state_documents = self[Connectors.MANAGER_STORAGE].get_elements(
