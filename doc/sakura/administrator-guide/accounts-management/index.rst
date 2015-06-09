@@ -1,3 +1,5 @@
+.. _admin-account:
+
 Accounts management
 ===================
 

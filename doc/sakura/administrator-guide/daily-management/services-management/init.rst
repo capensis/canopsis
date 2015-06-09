@@ -1,5 +1,7 @@
+.. _admin-manage-services-init:
+
 Canopsis Initialization Process
-*******************************
+===============================
 
 supervisord
 -----------

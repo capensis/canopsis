@@ -33,10 +33,7 @@ Engine
 Daemon with an associated AMQP queue. This daemon can consume the queue and/or
 publish messages to another queue.
 
-
-.. NOTE::
-
-   TODO: Add link
+See :ref:`dev-backend-engines` for more informations.
 
 Middleware
 ----------
@@ -54,9 +51,7 @@ Storage
 *Canopsis* object used to interact with a database (*MongoDB*, *PostgreSQL*,
 *ElasticSearch*, ...)
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`dev-backend-storage` for more informations.
 
 Manager
 -------
@@ -64,18 +59,14 @@ Manager
 Using a storage, allows parts of *Canopsis* to interact with any kind of database
 transparently.
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`dev-backend-mgr` for more informations.
 
 Web Service
 -----------
 
 Set of WSGI routes, using one or more manager to provide data to the client.
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`dev-backend-webserver` for more informations.
 
 Frontend
 ~~~~~~~~
@@ -85,9 +76,7 @@ UI Brick
 
 Set of UI Adapters/Components/Editors/Widgets.
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`dev-frontend-architecture` for more informations.
 
 UI Adapter
 ----------
@@ -103,9 +92,7 @@ UI Component
 
 Used to display interactive data to the user.
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`dev-frontend-cmp` for more informations.
 
 UI Editor
 ---------
@@ -113,9 +100,7 @@ UI Editor
 Using a component, provides a way to edit a model, before persisting it to the
 *WSGI API*.
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`dev-frontend-cmp-editors` for more informations.
 
 UI Widget
 ---------
@@ -123,18 +108,14 @@ UI Widget
 Improved component, based on a **MVC** design (unlike the UI components).
 They can be directly added to a view, and can have mixins.
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`dev-frontend-widgets` for more informations.
 
 UI Mixin
 --------
 
 Set of business code that can be applied to any widget.
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`dev-frontend-widgets-mixins` for more informations.
 
 UI Container
 ------------
@@ -142,21 +123,25 @@ UI Container
 Component containing widgets, used to dispose them in a specific layout.
 There is only one widget container, which can have different layout mixins.
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`user-ui-widgets-containers` for more informations.
 
 UI View
 -------
 
 Editable view which contains by default a single widget container.
 
-.. NOTE::
-
-   TODO: Add link
+See :ref:`user-ui-view` for more informations.
 
 Miscellaneous
 ~~~~~~~~~~~~~
+
+Event
+-----
+
+JSON object containing specific informations for *Canopsis*, must be emitted on
+the *AMQP Bus*.
+
+See :ref:`dev-spec-event` for more informations.
 
 Context
 -------
@@ -171,3 +156,19 @@ are referencing the associated context, for example :
 .. NOTE::
 
    TODO: Add link
+
+Selector
+--------
+
+.. NOTE::
+
+   TODO: add short description
+
+See :ref:`user-engines-selector` for more informations.
+
+SLA
+---
+
+Feature providing availability informations.
+
+See :ref:`dev-spec-sla` for more informations.

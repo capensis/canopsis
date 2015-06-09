@@ -1,4 +1,6 @@
-﻿Debugging
+﻿.. _admin-troubleshooting-debug:
+
+Debugging
 =========
 
 Exporting report

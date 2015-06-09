@@ -1,5 +1,7 @@
+.. _dev-frontend-widgets-howto:
+
 Creating a simple widget
-************************
+========================
 
 Introduction
 ------------

@@ -1,3 +1,5 @@
+.. _dev-frontend-cmp-internal:
+
 Internal components for Canopsis plugins
 ========================================
 

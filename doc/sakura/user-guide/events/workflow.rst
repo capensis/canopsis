@@ -1,3 +1,5 @@
+.. _user-events-workflow:
+
 Event workflows
 ===============
 
@@ -8,7 +10,10 @@ This section is made to understand event interaction in Canopsis.
 Interaction with events can be done in the user interface in a list that
 references events and that uses rights mixins to enable user actions on
 alerts.
-.. TODO reference mixins at user guide level
+
+.. NOTE::
+
+   TODO: reference mixins at user guide level
 
 Events statuses information
 ---------------------------

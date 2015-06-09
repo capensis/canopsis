@@ -1,4 +1,4 @@
-.. _datacleaner:
+.. _admin-manage-engines-datacleaner:
 
 Data cleaner
 ============

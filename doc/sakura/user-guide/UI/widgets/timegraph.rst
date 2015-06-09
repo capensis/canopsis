@@ -1,3 +1,5 @@
+.. _user-ui-widgets-timegraph:
+
 How to use TimeGraph
 ====================
 

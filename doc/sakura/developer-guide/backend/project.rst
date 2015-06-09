@@ -1,3 +1,5 @@
+.. _dev-backend-pyproject:
+
 Canopsis Python Project
 =======================
 

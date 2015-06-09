@@ -1,3 +1,5 @@
+.. dev-spec-event:
+
 Event specification
 ===================
 

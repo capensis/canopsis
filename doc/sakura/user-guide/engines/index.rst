@@ -1,4 +1,6 @@
-﻿Engines
+﻿.. _user-engines:
+
+Engines
 =======
 
 This document describes what is an engine, and what are the available engines.
@@ -11,7 +13,6 @@ For informations about how to configure a specific engine, take a look at:
    event-filter
    linklist
    selector
-   topology
    datacleaner
 
 

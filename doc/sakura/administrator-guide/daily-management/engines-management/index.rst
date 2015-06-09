@@ -1,3 +1,5 @@
+.. _admin-manage-engines:
+
 Engines management
 ==================
 

@@ -1,3 +1,5 @@
+.. _user-ui-view:
+
 Userviews
 =========
 

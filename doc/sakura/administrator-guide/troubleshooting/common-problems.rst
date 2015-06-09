@@ -1,3 +1,5 @@
+.. _admin-troubleshooting-common:
+
 Common problems
 ===============
 

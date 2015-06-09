@@ -1,3 +1,5 @@
+.. _admin-manage-services-howto:
+
 How to find common informations
 ===============================
 

@@ -1,3 +1,5 @@
+.. _dev-practices-javascript:
+
 Ember.JS resources
 ******************
 

@@ -1,3 +1,5 @@
+.. _user-ui-view-context:
+
 Using the view Context
 ======================
 

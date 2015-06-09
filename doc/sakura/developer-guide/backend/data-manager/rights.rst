@@ -1,3 +1,5 @@
+.. _dev-backend-mgr-rights:
+
 Rights
 _______
 
