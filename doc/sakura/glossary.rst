@@ -33,7 +33,10 @@ Engine
 Daemon with an associated AMQP queue. This daemon can consume the queue and/or
 publish messages to another queue.
 
-See :ref:`dev-backend-engines` for more informations.
+For more informations, see:
+
+ * :ref:`dev-backend-engines`
+ * :ref:`user-engines`
 
 Middleware
 ----------
