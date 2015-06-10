@@ -141,21 +141,41 @@ Event
 JSON object containing specific informations for *Canopsis*, must be emitted on
 the *AMQP Bus*.
 
-See :ref:`dev-spec-event` for more informations.
+For more informations, see:
+
+ * :ref:`dev-spec-event`
+ * :ref:`dev-backend-event`
+ * :ref:`user-events`
+
+Metric
+------
+
+Measurable information, associated to a component, or a resource. Can be used to
+render in a widget graph, progress-bar, and/or text.
+It is a contextual information referenced by each new inserted value.
+
+For more informations, see:
+
+ * :ref:`dev-frontend-widgets-perfdata`
+ * :ref:`user-ui-view-perfdata`
 
 Context
 -------
 
 Contextual informations about an event, organized in graph. All other stored data
-are referencing the associated context, for example :
+are referencing the associated context, for example:
 
  * a perfdata document reference the metric context
  * a periodic behavior reference the component or resource context
  * ...
 
-.. NOTE::
+A view is available in order to manipulate the context.
 
-   TODO: Add link
+For more informations, see:
+
+ * :ref:`user-ui-view-context`
+ * :ref:`dev-backend-mgr-vevent`
+ * :ref:`dev-backend-mgr-pbehavior`
 
 Selector
 --------
@@ -172,3 +192,18 @@ SLA
 Feature providing availability informations.
 
 See :ref:`dev-spec-sla` for more informations.
+
+Periodic Behavior
+-----------------
+
+An entity of the context can be configured to have a specific behavior during a
+specified period of time.
+
+See :ref:`dev-backend-mgr-pbehavior` for more informations.
+
+Downtime
+++++++++
+
+A downtime is configured when we must ignore eventual alerts on an entity.
+
+See :ref:`dev-backend-mgr-pbehavior` for more informations.
