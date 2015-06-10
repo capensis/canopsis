@@ -802,8 +802,7 @@ class GraphManager(MiddlewareRegistry):
         ids=None, types=None, sources=None, targets=None, graph_ids=None,
         info=None, query=None, serialize=True
     ):
-        """
-        Get edges related to input ids, types and source/target ids.
+        """Get edges related to input ids, types and source/target ids.
 
         :param ids: edge ids to find. If ids is a str, result is an Edge or
             None.
@@ -853,9 +852,18 @@ class GraphManager(MiddlewareRegistry):
         return result
 
     def get_orphans(self, serialize=True, query=None, info=None, types=None):
+        """Get all elements which are not associated to graphs.
+
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+        :param dict query: additional query.
+        :param info: info to find among vertices.
+        :param types: edge types to find.
+        :type types: list or str
+        :return: element(s) corresponding to input ids and query.
+        :rtype: list or dict
         """
-        Get all elements which are not associated to graphs.
-        """
+
         # get all elt ids
         graphs = self.get_graphs()
         elt_ids = list(chain(*(graph.elts for graph in graphs)))

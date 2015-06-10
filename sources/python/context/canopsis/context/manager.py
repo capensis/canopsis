@@ -95,6 +95,46 @@ class Context(MiddlewareRegistry):
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
 
+    def clean(self, entity):
+        """Remove entity properties which are not in self.context
+        """
+
+        result = {}
+
+        for ctx in self.context:
+            if ctx in entity:
+                result[ctx] = entity[ctx]
+            else:
+                break
+
+        return result
+
+    def get_children(self, entity):
+        """Get children entities of input entity.
+
+        For example, if entity is a component, you can retrieve component
+        resources and metrics.
+
+        :param dict entity: parent entity.
+        :return: list of children entity.
+        :rtype: list
+        """
+
+        # construct query with parent fields which can be found among children
+        query = self.clean(entity)
+        del query[Context.TYPE]
+
+        # iterate on context information without the type
+        for index, ctx in enumerate(self.context[1:]):
+            if ctx not in entity:
+                query[ctx] = entity[Context.NAME]
+                break
+
+        # execute query in order to get children
+        children = self[Context.CTX_STORAGE].find_elements(query=query)
+
+        return children
+
     def get_entity(
         self, event, from_db=False, create_if_not_exists=False, cache=False
     ):

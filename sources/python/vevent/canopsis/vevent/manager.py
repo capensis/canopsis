@@ -289,7 +289,7 @@ class VEventManager(MiddlewareRegistry):
 
             document = None
 
-            if isinstance(vevent, dict):
+            if isinstance(vevent, dict) and not isinstance(vevent, Event):
 
                 document = vevent
                 # get uid

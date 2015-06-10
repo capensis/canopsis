@@ -194,7 +194,7 @@ class CheckManager(MiddlewareRegistry):
         :param bool cache: storage cache when udpate state.
         """
 
-        self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids)
+        return self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids)
 
     def put_state(self, entity_id, state, cache=False):
         """
@@ -204,10 +204,10 @@ class CheckManager(MiddlewareRegistry):
         :param state: the state to persist.
         """
 
-        if state not in self.valid_states or not type(state) == int:
+        if state not in self.valid_states or not isinstance(state, int):
             raise InvalidState(state, self.valid_states)
 
-        self[CheckManager.CHECK_STORAGE].put_element(
+        return self[CheckManager.CHECK_STORAGE].put_element(
             _id=entity_id,
             element={'state': state},
             cache=cache

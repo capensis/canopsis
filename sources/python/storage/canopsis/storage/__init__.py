@@ -36,7 +36,7 @@ from collections import Iterable
 from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
 from canopsis.configuration.parameters import Parameter
-from canopsis.middleware import Middleware
+from canopsis.middleware.core import Middleware
 
 
 class DataBase(Middleware):
@@ -649,7 +649,8 @@ class Storage(DataBase):
 
     def find_elements(
         self,
-        query, limit=0, skip=0, sort=None, projection=None, with_count=False
+        query=None, limit=0, skip=0, sort=None, projection=None,
+        with_count=False
     ):
         """
         Find elements corresponding to input request and in taking care of

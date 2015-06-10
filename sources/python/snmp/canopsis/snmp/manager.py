@@ -33,7 +33,7 @@ CONF_PATH = 'snmp/snmp.conf'
 @add_category(CATEGORY)
 class SnmpManager(MiddlewareRegistry):
 
-    # The configuration key to read in the configuration file
+    #: The configuration key to read in the configuration file
     SNMP_STORAGE = 'snmp_storage'
 
     def __init__(self, *args, **kwargs):

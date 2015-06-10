@@ -18,4 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = '0.1'
+from canopsis.vevent.funder import VEventFunder
+
+
+class PBehaviorFunder(VEventFunder):
+    """In charge of binding a pbehavior information to context entities.
+    """
+
+    __datatype__ = 'pbehavior'  #: default datatype name

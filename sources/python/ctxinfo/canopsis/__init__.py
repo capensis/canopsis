@@ -18,4 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = '0.1'
+# attach this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)
