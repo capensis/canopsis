@@ -1,6 +1,7 @@
 {
   "crecord_name" : "filters.json",
   "loader_id": "view.filters",
+  "crecord_type": "view",
   "loader_no_update": false,
   "id": "view.filters",
   "_id": "view.filters",
