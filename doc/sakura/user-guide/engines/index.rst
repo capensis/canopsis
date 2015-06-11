@@ -1,7 +1,7 @@
 ﻿.. _user-engines:
 
-Engines
-=======
+Engines usage
+=============
 
 This document describes what is an engine, and what are the available engines.
 

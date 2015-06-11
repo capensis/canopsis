@@ -36,6 +36,7 @@ publish messages to another queue.
 For more informations, see:
 
  * :ref:`dev-backend-engines`
+ * :ref:`admin-manage-engines`
  * :ref:`user-engines`
 
 Middleware
@@ -54,7 +55,9 @@ Storage
 *Canopsis* object used to interact with a database (*MongoDB*, *PostgreSQL*,
 *ElasticSearch*, ...)
 
-See :ref:`dev-backend-storage` for more informations.
+For more informations, see:
+
+ * :ref:`dev-backend-storage`
 
 Manager
 -------
@@ -62,14 +65,18 @@ Manager
 Using a storage, allows parts of *Canopsis* to interact with any kind of database
 transparently.
 
-See :ref:`dev-backend-mgr` for more informations.
+For more informations, see:
+
+ * :ref:`dev-backend-mgr`
 
 Web Service
 -----------
 
 Set of WSGI routes, using one or more manager to provide data to the client.
 
-See :ref:`dev-backend-webserver` for more informations.
+For more informations, see:
+
+ * :ref:`dev-backend-webserver`
 
 Frontend
 ~~~~~~~~
@@ -79,7 +86,9 @@ UI Brick
 
 Set of UI Adapters/Components/Editors/Widgets.
 
-See :ref:`dev-frontend-architecture` for more informations.
+For more informations, see:
+
+ * :ref:`dev-frontend-architecture`
 
 UI Adapter
 ----------
@@ -95,7 +104,9 @@ UI Component
 
 Used to display interactive data to the user.
 
-See :ref:`dev-frontend-cmp` for more informations.
+For more informations, see:
+
+ * :ref:`dev-frontend-cmp`
 
 UI Editor
 ---------
@@ -103,7 +114,9 @@ UI Editor
 Using a component, provides a way to edit a model, before persisting it to the
 *WSGI API*.
 
-See :ref:`dev-frontend-cmp-editors` for more informations.
+For more informations, see:
+
+ * :ref:`dev-frontend-cmp-editors`
 
 UI Widget
 ---------
@@ -111,14 +124,18 @@ UI Widget
 Improved component, based on a **MVC** design (unlike the UI components).
 They can be directly added to a view, and can have mixins.
 
-See :ref:`dev-frontend-widgets` for more informations.
+For more informations, see:
+
+ * :ref:`dev-frontend-widgets`
 
 UI Mixin
 --------
 
 Set of business code that can be applied to any widget.
 
-See :ref:`dev-frontend-widgets-mixins` for more informations.
+For more informations, see:
+
+ * :ref:`dev-frontend-widgets-mixins`
 
 UI Container
 ------------
@@ -126,14 +143,18 @@ UI Container
 Component containing widgets, used to dispose them in a specific layout.
 There is only one widget container, which can have different layout mixins.
 
-See :ref:`user-ui-widgets-containers` for more informations.
+For more informations, see:
+
+ * :ref:`user-ui-widgets-containers`
 
 UI View
 -------
 
 Editable view which contains by default a single widget container.
 
-See :ref:`user-ui-view` for more informations.
+For more informations, see:
+
+ * :ref:`user-ui-view`
 
 Miscellaneous
 ~~~~~~~~~~~~~
@@ -187,14 +208,18 @@ Selector
 
    TODO: add short description
 
-See :ref:`user-engines-selector` for more informations.
+For more informations, see:
+
+ * :ref:`user-engines-selector`
 
 SLA
 ---
 
 Feature providing availability informations.
 
-See :ref:`dev-spec-sla` for more informations.
+For more informations, see:
+
+ * :ref:`dev-spec-sla`
 
 Periodic Behavior
 -----------------
@@ -202,11 +227,15 @@ Periodic Behavior
 An entity of the context can be configured to have a specific behavior during a
 specified period of time.
 
-See :ref:`dev-backend-mgr-pbehavior` for more informations.
+For more informations, see:
+
+ * :ref:`dev-backend-mgr-pbehavior`
 
 Downtime
 ++++++++
 
 A downtime is configured when we must ignore eventual alerts on an entity.
 
-See :ref:`dev-backend-mgr-pbehavior` for more informations.
+For more informations, see:
+
+ * :ref:`dev-backend-mgr-pbehavior`
