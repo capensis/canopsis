@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+from argparse import ArgumentParser, FileType
+
+from sys import stdout
+
+from pprint import pprint
+
+from canopsis.ctxinfo.manager import CTXInfoManager
+
+# instantiate a new cim manager
+cim = CTXInfoManager()
+
+# build argument parser
+parser = ArgumentParser(description='Get/Delete context information')
+# set operation argument
+parser.add_argument(
+    '-a', '--action', help='type of action (default get)',
+    default='get', nargs='?', choices=['get', 'del'], dest='action',
+    required=False
+)
+# set funders argument
+parser.add_argument(
+    '-f', '--funders', help='funder names (default all)', default=None,
+    nargs='*', dest='funders', required=False
+)
+# set output
+parser.add_argument(
+    '-o', '--output', help='output file (default stdout)', nargs='?',
+    dest='output', default=stdout, required=False, type=FileType('w')
+)
+# set entity ids argument
+parser.add_argument(
+    '-e', '--eids', help='entity ids', nargs='*', default=None,
+    dest='entity_ids', required=False
+)
+# set query argument
+parser.add_argument(
+    '-q', '--query', help='query argument', nargs='?', default=None, type=dict,
+    dest='query', required=False
+)
+# set method propagation
+parser.add_argument(
+    '-w', '--withoutchildren',
+    help='do not propagate action to children entities', default=False,
+    dest='withoutchildren', required=False, action='store_true'
+)
+# set pretty printer output
+parser.add_argument(
+    '-p', '--pretty', help='use pretty printer on output', default=False,
+    dest='pprint', required=False, action='store_true'
+)
+# parse arguments
+args = parser.parse_args()
+# choose the right cim operation
+operation = cim.get if args.action == 'get' else cim.delete
+# execute the operation with arguments
+result = cim.get(
+    entity_ids=args.entity_ids, query=args.query, funders=args.funders,
+    children=not args.withoutchildren
+)
+# output the result
+args.output.write(pprint(result) if args.pprint else str(result))
