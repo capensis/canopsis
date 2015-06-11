@@ -20,7 +20,7 @@
 
 from canopsis.configuration.parameters import Parameter, Configuration
 from canopsis.configuration.configurable.registry import ConfigurableRegistry
-from . import Middleware, parse_scheme
+from canopsis.middleware.core import Middleware, parse_scheme
 
 
 class MiddlewareRegistry(ConfigurableRegistry):

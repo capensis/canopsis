@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.snmp.manager import SNMPManager
+from canopsis.snmp.manager import SnmpManager
 from canopsis.ctxinfo.funder import CTXInfoFunder
 
 
@@ -26,13 +26,13 @@ class SNMPFunder(CTXInfoFunder):
     """In charge of binding a snmp information to context entities.
     """
 
-    __datatype__ = 'vevent'  #: default datatype name
+    __datatype__ = 'snmp'  #: default datatype name
 
     def __init__(self, *args, **kwargs):
 
         super(SNMPFunder, self).__init__(*args, **kwargs)
 
-        self.manager = SNMPManager()
+        self.manager = SnmpManager()
 
     def _do(self, cmd, entity_ids):
 

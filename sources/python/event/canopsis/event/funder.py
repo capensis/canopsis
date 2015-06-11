@@ -140,8 +140,8 @@ class EventLogFunder(OldFunder):
     """Funder bound to the old events_log collection.
     """
 
-    __datatype__ = 'events_log'  #: default datatype name
+    __datatype__ = 'eventslog'  #: default datatype name
 
-    def __init__(self, table=__datatype__, *args, **kwargs):
+    def __init__(self, table='events_log', *args, **kwargs):
 
-        super(EventFunder, self).__init__(table=table, *args, **kwargs)
+        super(EventLogFunder, self).__init__(table=table, *args, **kwargs)

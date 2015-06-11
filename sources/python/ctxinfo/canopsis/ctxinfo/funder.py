@@ -25,11 +25,10 @@ information managers such as the perfdata manager for example.
 """
 
 from canopsis.common.init import basestring
-from canopsis.ctxinfo.funder import CTXInfoFunder
 from canopsis.middleware.core import Middleware
 
 
-class Funder(Middleware):
+class CTXInfoFunder(Middleware):
     """Funder dedicated to entity events.
     """
 
