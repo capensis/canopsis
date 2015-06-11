@@ -25,6 +25,7 @@ from sys import stdout
 
 from pprint import pprint
 
+from canopsis.common.init import basestring
 from canopsis.ctxinfo.manager import CTXInfoManager
 
 # instantiate a new cim manager
@@ -34,9 +35,11 @@ cim = CTXInfoManager()
 parser = ArgumentParser(description='Get/Delete context information')
 # set operation argument
 parser.add_argument(
-    '-a', '--action', help='type of action (default get)',
-    default='get', nargs='?', choices=['get', 'del'], dest='action',
-    required=False
+    '-a', '--action', help='type of action. get (default): retrieve \
+        information, del: delete information, count: count number of \
+        information, eids: get entity ids.',
+    default='get', nargs='?', choices=['get', 'del', 'count', 'eids'],
+    dest='action', required=False
 )
 # set funders argument
 parser.add_argument(
@@ -50,8 +53,8 @@ parser.add_argument(
 )
 # set entity ids argument
 parser.add_argument(
-    '-e', '--eids', help='entity ids', nargs='*', default=None,
-    dest='entity_ids', required=False
+    '-e', '--eids', help='entity ids (works with get/del/count action).',
+    nargs='*', default=None, dest='entity_ids', required=False
 )
 # set query argument
 parser.add_argument(
@@ -61,22 +64,65 @@ parser.add_argument(
 # set method propagation
 parser.add_argument(
     '-w', '--withoutchildren',
-    help='do not propagate action to children entities', default=False,
-    dest='withoutchildren', required=False, action='store_true'
+    help='do not propagate action to children entities (false by default).\
+    (works with get/del/count actions).',
+    default=True, dest='children', required=False, action='store_false'
 )
 # set pretty printer output
 parser.add_argument(
     '-p', '--pretty', help='use pretty printer on output', default=False,
     dest='pprint', required=False, action='store_true'
 )
+# set force to delete all entity information
+parser.add_argument(
+    '--force',
+    help='delete all ctx info if eids is not given (false by default). \
+    (works with del action).',
+    default=False, dest='force', required=False, action='store_true'
+)
 # parse arguments
 args = parser.parse_args()
+
 # choose the right cim operation
 operation = cim.get if args.action == 'get' else cim.delete
+
+# build kwargs
+kwargs = {
+    'funders': args.funders, 'query': args.query
+}
+
+
+def apply_args(actions, nargs):
+    """Apply input ``nargs`` names when args.action is in actions.
+
+    :param actions: action(s) when apply args.
+    :type actions: str or list
+    :param nargs: arg(s) names to apply on kwargs
+    :type nargs: str or list.
+    """
+
+    # initialize actions and nargs
+    if isinstance(actions, basestring):
+        actions = [actions]
+    if isinstance(nargs, basestring):
+        nargs = [nargs]
+    # if actions match with args
+    if args.action in actions:
+        for narg in nargs:  # apply nargs on kwargs
+            kwargs[narg] = getattr(args, narg)
+
+
+# add force
+apply_args('del', 'force')
+
+# add eids
+apply_args(['get', 'del', 'count'], 'entity_ids')
+
+# apply children
+apply_args(['get', 'del', 'count'], 'children')
+
 # execute the operation with arguments
-result = cim.get(
-    entity_ids=args.entity_ids, query=args.query, funders=args.funders,
-    children=not args.withoutchildren
-)
+result = cim.get(**kwargs)
+
 # output the result
 args.output.write(pprint(result) if args.pprint else str(result))

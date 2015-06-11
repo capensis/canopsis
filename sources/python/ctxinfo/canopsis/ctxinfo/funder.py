@@ -32,10 +32,121 @@ class CTXInfoFunder(Middleware):
     """Funder dedicated to entity events.
     """
 
+    class Error(Exception):
+        """Handle CTXInfoFunder errors.
+        """
+
     ENTITY_ID = 'entity_id'  #: default entity id field name
 
     __register__ = True  #: register this class such as a middleware
     __protocol__ = 'funder'  #: protocol registration name if __register__
+
+    def get(self, entity_ids=None, query=None, *args, **kwargs):
+        """Get entity information related to input ``entity id(s)`` and
+        additional specific filter ``query`` per entity id.
+
+        :param entity_ids: entity id(s) from where find information. If None
+            (default), get all information of all entities.
+        :type entity_ids: str or list
+        :param dict query: specific query to apply on the method execution.
+        :return: couples of (entity id, [information]).
+        :rtype: dict
+        """
+
+        result = self._process(
+            cmd=self._get, entity_ids=entity_ids, query=query, *args, **kwargs
+        )
+
+        return result
+
+    def _get(self, *args, **kwargs):
+        """Protected get method implementation.
+        """
+
+        raise NotImplementedError()
+
+    def count(self, entity_ids=None, query=None, *args, **kwargs):
+        """Get entity information count related to input ``entity id(s)`` and
+        additional specific filter ``query`` per entity id.
+
+        :param entity_ids: entity id(s) from where find information. If None
+            (default), get all information of all entities.
+        :type entity_ids: str or list
+        :param dict query: specific query to apply on the method execution.
+        :return: couples of (entity id, count).
+        :rtype: dict
+        """
+
+        result = self._process(
+            cmd=self._count, entity_ids=entity_ids, query=query,
+            *args, **kwargs
+        )
+
+        return result
+
+    def _count(self, *args, **kwargs):
+        """Protected count method implementation.
+        """
+
+        raise NotImplementedError()
+
+    def delete(
+        self, entity_ids=None, query=None, cache=False, force=False,
+        *args, **kwargs
+    ):
+        """Get entity information count related to input ``entity id(s)`` and
+        additional specific filter ``query`` per entity id.
+
+        :param entity_ids: entity id(s) from where find information. If None
+            (default), get all information of all entities.
+        :type entity_ids: str or list
+        :param dict query: specific query to apply on the method execution.
+        :param bool cache: storage cache property.
+        :return: couples of (entity id, count).
+        :rtype: dict
+        """
+
+        # check if force is True if funders is None
+        if entity_ids is None and not force:
+            raise CTXInfoFunder.Error(
+                "Impossible to remove all existing ctx information. Use force."
+            )
+
+        result = self._process(
+            cmd=self._delete, entity_ids=entity_ids, query=query, cache=cache,
+            *args, **kwargs
+        )
+
+        return result
+
+    def _delete(self, *args, **kwargs):
+        """Protected delete method implementation.
+        """
+
+        raise NotImplementedError()
+
+    def entity_ids(self, query=None):
+        """Get funder entity id(s) related to input query.
+
+        :param dict query: query to apply on funder documents in order to
+            retrieve related entity id. If None, get all funder entity ids.
+        :return: list of entity ids.
+        :rtype: list
+        """
+
+        raise NotImplementedError()
+
+    def _process(self, cmd, entity_ids, *args, **kwargs):
+
+        entity_ids, unique = CTXInfoFunder._entity_ids_unique(entity_ids)
+
+        result = cmd(
+            entity_ids=entity_ids, *args, **kwargs
+        )
+
+        result = self._final_result(result, unique)
+
+        return result
 
     def _entity_id_field(self):
         """Get entity id document field name.
@@ -110,98 +221,3 @@ class CTXInfoFunder(Middleware):
 
         return result
 
-    def get(self, entity_ids=None, query=None, *args, **kwargs):
-        """Get entity information related to input ``entity id(s)`` and
-        additional specific filter ``query`` per entity id.
-
-        :param entity_ids: entity id(s) from where find information. If None
-            (default), get all information of all entities.
-        :type entity_ids: str or list
-        :param dict query: specific query to apply on the method execution.
-        :return: couples of (entity id, [information]).
-        :rtype: dict
-        """
-
-        entity_ids, unique = self._entity_ids_unique(entity_ids)
-
-        result = self._get(entity_ids=entity_ids, query=query, *args, **kwargs)
-
-        result = self._final_result(result, unique)
-
-        return result
-
-    def _get(self, *args, **kwargs):
-        """Protected get method implementation.
-        """
-
-        raise NotImplementedError()
-
-    def count(self, entity_ids=None, query=None, *args, **kwargs):
-        """Get entity information count related to input ``entity id(s)`` and
-        additional specific filter ``query`` per entity id.
-
-        :param entity_ids: entity id(s) from where find information. If None
-            (default), get all information of all entities.
-        :type entity_ids: str or list
-        :param dict query: specific query to apply on the method execution.
-        :return: couples of (entity id, count).
-        :rtype: dict
-        """
-
-        entity_ids, unique = self._entity_ids_unique(entity_ids)
-
-        result = self._count(
-            entity_ids=entity_ids, query=query, *args, **kwargs
-        )
-
-        result = self._final_result(result, unique)
-
-        return result
-
-    def _count(self, *args, **kwargs):
-        """Protected count method implementation.
-        """
-
-        raise NotImplementedError()
-
-    def delete(
-        self, entity_ids=None, query=None, cache=False, *args, **kwargs
-    ):
-        """Get entity information count related to input ``entity id(s)`` and
-        additional specific filter ``query`` per entity id.
-
-        :param entity_ids: entity id(s) from where find information. If None
-            (default), get all information of all entities.
-        :type entity_ids: str or list
-        :param dict query: specific query to apply on the method execution.
-        :param bool cache: storage cache property.
-        :return: couples of (entity id, count).
-        :rtype: dict
-        """
-
-        entity_ids, unique = self._entity_ids_unique(entity_ids)
-
-        result = self._get(
-            entity_ids=entity_ids, query=query, cache=cache, *args, **kwargs
-        )
-
-        result = self._final_result(result, unique)
-
-        return result
-
-    def _delete(self, *args, **kwargs):
-        """Protected delete method implementation.
-        """
-
-        raise NotImplementedError()
-
-    def get_entity_ids(self, query=None):
-        """Get funder entity id(s) related to input query.
-
-        :param dict query: query to apply on funder documents in order to
-            retrieve related entity id. If None, get all funder entity ids.
-        :return: list of entity ids.
-        :rtype: list
-        """
-
-        raise NotImplementedError()

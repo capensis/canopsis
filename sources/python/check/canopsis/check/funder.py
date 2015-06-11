@@ -38,9 +38,12 @@ class CheckFunder(CTXInfoFunder):
 
         result = []
 
-        for entity_id in entity_ids:
-            cmdresult = cmd(ids=entity_id)
-            result.append(cmdresult)
+        if entity_ids is None:
+            result += cmd()
+        else:
+            for entity_id in entity_ids:
+                cmdresult = cmd(ids=entity_id)
+                result.append(cmdresult)
 
         return result
 

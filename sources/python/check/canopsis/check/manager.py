@@ -83,10 +83,12 @@ class CheckManager(MiddlewareRegistry):
         self.types = types
 
     # TODO , is it used, is it usefull to manage state this way
-    def state(self, ids, state=None, criticity=HARD, f=DEFAULT_F, cache=False):
+    def state(
+        self, ids=None, state=None, criticity=HARD, f=DEFAULT_F, cache=False
+    ):
         """Get/update entity state(s).
 
-        :param ids: entity id(s).
+        :param ids: entity id(s). Default is all entity ids.
         :type ids: str or list
         :param int state: state to update if not None.
         :param int criticity: state criticity level (HARD by default).
@@ -127,11 +129,14 @@ class CheckManager(MiddlewareRegistry):
             state_name = CheckManager.STATE
             # save storage for quick access
             storage = self[CheckManager.CHECK_STORAGE]
-            # save entity ids
-            entity_ids = ids
-            # and ensure it is a set
-            if isinstance(entity_ids, basestring):
-                entity_ids = {entity_ids}
+            # ensure entity_ids is a set
+            if isinstance(ids, basestring):
+                entity_ids = set([ids])
+            elif ids is None:
+                if state_documents is None:
+                    entity_ids = set()
+                else:
+                    entity_ids = set([sd[id_name] for sd in state_documents])
             else:
                 entity_ids = set(ids)
             # if states exist in DB

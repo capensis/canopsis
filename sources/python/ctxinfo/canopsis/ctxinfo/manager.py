@@ -42,6 +42,10 @@ class CTXInfoManager(MiddlewareRegistry):
     """Manage context information.
     """
 
+    class Error(Exception):
+        """Handle CTXInfoManager errors.
+        """
+
     DATA_SCOPE = 'ctxinfo'  #: default data scope
 
     def __init__(self, *args, **kwargs):
@@ -49,6 +53,142 @@ class CTXInfoManager(MiddlewareRegistry):
         super(CTXInfoManager, self).__init__(*args, **kwargs)
 
         self.context = Context()
+
+    def get(self, funders=None, entity_ids=None, query=None, children=True):
+        """Get information of funders.
+
+        :param funders: funder names in charge of retrieve information. If None
+            (default), get information from all funders.
+        :type funders: str or list
+        :param entity_ids: entity id(s) from where find information. If None
+            (default), get all information of all entities.
+        :type entity_ids: str or list
+        :param dict query: specific query to apply on the method execution.
+        :param bool children: if True (default) propagate the method on entity
+            children.
+        :return: information of funders by funder. If funders is a string, the
+            result is specific funders information.
+        :rtype: dict
+        """
+
+        result = self._process_funders(
+            cmd='get', funders=funders,
+            entity_ids=entity_ids, query=query, children=children
+        )
+
+        return result
+
+    def count(self, funders=None, entity_ids=None, query=None, children=True):
+        """Count information of funders.
+
+        :param funders: funder names in charge of counting information. If None
+            (default), count information from all funders.
+        :type funders: str or list
+        :param entity_ids: entity id(s) from where count information. If None
+            (default), count all information of all entities.
+        :type entity_ids: str or list
+        :param dict query: specific query to apply on the method execution.
+        :param bool children: if True (default) propagate the method on entity
+            children.
+        :return: information of funders by funder. If funders is a string, the
+            result is specific count of funders information.
+        :rtype: dict
+        """
+
+        result = self._process_funders(
+            cmd='count',  funders=funders,
+            entity_ids=entity_ids, query=query, children=children
+        )
+
+        return result
+
+    def delete(
+        self, funders=None, entity_ids=None, query=None, children=True,
+        force=False, cache=False
+    ):
+        """Delete information of funders and returns number of information
+        deleted per funder and entity id.
+
+        :param funders: funder names in charge of deleting information. If None
+            (default), delete information from all funders.
+        :type funders: str or list
+        :param entity_ids: entity id(s) from where delete information. If None
+            (default), delete all information of all entities.
+        :type entity_ids: str or list
+        :param dict query: specific query to apply on the method execution.
+        :param bool force: if True (False by default), accept to nonify
+            entity_ids in order to delete all existing entity information.
+        :param bool children: if True (default) propagate the method on entity
+            children.
+        :return: information of funders by funder. If funders is a string, the
+            result is specific funders information.
+        :rtype: dict
+        """
+
+        # check if force is True if funders is None
+        if entity_ids is None and not force:
+            raise CTXInfoManager.Error(
+                "Impossible to remove all existing ctx information. Use force."
+            )
+
+        result = self._process_funders(
+            cmd='delete', funders=funders,
+            entity_ids=entity_ids, query=query,
+            children=children, force=force, cache=cache
+        )
+
+        return result
+
+    def entity_ids(self, funders=None, query=None):
+        """Get entity ids from different funders thanks to an input query.
+
+        :param funders: funder names in charge of deleting information. If None
+            (default), delete information from all funders.
+        :param dict query: specific query to apply on the method execution.
+        :return: entity ids of funders by funder. If funders is a string, the
+            result is specific entity ids funders.
+        :rtype: dict
+        """
+
+        result = self._process_funders(
+            cmd='entity_ids', funders=funders, query=query
+        )
+
+        return result
+
+    def _process_funders(self, funders, cmd, **kwargs):
+        """Process cmd on all funders with specific kwargs.
+
+        :param list funders: funders on which run cmd.
+        :param str cmd: cmd to apply on all funders.
+        :return: funder cmd result per by funder. If funders is a string, the
+            result is specific funder cmd result.
+        :rtype: dict or list
+        """
+
+        result = {}
+
+        funders, unique = self._funders_unique(funders)
+
+        # update kwargs entity_ids if necessary
+        if 'entity_ids' in kwargs:
+            kwargs['entity_ids'] = self._add_children(
+                pentity_ids=kwargs['entity_ids'], children=kwargs['children']
+            )
+            # remove children from kwargs
+            kwargs.pop('children')
+
+        # clean kwargs
+        kwargs.pop('funders')
+
+        for funder in funders:
+            fresult = getattr(self[funder], cmd)(**kwargs)
+            result[funder] = fresult
+
+        if unique:
+            result = result[funders[0]] if result else None
+
+        return result
 
     def _funders_unique(self, funders):
         """Return a couple of (list of funder names, funders is unique).
@@ -102,109 +242,5 @@ class CTXInfoManager(MiddlewareRegistry):
                 ]
                 # add children_ids to result
                 result += children_ids
-
-        return result
-
-    def get(self, funders=None, entity_ids=None, query=None, children=True):
-        """Get information of funders.
-
-        :param funders: funder names in charge of retrieve information. If None
-            (default), get information from all funders.
-        :type funders: str or list
-        :param entity_ids: entity id(s) from where find information. If None
-            (default), get all information of all entities.
-        :type entity_ids: str or list
-        :param dict query: specific query to apply on the method execution.
-        :param bool children: if True (default) propagate the method on entity
-            children.
-        :return: information of funders by funder. If funders is a string, the
-            result is specific funders information.
-        :rtype: dict
-        """
-
-        result = {}
-
-        funders, isunique = self._funders_unique(funders)
-        # update entity ids related to children parameter
-        entity_ids = self._add_children(
-            pentity_ids=entity_ids, children=children
-        )
-        # deleta the get method to all funders
-        for funder in funders:
-            fresult = self[funder].get(entity_ids=entity_ids, query=query)
-            result[funder] = fresult
-
-        if isunique:
-            result = result[funders[0]] if result else None
-
-        return result
-
-    def count(self, funders=None, entity_ids=None, query=None, children=True):
-        """Count information of funders.
-
-        :param funders: funder names in charge of counting information. If None
-            (default), count information from all funders.
-        :type funders: str or list
-        :param entity_ids: entity id(s) from where count information. If None
-            (default), count all information of all entities.
-        :type entity_ids: str or list
-        :param dict query: specific query to apply on the method execution.
-        :param bool children: if True (default) propagate the method on entity
-            children.
-        :return: information of funders by funder. If funders is a string, the
-            result is specific count of funders information.
-        :rtype: dict
-        """
-
-        result = {}
-
-        funders, isunique = self._funders_unique(funders)
-        # update entity_ids with children if necessary
-        entity_ids = self._add_children(
-            pentity_ids=entity_ids, children=children
-        )
-        for funder in funders:
-            fresult = self[funder].count(entity_ids=entity_ids, query=query)
-            result[funder] = fresult
-
-        if isunique:
-            result = result[funders[0]] if result else None
-
-        return result
-
-    def delete(
-        self, funders=None, entity_ids=None, query=None, children=True,
-        cache=False
-    ):
-        """Delete information of funders and returns number of information
-        deleted per funder and entity id.
-
-        :param funders: funder names in charge of deleting information. If None
-            (default), delete information from all funders.
-        :type funders: str or list
-        :param entity_ids: entity id(s) from where delete information. If None
-            (default), delete all information of all entities.
-        :type entity_ids: str or list
-        :param dict query: specific query to apply on the method execution.
-        :param bool children: if True (default) propagate the method on entity
-            children.
-        :return: information of funders by funder. If funders is a string, the
-            result is specific funders information.
-        :rtype: dict
-        """
-
-        result = {}
-
-        funders, isunique = self._funders_unique(funders)
-        # update entity_ids with children if necessary
-        entity_ids = self._add_children(
-            pentity_ids=entity_ids, children=children
-        )
-        for funder in funders:
-            fresult = self[funder].get(entity_ids=entity_ids, query=query)
-            result[funder] = fresult
-
-        if isunique:
-            result = result[funders[0]] if result else None
 
         return result
