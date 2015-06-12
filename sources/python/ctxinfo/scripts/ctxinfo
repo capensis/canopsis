@@ -43,7 +43,8 @@ entity_id \"X\" and all its children:\n\tctxinfo -a delete -f perfdata -e \
 
 parser = ArgumentParser(
     description='Get/Delete/Count context information related to other \
-arguments used such as filter selection or result displaying.', epilog=epilog
+arguments used such as filter selection or result displaying. Funders are \
+information scope such as perfdata or events.', epilog=epilog
 )
 # set operation argument
 parser.add_argument(
@@ -67,7 +68,7 @@ parser.add_argument(
 )
 # set entity ids argument
 parser.add_argument(
-    '-e', '--eids', help='entity ids (works with get/del/count action). \
+    '-e', '--eids', help='entity ids (works with get/delete/count action). \
     Added to the query argument if query is given.',
     nargs='+', default=None, dest='entity_ids', required=False
 )
@@ -81,7 +82,7 @@ format and is added to the eids argument if eids is given.', default=None,
 parser.add_argument(
     '-w', '--withoutchildren',
     help='do not propagate action to children entities (false by default).\
-    (works with get/del/count actions).',
+    (works with get/delete/count actions).',
     default=True, dest='children', required=False, action='store_false'
 )
 # set pretty printer output
