@@ -34,13 +34,16 @@ class SNMPFunder(CTXInfoFunder):
 
         self.manager = SnmpManager()
 
-    def _do(self, cmd, entity_ids):
+    def _do(self, cmd, entity_ids, *args, **kwargs):
 
         result = []
 
-        for entity_id in entity_ids:
-            cmdresult = cmd(oids=entity_id)
-            result.append(cmdresult)
+        if entity_ids is None:
+            result = list(cmd(*args, **kwargs))
+        else:
+            for entity_id in entity_ids:
+                cmdresult = cmd(oids=entity_id, *args, **kwargs)
+                result.append(cmdresult)
 
         return result
 

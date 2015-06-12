@@ -107,6 +107,8 @@ class Context(MiddlewareRegistry):
             else:
                 break
 
+        result[Context.NAME] = entity[Context.NAME]
+
         return result
 
     def get_children(self, entity):
@@ -125,9 +127,9 @@ class Context(MiddlewareRegistry):
         del query[Context.TYPE]
 
         # iterate on context information without the type
-        for index, ctx in enumerate(self.context[1:]):
+        for ctx in self.context[1:]:
             if ctx not in entity:
-                query[ctx] = entity[Context.NAME]
+                query[ctx] = query.pop(Context.NAME)
                 break
 
         # execute query in order to get children

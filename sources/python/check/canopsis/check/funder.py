@@ -34,27 +34,40 @@ class CheckFunder(CTXInfoFunder):
 
         self.manager = CheckManager()
 
-    def _do(self, cmd, entity_ids):
+    def _get_documents(self, entity_ids, query):
 
         result = []
 
-        if entity_ids is None:
-            result += cmd()
-        else:
-            for entity_id in entity_ids:
-                cmdresult = cmd(ids=entity_id)
-                result.append(cmdresult)
+        entity_id_field = self._entity_id_field()
+
+        docs = self.manager.state(ids=entity_ids, query=query)
+        for doc in docs:
+            doc[entity_id_field] = doc[CheckManager.ID]
+            result.append(doc)
 
         return result
 
     def _get(self, entity_ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.state, entity_ids=entity_ids)
-
-    def _count(self, entity_ids, query, *args, **kwargs):
-
-        return self._do(cmd=self.manager.del_state, entity_ids=entity_ids)
+        return self._get_documents(entity_ids=entity_ids, query=query)
 
     def _delete(self, entity_ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.del_state, entity_ids=entity_ids)
+        docs = self._get_documents(entity_ids=entity_ids, query=query)
+
+        ids = [doc[CheckManager.ID] for doc in docs]
+
+        self.manager.del_state(ids=ids, query=query)
+
+        return docs
+
+    def entity_ids(self, query=None):
+
+        result = set()
+
+        elts = self.manager.state(query=query)
+
+        for elt in elts:
+            result.add(elt[CheckManager.ID])
+
+        return list(result)

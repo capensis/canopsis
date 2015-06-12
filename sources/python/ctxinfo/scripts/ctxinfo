@@ -25,41 +25,57 @@ from sys import stdout
 
 from pprint import pprint
 
+from json import loads
+
 from canopsis.common.init import basestring
 from canopsis.ctxinfo.manager import CTXInfoManager
 
-# instantiate a new cim manager
-cim = CTXInfoManager()
-
 # build argument parser
-parser = ArgumentParser(description='Get/Delete context information')
+epilog = "\
+How to... (All those examples are cumulative with -o and -p arguments)\n\
+Get all information documents by funder name and entity_id:\n\tctxinfo\nGet \
+number of perfdata values by entity id:\n\tctxinfo -f perfdata -a count\nGet \
+entity ids from events with the specific json filter \
+'{\"connector\": \"nagios\"}':\n\tctxinfo -f events -q '{\"connector\": \"\
+nagios\"}' -a entity_ids\nDelete perfdata information related to the \
+entity_id \"X\" and all its children:\n\tctxinfo -a delete -f perfdata -e \
+\"X\"\nList all available funder names:\n\tctxinfo -a funders."
+
+parser = ArgumentParser(
+    description='Get/Delete/Count context information related to other \
+arguments used such as filter selection or result displaying.', epilog=epilog
+)
 # set operation argument
 parser.add_argument(
-    '-a', '--action', help='type of action. get (default): retrieve \
-        information, del: delete information, count: count number of \
-        information, eids: get entity ids.',
-    default='get', nargs='?', choices=['get', 'del', 'count', 'eids'],
+    '-a', '--action',
+    help='ctxinfo action. get(default)/count: retrieve information/count by \
+funder name and entity id, delete: delete information, entity_ids: get entity \
+ids, list: list funder names.',
+    default='get', type=str,
+    choices=['get', 'delete', 'count', 'entity_ids', 'funders'],
     dest='action', required=False
 )
 # set funders argument
 parser.add_argument(
     '-f', '--funders', help='funder names (default all)', default=None,
-    nargs='*', dest='funders', required=False
+    nargs='+', dest='funders', required=False
 )
 # set output
 parser.add_argument(
-    '-o', '--output', help='output file (default stdout)', nargs='?',
+    '-o', '--output', help='output file (default stdout)',
     dest='output', default=stdout, required=False, type=FileType('w')
 )
 # set entity ids argument
 parser.add_argument(
-    '-e', '--eids', help='entity ids (works with get/del/count action).',
-    nargs='*', default=None, dest='entity_ids', required=False
+    '-e', '--eids', help='entity ids (works with get/del/count action). \
+    Added to the query argument if query is given.',
+    nargs='+', default=None, dest='entity_ids', required=False
 )
 # set query argument
 parser.add_argument(
-    '-q', '--query', help='query argument', nargs='?', default=None, type=dict,
-    dest='query', required=False
+    '-q', '--query', help='query argument. Must respect the json object \
+format and is added to the eids argument if eids is given.', default=None,
+    type=loads, dest='query', required=False
 )
 # set method propagation
 parser.add_argument(
@@ -83,13 +99,14 @@ parser.add_argument(
 # parse arguments
 args = parser.parse_args()
 
+# instantiate a new cim manager
+cim = CTXInfoManager()
+
 # choose the right cim operation
-operation = cim.get if args.action == 'get' else cim.delete
+action = getattr(cim, args.action)
 
 # build kwargs
-kwargs = {
-    'funders': args.funders, 'query': args.query
-}
+kwargs = {}
 
 
 def apply_args(actions, nargs):
@@ -111,18 +128,20 @@ def apply_args(actions, nargs):
         for narg in nargs:  # apply nargs on kwargs
             kwargs[narg] = getattr(args, narg)
 
+# add funders and query
+apply_args(['get', 'delete', 'count', 'entity_ids'], ['funders', 'query'])
 
 # add force
-apply_args('del', 'force')
+apply_args('delete', 'force')
 
-# add eids
-apply_args(['get', 'del', 'count'], 'entity_ids')
+# add eids and children
+apply_args(['get', 'delete', 'count'], ['entity_ids', 'children'])
 
-# apply children
-apply_args(['get', 'del', 'count'], 'children')
-
-# execute the operation with arguments
-result = cim.get(**kwargs)
+# execute the action with arguments
+result = action if args.action == 'funders' else action(**kwargs)
 
 # output the result
-args.output.write(pprint(result) if args.pprint else str(result))
+if args.pprint:
+    pprint(result, args.output)
+else:
+    args.output.write(str(result))

@@ -20,6 +20,10 @@
 
 from canopsis.linklist.manager import Linklist
 from canopsis.ctxinfo.funder import CTXInfoFunder
+from canopsis.mongo import MongoStorage
+from canopsis.context.manager import Context
+
+from json import loads
 
 
 class LinklistFunder(CTXInfoFunder):
@@ -33,21 +37,72 @@ class LinklistFunder(CTXInfoFunder):
         super(LinklistFunder, self).__init__(*args, **kwargs)
 
         self.manager = Linklist()
+        self.events = MongoStorage(table='events')
+        self.context = Context()
 
-    def _do(self, cmd, entity_ids):
+    def _get_documents(self, entity_ids, query):
+        """Get documents related to input entity_ids and query.
 
+        :param list entity_ids: entity ids. If None, get all documents.
+        :param dict query: additional selection query.
+        :return: list of documents.
+        :rtype: list
+        """
         result = []
-
-        for entity_id in entity_ids:
-            cmdresult = cmd(ids=entity_id)
-            result.append(cmdresult)
+        # get entity id field name
+        entity_id_field = self._entity_id_field()
+        # get a set of entity ids for execution speed reasons
+        if entity_ids is not None:
+            entity_ids = set(entity_ids)
+        # get documents
+        docs = self.manager.find(_filter=query)
+        for doc in docs:
+            try:
+                mfilter = loads(doc['mfilter'])
+            except Exception:
+                pass
+            else:  # get entities from events
+                events = self.events.find_elements(query=mfilter)
+                for event in events:
+                    entity = self.context.get_entity(event)
+                    entity_id = self.context.get_entity_id(entity)
+                    if entity_ids is None or entity_id in entity_ids:
+                        doc[entity_id_field] = entity_id  # add eid to the doc
+                        result.append(doc)
 
         return result
 
     def _get(self, entity_ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.find, entity_ids=entity_ids)
+        return self._get_documents(entity_ids=entity_ids, query=query)
 
     def _delete(self, entity_ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.remove, entity_ids=entity_ids)
+        result = self._get_documents(entity_ids=entity_ids, query=query)
+
+        ids = [doc['_id'] for doc in result]
+
+        self.manager.remove(ids=ids)
+
+        return result
+
+    def entity_ids(self, query=None):
+
+        result = []
+
+        documents = self.manager.find(_filter=query)
+
+        for document in documents:
+            try:
+                mfilter = loads(document['mfilter'])
+            except Exception:
+                pass
+            else:
+                # get entities from events
+                events = self.events.find_elements(query=mfilter)
+                for event in events:
+                    entity = self.context.get_entity(event)
+                    entity_id = self.context.get_entity_id(entity)
+                    result.append(entity_id)
+
+        return result

@@ -26,7 +26,9 @@ information managers such as the perfdata manager for example.
 
 from copy import deepcopy
 
+from canopsis.storage import Cursor
 from canopsis.context.manager import Context
+from canopsis.mongo import MongoStorage
 from canopsis.middleware.core import Middleware
 from canopsis.ctxinfo.funder import CTXInfoFunder
 
@@ -45,9 +47,7 @@ class OldFunder(CTXInfoFunder):
 
         super(CTXInfoFunder, self).__init__(*args, **kwargs)
 
-        self.storage = Middleware.get_middleware(
-            protocol='storage', table=table
-        )
+        self.storage = MongoStorage(table=table)
         self.context = Context()
 
     def _do(self, command, entity_ids, query, queryname, *args, **kwargs):
@@ -67,10 +67,26 @@ class OldFunder(CTXInfoFunder):
         # get entity id field name
         entity_id_field = self._entity_id_field()
 
+        if entity_ids is None:
+            # get all existing entity ids
+            entity_ids = []
+            events = self.storage.find_elements()
+            for event in events:
+                entity = self.context.get_entity(event)
+                entity_id = self.context.get_entity_id(entity)
+                entity_ids.append(entity_id)
+
         for entity_id in entity_ids:
             # get entity
             entity = self.context.get_entity_by_id(entity_id)
             cleaned_entity = self.context.clean(entity)
+            cleaned_entity['source_type'] = cleaned_entity.pop('type')
+            for ctx in self.context.context[1:]:
+                if ctx in cleaned_entity:
+                    continue
+                else:
+                    cleaned_entity[ctx] = cleaned_entity.pop(Context.NAME)
+                    break
             # update query with entity information
             _query = deepcopy(query)
             _query.setdefault('$and', []).append(cleaned_entity)
@@ -78,9 +94,15 @@ class OldFunder(CTXInfoFunder):
             kwargs[queryname] = _query
             # execute the storage command
             documents = command(*args, **kwargs)
-            # update entity_id in documents
-            for document in documents:
-                document[entity_id_field] = entity_id
+            if isinstance(documents, Cursor):
+                documents = list(documents)
+                # update entity_id in documents
+                for document in documents:
+                    document[entity_id_field] = entity_id
+            else:
+                documents = [
+                    {entity_id_field: entity_id, 'result': documents}
+                ]
             # add all documents into the result
             result += documents
 
@@ -96,12 +118,11 @@ class OldFunder(CTXInfoFunder):
 
     def _count(self, entity_ids, query, *args, **kwargs):
 
-        result = []
-
-        for entity_id in entity_ids:
-            self.perfdata.count(metric_id=entity_id)
-
-        return result
+        return self._do(
+            command=self.storage.count_elements,
+            entity_ids=entity_ids, query=query, queryname='query',
+            *args, **kwargs
+        )
 
     def _delete(self, entity_ids, query, *args, **kwargs):
 
@@ -111,7 +132,7 @@ class OldFunder(CTXInfoFunder):
             *args, **kwargs
         )
 
-    def get_entity_ids(self, query=None, *args, **kwargs):
+    def entity_ids(self, query=None, *args, **kwargs):
 
         result = []
 

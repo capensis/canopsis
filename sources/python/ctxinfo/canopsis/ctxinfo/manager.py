@@ -54,6 +54,16 @@ class CTXInfoManager(MiddlewareRegistry):
 
         self.context = Context()
 
+    @property
+    def funders(self):
+        """Get list of available funders.
+
+        :return: list of available funders.
+        :rtype: list
+        """
+
+        return self.configurables.keys()
+
     def get(self, funders=None, entity_ids=None, query=None, children=True):
         """Get information of funders.
 
@@ -172,18 +182,25 @@ class CTXInfoManager(MiddlewareRegistry):
 
         # update kwargs entity_ids if necessary
         if 'entity_ids' in kwargs:
+            # get entity_ids and children from kwargs
+            entity_ids = kwargs['entity_ids']
+            children = kwargs.pop('children')  # remove children from kwargs
             kwargs['entity_ids'] = self._add_children(
-                pentity_ids=kwargs['entity_ids'], children=kwargs['children']
+                pentity_ids=entity_ids, children=children
             )
-            # remove children from kwargs
-            kwargs.pop('children')
-
-        # clean kwargs
-        kwargs.pop('funders')
 
         for funder in funders:
-            fresult = getattr(self[funder], cmd)(**kwargs)
-            result[funder] = fresult
+            funder_cmd = getattr(self[funder], cmd)
+            try:
+                fresult = funder_cmd(**kwargs)
+            except Exception as e:
+                self.logger.error(
+                    'Error ({0}) on Funder: {1} with kwargs {2}'.format(
+                        e, funder, kwargs
+                    )
+                )
+            else:
+                result[funder] = fresult
 
         if unique:
             result = result[funders[0]] if result else None
@@ -235,7 +252,7 @@ class CTXInfoManager(MiddlewareRegistry):
             result = pentity_ids[:]  # set result with a copy of pentity ids
             for pentity_id in pentity_ids:
                 # get children entity
-                entity = self.context.get_entity(pentity_id)
+                entity = self.context.get_entity_by_id(pentity_id)
                 children = self.context.get_children(entity)
                 children_ids = [
                     self.context.get_entity_id(child) for child in children

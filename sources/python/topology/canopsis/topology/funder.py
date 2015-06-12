@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.topology.elements import TopoVertice
+from canopsis.topology.elements import TopoVertice, Vertice
 from canopsis.topology.manager import TopologyManager
 from canopsis.ctxinfo.funder import CTXInfoFunder
 
@@ -35,26 +35,50 @@ class TopologyFunder(CTXInfoFunder):
 
         self.manager = TopologyManager()
 
-    def _do(self, cmd, entity_ids):
+    def _get_documents(self, entity_ids, query, *args, **kwargs):
 
         result = []
 
-        for entity_id in entity_ids:
-            cmdresult = cmd(
-                query={
-                    'info.{0}'.format(TopoVertice.ENTITY): entity_id
-                }
-            )
-            result.append(cmdresult)
+        entity_id_field = self._entity_id_field()
+
+        ENTITY = TopoVertice.ENTITY
+        INFO = Vertice.INFO
+
+        entity = (
+            {'$exists': True} if entity_ids is None else {'$in': entity_ids}
+        )
+        info = {ENTITY: entity}
+
+        docs = self.manager.get_elts(
+            info=info, serialize=False, query=query
+        )
+
+        for doc in docs:
+            doc[entity_id_field] = doc[INFO][ENTITY]
+            result.append(doc)
 
         return result
 
     def _get(self, entity_ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.get_elts, entity_ids=entity_ids)
+        return self._get_documents(entity_ids=entity_ids, query=query)
 
     def _delete(self, entity_ids, query, *args, **kwargs):
 
-        return self._do(
-            cmd=self.manager.del_elts, entity_ids=entity_ids
-        )
+        result = self._get_documents(entity_ids=entity_ids, query=query)
+
+        ids = [doc['_id'] for doc in result]
+        self.manager.del_elts(ids=ids)
+
+        return result
+
+    def entity_ids(self, query=None):
+
+        result = set()
+
+        elts = self.manager.get_elts(query=query)
+
+        for elt in elts:
+            result.add(elt.entity)
+
+        return result

@@ -34,19 +34,35 @@ class PerfDataFunder(CTXInfoFunder):
 
         self.manager = PerfData()
 
-    def _do(self, cmd, entity_ids):
+    def _do(self, cmd, entity_ids, *args, **kwargs):
 
         result = []
 
+        if entity_ids is None:
+            metrics = self.manager.context.find(_type='metric')
+            entity_ids = [metric['_id'] for metric in metrics]
+
+        entity_id_field = self._entity_id_field()
+
         for entity_id in entity_ids:
-            cmdresult = cmd(metric_id=entity_id)
-            result.append(cmdresult)
+            cmdresult = cmd(metric_id=entity_id, **kwargs)
+            if isinstance(cmdresult, list):
+                result += [
+                    {entity_id_field: entity_id, 'point': point}
+                    for point in cmdresult
+                ]
+            else:
+                result.append(
+                    {entity_id_field: entity_id, 'result': cmdresult}
+                )
 
         return result
 
     def _get(self, entity_ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.get, entity_ids=entity_ids)
+        return self._do(
+            cmd=self.manager.get, entity_ids=entity_ids, with_meta=False
+        )
 
     def _count(self, entity_ids, query, *args, **kwargs):
 
@@ -55,3 +71,9 @@ class PerfDataFunder(CTXInfoFunder):
     def _delete(self, entity_ids, query, *args, **kwargs):
 
         return self._do(cmd=self.manager.remove, entity_ids=entity_ids)
+
+    def entity_ids(self, query=None):
+
+        result = self.manager.get_metrics(query=query)
+
+        return result

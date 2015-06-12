@@ -34,22 +34,39 @@ class VEventFunder(CTXInfoFunder):
 
         self.manager = VEventManager()
 
-    def _do(self, cmd, entity_ids):
+    def _get_docs(self, entity_ids, query, *args, **kwargs):
 
         result = []
 
-        for entity_id in entity_ids:
-            cmdresult = cmd(sources=entity_id)
-            result.append(cmdresult)
+        docs = self.manager.values(sources=entity_ids, query=query)
+
+        entity_id_field = self._entity_id_field()
+
+        if entity_ids is not None:
+            entity_ids = set(entity_ids)
+
+        for doc in docs:
+            entity_id = doc[VEventManager.SOURCE]
+            if entity_ids is None or entity_id in entity_ids:
+                doc[entity_id_field] = entity_id
+                result.append(doc)
 
         return result
 
     def _get(self, entity_ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.values, entity_ids=entity_ids)
+        return self._get_docs(
+            entity_ids=entity_ids, query=query, *args, **kwargs
+        )
 
     def _delete(self, entity_ids, query, *args, **kwargs):
 
-        return self._do(
-            cmd=self.manager.remove_by_source, entity_ids=entity_ids
-        )
+        result = self._get_docs(entity_ids=entity_ids, query=query)
+
+        self.manager.remove_by_source(sources=entity_ids, query=query)
+
+        return result
+
+    def entity_ids(self, query=None):
+
+        return self.manager.whois(query=query)

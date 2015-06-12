@@ -86,9 +86,32 @@ class CTXInfoFunder(Middleware):
 
     def _count(self, *args, **kwargs):
         """Protected count method implementation.
+
+        By default execute the _get method and generate documents containing
+        both self.entity_id_field() and count keys.
         """
 
-        raise NotImplementedError()
+        documents = self._get(*args, **kwargs)
+
+        if isinstance(documents, dict):
+            documents = [documents]
+
+        counts = {}
+
+        entity_id_field = self._entity_id_field()
+
+        for document in documents:
+            entity_id = document[entity_id_field]
+            if entity_id in counts:
+                counts[entity_id] += 1
+            else:
+                counts[entity_id] = 1
+
+        result = [
+            {entity_id: count, 'count': counts[count]} for count in counts
+        ]
+
+        return result
 
     def delete(
         self, entity_ids=None, query=None, cache=False, force=False,
@@ -220,4 +243,3 @@ class CTXInfoFunder(Middleware):
             result = iter(result).next() if result else None
 
         return result
-

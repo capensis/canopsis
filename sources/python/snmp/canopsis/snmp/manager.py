@@ -43,8 +43,12 @@ class SnmpManager(MiddlewareRegistry):
         self[SnmpManager.SNMP_STORAGE].put_element(
             _id=oid, element=rule)
 
-    def get(self, oids=None):
-        return self[SnmpManager.SNMP_STORAGE].get_elements(ids=oids)
+    def get(self, oids=None, query=None):
+        return self[SnmpManager.SNMP_STORAGE].get_elements(
+            ids=oids, query=query
+        )
 
-    def remove(self, oids=None):
-        self[SnmpManager.SNMP_STORAGE].remove_elements(ids=oids)
+    def remove(self, oids=None, query=None):
+        self[SnmpManager.SNMP_STORAGE].remove_elements(
+            ids=oids, _filter=query
+        )
