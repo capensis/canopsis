@@ -87,7 +87,7 @@ class PerfData(MiddlewareRegistry):
         documents = self[PerfData.PERFDATA_STORAGE].find_elements(query=query)
 
         for document in documents:
-            result.add(document[PerfData.META_ID])
+            result.add(document['i'])
 
         return list(result)
 
