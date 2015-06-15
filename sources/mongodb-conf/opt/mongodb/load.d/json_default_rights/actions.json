@@ -168,6 +168,13 @@
         "desc": "Declare ticket number"
     },
     {
+        "_id" : "tabs_showeditionmenu",
+        "loader_id" : "tabs_showeditionmenu",
+        "crecord_name": "tabs_showeditionmenu",
+        "crecord_type" : "action",
+        "desc": "Shows the edition menu on tabs"
+    },
+    {
         "_id" : "models_userview",
         "loader_id" : "models_userview",
         "crecord_name": "models_userview",
