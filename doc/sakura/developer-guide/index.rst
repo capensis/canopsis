@@ -6,7 +6,7 @@ Developer guide
 This document targets developers who wants to develop for Canopsis.
 It describes our conventions, specifications and guides. 
 
-To access the API documentation, take a look at **[insert link here]**.
+To access the API documentation, take a look at :ref:`dev-api`.
 
 .. toctree::
    :maxdepth: 1

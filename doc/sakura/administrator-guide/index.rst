@@ -12,6 +12,5 @@ It targets an audience with basic *sys-admin* skills.
   
    best-practices/index
    setup/index
-   accounts-management/index
-   daily-management/index
+   management/index
    troubleshooting/index

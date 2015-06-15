@@ -6,10 +6,34 @@ RELEASE="0"
 DESCRIPTION=""
 REQUIRES="canohome"
 
-function pre_install() { true; }
-function post_install() { true; }
-function pre_remove() { true; }
-function post_remove() { true; }
-function pre_update() { true; }
-function post_update() { true; }
-function purge() { true; }
+function pre_install() {
+    launch_cmd 1 "service mongodb start"
+    launch_cmd 1 "service rabbitmq-server start"
+}
+
+function post_install() {
+    launch_cmd 1 "service rabbitmq-server stop"
+    launch_cmd 1 "service mongodb stop"
+}
+
+function pre_remove() {
+    true
+}
+
+function post_remove() {
+    true
+}
+
+function pre_update() {
+    launch_cmd 1 "service mongodb start"
+    launch_cmd 1 "service rabbitmq-server start"
+}
+
+function post_update() {
+    launch_cmd 1 "service rabbitmq-server stop"
+    launch_cmd 1 "service mongodb stop"
+}
+
+function purge() {
+    true
+}
