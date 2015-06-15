@@ -1,15 +1,17 @@
-Setup
-=====
+.. _admin-setup:
+
+Canopsis Setup
+==============
+
+This document describe how to configure Canopsis and related tools.
 
 .. toctree::
    :maxdepth: 2
 
-   install-from-packages
-   install-from-sources
-   canopsis-on-boot
+   install
+   on-boot
    firewall-rules
    filldb
    reverse-proxy-with-apache2
    reverse-proxy-with-nginx
-   upgrade-from-packages
    uninstall

@@ -102,4 +102,6 @@ class engine(Engine):
         default_status = 0 if not event["state"] else 1
         event["status"] = event.get("status", default_status)
 
+        event['output'] = event.get('output', '')
+
         return event

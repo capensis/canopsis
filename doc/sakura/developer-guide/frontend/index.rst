@@ -1,22 +1,26 @@
+.. _dev-frontend:
+
 Frontend
-********
+========
+
+This document contains several guides about specific parts of the web interface.
+Its goal is to help the newbie Canopsis developer to dive into the Canopsis webcore.
+
+Here is a presentation of how things are done in webcore:
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
+
+   architecture
+   managing-dependencies
+   translation
+
+Here is some guides about specific features:
 
 .. toctree::
    :maxdepth: 2
    :titlesonly:
 
-   architecture
-   REST/index
-   plugins/index
    components/index
-   editors
    widgets/index
-   resources
-   serializers-and-adapters
-   managing-dependencies
-   translation
-   data-management
-   routes-system
-   model-layer
-   user-preferences
-   javascript-and-ember/index

@@ -1,3 +1,5 @@
+.. _dev-spec:
+
 Specifications
 ==============
 
@@ -6,6 +8,6 @@ Specifications
    :titlesonly:
 
    packaging
-   graph
-   topology
-   snmp
+   event
+   status
+   sla

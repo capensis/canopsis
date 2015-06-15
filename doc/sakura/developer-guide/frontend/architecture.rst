@@ -1,6 +1,7 @@
-Architecture
-************
+.. _dev-frontend-architecture:
 
+Architecture
+============
 
 1. Presentation
 ---------------
@@ -21,9 +22,9 @@ When the *index.html* file is queried by a client to the server, index.html load
 
 Canopsis UI is made of many dependencies that together render the User Interface once loaded. These dependencies are made of:
 
- - `editors <#>`_
+ - `editors <components/editors.html>`_
  - `factories <#>`_
- - `loaders </developer-guide/uiv2/architecture.html>`_
+ - `loaders <#>`_
  - `renderers <#>`_
  - `schemas <#>`_
  - `templates <#>`_

@@ -1,5 +1,12 @@
-﻿Partition table
+﻿.. _admin-practices-partition:
+
+Partition table
 ===============
+
+Using a separated partition for ``/opt`` is recommanded.
+It must have at least **20 GB** free in order to let MongoDB start.
+
+This is the commonly used partition table:
 
 -  ``/boot`` 500MB Ext3
 -  ``SWAP`` 4GB

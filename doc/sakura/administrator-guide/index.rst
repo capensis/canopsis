@@ -1,12 +1,16 @@
+.. _admin:
+
 Administrator guide
 ===================
 
-.. toctree::
-   :maxdepth: 3
-   :titlesonly:
+This document describe how Canopsis is administrated.
+It targets an audience with basic *sys-admin* skills.
 
-   setup/index
-   administration/index
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
+  
    best-practices/index
+   setup/index
+   management/index
    troubleshooting/index
-   accounts-management/index

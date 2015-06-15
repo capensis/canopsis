@@ -1,106 +1,241 @@
-.. include:: includes/links.rst
-
-.. _glossary:
-
 Glossary
 ========
 
-Here are the terminology and the different concepts used in Canopsis |resource| .
+In this glossary, you will find a short definition of all concepts in *Canopsis*
+with a link to the complete documentation.
 
-.. _component:
-
-Component
----------
-
-A component is a (virtual) machine which contains a set of .
-
-An example of component is a server.
-
-The association with a system machine is realized with a name. If two components have the same name, they have to get different |connector| names in order to be differentiated by Canopsis.
-
-.. _resource:
-
-Resource
---------
-
-A resource is contained in a |component| and is identified by a unique name in the scope of one component.
-
-An example of resource is a service.
-
-.. _connector:
+Backend
+~~~~~~~
 
 Connector
 ---------
 
-A connector is the mean of Canopsis to access to a |component| .
+Daemon fetching data from a source (local system performance data, service, ...)
+and publishing it to *Canopsis* via the *AMQP Bus* or the *WSGI API*.
 
-.. _metric:
+.. NOTE::
 
-Metric
-------
+   TODO: Add link
 
-A metric is related measure that facilitates the quantification of some system characteristic.
+AMQP Bus
+--------
 
-For example, a service monitored by a supervisor can publish an event with a metric about its availability in time duration.
+Messaging system based on exchanges and queues, used by *Canopsis* to process
+events asynchronously.
 
-A metric is identified with a unique name in the scope of the triplet (component, resource, connector). Therefore, an event contains at least one metric.
+.. NOTE::
 
-A metric contains at least a value, and optionally an unit (meter, time, etc.), maximal/minimal values,
-a type (GAUGE, COUNTER, etc.) and warning/critical and thresholds.
-
-Go to |metricsPage| for more details.
-
-.. _publisher:
-
-Publisher
----------
-
-A publisher is a |supervisor| which feeds Canopsis with events through |queues|.
-
-nagios, icinga, graylog ..
-
-.. _hypervisor:
-
-Hypervisor
-----------
-
-An hypervisor is at the top of supervisors in order to supervise and to analyze a large, distributed and heterogeneous system. Its goal is to supervise supervisors and to provide better data analyses about monitored systems with historical and near real-time concerns.
-
-.. _supervisor:
-
-Supervisor
-----------
-
-A supervisor is a system which uses pollers in order to retrieve information from a system infrastructure such as services availability.
-
-.. _engine:
+   TODO: Add link
 
 Engine
 ------
 
-An engine is an event processor.
+Daemon with an associated AMQP queue. This daemon can consume the queue and/or
+publish messages to another queue.
 
-Several |engines| exist in Canopsis, such as the |filter| engine which allows events to be processed by Canopsis engines, or the |consolidation| engine which calculates consolidation to do with input engines.
+For more informations, see:
 
-.. _event:
+ * :ref:`dev-backend-engines`
+ * :ref:`admin-manage-engines`
+ * :ref:`user-engines`
+
+Middleware
+----------
+
+*Canopsis* object which allows two parts of *Canopsis* to communicate (via AMQP,
+HTTP, ...).
+
+.. NOTE::
+
+   TODO: Add link
+
+Storage
+-------
+
+*Canopsis* object used to interact with a database (*MongoDB*, *PostgreSQL*,
+*ElasticSearch*, ...)
+
+For more informations, see:
+
+ * :ref:`dev-backend-storage`
+
+Manager
+-------
+
+Using a storage, allows parts of *Canopsis* to interact with any kind of database
+transparently.
+
+For more informations, see:
+
+ * :ref:`dev-backend-mgr`
+
+Web Service
+-----------
+
+Set of WSGI routes, using one or more manager to provide data to the client.
+
+For more informations, see:
+
+ * :ref:`dev-backend-webserver`
+
+Frontend
+~~~~~~~~
+
+UI Brick
+--------
+
+Set of UI Adapters/Components/Editors/Widgets.
+
+For more informations, see:
+
+ * :ref:`dev-frontend-architecture`
+
+UI Adapter
+----------
+
+Used to interact with the *WSGI API*.
+
+.. NOTE::
+
+   TODO: Add link
+
+UI Component
+------------
+
+Used to display interactive data to the user.
+
+For more informations, see:
+
+ * :ref:`dev-frontend-cmp`
+
+UI Editor
+---------
+
+Using a component, provides a way to edit a model, before persisting it to the
+*WSGI API*.
+
+For more informations, see:
+
+ * :ref:`dev-frontend-cmp-editors`
+
+UI Widget
+---------
+
+Improved component, based on a **MVC** design (unlike the UI components).
+They can be directly added to a view, and can have mixins.
+
+For more informations, see:
+
+ * :ref:`dev-frontend-widgets`
+
+UI Mixin
+--------
+
+Set of business code that can be applied to any widget.
+
+For more informations, see:
+
+ * :ref:`dev-frontend-widgets-mixins`
+
+UI Container
+------------
+
+Component containing widgets, used to dispose them in a specific layout.
+There is only one widget container, which can have different layout mixins.
+
+For more informations, see:
+
+ * :ref:`user-ui-widgets-containers`
+
+UI View
+-------
+
+Editable view which contains by default a single widget container.
+
+For more informations, see:
+
+ * :ref:`user-ui-view`
+
+Miscellaneous
+~~~~~~~~~~~~~
 
 Event
 -----
 
-An event is a data information processed by Canopsis engines. An event can be published by a supervisor or by an engine in the case of engine processing results.
+JSON object containing specific informations for *Canopsis*, must be emitted on
+the *AMQP Bus*.
 
-It is identified by the triplet (component, resource, connector). Therefore only the last event published with this triplet is saved in a database, unlike event processing results (perf data) which are all saved in a database.
+For more informations, see:
 
-.. _queue:
+ * :ref:`dev-spec-event`
+ * :ref:`dev-backend-event`
+ * :ref:`user-events`
 
-Queue
------
+Metric
+------
 
-A queue is an event target which can be processed by synchronous |engines|.
+Measurable information, associated to a component, or a resource. Can be used to
+render in a widget graph, progress-bar, and/or text.
+It is a contextual information referenced by each new inserted value.
 
-.. _perf_data:
+For more informations, see:
 
-Perf data
----------
+ * :ref:`dev-frontend-widgets-perfdata`
+ * :ref:`user-ui-view-perfdata`
 
-Every event consumed by Canopsis is transformed into a perf data which is saved in a database for future processing such as data analysis.
+Context
+-------
+
+Contextual informations about an event, organized in graph. All other stored data
+are referencing the associated context, for example:
+
+ * a perfdata document reference the metric context
+ * a periodic behavior reference the component or resource context
+ * ...
+
+A view is available in order to manipulate the context.
+
+For more informations, see:
+
+ * :ref:`user-ui-view-context`
+ * :ref:`dev-backend-mgr-vevent`
+ * :ref:`dev-backend-mgr-pbehavior`
+
+Selector
+--------
+
+.. NOTE::
+
+   TODO: add short description
+
+For more informations, see:
+
+ * :ref:`user-engines-selector`
+
+SLA
+---
+
+Feature providing availability informations.
+
+For more informations, see:
+
+ * :ref:`dev-spec-sla`
+
+Periodic Behavior
+-----------------
+
+An entity of the context can be configured to have a specific behavior during a
+specified period of time.
+
+For more informations, see:
+
+ * :ref:`dev-backend-mgr-pbehavior`
+
+Downtime
+++++++++
+
+A downtime is configured when we must ignore eventual alerts on an entity.
+
+For more informations, see:
+
+ * :ref:`dev-backend-mgr-pbehavior`

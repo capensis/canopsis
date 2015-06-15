@@ -1,3 +1,5 @@
+.. _dev-backend-mgr-vevent:
+
 vEvent management
 =================
 

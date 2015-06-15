@@ -111,6 +111,9 @@
 		},
 		"author": {
 			"type": "string"
+		},
+		"entity_id": {
+			"type": "string"
 		}
 	}
 }

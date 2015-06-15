@@ -1,18 +1,32 @@
 NAME="canopsis-doc"
 
-function build(){
+function build() {
     true
 }
 
-function update_documentation(){
-	cd $SRC_PATH/../doc/sakura
-	make html
-	echo "Installing doc"
-	rm -rf $PREFIX/var/www/doc
-	cp -rv _build/html $PREFIX/var/www/doc
+function update_documentation() {
+    rm -rf $PREFIX/var/lib/canopsis/doc
+    rm -rf $PREFIX/var/www/doc
+
+    mkdir -p $PREFIX/var/lib/canopsis/doc
+    mkdir -p $PREFIX/var/www/doc
+
+    cd $SRC_PATH/../doc/sakura
+
+    echo "--- Installing documentation"
+
+    cp -r * $PREFIX/var/lib/canopsis/doc
+
+    chown -R $HUSER:$HGROUP $PREFIX/var/lib/canopsis/doc
+    chown -R $HUSER:$HGROUP $PREFIX/var/www/doc
+
+    echo "--- Building documentation"
+
+    launch_cmd 1 "cd $PREFIX/var/lib/canopsis/doc && ./build.sh"
+    launch_cmd 1 "cp -r $PREFIX/var/lib/canopsis/doc/_build/html/* $PREFIX/var/www/doc"
 }
 
-function install(){
+function install() {
     easy_install_pylib MarkupSafe
     easy_install_pylib docutils
     easy_install_pylib Pygments
@@ -21,7 +35,6 @@ function install(){
     update_documentation
 }
 
-function update(){
-	update_documentation
-    true
+function update() {
+    update_documentation
 }

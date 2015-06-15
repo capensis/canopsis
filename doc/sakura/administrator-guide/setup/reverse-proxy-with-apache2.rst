@@ -1,4 +1,6 @@
-﻿Reverse proxy with Apache2
+﻿.. _admin-setup-proxy-apache:
+
+Reverse proxy with Apache2
 ==========================
 
 For use another port for webserver, you can use Apache with

@@ -1,7 +1,7 @@
-.. _event-filter:
+.. _user-engines-filter:
 
-Engine Filter
-==============
+Event Filter
+============
 
 Engines filter can be placed anywhere in the processing chain and there can be several engines filters working in parallel, or one after the other, to speed up the processing of the events.
 
@@ -11,7 +11,7 @@ This set of rules is defined by the user in the web app.
 The user can create a filter and declare one, or several, action(s) to apply to any event matching the said filter.
 
 Actions
-----------
+-------
 
 The following actions are available to the user :
 
@@ -22,7 +22,7 @@ The following actions are available to the user :
 * `remove`
 
 Features
--------------
+--------
 
 The following features are available in the filter engine :
 

@@ -1,3 +1,5 @@
+.. _user-ui-widgets-weather:
+
 How to use Weather
 ==================
 

@@ -1,5 +1,7 @@
+.. _dev-backend-engines-scheduler:
+
 Canopsis Task Scheduling
-************************
+========================
 
 Task scheduling in Canopsis is based on a set of engines :
 
@@ -33,17 +35,29 @@ without caring about the schedule.
 Task Handler
 ------------
 
-A task handler is an engine, which subclasses ``TaskHandler`` (itself a subclass of
-``Engine``).
+A task handler is a function, decorated with ``task_handler`` (returning a
+function that can be registered as a task).
 
-You must implement the method ``handle_task()`` which takes the task as parameter.
-This method returns a tuple composed of the execution state, and the output.
+This function returns a tuple composed of the execution state, and the output.
 
 For example :
 
 .. code-block:: python
 
-   state, output = self.handle_task(job)
+   from canopsis.task import register_task
+   from canopsis.engines.core import task_handler
+
+
+   @register_task
+   @task_handler
+   def task_processing(engine, logger, job, **params):
+       return (0, 'OK')
+
+Here is, basically, what is done by the decorator ``task_handler`` :
+
+.. code-block:: python
+
+   state, output = task_processing(engine, logger, job)
 
    if state == 0:
        print 'OK:', output
@@ -63,7 +77,7 @@ Canopsis about the job's execution :
 .. code-block:: python
 
    start = time.time()
-   state, output = self.handle_task(job)
+   state, output = task_processing(engine, logger, job)
    end = time.time()
 
    event = {
@@ -81,6 +95,6 @@ Canopsis about the job's execution :
    }
 
 Each task handler is associated to a schema, describing the expected content of
-``job``. This schema is identified by ``'task.' + self.etype``.
+``job``. This schema is identified by ``'task.' + self.name``.
 
 If the job doesn't validate the schema, then it won't be executed.

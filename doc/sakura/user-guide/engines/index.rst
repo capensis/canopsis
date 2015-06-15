@@ -1,195 +1,97 @@
-﻿Engines
-=======
+﻿.. _user-engines:
+
+Engines usage
+=============
+
+This document describes what is an engine, and what are the available engines.
+
+For informations about how to configure a specific engine, take a look at:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   consolidation
-   datacleaner
    event-filter
-   event-requalification
-   selector
    linklist
-   snmp
+   selector
+   datacleaner
 
-.. include:: ../../includes/links.rst
 
-Engines information
-===================
+Introduction
+------------
 
-.. |sla| raw:: html
+Events sent by connectors to Canopsis are processed with the help of engines.
 
-   <font color="red">SLA</font>
+An engine has multiple roles:
 
-.. |Topology| raw:: html
+ * consuming an event : in order to process it, and then route it to the next engine(s)
+ * performing a periodic task : called the "beat", this task will be executed at regular interval
+ * consuming a dispatched record : called when records from database are available
 
-   <font color="red">Topology</font>
-
-Canopsis process system events thanks to a set of engines.
+Each engines is defined by a set of procedure, used to perform the above listed
+tasks.
 
 Description
-------------
+-----------
 
-There are two types of engines, asynchronous and synchronous.
+A single engine is associated to one or more AMQP queue :
 
-A synchronous engine belongs to a chain of engines which consume events
-from |queues|.
+ * a queue ``Engine_<engine's name>`` to consume events
+ * a queue ``Dispatcher_<engine's name>`` to consume records
+ * ...
 
-An asynchronous engine is independent from an execution chain of engines
-and process only events stored in a database.
+The beat is executed at regular interval in a parallel thread.
 
-Architecture
-------------
+Engine Listing
+--------------
 
-Here is an architecture view of engines (designed with
-`CACOO <https://cacoo.com/>`__).
-
-|image1|
-
-In this view, two chain of engines and flow of
-|event| ,
-|perf_data| and Canopsis
-configuration data are represented.
-
-The event chain is the entry point for all poller/Canopsis events. Its
-goal is to consume events and transform them into perfdata.
-
-The alert chain manages all Canopsis alerts at the end of event
-processing from the event chain.
-
-Let's see roles for all engines (hyperlinks denote engines which are
-configurable by the user).
-
-Synchronous engines
--------------------
-
-Cleaner
-~~~~~~~
-
-The Cleaner aims to clean events sent to Canopsis.
-
-|event-filter|
-~~~~~~~~~~~~~~~~~~~~~
-
-The filter aims to check if an event has to be destroyed or processed.
-
-|derogation|
-~~~~~~~~~~~~~~~~~~~
-
-The derogation aims to transform event fields from a poller to Canopsis
-fields.
-
-Tag
-~~~
-
-The tag aims to fill the tag fields of events.
-
-Perfstore2
-~~~~~~~~~~
-
-The perfstore2 aims to save perfdata in the random access database.
-
-Event store
-~~~~~~~~~~~
-
-The event store saves consumed events in the persistent database or send
-an alert corresponding to an inconsistent event.
-
-Alerts
-~~~~~~
-
-The alerts cleaner aims to clean alerts.
-
-Alert counter
-~~~~~~~~~~~~~
-
-The alert counter count number of alerts by alert type.
-
-|Topology|
-~~~~~~~~~~~~~~~~~
-
-The topology check rules with input alerts.
-
-|selector|
-~~~~~~~~~~~~~~~~~
-
-The selector calculates a worst state about input alerts.
-
-Asynchronous engines
---------------------
-
-CollectDGW
-~~~~~~~~~~
-
-|sla|
-~~~~~~~~~~~~
-
-Calculate SLA of system services.
-
-|consolidation|
-~~~~~~~~~~~~~~~~~~~~~~
-
-Do consolidation/aggregation on perfdata.
-
-Perfstore2\_rotate
-~~~~~~~~~~~~~~~~~~
-
-Switch perfdata from the random access database to the persistent
-database.
-
-Engines are presented below as they appear in the default configuration. On some architectures it can be relevant to tweak their configuration and duplicate some engines.
-
-Events queue
-------------
-
-+----------------+------------------------------------------------+------+------+
-| Engine name    | Description                                    | Work | Beat |
-+================+================================================+======+======+
-| cleaner        | Clean events to ensure they won't cause errors | YES  | NO   |
-|                | Same engine as the one in Alerts queue         |      |      |
-+----------------+------------------------------------------------+------+------+
-| event_filter   | Event firewall                                 | YES  | YES  |
-+----------------+------------------------------------------------+------+------+
-| derogation     |                                                | YES  | YES  |
-+----------------+------------------------------------------------+------+------+
-| tag            | Add tags to events                             | YES  | YES  |
-+----------------+------------------------------------------------+------+------+
-| perfstore2     | Store events' metrics in redis                 | YES  | NO   |
-+----------------+------------------------------------------------+------+------+
-| eventstore     | Store events in mongo                          | YES  | NO   |
-+----------------+------------------------------------------------+------+------+
-
-
-Alerts queue
-------------
-
-
-+----------------+------------------------------------------------+------+------+
-| Engine name    | Description                                    | Work | Beat |
-+================+================================================+======+======+
-| cleaner        | Clean events to ensure they won't cause errors | YES  | NO   |
-+----------------+------------------------------------------------+------+------+
-| alertcounter   |                                                | YES  | NO   |
-+----------------+------------------------------------------------+------+------+
-| topology       |                                                | YES  | YES  |
-+----------------+------------------------------------------------+------+------+
-| selector       |                                                | YES  | YES  |
-+----------------+------------------------------------------------+------+------+
-
-Others
-------
-
-+-------------------+------------------------------------------------+------+------+
-| Engine name       | Description                                    | Work | Beat |
-+===================+================================================+======+======+
-| collectdgw        |                                                | NO   | NO   |
-+-------------------+------------------------------------------------+------+------+
-| sla               |                                                | NO   | YES  |
-+-------------------+------------------------------------------------+------+------+
-| consolidation     |                                                | NO   | YES  |
-+-------------------+------------------------------------------------+------+------+
-| perfstore2_rotate | Move metrics and perfdatas from redis to mongo | NO   | YES  |
-+-------------------+------------------------------------------------+------+------+
-
-
-.. |image1| image:: ../../_static/images/engine/engines_map.png
++--------------------+----------------+-----------------+------+----------------------------------+
+| Engine's name      | Event Consumer | Record Consumer | Beat | Description                      |
++--------------------+----------------+-----------------+------+----------------------------------+
+| cleaner_events     | YES            | NO              | NO   | Drop invalid events              |
++--------------------+----------------+-----------------+------+----------------------------------+
+| cleaner_alerts     | YES            | NO              | NO   | Drop invalid events              |
++--------------------+----------------+-----------------+------+----------------------------------+
+| event_filter       | YES            | NO              | YES  | Apply filter rules               |
++--------------------+----------------+-----------------+------+----------------------------------+
+| downtime           | YES            | NO              | YES  | Handle downtimes                 |
++--------------------+----------------+-----------------+------+----------------------------------+
+| acknowledgement    | YES            | NO              | YES  | Acknowledge events               |
++--------------------+----------------+-----------------+------+----------------------------------+
+| cancel             | YES            | NO              | NO   | Cancel alarms                    |
++--------------------+----------------+-----------------+------+----------------------------------+
+| ticket             | YES            | NO              | NO   | Ticketing management             |
++--------------------+----------------+-----------------+------+----------------------------------+
+| tag                | YES            | NO              | YES  | Add tags to event                |
++--------------------+----------------+-----------------+------+----------------------------------+
+| perfdata           | YES            | NO              | NO   | Store perfdata from event        |
++--------------------+----------------+-----------------+------+----------------------------------+
+| eventstore         | YES            | NO              | YES  | Store event in history           |
++--------------------+----------------+-----------------+------+----------------------------------+
+| context            | YES            | NO              | YES  | Store contextual data from event |
++--------------------+----------------+-----------------+------+----------------------------------+
+| topology           | YES            | NO              | NO   | Topology refresh and management  |
++--------------------+----------------+-----------------+------+----------------------------------+
+| linklist           | YES            | NO              | YES  | Manage list of URLs for context  |
++--------------------+----------------+-----------------+------+----------------------------------+
+| stats              | NO             | NO              | YES  | Calculate alarm stats            |
++--------------------+----------------+-----------------+------+----------------------------------+
+| selector           | NO             | YES             | NO   | Selector refresh and management  |
++--------------------+----------------+-----------------+------+----------------------------------+
+| collectdgw         | YES            | NO              | NO   | Consume data from collectd       |
++--------------------+----------------+-----------------+------+----------------------------------+
+| consolidation      | NO             | YES             | NO   | Calculate series from metrics    |
++--------------------+----------------+-----------------+------+----------------------------------+
+| crecord_dispatcher | NO             | NO              | YES  | Send new records to engines      |
++--------------------+----------------+-----------------+------+----------------------------------+
+| eventduration      | YES            | NO              | YES  | Calculate time passed in engines |
++--------------------+----------------+-----------------+------+----------------------------------+
+| scheduler          | YES            | NO              | YES  | Send job to task handlers        |
++--------------------+----------------+-----------------+------+----------------------------------+
+| task_mail          | YES            | NO              | NO   | Task handler to send mail        |
++--------------------+----------------+-----------------+------+----------------------------------+
+| task_linklist      | YES            | NO              | NO   | Task handler to list context URL |
++--------------------+----------------+-----------------+------+----------------------------------+
+| task_dataclean     | YES            | NO              | NO   | Task handler to remove old data  |
++--------------------+----------------+-----------------+------+----------------------------------+
+| amqp2tty           | YES            | NO              | NO   | Print events to console          |
++--------------------+----------------+-----------------+------+----------------------------------+

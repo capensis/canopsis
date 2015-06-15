@@ -1,6 +1,9 @@
 [{
 	"_id": "admin",
 	"rights": {
+		"tabs_showeditionmenu" : {
+			"checksum": 1
+		},
 		"actionbutton_canuploadmibfile": {
 			"checksum": 15,
 			"desc": "Upload mib file to canopsis system"
@@ -105,6 +108,9 @@
 },{
 	"_id": "Supervision",
 	"rights": {
+		"tabs_showeditionmenu" : {
+			"checksum": 1
+		},
 		"actionbutton_ack": {
 			"checksum": 15,
 			"desc": ""
@@ -121,6 +127,9 @@
 },{
 	"_id": "Support",
 	"rights": {
+		"tabs_showeditionmenu" : {
+			"checksum": 1
+		},
 		"actionbutton_changestate": {
 			"checksum": 15,
 			"desc": ""
@@ -149,6 +158,9 @@
 },{
 	"_id": "Manager",
 	"rights": {
+		"tabs_showeditionmenu" : {
+			"checksum": 1
+		},
 		"actionbutton_history": {
 			"checksum": 15,
 			"desc": ""
