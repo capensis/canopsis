@@ -71,14 +71,15 @@
               "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}"
             },
             { "name": "history" },
-            { "name": "infobutton" },
             { "name": "sendevent" },
             { "name": "responsivelist" },
             { "name": "eventnavigation" },
             {
               "name": "listlinedetail",
               "template": "{{component-periodicbehaviormanager contextId=entity_id}}"
-            }],
+            },
+            { "name": "infobutton" }
+            ],
           "displayed_columns": [
             "domain",
             "perimeter",
