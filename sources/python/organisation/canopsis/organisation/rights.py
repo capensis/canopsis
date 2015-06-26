@@ -48,6 +48,12 @@ class Rights(MiddlewareRegistry):
                 ids=elem, query={'crecord_type': s_type})
         return get_from_storage_
 
+    def get_users(self, projection={'_id': 1}):
+        return self['user_storage'].get_elements(
+            query={'crecord_type': 'user'},
+            projection=projection
+        )
+
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(Rights, self)._configure(

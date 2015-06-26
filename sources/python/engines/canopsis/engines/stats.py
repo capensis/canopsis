@@ -18,15 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.event.manager import Event
+from canopsis.organisation.rights import Rights
 from canopsis.engines.core import Engine, publish
-from canopsis.old.storage import get_storage
-from canopsis.old.account import Account
 from canopsis.event import forger
 
 
 class engine(Engine):
 
     etype = 'stats'
+
+    event_manager = Event()
+    right_manager = Rights()
 
     """
     This engine's goal is to compute canopsis internal statistics.
@@ -44,13 +47,10 @@ class engine(Engine):
             2: 'major',
             3: 'critical'
         }
-        self.storage = get_storage(
-            namespace='events',
-            account=Account(
-                user="root",
-                group="root"
-            )
-        )
+
+    def beat(self):
+        users = right_manager.get_users()
+        self.userlist = [user['_id'] for user in list(users)]
 
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug('Entered in stats consume dispatcher')
@@ -63,26 +63,28 @@ class engine(Engine):
 
     def compute_states(self):
 
-        # Event count computation by state
-        for state in [0, 1, 2, 3]:
-            # There is an index on state field in events collection,
-            # that would keep the query efficient
-            count = self.storage.get_backend().find(
-                {'state': state}
-            ).count()
+        # Allow individual stat computation management from ui.
+        stats_to_compute = [
+            'event_count_by_source',
+            'event_count_by_source_and_state',
+            'event_count_by_state',
+            'ack_alerts_by_user'
+        ]
 
-            state_str = self.states_str[state]
+        for stat in stats_to_compute:
+            method = getattr(self, 'stats_to_compute')
+            method()
 
-            self.perf_data_array.append({
-                'metric': 'cps_states_{}'.format(state_str),
-                'value': count
-            })
+        self.logger.debug('perf_data_array {}'.format(self.perf_data_array))
 
-        for source_type in ['resource', 'component']:
+    def event_count_by_source(self):
+
+        for source_type in ('resource', 'component'):
             # Event count source type
-            count = self.storage.get_backend().find(
-                {'source_type': source_type}
-            ).count()
+            cursor, count = self.event_manager.find(
+                query={'source_type': source_type},
+                with_count=True
+            )
 
             self.perf_data_array.append({
                 'metric': 'cps_count_{}'.format(
@@ -91,14 +93,22 @@ class engine(Engine):
                 'value': count
             })
 
+    def event_count_by_source_and_state(self):
+
+        for source_type in ('resource', 'component'):
+
             # Event count by source type and state
-            for state in [0, 1, 2, 3]:
+            for state in (0, 1, 2, 3):
 
                 # There is an index on state and source_type field in
                 # events collection, that would keep the query efficient
-                count = self.storage.get_backend().find(
-                    {'source_type': source_type, 'state': state}
-                ).count()
+                cursor, count = self.event_manager.find(
+                    query={
+                        'source_type': source_type,
+                        'state': state
+                    }
+                    with_count=True
+                )
 
                 state_str = self.states_str[state]
 
@@ -110,7 +120,41 @@ class engine(Engine):
                     'value': count
                 })
 
-        self.logger.debug('perf_data_array {}'.format(self.perf_data_array))
+    def event_count_by_state(self):
+
+        # Event count computation by state
+        for state in (0, 1, 2, 3):
+            # There is an index on state field in events collection,
+            # that would keep the query efficient
+            cursor, count = self.event_manager.find(
+                query={'state': state},
+                with_count=True
+            )
+
+            state_str = self.states_str[state]
+
+            self.perf_data_array.append({
+                'metric': 'cps_states_{}'.format(state_str),
+                'value': count
+            })
+
+    def ack_alerts_by_user(self):
+
+        # may be improved to get this stats by domain/perimeter
+        for user in self.userlist:
+            cursor, count = self.event_manager.find(
+                query={
+                    'ack.author': user,
+                    'ack.isAck': True
+                },
+                with_count=True
+            )
+
+            self.perf_data_array.append({
+                'type': 'COUNTER',
+                'metric': 'cps_states_ack_alerts_by_user_{}'.format(user)
+                'value': count
+            })
 
     def publish_states(self):
 
