@@ -54,31 +54,71 @@ class engine(Engine):
     def pre_run(self):
 
         self.beat()
-
-        #TODO remove
         self.consume_dispatcher({})
 
-    def beat(self):
-        users = self.right_manager.get_users()
-        self.userlist = [user['_id'] for user in list(users)]
-
     def consume_dispatcher(self, event, *args, **kargs):
+
+        """
+        Entry point for stats computation. Triggered by the dispatcher
+        engine for distributed processing puroses.
+        Following methods will generate metrics that are finally embeded
+        in a metric event.
+        """
+
         self.logger.debug('Entered in stats consume dispatcher')
 
         self.perf_data_array = []
+
+        # Some queries may be used twice, so cache them for performance
+        self.prepare_queries()
 
         self.compute_states()
 
         self.publish_states()
 
+    def prepare_queries(self):
+
+        """
+        Stats are computed from database information. This methods
+        let perform cached results queries that are available in
+        all stats methods. Cached result should not be altered while 
+        processing stats computation
+        """
+
+        users = self.right_manager.get_users()
+        self.userlist = [user['_id'] for user in list(users)]
+
+        # Query for current ack events
+        cursor = self.event_manager.find(
+            query={
+                'ack.isAck': True
+            },
+            projection={
+                'ack.author': 1,
+                'ack.timestamp': 1,
+                'last_state_change': 1,
+                'domain': 1,
+                'perimeter': 1
+            }
+        )
+        self.ack_events = list(cursor)
+
     def compute_states(self):
+
+        """
+        Entry point for dynamic stats method triggering
+        Dynamic triggering allow greated control on which
+        stats are computed and can be activated/deactivated
+        from frontend.
+        """
 
         # Allow individual stat computation management from ui.
         stats_to_compute = [
             'event_count_by_source',
             'event_count_by_source_and_state',
             'event_count_by_state',
-            'ack_alerts_by_user'
+            'ack_alerts_by_user',
+            'delta_alert_ack_by_user'
         ]
 
         for stat in stats_to_compute:
@@ -86,6 +126,88 @@ class engine(Engine):
             method()
 
         self.logger.debug('perf_data_array {}'.format(self.perf_data_array))
+
+    def delta_alert_ack_by_user(self):
+
+        """
+        Stats method
+        computes time sum between an alert and a user ack.
+        metric is generated for each user.
+        """
+
+        metrics = {}
+        for event in self.ack_events:
+
+            ack = event.get('ack', {})
+            last_state_change = event['last_state_change']
+            ack_timestamp = ack.get('timestamp')
+            user = ack.get('author')
+
+            if last_state_change and ack_timestamp and user:
+                # Start delta time aggregation by user
+                delta = ack_timestamp - last_state_change
+                if user not in metrics:
+                    metrics[user] = 0
+                metrics[user] += delta
+
+            else:
+                self.logger.warning(
+                    'Stat delta_alert_ack_by_user error {} {} {}'.format(
+                        last_state_change,
+                        ack_timestamp,
+                        user
+                    )
+                )
+
+        for user in metrics:
+            self.perf_data_array.append({
+                'type': 'COUNTER',
+                'metric': 'cps_delta_alert_ack_by_user_{}'.format(user),
+                'value': metrics[user]
+            })
+        self.perf_data_array.append({
+            'type': 'COUNTER',
+            'metric': 'cps_delta_alert_ack_all',
+            'value': sum(metrics.values())
+        })
+
+    def ack_alerts_by_user(self):
+
+        """
+        Stat method
+        Counts how many alerts are ack by each user. It also
+        depends on event domain and perimeter
+        """
+
+        metrics = {}
+        for event in self.ack_events:
+            ack = event.get('ack', {})
+            user = ack.get('author')
+            domain = event['domain']
+            perimeter = event['perimeter']
+
+            metric_name = 'cps_ack_alerts_by_user_{}_on_{}_{}'.format(
+                user,
+                domain,
+                perimeter
+            )
+
+            if metric_name not in metrics:
+                metrics[metric_name] = 0
+
+            metrics[metric_name] += 1
+
+        for metric_name in metrics:
+            self.perf_data_array.append({
+                'type': 'COUNTER',
+                'metric': metric_name,
+                'value': metrics[metric_name]
+            })
+        self.perf_data_array.append({
+            'type': 'COUNTER',
+            'metric': 'cps_ack_alerts_all',
+            'value': sum(metrics.values())
+        })
 
     def event_count_by_source(self):
 
@@ -145,24 +267,6 @@ class engine(Engine):
 
             self.perf_data_array.append({
                 'metric': 'cps_states_{}'.format(state_str),
-                'value': count
-            })
-
-    def ack_alerts_by_user(self):
-
-        # may be improved to get this stats by domain/perimeter
-        for user in self.userlist:
-            cursor, count = self.event_manager.find(
-                query={
-                    'ack.author': user,
-                    'ack.isAck': True
-                },
-                with_count=True
-            )
-
-            self.perf_data_array.append({
-                'type': 'COUNTER',
-                'metric': 'cps_states_ack_alerts_by_user_{}'.format(user),
                 'value': count
             })
 
