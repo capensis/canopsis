@@ -130,8 +130,7 @@ class engine(Engine):
     def delta_alert_ack_by_user(self):
 
         """
-        Stats method
-        computes time sum between an alert and a user ack.
+        Computes time sum between an alert and a user ack.
         metric is generated for each user.
         """
 
@@ -174,7 +173,6 @@ class engine(Engine):
     def ack_alerts_by_user(self):
 
         """
-        Stat method
         Counts how many alerts are ack by each user. It also
         depends on event domain and perimeter
         """
@@ -211,6 +209,10 @@ class engine(Engine):
 
     def event_count_by_source(self):
 
+        """
+        Counts and produces metrics for events depending on source type
+        """
+
         for source_type in ('resource', 'component'):
             # Event count source type
             cursor, count = self.event_manager.find(
@@ -226,6 +228,11 @@ class engine(Engine):
             })
 
     def event_count_by_source_and_state(self):
+
+        """
+        Counts and produces metrics for events depending on source type,
+        by state
+        """
 
         for source_type in ('resource', 'component'):
 
@@ -253,6 +260,10 @@ class engine(Engine):
                 })
 
     def event_count_by_state(self):
+
+        """
+        Counts and produces metrics for events depending on state
+        """
 
         # Event count computation by state
         for state in (0, 1, 2, 3):
