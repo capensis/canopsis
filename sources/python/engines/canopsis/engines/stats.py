@@ -23,6 +23,9 @@ from canopsis.organisation.rights import Rights
 from canopsis.engines.core import Engine, publish
 from canopsis.event import forger
 
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
+
 
 class engine(Engine):
 
@@ -48,8 +51,15 @@ class engine(Engine):
             3: 'critical'
         }
 
+    def pre_run(self):
+
+        self.beat()
+
+        #TODO remove
+        self.consume_dispatcher({})
+
     def beat(self):
-        users = right_manager.get_users()
+        users = self.right_manager.get_users()
         self.userlist = [user['_id'] for user in list(users)]
 
     def consume_dispatcher(self, event, *args, **kargs):
@@ -72,7 +82,7 @@ class engine(Engine):
         ]
 
         for stat in stats_to_compute:
-            method = getattr(self, 'stats_to_compute')
+            method = getattr(self, stat)
             method()
 
         self.logger.debug('perf_data_array {}'.format(self.perf_data_array))
@@ -106,7 +116,7 @@ class engine(Engine):
                     query={
                         'source_type': source_type,
                         'state': state
-                    }
+                    },
                     with_count=True
                 )
 
@@ -152,7 +162,7 @@ class engine(Engine):
 
             self.perf_data_array.append({
                 'type': 'COUNTER',
-                'metric': 'cps_states_ack_alerts_by_user_{}'.format(user)
+                'metric': 'cps_states_ack_alerts_by_user_{}'.format(user),
                 'value': count
             })
 
@@ -168,6 +178,6 @@ class engine(Engine):
             perf_data_array=self.perf_data_array
         )
 
-        self.logger.debug('Publishing {}'.format(stats_event))
+        self.logger.debug('Publishing {}'.format(pp.pformat(stats_event)))
 
         publish(publisher=self.amqp, event=stats_event)
