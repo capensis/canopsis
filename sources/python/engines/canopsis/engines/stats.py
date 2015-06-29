@@ -54,6 +54,7 @@ class engine(Engine):
     def pre_run(self):
 
         self.beat()
+        #TODO remove consume dispatcher call
         self.consume_dispatcher({})
 
     def consume_dispatcher(self, event, *args, **kargs):
@@ -125,7 +126,12 @@ class engine(Engine):
             method = getattr(self, stat)
             method()
 
-        self.logger.debug('perf_data_array {}'.format(self.perf_data_array))
+    def add_metric(self, mname, mvalue, mtype='COUNTER'):
+        self.perf_data_array.append({
+            'metric': mname,
+            'value': mvalue,
+            'type': mtype
+        })
 
     def delta_alert_ack_by_user(self):
 
@@ -159,16 +165,14 @@ class engine(Engine):
                 )
 
         for user in metrics:
-            self.perf_data_array.append({
-                'type': 'COUNTER',
-                'metric': 'cps_delta_alert_ack_by_user_{}'.format(user),
-                'value': metrics[user]
-            })
-        self.perf_data_array.append({
-            'type': 'COUNTER',
-            'metric': 'cps_delta_alert_ack_all',
-            'value': sum(metrics.values())
-        })
+            self.add_metric(
+                'cps_delta_alert_ack_by_user_{}'.format(user),
+                metrics[user]
+            )
+        self.add_metric(
+            'cps_delta_alert_ack_all',
+            sum(metrics.values())
+        )
 
     def ack_alerts_by_user(self):
 
@@ -196,16 +200,14 @@ class engine(Engine):
             metrics[metric_name] += 1
 
         for metric_name in metrics:
-            self.perf_data_array.append({
-                'type': 'COUNTER',
-                'metric': metric_name,
-                'value': metrics[metric_name]
-            })
-        self.perf_data_array.append({
-            'type': 'COUNTER',
-            'metric': 'cps_ack_alerts_all',
-            'value': sum(metrics.values())
-        })
+            self.add_metric(
+                metric_name,
+                metrics[metric_name]
+            )
+        self.add_metric(
+            'cps_ack_alerts_all',
+            sum(metrics.values())
+        )
 
     def event_count_by_source(self):
 
@@ -220,12 +222,12 @@ class engine(Engine):
                 with_count=True
             )
 
-            self.perf_data_array.append({
-                'metric': 'cps_count_{}'.format(
+            self.add_metric(
+                'cps_count_{}'.format(
                     source_type
                 ),
-                'value': count
-            })
+                count
+            )
 
     def event_count_by_source_and_state(self):
 
@@ -251,13 +253,13 @@ class engine(Engine):
 
                 state_str = self.states_str[state]
 
-                self.perf_data_array.append({
-                    'metric': 'cps_states_{}_{}'.format(
+                self.add_metric(
+                    'cps_states_{}_{}'.format(
                         source_type,
                         state_str
                     ),
-                    'value': count
-                })
+                    count
+                )
 
     def event_count_by_state(self):
 
@@ -276,10 +278,10 @@ class engine(Engine):
 
             state_str = self.states_str[state]
 
-            self.perf_data_array.append({
-                'metric': 'cps_states_{}'.format(state_str),
-                'value': count
-            })
+            self.add_metric(
+                'cps_states_{}'.format(state_str),
+                count
+            )
 
     def publish_states(self):
 
@@ -293,6 +295,16 @@ class engine(Engine):
             perf_data_array=self.perf_data_array
         )
 
-        self.logger.debug('Publishing {}'.format(pp.pformat(stats_event)))
+        metrics = []
+        for m in self.perf_data_array:
+            metrics.append('{}\t{}\t{}'.format(
+                m['value'],
+                m['type'],
+                m['metric']
+            ))
+
+        self.logger.debug('Generated perfdata\n{}'.format(
+            '\n'.join(metrics)
+        ))
 
         publish(publisher=self.amqp, event=stats_event)
