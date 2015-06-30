@@ -88,7 +88,11 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
     def put(self, name, data):
 
-        self.gridfs.put(filename=name, data=data)
+        try:
+            fs = self.new_file(name=name)
+            fs.write(data=data)
+        finally:
+            fs.close()
 
     def get(self, name, version=-1):
 
