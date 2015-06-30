@@ -18,6 +18,9 @@
 			"type": "string",
 			"required": true
 		},
+		"defaultview": {
+			"type": "string"
+		},
 		"ui_language": {
 			"type": "string",
 			"enum": ["fr", "en"],
