@@ -26,6 +26,7 @@ from unittest import TestCase, main
 
 from canopsis.mongo.file import MongoFileStorage
 from pymongo import version as pymongov
+from time import sleep
 
 
 class MongoFileStorageTest(TestCase):
@@ -39,22 +40,34 @@ class MongoFileStorageTest(TestCase):
     def tearDown(self):
 
         self.fs.delete()
+        sleep(1)
+
+    def test_list(self):
+        """Test to list files.
+        """
+
+        names = set([str(i) for i in range(5)])
+
+        for name in names:
+            self.fs.new_file(name=name).close()
+
+        filenames = set(self.fs.list())
+
+        self.assertEqual(filenames, names)
 
     def test_notexists(self):
         """Test if a filestream does not exist.
         """
 
-        name = 'test'
-
-        exists = self.fs.exists(name=name)
+        exists = self.fs.exists(name=self.testfile)
 
         self.assertFalse(exists)
 
-        fs = self.fs.get(name=name)
+        fs = self.fs.get(name=self.testfile)
 
         self.assertIsNone(fs)
 
-        fss = list(self.fs.find(names=[name]))
+        fss = list(self.fs.find(names=[self.testfile]))
 
         self.assertFalse(fss)
 
@@ -101,13 +114,30 @@ class MongoFileStorageTest(TestCase):
 
         return result
 
-    def test_rw(self):
-        """Test to read and write data.
+    def test_putr(self):
+        """Test to put and read data.
+        """
+
+        if pymongov >= '3':
+            self.fs.put(name=self.testfile, data=self.testfile)
+
+            fs = self.fs.get(name=self.testfile)
+
+            data = fs.read(size=2)
+
+            self.assertEqual(self.testfile[:2], data)
+
+            data = fs.read(size=-1)
+
+            self.assertEqual(self.testfile[2:], data)
+
+    def test_writer(self):
+        """Test to write and read data.
         """
 
         fs = self.fs.new_file(name=self.testfile)
 
-        fs.write(self.testfile)
+        fs.write(data=self.testfile)
 
         fs.close()
 

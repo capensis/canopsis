@@ -80,6 +80,15 @@ class FileStorage(Storage):
 
     __datatype__ = 'file'  #: registered such as a file storage
 
+    def put(self, name, data):
+        """Put data in the storage.
+
+        :param str name: file name.
+        :param str data: data to put.
+        """
+
+        raise NotImplementedError()
+
     def get(self, name, version=-1):
         """Get file stream related to input name.
 

@@ -86,6 +86,10 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
         return result
 
+    def put(self, name, data):
+
+        self.gridfs.put(filename=name, data=data)
+
     def get(self, name, version=-1):
 
         result = None
@@ -163,5 +167,6 @@ class MongoFileStorage(MongoStorage, FileStorage):
             names = self.gridfs.list()
 
         names = ensure_iterable(names)
+
         for name in names:
             self.gridfs.delete(file_id=name)
