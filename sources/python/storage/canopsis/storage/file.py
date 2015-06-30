@@ -18,6 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Mongo implementation of the filestorage.
+"""
+
 from canopsis.storage import Storage
 
 
@@ -39,10 +42,10 @@ class FileStream(object):
 
         raise NotImplementedError()
 
-    def read(self, size=1):
+    def read(self, size=-1):
         """Read size characters from file content.
 
-        :param int size: number of characters to read.
+        :param int size: number of characters to read. Default all characters.
         """
 
         raise NotImplementedError()
@@ -57,7 +60,7 @@ class FileStream(object):
 
         raise NotImplementedError()
 
-    def teel(self):
+    def pos(self):
         """Get the current position of this file.
         """
 
@@ -77,15 +80,15 @@ class FileStorage(Storage):
 
     __datatype__ = 'file'  #: registered such as a file storage
 
-    def get(self, names, version=-1):
-        """Get file stream(s) related to input name(s).
+    def get(self, name, version=-1):
+        """Get file stream related to input name.
 
-        :param names: file stream names.
-        :type names: str or list of str
+        :param str name: file stream name.
         :param int version: file stream version. last if -1 (by default).
-
-        :rtype: FileStream or list of FileStream
+        :return: corresponding filestream.
+        :rtype: FileStream.
         """
+
         raise NotImplementedError()
 
     def exists(self, name):
@@ -95,6 +98,15 @@ class FileStorage(Storage):
 
         :return: True iif a file name equals to input name exists.
         :rtype: bool
+        """
+
+        raise NotImplementedError()
+
+    def list(self):
+        """Get all file names.
+
+        :return: list of file names.
+        :rtype: list
         """
 
         raise NotImplementedError()
@@ -133,7 +145,7 @@ class FileStorage(Storage):
         """Delete file streams related to their names
 
         :param names: file name(s) to delete.
-        :type names: str or list of str
+        :type names: str or list
         """
 
         raise NotImplementedError()
