@@ -22,12 +22,8 @@ Write 'test' in a new document named ``my file``
 
 .. code-block:: python
 
-   # attempt to create a new file
-   filestream = FS.new_file(name='my file')
-   # write data in the new file
-   filestream.write(data=...)
-   # save the new file
-   filestream.close()
+   # put 'test' directly in a new version of 'my file'
+   filestream = FS.put(name='my file', data='test')
 
 Get data from the second version of ``my file``
 ###############################################
