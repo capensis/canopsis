@@ -21,6 +21,7 @@
 from canopsis.event.manager import Event
 from canopsis.organisation.rights import Rights
 from canopsis.engines.core import Engine, publish
+from canopsis.session.manager import Session
 from canopsis.event import forger
 
 import pprint
@@ -33,6 +34,7 @@ class engine(Engine):
 
     event_manager = Event()
     right_manager = Rights()
+    session_manager = Session()
 
     """
     This engine's goal is to compute canopsis internal statistics.
@@ -115,11 +117,12 @@ class engine(Engine):
 
         # Allow individual stat computation management from ui.
         stats_to_compute = [
-            'event_count_by_source',
-            'event_count_by_source_and_state',
-            'event_count_by_state',
-            'ack_alerts_by_user',
-            'delta_alert_ack_by_user'
+            #'event_count_by_source',
+            #'event_count_by_source_and_state',
+            #'event_count_by_state',
+            #'ack_alerts_by_user',
+            #'delta_alert_ack_by_user',
+            'users_session_duration'
         ]
 
         for stat in stats_to_compute:
@@ -132,6 +135,12 @@ class engine(Engine):
             'value': mvalue,
             'type': mtype
         })
+
+    def users_session_duration(self):
+        sessions = self.session_manager.get_new_inactive_sessions()
+        metrics = self.session_manager.get_delta_session_time_metrics(sessions)
+        self.perf_data_array += metrics
+        self.logger.debug(self.perf_data_array)
 
     def delta_alert_ack_by_user(self):
 
@@ -303,7 +312,7 @@ class engine(Engine):
                 m['metric']
             ))
 
-        self.logger.debug('Generated perfdata\n{}'.format(
+        self.logger.debug('-- Generated perfdata --\n{}'.format(
             '\n'.join(metrics)
         ))
 

@@ -68,11 +68,10 @@ class SessionTest(SessionManagerTest):
         )
 
     def test_check_inactive_sessions(self):
-        self.session_manager.put(
-            self.user,
-            {'last_check': time()}
-        )
-        sessions = list(self.session_manager.get_inactive_sessions())
+        # initilize session
+        self.session_manager.session_start(self.user)
+
+        sessions = list(self.session_manager.get_new_inactive_sessions())
         self.assertEqual(len(sessions), 0)
 
         delta = self.session_manager.alive_session_duration
@@ -80,15 +79,17 @@ class SessionTest(SessionManagerTest):
             self.user,
             {'last_check': time() - delta}
         )
-        sessions = list(self.session_manager.get_inactive_sessions())
+        sessions = list(self.session_manager.get_new_inactive_sessions())
         self.assertEqual(len(sessions), 1)
+
+        self.session_manager.session_start(self.user + '1')
 
         self.session_manager.put(
             self.user + '1',
             {'last_check': time() - delta}
         )
-        sessions = list(self.session_manager.get_inactive_sessions())
-        self.assertEqual(len(sessions), 2)
+        sessions = list(self.session_manager.get_new_inactive_sessions())
+        self.assertEqual(len(sessions), 1)
         for session in sessions:
             self.assertIn('session_stop', session)
 
