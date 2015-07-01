@@ -106,6 +106,17 @@ class engine(Engine):
         )
         self.ack_events = list(cursor)
 
+        cursor = self.event_manager.find(
+            query={
+                'ack.wasAck': {'$exists': True}
+            },
+            projection={
+                'ack.wasAck': 1,
+            }
+        )
+        self.solved_alerts_events = list(cursor)
+        self.logger.debug(self.solved_alerts_events)
+
     def compute_states(self):
 
         """
@@ -122,7 +133,9 @@ class engine(Engine):
             #'event_count_by_state',
             #'ack_alerts_by_user',
             #'delta_alert_ack_by_user',
-            'users_session_duration'
+            #'users_session_duration',
+            #'ack_count',
+            'solved_alerts',
         ]
 
         for stat in stats_to_compute:
@@ -135,6 +148,24 @@ class engine(Engine):
             'value': mvalue,
             'type': mtype
         })
+
+    def solved_alerts(self):
+
+        was_ack = 0
+        was_not_ack = 0
+
+        for event in self.solved_alerts_events:
+            if event['ack']['wasAck']:
+                was_ack += 1
+            else:
+                was_not_ack += 1
+
+        self.add_metric('cps_solved_alert_ack', was_ack)
+        self.add_metric('cps_solved_alert_not_ack', was_not_ack)
+
+    def ack_count(self):
+        ack_count = len(self.ack_events)
+        self.add_metric('cps_ack_count', ack_events)
 
     def users_session_duration(self):
         sessions = self.session_manager.get_new_inactive_sessions()

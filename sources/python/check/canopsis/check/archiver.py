@@ -598,9 +598,18 @@ class Archiver(Configurable):
             # keep ack information if status does not reset event
             if 'ack' in devent:
                 if event['status'] == 0:
-                    change['ack'] = {}
+                    was_ack = devent.get('ack', {}).get('isAck', False)
+                    # save was ack for stats purposes
+                    change['ack'] = {
+                        'wasAck': was_ack
+                    }
                 else:
                     change['ack'] = devent['ack']
+                    # remove was ack for accurate stats
+                    # when event change to any alert state
+                    if 'wasAck' in change['ack']:
+                        del change['ack']['wasAck']
+
 
             # keep cancel information if status does not reset event
             if 'cancel' in devent:
