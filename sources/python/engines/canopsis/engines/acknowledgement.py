@@ -107,6 +107,12 @@ class engine(Engine):
 
             rk = event.get('referer', event.get('ref_rk', None))
 
+            author = event['author']
+            domain_perimeter = '{}{}'.format(
+                event.get('domain', ''),
+                event.get('perimeter', '')
+            )
+
             if not rk:
                 self.logger.error(
                     'Cannot get acknowledged event, missing referer or ref_rk'
@@ -132,7 +138,7 @@ class engine(Engine):
                 'timestamp': event['timestamp'],
                 'ackts': int(time()),
                 'rk': rk,
-                'author': event['author'],
+                'author': author,
                 'comment': event['output']
             }
 
@@ -148,7 +154,7 @@ class engine(Engine):
             self.logger.debug(
                 u'Updating event {} with author {} and comment {}'.format(
                     rk,
-                    ack_info['author'],
+                    author,
                     ack_info['comment']
                 )
             )
@@ -183,7 +189,9 @@ class engine(Engine):
                 if referer_event:
 
                     referer_event = referer_event.dump()
-
+                    duration = record['ackts'] - referer_event.get(
+                        'last_state_change', record['timestamp']
+                    )
                     logevent = forger(
                         connector="Engine",
                         connector_name=self.etype,
@@ -197,13 +205,13 @@ class engine(Engine):
 
                         ref_rk=event['rk'],
                         output=u'Event {0} acknowledged by {1}'.format(
-                            rk, event['author']),
+                            rk, author),
                         long_output=event['output'],
 
                         perf_data_array=[
                             {
-                                'metric': 'ack_delay',
-                                'value': record['ackts'] - record['timestamp'],
+                                'metric': 'ack_delay_{}'.format(author),
+                                'value': duration,
                                 'unit': 's'
                             }
                         ]
@@ -214,6 +222,9 @@ class engine(Engine):
             # Cast response to ! 0|1
             cvalues = int(not ackhost)
 
+            if domain_perimeter:
+                domain_perimeter = '_{}'.format(domain_perimeter)
+
             alerts_event = forger(
                 connector="Engine",
                 connector_name=self.etype,
@@ -222,7 +233,10 @@ class engine(Engine):
                 component="__canopsis__",
                 perf_data_array=[
                     {
-                        'metric': 'cps_alerts_ack',
+                        'metric': 'cps_alerts_ack_{}{}'.format(
+                            author,
+                            domain_perimeter
+                        ),
                         'value': cvalues,
                         'type': 'COUNTER'
                     },

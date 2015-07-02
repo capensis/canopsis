@@ -125,7 +125,7 @@ class Session(BaseCrud):
             metrics.append({
                 'type': 'COUNTER',
                 'value': delta,
-                'metric': 'cps_session_delta_user_{}'.format(session['_id'])
+                'metric': 'cps_session_delay_user_{}'.format(session['_id'])
             })
         return metrics
 

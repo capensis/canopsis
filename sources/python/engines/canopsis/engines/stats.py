@@ -128,13 +128,11 @@ class engine(Engine):
 
         # Allow individual stat computation management from ui.
         stats_to_compute = [
-            #'event_count_by_source',
-            #'event_count_by_source_and_state',
-            #'event_count_by_state',
-            #'ack_alerts_by_user',
-            #'delta_alert_ack_by_user',
-            #'users_session_duration',
-            #'ack_count',
+            'event_count_by_source',
+            'event_count_by_source_and_state',
+            'event_count_by_state',
+            'users_session_duration',
+            'ack_count',
             'solved_alerts',
         ]
 
@@ -172,82 +170,6 @@ class engine(Engine):
         metrics = self.session_manager.get_delta_session_time_metrics(sessions)
         self.perf_data_array += metrics
         self.logger.debug(self.perf_data_array)
-
-    def delta_alert_ack_by_user(self):
-
-        """
-        Computes time sum between an alert and a user ack.
-        metric is generated for each user.
-        """
-
-        metrics = {}
-        for event in self.ack_events:
-
-            ack = event.get('ack', {})
-            last_state_change = event['last_state_change']
-            ack_timestamp = ack.get('timestamp')
-            user = ack.get('author')
-
-            if last_state_change and ack_timestamp and user:
-                # Start delta time aggregation by user
-                delta = ack_timestamp - last_state_change
-                if user not in metrics:
-                    metrics[user] = 0
-                metrics[user] += delta
-
-            else:
-                self.logger.warning(
-                    'Stat delta_alert_ack_by_user error {} {} {}'.format(
-                        last_state_change,
-                        ack_timestamp,
-                        user
-                    )
-                )
-
-        for user in metrics:
-            self.add_metric(
-                'cps_delta_alert_ack_by_user_{}'.format(user),
-                metrics[user]
-            )
-        self.add_metric(
-            'cps_delta_alert_ack_all',
-            sum(metrics.values())
-        )
-
-    def ack_alerts_by_user(self):
-
-        """
-        Counts how many alerts are ack by each user. It also
-        depends on event domain and perimeter
-        """
-
-        metrics = {}
-        for event in self.ack_events:
-            ack = event.get('ack', {})
-            user = ack.get('author')
-            domain = event['domain']
-            perimeter = event['perimeter']
-
-            metric_name = 'cps_ack_alerts_by_user_{}_on_{}_{}'.format(
-                user,
-                domain,
-                perimeter
-            )
-
-            if metric_name not in metrics:
-                metrics[metric_name] = 0
-
-            metrics[metric_name] += 1
-
-        for metric_name in metrics:
-            self.add_metric(
-                metric_name,
-                metrics[metric_name]
-            )
-        self.add_metric(
-            'cps_ack_alerts_all',
-            sum(metrics.values())
-        )
 
     def event_count_by_source(self):
 
