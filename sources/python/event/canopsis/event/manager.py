@@ -16,13 +16,17 @@ class Event(MiddlewareRegistry):
 
     default_state = 0
     EVENT_STORAGE = 'event_storage'
+
+    states_str = {
+        0: 'info',
+        1: 'minor',
+        2: 'major',
+        3: 'critical'
+    }
+
     """
     Manage events in Canopsis
     """
-
-    def __init__(self, *args, **kwargs):
-
-        super(Event, self).__init__(*args, **kwargs)
 
     @staticmethod
     def get_rk(event):
@@ -40,12 +44,16 @@ class Event(MiddlewareRegistry):
         return rk
 
     def is_ack(self, event):
+        """
+        Define if an event is in ack state
+        :param: event is the event to test
+        """
         return event.get('ack', {}).get('isAck', False)
 
     def is_alert(self, state):
         """
-            Define if a state is in alert
-            allow progressive alert definition migration
+        Define if a state is in alert
+        allow progressive alert definition migration
         """
         result = None
         if state == 0:

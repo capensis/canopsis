@@ -62,5 +62,25 @@ class EventTest(EventManagerTest):
         state = self.event_manager.get_last_state(self.fake_event)
         self.assertEqual(state, test_value)
 
+    def test_is_ack(self):
+        event = {}
+
+        is_ack = self.event_manager.is_ack(event)
+        self.assertFalse(is_ack)
+
+        event['ack'] = {}
+        is_ack = self.event_manager.is_ack(event)
+        self.assertFalse(is_ack)
+
+        event['ack']['isAck'] = False
+        is_ack = self.event_manager.is_ack(event)
+        self.assertFalse(is_ack)
+
+        event['ack']['isAck'] = True
+        is_ack = self.event_manager.is_ack(event)
+        self.assertTrue(is_ack)
+
+
+
 if __name__ == '__main__':
     main()

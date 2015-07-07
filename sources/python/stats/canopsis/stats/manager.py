@@ -20,16 +20,24 @@
 
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.event.manager import Event
+from canopsis.session.manager import Session
 from canopsis.event import forger
 
 
 class Stats(MiddlewareRegistry):
 
     event_manager = Event()
+    session_manager = Session()
+
     # alias for easier testing purposes
     """
     Manage stats in Canopsis
     """
+
+    def __init__(self, *args, **kwargs):
+
+        super(Stats, self).__init__(self, *args, **kwargs)
+        self.perf_data_array = []
 
     def new_alert_event_count(self, event, devent):
 
@@ -92,6 +100,11 @@ class Stats(MiddlewareRegistry):
 
     def compute_ack_alerts(self, event, devent):
 
+        """
+        Compute ack [solved] alerts metrics
+        :param: event is amqp message
+        :param: devent is previous state
+        """
         perf_data_array = []
 
         # Compute alert stats and publish metrics if any
@@ -121,3 +134,102 @@ class Stats(MiddlewareRegistry):
                 perf_data_array=perf_data_array
             )
             return stats_event
+
+    def add_metric(self, mname, mvalue, mtype='COUNTER'):
+
+        """
+        Add metric to the manager perf_data array property
+        :param: mname is the metric name
+        :param: mvalue is the metric value
+        :param: mtype is the metric type
+        """
+
+        self.perf_data_array.append({
+            'metric': mname,
+            'value': mvalue,
+            'type': mtype
+        })
+
+    def users_session_duration(self):
+
+        """
+        Produce user session duration statistics from the session manager
+        """
+
+        sessions = self.session_manager.get_new_inactive_sessions()
+        metrics = self.session_manager.get_delta_session_time_metrics(sessions)
+        self.perf_data_array += metrics
+
+    def event_count_by_source(self):
+
+        """
+        Counts and produces metrics for events depending on source type
+        """
+
+        for source_type in ('resource', 'component'):
+            # Event count source type
+            cursor, count = self.event_manager.find(
+                query={'source_type': source_type},
+                with_count=True
+            )
+
+            self.add_metric(
+                'cps_count_{}'.format(
+                    source_type
+                ),
+                count
+            )
+
+    def event_count_by_source_and_state(self):
+
+        """
+        Counts and produces metrics for events depending on source type,
+        by state
+        """
+
+        for source_type in ('resource', 'component'):
+
+            # Event count by source type and state
+            for state in (0, 1, 2, 3):
+
+                # There is an index on state and source_type field in
+                # events collection, that would keep the query efficient
+                cursor, count = self.event_manager.find(
+                    query={
+                        'source_type': source_type,
+                        'state': state
+                    },
+                    with_count=True
+                )
+
+                state_str = self.event_manager.states_str[state]
+
+                self.add_metric(
+                    'cps_states_{}_{}'.format(
+                        source_type,
+                        state_str
+                    ),
+                    count
+                )
+
+    def event_count_by_state(self):
+
+        """
+        Counts and produces metrics for events depending on state
+        """
+
+        # Event count computation by state
+        for state in (0, 1, 2, 3):
+            # There is an index on state field in events collection,
+            # that would keep the query efficient
+            cursor, count = self.event_manager.find(
+                query={'state': state},
+                with_count=True
+            )
+
+            state_str = self.event_manager.states_str[state]
+
+            self.add_metric(
+                'cps_states_{}'.format(state_str),
+                count
+            )
