@@ -33,6 +33,15 @@ class Stats(MiddlewareRegistry):
 
     def new_alert_event_count(self, event, devent):
 
+        """
+        Produce metric count for alert count.
+        cps_new_alert +1 or -1 depends on previous event state
+
+        :param: event is the current event passing through canopsis input
+        :param: devent is the event from database matching event RK.
+        it is the last state the event were
+        """
+
         perf_data_array = []
         is_alert = self.event_manager.is_alert(event['state'])
         was_alert = self.event_manager.is_alert(devent['state'])
