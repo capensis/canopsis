@@ -52,8 +52,8 @@ class Event(MiddlewareRegistry):
 
     def is_alert(self, state):
         """
-        Define if a state is in alert
-        allow progressive alert definition migration
+            Define if a state is in alert
+            allow progressive alert definition migration
         """
         result = None
         if state == 0:

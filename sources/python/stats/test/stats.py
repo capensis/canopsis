@@ -118,5 +118,96 @@ class StatsTest(StatsManagerTest):
         sevent = self.stats_manager.compute_ack_alerts(event, devent)
         self.assertIsNone(sevent)
 
+    def test_add_metric(self):
+        self.stats_manager.add_metric('name', 5)
+        self.assertEqual(
+            self.stats_manager.perf_data_array[0],
+            {
+                'metric': 'name',
+                'value': 5,
+                'type': 'COUNTER'
+            }
+        )
+
+        self.stats_manager.add_metric('name1', 6, mtype='MYTYPE')
+        self.assertEqual(len(self.stats_manager.perf_data_array), 2)
+
+        self.assertEqual(
+            self.stats_manager.perf_data_array[1],
+            {
+                'metric': 'name1',
+                'value': 6,
+                'type': 'MYTYPE'
+            }
+        )
+
+    def test_users_session_duration(self):
+        # below methods are tested in the session manager
+        def mock_gnis():
+            return ['testvalue']
+
+        def mock_gdstm(sessions):
+            return sessions
+        sm = self.stats_manager.session_manager
+
+        sm.get_new_inactive_sessions = mock_gnis
+        sm.get_delta_session_time_metrics = mock_gdstm
+
+        # Just test the method acts as expected
+        self.stats_manager.users_session_duration()
+        self.assertEqual(self.stats_manager.perf_data_array, ['testvalue'])
+
+    def test_event_count_by_source(self):
+        def mockfind(query='Q', with_count=True):
+            return 'fakecursor', 5
+
+        self.stats_manager.event_manager.find = mockfind
+
+        self.stats_manager.event_count_by_source()
+        perfs = self.stats_manager.perf_data_array
+        self.assertEqual(len(perfs), 2)
+        self.assertEqual([x['metric'] for x in perfs], [
+            'cps_count_resource',
+            'cps_count_component',
+        ])
+        self.assertEqual([x['value'] for x in perfs], [5, 5])
+
+    def test_event_count_by_source_and_state(self):
+        def mockfind(query='Q', with_count=True):
+            return 'fakecursor', 5
+
+        self.stats_manager.event_manager.find = mockfind
+
+        self.stats_manager.event_count_by_source_and_state()
+        perfs = self.stats_manager.perf_data_array
+        self.assertEqual(len(perfs), 8)
+        self.assertEqual([x['metric'] for x in perfs], [
+            'cps_states_resource_info',
+            'cps_states_resource_minor',
+            'cps_states_resource_major',
+            'cps_states_resource_critical',
+            'cps_states_component_info',
+            'cps_states_component_minor',
+            'cps_states_component_major',
+            'cps_states_component_critical'
+        ])
+
+    def test_event_count_by_state(self):
+        def mockfind(query='Q', with_count=True):
+            return 'fakecursor', 5
+
+        self.stats_manager.event_manager.find = mockfind
+
+        self.stats_manager.event_count_by_state()
+        perfs = self.stats_manager.perf_data_array
+        self.assertEqual(len(perfs), 4)
+        self.assertEqual([x['metric'] for x in perfs], [
+            'cps_states_info',
+            'cps_states_minor',
+            'cps_states_major',
+            'cps_states_critical'
+        ])
+
+
 if __name__ == '__main__':
     main()

@@ -29,7 +29,6 @@ class Stats(MiddlewareRegistry):
     event_manager = Event()
     session_manager = Session()
 
-    # alias for easier testing purposes
     """
     Manage stats in Canopsis
     """
