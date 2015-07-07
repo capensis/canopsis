@@ -18,8 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-# provide only
-__all__ = ('Period', 'Interval', 'TimeWindow', 'get_offset_timewindow')
+__all__ = ['Period', 'Interval', 'TimeWindow', 'get_offset_timewindow']
 
 from time import time
 
@@ -298,7 +297,7 @@ class Period(object):
                                 ):
                                     if day in week:
                                         # get the right normalized  week index
-                                        norm_idx = (week_index // v) * v
+                                        norm_idx = (week_index // (v + 1)) * v
                                         # get the right normalized week
                                         norm_week = _monthcalendar[norm_idx]
                                         # get last monday

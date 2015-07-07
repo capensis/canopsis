@@ -21,11 +21,12 @@
 from uuid import uuid4 as uuid
 
 from canopsis.storage.file import FileStorage, FileStream
-from canopsis.mongo.storage import MongoStorage
+from canopsis.mongo import MongoStorage
 from canopsis.common.init import basestring
 from canopsis.common.utils import ensure_iterable
 
-from gridfs import GridFs
+from pymongo import version
+from gridfs import GridFS, NoFile
 
 
 class MongoFileStream(FileStream):
@@ -40,42 +41,69 @@ class MongoFileStream(FileStream):
     def write(self, data):
         self.gridout.write(data=data)
 
-    def read(self, size=1):
+    def read(self, size=-1):
+
         return self.gridout.read(size=size)
 
     def seek(self, pos, from_beginning=False):
+
         self.gridout.seek(pos=pos, whence=from_beginning)
 
-    def teel(self):
-        return self.gridout.teel()
+    def pos(self):
+
+        return self.gridout.tell()
 
     def next(self):
         return MongoFileStream(self.gridout.next())
+
+    def __eq__(self, other):
+
+        return (
+            isinstance(other, self.__class__)
+            and self.gridout.filename == other.gridout.filename
+        )
 
 
 class MongoFileStorage(MongoStorage, FileStorage):
 
     FILENAME = 'filename'
 
+    def __init__(self, *args, **kwargs):
+
+        super(MongoFileStorage, self).__init__(*args, **kwargs)
+
+        self.gridfs = None
+
     def _connect(self, **kwargs):
 
-        result = super(FileStorage, self)._connect(**kwargs)
+        result = super(MongoFileStorage, self)._connect(**kwargs)
 
         if result:
 
-            self.gridfs = GridFs(
-                database=self._database, collection=self.get_table())
+            self.gridfs = GridFS(
+                database=self._database, collection=self.get_table()
+            )
 
         return result
 
-    def get(self, names, version=-1):
+    def put(self, name, data):
 
-        names = ensure_iterable(names)
-        result = []
-        for name in names:
+        try:
+            fs = self.new_file(name=name)
+            fs.write(data=data)
+        finally:
+            fs.close()
+
+    def get(self, name, version=-1):
+
+        result = None
+
+        try:
             gridout = self.gridfs.get_version(filename=name, version=version)
-            fs = MongoFileStream(gridout)
-            result.append(fs)
+        except NoFile:
+            pass
+        else:
+            result = MongoFileStream(gridout)
 
         return result
 
@@ -111,6 +139,10 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
         return result
 
+    def list(self):
+
+        return self.gridfs.list()
+
     def new_file(self, name=None, meta=None, data=None):
 
         kwargs = {}
@@ -133,8 +165,12 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
         return result
 
-    def delete(self, names):
+    def delete(self, names=None):
+
+        if names is None:
+            names = self.gridfs.list()
 
         names = ensure_iterable(names)
+
         for name in names:
             self.gridfs.delete(file_id=name)
