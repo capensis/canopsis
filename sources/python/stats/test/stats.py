@@ -45,29 +45,78 @@ class StatsTest(StatsManagerTest):
         event['state'] = 0
         devent['state'] = 1
 
-        send_event = self.stats_manager.new_alert_event_count(event, devent)
-        self.assertEqual(send_event['perf_data_array'][0]['value'], -1)
+        metric = self.stats_manager.new_alert_event_count(event, devent)
+        self.assertEqual(metric['value'], -1)
 
         event['state'] = 1
         devent['state'] = 0
 
-        send_event = self.stats_manager.new_alert_event_count(event, devent)
-        self.assertEqual(send_event['perf_data_array'][0]['value'], 1)
+        metric = self.stats_manager.new_alert_event_count(event, devent)
+        self.assertEqual(metric['value'], 1)
 
         # When no metrics, event is not generated
         event['state'] = 0
         devent['state'] = 0
 
-        send_event = self.stats_manager.new_alert_event_count(event, devent)
-        self.assertIsNone(send_event)
+        metric = self.stats_manager.new_alert_event_count(event, devent)
+        self.assertIsNone(metric)
 
         event['state'] = 1
         devent['state'] = 1
 
-        send_event = self.stats_manager.new_alert_event_count(event, devent)
-        self.assertIsNone(send_event)
+        metric = self.stats_manager.new_alert_event_count(event, devent)
+        self.assertIsNone(metric)
 
+    def test_solved_alarm_ack(self):
 
+        devent = {}
+
+        # devent is not ack, so incremented metric name contains not
+        metric = self.stats_manager.solved_alarm_ack(devent)
+        self.assertEqual(
+            metric['metric'],
+            'cps_solved_not_ack_alarms'
+        )
+
+        # Simulate ack in devent
+        devent['ack'] = {'isAck': True}
+        metric = self.stats_manager.solved_alarm_ack(devent)
+        self.assertEqual(
+            metric['metric'],
+            'cps_solved_ack_alarms'
+        )
+
+    def test_compute_ack_alerts(self):
+        event = self.fake_event.copy()
+        devent = self.fake_event.copy()
+
+        # Solve alert produce two metrics
+        event['state'] = 0
+        devent['state'] = 1
+
+        sevent = self.stats_manager.compute_ack_alerts(event, devent)
+        self.assertEqual(len(sevent['perf_data_array']), 2)
+
+        # New alert metric only
+        event['state'] = 1
+        devent['state'] = 0
+
+        sevent = self.stats_manager.compute_ack_alerts(event, devent)
+        self.assertEqual(len(sevent['perf_data_array']), 1)
+
+        # No metric as no state change
+        event['state'] = 0
+        devent['state'] = 0
+
+        sevent = self.stats_manager.compute_ack_alerts(event, devent)
+        self.assertIsNone(sevent)
+
+        # No metric as no state change
+        event['state'] = 1
+        devent['state'] = 1
+
+        sevent = self.stats_manager.compute_ack_alerts(event, devent)
+        self.assertIsNone(sevent)
 
 if __name__ == '__main__':
     main()

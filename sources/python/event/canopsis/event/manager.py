@@ -39,6 +39,9 @@ class Event(MiddlewareRegistry):
 
         return rk
 
+    def is_ack(self, event):
+        return event.get('ack', {}).get('isAck', False)
+
     def is_alert(self, state):
         """
             Define if a state is in alert

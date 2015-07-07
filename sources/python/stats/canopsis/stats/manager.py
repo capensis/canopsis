@@ -42,43 +42,82 @@ class Stats(MiddlewareRegistry):
         it is the last state the event were
         """
 
-        perf_data_array = []
         is_alert = self.event_manager.is_alert(event['state'])
         was_alert = self.event_manager.is_alert(devent['state'])
 
+        metric = None
         # When alert
         if is_alert:
             # and event was not in alert
             if not was_alert:
                 # Publish increment new_alarm count
-                perf_data_array.append({
+                metric = {
                     'metric': 'cps_new_alert',
                     'value': 1,
                     'type': 'COUNTER'
-                })
+                }
         elif was_alert:
 
             if not is_alert:
 
                 # Publish decrement new_alarm count
-                perf_data_array.append({
+                metric = {
                     'metric': 'cps_new_alert',
                     'value': -1,
                     'type': 'COUNTER'
-                })
+                }
 
-        # Do not generate event if there is no metric
-        if len(perf_data_array) == 0:
-            return None
+        self.logger.debug('new alert \n{}'.format(metric))
 
-        stats_event = forger(
-            connector="Engine",
-            connector_name='stats',
-            event_type="perf",
-            source_type="component",
-            component="__canopsis__",
+        return metric
+
+    def solved_alarm_ack(self, devent):
+
+        # Then produce metric
+        was_ack = self.event_manager.is_ack(devent)
+        if was_ack:
+            metric_name = 'cps_solved_ack_alarms'
+        else:
+            metric_name = 'cps_solved_not_ack_alarms'
+
+        metric = {
+            'metric': metric_name,
+            'value': 1,
+            'type': 'COUNTER'
+        }
+
+        self.logger.debug('solved alarm ack \n{}'.format(metric))
+
+        return metric
+
+    def compute_ack_alerts(self, event, devent):
+
+        perf_data_array = []
+
+        # Compute alert stats and publish metrics if any
+        metric = self.new_alert_event_count(
+            event,
+            devent
         )
+        if metric:
 
-        stats_event['perf_data_array'] = perf_data_array
+            perf_data_array.append(metric)
 
-        return stats_event
+            solved = metric['value'] == -1
+            if solved:
+                # Compute alert ack depending on is ack
+                metric = self.solved_alarm_ack(
+                    devent
+                )
+                perf_data_array.append(metric)
+
+        if len(perf_data_array):
+            stats_event = forger(
+                connector="Engine",
+                connector_name='stats',
+                event_type="perf",
+                source_type="component",
+                component="__canopsis__",
+                perf_data_array=perf_data_array
+            )
+            return stats_event
