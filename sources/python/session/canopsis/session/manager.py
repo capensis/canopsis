@@ -106,7 +106,10 @@ class Session(BaseCrud):
         for session in sessions:
             if session['session_stop'] == -1:
                 session['session_stop'] = now
-                self.put(session['_id'], {'session_stop': now})
+                self.put(session['_id'], {
+                    'session_stop': now,
+                    'active': False
+                })
                 new_inactive_sessions.append(session)
 
         return new_inactive_sessions

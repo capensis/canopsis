@@ -106,7 +106,7 @@ class SessionTest(SessionManagerTest):
         self.assertEqual(
             metrics[0],
             {
-                'metric': 'cps_session_delta_user_test_user',
+                'metric': 'cps_session_delay_user_test_user',
                 'type': 'COUNTER',
                 'value': 500
             }
