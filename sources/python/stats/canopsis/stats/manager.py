@@ -111,11 +111,13 @@ class Stats(MiddlewareRegistry):
             event,
             devent
         )
+        self.logger.debug('metric computed {}'.format(metric))
         if metric:
 
             perf_data_array.append(metric)
 
             solved = metric['value'] == -1
+            self.logger.debug('solved alert {}'.format(solved))
             if solved:
                 # Compute alert ack depending on is ack
                 metric = self.solved_alarm_ack(

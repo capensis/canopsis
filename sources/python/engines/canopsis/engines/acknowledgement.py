@@ -68,6 +68,22 @@ class engine(Engine):
             self.cache_acks[ack['rk']] = 1
             self.logger.debug(' + ack cache key > ' + ack['rk'])
 
+    def get_metric_name_adp(self, event):
+
+        # allow metric naming by author/domain/perimeter (adp)
+        author = event.get('author', 'noauthor')
+        domain_perimeter = '{}{}'.format(
+            event.get('domain', ''),
+            event.get('perimeter', '')
+        )
+
+        if domain_perimeter:
+            domain_perimeter = '_{}'.format(domain_perimeter)
+
+        metric_name_adp = '{}{}'.format(author, domain_perimeter)
+
+        return metric_name_adp
+
     def work(self, event, *args, **kargs):
         logevent = None
 
@@ -108,10 +124,8 @@ class engine(Engine):
             rk = event.get('referer', event.get('ref_rk', None))
 
             author = event['author']
-            domain_perimeter = '{}{}'.format(
-                event.get('domain', ''),
-                event.get('perimeter', '')
-            )
+
+            self.logger.debug(event)
 
             if not rk:
                 self.logger.error(
@@ -212,7 +226,8 @@ class engine(Engine):
                             {
                                 'metric': 'ack_delay_{}'.format(author),
                                 'value': duration,
-                                'unit': 's'
+                                'unit': 's',
+                                'type': 'GAUGE'
                             }
                         ]
                     )
@@ -222,9 +237,6 @@ class engine(Engine):
             # Cast response to ! 0|1
             cvalues = int(not ackhost)
 
-            if domain_perimeter:
-                domain_perimeter = '_{}'.format(domain_perimeter)
-
             alerts_event = forger(
                 connector="Engine",
                 connector_name=self.etype,
@@ -233,20 +245,21 @@ class engine(Engine):
                 component="__canopsis__",
                 perf_data_array=[
                     {
-                        'metric': 'cps_alerts_ack_{}{}'.format(
-                            author,
-                            domain_perimeter
-                        ),
+                        'metric': 'cps_alerts_ack_by_host',
                         'value': cvalues,
                         'type': 'COUNTER'
                     },
                     {
-                        'metric': 'cps_alerts_not_ack',
-                        'value': -1,
+                        'metric': 'cps_alerts_ack_count_{}'.format(
+                            self.get_metric_name_adp(event)
+                        ),
+                        'value': 1,
                         'type': 'COUNTER'
                     }
                 ]
             )
+
+            self.logger.debug(alerts_event)
 
             publish(
                 publisher=self.amqp,
@@ -268,11 +281,6 @@ class engine(Engine):
                         {
                             'metric': 'cps_alerts_ack',
                             'value': cvalues,
-                            'type': 'COUNTER'
-                        },
-                        {
-                            'metric': 'cps_alerts_not_ack',
-                            'value': -1,
                             'type': 'COUNTER'
                         }
                     ]
@@ -335,6 +343,12 @@ class engine(Engine):
                                 'metric': 'ack_solved_delay',
                                 'value': solvedts - ack['ackts'],
                                 'unit': 's'
+                            }, {
+                                'metric': 'cps_alerts_ack_count_{}'.format(
+                                    self.get_metric_name_adp(event)
+                                ),
+                                'value': -1,
+                                'type': 'COUNTER'
                             }
                         ]
                     )

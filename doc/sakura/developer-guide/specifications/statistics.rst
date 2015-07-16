@@ -5,55 +5,44 @@ Statistics
 Canopsis computes in background some statistics that allow users to get information about canopsis usage.
 Below, the statistics list and **the way they have to be computed** to be available in Canopsis.
 
-As metrics have to be displayed with arbitrary time periods, agregation information have to be computed on the fly. It may be interesting to make evolve the metric system to be able to retrieve information from produced metrics instead of producing more metrics that would use disk space. This point of view have to be moderated by the fact that performance issue that may result with some too high level on the fly operations.
-
-For instance, it may be possible to solve the cps_user_ack_delay metric on global (sum of all users metrics) thanks to an appropriate api that allow such operation
-
 The main goal of these statistics is for a canopsis administrator to be able to plot and display them in **charts and widget texts**.
 Some users should be able to have a look at the charts and widget texts holding these information.
 
-The following metrics expects to be computed over time, accurately and with no double computation.
-
+These metrics have to be computed in an **incremental** way. This means that every event holding an information that have to change any of these metrics will produce a new event with a count metric that will **increment or decrement** the total count of one of these indicators. This way, it is possible **to perform aggregation operation overtime** in the actual Canopsis system.
 
  - Delay between a user connection and deconnection
 
-   ``[cps_session_delay: seconds, integer]`` A backend Session manager allow compute required to be able to produce these metrics
+   ``[cps_session_delay_user_<username>: seconds, integer]``
+   A backend Session manager manage connection delays from the UI interactions and allow to compute this metric. Every beat interval of the engine stats, ended session are computed and for each of them, the delay between the session start and the session end is computed and produces a metric. This metric is a **GAUGE** as session duration information are absolute times.
+
 
  - Acknowleged alarm by user, perimeter and domain
 
-   ``[cps_ack_alarm: integer]`` Should produce a metric by single **[user, perimeter, domain]**
+   ``[cps_alerts_ack_count_<user>[_<domain><perimeter>]: integer]``
+   Produce a metric by single **user, domain, perimeter** if domain and / or perimeter information are available. This indicator is incremented when an alert event is acknowleged and decremented when the alert retrieve it's normal state.
 
- - Delay between an alarm and a user acknowlegement. Also compute global value (for all users)
+ - Delay between an alarm and a user acknowlegement
 
-   ``[cps_user_ack_delay: seconds, integer]`` The produced metrics are for individual users. The global one is a sum of all users metrics
+   ``[ack_delay_<user>: seconds, integer]``
+   This metric is a count of ack delay that elapsed between the date when an event passed to alert state until when it is acknowleged.
 
  - New alarms count
 
-   ``[cps_new_alarms: integer]``
-
- - Acknowleged alarms
-
-   ``[cps_ack_alarm: integer]``
+   ``[cps_new_alert: integer]``
+   This indicator evolve in time with incrementation on an event passing to alert and decrementation when an alert goes back to ok state
 
  - Solved alarm with acknowlegement
 
    ``[cps_solved_ack_alarms: integer]``
+   This metric evolves in time beeing incremented when an alert is solved (back to ok state) when it has previously been acknowleged.
 
  - Solved alarm without acknowlegement
 
    ``[cps_solved_not_ack_alarms: integer]``
+   This metric evolves in time beeing incremented when an alert is solved (back to ok state) when it has previously NOT been acknowleged.
 
  - Delay between an alarm and it's resolution date for acknowleged alarms
 
-   ``[cps_delay_ack_alarm_solve: integer]``
-
-
- It must also be possible to perform aggregation operation on a custom period with a start and stop date such as:
-
- - minimum
- - maximum
- - mean
- - sum
-
-This should be acheived thanks to the serie's system.
+   ``[ack_solved_delay: integer]``
+   This metric counts the total time between event ack and alert resolution. This is done on change state.
 
