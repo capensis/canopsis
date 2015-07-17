@@ -94,52 +94,29 @@ class StatsTest(StatsManagerTest):
         event['state'] = 0
         devent['state'] = 1
 
-        sevent = self.stats_manager.compute_ack_alerts(event, devent)
-        self.assertEqual(len(sevent['perf_data_array']), 2)
+        metrics = self.stats_manager.compute_ack_alerts(event, devent)
+        self.assertEqual(len(metrics), 2)
 
         # New alert metric only
         event['state'] = 1
         devent['state'] = 0
 
-        sevent = self.stats_manager.compute_ack_alerts(event, devent)
-        self.assertEqual(len(sevent['perf_data_array']), 1)
+        metrics = self.stats_manager.compute_ack_alerts(event, devent)
+        self.assertEqual(len(metrics), 1)
 
         # No metric as no state change
         event['state'] = 0
         devent['state'] = 0
 
-        sevent = self.stats_manager.compute_ack_alerts(event, devent)
-        self.assertIsNone(sevent)
+        metrics = self.stats_manager.compute_ack_alerts(event, devent)
+        self.assertEqual(len(metrics), 0)
 
         # No metric as no state change
         event['state'] = 1
         devent['state'] = 1
 
-        sevent = self.stats_manager.compute_ack_alerts(event, devent)
-        self.assertIsNone(sevent)
-
-    def test_add_metric(self):
-        self.stats_manager.add_metric('name', 5)
-        self.assertEqual(
-            self.stats_manager.perf_data_array[0],
-            {
-                'metric': 'name',
-                'value': 5,
-                'type': 'COUNTER'
-            }
-        )
-
-        self.stats_manager.add_metric('name1', 6, mtype='MYTYPE')
-        self.assertEqual(len(self.stats_manager.perf_data_array), 2)
-
-        self.assertEqual(
-            self.stats_manager.perf_data_array[1],
-            {
-                'metric': 'name1',
-                'value': 6,
-                'type': 'MYTYPE'
-            }
-        )
+        metrics = self.stats_manager.compute_ack_alerts(event, devent)
+        self.assertEqual(len(metrics), 0)
 
     def test_users_session_duration(self):
         # below methods are tested in the session manager
@@ -157,56 +134,74 @@ class StatsTest(StatsManagerTest):
         self.stats_manager.users_session_duration()
         self.assertEqual(self.stats_manager.perf_data_array, ['testvalue'])
 
-    def test_event_count_by_source(self):
-        def mockfind(query='Q', with_count=True):
-            return 'fakecursor', 5
+    def test_event_add_by_source(self):
+        for source in ('resource', 'component', 'test'):
+            metrics = self.stats_manager.event_add_by_source(
+                {'source_type': source}, True
+            )
+            self.assertEqual(len(metrics), 1)
+            self.assertEqual(metrics[0]['value'], 1)
+            self.assertEqual(
+                metrics[0]['metric'],
+                'cps_count_{}'.format(source)
+            )
 
-        self.stats_manager.event_manager.find = mockfind
+        # Not new event, no metric to produce
+        metrics = self.stats_manager.event_add_by_source(
+            {'source_type': 'resource'}, False
+        )
+        self.assertEqual(len(metrics), 0)
 
-        self.stats_manager.event_count_by_source()
-        perfs = self.stats_manager.perf_data_array
-        self.assertEqual(len(perfs), 2)
-        self.assertEqual([x['metric'] for x in perfs], [
-            'cps_count_resource',
-            'cps_count_component',
-        ])
-        self.assertEqual([x['value'] for x in perfs], [5, 5])
+    def test_count_by_source_and_state(self):
 
-    def test_event_count_by_source_and_state(self):
-        def mockfind(query='Q', with_count=True):
-            return 'fakecursor', 5
+        # New event, no metric to produce
+        metrics = self.stats_manager.event_count_by_source_and_state(
+            {}, {}, True
+        )
+        self.assertEqual(len(metrics), 0)
 
-        self.stats_manager.event_manager.find = mockfind
+        # No state change, no metrics
+        metrics = self.stats_manager.event_count_by_source_and_state(
+            {'state': 1}, {'state': 1}, False
+        )
+        self.assertEqual(len(metrics), 0)
 
-        self.stats_manager.event_count_by_source_and_state()
-        perfs = self.stats_manager.perf_data_array
-        self.assertEqual(len(perfs), 8)
-        self.assertEqual([x['metric'] for x in perfs], [
-            'cps_states_resource_info',
-            'cps_states_resource_minor',
-            'cps_states_resource_major',
-            'cps_states_resource_critical',
-            'cps_states_component_info',
-            'cps_states_component_minor',
-            'cps_states_component_major',
-            'cps_states_component_critical'
-        ])
+        # Test works
+        metrics = self.stats_manager.event_count_by_source_and_state(
+            {'state': 0, 'source_type': 'testsource'}, {'state': 1}, False
+        )
+        self.assertEqual(len(metrics), 2)
+        self.assertEqual(metrics[0]['metric'], 'cps_states_testsource_minor')
+        self.assertEqual(metrics[0]['value'], -1)
+        self.assertEqual(metrics[1]['metric'], 'cps_states_testsource_info')
+        self.assertEqual(metrics[1]['value'], 1)
 
-    def test_event_count_by_state(self):
-        def mockfind(query='Q', with_count=True):
-            return 'fakecursor', 5
+        metrics = self.stats_manager.event_count_by_source_and_state(
+            {'state': 3, 'source_type': 'source1'}, {'state': 2}, False
+        )
+        self.assertEqual(len(metrics), 2)
+        self.assertEqual(metrics[0]['metric'], 'cps_states_source1_major')
+        self.assertEqual(metrics[0]['value'], -1)
+        self.assertEqual(metrics[1]['metric'], 'cps_states_source1_critical')
+        self.assertEqual(metrics[1]['value'], 1)
 
-        self.stats_manager.event_manager.find = mockfind
+    def test_event_add_by_state(self):
+        for x, state in enumerate(['info', 'minor', 'major', 'critical']):
+            metrics = self.stats_manager.event_add_by_state(
+                {'state': x}, True
+            )
+            self.assertEqual(len(metrics), 1)
+            self.assertEqual(metrics[0]['value'], 1)
+            self.assertEqual(
+                metrics[0]['metric'],
+                'cps_states_{}'.format(state)
+            )
 
-        self.stats_manager.event_count_by_state()
-        perfs = self.stats_manager.perf_data_array
-        self.assertEqual(len(perfs), 4)
-        self.assertEqual([x['metric'] for x in perfs], [
-            'cps_states_info',
-            'cps_states_minor',
-            'cps_states_major',
-            'cps_states_critical'
-        ])
+        # Not new event, no metric to produce
+        metrics = self.stats_manager.event_add_by_source(
+            {'source_type': 'resource'}, False
+        )
+        self.assertEqual(len(metrics), 0)
 
 
 if __name__ == '__main__':
