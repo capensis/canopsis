@@ -5,8 +5,6 @@ TITLE : titre du document
 Plan
 ====
 
-Plan du document.
-
 Description
 ===========
 
@@ -15,12 +13,7 @@ Description courte du document.
 Références
 ==========
 
-Références vers d’autres DS
-
-Concepts
-========
-
-Concepts utlisés dans le doc.
+Références vers d’autres FR/TR/ED.
 
 Mises à jour
 ============
@@ -33,8 +26,3 @@ Mises à jour
 
 Contenu
 =======
-
-Description
------------
-
-Description Longue

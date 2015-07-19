@@ -13,7 +13,7 @@ Description courte du document.
 Références
 ==========
 
-Références vers d’autres DS.
+Références vers d’autres TR et FR.
 
 Mises à jour
 ============
