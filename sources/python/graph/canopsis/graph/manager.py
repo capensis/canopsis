@@ -69,6 +69,10 @@ class GraphManager(MiddlewareRegistry):
 
     STORAGE = 'graph_storage'  #: graph storage name
 
+    SOURCES = 1 << 0  #: source orientation
+    TARGETS = 1 << 1  #: target orientation
+    ALL = SOURCES | TARGETS  #: source and target orientation
+
     def get_elts(
         self,
         ids=None, types=None, graph_ids=None, info=None, base_type=None,
@@ -455,7 +459,7 @@ class GraphManager(MiddlewareRegistry):
         """
 
         return self.get_neighbourhood(
-            ids=ids, graph_ids=graph_ids, sources=False, targets=True,
+            ids=ids, graph_ids=graph_ids, orientation=GraphManager.TARGETS,
             target_data=info, target_query=query, target_types=types,
             edge_ids=edge_ids, add_edges=add_edges,
             target_edge_types=edge_types, target_edge_data=edge_data,
@@ -490,7 +494,7 @@ class GraphManager(MiddlewareRegistry):
         """
 
         return self.get_neighbourhood(
-            ids=ids, graph_ids=graph_ids, sources=True, targets=False,
+            ids=ids, graph_ids=graph_ids, orientation=GraphManager.SOURCES,
             source_data=info, source_query=query, source_types=types,
             edge_ids=edge_ids, add_edges=add_edges,
             source_edge_types=edge_types, source_edge_data=edge_data,
@@ -498,16 +502,16 @@ class GraphManager(MiddlewareRegistry):
         )
 
     def get_neighbourhood(
-        self,
-        ids=None, sources=False, targets=True,
-        graph_ids=None,
-        info=None, source_data=None, target_data=None,
-        types=None, source_types=None, target_types=None,
-        edge_ids=None, edge_types=None, add_edges=False,
-        source_edge_types=None, target_edge_types=None,
-        edge_data=None, source_edge_data=None, target_edge_data=None,
-        query=None, edge_query=None, source_query=None, target_query=None,
-        serialize=True
+            self,
+            ids=None, orientation=TARGETS,
+            graph_ids=None,
+            info=None, source_data=None, target_data=None,
+            types=None, source_types=None, target_types=None,
+            edge_ids=None, edge_types=None, add_edges=False,
+            source_edge_types=None, target_edge_types=None,
+            edge_data=None, source_edge_data=None, target_edge_data=None,
+            query=None, edge_query=None, source_query=None, target_query=None,
+            serialize=True, depth=None
     ):
         """
         Get neighbour vertices identified by context parameters.
@@ -516,6 +520,8 @@ class GraphManager(MiddlewareRegistry):
 
         :param ids: vertice ids from where get neighbours.
         :type ids: list or str
+        :param int orientation: edge orientation to use, among GRAPH.SOURCES,
+            GRAPH.TARGETS (default) and GRAPH.ALL.
         :param bool sources: if True (False by default) add source vertices.
         :param bool targets: if True (default) add target vertices.
         :param graph_ids: vertice graph ids.
@@ -550,9 +556,14 @@ class GraphManager(MiddlewareRegistry):
         :param dict target_query: additional target query.
         :param bool serialize: serialize result in GraphElements if True
             (by default).
+        :param int depth: if not None (default), repeat recursively the depth
+            search and sort results by depth in ensuring a minimal depth for
+            found neighbourhoods.
 
         :return: list of neighbour vertices designed by ids, or dict of
-            {edge_id: (edge, list(vertices))} if add_edges.
+            {edge_id: (edge, list(vertices))} if add_edges. If depth is greater
+            than 1 or negative, result a set of (search depth, previous result
+            structure).
         :rtype: list or dict
         """
 
@@ -606,8 +617,10 @@ class GraphManager(MiddlewareRegistry):
             query=source_query,
             serialize=False
         )
+
         # fill edges
         if source_edges is not None:
+            sources = orientation & GraphManager.SOURCES
             # if source_edges is an edge
             if isinstance(source_edges, Edge):
                 # and sources or source_edges is not directed
@@ -666,6 +679,7 @@ class GraphManager(MiddlewareRegistry):
         )
         # fill edges
         if target_edges is not None:
+            targets = orientation & GraphManager.TARGETS
             # if target_edges is an edge
             if isinstance(target_edges, Edge):
                 # and targets or target_edges is not directed
@@ -758,6 +772,78 @@ class GraphManager(MiddlewareRegistry):
                     serialize=serialize
                 )
                 result += elts
+
+        # if depth search is asked
+        if depth is not None:
+            # initialize the new result
+            result = {0: result}
+            foundvertices = []
+            # initialize query
+            if query is None:
+                depth_query = {'$id': {'$nin': foundvertices}}
+            else:
+                depth_query = {
+                    '$and': [{'$id': {'$nin': foundvertices}}, query]
+                }
+
+            # initialize the new query
+            def getvertices(res):
+                """Get found vertice from parent function result and
+                fill query.
+
+                :param res: neighbourhood result to parse.
+                :return: found vertices.
+                :rtype: set
+                """
+
+                result = set()
+                # if res is a set of vertices by edges.
+                if isinstance(res, dict):
+                    for edge in res:
+                        for vertice in res[edge]:
+                            result.add(vertice)
+                # if res is a list of vertices
+                elif isinstance(res, list):
+                    result = set(res)
+                # if res is one vertice
+                elif res is not None:
+                    result.add(res)
+
+                if result:  # update foundvertices if necessary
+                    for vertice in result:
+                        verticeid = vertice.id if serialize else vertice[
+                            GraphElement.ID
+                        ]
+                        if verticeid not in foundvertices:
+                            foundvertices.append(verticeid)
+
+                return result
+
+            verticeids = ids
+
+            while depth != 0:
+                depth -= 1
+                new_result = self.get_neighbourhood(
+                    ids=verticeids, orientation=orientation,
+                    graph_ids=graph_ids, info=info, types=types,
+                    source_data=source_data, target_data=target_data,
+                    source_types=source_types, target_types=target_types,
+                    edge_ids=edge_ids, edge_types=edge_types,
+                    add_edges=add_edges, serialize=serialize,
+                    source_edge_types=source_edge_types,
+                    target_edge_types=target_edge_types,
+                    edge_data=edge_data,
+                    source_edge_data=source_edge_data,
+                    target_edge_data=target_edge_data,
+                    query=depth_query, edge_query=edge_query,
+                    source_query=source_query, target_query=target_query,
+                )
+                if new_result:  # if new vertices are founded
+                    # update vertice ids
+                    verticeids = getvertices(new_result)
+                    result[len(result)] = verticeids
+                else:  # stop to search vertices
+                    break
 
         return result
 
