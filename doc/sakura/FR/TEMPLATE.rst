@@ -17,11 +17,6 @@ Références
 
 Références vers d’autres FR.
 
-Concepts
-========
-
-Concepts utlisés dans le doc.
-
 Mises à jour
 ============
 
