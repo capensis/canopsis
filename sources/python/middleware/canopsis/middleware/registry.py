@@ -40,6 +40,7 @@ class MiddlewareRegistry(ConfigurableRegistry):
     SHARING_SCOPE = 'sharing_scope'  #: conf sharing scope name
     AUTO_CONNECT = 'auto_connect'  #: conf auto connect name
     DATA_SCOPE = 'data_scope'  #: configuration data scope name
+    DB = 'db'  #: sub-storage db name
 
     CATEGORY = 'MANAGER'  #: middleware manager
 
@@ -53,21 +54,17 @@ class MiddlewareRegistry(ConfigurableRegistry):
 
     def __init__(
         self, shared=True, sharing_scope=None, auto_connect=True,
-        data_scope=None,
+        data_scope=None, db=None,
         *args, **kwargs
     ):
         """
-        :param shared: sub-middleware shared usage (default:True)
-        :type shared: bool
-
-        :param sharing_scope: sub-middleware sharing scope usage (default:None)
-        :type sharing_scope: object
-
-        :param auto_connect: sub-middleware auto connect (default:True)
-        :type auto_connect: bool
-
-        :param data_scope: sub-middleware data_scope property (default:None)
-        :type data_scope: str
+        :param bool shared: sub-middleware shared usage (default:True).
+        :param sharing_scope: sub-middleware sharing scope usage (default:
+            None).
+        :param bool auto_connect: sub-middleware auto connect (default: True).
+        :param str data_scope: sub-middleware data_scope property (default:
+            None).
+        :param str db: sub-storage db property (default: None).
         """
 
         super(MiddlewareRegistry, self).__init__(*args, **kwargs)
@@ -76,6 +73,7 @@ class MiddlewareRegistry(ConfigurableRegistry):
         self.shared = shared
         self.sharing_scope = sharing_scope
         self.data_scope = data_scope
+        self.db = db
 
     @property
     def shared(self):
@@ -109,12 +107,20 @@ class MiddlewareRegistry(ConfigurableRegistry):
     def data_scope(self, value):
         self._data_scope = value
 
+    @property
+    def db(self):
+        return self._db
+
+    @db.setter
+    def db(self, value):
+        self._db = value
+
     def get_middleware(
-        self,
-        protocol, data_type=None, data_scope=None,
-        auto_connect=None,
-        shared=None, sharing_scope=None,
-        *args, **kwargs
+            self,
+            protocol, data_type=None, data_scope=None,
+            auto_connect=None,
+            shared=None, sharing_scope=None,
+            *args, **kwargs
     ):
         """
         Load a middleware related to input uri.
@@ -195,6 +201,9 @@ class MiddlewareRegistry(ConfigurableRegistry):
                 auto_connect=auto_connect,
                 *args, **kwargs)
 
+        if hasattr(result, MiddlewareRegistry.DB) and self.db is not None:
+            result.db = self.db
+
         return result
 
     def get_middleware_by_uri(
@@ -254,7 +263,10 @@ class MiddlewareRegistry(ConfigurableRegistry):
                 Parameter(MiddlewareRegistry.SHARED, parser=Parameter.bool),
                 Parameter(MiddlewareRegistry.SHARING_SCOPE),
                 Parameter(MiddlewareRegistry.AUTO_CONNECT),
-                Parameter(MiddlewareRegistry.DATA_SCOPE)))
+                Parameter(MiddlewareRegistry.DATA_SCOPE),
+                Parameter(MiddlewareRegistry.DB)
+            )
+        )
 
         return result
 
