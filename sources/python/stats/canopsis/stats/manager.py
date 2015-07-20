@@ -97,7 +97,7 @@ class Stats(MiddlewareRegistry):
 
         return metric
 
-    def compute_stats(event, devent, new_event):
+    def compute_stats(self, event, devent, new_event):
 
         """
         Computes general statistics that are computable
