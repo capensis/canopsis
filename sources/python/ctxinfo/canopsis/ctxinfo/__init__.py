@@ -18,5 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[LOADER]
-libraries=canopsis.mongo,canopsis.mongo.periodic,canopsis.mongo.timed,canopsis.mongo.composite,canopsis.ccalendar.funder,canopsis.check.funder,canopsis.event.funder,canopsis.linklist.funder,canopsis.pbehavior.funder,canopsis.perfdata.funder,canopsis.snmp.funder,canopsis.topology.funder,canopsis.vevent.funder
+"""This project is dedicated to enrich a context with dynamic information such
+as perfdata, periodic behavior, etc.
+
+A ctxinfo manager is dedicated to get/put/update/delete context information
+from a single point (... of failure ?! Stop to criticize my idea :p) in order
+to apply a same logic whatever concerns.
+
+Such context information manager implement the CTXInfoFunder interface which
+is able to execute the ctxinfo manager methods.
+"""
+
+__version__ = '0.1'

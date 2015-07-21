@@ -18,5 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[LOADER]
-libraries=canopsis.mongo,canopsis.mongo.periodic,canopsis.mongo.timed,canopsis.mongo.composite,canopsis.ccalendar.funder,canopsis.check.funder,canopsis.event.funder,canopsis.linklist.funder,canopsis.pbehavior.funder,canopsis.perfdata.funder,canopsis.snmp.funder,canopsis.topology.funder,canopsis.vevent.funder
+# attach this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

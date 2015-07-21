@@ -74,8 +74,7 @@ class GraphManager(MiddlewareRegistry):
         ids=None, types=None, graph_ids=None, info=None, base_type=None,
         query=None, serialize=True, cls=None
     ):
-        """
-        Get graph element(s) related to input ids, types and query.
+        """Get graph element(s) related to input ids, types and query.
 
         :param ids: list of ids or id of element to retrieve. If None, get all
             elements. If str, get one element.
@@ -84,10 +83,10 @@ class GraphManager(MiddlewareRegistry):
         :type types: list or str
         :param graph_ids: graph ids from where find elts.
         :type graph_ids: list or str
-        :param info: info query
+        :param info: info query.
         :param dict query: element search query.
         :param str base_type: elt base type.
-        :param bool serialize: serialize result in GraphElements if True
+        :param bool serialize: serialize result to GraphElements if True
             (by default).
         :param type cls: GraphElement type to retrieve if not None.
 
@@ -115,7 +114,7 @@ class GraphManager(MiddlewareRegistry):
                     data_name = 'info.{0}'.format(name)
                     query[data_name] = info[name]
             else:
-                query[Vertice.DATA] = info
+                query[Vertice.INFO] = info
         # find ids among graphs
         if graph_ids is not None:
             result = []
@@ -160,9 +159,10 @@ class GraphManager(MiddlewareRegistry):
 
         return result
 
-    def del_elts(self, ids=None, types=None, query=None, cache=False):
-        """
-        Del elements identified by input ids in removing reference before.
+    def del_elts(
+        self, ids=None, types=None, query=None, info=None, cache=False
+    ):
+        """Del elements identified by input ids in removing reference before.
 
         :param ids: list of ids or id elements to delete. If None, delete all
             elements.
@@ -170,6 +170,7 @@ class GraphManager(MiddlewareRegistry):
         :param types: element types to delete.
         :type types: list or str
         :param dict query: additional deletion query.
+        :param info: info query.
         :param bool cache: use query cache if True (False by default).
         """
 
@@ -179,6 +180,14 @@ class GraphManager(MiddlewareRegistry):
         # put types in query
         if types is not None:
             query[GraphElement.TYPE] = types
+        # put info if not None
+        if info is not None:
+            if isinstance(info, dict):
+                for name in info:
+                    data_name = 'info.{0}'.format(name)
+                    query[data_name] = info[name]
+            else:
+                query[Vertice.INFO] = info
         # remove references in graph
         self.remove_elts(ids=ids, cache=cache, del_orphans=False)
         # remove edge references
@@ -802,8 +811,7 @@ class GraphManager(MiddlewareRegistry):
         ids=None, types=None, sources=None, targets=None, graph_ids=None,
         info=None, query=None, serialize=True
     ):
-        """
-        Get edges related to input ids, types and source/target ids.
+        """Get edges related to input ids, types and source/target ids.
 
         :param ids: edge ids to find. If ids is a str, result is an Edge or
             None.
@@ -853,9 +861,18 @@ class GraphManager(MiddlewareRegistry):
         return result
 
     def get_orphans(self, serialize=True, query=None, info=None, types=None):
+        """Get all elements which are not associated to graphs.
+
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+        :param dict query: additional query.
+        :param info: info to find among vertices.
+        :param types: edge types to find.
+        :type types: list or str
+        :return: element(s) corresponding to input ids and query.
+        :rtype: list or dict
         """
-        Get all elements which are not associated to graphs.
-        """
+
         # get all elt ids
         graphs = self.get_graphs()
         elt_ids = list(chain(*(graph.elts for graph in graphs)))

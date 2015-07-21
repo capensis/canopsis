@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -17,6 +18,3 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
-[LOADER]
-libraries=canopsis.mongo,canopsis.mongo.periodic,canopsis.mongo.timed,canopsis.mongo.composite,canopsis.ccalendar.funder,canopsis.check.funder,canopsis.event.funder,canopsis.linklist.funder,canopsis.pbehavior.funder,canopsis.perfdata.funder,canopsis.snmp.funder,canopsis.topology.funder,canopsis.vevent.funder

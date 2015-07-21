@@ -18,5 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[LOADER]
-libraries=canopsis.mongo,canopsis.mongo.periodic,canopsis.mongo.timed,canopsis.mongo.composite,canopsis.ccalendar.funder,canopsis.check.funder,canopsis.event.funder,canopsis.linklist.funder,canopsis.pbehavior.funder,canopsis.perfdata.funder,canopsis.snmp.funder,canopsis.topology.funder,canopsis.vevent.funder
+from canopsis.vevent.funder import VEventFunder
+
+
+class PBehaviorFunder(VEventFunder):
+    """In charge of binding a pbehavior information to context entities.
+    """
+
+    __datatype__ = 'pbehavior'  #: default datatype name

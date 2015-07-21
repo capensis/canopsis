@@ -322,7 +322,7 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def find_elements(
-        self, query, limit=0, skip=0, sort=None, projection=None,
+        self, query=None, limit=0, skip=0, sort=None, projection=None,
         with_count=False,
         *args, **kwargs
     ):

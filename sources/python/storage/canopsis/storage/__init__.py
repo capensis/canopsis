@@ -36,7 +36,7 @@ from collections import Iterable
 from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
 from canopsis.configuration.parameters import Parameter
-from canopsis.middleware import Middleware
+from canopsis.middleware.core import Middleware
 
 
 class DataBase(Middleware):
@@ -649,7 +649,8 @@ class Storage(DataBase):
 
     def find_elements(
         self,
-        query, limit=0, skip=0, sort=None, projection=None, with_count=False
+        query=None, limit=0, skip=0, sort=None, projection=None,
+        with_count=False
     ):
         """
         Find elements corresponding to input request and in taking care of
@@ -725,17 +726,21 @@ class Storage(DataBase):
 
         self.put_element(element=element)
 
-    def count_elements(self, request=None):
+    def count_elements(self, query=None):
         """
-        Count elements corresponding to the input request
+        Count elements corresponding to the input query
 
-        :param dict request: request which contain set of couples (key, value)
+        :param dict query: query which contain set of couples (key, value)
 
-        :return: Number of elements corresponding to the input request
+        :return: Number of elements corresponding to the input query
         :rtype: int
         """
 
-        raise NotImplementedError()
+        cursor = self.find_elements(query=query)
+
+        result = len(cursor)
+
+        return result
 
     def __len__(self):
         """

@@ -20,7 +20,7 @@
 
 from canopsis.configuration.parameters import Parameter, Configuration
 from canopsis.common.utils import lookup
-from .manager import Manager
+from canopsis.middleware.manager import Manager
 
 
 class Benchmark(Manager):
