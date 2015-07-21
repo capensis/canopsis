@@ -23,7 +23,7 @@ from unittest import TestCase, main
 
 from functools import reduce
 
-from canopsis.storage import Storage
+from canopsis.storage.core import Storage
 from canopsis.storage.composite import CompositeStorage
 from canopsis.mongo.composite import MongoCompositeStorage
 

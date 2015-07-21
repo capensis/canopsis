@@ -24,7 +24,7 @@ from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData
 from sqlalchemy.sql import select
 
 from canopsis.common.init import basestring
-from canopsis.storage import Storage, DataBase
+from canopsis.storage.core import Storage, DataBase
 from canopsis.common.utils import isiterable
 
 

@@ -21,7 +21,7 @@
 """Mongo implementation of the filestorage.
 """
 
-from canopsis.storage import Storage
+from canopsis.storage.core import Storage
 
 
 class FileStream(object):

@@ -19,8 +19,8 @@
 # ---------------------------------
 
 from canopsis.common.utils import isiterable
-from canopsis.mongo import MongoStorage
-from canopsis.storage import Storage
+from canopsis.mongo.core import MongoStorage
+from canopsis.storage.core import Storage
 from canopsis.storage.composite import CompositeStorage
 
 

@@ -26,9 +26,9 @@ information managers such as the perfdata manager for example.
 
 from copy import deepcopy
 
-from canopsis.storage import Cursor
+from canopsis.storage.core import Cursor
 from canopsis.context.manager import Context
-from canopsis.mongo import MongoStorage
+from canopsis.mongo.core import MongoStorage
 from canopsis.middleware.core import Middleware
 from canopsis.ctxinfo.funder import CTXInfoFunder
 

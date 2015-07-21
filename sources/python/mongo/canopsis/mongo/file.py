@@ -21,7 +21,7 @@
 from uuid import uuid4 as uuid
 
 from canopsis.storage.file import FileStorage, FileStream
-from canopsis.mongo import MongoStorage
+from canopsis.mongo.core import MongoStorage
 from canopsis.common.init import basestring
 from canopsis.common.utils import ensure_iterable
 

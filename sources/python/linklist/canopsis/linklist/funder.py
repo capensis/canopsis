@@ -20,7 +20,7 @@
 
 from canopsis.linklist.manager import Linklist
 from canopsis.ctxinfo.funder import CTXInfoFunder
-from canopsis.mongo import MongoStorage
+from canopsis.mongo.core import MongoStorage
 from canopsis.context.manager import Context
 
 from json import loads
