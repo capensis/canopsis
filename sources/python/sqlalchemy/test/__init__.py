@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 
-from canopsis.mongo import MongoDataBase, MongoStorage
+from canopsis.mongo.core import MongoDataBase, MongoStorage
 
 from tempfile import NamedTemporaryFile
 

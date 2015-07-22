@@ -62,8 +62,7 @@ class PerfData(MiddlewareRegistry):
             self[PerfData.META_STORAGE] = meta_storage
 
     def count(self, metric_id, timewindow=None, period=None):
-        """
-        Get number of perfdata identified by metric_id in input timewindow
+        """Get number of perfdata identified by metric_id in input timewindow
 
         :param timewindow: if None, get all perfdata values
         """
@@ -76,13 +75,29 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
+    def get_metrics(self, query=None):
+        """Get registered metric ids.
+
+        :return: list of registered metric ids.
+        :rtype: list
+        """
+
+        result = set()
+
+        documents = self[PerfData.PERFDATA_STORAGE].find_elements(query=query)
+
+        for document in documents:
+            result.add(document['i'])
+
+        return list(result)
+
     def get(
         self, metric_id, period=None, with_meta=True, timewindow=None,
         limit=0, skip=0, timeserie=None
     ):
-        """
-        Get a set of data related to input data_id on the timewindow and input
-            period.
+        """Get a set of data related to input data_id on the timewindow and
+        input period.
+
         If with_meta, result is a couple of (points, list of meta by timestamp)
         """
 
@@ -106,9 +121,8 @@ class PerfData(MiddlewareRegistry):
     def get_point(
         self, metric_id, period=None, with_meta=True, timestamp=None
     ):
-        """
-        Get the closest point before input timestamp. Add meta informations if
-            with_meta.
+        """Get the closest point before input timestamp. Add meta informations
+        if with_meta.
         """
 
         if timestamp is None:
@@ -136,8 +150,7 @@ class PerfData(MiddlewareRegistry):
     def get_meta(
         self, metric_id, timewindow=None, limit=0, sort=None
     ):
-        """
-        Get the meta data related to input data_id and timewindow.
+        """Get the meta data related to input data_id and timewindow.
         """
 
         if timewindow is None:
@@ -153,9 +166,9 @@ class PerfData(MiddlewareRegistry):
         return result
 
     def put(self, metric_id, points, meta=None, period=None, cache=False):
-        """
-        Put a (list of) couple (timestamp, value), a meta into rated_documents
-        related to input period.
+        """Put a (list of) couple (timestamp, value), a meta into
+        rated_documents related to input period.
+
         kwargs will be added to all document in order to extend
         periodic_documents.
 
@@ -191,8 +204,8 @@ class PerfData(MiddlewareRegistry):
         self,
         metric_id, period=None, with_meta=False, timewindow=None, cache=False
     ):
-        """
-        Remove values and meta of one metric.
+        """Remove values and meta of one metric.
+
         meta_names is a list of meta_data to remove. An empty list ensure that
         no meta data is removed.
         if meta_names is None, then all meta_names are removed.
@@ -213,24 +226,22 @@ class PerfData(MiddlewareRegistry):
             )
 
     def put_meta(self, metric_id, meta, timestamp=None, cache=False):
-        """
-        Update meta information.
+        """Update meta information.
         """
 
         self[PerfData.PERFDATA_STORAGE].put(
             data_id=metric_id, value=meta, timestamp=timestamp, cache=cache)
 
     def remove_meta(self, metric_id, timewindow=None, cache=False):
-        """
-        Remove meta information.
+        """Remove meta information.
         """
 
         self[PerfData.PERFDATA_STORAGE].remove(
             data_id=metric_id, timewindow=timewindow, cache=cache)
 
     def get_period(self, metric_id, period=None):
-        """
-        Get default period related to input metric_id.
+        """Get default period related to input metric_id.
+
         DEFAULT_PERIOD if related entity does not exist or does not contain
         a default period.
         """

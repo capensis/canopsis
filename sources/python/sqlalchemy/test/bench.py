@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 
-from canopsis.mongo import MongoStorage
+from canopsis.mongo.core import MongoStorage
 
 from time import time
 

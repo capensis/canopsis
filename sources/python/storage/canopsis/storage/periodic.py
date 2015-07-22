@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.storage import Storage
+from canopsis.storage.core import Storage
 
 
 class PeriodicStorage(Storage):

@@ -21,7 +21,7 @@
 __version__ = "0.1"
 
 
-from canopsis.middleware import Middleware
+from canopsis.middleware.core import Middleware
 from canopsis.configuration.parameters import Category, Parameter
 from canopsis.common.utils import lookup
 

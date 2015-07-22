@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.common.utils import isiterable
-from canopsis.mongo import MongoStorage
+from canopsis.mongo.core import MongoStorage
 from canopsis.storage.timed import TimedStorage
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
