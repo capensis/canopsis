@@ -72,9 +72,6 @@ class engine(Engine):
 
         # Allow individual stat computation management from ui.
         stats_to_compute = [
-            'event_count_by_source',
-            'event_count_by_source_and_state',
-            'event_count_by_state',
             'users_session_duration',
         ]
 

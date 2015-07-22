@@ -661,11 +661,11 @@ class Archiver(Configurable):
                 change['change_state_output'] = event['output']
                 change['output'] = devent.get('output', '')
 
-            self.logger.debug('Will compute ack alerts stats')
-            sevent = self.stats_manager.compute_ack_alerts(event, devent)
-            self.logger.debug('Compute alert and ack stats {}'.format(sevent))
+            # Statistics on event that require event, previous event
+            # and is new event information
+            sevent = self.stats_manager.compute_stats(event, devent, new_event)
+            self.logger.debug('Stats event computed {}'.format(sevent))
             if sevent:
-                self.logger.debug('stats event {}'.format(sevent))
                 publish(event=sevent, publisher=self.amqp)
 
             if change:
