@@ -56,8 +56,8 @@ class MongoDataBase(DataBase):
         if self.port:
             connection_args['port'] = self.port
         # if self replica set is given
-        if self.replicaSet:
-            connection_args['replicaSet'] = self.replicaSet
+        if self.replicaset:
+            connection_args[Storage.REPLICASET] = self.replicaset
 
         connection_args['j'] = self.journaling
         connection_args['w'] = 1 if self.safe else 0

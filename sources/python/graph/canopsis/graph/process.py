@@ -27,7 +27,7 @@ graph nodes in order to execute theirs tasks.
 
 from canopsis.graph.manager import Graph
 from canopsis.context.manager import Context
-from canopsis.task import process_task, register_task
+from canopsis.task import run_task, register_task
 
 context = Context()
 graph = Graph()
@@ -54,7 +54,7 @@ def event_processing(event, ctx=None, **params):
         for node in nodes:
             task = node[Graph.TASK]
             if task is not None:
-                process_task(
+                run_task(
                     event=event,
                     task=task,
                     ctx=ctx,

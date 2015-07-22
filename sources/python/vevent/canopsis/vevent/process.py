@@ -32,7 +32,7 @@ context = Context()
 vem = VEventManager()
 
 
-@register_task(name='vevent.event_processing')
+@register_task('vevent.event_processing')
 def event_processing(event, veventmanager=None, **params):
     """Add vevent information in VEventManager from input event.
 
