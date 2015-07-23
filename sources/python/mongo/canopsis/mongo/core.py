@@ -28,6 +28,7 @@ from pymongo.errors import (
     TimeoutError, OperationFailure, ConnectionFailure, DuplicateKeyError
 )
 from pymongo.bulk import BulkOperationBuilder
+from pymongo.read_preferences import ReadPreference
 
 
 class MongoDataBase(DataBase):
@@ -57,7 +58,9 @@ class MongoDataBase(DataBase):
             connection_args['port'] = self.port
         # if self replica set is given
         if self.replicaset:
-            connection_args[Storage.REPLICASET] = self.replicaset
+            connection_args['replicaSet'] = self.replicaset
+            connection_args['read_preference'] = \
+                ReadPreference.PRIMARY_PREFERRED
 
         connection_args['j'] = self.journaling
         connection_args['w'] = 1 if self.safe else 0
