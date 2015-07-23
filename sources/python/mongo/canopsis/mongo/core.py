@@ -59,8 +59,7 @@ class MongoDataBase(DataBase):
         # if self replica set is given
         if self.replicaset:
             connection_args['replicaSet'] = self.replicaset
-            connection_args['read_preference'] = \
-                ReadPreference.PRIMARY_PREFERRED
+            connection_args['read_preference'] = ReadPreference.NEAREST
 
         connection_args['j'] = self.journaling
         connection_args['w'] = 1 if self.safe else 0
