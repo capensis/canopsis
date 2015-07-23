@@ -1,3 +1,5 @@
+.. _dev-backend-mgr:
+
 Data Manager
 ============
 
@@ -8,6 +10,7 @@ encapsulates everything about the storage and its configuration.
    :maxdepth: 2
    :titlesonly:
 
+   rights
    graph
    topology
    linklist

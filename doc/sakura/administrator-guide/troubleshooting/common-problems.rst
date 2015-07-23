@@ -1,55 +1,75 @@
+.. _admin-troubleshooting-common:
+
 Common problems
 ===============
-
-No datas retreived
-------------------
-
-Look at rabbitmq's logs in ``var/log/rabbitmq/rabbit@<hostname>.log`` for any connection problems.
-
-* Did you changed machine's name after Canopsis installation?
-
-If yes, then modify ``etc/rabbitmq/rabbitmq-env.conf`` this way:
-
-.. code-block:: bash
-
-    NODENAME=rabbit@<old hostname>
-
-The hostname is used by RabbitMQ to store datas (mnesia database, logs…), if you change it, be sure to modify this variable.
-
-Now you can restart canopsis:
-
-.. code-block:: bash
-
-    su - canopsis
-    hypstart canopsis restart
 
 MongoDB won't start
 -------------------
 
-MongoDB needs the locales to be configured in order to run properly. If you meet this line :
+You need to verify the following:
 
-    [initandlisten] exception in initAndListen std::exception: locale::facet::_S_create_c_locale name not valid, terminating
+ * at least 4GB free on your *Canopsis* partition
+ * no other service are listening on port 27017
 
-Then you must install locales, example with Debian :
+RabbitMQ won't start
+--------------------
 
-    # apt-get install locales
+Sometimes, *RabbitMQ* fails to stop properly, a child process remains : ``beam.smp``.
+Check if it exists by typing:
 
+.. code-block:: bash
 
-CentOS 7 python libs install
+   # su - canopsis
+   $ ps ux | grep beam.smp
+   if a process is found
+   $ kill -9 <found pid>
+
+Then try to restart *RabbitMQ*.
+
+Another problem that can occur is wrong permissions on the *Erlang* cookie.
+Check that you have the following:
+
+.. code-block:: bash
+
+   # su - canopsis
+   $ ls -l .erlang.cookie
+   -r-------- 1 canopsis canopsis 20 june  10 00:00 .erlang.cookie
+
+If not, correct the permissions, and try to restart *RabbitMQ*.
+
+No events found
+---------------
+
+When no events are found by *Canopsis UI*, the root cause can be:
+
+ * an exception occurred in the engines chain:
+    * check the logs in ``var/log/engines`` to verify
+    * if an error is found, report it with the traceback
+ * an engine failed to start, and events are stacking up in the queue:
+    * check if the engine is listed in ``etc/supervisord.d/amqp2engines.conf``
+    * check the engines status with: ``service amqp2engines status``
+    * look into the logs to determine why it didn't start
+    * report the error if found
+ * the engines chain is mis-configured:
+    * verify that the file ``etc/amqp2engines.conf`` chain the event to the ``eventstore``
+ * the event isn't received at all:
+    * using ``amqp2tty``, verify that the event is listed after its emission
+
+Python project won't install
 ----------------------------
 
-At build install a bug may appear
+This means there is an error in the *Canopsis* Python package.
+The ``setup.py`` will import ``canopsis.<project>`` in order to fetch the package's
+version.
+
+If there is an error in this module, the ``setup.py`` will fail with an ambiguous error.
+
+Since the Python projects are installed **after** the Python libs, you can try this:
 
 .. code-block:: bash
 
-   /opt/canopsis/include/python2.7/modsupport.h:27:1: erreur: ‘PyArg_ParseTuple’ is an unrecognized format function type [-Werror=format=]
-   PyAPI_FUNC(int) PyArg_ParseTuple(PyObject *, const char *, ...) Py_FORMAT_PARSETUPLE(PyArg_ParseTuple, 2, 3);
-
-The way to solve it:
-
-.. code-block:: bash
-
-   sed -i "/define HAVE_ATTRIBUTE_FORMAT_PARSETUPLE/ s#1#0#g" /opt/canopsis/include/python2.7/pyconfig.h
-
-This fix could have unknown side effect that we have not met until now.
+   $ cd sources/python
+   $ PYTHONPATH="$(pwd):$PYTHONPATH" /opt/canopsis/bin/python
+   >>> from canopsis import <project>
+   the real error should be printed here
 

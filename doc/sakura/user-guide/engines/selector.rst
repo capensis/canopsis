@@ -1,118 +1,88 @@
-﻿.. _selector:
+﻿.. _user-engines-selector:
 
 Selector
 ========
 
-Overview
---------
+This document describes how does the selectors work.
 
-Selector engine aims to perform aggregation operation on many events,
-providing this way a simple aggregated information.
+Introduction
+------------
 
-Goals
------
+A selector is composed of:
 
-Allow user to define it's own aggregation information. For now, selector
-allows to compute the worst state on an event set. Selectors takes care
-of acknowlegement state in events when computed.
+ * an event filter (and/or specific events included/excluded)
+ * one or more computations
 
-A Computed selector is computed from a user filter and will produce an
-event as output. event rules computation are explained below.
+When the engine executes the selector, it will fetch events from the database
+according to the configured filter. Then, the computations will be applied to
+the set of events, in order to produce a new ``selector`` event.
 
-Selector rules
---------------
+The available computations are:
 
-Selector computation is done on active canopsis events that come from
-external broker sources such as nagios or shinken. These events may
-represent a large amount of information that it may be hard to understand
-or synthetize.
+ * worst-state : the new event will have the worst event state among the set
+ * SLA : a new ``sla`` event will be produced with SLA as metrics
 
-Canopsis selectors aims to answer these aggregation problems by synthetizing
-the amount of information provided by simple events. The solution given by
-canopsis is to let user aggregate events information into a new single event.
+Event Emitted
+-------------
 
-Thus, Canopsis selectors are parametrized with database filters that will
-match existing events into database. Those events have their own statement
-and acknowlegement information that the selector engine will interpret to
-produce the new event.
+The ``selector`` event is very similar to a ``check`` event:
 
-When a filter is defined by the user, many events are selected from database.
-Once selected, selector engine computes the worst state on them with no care
-about statements of acknowleged events by default. This way, the newly produced
-event carries the worst state of all selected events and computes statistics
-information in it's output field.
+ * it owns a state, computed from the selector's alerts
+ * it owns some internal metrics:
+    * ``cps_sel_state_off``: number of alerts off
+    * ``cps_sel_state_minor``: number of minor alerts
+    * ``cps_sel_state_major``: number of major alerts
+    * ``cps_sel_state_critical``: number of critical alerts
+    * ``cps_sel_ack``: number of acknowledged alerts
+    * ``cps_sel_total``: total number of alerts in the selector
+ * it is associated to a component only (with the selector's name)
+ * its output is the rendered selector's template
 
-When all matched events by the user filter are acknowleged, then the produced
-selector event is acknowleged too.
+Example:
 
-The selector view
------------------
+.. code-block:: javascript
 
-Selector management can be done with Engine management right level.
-Please refer to the right management to get more.
+   {
+     "connector": "canopsis",
+     "connector_name": "engine",
+     "event_type": "selector",
+     "source_type": "component",
+     "component": "My Awesome Selector",
+     "state": 0,
+     "output": "My Selector's template",
+     "display_name": "My Awesome Selector",
+     "perf_data_array": [(...)]
+   }
 
-Selector configuration can be reached from the engine menu as shown on
-the picture below
+The ``sla`` event is also similar to a ``check`` event:
 
-.. image:: ../../_static/images/frontend/selector_configuration_1.png
+ * it owns a state, computed from the SLA metrics
+ * it owns some metrics:
+    * ``cps_pct_by_0``: percentage of the SLA period in "Off" state
+    * ``cps_pct_by_1``: percentage of the SLA period in "Minor" state
+    * ``cps_pct_by_2``: percentage of the SLA period in "Major" state
+    * ``cps_pct_by_3``: percentage of the SLA period in "Critical" state
+    * ``cps_avail``: selector's availability
+    * ``cps_avail_duration``: duration when the selector is available
+    * ``cps_alerts_duration``: duration when the selector is in alerts
+ * it is associated to a resource of the selector's component
+ * its output is the rendered SLA's template, configured in the selector
 
-Clicking on this menu item will lead to display the selector view. There
-are two lists on this view: The selector configuration list at the top
-and the produced events view at the bottom.
+Example:
 
-.. image:: ../../_static/images/frontend/selector_renderer_1.png
+.. code-block:: javascript
 
-The selector configuration list displays configuration element that will
-tell the canopsis backend selector engine to compute selector event and
-statements.
+   {
+     "connector": "sla",
+     "connector_name": "engine",
+     "event_type": "sla",
+     "source_type": "resource",
+     "component": "My Awesome Selector",
+     "resource": "sla",
+     "state": 0,
+     "output": "My SLA's template",
+     "display_name": "My Awesome Selector",
+     "perf_data_array": [(...)]
+   }
 
-The produced selector event list shows events in database that were
-produced by the selector engine.
-
-Create a selector in the canopsis UI
-------------------------------------
-
-First click on the create selector button which is in the scope of the
-selector list at the top of the picture.
-
-Then a form appears. This form tells the selector engine in the backend
-how to behave.
-
-.. image:: ../../_static/images/frontend/selector_configuration_2.png
-
-All field are explained when the mouse is over the ask icon.
-
-other tabs are:
-
--  a list of event id to **include**.
--  a list of event id to **exclude**.
--  a cfilter describing a filter which allows **custom** event selection.
-
-Once saved, the selector engine loads the newly configured selector and
-computes it in order to produce it's associated event.
-
-SLA system
-----------
-
-It is possible to tell Canopsis to compute `Service Level Agreement <http://en.wikipedia.org/wiki/Service-level_agreement>`_ for selectors.
-
-Computing SLA consists in the following rules:
-
-- SLA computation can be done only if selector is **enabled** and **dostate** and **dosla** are activated.
-- SLA are computed for the selector it is associated.
-- SLA computes percent of time a selector spend in a given state for each of the following **info, minor, major, critical**.
-- SLA produces an event where ``event_type`` is **sla** and witch resource is the selector name.
-- SLA allows to choose a timewindow witch is a duration until now where SLA are computed.
-
-SLA thresholds
---------------
-
-SLA takes care of a warning and a critical percent level that defines what value the computed event state will be. These values have to be **between 0 and 100** percents and if the threshold of one of these value is reached, the event takes a special state.
-
-For exemple, when a selector spend **90%** of it's time in alert in the given timewindow (one of minor, major or critical state) and the critical threshold value is 85, then the sla event will hold the critical state.
-
-SLA minor state is reached when the alert percent value is greater than the warning threshold and lower than the warning threshold.
-
-SLA configuration sample:
-
-.. image:: ../../_static/images/frontend/sla_configuration.png
+See :ref:`dev-spec-sla` for more informations.

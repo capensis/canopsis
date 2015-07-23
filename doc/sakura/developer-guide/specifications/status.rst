@@ -1,3 +1,5 @@
+.. _dev-spec-event:
+
 Event Status specification
 ==========================
 

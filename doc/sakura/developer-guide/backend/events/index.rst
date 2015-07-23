@@ -1,5 +1,7 @@
-Events
-======
+.. _dev-backend-event:
+
+Send Events
+===========
 
 .. toctree::
    :maxdepth: 2

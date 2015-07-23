@@ -1,4 +1,6 @@
-﻿Partition table
+﻿.. _admin-practices-partition:
+
+Partition table
 ===============
 
 Using a separated partition for ``/opt`` is recommanded.

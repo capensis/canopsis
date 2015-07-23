@@ -1,3 +1,5 @@
+.. _dev-practices-perf:
+
 Performance troubleshooting
 ===========================
 

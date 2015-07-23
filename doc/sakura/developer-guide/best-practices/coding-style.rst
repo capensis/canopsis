@@ -1,12 +1,16 @@
+.. _dev-practices-codestyle:
+
 Coding style
-************
+============
 
 Code quality
 ------------
 
 We advise to use these tools, with these configurations :
 
-.. TODO add pylint config
+.. NOTE::
+
+   TODO: add pylint config
 
 .. important ::
    You are strongly advised to use these tools, as your code will not be merged if the rules they check are not respected!

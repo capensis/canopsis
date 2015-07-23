@@ -1,5 +1,7 @@
+.. _dev-backend-engines-scheduler:
+
 Canopsis Task Scheduling
-************************
+========================
 
 Task scheduling in Canopsis is based on a set of engines :
 

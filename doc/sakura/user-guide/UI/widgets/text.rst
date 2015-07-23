@@ -1,3 +1,5 @@
+.. _user-ui-widgets-text:
+
 How to use Text
 ===============
 

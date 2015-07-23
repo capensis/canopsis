@@ -1,6 +1,7 @@
-Architecture
-************
+.. _dev-frontend-architecture:
 
+Architecture
+============
 
 1. Presentation
 ---------------

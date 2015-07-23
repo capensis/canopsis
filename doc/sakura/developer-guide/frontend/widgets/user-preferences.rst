@@ -1,3 +1,5 @@
+.. _dev-frontend-widgets-userpref:
+
 User preferences
 ================
 

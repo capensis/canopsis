@@ -1,3 +1,5 @@
+.. _dev-spec:
+
 Specifications
 ==============
 
@@ -8,3 +10,4 @@ Specifications
    packaging
    event
    status
+   sla

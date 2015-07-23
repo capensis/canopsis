@@ -1,5 +1,7 @@
+.. _dev-frontend-widgets-api:
+
 API
-***
+===
 
 1. Widget
 ---------

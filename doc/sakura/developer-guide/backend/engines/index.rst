@@ -1,5 +1,7 @@
-Engines
-=======
+.. _dev-backend-engines:
+
+Engines development
+===================
 
 .. toctree::
    :maxdepth: 2
@@ -8,4 +10,3 @@ Engines
    howto
    scheduler
    filter
-   rights

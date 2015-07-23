@@ -1,5 +1,7 @@
+.. _dev-frontend-widgets:
+
 Widgets
-*******
+=======
 
 .. toctree::
    :maxdepth: 2

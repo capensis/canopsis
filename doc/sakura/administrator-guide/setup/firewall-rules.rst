@@ -1,3 +1,5 @@
+.. _admin-setup-firewall:
+
 Firewall rules
 ==============
 

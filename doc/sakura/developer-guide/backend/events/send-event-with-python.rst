@@ -1,4 +1,6 @@
-﻿Send Event with Python
+﻿.. _dev-backend-event-python:
+
+Send Event with Python
 ======================
 
 Install requirements

@@ -21,7 +21,6 @@
 from unittest import TestCase, main
 
 from canopsis.check.archiver import Archiver
-from time import time
 
 ARCHIVER = None
 
@@ -45,7 +44,7 @@ class KnownValues(TestCase):
             autolog=True
         )
         self.archiver.beat()
-        self.archiver.reset_stealthy_event()
+        self.archiver.reset_status_event()
 
     def test_01_check_statuses(self):
 

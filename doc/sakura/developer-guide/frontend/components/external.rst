@@ -1,3 +1,5 @@
+.. _dev-frontend-cmp-external:
+
 External components by Canopsis
 ===============================
 

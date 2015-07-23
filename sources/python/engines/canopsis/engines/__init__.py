@@ -23,3 +23,7 @@ __version__ = '0.1'
 __all__ = ['Engine']
 
 from .core import Engine
+
+# hack for attaching this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

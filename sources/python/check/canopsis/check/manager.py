@@ -48,11 +48,10 @@ class InvalidState(Exception):
 @add_category(CATEGORY, content=Parameter('types', parser=Parameter.array()))
 @conf_paths(CONF_PATH)
 class CheckManager(MiddlewareRegistry):
-    """
-    Manage entity checking state.
+    """Manage entity checking state.
 
     A state is bound to an entity. Therefore, an entity id is a document state
-        id.
+    id.
     """
 
     CHECK_STORAGE = 'check_storage'  #: storage name
@@ -83,14 +82,18 @@ class CheckManager(MiddlewareRegistry):
         self.types = types
 
     # TODO , is it used, is it usefull to manage state this way
-    def state(self, ids, state=None, criticity=HARD, f=DEFAULT_F, cache=False):
+    def state(
+        self, ids=None, state=None, criticity=HARD, f=DEFAULT_F, query=None,
+        cache=False
+    ):
         """Get/update entity state(s).
 
-        :param ids: entity id(s).
+        :param ids: entity id(s). Default is all entity ids.
         :type ids: str or list
         :param int state: state to update if not None.
         :param int criticity: state criticity level (HARD by default).
         :param f: new state calculation function if state is not None.
+        :param dict query: additional query to use in order to find states.
         :param bool cache: storage cache when udpate state.
 
         :return: entity states by entity id or one state value if ids is a str.
@@ -103,7 +106,7 @@ class CheckManager(MiddlewareRegistry):
         result = {}
         # get state document
         state_documents = self[CheckManager.CHECK_STORAGE].get_elements(
-            ids=ids
+            ids=ids, query=query
         )
         # if state document exists
         if state_documents is not None:
@@ -127,11 +130,14 @@ class CheckManager(MiddlewareRegistry):
             state_name = CheckManager.STATE
             # save storage for quick access
             storage = self[CheckManager.CHECK_STORAGE]
-            # save entity ids
-            entity_ids = ids
-            # and ensure it is a set
-            if isinstance(entity_ids, basestring):
-                entity_ids = {entity_ids}
+            # ensure entity_ids is a set
+            if isinstance(ids, basestring):
+                entity_ids = set([ids])
+            elif ids is None:
+                if state_documents is None:
+                    entity_ids = set()
+                else:
+                    entity_ids = set([sd[id_name] for sd in state_documents])
             else:
                 entity_ids = set(ids)
             # if states exist in DB
@@ -185,16 +191,19 @@ class CheckManager(MiddlewareRegistry):
     with only a data couple of on identifier and an ID
     """
 
-    def del_state(self, ids=None):
-        """
-        Delete states related to input ids. If ids is None, delete all states.
+    def del_state(self, ids=None, query=None, cache=False):
+        """Delete states related to input ids. If ids is None, delete all
+        states.
 
         :param ids: entity ids. Delete all states if ids is None (default).
         :type ids: str or list
+        :param dict query: selection query.
         :param bool cache: storage cache when udpate state.
         """
 
-        self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids)
+        return self[CheckManager.CHECK_STORAGE].remove_elements(
+            ids=ids, _filter=query, cache=cache
+        )
 
     def put_state(self, entity_id, state, cache=False):
         """
@@ -204,10 +213,10 @@ class CheckManager(MiddlewareRegistry):
         :param state: the state to persist.
         """
 
-        if state not in self.valid_states or not type(state) == int:
+        if state not in self.valid_states or not isinstance(state, int):
             raise InvalidState(state, self.valid_states)
 
-        self[CheckManager.CHECK_STORAGE].put_element(
+        return self[CheckManager.CHECK_STORAGE].put_element(
             _id=entity_id,
             element={'state': state},
             cache=cache

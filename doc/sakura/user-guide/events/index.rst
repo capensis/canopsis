@@ -1,5 +1,7 @@
-Events
-======
+.. _user-events:
+
+Visualizing Events
+==================
 
 .. toctree::
    :maxdepth: 2
