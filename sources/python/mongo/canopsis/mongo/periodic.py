@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.mongo import MongoStorage
+from canopsis.mongo.core import MongoStorage
 from canopsis.storage.periodic import PeriodicStorage
 from canopsis.timeserie.timewindow import Period
 

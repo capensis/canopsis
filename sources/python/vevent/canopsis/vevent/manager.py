@@ -289,7 +289,7 @@ class VEventManager(MiddlewareRegistry):
 
             document = None
 
-            if isinstance(vevent, dict):
+            if isinstance(vevent, dict) and not isinstance(vevent, Event):
 
                 document = vevent
                 # get uid
@@ -362,27 +362,29 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
-    def remove(self, uids=None, cache=False):
+    def remove(self, uids=None, query=None, cache=False):
         """Remove elements from storage where uids are given.
 
         :param list uids: list of document uids to remove from storage
             (default all empty storage documents).
+        :param dict query: additional deletion query.
         """
 
         result = self[VEventManager.STORAGE].remove_elements(
-            ids=uids, cache=cache
+            ids=uids, cache=cache, _filter=query
         )
 
         return result
 
-    def remove_by_source(self, sources=None, cache=False):
+    def remove_by_source(self, sources=None, query=None, cache=False):
         """Remove vevent documents related to input sources.
 
         :param list sources: sources from where remove related vevent
             documents.
+        :param dict query: additional deletion query.
         """
 
-        _filter = {}
+        _filter = {} if query is None else query
 
         if sources is not None:
             _filter[VEventManager.SOURCE] = {'$in': sources}

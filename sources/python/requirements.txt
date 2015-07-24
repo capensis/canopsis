@@ -7,7 +7,6 @@ gevent==1.0.2
 bottle==0.10.9
 Beaker==1.5.4
 mongodb_beaker==0.5.0
-pysnmp==4.2.1
 xmlrpclib==1.0.1
 pyparsing==1.5.6
 gunicorn==19.2.1
