@@ -37,12 +37,31 @@ class MongoDataBase(DataBase):
     """
 
     def __init__(
-        self, host=MongoClient.HOST, port=MongoClient.PORT, *args, **kwargs
+        self, host=MongoClient.HOST, port=MongoClient.PORT,
+        read_preference=ReadPreference.NEAREST,
+        *args, **kwargs
     ):
 
         super(MongoDataBase, self).__init__(
             port=port, host=host, *args, **kwargs
         )
+
+        self.read_preference = read_preference
+
+    @property
+    def read_preference(self):
+
+        return self._read_preference
+
+    @read_preference.setter
+    def read_preference(self, value):
+
+        if isinstance(value, basestring):
+            value = getattr(ReadPreference, value, ReadPreference.NEAREST)
+        else:
+            value = int(value)
+
+        self._read_preference = value
 
     def _connect(self, *args, **kwargs):
 
@@ -59,7 +78,7 @@ class MongoDataBase(DataBase):
         # if self replica set is given
         if self.replicaset:
             connection_args['replicaSet'] = self.replicaset
-            connection_args['read_preference'] = ReadPreference.NEAREST
+            connection_args['read_preference'] = self.read_preference
 
         connection_args['j'] = self.journaling
         connection_args['w'] = 1 if self.safe else 0
