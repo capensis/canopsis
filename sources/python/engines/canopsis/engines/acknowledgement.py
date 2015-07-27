@@ -22,7 +22,7 @@ from canopsis.engines.core import Engine, publish
 from canopsis.event import get_routingkey, forger, is_host_acknowledged
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
-
+from copy import deepcopy
 from time import time
 
 
@@ -41,6 +41,17 @@ class engine(Engine):
         self.acknowledge_on = acknowledge_on
 
     def pre_run(self):
+
+        self.ack_event = forger(
+            connector="Engine",
+            connector_name=self.etype,
+            event_type="perf",
+            source_type='component',
+            resource='ack',
+            state=0,
+            state_type=1,
+        )
+
         self.beat()
 
     def beat(self):
@@ -72,13 +83,15 @@ class engine(Engine):
 
         # allow metric naming by author/domain/perimeter (adp)
         author = event.get('author', 'noauthor')
-        domain_perimeter = '{}{}'.format(
-            event.get('domain', ''),
-            event.get('perimeter', '')
-        )
 
-        if domain_perimeter:
-            domain_perimeter = '_{}'.format(domain_perimeter)
+        domain = event.get('domain', '')
+        perimeter = event.get('perimeter', '')
+
+        domain_perimeter = ''
+
+        # If no domain, information domain perimeter is useless
+        if domain:
+            domain_perimeter = '_d-{}p-{}'.format(domain, perimeter)
 
         metric_name_adp = '{}{}'.format(author, domain_perimeter)
 
@@ -213,23 +226,28 @@ class engine(Engine):
                         source_type=referer_event['source_type'],
                         component=referer_event['component'],
                         resource=referer_event.get('resource', None),
-
                         state=0,
                         state_type=1,
-
                         ref_rk=event['rk'],
                         output=u'Event {0} acknowledged by {1}'.format(
                             rk, author),
                         long_output=event['output'],
+                    )
 
-                        perf_data_array=[
-                            {
-                                'metric': 'ack_delay_{}'.format(author),
-                                'value': duration,
-                                'unit': 's',
-                                'type': 'GAUGE'
-                            }
-                        ]
+                    ack_event = deepcopy(self.ack_event)
+                    ack_event['component'] = author
+                    ack_event['perf_data_array'] = [
+                        {
+                            'metric': 'delay',
+                            'value': duration,
+                            'unit': 's',
+                            'type': 'GAUGE'
+                        }
+                    ]
+
+                    publish(
+                        publisher=self.amqp, event=ack_event,
+                        exchange=self.acknowledge_on
                     )
 
             # Now update counters
@@ -237,56 +255,44 @@ class engine(Engine):
             # Cast response to ! 0|1
             cvalues = int(not ackhost)
 
-            alerts_event = forger(
-                connector="Engine",
-                connector_name=self.etype,
-                event_type="perf",
-                source_type="component",
-                component="__canopsis__",
-                perf_data_array=[
-                    {
-                        'metric': 'cps_alerts_ack_by_host',
-                        'value': cvalues,
-                        'type': 'COUNTER'
-                    },
-                    {
-                        'metric': 'cps_alerts_ack_count_{}'.format(
-                            self.get_metric_name_adp(event)
-                        ),
-                        'value': 1,
-                        'type': 'COUNTER'
-                    }
-                ]
-            )
-
-            self.logger.debug(alerts_event)
+            ack_event = deepcopy(self.ack_event)
+            ack_event['component'] = author
+            ack_event['perf_data_array'] = [
+                {
+                    'metric': 'alerts_by_host',
+                    'value': cvalues,
+                    'type': 'COUNTER'
+                },
+                {
+                    'metric': 'alerts_count_{}'.format(
+                        self.get_metric_name_adp(event)
+                    ),
+                    'value': 1,
+                    'type': 'COUNTER'
+                }
+            ]
 
             publish(
-                publisher=self.amqp,
-                event=alerts_event
+                publisher=self.amqp, event=ack_event,
+                exchange=self.acknowledge_on
             )
 
             self.logger.debug('Ack internal metric sent.')
 
             for hostgroup in event.get('hostgroups', []):
-                alerts_event = forger(
-                    connector="Engine",
-                    connector_name=self.etype,
-                    event_type="perf",
-                    source_type="resource",
-                    component="__canopsis__",
-                    resource=hostgroup,
+                ack_event = deepcopy(self.ack_event)
+                ack_event['perf_data_array'] = [
+                    {
+                        'metric': 'alerts',
+                        'value': cvalues,
+                        'type': 'COUNTER'
+                    }
+                ]
 
-                    perf_data_array=[
-                        {
-                            'metric': 'cps_alerts_ack',
-                            'value': cvalues,
-                            'type': 'COUNTER'
-                        }
-                    ]
+                publish(
+                    publisher=self.amqp, event=ack_event,
+                    exchange=self.acknowledge_on
                 )
-
-                publish(publisher=self.amqp, event=alerts_event)
 
             self.logger.debug('Reloading ack cache')
             self.reload_ack_cache()
