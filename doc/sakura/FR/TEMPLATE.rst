@@ -1,35 +1,38 @@
-=========================
-TITLE : titre du document
-=========================
+=====
+TITLE
+=====
 
-Plan
-====
+Short description
 
-Plan du document.
+.. sectnum::
 
-Description
-===========
+.. contents::
+   :depth: 2
 
-Description courte du document.
-
-Références
+References
 ==========
 
-Références vers d’autres FR.
+List of referenced functional requirements...
 
-Mises à jour
-============
+- FR::example
+- FR::example2
 
-+-----------+------------+---------+-------------------------+------------+
-| Auteur(s) | Date       | Version | Résumé                  | Validé par |
-+-----------+------------+---------+-------------------------+------------+
-| John Doe  | 39/08/2005 | 0.1     | Création de ce template | toto       |
-+-----------+------------+---------+-------------------------+------------+
+.. _test: ./FR::example/test_
+.. _test2: ./FR::example2/test2_
 
-Contenu
+Updates
 =======
+
++-----------+------------+---------+-------------------+-------------+
+| Author(s) | Date       | Version | Summary           | Accepted by |
++-----------+------------+---------+-------------------+-------------+
+| John Doe  | 39/08/2005 | 0.1     | Template creation | toto        |
++-----------+------------+---------+-------------------+-------------+
+
+Contents
+========
 
 Description
 -----------
 
-Description Longue
+Long description
