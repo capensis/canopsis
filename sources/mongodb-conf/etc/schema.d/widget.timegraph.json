@@ -77,6 +77,39 @@
         },
         "series": {
             "type": "array",
+            "source": {
+                "schema": "serie",
+                "columns": [
+                    {"name": "crecord_name", "title": "Name"}
+                ]
+            },
+            "items": {
+                "type": "object",
+                "role": "stylizedserie",
+                "sourceRelationshipIdKey": {
+                    "sourceItemKey": "id",
+                    "objectKey": "serie"
+                },
+                "typeKeyName": "xtype",
+                "properties": {
+                    "color": {
+                        "type": "string",
+                        "role": "color"
+                    },
+                    "curve": {
+                        "type": "string",
+                        "role": "restobject",
+                        "schemaType":"curve",
+                        "valueField":"id",
+                        "labelField":"crecord_name"
+                    }
+                },
+                "relationship": "belongsTo",
+                "model": "stylizedserie"
+            }
+        },
+        "series2": {
+            "type": "array",
             "role": "array",
             "items": {
                 "type": "object",
@@ -87,10 +120,41 @@
         },
         "metrics": {
             "type": "array",
-            "role": "array",
+            "source": {
+                "schema": "ctxmetric",
+                "columns": [
+                    {"name": "component", "title": "Component"},
+                    {"name": "resource", "title": "Resource"},
+                    {"name": "cid", "title": "Metric"}
+                ]
+            },
             "items": {
                 "type": "object",
-                "role": "metricitem",
+                "role": "stylizedmetric",
+                "sourceRelationshipIdKey": {
+                    "sourceItemKey": "id",
+                    "objectKey": "metric"
+                },
+                "polymorphicTypeKey": "component",
+                "typeKeyName": "xtype",
+                "properties": {
+                    "color": {
+                        "type": "string",
+                        "role": "color"
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "xaxis": {
+                        "type": "string"
+                    },
+                    "yaxis": {
+                        "type": "string"
+                    },
+                    "unit": {
+                        "type": "string"
+                    }
+                },
                 "relationship": "belongsTo",
                 "model": "stylizedmetric"
             }
