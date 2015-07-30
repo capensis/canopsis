@@ -27,7 +27,7 @@ except ImportError:
 
 """
 TODO: sla
-from canopsis.middleware import Middleware
+from canopsis.middleware.core import Middleware
 """
 
 

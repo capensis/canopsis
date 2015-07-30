@@ -77,10 +77,7 @@ from canopsis.context.manager import Context
 from canopsis.topology.manager import TopologyManager
 from canopsis.graph.event import BaseTaskedVertice
 from canopsis.engines.core import publish
-
-_context = Context()
-_check = CheckManager()
-_topology = TopologyManager()
+from canopsis.common.utils import singleton_per_scope
 
 
 class TopoVertice(BaseTaskedVertice):
@@ -106,7 +103,8 @@ class TopoVertice(BaseTaskedVertice):
         )
         # update entity state
         if entity_id is not None:
-            state = _check.state(ids=entity_id)
+            cm = singleton_per_scope(CheckManager)
+            state = cm.state(ids=entity_id)
             if state is None:
                 state = TopoVertice.DEFAULT_STATE
             self.info[TopoVertice.STATE] = state
@@ -146,12 +144,17 @@ class TopoVertice(BaseTaskedVertice):
         return result
 
     def process(
-        self, event, publisher=None, manager=None, source=None, logger=None,
-        **kwargs
+            self, event, publisher=None, manager=None, source=None,
+            logger=None,
+            **kwargs
     ):
 
+        """
+        :param TopologyManager manager:
+        """
+
         if manager is None:
-            manager = _topology
+            manager = singleton_per_scope(TopologyManager)
 
         # save old state
         old_state = self.state
@@ -168,10 +171,10 @@ class TopoVertice(BaseTaskedVertice):
                 ids=self.id, add_edges=True
             )
             for edge_id in targets_by_edge:
-                    edge, _ = targets_by_edge[edge_id]
-                    # update edge state
-                    edge.state = self.state
-                    edge.save(manager=manager)
+                edge, _ = targets_by_edge[edge_id]
+                # update edge state
+                edge.state = self.state
+                edge.save(manager=manager)
             # if not equal
             new_event = self.get_event(state=self.state, source=source)
             # publish a new event
@@ -192,9 +195,9 @@ class Topology(Graph, TopoVertice):
     __slots__ = Graph.__slots__
 
     def __init__(
-        self,
-        operation=None, state=None, type=TYPE,
-        entity=None, *args, **kwargs
+            self,
+            operation=None, state=None, type=TYPE,
+            entity=None, *args, **kwargs
     ):
 
         super(Topology, self).__init__(type=type, *args, **kwargs)
@@ -217,9 +220,10 @@ class Topology(Graph, TopoVertice):
         # set default entity if entity_id is None
         if entity_id is None and self.entity is None:
             # set entity
+            ctxm = singleton_per_scope(Context)
             event = self.get_event(source=0, state=0)
-            entity = _context.get_entity(event)
-            entity_id = _context.get_entity_id(entity)
+            entity = ctxm.get_entity(event)
+            entity_id = ctxm.get_entity_id(entity)
             self.entity = entity_id
 
     def save(self, context=None, *args, **kwargs):
@@ -228,7 +232,7 @@ class Topology(Graph, TopoVertice):
 
         # use global context if input context is None
         if context is None:
-            context = _context
+            context = singleton_per_scope(Context)
         # get self entity
         event = self.get_event()
         entity = context.get_entity(event)
@@ -255,9 +259,9 @@ class TopoNode(Vertice, TopoVertice):
     __slots__ = Vertice.__slots__
 
     def __init__(
-        self,
-        entity=None, state=None, operation=None,
-        *args, **kwargs
+            self,
+            entity=None, state=None, operation=None,
+            *args, **kwargs
     ):
         """
         :param int state: state to use.
@@ -281,7 +285,8 @@ class TopoNode(Vertice, TopoVertice):
 
         result = super(TopoNode, self).get_event(*args, **kwargs)
 
-        graphs = _topology.get_graphs(elts=self.id)
+        tm = singleton_per_scope(TopologyManager)
+        graphs = tm.get_graphs(elts=self.id)
         # iterate on existing graphs
         for graph in graphs:
             # update result as soon as a graph has been founded

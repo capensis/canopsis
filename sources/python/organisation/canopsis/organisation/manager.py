@@ -21,10 +21,10 @@
 from md5 import new as md5
 
 from canopsis.configuration.parameters import Parameter
-from canopsis.storage.manager import Manager
+from canopsis.middleware.registry import MiddlewareRegistry
 
 
-class Organisation(Manager):
+class Organisation(MiddlewareRegistry):
     """
     Dedicated to manage users in Canopsis
     """

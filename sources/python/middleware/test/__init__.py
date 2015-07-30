@@ -20,7 +20,7 @@
 
 from unittest import TestCase, main
 
-from canopsis.middleware import \
+from canopsis.middleware.core import \
     Middleware, parse_scheme, SCHEME_SEPARATOR, DEFAULT_DATA_SCOPE
 
 
