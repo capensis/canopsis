@@ -2,47 +2,29 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["title", "refreshInterval", "human_readable", "legend", "tooltip"]
+        "keys": ["title", "display"]
     },{
-        "title": "Categories",
-        "keys": ["categories"]
+        "title": "Series",
+        "keys":["series"]
+    },{
+        "title": "Mixins",
+        "keys":["mixins"]
     }],
     "properties": {
         "title":  {
             "type": "string"
         },
-        "refreshableWidget": {
-            "type": "boolean",
-            "default": true
+        "display": {
+            "enum": ["gauge", "pie", "progressbar", "donut"],
+            "role": "simplelist"
         },
-        "isRefreshable": {
-            "type": "boolean",
-            "default": true
-        },
-        "human_readable": {
-            "type": "boolean",
-            "default": false,
-            "title": "Human readable values"
-        },
-        "legend": {
-            "type": "boolean",
-            "default": true,
-            "title": "Show legend"
-        },
-        "tooltip": {
-            "type": "boolean",
-            "default": true,
-            "title": "Show tooltips"
-        },
-        "categories": {
+        "series": {
+            "description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
             "type": "array",
-            "role": "array",
-            "items": {
-                "type": "object",
-                "role": "categoryitem",
-                "relationship": "belongsTo",
-                "model": "categorychartitem"
-            }
+            "role": "arrayclassifiedcrecordselector",
+            "model": "serie",
+            "crecordtype": "serie",
+            "multiselect": true
         }
     }
 }
