@@ -2,10 +2,13 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["title", "display"]
+        "keys": ["title", "display", "allow_user_display", "use_max_value", "max_value", "show_legend", "tooltip"]
     },{
         "title": "Series",
         "keys":["series"]
+    },{
+        "title": "Metrics",
+        "keys":["metrics"]
     },{
         "title": "Mixins",
         "keys":["mixins"]
@@ -16,7 +19,25 @@
         },
         "display": {
             "enum": ["gauge", "pie", "progressbar", "donut"],
-            "role": "simplelist"
+            "role": "simplelist",
+            "default": "pie",
+            "description": "Allow to select the categorie chart representation"
+        },
+        "allow_user_display": {
+            "type": "boolean",
+            "role": "boolean",
+            "default": true
+        },
+        "max_value": {
+            "type": "number",
+            "minimum": 0,
+            "description": "maximum value to display on the chart. This will create a serie with a value equal to the sum of series values minus the max."
+        },
+        "use_max_value": {
+            "type": "boolean",
+            "default": false,
+            "role": "boolean",
+            "description": "Use or not max value. when max value disabled, the maximum value of the chart is the sum of all series"
         },
         "series": {
             "description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
@@ -25,6 +46,25 @@
             "model": "serie",
             "crecordtype": "serie",
             "multiselect": true
+        },
+        "metrics": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "role": "cmetric",
+            "title": "Metrics"
+        },
+        "show_legend": {
+            "type": "boolean",
+            "default": true,
+            "role": "boolean",
+            "description": "Display legend when checked"
+        },"tooltip": {
+            "type": "boolean",
+            "default": true,
+            "role": "boolean",
+            "description": "Display tooltip when checked"
         }
     }
 }
