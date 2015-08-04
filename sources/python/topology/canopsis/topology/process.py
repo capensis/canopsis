@@ -41,17 +41,17 @@ from canopsis.context.manager import Context
 from canopsis.task import register_task
 from canopsis.event import Event
 from canopsis.check.manager import CheckManager
-
-context = Context()
-tm = TopologyManager()
-_check = CheckManager()
+from canopsis.common.utils import singleton_per_scope
 
 SOURCE = 'source'
 PUBLISHER = 'publisher'
 
 
 @register_task
-def event_processing(engine, event, manager=None, logger=None, **kwargs):
+def event_processing(
+    engine, event, manager=None, logger=None, ctx=None, tm=None, cm=None,
+    **kwargs
+):
     """Process input event in getting topology nodes bound to input event
     entity.
 
@@ -61,47 +61,61 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
     :param Engine engine: engine which consumes the event.
     :param TopologyManager manager: topology manager to use.
     :param Logger logger: logger to use in this task.
+    :param Context ctx:
+    :param TopologManager tm:
+    :param CheckManager cm:
     """
 
-    if manager is None:
-        manager = tm
+    # initialize ctx
+    if ctx is None:
+        ctx = singleton_per_scope(Context)
+
+    if tm is None:
+        tm = singleton_per_scope(TopologyManager)
+
+    if cm is None:
+        cm = singleton_per_scope(CheckManager)
 
     event_type = event[Event.TYPE]
 
     # apply processing only in case of check event
-    if event_type in _check.types:
+    if event_type in cm.types:
         # get source type
         source_type = event[Event.SOURCE_TYPE]
-        # get entity and entity id
-        entity = context.get_entity(event)
-        entity_id = context.get_entity_id(entity)
         # in case of topology node
         if source_type in [TopoNode.TYPE, Topology.TYPE]:
-            elt_id = context.get_name(entity_id)
+            # get entity and entity id
+            entity = ctx.get_entity(event)
+            entity_id = ctx.get_entity_id(entity)
+            elt_id = ctx.get_name(entity_id)
+            logger.info("elt_id {0}".format(elt_id))
             # process all targets
-            elt = manager.get_elts(ids=elt_id)
+            elt = tm.get_elts(ids=elt_id)
             if elt is not None:
-                targets = manager.get_targets(ids=elt_id)
+                targets = tm.get_targets(ids=elt_id)
+                logger.info("targets {0}".format(targets))
                 # process and save all targets
                 for target in targets:
                     target.process(
                         event=event, publisher=engine.amqp,
-                        manager=manager, source=elt_id,
+                        manager=tm, source=elt_id,
                         logger=logger,
                         **kwargs
                     )
 
         else:  # in case of entity event
-            # get elts from entity
-            entity = context.get_entity(event)
+            # get entity and entity id
+            entity = ctx.get_entity(event)
             if entity is not None:
-                entity_id = context.get_entity_id(entity)
-                elts = manager.get_elts(info={TopoNode.ENTITY: entity_id})
+                entity_id = ctx.get_entity_id(entity)
+                logger.info("entity_id {0}".format(entity_id))
+                elts = tm.get_elts(info={TopoNode.ENTITY: entity_id})
+                logger.info("elts {0}".format(elts))
                 # process all elts
                 for elt in elts:
                     elt.process(
                         event=event, publisher=engine.amqp,
-                        manager=manager, logger=logger,
+                        manager=tm, logger=logger,
                         **kwargs
                     )
 

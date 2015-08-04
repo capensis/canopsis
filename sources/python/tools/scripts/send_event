@@ -23,22 +23,22 @@ from __future__ import unicode_literals
 
 from sys import argv, exit, stdin, stdout
 
-import os
+from os.path import splitext, exists
 
-import getopt
+from getopt import getopt, GetoptError
 
-import urllib2
+from urllib2 import build_opener, HTTPCookieProcessor, Request
 
-import urllib
+from urllib import urlencode
 
-import cookielib
+from cookielib import CookieJar
 
-import traceback
+from traceback import print_exc
 
 try:
-    import json
+    from json import loads, dumps
 except:
-    import simplejson as json
+    from simplejson import loads, dumps
 
 
 def usage():
@@ -57,11 +57,12 @@ def usage():
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(
+        opts, _ = getopt(
             argv,
             "s:a:f:j:h",
-            ["server=", "authkey=", "file=", "json=", "help"])
-    except getopt.GetoptError as err:
+            ["server=", "authkey=", "file=", "json=", "help"]
+        )
+    except GetoptError as err:
         print(err)
         usage()
         exit(2)
@@ -72,7 +73,7 @@ def main(argv):
 
     authkey = None
     server = 'localhost:8082'
-    file_path = None
+    file_path, file_name, file_extension = None, None, None
     #input_stream = None
     json_string = None
 
@@ -85,30 +86,41 @@ def main(argv):
         if opt in ('--authkey', '-a'):
             authkey = arg
         if opt in ('--file', '-f'):
-            file_name, file_extension = os.path.splitext(arg)
+            file_name, file_extension = splitext(arg)
             file_path = arg
         if opt in ('--json', '-j'):
             try:
-                json_string = json.loads(arg)
+                json_string = loads(arg)
             except:
                 print('Bad json string')
                 exit()
 
-    #---------------------------authenticate---------------------------
     if not authkey:
         print('You must provide an authkey to access the webserver.\n \
             You can generate it from the Canopsis Web UI.')
         usage()
         exit()
 
-    cj = cookielib.CookieJar()
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+    send_event(
+        server=server, authkey=authkey, json_str=json_string,
+        file_path=file_path, file_name=file_name, file_extension=file_extension
+    )
+
+
+def send_event(
+    server='localhost:8082', authkey=None, file_path=None, json_str=None,
+    file_name=None, file_extension=None
+):
+
+    #---------------------------authenticate---------------------------
+    cj = CookieJar()
+    opener = build_opener(HTTPCookieProcessor(cj))
     #print('http://%s/autoLogin/%s' % (server,authkey))
     r = opener.open('http://%s/autologin/%s' % (server, authkey))
     r = opener.open('http://%s/account/me' % server)
 
     try:
-        response = json.loads(r.read())
+        response = loads(r.read())
     except Exception as err:
         print('Error: Bad response from server %s' % err)
 
@@ -119,21 +131,21 @@ def main(argv):
     #------------------------------find event source-----------------------
     event = None
 
-    if json_string:
-        event = json_string
+    if json_str:
+        event = json_str
 
     elif file_path:
         if file_extension != '.json':
             print('Error: Invalid file format (Must be .json)')
             exit()
 
-        if not os.path.exists(file_path):
+        if not exists(file_path):
             print('Error: File not found (%s)' % file_path)
             exit()
 
         #------------------read file-------------------
         try:
-            event = json.loads(open(file_path, "r").read().decode('utf-8-sig'))
+            event = loads(open(file_path, "r").read().decode('utf-8-sig'))
         except Exception as err:
             print('Invalid json file: %s' % err)
             exit()
@@ -141,7 +153,7 @@ def main(argv):
     #check if input stream
     elif not stdin.isatty():
         try:
-            event = json.loads(stdin.read())
+            event = loads(stdin.read())
         except:
             print('Error: Invalid json stream')
             exit()
@@ -152,9 +164,10 @@ def main(argv):
             'Error: No json media found, you must provide file/stream/command')
         exit()
 
-    event['connector'] = 'Cli'
+    if 'connector' not in event:
+        event['connector'] = 'Cli'
 
-    if not event.get('connector_name', None):
+    if 'connector_name' not in event:
         event['connector_name'] = 'Send_event'
 
     #-----------------------------send event-----------------------------
@@ -163,9 +176,9 @@ def main(argv):
         v = event[k]
         clean_event[k] = str(v).encode('utf-8')
 
-    request_params = {'event': json.dumps(clean_event)}
-    request = urllib2.Request(
-        'http://%s/event' % server, urllib.urlencode(request_params))
+    request_params = {'event': dumps(clean_event)}
+    request = Request(
+        'http://%s/event' % server, urlencode(request_params))
     r = opener.open(request)
     print('Webserver replied :')
     print(r.read())
@@ -175,5 +188,5 @@ if __name__ == "__main__":
     try:
         main(argv[1:])
     except Exception as err:
-        traceback.print_exc(file=stdout)
+        print_exc(file=stdout)
         exit(1)

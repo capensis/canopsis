@@ -21,7 +21,7 @@
 __version__ = "0.1"
 
 
-from canopsis.middleware import Middleware
+from canopsis.middleware.core import Middleware
 
 
 class RPC(Middleware):

@@ -6,12 +6,12 @@ Linklist
 Overview
 ---------
 
-Link list feature aims to associate links to Canopsis entities. This is done by different following ways:
+The link list feature aims to associate links to Canopsis entities. This is done by different following ways:
 
- - Canopsis receive an event that contains a specific key such as **action_url** that may be equal to **http://canopsis.org**
+ - Canopsis receives an event that contains a specific key such as **action_url** that may be equal to **http://canopsis.org**
  - A Canopsis user defines relations between Canopsis entities and some urls that have to be associated to them.
 
-In the end, the final user will be able to see a list of link associated to an specific event as shown in the picture below:
+In the end, the final user will be able to see a list of link associated to a specific event as shown in the picture below:
 
 .. image:: ../../_static/images/frontend/linklist_1.png
 .. image:: ../../_static/images/frontend/linklist_2.png

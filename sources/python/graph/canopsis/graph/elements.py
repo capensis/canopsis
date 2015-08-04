@@ -106,7 +106,7 @@ from uuid import uuid4 as uuid
 from collections import Iterable
 
 from canopsis.common.init import basestring
-from canopsis.storage import Storage
+from canopsis.storage.core import Storage
 from canopsis.common.utils import lookup, path
 
 CONF_PATH = 'graph/graph.conf'

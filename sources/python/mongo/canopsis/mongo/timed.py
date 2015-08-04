@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.common.utils import isiterable
-from canopsis.mongo import MongoStorage
+from canopsis.mongo.core import MongoStorage
 from canopsis.storage.timed import TimedStorage
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
@@ -54,7 +54,7 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
             one_element = True
 
         # if timewindow is not None, get latest timestamp before
-        # timewindow.stop()
+        # timewindow.stop()
         if timewindow is not None:
             timestamp = timewindow.stop()
             where[MongoTimedStorage.Key.TIMESTAMP] = {

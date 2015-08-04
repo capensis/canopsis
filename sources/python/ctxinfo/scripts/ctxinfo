@@ -1,0 +1,148 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+from argparse import ArgumentParser, FileType
+
+from sys import stdout
+
+from pprint import pprint
+
+from json import loads
+
+from canopsis.common.init import basestring
+from canopsis.ctxinfo.manager import CTXInfoManager
+
+# build argument parser
+epilog = "\
+How to... (All those examples are cumulative with -o and -p arguments)\n\
+Get all information documents by funder name and entity_id:\n\tctxinfo\nGet \
+number of perfdata values by entity id:\n\tctxinfo -f perfdata -a count\nGet \
+entity ids from events with the specific json filter \
+'{\"connector\": \"nagios\"}':\n\tctxinfo -f events -q '{\"connector\": \"\
+nagios\"}' -a entity_ids\nDelete perfdata information related to the \
+entity_id \"X\" and all its children:\n\tctxinfo -a delete -f perfdata -e \
+\"X\"\nList all available funder names:\n\tctxinfo -a funders."
+
+parser = ArgumentParser(
+    description='Get/Delete/Count context information related to other \
+arguments used such as filter selection or result displaying. Funders are \
+information scope such as perfdata or events.', epilog=epilog
+)
+# set operation argument
+parser.add_argument(
+    '-a', '--action',
+    help='ctxinfo action. get(default)/count: retrieve information/count by \
+funder name and entity id, delete: delete information, entity_ids: get entity \
+ids, list: list funder names.',
+    default='get', type=str,
+    choices=['get', 'delete', 'count', 'entity_ids', 'funders'],
+    dest='action', required=False
+)
+# set funders argument
+parser.add_argument(
+    '-f', '--funders', help='funder names (default all)', default=None,
+    nargs='+', dest='funders', required=False
+)
+# set output
+parser.add_argument(
+    '-o', '--output', help='output file (default stdout)',
+    dest='output', default=stdout, required=False, type=FileType('w')
+)
+# set entity ids argument
+parser.add_argument(
+    '-e', '--eids', help='entity ids (works with get/delete/count action). \
+    Added to the query argument if query is given.',
+    nargs='+', default=None, dest='entity_ids', required=False
+)
+# set query argument
+parser.add_argument(
+    '-q', '--query', help='query argument. Must respect the json object \
+format and is added to the eids argument if eids is given.', default=None,
+    type=loads, dest='query', required=False
+)
+# set method propagation
+parser.add_argument(
+    '-w', '--withoutchildren',
+    help='do not propagate action to children entities (false by default).\
+    (works with get/delete/count actions).',
+    default=True, dest='children', required=False, action='store_false'
+)
+# set pretty printer output
+parser.add_argument(
+    '-p', '--pretty', help='use pretty printer on output', default=False,
+    dest='pprint', required=False, action='store_true'
+)
+# set force to delete all entity information
+parser.add_argument(
+    '--force',
+    help='delete all ctx info if eids is not given (false by default). \
+    (works with del action).',
+    default=False, dest='force', required=False, action='store_true'
+)
+# parse arguments
+args = parser.parse_args()
+
+# instantiate a new cim manager
+cim = CTXInfoManager()
+
+# choose the right cim operation
+action = getattr(cim, args.action)
+
+# build kwargs
+kwargs = {}
+
+
+def apply_args(actions, nargs):
+    """Apply input ``nargs`` names when args.action is in actions.
+
+    :param actions: action(s) when apply args.
+    :type actions: str or list
+    :param nargs: arg(s) names to apply on kwargs
+    :type nargs: str or list.
+    """
+
+    # initialize actions and nargs
+    if isinstance(actions, basestring):
+        actions = [actions]
+    if isinstance(nargs, basestring):
+        nargs = [nargs]
+    # if actions match with args
+    if args.action in actions:
+        for narg in nargs:  # apply nargs on kwargs
+            kwargs[narg] = getattr(args, narg)
+
+# add funders and query
+apply_args(['get', 'delete', 'count', 'entity_ids'], ['funders', 'query'])
+
+# add force
+apply_args('delete', 'force')
+
+# add eids and children
+apply_args(['get', 'delete', 'count'], ['entity_ids', 'children'])
+
+# execute the action with arguments
+result = action if args.action == 'funders' else action(**kwargs)
+
+# output the result
+if args.pprint:
+    pprint(result, args.output)
+else:
+    args.output.write(str(result))

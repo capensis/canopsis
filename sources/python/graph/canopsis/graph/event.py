@@ -30,9 +30,7 @@ from canopsis.context.manager import Context
 from canopsis.task import register_task, run_task
 from canopsis.event import forger, Event
 from canopsis.check import Check
-
-_context = Context()
-graph = GraphManager()
+from canopsis.common.utils import singleton_per_scope
 
 
 class BaseTaskedVertice(object):
@@ -69,7 +67,8 @@ class BaseTaskedVertice(object):
         if value is not None:
             if isinstance(value, dict):
                 # get entity id
-                value = _context.get_entity_id(value)
+                ctx = singleton_per_scope(Context)
+                value = ctx.get_entity_id(value)
 
             # update entity
             self.info[BaseTaskedVertice.ENTITY] = value
@@ -175,20 +174,28 @@ class TaskedGraph(Graph, BaseTaskedVertice):
 
 
 @register_task()
-def event_processing(event, ctx=None, *args, **kwargs):
+def event_processing(event, ctx=None, cm=None, gm=None, *args, **kwargs):
     """Process input event in getting graph nodes bound to input event entity.
 
     If at least one graph node is found, execute its tasks.
+
+    :param Context cm:
+    :param GraphManager gm:
     """
 
     if ctx is None:
         ctx = {}
 
-    entity = _context.get_entity(event)
+    if cm is None:
+        cm = singleton_per_scope(Context)
+    if gm is None:
+        gm = singleton_per_scope(GraphManager)
+
+    entity = cm.get_entity(event)
 
     if entity is not None:
-        entity_id = _context.get_entity_id(entity)
-        vertices = graph.get_elts(
+        entity_id = cm.get_entity_id(entity)
+        vertices = gm.get_elts(
             info={BaseTaskedVertice.ENTITY: entity_id},
             cls=BaseTaskedVertice
         )

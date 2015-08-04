@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.organisation.permission import PermissionEntity
+from canopsis.organisation.permission import RightEntity
 
 
-class Session(PermissionEntity):
+class Session(RightEntity):
     pass
