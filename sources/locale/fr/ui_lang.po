@@ -1893,10 +1893,8 @@ msgid ""
 " {{component}} - {{metric}}"
 msgstr "Affichage de la valeur de la métrique sous forme de template. Les valeurs du template peuvent être <ul><li>connector</li><li>connector_name</li><li>component</li><li>resource</li><li>metric</li></ul>ex: {{component}} - {{metric}}"
 
-msgid ""
-"Show or hide controls button that allow transform the chart display type on "
-"the fly from the widget render on a view."
-msgstr "Affiche ou cache les boutons de controle qui permettent de changer l'aspect du graphique à la volée par l'utilisateur directement depuis la vue."
+msgid "Allow users to dynamically change chart type."
+msgstr "Permet de changer le type de graphique dynamiquement."
 
 msgid "Allow to select the categorie chart representation"
 msgstr "Permet de sélectionner un type de représentation pour le graphique"

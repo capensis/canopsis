@@ -2,7 +2,7 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["title", "display", "allow_user_display", "metric_template", "use_max_value", "max_value", "show_legend", "show_tooltip", "show_labels"]
+        "keys": ["title", "display", "allow_user_display", "metric_template", "use_max_value", "max_value", "show_legend", "show_tooltip", "show_labels", "stacked"]
     },{
         "title": "Series",
         "keys":["series"]
@@ -18,7 +18,7 @@
             "type": "string"
         },
         "display": {
-            "enum": ["gauge", "pie", "progressbar", "donut"],
+            "enum": ["gauge", "pie", "progressbar", "donut", "bar"],
             "role": "simplelist",
             "default": "pie",
             "description": "Allow to select the categorie chart representation"
@@ -27,7 +27,7 @@
             "type": "boolean",
             "role": "boolean",
             "default": true,
-            "description": "Show or hide controls button that allow transform the chart display type on the fly from the widget render on a view.",
+            "description": "Allow users to dynamically change chart type.",
             "title": "allow user display"
         },
         "max_value": {
@@ -70,6 +70,13 @@
             "role": "boolean",
             "description": "Display legend when checked",
             "title": "show legend"
+        },
+        "stacked": {
+            "type": "boolean",
+            "default": false,
+            "role": "boolean",
+            "description": "Display stacked elements when checked",
+            "title": "stacked"
         },
         "show_tooltip": {
             "type": "boolean",
