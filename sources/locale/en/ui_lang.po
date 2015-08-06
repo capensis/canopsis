@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-05-18 10:50+0100\n"
+"PO-Revision-Date: 2015-08-06 09:18+0100\n"
 "Last-Translator: teamcanopsis <teamcanopsis@capensis.fr>\n"
 "Language-Team: English <teamcanopsis@capensis.fr>\n"
 "MIME-Version: 1.0\n"
@@ -1851,3 +1851,153 @@ msgstr "Restore alarm"
 msgid "general"
 msgstr "general"
 
+msgid "Fetching frontend bricks"
+msgstr "Fetching frontend bricks"
+
+msgid "Nothing"
+msgstr "Nothing"
+
+msgid "Can view"
+msgstr "Can view"
+
+msgid "From"
+msgstr "From"
+
+msgid "To"
+msgstr "To"
+
+msgid "Recursion"
+msgstr "Recursion"
+
+msgid "Duration"
+msgstr "Duration"
+
+msgid "Behaviors"
+msgstr "Behaviors"
+
+msgid "Context"
+msgstr "Context"
+
+msgid "Left until max"
+msgstr "Left until max"
+
+msgid "Import a view"
+msgstr "Import a view"
+
+msgid "Metrics"
+msgstr "Metrics"
+
+msgid "display"
+msgstr "display"
+
+msgid "allow user display"
+msgstr "allow user display"
+
+msgid "metric template"
+msgstr "metric template"
+
+msgid "use max value"
+msgstr "use max value"
+
+msgid "max value"
+msgstr "max value"
+
+msgid "show legend"
+msgstr "show legend"
+
+msgid "show tooltip"
+msgstr "show tooltip"
+
+msgid "show labels"
+msgstr "show labels"
+
+msgid "Display labels when checked"
+msgstr "Display labels when checked"
+
+msgid "Display tooltip when checked"
+msgstr "Display tooltip when checked"
+
+msgid "Display legend when checked"
+msgstr "Display legend when checked"
+
+msgid ""
+"maximum value to display on the chart. This will create a serie with a value"
+" equal to the sum of series values minus the max.  Depends on if use max "
+"value is selected"
+msgstr ""
+"maximum value to display on the chart. This will create a serie with a value"
+" equal to the sum of series values minus the max.  Depends on if use max "
+"value is selected"
+
+msgid ""
+"Use or not max value. when max value disabled, the maximum value of the "
+"chart is the sum of all series."
+msgstr ""
+"Use or not max value. when max value disabled, the maximum value of the "
+"chart is the sum of all series."
+
+msgid ""
+"Select metric to display in the chart. the last value in an interval of 10 "
+"minutes is selected by default. Availables template values are "
+"<ul><li>connector</li><li>connector_name</li><li>component</li><li>resource</li><li>metric</li></ul>e.g."
+" {{component}} - {{metric}}"
+msgstr ""
+"Select metric to display in the chart. the last value in an interval of 10 "
+"minutes is selected by default. Availables template values are "
+"<ul><li>connector</li><li>connector_name</li><li>component</li><li>resource</li><li>metric</li></ul>e.g."
+" {{component}} - {{metric}}"
+
+msgid ""
+"Show or hide controls button that allow transform the chart display type on "
+"the fly from the widget render on a view."
+msgstr ""
+"Show or hide controls button that allow transform the chart display type on "
+"the fly from the widget render on a view."
+
+msgid "Allow to select the categorie chart representation"
+msgstr "Allow to select the categorie chart representation"
+
+msgid "Duplicate entry"
+msgstr "Duplicate entry"
+
+msgid "desc"
+msgstr "desc"
+
+msgid " Rights assigned"
+msgstr " Rights assigned"
+
+msgid "SMTP"
+msgstr "SMTP"
+
+msgid "User Informations"
+msgstr "User Informations"
+
+msgid "subject"
+msgstr "subject"
+
+msgid "body"
+msgstr "body"
+
+msgid "recipients"
+msgstr "recipients"
+
+msgid "attachments"
+msgstr "attachments"
+
+msgid "smtp_host"
+msgstr "smtp_host"
+
+msgid "smtp_port"
+msgstr "smtp_port"
+
+msgid "group"
+msgstr "group"
+
+msgid "sender"
+msgstr "sender"
+
+msgid "storages"
+msgstr "storages"
+
+msgid "Storages to clean"
+msgstr "Storages to clean"

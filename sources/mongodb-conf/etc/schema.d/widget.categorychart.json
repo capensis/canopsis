@@ -2,7 +2,7 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["title", "display", "allow_user_display", "use_max_value", "max_value", "show_legend", "tooltip"]
+        "keys": ["title", "display", "allow_user_display", "metric_template", "use_max_value", "max_value", "show_legend", "show_tooltip", "show_labels"]
     },{
         "title": "Series",
         "keys":["series"]
@@ -26,18 +26,27 @@
         "allow_user_display": {
             "type": "boolean",
             "role": "boolean",
-            "default": true
+            "default": true,
+            "description": "Show or hide controls button that allow transform the chart display type on the fly from the widget render on a view.",
+            "title": "allow user display"
         },
         "max_value": {
             "type": "number",
             "minimum": 0,
-            "description": "maximum value to display on the chart. This will create a serie with a value equal to the sum of series values minus the max."
+            "description": "maximum value to display on the chart. This will create a serie with a value equal to the sum of series values minus the max.  Depends on if use max value is selected",
+            "title" : "max value"
         },
         "use_max_value": {
             "type": "boolean",
             "default": false,
             "role": "boolean",
-            "description": "Use or not max value. when max value disabled, the maximum value of the chart is the sum of all series"
+            "description": "Use or not max value. when max value disabled, the maximum value of the chart is the sum of all series.",
+            "title": "use max value"
+        },
+        "metric_template":  {
+            "type": "string",
+            "description": "Select metric to display in the chart. the last value in an interval of 10 minutes is selected by default. Availables template values are <ul><li>connector</li><li>connector_name</li><li>component</li><li>resource</li><li>metric</li></ul>e.g. {{component}} - {{metric}}",
+            "title": "metric template"
         },
         "series": {
             "description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
@@ -59,12 +68,22 @@
             "type": "boolean",
             "default": true,
             "role": "boolean",
-            "description": "Display legend when checked"
-        },"tooltip": {
+            "description": "Display legend when checked",
+            "title": "show legend"
+        },
+        "show_tooltip": {
             "type": "boolean",
             "default": true,
             "role": "boolean",
-            "description": "Display tooltip when checked"
+            "description": "Display tooltip when checked",
+            "title": "show tooltip"
+        },
+        "show_labels": {
+            "type": "boolean",
+            "default": true,
+            "role": "boolean",
+            "description": "Display labels when checked",
+            "title": "show labels"
         }
     }
 }
