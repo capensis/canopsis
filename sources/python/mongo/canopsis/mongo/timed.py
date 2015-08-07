@@ -54,7 +54,7 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
             one_element = True
 
         # if timewindow is not None, get latest timestamp before
-        # timewindow.stop()
+        # timewindow.stop()
         if timewindow is not None:
             timestamp = timewindow.stop()
             where[MongoTimedStorage.Key.TIMESTAMP] = {

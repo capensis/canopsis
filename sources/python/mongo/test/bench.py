@@ -39,7 +39,7 @@ class Bench(TestCase):
         """
 
         self.storage = MongoStorage(data_scope='test')
-        #self.storage.safe = False
+        # self.storage.safe = False
         # remove all data from collection
         self.storage.drop()
         # initialize numerical values
@@ -125,7 +125,10 @@ class Bench(TestCase):
 
                 start = time()
 
-                documents = self.documents_to_update if command == 'update' else self.documents
+                if command == 'update':
+                    documents = self.documents_to_update
+                else:
+                    documents = self.documents
 
                 for j in range(self.count):
 

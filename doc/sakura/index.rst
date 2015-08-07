@@ -19,4 +19,5 @@ actual version of Canopsis (aka: **Sakura**):
    user-guide/index
    administrator-guide/index
    developer-guide/index
+   api/index
    glossary
