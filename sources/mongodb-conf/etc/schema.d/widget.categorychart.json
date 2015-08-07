@@ -2,7 +2,7 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["title", "display", "allow_user_display", "metric_template", "use_max_value", "max_value", "show_legend", "show_tooltip", "show_labels", "stacked"]
+        "keys": ["title", "display", "allow_user_display", "metric_template", "use_max_value", "max_value", "text_left_space", "show_legend", "show_tooltip", "show_labels", "stacked"]
     },{
         "title": "Series",
         "keys":["series"]
@@ -16,6 +16,12 @@
     "properties": {
         "title":  {
             "type": "string"
+        },
+        "text_left_space":  {
+            "type": "string",
+            "default": "Left until max",
+            "title": "test left space",
+            "description": "Name of the serie dynamically created when max value enabled."
         },
         "display": {
             "enum": ["gauge", "pie", "progressbar", "donut", "bar"],
