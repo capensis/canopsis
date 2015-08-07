@@ -45,9 +45,7 @@ The canopsis system administrator must be able to change the widget display and 
 Representation
 ==============
 
-The picture below show the many possible representation of the widget depending on categories
-
-.. figure:: ../_static/images/categorychart/all.png
+The chart widget comes with many possible representation for categorised data. they are : gauge, bar, progressbar, donut and pie
 
 Each section of each chart show a specific metric value. These values are show as tooltips, labels on the chart and legend depending on the widget type.
 
