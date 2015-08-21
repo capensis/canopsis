@@ -571,8 +571,8 @@ class GraphManager(MiddlewareRegistry):
 
         :return: list of neighbour vertices designed by ids, or dict of
             {edge_id: (edge, list(vertices))} if add_edges. If depth is greater
-            than 1 or negative, result a set of (search depth, previous result
-            structure).
+            than 1 or negative, result is a set of (search depth, previous
+                result structure).
         :rtype: list or dict
         """
 

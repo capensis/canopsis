@@ -72,21 +72,19 @@ class TopologyManager(GraphManager):
         :param int depth: maximal iteration of depth search. If negative,
             search without limit.
         :param int errstate: minimal error state which allow recursive depth
-            search.
+            search. Default is vertice state.
         """
+
+        vid, state = self._get_idstate(vertice=vertice)
+
+        if errstate is None:
+
+            errstate = 1 if state is None else state
 
         info = {TopoVertice.STATE: {'$gte': errstate}}
 
-        # init ids
-        if isinstance(vertice, basestring):
-            ids = [vertice]
-        elif isinstance(vertice, dict):
-            ids = [vertice[GraphElement.ID]]
-        elif isinstance(vertice, Vertice):
-            ids = [vertice.id]
-
         result = self.get_neighbourhood(
-            ids=ids, info=info, orientation=GraphElement.SOURCES, depth=depth
+            ids=vid, info=info, orientation=GraphElement.SOURCES, depth=depth
         )
 
         return result
@@ -102,22 +100,140 @@ class TopologyManager(GraphManager):
         :param int depth: maximal iteration of depth search. If negative,
             search without limit.
         :param int errstate: minimal error state which allow recursive depth
-            search.
+            search. Default is vertice state.
         """
+
+        vid, state = self._get_idstate(vertice=vertice)
+
+        if errstate is None:
+
+            errstate = 1 if state is None else state
 
         info = {TopoVertice.STATE: {'$gte': errstate}}
 
-        # init ids
-        if isinstance(vertice, basestring):
-            ids = [vertice]
-        elif isinstance(vertice, dict):
-            ids = [vertice[GraphElement.ID]]
-        elif isinstance(vertice, Vertice):
-            ids = [vertice.id]
-
         result = self.get_neighbourhood(
-            ids=ids, info=info, orientation=GraphElement.TARGETS, depth=depth
+            ids=vid, info=info, orientation=GraphElement.TARGETS, depth=depth
         )
 
         return result
 
+    def _get_idstate(self, vertice):
+        """Get vertice id and state.
+
+        :param vertice: vertice from where get state.
+        :type vertice: str, dict or Vertice
+        :return: vertice id and state.
+        :rtype: str, int
+        """
+
+        vid, state = None, None
+
+        if isinstance(vertice, basestring):
+            vid = vertice
+            vertice = self.get_vertices(ids=vid)
+            if vertice is not None:
+                state = vertice.info.get('state')
+
+        elif isinstance(vertice, dict):
+            vid = vertice[GraphElement.ID]
+            if GraphElement.INFO in vertice:
+                info = vertice[GraphElement.INFO]
+                state = info.get('state')
+
+        elif isinstance(vertice, Vertice):
+            vid = vertice.id
+            state = vertice.info.get('state')
+
+        return vid, state
+
+    def get_causalsconsequencespertopo(self, topoids, errstate=1):
+        """Get a set of causals and consequences from input topos.
+
+        Iterate on all input topos, and get vertices in errors. Once they are
+        found, use a set of (vertice, consequences) where vertices are final
+        causals (lower vertices in the graph of causals), and consequences are
+        only last consequences (upper vertices in the graph of consequences).
+
+        :param str(s) topoids: topology ids from where find causals and
+            consequences.
+        :param int errstate: minimal errstate for finding causals and
+            consequences.
+        :return: set of (maximal causals, maximal consequences).
+        :rtype: dict
+        """
+
+        result = {}
+
+        info = {'state': {'$gte': errstate}}
+
+        # get vertices in error related to topoids
+        vertices = self.get_vertices(
+            graph_ids=topoids, info=info, serialize=False
+        )
+
+        # get causals
+        for vertice in vertices:
+            vstate = vertice['info']['state']
+            causalset = self.causals(
+                vertice=vertice, errstate=vstate
+            )
+            # find all vertice causals
+            for causalitem in causalset:
+                maxdepth = max(causalitem)
+                causals = causalset[maxdepth]
+                # find all causals
+                for causal in causals:
+                    consequenceset = self.consequences(
+                        vertice=causal, errstate=vstate
+                    )
+                    # find all consequences
+                    maxdepth = max(consequenceset)
+                    result[causal] = consequenceset[maxdepth]
+
+        return result
+
+    def get_consequencescausalspertopo(self, topoids, errstate=1):
+        """Get a set of consequences and causals from input topos.
+
+        Iterate on all input topos, and get vertices in errors. Once they are
+        found, use a set of (vertice, causals) where vertices are final
+        consequences (upper vertices in the graph of consequences), and causals
+        are only last causals (lower vertices in the graph of causals).
+
+        :param str(s) topoids: topology ids from where find consequences and
+            causals.
+        :param int errstate: minimal errstate for finding consequences and
+            causals.
+        :return: set of (maximal consequences, maximal causals).
+        :rtype: dict
+        """
+
+        result = {}
+
+        info = {'state': {'$gte': errstate}}
+
+        # get vertices in error related to topoids
+        vertices = self.get_vertices(
+            graph_ids=topoids, info=info, serialize=False
+        )
+
+        # get consequences
+        for vertice in vertices:
+            vstate = vertice['info']['state']
+            consequenceset = self.consequences(
+                vertice=vertice, errstate=vstate
+            )
+            # find all vertice consequences
+            for consequenceitem in consequenceset:
+                maxdepth = max(consequenceitem)
+                consequences = consequenceset[maxdepth]
+                # find all causals
+                for consequence in consequences:
+                    causalset = self.causals(
+                        vertice=consequence, errstate=vstate
+                    )
+                    # find all consequences
+                    maxdepth = max(causalset)
+                    result[consequence] = causalset[maxdepth]
+
+        return result
