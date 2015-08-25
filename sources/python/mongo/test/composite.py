@@ -149,5 +149,22 @@ class MongoCompositeStorageTest(TestCase):
         shared_data = self.storage.get_shared_data(shared_ids=str(shared_id))
         self.assertEqual(len(shared_data), len(data) - 1)
 
+    def test_distinct(self):
+
+        self.storage.put_element('id_1', {'group': 'a', 'test': 'value1'})
+        self.storage.put_element('id_2', {'group': 'a', 'test': 'value2'})
+        self.storage.put_element('id_3', {'group': 'a', 'test': 'value3'})
+
+        self.storage.put_element('id_4', {'group': 'b', 'test': 'value1'})
+        self.storage.put_element('id_5', {'group': 'b', 'test': 'value2'})
+        self.storage.put_element('id_6', {'group': 'b', 'test': 'value4'})
+
+        result = self.storage.distinct('test', {'group': 'b'})
+        self.assertEqual(result, ['value1', 'value2', 'value4'])
+
+        result = self.storage.distinct('test', {'group': 'a'})
+        self.assertEqual(result, ['value1', 'value2', 'value3'])
+
+
 if __name__ == '__main__':
     main()
