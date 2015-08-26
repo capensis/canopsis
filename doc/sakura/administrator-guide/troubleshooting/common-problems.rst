@@ -3,6 +3,14 @@
 Common problems
 ===============
 
+General purpose
+---------------
+
+
+**client/server date synchronisation**
+
+When a client uses the canopsis UI which is loaded from the server, it is strongly advised to check if the client computer and the remote server date system are synchronized. Missynchronization may lead to unexpeted behaviors such as timewindow bad interpretation in widget rendering as timewindow are generated from the UI and compared on the server for exemple when issuing some metric data queries.
+
 MongoDB won't start
 -------------------
 
