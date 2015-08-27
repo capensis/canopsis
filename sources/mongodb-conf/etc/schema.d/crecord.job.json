@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "Schedule",
-		"keys": ["start", "rrule"]
+		"keys": ["start", "rrule", "jtype"]
 	}],
 	"properties": {
 		"xtype": {
@@ -17,6 +17,10 @@
 		"last_execution": {"type": "integer", "required": false, "role": "timestamp"},
 		"rrule": {"type": "string", "required": false},
 		"start": {"type": "integer", "required": false, "role": "timestamp"},
+		"jtype": {
+			"role": "simplelist",
+			"enum": ["notification", "scheduled"]
+		},
 		"params": {
 			"type": "object",
 			"model": "task",

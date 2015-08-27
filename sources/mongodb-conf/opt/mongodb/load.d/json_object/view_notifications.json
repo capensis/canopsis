@@ -1,9 +1,9 @@
 {
-  "crecord_write_time": 1440666248,
+  "crecord_write_time": 1440685063,
   "enable": true,
   "crecord_type": "view",
   "crecord_creation_time": 0,
-  "crecord_name": "jobs.json",
+  "crecord_name": "notifications.json",
   "description": null,
   "tags": [],
   "author": null,
@@ -25,7 +25,7 @@
         "title": "wrapper",
         "widget": {
           "xtype": "list",
-          "title": "Scheduled Jobs",
+          "title": "Notification Jobs",
           "mixins": [
             {
               "formoptions": {
@@ -44,9 +44,9 @@
               "name": "arraysearch"
             },
             {
-              "default_filter": "{\"$or\":[{\"jtype\":{\"$eq\":\"scheduled\"}}]}",
+              "filters": [],
               "name": "customfilterlist",
-              "filters": []
+              "default_filter": "{\"$or\":[{\"jtype\":{\"$eq\":\"notification\"}}]}"
             }
           ],
           "tagName": null,
@@ -64,16 +64,16 @@
             "jtype"
           ],
           "contentTruncatedLength": 150,
-          "id": "list_ed0428ef-31e7-a685-f8e0-5e0fc8ea6a6c",
-          "_id": "list_ed0428ef-31e7-a685-f8e0-5e0fc8ea6a6c"
+          "id": "list_738ebc03-bb14-0e51-8046-460451026e1f",
+          "_id": "list_738ebc03-bb14-0e51-8046-460451026e1f"
         },
-        "id": "widgetwrapper_79aefa0b-9433-e4b4-a61d-8d6173614093",
-        "_id": "widgetwrapper_79aefa0b-9433-e4b4-a61d-8d6173614093"
+        "id": "widgetwrapper_e19b70e5-5e77-4031-150b-1e6326547874",
+        "_id": "widgetwrapper_e19b70e5-5e77-4031-150b-1e6326547874"
       }
     ],
-    "id": "widgetcontainer_10e8c574-947e-7876-2f8e-64280645ab34",
-    "_id": "widgetcontainer_10e8c574-947e-7876-2f8e-64280645ab34"
+    "id": "widgetcontainer_846315ad-c2c2-c152-b2d0-ea8f14a3b092",
+    "_id": "widgetcontainer_846315ad-c2c2-c152-b2d0-ea8f14a3b092"
   },
-  "id": "view_jobs",
-  "_id": "view_jobs"
+  "id": "view_notifications",
+  "_id": "view_notifications"
 }
