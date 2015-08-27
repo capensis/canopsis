@@ -4,9 +4,6 @@
 		"title": "General",
 		"keys":["title", "cfilter_allow_only_optimized_filters", "defaultview", "safe_mode"]
 	},{
-		"title": "Events",
-		"keys":["list_info_button_pattern"]
-	},{
 		"title": "Login",
 		"keys": ["login_footer"]
 	},{
@@ -31,10 +28,6 @@
 		"debug_mode": {
 			"type": "boolean",
 			"default": true
-		},
-		"list_info_button_pattern": {
-			"type": "string",
-			"default": "http://localhost:8082/#/userview/view.event"
 		},
 		"login_footer": {
 			"type": "string",
