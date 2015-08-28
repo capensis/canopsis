@@ -34,10 +34,11 @@ conf = {'rules': [
         {'description': 'unit test rule',
          '_id': 'unittestidrule',
          'mfilter': {'connector': 'changeme'},
-         'actions': [{'type': 'override',
-                  'field': 'connector',
-                  'value': 'it_works'},
-                 {'type': 'pass'}],
+         'actions': [{
+                'type': 'override',
+                'field': 'connector',
+                'value': 'it_works'},
+             {'type': 'pass'}],
          'name': 'change-connector-name'},
 
         {'description': 'unit test rule',
@@ -96,36 +97,40 @@ conf = {'rules': [
         {'description': 'unit test rule',
          '_id': 'unittestidrule',
          'mfilter': {'tags': {'$in': ["tag2"]}},
-         'actions': [{'type': 'remove',
-                  'key': 'tags',
-                  'element': 'tag2'},
-                 {'type': 'pass'}],
+         'actions': [{
+                'type': 'remove',
+                'key': 'tags',
+                'element': 'tag2'},
+             {'type': 'pass'}],
          'name': 'change-tag-pass'},
 
         {'description': 'unit test rule',
          '_id': 'unittestidrule',
          'mfilter': {'perfdatas': {'$in': ["perf1"]}},
-         'actions': [{'type': 'remove',
-                  'key': 'perfdatas',
-                  'element': 'perf1'},
-                 {'type': 'pass'}],
+         'actions': [{
+                'type': 'remove',
+                'key': 'perfdatas',
+                'element': 'perf1'},
+             {'type': 'pass'}],
          'name': 'remove-perdata-pass'},
 
         {'description': 'unit test rule',
          '_id': 'unittestidrule',
          'mfilter': {'remove_me': "True"},
-         'actions': [{'type': 'remove',
-                  'key': 'remove_me'},
-                 {'type': 'pass'}],
+         'actions': [{
+                'type': 'remove',
+                'key': 'remove_me'},
+             {'type': 'pass'}],
          'name': 'remove-eventfield-pass'},
 
         {'description': 'unit test rule',
          '_id': 'unittestidrule',
          'mfilter': {'connector': "add_here"},
-         'actions': [{'type': 'override',
-                  'field': 'added_field',
-                  'value': "this_was_added_at_runtime"},
-                 {'type': 'pass'}],
+         'actions': [{
+                'type': 'override',
+                'field': 'added_field',
+                'value': "this_was_added_at_runtime"},
+             {'type': 'pass'}],
          'name': 'add-eventfield-pass'},
 
         {'description': 'unit test rule',
@@ -137,8 +142,9 @@ conf = {'rules': [
         {'description': 're route',
          '_id': 'unittestidrule',
          'mfilter': {'connector': 'route_me'},
-         'actions': [{'type': 'route',
-                  'route': 'new_route_defined'}],
+         'actions': [{
+                'type': 'route',
+                'route': 'new_route_defined'}],
          'name': 're-route'},
 
         {'description': 'rm & add hostgroup',
@@ -152,9 +158,9 @@ conf = {'rules': [
                       'value': 'debian jessie'}],
          'name': 'rm-hostgroup-add-hostgroup-pass'}
         ],
-    'priority': 2,
-    'default_action': 'drop',
-    'configuration': 'white_black_lists'}
+        'priority': 2,
+        'default_action': 'drop',
+        'configuration': 'white_black_lists'}
 
 
 class KnownValues(TestCase):

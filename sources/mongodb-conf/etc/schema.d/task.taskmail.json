@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys": ["subject", "body", "recipients", "attachments", "html"]
+		"keys": ["subject", "body", "recipients", "html"]
 	},{
 		"title": "SMTP",
 		"keys": ["smtp_host", "smtp_port"]
@@ -25,6 +25,7 @@
 		"subject": {"type": "string", "required": true},
 		"body": {"type": "string", "role": "textarea", "required": true},
 		"attachments": {
+			"description": "disabled until a file-upload editor is available",
 			"type": "array",
 			"items": {"type": "string"},
 			"required": true,

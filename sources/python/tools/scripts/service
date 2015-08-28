@@ -86,7 +86,7 @@ class Service(object):
 
         else:
             call(
-                '/bin/bash -l -c "supervisorctl update &>/dev/null"',
+                '/bin/bash -l -c "supervisorctl reread &>/dev/null"',
                 shell=True)
 
     def check_group(self):
