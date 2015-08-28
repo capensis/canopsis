@@ -2,9 +2,9 @@
   {
     "contact": {
       "name": "Administrator",
-      "email": "",
       "address": ""
     },
+    "mail": "admin@canopsis.org",
     "_id": "root",
     "enable": true,
     "external": false,
@@ -14,9 +14,9 @@
   }, {
     "contact": {
       "name": "Canopsis",
-      "email": "jdoes@canopsis.org",
       "address": ""
     },
+    "mail": "canopsis@canopsis.org",
     "_id": "canopsis",
     "enable": true,
     "external": false,

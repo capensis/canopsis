@@ -340,6 +340,19 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
+    def distinct(self, field, query):
+
+        """
+        Find distinct elements from a query into the given storage
+
+        :param string field: The distinct field to projection
+        :param dict query: set of couple of (field name, field value).
+        """
+
+        table = self.get_table()
+        backend = self._get_backend(backend=table)
+        return backend.find(query).distinct(field)
+
     def find_elements(
             self, query=None, limit=0, skip=0, sort=None, projection=None,
             with_count=False,
