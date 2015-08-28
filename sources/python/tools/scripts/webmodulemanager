@@ -83,7 +83,7 @@ def save_list(enabled_list):
 
 def show_module(unused):
     enabled_list = load_list()
-    log(enabled_list)
+    log(' - ' + '\n - '.join(enabled_list))
 
 
 def add_module(module_name):
