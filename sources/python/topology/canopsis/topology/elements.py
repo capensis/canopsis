@@ -64,10 +64,10 @@ A topology edge contains::
 
 - weight: node weight in the graph related to edge targets.
 
-A topology inherits from both grapg and to and contains.
+A topology inherits from both graph and to and contains.
 """
 
-__all__ = ['Topology', 'TopoEdge', 'TopoNode']
+__all__ = ['Topology', 'TopoEdge', 'TopoNode', 'TopoVertice']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
 from canopsis.task import new_conf
@@ -82,12 +82,13 @@ from canopsis.common.utils import singleton_per_scope
 
 class TopoVertice(BaseTaskedVertice):
 
-    STATE = Check.STATE  #: state field name in info
-    ENTITY = 'entity'  #: entity field name in info
-    OPERATION = 'operation'  #: operation field name in info
+    STATE = Check.STATE  #: state field name in info.
+    ENTITY = 'entity'  #: entity field name in info.
+    OPERATION = 'operation'  #: operation field name in info.
     NAME = 'name'  #: element name.
 
     DEFAULT_STATE = Check.OK  #: default state value
+    #: default task
     DEFAULT_TASK = 'canopsis.topology.rule.action.change_state'
 
     def get_default_task(self):
@@ -252,9 +253,9 @@ class TopoNode(Vertice, TopoVertice):
         - (optionnally) a task information.
     """
 
-    TYPE = 'toponode'  #: node type name
+    TYPE = 'toponode'  #: node type name.
 
-    PARAM = 'toponode'  #: parameter name
+    PARAM = 'toponode'  #: parameter name.
 
     __slots__ = Vertice.__slots__
 

@@ -39,8 +39,7 @@ from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
 from canopsis.graph.manager import GraphManager
-from canopsis.graph.element import GraphElement, Vertice
-from canopsis.topology.element import TopoVertice
+from canopsis.graph.elements import GraphElement, Vertice
 
 CONF_PATH = 'topology/topology.conf'
 CATEGORY = 'TOPOLOGY'
@@ -81,7 +80,7 @@ class TopologyManager(GraphManager):
 
             errstate = 1 if state is None else state
 
-        info = {TopoVertice.STATE: {'$gte': errstate}}
+        info = {'state': {'$gte': errstate}}
 
         result = self.get_neighbourhood(
             ids=vid, info=info, orientation=GraphElement.SOURCES, depth=depth
@@ -109,7 +108,7 @@ class TopologyManager(GraphManager):
 
             errstate = 1 if state is None else state
 
-        info = {TopoVertice.STATE: {'$gte': errstate}}
+        info = {'state': {'$gte': errstate}}
 
         result = self.get_neighbourhood(
             ids=vid, info=info, orientation=GraphElement.TARGETS, depth=depth

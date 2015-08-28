@@ -10,9 +10,6 @@ function install(){
 	tar c var | tar xhv -C $PREFIX/
     check_code $? "Impossible to deploy static files"
 
-	launch_log $NAME "python setup.py install"
-    check_code $? "Impossible to install canopsis.webcore"
-
 	echo "define(function() { return '$(git log | head -1 | cut -d ' ' -f2)'; });" > $PREFIX/var/www/canopsis/commit.js
 }
 
@@ -21,11 +18,6 @@ function update(){
 
     tar c var | tar xhv -C $PREFIX/
     check_code $? "Impossible to deploy static files"
-
-    launch_log $NAME "python setup.py install --no-conf"
-    check_code $? "Impossible to update canopsis.webcore"
-
-    update_conffiles ./etc
 
     echo "define(function() { return '$(git log | head -1 | cut -d ' ' -f2)'; });" > $PREFIX/var/www/canopsis/commit.js
 }
