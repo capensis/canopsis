@@ -1,5 +1,8 @@
 {
     "type": "object",
+    "metadata": {
+        "icon": "fa fa-pie-chart"
+    },
     "categories": [{
         "title": "General",
         "keys": ["title", "display", "human_readable", "allow_user_display", "metric_template", "use_max_value", "max_value", "text_left_space", "show_legend", "show_tooltip", "show_labels", "stacked"]
