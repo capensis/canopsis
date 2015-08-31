@@ -7,7 +7,8 @@ Overview
    :maxdepth: 2
    :titlesonly:
 
-.. image:: https://git.canopsis.net/canopsis/canopsis/blob/develop/doc/sakura/_static/images/overview/logo.png
+.. image:: https://git.canopsis.net/canopsis/canopsis/raw/develop/doc/sakura/_static/images/overview/logo.png 
+	:width: 60%
 
 What is Canopsis ? 
 ------------------
