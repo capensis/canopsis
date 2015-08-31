@@ -13,3 +13,4 @@ This section explains how to use the different kind of widgets
    weather
    text
    containers
+   categorychart

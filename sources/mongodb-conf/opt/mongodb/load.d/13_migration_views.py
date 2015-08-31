@@ -93,7 +93,7 @@ def find_weathers(items):
             find_weathers(widget['items'])
 
         if widget['xtype'] == 'weather' and 'event_selection' in widget:
-            log('Processing weather in widget: {0}'.format(widget['title']))
+            log(u'Processing weather in widget: {0}'.format(widget['title']))
 
             widget['event_selection'] = transform_event_selection(
                 widget['event_selection']
