@@ -1,5 +1,5 @@
 {
-  "crecord_write_time": 1440685063,
+  "crecord_write_time": 1440765495,
   "enable": true,
   "crecord_type": "view",
   "crecord_creation_time": 0,
@@ -29,6 +29,7 @@
           "mixins": [
             {
               "formoptions": {
+                "scheduled": false,
                 "jtype": "notification"
               },
               "name": "crud",
@@ -44,9 +45,9 @@
               "name": "arraysearch"
             },
             {
-              "filters": [],
+              "default_filter": "{\"$or\":[{\"jtype\":{\"$eq\":\"notification\"}}]}",
               "name": "customfilterlist",
-              "default_filter": "{\"$or\":[{\"jtype\":{\"$eq\":\"notification\"}}]}"
+              "filters": []
             }
           ],
           "tagName": null,
@@ -57,23 +58,21 @@
           "useRenderers": true,
           "listed_crecord_type": "job",
           "displayed_columns": [
+            "crecord_name",
             "task",
-            "start",
-            "rrule",
-            "last_execution",
-            "jtype"
+            "last_execution"
           ],
           "contentTruncatedLength": 150,
-          "id": "list_738ebc03-bb14-0e51-8046-460451026e1f",
-          "_id": "list_738ebc03-bb14-0e51-8046-460451026e1f"
+          "id": "list_3dceffe7-3042-0ec3-b711-535d7253e899",
+          "_id": "list_3dceffe7-3042-0ec3-b711-535d7253e899"
         },
-        "id": "widgetwrapper_e19b70e5-5e77-4031-150b-1e6326547874",
-        "_id": "widgetwrapper_e19b70e5-5e77-4031-150b-1e6326547874"
+        "id": "widgetwrapper_e731fd0b-fc54-a9b5-af31-dbbe8fd68e68",
+        "_id": "widgetwrapper_e731fd0b-fc54-a9b5-af31-dbbe8fd68e68"
       }
     ],
-    "id": "widgetcontainer_846315ad-c2c2-c152-b2d0-ea8f14a3b092",
-    "_id": "widgetcontainer_846315ad-c2c2-c152-b2d0-ea8f14a3b092"
+    "id": "widgetcontainer_c8423f89-f9f6-bd2e-2288-3a7c12c8d207",
+    "_id": "widgetcontainer_c8423f89-f9f6-bd2e-2288-3a7c12c8d207"
   },
-  "id": "view_notifications",
-  "_id": "view_notifications"
+  "id": "view.notifications",
+  "_id": "vie.notifications"
 }

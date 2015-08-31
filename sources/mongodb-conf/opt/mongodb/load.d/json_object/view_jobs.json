@@ -1,5 +1,5 @@
 {
-  "crecord_write_time": 1440666248,
+  "crecord_write_time": 1440765433,
   "enable": true,
   "crecord_type": "view",
   "crecord_creation_time": 0,
@@ -29,7 +29,7 @@
           "mixins": [
             {
               "formoptions": {
-                "jtype": "notification"
+                "jtype": "scheduled"
               },
               "name": "crud",
               "form": "jobform"
@@ -44,9 +44,9 @@
               "name": "arraysearch"
             },
             {
-              "default_filter": "{\"$or\":[{\"jtype\":{\"$eq\":\"scheduled\"}}]}",
+              "filters": [],
               "name": "customfilterlist",
-              "filters": []
+              "default_filter": "{\"$or\":[{\"jtype\":{\"$eq\":\"scheduled\"}}]}"
             }
           ],
           "tagName": null,
@@ -57,23 +57,23 @@
           "useRenderers": true,
           "listed_crecord_type": "job",
           "displayed_columns": [
+            "crecord_name",
             "task",
             "start",
             "rrule",
-            "last_execution",
-            "jtype"
+            "last_execution"
           ],
           "contentTruncatedLength": 150,
-          "id": "list_ed0428ef-31e7-a685-f8e0-5e0fc8ea6a6c",
-          "_id": "list_ed0428ef-31e7-a685-f8e0-5e0fc8ea6a6c"
+          "id": "list_fe05bf97-e2c4-3ced-3a39-ab416bf2bd19",
+          "_id": "list_fe05bf97-e2c4-3ced-3a39-ab416bf2bd19"
         },
-        "id": "widgetwrapper_79aefa0b-9433-e4b4-a61d-8d6173614093",
-        "_id": "widgetwrapper_79aefa0b-9433-e4b4-a61d-8d6173614093"
+        "id": "widgetwrapper_34705c26-0ac1-7e48-f5e5-692302b0648d",
+        "_id": "widgetwrapper_34705c26-0ac1-7e48-f5e5-692302b0648d"
       }
     ],
-    "id": "widgetcontainer_10e8c574-947e-7876-2f8e-64280645ab34",
-    "_id": "widgetcontainer_10e8c574-947e-7876-2f8e-64280645ab34"
+    "id": "widgetcontainer_c353bb53-6566-a95d-4fdb-60b24e748872",
+    "_id": "widgetcontainer_c353bb53-6566-a95d-4fdb-60b24e748872"
   },
-  "id": "view_jobs",
-  "_id": "view_jobs"
+  "id": "view.jobs",
+  "_id": "view.jobs"
 }
