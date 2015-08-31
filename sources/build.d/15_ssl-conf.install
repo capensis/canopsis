@@ -1,7 +1,7 @@
 NAME="ssl-conf"
 
 
-function install() {
+function init_ssl_dir() {
     echo
     echo "===> Install configuration files..."
     echo
@@ -21,7 +21,9 @@ function install() {
     echo
 
     launch_cmd 1 "openssl dhparam -outform PEM -out $PREFIX/etc/ssl/dhfile.pem $SSL_KEY_BITS"
+}
 
+function install_certificates() {
     if [ ! -z $SSL_CA_PATH ] && [ -f $SSL_CA_PATH ] && [ ! -z $SSL_CAKEY_PATH ] && [ -f $SSL_CAKEY_PATH ]
     then
         echo
@@ -92,7 +94,9 @@ function install() {
     do
         cat $PREFIX/etc/ssl/$i.pem >> $PREFIX/etc/ssl/bundle.pem
     done
+}
 
+function fix_ssl_permissions() {
     echo
     echo "===> Fix permissions..."
     echo
@@ -103,4 +107,15 @@ function install() {
     done
 
     chown -R $HUSER:$HGROUP $PREFIX/etc/ssl || exit 1
+}
+
+function install() {
+    init_ssl_dir || exit 1
+    install_certificates || exit 1
+    fix_ssl_permissions || exit 1
+}
+
+function update() {
+    install_certificates || exit 1
+    fix_ssl_permissions || exit 1
 }

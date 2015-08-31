@@ -36,6 +36,30 @@ function init_build_install() {
     rm -rf $LOG_PATH/*.log >/dev/null 2>&1
 }
 
+function check_ssl() {
+    if [ -e $PREFIX/etc/ssl/ca.pem ]
+    then
+        openssl x509 -in $PREFIX/etc/ssl/ca.pem -noout -checkend $SSL_CHECK_SECONDS
+
+        if [ $? -ne 0 ]
+        then
+            echo "-- SSL CA certificate expired (or will within $SSL_CHECK_SECONDS seconds), regenerating"
+            rm $PREFIX/etc/ssl/*.pem
+        fi
+    fi
+
+    if [ -e $PREFIX/etc/ssl/cert.pem ]
+    then
+        openssl x509 -in $PREFIX/etc/ssl/cert.pem -noout -checkend $SSL_CHECK_SECONDS
+
+        if [ $? -ne 0 ]
+        then
+            echo "-- SSL certificate expired (or will within $SSL_CHECK_SECONDS seconds), regenerating"
+            rm $PREFIX/etc/ssl/{cert,key,bundle}.pem
+        fi
+    fi
+}
+
 function purge_old_binaries() {
     if [ $CPSPKG -eq 1 ]
     then
