@@ -19,7 +19,9 @@ Debian Like:
 Redhat Like:
 ^^^^^^^^^^^^
 
-Disable some services
+Disable some services   
+ We don't provide any SELinux context so it's better to disable it. Feel free to help us writing one !  
+ You can see :ref:`admin-setup-firewall` to configure Iptables
 
 .. code-block:: bash
 
@@ -63,11 +65,12 @@ Clone git repository:
     git submodule init
     git submodule update
 
-You can switch to development branch:
+You can switch to development branch (or any other branches):
 
 .. code-block:: bash
 
     git checkout develop
+
 
 Build and install
 -----------------
@@ -78,6 +81,9 @@ Build and install
     sudo ./build-install.sh
 
 If build failed, you can see logs in ``log/`` directory.
+
+Note that install dir will be /opt/canopsis by default.
+You can change it by editing SOURCE_PATH/sources/canohome/lib/common.sh
 
 Start Canopsis
 --------------
