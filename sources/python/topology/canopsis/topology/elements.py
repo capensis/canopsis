@@ -32,7 +32,7 @@ Topological tasks consist to update status vertice information and to propagate
 the change of state in sending check events.
 
 vertices could be finally connected to the topology in order to propagate all
- change of state to the topology itelf.
+change of state to the topology itelf.
 
 An example of application is root cause analysis where a topology may react
 when an entity change of state and can propagate over topology nodes the change
@@ -51,16 +51,16 @@ Both permits to update the node state. The first one will update its state
 related to the bound entity state, while the task can update the state
 independently to the entity state.
 
-A topology operation (to) contains::
+A topology operation (to) contains:
 
 - info.state: to state which change at runtime depending on bound entity
-    state and event propagation.
+state and event propagation.
 - info.entity: to entity.
 - info.operation: to operation.
 
 A topology node inherits from both vertice and to.
 
-A topology edge contains::
+A topology edge contains:
 
 - weight: node weight in the graph related to edge targets.
 

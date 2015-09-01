@@ -576,8 +576,7 @@ def publish(event, publisher, rk=None, exchange=None, logger=None, **kwargs):
     :param publisher: resource able to publish the event with a
         publish method. This method takes three parameters, the event,
         the rk related to the event and en exchange name.
-    :param str rk: routing key to use. If None, use
-        get_routingkey(event).
+    :param str rk: routing key to use. If None, use get_routingkey(event).
     :param str exchange: exchange name. If None, use
         publisher.exchange_name_events.
     """

@@ -18,23 +18,27 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Storage synchronization module.
+"""
+
 from canopsis.configuration.parameters import Parameter, Configuration
-from canopsis.middleware.manager import Manager
+from canopsis.middleware.registry import MiddlewareRegistry
 
 
-class Synchronizer(Manager):
-    """
-    Manage synchronization between middlewares of the same type.
+class Synchronizer(MiddlewareRegistry):
+    """Synchronize data from a source storage to target storages.
+
+    Targets must respect a common storage type with the source storage.
     """
 
     CONF_FILE = 'middleware/sync.conf'
 
-    SOURCE_MIDDLEWARE = 'source_storage'
-    TARGET_MIDDLEWARES = 'target_storages'
+    SOURCE = 'source'
+    TARGETS = 'targets'
 
     CATEGORY = 'SYNC_MIDDLEWARE'
 
-    def __init__(self, source_storage, target_types, *args, **kwargs):
+    def __init__(self, source, targets, *args, **kwargs):
         """
 
         :param source: source storage to synchronize with targets
@@ -46,26 +50,38 @@ class Synchronizer(Manager):
 
         super(Synchronizer, self).__init__(*args, **kwargs)
 
-        self.source = source_storage
-        self.targets = target_types
+        self.source = source
+        self.targets = targets
 
     @property
-    def source_storage(self):
-        return self._source_storage
+    def source(self):
+        """Get source storage.
+        """
 
-    @source_storage.setter
-    def source_storage(self, value):
-        self._source_storage = value
+        return self._source
+
+    @source.setter
+    def source(self, value):
+        """Change of source storage.
+        """
+
+        self._source = value
 
     @property
-    def target_types(self):
-        return self._target_types
+    def targets(self):
+        """Get target storage types.
+        """
 
-    @target_types.setter
-    def target_types(self, value):
-        self._target_types = value
+        return self._targets
 
-    def copy(self, source_storage=None, target_types=None):
+    @targets.setter
+    def targets(self, value):
+        """Change of target storage types.
+        """
+
+        self._targets = value
+
+    def copy(self, source=None, targets=None):
         """
         Copy content of source storage to target storages
         """
@@ -87,8 +103,10 @@ class Synchronizer(Manager):
         result.add_unified_category(
             name=Synchronizer.CATEGORY,
             new_content=(
-                Parameter(Synchronizer.SOURCE_MIDDLEWARE),
-                Parameter(Synchronizer.TARGET_MIDDLEWARES)))
+                Parameter(Synchronizer.SOURCE),
+                Parameter(Synchronizer.TARGETS)
+            )
+        )
 
         return result
 
@@ -99,5 +117,5 @@ class Synchronizer(Manager):
         values = conf[Configuration.VALUES]
 
         # set shared
-        self._update_parameter(values, Synchronizer.SOURCE_MIDDLEWARE)
-        self._update_parameter(values, Synchronizer.TARGET_MIDDLEWARES)
+        self._update_parameter(values, Synchronizer.SOURCE)
+        self._update_parameter(values, Synchronizer.TARGETS)

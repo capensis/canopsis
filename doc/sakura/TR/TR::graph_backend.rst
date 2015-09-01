@@ -35,7 +35,8 @@ canopsis.graph.elements
 
 Module which contains all graph elements
 
-.. _graphelements:
+.. _trgraphelements:
+.. _trgraphelement:
 
 Graph Element
 -------------
@@ -48,14 +49,16 @@ Contains:
 - types: str(s).
 - info: dict.
 
-.. _vertices:
+.. _trvertices:
+.. _trvertice:
 
 Vertice
 -------
 
 Inherits from the Vertice_.
 
-.. _edges:
+.. _tredges:
+.. _tredge:
 
 Edge
 ----
@@ -68,7 +71,8 @@ Contains:
 - targets: str(s).
 - oriented: bool.
 
-.. _graphs:
+.. _trgraphs:
+.. _trgraph:
 
 Graph
 -----
@@ -81,6 +85,8 @@ Contains:
 
 canopsis.graph.manager
 ======================
+
+.. _graphmanager:
 
 GraphManager
 ------------

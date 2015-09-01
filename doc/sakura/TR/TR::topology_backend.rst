@@ -77,8 +77,6 @@ canopsis.topology.manager
 TopologyManager
 ---------------
 
-.. _graphmanager: `../TR/TR:graph.rst/graphmanager`_
-
 Inherits from the GraphManager_.
 
 Manages topology storing and analyzing fonctions.
@@ -113,21 +111,21 @@ canopsis.topology.webservices
 The webservice provides all graphmanager_ methods through the route 'topology/' plus topologymanager_ methods below:
 
 get_causals
->>>>>>>>>>>
+-----------
 
 'topology/causals'
 
 get_consequences
->>>>>>>>>>>>>>>>
+----------------
 
 'topology/consequences'
 
 get_causalsandconsequencespertopo
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+---------------------------------
 
 'topology/causalsandconsequences'
 
 get_consequencesandcausalspertopo
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+---------------------------------
 
 'topology/consequencesandcausals'
