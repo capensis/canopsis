@@ -10,7 +10,7 @@ It targets an audience with basic *sys-admin* skills.
    :maxdepth: 2
    :titlesonly:
   
-   best-practices/index
    setup/index
    management/index
+   best-practices/index
    troubleshooting/index

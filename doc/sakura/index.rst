@@ -16,6 +16,7 @@ actual version of Canopsis (aka: **Sakura**):
    :maxdepth: 1
    :titlesonly:
 
+   overview/index
    user-guide/index
    administrator-guide/index
    developer-guide/index

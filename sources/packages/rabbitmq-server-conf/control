@@ -18,6 +18,7 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
+	launch_cmd 0 supervisorctl update
 	launch_cmd 1 service rabbitmq-server start
 
 	echo -n "Safe wait ..."
