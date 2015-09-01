@@ -8,6 +8,15 @@ Requirements
 
 Install requirements with ``root`` user.
 
+Systems:
+^^^^^^^
+
+Canopsis can be installed on the following systems :
+
+* Debian 6, 7, 8
+* Ubuntu 12, 14 (can be installed but not supported by team)
+* RedHat / CentOS 6, 7
+
 Debian Like:
 ^^^^^^^^^^^^
 
@@ -33,6 +42,8 @@ Disable some services
     service iptables stop
     service ip6tables stop
     service qpidd stop
+
+Iptables an qpidd may not be available on RedHat/CentOS 7. Take a look at firewalld
 
 Install some packages
 
