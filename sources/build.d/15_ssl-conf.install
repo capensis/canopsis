@@ -118,7 +118,7 @@ function install() {
 function update() {
     serial=$(cat $PREFIX/etc/ssl/openssl/serial)
     let "serial = serial + 1"
-    launch_cmd 1 "echo '$serial' > $PREFIX/etc/ssl/openssl/serial"
+    launch_cmd 1 "echo '$serial' >> $PREFIX/etc/ssl/openssl/serial"
 
     install_certificates || exit 1
     fix_ssl_permissions || exit 1
