@@ -74,5 +74,6 @@
     "_id": "widgetcontainer_c8423f89-f9f6-bd2e-2288-3a7c12c8d207"
   },
   "id": "view.notifications",
-  "_id": "view.notifications"
+  "_id": "view.notifications",
+  "loader_id": "view.notifications"
 }

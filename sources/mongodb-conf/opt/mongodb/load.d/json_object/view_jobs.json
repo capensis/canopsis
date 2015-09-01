@@ -75,5 +75,6 @@
     "_id": "widgetcontainer_c353bb53-6566-a95d-4fdb-60b24e748872"
   },
   "id": "view.jobs",
-  "_id": "view.jobs"
+  "_id": "view.jobs",
+  "loader_id": "view.jobs"
 }
