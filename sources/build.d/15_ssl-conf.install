@@ -11,7 +11,8 @@ function init_ssl_dir() {
 
     install_conf "ssl/openssl.cnf"
 
-    launch_cmd 1 "touch $PREFIX/etc/ssl/openssl/index.txt{,.attr}"
+    launch_cmd 1 "touch $PREFIX/etc/ssl/openssl/index.txt"
+    launch_cmd 1 "echo 'unique_subject = no' > $PREFIX/etc/ssl/openssl/index.txt.attr"
     launch_cmd 1 "echo '01' > $PREFIX/etc/ssl/openssl/serial"
 
     chown -R $HUSER:$HGROUP $PREFIX/etc/ssl || exit 1
