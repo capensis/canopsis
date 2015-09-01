@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 SCRIPT_PATH="$(dirname `readlink -f $0`)"
 SRC_PATH=$SCRIPT_PATH/../sources/
