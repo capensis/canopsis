@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys": ["default_filter"]
+		"keys": ["default_filter", "can_mix_filters"]
 	},{
 		"title": "Filters",
 		"keys":["filters"]
@@ -36,6 +36,10 @@
 		"selected_filter": {
 			"isUserPreference": true,
 			"type": "object"
-		}
+		},
+		"can_mix_filters": {
+			"type": "boolean",
+            "default": false
+        }
 	}
 }

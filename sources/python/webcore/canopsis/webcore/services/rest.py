@@ -56,13 +56,20 @@ def get_records(ws, namespace, ctype=None, _id=None, **params):
     else:
         sort = ensure_iterable(sort)
 
+    if isinstance(sort, basestring):
+        try:
+            sort = json.loads(sort)
+        except Exception as e:
+            ws.logger.warning('Unable to parse sort field : {}'.format(sort))
+            sort = []
+
     # Generate MongoDB sorting query
     msort = [
         (
             item['property'],
             1 if item['direction'] == 'DESC' else -1
         )
-        for item in sort
+        for item in sort if item.get('property', None) is not None
     ]
 
     # Generate MongoDB filter
