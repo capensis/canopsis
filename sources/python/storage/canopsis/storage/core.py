@@ -940,20 +940,34 @@ Storage types must be of the same type.'.format(self, target))
         """
 
         result = []
-
         if isinstance(sort, basestring):
+
             result.append((sort, Storage.ASC))
+
         elif isinstance(sort, dict):
-            direction = sort.get('direction', Storage.ASC)
-            if isinstance(direction, basestring):
-                direction = getattr(Storage, direction.upper())
-            result.append((sort['property'], direction))
+
+            sort_tuple = None
+            field = sort.get('property', None)
+
+            if field is not None:
+                direction = sort.get('direction', Storage.ASC)
+                if isinstance(direction, basestring):
+                    direction = getattr(Storage, direction.upper())
+                    # Need field property filled in the sort document
+                    sort_tuple = (field, direction)
+
+            if sort_tuple is not None:
+                result.append(sort_tuple)
+
         elif isinstance(sort, tuple):
+
             direction = sort[1]
             if isinstance(direction, basestring):
                 direction = getattr(Storage, direction.upper())
             result.append((sort[0], direction))
+
         elif isinstance(sort, Iterable):
+
             for item in sort:
                 result += Storage._resolve_sort(item)
 
