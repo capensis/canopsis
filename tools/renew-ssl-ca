@@ -1,10 +1,10 @@
 #!/bin/sh
 
 SCRIPT_PATH="$(dirname `readlink -f $0`)"
-mkdir -p $SCRIPT_PATH/ssl-build
+SRC_PATH=$SCRIPT_PATH/../sources/
 
-. $SCRIPT_PATH/../sources/canohome/lib/common.sh
-. $SCRIPT_PATH/../sources/build-control/config.sh
+. $SRC_PATH/canohome/lib/common.sh
+. $SRC_PATH/build-control/config.sh
 
 if [ "x$SSL_KEY_BITS" == "x" ]
 then
@@ -60,6 +60,11 @@ function check_validity() {
 
 function main() {
     mkdir -p $SCRIPT_PATH/ssl-build
+
+    cp $SRC_PATH/extra/conf/ssl/openssl.cnf $SCRIPT_PATH/ssl-build
+    sed "s#@PREFIX@#$PREFIX#g" -i $SCRIPT_PATH/ssl-build/openssl.cnf
+    sed "s#@HUSER@#$HUSER#g" -i $SCRIPT_PATH/ssl-build/openssl.cnf
+    sed "s#@HGROUP@#$HGROUP#g" -i $SCRIPT_PATH/ssl-build/openssl.cnf
 
     if check_validity
     then
