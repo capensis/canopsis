@@ -29,7 +29,6 @@
           "mixins": [
             {
               "formoptions": {
-                "scheduled": false,
                 "jtype": "notification"
               },
               "name": "crud",
