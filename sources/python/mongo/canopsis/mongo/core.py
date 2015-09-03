@@ -343,7 +343,7 @@ class MongoStorage(MongoDataBase, Storage):
 
     def distinct(self, field, query):
 
-        return self.find_elements(query=query).distinct(field)
+        return self.find_elements(query=query)._cursor.distinct(field)
 
     def find_elements(
             self, query=None, limit=0, skip=0, sort=None, projection=None,
