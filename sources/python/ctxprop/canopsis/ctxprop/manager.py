@@ -64,12 +64,12 @@ class CTXPropManager(MiddlewareRegistry):
 
         return self.configurables.keys()
 
-    def get(self, registries=None, ctx_ids=None, query=None, children=True):
+    def get(self, registries=None, ids=None, query=None, children=True):
         """Get property of registries.
 
         :param str(s) registries: registry names in charge of retrieving
             property. If None (default), get property from all registries.
-        :param str(s) ctx_ids: ctx id(s) from where find property. If None
+        :param str(s) ids: ctx id(s) from where find property. If None
             (default), get all property of all entities.
         :param dict query: specific query to apply on the method execution.
         :param bool children: if True (default) propagate the method on ctx
@@ -81,17 +81,17 @@ class CTXPropManager(MiddlewareRegistry):
 
         result = self._process_providers(
             cmd='get', registries=registries,
-            ctx_ids=ctx_ids, query=query, children=children
+            ids=ids, query=query, children=children
         )
 
         return result
 
-    def count(self, registries=None, ctx_ids=None, query=None, children=True):
+    def count(self, registries=None, ids=None, query=None, children=True):
         """Count property of registries.
 
         :param str(s) registries: registry names in charge of counting
             property. If None (default), count property from all registries.
-        :param str(s) ctx_ids: ctx id(s) from where count property. If None
+        :param str(s) ids: ctx id(s) from where count property. If None
             (default), count all property of all entities.
         :param dict query: specific query to apply on the method execution.
         :param bool children: if True (default) propagate the method on ctx
@@ -103,13 +103,13 @@ class CTXPropManager(MiddlewareRegistry):
 
         result = self._process_providers(
             cmd='count', registries=registries,
-            ctx_ids=ctx_ids, query=query, children=children
+            ids=ids, query=query, children=children
         )
 
         return result
 
     def delete(
-            self, registries=None, ctx_ids=None, query=None, children=True,
+            self, registries=None, ids=None, query=None, children=True,
             force=False, cache=False
     ):
         """Delete property of registries and returns number of property
@@ -117,11 +117,11 @@ class CTXPropManager(MiddlewareRegistry):
 
         :param str(s) registries: registry names in charge of deleting
             property. If None (default), delete property from all registries.
-        :param str(s) ctx_ids: ctx id(s) from where delete property. If None
+        :param str(s) ids: ctx id(s) from where delete property. If None
             (default), delete all property of all entities.
         :param dict query: specific query to apply on the method execution.
         :param bool force: if True (False by default), accept to nonify
-            ctx_ids in order to delete all existing ctx property.
+            ids in order to delete all existing ctx property.
         :param bool children: if True (default) propagate the method on ctx
             children.
         :return: property of registries by registry. If registries is a string,
@@ -130,20 +130,20 @@ class CTXPropManager(MiddlewareRegistry):
         """
 
         # check if force is True if registries is None
-        if ctx_ids is None and not force:
+        if ids is None and not force:
             raise CTXPropManager.Error(
                 "Impossible to remove all existing ctx property. Use force."
             )
 
         result = self._process_providers(
             cmd='delete', registries=registries,
-            ctx_ids=ctx_ids, query=query,
+            ids=ids, query=query,
             children=children, force=force, cache=cache
         )
 
         return result
 
-    def ctx_ids(self, registries=None, query=None):
+    def ids(self, registries=None, query=None):
         """Get ctx ids from different registries thanks to an input query.
 
         :param registries: registry names in charge of deleting property. If
@@ -155,7 +155,7 @@ class CTXPropManager(MiddlewareRegistry):
         """
 
         result = self._process_providers(
-            cmd='ctx_ids', registries=registries, query=query
+            cmd='ids', registries=registries, query=query
         )
 
         return result
@@ -174,13 +174,13 @@ class CTXPropManager(MiddlewareRegistry):
 
         registries, unique = self._providers_unique(registries)
 
-        # update kwargs ctx_ids if necessary
-        if 'ctx_ids' in kwargs:
-            # get ctx_ids and children from kwargs
-            ctx_ids = kwargs['ctx_ids']
+        # update kwargs ids if necessary
+        if 'ids' in kwargs:
+            # get ids and children from kwargs
+            ids = kwargs['ids']
             children = kwargs.pop('children')  # remove children from kwargs
-            kwargs['ctx_ids'] = self._add_children(
-                pctx_ids=ctx_ids, children=children
+            kwargs['ids'] = self._add_children(
+                pctx_ids=ids, children=children
             )
 
         for registry in registries:

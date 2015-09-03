@@ -36,9 +36,9 @@ How to... (All those examples are cumulative with -o and -p arguments)\n\
 Get all property documents by ctxpropreg name and entity_id:\n\t\
 ctxprop\nGet number of perfdata values by ctx id:\n\tctxprop -f perfdata -a\
  count\nGet ctx ids from events with the specific json filter \
-'{\"connector\": \"nagios\"}':\n\tctxprop -f events -q '{\"connector\": \"\
+'{\"connector\": \"nagios\"}':\n\tctxprop -r events -q '{\"connector\": \"\
 nagios\"}' -a ids\nDelete perfdata property related to the \
-entity_id \"X\" and all its children:\n\tctxprop -a delete -f perfdata -e \
+entity_id \"X\" and all its children:\n\tctxprop -a delete -r perfdata -i \
 \"X\"\nList all available ctxpropreg names:\n\tctxprop -a registries."
 
 parser = ArgumentParser(
@@ -68,7 +68,7 @@ parser.add_argument(
 )
 # set ctx ids argument
 parser.add_argument(
-    '-e', '--eids', help='ctx ids (works with get/delete/count action). \
+    '-i', '--ids', help='ctx ids (works with get/delete/count action). \
     Added to the query argument if query is given.',
     nargs='+', default=None, dest='ids', required=False
 )
