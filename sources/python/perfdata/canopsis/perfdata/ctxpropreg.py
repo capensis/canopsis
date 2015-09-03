@@ -19,32 +19,32 @@
 # ---------------------------------
 
 from canopsis.perfdata.manager import PerfData
-from canopsis.ctxinfo.funder import CTXInfoFunder
+from canopsis.ctxprop.registry import CTXPropRegistry
 
 
-class PerfDataFunder(CTXInfoFunder):
-    """In charge of binding a perfdata to context entities.
+class CTXPerfDataRegistry(CTXPropRegistry):
+    """In charge of ctx perfdata properties.
     """
 
     __datatype__ = 'perfdata'  #: default datatype name
 
     def __init__(self, *args, **kwargs):
 
-        super(PerfDataFunder, self).__init__(*args, **kwargs)
+        super(CTXPerfDataRegistry, self).__init__(*args, **kwargs)
 
         self.manager = PerfData()
 
-    def _do(self, cmd, entity_ids, *args, **kwargs):
+    def _do(self, cmd, ids, *args, **kwargs):
 
         result = []
 
-        if entity_ids is None:
+        if ids is None:
             metrics = self.manager.context.find(_type='metric')
-            entity_ids = [metric['_id'] for metric in metrics]
+            ids = [metric['_id'] for metric in metrics]
 
         entity_id_field = self._entity_id_field()
 
-        for entity_id in entity_ids:
+        for entity_id in ids:
             cmdresult = cmd(metric_id=entity_id, **kwargs)
             if isinstance(cmdresult, list):
                 result += [
@@ -52,27 +52,24 @@ class PerfDataFunder(CTXInfoFunder):
                     for point in cmdresult
                 ]
             else:
-                result.append(
-                    {entity_id_field: entity_id, 'result': cmdresult}
-                )
+                item = {entity_id_field: entity_id, 'result': cmdresult}
+                result.append(item)
 
         return result
 
-    def _get(self, entity_ids, query, *args, **kwargs):
+    def _get(self, ids, query, *args, **kwargs):
 
-        return self._do(
-            cmd=self.manager.get, entity_ids=entity_ids, with_meta=False
-        )
+        return self._do(cmd=self.manager.get, ids=ids, with_meta=False)
 
-    def _count(self, entity_ids, query, *args, **kwargs):
+    def _count(self, ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.count, entity_ids=entity_ids)
+        return self._do(cmd=self.manager.count, ids=ids)
 
-    def _delete(self, entity_ids, query, *args, **kwargs):
+    def _delete(self, ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.remove, entity_ids=entity_ids)
+        return self._do(cmd=self.manager.remove, ids=ids)
 
-    def entity_ids(self, query=None):
+    def ids(self, query=None):
 
         result = self.manager.get_metrics(query=query)
 

@@ -19,41 +19,41 @@
 # ---------------------------------
 
 from canopsis.check.manager import CheckManager
-from canopsis.ctxinfo.funder import CTXInfoFunder
+from canopsis.ctxprop.registry import CTXPropRegistry
 
 
-class CheckFunder(CTXInfoFunder):
-    """In charge of binding a check information to context entities.
+class CTXCheckRegistry(CTXPropRegistry):
+    """In charge of contextual state properties.
     """
 
     __datatype__ = 'check'  #: default datatype name
 
     def __init__(self, *args, **kwargs):
 
-        super(CheckFunder, self).__init__(*args, **kwargs)
+        super(CTXCheckRegistry, self).__init__(*args, **kwargs)
 
         self.manager = CheckManager()
 
-    def _get_documents(self, entity_ids, query):
+    def _get_documents(self, ids, query):
 
         result = []
 
-        entity_id_field = self._entity_id_field()
+        ctx_id_field = self._ctx_id_field()
 
-        docs = self.manager.state(ids=entity_ids, query=query)
+        docs = self.manager.state(ids=ids, query=query)
         for doc in docs:
-            doc[entity_id_field] = doc[CheckManager.ID]
+            doc[ctx_id_field] = doc[CheckManager.ID]
             result.append(doc)
 
         return result
 
-    def _get(self, entity_ids, query, *args, **kwargs):
+    def _get(self, ids, query, *args, **kwargs):
 
-        return self._get_documents(entity_ids=entity_ids, query=query)
+        return self._get_documents(ids=ids, query=query)
 
-    def _delete(self, entity_ids, query, *args, **kwargs):
+    def _delete(self, ids, query, *args, **kwargs):
 
-        docs = self._get_documents(entity_ids=entity_ids, query=query)
+        docs = self._get_documents(ids=ids, query=query)
 
         ids = [doc[CheckManager.ID] for doc in docs]
 
@@ -61,7 +61,7 @@ class CheckFunder(CTXInfoFunder):
 
         return docs
 
-    def entity_ids(self, query=None):
+    def ids(self, query=None):
 
         result = set()
 

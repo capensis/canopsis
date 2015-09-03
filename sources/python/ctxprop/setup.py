@@ -24,7 +24,7 @@ from canopsis.common.setup import setup
 install_requires = ['canopsis.middleware']
 
 setup(
-    description='Canopsis context information',
+    description='contextual property system',
     install_requires=install_requires,
-    keywords='context information'
+    keywords='context property'
 )

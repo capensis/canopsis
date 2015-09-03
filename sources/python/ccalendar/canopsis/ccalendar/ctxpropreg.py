@@ -18,11 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.vevent.funder import VEventFunder
+from canopsis.vevent.ctxpropreg import CTXVEventRegistry
 
 
-class PBehaviorFunder(VEventFunder):
-    """In charge of binding a pbehavior information to context entities.
+class CTXCalendarRegistry(CTXVEventRegistry):
+    """In charge of contextual calendar properties.
     """
 
-    __datatype__ = 'pbehavior'  #: default datatype name
+    __datatype__ = 'calendar'  #: default datatype name

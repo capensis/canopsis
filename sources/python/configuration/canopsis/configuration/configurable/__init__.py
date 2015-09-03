@@ -73,6 +73,10 @@ class Configurable(object):
     Manages class conf synchronisation with conf resources.
     """
 
+    class Error(Exception):
+        """Handle Configurable errors.
+        """
+
     __metaclass__ = MetaConfigurable
 
     DEFAULT_DRIVERS = '{0},{1}'.format(

@@ -19,41 +19,41 @@
 # ---------------------------------
 
 from canopsis.linklist.manager import Linklist
-from canopsis.ctxinfo.funder import CTXInfoFunder
+from canopsis.ctxprop.registry import CTXPropRegistry
 from canopsis.mongo.core import MongoStorage
 from canopsis.context.manager import Context
 
 from json import loads
 
 
-class LinklistFunder(CTXInfoFunder):
-    """In charge of binding a linklist information to context entities.
+class CTXLinklistRegistry(CTXPropRegistry):
+    """In charge of ctx linklist information.
     """
 
     __datatype__ = 'linklist'  #: default datatype name
 
     def __init__(self, *args, **kwargs):
 
-        super(LinklistFunder, self).__init__(*args, **kwargs)
+        super(CTXLinklistRegistry, self).__init__(*args, **kwargs)
 
         self.manager = Linklist()
         self.events = MongoStorage(table='events')
         self.context = Context()
 
-    def _get_documents(self, entity_ids, query):
-        """Get documents related to input entity_ids and query.
+    def _get_documents(self, ids, query):
+        """Get documents related to input ids and query.
 
-        :param list entity_ids: entity ids. If None, get all documents.
+        :param list ids: entity ids. If None, get all documents.
         :param dict query: additional selection query.
         :return: list of documents.
         :rtype: list
         """
         result = []
         # get entity id field name
-        entity_id_field = self._entity_id_field()
+        ctx_id_field = self._ctx_id_field()
         # get a set of entity ids for execution speed reasons
-        if entity_ids is not None:
-            entity_ids = set(entity_ids)
+        if ids is not None:
+            ids = set(ids)
         # get documents
         docs = self.manager.find(_filter=query)
         for doc in docs:
@@ -66,19 +66,19 @@ class LinklistFunder(CTXInfoFunder):
                 for event in events:
                     entity = self.context.get_entity(event)
                     entity_id = self.context.get_entity_id(entity)
-                    if entity_ids is None or entity_id in entity_ids:
-                        doc[entity_id_field] = entity_id  # add eid to the doc
+                    if ids is None or entity_id in ids:
+                        doc[ctx_id_field] = entity_id  # add eid to the doc
                         result.append(doc)
 
         return result
 
-    def _get(self, entity_ids, query, *args, **kwargs):
+    def _get(self, ids, query, *args, **kwargs):
 
-        return self._get_documents(entity_ids=entity_ids, query=query)
+        return self._get_documents(ids=ids, query=query)
 
-    def _delete(self, entity_ids, query, *args, **kwargs):
+    def _delete(self, ids, query, *args, **kwargs):
 
-        result = self._get_documents(entity_ids=entity_ids, query=query)
+        result = self._get_documents(ids=ids, query=query)
 
         ids = [doc['_id'] for doc in result]
 
@@ -86,7 +86,7 @@ class LinklistFunder(CTXInfoFunder):
 
         return result
 
-    def entity_ids(self, query=None):
+    def ids(self, query=None):
 
         result = []
 

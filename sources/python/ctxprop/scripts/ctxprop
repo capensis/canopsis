@@ -28,49 +28,49 @@ from pprint import pprint
 from json import loads
 
 from canopsis.common.init import basestring
-from canopsis.ctxinfo.manager import CTXInfoManager
+from canopsis.ctxprop.manager import CTXPropManager
 
 # build argument parser
 epilog = "\
 How to... (All those examples are cumulative with -o and -p arguments)\n\
-Get all information documents by funder name and entity_id:\n\tctxinfo\nGet \
-number of perfdata values by entity id:\n\tctxinfo -f perfdata -a count\nGet \
-entity ids from events with the specific json filter \
-'{\"connector\": \"nagios\"}':\n\tctxinfo -f events -q '{\"connector\": \"\
-nagios\"}' -a entity_ids\nDelete perfdata information related to the \
-entity_id \"X\" and all its children:\n\tctxinfo -a delete -f perfdata -e \
-\"X\"\nList all available funder names:\n\tctxinfo -a funders."
+Get all property documents by ctxpropreg name and entity_id:\n\t\
+ctxprop\nGet number of perfdata values by ctx id:\n\tctxprop -f perfdata -a\
+ count\nGet ctx ids from events with the specific json filter \
+'{\"connector\": \"nagios\"}':\n\tctxprop -f events -q '{\"connector\": \"\
+nagios\"}' -a ids\nDelete perfdata property related to the \
+entity_id \"X\" and all its children:\n\tctxprop -a delete -f perfdata -e \
+\"X\"\nList all available ctxpropreg names:\n\tctxprop -a registries."
 
 parser = ArgumentParser(
-    description='Get/Delete/Count context information related to other \
+    description='Get/Delete/Count context property related to other \
 arguments used such as filter selection or result displaying. Funders are \
-information scope such as perfdata or events.', epilog=epilog
+property scope such as perfdata or events.', epilog=epilog
 )
 # set operation argument
 parser.add_argument(
     '-a', '--action',
-    help='ctxinfo action. get(default)/count: retrieve information/count by \
-funder name and entity id, delete: delete information, entity_ids: get entity \
-ids, list: list funder names.',
+    help='ctxprop action. get(default)/count: retrieve property/count by \
+ctxpropreg name and ctx id, delete: delete property, ids: \
+get ctx ids, list: list ctxpropreg names.',
     default='get', type=str,
-    choices=['get', 'delete', 'count', 'entity_ids', 'funders'],
+    choices=['get', 'delete', 'count', 'ids', 'registries'],
     dest='action', required=False
 )
-# set funders argument
+# set registries argument
 parser.add_argument(
-    '-f', '--funders', help='funder names (default all)', default=None,
-    nargs='+', dest='funders', required=False
+    '-r', '--registries', help='ctxpropreg names (default all)',
+    default=None, nargs='+', dest='registries', required=False
 )
 # set output
 parser.add_argument(
     '-o', '--output', help='output file (default stdout)',
     dest='output', default=stdout, required=False, type=FileType('w')
 )
-# set entity ids argument
+# set ctx ids argument
 parser.add_argument(
-    '-e', '--eids', help='entity ids (works with get/delete/count action). \
+    '-e', '--eids', help='ctx ids (works with get/delete/count action). \
     Added to the query argument if query is given.',
-    nargs='+', default=None, dest='entity_ids', required=False
+    nargs='+', default=None, dest='ids', required=False
 )
 # set query argument
 parser.add_argument(
@@ -90,7 +90,7 @@ parser.add_argument(
     '-p', '--pretty', help='use pretty printer on output', default=False,
     dest='pprint', required=False, action='store_true'
 )
-# set force to delete all entity information
+# set force to delete all ctx property
 parser.add_argument(
     '--force',
     help='delete all ctx info if eids is not given (false by default). \
@@ -101,7 +101,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 # instantiate a new cim manager
-cim = CTXInfoManager()
+cim = CTXPropManager()
 
 # choose the right cim operation
 action = getattr(cim, args.action)
@@ -129,17 +129,17 @@ def apply_args(actions, nargs):
         for narg in nargs:  # apply nargs on kwargs
             kwargs[narg] = getattr(args, narg)
 
-# add funders and query
-apply_args(['get', 'delete', 'count', 'entity_ids'], ['funders', 'query'])
+# add registries and query
+apply_args(['get', 'delete', 'count', 'ids'], ['registries', 'query'])
 
 # add force
 apply_args('delete', 'force')
 
 # add eids and children
-apply_args(['get', 'delete', 'count'], ['entity_ids', 'children'])
+apply_args(['get', 'delete', 'count'], ['ids', 'children'])
 
 # execute the action with arguments
-result = action if args.action == 'funders' else action(**kwargs)
+result = action if args.action == 'registries' else action(**kwargs)
 
 # output the result
 if args.pprint:

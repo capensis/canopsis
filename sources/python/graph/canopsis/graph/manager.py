@@ -527,35 +527,28 @@ class GraphManager(MiddlewareRegistry):
 
         Sources and targets are handled in not directed edges.
 
-        :param ids: vertice ids from where get neighbours.
-        :type ids: list or str
+        :param str(s) ids: vertice ids from where get neighbours.
         :param int orientation: edge orientation to use, among GRAPH.SOURCES,
             GRAPH.TARGETS (default) and GRAPH.ALL.
         :param bool sources: if True (False by default) add source vertices.
         :param bool targets: if True (default) add target vertices.
-        :param graph_ids: vertice graph ids.
-        :type graph_ids: list or str
+        :param str(s) graph_ids: vertice graph ids.
         :param dict info: neighbourhood info to find.
         :param dict source_data: source neighbourhood info to find.
         :param dict target_data: target neighbourhood info to find.
-        :param types: vertice type(s).
-        :type types: list or str
-        :param types: neighbourhood types to retrieve.
-        :type types: list or str
-        :param source_types: neighbourhood source types to retrieve.
-        :type source_types: list or str
-        :param target_types: neighbourhood target types to retrieve.
-        :type target_types: list or str
-        :param edge_ids: edge from where find target/source vertices.
-        :type edge_ids: list or str
-        :param edge_types: edge types from where find target/source vertices.
-        :type edge_types: list or str
+        :param str(s) types: vertice type(s).
+        :param str(s) types: neighbourhood types to retrieve.
+        :param str(s) source_types: neighbourhood source types to retrieve.
+        :param str(s) target_types: neighbourhood target types to retrieve.
+        :param str(s) edge_ids: edge from where find target/source vertices.
+        :param str(s) edge_types: edge types from where find target/source
+            vertices.
         :param bool add_edges: if True (False by default), add pathed edges in
             the result such as {edge_id: (edge, list(vertices))}.
-        :param source_edge_types: edge types from where find source vertices.
-        :type source_edge_types: list or str
-        :param target_edge_types: edge types from where find target vertices.
-        :type target_edge_types: list or str
+        :param str(s) source_edge_types: edge types from where find source
+            vertices.
+        :param str(s) target_edge_types: edge types from where find target
+            vertices.
         :param dict edge_data: edge info to find.
         :param dict source_edge_data: source edge info to find.
         :param dict target_edge_data: target edge info to find.
@@ -572,7 +565,7 @@ class GraphManager(MiddlewareRegistry):
         :return: list of neighbour vertices designed by ids, or dict of
             {edge_id: (edge, list(vertices))} if add_edges. If depth is greater
             than 1 or negative, result is a set of (search depth, previous
-                result structure).
+            result structure).
         :rtype: list or dict
         """
 

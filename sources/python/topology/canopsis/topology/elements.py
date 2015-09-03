@@ -54,7 +54,7 @@ independently to the entity state.
 A topology operation (to) contains:
 
 - info.state: to state which change at runtime depending on bound entity
-state and event propagation.
+    state and event propagation.
 - info.entity: to entity.
 - info.operation: to operation.
 

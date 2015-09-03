@@ -19,10 +19,10 @@
 # ---------------------------------
 
 from canopsis.vevent.manager import VEventManager
-from canopsis.ctxinfo.funder import CTXInfoFunder
+from canopsis.ctxprop.registry import CTXPropRegistry
 
 
-class VEventFunder(CTXInfoFunder):
+class CTXVEventRegistry(CTXPropRegistry):
     """In charge of binding a vevent information to context entities.
     """
 
@@ -30,43 +30,43 @@ class VEventFunder(CTXInfoFunder):
 
     def __init__(self, *args, **kwargs):
 
-        super(VEventFunder, self).__init__(*args, **kwargs)
+        super(CTXVEventRegistry, self).__init__(*args, **kwargs)
 
         self.manager = VEventManager()
 
-    def _get_docs(self, entity_ids, query, *args, **kwargs):
+    def _get_docs(self, ids, query, *args, **kwargs):
 
         result = []
 
-        docs = self.manager.values(sources=entity_ids, query=query)
+        docs = self.manager.values(sources=ids, query=query)
 
-        entity_id_field = self._entity_id_field()
+        ctx_id_field = self._ctx_id_field()
 
-        if entity_ids is not None:
-            entity_ids = set(entity_ids)
+        if ids is not None:
+            ids = set(ids)
 
         for doc in docs:
             entity_id = doc[VEventManager.SOURCE]
-            if entity_ids is None or entity_id in entity_ids:
-                doc[entity_id_field] = entity_id
+            if ids is None or entity_id in ids:
+                doc[ctx_id_field] = entity_id
                 result.append(doc)
 
         return result
 
-    def _get(self, entity_ids, query, *args, **kwargs):
+    def _get(self, ids, query, *args, **kwargs):
 
         return self._get_docs(
-            entity_ids=entity_ids, query=query, *args, **kwargs
+            ids=ids, query=query, *args, **kwargs
         )
 
-    def _delete(self, entity_ids, query, *args, **kwargs):
+    def _delete(self, ids, query, *args, **kwargs):
 
-        result = self._get_docs(entity_ids=entity_ids, query=query)
+        result = self._get_docs(ids=ids, query=query)
 
-        self.manager.remove_by_source(sources=entity_ids, query=query)
+        self.manager.remove_by_source(sources=ids, query=query)
 
         return result
 
-    def entity_ids(self, query=None):
+    def ids(self, query=None):
 
         return self.manager.whois(query=query)

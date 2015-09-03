@@ -20,11 +20,11 @@
 
 from canopsis.topology.elements import TopoVertice, Vertice
 from canopsis.topology.manager import TopologyManager
-from canopsis.ctxinfo.funder import CTXInfoFunder
+from canopsis.ctxprop.registry import CTXPropRegistry
 
 
-class TopologyFunder(CTXInfoFunder):
-    """In charge of binding a topology information to context entities.
+class TopologyFunder(CTXPropRegistry):
+    """In charge of ctx topology.
     """
 
     __datatype__ = 'topology'  #: default datatype name
@@ -35,44 +35,42 @@ class TopologyFunder(CTXInfoFunder):
 
         self.manager = TopologyManager()
 
-    def _get_documents(self, entity_ids, query, *args, **kwargs):
+    def _get_documents(self, ids, query, *args, **kwargs):
 
         result = []
 
-        entity_id_field = self._entity_id_field()
+        ctx_id_field = self._ctx_id_field()
 
-        ENTITY = TopoVertice.ENTITY
-        INFO = Vertice.INFO
+        entity_cst = TopoVertice.ENTITY
+        info_cst = Vertice.INFO
 
         entity = (
-            {'$exists': True} if entity_ids is None else {'$in': entity_ids}
+            {'$exists': True} if ids is None else {'$in': ids}
         )
-        info = {ENTITY: entity}
+        info = {entity_cst: entity}
 
-        docs = self.manager.get_elts(
-            info=info, serialize=False, query=query
-        )
+        docs = self.manager.get_elts(info=info, serialize=False, query=query)
 
         for doc in docs:
-            doc[entity_id_field] = doc[INFO][ENTITY]
+            doc[ctx_id_field] = doc[info_cst][entity_cst]
             result.append(doc)
 
         return result
 
-    def _get(self, entity_ids, query, *args, **kwargs):
+    def _get(self, ids, query, *args, **kwargs):
 
-        return self._get_documents(entity_ids=entity_ids, query=query)
+        return self._get_documents(ids=ids, query=query)
 
-    def _delete(self, entity_ids, query, *args, **kwargs):
+    def _delete(self, ids, query, *args, **kwargs):
 
-        result = self._get_documents(entity_ids=entity_ids, query=query)
+        result = self._get_documents(ids=ids, query=query)
 
         ids = [doc['_id'] for doc in result]
         self.manager.del_elts(ids=ids)
 
         return result
 
-    def entity_ids(self, query=None):
+    def ids(self, query=None):
 
         result = set()
 

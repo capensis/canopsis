@@ -18,32 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-# Fill by engine
-logger = None
-name = "worst_state"
-display_name = "Worst State"
-description = "Calcul the worst state"
+"""This project is dedicated to enrich a context with dynamic information such
+as perfdata, periodic behavior, etc.
 
-options = {
-    '_id': name,
-    'component': display_name,
-    'description': description,
-    'event_type': 'operator',
-    'source_type': 'component',
-    'nodeMaxOutConnexion': 10,
-    'nodeMaxInConnexion': 10
-}
+A ctxprop manager is dedicated to get/put/update/delete context information
+from a single point (... of failure ?! Stop to criticize my idea :p) in order
+to apply a same logic whatever concerns.
 
+Such context information manager implement the CTXInfoFunder interface which
+is able to execute the ctxprop manager methods.
+"""
 
-def operator(states, options={}):
-    logger.debug("%s: Calcul state for %s" % (name, states))
-
-    if len(states) == 1:
-        state = states[0]
-    else:
-        states.sort()
-        states.reverse()
-        state = states[0]
-
-    logger.debug("%s: + State: %s" % (name, state))
-    return state
+__version__ = '0.1'
