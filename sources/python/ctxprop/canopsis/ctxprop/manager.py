@@ -220,7 +220,7 @@ class CTXPropManager(MiddlewareRegistry):
         if unique:
             registries = [registries]
         elif registries is None:
-            registries = self.registries()
+            registries = self.registries
 
         result = registries, unique
 
