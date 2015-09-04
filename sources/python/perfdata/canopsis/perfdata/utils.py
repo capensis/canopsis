@@ -20,7 +20,7 @@
 
 from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, Period
-from canopsis.timeserie import TimeSerie
+from canopsis.timeserie.core import TimeSerie
 
 
 class PerfDataInterface(object):

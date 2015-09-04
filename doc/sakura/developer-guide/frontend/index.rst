@@ -13,6 +13,7 @@ Here is a presentation of how things are done in webcore:
    :titlesonly:
 
    architecture
+   writing-a-brick
    managing-dependencies
    translation
 

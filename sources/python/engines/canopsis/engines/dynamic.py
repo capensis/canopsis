@@ -191,12 +191,11 @@ class engine(Engine, Configurable):
 
 
 def load_dynamic_engine(name, *args, **kwargs):
-    """
-    Load a new engine in adding a specific conf_path.
+    """Load a new engine in adding a specific conf_path.
 
     :param str name: dynamic engine name.
-    :param tuple args: used in new engine initialization such as *args.
-    :param dict kwargs: used in new engine initialization such as **kwargs.
+    :param tuple args: used in new engine initialization such as varargs.
+    :param dict kwargs: used in new engine initialization such as keywords.
     """
 
     conf_path = 'engines/%s.conf' % name
