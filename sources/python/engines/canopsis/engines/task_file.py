@@ -39,7 +39,7 @@ class engine(TaskHandler):
         body = Template(body)(template_data)
 
         try:
-            with open(path, 'w') as f:
+            with open(path, 'a+') as f:
                 f.write(body)
             f.close
             return (0, "File has been write successfully")
