@@ -1,60 +1,61 @@
-=========================
-TITLE : titre du document
-=========================
+=====
+TITLE
+=====
 
-Plan
-====
+Short description
 
-Plan du document.
+.. sectnum::
 
-Description
-===========
+.. contents::
+   :depth: 2
 
-Description courte du document.
-
-Références
+References
 ==========
 
-Références vers d’autres TR et FR.
+List of referenced functional requirements...
 
-Mises à jour
-============
+- FR::example
+- FR::example2
 
-+-----------+------------+---------+-------------------------+------------+
-| Auteur(s) | Date       | Version | Résumé                  | Validé par |
-+-----------+------------+---------+-------------------------+------------+
-| John Doe  | 39/08/2005 | 0.1     | Création de ce template | toto       |
-+-----------+------------+---------+-------------------------+------------+
+.. _test: ./FR::example/test_
+.. _test2: ./FR::example2/test2_
 
-Contenu
+Updates
 =======
 
-Tâche 1
--------
 
-Description de la tâche 1.
+.. csv-table::
+   :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-Architecture Logicielle + chiffrage
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   "John Doe", "39/08/2005", "0.1", "Template creation", "toto"
 
-Schéma et description de l’architecture logicielle employée + charge en jours/homme de la tâche.
+Contents
+========
 
-Guide technique
+Task 1
+------
+
+Description
+
+Software architecture and costing
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Schema and used software architecture description plus costing in day/man.
+
+Technical guide
 >>>>>>>>>>>>>>>
 
-Guide d'utilisation technique.
+UTs + costing
+>>>>>>>>>>>>>
 
-TUs + chiffrage
->>>>>>>>>>>>>>>
+Description of Unit tests plus costing in day/man.
 
-Description des Tests unitaires + charge en jours/homme.
+TFs + costing
+>>>>>>>>>>>>>
 
-TFs + chiffrage
->>>>>>>>>>>>>>>
-
-Description des Tests fonctionnels + charge en jours/homme.
+Description of fonctional tests plus costing in day/man.
 
 TPs + chiffrage
 >>>>>>>>>>>>>>>
 
-Description des Tests de performance + charge en jours/homme.
+Description of performance tests plus costing in day/man.

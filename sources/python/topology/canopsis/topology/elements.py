@@ -32,7 +32,7 @@ Topological tasks consist to update status vertice information and to propagate
 the change of state in sending check events.
 
 vertices could be finally connected to the topology in order to propagate all
- change of state to the topology itelf.
+change of state to the topology itelf.
 
 An example of application is root cause analysis where a topology may react
 when an entity change of state and can propagate over topology nodes the change
@@ -51,23 +51,23 @@ Both permits to update the node state. The first one will update its state
 related to the bound entity state, while the task can update the state
 independently to the entity state.
 
-A topology operation (to) contains::
+A topology operation (to) contains:
 
 - info.state: to state which change at runtime depending on bound entity
-    state and event propagation.
+state and event propagation.
 - info.entity: to entity.
 - info.operation: to operation.
 
 A topology node inherits from both vertice and to.
 
-A topology edge contains::
+A topology edge contains:
 
 - weight: node weight in the graph related to edge targets.
 
-A topology inherits from both grapg and to and contains.
+A topology inherits from both graph and to and contains.
 """
 
-__all__ = ['Topology', 'TopoEdge', 'TopoNode']
+__all__ = ['Topology', 'TopoEdge', 'TopoNode', 'TopoVertice']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
 from canopsis.task import new_conf
@@ -82,12 +82,13 @@ from canopsis.common.utils import singleton_per_scope
 
 class TopoVertice(BaseTaskedVertice):
 
-    STATE = Check.STATE  #: state field name in info
-    ENTITY = 'entity'  #: entity field name in info
-    OPERATION = 'operation'  #: operation field name in info
+    STATE = Check.STATE  #: state field name in info.
+    ENTITY = 'entity'  #: entity field name in info.
+    OPERATION = 'operation'  #: operation field name in info.
     NAME = 'name'  #: element name.
 
     DEFAULT_STATE = Check.OK  #: default state value
+    #: default task
     DEFAULT_TASK = 'canopsis.topology.rule.action.change_state'
 
     def get_default_task(self):
@@ -252,9 +253,9 @@ class TopoNode(Vertice, TopoVertice):
         - (optionnally) a task information.
     """
 
-    TYPE = 'toponode'  #: node type name
+    TYPE = 'toponode'  #: node type name.
 
-    PARAM = 'toponode'  #: parameter name
+    PARAM = 'toponode'  #: parameter name.
 
     __slots__ = Vertice.__slots__
 

@@ -71,13 +71,13 @@ def parse_scheme(uri):
 
 
 def get_uri(
-    protocol, data_type=None, data_scope=None, host=None, port=None, user=None,
-    pwd=None, path=None, parameters=None
+        protocol, data_type=None, data_scope=None, host=None, port=None,
+        user=None, pwd=None, path=None, parameters=None
 ):
     """Get a scheme related to input protocol, data_type and data_scope.
 
     :return: {protocol[-{data_type}[-{data_scope}]]}://[{user}[:{pwd}]]@{host}?
-    localhost[:port][/{path}][?{parameters}]
+        localhost[:port][/{path}][?{parameters}]
     :rtype: str
     """
 
@@ -143,6 +143,7 @@ class Middleware(Configurable):
 
     - pubsub dedicated to events, status, etc.
     - database dedicated to relational data, no-sql data, timed data, etc.
+
     And a data scope ('canopsis' by default) which permits to define a domain.
 
     - perfdata for managing perfdata.
@@ -198,13 +199,13 @@ class Middleware(Configurable):
         pass
 
     def __init__(
-        self,
-        uri=None, data_type=None, data_scope=None,
-        protocol=None, host='localhost', port=0, path='canopsis',
-        auto_connect=True, safe=False,
-        conn_timeout=20000, in_timeout=100, out_timeout=2000,
-        ssl=False, ssl_key=None, ssl_cert=None, user=None, pwd=None,
-        *args, **kwargs
+            self,
+            uri=None, data_type=None, data_scope=None,
+            protocol=None, host='localhost', port=0, path='canopsis',
+            auto_connect=True, safe=False,
+            conn_timeout=20000, in_timeout=100, out_timeout=2000,
+            ssl=False, ssl_key=None, ssl_cert=None, user=None, pwd=None,
+            *args, **kwargs
     ):
         """
         :param uri: middleware uri to connect to. If other uri parameters are
@@ -287,7 +288,7 @@ class Middleware(Configurable):
         return result
 
     def _get_uri(self):
-        """Get uri in constructing it from individual uri parameters
+        """Get uri in constructing it from individual uri parameters.
         """
 
         result = self._uri
@@ -323,7 +324,8 @@ class Middleware(Configurable):
         self._set_uri(value)
 
     def _set_uri(self, value):
-        """Set uri in getting values from uri parameters if value is None or empty
+        """Set uri in getting values from uri parameters if value is None or
+        empty.
         """
 
         self._uri = value
@@ -748,17 +750,15 @@ class Middleware(Configurable):
 
     @staticmethod
     def get_middleware(
-        protocol, data_type=None, data_scope=None, auto_connect=True,
-        *args, **kwargs
+            protocol, data_type=None, data_scope=None, auto_connect=True,
+            *args, **kwargs
     ):
         """Instantiate the right middleware related to input protocol,
         data_type and specific parameters (in args and kwargs).
 
-        :param protocol: protocol name.
-        :type protocol: str
+        :param str protocol: protocol name.
 
-        :param data_type: data type name.
-        :type data_type: str
+        :param str data_type: data type name.
 
         :param args: list of args given to the middleware to instantiate.
         :param kwargs: kwargs given to the middleware to instantiate.
@@ -767,7 +767,7 @@ class Middleware(Configurable):
         :rtype: Middleware
 
         :raise: Middleware.Error if no middleware is registered related to
-        input protocol and data_type.
+            input protocol and data_type.
         """
 
         result = None
@@ -800,9 +800,8 @@ class Middleware(Configurable):
     def get_middleware_by_uri(uri, *args, **kwargs):
         """Instantiate the right middleware related to input uri.
 
-        :param uri: the uri may contains a protocol of type 'protocol' or
+        :param str uri: the uri may contains a protocol of type 'protocol' or
             'protocol-data_type' or 'protocol-data_type-data_scope.
-        :type uri: str
 
         :param args: list of args given to the middleware to instantiate.
         :param kwargs: kwargs given to the middleware to instantiate.

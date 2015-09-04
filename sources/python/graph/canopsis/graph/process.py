@@ -33,7 +33,7 @@ context = Context()
 graph = Graph()
 
 
-@register_task(name='graph.event_processing')
+@register_task('graph.event_processing')
 def event_processing(event, ctx=None, **params):
     """Process input event in getting graph nodes bound to input event entity.
 

@@ -783,32 +783,40 @@ class Forecast(object):
             self.parameters)
         return result
 
+    def validate_serie(self, y, c):
 
-    def validate_serie(y,c):
-        return (len(y)>2 and len(y)%c ==0)
+        return len(y) > 2 and len(y) % c == 0
 
     def holtwinters(
+            self,
             y,
             alpha=DEFAULT_ALPHA,
             beta=DEFAULT_BETA,
             gamma=DEFAULT_GAMMA,
             c=sys.maxint,
-            forecast=True):
+            forecast=True
+    ):
         """
-        y - time series data.
-        alpha(0.2) , beta(0.1), gamma(0.05): exponential smoothing coefficients
-                                        for level, trend, seasonal components.
-        c -  extrapolated future data points.
-              4 quarterly
-              7 weekly.
-              12 monthly
+        :param y: time series data.
+        :param float alpha: (0.2) exponential smoothing coefficients for level
+            seasonal components.
+        :param float beta: (0.1) exponential smoothing coefficients for trend
+            components.
+        :param float gamma: (0.05) exponential smoothing coefficients for
+            seasonal components.
+        :param int c: extrapolated future data points.
+
+            - 4 quarterly
+            - 7 weekly.
+            - 12 monthly
 
         The length of y must be a an integer multiple (> 2) of c.
         """
 
         # Validate the serie
-        if(not validate_serie(y,c)):
+        if(not self.validate_serie(y,c)):
             return
+
         logger.debug(
             "y = %s, alpha = %s, beta = %s, gamma = %s, c = %s" %
             (y, alpha, beta, gamma, c))
@@ -869,8 +877,7 @@ class Forecast(object):
 
         return c, At, Bt, F
 
-    @staticmethod
-    def holtwinters_forecast(y, c, At, Bt, F, S):
+    def holtwinters_forecast(self, y, c, At, Bt, F, S):
         ylen = len(y)
         #Forecast for next c periods:
         for m in range(c):
@@ -881,8 +888,8 @@ class Forecast(object):
 
         return F
 
-    @staticmethod
     def forecast_best_effort(
+            self,
             y,
             forecast_parameters=PARAMETERS,
             c=sys.maxint,
@@ -897,7 +904,7 @@ class Forecast(object):
         result = None
 
         for forecast_parameter in forecast_parameters:
-            c, At, Bt, F = Forecast.holtwinters(
+            c, At, Bt, F = self.holtwinters(
                 y,
                 forecast_parameter[Forecast.ALPHA],
                 forecast_parameter[Forecast.BETA],
@@ -909,7 +916,7 @@ class Forecast(object):
             else:
                 result['delta'] = delta
         if calculate_forecast:
-            Forecast.holtwinters_forecast(y, c, At, Bt, F)
+            self.holtwinters_forecast(y, c, At, Bt, F)
 
         return result, c, At, Bt, F
 
@@ -931,16 +938,18 @@ class Forecast(object):
         # calculate forecasted points
         if self.parameters is None:  # best effort
             forecast_parameters, c, At, Bt, F = Forecast.forecast_best_effort(
-                y, Forecast.FORECAST_PARAMETERS, c)
+                y, Forecast.FORECAST_PARAMETERS, c
+            )
             self.parameters = forecast_parameters
 
         else:
-            c, At, Bt, F = Forecast.holtwinters(
+            c, At, Bt, F = self.holtwinters(
                 y,
                 self.parameters.alpha,
                 self.parameters.beta,
                 self.parameters.gamma,
-                self.max_points)
+                self.max_points
+            )
 
         # add None in F
         def insertnonevalues(F, noneindexes, index=0):
@@ -972,6 +981,7 @@ class Forecast(object):
 
         logger.debug(
             'len(points): %s, len(y): %s, len(F): %s, len(result): %s' %
-            (len(points), len(y), len(F), len(result)))
+            (len(points), len(y), len(F), len(result))
+        )
 
         return result

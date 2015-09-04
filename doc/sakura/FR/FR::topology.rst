@@ -2,7 +2,7 @@
 Topology
 ========
 
-A topology is a graph representation of an infrastructure dedicated to find failure causes/consquences among hosts and services.
+A topology is a graph representation of an infrastructure dedicated to find failure causes/consequences among hosts and services.
 
 .. sectnum::
 
@@ -14,18 +14,20 @@ References
 ----------
 
 - FR::event
+- FR::graph
 
 .. _event: ./FR::event/event_
+.. _graph: ./FR::graph/graph_
 
 -------
 Updates
 -------
 
-+------------------+------------+---------+-------------------+-------------+
-| Author(s)        | Date       | Version | Summary           | Accepted by |
-+------------------+------------+---------+-------------------+-------------+
-| Jonathan Labéjof | 27/07/2015 | 0.1     | Document creation |             |
-+------------------+------------+---------+-------------------+-------------+
+
+.. csv-table::
+   :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
+
+   "Jonathan Labéjof", "27/07/2015", "0.1", "Creation", ""
 
 --------
 Contents
@@ -34,16 +36,22 @@ Contents
 Description
 ===========
 
-Une topologie est proche d'une structure de graphe au sens mathématique du terme. Constituée de sommets à état et d'arrêtes orientées et à état. Elle est dédié aux analyses de causes et d'impacts de pannes d'un système.
+Une topologie est un graph_ dédié à l'étude des causes et des conséquences de pannes d'un système. Constituée de sommets à état et d'arrêtes orientées et à état. Elle est dédié aux analyses de causes et d'impacts de pannes d'un système.
 
-Représentation
-==============
+Représentations
+===============
+
+Widget Topology
+---------------
 
 L'illustration ci-dessous montre un exemple de schéma de topologie avec des états observés dans une infrastructure, d'états calculés/corrélés par la topologie et des causes/conséquences des changements d'état.
 
 .. figure:: ../_static/images/topology/topology.png
 
-Les axes verticaux de nom “consequence” et “cause” montrent que plus on se rapproche de la topologie, plus la conséquence est importante, et inversement pour les causes. Les causes et les conséquences les plus pertinentes sont surlignés avec la même couleur que la propriété de l'axe intéressé.
+Les axes verticaux de nom “consequence” et “cause” montrent que plus on se rapproche de la topologie, plus la conséquence est importante, et inversement pour les causes. Les causes et les conséquences les plus pertinentes sont surlignées avec la même couleur que la propriété de l'axe intéressé.
+
+Widget list des causes et conséquences
+--------------------------------------
 
 Analyse
 =======
@@ -58,8 +66,8 @@ Même s'il est possible de développer ses propres opérations, celles proposée
 
 Un état recherché est par exemple une valeur spécifique ou non ok.
 
-Actions :
----------
+Actions
+-------
 
 - valeur d'état spécifique,
 - worst state : pire état observé,

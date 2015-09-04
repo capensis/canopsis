@@ -26,6 +26,7 @@ In addition to this condition, it is possible to test another condition which
 refers to source nodes if they exist.
 
 Such conditions are::
+
     - ``new_state``: test if state (or event state) is not equal to node state
     - ``at_least``: test if source node states match with an input state.
     - ``_all``: test if all source node states match with an input state.
@@ -51,12 +52,11 @@ SOURCES_BY_EDGES = 'sources_by_edges'
 
 @register_task
 def new_state(event, vertice, state=None, manager=None, **kwargs):
-    """
-    Condition triggered when state is different than vertice state.
+    """Condition triggered when state is different than vertice state.
 
     :param dict event: event from where get state if input state is None.
     :param TopoNode vertice: vertice from where check if vertice state != input
-    state.
+        state.
     :param int state: state to compare with input vertice state.
     """
 
@@ -72,8 +72,9 @@ def new_state(event, vertice, state=None, manager=None, **kwargs):
 
 @register_task
 def at_least(
-    event, ctx, vertice, state=Check.OK, min_weight=1, rrule=None, f=None,
-    manager=None, **kwargs
+        event, ctx, vertice, state=Check.OK, min_weight=1, rrule=None, f=None,
+        manager=None, edge_types=None, edge_data=None, edge_query=None,
+        **kwargs
 ):
     """
     Generic condition applied on sources of vertice which check if at least
@@ -85,10 +86,15 @@ def at_least(
     :param int state: state to check among sources nodes.
     :param float min_weight: minimal weight (default 1) to reach in order to
         validate this condition. If None, condition results in checking all
-            sources.
+        sources.
     :param rrule rrule: rrule to consider in order to check condition in time.
     :param f: function to apply on source vertice state. If None, use equality
         between input state and source vertice state.
+    :param edge_ids: edge from where find target/source vertices.
+    :type edge_ids: list or str
+    :param edge_types: edge types from where find target/source vertices.
+    :type edge_types: list or str
+    :param dict edge_query: additional edge query.
 
     :return: True if condition is checked among source nodes.
     :rtype: bool
@@ -105,7 +111,10 @@ def at_least(
     elif min_weight != 0:
         min_weight = None
 
-    sources_by_edges = manager.get_sources(ids=vertice.id, add_edges=True)
+    sources_by_edges = manager.get_sources(
+        ids=vertice.id, add_edges=True,
+        edge_types=edge_types, edge_data=edge_data, edge_query=edge_query
+    )
 
     if sources_by_edges and min_weight is None:
         # if edges & checking all nodes is required, result is True by default
@@ -121,7 +130,7 @@ def at_least(
         # get edge_weight which is 1 by default
         for source in sources:
             source_state = source.state
-            if (source_state == state if f is None else f(source_state)):
+            if source_state == state if f is None else f(source_state):
                 if min_weight is not None:  # if min_weight is not None
                     min_weight -= edge.weight  # remove edge_weight from result
                     if min_weight <= 0:  # if min_weight is negative, ends loop
@@ -190,5 +199,11 @@ def nok(**kwargs):
 
 
 def is_nok(state):
+    """True iif state is not ok.
+
+    :param int state: state to check such as a not ok state.
+    :return: True iif state is not ok.
+    :rtype: bool
+    """
 
     return state != Check.OK

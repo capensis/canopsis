@@ -23,11 +23,10 @@ List of referenced functional requirements...
 Updates
 =======
 
-+-----------+------------+---------+-------------------+-------------+
-| Author(s) | Date       | Version | Summary           | Accepted by |
-+-----------+------------+---------+-------------------+-------------+
-| John Doe  | 39/08/2005 | 0.1     | Template creation | toto        |
-+-----------+------------+---------+-------------------+-------------+
+.. csv-table::
+   :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
+
+   "John Doe", "39/08/2005", "0.1", "Template creation", "toto"
 
 Contents
 ========
