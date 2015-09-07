@@ -12,4 +12,3 @@ This Chapter describes ethe concept of a view/dashboard in Canopsis
    userviews
    viewmanagement
 
-

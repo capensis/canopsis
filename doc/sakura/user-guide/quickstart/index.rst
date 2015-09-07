@@ -9,6 +9,3 @@ This quickstart show you how to use Canopsis (frontend and backend) quickly
    :maxdepth: 3
    :titlesonly:
 
-   views/index
-   widgets/index
-   auth/index
