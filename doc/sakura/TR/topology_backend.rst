@@ -1,3 +1,5 @@
+.. tr-topology-backend:
+
 ========
 Topology
 ========
@@ -13,11 +15,10 @@ Project ``canopsis.topology`` description.
 References
 ----------
 
-- FR::topology
-- TR::graph
-
-.. _graph: ../TR/TR::graph/graph_
-.. _topology: ./FR::topology/topology
+- fr-topology_
+- `fr-topology`_
+- :ref: `fr-topology`
+- :ref: `graph <./graph>`
 
 -------
 Updates

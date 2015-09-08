@@ -1,3 +1,5 @@
+.. fr-topology:
+
 ========
 Topology
 ========
@@ -13,11 +15,11 @@ A topology is a graph representation of an infrastructure dedicated to find fail
 References
 ----------
 
-- FR::event
-- FR::graph
+- event_
+- graph_
 
-.. _event: ./FR::event/event_
-.. _graph: ./FR::graph/graph_
+.. _event: ./event_
+.. _graph: ./graph_
 
 -------
 Updates

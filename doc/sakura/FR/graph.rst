@@ -1,3 +1,5 @@
+.. fr-graph:
+
 =====
 Graph
 =====
@@ -22,8 +24,8 @@ Updates
 Contents
 --------
 
-Description
-===========
+Data structure
+==============
 
 A graph is inherited from the mathematical structure of hypergraphs with some technical features such as information on edges.
 
@@ -50,7 +52,10 @@ Edge
 
 An edge inherits from vertice and links source vertice(s) with target vertice(s).
 
-An edge contains the boolean property ``oriented`` which permits to distinguish or not target from sources.
+I contains:
+
+- a ``weight`` which designates the edge weight.
+- an ``oriented`` flag which distinguishes or not targets from sources.
 
 .. _graphs:
 
@@ -58,3 +63,19 @@ Graph
 -----
 
 A graph is a vertice used such as a set of vertices.
+
+Behavior
+========
+
+In addition to data information embedded by those elements, it might be important to use a specific element lifecycle behavior (creation, updating, deletion).
+
+In order to ensure this idea, all elements can be used such as objects from the OOP paradigm
+
+This related object is referenced by its class full name in the element.
+
+Factory
+=======
+
+The factory is dedicated to instanciate a graph from a simple data format, which respects both `data structure`_ and behavior_.
+
+Graph parsers might help any data format translation to the expected graph factory data format.

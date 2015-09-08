@@ -1,3 +1,5 @@
+.. tr-topology-frontend:
+
 =================
 Topology frontend
 =================
@@ -13,14 +15,9 @@ Project ``canopsis.topology`` frontend description.
 References
 ----------
 
-- FR::topology
-- TR::graph_frontend
-- TR::widgetlist
-
-.. _graph: ./TR::graph_frontend/graph_
-.. _topology: ../FR/FR::topology/topology
-.. _widgetlist: ./TR::widgetlist
-.. _widgetgraph: ./TR::graph_frontend/widget
+- :ref: `topology <fr-topology>`
+- :ref: `graph frontend <tr-graph-frontend>`
+- :ref: `widgetlist <tr-widgetlist>`
 
 -------
 Updates

@@ -1,3 +1,5 @@
+.. tr-title:
+
 =====
 TITLE
 =====
@@ -14,11 +16,11 @@ References
 
 List of referenced functional requirements...
 
-- FR::example
-- FR::example2
+- example
+- example2
 
-.. _test: ./FR::example/test_
-.. _test2: ./FR::example2/test2_
+.. _test: ./example/test_
+.. _test2: ./example2/test2_
 
 Updates
 =======

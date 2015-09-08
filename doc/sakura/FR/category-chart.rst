@@ -1,3 +1,5 @@
+.. fr-category-chart:
+
 ==============
 Category chart
 ==============

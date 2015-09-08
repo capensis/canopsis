@@ -22,3 +22,7 @@ actual version of Canopsis (aka: **Sakura**):
    developer-guide/index
    api/index
    glossary
+
+   FR/index
+   TR/index
+   ED/index
