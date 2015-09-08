@@ -1,3 +1,5 @@
+.. _ED__TITLE:
+
 =====
 TITLE
 =====
@@ -14,11 +16,11 @@ References
 
 List of referenced functional requirements...
 
-- example
-- example2
+- FR__TITLE_
+- TR__TITLE_
 
-.. _test: ./example/test_
-.. _test2: ./example2/test2_
+.. _fr_desc: fr__title__desc_
+.. _tr_desc: tr__title__desc_
 
 Updates
 =======
@@ -26,7 +28,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "John Doe", "39/08/2005", "0.1", "Template creation", "toto"
+   "Jonathan Labéjof", "2015/09/08", "1.0", "Template creation", ""
 
 Contents
 ========

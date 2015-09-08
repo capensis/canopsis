@@ -1,4 +1,4 @@
-.. tr-title:
+.. _TR__TITLE:
 
 =====
 TITLE
@@ -6,21 +6,18 @@ TITLE
 
 Short description
 
-.. sectnum::
-
 .. contents::
    :depth: 2
 
 References
 ==========
 
-List of referenced functional requirements...
+List of referenced functional and technical requirements...
 
-- example
-- example2
+- fr__title_
+- tr__title_
 
-.. _test: ./example/test_
-.. _test2: ./example2/test2_
+.. _desc: fr__title__desc_
 
 Updates
 =======
@@ -29,10 +26,12 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "John Doe", "39/08/2005", "0.1", "Template creation", "toto"
+   "Jonathan Labéjof", "2015/09/08", "1.0", "Template creation", ""
 
 Contents
 ========
+
+.. _tr__title__task1:
 
 Task 1
 ------

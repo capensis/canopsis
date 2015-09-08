@@ -1,4 +1,4 @@
-.. _ed:
+.. _ED:
 
 Exploitation Documents
 ======================

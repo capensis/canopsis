@@ -1,12 +1,10 @@
-.. fr-category-chart:
+.. _FR__Category_chart:
 
 ==============
 Category chart
 ==============
 
 The Canopsis category chart is a widget that allow display metrics depending on categories
-
-.. sectnum::
 
 .. contents::
    :depth: 2
@@ -19,11 +17,12 @@ References
 Updates
 -------
 
-+------------------+------------+---------+-------------------+-------------+
-| Author(s)        | Date       | Version | Summary           | Accepted by |
-+------------------+------------+---------+-------------------+-------------+
-| Eric Régnier     | 06/08/2015 | 0.1     | Document creation |             |
-+------------------+------------+---------+-------------------+-------------+
+.. csv-table::
+   :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
+
+   "David Delassus", "2015/09/01", "0.3", "Update references", ""
+   "David Delassus", "2015/09/01", "0.2", "Rename document", ""
+   "Eric Régnier", "2015/08/06", "0.1", "Document creation", ""
 
 --------
 Contents

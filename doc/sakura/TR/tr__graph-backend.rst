@@ -1,12 +1,10 @@
-.. tr-graph:
+.. _TR__Graph_backend:
 
 =====
 Graph
 =====
 
 Project ``canopsis.graph`` description.
-
-.. sectnum::
 
 .. contents::
    :depth: 2
@@ -15,9 +13,7 @@ Project ``canopsis.graph`` description.
 References
 ----------
 
-- :ref: `graph <../FR/graph>`
-
-.. _graph: ../FR/graph_
+- :ref: `FR__graph <FR__Graph>`
 
 -------
 Updates
@@ -26,7 +22,9 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "Jonathan Labéjof", "27/08/2015", "0.1", "Creation", ""
+   "David Delassus", "2015/09/01", "0.3", "Update references", ""
+   "David Delassus", "2015/09/01", "0.2", "Rename document", ""
+   "Jonathan Labéjof", "2015/08/27", "0.1", "Creation", ""
 
 --------
 Contents
@@ -37,8 +35,7 @@ canopsis.graph.elements
 
 Module which contains all graph elements
 
-.. _trgraphelements:
-.. _trgraphelement:
+.. _TR__Graph_backend__Element:
 
 Graph Element
 -------------
@@ -47,61 +44,45 @@ Base object for all other graph objects.
 
 Contains:
 
-.. csv-table::
-   :header: property, type, description
+- uid: str.
+- types: str(s).
+- info: dict.
 
-   uid, str, element id
-   types, str(s), element types
-   info, dict, element information
-   cls, str, element class
-
-A graph element exists in two formats, a serialized one, which is a dicitonary and an object. Both have same attributes.
-
-.. _trvertices:
-.. _trvertice:
+.. _TR__Graph_backend__Vertice:
 
 Vertice
 -------
 
-Inherits from the Vertice_.
+Inherits from the :ref:`Vertice <FR__Graph__vertice>`.
 
-.. _tredges:
-.. _tredge:
+.. _TR__Graph_backend__Edge:
 
 Edge
 ----
 
-Inherits from the Vertice_.
+Inherits from the :ref:`Edge <FR__Graph__edge>`.
 
 Contains:
 
-.. csv-table::
-   :header: property, type, description
+- sources: str(s).
+- targets: str(s).
+- oriented: bool.
 
-   sources, str(s), source element ids
-   targets, str(s), target element ids
-   weight, float, edge weight in [0; 1] (default 1)
-   oriented, bool, oriented flag (True by default)
-
-.. _trgraphs:
-.. _trgraph:
+.. _TR__Graph_backend__Graph:
 
 Graph
 -----
 
-Inherits from the Vertice_.
+Inherits from the :ref:`Graph <FR__Graph__graph>`.
 
 Contains:
 
-.. csv-table::
-   :header: property, type, description
-
-   elts, str(s), element ids used by the graph
+- elts: str(s)
 
 canopsis.graph.manager
 ======================
 
-.. _graphmanager:
+.. _TR__Graph_backend__Manager:
 
 GraphManager
 ------------
@@ -194,19 +175,8 @@ GraphFactory
 
 Instantiate a graph from a simple serialized format.
 
-load(elts)
->>>>>>>>>>
-
-UTs
-<<<
-
-GraphParser
------------
-
-Translate a data format to the graph data format expected by the graph factory.
-
-parse(data)
->>>>>>>>>>>
+load
+>>>>
 
 UTs
 <<<

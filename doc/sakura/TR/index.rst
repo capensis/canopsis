@@ -1,14 +1,31 @@
-.. _tr:
+.. _TR:
 
-Technical requirements
-======================
+Canopsis Technical Requirements
+===============================
 
-List of all technical requirements.
+Base
+----
 
 .. toctree::
    :maxdepth: 1
    :titlesonly:
 
-   graph_backend
-   topology_backend
-   topology_frontend
+   architecture
+
+Systems
+-------
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
+
+   graph-backend
+   topology-backend
+   topology-frontend
+
+High-Level features
+-------------------
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:

@@ -1,12 +1,10 @@
-.. tr-topology-backend:
+.. _TR__Topology_backend:
 
 ========
 Topology
 ========
 
 Project ``canopsis.topology`` description.
-
-.. sectnum::
 
 .. contents::
    :depth: 2
@@ -15,10 +13,8 @@ Project ``canopsis.topology`` description.
 References
 ----------
 
-- fr-topology_
-- `fr-topology`_
-- :ref: `fr-topology`
-- :ref: `graph <./graph>`
+- :ref:`FR__Topology <FR__Topology>`
+- :ref:`TR__graph <TR__Graph_backend>`
 
 -------
 Updates
@@ -27,7 +23,9 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "Jonathan Labéjof", "27/08/2015", "0.1", "Creation", ""
+   "David Delassus", "01/09/2015", "0.3", "Update references", ""
+   "David Delassus", "01/09/2015", "0.2", "Rename document", ""
+   "Jonathan Labéjof", "2015/08/27", "0.1", "Creation", ""
 
 --------
 Contents
@@ -38,7 +36,7 @@ canopsis.topology.elements
 
 Module which contains all topology elements
 
-.. _topovertices:
+.. _TR__Topology_backend__TopoVertice:
 
 TopoVertice
 -----------
@@ -51,34 +49,38 @@ info contains:
 - operation: str.
 - entity: str.
 
-.. _toponodes:
+.. _TR__Topology_backend__TopoNode:
 
 TopoNode
 --------
 
-Inherits from the TopoVertice_.
+Inherits from the :ref:`TopoVertice <TR__Topology_backend__TopoVertice>`.
 
-.. _topoedges:
+.. _TR__Topology_backend__TopoEdge:
 
 TopoEdge
 --------
 
-Inherits from the TopoNode_ and the Edge_.
+Inherits from the :ref:`TopoNode <TR__Topology_backend__TopoNode>` and the
+:ref:`TR__Graph_backend__Edge`.
 
-.. _graphs:
+.. _TR__Topology_backend__Graph:
 
 Graph
 -----
 
-Inherits from the TopoNode_ and the Graph_.
+Inherits from the :ref:`TopoNode <TR__Topology_backend__TopoNode>` and the
+:ref:`Graph <TR__Graph_backend__Graph>.
 
 canopsis.topology.manager
 =========================
 
+.. _TR__Topology_backend__Manager:
+
 TopologyManager
 ---------------
 
-Inherits from the GraphManager_.
+Inherits from the :ref:`GraphManager <TR__Graph_backend__Manager>`.
 
 Manages topology storing and analyzing fonctions.
 
@@ -109,7 +111,9 @@ UTs
 canopsis.topology.webservices
 =============================
 
-The webservice provides all graphmanager_ methods through the route 'topology/' plus topologymanager_ methods below:
+The webservice provides all :ref:`GraphManager <TR__Graph_backend__Manager>`
+methods through the route 'topology/' plus
+:ref:`GraphManager <TR__Topology_backend__Manager>` methods below:
 
 get_causals
 -----------

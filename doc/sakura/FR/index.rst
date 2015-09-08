@@ -1,14 +1,32 @@
-.. _fr:
+.. _FR:
 
-Functional requirements
-=======================
+Canopsis Functionnal Requirements
+=================================
 
-List of all functional requirements.
+Base
+----
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
+
+   architecture
+
+Systems
+-------
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
+
+   graph
+   topology
+
+High-Level features
+-------------------
 
 .. toctree::
    :maxdepth: 1
    :titlesonly:
 
    category-chart
-   graph
-   topology
