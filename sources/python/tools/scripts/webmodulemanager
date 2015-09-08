@@ -44,7 +44,7 @@ modules = [
 
 """
 This module aims to manager registed webcore modules in canopsis
-by allowing to add/remove module from enabled.json list in webcore.
+by allowing to enable/disable module from enabled.json list in webcore.
 """
 
 DEBUG = False
@@ -86,30 +86,37 @@ def show_module(unused):
     log(' - ' + '\n - '.join(enabled_list))
 
 
-def add_module(module_name):
+def enable_module(module_name):
     enabled_list = load_list()
     if module_name not in enabled_list:
         enabled_list.append(module_name)
         save_list(enabled_list)
-        log('Added {} module'.format(module_name))
+        log('Enabled {} module'.format(module_name))
     else:
         log('Module {} already registered'.format(module_name))
 
 
-def remove_module(module_name):
+def disable_module(module_name):
     enabled_list = load_list()
     if module_name in enabled_list:
         enabled_list.remove(module_name)
         save_list(enabled_list)
         log('Removed {} module'.format(module_name))
     else:
-        log('Could not remove module {} as not registered'.format(module_name))
+        log('Could not disable module {} as not registered'.format(module_name))
 
 
 def init_modules(module_name):
     # module name is not used here
     for module in modules:
-        add_module(module)
+        enable_module(module)
+
+
+def clear_modules(module_name):
+    # module name is not used here
+    for module in modules:
+        disable_module(module)
+
 
 if __name__ == '__main__':
 
@@ -120,7 +127,7 @@ if __name__ == '__main__':
         'action',
         type=str,
         help='What operation to perform on web modules',
-        choices=['add', 'remove', 'show', 'init']
+        choices=['enable', 'disable', 'list', 'init', 'clear']
     )
     parser.add_argument(
         'module_name',
@@ -131,15 +138,16 @@ if __name__ == '__main__':
 
     args = vars(parser.parse_args())
 
-    if args['action'] in ['add', 'remove'] and not args['module_name']:
+    if args['action'] in ['enable', 'disable'] and not args['module_name']:
         log('No module name given, aborting operation')
         sys.exit(1)
 
     action = {
-        'add': add_module,
-        'remove': remove_module,
-        'show': show_module,
-        'init': init_modules
+        'enable': enable_module,
+        'disable': disable_module,
+        'list': show_module,
+        'init': init_modules,
+        'clear': clear_modules,
     }[args['action']]
 
     action(args['module_name'])
