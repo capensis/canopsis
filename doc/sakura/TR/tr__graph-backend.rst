@@ -13,7 +13,7 @@ Project ``canopsis.graph`` description.
 References
 ----------
 
-- :ref: `FR__graph <FR__Graph>`
+- :ref:`FR__Graph <FR__Graph>`
 
 -------
 Updates

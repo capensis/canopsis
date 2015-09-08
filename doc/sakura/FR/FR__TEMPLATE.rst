@@ -1,4 +1,4 @@
-.. _FR__TITLE:
+.. _FR__Title:
 
 =====
 TITLE
@@ -14,9 +14,7 @@ References
 
 List of referenced functional requirements...
 
-- fr__title_
-
-.. _desc: fr__title__desc_
+- :ref:`FR::Other-Title <FR__Other_Title>`
 
 Updates
 =======
@@ -24,12 +22,12 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "Jonathan Labéjof", "2015/09/08", "1.0", "Template creation", ""
+   "Jonathan Labéjof", "2015/09/08", "1.0", "Template creation", "David Delassus"
 
 Contents
 ========
 
-.. _FR__TITLE__DESC:
+.. _FR__Title__Desc:
 
 Description
 -----------

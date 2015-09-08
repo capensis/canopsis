@@ -10,7 +10,7 @@ Base
    :maxdepth: 1
    :titlesonly:
 
-   architecture
+   tr__architecture
 
 Systems
 -------
@@ -19,9 +19,9 @@ Systems
    :maxdepth: 1
    :titlesonly:
 
-   graph-backend
-   topology-backend
-   topology-frontend
+   tr__graph-backend
+   tr__topology-backend
+   tr__topology-frontend
 
 High-Level features
 -------------------

@@ -10,7 +10,7 @@ Base
    :maxdepth: 1
    :titlesonly:
 
-   architecture
+   fr__architecture
 
 Systems
 -------
@@ -19,8 +19,8 @@ Systems
    :maxdepth: 1
    :titlesonly:
 
-   graph
-   topology
+   fr__graph
+   fr__topology
 
 High-Level features
 -------------------
@@ -29,4 +29,4 @@ High-Level features
    :maxdepth: 1
    :titlesonly:
 
-   category-chart
+   fr__category-chart

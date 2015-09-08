@@ -13,8 +13,8 @@ A topology is a graph representation of an infrastructure dedicated to find fail
 References
 ----------
 
-- :ref: `FR__Event <FR__Event>`
-- :ref: `FR__Graph <FR__GRAPH>`
+- :ref:`FR__Event <FR__Event>`
+- :ref:`FR__Graph <FR__Graph>`
 
 -------
 Updates

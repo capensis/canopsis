@@ -1,4 +1,4 @@
-.. _TR__TITLE:
+.. _TR__Title:
 
 =====
 TITLE
@@ -14,10 +14,8 @@ References
 
 List of referenced functional and technical requirements...
 
-- fr__title_
-- tr__title_
-
-.. _desc: fr__title__desc_
+- :ref:`FR::Title <FR__Title>`
+- :ref:`TR::Other-Title <TR__Other_Title>`
 
 Updates
 =======
@@ -26,17 +24,17 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "Jonathan Labéjof", "2015/09/08", "1.0", "Template creation", ""
+   "Jonathan Labéjof", "2015/09/08", "1.0", "Template creation", "David Delassus"
 
 Contents
 ========
 
-.. _tr__title__task1:
+.. _TR__Title__Task1:
 
 Task 1
 ------
 
-Description
+Description related to :ref:`desc <FR__Title__Desc>`.
 
 Software architecture and costing
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
