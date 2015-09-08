@@ -178,7 +178,6 @@ class ConfigurableRegistry(Configurable):
 
     class Error(Exception):
         """handle ConfigurableRegistry errors"""
-        pass
 
     CONF_PATH = 'configuration/registry.conf'  #: default conf path
 

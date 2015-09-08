@@ -19,28 +19,35 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""canopsis.common.ws UTs.
+"""
+
 from unittest import TestCase, main
 
 from canopsis.common.ws import route_name, route, response
 
 
 class RouteNameTest(TestCase):
-
+    """Test the route_name function.
+    """
     def test_no_param(self):
-
+        """Without params.
+        """
         result = route_name('d')
 
         self.assertEqual(result, '/d')
 
     def test_param(self):
-
+        """With params.
+        """
         result = route_name('d', 'a', 'b')
 
         self.assertEqual(result, '/d/:a/:b')
 
 
 class RouteTest(TestCase):
-
+    """Test the route function.
+    """
     def op(self, route):
 
         if not hasattr(self, 'routes'):

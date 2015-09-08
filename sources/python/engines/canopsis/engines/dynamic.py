@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.common.init import basestring
-from canopsis.task import get_task
+from canopsis.task.core import get_task
 from canopsis.engines.core import Engine
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
@@ -238,5 +238,3 @@ def beat_processing(engine, **params):
     :param Engine engine: engine which executes the beat.
     :param dict params: beat processing additional parameters.
     """
-
-    pass

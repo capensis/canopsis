@@ -46,6 +46,7 @@ Two, it is possible to find graphs, vertices and edges thanks to parameters
 which correspond to their properties.
 """
 
+from canopsis.common.utils import ensure_iterable
 from canopsis.common.init import basestring
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
@@ -74,9 +75,8 @@ class GraphManager(MiddlewareRegistry):
     ALL = SOURCES | TARGETS  #: source and target orientation
 
     def get_elts(
-        self,
-        ids=None, types=None, graph_ids=None, info=None, base_type=None,
-        query=None, serialize=True, cls=None
+            self, ids=None, types=None, graph_ids=None, info=None,
+            base_type=None, query=None, serialize=True, cls=None
     ):
         """Get graph element(s) related to input ids, types and query.
 
@@ -144,15 +144,15 @@ class GraphManager(MiddlewareRegistry):
         result = self[GraphManager.STORAGE].get_elements(ids=ids, query=query)
         if result is not None and serialize:
             if isinstance(result, dict):
-                result = GraphElement.new_element(**result)
+                result = GraphElement.new(**result)
                 # ensure cls is respected
                 if cls is not None and not isinstance(result, cls):
                     result = None
             else:
-                # save reference to new_element in order to ease its use
-                new_element = GraphElement.new_element
+                # save reference to new in order to ease its use
+                new = GraphElement.new
                 result = list(
-                    new_element(**elt) for elt in result
+                    new(**elt) for elt in result
                 )
                 # ensure cls is respected
                 if cls is not None:
@@ -164,7 +164,7 @@ class GraphManager(MiddlewareRegistry):
         return result
 
     def del_elts(
-        self, ids=None, types=None, query=None, info=None, cache=False
+            self, ids=None, types=None, query=None, info=None, cache=False
     ):
         """Del elements identified by input ids in removing reference before.
 
@@ -201,51 +201,18 @@ class GraphManager(MiddlewareRegistry):
             ids=ids, _filter=query, cache=cache
         )
 
-    def put_elt(self, elt, graph_ids=None, cache=False):
-        """
-        Put an element.
-
-        :param dict elt: element to put.
-        :type elt: dict or GraphElement
-        :param str graph_ids: element graph id. None if elt is a graph.
-        :param bool cache: use query cache if True (False by default).
-        """
-
-        # ensure elt is a dict
-        if isinstance(elt, GraphElement):
-            elt = elt.to_dict()
-        # get elt uuid
-        if GraphElement.ID not in elt:
-            elt[GraphElement.ID] = GraphElement.new_id()
-        elt_id = elt[GraphElement.ID]
-
-        # put elt value in storage
-        self[GraphManager.STORAGE].put_element(
-            _id=elt_id, element=elt, cache=cache
-        )
-        # update graph if graph_id is not None
-        if graph_ids is not None:
-            graphs = self.get_graphs(ids=graph_ids)
-            if graphs is not None:
-                # ensure graphs is a list of graphs
-                if isinstance(graphs, Graph):
-                    graphs = [graphs]
-                for graph in graphs:
-                    # if graph exists and elt_id not already present
-                    if elt_id not in graph.elts:
-                        # add elt_id in graph elts
-                        graph.elts.append(elt_id)
-                        graph.save(self, cache=cache)
-
     def put_elts(self, elts, graph_ids=None, cache=False):
-        """
-        Put graph elements in DB.
+        """Put graph elements in DB.
 
         :param elts: graph elements to put in DB.
         :type elts: dict, GraphElement or list of dict/GraphElement.
         :param str graph_ids: element graph id. None if elt is a graph.
         :param bool cache: use query cache if True (False by default).
+        :return: corresponding graph elts.
+        :rtype: list of GraphElements
         """
+
+        result = []
 
         # ensure elts is a list
         if isinstance(elts, (dict, GraphElement)):
@@ -253,17 +220,35 @@ class GraphManager(MiddlewareRegistry):
 
         for elt in elts:
             gelt = elt
+            # in case of dict, get the corresponding graph elt and save it
             if isinstance(gelt, dict):
-                if not gelt.get(GraphElement.ID):
-                    gelt[GraphElement.ID] = GraphElement.new_id()
-                gelt = GraphElement.new_element(**gelt)
-            # save elt
-            gelt.save(manager=self, cache=cache, graph_ids=graph_ids)
+                gelt = GraphElement.new(**gelt)
+                gelt.save(manager=self, cache=cache)
+            else:  # in case of graphelt, save its serialized form in db
+                serialized_elt = gelt.to_dict()
+                # put elt value in storage
+                self[GraphManager.STORAGE].put_element(
+                    _id=elt.id, element=serialized_elt, cache=cache
+                )
+            # add the graphical element to the result
+            result.append(gelt)
+        # associate all elt ids with all graph ids
+        if graph_ids is not None:
+            # eliminate doublons of elts
+            elt_ids = set([gelt.id for gelt in result])
+            # ensure graph_ids is a basestring
+            graph_ids = ensure_iterable(graph_ids)
+            graphs = self[GraphManager.STORAGE].get_elements(ids=graph_ids)
+            # add elt ids in elts of graphs
+            for graph in graphs:
+                graph[Graph.ELTS] = list(graph[Graph.ELTS] | elt_ids)
+            # save all graphs
+            self[GraphManager.STORAGE].put_elements(elements=graphs)
 
-        return elts
+        return result
 
     def remove_elts(
-        self, ids=None, graph_ids=None, cache=False, del_orphans=True
+            self, ids=None, graph_ids=None, cache=False, del_orphans=True
     ):
         """
         Remove vertices from graphs.
@@ -323,8 +308,8 @@ class GraphManager(MiddlewareRegistry):
                     elt.delete(manager=self, cache=cache)
 
     def del_edge_refs(
-        self, ids=None, vids=None, sources=None, targets=None, del_empty=False,
-        cache=False
+            self, ids=None, vids=None, sources=None, targets=None,
+            del_empty=False, cache=False
     ):
         """
         Delete references of vertices from edges.
@@ -361,8 +346,8 @@ class GraphManager(MiddlewareRegistry):
                     edge.save(manager=self, cache=cache)
 
     def get_graphs(
-        self, ids=None, types=None, elts=None, graph_ids=None, info=None,
-        query=None, add_elts=False, serialize=True
+            self, ids=None, types=None, elts=None, graph_ids=None, info=None,
+            query=None, add_elts=False, serialize=True
     ):
         """
         Get one or more graphs related to input ids, types and elts.
@@ -441,11 +426,9 @@ class GraphManager(MiddlewareRegistry):
         return result
 
     def get_targets(
-        self,
-        ids=None, graph_ids=None,
-        info=None, query=None,
-        types=None, edge_ids=None, add_edges=False, edge_types=None,
-        edge_data=None, edge_query=None, serialize=True
+            self, ids=None, graph_ids=None, info=None, query=None,
+            types=None, edge_ids=None, add_edges=False, edge_types=None,
+            edge_data=None, edge_query=None, serialize=True
     ):
         """
         Ease the use of get_neighbourhood method in order to get targets
@@ -476,11 +459,9 @@ class GraphManager(MiddlewareRegistry):
         )
 
     def get_sources(
-        self,
-        ids=None, graph_ids=None,
-        info=None, query=None,
-        types=None, edge_ids=None, add_edges=False, edge_types=None,
-        edge_data=None, edge_query=None, serialize=True
+            self, ids=None, graph_ids=None, info=None, query=None,
+            types=None, edge_ids=None, add_edges=False, edge_types=None,
+            edge_data=None, edge_query=None, serialize=True
     ):
         """
         Ease the use of get_neighbourhood method in order to get sources
@@ -511,9 +492,7 @@ class GraphManager(MiddlewareRegistry):
         )
 
     def get_neighbourhood(
-            self,
-            ids=None, orientation=TARGETS,
-            graph_ids=None,
+            self, ids=None, orientation=TARGETS, graph_ids=None,
             info=None, source_data=None, target_data=None,
             types=None, source_types=None, target_types=None,
             edge_ids=None, edge_types=None, add_edges=False,
@@ -704,8 +683,8 @@ class GraphManager(MiddlewareRegistry):
             edge_sources = []
             edge_targets = []
 
-        if serialize:  # save new_element method in memory for quicker access
-            new_element = GraphElement.new_element
+        if serialize:  # save new method in memory for quicker access
+            new = GraphElement.new
 
         # add sources and targets from all edges
         for edge_id in edges:
@@ -721,7 +700,7 @@ class GraphManager(MiddlewareRegistry):
                         serialize=serialize
                     )
                     # serialize edge if required
-                    _edge = new_element(**edge) if serialize else edge
+                    _edge = new(**edge) if serialize else edge
                     if edge_id in result:
                         # TODO: check if this case can happen
                         result[edge_id][1] += elts
@@ -740,7 +719,7 @@ class GraphManager(MiddlewareRegistry):
                         serialize=serialize
                     )
                     # serialize edge if required
-                    _edge = new_element(**edge) if serialize else edge
+                    _edge = new(**edge) if serialize else edge
                     if edge_id in result:
                         # TODO: check if this case can happen
                         result[edge_id][1] += elts
@@ -850,9 +829,8 @@ class GraphManager(MiddlewareRegistry):
         return result
 
     def get_vertices(
-        self,
-        ids=None, graph_ids=None, types=None, info=None, query=None,
-        serialize=True
+            self, ids=None, graph_ids=None, types=None, info=None, query=None,
+            serialize=True
     ):
         """
         Get graph vertices related to some context property.
@@ -886,9 +864,8 @@ class GraphManager(MiddlewareRegistry):
         return result
 
     def get_edges(
-        self,
-        ids=None, types=None, sources=None, targets=None, graph_ids=None,
-        info=None, query=None, serialize=True
+            self, ids=None, types=None, sources=None, targets=None,
+            graph_ids=None, info=None, query=None, serialize=True
     ):
         """Get edges related to input ids, types and source/target ids.
 

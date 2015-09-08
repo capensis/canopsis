@@ -23,7 +23,7 @@ from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.event import forger, get_routingkey
-from canopsis.task import register_task
+from canopsis.task.core import register_task
 from canopsis.tools import schema as cschema
 
 from traceback import format_exc, print_exc

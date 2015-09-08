@@ -196,8 +196,6 @@ class Middleware(Configurable):
         """Errors raised by the Middleware class.
         """
 
-        pass
-
     def __init__(
             self,
             uri=None, data_type=None, data_scope=None,
@@ -510,8 +508,6 @@ class Middleware(Configurable):
 
         :param conn: newly created connection.
         """
-
-        pass
 
     def disconnect(self):
         """Disconnect this database.

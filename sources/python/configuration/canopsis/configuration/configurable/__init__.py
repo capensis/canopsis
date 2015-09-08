@@ -65,7 +65,6 @@ class ConfigurableError(Exception):
     """
     Handle Configurable errors
     """
-    pass
 
 
 class Configurable(object):

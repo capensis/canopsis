@@ -30,8 +30,6 @@ GROUP = None
 
 
 class KnownValues(unittest.TestCase):
-    def setUp(self):
-        pass
 
     def test_01_Init(self):
         user_account = Account(user="william", group="capensis")

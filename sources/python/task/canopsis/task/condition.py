@@ -23,7 +23,7 @@ Task condition functions such as duration/rrule condition, switch, all and any.
 """
 
 from canopsis.common.init import basestring
-from canopsis.task import register_task, run_task
+from canopsis.task.core import register_task, run_task
 
 from time import time
 from datetime import datetime

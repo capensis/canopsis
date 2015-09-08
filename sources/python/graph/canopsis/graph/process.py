@@ -27,7 +27,7 @@ graph nodes in order to execute theirs tasks.
 
 from canopsis.graph.manager import Graph
 from canopsis.context.manager import Context
-from canopsis.task import run_task, register_task
+from canopsis.task.core import run_task, register_task
 
 context = Context()
 graph = Graph()
