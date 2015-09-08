@@ -4,8 +4,6 @@ TITLE
 
 Short description
 
-.. sectnum::
-
 .. contents::
    :depth: 2
 

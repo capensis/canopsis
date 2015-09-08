@@ -1,10 +1,10 @@
+.. _FR__Topology:
+
 ========
 Topology
 ========
 
 A topology is a graph representation of an infrastructure dedicated to find failure causes/consequences among hosts and services.
-
-.. sectnum::
 
 .. contents::
    :depth: 2
@@ -13,11 +13,8 @@ A topology is a graph representation of an infrastructure dedicated to find fail
 References
 ----------
 
-- FR::event
-- FR::graph
-
-.. _event: ./FR::event/event_
-.. _graph: ./FR::graph/graph_
+- :ref:`FR::Event <FR__Event>`
+- :ref:`FR::Graph <FR__Graph>`
 
 -------
 Updates
@@ -28,6 +25,8 @@ Updates
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
    "Jonathan Labéjof", "27/07/2015", "0.1", "Creation", ""
+   "David Delassus", "01/09/2015", "0.2", "Rename document", ""
+   "David Delassus", "01/09/2015", "0.3", "Update references", ""
 
 --------
 Contents
@@ -36,7 +35,10 @@ Contents
 Description
 ===========
 
-Une topologie est un graph_ dédié à l'étude des causes et des conséquences de pannes d'un système. Constituée de sommets à état et d'arrêtes orientées et à état. Elle est dédié aux analyses de causes et d'impacts de pannes d'un système.
+Une topologie est un :ref:`graph <FR__Graph__graph>` dédié à l'étude des causes
+et des conséquences de pannes d'un système. Constituée de sommets à état et d'arrêtes
+orientées et à état. Elle est dédié aux analyses de causes et d'impacts de pannes
+d'un système.
 
 Représentations
 ===============

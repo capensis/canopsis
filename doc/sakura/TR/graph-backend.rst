@@ -1,10 +1,10 @@
+.. _TR__Graph_backend:
+
 =====
 Graph
 =====
 
 Project ``canopsis.graph`` description.
-
-.. sectnum::
 
 .. contents::
    :depth: 2
@@ -13,9 +13,7 @@ Project ``canopsis.graph`` description.
 References
 ----------
 
-- FR::graph
-
-.. _graph: ./FR::graph/graph_
+- :ref:`FR::graph <FR__Graph>`
 
 -------
 Updates
@@ -25,6 +23,8 @@ Updates
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
    "Jonathan Labéjof", "27/08/2015", "0.1", "Creation", ""
+   "David Delassus", "01/09/2015", "0.2", "Rename document", ""
+   "David Delassus", "01/09/2015", "0.3", "Update references", ""
 
 --------
 Contents
@@ -35,8 +35,7 @@ canopsis.graph.elements
 
 Module which contains all graph elements
 
-.. _trgraphelements:
-.. _trgraphelement:
+.. _TR__Graph_backend__Element:
 
 Graph Element
 -------------
@@ -49,21 +48,19 @@ Contains:
 - types: str(s).
 - info: dict.
 
-.. _trvertices:
-.. _trvertice:
+.. _TR__Graph_backend__Vertice:
 
 Vertice
 -------
 
-Inherits from the Vertice_.
+Inherits from the :ref:`Vertice <FR__Graph__vertice>`.
 
-.. _tredges:
-.. _tredge:
+.. _TR__Graph_backend__Edge:
 
 Edge
 ----
 
-Inherits from the Vertice_.
+Inherits from the :ref:`Edge <FR__Graph__edge>`.
 
 Contains:
 
@@ -71,13 +68,12 @@ Contains:
 - targets: str(s).
 - oriented: bool.
 
-.. _trgraphs:
-.. _trgraph:
+.. _TR__Graph_backend__Graph:
 
 Graph
 -----
 
-Inherits from the Vertice_.
+Inherits from the :ref:`Graph <FR__Graph__graph>`.
 
 Contains:
 
@@ -86,7 +82,7 @@ Contains:
 canopsis.graph.manager
 ======================
 
-.. _graphmanager:
+.. _TR__Graph_backend__Manager:
 
 GraphManager
 ------------
