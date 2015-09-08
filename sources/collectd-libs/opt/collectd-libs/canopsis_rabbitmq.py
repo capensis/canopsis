@@ -24,6 +24,7 @@ import ConfigParser
 import json
 import urllib2
 import os
+import sys
 import httplib
 import base64
 import urlparse
@@ -67,6 +68,11 @@ def put_value(metric, value, type='gauge'):
 
 def log(msg):
     collectd.info("%s: %s" % (plugin_name, msg))
+
+
+def die(msg):
+    log(msg)
+    sys.exit(1)
 
 
 ### Callbacks
