@@ -19,6 +19,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Test the canopsis.common.utils module.
+"""
+
 from unittest import TestCase, main
 
 from canopsis.common.utils import (
@@ -29,16 +32,12 @@ from canopsis.common.utils import (
 from sys import version as PYVER
 
 
-def _test():
-    pass
-
-
 class UtilsTest(TestCase):
-
-    def setUp(self):
-        pass
-
+    """Test the utils module.
+    """
     def test_lookup(self):
+        """Test the lookup function.
+        """
 
         # resolve builtin function
         _open = lookup('{0}.open'.format(open.__module__))
@@ -64,6 +63,8 @@ class UtilsTest(TestCase):
         self.assertEqual(canopsis_common.__name__, 'canopsis.common')
 
     def test_path(self):
+        """Test the path function.
+        """
 
         # resolve built-in function
         open_path = path(open)
@@ -82,16 +83,20 @@ class UtilsTest(TestCase):
         self.assertEqual(path(canopsis_common), 'canopsis.common')
 
     def test_reciproc(self):
+        """Test the reciprocity of path and lookup functions.
+        """
 
         _path = 'canopsis.common.utils.path'
 
-        # Test if you can get the path _path using path() on the resolved element
+        # path(lookup(elt)) == elt
         self.assertEqual(path(lookup(_path)), _path)
 
-        # Test if you can retrieve the function by resolving the path got using path()
+        # lookup(path(path)) == path
         self.assertEqual(lookup(path(path)), path)
 
     def test_isiterable(self):
+        """Test tje isiterable.
+        """
 
         self.assertFalse(isiterable(2))
 
@@ -102,48 +107,53 @@ class UtilsTest(TestCase):
         self.assertFalse(isiterable('', is_str=False))
 
     def test_isunicode(self):
+        """Test the isunicode function.
+        """
 
         if PYVER < '3':
             self.assertFalse(isunicode(str()))
             self.assertTrue(isunicode(unicode()))
 
     def test_forceunicode(self):
-
+        """Test the forceunicode function.
+        """
         if PYVER < '3':
             self.assertTrue(isinstance(ensure_unicode(str()), unicode))
             self.assertTrue(isinstance(ensure_unicode(unicode()), unicode))
             self.assertRaises(TypeError, ensure_unicode)
 
     def test_ensure_iterable(self):
-
+        """Test the ensure_iterable function.
+        """
         self.assertEqual(ensure_iterable(2), [2])
         self.assertEqual(ensure_iterable("2"), ["2"])
         self.assertEqual(ensure_iterable([2]), [2])
         self.assertEqual(ensure_iterable([2], iterable=set), {2})
 
     def test_forceUTF8(self):
+        """Test the forceUTF8 function.
+        """
+        notutf8 = "é"
+        utf8 = unicode(notutf8, "utf-8") if PYVER < "3" else notutf8
 
-        notUTF8 = "é"
-        utf8 = unicode(notUTF8, "utf-8") if PYVER < "3" else notUTF8
-
-        data_to_check = notUTF8
+        data_to_check = notutf8
         result = forceUTF8(data_to_check)
         self.assertEqual(result, utf8)
 
-        data_to_check = {notUTF8: notUTF8, utf8: utf8, 1: 1}
+        data_to_check = {notutf8: notutf8, utf8: utf8, 1: 1}
         result = forceUTF8(data_to_check)
         data_to_compere = data_to_check if PYVER < "3" else {utf8: utf8, 1: 1}
         self.assertEqual(str(result), str(data_to_compere))
 
-        data_to_check = [notUTF8, utf8, 1]
+        data_to_check = [notutf8, utf8, 1]
         result = forceUTF8(data_to_check)
         self.assertEqual(result, [utf8, utf8, 1])
 
-        data_to_check = (notUTF8, utf8, 1)
+        data_to_check = (notutf8, utf8, 1)
         result = forceUTF8(data_to_check)
         self.assertEqual(result, (utf8, utf8, 1))
 
-        data_to_check = {notUTF8, utf8, 1}
+        data_to_check = {notutf8, utf8, 1}
         result = forceUTF8(data_to_check)
         self.assertEqual(result, {utf8, 1})
 

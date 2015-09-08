@@ -81,7 +81,6 @@ class xslt2py(object):
         """
         cf http://lxml.de/parsing.html#the-target-parser-interface
         """
-        pass
 
     def close(self):
         """

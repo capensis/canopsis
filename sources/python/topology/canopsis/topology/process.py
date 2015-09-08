@@ -38,7 +38,7 @@ such as those defined in the canopsis.topology.rule.action module.
 from canopsis.topology.elements import Topology, TopoNode
 from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
-from canopsis.task import register_task
+from canopsis.task.core import register_task
 from canopsis.event import Event
 from canopsis.check.manager import CheckManager
 from canopsis.common.utils import singleton_per_scope
@@ -49,8 +49,8 @@ PUBLISHER = 'publisher'
 
 @register_task
 def event_processing(
-    engine, event, manager=None, logger=None, ctx=None, tm=None, cm=None,
-    **kwargs
+        engine, event, manager=None, logger=None, ctx=None, tm=None, cm=None,
+        **kwargs
 ):
     """Process input event in getting topology nodes bound to input event
     entity.
@@ -88,12 +88,12 @@ def event_processing(
             entity = ctx.get_entity(event)
             entity_id = ctx.get_entity_id(entity)
             elt_id = ctx.get_name(entity_id)
-            logger.info("elt_id {0}".format(elt_id))
+            logger.debug("elt_id {0}".format(elt_id))
             # process all targets
             elt = tm.get_elts(ids=elt_id)
             if elt is not None:
                 targets = tm.get_targets(ids=elt_id)
-                logger.info("targets {0}".format(targets))
+                logger.debug("targets {0}".format(targets))
                 # process and save all targets
                 for target in targets:
                     target.process(
@@ -108,9 +108,9 @@ def event_processing(
             entity = ctx.get_entity(event)
             if entity is not None:
                 entity_id = ctx.get_entity_id(entity)
-                logger.info("entity_id {0}".format(entity_id))
+                logger.debug("entity_id {0}".format(entity_id))
                 elts = tm.get_elts(info={TopoNode.ENTITY: entity_id})
-                logger.info("elts {0}".format(elts))
+                logger.debug("elts {0}".format(elts))
                 # process all elts
                 for elt in elts:
                     elt.process(

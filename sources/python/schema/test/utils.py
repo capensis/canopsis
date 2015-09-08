@@ -34,9 +34,6 @@ def mock_get_schema_path(*args):
 
 class TestUtils(TestCase):
 
-    def setUp(self):
-        pass
-
     def test_get_unique_key(self):
         supposed_schemas = [
             ('profile.xsd', 'profile:1.0'),
