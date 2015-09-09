@@ -125,4 +125,6 @@ Once you wrote your installation file, you just have to run the Canopsis script 
    #Available in the canopsis environment.
    webmodulemanager add testmodule
 
+This will add a string in the module string list in the database object collection where the record crecord_type is enabledmodules. Record which is loaded thanks to the `json loader system <../../administrator-guide/setup/filldb.html>`_ .
+
 Enjoy

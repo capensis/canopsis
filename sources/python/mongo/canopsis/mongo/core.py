@@ -37,9 +37,9 @@ class MongoDataBase(DataBase):
     """
 
     def __init__(
-        self, host=MongoClient.HOST, port=MongoClient.PORT,
-        read_preference=ReadPreference.NEAREST,
-        *args, **kwargs
+            self, host=MongoClient.HOST, port=MongoClient.PORT,
+            read_preference=ReadPreference.NEAREST,
+            *args, **kwargs
     ):
 
         super(MongoDataBase, self).__init__(
@@ -92,14 +92,14 @@ class MongoDataBase(DataBase):
                 }
             )
 
-        self.logger.debug('Trying to connect to %s' % (connection_args))
+        self.logger.debug('Trying to connect to {0}'.format(connection_args))
 
         try:
             result = MongoClient(**connection_args)
-        except ConnectionFailure as e:
+        except ConnectionFailure as cfe:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
-                format(self.host, self.port, e)
+                format(self.host, self.port, cfe)
             )
         else:
             self._database = result[self.db]
@@ -109,14 +109,17 @@ class MongoDataBase(DataBase):
                 authenticate = self._database.authenticate(self.user, self.pwd)
 
                 if authenticate:
-                    self.logger.debug("Connected on {0}:{1}".format(
-                        self.host, self.port)
+                    self.logger.debug(
+                        "Connected on {0}:{1}".format(
+                            self.host, self.port
+                        )
                     )
 
                 else:
                     self.logger.error(
                         'Impossible to authenticate {0} on {1}:{2}'.format(
-                            self.host, self.port)
+                            self.host, self.port
+                        )
                     )
                     self.disconnect()
                     result = None
@@ -149,9 +152,9 @@ class MongoDataBase(DataBase):
         try:
             result = self._database.command("collstats", _backend)['size']
 
-        except Exception as e:
+        except Exception as ex:
             self.logger.warning(
-                "Impossible to read Collection Size: {0}".format(e))
+                "Impossible to read Collection Size: {0}".format(ex))
             result = None
 
         return result
@@ -182,7 +185,8 @@ class MongoDataBase(DataBase):
 
         if getattr(self, '_database', None) is None:
             raise DataBase.DataBaseError(
-                '{0} is not connected'.format(self))
+                '{0} is not connected'.format(self)
+            )
 
         result = self._database[backend]
 
@@ -207,6 +211,7 @@ class MongoStorage(MongoDataBase, Storage):
         if result:
             table = self.get_table()
             self._backend = self._database[table]
+
             # enable sharding
             if self.sharding:
                 # on db
@@ -218,8 +223,10 @@ class MongoStorage(MongoDataBase, Storage):
                 )
 
             for index in self.all_indexes():
+
                 try:
                     self._backend.ensure_index(index)
+
                 except Exception as ex:
                     self.logger.error(ex)
 
@@ -263,6 +270,7 @@ class MongoStorage(MongoDataBase, Storage):
         if ids is not None:
             if one_element:
                 _query[MongoStorage.ID] = ids
+
             else:
                 _query[MongoStorage.ID] = {'$in': ids}
 
@@ -271,8 +279,10 @@ class MongoStorage(MongoDataBase, Storage):
         # set limit, skip and sort properties
         if limit:
             cursor.limit(limit)
+
         if skip:
             cursor.skip(skip)
+
         if sort is not None:
             sort = Storage._resolve_sort(sort)
             if sort:
@@ -370,6 +380,7 @@ class MongoStorage(MongoDataBase, Storage):
         if ids is not None:
             if isiterable(ids, is_str=False):
                 query[MongoStorage.ID] = {'$in': ids}
+
             else:
                 query[MongoStorage.ID] = ids
 
@@ -378,11 +389,15 @@ class MongoStorage(MongoDataBase, Storage):
 
         self._remove(query, cache=cache)
 
-    def put_element(self, _id, element, cache=False, *args, **kwargs):
+    def put_element(self, element, _id=None, cache=False, *args, **kwargs):
+
+        if _id is None:
+            _id = self._element_id(element)
 
         return self._update(
             spec={MongoStorage.ID: _id}, document={'$set': element},
-            multi=False, cache=cache)
+            multi=False, cache=cache
+        )
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
 

@@ -238,7 +238,6 @@ class Storage(DataBase):
         """
         Handle Storage errors
         """
-        pass
 
     def __init__(
             self,
@@ -266,12 +265,13 @@ class Storage(DataBase):
         self._data = data
         self._table = table
 
-        self._update_cache = False
+        self._updated_cache = False
         self._cache = None
         self._cache_size = cache_size
         self._cache_count = 0
         self._cache_ordered = cache_ordered
         self._cache_autocommit = cache_autocommit
+        self._cached_thread = self._parent_thread = None
         self._lock = Lock()  # lock for asynchronous autocommit
 
     @property
@@ -419,8 +419,10 @@ class Storage(DataBase):
             self.halt_cache_thread()
             # start a new thread if self cache auto commit greater than 0
             if self._cache_autocommit > 0:
-                self._cache_thread = Thread(target=self._cache_async_execution)
-                self._cache_thread.start()
+                self._cached_thread = Thread(
+                    target=self._cache_async_execution
+                )
+                self._cached_thread.start()
         else:  # nullify _cache if it exists
             if hasattr(self, '_cache'):
                 del self._cache
@@ -461,7 +463,10 @@ class Storage(DataBase):
 
         if cache and self._cache_size > 0:
             # if self cache is None, that means thisd is the first use to cache
-            if self._cache_thread is None or not self._cache_thread.isAlive():
+            if (
+                    self._cached_thread is None or
+                    not self._cached_thread.isAlive()
+            ):
                 # init cache
                 self._init_cache()
             self._lock.acquire()  # avoid concurrent calls to cache execution
@@ -492,9 +497,9 @@ class Storage(DataBase):
 
         # while parent thread is alive and cache size is greater than 0
         while (
-            self._parent_thread.isAlive()
-            and self._cache_autocommit > 0
-            and self._cache_size > 0
+                self._parent_thread.isAlive()
+                and self._cache_autocommit > 0
+                and self._cache_size > 0
         ):
             # wait cache timeout before trying to executing it
             sleep(self._cache_autocommit)
@@ -521,9 +526,9 @@ class Storage(DataBase):
         # change value of cache auto commit in order to stop thread
         cache_autocommit, self._cache_autocommit = self._cache_autocommit, 0
 
-        if hasattr(self, '_cache_thread') and self._cache_thread.isAlive():
+        if self._cached_thread is not None and self._cached_thread.isAlive():
             try:  # wait for cache thread end
-                self._cache_thread.join(timeout)
+                self._cached_thread.join(timeout)
             except RuntimeError:
                 pass
 
@@ -540,9 +545,9 @@ class Storage(DataBase):
         if self._cache_count > 0:
             try:
                 result = self._execute_cache()
-            except Exception as e:
+            except Exception as ex:
                 self.logger.error(
-                    'Interruption of cache execution: {}'.format(e)
+                    'Interruption of cache execution: {}'.format(ex)
                 )
             else:  # if no error, renew the cache
                 self._cache = self._new_cache()
@@ -605,9 +610,9 @@ class Storage(DataBase):
         raise NotImplementedError()
 
     def get_elements(
-        self,
-        ids=None, query=None, limit=0, skip=0, sort=None, projection=None,
-        with_count=False,
+            self,
+            ids=None, query=None, limit=0, skip=0, sort=None, projection=None,
+            with_count=False,
     ):
         """
         Get a list of elements where id are input ids
@@ -714,21 +719,19 @@ class Storage(DataBase):
         return self.remove_elements(ids=ids)
 
     def __isub__(self, ids):
-        """
-        Python shortcut to the remove_elements method.
+        """Python shortcut to the remove_elements method.
         """
 
         self.remove_elements(ids=ids)
 
-    def put_element(self, _id, element, cache=False):
-        """
-        Put an element identified by input id
+    def put_element(self, element, _id=None, cache=False):
+        """Put an element identified by input id.
 
         :param str _id: element id to update.
         :param dict element: element to put (couples of field (name,value)).
         :param bool cache: use query cache if True (False by default).
 
-        :return: True if updated
+        :return: True if updated.
         :rtype: bool
         """
 
@@ -851,11 +854,8 @@ class Storage(DataBase):
             TimedTypedStorage,
             TypedStorage]
 
-        if not isinstance(self, storage_types):
-            pass
-
-        else:
-            for storage_type in storage_types:
+        if isinstance(self, storage_types):
+            for _ in storage_types:
                 if isinstance(self, storage_types):
                     if not isinstance(target, storage_types):
                         raise Storage.StorageError(
@@ -869,27 +869,23 @@ Storage types must be of the same type.'.format(self, target))
         return result
 
     def _copy(self, target):
-        """
-        Called by Storage.copy(self, target) in order to ensure than target
-        type is the same as self
+        """Called by Storage.copy(self, target) in order to ensure than target
+        type is the same as self.
         """
 
         for element in self.get_elements():
-            _id = self._element_id(element)
-            target.put_element(_id=_id, element=element)
+            target.put_element(element=element)
 
         raise NotImplementedError()
 
     def _element_id(self, element):
-        """
-        Get element id related to self behavior
+        """Get element id related to self behavior
         """
 
         raise NotImplementedError()
 
     def _get_category(self, *args, **kwargs):
-        """
-        Get configuration category for self storage
+        """Get configuration category for self storage.
         """
 
         prefix = self.data_type
@@ -975,8 +971,7 @@ Storage types must be of the same type.'.format(self, target))
 
 
 class Cursor(object):
-    """
-    Query cursor object.
+    """Query cursor object.
 
     An iterable object in order to retrieve data from a Storage.
     A reference to the technology cursor is provided by the cursor getter.
@@ -995,29 +990,25 @@ class Cursor(object):
 
     @property
     def cursor(self):
-        """
-        Get technology implementation cursor.
+        """Get technology implementation cursor.
         """
 
         return self._cursor
 
     def __len__(self):
-        """
-        Get number of cursor items.
+        """Get number of cursor items.
         """
 
         raise NotImplementedError()
 
     def __iter__(self):
-        """
-        Iterate on cursor items.
+        """Iterate on cursor items.
         """
 
         raise NotImplementedError()
 
     def __getitem__(self, index):
-        """
-        Get a single document or a slice of documents from this cursor.
+        """Get a single document or a slice of documents from this cursor.
 
         :param index: An integer or slice index to be applied to this cursor.
         :type index: int or slice

@@ -52,8 +52,6 @@ event = {
 
 
 class KnownValues(TestCase):
-    def setUp(self):
-        pass
 
     def test_01_simple(self):
         filter1 = {'connector': 'Engine'}

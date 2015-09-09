@@ -39,12 +39,10 @@ Related rule actions are defined in ``canopsis.topology.rule.action`` module.
 """
 
 from canopsis.common.init import basestring
-from canopsis.common.utils import lookup
+from canopsis.common.utils import lookup, singleton_per_scope
 from canopsis.topology.manager import TopologyManager
 from canopsis.check import Check
-from canopsis.task import register_task
-
-tm = TopologyManager()
+from canopsis.task.core import register_task
 
 #: parameter name which contain sources by edges
 SOURCES_BY_EDGES = 'sources_by_edges'
@@ -103,7 +101,7 @@ def at_least(
     result = False
 
     if manager is None:
-        manager = tm
+        manager = singleton_per_scope(TopologyManager)
 
     # ensure min_weight is exclusively a float or None
     if min_weight:

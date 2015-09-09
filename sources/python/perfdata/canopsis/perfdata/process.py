@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.task import register_task
+from canopsis.task.core import register_task
 
 from canopsis.perfdata.manager import PerfData
 from canopsis.context.manager import Context

@@ -66,7 +66,7 @@ class engine(Engine):
         for job in jobs:
             job = job.dump()
 
-            self.logger.info('Job: {0}'.format(job))
+            self.logger.debug('Job: {0}'.format(job))
 
             if job['last_execution'] <= 0:
                 self.do_job(job)

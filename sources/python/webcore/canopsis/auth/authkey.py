@@ -39,7 +39,7 @@ class AuthKeyBackend(BaseBackend):
             if not s.get('auth_on', False):
                 user = self.do_auth()
 
-                if user and not self.install_account(user):
+                if user and not self.install_account(user['_id'], user):
                     self.logger.error('User {0} not allowed'.format(
                         user['_id']
                     ))

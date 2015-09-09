@@ -22,7 +22,7 @@
 
 from canopsis.context.manager import Context
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.task import register_task
+from canopsis.task.core import register_task
 from canopsis.event import Event
 
 from canopsis.old.account import Account

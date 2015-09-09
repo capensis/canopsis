@@ -258,10 +258,10 @@ class Rights(MiddlewareRegistry):
             e_type: type of the entity
             right_id: right to be modified
             checksum: flags to remove
-         Returns:
+        Returns:
             The checksum of the right if it was modified
             ``0`` otherwise
-         """
+        """
 
         entity = self[e_type + '_storage'].get_elements(ids=entity)
 
@@ -709,12 +709,13 @@ class Rights(MiddlewareRegistry):
     ):
         """
         Args:
-            u_nick: nick of the user to create, usually first
-                letter of first name and last name (i.e.:
-                jdoe for John Doe).
+            u_id: nick of the user to create, usually first letter of first
+                name and last name (i.e.: jdoe for John Doe).
+
             u_role: role to init the user with.
-            contact: map containing full name, email, adress,
-                and/or phone number of the user.
+            contact: map containing full name, email, adress, and/or phone
+                number of the user.
+
             rights: map containing specific rights.
             groups: list of specific groups.
         Returns:
