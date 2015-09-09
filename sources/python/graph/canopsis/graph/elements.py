@@ -242,8 +242,7 @@ class GraphElement(object):
         """
 
         # save the dict format
-        elt = self.to_dict()
-        manager.put_elts(elts=elt, graph_ids=graph_ids, cache=cache)
+        manager.put_elts(elts=self, graph_ids=graph_ids, cache=cache)
 
     def delete(self, manager, cache=False):
         """Delete self from manager.
