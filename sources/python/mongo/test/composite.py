@@ -151,13 +151,25 @@ class MongoCompositeStorageTest(TestCase):
 
     def test_distinct(self):
 
-        self.storage.put_element('id_1', {'group': 'a', 'test': 'value1'})
-        self.storage.put_element('id_2', {'group': 'a', 'test': 'value2'})
-        self.storage.put_element('id_3', {'group': 'a', 'test': 'value3'})
+        self.storage.put_element(
+            _id='id_1', element={'group': 'a', 'test': 'value1'}
+        )
+        self.storage.put_element(
+            _id='id_2', element={'group': 'a', 'test': 'value2'}
+        )
+        self.storage.put_element(
+            _id='id_3', element={'group': 'a', 'test': 'value3'}
+        )
 
-        self.storage.put_element('id_4', {'group': 'b', 'test': 'value1'})
-        self.storage.put_element('id_5', {'group': 'b', 'test': 'value2'})
-        self.storage.put_element('id_6', {'group': 'b', 'test': 'value4'})
+        self.storage.put_element(
+            _id='id_4', element={'group': 'b', 'test': 'value1'}
+        )
+        self.storage.put_element(
+            _id='id_5', element={'group': 'b', 'test': 'value2'}
+        )
+        self.storage.put_element(
+            _id='id_6', element={'group': 'b', 'test': 'value4'}
+        )
 
         result = self.storage.distinct('test', {'group': 'b'})
         self.assertEqual(result, ['value1', 'value2', 'value4'])
