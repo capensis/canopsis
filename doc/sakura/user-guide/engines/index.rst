@@ -14,6 +14,8 @@ For informations about how to configure a specific engine, take a look at:
    linklist
    selector
    datacleaner
+   perfdata
+   context
 
 
 Introduction

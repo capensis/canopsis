@@ -11,7 +11,6 @@ This document describe how to configure Canopsis and related tools.
    install
    on-boot
    firewall-rules
-   filldb
    reverse-proxy-with-apache2
    reverse-proxy-with-nginx
    uninstall
