@@ -39,7 +39,6 @@ class Kombu(MOM):
         """
         Handle Kombu Exceptions
         """
-        pass
 
     def __init__(
         self, port=5672, *args, **kwargs

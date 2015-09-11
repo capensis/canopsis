@@ -99,15 +99,15 @@ class GraphTest(TestCase):
 
         # put vertices in DB
         for vertice in self.vertices:
-            self.manager.put_elt(elt=vertice)
+            vertice.save(manager=self.manager)
 
         # put edges in DB
         for edge in self.edges:
-            self.manager.put_elt(elt=edge)
+            edge.save(manager=self.manager)
 
         # put graphs in DB
         for graph in self.graphs:
-            self.manager.put_elt(elt=graph)
+            graph.save(manager=self.manager)
 
     def tearDown(self):
         """
@@ -132,11 +132,11 @@ class GraphTest(TestCase):
 
         # put all elements
         for vertice in self.vertices:
-            self.manager.put_elt(elt=vertice)
+            vertice.save(manager=self.manager)
         for edge in self.edges:
-            self.manager.put_elt(elt=edge)
+            edge.save(manager=self.manager)
         for graph in self.graphs:
-            self.manager.put_elt(elt=graph)
+            graph.save(manager=self.manager)
 
         # ensure to get all elements
         vertices = self.manager.get_elts(ids=self.vertice_ids)

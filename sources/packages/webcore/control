@@ -15,9 +15,8 @@ function pre_install(){
 }
 
 function post_install(){
-
-
-    check_code $? 
+    echo "Post-install $NAME $VERSION-$RELEASE ..." 
+    launch_cmd 0 supervisorctl update
 }
 
 function pre_remove(){

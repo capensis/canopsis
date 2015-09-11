@@ -32,7 +32,7 @@ Topological tasks consist to update status vertice information and to propagate
 the change of state in sending check events.
 
 vertices could be finally connected to the topology in order to propagate all
- change of state to the topology itelf.
+change of state to the topology itelf.
 
 An example of application is root cause analysis where a topology may react
 when an entity change of state and can propagate over topology nodes the change
@@ -51,7 +51,7 @@ Both permits to update the node state. The first one will update its state
 related to the bound entity state, while the task can update the state
 independently to the entity state.
 
-A topology operation (to) contains::
+A topology operation (to) contains:
 
 - info.state: to state which change at runtime depending on bound entity
     state and event propagation.
@@ -60,37 +60,35 @@ A topology operation (to) contains::
 
 A topology node inherits from both vertice and to.
 
-A topology edge contains::
+A topology edge contains:
 
 - weight: node weight in the graph related to edge targets.
 
-A topology inherits from both grapg and to and contains.
+A topology inherits from both graph and to and contains.
 """
 
-__all__ = ['Topology', 'TopoEdge', 'TopoNode']
+__all__ = ['Topology', 'TopoEdge', 'TopoNode', 'TopoVertice']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
-from canopsis.task import new_conf
+from canopsis.task.core import new_conf
 from canopsis.check import Check
 from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context
 from canopsis.topology.manager import TopologyManager
 from canopsis.graph.event import BaseTaskedVertice
 from canopsis.engines.core import publish
-
-_context = Context()
-_check = CheckManager()
-_topology = TopologyManager()
+from canopsis.common.utils import singleton_per_scope
 
 
 class TopoVertice(BaseTaskedVertice):
 
-    STATE = Check.STATE  #: state field name in info
-    ENTITY = 'entity'  #: entity field name in info
-    OPERATION = 'operation'  #: operation field name in info
+    STATE = Check.STATE  #: state field name in info.
+    ENTITY = 'entity'  #: entity field name in info.
+    OPERATION = 'operation'  #: operation field name in info.
     NAME = 'name'  #: element name.
 
     DEFAULT_STATE = Check.OK  #: default state value
+    #: default task
     DEFAULT_TASK = 'canopsis.topology.rule.action.change_state'
 
     def get_default_task(self):
@@ -106,7 +104,8 @@ class TopoVertice(BaseTaskedVertice):
         )
         # update entity state
         if entity_id is not None:
-            state = _check.state(ids=entity_id)
+            cm = singleton_per_scope(CheckManager)
+            state = cm.state(ids=entity_id)
             if state is None:
                 state = TopoVertice.DEFAULT_STATE
             self.info[TopoVertice.STATE] = state
@@ -146,12 +145,17 @@ class TopoVertice(BaseTaskedVertice):
         return result
 
     def process(
-        self, event, publisher=None, manager=None, source=None, logger=None,
-        **kwargs
+            self, event, publisher=None, manager=None, source=None,
+            logger=None,
+            **kwargs
     ):
 
+        """
+        :param TopologyManager manager:
+        """
+
         if manager is None:
-            manager = _topology
+            manager = singleton_per_scope(TopologyManager)
 
         # save old state
         old_state = self.state
@@ -168,10 +172,10 @@ class TopoVertice(BaseTaskedVertice):
                 ids=self.id, add_edges=True
             )
             for edge_id in targets_by_edge:
-                    edge, _ = targets_by_edge[edge_id]
-                    # update edge state
-                    edge.state = self.state
-                    edge.save(manager=manager)
+                edge, _ = targets_by_edge[edge_id]
+                # update edge state
+                edge.state = self.state
+                edge.save(manager=manager)
             # if not equal
             new_event = self.get_event(state=self.state, source=source)
             # publish a new event
@@ -192,9 +196,9 @@ class Topology(Graph, TopoVertice):
     __slots__ = Graph.__slots__
 
     def __init__(
-        self,
-        operation=None, state=None, type=TYPE,
-        entity=None, *args, **kwargs
+            self,
+            operation=None, state=None, type=TYPE,
+            entity=None, *args, **kwargs
     ):
 
         super(Topology, self).__init__(type=type, *args, **kwargs)
@@ -217,9 +221,10 @@ class Topology(Graph, TopoVertice):
         # set default entity if entity_id is None
         if entity_id is None and self.entity is None:
             # set entity
+            ctxm = singleton_per_scope(Context)
             event = self.get_event(source=0, state=0)
-            entity = _context.get_entity(event)
-            entity_id = _context.get_entity_id(entity)
+            entity = ctxm.get_entity(event)
+            entity_id = ctxm.get_entity_id(entity)
             self.entity = entity_id
 
     def save(self, context=None, *args, **kwargs):
@@ -228,7 +233,7 @@ class Topology(Graph, TopoVertice):
 
         # use global context if input context is None
         if context is None:
-            context = _context
+            context = singleton_per_scope(Context)
         # get self entity
         event = self.get_event()
         entity = context.get_entity(event)
@@ -248,16 +253,16 @@ class TopoNode(Vertice, TopoVertice):
         - (optionnally) a task information.
     """
 
-    TYPE = 'toponode'  #: node type name
+    TYPE = 'toponode'  #: node type name.
 
-    PARAM = 'toponode'  #: parameter name
+    PARAM = 'toponode'  #: parameter name.
 
     __slots__ = Vertice.__slots__
 
     def __init__(
-        self,
-        entity=None, state=None, operation=None,
-        *args, **kwargs
+            self,
+            entity=None, state=None, operation=None,
+            *args, **kwargs
     ):
         """
         :param int state: state to use.
@@ -281,7 +286,8 @@ class TopoNode(Vertice, TopoVertice):
 
         result = super(TopoNode, self).get_event(*args, **kwargs)
 
-        graphs = _topology.get_graphs(elts=self.id)
+        tm = singleton_per_scope(TopologyManager)
+        graphs = tm.get_graphs(elts=self.id)
         # iterate on existing graphs
         for graph in graphs:
             # update result as soon as a graph has been founded

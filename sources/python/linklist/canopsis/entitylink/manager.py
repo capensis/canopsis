@@ -49,7 +49,7 @@ class Entitylink(MiddlewareRegistry):
         Find or create an entity link document
 
         :param event: an event that may have an entity link stored
-        if not, an entity link entry is created and is returned
+            if not, an entity link entry is created and is returned
         """
 
         entity_list = list(self.get_links_from_event(event))

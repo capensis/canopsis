@@ -277,11 +277,9 @@ class KnownValues(TestCase):
     def test_21_RemoveAll(self):
         records = STORAGE.find(account=self.root_account)
         STORAGE.remove(records, account=self.root_account)
-        pass
 
     def test_99_DropNamespace(self):
         STORAGE.drop_namespace('unittest')
-        pass
 
 if __name__ == "__main__":
     main(verbosity=2)

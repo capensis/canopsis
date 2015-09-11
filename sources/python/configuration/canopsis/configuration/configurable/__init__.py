@@ -65,13 +65,16 @@ class ConfigurableError(Exception):
     """
     Handle Configurable errors
     """
-    pass
 
 
 class Configurable(object):
     """
     Manages class conf synchronisation with conf resources.
     """
+
+    class Error(Exception):
+        """Handle Configurable errors.
+        """
 
     __metaclass__ = MetaConfigurable
 

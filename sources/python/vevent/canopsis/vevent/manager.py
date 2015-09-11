@@ -53,16 +53,18 @@ class VEventManager(MiddlewareRegistry):
     an icalendar expression (dtstart, rrule, duration) and an array of
     behavior entries:
 
-    {
-        uid: document id,
-        source: source element id,
-        dtstart: datetime start,
-        dtend: datetime end,
-        duration: vevent duration,
-        freq: vevent freq,
-        vevent: vevent ical format value,
-        ... # specific properties
-    }.
+    .. code-block:: json
+
+        {
+            uid: document id,
+            source: source element id,
+            dtstart: datetime start,
+            dtend: datetime end,
+            duration: vevent duration,
+            freq: vevent freq,
+            vevent: vevent ical format value,
+            ... # specific properties
+        }.
     """
 
     STORAGE = 'vevent_storage'  #: vevent storage name

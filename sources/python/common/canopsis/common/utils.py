@@ -42,6 +42,50 @@ from .init import basestring
 __RESOLVED_ELEMENTS = {}  #: dictionary of resolved elements by name
 
 
+#: dictionary which contains singleton per scope
+_SINGLETONS_PER_SCOPE = {}
+
+
+def singleton_per_scope(cls, scope=None, args=None, kwargs=None):
+    """Get one instance of ``cls`` per ``scope``.
+
+    :param type cls: class to instanciate.
+    :param collections.Hashable scope: key for unique instance of cls.
+    :param collections.Iterable args: cls instanciation varargs.
+    :param dict kwargs: cls instanciation kwargs.
+    :return: singleton of type cls per scope.
+    """
+
+    result = None
+
+    # check if an instance has already been created
+    if cls in _SINGLETONS_PER_SCOPE and scope in _SINGLETONS_PER_SCOPE[cls]:
+        result = _SINGLETONS_PER_SCOPE[cls][scope]
+
+    else:
+        # initialiaze both args and kwargs
+        if args is None:
+            args = ()
+        if kwargs is None:
+            kwargs = {}
+        # instanciate the singleton
+        result = cls(*args, **kwargs)
+        # register the instance
+        _SINGLETONS_PER_SCOPE.setdefault(cls, {})[scope] = result
+
+    return result
+
+
+def del_singleton_per_scope(cls, scope=None):
+    """Delete a singleton of class ``cls`` and ``scope``.
+
+    :param type cls: type of singleton object.
+    :param scope: singleton scope.
+    """
+
+    _SINGLETONS_PER_SCOPE.get(cls, {}).pop(scope, None)
+
+
 def dynmodloads(_path='.', subdef=False, pattern='.*', logger=None):
     loaded = {}
     _path = expanduser(_path)
@@ -66,7 +110,7 @@ def dynmodloads(_path='.', subdef=False, pattern='.*', logger=None):
 
             if subdef:
                 alldefs = dir(module)
-                builtindefs =  [
+                builtindefs = [
                     '__builtins__',
                     '__doc__',
                     '__file__',
@@ -131,8 +175,9 @@ def lookup(path, cached=True):
 
     :param str path: full path to a python element.
         Examples:
-            - __builtin__.open
-            - canopsis.common.utils.lookup
+
+        - __builtin__.open
+        - canopsis.common.utils.lookup
 
     :para bool cached: if True (by default), use __RESOLVED_ELEMENTS cache
         memory to quickly load elements
@@ -370,10 +415,10 @@ def prototype(typed_args=None, typed_kwargs=None, typed_return=None):
     """
     Decorate a function to check its parameters type.
 
-    :param typed_args: Types for *args
+    :param typed_args: Types for args
     :type typed_args: tuple
 
-    :param typed_kwargs: Types for **kwargs
+    :param typed_kwargs: Types for kwargs
     :type typed_kwargs: dict
 
     :param typed_return: Types for return

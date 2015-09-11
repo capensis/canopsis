@@ -30,7 +30,7 @@ of state::
     - ``worst_state``: change of state related to the worst source node state.
 """
 
-from canopsis.task import register_task
+from canopsis.task.core import register_task
 from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
 from canopsis.topology.manager import TopologyManager

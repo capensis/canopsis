@@ -12,16 +12,18 @@ NO_DISTVERS=true
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
-	check_code $? 
+	check_code $?
 }
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
+	launch_cmd 0 supervisorctl update
+
 	launch_cmd 1 service rabbitmq-server start
 
 	echo -n "Safe wait ..."
-	
+
 	STATE=0
 	TRY=0
 	while [ $STATE -eq 0 ]; do
@@ -34,7 +36,7 @@ function post_install(){
 	    echo -n "."
 	done
 	echo
-	
+
 	if [ $STATE -eq 0 ]
 	then
 		check_code 1 "Failed to test rabbit service ..."
@@ -75,7 +77,7 @@ function post_install(){
 	then
 		echo " + Declare vhost ..."
 		launch_cmd 1 $PREFIX/bin/rabbitmqctl add_vhost canopsis
-		
+
 		echo " + Declare permissions for Admin user ..."
 		launch_cmd 1 $PREFIX/bin/rabbitmqctl set_permissions -p canopsis admin "\".*\"" "\".*\"" "\".*\""
 	fi
@@ -118,7 +120,7 @@ function post_install(){
 		else
 			cpspass=$RABBITMQ_USER_PASSWD
 		fi
-		
+
 		echo " + Declare $cpsuser user ..."
 		launch_cmd 1 $PREFIX/bin/rabbitmqctl add_user $cpsuser $cpspass
 		launch_cmd 1 $PREFIX/bin/rabbitmqctl set_user_tags $cpsuser canopsis
@@ -132,13 +134,13 @@ function post_install(){
 	fi
 
 	launch_cmd 1 service rabbitmq-server stop
-	
+
 	rm -f $PREFIX/var/log/rabbitmq/*
 }
 
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	launch_cmd 0 service rabbitmq-server stop 
+	launch_cmd 0 service rabbitmq-server stop
 }
 
 function post_remove(){

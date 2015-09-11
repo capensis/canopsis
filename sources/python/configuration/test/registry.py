@@ -45,9 +45,6 @@ class TestRegistry(ConfigurableRegistry):
 
 class ManagerTest(TestCase):
 
-    def setUp(self):
-        pass
-
     def test_apply_configuration(self):
 
         driver = TestRegistry()

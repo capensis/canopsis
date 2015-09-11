@@ -8,6 +8,15 @@ Requirements
 
 Install requirements with ``root`` user.
 
+Systems:
+^^^^^^^
+
+Canopsis can be installed on the following systems :
+
+* Debian 6, 7, 8
+* Ubuntu 12, 14 (can be installed but not supported by team)
+* RedHat / CentOS 6, 7
+
 Debian Like:
 ^^^^^^^^^^^^
 
@@ -19,7 +28,9 @@ Debian Like:
 Redhat Like:
 ^^^^^^^^^^^^
 
-Disable some services
+Disable some services   
+ We don't provide any SELinux context so it's better to disable it. Feel free to help us writing one !  
+ You can see :ref:`admin-setup-firewall` to configure Iptables
 
 .. code-block:: bash
 
@@ -31,6 +42,8 @@ Disable some services
     service iptables stop
     service ip6tables stop
     service qpidd stop
+
+Iptables an qpidd may not be available on RedHat/CentOS 7. Take a look at firewalld
 
 Install some packages
 
@@ -63,11 +76,12 @@ Clone git repository:
     git submodule init
     git submodule update
 
-You can switch to development branch:
+You can switch to development branch (or any other branches):
 
 .. code-block:: bash
 
     git checkout develop
+
 
 Build and install
 -----------------
@@ -78,6 +92,9 @@ Build and install
     sudo ./build-install.sh
 
 If build failed, you can see logs in ``log/`` directory.
+
+Note that install dir will be /opt/canopsis by default.
+You can change it by editing SOURCE_PATH/sources/canohome/lib/common.sh
 
 Start Canopsis
 --------------

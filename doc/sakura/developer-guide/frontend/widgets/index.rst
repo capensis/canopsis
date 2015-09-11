@@ -13,3 +13,4 @@ Widgets
    advanced-concepts
    perfdata
    user-preferences
+   category-chart

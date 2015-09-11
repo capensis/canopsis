@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["_id", "firstname", "lastname", "mail", "ui_language", "shadowpasswd", "authkey", "enable"]
+		"keys":["_id", "firstname", "lastname", "mail", "ui_language", "shadowpasswd", "authkey", "enable", "defaultview"]
 	},{
 		"title": "Role",
 		"keys": ["role"]
@@ -23,6 +23,15 @@
 		"_id": {
 			"type": "string",
 			"required": true
+		},
+		"defaultview": {
+			"title": "Default view",
+			"description": "The view to display when users log in",
+			"type": "string",
+			"role": "restobject",
+			"schemaType":"userview",
+			"valueField":"id",
+			"labelField":"crecord_name"
 		},
 		"ui_language": {
 			"type": "string",

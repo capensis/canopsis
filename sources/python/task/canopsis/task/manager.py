@@ -161,7 +161,7 @@ class TaskManager(MiddlewareRegistry):
         :param task: new task to use.
         :param dict task_info: task kwargs.
         :param _file: file where save the task
-        :param callable task
+        :param callable task: task to call.
         """
 
         # save task file if necessary

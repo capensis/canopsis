@@ -12,7 +12,7 @@ PROJECTS[8]='rpc'
 PROJECTS[9]='mom'
 PROJECTS[10]='storage'
 PROJECTS[11]='mongo'
-PROJECTS[12]='ctxinfo'
+PROJECTS[12]='ctxprop'
 PROJECTS[13]='kombu'
 PROJECTS[14]='context'
 PROJECTS[15]='perfdata'
@@ -31,6 +31,7 @@ PROJECTS[27]='vevent'
 PROJECTS[28]='ccalendar'
 PROJECTS[29]='pbehavior'
 PROJECTS[30]='downtime'
+PROJECTS[31]='webcore'
 
 function build(){
 	true

@@ -26,7 +26,7 @@ from time import time
 from dateutil import rrule
 
 from datetime import datetime
-from canopsis.task import register_task, TASK_ID, TASK_PARAMS
+from canopsis.task.core import register_task, TASK_ID, TASK_PARAMS
 from canopsis.task.condition import (
     _any, _all, during, _not, condition, switch, STATEMENT
 )

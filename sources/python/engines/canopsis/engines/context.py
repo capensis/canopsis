@@ -55,13 +55,16 @@ class engine(Engine):
     def beat(self):
         """
         TODO: sla
-        sla = self.storage.find_elements(request={
-            'crecord_type': 'sla',
-            'objclass': 'macro'
-        })
 
-        if sla:
-            self.sla = sla[0]
+        .. code-block:: python
+
+            sla = self.storage.find_elements(request={
+                'crecord_type': 'sla',
+                'objclass': 'macro'
+            })
+
+            if sla:
+                self.sla = sla[0]
         """
 
         self.lock.acquire()
@@ -90,9 +93,12 @@ class engine(Engine):
 
         """
         TODO: sla
-        if self.sla:
-            mCrit = self.sla.data['mCrit']
-            mWarn = self.sla.data['mWarn']
+
+        .. code-block::
+
+            if self.sla:
+                mCrit = self.sla.data['mCrit']
+                mWarn = self.sla.data['mWarn']
         """
 
         context = {}
