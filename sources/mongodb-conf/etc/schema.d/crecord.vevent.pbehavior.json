@@ -2,7 +2,7 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["dtstart", "dtend", "rrule", "duration"]
+        "keys": ["dtstart", "dtend", "rrule"]
     },{
         "title": "Behaviors",
         "keys": ["behaviors"]
@@ -19,9 +19,7 @@
                 "enum": ["downtime"],
                 "role": "simplelist"
             },
-            "role": "periodicbehaviors",
-            "required": true,
-            "default": []
+            "required": true
         }
     }
 }

@@ -18,13 +18,3 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
-from unittest import TestCase, main
-
-
-class TestCheck(TestCase):
-
-    pass
-
-if __name__ == '__main__':
-    main()
