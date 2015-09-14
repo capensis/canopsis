@@ -24,6 +24,7 @@ import ConfigParser
 import json
 import urllib2
 import os
+import sys
 import httplib
 import base64
 import urlparse
@@ -57,10 +58,10 @@ except Exception as err:
 ### Functions
 def put_value(metric, value, type='gauge'):
     metric = collectd.Values(
-        plugin = plugin_name,
-        type = type,
-        values = [value],
-        type_instance = metric
+        plugin=plugin_name,
+        type=type,
+        values=[value],
+        type_instance=metric
     )
     metric.dispatch()
 
@@ -83,9 +84,12 @@ def config_callback(config):
 
 
 def read_callback(data=None):
-
     #f = opener.open(url+"/exchanges")
-    exchanges = api("GET", "/api/exchanges", "", 'localhost', '15672', amqp_userid, amqp_password)
+    exchanges = api(
+        "GET", "/api/exchanges",
+        "", 'localhost', '15672',
+        amqp_userid, amqp_password
+    )
 
     try:
         exchanges = json.loads(exchanges)
@@ -96,15 +100,23 @@ def read_callback(data=None):
 
                 try:
                     message_stats_out = exchange['message_stats_out']
-                    put_value('%s_msg_out' % name, message_stats_out['publish'], type='derive')
+                    put_value(
+                        '%s_msg_out' % name,
+                        message_stats_out['publish'],
+                        type='derive'
+                    )
 
                 except Exception as err:
                     #log("Impossible to put OUT values of %s (%s)" % (name, err))
                     pass
 
                 try:
-                    message_stats_in  = exchange['message_stats_in']
-                    put_value('%s_msg_in' % name, message_stats_in['publish'], type='derive')
+                    message_stats_in = exchange['message_stats_in']
+                    put_value(
+                        '%s_msg_in' % name,
+                        message_stats_in['publish'],
+                        type='derive'
+                    )
 
                 except Exception, err:
                     #log("Impossible to put IN values of %s (%s)" % (name, err))
@@ -130,14 +142,18 @@ def api(method, path, body, hostname, port, username, password):
         try:
             conn.request(method, path, body, headers)
         except socket.error, e:
-            die("Could not connect: {0}".format(e))
+            log("Could not connect: {0}".format(e))
+            return []
         resp = conn.getresponse()
         if resp.status == 400:
-            die(json.loads(resp.read())['reason'])
+            log(json.loads(resp.read())['reason'])
+            return []
         if resp.status == 401:
-            die("Access refused: {0}".format(path))
+            log("Access refused: {0}".format(path))
+            return []
         if resp.status == 404:
-            die("Not found: {0}".format(path))
+            log("Not found: {0}".format(path))
+            return []
         if resp.status == 301:
             url = urlparse.urlparse(resp.getheader('location'))
             [host, port] = url.netloc.split(':')
