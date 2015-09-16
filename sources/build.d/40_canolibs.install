@@ -32,7 +32,9 @@ PROJECTS[28]='ccalendar'
 PROJECTS[29]='pbehavior'
 PROJECTS[30]='downtime'
 PROJECTS[31]='webcore'
-PROJECTS[32]='session'
+PROJECTS[32]='basecrud'
+PROJECTS[33]='session'
+PROJECTS[34]='stats'
 
 function build(){
 	true
