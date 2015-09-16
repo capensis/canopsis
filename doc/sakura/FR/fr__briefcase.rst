@@ -23,7 +23,8 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "David Delassus", "2015/09/16", "0.1", "Template creation", ""
+   "David Delassus", "2015/09/16", "0.2", "Update frontend description", ""
+   "David Delassus", "2015/09/16", "0.1", "Document creation", ""
 
 Contents
 ========
@@ -45,9 +46,9 @@ Frontend view
 The frontend MUST provide a component to explore associated files and folders, with the
 following layouts :
 
- * tree view
- * icon view
- * list view
+ * list view : each file is listed with its full path
+ * tree view : each folder is expandable/collapsible
+ * icon view : each file and folder is represented as an icon with the basename bellow
 
 This component must be filterable by entities.
 
