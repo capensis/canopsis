@@ -21,6 +21,9 @@
 from canopsis.common.ws import route
 from bottle import request
 from .rights import get_manager as get_rights
+from canopsis.session.manager import Session
+
+session_manager = Session()
 
 
 def get():
@@ -78,3 +81,12 @@ def exports(ws):
         user.pop('id', None)
         user.pop('eid', None)
         return user
+
+    @route(ws.application.get, payload=['username'], adapt=False)
+    def keepalive(username):
+        session_manager.keep_alive(username)
+
+    @route(ws.application.get, payload=['username'], adapt=False)
+    def sessionstart(username):
+        session_manager.session_start(username)
+
