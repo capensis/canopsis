@@ -29,4 +29,5 @@ High-Level features
    :maxdepth: 1
    :titlesonly:
 
+   fr__briefcase
    fr__category-chart
