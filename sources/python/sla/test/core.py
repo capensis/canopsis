@@ -43,9 +43,6 @@ class MockStorage(object):
 
 class KnownValues(TestCase):
 
-    def setUp(self):
-        pass
-
     def get_sla(
         self,
         rk='mock.rk',

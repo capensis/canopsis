@@ -54,6 +54,7 @@ class Context(MiddlewareRegistry):
     CTX_STORAGE = 'ctx_storage'  #: ctx storage name
     CONTEXT = 'context'
 
+    DATA_ID = '_id'  #: temporary id field
     TYPE = 'type'  #: entity type field name
     NAME = CompositeStorage.NAME  #: entity name field name
     EXTENDED = 'extended'  #: extended field name
@@ -94,6 +95,59 @@ class Context(MiddlewareRegistry):
         """
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
+
+    def iter_ids(self):
+        """Returns a cursor on all context ids.
+        """
+
+        cursor = self[Context.CTX_STORAGE].get_elements(projection={
+            Context.DATA_ID: True
+        })
+
+        for doc in cursor:
+            yield doc[Context.DATA_ID]
+
+    def clean(self, entity):
+        """Remove entity properties which are not in self.context
+        """
+
+        result = {}
+
+        for ctx in self.context:
+            if ctx in entity:
+                result[ctx] = entity[ctx]
+            else:
+                break
+
+        result[Context.NAME] = entity[Context.NAME]
+
+        return result
+
+    def get_children(self, entity):
+        """Get children entities of input entity.
+
+        For example, if entity is a component, you can retrieve component
+        resources and metrics.
+
+        :param dict entity: parent entity.
+        :return: list of children entity.
+        :rtype: list
+        """
+
+        # construct query with parent fields which can be found among children
+        query = self.clean(entity)
+        del query[Context.TYPE]
+
+        # iterate on context information without the type
+        for ctx in self.context[1:]:
+            if ctx not in entity:
+                query[ctx] = query.pop(Context.NAME)
+                break
+
+        # execute query in order to get children
+        children = self[Context.CTX_STORAGE].find_elements(query=query)
+
+        return children
 
     def get_entity(
         self, event, from_db=False, create_if_not_exists=False, cache=False

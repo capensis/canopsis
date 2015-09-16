@@ -74,6 +74,7 @@ def add_users(data, clear):
                 'external': user.get('external', False),
                 'enable': user.get('enable', True),
                 'shadowpasswd': user.get('shadowpass', None),
+                'mail': user.get('mail', None),
                 'authkey': str(uuid.uuid1())
             })
 
@@ -103,3 +104,4 @@ def init(clear=True):
 
 def update():
     init(clear=False)
+init()

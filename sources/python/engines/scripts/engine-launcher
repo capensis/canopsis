@@ -102,14 +102,9 @@ class EngineLauncher(object):
         """
 
         try:
-            try:
-                self.module = import_module(
-                    'canopsis.engines.{0}'.format(self.etype)
-                )
-            except ImportError as err:
-                self.module = import_module(
-                    'canopsis.{0}.{0}'.format(self.etype)
-                )
+            self.module = import_module(
+                'canopsis.engines.{0}'.format(self.etype)
+            )
 
         except ImportError as err:
             self.logger.error(

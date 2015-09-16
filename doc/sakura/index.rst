@@ -16,7 +16,19 @@ actual version of Canopsis (aka: **Sakura**):
    :maxdepth: 1
    :titlesonly:
 
+   overview/index
    user-guide/index
    administrator-guide/index
    developer-guide/index
+   api/index
    glossary
+
+Canopsis Specification
+======================
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
+
+   FR/index
+   TR/index

@@ -73,10 +73,7 @@ class Browser(Cmd):
 
     def do_cat(self, _id):
         try:
-            if _id == '*':
-                pass
-
-            else:
+            if _id != '*':
                 record = self.storage.get(_id)
                 record.cat()
 
@@ -85,10 +82,7 @@ class Browser(Cmd):
 
     def do_dump(self, _id):
         try:
-            if _id == '*':
-                pass
-
-            else:
+            if _id != '*':
                 record = self.storage.get(_id)
                 record.cat(dump=True)
 

@@ -38,7 +38,7 @@ such as those defined in the canopsis.topology.rule.action module.
 from canopsis.topology.elements import Topology, TopoNode
 from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
-from canopsis.task import register_task
+from canopsis.task.core import register_task
 from canopsis.event import Event
 from canopsis.check.manager import CheckManager
 

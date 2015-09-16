@@ -1,7 +1,7 @@
 NAME="ssl-conf"
 
 
-function install() {
+function init_ssl_dir() {
     echo
     echo "===> Install configuration files..."
     echo
@@ -11,7 +11,8 @@ function install() {
 
     install_conf "ssl/openssl.cnf"
 
-    launch_cmd 1 "touch $PREFIX/etc/ssl/openssl/index.txt{,.attr}"
+    launch_cmd 1 "touch $PREFIX/etc/ssl/openssl/index.txt"
+    launch_cmd 1 "echo 'unique_subject = no' > $PREFIX/etc/ssl/openssl/index.txt.attr"
     launch_cmd 1 "echo '01' > $PREFIX/etc/ssl/openssl/serial"
 
     chown -R $HUSER:$HGROUP $PREFIX/etc/ssl || exit 1
@@ -21,7 +22,9 @@ function install() {
     echo
 
     launch_cmd 1 "openssl dhparam -outform PEM -out $PREFIX/etc/ssl/dhfile.pem $SSL_KEY_BITS"
+}
 
+function install_certificates() {
     if [ ! -z $SSL_CA_PATH ] && [ -f $SSL_CA_PATH ] && [ ! -z $SSL_CAKEY_PATH ] && [ -f $SSL_CAKEY_PATH ]
     then
         echo
@@ -92,7 +95,9 @@ function install() {
     do
         cat $PREFIX/etc/ssl/$i.pem >> $PREFIX/etc/ssl/bundle.pem
     done
+}
 
+function fix_ssl_permissions() {
     echo
     echo "===> Fix permissions..."
     echo
@@ -103,4 +108,19 @@ function install() {
     done
 
     chown -R $HUSER:$HGROUP $PREFIX/etc/ssl || exit 1
+}
+
+function install() {
+    init_ssl_dir || exit 1
+    install_certificates || exit 1
+    fix_ssl_permissions || exit 1
+}
+
+function update() {
+    serial=$(cat $PREFIX/etc/ssl/openssl/serial)
+    let "serial = serial + 1"
+    launch_cmd 1 "echo '$serial' >> $PREFIX/etc/ssl/openssl/serial"
+
+    install_certificates || exit 1
+    fix_ssl_permissions || exit 1
 }

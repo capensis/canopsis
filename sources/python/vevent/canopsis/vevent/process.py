@@ -24,15 +24,13 @@ When an event occured, the related entity is retrieved with its bound
 graph nodes in order to execute theirs tasks.
 """
 
+from canopsis.common.utils import singleton_per_scope
 from canopsis.vevent.manager import VEventManager
 from canopsis.context.manager import Context
-from canopsis.task import register_task
-
-context = Context()
-vem = VEventManager()
+from canopsis.task.core import register_task
 
 
-@register_task(name='vevent.event_processing')
+@register_task('vevent.event_processing')
 def event_processing(event, veventmanager=None, **params):
     """Add vevent information in VEventManager from input event.
 
@@ -43,7 +41,8 @@ def event_processing(event, veventmanager=None, **params):
 
     # initialiaze veventmanager
     if veventmanager is None:
-        veventmanager = vem
+        veventmanager = singleton_per_scope(VEventManager)
+    context = singleton_per_scope(Context)
     # get source from the event
     entity = context.get_entity(event)
     source = context.get_entity_id(entity)

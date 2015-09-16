@@ -60,7 +60,7 @@ function create_slinks() {
     # create_python_slink rpc 0.1
 
     ln -s $SRC/sources/python/connectors/var/snmp $CPS/var/
-    ln -s $SRC/sources/webcore/canopsis $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/
+    ln -s $SRC/sources/python/webcore/canopsis $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/
     touch $CPS/.slinked
 }
 

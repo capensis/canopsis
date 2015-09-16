@@ -30,16 +30,10 @@ CATEGORY = 'LINKLIST'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class Linklist(MiddlewareRegistry):
-
-    LINKLIST_STORAGE = 'linklist_storage'
-
-    """
-    Manage linklist information in Canopsis
+    """Manage linklist information in Canopsis.
     """
 
-    def __init__(self, *args, **kwargs):
-
-        super(Linklist, self).__init__(*args, **kwargs)
+    LINKLIST_STORAGE = 'linklist_storage'  #: linklist storage name
 
     def find(
         self,
@@ -50,14 +44,18 @@ class Linklist(MiddlewareRegistry):
         with_count=False,
         _filter={},
     ):
+        """Retrieve information from data sources.
 
-        """
-        Retrieve information from data sources
+        :param ids: id(s) for document to search. All documents by default.
+        :type ids: str or list
+        :param int limit: maximum record fetched at once.
+        :param int skip: ordinal number where selection should start.
+        :param bool with_count: compute selection count when True.
+        :return: depending on ids type:
 
-        :param ids: an id list for document to search
-        :param limit: maximum record fetched at once
-        :param skip: ordinal number where selection should start
-        :param with_count: compute selection count when True
+            - str: one document or None if no related document exists.
+            - list or None: storage Cursor.
+        :rtype: Cursor or dict
         """
 
         result = self[Linklist.LINKLIST_STORAGE].get_elements(
@@ -68,6 +66,7 @@ class Linklist(MiddlewareRegistry):
             query=_filter,
             with_count=with_count
         )
+
         return result
 
     def put(
@@ -75,20 +74,19 @@ class Linklist(MiddlewareRegistry):
         document,
         cache=False
     ):
-        """
-        Persistance layer for upsert operations
+        """Persistance layer for upsert operations.
 
-        :param context: contains data identifiers
-        :param extra_keys: documents extra information depending on specific
-        schema.
+        :param dict document: document to put.
+        :param bool cache: if True (default false), use storage cache.
+        :return: put result.
+        :rtype: dict
         """
-        if 'id' not in document or not document['id']:
+        if not document.get('id'):
             document['_id'] = str(uuid.uuid4())
         else:
-            document['_id'] = document['id']
-            del document['id']
+            document['_id'] = document.pop('id')
 
-        self[Linklist.LINKLIST_STORAGE].put_element(
+        return self[Linklist.LINKLIST_STORAGE].put_element(
             _id=document['_id'], element=document, cache=cache
         )
 
@@ -96,8 +94,7 @@ class Linklist(MiddlewareRegistry):
         self,
         ids
     ):
-        """
-        Remove fields persisted in a default storage.
+        """Remove fields persisted in a default storage.
 
         :param element_id: identifier for the document to remove
         """

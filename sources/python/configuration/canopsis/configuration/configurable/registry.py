@@ -178,7 +178,6 @@ class ConfigurableRegistry(Configurable):
 
     class Error(Exception):
         """handle ConfigurableRegistry errors"""
-        pass
 
     CONF_PATH = 'configuration/registry.conf'  #: default conf path
 
@@ -204,8 +203,9 @@ class ConfigurableRegistry(Configurable):
         self._configurable_types = ConfigurableTypes(self, configurable_types)
 
     def _get_category(self):
-        """
-        Get category.
+        """Get category.
+
+        :rtype: Category
         """
 
         result = Category(ConfigurableRegistry.CATEGORY)
@@ -326,23 +326,21 @@ class ConfigurableRegistry(Configurable):
 
     @property
     def configurables(self):
-        """
-        Configurable which manages sub-configurables
+        """Configurable which manages sub-configurables.
         """
 
         return self._configurables
 
     @property
     def configurable_types(self):
-        """
-        ConfigurableTypes which manages restriction of sub-configurable types
+        """ConfigurableTypes which manages restriction of sub-configurable
+        types.
         """
 
         return self._configurable_types
 
     def __contains__(self, name):
-        """
-        Redirection to self.configurables.__contains__
+        """Redirection to self.configurables.__contains__.
         """
 
         if name.endswith(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
@@ -351,8 +349,7 @@ class ConfigurableRegistry(Configurable):
         return name in self._configurables
 
     def __getitem__(self, name):
-        """
-        Redirection to self.configurables.__getitem__
+        """Redirection to self.configurables.__getitem__.
         """
 
         if name.endswith(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
@@ -361,8 +358,7 @@ class ConfigurableRegistry(Configurable):
         return self._configurables[name]
 
     def __setitem__(self, name, value):
-        """
-        Redirection to self.configurables.__setitem__
+        """Redirection to self.configurables.__setitem__.
         """
 
         if name.endswith(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
@@ -372,8 +368,7 @@ class ConfigurableRegistry(Configurable):
             self._configurables[name] = value
 
     def __delitem__(self, name):
-        """
-        Redirection to self.configurables.__delitem__
+        """Redirection to self.configurables.__delitem__.
         """
 
         if name.endswith(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
@@ -382,25 +377,28 @@ class ConfigurableRegistry(Configurable):
         else:
             del self._configurables[name]
 
+    def __iter__(self):
+        """Redirection to iter(self.configurables).
+        """
+        return iter(self._configurables)
+
     @staticmethod
     def get_configurable_category(name):
-        """
-        Get generated sub-configurable category name
+        """Get generated sub-configurable category name.
         """
 
         return "{0}_CONF".format(name.upper())
 
     @staticmethod
     def get_configurable(configurable, *args, **kwargs):
-        """
-        Get a configurable instance from a configurable class/path/instance and
-        args, kwargs, None otherwise.
+        """Get a configurable instance from a configurable class/path/instance
+        and args, kwargs, None otherwise.
 
         :param configurable: configurable path, class or instance
         :type configurable: str, class or Configurable
 
         :return: configurable instance or None if input configurable can not be
-        solved such as a configurable.
+            solved such as a configurable.
         """
 
         result = configurable

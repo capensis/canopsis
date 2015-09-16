@@ -10,6 +10,7 @@ This Chapter describes how to use the new frontend system.
    :maxdepth: 3
    :titlesonly:
 
+   users/index
    views/index
    widgets/index
-   auth/index
+   mixins/index

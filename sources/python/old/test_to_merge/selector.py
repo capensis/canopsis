@@ -41,8 +41,6 @@ selector = None
 
 
 class KnownValues(unittest.TestCase):
-    def setUp(self):
-        pass
 
     def test_01_InitPutGet(self):
         global selector

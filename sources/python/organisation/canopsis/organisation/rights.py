@@ -102,11 +102,12 @@ class Rights(MiddlewareRegistry):
         """
 
         return self['action_storage'].put_element(
-            a_id, {
+            element={
                 'crecord_name': a_id,
                 'crecord_type': 'action',
-                'desc': a_desc}
-            )
+                'desc': a_desc
+            }, _id=a_id
+        )
 
     # Delete an action from the reference list
     def delete_action(self, a_id):
@@ -224,8 +225,12 @@ class Rights(MiddlewareRegistry):
 
         if not entity:
             self.logger.error(
-                ('Can not create right, entity {0} ' +
-                    'is empty or does not exist').format(e_name))
+                '{0} {1} {2}.'.format(
+                    'Can not create right, entity',
+                    e_name,
+                    'is empty or does not exist.'
+                )
+            )
             return 0
 
         if not entity.get('rights', None):
@@ -247,7 +252,7 @@ class Rights(MiddlewareRegistry):
             if kwargs[key]:
                 entity['rights'][right_id][key] = context
 
-        self[e_type].put_element(e_name, entity)
+        self[e_type].put_element(element=entity, _id=e_name)
         result = entity['rights'][right_id]['checksum']
         return result if result else True
 
@@ -260,16 +265,18 @@ class Rights(MiddlewareRegistry):
             e_type: type of the entity
             right_id: right to be modified
             checksum: flags to remove
-         Returns:
+        Returns:
             The checksum of the right if it was modified
             ``0`` otherwise
-         """
+        """
 
         entity = self[e_type + '_storage'].get_elements(ids=entity)
 
-        if (entity['rights']
-            and entity['rights'][right_id]
-                and entity['rights'][right_id]['checksum'] >= checksum):
+        if (
+                entity['rights']
+                and entity['rights'][right_id]
+                and entity['rights'][right_id]['checksum'] >= checksum
+        ):
 
             # remove the permissions passed in checksum
             ochecksum = int(entity['rights'][right_id]['checksum'])
@@ -278,10 +285,14 @@ class Rights(MiddlewareRegistry):
             # If all the permissions were removed from the right, delete it
             if not entity['rights'][right_id]['checksum']:
                 del entity['rights'][right_id]
-                self[e_type + "_storage"].put_element(entity['_id'], entity)
+                self[e_type + "_storage"].put_element(
+                    element=entity, _id=entity['_id']
+                )
                 return True
 
-            self[e_type + "_storage"].put_element(entity['_id'], entity)
+            self[e_type + "_storage"].put_element(
+                element=entity, _id=entity['_id']
+            )
             result = entity['rights'][right_id]['checksum']
             return result if result else True
 
@@ -313,7 +324,7 @@ class Rights(MiddlewareRegistry):
             'rights': {}
         }
 
-        self.group_storage.put_element(group_name, new_group)
+        self.group_storage.put_element(element=new_group, _id=group_name)
 
         if not group_rights:
             return group_name
@@ -344,20 +355,21 @@ class Rights(MiddlewareRegistry):
         # Do nothing if it already exists
         if self.get_profile(p_name):
             self.logger.error(
-                'Can not create group, group {0} already exists'.format(
-                    group_name)
-                )
+                'Can not create group, group {0} already exists'
+                .format(group_name)
+            )
             return None
 
-        new_profile = {'crecord_type': 'profile',
-                       'crecord_name': p_name
-                       }
+        new_profile = {
+            'crecord_type': 'profile',
+            'crecord_name': p_name
+        }
         if isinstance(p_groups, list):
             new_profile['group'] = p_groups
         else:
             new_profile.setdefault('group', []).append(p_groups)
 
-        self.profile_storage.put_element(p_name, new_profile)
+        self.profile_storage.put_element(element=new_profile, _id=p_name)
 
         return p_name
 
@@ -386,13 +398,15 @@ class Rights(MiddlewareRegistry):
                     query={'crecord_type': t_type}):
                 if e_type in entity and e_name in entity[e_type]:
                     entity[e_type].remove(e_name)
-                    self[to_storage].put_element(entity['_id'], entity)
+                    self[to_storage].put_element(
+                        _id=entity['_id'], element=entity
+                    )
 
             return True
 
         self.logger.error(
             'Can not delete entity, entity {0} does not exist'.format(e_name)
-            )
+        )
         return False
 
     def delete_role(self, r_name):
@@ -406,18 +420,20 @@ class Rights(MiddlewareRegistry):
 
         if self.get_role(r_name):
             for user in self['user_storage'].get_elements(
-                query={'crecord_type': 'user'}
+                    query={'crecord_type': 'user'}
             ):
                 if user and 'role' in user and r_name == user['role']:
                     user.pop('role', None)
-                    self['user_storage'].put_element(user['_id'], user)
+                    self['user_storage'].put_element(
+                        _id=user['_id'], element=user
+                    )
 
             self['role_storage'].remove_elements(r_name)
             return True
 
         self.logger.error(
             'Can not delete role, role {0} does not exist'.format(r_name)
-            )
+        )
         return False
 
     def delete_user(self, u_name):
@@ -478,7 +494,7 @@ class Rights(MiddlewareRegistry):
         entity = self[e_type].get_elements(ids=e_name)
         if 'group' not in entity or group_name not in entity['group']:
             entity.setdefault('group', []).append(group_name)
-            self[e_type].put_element(e_name, entity)
+            self[e_type].put_element(_id=e_name, element=entity)
 
         return True
 
@@ -548,7 +564,7 @@ class Rights(MiddlewareRegistry):
 
             if 'profile' not in s_role or p_name not in s_role['profile']:
                 s_role.setdefault('profile', []).append(p_name)
-                self.role_storage.put_element(role, s_role)
+                self.role_storage.put_element(_id=role, element=s_role)
 
             return True
 
@@ -574,7 +590,7 @@ class Rights(MiddlewareRegistry):
         if role:
             s_user = self.get_user(u_name)
             s_user['role'] = r_name
-            self.user_storage.put_element(u_name, s_user)
+            self.user_storage.put_element(_id=u_name, element=s_user)
 
             return True
 
@@ -583,11 +599,14 @@ class Rights(MiddlewareRegistry):
     # e_name can be a profile or a group
     def remove_entity(self, from_name, from_type, e_name, e_type):
         entity = self[from_type + '_storage'].get_elements(
-            query={'crecord_type': from_type}, ids=from_name)
+            query={'crecord_type': from_type}, ids=from_name
+        )
 
         if e_type in entity and e_name in entity[e_type]:
             entity[e_type].remove(e_name)
-            self[from_type + '_storage'].put_element(from_name, entity)
+            self[from_type + '_storage'].put_element(
+                _id=from_name, element=entity
+            )
             return True
 
         return False
@@ -687,33 +706,37 @@ class Rights(MiddlewareRegistry):
         if self.get_role(r_name):
             return r_name
 
-        new_role = {'crecord_type': 'role',
-                    'crecord_name': r_name,
-                    }
+        new_role = {
+            'crecord_type': 'role',
+            'crecord_name': r_name,
+        }
         if isinstance(r_profile, list):
             new_role['profile'] = r_profile
         else:
             new_role.setdefault('profile', []).append(r_profile)
 
-        self.role_storage.put_element(r_name, new_role)
+        self.role_storage.put_element(_id=r_name, element=new_role)
 
         return r_name
 
-    def create_user(self, u_id, u_role,
-                    contact=None, rights=None,
-                    groups=None):
+    def create_user(
+            self, u_id, u_role,
+            contact=None, rights=None,
+            groups=None
+    ):
         """
         Args:
-            u_nick: nick of the user to create, usually first
-                    letter of first name and last name (i.e.:
-                    jdoe for John Doe)
-            u_role: role to init the user with
-            contact: map containing full name, email, adress,
-                     and/or phone number of the user
-            rights: map containing specific rights
-            groups: list of specific groups
+            u_id: nick of the user to create, usually first letter of first
+                name and last name (i.e.: jdoe for John Doe).
+
+            u_role: role to init the user with.
+            contact: map containing full name, email, adress, and/or phone
+                number of the user.
+
+            rights: map containing specific rights.
+            groups: list of specific groups.
         Returns:
-            Map of the newly created user
+            Map of the newly created user.
         """
 
         user = self.get_user(u_id)
@@ -735,16 +758,16 @@ class Rights(MiddlewareRegistry):
         if groups and isinstance(groups, list):
             user['groups'] = groups
 
-        self.user_storage.put_element(u_id, user)
+        self.user_storage.put_element(_id=u_id, element=user)
         return user
 
     def set_user_fields(self, u_id, fields):
         """
         Args:
-            u_id: id of the user which fields to change
-            fields: map of fields to change and their new values
+            u_id: id of the user which fields to change.
+            fields: map of fields to change and their new values.
         Returns:
-            Map of the modified user
+            Map of the modified user.
         """
 
         user = self.get_user(u_id)
@@ -755,15 +778,15 @@ class Rights(MiddlewareRegistry):
             if key in supported_fields:
                 user.setdefault('contact', {})[key] = fields[key]
 
-        self.user_storage.put_element(u_id, user)
+        self.user_storage.put_element(_id=u_id, element=user)
         return user
 
     def get_user_rights(self, u_id):
         """
         Args:
-            u_uid: id of the user to get the rights from
+            u_uid: id of the user to get the rights from.
         Returns:
-            dict of user's rights
+            dict of user's rights.
         """
 
         profiles = []
@@ -810,12 +833,12 @@ class Rights(MiddlewareRegistry):
     def get_entity_field(self, e_id, e_type, field):
         """
         Args:
-            e_id: entity to get the field from
-            e_type: type of the entity
-            field: field to get
+            e_id: entity to get the field from.
+            e_type: type of the entity.
+            field: field to get.
         Returns:
-            value of the field if the field exists if the entity e_id
-            ``None`` otherwise
+            value of the field if the field exists if the entity e_id.
+            ``None`` otherwise.
         """
 
         if not field or not e_id or not e_type:
@@ -831,12 +854,12 @@ class Rights(MiddlewareRegistry):
     def update_entity_name(self, e_id, e_type, new_name):
         """
         Args:
-            e_id id of the entity to update
-            e_type type of the entity to update
-            new_name new name of the entity
+            e_id: id of the entity to update.
+            e_type: type of the entity to update.
+            new_name: new name of the entity.
         Returns:
-            ``True`` if the name was updated
-            ``False`` otherwise
+            ``True`` if the name was updated.
+            ``False`` otherwise.
         """
 
         entity = self[e_type + '_storage'].get_elements(
@@ -844,7 +867,7 @@ class Rights(MiddlewareRegistry):
 
         if entity:
             entity['crecord_name'] = new_name
-            self[e_type + '_storage'].put_element(e_id, entity)
+            self[e_type + '_storage'].put_element(_id=e_id, element=entity)
             return True
 
         return False
@@ -852,13 +875,13 @@ class Rights(MiddlewareRegistry):
     def update_field(self, e_id, e_type, new_elems, elem_type, entity):
         """
         Args:
-            e_id id of the entity to update
-            e_type type of the entity to update
-            new_elems elements to update
-            entity entity to be updated
+            e_id: id of the entity to update.
+            e_type: type of the entity to update.
+            new_elems: elements to update.
+            entity: entity to be updated.
         Returns:
-            ``True`` if the entity was thoroughly updated
-            ``False`` otherwise
+            ``True`` if the entity was thoroughly updated.
+            ``False`` otherwise.
         """
 
         if entity and elem_type in entity:
@@ -892,19 +915,19 @@ class Rights(MiddlewareRegistry):
                 to_remove = set(entity['rights']) - set(e_rights)
             for right in to_remove:
                 if not self.remove_right(
-                    e_id,
-                    e_type,
-                    right,
-                    entity['rights'][right]['checksum']
+                        e_id,
+                        e_type,
+                        right,
+                        entity['rights'][right]['checksum']
                 ):
                     return False
         if e_rights:
             for right in e_rights:
                 if not self.add_right(
-                    e_id,
-                    e_type,
-                    right,
-                    e_rights[right]['checksum']
+                        e_id,
+                        e_type,
+                        right,
+                        e_rights[right]['checksum']
                 ):
                     return False
         return True
@@ -954,7 +977,9 @@ class Rights(MiddlewareRegistry):
         if entity and not isinstance(entity, list):
             for key in fields:
                 entity[key] = fields[key]
-            return self[e_type + '_storage'].put_element(e_id, entity)
+            return self[e_type + '_storage'].put_element(
+                _id=e_id, element=entity
+            )
         else:
             return False
 

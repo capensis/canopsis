@@ -14,7 +14,6 @@ function easy_install_all_libs() {
 	easy_install_pylib bottle
 	easy_install_pylib Beaker
 	easy_install_pylib mongodb_beaker
-	easy_install_pylib pysnmp
 	easy_install_pylib xmlrpclib
 	easy_install_pylib pyparsing
 	easy_install_pylib gunicorn

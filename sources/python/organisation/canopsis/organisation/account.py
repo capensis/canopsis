@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.organisation.permission import PermissionEntity
+from canopsis.organisation.permission import RightEntity
 
 
-class Account(PermissionEntity):
+class Account(RightEntity):
 
     def __init__(self, contact=None, session=None, rights=None, roles=None):
         pass
