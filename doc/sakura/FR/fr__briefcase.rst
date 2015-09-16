@@ -23,6 +23,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "David Delassus", "2015/09/16", "0.3", "Add widget and view", ""
    "David Delassus", "2015/09/16", "0.2", "Update frontend description", ""
    "David Delassus", "2015/09/16", "0.1", "Document creation", ""
 
@@ -38,10 +39,13 @@ In Canopsis, the briefcase allows to associate one or more files to an :ref:`ent
 
 All associated documents are located in a :ref:`file storage <FR__Architecture__DataStore>`.
 
-.. _FR__Briefcase__View:
+Frontend
+--------
 
-Frontend view
--------------
+.. _FR__Briefcase__Component:
+
+Briefcase component
+~~~~~~~~~~~~~~~~~~~
 
 The frontend MUST provide a component to explore associated files and folders, with the
 following layouts :
@@ -50,7 +54,24 @@ following layouts :
  * tree view : each folder is expandable/collapsible
  * icon view : each file and folder is represented as an icon with the basename bellow
 
-This component must be filterable by entities.
+The component is configured with a filter (on entities and file(s) metadata), and
+also provide a search-box to filter at runtime.
+
+.. _FR__Briefcase__Widget:
+
+Briefcase widget
+~~~~~~~~~~~~~~~~
+
+A widget, using the Briefcase component, SHOULD be available to let the user customize
+the filter used by the component.
+
+.. _FR__Briefcase__View:
+
+Briefcase view
+~~~~~~~~~~~~~~
+
+A view containing the widget with no particular filter SHOULD be available in order
+to offer a global view on all associated file(s). 
 
 .. _FR__Briefcase__API:
 
