@@ -2,13 +2,17 @@
 	"type": "object",
 	"categories": [{
 		"title": "Schedule",
-		"keys": ["start", "rrule", "jtype"]
+		"keys": ["start", "rrule"]
+	}, {
+		"title": "Information",
+		"keys": ["crecord_name", "jtype"]
 	}],
 	"properties": {
 		"xtype": {
 			"enum": ["job"],
 			"required": false
 		},
+		"crecord_name": {"type": "string", "required": true},
 		"crecord_type": {
 			"enum": ["job"],
 			"required": true
