@@ -178,7 +178,6 @@ class ConfigurableRegistry(Configurable):
 
     class Error(Exception):
         """handle ConfigurableRegistry errors"""
-        pass
 
     CONF_PATH = 'configuration/registry.conf'  #: default conf path
 
@@ -399,7 +398,7 @@ class ConfigurableRegistry(Configurable):
         :type configurable: str, class or Configurable
 
         :return: configurable instance or None if input configurable can not be
-        solved such as a configurable.
+            solved such as a configurable.
         """
 
         result = configurable

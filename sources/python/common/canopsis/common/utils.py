@@ -175,8 +175,9 @@ def lookup(path, cached=True):
 
     :param str path: full path to a python element.
         Examples:
-            - __builtin__.open
-            - canopsis.common.utils.lookup
+
+        - __builtin__.open
+        - canopsis.common.utils.lookup
 
     :para bool cached: if True (by default), use __RESOLVED_ELEMENTS cache
         memory to quickly load elements
@@ -414,10 +415,10 @@ def prototype(typed_args=None, typed_kwargs=None, typed_return=None):
     """
     Decorate a function to check its parameters type.
 
-    :param typed_args: Types for *args
+    :param typed_args: Types for args
     :type typed_args: tuple
 
-    :param typed_kwargs: Types for **kwargs
+    :param typed_kwargs: Types for kwargs
     :type typed_kwargs: dict
 
     :param typed_return: Types for return

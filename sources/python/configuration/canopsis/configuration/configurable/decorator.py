@@ -30,16 +30,19 @@ def conf_paths(*conf_paths):
     :type paths: list of str
 
     Example:
+
     >>> conf_paths('test0', 'test1')(Configurable)().conf_paths[:-2]
     ['test0', 'test1']
     """
 
     def add_conf_paths(cls):
-        # add _get_conf_paths method to configurable classes
+        """ add _get_conf_paths method to configurable classes
+        """
         if issubclass(cls, Configurable):
 
             def _get_conf_paths(self, *args, **kwargs):
-                # get super result and append conf_paths
+                """get super result and append conf_paths
+                """
                 result = super(cls, self)._get_conf_paths()
                 result += conf_paths
 
@@ -49,7 +52,8 @@ def conf_paths(*conf_paths):
 
         else:
             raise Configurable.Error(
-                "class {0} is not a Configurable class".format(cls))
+                "class {0} is not a Configurable class".format(cls)
+            )
 
         return cls
 
@@ -60,12 +64,10 @@ def add_category(name, unified=True, content=None):
     """
     Add a category to a configurable configuration.
 
-    :param name: category name
-    :type name: str
+    :param str name: category name
 
-    :param unified: if True (by default), the new category is unified from
-    previous conf
-    :type unified: bool
+    :param bool unified: if True (by default), the new category is unified from
+        previous conf
 
     :param content: category or list of parameters to add to the new category
     :type content: Category or list(Parameter)
@@ -93,7 +95,8 @@ def add_category(name, unified=True, content=None):
 
         else:
             raise Configurable.Error(
-                "class {0} is not a Configurable class".format(cls))
+                "class {0} is not a Configurable class".format(cls)
+            )
 
         return cls
 
@@ -104,13 +107,11 @@ def add_config(config, unified=True):
     """
     Add multiple categories to a configurable configuration.
 
-    :param config: dict where keys are catogories names, and values categories
-    content
-    :type config: dict
+    :param dict config: dict where keys are catogories names, and values
+        categories content.
 
-    :param unified: if True (by default), the new category is unified from
-    previous conf
-    :type unified: bool
+    :param bool unified: if True (by default), the new category is unified from
+        previous conf.
     """
 
     def _add_unified(result, name, content):

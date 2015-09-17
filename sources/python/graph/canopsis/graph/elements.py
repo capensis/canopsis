@@ -119,6 +119,10 @@ class GraphElement(object):
     Contains an ID and a type.
     """
 
+    class Error(Exception):
+        """Handle GraphElement errors.
+        """
+
     ID = Storage.DATA_ID  #: graph element id.
     TYPE = 'type'  #: graph element type name.
     BASE_TYPE = '_type'  #: base graph element type name.
@@ -182,20 +186,8 @@ class GraphElement(object):
 
         return hash(self.id)
 
-    @classmethod
-    def new(cls, **kwargs):
-        """Instantiate a new element where kwargs contains element attributes.
-
-        :param dict kwargs: new element attributes.
-        :return: new element.
-        :raises: TypeError if kwargs can not be used in cls.new
-        """
-
-        result = cls(**kwargs)
-        return result
-
     @staticmethod
-    def new_element(**elt_properties):
+    def new(**elt_properties):
         """Instantiate a new graph element related to elt properties.
 
         :param dict elt_properties: serialized elt properties.
@@ -204,11 +196,17 @@ class GraphElement(object):
 
         result = None
 
-        cls = elt_properties[GraphElement._CLS]
-
-        if cls is not None:
+        try:
+            cls = elt_properties[GraphElement._CLS]
+        except KeyError:
+            raise GraphElement.Error(
+                "Graph element class is not given in {0}".format(
+                    elt_properties
+                )
+            )
+        else:
             cls = lookup(cls)
-            result = cls.new(**elt_properties)
+            result = cls(**elt_properties)
 
         return result
 
@@ -234,8 +232,6 @@ class GraphElement(object):
         :param dict elts: elts by id.
         """
 
-        pass
-
     def save(self, manager, graph_ids=None, cache=False):
         """Save self into manager graphs.
 
@@ -246,8 +242,7 @@ class GraphElement(object):
         """
 
         # save the dict format
-        elt = self.to_dict()
-        manager.put_elt(elt=elt, graph_ids=graph_ids, cache=cache)
+        manager.put_elts(elts=self, graph_ids=graph_ids, cache=cache)
 
     def delete(self, manager, cache=False):
         """Delete self from manager.
@@ -328,9 +323,10 @@ class Edge(Vertice):
     ) + Vertice.__slots__
 
     def __init__(
-        self, weight=1, sources=None, targets=None, directed=DEFAULT_DIRECTED,
-        _dsources=None, _dtargets=None, _gsources=None, _gtargets=None,
-        *args, **kwargs
+            self, weight=1, sources=None, targets=None,
+            _dsources=None, _dtargets=None, _gsources=None, _gtargets=None,
+            directed=DEFAULT_DIRECTED,
+            *args, **kwargs
     ):
         """
         :param float weight: self weight.
@@ -484,9 +480,9 @@ class Graph(Vertice):
     ) + Vertice.__slots__
 
     def __init__(
-        self,
-        elts=None, _gelts=None, _delts=None, _sources=None, _targets=None,
-        *args, **kwargs
+            self,
+            elts=None, _gelts=None, _delts=None, _sources=None, _targets=None,
+            *args, **kwargs
     ):
         """
         :param list elts: self graph elt ids.
@@ -535,12 +531,12 @@ class Graph(Vertice):
             # ids is a set of graph element ids to compare with self.elts
             ids = set()
             # quick access to the field name GraphElement ID
-            id = GraphElement.ID
+            geid = GraphElement.ID
             for item in other:
                 if isinstance(item, basestring):
                     ids.add(item)
                 elif isinstance(item, dict):
-                    ids.add(item[id])
+                    ids.add(item[geid])
                 elif isinstance(item, GraphElement):
                     ids.add(item.id)
                 else:
@@ -603,7 +599,7 @@ class Graph(Vertice):
                 # get it
                 new_elt = _added_elts[elt_id]
             else:  # else, instantiate it
-                new_elt = GraphElement.new_element(**elt)
+                new_elt = GraphElement.new(**elt)
                 _added_elts[elt_id] = new_elt
                 # fill graph if depth > 0
                 if isinstance(new_elt, Graph) and depth > 0:
@@ -662,8 +658,8 @@ class Graph(Vertice):
                         self.elts.remove(elt_id)
             elif isinstance(elt, GraphElement):
                 elt_id = elt.id
-                if elt_id in self._gelt:
-                    del self._gelt[elt_id]
+                if elt_id in self._gelts:
+                    del self._gelts[elt_id]
                     if elt_id in self._delts:
                         del self._delts[elt_id]
                         if elt_id in self.elts:
@@ -751,7 +747,7 @@ class Graph(Vertice):
         elif self._delts:
             for elt_id in self._delts:
                 elt = self._delts[elt_id]
-                elt = Graph.new_element(**elt)
+                elt = Graph.new(**elt)
                 elt.save(manager=manager, cache=cache)
 
     def delete(self, manager, cache=False, del_orphans=True, *args, **kwargs):

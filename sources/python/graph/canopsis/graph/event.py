@@ -27,7 +27,7 @@ graph nodes in order to execute theirs tasks.
 from canopsis.graph.elements import Vertice, Edge, Graph
 from canopsis.graph.manager import GraphManager
 from canopsis.context.manager import Context
-from canopsis.task import register_task, run_task
+from canopsis.task.core import register_task, run_task
 from canopsis.event import forger, Event
 from canopsis.check import Check
 from canopsis.common.utils import singleton_per_scope
@@ -80,8 +80,6 @@ class BaseTaskedVertice(object):
 
         :param str entity_id: new entity id. If None, entity_id is removed.
         """
-
-        pass
 
     @property
     def task(self):

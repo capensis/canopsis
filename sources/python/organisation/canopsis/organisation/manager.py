@@ -56,7 +56,6 @@ class Organisation(MiddlewareRegistry):
         """
         Exception dedicated to Organisation methods errors
         """
-        pass
 
     def __init__(
         self,
@@ -223,8 +222,6 @@ class Organisation(MiddlewareRegistry):
         """
         Check whatever or not if user rights checked input permission
         """
-
-        pass
 
     def _conf(self, *args, **kwargs):
 

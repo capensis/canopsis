@@ -7,6 +7,7 @@ User guide
    :maxdepth: 2
    :titlesonly:
 
-   engines/index
-   events/index
+   quickstart/index
+   reminders/index
    UI/index
+   engines/index

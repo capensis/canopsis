@@ -23,7 +23,7 @@ from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.event import forger, get_routingkey
-from canopsis.task import register_task
+from canopsis.task.core import register_task
 from canopsis.tools import schema as cschema
 
 from traceback import format_exc, print_exc
@@ -573,12 +573,13 @@ def publish(event, publisher, rk=None, exchange=None, logger=None, **kwargs):
     """Task dedicated to publish an event from an engine.
 
     :param dict event to send.
-    :param publisher: resource able to publish the event with a
-        publish method. This method takes three parameters, the event,
-        the rk related to the event and en exchange name.
+    :param publisher: object in charge of publishing the event. Its method
+        ``publish`` takes three parameters, the ``event``, the ``rk`` related
+        to the event and an ``exchange name``.
+
     :param str rk: routing key to use. If None, use get_routingkey(event).
     :param str exchange: exchange name. If None, use
-        publisher.exchange_name_events.
+        ``publisher.exchange_name_events``.
     """
 
     if exchange is None:

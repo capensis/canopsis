@@ -18,17 +18,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.common.utils import get_first
 from canopsis.common.ws import route
 from canopsis.topology.manager import TopologyManager
-from canopsis.graph.elements import GraphElement
 from canopsis.old.rabbitmq import Amqp
 from canopsis.check import Check
 
-manager = TopologyManager()
-publisher = Amqp()
-
 
 def exports(ws):
+
+    manager = TopologyManager()
+    publisher = Amqp()
 
     @route(ws.application.get, name='topology/graphelts')
     @route(
@@ -101,8 +101,7 @@ def exports(ws):
         name='topology/graphelt'
     )
     def put_elt(elt, graph_ids=None, cache=False):
-        """
-        Put element.
+        """Put element.
 
         :param elt: element to put.
         :type elt: dict.
@@ -110,7 +109,9 @@ def exports(ws):
         :param bool cache: use query cache if True (False by default).
         """
 
-        manager.put_elts(elts=elt, graph_ids=graph_ids, cache=cache)
+        elts = manager.put_elts(elts=elt, graph_ids=graph_ids, cache=cache)
+
+        return get_first(elts)
 
     @route(
         ws.application.put,
@@ -118,30 +119,23 @@ def exports(ws):
         name='topology/graphelts'
     )
     def put_elts(elts, graph_ids=None, cache=False):
-        """
-        Put elements.
+        """Put elements.
 
-        :param elts: elements to put.
-        :type elts: dict or list.
-        :param str graph_ids: element topology id. None if elt is a topology.
+        :param dict(s) elts: element(s) to put.
+        :param str(s) graph_ids: element topology id.
         :param bool cache: use query cache if True (False by default).
         """
 
-        manager.put_elts(elts=elts, graph_ids=graph_ids, cache=cache)
+        gelts = manager.put_elts(elts=elts, graph_ids=graph_ids, cache=cache)
 
-        # ensure elts is a list of elements
-        if isinstance(elts, (dict, GraphElement)):
-            elts = [elts]
-
-        # process all elts
-        for elt in elts:
-            gelt = elt
-            if not isinstance(elt, GraphElement):
-                gelt = GraphElement.new_element(**elt)
+        # process all gelts
+        for gelt in gelts:
             event = {Check.STATE: gelt.state}
             gelt.process(event=event, manager=manager, publisher=publisher)
 
-        return elts
+        result = list([gelt.to_dict() for gelt in gelts])
+
+        return result
 
     @route(
         ws.application.delete,
@@ -403,7 +397,7 @@ def exports(ws):
         name='topology/vertices'
     )
     def get_vertices(
-        ids=None, graph_ids=None, types=None, info=None, query=None
+            ids=None, graph_ids=None, types=None, info=None, query=None
     ):
         """
         Get topology vertices related to some context property.

@@ -132,8 +132,6 @@ class GraphElementTest(TestCase):
         Test resolve_refs.
         """
 
-        pass
-
     def test_serialization(self):
         """
         Test serializations
@@ -142,7 +140,7 @@ class GraphElementTest(TestCase):
         # assert serialization are ok
         for elt in self.elts:
             elt_dict = elt.to_dict()
-            new_elt = elt.new(**elt_dict)
+            new_elt = self.get_type()(**elt_dict)
             self.assertEqual(new_elt, elt)
             new_elt_dict = new_elt.to_dict()
             self.assertEqual(elt_dict, new_elt_dict)

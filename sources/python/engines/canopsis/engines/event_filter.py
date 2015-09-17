@@ -205,9 +205,9 @@ class engine(Engine):
         """
         Change the route to which an event will be sent
         Args:
-            event map of the event to be modified
-            action map of type action
-            _name of the rule
+            event: map of the event to be modified
+            action: map of type action
+            name: of the rule
         Returns:
             ``None``
         """

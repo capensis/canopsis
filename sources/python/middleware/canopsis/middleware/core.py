@@ -137,8 +137,8 @@ class MetaMiddleware(MetaConfigurable):
 class Middleware(Configurable):
     """Abstract class which aims to manage middleware.
 
-    A middleware is a resource which connects itself to a foreign resource
-        such as a database, a mom broker, etc.
+    A middleware is a resource which connects itself to a foreign resource such
+    as a database, a mom broker, etc.
     Optionnaly, it is related to a data_type:
 
     - pubsub dedicated to events, status, etc.
@@ -195,8 +195,6 @@ class Middleware(Configurable):
     class Error(Exception):
         """Errors raised by the Middleware class.
         """
-
-        pass
 
     def __init__(
             self,
@@ -511,8 +509,6 @@ class Middleware(Configurable):
         :param conn: newly created connection.
         """
 
-        pass
-
     def disconnect(self):
         """Disconnect this database.
 
@@ -683,17 +679,15 @@ class Middleware(Configurable):
         """Get a reference to a middleware class registered by a protocol and a
         data_scope.
 
-        :param protocol: protocol name
-        :type protocol: str
+        :param str protocol: protocol name
 
-        :param data_type: data type name
-        :type data_type: str
+        :param str data_type: data type name
 
         :return: Middleware type
         :rtype: type
 
         :raise: Middleware.Error if no middleware is registered related to
-        input protocol and data_type.
+            input protocol and data_type.
         """
 
         # call dynamic middleware library loader

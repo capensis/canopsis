@@ -10,3 +10,4 @@ This document describes how do you administrate a Canopsis node, on a daily basi
 
    services/index
    engines/index
+   filldb

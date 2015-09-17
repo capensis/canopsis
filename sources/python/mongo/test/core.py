@@ -221,15 +221,15 @@ class StorageTest(TestCase):
         self.storage._cache_autocommit = 0.01
         # check the cache thread is started
         self.storage.remove_elements(cache=True)
-        self.assertTrue(self.storage._cache_thread.isAlive())
+        self.assertTrue(self.storage._cached_thread.isAlive())
 
         # check the cache thread is halted
         self.storage.halt_cache_thread()
-        self.assertFalse(self.storage._cache_thread.isAlive())
+        self.assertFalse(self.storage._cached_thread.isAlive())
 
         # check the cache thread is started twice
         self.storage.remove_elements(cache=True)
-        self.assertTrue(self.storage._cache_thread.isAlive())
+        self.assertTrue(self.storage._cached_thread.isAlive())
 
 if __name__ == '__main__':
     main()

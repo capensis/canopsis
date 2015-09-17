@@ -23,9 +23,9 @@ from unittest import TestCase, main
 
 
 class WatcherTest(TestCase):
-
-    def setUp(self):
-        pass
+    """Test about the watcher module.
+    """
+    raise NotImplementedError()
 
 if __name__ == '__main__':
     main()
