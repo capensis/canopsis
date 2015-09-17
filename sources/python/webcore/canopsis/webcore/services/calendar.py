@@ -76,8 +76,10 @@ def exports(ws):
             eventcategories=eventcategories, output=output,
             dtstart=dtstart, dtend=dtend
         )
+        calendar_vevents = []
+        calendar_vevents.append(calendarDocument)
 
-        result = cm.put(source=source, vevents=calendarDocument)
+        result = cm.put(source=source, vevents=calendar_vevents)
 
         return result
 
