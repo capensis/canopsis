@@ -24,7 +24,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from copy import deepcopy
 from time import time
-
+from json import dumps
 
 class engine(Engine):
     etype = "acknowledgement"
@@ -138,7 +138,7 @@ class engine(Engine):
 
             author = event['author']
 
-            self.logger.debug(event)
+            self.logger.debug(dumps(event, indent=2))
 
             if not rk:
                 self.logger.error(
@@ -234,22 +234,6 @@ class engine(Engine):
                         long_output=event['output'],
                     )
 
-                    ack_event = deepcopy(self.ack_event)
-                    ack_event['component'] = author
-                    ack_event['perf_data_array'] = [
-                        {
-                            'metric': 'delay',
-                            'value': duration,
-                            'unit': 's',
-                            'type': 'GAUGE'
-                        }
-                    ]
-
-                    publish(
-                        publisher=self.amqp, event=ack_event,
-                        exchange=self.acknowledge_on
-                    )
-
             # Now update counters
             ackhost = is_host_acknowledged(event)
             # Cast response to ! 0|1
@@ -277,7 +261,9 @@ class engine(Engine):
                 exchange=self.acknowledge_on
             )
 
-            self.logger.debug('Ack internal metric sent.')
+            self.logger.debug('Ack internal metric sent. {}'.format(
+                dumps(ack_event['perf_data_array'], indent=2)
+            ))
 
             for hostgroup in event.get('hostgroups', []):
                 ack_event = deepcopy(self.ack_event)
@@ -382,6 +368,9 @@ class engine(Engine):
             )
 
         if logevent:
+            self.logger.debug('publishing log event {}'.format(
+                dumps(logevent, indent=2)
+            ))
             publish(
                 publisher=self.amqp, event=logevent,
                 exchange=self.acknowledge_on
