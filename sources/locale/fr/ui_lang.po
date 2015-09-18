@@ -1,13 +1,13 @@
 # 
 # Translators:
 # eric regnier <eregnier@capensis.fr>, 2014-2015
-# Mourcia Mikael <mmourcia@yahoo.fr>, 2014
+# Mourcia Mikael <mmourcia@yahoo.fr>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-08-06 07:32+0000\n"
+"PO-Revision-Date: 2015-09-18 12:47+0000\n"
 "Last-Translator: eric regnier <eregnier@capensis.fr>\n"
 "Language-Team: French (http://www.transifex.com/ojan/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -161,7 +161,7 @@ msgid "Create"
 msgstr "Créer"
 
 msgid "For the selection"
-msgstr "Pour la sélection"
+msgstr "Sélection"
 
 msgid "Field to override"
 msgstr "Champ à écraser"
@@ -1943,3 +1943,9 @@ msgstr "système de stockage"
 
 msgid "Storages to clean"
 msgstr "Stockage à nettoyer"
+
+msgid "write template"
+msgstr "écrire un template"
+
+msgid "Selection"
+msgstr "Sélection"
