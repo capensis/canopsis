@@ -161,9 +161,10 @@ class engine(Engine):
                         )
                     )
 
+            ackts = int(time())
             ack_info = {
                 'timestamp': event['timestamp'],
-                'ackts': int(time()),
+                'ackts': ackts,
                 'rk': rk,
                 'author': author,
                 'comment': event['output']
@@ -204,66 +205,70 @@ class engine(Engine):
                 }
             )
 
-            if not response['lastErrorObject']['updatedExisting']:
-                record = response['value']
+            #When an ack status is changed
 
-                # Emit an event log
-                referer_event = self.storage.find_one(
-                    mfilter={'_id': rk},
-                    namespace='events'
-                )
-
-                if referer_event:
-
-                    referer_event = referer_event.dump()
-                    duration = record['ackts'] - referer_event.get(
-                        'last_state_change', record['timestamp']
-                    )
-                    logevent = forger(
-                        connector="Engine",
-                        connector_name=self.etype,
-                        event_type="log",
-                        source_type=referer_event['source_type'],
-                        component=referer_event['component'],
-                        resource=referer_event.get('resource', None),
-                        state=0,
-                        state_type=1,
-                        ref_rk=event['rk'],
-                        output=u'Event {0} acknowledged by {1}'.format(
-                            rk, author),
-                        long_output=event['output'],
-                    )
-
-            # Now update counters
-            ackhost = is_host_acknowledged(event)
-            # Cast response to ! 0|1
-            cvalues = int(not ackhost)
-
-            ack_event = deepcopy(self.ack_event)
-            ack_event['component'] = author
-            ack_event['perf_data_array'] = [
-                {
-                    'metric': 'alerts_by_host',
-                    'value': cvalues,
-                    'type': 'COUNTER'
-                },
-                {
-                    'metric': 'alerts_count_{}'.format(
-                        self.get_metric_name_adp(event)
-                    ),
-                    'value': 1,
-                    'type': 'COUNTER'
-                }
-            ]
-
-            publish(
-                publisher=self.amqp, event=ack_event,
-                exchange=self.acknowledge_on
+            # Emit an event log
+            referer_event = self.storage.find_one(
+                mfilter={'_id': rk},
+                namespace='events'
             )
 
-            self.logger.debug('Ack internal metric sent. {}'.format(
-                dumps(ack_event['perf_data_array'], indent=2)
-            ))
+            if referer_event:
+
+                referer_event = referer_event.dump()
+                duration = ackts - referer_event.get(
+                    'last_state_change', event['timestamp']
+                )
+                logevent = forger(
+                    connector="Engine",
+                    connector_name=self.etype,
+                    event_type="log",
+                    source_type=referer_event['source_type'],
+                    component=referer_event['component'],
+                    resource=referer_event.get('resource', None),
+                    state=0,
+                    state_type=1,
+                    ref_rk=event['rk'],
+                    output=u'Event {0} acknowledged by {1}'.format(
+                        rk, author),
+                    long_output=event['output'],
+                )
+
+                # Now update counters
+                ackhost = is_host_acknowledged(event)
+                # Cast response to ! 0|1
+                cvalues = int(not ackhost)
+
+                ack_event = deepcopy(self.ack_event)
+                ack_event['component'] = author
+                ack_event['perf_data_array'] = [
+                    {
+                        'metric': 'alerts_by_host',
+                        'value': cvalues,
+                        'type': 'COUNTER'
+                    },
+                    {
+                        'metric': 'alerts_count_{}'.format(
+                            self.get_metric_name_adp(event)
+                        ),
+                        'value': 1,
+                        'type': 'COUNTER'
+                    },
+                    {
+                       'metric': 'delay',
+                        'value': duration,
+                        'type': 'COUNTER'
+                    }
+                ]
+
+                publish(
+                    publisher=self.amqp, event=ack_event,
+                    exchange=self.acknowledge_on
+                )
+
+                self.logger.debug('Ack internal metric sent. {}'.format(
+                    dumps(ack_event['perf_data_array'], indent=2)
+                ))
 
             for hostgroup in event.get('hostgroups', []):
                 ack_event = deepcopy(self.ack_event)
