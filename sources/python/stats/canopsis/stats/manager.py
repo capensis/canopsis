@@ -160,7 +160,7 @@ class Stats(MiddlewareRegistry):
             event,
             devent
         )
-        self.logger.debug('New alert metric {}'.format(new_alert))
+        self.logger.info('New alert metric {}'.format(new_alert))
         if new_alert:
 
             solved = new_alert[0]['value'] == -1

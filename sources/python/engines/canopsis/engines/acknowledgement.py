@@ -346,7 +346,7 @@ class engine(Engine):
 
                     # Metric for solved alarms
                     ack_event = deepcopy(self.ack_event)
-                    ack_event['component'] = 'solved_alarm'
+                    ack_event['component'] = 'solved_alert'
                     ack_event['perf_data_array'] = [
                         {
                             'metric': 'delay',
