@@ -1,0 +1,16 @@
+{
+	"type": "object",
+	"metadata": {
+		"icon": "list-alt"
+	},
+	"categories": [{
+		"title": "General",
+		"keys":["popup_template"]
+	}],
+	"properties": {
+		"popup_template": {
+			"type": "string",
+			"role":"richtext"
+		}
+	}
+}
