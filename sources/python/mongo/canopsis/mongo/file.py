@@ -25,7 +25,6 @@ from canopsis.mongo.core import MongoStorage
 from canopsis.common.init import basestring
 from canopsis.common.utils import ensure_iterable
 
-from pymongo import version
 from gridfs import GridFS, NoFile
 
 
@@ -94,7 +93,7 @@ class MongoFileStorage(MongoStorage, FileStorage):
         finally:
             fs.close()
 
-    def get(self, name, version=-1):
+    def get(self, name, version=-1, with_meta=False):
 
         result = None
 
@@ -103,7 +102,11 @@ class MongoFileStorage(MongoStorage, FileStorage):
         except NoFile:
             pass
         else:
-            result = MongoFileStream(gridout)
+            if with_meta:
+                result = MongoFileStream(gridout), gridout.metadata
+
+            else:
+                result = MongoFileStream(gridout)
 
         return result
 
@@ -113,7 +116,15 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
         return result
 
-    def find(self, names=None, meta=None, sort=None, limit=-1, skip=0):
+    def find(
+        self,
+        names=None,
+        meta=None,
+        sort=None,
+        limit=-1,
+        skip=0,
+        with_meta=False
+    ):
 
         request = {}
 
@@ -135,7 +146,14 @@ class MongoFileStorage(MongoStorage, FileStorage):
         if skip > 0:
             cursor.skip(skip)
 
-        result = (MongoFileStream(gridout) for gridout in cursor)
+        if with_meta:
+            result = (
+                (MongoFileStream(gridout), gridout.metadata)
+                for gridout in cursor
+            )
+
+        else:
+            result = (MongoFileStream(gridout) for gridout in cursor)
 
         return result
 

@@ -89,11 +89,12 @@ class FileStorage(Storage):
 
         raise NotImplementedError()
 
-    def get(self, name, version=-1):
+    def get(self, name, version=-1, with_meta=False):
         """Get file stream related to input name.
 
         :param str name: file stream name.
         :param int version: file stream version. last if -1 (by default).
+        :param bool with_meta: return file's metadata.
         :return: corresponding filestream.
         :rtype: FileStream.
         """
@@ -120,7 +121,15 @@ class FileStorage(Storage):
 
         raise NotImplementedError()
 
-    def find(self, names=None, meta=None, sort=None, limit=-1, skip=0):
+    def find(
+        self,
+        names=None,
+        meta=None,
+        sort=None,
+        limit=-1,
+        skip=0,
+        with_meta=False
+    ):
         """Try to find file streams where names match with input names or meta
         data match with input meta.
 
@@ -131,6 +140,7 @@ class FileStorage(Storage):
         :param dict sort: sort criteria.
         :param int limit: limit criteria.
         :param int skip: skip criteria.
+        :param bool with_meta: return files with metadata
 
         :return: file stream(s) depending on input names value.
         :rtype: list or FileStream
