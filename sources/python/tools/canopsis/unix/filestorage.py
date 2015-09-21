@@ -20,7 +20,9 @@
 
 from canopsis.storage.file import FileStorage, FileStream
 from canopsis.common.utils import ensure_iterable
+from canopsis.old.mfilter import check
 
+from uuid import uuid4 as uuid
 import json
 import os
 
