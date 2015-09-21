@@ -20,7 +20,7 @@
 
 from canopsis.common.ws import route
 from canopsis.ccalendar.manager import CalendarManager
-
+from json import dumps
 cm = CalendarManager()
 
 
@@ -58,9 +58,17 @@ def exports(ws):
     )
     @route(
         ws.application.put, name='calendar',
-        payload=['eventcategories', 'output', 'dtstart', 'dtend']
+        payload=['eventcategories', 'output', 'dtstart', 'dtend', 'uid']
     )
-    def put(eventcategories, output, dtstart, dtend, source=None, info=None):
+    def put(
+        eventcategories,
+        output,
+        dtstart,
+        dtend,
+        uid=None,
+        source=None,
+        info=None
+    ):
         """Add calendar events (and optionally data) related to input source.
 
         :param str source: calendardata source if not None.
@@ -72,10 +80,19 @@ def exports(ws):
         :return: new documents.
         :rtype: list
         """
+        ws.logger.debug('eventcategories, {}'.format(
+            dumps(eventcategories, indent=2)
+        ))
         calendarDocument = cm.get_document(
-            eventcategories=eventcategories, output=output,
-            dtstart=dtstart, dtend=dtend
+            uid=uid,
+            eventcategories=eventcategories,
+            output=output,
+            dtstart=dtstart,
+            dtend=dtend
         )
+        ws.logger.debug('calendarDocument, {}'.format(
+            dumps(calendarDocument, indent=2)
+        ))
         calendar_vevents = []
         calendar_vevents.append(calendarDocument)
 
@@ -83,20 +100,11 @@ def exports(ws):
 
         return result
 
-    @route(
-        ws.application.delete, name='calendar',
-        payload=['uids']
-    )
-    def remove(uids=None):
-        """Remove elements from storage where uids are given.
-
-        :param list uids: list of document uids to remove from storage
-            (default all empty storage documents).
-        """
-
-        result = cm.remove(uids=uids)
-
-        return result
+    @route(ws.application.delete, payload=['ids'])
+    def calendar(ids):
+        result = cm.remove(uids=ids)
+        ws.logger.info('Delete : {}'.format(ids))
+        return True
 
     @route(
         ws.application.get, name='calendar/values',
