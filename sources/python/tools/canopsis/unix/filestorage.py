@@ -143,6 +143,9 @@ class UnixFileStorage(FileStorage):
         if with_meta:
             result = [(f, self.get_meta(f.name)) for f in result]
 
+        if sort is not None:
+            raise NotImplementedError('sort is not yet supported')
+
         return result
 
     def list(self):
