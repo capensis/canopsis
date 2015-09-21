@@ -26,6 +26,7 @@ from copy import deepcopy
 from time import time
 from json import dumps
 
+
 class engine(Engine):
     etype = "acknowledgement"
 
@@ -81,9 +82,6 @@ class engine(Engine):
 
     def get_metric_name_adp(self, event):
 
-        # allow metric naming by author/domain/perimeter (adp)
-        author = event.get('author', 'noauthor')
-
         domain = event.get('domain', '')
         perimeter = event.get('perimeter', '')
 
@@ -91,9 +89,9 @@ class engine(Engine):
 
         # If no domain, information domain perimeter is useless
         if domain:
-            domain_perimeter = '_d-{}p-{}'.format(domain, perimeter)
+            domain_perimeter = 'd-{}p-{}'.format(domain, perimeter)
 
-        metric_name_adp = '{}{}'.format(author, domain_perimeter)
+        metric_name_adp = '{}'.format(domain_perimeter)
 
         return metric_name_adp
 
@@ -205,7 +203,7 @@ class engine(Engine):
                 }
             )
 
-            #When an ack status is changed
+            # When an ack status is changed
 
             # Emit an event log
             referer_event = self.storage.find_one(
@@ -216,6 +214,8 @@ class engine(Engine):
             if referer_event:
 
                 referer_event = referer_event.dump()
+
+                # Duration between event last state and acknolegement date
                 duration = ackts - referer_event.get(
                     'last_state_change', event['timestamp']
                 )
@@ -255,7 +255,7 @@ class engine(Engine):
                         'type': 'COUNTER'
                     },
                     {
-                       'metric': 'delay',
+                        'metric': 'delay',
                         'value': duration,
                         'type': 'COUNTER'
                     }
@@ -309,6 +309,9 @@ class engine(Engine):
                 ack = self.stbackend.find_one(query)
 
                 if ack:
+
+                    ackts = ack['ackts']
+
                     self.stbackend.update(
                         query,
                         {
@@ -333,27 +336,35 @@ class engine(Engine):
                         ref_rk=event['rk'],
                         output=u'Acknowledgement removed for event {0}'.format(
                             event['rk']),
-                        long_output=u'Everything went back to normal',
-
-                        perf_data_array=[
-                            {
-                                'metric': 'ack_solved_delay',
-                                'value': solvedts - ack['ackts'],
-                                'unit': 's'
-                            }, {
-                                'metric': 'cps_alerts_ack_count_{}'.format(
-                                    self.get_metric_name_adp(event)
-                                ),
-                                'value': -1,
-                                'type': 'COUNTER'
-                            }
-                        ]
+                        long_output=u'Everything went back to normal'
                     )
 
                     logevent['acknowledged_connector'] = event['connector']
                     logevent['acknowledged_source'] = event['connector_name']
-                    logevent['acknowledged_at'] = ack['ackts']
+                    logevent['acknowledged_at'] = ackts
                     logevent['solved_at'] = solvedts
+
+                    # Metric for solved alarms
+                    ack_event = deepcopy(self.ack_event)
+                    ack_event['component'] = 'solved_alarm'
+                    ack_event['perf_data_array'] = [
+                        {
+                            'metric': 'delay',
+                            'value': solvedts - ackts,
+                            'unit': 's'
+                        },
+                        {
+                            'metric': 'count',
+                            'value': 1,
+                            'type': 'COUNTER'
+                        }
+                    ]
+
+                    publish(
+                        publisher=self.amqp, event=ack_event,
+                        exchange=self.acknowledge_on
+                    )
+
 
         # If the event is in problem state,
         # update the solved state of acknowledgement

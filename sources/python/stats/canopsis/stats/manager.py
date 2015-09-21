@@ -22,6 +22,7 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.event.manager import Event
 from canopsis.session.manager import Session
 from canopsis.event import forger
+from json import dumps
 
 
 class Stats(MiddlewareRegistry):
@@ -52,31 +53,29 @@ class Stats(MiddlewareRegistry):
         is_alert = self.event_manager.is_alert(event['state'])
         was_alert = self.event_manager.is_alert(devent['state'])
 
-        metric = None
-        # When alert
-        if is_alert:
-            # and event was not in alert
-            if not was_alert:
-                # Publish increment new_alarm count
-                metric = {
-                    'metric': 'cps_new_alert',
-                    'value': 1,
-                    'type': 'COUNTER'
-                }
-        elif was_alert:
+        perf_data_array = []
 
-            if not is_alert:
+        value = None
 
-                # Publish decrement new_alarm count
-                metric = {
-                    'metric': 'cps_new_alert',
-                    'value': -1,
-                    'type': 'COUNTER'
-                }
+        # When alert and event was not in alert
+        if is_alert and not was_alert:
+            # Publish increment new_alarm count
+            value = 1
 
-        self.logger.debug('new alert \n{}'.format(metric))
+        if was_alert and not is_alert:
+            # Publish decrement new_alarm count
+            value = -1
 
-        return metric
+        self.logger.debug('Alerts count {}'.format(value))
+
+        if value is not None:
+            perf_data_array.append({
+                'metric': 'alert_count',
+                'value': value,
+                'type': 'COUNTER'
+            })
+
+        return perf_data_array
 
     def solved_alarm_ack(self, devent):
 
@@ -110,13 +109,17 @@ class Stats(MiddlewareRegistry):
         :returns: a new event to be published if any metrics
         """
         perf_data_array = []
-
+        perf_data_array += self.new_alert_event_count(
+            event, devent
+        )
         perf_data_array += self.compute_ack_alerts(event, devent)
         perf_data_array += self.compute_by_states_and_sources(
             event,
             devent,
             new_event
         )
+        self.logger.info('compute stats generated perfdata')
+        self.logger.info(dumps(perf_data_array, indent=2))
 
         if len(perf_data_array):
             stats_event = forger(
@@ -153,16 +156,14 @@ class Stats(MiddlewareRegistry):
         perf_data_array = []
 
         # Compute alert stats and publish metrics if any
-        metric = self.new_alert_event_count(
+        new_alert = self.new_alert_event_count(
             event,
             devent
         )
-        self.logger.debug('metric computed {}'.format(metric))
-        if metric:
+        self.logger.debug('New alert metric {}'.format(new_alert))
+        if new_alert:
 
-            perf_data_array.append(metric)
-
-            solved = metric['value'] == -1
+            solved = new_alert[0]['value'] == -1
             self.logger.debug('solved alert {}'.format(solved))
             if solved:
                 # Compute alert ack depending on is ack
