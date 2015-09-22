@@ -13,9 +13,9 @@ Create a category chart in a view
 
 Inserting a category chart widget in a canopsis view requires management rights. please refer to the canopsis rights management to know more about this topic.
 
-First, choose a view where the weather will be inserted. When done, switch to insert widget edition mode, choose the category chart in the list and click on it. The specific form for the category chart is displayed and let input this widget configuration.
+First, choose a view where the category chart will be inserted. When done, switch to insert widget edition mode, choose the category chart in the list and click on it. The specific form for the category chart is displayed and let input this widget configuration.
 
-Weather parameters are explained below.
+Category chart parameters are explained below.
 
 Category chart widget configuration
 -----------------------------------
