@@ -85,11 +85,29 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
         return result
 
-    def put(self, name, data):
+    def put(self, name, data, meta=None):
 
         try:
-            fs = self.new_file(name=name)
+            fs = self.new_file(name=name, meta=meta)
             fs.write(data=data)
+        finally:
+            fs.close()
+
+    def put_meta(self, name, meta):
+        try:
+            oldf, _meta = self.get(name, with_meta=True)
+            _meta.update(meta)
+
+            fs = self.new_file(name=name, meta=_meta)
+
+            while True:
+                data = oldf.read(512)
+
+                if data is None:
+                    break
+
+                fs.write(data=data)
+
         finally:
             fs.close()
 
@@ -109,6 +127,11 @@ class MongoFileStorage(MongoStorage, FileStorage):
                 result = MongoFileStream(gridout)
 
         return result
+
+    def get_meta(self, name):
+        _, metadata = self.get(name, with_meta=True)
+
+        return metadata
 
     def exists(self, name):
 
@@ -191,4 +214,10 @@ class MongoFileStorage(MongoStorage, FileStorage):
         names = ensure_iterable(names)
 
         for name in names:
-            self.gridfs.delete(file_id=name)
+            while True:
+                fs = self.get(name)
+
+                if fs is None:
+                    break
+
+                self.gridfs.delete(file_id=fs._id)
