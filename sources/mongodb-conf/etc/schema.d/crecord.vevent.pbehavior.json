@@ -16,7 +16,11 @@
             "type": "array",
             "items": {
                 "type": "string",
-                "enum": ["downtime"],
+                "enum": [
+                    "downtime",
+                    "disabled",
+                    "off"
+                ],
                 "role": "simplelist"
             },
             "required": true
