@@ -172,7 +172,7 @@ class Archiver(Configurable):
                 if operation['collection'] == self.namespace:
                     events[_id] = operation
                 elif operation['collection'] == self.namespace_log:
-                    _id = '{}.{}'.format(_id, time())
+                    _id = u'{}.{}'.format(_id, time())
                     operation['event']['_id'] = _id
                     events_log[_id] = operation
                 else:
@@ -332,7 +332,7 @@ class Archiver(Configurable):
             status status of the current event
         """
 
-        log = 'Status is set to {} for event {}'.format(status, event['rk'])
+        log = u'Status is set to {} for event {}'.format(status, event['rk'])
         bagot_freq = event.get('bagot_freq', 0)
         values = {
             OFF: {
