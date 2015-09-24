@@ -13,7 +13,7 @@ extract those informations in order to create an **Entity**.
 
 The view *Context* allows you to see all detected entities.
 
-..note::
+.. note::
 
    Edition and suppression are ignored by the system. All modifications will be
    erased by the next incoming event.
