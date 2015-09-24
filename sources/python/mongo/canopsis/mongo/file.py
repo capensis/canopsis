@@ -30,6 +30,10 @@ from gridfs import GridFS, NoFile
 
 class MongoFileStream(FileStream):
 
+    @property
+    def name(self):
+        return self.gridout.filename
+
     def __init__(self, gridout):
 
         self.gridout = gridout

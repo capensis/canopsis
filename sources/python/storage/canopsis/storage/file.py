@@ -28,6 +28,13 @@ class FileStream(object):
     """File stream object stored in a FileStorage.
     """
 
+    @property
+    def name(self):
+        """Return file's name.
+        """
+
+        raise NotImplementedError()
+
     def close(self):
         """Close this file stream.
         """

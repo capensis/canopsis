@@ -28,6 +28,10 @@ import os
 
 
 class UnixFileStream(FileStream):
+    @property
+    def name(self):
+        return self.fileobj.name
+
     def __init__(self, fileobj):
         self.fileobj = fileobj
 
