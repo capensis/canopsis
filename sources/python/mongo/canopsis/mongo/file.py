@@ -195,7 +195,6 @@ class MongoFileStorage(MongoStorage, FileStorage):
         if name is None:
             name = str(uuid())
 
-        kwargs['_id'] = name
         kwargs['filename'] = name
 
         if meta is not None:
