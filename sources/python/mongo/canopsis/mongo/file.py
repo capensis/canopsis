@@ -107,7 +107,7 @@ class MongoFileStorage(MongoStorage, FileStorage):
             while True:
                 data = oldf.read(512)
 
-                if data is None:
+                if not data:
                     break
 
                 fs.write(data=data)
