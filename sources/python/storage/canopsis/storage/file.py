@@ -79,6 +79,18 @@ class FileStream(object):
 
         raise NotImplementedError()
 
+    def get_inner_object(self):
+        """Get backend file object.
+        """
+
+        raise NotImplementedError()
+
+    def __eq__(self, other):
+        """Check that file streams are equal.
+        """
+
+        raise NotImplementedError()
+
 
 class FileStorage(Storage):
     """

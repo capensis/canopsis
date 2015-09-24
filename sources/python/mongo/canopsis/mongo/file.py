@@ -59,6 +59,9 @@ class MongoFileStream(FileStream):
     def next(self):
         return MongoFileStream(self.gridout.next())
 
+    def get_inner_object(self):
+        return self.gridout
+
     def __eq__(self, other):
 
         return (
@@ -223,4 +226,4 @@ class MongoFileStorage(MongoStorage, FileStorage):
                 if fs is None:
                     break
 
-                self.gridfs.delete(file_id=fs._id)
+                self.gridfs.delete(file_id=fs.get_inner_object()._id)

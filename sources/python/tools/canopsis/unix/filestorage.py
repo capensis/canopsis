@@ -53,6 +53,9 @@ class UnixFileStream(FileStream):
     def next(self):
         return UnixFileStream(self.fileobj.next())
 
+    def get_inner_object(self):
+        return self.fileobj
+
     def __eq__(self, other):
         return (
             isinstance(other, self.__class__)
