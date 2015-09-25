@@ -11,6 +11,14 @@
 		"popup_template": {
 			"type": "string",
 			"role":"richtext"
+		},
+		"listed_behaviors": {
+			"isUserPreference": true,
+			"type": "array",
+			"items": {
+				"type": "string",
+				"default": ""
+			}
 		}
 	}
 }
