@@ -25,11 +25,12 @@ function do_cmd(){
 
     for service in ${processes[@]}
     do
-		if [[ "$service" =~ "*" && "$cmd" != "status" ]]; then
-        	service $service m$cmd > /dev/null 2>&1 &
-		else
-        	service $service $cmd > /dev/null 2>&1 &
-		fi
+        if [[ "$service" =~ "*" && "$cmd" != "status" ]]
+        then
+            service $service m$cmd > /dev/null 2>&1 &
+        else
+            service $service $cmd > /dev/null 2>&1 &
+        fi
         waitfor[$service]=$!
     done
 
