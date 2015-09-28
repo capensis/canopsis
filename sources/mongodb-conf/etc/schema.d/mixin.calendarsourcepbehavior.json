@@ -12,13 +12,12 @@
 			"type": "string",
 			"role":"richtext"
 		},
-		"listed_behaviors": {
-			"isUserPreference": true,
+		"behavior_filters": {
 			"type": "array",
 			"items": {
-				"type": "string",
-				"default": ""
-			}
+				"type": "string"
+			},
+			"isUserPreference": true
 		}
 	}
 }
