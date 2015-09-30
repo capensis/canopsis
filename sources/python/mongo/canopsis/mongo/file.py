@@ -165,7 +165,7 @@ class MongoFileStorage(MongoStorage, FileStorage):
                 request[MongoFileStorage.FILENAME] = {'$in': names}
 
         if meta is not None:
-            request.update(meta)
+            request = {'$and': [request, meta]}
 
         cursor = self.gridfs.find(request)
 
