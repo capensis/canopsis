@@ -145,7 +145,7 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
     def exists(self, name):
 
-        result = self.gridfs.exists(name)
+        result = self.gridfs.exists(filename=name)
 
         return result
 
