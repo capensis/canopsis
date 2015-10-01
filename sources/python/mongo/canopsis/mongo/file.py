@@ -136,9 +136,12 @@ class MongoFileStorage(MongoStorage, FileStorage):
         return result
 
     def get_meta(self, name):
-        _, metadata = self.get(name, with_meta=True)
+        result = self.get(name, with_meta=True)
 
-        return metadata
+        if result is not None:
+            result = result[1]
+
+        return result
 
     def exists(self, name):
 
