@@ -15,7 +15,7 @@
 		"behavior_filters": {
 			"type": "array",
 			"items": {
-				"type": "string"
+				"type": "object"
 			},
 			"isUserPreference": true
 		}

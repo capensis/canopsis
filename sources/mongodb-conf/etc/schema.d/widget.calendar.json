@@ -12,9 +12,7 @@
 			"bgcolor_eventlog",
 			"textcolor_eventlog",
 			"bgcolor_pbehavior",
-			"textcolor_pbehavior",
-			"bgcolor_userevent",
-			"textcolor_userevent"
+			"textcolor_pbehavior"
 		]
 	},{
 		"title": "Size",
