@@ -85,13 +85,13 @@ class engine(Engine):
         domain = event.get('domain', '')
         perimeter = event.get('perimeter', '')
 
-        domain_perimeter = ''
+        domain_perimeter = u''
 
         # If no domain, information domain perimeter is useless
         if domain:
-            domain_perimeter = 'd-{}p-{}'.format(domain, perimeter)
+            domain_perimeter = u'_d-{}p-{}'.format(domain, perimeter)
 
-        metric_name_adp = '{}'.format(domain_perimeter)
+        metric_name_adp = u'{}'.format(domain_perimeter)
 
         return metric_name_adp
 
@@ -248,7 +248,7 @@ class engine(Engine):
                         'type': 'COUNTER'
                     },
                     {
-                        'metric': 'alerts_count_{}'.format(
+                        'metric': 'alerts_count{}'.format(
                             self.get_metric_name_adp(event)
                         ),
                         'value': 1,
