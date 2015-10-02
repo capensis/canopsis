@@ -171,10 +171,7 @@ def send_event(
         event['connector_name'] = 'Send_event'
 
     #-----------------------------send event-----------------------------
-    clean_event = {}
-    for k in event:
-        v = event[k]
-        clean_event[k] = str(v).encode('utf-8')
+    clean_event = encode_json(event)
 
     request_params = {'event': dumps(clean_event)}
     request = Request(
@@ -182,6 +179,32 @@ def send_event(
     r = opener.open(request)
     print('Webserver replied :')
     print(r.read())
+
+
+def encode_array(arr):
+    ret = []
+    for x in arr:
+        if isinstance(x, dict):
+            ret.append(encode_json(x))
+        elif isinstance(x, (list, tuple)):
+            ret.append(encode_array(x))
+        else:
+            ret.append(str(x).encode('utf-8'))
+    return ret
+
+def encode_json(doc):
+    ret = {}
+    for k in doc:
+        v = doc[k]
+        # recursively encode dict
+        if isinstance(v, dict):
+            ret[k] = encode_json(v)
+        # iterate list/tuple to encode each element individually recursively
+        elif isinstance(v, (list, tuple)):
+            ret[k] = encode_array(v)
+        else:
+            ret[k] = str(v).encode('utf-8')
+    return ret
 
 
 if __name__ == "__main__":
