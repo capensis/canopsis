@@ -1,0 +1,15 @@
+{
+	"type": "object",
+	"metadata": {
+		"icon": "list-alt"
+	},
+	"properties": {
+		"userevent_filters": {
+			"type": "array",
+			"items": {
+				"type": "object"
+			},
+			"isUserPreference": true
+		}
+	}
+}
