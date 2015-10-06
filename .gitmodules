@@ -1,6 +1,3 @@
-[submodule "sources/reporting/opt/casperjs"]
-	path = sources/reporting/opt/casperjs
-	url = https://github.com/n1k0/casperjs
 [submodule "sources/externals"]
 	path = sources/externals
 	url = https://git.canopsis.net/canopsis/canopsis-externals.git
