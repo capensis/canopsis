@@ -22,6 +22,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "David Delassus", "2015/10/06", "0.2", "Add job context", ""
    "David Delassus", "2015/10/06", "0.1", "Document creation", ""
 
 Contents
@@ -44,8 +45,10 @@ Jobs
 
 A job is described by a :ref:`data schema <FR__Schema__Data>`, and **MUST** contain:
 
+ - an ID
  - a starting point
  - a recurrent rule
+ - a context, which can be anything
  - configuration for the task, also described by a :ref:`data schema <FR__Schema__Data>`
 
 .. _FR__Task__Scheduler:
@@ -60,6 +63,11 @@ If the fetched jobs must be executed (depending on its recurrent rule), its task
 It **SHOULD** provide an event processing algorithm, where the received event is
 a :ref:`job <FR__Task__Job>`.
 The received job will then be dispatched to the corresponding task handler.
+
+When the scheduler dispatch a task, it **MUST** add the following informations:
+
+ - context received with the :ref:`job <FR__Task__Job>`
+ - job ID
 
 .. _FR__Task__Handler:
 
