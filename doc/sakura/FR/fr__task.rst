@@ -22,8 +22,8 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "David Delassus", "2015/10/06", "0.2", "Add job context", ""
-   "David Delassus", "2015/10/06", "0.1", "Document creation", ""
+   "David Delassus", "2015/10/06", "0.2", "Add job context", "Jonathan Labéjof"
+   "David Delassus", "2015/10/06", "0.1", "Document creation", "Jonathan Labéjof"
 
 Contents
 ========
@@ -60,11 +60,10 @@ The scheduler engine **MUST** periodically fetch :ref:`jobs <FR__Task__Job>`.
 
 If the fetched jobs must be executed (depending on its recurrent rule), its task will be dispatched to the corresponding task handler.
 
-It **SHOULD** provide an event processing algorithm, where the received event is
-a :ref:`job <FR__Task__Job>`.
+It **SHOULD** provide an event processing algorithm, where the received event is a :ref:`job <FR__Task__Job>`.
 The received job will then be dispatched to the corresponding task handler.
 
-When the scheduler dispatch a task, it **MUST** add the following informations:
+When the scheduler dispatches a task, it **MUST** add the following informations:
 
  - context received with the :ref:`job <FR__Task__Job>`
  - job ID

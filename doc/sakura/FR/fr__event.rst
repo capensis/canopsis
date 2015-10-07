@@ -9,8 +9,9 @@ This document describes the structure of events in Canopsis.
 .. contents::
    :depth: 2
 
+----------
 References
-==========
+----------
 
 List of referenced function requirements:
 
@@ -19,16 +20,18 @@ List of referenced function requirements:
  - :ref:`FR::Context <FR__Context>`
  - :ref:`FR::Metric <FR__Metric>`
 
+-------
 Updates
-=======
+-------
 
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "David Delassus", "2015/10/06", "0.1", "Document creation", ""
+   "David Delassus", "2015/10/06", "0.1", "Document creation", "Jonathan Labéjof"
 
+--------
 Contents
-========
+--------
 
 Description
 -----------
