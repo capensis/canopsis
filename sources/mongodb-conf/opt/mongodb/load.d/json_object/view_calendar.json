@@ -32,19 +32,14 @@
 					      "name": "customfilterlist",
 					      "filters" : [
 					        {
-					          "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+					          "filter" : "{\"$or\":[{\"$and\":[{\"event_type\":{\"$eq\":\"check\"}}]}]}",
 					          "cfilter" : "",
-					          "title" : "Alert not ack"
+					          "title" : "Check"
 					        },
 					        {
-					          "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+					          "filter" : "{\"$or\":[{}]}",
 					          "cfilter" : "",
-					          "title" : "Ack"
-					        },
-					        {
-					          "filter" : "{\"$or\":[{\"$and\":[{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
-					          "cfilter" : "",
-					          "title" : "Alert"
+					          "title" : "All"
 					        }
 					      ],
 					      "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}"
