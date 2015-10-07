@@ -4,8 +4,10 @@
 [submodule "sources/externals"]
 	path = sources/externals
 	url = https://git.canopsis.net/canopsis/canopsis-externals.git
-	branch = develop
+	ignore = dirty
+	branch = master
 [submodule "sources/webcore"]
 	path = sources/webcore
 	url = https://git.canopsis.net/canopsis/canopsis-webcore.git
-	branch = develop
+	ignore = dirty
+	branch = master

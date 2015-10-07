@@ -37,8 +37,11 @@ modules = [
     'canopsis-ui',
     'userpreferences',
     'charts',
+<<<<<<< .merge_file_G11bdc
     'canopsis-vevent',
     'canopsis-pbehavior',
+=======
+>>>>>>> .merge_file_fqF3qf
     'canopsis-rights'
 ]
 

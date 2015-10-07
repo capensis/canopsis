@@ -52,6 +52,7 @@ def update():
                 find_weathers(view['containerwidget']['items'])
 
         log('Updating view: {0}'.format(view['_id']))
+<<<<<<< .merge_file_hPI28J
 
         try:
             dbconf.put(view['_id'], view)
@@ -68,6 +69,25 @@ def update():
                 view.get('title', view['_id'])
             ))
 
+=======
+
+        try:
+            dbconf.put(view['_id'], view)
+
+        except Exception as err:
+            log('Error updating view {0}: {1}'.format(view['_id'], err))
+            backup.append(view)
+
+        log('Ensure rights for view: {0}'.format(view['_id']))
+
+        actions = rights.get_action([view['_id']])
+
+        if not actions:
+            rights.add(view['_id'], 'Access to view {0}'.format(
+                view.get('title', view['_id'])
+            ))
+
+>>>>>>> .merge_file_ahAnHI
     if backup:
         bakdir = os.path.join(
             sys.prefix, 'var', 'cache', 'canopsis', 'migration'
@@ -93,7 +113,11 @@ def find_weathers(items):
             find_weathers(widget['items'])
 
         if widget['xtype'] == 'weather' and 'event_selection' in widget:
+<<<<<<< .merge_file_hPI28J
             log(u'Processing weather in widget: {0}'.format(widget['title']))
+=======
+            log('Processing weather in widget: {0}'.format(widget['title']))
+>>>>>>> .merge_file_ahAnHI
 
             widget['event_selection'] = transform_event_selection(
                 widget['event_selection']
@@ -112,6 +136,13 @@ def transform_event_selection(event_selection):
                 'label': 'label',
                 'rk': value
             }
+<<<<<<< .merge_file_hPI28J
+=======
+
+        selection.append(value)
+
+    return selection
+>>>>>>> .merge_file_ahAnHI
 
         selection.append(value)
 
