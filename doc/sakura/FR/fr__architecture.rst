@@ -14,8 +14,8 @@ References
 
 List of referenced functional requirements...
 
- - :ref:`FR__Engine <FR__Engine>`
- - :ref:`FR__JSON-API-Protocol <FR__JSON_API_Protocol>`
+ - :ref:`FR::Engine <FR__Engine>`
+ - :ref:`FR::JSON-API-Protocol <FR__JSON_API_Protocol>`
 
 Updates
 =======
