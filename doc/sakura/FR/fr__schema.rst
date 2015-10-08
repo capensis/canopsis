@@ -12,6 +12,8 @@ This document describes the concept of schema in Canopsis.
 References
 ==========
 
+ - :ref:`FR::Storage <FR__Storage>`
+
 Updates
 =======
 
@@ -30,7 +32,7 @@ A schema is used to describe:
 
  - data: how data is structured, in order to generate models for it
  - transformation: how data can be turned into another data
- - components: how Canopsis components interact (chaining, ...)
+ - components: how Canopsis components interact with data (chaining, ...)
 
 .. _FR__Schema__Data:
 
@@ -62,7 +64,7 @@ And it **MUST** contain a mapping of:
 Component Schema
 ----------------
 
-This schema describe the configuration of Canopsis components, for example:
+This schema describes the configuration of Canopsis components, for example:
 
  - what storage to use
  - what other components to chain data to
