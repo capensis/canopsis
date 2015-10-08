@@ -14,8 +14,8 @@ References
 
 List of referenced functional requirements...
 
- - :ref:`FR__Engine <FR__Engine>`
- - :ref:`FR__JSON-API-Protocol <FR__JSON_API_Protocol>`
+ - :ref:`FR::Engine <FR__Engine>`
+ - :ref:`FR::JSON-API-Protocol <FR__JSON_API_Protocol>`
 
 Updates
 =======
@@ -23,12 +23,15 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "David Delassus", "2015/09/16", "0.4", "Update data storage requirements", ""
    "David Delassus", "2015/09/01", "0.3", "Update references", ""
    "David Delassus", "2015/09/01", "0.2", "Rename document", ""
    "David Delassus", "2015/09/01", "0.1", "Document creation", ""
 
 Contents
 ========
+
+.. _FR__Architecture__Desc:
 
 Description
 -----------
@@ -42,11 +45,15 @@ To know those requirements we have to know its needs :
  - in order to store incoming data, it will need a database platform
  - to expose data, it will need a web server to process requests
 
+.. _FR__Architecture__DataSrc:
+
 Data Source
 -----------
 
 A data source MUST be independent and MUST NOT rely on Canopsis toolchain to
 produce messages.
+
+.. _FR__Architecture__Messaging:
 
 Messaging Queue System
 ----------------------
@@ -62,6 +69,8 @@ The technical solution MUST support :
  - consumers subscription to a set of messages
  - authentication support
 
+.. _FR__Architecture__DataStore:
+
 Data storage
 ------------
 
@@ -73,6 +82,9 @@ The technical solution MUST support :
  - indexing
  - in memory cache
  - authentication support
+ - file storage support
+
+.. _FR__Architecture__DataServe:
 
 Data exposure
 -------------
@@ -82,6 +94,8 @@ Data will be exposed to the front-end via an API which MUST support :
  - :ref:`JSON custom protocol <TR__JSON_API_Protocol>`
  - authentication (with credentials or token)
  - external authentication (with CAS, LDAP)
+
+.. _FR__Architecture__Schema:
 
 Schema
 ======
