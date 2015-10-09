@@ -90,9 +90,7 @@
             "role": "array",
             "items": {
                 "type": "object",
-                "role": "metricitem",
-                "relationship": "belongsTo",
-                "model": "stylizedmetric"
+                "role": "metricitem"
             }
         }
     }
