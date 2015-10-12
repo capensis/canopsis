@@ -53,7 +53,6 @@ CATEGORY = 'ARCHIVER'
 @add_category(CATEGORY)
 class Archiver(Configurable):
 
-    stats_manager = Stats()
 
     def __init__(
         self, namespace, confnamespace='object', storage=None, autolog=False,
@@ -102,6 +101,8 @@ class Archiver(Configurable):
 
         self.reset_stealthy_event_duration = time()
         self.reset_stats()
+
+        self.stats_manager = Stats()
 
     def reset_stats(self):
         self.stats = {
