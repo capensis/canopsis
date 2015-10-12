@@ -58,6 +58,15 @@
 			"default": 100,
 			"role": "slider",
 			"description": "Calendar width in percent relative to the widget"
+		},
+		"user_filters": {
+			"type": "array",
+			"isUserPreference": true,
+			"items": {
+				"type": "object",
+				"objectDict": { "title": "untitled filter", "cfilter": ""},
+				"role": "cfilterwithproperties"
+			}
 		}
 	}
 }
