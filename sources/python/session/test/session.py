@@ -29,7 +29,7 @@ class SessionManagerTest(TestCase):
     def setUp(self):
         self.session_manager = Session()
         self.user = 'test_user'
-        self.session_manager.remove([], remove_all=True)
+        self.session_manager[Session.ENTITY_STORAGE].remove_elements()
 
 
 class SessionTest(SessionManagerTest):
@@ -72,21 +72,23 @@ class SessionTest(SessionManagerTest):
         self.session_manager.session_start(self.user)
 
         sessions = list(self.session_manager.get_new_inactive_sessions())
+
         self.assertEqual(len(sessions), 0)
 
-        delta = self.session_manager.alive_session_duration
-        self.session_manager.put(
-            self.user,
-            {'last_check': time() - delta}
+        delta = self.session_manager.alive_session_duration + 1
+        self.session_manager[Session.ENTITY_STORAGE].put_element(
+            _id=self.user,
+            element={'last_check': time() - delta}
         )
         sessions = list(self.session_manager.get_new_inactive_sessions())
+
         self.assertEqual(len(sessions), 1)
 
         self.session_manager.session_start(self.user + '1')
 
-        self.session_manager.put(
-            self.user + '1',
-            {'last_check': time() - delta}
+        self.session_manager[Session.ENTITY_STORAGE].put_element(
+            _id=self.user + '1',
+            element={'last_check': time() - delta}
         )
         sessions = list(self.session_manager.get_new_inactive_sessions())
         self.assertEqual(len(sessions), 1)
