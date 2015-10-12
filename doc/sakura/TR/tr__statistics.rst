@@ -57,6 +57,8 @@ At the moment, statistics that are computed from the manager are covered by unit
 
 Writting statistics business code within a manager is the best way to isolate specific code and keep control on how it can be tested.
 
+Automated tests to run for this feature are located in the python sources folder : stats/test/stats.py this will test the stats manager.
+
 Functional tests
 >>>>>>>>>>>>>>>>
 

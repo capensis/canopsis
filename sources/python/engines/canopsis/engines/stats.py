@@ -88,6 +88,7 @@ class engine(Engine):
             connector_name='engine',
             event_type='perf',
             source_type='resource',
+            component='__canopsis__',
             resource='Engine_stats',
             state=0,
             perf_data_array=perfdatas

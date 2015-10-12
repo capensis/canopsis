@@ -1,8 +1,8 @@
 .. _FR__Title:
 
-===========
-Statisctics
-===========
+==========
+Statistics
+==========
 
 This document explains Canopsis statistic design.
 
@@ -36,3 +36,18 @@ Canopsis comes with the idea to be monitorable. This is why it is intersting for
 
 The way canopsis monitors it's activity is by generating events that contains metric information. These events are published into the canopsis entry AMQP entry point where the event is processed by the perfdata engine. This engine is in charge to extract metric information, store and make them available through the Canopsis API for Canopsis clients such as the Canopsis UI or any program that may query the API.
 
+Indicators
+----------
+
+This is a list of the computed indicators that are executed depending in it's nature. This table also describe how to functionnaly produce metrics.
+
+.. csv-table::
+   :header: "Component", "Resource", "Metric", "Type", "Production"
+
+   "__canopsis__",  "Engine_stats", "cps_session_delay_user_<username>", "gauge", "Login with a user then logout for at least 5 minutes to produce the metric for the current user."
+   "#AUTHOR", "ack", "alerts_count[_<domain><perimeter>]", "counter", "Produce an ack for an alert event depending on whether domain information exists. This metric is incremented when an alert is acknowleged."
+   "#AUTHOR", "ack", "delay", "gauge", "Acknowlege an event after an event is on alert. The delta between the alert and the ack define the value of the metric."
+   "solved_alarm", "ack", "count", "counter", "A solved alert (state back to 0) that was acknowleged will increment the metric value."
+   "solved_alert", "ack", "delay", "gauge", "A solved alert (state back to 0) that was acknowleged will increment the duration metric value."
+   "__canopsis__", "ack", "cps_solved_ack_alarms", "counter", "A solved alarm (back to 0 state) that was ack will increment the metric value."
+   "__canopsis__", "ack", "cps_solved_not_ack_alarms", "counter", "A solved alarm (back to 0 state) that was NOT ack will increment the metric value."
