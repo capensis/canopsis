@@ -51,3 +51,9 @@ This is a list of the computed indicators that are executed depending in it's na
    "solved_alert", "ack", "delay", "gauge", "A solved alert (state back to 0) that was acknowleged will increment the duration metric value."
    "__canopsis__", "ack", "cps_solved_ack_alarms", "counter", "A solved alarm (back to 0 state) that was ack will increment the metric value."
    "__canopsis__", "ack", "cps_solved_not_ack_alarms", "counter", "A solved alarm (back to 0 state) that was NOT ack will increment the metric value."
+
+
+Performance tests
+-----------------
+
+Testing performance for this feature consists in check that canopsis amqp queues does not fall when many ack are sent to the canopsis instance. Considering that Canopsis at the moment can manager about 700 events/s, the ack proportion of these event made by users have to be maximised for performance test issue.
