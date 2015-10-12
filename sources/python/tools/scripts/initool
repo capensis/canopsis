@@ -1,4 +1,4 @@
-#!/opt/canopsis/bin/python
+#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 import ConfigParser
@@ -27,7 +27,7 @@ def set_confopt(confpath, section, name=None, value=None):
             config.add_section(section)
 
         if name is not None:
-			config.set(section, name, value)
+            config.set(section, name, value)
 
         with open(confpath, 'w') as f:
             config.write(f)
