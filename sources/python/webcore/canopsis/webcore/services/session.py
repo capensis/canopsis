@@ -67,14 +67,6 @@ def exports(ws):
     @route(ws.application.get, name='account/me', adapt=False)
     def get_me():
         user = get_user()
-        # Set user's defaultview from it's role (if any) if user have no one.
-        if not user.get('defaultview'):
-            role = user.get('role')
-            if role:
-                rights = get_rights()
-                role_default_view = rights.get_role('admin').get('defaultview')
-                if role_default_view:
-                    user['defaultview'] = role_default_view
         user.pop('id', None)
         user.pop('eid', None)
         return user
