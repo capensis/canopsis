@@ -20,7 +20,7 @@
 
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
-from canopsis.basecrud.manager import BaseCrud
+from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.parameters import Parameter
 from time import time
 
@@ -34,7 +34,7 @@ CONFIG = [
 
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY, content=CONFIG)
-class Session(BaseCrud):
+class Session(MiddlewareRegistry):
 
     """
     Manage session information in Canopsis
@@ -54,7 +54,9 @@ class Session(BaseCrud):
         self._alive_session_duration = value
 
     def keep_alive(self, username):
-        self.put(username, {'last_check': time()})
+        self[Session.ENTITY_STORAGE].put_element(
+            _id=username, element={'last_check': time()}
+        )
 
     def is_user_session_active(self, username):
 
@@ -79,12 +81,16 @@ class Session(BaseCrud):
         # active session test avoid start session
         # reset if session is still active
         if not self.is_user_session_active(username):
-            self.put(username, {
-                'session_start': time(),
-                'last_check': time(),
-                'active': True,
-                'session_stop': -1
-            })
+
+            self[Session.ENTITY_STORAGE].put_element(
+                _id=username,
+                element={
+                    'session_start': time(),
+                    'last_check': time(),
+                    'active': True,
+                    'session_stop': -1
+                }
+            )
 
     def get_new_inactive_sessions(self):
 
@@ -96,9 +102,12 @@ class Session(BaseCrud):
         """
 
         active_limit_date = time() - self.alive_session_duration
-        sessions = list(self.find(query={
-            'last_check': {'$lte': active_limit_date}
-        }))
+
+        sessions = self[Session.ENTITY_STORAGE].get_elements(
+            query={
+                'last_check': {'$lte': active_limit_date}
+            }
+        )
 
         new_inactive_sessions = []
         # Upsert end date if not already set
@@ -106,10 +115,14 @@ class Session(BaseCrud):
         for session in sessions:
             if session['session_stop'] == -1:
                 session['session_stop'] = now
-                self.put(session['_id'], {
-                    'session_stop': now,
-                    'active': False
-                })
+
+                self[Session.ENTITY_STORAGE].put_element(
+                    _id=session['_id'],
+                    element={
+                        'session_stop': now,
+                        'active': False
+                    }
+                )
                 new_inactive_sessions.append(session)
 
         return new_inactive_sessions
@@ -138,4 +151,5 @@ class Session(BaseCrud):
         :param: username
         :returns: a dict with user's session information
         """
-        return self.find(ids=username)
+
+        return self[Session.ENTITY_STORAGE].get_elements(ids=username)
