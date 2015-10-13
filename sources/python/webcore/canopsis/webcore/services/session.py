@@ -22,8 +22,9 @@ from canopsis.common.ws import route
 from bottle import request
 from .rights import get_manager as get_rights
 from canopsis.session.manager import Session
+from canopsis.common.utils import singleton_per_scope
 
-session_manager = Session()
+session_manager = singleton_per_scope(Session)
 
 
 def get():
@@ -89,4 +90,3 @@ def exports(ws):
     @route(ws.application.get, payload=['username'], adapt=False)
     def sessionstart(username):
         session_manager.session_start(username)
-
