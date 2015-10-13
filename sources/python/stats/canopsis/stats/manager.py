@@ -37,7 +37,25 @@ class Stats(MiddlewareRegistry):
     def __init__(self, *args, **kwargs):
 
         super(Stats, self).__init__(self, *args, **kwargs)
-        self.perf_data_array = []
+        self.set_perf_data_array([])
+
+    def set_perf_data_array(self, perf_data_array):
+
+        """
+        Property perf_data_array setter
+
+        :param: value perf_data_array set the perf_data_array value
+        """
+
+        self.perf_data_array = perf_data_array
+
+    def get_perf_data_array(self):
+
+        """
+        Property perf_data_array getter
+        """
+
+        return self.perf_data_array
 
     def new_alert_event_count(self, event, devent):
 

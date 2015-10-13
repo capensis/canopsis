@@ -53,7 +53,7 @@ class engine(Engine):
 
         self.logger.debug('Entered in stats consume dispatcher')
 
-        self.stats_manager.perf_data_array = []
+        self.stats_manager.set_perf_data_array([])
 
         self.compute_states()
 
@@ -79,7 +79,7 @@ class engine(Engine):
 
     def publish_states(self):
 
-        perfdatas = self.stats_manager.perf_data_array
+        perfdatas = self.stats_manager.get_perf_data_array()
 
         stats_event = forger(
             connector='engine',
