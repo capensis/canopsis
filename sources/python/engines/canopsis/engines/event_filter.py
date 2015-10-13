@@ -221,13 +221,26 @@ class engine(Engine):
 
         return None
 
+    def a_exec_job(self, event, action, name):
+        records = self.storage.find(
+            {'crecord_type': 'job', '_id': action['job'] }
+        )
+        for record in records:
+            job = record.dump()
+            job['context'] = event
+            publish(publisher=self.amqp, event=job, rk='Engine_scheduler', exchange='amq.direct')
+            #publish(publisher=self.amqp, event=job, rk='Engine_scheduler')
+        return True
+
     def apply_actions(self, event, actions):
         pass_event = False
         actionMap = {'drop': self.a_drop,
                      'pass': self.a_pass,
                      'override': self.a_modify,
                      'remove': self.a_modify,
-                     'route': self.a_route}
+					 'execjob': self.a_exec_job,
+                     'route': self.a_route
+					}
 
         for name, action in actions:
             if (action['type'] in actionMap):
@@ -397,3 +410,5 @@ class engine(Engine):
             "No default action found. Assuming default action is pass"
         )
         return 'pass'
+
+

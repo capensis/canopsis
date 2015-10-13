@@ -80,9 +80,7 @@
             "role": "array",
             "items": {
                 "type": "object",
-                "role": "serieitem",
-                "relationship": "belongsTo",
-                "model": "stylizedserie"
+                "role": "serieitem"
             }
         },
         "metrics": {
@@ -90,9 +88,7 @@
             "role": "array",
             "items": {
                 "type": "object",
-                "role": "metricitem",
-                "relationship": "belongsTo",
-                "model": "stylizedmetric"
+                "role": "metricitem"
             }
         }
     }

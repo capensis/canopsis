@@ -57,6 +57,11 @@ class engine(Engine):
 
         jobs = self.storage.find({'$and': [
             {'crecord_type': 'job'},
+			{'$or': [
+				{'jtype': {'$exists': False}},
+				{'jtype': None },
+				{'jtype': 'scheduled'}
+			]},
             {'$or': [
                 {'last_execution': {'$lte': prev}},
                 {'last_execution': None},
