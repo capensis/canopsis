@@ -18,7 +18,7 @@ def get_confopt(confpath, section, name):
         return False, err
 
 
-def set_ confopt(confpath, section, name, value):
+def set_confopt(confpath, section, name, value):
     try:
         config = ConfigParser.ConfigParser()
         config.read(confpath)
