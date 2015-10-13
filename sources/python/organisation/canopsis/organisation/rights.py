@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from logging import ERROR
-
+from uuid import uuid4
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
@@ -744,10 +744,13 @@ class Rights(MiddlewareRegistry):
         if user:
             return user
 
-        user = {'crecord_type': 'user',
-                'enable': True,
-                'crecord_name': u_id,
-                'role': u_role}
+        user = {
+            'crecord_type': 'user',
+            'enable': True,
+            'crecord_name': u_id,
+            'role': u_role,
+            'authkey': str(uuid4())
+        }
 
         if contact and isinstance(contact, dict):
             user['contact'] = contact
