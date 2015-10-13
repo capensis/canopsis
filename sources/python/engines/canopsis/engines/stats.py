@@ -30,8 +30,6 @@ class engine(Engine):
 
     etype = 'stats'
 
-    stats_manager = Stats()
-
     """
     This engine's goal is to compute canopsis internal statistics.
     Statistics are computed on each passing event and are updated
@@ -40,9 +38,9 @@ class engine(Engine):
 
     def pre_run(self):
 
+        self.stats_manager = Stats()
+
         self.beat()
-        #TODO remove consume dispatcher call
-        self.consume_dispatcher({})
 
     def consume_dispatcher(self, event, *args, **kargs):
 
