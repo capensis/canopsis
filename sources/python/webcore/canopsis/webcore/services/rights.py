@@ -101,8 +101,9 @@ def save_user(ws, record):
     urights = record.pop('rights', None)
     ugroup = record.pop('groups', None)
 
-    # Remove authkey from record if null
-    'authkey' in record and record.pop('authkey')
+    # Remove authkey from record when None
+    # Prevents update with None value
+    record.pop('authkey', None)
 
     if ucontact is None:
         ucontact = {
