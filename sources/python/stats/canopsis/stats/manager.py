@@ -27,8 +27,6 @@ from json import dumps
 
 class Stats(MiddlewareRegistry):
 
-    event_manager = Event()
-    session_manager = Session()
 
     """
     Manage stats in Canopsis
@@ -38,6 +36,10 @@ class Stats(MiddlewareRegistry):
 
         super(Stats, self).__init__(self, *args, **kwargs)
         self.set_perf_data_array([])
+
+        self.event_manager = Event()
+        self.session_manager = Session()
+
 
     def set_perf_data_array(self, perf_data_array):
 
