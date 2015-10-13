@@ -24,8 +24,6 @@ from .rights import get_manager as get_rights
 from canopsis.session.manager import Session
 from canopsis.common.utils import singleton_per_scope
 
-session_manager = singleton_per_scope(Session)
-
 
 def get():
     return request.environ.get('beaker.session')
@@ -68,6 +66,9 @@ def delete():
 
 
 def exports(ws):
+
+    session_manager = singleton_per_scope(Session)
+
     @route(ws.application.get, name='account/me', adapt=False)
     def get_me():
         user = get_user()
