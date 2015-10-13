@@ -21,6 +21,7 @@
 
 from unittest import TestCase, main
 from canopsis.stats.manager import Stats
+from copy import deepcopy
 
 
 class StatsManagerTest(TestCase):
@@ -39,33 +40,33 @@ class StatsManagerTest(TestCase):
 class StatsTest(StatsManagerTest):
     def test_new_alert_event_count(self):
 
-        event = self.fake_event.copy()
-        devent = self.fake_event.copy()
+        event = deepcopy(self.fake_event)
+        devent = deepcopy(self.fake_event)
 
         event['state'] = 0
         devent['state'] = 1
 
         metric = self.stats_manager.new_alert_event_count(event, devent)
-        self.assertEqual(metric['value'], -1)
+        self.assertEqual(metric[0]['value'], -1)
 
         event['state'] = 1
         devent['state'] = 0
 
         metric = self.stats_manager.new_alert_event_count(event, devent)
-        self.assertEqual(metric['value'], 1)
+        self.assertEqual(metric[0]['value'], 1)
 
         # When no metrics, event is not generated
         event['state'] = 0
         devent['state'] = 0
 
         metric = self.stats_manager.new_alert_event_count(event, devent)
-        self.assertIsNone(metric)
+        self.assertEqual(len(metric), 0)
 
         event['state'] = 1
         devent['state'] = 1
 
         metric = self.stats_manager.new_alert_event_count(event, devent)
-        self.assertIsNone(metric)
+        self.assertEqual(len(metric), 0)
 
     def test_solved_alarm_ack(self):
 
@@ -87,22 +88,22 @@ class StatsTest(StatsManagerTest):
         )
 
     def test_compute_ack_alerts(self):
-        event = self.fake_event.copy()
-        devent = self.fake_event.copy()
+        event = deepcopy(self.fake_event)
+        devent = deepcopy(self.fake_event)
 
         # Solve alert produce two metrics
         event['state'] = 0
         devent['state'] = 1
 
         metrics = self.stats_manager.compute_ack_alerts(event, devent)
-        self.assertEqual(len(metrics), 2)
+        self.assertEqual(len(metrics), 1)
 
         # New alert metric only
         event['state'] = 1
         devent['state'] = 0
 
         metrics = self.stats_manager.compute_ack_alerts(event, devent)
-        self.assertEqual(len(metrics), 1)
+        self.assertEqual(len(metrics), 0)
 
         # No metric as no state change
         event['state'] = 0
@@ -251,7 +252,9 @@ class StatsTest(StatsManagerTest):
         self.stats_manager.compute_ack_alerts = mock1
         self.stats_manager.compute_by_states_and_sources = mock2
 
-        event = self.stats_manager.compute_stats({}, {}, True)
+        event = self.stats_manager.compute_stats(
+            {'state': 0}, {'state': 0}, True
+        )
 
         self.assertEqual(event['perf_data_array'], ['m1', 'm2'])
         self.assertEqual(event['component'], '__canopsis__')
@@ -261,7 +264,9 @@ class StatsTest(StatsManagerTest):
             return []
 
         self.stats_manager.compute_ack_alerts = mock1
-        event = self.stats_manager.compute_stats({}, {}, True)
+        event = self.stats_manager.compute_stats(
+            {'state': 0}, {'state': 0}, True
+        )
         self.assertEqual(len(event['perf_data_array']), 1)
 
         # Do not produce any event as metric array is empty
@@ -274,7 +279,9 @@ class StatsTest(StatsManagerTest):
         self.stats_manager.compute_ack_alerts = mock1
         self.stats_manager.compute_by_states_and_sources = mock2
 
-        event = self.stats_manager.compute_stats({}, {}, True)
+        event = self.stats_manager.compute_stats(
+            {'state': 0}, {'state': 0}, True
+        )
 
         self.assertIsNone(event)
 
