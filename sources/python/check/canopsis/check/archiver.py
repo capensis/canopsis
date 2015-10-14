@@ -25,14 +25,16 @@ from canopsis.old.account import Account
 from canopsis.old.record import Record
 from canopsis.old.rabbitmq import Amqp
 from canopsis.event import get_routingkey
+from canopsis.stats.manager import Stats
 
 from canopsis.engines.core import publish
-#from canopsis.context.manager import Context
-#from canopsis.check.manager import CheckManager
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
+
+import pprint
+pp = pprint.PrettyPrinter(indent=2)
 
 from pymongo.errors import BulkWriteError
 
@@ -50,6 +52,7 @@ CATEGORY = 'ARCHIVER'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class Archiver(Configurable):
+
 
     def __init__(
         self, namespace, confnamespace='object', storage=None, autolog=False,
@@ -99,6 +102,8 @@ class Archiver(Configurable):
         self.reset_stealthy_event_duration = time()
         self.reset_stats()
 
+        self.stats_manager = Stats()
+
     def reset_stats(self):
         self.stats = {
             'update': 0,
@@ -137,8 +142,6 @@ class Archiver(Configurable):
             try:
                 bulk.execute({'w': 0})
             except BulkWriteError as bwe:
-                import pprint
-                pp = pprint.PrettyPrinter(indent=2)
                 self.logger.warning(pp.pformat(bwe.details))
             self.logger.info('inserted log events {}'.format(len(operations)))
 
@@ -245,7 +248,8 @@ class Archiver(Configurable):
 
         def _publish_event(event):
             rk = event.get('rk', get_routingkey(event))
-            self.logger.info("Sending event {}".format(rk))
+            self.logger.info('Sending event {}'.format(rk))
+            self.logger.debug(event)
             publish(
                 event=event, rk=rk, publisher=self.amqp
             )
@@ -429,8 +433,8 @@ class Archiver(Configurable):
         if (devent.get('status', ONGOING) != CANCELED
             or (dstate != event['state']
                 and (self.restore_event
-                    or event['state'] == OFF
-                    or dstate == OFF))):
+                or event['state'] == OFF
+                or dstate == OFF))):
             # Check the stealthy intervals
             if self.check_stealthy(devent, event_ts):
                 if self.is_bagot(event):
@@ -475,10 +479,6 @@ class Archiver(Configurable):
         # Buffering event informations
         self.bulk_ids.append(_id)
         self.incoming_events[_id] = event
-
-        # use the check manager in order to save the state
-        #entity_id = self.context.get_entity_id(event)
-        #self.check.state(ids=entity_id['id'], state=event['state'], cache=True)
 
         # Processing many events condition computation
         bulk_modulo = len(self.bulk_ids) % self.bulk_amount
@@ -598,9 +598,17 @@ class Archiver(Configurable):
             # keep ack information if status does not reset event
             if 'ack' in devent:
                 if event['status'] == 0:
-                    change['ack'] = {}
+                    was_ack = devent.get('ack', {}).get('isAck', False)
+                    # save was ack for stats purposes
+                    change['ack'] = {
+                        'wasAck': was_ack
+                    }
                 else:
                     change['ack'] = devent['ack']
+                    # remove was ack for accurate stats
+                    # when event change to any alert state
+                    if 'wasAck' in change['ack']:
+                        del change['ack']['wasAck']
 
             # keep cancel information if status does not reset event
             if 'cancel' in devent:
@@ -653,6 +661,13 @@ class Archiver(Configurable):
             if 'keep_state' in event:
                 change['change_state_output'] = event['output']
                 change['output'] = devent.get('output', '')
+
+            # Statistics on event that require event, previous event
+            # and is new event information
+            sevent = self.stats_manager.compute_stats(event, devent, new_event)
+            self.logger.debug('Stats event computed {}'.format(sevent))
+            if sevent:
+                publish(event=sevent, publisher=self.amqp)
 
             if change:
                 operations.append(
