@@ -18,7 +18,7 @@ def get_confopt(confpath, section, name):
         return False, err
 
 
-def set_ confopt(confpath, section, name, value):
+def set_confopt(confpath, section, name=None, value=None):
     try:
         config = ConfigParser.ConfigParser()
         config.read(confpath)
@@ -39,8 +39,8 @@ def set_ confopt(confpath, section, name, value):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 5 or sys.argv[1] not in ['get', 'set']:
-        print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section name (value)"
+    if len(sys.argv) < 4 or sys.argv[1] not in ['get', 'set']:
+        print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section [name (value)]"
         sys.exit(1)
 
     elif sys.argv[1] == 'get':

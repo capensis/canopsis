@@ -14,14 +14,19 @@ CATEGORY = 'EVENT'
 @add_category(CATEGORY)
 class Event(MiddlewareRegistry):
 
+    default_state = 0
     EVENT_STORAGE = 'event_storage'
+
+    states_str = {
+        0: 'info',
+        1: 'minor',
+        2: 'major',
+        3: 'critical'
+    }
+
     """
     Manage events in Canopsis
     """
-
-    def __init__(self, *args, **kwargs):
-
-        super(Event, self).__init__(*args, **kwargs)
 
     @staticmethod
     def get_rk(event):
@@ -37,6 +42,34 @@ class Event(MiddlewareRegistry):
             rk = '{0}.{1}'.format(rk, event['resource'])
 
         return rk
+
+    def is_ack(self, event):
+        """
+        Define if an event is in ack state
+        :param: event is the event to test
+        """
+        return event.get('ack', {}).get('isAck', False)
+
+    def is_alert(self, state):
+        """
+            Define if a state is in alert
+            allow progressive alert definition migration
+        """
+        result = None
+        if state == 0:
+            result = False
+        if state in (1, 2, 3):
+            result = True
+        return result
+
+    def get_last_state(self, event):
+        """
+            Retrieve last event state from database
+            This is a subset information of a find query focused on state
+        """
+
+        existing_event = self.get(Event.get_rk(event), {})
+        return existing_event.get('state', self.default_state)
 
     def get(self, rk, default=None):
         result = self.find(query={'rk': rk}, limit=1)

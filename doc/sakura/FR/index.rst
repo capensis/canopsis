@@ -35,3 +35,4 @@ High-Level features
    :titlesonly:
 
    fr__category-chart
+   fr__statistics

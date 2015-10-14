@@ -21,6 +21,8 @@
 from canopsis.common.ws import route
 from bottle import request
 from .rights import get_manager as get_rights
+from canopsis.session.manager import Session
+from canopsis.common.utils import singleton_per_scope
 
 
 def get():
@@ -64,9 +66,20 @@ def delete():
 
 
 def exports(ws):
+
+    session_manager = singleton_per_scope(Session)
+
     @route(ws.application.get, name='account/me', adapt=False)
     def get_me():
         user = get_user()
         user.pop('id', None)
         user.pop('eid', None)
         return user
+
+    @route(ws.application.get, payload=['username'], adapt=False)
+    def keepalive(username):
+        session_manager.keep_alive(username)
+
+    @route(ws.application.get, payload=['username'], adapt=False)
+    def sessionstart(username):
+        session_manager.session_start(username)

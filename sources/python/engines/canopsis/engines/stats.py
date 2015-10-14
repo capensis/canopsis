@@ -18,10 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.stats.manager import Stats
 from canopsis.engines.core import Engine, publish
-from canopsis.old.storage import get_storage
-from canopsis.old.account import Account
 from canopsis.event import forger
+
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 
 class engine(Engine):
@@ -34,28 +36,24 @@ class engine(Engine):
     in async way in order to manage performances issues.
     """
 
-    def __init__(self, *args, **kargs):
+    def pre_run(self):
 
-        super(engine, self).__init__(*args, **kargs)
+        self.stats_manager = Stats()
 
-        self.states_str = {
-            0: 'info',
-            1: 'minor',
-            2: 'major',
-            3: 'critical'
-        }
-        self.storage = get_storage(
-            namespace='events',
-            account=Account(
-                user="root",
-                group="root"
-            )
-        )
+        self.beat()
 
     def consume_dispatcher(self, event, *args, **kargs):
+
+        """
+        Entry point for stats computation. Triggered by the dispatcher
+        engine for distributed processing puroses.
+        Following methods will generate metrics that are finally embeded
+        in a metric event.
+        """
+
         self.logger.debug('Entered in stats consume dispatcher')
 
-        self.perf_data_array = []
+        self.stats_manager.set_perf_data_array([])
 
         self.compute_states()
 
@@ -63,67 +61,48 @@ class engine(Engine):
 
     def compute_states(self):
 
-        # Event count computation by state
-        for state in [0, 1, 2, 3]:
-            # There is an index on state field in events collection,
-            # that would keep the query efficient
-            count = self.storage.get_backend().find(
-                {'state': state}
-            ).count()
+        """
+        Entry point for dynamic stats method triggering
+        Dynamic triggering allow greated control on which
+        stats are computed and can be activated/deactivated
+        from frontend.
+        """
 
-            state_str = self.states_str[state]
+        # Allow individual stat computation management from ui.
+        stats_to_compute = [
+            'users_session_duration',
+        ]
 
-            self.perf_data_array.append({
-                'metric': 'cps_states_{}'.format(state_str),
-                'value': count
-            })
-
-        for source_type in ['resource', 'component']:
-            # Event count source type
-            count = self.storage.get_backend().find(
-                {'source_type': source_type}
-            ).count()
-
-            self.perf_data_array.append({
-                'metric': 'cps_count_{}'.format(
-                    source_type
-                ),
-                'value': count
-            })
-
-            # Event count by source type and state
-            for state in [0, 1, 2, 3]:
-
-                # There is an index on state and source_type field in
-                # events collection, that would keep the query efficient
-                count = self.storage.get_backend().find(
-                    {'source_type': source_type, 'state': state}
-                ).count()
-
-                state_str = self.states_str[state]
-
-                self.perf_data_array.append({
-                    'metric': 'cps_states_{}_{}'.format(
-                        source_type,
-                        state_str
-                    ),
-                    'value': count
-                })
-
-        self.logger.debug('perf_data_array {}'.format(self.perf_data_array))
+        for stat in stats_to_compute:
+            method = getattr(self.stats_manager, stat)
+            method()
 
     def publish_states(self):
+
+        perfdatas = self.stats_manager.get_perf_data_array()
 
         stats_event = forger(
             connector='engine',
             connector_name='engine',
             event_type='perf',
             source_type='resource',
+            component='__canopsis__',
             resource='Engine_stats',
             state=0,
-            perf_data_array=self.perf_data_array
+            perf_data_array=perfdatas
         )
 
-        self.logger.debug('Publishing {}'.format(stats_event))
+        # Just log information
+        metrics = []
+        for m in perfdatas:
+            metrics.append('{}\t{}\t{}'.format(
+                m['value'],
+                m['type'],
+                m['metric']
+            ))
+
+        self.logger.debug('-- Generated perfdata --\n{}'.format(
+            '\n'.join(metrics)
+        ))
 
         publish(publisher=self.amqp, event=stats_event)
