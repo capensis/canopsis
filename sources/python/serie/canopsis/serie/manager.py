@@ -23,6 +23,7 @@ from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.parameters import Parameter
 
+from canopsis.serie.utils import build_filter_from_regex
 from canopsis.timeserie.timewindow import Period
 from canopsis.timeserie.core import TimeSerie
 from canopsis.task.core import get_task
@@ -61,7 +62,7 @@ class Serie(MiddlewareRegistry):
             value = 10
 
         self._points_per_interval = value
-    
+
     def __init__(
         self,
         points_per_interval=None,
@@ -84,45 +85,8 @@ class Serie(MiddlewareRegistry):
         if perfdata is not None:
             self[Serie.PERFDATA_MANAGER] = perfdata
 
-    def build_mfilter_from_regex(self, regex):
-        regex_parts = regex.split(' ')
-        regex = {
-            'component': [],
-            'resource': [],
-            'name': []
-        }
-
-        for part in regex_parts:
-            if part.startswith('co:'):
-                regex['component'].append({'$regex': part[3:]})
-
-            elif part.startswith('re:'):
-                regex['resource'].append({'$regex': part[3:]})
-
-            elif part.startswith('me:'):
-                regex['name'].append({'$regex': part[3:]})
-
-            else:
-                for key in regex.keys():
-                    regex[key].append({'$regex': part})
-
-        mfilter = {'$and': []}
-
-        for key in regex:
-            if len(regex[key]) > 0:
-                local_mfilter = {'$or': [
-                    subfilter for subfilter in regex[key]
-                ]}
-
-                if len(local_mfilter['$or']) == 1:
-                    local_mfilter = local_mfilter['$or'][0]
-
-                mfilter['$and'].append(local_mfilter)
-
-        return mfilter
-
     def get_metrics(self, regex, metrics=None):
-        mfilter = self.build_mfilter_from_regex(regex)
+        mfilter = build_filter_from_regex(regex)
 
         if metrics is None:
             metric_ids = self[Serie.PERFDATA_MANAGER].get_metrics(mfilter)
@@ -154,6 +118,36 @@ class Serie(MiddlewareRegistry):
             }
 
         return result
+
+    def subset_perfdata_values_at_x(self, regex, x, perfdatas):
+        selected_metrics = [
+            perfdatas[key]['entity']
+            for key in perfdatas.keys()
+        ]
+
+        metrics = self.get_metrics(regex, selected_metrics)
+        metric_ids = [
+            self[Serie.CONTEXT_MANAGER].get_entity_id(metric)
+            for metric in metrics
+        ]
+
+        # all perfdata are aggregated with the same period
+        # so all x values are the same
+        mid = metric_ids[0]
+        i = 0
+
+        for point in perfdatas[mid]['aggregated']:
+            if point[0] == x:
+                break
+
+            i += 1
+
+        selected_values = [
+            perfdatas[key]['aggregated'][i][1]
+            for key in metric_ids
+        ]
+
+        return selected_values
 
     def aggregation(self, serieconf, timewindow=None):
         interval = serieconf.get('aggregation_interval', None)
@@ -193,7 +187,7 @@ class Serie(MiddlewareRegistry):
         }
 
         operatorset = get_task('serie.operatorset')
-        operators = operatorset(self, serieconf, perfdatas)
+        operators = operatorset(self, perfdatas)
         restricted_globals.update(operators)
 
         # all perfdata are aggregated with the same period
