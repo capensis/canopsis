@@ -5,10 +5,14 @@
 	},
 	"categories": [{
 		"title": "General",
-		"keys":["popup_template"]
+		"keys":["event_title", "popup_template"]
 	}],
 	"properties": {
 		"popup_template": {
+			"type": "string",
+			"role":"richtext"
+		},
+		"event_title": {
 			"type": "string",
 			"role":"richtext"
 		},

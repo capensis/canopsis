@@ -1,8 +1,9 @@
 {
 	"type": "object",
-	"metadata": {
-		"icon": "list-alt"
-	},
+	"categories": [{
+		"title": "General",
+		"keys":[]
+	}],
 	"properties": {
 		"userevent_filters": {
 			"type": "array",
