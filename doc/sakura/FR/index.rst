@@ -12,7 +12,9 @@ Base
 
    fr__architecture
    fr__schema
+   fr__context
    fr__event
+   fr__metric
 
 Systems
 -------
@@ -34,5 +36,6 @@ High-Level features
    :maxdepth: 1
    :titlesonly:
 
+   fr__serie
    fr__category-chart
    fr__statistics
