@@ -19,251 +19,108 @@
 # ---------------------------------
 
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.event.manager import Event
-from canopsis.session.manager import Session
-from canopsis.event import forger
-from json import dumps
+from canopsis.configuration.configurable.decorator import add_category
+from canopsis.configuration.configurable.decorator import conf_paths
+from canopsis.configuration.parameters import Parameter
+
+from canopsis.timeserie.core import TimeSerie
+from canopsis.old.filter import check
 
 
-class Stats(MiddlewareRegistry):
+CONF_PATH = 'stats/producer/metric.conf'
+CATEGORY = 'METRICPRODUCER'
+CONTENT = [
+    Parameter('default_aggregation_interval', int),
+    Parameter('round_time_interval', Parameter.bool)
+]
 
-    """
-    Manage stats in Canopsis
-    """
 
-    def __init__(self, *args, **kwargs):
+@conf_paths(CONF_PATH)
+@add_category(CATEGORY, content=CONTENT)
+class MetricProducer(MiddlewareRegistry):
 
-        super(Stats, self).__init__(self, *args, **kwargs)
-        self.set_perf_data_array([])
+    FILTER_STORAGE = 'filter_storage'
+    SERIE_MANAGER = 'serie'
+    CONTEXT_MANAGER = 'context'
+    PERFDATA_MANAGER = 'perfdata'
 
-        self.event_manager = Event()
-        self.session_manager = Session()
+    @property
+    def default_aggregation_interval(self):
+        if not hasattr(self, '_default_aggregation_interval'):
+            self.default_aggregation_interval = None
 
-    def set_perf_data_array(self, perf_data_array):
+        return self._default_aggregation_interval
 
-        """
-        Property perf_data_array setter
+    @default_aggregation_interval.setter
+    def default_aggregation_interval(self, value):
+        if value is None:
+            value = TimeSerie.VPERIOD.total_seconds()
 
-        :param: value perf_data_array set the perf_data_array value
-        """
+        self._default_aggregation_interval = value
 
-        self.perf_data_array = perf_data_array
+    @property
+    def round_time_interval(self):
+        if not hasattr(self, '_round_time_interval'):
+            self.round_time_interval = None
 
-    def get_perf_data_array(self):
+        return self._round_time_interval
 
-        """
-        Property perf_data_array getter
-        """
+    @round_time_interval.setter
+    def round_time_interval(self, value):
+        if value is None:
+            value = TimeSerie.VROUND_TIME.total_seconds()
 
-        return self.perf_data_array
+        self._round_time_interval = value
 
-    def new_alert_event_count(self, event, devent):
+    def __init__(
+        self,
+        default_aggregation_interval=None,
+        round_time_interval=None,
+        filter_storage=None,
+        *args, **kwargs
+    ):
+        super(MetricProducer, self).__init__(*args, **kwargs)
 
-        """
-        Produce metric count for alert count.
-        cps_new_alert +1 or -1 depends on previous event state
+        if default_aggregation_interval is not None:
+            self.default_aggregation_interval = default_aggregation_interval
 
-        :param: event is the current event passing through canopsis input
-        :param: devent is the event from database matching event RK.
-        it is the last state the event were
-        """
+        if round_time_interval is not None:
+            self.round_time_interval = round_time_interval
 
-        is_alert = self.event_manager.is_alert(event['state'])
-        was_alert = self.event_manager.is_alert(devent['state'])
+        if filter_storage is not None:
+            self[MetricProducer.FILTER_STORAGE] = filter_storage
 
-        perf_data_array = []
+    def match(self, event):
+        storage = self[MetricProducer.FILTER_STORAGE]
+        matches = [
+            evfilter['crecord_name']
+            for evfilter in storage.find_elements()
+            if check(evfilter['filter'], event)
+        ]
 
-        value = None
+        return matches
 
-        # When alert and event was not in alert
-        if is_alert and not was_alert:
-            # Publish increment new_alarm count
-            value = 1
-
-        if was_alert and not is_alert:
-            # Publish decrement new_alarm count
-            value = -1
-
-        self.logger.debug('Alerts count {}'.format(value))
-
-        if value is not None:
-            perf_data_array.append({
-                'metric': 'alert_count',
-                'value': value,
-                'type': 'COUNTER'
-            })
-
-        return perf_data_array
-
-    def solved_alarm_ack(self, devent):
-
-        # Then produce metric
-        was_ack = self.event_manager.is_ack(devent)
-        if was_ack:
-            metric_name = 'cps_solved_ack_alarms'
-        else:
-            metric_name = 'cps_solved_not_ack_alarms'
-
-        metric = {
-            'metric': metric_name,
-            'value': 1,
-            'type': 'COUNTER'
+    def create_serie(self, metric, operator):
+        serie = {
+            'crecord_name': metric['name'],
+            'component': metric['component'],
+            'resource': metric['resource'],
+            'metric_filter': 'co:{0} re:{1} me:{2}'.format(
+                metric['component'],
+                metric['resource'],
+                metric['name']
+            ),
+            'aggregation_method': operator,
+            'aggregation_interval': self.default_aggregation_interval,
+            'round_time_interval': self.round_time_interval,
+            # only one metric selected, so SUM is the identity
+            'formula': 'SUM("me:.*")',
+            'last_computation': 0
         }
 
-        self.logger.debug('solved alarm ack \n{}'.format(metric))
+        metric_id = self[MetricProducer.CONTEXT_MANAGER].get_entity_id(metric)
+        meta = self[MetricProducer.PERFDATA_MANAGER].get_meta(metric_id)
+        serie.update(meta)
 
-        return metric
-
-    def compute_stats(self, event, devent, new_event):
-
-        """
-        Computes general statistics that are computable
-        from event and it's previous state
-
-        :param event: the current event within canopsis engines
-        :param devent: previous event state from event storage
-        :param new_event: boolean information True if event is new
-
-        :returns: a new event to be published if any metrics
-        """
-        perf_data_array = []
-        perf_data_array += self.new_alert_event_count(
-            event, devent
-        )
-        perf_data_array += self.compute_ack_alerts(event, devent)
-        perf_data_array += self.compute_by_states_and_sources(
-            event,
-            devent,
-            new_event
-        )
-        self.logger.info('compute stats generated perfdata')
-        self.logger.info(dumps(perf_data_array, indent=2))
-
-        if len(perf_data_array):
-            stats_event = forger(
-                connector="Engine",
-                connector_name='stats',
-                event_type="perf",
-                source_type="component",
-                component="__canopsis__",
-                perf_data_array=perf_data_array
-            )
-            return stats_event
-
-    def compute_by_states_and_sources(self, event, devent, new_event):
-
-        metrics = []
-
-        metrics += self.event_add_by_source(event, new_event)
-        metrics += self.event_add_by_state(event, new_event)
-        metrics += self.event_count_by_source_and_state(
-            event,
-            devent,
-            new_event
-        )
-
-        return metrics
-
-    def compute_ack_alerts(self, event, devent):
-
-        """
-        Compute ack [solved] alerts metrics
-        :param: event is amqp message
-        :param: devent is previous state
-        """
-        perf_data_array = []
-
-        # Compute alert stats and publish metrics if any
-        new_alert = self.new_alert_event_count(
-            event,
-            devent
-        )
-        self.logger.info('New alert metric {}'.format(new_alert))
-        if new_alert:
-
-            solved = new_alert[0]['value'] == -1
-            self.logger.debug('solved alert {}'.format(solved))
-            if solved:
-                # Compute alert ack depending on is ack
-                metric = self.solved_alarm_ack(devent)
-                perf_data_array.append(metric)
-
-        return perf_data_array
-
-    def users_session_duration(self):
-
-        """
-        Produce user session duration statistics from the session manager
-        """
-
-        sessions = self.session_manager.get_new_inactive_sessions()
-        metrics = self.session_manager.get_delta_session_time_metrics(sessions)
-        self.perf_data_array += metrics
-
-    def event_add_by_source(self, event, new_event):
-
-        """
-        Counts and produces metrics for events depending on source type
-        """
-        metrics = []
-
-        if new_event:
-            metrics.append({
-                'metric': 'cps_count_{}'.format(event['source_type']),
-                'value': 1,
-                'type': 'COUNTER'
-            })
-
-        return metrics
-
-    def event_count_by_source_and_state(self, event, devent, new_event):
-
-        """
-        Counts and produces metrics for events depending on source type,
-        by state
-        """
-
-        metrics = []
-
-        if not new_event and devent['state'] != event['state']:
-
-            state_src = self.event_manager.states_str[devent['state']]
-            state_dest = self.event_manager.states_str[event['state']]
-
-            metrics.append({
-                'metric': 'cps_states_{}_{}'.format(
-                    event['source_type'],
-                    state_src
-                ),
-                'value': -1,
-                'type': 'COUNTER'
-            })
-
-            metrics.append({
-                'metric': 'cps_states_{}_{}'.format(
-                    event['source_type'],
-                    state_dest
-                ),
-                'value': 1,
-                'type': 'COUNTER'
-            })
-
-        return metrics
-
-    def event_add_by_state(self, event, new_event):
-
-        """
-        Counts and produces metrics for events depending on state
-        """
-
-        metrics = []
-
-        if new_event:
-            state_str = self.event_manager.states_str[event['state']]
-            metrics.append({
-                'metric': 'cps_states_{}'.format(state_str),
-                'value': 1,
-                'type': 'COUNTER'
-            })
-
-        return metrics
+        seriemgr = self[MetricProducer.SERIE_MANAGER]
+        return seriemgr[seriemgr.SERIE_STORAGE].put_element(serie)

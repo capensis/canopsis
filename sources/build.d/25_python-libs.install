@@ -34,7 +34,6 @@ function easy_install_all_libs() {
 	easy_install_pylib mock
 	easy_install_pylib lxml
 	easy_install_pylib requests
-	easy_install_pylib pyparsing
 	easy_install_pylib supervisor-wildcards
 	easy_install_pylib RestrictedPython
 }

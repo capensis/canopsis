@@ -54,7 +54,7 @@ def serie_processing(engine, serieconf, manager=None, logger=None, **kwargs):
     )
 
     points = manager.calculate(serieconf, timewin)
-
+    events = []
     for point in points:
         metric = {
             'metric': serieconf['crecord_name'],
@@ -66,14 +66,16 @@ def serie_processing(engine, serieconf, manager=None, logger=None, **kwargs):
             if serieconf.get(meta, None) is not None:
                 metric[meta] = serieconf[meta]
 
-        event = {
-            'timestamp': point[0],
+        events.append({
+            'timestamp': int(point[0]),
             'connector': 'canopsis',
             'connector_name': engine.name,
             'event_type': 'perf',
-            'source_type': 'component',
-            'component': 'serie',
+            'source_type': 'resource',
+            'component': serieconf['component'],
+            'resource': serieconf['resource'],
             'perf_data_array': [metric]
-        }
+        })
 
+    for event in events:
         publish(publisher=engine.amp, event=event, logger=logger)
