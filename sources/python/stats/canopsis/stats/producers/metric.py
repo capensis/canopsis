@@ -26,9 +26,11 @@ from canopsis.configuration.parameters import Parameter
 from canopsis.timeserie.core import TimeSerie
 from canopsis.old.filter import check
 
+from hashlib import sha1
+
 
 CONF_PATH = 'stats/producer/metric.conf'
-CATEGORY = 'METRICPRODUCER'
+CATEGORY = 'METRIC_PRODUCER'
 CONTENT = [
     Parameter('default_aggregation_interval', int),
     Parameter('round_time_interval', Parameter.bool)
@@ -40,7 +42,7 @@ CONTENT = [
 class MetricProducer(MiddlewareRegistry):
 
     FILTER_STORAGE = 'filter_storage'
-    SERIE_MANAGER = 'serie'
+    SERIE_STORAGE = 'serie_storage'
     CONTEXT_MANAGER = 'context'
     PERFDATA_MANAGER = 'perfdata'
 
@@ -77,6 +79,9 @@ class MetricProducer(MiddlewareRegistry):
         default_aggregation_interval=None,
         round_time_interval=None,
         filter_storage=None,
+        serie_storage=None,
+        context=None,
+        perfdata=None,
         *args, **kwargs
     ):
         super(MetricProducer, self).__init__(*args, **kwargs)
@@ -90,6 +95,34 @@ class MetricProducer(MiddlewareRegistry):
         if filter_storage is not None:
             self[MetricProducer.FILTER_STORAGE] = filter_storage
 
+        if serie_storage is not None:
+            self[MetricProducer.SERIE_STORAGE] = serie_storage
+
+        if context is not None:
+            self[MetricProducer.CONTEXT_MANAGER] = context
+
+        if perfdata is not None:
+            self[MetricProducer.PERFDATA_MANAGER] = perfdata
+
+        self.events_cache = {}
+
+    def cache(self, event):
+        rk = event['rk']
+
+        if rk not in self.events_cache:
+            self.events_cache[rk] = []
+
+        self.events_cache[rk].append(event)
+
+    def get_cache(self, event):
+        return self.events_cache.get(event['rk'], [])
+
+    def clear_cache(self, event):
+        rk = event['rk']
+
+        if rk in self.events_cache:
+            self.events_cache[rk].clear()
+
     def match(self, event):
         storage = self[MetricProducer.FILTER_STORAGE]
         matches = [
@@ -100,27 +133,44 @@ class MetricProducer(MiddlewareRegistry):
 
         return matches
 
-    def create_serie(self, metric, operator):
-        serie = {
-            'crecord_name': metric['name'],
-            'component': metric['component'],
-            'resource': metric['resource'],
-            'metric_filter': 'co:{0} re:{1} me:{2}'.format(
-                metric['component'],
-                metric['resource'],
-                metric['name']
-            ),
-            'aggregation_method': operator,
-            'aggregation_interval': self.default_aggregation_interval,
-            'round_time_interval': self.round_time_interval,
-            # only one metric selected, so SUM is the identity
-            'formula': 'SUM("me:.*")',
-            'last_computation': 0
-        }
+    def get_stats_serie_id(self, metric_id, operator):
+        serie_id = sha1()
+        serie_id.update(metric_id)
+        serie_id.update(operator)
+        return serie_id.hexdigest()
+
+    def may_create_stats_serie(self, metric, operator):
+        storage = self[MetricProducer.SERIE_STORAGE]
 
         metric_id = self[MetricProducer.CONTEXT_MANAGER].get_entity_id(metric)
-        meta = self[MetricProducer.PERFDATA_MANAGER].get_meta(metric_id)
-        serie.update(meta)
+        serie_id = self.get_stats_serie_id(metric_id, operator)
 
-        seriemgr = self[MetricProducer.SERIE_MANAGER]
-        return seriemgr[seriemgr.SERIE_STORAGE].put_element(serie)
+        result = storage.get_elements(ids=serie_id)
+
+        if result is None:
+            serie = {
+                'crecord_name': operator,
+                'component': metric['component'],
+                'resource': metric['resource'],
+                'metric_filter': 'co:{0} re:{1} me:{2}'.format(
+                    metric['component'],
+                    metric['resource'],
+                    metric['name']
+                ),
+                'aggregation_method': operator,
+                'aggregation_interval': self.default_aggregation_interval,
+                'round_time_interval': self.round_time_interval,
+                # only one metric selected, so SUM is the identity
+                'formula': 'SUM("me:.*")',
+                'last_computation': 0
+            }
+
+            meta = self[MetricProducer.PERFDATA_MANAGER].get_meta(metric_id)
+            serie.update(meta)
+
+            storage.put_element(serie, _id=serie_id)
+
+            serie[storage.DATA_ID] = serie_id
+            result = serie
+
+        return result
