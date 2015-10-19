@@ -89,8 +89,9 @@ class Serie(MiddlewareRegistry):
         mfilter = build_filter_from_regex(regex)
 
         if metrics is None:
-            metric_ids = self[Serie.PERFDATA_MANAGER].get_metrics(mfilter)
-            return self[Serie.CONTEXT_MANAGER].get_entities(metric_ids)
+            return self[Serie.CONTEXT_MANAGER].find(
+                _filter=mfilter
+            )
 
         else:
             result = [
@@ -109,7 +110,8 @@ class Serie(MiddlewareRegistry):
             perfdata = self[Serie.PERFDATA_MANAGER].get(
                 mid,
                 period=period,
-                timewindow=timewindow
+                timewindow=timewindow,
+                with_meta=False
             )
 
             result[mid] = {
@@ -119,7 +121,7 @@ class Serie(MiddlewareRegistry):
 
         return result
 
-    def subset_perfdata_values_at_x(self, regex, x, perfdatas):
+    def subset_perfdata_superposed(self, regex, perfdatas):
         selected_metrics = [
             perfdatas[key]['entity']
             for key in perfdatas.keys()
@@ -131,23 +133,14 @@ class Serie(MiddlewareRegistry):
             for metric in metrics
         ]
 
-        # all perfdata are aggregated with the same period
-        # so all x values are the same
-        mid = metric_ids[0]
-        i = 0
+        points = []
 
-        for point in perfdatas[mid]['aggregated']:
-            if point[0] == x:
-                break
+        for metric_id in metric_ids:
+            points += perfdatas[metric_id]['aggregated']
 
-            i += 1
+        points = sorted(points, key=lambda point: point[0])
 
-        selected_values = [
-            perfdatas[key]['aggregated'][i][1]
-            for key in metric_ids
-        ]
-
-        return selected_values
+        return points
 
     def aggregation(self, serieconf, timewindow=None):
         interval = serieconf.get('aggregation_interval', None)
@@ -182,30 +175,33 @@ class Serie(MiddlewareRegistry):
         return perfdatas
 
     def consolidation(self, serieconf, perfdatas):
+        # configure consolidation period (same as aggregation period)
+        interval = serieconf.get('aggregation_interval', None)
+
+        if interval is None:
+            period = TimeSerie.VPERIOD
+
+        else:
+            period = Period(second=interval)
+
+        # generator consolidation operators
+        operatorset = get_task('serie.operatorset')
+        operators = operatorset(self, period, perfdatas)
+
+        # execute formula in sand-boxed environment
         restricted_globals = {
             '__builtins__': safe_builtins,
         }
 
-        operatorset = get_task('serie.operatorset')
-        operators = operatorset(self, perfdatas)
         restricted_globals.update(operators)
 
-        # all perfdata are aggregated with the same period
-        # so all x values are the same
-        mid = perfdatas.keys()[0]
-        axis_x = [point[0] for point in perfdatas[mid]['aggregated']]
-        consolidated_points = []
+        expression = 'result = {0}'.format(serieconf['formula'])
+        code = compile_restricted(expression, '<string>', 'exec')
 
-        for x in axis_x:
-            restricted_globals['x'] = x
-            expression = 'result = {0}'.format(serieconf['formula'])
-            code = compile_restricted(expression, '<string>', 'exec')
+        exec(code) in restricted_globals
 
-            exec(code) in restricted_globals
-
-            consolidated_points.append((x, restricted_globals['result']))
-
-        return consolidated_points
+        # result contains consolidated point
+        return restricted_globals['result']
 
     def calculate(self, serieconf, timewindow=None):
         perfdatas = self.aggregation(serieconf, timewindow)

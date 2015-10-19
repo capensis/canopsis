@@ -18,95 +18,41 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.task.core import register_task, get_task
+from canopsis.timeserie.aggregation import get_aggregations
+from canopsis.timeserie.timewindow import TimeWindow
+from canopsis.timeserie.core import TimeSerie
+from canopsis.task.core import register_task
 
 
-_OPERATORS_CACHE = set()
+def new_operator(op, manager, period, perfdatas):
+    def operator(regex):
+        points = manager.subset_perfdata_superposed(regex, perfdatas)
+        result = float('nan')
 
-
-@register_task
-def register_operator(operator):
-    _OPERATORS_CACHE.add(operator.upper())
-
-    return register_task('serie.op.{0}'.format(operator))
-
-
-@register_operator('first')
-def op_first(values):
-    return values[0]
-
-
-@register_operator('last')
-def op_last(values):
-    return values[-1]
-
-
-@register_operator('average')
-def op_average(values):
-    return sum(values) / len(values)
-
-
-@register_operator('min')
-def op_min(values):
-    return min(values)
-
-
-@register_operator('max')
-def op_max(values):
-    return max(values)
-
-
-@register_operator('sum')
-def op_sum(values):
-    return sum(values)
-
-
-@register_operator('sub')
-def op_sub(values):
-    result = values[0]
-
-    for value in values[1:]:
-        result -= value
-
-    return result
-
-
-@register_operator('mul')
-def op_mul(values):
-    result = values[0]
-
-    for value in values[1:]:
-        result *= value
-
-    return result
-
-
-@register_operator('div')
-def op_div(values):
-    result = values[0]
-
-    for value in values[1:]:
-        result /= value
-
-    return result
-
-
-@register_task('operatorset')
-def serie_operatorset(manager, perfdatas):
-    def call_operator(op):
-        task = get_task('serie.op.{}'.format(op))
-
-        return lambda regex: task(
-            manager.subset_perfdata_values_at_x(
-                regex,
-                globals()['x'],  # defined in sand-boxed environment
-                perfdatas
+        if len(points) > 0:
+            ts = TimeSerie(
+                period=period,
+                aggregation=op,
+                round_time=False
             )
-        )
 
+            tw = TimeWindow(start=points[0][0], stop=points[-1][0])
+
+            consolidated = ts.calculate(points, tw)
+
+            if len(consolidated) > 0:
+                result = consolidated[0][1]
+
+        return result
+
+    return operator
+
+
+@register_task('serie.operatorset')
+def serie_operatorset(manager, period, perfdatas):
     operators = {
-        key: call_operator(key.lower())
-        for key in _OPERATORS_CACHE
+        key: new_operator(key.lower(), manager, period, perfdatas)
+        for key in get_aggregations()
     }
 
     return operators

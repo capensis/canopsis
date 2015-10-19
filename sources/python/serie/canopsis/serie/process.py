@@ -53,29 +53,27 @@ def serie_processing(engine, serieconf, manager=None, logger=None, **kwargs):
         stop=time()
     )
 
-    points = manager.calculate(serieconf, timewin)
-    events = []
-    for point in points:
-        metric = {
-            'metric': serieconf['crecord_name'],
-            'value': point[1],
-            'type': 'GAUGE'
-        }
+    point = manager.calculate(serieconf, timewin)
 
-        for meta in ['unit', 'min', 'max', 'warn', 'crit']:
-            if serieconf.get(meta, None) is not None:
-                metric[meta] = serieconf[meta]
+    metric = {
+        'metric': serieconf['crecord_name'],
+        'value': point[1],
+        'type': 'GAUGE'
+    }
 
-        events.append({
-            'timestamp': int(point[0]),
-            'connector': 'canopsis',
-            'connector_name': engine.name,
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': serieconf['component'],
-            'resource': serieconf['resource'],
-            'perf_data_array': [metric]
-        })
+    for meta in ['unit', 'min', 'max', 'warn', 'crit']:
+        if serieconf.get(meta, None) is not None:
+            metric[meta] = serieconf[meta]
 
-    for event in events:
-        publish(publisher=engine.amp, event=event, logger=logger)
+    event = {
+        'timestamp': int(point[0]),
+        'connector': 'canopsis',
+        'connector_name': engine.name,
+        'event_type': 'perf',
+        'source_type': 'resource',
+        'component': serieconf['component'],
+        'resource': serieconf['resource'],
+        'perf_data_array': [metric]
+    }
+
+    publish(publisher=engine.amp, event=event, logger=logger)

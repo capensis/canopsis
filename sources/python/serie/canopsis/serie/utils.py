@@ -19,7 +19,7 @@
 # ---------------------------------
 
 
-def build_filter_from_regex(self, regex):
+def build_filter_from_regex(regex):
     regex_parts = regex.split(' ')
     regex = {
         'component': [],
@@ -46,12 +46,18 @@ def build_filter_from_regex(self, regex):
     for key in regex:
         if len(regex[key]) > 0:
             local_mfilter = {'$or': [
-                subfilter for subfilter in regex[key]
+                {key: subfilter} for subfilter in regex[key]
             ]}
 
             if len(local_mfilter['$or']) == 1:
                 local_mfilter = local_mfilter['$or'][0]
 
             mfilter['$and'].append(local_mfilter)
+
+    if len(mfilter['$and']) == 0:
+        mfilter = {}
+
+    elif len(mfilter['$and']) == 1:
+        mfilter = mfilter['$and'][0]
 
     return mfilter
