@@ -12,6 +12,8 @@ Base
 
    fr__architecture
    fr__schema
+   fr__configuration
+   fr__context
    fr__event
 
 Systems
@@ -21,6 +23,8 @@ Systems
    :maxdepth: 1
    :titlesonly:
 
+   fr__middleware
+   fr__storage
    fr__engine
    fr__task
    fr__output
