@@ -27,6 +27,7 @@ def exports(ws):
     @route(ws.application.get, name='storage')
     def get_elements(protocol, data_type, data_scope, ids=None):
         storage = Middleware.get_middleware(protocol, data_type, data_scope)
+        storage.connect()
 
         return storage.get_elements(ids=ids)
 
@@ -46,6 +47,7 @@ def exports(ws):
         with_count=False
     ):
         storage = Middleware.get_middleware(protocol, data_type, data_scope)
+        storage.connect()
 
         return storage.find_elements(
             query=query, projection=projection,
@@ -56,6 +58,7 @@ def exports(ws):
     @route(ws.application.put, name='storage', payload=['element'])
     def put_element(protocol, data_type, data_scope, _id=None, element=None):
         storage = Middleware.get_middleware(protocol, data_type, data_scope)
+        storage.connect()
 
         if not storage.put_element(element, _id=_id):
             return HTTPError(500, 'Impossible to put element in storage')
@@ -66,5 +69,6 @@ def exports(ws):
         ids=None, _filter=None
     ):
         storage = Middleware.get_middleware(protocol, data_type, data_scope)
+        storage.connect()
 
         storage.remove_elements(ids=ids, _filter=_filter)
