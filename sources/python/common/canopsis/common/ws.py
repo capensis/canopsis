@@ -183,16 +183,16 @@ class route(object):
                         params[lb] = value
 
             # add body parameters in kwargs
-            for body_param in self.payload:
-                # if param is an array of values
-                array_body_param = '{0}[]'.format(body_param)
-                if array_body_param in params:
-                    param = params.getall(array_body_param)
+            for body_param in params:
+                if body_param.endswith('[]'):
+                    param = params.getall(body_param)
+                    body_param = body_param[:-2]
+
                     # try to convert all json param values to python
                     for i in range(len(param)):
                         try:
                             p = loads(param[i])
-                        except Exception:
+                        except ValueError:
                             pass
                         else:
                             param[i] = p
@@ -204,7 +204,7 @@ class route(object):
                     try:
                         kwargs[body_param] = loads(param)
 
-                    except Exception:  # error while deserializing
+                    except ValueError:  # error while deserializing
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
 
