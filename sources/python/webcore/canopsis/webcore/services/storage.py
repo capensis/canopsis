@@ -25,8 +25,11 @@ from bottle import HTTPError
 
 def exports(ws):
     @route(ws.application.get, name='storage')
-    def get_elements(protocol, data_type, data_scope, ids=None):
-        storage = Middleware.get_middleware(protocol, data_type, data_scope)
+    def get_elements(protocol, data_type, data_scope, ids=None, **kwargs):
+        storage = Middleware.get_middleware(
+            protocol, data_type, data_scope,
+            **kwargs
+        )
         storage.connect()
 
         return storage.get_elements(ids=ids)
@@ -44,9 +47,13 @@ def exports(ws):
         protocol, data_type, data_scope,
         query=None, projection=None,
         limit=0, skip=0, sort=None,
-        with_count=False
+        with_count=False,
+        **kwargs
     ):
-        storage = Middleware.get_middleware(protocol, data_type, data_scope)
+        storage = Middleware.get_middleware(
+            protocol, data_type, data_scope,
+            **kwargs
+        )
         storage.connect()
 
         return storage.find_elements(
@@ -56,8 +63,15 @@ def exports(ws):
         )
 
     @route(ws.application.put, name='storage', payload=['element'])
-    def put_element(protocol, data_type, data_scope, _id=None, element=None):
-        storage = Middleware.get_middleware(protocol, data_type, data_scope)
+    def put_element(
+        protocol, data_type, data_scope,
+        _id=None, element=None,
+        **kwargs
+    ):
+        storage = Middleware.get_middleware(
+            protocol, data_type, data_scope,
+            **kwargs
+        )
         storage.connect()
 
         if not storage.put_element(element, _id=_id):
@@ -66,9 +80,13 @@ def exports(ws):
     @route(ws.application.delete, name='storage', payload=['_filter'])
     def remove_elements(
         protocol, data_type, data_scope,
-        ids=None, _filter=None
+        ids=None, _filter=None,
+        **kwargs
     ):
-        storage = Middleware.get_middleware(protocol, data_type, data_scope)
+        storage = Middleware.get_middleware(
+            protocol, data_type, data_scope,
+            **kwargs
+        )
         storage.connect()
 
         storage.remove_elements(ids=ids, _filter=_filter)
