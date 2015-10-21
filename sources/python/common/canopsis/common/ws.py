@@ -175,7 +175,7 @@ class route(object):
                 # params are request params
                 try:
                     loaded_body = loads(request.body.readline())
-                except ValueError:
+                except (ValueError, TypeError):
                     pass
                 else:
                     for lb in loaded_body:
@@ -192,7 +192,7 @@ class route(object):
                     for i in range(len(param)):
                         try:
                             p = loads(param[i])
-                        except ValueError:
+                        except (ValueError, TypeError):
                             pass
                         else:
                             param[i] = p
