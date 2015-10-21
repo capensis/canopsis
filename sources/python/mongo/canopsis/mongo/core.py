@@ -51,7 +51,8 @@ class CanopsisSONManipulator(SONManipulator):
         )
 
         for key in self.to_str:
-            son[key] = str(son[key])
+            if key in son:
+                son[key] = str(son[key])
 
         return son
 
