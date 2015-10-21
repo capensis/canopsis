@@ -204,7 +204,7 @@ class route(object):
                     try:
                         kwargs[body_param] = loads(param)
 
-                    except ValueError:  # error while deserializing
+                    except (ValueError, TypeError):
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
 
