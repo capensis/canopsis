@@ -100,7 +100,13 @@ def exports(ws):
         name='pbehavior/calendar'
     )
     def find_pbehavior(behaviors=None, start=None, end=None):
-        """
+        """Get pbehavior which are between a starting and a ending date. They are filtered by behavior
+
+        :param string behaviors: behavior to filter the query (optionnal)
+        :param timestamp start: begin of the filtered period
+        :param timestamp end: end of the filtered period
+        :return: matchable events
+        :rtype: list
         """
 
         storage = pbm[PBehaviorManager.STORAGE]
