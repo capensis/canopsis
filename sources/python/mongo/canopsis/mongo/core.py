@@ -30,6 +30,7 @@ from pymongo.errors import (
 from pymongo.bulk import BulkOperationBuilder
 from pymongo.read_preferences import ReadPreference
 from pymongo.son_manipulator import SONManipulator
+from uuid import uuid1
 
 
 class CanopsisSONManipulator(SONManipulator):
@@ -37,22 +38,28 @@ class CanopsisSONManipulator(SONManipulator):
     Manage transformations on incoming/outgoing objects.
     """
 
-    def __init__(self, to_str=None, *args, **kwargs):
+    def __init__(self, idfield, *args, **kwargs):
         super(CanopsisSONManipulator, self).__init__(*args, **kwargs)
 
-        if to_str is None:
-            to_str = []
+        self.idfield = idfield
 
-        self.to_str = to_str
+    def transform_incoming(self, *args, **kwargs):
+        son = super(CanopsisSONManipulator, self).transform_incoming(
+            *args, **kwargs
+        )
+
+        if self.idfield not in son:
+            son[self.idfield] = uuid1()
+
+        return son
 
     def transform_outgoing(self, *args, **kwargs):
         son = super(CanopsisSONManipulator, self).transform_outgoing(
             *args, **kwargs
         )
 
-        for key in self.to_str:
-            if key in son:
-                son[key] = str(son[key])
+        if self.idfield in son:
+            son[self.idfield] = str(son[self.idfield])
 
         return son
 
@@ -238,7 +245,7 @@ class MongoStorage(MongoDataBase, Storage):
 
         else:
             self._database.add_son_manipulator(
-                CanopsisSONManipulator(to_str=[MongoStorage.ID])
+                CanopsisSONManipulator(MongoStorage.ID)
             )
 
         # initialize cache
