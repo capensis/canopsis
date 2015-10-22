@@ -32,7 +32,7 @@ def exports(ws):
         )
         storage.connect()
 
-        return storage.get_elements(ids=ids)
+        return storage.get_elements(ids=ids) or []
 
     @route(
         ws.application.post,
