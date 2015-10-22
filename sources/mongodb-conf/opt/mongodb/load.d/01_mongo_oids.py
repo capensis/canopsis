@@ -27,6 +27,7 @@ def init():
 
 
 def update():
+    print('Migration from ObjectId to str')
     storage = Middleware.get_middleware_by_uri('mongodb://')
     storage.connect()
 
@@ -44,6 +45,10 @@ def update():
             for doc in cursor
             if not isinstance(doc[storage.ID], basestring)
         ]
+
+        print('-- collection: {0} (documents to migrate: {1})'.format(
+            collection, len(docs)
+        ))
 
         oids = []
         for doc in docs:
