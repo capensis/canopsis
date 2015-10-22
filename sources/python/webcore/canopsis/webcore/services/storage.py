@@ -25,14 +25,14 @@ from bottle import HTTPError
 
 def exports(ws):
     @route(ws.application.get, name='storage')
-    def get_elements(protocol, data_type, data_scope, ids=None, **kwargs):
+    def get_elements(protocol, data_type, data_scope, _id=None, **kwargs):
         storage = Middleware.get_middleware(
             protocol, data_type, data_scope,
             **kwargs
         )
         storage.connect()
 
-        return storage.get_elements(ids=ids) or []
+        return storage.get_elements(ids=_id) or []
 
     @route(
         ws.application.post,
@@ -80,7 +80,7 @@ def exports(ws):
     @route(ws.application.delete, name='storage', payload=['_filter'])
     def remove_elements(
         protocol, data_type, data_scope,
-        ids=None, _filter=None,
+        _id=None, _filter=None,
         **kwargs
     ):
         storage = Middleware.get_middleware(
@@ -89,4 +89,4 @@ def exports(ws):
         )
         storage.connect()
 
-        storage.remove_elements(ids=ids, _filter=_filter)
+        storage.remove_elements(ids=_id, _filter=_filter)
