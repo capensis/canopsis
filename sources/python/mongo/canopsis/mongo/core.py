@@ -53,16 +53,6 @@ class CanopsisSONManipulator(SONManipulator):
 
         return son
 
-    def transform_outgoing(self, *args, **kwargs):
-        son = super(CanopsisSONManipulator, self).transform_outgoing(
-            *args, **kwargs
-        )
-
-        if self.idfield in son:
-            son[self.idfield] = str(son[self.idfield])
-
-        return son
-
 
 class MongoDataBase(DataBase):
     """
