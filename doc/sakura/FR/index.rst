@@ -34,5 +34,6 @@ High-Level features
    :maxdepth: 1
    :titlesonly:
 
+   fr__alarm
    fr__category-chart
    fr__statistics
