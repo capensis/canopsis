@@ -38,7 +38,7 @@ def cancel(manager, entity, author, message, event):
 
 
 @register_task('alerts.useraction.uncancel')
-def uncancel(manager, entity, author, message, event):
+def restore(manager, entity, author, message, event):
     pass
 
 
