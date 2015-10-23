@@ -24,6 +24,7 @@ from canopsis.engines.core import publish
 
 from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.stats.producers.event import EventMetricProducer
+from canopsis.session.manager import Session
 
 
 @register_task
@@ -72,3 +73,12 @@ def event_processing(
 
     for event in events:
         publish(publisher=engine.amp, event=event, logger=logger)
+
+
+@register_task
+def beat_processing(engine, sessionmgr=None, logger=None, **kwargs):
+    if sessionmgr is None:
+        sessionmgr = singleton_per_scope(Session)
+
+    for event in sessionmgr.duration():
+        publish(publisher=engine.amqp, event=event, logger=logger)

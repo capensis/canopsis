@@ -76,10 +76,10 @@ def exports(ws):
         user.pop('eid', None)
         return user
 
-    @route(ws.application.get, payload=['username'], adapt=False)
+    @route(ws.application.get, payload=['username'])
     def keepalive(username):
         session_manager.keep_alive(username)
 
-    @route(ws.application.get, payload=['username'], adapt=False)
+    @route(ws.application.get, payload=['username'])
     def sessionstart(username):
         session_manager.session_start(username)
