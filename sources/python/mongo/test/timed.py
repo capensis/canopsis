@@ -77,13 +77,66 @@ class TimedStorageTest(TestCase):
             # add a document at starting time window
             self.storage.put(data_id=data_id, value=meta, timestamp=timestamp)
 
-        # check for count equals 5
+        # check for count equals 2
         count = self.storage.count(data_id=data_id)
         self.assertEquals(count, 2)
 
         # check for_data before now
         data = self.storage.get(data_ids=[data_id])
         self.assertEquals(len(data[data_id]), 2)
+
+        # check for data before now with single id
+        data = self.storage.get(data_ids=data_id)
+        self.assertEquals(len(data), 2)
+
+        # check values are meta
+        self.assertEqual(
+            data[0][MongoTimedStorage.VALUE]['max'],
+            meta['max']
+        )
+
+        # check filtering with max == 1
+        data = self.storage.get(data_ids=data_id, _filter={'max': 1})
+        self.assertEquals(len(data), 0)
+
+        # check filtering with max == 0
+        data = self.storage.get(data_ids=data_id, _filter={'max': 0})
+        self.assertEquals(len(data), 2)
+
+        # add twice same documents with different values
+        meta['max'] += 1
+        for dat in data:
+            # add a document at starting time window
+            self.storage.put(
+                data_id=data_id, value=meta,
+                timestamp=dat[MongoTimedStorage.TIMESTAMP]
+            )
+
+        # check for_data before now
+        data = self.storage.get(data_ids=[data_id])
+        self.assertEquals(len(data[data_id]), 2)
+
+        # check for_data before now
+        data = self.storage.get(data_ids=[data_id])
+        self.assertEquals(len(data[data_id]), 2)
+
+        # check for_data before now with single index
+        data = self.storage.get(data_ids=data_id)
+        self.assertEquals(len(data), 2)
+
+        # check values are new meta
+        self.assertEqual(
+            data[0][MongoTimedStorage.VALUE]['max'],
+            meta['max']
+        )
+
+        # check filtering with max == 0
+        data = self.storage.get(data_ids=data_id, _filter={'max': 0})
+        self.assertEquals(len(data), 0)
+
+        # check filtering with max == 1
+        data = self.storage.get(data_ids=data_id, _filter={'max': 1})
+        self.assertEquals(len(data), 2)
 
         # check for data inside timewindow and just before
         data = self.storage.get(data_ids=[data_id], timewindow=timewindow)
@@ -101,6 +154,7 @@ class TimedStorageTest(TestCase):
         # check for count equals 0
         count = self.storage.count(data_id=data_id)
         self.assertEquals(count, 0)
+
 
 if __name__ == '__main__':
     main()

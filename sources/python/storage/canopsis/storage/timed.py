@@ -41,10 +41,12 @@ class TimedStorage(Storage):
     TIMESTAMP = 'timestamp'
 
     def get(
-        self, data_ids, timewindow=None, limit=0, skip=0, sort=None
+        self, data_ids, timewindow=None, _filter=None,
+        limit=0, skip=0, sort=None
     ):
         """
-        Get a dictionary of sorted list of triplet of dictionaries such as :
+        Get data values ordered by timestamp in descresent order and data ids
+        if data_ids is a list of data ids.
 
         dict(
             tuple(
@@ -53,31 +55,48 @@ class TimedStorage(Storage):
 
         If timewindow is None, result is all timed document.
 
-        :return:
-        :rtype: dict of tuple(float, dict, str)
+        :param str(s) data_ids: data id(s).
+        :param TimeWindow timedwindow: data value time window. Default is
+            current timestamp offsset.
+        :param _filter: value filter.
+        :param int limit: maximal number of data to retrieve.
+        :param int skip: number of documents to skip.
+        :param dict sort: sort documents by something else than timestamp.
+
+        :return: depends on data_ids type:
+
+            - str: list of (timestamp, data value)
+            - list: dict of {data id, list of (timestamp, data value)}
+
+        :rtype: dict of tuple(float, dict, str) or tuple(float, dict, str)
         """
 
         raise NotImplementedError()
 
     def count(self, data_id):
-        """
-        Get number of timed documents for input data_id.
+        """Get number of period of timed documents for input data_id.
+
+        :param str data_id: data_id to count.
         """
 
         raise NotImplementedError()
 
     def put(self, data_id, value, timestamp, cache=False):
-        """
-        Put a dictionary of value by name in collection.
+        """Put a dictionary of value by name in collection.
 
+        :param str data_id: related data_id.
+        :param value: value to associate to data_id at timestamp time.
+        :param float timestamp: timestamp to use for associating value to
+            data_id. If timestamp already exists, update existing value with
+            the same timestamp. Otherwise, check if value is different than the
+            previous value and add a document if False.
         :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
     def remove(self, data_ids, timewindow=None, cache=False):
-        """
-        Remove timed_data existing on input timewindow.
+        """Remove timed_data existing on input timewindow.
 
         :param bool cache: use query cache if True (False by default).
         """
