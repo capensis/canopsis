@@ -189,6 +189,9 @@ def status_decrease(manager, alarm, status, event):
         'status': status
     }
 
+    if status == archiver.OFF:
+        alarm['resolved'] = step['t']
+
     alarm['steps'].append(step)
 
     return alarm

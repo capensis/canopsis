@@ -148,7 +148,7 @@ class Alerts(MiddlewareRegistry):
                 'ack': None,
                 'canceled': None,
                 'ticket': None,
-                'resolved': None
+                'resolved': None,
                 'steps': [],
             }
 
