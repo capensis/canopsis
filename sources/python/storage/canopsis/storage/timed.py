@@ -44,7 +44,7 @@ class TimedStorage(Storage):
         self, data_ids, timewindow=None, limit=0, skip=0, sort=None
     ):
         """
-        Get a dictionary of sorted list of triplet of dictionaries such as :
+        Get a dictionary of sorted list of triplet of dictionaries such as:
 
         dict(
             tuple(
@@ -53,15 +53,15 @@ class TimedStorage(Storage):
 
         If timewindow is None, result is all timed document.
 
-        :return:
         :rtype: dict of tuple(float, dict, str)
         """
 
         raise NotImplementedError()
 
     def count(self, data_id):
-        """
-        Get number of timed documents for input data_id.
+        """Get number of timed documents for input data_id.
+
+        :rtype: int
         """
 
         raise NotImplementedError()

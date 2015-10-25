@@ -22,8 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.parameters import \
-    Configuration, Category, Parameter
+from canopsis.configuration.model import Configuration, Category, Parameter
 
 from tempfile import NamedTemporaryFile
 
@@ -42,11 +41,13 @@ class ConfigurableTest(TestCase):
         self.configurable = Configurable()
 
         self.conf = Configuration(
-            Category('A',
+            Category(
+                'A',
                 Parameter('a', value='a'),
                 Parameter('2', value=2, parser=int),
                 Parameter('error', value='error', parser=float)),
-            Category('B',
+            Category(
+                'B',
                 Parameter('a', value='b'),
                 Parameter('b', value='b')))
 
@@ -162,7 +163,8 @@ class ConfigurableTest(TestCase):
         self.assertTrue(self.configurable.auto_conf)
 
         conf = Configuration(
-            Category('TEST',
+            Category(
+                'TEST',
                 Parameter('auto_conf', value=False)))
 
         self.configurable.configure(conf=conf)
@@ -170,7 +172,8 @@ class ConfigurableTest(TestCase):
         self.assertEqual(self.configurable.log_lvl, 'INFO')
 
         conf = Configuration(
-            Category('TEST',
+            Category(
+                'TEST',
                 Parameter('log_lvl', value='DEBUG')))
 
         self.configurable.configure(conf=conf)

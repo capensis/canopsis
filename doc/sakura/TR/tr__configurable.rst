@@ -1,10 +1,10 @@
-.. _FR__Configurable:
+.. _TR__Configurable:
 
 =====================
 Canopsis configurable
 =====================
 
-This document describes the concept of configurable in Canopsis.
+This document describes the technical solution of configurable in Canopsis.
 
 .. contents::
    :depth: 2
@@ -16,20 +16,41 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "Jonathan Labéjof", "2015/10/06", "0.1", "Document creation", ""
+   "Jonathan Labéjof", "2015/10/22", "0.1", "Document creation"
+
+----------
+References
+----------
+
+- :ref:`FR::Configurable <fr__configurable>`
 
 --------
 Contents
 --------
 
-Description
-===========
+.. _TR__Configurable__Model:
 
-A configurable is the base class for all python classes in Canopsis.
+Architecture
+============
 
-It is linked to at least one configuration resource, such as file or data base document.
+This project contains those modules:
 
-All resources are transformed in a unified configuration language;
+- model: configuration model classes and tools.
+- configurable: configurable base class and tools.
+- drivers: configuration driver classes and tools.
+
+.. _TR__Configurable__Model:
+
+.. include:: ../developer-guide/api/configuration/canopsis.rst
+
+TOTO
+
+.. include:: ../developer-guide/api/configuration/canopsis.configuration.rst
+
+Model
+=====
+
+Four classes are provided in order to modelize a configuration.
 
 .. _FR__Configurable__configuration:
 

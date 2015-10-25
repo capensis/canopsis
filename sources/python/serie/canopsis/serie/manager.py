@@ -21,7 +21,7 @@
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.model import Parameter
 
 from canopsis.serie.utils import build_filter_from_regex
 from canopsis.timeserie.timewindow import Period
