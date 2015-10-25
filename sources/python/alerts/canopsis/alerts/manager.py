@@ -58,7 +58,13 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.CHECK_MANAGER] = check
 
     def get_current_alarm(self, alarm_id):
-        return self[Alerts.ALARM_STORAGE].get(alarm_id, limit=1)
+        return self[Alerts.ALARM_STORAGE].get(
+            alarm_id,
+            _filter={
+                'resolved': None
+            },
+            limit=1
+        )
 
     def update_current_alarm(self, alarm, new_value):
         storage = self[Alerts.ALARM_STORAGE]
