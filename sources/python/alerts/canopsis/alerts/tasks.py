@@ -23,55 +23,172 @@ from canopsis.check import archiver
 
 
 @register_task('alerts.useraction.ack')
-def acknowledge(manager, entity, author, message, event):
-    pass
+def acknowledge(manager, alarm, author, message, event):
+    step = {
+        '_t': 'ack',
+        't': event['timestamp'],
+        'a': author,
+        'm': message
+    }
+
+    alarm['ack'] = step
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.useraction.ackremove')
-def unacknowledge(manager, entity, author, message, event):
-    pass
+def unacknowledge(manager, alarm, author, message, event):
+    step = {
+        '_t': 'ackremove',
+        't': event['timestamp'],
+        'a': author,
+        'm': message
+    }
+
+    del alarm['ack']
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.useraction.cancel')
-def cancel(manager, entity, author, message, event):
-    pass
+def cancel(manager, alarm, author, message, event):
+    step = {
+        '_t': 'cancel',
+        't': event['timestamp'],
+        'a': author,
+        'm': message
+    }
+
+    alarm['canceled'] = step
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.useraction.uncancel')
-def restore(manager, entity, author, message, event):
-    pass
+def restore(manager, alarm, author, message, event):
+    step = {
+        '_t': 'uncancel',
+        't': event['timestamp'],
+        'a': author,
+        'm': message
+    }
+
+    del alarm['canceled']
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.useraction.declareticket')
-def declare_ticket(manager, entity, author, message, event):
-    pass
+def declare_ticket(manager, alarm, author, message, event):
+    step = {
+        '_t': 'declareticket',
+        't': event['timestamp'],
+        'a': author,
+        'm': message,
+        'val': None
+    }
+
+    alarm['ticket'] = step
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.useraction.assocticket')
-def associate_ticket(manager, entity, author, message, event):
-    pass
+def associate_ticket(manager, alarm, author, message, event):
+    step = {
+        '_t': 'assocticket',
+        't': event['timestamp'],
+        'a': author,
+        'm': message,
+        'val': event['ticket']
+    }
+
+    alarm['ticket'] = step
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.useraction.changestate')
-def change_state(manager, entity, author, message, event):
-    pass
+def change_state(manager, alarm, author, message, event):
+    step = {
+        '_t': 'changestate',
+        't': event['timestamp'],
+        'a': author,
+        'm': message,
+        'val': event['state']
+    }
+
+    alarm['state'] = step
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.systemaction.state_increase')
-def state_increase(manager, entity, state):
-    return archiver.OFF
+def state_increase(manager, alarm, state, event):
+    step = {
+        '_t': 'stateinc',
+        't': event['timestamp'],
+        'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
+        'm': event['output'],
+        'val': state
+    }
+
+    alarm['state'] = step
+    # TODO: alarm['status'] = ...
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.systemaction.state_decrease')
-def state_decrease(manager, entity, state):
-    return archiver.OFF
+def state_decrease(manager, alarm, state, event):
+    step = {
+        '_t': 'statedec',
+        't': event['timestamp'],
+        'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
+        'm': event['output'],
+        'val': state
+    }
+
+    alarm['state'] = step
+    # TODO: alarm['status'] = ...
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.systemaction.status_increase')
-def status_increase(manager, entity, status):
-    return True
+def status_increase(manager, alarm, status, event):
+    step = {
+        '_t': 'statusinc',
+        't': event['timestamp'],
+        'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
+        'm': event['output'],
+        'status': status
+    }
+
+    alarm['steps'].append(step)
+
+    return alarm
 
 
 @register_task('alerts.systemaction.status_decrease')
-def status_decrease(manager, entity, status):
-    return False
+def status_decrease(manager, alarm, status, event):
+    step = {
+        '_t': 'statusdec',
+        't': event['timestamp'],
+        'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
+        'm': event['output'],
+        'status': status
+    }
+
+    alarm['steps'].append(step)
+
+    return alarm

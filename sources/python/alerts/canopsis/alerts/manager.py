@@ -57,6 +57,17 @@ class Alerts(MiddlewareRegistry):
         if check is not None:
             self[Alerts.CHECK_MANAGER] = check
 
+    def get_current_alarm(self, alarm_id):
+        return self[Alerts.ALARM_STORAGE].get(alarm_id, limit=1)
+
+    def update_current_alarm(self, alarm, new_value):
+        storage = self[Alerts.ALARM_STORAGE]
+
+        alarm_id = alarm[storage.Key.DATA_ID]
+        alarm_ts = alarm[storage.Key.TIMESTAMP]
+
+        storage.put(alarm_id, new_value, alarm_ts)
+
     def archive(self, event):
         entity = self[Alerts.CONTEXT_MANAGER].get_entity(event)
         entity_id = self[Alerts.CONTEXT_MANAGER].get_entity_id(entity)
@@ -65,6 +76,9 @@ class Alerts(MiddlewareRegistry):
         message = event.get('output', None)
 
         if event['type'] == Check.EVENT_TYPE:
+            if event[Check.STATE] != Check.OK:
+                self.make_alarm(entity_id, event['timestamp'])
+
             old_state = self[Alerts.CHECK_MANAGER].state(ids=entity_id)
             state = self[Alerts.CHECK_MANAGER].state(
                 ids=entity_id,
@@ -72,15 +86,18 @@ class Alerts(MiddlewareRegistry):
             )
 
             if state != old_state:
-                self.change_of_state(entity, old_state, state)
+                self.change_of_state(entity, old_state, state, event)
 
         else:
             task = get_task('alerts.useraction.{0}'.format(event['type']))
 
             if task is not None:
-                task(self, entity, author, message, event)
+                alarm = self.get_current_alarm(entity_id)
+                value = alarm.get(self[Alerts.ALARM_STORAGE].Key.VALUE)
+                new_value = task(self, value, author, message, event)
+                self.update_current_alarm(alarm, new_value)
 
-    def change_of_state(self, entity, old_state, state):
+    def change_of_state(self, entity, old_state, state, event):
         entity_id = self[Alerts.CONTEXT_MANAGER].get_entity_id(entity)
 
         if state > old_state:
@@ -89,35 +106,50 @@ class Alerts(MiddlewareRegistry):
         elif state < old_state:
             task = get_task('alerts.systemaction.state_decrease')
 
-        status = task(self, entity, state)
+        alarm = self.get_current_alarm(entity_id)
+        value = alarm.get(self[Alerts.ALARM_STORAGE].Key.VALUE)
+        new_value = task(self, value, state, event)
+        self.update_current_alarm(alarm, new_value)
 
         # TODO: implementation needed in check manager
         # old_status = self[Alerts.CHECK_MANAGER].status(ids=entity_id)
         # status = self[Alerts.CHECK_MANAGER].status(
         #     ids=entity_id,
-        #     status=status
+        #     status=new_value['status']['val']
         # )
         #
         # if status != old_status:
-        #     self.change_of_status(entity, old_status, status)
+        #     self.change_of_status(
+        #         alarm,
+        #         old_status,
+        #         new_value['status'],
+        #         event
+        #     )
 
-    def change_of_status(self, entity, old_status, status):
+    def change_of_status(self, alarm, old_status, status, event):
+        value = alarm.get(self[Alerts.ALARM_STORAGE].Key.VALUE)
+
         if status > old_status:
             task = get_task('alerts.systemaction.status_increase')
 
         elif status < old_status:
             task = get_task('alerts.systemaction.status_decrease')
 
-        alarm = task(self, entity, status)
+        new_value = task(self, value, status, event)
+        self.update_current_alarm(alarm, new_value)
 
-        if alarm:
-            self.alarm(entity)
+    def make_alarm(self, alarm_id, timestamp):
+        alarm = self.get_current_alarm(alarm_id)
 
-        else:
-            self.resolve(entity)
+        if alarm is None:
+            value = {
+                'state': None,
+                'status': None,
+                'ack': None,
+                'canceled': None,
+                'ticket': None,
+                'resolved': None
+                'steps': [],
+            }
 
-    def alarm(self, entity):
-        pass
-
-    def resolve(self, entity):
-        pass
+            self[Alerts.ALARM_STORAGE].put(alarm_id, value, timestamp)
