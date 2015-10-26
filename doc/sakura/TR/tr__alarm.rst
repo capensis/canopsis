@@ -36,7 +36,12 @@ Alerts manager
 An ``Alerts`` :ref:`configurable <FR__Configurable>` provides:
 
  - the ability to archive an :ref:`event <FR__Event>`
- - alarm cycle management operations (create a new one, update existing one, get last one, find old alarms, tagging)
+ - alarm cycle management operations:
+    - create a new one
+    - update existing one
+    - get last one
+    - find old alarms
+    - tagging
 
 .. _TR__Alarm__Cycle:
 

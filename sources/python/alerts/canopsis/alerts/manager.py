@@ -58,7 +58,7 @@ class Alerts(MiddlewareRegistry):
         if check is not None:
             self[Alerts.CHECK_MANAGER] = check
 
-    def get_alarms(self, resolved=True, tags=None):
+    def get_alarms(self, resolved=True, tags=None, exclude_tags=None):
         query = {}
 
         if resolved:
@@ -67,10 +67,26 @@ class Alerts(MiddlewareRegistry):
         else:
             query['resolved'] = None
 
-        if tags is not None:
-            query['tags'] = {'$in': ensure_iterable(tags)}
+        tags_cond = None
 
-        return self[Alerts.ALARM_STORAGE].find(query=query, limit=1)
+        if tags is not None:
+            tags_cond = {'$in': ensure_iterable(tags)}
+
+        notags_cond = None
+
+        if exclude_tags is not None:
+            notags_cond = {'$nin': ensure_iterable(tags)}
+
+        if tags_cond is None and notags_cond is not None:
+            query['tags'] = notags_cond
+
+        elif tags_cond is not None and notags_cond is None:
+            query['tags'] = tags_cond
+
+        elif tags_cond is not None and notags_cond is not None:
+            query = {'$and': [query, tags_cond, notags_cond]}
+
+        return self[Alerts.ALARM_STORAGE].find(query=query)
 
     def get_current_alarm(self, alarm_id):
         return self[Alerts.ALARM_STORAGE].get(
