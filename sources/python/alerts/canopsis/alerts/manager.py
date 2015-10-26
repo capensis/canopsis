@@ -22,6 +22,7 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 
+from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
 from canopsis.check import Check
 
@@ -57,6 +58,20 @@ class Alerts(MiddlewareRegistry):
         if check is not None:
             self[Alerts.CHECK_MANAGER] = check
 
+    def get_alarms(self, resolved=True, tags=None):
+        query = {}
+
+        if resolved:
+            query['resolved'] = {'$ne': None}
+
+        else:
+            query['resolved'] = None
+
+        if tags is not None:
+            query['tags'] = {'$in': ensure_iterable(tags)}
+
+        return self[Alerts.ALARM_STORAGE].find(query=query, limit=1)
+
     def get_current_alarm(self, alarm_id):
         return self[Alerts.ALARM_STORAGE].get(
             alarm_id,
@@ -66,11 +81,16 @@ class Alerts(MiddlewareRegistry):
             limit=1
         )
 
-    def update_current_alarm(self, alarm, new_value):
+    def update_current_alarm(self, alarm, new_value, tags=None):
         storage = self[Alerts.ALARM_STORAGE]
 
         alarm_id = alarm[storage.Key.DATA_ID]
         alarm_ts = alarm[storage.Key.TIMESTAMP]
+
+        if tags is not None:
+            for tag in ensure_iterable(tags):
+                if tag not in new_value['tags']:
+                    new_value['tags'].append(tag)
 
         storage.put(alarm_id, new_value, alarm_ts)
 
@@ -156,6 +176,7 @@ class Alerts(MiddlewareRegistry):
                 'ticket': None,
                 'resolved': None,
                 'steps': [],
+                'tags': []
             }
 
             self[Alerts.ALARM_STORAGE].put(alarm_id, value, timestamp)
