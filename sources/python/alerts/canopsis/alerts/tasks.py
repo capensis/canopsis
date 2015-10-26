@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.alerts.status import compute_status
 from canopsis.task.core import register_task
 from canopsis.check import archiver
 
@@ -141,10 +142,10 @@ def state_increase(manager, alarm, state, event):
     }
 
     alarm['state'] = step
-    # TODO: alarm['status'] = ...
+    status = compute_status(manager, alarm)
     alarm['steps'].append(step)
 
-    return alarm
+    return alarm, status
 
 
 @register_task('alerts.systemaction.state_decrease')
@@ -158,10 +159,10 @@ def state_decrease(manager, alarm, state, event):
     }
 
     alarm['state'] = step
-    # TODO: alarm['status'] = ...
+    status = compute_status(manager, alarm)
     alarm['steps'].append(step)
 
-    return alarm
+    return alarm, status
 
 
 @register_task('alerts.systemaction.status_increase')

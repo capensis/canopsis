@@ -21,6 +21,7 @@
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
+from canopsis.configuration.params import Parameter
 
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
@@ -29,7 +30,12 @@ from canopsis.check import Check
 
 CONF_PATH = 'alerts/manager.conf'
 CATEGORY = 'ALERTS'
-CONTENT = []
+CONTENT = [
+    Parameter('flapping_interval', int),
+    Parameter('flapping_freq', int),
+    Parameter('stealthy_interval', int),
+    Parameter('stealthy_show_duration', int)
+]
 
 
 @conf_paths(CONF_PATH)
@@ -150,14 +156,14 @@ class Alerts(MiddlewareRegistry):
 
         alarm = self.get_current_alarm(entity_id)
         value = alarm.get(self[Alerts.ALARM_STORAGE].Key.VALUE)
-        new_value = task(self, value, state, event)
+        new_value, status = task(self, value, state, event)
         self.update_current_alarm(alarm, new_value)
 
         # TODO: implementation needed in check manager
         # old_status = self[Alerts.CHECK_MANAGER].status(ids=entity_id)
         # status = self[Alerts.CHECK_MANAGER].status(
         #     ids=entity_id,
-        #     status=new_value['status']['val']
+        #     status=status
         # )
         #
         # if status != old_status:
