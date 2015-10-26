@@ -46,7 +46,7 @@ def unacknowledge(manager, alarm, author, message, event):
         'm': message
     }
 
-    del alarm['ack']
+    alarm['ack'] = None
     alarm['steps'].append(step)
 
     return alarm
@@ -76,7 +76,7 @@ def restore(manager, alarm, author, message, event):
         'm': message
     }
 
-    del alarm['canceled']
+    alarm['canceled'] = None
     alarm['steps'].append(step)
 
     return alarm

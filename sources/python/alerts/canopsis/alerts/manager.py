@@ -128,7 +128,7 @@ class Alerts(MiddlewareRegistry):
         #     self.change_of_status(
         #         alarm,
         #         old_status,
-        #         new_value['status'],
+        #         status,
         #         event
         #     )
 
