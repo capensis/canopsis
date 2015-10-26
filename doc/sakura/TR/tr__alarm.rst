@@ -16,6 +16,7 @@ References
  - :ref:`FR::Configuration <FR__Configurable>`
  - :ref:`FR::Event <FR__Event>`
  - :ref:`FR::Storage <FR__Storage>`
+ - :ref:`TR::Storage <TR__Storage>`
 
 Updates
 =======
@@ -228,3 +229,190 @@ Alarm step "change state" data model
    a, step author, state requalification author
    m, step message, state requalification message
    val, state, new state
+
+Unit Tests
+==========
+
+Creating new alarm
+------------------
+
+``make_alarm(alarm_id, timestamp)``:
+
+ * ``alarm_id`` as ``string``: the entity id of the alarm
+ * ``timestamp`` as ``integer``: the date/time of alarm appearance
+
+Case 1: new alarm
+~~~~~~~~~~~~~~~~~
+
+**Expected:** The alarm **MUST** be present in the configured timed storage with all values set to ``None``.
+
+Case 2: existing alarm
+~~~~~~~~~~~~~~~~~~~~~~
+
+**Expected:** The existing alarm **MUST** be left untouched, and no new alarm should be created.
+
+Get last unresolved alarm
+-------------------------
+
+``get_current_alarm(alarm_id) -> alarm``:
+
+ * ``alarm_id`` as ``string``: the entity id of the alarm
+ * ``alarm`` as a ``dict``: the current unresolved alarm, or ``None`` if no alarm found, or all of them are resolved
+
+Case 1: there is an unresolved alarm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Expected:** ``alarm`` **MUST NOT** be ``None``, and should contains a value described by the :ref:`alarm data model <TR__Alarm__DataModel>`.
+
+Case 2: there is no alarm, or no resolved ones
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Expected:** ``alarm`` **MUST** be ``None``.
+
+Update existing alarm
+---------------------
+
+``update_current_alarm(alarm, new_value, [tags])``:
+
+ * ``alarm`` as described by the :ref:`timed storage data model <TR__Storage__DataModel__Timed>`: alarm to update
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: value to use for the alarm
+ * ``tags`` (optional) as a ``list`` or a ``string``: tags to add to the alarm value
+
+Case 1: there is no alarm
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Expected:** A new document **SHOULD** be created.
+
+Case 2: there is an existing alarm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Expected:**
+
+ - the alarm value **MUST** be replaced by ``new_value``
+ - the ``tags`` **MUST** be added to the alarm value
+
+Task: acknowledge
+-----------------
+
+``alerts.useraction.ack(manager, alarm, author, message, event) -> new_value``:
+
+ * ``manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to acknowledge
+ * ``author`` as a ``string``: the acknowledgment author
+ * ``message`` as a ``string``: the acknowledgment message
+ * ``event`` as a ``dict``: the :ref:`acknowledgment event <FR__Event__Ack>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``ack`` **MUST** be set to the :ref:`acknowledge step <TR__Alarm__DataModel__Acknowledge>`
+ - the step **MUST** be added to the ``steps`` set of the alarm
+ - the alarm **MUST** be returned as ``new_value``
+
+Task: unacknowledge
+-------------------
+
+``alerts.useraction.ackremove(manager, alarm, author, message, event) -> new_value``:
+
+ * ``manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to unacknowledge
+ * ``author`` as a ``string``: the acknowledgment removing author
+ * ``message`` as a ``string``: the acknowledgment removing message
+ * ``event`` as a ``dict``: the :ref:`acknowledgment removing event <FR__Event__Ackremove>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``ack`` **MUST** be set to ``None``
+ - the :ref:`unacknowledge step <TR__Alarm__DataModel__Unacknowledge>` **MUST** be added to the ``steps`` set of the alarm
+ - the alarm **MUST** be returned as ``new_value``
+
+Task: Cancel
+------------
+
+``alerts.useraction.cancel(manager, alarm, author, message, event) -> new_value``:
+
+ * ``manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to cancel
+ * ``author`` as a ``string``: the alarm canceling author
+ * ``message`` as a ``string``: the alarm canceling message
+ * ``event`` as a ``dict``: the :ref:`alarm canceling event <FR__Event__Cancel>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``cancel`` **MUST** be set to :ref:`cancel step <TR__Alarm__DataModel__Cancel>`
+ - the step **MUST** be added to the ``steps`` set of the alarm
+ - the alarm **MUST** be returned as ``new_value``
+
+Task: Restore
+-------------
+
+``alerts.useraction.uncancel(manager, alarm, author, message, event) -> new_value``:
+
+ * ``manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to restore
+ * ``author`` as a ``string``: the alarm restoring author
+ * ``message`` as a ``string``: the alarm restoring message
+ * ``event`` as a ``dict``: the :ref:`alarm restoring event <FR__Event__Uncancel>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``cancel`` **MUST** be set to ``None``
+ - the :ref:`cancel step <TR__Alarm__DataModel__Cancel>` **MUST** be added to the ``steps`` set of the alarm
+ - the alarm **MUST** be returned as ``new_value``
+
+Task: Declare ticket
+--------------------
+
+``alerts.useraction.declareticket(manager, alarm, author, message, event) -> new_value``:
+
+ * ``manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm used for ticket declaration
+ * ``author`` as a ``string``: the ticket declaration author
+ * ``message`` as a ``string``: the ticket declaration message
+ * ``event`` as a ``dict``: the :ref:`ticket declaration event <FR__Event__Declareticket>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``ticket`` **MUST** be set to the :ref:`ticket declaration step <TR__Alarm__DataModel__Declareticket>`
+ - the step **MUST** be added to the ``steps`` set of the alarm
+ - the alarm **MUST** be returned as ``new_value``
+
+Task: Associate ticket
+----------------------
+
+``alerts.useraction.assocticket(manager, alarm, author, message, event) -> new_value``:
+
+ * ``manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm used for ticket association
+ * ``author`` as a ``string``: the ticket association author
+ * ``message`` as a ``string``: the ticket association message
+ * ``event`` as a ``dict``: the :ref:`ticket association event <FR__Event__Assocticket>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``ticket`` **MUST** be set to the :ref:`ticket association step <TR__Alarm__DataModel__Assocticket>`
+ - the step **MUST** be added to the ``steps`` set of the alarm
+ - the alarm **MUST** be returned as ``new_value``
+
+Task: Change State
+------------------
+
+``alerts.useraction.changestate(manager, alarm, author, message, event) -> new_value``:
+
+ * ``manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
+ * ``author`` as a ``string``: the change state author
+ * ``message`` as a ``string``: the change state message
+ * ``event`` as a ``dict``: the :ref:`change state event <FR__Event__Changestate>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``ticket`` **MUST** be set to the :ref:`change state step <TR__Alarm__DataModel__ChangeState>`
+ - the step **MUST** be added to the ``steps`` set of the alarm
+ - the alarm **MUST** be returned as ``new_value``
