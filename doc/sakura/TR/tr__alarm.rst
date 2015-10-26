@@ -36,7 +36,7 @@ Alerts manager
 An ``Alerts`` :ref:`configurable <FR__Configurable>` provides:
 
  - the ability to archive an :ref:`event <FR__Event>`
- - alarm cycle management operations (create a new one, update existing one, get last one)
+ - alarm cycle management operations (create a new one, update existing one, get last one, find old alarms, tagging)
 
 .. _TR__Alarm__Cycle:
 
@@ -66,6 +66,7 @@ The set of alarm steps will compute informations for an easier use:
    ticket, ``declareticket`` step or ``assocticket`` step or ``None`` if no ticketing informations
    resolved, timestamp of resolution or ``None`` if alarm is still on going
    steps, array of steps (see data models bellow)
+   tags, array of tag (as strings) used for filtering
 
 .. _TR__Alarm__DataModel__StateInc:
 
