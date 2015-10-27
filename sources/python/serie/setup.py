@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -18,6 +19,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[STATS]
+from canopsis.common.setup import setup
 
-[EVENT_STORAGE_CONF]
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.timeserie',
+    'canopsis.task',
+    'canopsis.engines',
+    'canopsis.old',
+    'RestrictedPython'
+]
+
+setup(
+    description='Canopsis stats library',
+    install_requires=install_requires,
+    keywords='stats')

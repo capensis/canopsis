@@ -20,7 +20,7 @@
 
 from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
-from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
@@ -29,11 +29,14 @@ from canopsis.check import Check
 
 #: check manager configuration category
 CATEGORY = 'CHECK'
+
 #: check manager conf path
 CONF_PATH = 'check/check.conf'
 
 
 class InvalidState(Exception):
+    """Handle CheckManager errors."""
+
     def __init__(self, state, states):
         self.state = state
         self.states = states
@@ -54,24 +57,24 @@ class CheckManager(MiddlewareRegistry):
     id.
     """
 
-    CHECK_STORAGE = 'check_storage'  #: storage name
+    CHECK_STORAGE = 'check_storage'  #: storage name.
 
-    ID = '_id'  # Storage.DATA_ID  #: state id field name
+    ID = '_id'  #: state id field name.
 
-    STATE = Check.STATE  #: state field name
-    LAST_STATE = 'last'  #: last state field name if criticity != HARD
-    COUNT = 'count'  #: last state count if criticity != 0
+    STATE = Check.STATE  #: state field name.
+    LAST_STATE = 'last'  #: last state field name if criticity != HARD.
+    COUNT = 'count'  #: last state count if criticity != 0.
 
-    HARD = 0  #: hard criticity
-    SOFT = 1  #: soft criticity
+    HARD = 0  #: hard criticity.
+    SOFT = 1  #: soft criticity.
 
-    #: number of state before updating by criticity levels
+    #: number of state before updating by criticity levels.
     CRITICITY_COUNT = {
         HARD: 1,
         SOFT: 3
     }
 
-    #: default function to apply when changing of state
+    #: default function to apply when changing of state.
     DEFAULT_F = 'canopsis.check.task.criticity'
     valid_states = [0, 1, 2, 3]
 
@@ -110,6 +113,7 @@ class CheckManager(MiddlewareRegistry):
         )
         # if state document exists
         if state_documents is not None:
+
             # ensure state_documents is a list
             if isinstance(state_documents, dict):
                 state_documents = [state_documents]
@@ -117,12 +121,15 @@ class CheckManager(MiddlewareRegistry):
             id_field, state_field = CheckManager.ID, CheckManager.STATE
             # result is a dictionary of entity id, state value
             result = {}
+
             for state_document in state_documents:
                 entity_id = state_document[id_field]
                 entity_state = state_document[state_field]
                 result[entity_id] = entity_state
+
         # if state has to be updated
         if state is not None:
+
             # get the right state function
             f = lookup(f) if isinstance(f, basestring) else f
             # save field name for quick access
@@ -130,18 +137,25 @@ class CheckManager(MiddlewareRegistry):
             state_name = CheckManager.STATE
             # save storage for quick access
             storage = self[CheckManager.CHECK_STORAGE]
+
             # ensure entity_ids is a set
             if isinstance(ids, basestring):
                 entity_ids = set([ids])
+
             elif ids is None:
+
                 if state_documents is None:
                     entity_ids = set()
+
                 else:
                     entity_ids = set([sd[id_name] for sd in state_documents])
+
             else:
                 entity_ids = set(ids)
+
             # if states exist in DB
             if state_documents is not None:
+
                 # for all found documents
                 for state_document in state_documents:
                     # get document id
@@ -154,28 +168,35 @@ class CheckManager(MiddlewareRegistry):
                         state=state,
                         criticity=criticity
                     )
+
                     # save new state_document if old != new
                     if state_document != new_state_document:
                         storage.put_element(
                             _id=_id, element=new_state_document, cache=cache
                         )
+
                     # save state entity in result
                     result[_id] = new_state_document[state_name]
+
             # for all not found documents
             for entity_id in entity_ids:
+
                 # create a new document
                 state_document = {
                     id_name: entity_id,
                 }
+
                 new_state_document = f(
                     state_document=state_document,
                     state=state,
                     criticity=criticity
                 )
+
                 # save it in storage
                 storage.put_element(
                     _id=entity_id, element=new_state_document, cache=cache
                 )
+
                 # and put entity state in the result
                 result[entity_id] = state
 

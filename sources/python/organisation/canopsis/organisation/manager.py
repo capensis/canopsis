@@ -20,7 +20,7 @@
 
 from md5 import new as md5
 
-from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.model import Parameter
 from canopsis.middleware.registry import MiddlewareRegistry
 
 

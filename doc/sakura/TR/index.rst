@@ -11,6 +11,8 @@ Base
    :titlesonly:
 
    tr__architecture
+   tr__context
+   tr__metric
 
 Systems
 -------

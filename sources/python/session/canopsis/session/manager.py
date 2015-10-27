@@ -21,7 +21,8 @@
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.model import Parameter
+
 from time import time
 
 CONF_PATH = 'session/session.conf'

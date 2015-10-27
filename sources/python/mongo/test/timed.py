@@ -53,7 +53,7 @@ class TimedStorageTest(TestCase):
         self.storage.drop()
 
         # ensure count is 0
-        count = self.storage.count(data_id=data_id)
+        count = self.storage.count(data_ids=data_id)
         self.assertEquals(count, 0)
 
         # let's play with different data_names
@@ -78,7 +78,7 @@ class TimedStorageTest(TestCase):
             self.storage.put(data_id=data_id, value=meta, timestamp=timestamp)
 
         # check for count equals 2
-        count = self.storage.count(data_id=data_id)
+        count = self.storage.count(data_ids=data_id)
         self.assertEquals(count, 2)
 
         # check for_data before now
@@ -101,6 +101,16 @@ class TimedStorageTest(TestCase):
 
         # check filtering with max == 0
         data = self.storage.get(data_ids=data_id, _filter={'max': 0})
+        self.assertEquals(len(data), 2)
+
+        # check find
+        data = self.storage.find(_filter={'max': 1})
+        self.assertEquals(len(data), 0)
+
+        data = self.storage.find(_filter={'max': 0})[data_id]
+        self.assertEquals(len(data), 2)
+
+        data = self.storage.find()[data_id]
         self.assertEquals(len(data), 2)
 
         # add twice same documents with different values
@@ -138,21 +148,35 @@ class TimedStorageTest(TestCase):
         data = self.storage.get(data_ids=data_id, _filter={'max': 1})
         self.assertEquals(len(data), 2)
 
+        # check find
+        data = self.storage.find(_filter={'max': 0})
+        self.assertEquals(len(data), 0)
+
+        data = self.storage.find(_filter={'max': 1})[data_id]
+        self.assertEquals(len(data), 2)
+
+        data = self.storage.find()[data_id]
+        self.assertEquals(len(data), 2)
+
         # check for data inside timewindow and just before
         data = self.storage.get(data_ids=[data_id], timewindow=timewindow)
+        self.assertEquals(len(data), 1)
+
+        # check for data inside timewindow and just before
+        data = self.storage.find(timewindow=timewindow)
         self.assertEquals(len(data), 1)
 
         # remove data inside timewindow
         self.storage.remove(data_ids=[data_id], timewindow=timewindow)
         # check for data outside timewindow
-        count = self.storage.count(data_id=data_id)
+        count = self.storage.count(data_ids=data_id)
         self.assertEquals(
             count, len(before_timewindow) + len(after_timewindow))
 
         # remove all data
-        self.storage.remove(data_ids=[data_id])
+        self.storage.remove(data_ids=data_id)
         # check for count equals 0
-        count = self.storage.count(data_id=data_id)
+        count = self.storage.count(data_ids=data_id)
         self.assertEquals(count, 0)
 
 
