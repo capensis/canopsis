@@ -81,7 +81,15 @@ def restore(manager, alarm, author, message, event):
     alarm['canceled'] = None
     alarm['steps'].append(step)
 
-    return alarm, status.get_last_status(alarm, ts=canceled['t'])
+    status = None
+
+    if manager.restore_event:
+        status = status.get_last_status(alarm, ts=canceled['t'])
+
+    else:
+        status = status.compute_status(alarm)
+
+    return alarm, status
 
 
 @register_task('alerts.useraction.declareticket')
