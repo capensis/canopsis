@@ -150,7 +150,9 @@ def state_increase(manager, alarm, state, event):
         'val': state
     }
 
-    alarm['state'] = step
+    if alarm['state'] is None or alarm['state']['_t'] != 'changestate':
+        alarm['state'] = step
+
     status = compute_status(manager, alarm)
     alarm['steps'].append(step)
 
@@ -167,7 +169,9 @@ def state_decrease(manager, alarm, state, event):
         'val': state
     }
 
-    alarm['state'] = step
+    if alarm['state'] is None or alarm['state']['_t'] != 'changestate':
+        alarm['state'] = step
+
     status = compute_status(manager, alarm)
     alarm['steps'].append(step)
 

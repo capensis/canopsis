@@ -44,19 +44,15 @@ def get_previous_step(alarm, steptypes, ts=None):
 
 
 def get_last_state(alarm, ts=None):
-    step = get_previous_step(alarm, ['stateinc', 'statedec'], ts=ts)
-
-    if step is not None:
-        return step['val']
+    if alarm['state'] is not None:
+        return alarm['state']['val']
 
     return Check.OK
 
 
 def get_last_status(alarm, ts=None):
-    step = get_previous_step(alarm, ['statusinc', 'statusdec'], ts=ts)
-
-    if step is not None:
-        return step['val']
+    if alarm['status'] is not None:
+        return alarm['status']['val']
 
     return OFF
 
