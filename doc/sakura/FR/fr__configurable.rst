@@ -77,5 +77,7 @@ A configuration driver permits to access to a configurable configuration, whatev
 
 Example of drivers are:
 
-- FileDriver : dedicated to condfiguration files.
-- DBDriver : dedicated to configuration database.
+- FileDriver: dedicated to configuration files.
+- IniDriver: dedicated to ini files.
+- JSonDriver: dedicated to json files.
+- DBDriver: dedicated to configuration database.

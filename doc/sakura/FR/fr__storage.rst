@@ -43,15 +43,16 @@ A storage is a common way to access to data, with contextual concerns.
 Types of Storage
 ================
 
-According to ORM (Object Relational Mapping) solutions, Canopsis storages are an abstract layer to access data, whatever database implementation. Except that there are several types of Canopsis storages which focuses on the contextual data properties, such as time, composition, etc. Instead of focusing only on data structure like ORM.
+According to ORM (Object Relational Mapping) solutions, Canopsis storages are an abstract layer to access data, whatever database implementation. Except that there are several types of Canopsis storages which focus on the contextual data properties, such as time, composition, etc. Instead of focusing only on data structure like ORM.
 
 Here are types of Storages:
 
-- **Storage**: default period, same behaviors than ORMs
-- **PeriodicStorage**: dedicated to data which have instances which exists on a period of time (for example, Obama is an instance of president which occurred from past 7 years to next... let's "humanity" decide)
-- **TimeStorage**: useful to data which have an instance at a specific moment. For example, a perfdata exists at a moment
-- **CompositeStorage**: specific to typed relational data. For example, a Canopsis resource is embedded by a component
-- **FileStorage**: useful to store/access files like a file system
+- **Storage**: default period, same behaviors than ORMs.
+- **PeriodicStorage**: dedicated to data which have instances which exists on a period of time (for example, Obama is an instance of president which occurred from past 7 years to next... let's "humanity" decide).
+- **TimeStorage**: useful to data which have an instance at a specific moment. For example, a perfdata exists at a moment.
+- **CompositeStorage**: specific to typed relational data. For example, a Canopsis resource is embedded by a component.
+- **FileStorage**: useful to store/access files like a file system.
+- **GraphStorage**: used to store complex relationships among data.
 
 According to storage types, the implementation must provide the best data model, which is independent from data structures.
 
@@ -71,7 +72,7 @@ A storage is defined by:
 Serving storages
 ================
 
-A :ref:`webservice <FR__Webservice>` **MUST** provide CRUD access to each storage.
+A :ref:`webservice <FR__Webservice>` **SHOULD** provide CRUD access to each storage.
 
 The URL **SHOULD** be ``/storage/<protocol>/<data_type>/<data_scope>`` and each method
 **SHOULD** resolve to the corresponding storage and CRUD operation.
