@@ -25,6 +25,9 @@ from canopsis.configuration.params import Parameter
 
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
+
+from canopsis.alerts.status import get_last_state
+from canopsis.event.manager import Event
 from canopsis.check import Check
 
 
@@ -106,8 +109,8 @@ class Alerts(MiddlewareRegistry):
     def update_current_alarm(self, alarm, new_value, tags=None):
         storage = self[Alerts.ALARM_STORAGE]
 
-        alarm_id = alarm[storage.Key.DATA_ID]
-        alarm_ts = alarm[storage.Key.TIMESTAMP]
+        alarm_id = alarm[storage.DATA_ID]
+        alarm_ts = alarm[storage.TIMESTAMP]
 
         if tags is not None:
             for tag in ensure_iterable(tags):
@@ -115,6 +118,72 @@ class Alerts(MiddlewareRegistry):
                     new_value['tags'].append(tag)
 
         storage.put(alarm_id, new_value, alarm_ts)
+
+    def get_events(self, alarm):
+        storage = self[Alerts.ALARM_STORAGE]
+        alarm_id = alarm[storage.DATA_ID]
+        alarm = alarm[storage.VALUE]
+
+        entity = self[Alerts.CONTEXT_MANAGER].get_entity_by_id(alarm_id)
+
+        no_author_tupes = ['stateinc', 'statedec', 'statusinc', 'statusdec']
+        check_referer_types = [
+            'ack', 'ackremove',
+            'cancel', 'uncancel',
+            'declareticket',
+            'assocticket',
+            'changestate'
+        ]
+
+        typemap = {
+            'stateinc': Check.EVENT_TYPE,
+            'statedec': Check.EVENT_TYPE,
+            'statusinc': Check.EVENT_TYPE,
+            'statusdec': Check.EVENT_TYPE,
+            'ack': 'ack',
+            'ackremove': 'ackremove',
+            'cancel': 'cancel',
+            'uncancel': 'uncancel',
+            'declareticket': 'declareticket',
+            'assocticket': 'assocticket',
+            'changestate': 'changestate'
+        }
+        valmap = {
+            'stateinc': Check.STATE,
+            'statedec': Check.STATE,
+            'changestate': Check.STATE,
+            'statusinc': Check.STATUS,
+            'statusdec': Check.STATUS,
+            'assocticket': 'ticket'
+        }
+
+        events = []
+        eventmodel = self[Alerts.CONTEXT_MANAGER].get_event(entity)
+
+        for step in alarm['steps']:
+            event = eventmodel.copy()
+            event['timestamp'] = step['t']
+            event['output'] = step['m']
+
+            if step['_t'] in valmap:
+                field = valmap[step['_t']]
+                event[field] = step['val']
+
+            if step['_t'] not in no_author_tupes:
+                event['author'] = step['a']
+
+            if step['_t'] in check_referer_types:
+                event['event_type'] = 'check'
+                event['ref_rk'] = Event.get_rk(event)
+
+            if Check.STATE not in event:
+                event[Check.STATE] = get_last_state(alarm)
+
+            event['event_type'] = typemap[step['_t']]
+
+            events.append(event)
+
+        return events
 
     def archive(self, event):
         entity = self[Alerts.CONTEXT_MANAGER].get_entity(event)
@@ -141,7 +210,7 @@ class Alerts(MiddlewareRegistry):
 
             if task is not None:
                 alarm = self.get_current_alarm(entity_id)
-                value = alarm.get(self[Alerts.ALARM_STORAGE].Key.VALUE)
+                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
                 new_value = task(self, value, author, message, event)
                 self.update_current_alarm(alarm, new_value)
 
@@ -155,7 +224,7 @@ class Alerts(MiddlewareRegistry):
             task = get_task('alerts.systemaction.state_decrease')
 
         alarm = self.get_current_alarm(entity_id)
-        value = alarm.get(self[Alerts.ALARM_STORAGE].Key.VALUE)
+        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value, status = task(self, value, state, event)
         self.update_current_alarm(alarm, new_value)
 
@@ -175,7 +244,7 @@ class Alerts(MiddlewareRegistry):
         #     )
 
     def change_of_status(self, alarm, old_status, status, event):
-        value = alarm.get(self[Alerts.ALARM_STORAGE].Key.VALUE)
+        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
         if status > old_status:
             task = get_task('alerts.systemaction.status_increase')

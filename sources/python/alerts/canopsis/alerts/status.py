@@ -18,7 +18,31 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.common.utils import ensure_iterable
 from canopsis.check import archiver, Check
+
+
+def get_previous_step(alarm, steptypes, ts=None):
+    if len(alarm['steps']) > 0:
+        if ts is None:
+            ts = alarm['steps'][-1]['t'] + 1
+
+        steptypes = ensure_iterable(steptypes)
+
+        for step in reversed(alarm['steps']):
+            if step['t'] < ts and step['_t'] in steptypes:
+                return step
+
+    return None
+
+
+def get_last_state(alarm):
+    step = get_previous_step(alarm, ['stateinc', 'statedec'])
+
+    if step is not None:
+        return step['val']
+
+    return Check.OK
 
 
 def is_flapping(manager, alarm):

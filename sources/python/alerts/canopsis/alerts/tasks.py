@@ -172,7 +172,7 @@ def status_increase(manager, alarm, status, event):
         't': event['timestamp'],
         'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
         'm': event['output'],
-        'status': status
+        'val': status
     }
 
     alarm['steps'].append(step)
@@ -187,7 +187,7 @@ def status_decrease(manager, alarm, status, event):
         't': event['timestamp'],
         'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
         'm': event['output'],
-        'status': status
+        'val': status
     }
 
     if status == archiver.OFF:
