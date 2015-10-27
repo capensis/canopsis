@@ -58,7 +58,7 @@ produce messages.
 Messaging Queue System
 ----------------------
 
-Each Canopsis :ref:`engine <FR__Engine__engine>` listen on a queue and chain the
+Each Canopsis :ref:`engine <FR__Engine__Desc>` listen on a queue and chain the
 message to the next configured queues, each one of them associated to an engine.
 
 The technical solution MUST support :

@@ -21,14 +21,13 @@
 from logging import Formatter, getLogger, FileHandler, Filter
 
 from os.path import join, sep
+
 from sys import prefix as sys_prefix
 
 from inspect import isclass
 
 from canopsis.common.init import basestring
-from canopsis.configuration.parameters \
-    import Configuration, Category, Parameter
-
+from canopsis.configuration.model import Configuration, Category, Parameter
 from canopsis.configuration.driver import ConfigurationDriver
 
 

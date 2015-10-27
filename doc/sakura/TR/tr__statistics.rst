@@ -1,71 +1,119 @@
 .. _TR__Statistics:
 
-==========
-Statistics
-==========
+=============================
+Canopsis Statistics Generator
+=============================
 
-This document is the canopsis statistics computation reference where all internal computed metrics are explained.
+This document specifies how the Statistics Generator must be implemented.
 
 .. contents::
-   :depth: 2
+   :depth: 3
 
 References
 ==========
 
-- :ref:`FR::Statistics`
-- :ref:`TR::Statistics`
+ - :ref:`FR::Statistics <FR__Statistics>`
+ - :ref:`FR::Configurable <FR__Configurable>`
+ - :ref:`FR::Event <FR__Event>`
+ - :ref:`FR::Engine <FR__Engine>`
+ - :ref:`FR::Webservice <FR__Webservice>`
 
 Updates
 =======
 
-
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "Eric Régnier", "2015/10/02", "1.0", "Initial functional requirements", ""
+   "David Delassus", "2015/10/15", "0.1", "Document creation", ""
 
 Contents
 ========
 
-.. _TR__Statistics:
+.. _TR__Statistics__MetricProducer:
 
-Statistics enhencement
-----------------------
+Metric Producer
+---------------
 
-Description related to :ref:`desc <FR__Statistics>`.
+A :ref:`configurable registry <FR__Configurable__Registry>` will provide:
 
-Software architecture
->>>>>>>>>>>>>>>>>>>>>
+ - a :ref:`filter configuration <FR__Statistics__Configuration>` storage
+ - a method returning ``True`` or ``False`` wether an :ref:`event <FR__Event>` match the filter or not
+ - a method to create an :ref:`aggregated serie <FR__Serie>` from a :ref:`basic metric <FR__Statistics__Desc>`
 
-Statistics metrics can be produced over many place into Canopsis. Here is next a description of canopsis internal metrics that are produced depending on some condition that have to be explained for better understanding of each of these indicators.
+.. _TR__Statistics__UserMetricProducer:
 
-Mainly, there is a statistics manager that contains all statistics computation methods. This manager can be called from many location such as engines. It can aslo be used through the api webservice where a client may reach the procedure to generate some metrics.
+User Metric Producer
+--------------------
 
-Metrics are produced and sent to canopsis system thanks to an event. An event is viewed in Canopsis a context element (see context documentation for more information about this concept). This is why a metric a more than just a value, it is also an information within canopsis related to many other information that can be of various nature.
+A subclass of the :ref:`MetricProducer <TR__Statistics__MetricProducer>` configurable,
+providing:
 
-Computed metrics generate a trend type metric that can increase or decrease the value of a context element's metric. this way, Canopsis system is able to compute back many information through the time thanks to an aggregation system. This can be viewed as an evolving curve over time where past data are linked to a single Canopsis context element. This way, it is possible to retrieve an accurate value information for any existing time period.
+ - a method per :ref:`resource <FR__Statistics__User>`:
+    - parameters:
+        - the username as a parameter
+        - the events involved
+    - returns: one or more :ref:`metrics <FR__Event__Perf>` to publish
 
-Technical guide
->>>>>>>>>>>>>>>
+.. _TR__Statistics__EventMetricProducer:
 
-The reason why some metrics may be produced over many code procedure is that the nature of the indicator may bary a lot and contextual information required to compute metrics value may not be available elsewhere. This is the case for alert count indicator that requires that the information of the previous event state is compared to the current passing event state. That's why such a computation have to be done in a code place where the previous event state is available. It technically can be from every where, but for performance purpose (avoid query database in many places) it is only available in the event store engine.
+Event Metric Producer
+---------------------
 
-Automated tests
->>>>>>>>>>>>>>>
+A subclass of the :ref:`MetricProducer <TR__Statistics__MetricProducer>` configurable,
+providing:
 
-At the moment, statistics that are computed from the manager are covered by unit tests as long as the business code belongs to the manager.
+ - a method per :ref:`resource <FR__Statistics__Event>`:
+    - parameters:
+        - the events involved
+    - returns: one or more :ref:`metrics <FR__Event__Perf>` to publish
 
-Writting statistics business code within a manager is the best way to isolate specific code and keep control on how it can be tested.
+.. _TR__Statistics__Engine:
 
-Automated tests to run for this feature are located in the python sources folder : stats/test/stats.py this will test the stats manager.
+Statistics engine
+-----------------
 
-Functional tests
->>>>>>>>>>>>>>>>
+An :ref:`engine <FR__Engine>` will listen for the following events:
 
-The section bellow have to explain how (what condition) statistics metrics are produced by the internal Canopsis system. These explaination have to be clear enough to make a tester (person) able to trigger the associated code computation.
+ - :ref:`check events <FR__Event__Check>`
+ - :ref:`ack events <FR__Event__Check>`
 
-Performance
->>>>>>>>>>>
+This engine will be composed of the :ref:`UserMetricProducer <TR__Statistics__UserMetricProducer>` and the :ref:`EventMetricProducer <TR__Statistics__EventMetricProducer>`, which will be used to:
 
-For some performance issues, some metric may be computed asynchronously instead of from the event stream.
+ - periodically fetch filters from storage
+ - cache check events with an OK state, and ack events, to know the involved events when needed
+ - if the event match one filter, call methods from both :ref:`MetricProducer <TR__Statistics__MetricProducer>`
+ - publish all the returned events
 
+*NB: after benchmarking, we may have to dispatch those calls in specific engines.*
+
+.. _TR__Statistics__Webservice:
+
+Statistics webservice
+---------------------
+
+A :ref:`webservice <FR__Webservice>` will provide two routes:
+
+ - one to call when a Canopsis UI is opened, which will increment a counter for the user
+ - one to call when a Canopsis UI is closed, which will decrement a counter for the user
+
+When the counter is incremented, and was ``0``, the current timestamp will be registered.
+When the counter fall back to ``0``, the difference between the registered timestamp and the current timestamp will be published as a metric.
+
+Unit tests
+==========
+
+.. warning::
+
+   **TODO:** unit test of each MetricProducer methods
+
+.. warning::
+
+   **TODO:** unit test of each type of UserMetricProducer method
+
+.. warning::
+
+   **TODO:** unit test of each type of EventMetricProducer method
+
+.. warning::
+
+   **TODO:** unit test for each route of the webservice
