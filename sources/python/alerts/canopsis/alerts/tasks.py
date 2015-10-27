@@ -20,7 +20,7 @@
 
 from canopsis.alerts.status import compute_status
 from canopsis.task.core import register_task
-from canopsis.check import archiver
+from canopsis.alerts import status
 
 
 @register_task('alerts.useraction.ack')
@@ -65,7 +65,7 @@ def cancel(manager, alarm, author, message, event):
     alarm['canceled'] = step
     alarm['steps'].append(step)
 
-    return alarm
+    return alarm, status.CANCELED
 
 
 @register_task('alerts.useraction.uncancel')
@@ -77,10 +77,11 @@ def restore(manager, alarm, author, message, event):
         'm': message
     }
 
+    canceled = alarm['canceled']
     alarm['canceled'] = None
     alarm['steps'].append(step)
 
-    return alarm
+    return alarm, status.get_last_status(alarm, ts=canceled['t'])
 
 
 @register_task('alerts.useraction.declareticket')

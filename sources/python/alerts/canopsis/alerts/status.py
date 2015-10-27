@@ -19,7 +19,14 @@
 # ---------------------------------
 
 from canopsis.common.utils import ensure_iterable
-from canopsis.check import archiver, Check
+from canopsis.check import Check
+
+
+OFF = 0
+ONGOING = 1
+STEALTHY = 2
+FLAPPING = 3
+CANCELED = 4
 
 
 def get_previous_step(alarm, steptypes, ts=None):
@@ -36,13 +43,22 @@ def get_previous_step(alarm, steptypes, ts=None):
     return None
 
 
-def get_last_state(alarm):
-    step = get_previous_step(alarm, ['stateinc', 'statedec'])
+def get_last_state(alarm, ts=None):
+    step = get_previous_step(alarm, ['stateinc', 'statedec'], ts=ts)
 
     if step is not None:
         return step['val']
 
     return Check.OK
+
+
+def get_last_status(alarm, ts=None):
+    step = get_previous_step(alarm, ['statusinc', 'statusdec'], ts=ts)
+
+    if step is not None:
+        return step['val']
+
+    return OFF
 
 
 def is_flapping(manager, alarm):
@@ -90,16 +106,16 @@ def is_stealthy(manager, alarm):
 
 def compute_status(manager, alarm):
     if alarm['canceled'] is not None:
-        return archiver.CANCELED
+        return CANCELED
 
     if is_flapping(manager, alarm):
-        return archiver.BAGOT
+        return FLAPPING
 
     elif is_stealthy(manager, alarm):
-        return archiver.STEALTHY
+        return STEALTHY
 
     elif alarm['state']['val'] != Check.OK:
-        return archiver.ONGOING
+        return ONGOING
 
     else:
-        return archiver.OFF
+        return OFF

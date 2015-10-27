@@ -26,7 +26,7 @@ from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
 
-from canopsis.alerts.status import get_last_state
+from canopsis.alerts.status import get_last_state, get_last_status
 from canopsis.event.manager import Event
 from canopsis.check import Check
 
@@ -43,7 +43,6 @@ class Alerts(MiddlewareRegistry):
     CONFIG_STORAGE = 'config_storage'
     ALARM_STORAGE = 'alarm_storage'
     CONTEXT_MANAGER = 'context'
-    CHECK_MANAGER = 'check'
 
     @property
     def config(self):
@@ -87,7 +86,6 @@ class Alerts(MiddlewareRegistry):
         config_storage=None,
         alarm_storage=None,
         context=None,
-        check=None,
         *args, **kwargs
     ):
         super(Alerts, self).__init__(*args, **kwargs)
@@ -100,9 +98,6 @@ class Alerts(MiddlewareRegistry):
 
         if context is not None:
             self[Alerts.CONTEXT_MANAGER] = context
-
-        if check is not None:
-            self[Alerts.CHECK_MANAGER] = check
 
     def get_alarms(self, resolved=True, tags=None, exclude_tags=None):
         query = {}
@@ -135,12 +130,9 @@ class Alerts(MiddlewareRegistry):
         return self[Alerts.ALARM_STORAGE].find(query=query)
 
     def get_current_alarm(self, alarm_id):
-
-        timewindow = get_offset_timewindow()
-
         return self[Alerts.ALARM_STORAGE].get(
             alarm_id,
-            timewindow=timewindow,
+            timewindow=get_offset_timewindow(),
             _filter={
                 'resolved': None
             },
@@ -237,14 +229,8 @@ class Alerts(MiddlewareRegistry):
             if event[Check.STATE] != Check.OK:
                 self.make_alarm(entity_id, event['timestamp'])
 
-            old_state = self[Alerts.CHECK_MANAGER].state(ids=entity_id)
-            state = self[Alerts.CHECK_MANAGER].state(
-                ids=entity_id,
-                state=event[Check.STATE]
-            )
-
-            if state != old_state:
-                self.change_of_state(entity, old_state, state, event)
+            alarm = self.get_current_alarm(entity_id)
+            self.archive_state(alarm, event[Check.STATE], event)
 
         else:
             task = get_task('alerts.useraction.{0}'.format(event['type']))
@@ -252,47 +238,60 @@ class Alerts(MiddlewareRegistry):
             if task is not None:
                 alarm = self.get_current_alarm(entity_id)
                 value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+
                 new_value = task(self, value, author, message, event)
+                status = None
+
+                if isinstance(new_value, tuple):
+                    new_value, status = new_value
+
                 self.update_current_alarm(alarm, new_value)
 
-    def change_of_state(self, entity, old_state, state, event):
-        entity_id = self[Alerts.CONTEXT_MANAGER].get_entity_id(entity)
+                if status is not None:
+                    self.archive_status(alarm, status, event)
 
+    def archive_state(self, alarm, state, event):
+        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+
+        old_state = get_last_state(value, ts=event['timestamp'])
+
+        if state != old_state:
+            self.change_of_state(alarm, old_state, state, event)
+
+    def archive_status(self, alarm, status, event):
+        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+
+        old_status = get_last_status(value, ts=event['timestamp'])
+
+        if status != old_status:
+            self.change_of_status(
+                alarm,
+                old_status,
+                status,
+                event
+            )
+
+    def change_of_state(self, alarm, old_state, state, event):
         if state > old_state:
             task = get_task('alerts.systemaction.state_increase')
 
         elif state < old_state:
             task = get_task('alerts.systemaction.state_decrease')
 
-        alarm = self.get_current_alarm(entity_id)
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value, status = task(self, value, state, event)
         self.update_current_alarm(alarm, new_value)
 
-        # TODO: implementation needed in check manager
-        # old_status = self[Alerts.CHECK_MANAGER].status(ids=entity_id)
-        # status = self[Alerts.CHECK_MANAGER].status(
-        #     ids=entity_id,
-        #     status=status
-        # )
-        #
-        # if status != old_status:
-        #     self.change_of_status(
-        #         alarm,
-        #         old_status,
-        #         status,
-        #         event
-        #     )
+        self.archive_status(alarm, status, event)
 
     def change_of_status(self, alarm, old_status, status, event):
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
-
         if status > old_status:
             task = get_task('alerts.systemaction.status_increase')
 
         elif status < old_status:
             task = get_task('alerts.systemaction.status_decrease')
 
+        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value = task(self, value, status, event)
         self.update_current_alarm(alarm, new_value)
 
