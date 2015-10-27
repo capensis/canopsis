@@ -21,7 +21,6 @@
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.params import Parameter
 
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
@@ -33,30 +32,67 @@ from canopsis.check import Check
 
 CONF_PATH = 'alerts/manager.conf'
 CATEGORY = 'ALERTS'
-CONTENT = [
-    Parameter('flapping_interval', int),
-    Parameter('flapping_freq', int),
-    Parameter('stealthy_interval', int),
-    Parameter('stealthy_show_duration', int)
-]
+CONTENT = []
 
 
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY, content=CONTENT)
 class Alerts(MiddlewareRegistry):
 
+    CONFIG_STORAGE = 'config_storage'
     ALARM_STORAGE = 'alarm_storage'
     CONTEXT_MANAGER = 'context'
     CHECK_MANAGER = 'check'
 
+    @property
+    def config(self):
+        if not hasattr(self, '_config'):
+            self.config = None
+
+        return self._config
+
+    @config.setter
+    def config(self, value):
+        if value is None:
+            value = self[Alerts.CONFIG_STORAGE].get_elements(
+                query={'crecord_type': 'statusmanagement'}
+            )
+            value = {} if not value else value[0]
+
+        self._config = value
+
+    @property
+    def flapping_interval(self):
+        return self.config.get('bagot_time', 0)
+
+    @property
+    def flapping_freq(self):
+        return self.config.get('bagot_freq', 0)
+
+    @property
+    def stealthy_interval(self):
+        return self.config.get('stealthy_time', 0)
+
+    @property
+    def stealthy_show_duration(self):
+        return self.config.get('stealthy_show', 0)
+
+    @property
+    def restore_event(self):
+        return self.config.get('restore_event', False)
+
     def __init__(
         self,
+        config_storage=None,
         alarm_storage=None,
         context=None,
         check=None,
         *args, **kwargs
     ):
         super(Alerts, self).__init__(*args, **kwargs)
+
+        if config_storage is not None:
+            self[Alerts.CONFIG_STORAGE] = config_storage
 
         if alarm_storage is not None:
             self[Alerts.ALARM_STORAGE] = alarm_storage
