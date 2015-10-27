@@ -22,7 +22,7 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.params import Parameter
-
+from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
 
@@ -98,8 +98,12 @@ class Alerts(MiddlewareRegistry):
         return self[Alerts.ALARM_STORAGE].find(query=query)
 
     def get_current_alarm(self, alarm_id):
+
+        timewindow = get_offset_timewindow()
+
         return self[Alerts.ALARM_STORAGE].get(
             alarm_id,
+            timewindow=timewindow,
             _filter={
                 'resolved': None
             },
