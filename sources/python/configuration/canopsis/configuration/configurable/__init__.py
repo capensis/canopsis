@@ -32,9 +32,7 @@ from canopsis.configuration.driver import ConfigurationDriver
 
 
 class MetaConfigurable(type):
-    """
-    Meta class for Configurable.
-    """
+    """Meta class for Configurable."""
 
     def __call__(cls, *args, **kwargs):
         """
@@ -45,8 +43,10 @@ class MetaConfigurable(type):
         result = type.__call__(cls, *args, **kwargs)
 
         if result.auto_conf or result.reconf_once:
+
             # get configuration
             conf = result.conf
+
             # add a last category which contains args and kwargs as parameters
             if kwargs:
                 init_category = Category(Configurable.INIT_CAT)
@@ -54,6 +54,7 @@ class MetaConfigurable(type):
                     param = Parameter(name=name, value=kwargs[name])
                     init_category += param
                 conf += init_category
+
             # apply configuration
             result.apply_configuration(conf=conf)
 
@@ -61,25 +62,21 @@ class MetaConfigurable(type):
 
 
 class ConfigurableError(Exception):
-    """
-    Handle Configurable errors
-    """
+    """Handle Configurable errors."""
 
 
 class Configurable(object):
-    """
-    Manages class conf synchronisation with conf resources.
-    """
+    """Manages class conf synchronisation with conf resources."""
 
     class Error(Exception):
-        """Handle Configurable errors.
-        """
+        """Handle Configurable errors."""
 
     __metaclass__ = MetaConfigurable
 
     DEFAULT_DRIVERS = '{0},{1}'.format(
         'canopsis.configuration.driver.file.json.JSONConfigurationDriver',
-        'canopsis.configuration.driver.file.ini.INIConfigurationDriver')
+        'canopsis.configuration.driver.file.ini.INIConfigurationDriver'
+    )
 
     INIT_CAT = 'init_cat'  #: initialization category
 
@@ -116,7 +113,8 @@ class Configurable(object):
         auto_conf=True, reconf_once=False,
         log_lvl='INFO', log_name=None, log_info_format=INFO_FORMAT,
         log_debug_format=DEBUG_FORMAT, log_warning_format=WARNING_FORMAT,
-        log_error_format=ERROR_FORMAT, log_critical_format=CRITICAL_FORMAT
+        log_error_format=ERROR_FORMAT, log_critical_format=CRITICAL_FORMAT,
+        *args, **kwargs
     ):
         """
         :param str unified_category: if not None, used such as a unified
@@ -191,9 +189,8 @@ class Configurable(object):
             """
 
             class _Filter(Filter):
-                """
-                Ensure message will be given for specific lvl
-                """
+                """Ensure message will be given for specific lvl"""
+
                 def filter(self, record):
                     return record.levelname == lvl
 
@@ -225,9 +222,8 @@ class Configurable(object):
 
     @property
     def conf(self):
-        """
-        Get conf with parsers and self property values
-        """
+        """Get conf with parsers and self property values."""
+
         result = self._conf()
 
         # add a last unified category if asked by self
