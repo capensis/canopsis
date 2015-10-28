@@ -536,7 +536,8 @@ class Context(MiddlewareRegistry):
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(Context, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
+            unified_conf=unified_conf, *args, **kwargs
+        )
 
         if Context.CTX_STORAGE in self:
             self[Context.CTX_STORAGE].path = self.context
