@@ -203,9 +203,6 @@ def status_decrease(manager, alarm, status, event):
         'val': status
     }
 
-    if status == status.OFF:
-        alarm['resolved'] = step['t']
-
     alarm['steps'].append(step)
 
     return alarm

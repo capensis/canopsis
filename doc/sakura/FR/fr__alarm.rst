@@ -92,3 +92,7 @@ Functional test
 Alarms cycle **MUST** respect the following schema:
 
 .. figure:: ../_static/images/alarm/cycle.svg
+
+Status **MUST** be computed in respect of the following schema:
+
+.. figure:: ../_static/images/alarm/status.svg

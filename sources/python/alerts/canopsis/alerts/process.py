@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -19,20 +18,22 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.setup import setup
+from canopsis.common.utils import singleton_per_scope
+from canopsis.task.core import register_task
+from canopsis.alerts.manager import Alerts
 
-install_requires = [
-    'canopsis.common',
-    'canopsis.configuration',
-    'canopsis.middleware',
-    'canopsis.task',
-    'canopsis.event',
-    'canopsis.check',
-    'canopsis.timeserie'
-]
 
-setup(
-    description='Canopsis alert management',
-    install_requires=install_requires,
-    keywords='alerts'
-)
+@register_task
+def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
+    if alertsmgr is None:
+        alertsmgr = singleton_per_scope(Alerts)
+
+    alertsmgr.archive(event)
+
+
+@register_task
+def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
+    if alertsmgr is None:
+        alertsmgr = singleton_per_scope(Alerts)
+
+    alertsmgr.resolve_alarms()
