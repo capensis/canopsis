@@ -20,7 +20,7 @@
 
 from canopsis.alerts.status import compute_status
 from canopsis.task.core import register_task
-from canopsis.check import archiver
+from canopsis.alerts import status
 
 
 @register_task('alerts.useraction.ack')
@@ -65,7 +65,7 @@ def cancel(manager, alarm, author, message, event):
     alarm['canceled'] = step
     alarm['steps'].append(step)
 
-    return alarm
+    return alarm, status.CANCELED
 
 
 @register_task('alerts.useraction.uncancel')
@@ -77,10 +77,19 @@ def restore(manager, alarm, author, message, event):
         'm': message
     }
 
+    canceled = alarm['canceled']
     alarm['canceled'] = None
     alarm['steps'].append(step)
 
-    return alarm
+    status = None
+
+    if manager.restore_event:
+        status = status.get_last_status(alarm, ts=canceled['t'])
+
+    else:
+        status = status.compute_status(alarm)
+
+    return alarm, status
 
 
 @register_task('alerts.useraction.declareticket')
@@ -141,7 +150,9 @@ def state_increase(manager, alarm, state, event):
         'val': state
     }
 
-    alarm['state'] = step
+    if alarm['state'] is None or alarm['state']['_t'] != 'changestate':
+        alarm['state'] = step
+
     status = compute_status(manager, alarm)
     alarm['steps'].append(step)
 
@@ -158,7 +169,9 @@ def state_decrease(manager, alarm, state, event):
         'val': state
     }
 
-    alarm['state'] = step
+    if alarm['state'] is None or alarm['state']['_t'] != 'changestate':
+        alarm['state'] = step
+
     status = compute_status(manager, alarm)
     alarm['steps'].append(step)
 
@@ -172,7 +185,7 @@ def status_increase(manager, alarm, status, event):
         't': event['timestamp'],
         'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
         'm': event['output'],
-        'status': status
+        'val': status
     }
 
     alarm['steps'].append(step)
@@ -187,11 +200,8 @@ def status_decrease(manager, alarm, status, event):
         't': event['timestamp'],
         'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
         'm': event['output'],
-        'status': status
+        'val': status
     }
-
-    if status == archiver.OFF:
-        alarm['resolved'] = step['t']
 
     alarm['steps'].append(step)
 

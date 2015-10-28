@@ -18,7 +18,43 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.check import archiver, Check
+from canopsis.common.utils import ensure_iterable
+from canopsis.check import Check
+
+
+OFF = 0
+ONGOING = 1
+STEALTHY = 2
+FLAPPING = 3
+CANCELED = 4
+
+
+def get_previous_step(alarm, steptypes, ts=None):
+    if len(alarm['steps']) > 0:
+        if ts is None:
+            ts = alarm['steps'][-1]['t'] + 1
+
+        steptypes = ensure_iterable(steptypes)
+
+        for step in reversed(alarm['steps']):
+            if step['t'] < ts and step['_t'] in steptypes:
+                return step
+
+    return None
+
+
+def get_last_state(alarm, ts=None):
+    if alarm['state'] is not None:
+        return alarm['state']['val']
+
+    return Check.OK
+
+
+def get_last_status(alarm, ts=None):
+    if alarm['status'] is not None:
+        return alarm['status']['val']
+
+    return OFF
 
 
 def is_flapping(manager, alarm):
@@ -66,16 +102,16 @@ def is_stealthy(manager, alarm):
 
 def compute_status(manager, alarm):
     if alarm['canceled'] is not None:
-        return archiver.CANCELED
+        return CANCELED
 
     if is_flapping(manager, alarm):
-        return archiver.BAGOT
+        return FLAPPING
 
     elif is_stealthy(manager, alarm):
-        return archiver.STEALTHY
+        return STEALTHY
 
     elif alarm['state']['val'] != Check.OK:
-        return archiver.ONGOING
+        return ONGOING
 
     else:
-        return archiver.OFF
+        return OFF

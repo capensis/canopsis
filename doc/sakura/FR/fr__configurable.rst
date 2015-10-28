@@ -27,9 +27,14 @@ Description
 
 A configurable is the base class for all python classes in Canopsis.
 
-It is linked to at least one configuration resource, such as file or data base document.
+A configurable uses a configuration model, which is given to configuration drivers in order to:
 
-All resources are transformed in a unified configuration language;
+- retrieve a specific configuration from at least one configuration resources.
+- write a specific configuration to configuration resources.
+
+The driver permits to be agnostic from the type of configuration resource. Therefore a configuration resource can be a file, or a database document, etc.
+
+The configuration model is the common language for configuring canopsis python objects, which is agnostic from configuration resource.
 
 .. _FR__Configurable__configuration:
 
@@ -45,23 +50,23 @@ Configuration overriding/inheritance
 
 According to class inheritance, a Configurable can use self configuration resources, and ones defined at a base class level. In such way, the final configuration is based from base class configuration, and it is possible to apply a fined grained configuration with a specific Configuration instance.
 
-.. _FR__Configurable__Configuration__Language:
+.. _FR__Configurable__Registry:
 
-Configuration Language
-----------------------
+Configurable Registry
+---------------------
 
-The configuration langage is composed of three concepts:
+A configurable registry is a configurable which is composed of configurables.
+
+.. _FR__Configurable__Model:
+
+Configuration Model
+===================
+
+The configuration model is composed of three concepts:
 
 - **Configuration**: set of categories by name.
 - **Category**: set of parameters by name, and is identified by a name.
 - **Parameter**: identified by a name. It uses also a default value and uses a parser in order to get a value from a serialized string value.
-
-.. _FR__Configurable__Registry:
-
-Configurable Registry
-=====================
-
-A configurable registry is a configurable which is composed of configurables.
 
 .. _FR__Configurable__Driver:
 
@@ -72,5 +77,7 @@ A configuration driver permits to access to a configurable configuration, whatev
 
 Example of drivers are:
 
-- FileDriver : dedicated to condfiguration files.
-- DBDriver : dedicated to configuration database.
+- FileDriver: dedicated to configuration files.
+- IniDriver: dedicated to ini files.
+- JSonDriver: dedicated to json files.
+- DBDriver: dedicated to configuration database.

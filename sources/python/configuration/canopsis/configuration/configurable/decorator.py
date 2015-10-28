@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from . import Configurable
-from ..parameters import Category, ParamList
+from ..model import Category, ParamList
 
 
 def conf_paths(*conf_paths):

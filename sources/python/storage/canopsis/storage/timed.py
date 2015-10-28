@@ -41,17 +41,12 @@ class TimedStorage(Storage):
     TIMESTAMP = 'timestamp'
 
     def get(
-        self, data_ids, timewindow=None, _filter=None,
-        limit=0, skip=0, sort=None
+            self, data_ids, timewindow=None, _filter=None,
+            limit=0, skip=0, sort=None
     ):
         """
         Get data values ordered by timestamp in descresent order and data ids
         if data_ids is a list of data ids.
-
-        dict(
-            tuple(
-                timestamp,
-                dict(data_type, data_value), data id))
 
         If timewindow is None, result is all timed document.
 
@@ -63,20 +58,48 @@ class TimedStorage(Storage):
         :param int skip: number of documents to skip.
         :param dict sort: sort documents by something else than timestamp.
 
-        :return: depends on data_ids type:
+        :return: depends on type of data_ids
 
-            - str: list of (timestamp, data value)
-            - list: dict of {data id, list of (timestamp, data value)}
+            - string: list of {
+                    TimedStorage.TIMESTAMP: timestamp,
+                    TimedStorage.VALUE: value
+                }
+            - list: dictionary of {
+                    data_id: self.get(data_id, ...)
+                }
 
-        :rtype: dict of tuple(float, dict, str) or tuple(float, dict, str)
+        :rtype: dict or list
         """
 
         raise NotImplementedError()
 
-    def count(self, data_id):
+    def find(self, timewindow=None, _filter=None):
+        """
+        Find data values ordered by timestamp in descresent order and data ids.
+
+        If timewindow is None, result is all timed document.
+
+        :param TimeWindow timedwindow: data value time window. Default is
+            current timestamp offsset.
+        :param _filter: value filter.
+
+        :return: dictionary of {
+                data_id: list of {
+                    TimedStorage.TIMESTAMP: timestamp,
+                    TimedStorage.VALUE: value
+                }
+            }
+        :rtype: dict
+        """
+
+        raise NotImplementedError()
+
+    def count(self, data_ids, timewindow=None, _filter=None):
         """Get number of period of timed documents for input data_id.
 
-        :param str data_id: data_id to count.
+        :param str(s) data_ids: data_id(s) to count.
+        :param TimeWindow timewindow: count timewindow.
+        :param dict _filter: filter applied on values.
         """
 
         raise NotImplementedError()
@@ -98,6 +121,7 @@ class TimedStorage(Storage):
     def remove(self, data_ids, timewindow=None, cache=False):
         """Remove timed_data existing on input timewindow.
 
+        :param str(s) data_ids: related data_id(s) to remove.
         :param bool cache: use query cache if True (False by default).
         """
 

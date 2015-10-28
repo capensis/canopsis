@@ -34,7 +34,7 @@ class Configuration(object):
     ERRORS = 'ERRORS'  #: category name which contains errors
     VALUES = 'VALUES'  #: category name which contains local parameter values
     #: category name which contains not local parameters
-    FOREIGNS = 'FOREIGN'
+    FOREIGNS = 'FOREIGNS'
 
     def __init__(self, *categories):
         """
@@ -303,9 +303,12 @@ class Category(object):
             self.put(value)
 
         else:
-            raise Exception('Wrong type to add {0} to {1}. \
-Must be a Category, a Parameter or a list of {Parameter, Category}'.format(
-                value, self))
+            raise Exception(
+                'Wrong type to add {0} to {1}. \
+Must be a Category, a Parameter or a list of \{Parameter, Category\}'.format(
+                value, self
+                )
+            )
 
         return self
 

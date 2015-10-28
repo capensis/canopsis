@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
@@ -17,12 +19,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[ALERTS]
+from canopsis.common.setup import setup
 
-config_storage_uri = mongodb-default://
-alarm_storage_uri = mongodb-timed-alarm://
-context_value = canopsis.context.manager.Context
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.task',
+    'canopsis.event',
+    'canopsis.check',
+    'canopsis.timeserie'
+]
 
-[CONFIG_STORAGE_CONF]
-
-table=object
+setup(
+    description='Canopsis alert management',
+    install_requires=install_requires,
+    keywords='alerts'
+)

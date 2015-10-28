@@ -233,6 +233,17 @@ Alarm step "change state" data model
 Unit Tests
 ==========
 
+Get alarm history
+-----------------
+
+``get_alarms([resolved], [tags], [exclude_tags], [timewindow]) -> alarms``:
+
+ * ``resolved`` (optional) as a ``boolean``: get resolved alarms or unresolved alarms
+ * ``tags`` (optional) as a ``string`` or a ``list``: get alarms with listed tags
+ * ``exclude_tags`` (optional) as a ``string`` or a ``list``: get alarms without listed tags
+ * ``timewindow`` (optional) as a ``canopsis.timeserie.timewindow.TimeWindow``: get alarms within time interval
+ * ``alarms`` as a ``cursor``: alarms that matched the previous parameters
+
 Creating new alarm
 ------------------
 
@@ -330,7 +341,7 @@ Task: unacknowledge
 Task: Cancel
 ------------
 
-``alerts.useraction.cancel(manager, alarm, author, message, event) -> new_value``:
+``alerts.useraction.cancel(manager, alarm, author, message, event) -> new_value, status``:
 
  * ``manager`` as an ``Alerts`` configurable: the task caller
  * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to cancel
@@ -338,6 +349,7 @@ Task: Cancel
  * ``message`` as a ``string``: the alarm canceling message
  * ``event`` as a ``dict``: the :ref:`alarm canceling event <FR__Event__Cancel>`
  * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+ * ``status`` as an ``int`` which will always be set to ``CANCELED`` (will trigger a change of status on the alarm)
 
 **Expected:**
 
@@ -348,7 +360,7 @@ Task: Cancel
 Task: Restore
 -------------
 
-``alerts.useraction.uncancel(manager, alarm, author, message, event) -> new_value``:
+``alerts.useraction.uncancel(manager, alarm, author, message, event) -> new_value, status``:
 
  * ``manager`` as an ``Alerts`` configurable: the task caller
  * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to restore
@@ -356,6 +368,7 @@ Task: Restore
  * ``message`` as a ``string``: the alarm restoring message
  * ``event`` as a ``dict``: the :ref:`alarm restoring event <FR__Event__Uncancel>`
  * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+ * ``status`` as an ``int`` which will be set to the previous status or the actual status as it should have been without the *cancel* (will trigger a change of status on the alarm)
 
 **Expected:**
 
@@ -416,3 +429,97 @@ Task: Change State
  - the alarm ``ticket`` **MUST** be set to the :ref:`change state step <TR__Alarm__DataModel__ChangeState>`
  - the step **MUST** be added to the ``steps`` set of the alarm
  - the alarm **MUST** be returned as ``new_value``
+
+Task: State increase
+--------------------
+
+``alerts.systemaction.state_increase(manager, alarm, state, event) -> new_value, status``:
+
+ * `manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
+ * ``state`` as ``int``: the increased state
+ * ``event`` as a ``dict``: the :ref:`check event <FR__Event__Check>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+ * ``status`` as ``int``: the new computed status from state history
+
+**Expected:**
+
+ - the alarm ``state`` **MUST** be set to the :ref:`state increase step <TR__Alarm__DataModel__StateInc>` **only if** there was no :ref:`change state step <TR__Alarm__DataModel__ChangeState>` set
+ - the step **MUST** be added to the ``steps`` set of the alarm
+ - the alarm ``status`` **MUST** be computed accordingly to the functional tests
+
+Task: State decrease
+--------------------
+
+``alerts.systemaction.state_decrease(manager, alarm, state, event) -> new_value, status``:
+
+ * `manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
+ * ``state`` as ``int``: the decreased state
+ * ``event`` as a ``dict``: the :ref:`check event <FR__Event__Check>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+ * ``status`` as ``int``: the new computed status from state history
+
+**Expected:**
+
+ - the alarm ``state`` **MUST** be set to the :ref:`state decrease step <TR__Alarm__DataModel__StateDec>` **only if** there was no :ref:`change state step <TR__Alarm__DataModel__ChangeState>` set
+ - the step **MUST** be added to the ``steps`` set of the alarm
+ - the alarm ``status`` **MUST** be computed accordingly to the functional tests
+
+Task: Status increase
+---------------------
+
+``alerts.systemaction.status_increase(manager, alarm, status, event) -> new_value``:
+
+ * `manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
+ * ``status`` as ``int``: the increased status
+ * ``event`` as a ``dict``: the :ref:`check event <FR__Event__Check>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``status`` **MUST** be set to the :ref:`status increase step <TR__Alarm__DataModel__StatusInc>`
+ - the step **MUST** be added to the ``steps`` set of the alarm
+
+Task: Status deccrease
+----------------------
+
+``alerts.systemaction.status_decrease(manager, alarm, status, event) -> new_value``:
+
+ * `manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
+ * ``status`` as ``int``: the decreased status
+ * ``event`` as a ``dict``: the :ref:`check event <FR__Event__Check>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``status`` **MUST** be set to the :ref:`status increase step <TR__Alarm__DataModel__StatusInc>`
+ - the step **MUST** be added to the ``steps`` set of the alarm
+
+Utility: Get previous step
+--------------------------
+
+``get_previous_step(alarm, steptypes, [ts]) -> step``:
+
+Utility: Get last state
+-----------------------
+
+``get_last_state(alarm, [ts]) -> state``:
+
+Utility: Get last status
+------------------------
+
+``get_last_status(alarm, [ts]) -> status``:
+
+Utility: Is flapping ?
+----------------------
+
+``is_flapping(manager, alarm) -> result``:
+
+Utility: Is stealthy ?
+----------------------
+
+``is_stealthy(manager, alarm) -> result``:
+

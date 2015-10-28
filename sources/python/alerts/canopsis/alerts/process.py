@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -19,13 +18,22 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+from canopsis.common.utils import singleton_per_scope
+from canopsis.task.core import register_task
+from canopsis.alerts.manager import Alerts
 
 
-class WatcherTest(TestCase):
-    """Test about the watcher module.
-    """
-    raise NotImplementedError()
+@register_task
+def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
+    if alertsmgr is None:
+        alertsmgr = singleton_per_scope(Alerts)
 
-if __name__ == '__main__':
-    main()
+    alertsmgr.archive(event)
+
+
+@register_task
+def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
+    if alertsmgr is None:
+        alertsmgr = singleton_per_scope(Alerts)
+
+    alertsmgr.resolve_alarms()

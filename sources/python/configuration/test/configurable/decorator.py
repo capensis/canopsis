@@ -21,10 +21,11 @@
 
 from unittest import main, TestCase
 
-from canopsis.configuration.parameters import Parameter, Category
+from canopsis.configuration.model import Parameter, Category
 from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator \
-    import conf_paths, add_category
+from canopsis.configuration.configurable.decorator import (
+    conf_paths, add_category
+)
 
 
 class DecoratorTest(TestCase):
