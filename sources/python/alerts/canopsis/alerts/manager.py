@@ -26,9 +26,11 @@ from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
 
-from canopsis.alerts.status import get_last_state, get_last_status
+from canopsis.alerts.status import get_last_state, get_last_status, OFF
 from canopsis.event.manager import Event
 from canopsis.check import Check
+
+from time import time
 
 
 CONF_PATH = 'alerts/manager.conf'
@@ -311,3 +313,15 @@ class Alerts(MiddlewareRegistry):
             }
 
             self[Alerts.ALARM_STORAGE].put(alarm_id, value, timestamp)
+
+    def resolve_alarms(self):
+        for docalarm in self.get_alarms(resolved=False):
+            alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+
+            if get_last_status(alarm) == OFF:
+                t = alarm['status']['t']
+                now = int(time())
+
+                if (now - t) > self.flapping_interval:
+                    alarm['resolved'] = t
+                    self.update_current_alarm(docalarm, alarm)
