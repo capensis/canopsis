@@ -14,9 +14,7 @@ class DBConfiguration(MiddlewareRegistry):
 
     DBCONFIGURATION_STORAGE = 'dbconfiguration_storage'
 
-    """
-    Manage Canopsis database configuration information
-    """
+    """Manage Canopsis database configuration information."""
 
     def __init__(self, dbconfiguration_storage=None, *args, **kwargs):
 

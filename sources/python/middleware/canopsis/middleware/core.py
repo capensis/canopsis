@@ -650,8 +650,8 @@ class Middleware(Configurable):
         for protocol in protocols:
             _data_types = Middleware.__MIDDLEWARES__.setdefault(protocol, {})
 
-            for dt in data_types:
-                _data_types[dt] = cls
+            for datatype in data_types:
+                _data_types[datatype] = cls
 
     @classmethod
     def get_protocols(cls):
@@ -785,13 +785,16 @@ class Middleware(Configurable):
                 )
             )
 
-            result.auto_connect = auto_connect
+            result._auto_connect = auto_connect
             result.configure(conf=conf)
+
+            if auto_connect:
+                result.connect()
 
         return result
 
     @staticmethod
-    def get_middleware_by_uri(uri, *args, **kwargs):
+    def get_middleware_by_uri(uri, auto_connect=True, *args, **kwargs):
         """Instantiate the right middleware related to input uri.
 
         :param str uri: the uri may contains a protocol of type 'protocol' or
@@ -832,8 +835,11 @@ class Middleware(Configurable):
             )
 
             # set auto_connect to true
-            result._auto_connect = True
+            result._auto_connect = auto_connect
             # and configure the result
             result.configure(conf=conf)
+
+            if auto_connect:
+                result.connect()
 
         return result
