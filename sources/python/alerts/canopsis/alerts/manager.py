@@ -101,7 +101,13 @@ class Alerts(MiddlewareRegistry):
         if context is not None:
             self[Alerts.CONTEXT_MANAGER] = context
 
-    def get_alarms(self, resolved=True, tags=None, exclude_tags=None):
+    def get_alarms(
+        self,
+        resolved=True,
+        tags=None,
+        exclude_tags=None,
+        timewindow=None
+    ):
         query = {}
 
         if resolved:
@@ -129,7 +135,10 @@ class Alerts(MiddlewareRegistry):
         elif tags_cond is not None and notags_cond is not None:
             query = {'$and': [query, tags_cond, notags_cond]}
 
-        return self[Alerts.ALARM_STORAGE].find(query=query)
+        return self[Alerts.ALARM_STORAGE].find(
+            _filter=query,
+            timewindow=timewindow
+        )
 
     def get_current_alarm(self, alarm_id):
         return self[Alerts.ALARM_STORAGE].get(
