@@ -21,9 +21,18 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.task',
+    'canopsis.event',
+    'canopsis.check',
+    'canopsis.timeserie'
+]
 
 setup(
     description='Canopsis alert management',
     install_requires=install_requires,
-    keywords='alerts')
+    keywords='alerts'
+)
