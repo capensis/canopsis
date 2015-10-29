@@ -43,23 +43,57 @@ class PerfData(MiddlewareRegistry):
 
     PERFDATA_STORAGE = 'perfdata_storage'
     META_STORAGE = 'meta_storage'
+    CONTEXT_MANAGER = 'context'
 
     META_TIMESTAMP = TimedStorage.TIMESTAMP
     META_VALUE = TimedStorage.VALUE
     META_ID = TimedStorage.DATA_ID
 
+    @property
+    def context(self):
+        return self[PerfData.CONTEXT_MANAGER]
+
     def __init__(
-        self, perfdata_storage=None, meta_storage=None, *args, **kwargs
+        self,
+        perfdata_storage=None,
+        meta_storage=None,
+        context=None,
+        *args, **kwargs
     ):
 
         super(PerfData, self).__init__(*args, **kwargs)
 
-        self.context = Context()
-
         if perfdata_storage is not None:
             self[PerfData.PERFDATA_STORAGE] = perfdata_storage
+
         if meta_storage is not None:
             self[PerfData.META_STORAGE] = meta_storage
+
+        if context is not None:
+            self[PerfData.CONTEXT_MANAGER] = context
+
+    def get_metric_entity(self, metricname, event):
+        """
+        Get metric entity from event and metric name.
+
+        :param metricname: entity name
+        :type metricname: str
+
+        :param event: event used to generate entity
+        :type event: dict
+
+        :returns: entity as dict
+        """
+
+        entity = self.context.get_entity(event)
+
+        ctype = entity[Context.TYPE]
+        entity[Context.TYPE] = 'metric'
+
+        entity[ctype] = entity[Context.NAME]
+        entity[Context.NAME] = metricname
+
+        return entity
 
     def count(self, metric_id, timewindow=None, period=None):
         """Get number of perfdata identified by metric_id in input timewindow

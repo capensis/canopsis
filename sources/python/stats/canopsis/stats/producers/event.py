@@ -76,6 +76,13 @@ class EventMetricProducer(MetricProducer):
             ]
         }
 
+        for operator in ['min', 'max', 'average']:
+            entity = self[MetricProducer.PERFDATA_MANAGER].get_metric_entity(
+                'last', event
+            )
+
+            self.may_create_stats_serie(entity, operator)
+
         return event
 
     def alarm(self, event):
