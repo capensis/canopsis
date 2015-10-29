@@ -141,7 +141,9 @@ class Alerts(MiddlewareRegistry):
         )
 
     def get_current_alarm(self, alarm_id):
-        return self[Alerts.ALARM_STORAGE].get(
+        storage = self[Alerts.ALARM_STORAGE]
+
+        result = storage.get(
             alarm_id,
             timewindow=get_offset_timewindow(),
             _filter={
@@ -149,6 +151,12 @@ class Alerts(MiddlewareRegistry):
             },
             limit=1
         )
+
+        if result is not None:
+            result = result[0]
+            result[storage.DATA_ID] = alarm_id
+
+        return result
 
     def update_current_alarm(self, alarm, new_value, tags=None):
         storage = self[Alerts.ALARM_STORAGE]
@@ -236,15 +244,19 @@ class Alerts(MiddlewareRegistry):
         author = event.get('author', None)
         message = event.get('output', None)
 
-        if event['type'] == Check.EVENT_TYPE:
+        if event['event_type'] == Check.EVENT_TYPE:
             if event[Check.STATE] != Check.OK:
                 self.make_alarm(entity_id, event['timestamp'])
 
             alarm = self.get_current_alarm(entity_id)
-            self.archive_state(alarm, event[Check.STATE], event)
+
+            if alarm is not None:
+                self.archive_state(alarm, event[Check.STATE], event)
 
         else:
-            task = get_task('alerts.useraction.{0}'.format(event['type']))
+            task = get_task('alerts.useraction.{0}'.format(
+                event['event_type']
+            ))
 
             if task is not None:
                 alarm = self.get_current_alarm(entity_id)
@@ -324,13 +336,18 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.ALARM_STORAGE].put(alarm_id, value, timestamp)
 
     def resolve_alarms(self):
-        for docalarm in self.get_alarms(resolved=False):
-            alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        storage = self[Alerts.ALARM_STORAGE]
+        result = self.get_alarms(resolved=False)
 
-            if get_last_status(alarm) == OFF:
-                t = alarm['status']['t']
-                now = int(time())
+        for data_id in result:
+            for docalarm in result[data_id]:
+                docalarm[storage.DATA_ID] = data_id
+                alarm = docalarm.get(storage.VALUE)
 
-                if (now - t) > self.flapping_interval:
-                    alarm['resolved'] = t
-                    self.update_current_alarm(docalarm, alarm)
+                if get_last_status(alarm) == OFF:
+                    t = alarm['status']['t']
+                    now = int(time())
+
+                    if (now - t) > self.flapping_interval:
+                        alarm['resolved'] = t
+                        self.update_current_alarm(docalarm, alarm)

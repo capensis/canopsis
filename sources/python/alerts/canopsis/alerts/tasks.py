@@ -188,6 +188,7 @@ def status_increase(manager, alarm, status, event):
         'val': status
     }
 
+    alarm['status'] = step
     alarm['steps'].append(step)
 
     return alarm
@@ -203,6 +204,7 @@ def status_decrease(manager, alarm, status, event):
         'val': status
     }
 
+    alarm['status'] = step
     alarm['steps'].append(step)
 
     return alarm
