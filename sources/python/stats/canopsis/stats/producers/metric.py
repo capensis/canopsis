@@ -29,7 +29,7 @@ from canopsis.old.mfilter import check
 from hashlib import sha1
 
 
-CONF_PATH = 'stats/producer/metric.conf'
+CONF_PATH = 'stats/producers/metric.conf'
 CATEGORY = 'METRIC_PRODUCER'
 CONTENT = [
     Parameter('default_aggregation_interval', int),

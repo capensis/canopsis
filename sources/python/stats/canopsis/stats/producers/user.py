@@ -23,7 +23,7 @@ from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.configurable.decorator import conf_paths
 
 
-CONF_PATH = 'stats/producer/user.conf'
+CONF_PATH = 'stats/producers/user.conf'
 CATEGORY = 'USER_METRIC_PRODUCER'
 CONTENT = []
 
