@@ -25,7 +25,6 @@ from canopsis.old.account import Account
 from canopsis.old.record import Record
 from canopsis.old.rabbitmq import Amqp
 from canopsis.event import get_routingkey
-from canopsis.stats.manager import Stats
 
 from canopsis.engines.core import publish
 from canopsis.configuration.configurable import Configurable
@@ -52,7 +51,6 @@ CATEGORY = 'ARCHIVER'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class Archiver(Configurable):
-
 
     def __init__(
         self, namespace, confnamespace='object', storage=None, autolog=False,
@@ -101,8 +99,6 @@ class Archiver(Configurable):
 
         self.reset_stealthy_event_duration = time()
         self.reset_stats()
-
-        self.stats_manager = Stats()
 
     def reset_stats(self):
         self.stats = {
@@ -661,13 +657,6 @@ class Archiver(Configurable):
             if 'keep_state' in event:
                 change['change_state_output'] = event['output']
                 change['output'] = devent.get('output', '')
-
-            # Statistics on event that require event, previous event
-            # and is new event information
-            sevent = self.stats_manager.compute_stats(event, devent, new_event)
-            self.logger.debug('Stats event computed {}'.format(sevent))
-            if sevent:
-                publish(event=sevent, publisher=self.amqp)
 
             if change:
                 operations.append(
