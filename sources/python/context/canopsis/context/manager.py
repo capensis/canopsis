@@ -171,7 +171,7 @@ class Context(MiddlewareRegistry):
         # try to get the right type if the event corresponds to the old system
         if _type in self.context:
             event_type = _event['event_type']
-            if event_type not in ['check', 'downtime', 'ack']:
+            if event_type not in ['check', 'downtime', 'ack', 'perf']:
                 _type = event_type
 
         # set type in event
