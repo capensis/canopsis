@@ -247,10 +247,10 @@ Get alarm history
 Creating new alarm
 ------------------
 
-``make_alarm(alarm_id, timestamp)``:
+``make_alarm(alarm_id, event)``:
 
  * ``alarm_id`` as ``string``: the entity id of the alarm
- * ``timestamp`` as ``integer``: the date/time of alarm appearance
+ * ``event`` as ``dict``: the event which produces the alarm
 
 Case 1: new alarm
 ~~~~~~~~~~~~~~~~~

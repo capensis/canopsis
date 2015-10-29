@@ -21,6 +21,7 @@
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
+from canopsis.configuration.model import Parameter
 
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
@@ -35,7 +36,9 @@ from time import time
 
 CONF_PATH = 'alerts/manager.conf'
 CATEGORY = 'ALERTS'
-CONTENT = []
+CONTENT = [
+    Parameter('extra_fields', Parameter.array)
+]
 
 
 @conf_paths(CONF_PATH)
@@ -83,14 +86,32 @@ class Alerts(MiddlewareRegistry):
     def restore_event(self):
         return self.config.get('restore_event', False)
 
+    @property
+    def extra_fields(self):
+        if not hasattr(self, '_extra_fields'):
+            self.extra_fields = None
+
+        return self._extra_fields
+
+    @extra_fields.setter
+    def extra_fields(self, value):
+        if value is None:
+            value = []
+
+        self._extra_fields = value
+
     def __init__(
         self,
+        extra_fields=None,
         config_storage=None,
         alarm_storage=None,
         context=None,
         *args, **kwargs
     ):
         super(Alerts, self).__init__(*args, **kwargs)
+
+        if extra_fields is not None:
+            self.extra_fields = extra_fields
 
         if config_storage is not None:
             self[Alerts.CONFIG_STORAGE] = config_storage
@@ -124,7 +145,7 @@ class Alerts(MiddlewareRegistry):
         notags_cond = None
 
         if exclude_tags is not None:
-            notags_cond = {'$nin': ensure_iterable(tags)}
+            notags_cond = {'$nin': ensure_iterable(exclude_tags)}
 
         if tags_cond is None and notags_cond is not None:
             query['tags'] = notags_cond
@@ -233,6 +254,10 @@ class Alerts(MiddlewareRegistry):
 
             event['event_type'] = typemap[step['_t']]
 
+            for field in self.extra_fields:
+                if field in alarm['extra']:
+                    event[field] = alarm['extra'][field]
+
             events.append(event)
 
         return events
@@ -246,7 +271,7 @@ class Alerts(MiddlewareRegistry):
 
         if event['event_type'] == Check.EVENT_TYPE:
             if event[Check.STATE] != Check.OK:
-                self.make_alarm(entity_id, event['timestamp'])
+                self.make_alarm(entity_id, event)
 
             alarm = self.get_current_alarm(entity_id)
 
@@ -318,7 +343,7 @@ class Alerts(MiddlewareRegistry):
         new_value = task(self, value, status, event)
         self.update_current_alarm(alarm, new_value)
 
-    def make_alarm(self, alarm_id, timestamp):
+    def make_alarm(self, alarm_id, event):
         alarm = self.get_current_alarm(alarm_id)
 
         if alarm is None:
@@ -330,10 +355,15 @@ class Alerts(MiddlewareRegistry):
                 'ticket': None,
                 'resolved': None,
                 'steps': [],
-                'tags': []
+                'tags': [],
+                'extra': {
+                    field: event[field]
+                    for field in self.extra_fields
+                    if field in event
+                }
             }
 
-            self[Alerts.ALARM_STORAGE].put(alarm_id, value, timestamp)
+            self[Alerts.ALARM_STORAGE].put(alarm_id, value, event['timestamp'])
 
     def resolve_alarms(self):
         storage = self[Alerts.ALARM_STORAGE]
