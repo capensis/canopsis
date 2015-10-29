@@ -24,23 +24,12 @@ from canopsis.engines.core import publish
 
 from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.stats.producers.event import EventMetricProducer
+
 from canopsis.session.manager import Session
+from canopsis.context.manager import Context
+
 from canopsis.alerts.status import get_previous_step
 from canopsis.alerts.manager import Alerts
-
-
-@register_task
-def event_processing(engine, event, usermgr=None, logger=None, **kwargs):
-    if usermgr is None:
-        usermgr = singleton_per_scope(UserMetricProducer)
-
-    events = []
-
-    if event['type'] == 'ack':
-        events.append(usermgr.alarm_ack(event, event['ack']['author']))
-
-    for event in events:
-        publish(publisher=engine.amp, event=event, logger=logger)
 
 
 @register_task
@@ -48,6 +37,7 @@ def beat_processing(
     engine,
     sessionmgr=None,
     eventmgr=None,
+    usermgr=None,
     alertsmgr=None,
     logger=None,
     **kwargs
@@ -57,6 +47,9 @@ def beat_processing(
 
     if eventmgr is None:
         eventmgr = singleton_per_scope(EventMetricProducer)
+
+    if usermgr is None:
+        usermgr = singleton_per_scope(UserMetricProducer)
 
     if alertsmgr is None:
         alertsmgr = singleton_per_scope(Alerts)
@@ -98,18 +91,40 @@ def beat_processing(
                             )
                         )
 
+                        events.append(usermgr.alarm_ack_delay(
+                            alarm['ack']['a'],
+                            ack_delay
+                        ))
+
                     if len(alarm_events) > 0:
                         events.append(eventmgr.alarm(alarm_events[0]))
 
                     for event in alarm_events:
                         if event['event_type'] == 'ack':
                             events.append(eventmgr.alarm_ack(event))
+                            events.append(
+                                usermgr.alarm_ack(event, event['author'])
+                            )
 
                         elif event['timestamp'] == alarm['resolved']:
                             events.append(eventmgr.alarm_solved(event))
 
                             if alarm['ack'] is not None:
                                 events.append(eventmgr.alarm_ack_solved(event))
+
+                                events.append(
+                                    usermgr.alarm_ack_solved(
+                                        alarm['ack']['a'],
+                                        alarm['resolved'] - alarm['ack']['t']
+                                    )
+                                )
+
+                                events.append(
+                                    usermgr.alarm_solved(
+                                        alarm['ack']['a'],
+                                        alarm['resolved'] - alarm_ts
+                                    )
+                                )
 
                     alertsmgr.update_current_alarm(
                         docalarm,

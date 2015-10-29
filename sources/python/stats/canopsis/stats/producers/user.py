@@ -53,3 +53,43 @@ class UserMetricProducer(MetricProducer):
         }
 
         return event
+
+    def _delay(self, user, name, value):
+        event = {
+            'connector': 'canopsis',
+            'connector_name': 'stats',
+            'event_type': 'perf',
+            'source_type': 'resource',
+            'component': user,
+            'resource': name,
+            'perf_data_array': [
+                {
+                    'metric': 'sum',
+                    'value': value,
+                    'type': 'COUNTER'
+                },
+                {
+                    'metric': 'last',
+                    'value': value,
+                    'type': 'GAUGE'
+                }
+            ]
+        }
+
+        for operator in ['min', 'max', 'average']:
+            entity = self[MetricProducer.PERFDATA_MANAGER].get_metric_entity(
+                'last', event
+            )
+
+            self.may_create_stats_serie(entity, operator)
+
+        return event
+
+    def alarm_ack_delay(self, user, delay):
+        return self._delay(user, 'alarm_ack_delay', delay)
+
+    def alarm_ack_solved(self, user, delay):
+        return self._delay(user, 'alarm_ack_solved', delay)
+
+    def alarm_solved(self, user, delay):
+        return self._delay(user, 'alarm_solved', delay)
