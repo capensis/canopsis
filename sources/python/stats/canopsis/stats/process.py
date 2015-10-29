@@ -62,7 +62,6 @@ def beat_processing(
         alertsmgr = singleton_per_scope(Alerts)
 
     storage = alertsmgr[alertsmgr.ALARM_STORAGE]
-
     events = sessionmgr.duration()
 
     with engine.Lock(engine, 'alarm_stats_computation') as l:
@@ -72,45 +71,51 @@ def beat_processing(
                 exclude_tags='stats'
             )
 
-            for docalarm in resolved_alarms:
-                alarm = docalarm[storage.VALUE]
-                alarm_ts = docalarm[storage.TIMESTAMP]
-                alarm_events = alertsmgr.get_events(docalarm)
+            for data_id in resolved_alarms:
+                for docalarm in resolved_alarms[data_id]:
+                    docalarm[storage.DATA_ID] = data_id
+                    alarm = docalarm[storage.VALUE]
+                    alarm_ts = docalarm[storage.TIMESTAMP]
+                    alarm_events = alertsmgr.get_events(docalarm)
 
-                solved_delay = alarm['resolved'] - alarm_ts
-                events.append(eventmgr.alarm_solved_delay(solved_delay))
+                    solved_delay = alarm['resolved'] - alarm_ts
+                    events.append(eventmgr.alarm_solved_delay(solved_delay))
 
-                if alarm['ack'] is not None:
-                    ack_ts = alarm['ack']['t']
-                    ackremove = get_previous_step(
-                        alarm,
-                        'ackremove',
-                        ts=ack_ts
-                    )
-                    ts = alarm_ts if ackremove is None else ackremove['t']
-                    ack_delay = ack_ts - ts
-
-                    events.append(eventmgr.alarm_ack_delay(ack_delay))
-                    events.append(
-                        eventmgr.alarm_ack_solved_delay(
-                            solved_delay - ack_delay
+                    if alarm['ack'] is not None:
+                        ack_ts = alarm['ack']['t']
+                        ackremove = get_previous_step(
+                            alarm,
+                            'ackremove',
+                            ts=ack_ts
                         )
+                        ts = alarm_ts if ackremove is None else ackremove['t']
+                        ack_delay = ack_ts - ts
+
+                        events.append(eventmgr.alarm_ack_delay(ack_delay))
+                        events.append(
+                            eventmgr.alarm_ack_solved_delay(
+                                solved_delay - ack_delay
+                            )
+                        )
+
+                    if len(alarm_events) > 0:
+                        events.append(eventmgr.alarm(alarm_events[0]))
+
+                    for event in alarm_events:
+                        if event['event_type'] == 'ack':
+                            events.append(eventmgr.alarm_ack(event))
+
+                        elif event['timestamp'] == alarm['resolved']:
+                            events.append(eventmgr.alarm_solved(event))
+
+                            if alarm['ack'] is not None:
+                                events.append(eventmgr.alarm_ack_solved(event))
+
+                    alertsmgr.update_current_alarm(
+                        docalarm,
+                        alarm,
+                        tags='stats'
                     )
-
-                if len(alarm_events) > 0:
-                    events.append(eventmgr.alarm(alarm_events[0]))
-
-                for event in alarm_events:
-                    if event['event_type'] == 'ack':
-                        events.append(eventmgr.alarm_ack(event))
-
-                    elif event['timestamp'] == alarm['resolved']:
-                        events.append(eventmgr.alarm_solved(event))
-
-                        if alarm['ack'] is not None:
-                            events.append(eventmgr.alarm_ack_solved(event))
-
-                alertsmgr.update_current_alarm(docalarm, alarm, tags='stats')
 
     for event in events:
         publish(publisher=engine.amqp, event=event, logger=logger)

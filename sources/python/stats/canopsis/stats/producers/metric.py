@@ -24,7 +24,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 
 from canopsis.timeserie.core import TimeSerie
-from canopsis.old.filter import check
+from canopsis.old.mfilter import check
 
 from hashlib import sha1
 
