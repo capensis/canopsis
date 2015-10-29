@@ -153,8 +153,8 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
         result = self._cursor2periods(cursor=cursor, timewindow=timewindow)
 
         # if one element has been requested, returns it
-        if isinstance(data_ids, basestring) and result:
-            result = result[data_ids]
+        if isinstance(data_ids, basestring):
+            result = result[data_ids] if result else None
 
         return result
 
