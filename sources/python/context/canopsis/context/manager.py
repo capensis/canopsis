@@ -262,13 +262,16 @@ class Context(MiddlewareRegistry):
 
         return result
 
-    def get_event(self, entity, **kwargs):
+    def get_event(self, entity, event_type='check', **kwargs):
         """Get an event from an entity.
 
         :param dict entity: entity to convert to an event.
+        :param str event_type: specific event_type. Default check.
         :param dict kwargs: additional fields to put in the event.
+        :rtype: dict
         """
 
+        kwargs['event_type'] = event_type
         # fill kwargs with entity values
         for field in entity:
             kwargs[field] = entity[field]
