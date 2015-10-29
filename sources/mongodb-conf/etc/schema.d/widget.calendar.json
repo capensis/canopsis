@@ -67,6 +67,14 @@
 				"objectDict": { "title": "untitled filter", "cfilter": ""},
 				"role": "cfilterwithproperties"
 			}
+		},
+		"started_date": {
+			"type": "integer",
+			"isUserPreference": true
+		},
+		"reload": {
+			"type": "boolean",
+			"isUserPreference": true
 		}
 	}
 }
