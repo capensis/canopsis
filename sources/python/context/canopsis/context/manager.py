@@ -34,8 +34,8 @@ CONTENT = [
 ]
 
 
-@add_category(CATEGORY)
-@conf_paths(CONF_RESOURCE, content=CONTENT)
+@add_category(CATEGORY, content=CONTENT)
+@conf_paths(CONF_RESOURCE)
 class Context(MiddlewareRegistry):
     """
     Manage access to a context (connector, component, resource) elements
