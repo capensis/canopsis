@@ -166,7 +166,9 @@ class MetricProducer(MiddlewareRegistry):
             }
 
             meta = self[MetricProducer.PERFDATA_MANAGER].get_meta(metric_id)
-            serie.update(meta)
+            
+            if meta is not None:
+                serie.update(meta)
 
             storage.put_element(serie, _id=serie_id)
 

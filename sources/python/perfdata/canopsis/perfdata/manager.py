@@ -191,7 +191,7 @@ class PerfData(MiddlewareRegistry):
             timewindow = get_offset_timewindow()
 
         result = self[PerfData.META_STORAGE].get(
-            data_id=metric_id,
+            data_ids=metric_id,
             timewindow=timewindow,
             limit=limit,
             sort=sort
