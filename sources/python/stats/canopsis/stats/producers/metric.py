@@ -70,7 +70,7 @@ class MetricProducer(MiddlewareRegistry):
     @round_time_interval.setter
     def round_time_interval(self, value):
         if value is None:
-            value = TimeSerie.VROUND_TIME.total_seconds()
+            value = TimeSerie.VROUND_TIME
 
         self._round_time_interval = value
 
