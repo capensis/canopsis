@@ -19,17 +19,23 @@
 # ---------------------------------
 
 from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
+    conf_paths, add_category
+)
+from canopsis.configuration.model import Parameter
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.event import Event, forger
 from canopsis.storage.composite import CompositeStorage
 
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
+CONTENT = [
+    Parameter('accept_event_types', Parameter.array())
+]
 
 
 @add_category(CATEGORY)
-@conf_paths(CONF_RESOURCE)
+@conf_paths(CONF_RESOURCE, content=CONTENT)
 class Context(MiddlewareRegistry):
     """
     Manage access to a context (connector, component, resource) elements
@@ -86,6 +92,31 @@ class Context(MiddlewareRegistry):
     def context(self, value):
 
         self._context = value
+
+    @property
+    def accept_event_types(self):
+        if not hasattr('_accept_event_types'):
+            self.accept_event_types = None
+
+        return self._accept_event_types
+
+    @accept_event_types.setter
+    def accept_event_types(self, value):
+        if value is None:
+            value = [
+                'perf',
+                'check',
+                'ack',
+                'ackremove'
+                'declareticket',
+                'assocticket',
+                'cancel',
+                'uncancel',
+                'changestate',
+                'downtime'
+            ]
+
+        self._accept_event_types = value
 
     def get_entities(self, ids):
         """Get entities by id.
@@ -171,7 +202,7 @@ class Context(MiddlewareRegistry):
         # try to get the right type if the event corresponds to the old system
         if _type in self.context:
             event_type = _event['event_type']
-            if event_type not in ['check', 'downtime', 'ack', 'perf']:
+            if event_type not in self.accept_event_types:
                 _type = event_type
 
         # set type in event

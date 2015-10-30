@@ -37,7 +37,7 @@ from time import time
 CONF_PATH = 'alerts/manager.conf'
 CATEGORY = 'ALERTS'
 CONTENT = [
-    Parameter('extra_fields', Parameter.array)
+    Parameter('extra_fields', Parameter.array())
 ]
 
 
