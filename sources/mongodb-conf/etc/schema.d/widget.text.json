@@ -1,65 +1,69 @@
 {
-	"type": "object",
-	"metadata": {
-		"icon": "glyphicon glyphicon-file"
-	},
-	"categories": [{
-		"title": "General",
-		"keys":["title", "html"]
-	},{
-		"title": "Series",
-		"keys":["series"]
-	},{
-        "title": "Metrics",
-        "keys":["metrics"]
+    "type": "object",
+    "metadata": {
+        "icon": "glyphicon glyphicon-file"
+    },
+    "categories": [{
+        "title": "General",
+        "keys":["title", "html"]
     },{
-		"title": "Events",
-		"keys":["events"]
-	},{
-		"title": "Mixins",
-		"keys":["mixins"]
-	}],
-	"properties": {
-		"title": {
-			"type": "string"
-		},
-		"html": {
-			"description": "Allow display event or metric values<ul><li>event component : {{event.event_label.component}}</li><li>serie's value {{serie.serie_name}}</li><li>metric's value {{metric.metric_name}}</li><li>human readable value {{hr value=serie.serie_name}}</li></ul>",
-			"type": "string",
-			"role": "richtext"
-		},
-		"series": {
-			"description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
-			"type": "array",
-			"role": "arrayclassifiedcrecordselector",
-			"model": "serie",
-			"crecordtype": "serie",
-			"multiselect": true
-		},
-        "metrics": {
+        "title": "Time Window",
+        "keys": ["time_window", "time_window_offset"]
+    },{
+        "title": "Series",
+        "keys":["series"]
+    },{
+        "title": "Events",
+        "keys":["events"]
+    },{
+        "title": "Mixins",
+        "keys":["mixins"]
+    }],
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "html": {
+            "description": "Allow display event or metric values<ul><li>event component : {{event.event_label.component}}</li><li>serie's value {{serie.serie_name}}</li><li>human readable value {{hr value=serie.serie_name}}</li></ul>",
+            "type": "string",
+            "role": "richtext"
+        },
+        "time_window": {
+            "type": "number",
+            "role": "duration",
+            "default": 86400,
+            "title": "Time Window to show on graph"
+        },
+        "time_window_offset": {
+            "type": "number",
+            "role": "duration",
+            "default": 0,
+            "title": "Time window offset from now"
+        },
+        "series": {
+            "description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
             "type": "array",
+            "role": "arrayclassifiedcrecordselector",
+            "model": "serie",
+            "crecordtype": "serie",
+            "multiselect": true
+        },
+        "events": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            },
+            "role": "eventselector",
+            "labelled": true,
+            "description": "Choose events to include in selector computation, and associate them a label"
+        },
+        "mixins": {
+            "type": "array",
+            "role": "mixins",
             "items": {
                 "type": "string"
             },
-            "role": "cmetric",
-            "title": "Metrics"
-        },
-		"events": {
-			"type": "array",
-			"items": {
-				"type": "object"
-			},
-			"role": "eventselector",
-			"labelled": true,
-			"description": "Choose events to include in selector computation, and associate them a label"
-		},
-		"mixins": {
-			"type": "array",
-			"role": "mixins",
-			"items": {
-				"type": "string"
-			},
-			"reorderable": true
-		}
-	}
+            "reorderable": true
+        }
+    }
 }
