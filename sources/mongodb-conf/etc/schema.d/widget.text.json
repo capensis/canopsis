@@ -13,6 +13,9 @@
         "title": "Series",
         "keys":["series"]
     },{
+        "title": "Metrics",
+        "keys":["metrics"]
+    },{
         "title": "Events",
         "keys":["events"]
     },{
@@ -21,10 +24,12 @@
     }],
     "properties": {
         "title": {
-            "type": "string"
+            "type": "string",
+            "title": "Widget title"
         },
         "html": {
-            "description": "Allow display event or metric values<ul><li>event component : {{event.event_label.component}}</li><li>serie's value {{serie.serie_name}}</li><li>human readable value {{hr value=serie.serie_name}}</li></ul>",
+            "title": "Template",
+            "description": "Variables: <ul><li>Event: <code>{{event.label.*}}</code></li><li>Serie: <code>{{serie.name}}</code></li><li>Metric: <code>{{metric.component[.resource].name}}</code></li><li>Interval: <code>{{from}} {{to}}</code></li></ul>",
             "type": "string",
             "role": "richtext"
         },
@@ -32,7 +37,7 @@
             "type": "number",
             "role": "duration",
             "default": 86400,
-            "title": "Time Window to show on graph"
+            "title": "Time Window for data fetching"
         },
         "time_window_offset": {
             "type": "number",
@@ -41,12 +46,22 @@
             "title": "Time window offset from now"
         },
         "series": {
-            "description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
+            "description": "Series to provide to template",
+            "title": "Choose series",
             "type": "array",
             "role": "arrayclassifiedcrecordselector",
             "model": "serie",
             "crecordtype": "serie",
             "multiselect": true
+        },
+        "metrics": {
+            "description": "Metrics to provide to template",
+            "title": "Choose metrics",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "role": "cmetric"
         },
         "events": {
             "type": "array",
@@ -55,7 +70,7 @@
             },
             "role": "eventselector",
             "labelled": true,
-            "description": "Choose events to include in selector computation, and associate them a label"
+            "description": "Labelled events to provide to template"
         },
         "mixins": {
             "type": "array",
