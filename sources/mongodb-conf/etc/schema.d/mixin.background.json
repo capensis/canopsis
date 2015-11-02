@@ -5,7 +5,7 @@
         "keys":["imageUrl", "position", "repeat", "size", "backgroundcolor"]
     }],
     "metadata": {
-        "icon": "fa fa-picture",
+        "icon": "fa fa-picture-o",
         "description": "Puts a background image on a widget"
     },
     "properties": {
