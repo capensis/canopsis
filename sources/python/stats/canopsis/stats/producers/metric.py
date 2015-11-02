@@ -128,7 +128,7 @@ class MetricProducer(MiddlewareRegistry):
         matches = [
             evfilter['crecord_name']
             for evfilter in storage.find_elements()
-            if check(evfilter['filter'], event)
+            if check(evfilter.get('filter',None) or {}, event)
         ]
 
         return matches

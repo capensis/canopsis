@@ -95,7 +95,7 @@ class Context(MiddlewareRegistry):
 
     @property
     def accept_event_types(self):
-        if not hasattr('_accept_event_types'):
+        if not hasattr(self, '_accept_event_types'):
             self.accept_event_types = None
 
         return self._accept_event_types

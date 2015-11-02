@@ -49,7 +49,7 @@ class CanopsisSONManipulator(SONManipulator):
         )
 
         if self.idfield not in son:
-            son[self.idfield] = uuid1()
+            son[self.idfield] = str(uuid1())
 
         return son
 

@@ -1,6 +1,6 @@
 {
     "title": "StatsFilter",
-    "description": "Filter used to generator statistics counters",
+    "description": "Filter used to generate statistics counters",
     "categories": [{
         "title": "General",
         "keys": ["crecord_name", "filter"]

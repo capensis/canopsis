@@ -26,7 +26,6 @@ from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.stats.producers.event import EventMetricProducer
 
 from canopsis.session.manager import Session
-from canopsis.context.manager import Context
 
 from canopsis.alerts.status import get_previous_step
 from canopsis.alerts.manager import Alerts
