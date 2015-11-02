@@ -1,5 +1,8 @@
 {
 	"type": "object",
+	"metadata": {
+		"description": "A layout for containers to display childs in a responsive grid"
+	},
 	"categories": [{
 		"title": "General",
 		"keys":["columnXS", "columnMD", "columnLG", "offset", "forcelegacy"]

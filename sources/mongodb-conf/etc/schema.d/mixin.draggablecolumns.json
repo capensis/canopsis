@@ -1,14 +1,16 @@
 {
-	"type": "object",
-
-	"properties": {
-		"user_displayed_columns": {
-			"type": "array",
-			"isUserPreference": true,
-			"items": {
-				"type": "string"
-			},
-			"reorderable": true
-		}
-	}
+    "type": "object",
+    "metadata": {
+        "description": "Draggable columns for list widgets"
+    },
+    "properties": {
+        "user_displayed_columns": {
+            "type": "array",
+            "isUserPreference": true,
+            "items": {
+                "type": "string"
+            },
+            "reorderable": true
+        }
+    }
 }
