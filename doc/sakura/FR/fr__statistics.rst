@@ -53,23 +53,23 @@ Metrics
 ~~~~~~~
 
 .. csv-table::
-   :header: "Component", "Resource", "Metric", "Metric Type"
+   :header: "Component", "Resource", "Metric", "Metric Type", "Description"
 
-   ``$username``, alarm_ack, total, COUNTER
-   ``$username``, alarm_ack, ``$filter_name``, COUNTER
-   ``$username``, alarm_ack_delay, last, GAUGE
+   ``$username``, alarm_ack, total, COUNTER, Total number of acknowledged alarms
+   ``$username``, alarm_ack, ``$filter_name``, COUNTER, Number of acknowledged alarms matching filter
+   ``$username``, alarm_ack_delay, last, GAUGE, Delay between alarm apparition and its acknowledgment
    ``$username``, alarm_ack_delay, average, GAUGE
    ``$username``, alarm_ack_delay, max, GAUGE
    ``$username``, alarm_ack_delay, min, GAUGE
-   ``$username``, alarm_ack_solved, last, GAUGE
+   ``$username``, alarm_ack_solved, last, GAUGE, Delay between alarm resolution and its acknowledgment
    ``$username``, alarm_ack_solved, average, GAUGE
    ``$username``, alarm_ack_solved, max, GAUGE
    ``$username``, alarm_ack_solved, min, GAUGE
-   ``$username``, alarm_solved, last, GAUGE
+   ``$username``, alarm_solved, last, GAUGE, Delay between alarm apparition and its resolution
    ``$username``, alarm_solved, average, GAUGE
    ``$username``, alarm_solved, max, GAUGE
    ``$username``, alarm_solved, min, GAUGE
-   ``$username``, session_duration, last, GAUGE
+   ``$username``, session_duration, last, GAUGE, Delay between user's login and logout
    ``$username``, session_duration, average, GAUGE
    ``$username``, session_duration, max, GAUGE
    ``$username``, session_duration, min, GAUGE
@@ -93,28 +93,28 @@ Metrics
 ~~~~~~~
 
 .. csv-table::
-   :header: "Component", "Resource", "Metric", "Metric Type"
+   :header: "Component", "Resource", "Metric", "Metric Type", "Description"
 
-   canopsis, alarm, total, COUNTER
-   canopsis, alarm, ``$filter_name``, COUNTER
-   canopsis, alarm_ack, total, COUNTER
-   canopsis, alarm_ack, ``$filter_name``, COUNTER
-   canopsis, alarm_ack_solved, total, COUNTER
-   canopsis, alarm_ack_solved, ``$filter_name``, COUNTER
-   canopsis, alarm_solved, total, COUNTER
-   canopsis, alarm_solved, ``$filter_name``, COUNTER
-   canopsis, alarm_ack_delay, sum, COUNTER
-   canopsis, alarm_ack_delay, last, GAUGE
+   canopsis, alarm, total, COUNTER, Total number of alarms
+   canopsis, alarm, ``$filter_name``, COUNTER, Number of alarms matching filter
+   canopsis, alarm_ack, total, COUNTER, Total number of acknowledged alarms
+   canopsis, alarm_ack, ``$filter_name``, COUNTER, Number of acknowledged alarms matching filter
+   canopsis, alarm_ack_solved, total, COUNTER, Total number of acknowledged resolved alarms
+   canopsis, alarm_ack_solved, ``$filter_name``, COUNTER, Number of acknowledged resolved alarms matching filter
+   canopsis, alarm_solved, total, COUNTER, Total number of resolved alarms
+   canopsis, alarm_solved, ``$filter_name``, COUNTER, Number of resolved alarms matching filter
+   canopsis, alarm_ack_delay, sum, COUNTER, Cumulative delay between alarm apparition and its acknowledgment
+   canopsis, alarm_ack_delay, last, GAUGE, Delay between alarm apparition and its acknowledgment
    canopsis, alarm_ack_delay, average, GAUGE
    canopsis, alarm_ack_delay, max, GAUGE
    canopsis, alarm_ack_delay, min, GAUGE
-   canopsis, alarm_ack_solved, sum, COUNTER
-   canopsis, alarm_ack_solved, last, GAUGE
+   canopsis, alarm_ack_solved, sum, COUNTER, Cumulative delay between alarm resolution and its acknowledgment
+   canopsis, alarm_ack_solved, last, GAUGE, Delay between alarm resolution and its acknowledgment
    canopsis, alarm_ack_solved, average, GAUGE
    canopsis, alarm_ack_solved, max, GAUGE
    canopsis, alarm_ack_solved, min, GAUGE
-   canopsis, alarm_solved, sum, COUNTER
-   canopsis, alarm_solved, last, GAUGE
+   canopsis, alarm_solved, sum, COUNTER, Cumulative delay between alarm apparition and its resolution
+   canopsis, alarm_solved, last, GAUGE, Delay between alarm apparition and its resolution
    canopsis, alarm_solved, average, GAUGE
    canopsis, alarm_solved, max, GAUGE
    canopsis, alarm_solved, min, GAUGE
@@ -137,8 +137,8 @@ Computation
 Configuration
 -------------
 
-In order to create the event filters (to produce complex metrics), we will need 5
-collection of filters:
+In order to create the event filters (to produce complex metrics), we will need 
+at least 5 collections of filters:
 
  - ``user.alarm_ack``
  - ``canopsis.alarm``
