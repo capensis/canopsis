@@ -31,59 +31,9 @@ CONTENT = []
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY, content=CONTENT)
 class EventMetricProducer(MetricProducer):
-    def __init__(self, *args, **kwargs):
-        super(EventMetricProducer, self).__init__(*args, **kwargs)
-
-    def _counter(self, name, event):
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': '__canopsis__',
-            'resource': name,
-            'perf_data_array': [
-                {
-                    'metric': filtername,
-                    'value': 1,
-                    'type': 'COUNTER'
-                }
-                for filtername in self.match(event)
-            ]
-        }
-
-        return event
-
-    def _delay(self, name, value):
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': '__canopsis__',
-            'resource': name,
-            'perf_data_array': [
-                {
-                    'metric': 'sum',
-                    'value': value,
-                    'type': 'COUNTER'
-                },
-                {
-                    'metric': 'last',
-                    'value': value,
-                    'type': 'GAUGE'
-                }
-            ]
-        }
-
-        for operator in ['min', 'max', 'average']:
-            entity = self[MetricProducer.PERFDATA_MANAGER].get_metric_entity(
-                'last', event
-            )
-
-            self.may_create_stats_serie(entity, operator)
-
-        return event
+    """
+    Metric producer for event statistics.
+    """
 
     def alarm(self, event):
         return self._counter('alarm', event)

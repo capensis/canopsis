@@ -44,6 +44,9 @@ CONTENT = [
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY, content=CONTENT)
 class Serie(MiddlewareRegistry):
+    """
+    Consolidation manager.
+    """
 
     SERIE_STORAGE = 'serie_storage'
     CONTEXT_MANAGER = 'context'
@@ -51,6 +54,10 @@ class Serie(MiddlewareRegistry):
 
     @property
     def points_per_interval(self):
+        """
+        Maximum number of points in a consolidation interval.
+        """
+
         if not hasattr(self, '_points_per_interval'):
             self.points_per_interval = None
 
@@ -86,6 +93,18 @@ class Serie(MiddlewareRegistry):
             self[Serie.PERFDATA_MANAGER] = perfdata
 
     def get_metrics(self, regex, metrics=None):
+        """
+        Get metrics with regular expression from storage or existing set.
+
+        :param regex: "co:regex re:regex me:regex" filter
+        :type regex: str
+
+        :param metrics: If not specified, get from storage (optional)
+        :type metrics: list
+
+        :returns: list of matching metrics
+        """
+
         mfilter = build_filter_from_regex(regex)
 
         if metrics is None:
@@ -103,6 +122,12 @@ class Serie(MiddlewareRegistry):
             return result
 
     def get_perfdata(self, metrics, period=None, timewindow=None):
+        """
+        Internal method to fetch perfdata from metrics.
+
+        :returns: perfdata per metric id as dict
+        """
+
         result = {}
 
         for metric in metrics:
@@ -122,6 +147,18 @@ class Serie(MiddlewareRegistry):
         return result
 
     def subset_perfdata_superposed(self, regex, perfdatas):
+        """
+        Get superposed points of metric matching filter.
+
+        :param regex: filter for ``get_metric()`` method
+        :type regex: str
+
+        :param perfdatas: perfdata fetched with ``get_perfdata()`` method
+        :type perfdatas: dict
+
+        :returns: superposed points as list
+        """
+
         selected_metrics = [
             perfdatas[key]['entity']
             for key in perfdatas.keys()
@@ -143,6 +180,18 @@ class Serie(MiddlewareRegistry):
         return points
 
     def aggregation(self, serieconf, timewindow=None):
+        """
+        Get aggregated perfdata from serie.
+
+        :param serieconf: Serie used for aggregation
+        :type serieconf: dict
+
+        :param timewindow: Time window used for perfdata fetching (optional)
+        :type timewindow: canopsis.timeserie.timewindow.TimeWindow
+
+        :returns: aggregated perfdata classified by metric id as dict
+        """
+
         interval = serieconf.get('aggregation_interval', None)
 
         if interval is None:
@@ -175,6 +224,18 @@ class Serie(MiddlewareRegistry):
         return perfdatas
 
     def consolidation(self, serieconf, perfdatas):
+        """
+        Get consolidated point from serie.
+
+        :param serieconf: Serie used for consolidation
+        :type serieconf: dict
+
+        :param perfdatas: Aggregated perfdatas from ``aggregation()`` method
+        :type perfdatas: dict
+
+        :returns: Consolidated point as float
+        """
+
         # configure consolidation period (same as aggregation period)
         interval = serieconf.get('aggregation_interval', None)
 
@@ -204,10 +265,32 @@ class Serie(MiddlewareRegistry):
         return restricted_globals['result']
 
     def calculate(self, serieconf, timewindow=None):
+        """
+        Compute serie point.
+
+        :param serieconf: Serie to compute
+        :type serieconf: dict
+
+        :param timewindow: Time Window to use for aggregation (optional)
+        :type timewindow: canopsis.timeserie.timewindow.TimeWindow
+
+        :returns: Computed point as int
+        """
+
         perfdatas = self.aggregation(serieconf, timewindow)
         return self.consolidation(serieconf, perfdatas)
 
     def get_series(self, timestamp):
+        """
+        Get series that need to be computed at specified timestamp.
+
+        :param timestamp: Timestamp used to determine if a serie needs
+                          to be computed
+        :type timestamp: int
+
+        :returns: list of serie
+        """
+
         storage = self[Serie.SERIE_STORAGE]
 
         javascript_condition = '({0} - {1}) >= ({2} / {3})'.format(

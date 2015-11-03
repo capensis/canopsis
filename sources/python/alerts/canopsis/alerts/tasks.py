@@ -25,6 +25,10 @@ from canopsis.alerts import status
 
 @register_task('alerts.useraction.ack')
 def acknowledge(manager, alarm, author, message, event):
+    """
+    Called when a user add an acknowledgment on an alarm.
+    """
+
     step = {
         '_t': 'ack',
         't': event['timestamp'],
@@ -40,6 +44,10 @@ def acknowledge(manager, alarm, author, message, event):
 
 @register_task('alerts.useraction.ackremove')
 def unacknowledge(manager, alarm, author, message, event):
+    """
+    Called when a user remove an acknowledgment from an alarm.
+    """
+
     step = {
         '_t': 'ackremove',
         't': event['timestamp'],
@@ -55,6 +63,10 @@ def unacknowledge(manager, alarm, author, message, event):
 
 @register_task('alerts.useraction.cancel')
 def cancel(manager, alarm, author, message, event):
+    """
+    Called when an alarm is canceled by a user.
+    """
+
     step = {
         '_t': 'cancel',
         't': event['timestamp'],
@@ -70,6 +82,10 @@ def cancel(manager, alarm, author, message, event):
 
 @register_task('alerts.useraction.uncancel')
 def restore(manager, alarm, author, message, event):
+    """
+    Called when an alarm is restored by a user.
+    """
+
     step = {
         '_t': 'uncancel',
         't': event['timestamp'],
@@ -94,6 +110,10 @@ def restore(manager, alarm, author, message, event):
 
 @register_task('alerts.useraction.declareticket')
 def declare_ticket(manager, alarm, author, message, event):
+    """
+    Called when a user declare a ticket for an alarm.
+    """
+
     step = {
         '_t': 'declareticket',
         't': event['timestamp'],
@@ -110,6 +130,10 @@ def declare_ticket(manager, alarm, author, message, event):
 
 @register_task('alerts.useraction.assocticket')
 def associate_ticket(manager, alarm, author, message, event):
+    """
+    Called when a user associate a ticket to an alarm.
+    """
+
     step = {
         '_t': 'assocticket',
         't': event['timestamp'],
@@ -126,6 +150,10 @@ def associate_ticket(manager, alarm, author, message, event):
 
 @register_task('alerts.useraction.changestate')
 def change_state(manager, alarm, author, message, event):
+    """
+    Called when a user manually change the state of an alarm.
+    """
+
     step = {
         '_t': 'changestate',
         't': event['timestamp'],
@@ -142,6 +170,10 @@ def change_state(manager, alarm, author, message, event):
 
 @register_task('alerts.systemaction.state_increase')
 def state_increase(manager, alarm, state, event):
+    """
+    Called when the system detect a state escalation on an alarm.
+    """
+
     step = {
         '_t': 'stateinc',
         't': event['timestamp'],
@@ -161,6 +193,10 @@ def state_increase(manager, alarm, state, event):
 
 @register_task('alerts.systemaction.state_decrease')
 def state_decrease(manager, alarm, state, event):
+    """
+    Called when the system detect a state decrease on an alarm.
+    """
+
     step = {
         '_t': 'statedec',
         't': event['timestamp'],
@@ -180,6 +216,10 @@ def state_decrease(manager, alarm, state, event):
 
 @register_task('alerts.systemaction.status_increase')
 def status_increase(manager, alarm, status, event):
+    """
+    Called when the system detect a status escalation on an alarm.
+    """
+
     step = {
         '_t': 'statusinc',
         't': event['timestamp'],
@@ -196,6 +236,10 @@ def status_increase(manager, alarm, status, event):
 
 @register_task('alerts.systemaction.status_decrease')
 def status_decrease(manager, alarm, status, event):
+    """
+    Called when the system detect a status decrease on an alarm.
+    """
+
     step = {
         '_t': 'statusdec',
         't': event['timestamp'],

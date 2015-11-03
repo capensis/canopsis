@@ -40,6 +40,11 @@ CONTENT = [
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY, content=CONTENT)
 class MetricProducer(MiddlewareRegistry):
+    """
+    Base Metric producer.
+
+    This object is used to generate events containing statistics metrics.
+    """
 
     FILTER_STORAGE = 'filter_storage'
     SERIE_STORAGE = 'serie_storage'
@@ -104,42 +109,50 @@ class MetricProducer(MiddlewareRegistry):
         if perfdata is not None:
             self[MetricProducer.PERFDATA_MANAGER] = perfdata
 
-        self.events_cache = {}
-
-    def cache(self, event):
-        rk = event['rk']
-
-        if rk not in self.events_cache:
-            self.events_cache[rk] = []
-
-        self.events_cache[rk].append(event)
-
-    def get_cache(self, event):
-        return self.events_cache.get(event['rk'], [])
-
-    def clear_cache(self, event):
-        rk = event['rk']
-
-        if rk in self.events_cache:
-            self.events_cache[rk].clear()
-
     def match(self, event):
+        """
+        Get filters names which match the event.
+
+        :param event: Event to check
+        :type event: dict
+
+        :returns: filters names as list
+        """
+
         storage = self[MetricProducer.FILTER_STORAGE]
         matches = [
             evfilter['crecord_name']
             for evfilter in storage.find_elements()
-            if check(evfilter.get('filter',None) or {}, event)
+            if check(evfilter.get('filter', None) or {}, event)
         ]
 
         return matches
 
     def get_stats_serie_id(self, metric_id, operator):
+        """
+        Get serie name from metric id and operator.
+
+        :returns: sha1(metric_id, operator) as str
+        """
+
         serie_id = sha1()
         serie_id.update(metric_id)
         serie_id.update(operator)
         return serie_id.hexdigest()
 
     def may_create_stats_serie(self, metric, operator):
+        """
+        Create serie for metric and operator if not existing yet.
+
+        :param metric: Metric entity
+        :type metric: dict
+
+        :param operator: Aggregation operator used on metric
+        :type operator: str
+
+        :returns: the newly created, or existing, serie
+        """
+
         storage = self[MetricProducer.SERIE_STORAGE]
 
         metric_id = self[MetricProducer.CONTEXT_MANAGER].get_entity_id(metric)
@@ -166,7 +179,7 @@ class MetricProducer(MiddlewareRegistry):
             }
 
             meta = self[MetricProducer.PERFDATA_MANAGER].get_meta(metric_id)
-            
+
             if meta is not None:
                 serie.update(meta)
 
@@ -176,3 +189,84 @@ class MetricProducer(MiddlewareRegistry):
             result = serie
 
         return result
+
+    def _counter(self, name, event, author='__canopsis__'):
+        """
+        Generate counters for each matching filter.
+
+        :param name: Counter's name
+        :type name: str
+
+        :param event: Event to check against filters
+        :type event: dict
+
+        :param author: Statistic author (default: __canopsis__)
+        :type author: str
+
+        :returns: perf event as dict
+        """
+
+        event = {
+            'connector': 'canopsis',
+            'connector_name': 'stats',
+            'event_type': 'perf',
+            'source_type': 'resource',
+            'component': author,
+            'resource': name,
+            'perf_data_array': [
+                {
+                    'metric': filtername,
+                    'value': 1,
+                    'type': 'COUNTER'
+                }
+                for filtername in self.match(event)
+            ]
+        }
+
+        return event
+
+    def _delay(self, name, value, author='__canopsis__'):
+        """
+        Generate gauge and counter for delay statistic.
+
+        :param name: Delay's name
+        :type name: str
+
+        :param value: Delay
+        :type value: float
+
+        :param author: Statistic author (default: __canopsis__)
+        :type author: str
+
+        :returns: perf event as dict
+        """
+
+        event = {
+            'connector': 'canopsis',
+            'connector_name': 'stats',
+            'event_type': 'perf',
+            'source_type': 'resource',
+            'component': author,
+            'resource': name,
+            'perf_data_array': [
+                {
+                    'metric': 'sum',
+                    'value': value,
+                    'type': 'COUNTER'
+                },
+                {
+                    'metric': 'last',
+                    'value': value,
+                    'type': 'GAUGE'
+                }
+            ]
+        }
+
+        for operator in ['min', 'max', 'average']:
+            entity = self[MetricProducer.PERFDATA_MANAGER].get_metric_entity(
+                'last', event
+            )
+
+            self.may_create_stats_serie(entity, operator)
+
+        return event

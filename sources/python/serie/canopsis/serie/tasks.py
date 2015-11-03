@@ -25,7 +25,36 @@ from canopsis.task.core import register_task
 
 
 def new_operator(op, manager, period, perfdatas):
+    """
+    Create a new operator usable in the restricted Python environment.
+
+    This operator will be used in the formula.
+
+    :param op: Operator name
+    :type op: str
+
+    :param manager: Serie manager
+    :type manager: canopsis.serie.manager.Serie
+
+    :param period: Period used for timeserie
+    :type period: canopsis.timeserie.timewindow.Period
+
+    :param perfdatas: Perfdata classified by metric id
+    :type perfdatas: dict
+
+    :returns: operator as a callable
+    """
+
     def operator(regex):
+        """
+        Operator returned by ``new_operator()`` function.
+
+        :param regex: Metric filter used to aggregate perfdatas
+        :type regex: str
+
+        :returns: consolidated point as float
+        """
+
         points = manager.subset_perfdata_superposed(regex, perfdatas)
         result = float('nan')
 
@@ -50,6 +79,21 @@ def new_operator(op, manager, period, perfdatas):
 
 @register_task('serie.operatorset')
 def serie_operatorset(manager, period, perfdatas):
+    """
+    Generate set of operators.
+
+    :param manager: Serie manager
+    :type manager: canopsis.serie.manager.Serie
+
+    :param period: Period used for timeserie
+    :type period: canopsis.timeserie.timewindow.Period
+
+    :param perfdatas: Perfdata classified by metric id
+    :type perfdatas: dict
+
+    :returns: operators classified by name as dict
+    """
+
     operators = {
         key: new_operator(key.lower(), manager, period, perfdatas)
         for key in get_aggregations()

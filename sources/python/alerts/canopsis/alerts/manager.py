@@ -44,6 +44,11 @@ CONTENT = [
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY, content=CONTENT)
 class Alerts(MiddlewareRegistry):
+    """
+    Alarm cycle managment.
+
+    Used to archive events related to alarms in a TimedStorage.
+    """
 
     CONFIG_STORAGE = 'config_storage'
     ALARM_STORAGE = 'alarm_storage'
@@ -51,6 +56,10 @@ class Alerts(MiddlewareRegistry):
 
     @property
     def config(self):
+        """
+        Property computed from configuration storage.
+        """
+
         if not hasattr(self, '_config'):
             self.config = None
 
@@ -68,26 +77,52 @@ class Alerts(MiddlewareRegistry):
 
     @property
     def flapping_interval(self):
+        """
+        Interval used to check for flapping alarm status.
+        """
+
         return self.config.get('bagot_time', 0)
 
     @property
     def flapping_freq(self):
+        """
+        Number of alarm oscillation during flapping interval
+        to consider an alarm as flapping.
+        """
+
         return self.config.get('bagot_freq', 0)
 
     @property
     def stealthy_interval(self):
+        """
+        Interval used to check for stealthy alarm status.
+        """
+
         return self.config.get('stealthy_time', 0)
 
     @property
     def stealthy_show_duration(self):
+        """
+        Interval used to check if alarm is still in stealthy status.
+        """
+
         return self.config.get('stealthy_show', 0)
 
     @property
     def restore_event(self):
+        """
+        When alarm is restored, reset the previous status if ``True``,
+        recompute status with alarm history if ``False``.
+        """
+
         return self.config.get('restore_event', False)
 
     @property
     def extra_fields(self):
+        """
+        Array of fields to save from event in alarm.
+        """
+
         if not hasattr(self, '_extra_fields'):
             self.extra_fields = None
 
@@ -129,6 +164,24 @@ class Alerts(MiddlewareRegistry):
         exclude_tags=None,
         timewindow=None
     ):
+        """
+        Get alarms from TimedStorage.
+
+        :param resolved: If ``True``, returns only resolved alarms, else
+                         returns only unresolved alarms (default: ``True``).
+        :type resolved: bool
+        :param tags: Tags which must be set on alarm (optional)
+        :type tags: str or list
+
+        :param exclude_tags: Tags which must not be set on alarm (optional)
+        :type tags: str or list
+
+        :param timewindow: Time Window used for fetching (optional)
+        :type timewindow: canopsis.timeserie.timewindow.TimeWindow
+
+        :returns: Iterable of alarms matching 
+        """
+
         query = {}
 
         if resolved:
@@ -162,6 +215,15 @@ class Alerts(MiddlewareRegistry):
         )
 
     def get_current_alarm(self, alarm_id):
+        """
+        Get current unresolved alarm.
+
+        :param alarm_id: Alarm entity ID
+        :type alarm_id: str
+
+        :returns: Alarm as dict if found, else None
+        """
+
         storage = self[Alerts.ALARM_STORAGE]
 
         result = storage.get(
@@ -180,6 +242,19 @@ class Alerts(MiddlewareRegistry):
         return result
 
     def update_current_alarm(self, alarm, new_value, tags=None):
+        """
+        Update alarm's history and tags.
+
+        :param alarm: Alarm to update
+        :type alarm: dict
+
+        :param new_value: New history to set on alarm
+        :type new_value: dict
+
+        :param tags: Tags to add on alarm (optional)
+        :type tags: str or list
+        """
+
         storage = self[Alerts.ALARM_STORAGE]
 
         alarm_id = alarm[storage.DATA_ID]
@@ -193,6 +268,15 @@ class Alerts(MiddlewareRegistry):
         storage.put(alarm_id, new_value, alarm_ts)
 
     def get_events(self, alarm):
+        """
+        Rebuild events from alarm history.
+
+        :param alarm: Alarm to use for events reconstruction
+        :type alarm: dict
+
+        :returns: Array of events
+        """
+
         storage = self[Alerts.ALARM_STORAGE]
         alarm_id = alarm[storage.DATA_ID]
         alarm = alarm[storage.VALUE]
@@ -263,6 +347,13 @@ class Alerts(MiddlewareRegistry):
         return events
 
     def archive(self, event):
+        """
+        Archive event in corresponding alarm history.
+
+        :param event: Event to archive
+        :type event: dict
+        """
+
         entity = self[Alerts.CONTEXT_MANAGER].get_entity(event)
         entity_id = self[Alerts.CONTEXT_MANAGER].get_entity_id(entity)
 
@@ -279,9 +370,13 @@ class Alerts(MiddlewareRegistry):
                 self.archive_state(alarm, event[Check.STATE], event)
 
         else:
-            task = get_task('alerts.useraction.{0}'.format(
-                event['event_type']
-            ))
+            try:
+                task = get_task('alerts.useraction.{0}'.format(
+                    event['event_type']
+                ))
+
+            except ImportError:
+                task = None
 
             if task is not None:
                 alarm = self.get_current_alarm(entity_id)
@@ -299,6 +394,19 @@ class Alerts(MiddlewareRegistry):
                     self.archive_status(alarm, status, event)
 
     def archive_state(self, alarm, state, event):
+        """
+        Archive state if needed.
+
+        :param alarm: Alarm associated to state change event
+        :type alarm: dict
+
+        :param state: New state to archive
+        :type state: int
+
+        :param event: Associated event
+        :type event: dict
+        """
+
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
         old_state = get_last_state(value, ts=event['timestamp'])
@@ -307,6 +415,19 @@ class Alerts(MiddlewareRegistry):
             self.change_of_state(alarm, old_state, state, event)
 
     def archive_status(self, alarm, status, event):
+        """
+        Archive status if needed.
+
+        :param alarm: Alarm associated to status change event
+        :type alarm: dict
+
+        :param status: New status to archive
+        :type status: int
+
+        :param event: Associated event
+        :type event: dict
+        """
+
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
         old_status = get_last_status(value, ts=event['timestamp'])
@@ -320,6 +441,22 @@ class Alerts(MiddlewareRegistry):
             )
 
     def change_of_state(self, alarm, old_state, state, event):
+        """
+        Archive state change when ``archive_state()`` detected a state change.
+
+        :param alarm: Associated alarm to state change event
+        :type alarm: dict
+
+        :param old_state: Previous state
+        :type old_state: int
+
+        :param state: New state
+        :type state: int
+
+        :param event: Associated event
+        :type event: dict
+        """
+
         if state > old_state:
             task = get_task('alerts.systemaction.state_increase')
 
@@ -333,6 +470,23 @@ class Alerts(MiddlewareRegistry):
         self.archive_status(alarm, status, event)
 
     def change_of_status(self, alarm, old_status, status, event):
+        """
+        Archive status change when ``archive_status()`` detected a status
+        change.
+
+        :param alarm: Associated alarm to status change event
+        :type alarm: dict
+
+        :param old_status: Previous status
+        :type old_status: int
+
+        :param status: New status
+        :type status: int
+
+        :param event: Associated event
+        :type event: dict
+        """
+
         if status > old_status:
             task = get_task('alerts.systemaction.status_increase')
 
@@ -344,6 +498,16 @@ class Alerts(MiddlewareRegistry):
         self.update_current_alarm(alarm, new_value)
 
     def make_alarm(self, alarm_id, event):
+        """
+        Create a new alarm from event if not already existing.
+
+        :param alarm_id: Alarm entity ID
+        :type alarm_id: str
+
+        :param event: Associated event
+        :type event: dict
+        """
+
         alarm = self.get_current_alarm(alarm_id)
 
         if alarm is None:
@@ -366,6 +530,10 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.ALARM_STORAGE].put(alarm_id, value, event['timestamp'])
 
     def resolve_alarms(self):
+        """
+        Loop over all unresolved alarms, and check if it can be resolved.
+        """
+
         storage = self[Alerts.ALARM_STORAGE]
         result = self.get_alarms(resolved=False)
 

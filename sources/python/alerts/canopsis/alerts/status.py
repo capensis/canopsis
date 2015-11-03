@@ -30,6 +30,21 @@ CANCELED = 4
 
 
 def get_previous_step(alarm, steptypes, ts=None):
+    """
+    Get last step in alarm history.
+
+    :param alarm: Alarm history
+    :type alarm: dict
+
+    :param steptypes: Step types wanted
+    :type steptypes: str or list
+
+    :param ts: Timestamp to look from (optional)
+    :type ts: int
+
+    :returns: Most recent step
+    """
+
     if len(alarm['steps']) > 0:
         if ts is None:
             ts = alarm['steps'][-1]['t'] + 1
@@ -44,6 +59,18 @@ def get_previous_step(alarm, steptypes, ts=None):
 
 
 def get_last_state(alarm, ts=None):
+    """
+    Get last alarm state.
+
+    :param alarm: Alarm history
+    :type alarm: dict
+ 
+    :param ts: Timestamp to look from (optional)
+    :type ts: int
+
+    :returns: Most recent state
+    """
+
     if alarm['state'] is not None:
         return alarm['state']['val']
 
@@ -51,6 +78,18 @@ def get_last_state(alarm, ts=None):
 
 
 def get_last_status(alarm, ts=None):
+    """
+    Get last alarm status.
+
+    :param alarm: Alarm history
+    :type alarm: dict
+ 
+    :param ts: Timestamp to look from (optional)
+    :type ts: int
+
+    :returns: Most recent status
+    """
+
     if alarm['status'] is not None:
         return alarm['status']['val']
 
@@ -58,6 +97,18 @@ def get_last_status(alarm, ts=None):
 
 
 def is_flapping(manager, alarm):
+    """
+    Check if alarm is flapping.
+
+    :param manager: Alerts manager
+    :type manager: canopsis.alerts.manager.Alerts
+
+    :param alarm: Alarm history
+    :type alarm: dict
+
+    :returns: ``True`` if alarm is flapping, ``False`` otherwise
+    """
+
     statestep = None
     freq = 0
     ts = alarm['state']['t']
@@ -84,6 +135,18 @@ def is_flapping(manager, alarm):
 
 
 def is_stealthy(manager, alarm):
+    """
+    Check if alarm is stealthy.
+
+    :param manager: Alerts manager
+    :type manager: canopsis.alerts.manager.Alerts
+
+    :param alarm: Alarm history
+    :type alarm: dict
+
+    :returns: ``True`` if alarm is stealthy, ``False`` otherwise
+    """
+
     ts = alarm['state']['t']
 
     for step in reversed(alarm['steps']):
@@ -101,6 +164,18 @@ def is_stealthy(manager, alarm):
 
 
 def compute_status(manager, alarm):
+    """
+    Compute alarm status from its history.
+
+    :param manager: Alerts manager
+    :type manager: canopsis.alerts.manager.Alerts
+
+    :param alarm: Alarm history
+    :type alarm: dict
+
+    :returns: Alarm status as int
+    """
+
     if alarm['canceled'] is not None:
         return CANCELED
 

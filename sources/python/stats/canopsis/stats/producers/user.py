@@ -31,65 +31,18 @@ CONTENT = []
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY, content=CONTENT)
 class UserMetricProducer(MetricProducer):
-    def __init__(self, *args, **kwargs):
-        super(UserMetricProducer, self).__init__(*args, **kwargs)
+    """
+    Metric producer for user statistics.
+    """
 
     def alarm_ack(self, event, user):
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': user,
-            'resource': 'alarm_ack',
-            'perf_data_array': [
-                {
-                    'metric': filtername,
-                    'value': 1,
-                    'type': 'COUNTER'
-                }
-                for filtername in self.match(event)
-            ]
-        }
-
-        return event
-
-    def _delay(self, user, name, value):
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': user,
-            'resource': name,
-            'perf_data_array': [
-                {
-                    'metric': 'sum',
-                    'value': value,
-                    'type': 'COUNTER'
-                },
-                {
-                    'metric': 'last',
-                    'value': value,
-                    'type': 'GAUGE'
-                }
-            ]
-        }
-
-        for operator in ['min', 'max', 'average']:
-            entity = self[MetricProducer.PERFDATA_MANAGER].get_metric_entity(
-                'last', event
-            )
-
-            self.may_create_stats_serie(entity, operator)
-
-        return event
+        return self._counter('alarm_ack', event, author=user)
 
     def alarm_ack_delay(self, user, delay):
-        return self._delay(user, 'alarm_ack_delay', delay)
+        return self._delay('alarm_ack_delay', delay, author=user)
 
     def alarm_ack_solved(self, user, delay):
-        return self._delay(user, 'alarm_ack_solved', delay)
+        return self._delay('alarm_ack_solved', delay, author=user)
 
     def alarm_solved(self, user, delay):
-        return self._delay(user, 'alarm_solved', delay)
+        return self._delay('alarm_solved', delay, author=user)

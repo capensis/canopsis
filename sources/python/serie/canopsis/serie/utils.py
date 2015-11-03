@@ -20,6 +20,22 @@
 
 
 def build_filter_from_regex(regex):
+    """
+    Transform a metric filter into a MongoDB-like filter.
+
+    co:<regex> --> {'component': {'$regex': '<regex>'}}
+    re:<regex> --> {'resource': {'$regex': '<regex>'}}
+    me:<regex> --> {'metric': {'$regex': '<regex>'}}
+
+    co:<regex1> co:<regex2> --> {'$or': [...]}
+    co:<regex> re:<regex> --> {'$and': [...]}
+
+    :param regex: Metric filter to transform
+    :type regex: str
+
+    :returns: MongoDB-like filter as dict
+    """
+
     regex_parts = regex.split(' ')
     regex = {
         'component': [],
