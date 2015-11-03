@@ -140,6 +140,45 @@
             },
             {
                 "widget" : {
+                    "widgetId" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb026",
+                    "default_column_sort" : {
+                        "direction" : "ASC"
+                    },
+                    "xtype" : "list",
+                    "title" : "Statistics Filter",
+                    "listed_crecord_type" : "statsfilter",
+                    "mixins" : [
+                        {
+                            "name" : "crud"
+                        },
+                        {
+                            "name" : "pagination"
+                        },
+                        { "name": "Arraysearch",
+                          "searchable_columns": [
+                            "crecord_name"
+                          ]
+                        },
+                        {
+                            "name": "sortablearray"
+                        }
+                    ],
+                    "columnsOrder" : [ ],
+                    "tagName" : null,
+                    "display_record_field" : null,
+                    "displayed_columns" : [
+                        "crecord_name",
+                        "filter"
+                    ],
+                    "refreshInterval" : 0,
+                    "contentTruncatedLength" : 0,
+                    "record_template" : null
+                },
+                "xtype" : "widgetwrapper",
+                "title" : "wrapper"
+            },
+            {
+                "widget" : {
                     "widgetId" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb025",
                     "default_column_sort" : {
                         "direction" : "ASC"
