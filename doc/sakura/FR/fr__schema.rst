@@ -47,45 +47,6 @@ This schema **MUST** describe the structure of data:
 
 .. _FR__Schema__Transform:
 
-Meta-Schema
------------
-
-
-.. code:: javascript
-
-   {
-     "$schema": "meta-schema",
-     "type": "object",
-     "required": [ "properties" ],
-     "properties": {
-       "properties": {
-         "type": "object"
-       },
-   
-       "categories": {
-         "type": "array",
-         "items": {
-           "type": "object"
-           "properties": {
-              "title": { "type": "string" }
-              "keys": {
-                 "type": "array",
-                 "items": { "type": "string" }
-               }
-           }
-         }
-       },
-   
-       "metadata": {
-         "type": "object"
-         "properties": {
-           "description": { "type": "string" },
-           "icon": { "type": "string" }
-         }
-       }
-     }
-   }
-
 
 Transformation Schema
 ---------------------
