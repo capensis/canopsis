@@ -22,6 +22,7 @@ Updates
 
    "David Delassus", "2015/10/06", "0.1", "Document creation", ""
    "Gwenael Pluchon", "2015/11/02", "0.2", "Add meta-schema", ""
+   "Gwenael Pluchon", "2015/11/02", "0.3", "remove meta-schema", ""
 
 Contents
 ========
