@@ -1,0 +1,46 @@
+{
+    "type": "object",
+    "metadata": {
+        "icon": "glyphicon glyphicon-file"
+    },
+    "categories": [{
+        "title": "General",
+        "keys":["title", "metric_filter"]
+    },{
+        "title": "Time Window",
+        "keys": ["time_window", "time_window_offset"]
+    },{
+        "title": "Mixins",
+        "keys":["mixins"]
+    }],
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "metric_filter": {
+            "title": "Metric Filter",
+            "description": "Metric Filter: ``co:<regex>``, ``re:<regex>``, ``me:<regex>``",
+            "type": "string"
+        },
+        "time_window": {
+            "type": "number",
+            "role": "duration",
+            "default": 86400,
+            "title": "Time Window to show on graph"
+        },
+        "time_window_offset": {
+            "type": "number",
+            "role": "duration",
+            "default": 0,
+            "title": "Time window offset from now"
+        },
+        "mixins": {
+            "type": "array",
+            "role": "mixins",
+            "items": {
+                "type": "string"
+            },
+            "reorderable": true
+        }
+    }
+}
