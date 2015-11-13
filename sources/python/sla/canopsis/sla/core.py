@@ -234,7 +234,7 @@ class Sla(object):
         previous_event_log = events_log.find_one({
             'rk': selector_rk,
             'timestamp': {'$lt': timewindow_date_start}
-        }, projection, sort=[('timestamp', 1)])
+        }, projection, sort=[('timestamp', -1)])
 
         self.logger.debug('previous event log {}'.format(previous_event_log))
 
