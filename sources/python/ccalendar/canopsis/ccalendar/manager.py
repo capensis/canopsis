@@ -42,7 +42,7 @@ class Calendar(MiddlewareRegistry):
         ids=None,
         sort=None,
         with_count=False,
-        query={}
+        query=None
     ):
         """Retrieve information from data sources
 

@@ -315,16 +315,26 @@ class VEventManager(MiddlewareRegistry):
                 # ensure vevent is an ical format
                 if isinstance(vevent, basestring):
                     vevent = Event.from_ical(vevent)
+
                 # prepare the document with specific properties
                 document = self._get_vevent_properties(vevent=vevent)
+
                 # get dtstart
-                dtstart = vevent.get(VEventManager.DTSTART, 0)
-                if isinstance(dtstart, datetime):
+                try:
+                    dtstart = vevent.decoded(VEventManager.DTSTART)
+                except KeyError:
+                    dtstart = 0
+                else:
                     dtstart = timegm(dtstart.timetuple())
+
                 # get dtend
-                dtend = vevent.get(VEventManager.DTEND, 0)
-                if isinstance(dtend, datetime):
+                try:
+                    dtend = vevent.decoded(VEventManager.DTEND)
+                except KeyError:
+                    dtend = 0
+                else:
                     dtend = timegm(dtend.timetuple())
+
                 # get rrule
                 rrule = vevent.get(VEventManager.RRULE)
                 if rrule is not None:
@@ -333,17 +343,24 @@ class VEventManager(MiddlewareRegistry):
                         rrule_value = rrule[rrule_key]
                         _rrule += "{0}={1};".format(rrule_key, rrule_value)
                     rrule = _rrule
+
                 # get duration
-                duration = vevent.get(VEventManager.DURATION)
-                if duration:
+                try:
+                    duration = vevent.decoded(VEventManager.DURATION)
+                except KeyError:
+                    duration = 0
+                else:
                     duration = duration.total_seconds()
+
                 # get uid
                 uid = vevent.get(VEventManager.UID)
                 if not uid:
                     uid = str(uuid())
+
                 # get source
                 if not source:
                     source = vevent.get(VEventManager.SOURCE_TYPE)
+
                 # prepare the document
                 document.update({
                     VEventManager.UID: uid,
