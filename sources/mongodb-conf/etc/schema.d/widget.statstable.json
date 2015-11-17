@@ -5,7 +5,13 @@
     },
     "categories": [{
         "title": "General",
-        "keys":["title", "metric_filter"]
+        "keys": [
+            "title",
+            "metric_filter",
+            "show_user",
+            "show_event",
+            "show_advanced"
+        ]
     },{
         "title": "Time Window",
         "keys": ["time_window", "time_window_offset"]
@@ -21,6 +27,21 @@
             "title": "Metric Filter",
             "description": "Metric Filter: ``co:<regex>``, ``re:<regex>``, ``me:<regex>``",
             "type": "string"
+        },
+        "show_user": {
+            "title": "Display user statistics",
+            "description": "Enable/disable user statistics",
+            "type": "boolean"
+        },
+        "show_event": {
+            "title": "Display event statistics",
+            "description": "Enable/disable event statistics",
+            "type": "boolean"
+        },
+        "show_advanced": {
+            "title": "Display advanced statistics",
+            "description": "Enable/disable advanced statistics",
+            "type": "boolean"
         },
         "time_window": {
             "type": "number",
