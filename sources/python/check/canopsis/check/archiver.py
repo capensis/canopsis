@@ -603,6 +603,12 @@ class Archiver(Configurable):
                     change['ack'] = {
                         'wasAck': was_ack
                     }
+                    # Clear ack related information
+                    change['ticket_declared_author'] = None
+                    change['ticket_declared_date'] = None
+                    change['ticket_date'] = None
+                    change['ticket'] = None
+
                 else:
                     change['ack'] = devent['ack']
                     # remove was ack for accurate stats
