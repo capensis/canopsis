@@ -9,10 +9,12 @@
 	}],
 	"properties": {
 		"popup_template": {
+			"description": "available attributes: {{behavior}}, {{component}}, {{begin}}, {{end}}",
 			"type": "string",
 			"role":"richtext"
 		},
 		"event_title": {
+			"description": "available attributes: {{behavior}}, {{component}}, {{begin}}, {{end}}",
 			"type": "string",
 			"role":"richtext"
 		},
