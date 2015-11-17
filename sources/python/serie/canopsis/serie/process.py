@@ -44,36 +44,38 @@ def beat_processing(engine, manager=None, logger=None, **kwargs):
 
 
 @register_task
-def serie_processing(engine, serieconf, manager=None, logger=None, **kwargs):
+def serie_processing(engine, event, manager=None, logger=None, **kwargs):
     if manager is None:
         manager = singleton_per_scope(Serie)
 
+    now = time()
+
     timewin = TimeWindow(
-        start=serieconf['last_computation'],
-        stop=time()
+        start=event['last_computation'],
+        stop=now
     )
 
-    point = manager.calculate(serieconf, timewin)
+    point = manager.calculate(event, timewin)
 
     metric = {
-        'metric': serieconf['crecord_name'],
-        'value': point[1],
+        'metric': event['crecord_name'],
+        'value': point,
         'type': 'GAUGE'
     }
 
     for meta in ['unit', 'min', 'max', 'warn', 'crit']:
-        if serieconf.get(meta, None) is not None:
-            metric[meta] = serieconf[meta]
+        if event.get(meta, None) is not None:
+            metric[meta] = event[meta]
 
     event = {
-        'timestamp': int(point[0]),
+        'timestamp': int(now),
         'connector': 'canopsis',
         'connector_name': engine.name,
         'event_type': 'perf',
         'source_type': 'resource',
-        'component': serieconf['component'],
-        'resource': serieconf['resource'],
+        'component': event['component'],
+        'resource': event['resource'],
         'perf_data_array': [metric]
     }
 
-    publish(publisher=engine.amp, event=event, logger=logger)
+    publish(publisher=engine.amqp, event=event, logger=logger)
