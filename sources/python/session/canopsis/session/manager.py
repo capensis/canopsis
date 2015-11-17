@@ -135,13 +135,13 @@ class Session(MiddlewareRegistry):
 
         now = time()
         inactive_ts = now - self.alive_session_duration
-        inactive_sessions = storage.get_elements(
+        inactive_sessions = list(storage.get_elements(
             query={
                 'last_check': {'$lte': inactive_ts},
                 'session_stop': -1,
                 'active': True
             }
-        )
+        ))
 
         # Update sessions in storage
         for session in inactive_sessions:
