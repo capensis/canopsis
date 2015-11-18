@@ -16,7 +16,7 @@
             "type": "array",
             "items": {
                 "type": "string",
-                "enum": ["downtime"],
+                "enum": ["downtime", "penalty"],
                 "role": "simplelist"
             },
             "role": "periodicbehaviors",
