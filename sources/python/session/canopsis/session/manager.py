@@ -42,12 +42,26 @@ class Session(MiddlewareRegistry):
     """
 
     SESSION_STORAGE = 'session_storage'
+    METRIC_PRODUCER = 'metric_producer'
+    PERFDATA_MANAGER = 'perfdata_manager'
 
-    def __init__(self, session_storage=None, *args, **kwargs):
+    def __init__(
+        self,
+        session_storage=None,
+        metric_producer=None,
+        perfdata_manager=None,
+        *args, **kwargs
+    ):
         super(Session, self).__init__(*args, **kwargs)
 
         if session_storage is not None:
             self[Session.SESSION_STORAGE] = session_storage
+
+        if metric_producer is not None:
+            self[Session.METRIC_PRODUCER] = metric_producer
+
+        if perfdata_manager is not None:
+            self[Session.PERFDATA_MANAGER] = perfdata_manager
 
     @property
     def alive_session_duration(self):
@@ -154,8 +168,8 @@ class Session(MiddlewareRegistry):
         events = []
 
         for session in inactive_sessions:
-            stop, start = session['session_stop'], session['session_start']
-            events.append({
+            duration = session['session_stop'] - session['session_start']
+            event = {
                 'timestamp': now,
                 'connector': 'canopsis',
                 'connector_name': 'session',
@@ -163,12 +177,29 @@ class Session(MiddlewareRegistry):
                 'source_type': 'resource',
                 'component': session[storage.ID],
                 'resource': 'session_duration',
-                'perf_data_array': [{
-                    'metric': 'last',
-                    'value': stop - start,
-                    'type': 'GAUGE',
-                    'unit': 's'
-                }]
-            })
+                'perf_data_array': [
+                    {
+                        'metric': 'last',
+                        'value': duration,
+                        'type': 'GAUGE',
+                        'unit': 's'
+                    },
+                    {
+                        'metric': 'sum',
+                        'value': duration,
+                        'type': 'COUNTER',
+                        'unit': 's'
+                    }
+                ]
+            }
+
+            events.append(event)
+
+            for operator in ['min', 'max', 'average']:
+                perfdatamgr = self[Session.PERFDATA_MANAGER]
+                producer = self[Session.METRIC_PRODUCER]
+
+                entity = perfdatamgr.get_metric_entity('last', event)
+                producer.may_create_stats_serie(entity, operator)
 
         return events
