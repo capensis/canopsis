@@ -354,15 +354,21 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.RRULE: rrule
                 })
 
+            self._update_element(element=document)
+
             self[VEventManager.STORAGE].put_element(
                 _id=uid, element=document
             )
-
+            self.logger.info('document', document)
             document['_id'] = uid
 
             result.append(document)
 
         return result
+
+    def _update_element(self, element):
+        """ Update or format an element before to put it on database
+        """
 
     def remove(self, uids=None, query=None, cache=False):
         """Remove elements from storage where uids are given.
