@@ -13,15 +13,8 @@
             "required": true
         },
         "behaviors": {
-            "type": "array",
-            "items": {
-                "type": "string",
-                "enum": ["downtime"],
-                "role": "simplelist"
-            },
-            "role": "periodicbehaviors",
-            "required": true,
-            "default": []
+            "type": "string",
+            "required": true
         }
     }
 }
