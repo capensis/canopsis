@@ -18,23 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-"""Module in charge of defining topology processing in engines.
+"""Process input calendarevent
 
-When an event occured, the related entity is retrieved and all bound
-topological nodes are retrieved as well in order to execute theirs rules.
+A calendarevent could be created by the user using the widgetCalendar in the
+UI or by adding a ical Calendar.
 
-First, a topology processing is triggered when an event occured.
-
-From this event, bound topology nodes are retrieved in order to apply node
-    rules.
-
-A typical topological task condition is an ``canopsis.task.condition.all``
-composed of the ``canopsis.topology.rule.condition.new_state`` condition and
-``canopsis.topology.rule.action.change_state`` action.
-If this condition is checked, then other specific conditions can be applied
-such as those defined in the canopsis.topology.rule.action module.
+This kind of event is processing by this process.
 """
 
+from canopsis.ccalendar.manager import CalendarManager
 from canopsis.topology.elements import Topology, TopoNode
 from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
@@ -42,8 +34,7 @@ from canopsis.task.core import register_task
 from canopsis.event import Event
 from canopsis.check.manager import CheckManager
 
-context = Context()
-tm = TopologyManager()
+cm = CalendarManager()
 _check = CheckManager()
 
 SOURCE = 'source'
@@ -51,16 +42,11 @@ PUBLISHER = 'publisher'
 
 
 @register_task
-def event_processing(event, logger=None, **kwargs):
-    """Process input event in getting topology nodes bound to input event
+def calendar_event_processing(event, **kwargs):
+    """Process input event in getting calendarevent to input event
     entity.
 
-    One topology nodes are founded, executing related rules.
-
     :param dict event: event to process.
-    :param Engine engine: engine which consumes the event.
-    :param TopologyManager manager: topology manager to use.
-    :param Logger logger: logger to use in this task.
     """
 
     return event
