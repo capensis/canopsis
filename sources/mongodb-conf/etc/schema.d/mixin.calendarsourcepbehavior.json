@@ -1,0 +1,29 @@
+{
+	"type": "object",
+	"metadata": {
+		"icon": "list-alt"
+	},
+	"categories": [{
+		"title": "General",
+		"keys":["event_title", "popup_template"]
+	}],
+	"properties": {
+		"popup_template": {
+			"description": "available attributes: {{behavior}}, {{component}}, {{begin}}, {{end}}",
+			"type": "string",
+			"role":"richtext"
+		},
+		"event_title": {
+			"description": "available attributes: {{behavior}}, {{component}}, {{begin}}, {{end}}",
+			"type": "string",
+			"role":"richtext"
+		},
+		"behavior_filters": {
+			"type": "array",
+			"items": {
+				"type": "object"
+			},
+			"isUserPreference": true
+		}
+	}
+}

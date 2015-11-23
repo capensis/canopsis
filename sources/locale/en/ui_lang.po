@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-08-06 09:18+0100\n"
+"PO-Revision-Date: 2015-11-17 11:49+0100\n"
 "Last-Translator: teamcanopsis <teamcanopsis@capensis.fr>\n"
 "Language-Team: English <teamcanopsis@capensis.fr>\n"
 "MIME-Version: 1.0\n"
@@ -1948,7 +1948,7 @@ msgstr ""
 " {{component}} - {{metric}}"
 
 msgid "Allow users to dynamically change chart type."
-msgstr Allow users to dynamically change chart type."
+msgstr "llow users to dynamically change chart type."
 
 msgid "Allow to select the categorie chart representation"
 msgstr "Allow to select the categorie chart representation"
@@ -1997,3 +1997,15 @@ msgstr "storages"
 
 msgid "Storages to clean"
 msgstr "Storages to clean"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "write template"
+msgstr "write template"
+
+msgid "Add event"
+msgstr "Add event"
+
+msgid "Categories"
+msgstr "Categories"
