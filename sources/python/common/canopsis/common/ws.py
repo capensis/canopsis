@@ -48,15 +48,24 @@ def adapt_canopsis_data_to_ember(data):
 
     if isinstance(data, dict):
         for key, item in data.iteritems():
-            if isnan(item) or isinf(item):
+            if isinstance(item, float) and (isnan(item) or isinf(item)):
                 data[key] = None
 
             else:
                 adapt_canopsis_data_to_ember(item)
 
     elif isiterable(data, is_str=False):
-        for item in data:
-            adapt_canopsis_data_to_ember(item)
+        if isinstance(data, (tuple, frozenset)):
+            data = list(data)
+
+        for i in range(len(data)):
+            item = data[i]
+
+            if isinstance(item, float) and (isnan(item) or isinf(item)):
+                data[i] = None
+
+            else:
+                adapt_canopsis_data_to_ember(item)
 
 
 def adapt_ember_data_to_canopsis(data):
