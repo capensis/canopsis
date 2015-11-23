@@ -62,7 +62,7 @@ def new_operator(op, manager, period, perfdatas):
             ts = TimeSerie(
                 period=period,
                 aggregation=op,
-                round_time=False
+                round_time=True
             )
 
             tw = TimeWindow(start=points[0][0], stop=points[-1][0])
