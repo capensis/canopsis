@@ -31,6 +31,7 @@ from inspect import getargspec
 from canopsis.common.utils import ensure_iterable, isiterable
 
 from json import loads, dumps
+from math import isnan, isinf
 from bottle import request, HTTPError, HTTPResponse
 from functools import wraps
 import traceback
@@ -46,8 +47,13 @@ def adapt_canopsis_data_to_ember(data):
     """
 
     if isinstance(data, dict):
-        for item in data.values():
-            adapt_canopsis_data_to_ember(item)
+        for key, item in data.iteritems():
+            if isnan(item) or isinf(item):
+                data[key] = None
+
+            else:
+                adapt_canopsis_data_to_ember(item)
+
     elif isiterable(data, is_str=False):
         for item in data:
             adapt_canopsis_data_to_ember(item)
@@ -56,8 +62,9 @@ def adapt_canopsis_data_to_ember(data):
 def adapt_ember_data_to_canopsis(data):
 
     if isinstance(data, dict):
-        for item in data.values():
+        for key, item in data.iteritems():
             adapt_ember_data_to_canopsis(item)
+
     elif isiterable(data, is_str=False):
         for item in data:
             adapt_ember_data_to_canopsis(item)
