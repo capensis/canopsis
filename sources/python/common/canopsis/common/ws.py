@@ -52,12 +52,13 @@ def adapt_canopsis_data_to_ember(data):
                 data[key] = None
 
             else:
+                if isinstance(item, (tuple, frozenset)):
+                    item = list(item)
+                    data[key] = item
+
                 adapt_canopsis_data_to_ember(item)
 
     elif isiterable(data, is_str=False):
-        if isinstance(data, (tuple, frozenset)):
-            data = list(data)
-
         for i in range(len(data)):
             item = data[i]
 
@@ -65,6 +66,10 @@ def adapt_canopsis_data_to_ember(data):
                 data[i] = None
 
             else:
+                if isinstance(item, (tuple, frozenset)):
+                    item = list(item)
+                    data[i] = item
+
                 adapt_canopsis_data_to_ember(item)
 
 
