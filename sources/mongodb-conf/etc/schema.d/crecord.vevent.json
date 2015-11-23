@@ -30,7 +30,7 @@
             "type": "number",
             "required": false,
             "role": "timestamp",
-            "default": 2147483648,
+            "default": 2147483647,
             "description": "End timestamp."
         },
         "rrule": {
