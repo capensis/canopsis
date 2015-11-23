@@ -595,6 +595,17 @@ class Archiver(Configurable):
         else:
             change = {}
 
+            # Clear ack related information when event goes ok state
+            # Ack is kept in the current event below
+            if event['state'] == 0 and devent.get('state') != 0:
+                for key in (
+                    'ticket_declared_author',
+                    'ticket_declared_date',
+                    'ticket_date',
+                    'ticket'
+                ):
+                    change[key] = None
+
             # keep ack information if status does not reset event
             if 'ack' in devent:
                 if event['status'] == 0:
@@ -603,11 +614,6 @@ class Archiver(Configurable):
                     change['ack'] = {
                         'wasAck': was_ack
                     }
-                    # Clear ack related information
-                    change['ticket_declared_author'] = None
-                    change['ticket_declared_date'] = None
-                    change['ticket_date'] = None
-                    change['ticket'] = None
 
                 else:
                     change['ack'] = devent['ack']
