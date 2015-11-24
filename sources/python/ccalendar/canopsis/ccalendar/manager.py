@@ -19,74 +19,65 @@
 # ---------------------------------
 
 from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
+    add_category, conf_paths
 )
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.vevent.manager import VEventManager
 
+from json import loads
+
+
+#: calendar manager configuration path
 CONF_PATH = 'calendar/calendar.conf'
+#: calendar manager configuration category name
 CATEGORY = 'CALENDAR'
 
 
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
-class Calendar(MiddlewareRegistry):
-    """Manage calendar information in Canopsis.
+class CalendarManager(VEventManager):
+    """Dedicated to manage calendar event.
+
+    Such period are technically an expression which respects the icalendar
+    specification ftp://ftp.rfc-editor.org/in-notes/rfc2445.txt.
+
+    A calendar document contains several values. Each value contains
+    an icalendar expression (dtstart, rrule, duration)
     """
 
-    CALENDAR_STORAGE = 'calendar_storage'
+    EVENTCATEGORIES = 'EVENTCATEGORIES'
+    OUTPUT = 'OUTPUT'
 
-    def find(
-        self,
-        limit=None,
-        skip=None,
-        ids=None,
-        sort=None,
-        with_count=False,
-        query={}
-    ):
-        """Retrieve information from data sources
+    def _get_vevent_properties(self, vevent, *args, **kwargs):
+        """Get information from a vevent.
 
-        :param str ids: an id list for document to search.
-        :param int limit: maximum record fetched at once.
-        :param int skip: ordinal number where selection should start.
-        :param bool with_count: compute selection count when True.
+        :param Event vevent: vevent from where get information
+        :return: vevent information in a dictionary
+        :rtype: dict
         """
 
-        result = self[Calendar.CALENDAR_STORAGE].get_elements(
-            ids=ids,
-            skip=skip,
-            sort=sort,
-            limit=limit,
-            query=query,
-            with_count=with_count
-        )
+        serialized_eventcategories = vevent[CalendarManager.EVENTCATEGORIES]
+        serialized_output = vevent[CalendarManager.OUTPUT]
+
+        result = {
+            "eventcategories": serialized_eventcategories,
+            "output": serialized_output
+        }
 
         return result
 
-    def put(
-        self,
-        _id,
-        document,
-        cache=False
-    ):
-        """Persistance layer for upsert operations
+    def _get_document_properties(self, document):
+        """Get properties from a document.
 
-        :param _id: entity id
-        :param document: contains link information for entities
+        :param dict document: document from where get properties.
+        :return: document properties in a dictionary.
+        :rtype: dict
         """
+        serialized_eventcategories = document.get("eventcategories")
+        serialized_output = document.get("output")
 
-        self[Calendar.CALENDAR_STORAGE].put_element(
-            _id=_id, element=document, cache=cache
-        )
+        result = {
+            "eventcategories": serialized_eventcategories,
+            "output": serialized_output
+        }
 
-    def remove(
-        self,
-        ids,
-        cache=False
-    ):
-        """Remove fields persisted in a default storage.
-
-        :param element_id: identifier for the document to remove
-        """
-
-        self[Calendar.CALENDAR_STORAGE].remove_elements(ids=ids, cache=cache)
+        return result

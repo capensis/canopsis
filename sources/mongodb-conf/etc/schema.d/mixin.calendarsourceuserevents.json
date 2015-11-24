@@ -1,0 +1,16 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":[]
+	}],
+	"properties": {
+		"userevent_filters": {
+			"type": "array",
+			"items": {
+				"type": "object"
+			},
+			"isUserPreference": true
+		}
+	}
+}

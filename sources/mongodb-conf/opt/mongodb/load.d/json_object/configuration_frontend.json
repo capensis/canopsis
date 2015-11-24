@@ -20,7 +20,7 @@
         "label" : "²"
     }],
     "editors": {
-        "behaviors": "array"
+        "behaviors": "string"
     },
     "defaultview" : "view.event",
     "crecord_name" : "frontend",

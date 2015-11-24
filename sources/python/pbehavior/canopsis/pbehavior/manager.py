@@ -72,6 +72,18 @@ class PBehaviorManager(VEventManager):
 
         return result
 
+    def _update_element(self, element):
+        """Update or format an element before to put it on database
+
+        :param element: pbehavior to update
+        :return: element
+        :rtype: dict
+        """
+        behavior = element[PBehaviorManager.BEHAVIORS]
+
+        if isinstance(behavior, basestring):
+            element[PBehaviorManager.BEHAVIORS] = [behavior]
+
     @staticmethod
     def get_query(behaviors):
         """Get a query related to input behaviors.

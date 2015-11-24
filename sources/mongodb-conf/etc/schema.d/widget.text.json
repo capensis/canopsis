@@ -6,11 +6,13 @@
 	"categories": [{
 		"title": "General",
 		"keys":["title", "html"]
-	},
-	{
+	},{
 		"title": "Series",
 		"keys":["series"]
 	},{
+        "title": "Metrics",
+        "keys":["metrics"]
+    },{
 		"title": "Events",
 		"keys":["events"]
 	},{
@@ -22,7 +24,7 @@
 			"type": "string"
 		},
 		"html": {
-			"description": "Allow display event or metric values<ul><li>event component : {{event.event_label.component}}</li><li>serie's value {{serie.serie_name}}</li><li>human readable value {{hr value=serie.serie_name}}</li></ul>",
+			"description": "Allow display event or metric values<ul><li>event component : {{event.event_label.component}}</li><li>serie's value {{serie.serie_name}}</li><li>metric's value {{metric.metric_name}}</li><li>human readable value {{hr value=serie.serie_name}}</li></ul>",
 			"type": "string",
 			"role": "richtext"
 		},
@@ -34,6 +36,14 @@
 			"crecordtype": "serie",
 			"multiselect": true
 		},
+        "metrics": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "role": "cmetric",
+            "title": "Metrics"
+        },
 		"events": {
 			"type": "array",
 			"items": {

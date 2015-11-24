@@ -1,8 +1,11 @@
 {
 	"type": "object",
+	"metadata": {
+		"description": "A layout for containers to display childs in a responsive grid"
+	},
 	"categories": [{
 		"title": "General",
-		"keys":["columnXS", "columnMD", "columnLG", "offset", "forcelegacy"]
+		"keys":["columnXS", "columnMD", "columnLG", "offset", "forcelegacy", "hiddenXS", "hiddenMD", "hiddenLG"]
 	}],
 
 	"properties": {
@@ -42,6 +45,18 @@
 			"tick": 1,
 			"role": "slider",
 			"description": "Columns number to skip before placing the widget"
+		},
+		"hiddenXS": {
+			"type": "boolean",
+			"description": "Hidden on small resolutions"
+		},
+		"hiddenMD": {
+			"type": "boolean",
+			"description": "Hidden on medium resolutions"
+		},
+		"hiddenLG": {
+			"type": "boolean",
+			"description": "Hidden on large resolutions"
 		}
 	}
 }
