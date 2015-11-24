@@ -28,6 +28,7 @@ from canopsis.event import forger
 from datetime import datetime
 from pprint import PrettyPrinter
 from canopsis.timeserie.timewindow import Period
+from canopsis.event.manager import Event
 
 pp = PrettyPrinter(indent=2)
 
@@ -72,7 +73,7 @@ class Sla(object):
     ):
 
         self.storage = storage
-
+        self.eventmanager = Event()
         self.type = 'sla'
 
         if logger:
@@ -92,7 +93,7 @@ class Sla(object):
             timewindow_date_start
         ))
 
-        self.logger.debug('Computing sla for selector {}'.format(rk))
+        self.logger.debug(u'Computing sla for selector {}'.format(rk))
         # Retrieve sla information from selector record
         sla_information = self.get_sla_information(
             rk,
@@ -105,7 +106,7 @@ class Sla(object):
         ))
 
         # Compute effective sla dict to be able to fill the ouput template
-        sla_measures, first_timestamp, sla_times = self.compute_sla(
+        sla_measures, sla_times = self.compute_sla(
             sla_information,
             now
         )
@@ -135,7 +136,7 @@ class Sla(object):
             alerts_percent,
             alerts_duration,
             avail_duration,
-            first_timestamp,
+            timewindow_date_start,
         )
 
         state = self.compute_state(
@@ -221,60 +222,46 @@ class Sla(object):
         """Sla information is a list containing all state in the timewindow for
         current sla event."""
 
-        sla = []
-
         events_log = self.storage.get_backend('events_log')
-
-        # Fetch previous state
-        find_query = {
-            'rk': selector_rk,
-            'timestamp': {'$lte': timewindow_date_start}
-        }
+        sla_information = []
         projection = {
             'state': 1,
             'timestamp': 1,
             '_id': 0
         }
 
-        state_before = events_log.find_one(
-            find_query,
-            projection,
-            sort=[('timestamp', -1)]
-        )
-
-        self.logger.debug('state_before {}'.format(state_before))
-
-        if state_before:
-            self.logger.debug('State before found ! {}'.format(state_before))
-            state_before['timestamp'] = timewindow_date_start
-            sla.append(state_before)
-
-        # Fetch all state between before and now
-        sla_infos = events_log.find({
+        # Try to find last state
+        previous_event_log = events_log.find_one({
             'rk': selector_rk,
-            'timestamp': {'$gte': timewindow_date_start}
-        }, {
-            'state': 1,
-            'timestamp': 1,
-            '_id': 0
-        }, sort=[('timestamp', 1)])
+            'timestamp': {'$lt': timewindow_date_start}
+        }, projection, sort=[('timestamp', -1)])
 
-        for sla_info in sla_infos:
-            sla.append(sla_info)
+        self.logger.debug('previous event log {}'.format(previous_event_log))
 
-        # Add last delta time because state may remain until now
-        if len(sla) and sla[-1]['timestamp'] < now:
-            sla.append({
-                'timestamp': now,
-                'state': sla[-1]['state']
-            })
-            self.logger.debug('Add time until now for last state')
+        # Default value is set as no previous information
+        if previous_event_log is None:
+            previous_event_log = {
+                'state': 0,
+                'timestamp': timewindow_date_start
+            }
+        else:
+            previous_event_log['timestamp'] = timewindow_date_start
 
-        self.logger.debug('Sla information from events_log : {}'.format(
-            pp.pformat(sla)
+        sla_information.append(previous_event_log)
+
+        # Fetch all event log data in timewindow
+        sla_information += list(events_log.find(
+            {
+                'rk': selector_rk,
+                'timestamp': {'$gt': timewindow_date_start}
+            },
+            projection,
+            sort=[('timestamp', 1)]
         ))
 
-        return sla
+        self.logger.debug(u' # sla information {}'.format(sla_information))
+
+        return sla_information
 
     def compute_sla(self, sla_information, now):
 
@@ -290,6 +277,22 @@ class Sla(object):
             2: 0.0,
             3: 0.0,
         }
+
+        total_time = float(now - sla_information[0]['timestamp'])
+        previous_state = sla_information[0]['state']
+        previous_timestamp = sla_information[0]['timestamp']
+        duration = 0.0
+
+        for step in sla_information[1:]:
+            duration += step['timestamp'] - previous_timestamp
+            previous_timestamp = step['timestamp']
+            if step['state'] != previous_state:
+                sla_times[previous_state] += duration
+                previous_state = step['state']
+                duration = 0.0
+
+        sla_times[previous_state] += now - previous_timestamp
+
         sla_measures = {
             0: 0.0,
             1: 0.0,
@@ -297,54 +300,15 @@ class Sla(object):
             3: 0.0,
         }
 
-        # Compute duration between eache state change
-        # default value for first timestamp
-        first_timestamp = now
-        if len(sla_information):
-
-            # Allow computing the percentage inside the timewindow
-            first_timestamp = date_start = sla_information[0]['timestamp']
-            previous_state = sla_information[0]['state']
-
-            self.logger.debug('Compute since {}, state were {}'.format(
-                date_start,
-                previous_state
+        for state in sla_times:
+            sla_time = float(sla_times[state])
+            self.logger.debug('state {} time {} total {} now {}, start {}'.format(
+                state, sla_time, total_time, now , sla_information[0]['state']
             ))
+            percent = sla_time / total_time
+            sla_measures[state] = percent
 
-            # compute what proportion of time the event
-            # remained in the same state
-            for sla_info in sla_information:
-                delta_time = sla_info['timestamp'] - date_start
-                date_start = sla_info['timestamp']
-                sla_times[previous_state] += delta_time
-                previous_state = sla_info['state']
-
-                self.logger.debug('Add time {} to state {}'.format(
-                    delta_time,
-                    sla_info['state'],
-                ))
-
-            self.logger.debug('Computed sla times are {}'.format(
-                sla_times
-            ))
-
-            total_time = now - first_timestamp
-            self.logger.debug('total_time {}, now {}, date_start {}'.format(
-                total_time,
-                now,
-                first_timestamp
-            ))
-
-            if total_time == 0:
-                # Avoids divid by 0 error
-                self.logger.warning('Tried to divide by 0 in compute sla')
-                total_time = 1
-
-            for state in sla_times:
-                percent = float(sla_times[state]) / float(total_time)
-                sla_measures[state] = percent
-
-        return sla_measures, first_timestamp, sla_times
+        return sla_measures, sla_times
 
     def compute_output(
         self,
