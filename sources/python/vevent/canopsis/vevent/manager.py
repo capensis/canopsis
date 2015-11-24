@@ -162,7 +162,7 @@ class VEventManager(MiddlewareRegistry):
         if duration:
             kwargs[VEventManager.DURATION] = timedelta(duration)
         # get freq
-        rrule = document[VEventManager.RRULE]
+        rrule = document.get(VEventManager.RRULE)
         if rrule:
             kwargs[VEventManager.RRULE] = rrule
 
