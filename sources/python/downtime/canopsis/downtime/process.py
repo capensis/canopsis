@@ -71,7 +71,7 @@ def event_processing(
 
     if evtype == DOWNTIME:
         ev = vEvent()
-        ev.add('X-Canopsis-BehaviorType', DOWNTIME)
+        ev.add('X-Canopsis-BehaviorType', '["{0}"]'.format(DOWNTIME))
         ev.add('summary', event['output'])
         ev.add('dtstart', datetime.fromtimestamp(event['start']))
         ev.add('dtend', datetime.fromtimestamp(event['end']))
