@@ -1946,5 +1946,32 @@ types = {
                 'min': '0',
                 'unit': None
         }
+    ],
+    'current': [
+        {
+                'max': None,
+                'name': 'value',
+                'type': 'GAUGE',
+                'min': '0',
+                'unit': "A"
+        }
+    ],
+    'voltage': [
+        {
+                'max': None,
+                'name': 'value',
+                'type': 'GAUGE',
+                'min': '0',
+                'unit': "V"
+        }
+    ],
+    'temperature': [
+        {
+                'max': None,
+                'name': 'value',
+                'type': 'GAUGE',
+                'min': '0',
+                'unit': "C"
+        }
     ]
 }
