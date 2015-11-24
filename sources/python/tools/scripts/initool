@@ -1,4 +1,4 @@
-#!/opt/canopsis/bin/python
+#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 import ConfigParser
@@ -27,10 +27,11 @@ def set_confopt(confpath, section, name=None, value=None):
             config.add_section(section)
 
         if name is not None:
-			config.set(section, name, value)
+            config.set(section, name, value)
 
         with open(confpath, 'w') as f:
             config.write(f)
+
         return True, None
 
     except ConfigParser.Error as err:
@@ -39,7 +40,7 @@ def set_confopt(confpath, section, name=None, value=None):
 
 if __name__ == '__main__':
     if len(sys.argv) < 4 or sys.argv[1] not in ['get', 'set']:
-        print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section name (value)"
+        print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section [name (value)]"
         sys.exit(1)
 
     elif sys.argv[1] == 'get':
@@ -50,16 +51,21 @@ if __name__ == '__main__':
             sys.exit(1)
 
     elif sys.argv[1] == 'set':
+
         success = None
         error = None
+
         if len(sys.argv) == 4:
             success, error = set_confopt(*sys.argv[2:4])
+
         elif len(sys.argv) < 6:
             print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section [name (value)]"
             sys.exit(1)
+
         else:
             success, error = set_confopt(*sys.argv[2:6])
 
         if not success:
             print >>sys.stderr, error
             sys.exit(1)
+

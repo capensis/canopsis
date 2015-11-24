@@ -66,6 +66,7 @@ def save_profile(ws, profile):
 
 
 def save_role(ws, role):
+    role_payload = role
     rid = role['_id']
 
     rgroup = role.get('groups', None)
@@ -91,7 +92,7 @@ def save_role(ws, role):
     if rrights:
         rights.update_rights(rid, 'role', rrights, role)
 
-    return role
+    return role_payload
 
 
 def save_user(ws, record):
@@ -100,6 +101,10 @@ def save_user(ws, record):
     ucontact = record.pop('contact', None)
     urights = record.pop('rights', None)
     ugroup = record.pop('groups', None)
+
+    # Remove authkey from record when None
+    # Prevents update with None value
+    record.pop('authkey', None)
 
     if ucontact is None:
         ucontact = {
@@ -129,12 +134,13 @@ def save_user(ws, record):
     if urights is not None:
         rights.update_rights(uid, 'user', urights, user)
 
+
     rights.update_fields(uid, 'user', record)
 
     if not rights.add_role(uid, urole):
         raise ws.Error('Impossible to add user to role')
 
-    return user
+    return record
 
 
 def exports(ws):

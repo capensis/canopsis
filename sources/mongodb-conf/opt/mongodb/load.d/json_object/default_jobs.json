@@ -16,8 +16,9 @@
         "context" : null,
         "crecord_type" : "job",
         "crecord_creation_time" : 1430404013,
-        "crecord_name" : null,
+        "crecord_name" : "Default Task Link List",
         "loader_id" : "job_linklist_1",
-        "loader_no_update": true
+        "loader_no_update": true,
+        "jtype": "scheduled"
     }
 ]

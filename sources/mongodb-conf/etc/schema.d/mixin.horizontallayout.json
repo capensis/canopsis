@@ -1,5 +1,8 @@
 {
 	"type": "object",
+        "metadata": {
+                "description": "A layout for containers to display childs horizontally"
+        },
 	"categories": [{
 		"title": "General",
 		"keys":["cellCssClass"]
