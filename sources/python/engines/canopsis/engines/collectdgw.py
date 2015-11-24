@@ -153,10 +153,9 @@ class engine(Engine):
                         connector_name='collectd2event',
                         component=component,
                         resource=resource,
-                        timestamp=None,
+                        timestamp=timestamp,
                         source_type='resource',
-                        event_type='check',
-                        state=0,
+                        event_type='perf',
                         perf_data_array=perf_data_array
                     )
 
