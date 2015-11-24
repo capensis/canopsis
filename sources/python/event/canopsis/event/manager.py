@@ -71,8 +71,8 @@ class Event(MiddlewareRegistry):
         existing_event = self.get(Event.get_rk(event), {})
         return existing_event.get('state', self.default_state)
 
-    def get(self, rk, default=None):
-        result = self.find(query={'rk': rk}, limit=1)
+    def get(self, rk, projection=None, default=None):
+        result = self.find(query={'rk': rk}, limit=1, projection=projection)
 
         return result[0] if len(result) else default
 
