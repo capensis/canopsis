@@ -72,7 +72,7 @@ class Archiver(Configurable):
 
         self.autolog = autolog
 
-        self.logger.debug("Init Archiver on %s" % namespace)
+        self.logger.debug(u"Init Archiver on %s" % namespace)
 
         self.account = Account(user="root", group="root")
 
@@ -139,7 +139,7 @@ class Archiver(Configurable):
                 bulk.execute({'w': 0})
             except BulkWriteError as bwe:
                 self.logger.warning(pp.pformat(bwe.details))
-            self.logger.info('inserted log events {}'.format(len(operations)))
+            self.logger.info(u'inserted log events {}'.format(len(operations)))
 
     def process_update_operations(self, operations):
 
@@ -161,7 +161,7 @@ class Archiver(Configurable):
         for operation in insert_operations:
             if '_id' not in operation['event']:
                 self.logger.error(
-                    'Unable to find _id value in event {}'.format(
+                    u'Unable to find _id value in event {}'.format(
                         operation['event']
                     )
                 )
@@ -171,7 +171,7 @@ class Archiver(Configurable):
                 if operation['collection'] == self.namespace:
                     events[_id] = operation
                 elif operation['collection'] == self.namespace_log:
-                    _id = '{}.{}'.format(_id, time())
+                    _id = u'{}.{}'.format(_id, time())
                     operation['event']['_id'] = _id
                     events_log[_id] = operation
                 else:
@@ -244,7 +244,7 @@ class Archiver(Configurable):
 
         def _publish_event(event):
             rk = event.get('rk', get_routingkey(event))
-            self.logger.info('Sending event {}'.format(rk))
+            self.logger.info(u"Sending event {}".format(rk))
             self.logger.debug(event)
             publish(
                 event=event, rk=rk, publisher=self.amqp
@@ -282,7 +282,7 @@ class Archiver(Configurable):
             if is_show_delay_passed:
 
                 self.logger.info(
-                    'Event {} no longer in status {}'.format(
+                    u'Event {} no longer in status {}'.format(
                         event['rk'],
                         reset_type
                     )
@@ -332,7 +332,7 @@ class Archiver(Configurable):
             status status of the current event
         """
 
-        log = 'Status is set to {} for event {}'.format(status, event['rk'])
+        log = u'Status is set to {} for event {}'.format(status, event['rk'])
         bagot_freq = event.get('bagot_freq', 0)
         values = {
             OFF: {
@@ -688,7 +688,7 @@ class Archiver(Configurable):
             if 'ack' in devent:
                 event['ack'] = devent['ack']
 
-            self.logger.info(' + State changed, have to log {}'.format(_id))
+            self.logger.info(u' + State changed, have to log {}'.format(_id))
 
             # copy avoid side effects
             operations.append(
