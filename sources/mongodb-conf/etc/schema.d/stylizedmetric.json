@@ -21,7 +21,8 @@
             "type": "string",
             "role": "modelselect",
             "model": "crecord.curve",
-            "required": true
+            "required": true,
+            "default": "curve.simpleline"
         },
         "color": {
             "type": "string",

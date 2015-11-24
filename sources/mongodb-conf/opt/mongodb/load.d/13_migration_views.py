@@ -112,7 +112,6 @@ def transform_event_selection(event_selection):
                 'label': 'label',
                 'rk': value
             }
-
         selection.append(value)
 
     return selection

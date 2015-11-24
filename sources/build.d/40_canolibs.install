@@ -32,6 +32,8 @@ PROJECTS[28]='ccalendar'
 PROJECTS[29]='pbehavior'
 PROJECTS[30]='downtime'
 PROJECTS[31]='webcore'
+PROJECTS[32]='session'
+PROJECTS[33]='stats'
 
 function build(){
 	true

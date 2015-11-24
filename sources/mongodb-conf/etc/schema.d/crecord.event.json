@@ -85,6 +85,7 @@
 			"required": true
 		},
 		"output": {
+			"role": "richtext",
 			"type": "string",
 			"required": true,
 			"description": "output of the event",

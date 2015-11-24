@@ -21,6 +21,8 @@
 from canopsis.common.ws import route
 from bottle import request
 from .rights import get_manager as get_rights
+from canopsis.session.manager import Session
+from canopsis.common.utils import singleton_per_scope
 
 
 def get():
@@ -64,17 +66,20 @@ def delete():
 
 
 def exports(ws):
+
+    session_manager = singleton_per_scope(Session)
+
     @route(ws.application.get, name='account/me', adapt=False)
     def get_me():
         user = get_user()
-        # Set user's defaultview from it's role (if any) if user have no one.
-        if not user.get('defaultview'):
-            role = user.get('role')
-            if role:
-                rights = get_rights()
-                role_default_view = rights.get_role('admin').get('defaultview')
-                if role_default_view:
-                    user['defaultview'] = role_default_view
         user.pop('id', None)
         user.pop('eid', None)
         return user
+
+    @route(ws.application.get, payload=['username'], adapt=False)
+    def keepalive(username):
+        session_manager.keep_alive(username)
+
+    @route(ws.application.get, payload=['username'], adapt=False)
+    def sessionstart(username):
+        session_manager.session_start(username)

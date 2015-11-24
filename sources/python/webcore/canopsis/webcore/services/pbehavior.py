@@ -93,3 +93,62 @@ def exports(ws):
         result = pbm.remove(uids=ids)
 
         return result
+
+    @route(
+        ws.application.get,
+        payload=['behaviors', 'start', 'end'],
+        name='pbehavior/calendar'
+    )
+    def find_pbehavior(behaviors=None, start=None, end=None):
+        """Get pbehavior which are between a starting and a ending date. They are filtered by behavior
+
+        :param string behaviors: behavior to filter the query (optionnal)
+        :param timestamp start: begin of the filtered period
+        :param timestamp end: end of the filtered period
+        :return: matchable events
+        :rtype: list
+        """
+
+        storage = pbm[PBehaviorManager.STORAGE]
+
+        if behaviors is None:
+            pbehavior_list = storage.find_elements(query={
+                '$or': [
+                    {
+                        'dtstart': {'$gte': start},
+                        'dtstart': {'$lte': end}
+                    },
+                    {
+                        'dtend': {'$gte': start},
+                        'dtend': {'$lte': end}
+                    },
+                    {
+                        'dtstart': {'$lte': start},
+                        'dtend': {'gte': end}
+                    }
+                ]
+            })
+        else:
+            pbehavior_list = storage.find_elements(query={
+                '$and': [
+                    {'behaviors': behaviors},
+                    {
+                        '$or': [
+                            {
+                                'dtstart': {'$gte': start},
+                                'dtstart': {'$lte': end}
+                            },
+                            {
+                                'dtend': {'$gte': start},
+                                'dtend': {'$lte': end}
+                            },
+                            {
+                                'dtstart': {'$lte': start},
+                                'dtend': {'gte': end}
+                            }
+                        ]
+                    }
+                ]
+            })
+
+        return list(pbehavior_list)
