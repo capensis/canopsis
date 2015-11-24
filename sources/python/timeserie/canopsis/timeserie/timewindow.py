@@ -538,6 +538,48 @@ class Interval(object):
         return result
 
     @staticmethod
+    def get_intervals_by_period(tstart, tstop, period):
+        """ Get intervals in timestamp for each period found in the given interval
+
+            :param start: begin interval timestamp
+            :param stop: end interval timestamp
+            :param period: dict that contains a period and a number for this
+            period, for Example period = {'day': 1} to create a period of
+            one day
+            :return: list of intervals
+            :rtype: list
+        """
+        period = Period(**period)
+        delta = period.get_delta()
+        timewindow = TimeWindow()
+
+        if tstart > tstop:
+            raise AttributeError('tstart should not be higher than tstop')
+
+        intervals = []
+
+        dstart = timewindow.get_datetime(tstart)
+        dstop = timewindow.get_datetime(tstop)
+
+        while dstart < dstop:
+            # test if the period finishes after the interval's end
+            if (dstart + delta) <= dstop:
+                occurence = {}
+                occurence['begin'] = timewindow.get_timestamp(dstart)
+                dstart += delta
+                occurence['end'] = timewindow.get_timestamp(dstart)
+                intervals.append(occurence)
+
+            else:
+                occurence = {}
+                occurence['begin'] = timewindow.get_timestamp(dstart)
+                occurence['end'] = timewindow.get_timestamp(dstop)
+                dstart += delta
+                intervals.append(occurence)
+
+        return intervals
+
+    @staticmethod
     def sort_and_join_intersections(*intervals):
         """Get intervals which are the result of a clean, sort and a join
         intersection operation on input intervals.

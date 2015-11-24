@@ -19,118 +19,127 @@
 # ---------------------------------
 
 from canopsis.common.ws import route
-from canopsis.ccalendar.manager import Calendar
-
-from dateutil.rrule import rrulestr
-from datetime import datetime
-from time import mktime
-
-
-calendar_manager = Calendar()
+from canopsis.ccalendar.manager import CalendarManager
+from json import dumps
+cm = CalendarManager()
 
 
 def exports(ws):
-    rest = ws.require('rest')
 
-    @route(ws.application.get)
-    def cal(source, interval_start, interval_end):
-        params = {
-            'filter': {
-                '$and': [
-                    {'event_type': 'calendar'},
-                    {'component': source},
-                    {'rrule': {'$exists': False}},
-                    {'$or': [
-                        {'$and': [
-                            {'start': {'$gt': int(interval_start)}},
-                            {'start': {'$lt': int(interval_end)}}
-                        ]},
-                        {'$and': [
-                            {'end': {'$gt': int(interval_start)}},
-                            {'end': {'$lt': int(interval_end)}}
-                        ]}
-                    ]}
-                ]
-            }
-        }
+    @route(ws.application.get, name='calendar')
+    def get_by_uids(
+        uids, limit=0, skip=0, sort=None, projection=None, with_count=False
+    ):
+        """Get documents by uids.
 
-        events = rest.get_records(ws, 'events', **params)
+        :param list uids: list of document uids.
+        :param int limit: max number of elements to get.
+        :param int skip: first element index among searched list.
+        :param sort: contains a list of couples of field (name, ASC/DESC)
+            or field name which denots an implicitelly ASC order.
+        :type sort: list of {(str, {ASC, DESC}}), or str}
+        :param dict projection: key names to keep from elements.
+        :param bool with_count: If True (False by default), add count to the
+            result.
+        :return: documents where uids are in uids.
+        :rtype: list
+        """
 
-        params['filter'] = {
-            '$and': [
-                {'event_type': 'calendar'},
-                {'component': source},
-                {'rrule': {'$exists': True}}
-            ]
-        }
+        result = cm.get_by_uids(
+            uids=uids, limit=limit, skip=skip, sort=sort,
+            projection=projection, with_count=with_count
+        )
 
-        recurrent_events = rest.get_records(ws, 'events', **params)
+        return result
 
-        for event in recurrent_events['data']:
-            try:
-                dtstart = datetime.fromtimestamp(float(interval_start))
-                dtend = datetime.fromtimestamp(float(interval_end))
+    @route(
+        ws.application.post, name='calendar',
+        payload=['eventcategories', 'output', 'dtstart', 'dtend']
+    )
+    @route(
+        ws.application.put, name='calendar',
+        payload=['eventcategories', 'output', 'dtstart', 'dtend', 'uid']
+    )
+    def put(
+        eventcategories,
+        output,
+        dtstart,
+        dtend,
+        uid=None,
+        source=None,
+        info=None
+    ):
+        """Add calendar events (and optionally data) related to input source.
 
-                evstart = datetime.fromtimestamp(float(event['start']))
-                evend = datetime.fromtimestamp(float(event['end']))
+        :param str source: calendardata source if not None.
+        :param dict info: calendar event info.
+        :param str eventcategories: eventcategories of the event.
+        :param str output: description of the event.
+        :param int dtstart: beginning date.
+        :param int dtend: ending date.
+        :return: new documents.
+        :rtype: list
+        """
+        ws.logger.debug('eventcategories, {}'.format(
+            dumps(eventcategories, indent=2)
+        ))
+        calendarDocument = cm.get_document(
+            uid=uid,
+            eventcategories=eventcategories,
+            output=output,
+            dtstart=dtstart,
+            dtend=dtend
+        )
+        ws.logger.debug('calendarDocument, {}'.format(
+            dumps(calendarDocument, indent=2)
+        ))
+        calendar_vevents = []
+        calendar_vevents.append(calendarDocument)
 
-                occurences = list(
-                    rrulestr(
-                        event['rrule'],
-                        dtstart=evstart
-                    ).between(dtstart, dtend)
-                )
+        result = cm.put(source=source, vevents=calendar_vevents)
 
-                event_duration = evend - evstart
-
-                n_occur = 0
-
-                # instantiate an event occurence for each found date
-                for occurence in occurences:
-                    n_occur += 1
-
-                    new_event = event.copy()
-                    occur_start = mktime(occurence.timetuple())
-                    occur_end = occurence + event_duration
-                    occur_end = mktime(occur_end.timetuple())
-
-                    new_event['start'] = int(occur_start)
-                    new_event['end'] = int(occur_end)
-                    events['data'].append(new_event)
-
-            except Exception as e:
-                ws.logger.error('Error parsing rrule for event: {0}'.format(e))
-
-        return events
+        return result
 
     @route(ws.application.delete, payload=['ids'])
     def calendar(ids):
-        calendar_manager.remove(ids)
+        """Delete a event with the id. We can delete several events with an array of ids
+
+        :param list ids: list of ids to delete
+        :return: True if the remove is ok
+        :rtype: boolean
+        """
+        result = cm.remove(uids=ids)
         ws.logger.info('Delete : {}'.format(ids))
         return True
 
     @route(
-        ws.application.post,
-        payload=['document'],
-        name='calendar/put'
+        ws.application.get, name='calendar/values',
+        payload=['query', 'source', 'dtstart', 'dtend']
     )
-    def calendar(document):
-        ws.logger.debug({
-            'document': document,
-            'type': type(document)
-        })
+    def values(
+        query=None, sources=None, dtstart=None, dtend=None
+    ):
+        """Get source vevent document values.
 
-        calendar_manager.put(document)
-
-        return True
-
-    @route(ws.application.post, payload=['limit', 'start', 'sort', 'filter'])
-    def calendar(limit=0, start=0, sort=None, filter={}):
-        result = calendar_manager.find(
-            limit=limit,
-            skip=start,
-            query=filter,
-            sort=sort,
-            with_count=True
+        :param list sources: sources from where get values. If None, use all
+            sources.
+        :param int dtstart: vevent dtstart (default 0).
+        :param int dtend: vevent dtend (default sys.maxsize).
+        :param dict query: vevent information if given.
+        :param int limit: max number of elements to get.
+        :param int skip: first element index among searched list.
+        :param sort: contains a list of couples of field (name, ASC/DESC)
+            or field name which denots an implicitelly ASC order.
+        :type sort: list of {(str, {ASC, DESC}}), or str}
+        :param dict projection: key names to keep from elements.
+        :param bool with_count: If True (False by default), add count to the
+            result.
+        :return: matchable documents.
+        :rtype: list
+        """
+        ws.logger.info("dtend, {}".format(dtend))
+        result = cm.values(
+            sources=sources, dtstart=dtstart, dtend=dtend, query=query
         )
+
         return result
