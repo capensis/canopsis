@@ -32,6 +32,7 @@ from canopsis.old.mfilter import check
 
 from RestrictedPython import compile_restricted
 from RestrictedPython.Guards import safe_builtins
+from time import time
 
 
 CONF_PATH = 'serie/manager.conf'
@@ -278,7 +279,12 @@ class Serie(MiddlewareRegistry):
         """
 
         perfdatas = self.aggregation(serieconf, timewindow)
-        return self.consolidation(serieconf, perfdatas)
+        point = self.consolidation(serieconf, perfdatas)
+
+        serieconf['last_computation'] = int(time())
+        self[Serie.SERIE_STORAGE].put_element(element=serieconf)
+
+        return point
 
     def get_series(self, timestamp):
         """
