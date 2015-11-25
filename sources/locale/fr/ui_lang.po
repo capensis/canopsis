@@ -1943,3 +1943,15 @@ msgstr "système de stockage"
 
 msgid "Storages to clean"
 msgstr "Stockage à nettoyer"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "write template"
+msgstr "écrire template"
+
+msgid "Add event"
+msgstr "Ajouter événement"
+
+msgid "Categories"
+msgstr "Categories"

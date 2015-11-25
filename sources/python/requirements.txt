@@ -27,3 +27,5 @@ greenlet==0.4.7
 mock==1.0.1
 lxml==3.4.1
 requests==1.1.0
+supervisor-wildcards==0.1.3
+RestrictedPython==3.6.0

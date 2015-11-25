@@ -18,10 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.configurable.decorator import (
+    conf_paths, add_category
+)
+from canopsis.configuration.model import Parameter
+
 from time import time
 
 CONF_PATH = 'session/session.conf'
@@ -35,121 +37,169 @@ CONFIG = [
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY, content=CONFIG)
 class Session(MiddlewareRegistry):
-
     """
-    Manage session information in Canopsis
+    Manage session informations.
     """
 
-    ENTITY_STORAGE = 'session_storage'
+    SESSION_STORAGE = 'session_storage'
+    METRIC_PRODUCER = 'metric_producer'
+    PERFDATA_MANAGER = 'perfdata_manager'
+
+    def __init__(
+        self,
+        session_storage=None,
+        metric_producer=None,
+        perfdata_manager=None,
+        *args, **kwargs
+    ):
+        super(Session, self).__init__(*args, **kwargs)
+
+        if session_storage is not None:
+            self[Session.SESSION_STORAGE] = session_storage
+
+        if metric_producer is not None:
+            self[Session.METRIC_PRODUCER] = metric_producer
+
+        if perfdata_manager is not None:
+            self[Session.PERFDATA_MANAGER] = perfdata_manager
 
     @property
     def alive_session_duration(self):
         if not hasattr(self, '_alive_session_duration'):
-            self.alive_session_duration = 0
+            self.alive_session_duration = None
 
         return self._alive_session_duration
 
     @alive_session_duration.setter
     def alive_session_duration(self, value):
+        if value is None:
+            value = 300
+
         self._alive_session_duration = value
 
     def keep_alive(self, username):
-        self[Session.ENTITY_STORAGE].put_element(
-            _id=username, element={'last_check': time()}
+        """
+        Keep session alive by setting the ``last_check`` field
+        to current timestamp.
+
+        :param username: user identifier
+        :type username: string
+
+        :returns: check timestamp
+        """
+
+        now = time()
+        self[Session.SESSION_STORAGE].put_element(
+            _id=username, element={'last_check': now}
         )
+        return now
 
-    def is_user_session_active(self, username):
-
+    def is_session_active(self, username):
         """
-        Returns wether or not the user session is active
-        :param: username string
+        Check if session is active.
+        If the session isn't found, then it is considered inactive.
+
+        :param username: user identifier
+        :type username: string
+
+        :returns: True if session is active, False otherwise
         """
 
-        session = self.get_user_info(username)
-        if not session:
+        session = self[Session.SESSION_STORAGE].get_elements(ids=username)
+
+        if session is None:
             return False
+
         else:
             return session['active']
 
     def session_start(self, username):
-
         """
-        Starts a session for a given username
-        :param: username string
+        Make session active for a user.
+
+        :param username: user identifier
+        :type username: string
+
+        :returns: Start timestamp, or None if already started
         """
 
-        # active session test avoid start session
-        # reset if session is still active
-        if not self.is_user_session_active(username):
+        if not self.is_session_active(username):
+            now = time()
 
-            self[Session.ENTITY_STORAGE].put_element(
+            self[Session.SESSION_STORAGE].put_element(
                 _id=username,
                 element={
-                    'session_start': time(),
-                    'last_check': time(),
+                    'session_start': now,
+                    'last_check': now,
                     'active': True,
                     'session_stop': -1
                 }
             )
 
-    def get_new_inactive_sessions(self):
+            return now
 
+    def duration(self):
         """
-        Retrieve a user session list that are newly inactive.
-        Sets the session stop time if session is found as inactive
-        since at least
-        :returns: a list of user session newly inactive
+        Return event, for each user, containing the session_duration metric.
+
+        :returns: list of events
         """
 
-        active_limit_date = time() - self.alive_session_duration
+        storage = self[Session.SESSION_STORAGE]
 
-        sessions = self[Session.ENTITY_STORAGE].get_elements(
-            query={
-                'last_check': {'$lte': active_limit_date}
-            }
-        )
-
-        new_inactive_sessions = []
-        # Upsert end date if not already set
         now = time()
-        for session in sessions:
-            if session['session_stop'] == -1:
-                session['session_stop'] = now
+        inactive_ts = now - self.alive_session_duration
+        inactive_sessions = list(storage.get_elements(
+            query={
+                'last_check': {'$lte': inactive_ts},
+                'session_stop': -1,
+                'active': True
+            }
+        ))
 
-                self[Session.ENTITY_STORAGE].put_element(
-                    _id=session['_id'],
-                    element={
-                        'session_stop': now,
-                        'active': False
+        # Update sessions in storage
+        for session in inactive_sessions:
+            session['session_stop'] = now
+            session['active'] = False
+
+            storage.put_element(element=session)
+
+        # Generate events
+        events = []
+
+        for session in inactive_sessions:
+            duration = session['session_stop'] - session['session_start']
+            event = {
+                'timestamp': now,
+                'connector': 'canopsis',
+                'connector_name': 'session',
+                'event_type': 'perf',
+                'source_type': 'resource',
+                'component': session[storage.ID],
+                'resource': 'session_duration',
+                'perf_data_array': [
+                    {
+                        'metric': 'last',
+                        'value': duration,
+                        'type': 'GAUGE',
+                        'unit': 's'
+                    },
+                    {
+                        'metric': 'sum',
+                        'value': duration,
+                        'type': 'COUNTER',
+                        'unit': 's'
                     }
-                )
-                new_inactive_sessions.append(session)
+                ]
+            }
 
-        return new_inactive_sessions
+            events.append(event)
 
-    def get_delta_session_time_metrics(self, sessions):
+            for operator in ['min', 'max', 'average']:
+                perfdatamgr = self[Session.PERFDATA_MANAGER]
+                producer = self[Session.METRIC_PRODUCER]
 
-        """
-        Compute metrics from a user session list
-        :param: sessions is a list of user session (session records)
-        :returns: a list of metrics formated as an event perfdata array
-        """
+                entity = perfdatamgr.get_metric_entity('last', event)
+                producer.may_create_stats_serie(entity, operator)
 
-        metrics = []
-        for session in sessions:
-            delta = session['session_stop'] - session['session_start']
-            metrics.append({
-                'type': 'COUNTER',
-                'value': delta,
-                'metric': 'cps_session_delay_user_{}'.format(session['_id'])
-            })
-        return metrics
-
-    def get_user_info(self, username):
-        """
-        Retrieve database user session information
-        :param: username
-        :returns: a dict with user's session information
-        """
-
-        return self[Session.ENTITY_STORAGE].get_elements(ids=username)
+        return events

@@ -29,6 +29,29 @@ from pymongo.errors import (
 )
 from pymongo.bulk import BulkOperationBuilder
 from pymongo.read_preferences import ReadPreference
+from pymongo.son_manipulator import SONManipulator
+from uuid import uuid1
+
+
+class CanopsisSONManipulator(SONManipulator):
+    """
+    Manage transformations on incoming/outgoing objects.
+    """
+
+    def __init__(self, idfield, *args, **kwargs):
+        super(CanopsisSONManipulator, self).__init__(*args, **kwargs)
+
+        self.idfield = idfield
+
+    def transform_incoming(self, *args, **kwargs):
+        son = super(CanopsisSONManipulator, self).transform_incoming(
+            *args, **kwargs
+        )
+
+        if self.idfield not in son:
+            son[self.idfield] = str(uuid1())
+
+        return son
 
 
 class MongoDataBase(DataBase):
@@ -201,8 +224,19 @@ class MongoStorage(MongoDataBase, Storage):
     ID = '_id'  #: ID mongo
 
     def _connect(self, *args, **kwargs):
-
         result = super(MongoStorage, self)._connect(*args, **kwargs)
+
+        manipulators = self._database.incoming_manipulators
+        manipulators += self._database.outgoing_manipulators
+
+        for manipulator in manipulators:
+            if isinstance(manipulator, CanopsisSONManipulator):
+                break
+
+        else:
+            self._database.add_son_manipulator(
+                CanopsisSONManipulator(MongoStorage.ID)
+            )
 
         # initialize cache
         if not hasattr(self, '_cache'):
@@ -394,10 +428,14 @@ class MongoStorage(MongoDataBase, Storage):
         if _id is None:
             _id = self._element_id(element)
 
-        return self._update(
-            spec={MongoStorage.ID: _id}, document={'$set': element},
-            multi=False, cache=cache
-        )
+        if _id is None:
+            return self._insert(document=element, cache=cache)
+
+        else:
+            return self._update(
+                spec={MongoStorage.ID: _id}, document={'$set': element},
+                multi=False, cache=cache
+            )
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
 
@@ -419,7 +457,7 @@ class MongoStorage(MongoDataBase, Storage):
 
     def _element_id(self, element):
 
-        return element[MongoStorage.ID]
+        return element.get(MongoStorage.ID, None)
 
     def all_indexes(self, *args, **kwargs):
 

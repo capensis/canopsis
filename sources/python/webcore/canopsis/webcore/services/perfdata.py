@@ -71,11 +71,14 @@ def exports(ws):
         result = []
 
         for metric_id in metrics:
-            pts, meta = manager.get(
+            # meta -> _meta
+            pts, _meta = manager.get(
                 metric_id=metric_id, with_meta=True,
                 timewindow=timewindow, limit=limit, skip=skip
             )
-            meta = meta[0]
+
+            meta = _meta[0] if _meta is not None else {}
+            meta[manager[PerfData.META_STORAGE].DATA_ID] = metric_id
 
             if timeserie is not None:
                 pts = timeserie.calculate(pts, timewindow, meta=meta)

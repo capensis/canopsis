@@ -1,11 +1,14 @@
 {
-	"type": "object",
-	"categories": [{
-		"title": "Background",
-		"keys":["imageUrl", "position", "repeat", "size", "backgroundcolor"]
-	}],
-
-	"properties": {
+    "type": "object",
+    "categories": [{
+        "title": "Background",
+        "keys":["imageUrl", "position", "repeat", "size", "backgroundcolor"]
+    }],
+    "metadata": {
+        "icon": "fa fa-picture-o",
+        "description": "Puts a background image on a widget"
+    },
+    "properties": {
         "backgroundcolor":  {
             "type": "string",
             "role": "color",
@@ -13,24 +16,24 @@
             "required": true,
             "title": "Background color"
         },
-		"imageUrl": {
-			"type": "string"
-		},
-		"position": {
-			"type": "string"
-		},
-		"repeat": {
-			"type": "string",
-			"enum": [
-				"no-repeat",
-				"repeat-x",
-				"repeat-y",
-				"repeat"
-			],
-			"role": "simplelist"
-		},
-		"size": {
-			"type": "string"
-		}
-	}
+        "imageUrl": {
+            "type": "string"
+        },
+        "position": {
+            "type": "string"
+        },
+        "repeat": {
+            "type": "string",
+            "enum": [
+                "no-repeat",
+                "repeat-x",
+                "repeat-y",
+                "repeat"
+            ],
+            "role": "simplelist"
+        },
+        "size": {
+            "type": "string"
+        }
+    }
 }

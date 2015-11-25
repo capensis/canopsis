@@ -1,7 +1,7 @@
 .. _ED:
 
-Exploitation Documents
-======================
+Canopsis Exploitation Documents
+===============================
 
 List of all exploitation documents.
 

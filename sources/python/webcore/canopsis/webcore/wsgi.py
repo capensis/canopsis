@@ -26,7 +26,7 @@ from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
 import mongodb_beaker  # needed by beaker
 
-from canopsis.configuration.parameters import Parameter, ParamList
+from canopsis.configuration.model import Parameter, ParamList
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_config
 from canopsis.configuration.configurable import Configurable
