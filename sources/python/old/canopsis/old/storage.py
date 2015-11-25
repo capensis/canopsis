@@ -131,12 +131,7 @@ class Storage(object):
             self.connect()
 
     def clean_id(self, _id):
-        try:
-            int(_id, 16)
-            return objectid.ObjectId(_id)
-
-        except Exception:
-            return _id
+        return _id
 
     def make_mongofilter(self, account):
         Read_mfilter = {}

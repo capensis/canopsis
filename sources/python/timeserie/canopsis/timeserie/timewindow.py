@@ -858,8 +858,10 @@ class TimeWindow(object):
         return result
 
 
-def get_offset_timewindow(offset=time()):
-    """Get a timewindow with one point.
-    """
+def get_offset_timewindow(offset=None):
+    """Get a timewindow with one point."""
+
+    if offset is None:
+        offset = time()
 
     return TimeWindow(start=offset, stop=offset)

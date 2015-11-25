@@ -12,7 +12,10 @@ Base
 
    fr__architecture
    fr__schema
+   fr__configuration
+   fr__context
    fr__event
+   fr__metric
 
 Systems
 -------
@@ -21,6 +24,8 @@ Systems
    :maxdepth: 1
    :titlesonly:
 
+   fr__middleware
+   fr__storage
    fr__engine
    fr__task
    fr__output
@@ -34,6 +39,8 @@ High-Level features
    :maxdepth: 1
    :titlesonly:
 
+   fr__alarm
+   fr__serie
    fr__category-chart
    fr__statistics
 

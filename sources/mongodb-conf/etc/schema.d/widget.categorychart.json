@@ -20,6 +20,18 @@
         "title":  {
             "type": "string"
         },
+        "time_window": {
+            "type": "number",
+            "role": "duration",
+            "default": 86400,
+            "title": "Time Window to show on graph"
+        },
+        "time_window_offset": {
+            "type": "number",
+            "role": "duration",
+            "default": 0,
+            "title": "Time window offset from now"
+        },
         "text_left_space":  {
             "type": "string",
             "default": "Left until max",

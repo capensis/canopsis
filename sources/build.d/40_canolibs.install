@@ -34,6 +34,8 @@ PROJECTS[30]='downtime'
 PROJECTS[31]='webcore'
 PROJECTS[32]='session'
 PROJECTS[33]='stats'
+PROJECTS[34]='alerts'
+PROJECTS[35]='serie'
 
 function build(){
 	true

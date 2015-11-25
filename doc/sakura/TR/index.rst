@@ -11,6 +11,8 @@ Base
    :titlesonly:
 
    tr__architecture
+   tr__context
+   tr__metric
 
 Systems
 -------
@@ -31,4 +33,6 @@ High-Level features
    :maxdepth: 1
    :titlesonly:
 
+   tr__alarm
+   tr__serie
    tr__statistics

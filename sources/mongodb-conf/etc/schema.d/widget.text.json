@@ -1,65 +1,84 @@
 {
-	"type": "object",
-	"metadata": {
-		"icon": "glyphicon glyphicon-file"
-	},
-	"categories": [{
-		"title": "General",
-		"keys":["title", "html"]
-	},{
-		"title": "Series",
-		"keys":["series"]
-	},{
+    "type": "object",
+    "metadata": {
+        "icon": "glyphicon glyphicon-file"
+    },
+    "categories": [{
+        "title": "General",
+        "keys":["title", "html"]
+    },{
+        "title": "Time Window",
+        "keys": ["time_window", "time_window_offset"]
+    },{
+        "title": "Series",
+        "keys":["series"]
+    },{
         "title": "Metrics",
         "keys":["metrics"]
     },{
-		"title": "Events",
-		"keys":["events"]
-	},{
-		"title": "Mixins",
-		"keys":["mixins"]
-	}],
-	"properties": {
-		"title": {
-			"type": "string"
-		},
-		"html": {
-			"description": "Allow display event or metric values<ul><li>event component : {{event.event_label.component}}</li><li>serie's value {{serie.serie_name}}</li><li>metric's value {{metric.metric_name}}</li><li>human readable value {{hr value=serie.serie_name}}</li></ul>",
-			"type": "string",
-			"role": "richtext"
-		},
-		"series": {
-			"description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
-			"type": "array",
-			"role": "arrayclassifiedcrecordselector",
-			"model": "serie",
-			"crecordtype": "serie",
-			"multiselect": true
-		},
+        "title": "Events",
+        "keys":["events"]
+    },{
+        "title": "Mixins",
+        "keys":["mixins"]
+    }],
+    "properties": {
+        "title": {
+            "type": "string",
+            "title": "Widget title"
+        },
+        "html": {
+            "title": "Template",
+            "description": "Variables: <ul><li>Event: <code>{{event.label.*}}</code></li><li>Serie: <code>{{serie.name}}</code></li><li>Metric: <code>{{metric.component[.resource].name}}</code></li><li>Interval: <code>{{from}} {{to}}</code></li></ul>",
+            "type": "string",
+            "role": "richtext"
+        },
+        "time_window": {
+            "type": "number",
+            "role": "duration",
+            "default": 86400,
+            "title": "Time Window for data fetching"
+        },
+        "time_window_offset": {
+            "type": "number",
+            "role": "duration",
+            "default": 0,
+            "title": "Time window offset from now"
+        },
+        "series": {
+            "description": "Series to provide to template",
+            "title": "Choose series",
+            "type": "array",
+            "role": "arrayclassifiedcrecordselector",
+            "model": "serie",
+            "crecordtype": "serie",
+            "multiselect": true
+        },
         "metrics": {
+            "description": "Metrics to provide to template",
+            "title": "Choose metrics",
             "type": "array",
             "items": {
                 "type": "string"
             },
-            "role": "cmetric",
-            "title": "Metrics"
+            "role": "cmetric"
         },
-		"events": {
-			"type": "array",
-			"items": {
-				"type": "object"
-			},
-			"role": "eventselector",
-			"labelled": true,
-			"description": "Choose events to include in selector computation, and associate them a label"
-		},
-		"mixins": {
-			"type": "array",
-			"role": "mixins",
-			"items": {
-				"type": "string"
-			},
-			"reorderable": true
-		}
-	}
+        "events": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            },
+            "role": "eventselector",
+            "labelled": true,
+            "description": "Labelled events to provide to template"
+        },
+        "mixins": {
+            "type": "array",
+            "role": "mixins",
+            "items": {
+                "type": "string"
+            },
+            "reorderable": true
+        }
+    }
 }

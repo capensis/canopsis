@@ -35,7 +35,7 @@ from collections import Iterable
 
 from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
-from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.model import Parameter
 from canopsis.middleware.core import Middleware
 
 
