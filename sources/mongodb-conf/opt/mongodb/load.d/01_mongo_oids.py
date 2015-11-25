@@ -35,6 +35,17 @@ def update():
         include_system_collections=False
     )
 
+    # exclude GridFS collections
+    collections = filter(
+        lambda item: any([
+            not item.endswith('.chunks'),
+            not item.endswith('.files'),
+            '{0}.chunks'.format(item) not in collections,
+            '{0}.files'.format(item) not in collections
+        ]),
+        collections
+    )
+
     for collection in collections:
         storage.table = collection
 

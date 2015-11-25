@@ -26,13 +26,13 @@
             "description": "Method used to aggregate selected metrics",
             "type": "string",
             "enum": [
-                "Average",
-                "Last",
-                "First",
-                "Delta",
-                "Sum",
-                "Max",
-                "Min"
+                "average",
+                "last",
+                "first",
+                "delta",
+                "sum",
+                "max",
+                "min"
             ],
             "default": "Average",
             "role": "simplelist",
