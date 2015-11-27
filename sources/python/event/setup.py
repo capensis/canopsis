@@ -19,14 +19,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""event project building script."""
+
 from canopsis.common.setup import setup
 
 install_requires = [
-
-	'canopsis.old',
-	'canopsis.common',
-	'canopsis.mongo',
-	'canopsis.timeserie'
+    'canopsis.old',
+    'canopsis.common',
+    'canopsis.mongo',
+    'canopsis.timeserie'
     'canopsis.configuration',
     'canopsis.middleware',
     'canopsis.storage',

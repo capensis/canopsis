@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""engines project building script."""
+
 from canopsis.common.setup import setup
 
 install_requires = [
@@ -38,4 +40,5 @@ install_requires = [
 setup(
     description='Engines library',
     install_requires=install_requires,
-    keywords='engines')
+    keywords='engines'
+)
