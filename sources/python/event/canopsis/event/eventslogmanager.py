@@ -18,9 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from time import time
 from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
+    conf_paths, add_category
+  )
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.timeserie.timewindow import Interval
 

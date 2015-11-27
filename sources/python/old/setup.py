@@ -21,6 +21,12 @@
 
 from canopsis.common.setup import setup
 
+install_requires = [
+    'canopsis.common'
+]
+
 setup(
-    description=('Old canolibs libraries to migrate in separated project'),
-    keywords='old canolibs libraries')
+    description='Old canolibs libraries to migrate in separated project',
+    install_requires=install_requires,
+    keywords='old canolibs libraries'
+)

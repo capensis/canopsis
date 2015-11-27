@@ -22,6 +22,7 @@
 from canopsis.context.manager import Context
 from canopsis.topology.manager import TopologyManager
 
+
 context = Context()
 tm = TopologyManager()
 

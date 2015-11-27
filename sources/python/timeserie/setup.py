@@ -21,7 +21,10 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.configuration']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration'
+]
 
 setup(
     description='Canopsis timeserie',

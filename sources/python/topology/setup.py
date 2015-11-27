@@ -22,6 +22,7 @@
 from canopsis.common.setup import setup
 
 install_requires = [
+    'canopsis.common',
 	'canopsis.storage',
 	'canopsis.task',
 	'canopsis.graph',
@@ -31,6 +32,8 @@ install_requires = [
     'canopsis.engines',
     'canopsis.configuration',
     'canopsis.event'
+    'canopsis.common',
+    'canopsis.ctxprop',
 ]
 
 setup(

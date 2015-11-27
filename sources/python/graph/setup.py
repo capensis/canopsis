@@ -22,13 +22,18 @@
 from canopsis.common.setup import setup
 
 install_requires = [
-    'canopsis.common',
 	'canopsis.storage',
 	'canopsis.task',
 	'canopsis.event',
     'canopsis.check',
     'canopsis.context',
-
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.storage',
+    'canopsis.context',
+    'canopsis.event',
+    'canopsis.check',
+    'canopsis.task'
 ]
 
 setup(

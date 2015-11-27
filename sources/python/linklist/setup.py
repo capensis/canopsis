@@ -21,7 +21,16 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.context',
+    'canopsis.ctxprop',
+    'canopsis.mongo'
+    'canopsis.engines',
+    'canopsis.event'
+]
 
 setup(
     description='Canopsis linklist library',
