@@ -28,8 +28,7 @@ install_requires = [
     'canopsis.timeserie',
     'canopsis.task',
     'canopsis.engines',
-    'canopsis.old',
-    'RestrictedPython'
+    'canopsis.old'
 ]
 
 setup(

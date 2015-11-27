@@ -21,7 +21,12 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['pymongo', 'canopsis.storage']
+install_requires = [
+    'canopsis.common',
+    'canopsis.storage',
+    'canopsis.timeserie',
+    'canopsis.old'
+]
 
 setup(
     description='Mongo for Canopsis',

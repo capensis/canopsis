@@ -21,7 +21,15 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common', 'canopsis.storage', 'dateutil']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.vevent',
+    'canopsis.topology',
+    'canopsis.task',
+    'canopsis.event',
+    'canopsis.check'
+]
 
 setup(
     description='Canopsis calendar library',

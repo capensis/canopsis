@@ -25,11 +25,11 @@ In such way, all methods execution are delegated to its registries.
 """
 
 from canopsis.common.init import basestring
+from canopsis.common.utils import lookup
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.context.manager import Context
 
 
 CONF_PATH = 'ctxprop/ctxprop.conf'
@@ -39,20 +39,24 @@ CATEGORY = 'CTXPROP'
 @add_category(CATEGORY)
 @conf_paths(CONF_PATH)
 class CTXPropManager(MiddlewareRegistry):
-    """Manage context property.
-    """
+    """Manage context property."""
 
     class Error(Exception):
-        """Handle CTXPropManager errors.
-        """
+        """Handle CTXPropManager errors."""
 
     DATA_SCOPE = 'ctxprop'  #: default data scope
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, context=None, *args, **kwargs):
 
         super(CTXPropManager, self).__init__(*args, **kwargs)
 
-        self.context = Context()
+        self['context'] = context
+
+    @property
+    def context(self):
+        """Get self context."""
+
+        return self['context']
 
     @property
     def registries(self):

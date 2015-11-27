@@ -19,9 +19,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""ctxprop project building script."""
+
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.middleware']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware'
+]
 
 setup(
     description='contextual property system',
