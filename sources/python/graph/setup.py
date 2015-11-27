@@ -19,9 +19,19 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""graph building script."""
+
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.storage', 'canopsis.task']
+install_requires = [
+    'canopsis.storage',
+    'canopsis.task',
+    'canopsis.event',
+    'canopsis.check',
+    'canopsis.context',
+    'canopsis.configuration',
+    'canopsis.middleware',
+]
 
 setup(
     description='Canopsis graph',

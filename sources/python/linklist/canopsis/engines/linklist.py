@@ -20,8 +20,7 @@
 
 from canopsis.engines.core import Engine
 from canopsis.entitylink.manager import Entitylink
-from canopsis.configuration.dbconfigurationmanager import DBConfiguration
-from canopsis.common import utils
+from canopsis.linklist.dbconfigurationmanager import DBConfiguration
 
 
 class engine(Engine):

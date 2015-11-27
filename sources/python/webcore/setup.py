@@ -21,7 +21,26 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.old', 'canopsis.auth']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.context',
+    'canopsis.ctxprop',
+    'canopsis.graph',
+    'canopsis.event',
+    'canopsis.check',
+    'canopsis.ccalendar',
+    'canopsis.linklist',
+    'canopsis.pbehavior',
+    'canopsis.timeserie',
+    'canopsis.perfdata',
+    'canopsis.organisation',
+    'canopsis.session',
+    'canopsis.topology',
+    'canopsis.vevent',
+    'canopsis.old'
+]
 
 setup(
     description='Canopsis WebCore',

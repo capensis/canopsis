@@ -21,7 +21,17 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.context', 'canopsis.storage']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.storage'
+    'canopsis.context',
+    'canopsis.ctxprop',
+    'canopsis.monitoring',
+    'canopsis.timeserie',
+    'canopsis.task'
+]
 
 setup(
     description='Canopsis perfdata',
