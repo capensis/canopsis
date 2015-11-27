@@ -46,11 +46,17 @@ class CTXPropManager(MiddlewareRegistry):
 
     DATA_SCOPE = 'ctxprop'  #: default data scope
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, context=None, *args, **kwargs):
 
         super(CTXPropManager, self).__init__(*args, **kwargs)
 
-        self.context = lookup('canopsis.context.manager.Context')()
+        self['context'] = context
+
+    @property
+    def context(self):
+        """Get self context."""
+
+        return self['context']
 
     @property
     def registries(self):
