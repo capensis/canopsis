@@ -21,7 +21,17 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.storage', 'canopsis.task', 'canopsis.graph']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.context',
+    'canopsis.ctxprop',
+    'canopsis.graph'
+    'canopsis.engines'
+    'canopsis.check',
+    'canopsis.task',
+    'canopsis.old',
+]
 
 setup(
     description='Canopsis topology',
