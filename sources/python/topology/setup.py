@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Topology project building script"""
+
 from canopsis.common.setup import setup
 
 install_requires = [
