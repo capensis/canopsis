@@ -31,11 +31,6 @@ install_requires = [
     'canopsis.context',
     'canopsis.configuration',
     'canopsis.middleware',
-    'canopsis.storage',
-    'canopsis.context',
-    'canopsis.event',
-    'canopsis.check',
-    'canopsis.task'
 ]
 
 setup(
