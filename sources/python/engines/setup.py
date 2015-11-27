@@ -25,7 +25,6 @@ install_requires = [
     'canopsis.old',
     'canopsis.timeserie',
     'canopsis.perfdata',
-    'canopsis.rule',
     'canopsis.tools',
     'canopsis.event'
 ]

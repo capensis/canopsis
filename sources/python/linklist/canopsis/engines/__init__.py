@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -19,19 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.setup import setup
-
-install_requires = [
-    'canopsis.common',
-    'canopsis.configuration',
-    'canopsis.middleware',
-    'canopsis.storage',
-    'canopsis.event',
-    'canopsis.topology',
-    'canopsis.ctxprop'
-]
-
-setup(
-    description='Canopsis context',
-    install_requires=install_requires,
-    keywords='context')
+# hack for attaching this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

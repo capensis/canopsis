@@ -21,7 +21,7 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.old', 'canopsis.auth']
+install_requires = ['canopsis.old']
 
 setup(
     description='Canopsis WebCore',

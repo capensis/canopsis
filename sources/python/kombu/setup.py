@@ -21,7 +21,7 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common', 'canopsis.pubsub']
+install_requires = ['canopsis.common']
 
 setup(
     description='Canopsis kombu',
