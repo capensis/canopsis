@@ -22,8 +22,12 @@
 from canopsis.common.setup import setup
 
 install_requires = [
-    'python-dateutil', 'icalendar',
-    'canopsis.context', 'canopsis.pbehavior'
+    'canopsis.common',
+    'canopsis.context',
+    'canopsis.pbehavior',
+    'canopsis.task',
+    'canopsis.event',
+    'canopsis.old'
 ]
 
 setup(

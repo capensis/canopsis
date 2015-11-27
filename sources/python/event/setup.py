@@ -21,7 +21,18 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.old', 'canopsis.common']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.storage',
+    'canopsis.mongo',
+    'canopsis.ctxprop',
+    'canopsis.timeserie',
+    'canopsis.pbehavior',
+    'canopsis.downtime',
+    'canopsis.old'
+]
 
 setup(
     description='Canopsis event library',
