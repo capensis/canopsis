@@ -21,7 +21,7 @@
 from canopsis.engines.core import Engine
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.event.selector import Selector
+from canopsis.downtime.selector import Selector
 from canopsis.old.mfilter import check
 
 
