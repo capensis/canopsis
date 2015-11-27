@@ -67,7 +67,8 @@ def exports(ws):
         dtend,
         uid=None,
         source=None,
-        info=None
+        info=None,
+        **kwargs
     ):
         """Add calendar events (and optionally data) related to input source.
 

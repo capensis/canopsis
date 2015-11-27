@@ -20,18 +20,19 @@
 
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
+from canopsis.configuration.configurable.decorator import add_config
 from canopsis.configuration.model import ParamList, Parameter
 
 
 CONF_PATH = 'webserver.conf'
-CATEGORY = 'WEBMODULEMANAGER'
-CONTENT = []
+CONFIG = {
+    'WEBMODULEMANAGER': [],
+    'webmodules': ParamList(parser=Parameter.bool)
+}
 
 
 @conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
-@add_category('webmodules', content=ParamList(parser=Parameter.bool))
+@add_config(CONFIG)
 class WebModuleManager(MiddlewareRegistry):
     """
     Manage list of web modules.
