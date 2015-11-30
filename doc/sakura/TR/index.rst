@@ -32,3 +32,12 @@ High-Level features
    :titlesonly:
 
    tr__statistics
+
+Frontend
+--------
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
+
+   tr__ui_scenarios
