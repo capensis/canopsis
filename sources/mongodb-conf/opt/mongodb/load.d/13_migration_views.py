@@ -32,6 +32,7 @@ storage = Middleware.get_middleware_by_uri(
     'mongodb-default://',
     table='object'
 )
+storage.connect()
 
 rights = Rights()
 
