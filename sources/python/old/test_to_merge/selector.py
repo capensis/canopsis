@@ -22,7 +22,7 @@
 import unittest
 import time
 
-from canopsis.event.selector import Selector
+from canopsis.downtime.selector import Selector
 #from Selector import cselector_get, cselector_getall
 import logging
 

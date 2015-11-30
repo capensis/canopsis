@@ -19,18 +19,26 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""engines project building script."""
+
 from canopsis.common.setup import setup
 
 install_requires = [
-    'canopsis.old',
-    'canopsis.timeserie',
-    'canopsis.perfdata',
-    'canopsis.rule',
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.context',
+    'canopsis.event',
+    'canopsis.check',
+    'canopsis.pbehavior',
+    'canopsis.schema',
+    'canopsis.sla',
     'canopsis.tools',
-    'canopsis.event'
+    'canopsis.old'
 ]
 
 setup(
     description='Engines library',
     install_requires=install_requires,
-    keywords='engines')
+    keywords='engines'
+)

@@ -21,7 +21,17 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.task',
+    'canopsis.engines',
+    'canopsis.session',
+    'canopsis.alerts',
+    'canopsis.timeserie',
+    'canopsis.old'
+]
 
 setup(
     description='Canopsis stats library',
