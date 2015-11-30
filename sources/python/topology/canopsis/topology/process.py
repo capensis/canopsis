@@ -88,12 +88,12 @@ def event_processing(
             entity = ctx.get_entity(event)
             entity_id = ctx.get_entity_id(entity)
             elt_id = ctx.get_name(entity_id)
-            logger.debug("elt_id {0}".format(elt_id))
+            logger.debug(u"elt_id {0}".format(elt_id))
             # process all targets
             elt = tm.get_elts(ids=elt_id)
             if elt is not None:
                 targets = tm.get_targets(ids=elt_id)
-                logger.debug("targets {0}".format(targets))
+                logger.debug(u"targets {0}".format(targets))
                 # process and save all targets
                 for target in targets:
                     target.process(
@@ -108,9 +108,9 @@ def event_processing(
             entity = ctx.get_entity(event)
             if entity is not None:
                 entity_id = ctx.get_entity_id(entity)
-                logger.debug("entity_id {0}".format(entity_id))
+                logger.debug(u"entity_id {0}".format(entity_id))
                 elts = tm.get_elts(info={TopoNode.ENTITY: entity_id})
-                logger.debug("elts {0}".format(elts))
+                logger.debug(u"elts {0}".format(elts))
                 # process all elts
                 for elt in elts:
                     elt.process(

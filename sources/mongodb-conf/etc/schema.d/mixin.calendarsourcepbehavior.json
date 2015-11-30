@@ -1,8 +1,5 @@
 {
 	"type": "object",
-	"metadata": {
-		"icon": "list-alt"
-	},
 	"categories": [{
 		"title": "General",
 		"keys":["event_title", "popup_template"]

@@ -20,102 +20,59 @@
 # ---------------------------------
 
 from unittest import TestCase, main
+from canopsis.middleware.core import Middleware
 from canopsis.session.manager import Session
-from time import time
 
 
 class SessionManagerTest(TestCase):
 
     def setUp(self):
-        self.session_manager = Session()
-        self.user = 'test_user'
-        self.session_manager[Session.ENTITY_STORAGE].remove_elements()
-
-
-class SessionTest(SessionManagerTest):
-
-    def test_get_user_info(self):
-        self.assertIsNone(
-            self.session_manager.get_user_info(self.user)
+        self.storage = Middleware.get_middleware_by_uri(
+            'mongodb-default-test_session://'
         )
-        self.session_manager.keep_alive(self.user)
-        session = self.session_manager.get_user_info(self.user)
-        self.assertEqual(session['_id'], self.user)
+        self.storage.connect()
+
+        self.manager = Session()
+        self.manager[Session.SESSION_STORAGE] = self.storage
+
+        self.user = 'test_user'
+
+    def tearDown(self):
+        self.storage.remove_elements()
+        self.storage.disconnect()
 
     def test_keep_alive(self):
-        self.session_manager.keep_alive(self.user)
-        session = self.session_manager.get_user_info(self.user)
-        self.assertLessEqual(session['last_check'], time())
+        got = self.manager.keep_alive(self.user)
+
+        session = self.storage.get_elements(ids=self.user)
+
+        self.assertTrue(session is not None)
+        self.assertEqual(got, session['last_check'])
 
     def test_session_start(self):
-        self.session_manager.session_start(self.user)
-        session = self.session_manager.get_user_info(self.user)
-        self.assertLessEqual(session['session_start'], time())
+        got = self.manager.session_start(self.user)
+
+        session = self.storage.get_elements(ids=self.user)
+
+        self.assertTrue(session is not None)
         self.assertTrue(session['active'])
+        self.assertEqual(got, session['session_start'])
 
-        first_start = session['session_start']
-        self.session_manager.session_start(self.user)
-        session = self.session_manager.get_user_info(self.user)
-        self.assertEqual(first_start, session['session_start'])
+    def test_session_start_already_started(self):
+        self.test_session_start()
 
-    def test_is_user_session_active(self):
-        self.assertFalse(
-            self.session_manager.is_user_session_active(self.user)
-        )
-        self.session_manager.session_start(self.user)
-        self.assertTrue(
-            self.session_manager.is_user_session_active(self.user)
-        )
+        got = self.manager.session_start(self.user)
 
-    def test_check_inactive_sessions(self):
-        # initilize session
-        self.session_manager.session_start(self.user)
+        self.assertTrue(got is None)
 
-        sessions = list(self.session_manager.get_new_inactive_sessions())
+    def test_is_session_active(self):
+        self.assertFalse(self.manager.is_session_active(self.user))
+        self.manager.session_start(self.user)
+        self.assertTrue(self.manager.is_session_active(self.user))
 
-        self.assertEqual(len(sessions), 0)
+    def test_duration(self):
+        raise NotImplementedError('missing test')
 
-        delta = self.session_manager.alive_session_duration + 1
-        self.session_manager[Session.ENTITY_STORAGE].put_element(
-            _id=self.user,
-            element={'last_check': time() - delta}
-        )
-        sessions = list(self.session_manager.get_new_inactive_sessions())
 
-        self.assertEqual(len(sessions), 1)
-
-        self.session_manager.session_start(self.user + '1')
-
-        self.session_manager[Session.ENTITY_STORAGE].put_element(
-            _id=self.user + '1',
-            element={'last_check': time() - delta}
-        )
-        sessions = list(self.session_manager.get_new_inactive_sessions())
-        self.assertEqual(len(sessions), 1)
-        for session in sessions:
-            self.assertIn('session_stop', session)
-
-    def test_get_delta_session_time_metrics(self):
-        # This should produce events metrics
-        sessions = [
-            {
-                '_id': self.user,
-                'session_start': 500,
-                'session_stop': 1000
-            }
-        ]
-        metrics = self.session_manager.get_delta_session_time_metrics(sessions)
-        self.assertEqual(
-            metrics[0],
-            {
-                'metric': 'cps_session_delay_user_test_user',
-                'type': 'COUNTER',
-                'value': 500
-            }
-        )
-        # We have two session so two metrics
-        sessions.append(sessions[0].copy())
-        metrics = self.session_manager.get_delta_session_time_metrics(sessions)
-        self.assertEqual(len(metrics), 2)
 if __name__ == '__main__':
     main()

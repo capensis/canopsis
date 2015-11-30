@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.parameters import Parameter, Configuration
+from canopsis.configuration.model import Parameter, Configuration
 from canopsis.configuration.configurable.registry import ConfigurableRegistry
 from canopsis.middleware.core import Middleware, parse_scheme
 
@@ -183,16 +183,19 @@ class MiddlewareRegistry(ConfigurableRegistry):
                     )
                 )
 
-            except Exception as e:
+            except Exception:
                 # clean memory in case of error
                 if not data_scopes:
                     del data_types[data_type]
+
                 if not data_types:
                     del protocols[protocol]
+
                 if not protocols:
                     del MiddlewareRegistry.__MIDDLEWARES__[sharing_scope]
-                # and raise back e
-                raise e
+
+                # and raise back exception
+                raise
 
         else:
             # get a new middleware instance
@@ -207,9 +210,8 @@ class MiddlewareRegistry(ConfigurableRegistry):
         return result
 
     def get_middleware_by_uri(
-        self,
-        uri,
-        auto_connect=None, shared=None, sharing_scope=None, *args, **kwargs
+            self, uri,
+            auto_connect=None, shared=None, sharing_scope=None, *args, **kwargs
     ):
 
         """
@@ -240,7 +242,8 @@ class MiddlewareRegistry(ConfigurableRegistry):
         result = self.get_middleware(
             protocol=protocol, data_type=data_type, data_scope=data_scope,
             auto_connect=auto_connect, shared=shared,
-            sharing_scope=sharing_scope, uri=uri, *args, **kwargs)
+            sharing_scope=sharing_scope, uri=uri, *args, **kwargs
+        )
 
         return result
 
@@ -270,10 +273,21 @@ class MiddlewareRegistry(ConfigurableRegistry):
 
         return result
 
+    def configure(self, *args, **kwargs):
+
+        super(MiddlewareRegistry, self).configure(*args, **kwargs)
+
+        if self.auto_connect:
+            for name in self:
+                configurable = self[name]
+                if isinstance(configurable, Middleware):
+                    configurable.connect()
+
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(MiddlewareRegistry, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
+            unified_conf=unified_conf, *args, **kwargs
+        )
 
         foreigns = unified_conf[Configuration.FOREIGNS]
 
@@ -286,7 +300,8 @@ class MiddlewareRegistry(ConfigurableRegistry):
                 name = parameter.name[:-len_midl_suffix]
                 # set a middleware in list of configurables
                 self[name] = self.get_middleware_by_uri(
-                    uri=parameter.value)
+                    uri=parameter.value, auto_connect=False
+                )
 
     def _is_local(self, to_configure, name, *args, **kwargs):
 

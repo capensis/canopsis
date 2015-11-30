@@ -53,7 +53,7 @@ class TimedStorageTest(TestCase):
         self.storage.drop()
 
         # ensure count is 0
-        count = self.storage.count(data_id=data_id)
+        count = self.storage.count(data_ids=data_id)
         self.assertEquals(count, 0)
 
         # let's play with different data_names
@@ -77,30 +77,108 @@ class TimedStorageTest(TestCase):
             # add a document at starting time window
             self.storage.put(data_id=data_id, value=meta, timestamp=timestamp)
 
-        # check for count equals 5
-        count = self.storage.count(data_id=data_id)
+        # check for count equals 2
+        count = self.storage.count(data_ids=data_id)
         self.assertEquals(count, 2)
 
         # check for_data before now
         data = self.storage.get(data_ids=[data_id])
         self.assertEquals(len(data[data_id]), 2)
 
+        # check for data before now with single id
+        data = self.storage.get(data_ids=data_id)
+        self.assertEquals(len(data), 2)
+
+        # check values are meta
+        self.assertEqual(
+            data[0][MongoTimedStorage.VALUE]['max'],
+            meta['max']
+        )
+
+        # check filtering with max == 1
+        data = self.storage.get(data_ids=data_id, _filter={'max': 1})
+        self.assertEquals(len(data), 0)
+
+        # check filtering with max == 0
+        data = self.storage.get(data_ids=data_id, _filter={'max': 0})
+        self.assertEquals(len(data), 2)
+
+        # check find
+        data = self.storage.find(_filter={'max': 1})
+        self.assertEquals(len(data), 0)
+
+        data = self.storage.find(_filter={'max': 0})[data_id]
+        self.assertEquals(len(data), 2)
+
+        data = self.storage.find()[data_id]
+        self.assertEquals(len(data), 2)
+
+        # add twice same documents with different values
+        meta['max'] += 1
+        for dat in data:
+            # add a document at starting time window
+            self.storage.put(
+                data_id=data_id, value=meta,
+                timestamp=dat[MongoTimedStorage.TIMESTAMP]
+            )
+
+        # check for_data before now
+        data = self.storage.get(data_ids=[data_id])
+        self.assertEquals(len(data[data_id]), 2)
+
+        # check for_data before now
+        data = self.storage.get(data_ids=[data_id])
+        self.assertEquals(len(data[data_id]), 2)
+
+        # check for_data before now with single index
+        data = self.storage.get(data_ids=data_id)
+        self.assertEquals(len(data), 2)
+
+        # check values are new meta
+        self.assertEqual(
+            data[0][MongoTimedStorage.VALUE]['max'],
+            meta['max']
+        )
+
+        # check filtering with max == 0
+        data = self.storage.get(data_ids=data_id, _filter={'max': 0})
+        self.assertEquals(len(data), 0)
+
+        # check filtering with max == 1
+        data = self.storage.get(data_ids=data_id, _filter={'max': 1})
+        self.assertEquals(len(data), 2)
+
+        # check find
+        data = self.storage.find(_filter={'max': 0})
+        self.assertEquals(len(data), 0)
+
+        data = self.storage.find(_filter={'max': 1})[data_id]
+        self.assertEquals(len(data), 2)
+
+        data = self.storage.find()[data_id]
+        self.assertEquals(len(data), 2)
+
         # check for data inside timewindow and just before
         data = self.storage.get(data_ids=[data_id], timewindow=timewindow)
+        self.assertEquals(len(data), 1)
+
+        # check for data inside timewindow and just before
+        data = self.storage.find(timewindow=timewindow)
         self.assertEquals(len(data), 1)
 
         # remove data inside timewindow
         self.storage.remove(data_ids=[data_id], timewindow=timewindow)
         # check for data outside timewindow
-        count = self.storage.count(data_id=data_id)
+        count = self.storage.count(data_ids=data_id)
         self.assertEquals(
             count, len(before_timewindow) + len(after_timewindow))
 
         # remove all data
-        self.storage.remove(data_ids=[data_id])
+        self.storage.remove(data_ids=data_id)
         # check for count equals 0
-        count = self.storage.count(data_id=data_id)
+        count = self.storage.count(data_ids=data_id)
         self.assertEquals(count, 0)
+
 
 if __name__ == '__main__':
     main()

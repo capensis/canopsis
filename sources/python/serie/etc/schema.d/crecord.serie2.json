@@ -1,0 +1,81 @@
+{
+    "title": "Serie",
+    "description": "Aggregation/Consolidation operations on filtered metrics",
+    "type": "object",
+    "properties": {
+        "component": {
+            "title": "Component",
+            "description": "Component of produced event",
+            "type": "string",
+            "required": true
+        },
+        "resource": {
+            "title": "Resource",
+            "description": "Resource of produced event",
+            "type": "string",
+            "required": true
+        },
+        "metric_filter": {
+            "title": "Metric Filter",
+            "description": "Metric Filter: ``co:<regex>``, ``re:<regex>``, ``me:<regex>``",
+            "type": "string",
+            "required": true
+        },
+        "aggregation_method": {
+            "title": "Aggregation method",
+            "description": "Method used to aggregate selected metrics",
+            "type": "string",
+            "enum": [
+                "average",
+                "last",
+                "first",
+                "delta",
+                "sum",
+                "max",
+                "min"
+            ],
+            "default": "Average",
+            "role": "simplelist",
+            "required": true
+        },
+        "aggregation_interval": {
+            "title": "Aggregation interval",
+            "description": "Interval used for aggregation",
+            "type": "integer",
+            "role": "duration",
+            "required": true
+        },
+        "round_time_interval": {
+            "title": "Fixed interval",
+            "description": "Fix interval (example: 1 week, from Monday to Sunday instead of from 1 week fefore to now",
+            "type": "boolean",
+            "default": true,
+            "required": true
+        },
+        "formula": {
+            "title": "Consolidation Formula",
+            "description": "Formula used to consolidate aggregated metrics",
+            "type": "string",
+            "required": true
+        },
+        "last_computation": {
+            "title": "Last computation",
+            "description": "Timestamp of last computation",
+            "type": "integer",
+            "default": 0
+        }
+    },
+    "categories": [{
+        "title": "General",
+        "keys": ["crecord_name", "component", "resource"]
+    },{
+        "title": "Metrics",
+        "keys": ["metric_filter"]
+    },{
+        "title": "Aggregation",
+        "keys": ["aggregation_method", "aggregation_interval", "round_time_interval"]
+    },{
+        "title": "Consolidation",
+        "keys": ["formula"]
+    }]
+}

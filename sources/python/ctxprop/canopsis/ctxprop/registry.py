@@ -26,21 +26,39 @@ property managers such as the perfdata manager for example.
 
 from canopsis.common.init import basestring
 from canopsis.middleware.core import Middleware
+from canopsis.configuration.configurable.decorator import (
+    conf_paths, add_category
+)
+
+CONF_PATH = 'ctxprop/ctxpropreg.conf'
+CATEGORY = 'CTXPROPREG'
 
 
+@add_category(CATEGORY)
+@conf_paths(CONF_PATH)
 class CTXPropRegistry(Middleware):
-    """dedicated to ctx events.
-    """
+    """dedicated to ctx events."""
 
     class Error(Exception):
-        """Handle CTXPropRegistry errors.
-        """
+        """Handle CTXPropRegistry errors."""
 
     CTX_ID = 'ctx_id'  #: default ctx id field name
 
     __register__ = True  #: register this class such as a middleware
     #: protocol registration name if __register__
     __protocol__ = 'ctxpropreg'
+
+    def __init__(self, context, *args, **kwargs):
+
+        super(CTXPropRegistry, self).__init__(*args, **kwargs)
+
+        self['context'] = context
+
+    @property
+    def context(self):
+        """Get self context."""
+
+        return self['context']
 
     def get(self, ids=None, query=None, *args, **kwargs):
         """Get ctx property related to input ``ctx id(s)`` and

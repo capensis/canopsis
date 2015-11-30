@@ -32,6 +32,7 @@ from pymongo import Connection
 from pymongo import ASCENDING
 from pymongo import DESCENDING
 
+from canopsis.mongo.core import CanopsisSONManipulator
 from canopsis.old.account import Account
 from canopsis.old.record import Record
 
@@ -131,12 +132,7 @@ class Storage(object):
             self.connect()
 
     def clean_id(self, _id):
-        try:
-            int(_id, 16)
-            return objectid.ObjectId(_id)
-
-        except Exception:
-            return _id
+        return _id
 
     def make_mongofilter(self, account):
         Read_mfilter = {}
@@ -194,6 +190,18 @@ class Storage(object):
 
         self.conn = Connection(self.uri, safe=True)
         self.db = self.conn[self.mongo_db]
+
+        manipulators = self.db.incoming_manipulators
+        manipulators += self.db.outgoing_manipulators
+
+        for manipulator in manipulators:
+            if isinstance(manipulator, CanopsisSONManipulator):
+                break
+
+        else:
+            self.db.add_son_manipulator(
+                CanopsisSONManipulator('_id')
+            )
 
         try:
             self.gridfs_namespace = CONFIG.get("master", "gridfs_namespace")

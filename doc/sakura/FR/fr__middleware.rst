@@ -50,7 +50,13 @@ A more consistent way to configure it is to use an URI which contains all middle
 
 Final URI example might respect this form:
 
-{protocol}://({user}(:{password})?@)?{host}(:{port})?/({data_scope})?/({data_type})?/({path})?('?'{params})?
+{protocol}-{data_scope}-{data_type}://({user}(:{password})?@)?{host}(:{port})?/({path})?('?'{params})?
+
+.. note::
+
+   In a future release, the URI will look like this:
+
+   {protocol}://({user}(:{password})?@)?{host}(:{port})?/({data_scope})?/({data_type})?/({path})?('?'{params})?
 
 Where '{X}' designates X properties from this documentation or from expected URI parts.
 
