@@ -20,7 +20,7 @@
 # ---------------------------------
 
 from unittest import TestCase, main
-from canopsis.configuration.dbconfigurationmanager import DBConfiguration
+from canopsis.linklist.dbconfigurationmanager import DBConfiguration
 from uuid import uuid4
 
 DEBUG = False
