@@ -32,7 +32,6 @@ storage = Middleware.get_middleware_by_uri(
     'mongodb-default://',
     table='object'
 )
-storage.connect()
 
 rights = Rights()
 
@@ -59,7 +58,8 @@ def update():
         log('Updating view: {0}'.format(view['_id']))
 
         try:
-            dbconf.put_element(element=view, _id=view['_id'])
+            storage.put_element(element=view, _id=view['_id'])
+
         except Exception as err:
             log('Error updating view {0}: {1}'.format(view['_id'], err))
             backup.append(view)
