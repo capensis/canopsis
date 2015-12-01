@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.dbconfigurationmanager import DBConfiguration
+from canopsis.middleware.core import Middleware
 from canopsis.organisation.rights import Rights
 
 from time import time
@@ -28,7 +28,11 @@ import sys
 import os
 
 
-dbconf = DBConfiguration()
+storage = Middleware.get_middleware_by_uri(
+    'mongodb-default://',
+    table='object'
+)
+
 rights = Rights()
 
 
@@ -42,7 +46,7 @@ def init():
 
 def update():
     # Get views
-    views = dbconf.find(query={'crecord_type': 'view'})
+    views = storage.find_elements(query={'crecord_type': 'view'})
     backup = []
 
     for view in views:
@@ -54,7 +58,8 @@ def update():
         log('Updating view: {0}'.format(view['_id']))
 
         try:
-            dbconf.put(view['_id'], view)
+            storage.put_element(element=view, _id=view['_id'])
+
         except Exception as err:
             log('Error updating view {0}: {1}'.format(view['_id'], err))
             backup.append(view)

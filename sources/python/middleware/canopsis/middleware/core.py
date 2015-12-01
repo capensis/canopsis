@@ -789,7 +789,7 @@ class Middleware(Configurable):
             result.configure(conf=conf)
 
             if auto_connect:
-                result.connect()
+                result.reconnect()
 
         return result
 
@@ -840,6 +840,6 @@ class Middleware(Configurable):
             result.configure(conf=conf)
 
             if auto_connect:
-                result.connect()
+                result.reconnect()
 
         return result
