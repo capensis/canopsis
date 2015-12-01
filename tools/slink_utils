@@ -9,7 +9,7 @@ function create_python_slink() {
         then version="0.1";
         else version=$2;
     fi;
-    ln -s $SRC/sources/python/$project/canopsis $CPS/lib/python2.7/site-packages/canopsis.$project-$version-py2.7.egg/
+    # ln -s $SRC/sources/python/$project/canopsis $CPS/lib/python2.7/site-packages/canopsis.$project-$version-py2.7.egg/
 }
 
 function create_canolibs_slink() {
@@ -28,13 +28,13 @@ function create_canolibs_slink() {
 }
 
 function create_slinks() {
-    ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
-    ln -s $SRC/sources/wkhtmltopdf-libs/etc/tasks.d/task_reporting.py $CPS/etc/tasks.d/
-    ln -s $SRC/sources/externals/webcore-libs $CPS/var/www/
-    ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
-    ln -s $SRC/sources/webcore/var/plugins $CPS/var/plugins
-    ln -s $SRC/sources/webcore/var/www/canopsis $CPS/var/www/
-    ln -s $SRC/sources/webcore/var/www/login $CPS/var/www/
+    # ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
+    # ln -s $SRC/sources/wkhtmltopdf-libs/etc/tasks.d/task_reporting.py $CPS/etc/tasks.d/
+    # ln -s $SRC/sources/externals/webcore-libs $CPS/src/
+    # ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
+    # ln -s $SRC/sources/webcore/var/plugins $CPS/var/plugins
+    ln -s $SRC/sources/webcore/src/canopsis $CPS/var/www/
+    ln -s $SRC/sources/webcore/src/login $CPS/var/www/
     ln -s $SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/
     ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
     ln -s $SRC/sources/mongodb-conf/etc/schema.d $CPS/etc/
