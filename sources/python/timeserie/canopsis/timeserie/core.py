@@ -260,9 +260,9 @@ class TimeSerie(Configurable):
                     values_to_aggregate, fn
                 )
 
-                # new point to add to result
-                aggregation_point = timestamp, aggregation_value
-                result.append(aggregation_point)
+                if aggregation_value is not None:  # new point to add to result
+                    aggregation_point = timestamp, aggregation_value
+                    result.append(aggregation_point)
 
                 # save last_point for future DELTA checking
                 if len(values_to_aggregate) > 0:

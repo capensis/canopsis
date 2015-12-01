@@ -24,7 +24,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 
 from canopsis.serie.utils import build_filter_from_regex
-from canopsis.timeserie.timewindow import Period
+from canopsis.timeserie.timewindow import Period, TimeWindow
 from canopsis.timeserie.core import TimeSerie
 from canopsis.task.core import get_task
 
@@ -37,17 +37,13 @@ from time import time
 
 CONF_PATH = 'serie/manager.conf'
 CATEGORY = 'SERIE'
-CONTENT = [
-    Parameter('points_per_interval', int)
-]
+CONTENT = [Parameter('points_per_interval', int)]
 
 
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY, content=CONTENT)
 class Serie(MiddlewareRegistry):
-    """
-    Consolidation manager.
-    """
+    """Serie manager."""
 
     SERIE_STORAGE = 'serie_storage'
     CONTEXT_MANAGER = 'context'
@@ -55,9 +51,7 @@ class Serie(MiddlewareRegistry):
 
     @property
     def points_per_interval(self):
-        """
-        Maximum number of points in a consolidation interval.
-        """
+        """Maximum number of points in a consolidation interval."""
 
         if not hasattr(self, '_points_per_interval'):
             self.points_per_interval = None
@@ -72,12 +66,12 @@ class Serie(MiddlewareRegistry):
         self._points_per_interval = value
 
     def __init__(
-        self,
-        points_per_interval=None,
-        serie_storage=None,
-        context=None,
-        perfdata=None,
-        *args, **kwargs
+            self,
+            points_per_interval=None,
+            serie_storage=None,
+            context=None,
+            perfdata=None,
+            *args, **kwargs
     ):
         super(Serie, self).__init__(*args, **kwargs)
 
@@ -180,7 +174,27 @@ class Serie(MiddlewareRegistry):
 
         return points
 
-    def aggregation(self, serieconf, timewindow=None):
+    def get_fixed_timewindow(self, timewindow, period):
+        """Get the fixed timewindow corresponding to the input timewindow and
+        period.
+
+        :param timewindow: Input time window
+        :type timewindow: canopsis.timeserie.timewindow.TimeWindow
+
+        :param period: Input period
+        :type period: canopsis.timeserie.timewindow.Period
+
+        :rtype: canopsis.timeserie.timewindow.TimeWindow
+        """
+
+        return TimeWindow(
+            start=period.round_timestamp(timewindow.start(), normalize=True),
+            stop=period.round_timestamp(
+                timewindow.stop(), normalize=True, next_period=True
+            )
+        )
+
+    def aggregation(self, serieconf, timewindow):
         """
         Get aggregated perfdata from serie.
 
@@ -201,17 +215,24 @@ class Serie(MiddlewareRegistry):
         else:
             period = Period(second=interval)
 
+        fixed_interval = serieconf.get(
+            'round_time_interval',
+            TimeSerie.VROUND_TIME
+        )
+
         ts = TimeSerie(
             period=period,
             aggregation=serieconf.get(
                 'aggregation_method',
                 TimeSerie.VDEFAULT_AGGREGATION
             ),
-            round_time=serieconf.get(
-                'round_time_interval',
-                TimeSerie.VROUND_TIME
-            )
+            round_time=fixed_interval
         )
+
+        if fixed_interval:
+            timewindow = self.get_fixed_timewindow(
+                timewindow=timewindow, period=period
+            )
 
         metrics = self.get_metrics(serieconf['metric_filter'])
         perfdatas = self.get_perfdata(metrics, timewindow=timewindow)
@@ -265,7 +286,7 @@ class Serie(MiddlewareRegistry):
         # result contains consolidated point
         return restricted_globals['result']
 
-    def calculate(self, serieconf, timewindow=None):
+    def calculate(self, serieconf, timewindow):
         """
         Compute serie point.
 
@@ -281,7 +302,7 @@ class Serie(MiddlewareRegistry):
         perfdatas = self.aggregation(serieconf, timewindow)
         point = self.consolidation(serieconf, perfdatas)
 
-        serieconf['last_computation'] = int(time())
+        serieconf['last_computation'] = timewindow.stop()
         self[Serie.SERIE_STORAGE].put_element(element=serieconf)
 
         return point
