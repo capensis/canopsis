@@ -32,6 +32,8 @@ from pymongo.read_preferences import ReadPreference
 from pymongo.son_manipulator import SONManipulator
 from uuid import uuid1
 
+from pymongo.mongo_replica_set_client import MongoReplicaSetClient
+
 
 class CanopsisSONManipulator(SONManipulator):
     """
@@ -92,6 +94,8 @@ class MongoDataBase(DataBase):
 
         connection_args = {}
 
+        conncls = MongoClient
+
         # if self host is given
         if self.host:
             connection_args['host'] = self.host
@@ -100,6 +104,7 @@ class MongoDataBase(DataBase):
             connection_args['port'] = self.port
         # if self replica set is given
         if self.replicaset:
+            conncls = MongoReplicaSetClient
             connection_args['replicaSet'] = self.replicaset
             connection_args['read_preference'] = self.read_preference
 
@@ -118,7 +123,7 @@ class MongoDataBase(DataBase):
         self.logger.debug('Trying to connect to {0}'.format(connection_args))
 
         try:
-            result = MongoClient(**connection_args)
+            result = conncls(**connection_args)
         except ConnectionFailure as cfe:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
