@@ -47,7 +47,7 @@ DOWNTIME_QUERY = PBehaviorManager.get_query(behaviors=DOWNTIME)
 
 @register_task
 def event_processing(
-    engine, event, context=None, manager=None, logger=None, **kwargs
+        engine, event, context=None, manager=None, logger=None, **kwargs
 ):
     """Process input event.
 

@@ -19,11 +19,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""downtime project building script."""
+
 from canopsis.common.setup import setup
 
 install_requires = [
-    'python-dateutil', 'icalendar',
-    'canopsis.context', 'canopsis.pbehavior'
+    'canopsis.common',
+    'canopsis.context',
+    'canopsis.pbehavior',
+    'canopsis.task',
+    'canopsis.event',
+    'canopsis.old'
 ]
 
 setup(

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -22,19 +21,19 @@
 from canopsis.old.record import Record
 from canopsis.event import get_routingkey, forger
 from canopsis.old.cfilter import Filter
+from canopsis.common.utils import lookup
+from canopsis.common.utils import singleton_per_scope
 
-from canopsis.context.manager import Context
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.context.manager import Context
+
 from canopsis.downtime.process import DOWNTIME  #TODO: in configuration please
 
 from json import loads
 from logging import getLogger
-import pprint
 from copy import deepcopy
 from time import time
 from datetime import datetime
-
-pp = pprint.PrettyPrinter(indent=2)
 
 DEFAULT_SLA_TIMEWINDOW = 3600 * 24
 DELTA_PUBLICATION = 60 * 5
@@ -85,8 +84,8 @@ class Selector(Record):
         }
 
         self.logger = getLogger('Selector')
-        self.context = Context()
-        self.pbehavior = PBehaviorManager()
+        self.context = singleton_per_scope(Context)
+        self.pbehavior = singleton_per_scope(PBehaviorManager)
         # Canopsis filter management for mongo
         self.cfilter = Filter()
 
@@ -244,7 +243,6 @@ class Selector(Record):
             cfilter['$and'].append(downtime)
 
         self.logger.debug('Generated cfilter is')
-        self.logger.debug(pp.pformat(cfilter))
 
         return cfilter
 
@@ -357,7 +355,6 @@ class Selector(Record):
             mfilter['ack.isAck'] = {'$ne': True}
 
         self.logger.debug('Selector mfilter')
-        self.logger.debug(pp.pformat(mfilter))
 
         # Computes worst state for events that are not acknowleged
         result_ack_worst_state = self.storage.get_backend(
