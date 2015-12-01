@@ -204,8 +204,10 @@ class TimeSerie(Configurable):
         fn = None
 
         # if no period and max_points > len(points)
-        if (not points) or self.period is None\
-                and self.max_points > points_len:
+        if (
+            (not points) or self.period is None
+                and self.max_points > points_len
+        ):
             result = points  # result is points
 
         else:  # else get the right aggregation function
@@ -221,43 +223,45 @@ class TimeSerie(Configurable):
             values_to_aggregate = []
             last_point = None
 
+            len_timesteps = len(timesteps)
+
             # iterate on all timesteps in order to get points in [prev_ts, ts[
-            for index in range(1, len(timesteps)):
+            for index, timestamp in enumerate(timesteps):
                 # initialize values_to_aggregate
                 values_to_aggregate = []
                 # set timestamp and previous_timestamp
-                previous_timestamp = timesteps[index - 1]
-                timestamp = timesteps[index]
 
-                # if no point to process in [previous_timestamp, timestamp]
-                if points[i][0] > timestamp:
-                    continue  # go to the next iteration
+                if index < len_timesteps:  # calculate the upper bound
+                    next_timestamp = timesteps[index + 1]
+                else:
+                    next_timestamp = 0
 
                 # fill the values_to_aggregate array
-                while i < points_len:  # while there are points to process
+                for i in range(i, points_len):  # while points to process
 
-                    _timestamp, value = points[i]
-                    i += 1
+                    pt_ts, pt_val = points[i]
 
                     # leave the loop if _timestamp is for a future aggregation
-                    if _timestamp > timestamp:
+                    if pt_ts >= next_timestamp:
                         break
 
-                    # if _timestamp is in timewindow and value is not None
-                    # add value to list of values to aggregate
-                    if value is not None:
-                        values_to_aggregate.append(value)
+                    else:
+                        # if _timestamp is in timewindow and value is not None
+                        # add value to list of values to aggregate
+                        if pt_val is not None:
+                            values_to_aggregate.append(pt_val)
 
                 # TODO: understand what it means :D
                 if self.aggregation == "DELTA" and last_point:
                     values_to_aggregate.insert(0, last_point)
 
                 # get the aggregated value related to values_to_aggregate
-                _aggregation_value = self._aggregation_value(
-                    values_to_aggregate, fn)
+                aggregation_value = self._aggregation_value(
+                    values_to_aggregate, fn
+                )
 
                 # new point to add to result
-                aggregation_point = previous_timestamp, _aggregation_value
+                aggregation_point = timestamp, aggregation_value
                 result.append(aggregation_point)
 
                 # save last_point for future DELTA checking
