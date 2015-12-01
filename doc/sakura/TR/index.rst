@@ -36,3 +36,12 @@ High-Level features
    tr__alarm
    tr__serie
    tr__statistics
+
+Frontend
+--------
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
+
+   tr__ui_scenarios
