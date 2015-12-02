@@ -22,13 +22,11 @@ _AGGREGATIONS = {}
 
 
 class AggregationError(Exception):
-    pass
+    """Handle Aggregation errors."""
 
 
 def get_aggregations():
-    """
-    Get aggregation functions by name.
-    """
+    """Get aggregation functions by name."""
 
     result = _AGGREGATIONS.copy()
 
@@ -36,8 +34,7 @@ def get_aggregations():
 
 
 def get_aggregation_value(name, points):
-    """
-    Get aggregation value where with related name and points.
+    """Get aggregation value where with related name and points.
 
     Points must have only real values.
     """
@@ -52,8 +49,7 @@ def get_aggregation_value(name, points):
 
 
 def add_aggregation(name, function, push=False):
-    """
-    Set an aggregation function to this AGGREGATIONS module variable.
+    """Set an aggregation function to this AGGREGATIONS module variable.
 
     - push : if False, raise an AggregationError if an aggregation has already
       been added with the same name.
@@ -72,36 +68,43 @@ add_aggregation('NONE', None)
 
 
 def _mean(points):
+    """Calculate mean of points."""
     return sum(points) / len(points)
 add_aggregation('MEAN', _mean)
 add_aggregation('AVERAGE', _mean)
 
 
 def _last(points):
+    """Get the last point."""
     return points[-1]
 add_aggregation('LAST', _last)
 
 
 def _first(points):
+    """Get the first point."""
     return points[0]
 add_aggregation('FIRST', _first)
 
 
 def _delta(points):
+    """Get the delta value."""
     return (max(points) - min(points)) / 2
 add_aggregation('DELTA', _delta)
 
 
 def _sum(points):
+    """Get the sum."""
     return sum(points)
 add_aggregation('SUM', _sum)
 
 
 def _max(points):
+    """Get the max."""
     return max(points)
 add_aggregation('MAX', _max)
 
 
 def _min(points):
+    """Get the min."""
     return min(points)
 add_aggregation('MIN', _min)

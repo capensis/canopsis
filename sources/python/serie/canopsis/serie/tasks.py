@@ -18,20 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Module of serie tasks."""
+
 from canopsis.timeserie.aggregation import get_aggregations
-from canopsis.timeserie.timewindow import TimeWindow
 from canopsis.timeserie.core import TimeSerie
 from canopsis.task.core import register_task
 
 
-def new_operator(op, manager, period, perfdatas, timewindow):
-    """
-    Create a new operator usable in the restricted Python environment.
+def new_operator(opname, manager, period, perfdatas, timewindow):
+    """Create a new operator usable in the restricted Python environment.
 
     This operator will be used in the formula.
 
-    :param op: Operator name
-    :type op: str
+    :param opname: Operator name
+    :type opname: str
 
     :param manager: Serie manager
     :type manager: canopsis.serie.manager.Serie
@@ -61,16 +61,16 @@ def new_operator(op, manager, period, perfdatas, timewindow):
         points = manager.subset_perfdata_superposed(regex, perfdatas)
         result = float('nan')
 
-        if len(points) > 0:
-            ts = TimeSerie(
+        if points:
+            timeserie = TimeSerie(
                 period=period,
-                aggregation=op,
+                aggregation=opname,
                 round_time=True
             )
 
-            consolidated = ts.calculate(points, timewindow)
+            consolidated = timeserie.calculate(points, timewindow)
 
-            if len(consolidated) > 0:
+            if consolidated:
                 result = consolidated[0][1]
 
         return result
