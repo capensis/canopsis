@@ -248,7 +248,10 @@ class Serie(MiddlewareRegistry):
 
         # generate one point per aggregation interval in timewindow
         for interval in intervals:
-            timewindow = TimeWindow(intervals=interval)
+            timewindow = TimeWindow(
+                start=interval['begin'],
+                stop=interval['end']
+            )
 
             # operators are acting on a specific timewindow
             operators = operatorset(self, period, perfdatas, timewindow)
