@@ -25,6 +25,7 @@ from time import time
 
 from canopsis.engines.collectd_utils import types
 
+import re
 
 class engine(Engine):
     etype = 'collectdgw'
@@ -43,9 +44,14 @@ class engine(Engine):
         start = time()
         error = False
 
-        collectd_info = body.split(' ')
-
-        if len(collectd_info) > 0:
+        prog = re.compile('^(PUTVAL) ("(.+)"|([^\s]+)) (interval=.+) ([^\s]+)$')
+        match = re.match(prog, body)
+        if match:
+            if match.group(3):
+                cnode = match.group(3)
+            else:
+                cnode = match.group(4)
+            collectd_info = [match.group(1),cnode,match.group(5),match.group(6)]
             self.logger.debug(body)
             action = collectd_info[0]
             self.logger.debug(" + Action: %s" % action)
@@ -147,10 +153,9 @@ class engine(Engine):
                         connector_name='collectd2event',
                         component=component,
                         resource=resource,
-                        timestamp=None,
+                        timestamp=timestamp,
                         source_type='resource',
-                        event_type='check',
-                        state=0,
+                        event_type='perf',
                         perf_data_array=perf_data_array
                     )
 
