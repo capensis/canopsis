@@ -60,13 +60,13 @@ class TimeSerie(Configurable):
     CATEGORY = 'TIMESERIE'
 
     def __init__(
-        self,
-        aggregation=VDEFAULT_AGGREGATION,
-        max_points=VMAX_POINTS,
-        period=None,
-        round_time=VROUND_TIME,
-        fill=VFILL,
-        *args, **kwargs
+            self,
+            aggregation=VDEFAULT_AGGREGATION,
+            max_points=VMAX_POINTS,
+            period=None,
+            round_time=VROUND_TIME,
+            fill=VFILL,
+            *args, **kwargs
     ):
 
         super(TimeSerie, self).__init__(*args, **kwargs)
