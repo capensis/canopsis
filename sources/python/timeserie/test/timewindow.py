@@ -122,7 +122,7 @@ class PeriodTest(TestCase):
                             self.assertEqual(round_value, 0)
 
                 if Period.MICROSECOND is not unit:
-                    normalized_dt = period.round_datetime(dt, normalize=True)
+                    normalized_dt = period.round_datetime(dt)
                     for _unit in Period.UNITS[0:Period.UNITS.index(unit) - 1]:
                         if _unit is not Period.WEEK:
                             normalized_dt_unit = getattr(normalized_dt, _unit)

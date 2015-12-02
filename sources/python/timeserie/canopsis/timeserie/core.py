@@ -142,9 +142,7 @@ class TimeSerie(Configurable):
         stop_datetime = timewindow.stop_datetime()
 
         if self.round_time:  # normalize if round time is True
-            start_datetime = period.round_datetime(
-                datetime=start_datetime, normalize=True
-            )
+            start_datetime = period.round_datetime(datetime=start_datetime)
 
         current_datetime = start_datetime
         delta = period.get_delta()
@@ -174,8 +172,7 @@ class TimeSerie(Configurable):
         if self.round_time:
             period = self._get_period(timewindow)
             round_starttimestamp = period.round_timestamp(
-                timestamp=timewindow.start(),
-                normalize=True
+                timestamp=timewindow.start()
             )
             timewindow = timewindow.reduce(
                 start=round_starttimestamp,
