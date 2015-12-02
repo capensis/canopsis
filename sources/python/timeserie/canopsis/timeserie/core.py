@@ -60,13 +60,13 @@ class TimeSerie(Configurable):
     CATEGORY = 'TIMESERIE'
 
     def __init__(
-        self,
-        aggregation=VDEFAULT_AGGREGATION,
-        max_points=VMAX_POINTS,
-        period=None,
-        round_time=VROUND_TIME,
-        fill=VFILL,
-        *args, **kwargs
+            self,
+            aggregation=VDEFAULT_AGGREGATION,
+            max_points=VMAX_POINTS,
+            period=None,
+            round_time=VROUND_TIME,
+            fill=VFILL,
+            *args, **kwargs
     ):
 
         super(TimeSerie, self).__init__(*args, **kwargs)
@@ -255,18 +255,18 @@ class TimeSerie(Configurable):
                 if self.aggregation == "DELTA" and last_point:
                     values_to_aggregate.insert(0, last_point)
 
-                # get the aggregated value related to values_to_aggregate
-                aggregation_value = self._aggregation_value(
-                    values_to_aggregate, fn
-                )
+                if values_to_aggregate:
 
-                if aggregation_value is not None:  # new point to add to result
-                    aggregation_point = timestamp, aggregation_value
-                    result.append(aggregation_point)
+                    # get the aggregated value related to values_to_aggregate
+                    aggregation_value = self._aggregation_value(
+                        values_to_aggregate, fn
+                    )
 
-                # save last_point for future DELTA checking
-                if len(values_to_aggregate) > 0:
-                    last_point = values_to_aggregate[-1]
+                    if aggregation_value is not None:  # new point to add to result
+                        aggregation_point = timestamp, aggregation_value
+                        result.append(aggregation_point)
+                        # save last_point for future DELTA checking
+                        last_point = aggregation_point[-1]
 
                 if i >= points_len:
                     break
