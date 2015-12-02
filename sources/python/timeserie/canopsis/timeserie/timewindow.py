@@ -549,7 +549,9 @@ class Interval(object):
             :return: list of intervals
             :rtype: list
         """
-        period = Period(**period)
+        if isinstance(period, dict):
+            period = Period(**period)
+
         delta = period.get_delta()
         timewindow = TimeWindow()
 
