@@ -62,7 +62,9 @@
             "title": "Last computation",
             "description": "Timestamp of last computation",
             "type": "integer",
-            "default": 0
+            "default": 0,
+            "role": "eventtimestamp",
+            "canDisplayAgo": true
         },
         "computations_per_interval": {
             "title": "Number of computation per interval",
