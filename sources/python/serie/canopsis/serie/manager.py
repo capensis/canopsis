@@ -24,7 +24,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 
 from canopsis.serie.utils import build_filter_from_regex
-from canopsis.timeserie.timewindow import Period, TimeWindow
+from canopsis.timeserie.timewindow import Period, Interval, TimeWindow
 from canopsis.timeserie.core import TimeSerie
 from canopsis.task.core import get_task
 
@@ -32,7 +32,6 @@ from canopsis.old.mfilter import check
 
 from RestrictedPython import compile_restricted
 from RestrictedPython.Guards import safe_builtins
-from time import time
 
 
 CONF_PATH = 'serie/manager.conf'
@@ -201,7 +200,7 @@ class Serie(MiddlewareRegistry):
         :param serieconf: Serie used for aggregation
         :type serieconf: dict
 
-        :param timewindow: Time window used for perfdata fetching (optional)
+        :param timewindow: Time window used for perfdata fetching
         :type timewindow: canopsis.timeserie.timewindow.TimeWindow
 
         :returns: aggregated perfdata classified by metric id as dict
@@ -245,7 +244,7 @@ class Serie(MiddlewareRegistry):
 
         return perfdatas
 
-    def consolidation(self, serieconf, perfdatas):
+    def consolidation(self, serieconf, perfdatas, timewindow):
         """
         Get consolidated point from serie.
 
@@ -255,7 +254,10 @@ class Serie(MiddlewareRegistry):
         :param perfdatas: Aggregated perfdatas from ``aggregation()`` method
         :type perfdatas: dict
 
-        :returns: Consolidated point as float
+        :param timewindow: Time window used for consolidation
+        :type timewindow: canopsis.timeserie.timewindow.TimeWindow
+
+        :returns: Consolidated points
         """
 
         # configure consolidation period (same as aggregation period)
@@ -267,24 +269,51 @@ class Serie(MiddlewareRegistry):
         else:
             period = Period(second=interval)
 
+        fixed_interval = serieconf.get(
+            'round_time_interval',
+            TimeSerie.VROUND_TIME
+        )
+
+        if fixed_interval:
+            timewindow = self.get_fixed_timewindow(
+                timewindow=timewindow, period=period
+            )
+
+        intervals = Interval.get_intervals_by_period(
+            timewindow.start(),
+            timewindow.stop(),
+            period
+        )
+
+        points = []
+
         # generator consolidation operators
         operatorset = get_task('serie.operatorset')
-        operators = operatorset(self, period, perfdatas)
 
-        # execute formula in sand-boxed environment
-        restricted_globals = {
-            '__builtins__': safe_builtins,
-        }
+        # generate one point per aggregation interval in timewindow
+        for interval in intervals:
+            tw = TimeWindow(intervals=interval)
 
-        restricted_globals.update(operators)
+            # operators are acting on a specific timewindow
+            operators = operatorset(self, period, perfdatas, tw)
 
-        expression = 'result = {0}'.format(serieconf['formula'])
-        code = compile_restricted(expression, '<string>', 'exec')
+            # execute formula in sand-boxed environment
+            restricted_globals = {
+                '__builtins__': safe_builtins,
+            }
 
-        exec(code) in restricted_globals
+            restricted_globals.update(operators)
 
-        # result contains consolidated point
-        return restricted_globals['result']
+            expression = 'result = {0}'.format(serieconf['formula'])
+            code = compile_restricted(expression, '<string>', 'exec')
+
+            exec(code) in restricted_globals
+
+            # result contains consolidated value
+            # point is computed at the start of interval
+            points.append((tw.start(), restricted_globals['result']))
+
+        return points
 
     def calculate(self, serieconf, timewindow):
         """
@@ -293,19 +322,19 @@ class Serie(MiddlewareRegistry):
         :param serieconf: Serie to compute
         :type serieconf: dict
 
-        :param timewindow: Time Window to use for aggregation (optional)
+        :param timewindow: Time Window to use for aggregation
         :type timewindow: canopsis.timeserie.timewindow.TimeWindow
 
-        :returns: Computed point as int
+        :returns: Computed points
         """
 
         perfdatas = self.aggregation(serieconf, timewindow)
-        point = self.consolidation(serieconf, perfdatas)
+        points = self.consolidation(serieconf, perfdatas, timewindow)
 
         serieconf['last_computation'] = timewindow.stop()
         self[Serie.SERIE_STORAGE].put_element(element=serieconf)
 
-        return point
+        return points
 
     def get_series(self, timestamp):
         """
