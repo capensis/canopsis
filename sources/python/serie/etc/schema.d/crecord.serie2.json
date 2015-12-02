@@ -63,6 +63,12 @@
             "description": "Timestamp of last computation",
             "type": "integer",
             "default": 0
+        },
+        "computations_per_interval": {
+            "title": "Number of computation per interval",
+            "description": "Define how many times a point is calculated",
+            "type": "integer",
+            "default": 1
         }
     },
     "categories": [{
@@ -76,6 +82,6 @@
         "keys": ["aggregation_method", "aggregation_interval", "round_time_interval"]
     },{
         "title": "Consolidation",
-        "keys": ["formula"]
+        "keys": ["formula", "computations_per_interval"]
     }]
 }

@@ -48,34 +48,14 @@ class Serie(MiddlewareRegistry):
     CONTEXT_MANAGER = 'context'
     PERFDATA_MANAGER = 'perfdata'
 
-    @property
-    def points_per_interval(self):
-        """Maximum number of points in a consolidation interval."""
-
-        if not hasattr(self, '_points_per_interval'):
-            self.points_per_interval = None
-
-        return self._points_per_interval
-
-    @points_per_interval.setter
-    def points_per_interval(self, value):
-        if value is None:
-            value = 10
-
-        self._points_per_interval = value
-
     def __init__(
             self,
-            points_per_interval=None,
             serie_storage=None,
             context=None,
             perfdata=None,
             *args, **kwargs
     ):
         super(Serie, self).__init__(*args, **kwargs)
-
-        if points_per_interval is not None:
-            self.points_per_interval = points_per_interval
 
         if serie_storage is not None:
             self[Serie.SERIE_STORAGE] = serie_storage
@@ -353,7 +333,7 @@ class Serie(MiddlewareRegistry):
             timestamp,
             'this.last_computation',
             'this.aggregation_interval',
-            self.points_per_interval
+            'this.computations_per_interval'
         )
 
         return storage.find_elements(query={'$where': javascript_condition})
