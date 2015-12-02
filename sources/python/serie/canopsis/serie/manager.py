@@ -18,10 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Module of the serie manager."""
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.model import Parameter
 
 from canopsis.serie.utils import build_filter_from_regex
 from canopsis.timeserie.timewindow import Period, Interval, TimeWindow
@@ -36,17 +37,16 @@ from RestrictedPython.Guards import safe_builtins
 
 CONF_PATH = 'serie/manager.conf'
 CATEGORY = 'SERIE'
-CONTENT = [Parameter('points_per_interval', int)]
 
 
 @conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
+@add_category(CATEGORY)
 class Serie(MiddlewareRegistry):
     """Serie manager."""
 
-    SERIE_STORAGE = 'serie_storage'
-    CONTEXT_MANAGER = 'context'
-    PERFDATA_MANAGER = 'perfdata'
+    SERIE_STORAGE = 'serie_storage'  #: serie storage name.
+    CONTEXT_MANAGER = 'context'  #: serie context manager name.
+    PERFDATA_MANAGER = 'perfdata'  #: serie perfdata manager name.
 
     def __init__(
             self,
@@ -153,26 +153,6 @@ class Serie(MiddlewareRegistry):
 
         return points
 
-    def get_fixed_timewindow(self, timewindow, period):
-        """Get the fixed timewindow corresponding to the input timewindow and
-        period.
-
-        :param timewindow: Input time window
-        :type timewindow: canopsis.timeserie.timewindow.TimeWindow
-
-        :param period: Input period
-        :type period: canopsis.timeserie.timewindow.Period
-
-        :rtype: canopsis.timeserie.timewindow.TimeWindow
-        """
-
-        return TimeWindow(
-            start=period.round_timestamp(timewindow.start(), normalize=True),
-            stop=period.round_timestamp(
-                timewindow.stop(), normalize=True, next_period=True
-            )
-        )
-
     def aggregation(self, serieconf, timewindow):
         """
         Get aggregated perfdata from serie.
@@ -199,7 +179,7 @@ class Serie(MiddlewareRegistry):
             TimeSerie.VROUND_TIME
         )
 
-        ts = TimeSerie(
+        timeserie = TimeSerie(
             period=period,
             aggregation=serieconf.get(
                 'aggregation_method',
@@ -209,15 +189,13 @@ class Serie(MiddlewareRegistry):
         )
 
         if fixed_interval:
-            timewindow = self.get_fixed_timewindow(
-                timewindow=timewindow, period=period
-            )
+            timewindow = timewindow.get_round_timewindow(period=period)
 
         metrics = self.get_metrics(serieconf['metric_filter'])
         perfdatas = self.get_perfdata(metrics, timewindow=timewindow)
 
         for key in perfdatas:
-            perfdatas[key]['aggregated'] = ts.calculate(
+            perfdatas[key]['aggregated'] = timeserie.calculate(
                 perfdatas[key]['points'],
                 timewindow
             )
@@ -255,9 +233,7 @@ class Serie(MiddlewareRegistry):
         )
 
         if fixed_interval:
-            timewindow = self.get_fixed_timewindow(
-                timewindow=timewindow, period=period
-            )
+            timewindow = timewindow.get_round_timewindow(period=period)
 
         intervals = Interval.get_intervals_by_period(
             timewindow.start(),
@@ -272,10 +248,10 @@ class Serie(MiddlewareRegistry):
 
         # generate one point per aggregation interval in timewindow
         for interval in intervals:
-            tw = TimeWindow(intervals=interval)
+            timewindow = TimeWindow(intervals=interval)
 
             # operators are acting on a specific timewindow
-            operators = operatorset(self, period, perfdatas, tw)
+            operators = operatorset(self, period, perfdatas, timewindow)
 
             # execute formula in sand-boxed environment
             restricted_globals = {
@@ -291,7 +267,7 @@ class Serie(MiddlewareRegistry):
 
             # result contains consolidated value
             # point is computed at the start of interval
-            points.append((tw.start(), restricted_globals['result']))
+            points.append((timewindow.start(), restricted_globals['result']))
 
         return points
 

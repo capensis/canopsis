@@ -857,6 +857,22 @@ class TimeWindow(object):
         result = TimeWindow(intervals=interval, timezone=self.timezone)
         return result
 
+    def get_round_timewindow(self, period):
+        """Get a rounded timewindow thanks to input period.
+
+        :param period: Input period
+        :type period: canopsis.timeserie.timewindow.Period
+
+        :rtype: canopsis.timeserie.timewindow.TimeWindow
+        """
+
+        return TimeWindow(
+            start=period.round_timestamp(self.start(), normalize=True),
+            stop=period.round_timestamp(
+                self.stop(), normalize=True, next_period=True
+            )
+        )
+
 
 def get_offset_timewindow(offset=None):
     """Get a timewindow with one point."""

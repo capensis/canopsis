@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Module of serie processing tasks."""
+
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 from canopsis.engines.core import publish
@@ -30,11 +32,13 @@ from time import time
 
 @register_task
 def beat_processing(engine, manager=None, logger=None, **kwargs):
+    """Engine beat processing task."""
+
     if manager is None:
         manager = singleton_per_scope(Serie)
 
-    with engine.Lock(engine, 'serie_fetching') as l:
-        if l.own():
+    with engine.Lock(engine, 'serie_fetching') as lock:
+        if lock.own():
             for serie in manager.get_series(time()):
                 publish(
                     publisher=engine.amqp,
@@ -47,6 +51,8 @@ def beat_processing(engine, manager=None, logger=None, **kwargs):
 
 @register_task
 def serie_processing(engine, event, manager=None, logger=None, **kwargs):
+    """Engine work processing task."""
+
     if manager is None:
         manager = singleton_per_scope(Serie)
 
