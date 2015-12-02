@@ -33,14 +33,16 @@ def beat_processing(engine, manager=None, logger=None, **kwargs):
     if manager is None:
         manager = singleton_per_scope(Serie)
 
-    for serie in manager.get_series(time()):
-        publish(
-            publisher=engine.amqp,
-            event=serie,
-            rk=engine.amqp_queue,
-            exchange='amq.direct',
-            logger=logger
-        )
+    with engine.Lock(engine, 'serie_fetching') as l:
+        if l.own():
+            for serie in manager.get_series(time()):
+                publish(
+                    publisher=engine.amqp,
+                    event=serie,
+                    rk=engine.amqp_queue,
+                    exchange='amq.direct',
+                    logger=logger
+                )
 
 
 @register_task
@@ -55,27 +57,31 @@ def serie_processing(engine, event, manager=None, logger=None, **kwargs):
         stop=now
     )
 
-    point = manager.calculate(event, timewin)
+    points = manager.calculate(event, timewin)
 
-    metric = {
-        'metric': event['crecord_name'],
-        'value': point,
-        'type': 'GAUGE'
-    }
+    events = []
 
-    for meta in ['unit', 'min', 'max', 'warn', 'crit']:
-        if event.get(meta, None) is not None:
-            metric[meta] = event[meta]
+    for point in points:
+        metric = {
+            'metric': event['crecord_name'],
+            'value': point[1],
+            'type': 'GAUGE'
+        }
 
-    event = {
-        'timestamp': int(now),
-        'connector': 'canopsis',
-        'connector_name': engine.name,
-        'event_type': 'perf',
-        'source_type': 'resource',
-        'component': event['component'],
-        'resource': event['resource'],
-        'perf_data_array': [metric]
-    }
+        for meta in ['unit', 'min', 'max', 'warn', 'crit']:
+            if event.get(meta, None) is not None:
+                metric[meta] = event[meta]
 
-    publish(publisher=engine.amqp, event=event, logger=logger)
+        events.append({
+            'timestamp': point[0],
+            'connector': 'canopsis',
+            'connector_name': engine.name,
+            'event_type': 'perf',
+            'source_type': 'resource',
+            'component': event['component'],
+            'resource': event['resource'],
+            'perf_data_array': [metric]
+        })
+
+    for event in events:
+        publish(publisher=engine.amqp, event=event, logger=logger)
