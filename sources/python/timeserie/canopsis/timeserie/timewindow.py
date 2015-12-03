@@ -220,9 +220,11 @@ class Period(object):
         In this case, r corresponds to "2015/03/01 15:05".
         If normalize equals True, r corresponds to "2015/03/01 00:00"
         """
-        
+
         datetime = dt.utcfromtimestamp(float(timestamp))
-        datetime = self.round_datetime(datetime=datetime, next_period=next_period)
+        datetime = self.round_datetime(
+            datetime=datetime, next_period=next_period
+        )
 
         utctimetuple = datetime.utctimetuple()
         result = timegm(utctimetuple)
@@ -247,7 +249,7 @@ class Period(object):
         monday before 2015/03/01.
         If normalize equals True, r corresponds to "2015/m/d 00:00"
         """
-    
+
         result = None
 
         parameters = {}
