@@ -51,7 +51,7 @@ class Period(object):
 
     UNITS = (MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR)
 
-    MAX_UNIT_VALUES = (10000000, 60, 60, 24, 7, 4, 31, 100)
+    MAX_UNIT_VALUES = (10**-9, 60, 60, 24, 7, 4, 12, 1000)
 
     UNIT = 'unit'
     VALUE = 'value'
@@ -61,6 +61,8 @@ class Period(object):
         super(Period, self).__init__()
 
         self.unit_values = unit_values
+
+        self.clean()
 
     def __repr__(self):
 
@@ -125,6 +127,24 @@ class Period(object):
 
         return self
 
+    def clean(self):
+        """Clean this content in avoiding to get unit values greater than normal
+        unit values.
+
+        For example, 300 seconds is converted to 5 mn.
+        """
+
+        for index, unit in enumerate(Period.UNITS[:-1]):
+            unitvalue = self.unit_values.get(unit)
+
+            if unitvalue:
+                maxunitvalue = Period.MAX_UNIT_VALUES[index]
+                nextunitvalue = unitvalue / maxunitvalue
+                if nextunitvalue:
+                    nextunit = Period.UNITS[index + 1]
+                    self[nextunit] = self.unit_values.get(nextunit, 0) + nextunitvalue
+                    self[unit] = unitvalue % maxunitvalue
+
     def total_seconds(self):
         """Get number of seconds.
 
@@ -135,29 +155,15 @@ class Period(object):
 
         result = 0
 
-        if Period.MICROSECOND in self:
-            result += self[Period.MICROSECOND] * 10 ** -9
+        seconds = 1
 
-        if Period.SECOND in self:
-            result += self[Period.SECOND]
+        for index, unit in enumerate(Period.UNITS):
 
-        if Period.MINUTE in self:
-            result += self[Period.MINUTE] * 60
+            if unit in self.unit_values:
+                result += self.unit_values[unit] * seconds
 
-        if Period.HOUR in self:
-            result += self[Period.HOUR] * 3600
-
-        if Period.DAY in self:
-            result += self[Period.DAY] * 86400
-
-        if Period.WEEK in self:
-            result += self[Period.WEEK] * 604800
-
-        if Period.MONTH in self:
-            result += self[Period.MONTH] * 2592000
-
-        if Period.YEAR in self:
-            result += self[Period.YEAR] * 31536000
+            if index > 1:
+                seconds *= Period.MAX_UNIT_VALUES[index]
 
         return result
 
@@ -214,13 +220,16 @@ class Period(object):
         In this case, r corresponds to "2015/03/01 15:05".
         If normalize equals True, r corresponds to "2015/03/01 00:00"
         """
+        
+        datetime = dt.utcfromtimestamp(float(timestamp))
+        datetime = self.round_datetime(datetime=datetime, next_period=next_period)
 
-        diff = timestamp % self.total_seconds()
+        utctimetuple = datetime.utctimetuple()
+        result = timegm(utctimetuple)
 
-        result = timestamp - diff
-
-        if next_period:
-            result += self.total_seconds()
+        # restore microsecond because utctimetuple() does not
+        microseconds = datetime.microsecond * Period.MAX_UNIT_VALUES[0]
+        result += microseconds
 
         return result
 
@@ -238,16 +247,36 @@ class Period(object):
         monday before 2015/03/01.
         If normalize equals True, r corresponds to "2015/m/d 00:00"
         """
-
+    
         result = None
 
-        timestamp = TimeWindow.get_timestamp(datetime)
+        parameters = {}
 
-        round_timestamp = self.round_timestamp(
-            timestamp=timestamp, next_period=next_period
-        )
+        unit_values = self.unit_values
 
-        result = datetime.fromtimestamp(round_timestamp)
+        for unit in unit_values:
+            value = max(1, unit_values[unit])
+            if unit == Period.WEEK:
+                _monthcalendar = monthcalendar(
+                    datetime.year, datetime.month
+                )
+                for week_index, week in enumerate(_monthcalendar):
+                    if datetime.day in week:
+                        datetime_value = week_index
+                        break
+            else:
+                datetime_value = getattr(datetime, unit)
+            rounding_period_value = datetime_value % value
+            parameters[unit] = rounding_period_value
+
+        rounding_period = Period(**parameters)
+
+        delta = rounding_period.get_delta()
+
+        result = datetime - delta
+
+        if next_period:
+            result = result + self.get_delta()
 
         return result
 
