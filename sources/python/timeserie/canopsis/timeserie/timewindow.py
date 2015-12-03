@@ -51,7 +51,7 @@ class Period(object):
 
     UNITS = (MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR)
 
-    MAX_UNIT_VALUES = (10**-9, 60, 60, 24, 7, 4, 12, 1000)
+    MAX_UNIT_VALUES = (10**9, 60, 60, 24, 7, 4, 12, 1000)
 
     UNIT = 'unit'
     VALUE = 'value'
@@ -140,10 +140,17 @@ class Period(object):
             if unitvalue:
                 maxunitvalue = Period.MAX_UNIT_VALUES[index]
                 nextunitvalue = unitvalue / maxunitvalue
+
                 if nextunitvalue:
                     nextunit = Period.UNITS[index + 1]
-                    self[nextunit] = self.unit_values.get(nextunit, 0) + nextunitvalue
-                    self[unit] = unitvalue % maxunitvalue
+                    self.unit_values[nextunit] = self.unit_values.get(nextunit, 0) + nextunitvalue
+                    unitvalue = int(unitvalue % maxunitvalue)
+
+                if unitvalue:
+                    self.unit_values[unit] = unitvalue
+                    
+                else:
+                    del self.unit_values[unit]
 
     def total_seconds(self):
         """Get number of seconds.
@@ -155,15 +162,15 @@ class Period(object):
 
         result = 0
 
+        if Period.MICROSECOND in self.unit_values:
+            result = self[Period.MICROSECOND] * 10**9
+
         seconds = 1
 
-        for index, unit in enumerate(Period.UNITS):
+        for index, unit in enumerate(Period.UNITS[1:]):
 
             if unit in self.unit_values:
                 result += self.unit_values[unit] * seconds
-
-            if index > 1:
-                seconds *= Period.MAX_UNIT_VALUES[index]
 
         return result
 
@@ -250,27 +257,39 @@ class Period(object):
     
         result = None
 
-        parameters = {}
+        params = {}
+        intermediar_params = {}
 
         unit_values = self.unit_values
 
-        for unit in unit_values:
-            value = max(1, unit_values[unit])
-            if unit == Period.WEEK:
-                _monthcalendar = monthcalendar(
-                    datetime.year, datetime.month
-                )
-                for week_index, week in enumerate(_monthcalendar):
-                    if datetime.day in week:
-                        datetime_value = week_index
-                        break
+        for unit in Period.UNITS:
+            if unit not in self.unit_values:
+                if unit != Period.WEEK:
+                    intermediar_params[unit] = int(getattr(datetime, unit))
+
             else:
-                datetime_value = getattr(datetime, unit)
-            rounding_period_value = datetime_value % value
-            parameters[unit] = rounding_period_value
+                value = max(1, self.unit_values[unit])
+                if intermediar_params:
+                    params.update(intermediar_params)
+                    intermediar_params.clear()
+            
+                if unit == Period.WEEK:
+                    _monthcalendar = monthcalendar(
+                        datetime.year, datetime.month
+                    )
+                    for week_index, week in enumerate(_monthcalendar):
+                        if datetime.day in week:
+                            datetime_value = week_index
+                            break
 
-        rounding_period = Period(**parameters)
+                else:
+                    datetime_value = getattr(datetime, unit)
 
+                rounding_period_value = int(datetime_value % value)
+                params[unit] = rounding_period_value
+
+        print(params)
+        rounding_period = Period(**params)
         delta = rounding_period.get_delta()
 
         result = datetime - delta
