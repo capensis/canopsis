@@ -115,7 +115,6 @@ class TimeSerieTest(TestCase):
                 self.assertEqual(timesteps_gap, period_length)
 
                 for i in range(5):
-
                     points = [
                         (t, random()) for t in
                         range(
