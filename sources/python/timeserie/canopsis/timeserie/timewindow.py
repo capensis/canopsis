@@ -148,7 +148,7 @@ class Period(object):
 
                 if unitvalue:
                     self.unit_values[unit] = unitvalue
-                    
+
                 else:
                     del self.unit_values[unit]
 
@@ -163,7 +163,7 @@ class Period(object):
         result = 0
 
         if Period.MICROSECOND in self.unit_values:
-            result = self[Period.MICROSECOND] * 10**9
+            result = self[Period.MICROSECOND] * 10**-9
 
         seconds = 1
 
@@ -171,6 +171,8 @@ class Period(object):
 
             if unit in self.unit_values:
                 result += self.unit_values[unit] * seconds
+
+            seconds *= Period.MAX_UNIT_VALUES[index + 1]
 
         return result
 
@@ -274,7 +276,7 @@ class Period(object):
                 if intermediar_params:
                     params.update(intermediar_params)
                     intermediar_params.clear()
-            
+
                 if unit == Period.WEEK:
                     _monthcalendar = monthcalendar(
                         datetime.year, datetime.month
