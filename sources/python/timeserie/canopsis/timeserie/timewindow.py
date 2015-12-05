@@ -51,7 +51,7 @@ class Period(object):
 
     UNITS = (MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR)
 
-    MAX_UNIT_VALUES = (10**9, 60, 60, 24, 7, 4, 12, 1000)
+    MAX_UNIT_VALUES = (10**9, 60, 60, 24, 7, 4, 12, 10**10)
 
     UNIT = 'unit'
     VALUE = 'value'
@@ -267,12 +267,18 @@ class Period(object):
         unit_values = self.unit_values
 
         for unit in Period.UNITS:
+
             if unit not in self.unit_values:
-                if unit != Period.WEEK:
+
+                if unit in (Period.DAY, Period.MONTH):
+                    intermediar_params[unit] = int(getattr(datetime, unit)) - 1
+
+                elif unit != Period.WEEK:
                     intermediar_params[unit] = int(getattr(datetime, unit))
 
             else:
                 value = max(1, self.unit_values[unit])
+
                 if intermediar_params:
                     params.update(intermediar_params)
                     intermediar_params.clear()
@@ -290,6 +296,7 @@ class Period(object):
                     datetime_value = getattr(datetime, unit)
 
                 rounding_period_value = int(datetime_value % value)
+
                 params[unit] = rounding_period_value
 
         rounding_period = Period(**params)
