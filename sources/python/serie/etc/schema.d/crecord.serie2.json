@@ -3,6 +3,13 @@
     "description": "Aggregation/Consolidation operations on filtered metrics",
     "type": "object",
     "properties": {
+        "usenan": {
+            "title": "Include empty intervals",
+            "descriptrion": "Nonify aggregated intervals if empty intervals exist among aggregations.",
+            "type": "boolean",
+            "required": true,
+            "default": true
+        },
         "component": {
             "title": "Component",
             "description": "Component of produced event",

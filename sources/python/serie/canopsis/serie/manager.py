@@ -190,6 +190,8 @@ class Serie(MiddlewareRegistry):
             TimeSerie.VROUND_TIME
         )
 
+        usenan = serieconf.get('usenan', True)
+
         timeserie = TimeSerie(
             period=period,
             aggregation=serieconf.get(
@@ -207,8 +209,9 @@ class Serie(MiddlewareRegistry):
 
         for key in perfdatas:
             perfdatas[key]['aggregated'] = timeserie.calculate(
-                perfdatas[key]['points'],
-                timewindow
+                points=perfdatas[key]['points'],
+                timewindow=timewindow,
+                usenan=usenan
             )
 
         return perfdatas
@@ -246,6 +249,8 @@ class Serie(MiddlewareRegistry):
             period
         )
 
+        usenan = serieconf.get('usenan', True)
+
         points = []
 
         # generator consolidation operators
@@ -259,7 +264,7 @@ class Serie(MiddlewareRegistry):
             )
 
             # operators are acting on a specific timewindow
-            operators = operatorset(self, period, perfdatas, timewindow)
+            operators = operatorset(self, period, perfdatas, timewindow, usenan)
 
             # execute formula in sand-boxed environment
             restricted_globals = {

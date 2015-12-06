@@ -187,7 +187,7 @@ class TimeSerie(Configurable):
         # start to exclude points which are not in timewindow
         points = [
             point for point in points
-            if point[0] in timewindow and usenan or not isnan(point[1])
+            if point[0] in timewindow and (usenan or not isnan(point[1]))
         ]
 
         if not meta:
@@ -247,7 +247,8 @@ class TimeSerie(Configurable):
                             values_to_aggregate.append(pt_val)
 
                 else:
-                    result.append((timestamp, float('nan')))
+                    if usenan:
+                        result.append((timestamp, float('nan')))
                     continue
 
                 # TODO: understand what it means :D

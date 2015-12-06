@@ -25,7 +25,7 @@ from canopsis.timeserie.core import TimeSerie
 from canopsis.task.core import register_task
 
 
-def new_operator(opname, manager, period, perfdatas, timewindow):
+def new_operator(opname, manager, period, perfdatas, timewindow, usenan=True):
     """Create a new operator usable in the restricted Python environment.
 
     This operator will be used in the formula.
@@ -44,6 +44,9 @@ def new_operator(opname, manager, period, perfdatas, timewindow):
 
     :param timewindow: Time window used for consolidation
     :type timewindow: canopsis.timeserie.timewindow.TimeWindow
+
+    :param usenan: include nan point values
+    :type usenan: bool
 
     :returns: operator as a callable
     """
@@ -69,7 +72,9 @@ def new_operator(opname, manager, period, perfdatas, timewindow):
                 round_time=True
             )
 
-            consolidated = timeserie.calculate(points, timewindow)
+            consolidated = timeserie.calculate(
+                points=points, timewindow=timewindow, usenan=usenan
+            )
 
             if consolidated:
                 result = consolidated[0][1]
@@ -80,7 +85,7 @@ def new_operator(opname, manager, period, perfdatas, timewindow):
 
 
 @register_task('serie.operatorset')
-def serie_operatorset(manager, period, perfdatas, timewindow):
+def serie_operatorset(manager, period, perfdatas, timewindow, usenan=True):
     """
     Generate set of operators.
 
@@ -96,11 +101,14 @@ def serie_operatorset(manager, period, perfdatas, timewindow):
     :param timewindow: Time window used for consolidation
     :type timewindow: canopsis.timeserie.timewindow.TimeWindow
 
+    :param usenan: include nan point values
+    :type usenan: bool
+
     :returns: operators classified by name as dict
     """
 
     operators = {
-        key: new_operator(key, manager, period, perfdatas, timewindow)
+        key: new_operator(key, manager, period, perfdatas, timewindow, usenan)
         for key in get_aggregations()
     }
 
