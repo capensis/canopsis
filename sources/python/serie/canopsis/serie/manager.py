@@ -34,7 +34,9 @@ from canopsis.old.mfilter import check
 from RestrictedPython import compile_restricted
 from RestrictedPython.Guards import safe_builtins
 
-from numbers import Number
+from operator import itemgetter
+
+from math import isnan
 
 
 CONF_PATH = 'serie/manager.conf'
@@ -85,6 +87,7 @@ class Serie(MiddlewareRegistry):
 
         if metrics is None:
             return self[Serie.CONTEXT_MANAGER].find(
+                _type='metric',
                 _filter=mfilter
             )
 
@@ -134,12 +137,10 @@ class Serie(MiddlewareRegistry):
         :returns: superposed points as list
         """
 
-        selected_metrics = [
-            perfdatas[key]['entity']
-            for key in perfdatas.keys()
-        ]
+        selected_metrics = [perfdatas[key]['entity'] for key in perfdatas]
 
         metrics = self.get_metrics(regex, selected_metrics)
+
         metric_ids = [
             self[Serie.CONTEXT_MANAGER].get_entity_id(metric)
             for metric in metrics
@@ -150,12 +151,18 @@ class Serie(MiddlewareRegistry):
         for metric_id in metric_ids:
             points += perfdatas[metric_id]['aggregated']
 
-        points = sorted(points, key=lambda point: point[0])
+        points = sorted(points, key=itemgetter(0))
 
         return points
 
     @staticmethod
     def get_aggregation_interval(serieconf):
+        """Get the right serie aggregation interval.
+
+        :param dict serieconf: serie configuration from where get the interval
+        :rtype: Period
+        """
+
 
         result = serieconf.get('aggregation_interval', TimeSerie.VPERIOD)
 
@@ -261,14 +268,31 @@ class Serie(MiddlewareRegistry):
 
             restricted_globals.update(operators)
 
-            expression = 'result = {0}'.format(serieconf['formula'])
-            code = compile_restricted(expression, '<string>', 'exec')
+            formula = serieconf['formula']
+            code = compile_restricted(formula, '<string>', 'eval')
 
-            exec(code) in restricted_globals
+            try:
+                val = eval(code, restricted_globals)
+
+            except Exception as ex:
+                self.logger.warning(
+                    'Wrong serie formula: {0}/{1} ({2})'.format(
+                        serieconf['crecord_name'], formula, ex
+                    )
+                )
+                val = float('nan')
+
+            else:
+                if isnan(val):
+                    self.logger.warning(
+                        'Formula result is nan: {0}/{1}.'.format(
+                            serieconf['crecord_name'], formula
+                        )
+                    )
 
             # result contains consolidated value
             # point is computed at the start of interval
-            points.append((timewindow.start(), restricted_globals['result']))
+            points.append((interval['begin'], val))
 
         return points
 

@@ -30,6 +30,8 @@ from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 
+from math import isnan
+
 CONF_PATH = 'timeserie/timeserie.conf'
 
 
@@ -156,9 +158,10 @@ class TimeSerie(Configurable):
 
         return result
 
-    def calculate(self, points, timewindow, meta=None):
+    def calculate(self, points, timewindow, meta=None, usenan=True):
         """Do an operation on all points with input timewindow.
 
+        :param bool usenan: if False (True by default) remove nan point values.
         :return: points such as follow:
             Let func self aggregation function and
             input points of the form: [(T0, V0), ..., (Tn, Vn)]
@@ -166,6 +169,8 @@ class TimeSerie(Configurable):
         """
 
         result = []
+
+        nan = float('nan')
 
         # start to exclude points not in timewindow
         # in taking care about round time
@@ -182,7 +187,7 @@ class TimeSerie(Configurable):
         # start to exclude points which are not in timewindow
         points = [
             point for point in points
-            if point[1] is not None and point[0] in timewindow
+            if point[0] in timewindow and usenan or not isnan(point[1])
         ]
 
         if not meta:
@@ -242,7 +247,7 @@ class TimeSerie(Configurable):
                             values_to_aggregate.append(pt_val)
 
                 else:
-                    result.append((timestamp, None))
+                    result.append((timestamp, float('nan')))
                     continue
 
                 # TODO: understand what it means :D
@@ -257,14 +262,14 @@ class TimeSerie(Configurable):
                     )
 
                     # new point to add to result
-                    if aggregation_value is not None:
+                    if usenan or not isnan(aggregation_value):
                         aggregation_point = timestamp, aggregation_value
                         result.append(aggregation_point)
                         # save last_point for future DELTA checking
                         last_point = aggregation_point[-1]
 
-                else:
-                    result.append((timestamp, None))
+                elif usenan:
+                        result.append((timestamp, nan))
 
         return result
 

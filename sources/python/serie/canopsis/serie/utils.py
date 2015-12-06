@@ -62,9 +62,10 @@ def build_filter_from_regex(regex):
     mfilter = {'$and': []}
 
     for key in regex:
-        if regex[key]:
+        items = regex[key]
+        if items:
             local_mfilter = {'$or': [
-                {key: subfilter} for subfilter in regex[key]
+                {key: subfilter} for subfilter in items
             ]}
 
             if len(local_mfilter['$or']) == 1:

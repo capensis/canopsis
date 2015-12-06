@@ -58,8 +58,9 @@ def new_operator(opname, manager, period, perfdatas, timewindow):
         :returns: consolidated point as float
         """
 
+        result = float('nan')
+
         points = manager.subset_perfdata_superposed(regex, perfdatas)
-        result = None
 
         if points:
             timeserie = TimeSerie(
@@ -99,7 +100,7 @@ def serie_operatorset(manager, period, perfdatas, timewindow):
     """
 
     operators = {
-        key: new_operator(key.lower(), manager, period, perfdatas, timewindow)
+        key: new_operator(key, manager, period, perfdatas, timewindow)
         for key in get_aggregations()
     }
 
