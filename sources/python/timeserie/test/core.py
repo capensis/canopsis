@@ -73,6 +73,51 @@ class TimeSerieTest(TestCase):
 
         return result
 
+    def test_intervals(self):
+        """Test calculate on different intervals."""
+
+        now = time()
+
+        # let a period of 1 day
+        period = Period(day=1)
+        oneday = period.total_seconds()
+
+        rnow = period.round_timestamp(now)
+
+        # let a timewindow of 10+1/4 days
+        timewindow = TimeWindow(start=now - oneday, stop=now + 45/4 * oneday)
+
+        points = [
+            # the first interval is empty
+            (rnow, None), # the second interval contains None at start
+            (rnow + oneday + 1, None), # the third interval contains None at start + 1
+            (rnow + 2 * oneday, 1), # the fourth interval contains 1 at start
+            (rnow + 3 * oneday + 1, 1), # the fourth interval contains 1 at start + 1
+            (rnow + 4 * oneday, None), (rnow + 4 * oneday + 1, 1),  # the fith interval contains 1 and None
+            (rnow + 5 * oneday, 1), (rnow + 5 * oneday + 1, 1),  # the sixth interval contains 1 and 1
+            (rnow + 6 * oneday, 1), (rnow + 6 * oneday, 1),  # the sixth interval contains 1 and 1 at the same time
+            (rnow + 7 * oneday, None), (rnow + 7 * oneday, None),  # the sixth interval contains None and None at the same time
+        ]
+
+        timeserie = TimeSerie(
+            aggregation='sum',
+            period=period,
+            round_time=True
+        )
+
+        _points = timeserie.calculate(points, timewindow)
+
+        self.assertEqual(_points[0], (rnow - oneday, None))
+        self.assertEqual(_points[1], (rnow, None))
+        self.assertEqual(_points[2], (rnow + oneday, None))
+        self.assertEqual(_points[3], (rnow + 2 * oneday, 1))
+        self.assertEqual(_points[4], (rnow + 3 * oneday, 1))
+        self.assertEqual(_points[5], (rnow + 4 * oneday, 1))
+        self.assertEqual(_points[6], (rnow + 5 * oneday, 2))
+        self.assertEqual(_points[7], (rnow + 6 * oneday, 2))
+        for i in range(8, len(_points)):
+            self.assertEqual(_points[i], (rnow + (i - 1) * oneday, None))
+
     def test_scenario(self):
         """
         Calculate aggregations over 5 years

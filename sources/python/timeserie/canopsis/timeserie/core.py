@@ -180,7 +180,10 @@ class TimeSerie(Configurable):
             )
 
         # start to exclude points which are not in timewindow
-        points = [point for point in points if point[0] in timewindow]
+        points = [
+            point for point in points
+            if point[1] is not None and point[0] in timewindow
+        ]
 
         if not meta:
             meta = {}
@@ -198,14 +201,12 @@ class TimeSerie(Configurable):
         ):
             result = points  # result is points
 
-        else:  # else get the right aggregation function
+        else:  # else calculate points with the right aggregation function
             func = get_aggregations()[self.aggregation]
 
-        # if an aggregation is required
-        if func is not None:
-
             # get timesteps
-            timesteps = self.timesteps(timewindow)
+            timesteps = self.timesteps(timewindow)[:-1]
+
             # initialize variables for loop
             i = 0
             values_to_aggregate = []
@@ -219,25 +220,30 @@ class TimeSerie(Configurable):
                 values_to_aggregate = []
                 # set timestamp and previous_timestamp
 
-                if index < len_timesteps - 1:  # calculate the upper bound
+                if index < (len_timesteps - 1):  # calculate the upper bound
                     next_timestamp = timesteps[index + 1]
+
                 else:
-                    next_timestamp = 0
+                    next_timestamp = None
 
-                # fill the values_to_aggregate array
-                for i in range(i, points_len):  # while points to process
+                if i < (points_len - 1):
 
-                    pt_ts, pt_val = points[i]
+                    # fill the values_to_aggregate array
+                    for i in range(i, points_len):  # while points to process
 
-                    # leave the loop if _timestamp is for a future aggregation
-                    if pt_ts >= next_timestamp:
-                        break
+                        pt_ts, pt_val = points[i]
 
-                    else:
-                        # if _timestamp is in timewindow and value is not None
-                        # add value to list of values to aggregate
-                        if pt_val is not None:
+                        # leave the loop if _timestamp is for a future aggregation
+                        if next_timestamp is not None and pt_ts >= next_timestamp:
+                            break
+
+                        else:
+                            # add value to list of values to aggregate
                             values_to_aggregate.append(pt_val)
+
+                else:
+                    result.append((timestamp, None))
+                    continue
 
                 # TODO: understand what it means :D
                 if self.aggregation == "DELTA" and last_point:
@@ -257,11 +263,8 @@ class TimeSerie(Configurable):
                         # save last_point for future DELTA checking
                         last_point = aggregation_point[-1]
 
-                if i >= points_len:
-                    break
-
-        else:
-            result = points
+                else:
+                    result.append((timestamp, None))
 
         return result
 
