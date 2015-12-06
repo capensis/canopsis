@@ -33,6 +33,8 @@ from operator import itemgetter
 
 from datetime import datetime as dt
 
+from numbers import Number
+
 
 class Period(object):
     """Period management with a value and an unitself.
@@ -200,7 +202,7 @@ class Period(object):
         Example: Period(minute=60).next_period() == Period(hour=1)
         """
 
-        result = Period()
+        unit_values = {}
 
         counts_with_unit = zip(Period.UNITS, Period.MAX_UNIT_VALUES)
         previous_unit, _ = counts_with_unit.pop(-1)
@@ -211,9 +213,11 @@ class Period(object):
 
             if value is not None:
                 next_value = value * count
-                result[previous_unit] = next_value
+                unit_values[previous_unit] = next_value
 
             previous_unit = unit
+
+        result = Period(**unit_values)
 
         return result
 
@@ -357,6 +361,24 @@ class Period(object):
                 pass
 
         result = Period(**params)
+
+        return result
+
+    @staticmethod
+    def new(args):
+
+        result = None
+
+        if isinstance(args, dict):
+            result = Period(**args)
+
+        elif isinstance(args, Number):
+            result = Period(second=args)
+
+        else:
+            raise TypeError(
+                'Wrong period argument: {0}. dict or int expected.'.format(args)
+            )
 
         return result
 
@@ -530,8 +552,9 @@ class Interval(object):
             :return: list of intervals
             :rtype: list
         """
-        if isinstance(period, dict):
-            period = Period(**period)
+
+        if not isinstance(period, Period):
+            period = Period.new(period)
 
         delta = period.get_delta()
         timewindow = TimeWindow()

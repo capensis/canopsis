@@ -32,6 +32,22 @@ from canopsis.timeserie.timewindow import Period, Interval, TimeWindow
 
 class PeriodTest(TestCase):
 
+    def test_new(self):
+
+        args = 36
+
+        period = Period.new(args)
+
+        self.assertEqual(period.total_seconds(), args)
+
+        period = Period.new(36.0)
+
+        self.assertEqual(period.total_seconds(), args)
+
+        period = Period.new({second: 36})
+
+        self.assertEqual(period.total_seconds(), args)
+
     @staticmethod
     def _new_period():
 

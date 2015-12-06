@@ -34,6 +34,8 @@ from canopsis.old.mfilter import check
 from RestrictedPython import compile_restricted
 from RestrictedPython.Guards import safe_builtins
 
+from numbers import Number
+
 
 CONF_PATH = 'serie/manager.conf'
 CATEGORY = 'SERIE'
@@ -95,7 +97,7 @@ class Serie(MiddlewareRegistry):
 
             return result
 
-    def get_perfdata(self, metrics, period=None, timewindow=None):
+    def get_perfdata(self, metrics, timewindow=None):
         """
         Internal method to fetch perfdata from metrics.
 
@@ -108,7 +110,6 @@ class Serie(MiddlewareRegistry):
             mid = self[Serie.CONTEXT_MANAGER].get_entity_id(metric)
             perfdata = self[Serie.PERFDATA_MANAGER].get(
                 mid,
-                period=period,
                 timewindow=timewindow,
                 with_meta=False
             )
@@ -153,6 +154,15 @@ class Serie(MiddlewareRegistry):
 
         return points
 
+    @staticmethod
+    def get_aggregation_interval(serieconf):
+
+        result = serieconf.get('aggregation_interval', TimeSerie.VPERIOD)
+
+        result = Period.new(result)
+
+        return result
+
     def aggregation(self, serieconf, timewindow):
         """
         Get aggregated perfdata from serie.
@@ -166,13 +176,7 @@ class Serie(MiddlewareRegistry):
         :returns: aggregated perfdata classified by metric id as dict
         """
 
-        interval = serieconf.get('aggregation_interval', None)
-
-        if interval is None:
-            period = TimeSerie.VPERIOD
-
-        else:
-            period = Period(second=interval)
+        period = self.get_aggregation_interval(serieconf)
 
         fixed_interval = serieconf.get(
             'round_time_interval',
@@ -219,13 +223,7 @@ class Serie(MiddlewareRegistry):
         """
 
         # configure consolidation period (same as aggregation period)
-        interval = serieconf.get('aggregation_interval', None)
-
-        if interval is None:
-            period = TimeSerie.VPERIOD
-
-        else:
-            period = Period(second=interval)
+        period = self.get_aggregation_interval(serieconf)
 
         fixed_interval = serieconf.get(
             'round_time_interval',
