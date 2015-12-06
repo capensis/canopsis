@@ -59,7 +59,7 @@ def new_operator(opname, manager, period, perfdatas, timewindow):
         """
 
         points = manager.subset_perfdata_superposed(regex, perfdatas)
-        result = float('nan')
+        result = None
 
         if points:
             timeserie = TimeSerie(

@@ -34,24 +34,26 @@ class PeriodTest(TestCase):
 
     def test_new(self):
 
-        args = 36
+        args = int(36)
 
         period = Period.new(args)
 
         self.assertEqual(period.total_seconds(), args)
 
-        period = Period.new(36.0)
+        args = float(args)
+
+        period = Period.new(args)
 
         self.assertEqual(period.total_seconds(), args)
 
-        period = Period.new({second: 36})
+        period = Period.new({'second': args})
 
         self.assertEqual(period.total_seconds(), args)
 
     @staticmethod
     def _new_period():
 
-        unit_values = dict()
+        unit_values = {}
 
         for unit in Period.UNITS:
             unit_values[unit] = random() * 10
@@ -74,34 +76,20 @@ class PeriodTest(TestCase):
 
         delta = period.get_delta()
 
-        for unit, value in period.unit_values.iteritems():
-            if unit is Period.WEEK or unit is Period.DAY:
+        for unit in period.unit_values:
+            value = period.unit_values[unit]
+
+            if unit in (Period.WEEK, Period.DAY):
                 value_to_compare = int(delta.days)
                 value = int(
-                    period.unit_values['day'] + 7 * period.unit_values['week']
+                    period.unit_values.get('day', 0) + 7 * period.unit_values.get('week', 0)
                 )
 
             else:
-                unit = "{0}s".format(unit)
+                unit = '{0}s'.format(unit)
                 value_to_compare = getattr(delta, unit)
 
             self.assertEqual(value, value_to_compare)
-
-    def test_next_period(self):
-
-        period = self._new_period()
-
-        del period.unit_values[Period.YEAR]
-        del period.unit_values[Period.HOUR]
-
-        next_period = period.next_period()
-
-        self.assertTrue(Period.YEAR in next_period)
-        self.assertTrue(Period.HOUR in next_period.unit_values)
-
-        self.assertEqual(
-            next_period[Period.YEAR],
-            Period.MAX_UNIT_VALUES[-2] * period[Period.MONTH])
 
     def test_round_datetime(self, ts=None):
 

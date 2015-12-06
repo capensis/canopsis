@@ -141,7 +141,7 @@ class Period(object):
 
             if unitvalue:
                 maxunitvalue = Period.MAX_UNIT_VALUES[index]
-                nextunitvalue = unitvalue / maxunitvalue
+                nextunitvalue = unitvalue // maxunitvalue
 
                 if nextunitvalue:
                     nextunit = Period.UNITS[index + 1]
@@ -192,32 +192,6 @@ class Period(object):
         }
 
         result = rd(**parameters)
-
-        return result
-
-    def next_period(self):
-        """Get next period with input step or none if next period can't be
-        associated to a specific unit.
-
-        Example: Period(minute=60).next_period() == Period(hour=1)
-        """
-
-        unit_values = {}
-
-        counts_with_unit = zip(Period.UNITS, Period.MAX_UNIT_VALUES)
-        previous_unit, _ = counts_with_unit.pop(-1)
-        counts_with_unit.reverse()
-
-        for unit, count in counts_with_unit:
-            value = self.unit_values.get(unit)
-
-            if value is not None:
-                next_value = value * count
-                unit_values[previous_unit] = next_value
-
-            previous_unit = unit
-
-        result = Period(**unit_values)
 
         return result
 
