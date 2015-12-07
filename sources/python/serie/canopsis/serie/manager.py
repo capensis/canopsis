@@ -155,22 +155,9 @@ class Serie(MiddlewareRegistry):
 
         return points
 
-    @staticmethod
-    def get_aggregation_interval(serieconf):
-        """Get the right serie aggregation interval.
-
-        :param dict serieconf: serie configuration from where get the interval
-        :rtype: Period
-        """
-
-
-        result = serieconf.get('aggregation_interval', TimeSerie.VPERIOD)
-
-        result = Period.new(result)
-
-        return result
-
-    def aggregation(self, serieconf, timewindow):
+    def aggregation(
+        self, serieconf, timewindow, period=None, usenan=True, fixed=True
+    ):
         """
         Get aggregated perfdata from serie.
 
@@ -183,14 +170,9 @@ class Serie(MiddlewareRegistry):
         :returns: aggregated perfdata classified by metric id as dict
         """
 
-        period = self.get_aggregation_interval(serieconf)
-
-        fixed_interval = serieconf.get(
-            'round_time_interval',
-            TimeSerie.VROUND_TIME
+        timwin, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
+            serieconf, timewindow, period, usenan, fixed
         )
-
-        usenan = serieconf.get('usenan', True)
 
         timeserie = TimeSerie(
             period=period,
@@ -198,25 +180,25 @@ class Serie(MiddlewareRegistry):
                 'aggregation_method',
                 TimeSerie.VDEFAULT_AGGREGATION
             ),
-            round_time=fixed_interval
+            round_time=fixed
         )
 
-        if fixed_interval:
-            timewindow = timewindow.get_round_timewindow(period=period)
-
         metrics = self.get_metrics(serieconf['metric_filter'])
-        perfdatas = self.get_perfdata(metrics, timewindow=timewindow)
+        perfdatas = self.get_perfdata(metrics, timewindow=timwin)
 
         for key in perfdatas:
             perfdatas[key]['aggregated'] = timeserie.calculate(
                 points=perfdatas[key]['points'],
-                timewindow=timewindow,
+                timewindow=timwin,
                 usenan=usenan
             )
 
         return perfdatas
 
-    def consolidation(self, serieconf, perfdatas, timewindow):
+    def consolidation(
+        self, serieconf, perfdatas, timewindow,
+        period=None, usenan=True, fixed=True
+    ):
         """
         Get consolidated point from serie.
 
@@ -233,23 +215,15 @@ class Serie(MiddlewareRegistry):
         """
 
         # configure consolidation period (same as aggregation period)
-        period = self.get_aggregation_interval(serieconf)
-
-        fixed_interval = serieconf.get(
-            'round_time_interval',
-            TimeSerie.VROUND_TIME
+        timwin, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
+            serieconf, timewindow, period, usenan, fixed
         )
-
-        if fixed_interval:
-            timewindow = timewindow.get_round_timewindow(period=period)
 
         intervals = Interval.get_intervals_by_period(
-            timewindow.start(),
-            timewindow.stop(),
+            timwin.start(),
+            timwin.stop(),
             period
         )
-
-        usenan = serieconf.get('usenan', True)
 
         points = []
 
@@ -260,7 +234,7 @@ class Serie(MiddlewareRegistry):
         for interval in intervals:
             timewindow = TimeWindow(
                 start=interval['begin'],
-                stop=interval['end']
+                stop=interval['end'] - 1
             )
 
             # operators are acting on a specific timewindow
@@ -314,10 +288,19 @@ class Serie(MiddlewareRegistry):
         :returns: Computed points
         """
 
-        perfdatas = self.aggregation(serieconf, timewindow)
-        points = self.consolidation(serieconf, perfdatas, timewindow)
+        timwin, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
+            serieconf, timewindow
+        )
 
-        serieconf['last_computation'] = timewindow.stop()
+        perfdatas = self.aggregation(
+            serieconf, timwin, period=period, usenan=usenan, fixed=fixed
+        )
+        points = self.consolidation(
+            serieconf, perfdatas, timwin,
+            period=period, usenan=usenan, fixed=fixed
+        )
+
+        serieconf['last_computation'] = timwin.stop()
         self[Serie.SERIE_STORAGE].put_element(element=serieconf)
 
         return points
@@ -343,3 +326,26 @@ class Serie(MiddlewareRegistry):
         )
 
         return storage.find_elements(query={'$where': javascript_condition})
+
+    @staticmethod
+    def get_timewindow_period_usenan_fixed(
+        serieconf, timewindow, period=None, usenan=None, fixed=None
+    ):
+        """Get the right timewindow, period and usenan."""
+
+        if fixed is None:
+            fixed = serieconf.get('round_time_interval', TimeSerie.VROUND_TIME)
+
+        if period is None:
+            interval = serieconf.get('aggregation_interval', TimeSerie.VPERIOD)
+            period = Period.new(interval)
+
+            if fixed:
+                timewindow = timewindow.get_round_timewindow(period=period)
+
+        if usenan is None:
+            usenan = serieconf.get('usenan', True)
+
+        result = timewindow, period, usenan, fixed
+
+        return result
