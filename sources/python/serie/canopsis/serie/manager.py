@@ -156,7 +156,7 @@ class Serie(MiddlewareRegistry):
         return points
 
     def aggregation(
-        self, serieconf, timewindow, period=None, usenan=True, fixed=True
+            self, serieconf, timewindow, period=None, usenan=True, fixed=True
     ):
         """
         Get aggregated perfdata from serie.
@@ -196,8 +196,8 @@ class Serie(MiddlewareRegistry):
         return perfdatas
 
     def consolidation(
-        self, serieconf, perfdatas, timewindow,
-        period=None, usenan=True, fixed=True
+            self, serieconf, perfdatas, timewindow,
+            period=None, usenan=True, fixed=True
     ):
         """
         Get consolidated point from serie.
@@ -300,10 +300,14 @@ class Serie(MiddlewareRegistry):
             period=period, usenan=usenan, fixed=fixed
         )
 
-        serieconf['last_computation'] = timwin.stop()
-        self[Serie.SERIE_STORAGE].put_element(element=serieconf)
-
         return points
+
+    def put_serie(self, serieconf):
+        """Put input serie in this storage.
+
+        :param dict serieconf: serie to store."""
+
+        self[Serie.SERIE_STORAGE].put_element(element=serieconf)
 
     def get_series(self, timestamp):
         """
@@ -329,7 +333,7 @@ class Serie(MiddlewareRegistry):
 
     @staticmethod
     def get_timewindow_period_usenan_fixed(
-        serieconf, timewindow, period=None, usenan=None, fixed=None
+            serieconf, timewindow, period=None, usenan=None, fixed=None
     ):
         """Get the right timewindow, period and usenan."""
 

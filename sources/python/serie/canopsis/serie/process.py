@@ -31,7 +31,7 @@ from time import time
 
 
 @register_task
-def beat_processing(engine, manager=None, logger=None, **kwargs):
+def beat_processing(engine, manager=None, logger=None, **_):
     """Engine beat processing task."""
 
     if manager is None:
@@ -50,7 +50,7 @@ def beat_processing(engine, manager=None, logger=None, **kwargs):
 
 
 @register_task
-def serie_processing(engine, event, manager=None, logger=None, **kwargs):
+def serie_processing(engine, event, manager=None, logger=None, **_):
     """Engine work processing task."""
 
     if manager is None:
@@ -64,6 +64,9 @@ def serie_processing(engine, event, manager=None, logger=None, **kwargs):
     )
 
     points = manager.calculate(event, timewin)
+
+    event['last_computation'] = now
+    manager.put_serie(event)
 
     events = []
 
