@@ -525,7 +525,7 @@ class Selector(Record):
     def have_to_publish(self, event):
 
         self.logger.debug(u'Previous metrics\n{}'.format(
-            pp.pformat(self.previous_metrics)
+            self.previous_metrics
         ))
 
         is_different = False
