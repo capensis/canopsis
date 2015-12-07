@@ -219,7 +219,7 @@ class TimeSerie(Configurable):
 
             len_timesteps = len(timesteps)
 
-            # iterate on all timesteps in order to get points in [prev_ts, timestamp[
+            # iterate on timesteps to get points in [prev_ts, timestamp[
             for index, timestamp in enumerate(timesteps):
                 # initialize values_to_aggregate
                 values_to_aggregate = []
@@ -231,25 +231,21 @@ class TimeSerie(Configurable):
                 else:
                     next_timestamp = None
 
-                if i < (points_len - 1):
+                # fill the values_to_aggregate array
+                for i in range(i, points_len):  # while points to process
 
-                    # fill the values_to_aggregate array
-                    for i in range(i, points_len):  # while points to process
+                    pt_ts, pt_val = points[i]
 
-                        pt_ts, pt_val = points[i]
+                    # leave the loop if _timestamp is for a future aggregation
+                    if next_timestamp is not None and pt_ts >= next_timestamp:
+                        break
 
-                        # leave the loop if _timestamp is for a future aggregation
-                        if next_timestamp is not None and pt_ts >= next_timestamp:
-                            break
+                    else:
+                        # add value to list of values to aggregate
+                        values_to_aggregate.append(pt_val)
 
-                        else:
-                            # add value to list of values to aggregate
-                            values_to_aggregate.append(pt_val)
-
-                else:
-                    if usenan:
-                        result.append((timestamp, float('nan')))
-                    continue
+                else:  # leave the loop whatever timesteps
+                    i += 1
 
                 # TODO: understand what it means :D
                 if self.aggregation == "DELTA" and last_point:
