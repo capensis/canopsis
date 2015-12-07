@@ -56,11 +56,14 @@ def exports(ws):
         )
         storage.connect()
 
-        return storage.find_elements(
+        total = storage.count_elements(query=query)
+        result = storage.find_elements(
             query=query, projection=projection,
             limit=limit, skip=skip, sort=sort,
             with_count=with_count
         )
+
+        return result, total
 
     @route(ws.application.put, name='storage', payload=['element'])
     def put_element(
