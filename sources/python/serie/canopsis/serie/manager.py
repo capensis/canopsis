@@ -38,6 +38,8 @@ from operator import itemgetter
 
 from math import isnan
 
+from time import time
+
 
 CONF_PATH = 'serie/manager.conf'
 CATEGORY = 'SERIE'
@@ -275,18 +277,27 @@ class Serie(MiddlewareRegistry):
 
         return points
 
-    def calculate(self, serieconf, timewindow):
+    def calculate(self, serieconf, lastts=None):
         """
         Compute serie point.
 
         :param serieconf: Serie to compute
         :type serieconf: dict
 
-        :param timewindow: Time Window to use for aggregation
-        :type timewindow: canopsis.timeserie.timewindow.TimeWindow
+        :param lastts: timestamp corresponding to the last point to calculate.
+            Default is now.
+        :type lastts: float
 
         :returns: Computed points
         """
+
+        if lastts is None:
+            lastts = time()
+
+        timewindow = TimeWindow(
+            start=serieconf.get('last_computation', lastts),
+            stop=lastts
+        )
 
         timwin, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
             serieconf, timewindow
@@ -295,19 +306,18 @@ class Serie(MiddlewareRegistry):
         perfdatas = self.aggregation(
             serieconf, timwin, period=period, usenan=usenan, fixed=fixed
         )
+
         points = self.consolidation(
             serieconf, perfdatas, timwin,
             period=period, usenan=usenan, fixed=fixed
         )
 
-        return points
+        points = [point for point in points if point[0] <= lastts]
 
-    def put_serie(self, serieconf):
-        """Put input serie in this storage.
-
-        :param dict serieconf: serie to store."""
-
+        serieconf['last_computation'] = lastts
         self[Serie.SERIE_STORAGE].put_element(element=serieconf)
+
+        return points
 
     def get_series(self, timestamp):
         """
