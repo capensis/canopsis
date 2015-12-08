@@ -20,11 +20,12 @@
 # ---------------------------------
 
 from unittest import TestCase, main
+
 from canopsis.middleware.core import Middleware
-from canopsis.alerts.manager import Alerts
-from canopsis.alerts.status import get_previous_step
-from canopsis.alerts import status
 from canopsis.task import get_task
+
+from canopsis.alerts.manager import Alerts
+from canopsis.alerts.status import get_previous_step, OFF, CANCELED
 
 
 class BaseTest(TestCase):
@@ -161,7 +162,7 @@ class TestManager(BaseTest):
 
         value['status'] = {
             't': 0,
-            'val': status.OFF
+            'val': OFF
         }
 
         self.manager.update_current_alarm(alarm, value)
@@ -261,7 +262,7 @@ class TestTasks(BaseTest):
             event
         )
 
-        self.assertEqual(statusval, status.CANCELED)
+        self.assertEqual(statusval, CANCELED)
         self.assertTrue(alarm['canceled'] is not None)
         self.assertEqual(alarm['canceled']['t'], 0)
         self.assertEqual(alarm['canceled']['a'], 'testauthor')

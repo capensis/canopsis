@@ -27,9 +27,10 @@ from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
 
-from canopsis.alerts.status import get_last_state, get_last_status, OFF
 from canopsis.event.manager import Event
 from canopsis.check import Check
+
+from canopsis.alerts.status import get_last_state, get_last_status, OFF
 
 from time import time
 
@@ -179,7 +180,7 @@ class Alerts(MiddlewareRegistry):
         :param timewindow: Time Window used for fetching (optional)
         :type timewindow: canopsis.timeserie.timewindow.TimeWindow
 
-        :returns: Iterable of alarms matching 
+        :returns: Iterable of alarms matching
         """
 
         query = {}
