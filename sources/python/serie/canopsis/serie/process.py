@@ -68,6 +68,9 @@ def serie_processing(engine, event, manager=None, logger=None, **_):
     event['last_computation'] = now
     manager.put_serie(event)
 
+    # keep points before now
+    points = [point for point in points if point[0] < now]
+
     events = []
 
     for point in points:
