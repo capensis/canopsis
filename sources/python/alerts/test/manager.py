@@ -22,8 +22,9 @@
 from unittest import TestCase, main
 
 from canopsis.middleware.core import Middleware
-from canopsis.task import get_task
+from canopsis.task.core import get_task
 
+from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import get_previous_step, OFF, CANCELED
 
@@ -31,10 +32,10 @@ from canopsis.alerts.status import get_previous_step, OFF, CANCELED
 class BaseTest(TestCase):
     def setUp(self):
         self.alarm_storage = Middleware.get_middleware_by_uri(
-            'storage-timed-test_alarm://'
+            'storage-timed-testalarm://'
         )
         self.config_storage = Middleware.get_middleware_by_uri(
-            'storage-timed-test_config://'
+            'storage-timed-testconfig://'
         )
 
         self.manager = Alerts()
@@ -85,38 +86,41 @@ class TestManager(BaseTest):
         self.manager.make_alarm(alarm1_id, {'timestamp': 0})
 
         # Case 1: unresolved alarms
-        got = list(self.manager.get_alarms(resolved=False))
-        ids = [a[storage.DATA_ID] for a in got]
+        got = self.manager.get_alarms(resolved=False)
+        ids = [a for a in got]
 
         self.assertTrue(alarm0_id in ids)
         self.assertTrue(alarm1_id in ids)
 
+        alarm0 = got[alarm0_id][0]
+        alarm0[storage.DATA_ID] = alarm0_id
+
         # Case 2: resolved alarms
-        got = list(self.manager.get_alarms(resolved=True))
-        ids = [a[storage.DATA_ID] for a in got]
+        got = self.manager.get_alarms(resolved=True)
+        ids = [a for a in got]
 
         self.assertFalse(alarm0_id in ids)
         self.assertFalse(alarm1_id in ids)
 
         # Case 3: with tags
-        self.manager.test_update_current_alarm(
-            got[0],
-            got[0][storage.VALUE],
+        self.manager.update_current_alarm(
+            alarm0,
+            alarm0[storage.VALUE],
             tags='test'
         )
 
-        got = list(self.manager.get_alarms(tags='test', resolved=False))
-        ids = [a[storage.DATA_ID] for a in got]
+        got = self.manager.get_alarms(tags='test', resolved=False)
+        ids = [a for a in got]
 
         self.assertTrue(alarm0_id in ids)
         self.assertFalse(alarm1_id in ids)
 
         # Case 4: without tags
-        got = list(self.manager.get_alarms(
+        got = self.manager.get_alarms(
             exclude_tags='test',
             resolved=False
-        ))
-        ids = [a[storage.DATA_ID] for a in got]
+        )
+        ids = [a for a in got]
 
         self.assertFalse(alarm0_id in ids)
         self.assertTrue(alarm1_id in ids)
@@ -158,8 +162,9 @@ class TestManager(BaseTest):
         self.manager.make_alarm(alarm_id, {'timestamp': 0})
 
         alarm = self.manager.get_current_alarm(alarm_id)
-        value = alarm[storage.VALUE]
+        self.assertIsNotNone(alarm)
 
+        value = alarm[storage.VALUE]
         value['status'] = {
             't': 0,
             'val': OFF
@@ -169,9 +174,21 @@ class TestManager(BaseTest):
         self.manager.resolve_alarms()
 
         alarm = self.manager.get_current_alarm(alarm_id)
+        self.assertIsNone(alarm)
+
+        alarm = storage.get(
+            alarm_id,
+            timewindow=get_offset_timewindow(),
+            _filter={
+                'resolved': {'$exists': True}
+            },
+            limit=1
+        )
+        self.assertTrue(alarm)
+        alarm = alarm[0]
         value = alarm[storage.VALUE]
 
-        self.assertEqual(value['resolved'] == value['status']['t'])
+        self.assertEqual(value['resolved'], value['status']['t'])
 
     def test_change_of_state(self):
         raise NotImplementedError()
@@ -275,6 +292,13 @@ class TestTasks(BaseTest):
         event = {'timestamp': 0}
 
         task = get_task('alerts.useraction.uncancel')
+        self.alarm['canceled'] = {
+            '_t': 'cancel',
+            't': 0,
+            'a': 'testauthor',
+            'm': 'test message'
+        }
+
         alarm, _ = task(
             self.manager,
             self.alarm,
@@ -286,6 +310,7 @@ class TestTasks(BaseTest):
         self.assertTrue(alarm['canceled'] is None)
 
         uncancel = get_previous_step(alarm, 'uncancel')
+        self.assertFalse(uncancel is None)
         self.assertEqual(uncancel['t'], 0)
         self.assertEqual(uncancel['a'], 'testauthor')
         self.assertEqual(uncancel['m'], 'test message')
@@ -377,7 +402,7 @@ class TestTasks(BaseTest):
         self.assertEqual(alarm['state']['m'], 'test message')
         self.assertEqual(alarm['state']['val'], state)
         self.assertTrue(
-            alarm['state'] is get_previous_step('stateinc')
+            alarm['state'] is get_previous_step(alarm, 'stateinc')
         )
 
     def test_state_decrease(self):
@@ -398,7 +423,7 @@ class TestTasks(BaseTest):
         self.assertEqual(alarm['state']['m'], 'test message')
         self.assertEqual(alarm['state']['val'], state)
         self.assertTrue(
-            alarm['state'] is get_previous_step('statedec')
+            alarm['state'] is get_previous_step(alarm, 'statedec')
         )
 
     def test_status_increase(self):
@@ -419,7 +444,7 @@ class TestTasks(BaseTest):
         self.assertEqual(alarm['status']['m'], 'test message')
         self.assertEqual(alarm['status']['val'], statusval)
         self.assertTrue(
-            alarm['status'] is get_previous_step('statusinc')
+            alarm['status'] is get_previous_step(alarm, 'statusinc')
         )
 
     def test_status_decrease(self):
@@ -440,7 +465,7 @@ class TestTasks(BaseTest):
         self.assertEqual(alarm['status']['m'], 'test message')
         self.assertEqual(alarm['status']['val'], statusval)
         self.assertTrue(
-            alarm['status'] is get_previous_step('statusdec')
+            alarm['status'] is get_previous_step(alarm, 'statusdec')
         )
 
 
