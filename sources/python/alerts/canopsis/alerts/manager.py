@@ -374,7 +374,7 @@ class Alerts(MiddlewareRegistry):
             try:
                 task = get_task('alerts.useraction.{0}'.format(
                     event['event_type']
-                ))
+                ), cacheonly=True)
 
             except ImportError:
                 task = None
@@ -459,10 +459,14 @@ class Alerts(MiddlewareRegistry):
         """
 
         if state > old_state:
-            task = get_task('alerts.systemaction.state_increase')
+            task = get_task(
+                'alerts.systemaction.state_increase', cacheonly=True
+            )
 
         elif state < old_state:
-            task = get_task('alerts.systemaction.state_decrease')
+            task = get_task(
+                'alerts.systemaction.state_decrease', cacheonly=True
+            )
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value, status = task(self, value, state, event)
@@ -489,10 +493,14 @@ class Alerts(MiddlewareRegistry):
         """
 
         if status > old_status:
-            task = get_task('alerts.systemaction.status_increase')
+            task = get_task(
+                'alerts.systemaction.status_increase', cacheonly=True
+            )
 
         elif status < old_status:
-            task = get_task('alerts.systemaction.status_decrease')
+            task = get_task(
+                'alerts.systemaction.status_decrease', cacheonly=True
+            )
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value = task(self, value, status, event)
