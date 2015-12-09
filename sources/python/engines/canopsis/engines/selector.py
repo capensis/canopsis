@@ -47,63 +47,47 @@ class engine(Engine):
         self.thd_warn_sec_per_evt = 1.5
         self.thd_crit_sec_per_evt = 2
 
-    def pre_run(self):
-        # Load selectors
         self.storage = get_storage(
-            namespace='object', account=Account(user="root", group="root"))
+            namespace='object',
+            account=Account(user="root", group="root")
+        )
+
+    def get_selectors(self):
+        return self.storage.find(query={'crecord_type': 'selector'})
 
     def beat(self):
         self.logger.debug('entered in selector BEAT')
 
-    def consume_dispatcher(self, event, *args, **kargs):
-
-        selector = self.get_ready_record(event)
-
-        if selector:
-
-            event_id = event['_id']
-
+        for selector in self.get_selectors():
             # Loads associated class
             selector = Selector(
-                storage=self.storage, record=selector,
-                logging_level=self.logging_level)
+                storage=self.storage,
+                record=selector,
+                logging_level=self.logging_level
+            )
 
             name = selector.display_name
 
-            self.logger.debug('----------SELECTOR----------\n')
+            self.logger.debug(u'Start processing selector: {0}'.format(name))
 
-            self.logger.debug(u'Selector {} found, start processing..'.format(
-                name
-            ))
-
-            update_extra_fields = {}
             # Selector event have to be published when do state is true.
             if selector.dostate:
-                rk, selector_event, publish_ack = selector.event()
+                rk, event, publish_ack = selector.event()
 
                 # Compute previous event to know if any difference next turn
-                previous_metrics = {}
-                for metric in selector_event['perf_data_array']:
-                    previous_metrics[metric['metric']] = metric['value']
-                update_extra_fields['previous_metrics'] = previous_metrics
+                selector.data['previous_metrics'] = {
+                    metric['metric']: metric['value']
+                    for metric in event['perf_data_array']
+                }
 
                 do_publish_event = selector.have_to_publish(selector_event)
 
                 if do_publish_event:
-                    update_extra_fields['last_publication_date'] = \
-                        selector.last_publication_date
-
-                    self.publish_event(
-                        selector,
-                        rk,
-                        selector_event,
-                        publish_ack
-                    )
+                    self.publish_event(selector, rk, event, publish_ack)
 
                 # When selector computed, sla may be asked to be computed.
                 if selector.dosla:
-
-                    self.logger.debug('----------SLA----------\n')
+                    self.logger.debug('Start processing SLA')
 
                     # Retrieve user ui settings
                     # This template should be always set
@@ -134,30 +118,24 @@ class engine(Engine):
                     )
 
             else:
-                self.logger.debug(u'Nothing to do with selector {}'.format(
-                    name
-                ))
+                self.logger.debug('Nothing to do')
 
-            # Update crecords informations
-            self.crecord_task_complete(event_id, update_extra_fields)
+            selector.save()
 
         self.nb_beat += 1
-        # Set record free for dispatcher engine
 
     def publish_sla_event(self, event, display_name):
-
         publish(publisher=self.amqp, event=event)
 
-        self.logger.debug(u'published event sla selector {}'.format(
+        self.logger.debug(u'SLA event published for selector: {}'.format(
             display_name
         ))
 
     def publish_event(self, selector, rk, selector_event, publish_ack):
-
         selector_event['selector_id'] = selector._id
 
         self.logger.info(
-            u'Ready to publish selector {} event with state {}'.format(
+            u'Publish event: selector={} state={}'.format(
                 selector.display_name,
                 selector_event['state']
             )
@@ -174,16 +152,14 @@ class engine(Engine):
                 'isAck': True
             }
             self.logger.debug(
-                'Selector event is ack because ' +
-                'all matched NOK event are ack'
+                'Event acknowleged because all matched events are acknowleged'
             )
+
         else:
             # Define or reset ack key for selector generated event
             selector_event['ack'] = {}
-            self.logger.debug('Selector event is NOT ack')
+            self.logger.debug('Event not acknowleged')
 
         publish(publisher=self.amqp, event=selector_event, rk=rk)
 
-        self.logger.debug(u'published event selector {}'.format(
-            selector.display_name
-        ))
+        self.logger.debug('Event sent')

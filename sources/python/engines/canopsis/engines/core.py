@@ -34,7 +34,6 @@ from logging import INFO, DEBUG, FileHandler, Formatter
 
 from time import time, sleep
 from json import loads
-from datetime import datetime
 from os import getpid
 from os.path import join
 from sys import prefix as sys_prefix
@@ -127,7 +126,7 @@ class Engine(object):
 
         self.last_stat = int(time())
 
-        self.logger.info("Engine initialised")
+        self.logger.info("Engine initialized")
 
     def new_amqp_queue(
         self, amqp_queue, routing_keys, on_amqp_event, exchange_name
