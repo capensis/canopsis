@@ -64,7 +64,7 @@ class engine(Engine):
 
                 for event in events:
                     publish(
-                        publisher=self.engine.amqp,
+                        publisher=self.amqp,
                         event=event,
                         rk=self.amqp_queue,
                         exchange='amq.direct',
