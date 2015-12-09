@@ -52,7 +52,7 @@ class engine(Engine):
         )
 
     def get_selectors(self):
-        return self.storage.find(query={'crecord_type': 'selector'})
+        return self.storage.find({'crecord_type': 'selector'})
 
     def beat(self):
         with self.Lock(self, 'selector_processing') as l:
