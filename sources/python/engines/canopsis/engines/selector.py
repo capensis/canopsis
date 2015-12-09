@@ -43,7 +43,6 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kargs)
 
         self.selectors = []
-        self.nb_beat = 0
         self.thd_warn_sec_per_evt = 1.5
         self.thd_crit_sec_per_evt = 2
 
@@ -56,73 +55,85 @@ class engine(Engine):
         return self.storage.find(query={'crecord_type': 'selector'})
 
     def beat(self):
-        self.logger.debug('entered in selector BEAT')
+        with self.Lock(self, 'selector_processing') as l:
+            if l.own():
+                events = [
+                    selector.dump()
+                    for selector in self.get_selectors()
+                ]
 
-        for selector in self.get_selectors():
-            # Loads associated class
-            selector = Selector(
-                storage=self.storage,
-                record=selector,
-                logging_level=self.logging_level
-            )
-
-            name = selector.display_name
-
-            self.logger.debug(u'Start processing selector: {0}'.format(name))
-
-            # Selector event have to be published when do state is true.
-            if selector.dostate:
-                rk, event, publish_ack = selector.event()
-
-                # Compute previous event to know if any difference next turn
-                selector.data['previous_metrics'] = {
-                    metric['metric']: metric['value']
-                    for metric in event['perf_data_array']
-                }
-
-                do_publish_event = selector.have_to_publish(selector_event)
-
-                if do_publish_event:
-                    self.publish_event(selector, rk, event, publish_ack)
-
-                # When selector computed, sla may be asked to be computed.
-                if selector.dosla:
-                    self.logger.debug('Start processing SLA')
-
-                    # Retrieve user ui settings
-                    # This template should be always set
-                    template = selector.get_sla_output_tpl()
-                    # Timewindow computation duration
-                    timewindow = selector.get_sla_timewindow()
-                    sla_warning = selector.get_sla_warning()
-                    sla_critical = selector.get_sla_critical()
-                    alert_level = selector.get_alert_level()
-                    display_name = selector.display_name
-
-                    rk = get_routingkey(selector_event)
-
-                    sla = Sla(
-                        self.storage,
-                        rk,
-                        template,
-                        timewindow,
-                        sla_warning,
-                        sla_critical,
-                        alert_level,
-                        display_name,
+                for event in events:
+                    publish(
+                        publisher=self.engine.amqp,
+                        event=event,
+                        rk=self.amqp_queue,
+                        exchange='amq.direct',
                         logger=self.logger
                     )
-                    self.publish_sla_event(
-                        sla.get_event(),
-                        display_name
-                    )
 
-            else:
-                self.logger.debug('Nothing to do')
+    def work(self, event, *args, **kwargs):
+        # Loads associated class
+        selector = Selector(
+            storage=self.storage,
+            raw_record=event,
+            logging_level=self.logging_level
+        )
 
-            selector.save()
+        name = selector.display_name
 
-        self.nb_beat += 1
+        self.logger.debug(u'Start processing selector: {0}'.format(name))
+
+        # Selector event have to be published when do state is true.
+        if selector.dostate:
+            rk, event, publish_ack = selector.event()
+
+            # Compute previous event to know if any difference next turn
+            selector.data['previous_metrics'] = {
+                metric['metric']: metric['value']
+                for metric in event['perf_data_array']
+            }
+
+            do_publish_event = selector.have_to_publish(event)
+
+            if do_publish_event:
+                self.publish_event(selector, rk, event, publish_ack)
+
+            # When selector computed, sla may be asked to be computed.
+            if selector.dosla:
+                self.logger.debug('Start processing SLA')
+
+                # Retrieve user ui settings
+                # This template should be always set
+                template = selector.get_sla_output_tpl()
+                # Timewindow computation duration
+                timewindow = selector.get_sla_timewindow()
+                sla_warning = selector.get_sla_warning()
+                sla_critical = selector.get_sla_critical()
+                alert_level = selector.get_alert_level()
+                display_name = selector.display_name
+
+                rk = get_routingkey(event)
+
+                sla = Sla(
+                    self.storage,
+                    rk,
+                    template,
+                    timewindow,
+                    sla_warning,
+                    sla_critical,
+                    alert_level,
+                    display_name,
+                    logger=self.logger
+                )
+                self.publish_sla_event(
+                    sla.get_event(),
+                    display_name
+                )
+
+        else:
+            self.logger.debug('Nothing to do')
+
+        selector.save()
 
     def publish_sla_event(self, event, display_name):
         publish(publisher=self.amqp, event=event)
