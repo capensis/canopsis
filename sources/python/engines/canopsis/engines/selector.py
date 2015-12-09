@@ -21,6 +21,7 @@
 from canopsis.engines.core import Engine, publish
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
+from canopsis.old.record import Record
 from canopsis.downtime.selector import Selector
 from canopsis.sla import Sla
 from canopsis.event import get_routingkey
@@ -75,7 +76,7 @@ class engine(Engine):
         # Loads associated class
         selector = Selector(
             storage=self.storage,
-            raw_record=event,
+            record=Record(event),
             logging_level=self.logging_level
         )
 
