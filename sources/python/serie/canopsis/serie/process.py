@@ -24,7 +24,6 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 from canopsis.engines.core import publish
 
-from canopsis.timeserie.timewindow import TimeWindow
 from canopsis.serie.manager import Serie
 
 from time import time
@@ -56,31 +55,32 @@ def serie_processing(engine, event, manager=None, logger=None, **_):
     if manager is None:
         manager = singleton_per_scope(Serie)
 
-    points = manager.calculate(event)
+    # Generate metric metadata
+    metric_meta = {
+        meta: event[meta]
+        for meta in ['unit', 'min', 'max', 'warn', 'crit']
+        if event.get(meta, None) is not None
+    }
+    metric_meta['type'] = 'GAUGE'
 
-    events = []
+    # Generate metric entity
+    entity = {
+        'type': 'metric',
+        'connector': 'canopsis',
+        'connector_name': engine.name,
+        'component': event['component'],
+        'resource': event['resource'],
+        'name': event['crecord_name']
+    }
 
-    for point in points:
-        metric = {
-            'metric': event['crecord_name'],
-            'value': point[1],
-            'type': 'GAUGE'
-        }
+    context = manager[Serie.CONTEXT_MANAGER]
+    entity_id = context.get_entity_id(entity)
 
-        for meta in ['unit', 'min', 'max', 'warn', 'crit']:
-            if event.get(meta, None) is not None:
-                metric[meta] = event[meta]
-
-        events.append({
-            'timestamp': point[0],
-            'connector': 'canopsis',
-            'connector_name': engine.name,
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': event['component'],
-            'resource': event['resource'],
-            'perf_data_array': [metric]
-        })
-
-    for event in events:
-        publish(publisher=engine.amqp, event=event, logger=logger)
+    # Publish points
+    perfdata = manager[Serie.PERFDATA_MANAGER]
+    perfdata.put(
+        entity_id,
+        points=manager.calculate(event),
+        meta=metric_meta,
+        cache=False
+    )

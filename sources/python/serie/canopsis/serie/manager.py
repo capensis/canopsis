@@ -172,7 +172,7 @@ class Serie(MiddlewareRegistry):
         :returns: aggregated perfdata classified by metric id as dict
         """
 
-        timwin, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
+        tw, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
             serieconf, timewindow, period, usenan, fixed
         )
 
@@ -186,12 +186,12 @@ class Serie(MiddlewareRegistry):
         )
 
         metrics = self.get_metrics(serieconf['metric_filter'])
-        perfdatas = self.get_perfdata(metrics, timewindow=timwin)
+        perfdatas = self.get_perfdata(metrics, timewindow=tw)
 
         for key in perfdatas:
             perfdatas[key]['aggregated'] = timeserie.calculate(
                 points=perfdatas[key]['points'],
-                timewindow=timwin,
+                timewindow=tw,
                 usenan=usenan
             )
 
@@ -217,13 +217,13 @@ class Serie(MiddlewareRegistry):
         """
 
         # configure consolidation period (same as aggregation period)
-        timwin, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
+        tw, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
             serieconf, timewindow, period, usenan, fixed
         )
 
         intervals = Interval.get_intervals_by_period(
-            timwin.start(),
-            timwin.stop(),
+            tw.start(),
+            tw.stop(),
             period
         )
 
@@ -234,13 +234,13 @@ class Serie(MiddlewareRegistry):
 
         # generate one point per aggregation interval in timewindow
         for interval in intervals:
-            timewindow = TimeWindow(
+            tw = TimeWindow(
                 start=interval['begin'],
                 stop=interval['end'] - 1
             )
 
             # operators are acting on a specific timewindow
-            operators = operatorset(self, period, perfdatas, timewindow, usenan)
+            operators = operatorset(self, period, perfdatas, tw, usenan)
 
             # execute formula in sand-boxed environment
             restricted_globals = {
@@ -299,16 +299,16 @@ class Serie(MiddlewareRegistry):
             stop=lastts
         )
 
-        timwin, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
+        tw, period, usenan, fixed = self.get_timewindow_period_usenan_fixed(
             serieconf, timewindow
         )
 
         perfdatas = self.aggregation(
-            serieconf, timwin, period=period, usenan=usenan, fixed=fixed
+            serieconf, tw, period=period, usenan=usenan, fixed=fixed
         )
 
         points = self.consolidation(
-            serieconf, perfdatas, timwin,
+            serieconf, perfdatas, tw,
             period=period, usenan=usenan, fixed=fixed
         )
 
