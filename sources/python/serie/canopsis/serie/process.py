@@ -24,14 +24,13 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 from canopsis.engines.core import publish
 
-from canopsis.timeserie.timewindow import TimeWindow
 from canopsis.serie.manager import Serie
 
 from time import time
 
 
 @register_task
-def beat_processing(engine, manager=None, logger=None, **kwargs):
+def beat_processing(engine, manager=None, logger=None, **_):
     """Engine beat processing task."""
 
     if manager is None:
@@ -50,44 +49,38 @@ def beat_processing(engine, manager=None, logger=None, **kwargs):
 
 
 @register_task
-def serie_processing(engine, event, manager=None, logger=None, **kwargs):
+def serie_processing(engine, event, manager=None, logger=None, **_):
     """Engine work processing task."""
 
     if manager is None:
         manager = singleton_per_scope(Serie)
 
-    now = time()
+    # Generate metric metadata
+    metric_meta = {
+        meta: event[meta]
+        for meta in ['unit', 'min', 'max', 'warn', 'crit']
+        if event.get(meta, None) is not None
+    }
+    metric_meta['type'] = 'GAUGE'
 
-    timewin = TimeWindow(
-        start=event['last_computation'],
-        stop=now
+    # Generate metric entity
+    entity = {
+        'type': 'metric',
+        'connector': 'canopsis',
+        'connector_name': engine.name,
+        'component': event['component'],
+        'resource': event['resource'],
+        'name': event['crecord_name']
+    }
+
+    context = manager[Serie.CONTEXT_MANAGER]
+    entity_id = context.get_entity_id(entity)
+
+    # Publish points
+    perfdata = manager[Serie.PERFDATA_MANAGER]
+    perfdata.put(
+        entity_id,
+        points=manager.calculate(event),
+        meta=metric_meta,
+        cache=False
     )
-
-    points = manager.calculate(event, timewin)
-
-    events = []
-
-    for point in points:
-        metric = {
-            'metric': event['crecord_name'],
-            'value': point[1],
-            'type': 'GAUGE'
-        }
-
-        for meta in ['unit', 'min', 'max', 'warn', 'crit']:
-            if event.get(meta, None) is not None:
-                metric[meta] = event[meta]
-
-        events.append({
-            'timestamp': point[0],
-            'connector': 'canopsis',
-            'connector_name': engine.name,
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': event['component'],
-            'resource': event['resource'],
-            'perf_data_array': [metric]
-        })
-
-    for event in events:
-        publish(publisher=engine.amqp, event=event, logger=logger)

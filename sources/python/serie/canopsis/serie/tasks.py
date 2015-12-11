@@ -68,8 +68,7 @@ def new_operator(opname, manager, period, perfdatas, timewindow, usenan=True):
         if points:
             timeserie = TimeSerie(
                 period=period,
-                aggregation=opname,
-                round_time=True
+                aggregation=opname
             )
 
             consolidated = timeserie.calculate(
