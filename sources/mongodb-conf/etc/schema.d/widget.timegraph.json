@@ -17,7 +17,10 @@
         "keys": ["series"]
     },{
         "title": "Metrics",
-        "keys": ["metrics"]
+        "keys": ["metric_template", "metrics"]
+    },{
+        "title": "Mixins",
+        "keys":["mixins"]
     }],
     "properties": {
         "title":  {
@@ -90,6 +93,11 @@
                 "type": "object",
                 "role": "metricitem"
             }
+        },
+        "metric_template":  {
+            "type": "string",
+            "description": "Template metric information to display in the chart. Availables template values are <ul><li>connector</li><li>connector_name</li><li>component</li><li>resource</li><li>metric</li></ul>e.g. {{component}} - {{metric}}",
+            "title": "metric template"
         }
     }
 }
