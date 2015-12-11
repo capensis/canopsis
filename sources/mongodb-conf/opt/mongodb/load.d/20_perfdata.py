@@ -35,19 +35,13 @@ def update():
 def fixtimestampandnone():
     """Fix wrong timestamp when period uses a week."""
 
-    perfdatatofix = PerfData()
-
-    perfdata_migrating = 'perfdata_migrating'
-
-    # start to rename perfdata collection
-    perfdatatofix[PerfData.PERFDATA_STORAGE]._backend.rename(perfdata_migrating)
-    perfdatatofix[PerfData.PERFDATA_STORAGE].table = perfdata_migrating
-
-    fixedperfdata = PerfData()
+    perfdata = PerfData()
 
     nan = float('nan')
 
-    for document in perfdatatofix[PerfData.PERFDATA_STORAGE].find_elements():
+    oneweek = 3600 * 24 * 7
+
+    for document in perfdata[PerfData.PERFDATA_STORAGE].find_elements():
 
         metric_id = document['i']
 
@@ -59,4 +53,13 @@ def fixtimestampandnone():
             for ts in values
         )
 
-        fixedperfdata.put(metric_id=metric_id, points=points, cache=False)
+        rightvalues = {
+            key: values[key] for key in values if int(key) < oneweek
+        }
+        document['v'] = rightvalues
+
+        perfdata[PerfData.PERFDATA_STORAGE].put_element(
+            element=document, cache=False
+        )
+
+        perfdata.put(metric_id=metric_id, points=points, cache=False)
