@@ -217,7 +217,7 @@ class Period(object):
         result = timegm(utctimetuple)
 
         # restore microsecond because utctimetuple() does not
-        microseconds = datetime.microsecond * Period.MAX_UNIT_VALUES[0]
+        microseconds = datetime.microsecond * 10**-9
         result += microseconds
 
         return result
@@ -265,17 +265,17 @@ class Period(object):
                     _monthcalendar = monthcalendar(
                         datetime.year, datetime.month
                     )
-                    for week_index, week in enumerate(_monthcalendar):
+                    for week in _monthcalendar:
                         if datetime.day in week:
-                            datetime_value = week_index
+                            params[Period.DAY] = (
+                                week.index(datetime.day) + 7 * (value - 1)
+                            )
                             break
 
                 else:
                     datetime_value = getattr(datetime, unit)
-
-                rounding_period_value = int(datetime_value % value)
-
-                params[unit] = rounding_period_value
+                    rounding_period_value = int(datetime_value % value)
+                    params[unit] = rounding_period_value
 
         rounding_period = Period(**params)
         delta = rounding_period.get_delta()

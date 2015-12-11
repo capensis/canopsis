@@ -19,7 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.context.manager import Context
 from canopsis.perfdata.manager import PerfData
 
 logger = None
@@ -31,23 +30,33 @@ def init():
 
 def update():
 
-    nonetonan()
+    fixtimestampandnone()
 
-def nonetonan():
-    """change none values to nan"""
+def fixtimestampandnone():
+    """Fix wrong timestamp when period uses a week."""
 
-    context = Context()
-    perfdata = PerfData()
-    metrics = context.find(_type='metric')
+    perfdatatofix = PerfData()
 
-    for metric in metrics:
-        metric_id = context.get_entity_id(metric)
-        points = perfdata.get(metric_id=metric_id, with_meta=False)
+    perfdata_migrating = 'perfdata_migrating'
 
-        nan = float('nan')
+    # start to rename perfdata collection
+    perfdatatofix[PerfData.PERFDATA_STORAGE]._backend.rename(perfdata_migrating)
+    perfdatatofix[PerfData.PERFDATA_STORAGE].table = perfdata_migrating
 
-        nonepoints = list(
-            (point[0], nan) for point in points if point[1] is None
+    fixedperfdata = PerfData()
+
+    nan = float('nan')
+
+    for document in perfdatatofix[PerfData.PERFDATA_STORAGE].find_elements():
+
+        metric_id = document['i']
+
+        values = document['v']
+        t = document['t']
+
+        points = list(
+            (t + int(ts), nan if values[ts] is None else values[ts])
+            for ts in values
         )
 
-        perfdata.put(metric_id=metric_id, points=nonepoints)
+        fixedperfdata.put(metric_id=metric_id, points=points, cache=False)
