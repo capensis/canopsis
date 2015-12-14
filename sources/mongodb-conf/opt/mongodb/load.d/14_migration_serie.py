@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
@@ -17,8 +19,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[SERIE]
+from canopsis.middleware.core import Middleware
 
-serie_storage_uri = mongodb-default-serie2://
-context_value = canopsis.context.manager.Context
-perfdata_value = canopsis.perfdata.manager.PerfData
+
+def init():
+    pass
+
+
+def update():
+    storage = Middleware.get_middleware_by_uri('mongodb-default-serie2://')
+
+    items = storage.find_elements(query={
+        'computations_per_interval': {'$exists': False}
+    })
+
+    for item in items:
+        item['computations_per_interval'] = 1
+        storage.put_element(element=item, _id=item['_id'])

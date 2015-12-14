@@ -34,13 +34,11 @@ from logging import INFO, DEBUG, FileHandler, Formatter
 
 from time import time, sleep
 from json import loads
-from datetime import datetime
 from os import getpid
 from os.path import join
 from sys import prefix as sys_prefix
 
 DROP = -1
-DISPATCHER_READY_TIME = 5
 
 
 class Engine(object):
@@ -128,63 +126,7 @@ class Engine(object):
 
         self.last_stat = int(time())
 
-        self.logger.info("Engine initialised")
-
-        self.dispatcher_crecords = [
-            'selector', 'topology', 'derogation', 'consolidation', 'sla',
-            'downtime', 'eventstore', 'stats', 'datacleaner'
-        ]
-
-    def crecord_task_complete(self, crecord_id, extra_fields={}):
-
-        next_ready = time() + DISPATCHER_READY_TIME
-        update_information = {'loaded': False, 'next_ready_time': next_ready}
-
-        # Allow update extra information to the record.
-        for key in extra_fields:
-            update_information[key] = extra_fields[key]
-
-        self.storage.update(
-            crecord_id, update_information
-        )
-        self.logger.debug(
-            'next ready time for crecord {0} : {1}'.format(
-                crecord_id,
-                datetime.fromtimestamp(
-                    next_ready
-                ).strftime('%Y-%m-%d %H:%M:%S')
-            )
-        )
-
-    def get_ready_record(self, record_event):
-        """
-        crecord dispatcher sent a record event with type and crecord id.
-        So I load a crecord object instance (dynamically) from these infos
-        """
-
-        ctype = record_event.get('crecord_type', None)
-
-        if ('_id' in record_event and ctype and
-                ctype in self.dispatcher_crecords):
-
-            record_object = None
-
-            try:
-                record_object = self.storage.get(
-                    record_event['_id'],
-                    account=Account(user="root", group="root")
-                )
-
-            except Exception as e:
-                self.logger.critical(
-                    '<{}> record ({}) not found : {}'.format(
-                        ctype,
-                        record_event['_id'],
-                        e
-                    )
-                )
-
-            return record_object
+        self.logger.info("Engine initialized")
 
     def new_amqp_queue(
         self, amqp_queue, routing_keys, on_amqp_event, exchange_name
@@ -224,23 +166,6 @@ class Engine(object):
                 self.routing_keys,
                 self.on_amqp_event,
                 self.exchange_name
-            )
-
-            # This is an async engine and it needs engine dispatcher bindinds
-            # to be feed properly
-
-        if self.etype in self.dispatcher_crecords:
-            rk = 'dispatcher.{0}'.format(self.etype)
-            self.logger.debug(
-                'Creating dispatcher queue for engine {0}'.format(self.etype)
-            )
-
-            self.amqp.get_exchange('media')
-            self.new_amqp_queue(
-                'Dispatcher_{0}'.format(self.etype),
-                rk,
-                self.consume_dispatcher,
-                'media'
             )
 
         self.amqp.start()

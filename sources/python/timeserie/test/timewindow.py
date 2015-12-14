@@ -32,10 +32,28 @@ from canopsis.timeserie.timewindow import Period, Interval, TimeWindow
 
 class PeriodTest(TestCase):
 
+    def test_new(self):
+
+        args = int(36)
+
+        period = Period.new(args)
+
+        self.assertEqual(period.total_seconds(), args)
+
+        args = float(args)
+
+        period = Period.new(args)
+
+        self.assertEqual(period.total_seconds(), args)
+
+        period = Period.new({'second': args})
+
+        self.assertEqual(period.total_seconds(), args)
+
     @staticmethod
     def _new_period():
 
-        unit_values = dict()
+        unit_values = {}
 
         for unit in Period.UNITS:
             unit_values[unit] = random() * 10
@@ -58,87 +76,71 @@ class PeriodTest(TestCase):
 
         delta = period.get_delta()
 
-        for unit, value in period.unit_values.iteritems():
-            if unit is Period.WEEK or unit is Period.DAY:
+        for unit in period.unit_values:
+            value = period.unit_values[unit]
+
+            if unit in (Period.WEEK, Period.DAY):
                 value_to_compare = int(delta.days)
                 value = int(
-                    period.unit_values['day'] + 7 * period.unit_values['week']
+                    period.unit_values.get('day', 0) + 7 * period.unit_values.get('week', 0)
                 )
 
             else:
-                unit = "{0}s".format(unit)
+                unit = '{0}s'.format(unit)
                 value_to_compare = getattr(delta, unit)
 
             self.assertEqual(value, value_to_compare)
 
-    def test_next_period(self):
+    def test_round_datetime(self, ts=None):
 
-        period = self._new_period()
+        now = datetime.now() if ts is None else datetime.utcfromtimestamp(ts)
 
-        del period.unit_values[Period.YEAR]
-        del period.unit_values[Period.HOUR]
+        for unitindex, unit in enumerate(Period.UNITS):
 
-        next_period = period.next_period()
-
-        self.assertTrue(Period.YEAR in next_period)
-        self.assertTrue(Period.HOUR in next_period.unit_values)
-
-        self.assertEqual(
-            next_period[Period.YEAR],
-            Period.MAX_UNIT_VALUES[-2] * period[Period.MONTH])
-
-    def test_round_datetime(self):
-
-        # get current datetime
-        dt = datetime.now()
-
-        for unit in Period.UNITS:
+            if unit in (Period.MONTH, Period.WEEK):
+                continue
 
             for i in range(0, 5):
 
                 period = Period(**{unit: i})
+                round_dt = period.round_datetime(now)
+                round_value = getattr(round_dt, unit, None)
 
-                round_dt = period.round_datetime(dt)
+                unitval = getattr(now, unit, None)
 
-                value = getattr(dt, unit, None)
-                if value is not None:
-                    value_to_set = value + 1 if unit != Period.YEAR else 2000
-                    period.unit_values[unit] = value_to_set
-                    round_dt = period.round_datetime(dt)
-                    round_value = getattr(round_dt, unit)
+                if unitval is not None:
 
-                    if round_value is not None:
-                        if unit is Period.YEAR:
-                            self.assertEqual(round_value, 2000)
-                        elif unit is Period.DAY:
-                            month = dt.month - 1
+                    if unit is Period.DAY:
+
+                        roundday = unitval - (unitval % max(1, i))
+                        if roundday < 0:
+                            month = now.month - 1
+
                             if month == 0:
                                 month = 12
-                            _, monthday = monthrange(dt.year, month)
-                            self.assertEqual(round_value, monthday)
-                        elif unit is Period.MONTH:
-                            self.assertEqual(round_value, 12)
-                        else:
-                            self.assertEqual(round_value, 0)
 
-                if Period.MICROSECOND is not unit:
-                    normalized_dt = period.round_datetime(dt, normalize=True)
-                    for _unit in Period.UNITS[0:Period.UNITS.index(unit) - 1]:
-                        if _unit is not Period.WEEK:
-                            normalized_dt_unit = getattr(normalized_dt, _unit)
-                            if _unit is Period.MONTH or _unit is Period.DAY:
-                                self.assertEqual(normalized_dt_unit, 1)
-                            else:
-                                self.assertEqual(normalized_dt_unit, 0)
+                            _, roundday = monthrange(now.year, month)
+
+                        self.assertEqual(round_value, roundday)
+
+                    else:
+                        maxunitval = Period.MAX_UNIT_VALUES[unitindex]
+
+                        rval = (unitval - (unitval % max(1, i))) % maxunitval
+
+                        self.assertEqual(rval, round_value)
+
+                    for _unit in Period.UNITS[:max(0, unitindex - 1)]:
+                        _round_value = getattr(round_dt, _unit, None)
+
+                        if _unit in (Period.MONTH, Period.DAY):
+                            _round_value -= 1
+
+                        self.assertFalse(_round_value)
 
     def test_round_timestamp(self):
 
-        t = time()
-
-        for unit in Period.UNITS:
-            period = Period(**{unit: 1})
-            st = period.round_timestamp(t)
-            self.assertEqual(t, st)
+        self.test_round_datetime(time())
 
     def test_get_max_unit(self):
 
@@ -148,95 +150,25 @@ class PeriodTest(TestCase):
 
         self.assertTrue(max_unit[Period.UNIT], Period.YEAR)
 
-    def _assert_total_seconds(self, period, value):
-        """
-        Test if period total_seconds equals value
-        """
+    def test_units_and_values(self):
 
-        total_seconds = period.total_seconds()
+        seconds = 1
 
-        self.assertEqual(value, total_seconds)
+        value = randint(0, 10**9-1)
 
-    def test_total_seconds_zero(self):
-        """
-        Test total seconds with 0.
-        """
+        total_seconds = Period(microsecond=value).total_seconds()
 
-        period = Period()
+        self.assertEqual(total_seconds, value * 10**-9)
 
-        self._assert_total_seconds(period, 0)
+        for index, unit in enumerate(Period.UNITS[1:-1]):
 
-    def test_total_seconds_microseconds(self):
-        """
-        Test total seconds with microseconds.
-        """
+            value = randint(1, 10**10)
 
-        period = Period(**{Period.MICROSECOND: 1})
+            total_seconds = Period(**{unit: value}).total_seconds()
 
-        self._assert_total_seconds(period, 0.000000001)
+            self.assertEqual(total_seconds, seconds * value, '{0}:{1}:{2}'.format(value, total_seconds, unit))
 
-    def test_total_seconds_seconds(self):
-        """
-        Test total seconds with seconds
-        """
-
-        period = Period(**{Period.SECOND: 1})
-
-        self._assert_total_seconds(period, 1)
-
-    def test_total_seconds_minutes(self):
-        """
-        Test total seconds with minutes
-        """
-
-        period = Period(**{Period.MINUTE: 1})
-
-        self._assert_total_seconds(period, 60)
-
-    def test_total_seconds_hours(self):
-        """
-        Test total seconds with hours
-        """
-
-        period = Period(**{Period.HOUR: 1})
-
-        self._assert_total_seconds(period, 3600)
-
-    def test_total_seconds_days(self):
-        """
-        Test total seconds with days
-        """
-
-        period = Period(**{Period.DAY: 1})
-
-        self._assert_total_seconds(period, 86400)
-
-    def test_total_seconds_weeks(self):
-        """
-        Test total seconds with weeks
-        """
-
-        period = Period(**{Period.WEEK: 1})
-
-        self._assert_total_seconds(period, 604800)
-
-    def test_total_seconds_months(self):
-        """
-        Test total seconds with months
-        """
-
-        period = Period(**{Period.MONTH: 1})
-
-        self._assert_total_seconds(period, 2592000)
-
-    def test_total_seconds_years(self):
-        """
-        Test total seconds with years
-        """
-
-        period = Period(**{Period.YEAR: 1})
-
-        self._assert_total_seconds(period, 31536000)
+            seconds *= Period.MAX_UNIT_VALUES[index + 1]
 
     def test_total_seconds_mix(self):
         """
@@ -256,9 +188,9 @@ class PeriodTest(TestCase):
 
         period = Period(**kwargs)
 
-        self._assert_total_seconds(
-            period,
-            0.000000001 + 1 + 60 + 3600 + 86400 + 604800 + 2592000 + 31536000
+        self.assertEqual(
+            period.total_seconds(),
+            10**-9 + 1 + 60 + 3600 + 86400 + 86400*7 + 86400*7*4 + 86400*7*4*12
         )
 
     def test_mul(self):
