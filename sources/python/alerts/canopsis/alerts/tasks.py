@@ -18,9 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.alerts.status import compute_status
+from canopsis.alerts.status import compute_status, CANCELED, get_last_status
+
 from canopsis.task.core import register_task
-from canopsis.alerts import status
 
 
 @register_task('alerts.useraction.ack')
@@ -77,7 +77,7 @@ def cancel(manager, alarm, author, message, event):
     alarm['canceled'] = step
     alarm['steps'].append(step)
 
-    return alarm, status.CANCELED
+    return alarm, CANCELED
 
 
 @register_task('alerts.useraction.uncancel')
@@ -100,10 +100,10 @@ def restore(manager, alarm, author, message, event):
     status = None
 
     if manager.restore_event:
-        status = status.get_last_status(alarm, ts=canceled['t'])
+        status = get_last_status(alarm, ts=canceled['t'])
 
     else:
-        status = status.compute_status(alarm)
+        status = compute_status(manager, alarm)
 
     return alarm, status
 

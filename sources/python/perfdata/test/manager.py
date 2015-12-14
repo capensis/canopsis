@@ -54,12 +54,14 @@ class PerfDataTest(TestCase):
         self.perfdata.put(
             metric_id=metric_id,
             points=points,
-            meta=meta)
+            meta=meta
+        )
 
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
             timewindow=timewindow,
-            with_meta=True)
+            with_meta=True
+        )
 
         self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
 
@@ -70,12 +72,14 @@ class PerfDataTest(TestCase):
 
         self.perfdata.remove(
             metric_id=metric_id,
-            timewindow=_timewindow)
+            timewindow=_timewindow
+        )
 
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
             timewindow=timewindow,
-            with_meta=True)
+            with_meta=True
+        )
 
         self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
 
@@ -85,14 +89,16 @@ class PerfDataTest(TestCase):
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
             timewindow=timewindow,
-            with_meta=True)
+            with_meta=True
+        )
 
         self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
 
         # get all data
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
-            with_meta=True)
+            with_meta=True
+        )
 
         self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
 
@@ -101,13 +107,15 @@ class PerfDataTest(TestCase):
         # remove all data
         self.perfdata.remove(
             metric_id=metric_id,
-            with_meta=True)
+            with_meta=True
+        )
 
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
-            with_meta=True)
+            with_meta=True
+        )
 
-        self.assertEqual(len(_meta), 0)
+        self.assertIsNone(_meta)
 
         self.assertEqual(len(data), 0)
 

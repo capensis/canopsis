@@ -56,6 +56,13 @@ class engine(Engine):
     def beat(self):
         self.archiver.beat()
 
+        with self.Lock(self, 'eventstore_reset_status') as l:
+            if l.own():
+                self.reset_stealthy_event_duration = time()
+                self.archiver.reload_configuration()
+                self.archiver.reset_status_event(BAGOT)
+                self.archiver.reset_status_event(STEALTHY)
+
     def store_check(self, event):
         _id = self.archiver.check_event(event['rk'], event)
 
@@ -137,13 +144,3 @@ class engine(Engine):
             self.store_log(event, store_new_event=False)
 
         return event
-
-    def consume_dispatcher(self, event, *args, **kargs):
-
-        # Process this each minute only
-        self.logger.info('proceed status reset')
-
-        self.reset_stealthy_event_duration = time()
-        self.archiver.reload_configuration()
-        self.archiver.reset_status_event(BAGOT)
-        self.archiver.reset_status_event(STEALTHY)

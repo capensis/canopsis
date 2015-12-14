@@ -27,9 +27,10 @@ from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
 
-from canopsis.alerts.status import get_last_state, get_last_status, OFF
 from canopsis.event.manager import Event
 from canopsis.check import Check
+
+from canopsis.alerts.status import get_last_state, get_last_status, OFF
 
 from time import time
 
@@ -179,7 +180,7 @@ class Alerts(MiddlewareRegistry):
         :param timewindow: Time Window used for fetching (optional)
         :type timewindow: canopsis.timeserie.timewindow.TimeWindow
 
-        :returns: Iterable of alarms matching 
+        :returns: Iterable of alarms matching
         """
 
         query = {}
@@ -373,7 +374,7 @@ class Alerts(MiddlewareRegistry):
             try:
                 task = get_task('alerts.useraction.{0}'.format(
                     event['event_type']
-                ))
+                ), cacheonly=True)
 
             except ImportError:
                 task = None
@@ -458,10 +459,14 @@ class Alerts(MiddlewareRegistry):
         """
 
         if state > old_state:
-            task = get_task('alerts.systemaction.state_increase')
+            task = get_task(
+                'alerts.systemaction.state_increase', cacheonly=True
+            )
 
         elif state < old_state:
-            task = get_task('alerts.systemaction.state_decrease')
+            task = get_task(
+                'alerts.systemaction.state_decrease', cacheonly=True
+            )
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value, status = task(self, value, state, event)
@@ -488,10 +493,14 @@ class Alerts(MiddlewareRegistry):
         """
 
         if status > old_status:
-            task = get_task('alerts.systemaction.status_increase')
+            task = get_task(
+                'alerts.systemaction.status_increase', cacheonly=True
+            )
 
         elif status < old_status:
-            task = get_task('alerts.systemaction.status_decrease')
+            task = get_task(
+                'alerts.systemaction.status_decrease', cacheonly=True
+            )
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value = task(self, value, status, event)
