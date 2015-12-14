@@ -20,6 +20,7 @@
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
+
 from canopsis.alerts.manager import Alerts
 
 

@@ -3,6 +3,13 @@
     "description": "Aggregation/Consolidation operations on filtered metrics",
     "type": "object",
     "properties": {
+        "usenan": {
+            "title": "Include empty intervals",
+            "descriptrion": "Nonify aggregated intervals if empty intervals exist among aggregations.",
+            "type": "boolean",
+            "required": true,
+            "default": true
+        },
         "component": {
             "title": "Component",
             "description": "Component of produced event",
@@ -62,7 +69,15 @@
             "title": "Last computation",
             "description": "Timestamp of last computation",
             "type": "integer",
-            "default": 0
+            "default": 0,
+            "role": "eventtimestamp",
+            "canDisplayAgo": true
+        },
+        "computations_per_interval": {
+            "title": "Number of computation per interval",
+            "description": "Define how many times a point is calculated",
+            "type": "integer",
+            "default": 1
         }
     },
     "categories": [{
@@ -76,6 +91,6 @@
         "keys": ["aggregation_method", "aggregation_interval", "round_time_interval"]
     },{
         "title": "Consolidation",
-        "keys": ["formula"]
+        "keys": ["formula", "computations_per_interval"]
     }]
 }

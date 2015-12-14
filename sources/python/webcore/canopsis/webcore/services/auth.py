@@ -164,7 +164,7 @@ def exports(ws):
         redirect('/')
 
     @route(ws.application.post, name='auth/external', nolog=True)
-    def auth_external():
+    def auth_external(**kwargs):
         ws.logger.info('/auth/external')
 
         # When we arrive here, the Bottle plugins in charge of authentication

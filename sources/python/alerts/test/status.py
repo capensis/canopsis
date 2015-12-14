@@ -22,18 +22,23 @@
 from unittest import TestCase, main
 
 from canopsis.middleware.core import Middleware
-from canopsis.alerts.manager import Alerts
-from canopsis.alerts import status
 from canopsis.check import Check
+
+from canopsis.alerts.manager import Alerts
+from canopsis.alerts.status import (
+    FLAPPING, ONGOING, CANCELED, OFF,
+    is_flapping, is_stealthy, compute_status, get_last_state, get_last_status,
+    get_previous_step
+)
 
 
 class TestStatus(TestCase):
     def setUp(self):
         self.alarm_storage = Middleware.get_middleware_by_uri(
-            'storage-timed-test_alarm://'
+            'storage-timed-testalarm://'
         )
         self.config_storage = Middleware.get_middleware_by_uri(
-            'storage-timed-test_config://'
+            'storage-timed-testconfig://'
         )
 
         self.manager = Alerts()
@@ -135,13 +140,20 @@ class TestStatus(TestCase):
                 'a': 'test',
                 'm': 'test',
                 'val': Check.OK
-            }
+            },
+            {
+                '_t': 'stateinc',
+                't': 10,
+                'a': 'test',
+                'm': 'test',
+                'val': Check.CRITICAL
+            },
         ]
 
         self.alarm['state'] = self.alarm['steps'][-1]
 
-        got = status.is_flapping(self.manager, self.alarm)
-        self.assertEqual(got, status.FLAPPING)
+        got = is_flapping(self.manager, self.alarm)
+        self.assertTrue(got)
 
     def test_isnot_flapping(self):
         self.alarm['steps'] = [
@@ -163,8 +175,8 @@ class TestStatus(TestCase):
 
         self.alarm['state'] = self.alarm['steps'][-1]
 
-        got = status.is_flapping(self.manager, self.alarm)
-        self.assertNotEqual(got, status.FLAPPING)
+        got = is_flapping(self.manager, self.alarm)
+        self.assertFalse(got)
 
     def test_is_stealthy(self):
         self.alarm['steps'].append({
@@ -179,10 +191,10 @@ class TestStatus(TestCase):
             't': 1,
             'a': 'test',
             'm': 'test',
-            'val': Check.OFF
+            'val': Check.OK
         }
 
-        got = status.is_stealthy(self.manager, self.alarm)
+        got = is_stealthy(self.manager, self.alarm)
 
         self.assertTrue(got)
 
@@ -199,51 +211,85 @@ class TestStatus(TestCase):
             't': 601,
             'a': 'test',
             'm': 'test',
-            'val': Check.OFF
+            'val': Check.OK
         }
 
-        got = status.is_stealthy(self.manager, self.alarm)
+        got = is_stealthy(self.manager, self.alarm)
 
         self.assertFalse(got)
 
     def test_is_ongoing(self):
-        self.alarm['state'] = {'val': Check.CRITICAL}
-        got = status.compute_status(self.manager, self.alarm)
-        self.assertEqual(got, status.ONGOING)
+        self.alarm['state'] = {
+            '_t': 'stateinc',
+            't': 0,
+            'a': 'test',
+            'm': 'test',
+            'val': Check.CRITICAL
+        }
+        got = compute_status(self.manager, self.alarm)
+        self.assertEqual(got, ONGOING)
 
     def test_is_canceled(self):
-        self.alarm['canceled'] = {'_t': 'cancel'}
-        got = status.compute_status(self.manager, self.alarm)
-        self.assertEqual(got, status.CANCELED)
+        self.alarm['canceled'] = {
+            '_t': 'cancel',
+            't': 0,
+            'a': 'test',
+            'm': 'test'
+        }
+        got = compute_status(self.manager, self.alarm)
+        self.assertEqual(got, CANCELED)
 
     def test_is_off(self):
-        self.alarm['state'] = {'val': Check.OK}
-        got = status.compute_status(self.manager, self.alarm)
-        self.assertEqual(got, status.OFF)
+        self.alarm['state'] = {
+            '_t': 'statedec',
+            't': 0,
+            'a': 'test',
+            'm': 'test',
+            'val': Check.OK
+        }
+        got = compute_status(self.manager, self.alarm)
+        self.assertEqual(got, OFF)
 
     def test_get_last_state(self):
-        got = status.get_last_state(self.alarm)
+        got = get_last_state(self.alarm)
         self.assertEqual(got, Check.OK)
 
-        self.alarm['state'] = {'val': Check.CRITICAL}
+        self.alarm['state'] = {
+            '_t': 'stateinc',
+            't': 0,
+            'a': 'test',
+            'm': 'test',
+            'val': Check.CRITICAL
+        }
 
-        got = status.get_last_state(self.alarm)
+        got = get_last_state(self.alarm)
         self.assertEqual(got, Check.CRITICAL)
 
     def test_get_last_status(self):
-        got = status.get_last_status(self.alarm)
-        self.assertEqual(got, status.OFF)
+        got = get_last_status(self.alarm)
+        self.assertEqual(got, OFF)
 
-        self.alarm['status'] = {'val': status.ONGOING}
+        self.alarm['status'] = {
+            '_t': 'statusinc',
+            't': 0,
+            'a': 'test',
+            'm': 'test',
+            'val': ONGOING
+        }
 
-        got = status.get_last_status(self.alarm)
-        self.assertEqual(got, status.ONGOING)
+        got = get_last_status(self.alarm)
+        self.assertEqual(got, ONGOING)
 
     def test_get_previous_step(self):
-        expected = {'_t': 'teststep'}
+        expected = {
+            '_t': 'teststep',
+            't': 0,
+            'a': 'test',
+            'm': 'test'
+        }
         self.alarm['steps'].append(expected)
 
-        step = status.get_previous_step(self.alarm, 'teststep')
+        step = get_previous_step(self.alarm, 'teststep')
 
         self.assertTrue(expected is step)
 

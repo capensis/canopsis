@@ -28,7 +28,7 @@ class SessionManagerTest(TestCase):
 
     def setUp(self):
         self.storage = Middleware.get_middleware_by_uri(
-            'mongodb-default-test_session://'
+            'mongodb-default-testsession://'
         )
         self.storage.connect()
 
