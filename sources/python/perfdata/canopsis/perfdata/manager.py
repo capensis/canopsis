@@ -20,6 +20,7 @@
 
 from time import time
 
+from canopsis.common.init import basestring
 from canopsis.monitoring.parser import PerfDataParser
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
@@ -29,7 +30,9 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
 from canopsis.storage.timed import TimedStorage
 
-DEFAULT_PERIOD = Period(**{Period.WEEK: 1})  # save data each week
+from numbers import Number
+
+DEFAULT_PERIOD = Period(week=1)  # save data each week
 
 CONF_PATH = 'perfdata/perfdata.conf'
 CATEGORY = 'PERFDATA'
@@ -38,8 +41,7 @@ CATEGORY = 'PERFDATA'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class PerfData(MiddlewareRegistry):
-    """Dedicated to access to perfdata (via periodic and timed stores).
-    """
+    """Dedicated to access to perfdata (via periodic and timed stores)."""
 
     PERFDATA_STORAGE = 'perfdata_storage'
     META_STORAGE = 'meta_storage'
@@ -54,11 +56,8 @@ class PerfData(MiddlewareRegistry):
         return self[PerfData.CONTEXT_MANAGER]
 
     def __init__(
-        self,
-        perfdata_storage=None,
-        meta_storage=None,
-        context=None,
-        *args, **kwargs
+            self, perfdata_storage=None, meta_storage=None, context=None,
+            *args, **kwargs
     ):
 
         super(PerfData, self).__init__(*args, **kwargs)
@@ -126,8 +125,8 @@ class PerfData(MiddlewareRegistry):
         return list(result)
 
     def get(
-        self, metric_id, period=None, with_meta=True, timewindow=None,
-        limit=0, skip=0, timeserie=None
+            self, metric_id, period=None, with_meta=True, timewindow=None,
+            limit=0, skip=0, timeserie=None
     ):
         """Get a set of data related to input data_id on the timewindow and
         input period.
@@ -153,7 +152,7 @@ class PerfData(MiddlewareRegistry):
         return result
 
     def get_point(
-        self, metric_id, period=None, with_meta=True, timestamp=None
+            self, metric_id, period=None, with_meta=True, timestamp=None
     ):
         """Get the closest point before input timestamp. Add meta informations
         if with_meta.
@@ -182,10 +181,9 @@ class PerfData(MiddlewareRegistry):
         return result
 
     def get_meta(
-        self, metric_id, timewindow=None, limit=0, sort=None
+            self, metric_id, timewindow=None, limit=0, sort=None
     ):
-        """Get the meta data related to input data_id and timewindow.
-        """
+        """Get the meta data related to input data_id and timewindow."""
 
         if timewindow is None:
             timewindow = get_offset_timewindow()
@@ -214,7 +212,7 @@ class PerfData(MiddlewareRegistry):
         if points:
             first_point = points[0]
             # if first_point is a timestamp, points is one point
-            if isinstance(first_point, (int, float, str)):
+            if isinstance(first_point, (Number, basestring)):
                 # transform points into a tuple
                 points = (points,)
 
@@ -235,8 +233,8 @@ class PerfData(MiddlewareRegistry):
                 )
 
     def remove(
-        self,
-        metric_id, period=None, with_meta=False, timewindow=None, cache=False
+            self,
+            metric_id, period=None, with_meta=False, timewindow=None, cache=False
     ):
         """Remove values and meta of one metric.
 
@@ -260,15 +258,13 @@ class PerfData(MiddlewareRegistry):
             )
 
     def put_meta(self, metric_id, meta, timestamp=None, cache=False):
-        """Update meta information.
-        """
+        """Update meta information."""
 
         self[PerfData.PERFDATA_STORAGE].put(
             data_id=metric_id, value=meta, timestamp=timestamp, cache=cache)
 
     def remove_meta(self, metric_id, timewindow=None, cache=False):
-        """Remove meta information.
-        """
+        """Remove meta information."""
 
         self[PerfData.PERFDATA_STORAGE].remove(
             data_id=metric_id, timewindow=timewindow, cache=cache)

@@ -18,64 +18,69 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Module of serie processing tasks."""
+
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 from canopsis.engines.core import publish
 
-from canopsis.timeserie.timewindow import TimeWindow
 from canopsis.serie.manager import Serie
 
 from time import time
 
 
 @register_task
-def beat_processing(engine, manager=None, logger=None, **kwargs):
+def beat_processing(engine, manager=None, logger=None, **_):
+    """Engine beat processing task."""
+
     if manager is None:
         manager = singleton_per_scope(Serie)
 
-    for serie in manager.get_series(time()):
-        publish(
-            publisher=engine.amqp,
-            event=serie,
-            rk=engine.amqp_queue,
-            exchange='amq.direct',
-            logger=logger
-        )
+    with engine.Lock(engine, 'serie_fetching') as lock:
+        if lock.own():
+            for serie in manager.get_series(time()):
+                publish(
+                    publisher=engine.amqp,
+                    event=serie,
+                    rk=engine.amqp_queue,
+                    exchange='amq.direct',
+                    logger=logger
+                )
 
 
 @register_task
-def serie_processing(engine, event, manager=None, logger=None, **kwargs):
+def serie_processing(engine, event, manager=None, logger=None, **_):
+    """Engine work processing task."""
+
     if manager is None:
         manager = singleton_per_scope(Serie)
 
-    now = time()
-
-    timewin = TimeWindow(
-        start=event['last_computation'],
-        stop=now
-    )
-
-    point = manager.calculate(event, timewin)
-
-    metric = {
-        'metric': event['crecord_name'],
-        'value': point,
-        'type': 'GAUGE'
+    # Generate metric metadata
+    metric_meta = {
+        meta: event[meta]
+        for meta in ['unit', 'min', 'max', 'warn', 'crit']
+        if event.get(meta, None) is not None
     }
+    metric_meta['type'] = 'GAUGE'
 
-    for meta in ['unit', 'min', 'max', 'warn', 'crit']:
-        if event.get(meta, None) is not None:
-            metric[meta] = event[meta]
-
-    event = {
-        'timestamp': int(now),
+    # Generate metric entity
+    entity = {
+        'type': 'metric',
         'connector': 'canopsis',
         'connector_name': engine.name,
-        'event_type': 'perf',
-        'source_type': 'resource',
         'component': event['component'],
         'resource': event['resource'],
-        'perf_data_array': [metric]
+        'name': event['crecord_name']
     }
 
-    publish(publisher=engine.amqp, event=event, logger=logger)
+    context = manager[Serie.CONTEXT_MANAGER]
+    entity_id = context.get_entity_id(entity)
+
+    # Publish points
+    perfdata = manager[Serie.PERFDATA_MANAGER]
+    perfdata.put(
+        entity_id,
+        points=manager.calculate(event),
+        meta=metric_meta,
+        cache=False
+    )

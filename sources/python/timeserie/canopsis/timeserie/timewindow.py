@@ -33,6 +33,8 @@ from operator import itemgetter
 
 from datetime import datetime as dt
 
+from numbers import Number
+
 
 class Period(object):
     """Period management with a value and an unitself.
@@ -51,7 +53,7 @@ class Period(object):
 
     UNITS = (MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR)
 
-    MAX_UNIT_VALUES = (10000000, 60, 60, 24, 7, 4, 31, 100)
+    MAX_UNIT_VALUES = (10**9, 60, 60, 24, 7, 4, 12, 10**10)
 
     UNIT = 'unit'
     VALUE = 'value'
@@ -61,6 +63,8 @@ class Period(object):
         super(Period, self).__init__()
 
         self.unit_values = unit_values
+
+        self.clean()
 
     def __repr__(self):
 
@@ -125,6 +129,31 @@ class Period(object):
 
         return self
 
+    def clean(self):
+        """Clean this content in avoiding to get unit values greater than normal
+        unit values.
+
+        For example, 300 seconds is converted to 5 mn.
+        """
+
+        for index, unit in enumerate(Period.UNITS[:-1]):
+            unitvalue = self.unit_values.get(unit)
+
+            if unitvalue:
+                maxunitvalue = Period.MAX_UNIT_VALUES[index]
+                nextunitvalue = unitvalue // maxunitvalue
+
+                if nextunitvalue:
+                    nextunit = Period.UNITS[index + 1]
+                    self.unit_values[nextunit] = self.unit_values.get(nextunit, 0) + nextunitvalue
+                    unitvalue = int(unitvalue % maxunitvalue)
+
+                if unitvalue:
+                    self.unit_values[unit] = unitvalue
+
+                else:
+                    del self.unit_values[unit]
+
     def total_seconds(self):
         """Get number of seconds.
 
@@ -135,29 +164,17 @@ class Period(object):
 
         result = 0
 
-        if Period.MICROSECOND in self:
-            result += self[Period.MICROSECOND] * 10 ** -9
+        if Period.MICROSECOND in self.unit_values:
+            result = self[Period.MICROSECOND] * 10**-9
 
-        if Period.SECOND in self:
-            result += self[Period.SECOND]
+        seconds = 1
 
-        if Period.MINUTE in self:
-            result += self[Period.MINUTE] * 60
+        for index, unit in enumerate(Period.UNITS[1:]):
 
-        if Period.HOUR in self:
-            result += self[Period.HOUR] * 3600
+            if unit in self.unit_values:
+                result += self.unit_values[unit] * seconds
 
-        if Period.DAY in self:
-            result += self[Period.DAY] * 86400
-
-        if Period.WEEK in self:
-            result += self[Period.WEEK] * 604800
-
-        if Period.MONTH in self:
-            result += self[Period.MONTH] * 2592000
-
-        if Period.YEAR in self:
-            result += self[Period.YEAR] * 31536000
+            seconds *= Period.MAX_UNIT_VALUES[index + 1]
 
         return result
 
@@ -178,35 +195,10 @@ class Period(object):
 
         return result
 
-    def next_period(self):
-        """Get next period with input step or none if next period can't be
-        associated to a specific unit.
-
-        Example: Period(minute=60).next_period() == Period(hour=1)
-        """
-
-        result = Period()
-
-        counts_with_unit = zip(Period.UNITS, Period.MAX_UNIT_VALUES)
-        previous_unit, previous_count = counts_with_unit.pop(-1)
-        counts_with_unit.reverse()
-
-        for unit, count in counts_with_unit:
-            value = self.unit_values.get(unit)
-
-            if value is not None:
-                next_value = value * count
-                result[previous_unit] = next_value
-
-            previous_unit = unit
-
-        return result
-
-    def round_timestamp(self, timestamp, normalize=False, next_period=False):
+    def round_timestamp(self, timestamp, next_period=False):
         """Get round timestamp relative to an input timestamp.
 
         :param long timestamp: timestamp to round.
-        :param bool normalize: normalization property.
         :param bool next_period: computes current period next timestamp.
 
 
@@ -217,26 +209,26 @@ class Period(object):
         """
 
         datetime = dt.utcfromtimestamp(float(timestamp))
-        datetime = self.round_datetime(datetime=datetime, normalize=normalize)
+        datetime = self.round_datetime(
+            datetime=datetime, next_period=next_period
+        )
 
         utctimetuple = datetime.utctimetuple()
         result = timegm(utctimetuple)
 
         # restore microsecond because utctimetuple() does not
-        microseconds = datetime.microsecond * 0.000001
+        microseconds = datetime.microsecond * 10**-9
         result += microseconds
-
-        if next_period:
-            result += len(self)
 
         return result
 
-    def round_datetime(self, datetime, normalize=False):
+    def round_datetime(self, datetime, next_period=False):
         """Calculate roudtime relative to an UTC date.
-        normalize unsure to set to 0 for not given units under the minimal unit
+
+        Normalize unsure to set to 0 for not given units under the minimal unit.
 
         :param datetime datetime: datetime to round.
-        :param bool normalize: normalize.
+        :param bool next_period: computes current period next timestamp.
 
         Example: Let a datetime ``d`` related to the date: 2015/03/04 15:05.
         r = Period(week=1).round_datetime(datetime=d)
@@ -247,84 +239,51 @@ class Period(object):
 
         result = None
 
-        parameters = {}
+        params = {}
+        intermediar_params = {}
 
         unit_values = self.unit_values
 
-        for unit in unit_values:
-            value = max(1, unit_values[unit])
-            if unit == Period.WEEK:
-                _monthcalendar = monthcalendar(
-                    datetime.year, datetime.month
-                )
-                for week_index, week in enumerate(_monthcalendar):
-                    if datetime.day in week:
-                        datetime_value = week_index
-                        break
+        for unit in Period.UNITS:
+
+            if unit not in self.unit_values:
+
+                if unit in (Period.DAY, Period.MONTH):
+                    intermediar_params[unit] = int(getattr(datetime, unit)) - 1
+
+                elif unit != Period.WEEK:
+                    intermediar_params[unit] = int(getattr(datetime, unit))
+
             else:
-                datetime_value = getattr(datetime, unit)
-            rounding_period_value = datetime_value % value
-            parameters[unit] = rounding_period_value
+                value = max(1, self.unit_values[unit])
 
-        rounding_period = Period(**parameters)
+                if intermediar_params:
+                    params.update(intermediar_params)
+                    intermediar_params.clear()
 
+                if unit == Period.WEEK:
+                    _monthcalendar = monthcalendar(
+                        datetime.year, datetime.month
+                    )
+                    for week in _monthcalendar:
+                        if datetime.day in week:
+                            params[Period.DAY] = (
+                                week.index(datetime.day) + 7 * (value - 1)
+                            )
+                            break
+
+                else:
+                    datetime_value = getattr(datetime, unit)
+                    rounding_period_value = int(datetime_value % value)
+                    params[unit] = rounding_period_value
+
+        rounding_period = Period(**params)
         delta = rounding_period.get_delta()
 
         result = datetime - delta
 
-        if normalize:  # set to minimal value for all units before minimal unit
-            parameters = {}
-            if Period.MICROSECOND not in self:
-                parameters[Period.MICROSECOND] = 0
-                if Period.SECOND not in self:
-                    parameters[Period.SECOND] = 0
-                    if Period.MINUTE not in self:
-                        parameters[Period.MINUTE] = 0
-                        if Period.HOUR not in self:
-                            parameters[Period.HOUR] = 0
-                            # check week have to be normalized
-                            if Period.WEEK in self:
-                                # get the right monday
-                                # save day, month and year which can change
-                                day = datetime.day
-                                month = datetime.month
-                                year = datetime.year
-                                # get week value
-                                v = self[Period.WEEK]
-                                # find the right week which corresponds to day
-                                for week_index, week in enumerate(
-                                    _monthcalendar
-                                ):
-                                    if day in week:
-                                        # get the right normalized  week index
-                                        norm_idx = (week_index // (v + 1)) * v
-                                        # get the right normalized week
-                                        norm_week = _monthcalendar[norm_idx]
-                                        # get last monday
-                                        day = norm_week[0]
-                                        # if monday appeared previous month
-                                        if day == 0:
-                                            month -= 1
-                                            if month == 0:
-                                                month = 12
-                                                year -= 1
-                                                # update year
-                                                parameters[Period.YEAR] = year
-                                            # update month
-                                            parameters[Period.MONTH] = month
-                                            # get previous month calendar
-                                            mc = monthcalendar(year, month)
-                                            # get last old monday
-                                            day = mc[-1][0]
-                                        break
-                                parameters[Period.DAY] = day
-                            elif Period.DAY not in self:
-                                parameters[Period.DAY] = 1
-                                if Period.MONTH not in self:
-                                    parameters[Period.MONTH] = 1
-                                    if Period.YEAR not in self:
-                                        parameters[Period.YEAR] = 0
-            result = result.replace(**parameters)
+        if next_period:
+            result = result + self.get_delta()
 
         return result
 
@@ -376,6 +335,24 @@ class Period(object):
                 pass
 
         result = Period(**params)
+
+        return result
+
+    @staticmethod
+    def new(args):
+
+        result = None
+
+        if isinstance(args, dict):
+            result = Period(**args)
+
+        elif isinstance(args, Number):
+            result = Period(second=args)
+
+        else:
+            raise TypeError(
+                'Wrong period argument: {0}. dict or int expected.'.format(args)
+            )
 
         return result
 
@@ -549,7 +526,10 @@ class Interval(object):
             :return: list of intervals
             :rtype: list
         """
-        period = Period(**period)
+
+        if not isinstance(period, Period):
+            period = Period.new(period)
+
         delta = period.get_delta()
         timewindow = TimeWindow()
 
@@ -679,11 +659,10 @@ class Interval(object):
 
 
 class TimeWindow(object):
-    """Manage second intervals with a timezone.
-    """
+    """Manage second intervals with a timezone."""
 
     class TimeWindowError(Exception):
-        pass
+        """Handle timewindow error."""
 
     DEFAULT_DURATION = 60 * 60 * 24  # one day
 
@@ -750,16 +729,14 @@ class TimeWindow(object):
         return result
 
     def __contains__(self, *timestamps):
-        """True if input timestamps are in this timewindow.
-        """
+        """True if input timestamps are in this timewindow."""
 
         result = timestamps in self.interval
 
         return result
 
     def copy(self):
-        """Get a copy of self.
-        """
+        """Get a copy of self."""
 
         result = TimeWindow(
             intervals=[Interval(self.interval)], timezone=self.timezone
@@ -768,16 +745,14 @@ class TimeWindow(object):
         return result
 
     def start(self):
-        """Get first timestamp.
-        """
+        """Get first timestamp."""
 
         result = float(self.interval.min())
 
         return result
 
     def start_datetime(self, utc=False):
-        """Get start datetime.
-        """
+        """Get start datetime."""
 
         result = TimeWindow.get_datetime(
             self.start(), - self.timezone if utc else 0
@@ -786,16 +761,14 @@ class TimeWindow(object):
         return result
 
     def stop(self):
-        """Get last timestamp.
-        """
+        """Get last timestamp."""
 
         result = float(self.interval.max())
 
         return result
 
     def stop_datetime(self, utc=False):
-        """Get stop datetime.
-        """
+        """Get stop datetime."""
 
         result = TimeWindow.get_datetime(
             self.stop(), self.timezone if utc else 0
@@ -804,8 +777,7 @@ class TimeWindow(object):
         return result
 
     def total_seconds(self):
-        """Returns seconds inside this timewindow.
-        """
+        """Returns seconds inside this timewindow."""
 
         result = len(self.interval)
 
@@ -813,8 +785,7 @@ class TimeWindow(object):
 
     @staticmethod
     def get_timestamp(datetime):
-        """Get the timestamp corresponding to input datetime.
-        """
+        """Get the timestamp corresponding to input datetime."""
 
         result = timegm(datetime.timetuple())
 
@@ -832,8 +803,7 @@ class TimeWindow(object):
 
     @staticmethod
     def convert_to_seconds_interval(interval):
-        """Get interval in seconds from an interval.
-        """
+        """Get interval in seconds from an interval."""
 
         sub_intervals = [
             (int(sub_interval[0]), int(sub_interval[1]))
@@ -856,6 +826,20 @@ class TimeWindow(object):
         interval = self.interval.reduce(start, stop)
         result = TimeWindow(intervals=interval, timezone=self.timezone)
         return result
+
+    def get_round_timewindow(self, period):
+        """Get a rounded timewindow thanks to input period.
+
+        :param period: Input period
+        :type period: canopsis.timeserie.timewindow.Period
+
+        :rtype: canopsis.timeserie.timewindow.TimeWindow
+        """
+
+        return TimeWindow(
+            start=period.round_timestamp(self.start()),
+            stop=period.round_timestamp(self.stop(), next_period=True)
+        )
 
 
 def get_offset_timewindow(offset=None):
