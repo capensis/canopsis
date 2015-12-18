@@ -48,7 +48,8 @@ class AggregationTest(TestCase):
 
 	def test_delta(self):
 		self._test_aggregation(
-			'DELTA', lambda points: (max(points) - min(points)) / 2)
+			'DELTA', lambda points: (max(points) - min(points)) / 2
+		)
 
 	def test_sum(self):
 		self._test_aggregation('SUM', lambda points: sum(points))

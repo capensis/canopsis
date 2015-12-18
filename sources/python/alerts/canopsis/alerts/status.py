@@ -21,7 +21,6 @@
 from canopsis.common.utils import ensure_iterable
 from canopsis.check import Check
 
-
 OFF = 0
 ONGOING = 1
 STEALTHY = 2
@@ -64,7 +63,7 @@ def get_last_state(alarm, ts=None):
 
     :param alarm: Alarm history
     :type alarm: dict
- 
+
     :param ts: Timestamp to look from (optional)
     :type ts: int
 
@@ -83,7 +82,7 @@ def get_last_status(alarm, ts=None):
 
     :param alarm: Alarm history
     :type alarm: dict
- 
+
     :param ts: Timestamp to look from (optional)
     :type ts: int
 

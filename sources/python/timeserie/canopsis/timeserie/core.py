@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Timeserie module."""
+
 # provide only TimeSerie
 __all__ = ['TimeSerie']
 
@@ -27,6 +29,8 @@ from canopsis.timeserie.aggregation import get_aggregations
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
+
+from math import isnan
 
 CONF_PATH = 'timeserie/timeserie.conf'
 
@@ -60,16 +64,20 @@ class TimeSerie(Configurable):
     CATEGORY = 'TIMESERIE'
 
     def __init__(
-        self,
-        aggregation=VDEFAULT_AGGREGATION,
-        max_points=VMAX_POINTS,
-        period=None,
-        round_time=VROUND_TIME,
-        fill=VFILL,
-        *args, **kwargs
+            self,
+            aggregation=VDEFAULT_AGGREGATION,
+            max_points=VMAX_POINTS,
+            period=None,
+            round_time=VROUND_TIME,
+            fill=VFILL,
+            *args, **kwargs
     ):
 
         super(TimeSerie, self).__init__(*args, **kwargs)
+
+        # set protected attributes
+        self._period = None
+        self._aggregation = None
 
         self.period = period
         self.max_points = max_points
@@ -83,7 +91,8 @@ class TimeSerie(Configurable):
             ", aggregation: {2}, fill: {3}, max_points: {4})"
         result = message.format(
             self.period, self.round_time, self.aggregation, self.fill,
-            self.max_points)
+            self.max_points
+        )
 
         return result
 
@@ -94,50 +103,35 @@ class TimeSerie(Configurable):
         return result
 
     @property
-    def max_points(self):
-        return self._max_points
-
-    @max_points.setter
-    def max_points(self, value):
-        self._max_points = value
-
-    @property
     def aggregation(self):
+        """Get this aggregation method."""
+
         return self._aggregation.upper()
 
     @aggregation.setter
     def aggregation(self, value):
+        """Change of aggregation method."""
+
         self._aggregation = value
 
     @property
-    def fill(self):
-        return self._fill
-
-    @fill.setter
-    def fill(self, value):
-        self._fill = value
-
-    @property
     def period(self):
+        """Get this period."""
+
         return self._period
 
     @period.setter
     def period(self, value):
+        """Change of period."""
+
         if isinstance(value, basestring):
             value = Period.from_str(value)
+
         self._period = value
 
-    @property
-    def round_time(self):
-        return self._round_time
-
-    @round_time.setter
-    def round_time(self, value):
-        self._round_time = value
-
     def timesteps(self, timewindow):
-        """
-        Get a list of same longer intervals inside timewindow.
+        """Get a list of same longer intervals inside timewindow.
+
         The upper bound is timewindow.stop_datetime()
         """
 
@@ -150,41 +144,40 @@ class TimeSerie(Configurable):
         stop_datetime = timewindow.stop_datetime()
 
         if self.round_time:  # normalize if round time is True
-            start_datetime = period.round_datetime(
-                datetime=start_datetime, normalize=True
-            )
+            start_datetime = period.round_datetime(datetime=start_datetime)
 
         current_datetime = start_datetime
         delta = period.get_delta()
 
         while current_datetime < stop_datetime:
-            ts = TimeWindow.get_timestamp(current_datetime)
-            result.append(ts)
+            timestamp = TimeWindow.get_timestamp(current_datetime)
+            result.append(timestamp)
             current_datetime += delta
 
         result.append(timewindow.stop())
 
         return result
 
-    def calculate(self, points, timewindow, meta=None):
-        """
-        Do an operation on all points with input timewindow.
+    def calculate(self, points, timewindow, meta=None, usenan=True):
+        """Do an operation on all points with input timewindow.
 
-        Return points su as follow:
-        Let fn self aggregation function and
-        input points of the form: [(T0, V0), ..., (Tn, Vn)]
-        then the result is [(T0, fn(V0, V1)), (T2, fn(V2, V3), ...].
+        :param bool usenan: if False (True by default) remove nan point values.
+        :return: points such as follow:
+            Let func self aggregation function and
+            input points of the form: [(T0, V0), ..., (Tn, Vn)]
+            then the result is [(T0, func(V0, V1)), (T2, func(V2, V3), ...].
         """
 
         result = []
+
+        nan = float('nan')
 
         # start to exclude points not in timewindow
         # in taking care about round time
         if self.round_time:
             period = self._get_period(timewindow)
             round_starttimestamp = period.round_timestamp(
-                timestamp=timewindow.start(),
-                normalize=True
+                timestamp=timewindow.start()
             )
             timewindow = timewindow.reduce(
                 start=round_starttimestamp,
@@ -192,154 +185,88 @@ class TimeSerie(Configurable):
             )
 
         # start to exclude points which are not in timewindow
-        points = [point for point in points if point[0] in timewindow]
+        points = [
+            point for point in points
+            if point[0] in timewindow and (usenan or not isnan(point[1]))
+        ]
 
         if not meta:
             meta = {}
 
         transform_method = meta.get('value', {}).get('type', None)
-        points = self.apply_transform(points, method=transform_method)
+        points = apply_transform(points, method=transform_method)
         points_len = len(points)
 
-        fn = None
+        func = None
 
         # if no period and max_points > len(points)
-        if (not points) or self.period is None\
-                and self.max_points > points_len:
+        if (
+                (not points) or self.period is None
+                and self.max_points > points_len
+        ):
             result = points  # result is points
 
-        else:  # else get the right aggregation function
-            fn = get_aggregations()[self.aggregation]
-
-        # if an aggregation is required
-        if fn is not None:
+        else:  # else calculate points with the right aggregation function
+            func = get_aggregations()[self.aggregation]
 
             # get timesteps
-            timesteps = self.timesteps(timewindow)
+            timesteps = self.timesteps(timewindow)[:-1]
+
             # initialize variables for loop
             i = 0
             values_to_aggregate = []
             last_point = None
 
-            # iterate on all timesteps in order to get points in [prev_ts, ts[
-            for index in range(1, len(timesteps)):
+            len_timesteps = len(timesteps)
+
+            # iterate on timesteps to get points in [prev_ts, timestamp[
+            for index, timestamp in enumerate(timesteps):
                 # initialize values_to_aggregate
                 values_to_aggregate = []
                 # set timestamp and previous_timestamp
-                previous_timestamp = timesteps[index - 1]
-                timestamp = timesteps[index]
 
-                # if no point to process in [previous_timestamp, timestamp]
-                if points[i][0] > timestamp:
-                    continue  # go to the next iteration
+                if index < (len_timesteps - 1):  # calculate the upper bound
+                    next_timestamp = timesteps[index + 1]
+
+                else:
+                    next_timestamp = None
 
                 # fill the values_to_aggregate array
-                while i < points_len:  # while there are points to process
+                for i in range(i, points_len):  # while points to process
 
-                    _timestamp, value = points[i]
-                    i += 1
+                    pt_ts, pt_val = points[i]
 
                     # leave the loop if _timestamp is for a future aggregation
-                    if _timestamp > timestamp:
+                    if next_timestamp is not None and pt_ts >= next_timestamp:
                         break
 
-                    # if _timestamp is in timewindow and value is not None
-                    # add value to list of values to aggregate
-                    if value is not None:
-                        values_to_aggregate.append(value)
+                    else:
+                        # add value to list of values to aggregate
+                        values_to_aggregate.append(pt_val)
+
+                else:  # leave the loop whatever timesteps
+                    i += 1
 
                 # TODO: understand what it means :D
                 if self.aggregation == "DELTA" and last_point:
                     values_to_aggregate.insert(0, last_point)
 
-                # get the aggregated value related to values_to_aggregate
-                _aggregation_value = self._aggregation_value(
-                    values_to_aggregate, fn)
+                if values_to_aggregate:
 
-                # new point to add to result
-                aggregation_point = previous_timestamp, _aggregation_value
-                result.append(aggregation_point)
+                    # get the aggregated value related to values_to_aggregate
+                    aggregation_value = self._aggregation_value(
+                        values_to_aggregate, func
+                    )
 
-                # save last_point for future DELTA checking
-                if len(values_to_aggregate) > 0:
-                    last_point = values_to_aggregate[-1]
+                    # new point to add to result
+                    if usenan or not isnan(aggregation_value):
+                        aggregation_point = timestamp, aggregation_value
+                        result.append(aggregation_point)
+                        # save last_point for future DELTA checking
+                        last_point = aggregation_point[-1]
 
-                if i >= points_len:
-                    break
-
-        else:
-            result = points
-
-        return result
-
-    def apply_transform(self, points, method=None):
-        """
-        Apply DERIVE, ABSOLUTE, COUNTER, GAUGE transforms to points.
-
-        :param list points: list of points.
-        :param str method: method (it's the "type" metadata of perfdata).
-        :returns: list of points.
-        :rtype: list
-        """
-
-        def gauge(pts):
-            return pts
-
-        def absolute(pts):
-            points = []
-
-            for pt in pts:
-                ts, val = pt[0], pt[1]
-
-                if val < 0:
-                    val = -val
-
-                points.append([ts, val])
-
-            return points
-
-        def derive(pts):
-            points = []
-
-            for i in range(1, len(pts)):
-                ts, val = pts[i][0], pts[i][1]
-                prevts, prevval = pts[i - 1][0], pts[i - 1][1]
-
-                if val > prevval:
-                    val -= prevval
-
-                interval = abs(ts - prevts)
-                if interval:
-                    val = round(float(val) / interval, 3)
-
-                points.append([ts, val])
-
-            return points
-
-        def counter(pts):
-            points = []
-
-            val = 0
-
-            for pt in pts:
-                ts, increment = pt[0], pt[1]
-                val += increment
-
-                points.append([ts, val])
-
-            return points
-
-        methods = {
-            'GAUGE': gauge,
-            'ABSOLUTE': absolute,
-            'DERIVE': derive,
-            'COUNTER': counter
-        }
-
-        result = points
-
-        if method and method in methods:
-            result = methods[method](points)
+                elif usenan:
+                        result.append((timestamp, nan))
 
         return result
 
@@ -361,32 +288,103 @@ class TimeSerie(Configurable):
         return result
 
     def _get_period(self, timewindow):
-        """
-        Get a period related to input max_points or a period.
-        """
+        """Get a period related to input max_points or a period."""
 
         result = self.period
 
         if result is None:
-            seconds = \
+            seconds = (
                 (timewindow.stop() - timewindow.start()) / self.max_points
+            )
             result = Period(second=seconds)
 
         return result
 
-    def _aggregation_value(self, values_to_aggregate, fn=None):
-        """
-        Get the aggregated value related to input values_to_aggregate,
-        a specific function and a timestamp.
+    def _aggregation_value(self, values_to_aggregate, func=None):
+        """Get the aggregated value related to input values_to_aggregate, a
+        specific function and a timestamp.
         """
 
-        if fn is None:
-            fn = get_aggregations()[self.aggregation]
+        if func is None:
+            func = get_aggregations()[self.aggregation]
 
         if len(values_to_aggregate) > 0:
-            result = round(fn(values_to_aggregate), 2)
+            result = round(func(values_to_aggregate), 2)
 
         else:
             result = 0 if self.fill else None
 
         return result
+
+
+def gauge(pts):
+    """Calculate gauge."""
+
+    return pts
+
+
+def absolute(pts):
+    """Calculate gauge."""
+
+    return list([point[0], abs(point[1])] for point in pts)
+
+
+def derive(pts):
+    """calculate derive."""
+
+    result = []
+
+    for i in range(1, len(pts)):
+        timestamp, val = pts[i]
+        prevts, prevval = pts[i - 1]
+
+        if val > prevval:
+            val -= prevval
+
+        interval = abs(timestamp - prevts)
+        if interval:
+            val = round(float(val) / interval, 3)
+
+        result.append([timestamp, val])
+
+    return result
+
+
+def counter(pts):
+    """Calculate counter."""
+
+    result = []
+
+    val = 0
+
+    for point in pts:
+        timestamp, increment = point
+        val += increment
+
+        result.append([timestamp, val])
+
+    return result
+
+
+METHODS = {
+    'GAUGE': gauge,
+    'ABSOLUTE': absolute,
+    'DERIVE': derive,
+    'COUNTER': counter
+}
+
+def apply_transform(points, method=None):
+    """Apply DERIVE, ABSOLUTE, COUNTER, GAUGE transforms to points.
+
+    :param list points: list of points.
+    :param str method: method (it's the "type" metadata of perfdata).
+    :returns: list of points.
+    :rtype: list
+    """
+
+    result = points
+
+    if method and method in METHODS:
+        result = METHODS[method](points)
+
+    return result

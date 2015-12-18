@@ -18,6 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""Module of Serie utilities."""
+
+NAME_BY_KEYS = {
+    'co:': 'component',
+    're:': 'resource',
+    'me:': 'name'
+}  #: entity name by regex entity header.
+
 
 def build_filter_from_regex(regex):
     """
@@ -37,32 +45,27 @@ def build_filter_from_regex(regex):
     """
 
     regex_parts = regex.split(' ')
-    regex = {
-        'component': [],
-        'resource': [],
-        'name': []
-    }
+
+    regex = {NAME_BY_KEYS[key]: [] for key in NAME_BY_KEYS}
 
     for part in regex_parts:
-        if part.startswith('co:'):
-            regex['component'].append({'$regex': part[3:]})
-
-        elif part.startswith('re:'):
-            regex['resource'].append({'$regex': part[3:]})
-
-        elif part.startswith('me:'):
-            regex['name'].append({'$regex': part[3:]})
+        for key in NAME_BY_KEYS:
+            if part.startswith(key):
+                name = NAME_BY_KEYS[key]
+                regex[name].append({'$regex': part[len(key):]})
+                break
 
         else:
-            for key in regex.keys():
-                regex[key].append({'$regex': part})
+            for name in regex.keys():
+                regex[name].append({'$regex': part})
 
     mfilter = {'$and': []}
 
     for key in regex:
-        if len(regex[key]) > 0:
+        items = regex[key]
+        if items:
             local_mfilter = {'$or': [
-                {key: subfilter} for subfilter in regex[key]
+                {key: subfilter} for subfilter in items
             ]}
 
             if len(local_mfilter['$or']) == 1:
