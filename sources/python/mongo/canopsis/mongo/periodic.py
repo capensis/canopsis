@@ -41,10 +41,9 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
         DATA_ID = 'i'
         TIMESTAMP = 't'
         VALUES = 'v'
-        PERIOD = 'p'
         LAST_UPDATE = 'l'
 
-        QUERY = [(DATA_ID, 1), (PERIOD, 1), (TIMESTAMP, 1)]
+        QUERY = [(DATA_ID, 1), (TIMESTAMP, 1)]
 
     def count(self, data_id, period, timewindow=None, *args, **kwargs):
 
@@ -73,9 +72,6 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
                 '$lte': timewindow.stop()
             }
 
-        if period is not None:
-            where[MongoPeriodicStorage.Index.PERIOD] = period
-
         cursor = self._find(document=where)
         cursor.hint(MongoPeriodicStorage.Index.QUERY)
 
@@ -98,9 +94,6 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
             MongoPeriodicStorage.Index.TIMESTAMP: 1,
             MongoPeriodicStorage.Index.VALUES: 1
         }
-
-        if period is None:
-            projection[MongoPeriodicStorage.Index.PERIOD] = 1
 
         cursor = self._find(document=query, projection=projection)
 
@@ -172,7 +165,6 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
             _set = {
                 MongoPeriodicStorage.Index.DATA_ID: data_id,
-                MongoPeriodicStorage.Index.PERIOD: period.unit_values,
                 MongoPeriodicStorage.Index.TIMESTAMP: id_timestamp
             }
             _set.update(document_properties)
@@ -247,13 +239,11 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
             MongoPeriodicStorage.Index.DATA_ID: data_id
         }
 
-        if period is not None:  # manage specific period
-            result[MongoPeriodicStorage.Index.PERIOD] = period.unit_values
-
         if timewindow is not None:  # manage specific timewindow
             start_timestamp, stop_timestamp = \
                 MongoPeriodicStorage._get_id_timestamps(
-                    timewindow=timewindow, period=period)
+                    timewindow=timewindow, period=period
+                )
             result[MongoPeriodicStorage.Index.TIMESTAMP] = {
                 '$gte': start_timestamp,
                 '$lte': stop_timestamp}
@@ -267,11 +257,9 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
         """
 
         # get minimal timestamp
-        start_timestamp = int(
-            period.round_timestamp(timewindow.start()))
+        start_timestamp = int(period.round_timestamp(timewindow.start()))
         # and maximal timestamp
-        stop_timestamp = int(
-            period.round_timestamp(timewindow.stop()))
+        stop_timestamp = int(period.round_timestamp(timewindow.stop()))
         stop_datetime = datetime.fromtimestamp(stop_timestamp)
         delta = period.get_delta()
         stop_datetime += delta
@@ -300,7 +288,8 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
         if unit_with_value is None:
             raise MongoPeriodicStorage.Error(
                 "period {0} must contain at least one valid unit among {1}".
-                format(period, Period.UNITS))
+                format(period, Period.UNITS)
+            )
 
         md5_result.update(
             unit_with_value[Period.UNIT].encode('ascii', 'ignore'))

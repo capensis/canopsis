@@ -20,6 +20,7 @@
 # ---------------------------------
 
 from canopsis.perfdata.manager import PerfData
+from time import time
 
 logger = None
 
@@ -41,7 +42,29 @@ def fixtimestampandnone():
 
     oneweek = 3600 * 24 * 7
 
-    for document in perfdata[PerfData.PERFDATA_STORAGE].find_elements():
+    cursor = perfdata[PerfData.PERFDATA_STORAGE].find_elements(
+        {'p': {'$exists': True}}
+    )
+
+    count = cursor.count()
+
+    i = 0
+
+    start = time()
+
+    for document in cursor:
+
+        if i % 100 == 0:
+            print(
+                '{0}% . Elapsed time: {1}'.format(
+                    round(float(i) / count, 2) * 100
+                    time() - start
+                )
+            )
+
+        i += 1
+
+        del document['p']
 
         metric_id = document['i']
 
