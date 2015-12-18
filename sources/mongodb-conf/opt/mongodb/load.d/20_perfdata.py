@@ -49,18 +49,16 @@ def fixtimestampandnone():
     count = cursor.count()
 
     i = 0
+    prct = 0
 
     start = time()
 
     for document in cursor:
 
-        if i % 100 == 0:
-            print(
-                '{0}% . Elapsed time: {1}'.format(
-                    round(float(i) / count, 2) * 100
-                    time() - start
-                )
-            )
+        _prct = round(float(i) / count, 2) * 100
+        if prct != _prct:
+            prct = _prct
+            print('{0}% . Elapsed time: {1}s'.format(prct, time() - start))
 
         i += 1
 
