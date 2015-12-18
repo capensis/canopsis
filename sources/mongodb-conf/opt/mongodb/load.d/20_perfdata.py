@@ -79,6 +79,11 @@ def fixtimestampandnone():
         }
         document['v'] = rightvalues
 
+        perfdata[PerfData.PERFDATA_STORAGE]._update(
+            spec={'_id': document['_id']}, document={'$unset': {'p': ''}},
+            multi=False, cache=False
+        )
+
         perfdata[PerfData.PERFDATA_STORAGE].put_element(
             element=document, cache=False
         )
