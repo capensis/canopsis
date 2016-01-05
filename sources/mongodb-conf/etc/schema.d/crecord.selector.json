@@ -134,7 +134,7 @@
 		},
 		"sla_output_tpl": {
 			"type": "string",
-			"default" :"Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%, Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART],  time available [T_AVAIL], time alert [T_ALERT]"
+			"default" :"Available: [P_AVAIL]%, Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%, Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART],  time available [T_AVAIL], time alert [T_ALERT]"
 		},
 		"output_tpl": {
 			"type": "string",
