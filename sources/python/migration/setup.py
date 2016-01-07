@@ -19,17 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.migration.manager import MigrationTool
-from argparse import ArgumentParser
+from canopsis.common.setup import setup
 
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.old',
+    'canopsis.perfdata',
+    'canopsis.organisation'
+]
 
-if __name__ == '__main__':
-    parser = ArgumentParser(description='Canopsis Migration Tool')
-    parser.add_argument('--init', dest='init', action='store_true')
-    parser.add_argument('--update', dest='init', action='store_false')
-    parser.set_defaults(init=True)
-
-    args = parser.parse_args()
-
-    mgr = MigrationTool()
-    mgr.fill(init=args.init)
+setup(
+    description='Canopsis migration module',
+    install_requires=install_requires,
+    keywords='migration')
