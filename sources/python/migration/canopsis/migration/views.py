@@ -99,39 +99,39 @@ class ViewsModule(MigrationModule):
 
             self.logger.info('Backup found at: {0}'.format(filepath))
 
-        def find_weathers(self, items):
-            # Recursively find all weathers in the view
-            for item in items:
-                w = item['widget']
+    def find_weathers(self, items):
+        # Recursively find all weathers in the view
+        for item in items:
+            w = item['widget']
 
-                # Nested widget search
-                if 'items' in w:
-                    self.find_weathers(w['items'])
+            # Nested widget search
+            if 'items' in w:
+                self.find_weathers(w['items'])
 
-                if w['xtype'] == 'weather' and 'event_selection' in w:
-                    self.logger.info(
-                        u'Processing weather in widget: {0}'.format(
-                            w['title']
-                        )
+            if w['xtype'] == 'weather' and 'event_selection' in w:
+                self.logger.info(
+                    u'Processing weather in widget: {0}'.format(
+                        w['title']
                     )
+                )
 
-                    w['event_selection'] = self.transform_event_selection(
-                        w['event_selection']
-                    )
+                w['event_selection'] = self.transform_event_selection(
+                    w['event_selection']
+                )
 
-        def transform_event_selection(self, event_selection):
-            # Business code, update weather content
-            selection = []
+    def transform_event_selection(self, event_selection):
+        # Business code, update weather content
+        selection = []
 
-            while event_selection:
-                value = event_selection.pop()
+        while event_selection:
+            value = event_selection.pop()
 
-                if isinstance(value, basestring):
-                    value = {
-                        'label': 'label',
-                        'rk': value
-                    }
+            if isinstance(value, basestring):
+                value = {
+                    'label': 'label',
+                    'rk': value
+                }
 
-                selection.append(value)
+            selection.append(value)
 
-            return selection
+        return selection

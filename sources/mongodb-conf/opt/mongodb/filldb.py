@@ -34,4 +34,4 @@ if __name__ == '__main__':
         print('Invalid option: {0}'.format(action))
         sys.exit(1)
 
-    subprocess.call('canopsis-filldb --{0}'.format(action))
+    subprocess.call('canopsis-filldb --{0}'.format(action), shell=True)

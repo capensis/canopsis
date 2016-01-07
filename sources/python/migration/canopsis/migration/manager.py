@@ -25,6 +25,7 @@ from canopsis.configuration.model import Parameter
 
 from canopsis.common.utils import lookup
 
+from logging import StreamHandler
 import signal
 import json
 import os
@@ -61,6 +62,9 @@ class MigrationTool(Configurable):
         if modules is not None:
             self.modules = modules
 
+        self.loghandler = StreamHandler()
+        self.logger.addHandler(self.loghandler)
+
     def fill(self, init=True):
         tools = []
 
@@ -78,7 +82,9 @@ class MigrationTool(Configurable):
 
                 continue
 
-            tools.append(migrationcls())
+            migrationtool = migrationcls()
+            migrationtool.addHandler(self.loghandler)
+            tools.append(migrationtool)
 
         for tool in tools:
             if init:
@@ -162,7 +168,7 @@ class MigrationModule(Configurable):
 
         try:
             with open(self.version_info, 'w') as f:
-                json.dump(f, version_info)
+                json.dump(version_info, f)
 
         except Exception as err:
             self.logger.error(
