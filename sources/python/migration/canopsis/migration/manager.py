@@ -83,7 +83,7 @@ class MigrationTool(Configurable):
                 continue
 
             migrationtool = migrationcls()
-            migrationtool.addHandler(self.loghandler)
+            migrationtool.logger.addHandler(self.loghandler)
             tools.append(migrationtool)
 
         for tool in tools:
