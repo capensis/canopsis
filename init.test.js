@@ -18,4 +18,5 @@
  */
 
  define([
+    'canopsis/brick-querybuilder/tests/querybuilder'
 ], function () {});

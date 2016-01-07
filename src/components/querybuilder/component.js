@@ -66,25 +66,12 @@ Ember.Application.initializer({
 
                     if(attribute.type === 'number') {
                         filterElementDict.type = 'integer';
-                        filterElementDict.type = 'date';
-                        filterElementDict.validation = {
-                            format: 'YYYY/MM/DD'
-                        };
-                        filterElementDict.plugin = 'datepicker';
-                        filterElementDict.plugin_config = {
-                            format: 'yyyy/mm/dd',
-                            todayBtn: 'linked',
-                            todayHighlight: true,
-                            autoclose: true
-                        };
                     }
 
                     if(attribute.type !== 'object' && attribute.type !== 'array') {
                         filters.pushObject(filterElementDict);
                     }
-
                 });
-
                 this.$().find('.builder').queryBuilder({
                     filters: filters,
                     lang_code: i18n.lang
