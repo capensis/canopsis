@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: component.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+
+    <h1 class="page-title">Source: component.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+ * Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+ *
+ * This file is part of Canopsis.
+ *
+ * Canopsis is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Canopsis is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Canopsis. If not, see &lt;http://www.gnu.org/licenses/>.
+ */
+
+Ember.Application.initializer({
+    name: 'component-querybuilder',
+    initialize: function(container, application) {
+
+        var i18n = container.lookupFactory('utility:i18n');
+
+        /**
+         * @component querybuilder
+         * @description A query editor component to handle mongo filters edition, using jquery-querybuilder library.
+         * This component also display preview of matching results in a dedicated tab
+         */
+        var component = Ember.Component.extend({
+            /**
+             * @property viewTabColumns
+             * @type array
+             * @description the columns to display in the results preview table
+             */
+            viewTabColumns: [{ name:'component', title:'component' }, { name:'resource', title:'resource' }],
+
+            /**
+             * @property filterValue
+             * @type string
+             * @description contains the computed filter value
+             */
+            filterValue: '',
+            /**
+             * @method didInsertElement
+             * @description contains jquery-querybuilder initialisation and data binding
+             */
+            didInsertElement: function() {
+                var filters = [];
+                Ember.get(container.lookupFactory('model:event'), 'attributes').forEach(function(attribute, name) {
+                    console.error(attribute);
+                    var filterElementDict = {
+                        id: name,
+                        label: name,
+                        type: attribute.type
+                    };
+
+                    if(attribute.type === 'boolean') {
+                        filterElementDict.input = 'radio';
+                        filterElementDict.values = {
+                            true: 'True',
+                            false: 'False'
+                        };
+                    }
+
+                    if(attribute.type === 'number') {
+                        filterElementDict.type = 'integer';
+                        filterElementDict.type = 'date';
+                        filterElementDict.validation = {
+                            format: 'YYYY/MM/DD'
+                        };
+                        filterElementDict.plugin = 'datepicker';
+                        filterElementDict.plugin_config = {
+                            format: 'yyyy/mm/dd',
+                            todayBtn: 'linked',
+                            todayHighlight: true,
+                            autoclose: true
+                        };
+                    }
+
+                    if(attribute.type !== 'object' &amp;&amp; attribute.type !== 'array') {
+                        filters.pushObject(filterElementDict);
+                    }
+
+                });
+
+                this.$().find('.builder').queryBuilder({
+                    filters: filters,
+                    lang_code: i18n.lang
+                });
+
+                if(this.get('filterValue')) {
+                    this.$().find('.builder').queryBuilder('setRulesFromMongo', JSON.parse(this.get('filterValue')));
+                }
+
+                var component = this;
+                this.$().find('.builder').on('afterUpdateRuleFilter.queryBuilder afterDeleteGroup.queryBuilder afterAddRule.queryBuilder afterDeleteRule.queryBuilder afterUpdateRuleValue.queryBuilder afterUpdateRuleOperator.queryBuilder afterUpdateGroupCondition.queryBuilder', function () {
+                    var result = component.$().find('.builder').queryBuilder('getMongo');
+
+                    if (!$.isEmptyObject(result)) {
+                        component.set('filterValue', JSON.stringify(result, null, 2));
+                    }
+                });
+            }
+        });
+
+        application.register('component:component-querybuilder', component);
+    }
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Components</h3><ul><li><a href="component_querybuilder.html">querybuilder</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Jan 07 2016 14:38:55 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
