@@ -27,7 +27,7 @@ install_requires = [
     'canopsis.middleware',
     'canopsis.context',
     'canopsis.ctxprop',
-    'canopsis.mongo'
+    'canopsis.mongo',
     'canopsis.engines',
     'canopsis.event'
 ]

@@ -34,7 +34,7 @@ install_requires = [
     'canopsis.engines',
     'canopsis.configuration',
     'canopsis.event',
-    'canopsis.ctxprop',
+    'canopsis.ctxprop'
 ]
 
 setup(
