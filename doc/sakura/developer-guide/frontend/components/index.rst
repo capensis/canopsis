@@ -1,5 +1,7 @@
+.. _dev-frontend-cmp:
+
 Components
-**********
+==========
 
 .. toctree::
    :maxdepth: 2
@@ -7,3 +9,4 @@ Components
 
    internal
    external
+   editors

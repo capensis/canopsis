@@ -31,6 +31,7 @@ from inspect import getargspec
 from canopsis.common.utils import ensure_iterable, isiterable
 
 from json import loads, dumps
+from math import isnan, isinf
 from bottle import request, HTTPError, HTTPResponse
 from functools import wraps
 import traceback
@@ -40,43 +41,51 @@ from uuid import uuid4 as uuid
 
 
 def adapt_canopsis_data_to_ember(data):
-    """
-    Transform canopsis data to ember data (in changing ``id`` to ``cid``).
+    """Transform canopsis data to ember data (in changing ``id`` to ``cid``).
 
     :param data: data to transform
     """
 
     if isinstance(data, dict):
-        #if 'id' in data and data['id']:
-            #data['cid'] = data['id']
-            #del data['id']
-        #if 'eid' in data and data['eid']:
-            #data['id'] = data['eid']
-        for item in data.values():
-            adapt_canopsis_data_to_ember(item)
+        for key, item in data.iteritems():
+            if isinstance(item, float) and (isnan(item) or isinf(item)):
+                data[key] = None
+
+            else:
+                if isinstance(item, (tuple, frozenset)):
+                    item = list(item)
+                    data[key] = item
+
+                adapt_canopsis_data_to_ember(item)
+
     elif isiterable(data, is_str=False):
-        for item in data:
-            adapt_canopsis_data_to_ember(item)
+        for i in range(len(data)):
+            item = data[i]
+
+            if isinstance(item, float) and (isnan(item) or isinf(item)):
+                data[i] = None
+
+            else:
+                if isinstance(item, (tuple, frozenset)):
+                    item = list(item)
+                    data[i] = item
+
+                adapt_canopsis_data_to_ember(item)
 
 
 def adapt_ember_data_to_canopsis(data):
 
     if isinstance(data, dict):
-        #if 'id' in data and data['id']:
-            #data['eid'] = data['id']
-        #if 'cid' in data and data['cid']:
-            #data['id'] = data['cid']
-            #del data['cid']
-        for item in data.values():
+        for key, item in data.iteritems():
             adapt_ember_data_to_canopsis(item)
+
     elif isiterable(data, is_str=False):
         for item in data:
             adapt_ember_data_to_canopsis(item)
 
 
 def response(data, adapt=True):
-    """
-    Construct a REST response from input data.
+    """Construct a REST response from input data.
 
     :param data: data to convert into a REST response.
     :param kwargs: service function parameters.
@@ -106,8 +115,7 @@ def response(data, adapt=True):
 
 
 def route_name(operation_name, *parameters):
-    """
-    Get the right route related to input operation_name
+    """Get the right route related to input operation_name.
     """
 
     result = '/{0}'.format(operation_name.replace('_', '-'))
@@ -119,8 +127,7 @@ def route_name(operation_name, *parameters):
 
 
 class route(object):
-    """
-    Decorator which add ws routes to a callable object.
+    """Decorator which add ws routes to a callable object.
 
     Example::
 
@@ -180,26 +187,16 @@ class route(object):
         # generate an interceptor
         @wraps(function)
         def interceptor(*args, **kwargs):
-            if not self.nolog:
-                self.logger.info(
-                    'Request: {} - {} - {}, {} (params: {})'.format(
-                        self.op.__name__.upper(),
-                        self.url,
-                        dumps(args), dumps(kwargs),
-                        dumps(dict(request.params))
-                    )
-                )
-
             params = request.params  # request params
 
             if self.raw_body:
-                kwargs['body'] = request.body
+                kwargs['body'] = request.body.readline()
 
             else:
                 # params are request params
                 try:
                     loaded_body = loads(request.body.readline())
-                except ValueError:
+                except (ValueError, TypeError):
                     pass
                 else:
                     for lb in loaded_body:
@@ -207,16 +204,16 @@ class route(object):
                         params[lb] = value
 
             # add body parameters in kwargs
-            for body_param in self.payload:
-                # if param is an array of values
-                array_body_param = '{0}[]'.format(body_param)
-                if array_body_param in params:
-                    param = params.getall(array_body_param)
+            for body_param in params:
+                if body_param.endswith('[]'):
+                    param = params.getall(body_param)
+                    body_param = body_param[:-2]
+
                     # try to convert all json param values to python
                     for i in range(len(param)):
                         try:
                             p = loads(param[i])
-                        except Exception:
+                        except (ValueError, TypeError):
                             pass
                         else:
                             param[i] = p
@@ -228,9 +225,19 @@ class route(object):
                     try:
                         kwargs[body_param] = loads(param)
 
-                    except Exception:  # error while deserializing
+                    except (ValueError, TypeError):
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
+
+            if not self.nolog:
+                self.logger.info(
+                    'Request: {} - {} - {}, {} (params: {})'.format(
+                        self.op.__name__.upper(),
+                        self.url,
+                        dumps(args), dumps(kwargs),
+                        dumps(dict(params))
+                    )
+                )
 
             if self.adapt:
                 # adapt ember data to canopsis data
@@ -256,7 +263,12 @@ class route(object):
                 }
 
             else:
-                if not isinstance(result_function, HTTPError):
+                #TODO: move it globaly, and move this module in webcore project
+                from canopsis.storage.file import FileStream
+
+                classes = (HTTPError, FileStream)
+
+                if not isinstance(result_function, classes):
                     result = self.response(
                         result_function, adapt=self.adapt)
 
@@ -341,3 +353,9 @@ class route(object):
         in_route_name = ':{0}/'.format(param) in route_name
 
         return in_payload or in_route_name
+
+
+def apply_routes(urls):
+    for url in urls:
+        decorator = route(url['method'], name=url['name'], **url['params'])
+        decorator(url['handler'])

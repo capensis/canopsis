@@ -19,16 +19,22 @@
 # ---------------------------------
 
 from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
+    conf_paths, add_category
+)
+from canopsis.configuration.model import Parameter
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.event import Event, forger
 from canopsis.storage.composite import CompositeStorage
 
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
+CONTENT = [
+    Parameter('accept_event_types', Parameter.array())
+]
 
 
-@add_category(CATEGORY)
+@add_category(CATEGORY, content=CONTENT)
 @conf_paths(CONF_RESOURCE)
 class Context(MiddlewareRegistry):
     """
@@ -54,6 +60,7 @@ class Context(MiddlewareRegistry):
     CTX_STORAGE = 'ctx_storage'  #: ctx storage name
     CONTEXT = 'context'
 
+    DATA_ID = '_id'  #: temporary id field
     TYPE = 'type'  #: entity type field name
     NAME = CompositeStorage.NAME  #: entity name field name
     EXTENDED = 'extended'  #: extended field name
@@ -86,13 +93,92 @@ class Context(MiddlewareRegistry):
 
         self._context = value
 
+    @property
+    def accept_event_types(self):
+        if not hasattr(self, '_accept_event_types'):
+            self.accept_event_types = None
+
+        return self._accept_event_types
+
+    @accept_event_types.setter
+    def accept_event_types(self, value):
+        if value is None:
+            value = [
+                'perf',
+                'check',
+                'ack',
+                'ackremove'
+                'declareticket',
+                'assocticket',
+                'cancel',
+                'uncancel',
+                'changestate',
+                'downtime'
+            ]
+
+        self._accept_event_types = value
+
     def get_entities(self, ids):
         """Get entities by id.
 
         :param ids: one id or a set of ids.
+        :type ids: list or str
         """
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
+
+    def iter_ids(self):
+        """Returns a cursor on all context ids.
+        """
+
+        cursor = self[Context.CTX_STORAGE].get_elements(projection={
+            Context.DATA_ID: True
+        })
+
+        for doc in cursor:
+            yield doc[Context.DATA_ID]
+
+    def clean(self, entity):
+        """Remove entity properties which are not in self.context
+        """
+
+        result = {}
+
+        for ctx in self.context:
+            if ctx in entity:
+                result[ctx] = entity[ctx]
+            else:
+                break
+
+        result[Context.NAME] = entity[Context.NAME]
+
+        return result
+
+    def get_children(self, entity):
+        """Get children entities of input entity.
+
+        For example, if entity is a component, you can retrieve component
+        resources and metrics.
+
+        :param dict entity: parent entity.
+        :return: list of children entity.
+        :rtype: list
+        """
+
+        # construct query with parent fields which can be found among children
+        query = self.clean(entity)
+        del query[Context.TYPE]
+
+        # iterate on context information without the type
+        for ctx in self.context[1:]:
+            if ctx not in entity:
+                query[ctx] = query.pop(Context.NAME)
+                break
+
+        # execute query in order to get children
+        children = self[Context.CTX_STORAGE].find_elements(query=query)
+
+        return children
 
     def get_entity(
         self, event, from_db=False, create_if_not_exists=False, cache=False
@@ -116,7 +202,7 @@ class Context(MiddlewareRegistry):
         # try to get the right type if the event corresponds to the old system
         if _type in self.context:
             event_type = _event['event_type']
-            if event_type not in ['check', 'downtime', 'ack']:
+            if event_type not in self.accept_event_types:
                 _type = event_type
 
         # set type in event
@@ -207,13 +293,16 @@ class Context(MiddlewareRegistry):
 
         return result
 
-    def get_event(self, entity, **kwargs):
+    def get_event(self, entity, event_type='check', **kwargs):
         """Get an event from an entity.
 
         :param dict entity: entity to convert to an event.
+        :param str event_type: specific event_type. Default check.
         :param dict kwargs: additional fields to put in the event.
+        :rtype: dict
         """
 
+        kwargs['event_type'] = event_type
         # fill kwargs with entity values
         for field in entity:
             kwargs[field] = entity[field]
@@ -481,7 +570,8 @@ class Context(MiddlewareRegistry):
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(Context, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
+            unified_conf=unified_conf, *args, **kwargs
+        )
 
         if Context.CTX_STORAGE in self:
             self[Context.CTX_STORAGE].path = self.context

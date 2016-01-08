@@ -4,7 +4,8 @@
 		"widget": {
 			"relationship": "belongsTo",
 			"model": "widget",
-			"polymorphic":true
+			"polymorphic":true,
+			"embedded": true
 		},
 		"title": {
 			"type": "string"

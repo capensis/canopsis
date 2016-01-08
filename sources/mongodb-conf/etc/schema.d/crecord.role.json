@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["_id", "description"]
+		"keys":["_id", "description", "defaultview"]
 	},{
 		"title": "rights",
 		"keys": ["rights"]
@@ -23,6 +23,15 @@
 			"type": "object",
 			"role": "rights",
 			"valuekey" : "_id"
+		},
+		"defaultview": {
+			"title": "Default view",
+			"description": "The view to display when users log in",
+			"type": "string",
+			"role": "restobject",
+			"schemaType":"userview",
+			"valueField":"id",
+			"labelField":"crecord_name"
 		}
 	}
 }

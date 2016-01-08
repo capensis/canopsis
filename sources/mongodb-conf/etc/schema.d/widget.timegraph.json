@@ -5,7 +5,7 @@
     },
     "categories": [{
         "title": "General",
-        "keys": ["title", "refreshInterval", "human_readable", "legend", "tooltip"]
+        "keys": ["title", "human_readable", "legend", "tooltip"]
     },{
         "title": "Time Window",
         "keys": ["time_window", "time_window_offset"]
@@ -80,9 +80,7 @@
             "role": "array",
             "items": {
                 "type": "object",
-                "role": "serieitem",
-                "relationship": "belongsTo",
-                "model": "stylizedserie"
+                "role": "serieitem"
             }
         },
         "metrics": {
@@ -90,9 +88,7 @@
             "role": "array",
             "items": {
                 "type": "object",
-                "role": "metricitem",
-                "relationship": "belongsTo",
-                "model": "stylizedmetric"
+                "role": "metricitem"
             }
         }
     }

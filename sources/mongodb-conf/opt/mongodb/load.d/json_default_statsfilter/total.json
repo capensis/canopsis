@@ -1,0 +1,11 @@
+{
+    "_id" : "total_statsfilter",
+    "loader_id" : "total_statsfilter",
+    "crecord_write_time" : 0,
+    "enable" : true,
+    "crecord_creation_time" : 0,
+    "filter" : null,
+    "crecord_type" : "statsfilter",
+    "id" : "total_statsfilter",
+    "crecord_name" : "total"
+}

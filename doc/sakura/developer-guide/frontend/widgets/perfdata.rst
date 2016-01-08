@@ -1,3 +1,5 @@
+.. _dev-frontend-widgets-perfdata:
+
 Using Performance Data
 ======================
 

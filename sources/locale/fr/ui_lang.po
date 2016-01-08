@@ -7,9 +7,9 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2015-05-18 08:57+0000\n"
+"PO-Revision-Date: 2015-08-06 07:32+0000\n"
 "Last-Translator: eric regnier <eregnier@capensis.fr>\n"
-"Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
+"Language-Team: French (http://www.transifex.com/ojan/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1805,3 +1805,153 @@ msgstr "Rétablir alarme"
 
 msgid "general"
 msgstr "général"
+
+msgid "Fetching frontend bricks"
+msgstr "Récupération des briques du frontend"
+
+msgid "Nothing"
+msgstr "Rien"
+
+msgid "Can view"
+msgstr "Peut voir"
+
+msgid "From"
+msgstr "Depuis"
+
+msgid "To"
+msgstr "Jusqu'à"
+
+msgid "Recursion"
+msgstr "Récursion"
+
+msgid "Duration"
+msgstr "Durée"
+
+msgid "Behaviors"
+msgstr "Comportements"
+
+msgid "Context"
+msgstr "Contexte"
+
+msgid "Left until max"
+msgstr "Restant jusqu'au maximum"
+
+msgid "Import a view"
+msgstr "Importer une vue"
+
+msgid "Metrics"
+msgstr "Métriques"
+
+msgid "display"
+msgstr "affichage"
+
+msgid "allow user display"
+msgstr "permettre affichage utilisateur"
+
+msgid "metric template"
+msgstr "template de mértique"
+
+msgid "use max value"
+msgstr "utiliser la valeur maximale"
+
+msgid "max value"
+msgstr "valeur maximale"
+
+msgid "show legend"
+msgstr "afficher la légende"
+
+msgid "show tooltip"
+msgstr "afficher l'infobulle"
+
+msgid "show labels"
+msgstr "afficher les labels"
+
+msgid "Display labels when checked"
+msgstr "Afficher les labels quand coché"
+
+msgid "Display tooltip when checked"
+msgstr "Afficher les infobulles quand coché"
+
+msgid "Display legend when checked"
+msgstr "Afficher la légende quand coché"
+
+msgid ""
+"maximum value to display on the chart. This will create a serie with a value"
+" equal to the sum of series values minus the max.  Depends on if use max "
+"value is selected"
+msgstr "Valeur maximale à afficher sur le graphique. Cela va créer une série supplémentaire ayant pour valeur la différence entre la valeur maximale et la somme des valeurs des séries. Dépend de si le paramètre \"utiliser valeur maximale\" est coché"
+
+msgid ""
+"Use or not max value. when max value disabled, the maximum value of the "
+"chart is the sum of all series."
+msgstr "Utiliser ou non la valeur maximale. Quand la valeur maximale est désactivés, la valeur maximale du graphique est la somme des séries."
+
+msgid ""
+"Select metric to display in the chart. the last value in an interval of 10 "
+"minutes is selected by default. Availables template values are "
+"<ul><li>connector</li><li>connector_name</li><li>component</li><li>resource</li><li>metric</li></ul>e.g."
+" {{component}} - {{metric}}"
+msgstr "Affichage de la valeur de la métrique sous forme de template. Les valeurs du template peuvent être <ul><li>connector</li><li>connector_name</li><li>component</li><li>resource</li><li>metric</li></ul>ex: {{component}} - {{metric}}"
+
+msgid "Allow users to dynamically change chart type."
+msgstr "Permet de changer le type de graphique dynamiquement."
+
+msgid "Allow to select the categorie chart representation"
+msgstr "Permet de sélectionner un type de représentation pour le graphique"
+
+msgid "Duplicate entry"
+msgstr "Dupliquer"
+
+msgid "desc"
+msgstr "descendant"
+
+msgid " Rights assigned"
+msgstr "Droit assigné"
+
+msgid "SMTP"
+msgstr "SMTP"
+
+msgid "User Informations"
+msgstr "Informations utilisateur"
+
+msgid "subject"
+msgstr "sujet"
+
+msgid "body"
+msgstr "corps"
+
+msgid "recipients"
+msgstr "destinataires"
+
+msgid "attachments"
+msgstr "pièces jointes"
+
+msgid "smtp_host"
+msgstr "hôte smtp"
+
+msgid "smtp_port"
+msgstr "port smtp"
+
+msgid "group"
+msgstr "groupe"
+
+msgid "sender"
+msgstr "émetteur"
+
+msgid "storages"
+msgstr "système de stockage"
+
+msgid "Storages to clean"
+msgstr "Stockage à nettoyer"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "write template"
+msgstr "écrire template"
+
+msgid "Add event"
+msgstr "Ajouter événement"
+
+msgid "Categories"
+msgstr "Categories"

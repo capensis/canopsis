@@ -1,3 +1,5 @@
+.. _dev-frontend-translation:
+
 Translation
 ===========
 

@@ -1,5 +1,11 @@
 {
     "type": "object",
+    "categories": [
+        {
+            "title": "General",
+            "keys": ["type", "name"]
+        }
+    ],
     "properties": {
         "type": {
             "type": "string",

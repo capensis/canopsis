@@ -1,13 +1,13 @@
+.. _user:
+
 User guide
 ==========
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :titlesonly:
 
-   engines/index
+   quickstart/index
+   reminders/index
    UI/index
-   event-spec
-   internal-metrics
-   event-workflows
-   topology
+   engines/index

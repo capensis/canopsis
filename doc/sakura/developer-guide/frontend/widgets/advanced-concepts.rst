@@ -1,10 +1,14 @@
+.. _dev-frontend-widgets-advanced:
+
 Advanced concepts
-*****************
+=================
 
 Widget factory options
 ----------------------
 
-.. TODO document this part
+.. NOTE::
+
+   TODO: document this part
 
 View mixins
 -----------

@@ -50,3 +50,7 @@ SSL_KEY_PASS="cpsnode"
 # - Variable SSL_KEY_BITS
 # Key size in bits
 SSL_KEY_BITS="1024"
+
+# - Variable SSL_CHECK_SECONDS
+# Range used to check for certificate expiration from now
+SSL_CHECK_SECONDS="86400"

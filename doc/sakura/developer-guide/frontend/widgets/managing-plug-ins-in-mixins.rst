@@ -1,5 +1,7 @@
+.. _dev-frontend-widgets-mixins:
+
 Managing plug-ins in mixins
-***************************
+===========================
 
 Introduction
 ------------

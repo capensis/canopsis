@@ -1,13 +1,13 @@
 {
     "crecord_name" : "series.json",
     "loader_id": "view.series",
-    "loader_no_update": true,
+    "loader_no_update": false,
     "_id" : "view.series",
     "id" : "view.series",
     "crecord_write_time" : 1421855062,
     "enable" : true,
     "description" : "Configure series",
-    "parent" : [ ],
+    "crecord_type" : "view",
     "containerwidget" : {
         "widgetId" : "item_000001-5f29-a175-badd-45c1293b0fce",
         "xtype" : "widgetcontainer",
@@ -28,9 +28,9 @@
                     "listed_crecord_type" : "ctxmetric",
                     "mixins" : [
                         {
-                            "name" : "Pagination"
+                            "name" : "pagination"
                         },
-                        { "name": "Arraysearch",
+                        { "name": "arraysearch",
                           "searchable_columns": [
                             "component",
                             "resource",
@@ -58,10 +58,10 @@
                     "listed_crecord_type" : "serie",
                     "mixins" : [
                         {
-                            "name" : "Crud"
+                            "name" : "crud"
                         },
                         {
-                            "name" : "Pagination"
+                            "name" : "pagination"
                         },
                         { "name": "Arraysearch",
                           "searchable_columns": [
@@ -99,17 +99,102 @@
                         "direction" : "ASC"
                     },
                     "xtype" : "list",
+                    "title" : "Series v2",
+                    "listed_crecord_type" : "serie2",
+                    "mixins" : [
+                        {
+                            "name" : "crud"
+                        },
+                        {
+                            "name" : "pagination"
+                        },
+                        { "name": "Arraysearch",
+                          "searchable_columns": [
+                            "crecord_name",
+                            "aggregate_method",
+                            "aggregate_interval"
+                          ]
+                        },
+                        {
+                            "name": "sortablearray"
+                        }
+                    ],
+                    "columnsOrder" : [ ],
+                    "tagName" : null,
+                    "display_record_field" : null,
+                    "displayed_columns" : [
+                        "crecord_name",
+                        "metric_filter",
+                        "aggregate_method",
+                        "aggregate_interval",
+                        "round_time_interval",
+                        "formula",
+                        "last_computation"
+                    ],
+                    "refreshInterval" : 0,
+                    "contentTruncatedLength" : 0,
+                    "record_template" : null
+                },
+                "xtype" : "widgetwrapper",
+                "title" : "wrapper"
+            },
+            {
+                "widget" : {
+                    "widgetId" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb025",
+                    "default_column_sort" : {
+                        "direction" : "ASC"
+                    },
+                    "xtype" : "list",
+                    "title" : "Statistics Filter",
+                    "listed_crecord_type" : "statsfilter",
+                    "mixins" : [
+                        {
+                            "name" : "crud"
+                        },
+                        {
+                            "name" : "pagination"
+                        },
+                        { "name": "Arraysearch",
+                          "searchable_columns": [
+                            "crecord_name"
+                          ]
+                        },
+                        {
+                            "name": "sortablearray"
+                        }
+                    ],
+                    "columnsOrder" : [ ],
+                    "tagName" : null,
+                    "display_record_field" : null,
+                    "displayed_columns" : [
+                        "crecord_name",
+                        "filter"
+                    ],
+                    "refreshInterval" : 0,
+                    "contentTruncatedLength" : 0,
+                    "record_template" : null
+                },
+                "xtype" : "widgetwrapper",
+                "title" : "wrapper"
+            },
+            {
+                "widget" : {
+                    "widgetId" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb024",
+                    "default_column_sort" : {
+                        "direction" : "ASC"
+                    },
+                    "xtype" : "list",
                     "title" : "Curves",
                     "listed_crecord_type" : "curve",
                     "mixins" : [
                         {
-                            "name" : "Pagination"
+                            "name" : "pagination"
                         },
                         {
-                            "name" : "Crud"
+                            "name" : "crud"
                         },
                         {
-                            "name" : "Arraysearch"
+                            "name" : "arraysearch"
                         }
                     ],
                     "columnsOrder" : [ ],
@@ -137,8 +222,5 @@
             }
         ],
         "refreshInterval" : 0
-    },
-    "internal" : false,
-    "crecord_type" : "view",
-    "crecord_creation_time" : 1421685120
+    }
 }

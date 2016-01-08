@@ -1,7 +1,9 @@
+.. _user-ui-widgets-timegraph:
+
 How to use TimeGraph
 ====================
 
-This document describe how to insert and configure a *TimeGraph* widget.
+This document describes how to insert and configure a *TimeGraph* widget.
 
 The first step is to create some `series and/or curves <../perfdata.html>`_.
 

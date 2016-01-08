@@ -6,11 +6,30 @@
 Sakura
 ======
 
+Welcome on the Canopsis documentation.
+
+You'll find the user guides, administrator guides and developer guides for the
+actual version of Canopsis (aka: **Sakura**):
+
+
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    :titlesonly:
 
+   overview/index
    user-guide/index
    administrator-guide/index
    developer-guide/index
+   api/index
    glossary
+
+Canopsis Specification
+======================
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
+
+   FR/index
+   TR/index
+   ED/index

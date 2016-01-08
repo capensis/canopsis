@@ -57,6 +57,11 @@ class engine(Engine):
 
         jobs = self.storage.find({'$and': [
             {'crecord_type': 'job'},
+			{'$or': [
+				{'jtype': {'$exists': False}},
+				{'jtype': None },
+				{'jtype': 'scheduled'}
+			]},
             {'$or': [
                 {'last_execution': {'$lte': prev}},
                 {'last_execution': None},
@@ -66,7 +71,7 @@ class engine(Engine):
         for job in jobs:
             job = job.dump()
 
-            self.logger.info('Job: {0}'.format(job))
+            self.logger.debug('Job: {0}'.format(job))
 
             if job['last_execution'] <= 0:
                 self.do_job(job)

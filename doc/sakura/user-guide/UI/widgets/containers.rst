@@ -1,3 +1,5 @@
+.. _user-ui-widgets-containers:
+
 How to use Containers
 =====================
 

@@ -1,3 +1,5 @@
+.. _user-ui-widgets:
+
 Widgets
 =======
 
@@ -7,7 +9,8 @@ This section explains how to use the different kind of widgets
    :maxdepth: 3
    :titlesonly:
 
+   containers
    timegraph
    weather
    text
-   containers
+   categorychart

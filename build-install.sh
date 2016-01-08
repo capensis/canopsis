@@ -172,6 +172,7 @@ export_env
 if [ $CPSBUILD -eq 1 ]
 then
     extra_deps
+    check_ssl
 
     if [ $CPSBUILDONE -eq 0 ]
     then

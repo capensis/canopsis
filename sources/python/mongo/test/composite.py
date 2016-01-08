@@ -53,7 +53,7 @@ class MongoCompositeStorageTest(TestCase):
 
         indexes = self.storage.all_indexes()
         # check number of indexes
-        self.assertEqual(len(indexes), len(self.path) + 3)
+        self.assertEqual(len(indexes), len(self.path) + 4)
 
         # add path data with name which are path last value
         for n, _ in enumerate(self.path):
@@ -148,6 +148,35 @@ class MongoCompositeStorageTest(TestCase):
         self.storage.unshare_data(data=data[0])
         shared_data = self.storage.get_shared_data(shared_ids=str(shared_id))
         self.assertEqual(len(shared_data), len(data) - 1)
+
+    def test_distinct(self):
+
+        self.storage.put_element(
+            _id='id_1', element={'group': 'a', 'test': 'value1'}
+        )
+        self.storage.put_element(
+            _id='id_2', element={'group': 'a', 'test': 'value2'}
+        )
+        self.storage.put_element(
+            _id='id_3', element={'group': 'a', 'test': 'value3'}
+        )
+
+        self.storage.put_element(
+            _id='id_4', element={'group': 'b', 'test': 'value1'}
+        )
+        self.storage.put_element(
+            _id='id_5', element={'group': 'b', 'test': 'value2'}
+        )
+        self.storage.put_element(
+            _id='id_6', element={'group': 'b', 'test': 'value4'}
+        )
+
+        result = self.storage.distinct('test', {'group': 'b'})
+        self.assertEqual(result, ['value1', 'value2', 'value4'])
+
+        result = self.storage.distinct('test', {'group': 'a'})
+        self.assertEqual(result, ['value1', 'value2', 'value3'])
+
 
 if __name__ == '__main__':
     main()

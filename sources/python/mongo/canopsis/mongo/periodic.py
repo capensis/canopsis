@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.mongo import MongoStorage
+from canopsis.mongo.core import MongoStorage
 from canopsis.storage.periodic import PeriodicStorage
 from canopsis.timeserie.timewindow import Period
 
@@ -140,7 +140,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
         for ts, value in points:
 
             ts = int(ts)
-            id_timestamp = int(period.round_timestamp(ts, normalize=True))
+            id_timestamp = int(period.round_timestamp(ts))
 
             document_properties = doc_props_by_id_ts.setdefault(
                 id_timestamp, {}
@@ -268,10 +268,10 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
         # get minimal timestamp
         start_timestamp = int(
-            period.round_timestamp(timewindow.start(), normalize=True))
+            period.round_timestamp(timewindow.start()))
         # and maximal timestamp
         stop_timestamp = int(
-            period.round_timestamp(timewindow.stop(), normalize=True))
+            period.round_timestamp(timewindow.stop()))
         stop_datetime = datetime.fromtimestamp(stop_timestamp)
         delta = period.get_delta()
         stop_datetime += delta

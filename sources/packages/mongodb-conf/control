@@ -62,6 +62,8 @@ function wait_for_mongo_install() {
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
+	launch_cmd 0 supervisorctl update
+
 	launch_cmd 0 service mongodb stop
 
 	rm /tmp/mongodb-*.sock &> /dev/null || true

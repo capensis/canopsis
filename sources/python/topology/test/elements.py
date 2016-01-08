@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 
-from canopsis.task import register_task
+from canopsis.task.core import register_task
 from canopsis.topology.elements import TopoNode, Topology, TopoEdge
 from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context

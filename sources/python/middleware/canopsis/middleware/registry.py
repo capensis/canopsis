@@ -18,9 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.parameters import Parameter, Configuration
+from canopsis.configuration.model import Parameter, Configuration
 from canopsis.configuration.configurable.registry import ConfigurableRegistry
-from . import Middleware, parse_scheme
+from canopsis.middleware.core import Middleware, parse_scheme
 
 
 class MiddlewareRegistry(ConfigurableRegistry):
@@ -40,6 +40,7 @@ class MiddlewareRegistry(ConfigurableRegistry):
     SHARING_SCOPE = 'sharing_scope'  #: conf sharing scope name
     AUTO_CONNECT = 'auto_connect'  #: conf auto connect name
     DATA_SCOPE = 'data_scope'  #: configuration data scope name
+    DB = 'db'  #: sub-storage db name
 
     CATEGORY = 'MANAGER'  #: middleware manager
 
@@ -53,21 +54,17 @@ class MiddlewareRegistry(ConfigurableRegistry):
 
     def __init__(
         self, shared=True, sharing_scope=None, auto_connect=True,
-        data_scope=None,
+        data_scope=None, db=None,
         *args, **kwargs
     ):
         """
-        :param shared: sub-middleware shared usage (default:True)
-        :type shared: bool
-
-        :param sharing_scope: sub-middleware sharing scope usage (default:None)
-        :type sharing_scope: object
-
-        :param auto_connect: sub-middleware auto connect (default:True)
-        :type auto_connect: bool
-
-        :param data_scope: sub-middleware data_scope property (default:None)
-        :type data_scope: str
+        :param bool shared: sub-middleware shared usage (default:True).
+        :param sharing_scope: sub-middleware sharing scope usage (default:
+            None).
+        :param bool auto_connect: sub-middleware auto connect (default: True).
+        :param str data_scope: sub-middleware data_scope property (default:
+            None).
+        :param str db: sub-storage db property (default: None).
         """
 
         super(MiddlewareRegistry, self).__init__(*args, **kwargs)
@@ -76,6 +73,7 @@ class MiddlewareRegistry(ConfigurableRegistry):
         self.shared = shared
         self.sharing_scope = sharing_scope
         self.data_scope = data_scope
+        self.db = db
 
     @property
     def shared(self):
@@ -109,12 +107,20 @@ class MiddlewareRegistry(ConfigurableRegistry):
     def data_scope(self, value):
         self._data_scope = value
 
+    @property
+    def db(self):
+        return self._db
+
+    @db.setter
+    def db(self, value):
+        self._db = value
+
     def get_middleware(
-        self,
-        protocol, data_type=None, data_scope=None,
-        auto_connect=None,
-        shared=None, sharing_scope=None,
-        *args, **kwargs
+            self,
+            protocol, data_type=None, data_scope=None,
+            auto_connect=None,
+            shared=None, sharing_scope=None,
+            *args, **kwargs
     ):
         """
         Load a middleware related to input uri.
@@ -177,16 +183,19 @@ class MiddlewareRegistry(ConfigurableRegistry):
                     )
                 )
 
-            except Exception as e:
+            except Exception:
                 # clean memory in case of error
                 if not data_scopes:
                     del data_types[data_type]
+
                 if not data_types:
                     del protocols[protocol]
+
                 if not protocols:
                     del MiddlewareRegistry.__MIDDLEWARES__[sharing_scope]
-                # and raise back e
-                raise e
+
+                # and raise back exception
+                raise
 
         else:
             # get a new middleware instance
@@ -195,12 +204,14 @@ class MiddlewareRegistry(ConfigurableRegistry):
                 auto_connect=auto_connect,
                 *args, **kwargs)
 
+        if hasattr(result, MiddlewareRegistry.DB) and self.db is not None:
+            result.db = self.db
+
         return result
 
     def get_middleware_by_uri(
-        self,
-        uri,
-        auto_connect=None, shared=None, sharing_scope=None, *args, **kwargs
+            self, uri,
+            auto_connect=None, shared=None, sharing_scope=None, *args, **kwargs
     ):
 
         """
@@ -231,7 +242,8 @@ class MiddlewareRegistry(ConfigurableRegistry):
         result = self.get_middleware(
             protocol=protocol, data_type=data_type, data_scope=data_scope,
             auto_connect=auto_connect, shared=shared,
-            sharing_scope=sharing_scope, uri=uri, *args, **kwargs)
+            sharing_scope=sharing_scope, uri=uri, *args, **kwargs
+        )
 
         return result
 
@@ -254,14 +266,28 @@ class MiddlewareRegistry(ConfigurableRegistry):
                 Parameter(MiddlewareRegistry.SHARED, parser=Parameter.bool),
                 Parameter(MiddlewareRegistry.SHARING_SCOPE),
                 Parameter(MiddlewareRegistry.AUTO_CONNECT),
-                Parameter(MiddlewareRegistry.DATA_SCOPE)))
+                Parameter(MiddlewareRegistry.DATA_SCOPE),
+                Parameter(MiddlewareRegistry.DB)
+            )
+        )
 
         return result
+
+    def configure(self, *args, **kwargs):
+
+        super(MiddlewareRegistry, self).configure(*args, **kwargs)
+
+        if self.auto_connect:
+            for name in self:
+                configurable = self[name]
+                if isinstance(configurable, Middleware):
+                    configurable.connect()
 
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(MiddlewareRegistry, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
+            unified_conf=unified_conf, *args, **kwargs
+        )
 
         foreigns = unified_conf[Configuration.FOREIGNS]
 
@@ -274,7 +300,8 @@ class MiddlewareRegistry(ConfigurableRegistry):
                 name = parameter.name[:-len_midl_suffix]
                 # set a middleware in list of configurables
                 self[name] = self.get_middleware_by_uri(
-                    uri=parameter.value)
+                    uri=parameter.value, auto_connect=False
+                )
 
     def _is_local(self, to_configure, name, *args, **kwargs):
 

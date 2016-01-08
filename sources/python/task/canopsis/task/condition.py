@@ -23,7 +23,7 @@ Task condition functions such as duration/rrule condition, switch, all and any.
 """
 
 from canopsis.common.init import basestring
-from canopsis.task import register_task, run_task
+from canopsis.task.core import register_task, run_task
 
 from time import time
 from datetime import datetime
@@ -190,12 +190,12 @@ def condition(condition=None, statement=None, _else=None, **kwargs):
 
 @register_task
 def switch(
-    confs=None, remain=False, all_checked=False, _default=None, **kwargs
+        confs=None, remain=False, all_checked=False, _default=None, **kwargs
 ):
     """
     Execute first statement among conf where task result is True.
     If remain, process all statements conf starting from the first checked
-        conf.
+    conf.
 
     :param confs: task confs to check. Each one may contain a task action at
         the key 'action' in conf.

@@ -1,0 +1,10 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["template"]
+    }],
+    "properties": {
+        "template": {"type": "string", "role": "textarea", "required": true}
+    }
+}

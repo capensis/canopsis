@@ -1,6 +1,13 @@
 [{
 	"_id": "admin",
 	"rights": {
+		"tabs_showeditionmenu" : {
+			"checksum": 1
+		},
+		"actionbutton_canuploadmibfile": {
+			"checksum": 15,
+			"desc": "Upload mib file to canopsis system"
+		},
 		"actionbutton_canediturlfield": {
 			"checksum": 15,
 			"desc": ""
@@ -30,14 +37,6 @@
 			"desc": ""
 		},
 		"actionbutton_connectorsetconf": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_service": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_connectors": {
 			"checksum": 15,
 			"desc": ""
 		},
@@ -104,35 +103,14 @@
 		"actionbutton_ticketnumber": {
 			"checksum": 15,
 			"desc": ""
-		},
-		"showview_view_event": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_selectors": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_jobs": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_filters": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_services": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_series": {
-			"checksum": 15,
-			"desc": ""
 		}
 	}
 },{
 	"_id": "Supervision",
 	"rights": {
+		"tabs_showeditionmenu" : {
+			"checksum": 1
+		},
 		"actionbutton_ack": {
 			"checksum": 15,
 			"desc": ""
@@ -149,6 +127,9 @@
 },{
 	"_id": "Support",
 	"rights": {
+		"tabs_showeditionmenu" : {
+			"checksum": 1
+		},
 		"actionbutton_changestate": {
 			"checksum": 15,
 			"desc": ""
@@ -157,15 +138,7 @@
 			"checksum": 15,
 			"desc": ""
 		},
-		"showview_view_services": {
-			"checksum": 15,
-			"desc": ""
-		},
 		"actionbutton_info": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_filters": {
 			"checksum": 15,
 			"desc": ""
 		},
@@ -185,15 +158,10 @@
 },{
 	"_id": "Manager",
 	"rights": {
+		"tabs_showeditionmenu" : {
+			"checksum": 1
+		},
 		"actionbutton_history": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_accounts": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_permissions": {
 			"checksum": 15,
 			"desc": ""
 		},
@@ -217,10 +185,6 @@
 			"checksum": 15,
 			"desc": ""
 		},
-		"showview_view_filters": {
-			"checksum": 15,
-			"desc": ""
-		},
 		"list_filters": {
 			"checksum": 15,
 			"desc": ""
@@ -237,13 +201,5 @@
 },{
 	"_id": "Visualisation",
 	"rights": {
-		"showview_view_event": {
-			"checksum": 15,
-			"desc": ""
-		},
-		"showview_view_services": {
-			"checksum": 15,
-			"desc": ""
-		}
 	}
 }]

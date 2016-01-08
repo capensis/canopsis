@@ -1,2 +1,0 @@
-CAS Authentication Backend
-==========================

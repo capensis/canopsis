@@ -26,6 +26,11 @@
 				"type": "string"
 			},
 			"reorderable": true
+		},
+		"items": {
+        		"relationship": "hasMany",
+        		"model": "widgetwrapper"
 		}
+
 	}
 }

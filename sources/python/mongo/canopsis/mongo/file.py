@@ -21,14 +21,18 @@
 from uuid import uuid4 as uuid
 
 from canopsis.storage.file import FileStorage, FileStream
-from canopsis.mongo.storage import MongoStorage
+from canopsis.mongo.core import MongoStorage
 from canopsis.common.init import basestring
 from canopsis.common.utils import ensure_iterable
 
-from gridfs import GridFs
+from gridfs import GridFS, NoFile
 
 
 class MongoFileStream(FileStream):
+
+    @property
+    def name(self):
+        return self.gridout.filename
 
     def __init__(self, gridout):
 
@@ -40,52 +44,120 @@ class MongoFileStream(FileStream):
     def write(self, data):
         self.gridout.write(data=data)
 
-    def read(self, size=1):
+    def read(self, size=-1):
+
         return self.gridout.read(size=size)
 
     def seek(self, pos, from_beginning=False):
+
         self.gridout.seek(pos=pos, whence=from_beginning)
 
-    def teel(self):
-        return self.gridout.teel()
+    def pos(self):
+
+        return self.gridout.tell()
 
     def next(self):
         return MongoFileStream(self.gridout.next())
+
+    def get_inner_object(self):
+        return self.gridout
+
+    def __eq__(self, other):
+
+        return (
+            isinstance(other, self.__class__)
+            and self.gridout.filename == other.gridout.filename
+        )
 
 
 class MongoFileStorage(MongoStorage, FileStorage):
 
     FILENAME = 'filename'
 
+    def __init__(self, *args, **kwargs):
+
+        super(MongoFileStorage, self).__init__(*args, **kwargs)
+
+        self.gridfs = None
+
     def _connect(self, **kwargs):
 
-        result = super(FileStorage, self)._connect(**kwargs)
+        result = super(MongoFileStorage, self)._connect(**kwargs)
 
         if result:
 
-            self.gridfs = GridFs(
-                database=self._database, collection=self.get_table())
+            self.gridfs = GridFS(
+                database=self._database, collection=self.get_table()
+            )
 
         return result
 
-    def get(self, names, version=-1):
+    def put(self, name, data, meta=None):
 
-        names = ensure_iterable(names)
-        result = []
-        for name in names:
+        try:
+            fs = self.new_file(name=name, meta=meta)
+            fs.write(data=data)
+        finally:
+            fs.close()
+
+    def put_meta(self, name, meta):
+        try:
+            oldf, _meta = self.get(name, with_meta=True)
+            _meta.update(meta)
+
+            fs = self.new_file(name=name, meta=_meta)
+
+            while True:
+                data = oldf.read(512)
+
+                if not data:
+                    break
+
+                fs.write(data=data)
+
+        finally:
+            fs.close()
+
+    def get(self, name, version=-1, with_meta=False):
+
+        result = None
+
+        try:
             gridout = self.gridfs.get_version(filename=name, version=version)
-            fs = MongoFileStream(gridout)
-            result.append(fs)
+        except NoFile:
+            pass
+        else:
+            if with_meta:
+                result = MongoFileStream(gridout), gridout.metadata
+
+            else:
+                result = MongoFileStream(gridout)
+
+        return result
+
+    def get_meta(self, name):
+        result = self.get(name, with_meta=True)
+
+        if result is not None:
+            result = result[1]
 
         return result
 
     def exists(self, name):
 
-        result = self.gridfs.exists(name)
+        result = self.gridfs.exists(filename=name)
 
         return result
 
-    def find(self, names=None, meta=None, sort=None, limit=-1, skip=0):
+    def find(
+        self,
+        names=None,
+        meta=None,
+        sort=None,
+        limit=-1,
+        skip=0,
+        with_meta=False
+    ):
 
         request = {}
 
@@ -96,7 +168,9 @@ class MongoFileStorage(MongoStorage, FileStorage):
                 request[MongoFileStorage.FILENAME] = {'$in': names}
 
         if meta is not None:
-            request.update(meta)
+            for metafield in meta:
+                field = 'metadata.{0}'.format(metafield)
+                request[field] = meta[metafield]
 
         cursor = self.gridfs.find(request)
 
@@ -107,9 +181,20 @@ class MongoFileStorage(MongoStorage, FileStorage):
         if skip > 0:
             cursor.skip(skip)
 
-        result = (MongoFileStream(gridout) for gridout in cursor)
+        if with_meta:
+            result = (
+                (MongoFileStream(gridout), gridout.metadata)
+                for gridout in cursor
+            )
+
+        else:
+            result = (MongoFileStream(gridout) for gridout in cursor)
 
         return result
+
+    def list(self):
+
+        return self.gridfs.list()
 
     def new_file(self, name=None, meta=None, data=None):
 
@@ -118,7 +203,6 @@ class MongoFileStorage(MongoStorage, FileStorage):
         if name is None:
             name = str(uuid())
 
-        kwargs['_id'] = name
         kwargs['filename'] = name
 
         if meta is not None:
@@ -133,8 +217,18 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
         return result
 
-    def delete(self, names):
+    def delete(self, names=None):
+
+        if names is None:
+            names = self.gridfs.list()
 
         names = ensure_iterable(names)
+
         for name in names:
-            self.gridfs.delete(file_id=name)
+            while True:
+                fs = self.get(name)
+
+                if fs is None:
+                    break
+
+                self.gridfs.delete(file_id=fs.get_inner_object()._id)

@@ -18,12 +18,22 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.storage import Storage
+"""Mongo implementation of the filestorage.
+"""
+
+from canopsis.storage.core import Storage
 
 
 class FileStream(object):
     """File stream object stored in a FileStorage.
     """
+
+    @property
+    def name(self):
+        """Return file's name.
+        """
+
+        raise NotImplementedError()
 
     def close(self):
         """Close this file stream.
@@ -39,10 +49,10 @@ class FileStream(object):
 
         raise NotImplementedError()
 
-    def read(self, size=1):
+    def read(self, size=-1):
         """Read size characters from file content.
 
-        :param int size: number of characters to read.
+        :param int size: number of characters to read. Default all characters.
         """
 
         raise NotImplementedError()
@@ -57,7 +67,7 @@ class FileStream(object):
 
         raise NotImplementedError()
 
-    def teel(self):
+    def pos(self):
         """Get the current position of this file.
         """
 
@@ -65,6 +75,18 @@ class FileStream(object):
 
     def next(self):
         """Get next file stream version.
+        """
+
+        raise NotImplementedError()
+
+    def get_inner_object(self):
+        """Get backend file object.
+        """
+
+        raise NotImplementedError()
+
+    def __eq__(self, other):
+        """Check that file streams are equal.
         """
 
         raise NotImplementedError()
@@ -77,15 +99,25 @@ class FileStorage(Storage):
 
     __datatype__ = 'file'  #: registered such as a file storage
 
-    def get(self, names, version=-1):
-        """Get file stream(s) related to input name(s).
+    def put(self, name, data):
+        """Put data in the storage.
 
-        :param names: file stream names.
-        :type names: str or list of str
-        :param int version: file stream version. last if -1 (by default).
-
-        :rtype: FileStream or list of FileStream
+        :param str name: file name.
+        :param str data: data to put.
         """
+
+        raise NotImplementedError()
+
+    def get(self, name, version=-1, with_meta=False):
+        """Get file stream related to input name.
+
+        :param str name: file stream name.
+        :param int version: file stream version. last if -1 (by default).
+        :param bool with_meta: return file's metadata.
+        :return: corresponding filestream.
+        :rtype: FileStream.
+        """
+
         raise NotImplementedError()
 
     def exists(self, name):
@@ -99,7 +131,24 @@ class FileStorage(Storage):
 
         raise NotImplementedError()
 
-    def find(self, names=None, meta=None, sort=None, limit=-1, skip=0):
+    def list(self):
+        """Get all file names.
+
+        :return: list of file names.
+        :rtype: list
+        """
+
+        raise NotImplementedError()
+
+    def find(
+        self,
+        names=None,
+        meta=None,
+        sort=None,
+        limit=-1,
+        skip=0,
+        with_meta=False
+    ):
         """Try to find file streams where names match with input names or meta
         data match with input meta.
 
@@ -110,6 +159,7 @@ class FileStorage(Storage):
         :param dict sort: sort criteria.
         :param int limit: limit criteria.
         :param int skip: skip criteria.
+        :param bool with_meta: return files with metadata
 
         :return: file stream(s) depending on input names value.
         :rtype: list or FileStream
@@ -133,7 +183,7 @@ class FileStorage(Storage):
         """Delete file streams related to their names
 
         :param names: file name(s) to delete.
-        :type names: str or list of str
+        :type names: str or list
         """
 
         raise NotImplementedError()

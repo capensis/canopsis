@@ -20,8 +20,8 @@
 
 from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
-from canopsis.mongo import MongoStorage
-from canopsis.storage import Storage
+from canopsis.mongo.core import MongoStorage
+from canopsis.storage.core import Storage
 from canopsis.storage.composite import CompositeStorage
 
 
@@ -41,13 +41,15 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
             result.append(index)
 
+        result.append([(CompositeStorage.NAME, Storage.ASC)])
+
         return result
 
     def get(
-        self,
-        path, names=None, _filter=None, shared=False,
-        limit=0, skip=0, sort=None, with_count=False,
-        *args, **kwargs
+            self,
+            path, names=None, _filter=None, shared=False,
+            limit=0, skip=0, sort=None, with_count=False,
+            *args, **kwargs
     ):
 
         result = []
@@ -109,9 +111,9 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         return result
 
     def find(
-        self,
-        path,
-        _filter, shared=False, limit=0, skip=0, sort=None, with_count=False
+            self,
+            path,
+            _filter, shared=False, limit=0, skip=0, sort=None, with_count=False
     ):
 
         result = self.get(
@@ -122,7 +124,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         return result
 
     def put(
-        self, path, name, data, share_id=None, cache=False, *args, **kwargs
+            self, path, name, data, share_id=None, cache=False, *args, **kwargs
     ):
 
         # get unique id
@@ -143,7 +145,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         self._update(spec=query, document=_set, multi=False, cache=cache)
 
     def remove(
-        self, path, names=None, shared=False, cache=False, *args, **kwargs
+            self, path, names=None, shared=False, cache=False, *args, **kwargs
     ):
 
         query = path.copy()

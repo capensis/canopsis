@@ -4,9 +4,6 @@
 		"title": "General",
 		"keys":["title", "cfilter_allow_only_optimized_filters", "defaultview", "safe_mode"]
 	},{
-		"title": "Events",
-		"keys":["list_info_button_pattern"]
-	},{
 		"title": "Login",
 		"keys": ["login_footer"]
 	},{
@@ -32,10 +29,6 @@
 			"type": "boolean",
 			"default": true
 		},
-		"list_info_button_pattern": {
-			"type": "string",
-			"default": "http://localhost:8082/#/userview/view.event"
-		},
 		"login_footer": {
 			"type": "string",
 			"default": ""
@@ -45,7 +38,7 @@
 			"description": "The view to display when users log in",
 			"type": "string",
 			"role": "restobject",
-			"schemaType":"userview",
+			"schemaType":"userviewsimplemodel",
 			"valueField":"id",
 			"labelField":"crecord_name"
 		},

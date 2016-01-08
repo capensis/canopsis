@@ -76,8 +76,8 @@ class engine(Engine):
         return result
 
     def a_override(self, event, action):
-        """
-        Override a field from event or add a new one if it does not have one
+        """Override a field from event or add a new one if it does not have
+        one.
         """
 
         afield = action.get('field', None)
@@ -101,9 +101,8 @@ class engine(Engine):
             return False
 
     def a_remove(self, event, action):
-        """
-        Remove an event from a field in event or the whole field if no element
-        is specified
+        """Remove an event from a field in event or the whole field if no
+        element is specified.
         """
 
         akey = action.get('key', None)
@@ -152,9 +151,11 @@ class engine(Engine):
         """
 
         derogated = False
-        atype = action.get('type', None)
-        actionMap = {'override': self.a_override,
-                     'remove': self.a_remove}
+        atype = action.get('type')
+        actionMap = {
+            'override': self.a_override,
+            'remove': self.a_remove
+        }
 
         if atype in actionMap:
             derogated = actionMap[atype](event, action)
@@ -169,8 +170,8 @@ class engine(Engine):
         return None
 
     def a_drop(self, event, action, name):
-        """
-        Drop the event
+        """ Drop the event.
+
         Args:
             event map of the event to be modified
             action map of type action
@@ -181,11 +182,12 @@ class engine(Engine):
 
         self.logger.debug(u"Event dropped by rule '{}'".format(name))
         self.drop_event_count += 1
+
         return DROP
 
     def a_pass(self, event, action, name):
-        """
-        Pass the event to the next queue
+        """Pass the event to the next queue.
+
         Args:
             event map of the event to be modified
             action map of type action
@@ -196,15 +198,16 @@ class engine(Engine):
 
         self.logger.debug(u"Event passed by rule '{}'".format(name))
         self.pass_event_count += 1
+
         return event
 
     def a_route(self, event, action, name):
         """
         Change the route to which an event will be sent
         Args:
-            event map of the event to be modified
-            action map of type action
-            _name of the rule
+            event: map of the event to be modified
+            action: map of type action
+            name: of the rule
         Returns:
             ``None``
         """
@@ -218,13 +221,26 @@ class engine(Engine):
 
         return None
 
+    def a_exec_job(self, event, action, name):
+        records = self.storage.find(
+            {'crecord_type': 'job', '_id': action['job'] }
+        )
+        for record in records:
+            job = record.dump()
+            job['context'] = event
+            publish(publisher=self.amqp, event=job, rk='Engine_scheduler', exchange='amq.direct')
+            #publish(publisher=self.amqp, event=job, rk='Engine_scheduler')
+        return True
+
     def apply_actions(self, event, actions):
         pass_event = False
         actionMap = {'drop': self.a_drop,
                      'pass': self.a_pass,
                      'override': self.a_modify,
                      'remove': self.a_modify,
-                     'route': self.a_route}
+					 'execjob': self.a_exec_job,
+                     'route': self.a_route
+					}
 
         for name, action in actions:
             if (action['type'] in actionMap):
@@ -301,6 +317,7 @@ class engine(Engine):
 
     def beat(self, *args, **kargs):
         """ Configuration reload for realtime ui changes handling """
+
         self.derogations = []
         self.configuration = {
             'rules': [],
@@ -331,16 +348,17 @@ class engine(Engine):
             self.logger.debug(record_dump)
             self.configuration['rules'].append(record_dump)
 
-        self.logger.info('Loaded {} rules'.format(
-            len(self.configuration['rules']))
+        self.logger.info(
+            'Loaded {} rules'.format(len(self.configuration['rules']))
         )
         self.send_stat_event()
 
     def set_loaded(self, record):
+
         if 'run_once' in record and not record['run_once']:
             self.storage.update(record['_id'], {'run_once': True})
-            self.logger.info('record {} has been run once'.format(
-                record['_id'])
+            self.logger.info(
+                'record {} has been run once'.format(record['_id'])
             )
 
     def send_stat_event(self):
@@ -370,7 +388,8 @@ class engine(Engine):
                 {'metric': 'drop_event',
                  'value': self.drop_event_count,
                  'type': 'GAUGE'}
-            ])
+            ]
+        )
 
         self.logger.debug(message_dropped)
         self.logger.debug(message_passed)
@@ -379,9 +398,8 @@ class engine(Engine):
         self.pass_event_count = 0
 
     def find_default_action(self):
-        """
-        Find the default action stored and returns it,
-        else assume it default action is pass
+        """Find the default action stored and returns it, else assume it
+        default action is pass.
         """
 
         records = self.storage.find({'crecord_type': 'defaultrule'})
@@ -392,3 +410,5 @@ class engine(Engine):
             "No default action found. Assuming default action is pass"
         )
         return 'pass'
+
+

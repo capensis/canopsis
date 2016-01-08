@@ -155,11 +155,13 @@ class TaskManager(MiddlewareRegistry):
         return result
 
     def set_task(self, _id, task=None, task_info=None, _file=None):
-        """
-        Change of task.
+        """Change of task.
 
         :param str _id: task id.
-        :param callable task
+        :param task: new task to use.
+        :param dict task_info: task kwargs.
+        :param _file: file where save the task
+        :param callable task: task to call.
         """
 
         # save task file if necessary

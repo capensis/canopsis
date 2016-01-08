@@ -20,11 +20,11 @@
 
 from md5 import new as md5
 
-from canopsis.configuration.parameters import Parameter
-from canopsis.storage.manager import Manager
+from canopsis.configuration.model import Parameter
+from canopsis.middleware.registry import MiddlewareRegistry
 
 
-class Organisation(Manager):
+class Organisation(MiddlewareRegistry):
     """
     Dedicated to manage users in Canopsis
     """
@@ -56,7 +56,6 @@ class Organisation(Manager):
         """
         Exception dedicated to Organisation methods errors
         """
-        pass
 
     def __init__(
         self,
@@ -223,8 +222,6 @@ class Organisation(Manager):
         """
         Check whatever or not if user rights checked input permission
         """
-
-        pass
 
     def _conf(self, *args, **kwargs):
 

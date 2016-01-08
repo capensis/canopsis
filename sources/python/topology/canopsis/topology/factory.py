@@ -23,7 +23,7 @@ from canopsis.context.manager import Context
 from canopsis.topology.format import formatter
 from canopsis.topology.elements import Topology, TopoEdge, TopoNode
 from canopsis.topology.manager import TopologyManager
-from canopsis.task import new_conf
+from canopsis.task.core import new_conf
 from canopsis.task.condition import condition as cond
 from canopsis.topology.rule import action
 from canopsis.topology.rule.condition import at_least

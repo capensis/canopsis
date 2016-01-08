@@ -19,12 +19,11 @@
 # ---------------------------------
 
 from canopsis.engines.core import TaskHandler
-from canopsis.old.template import Template
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
 from canopsis.old.file import File
-from canopsis.old.init import ensure_unicode
-
+from canopsis.common.utils import ensure_unicode
+from canopsis.common.template import Template
 
 from email import Encoders
 from email.MIMEBase import MIMEBase
@@ -78,19 +77,19 @@ class engine(TaskHandler):
             smtp_port, html)
 
     def sendmail(
-        self, account, recipients, subject, body, attachments, smtp_host,
-        smtp_port, html
+            self, account, recipients, subject, body, attachments, smtp_host,
+            smtp_port, html
     ):
         """
-            account        : Account or nothing for anon
-            recipients     : str("glehee@capensis.fr"), Account
-                             list of (Account or string)
-            subject        : str("My Subject")
-            body           : str("My Body")
-            attachments    : File, list of File
-            smtp_host      : str("localhost")
-            smtp_port      : int(25)
-            html           : allow html into mail body (booleen)
+        :param account: Account or nothing for anon.
+        :param recipients: str("glehee@capensis.fr"), Account list of (Account
+            or string).
+        :param subject: str("My Subject").
+        :param body: str("My Body").
+        :param attachments: File, list of File.
+        :param smtp_host: str("localhost").
+        :param smtp_port: int(25).
+        :param html: allow html into mail body (booleen).
         """
 
         # Verify account
@@ -116,8 +115,8 @@ class engine(TaskHandler):
             account_full_mail = account.get_full_mail()
 
         if not re.match(
-            "^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.([a-zA-Z]{2,6})?$",
-            str(account_mail)
+                "^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.([a-zA-Z]{2,6})?$",
+                str(account_mail)
         ):
             return (
                 2,
@@ -136,8 +135,8 @@ class engine(TaskHandler):
         for dest in recipients:
             if isinstance(dest, basestring):
                 if re.match(
-                    "^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.([a-zA-Z]{2,6})?$",
-                    dest
+                        "^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.([a-zA-Z]{2,6})?$",
+                        dest
                 ):
                     dest_mail = dest
                     dest_full_mail = '"{0}" <{1}>'.format(
@@ -191,16 +190,17 @@ class engine(TaskHandler):
                 part.add_header('Content-Type', _file.data['content_type'])
                 msg.attach(part)
 
-        s = socket.socket()
+        sock = socket.socket()
 
         try:
-            s.connect((smtp_host, smtp_port))
+            sock.connect((smtp_host, smtp_port))
 
         except Exception as err:
             return (
                 2,
                 'Connection to SMTP <{0}:{1}> failed: {2}'.format(
-                    smtp_host, smtp_port, err)
+                    smtp_host, smtp_port, err
+                )
             )
 
         try:

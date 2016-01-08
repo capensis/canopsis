@@ -19,9 +19,9 @@
 			"required": true
 		},
 		"crecord_type": {
-			"enum": ["account"],
+			"enum": ["event"],
 			"required": true,
-			"default": "account",
+			"default": "event",
 			"icon": "flag"
 		},
 		"ack": {
@@ -85,6 +85,7 @@
 			"required": true
 		},
 		"output": {
+			"role": "richtext",
 			"type": "string",
 			"required": true,
 			"description": "output of the event",
@@ -110,6 +111,9 @@
 			"role": "object"
 		},
 		"author": {
+			"type": "string"
+		},
+		"entity_id": {
 			"type": "string"
 		}
 	}

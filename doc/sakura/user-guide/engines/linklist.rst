@@ -1,4 +1,4 @@
-﻿.. _linklist:
+﻿.. _user-engines-linklist:
 
 Linklist
 ========
@@ -6,12 +6,12 @@ Linklist
 Overview
 ---------
 
-Link list feature aims to associate links to Canopsis entities. This is done by different following ways:
+The link list feature aims to associate links to Canopsis entities. This is done by different following ways:
 
- - Canopsis receive an event that contains a specific key such as **action_url** that may be equal to **http://canopsis.org**
+ - Canopsis receives an event that contains a specific key such as **action_url** that may be equal to **http://canopsis.org**
  - A Canopsis user defines relations between Canopsis entities and some urls that have to be associated to them.
 
-In the end, the final user will be able to see a list of link associated to an specific event as shown in the picture below:
+In the end, the final user will be able to see a list of link associated to a specific event as shown in the picture below:
 
 .. image:: ../../_static/images/frontend/linklist_1.png
 .. image:: ../../_static/images/frontend/linklist_2.png
@@ -39,4 +39,6 @@ A link is made of a **label** and an **url**.
 
 Once done, link list are ready to be computed. The only left action to perform is to trigger a link association computation thanks to the scheduled job system. for more information about the job system go to `scheduled jobs <scheduledjobs.html>`_
 
-.. TODO a good link for a user guide for scheduled jobs
+.. NOTE::
+
+   TODO: a good link for a user guide for scheduled jobs

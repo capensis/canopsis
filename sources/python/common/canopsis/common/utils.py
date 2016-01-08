@@ -23,17 +23,110 @@ Python utility library.
 """
 
 from importlib import import_module
+from imp import load_source
 
 from inspect import ismodule
 
 from collections import Iterable
 
 from sys import version as PYVER
-from os.path import expanduser
+
+from os.path import expanduser, splitext
+from os.path import join as joinpath
+from os import listdir
+
+from re import search as regsearch
 
 from .init import basestring
 
 __RESOLVED_ELEMENTS = {}  #: dictionary of resolved elements by name
+
+
+#: dictionary which contains singleton per scope
+_SINGLETONS_PER_SCOPE = {}
+
+
+def singleton_per_scope(cls, scope=None, args=None, kwargs=None):
+    """Get one instance of ``cls`` per ``scope``.
+
+    :param type cls: class to instanciate.
+    :param collections.Hashable scope: key for unique instance of cls.
+    :param collections.Iterable args: cls instanciation varargs.
+    :param dict kwargs: cls instanciation kwargs.
+    :return: singleton of type cls per scope.
+    """
+
+    result = None
+
+    # check if an instance has already been created
+    if cls in _SINGLETONS_PER_SCOPE and scope in _SINGLETONS_PER_SCOPE[cls]:
+        result = _SINGLETONS_PER_SCOPE[cls][scope]
+
+    else:
+        # initialiaze both args and kwargs
+        if args is None:
+            args = ()
+        if kwargs is None:
+            kwargs = {}
+        # instanciate the singleton
+        result = cls(*args, **kwargs)
+        # register the instance
+        _SINGLETONS_PER_SCOPE.setdefault(cls, {})[scope] = result
+
+    return result
+
+
+def del_singleton_per_scope(cls, scope=None):
+    """Delete a singleton of class ``cls`` and ``scope``.
+
+    :param type cls: type of singleton object.
+    :param scope: singleton scope.
+    """
+
+    _SINGLETONS_PER_SCOPE.get(cls, {}).pop(scope, None)
+
+
+def dynmodloads(_path='.', subdef=False, pattern='.*', logger=None):
+    loaded = {}
+    _path = expanduser(_path)
+
+    for mfile in listdir(_path):
+        name, ext = splitext(mfile)
+
+        # Ignore "." and "__init__.py" and everything not matched by "*.py"
+        if name in ['.', '__init__'] or ext != '.py':
+            continue
+
+        logger.info("Load '{0}' ...".format(name))
+
+        try:
+            module = load_source(name, joinpath(_path, mfile))
+
+        except ImportError as err:
+            logger.error('Impossible to import {0}: {1}'.format(name, err))
+
+        else:
+            loaded[name] = module
+
+            if subdef:
+                alldefs = dir(module)
+                builtindefs = [
+                    '__builtins__',
+                    '__doc__',
+                    '__file__',
+                    '__name__',
+                    '__package__'
+                ]
+
+                for mydef in alldefs:
+                    if mydef not in builtindefs and regsearch(pattern, mydef):
+                        logger.debug('from {0} import {1}'.format(
+                            name, mydef
+                        ))
+
+                        loaded[mydef] = getattr(module, mydef)
+
+    return loaded
 
 
 def setdefaultattr(obj, attr, value):
@@ -82,8 +175,9 @@ def lookup(path, cached=True):
 
     :param str path: full path to a python element.
         Examples:
-            - __builtin__.open
-            - canopsis.common.utils.lookup
+
+        - __builtin__.open
+        - canopsis.common.utils.lookup
 
     :para bool cached: if True (by default), use __RESOLVED_ELEMENTS cache
         memory to quickly load elements
@@ -321,10 +415,10 @@ def prototype(typed_args=None, typed_kwargs=None, typed_return=None):
     """
     Decorate a function to check its parameters type.
 
-    :param typed_args: Types for *args
+    :param typed_args: Types for args
     :type typed_args: tuple
 
-    :param typed_kwargs: Types for **kwargs
+    :param typed_kwargs: Types for kwargs
     :type typed_kwargs: dict
 
     :param typed_return: Types for return

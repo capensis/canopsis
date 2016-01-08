@@ -1,6 +1,7 @@
-Architecture
-************
+.. _dev-frontend-architecture:
 
+Architecture
+============
 
 1. Presentation
 ---------------
@@ -21,9 +22,9 @@ When the *index.html* file is queried by a client to the server, index.html load
 
 Canopsis UI is made of many dependencies that together render the User Interface once loaded. These dependencies are made of:
 
- - `editors <#>`_
+ - `editors <components/editors.html>`_
  - `factories <#>`_
- - `loaders </developer-guide/uiv2/architecture.html>`_
+ - `loaders <#>`_
  - `renderers <#>`_
  - `schemas <#>`_
  - `templates <#>`_
@@ -94,14 +95,36 @@ This code will just call the stateview helper with two parameters: the state val
 .. image:: ../../_static/images/frontend/staterenderer.png
 
 
-. Canopsis UI Model
+7. Canopsis UI Model
 --------------------
 
-The Canopsis UI Model system is based upon json schemas that describes datatypes for each document type managed into canopsis. Those schemas are used in both front office an back office in order to keep redundancy in the project.
+The Canopsis UI Model system is based upon json schemas that describes datatypes for each document type managed into canopsis. Those schemas are used in both front office and back office in order to keep redundancy in the project.
 
-. Widgets
+8. Widgets
 ----------
 
 Widgets are components used in Canopsis UI. They are made of a controller and a template and they can be parametrized in order to best fit users need. see more `widgets <widgets/creating-a-simple-widget.html>`_
 
+9. Packaging
+------------
 
+You can create your own UI parts in two steps, independently the UI file tree.
+
+A. file creation
+################
+
+Create a directory, named ``testmodule`` in this example, which contains at least an ``init.js`` file which describes imports of sub-components (mixin, templates, images, etc.) related to the ember/requirejs project installation format.
+
+B. register module
+##################
+
+Once you wrote your installation file, you just have to run the Canopsis script ``webmodulemanager`` such as...
+
+.. code-block:: bash
+
+   #Available in the canopsis environment.
+   webmodulemanager add testmodule
+
+This will add a string in the module string list in the database object collection where the record crecord_type is enabledmodules. Record which is loaded thanks to the `json loader system <../../administrator-guide/setup/filldb.html>`_ .
+
+Enjoy

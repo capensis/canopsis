@@ -27,12 +27,13 @@ from canopsis.old.rabbitmq import Amqp
 from canopsis.event import get_routingkey
 
 from canopsis.engines.core import publish
-#from canopsis.context.manager import Context
-#from canopsis.check.manager import CheckManager
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
+
+import pprint
+pp = pprint.PrettyPrinter(indent=2)
 
 from pymongo.errors import BulkWriteError
 
@@ -71,7 +72,7 @@ class Archiver(Configurable):
 
         self.autolog = autolog
 
-        self.logger.debug("Init Archiver on %s" % namespace)
+        self.logger.debug(u"Init Archiver on %s" % namespace)
 
         self.account = Account(user="root", group="root")
 
@@ -137,10 +138,8 @@ class Archiver(Configurable):
             try:
                 bulk.execute({'w': 0})
             except BulkWriteError as bwe:
-                import pprint
-                pp = pprint.PrettyPrinter(indent=2)
                 self.logger.warning(pp.pformat(bwe.details))
-            self.logger.info('inserted log events {}'.format(len(operations)))
+            self.logger.info(u'inserted log events {}'.format(len(operations)))
 
     def process_update_operations(self, operations):
 
@@ -162,7 +161,7 @@ class Archiver(Configurable):
         for operation in insert_operations:
             if '_id' not in operation['event']:
                 self.logger.error(
-                    'Unable to find _id value in event {}'.format(
+                    u'Unable to find _id value in event {}'.format(
                         operation['event']
                     )
                 )
@@ -172,7 +171,7 @@ class Archiver(Configurable):
                 if operation['collection'] == self.namespace:
                     events[_id] = operation
                 elif operation['collection'] == self.namespace_log:
-                    _id = '{}.{}'.format(_id, time())
+                    _id = u'{}.{}'.format(_id, time())
                     operation['event']['_id'] = _id
                     events_log[_id] = operation
                 else:
@@ -245,7 +244,8 @@ class Archiver(Configurable):
 
         def _publish_event(event):
             rk = event.get('rk', get_routingkey(event))
-            self.logger.info("Sending event {}".format(rk))
+            self.logger.info(u"Sending event {}".format(rk))
+            self.logger.debug(event)
             publish(
                 event=event, rk=rk, publisher=self.amqp
             )
@@ -282,7 +282,7 @@ class Archiver(Configurable):
             if is_show_delay_passed:
 
                 self.logger.info(
-                    'Event {} no longer in status {}'.format(
+                    u'Event {} no longer in status {}'.format(
                         event['rk'],
                         reset_type
                     )
@@ -332,7 +332,7 @@ class Archiver(Configurable):
             status status of the current event
         """
 
-        log = 'Status is set to {} for event {}'.format(status, event['rk'])
+        log = u'Status is set to {} for event {}'.format(status, event['rk'])
         bagot_freq = event.get('bagot_freq', 0)
         values = {
             OFF: {
@@ -429,8 +429,8 @@ class Archiver(Configurable):
         if (devent.get('status', ONGOING) != CANCELED
             or (dstate != event['state']
                 and (self.restore_event
-                    or event['state'] == OFF
-                    or dstate == OFF))):
+                or event['state'] == OFF
+                or dstate == OFF))):
             # Check the stealthy intervals
             if self.check_stealthy(devent, event_ts):
                 if self.is_bagot(event):
@@ -475,10 +475,6 @@ class Archiver(Configurable):
         # Buffering event informations
         self.bulk_ids.append(_id)
         self.incoming_events[_id] = event
-
-        # use the check manager in order to save the state
-        #entity_id = self.context.get_entity_id(event)
-        #self.check.state(ids=entity_id['id'], state=event['state'], cache=True)
 
         # Processing many events condition computation
         bulk_modulo = len(self.bulk_ids) % self.bulk_amount
@@ -595,12 +591,32 @@ class Archiver(Configurable):
         else:
             change = {}
 
+            # Clear ack related information when event goes ok state
+            # Ack is kept in the current event below
+            if event['state'] == 0 and devent.get('state') != 0:
+                for key in (
+                    'ticket_declared_author',
+                    'ticket_declared_date',
+                    'ticket_date',
+                    'ticket'
+                ):
+                    change[key] = None
+
             # keep ack information if status does not reset event
             if 'ack' in devent:
                 if event['status'] == 0:
-                    change['ack'] = {}
+                    was_ack = devent.get('ack', {}).get('isAck', False)
+                    # save was ack for stats purposes
+                    change['ack'] = {
+                        'wasAck': was_ack
+                    }
+
                 else:
                     change['ack'] = devent['ack']
+                    # remove was ack for accurate stats
+                    # when event change to any alert state
+                    if 'wasAck' in change['ack']:
+                        del change['ack']['wasAck']
 
             # keep cancel information if status does not reset event
             if 'cancel' in devent:
@@ -672,7 +688,7 @@ class Archiver(Configurable):
             if 'ack' in devent:
                 event['ack'] = devent['ack']
 
-            self.logger.info(' + State changed, have to log {}'.format(_id))
+            self.logger.info(u' + State changed, have to log {}'.format(_id))
 
             # copy avoid side effects
             operations.append(

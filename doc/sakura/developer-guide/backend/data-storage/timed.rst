@@ -1,3 +1,5 @@
+.. _dev-backend-storage-timed:
+
 Timed Storage
 =============
 

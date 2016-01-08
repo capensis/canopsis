@@ -1,5 +1,7 @@
+.. _dev-frontend-widgets-howto:
+
 Creating a simple widget
-************************
+========================
 
 Introduction
 ------------
@@ -72,7 +74,7 @@ And finally, define a **template** that show the field setted by the view manage
 .. code-block:: html
 
    <h1>
-      {{texttodisplay}}
+      {{controller.model.texttodisplay}}
    </h1>
 
 

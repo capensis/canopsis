@@ -21,7 +21,10 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common']
+install_requires = [
+    'canopsis.common',
+    'canopsis.schema'
+]
 
 setup(
     description='Monitoring tools',
