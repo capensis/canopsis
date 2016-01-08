@@ -19,19 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import subprocess
-import sys
+from canopsis.common.setup import setup
 
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.old',
+    'canopsis.perfdata',
+    'canopsis.organisation'
+]
 
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print('Usage: {0} [init|update]'.format(sys.argv[0]))
-        sys.exit(1)
-
-    action = sys.argv[1].lower()
-
-    if action not in ['update', 'init']:
-        print('Invalid option: {0}'.format(action))
-        sys.exit(1)
-
-    subprocess.call('canopsis-filldb --{0}'.format(action), shell=True)
+setup(
+    description='Canopsis migration module',
+    install_requires=install_requires,
+    keywords='migration')
