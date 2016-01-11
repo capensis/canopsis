@@ -34,8 +34,6 @@ require.config({
 define([
     'query-builder',
     'link!canopsis/brick-querybuilder/externals/jQuery-QueryBuilder/dist/css/query-builder.default.min.css',
-    'canopsis/brick-querybuilder/externals/bootstrap-select/dist/js/bootstrap-select',
-    'link!canopsis/brick-querybuilder/externals/bootstrap-select/dist/css/bootstrap-select.min.css',
     'canopsis/brick-querybuilder/externals/editableSelect/jquery.editable.select',
     'canopsis/brick-querybuilder/externals/querybuilder-editablekey/querybuilder-editablekey'
 ], function () {
