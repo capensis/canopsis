@@ -74,7 +74,10 @@ Ember.Application.initializer({
                 });
                 this.$().find('.builder').queryBuilder({
                     filters: filters,
-                    lang_code: i18n.lang
+                    lang_code: i18n.lang,
+                    plugins: [
+                        'sortable'
+                    ],
                 });
 
                 if(this.get('filterValue')) {
