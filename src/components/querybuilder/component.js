@@ -34,7 +34,7 @@ Ember.Application.initializer({
              * @type array
              * @description the columns to display in the results preview table
              */
-            viewTabColumns: [{ name:'component', title:'component' }, { name:'resource', title:'resource' }],
+            viewTabColumns: [{ name:'connector', title:'connector' }, { name:'connector_name', title:'connector_name' }, { name:'component', title:'component' }, { name:'resource', title:'resource' }],
 
             /**
              * @property filterValue
