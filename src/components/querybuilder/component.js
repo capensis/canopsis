@@ -76,7 +76,8 @@ Ember.Application.initializer({
                     filters: filters,
                     lang_code: i18n.lang,
                     plugins: [
-                        'sortable'
+                        'sortable',
+                        'key-editable-select'
                     ]
                 });
 

@@ -1,0 +1,27 @@
+{
+"name" : "editableSelect",
+"version" : "0.0.1",
+"title" : "jQuery editable select box",
+"author" : {
+  "name" : "Martin Mende",
+	"email" : "martin.mende@aristech.de"	
+},
+"licenses" : [
+    {
+        "type" : "CC BY-NC 3.0",
+        "url" : "http://creativecommons.org/licenses/by-nc/3.0/"
+    }
+],
+"dependencies" :
+    {
+        "jquery" : ">=1.9.0"
+    },
+"description" : "This plugin allows you to make a select box editable like a text box while keeping it's select-option features",
+"keywords" : [
+	"select",
+	"option",
+	"editable",
+	"input"
+],
+"download" : "https://github.com/mmende/editableSelect/archive/master.zip"
+}

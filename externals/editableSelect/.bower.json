@@ -1,0 +1,15 @@
+{
+  "name": "editableSelect",
+  "homepage": "https://github.com/mmende/editableSelect",
+  "version": "0.0.1",
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.1",
+    "commit": "ea02fb397764ca041c132f998fcbaeffd7b4e872"
+  },
+  "_source": "https://github.com/mmende/editableSelect.git",
+  "_target": "~0.0.1",
+  "_originalSource": "https://github.com/mmende/editableSelect.git",
+  "_direct": true
+}

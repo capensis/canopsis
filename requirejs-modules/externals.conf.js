@@ -21,14 +21,23 @@ require.config({
     paths: {
         'doT': 'canopsis/brick-querybuilder/externals/doT/doT.min',
         'jQuery.extendext': 'canopsis/brick-querybuilder/externals/jquery-extendext/jQuery.extendext.min',
-        'query-builder': 'canopsis/brick-querybuilder/externals/jQuery-QueryBuilder/dist/js/query-builder.min'
+        'query-builder': 'canopsis/brick-querybuilder/externals/jQuery-QueryBuilder/dist/js/query-builder',
+        'querybuilder-editablekey' : 'canopsis/brick-querybuilder/externals/querybuilder-editablekey/querybuilder-editablekey'
     },
-    shim: {}
+    shim: {
+        'querybuilder-editablekey': {
+            'deps': ['query-builder', 'jquery']
+        }
+    }
 });
 
 define([
     'query-builder',
-    'link!canopsis/brick-querybuilder/externals/jQuery-QueryBuilder/dist/css/query-builder.default.min.css'
+    'link!canopsis/brick-querybuilder/externals/jQuery-QueryBuilder/dist/css/query-builder.default.min.css',
+    'canopsis/brick-querybuilder/externals/bootstrap-select/dist/js/bootstrap-select',
+    'link!canopsis/brick-querybuilder/externals/bootstrap-select/dist/css/bootstrap-select.min.css',
+    'canopsis/brick-querybuilder/externals/editableSelect/jquery.editable.select',
+    'canopsis/brick-querybuilder/externals/querybuilder-editablekey/querybuilder-editablekey'
 ], function () {
     require(['canopsis/brick-querybuilder/externals/jQuery-QueryBuilder/dist/i18n/query-builder.' + window.i18n.lang]);
 });

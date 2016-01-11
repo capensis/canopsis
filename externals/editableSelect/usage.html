@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Editable Select Usage</title>
+	
+	<meta name="author" content="Martin Mende" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+	<style type="text/css">
+		body, html{
+			margin: 0;
+			padding: 15px;
+			color: #333;
+			font-family: arial, helvetica, sans-serif;	
+		}
+		p{
+			font-size: 13px;	
+		}
+		h1{
+			font-size: 18px;	
+		}
+		h2{
+			font-size: 16px;	
+		}
+		code{
+			display: block;
+			padding: 15px;
+			border: 1px solid #ccc;
+			margin: 7px;	
+		}
+	</style>
+	
+	
+
+	<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+	<script type="text/javascript" src="jquery.editable.select.min.js"></script>
+	
+	
+	<script type="text/javascript">
+		$(function(){
+			var selectBoxOne = $("#s1").editableSelect();
+			var selectBoxTwo = $("#s2").editableSelect();	
+			selectBoxTwo.addOption("punches in your face");
+			selectBoxTwo.removeOption("$ - Dollar");
+			
+			selectBoxOne.change(function(){
+				console.log("Option: "+selectBoxOne.val());
+			});
+			selectBoxTwo.change(function(){
+				console.log("Your currency: "+selectBoxTwo.val());
+			});
+			
+			//selectBoxOne.restoreSelect();
+		});
+	</script>
+</head>
+<body>
+<h1>Usage</h1>
+<p>The usage is pretty self explaining.<br>
+Include 'jquery.editable.select.min.js'.<br>
+The plugin does not need any stylesheet or images.<br><br>
+<b>Transform a select into an editable select:</b>
+<code class="prettyprint">
+var myEditableSelect = $(".mySelectBox").editableSelect();
+</code><br>
+The select with the class 'mySelectBox' should now be editable.<br><br>
+<b>Add or delete options</b>
+<code class="prettyprint">
+myEditableSelect.addOption("I'm a new option");<br>
+myEditableSelect.addOption("me too");<br><br>
+
+myEditableSelect.removeOption("me too");<br>
+//you can also remove an option by it's index
+</code><br>
+To obtain the value of the editable select call it's val() method
+<code class="prettyprint">
+alert( myEditableSelect.val() );
+</code>
+</p>
+<p>
+<h1>Example</h1>
+<label style="font-family: arial, sans-serif; font-size: 13px; color: #333;">Your plugin is awesome and I wanna pledge </label>
+<select id="s1">
+	<option>1</option>
+	<option>5</option>
+	<option>10</option>
+	<option>50</option>
+	<option>100</option>
+	<option>1000</option>
+</select>
+
+<select id="s2" style="width: 150px">
+	<option>€ - Euro</option>
+	<option>$ - Dollar</option>
+	<option>¥ - Yen</option>
+	<option>£ - Pound</option>
+</select>
+<h2>Example Code</h2>
+<code class="prettyprint">
+$(function(){<br><blockquote>
+	var selectBoxOne = $("#s1").editableSelect();<br>
+	var selectBoxTwo = $("#s2").editableSelect();<br>	
+	selectBoxTwo.addOption("punches in your face");<br>
+	selectBoxTwo.removeOption("$ - Dollar");<br><br>
+	
+	selectBoxOne.change(function(){<br>
+		console.log("Option: "+selectBoxOne.val());<br>
+	});<br>
+	selectBoxTwo.change(function(){<br>
+		console.log("Your currency: "+selectBoxTwo.val());<br>
+	});<br><br>
+	
+	//selectBoxOne.restoreSelect();
+	</blockquote>
+});
+</code>
+</p>
+</body>
+</html>
