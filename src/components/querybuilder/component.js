@@ -93,6 +93,11 @@ Ember.Application.initializer({
                         component.set('filterValue', JSON.stringify(result, null, 2));
                     }
                 });
+
+                this.$('.btn-reset').on('click', function() {
+                    component.$().find('.builder').queryBuilder('reset');
+                    component.set('filterValue', '{}');
+                });
             }
         });
 
