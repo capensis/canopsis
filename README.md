@@ -43,3 +43,18 @@ Tested on commit : 4a27549.
 | Target | Status | Log |
 | ------ | ------ | --- |
 | Lint   | :ok: OK |  |
+
+## Code Notes
+
+### TODOS
+
+| File | Note |
+ | --- | --- |
+| src/components/querybuilder/component.js |  activate this when events will be triggered at rule drop, probably on version 2.3.1 of querybuilder |
+
+
+### FIXMES
+
+| File | Note |
+ | --- | --- |
+
