@@ -49,11 +49,6 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/blob/
 
 
 
-| File | Note |
-| ---- | ---- |
-
-
-
 Tested on commit : 4a27549.
 
 | Target | Status | Log |
