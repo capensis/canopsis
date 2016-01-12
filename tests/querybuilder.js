@@ -1,9 +1,9 @@
 module('querybuilder editor');
 
-test('Form crashing attempt', function() {
+test('Querybuilder crashing attempt', function() {
     visit('/userview/view.event');
 
-    expect(1);
+    expect(2);
 
     click('.left-side .frontend-config');
     waitForElement('input[name=title]').then(function(){
@@ -28,8 +28,13 @@ test('Form crashing attempt', function() {
                     waitMilliseconds(100).then(function(){
                         find('.rule-filter-container select:last').val('crecord_type').change();
                         fillIn('.builder .rule-value-container:last input', 'event');
-                        click('.modal-content a[aria-controls=output]');
-                        equal(find('.modal-content div[role=output] pre').html().replace(/\s/g, ''), '{"$and":[{"enable":true},{"resource":"Engine_perfdata"},{"$and":[{"crecord_type":"event"}]}]}', 'generated filter seems correct');
+                        click('.query-builder a[aria-controls=output]');
+                        equal(find('.query-builder div[role=output] pre').html().replace(/\s/g, ''), '{"$and":[{"enable":true},{"resource":"Engine_perfdata"},{"$and":[{"crecord_type":"event"}]}]}', 'generated filter seems correct');
+                        click('.query-builder .btn-reset');
+                        waitMilliseconds(100).then(function(){
+                            equal(find('.query-builder div[role=output] pre').html().replace(/\s/g, ''), '{}', 'After hitting reset button, the filter is empty');
+                            click('.modal-footer .btn-submit');
+                        });
                     });
                 });
             });

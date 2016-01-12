@@ -37,6 +37,12 @@ Ember.Application.initializer({
             viewTabColumns: [{ name:'connector', title:'connector' }, { name:'connector_name', title:'connector_name' }, { name:'component', title:'component' }, { name:'resource', title:'resource' }],
 
             /**
+             * @property classNames
+             * @type array
+             */
+            classNames: ['query-builder'],
+
+            /**
              * @property filterValue
              * @type string
              * @description contains the computed filter value
@@ -76,7 +82,7 @@ Ember.Application.initializer({
                     filters: filters,
                     lang_code: i18n.lang,
                     plugins: [
-                        'sortable',
+                        // 'sortable', //TODO activate this when events will be triggered at rule drop, probably on version 2.3.1 of querybuilder
                         'key-editable-select'
                     ]
                 });
