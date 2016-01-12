@@ -38,16 +38,8 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/blob/
 
 ## Continuous Integration
 
-Tested on commit : 4a27549.
-
-| Target | Status | Log |
-| ------ | ------ | --- |
-| Lint   | :ok: OK |  |
-
 ## Code Notes
 
-
-### TODOS
 
 
 | File | Note |
@@ -56,9 +48,14 @@ Tested on commit : 4a27549.
 
 
 
-### FIXMES
-
 
 | File | Note |
 | ---- | ---- |
 
+
+
+Tested on commit : 4a27549.
+
+| Target | Status | Log |
+| ------ | ------ | --- |
+| Lint   | :ok: OK |  |
