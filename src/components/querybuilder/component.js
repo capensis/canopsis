@@ -48,6 +48,7 @@ Ember.Application.initializer({
              * @description contains the computed filter value
              */
             filterValue: '',
+
             /**
              * @method didInsertElement
              * @description contains jquery-querybuilder initialisation and data binding
@@ -78,6 +79,7 @@ Ember.Application.initializer({
                         filters.pushObject(filterElementDict);
                     }
                 });
+
                 this.$().find('.builder').queryBuilder({
                     filters: filters,
                     lang_code: i18n.lang,
