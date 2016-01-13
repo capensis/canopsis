@@ -19,16 +19,15 @@
 
  require.config({
     paths: {
-        'components/component-querybuilder': 'canopsis/brick-querybuilder/dist/templates/components/component-querybuilder',
-        'editor-querybuilder': 'canopsis/brick-querybuilder/dist/templates/editor-querybuilder',
+        'components/component-querybuilder': 'canopsis/brick-querybuilder/src/components/querybuilder/template',
+        'editor-querybuilder': 'canopsis/brick-querybuilder/src/editors/editor-querybuilder',
 
     }
 });
 
  define([
-    'link!canopsis/brick-querybuilder/dist/brick.min.css',
+    'canopsis/brick-querybuilder/src/components/querybuilder/component',
     'ehbs!components/component-querybuilder',
     'ehbs!editor-querybuilder',
-    'canopsis/brick-querybuilder/requirejs-modules/externals.conf',
-    'canopsis/brick-querybuilder/dist/brick.min'
+    'canopsis/brick-querybuilder/requirejs-modules/externals.conf'
 ], function () {});
