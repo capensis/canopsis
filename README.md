@@ -46,7 +46,7 @@ Tested on commit : 4a27549.
 
 ## Code Notes
 
-### TODOS
+### TODOS
 
 | File   | Note   |
 |--------|--------|
