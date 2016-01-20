@@ -25,15 +25,12 @@ install_requires = [
     'canopsis.common',
     'canopsis.configuration',
     'canopsis.middleware',
-    'canopsis.storage',
-    'canopsis.context',
-    'canopsis.ctxprop',
-    'canopsis.monitoring',
-    'canopsis.timeserie',
-    'canopsis.task'
+    'canopsis.old',
+    'canopsis.perfdata',
+    'canopsis.organisation'
 ]
 
 setup(
-    description='Canopsis perfdata',
+    description='Canopsis migration module',
     install_requires=install_requires,
-    keywords='perfdata')
+    keywords='migration')

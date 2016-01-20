@@ -18,21 +18,3 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
-from canopsis.middleware.core import Middleware
-
-
-def init():
-    pass
-
-
-def update():
-    storage = Middleware.get_middleware_by_uri('mongodb-default-serie2://')
-
-    items = storage.find_elements(query={
-        'computations_per_interval': {'$exists': False}
-    })
-
-    for item in items:
-        item['computations_per_interval'] = 1
-        storage.put_element(element=item, _id=item['_id'])

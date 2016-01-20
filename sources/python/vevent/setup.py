@@ -25,7 +25,7 @@ install_requires = [
     'canopsis.common',
     'canopsis.configuration',
     'canopsis.middleware',
-    'canopsis.context'
+    'canopsis.context',
     'canopsis.ctxprop',
     'canopsis.task'
 ]

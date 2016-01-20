@@ -30,7 +30,7 @@ install_requires = [
     'canopsis.check',
     'canopsis.context',
     'canopsis.configuration',
-    'canopsis.middleware',
+    'canopsis.middleware'
 ]
 
 setup(
