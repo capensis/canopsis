@@ -10,7 +10,7 @@
 			"required": true
 		},
 		"perf_data_array": {
-			"type": "perf_data_array",
+			"type": "perfdataarray",
 			"required": true
 		}
 	}

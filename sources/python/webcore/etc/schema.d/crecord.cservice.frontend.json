@@ -38,7 +38,7 @@
 			"description": "The view to display when users log in",
 			"type": "string",
 			"role": "restobject",
-			"schemaType":"userview",
+			"schemaType":"userviewsimplemodel",
 			"valueField":"id",
 			"labelField":"crecord_name"
 		},

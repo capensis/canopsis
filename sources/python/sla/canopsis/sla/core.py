@@ -343,6 +343,11 @@ class Sla(object):
             output = output.replace('[CRITICAL]', to_percent(sla_measures[3]))
             output = output.replace('[ALERTS]', to_percent(alerts_percent))
 
+            # Embed sla measures available total percentage in the output
+            output = output.replace('[P_AVAIL]', to_percent(
+                1.0 - alerts_percent)
+            )
+
             # Embed sla measures durations in the output
             output = output.replace('[T_AVAIL]', duration_to_time(
                 avail_duration)

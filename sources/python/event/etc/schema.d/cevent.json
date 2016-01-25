@@ -39,7 +39,7 @@
 		},
 		"perf_data": {"type": "string"},
 		"perf_data_array": {
-			"type": "string"
+			"type": "perfdataarray"
 		},
 		"destination": {
 			"type": "string"
