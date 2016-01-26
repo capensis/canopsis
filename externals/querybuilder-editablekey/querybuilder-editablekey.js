@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+ *
+ * This file is part of Canopsis.
+ *
+ * Canopsis is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Canopsis is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
+ */
 define([
     'query-builder'
 ], function (QueryBuilder) {
@@ -24,6 +42,7 @@ define([
             if(rule.$el.find('.rule-filter-container input').length === 0) {
                 var realSelect = rule.$el.find('.rule-filter-container select');
                 var select = realSelect.editableSelect();
+                select.css('width', '150px');
 
                 select.change(function() {
                     var selectVal = select.val();
@@ -40,14 +59,12 @@ define([
 
                         queryBuilder.addFilter(r);
 
-                        console.error('append new option', select.val());
                         realSelect.append($('<option>', {
                             value: select.val(),
                             text: select.val()
                         }));
                     }
 
-                    console.error(arguments);
                     rule.$el.find('.rule-filter-container select')
                         .val(select.val())
                         .trigger('change');

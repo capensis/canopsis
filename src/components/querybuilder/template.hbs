@@ -4,9 +4,9 @@
 <div>
   <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#filter" aria-controls="filter" role="tab" data-toggle="tab">{{tr "Filter"}}</a></li>
-        <li role="presentation"><a href="#output" aria-controls="output" role="tab" data-toggle="tab">{{tr "Generated filter"}}</a></li>
-        <li role="presentation"><a href="#result" aria-controls="result" role="tab" data-toggle="tab">{{tr "Result"}}</a></li>
+        <li class="active"><a href="#filter" aria-controls="filter" role="tab" data-toggle="tab">{{tr "Filter"}}</a></li>
+        <li><a href="#output" aria-controls="output" role="tab" data-toggle="tab">{{tr "Generated filter"}}</a></li>
+        <li><a href="#result" aria-controls="result" role="tab" data-toggle="tab">{{tr "Result"}}</a></li>
     </ul>
 
     <!-- Tab panes -->
@@ -19,6 +19,16 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="result">
             {{component-table model="event" modelfilter=filterValue columns=viewTabColumns targetObject=this}}
+            <div style="float: right;">
+                {{#component-tooltip content=helpModal.content htmlEnabled=true noTranslation=true}}
+                    <i class="fa fa-info-circle"></i>
+                {{/component-tooltip}}
+                {{tr 'Search'}}: {{input action="search"}}
+            </div>
+            {{selectionTabFilter}}
+            <b>{{tr 'Available'}}:</b>
+
+            {{component-table items=metrics model="event" modelfilter=selectionTabFilter columns=selectionTabColumns targetObject=this}}
         </div>
     </div>
 </div>

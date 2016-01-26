@@ -34,7 +34,8 @@ require.config({
 define([
     'query-builder',
     'link!canopsis/brick-querybuilder/externals/jQuery-QueryBuilder/dist/css/query-builder.default.min.css',
-    'canopsis/brick-querybuilder/externals/editableSelect/jquery.editable.select',
+    'canopsis/brick-querybuilder/externals/jquery-editable-select/source/jquery.editable-select',
+    'link!canopsis/brick-querybuilder/externals/jquery-editable-select/source/jquery.editable-select.min.css',
     'canopsis/brick-querybuilder/externals/querybuilder-editablekey/querybuilder-editablekey'
 ], function () {
     require(['canopsis/brick-querybuilder/externals/jQuery-QueryBuilder/dist/i18n/query-builder.' + window.i18n.lang]);

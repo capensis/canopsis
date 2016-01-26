@@ -29,5 +29,6 @@
     'canopsis/brick-querybuilder/src/components/querybuilder/component',
     'ehbs!components/component-querybuilder',
     'ehbs!editor-querybuilder',
+    'link!canopsis/brick-querybuilder/src/style.css',
     'canopsis/brick-querybuilder/requirejs-modules/externals.conf'
 ], function () {});

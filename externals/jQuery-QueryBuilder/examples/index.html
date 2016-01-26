@@ -60,17 +60,22 @@
         <option value="pt-BR" data-icon="flag flag-pt-BR">Brazilian Portuguese</option>
         <option value="ro" data-icon="flag flag-ro">Romanian</option>
         <option value="ru" data-icon="flag flag-ru">Russian</option>
+        <option value="zh-CN" data-icon="flag flag-zh-CN" >Simplified Chinese</option>
       </select>
     </div>
 
     <div id="builder"></div>
 
     <div class="btn-group">
-      <button class="btn btn-warning reset">Reset</button>
-      <button class="btn btn-success set">Set rules</button>
-      <button class="btn btn-success set-mongo">Set rules from MongoDB</button>
-      <button class="btn btn-success set-sql">Set rules from SQL</button>
-      <button class="btn btn-warning set-filters">Set filters</button>
+      <button class="btn btn-danger reset">Reset</button>
+      <button class="btn btn-warning set-filters" data-toggle="tooltip" title="Adds a filter 'New filter' and removes 'Coordinates', 'State', 'BSON'" data-container="body" data-placement="bottom">Set filters</button>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-default" disabled>Set:</button>
+      <button class="btn btn-success set">From JSON</button>
+      <button class="btn btn-success set-mongo">From MongoDB</button>
+      <button class="btn btn-success set-sql">From SQL</button>
     </div>
 
     <div class="btn-group">
@@ -101,10 +106,14 @@
 <script src="../dist/js/query-builder.js"></script>
 
 <script>
+$('[data-toggle="tooltip"]').tooltip();
+
 var $b = $('#builder');
 
 var options = {
   allow_empty: true,
+  
+  default_filter: 'state',
   
   optgroups: {
     core: {
@@ -122,6 +131,30 @@ var options = {
     'bt-checkbox': { color: 'primary' },
     'invert': null
   },
+
+  // standard operators in custom optgroups
+  operators: [
+    {type: 'equal',            optgroup: 'basic'},
+    {type: 'not_equal',        optgroup: 'basic'},
+    {type: 'in',               optgroup: 'basic'},
+    {type: 'not_in',           optgroup: 'basic'},
+    {type: 'less',             optgroup: 'numbers'},
+    {type: 'less_or_equal',    optgroup: 'numbers'},
+    {type: 'greater',          optgroup: 'numbers'},
+    {type: 'greater_or_equal', optgroup: 'numbers'},
+    {type: 'between',          optgroup: 'numbers'},
+    {type: 'not_between',      optgroup: 'numbers'},
+    {type: 'begins_with',      optgroup: 'strings'},
+    {type: 'not_begins_with',  optgroup: 'strings'},
+    {type: 'contains',         optgroup: 'strings'},
+    {type: 'not_contains',     optgroup: 'strings'},
+    {type: 'ends_with',        optgroup: 'strings'},
+    {type: 'not_ends_with',    optgroup: 'strings'},
+    {type: 'is_empty'     },
+    {type: 'is_not_empty' },
+    {type: 'is_null'      },
+    {type: 'is_not_null'  }
+  ],
 
   filters: [
   /*
@@ -179,7 +212,7 @@ var options = {
    * select
    */
   {
-    id: 'contient',
+    id: 'continent',
     label: 'Continent',
     type: 'string',
     input: 'select',
@@ -402,6 +435,9 @@ $('.change-theme').on('click', function() {
 $('.set').on('click', function() {
   $('#builder').queryBuilder('setRules', {
     condition: 'AND',
+    flags: {
+      condition_readonly: true
+    },
     rules: [{
       id: 'price',
       operator: 'between',
@@ -419,6 +455,9 @@ $('.set').on('click', function() {
       value: 'AK',
     }, {
       condition: 'OR',
+      flags: {
+        no_delete: true
+      },
       rules: [{
         id: 'category',
         operator: 'equal',
@@ -466,7 +505,7 @@ $('.reset').on('click', function() {
 $('.parse-json').on('click', function() {
   $('#result').removeClass('hide')
     .find('pre').html(JSON.stringify(
-      $('#builder').queryBuilder('getRules'),
+      $('#builder').queryBuilder('getRules', {get_flags: true}),
       undefined, 2
     ));
 });
@@ -490,6 +529,7 @@ $('.parse-mongo').on('click', function() {
 // set filters
 $('.set-filters').on('click', function() {
   $(this).prop('disabled', true);
+  $(this).tooltip('hide');
   
   // add a new filter after 'state'
   $('#builder').queryBuilder('addFilter',
@@ -503,7 +543,7 @@ $('.set-filters').on('click', function() {
   
   // remove filter 'coord'
   $('#builder').queryBuilder('removeFilter',
-    'coord',
+    ['coord', 'state', 'bson'],
     true
   );
   

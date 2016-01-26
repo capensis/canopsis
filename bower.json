@@ -22,6 +22,6 @@
     "tests"
   ],
   "envMode": "production",
-  "dependencies": {"jQuery-QueryBuilder":"https://github.com/mistic100/jQuery-QueryBuilder.git#~2.3.0","bootstrap-select":"~1.9.3","editableSelect":"https://github.com/mmende/editableSelect.git#~0.0.1","querybuilder-editablekey":"https://git.canopsis.net/gpluchon/querybuilder-editablekey.git"}
+  "dependencies": {"jQuery-QueryBuilder":"https://github.com/mistic100/jQuery-QueryBuilder.git#~2.3.0","jquery-editable-select":"https://git.canopsis.net/gpluchon/jquery-editable-select.git","querybuilder-editablekey":"https://git.canopsis.net/gpluchon/querybuilder-editablekey.git"}
 
 }

@@ -1,22 +1,22 @@
 # jQuery QueryBuilder
 
-[![Bower version](https://badge.fury.io/bo/jQuery-QueryBuilder.svg)](http://badge.fury.io/bo/jQuery-QueryBuilder)
-[![Build Status](https://travis-ci.org/mistic100/jQuery-QueryBuilder.svg?branch=master)](https://travis-ci.org/mistic100/jQuery-QueryBuilder)
-[![Coverage Status](https://coveralls.io/repos/mistic100/jQuery-QueryBuilder/badge.svg)](https://coveralls.io/r/mistic100/jQuery-QueryBuilder)
-[![Gratipay](https://img.shields.io/gratipay/mistic100.svg)](https://gratipay.com/mistic100)
+[![Bower version](https://img.shields.io/bower/v/jQuery-QueryBuilder.svg?style=flat-square)](http://querybuilder.js.org)
+[![CDN](https://img.shields.io/badge/cdn-jsdelivr-%23EB4C36.svg?style=flat-square)](http://www.jsdelivr.com/projects/jquery.query-builder)
+[![Build Status](https://img.shields.io/travis/mistic100/jQuery-QueryBuilder.svg?style=flat-square)](https://travis-ci.org/mistic100/jQuery-QueryBuilder)
+[![Coverage Status](https://img.shields.io/coveralls/mistic100/jQuery-QueryBuilder/master.svg?style=flat-square)](https://coveralls.io/r/mistic100/jQuery-QueryBuilder)
 
 jQuery plugin offering an simple interface to create complex queries.
 
-![screenshot](https://raw.githubusercontent.com/mistic100/jQuery-QueryBuilder/master/examples/screenshot.png)
+[![screenshot](https://raw.githubusercontent.com/mistic100/jQuery-QueryBuilder/master/examples/screenshot.png)](http://querybuilder.js.org)
 
 ## Documentation
-http://mistic100.github.io/jQuery-QueryBuilder
+http://querybuilder.js.org
 
 ### Dependencies
  * jQuery >= 1.9
  * Bootstrap >= 3.1 (CSS only)
  * [jQuery.extendext](https://github.com/mistic100/jQuery.extendext)
- * [doT.js](http://olado.github.io/doT)
+ * [doT.js](http://olado.github.io/doT) (@master until the author decide to publish a new version)
  * [MomentJS](http://momentjs.com) (optional, for Date/Time validation)
  * Other Bootstrap/jQuery plugins used by plugins
 
@@ -60,9 +60,10 @@ grunt --languages=fr,it
 
 #### Other commands
 
- * `grunt test` to run JSHint and the QUnit test suite.
+ * `grunt test` to run jshint/jscs/scsslint and the QUnit test suite.
  * `grunt list_modules` to get the list of available plugins and languages.
  * `grunt describe_triggers` to get the list of all triggers.
+ * `grunt describe_errors` to get the list of all fatal errors.
  * `grunt watch` to automatically build the library when modifying the source files.
 
 ### Inspiration
