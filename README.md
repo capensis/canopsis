@@ -6,7 +6,7 @@ Query builder editor
 
 ## Screenshots
 
-![View0](https://git.canopsis.net/canopsis-ui-bricks/brick-simpletile/raw/master/doc/preview/querybuilder1.png)![View1](https://git.canopsis.net/canopsis-ui-bricks/brick-simpletile/raw/master/doc/preview/querybuilder2.png)
+![View0](https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/raw/master/doc/preview/querybuilder1.png)![View1](https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/raw/master/doc/preview/querybuilder2.png)
 
 ## Installation
 
@@ -38,7 +38,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/blob/
 
 ## Continuous Integration
 
-Tested on commit : f1892ae.
+Tested on commit : 328d87b.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
