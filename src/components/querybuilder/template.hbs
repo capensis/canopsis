@@ -19,7 +19,7 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="result">
             {{component-table model="event" modelfilter=filterValue columns=viewTabColumns targetObject=this}}
-            <div style="float: right;">
+            <div style="float: right;" class="searchField">
                 {{#component-tooltip content=helpModal.content htmlEnabled=true noTranslation=true}}
                     <i class="fa fa-info-circle"></i>
                 {{/component-tooltip}}
@@ -27,8 +27,9 @@
             </div>
             {{selectionTabFilter}}
             <b>{{tr 'Available'}}:</b>
-
-            {{component-table items=metrics model="event" modelfilter=selectionTabFilter columns=selectionTabColumns targetObject=this}}
+            <div class="available_results">
+                {{component-table items=metrics model="event" modelfilter=selectionTabFilter columns=selectionTabColumns targetObject=this}}
+            </div>
         </div>
     </div>
 </div>

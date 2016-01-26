@@ -1,6 +1,6 @@
 module('querybuilder editor');
 
-test('Querybuilder crashing attempt', function() {
+test('Querybuilder filter composition and reset', function() {
     visit('/userview/view.event');
 
     expect(2);
@@ -31,6 +31,42 @@ test('Querybuilder crashing attempt', function() {
                         equal(find('.query-builder div[role=output] pre').html().replace(/\s/g, ''), '{}', 'After hitting reset button, the filter is empty');
                         click('.modal-footer .btn-submit');
                     });
+                });
+            });
+        });
+    });
+});
+
+test('Querybuilder filter handpick feature', function() {
+    visit('/userview/view.event');
+
+    expect(2);
+
+    click('.left-side .frontend-config');
+    waitForElement('input[name=title]').then(function(){
+        click('.modal-body a[href=#editors]');
+        fillIn('.modal-body .tab-pane.active input:first', 'filter');
+        fillIn('.modal-body .tab-pane.active input:last', 'querybuilder');
+        click('.modal-body .btn-success');
+        click('.modal-footer .btn-submit');
+        waitForElementRemoval('.modal-backdrop').then(function() {
+            click('.btn-add-customfilter');
+
+            waitForElement('input[name=title]').then(function(){
+                fillIn('input[name=title]', 'test filter handpick');
+                click('.query-builder a[aria-controls=result]');
+                click('.available_results tr:last td:last a');
+                click('.query-builder a[aria-controls=output]');
+
+                waitMilliseconds(300).then(function(){
+                    var resultJson = find('.query-builder div[role=output] pre').html().replace(/\s/g, '');
+
+                    resultJson = JSON.parse(resultJson);
+
+                    notEqual(resultJson['$or'][0]["_id"], undefined, 'one filter selected by id');
+                    notEqual(resultJson['$or'][0]["_id"], null, 'one filter selected by id');
+
+                    click('.modal-footer .btn-submit');
                 });
             });
         });

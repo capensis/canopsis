@@ -216,7 +216,6 @@ Ember.Application.initializer({
                 search: function(search) {
                     if(search) {
                         var mfilter = build_filter(search);
-                        alert(JSON.stringify(mfilter));
                         set(this, 'selectionTabSearch', JSON.stringify(mfilter));
                     }
                     else {
