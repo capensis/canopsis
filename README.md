@@ -38,7 +38,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/blob/
 
 ## Continuous Integration
 
-Tested on commit : d0e2974.
+Tested on commit : e18660a.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
