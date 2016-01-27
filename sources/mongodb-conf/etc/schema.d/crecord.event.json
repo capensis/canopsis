@@ -8,7 +8,7 @@
 		"keys":["component", "resource", "domain", "perimeter"]
 	},{
 		"title": "Event",
-		"keys":["event_type", "status"]
+		"keys":["event_type", "status", "state"]
 	}],
 	"showEditButton": true,
 	"properties": {
