@@ -61,12 +61,15 @@ test('Querybuilder filter handpick feature', function() {
                 waitMilliseconds(300).then(function(){
                     var resultJson = find('.query-builder div[role=output] pre').html().replace(/\s/g, '');
 
-                    resultJson = JSON.parse(resultJson);
+                    waitMilliseconds(300).then(function(){
 
-                    notEqual(resultJson['$or'][0]["_id"], undefined, 'one filter selected by id');
-                    notEqual(resultJson['$or'][0]["_id"], null, 'one filter selected by id');
+                        resultJson = JSON.parse(resultJson);
 
-                    click('.modal-footer .btn-submit');
+                        notEqual(resultJson['$or'][0]["_id"], undefined, 'one filter selected by id');
+                        notEqual(resultJson['$or'][0]["_id"], null, 'one filter selected by id');
+
+                        click('.modal-footer .btn-submit');
+                    });
                 });
             });
         });

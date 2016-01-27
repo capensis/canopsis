@@ -41,34 +41,46 @@ define([
         this.on('afterCreateRuleOperators', function(e, rule) {
             if(rule.$el.find('.rule-filter-container input').length === 0) {
                 var realSelect = rule.$el.find('.rule-filter-container select');
-                var select = realSelect.editableSelect();
-                select.css('width', '150px');
 
-                select.change(function() {
-                    var selectVal = select.val();
+                var changeFunction = function(selectValParam) {
+                    var selectVal = selectValParam;
+
+                    if(typeof selectVal !== 'string') {
+                        selectVal = select.val();
+                    }
 
                     if (realSelect.find("option[value='" + selectVal + "']").length === 0) {
 
                         var r = {
-                            field: select.val(),
-                            id: select.val(),
+                            field: selectVal,
+                            id: selectVal,
                             input: "text",
-                            label: select.val(),
+                            label: selectVal,
                             type: "string"
                         };
 
                         queryBuilder.addFilter(r);
 
                         realSelect.append($('<option>', {
-                            value: select.val(),
-                            text: select.val()
+                            value: selectVal,
+                            text: selectVal
                         }));
                     }
 
                     rule.$el.find('.rule-filter-container select')
-                        .val(select.val())
+                        .val(selectVal)
                         .trigger('change');
+                };
+
+                var select = realSelect.editableSelect({
+                    onSelect: function () {
+                        select.val($(this).val()).change();
+                        changeFunction($(this).val());
+                    }
                 });
+                select.css('width', '150px');
+
+                select.change(changeFunction);
             }
         });
 
