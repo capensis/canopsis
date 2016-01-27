@@ -102,7 +102,7 @@ Ember.Application.initializer({
         /**
          * @method extractKeysFromMongoFilter
          * @private
-         * @param {object} the filter to extract keys from
+         * @param {object} filter the filter to extract keys from
          * @returns array of keys
          */
         var extractKeysFromMongoFilter = function(filter) {
@@ -125,6 +125,36 @@ Ember.Application.initializer({
             results = $(results).not(['$eq', '$regex', '$ne', '$gt', '$gte', '$lt', '$lte', '$in', '$ne', '$nin', '$exists', '$type', '$mod', '$where', '$text']).get();
 
             return results;
+        };
+
+        /**
+         * @method cleanFilterEqOperators
+         * @private
+         * @description cleans every "$eq" operator from a mongo filter
+         * @param {object} filter the filter to extract keys from
+         * @returns the cleaned filter
+         */
+        var cleanFilterEqOperators = function(filter) {
+            var filterKeys = Ember.keys(filter);
+            if(filter.$eq !== undefined) {
+                return filter.$eq;
+            }
+
+            for (var i = 0; i < filterKeys.length; i++) {
+                var currentKey = filterKeys[i];
+
+                if(Ember.isArray(filter[currentKey])) {
+                    var arrayClause = [];
+                    for (var j = 0; j < filter[currentKey].length; j++) {
+                        arrayClause.pushObject(cleanFilterEqOperators(filter[currentKey][j]));
+                    }
+                    filter[currentKey] = arrayClause;
+                } else if(typeof filter[currentKey] === 'object') {
+                    filter[currentKey] = cleanFilterEqOperators(filter[currentKey]);
+                }
+            }
+
+            return filter;
         };
 
         /**
@@ -310,6 +340,7 @@ Ember.Application.initializer({
 
                 if(filterValue && filterValue !== '{}') {
                     filterValue = JSON.parse(filterValue);
+                    filterValue = cleanFilterEqOperators(filterValue);
                     var additionnalKeys = extractKeysFromMongoFilter(filterValue);
                     additionnalKeys = $(additionnalKeys).not(existingFiltersKeys).get();
 
