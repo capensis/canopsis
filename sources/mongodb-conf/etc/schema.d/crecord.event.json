@@ -1,8 +1,14 @@
 {
 	"type": "object",
 	"categories": [{
-		"title": "General",
-		"keys":["timestamp", "component", "resource", "state", "output"]
+		"title": "Source",
+		"keys":["connector", "connector_name"]
+	},{
+		"title": "Entities",
+		"keys":["component", "resource", "domain", "perimeter"]
+	},{
+		"title": "Event",
+		"keys":["event_type", "status", "state"]
 	}],
 	"showEditButton": true,
 	"properties": {
