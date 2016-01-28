@@ -25,10 +25,10 @@ test('Querybuilder filter composition and reset', function() {
                     find('.rule-filter-container select:last').val('connector').change();
                     fillIn('.builder .rule-value-container:last input', 'Engine');
                     click('.query-builder a[aria-controls=output]');
-                    equal(find('.query-builder div[role=output] pre').html().replace(/\s/g, ''), '{"$and":[{"resource":"Engine_perfdata"},{"$and":[{"connector":"Engine"}]}]}', 'generated filter seems correct');
+                    equal(find('.query-builder div[data-ref=output] pre').html().replace(/\s/g, ''), '{"$and":[{"resource":"Engine_perfdata"},{"$and":[{"connector":"Engine"}]}]}', 'generated filter seems correct');
                     click('.query-builder .btn-reset');
                     waitMilliseconds(100).then(function(){
-                        equal(find('.query-builder div[role=output] pre').html().replace(/\s/g, ''), '{}', 'After hitting reset button, the filter is empty');
+                        equal(find('.query-builder div[data-ref=output] pre').html().replace(/\s/g, ''), '{}', 'After hitting reset button, the filter is empty');
                         click('.modal-footer .btn-submit');
                     });
                 });
@@ -59,7 +59,7 @@ test('Querybuilder filter handpick feature', function() {
                 click('.query-builder a[aria-controls=output]');
 
                 waitMilliseconds(300).then(function(){
-                    var resultJson = find('.query-builder div[role=output] pre').html().replace(/\s/g, '');
+                    var resultJson = find('.query-builder div[data-ref=output] pre').html().replace(/\s/g, '');
 
                     waitMilliseconds(300).then(function(){
 

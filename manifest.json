@@ -13,7 +13,5 @@
     "jquery-editable-select": "https://git.canopsis.net/gpluchon/jquery-editable-select.git",
     "querybuilder-editablekey": "https://git.canopsis.net/gpluchon/querybuilder-editablekey.git"
   },
-  "debug": {
-    "useSrcFolder": false
-  }
+  "envMode": "production"
 }
