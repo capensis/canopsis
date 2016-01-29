@@ -25,14 +25,12 @@ from canopsis.monitoring.parser import PerfDataParser
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
-from canopsis.timeserie.timewindow import Period, get_offset_timewindow
+from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
 from canopsis.storage.timed import TimedStorage
 
 from numbers import Number
-
-DEFAULT_PERIOD = Period(week=1)  # save data each week
 
 CONF_PATH = 'perfdata/perfdata.conf'
 CATEGORY = 'PERFDATA'
@@ -41,7 +39,7 @@ CATEGORY = 'PERFDATA'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class PerfData(MiddlewareRegistry):
-    """Dedicated to access to perfdata (via periodic and timed stores)."""
+    """Dedicated to access to perfdata (via periodical and timed stores)."""
 
     PERFDATA_STORAGE = 'perfdata_storage'
     META_STORAGE = 'meta_storage'
@@ -72,8 +70,7 @@ class PerfData(MiddlewareRegistry):
             self[PerfData.CONTEXT_MANAGER] = context
 
     def get_metric_entity(self, metricname, event):
-        """
-        Get metric entity from event and metric name.
+        """Get metric entity from event and metric name.
 
         :param metricname: entity name
         :type metricname: str
@@ -94,16 +91,14 @@ class PerfData(MiddlewareRegistry):
 
         return entity
 
-    def count(self, metric_id, timewindow=None, period=None):
+    def count(self, metric_id, timewindow=None):
         """Get number of perfdata identified by metric_id in input timewindow
 
         :param timewindow: if None, get all perfdata values
         """
 
-        period = self.get_period(metric_id, period=period)
-
         result = self[PerfData.PERFDATA_STORAGE].count(
-            data_id=metric_id, timewindow=timewindow, period=period
+            data_id=metric_id, timewindow=timewindow
         )
 
         return result
@@ -125,7 +120,7 @@ class PerfData(MiddlewareRegistry):
         return list(result)
 
     def get(
-            self, metric_id, period=None, with_meta=True, timewindow=None,
+            self, metric_id, with_meta=True, timewindow=None,
             limit=0, skip=0, timeserie=None
     ):
         """Get a set of data related to input data_id on the timewindow and
@@ -134,10 +129,8 @@ class PerfData(MiddlewareRegistry):
         If with_meta, result is a couple of (points, list of meta by timestamp)
         """
 
-        period = self.get_period(metric_id, period=period)
-
         result = self[PerfData.PERFDATA_STORAGE].get(
-            data_id=metric_id, timewindow=timewindow, period=period,
+            data_id=metric_id, timewindow=timewindow,
             limit=limit, skip=skip, timeserie=timeserie
         )
 
@@ -152,7 +145,7 @@ class PerfData(MiddlewareRegistry):
         return result
 
     def get_point(
-            self, metric_id, period=None, with_meta=True, timestamp=None
+            self, metric_id, with_meta=True, timestamp=None
     ):
         """Get the closest point before input timestamp. Add meta informations
         if with_meta.
@@ -163,10 +156,8 @@ class PerfData(MiddlewareRegistry):
 
         timewindow = get_offset_timewindow(timestamp)
 
-        period = self.get_period(metric_id, period=period)
-
         result = self[PerfData.PERFDATA_STORAGE].get(
-            data_id=metric_id, timewindow=timewindow, period=period,
+            data_id=metric_id, timewindow=timewindow,
             limit=1
         )
 
@@ -197,12 +188,11 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    def put(self, metric_id, points, meta=None, period=None, cache=False):
+    def put(self, metric_id, points, meta=None, cache=False):
         """Put a (list of) couple (timestamp, value), a meta into
-        rated_documents related to input period.
+        rated_documents.
 
-        kwargs will be added to all document in order to extend
-        periodic_documents.
+        kwargs will be added to all document in order to extend timed documents.
 
         :param iterable points: points to put. One point (timestamp, value) or
             points (timestamp, values)+.
@@ -216,10 +206,9 @@ class PerfData(MiddlewareRegistry):
                 # transform points into a tuple
                 points = (points,)
 
-            period = self.get_period(metric_id=metric_id, period=period)
             # update data in a cache (a)synchronous way
             self[PerfData.PERFDATA_STORAGE].put(
-                data_id=metric_id, period=period, points=points, cache=cache
+                data_id=metric_id, points=points, cache=cache
             )
 
             if meta is not None:
@@ -232,10 +221,7 @@ class PerfData(MiddlewareRegistry):
                     timestamp=min_timestamp
                 )
 
-    def remove(
-            self,
-            metric_id, period=None, with_meta=False, timewindow=None, cache=False
-    ):
+    def remove(self, metric_id, with_meta=False, timewindow=None, cache=False):
         """Remove values and meta of one metric.
 
         meta_names is a list of meta_data to remove. An empty list ensure that
@@ -243,12 +229,9 @@ class PerfData(MiddlewareRegistry):
         if meta_names is None, then all meta_names are removed.
         """
 
-        period = self.get_period(metric_id, period=period)
-
         self[PerfData.PERFDATA_STORAGE].remove(
             data_id=metric_id,
             timewindow=timewindow,
-            period=period,
             cache=cache
         )
 
@@ -267,27 +250,8 @@ class PerfData(MiddlewareRegistry):
         """Remove meta information."""
 
         self[PerfData.PERFDATA_STORAGE].remove(
-            data_id=metric_id, timewindow=timewindow, cache=cache)
-
-    def get_period(self, metric_id, period=None):
-        """Get default period related to input metric_id.
-
-        DEFAULT_PERIOD if related entity does not exist or does not contain
-        a default period.
-        """
-
-        result = period
-
-        if result is None:
-
-            result = DEFAULT_PERIOD
-            # TODO: restore when the period will be specified by entity
-            # entity = self.context.get_entities(ids=metric_id)
-
-            # if entity is not None and 'period' in entity:
-            #     result = Period(**entity['period'])
-
-        return result
+            data_id=metric_id, timewindow=timewindow, cache=cache
+        )
 
     def parse_perfdata(self, perf_data_raw):
         """Try to get a perf data array from input perf_data_raw.
