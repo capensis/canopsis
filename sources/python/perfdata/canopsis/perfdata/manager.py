@@ -28,7 +28,7 @@ from canopsis.configuration.configurable.decorator import (
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
-from canopsis.storage.timed import TimedStorage
+from canopsis.storage.periodical import PeriodicalStorage
 
 from numbers import Number
 
@@ -45,9 +45,9 @@ class PerfData(MiddlewareRegistry):
     META_STORAGE = 'meta_storage'
     CONTEXT_MANAGER = 'context'
 
-    META_TIMESTAMP = TimedStorage.TIMESTAMP
-    META_VALUE = TimedStorage.VALUE
-    META_ID = TimedStorage.DATA_ID
+    META_TIMESTAMP = PeriodicalStorage.TIMESTAMP
+    META_VALUE = PeriodicalStorage.VALUE
+    META_ID = PeriodicalStorage.DATA_ID
 
     @property
     def context(self):
