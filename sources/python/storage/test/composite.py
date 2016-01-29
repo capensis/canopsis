@@ -19,39 +19,38 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+from unittest import main
 
 from functools import reduce
 
 from canopsis.storage.composite import CompositeStorage
-from canopsis.mongo.composite import MongoCompositeStorage
+
+from canopsis.configuration.configurable.decorator import conf_paths
+
+from .base import BaseTestConfiguration, BaseStorageTest
 
 
-class MongoCompositeStorageTest(TestCase):
-    """MongoCompositeStorage UT on data_scope = "test".
-    """
+@conf_paths('storage/test-composite.conf')
+class TestConfiguration(BaseTestConfiguration):
+    """Default test configuration."""
 
-    def setUp(self):
-        # create a storage on test_store collections
-        self.path = ['a', 'b', 'c']
-        self.storage = MongoCompositeStorage(data_scope="test", path=self.path)
 
-    def test_connect(self):
-        self.assertTrue(self.storage.connected())
+class CompositeStorageTest(BaseStorageTest):
+    """CompositeStorage UT on data_scope = "test" """
 
-        self.storage.disconnect()
+    def _test(self, storage):
 
-        self.assertFalse(self.storage.connected())
+        self.path = storage.path
 
-        self.storage.connect()
+        self._test_CRUD(storage)
+        self._test_shared(storage)
+        self._test_distinct(storage)
 
-        self.assertTrue(self.storage.connected())
+    def _test_CRUD(self, storage):
 
-    def test_CRUD(self):
+        storage.drop()
 
-        self.storage.drop()
-
-        indexes = self.storage.all_indexes()
+        indexes = storage.all_indexes()
         # check number of indexes
         self.assertEqual(len(indexes), len(self.path) + 4)
 
@@ -64,10 +63,10 @@ class MongoCompositeStorageTest(TestCase):
             name = str(n)
 
             # compare absolute path
-            absolute_path = self.storage.get_absolute_path(
+            absolute_path = storage.get_absolute_path(
                 path=_path, name=name
             )
-            __path = [path for path in self.storage.path if path in _path]
+            __path = [path for path in storage.path if path in _path]
             _absolute_path = reduce(
                 lambda x, y: '%s%s%s' % (
                     x, CompositeStorage.PATH_SEPARATOR, y), __path
@@ -80,23 +79,23 @@ class MongoCompositeStorageTest(TestCase):
             )
             self.assertEqual(absolute_path, _absolute_path)
             # put new entry
-            self.storage.put(path=_path, name=name, data={'value': n})
+            storage.put(path=_path, name=name, data={'value': n})
 
         # get all data related to path[n-1]
         for n, _ in enumerate(self.path):
             _path = {path: path for path in self.path[:n + 1]}
-            elements = self.storage.get(path=_path)
+            elements = storage.get(path=_path)
             self.assertEqual(len(elements), len(self.path) - n)
 
         for n in range(len(self.path), 0, -1):
             _path = {path: path for path in self.path[:n]}
-            self.storage.remove(path=_path)
-            elements = self.storage.get(path={self.path[0]: self.path[0]})
+            storage.remove(path=_path)
+            elements = storage.get(path={self.path[0]: self.path[0]})
             self.assertEqual(len(elements), n - 1)
 
-    def test_shared(self):
+    def _test_shared(self, storage):
 
-        self.storage.drop()
+        storage.drop()
 
         path = {_path: _path for _path in self.path}
 
@@ -109,19 +108,19 @@ class MongoCompositeStorageTest(TestCase):
 
         # check unary data sharing
         for n, d in enumerate(data):
-            self.storage.put(path=path, name=str(n), data=d)
-            ds = self.storage.get(path=path, names=str(n), shared=True)
+            storage.put(path=path, name=str(n), data=d)
+            ds = storage.get(path=path, names=str(n), shared=True)
             self.assertEqual(len(ds), 1)
 
-            shared_id = self.storage.share_data(data=d)
-            shared_data = self.storage.get_shared_data(shared_ids=shared_id)
+            shared_id = storage.share_data(data=d)
+            shared_data = storage.get_shared_data(shared_ids=shared_id)
             self.assertEqual(len(shared_data), 1)
             self.assertTrue(isinstance(shared_data[0], dict))
 
-            self.storage.unshare_data(d)
+            storage.unshare_data(d)
             self.assertNotEqual(shared_id, d[CompositeStorage.SHARED])
 
-            shared_data = self.storage.get_shared_data(
+            shared_data = storage.get_shared_data(
                 shared_ids=str(shared_id)
             )
             self.assertEqual(len(shared_data), 0)
@@ -130,51 +129,51 @@ class MongoCompositeStorageTest(TestCase):
 
         # check shared data
         for n, d in enumerate(data):
-            self.storage.share_data(data=d, shared_id=str(shared_id))
-            shared_data = self.storage.get_shared_data(
+            storage.share_data(data=d, shared_id=str(shared_id))
+            shared_data = storage.get_shared_data(
                 shared_ids=str(shared_id)
             )
             self.assertEqual(len(shared_data), n + 1)
             shared_id += 1
-            self.storage.share_data(
+            storage.share_data(
                 data=d, shared_id=str(shared_id), share_extended=True
             )
-            shared_data = self.storage.get_shared_data(
+            shared_data = storage.get_shared_data(
                 shared_ids=str(shared_id)
             )
             self.assertEqual(len(shared_data), n + 1)
 
         # unshare the first data and check if number of shared data is data - 1
-        self.storage.unshare_data(data=data[0])
-        shared_data = self.storage.get_shared_data(shared_ids=str(shared_id))
+        storage.unshare_data(data=data[0])
+        shared_data = storage.get_shared_data(shared_ids=str(shared_id))
         self.assertEqual(len(shared_data), len(data) - 1)
 
-    def test_distinct(self):
+    def _test_distinct(self, storage):
 
-        self.storage.put_element(
+        storage.put_element(
             _id='id_1', element={'group': 'a', 'test': 'value1'}
         )
-        self.storage.put_element(
+        storage.put_element(
             _id='id_2', element={'group': 'a', 'test': 'value2'}
         )
-        self.storage.put_element(
+        storage.put_element(
             _id='id_3', element={'group': 'a', 'test': 'value3'}
         )
 
-        self.storage.put_element(
+        storage.put_element(
             _id='id_4', element={'group': 'b', 'test': 'value1'}
         )
-        self.storage.put_element(
+        storage.put_element(
             _id='id_5', element={'group': 'b', 'test': 'value2'}
         )
-        self.storage.put_element(
+        storage.put_element(
             _id='id_6', element={'group': 'b', 'test': 'value4'}
         )
 
-        result = self.storage.distinct('test', {'group': 'b'})
+        result = storage.distinct('test', {'group': 'b'})
         self.assertEqual(result, ['value1', 'value2', 'value4'])
 
-        result = self.storage.distinct('test', {'group': 'a'})
+        result = storage.distinct('test', {'group': 'a'})
         self.assertEqual(result, ['value1', 'value2', 'value3'])
 
 

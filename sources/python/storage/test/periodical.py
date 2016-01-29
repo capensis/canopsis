@@ -21,29 +21,12 @@
 
 from unittest import TestCase, main
 
-from canopsis.mongo.timed import MongoTimedStorage
+from canopsis.mongo.periodical import PeriodicalStorage
 from canopsis.timeserie.timewindow import TimeWindow
 
 
 class TimedStorageTest(TestCase):
-    """
-    MongoTimedStorage UT on data_type = "test_store"
-    """
-
-    def setUp(self):
-        # create a storage on test_store collections
-        self.storage = MongoTimedStorage(data_scope="test_store")
-
-    def test_connect(self):
-        self.assertTrue(self.storage.connected())
-
-        self.storage.disconnect()
-
-        self.assertFalse(self.storage.connected())
-
-        self.storage.connect()
-
-        self.assertTrue(self.storage.connected())
+    """PeriodicalStorage UT on data_type = "test_store"."""
 
     def test_CRUD(self):
 
@@ -91,7 +74,7 @@ class TimedStorageTest(TestCase):
 
         # check values are meta
         self.assertEqual(
-            data[0][MongoTimedStorage.VALUE]['max'],
+            data[0][PeriodicalStorage.VALUE]['max'],
             meta['max']
         )
 
@@ -119,7 +102,7 @@ class TimedStorageTest(TestCase):
             # add a document at starting time window
             self.storage.put(
                 data_id=data_id, value=meta,
-                timestamp=dat[MongoTimedStorage.TIMESTAMP]
+                timestamp=dat[PeriodicalStorage.TIMESTAMP]
             )
 
         # check for_data before now
@@ -136,7 +119,7 @@ class TimedStorageTest(TestCase):
 
         # check values are new meta
         self.assertEqual(
-            data[0][MongoTimedStorage.VALUE]['max'],
+            data[0][PeriodicalStorage.VALUE]['max'],
             meta['max']
         )
 

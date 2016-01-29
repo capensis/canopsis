@@ -21,7 +21,9 @@
 
 from unittest import TestCase, main
 
-from canopsis.mongo.core import MongoStorage
+from canopsis.storage.core import Storage
+
+from .base import BaseTestConfiguration, BaseStorageTest
 
 from time import time
 
@@ -31,17 +33,16 @@ except ImportError:
     from dummy_threading import Thread
 
 
-class Bench(TestCase):
+class Bench(BaseStorageTest):
+
+    #: only one variable to set in order to instanciate the right storage.
+    __protocol__ = None
 
     def setUp(self):
-        """
-        initalize a storage.
-        """
+        """initalize storages."""
 
-        self.storage = MongoStorage(data_scope='test')
-        # self.storage.safe = False
-        # remove all data from collection
-        self.storage.drop()
+        super(Bench, self).setUp()
+
         # initialize numerical values
         self.iteration = 5
         self.count = 10000

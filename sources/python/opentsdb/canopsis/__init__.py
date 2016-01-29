@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -18,13 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[DATABASE]
-db=canopsis
-journaling=False
-sharding=False
-retention=1y
-
-[STORAGE]
-cache_size=1000
-cache_autocommit=5
-cache_ordered=True
+# hack for attaching this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

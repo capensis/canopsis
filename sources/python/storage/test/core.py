@@ -19,58 +19,53 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+from unittest import main
 
+from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage
-from canopsis.mongo.core import MongoDataBase, MongoStorage
+
+from .base import BaseTestConfiguration, BaseStorageTest
 
 from tempfile import NamedTemporaryFile
 
 
-class DataBaseTest(TestCase):
-
-    def setUp(self):
-        self.database = MongoDataBase(
-            data_scope="test_store", auto_connect=False
-        )
-
-    def test_connect(self):
-        self.database.connect()
-        self.assertTrue(self.database.connected())
-        self.database.disconnect()
-        self.assertFalse(self.database.connected())
-        self.database.reconnect()
-        self.assertTrue(self.database.connected())
+@conf_paths('storage/test-core.conf')
+class TestConfiguration(BaseTestConfiguration):
+    """Default test configuration."""
 
 
-class TestStorage(MongoStorage):
+class StorageTest(BaseStorageTest):
 
-    def _get_storage_type(self, *args, **kwargs):
-        return 'test'
+    def _testconfcls(self):
 
+        return TestConfiguration
 
-class StorageTest(TestCase):
+    def _test(self, storage):
 
-    def setUp(self):
-        self.storage = TestStorage(data_type='test')
+        self._test_connection(storage)
+        self.test_indexes(storage)
+        self.test_CRUD(storage)
+        self.test_cache(storage)
+        self.test_thread(storage)
 
-    def tearDown(self):
-        self.storage.drop()
+    def _test_connection(self, storage):
 
-    def test_connect(self):
-        self.assertTrue(self.storage.connected())
-        self.storage.disconnect()
-        self.assertFalse(self.storage.connected())
-        self.storage.reconnect()
-        self.assertTrue(self.storage.connected())
+        storage.connect()
+        self.assertTrue(storage.connected())
+        storage.disconnect()
+        self.assertFalse(storage.connected())
+        storage.reconnect()
+        self.assertTrue(storage.connected())
 
-    def test_indexes(self):
-        indexes = self.storage.all_indexes()
+    def _test_indexes(self, storage):
 
-        collection_index = self.storage._backend.index_information()
+        indexes = storage.all_indexes()
+
+        collection_index = storage._backend.index_information()
 
         for index in indexes:
             key = ''
+
             for i in index:
                 key += '{0}_{1}'.format(i[0], i[1] if i[0] != '_id' else '')
             self.assertIn(key, collection_index)
@@ -98,138 +93,146 @@ class StorageTest(TestCase):
         ]
 
         with open(conf_path, 'w') as _file:
-            _file.write('[{}]'.format(MongoStorage.CATEGORY))
+            _file.write('[{}]'.format('STORAGE'))
             _file.write('\nindexes={}'.format(indexes))
             _file.write('\ndata={}'.format(data))
 
-        self.storage.apply_configuration(conf_paths=conf_path)
+        storage.apply_configuration(conf_paths=conf_path)
 
-        _indexes = self.storage.all_indexes()
+        _indexes = storage.all_indexes()
 
         self.assertEqual(final_indexes, _indexes)
 
-    def test_CRUD(self):
+    def _test_CRUD(self, storage):
+
         document = {'a': 'b'}
 
-        self.storage.drop()
+        storage.drop()
 
-        request = self.storage._find(document)
+        request = storage._find(document)
         self.assertEqual(request.count(), 0)
 
-        self.storage._insert(document)
+        storage._insert(document)
 
-        request = self.storage._find(document)
+        request = storage._find(document)
 
         self.assertEqual(request.count(), 1)
         self.assertEqual(request[0], document)
 
-        self.storage._remove(document)
+        storage._remove(document)
 
-        request = self.storage._find(document)
+        request = storage._find(document)
         self.assertEqual(request.count(), 0)
 
-        request = self.storage._find()
+        request = storage._find()
         self.assertEqual(request.count(), 0)
 
         _id = 'test'
         document['_id'] = _id
 
-        request = self.storage.get_elements(ids=[_id])
+        request = storage.get_elements(ids=[_id])
 
         self.assertEqual(len(request), 0)
 
-        self.storage.put_element(_id=_id, element=document)
+        storage.put_element(_id=_id, element=document)
 
-        request = self.storage.get_elements()
+        request = storage.get_elements()
         self.assertEqual(len(request), 1)
         self.assertEqual(request[0], document)
 
-        request = self.storage.get_elements(ids=[_id])
+        request = storage.get_elements(ids=[_id])
         self.assertEqual(len(request), 1)
         self.assertEqual(request[0], document)
 
-        self.storage.remove_elements(ids=[_id])
+        storage.remove_elements(ids=[_id])
 
-        request = self.storage.get_elements(ids=[_id])
+        request = storage.get_elements(ids=[_id])
 
         self.assertEqual(len(request), 0)
 
-    def test_cache(self):
+    def _test_cache(self, storage):
 
         cache_size = 25
         count = cache_size + 1  # play with 2 * cache_size + 1
 
         # activate cache
-        self.storage.cache_autocommit = 0.1
-        self.storage.cache_size = cache_size
+        storage.cache_autocommit = 0.1
+        storage.cache_size = cache_size
         data = list({'_id': str(i)} for i in range(count))
 
         # check insert
         for i, d in enumerate(data):
-            self.storage._insert(d, cache=True)
-            count = self.storage._count(document=d)
+            storage._insert(d, cache=True)
+            count = storage._count(document=d)
             # documents are inserted when cache_size insertions are done
             self.assertEqual(count, 0 if i != cache_size - 1 else 1)
+
         for d in data[:-1]:
-            count = self.storage._count(document=d)
+            count = storage._count(document=d)
             self.assertEqual(count, 1)
-        count = self.storage._count(document=data[-1])
+        count = storage._count(document=data[-1])
         self.assertEqual(count, 0)
-        self.storage.execute_cache()
-        count = self.storage._count(document=data[-1])
+        storage.execute_cache()
+        count = storage._count(document=data[-1])
         self.assertEqual(count, 1)
-        self.assertEqual(self.storage._cache_count, 0)
+        self.assertEqual(storage._cache_count, 0)
 
         # check update
         for i, d in enumerate(data):
-            self.storage._update(
+            storage._update(
                 spec=d, document={'$set': {'a': 1}}, cache=True
             )
-            elt = self.storage._find(document=d)[0]
+            elt = storage._find(document=d)[0]
+
             # documents are updated when cache_size updates are done
             if i != cache_size - 1:
                 self.assertNotIn('a', elt)
             else:
                 self.assertIn('a', elt)
+
         for d in data[:-1]:
-            elt = self.storage._find(document=d)[0]
+            elt = storage._find(document=d)[0]
             self.assertIn('a', elt)
-        elt = self.storage._find(document=data[-1])[0]
+
+        elt = storage._find(document=data[-1])[0]
         self.assertNotIn('a', elt)
-        self.storage.execute_cache()
-        elt = self.storage._find(document=data[-1])[0]
+        storage.execute_cache()
+        elt = storage._find(document=data[-1])[0]
         self.assertIn('a', elt)
 
         # check remove
         for i, d in enumerate(data):
-            self.storage._remove(document=d, cache=True)
-            count = self.storage._count(document=d)
+            storage._remove(document=d, cache=True)
+            count = storage._count(document=d)
             # documents are removed when cache_size removes are done
             self.assertEqual(count, 1 if i != cache_size - 1 else 0)
+
         for d in data[:-1]:
-            count = self.storage._count(document=d)
+            count = storage._count(document=d)
             self.assertEqual(count, 0)
-        count = self.storage._count(document=data[-1])
+
+        count = storage._count(document=data[-1])
         self.assertEqual(count, 1)
-        self.storage.execute_cache()
-        count = self.storage._count(document=data[-1])
+        storage.execute_cache()
+        count = storage._count(document=data[-1])
         self.assertEqual(count, 0)
 
-    def test_thread(self):
+    def _test_thread(self, storage):
 
         # ensure cache auto commit is short
-        self.storage._cache_autocommit = 0.01
+        storage._cache_autocommit = 0.01
         # check the cache thread is started
-        self.storage.remove_elements(cache=True)
-        self.assertTrue(self.storage._cached_thread.isAlive())
+        storage.remove_elements(cache=True)
+        self.assertTrue(storage._cached_thread.isAlive())
 
         # check the cache thread is halted
-        self.storage.halt_cache_thread()
-        self.assertFalse(self.storage._cached_thread.isAlive())
+        storage.halt_cache_thread()
+        self.assertFalse(storage._cached_thread.isAlive())
 
         # check the cache thread is started twice
-        self.storage.remove_elements(cache=True)
-        self.assertTrue(self.storage._cached_thread.isAlive())
+        storage.remove_elements(cache=True)
+        self.assertTrue(storage._cached_thread.isAlive())
+
 
 if __name__ == '__main__':
     main()

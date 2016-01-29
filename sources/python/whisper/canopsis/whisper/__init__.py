@@ -18,13 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[DATABASE]
-db=canopsis
-journaling=False
-sharding=False
-retention=1y
+"""Package canopsis.whisper."""
 
-[STORAGE]
-cache_size=1000
-cache_autocommit=5
-cache_ordered=True
+__version__ = '0.1'  #: project version

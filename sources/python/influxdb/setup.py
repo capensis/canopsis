@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -18,13 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[DATABASE]
-db=canopsis
-journaling=False
-sharding=False
-retention=1y
+from canopsis.common.setup import setup
 
-[STORAGE]
-cache_size=1000
-cache_autocommit=5
-cache_ordered=True
+install_requires = [
+    'canopsis.common',
+    'canopsis.storage',
+    'canopsis.timeserie',
+    'canopsis.old',
+    'influxdb'
+]
+
+setup(
+    description='Influxdb for Canopsis',
+    install_requires=install_requires,
+    keywords='influxdb'
+)
