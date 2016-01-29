@@ -36,6 +36,7 @@ function easy_install_all_libs() {
 	easy_install_pylib requests
 	easy_install_pylib supervisor-wildcards
 	easy_install_pylib RestrictedPython
+	easy_install_pylib six
 }
 
 function install(){
