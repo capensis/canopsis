@@ -217,8 +217,8 @@ class PerfData(MiddlewareRegistry):
                 )
 
     def remove(
-        self, metric_id, with_meta=False, timewindow=None, meta=None,
-        cache=False
+            self, metric_id, with_meta=False, timewindow=None, meta=None,
+            cache=False
     ):
         """Remove values and meta of one metric.
 

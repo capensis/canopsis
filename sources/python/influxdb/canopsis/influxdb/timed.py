@@ -96,7 +96,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
             pointstoput.append(
                 {
                     'measurement': data_id,
-                    'time': point[0],
+                    'time': int(point[0] * (10**9)),
                     'fields': {'value': point[1]}
                 }
             )
