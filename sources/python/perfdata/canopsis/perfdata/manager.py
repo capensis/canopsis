@@ -159,7 +159,7 @@ class PerfData(MiddlewareRegistry):
         if with_meta is not None:
 
             meta = self[PerfData.META_STORAGE].get(
-                data_id=metric_id, timewindow=timewindow
+                data_ids=metric_id, timewindow=timewindow
             )
 
             result = result, meta
