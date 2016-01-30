@@ -81,7 +81,7 @@ class InfluxDBDataBase(DataBase):
             connection_args['ssl'] = True
 
         if self.user:
-            connection_args['user'] = self.user
+            connection_args['username'] = self.user
 
         if self.pwd:
             connection_args['password'] = self.pwd
@@ -293,7 +293,7 @@ def paramstoquery(
         one_projection = isinstance(projection, basestring)
 
         if one_projection:
-            _select = projection
+            _select = 'SELECT {0}'.format(projection)
 
         else:
             _select = 'SELECT {0}'.format(projection[0])

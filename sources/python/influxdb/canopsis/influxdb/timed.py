@@ -83,9 +83,10 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         result = []
 
-        for point in points:
-            timestamp = timegm(parse(point['time']).timetuple())
-            result.append((timestamp, point['value']))
+        if points:
+            for point in points:
+                timestamp = timegm(parse(point['time']).timetuple())
+                result.append((timestamp, point['value']))
 
         return result
 

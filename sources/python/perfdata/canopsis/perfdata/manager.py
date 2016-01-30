@@ -120,7 +120,7 @@ class PerfData(MiddlewareRegistry):
         return list(result)
 
     def get(
-            self, metric_id, with_meta=True, timewindow=None,
+            self, metric_id, tags=None, with_meta=True, timewindow=None,
             limit=0, skip=0, timeserie=None
     ):
         """Get a set of data related to input data_id on the timewindow and
@@ -131,7 +131,7 @@ class PerfData(MiddlewareRegistry):
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=metric_id, timewindow=timewindow,
-            limit=limit, skip=skip, timeserie=timeserie
+            limit=limit, skip=skip, timeserie=timeserie, tags=tags
         )
 
         if with_meta:
@@ -145,7 +145,7 @@ class PerfData(MiddlewareRegistry):
         return result
 
     def get_point(
-            self, metric_id, with_meta=True, timestamp=None
+            self, metric_id, with_meta=True, timestamp=None, tags=None
     ):
         """Get the closest point before input timestamp. Add meta informations
         if with_meta.
@@ -158,7 +158,7 @@ class PerfData(MiddlewareRegistry):
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=metric_id, timewindow=timewindow,
-            limit=1
+            limit=1, tags=tags
         )
 
         if with_meta is not None:
@@ -188,7 +188,7 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    def put(self, metric_id, points, meta=None, cache=False):
+    def put(self, metric_id, points, meta=None, tags=None, cache=False):
         """Put a (list of) couple (timestamp, value), a meta into
         rated_documents.
 
@@ -208,7 +208,7 @@ class PerfData(MiddlewareRegistry):
 
             # update data in a cache (a)synchronous way
             self[PerfData.PERFDATA_STORAGE].put(
-                data_id=metric_id, points=points, tags=meta, cache=cache
+                data_id=metric_id, points=points, tags=tags, cache=cache
             )
 
             if meta is not None:
