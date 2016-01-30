@@ -193,15 +193,14 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
             projection=projection
         )
 
-        cursor = InfluxDBCursor(self._conn.query(_query))
+        result = InfluxDBCursor(self._conn.query(_query))
 
         one_element = isinstance(ids, basestring)
 
         if one_element:
 
-            if cursor:
-                for key in cursor:
-                    result = cursor[key]
+            if result:
+                result = result[ids]
 
             else:
                 result = None
@@ -209,7 +208,7 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
         # if with_count, add count to the result
         if with_count:
             # calculate count
-            count = len(cursor)
+            count = len(result)
             result = result, count
 
         return result

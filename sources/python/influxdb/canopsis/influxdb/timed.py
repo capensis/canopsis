@@ -79,7 +79,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         points = self.get_elements(
             projection='value', ids=data_id, query=query, limit=limit
-        ).get_points(data_id)
+        )
 
         result = []
 
