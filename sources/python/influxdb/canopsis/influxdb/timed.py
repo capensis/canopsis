@@ -24,6 +24,10 @@ from canopsis.storage.timed import TimedStorage
 
 from sys import getsizeof
 
+from dateutil.parser import parse
+
+from calendar import timegm
+
 
 class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
     """InfluxDB storage dedicated to manage timed data."""
@@ -32,11 +36,18 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
     def count(self, data_id, timewindow=None, *args, **kwargs):
 
-        ids = 'COUNT({0})'.format(data_id)
+        ids = 'COUNT(value)'
 
         query = self._timewindowtowhere(timewindow=timewindow)
 
-        result = self.get_elements(ids=ids, query=query)[data_id]
+        try:
+            result = next(
+                self.get_elements(ids=ids, query=query).get_points(data_id)
+            )['count']
+
+        except StopIteration:
+            raise self.Error('No point {0}'.format(data_id))
+
 
         return result
 
@@ -66,7 +77,15 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         query = self._timewindowtowhere(timewindow=timewindow)
 
-        result = self.get_elements(ids=data_id, query=query, limit=limit)[data_id]
+        points = self.get_elements(
+            projection='value', ids=data_id, query=query, limit=limit
+        ).get_points(data_id)
+
+        result = []
+
+        for point in points:
+            timestamp = timegm(parse(point['time']).timetuple())
+            result.append((timestamp, point['value']))
 
         return result
 
@@ -83,10 +102,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
                 }
             )
 
-        return self._conn.write_points(
-            points=pointstoput, time_precision='s',
-            batch_size=self.cache_size if cache else 0
-        )
+        return self.put_elements(elements=pointstoput, cache=cache)
 
     def remove(self, data_id, timewindow=None, **_):
 
@@ -95,4 +111,4 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
                 'This storage can not delete points in a specific timewindow'
             )
 
-        return self._conn.delete_series(measurement=data_id)
+        return self.remove_elements(ids=data_id)

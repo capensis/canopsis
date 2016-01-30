@@ -22,11 +22,12 @@ from canopsis.common.init import basestring
 from canopsis.storage.core import Storage, DataBase, Cursor
 
 from influxdb import InfluxDBClient, InfluxDBClusterClient
+from influxdb.exceptions import InfluxDBClientError
 
 from sys import getsizeof
 
 
-class InfluxDBBase(DataBase):
+class InfluxDBDataBase(DataBase):
     """Manage access to influxDB."""
 
     __protocol__ = 'influxdb'
@@ -47,9 +48,9 @@ class InfluxDBBase(DataBase):
             *args, **kwargs
     ):
 
-        super(InfluxDBBase, self).__init__(
+        super(InfluxDBDataBase, self).__init__(
             host=host, port=port, user=user, pwd=pwd, db=db, ssl=ssl,
-            conn_timeout=in_timeout, proxies=proxies, *args, **kwargs
+            conn_timeout=conn_timeout, proxies=proxies, *args, **kwargs
         )
 
     def _connect(self, *args, **kwargs):
@@ -96,17 +97,17 @@ class InfluxDBBase(DataBase):
         try:
             result = conncls(**connection_args)
 
-        except Exception as cex:
+        except InfluxDBClientError as ice:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
-                format(self.host, self.port, cex)
+                format(self.host, self.port, ice)
             )
 
         else:
             try:
                 result.create_database(self.db)
 
-            except:
+            except InfluxDBClientError:
                 pass
 
             if self.retention:
@@ -116,14 +117,14 @@ class InfluxDBBase(DataBase):
                         replication=0 if self.replicaset is None else 1
                     )
 
-                except:
+                except InfluxDBClientError:
                     pass
 
             if self.user:
                 try:
                     result.create_user(self.user, self.pwd, False)
 
-                except:
+                except InfluxDBClientError:
                     pass
 
         return result
@@ -146,9 +147,14 @@ class InfluxDBBase(DataBase):
         if table is None:
             table = self.table
 
-        query = paramstoquery(ids='COUNT(*)', query=criteria)
+        query = paramstoquery(
+            ids=table, projection='COUNT(value)', query=criteria
+        )
 
-        result = len(self._conn.query(query).get_points()) * getsizeof(0)
+        for point in self._conn.query(query).get_points():
+            result += point['count']
+
+        result *= getsizeof(0)
 
         return result
 
@@ -170,7 +176,7 @@ class InfluxDBCursor(Cursor):
 
     def __getitem__(self, index):
 
-        return self._cursor[index]
+        return self._cursor.get_points(index)
 
 
 class InfluxDBStorage(InfluxDBDataBase, Storage):
@@ -230,21 +236,33 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
 
     def put_element(self, element, _id=None, cache=False):
 
-        points = {
-            'measurement': _id,
-        }
+        point = element
 
-        points.update(element)
+        if _id is not None:
+            point['measurement'] = _id
 
         return self._conn.write_points(
-            points=points, batch_size=self.cache_size if cache else 0
+            points=[point], batch_size=self.cache_size if cache else 0
+        )
+
+    def put_elements(self, elements, cache=False):
+
+        return self._conn.write_points(
+            points=elements, batch_size=self.cache_size if cache else 0
         )
 
     def remove_elements(
             self, ids=None, _filter=None, cache=False, *args, **kwargs
     ):
 
-        self._conn.delete_series(measurement=ids)
+        if _filter is not None:
+            raise self.Error('{0} does not accept filter'.format(_filter))
+
+        query = paramstoquery(ids=ids, query=_filter)
+
+        query = query.replace('SELECT *', 'DROP SERIES')
+
+        self._conn.query(query)
 
 
 def paramstoquery(
@@ -295,12 +313,12 @@ def paramstoquery(
     else:
         one_sort = isinstance(sort[0], basestring)
         if one_sort:
-            _sort = 'SORT BY {0} {1}'.format(sort[0], sort[1])
+            _sort = 'ORDER BY {0} {1}'.format(sort[0], sort[1])
 
         else:
-            _sort = 'SORT BY {0} {1}'.format(sort[0][0], sort[0][1])
+            _sort = 'ORDER BY {0} {1}'.format(sort[0][0], sort[0][1])
             for _so in sort:
-                _sort = 'SORT BY {0} {1}'.format(_so[0], _so[1])
+                _sort = 'ORDER BY {0} {1}'.format(_so[0], _so[1])
 
     # construct limit
     _limit = 'LIMIT {0}'.format(limit) if limit else ''

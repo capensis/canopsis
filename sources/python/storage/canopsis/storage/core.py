@@ -733,7 +733,20 @@ class Storage(DataBase):
     def __iadd__(self, element):
         """Python shortcut for the put_element method."""
 
-        self.put_element(element=element)
+        if isinstance(element, list):
+            self.put_elements(elements=element)
+
+        else:
+            self.put_element(element=element)
+
+    def put_elements(self, elements, cache=False):
+        """Put list of elements at a time.
+
+        :param list elements: elements to put.
+        :param bool cache: use query cache if True (False by default)."""
+
+        for element in elements:
+            self.put_element(element)
 
     def count_elements(self, query=None):
         """Count elements corresponding to the input query.
