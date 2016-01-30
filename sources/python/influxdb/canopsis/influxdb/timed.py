@@ -89,7 +89,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         return result
 
-    def put(self, data_id, points, cache=False, *args, **kwargs):
+    def put(self, data_id, points, tags=None, cache=False, *args, **kwargs):
 
         pointstoput = []
 
@@ -102,7 +102,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
                 }
             )
 
-        return self.put_elements(elements=pointstoput, cache=cache)
+        return self.put_elements(elements=pointstoput, cache=cache, tags=tags)
 
     def remove(self, data_id, timewindow=None, **_):
 

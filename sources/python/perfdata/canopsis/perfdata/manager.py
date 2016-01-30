@@ -208,7 +208,7 @@ class PerfData(MiddlewareRegistry):
 
             # update data in a cache (a)synchronous way
             self[PerfData.PERFDATA_STORAGE].put(
-                data_id=metric_id, points=points, cache=cache
+                data_id=metric_id, points=points, tags=meta, cache=cache
             )
 
             if meta is not None:

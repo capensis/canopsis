@@ -611,7 +611,7 @@ class Storage(DataBase):
     def get_elements(
             self,
             ids=None, query=None, limit=0, skip=0, sort=None, projection=None,
-            with_count=False,
+            tags=None, with_count=False
     ):
         """Get a list of elements where id are input ids.
 
@@ -624,6 +624,7 @@ class Storage(DataBase):
             or field name which denots an implicitelly ASC order.
         :type sort: list of {(str, {ASC, DESC}}), or str}
         :param dict projection: key names to keep from elements.
+        :param list tags: search tags.
         :param bool with_count: If True (False by default), add count to the
             result.
 
@@ -670,7 +671,7 @@ class Storage(DataBase):
     def find_elements(
             self,
             query=None, limit=0, skip=0, sort=None, projection=None,
-            with_count=False
+            tags=None, with_count=False
     ):
         """Find elements corresponding to input request and in taking care of
         limit, skip and sort find parameters.
@@ -681,6 +682,7 @@ class Storage(DataBase):
         :param list sort: contains a list of couples of field (name, ASC/DESC)
             or field name which denots an implicitelly ASC order.
         :param dict projection: key names to keep from elements.
+        :param list tags: search tags.
         :param bool with_count: If True (False by default), add count to the
             result.
 
@@ -690,13 +692,14 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def remove_elements(self, ids=None, _filter=None, cache=False):
+    def remove_elements(self, ids=None, _filter=None, tags=None, cache=False):
         """Remove elements identified by the unique input ids.
 
         :param ids: ids of elements to delete.
         :type ids: list of str
         :param dict _filter: removing filter.
         :param Filter _filter: additional filter to use if not None.
+        :param list tags: element tags to remove.
         :param bool cache: use query cache if True (False by default).
         """
 
@@ -712,11 +715,14 @@ class Storage(DataBase):
 
         self.remove_elements(ids=ids)
 
-    def put_element(self, element, _id=None, cache=False):
+    def put_element(
+        self, element, _id=None, tags=None, version=None, cache=False
+    ):
         """Put an element identified by input id.
 
         :param str _id: element id to update.
         :param dict element: element to put (couples of field (name,value)).
+        :param list tags: element indexed tags.
         :param bool cache: use query cache if True (False by default).
 
         :return: True if updated.
@@ -739,16 +745,17 @@ class Storage(DataBase):
         else:
             self.put_element(element=element)
 
-    def put_elements(self, elements, cache=False):
+    def put_elements(self, elements, tags=None, cache=False):
         """Put list of elements at a time.
 
         :param list elements: elements to put.
+        :param list tags: element indexed tags.
         :param bool cache: use query cache if True (False by default)."""
 
         for element in elements:
             self.put_element(element)
 
-    def count_elements(self, query=None):
+    def count_elements(self, query=None, tags=None):
         """Count elements corresponding to the input query.
 
         :param dict query: query which contain set of couples (key, value)
@@ -757,7 +764,7 @@ class Storage(DataBase):
         :rtype: int
         """
 
-        cursor = self.find_elements(query=query)
+        cursor = self.find_elements(query=query, tags=None)
 
         result = len(cursor)
 

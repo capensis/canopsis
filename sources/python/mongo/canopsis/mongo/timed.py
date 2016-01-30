@@ -33,20 +33,18 @@ from time import mktime
 DEFAULT_PERIOD = Period(week=1)
 
 
-class MongoPeriodicStorage(MongoStorage, TimedStorage):
-    """
-    MongoStorage dedicated to manage periodic data.
-    """
+class MongoTimedStorage(MongoStorage, TimedStorage):
+    """MongoStorage dedicated to manage periodic data."""
 
     class Index:
 
         DATA_ID = 'i'
         TIMESTAMP = 't'
         VALUES = 'v'
-        PERIOD = 'p'
         LAST_UPDATE = 'l'
+        TAGS = MongoStorage.TAGS
 
-        QUERY = [(DATA_ID, 1), (PERIOD, 1), (TIMESTAMP, 1)]
+        QUERY = [(DATA_ID, 1), (TIMESTAMP, 1), (TAGS, 1)]
 
     def count(self, data_id, timewindow=None, *args, **kwargs):
 
@@ -62,37 +60,40 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
     def size(self, data_id=None, timewindow=None, *args, **kwargs):
 
         where = {
-            MongoPeriodicStorage.Index.DATA_ID: data_id
+            MongoTimedStorage.Index.DATA_ID: data_id
         }
 
         if timewindow is not None:
-            where[MongoPeriodicStorage.Index.TIMESTAMP] = {
+            where[MongoTimedStorage.Index.TIMESTAMP] = {
                 '$gte': timewindow.start(),
                 '$lte': timewindow.stop()
             }
 
         cursor = self._find(document=where)
-        cursor.hint(MongoPeriodicStorage.Index.QUERY)
+        cursor.hint(MongoTimedStorage.Index.QUERY)
 
         result = cursor.count()
 
         return result
 
-    def get(self, data_id, timewindow=None, limit=0, *args, **kwargs):
+    def get(
+        self, data_id, timewindow=None, limit=0, tags=None, *args, **kwargs
+    ):
 
         query = self._get_documents_query(
             data_id=data_id,
-            timewindow=timewindow
+            timewindow=timewindow,
+            tags=tags
         )
 
         projection = {
-            MongoPeriodicStorage.Index.TIMESTAMP: 1,
-            MongoPeriodicStorage.Index.VALUES: 1
+            MongoTimedStorage.Index.TIMESTAMP: 1,
+            MongoTimedStorage.Index.VALUES: 1
         }
 
         cursor = self._find(document=query, projection=projection)
 
-        cursor.hint(MongoPeriodicStorage.Index.QUERY)
+        cursor.hint(MongoTimedStorage.Index.QUERY)
 
         result = []
 
@@ -101,9 +102,9 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
 
         for document in cursor:
 
-            timestamp = int(document[MongoPeriodicStorage.Index.TIMESTAMP])
+            timestamp = int(document[MongoTimedStorage.Index.TIMESTAMP])
 
-            values = document[MongoPeriodicStorage.Index.VALUES]
+            values = document[MongoTimedStorage.Index.VALUES]
 
             for t in values:
                 value = values[t]
@@ -116,7 +117,7 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
 
         return result
 
-    def put(self, data_id, points, cache=False, *args, **kwargs):
+    def put(self, data_id, points, tags=None, cache=False, *args, **kwargs):
 
         # initialize a dictionary of perfdata value by value field
         # and id_timestamp
@@ -136,20 +137,20 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
 
             if '_id' not in document_properties:
                 document_properties['_id'] = \
-                    MongoPeriodicStorage._get_document_id(
+                    MongoTimedStorage._get_document_id(
                         data_id=data_id,
                         timestamp=id_timestamp
                     )
-                document_properties[MongoPeriodicStorage.Index.LAST_UPDATE] = \
+                document_properties[MongoTimedStorage.Index.LAST_UPDATE] = \
                     ts
 
             else:
-                last_update = MongoPeriodicStorage.Index.LAST_UPDATE
+                last_update = MongoTimedStorage.Index.LAST_UPDATE
                 if document_properties[last_update] < ts:
                     document_properties[last_update] = ts
 
             field_name = "{0}.{1}".format(
-                MongoPeriodicStorage.Index.VALUES, ts - id_timestamp)
+                MongoTimedStorage.Index.VALUES, ts - id_timestamp)
 
             document_properties[field_name] = value
 
@@ -160,12 +161,15 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
             _id = document_properties.pop('_id')
 
             _set = {
-                MongoPeriodicStorage.Index.DATA_ID: data_id,
-                MongoPeriodicStorage.Index.TIMESTAMP: id_timestamp
+                MongoTimedStorage.Index.DATA_ID: data_id,
+                MongoTimedStorage.Index.TIMESTAMP: id_timestamp
             }
             _set.update(document_properties)
 
             document_properties['_id'] = _id
+
+            if tags:
+                _set[MongoTimedStorage.Index.TAGS] = tags
 
             result = self._update(
                 spec={'_id': _id}, document={'$set': _set}, cache=cache
@@ -173,24 +177,26 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
 
         return result
 
-    def remove(self, data_id, timewindow=None, cache=False, *args, **kwargs):
+    def remove(
+        self, data_id, timewindow=None, tags=None, cache=False, *args, **kwargs
+    ):
 
         query = self._get_documents_query(
-            data_id=data_id, timewindow=timewindow
+            data_id=data_id, timewindow=timewindow, tags=tags
         )
 
         if timewindow is not None:
 
             projection = {
-                MongoPeriodicStorage.Index.TIMESTAMP: 1,
-                MongoPeriodicStorage.Index.VALUES: 1
+                MongoTimedStorage.Index.TIMESTAMP: 1,
+                MongoTimedStorage.Index.VALUES: 1
             }
 
             documents = self._find(document=query, projection=projection)
 
             for document in documents:
-                timestamp = document.get(MongoPeriodicStorage.Index.TIMESTAMP)
-                values = document.get(MongoPeriodicStorage.Index.VALUES)
+                timestamp = document.get(MongoTimedStorage.Index.TIMESTAMP)
+                values = document.get(MongoTimedStorage.Index.VALUES)
                 values_to_save = {
                     t: values[t] for t in values
                     if (timestamp + int(t)) not in timewindow
@@ -202,7 +208,7 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
                         spec={'_id': _id},
                         document={
                             '$set': {
-                                MongoPeriodicStorage.Index.VALUES:
+                                MongoTimedStorage.Index.VALUES:
                                 values_to_save}
                         },
                         cache=cache)
@@ -214,13 +220,13 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
 
     def all_indexes(self, *args, **kwargs):
 
-        result = super(MongoPeriodicStorage, self).all_indexes(*args, **kwargs)
+        result = super(MongoTimedStorage, self).all_indexes(*args, **kwargs)
 
-        result.append(MongoPeriodicStorage.Index.QUERY)
+        result.append(MongoTimedStorage.Index.QUERY)
 
         return result
 
-    def _get_documents_query(self, data_id, timewindow):
+    def _get_documents_query(self, data_id, timewindow, tags):
         """Get mongo documents query about data_id, timewindow and period.
 
         If period is None and timewindow is not None, period takes default
@@ -228,15 +234,18 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
         """
 
         result = {
-            MongoPeriodicStorage.Index.DATA_ID: data_id
+            MongoTimedStorage.Index.DATA_ID: data_id
         }
+
+        if tags:
+            result[MongoTimedStorage.Index.TAGS] = tags
 
         if timewindow is not None:  # manage specific timewindow
             start_timestamp, stop_timestamp = \
-                MongoPeriodicStorage._get_id_timestamps(
+                MongoTimedStorage._get_id_timestamps(
                     timewindow=timewindow
                 )
-            result[MongoPeriodicStorage.Index.TIMESTAMP] = {
+            result[MongoTimedStorage.Index.TIMESTAMP] = {
                 '$gte': start_timestamp,
                 '$lte': stop_timestamp}
 
@@ -280,7 +289,7 @@ class MongoPeriodicStorage(MongoStorage, TimedStorage):
         # add period in id
         unit_with_value = DEFAULT_PERIOD.get_max_unit()
         if unit_with_value is None:
-            raise MongoPeriodicStorage.Error(
+            raise MongoTimedStorage.Error(
                 "period {0} must contain at least one valid unit among {1}".
                 format(DEFAULT_PERIOD, Period.UNITS))
 

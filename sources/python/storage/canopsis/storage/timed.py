@@ -46,10 +46,11 @@ class TimedStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, data_id, points, cache=False):
+    def put(self, data_id, points, tags=None, cache=False):
         """Put timed points in a timed collection with specific timed values.
 
         :param points: iterable of (timestamp, value).
+        :param list tags: indexed tags of points.
         :param bool cache: use query cache if True (False by default).
         """
 
