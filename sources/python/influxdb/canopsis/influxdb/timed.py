@@ -36,13 +36,13 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
     def count(self, data_id, timewindow=None, *args, **kwargs):
 
-        ids = 'COUNT(value)'
-
         query = self._timewindowtowhere(timewindow=timewindow)
 
         try:
             result = next(
-                self.get_elements(ids=ids, query=query).get_points(data_id)
+                self.get_elements(
+                    projection='COUNT(value)', ids=data_id, query=query
+                )
             )['count']
 
         except StopIteration:

@@ -139,8 +139,7 @@ class Context(MiddlewareRegistry):
             yield doc[Context.DATA_ID]
 
     def clean(self, entity):
-        """Remove entity properties which are not in self.context
-        """
+        """Remove entity properties which are not in self.context."""
 
         result = {}
 
