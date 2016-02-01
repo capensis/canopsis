@@ -77,7 +77,6 @@ def exports(ws):
                 timewindow=timewindow, limit=limit, skip=skip
             )
 
-            meta = _meta[0] if _meta is not None else {}
             meta[manager[PerfData.META_STORAGE].DATA_ID] = metric_id
 
             if timeserie is not None:

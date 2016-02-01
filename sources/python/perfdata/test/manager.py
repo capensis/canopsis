@@ -63,7 +63,7 @@ class PerfDataTest(TestCase):
             with_meta=True
         )
 
-        self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
+        self.assertEqual(meta, _meta[PerfData.META_VALUE])
 
         self.assertEqual([tv0, tv1, tv2], data)
 
@@ -81,7 +81,7 @@ class PerfDataTest(TestCase):
             with_meta=True
         )
 
-        self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
+        self.assertEqual(meta, _meta[PerfData.META_VALUE])
 
         self.assertEqual(data, [tv0, tv1])
 
@@ -92,7 +92,7 @@ class PerfDataTest(TestCase):
             with_meta=True
         )
 
-        self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
+        self.assertEqual(meta, _meta[PerfData.META_VALUE])
 
         # get all data
         data, _meta = self.perfdata.get(
@@ -100,7 +100,7 @@ class PerfDataTest(TestCase):
             with_meta=True
         )
 
-        self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
+        self.assertEqual(meta, _meta[PerfData.META_VALUE])
 
         self.assertEqual(len(data), 3)
 
@@ -115,7 +115,7 @@ class PerfDataTest(TestCase):
             with_meta=True
         )
 
-        self.assertIsNone(_meta)
+        self.assertFalse(_meta)
 
         self.assertEqual(len(data), 0)
 
