@@ -33,7 +33,7 @@ class InfluxDBDataBase(DataBase):
     __protocol__ = 'influxdb'
 
     DEFAULT_HOST = 'localhost'
-    DEFAULT_PORT = 8086
+    DEFAULT_PORT = 4444
     DEFAULT_USER = 'root'
     DEFAULT_PWD = 'root'
     DEFAULT_DB = None
@@ -69,7 +69,7 @@ class InfluxDBDataBase(DataBase):
             connection_args['host'] = self.host
         # if self port is given
         if self.port:
-            connection_args['port'] = self.port
+            connection_args['udp_port'] = self.port
         # if self replica set is given
         if self.replicaset:
             conncls = InfluxDBClusterClient
