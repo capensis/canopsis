@@ -61,9 +61,10 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
         """Transform a timewindow into a WHERE query."""
 
         if timewindow is not None:
+            factor = 1e9
             result = {
-                'time': {'$gte': timewindow.start()},
-                'time': {'$lte': timewindow.stop()}
+                'time': {'$gte': int(timewindow.start() * factor)},
+                'time': {'$lte': int(timewindow.stop() * factor)}
             }
 
         else:
