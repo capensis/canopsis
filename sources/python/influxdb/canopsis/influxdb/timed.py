@@ -80,18 +80,19 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         points = self.get_elements(
             projection=None if with_tags else 'value', ids=data_id, query=query,
-            limit=limit, with_tags=with_tags
+            limit=limit
         )
 
-        result = []
+        _points, tags = [], {}
 
         if points:
             for point in points:
                 timestamp = timegm(parse(point['time']).timetuple())
-                result.append((timestamp, point['value']))
+                _points.append((timestamp, point['value']))
+                if with_tags:
+                    tags.update(point)
 
-        if with_tags:
-            result = result, (list(points)[0] if len(points) else {})
+        result = (_points, tags) if with_tags else _points
 
         return result
 
