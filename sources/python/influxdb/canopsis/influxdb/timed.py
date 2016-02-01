@@ -91,6 +91,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
                 _points.append((timestamp, point['value']))
                 if with_tags:
                     tags.update(point)
+                    tags['timestamp'] = point['time']
 
         result = (_points, tags) if with_tags else _points
 

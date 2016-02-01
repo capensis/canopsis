@@ -85,7 +85,7 @@ def exports(ws):
             if with_meta:
                 result.append({
                     "points": pts,
-                    "meta": meta
+                    "meta": [meta]
                 })
 
             else:
