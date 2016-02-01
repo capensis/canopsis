@@ -112,7 +112,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         return self.put_elements(elements=pointstoput, cache=cache, tags=tags)
 
-    def remove(self, data_id, timewindow=None, tags=tags, **_):
+    def remove(self, data_id, timewindow=None, tags=None, **_):
 
         if timewindow is not None:
             raise ValueError(
