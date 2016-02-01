@@ -57,7 +57,7 @@ class InfluxDBDataBase(DataBase):
 
         result = None
 
-        connection_args = {}
+        connection_args = {'use_udp': True}
 
         conncls = InfluxDBClient
 
@@ -278,12 +278,12 @@ def paramstoquery(
     else:
         one_id = isinstance(ids, basestring)
         if one_id:
-            _from = 'FROM {0}'.format(ids)
+            _from = 'FROM "{0}"'.format(ids)
 
         else:
-            _from = 'FROM {0}'.format(ids[0])
+            _from = 'FROM "{0}"'.format(ids[0])
             for _id in ids:
-                _from += ',{0}'.format(_id)
+                _from += ',"{0}"'.format(_id)
 
     # construct projection
     if projection is None:
@@ -293,12 +293,12 @@ def paramstoquery(
         one_projection = isinstance(projection, basestring)
 
         if one_projection:
-            _select = 'SELECT {0}'.format(projection)
+            _select = 'SELECT "{0}"'.format(projection)
 
         else:
-            _select = 'SELECT {0}'.format(projection[0])
+            _select = 'SELECT "{0}"'.format(projection[0])
             for prj in projection[1:]:
-                _select += ',{0}'.format(prj)
+                _select += ',"{0}"'.format(prj)
 
     # construct offset
     if skip:
@@ -314,12 +314,12 @@ def paramstoquery(
     else:
         one_sort = isinstance(sort[0], basestring)
         if one_sort:
-            _sort = 'ORDER BY {0} {1}'.format(sort[0], sort[1])
+            _sort = 'ORDER BY "{0}"" {1}'.format(sort[0], sort[1])
 
         else:
-            _sort = 'ORDER BY {0} {1}'.format(sort[0][0], sort[0][1])
+            _sort = 'ORDER BY "{0}"" {1}'.format(sort[0][0], sort[0][1])
             for _so in sort:
-                _sort = 'ORDER BY {0} {1}'.format(_so[0], _so[1])
+                _sort = 'ORDER BY "{0}"" {1}'.format(_so[0], _so[1])
 
     # construct limit
     _limit = 'LIMIT {0}'.format(limit) if limit else ''
@@ -363,7 +363,7 @@ def querytosql(query):
         else:
             operator = '='
 
-        result = '{0} {1} {2} {3},'.format(result, param, operator, value)
+        result = '{0} "{1}" {2} ({3}),'.format(result, param, operator, value)
 
     if result:
         result = result[:-1]
