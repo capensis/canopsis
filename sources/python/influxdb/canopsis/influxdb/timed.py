@@ -72,12 +72,15 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         return result
 
-    def get(self, data_id, timewindow=None, limit=0, *args, **kwargs):
+    def get(
+            self, data_id, timewindow=None, limit=0, with_tags=False, **_
+    ):
 
         query = self._timewindowtowhere(timewindow=timewindow)
 
         points = self.get_elements(
-            projection='value', ids=data_id, query=query, limit=limit
+            projection=None if with_tags else 'value', ids=data_id, query=query,
+            limit=limit, with_tags=with_tags
         )
 
         result = []
@@ -86,6 +89,9 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
             for point in points:
                 timestamp = timegm(parse(point['time']).timetuple())
                 result.append((timestamp, point['value']))
+
+        if with_tags:
+            result = result, (points[0] if points else {})
 
         return result
 
@@ -106,11 +112,11 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         return self.put_elements(elements=pointstoput, cache=cache, tags=tags)
 
-    def remove(self, data_id, timewindow=None, **_):
+    def remove(self, data_id, timewindow=None, tags=tags, **_):
 
         if timewindow is not None:
             raise ValueError(
                 'This storage can not delete points in a specific timewindow'
             )
 
-        return self.remove_elements(ids=data_id)
+        return self.remove_elements(ids=data_id, tags=tags)

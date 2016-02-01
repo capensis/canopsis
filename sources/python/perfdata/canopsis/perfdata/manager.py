@@ -42,12 +42,12 @@ class PerfData(MiddlewareRegistry):
     """Dedicated to access to perfdata (via periodical and timed stores)."""
 
     PERFDATA_STORAGE = 'perfdata_storage'
-    META_STORAGE = 'meta_storage'
+    #META_STORAGE = 'meta_storage'
     CONTEXT_MANAGER = 'context'
 
-    META_TIMESTAMP = PeriodicalStorage.TIMESTAMP
-    META_VALUE = PeriodicalStorage.VALUE
-    META_ID = PeriodicalStorage.DATA_ID
+    #META_TIMESTAMP = PeriodicalStorage.TIMESTAMP
+    #META_VALUE = PeriodicalStorage.VALUE
+    #META_ID = PeriodicalStorage.DATA_ID
 
     @property
     def context(self):
@@ -63,8 +63,8 @@ class PerfData(MiddlewareRegistry):
         if perfdata_storage is not None:
             self[PerfData.PERFDATA_STORAGE] = perfdata_storage
 
-        if meta_storage is not None:
-            self[PerfData.META_STORAGE] = meta_storage
+        #if meta_storage is not None:
+        #    self[PerfData.META_STORAGE] = meta_storage
 
         if context is not None:
             self[PerfData.CONTEXT_MANAGER] = context
@@ -116,7 +116,7 @@ class PerfData(MiddlewareRegistry):
 
     def get(
             self, metric_id, meta=None, with_meta=True, timewindow=None,
-            limit=0, skip=0, timeserie=None
+            limit=0, skip=0, sort=None, timeserie=None
     ):
         """Get a set of data related to input data_id on the timewindow and
         input period.
@@ -125,17 +125,18 @@ class PerfData(MiddlewareRegistry):
         """
 
         result = self[PerfData.PERFDATA_STORAGE].get(
-            data_id=metric_id, timewindow=timewindow,
-            limit=limit, skip=skip, timeserie=timeserie, tags=meta
+            data_id=metric_id, timewindow=timewindow, limit=limit,
+            skip=skip, timeserie=timeserie, tags=meta, with_tags=with_meta,
+            sort=sort,
         )
 
-        if with_meta:
+        #if with_meta:
 
-            meta = self[PerfData.META_STORAGE].get(
-                data_ids=metric_id, timewindow=timewindow
-            )
+            #meta = self[PerfData.META_STORAGE].get(
+            #    data_ids=metric_id, timewindow=timewindow
+            #)
 
-            result = result, meta
+            #result = result, meta
 
         return result
 
@@ -153,16 +154,16 @@ class PerfData(MiddlewareRegistry):
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=metric_id, timewindow=timewindow,
-            limit=1, tags=meta
+            limit=1, tags=meta, with_tags=with_meta
         )
 
-        if with_meta is not None:
+        #if with_meta is not None:
 
-            meta = self[PerfData.META_STORAGE].get(
-                data_ids=metric_id, timewindow=timewindow
-            )
+        #    meta = self[PerfData.META_STORAGE].get(
+        #        data_ids=metric_id, timewindow=timewindow
+        #    )
 
-            result = result, meta
+        #    result = result, meta
 
         return result
 
@@ -171,14 +172,9 @@ class PerfData(MiddlewareRegistry):
     ):
         """Get the meta data related to input data_id and timewindow."""
 
-        if timewindow is None:
-            timewindow = get_offset_timewindow()
-
-        result = self[PerfData.META_STORAGE].get(
-            data_ids=metric_id,
-            timewindow=timewindow,
-            limit=limit,
-            sort=sort
+        _, result = self.get(
+            metric_id=metric_id, with_meta=True, timewindow=timewindow,
+            limit=limit, sort=sort
         )
 
         return result
@@ -206,15 +202,15 @@ class PerfData(MiddlewareRegistry):
                 data_id=metric_id, points=points, tags=meta, cache=cache
             )
 
-            if meta is not None:
+            #if meta is not None:
 
-                min_timestamp = min(point[0] for point in points)
+            #    min_timestamp = min(point[0] for point in points)
                 # update meta data in a synchronous way
-                self[PerfData.META_STORAGE].put(
-                    data_id=metric_id,
-                    value=meta,
-                    timestamp=min_timestamp
-                )
+            #    self[PerfData.META_STORAGE].put(
+            #        data_id=metric_id,
+            #        value=meta,
+            #        timestamp=min_timestamp
+            #    )
 
     def remove(
             self, metric_id, with_meta=False, timewindow=None, meta=None,
@@ -234,10 +230,10 @@ class PerfData(MiddlewareRegistry):
             tags=meta
         )
 
-        if with_meta:
-            self[PerfData.META_STORAGE].remove(
-                data_ids=metric_id, timewindow=timewindow, cache=cache
-            )
+        #if with_meta:
+        #    self[PerfData.META_STORAGE].remove(
+        #        data_ids=metric_id, timewindow=timewindow, cache=cache
+        #    )
 
     def put_meta(self, metric_id, meta, timestamp=None, cache=False):
         """Update meta information."""

@@ -185,12 +185,12 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
     def get_elements(
             self,
             ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
-            projection=None, *args, **kwargs
+            projection=None, tags=None, *args, **kwargs
     ):
 
         _query = paramstoquery(
             ids=ids, query=query, limit=limit, skip=skip, sort=sort,
-            projection=projection
+            projection=projection, tags=tags
         )
 
         result = InfluxDBCursor(self._conn.query(_query))
@@ -253,13 +253,14 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
         )
 
     def remove_elements(
-            self, ids=None, _filter=None, cache=False, *args, **kwargs
+            self, ids=None, _filter=None, cache=False, tags=None,
+            *args, **kwargs
     ):
 
         if _filter is not None:
             raise self.Error('{0} does not accept filter'.format(_filter))
 
-        query = paramstoquery(ids=ids, query=_filter)
+        query = paramstoquery(ids=ids, query=_filter, tags=tags)
 
         query = query.replace('SELECT *', 'DROP SERIES')
 
@@ -267,7 +268,8 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
 
 
 def paramstoquery(
-    ids=None, projection=None, skip=None, sort=None, limit=None, query=None
+        ids=None, projection=None, skip=None, sort=None, limit=None, query=None,
+        tags=None
 ):
     """transform storage parameters to a influxdb query."""
 
@@ -325,6 +327,14 @@ def paramstoquery(
     _limit = 'LIMIT {0}'.format(limit) if limit else ''
 
     # construct where
+    _query = query
+    if query is None:
+        if tags is not None:
+            _query = tags
+
+    elif tags is not None:
+        _query.update(tags)
+
     if query is None:
         _where = ''
 
