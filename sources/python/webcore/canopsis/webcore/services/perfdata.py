@@ -77,7 +77,7 @@ def exports(ws):
                 timewindow=timewindow, limit=limit, skip=skip
             )
 
-            meta[manager[PerfData.META_STORAGE].DATA_ID] = metric_id
+            meta['data_id'] = metric_id
 
             if timeserie is not None:
                 pts = timeserie.calculate(pts, timewindow, meta=meta)
