@@ -72,7 +72,7 @@ def exports(ws):
 
         for metric_id in metrics:
             # meta -> _meta
-            pts, _meta = manager.get(
+            pts, meta = manager.get(
                 metric_id=metric_id, with_meta=True,
                 timewindow=timewindow, limit=limit, skip=skip
             )
