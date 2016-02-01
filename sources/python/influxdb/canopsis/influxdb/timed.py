@@ -91,7 +91,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
                 result.append((timestamp, point['value']))
 
         if with_tags:
-            result = result, (points[0] if points else {})
+            result = result, (list(points)[0] if len(points) else {})
 
         return result
 
