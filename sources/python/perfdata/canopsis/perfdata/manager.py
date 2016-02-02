@@ -127,7 +127,7 @@ class PerfData(MiddlewareRegistry):
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=metric_id, timewindow=timewindow, limit=limit,
             skip=skip, timeserie=timeserie, tags=meta, with_tags=with_meta,
-            sort=sort,
+            sort=sort
         )
 
         #if with_meta:
@@ -140,9 +140,7 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    def get_point(
-            self, metric_id, with_meta=True, timestamp=None, meta=None
-    ):
+    def get_point(self, metric_id, with_meta=True, timestamp=None, meta=None):
         """Get the closest point before input timestamp. Add meta informations
         if with_meta.
         """

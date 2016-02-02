@@ -27,6 +27,7 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.event import Event, forger
 from canopsis.storage.composite import CompositeStorage
 
+
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
 CONTENT = [
@@ -72,7 +73,7 @@ class Context(MiddlewareRegistry):
     ENTITY = Event.ENTITY  #: entity id in event
 
     def __init__(
-        self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
+            self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
     ):
 
         super(Context, self).__init__(self, *args, **kwargs)
@@ -83,8 +84,7 @@ class Context(MiddlewareRegistry):
 
     @property
     def context(self):
-        """List of context element name.
-        """
+        """List of context element name."""
 
         return self._context
 
