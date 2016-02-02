@@ -36,6 +36,7 @@ PROJECTS[33]='serie'
 PROJECTS[34]='session'
 PROJECTS[35]='stats'
 PROJECTS[36]='alerts'
+PROJECTS[37]='migration'
 
 function build(){
 	true

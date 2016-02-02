@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/opt/canopsis/bin/python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -95,7 +95,7 @@ class Schema2MongoDB(object):
         def _build(pkey, subschema):
             updated = False
 
-            if 'type' in subschema:
+            if 'type' in subschema and pkey != 'properties':
                 if isinstance(subschema['type'], list):
                     for stype in subschema['type']:
                         if stype not in self.stdtypes:
@@ -114,6 +114,14 @@ class Schema2MongoDB(object):
 
                         else:
                             model = self.schemas.get(subschema['type'])
+
+                            if model is None:
+                                raise RuntimeError(
+                                    'Impossible to find schema: {0}'.format(
+                                        subschema['type']
+                                    )
+                                )
+
                             subschema.update(model)
                             updated = True
 
@@ -135,6 +143,14 @@ class Schema2MongoDB(object):
                                 self.hierarchy.append(subschema['type'])
                                 subupdated = _build(key, subschema[key])
                                 del self.hierarchy[-1]
+
+                        if key == 'properties':
+                            for subkey in subschema[key]:
+                                if _build(subkey, subschema[key][subkey]):
+                                    subupdated = True
+
+                        elif key == 'items':
+                            subupdated = _build(key, subschema[key])
 
                     else:
                         subupdated = _build(key, subschema[key])

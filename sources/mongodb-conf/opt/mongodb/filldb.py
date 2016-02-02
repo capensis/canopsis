@@ -19,17 +19,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import dynmodloads
-from canopsis.common.init import Init
-
+import subprocess
 import sys
-import os
 
 
 if __name__ == '__main__':
-    init = Init()
-    logger = init.getLogger('filldb')
-
     if len(sys.argv) != 2:
         print('Usage: {0} [init|update]'.format(sys.argv[0]))
         sys.exit(1)
@@ -40,14 +34,4 @@ if __name__ == '__main__':
         print('Invalid option: {0}'.format(action))
         sys.exit(1)
 
-    modules = dynmodloads(
-        os.path.join(sys.prefix, 'opt', 'mongodb', 'load.d'),
-        logger=logger
-    )
-
-    for name in sorted(modules):
-        module = modules[name]
-        module.logger = logger
-        logger.info("{0} {1} ...".format(action, name))
-
-        getattr(module, action)()
+    subprocess.call('canopsis-filldb --{0}'.format(action), shell=True)
