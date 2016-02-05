@@ -28,7 +28,6 @@ from canopsis.configuration.configurable.decorator import (
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
-from canopsis.storage.periodical import PeriodicalStorage
 
 from numbers import Number
 
@@ -45,16 +44,12 @@ class PerfData(MiddlewareRegistry):
     #META_STORAGE = 'meta_storage'
     CONTEXT_MANAGER = 'context'
 
-    #META_TIMESTAMP = PeriodicalStorage.TIMESTAMP
-    #META_VALUE = PeriodicalStorage.VALUE
-    #META_ID = PeriodicalStorage.DATA_ID
-
     @property
     def context(self):
         return self[PerfData.CONTEXT_MANAGER]
 
     def __init__(
-            self, perfdata_storage=None, meta_storage=None, context=None,
+            self, perfdata_storage=None, context=None,
             *args, **kwargs
     ):
 
@@ -62,9 +57,6 @@ class PerfData(MiddlewareRegistry):
 
         if perfdata_storage is not None:
             self[PerfData.PERFDATA_STORAGE] = perfdata_storage
-
-        #if meta_storage is not None:
-        #    self[PerfData.META_STORAGE] = meta_storage
 
         if context is not None:
             self[PerfData.CONTEXT_MANAGER] = context
@@ -91,14 +83,30 @@ class PerfData(MiddlewareRegistry):
 
         return entity
 
-    def count(self, metric_id, timewindow=None):
+    def _data_id_tags(self, metric_id, tags=None):
+
+        if tags is None:
+            tags = {}
+
+        entity = self[PerfData.CONTEXT_MANAGER].get_entity_by_id(metric_id)
+
+        tags.update(entity)
+        tags[Context.EID] = metric_id
+
+        data_id = tags.pop(Context.NAME)
+
+        return data_id, tags
+
+    def count(self, metric_id, timewindow=None, tags=None):
         """Get number of perfdata identified by metric_id in input timewindow
 
         :param timewindow: if None, get all perfdata values
         """
 
+        data_id, tags = self._data_id_tags(metric_id, tags)
+
         result = self[PerfData.PERFDATA_STORAGE].count(
-            data_id=metric_id, timewindow=timewindow
+            data_id=data_id, timewindow=timewindow, tags=tags
         )
 
         return result
@@ -115,35 +123,34 @@ class PerfData(MiddlewareRegistry):
         )
 
     def get(
-            self, metric_id, meta=None, with_meta=True, timewindow=None,
+            self, metric_id, tags=None, with_tags=True, timewindow=None,
             limit=0, skip=0, sort=None, timeserie=None
     ):
         """Get a set of data related to input data_id on the timewindow and
         input period.
 
-        If with_meta, result is a couple of (points, list of meta by timestamp)
+        If with_tags, result is a couple of (points, list of tags by timestamp)
         """
 
+        data_id, tags = self._data_id_tags(metric_id, tags)
+
         result = self[PerfData.PERFDATA_STORAGE].get(
-            data_id=metric_id, timewindow=timewindow, limit=limit,
-            skip=skip, timeserie=timeserie, tags=meta, with_tags=with_meta,
+            data_id=data_id, timewindow=timewindow, limit=limit,
+            skip=skip, timeserie=timeserie, tags=tags, with_tags=with_tags,
             sort=sort
         )
 
-        #if with_meta:
-
-            #meta = self[PerfData.META_STORAGE].get(
-            #    data_ids=metric_id, timewindow=timewindow
-            #)
-
-            #result = result, meta
-
         return result
 
-    def get_point(self, metric_id, with_meta=True, timestamp=None, meta=None):
-        """Get the closest point before input timestamp. Add meta informations
-        if with_meta.
+    def get_point(
+            self,
+            metric_id, with_tags=True, timestamp=None, tags=None, tags=None
+    ):
+        """Get the closest point before input timestamp. Add tags informations
+        if with_tags.
         """
+
+        data_id, tags = self._data_id_tags(metric_id, tags)
 
         if timestamp is None:
             timestamp = time()
@@ -151,34 +158,14 @@ class PerfData(MiddlewareRegistry):
         timewindow = get_offset_timewindow(timestamp)
 
         result = self[PerfData.PERFDATA_STORAGE].get(
-            data_id=metric_id, timewindow=timewindow,
-            limit=1, tags=meta, with_tags=with_meta
-        )
-
-        #if with_meta is not None:
-
-        #    meta = self[PerfData.META_STORAGE].get(
-        #        data_ids=metric_id, timewindow=timewindow
-        #    )
-
-        #    result = result, meta
-
-        return result
-
-    def get_meta(
-            self, metric_id, timewindow=None, limit=0, sort=None
-    ):
-        """Get the meta data related to input data_id and timewindow."""
-
-        _, result = self.get(
-            metric_id=metric_id, with_meta=True, timewindow=timewindow,
-            limit=limit, sort=sort
+            data_id=data_id, timewindow=timewindow,
+            limit=1, tags=tags, with_tags=with_tags
         )
 
         return result
 
-    def put(self, metric_id, points, meta=None, cache=False):
-        """Put a (list of) couple (timestamp, value), a meta into
+    def put(self, metric_id, points, tags=None, cache=False):
+        """Put a (list of) couple (timestamp, value), a tags into
         rated_documents.
 
         kwargs will be added to all document in order to extend timed documents.
@@ -195,55 +182,30 @@ class PerfData(MiddlewareRegistry):
                 # transform points into a tuple
                 points = (points,)
 
+            data_id, tags = self._data_id_tags(metric_id, tags)
+
             # update data in a cache (a)synchronous way
             self[PerfData.PERFDATA_STORAGE].put(
-                data_id=metric_id, points=points, tags=meta, cache=cache
+                data_id=data_id, points=points, tags=tags, cache=cache
             )
 
-            #if meta is not None:
-
-            #    min_timestamp = min(point[0] for point in points)
-                # update meta data in a synchronous way
-            #    self[PerfData.META_STORAGE].put(
-            #        data_id=metric_id,
-            #        value=meta,
-            #        timestamp=min_timestamp
-            #    )
-
     def remove(
-            self, metric_id, with_meta=False, timewindow=None, meta=None,
-            cache=False
+            self, metric_id, timewindow=None, tags=None, cache=False
     ):
-        """Remove values and meta of one metric.
+        """Remove values and tags of one metric.
 
         meta_names is a list of meta_data to remove. An empty list ensure that
-        no meta data is removed.
+        no tags data is removed.
         if meta_names is None, then all meta_names are removed.
         """
 
+        data_id, tags = self._data_id_tags(metric_id, tags)
+
         self[PerfData.PERFDATA_STORAGE].remove(
-            data_id=metric_id,
+            data_id=data_id,
             timewindow=timewindow,
             cache=cache,
-            tags=meta
-        )
-
-        #if with_meta:
-        #    self[PerfData.META_STORAGE].remove(
-        #        data_ids=metric_id, timewindow=timewindow, cache=cache
-        #    )
-
-    def put_meta(self, metric_id, meta, timestamp=None, cache=False):
-        """Update meta information."""
-
-        self[PerfData.PERFDATA_STORAGE].put(
-            data_id=metric_id, value=meta, timestamp=timestamp, cache=cache)
-
-    def remove_meta(self, metric_id, timewindow=None, cache=False):
-        """Remove meta information."""
-
-        self[PerfData.PERFDATA_STORAGE].remove(
-            data_id=metric_id, timewindow=timewindow, cache=cache
+            tags=tags
         )
 
     def parse_perfdata(self, perf_data_raw):

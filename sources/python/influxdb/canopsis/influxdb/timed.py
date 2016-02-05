@@ -34,7 +34,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
     __register__ = True  #: register this class to middleware.
 
-    def count(self, data_id, timewindow=None, *args, **kwargs):
+    def count(self, data_id, timewindow=None, tags=None, *args, **kwargs):
 
         result = 0
 
@@ -73,7 +73,8 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
         return result
 
     def get(
-            self, data_id, timewindow=None, limit=0, with_tags=False, **_
+            self, data_id, timewindow=None, limit=0, with_tags=False, tags=None,
+            **_
     ):
 
         query = self._timewindowtowhere(timewindow=timewindow)
@@ -88,7 +89,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
         if points:
             for point in points:
                 timestamp = timegm(parse(point['time']).timetuple())
-                _points.append((timestamp, point['value']))
+                _points.append((timestamp, point.pop('value')))
                 if with_tags:
                     tags.update(point)
                     tags['timestamp'] = point['time']

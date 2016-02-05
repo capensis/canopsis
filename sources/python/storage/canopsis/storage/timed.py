@@ -31,17 +31,20 @@ class TimedStorage(Storage):
     PERIOD = 'period'
     LAST_UPDATE = 'last_update'
 
-    def count(self, data_id, timewindow=None):
+    def count(self, data_id, timewindow=None, tags=None):
         """Get number of timed documents for input data_id."""
 
         raise NotImplementedError()
 
-    def size(self, data_id=None, timewindow=None, *args, **kwargs):
+    def size(self, data_id=None, timewindow=None, tags=None, *args, **kwargs):
         """Get size occupied by research filter data_id."""
 
         raise NotImplementedError()
 
-    def get(self, data_id, timewindow=None, limit=0, skip=0, sort=None):
+    def get(
+            self, data_id, timewindow=None, limit=0, skip=0, sort=None,
+            tags=None
+    ):
         """Get a list of points."""
 
         raise NotImplementedError()
@@ -56,7 +59,7 @@ class TimedStorage(Storage):
 
         raise NotImplementedError()
 
-    def remove(self, data_id, timewindow=None, cache=False):
+    def remove(self, data_id, timewindow=None, cache=False, tags=None):
         """Remove timed data related to data_id and timewindow.
 
         :param canopsis.timeserie.timewindow.TimeWindow timewindow: Default
