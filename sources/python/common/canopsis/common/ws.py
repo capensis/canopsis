@@ -33,6 +33,7 @@ from canopsis.common.utils import ensure_iterable, isiterable
 from json import loads, dumps
 from math import isnan, isinf
 from bottle import request, HTTPError, HTTPResponse
+from bottle import response as BottleResponse
 from functools import wraps
 import traceback
 import logging
@@ -110,6 +111,15 @@ def response(data, adapt=True):
         'data': result_data,
         'success': True
     }
+
+    headers = {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': 0
+    }
+
+    for hname in headers:
+        BottleResponse.set_header(hname, headers[hname])
 
     return result
 
