@@ -19,7 +19,7 @@ Then, you need to import specific schemas
 
     $ su - canopsis
     $ cp $CANOPSIS_PATH/var/www/canopsis/brick-querybuilder/schemas/* $CANOPSIS_PATH/etc/schema.d
-    $ schema2db update
+    $ schema2db
 
 Then, you need to enable the brick
 
@@ -38,7 +38,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/blob/
 
 ## Continuous Integration
 
-Tested on commit : 38349eb.
+Tested on commit : d2b1bfa.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -56,3 +56,8 @@ Tested on commit : 38349eb.
 ### FIXMES
 
 
+
+## Additional info
+
+Minified version : 5 files (size: 40K)
+Development version : 4 files (size: 44K)
