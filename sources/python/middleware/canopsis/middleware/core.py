@@ -193,7 +193,7 @@ class Middleware(Configurable):
     CONF_RESOURCE = 'middleware/middleware.conf'
 
     class Error(Exception):
-        """Errors raised by the Middleware class."""
+        """Handle Middleware erros."""
 
     def __init__(
             self,

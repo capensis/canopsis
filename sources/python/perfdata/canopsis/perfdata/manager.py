@@ -41,7 +41,6 @@ class PerfData(MiddlewareRegistry):
     """Dedicated to access to perfdata (via periodical and timed stores)."""
 
     PERFDATA_STORAGE = 'perfdata_storage'
-    #META_STORAGE = 'meta_storage'
     CONTEXT_MANAGER = 'context'
 
     @property
@@ -64,11 +63,8 @@ class PerfData(MiddlewareRegistry):
     def get_metric_entity(self, metricname, event):
         """Get metric entity from event and metric name.
 
-        :param metricname: entity name
-        :type metricname: str
-
-        :param event: event used to generate entity
-        :type event: dict
+        :param str metricname: entity name.
+        :param dict event: event used to generate entity.
 
         :returns: entity as dict
         """
@@ -83,8 +79,9 @@ class PerfData(MiddlewareRegistry):
 
         return entity
 
-    def _data_id_tags(self, metric_id, tags=None):
+    def _data_id_tags(self, metric_id, meta=None):
 
+        tags = {} if meta is None else meta.copy()
         if tags is None:
             tags = {}
 
@@ -97,13 +94,13 @@ class PerfData(MiddlewareRegistry):
 
         return data_id, tags
 
-    def count(self, metric_id, timewindow=None, tags=None):
+    def count(self, metric_id, timewindow=None, meta=None):
         """Get number of perfdata identified by metric_id in input timewindow
 
         :param timewindow: if None, get all perfdata values
         """
 
-        data_id, tags = self._data_id_tags(metric_id, tags)
+        data_id, tags = self._data_id_tags(metric_id, meta)
 
         result = self[PerfData.PERFDATA_STORAGE].count(
             data_id=data_id, timewindow=timewindow, tags=tags
@@ -123,34 +120,31 @@ class PerfData(MiddlewareRegistry):
         )
 
     def get(
-            self, metric_id, tags=None, with_tags=True, timewindow=None,
+            self, metric_id, meta=None, with_meta=True, timewindow=None,
             limit=0, skip=0, sort=None, timeserie=None
     ):
         """Get a set of data related to input data_id on the timewindow and
         input period.
 
-        If with_tags, result is a couple of (points, list of tags by timestamp)
+        If with_meta, result is a couple of (points, list of tags by timestamp)
         """
 
-        data_id, tags = self._data_id_tags(metric_id, tags)
+        data_id, tags = self._data_id_tags(metric_id, meta)
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=data_id, timewindow=timewindow, limit=limit,
-            skip=skip, timeserie=timeserie, tags=tags, with_tags=with_tags,
+            skip=skip, timeserie=timeserie, tags=tags, with_tags=with_meta,
             sort=sort
         )
 
         return result
 
-    def get_point(
-            self,
-            metric_id, with_tags=True, timestamp=None, tags=None, tags=None
-    ):
+    def get_point(self, metric_id, with_meta=True, timestamp=None, meta=None):
         """Get the closest point before input timestamp. Add tags informations
         if with_tags.
         """
 
-        data_id, tags = self._data_id_tags(metric_id, tags)
+        data_id, tags = self._data_id_tags(metric_id, meta)
 
         if timestamp is None:
             timestamp = time()
@@ -159,12 +153,12 @@ class PerfData(MiddlewareRegistry):
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=data_id, timewindow=timewindow,
-            limit=1, tags=tags, with_tags=with_tags
+            limit=1, tags=tags, with_tags=with_meta
         )
 
         return result
 
-    def put(self, metric_id, points, tags=None, cache=False):
+    def put(self, metric_id, points, meta=None, cache=False):
         """Put a (list of) couple (timestamp, value), a tags into
         rated_documents.
 
@@ -182,7 +176,7 @@ class PerfData(MiddlewareRegistry):
                 # transform points into a tuple
                 points = (points,)
 
-            data_id, tags = self._data_id_tags(metric_id, tags)
+            data_id, tags = self._data_id_tags(metric_id, meta)
 
             # update data in a cache (a)synchronous way
             self[PerfData.PERFDATA_STORAGE].put(
@@ -190,16 +184,11 @@ class PerfData(MiddlewareRegistry):
             )
 
     def remove(
-            self, metric_id, timewindow=None, tags=None, cache=False
+            self, metric_id, timewindow=None, meta=None, cache=False
     ):
-        """Remove values and tags of one metric.
+        """Remove values and tags of one metric."""
 
-        meta_names is a list of meta_data to remove. An empty list ensure that
-        no tags data is removed.
-        if meta_names is None, then all meta_names are removed.
-        """
-
-        data_id, tags = self._data_id_tags(metric_id, tags)
+        data_id, tags = self._data_id_tags(metric_id, meta)
 
         self[PerfData.PERFDATA_STORAGE].remove(
             data_id=data_id,

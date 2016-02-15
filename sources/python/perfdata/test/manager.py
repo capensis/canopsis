@@ -36,7 +36,7 @@ class PerfDataTest(TestCase):
 
         metric_id = 'test_manager'
 
-        self.perfdata.remove(metric_id=metric_id, with_meta=True)
+        self.perfdata.remove(metric_id=metric_id, with_tags=True)
 
         count = self.perfdata.count(metric_id=metric_id)
         self.assertEqual(count, 0)
@@ -49,21 +49,21 @@ class PerfDataTest(TestCase):
         # set values with timestamp without order
         points = [tv0, tv2, tv1, tv3]
 
-        meta = {'plop': None}
+        tags = {'plop': None}
 
         self.perfdata.put(
             metric_id=metric_id,
             points=points,
-            meta=meta
+            tags=tags
         )
 
-        data, _meta = self.perfdata.get(
+        data, _tags = self.perfdata.get(
             metric_id=metric_id,
             timewindow=timewindow,
-            with_meta=True
+            with_tags=True
         )
 
-        self.assertEqual(meta, _meta[PerfData.META_VALUE])
+        self.assertEqual(tags, _tags[PerfData.TAGS_VALUE])
 
         self.assertEqual([tv0, tv1, tv2], data)
 
@@ -75,47 +75,47 @@ class PerfDataTest(TestCase):
             timewindow=_timewindow
         )
 
-        data, _meta = self.perfdata.get(
+        data, _tags = self.perfdata.get(
             metric_id=metric_id,
             timewindow=timewindow,
-            with_meta=True
+            with_tags=True
         )
 
-        self.assertEqual(meta, _meta[PerfData.META_VALUE])
+        self.assertEqual(tags, _tags[PerfData.TAGS_VALUE])
 
         self.assertEqual(data, [tv0, tv1])
 
         # get data on timewindow
-        data, _meta = self.perfdata.get(
+        data, _tags = self.perfdata.get(
             metric_id=metric_id,
             timewindow=timewindow,
-            with_meta=True
+            with_tags=True
         )
 
-        self.assertEqual(meta, _meta[PerfData.META_VALUE])
+        self.assertEqual(tags, _tags[PerfData.TAGS_VALUE])
 
         # get all data
-        data, _meta = self.perfdata.get(
+        data, _tags = self.perfdata.get(
             metric_id=metric_id,
-            with_meta=True
+            with_tags=True
         )
 
-        self.assertEqual(meta, _meta[PerfData.META_VALUE])
+        self.assertEqual(tags, _tags[PerfData.TAGS_VALUE])
 
         self.assertEqual(len(data), 3)
 
         # remove all data
         self.perfdata.remove(
             metric_id=metric_id,
-            with_meta=True
+            with_tags=True
         )
 
-        data, _meta = self.perfdata.get(
+        data, _tags = self.perfdata.get(
             metric_id=metric_id,
-            with_meta=True
+            with_tags=True
         )
 
-        self.assertFalse(_meta)
+        self.assertFalse(_tags)
 
         self.assertEqual(len(data), 0)
 

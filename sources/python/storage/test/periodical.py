@@ -25,10 +25,10 @@ from canopsis.mongo.periodical import PeriodicalStorage
 from canopsis.timeserie.timewindow import TimeWindow
 
 
-class TimedStorageTest(TestCase):
+class PeriodicalStorageTest(TestCase):
     """PeriodicalStorage UT on data_type = "test_store"."""
 
-    def test_CRUD(self):
+    def test_crud(self):
 
         data_id = 'test_store_id'
 
@@ -40,7 +40,7 @@ class TimedStorageTest(TestCase):
         self.assertEquals(count, 0)
 
         # let's play with different data_names
-        meta = {'min': None, 'max': 0}
+        tags = {'min': None, 'max': 0}
 
         timewindow = TimeWindow()
 
@@ -58,7 +58,7 @@ class TimedStorageTest(TestCase):
 
         for timestamp in timestamps:
             # add a document at starting time window
-            self.storage.put(data_id=data_id, value=meta, timestamp=timestamp)
+            self.storage.put(data_id=data_id, value=tags, timestamp=timestamp)
 
         # check for count equals 2
         count = self.storage.count(data_ids=data_id)
@@ -72,11 +72,8 @@ class TimedStorageTest(TestCase):
         data = self.storage.get(data_ids=data_id)
         self.assertEquals(len(data), 2)
 
-        # check values are meta
-        self.assertEqual(
-            data[0][PeriodicalStorage.VALUE]['max'],
-            meta['max']
-        )
+        # check values are tags
+        self.assertEqual(data[0][PeriodicalStorage.VALUE]['max'], tags['max'])
 
         # check filtering with max == 1
         data = self.storage.get(data_ids=data_id, _filter={'max': 1})
@@ -97,11 +94,11 @@ class TimedStorageTest(TestCase):
         self.assertEquals(len(data), 2)
 
         # add twice same documents with different values
-        meta['max'] += 1
+        tags['max'] += 1
         for dat in data:
             # add a document at starting time window
             self.storage.put(
-                data_id=data_id, value=meta,
+                data_id=data_id, value=tags,
                 timestamp=dat[PeriodicalStorage.TIMESTAMP]
             )
 
@@ -117,11 +114,8 @@ class TimedStorageTest(TestCase):
         data = self.storage.get(data_ids=data_id)
         self.assertEquals(len(data), 2)
 
-        # check values are new meta
-        self.assertEqual(
-            data[0][PeriodicalStorage.VALUE]['max'],
-            meta['max']
-        )
+        # check values are new tags
+        self.assertEqual(data[0][PeriodicalStorage.VALUE]['max'], tags['max'])
 
         # check filtering with max == 0
         data = self.storage.get(data_ids=data_id, _filter={'max': 0})
@@ -153,8 +147,7 @@ class TimedStorageTest(TestCase):
         self.storage.remove(data_ids=[data_id], timewindow=timewindow)
         # check for data outside timewindow
         count = self.storage.count(data_ids=data_id)
-        self.assertEquals(
-            count, len(before_timewindow) + len(after_timewindow))
+        self.assertEquals(count, len(before_timewindow) + len(after_timewindow))
 
         # remove all data
         self.storage.remove(data_ids=data_id)

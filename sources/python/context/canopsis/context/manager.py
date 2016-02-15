@@ -268,7 +268,7 @@ class Context(MiddlewareRegistry):
 
         return result
 
-    def get_entity_by_id(self, _id):
+    def get_entity_by_id(self, _id, _type=None):
         """Generate an entity related to input id.
 
         :param str _id: entity id from where get entity properties.
@@ -277,9 +277,13 @@ class Context(MiddlewareRegistry):
         result = {}
         # get ctx values from _id
 
-        result = self.get_data_from_id(data_id=_id)
+        result = self[Context.CTX_STORAGE].get_data_from_id(data_id=_id)
 
-        _type = result[self.TYPE]
+        if _type is None:
+            _type = result[self.TYPE]
+
+        else:
+            result[self.TYPE] = _type
 
         if _type in result:
             result[Context.NAME] = result.pop(_type)
