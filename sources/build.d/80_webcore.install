@@ -7,17 +7,23 @@ function build(){
 function install(){
 	cd $SRC_PATH/$NAME
 
-	tar c var | tar xhv -C $PREFIX/
+    mkdir -p $PREFIX/var/www
+    cd src
+	tar c * | tar xhv -C $PREFIX/var/www
+    cd ..
     check_code $? "Impossible to deploy static files"
 
 	echo "define(function() { return '$(git log | head -1 | cut -d ' ' -f2)'; });" > $PREFIX/var/www/canopsis/commit.js
+
+    for schemadir in `find -name schemas -type d | xargs`
+    do
+        currentdir=`pwd`
+        cd $schemadir
+        tar c * | tar xhv -C $PREFIX/etc/schema.d
+        cd $currentdir
+    done
 }
 
 function update(){
-    cd $SRC_PATH/$NAME
-
-    tar c var | tar xhv -C $PREFIX/
-    check_code $? "Impossible to deploy static files"
-
-    echo "define(function() { return '$(git log | head -1 | cut -d ' ' -f2)'; });" > $PREFIX/var/www/canopsis/commit.js
+    install
 }
