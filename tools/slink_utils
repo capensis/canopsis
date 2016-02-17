@@ -9,7 +9,7 @@ function create_python_slink() {
         then version="0.1";
         else version=$2;
     fi;
-    # ln -s $SRC/sources/python/$project/canopsis $CPS/lib/python2.7/site-packages/canopsis.$project-$version-py2.7.egg/
+    ln -s $SRC/sources/python/$project/canopsis $CPS/lib/python2.7/site-packages/canopsis.$project-$version-py2.7.egg/
 }
 
 function create_canolibs_slink() {
