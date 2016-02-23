@@ -63,6 +63,13 @@
         "desc": "Manage UI settings"
     },
     {
+        "_id" : "menu_documentation",
+        "loader_id" : "menu_documentation",
+        "crecord_name": "menu_documentation",
+        "crecord_type" : "action",
+        "desc": "Show Canopsis documentation button"
+    },
+    {
         "_id" : "actionbutton_ack",
         "loader_id" : "actionbutton_ack",
         "crecord_name": "actionbutton_ack",
