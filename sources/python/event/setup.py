@@ -27,7 +27,7 @@ install_requires = [
     'canopsis.old',
     'canopsis.common',
     'canopsis.mongo',
-    'canopsis.timeserie'
+    'canopsis.timeserie',
     'canopsis.configuration',
     'canopsis.middleware',
     'canopsis.storage',
