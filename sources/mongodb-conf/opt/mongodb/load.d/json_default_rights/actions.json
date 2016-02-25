@@ -25,7 +25,14 @@
         "loader_id" : "list_filters",
         "crecord_name": "list_filters",
         "crecord_type" : "action",
-        "desc": "Display and manage list filters"
+        "desc": "Display and manage search filters on list"
+    },
+    {
+        "_id" : "list_filters_create_custom",
+        "loader_id" : "list_filters_create_custom",
+        "crecord_name": "list_filters_create_custom",
+        "crecord_type" : "action",
+        "desc": "Create custom search filters on list"
     },
     {
         "_id" : "menu_aclconfig",
@@ -61,6 +68,13 @@
         "crecord_name": "menu_uisettings",
         "crecord_type" : "action",
         "desc": "Manage UI settings"
+    },
+    {
+        "_id" : "menu_documentation",
+        "loader_id" : "menu_documentation",
+        "crecord_name": "menu_documentation",
+        "crecord_type" : "action",
+        "desc": "Show Canopsis documentation button"
     },
     {
         "_id" : "actionbutton_ack",
