@@ -10,7 +10,9 @@
   "containerwidget": {
     "xtype": "widgetcontainer",
     "mixins": [
-      { "name": "verticallayout" }
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
     ],
     "title": "container title hbox",
     "_id": "test_view_horizontal_container",

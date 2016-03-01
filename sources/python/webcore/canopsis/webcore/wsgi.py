@@ -107,7 +107,7 @@ class WebServer(Configurable):
     def root_directory(self):
         return setdefaultattr(
             self, '_rootdir',
-            os.path.expanduser('~/var/www/')
+            os.path.expanduser('~/var/www/src/')
         )
 
     @root_directory.setter
