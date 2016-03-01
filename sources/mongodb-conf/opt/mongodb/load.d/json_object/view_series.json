@@ -14,7 +14,9 @@
         "mixins" : [
             {
                 "name" : "verticallayout"
-            }
+            },
+            { "name": "widgetrefresh" },
+            { "name": "widgetfullscreen" }
         ],
         "items" : [
             {
