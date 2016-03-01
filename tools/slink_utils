@@ -33,8 +33,8 @@ function create_slinks() {
     # ln -s $SRC/sources/externals/webcore-libs $CPS/src/
     # ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
     # ln -s $SRC/sources/webcore/var/plugins $CPS/var/plugins
-    ln -s $SRC/sources/webcore/src/canopsis $CPS/var/www/
-    ln -s $SRC/sources/webcore/src/login $CPS/var/www/
+    ln -s $SRC/sources/webcore $CPS/var/www/
+zsh:1: command not found: q
     ln -s $SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/
     ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
     # canolibs
