@@ -1,4 +1,4 @@
-NAME="mongodb-conf"
+NAME="db-conf"
 
 function build(){
 	true

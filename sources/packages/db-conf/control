@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME="mongodb-conf"
+NAME="db-conf"
 VERSION=0.7
 RELEASE=0
 DESCRIPTION=""
