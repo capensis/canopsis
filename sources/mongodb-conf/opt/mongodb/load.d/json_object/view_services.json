@@ -40,7 +40,9 @@
       }
     ],
     "mixins": [
-      { "name": "verticallayout" }
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
     ]
   }
 }

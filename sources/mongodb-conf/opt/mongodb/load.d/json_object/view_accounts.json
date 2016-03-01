@@ -10,7 +10,9 @@
   "containerwidget": {
     "xtype": "widgetcontainer",
     "mixins": [
-      { "name": "verticallayout" }
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
     ],
     "title": "container title vbox",
     "items": [
