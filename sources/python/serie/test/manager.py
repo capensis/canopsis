@@ -37,14 +37,10 @@ class BaseTestSerieManager(TestCase):
         self.ctx_manager[Context.CTX_STORAGE] = self.ctx_storage
 
         self.perfdata_storage = Middleware.get_middleware_by_uri(
-            'storage-periodic-test_perfdata://'
-        )
-        self.perfmeta_storage = Middleware.get_middleware_by_uri(
             'storage-timed-test_perfmeta://'
         )
         self.perf_manager = PerfData()
         self.perf_manager[PerfData.PERFDATA_STORAGE] = self.perfdata_storage
-        self.perf_manager[PerfData.META_STORAGE] = self.perfmeta_storage
         self.perf_manager[PerfData.CONTEXT_MANAGER] = self.ctx_manager
 
         self.serie_storage = Middleware.get_middleware_by_uri(
