@@ -22,106 +22,48 @@ from canopsis.storage.core import Storage
 
 
 class TimedStorage(Storage):
-    """
-    Store dedicated to manage timed data.
-    It saves one value at one timestamp.
-    Two consecutives timestamp values can not be same values.
-    """
+    """Storage dedicated to manage timed data."""
 
     __datatype__ = 'timed'
 
-    class Index:
-
-        TIMESTAMP = 0
-        VALUE = 1
-        DATA_ID = 2
-
-    DATA_ID = 'data_id'
-    VALUE = 'value'
     TIMESTAMP = 'timestamp'
+    VALUES = 'values'
+    PERIOD = 'period'
+    LAST_UPDATE = 'last_update'
+
+    def count(self, data_id, timewindow=None, tags=None):
+        """Get number of timed documents for input data_id."""
+
+        raise NotImplementedError()
+
+    def size(self, data_id=None, timewindow=None, tags=None, *args, **kwargs):
+        """Get size occupied by research filter data_id."""
+
+        raise NotImplementedError()
 
     def get(
-            self, data_ids, timewindow=None, _filter=None,
-            limit=0, skip=0, sort=None
+            self, data_id, timewindow=None, limit=0, skip=0, sort=None,
+            tags=None
     ):
-        """
-        Get data values ordered by timestamp in descresent order and data ids
-        if data_ids is a list of data ids.
-
-        If timewindow is None, result is all timed document.
-
-        :param str(s) data_ids: data id(s).
-        :param TimeWindow timedwindow: data value time window. Default is
-            current timestamp offsset.
-        :param _filter: value filter.
-        :param int limit: maximal number of data to retrieve.
-        :param int skip: number of documents to skip.
-        :param dict sort: sort documents by something else than timestamp.
-
-        :return: depends on type of data_ids
-
-            - string: list of {
-                    TimedStorage.TIMESTAMP: timestamp,
-                    TimedStorage.VALUE: value
-                }
-            - list: dictionary of {
-                    data_id: self.get(data_id, ...)
-                }
-
-        :rtype: dict or list
-        """
+        """Get a list of points."""
 
         raise NotImplementedError()
 
-    def find(self, timewindow=None, _filter=None):
-        """
-        Find data values ordered by timestamp in descresent order and data ids.
+    def put(self, data_id, points, tags=None, cache=False):
+        """Put timed points in a timed collection with specific timed values.
 
-        If timewindow is None, result is all timed document.
-
-        :param TimeWindow timedwindow: data value time window. Default is
-            current timestamp offsset.
-        :param _filter: value filter.
-
-        :return: dictionary of {
-                data_id: list of {
-                    TimedStorage.TIMESTAMP: timestamp,
-                    TimedStorage.VALUE: value
-                }
-            }
-        :rtype: dict
-        """
-
-        raise NotImplementedError()
-
-    def count(self, data_ids, timewindow=None, _filter=None):
-        """Get number of period of timed documents for input data_id.
-
-        :param str(s) data_ids: data_id(s) to count.
-        :param TimeWindow timewindow: count timewindow.
-        :param dict _filter: filter applied on values.
-        """
-
-        raise NotImplementedError()
-
-    def put(self, data_id, value, timestamp, cache=False):
-        """Put a dictionary of value by name in collection.
-
-        :param str data_id: related data_id.
-        :param value: value to associate to data_id at timestamp time.
-        :param float timestamp: timestamp to use for associating value to
-            data_id. If timestamp already exists, update existing value with
-            the same timestamp. Otherwise, check if value is different than the
-            previous value and add a document if False.
+        :param points: iterable of (timestamp, value).
+        :param list tags: indexed tags of points.
         :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def remove(self, data_ids, timewindow=None, cache=False):
-        """Remove timed_data existing on input timewindow.
+    def remove(self, data_id, timewindow=None, cache=False, tags=None):
+        """Remove timed data related to data_id and timewindow.
 
-        :param str(s) data_ids: related data_id(s) to remove.
+        :param canopsis.timeserie.timewindow.TimeWindow timewindow: Default
+            remove all timed data with input period.
         :param bool cache: use query cache if True (False by default).
         """
 

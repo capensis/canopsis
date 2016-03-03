@@ -27,11 +27,12 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.event import Event, forger
 from canopsis.storage.composite import CompositeStorage
 
+from urllib import unquote_plus
+
+
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
-CONTENT = [
-    Parameter('accept_event_types', Parameter.array())
-]
+CONTENT = [Parameter('accept_event_types', Parameter.array())]
 
 
 @add_category(CATEGORY, content=CONTENT)
@@ -71,20 +72,22 @@ class Context(MiddlewareRegistry):
 
     ENTITY = Event.ENTITY  #: entity id in event
 
+    EID = 'eid'  #: entity id.
+
     def __init__(
-        self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
+            self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
     ):
 
         super(Context, self).__init__(self, *args, **kwargs)
 
         self._context = context
+
         if ctx_storage is not None:
             self[Context.CTX_STORAGE] = ctx_storage
 
     @property
     def context(self):
-        """List of context element name.
-        """
+        """List of context element name."""
 
         return self._context
 
@@ -139,8 +142,7 @@ class Context(MiddlewareRegistry):
             yield doc[Context.DATA_ID]
 
     def clean(self, entity):
-        """Remove entity properties which are not in self.context
-        """
+        """Remove entity properties which are not in self.context."""
 
         result = {}
 
@@ -181,7 +183,7 @@ class Context(MiddlewareRegistry):
         return children
 
     def get_entity(
-        self, event, from_db=False, create_if_not_exists=False, cache=False
+            self, event, from_db=False, create_if_not_exists=False, cache=False
     ):
         """Get event entity.
 
@@ -262,9 +264,11 @@ class Context(MiddlewareRegistry):
             if index < len(names):  # else get names[index]
                 result = names[index]
 
+        result = unquote_plus(result)
+
         return result
 
-    def get_entity_by_id(self, _id):
+    def get_entity_by_id(self, _id, _type=None):
         """Generate an entity related to input id.
 
         :param str _id: entity id from where get entity properties.
@@ -272,24 +276,23 @@ class Context(MiddlewareRegistry):
 
         result = {}
         # get ctx values from _id
-        ctx_values = _id.split('/')[1:]
 
-        if ctx_values:
-            # use static resolution of self.context to improve algo. eff.
-            self_context = self.context
-            self_context_len = len(self_context)
+        result = self[Context.CTX_STORAGE].get_data_from_id(data_id=_id)
 
-            for index, ctx_value in enumerate(ctx_values):
-                if index < self_context_len:
-                    ctx = self.context[index]
-                    result[ctx] = ctx_value
-                else:
-                    result[Context.NAME] = ctx_value
-                    break
-            else:
-                # replace last ctx by name property
-                del result[ctx]
-                result[Context.NAME] = ctx_value
+        if _type is None:
+            _type = result[self.TYPE]
+
+        else:
+            result[self.TYPE] = _type
+
+        if _type in result:
+            result[Context.NAME] = result.pop(_type)
+
+        elif 'extended' in result:
+            result[Context.NAME] = result.pop('extended')
+
+        else:
+            result[Context.NAME] = result.pop(self.context[len(result) - 1])
 
         return result
 
@@ -303,20 +306,21 @@ class Context(MiddlewareRegistry):
         """
 
         kwargs['event_type'] = event_type
+
         # fill kwargs with entity values
         for field in entity:
             kwargs[field] = entity[field]
+
         # forge the event
         result = forger(**kwargs)
 
         return result
 
     def get_by_id(
-        self,
-        ids=None, limit=0, skip=0, sort=None, with_count=False
+            self,
+            ids=None, limit=0, skip=0, sort=None, with_count=False
     ):
-        """
-        Get a list of entities where id are input ids.
+        """Get a list of entities where id are input ids.
 
         :param ids: element ids or an element id to get if is a string.
         :type ids: list of str
@@ -345,8 +349,7 @@ class Context(MiddlewareRegistry):
         return result
 
     def get(self, _type, names, context=None, extended=False):
-        """
-        Get entities by name.
+        """Get entities by name.
 
         :param str _type: entity type (connector, component, etc.)
         :param names: entity name(s).
@@ -373,11 +376,10 @@ class Context(MiddlewareRegistry):
         return result
 
     def find(
-        self, _type=None, context=None, _filter=None, extended=False,
-        limit=0, skip=0, sort=None, with_count=False
+            self, _type=None, context=None, _filter=None, extended=False,
+            limit=0, skip=0, sort=None, with_count=False
     ):
-        """
-        Find all entities which of input _type and context with an additional
+        """Find all entities which of input _type and context with an additional
         filter.
 
         :param extended: get extended entities if they are shared.
@@ -399,9 +401,9 @@ class Context(MiddlewareRegistry):
         return result
 
     def put(
-        self,
-        _type, entity, context=None, extended_id=None, add_parents=True,
-        cache=False
+            self,
+            _type, entity, context=None, extended_id=None, add_parents=True,
+            cache=False
     ):
         """
         Put an entity designated by the _type, context and entity.
@@ -480,11 +482,11 @@ class Context(MiddlewareRegistry):
             )
 
     def remove(
-        self, ids=None, _type=None, context=None, extended=False, cache=False
+            self, ids=None, _type=None, context=None, extended=False,
+            cache=False
     ):
-        """
-        Remove a set of elements identified by element_ids, an element type or
-        a timewindow. If ids, _type and context are all None, remove all
+        """Remove a set of elements identified by element_ids, an element type
+        or a timewindow. If ids, _type and context are all None, remove all
         elements.
 
         :param bool cache: use query cache if True (False by default).
@@ -505,13 +507,13 @@ class Context(MiddlewareRegistry):
 
         if ids is not None:
             self[Context.CTX_STORAGE].remove_elements(ids=ids, cache=cache)
+
         # if all parameters are None, delete all elements
         elif (_type, context) == (None, None):
             self[Context.CTX_STORAGE].remove_elements()
 
     def get_entity_context_and_name(self, entity):
-        """
-        Get the right context related to input entity.
+        """Get the right context related to input entity.
 
         :param dict entity: must contain at least name and type fields.
         """
@@ -526,6 +528,7 @@ class Context(MiddlewareRegistry):
                 del _entity[ctx]
                 break
         """
+
         result = self[Context.CTX_STORAGE].get_path_with_name(_entity)
 
         return result
@@ -545,9 +548,7 @@ class Context(MiddlewareRegistry):
         return result
 
     def get_entity_id_context_name(self, entity):
-        """
-        Get the right id, context and name of input entity.
-        """
+        """Get the right id, context and name of input entity."""
 
         path, name = self.get_entity_context_and_name(entity=entity)
 

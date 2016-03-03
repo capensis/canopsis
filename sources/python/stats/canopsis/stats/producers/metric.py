@@ -141,8 +141,7 @@ class MetricProducer(MiddlewareRegistry):
         return serie_id.hexdigest()
 
     def may_create_stats_serie(self, metric, operator):
-        """
-        Create serie for metric and operator if not existing yet.
+        """Create serie for metric and operator if not existing yet.
 
         :param metric: Metric entity
         :type metric: dict
@@ -178,10 +177,12 @@ class MetricProducer(MiddlewareRegistry):
                 'last_computation': 0
             }
 
-            meta = self[MetricProducer.PERFDATA_MANAGER].get_meta(metric_id)
+            _, tags = self[MetricProducer.PERFDATA_MANAGER].get(
+                metric_id, with_tags=True
+            )
 
-            if meta is not None:
-                serie.update(meta)
+            if tags is not None:
+                serie.update(tags)
 
             storage.put_element(serie, _id=serie_id)
 

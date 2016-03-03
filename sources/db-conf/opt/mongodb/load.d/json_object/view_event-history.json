@@ -1,0 +1,88 @@
+{
+  "loader_id": "view.event-history",
+  "loader_no_update": true,
+  "id": "view.event-history",
+  "_id": "view.event-history",
+  "crecord_type": "view",
+  "crecord_write_time": 1400853201,
+  "crecord_name": "Event history",
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "title": "container title vbox",
+    "items": [
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "id" : "item-fd5a-1ede-8ac2-6a1d66ad0023",
+          "widgetId" : "item-fd5a-1ede-8ac2-6a1d66ad0023",
+          "refreshInterval": 40,
+          "refreshableWidget" : false,
+          "xtype": "list",
+          "listed_crecord_type": "eventlog",
+          "display_record_field": "resource",
+          "record_template" : "<div>Connecteur : {{connector}}</div><div>Composant : {{component}} / Adresse IP : {{address}}</div><div>Hostgroups : {{hostgroups}}</div><div>Ressource : {{resource}}</div><div>Message :&nbsp;<span style=\"line-height: 1.428571429;\">{{output}}</span></div>",
+          "title": "Historique",
+          "actions_toolbar": [
+            "actionbutton-eventnavigation"
+          ],
+          "default_column_sort" : {
+            "direction" : "DESC",
+            "property" : "timestamp"
+          },
+          "filters" : [
+            {
+              "filter" : "{\"$or\":[{\"$and\":[{\"component\":{\"$ne\":\"__canopsis__\"}},{\"connector_name\":{\"$ne\":\"engine\"}}]}]}",
+              "cfilter" : "",
+              "title" : "No internal"
+            }
+          ],
+          "mixins": [
+            {
+              "name" : "periodicrefresh",
+              "refreshInterval" : "60"
+            },
+            {"name": "customfilterlist"},
+            {"name": "sortablearray"},
+            { "name": "arraysearch",
+              "searchable_columns": [
+                "connector_name",
+                "connector",
+                "component",
+                "resource",
+                "domain",
+                "perimeter"
+              ]
+            },
+            {
+              "name": "pagination",
+              "itemsPerPage": 50
+            },
+            {"name": "history"},
+            {"name": "eventhistory"}
+          ],
+          "displayed_columns": [
+            "domain",
+            "perimeter",
+            "connector",
+            "component",
+            "resource",
+            "output",
+            "status",
+            "criticity",
+            "ack",
+            "timestamp",
+            "author",
+            "event_type"
+          ]
+        }
+      }
+    ]
+  }
+}

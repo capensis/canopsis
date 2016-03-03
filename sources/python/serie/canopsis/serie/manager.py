@@ -116,7 +116,7 @@ class Serie(MiddlewareRegistry):
             perfdata = self[Serie.PERFDATA_MANAGER].get(
                 mid,
                 timewindow=timewindow,
-                with_meta=False
+                with_tags=False
             )
 
             result[mid] = {
