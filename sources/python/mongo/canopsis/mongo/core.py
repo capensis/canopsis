@@ -34,7 +34,7 @@ from pymongo.son_manipulator import SONManipulator
 from uuid import uuid1
 
 
-CONF_RESOURCE = 'influx/storage.conf'
+CONF_RESOURCE = 'mongo/storage.conf'
 
 
 class CanopsisSONManipulator(SONManipulator):
