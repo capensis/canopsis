@@ -19,8 +19,8 @@ function wait_for_mongo() {
 
     echo -n "Safe wait (may be long the first time) "
 
-    mongo_user=$($PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf DATABASE user)
-    mongo_pass=$($PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf DATABASE pwd)
+    mongo_user=$($PREFIX/bin/initool get $PREFIX/etc/mongo/storage.conf DATABASE user)
+    mongo_pass=$($PREFIX/bin/initool get $PREFIX/etc/mongo/storage.conf DATABASE pwd)
 
     mongo_ready=false
     while ! $mongo_ready
