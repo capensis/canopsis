@@ -183,7 +183,7 @@ function post_install_influxdb() {
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/influx/storage.conf DATABASE pwd $cpspass
 
     echo "  + Reconfigure InfluxDB"
-    launch_cmd 1 sed -i "\"s/auth-enabled = false/auth-enabled = true/" $PREFIX/etc/influxdb.conf
+    launch_cmd 1 sed -i "\"s/auth-enabled = false/auth-enabled = true/\"" $PREFIX/etc/influxdb.conf
 
     echo "  + Restart InfluxDB"
     launch_cmd 1 service influxdb restart
