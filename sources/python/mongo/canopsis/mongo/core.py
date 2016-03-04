@@ -55,6 +55,8 @@ class CanopsisSONManipulator(SONManipulator):
 class MongoDataBase(DataBase):
     """Manage access to a mongodb."""
 
+    CONF_RESOURCE = 'mongo/storage.conf'
+
     def __init__(
             self, host=MongoClient.HOST, port=MongoClient.PORT,
             read_preference=ReadPreference.NEAREST,

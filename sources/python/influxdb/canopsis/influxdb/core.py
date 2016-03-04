@@ -41,6 +41,8 @@ class InfluxDBDataBase(DataBase):
     DEFAULT_TIMEOUT = None
     DEFAULT_PROXIES = None
 
+    CONF_RESOURCE = 'influx/storage.conf'
+
     def __init__(
             self, host=DEFAULT_HOST, port=DEFAULT_PORT, user=DEFAULT_USER,
             pwd=DEFAULT_PWD, db=DEFAULT_DB, ssl=DEFAULT_SSL,

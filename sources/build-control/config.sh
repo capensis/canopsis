@@ -20,6 +20,21 @@ MONGODB_USER="cpsmongo"
 
 MONGODB_USER_PASSWD="canopsis"
 
+# - Variable INFLUXDB_ADMIN_PASSWD
+# If defined, the user won't be asked to type a password for the InfluxDB admin user
+
+INFLUXDB_ADMIN_PASSWD="admin"
+
+# - Variable INFLUXDB_USER
+# If defined, the user won't be asked to enter a username for InfluxDB
+
+INFLUXDB_USER="cpsinflux"
+
+# - Variable INFLUXDB_USER_PASSWD
+# If defined, the user won't be asked to type a password for the InfluxDB canopsis user
+
+INFLUXDB_USER_PASSWD="canopsis"
+
 # - Variable RABBITMQ_ADMIN_PASSWD
 # If defined, the user won't be asked to type a password for the RabbitMQ admin user
 
