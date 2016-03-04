@@ -19,6 +19,7 @@
 # ---------------------------------
 
 from canopsis.common.init import basestring
+from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
 
@@ -31,6 +32,9 @@ from pymongo.bulk import BulkOperationBuilder
 from pymongo.read_preferences import ReadPreference
 from pymongo.son_manipulator import SONManipulator
 from uuid import uuid1
+
+
+CONF_RESOURCE = 'influx/storage.conf'
 
 
 class CanopsisSONManipulator(SONManipulator):
@@ -52,10 +56,9 @@ class CanopsisSONManipulator(SONManipulator):
         return son
 
 
+@conf_paths(CONF_RESOURCE)
 class MongoDataBase(DataBase):
     """Manage access to a mongodb."""
-
-    CONF_RESOURCE = 'mongo/storage.conf'
 
     def __init__(
             self, host=MongoClient.HOST, port=MongoClient.PORT,
