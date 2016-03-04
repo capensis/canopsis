@@ -38,9 +38,7 @@ function wait_for_mongo() {
     done
 }
 
-
 function wait_for_mongo_install() {
-
     echo -n "Safe wait (may be long the first time) "
 
     mongo_ready=false
@@ -183,6 +181,12 @@ function post_install_influxdb() {
 
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/influx/storage.conf DATABASE user $cpsuser
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/influx/storage.conf DATABASE pwd $cpspass
+
+    echo "  + Reconfigure InfluxDB"
+    launch_cmd 1 $PREFIX/bin/initool set $PREFIX/etc/influxdb.conf http auth-enabled true
+
+    echo "  + Restart InfluxDB"
+    launch_cmd 1 service influxdb restart
 }
 
 function post_install() {
