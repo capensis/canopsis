@@ -173,11 +173,11 @@ function post_install_influxdb() {
     fi
 
     echo "  + Create admin user ..."
-    launch_cmd 1 influx --execute "CREATE USER admin WITH PASSWORD '$adminpass' WITH ALL PRIVILEGES"
+    launch_cmd 1 influx --execute "\"CREATE USER admin WITH PASSWORD '$adminpass' WITH ALL PRIVILEGES\""
 
     echo "  + Create $cpsuser user ..."
-    launch_cmd 1 influx --execute "CREATE USER $cpsuser WITH PASSWORD '$cpspass'"
-    launch_cmd 1 influx --execute "GRANT ALL ON canopsis TO $cpsuser"
+    launch_cmd 1 influx --execute "\"CREATE USER $cpsuser WITH PASSWORD '$cpspass'\""
+    launch_cmd 1 influx --execute "\"GRANT ALL ON canopsis TO $cpsuser\""
 
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/influx/storage.conf DATABASE user $cpsuser
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/influx/storage.conf DATABASE pwd $cpspass
