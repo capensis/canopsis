@@ -128,6 +128,8 @@ function post_install_mongodb() {
 function post_install_influxdb() {
     echo "--- InfluxDB"
 
+    launch_cmd 1 service influxdb start
+
     # Define user
     if [ "x$INFLUXDB_ADMIN_PASSWD" == "x" ]
     then
