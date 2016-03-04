@@ -236,7 +236,7 @@ function post_update() {
     echo "Post-update $NAME $VERSION-$RELEASE ..."
 
     post_update_mongodb
-    post_install_influxdb
+    post_update_influxdb
 
     echo "--- Update JSON schemas"
     launch_cmd 1 schema2db
