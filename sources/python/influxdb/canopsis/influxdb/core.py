@@ -122,13 +122,6 @@ class InfluxDBDataBase(DataBase):
                 except InfluxDBClientError:
                     pass
 
-            if self.user:
-                try:
-                    result.create_user(self.user, self.pwd, False)
-
-                except InfluxDBClientError:
-                    pass
-
         return result
 
     def _disconnect(self, *args, **kwargs):
