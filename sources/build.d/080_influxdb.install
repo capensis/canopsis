@@ -29,5 +29,4 @@ function install(){
     check_code $?
 
     install_init "influxdb"
-    install_conf "influxdb.conf"
 }
