@@ -739,17 +739,6 @@ function create_package_list() {
 }
 
 
-function launch_update_pylibs() {
-    echo
-    echo "################################"
-    echo "# Update Python Libs"
-    echo "################################"
-    echo
-
-    launch_cmd 1 update_pylibs
-    echo " + Ok"
-}
-
 function fix_permissions() {
     echo
     echo "################################"
