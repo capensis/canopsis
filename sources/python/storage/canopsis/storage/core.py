@@ -40,8 +40,7 @@ from canopsis.middleware.core import Middleware
 
 
 class DataBase(Middleware):
-    """
-    Abstract class which aims to manage access to a data base.
+    """Abstract class which aims to manage access to a data base.
 
     Related to a configuration file, it can connects to a database
     depending on several parameters like.
@@ -52,21 +51,22 @@ class DataBase(Middleware):
 
     CATEGORY = 'DATABASE'
 
-    DB = 'db'
-    JOURNALING = 'journaling'
-
-    SHARDING = 'sharding'
-    REPLICASET = 'replicaset'
+    DB = 'db'  #: database name.
+    JOURNALING = 'journaling'  #: journaling flag.
+    SHARDING = 'sharding'  #: sharding name.
+    REPLICASET = 'replicaset'  #: replication set name.
+    #: retention rule : INF|{number}[ywdhm]. INF by default.
+    RETENTION = 'retention'
 
     CONF_RESOURCE = 'storage/storage.conf'
 
     class DataBaseError(Exception):
-        """Handle DataBase errors.
-        """
+        """Handle DataBase errors."""
 
     def __init__(
             self,
             db='canopsis', journaling=False, sharding=False, replicaset=None,
+            retention=None,
             *args, **kwargs
     ):
         """
@@ -74,6 +74,7 @@ class DataBase(Middleware):
         :param bool journaling: journaling mode enabling.
         :param bool sharding: db sharding mode enabling.
         :param str replicaset: db replicaset.
+        :param str retention: retention rule.
         """
 
         super(DataBase, self).__init__(*args, **kwargs)
@@ -83,6 +84,7 @@ class DataBase(Middleware):
         self._journaling = journaling
         self._sharding = sharding
         self._replicaset = replicaset
+        self._retention = retention
 
     @property
     def db(self):
@@ -100,6 +102,23 @@ class DataBase(Middleware):
     @journaling.setter
     def journaling(self, value):
         self._journaling = value
+        self.reconnect()
+
+    @property
+    def retention(self):
+        """Get retention rule.
+
+        :rtye: str"""
+
+        return self._retention
+
+    @retention.setter
+    def retention(self, value):
+        """Change of retention rule.
+
+        :param str value: new retention rule to apply."""
+
+        self._retention = value
         self.reconnect()
 
     @property
@@ -121,8 +140,7 @@ class DataBase(Middleware):
         self.reconnect()
 
     def drop(self, table=None, *args, **kwargs):
-        """
-        Drop related all tables or one table if given.
+        """Drop related all tables or one table if given.
 
         :param table: table to drop
         :type table: str
@@ -134,8 +152,7 @@ class DataBase(Middleware):
         raise NotImplementedError()
 
     def size(self, table=None, criteria=None, *args, **kwargs):
-        """
-        Get database size in Bytes
+        """Get database size in Bytes.
 
         :param table: table from where get data size
         :type table: str
@@ -190,8 +207,7 @@ class DataBase(Middleware):
 
 
 class Storage(DataBase):
-    """
-    Manage different kind of storages by data_scope.
+    """Manage different kind of storages by data_scope.
 
     For example, perfdata and context are two data types.
 
@@ -235,9 +251,7 @@ class Storage(DataBase):
     DESC = -1  #: DESC order
 
     class StorageError(Exception):
-        """
-        Handle Storage errors
-        """
+        """Handle Storage errors"""
 
     def __init__(
             self,
@@ -309,8 +323,7 @@ class Storage(DataBase):
 
     @indexes.setter
     def indexes(self, value):
-        """
-        Indexes setter
+        """Indexes setter.
 
         :param value: indexes such as::
             - one name
@@ -404,9 +417,7 @@ class Storage(DataBase):
         return self._cache_count
 
     def _init_cache(self):
-        """
-        Initialize cache processing.
-        """
+        """Initialize cache processing."""
 
         # if cache size exists
         if self._cache_size > 0:
@@ -429,9 +440,7 @@ class Storage(DataBase):
             self._cache = None
 
     def _new_cache(self):
-        """
-        Get self cache for query.
-        """
+        """Get self cache for query."""
 
         raise NotImplementedError()
 
@@ -441,9 +450,8 @@ class Storage(DataBase):
             query_kwargs=None, cache_kwargs=None, cache=False,
             **kwargs
     ):
-        """
-        Execute a query or the query cache depending on values of _cache_size
-            and input cache parameter.
+        """Execute a query or the query cache depending on values of _cache_size
+        and input cache parameter.
 
         :param function query_op: query operation.
         :param function cache_op: query operation to cache.
@@ -491,9 +499,7 @@ class Storage(DataBase):
         return result
 
     def _cache_async_execution(self):
-        """
-        Threaded method which execute the cache.
-        """
+        """Threaded method which execute the cache."""
 
         # while parent thread is alive and cache size is greater than 0
         while (
@@ -515,9 +521,8 @@ class Storage(DataBase):
                 self._lock.release()
 
     def halt_cache_thread(self, timeout=None):
-        """
-        Halt cache auto_commit. This method aims to wait cache at most
-            ``cache_autocommit`` or input timeout seconds before finishing.
+        """Halt cache auto_commit. This method aims to wait cache at most
+        ``cache_autocommit`` or input timeout seconds before finishing.
 
         :param float timeout: max time to wait before waiting for this halting
             cache thread. Default value is self cache autocommit.
@@ -536,9 +541,7 @@ class Storage(DataBase):
         self._cache_autocommit = cache_autocommit
 
     def execute_cache(self):
-        """
-        Execute the query cache and return execution processing.
-        """
+        """Execute the query cache and return execution processing."""
 
         result = None
         # do something only if there are cached query to execute
@@ -557,15 +560,12 @@ class Storage(DataBase):
         return result
 
     def _execute_cache(self):
-        """
-        Private cache execution. May be overriden.
-        """
+        """Private cache execution. May be overriden."""
 
         raise NotImplementedError()
 
     def _ensure_index(self, index):
-        """
-        Get a right index structure related to input index.
+        """Get a right index structure related to input index.
 
         :return: depending on index:
             - str: [(index, Storage.ASC)]
@@ -588,8 +588,7 @@ class Storage(DataBase):
         return result
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
-        """
-        Performs an atomic compare_and_swap operation on database related to \
+        """Performs an atomic compare_and_swap operation on database related to
         input _id.
 
         :remarks: this method is not atomic
@@ -599,23 +598,22 @@ class Storage(DataBase):
         raise NotImplementedError()
 
     def val_compare_and_swap(self, _id, oldvalue, newvalue):
-        """
-        Performs an atomic val_compare_and_swap operation on database related \
+        """Performs an atomic val_compare_and_swap operation on database related
         to input _id, oldvalue and newvalue.
 
         :remarks: this method is not atomic
 
         :returns: True if the comparison succeed
         """
+
         raise NotImplementedError()
 
     def get_elements(
             self,
             ids=None, query=None, limit=0, skip=0, sort=None, projection=None,
-            with_count=False,
+            tags=None, with_count=False
     ):
-        """
-        Get a list of elements where id are input ids
+        """Get a list of elements where id are input ids.
 
         :param ids: element ids or an element id to get if is a string.
         :type ids: list of str
@@ -626,6 +624,7 @@ class Storage(DataBase):
             or field name which denots an implicitelly ASC order.
         :type sort: list of {(str, {ASC, DESC}}), or str}
         :param dict projection: key names to keep from elements.
+        :param list tags: search tags.
         :param bool with_count: If True (False by default), add count to the
             result.
 
@@ -637,9 +636,7 @@ class Storage(DataBase):
         raise NotImplementedError()
 
     def __getitem__(self, ids):
-        """
-        Python shortcut to the get_elements(ids) method.
-        """
+        """Python shortcut to the get_elements(ids) method."""
 
         result = self.get_elements(ids=ids)
 
@@ -649,9 +646,7 @@ class Storage(DataBase):
         return result
 
     def __contains__(self, ids):
-        """
-        Python shortcut to the get_elements(ids) method.
-        """
+        """Python shortcut to the get_elements(ids) method."""
 
         result = True
 
@@ -665,8 +660,7 @@ class Storage(DataBase):
         return result
 
     def distinct(self, field, query):
-        """
-        Find distinct elements from a query into the given storage
+        """Find distinct elements from a query into the given storage.
 
         :param string field: The distinct field to projection
         :param dict query: set of couple of (field name, field value).
@@ -677,10 +671,9 @@ class Storage(DataBase):
     def find_elements(
             self,
             query=None, limit=0, skip=0, sort=None, projection=None,
-            with_count=False
+            tags=None, with_count=False
     ):
-        """
-        Find elements corresponding to input request and in taking care of
+        """Find elements corresponding to input request and in taking care of
         limit, skip and sort find parameters.
 
         :param dict query: set of couple of (field name, field value).
@@ -689,6 +682,7 @@ class Storage(DataBase):
         :param list sort: contains a list of couples of field (name, ASC/DESC)
             or field name which denots an implicitelly ASC order.
         :param dict projection: key names to keep from elements.
+        :param list tags: search tags.
         :param bool with_count: If True (False by default), add count to the
             result.
 
@@ -698,37 +692,37 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def remove_elements(self, ids=None, _filter=None, cache=False):
-        """
-        Remove elements identified by the unique input ids
+    def remove_elements(self, ids=None, _filter=None, tags=None, cache=False):
+        """Remove elements identified by the unique input ids.
 
         :param ids: ids of elements to delete.
         :type ids: list of str
         :param dict _filter: removing filter.
         :param Filter _filter: additional filter to use if not None.
+        :param list tags: element tags to remove.
         :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
     def __delitem__(self, ids):
-        """
-        Python shortcut to the remove_elements method.
-        """
+        """Python shortcut to the remove_elements method."""
 
         return self.remove_elements(ids=ids)
 
     def __isub__(self, ids):
-        """Python shortcut to the remove_elements method.
-        """
+        """Python shortcut to the remove_elements method."""
 
         self.remove_elements(ids=ids)
 
-    def put_element(self, element, _id=None, cache=False):
+    def put_element(
+        self, element, _id=None, tags=None, version=None, cache=False
+    ):
         """Put an element identified by input id.
 
         :param str _id: element id to update.
         :param dict element: element to put (couples of field (name,value)).
+        :param list tags: element indexed tags.
         :param bool cache: use query cache if True (False by default).
 
         :return: True if updated.
@@ -738,20 +732,31 @@ class Storage(DataBase):
         raise NotImplementedError()
 
     def __setitem__(self, _id, element):
-        """
-        Python shortcut for the put_element method.
-        """
+        """Python shortcut for the put_element method."""
 
         self.put_element(_id=_id, element=element)
 
     def __iadd__(self, element):
-        """Python shortcut for the put_element method.
-        """
+        """Python shortcut for the put_element method."""
 
-        self.put_element(element=element)
+        if isinstance(element, list):
+            self.put_elements(elements=element)
 
-    def count_elements(self, query=None):
-        """Count elements corresponding to the input query
+        else:
+            self.put_element(element=element)
+
+    def put_elements(self, elements, tags=None, cache=False):
+        """Put list of elements at a time.
+
+        :param list elements: elements to put.
+        :param list tags: element indexed tags.
+        :param bool cache: use query cache if True (False by default)."""
+
+        for element in elements:
+            self.put_element(element)
+
+    def count_elements(self, query=None, tags=None):
+        """Count elements corresponding to the input query.
 
         :param dict query: query which contain set of couples (key, value)
 
@@ -759,21 +764,19 @@ class Storage(DataBase):
         :rtype: int
         """
 
-        cursor = self.find_elements(query=query)
+        cursor = self.find_elements(query=query, tags=None)
 
         result = len(cursor)
 
         return result
 
     def __len__(self):
-        """Python shortcut to the count_elements method.
-        """
+        """Python shortcut to the count_elements method."""
 
         return self.count_elements()
 
     def _find(self, *args, **kwargs):
-        """Find operation dedicated to technology implementation.
-        """
+        """Find operation dedicated to technology implementation."""
 
         raise NotImplementedError()
 
@@ -802,8 +805,7 @@ class Storage(DataBase):
         raise NotImplementedError()
 
     def _count(self, *args, **kwargs):
-        """Count operation dedicated to technology implementation.
-        """
+        """Count operation dedicated to technology implementation."""
 
         raise NotImplementedError()
 
@@ -829,8 +831,8 @@ class Storage(DataBase):
         return result
 
     def copy(self, target):
-        """
-        Copy self content into target storage.
+        """Copy self content into target storage.
+
         target type must implement the same class in cstorage packege as self.
         If self implements directly cstorage.Storage, we don't care about
         target type
@@ -879,14 +881,12 @@ Storage types must be of the same type.'.format(self, target))
         raise NotImplementedError()
 
     def _element_id(self, element):
-        """Get element id related to self behavior
-        """
+        """Get element id related to self behavior."""
 
         raise NotImplementedError()
 
     def _get_category(self, *args, **kwargs):
-        """Get configuration category for self storage.
-        """
+        """Get configuration category for self storage."""
 
         prefix = self.data_type
 
@@ -990,20 +990,17 @@ class Cursor(object):
 
     @property
     def cursor(self):
-        """Get technology implementation cursor.
-        """
+        """Get technology implementation cursor."""
 
         return self._cursor
 
     def __len__(self):
-        """Get number of cursor items.
-        """
+        """Get number of cursor items."""
 
         raise NotImplementedError()
 
     def __iter__(self):
-        """Iterate on cursor items.
-        """
+        """Iterate on cursor items."""
 
         raise NotImplementedError()
 
@@ -1013,4 +1010,5 @@ class Cursor(object):
         :param index: An integer or slice index to be applied to this cursor.
         :type index: int or slice
         """
+
         raise NotImplementedError()

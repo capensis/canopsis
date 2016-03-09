@@ -193,8 +193,7 @@ class Middleware(Configurable):
     CONF_RESOURCE = 'middleware/middleware.conf'
 
     class Error(Exception):
-        """Errors raised by the Middleware class.
-        """
+        """Handle Middleware erros."""
 
     def __init__(
             self,
@@ -203,49 +202,32 @@ class Middleware(Configurable):
             auto_connect=True, safe=False,
             conn_timeout=20000, in_timeout=100, out_timeout=2000,
             ssl=False, ssl_key=None, ssl_cert=None, user=None, pwd=None,
+            proxies=None,
             *args, **kwargs
     ):
         """
-        :param uri: middleware uri to connect to. If other uri parameters are
+        :param str uri: middleware uri to connect to. If other uri params are
             avoided (protocol, data_type, data_scope, host, port, path, user,
             pwd).
-        :param protocol: protocol managed if uri is not given.
+        :param str protocol: protocol managed if uri is not given.
         :param data_type: data type (typed, timed, event, etc.) managed if not
             uri.
-        :param data_data_scope: data scope (perfdata, entities, etc.).
-        :param host: host name.
-        :param port: port.
-        :param path: path name (end of the uri, could contains information
+        :param str data_scope: data scope (perfdata, entities, etc.).
+        :param str host: host name.
+        :param int port: port.
+        :param str path: path name (end of the uri, could contains information
             such as db, virtual_host, etc.).
-        :param auto_connect: auto connect when (re-)configured.
-        :param safe: ensure output data.
-        :param conn_timeout: connection timeout in milliseconds.
-        :param in_timeout: input timeout in milliseconds.
-        :param out_timeout: output timeout in milliseconds.
-        :param ssl: ssl mode
-        :param ssl_key: ssl keys file.
-        :param ssl_cert: ssl certification file.
-        :param user: user
-        :param pwd: password
-
-        :type uri: str
-        :type protocol: str
-        :type data_type: str
-        :type data_scope: str
-        :type host: str
-        :type port: int
-        :type path: str
-        :type auto_connect: bool
-        :type backend: str
-        :type safe: bool
-        :type conn_timeout: int
-        :type in_timeout: int
-        :type out_timeout: int
-        :type ssl: bool
-        :type ssl_key: str
-        :type ssl_cert: str
-        :type user: str
-        :type pwd: str
+        :param bool auto_connect: auto connect when (re-)configured.
+        :param bool safe: ensure output data.
+        :param int conn_timeout: connection timeout in milliseconds.
+        :param int in_timeout: input timeout in milliseconds.
+        :param int out_timeout: output timeout in milliseconds.
+        :param bool ssl: ssl mode
+        :param str ssl_key: ssl keys file.
+        :param str ssl_cert: ssl certification file.
+        :param str user: user
+        :param str pwd: password
+        :param dict proxies: proxies to use.
         """
 
         super(Middleware, self).__init__(*args, **kwargs)
@@ -273,6 +255,7 @@ class Middleware(Configurable):
         self._ssl_cert = ssl_cert
         self._user = user
         self._pwd = pwd
+        self._proxies = proxies
 
     @property
     def conn(self):
@@ -286,8 +269,7 @@ class Middleware(Configurable):
         return result
 
     def _get_uri(self):
-        """Get uri in constructing it from individual uri parameters.
-        """
+        """Get uri in constructing it from individual uri parameters."""
 
         result = self._uri
 
@@ -467,6 +449,14 @@ class Middleware(Configurable):
     def pwd(self, value):
         self._pwd = value
 
+    @property
+    def proxies(self):
+        return self._proxies
+
+    @proxies.setter
+    def proxies(self, value):
+        self._proxies = value
+
     def connect(self):
         """Connect this database.
 
@@ -529,8 +519,7 @@ class Middleware(Configurable):
             self.logger.debug("%s is already disconnected" % self)
 
     def _disconnect(self):
-        """Method to implement in order to disconnect this middleware.
-        """
+        """Method to implement in order to disconnect this middleware."""
 
         raise NotImplementedError()
 
@@ -542,7 +531,7 @@ class Middleware(Configurable):
         return False
 
     def reconnect(self):
-        """Try to reconnect and returns connection result
+        """Try to reconnect and returns connection result.
 
         :return: True if connected
         :rtype: bool
@@ -655,7 +644,7 @@ class Middleware(Configurable):
 
     @classmethod
     def get_protocols(cls):
-        """Get all protocols declared in the class hierarchy of cls
+        """Get all protocols declared in the class hierarchy of cls.
 
         :return: set of protocols registered in the class tree
          of input cls

@@ -193,7 +193,7 @@ class TimeSerie(Configurable):
         if not meta:
             meta = {}
 
-        transform_method = meta.get('value', {}).get('type', None)
+        transform_method = meta.get('type')
         points = apply_transform(points, method=transform_method)
         points_len = len(points)
 
