@@ -30,6 +30,7 @@ from inspect import getargspec
 
 from canopsis.common.utils import ensure_iterable, isiterable
 
+from urlparse import parse_qs
 from gzip import GzipFile
 from json import loads, dumps
 from math import isnan, isinf
@@ -199,10 +200,10 @@ class route(object):
         @wraps(function)
         def interceptor(*args, **kwargs):
             if 'gzip' in request.get_header('Content-Encoding', ''):
-                params = {}
-
                 with GzipFile(fileobj=request.body) as gzipped_body:
                     body = gzipped_body.read()
+
+                params = parse_qs(body)
 
             else:
                 params = request.params  # request params
@@ -239,6 +240,10 @@ class route(object):
                 else:
                     # TODO: remove reference from bottle
                     param = params.get(body_param)
+
+                    if isiterable(param, is_str=False):
+                        param = param[0]
+
                 # if param exists add it in kwargs in deserializing it
                 if param is not None:
                     try:
