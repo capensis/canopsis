@@ -30,6 +30,7 @@ from inspect import getargspec
 
 from canopsis.common.utils import ensure_iterable, isiterable
 
+from gzip import GzipFile
 from json import loads, dumps
 from math import isnan, isinf
 from bottle import request, HTTPError, HTTPResponse
@@ -197,15 +198,23 @@ class route(object):
         # generate an interceptor
         @wraps(function)
         def interceptor(*args, **kwargs):
-            params = request.params  # request params
+            if 'gzip' in request.get_header('Content-Encoding', ''):
+                params = {}
+
+                with GzipFile(fileobj=request.body) as gzipped_body:
+                    body = gzipped_body.read()
+
+            else:
+                params = request.params  # request params
+                body = request.body.readline()
 
             if self.raw_body:
-                kwargs['body'] = request.body.readline()
+                kwargs['body'] = body
 
             else:
                 # params are request params
                 try:
-                    loaded_body = loads(request.body.readline())
+                    loaded_body = loads(body)
                 except (ValueError, TypeError):
                     pass
                 else:
