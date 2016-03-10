@@ -38,6 +38,20 @@ function easy_install_all_libs() {
 	easy_install_pylib RestrictedPython
 	easy_install_pylib six
 	easy_install_pylib influxdb
+	easy_install_pylib extras
+	easy_install_pylib fixtures
+	easy_install_pylib funcsigs
+	easy_install_pylib fuzzywuzzy
+	easy_install_pylib lettuce
+	easy_install_pylib linecache2
+	easy_install_pylib pbr
+	easy_install_pylib pyrsistent
+	easy_install_pylib python-mimeparse
+	easy_install_pylib python-subunit
+	easy_install_pylib sure
+	easy_install_pylib testtools
+	easy_install_pylib traceback2
+	easy_install_pylib unittest2
 }
 
 function install(){
