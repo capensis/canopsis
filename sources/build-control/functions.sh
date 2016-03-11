@@ -417,6 +417,37 @@ function install_dir() {
     rm $DIRNAME.tar
 }
 
+function install_pytests() {
+    project=$1
+
+    if [ -e test ]
+    then
+        UNITTESTDIR=$PREFIX/var/lib/canopsis/unittest/$project
+        mkdir -p $UNITTESTDIR
+
+        if [ ! -e $UNITTESTDIR/test ]
+        then
+            ln -s $UNITTESTDIR $UNITTESTDIR/test
+        fi
+
+        cd test
+        tar -c . | tar xh -C $UNITTESTDIR
+        check_code $? "Impossible to copy unittest"
+        cd ..
+    fi
+
+    if [ -e features ]
+    then
+        FUNCTESTDIR=$PREFIX/var/lib/canopsis/functionnal-tests
+        mkdir -p $FUNCTESTDIR
+
+        cd features
+        tar -c . | tar xh -C $FUNCTESTDIR
+        check_code $? "Impossible to copy functionnal tests"
+        cd ..
+    fi
+}
+
 function extra_deps() {
     if [ $CPSNODEPS -ne 1 ]
     then

@@ -28,11 +28,7 @@ install_requires = [
 ]
 
 setup(
-    name='schemas',
     description='Canopsis schemas',
     install_requires=install_requires,
-    keywords='schema',
-    author='Capensis',
-    author_email='teamcanopsis@capensis.fr',
-    test_suite='test',
-    )
+    keywords='schema'
+)
