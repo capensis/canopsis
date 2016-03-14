@@ -10,6 +10,7 @@ Base
    :maxdepth: 1
    :titlesonly:
 
+   fr__functionnal-tests
    fr__architecture
    fr__schema
    fr__configuration
@@ -39,6 +40,7 @@ High-Level features
    :maxdepth: 1
    :titlesonly:
 
+   fr__monitoring
    fr__alarm
    fr__serie
    fr__category-chart
