@@ -21,6 +21,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "David Delassus", "2016/03/14", "0.2", "Document validation", "Florent Demeulenaere"
    "David Delassus", "2016/03/14", "0.1", "Document creation", ""
 
 Contents
@@ -41,7 +42,7 @@ Functionnal tests are based on [lettuce](http://lettuce.it) and **MUST** describ
 How-to
 ------
 
-Functionnal tests dexcription are written in ``<feature-name>.feature`` files in
+Functionnal tests description are written in ``<feature-name>.feature`` files in
 the folder ``features`` of the Python project.
 
 A file named ``<feature-name>.py`` will be placed with the ``.feature`` file to

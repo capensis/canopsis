@@ -22,6 +22,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "David Delassus", "2016/03/14", "1.0", "Document validation", "Florent Demeulenaere"
    "David Delassus", "2016/03/14", "1.0", "Document creation", ""
 
 Contents
