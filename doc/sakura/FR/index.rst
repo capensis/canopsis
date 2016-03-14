@@ -10,6 +10,7 @@ Base
    :maxdepth: 1
    :titlesonly:
 
+   fr__functionnal-tests
    fr__architecture
    fr__schema
    fr__configuration
