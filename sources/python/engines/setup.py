@@ -29,7 +29,6 @@ install_requires = [
     'canopsis.middleware',
     'canopsis.context',
     'canopsis.event',
-    'canopsis.pbehavior',
     'canopsis.schema',
     'canopsis.sla',
     'canopsis.tools',
