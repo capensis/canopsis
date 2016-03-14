@@ -33,6 +33,7 @@ High-Level features
    :maxdepth: 1
    :titlesonly:
 
+   tr__monitoring
    tr__alarm
    tr__serie
    tr__statistics
