@@ -241,7 +241,7 @@ class route(object):
                     # TODO: remove reference from bottle
                     param = params.get(body_param)
 
-                    if isiterable(param, is_str=False):
+                    if isinstance(param, list):
                         param = param[0]
 
                 # if param exists add it in kwargs in deserializing it
