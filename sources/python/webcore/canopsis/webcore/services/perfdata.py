@@ -35,7 +35,7 @@ def exports(ws):
             timewindow = TimeWindow(**timewindow)
 
         result = manager.count(
-            metric_id=metric_id, timewindow=timewindow, tags=tags
+            metric_id=metric_id, timewindow=timewindow, meta=tags
         )
 
         return result
@@ -75,15 +75,15 @@ def exports(ws):
         for metric_id in metrics:
             # tags -> _meta
             pts, tags = manager.get(
-                metric_id=metric_id, with_tags=True,
+                metric_id=metric_id, with_meta=True,
                 timewindow=timewindow, limit=limit, skip=skip,
-                tags=tags
+                meta=tags
             )
 
             tags['data_id'] = metric_id
 
             if timeserie is not None:
-                pts = timeserie.calculate(pts, timewindow, tags=tags)
+                pts = timeserie.calculate(pts, timewindow, meta=tags)
 
             if with_tags:
                 result.append({
@@ -100,7 +100,7 @@ def exports(ws):
 
     @route(ws.application.put, payload=['metric_id', 'points', 'tags'])
     def perfdata(metric_id, points, tags=None):
-        manager.put(metric_id=metric_id, points=points, tags=tags)
+        manager.put(metric_id=metric_id, points=points, meta=tags)
 
         result = points
 
@@ -111,7 +111,7 @@ def exports(ws):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
-        manager.remove(metric_id=metric_id, timewindow=timewindow, tags=tags)
+        manager.remove(metric_id=metric_id, timewindow=timewindow, meta=tags)
 
         result = None
 
