@@ -195,7 +195,6 @@ then
         done
     fi
 
-    launch_update_pylibs
     fix_permissions
     launch_unittests
 fi

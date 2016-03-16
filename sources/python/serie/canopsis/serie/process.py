@@ -56,12 +56,12 @@ def serie_processing(engine, event, manager=None, logger=None, **_):
         manager = singleton_per_scope(Serie)
 
     # Generate metric metadata
-    metric_meta = {
-        meta: event[meta]
-        for meta in ['unit', 'min', 'max', 'warn', 'crit']
-        if event.get(meta, None) is not None
+    metric_tags = {
+        tags: event[tags]
+        for tags in ['unit', 'min', 'max', 'warn', 'crit']
+        if event.get(tags, None) is not None
     }
-    metric_meta['type'] = 'GAUGE'
+    metric_tags['type'] = 'GAUGE'
 
     # Generate metric entity
     entity = {
@@ -81,6 +81,6 @@ def serie_processing(engine, event, manager=None, logger=None, **_):
     perfdata.put(
         entity_id,
         points=manager.calculate(event),
-        meta=metric_meta,
+        tags=metric_tags,
         cache=False
     )

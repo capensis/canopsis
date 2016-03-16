@@ -59,7 +59,7 @@ class CTXPerfDataRegistry(CTXPropRegistry):
 
     def _get(self, ids, query, *args, **kwargs):
 
-        return self._do(cmd=self.manager.get, ids=ids, with_meta=False)
+        return self._do(cmd=self.manager.get, ids=ids, with_tags=False)
 
     def _count(self, ids, query, *args, **kwargs):
 

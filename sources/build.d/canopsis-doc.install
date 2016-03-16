@@ -20,7 +20,7 @@ function update_documentation() {
     chown -R $HUSER:$HGROUP $PREFIX/var/lib/canopsis/doc
     chown -R $HUSER:$HGROUP $PREFIX/var/www/doc
 
-    echo "--- Building documentation
+    echo "--- Building documentation"
 
     launch_cmd 1 "cd $PREFIX/var/lib/canopsis/doc && ./build.sh"
     launch_cmd 1 "cp -r $PREFIX/var/lib/canopsis/doc/_build/html/* $PREFIX/var/www/doc"
