@@ -183,6 +183,7 @@ class RightsModule(MigrationModule):
                     role.get('profile', None)
                 )
 
+            self.logger.info('Updating role: {0}'.format(role['_id']))
             record = self.manager.get_role(role['_id'])
 
             rights = record.get('rights', {})
