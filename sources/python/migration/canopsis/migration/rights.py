@@ -120,7 +120,7 @@ class RightsModule(MigrationModule):
 
             for fpath in os.listdir(path):
                 if fpath.endswith('.json'):
-                    with open(path) as f:
+                    with open(fpath) as f:
                         data = ensure_iterable(json.load(f))
 
                     loaded += data
