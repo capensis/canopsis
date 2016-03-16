@@ -1,5 +1,8 @@
 {
 	"type": "object",
+	"metadata": {
+		"icon": "fa fa-envelope"
+	},
 	"categories": [{
 		"title": "General",
 		"keys": ["subject", "body", "recipients", "html"]
