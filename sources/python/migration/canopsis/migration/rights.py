@@ -173,17 +173,14 @@ class RightsModule(MigrationModule):
                     role.get('profile', None)
                 )
 
-                record = self.manager.get_role(role['_id'])
+            record = self.manager.get_role(role['_id'])
 
-                self.manager.update_rights(
-                    role['_id'],
-                    'role',
-                    role.get('rights', {}),
-                    record
-                )
-                self.manager.update_group(
-                    role['_id'],
-                    'role',
-                    role.get('groups', []),
-                    record
-                )
+            rights = record.get('rights', {})
+            groups = record.get('groups', [])
+
+            rights.update(role.get('rights', {}))
+            groups += role.get('groups', [])
+            groups = list(set(groups))  # make groups unique
+
+            self.manager.update_rights(role['_id'], 'role', rights, record)
+            self.manager.update_group(role['_id'], 'role', groups, record)
