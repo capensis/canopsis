@@ -23,6 +23,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.model import Parameter
 
+from canopsis.common.utils import ensure_iterable
 from canopsis.organisation.rights import Rights
 
 from uuid import uuid1
@@ -53,7 +54,7 @@ class RightsModule(MigrationModule):
     @actions_path.setter
     def actions_path(self, value):
         if value is None:
-            value = '~/opt/mongodb/load.d/rights/actions_ids.json'
+            value = '~/opt/mongodb/load.d/rights/actions_ids'
 
         self._actions_path = os.path.expanduser(value)
 
@@ -67,7 +68,7 @@ class RightsModule(MigrationModule):
     @users_path.setter
     def users_path(self, value):
         if value is None:
-            value = '~/opt/mongodb/load.d/rights/default_users.json'
+            value = '~/opt/mongodb/load.d/rights/default_users'
 
         self._users_path = os.path.expanduser(value)
 
@@ -81,7 +82,7 @@ class RightsModule(MigrationModule):
     @roles_path.setter
     def roles_path(self, value):
         if value is None:
-            value = '~/opt/mongodb/load.d/rights/default_roles.json'
+            value = '~/opt/mongodb/load.d/rights/default_roles'
 
         self._roles_path = os.path.expanduser(value)
 
@@ -115,28 +116,37 @@ class RightsModule(MigrationModule):
 
     def load(self, path):
         try:
-            with open(path) as f:
-                data = json.load(f)
+            loaded = []
+
+            for fpath in os.listdir(path):
+                if fpath.endswith('.json'):
+                    fullpath = os.path.join(path, fpath)
+
+                    with open(fullpath) as f:
+                        data = ensure_iterable(json.load(f))
+
+                    loaded += data
 
         except Exception as err:
-            self.logger.error('Unable to load JSON file "{0}": {1}'.format(
+            self.logger.error('Unable to load JSON files "{0}": {1}'.format(
                 path,
                 err
             ))
 
-            data = {}
+            loaded = []
 
-        return data
+        return loaded
 
     def add_actions(self, data, clear):
-        for action_id in data:
-            if self.manager.get_action(action_id) is None or clear:
-                self.logger.info('Initialize action: {0}'.format(action_id))
+        for action in data:
+            for aid in action:
+                if self.manager.get_action(aid) is None or clear:
+                    self.logger.info('Initialize action: {0}'.format(aid))
 
-                self.manager.add(
-                    action_id,
-                    data[action_id].get('desc', 'Empty description')
-                )
+                    self.manager.add(
+                        aid,
+                        action[aid].get('desc', 'Empty description')
+                    )
 
     def add_users(self, data, clear):
         for user in data:
@@ -173,17 +183,15 @@ class RightsModule(MigrationModule):
                     role.get('profile', None)
                 )
 
-                record = self.manager.get_role(role['_id'])
+            self.logger.info('Updating role: {0}'.format(role['_id']))
+            record = self.manager.get_role(role['_id'])
 
-                self.manager.update_rights(
-                    role['_id'],
-                    'role',
-                    role.get('rights', {}),
-                    record
-                )
-                self.manager.update_group(
-                    role['_id'],
-                    'role',
-                    role.get('groups', []),
-                    record
-                )
+            rights = record.get('rights', {})
+            groups = record.get('groups', [])
+
+            rights.update(role.get('rights', {}))
+            groups += role.get('groups', [])
+            groups = list(set(groups))  # make groups unique
+
+            self.manager.update_rights(role['_id'], 'role', rights, record)
+            self.manager.update_group(role['_id'], 'role', groups, record)
