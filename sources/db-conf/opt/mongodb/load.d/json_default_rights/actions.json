@@ -323,5 +323,26 @@
         "crecord_type" : "action",
         "desc": "Rights on view: Accounts",
         "type": "RW"
+    },
+    {
+        "_id" : "models_taskmail",
+        "loader_id" : "models_taskmail",
+        "crecord_name" : "models_taskmail",
+        "crecord_type" : "action",
+        "desc": "Rights on task: Mail"
+    },
+    {
+        "_id" : "models_taskdataclean",
+        "loader_id" : "models_taskdataclean",
+        "crecord_name" : "models_taskdataclean",
+        "crecord_type" : "action",
+        "desc": "Rights on task: Dataclean"
+    },
+    {
+        "_id" : "models_tasklinklist",
+        "loader_id" : "models_tasklinklist",
+        "crecord_name" : "models_tasklinklist",
+        "crecord_type" : "action",
+        "desc": "Rights on task: Linklist"
     }
 ]
