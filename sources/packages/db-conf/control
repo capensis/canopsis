@@ -291,6 +291,7 @@ function post_update() {
 
     echo "--- Update databases"
     launch_cmd 1 canopsis-filldb --update
+    launch_cmd 1 $PREFIX/bin/webmodulemanager init
 }
 
 function purge() {
