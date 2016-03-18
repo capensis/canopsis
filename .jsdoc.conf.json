@@ -1,6 +1,6 @@
 {
     "recurse": true,
-    "plugins": ["node_modules/canopsis-ui-toolbelt/externals/jsdoc-template/plugins/widget-tag"],
+    "plugins": ["node_modules/canopsis-ui-toolbelt/externals/jsdoc-template/plugins/widget-tag", "plugins/markdown"],
     "source": {
         "excludePattern": "externals|node_modules"
     },
