@@ -82,8 +82,6 @@ class PerfData(MiddlewareRegistry):
     def _data_id_tags(self, metric_id, meta=None):
 
         tags = {} if meta is None else meta.copy()
-        if tags is None:
-            tags = {}
 
         entity = self[PerfData.CONTEXT_MANAGER].get_entity_by_id(metric_id)
 
