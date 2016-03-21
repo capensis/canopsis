@@ -271,6 +271,7 @@ function post_update_mongodb() {
 function post_update_influxdb() {
     echo "--- InfluxDB"
 
+    launch_cmd 1 sed -i "\"s/auth-enabled = false/auth-enabled = true/\"" $PREFIX/etc/influxdb.conf
     launch_cmd 1 service influxdb start
     wait_for_influx
 }
