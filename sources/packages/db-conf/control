@@ -38,6 +38,26 @@ function wait_for_mongo() {
     done
 }
 
+function wait_for_influx() {
+
+    echo -n "Safe wait "
+
+    influx_ready=false
+    while ! $influx_ready
+    do
+        echo "show databases" | $PREFIX/bin/influx -username admin -password $INFLUXDB_ADMIN_PASSWD >/dev/null 2>&1
+
+        if [ $? -eq 0 ]
+        then
+            echo " ready"
+            influx_ready=true
+        else
+            echo -n "."
+            sleep 1
+        fi
+    done
+}
+
 function wait_for_mongo_install() {
     echo -n "Safe wait (may be long the first time) "
 
@@ -50,6 +70,27 @@ function wait_for_mongo_install() {
         then
             echo " ready"
             mongo_ready=true
+        else
+            echo -n "."
+            sleep 1
+        fi
+    done
+}
+
+
+function wait_for_influx_install() {
+
+    echo -n "Safe wait "
+
+    influx_ready=false
+    while ! $influx_ready
+    do
+        echo "show databases" | $PREFIX/bin/influx >/dev/null 2>&1
+
+        if [ $? -eq 0 ]
+        then
+            echo " ready"
+            influx_ready=true
         else
             echo -n "."
             sleep 1
@@ -127,6 +168,7 @@ function post_install_influxdb() {
     echo "--- InfluxDB"
 
     launch_cmd 1 service influxdb start
+    wait_for_influx_install
 
     # Define user
     if [ "x$INFLUXDB_ADMIN_PASSWD" == "x" ]
@@ -229,7 +271,9 @@ function post_update_mongodb() {
 function post_update_influxdb() {
     echo "--- InfluxDB"
 
+    launch_cmd 1 sed -i "\"s/auth-enabled = false/auth-enabled = true/\"" $PREFIX/etc/influxdb.conf
     launch_cmd 1 service influxdb start
+    wait_for_influx
 }
 
 function post_update() {

@@ -15,37 +15,37 @@ PROJECTS[12]='ctxprop'
 PROJECTS[13]='event'
 PROJECTS[14]='kombu'
 PROJECTS[15]='context'
-PROJECTS[16]='perfdata'
-PROJECTS[17]='tools'
-PROJECTS[18]='engines'
-PROJECTS[19]='connectors'
-PROJECTS[20]='cli'
-PROJECTS[21]='organisation'
-PROJECTS[22]='check'
-PROJECTS[23]='monitoring'
-PROJECTS[24]='graph'
-PROJECTS[25]='topology'
-PROJECTS[26]='sla'
+PROJECTS[16]='monitoring'
+PROJECTS[17]='perfdata'
+PROJECTS[18]='tools'
+PROJECTS[19]='sla'
+PROJECTS[20]='engines'
+PROJECTS[21]='connectors'
+PROJECTS[22]='cli'
+PROJECTS[23]='organisation'
+PROJECTS[24]='check'
+PROJECTS[25]='graph'
+PROJECTS[26]='topology'
 PROJECTS[27]='linklist'
 PROJECTS[28]='vevent'
 PROJECTS[29]='ccalendar'
 PROJECTS[30]='pbehavior'
 PROJECTS[31]='downtime'
-PROJECTS[32]='webcore'
-PROJECTS[33]='serie'
-PROJECTS[34]='session'
-PROJECTS[35]='stats'
-PROJECTS[36]='alerts'
+PROJECTS[32]='session'
+PROJECTS[33]='webcore'
+PROJECTS[34]='serie'
+PROJECTS[35]='alerts'
+PROJECTS[36]='stats'
 PROJECTS[37]='migration'
 PROJECTS[38]='influxdb'
 PROJECTS[39]='opentsdb'
 PROJECTS[40]='whisper'
 
-function build(){
+function build() {
 	true
 }
 
-function install(){
+function install() {
     # install all projects
     for project in "${PROJECTS[@]}"
     do
@@ -56,21 +56,7 @@ function install(){
         launch_log $NAME 'python setup.py install'
         check_code $? "Impossible to install $project"
 
-        if [ -e test ]
-        then
-            UNITTESTDIR=$PREFIX/var/lib/canopsis/unittest/$project
-            mkdir -p $UNITTESTDIR
-
-            if [ ! -e $UNITTESTDIR/test ]
-            then
-                ln -s $UNITTESTDIR $UNITTESTDIR/test
-            fi
-
-            cd test
-            tar -c . | tar xh -C $UNITTESTDIR
-            check_code $? "Impossible to copy unittest"
-            cd ..
-        fi
+        install_pytests "$project"
 
         chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
     done
@@ -81,7 +67,7 @@ function install(){
     # launch_log $NAME fab -H localhost -u $HUSER -p canopsis setup
 }
 
-function update(){
+function update() {
     # install all projects
     for project in "${PROJECTS[@]}"
     do
@@ -92,21 +78,7 @@ function update(){
         launch_log $NAME "python setup.py install --no-conf"
         check_code $? "Impossible to update $project"
 
-        if [ -e test ]
-        then
-            UNITTESTDIR=$PREFIX/var/lib/canopsis/unittest/$project
-            mkdir -p $UNITTESTDIR
-
-            if [ ! -e $UNITTESTDIR/test ]
-            then
-                ln -s $UNITTESTDIR $UNITTESTDIR/test
-            fi
-
-            cd test
-            tar -c . | tar xh -C $UNITTESTDIR
-            check_code $? "Impossible to copy unittest"
-            cd ..
-        fi
+        install_pytests "$project"
 
         chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
         update_conffiles ./etc

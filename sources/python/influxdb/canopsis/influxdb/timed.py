@@ -73,14 +73,21 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
         return result
 
     def get(
-            self, data_id, timewindow=None, limit=0, with_tags=False, tags=None,
-            **_
+        self,
+        data_id,
+        timewindow=None,
+        limit=0,
+        with_tags=False,
+        tags=None,
+        **_
     ):
 
         query = self._timewindowtowhere(timewindow=timewindow)
 
         points = self.get_elements(
-            projection=None if with_tags else 'value', ids=data_id, query=query,
+            projection=None if with_tags else 'value',
+            ids=data_id,
+            query=query,
             limit=limit
         )
 

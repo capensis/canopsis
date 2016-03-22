@@ -121,7 +121,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
 
             manager.put(
                 metric_id=metric_id, points=[(timestamp, value)],
-                tags=perf_data, cache=True
+                meta=perf_data, cache=True
             )
 
     return event

@@ -29,13 +29,13 @@ def exports(ws):
 
     manager = singleton_per_scope(PerfData)
 
-    @route(ws.application.post, payload=['metric_id', 'timewindow', 'tags'])
-    def perfdata_count(metric_id, timewindow=None, tags=None):
+    @route(ws.application.post, payload=['metric_id', 'timewindow', 'meta'])
+    def perfdata_count(metric_id, timewindow=None, meta=None):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
         result = manager.count(
-            metric_id=metric_id, timewindow=timewindow, tags=tags
+            metric_id=metric_id, timewindow=timewindow, meta=meta
         )
 
         return result
@@ -43,14 +43,14 @@ def exports(ws):
     @route(
         ws.application.post,
         payload=[
-            'metric_id', 'with_tags',
+            'metric_id', 'with_meta',
             'limit', 'skip', 'period',
             'timewindow', 'period', 'timeserie'
         ]
     )
     def perfdata(
-        metric_id, timewindow=None, period=None, with_tags=True,
-        limit=0, skip=0, timeserie=None, tags=None
+        metric_id, timewindow=None, period=None, with_meta=True,
+        limit=0, skip=0, timeserie=None, meta=None
     ):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
@@ -73,22 +73,22 @@ def exports(ws):
         result = []
 
         for metric_id in metrics:
-            # tags -> _meta
-            pts, tags = manager.get(
-                metric_id=metric_id, with_tags=True,
+            # meta -> _meta
+            pts, meta = manager.get(
+                metric_id=metric_id, with_meta=True,
                 timewindow=timewindow, limit=limit, skip=skip,
-                tags=tags
+                meta=meta
             )
 
-            tags['data_id'] = metric_id
+            meta['data_id'] = metric_id
 
             if timeserie is not None:
-                pts = timeserie.calculate(pts, timewindow, tags=tags)
+                pts = timeserie.calculate(pts, timewindow, meta=meta)
 
-            if with_tags:
+            if with_meta:
                 result.append({
                     'points': pts,
-                    'tags': [tags]
+                    'meta': meta
                 })
 
             else:
@@ -98,20 +98,20 @@ def exports(ws):
 
         return (result, len(result))
 
-    @route(ws.application.put, payload=['metric_id', 'points', 'tags'])
-    def perfdata(metric_id, points, tags=None):
-        manager.put(metric_id=metric_id, points=points, tags=tags)
+    @route(ws.application.put, payload=['metric_id', 'points', 'meta'])
+    def perfdata(metric_id, points, meta=None):
+        manager.put(metric_id=metric_id, points=points, meta=meta)
 
         result = points
 
         return result
 
-    @route(ws.application.delete, payload=['metric_id', 'timewindow', 'tags'])
-    def perfdata(metric_id, timewindow=None, tags=None):
+    @route(ws.application.delete, payload=['metric_id', 'timewindow', 'meta'])
+    def perfdata(metric_id, timewindow=None, meta=None):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
-        manager.remove(metric_id=metric_id, timewindow=timewindow, tags=tags)
+        manager.remove(metric_id=metric_id, timewindow=timewindow, meta=meta)
 
         result = None
 

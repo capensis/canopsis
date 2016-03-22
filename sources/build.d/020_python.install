@@ -79,6 +79,6 @@ function install(){
 	launch_log $NAME "make install"
 	check_code $?
 	cd $SRC_PATH
-	install_pylib "setuptools" "0.6c11"
+	install_pylib "setuptools" "20.2.2"
 	chown $HUSER:$HGROUP -R $PREFIX/lib/python2.7
 }

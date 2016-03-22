@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["_id", "desc"]
+		"keys":["_id", "desc", "type"]
 	}],
 	"properties": {
 		"_id": {

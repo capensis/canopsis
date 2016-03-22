@@ -24,7 +24,7 @@ from canopsis.topology.manager import TopologyManager
 from canopsis.topology.elements import TopoEdge, TopoNode, Topology
 from canopsis.topology.rule.action import change_state, worst_state, best_state
 from canopsis.topology.rule.condition import at_least, _all, nok
-from canopsis.task.task import new_conf, TASK
+from canopsis.task.core import new_conf, TASK
 from canopsis.task.condition import condition
 
 from argparse import ArgumentParser
