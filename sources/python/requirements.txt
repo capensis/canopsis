@@ -16,7 +16,7 @@ supervisor==3.0a12
 isit==0.2.6
 icalendar==3.5
 pytz==2014.2
-kombu==2.5.10
+kombu==3.0.33
 polib==1.0.4
 python-ldap==2.4.13
 validictory==0.9.3
