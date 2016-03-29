@@ -19,7 +19,7 @@
 		},
 		"task": {"type": "string", "required": true},
 		"last_execution": {"type": "integer", "required": false, "role": "timestamp"},
-		"rrule": {"type": "string", "required": false},
+		"rrule": {"type": "string", "role": "rrule", "required": false},
 		"start": {"type": "integer", "required": false, "role": "timestamp"},
 		"jtype": {
 			"role": "simplelist",
