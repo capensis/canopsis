@@ -1,3 +1,4 @@
+setuptools==20.2.2
 simplejson==2.1.6
 pymongo==2.7.2
 pycurl==7.19.5.1
