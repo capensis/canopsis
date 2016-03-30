@@ -28,6 +28,8 @@ from dateutil.parser import parse
 
 from calendar import timegm
 
+from numbers import Number
+
 
 class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
     """InfluxDB storage dedicated to manage timed data."""
@@ -112,11 +114,14 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
         factor = 1e9
 
         for point in points:
+            value = point[1]
+            if isinstance(value, Number):
+                value = float(value)
             pointstoput.append(
                 {
                     'measurement': data_id,
                     'time': int(point[0] * factor),
-                    'fields': {'value': point[1]}
+                    'fields': {'value': value}
                 }
             )
 

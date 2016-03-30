@@ -274,7 +274,7 @@ class CompositeStorage(Storage):
 
         result = {}
 
-        names = data_id.split(CompositeStorage.PATH_SEPARATOR)
+        names = data_id.split(CompositeStorage.PATH_SEPARATOR)[1:]
 
         for path, name in zip(self.path, names):
             result[path] = unquote_plus(name)
