@@ -90,7 +90,8 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
             projection=None if with_tags else 'value',
             ids=data_id,
             query=query,
-            limit=limit
+            limit=limit,
+            tags=tags
         )
 
         _points, tags = [], {}
