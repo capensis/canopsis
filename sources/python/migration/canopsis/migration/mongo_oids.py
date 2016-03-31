@@ -95,7 +95,7 @@ class MongoOIDsModule(MigrationModule):
             for name in collections2rename:
                 collection = collections2rename[name]
 
-                newname = collectionname.replace('timed_', 'periodical_')
+                newname = name.replace('timed_', 'periodical_')
                 newname = newname.replace('periodic_', 'timed_')
 
                 collection.rename(newname)
