@@ -1,3 +1,4 @@
+setuptools==20.2.2
 simplejson==2.1.6
 pymongo==2.7.2
 pycurl==7.19.5.1
@@ -16,7 +17,7 @@ supervisor==3.0a12
 isit==0.2.6
 icalendar==3.5
 pytz==2014.2
-kombu==2.5.10
+kombu==3.0.33
 polib==1.0.4
 python-ldap==2.4.13
 validictory==0.9.3
