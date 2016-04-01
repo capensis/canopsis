@@ -23,7 +23,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.perfdata.manager import PerfData
 
-from canopsis.mongo.storage import MongoStorage
+from canopsis.mongo.core import MongoStorage
 
 from canopsis.perfdata.manager import PerfData
 
