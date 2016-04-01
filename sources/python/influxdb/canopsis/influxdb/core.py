@@ -353,6 +353,7 @@ def querytosql(query):
 
     for param in query:
 
+        valwop = []  # list of values with operators
         value = query[param]
 
         if isinstance(value, dict):
@@ -364,17 +365,19 @@ def querytosql(query):
                     raise NotImplementedError()
 
                 else:
-
-                    value = value[operator]
-                    operator = OPERATORS[operator]
+                    valwop.append((OPERATORS[operator], value[operator]))
 
         else:
-            operator = '='
+            valwop = [('=', value)]
 
-        if isinstance(value, basestring):
-            value = '"{0}"'.format(value)
+        for operator, value in valwop:
 
-        result = '{0} "{1}" {2} ({3}) AND'.format(result, param, operator, value)
+            if isinstance(value, basestring):
+                value = '\'{0}\''.format(value)
+
+            result = '{0} "{1}" {2} ({3}) AND'.format(
+                result, param, operator, value
+            )
 
     if result:
         result = result[:-len('AND')]

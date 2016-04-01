@@ -65,8 +65,10 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
         if timewindow is not None:
             factor = 1e9
             result = {
-                'time': {'$gte': int(timewindow.start() * factor)},
-                'time': {'$lte': int(timewindow.stop() * factor)}
+                'time': {
+                    '$gte': int(timewindow.start() * factor),
+                    '$lte': int(timewindow.stop() * factor)
+                }
             }
 
         else:
