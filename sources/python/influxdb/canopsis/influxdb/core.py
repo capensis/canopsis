@@ -371,10 +371,13 @@ def querytosql(query):
         else:
             operator = '='
 
-        result = '{0} "{1}" {2} ({3}),'.format(result, param, operator, value)
+        if isinstance(value, basestring):
+            value = '"{0}"'.format(value)
+
+        result = '{0} "{1}" {2} ({3}) AND'.format(result, param, operator, value)
 
     if result:
-        result = result[:-1]
+        result = result[:-len('AND')]
 
     return result
 
