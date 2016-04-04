@@ -201,7 +201,7 @@ class TimeSerie(Configurable):
 
         # if no period and max_points > len(points)
         if (
-                self.aggregation == NONE or
+                get_aggregation(self.aggregation) is None or
                 (
                     (not points) or self.period is None
                     and self.max_points > points_len
