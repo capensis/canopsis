@@ -69,7 +69,7 @@ def add_aggregation(name, function=None, push=False):
     Added aggregations are available through module properties.
     """
 
-    if push is False and name in _AGGREGATIONS:
+    if push is False and name.lower() in _AGGREGATIONS:
         raise AggregationError("name {0} already exists".format(name))
 
     def _setfunc(function):
@@ -83,6 +83,8 @@ def add_aggregation(name, function=None, push=False):
 
     else:
         _setfunc(function)
+
+    return function
 
 
 NONE = 'NONE'
