@@ -1,0 +1,20 @@
+NAME="webcore"
+
+function build(){
+	true
+}
+
+function install(){
+	cd $SRC_PATH/$NAME
+
+    mkdir -p $PREFIX/var/www
+    tar c . | tar xh -C $PREFIX/var/www
+    check_code $? "Impossible to deploy static files"
+
+    echo "define(function() { return '$(git log | head -1 | cut -d ' ' -f2)'; });" > $PREFIX/var/www/src/canopsis/commit.js
+
+}
+
+function update(){
+    install
+}

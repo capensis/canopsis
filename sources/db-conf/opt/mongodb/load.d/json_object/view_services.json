@@ -1,0 +1,48 @@
+{
+  "loader_id": "view.services",
+  "loader_no_update": true,
+  "crecord_name": "Services",
+  "id": "view.services",
+  "_id": "view.services",
+  "crecord_type": "view",
+  "crecord_write_time": 1400853201,
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "title": "container title vbox services2",
+    "_id": "test_view_vertical_container",
+    "items": [
+      {
+        "widget" : {
+          "widgetId" : "item_4d8d086e-c89a-507d-fae6-c8f86f962dbe",
+          "xtype" : "text",
+          "title" : "Global overview",
+          "series" : [
+            "cps_count_component",
+            "cps_count_resource",
+            "cps_states_component_info",
+            "cps_states_component_minor",
+            "cps_states_component_major",
+            "cps_states_component_critical",
+            "cps_states_resource_info",
+            "cps_states_resource_minor",
+            "cps_states_resource_major",
+            "cps_states_resource_critical"
+          ],
+          "mixins" : [ ],
+          "html" : "<table class=\"table table-bordered\" style=\"font-size:10px;text-align:center\" border=\"1\">\n    <tbody>\n        <tr>\n            <td colspan=\"4\">\n                Hosts : {{serie.cps_count_component}}\n            </td>\n        </tr>\n        <tr>\n            <td class=\"eventLikeGreen\">info {{serie.cps_states_component_info}}</td>\n            <td class=\"eventLikeYellow\">minor {{serie.cps_states_component_minor}}</td>\n            <td class=\"eventLikeOrange\">major {{serie.cps_states_component_major}}</td>\n            <td class=\"eventLikeRed\">critical {{serie.cps_states_component_critical}}</td>\n        </tr><tr>\n            <td colspan=\"4\">\n                Resources : {{serie.cps_count_resource}}\n            </td>\n        </tr>\n        <tr>\n            <td class=\"eventLikeGreen\">info {{serie.cps_states_resource_info}}</td>\n            <td class=\"eventLikeYellow\">minor {{serie.cps_states_resource_minor}}</td>\n            <td class=\"eventLikeOrange\">major {{serie.cps_states_resource_major}}</td>\n            <td class=\"eventLikeRed\">critical {{serie.cps_states_resource_critical}}</td>\n        </tr>\n    </tbody>\n</table>",
+          "tagName" : null,
+          "refreshInterval" : 0,
+          "events" : [ ]
+        },
+        "xtype" : "widgetwrapper",
+        "title" : "Services"
+      }
+    ],
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ]
+  }
+}

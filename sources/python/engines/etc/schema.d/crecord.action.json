@@ -1,0 +1,18 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["_id", "desc", "type"]
+	}],
+	"properties": {
+		"_id": {
+			"type": "string"
+		},
+		"desc": {
+			"type": "string"
+		},
+		"type": {
+			"type": "string"
+		}
+	}
+}

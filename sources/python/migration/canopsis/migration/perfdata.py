@@ -41,7 +41,8 @@ class PerfdataModule(MigrationModule):
         pass
 
     def update(self):
-        if self.get_version('perfdata') < 1:
+        # FIXME
+        if self.get_version('perfdata') < 1 and False:
             self.logger.info('Migrating to version 1')
 
             self.update_to_version_1()

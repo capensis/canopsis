@@ -21,15 +21,6 @@ function update_documentation() {
     chown -R $HUSER:$HGROUP $PREFIX/var/www/doc
 
     echo "--- Building documentation"
-    hash npm &> /dev/null
-
-    if [ $? -eq 1 ]; then
-        echo >&2 "npm not found. The Frontend API documentation will not be installed."
-    else
-        cd $PREFIX/var/www && npm install && npm run rst-doc
-        rm -Rf $PREFIX/var/lib/canopsis/doc/api/frontend
-        cp -R $PREFIX/var/www/docs/rst $PREFIX/var/lib/canopsis/doc/api/frontend
-    fi
 
     launch_cmd 1 "cd $PREFIX/var/lib/canopsis/doc && ./build.sh"
     launch_cmd 1 "cp -r $PREFIX/var/lib/canopsis/doc/_build/html/* $PREFIX/var/www/doc"

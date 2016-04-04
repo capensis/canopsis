@@ -1,0 +1,70 @@
+NAME="python-libs"
+
+function build(){
+	true
+}
+
+function easy_install_all_libs() {
+	easy_install_pylib simplejson
+	easy_install_pylib pymongo
+	easy_install_pylib pycurl
+	easy_install_pylib tornado
+	easy_install_pylib python-daemon
+	easy_install_pylib gevent
+	easy_install_pylib bottle
+	easy_install_pylib Beaker
+	easy_install_pylib mongodb_beaker
+	easy_install_pylib xmlrpclib
+	easy_install_pylib pyparsing
+	easy_install_pylib gunicorn
+	easy_install_pylib apscheduler
+	easy_install_pylib msgpack-python
+	easy_install_pylib supervisor
+	easy_install_pylib isit
+	easy_install_pylib icalendar
+	easy_install_pylib pytz
+	easy_install_pylib kombu
+	easy_install_pylib polib
+	easy_install_pylib python-ldap
+	easy_install_pylib validictory
+	easy_install_pylib psutil==1.0.1
+	easy_install_pylib pybars
+	easy_install_pylib PyMeta
+	easy_install_pylib greenlet
+	easy_install_pylib mock
+	easy_install_pylib lxml
+	easy_install_pylib requests
+	easy_install_pylib supervisor-wildcards
+	easy_install_pylib RestrictedPython
+	easy_install_pylib six
+	easy_install_pylib influxdb
+	easy_install_pylib extras
+	easy_install_pylib fixtures
+	easy_install_pylib funcsigs
+	easy_install_pylib fuzzywuzzy
+	easy_install_pylib lettuce
+	easy_install_pylib linecache2
+	easy_install_pylib pbr
+	easy_install_pylib pyrsistent
+	easy_install_pylib python-mimeparse
+	easy_install_pylib python-subunit
+	easy_install_pylib sure
+	easy_install_pylib testtools
+	easy_install_pylib traceback2
+	easy_install_pylib unittest2
+}
+
+function install(){
+	easy_install_all_libs
+
+	# Todo: Very dirty patch, see https://github.com/Supervisor/supervisor/issues/141
+	sed -i "156i\            if isinstance(value, bool):\n                value = xmlrpclib.boolean(value)" $PREFIX/lib/python2.7/site-packages/supervisor-3.0a12-py2.7.egg/supervisor/xmlrpc.py
+	rm $PREFIX/lib/python2.7/site-packages/supervisor-3.0a12-py2.7.egg/supervisor/*.pyc
+
+	install_conf "supervisord.conf"
+}
+
+
+function update() {
+	easy_install_all_libs
+}

@@ -141,13 +141,13 @@ class FileStorage(Storage):
         raise NotImplementedError()
 
     def find(
-        self,
-        names=None,
-        meta=None,
-        sort=None,
-        limit=-1,
-        skip=0,
-        with_meta=False
+            self,
+            names=None,
+            meta=None,
+            sort=None,
+            limit=-1,
+            skip=0,
+            with_meta=False
     ):
         """Try to find file streams where names match with input names or meta
         data match with input meta.
