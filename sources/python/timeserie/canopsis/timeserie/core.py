@@ -25,7 +25,7 @@ __all__ = ['TimeSerie']
 
 from canopsis.common.init import basestring
 from canopsis.timeserie.timewindow import Period, TimeWindow
-from canopsis.timeserie.aggregation import get_aggregations, DELTA, NONE
+from canopsis.timeserie.aggregation import get_aggregation, DELTA, NONE
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
@@ -210,7 +210,7 @@ class TimeSerie(Configurable):
             result = points  # result is points
 
         else:  # else calculate points with the right aggregation function
-            func = get_aggregations()[self.aggregation]
+            func = get_aggregation(name=self.aggregation)
 
             # get timesteps
             timesteps = self.timesteps(timewindow)[:-1]
@@ -309,7 +309,7 @@ class TimeSerie(Configurable):
         """
 
         if func is None:
-            func = get_aggregations()[self.aggregation]
+            func = get_aggregation(name=self.aggregation)
 
         if len(values_to_aggregate) > 0:
             result = round(func(values_to_aggregate), 2)

@@ -33,13 +33,24 @@ def get_aggregations():
     return result
 
 
+def get_aggregation(name):
+    """Get registered aggregation.
+
+    :param str name: aggregation name to retrieve.
+    :return: aggregation function registered with input name.
+    """
+
+    return _AGGREGATIONS.get(name.lower())
+
+
 def get_aggregation_value(name, points):
     """Get aggregation value where with related name and points.
 
     Points must have only real values.
     """
 
-    aggregation = _AGGREGATIONS.get(name.lower(), None)
+    aggregation = get_aggregation(name)
+
     if aggregation is None:
         raise NotImplementedError("No aggregation {0} exists".format(name))
 
