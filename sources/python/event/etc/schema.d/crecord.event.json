@@ -12,6 +12,13 @@
 	}],
 	"showEditButton": true,
 	"properties": {
+		"hostgroups": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "role" : "tags"
+        },
 		"change_state_output": {
 			"type": "string"
 		},
