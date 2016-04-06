@@ -35,6 +35,8 @@ CONF_PATH = 'perfdata/perfdata.conf'
 CATEGORY = 'PERFDATA'
 
 
+SLIDING_TIME = 'sliding_time'
+
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class PerfData(MiddlewareRegistry):
@@ -134,6 +136,28 @@ class PerfData(MiddlewareRegistry):
             skip=skip, timeserie=timeserie, tags=tags, with_tags=with_meta,
             sort=sort
         )
+
+        if result:  # manage sliding_time
+
+            if with_meta:
+                points, _meta = result
+                if meta is not None:
+                    _meta.update(meta)
+
+            else:
+                points, _meta = result, (meta if meta else {})
+
+            if _meta.get(SLIDING_TIME, False):
+                now = time()
+                points = list([
+                    (ts if ts <= now else now, value) for ts, value in points
+                ])
+
+                if with_meta:
+                    result = points, meta
+
+                else:
+                    result = points
 
         return result
 
