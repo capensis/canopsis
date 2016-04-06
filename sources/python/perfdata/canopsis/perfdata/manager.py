@@ -25,7 +25,7 @@ from canopsis.monitoring.parser import PerfDataParser
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
-from canopsis.timeserie.timewindow import get_offset_timewindow
+from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
 
@@ -141,6 +141,7 @@ class PerfData(MiddlewareRegistry):
 
             if with_meta:
                 points, _meta = result
+
                 if meta is not None:
                     _meta.update(meta)
 
@@ -148,16 +149,28 @@ class PerfData(MiddlewareRegistry):
                 points, _meta = result, (meta if meta else {})
 
             if _meta.get(SLIDING_TIME, False):
+
+                last_ts = points[-1][0] if points else 0
+
                 now = time()
-                points = list([
-                    (ts if ts <= now else now, value) for ts, value in points
-                ])
 
-                if with_meta:
-                    result = points, meta
+                if last_ts < now:
 
-                else:
-                    result = points
+                    timewindow = TimeWindow(start=now, stop=now * 3650 * 86400)
+
+                    last_points = self[PerfData.PERFDATA_STORAGE].get(
+                        data_id=data_id, timewindow=timewindow, tags=tags
+                    )
+
+                    if last_points:
+                        last_points = [(now, val) for (_, val) in last_points]
+                        points = list(points) + [last_points[0]]
+
+                    if with_meta:
+                        result = points, meta
+
+                    else:
+                        result = points
 
         return result
 
