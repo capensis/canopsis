@@ -30,8 +30,14 @@ Contents
 Description
 -----------
 
-The event list get an UI ACK Button that popup a form in order to send ack on an event. 
-This new features will do the same thing faster. The popup will not be show and the ACK event will be sent directly.  
+Fast ack will have the exact same features of Normal ACK :ref:`ACK <FR__Ack>`.
+
+The puporse grant the ability to ack an event without filling the popup information. 
+
+The Fast ACK feature will can be acces throught a button near the normal ACK button. 
+When Fast ACK button is click the will produce and ack with no ticket and a configured message.
+
+Like normal ack, fast ack will have a right on it. To grant acces to thie feature you will need to fist grand acces to normal ack then to fast ack.
 
 An event in Canopsis is the representation of asynchronously incoming data, sent by
 a :ref:`connector <FR__Connector>`.

@@ -27,7 +27,7 @@ Contents
 Description
 -----------
 
-This Button will produce an ack event configured in its :ref:`UI_FastACk<FR__UI__FastACK>`.
+This Button will produce an ack event configured in its :ref:`FastACk <FR__FastACK>`.
 
 ACK Configuration:
 
@@ -36,6 +36,14 @@ It **MUST** contains:
  - a sender, composed of:
  - an message that will be **auto ACK**
  - an event ref
+ 
+List of file modified to add this feature :
+ - ACK Template ( uibase => template => ack )
+ - ACK Selection template ( uibase => template => ackselection )
+ - Mixin send event ( monitoring => mixins => sendevent )
+ - JSON Right list
+ - Init Schema file of Monitoring UI Brick
+ - Add mixin.sendevent.json in UI Brick
  
  
 Case: OK
