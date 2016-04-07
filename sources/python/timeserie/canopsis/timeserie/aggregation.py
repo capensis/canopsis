@@ -33,13 +33,24 @@ def get_aggregations():
     return result
 
 
+def get_aggregation(name):
+    """Get registered aggregation.
+
+    :param str name: aggregation name to retrieve.
+    :return: aggregation function registered with input name.
+    """
+
+    return _AGGREGATIONS.get(name.lower())
+
+
 def get_aggregation_value(name, points):
     """Get aggregation value where with related name and points.
 
     Points must have only real values.
     """
 
-    aggregation = _AGGREGATIONS.get(name, None)
+    aggregation = get_aggregation(name)
+
     if aggregation is None:
         raise NotImplementedError("No aggregation {0} exists".format(name))
 
@@ -48,7 +59,7 @@ def get_aggregation_value(name, points):
     return result
 
 
-def add_aggregation(name, function, push=False):
+def add_aggregation(name, function=None, push=False):
     """Set an aggregation function to this AGGREGATIONS module variable.
 
     - push : if False, raise an AggregationError if an aggregation has already
@@ -58,53 +69,74 @@ def add_aggregation(name, function, push=False):
     Added aggregations are available through module properties.
     """
 
-    if push is False and name in _AGGREGATIONS:
+    if push is False and name.lower() in _AGGREGATIONS:
         raise AggregationError("name {0} already exists".format(name))
 
-    _AGGREGATIONS[name] = function
+    def _setfunc(function):
+
+        _AGGREGATIONS[name.lower()] = function
+
+        return function
+
+    if function is None:
+        return _setfunc
+
+    else:
+        _setfunc(function)
+
+    return function
 
 
-add_aggregation('NONE', None)
+NONE = 'NONE'
+add_aggregation(NONE, None)
 
 
+MEAN = 'MEAN'
+AVERAGE = 'AVERAGE'
+add_aggregation(MEAN)
+add_aggregation(AVERAGE)
 def _mean(points):
     """Calculate mean of points."""
     return sum(points) / len(points)
-add_aggregation('MEAN', _mean)
-add_aggregation('AVERAGE', _mean)
 
 
+LAST = 'LAST'
+add_aggregation(LAST)
 def _last(points):
     """Get the last point."""
     return points[-1]
-add_aggregation('LAST', _last)
 
 
+FIRST = 'FIRST'
+add_aggregation(FIRST)
 def _first(points):
     """Get the first point."""
     return points[0]
-add_aggregation('FIRST', _first)
 
 
+DELTA = 'DELTA'
+add_aggregation(DELTA)
 def _delta(points):
     """Get the delta value."""
     return (max(points) - min(points)) / 2
-add_aggregation('DELTA', _delta)
 
 
+SUM = 'SUM'
+add_aggregation(SUM)
 def _sum(points):
     """Get the sum."""
     return sum(points)
-add_aggregation('SUM', _sum)
 
 
+MAX = 'MAX'
+add_aggregation(MAX)
 def _max(points):
     """Get the max."""
     return max(points)
-add_aggregation('MAX', _max)
 
 
+MIN = 'MIN'
+add_aggregation(MIN)
 def _min(points):
     """Get the min."""
     return min(points)
-add_aggregation('MIN', _min)

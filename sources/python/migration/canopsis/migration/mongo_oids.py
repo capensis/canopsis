@@ -70,6 +70,36 @@ class MongoOIDsModule(MigrationModule):
             self.update_to_version_1()
             self.set_version('mongo_oids', 1)
 
+    def update_periodic2periodical(self):
+        """Change collection names of periodic to timed and timed to periodical."""
+
+        db = self.storage._database
+
+        # dict of collections by name
+        collections2rename = {}
+        hasperiodic = False
+
+        for collectionname in db.collection_names():
+
+            if collectionname.startswith('periodic_'):
+                hasperiodic = True
+
+                collections2rename[collectionname] = db.get_collection(collectionname)
+
+            if collectionname.startswith('timed_'):
+
+                collections2rename[collectionname] = db.get_collection(collectionname)
+
+        if hasperiodic:
+
+            for name in collections2rename:
+                collection = collections2rename[name]
+
+                newname = name.replace('timed_', 'periodical_')
+                newname = newname.replace('periodic_', 'timed_')
+
+                collection.rename(newname)
+
     def update_to_version_1(self):
         collections = self.storage._database.collection_names(
             include_system_collections=False

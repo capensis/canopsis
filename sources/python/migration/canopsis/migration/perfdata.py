@@ -23,6 +23,10 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.perfdata.manager import PerfData
 
+from canopsis.mongo.core import MongoStorage
+
+from canopsis.perfdata.manager import PerfData
+
 
 CONF_PATH = 'migration/perfdata.conf'
 CATEGORY = 'PERFDATA'
@@ -39,6 +43,25 @@ class PerfdataModule(MigrationModule):
 
     def init(self):
         pass
+
+    def update_mongo2influxdb(self):
+        """Convert mongo data to influxdb data."""
+        mongostorage = MongoStorage(table='periodic_perfdata')
+
+        count = mongostorage._backend.count()
+
+        if count:  # if data have to be deleted
+            for document in mongostorage._backend.find():
+
+                data_id = document['i']
+                timestamp = int(document['t'])
+                values = document['v']
+
+                points = [(timestamp + int(ts), values[ts]) for ts in values]
+
+                perfdata.put(metric_id=data_id, points=points)
+
+                mongostorage.remove_elements(ids=document['_id'])
 
     def update(self):
         # FIXME
