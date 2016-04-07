@@ -134,15 +134,11 @@ class PerfData(MiddlewareRegistry):
 
         if sliding_time:  # apply sliding_time
 
-            now = time()
-
             if timewindow is None:
 
                 timewindow = TimeWindow()
 
-            else:
-                if timewindow.stop <= now:
-                    timewindow.stop = now
+            _timewindow = timewindow
 
             timewindow = TimeWindow(
                 start=timewindow.start(),
@@ -163,7 +159,7 @@ class PerfData(MiddlewareRegistry):
             else:
                 points = result
 
-            points = [(now if ts > now else ts, val) for (ts, val) in points]
+            points = [(min(ts, _timewindow.stop()), val) for (ts, val) in points]
 
             if with_meta:
                 result = points, result[1]

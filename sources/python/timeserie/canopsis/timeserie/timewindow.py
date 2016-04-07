@@ -688,7 +688,7 @@ class TimeWindow(object):
         elif isinstance(intervals, Interval):
             intervals = [intervals]
         # initialize start/stop related to intervals
-        if len(intervals):
+        if intervals:
             if start is None:
                 start = intervals[0][0]
             if stop is None:
