@@ -34,8 +34,9 @@ from numbers import Number
 CONF_PATH = 'perfdata/perfdata.conf'
 CATEGORY = 'PERFDATA'
 
-
 SLIDING_TIME = 'sliding_time'
+SLIDING_TIME_UPPER_BOUND = 365 * 86400 * 3
+
 
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
@@ -121,7 +122,7 @@ class PerfData(MiddlewareRegistry):
 
     def get(
             self, metric_id, meta=None, with_meta=True, timewindow=None,
-            limit=0, skip=0, sort=None, timeserie=None
+            limit=0, skip=0, sort=None, timeserie=None, sliding_time=False
     ):
         """Get a set of data related to input data_id on the timewindow and
         input period.
@@ -131,46 +132,41 @@ class PerfData(MiddlewareRegistry):
 
         data_id, tags = self._data_id_tags(metric_id, meta)
 
+        if sliding_time:  # apply sliding_time
+
+            now = time()
+
+            if timewindow is None:
+
+                timewindow = TimeWindow()
+
+            else:
+                if timewindow.stop <= now:
+                    timewindow.stop = now
+
+            timewindow.stop += SLIDING_TIME_UPPER_BOUND
+
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=data_id, timewindow=timewindow, limit=limit,
             skip=skip, timeserie=timeserie, tags=tags, with_tags=with_meta,
             sort=sort
         )
 
-        if result:  # manage sliding_time
+        if sliding_time:
 
             if with_meta:
-                points, _meta = result
-
-                if meta is not None:
-                    _meta.update(meta)
+                points = result[0]
 
             else:
-                points, _meta = result, (meta if meta else {})
+                points = result
 
-            if _meta.get(SLIDING_TIME, False):
+            points = [(now if ts > now else ts, val) for (ts, val) in points]
 
-                last_ts = points[-1][0] if points else 0
+            if with_meta:
+                result = points, result[1]
 
-                now = time()
-
-                if last_ts < now:
-
-                    timewindow = TimeWindow(start=now, stop=now * 3650 * 86400)
-
-                    last_points = self[PerfData.PERFDATA_STORAGE].get(
-                        data_id=data_id, timewindow=timewindow, tags=tags
-                    )
-
-                    if last_points:
-                        last_points = [(now, val) for (_, val) in last_points]
-                        points = list(points) + [last_points[0]]
-
-                    if with_meta:
-                        result = points, meta
-
-                    else:
-                        result = points
+            else:
+                result = points
 
         return result
 
