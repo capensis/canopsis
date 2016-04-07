@@ -144,7 +144,10 @@ class PerfData(MiddlewareRegistry):
                 if timewindow.stop <= now:
                     timewindow.stop = now
 
-            timewindow.stop += SLIDING_TIME_UPPER_BOUND
+            timewindow = TimeWindow(
+                start=timewindow.start(),
+                stop=timewindow.stop() + SLIDING_TIME_UPPER_BOUND
+            )
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=data_id, timewindow=timewindow, limit=limit,
