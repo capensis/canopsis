@@ -35,7 +35,7 @@ function create_slinks() {
     # ln -s $SRC/sources/webcore/var/plugins $CPS/var/plugins
     ln -s $SRC/sources/webcore $CPS/var/www
     ln -s $SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/
-    ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
+    ln -s $SRC/sources/db-conf/opt/mongodb $CPS/opt/
     # canolibs
     create_canolibs_slink
     # create_python_slink cli 0.1
