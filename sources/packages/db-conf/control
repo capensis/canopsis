@@ -242,7 +242,6 @@ function post_install() {
     echo "--- Initialize databases"
     launch_cmd 1 schema2db
     launch_cmd 1 canopsis-filldb --init
-    launch_cmd 1 $PREFIX/bin/webmodulemanager init
 
     launch_cmd 1 service mongodb stop
     launch_cmd 1 service influxdb stop
@@ -291,7 +290,6 @@ function post_update() {
 
     echo "--- Update databases"
     launch_cmd 1 canopsis-filldb --update
-    launch_cmd 1 $PREFIX/bin/webmodulemanager init
 }
 
 function purge() {
