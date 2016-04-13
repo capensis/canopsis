@@ -25,7 +25,7 @@ __all__ = ['TimeSerie']
 
 from canopsis.common.init import basestring
 from canopsis.timeserie.timewindow import Period, TimeWindow
-from canopsis.timeserie.aggregation import get_aggregations
+from canopsis.timeserie.aggregation import get_aggregation, DELTA, NONE
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
@@ -201,13 +201,16 @@ class TimeSerie(Configurable):
 
         # if no period and max_points > len(points)
         if (
-                (not points) or self.period is None
-                and self.max_points > points_len
+                get_aggregation(self.aggregation) is None or
+                (
+                    (not points) or self.period is None
+                    and self.max_points > points_len
+                )
         ):
             result = points  # result is points
 
         else:  # else calculate points with the right aggregation function
-            func = get_aggregations()[self.aggregation]
+            func = get_aggregation(name=self.aggregation)
 
             # get timesteps
             timesteps = self.timesteps(timewindow)[:-1]
@@ -248,7 +251,7 @@ class TimeSerie(Configurable):
                     i += 1
 
                 # TODO: understand what it means :D
-                if self.aggregation == "DELTA" and last_point:
+                if self.aggregation == DELTA and last_point:
                     values_to_aggregate.insert(0, last_point)
 
                 if values_to_aggregate:
@@ -266,7 +269,7 @@ class TimeSerie(Configurable):
                         last_point = aggregation_point[-1]
 
                 elif usenan:
-                        result.append((timestamp, nan))
+                    result.append((timestamp, nan))
 
         return result
 
@@ -306,7 +309,7 @@ class TimeSerie(Configurable):
         """
 
         if func is None:
-            func = get_aggregations()[self.aggregation]
+            func = get_aggregation(name=self.aggregation)
 
         if len(values_to_aggregate) > 0:
             result = round(func(values_to_aggregate), 2)

@@ -28,6 +28,8 @@ from dateutil.parser import parse
 
 from calendar import timegm
 
+from numbers import Number
+
 
 class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
     """InfluxDB storage dedicated to manage timed data."""
@@ -63,8 +65,10 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
         if timewindow is not None:
             factor = 1e9
             result = {
-                'time': {'$gte': int(timewindow.start() * factor)},
-                'time': {'$lte': int(timewindow.stop() * factor)}
+                'time': {
+                    '$gte': int(timewindow.start() * factor),
+                    '$lte': int(timewindow.stop() * factor)
+                }
             }
 
         else:
@@ -88,7 +92,8 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
             projection=None if with_tags else 'value',
             ids=data_id,
             query=query,
-            limit=limit
+            limit=limit,
+            tags=tags
         )
 
         _points, tags = [], {}
@@ -112,11 +117,14 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
         factor = 1e9
 
         for point in points:
+            value = point[1]
+            if isinstance(value, Number):
+                value = float(value)
             pointstoput.append(
                 {
                     'measurement': data_id,
                     'time': int(point[0] * factor),
-                    'fields': {'value': point[1]}
+                    'fields': {'value': value}
                 }
             )
 

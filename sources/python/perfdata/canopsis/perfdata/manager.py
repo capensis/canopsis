@@ -25,7 +25,7 @@ from canopsis.monitoring.parser import PerfDataParser
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
-from canopsis.timeserie.timewindow import get_offset_timewindow
+from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
 
@@ -33,6 +33,9 @@ from numbers import Number
 
 CONF_PATH = 'perfdata/perfdata.conf'
 CATEGORY = 'PERFDATA'
+
+SLIDING_TIME = 'sliding_time'
+SLIDING_TIME_UPPER_BOUND = 365 * 86400 * 3
 
 
 @conf_paths(CONF_PATH)
@@ -119,7 +122,7 @@ class PerfData(MiddlewareRegistry):
 
     def get(
             self, metric_id, meta=None, with_meta=True, timewindow=None,
-            limit=0, skip=0, sort=None, timeserie=None
+            limit=0, skip=0, sort=None, timeserie=None, sliding_time=False
     ):
         """Get a set of data related to input data_id on the timewindow and
         input period.
@@ -129,11 +132,40 @@ class PerfData(MiddlewareRegistry):
 
         data_id, tags = self._data_id_tags(metric_id, meta)
 
+        if sliding_time:  # apply sliding_time
+
+            if timewindow is None:
+
+                timewindow = TimeWindow()
+
+            _timewindow = timewindow
+
+            timewindow = TimeWindow(
+                start=timewindow.start(),
+                stop=timewindow.stop() + SLIDING_TIME_UPPER_BOUND
+            )
+
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=data_id, timewindow=timewindow, limit=limit,
             skip=skip, timeserie=timeserie, tags=tags, with_tags=with_meta,
             sort=sort
         )
+
+        if sliding_time:
+
+            if with_meta:
+                points = result[0]
+
+            else:
+                points = result
+
+            points = [(min(ts, _timewindow.stop()), val) for (ts, val) in points]
+
+            if with_meta:
+                result = points, result[1]
+
+            else:
+                result = points
 
         return result
 
