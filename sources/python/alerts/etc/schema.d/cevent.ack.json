@@ -57,7 +57,6 @@
 		"output": {
 			"type": "string",
 			"role": "textarea",
-			"required": true,
 			"title": " ",
 			"description": "Remarque ..."
 		},
