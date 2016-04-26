@@ -134,7 +134,6 @@ def save_user(ws, record):
     if urights is not None:
         rights.update_rights(uid, 'user', urights, user)
 
-
     rights.update_fields(uid, 'user', record)
 
     if not rights.add_role(uid, urole):
