@@ -45,12 +45,12 @@ def exports(ws):
         payload=[
             'metric_id', 'with_meta',
             'limit', 'skip', 'period',
-            'timewindow', 'period', 'timeserie'
+            'timewindow', 'period', 'timeserie', 'sliding_time'
         ]
     )
     def perfdata(
         metric_id, timewindow=None, period=None, with_meta=True,
-        limit=0, skip=0, timeserie=None, meta=None
+        limit=0, skip=0, timeserie=None, meta=None, sliding_time=True
     ):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
@@ -74,21 +74,21 @@ def exports(ws):
 
         for metric_id in metrics:
             # meta -> _meta
-            pts, meta = manager.get(
+            pts, _meta = manager.get(
                 metric_id=metric_id, with_meta=True,
                 timewindow=timewindow, limit=limit, skip=skip,
-                meta=meta
+                meta=meta, sliding_time=sliding_time
             )
 
-            meta['data_id'] = metric_id
+            _meta['data_id'] = metric_id
 
             if timeserie is not None:
-                pts = timeserie.calculate(pts, timewindow, meta=meta)
+                pts = timeserie.calculate(pts, timewindow, meta=_meta)
 
             if with_meta:
                 result.append({
                     'points': pts,
-                    'meta': meta
+                    'meta': _meta
                 })
 
             else:
