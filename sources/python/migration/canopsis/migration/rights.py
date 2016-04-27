@@ -169,7 +169,7 @@ class RightsModule(MigrationModule):
                         'enable': user.get('enable', True),
                         'shadowpasswd': user.get('shadowpass', None),
                         'mail': user.get('mail', None),
-                        'authkey': str(uuid1())
+                        'authkey': user.get('authkey', str(uuid1()))
                     }
                 )
 
