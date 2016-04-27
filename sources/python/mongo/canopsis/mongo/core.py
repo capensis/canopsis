@@ -421,7 +421,7 @@ class MongoStorage(MongoDataBase, Storage):
         if _filter is not None:
             query.update(_filter)
 
-        self._remove(query, cache=cache)
+        return self._remove(query, cache=cache)
 
     def put_element(
         self, element, _id=None, tags=None, cache=False, *args, **kwargs

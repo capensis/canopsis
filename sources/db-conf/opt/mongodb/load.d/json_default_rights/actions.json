@@ -84,6 +84,13 @@
         "desc": "Acknowledge an event"
     },
     {
+        "_id" : "actionbutton_fastack",
+        "loader_id" : "actionbutton_fastack",
+        "crecord_name": "actionbutton_fastack",
+        "crecord_type" : "action",
+        "desc": "Acknowledge an event"
+    },
+    {
         "_id" : "actionbutton_connectoredit",
         "loader_id" : "actionbutton_connectoredit",
         "crecord_name": "actionbutton_connectoredit",
