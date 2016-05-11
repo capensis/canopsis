@@ -167,11 +167,11 @@ fi
 init_build_install
 init_submodules
 detect_os
-export_env
 
 if [ $CPSBUILD -eq 1 ]
 then
     extra_deps
+    export_env
     check_ssl
 
     if [ $CPSBUILDONE -eq 0 ]
@@ -197,6 +197,8 @@ then
 
     fix_permissions
     launch_unittests
+else
+    export_env
 fi
 
 build_installer

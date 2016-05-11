@@ -1,5 +1,4 @@
 yum clean all
 yum update -y
-yum install -y redhat-lsb make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel wget libtool openssl-devel bzip2-devel cyrus-sasl-devel openldap-devel xz-utils python-devel openldap-devel libxml2-devel libxslt-devel perl-ExtUtils-MakeMaker
 
-yum localinstall --nogpgcheck -y sources/externals/libevent-devel-1.4.13-4.el6.x86_64.rpm sources/externals/libevent-doc-1.4.13-4.el6.noarch.rpm sources/externals/libevent-headers-1.4.13-4.el6.noarch.rpm
+yum install -y redhat-lsb make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel wget libtool openssl openssl-devel bzip2-devel cyrus-sasl-devel openldap-devel xz-utils python-devel openldap-devel libxml2-devel libxslt-devel perl-ExtUtils-MakeMaker
