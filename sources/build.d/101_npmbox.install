@@ -1,0 +1,23 @@
+NAME="npmbox"
+
+function build() {
+    BASE=$SRC_PATH/externals/npmbox
+
+    if [ ! -e $BASE ]
+    then
+        mkdir -p $SRC_PATH/externals/npmbox
+        cd $SRC_PATH/externals/npmbox
+
+        tar --no-same-owner --no-same-permissions -xvzf $SRC_PATH/externals/npmboxes/npmbox.npmbox
+    fi
+}
+
+function install() {
+    BASE=$SRC_PATH/externals/npmbox
+
+    npm install --global --cache $BASE/.npmbox.cache --optional --cache-min 99999 --shrinkwrap false npmbox
+}
+
+function update() {
+    install
+}
