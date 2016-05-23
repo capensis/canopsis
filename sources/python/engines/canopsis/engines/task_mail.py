@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from canopsis.engines.core import TaskHandler
 from canopsis.old.account import Account
@@ -169,7 +170,7 @@ class engine(TaskHandler):
             msg.attach(MIMEText(body, 'html'))
 
         else:
-            msg.attach(MIMEText(body, 'plain'))
+            msg.attach(MIMEText(body.encode('utf-8'), 'plain'))
 
         msg['Date'] = formatdate(localtime=True)
 
