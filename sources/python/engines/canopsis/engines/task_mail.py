@@ -169,7 +169,11 @@ class engine(TaskHandler):
         msg["Subject"] = subject
 
         if html:
-            msg.attach(MIMEText(body, 'html'))
+            try:
+                detection = detect(body)
+                msg.attach(MIMEText(body, 'html', _charset=detection['encoding']))
+            except:
+                msg.attach(MIMEText(body, 'html', _charset='utf-8'))
 
         else:
             try:
