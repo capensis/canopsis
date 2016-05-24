@@ -36,6 +36,8 @@ import smtplib
 import socket
 import re
 
+from chardet import detect
+
 from sys import version as PYVER
 
 if PYVER >= '3':
@@ -170,7 +172,11 @@ class engine(TaskHandler):
             msg.attach(MIMEText(body, 'html'))
 
         else:
-            msg.attach(MIMEText(body.encode('utf-8'), 'plain'))
+            try:
+                detection = detect(body)
+                msg.attach(MIMEText(body, 'plain', _charset=detection['encoding']))
+            except:
+                msg.attach(MIMEText(body, 'plain', _charset='utf-8'))
 
         msg['Date'] = formatdate(localtime=True)
 
