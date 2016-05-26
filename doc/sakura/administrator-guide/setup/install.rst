@@ -76,19 +76,11 @@ Clone git repository:
     git submodule init
     git submodule update
 
-You can switch to development branch (or any other branches):
-
-.. code-block:: bash
-
-    git checkout develop
-
-
 Build and install
 -----------------
 
 .. code-block:: bash
 
-    cd sources
     sudo ./build-install.sh
 
 If build failed, you can see logs in ``log/`` directory.
@@ -114,6 +106,12 @@ You can verify installation: (in ``canopsis`` environment)
 .. code-block:: bash
 
     python opt/canotools/functional-test.py
+
+And you can also check needed services :(in ``canopsis`` environment)
+
+.. code-block:: bash
+
+    hypcontrol status
 
 Troubleshooting
 ---------------

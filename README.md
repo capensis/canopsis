@@ -17,17 +17,14 @@ A <a href="https://github.com/capensis/canopsis/wiki/Glossary">Glossary</a> page
 ## How to try ?
 
 You can try Canopsis on demo platform:
-* Master branch (stable): http://demo.canopsis.org
-* Devel branch (unstable): http://demo-devel.canopsis.org
+* Master branch (stable): http://sakura.canopsis.net
+* Devel branch (unstable): http://sakura-devel.canopsis.net
 
 ## How to install ?
-Two ways for install:
 
-Easy way (on `Debian 6 & ulterior`, `CentOS 6`, `Ubuntu 12.04 & ulterior` 64Bits):
-* https://github.com/capensis/canopsis/wiki/Install-from-packages
+Available on `Debian 6 & ulterior`, `CentOS 6`, `Ubuntu 12.04 & ulterior` 64Bits:
 
-And developers way (or unsupported environment):
-* https://github.com/capensis/canopsis/wiki/Install-from-sources
+https://github.com/capensis/canopsis/wiki/Install-from-sources
 
 ## How to connect ?
 Now you are ready to deal with Canopsis.
@@ -40,7 +37,7 @@ Or your [`Shinken`](https://github.com/naparuba/shinken):
 
 ## How to use ?
 
-A <a href="https://github.com/capensis/canopsis/wiki/Dashboard">Dashboard</a> containing <a href="https://github.com/capensis/canopsis/wiki/views">views</a> and <a href="https://github.com/capensis/canopsis/wiki/widgets">Widgets</a> is provided in order to monitor and to <a href="https://github.com/capensis/canopsis/wiki/engines">administer</a> resources.
+A Dashboard containing views and Widgets is provided in order to monitor and to administer resources.
 
 <img src="https://github.com/capensis/canopsis/wiki/images/dashboard.png"/>
 
