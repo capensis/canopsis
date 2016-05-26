@@ -8,7 +8,7 @@ function install() {
     cd $SRC_PATH/externals/npmboxes
 
     npmunbox -g bower broccoli-cli
-    npmunbox command-line-args command-line-commands connect serve-static subcommand subcommander sync-exec
+    npmunbox -C $PREFIX/var/www command-line-args command-line-commands connect serve-static subcommand subcommander sync-exec
 }
 
 function update() {
