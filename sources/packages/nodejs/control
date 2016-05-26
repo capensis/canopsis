@@ -14,7 +14,7 @@ function pre_install() {
 function post_install() {
     echo "Post-install $NAME $VERSION-$RELEASE ..."
 
-    launch_cmd 0 "npm clear cache"
+    launch_cmd 0 "npm cache clear"
 
     check_code $? 
 }
