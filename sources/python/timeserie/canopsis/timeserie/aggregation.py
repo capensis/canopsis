@@ -93,50 +93,64 @@ add_aggregation(NONE, None)
 
 MEAN = 'MEAN'
 AVERAGE = 'AVERAGE'
-add_aggregation(MEAN)
-add_aggregation(AVERAGE)
+
+
+@add_aggregation(MEAN)
 def _mean(points):
     """Calculate mean of points."""
     return sum(points) / len(points)
+add_aggregation(AVERAGE, _mean)
 
 
 LAST = 'LAST'
-add_aggregation(LAST)
+
+
+@add_aggregation(LAST)
 def _last(points):
     """Get the last point."""
     return points[-1]
 
 
 FIRST = 'FIRST'
-add_aggregation(FIRST)
+
+
+@add_aggregation(FIRST)
 def _first(points):
     """Get the first point."""
     return points[0]
 
 
 DELTA = 'DELTA'
-add_aggregation(DELTA)
+
+
+@add_aggregation(DELTA)
 def _delta(points):
     """Get the delta value."""
     return (max(points) - min(points)) / 2
 
 
 SUM = 'SUM'
-add_aggregation(SUM)
+
+
+@add_aggregation(SUM)
 def _sum(points):
     """Get the sum."""
     return sum(points)
 
 
 MAX = 'MAX'
-add_aggregation(MAX)
+
+
+@add_aggregation(MAX)
 def _max(points):
     """Get the max."""
     return max(points)
 
 
 MIN = 'MIN'
-add_aggregation(MIN)
+
+
+@add_aggregation(MIN)
 def _min(points):
     """Get the min."""
     return min(points)

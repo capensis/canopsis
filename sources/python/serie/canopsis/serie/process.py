@@ -81,6 +81,6 @@ def serie_processing(engine, event, manager=None, logger=None, **_):
     perfdata.put(
         entity_id,
         points=manager.calculate(event),
-        tags=metric_tags,
+        meta=metric_tags,
         cache=False
     )

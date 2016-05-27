@@ -107,7 +107,14 @@ def serie_operatorset(manager, period, perfdatas, timewindow, usenan=True):
     """
 
     operators = {
-        key: new_operator(key, manager, period, perfdatas, timewindow, usenan)
+        key.upper(): new_operator(
+            key,
+            manager,
+            period,
+            perfdatas,
+            timewindow,
+            usenan
+        )
         for key in get_aggregations()
     }
 
