@@ -122,7 +122,7 @@ Once you wrote your installation file, you just have to run the Canopsis script 
 
 .. code-block:: bash
 
-	#Available in the sources/webcore directory of canopsis
+    #Available in the sources/webcore directory of canopsis
     ./bin/brickmanager enable testmodule
 
 You can check the module load with ``./bin/brickmanager list``
