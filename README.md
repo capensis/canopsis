@@ -1,12 +1,12 @@
 <a href="http://www.canopsis.org" >
-    <img src="https://github.com/capensis/canopsis/wiki/images/logo_canopsis.png"/> 
+    <img src="https://github.com/capensis/canopsis/wiki/images/logo_canopsis.png"/>
 </a>
 
 <a href="https://travis-ci.org/capensis/canopsis">
     <img src="https://travis-ci.org/capensis/canopsis.svg"/>
 </a>
 
-## What is Canopsis ? 
+## What is Canopsis ?
 
 [Canopsis](http://canopsis.org) is an open-source [hypervisor](http://www.capensis.fr/solutions/hypervision/) whose goal is to <a href="https://github.com/capensis/canopsis/wiki/consolidation">aggregate/consolidate</a> information and events (containing <a href="https://github.com/capensis/canopsis/wiki/metrics">metrics</a> of different types such as performance, availability, etc.) coming from multiple sources to create a global solution for <a href="https://github.com/capensis/canopsis/wiki/Dashboard">monitoring</a> and <a href="https://github.com/capensis/canopsis/wiki/engines">administrating</a> resources.
 
@@ -22,27 +22,15 @@ You can try Canopsis on demo platform:
 
 ## How to install ?
 
-Available on `Debian 6 & ulterior`, `CentOS 6`, `Ubuntu 12.04 & ulterior` 64Bits:
+Available on `Debian 7 & ulterior`, `CentOS 7`, `Ubuntu 12.04 & ulterior` 64Bits:
 
-https://github.com/capensis/canopsis/wiki/Install-from-sources
-
-## How to connect ?
-Now you are ready to deal with Canopsis.
-
-You can connect your `Nagios` (or `Icinga`):
-* https://github.com/capensis/canopsis-nagios
-
-Or your [`Shinken`](https://github.com/naparuba/shinken):
-* https://github.com/capensis/canopsis/wiki/Shinken
+<a href="https://canopsis.readthedocs.io/en/readthedocs/canopsis/canopsis/administrator-guide/setup/install.html">Install from sources</a>
 
 ## How to use ?
 
-A Dashboard containing views and Widgets is provided in order to monitor and to administer resources.
+To know more about Canopsis, have a look at <a href="https://canopsis.readthedocs.io">this documentation</a>
 
-<img src="https://github.com/capensis/canopsis/wiki/images/dashboard.png"/>
+## Other links
 
-## Links:
-* Wiki: https://github.com/capensis/canopsis/wiki/_pages
 * Community: http://www.canopsis.org
 * Forum (french): http://forums.monitoring-fr.org/index.php/board,127.0.html
-* <a href="https://github.com/capensis/canopsis/wiki/Glossary">Glossary</a>
