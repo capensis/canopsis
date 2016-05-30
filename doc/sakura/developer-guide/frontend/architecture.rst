@@ -118,13 +118,13 @@ Create a directory, named ``testmodule`` in this example, which contains at leas
 B. register module
 ##################
 
-Once you wrote your installation file, you just have to run the Canopsis script ``webmodulemanager`` such as...
+Once you wrote your installation file, you just have to run the Canopsis script ``brickmanager`` such as...
 
 .. code-block:: bash
 
-   #Available in the canopsis environment.
-   webmodulemanager add testmodule
+    #Available in the sources/webcore directory of canopsis
+    ./bin/brickmanager enable testmodule
 
-This will add a string in the module string list in the database object collection where the record crecord_type is enabledmodules. Record which is loaded thanks to the `json loader system <../../administrator-guide/setup/filldb.html>`_ .
+You can check the module load with ``./bin/brickmanager list``
 
 Enjoy

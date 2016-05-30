@@ -28,16 +28,14 @@ function create_canolibs_slink() {
 }
 
 function create_slinks() {
-    ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
-    ln -s $SRC/sources/wkhtmltopdf-libs/etc/tasks.d/task_reporting.py $CPS/etc/tasks.d/
-    ln -s $SRC/sources/externals/webcore-libs $CPS/var/www/
-    ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
-    ln -s $SRC/sources/webcore/var/plugins $CPS/var/plugins
-    ln -s $SRC/sources/webcore/var/www/canopsis $CPS/var/www/
-    ln -s $SRC/sources/webcore/var/www/login $CPS/var/www/
+    # ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
+    # ln -s $SRC/sources/wkhtmltopdf-libs/etc/tasks.d/task_reporting.py $CPS/etc/tasks.d/
+    # ln -s $SRC/sources/externals/webcore-libs $CPS/src/
+    # ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
+    # ln -s $SRC/sources/webcore/var/plugins $CPS/var/plugins
+    ln -s $SRC/sources/webcore $CPS/var/www
     ln -s $SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/
-    ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
-    ln -s $SRC/sources/mongodb-conf/etc/schema.d $CPS/etc/
+    ln -s $SRC/sources/db-conf/opt/mongodb $CPS/opt/
     # canolibs
     create_canolibs_slink
     # create_python_slink cli 0.1
@@ -68,11 +66,8 @@ function remove_slinks() {
     rm -Rf $CPS/opt/webcore
     rm -Rf $CPS/opt/collectd-libs
     rm -Rf $CPS/opt/mongodb
-    rm -Rf $CPS/var/www/canopsis
-    rm -Rf $CPS/var/www/login
-    rm -Rf $CPS/var/www/webcore-libs
+    rm -Rf $CPS/var/www
     rm -Rf $CPS/lib/wkhtmltopdf/*
-    rm -Rf $CPS/etc/schema.d
     rm -Rf $CPS/etc/tasks.d/task_reporting.py
     rm -rf $CPS/var/plugins
 

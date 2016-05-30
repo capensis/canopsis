@@ -30,6 +30,8 @@ from pprint import PrettyPrinter
 from canopsis.timeserie.timewindow import Period
 from canopsis.event.manager import Event
 
+from canopsis.perfdata.manager import SLIDING_TIME
+
 pp = PrettyPrinter(indent=2)
 
 
@@ -391,15 +393,18 @@ class Sla(object):
         perf_data_array.append({
             'metric': 'cps_avail',
             'value': round(availability, 2),
-            'max': 100
+            'max': 100,
+            SLIDING_TIME: True
         })
         perf_data_array.append({
             'metric': 'cps_avail_duration',
             'value': avail_duration,
+            SLIDING_TIME: True
         })
         perf_data_array.append({
             'metric': 'cps_alerts_duration',
             'value': alerts_duration,
+            SLIDING_TIME: True
         })
 
         period_options = {

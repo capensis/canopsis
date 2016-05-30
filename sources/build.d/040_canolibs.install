@@ -1,0 +1,88 @@
+NAME="canolibs"
+
+PROJECTS[1]='common'
+PROJECTS[2]='old'
+PROJECTS[3]='configuration'
+PROJECTS[4]='timeserie'
+PROJECTS[5]='middleware'
+PROJECTS[6]='task'
+PROJECTS[7]='rpc'
+PROJECTS[8]='mom'
+PROJECTS[9]='storage'
+PROJECTS[10]='mongo'
+PROJECTS[11]='schema'
+PROJECTS[12]='ctxprop'
+PROJECTS[13]='event'
+PROJECTS[14]='kombu'
+PROJECTS[15]='context'
+PROJECTS[16]='monitoring'
+PROJECTS[17]='perfdata'
+PROJECTS[18]='tools'
+PROJECTS[19]='sla'
+PROJECTS[20]='engines'
+PROJECTS[21]='connectors'
+PROJECTS[22]='cli'
+PROJECTS[23]='organisation'
+PROJECTS[24]='check'
+PROJECTS[25]='graph'
+PROJECTS[26]='topology'
+PROJECTS[27]='linklist'
+PROJECTS[28]='vevent'
+PROJECTS[29]='ccalendar'
+PROJECTS[30]='pbehavior'
+PROJECTS[31]='downtime'
+PROJECTS[32]='session'
+PROJECTS[33]='webcore'
+PROJECTS[34]='serie'
+PROJECTS[35]='alerts'
+PROJECTS[36]='stats'
+PROJECTS[37]='migration'
+PROJECTS[38]='influxdb'
+PROJECTS[39]='opentsdb'
+PROJECTS[40]='whisper'
+
+function build() {
+	true
+}
+
+function install() {
+    # install all projects
+    for project in "${PROJECTS[@]}"
+    do
+        echo "-- Install project: $project"
+        export CPS_PREFIX="$PREFIX/etc/"
+        cd $SRC_PATH/python/$project
+
+        launch_log $NAME 'python setup.py install'
+        check_code $? "Impossible to install $project"
+
+        install_pytests "$project"
+
+        chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
+    done
+
+    install_init "canopsis"
+
+    # TODO when fabric will be available
+    # launch_log $NAME fab -H localhost -u $HUSER -p canopsis setup
+}
+
+function update() {
+    # install all projects
+    for project in "${PROJECTS[@]}"
+    do
+        echo "-- Update project: $project"
+        export CPS_PREFIX="$PREFIX/etc/"
+        cd $SRC_PATH/python/$project
+
+        launch_log $NAME "python setup.py install --no-conf"
+        check_code $? "Impossible to update $project"
+
+        install_pytests "$project"
+
+        chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
+        update_conffiles ./etc
+    done
+
+    install_init "canopsis"
+}

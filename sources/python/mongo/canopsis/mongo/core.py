@@ -19,6 +19,7 @@
 # ---------------------------------
 
 from canopsis.common.init import basestring
+from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
 
@@ -33,10 +34,11 @@ from pymongo.son_manipulator import SONManipulator
 from uuid import uuid1
 
 
+CONF_RESOURCE = 'mongo/storage.conf'
+
+
 class CanopsisSONManipulator(SONManipulator):
-    """
-    Manage transformations on incoming/outgoing objects.
-    """
+    """Manage transformations on incoming/outgoing objects."""
 
     def __init__(self, idfield, *args, **kwargs):
         super(CanopsisSONManipulator, self).__init__(*args, **kwargs)
@@ -54,10 +56,9 @@ class CanopsisSONManipulator(SONManipulator):
         return son
 
 
+@conf_paths(CONF_RESOURCE)
 class MongoDataBase(DataBase):
-    """
-    Manage access to a mongodb.
-    """
+    """Manage access to a mongodb."""
 
     def __init__(
             self, host=MongoClient.HOST, port=MongoClient.PORT,
@@ -222,6 +223,7 @@ class MongoStorage(MongoDataBase, Storage):
     __protocol__ = 'mongodb'  #: register this class to the protocol mongodb
 
     ID = '_id'  #: ID mongo
+    TAGS = 'tags'  #: tags field name
 
     def _connect(self, *args, **kwargs):
         result = super(MongoStorage, self)._connect(*args, **kwargs)
@@ -284,16 +286,13 @@ class MongoStorage(MongoDataBase, Storage):
         return self._cache.execute()
 
     def drop(self, *args, **kwargs):
-        """
-        Drop self table.
-        """
 
         super(MongoStorage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
             self,
             ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
-            hint=None, projection=None,
+            hint=None, projection=None, tags=None,
             *args, **kwargs
     ):
 
@@ -307,6 +306,9 @@ class MongoStorage(MongoDataBase, Storage):
 
             else:
                 _query[MongoStorage.ID] = {'$in': ids}
+
+        if tags:
+            _query[MongoStorage.TAGS] = tags
 
         cursor = self._find(_query, projection)
 
@@ -342,9 +344,7 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _get_hint(self, query, cursor):
-        """
-        Get the best hint on input cursor for input query and returns it.
-        """
+        """Get the best hint on input cursor for input query and returns it."""
 
         result = None
 
@@ -391,22 +391,19 @@ class MongoStorage(MongoDataBase, Storage):
 
     def find_elements(
             self, query=None, limit=0, skip=0, sort=None, projection=None,
-            with_count=False,
+            tags=None, with_count=False,
             *args, **kwargs
     ):
 
         return self.get_elements(
-            query=query,
-            limit=limit,
-            skip=skip,
-            sort=sort,
-            with_count=with_count,
-            projection=projection,
+            query=query, limit=limit, skip=skip, sort=sort, tags=tags,
+            projection=projection, with_count=with_count,
             *args, **kwargs
         )
 
     def remove_elements(
-            self, ids=None, _filter=None, cache=False, *args, **kwargs
+            self, ids=None, _filter=None, tags=None, cache=False,
+            *args, **kwargs
     ):
 
         query = {}
@@ -418,12 +415,20 @@ class MongoStorage(MongoDataBase, Storage):
             else:
                 query[MongoStorage.ID] = ids
 
+        if tags:
+            query[MongoStorage.TAGS] = tags
+
         if _filter is not None:
             query.update(_filter)
 
-        self._remove(query, cache=cache)
+        return self._remove(query, cache=cache)
 
-    def put_element(self, element, _id=None, cache=False, *args, **kwargs):
+    def put_element(
+        self, element, _id=None, tags=None, cache=False, *args, **kwargs
+    ):
+
+        if tags is not None:
+            element.update(tags)
 
         if _id is None:
             _id = self._element_id(element)
@@ -436,6 +441,11 @@ class MongoStorage(MongoDataBase, Storage):
                 spec={MongoStorage.ID: _id}, document={'$set': element},
                 multi=False, cache=cache
             )
+
+    def put_elements(self, elements, tags=None, *args, **kwargs):
+
+        for element in elements:
+            self.put_element(element=element, tags=tags)
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
 
@@ -563,8 +573,7 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _manage_query_error(self, result_query):
-        """
-        Manage mongo query error.
+        """Manage mongo query error.
 
         Returns result_query if no error encountered. Else None.
         """
@@ -621,9 +630,7 @@ class MongoStorage(MongoDataBase, Storage):
 
 
 class MongoCursor(Cursor):
-    """
-    In charge of handle cursors wit MongoDB.
-    """
+    """In charge of handle cursors wit MongoDB."""
 
     __slots__ = ('_len', ) + Cursor.__slots__
 

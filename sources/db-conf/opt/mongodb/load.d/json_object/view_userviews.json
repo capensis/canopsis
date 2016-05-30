@@ -1,0 +1,50 @@
+{
+  "crecord_name" : "userviews.json",
+  "loader_id": "view.userviews",
+  "loader_no_update": false,
+  "id": "view.userviews",
+  "_id": "view.userviews",
+  "crecord_type": "view",
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "title": "container title vbox",
+    "items": [
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb63",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb63",
+          "itemsPerPage": 5,
+          "xtype": "list",
+          "listed_crecord_type": "userview",
+          "title": "Userviews",
+          "item_actions": ["actionbutton-show", "actionbutton-removeselection"],
+          "displayed_columns": ["crecord_type", "internal", "enable", "crecord_name", "description", "crecord_write_time", "tags"],
+          "selection_toolbar": [
+            "actionbutton-removeselection"
+          ],
+          "mixins": [
+            { "name": "sortablearray" },
+            { "name": "arraysearch" },
+            { "name": "pagination" },
+            {
+              "name": "crud",
+              "hideCreate": true
+            },
+            { "name": "showviewbutton" }
+          ],
+          "searchable_columns": [
+            "crecord_name"
+          ]
+        }
+      }
+    ]
+  }
+}

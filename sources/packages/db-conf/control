@@ -1,0 +1,298 @@
+#!/bin/bash
+
+NAME="db-conf"
+VERSION=0.7
+RELEASE=0
+DESCRIPTION=""
+REQUIRES="canohome python canolibs mongodb"
+
+NO_ARCH=true
+NO_DIST=true
+NO_DISTVERS=true
+
+function pre_install() {
+    echo "Pre-install $NAME $VERSION-$RELEASE ..."
+    check_code $?
+}
+
+function wait_for_mongo() {
+
+    echo -n "Safe wait (may be long the first time) "
+
+    mongo_user=$($PREFIX/bin/initool get $PREFIX/etc/mongo/storage.conf DATABASE user)
+    mongo_pass=$($PREFIX/bin/initool get $PREFIX/etc/mongo/storage.conf DATABASE pwd)
+
+    mongo_ready=false
+    while ! $mongo_ready
+    do
+        echo "show collections" | $PREFIX/bin/mongo canopsis -u $mongo_user -p $mongo_pass >/dev/null 2>&1
+
+        if [ $? -eq 0 ]
+        then
+            echo " ready"
+            mongo_ready=true
+        else
+            echo -n "."
+            sleep 1
+        fi
+    done
+}
+
+function wait_for_influx() {
+
+    echo -n "Safe wait "
+
+    influx_ready=false
+    while ! $influx_ready
+    do
+        echo "show databases" | $PREFIX/bin/influx -username admin -password $INFLUXDB_ADMIN_PASSWD >/dev/null 2>&1
+
+        if [ $? -eq 0 ]
+        then
+            echo " ready"
+            influx_ready=true
+        else
+            echo -n "."
+            sleep 1
+        fi
+    done
+}
+
+function wait_for_mongo_install() {
+    echo -n "Safe wait (may be long the first time) "
+
+    mongo_ready=false
+    while ! $mongo_ready
+    do
+        echo "show collections" | $PREFIX/bin/mongo canopsis >/dev/null 2>&1
+
+        if [ $? -eq 0 ]
+        then
+            echo " ready"
+            mongo_ready=true
+        else
+            echo -n "."
+            sleep 1
+        fi
+    done
+}
+
+
+function wait_for_influx_install() {
+
+    echo -n "Safe wait "
+
+    influx_ready=false
+    while ! $influx_ready
+    do
+        echo "show databases" | $PREFIX/bin/influx >/dev/null 2>&1
+
+        if [ $? -eq 0 ]
+        then
+            echo " ready"
+            influx_ready=true
+        else
+            echo -n "."
+            sleep 1
+        fi
+    done
+}
+
+function post_install_mongodb() {
+    echo "--- MongoDB"
+
+    launch_cmd 0 service mongodb stop
+    rm /tmp/mongodb-*.sock &> /dev/null || true
+
+    launch_cmd 1 service mongodb start
+    wait_for_mongo_install
+
+    # Define user
+    if [ "x$MONGODB_ADMIN_PASSWD" == "x" ]
+    then
+        while true
+        do
+            safe_prompt "MongoDB password for admin: " adminpass
+            safe_prompt "Confirm password: " confirm
+
+            if [ "$adminpass" == "$confirm" ]
+            then
+                break
+            else
+                echo "Passwords doesn't match"
+            fi
+        done
+    else
+        adminpass=$MONGODB_ADMIN_PASSWD
+    fi
+
+    if [ "x$MONGODB_USER" == "x" ]
+    then
+        safe_prompt "MongoDB common user: " cpsuser "show"
+    else
+        cpsuser=$MONGODB_USER
+    fi
+
+    if [ "x$MONGODB_USER_PASSWD" == "x" ]
+    then
+        while true
+        do
+            safe_prompt "MongoDB password for $cpsuser: " cpspass
+            safe_prompt "Confirm password: " confirm
+
+            if [ "$cpspass" == "$confirm" ]
+            then
+                break
+            else
+                echo "Passwords doesn't match"
+            fi
+        done
+    else
+        cpspass=$MONGODB_USER_PASSWD
+    fi
+
+    echo "  + Create admin user ..."
+    launch_cmd 1 $PREFIX/bin/mongo admin --eval "\"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase', 'root']})\""
+
+    echo "  + Create $cpsuser user ..."
+    launch_cmd 1 $PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval "\"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
+
+    launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $cpsuser
+    launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $cpspass
+
+    launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/mongo/storage.conf DATABASE user $cpsuser
+    launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/mongo/storage.conf DATABASE pwd $cpspass
+}
+
+function post_install_influxdb() {
+    echo "--- InfluxDB"
+
+    launch_cmd 1 service influxdb start
+    wait_for_influx_install
+
+    # Define user
+    if [ "x$INFLUXDB_ADMIN_PASSWD" == "x" ]
+    then
+        while true
+        do
+            safe_prompt "InfluxDB password for admin: " adminpass
+            safe_prompt "Confirm password: " confirm
+
+            if [ "$adminpass" == "$confirm" ]
+            then
+                break
+            else
+                echo "Passwords doesn't match"
+            fi
+        done
+    else
+        adminpass=$INFLUXDB_ADMIN_PASSWD
+    fi
+
+    if [ "x$INFLUXDB_USER" == "x" ]
+    then
+        safe_prompt "InfluxDB common user: " cpsuser "show"
+    else
+        cpsuser=$INFLUXDB_USER
+    fi
+
+    if [ "x$INFLUXDB_USER_PASSWD" == "x" ]
+    then
+        while true
+        do
+            safe_prompt "InfluxDB password for $cpsuser: " cpspass
+            safe_prompt "Confirm password: " confirm
+
+            if [ "$cpspass" == "$confirm" ]
+            then
+                break
+            else
+                echo "Passwords doesn't match"
+            fi
+        done
+    else
+        cpspass=$INFLUXDB_USER_PASSWD
+    fi
+
+    echo "  + Create admin user ..."
+    launch_cmd 1 influx --execute "\"CREATE USER admin WITH PASSWORD '$adminpass' WITH ALL PRIVILEGES\""
+
+    echo "  + Create $cpsuser user ..."
+    launch_cmd 1 influx --execute "\"CREATE USER $cpsuser WITH PASSWORD '$cpspass'\""
+    launch_cmd 1 influx --execute "\"GRANT ALL ON canopsis TO $cpsuser\""
+
+    launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/influx/storage.conf DATABASE user $cpsuser
+    launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/influx/storage.conf DATABASE pwd $cpspass
+
+    echo "  + Reconfigure InfluxDB"
+    launch_cmd 1 sed -i "\"s/auth-enabled = false/auth-enabled = true/\"" $PREFIX/etc/influxdb.conf
+
+    echo "  + Restart InfluxDB"
+    launch_cmd 1 service influxdb restart
+}
+
+function post_install() {
+    echo "Post-install $NAME $VERSION-$RELEASE ..."
+
+    launch_cmd 0 supervisorctl update
+
+    post_install_mongodb
+    post_install_influxdb
+
+    echo "--- Initialize databases"
+    launch_cmd 1 schema2db
+    launch_cmd 1 canopsis-filldb --init
+
+    launch_cmd 1 service mongodb stop
+    launch_cmd 1 service influxdb stop
+}
+
+function pre_remove() {
+    echo "Pre-remove $NAME $VERSION-$RELEASE ..."
+    launch_cmd 0 service mongodb stop
+}
+
+function post_remove() {
+    echo "Post-remove $NAME $VERSION-$RELEASE ..."
+}
+
+function pre_update() {
+    echo "Pre-update $NAME $VERSION-$RELEASE ..."
+}
+
+function post_update_mongodb() {
+    echo "--- MongoDB"
+
+    launch_cmd 1 service mongodb start
+    wait_for_mongo
+}
+
+function post_update_influxdb() {
+    echo "--- InfluxDB"
+
+    launch_cmd 1 sed -i "\"s/auth-enabled = false/auth-enabled = true/\"" $PREFIX/etc/influxdb.conf
+    launch_cmd 1 service influxdb start
+    wait_for_influx
+}
+
+function post_update() {
+    echo "Post-update $NAME $VERSION-$RELEASE ..."
+
+    post_update_mongodb
+    post_update_influxdb
+
+    echo "--- Update JSON schemas"
+    launch_cmd 1 schema2db
+
+    echo "--- Fix permissions"
+    chown -R $HUSER:$HGROUP $PREFIX/etc/schema.d
+    check_code $?
+
+    echo "--- Update databases"
+    launch_cmd 1 canopsis-filldb --update
+}
+
+function purge() {
+    echo "Purge $NAME $VERSION-$RELEASE ..."
+    check_code $?
+}

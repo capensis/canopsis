@@ -24,11 +24,12 @@ from canopsis.configuration.model import Parameter
 from canopsis.common.utils import ensure_iterable, isiterable, get_first
 from canopsis.storage.core import Storage
 
+from urllib import quote_plus, unquote_plus
+
 
 class CompositeStorage(Storage):
-    """
-    Storage dedicated to manage composite data identified by a name in a
-    path of ordered fields.
+    """Storage dedicated to manage composite data identified by a name in a path
+    of ordered fields.
 
     For example, a metric is identified by a unique name in the path
     (type=metric, connector, component, resource) or
@@ -39,15 +40,17 @@ class CompositeStorage(Storage):
     share the same value which is unique among all composite data.
     """
 
-    __datatype__ = 'composite'  #: registered such as a composite storage
+    __datatype__ = 'composite'  #: registered such as a composite storage.
 
-    PATH_SEPARATOR = '/'  #: char separator between path values
+    PATH_SEPARATOR = '/'  #: char separator between path values.
 
-    SHARED = 'shared'  #: shared field name
-    VALUE = 'value'  #: data value
-    PATH = 'path'  #: path value
+    SHARED = 'shared'  #: shared field name.
+    VALUE = 'value'  #: data value.
+    PATH = 'path'  #: path value.
 
-    NAME = 'name'  #: name field name
+    NAME = 'name'  #: name field name.
+
+    EXTENDED = 'extended'  #: additional fields over self.path.
 
     def __init__(self, path=None, *args, **kwargs):
         """
@@ -62,8 +65,9 @@ class CompositeStorage(Storage):
     @property
     def path(self):
         """
-        tuple of ordered field names.
+        :return: tuple of ordered field names.
         """
+
         return self._path
 
     @path.setter
@@ -82,8 +86,7 @@ class CompositeStorage(Storage):
         return result
 
     def get_shared_data(self, shared_ids):
-        """
-        Get all shared data related to input shared ids.
+        """Get all shared data related to input shared ids.
 
         :param shared_ids: one or more data.
         :type shared_ids: list or str
@@ -110,10 +113,9 @@ class CompositeStorage(Storage):
         return result
 
     def share_data(
-        self, data, shared_id=None, share_extended=False, cache=False
+            self, data, shared_id=None, share_extended=False, cache=False
     ):
-        """
-        Set input data as a shared data with input shared id
+        """Set input data as a shared data with input shared id.
 
         :param data: one data
         :param str shared_id: unique shared id. If None, the id is generated.
@@ -154,8 +156,7 @@ class CompositeStorage(Storage):
         return result
 
     def unshare_data(self, data, cache=False):
-        """
-        Remove share property from input data
+        """Remove share property from input data.
 
         :param data: one or more data to unshare.
         :param bool cache: use query cache if True (False by default).
@@ -169,12 +170,11 @@ class CompositeStorage(Storage):
                 self.put(path=path, name=name, data=d, cache=cache)
 
     def get(
-        self,
-        path, names=None, _filter=None, shared=False,
-        limit=0, skip=0, sort=None, with_count=False
+            self,
+            path, names=None, _filter=None, shared=False,
+            limit=0, skip=0, sort=None, with_count=False
     ):
-        """
-        Get data related to input names, input path and input filter.
+        """Get data related to input names, input path and input filter.
 
         :param dict path: dictionnary of path valut by path name
         :param names: data names in the input path.
@@ -198,12 +198,11 @@ class CompositeStorage(Storage):
         raise NotImplementedError()
 
     def find(
-        self, path, _filter, shared=False, limit=0, skip=0, sort=None,
-        with_count=False
+            self, path, _filter, shared=False, limit=0, skip=0, sort=None,
+            with_count=False
     ):
-        """
-        Get a list of data identified among a dictionary of composite values by
-        name.
+        """Get a list of data identified among a dictionary of composite values
+        by name.
 
         :param path: path
         :type path: storage filter
@@ -225,8 +224,7 @@ class CompositeStorage(Storage):
         raise NotImplementedError()
 
     def put(self, path, name, data, shared_id=None, cache=False):
-        """
-        Put a data related to an id and a path.
+        """Put a data related to an id and a path.
 
         :param path: path
         :type path: storage filter
@@ -239,8 +237,7 @@ class CompositeStorage(Storage):
         raise NotImplementedError()
 
     def remove(self, path, names=None, shared=False, cache=False):
-        """
-        Remove data from ids or type
+        """Remove data from ids or type.
 
         :param path: path to remove
         :type path: storage filter
@@ -255,8 +252,7 @@ class CompositeStorage(Storage):
         raise NotImplementedError()
 
     def get_path_with_name(self, data):
-        """
-        Get input data path and id
+        """Get input data path and id.
 
         :type data: dict
 
@@ -267,16 +263,29 @@ class CompositeStorage(Storage):
         path = {
             field: data[field]
             for field in data
-            if field in self.path and data[field] is not None
+            if field in self.path and data.get(field) is not None
         }
 
         result = path, data[CompositeStorage.NAME]
 
         return result
 
+    def get_data_from_id(self, data_id):
+
+        result = {}
+
+        names = data_id.split(CompositeStorage.PATH_SEPARATOR)[1:]
+
+        for path, name in zip(self.path, names):
+            result[path] = unquote_plus(name)
+
+        if len(names) > len(self.path):
+            result['extended'] = names[-1]
+
+        return result
+
     def get_absolute_path(self, path, name=None):
-        """
-        Get input data absolute path.
+        """Get input data absolute path.
 
         :param dict path: path from where get absolute path.
         :param str name: data id
@@ -284,20 +293,21 @@ class CompositeStorage(Storage):
 
         result = ''
 
-        for n, field in enumerate(self.path):
+        for field in self.path:
             if path.get(field) is not None:
-                result = '%s%s%s' % (
+                result = '{0}{1}{2}'.format(
                     result,
                     CompositeStorage.PATH_SEPARATOR,
-                    path[field]
+                    quote_plus(path[field])
                 )
             else:
                 break
 
         if name is not None and result:
-            result = '%s%s%s' % (
-                result, CompositeStorage.PATH_SEPARATOR,
-                name
+            result = '{0}{1}{2}'.format(
+                result,
+                CompositeStorage.PATH_SEPARATOR,
+                quote_plus(name)
             )
 
         return result

@@ -18,225 +18,285 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import isiterable
-from canopsis.common.init import basestring
 from canopsis.mongo.core import MongoStorage
 from canopsis.storage.timed import TimedStorage
-from canopsis.timeserie.timewindow import get_offset_timewindow
+from canopsis.timeserie.timewindow import Period
+
+from md5 import new as md5
+
+from operator import itemgetter
+
+from datetime import datetime
+
+from time import mktime
+
+DEFAULT_PERIOD = Period(week=1)
 
 
 class MongoTimedStorage(MongoStorage, TimedStorage):
+    """MongoStorage dedicated to manage periodic data."""
 
-    class Key:
-        """Index key names."""
+    class Index:
 
-        DATA_ID = 'd'  #: data id index name.
-        VALUE = 'v'  #: value index name.
-        TIMESTAMP = 't'  #: timestamp index name.
+        DATA_ID = 'i'
+        TIMESTAMP = 't'
+        VALUES = 'v'
+        LAST_UPDATE = 'l'
+        TAGS = MongoStorage.TAGS
 
-    TIMESTAMP_BY_ID = [  #: timestamp by data_id.
-        (Key.DATA_ID, MongoStorage.ASC), (Key.TIMESTAMP, MongoStorage.DESC)
-    ]
-    TIMESTAMPS = [  #: timestamps index in case of data_ids is not given.
-        (Key.TIMESTAMP, MongoStorage.DESC)
-    ]
+        QUERY = [(DATA_ID, 1), (TIMESTAMP, 1), (TAGS, 1)]
 
-    def _search(
-        self, data_ids=None, timewindow=None, _filter=None,
-        limit=0, skip=0, sort=None,
-        *args, **kwargs
-    ):
-        """Process internal search query in returning a cursor."""
+    def count(self, data_id, timewindow=None, *args, **kwargs):
 
-        result = None
+        data = self.get(
+            data_id=data_id,
+            timewindow=timewindow
+        )
 
-        # set a where clause for the search
-        where = {}
+        result = len(data)
 
-        if _filter is not None:  # add value filtering
-            if isinstance(_filter, dict):
-                for name in _filter:
-                    vname = '{0}.{1}'.format(MongoTimedStorage.Key.VALUE, name)
-                    where[vname] = _filter[name]
+        return result
 
-            else:
-                where[MongoTimedStorage.Key.VALUE] = _filter
+    def size(self, data_id=None, timewindow=None, *args, **kwargs):
 
-        if data_ids is not None:
-            if isiterable(data_ids, is_str=False):
-                where[MongoTimedStorage.Key.DATA_ID] = {'$in': data_ids}
+        where = {
+            MongoTimedStorage.Index.DATA_ID: data_id
+        }
 
-            else:
-                where[MongoTimedStorage.Key.DATA_ID] = data_ids
-
-        # if timewindow is not None, get latest timestamp before
-        # timewindow.stop()
         if timewindow is not None:
-            timestamp = timewindow.stop()
-            where[MongoTimedStorage.Key.TIMESTAMP] = {'$lte': timestamp}
-
-        # do the query
-        result = self._find(document=where)
-
-        # if timewindow is None or contains only one point, get only last
-        # document respectively before now or before the one point
-        if limit:
-            result.limit(limit)
-
-        if skip:
-            result.skip(skip)
-
-        if sort is not None:
-            sort = TimedStorage._resolve_sort(sort)
-            result.sort(sort)
-
-        # apply a specific index
-        if data_ids is None:
-            index = MongoTimedStorage.TIMESTAMPS
-
-        else:
-            index = MongoTimedStorage.TIMESTAMP_BY_ID
-
-        result.hint(index)
-
-        return result
-
-    def _cursor2periods(self, cursor, timewindow):
-        """Transform a cursor to period data.
-
-        :return: dictionary of {
-            data_id: list of {
-                    TimedStorage.TIMESTAMP: timestamp,
-                    TimedStorage.VALUE: value
-                }
-            }
-        :rtype: dict
-        """
-
-        result = {}
-
-        # iterate on all documents
-        for document in cursor:
-            timestamp = document[MongoTimedStorage.Key.TIMESTAMP]
-            value = document[MongoTimedStorage.Key.VALUE]
-            data_id = document[MongoTimedStorage.Key.DATA_ID]
-
-            # a value to get is composed of a timestamp, values and document id
-            value_to_append = {
-                TimedStorage.TIMESTAMP: timestamp,
-                TimedStorage.VALUE: value
+            where[MongoTimedStorage.Index.TIMESTAMP] = {
+                '$gte': timewindow.start(),
+                '$lte': timewindow.stop()
             }
 
-            if data_id not in result:
-                result[data_id] = [value_to_append]
-
-            else:
-                result[data_id].append(value_to_append)
-
-            if timewindow is not None and timestamp not in timewindow:
-                # stop when a document is just before the start timewindow
-                break
-
-        return result
-
-    def get(
-            self, data_ids, timewindow=None, _filter=None,
-            limit=0, skip=0, sort=None,
-            *args, **kwargs
-    ):
-
-        cursor = self._search(
-            data_ids=data_ids, timewindow=timewindow, _filter=_filter,
-            limit=limit, skip=skip, sort=sort
-        )
-
-        result = self._cursor2periods(cursor=cursor, timewindow=timewindow)
-
-        # if one element has been requested, returns it
-        if isinstance(data_ids, basestring):
-            result = result[data_ids] if result else None
-
-        return result
-
-    def find(self, timewindow=None, _filter=None, *args, **kwargs):
-
-        cursor = self._search(timewindow=timewindow, _filter=_filter)
-
-        result = self._cursor2periods(cursor=cursor, timewindow=timewindow)
-
-        return result
-
-    def count(self, data_ids, timewindow=None, _filter=None, *args, **kwargs):
-
-        cursor = self._search(
-            data_ids=data_ids, timewindow=timewindow, _filter=_filter
-        )
+        cursor = self._find(document=where)
+        cursor.hint(MongoTimedStorage.Index.QUERY)
 
         result = cursor.count()
 
         return result
 
-    def put(self, data_id, value, timestamp, cache=False, *args, **kwargs):
+    def get(
+        self, data_id, timewindow=None, limit=0, tags=None, *args, **kwargs
+    ):
 
-        timewindow = get_offset_timewindow(offset=timestamp)
-
-        data = self.get(
-            data_ids=data_id, timewindow=timewindow, limit=1
+        query = self._get_documents_query(
+            data_id=data_id,
+            timewindow=timewindow,
+            tags=tags
         )
 
-        data_value = None
+        projection = {
+            MongoTimedStorage.Index.TIMESTAMP: 1,
+            MongoTimedStorage.Index.VALUES: 1
+        }
 
-        if data:
-            data = data[0]
-            data_value = data[TimedStorage.VALUE]
+        cursor = self._find(document=query, projection=projection)
 
-        if value != data_value:  # new entry to insert
+        cursor.hint(MongoTimedStorage.Index.QUERY)
 
-            document = {
-                MongoTimedStorage.Key.DATA_ID: data_id,
-                MongoTimedStorage.Key.TIMESTAMP: timestamp,
-                MongoTimedStorage.Key.VALUE: value
-            }
+        result = []
 
-            if data and data[TimedStorage.TIMESTAMP] == timestamp:
-                spec = {
-                    MongoTimedStorage.Key.DATA_ID: data_id,
-                    MongoTimedStorage.Key.TIMESTAMP: timestamp
-                }
+        if limit != 0:
+            cursor = cursor[:limit]
 
-                self._update(
-                    spec=spec,
-                    document=document,
-                    cache=cache,
-                    multi=False,
-                    upsert=False
-                )
+        for document in cursor:
+
+            timestamp = int(document[MongoTimedStorage.Index.TIMESTAMP])
+
+            values = document[MongoTimedStorage.Index.VALUES]
+
+            for t in values:
+                value = values[t]
+                value_timestamp = timestamp + int(t)
+
+                if timewindow is None or value_timestamp in timewindow:
+                    result.append((value_timestamp, value))
+
+        result.sort(key=itemgetter(0))
+
+        return result
+
+    def put(self, data_id, points, tags=None, cache=False, *args, **kwargs):
+
+        # initialize a dictionary of perfdata value by value field
+        # and id_timestamp
+        doc_props_by_id_ts = {}
+        # previous variable contains a dict of entries to put in
+        # the related document
+
+        # prepare data to insert/update in db
+        for ts, value in points:
+
+            ts = int(ts)
+            id_timestamp = int(DEFAULT_PERIOD.round_timestamp(ts))
+
+            document_properties = doc_props_by_id_ts.setdefault(
+                id_timestamp, {}
+            )
+
+            if '_id' not in document_properties:
+                document_properties['_id'] = \
+                    MongoTimedStorage._get_document_id(
+                        data_id=data_id,
+                        timestamp=id_timestamp
+                    )
+                document_properties[MongoTimedStorage.Index.LAST_UPDATE] = \
+                    ts
 
             else:
-                self._insert(document=document, cache=cache)
+                last_update = MongoTimedStorage.Index.LAST_UPDATE
+                if document_properties[last_update] < ts:
+                    document_properties[last_update] = ts
 
-    def remove(self, data_ids, timewindow=None, cache=False, *args, **kwargs):
+            field_name = "{0}.{1}".format(
+                MongoTimedStorage.Index.VALUES, ts - id_timestamp)
 
-        where = {}
+            document_properties[field_name] = value
 
-        if isiterable(data_ids, is_str=False):
-            where[MongoTimedStorage.Key.DATA_ID] = {'$in': data_ids}
-        else:
-            where[MongoTimedStorage.Key.DATA_ID] = data_ids
+        for id_timestamp in doc_props_by_id_ts:
+            document_properties = doc_props_by_id_ts[id_timestamp]
+
+            # remove _id and last_update
+            _id = document_properties.pop('_id')
+
+            _set = {
+                MongoTimedStorage.Index.DATA_ID: data_id,
+                MongoTimedStorage.Index.TIMESTAMP: id_timestamp
+            }
+            _set.update(document_properties)
+
+            document_properties['_id'] = _id
+
+            if tags:
+                _set[MongoTimedStorage.Index.TAGS] = tags
+
+            result = self._update(
+                spec={'_id': _id}, document={'$set': _set}, cache=cache
+            )
+
+        return result
+
+    def remove(
+        self, data_id, timewindow=None, tags=None, cache=False, *args, **kwargs
+    ):
+
+        query = self._get_documents_query(
+            data_id=data_id, timewindow=timewindow, tags=tags
+        )
 
         if timewindow is not None:
-            where[MongoTimedStorage.Key.TIMESTAMP] = {
-                '$gte': timewindow.start(), '$lte': timewindow.stop()
+
+            projection = {
+                MongoTimedStorage.Index.TIMESTAMP: 1,
+                MongoTimedStorage.Index.VALUES: 1
             }
 
-        self._remove(document=where, cache=cache)
+            documents = self._find(document=query, projection=projection)
+
+            for document in documents:
+                timestamp = document.get(MongoTimedStorage.Index.TIMESTAMP)
+                values = document.get(MongoTimedStorage.Index.VALUES)
+                values_to_save = {
+                    t: values[t] for t in values
+                    if (timestamp + int(t)) not in timewindow
+                }
+                _id = document.get('_id')
+
+                if len(values_to_save) > 0:
+                    self._update(
+                        spec={'_id': _id},
+                        document={
+                            '$set': {
+                                MongoTimedStorage.Index.VALUES:
+                                values_to_save}
+                        },
+                        cache=cache)
+                else:
+                    self._remove(document=_id, cache=cache)
+
+        else:
+            self._remove(document=query, cache=cache)
 
     def all_indexes(self, *args, **kwargs):
 
         result = super(MongoTimedStorage, self).all_indexes(*args, **kwargs)
 
-        result += [
-            MongoTimedStorage.TIMESTAMP_BY_ID, MongoTimedStorage.TIMESTAMPS
-        ]
+        result.append(MongoTimedStorage.Index.QUERY)
+
+        return result
+
+    def _get_documents_query(self, data_id, timewindow, tags):
+        """Get mongo documents query about data_id, timewindow and period.
+
+        If period is None and timewindow is not None, period takes default
+        period value for data_id.
+        """
+
+        result = {
+            MongoTimedStorage.Index.DATA_ID: data_id
+        }
+
+        if tags:
+            result[MongoTimedStorage.Index.TAGS] = tags
+
+        if timewindow is not None:  # manage specific timewindow
+            start_timestamp, stop_timestamp = \
+                MongoTimedStorage._get_id_timestamps(
+                    timewindow=timewindow
+                )
+            result[MongoTimedStorage.Index.TIMESTAMP] = {
+                '$gte': start_timestamp,
+                '$lte': stop_timestamp}
+
+        return result
+
+    @staticmethod
+    def _get_id_timestamps(timewindow):
+        """
+        Get id timestamps related to input timewindow and period.
+        """
+
+        # get minimal timestamp
+        start_timestamp = int(
+            DEFAULT_PERIOD.round_timestamp(timewindow.start()))
+        # and maximal timestamp
+        stop_timestamp = int(
+            DEFAULT_PERIOD.round_timestamp(timewindow.stop()))
+        stop_datetime = datetime.fromtimestamp(stop_timestamp)
+        delta = DEFAULT_PERIOD.get_delta()
+        stop_datetime += delta
+        stop_timestamp = mktime(stop_datetime.timetuple())
+
+        result = start_timestamp, stop_timestamp
+
+        return result
+
+    @staticmethod
+    def _get_document_id(data_id, timestamp):
+        """
+        Get periodic document id related to input data_id, timestamp and period
+        """
+
+        md5_result = md5()
+
+        # add data_id in id
+        md5_result.update(data_id.encode('ascii', 'ignore'))
+
+        # add id_timestamp in id
+        md5_result.update(str(timestamp).encode('ascii', 'ignore'))
+
+        # add period in id
+        unit_with_value = DEFAULT_PERIOD.get_max_unit()
+        if unit_with_value is None:
+            raise MongoTimedStorage.Error(
+                "period {0} must contain at least one valid unit among {1}".
+                format(DEFAULT_PERIOD, Period.UNITS))
+
+        md5_result.update(
+            unit_with_value[Period.UNIT].encode('ascii', 'ignore'))
+
+        # resolve md5
+        result = md5_result.hexdigest()
 
         return result

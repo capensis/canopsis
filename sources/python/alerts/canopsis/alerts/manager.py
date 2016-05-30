@@ -159,11 +159,11 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.CONTEXT_MANAGER] = context
 
     def get_alarms(
-        self,
-        resolved=True,
-        tags=None,
-        exclude_tags=None,
-        timewindow=None
+            self,
+            resolved=True,
+            tags=None,
+            exclude_tags=None,
+            timewindow=None
     ):
         """
         Get alarms from TimedStorage.

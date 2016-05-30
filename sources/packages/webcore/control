@@ -11,12 +11,19 @@ NO_DIST=true
 NO_DISTVERS=true
 
 function pre_install(){
-    echo "Pre-install $NAME $VERSION-$RELEASE ..." 
+    echo "Pre-install $NAME $VERSION-$RELEASE ..."
 }
 
 function post_install(){
-    echo "Post-install $NAME $VERSION-$RELEASE ..." 
+
+    echo "-- Fix permissions"
+    chown -R $HUSER:$HGROUP $PREFIX/var/www
+
+    echo "Post-install $NAME $VERSION-$RELEASE ..."
     launch_cmd 0 supervisorctl update
+    launch_cmd 0 service mongodb start
+    launch_cmd 0 schema2db
+    launch_cmd 0 service mongodb stop
 }
 
 function pre_remove(){
@@ -46,8 +53,14 @@ function pre_update() {
 }
 
 function post_update(){
+
+    echo "-- Fix permissions"
+    chown -R $HUSER:$HGROUP $PREFIX/var/www
+
     echo "Post-update $NAME $VERSION-$RELEASE ..."
-    check_code $?
+    launch_cmd 0 service mongodb start
+    launch_cmd 0 schema2db
+    launch_cmd 0 service mongodb stop
 }
 
 function purge(){

@@ -26,12 +26,13 @@ install_requires = [
     'canopsis.configuration',
     'canopsis.middleware',
     'canopsis.event',
-    'canopsis.engines'
-    'canopsis.ctxprop'
-    'canopsis.old',
+    'canopsis.engines',
+    'canopsis.ctxprop',
+    'canopsis.old'
 ]
 
 setup(
     description='Canopsis check event library',
     install_requires=install_requires,
-    keywords='check event')
+    keywords='check event'
+)
