@@ -8,18 +8,5 @@ This document describe how Canopsis is organized
 Schema
 ------
 
-TODO
 
-
-Major Technologies used
------------------------
-
-Messaging: RabbitMQ
-^^^^^^^^^^^^^^^^^^^
-
-Database: MongoDB
-^^^^^^^^^^^^^^^^^
-
-Coding Language: Python / JS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+.. image:: ../../_static/images/architecture/technicaloverview.png
