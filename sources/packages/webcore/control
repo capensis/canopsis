@@ -53,6 +53,10 @@ function pre_update() {
 }
 
 function post_update(){
+
+    echo "-- Fix permissions"
+    chown -R $HUSER:$HGROUP $PREFIX/var/www
+
     echo "Post-update $NAME $VERSION-$RELEASE ..."
     launch_cmd 0 service mongodb start
     launch_cmd 0 schema2db
