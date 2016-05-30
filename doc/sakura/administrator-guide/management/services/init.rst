@@ -39,6 +39,18 @@ The available commands are :
    service <service name> restart
    service <service name> status
 
+
+**Special tip for `amqp2engines` groups of processes**
+
+You can use that command
+
+.. code-block:: bash
+
+   service amqp2engines* mstart|mstop|mrestart
+
+to play with engines in parallel instead of in serie. (`m` stands for `massive`).
+
+
 Configuring and running the hypervisor
 --------------------------------------
 
