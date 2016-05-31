@@ -26,6 +26,7 @@ from time import time
 
 from canopsis.common.init import basestring, PYVER
 from canopsis.common.utils import ensure_unicode, forceUTF8
+from canopsis.monitoring.parser import PerfDataParser
 
 
 class engine(Engine):
@@ -103,5 +104,28 @@ class engine(Engine):
         event["status"] = event.get("status", default_status)
 
         event['output'] = event.get('output', '')
+
+        # Get perfdata
+        perf_data = event.get('perf_data')
+        perf_data_array = event.get('perf_data_array')
+
+        if perf_data_array is None:
+            perf_data_array = []
+
+        # Parse perfdata
+        if perf_data:
+            self.logger.debug(' + perf_data: {0}'.format(perf_data))
+
+            try:
+                perf_data_array += PerfDataParser(perf_data).perf_data_array
+
+            except Exception as err:
+                self.logger.error(
+                    "Impossible to parse perfdata from: {0} ({1})".format(
+                        event, err
+                    )
+                )
+
+            event['perf_data_array'] = perf_data_array
 
         return event
