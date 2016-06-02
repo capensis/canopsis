@@ -27,6 +27,7 @@ from canopsis.common.utils import ensure_unicode
 from canopsis.common.template import Template
 
 from email import Encoders
+from email import charset
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email.MIMEMultipart import MIMEMultipart
@@ -94,6 +95,8 @@ class engine(TaskHandler):
         :param smtp_port: int(25).
         :param html: allow html into mail body (booleen).
         """
+
+        charset.add_charset('utf-8', charset.SHORTEST, charset.QP)
 
         # Verify account
         account_firstname = account.firstname
@@ -169,18 +172,10 @@ class engine(TaskHandler):
         msg["Subject"] = subject
 
         if html:
-            try:
-                detection = detect(body)
-                msg.attach(MIMEText(body, 'html', _charset=detection['encoding']))
-            except:
-                msg.attach(MIMEText(body, 'html', _charset='utf-8'))
+            msg.attach(MIMEText(body, 'html', _charset='utf-8'))
 
         else:
-            try:
-                detection = detect(body)
-                msg.attach(MIMEText(body, 'plain', _charset=detection['encoding']))
-            except:
-                msg.attach(MIMEText(body, 'plain', _charset='utf-8'))
+            msg.attach(MIMEText(body, 'plain', _charset='utf-8'))
 
         msg['Date'] = formatdate(localtime=True)
 
