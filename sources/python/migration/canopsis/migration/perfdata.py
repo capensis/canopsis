@@ -71,6 +71,11 @@ class PerfdataModule(MigrationModule):
             self.update_to_version_1()
             self.set_version('perfdata', 1)
 
+        if self.get_version('perfdata') < 2:
+            self.logger.info('Migrating to version 2')
+            self.update_mongo2influxdb()
+            self.set_version('perfdata', 2)
+
     def update_to_version_1(self):
         storage = self.manager[PerfData.PERFDATA_STORAGE]
         nan = float('nan')
