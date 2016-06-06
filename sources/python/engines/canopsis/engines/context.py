@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from canopsis.engines.core import Engine
 from canopsis.context.manager import Context
@@ -133,8 +134,20 @@ class engine(Engine):
             )
 
         # get related entity
+        encoded_event = {}
+        for k, v in _event.items():
+            try:
+                k = k.encode('utf-8')
+            except:
+                pass
+            try:
+                v = v.encode('utf-8')
+            except:
+                pass
+            encoded_event[k] = v
+
         entity = self.context.get_entity(
-            _event, from_db=True, create_if_not_exists=True, cache=True
+            encoded_event, from_db=True, create_if_not_exists=True, cache=True
         )
 
         # set service groups and hostgroups
