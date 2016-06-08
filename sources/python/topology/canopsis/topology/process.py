@@ -34,6 +34,7 @@ composed of the ``canopsis.topology.rule.condition.new_state`` condition and
 If this condition is checked, then other specific conditions can be applied
 such as those defined in the canopsis.topology.rule.action module.
 """
+from __future__ import unicode_literals
 
 from canopsis.topology.elements import Topology, TopoNode
 from canopsis.topology.manager import TopologyManager
@@ -107,7 +108,20 @@ def event_processing(
             # get entity and entity id
             entity = ctx.get_entity(event)
             if entity is not None:
-                entity_id = ctx.get_entity_id(entity)
+
+                encoded_entity = {}
+                for k, v in entity.items():
+                    try:
+                        k = k.encode('utf-8')
+                    except:
+                        pass
+                    try:
+                        v = v.encode('utf-8')
+                    except:
+                        pass
+                    encoded_entity[k] = v
+
+                entity_id = ctx.get_entity_id(encoded_entity)
                 logger.debug(u"entity_id {0}".format(entity_id))
                 elts = tm.get_elts(info={TopoNode.ENTITY: entity_id})
                 logger.debug(u"elts {0}".format(elts))
