@@ -1,0 +1,16 @@
+NAME="npmbox-packages"
+
+function build() {
+    true
+}
+
+function install() {
+    cd $SRC_PATH/externals/npmboxes
+
+    npmunbox -g bower broccoli-cli
+    npmunbox -C $PREFIX/var/www command-line-args command-line-commands connect serve-static subcommand subcommander sync-exec
+}
+
+function update() {
+    install
+}
