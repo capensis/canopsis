@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from canopsis.common.utils import ensure_iterable
 from canopsis.common.ws import route
@@ -68,11 +69,11 @@ def exports(ws):
                                 continue
 
                         rk = '{0}.{1}.{2}.{3}.{4}'.format(
-                            event['connector'],
-                            event['connector_name'],
-                            event['event_type'],
-                            event['source_type'],
-                            event['component']
+                            u'{0}'.format(event['connector']),
+                            u'{0}'.format(event['connector_name']),
+                            u'{0}'.format(event['event_type']),
+                            u'{0}'.format(event['source_type']),
+                            u'{0}'.format(event['component'])
                         )
 
                         if event['source_type'] == 'resource':

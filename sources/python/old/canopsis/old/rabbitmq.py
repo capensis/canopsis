@@ -18,11 +18,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from sys import stdout
 from sys import prefix as sys_prefix
 
 from kombu import Connection, Exchange, Queue, pools, __version__
+
+import traceback
 
 try:
     from amqplib.client_0_8.exceptions import AMQPConnectionException \
@@ -368,7 +371,7 @@ class Amqp(Thread):
                             serializer=serializer,
                             compression=compression,
                             routing_key=routing_key,
-                            exchange=self.get_exchange(exchange_name)
+                            exchange=self.get_exchange(exchange_name.encode('utf-8'))
                         )
 
                         self.logger.debug('publish {} in exchange {}'.format(
@@ -380,7 +383,7 @@ class Amqp(Thread):
 
                     except Exception as e:
                         self.logger.error(
-                            u' + Impossible to send {}'.format(e)
+                            u' + Impossible to send {}'.format(traceback.format_exc(e))
                         )
                         self.disconnect()
                         self.connect()

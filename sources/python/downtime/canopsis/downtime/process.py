@@ -19,6 +19,7 @@
 # ---------------------------------
 
 """Module in charge of defining downtime processing in engines."""
+from __future__ import unicode_literals
 
 from canopsis.context.manager import Context
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -67,7 +68,20 @@ def event_processing(
 
     evtype = event[Event.TYPE]
     entity = context.get_entity(event)
-    eid = context.get_entity_id(entity)
+
+    encoded_entity = {}
+    for k, v in entity.items():
+        try:
+            k = k.encode('utf-8')
+        except:
+            pass
+        try:
+            v = v.encode('utf-8')
+        except:
+            pass
+        encoded_entity[k] = v
+
+    eid = context.get_entity_id(encoded_entity)
 
     if evtype == DOWNTIME:
         ev = vEvent()
