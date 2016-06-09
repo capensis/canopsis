@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from canopsis.task.core import register_task
 
@@ -114,8 +115,20 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             event_with_metric['type'] = 'metric'
             event_with_metric[Context.NAME] = perf_data.pop('metric')
 
+            encoded_event_with_metric = {}
+            for k, v in event_with_metric.items():
+                try:
+                    k = k.encode('utf-8')
+                except:
+                    pass
+                try:
+                    v = v.encode('utf-8')
+                except:
+                    pass
+                encoded_event_with_metric[k] = v
+
             metric_id = manager.context.get_entity_id(
-                event_with_metric
+                encoded_event_with_metric
             )
             value = perf_data.pop('value', None)
 

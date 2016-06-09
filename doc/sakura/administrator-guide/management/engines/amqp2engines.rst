@@ -3,7 +3,7 @@
 Configure amqp2engines
 ======================
 
-*amqp2engines* is a group of process, where each process is a single engine.
+*amqp2engines* is a group of processes, where each process is a single engine.
 
 The engines are launched by the script ``engine-launcher``.
 

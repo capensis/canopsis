@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from bottle import HTTPError, response
 from canopsis.common.ws import route
@@ -323,7 +324,19 @@ def exports(ws):
             if record['crecord_type'] == 'event':
                 entity = ctxmgr.get_entity(record)
 
-                record['entity_id'] = ctxmgr.get_entity_id(entity)
+                encoded_entity = {}
+                for k, v in entity.items():
+                    try:
+                        k = k.encode('utf-8')
+                    except:
+                        pass
+                    try:
+                        v = v.encode('utf-8')
+                    except:
+                        pass
+                    encoded_entity[k] = v
+
+                record['entity_id'] = ctxmgr.get_entity_id(encoded_entity)
 
         return records, nrecords
 
