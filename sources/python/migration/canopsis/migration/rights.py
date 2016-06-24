@@ -161,17 +161,17 @@ class RightsModule(MigrationModule):
                     groups=user.get('groups', None)
                 )
 
-                self.manager.update_fields(
-                    user['_id'],
-                    'user',
-                    {
-                        'external': user.get('external', False),
-                        'enable': user.get('enable', True),
-                        'shadowpasswd': user.get('shadowpass', None),
-                        'mail': user.get('mail', None),
-                        'authkey': user.get('authkey', str(uuid1()))
-                    }
-                )
+            self.manager.update_fields(
+                user['_id'],
+                'user',
+                {
+                    'external': user.get('external', False),
+                    'enable': user.get('enable', True),
+                    'shadowpasswd': user.get('shadowpass', None),
+                    'mail': user.get('mail', None),
+                    'authkey': user.get('authkey', str(uuid1()))
+                }
+            )
 
     def add_roles(self, data, clear):
         for role in data:

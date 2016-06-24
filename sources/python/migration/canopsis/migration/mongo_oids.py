@@ -89,11 +89,11 @@ class MongoOIDsModule(MigrationModule):
             if collectionname.startswith('periodic_'):
                 hasperiodic = True
 
-                collections2rename[collectionname] = db.[collectionname]
+                collections2rename[collectionname] = db.get_collection(collectionname)
 
             if collectionname.startswith('timed_'):
 
-                collections2rename[collectionname] = db.[collectionname]
+                collections2rename[collectionname] = db.get_collection(collectionname)
 
         if hasperiodic:
 
