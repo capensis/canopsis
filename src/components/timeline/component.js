@@ -30,7 +30,7 @@ Ember.Application.initializer({
             timelineData: undefined,
 
             statusToName: {
-                'ack':'Acknowledge by ',
+                'ack':'Acknowledged by ',
                 'assocticket':'Ticket association by ',
                 'declareticket':'Ticket declared by ',
                 'cancel':'Canceled by ',
@@ -49,6 +49,14 @@ Ember.Application.initializer({
                 'Critical'
             ],
 
+            statusArray: [
+                'off',
+                'ongoing',
+                'stealthy',
+                'bagot',
+                'canceled'
+            ],
+
             colorArray:[
                 'bg-green',
                 'bg-yellow',
@@ -60,10 +68,10 @@ Ember.Application.initializer({
                 'ack':{'icon':'fa-check','color':'bg-purple'},
                 'assocticket':{'icon':'fa-ticket','color':'bg-blue'},
                 'declareticket':{'icon':'fa-ticket','color':'bg-blue'},
-                'cancel':{'icon':'fa-close','color':'bg-green'},
-                'uncancel':{'icon':'fa-close','color':'bg-yellow'},
-                'statusinc':{'icon':'fa-flag','color':undefined},
-                'statusdec':{'icon':'fa-flag','color':undefined},
+                'cancel':{'icon':'glyphicon glyphicon-ban-circle','color':'bg-gray'},
+                'uncancel':{'icon':'glyphicon glyphicon-ban-circle','color':'bg-gray'},
+                'statusinc':{'icon':'fa-sort-amount-asc','color':'bg-gray'},
+                'statusdec':{'icon':'fa-sort-amount-desc','color':'bg-gray'},
                 'stateinc':{'icon':'fa-flag','color':undefined},
                 'statedec':{'icon':'fa-flag','color':undefined},
                 'changestate':{'icon':'fa-flag','color':undefined}
@@ -97,6 +105,9 @@ Ember.Application.initializer({
                     if(step._t.indexOf('state') > -1)
                         step.state = get(this,'stateArray')[step.val];
                     
+                    if(step._t.indexOf('status') > -1)
+                        step.status = get(this,'statusArray')[step.val];
+
                     step.name = get(this,'statusToName')[step._t];
                 }
             }

@@ -24,6 +24,10 @@
                 <span {{bind-attr class=":brick-timeline-badge step.color"}}>  {{step.state}}
                 </span>
               {{/if}}
+              {{#if step.status}}
+                <span class="brick-timeline-badge">  {{step.status}}
+                </span>
+              {{/if}}
               <span ></span>
               <span class="brick-timeline-title">{{step.name}}</span>    {{step.a}}
             </h3>
