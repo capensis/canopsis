@@ -53,11 +53,11 @@ The last build was not a full build. Please use the "full-compile" npm script to
 
 ### Lint
 
-Tested on commit : [ERROR : The brick is not in a dedicated git repository].
+Tested on commit : cf2988a.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
-| Lint   | :ok: OK |  |
+| Lint   | :negative_squared_cross_mark: ERROR | <br>/home/tristan/git/canopsis/var/www/src/canopsis/brick-timeline/src/components/timeline/component.js<br>  24:2  error  Mixed spaces and tabs                                   no-mixed-spaces-and-tabs<br>  24:6  error  Expected indentation of 8 space characters but found 4  indent<br>  25:2  error  Mixed spaces and tabs                                   no-mixed-spaces-and-tabs<br>  25:8  error  Missing semicolon                                       semi<br>  26:2  error  Mixed spaces and tabs                                   no-mixed-spaces-and-tabs<br>  27:2  error  Mixed spaces and tabs                                   no-mixed-spaces-and-tabs<br>  27:6  error  Expected indentation of 8 space characters but found 4  indent<br><br>✖ 7 problems (7 errors, 0 warnings)<br><br> |
 
 
 ## Code-Notes
@@ -73,4 +73,4 @@ Tested on commit : [ERROR : The brick is not in a dedicated git repository].
 ## Additional-info
 
 Minified version :  files (size: 4,0K)
-Development version :  files (size: 4,0K)
+Development version : 3 files (size: 24K)
