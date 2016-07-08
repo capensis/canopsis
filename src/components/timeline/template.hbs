@@ -6,7 +6,7 @@
       {{#each steps as |step|}}
         <li class="time-label">
           <span class="bg-red">
-            {{step.date}} {{step.time}}
+            {{step.date}}
           </span>
         </li>
         <!-- /.timeline-label -->
@@ -15,9 +15,18 @@
           <i {{bind-attr class=":fa step.icon step.color"}}></i>
 
           <div class="timeline-item">
-            <span class="time"><i class="fa fa-clock-o"></i> {{step.time}}</span>
+            <span class="time">
+              <i class="fa fa-clock-o"></i> {{step.time}}
+            </span>
 
-            <h3 class="timeline-header"><a href="#">{{step.a}}</a>    {{step._t}}</h3>
+            <h3 class="timeline-header">
+              {{#if step.state}}
+                <span {{bind-attr class=":brick-timeline-badge step.color"}}>  {{step.state}}
+                </span>
+              {{/if}}
+              <span ></span>
+              <span class="brick-timeline-title">{{step.name}}</span>    {{step.a}}
+            </h3>
 
             <div class="timeline-body">
               {{step.m}}

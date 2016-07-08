@@ -30,6 +30,26 @@ Ember.Application.initializer({
         var component = Ember.Component.extend({
             timelineData: undefined,
 
+            statusToName: {
+                "ack":"Acknowledge by ",
+                "assocticket":"Ticket association by ",
+                "declareticket":"Ticket declared by ",
+                "cancel":"Canceled by ",
+                "uncancel":"Uncanceled by ",
+                "statusinc":"Status increased",
+                "statusdec":"Status decreased",
+                "stateinc":"State increased",
+                "statedec":"State decreased",
+                "changestate":"State changed"
+            },
+
+            stateArray: [
+                "Ok",
+                "Minor",
+                "Major",
+                "Critical"
+            ],
+
             /**
              * @method didInsertElement
              * @description contains Rrule-editor initialisation and data binding
@@ -39,60 +59,63 @@ Ember.Application.initializer({
                 console.error(this.timelineData)
                 for(var i = 0; i < this.steps.length;i++){
                     var date = new Date(this.steps[i].t*1000);
-                    this.steps[i].date = moment(date).format('LL');
-                    this.steps[i].time = moment(date).format("h:mm:ss a");
-                    this.steps[i].color = "bg-"
+                    var step = this.steps[i]
+                    step.date = moment(date).format('LL');
+                    step.time = moment(date).format("h:mm:ss a");
+                    step.color = "bg-"
 
-                    switch(this.steps[i]._t){
+                    switch(step._t){
                         case "ack":
-                            this.steps[i].icon = "fa-check"
-                            this.steps[i].color += "purple";
+                            step.icon = "fa-check"
+                            step.color += "purple";
                             break;
                         case "assocticket":
-                            this.steps[i].icon = "fa-ticket"
-                            this.steps[i].color += "blue";
+                            step.icon = "fa-ticket"
+                            step.color += "blue";
                             break;
                         case "declareticket":
-                            this.steps[i].icon = "fa-ticket"
-                            this.steps[i].color += "blue";
+                            step.icon = "fa-ticket"
+                            step.color += "blue";
                             break;
                         case "cancel":
-                            this.steps[i].icon = "fa-close"
-                            this.steps[i].color += "green";
+                            step.icon = "fa-close"
+                            step.color += "green";
                             break;
                         case "uncancel":
-                            this.steps[i].icon = "fa-close"
-                            this.steps[i].color += "yellow";
+                            step.icon = "fa-close"
+                            step.color += "yellow";
                             break;
                         case "statusinc":
                         case "statusdec":
-                            this.steps[i].icon = "fa-envelope"
+                            step.icon = "fa-flag"
                             break;
                         case "stateinc":
                         case "statedec":
                         case "changestate":
-                            this.steps[i].icon = "fa-envelope"
+                            step.state = this.stateArray[step.val]
+                            step.icon = "fa-flag"
                             break;
                         default:
                             break;
                     }
 
 
-                    switch(this.steps[i].val){
+                    switch(step.val){
                         case 0:
-                            this.steps[i].color += "green";
+                            step.color += "green";
                             break;
                         case 1:
-                            this.steps[i].color += "yellow";
+                            step.color += "yellow";
                             break;
                         case 2:
-                            this.steps[i].color += "orange";
+                            step.color += "orange";
                             break;
                         case 3:
-                            this.steps[i].color += "red";
+                            step.color += "red";
                             break;
                     }
-                    console.error(this.steps[i]._t)
+                    
+                    step.name = this.statusToName[step._t]
                 }
             }
         })

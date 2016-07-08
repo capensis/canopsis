@@ -7,7 +7,7 @@
 		"canceled": {"type": "alarmstep", "required": false},
 		"ticket": {"type": "alarmstep", "required": false},
 		"resolved": {"type": "integer","required":false},
-		"t":  {"type": "integer","required":false},
+		"t":  {"type": "integer","role": "timestamp","required":false},
 		"steps": {
 			"type": "array",
 			"default": [],
