@@ -17,7 +17,7 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
-window.bricks['brick-timeline'].schemasArray = [];
+window.bricks['brick-timeline'].schemasArray = ["text!canopsis/brick-timeline/schemas/alarm.json","text!canopsis/brick-timeline/schemas/alarmstep.json"];
 
 define(window.bricks['brick-timeline'].schemasArray, function () {
     for (var i = 0; i < arguments.length; i++) {

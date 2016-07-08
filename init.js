@@ -19,9 +19,13 @@
 
  require.config({
     paths: {
+        'components/component-timeline': 'canopsis/brick-timeline/src/components/timeline/template',
 
     }
 });
 
  define([
+    'canopsis/brick-timeline/src/adapters/adapters',
+    'canopsis/brick-timeline/src/components/timeline/component',
+    'ehbs!components/component-timeline'
 ], function () {});

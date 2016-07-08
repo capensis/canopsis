@@ -1,0 +1,26 @@
+{
+	"type": "object",
+	"properties": {
+		"state": {"type": "alarmstep", "required": false},
+		"status": {"type": "alarmstep", "required": false},
+		"ack": {"type": "alarmstep", "required": false},
+		"canceled": {"type": "alarmstep", "required": false},
+		"ticket": {"type": "alarmstep", "required": false},
+		"resolved": {"type": "integer","required":false},
+		"steps": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"type": "alarmstep"
+			},
+			"required": false
+		},
+		"tags": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"required":false
+		}
+	}
+}
