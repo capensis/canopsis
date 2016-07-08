@@ -22,103 +22,85 @@ Ember.Application.initializer({
     after: 'HashUtils',
     initialize: function(container, application) {
 
-        var __ = Ember.String.loc,
-            get = Ember.get,
+        var get = Ember.get,
             set = Ember.set,
-            isArray = Ember.isArray
+            moment = window.moment;
 
         var component = Ember.Component.extend({
             timelineData: undefined,
 
             statusToName: {
-                "ack":"Acknowledge by ",
-                "assocticket":"Ticket association by ",
-                "declareticket":"Ticket declared by ",
-                "cancel":"Canceled by ",
-                "uncancel":"Uncanceled by ",
-                "statusinc":"Status increased",
-                "statusdec":"Status decreased",
-                "stateinc":"State increased",
-                "statedec":"State decreased",
-                "changestate":"State changed"
+                'ack':'Acknowledge by ',
+                'assocticket':'Ticket association by ',
+                'declareticket':'Ticket declared by ',
+                'cancel':'Canceled by ',
+                'uncancel':'Uncanceled by ',
+                'statusinc':'Status increased',
+                'statusdec':'Status decreased',
+                'stateinc':'State increased',
+                'statedec':'State decreased',
+                'changestate':'State changed'
             },
 
             stateArray: [
-                "Ok",
-                "Minor",
-                "Major",
-                "Critical"
+                'Ok',
+                'Minor',
+                'Major',
+                'Critical'
             ],
+
+            colorArray:[
+                'bg-green',
+                'bg-yellow',
+                'bg-orange',
+                'bg-red'
+            ],
+
+            iconsAndColors: {
+                'ack':{'icon':'fa-check','color':'bg-purple'},
+                'assocticket':{'icon':'fa-ticket','color':'bg-blue'},
+                'declareticket':{'icon':'fa-ticket','color':'bg-blue'},
+                'cancel':{'icon':'fa-close','color':'bg-green'},
+                'uncancel':{'icon':'fa-close','color':'bg-yellow'},
+                'statusinc':{'icon':'fa-flag','color':undefined},
+                'statusdec':{'icon':'fa-flag','color':undefined},
+                'stateinc':{'icon':'fa-flag','color':undefined},
+                'statedec':{'icon':'fa-flag','color':undefined},
+                'changestate':{'icon':'fa-flag','color':undefined}
+            },
 
             /**
              * @method didInsertElement
              * @description contains Rrule-editor initialisation and data binding
              */
             didInsertElement: function() {
-                set(this,"steps",this.timelineData.v.steps)
-                console.error(this.timelineData)
-                for(var i = 0; i < this.steps.length;i++){
-                    var date = new Date(this.steps[i].t*1000);
-                    var step = this.steps[i]
+                set(this,'steps',get(this,'timelineData').v.steps);
+
+                for(var i = 0; i < get(this,'steps').length;i++){
+                    var step = get(this,'steps')[i];
+
+                    //build time related information
+                    var date = new Date(get(this,'steps')[i].t*1000);
                     step.date = moment(date).format('LL');
-                    step.time = moment(date).format("h:mm:ss a");
-                    step.color = "bg-"
-
-                    switch(step._t){
-                        case "ack":
-                            step.icon = "fa-check"
-                            step.color += "purple";
-                            break;
-                        case "assocticket":
-                            step.icon = "fa-ticket"
-                            step.color += "blue";
-                            break;
-                        case "declareticket":
-                            step.icon = "fa-ticket"
-                            step.color += "blue";
-                            break;
-                        case "cancel":
-                            step.icon = "fa-close"
-                            step.color += "green";
-                            break;
-                        case "uncancel":
-                            step.icon = "fa-close"
-                            step.color += "yellow";
-                            break;
-                        case "statusinc":
-                        case "statusdec":
-                            step.icon = "fa-flag"
-                            break;
-                        case "stateinc":
-                        case "statedec":
-                        case "changestate":
-                            step.state = this.stateArray[step.val]
-                            step.icon = "fa-flag"
-                            break;
-                        default:
-                            break;
-                    }
-
-
-                    switch(step.val){
-                        case 0:
-                            step.color += "green";
-                            break;
-                        case 1:
-                            step.color += "yellow";
-                            break;
-                        case 2:
-                            step.color += "orange";
-                            break;
-                        case 3:
-                            step.color += "red";
-                            break;
-                    }
+                    step.time = moment(date).format('h:mm:ss a');
                     
-                    step.name = this.statusToName[step._t]
+                    //build color class
+                    step.color = get(this,'iconsAndColors')[step._t].color;
+                    //set icon
+                    step.icon = get(this,'iconsAndColors')[step._t].icon;
+
+                    //if no color, it's a state/value, so color
+                    if(!step.color)
+                        step.color = get(this,'colorArray')[step.val];
+
+                    //if _t in ['stateinc','statedec','changestate']
+                    if(step._t.indexOf('state') > -1)
+                        step.state = get(this,'stateArray')[step.val];
+                    
+                    step.name = get(this,'statusToName')[step._t];
                 }
             }
-        })
+        });
         
         application.register('component:component-timeline', component);
     }
