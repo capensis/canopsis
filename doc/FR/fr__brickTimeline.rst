@@ -35,5 +35,5 @@ The timeline component is used to display alarm steps in chronological order. Th
 component depends heavily of adminLTE design, used icons are font awesome. A new adapter
 is provided.
 
-.. figure:: ../_static/images/readme.png
+.. figure:: ../preview/readme.png
 
