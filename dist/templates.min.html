@@ -1,4 +1,4 @@
-<button class="btn btn-warning btn-reset" data-target="plugins" style="float:right">
+<script type="text/x-handlebars" data-template-name="components/component-querybuilder"><button class="btn btn-warning btn-reset" data-target="plugins" style="float:right">
     {{tr "Reset"}}
 </button>
 
@@ -31,3 +31,6 @@
         {{/component-tabcontent}}
     {{/component-tabscontentgroup}}
 {{/component-tabs}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-querybuilder">{{component-querybuilder filterValue=attr.value}}
+</script>

@@ -25,10 +25,16 @@
     }
 });
 
- define([
+define(['text!canopsis/brick-querybuilder/dist/templates.min.html',
     'link!canopsis/brick-querybuilder/dist/brick.min.css',
     'ehbs!components/component-querybuilder',
     'ehbs!editor-querybuilder',
     'canopsis/brick-querybuilder/requirejs-modules/externals.conf',
     'canopsis/brick-querybuilder/dist/brick.min'
-], function () {});
+], function (templates) {
+    templates = $(templates).filter('script');
+for (var i = 0, l = templates.length; i < l; i++) {
+var tpl = $(templates[i]);
+Ember.TEMPLATES[tpl.attr('data-template-name')] = Ember.Handlebars.compile(tpl.text());
+};
+});
