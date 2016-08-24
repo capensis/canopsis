@@ -295,19 +295,23 @@ class CompositeStorage(Storage):
 
         for field in self.path:
             if path.get(field) is not None:
+                encoded_field = path.get(field).encode('utf-8')
                 result = '{0}{1}{2}'.format(
                     result,
                     CompositeStorage.PATH_SEPARATOR,
-                    quote_plus(path[field])
+                    quote_plus(encoded_field)
                 )
             else:
                 break
 
         if name is not None and result:
+
+            encoded_name = name.encode('utf-8')
+
             result = '{0}{1}{2}'.format(
                 result,
                 CompositeStorage.PATH_SEPARATOR,
-                quote_plus(name)
+                quote_plus(encoded_name)
             )
 
         return result
