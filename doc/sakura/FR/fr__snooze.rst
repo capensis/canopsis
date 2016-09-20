@@ -4,7 +4,7 @@
 Snoozed alarm
 =============
 
-This document describes the snooze status feature of Canopsis.
+This document describes the snooze behaviour feature of Canopsis.
 
 .. contents::
    :depth: 3
@@ -57,7 +57,7 @@ The snoozed behaviour triggered by the user
 When an alarm is displayed on the widget list, the user **MUST** be able to
 snooze it.
 
-If an alarm is snoozed by a user, the alarm status is switched to "snoozed"
+If an alarm is snoozed by a user, the alarm is switched to "snoozed"
 during a time period defined by the user.
 
 During this time period, the alarm is not visible. If the alarm state switch to
