@@ -55,4 +55,6 @@ If a snoozed alarm is snoozed again :
 Configuration
 -------------
 
-As a first step, a global snooze time for all entities will be configurable in .. . When contextv2 will be available, automatic snooze time by entity will be used instead.
+As a first step, a global snooze time for all entities will be configurable in
+etc/schema.d/crecord.statusmanagement.json. When contextv2 will be available,
+automatic snooze time by entity will be used instead.
