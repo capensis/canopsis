@@ -32,10 +32,10 @@ from canopsis.alerts.status import get_previous_step, OFF, CANCELED
 class BaseTest(TestCase):
     def setUp(self):
         self.alarm_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testalarm://'
+            'storage-periodical-testalarm://'
         )
         self.config_storage = Middleware.get_middleware_by_uri(
-            'storage-periodical-testconfig://'
+            'storage-default-testconfig://'
         )
 
         self.manager = Alerts()
