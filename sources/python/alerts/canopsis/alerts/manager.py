@@ -171,6 +171,7 @@ class Alerts(MiddlewareRegistry):
         :param resolved: If ``True``, returns only resolved alarms, else
                          returns only unresolved alarms (default: ``True``).
         :type resolved: bool
+
         :param tags: Tags which must be set on alarm (optional)
         :type tags: str or list
 
