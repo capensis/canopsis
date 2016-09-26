@@ -203,6 +203,30 @@ class GraphManager(MiddlewareRegistry):
             ids=ids, _filter=query, cache=cache
         )
         self.clean_edges()
+        self.clean_operators()
+
+    def clean_operators(self):
+        topos_elts = []
+
+        coll_operator = self[GraphManager.STORAGE].get_elements(query={'type': 'topologyoperator2'})
+        coll_topo = self[GraphManager.STORAGE].get_elements(query={'type':'topo'})
+
+        for i in coll_topo:
+            for j in i['elts']:
+                topos_elts.append(j)
+
+        with open('/home/tgosselin/fichierdelog3', 'a') as f:
+            f.write('topo_elts: {0}\n'.format(topos_elts))
+
+        for i in coll_operator:
+            if i['_id'] not in topos_elts:
+                with open('/home/tgosselin/fichierdelog3', 'a') as f:
+                    f.write('DELETE\n')
+                self[GraphManager.STORAGE].remove_elements(ids=i['_id'])
+            else:
+                with open('/home/tgosselin/fichierdelog3', 'a') as f:
+                    f.write('DELETE PAS\n')
+
 
     def clean_edges(self):
         ids = []
