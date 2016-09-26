@@ -32,10 +32,10 @@ from canopsis.alerts.status import get_previous_step, OFF, CANCELED
 class BaseTest(TestCase):
     def setUp(self):
         self.alarm_storage = Middleware.get_middleware_by_uri(
-            'storage-timed-testalarm://'
+            'storage-periodical-testalarm://'
         )
         self.config_storage = Middleware.get_middleware_by_uri(
-            'storage-timed-testconfig://'
+            'storage-default-testconfig://'
         )
 
         self.manager = Alerts()
@@ -71,9 +71,15 @@ class TestManager(BaseTest):
         alarm_id = '/fake/alarm/id'
 
         self.assertTrue(self.manager.get_current_alarm(alarm_id) is None)
-        self.manager.make_alarm(alarm_id, {'timestamp': 0})
+        self.manager.make_alarm(
+            alarm_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
         self.assertTrue(self.manager.get_current_alarm(alarm_id) is not None)
-        self.manager.make_alarm(alarm_id, {'timestamp': 0})
+        self.manager.make_alarm(
+            alarm_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
         self.assertTrue(self.manager.get_current_alarm(alarm_id) is not None)
 
     def test_get_alarms(self):
@@ -82,8 +88,14 @@ class TestManager(BaseTest):
         alarm0_id = '/fake/alarm/id0'
         alarm1_id = '/fake/alarm/id1'
 
-        self.manager.make_alarm(alarm0_id, {'timestamp': 0})
-        self.manager.make_alarm(alarm1_id, {'timestamp': 0})
+        self.manager.make_alarm(
+            alarm0_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
+        self.manager.make_alarm(
+            alarm1_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
 
         # Case 1: unresolved alarms
         got = self.manager.get_alarms(resolved=False)
@@ -131,7 +143,10 @@ class TestManager(BaseTest):
         got = self.manager.get_current_alarm(alarm_id)
         self.assertTrue(got is None)
 
-        self.manager.make_alarm(alarm_id, {'timestamp': 0})
+        self.manager.make_alarm(
+            alarm_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
 
         got = self.manager.get_current_alarm(alarm_id)
         self.assertTrue(got is not None)
@@ -140,7 +155,10 @@ class TestManager(BaseTest):
         storage = self.manager[Alerts.ALARM_STORAGE]
 
         alarm_id = '/fake/alarm/id'
-        self.manager.make_alarm(alarm_id, {'timestamp': 0})
+        self.manager.make_alarm(
+            alarm_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
 
         alarm = self.manager.get_current_alarm(alarm_id)
         value = alarm[storage.VALUE]
@@ -159,7 +177,10 @@ class TestManager(BaseTest):
         storage = self.manager[Alerts.ALARM_STORAGE]
 
         alarm_id = '/fake/alarm/id'
-        self.manager.make_alarm(alarm_id, {'timestamp': 0})
+        self.manager.make_alarm(
+            alarm_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
 
         alarm = self.manager.get_current_alarm(alarm_id)
         self.assertIsNotNone(alarm)
