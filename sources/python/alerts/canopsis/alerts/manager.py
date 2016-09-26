@@ -119,6 +119,25 @@ class Alerts(MiddlewareRegistry):
         return self.config.get('restore_event', False)
 
     @property
+    def auto_snooze(self):
+        """
+        If ``True``, new alarms will be created snoozed for the
+        snooze_default_time duration.
+        """
+
+        return True
+        return self.config.get('auto_snooze', False)
+
+    @property
+    def snooze_default_time(self):
+        """
+        Default duration used for snooze events that are received with no
+        ``duration`` attribute (ie automatic snoozes).
+        """
+
+        return self.config.get('snooze_default_duration', 300)
+
+    @property
     def extra_fields(self):
         """
         Array of fields to save from event in alarm.
@@ -285,7 +304,7 @@ class Alerts(MiddlewareRegistry):
 
         entity = self[Alerts.CONTEXT_MANAGER].get_entity_by_id(alarm_id)
 
-        no_author_tupes = ['stateinc', 'statedec', 'statusinc', 'statusdec']
+        no_author_types = ['stateinc', 'statedec', 'statusinc', 'statusdec']
         check_referer_types = [
             'ack', 'ackremove',
             'cancel', 'uncancel',
@@ -305,7 +324,8 @@ class Alerts(MiddlewareRegistry):
             'uncancel': 'uncancel',
             'declareticket': 'declareticket',
             'assocticket': 'assocticket',
-            'changestate': 'changestate'
+            'changestate': 'changestate',
+            'snooze': 'snooze'
         }
         valmap = {
             'stateinc': Check.STATE,
@@ -313,7 +333,8 @@ class Alerts(MiddlewareRegistry):
             'changestate': Check.STATE,
             'statusinc': Check.STATUS,
             'statusdec': Check.STATUS,
-            'assocticket': 'ticket'
+            'assocticket': 'ticket',
+            'snooze': 'duration'
         }
 
         events = []
@@ -328,7 +349,7 @@ class Alerts(MiddlewareRegistry):
                 field = valmap[step['_t']]
                 event[field] = step['val']
 
-            if step['_t'] not in no_author_tupes:
+            if step['_t'] not in no_author_types:
                 event['author'] = step['a']
 
             if step['_t'] in check_referer_types:
@@ -382,18 +403,26 @@ class Alerts(MiddlewareRegistry):
 
             if task is not None:
                 alarm = self.get_current_alarm(entity_id)
-                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                if alarm is None:
+                    self.logger.warning(
+                        'Entity {} has no current alarm : ignoring'.format(
+                            entity_id
+                        )
+                    )
 
-                new_value = task(self, value, author, message, event)
-                status = None
+                else:
+                    value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
-                if isinstance(new_value, tuple):
-                    new_value, status = new_value
+                    new_value = task(self, value, author, message, event)
+                    status = None
 
-                self.update_current_alarm(alarm, new_value)
+                    if isinstance(new_value, tuple):
+                        new_value, status = new_value
 
-                if status is not None:
-                    self.archive_status(alarm, status, event)
+                    self.update_current_alarm(alarm, new_value)
+
+                    if status is not None:
+                        self.archive_status(alarm, status, event)
 
     def archive_state(self, alarm, state, event):
         """
@@ -521,14 +550,28 @@ class Alerts(MiddlewareRegistry):
         alarm = self.get_current_alarm(alarm_id)
 
         if alarm is None:
+
+            if self.auto_snooze:
+                snooze = {
+                    'a': event['connector'],
+                    '_t': 'snooze',
+                    'm': 'Auto snooze',
+                    't': event['timestamp'],
+                    'val': event['timestamp'] + self.snooze_default_time
+                }
+
+            else:
+                snooze = None
+
             value = {
                 'state': None,
                 'status': None,
                 'ack': None,
                 'canceled': None,
+                'snooze': snooze,
                 'ticket': None,
                 'resolved': None,
-                'steps': [],
+                'steps': [snooze] if snooze else [],
                 'tags': [],
                 'extra': {
                     field: event[field]

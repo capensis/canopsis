@@ -116,7 +116,8 @@ class Context(MiddlewareRegistry):
                 'cancel',
                 'uncancel',
                 'changestate',
-                'downtime'
+                'downtime',
+                'snooze',
             ]
 
         self._accept_event_types = value
@@ -521,7 +522,7 @@ class Context(MiddlewareRegistry):
         _entity = entity.copy()
 
         # ensure name exists once
-        #_name = entity[Context.NAME]
+        # _name = entity[Context.NAME]
         # remove useless fields where ctx field is the name
         """for ctx in reversed(self.context):
             if ctx in _entity and _entity[ctx] == _name:
