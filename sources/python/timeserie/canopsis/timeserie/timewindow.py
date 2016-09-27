@@ -18,8 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__all__ = ['Period', 'Interval', 'TimeWindow', 'get_offset_timewindow']
-
 from time import time
 
 from dateutil.relativedelta import relativedelta as rd
@@ -34,6 +32,8 @@ from operator import itemgetter
 from datetime import datetime as dt
 
 from numbers import Number
+
+__all__ = ['Period', 'Interval', 'TimeWindow', 'get_offset_timewindow']
 
 
 class Period(object):
@@ -693,7 +693,7 @@ class TimeWindow(object):
             if start is None:
                 start = intervals[0][0]
             if stop is None:
-                stop = intervals[-1][0]
+                stop = intervals[-1][1]
 
         # if stop is None, stop = now
         if stop is None:
