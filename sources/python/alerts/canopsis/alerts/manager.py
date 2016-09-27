@@ -182,7 +182,8 @@ class Alerts(MiddlewareRegistry):
             resolved=True,
             tags=None,
             exclude_tags=None,
-            timewindow=None
+            timewindow=None,
+            snoozed=False
     ):
         """
         Get alarms from TimedStorage.
@@ -199,6 +200,10 @@ class Alerts(MiddlewareRegistry):
 
         :param timewindow: Time Window used for fetching (optional)
         :type timewindow: canopsis.timeserie.timewindow.TimeWindow
+
+        :param snoozed: If ``False``, return all non-snoozed alarms, else
+                        returns alarms even if they are snoozed.
+        :type snoozed: bool
 
         :returns: Iterable of alarms matching
         """
@@ -228,7 +233,19 @@ class Alerts(MiddlewareRegistry):
             query['tags'] = tags_cond
 
         elif tags_cond is not None and notags_cond is not None:
-            query = {'$and': [query, tags_cond, notags_cond]}
+            query = {'$and': [
+                query,
+                {'tags': tags_cond},
+                {'tags': notags_cond}
+            ]}
+
+        if not snoozed:
+            no_snooze_cond = {'$or': [
+                    {'snooze': None},
+                    {'snooze.val': {'$lte': int(time())}}
+                ]
+            }
+            query = {'$and': [query, no_snooze_cond]}
 
         return self[Alerts.ALARM_STORAGE].find(
             _filter=query,
