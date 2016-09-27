@@ -46,6 +46,9 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
         Recursively walk through _filter and prepend appropriate keys with
         ``v.``.
         """
+        if not isinstance(_filter, dict):
+            return _filter
+
         cfilter = {}
 
         for key, value in _filter.items():
@@ -75,14 +78,7 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
         result = None
 
         # set a where clause for the search
-        where = {}
-
-        if _filter is not None:  # add value filtering
-            if isinstance(_filter, dict):
-                where = self._convert_value_filter(_filter)
-
-            else:
-                where[MongoPeriodicalStorage.Key.VALUE] = _filter
+        where = {} if _filter is None else self._convert_value_filter(_filter)
 
         if data_ids is not None:
             if isiterable(data_ids, is_str=False):
@@ -98,7 +94,6 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
             where[MongoPeriodicalStorage.Key.TIMESTAMP] = {'$lte': timestamp}
 
         # do the query
-        print('where={}'.format(where))
         result = self._find(document=where)
 
         # if timewindow is None or contains only one point, get only last
