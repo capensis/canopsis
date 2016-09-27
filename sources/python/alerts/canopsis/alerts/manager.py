@@ -23,7 +23,8 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.model import Parameter
 
-from canopsis.timeserie.timewindow import get_offset_timewindow
+from canopsis.timeserie.timewindow import (
+    get_offset_timewindow, Interval, TimeWindow)
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
 
@@ -251,6 +252,60 @@ class Alerts(MiddlewareRegistry):
             _filter=query,
             timewindow=timewindow
         )
+
+    def count_alarms(
+            self,
+            tstart,
+            tstop,
+            subperiod={'day': 1},
+            limit=100,
+            query={},
+    ):
+        """
+        Count alarms that have been started, stopped or opened during period
+        (tstop - tstart).
+
+        :param start: Timestamp of start of period
+        :type start: int
+
+        :param stop: Timestamp of end of period
+        :type stop: int
+
+        :param subperiod: Cut (tstop - tstart) in ``subperiod`` subperiods
+        :type subperiod: dict
+
+        :param limit: Counts cannot exceed this value
+        :type limit: int
+
+        :param query: Custom mongodb filter for alarms
+
+        :return: List in which each item contains an interval and the
+                 related count
+        :rtype: list
+        """
+        intervals = Interval.get_intervals_by_period(tstart, tstop, subperiod)
+
+        results = []
+        for date in intervals:
+            _filter = {
+                '$or': [
+                    {'resolved': None},
+                    {'resolved': {'$gte': date['begin']}},
+                ]
+            }
+
+            count = self[Alerts.ALARM_STORAGE].count(
+                data_ids=None,
+                timewindow=TimeWindow(start=date['begin'], stop=date['end']),
+                _filter=_filter,
+            )
+
+            results.append({
+                'date': date,
+                'count': count,
+            })
+
+        return results
 
     def get_current_alarm(self, alarm_id):
         """
