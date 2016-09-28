@@ -27,7 +27,11 @@ def exports(ws):
 
     am = Alerts()
 
-    @route(ws.application.get, name='alarms')
+    @route(
+            ws.application.get,
+            name='alerts/alarms',
+            payload=['resolved', 'tags', 'exclude_tags'],
+    )
     def get_alarms(
             resolved=False,
             tags=None,
@@ -56,3 +60,37 @@ def exports(ws):
         )
 
         return alarms
+
+    @route(
+            ws.application.get,
+            name='alerts/count',
+            payload=['start', 'stop', 'limit', 'select'],
+    )
+    def count_per_period(
+            start,
+            stop,
+            limit=100,
+            select=None,
+    ):
+        """
+        Count alarms that have been started before stop _and_ stopped after
+        start.
+
+        :param start: Beginning timestamp of period
+        :type start: int
+
+        :param stop: End timestamp of period
+        :type stop: int
+
+        :param limit: Counts cannot exceed this value
+        :type limit: int
+
+        :param query: Custom mongodb filter for alarms
+        :type query: dict
+
+        :return: List in which each item contains a time interval and the
+                 related count
+        :rtype: list
+        """
+
+        return am.count_alarms(start, stop, limit=limit, query=select)

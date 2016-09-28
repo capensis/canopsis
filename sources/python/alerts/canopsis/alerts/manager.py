@@ -262,27 +262,29 @@ class Alerts(MiddlewareRegistry):
             query={},
     ):
         """
-        Count alarms that have been started, stopped or opened during period
-        (tstop - tstart).
+        Count alarms that have been started before stop _and_ stopped after
+        start.
 
-        :param start: Timestamp of start of period
+        :param start: Beginning timestamp of period
         :type start: int
 
-        :param stop: Timestamp of end of period
+        :param stop: End timestamp of period
         :type stop: int
 
-        :param subperiod: Cut (tstop - tstart) in ``subperiod`` subperiods
+        :param subperiod: Cut (stop - start) in ``subperiod`` subperiods
         :type subperiod: dict
 
         :param limit: Counts cannot exceed this value
         :type limit: int
 
         :param query: Custom mongodb filter for alarms
+        :type query: dict
 
         :return: List in which each item contains an interval and the
                  related count
         :rtype: list
         """
+
         intervals = Interval.get_intervals_by_period(tstart, tstop, subperiod)
 
         results = []
