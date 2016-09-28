@@ -31,11 +31,13 @@ Contents
 Snooze behaviour will be implemented in ``*_alarm`` collections. It won't be
 recorded in events / events_log.
 
-Notification
-------------
+Snooze information
+------------------
 
-Snoozes will be notified with a new type of event : ``snooze``. This event will
-be sent by the ``alert`` engine for auto-triggered snoozes.
+Snoozes will be notified with a new type of event : ``snooze``.
+
+Auto-triggered snoozes are assumed by the ``alert`` engine if this type
+of snooze is configured and if the alarm is just created.
 
 Storage
 -------
@@ -45,16 +47,29 @@ start time and end time. A snooze property (default value is null) will be
 added to alarms to record the last snooze step.
 
 To retrieve non-snoozed alarms, a mongo filter filtering snooze=null or
-snooze_end < now could be applied.
+snooze_end < now is applied by default.
 
 If a snoozed alarm is snoozed again :
 
- - the second snooze will be appended to steps
- - the snooze property end time will be updated with the second snooze end time
+ - The last snooze will be appended to steps
+ - The new snooze will overwrite ``snooze`` field
+
+Consequences :
+
+ - A snoozed alarm that is snoozed again will stop being snoozed at the end of
+   the most recent snooze
+ - If the second snooze has a duration of 0 seconds, this behaviour achieve an
+   'un-snooze' function
 
 Configuration
 -------------
 
-As a first step, a global snooze time for all entities will be configurable in
-etc/schema.d/crecord.statusmanagement.json. When contextv2 will be available,
-automatic snooze time by entity will be used instead.
+As a first step, two global configuration directives are configurable in
+etc/schema.d/crecord.statusmanagement.json :
+
+ - auto_snooze : Do alarms have to be automatically snoozed after creation ?
+ - snooze_default_time : Default snooze duration, either used in context of
+   automatic snoozes or if a snooze event is received wi no duration property.
+
+When contextv2 will be available, those properties will be configurable by
+(group of) entity instead.
