@@ -205,13 +205,39 @@ class GraphManager(MiddlewareRegistry):
             ids=ids, _filter=query, cache=cache
         )
 
-        sleep(10)
+ 	self.clean_edges()
+        self.clean_operators()
+
+    def clean_operators(self):
+        """clean_operators"""
+        topos_elts = []
+
+        coll_operator = self[GraphManager.STORAGE].get_elements(query={'type': 'topologyoperator2'})
+        coll_topo = self[GraphManager.STORAGE].get_elements(query={'type':'topo'})
+
+        for i in coll_topo:
+            for j in i['elts']:
+                topos_elts.append(j)
+
+        for i in coll_operator:
+            if i['_id'] not in topos_elts:
+                self[GraphManager.STORAGE].remove_elements(ids=i['_id'])
 
 
-        self[GraphManager.STORAGE].remove_elements(
-            ids=ids, _filter=query, cache=cache
-        )
+    def clean_edges(self):
+        """clean_edges"""
+        ids = []
 
+        for i in self[GraphManager.STORAGE].get_elements(query={'type': 'topoedge'}):
+            if i['targets'] == [] or i['sources'] == []:
+                ids.append(i['id'])
+            elif not self.id_exists(i['targets']):
+                ids.append(i['id'])
+            elif not self.id_exists(i['sources']):
+                ids.append(i['id'])
+
+            for id in ids:
+                self[GraphManager.STORAGE].remove_elements(ids=id)
     def id_exists(self, id):
         res = []
         for j in id:
