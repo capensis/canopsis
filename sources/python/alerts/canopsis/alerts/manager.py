@@ -253,17 +253,16 @@ class Alerts(MiddlewareRegistry):
             timewindow=timewindow
         )
 
-    def count_alarms(
+    def count_alarms_by_period(
             self,
-            tstart,
-            tstop,
+            start,
+            stop,
             subperiod={'day': 1},
             limit=100,
             query={},
     ):
         """
-        Count alarms that have been started before stop _and_ stopped after
-        start.
+        Count alarms that have been opened during (stop - start) period.
 
         :param start: Beginning timestamp of period
         :type start: int
@@ -285,21 +284,14 @@ class Alerts(MiddlewareRegistry):
         :rtype: list
         """
 
-        intervals = Interval.get_intervals_by_period(tstart, tstop, subperiod)
+        intervals = Interval.get_intervals_by_period(start, stop, subperiod)
 
         results = []
         for date in intervals:
-            _filter = {
-                '$or': [
-                    {'resolved': None},
-                    {'resolved': {'$gte': date['begin']}},
-                ]
-            }
-
             count = self[Alerts.ALARM_STORAGE].count(
                 data_ids=None,
                 timewindow=TimeWindow(start=date['begin'], stop=date['end']),
-                _filter=_filter,
+                _filter=query,
             )
 
             results.append({

@@ -90,8 +90,29 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
         # if timewindow is not None, get latest timestamp before
         # timewindow.stop()
         if timewindow is not None:
-            timestamp = timewindow.stop()
-            where[MongoPeriodicalStorage.Key.TIMESTAMP] = {'$lte': timestamp}
+            start = timewindow.start()
+            stop = timewindow.stop()
+
+            if where:
+                where = {
+                    '$and': [
+                        where,
+                        {MongoPeriodicalStorage.Key.TIMESTAMP:
+                            {'$gte': start}},
+                        {MongoPeriodicalStorage.Key.TIMESTAMP:
+                            {'$lte': stop}},
+                    ]
+                }
+
+            else:
+                where = {
+                    '$and': [
+                        {MongoPeriodicalStorage.Key.TIMESTAMP:
+                            {'$gte': start}},
+                        {MongoPeriodicalStorage.Key.TIMESTAMP:
+                            {'$lte': stop}},
+                    ]
+                }
 
         # do the query
         result = self._find(document=where)

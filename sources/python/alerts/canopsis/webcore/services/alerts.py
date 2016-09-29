@@ -66,15 +66,14 @@ def exports(ws):
             name='alerts/count',
             payload=['start', 'stop', 'limit', 'select'],
     )
-    def count_per_period(
+    def count_by_period(
             start,
             stop,
             limit=100,
             select=None,
     ):
         """
-        Count alarms that have been started before stop _and_ stopped after
-        start.
+        Count alarms that have been opened during (stop - start) period.
 
         :param start: Beginning timestamp of period
         :type start: int
@@ -93,4 +92,9 @@ def exports(ws):
         :rtype: list
         """
 
-        return am.count_alarms(start, stop, limit=limit, query=select)
+        return am.count_alarms_by_period(
+            start,
+            stop,
+            limit=limit,
+            query=select,
+        )
