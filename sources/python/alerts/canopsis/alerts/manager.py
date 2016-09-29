@@ -291,6 +291,7 @@ class Alerts(MiddlewareRegistry):
             count = self[Alerts.ALARM_STORAGE].count(
                 data_ids=None,
                 timewindow=TimeWindow(start=date['begin'], stop=date['end']),
+                window_start_bind=True,
                 _filter=query,
             )
 

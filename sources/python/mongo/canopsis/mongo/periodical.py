@@ -69,8 +69,8 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
         return cfilter
 
     def _search(
-        self, data_ids=None, timewindow=None, _filter=None,
-        limit=0, skip=0, sort=None,
+        self, data_ids=None, timewindow=None, window_start_bind=False,
+        _filter=None, limit=0, skip=0, sort=None,
         *args, **kwargs
     ):
         """Process internal search query in returning a cursor."""
@@ -90,29 +90,23 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
         # if timewindow is not None, get latest timestamp before
         # timewindow.stop()
         if timewindow is not None:
-            start = timewindow.start()
             stop = timewindow.stop()
 
+            time_query = [
+                {MongoPeriodicalStorage.Key.TIMESTAMP: {'$lte': stop}},
+            ]
+
+            if window_start_bind:
+                start = timewindow.start()
+                time_query.append(
+                    {MongoPeriodicalStorage.Key.TIMESTAMP: {'$gte': start}}
+                )
+
             if where:
-                where = {
-                    '$and': [
-                        where,
-                        {MongoPeriodicalStorage.Key.TIMESTAMP:
-                            {'$gte': start}},
-                        {MongoPeriodicalStorage.Key.TIMESTAMP:
-                            {'$lte': stop}},
-                    ]
-                }
+                where = {'$and': [where] + time_query}
 
             else:
-                where = {
-                    '$and': [
-                        {MongoPeriodicalStorage.Key.TIMESTAMP:
-                            {'$gte': start}},
-                        {MongoPeriodicalStorage.Key.TIMESTAMP:
-                            {'$lte': stop}},
-                    ]
-                }
+                where = {'$and': time_query}
 
         # do the query
         result = self._find(document=where)
@@ -205,10 +199,16 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
 
         return result
 
-    def count(self, data_ids, timewindow=None, _filter=None, *args, **kwargs):
+    def count(
+            self, data_ids=None, timewindow=None, window_start_bind=False,
+            _filter=None, *args, **kwargs
+    ):
 
         cursor = self._search(
-            data_ids=data_ids, timewindow=timewindow, _filter=_filter
+            data_ids=data_ids,
+            timewindow=timewindow,
+            window_start_bind=window_start_bind,
+            _filter=_filter,
         )
 
         result = cursor.count()
