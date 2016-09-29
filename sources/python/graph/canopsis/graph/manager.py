@@ -56,7 +56,6 @@ from canopsis.graph.elements import Graph, Edge, GraphElement, Vertice
 
 from itertools import chain
 
-from time import sleep
 
 CONF_PATH = 'graph/graph.conf'
 CATEGORY = 'GRAPH'
@@ -200,12 +199,11 @@ class GraphManager(MiddlewareRegistry):
         # remove edge references
         self.del_edge_refs(vids=ids, cache=cache)
         # remove elements
-
         self[GraphManager.STORAGE].remove_elements(
             ids=ids, _filter=query, cache=cache
         )
 
- 	self.clean_edges()
+        self.clean_edges()
         self.clean_operators()
 
     def clean_operators(self):
