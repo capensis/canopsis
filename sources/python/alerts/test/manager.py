@@ -50,7 +50,9 @@ class BaseTest(TestCase):
                 'bagot_freq': 10,
                 'stealthy_time': 300,
                 'stealthy_show': 600,
-                'restore_event': True
+                'restore_event': True,
+                'auto_snooze': False,
+                'snooze_default_time': 300,
             },
             _id='test_config'
         )
@@ -66,6 +68,8 @@ class TestManager(BaseTest):
         self.assertEqual(self.manager.stealthy_interval, 300)
         self.assertEqual(self.manager.stealthy_show_duration, 600)
         self.assertEqual(self.manager.restore_event, True)
+        self.assertEqual(self.manager.auto_snooze, False)
+        self.assertEqual(self.manager.snooze_default_time, 300)
 
     def test_make_alarm(self):
         alarm_id = '/fake/alarm/id'
@@ -136,6 +140,55 @@ class TestManager(BaseTest):
 
         self.assertFalse(alarm0_id in ids)
         self.assertTrue(alarm1_id in ids)
+
+    def test_count_alarms_by_period(self):
+        day = 24 * 3600
+
+        alarm0_id = '/fake/alarm/id0'
+        alarm1_id = '/fake/alarm/id1'
+
+        self.manager.make_alarm(
+            alarm0_id,
+            {'connector': 'ut-connector', 'timestamp': day / 2}
+        )
+        self.manager.make_alarm(
+            alarm1_id,
+            {'connector': 'ut-connector', 'timestamp': 3 * day / 2}
+        )
+
+        # Are subperiods well cut ?
+        count = self.manager.count_alarms_by_period(0, day)
+        self.assertEqual(len(count), 1)
+
+        count = self.manager.count_alarms_by_period(0, day * 3)
+        self.assertEqual(len(count), 3)
+
+        count = self.manager.count_alarms_by_period(day, day * 10)
+        self.assertEqual(len(count), 9)
+
+        count = self.manager.count_alarms_by_period(
+            0, day,
+            subperiod={'hour': 1},
+        )
+        self.assertEqual(len(count), 24)
+
+        # Are counts by period correct ?
+        count = self.manager.count_alarms_by_period(0, day / 4)
+        self.assertEqual(count[0]['count'], 0)
+
+        count = self.manager.count_alarms_by_period(0, day)
+        self.assertEqual(count[0]['count'], 1)
+
+        count = self.manager.count_alarms_by_period(day / 2, 3 * day / 2)
+        self.assertEqual(count[0]['count'], 2)
+
+        # Does limit limits count ?
+        count = self.manager.count_alarms_by_period(0, day, limit=100)
+        self.assertEqual(count[0]['count'], 1)
+
+        count = self.manager.count_alarms_by_period(day / 2, 3 * day / 2,
+                                                    limit=1)
+        self.assertEqual(count[0]['count'], 1)
 
     def test_get_current_alarm(self):
         alarm_id = '/fake/alarm/id'
@@ -212,28 +265,413 @@ class TestManager(BaseTest):
         self.assertEqual(value['resolved'], value['status']['t'])
 
     def test_change_of_state(self):
-        raise NotImplementedError()
+        alarm_id = '/fake/alarm/id'
+
+        event = {
+            'timestamp': 0,
+            'connector': 'ut-connector',
+            'connector_name': 'ut-connector0',
+            'output': 'UT message',
+        }
+
+        self.manager.make_alarm(
+            alarm_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        self.manager.change_of_state(alarm, 0, 2, event)
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        expected_state = {
+            'a': 'ut-connector.ut-connector0',
+            '_t': 'stateinc',
+            'm': 'UT message',
+            't': 0,
+            'val': 2,
+        }
+
+        expected_status = {
+            'a': 'ut-connector.ut-connector0',
+            '_t': 'statusinc',
+            'm': 'UT message',
+            't': 0,
+            'val': 1,
+        }
+
+        # Make sure no more steps are added
+        self.assertEqual(len(alarm['value']['steps']), 2)
+
+        self.assertEqual(alarm['value']['state'], expected_state)
+        self.assertEqual(alarm['value']['steps'][0], expected_state)
+        self.assertEqual(alarm['value']['status'], expected_status)
+        self.assertEqual(alarm['value']['steps'][1], expected_status)
+
+        self.manager.change_of_state(alarm, 2, 1, event)
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        expected_state = {
+            'a': 'ut-connector.ut-connector0',
+            '_t': 'statedec',
+            'm': 'UT message',
+            't': 0,
+            'val': 1,
+        }
+
+        # Make sure no more steps are added
+        self.assertEqual(len(alarm['value']['steps']), 3)
+
+        self.assertEqual(alarm['value']['state'], expected_state)
+        self.assertEqual(alarm['value']['steps'][2], expected_state)
 
     def test_change_of_status(self):
-        raise NotImplementedError()
+        alarm_id = '/fake/alarm/id'
+
+        event = {
+            'timestamp': 0,
+            'connector': 'ut-connector',
+            'connector_name': 'ut-connector0',
+            'output': 'UT message',
+        }
+
+        self.manager.make_alarm(
+            alarm_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        self.manager.change_of_status(alarm, 0, 1, event)
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        expected_status = {
+            'a': 'ut-connector.ut-connector0',
+            '_t': 'statusinc',
+            'm': 'UT message',
+            't': 0,
+            'val': 1,
+        }
+
+        self.assertEqual(alarm['value']['status'], expected_status)
+
+        self.assertEqual(len(alarm['value']['steps']), 1)
+        self.assertEqual(alarm['value']['steps'][0], expected_status)
 
     def test_archive_state_nochange(self):
-        raise NotImplementedError()
+        alarm_id = '/component/test/test0/ut-comp'
+
+        event0 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 1,
+        }
+        self.manager.archive(event0)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        expected_state = {
+            'a': 'test.test0',
+            '_t': 'stateinc',
+            'm': 'test message',
+            't': 0,
+            'val': 1,
+        }
+
+        self.assertEqual(len(alarm['value']['steps']), 2)
+        self.assertEqual(alarm['value']['steps'][0], expected_state)
+        self.assertEqual(alarm['value']['state'], expected_state)
+
+        event1 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 1,
+        }
+        self.manager.archive(event1)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertEqual(len(alarm['value']['steps']), 2)
+        self.assertEqual(alarm['value']['steps'][0], expected_state)
+        self.assertEqual(alarm['value']['state'], expected_state)
 
     def test_archive_state_changed(self):
-        raise NotImplementedError()
+        alarm_id = '/component/test/test0/ut-comp'
+
+        event0 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 1,
+        }
+        self.manager.archive(event0)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        expected_state = {
+            'a': 'test.test0',
+            '_t': 'stateinc',
+            'm': 'test message',
+            't': 0,
+            'val': 1,
+        }
+
+        self.assertEqual(len(alarm['value']['steps']), 2)
+        self.assertEqual(alarm['value']['steps'][0], expected_state)
+        self.assertEqual(alarm['value']['state'], expected_state)
+
+        event1 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 2,
+        }
+        self.manager.archive(event1)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        expected_state = {
+            'a': 'test.test0',
+            '_t': 'stateinc',
+            'm': 'test message',
+            't': 0,
+            'val': 2,
+        }
+
+        self.assertEqual(len(alarm['value']['steps']), 3)
+        self.assertEqual(alarm['value']['steps'][2], expected_state)
+        self.assertEqual(alarm['value']['state'], expected_state)
 
     def test_archive_status_nochange(self):
-        raise NotImplementedError()
+        alarm_id = '/component/test/test0/ut-comp'
+
+        event0 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 1,
+        }
+        self.manager.archive(event0)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        expected_status = {
+            'a': 'test.test0',
+            '_t': 'statusinc',
+            'm': 'test message',
+            't': 0,
+            'val': 1,
+        }
+
+        self.assertEqual(len(alarm['value']['steps']), 2)
+        self.assertEqual(alarm['value']['steps'][1], expected_status)
+        self.assertEqual(alarm['value']['status'], expected_status)
+
+        # Force status to stealthy
+        event1 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 2,
+        }
+        self.manager.archive(event1)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertEqual(len(alarm['value']['steps']), 3)
+        self.assertEqual(alarm['value']['steps'][1], expected_status)
+        self.assertEqual(alarm['value']['status'], expected_status)
 
     def test_archive_status_changed(self):
-        raise NotImplementedError()
+        alarm_id = '/component/test/test0/ut-comp'
 
-    def test_archive(self):
-        raise NotImplementedError()
+        event0 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 1,
+        }
+        self.manager.archive(event0)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        expected_status = {
+            'a': 'test.test0',
+            '_t': 'statusinc',
+            'm': 'test message',
+            't': 0,
+            'val': 1,
+        }
+
+        self.assertEqual(len(alarm['value']['steps']), 2)
+        self.assertEqual(alarm['value']['steps'][1], expected_status)
+        self.assertEqual(alarm['value']['status'], expected_status)
+
+        # Force status to stealthy
+        event1 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 0,
+        }
+        self.manager.archive(event1)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        expected_status = {
+            'a': 'test.test0',
+            '_t': 'statusinc',
+            'm': 'test message',
+            't': 0,
+            'val': 2,
+        }
+
+        self.assertEqual(len(alarm['value']['steps']), 4)
+        self.assertEqual(alarm['value']['steps'][3], expected_status)
+        self.assertEqual(alarm['value']['status'], expected_status)
 
     def test_get_events(self):
-        raise NotImplementedError()
+        # Empty alarm ; no events sent
+        alarm0_id = '/fake/alarm/id0'
+
+        self.manager.make_alarm(
+            alarm0_id,
+            {'connector': 'ut-connector', 'timestamp': 0}
+        )
+
+        alarm0 = self.manager.get_current_alarm(alarm0_id)
+        events = self.manager.get_events(alarm0)
+        self.assertEqual(events, [])
+
+        # Only a check OK
+        alarm1_id = '/component/test/test0/ut-comp'
+
+        event = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 0,
+        }
+        self.manager.archive(event)
+
+        alarm1 = self.manager.get_current_alarm(alarm1_id)
+        self.assertIs(alarm1, None)
+
+        # Check KO
+        event = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 1,
+        }
+        self.manager.archive(event)
+
+        # Ack
+        event = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'ack',
+            'state_type': 1,
+            'state': 1,
+        }
+        self.manager.archive(event)
+
+        alarm1 = self.manager.get_current_alarm(alarm1_id)
+        events = self.manager.get_events(alarm1)
+
+        expected_event0 = {
+            'component': 'ut-comp',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'event_type': 'check',
+            'long_output': None,
+            'output': 'test message',
+            'source_type': 'component',
+            'state': 1,
+            'state_type': 1,
+            'timestamp': 0,
+            'type': 'component',
+        }
+
+        expected_event1 = {
+            'component': 'ut-comp',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'event_type': 'check',
+            'long_output': None,
+            'output': u'test message',
+            'source_type': 'component',
+            'state': 0,
+            'state_type': 1,
+            'status': 1,
+            'timestamp': 0,
+            'type': 'component',
+        }
+
+        expected_event2 = {
+            'author': None,
+            'component': 'ut-comp',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'event_type': 'ack',
+            'ref_rk': 'test.test0.check.component.ut-comp',
+            'long_output': None,
+            'output': 'test message',
+            'source_type': 'component',
+            'state_type': 1,
+            'state': 0,
+            'timestamp': 0,
+            'type': 'component',
+        }
+
+        self.assertEqual(len(events), 3)
+        self.assertEqual(events[0], expected_event0)
+        self.assertEqual(events[1], expected_event1)
+        self.assertEqual(events[2], expected_event2)
 
 
 class TestTasks(BaseTest):
@@ -403,6 +841,33 @@ class TestTasks(BaseTest):
         self.assertEqual(alarm['state']['val'], 2)
         self.assertTrue(
             alarm['state'] is get_previous_step(alarm, 'changestate')
+        )
+
+    def test_snooze(self):
+        event = {
+            'connector': 'test',
+            'connector_name': 'test0',
+            'timestamp': 0,
+            'output': 'test message',
+            'duration': 3600,
+        }
+
+        task = get_task('alerts.useraction.snooze')
+        alarm = task(
+            self.manager,
+            self.alarm,
+            'testauthor',
+            'test message',
+            event,
+        )
+
+        self.assertIsNot(alarm['snooze'], None)
+        self.assertEqual(alarm['snooze']['t'], 0)
+        self.assertEqual(alarm['snooze']['a'], 'testauthor')
+        self.assertEqual(alarm['snooze']['m'], 'test message')
+        self.assertEqual(alarm['snooze']['val'], 0 + 3600)
+        self.assertTrue(
+            alarm['snooze'] is get_previous_step(alarm, 'snooze')
         )
 
     def test_state_increase(self):
