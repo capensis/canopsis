@@ -219,12 +219,12 @@ class Alerts(MiddlewareRegistry):
         tags_cond = None
 
         if tags is not None:
-            tags_cond = {'$in': ensure_iterable(tags)}
+            tags_cond = {'$all': ensure_iterable(tags)}
 
         notags_cond = None
 
         if exclude_tags is not None:
-            notags_cond = {'$nin': ensure_iterable(exclude_tags)}
+            notags_cond = {'$not': {'$all': ensure_iterable(exclude_tags)}}
 
         if tags_cond is None and notags_cond is not None:
             query['tags'] = notags_cond
