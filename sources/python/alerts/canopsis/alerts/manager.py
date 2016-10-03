@@ -126,7 +126,6 @@ class Alerts(MiddlewareRegistry):
         snooze_default_time duration.
         """
 
-        return True
         return self.config.get('auto_snooze', False)
 
     @property
@@ -297,7 +296,7 @@ class Alerts(MiddlewareRegistry):
 
             results.append({
                 'date': date,
-                'count': count,
+                'count': limit if count > limit else count,
             })
 
         return results
