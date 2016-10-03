@@ -36,6 +36,7 @@ def exports(ws):
             resolved=False,
             tags=None,
             exclude_tags=None,
+            snoozed=False,
     ):
         """
         Get alarms
@@ -57,6 +58,7 @@ def exports(ws):
             resolved=resolved,
             tags=tags,
             exclude_tags=exclude_tags,
+            snoozed=snoozed,
         )
 
         return alarms
