@@ -308,6 +308,12 @@ class Context(MiddlewareRegistry):
 
         kwargs['event_type'] = event_type
 
+        # In some cases, name is present but is component in fact
+        if 'name' in entity:
+            if 'component' not in entity:
+                entity['component'] = entity['name']
+            entity.pop('name')
+
         # fill kwargs with entity values
         for field in entity:
             kwargs[field] = entity[field]
