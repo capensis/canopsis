@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2016 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,6 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[CONTEXT]
-accept_event_types=perf,check,ack,ackremove,declareticket,assocticket,cancel,uncancel,changestate,downtime,snooze
-ctx_storage_uri=mongodb-composite-context://
+# attach this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

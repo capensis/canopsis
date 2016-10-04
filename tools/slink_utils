@@ -9,7 +9,9 @@ function create_python_slink() {
         then version="0.1";
         else version=$2;
     fi;
-    ln -s $SRC/sources/python/$project/canopsis $CPS/lib/python2.7/site-packages/canopsis.$project-$version-py2.7.egg/
+    lns="ln -sf $SRC/sources/python/$project/canopsis $CPS/lib/python2.7/site-packages/canopsis.$project-$version-py2.7.egg/"
+    echo $lns
+    eval $lns
 }
 
 function create_canolibs_slink() {
@@ -28,14 +30,17 @@ function create_canolibs_slink() {
 }
 
 function create_slinks() {
-    # ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
-    # ln -s $SRC/sources/wkhtmltopdf-libs/etc/tasks.d/task_reporting.py $CPS/etc/tasks.d/
-    # ln -s $SRC/sources/externals/webcore-libs $CPS/src/
-    # ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
-    # ln -s $SRC/sources/webcore/var/plugins $CPS/var/plugins
-    ln -s $SRC/sources/webcore $CPS/var/www
-    ln -s $SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/
-    ln -s $SRC/sources/db-conf/opt/mongodb $CPS/opt/
+    # ln -sf $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
+    # ln -sf $SRC/sources/wkhtmltopdf-libs/etc/tasks.d/task_reporting.py $CPS/etc/tasks.d/
+    # ln -sf $SRC/sources/externals/webcore-libs $CPS/src/
+    # ln -sf $SRC/sources/webcore/opt/webcore $CPS/opt/
+    # ln -sf $SRC/sources/webcore/var/plugins $CPS/var/plugins
+    for paths in "$SRC/sources/webcore $CPS/var/www" "$SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/" "$SRC/sources/db-conf/opt/mongodb $CPS/opt/"
+    do
+        lns="ln -sf "$paths
+        echo $lns
+        eval $lns
+    done
     # canolibs
     create_canolibs_slink
     # create_python_slink cli 0.1
@@ -57,8 +62,12 @@ function create_slinks() {
     # create_python_slink mom 0.1
     # create_python_slink rpc 0.1
 
-    ln -s $SRC/sources/python/connectors/var/snmp $CPS/var/
-    ln -s $SRC/sources/python/webcore/canopsis $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/
+    for paths in "$SRC/sources/python/connectors/var/snmp $CPS/var/" "$SRC/sources/python/webcore/canopsis $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/"
+    do
+        lns="ln -sf "$paths
+        echo $lns
+        eval $lns
+    done
     touch $CPS/.slinked
 }
 
