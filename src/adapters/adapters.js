@@ -22,7 +22,7 @@ Ember.Application.initializer({
     name: 'alarmAdapter',
     after: 'StorageAdapters',
     initialize: function(container, application) {
-        var adapter = container.lookupFactory('adapter:storage-periodical');
+        var adapter = container.lookupFactory('adapter:storage-timed');
 
         /**
          * @adapter Alarm
