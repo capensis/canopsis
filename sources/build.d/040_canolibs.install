@@ -32,14 +32,13 @@ PROJECTS[29]='ccalendar'
 PROJECTS[30]='pbehavior'
 PROJECTS[31]='downtime'
 PROJECTS[32]='session'
-PROJECTS[33]='webcore'
-PROJECTS[34]='serie'
-PROJECTS[35]='alerts'
+PROJECTS[33]='alerts'
+PROJECTS[34]='webcore'
+PROJECTS[35]='serie'
 PROJECTS[36]='stats'
 PROJECTS[37]='migration'
 PROJECTS[38]='influxdb'
-PROJECTS[39]='opentsdb'
-PROJECTS[40]='whisper'
+
 
 function build() {
 	true
