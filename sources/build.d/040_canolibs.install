@@ -34,12 +34,12 @@ PROJECTS[31]='downtime'
 PROJECTS[32]='session'
 PROJECTS[33]='serie'
 PROJECTS[34]='alerts'
-PROJECTS[35]='stats'
-PROJECTS[36]='migration'
-PROJECTS[37]='influxdb'
-PROJECTS[38]='opentsdb'
-PROJECTS[39]='whisper'
-PROJECTS[40]='webcore'
+PROJECTS[35]='webcore'
+PROJECTS[36]='stats'
+PROJECTS[37]='migration'
+PROJECTS[38]='influxdb'
+PROJECTS[39]='opentsdb'
+PROJECTS[40]='whisper'
 
 function build() {
 	true
