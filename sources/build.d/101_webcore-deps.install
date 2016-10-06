@@ -26,11 +26,11 @@ function install() {
     cp -r $BASE/bower $LIB
     cp -r $BASE/broccoli-cli $LIB
     chown -R canopsis:canopsis $LIB
-    if [ ! -f $LIB/bin/bower ]; then
-        ln -s $LIB/bower/bin/bower $PREFIX/bin/bower
+    if [ ! -L $LIB/bin/bower ]; then
+        ln -sf $LIB/bower/bin/bower $PREFIX/bin/bower
     fi
-    if [ ! -f $LIB/bin/broccoli ]; then
-        ln -s $LIB/broccoli-cli/bin/broccoli $PREFIX/bin/broccoli
+    if [ ! -L $LIB/bin/broccoli ]; then
+        ln -sf $LIB/broccoli-cli/bin/broccoli $PREFIX/bin/broccoli
     fi
 }
 
