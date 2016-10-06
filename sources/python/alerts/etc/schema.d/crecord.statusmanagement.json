@@ -7,9 +7,12 @@
 		"title": "Stealthy settings",
 		"keys":["stealthy_time", "stealthy_show"]
 	},{
+                "title": "Snooze",
+                "keys":["auto_snooze", "snooze_default_time"]
+	},{
 		"title": "Misc statuses",
 		"keys":["restore_event"]
-	}],
+        }],
 	"properties": {
 		"stealthy_time": {
 			"type": "number",
