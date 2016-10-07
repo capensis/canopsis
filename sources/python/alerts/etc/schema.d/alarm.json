@@ -10,11 +10,36 @@
       "type": "object",
       "properties": {
           "entity": {
-            "title": "Entity",
-            "description": "Fields allowing to identify entity",
+            "connector": {
+              "title": "Connector",
 
-            "type": "alarmentity",
-            "required": true
+              "type": "string",
+              "required": true
+            },
+            "connector_name": {
+              "title": "Connector name",
+
+              "type": "string",
+              "required": true
+            },
+            "entity_id": {
+              "title": "Entity ID",
+
+              "type": "string",
+              "required": true
+            },
+            "name": {
+              "title": "Entity name",
+
+              "type": "string",
+              "required": true
+            },
+            "type": {
+              "title": "Type",
+
+              "type": "string",
+              "required": true
+            }
           },
           "timestamp": {
             "title": "Timestamp",
