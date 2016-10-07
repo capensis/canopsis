@@ -39,7 +39,6 @@ install_requires = [
     'canopsis.session',
     'canopsis.topology',
     'canopsis.vevent',
-    'canopsis.alerts',
     'canopsis.old'
 ]
 
