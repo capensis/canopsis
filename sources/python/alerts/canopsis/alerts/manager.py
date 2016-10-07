@@ -22,6 +22,7 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.model import Parameter
+from canopsis.context.manager import Context
 
 from canopsis.timeserie.timewindow import (
     get_offset_timewindow, Interval, TimeWindow)
@@ -247,10 +248,19 @@ class Alerts(MiddlewareRegistry):
             }
             query = {'$and': [query, no_snooze_cond]}
 
-        return self[Alerts.ALARM_STORAGE].find(
+        alarms_by_entity = self[Alerts.ALARM_STORAGE].find(
             _filter=query,
             timewindow=timewindow
         )
+
+        cm = Context()
+        for entity_id, alarms in alarms_by_entity.items():
+            entity = cm.get_entity_by_id(entity_id)
+            entity['entity_id'] = entity_id
+            for alarm in alarms:
+                alarm['entity'] = entity
+
+        return alarms_by_entity
 
     def count_alarms_by_period(
             self,
