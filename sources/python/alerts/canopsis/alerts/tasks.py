@@ -18,7 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.alerts.status import compute_status, CANCELED, get_last_status
+from canopsis.alerts.status import (
+    compute_status, OFF, CANCELED, get_previous_step)
 
 from canopsis.task.core import register_task
 
@@ -100,7 +101,18 @@ def restore(manager, alarm, author, message, event):
     status = None
 
     if manager.restore_event:
-        status = get_last_status(alarm, ts=canceled['t'])
+        status = get_previous_step(
+            alarm,
+            ['statusinc', 'statusdec'],
+            ts=canceled['t']
+        )
+
+        if status is not None:
+            status = status['val']
+        else:
+            # This is not supposed to happen since a restored alarm
+            # should have a status before its cancelation
+            status = OFF
 
     else:
         status = compute_status(manager, alarm)
