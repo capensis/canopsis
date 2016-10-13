@@ -18,8 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__all__ = ['Period', 'Interval', 'TimeWindow', 'get_offset_timewindow']
-
 from time import time
 
 from dateutil.relativedelta import relativedelta as rd
@@ -34,6 +32,8 @@ from operator import itemgetter
 from datetime import datetime as dt
 
 from numbers import Number
+
+__all__ = ['Period', 'Interval', 'TimeWindow', 'get_offset_timewindow']
 
 
 class Period(object):
@@ -145,7 +145,8 @@ class Period(object):
 
                 if nextunitvalue:
                     nextunit = Period.UNITS[index + 1]
-                    self.unit_values[nextunit] = self.unit_values.get(nextunit, 0) + nextunitvalue
+                    self.unit_values[nextunit] = \
+                        self.unit_values.get(nextunit, 0) + nextunitvalue
                     unitvalue = int(unitvalue % maxunitvalue)
 
                 if unitvalue:
@@ -225,7 +226,8 @@ class Period(object):
     def round_datetime(self, datetime, next_period=False):
         """Calculate roudtime relative to an UTC date.
 
-        Normalize unsure to set to 0 for not given units under the minimal unit.
+        Normalize unsure to set to 0 for not given units under the minimal
+        unit.
 
         :param datetime datetime: datetime to round.
         :param bool next_period: computes current period next timestamp.
@@ -241,8 +243,6 @@ class Period(object):
 
         params = {}
         intermediar_params = {}
-
-        unit_values = self.unit_values
 
         for unit in Period.UNITS:
 
@@ -351,7 +351,8 @@ class Period(object):
 
         else:
             raise TypeError(
-                'Wrong period argument: {0}. dict or int expected.'.format(args)
+                'Wrong period argument: {0}. dict or int expected.'
+                .format(args)
             )
 
         return result
@@ -388,7 +389,7 @@ class Interval(object):
         return result
 
     def __contains__(self, numbers_or_intervals):
-        """True iif input values or intervals are in this interval.
+        """True if input values or intervals are in this interval.
         values_or_interval must be numbers or Intervals.
         """
 
@@ -692,7 +693,7 @@ class TimeWindow(object):
             if start is None:
                 start = intervals[0][0]
             if stop is None:
-                stop = intervals[-1][0]
+                stop = intervals[-1][1]
 
         # if stop is None, stop = now
         if stop is None:

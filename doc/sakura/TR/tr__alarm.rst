@@ -4,7 +4,8 @@
 Alarm management
 ================
 
-This document specifies the alarm management in Canopsis, and its implementation.
+This document specifies the alarm management in Canopsis, and its
+implementation.
 
 .. contents::
    :depth: 3
@@ -49,7 +50,8 @@ An ``Alerts`` :ref:`configurable <FR__Configurable>` provides:
 Alarm Cycle
 -----------
 
-Alarm cycles are persisted in a :ref:`timed storage <FR__Storage_Type>` with the following informations:
+Alarm cycles are persisted in a :ref:`timed storage <FR__Storage_Type>` with
+the following informations:
 
  - data identifier: the entity identifier of the received event
  - value: set of alarm steps (see :ref:`data model <TR__Alarm__DataModel>` bellow)
@@ -130,7 +132,8 @@ Alarm step "status decrease" data model
    m, step message, ``event["output"]``
    val, step associated value, new status
 
-**NB:** if status decreases to ``OFF``, then the alarm value ``resolved`` is set to this step timestamp.
+**NB:** if status decreases to ``OFF``, then the alarm value ``resolved`` is
+set to this step timestamp.
 
 .. _TR__Alarm__DataModel__Acknowledge:
 
@@ -230,6 +233,18 @@ Alarm step "change state" data model
    m, step message, state requalification message
    val, state, new state
 
+Alarm step "snooze" data model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. csv-table::
+   :header: Field, Description, Default Value
+
+   _t, step type, ``changestate``
+   t, step timestamp, ``event["timestamp"]``
+   a, step author, state requalification author
+   m, step message, state requalification message
+   val, timestamp, date until end of snooze
+
 Unit Tests
 ==========
 
@@ -255,7 +270,8 @@ Creating new alarm
 Case 1: new alarm
 ~~~~~~~~~~~~~~~~~
 
-**Expected:** The alarm **MUST** be present in the configured timed storage with all values set to ``None``.
+**Expected:** The alarm **MUST** be present in the configured timed storage
+with all values set to ``None``.
 
 Case 2: existing alarm
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -482,7 +498,7 @@ Task: Status increase
  - the alarm ``status`` **MUST** be set to the :ref:`status increase step <TR__Alarm__DataModel__StatusInc>`
  - the step **MUST** be added to the ``steps`` set of the alarm
 
-Task: Status deccrease
+Task: Status decrease
 ----------------------
 
 ``alerts.systemaction.status_decrease(manager, alarm, status, event) -> new_value``:

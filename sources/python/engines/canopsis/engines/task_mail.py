@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from canopsis.engines.core import TaskHandler
 from canopsis.old.account import Account
@@ -26,6 +27,7 @@ from canopsis.common.utils import ensure_unicode
 from canopsis.common.template import Template
 
 from email import Encoders
+from email import charset
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email.MIMEMultipart import MIMEMultipart
@@ -34,6 +36,8 @@ from email.Utils import formatdate
 import smtplib
 import socket
 import re
+
+from chardet import detect
 
 from sys import version as PYVER
 
@@ -91,6 +95,8 @@ class engine(TaskHandler):
         :param smtp_port: int(25).
         :param html: allow html into mail body (booleen).
         """
+
+        charset.add_charset('utf-8', charset.SHORTEST, charset.QP)
 
         # Verify account
         account_firstname = account.firstname
@@ -166,10 +172,10 @@ class engine(TaskHandler):
         msg["Subject"] = subject
 
         if html:
-            msg.attach(MIMEText(body, 'html'))
+            msg.attach(MIMEText(body, 'html', _charset='utf-8'))
 
         else:
-            msg.attach(MIMEText(body, 'plain'))
+            msg.attach(MIMEText(body, 'plain', _charset='utf-8'))
 
         msg['Date'] = formatdate(localtime=True)
 

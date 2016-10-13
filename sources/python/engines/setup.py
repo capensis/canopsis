@@ -32,6 +32,7 @@ install_requires = [
     'canopsis.schema',
     'canopsis.sla',
     'canopsis.tools',
+    'canopsis.monitoring',
     'canopsis.old'
 ]
 

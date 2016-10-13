@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from time import time
 from canopsis.configuration.configurable.decorator import (
@@ -71,7 +72,20 @@ class Entitylink(MiddlewareRegistry):
         :param event: an event to search a context id from
         """
         entity = self.context.get_entity(event)
-        entity_id = self.context.get_entity_id(entity)
+
+        encoded_entity = {}
+        for k, v in entity.items():
+            try:
+                k = k.encode('utf-8')
+            except:
+                pass
+            try:
+                v = v.encode('utf-8')
+            except:
+                pass
+            encoded_entity[k] = v
+
+        entity_id = self.context.get_entity_id(encoded_entity)
         return entity_id
 
     def get_links_from_event(self, event):

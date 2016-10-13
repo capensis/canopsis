@@ -116,7 +116,8 @@ class Context(MiddlewareRegistry):
                 'cancel',
                 'uncancel',
                 'changestate',
-                'downtime'
+                'downtime',
+                'snooze',
             ]
 
         self._accept_event_types = value
@@ -306,6 +307,12 @@ class Context(MiddlewareRegistry):
         """
 
         kwargs['event_type'] = event_type
+
+        # In some cases, name is present but is component in fact
+        if 'name' in entity:
+            if 'component' not in entity:
+                entity['component'] = entity['name']
+            entity.pop('name')
 
         # fill kwargs with entity values
         for field in entity:
@@ -521,7 +528,7 @@ class Context(MiddlewareRegistry):
         _entity = entity.copy()
 
         # ensure name exists once
-        #_name = entity[Context.NAME]
+        # _name = entity[Context.NAME]
         # remove useless fields where ctx field is the name
         """for ctx in reversed(self.context):
             if ctx in _entity and _entity[ctx] == _name:

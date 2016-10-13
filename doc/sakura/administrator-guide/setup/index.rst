@@ -11,6 +11,5 @@ This document describe how to configure Canopsis and related tools.
    install
    on-boot
    firewall-rules
-   reverse-proxy-with-apache2
-   reverse-proxy-with-nginx
+   reverse-proxy
    uninstall

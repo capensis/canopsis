@@ -38,6 +38,13 @@ from canopsis.common.utils import isiterable
 from canopsis.configuration.model import Parameter
 from canopsis.middleware.core import Middleware
 
+from b3j0f.requester.driver.custom import CreateAnnotation
+from b3j0f.requester.driver.custom import ReadAnnotation
+from b3j0f.requester.driver.custom import UpdateAnnotation
+from b3j0f.requester.driver.custom import DeleteAnnotation
+from b3j0f.requester.driver.py import processdelete, processupdate
+from b3j0f.requester.driver.ctx import Context
+
 
 class DataBase(Middleware):
     """Abstract class which aims to manage access to a data base.
@@ -860,9 +867,10 @@ class Storage(DataBase):
             for _ in storage_types:
                 if isinstance(self, storage_types):
                     if not isinstance(target, storage_types):
-                        raise Storage.StorageError(
-                            'Impossible to copy {0} content into {1}. \
-Storage types must be of the same type.'.format(self, target))
+                        fmt = 'Impossible to copy {0} content into {1}. '
+                        fmt += 'Storage types must be of the same type.'
+                        raise Storage.StorageError(fmt.format(self, target))
+
                     else:
                         self._copy(target)
 
@@ -968,6 +976,73 @@ Storage types must be of the same type.'.format(self, target))
                 result += Storage._resolve_sort(item)
 
         return result
+
+    @CreateAnnotation()
+    def sysreq_create_elements(
+        self,
+        _id=None,
+        tags=None,
+        version=None,
+        cache=False,
+        **element
+    ):
+        self.put_element(
+            element,
+            _id=_id,
+            tags=tags,
+            version=version,
+            cache=cache
+        )
+
+    @ReadAnnotation(gateway=False)
+    def sysreq_get_elements(self, transaction, crud):
+        return self.get_elements(
+            limit=crud.limit(),
+            skip=crud.offset(),
+            sort=crud.orderby()
+        )
+
+    @UpdateAnnotation(gateway=False)
+    def sysreq_update_elements(self, transaction, crud):
+        ctx = Context()
+
+        with transaction.drv.open(ctx=ctx) as t:
+            t.read(query=crud.query, alias='items')
+
+        items = ctx['items']
+        result = processupdate(
+            update=crud,
+            items=items,
+            ctx=transaction.ctx
+        )
+
+        self.put_elements(result)
+
+        return result
+
+    @DeleteAnnotation(gateway=False)
+    def sysreq_remove_elements(self, transaction, crud):
+        ctx = Context()
+
+        with transaction.drv.open(ctx=ctx) as t:
+            t.read(query=crud.query, alias='items')
+
+        items = ctx['items']
+        result = processdelete(
+            delete=crud,
+            items=items[:],
+            ctx=transaction.ctx
+        )
+
+        deleted = [
+            item[self.DATA_ID]
+            for item in items
+            if item not in result
+        ]
+
+        self.remove_elements(ids=deleted)
+
+        return deleted
 
 
 class Cursor(object):
