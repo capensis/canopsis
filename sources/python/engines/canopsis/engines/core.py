@@ -50,6 +50,7 @@ class Engine(object):
         self,
         next_amqp_queues=[],
         next_balanced=False,
+        autonext=False,
         name="worker1",
         beat_interval=60,
         logging_level=INFO,
@@ -86,6 +87,7 @@ class Engine(object):
 
         # Get from internal or external queue
         self.next_balanced = next_balanced
+        self.autonext = autonext
 
         init = Init()
 
@@ -208,7 +210,7 @@ class Engine(object):
                 self.logger.error("Impossible to deal with: {0}".format(event))
                 self.rk_on_error.append(event['rk'])
 
-            self.next_queue(event)
+            self.next_queue(event, msg.delivery_info['routing_key'])
 
     def _work(self, event, msg=None, *args, **kargs):
         start = time()
@@ -227,7 +229,7 @@ class Engine(object):
                 if isinstance(wevent, dict):
                     event = wevent
 
-                self.next_queue(event)
+                self.next_queue(event, msg.delivery_info['routing_key'])
 
         except Exception as err:
             error = True
@@ -248,20 +250,33 @@ class Engine(object):
     def work(self, event, amqp_msg):
         return event
 
-    def next_queue(self, event):
-        if self.next_balanced:
-            queue_name = self.get_amqp_queue.next()
-            if queue_name:
-                publish(
-                    publisher=self.amqp, event=event, rk=queue_name,
-                    exchange='amq.direct'
-                )
+    def next_queue(self, event, rk):
+        if not self.autonext:
+            if self.next_balanced:
+                queue_name = self.get_amqp_queue.next()
+                if queue_name:
+                    publish(
+                        publisher=self.amqp, event=event, rk=queue_name,
+                        exchange='amq.direct'
+                    )
+
+            else:
+                for queue_name in self.next_amqp_queues:
+                    publish(
+                        publisher=self.amqp, event=event, rk=queue_name,
+                        exchange="amq.direct"
+                    )
 
         else:
-            for queue_name in self.next_amqp_queues:
+            rkparts = rk.split('.')
+            newrk = '.'.join(rkparts[1:])
+
+            if newrk:
                 publish(
-                    publisher=self.amqp, event=event, rk=queue_name,
-                    exchange="amq.direct"
+                    publisher=self.amqp,
+                    event=event,
+                    rk=newrk,
+                    exchange=self.exchange_name
                 )
 
     def _beat(self):

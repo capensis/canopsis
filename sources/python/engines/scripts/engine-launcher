@@ -143,11 +143,12 @@ class EngineLauncher(object):
         schema = {
             'next': parser.list,
             'next_balanced': parser.bool,
+            'autonext': parser.bool,
             'beat_interval': parser.int,
             'exchange_name': parser.str,
             'routing_keys': parser.list,
             'event_processing': parser.str,
-            'max_retries': parser.int
+            'max_retries': parser.int,
         }
 
         engine_conf = {}
@@ -157,7 +158,8 @@ class EngineLauncher(object):
             param = item[0]
             value = item[1]
 
-            # If the param is not defined in the schema, consider it as a string
+            # If the param is not defined in the schema
+            # consider it as a string
             if param not in schema:
                 self.logger.warning(
                     'Unknown parameter "{0}", assuming it\'s a string'.
@@ -185,7 +187,8 @@ class EngineLauncher(object):
 
     def init_engine(self):
         """
-        Initialize engine with basic configuration, and add extra parameters once done.
+        Initialize engine with basic configuration
+        and add extra parameters once done.
         """
 
         self.engine_conf['name'] = self.ename
