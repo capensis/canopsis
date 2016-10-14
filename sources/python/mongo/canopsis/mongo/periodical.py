@@ -25,7 +25,7 @@ from canopsis.storage.periodical import PeriodicalStorage
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
 
-class MongoTimedStorage(MongoStorage, PeriodicalStorage):
+class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
 
     class Key:
         """Index key names."""
@@ -41,9 +41,36 @@ class MongoTimedStorage(MongoStorage, PeriodicalStorage):
         (Key.TIMESTAMP, MongoStorage.DESC)
     ]
 
+    def _convert_value_filter(self, _filter):
+        """
+        Recursively walk through _filter and prepend appropriate keys with
+        ``v.``.
+        """
+        if not isinstance(_filter, dict):
+            return _filter
+
+        cfilter = {}
+
+        for key, value in _filter.items():
+            if isinstance(value, dict):
+                value = self._convert_value_filter(value)
+
+            elif isinstance(value, list):
+                value = map(self._convert_value_filter, value)
+
+            if key.startswith('$'):
+                ckey = key
+
+            else:
+                ckey = '{0}.{1}'.format(MongoPeriodicalStorage.Key.VALUE, key)
+
+            cfilter[ckey] = value
+
+        return cfilter
+
     def _search(
-        self, data_ids=None, timewindow=None, _filter=None,
-        limit=0, skip=0, sort=None,
+        self, data_ids=None, timewindow=None, window_start_bind=False,
+        _filter=None, limit=0, skip=0, sort=None,
         *args, **kwargs
     ):
         """Process internal search query in returning a cursor."""
@@ -51,29 +78,35 @@ class MongoTimedStorage(MongoStorage, PeriodicalStorage):
         result = None
 
         # set a where clause for the search
-        where = {}
-
-        if _filter is not None:  # add value filtering
-            if isinstance(_filter, dict):
-                for name in _filter:
-                    vname = '{0}.{1}'.format(MongoTimedStorage.Key.VALUE, name)
-                    where[vname] = _filter[name]
-
-            else:
-                where[MongoTimedStorage.Key.VALUE] = _filter
+        where = {} if _filter is None else self._convert_value_filter(_filter)
 
         if data_ids is not None:
             if isiterable(data_ids, is_str=False):
-                where[MongoTimedStorage.Key.DATA_ID] = {'$in': data_ids}
+                where[MongoPeriodicalStorage.Key.DATA_ID] = {'$in': data_ids}
 
             else:
-                where[MongoTimedStorage.Key.DATA_ID] = data_ids
+                where[MongoPeriodicalStorage.Key.DATA_ID] = data_ids
 
         # if timewindow is not None, get latest timestamp before
         # timewindow.stop()
         if timewindow is not None:
-            timestamp = timewindow.stop()
-            where[MongoTimedStorage.Key.TIMESTAMP] = {'$lte': timestamp}
+            stop = timewindow.stop()
+
+            time_query = [
+                {MongoPeriodicalStorage.Key.TIMESTAMP: {'$lte': stop}},
+            ]
+
+            if window_start_bind:
+                start = timewindow.start()
+                time_query.append(
+                    {MongoPeriodicalStorage.Key.TIMESTAMP: {'$gte': start}}
+                )
+
+            if where:
+                where = {'$and': [where] + time_query}
+
+            else:
+                where = {'$and': time_query}
 
         # do the query
         result = self._find(document=where)
@@ -92,10 +125,10 @@ class MongoTimedStorage(MongoStorage, PeriodicalStorage):
 
         # apply a specific index
         if data_ids is None:
-            index = MongoTimedStorage.TIMESTAMPS
+            index = MongoPeriodicalStorage.TIMESTAMPS
 
         else:
-            index = MongoTimedStorage.TIMESTAMP_BY_ID
+            index = MongoPeriodicalStorage.TIMESTAMP_BY_ID
 
         result.hint(index)
 
@@ -117,9 +150,9 @@ class MongoTimedStorage(MongoStorage, PeriodicalStorage):
 
         # iterate on all documents
         for document in cursor:
-            timestamp = document[MongoTimedStorage.Key.TIMESTAMP]
-            value = document[MongoTimedStorage.Key.VALUE]
-            data_id = document[MongoTimedStorage.Key.DATA_ID]
+            timestamp = document[MongoPeriodicalStorage.Key.TIMESTAMP]
+            value = document[MongoPeriodicalStorage.Key.VALUE]
+            data_id = document[MongoPeriodicalStorage.Key.DATA_ID]
 
             # a value to get is composed of a timestamp, values and document id
             value_to_append = {
@@ -166,10 +199,16 @@ class MongoTimedStorage(MongoStorage, PeriodicalStorage):
 
         return result
 
-    def count(self, data_ids, timewindow=None, _filter=None, *args, **kwargs):
+    def count(
+            self, data_ids=None, timewindow=None, window_start_bind=False,
+            _filter=None, *args, **kwargs
+    ):
 
         cursor = self._search(
-            data_ids=data_ids, timewindow=timewindow, _filter=_filter
+            data_ids=data_ids,
+            timewindow=timewindow,
+            window_start_bind=window_start_bind,
+            _filter=_filter,
         )
 
         result = cursor.count()
@@ -193,15 +232,15 @@ class MongoTimedStorage(MongoStorage, PeriodicalStorage):
         if value != data_value:  # new entry to insert
 
             document = {
-                MongoTimedStorage.Key.DATA_ID: data_id,
-                MongoTimedStorage.Key.TIMESTAMP: timestamp,
-                MongoTimedStorage.Key.VALUE: value
+                MongoPeriodicalStorage.Key.DATA_ID: data_id,
+                MongoPeriodicalStorage.Key.TIMESTAMP: timestamp,
+                MongoPeriodicalStorage.Key.VALUE: value
             }
 
             if data and data[PeriodicalStorage.TIMESTAMP] == timestamp:
                 spec = {
-                    MongoTimedStorage.Key.DATA_ID: data_id,
-                    MongoTimedStorage.Key.TIMESTAMP: timestamp
+                    MongoPeriodicalStorage.Key.DATA_ID: data_id,
+                    MongoPeriodicalStorage.Key.TIMESTAMP: timestamp
                 }
 
                 self._update(
@@ -220,12 +259,12 @@ class MongoTimedStorage(MongoStorage, PeriodicalStorage):
         where = {}
 
         if isiterable(data_ids, is_str=False):
-            where[MongoTimedStorage.Key.DATA_ID] = {'$in': data_ids}
+            where[MongoPeriodicalStorage.Key.DATA_ID] = {'$in': data_ids}
         else:
-            where[MongoTimedStorage.Key.DATA_ID] = data_ids
+            where[MongoPeriodicalStorage.Key.DATA_ID] = data_ids
 
         if timewindow is not None:
-            where[MongoTimedStorage.Key.TIMESTAMP] = {
+            where[MongoPeriodicalStorage.Key.TIMESTAMP] = {
                 '$gte': timewindow.start(), '$lte': timewindow.stop()
             }
 
@@ -233,10 +272,12 @@ class MongoTimedStorage(MongoStorage, PeriodicalStorage):
 
     def all_indexes(self, *args, **kwargs):
 
-        result = super(MongoTimedStorage, self).all_indexes(*args, **kwargs)
+        result = super(MongoPeriodicalStorage, self).all_indexes(*args,
+                                                                 **kwargs)
 
         result += [
-            MongoTimedStorage.TIMESTAMP_BY_ID, MongoTimedStorage.TIMESTAMPS
+            MongoPeriodicalStorage.TIMESTAMP_BY_ID,
+            MongoPeriodicalStorage.TIMESTAMPS
         ]
 
         return result

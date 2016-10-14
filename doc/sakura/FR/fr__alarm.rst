@@ -43,6 +43,7 @@ An alarm is described by a set of :ref:`events <FR__Event>`:
  - eventually a :ref:`changing state event <FR__Event__Changestate>`
  - eventually an :ref:`alarm canceling event <FR__Event__Cancel>`
  - eventually an :ref:`alarm restoring event <FR__Event__Uncancel>`
+ - eventually an :ref:`alarm snooze event <FR__Event__Snooze>`
 
 This set of events is called, in Canopsis, an *alarm cycle* and is associated to
 a :ref:`contextual entity <FR__Context__Entity>`.
@@ -52,8 +53,9 @@ a :ref:`contextual entity <FR__Context__Entity>`.
 Alarm step
 ----------
 
-The *alarm cycle* may not be ended yet. It **MUST** have a current state, which
-is called the *alarm step*, telling that:
+The *alarm cycle* may only be ended after a status set to 0 if the period of
+potential flapping has elapsed. It **MUST** have a current state, which is
+called the *alarm step*, telling that:
 
  - the alarm is *on going*
  - the alarm is *flapping*
@@ -65,7 +67,7 @@ is called the *alarm step*, telling that:
  - the alarm has been restored from its canceled state
  - the alarm escalated
  - the alarm decreased
- - the alarm ended
+ - the alarm has been snoozed
 
 Each step **MUST** be historized in its corresponding *alarm cycle*.
 And once the alarm ended, the cycle **SHOULD** be closed, and archived.

@@ -1,7 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2016 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -17,33 +16,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# --------------------------------
+# ---------------------------------
 
-from canopsis.common.setup import setup
-
-install_requires = [
-    'canopsis.common',
-    'canopsis.configuration',
-    'canopsis.middleware',
-    'canopsis.context',
-    'canopsis.ctxprop',
-    'canopsis.graph',
-    'canopsis.event',
-    'canopsis.check',
-    'canopsis.ccalendar',
-    'canopsis.linklist',
-    'canopsis.pbehavior',
-    'canopsis.timeserie',
-    'canopsis.perfdata',
-    'canopsis.organisation',
-    'canopsis.session',
-    'canopsis.topology',
-    'canopsis.vevent',
-    'canopsis.old'
-]
-
-setup(
-    description='Canopsis WebCore',
-    install_requires=install_requires,
-    keywords='webcore'
-)
+__version__ = '0.1'

@@ -234,7 +234,6 @@ class Archiver(Configurable):
         )
 
     def reset_status_event(self, reset_type):
-
         """Trigger event status reset to off/on going status if event are in
         BAGOT or STEALTHY status.
 
@@ -428,9 +427,8 @@ class Archiver(Configurable):
         # If not canceled, proceed to check the status
         if (devent.get('status', ONGOING) != CANCELED
             or (dstate != event['state']
-                and (self.restore_event
-                or event['state'] == OFF
-                or dstate == OFF))):
+                and (event['state'] == OFF
+                     or dstate == OFF))):
             # Check the stealthy intervals
             if self.check_stealthy(devent, event_ts):
                 if self.is_bagot(event):

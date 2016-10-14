@@ -103,13 +103,14 @@ def exports(ws):
 
     @route(ws.application.delete, payload=['ids'])
     def calendar(ids):
-        """Delete a event with the id. We can delete several events with an array of ids
+        """Delete a event with the id. We can delete several events with an
+        array of ids
 
         :param list ids: list of ids to delete
         :return: True if the remove is ok
         :rtype: boolean
         """
-        result = cm.remove(uids=ids)
+        cm.remove(uids=ids)
         ws.logger.info('Delete : {}'.format(ids))
         return True
 
