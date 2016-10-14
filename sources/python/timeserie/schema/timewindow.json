@@ -1,0 +1,9 @@
+{
+	"title": "timewindow",
+	"id": "timewindow",
+	"type": "object",
+	"properties": {
+		"interval": {"$ref": "interval"},
+		"timezone": {"type": "integer", "default": 0}
+	}
+}

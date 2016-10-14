@@ -1,0 +1,11 @@
+{
+	"title": "class",
+	"id": "class",
+	"type": "object",
+	"properties": {
+		"name": "string",
+		"attributes": {"type": "array", "items": {"$ref": "parameter"}},
+		"functions": {"type": "array", "items": {"$ref": "function"}}
+	},
+	"required": ["name"]
+}

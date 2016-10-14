@@ -1,0 +1,17 @@
+{
+	"title": "period",
+	"id": "period",
+	"type": "object",
+	"properties": {
+		"unit_values": {
+			"microsecond": {"type": "integer", "default": 0},
+			"second": {"type": "integer", "default": 0},
+			"minute": {"type": "integer", "default": 0},
+			"hour": {"type": "integer", "default": 0},
+			"day": {"type": "integer", "default": 0},
+			"week": {"type": "integer", "default": 0},
+			"month": {"type": "integer", "default": 0},
+			"year": {"type": "integer", "default": 0}
+		}
+	}
+}

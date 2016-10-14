@@ -1,0 +1,8 @@
+{
+	"title": "interval",
+	"id": "interval",
+	"type": "object",
+	"properties": {
+		"sub_intervals": {"type": "array", "lenght": 2, "items": {"type": "integer"}}
+	}
+}

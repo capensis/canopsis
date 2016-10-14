@@ -1,0 +1,12 @@
+{
+	"title": "timeserie",
+	"id": "timeserie",
+	"type": "object",
+	"properties": {
+		"period": {"$ref": "period", "default": {"unit_values": {"day": 1}}},
+		"max_points": {"type": "integer", "default": 500, "minimum": 0},
+		"round_time": {"type": "boolean", "default": true},
+		"aggregation": {"type": "string", "default": "mean"},
+		"fill": {"type": "boolean", "default": false}
+	}
+}

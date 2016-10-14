@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -18,6 +19,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-# attach this project to canopsis package
-from pkgutil import extend_path
-__path__ = extend_path(__path__, __name__)
+from canopsis.common.setup import setup
+
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.task',
+    'canopsis.event',
+    'canopsis.check',
+    'canopsis.timeserie'
+]
+
+setup(
+    description='Canopsis sysreq management',
+    install_requires=install_requires,
+    keywords='sysreq'
+)

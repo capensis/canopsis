@@ -1,0 +1,10 @@
+{
+	"id": "perfdatapts",
+	"title": "perfdatapts",
+	"properties": {
+		"id": "string",
+		"metric_id": "string",
+		"points": "float",
+		"meta": "object"
+	}
+}

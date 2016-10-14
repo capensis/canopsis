@@ -1,0 +1,10 @@
+{
+	"title": "parameter",
+	"id": "parameter",
+	"type": "object",
+	"properties": {
+		"name": "string",
+		"type": "string"
+	},
+	"required": ["name"]
+}

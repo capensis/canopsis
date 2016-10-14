@@ -1,0 +1,13 @@
+{
+	"title": "system/perfdata",
+	"id": "system/perfdata",
+	"$ref": "class",
+	"properties": {
+		"put": {
+			"$ref": "function", "default": {
+				"name": "put",
+				"parameters": [{"name": }]
+			}
+		}
+	}
+}

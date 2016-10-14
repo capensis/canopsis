@@ -1,0 +1,11 @@
+{
+	"id": "perfdata",
+	"title": "perfdata",
+	"properties": {
+		"id": "string",
+		"metric_id": "string",
+		"timestamp": "integer",
+		"value": "float",
+		"meta": "object"
+	}
+}

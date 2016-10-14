@@ -1,0 +1,17 @@
+{
+	"title": "function",
+	"id": "function",
+	"type": "object",
+	"properties": {
+		"name": "string",
+		"parameters": {
+			"type": "array", "items": {
+				"$ref": "parameter"
+			}
+		},
+		"static": {"type": "boolean", "default": false},
+		"description": "string",
+		"rtype": "string"
+	},
+	"required": ["name"]
+}
