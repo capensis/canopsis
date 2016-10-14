@@ -20,15 +20,16 @@
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.router.manager import RouterManager
-from canopsis.engines.core import publish
+from canopsis.engines.core import publish, DROP
 
 
 def event_processing(engine, event, manager=None, logger=None, **_):
     if manager is None:
         manager = singleton_per_scope(RouterManager)
 
-    if manager.match_filters(event):
-        event = manager.apply_patchs(event)
+    event = manager.match_filters(event, publisher=engine.amqp)
+
+    if engine.autonext:
         rk = manager.get_routing_key(event)
 
         publish(
@@ -38,6 +39,9 @@ def event_processing(engine, event, manager=None, logger=None, **_):
             exchange=manager.exchange,
             logger=logger
         )
+
+    else:
+        return event if event is not None else DROP
 
 
 def beat_processing(engine, manager=None, logger=None, **_):
