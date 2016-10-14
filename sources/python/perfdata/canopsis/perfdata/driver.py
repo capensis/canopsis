@@ -31,18 +31,11 @@ from canopsis.context.manager import Context
 
 from numbers import Number
 
-from b3j0f.requester import (
-    CreateAnnotation, ReadAnnotation, UpdateAnnotation, DeleteAnnotation
-)
-from b3j0f.requester.driver.custom import datafromgateway
-
-
 CONF_PATH = 'perfdata/perfdata.conf'
 CATEGORY = 'PERFDATA'
 
 SLIDING_TIME = 'sliding_time'
 SLIDING_TIME_UPPER_BOUND = 365 * 86400 * 3
-
 
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
@@ -115,7 +108,6 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    @ReadAnnotation(translator=datafromgateway)
     def get_metrics(self, query=None):
         """Get registered metric ids.
 
@@ -127,7 +119,6 @@ class PerfData(MiddlewareRegistry):
             _type='metric', _filter=query
         )
 
-    @ReadAnnotation(translator=datafromgateway)
     def get(
             self, metric_id, meta=None, with_meta=True, timewindow=None,
             limit=0, skip=0, sort=None, timeserie=None, sliding_time=False
@@ -167,9 +158,7 @@ class PerfData(MiddlewareRegistry):
             else:
                 points = result
 
-            points = [
-                (min(ts, _timewindow.stop()), val) for (ts, val) in points
-            ]
+            points = [(min(ts, _timewindow.stop()), val) for (ts, val) in points]
 
             if with_meta:
                 result = points, result[1]
@@ -198,8 +187,6 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    @CreateAnnotation(translator=datafromgateway)
-    @UpdateAnnotation(translator=datafromgateway)
     def put(self, metric_id, points, meta=None, cache=False):
         """Put a (list of) couple (timestamp, value), a tags into
         rated_documents.
@@ -225,7 +212,6 @@ class PerfData(MiddlewareRegistry):
                 data_id=data_id, points=points, tags=tags, cache=cache
             )
 
-    @DeleteAnnotation(translator=datafromgateway)
     def remove(
             self, metric_id, timewindow=None, meta=None, cache=False
     ):

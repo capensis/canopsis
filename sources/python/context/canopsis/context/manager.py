@@ -29,6 +29,11 @@ from canopsis.storage.composite import CompositeStorage
 
 from urllib import unquote_plus
 
+from b3j0f.requester import (
+    obj2driver, CreateAnnotation, ReadAnnotation, UpdateAnnotation,
+    DeleteAnnotation
+)
+from b3j0f.requester.driver.custom import datafromgateway
 
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
@@ -382,6 +387,7 @@ class Context(MiddlewareRegistry):
 
         return result
 
+    @ReadAnnotation(translator=datafromgateway)
     def find(
             self, _type=None, context=None, _filter=None, extended=False,
             limit=0, skip=0, sort=None, with_count=False
@@ -407,6 +413,8 @@ class Context(MiddlewareRegistry):
 
         return result
 
+    @CreateAnnotation(translator=datafromgateway)
+    @UpdateAnnotation(translator=datafromgateway)
     def put(
             self,
             _type, entity, context=None, extended_id=None, add_parents=True,
@@ -488,6 +496,7 @@ class Context(MiddlewareRegistry):
                 cache=cache
             )
 
+    @DeleteAnnotation(translator=datafromgateway)
     def remove(
             self, ids=None, _type=None, context=None, extended=False,
             cache=False

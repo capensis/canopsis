@@ -34,6 +34,11 @@ from dateutil.rrule import rrulestr
 
 from calendar import timegm
 
+from b3j0f.requester import (
+    CreateAnnotation, UpdateAnnotation, DeleteAnnotation, UpdateAnnotation
+)
+from b3j0f.requester.driver.custom import datafromgateway
+
 #: pbehavior manager configuration path
 CONF_PATH = 'pbehavior/pbehavior.conf'
 #: pbehavior manager configuration category name
@@ -101,6 +106,7 @@ class PBehaviorManager(VEventManager):
 
         return result
 
+    @ReadAnnotation(translator=datafromgateway)
     def getending(self, source, behaviors=None, ts=None):
         """Get end date of corresponding behaviors if a timestamp is in a
         behavior period.

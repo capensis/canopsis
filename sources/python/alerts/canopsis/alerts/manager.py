@@ -36,6 +36,11 @@ from canopsis.alerts.status import get_last_state, get_last_status, OFF
 
 from time import time
 
+from b3j0f.requester import (
+    CreateAnnotation, ReadAnnotation, UpdateAnnotation, DeleteAnnotation
+)
+from b3j0f.requester.driver.custom import datafromgateway
+
 
 CONF_PATH = 'alerts/manager.conf'
 CATEGORY = 'ALERTS'
@@ -178,6 +183,7 @@ class Alerts(MiddlewareRegistry):
         if context is not None:
             self[Alerts.CONTEXT_MANAGER] = context
 
+    @ReadAnnotation(translator=datafromgateway)
     def get_alarms(
             self,
             resolved=True,
@@ -241,7 +247,8 @@ class Alerts(MiddlewareRegistry):
             ]}
 
         if not snoozed:
-            no_snooze_cond = {'$or': [
+            no_snooze_cond = {
+                '$or': [
                     {'snooze': None},
                     {'snooze.val': {'$lte': int(time())}}
                 ]
@@ -262,13 +269,14 @@ class Alerts(MiddlewareRegistry):
 
         return alarms_by_entity
 
+    @ReadAnnotation(translator=datafromgateway)
     def count_alarms_by_period(
             self,
             start,
             stop,
             subperiod={'day': 1},
             limit=100,
-            query={},
+            query={}
     ):
         """
         Count alarms that have been opened during (stop - start) period.
@@ -364,6 +372,7 @@ class Alerts(MiddlewareRegistry):
 
         storage.put(alarm_id, new_value, alarm_ts)
 
+    @ReadAnnotation(translator=datafromgateway)
     def get_events(self, alarm):
         """
         Rebuild events from alarm history.
@@ -445,6 +454,8 @@ class Alerts(MiddlewareRegistry):
 
         return events
 
+    @CreateAnnotation(translator=datafromgateway)
+    @UpdateAnnotation(translator=datafromgateway)
     def archive(self, event):
         """
         Archive event in corresponding alarm history.
@@ -612,6 +623,7 @@ class Alerts(MiddlewareRegistry):
         new_value = task(self, value, status, event)
         self.update_current_alarm(alarm, new_value)
 
+    @CreateAnnotation(translator=datafromgateway)
     def make_alarm(self, alarm_id, event):
         """
         Create a new alarm from event if not already existing.

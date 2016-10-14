@@ -35,6 +35,11 @@ from datetime import datetime, timedelta
 
 from uuid import uuid4 as uuid
 
+from b3j0f.requester import (
+    CreateAnnotation, ReadAnnotation, UpdateAnnotation, DeleteAnnotation
+)
+from b3j0f.requester.driver.custom import datafromgateway
+
 MAXTS = 2147483647  #: maximal timestamp
 
 CONF_PATH = 'vevent/vevent.conf'
@@ -130,6 +135,7 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
+    @ReadAnnotation(translator=datafromgateway)
     def get_vevent(self, document):
         """Get a vevent from a document.
 
@@ -170,6 +176,7 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
+    @ReadAnnotation(translator=datafromgateway)
     def get_by_uids(
         self, uids,
         limit=0, skip=0, sort=None, projection=None, with_count=False
@@ -202,6 +209,9 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
+    @ReadAnnotation(translator=datafromgateway)
+    @CreateAnnotation(translator=datafromgateway)
+    @UpdateAnnotation(translator=datafromgateway)
     def values(
         self, sources=None, dtstart=None, dtend=None, query=None,
         limit=0, skip=0, sort=None, projection=None, with_count=False
@@ -254,6 +264,7 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
+    @ReadAnnotation(translator=datafromgateway)
     def whois(self, sources=None, dtstart=None, dtend=None, query=None):
         """Get a set of sources which match with timed condition and query.
 
@@ -274,6 +285,8 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
+    @CreateAnnotation(translator=datafromgateway)
+    @UpdateAnnotation(translator=datafromgateway)
     def put(self, vevents, source=None, cache=False):
         """Add vevents (and optionally data) related to input source.
 
@@ -370,6 +383,7 @@ class VEventManager(MiddlewareRegistry):
         """ Update or format an element before to put it on database
         """
 
+    @DeleteAnnotation(translator=datafromgateway)
     def remove(self, uids=None, query=None, cache=False):
         """Remove elements from storage where uids are given.
 
@@ -384,6 +398,7 @@ class VEventManager(MiddlewareRegistry):
 
         return result
 
+    @DeleteAnnotation(translator=datafromgateway)
     def remove_by_source(self, sources=None, query=None, cache=False):
         """Remove vevent documents related to input sources.
 
