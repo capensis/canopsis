@@ -52,7 +52,18 @@ function easy_install_all_libs() {
 	easy_install_pylib testtools
 	easy_install_pylib traceback2
 	easy_install_pylib unittest2
-        easy_install_pylib chardet
+    easy_install_pylib chardet
+    easy_install_pylib b3j0f.utils
+    easy_install_pylib b3j0f.conf
+    easy_install_pylib b3j0f.aop
+    easy_install_pylib b3j0f.annotation
+    easy_install_pylib b3j0f.schema
+    easy_install_pylib b3j0f.requester
+    easy_install_pylib soundex
+    easy_install_pylib enum34
+    easy_install_pylib ordereddict
+    easy_install_pylib repoze.lru
+    easy_install_pylib silpa-common
 }
 
 function install(){
