@@ -37,19 +37,30 @@ def exports(ws):
             tags=None,
             exclude_tags=None,
             snoozed=False,
+            limit=5,
+            start=0,
+            filter={},
+            sort=[{"direction": "ASC"}],
     ):
         """
         Get alarms
 
-        :param resolved: If ``True``, returns only resolved alarms, else
-                         returns only unresolved alarms (default: ``False``).
-        :type resolved: bool
+        :param bool resolved: If ``True``, returns only resolved alarms, else
+          returns only unresolved alarms (default: ``False``).
 
         :param tags: Tags which must be set on alarm (optional)
         :type tags: str or list
 
         :param exclude_tags: Tags which must not be set on alarm (optional)
         :type tags: str or list
+
+        :param int limit: Number of entries returned (TODO)
+
+        :param int start: Pagination index (TODO)
+
+        :param dict filter: TODO
+
+        :param list sort: TODO
 
         :returns: Iterable of alarms matching
         """
