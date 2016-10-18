@@ -28,7 +28,8 @@ install_requires = [
     'canopsis.task',
     'canopsis.event',
     'canopsis.check',
-    'canopsis.timeserie'
+    'canopsis.timeserie',
+    'b3j0f.requester'
 ]
 
 setup(

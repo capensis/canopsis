@@ -38,6 +38,7 @@ PROJECTS[35]='serie'
 PROJECTS[36]='stats'
 PROJECTS[37]='migration'
 PROJECTS[38]='influxdb'
+PROJECTS[39]='sysreq'
 
 
 function build() {
