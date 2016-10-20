@@ -111,3 +111,19 @@ def exports(ws):
             limit=limit,
             query=select,
         )
+
+    @route(
+            ws.application.get,
+            name='alerts/get-current-alarm',
+            payload=['entity_id'],
+    )
+    def get_current_alarm(entity_id):
+        """
+        Get current unresolved alarm for a entity.
+
+        :param str entity_id: Entity ID of the alarm
+
+        :returns: Alarm as dict if something is opened, else None
+        """
+
+        return am.get_current_alarm(entity_id)
