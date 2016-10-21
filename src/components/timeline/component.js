@@ -19,15 +19,17 @@
 
 Ember.Application.initializer({
     name: 'component-timeline',
-    after: 'HashUtils',
+    after: ['DataUtils', 'HashUtils'],
     initialize: function(container, application) {
+
+        var dataUtils = container.lookupFactory('utility:data');
 
         var get = Ember.get,
             set = Ember.set,
             moment = window.moment;
 
         var component = Ember.Component.extend({
-            timelineData: undefined,
+                        timelineData: undefined,
 
             statusToName: {
                 'ack':'Acknowledged by ',
@@ -82,34 +84,51 @@ Ember.Application.initializer({
              * @description contains Rrule-editor initialisation and data binding
              */
             didInsertElement: function() {
-                set(this,'steps',get(this,'timelineData').v.steps);
+                var component = this;
 
-                for(var i = 0; i < get(this,'steps').length;i++){
-                    var step = get(this,'steps')[i];
+                var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alarm');
+                var query = {'entity_id': get(component, 'timelineData').entity_id};
 
-                    //build time related information
-                    var date = new Date(get(this,'steps')[i].t*1000);
-                    step.date = moment(date).format('LL');
-                    step.time = moment(date).format('h:mm:ss a');
-                    
-                    //build color class
-                    step.color = get(this,'iconsAndColors')[step._t].color;
-                    //set icon
-                    step.icon = get(this,'iconsAndColors')[step._t].icon;
+                adapter.findQuery('alarm', 'get-current-alarm', query).then(function (result) {
+                    // onfullfillment
 
-                    //if no color, it's a state/value, so color
-                    if(!step.color)
-                        step.color = get(this,'colorArray')[step.val];
+                    /* result can be null if entity has no current alarm. */
+                    if (result === null) {
+                        set(component,'steps',[]);
+                    } else {
+                        set(component,'steps',result.data[0].value.steps);
 
-                    //if _t in ['stateinc','statedec','changestate']
-                    if(step._t.indexOf('state') > -1)
-                        step.state = get(this,'stateArray')[step.val];
-                    
-                    if(step._t.indexOf('status') > -1)
-                        step.status = get(this,'statusArray')[step.val];
+                        for(var i = 0; i < get(component,'steps').length;i++){
+                            var step = get(component,'steps')[i];
 
-                    step.name = get(this,'statusToName')[step._t];
-                }
+                            //build time related information
+                            var date = new Date(step.t*1000);
+                            step.date = moment(date).format('LL');
+                            step.time = moment(date).format('h:mm:ss a');
+
+                            //build color class
+                            step.color = get(component,'iconsAndColors')[step._t].color;
+                            //set icon
+                            step.icon = get(component,'iconsAndColors')[step._t].icon;
+
+                            //if no color, it's a state/value, so color
+                            if(!step.color)
+                                step.color = get(component,'colorArray')[step.val];
+
+                            //if _t in ['stateinc','statedec','changestate']
+                            if(step._t.indexOf('state') > -1)
+                                step.state = get(component,'stateArray')[step.val];
+
+                            if(step._t.indexOf('status') > -1)
+                                step.status = get(component,'statusArray')[step.val];
+
+                            step.name = get(component,'statusToName')[step._t];
+                        }
+                    }
+                }, function (reason) {
+                    // onrejection
+                    console.error('ERROR in the adapter: ', reason);
+                });
             }
         });
         
