@@ -25,8 +25,10 @@
 });
 
  define([
-    'canopsis/brick-timeline/src/adapters/adapters',
     'canopsis/brick-timeline/src/components/timeline/component',
     'ehbs!components/component-timeline',
     'link!canopsis/brick-timeline/src/style.css'
-], function () {});
+], function () {
+    
+});
+
