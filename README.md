@@ -49,15 +49,15 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-timeline/blob/mast
 
 ### Tests
 
-The last build was not a full build. Please use the "full-compile" npm script to make test results show up here.
+
 
 ### Lint
 
-Tested on commit : a545c40.
+Tested on commit : 3301ba6.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
-| Lint   | :ok: OK |  |
+| Lint   | :negative_squared_cross_mark: ERROR |  |
 
 
 ## Code-Notes
@@ -72,5 +72,5 @@ Tested on commit : a545c40.
 
 ## Additional-info
 
-Minified version :  files (size: 4,0K)
-Development version : 4 files (size: 36K)
+Minified version : 4 files (size: 28K)
+Development version : 3 files (size: 28K)
