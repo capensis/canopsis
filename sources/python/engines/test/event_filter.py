@@ -19,155 +19,238 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.init import Init
-
 from unittest import TestCase, main
+from mock import MagicMock, patch
 
-from logging import DEBUG, INFO
+from logging import WARNING
 
-from canopsis.engines import DROP
+from canopsis.engines.core import DROP
 from canopsis.engines.event_filter import engine
 
 # TODO, reset theses tests because they are not accurate and not clean
 
-conf = {'rules': [
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'changeme'},
-         'actions': [{
-                'type': 'override',
-                'field': 'connector',
-                'value': 'it_works'},
-             {'type': 'pass'}],
-         'name': 'change-connector-name'},
+conf = {
+    'rules': [
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'changeme'},
+            'actions': [
+                {
+                   'type': 'override',
+                   'field': 'connector',
+                   'value': 'it_works',
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'change-connector-name',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'nagios'},
-         'actions': [{'type': 'pass'}],
-         'name': 'check-connector-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'nagios'},
+            'actions': [{'type': 'pass'}],
+            'name': 'check-connector-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'collectd'},
-         'actions': [{'type': 'drop'}],
-         'name': 'check-connector-drop'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'collectd'},
+            'actions': [{'type': 'drop'}],
+            'name': 'check-connector-drop',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'priority'},
-         'actions': [{'type': 'pass'}],
-         'name': 'check-connector-pass2'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'priority'},
+            'actions': [{'type': 'pass'}],
+            'name': 'check-connector-pass2',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'test_field': {'$gt': 1378713357}},
-         'actions': [{'type': 'drop'}],
-         'name': 'check-gt-drop'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'test_field': {'$gt': 1378713357}},
+            'actions': [{'type': 'drop'}],
+            'name': 'check-gt-drop',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {"tags": {"$in": ["collectd2event"]}},
-         'name': 'check-in-default'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {"tags": {"$in": ["collectd2event"]}},
+            'name': 'check-in-default'
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'nagios'},
-         'actions': [{'type': 'pass'}],
-         'name': 'chec-connector-pass3'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'nagios'},
+            'actions': [{'type': 'pass'}],
+            'name': 'chec-connector-pass3',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'second_rule'},
-         'actions': [{'type': 'pass'}],
-         'name': 'chec-connector-pass4'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'second_rule'},
+            'actions': [{'type': 'pass'}],
+            'name': 'chec-connector-pass4',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'priority'},
-         'actions': [{'type': 'drop'}],
-         'name': 'check-connector-drop2'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'priority'},
+            'actions': [{'type': 'drop'}],
+            'name': 'check-connector-drop2',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'test_field': {'$eq': 'Engine'}},
-         'actions': [{'type': 'pass'}],
-         'name': 'check-eq-pass2'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'test_field': {'$eq': 'Engine'}},
+            'actions': [{'type': 'pass'}],
+            'name': 'check-eq-pass2',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'tags': {'$in': ["tag2"]}},
-         'actions': [{
-                'type': 'remove',
-                'key': 'tags',
-                'element': 'tag2'},
-             {'type': 'pass'}],
-         'name': 'change-tag-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'tags': {'$in': ["tag2"]}},
+            'actions': [
+                {
+                   'type': 'remove',
+                   'key': 'tags',
+                   'element': 'tag2',
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'change-tag-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'perfdatas': {'$in': ["perf1"]}},
-         'actions': [{
-                'type': 'remove',
-                'key': 'perfdatas',
-                'element': 'perf1'},
-             {'type': 'pass'}],
-         'name': 'remove-perdata-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'perfdatas': {'$in': ["perf1"]}},
+            'actions': [
+                {
+                   'type': 'remove',
+                   'key': 'perfdatas',
+                   'element': 'perf1',
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'remove-perdata-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'remove_me': "True"},
-         'actions': [{
-                'type': 'remove',
-                'key': 'remove_me'},
-             {'type': 'pass'}],
-         'name': 'remove-eventfield-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'remove_me': "True"},
+            'actions': [
+                {
+                   'type': 'remove',
+                   'key': 'remove_me',
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'remove-eventfield-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': "add_here"},
-         'actions': [{
-                'type': 'override',
-                'field': 'added_field',
-                'value': "this_was_added_at_runtime"},
-             {'type': 'pass'}],
-         'name': 'add-eventfield-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': "add_here"},
+            'actions': [
+                {
+                    'type': 'override',
+                    'field': 'added_field',
+                    'value': "this_was_added_at_runtime",
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'add-eventfield-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'test_field': {'$gt': 1378713357}},
-         'actions': [{'type': 'drop'}],
-         'name': 'check-gt-drop2'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'test_field': {'$gt': 1378713357}},
+            'actions': [{'type': 'drop'}],
+            'name': 'check-gt-drop2',
+        },
 
-        {'description': 're route',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'route_me'},
-         'actions': [{
-                'type': 'route',
-                'route': 'new_route_defined'}],
-         'name': 're-route'},
+        {
+            'description': 're route',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'route_me'},
+            'actions': [
+                {
+                   'type': 'route',
+                   'route': 'new_route_defined',
+                },
+            ],
+            'name': 're-route',
+        },
 
-        {'description': 'rm & add hostgroup',
-         '_id': 'unittestidrule',
-         'mfilter': {"hostgroups": {"$in": ["linux mint"]}},
-         'actions': [{'type': 'remove',
-                      'key': 'hostgroups',
-                      'element': 'linux mint'},
-                     {'type': 'override',
-                      'field': 'hostgroups',
-                      'value': 'debian jessie'}],
-         'name': 'rm-hostgroup-add-hostgroup-pass'}
-        ],
-        'priority': 2,
-        'default_action': 'drop',
-        'configuration': 'white_black_lists'}
+        {
+            'description': 'rm & add hostgroup',
+            '_id': 'unittestidrule',
+            'mfilter': {"hostgroups": {"$in": ["linux mint"]}},
+            'actions': [
+                {
+                    'type': 'remove',
+                    'key': 'hostgroups',
+                    'element': 'linux mint',
+                },
+                {
+                    'type': 'override',
+                    'field': 'hostgroups',
+                    'value': 'debian jessie',
+                },
+            ],
+            'name': 'rm-hostgroup-add-hostgroup-pass',
+        },
+
+        {
+            'description': 'test snooze',
+            '_id': 'unittestidrule',
+            'mfilter': {'tags': {'$in': 'snooze_me'}},
+            'actions': [
+                {
+                    'type': 'snooze',
+                    'duration': 300,
+                },
+            ],
+        },
+    ],
+    'priority': 2,
+    'default_action': 'drop',
+    'configuration': 'white_black_lists',
+}
 
 
 class KnownValues(TestCase):
 
     def setUp(self):
         self.engine = engine(
-            **{'name': 'passdropity', 'logging_level': INFO})
+            name='passdropity',
+            logging_level=WARNING,
+        )
 
         self.engine.next_amqp_queues = ["consolidation"]
         self.engine.drop_event_count = 0
@@ -346,6 +429,79 @@ class KnownValues(TestCase):
         event['remove_me'] = 'False'
         event = self.engine.work(event)
         self.assertEqual(self.engine.next_amqp_queues[0], "new_route_defined")
+
+    def test_snooze(self):
+
+        self.engine.amqp = MagicMock()
+        self.engine.cm = MagicMock()
+        self.engine.am = MagicMock()
+
+        # get_current_alarm should return None if an alarm concerning an
+        # entity is not currently openened
+        self.engine.am.get_current_alarm = MagicMock(return_value=None)
+
+        def patched_publish(event, publisher, **kwargs):
+            self.published = event
+
+        event = {
+            'connector': 'co',
+            'connector_name': 'cn',
+            'event_type': 'check',
+            'state': 1,
+            'source_type': 'resource',
+            'component': 'cpt',
+            'resource': 'r',
+            'tags': ['snooze_me'],
+        }
+
+        with patch(
+                'canopsis.engines.event_filter.publish',
+                new=MagicMock(side_effect=patched_publish),
+        ):
+            self.engine.work(event)
+
+        generated_snooze = {
+            'connector': 'co',
+            'connector_name': 'cn',
+            'source_type': 'resource',
+            'component': 'cpt',
+            'resource': 'r',
+            'event_type': 'snooze',
+            'duration': 500,
+            'author': 'event_filter',
+            'output': 'Auto snooze',
+        }
+        self.assertEqual(self.published, generated_snooze)
+
+        del self.published
+
+    def test_no_snooze(self):
+
+        self.engine.amqp = MagicMock()
+        self.engine.cm = MagicMock()
+        self.engine.am = MagicMock()
+        self.engine.am.get_current_alarm = MagicMock(return_value='alarm')
+
+        def patched_publish(event, publisher, **kwargs):
+            self.published = 'something published'
+
+        event = {
+            'connector': 'co',
+            'connector_name': 'cn',
+            'source_type': 'resource',
+            'component': 'cpt',
+            'resource': 'r',
+            'event_type': 'check',
+            'author': 'event_filter',
+        }
+
+        with patch(
+                'canopsis.engines.event_filter.publish',
+                new=MagicMock(side_effect=patched_publish),
+        ):
+            self.engine.work(event)
+
+        self.assertFalse(hasattr(self, 'published'))
 
     def test_no_conf(self):
 

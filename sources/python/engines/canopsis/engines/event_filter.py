@@ -20,12 +20,15 @@
 
 from canopsis.engines.core import Engine, DROP, publish
 
+from canopsis.alerts.manager import Alerts
+from canopsis.context.manager import Context
+
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.event import forger, get_routingkey
 from canopsis.old.mfilter import check
 
-import json
+from json import loads
 from time import time
 
 
@@ -238,6 +241,56 @@ class engine(Engine):
             # publish(publisher=self.amqp, event=job, rk='Engine_scheduler')
         return True
 
+    def a_snooze(self, event, action, name):
+        """
+        Snooze event checks
+
+        :param dict event: event to be snoozed
+        :param dict action: action
+        :param str name: name of the rule
+
+        :returns: True if a snooze has been sent, False otherwise
+        :rtype: boolean
+        """
+        # Only check events can trigger an auto-snooze
+        if event['event_type'] != 'check':
+            return False
+
+        # A check OK cannot trigger an auto-snooze
+        if event['state'] == 0:
+            return False
+
+        # Alerts manager caching
+        if not hasattr(self, 'am'):
+            self.am = Alerts()
+
+        # Context manager caching
+        if not hasattr(self, 'cm'):
+            self.cm = Context()
+
+        entity = self.cm.get_entity(event)
+        entity_id = self.cm.get_entity_id(entity)
+
+        current_alarm = self.am.get_current_alarm(entity_id)
+        if current_alarm is None:
+            snooze = {
+                'connector': event.get('connector', ''),
+                'connector_name': event.get('connector_name', ''),
+                'source_type': event.get('source_type', ''),
+                'component': event.get('component', ''),
+                'resource': event.get('resource', ''),
+                'event_type': 'snooze',
+                'duration': action.get('duration', 300),
+                'author': 'event_filter',
+                'output': 'Auto snooze',
+            }
+
+            publish(event=snooze, publisher=self.amqp)
+
+            return True
+
+        return False
+
     def apply_actions(self, event, actions):
         pass_event = False
         actionMap = {
@@ -246,11 +299,12 @@ class engine(Engine):
             'override': self.a_modify,
             'remove': self.a_modify,
             'execjob': self.a_exec_job,
-            'route': self.a_route
+            'route': self.a_route,
+            'snooze': self.a_snooze,
         }
 
         for name, action in actions:
-            if (action['type'] in actionMap):
+            if action['type'] in actionMap:
                 ret = actionMap[action['type'].lower()](event, action, name)
                 if ret:
                     pass_event = True
@@ -343,7 +397,7 @@ class engine(Engine):
             self.set_loaded(record_dump)
 
             try:
-                record_dump["mfilter"] = json.loads(record_dump["mfilter"])
+                record_dump["mfilter"] = loads(record_dump["mfilter"])
             except Exception:
                 self.logger.info('Invalid mfilter {}, filter {}'.format(
                     record_dump['mfilter'],
@@ -417,5 +471,3 @@ class engine(Engine):
             "No default action found. Assuming default action is pass"
         )
         return 'pass'
-
-
