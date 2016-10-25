@@ -186,8 +186,7 @@ def snooze(manager, alarm, author, message, event):
     Called when a user snoozes an alarm.
     """
 
-    duration = event.get('duration', manager.snooze_default_time)
-    until = event['timestamp'] + duration
+    until = event['timestamp'] + event.get('duration', 300)
 
     step = {
         '_t': 'snooze',

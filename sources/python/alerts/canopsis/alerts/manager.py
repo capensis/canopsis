@@ -121,24 +121,6 @@ class Alerts(MiddlewareRegistry):
         return self.config.get('restore_event', False)
 
     @property
-    def auto_snooze(self):
-        """
-        If ``True``, new alarms will be created snoozed for the
-        snooze_default_time duration.
-        """
-
-        return self.config.get('auto_snooze', False)
-
-    @property
-    def snooze_default_time(self):
-        """
-        Default duration used for snooze events that are received with no
-        ``duration`` attribute (ie automatic snoozes).
-        """
-
-        return self.config.get('snooze_default_duration', 300)
-
-    @property
     def extra_fields(self):
         """
         Array of fields to save from event in alarm.
@@ -626,28 +608,15 @@ class Alerts(MiddlewareRegistry):
         alarm = self.get_current_alarm(alarm_id)
 
         if alarm is None:
-
-            if self.auto_snooze:
-                snooze = {
-                    'a': event['connector'],
-                    '_t': 'snooze',
-                    'm': 'Auto snooze',
-                    't': event['timestamp'],
-                    'val': event['timestamp'] + self.snooze_default_time
-                }
-
-            else:
-                snooze = None
-
             value = {
                 'state': None,
                 'status': None,
                 'ack': None,
                 'canceled': None,
-                'snooze': snooze,
+                'snooze': None,
                 'ticket': None,
                 'resolved': None,
-                'steps': [snooze] if snooze else [],
+                'steps': [],
                 'tags': [],
                 'extra': {
                     field: event[field]
