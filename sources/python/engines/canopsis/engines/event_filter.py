@@ -339,7 +339,7 @@ class engine(Engine):
             if filterItem['mfilter'] and check(filterItem['mfilter'], event):
 
                 self.logger.debug(
-                    u'Event: {}, filter matches'.format(event['rk'])
+                    u'Event: {}, filter matches'.format(event.get('rk', event))
                 )
 
                 for action in actions:
