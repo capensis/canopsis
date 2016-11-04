@@ -165,6 +165,20 @@ A ``downtime`` event **MUST** contain:
 
 .. _FR__Event__Cancel:
 
+Event Snooze
+~~~~~~~~~~~~
+
+A ``snooze`` event **MUST** contain:
+
+ - an author
+ - a message
+
+And it **MAY** contain:
+
+ - a period
+
+.. _FR__Event__Snooze:
+
 Event Cancel
 ~~~~~~~~~~~~
 

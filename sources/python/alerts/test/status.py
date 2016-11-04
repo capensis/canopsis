@@ -26,7 +26,7 @@ from canopsis.check import Check
 
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import (
-    FLAPPING, ONGOING, CANCELED, OFF,
+    ONGOING, CANCELED, OFF,
     is_flapping, is_stealthy, compute_status, get_last_state, get_last_status,
     get_previous_step
 )
@@ -35,10 +35,10 @@ from canopsis.alerts.status import (
 class TestStatus(TestCase):
     def setUp(self):
         self.alarm_storage = Middleware.get_middleware_by_uri(
-            'storage-timed-testalarm://'
+            'storage-periodical-testalarm://'
         )
         self.config_storage = Middleware.get_middleware_by_uri(
-            'storage-timed-testconfig://'
+            'storage-default-testconfig://'
         )
 
         self.manager = Alerts()

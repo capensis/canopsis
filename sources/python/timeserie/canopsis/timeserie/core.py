@@ -25,7 +25,7 @@ __all__ = ['TimeSerie']
 
 from canopsis.common.init import basestring
 from canopsis.timeserie.timewindow import Period, TimeWindow
-from canopsis.timeserie.aggregation import get_aggregation, DELTA, NONE
+from canopsis.timeserie.aggregation import get_aggregation, DELTA
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter

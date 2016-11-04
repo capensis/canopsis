@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#--------------------------------
+# --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -17,7 +17,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
+# --------------------------------
 
 from canopsis.common.setup import setup
 
