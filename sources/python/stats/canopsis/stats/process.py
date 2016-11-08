@@ -31,6 +31,122 @@ from canopsis.alerts.status import get_previous_step
 from canopsis.alerts.manager import Alerts
 
 
+def session_stats(sessionmgr, logger):
+    for duration in sessionmgr.duration():
+        yield duration
+
+
+def opened_alarm_stats(eventmgr, alertsmgr, storage, logger):
+    for resolved in [False, True]:
+        alarms = alertsmgr.get_alarms(
+            resolved=resolved,
+            exclude_tags='stats-opened'
+        )
+
+        for entity_id in alarms:
+            for docalarm in alarms[entity_id]:
+                docalarm[storage.DATA_ID] = entity_id
+
+                alarm = docalarm[storage.VALUE]
+                extra = alarm['extra']
+
+                yield eventmgr.alarm_opened(extra_fields=extra)
+
+                alertsmgr.update_current_alarm(
+                    docalarm,
+                    alarm,
+                    tags='stats-opened'
+                )
+
+
+def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
+    resolved_alarms = alertsmgr.get_alarms(
+        resolved=True,
+        exclude_tags='stats-resolved'
+    )
+
+    for entity_id in resolved_alarms:
+        for docalarm in resolved_alarms[entity_id]:
+            docalarm[storage.DATA_ID] = entity_id
+            alarm = docalarm[storage.VALUE]
+            alarm_ts = docalarm[storage.TIMESTAMP]
+
+            extra = alarm['extra']
+            extra['__ack__'] = True if alarm['ack'] is not None else False
+
+            solved_delay = alarm['resolved'] - alarm_ts
+            yield eventmgr.alarm_solved_delay(solved_delay, extra_fields=extra)
+
+            if alarm['ack'] is not None:
+                ack_ts = alarm['ack']['t']
+                ackremove = get_previous_step(
+                    alarm,
+                    'ackremove',
+                    ts=ack_ts
+                )
+                ts = alarm_ts if ackremove is None else ackremove['t']
+                ack_delay = ack_ts - ts
+
+                yield eventmgr.alarm_ack_solved_delay(
+                    solved_delay - ack_delay,
+                    extra_fields=extra
+                )
+
+                yield usermgr.alarm_ack_delay(
+                    alarm['ack']['a'],
+                    ack_delay,
+                    extra_fields=extra
+                )
+
+            # !!DISABLE COUNTERS!!
+            # NB: will be done with InfluxDB directly ?
+
+            # HAVE_COUNTERS = False
+
+            # alarm_events = alertsmgr.get_events(docalarm)
+            # if HAVE_COUNTERS:
+            #     if len(alarm_events) > 0:
+            #         events.append(eventmgr.alarm(alarm_events[0]))
+
+            # for event in alarm_events:
+            #     if event['event_type'] == 'ack':
+            #         if HAVE_COUNTERS:
+            #             events.append(eventmgr.alarm_ack(event))
+            #             events.append(
+            #                 usermgr.alarm_ack(event, event['author'])
+            #             )
+
+            #     elif event['timestamp'] == alarm['resolved']:
+            #         if HAVE_COUNTERS:
+            #             events.append(eventmgr.alarm_solved(event))
+
+            #         if alarm['ack'] is not None:
+            #             if HAVE_COUNTERS:
+            #                 events.append(
+            #                     eventmgr.alarm_ack_solved(event)
+            #                 )
+
+            #             events.append(
+            #                 usermgr.alarm_ack_solved(
+            #                     alarm['ack']['a'],
+            #                     alarm['resolved'] - alarm['ack']['t']
+            #                 )
+            #             )
+
+            #             events.append(
+            #                 usermgr.alarm_solved(
+            #                     alarm['ack']['a'],
+            #                     alarm['resolved'] - alarm_ts
+            #                 )
+            #             )
+
+            alertsmgr.update_current_alarm(
+                docalarm,
+                alarm,
+                tags='stats-resolved'
+            )
+
+
 @register_task
 def beat_processing(
     engine,
@@ -54,93 +170,27 @@ def beat_processing(
         alertsmgr = singleton_per_scope(Alerts)
 
     storage = alertsmgr[alertsmgr.ALARM_STORAGE]
-    events = sessionmgr.duration()
+
+    stats_events = []
+
+    stats_events += session_stats(sessionmgr, logger)
 
     with engine.Lock(engine, 'alarm_stats_computation') as l:
         if l.own():
-            resolved_alarms = alertsmgr.get_alarms(
-                resolved=True,
-                exclude_tags='stats'
+            stats_events += opened_alarm_stats(
+                eventmgr,
+                alertsmgr,
+                storage,
+                logger
             )
 
-            for data_id in resolved_alarms:
-                for docalarm in resolved_alarms[data_id]:
-                    docalarm[storage.DATA_ID] = data_id
-                    alarm = docalarm[storage.VALUE]
-                    alarm_ts = docalarm[storage.TIMESTAMP]
-                    alarm_events = alertsmgr.get_events(docalarm)
+            stats_events += resolved_alarm_stats(
+                eventmgr,
+                usermgr,
+                alertsmgr,
+                storage,
+                logger
+            )
 
-                    solved_delay = alarm['resolved'] - alarm_ts
-                    events.append(eventmgr.alarm_solved_delay(solved_delay))
-
-                    if alarm['ack'] is not None:
-                        ack_ts = alarm['ack']['t']
-                        ackremove = get_previous_step(
-                            alarm,
-                            'ackremove',
-                            ts=ack_ts
-                        )
-                        ts = alarm_ts if ackremove is None else ackremove['t']
-                        ack_delay = ack_ts - ts
-
-                        events.append(eventmgr.alarm_ack_delay(ack_delay))
-                        events.append(
-                            eventmgr.alarm_ack_solved_delay(
-                                solved_delay - ack_delay
-                            )
-                        )
-
-                        events.append(usermgr.alarm_ack_delay(
-                            alarm['ack']['a'],
-                            ack_delay
-                        ))
-
-                    # !!DISABLE COUNTERS!!
-                    # NB: will be done with InfluxDB directly ?
-
-                    HAVE_COUNTERS = False
-
-                    if HAVE_COUNTERS:
-                        if len(alarm_events) > 0:
-                            events.append(eventmgr.alarm(alarm_events[0]))
-
-                    for event in alarm_events:
-                        if event['event_type'] == 'ack':
-                            if HAVE_COUNTERS:
-                                events.append(eventmgr.alarm_ack(event))
-                                events.append(
-                                    usermgr.alarm_ack(event, event['author'])
-                                )
-
-                        elif event['timestamp'] == alarm['resolved']:
-                            if HAVE_COUNTERS:
-                                events.append(eventmgr.alarm_solved(event))
-
-                            if alarm['ack'] is not None:
-                                if HAVE_COUNTERS:
-                                    events.append(
-                                        eventmgr.alarm_ack_solved(event)
-                                    )
-
-                                events.append(
-                                    usermgr.alarm_ack_solved(
-                                        alarm['ack']['a'],
-                                        alarm['resolved'] - alarm['ack']['t']
-                                    )
-                                )
-
-                                events.append(
-                                    usermgr.alarm_solved(
-                                        alarm['ack']['a'],
-                                        alarm['resolved'] - alarm_ts
-                                    )
-                                )
-
-                    alertsmgr.update_current_alarm(
-                        docalarm,
-                        alarm,
-                        tags='stats'
-                    )
-
-    for event in events:
+    for event in stats_events:
         publish(publisher=engine.amqp, event=event, logger=logger)

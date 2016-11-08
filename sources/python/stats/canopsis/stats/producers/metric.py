@@ -272,7 +272,28 @@ class MetricProducer(MiddlewareRegistry):
 
         return event
 
-    def _delay(self, name, value, author='__canopsis__'):
+    def _count(self, name, author='__canopsis__', extra_fields={}):
+        event = {
+            'connector': 'canopsis',
+            'connector_name': 'stats',
+            'event_type': 'perf',
+            'source_type': 'component',
+            'component': author,
+            'perf_data_array': [
+                {
+                    'metric': name,
+                    'value': 1,
+                    'type': 'GAUGE'
+                }
+            ]
+        }
+
+        for key, value in extra_fields.items():
+            event['perf_data_array'][0][key] = value
+
+        return event
+
+    def _delay(self, name, value, author='__canopsis__', extra_fields={}):
         event = {
             'connector': 'canopsis',
             'connector_name': 'stats',
@@ -287,5 +308,8 @@ class MetricProducer(MiddlewareRegistry):
                 }
             ]
         }
+
+        for key, value in extra_fields.items():
+            event['perf_data_array'][0][key] = value
 
         return event
