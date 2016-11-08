@@ -95,21 +95,32 @@ def beat_processing(
                             ack_delay
                         ))
 
-                    if len(alarm_events) > 0:
-                        events.append(eventmgr.alarm(alarm_events[0]))
+                    # !!DISABLE COUNTERS!!
+                    # NB: will be done with InfluxDB directly ?
+
+                    HAVE_COUNTERS = False
+
+                    if HAVE_COUNTERS:
+                        if len(alarm_events) > 0:
+                            events.append(eventmgr.alarm(alarm_events[0]))
 
                     for event in alarm_events:
                         if event['event_type'] == 'ack':
-                            events.append(eventmgr.alarm_ack(event))
-                            events.append(
-                                usermgr.alarm_ack(event, event['author'])
-                            )
+                            if HAVE_COUNTERS:
+                                events.append(eventmgr.alarm_ack(event))
+                                events.append(
+                                    usermgr.alarm_ack(event, event['author'])
+                                )
 
                         elif event['timestamp'] == alarm['resolved']:
-                            events.append(eventmgr.alarm_solved(event))
+                            if HAVE_COUNTERS:
+                                events.append(eventmgr.alarm_solved(event))
 
                             if alarm['ack'] is not None:
-                                events.append(eventmgr.alarm_ack_solved(event))
+                                if HAVE_COUNTERS:
+                                    events.append(
+                                        eventmgr.alarm_ack_solved(event)
+                                    )
 
                                 events.append(
                                     usermgr.alarm_ack_solved(

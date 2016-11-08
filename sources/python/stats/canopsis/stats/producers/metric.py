@@ -226,7 +226,7 @@ class MetricProducer(MiddlewareRegistry):
 
         return event
 
-    def _delay(self, name, value, author='__canopsis__'):
+    def _delay_old(self, name, value, author='__canopsis__'):
         """
         Generate gauge and counter for delay statistic.
 
@@ -269,5 +269,23 @@ class MetricProducer(MiddlewareRegistry):
             )
 
             self.may_create_stats_serie(entity, operator)
+
+        return event
+
+    def _delay(self, name, value, author='__canopsis__'):
+        event = {
+            'connector': 'canopsis',
+            'connector_name': 'stats',
+            'event_type': 'perf',
+            'source_type': 'component',
+            'component': author,
+            'perf_data_array': [
+                {
+                    'metric': name,
+                    'value': value,
+                    'type': 'GAUGE'
+                }
+            ]
+        }
 
         return event
