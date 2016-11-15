@@ -32,6 +32,7 @@ function install() {
     if [ ! -L $LIB/bin/broccoli ]; then
         ln -sf $LIB/broccoli-cli/bin/broccoli $PREFIX/bin/broccoli
     fi
+    ln -sf $PREFIX/var/www/bin/brickmanager $PREFIX/bin/brickmanager
 }
 
 function update() {

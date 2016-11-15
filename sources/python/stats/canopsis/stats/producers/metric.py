@@ -178,7 +178,7 @@ class MetricProducer(MiddlewareRegistry):
             }
 
             _, tags = self[MetricProducer.PERFDATA_MANAGER].get(
-                metric_id, with_tags=True
+                metric_id, with_meta=True
             )
 
             if tags is not None:
