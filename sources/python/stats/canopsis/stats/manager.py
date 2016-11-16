@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from re import escape
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
@@ -26,8 +28,7 @@ from canopsis.common.utils import ensure_iterable
 
 CONF_PATH = 'stats/manager.conf'
 CATEGORY = 'STATS'
-CONTENT = [
-]
+CONTENT = []
 
 
 @conf_paths(CONF_PATH)
@@ -104,10 +105,10 @@ class Stats(MiddlewareRegistry):
               'name': '__total__',
               [...]
           ],
-          '__total__': [
+          '__total__': {
             'stats_count': {...},
             'stats_delay': {...}
-          ]
+          }
         }
         """
         self.logger.info("Retrieving event based stats")
@@ -466,6 +467,9 @@ class Stats(MiddlewareRegistry):
 
         result = []
 
+        if not users:
+            return result
+
         time_where = 'time >= {}s AND time <= {}s'.format(tstart, tstop)
 
         user_regex = self._influx_or_regex(users)
@@ -549,10 +553,19 @@ class Stats(MiddlewareRegistry):
         return result
 
     def _influx_or_regex(self, items):
+        """
+        Transform a list of strings in an influx regex with an or filter
+        between each element.
+
+        :param list items: List of strings
+
+        :return: Ready to use regex
+        :rtype: str
+        """
         regex = '/^('
 
         for item in items:
-            regex = '{}{}|'.format(regex, item)
+            regex = '{}{}|'.format(regex, escape(item))
 
         # Truncate regex for the last '|'
         regex = '{})$/'.format(regex[:-1])
@@ -593,7 +606,7 @@ class Stats(MiddlewareRegistry):
             else:
                 query = query[:-1]
 
-        self.logger.error('Processing query `{}`'.format(query))
+        self.logger.debug('Processing query `{}`'.format(query))
         result = self.influxdbstg.raw_query(query)
 
         # If something went wrong (bad metric_id, bad aggregation...),
