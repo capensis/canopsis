@@ -35,28 +35,36 @@ class UserMetricProducer(MetricProducer):
     Metric producer for user statistics.
     """
 
-    def alarm_ack(self, event, user):
-        return self._counter('alarm_ack', event, author=user)
+    # def alarm_ack(self, event, user):
+    #     return self._counter('alarm_ack', event, author=user)
+
+    def session_duration(self, user, duration):
+        return self._delay(
+            'session_duration',
+            duration,
+            author=user,
+        )
 
     def alarm_ack_delay(self, user, delay, extra_fields={}):
         return self._delay(
             'alarm_ack_delay',
-            delay, author=user,
-            extra_fields=extra_fields
-        )
-
-    def alarm_ack_solved(self, user, delay, extra_fields={}):
-        return self._delay(
-            'alarm_ack_solved',
             delay,
             author=user,
             extra_fields=extra_fields
         )
 
-    def alarm_solved(self, user, delay, extra_fields={}):
-        return self._delay(
-            'alarm_solved',
-            delay,
-            author=user,
-            extra_fields=extra_fields
-        )
+    # def alarm_ack_solved(self, user, delay, extra_fields={}):
+    #     return self._delay(
+    #         'alarm_ack_solved',
+    #         delay,
+    #         author=user,
+    #         extra_fields=extra_fields
+    #     )
+
+    # def alarm_solved(self, user, delay, extra_fields={}):
+    #     return self._delay(
+    #         'alarm_solved',
+    #         delay,
+    #         author=user,
+    #         extra_fields=extra_fields
+    #     )

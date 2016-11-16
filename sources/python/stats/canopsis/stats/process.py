@@ -31,9 +31,10 @@ from canopsis.alerts.status import get_previous_step
 from canopsis.alerts.manager import Alerts
 
 
-def session_stats(sessionmgr, logger):
-    for duration in sessionmgr.duration():
-        yield duration
+def session_stats(usermgr, sessionmgr, logger):
+    for expired in sessionmgr.sessions_close():
+        duration = expired['session_stop'] - expired['session_start']
+        yield usermgr.session_duration(expired['_id'], duration)
 
 
 def opened_alarm_stats(eventmgr, alertsmgr, storage, logger):
@@ -173,7 +174,7 @@ def beat_processing(
 
     stats_events = []
 
-    stats_events += session_stats(sessionmgr, logger)
+    stats_events += session_stats(usermgr, sessionmgr, logger)
 
     with engine.Lock(engine, 'alarm_stats_computation') as l:
         if l.own():

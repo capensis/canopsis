@@ -191,86 +191,86 @@ class MetricProducer(MiddlewareRegistry):
 
         return result
 
-    def _counter(self, name, event, author='__canopsis__'):
-        """
-        Generate counters for each matching filter.
+    # def _counter(self, name, event, author='__canopsis__'):
+    #     """
+    #     Generate counters for each matching filter.
 
-        :param name: Counter's name
-        :type name: str
+    #     :param name: Counter's name
+    #     :type name: str
 
-        :param event: Event to check against filters
-        :type event: dict
+    #     :param event: Event to check against filters
+    #     :type event: dict
 
-        :param author: Statistic author (default: __canopsis__)
-        :type author: str
+    #     :param author: Statistic author (default: __canopsis__)
+    #     :type author: str
 
-        :returns: perf event as dict
-        """
+    #     :returns: perf event as dict
+    #     """
 
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': author,
-            'resource': name,
-            'perf_data_array': [
-                {
-                    'metric': filtername,
-                    'value': 1,
-                    'type': 'COUNTER'
-                }
-                for filtername in self.match(event)
-            ]
-        }
+    #     event = {
+    #         'connector': 'canopsis',
+    #         'connector_name': 'stats',
+    #         'event_type': 'perf',
+    #         'source_type': 'resource',
+    #         'component': author,
+    #         'resource': name,
+    #         'perf_data_array': [
+    #             {
+    #                 'metric': filtername,
+    #                 'value': 1,
+    #                 'type': 'COUNTER'
+    #             }
+    #             for filtername in self.match(event)
+    #         ]
+    #     }
 
-        return event
+    #     return event
 
-    def _delay_old(self, name, value, author='__canopsis__'):
-        """
-        Generate gauge and counter for delay statistic.
+    # def _delay_old(self, name, value, author='__canopsis__'):
+    #     """
+    #     Generate gauge and counter for delay statistic.
 
-        :param name: Delay's name
-        :type name: str
+    #     :param name: Delay's name
+    #     :type name: str
 
-        :param value: Delay
-        :type value: float
+    #     :param value: Delay
+    #     :type value: float
 
-        :param author: Statistic author (default: __canopsis__)
-        :type author: str
+    #     :param author: Statistic author (default: __canopsis__)
+    #     :type author: str
 
-        :returns: perf event as dict
-        """
+    #     :returns: perf event as dict
+    #     """
 
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': author,
-            'resource': name,
-            'perf_data_array': [
-                {
-                    'metric': 'sum',
-                    'value': value,
-                    'type': 'COUNTER'
-                },
-                {
-                    'metric': 'last',
-                    'value': value,
-                    'type': 'GAUGE'
-                }
-            ]
-        }
+    #     event = {
+    #         'connector': 'canopsis',
+    #         'connector_name': 'stats',
+    #         'event_type': 'perf',
+    #         'source_type': 'resource',
+    #         'component': author,
+    #         'resource': name,
+    #         'perf_data_array': [
+    #             {
+    #                 'metric': 'sum',
+    #                 'value': value,
+    #                 'type': 'COUNTER'
+    #             },
+    #             {
+    #                 'metric': 'last',
+    #                 'value': value,
+    #                 'type': 'GAUGE'
+    #             }
+    #         ]
+    #     }
 
-        for operator in ['min', 'max', 'average']:
-            entity = self[MetricProducer.PERFDATA_MANAGER].get_metric_entity(
-                'last', event
-            )
+    #     for operator in ['min', 'max', 'average']:
+    #         entity = self[MetricProducer.PERFDATA_MANAGER].get_metric_entity(
+    #             'last', event
+    #         )
 
-            self.may_create_stats_serie(entity, operator)
+    #         self.may_create_stats_serie(entity, operator)
 
-        return event
+    #     return event
 
     def _count(self, name, author='__canopsis__', extra_fields={}):
         event = {
