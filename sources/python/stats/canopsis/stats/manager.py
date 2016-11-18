@@ -182,13 +182,13 @@ class Stats(MiddlewareRegistry):
             },
             'stats_delay': {
                 'ack_delay_min': ack_new_min_tot,
-                'ack_delay_avg': ack_new_avg_tot,
+                'ack_delay_avg': int(ack_new_avg_tot),
                 'ack_delay_max': ack_new_max_tot,
                 'ack_solved_delay_min': ack_sol_min_tot,
-                'ack_solved_delay_avg': ack_sol_avg_tot,
+                'ack_solved_delay_avg': int(ack_sol_avg_tot),
                 'ack_solved_delay_max': ack_sol_max_tot,
                 'alarm_solved_delay_min': al_sol_min_tot,
-                'alarm_solved_delay_avg': al_sol_avg_tot,
+                'alarm_solved_delay_avg': int(al_sol_avg_tot),
                 'alarm_solved_delay_max': al_sol_max_tot
             }
         }
@@ -315,13 +315,13 @@ class Stats(MiddlewareRegistry):
                     },
                     'stats_delay': {
                         'ack_delay_min': ack_new_min,
-                        'ack_delay_avg': ack_new_avg,
+                        'ack_delay_avg': int(ack_new_avg),
                         'ack_delay_max': ack_new_max,
                         'ack_solved_delay_min': ack_sol_min,
-                        'ack_solved_delay_avg': ack_sol_avg,
+                        'ack_solved_delay_avg': int(ack_sol_avg),
                         'ack_solved_delay_max': ack_sol_max,
                         'alarm_solved_delay_min': al_sol_min,
-                        'alarm_solved_delay_avg': al_sol_avg,
+                        'alarm_solved_delay_avg': int(al_sol_avg),
                         'alarm_solved_delay_max': al_sol_max
                     }
                 }
@@ -395,13 +395,13 @@ class Stats(MiddlewareRegistry):
                 },
                 'stats_delay': {
                     'ack_delay_min': ack_new_min_tot,
-                    'ack_delay_avg': ack_new_avg_tot,
+                    'ack_delay_avg': int(ack_new_avg_tot),
                     'ack_delay_max': ack_new_max_tot,
                     'ack_solved_delay_min': ack_sol_min_tot,
-                    'ack_solved_delay_avg': ack_sol_avg_tot,
+                    'ack_solved_delay_avg': int(ack_sol_avg_tot),
                     'ack_solved_delay_max': ack_sol_max_tot,
                     'alarm_solved_delay_min': al_sol_min_tot,
-                    'alarm_solved_delay_avg': al_sol_avg_tot,
+                    'alarm_solved_delay_avg': int(al_sol_avg_tot),
                     'alarm_solved_delay_max': al_sol_max_tot
                 }
             }
@@ -482,6 +482,13 @@ class Stats(MiddlewareRegistry):
             groupby='component'
         )
 
+        g_duration = self._influx_query(
+            metric_id='session_duration',
+            aggregations=['min', 'mean', 'max'],
+            condition=user_where,
+            groupby='component'
+        )
+
         for user in users:
             self.logger.debug("Retrieving stats for user '{}'".format(user))
 
@@ -494,18 +501,25 @@ class Stats(MiddlewareRegistry):
             ack_new_max = self._get_stats(
                 result_set=g_ack_new, tags={'component': user}, column='max')
 
+            duration_min = self._get_stats(
+                result_set=g_duration, tags={'component': user}, column='min')
+            duration_avg = self._get_stats(
+                result_set=g_duration, tags={'component': user}, column='mean')
+            duration_max = self._get_stats(
+                result_set=g_duration, tags={'component': user}, column='max')
+
             stats = {
                 'author': user,
                 'ack': {
                     'total': ack_new_cnt,
                     'delay_min': ack_new_min,
-                    'delay_avg': ack_new_avg,
+                    'delay_avg': int(ack_new_avg),
                     'delay_max': ack_new_max
                 },
                 'session': {
-                    'duration_min': None,
-                    'duration_avg': None,
-                    'duration_max': None
+                    'duration_min': duration_min,
+                    'duration_avg': duration_avg,
+                    'duration_max': duration_max
                 },
                 'tags': {}
             }
