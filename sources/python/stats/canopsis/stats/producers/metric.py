@@ -18,6 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from hashlib import sha1
+from uuid import uuid4
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.configurable.decorator import conf_paths
@@ -25,8 +28,6 @@ from canopsis.configuration.model import Parameter
 
 from canopsis.timeserie.core import TimeSerie
 from canopsis.old.mfilter import check
-
-from hashlib import sha1
 
 
 CONF_PATH = 'stats/producers/metric.conf'
@@ -283,7 +284,10 @@ class MetricProducer(MiddlewareRegistry):
                 {
                     'metric': name,
                     'value': 1,
-                    'type': 'GAUGE'
+                    'type': 'GAUGE',
+                    # Prevent 2 metrics to be exactly the same so that influx
+                    # will ignore one.
+                    'uuid': str(uuid4()),
                 }
             ]
         }
@@ -304,7 +308,10 @@ class MetricProducer(MiddlewareRegistry):
                 {
                     'metric': name,
                     'value': value,
-                    'type': 'GAUGE'
+                    'type': 'GAUGE',
+                    # Prevent 2 metrics to be exactly the same so that influx
+                    # will ignore one.
+                    'uuid': str(uuid4()),
                 }
             ]
         }
