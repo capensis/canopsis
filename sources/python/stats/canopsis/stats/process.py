@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from copy import copy
+
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 from canopsis.engines.core import publish
@@ -46,18 +48,19 @@ def opened_alarm_stats(eventmgr, alertsmgr, storage, logger):
 
         for entity_id in alarms:
             for docalarm in alarms[entity_id]:
+
                 docalarm[storage.DATA_ID] = entity_id
 
                 alarm = docalarm[storage.VALUE]
-                extra = alarm['extra']
-
-                yield eventmgr.alarm_opened(extra_fields=extra)
+                extra = copy(alarm['extra'])
 
                 alertsmgr.update_current_alarm(
                     docalarm,
                     alarm,
                     tags='stats-opened'
                 )
+
+                yield eventmgr.alarm_opened(extra_fields=extra)
 
 
 def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
@@ -72,30 +75,17 @@ def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
             alarm = docalarm[storage.VALUE]
             alarm_ts = docalarm[storage.TIMESTAMP]
 
-            extra = alarm['extra']
-            extra['__ack__'] = True if alarm['ack'] is not None else False
+            extra = copy(alarm['extra'])
+            # extra['__ack__'] = True if alarm['ack'] is not None else False
 
             solved_delay = alarm['resolved'] - alarm_ts
             yield eventmgr.alarm_solved_delay(solved_delay, extra_fields=extra)
 
             if alarm['ack'] is not None:
                 ack_ts = alarm['ack']['t']
-                ackremove = get_previous_step(
-                    alarm,
-                    'ackremove',
-                    ts=ack_ts
-                )
-                ts = alarm_ts if ackremove is None else ackremove['t']
-                ack_delay = ack_ts - ts
 
                 yield eventmgr.alarm_ack_solved_delay(
-                    solved_delay - ack_delay,
-                    extra_fields=extra
-                )
-
-                yield usermgr.alarm_ack_delay(
-                    alarm['ack']['a'],
-                    ack_delay,
+                    alarm['resolved'] - ack_ts,
                     extra_fields=extra
                 )
 
@@ -104,42 +94,58 @@ def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
 
             # HAVE_COUNTERS = False
 
-            # alarm_events = alertsmgr.get_events(docalarm)
             # if HAVE_COUNTERS:
             #     if len(alarm_events) > 0:
             #         events.append(eventmgr.alarm(alarm_events[0]))
 
-            # for event in alarm_events:
-            #     if event['event_type'] == 'ack':
-            #         if HAVE_COUNTERS:
-            #             events.append(eventmgr.alarm_ack(event))
-            #             events.append(
-            #                 usermgr.alarm_ack(event, event['author'])
-            #             )
+            alarm_events = alertsmgr.get_events(docalarm)
+            for event in alarm_events:
+                if event['event_type'] == 'ack':
+                    ack_ts = event['timestamp']
 
-            #     elif event['timestamp'] == alarm['resolved']:
-            #         if HAVE_COUNTERS:
-            #             events.append(eventmgr.alarm_solved(event))
+                    ackremove = get_previous_step(
+                        alarm,
+                        'ackremove',
+                        ts=ack_ts
+                    )
 
-            #         if alarm['ack'] is not None:
-            #             if HAVE_COUNTERS:
-            #                 events.append(
-            #                     eventmgr.alarm_ack_solved(event)
-            #                 )
+                    ref_ts = alarm_ts if ackremove is None else ackremove['t']
+                    ack_delay = ack_ts - ref_ts
 
-            #             events.append(
-            #                 usermgr.alarm_ack_solved(
-            #                     alarm['ack']['a'],
-            #                     alarm['resolved'] - alarm['ack']['t']
-            #                 )
-            #             )
+                    yield usermgr.alarm_ack_delay(
+                        event['author'],
+                        ack_delay,
+                        extra_fields=extra
+                    )
+                    # if HAVE_COUNTERS:
+                    #     events.append(eventmgr.alarm_ack(event))
+                    #     events.append(
+                    #         usermgr.alarm_ack(event, event['author'])
+                    #     )
 
-            #             events.append(
-            #                 usermgr.alarm_solved(
-            #                     alarm['ack']['a'],
-            #                     alarm['resolved'] - alarm_ts
-            #                 )
-            #             )
+                # if event['timestamp'] == alarm['resolved']:
+                #     # if HAVE_COUNTERS:
+                #     #     events.append(eventmgr.alarm_solved(event))
+
+                #     if alarm['ack'] is not None:
+                #         # if HAVE_COUNTERS:
+                #         #     events.append(
+                #         #         eventmgr.alarm_ack_solved(event)
+                #         #     )
+
+                #         events.append(
+                #             usermgr.alarm_ack_solved(
+                #                 alarm['ack']['a'],
+                #                 alarm['resolved'] - alarm['ack']['t']
+                #             )
+                #         )
+
+                #         events.append(
+                #             usermgr.alarm_solved(
+                #                 alarm['ack']['a'],
+                #                 alarm['resolved'] - alarm_ts
+                #             )
+                #         )
 
             alertsmgr.update_current_alarm(
                 docalarm,
