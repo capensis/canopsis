@@ -485,19 +485,37 @@ class Stats(MiddlewareRegistry):
         time_where = 'time >= {}s AND time <= {}s'.format(tstart, tstop)
 
         user_regex = self._influx_or_regex(users)
-        user_where = '{} AND component =~ {}'.format(time_where, user_regex)
+        user_where = 'component =~ {}'.format(user_regex)
+
+        tags_where = ''
+        for tag_group, tag_names in tags.items():
+            tags_where += '{} =~ {} OR '.format(
+                tag_group,
+                self._influx_or_regex(tag_names)
+            )
+        else:
+            # Remove trailing ' OR '
+            tags_where = tags_where[:-4]
+
+        ack_new_where = '{} AND {} AND ({})'.format(
+            time_where,
+            user_where,
+            tags_where
+        )
 
         g_ack_new = self._influx_query(
             metric_id='alarm_ack_delay',
             aggregations=['count', 'min', 'mean', 'max'],
-            condition=user_where,
+            condition=ack_new_where,
             groupby='component'
         )
+
+        duration_where = '{} AND {}'.format(time_where, user_where)
 
         g_duration = self._influx_query(
             metric_id='session_duration',
             aggregations=['min', 'mean', 'max'],
-            condition=user_where,
+            condition=duration_where,
             groupby='component'
         )
 
@@ -562,7 +580,7 @@ class Stats(MiddlewareRegistry):
                 for i in range(len(users)):
                     ack_new = self._get_stats(
                         result_set=g_ack_new,
-                        tags={'component': user, tag_group: tag_name},
+                        tags={'component': users[i], tag_group: tag_name},
                         column='count'
                     )
 
