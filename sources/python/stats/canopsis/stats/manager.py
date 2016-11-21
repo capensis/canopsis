@@ -653,4 +653,10 @@ class Stats(MiddlewareRegistry):
             return stats
 
         else:
-            return stats[column]
+            # stats[column] might be None if requested period does not have
+            # any data.
+            if stats[column] is not None:
+                return stats[column]
+
+            else:
+                return 0
