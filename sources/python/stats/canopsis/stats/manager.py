@@ -117,28 +117,40 @@ class Stats(MiddlewareRegistry):
 
         time_where = 'time >= {}s AND time <= {}s'.format(tstart, tstop)
 
+        tags_where_total = ''
+        for tag_group, tag_names in tags.items():
+            tags_where_total += '{} =~ {} OR '.format(
+                tag_group,
+                self._influx_or_regex(tag_names)
+            )
+        else:
+            # Remove trailing ' OR '
+            tags_where_total = tags_where_total[:-4]
+
+        where_total = '{} AND ({})'.format(time_where, tags_where_total)
+
         g_alarm_new_total = self._influx_query(
             metric_id='alarm_opened_count',
             aggregations='count',
-            condition=time_where
+            condition=where_total
         )
 
         g_ack_new_total = self._influx_query(
             metric_id='alarm_ack_delay',
             aggregations=['count', 'min', 'mean', 'max'],
-            condition=time_where
+            condition=where_total
         )
 
         g_ack_solved_total = self._influx_query(
             metric_id='alarm_ack_solved_delay',
             aggregations=['count', 'min', 'mean', 'max'],
-            condition=time_where
+            condition=where_total
         )
 
         g_alarm_solved_total = self._influx_query(
             metric_id='alarm_solved_delay',
             aggregations=['count', 'min', 'mean', 'max'],
-            condition=time_where
+            condition=where_total
         )
 
         al_new_cnt_tot = self._get_stats(
