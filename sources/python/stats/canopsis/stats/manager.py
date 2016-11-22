@@ -547,9 +547,9 @@ class Stats(MiddlewareRegistry):
                     'delay_max': ack_new_max
                 },
                 'session': {
-                    'duration_min': duration_min,
-                    'duration_avg': duration_avg,
-                    'duration_max': duration_max
+                    'duration_min': int(duration_min),
+                    'duration_avg': int(duration_avg),
+                    'duration_max': int(duration_max)
                 },
                 'tags': {}
             }
