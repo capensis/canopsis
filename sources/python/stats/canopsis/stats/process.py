@@ -76,7 +76,6 @@ def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
             alarm_ts = docalarm[storage.TIMESTAMP]
 
             extra = copy(alarm['extra'])
-            # extra['__ack__'] = True if alarm['ack'] is not None else False
 
             solved_delay = alarm['resolved'] - alarm_ts
             yield eventmgr.alarm_solved_delay(solved_delay, extra_fields=extra)
@@ -88,15 +87,6 @@ def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
                     alarm['resolved'] - ack_ts,
                     extra_fields=extra
                 )
-
-            # !!DISABLE COUNTERS!!
-            # NB: will be done with InfluxDB directly ?
-
-            # HAVE_COUNTERS = False
-
-            # if HAVE_COUNTERS:
-            #     if len(alarm_events) > 0:
-            #         events.append(eventmgr.alarm(alarm_events[0]))
 
             alarm_events = alertsmgr.get_events(docalarm)
             for event in alarm_events:
@@ -117,35 +107,6 @@ def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
                         ack_delay,
                         extra_fields=extra
                     )
-                    # if HAVE_COUNTERS:
-                    #     events.append(eventmgr.alarm_ack(event))
-                    #     events.append(
-                    #         usermgr.alarm_ack(event, event['author'])
-                    #     )
-
-                # if event['timestamp'] == alarm['resolved']:
-                #     # if HAVE_COUNTERS:
-                #     #     events.append(eventmgr.alarm_solved(event))
-
-                #     if alarm['ack'] is not None:
-                #         # if HAVE_COUNTERS:
-                #         #     events.append(
-                #         #         eventmgr.alarm_ack_solved(event)
-                #         #     )
-
-                #         events.append(
-                #             usermgr.alarm_ack_solved(
-                #                 alarm['ack']['a'],
-                #                 alarm['resolved'] - alarm['ack']['t']
-                #             )
-                #         )
-
-                #         events.append(
-                #             usermgr.alarm_solved(
-                #                 alarm['ack']['a'],
-                #                 alarm['resolved'] - alarm_ts
-                #             )
-                #         )
 
             alertsmgr.update_current_alarm(
                 docalarm,
