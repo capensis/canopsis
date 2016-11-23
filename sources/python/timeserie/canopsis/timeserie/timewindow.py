@@ -691,9 +691,9 @@ class TimeWindow(object):
         # initialize start/stop related to intervals
         if intervals:
             if start is None:
-                start = intervals[0][0]
+                start = intervals[0]
             if stop is None:
-                stop = intervals[-1][1]
+                stop = intervals[-1]
 
         # if stop is None, stop = now
         if stop is None:
