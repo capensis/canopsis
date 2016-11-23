@@ -130,6 +130,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             metric_id = manager.context.get_entity_id(
                 encoded_event_with_metric
             )
+
             value = perf_data.pop('value', None)
 
             manager.put(

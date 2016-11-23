@@ -18,6 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from hashlib import sha1
+from uuid import uuid4
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.configurable.decorator import conf_paths
@@ -25,8 +28,6 @@ from canopsis.configuration.model import Parameter
 
 from canopsis.timeserie.core import TimeSerie
 from canopsis.old.mfilter import check
-
-from hashlib import sha1
 
 
 CONF_PATH = 'stats/producers/metric.conf'
@@ -191,83 +192,50 @@ class MetricProducer(MiddlewareRegistry):
 
         return result
 
-    def _counter(self, name, event, author='__canopsis__'):
-        """
-        Generate counters for each matching filter.
-
-        :param name: Counter's name
-        :type name: str
-
-        :param event: Event to check against filters
-        :type event: dict
-
-        :param author: Statistic author (default: __canopsis__)
-        :type author: str
-
-        :returns: perf event as dict
-        """
-
+    def _count(self, name, author='__canopsis__', extra_fields={}):
         event = {
             'connector': 'canopsis',
             'connector_name': 'stats',
             'event_type': 'perf',
-            'source_type': 'resource',
+            'source_type': 'component',
             'component': author,
-            'resource': name,
             'perf_data_array': [
                 {
-                    'metric': filtername,
+                    'metric': name,
                     'value': 1,
-                    'type': 'COUNTER'
+                    'type': 'GAUGE',
+                    # Prevent 2 metrics to be exactly the same so that influx
+                    # will ignore one.
+                    'uuid': str(uuid4()),
                 }
-                for filtername in self.match(event)
             ]
         }
+
+        for key, value in extra_fields.items():
+            event['perf_data_array'][0][key] = value
 
         return event
 
-    def _delay(self, name, value, author='__canopsis__'):
-        """
-        Generate gauge and counter for delay statistic.
-
-        :param name: Delay's name
-        :type name: str
-
-        :param value: Delay
-        :type value: float
-
-        :param author: Statistic author (default: __canopsis__)
-        :type author: str
-
-        :returns: perf event as dict
-        """
-
+    def _delay(self, name, value, author='__canopsis__', extra_fields={}):
         event = {
             'connector': 'canopsis',
             'connector_name': 'stats',
             'event_type': 'perf',
-            'source_type': 'resource',
+            'source_type': 'component',
             'component': author,
-            'resource': name,
             'perf_data_array': [
                 {
-                    'metric': 'sum',
+                    'metric': name,
                     'value': value,
-                    'type': 'COUNTER'
-                },
-                {
-                    'metric': 'last',
-                    'value': value,
-                    'type': 'GAUGE'
+                    'type': 'GAUGE',
+                    # Prevent 2 metrics to be exactly the same so that influx
+                    # will ignore one.
+                    'uuid': str(uuid4()),
                 }
             ]
         }
 
-        for operator in ['min', 'max', 'average']:
-            entity = self[MetricProducer.PERFDATA_MANAGER].get_metric_entity(
-                'last', event
-            )
-
-            self.may_create_stats_serie(entity, operator)
+        for key, value in extra_fields.items():
+            event['perf_data_array'][0][key] = value
 
         return event
