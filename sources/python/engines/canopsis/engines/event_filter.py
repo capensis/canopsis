@@ -86,23 +86,64 @@ class engine(Engine):
         afield = action.get('field', None)
         avalue = action.get('value', None)
 
-        # This mus be a hard check because value can be a boolean or a null
+        # This must be a hard check because value can be a boolean or a null
         # integer
-        if afield is not None and avalue is not None:
-            if afield in event and isinstance(event[afield], list):
+        if afield is None or avalue is None:
+            self.logger.error(
+                "Malformed action ('field' and 'value' required): {}".format(
+                    action
+                )
+            )
+            return False
+
+        if afield not in event:
+            self.logger.debug("Overriding: '{}' -> '{}'".format(
+                afield, avalue))
+            event[afield] = avalue
+            return True
+
+        # afield is in event
+        if not isinstance(avalue, list):
+            if isinstance(event[afield], list):
+                self.logger.debug("Appending: '{}' to '{}'".format(
+                    avalue, afield))
                 event[afield].append(avalue)
+
             else:
+                self.logger.debug("Overriding: '{}' -> '{}'".format(
+                    afield, avalue))
                 event[afield] = avalue
-            self.logger.debug(
-                u"    + {}: Override: '{}' -> '{}'".format(
-                    event['rk'], afield, avalue))
+
             return True
 
         else:
-            self.logger.error(
-                u"Action malformed (needs 'field' and 'value'): {}".format(
-                    action))
-            return False
+            # operation field is supported only for list values
+            op = action.get('operation', 'append')
+
+            if op == 'override':
+                self.logger.debug("Overriding: '{}' -> '{}'".format(
+                    afield, avalue))
+                event[afield] = avalue
+                return True
+
+            elif op == 'append':
+                self.logger.debug("Appending: '{}' to '{}'".format(
+                    avalue, afield))
+
+                if isinstance(event[afield], list):
+                    event[afield] += avalue
+                else:
+                    event[afield] = [event[afield]] + avalue
+
+                return True
+
+            else:
+                self.logger.error(
+                    "Operation '{}' unsupported (action '{}')".format(
+                        op, action
+                    )
+                )
+                return False
 
     def a_remove(self, event, action):
         """Remove an event from a field in event or the whole field if no
