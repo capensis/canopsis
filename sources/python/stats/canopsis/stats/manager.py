@@ -127,7 +127,10 @@ class Stats(MiddlewareRegistry):
             # Remove trailing ' OR '
             tags_where_total = tags_where_total[:-4]
 
-        where_total = '{} AND ({})'.format(time_where, tags_where_total)
+        if tags_where_total:
+            where_total = '{} AND ({})'.format(time_where, tags_where_total)
+        else:
+            where_total = time_where
 
         g_alarm_new_total = self._influx_query(
             metric_id='alarm_opened_count',
@@ -497,11 +500,17 @@ class Stats(MiddlewareRegistry):
             # Remove trailing ' OR '
             tags_where = tags_where[:-4]
 
-        ack_new_where = '{} AND {} AND ({})'.format(
-            time_where,
-            user_where,
-            tags_where
-        )
+        if tags_where:
+            ack_new_where = '{} AND {} AND ({})'.format(
+                time_where,
+                user_where,
+                tags_where
+            )
+        else:
+            ack_new_where = '{} AND {}'.format(
+                time_where,
+                user_where
+            )
 
         g_ack_new = self._influx_query(
             metric_id='alarm_ack_delay',

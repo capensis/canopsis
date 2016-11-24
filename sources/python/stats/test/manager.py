@@ -79,11 +79,14 @@ class TestManager(TestCase):
             {
                 'tstart': 0,
                 'tstop': 0,
-                'tags': {'domain': ['d1', 'd2'], 'perimeter': ['p1']},
+                'tags': {
+                    'domain': ['__test_d1__', '__test_d2__'],
+                    'perimeter': ['__test_p1__']
+                },
                 'expected': {
                     'domain': [
                         {
-                            'name': 'd1',
+                            'name': '__test_d1__',
                             'stats_count': {
                                 'alarms_new': 0,
                                 'alarms_ack': 0,
@@ -103,7 +106,7 @@ class TestManager(TestCase):
                             }
                         },
                         {
-                            'name': 'd2',
+                            'name': '__test_d2__',
                             'stats_count': {
                                 'alarms_new': 0,
                                 'alarms_ack': 0,
@@ -145,7 +148,7 @@ class TestManager(TestCase):
                     ],
                     'perimeter': [
                         {
-                            'name': 'p1',
+                            'name': '__test_p1__',
                             'stats_count': {
                                 'alarms_new': 0,
                                 'alarms_ack': 0,
@@ -209,11 +212,11 @@ class TestManager(TestCase):
             {
                 'tstart': 0,
                 'tstop': 0,
-                'tags': {'domain': ['d2', 'd1']},
+                'tags': {'domain': ['__test_d2__', '__test_d1__']},
                 'expected': {
                     'domain': [
                         {
-                            'name': 'd2',
+                            'name': '__test_d2__',
                             'stats_count': {
                                 'alarms_new': 0,
                                 'alarms_ack': 0,
@@ -233,7 +236,7 @@ class TestManager(TestCase):
                             }
                         },
                         {
-                            'name': 'd1',
+                            'name': '__test_d1__',
                             'stats_count': {
                                 'alarms_new': 0,
                                 'alarms_ack': 0,
@@ -320,11 +323,11 @@ class TestManager(TestCase):
             {
                 'tstart': 0,
                 'tstop': 0,
-                'users': ['u1', 'u2'],
+                'users': ['__test_u1__', '__test_u2__'],
                 'tags': {},
                 'expected': [
                     {
-                        'author': 'u1',
+                        'author': '__test_u1__',
                         'ack': {
                             'total': 0,
                             'delay_min': 0,
@@ -332,14 +335,14 @@ class TestManager(TestCase):
                             'delay_max': 0
                         },
                         'session': {
-                            'duration_min': None,
-                            'duration_avg': None,
-                            'duration_max': None
+                            'duration_min': 0,
+                            'duration_avg': 0,
+                            'duration_max': 0
                         },
                         'tags': {}
                     },
                     {
-                        'author': 'u2',
+                        'author': '__test_u2__',
                         'ack': {
                             'total': 0,
                             'delay_min': 0,
@@ -347,9 +350,9 @@ class TestManager(TestCase):
                             'delay_max': 0
                         },
                         'session': {
-                            'duration_min': None,
-                            'duration_avg': None,
-                            'duration_max': None
+                            'duration_min': 0,
+                            'duration_avg': 0,
+                            'duration_max': 0
                         },
                         'tags': {}
                     }
@@ -358,11 +361,11 @@ class TestManager(TestCase):
             {
                 'tstart': 0,
                 'tstop': 0,
-                'users': ['u2', 'u1'],
+                'users': ['__test_u2__', '__test_u1__'],
                 'tags': {},
                 'expected': [
                     {
-                        'author': 'u2',
+                        'author': '__test_u2__',
                         'ack': {
                             'total': 0,
                             'delay_min': 0,
@@ -370,14 +373,14 @@ class TestManager(TestCase):
                             'delay_max': 0
                         },
                         'session': {
-                            'duration_min': None,
-                            'duration_avg': None,
-                            'duration_max': None
+                            'duration_min': 0,
+                            'duration_avg': 0,
+                            'duration_max': 0
                         },
                         'tags': {}
                     },
                     {
-                        'author': 'u1',
+                        'author': '__test_u1__',
                         'ack': {
                             'total': 0,
                             'delay_min': 0,
@@ -385,9 +388,9 @@ class TestManager(TestCase):
                             'delay_max': 0
                         },
                         'session': {
-                            'duration_min': None,
-                            'duration_avg': None,
-                            'duration_max': None
+                            'duration_min': 0,
+                            'duration_avg': 0,
+                            'duration_max': 0
                         },
                         'tags': {}
                     }
@@ -396,11 +399,14 @@ class TestManager(TestCase):
             {
                 'tstart': 0,
                 'tstop': 0,
-                'users': ['u1', 'u2'],
-                'tags': {'domain': ['d1', 'd2'], 'perimeter': ['p1']},
+                'users': ['__test_u1__', '__test_u2__'],
+                'tags': {
+                    'domain': ['__test_d1__', '__test_d2__'],
+                    'perimeter': ['__test_p1__']
+                },
                 'expected': [
                     {
-                        'author': 'u1',
+                        'author': '__test_u1__',
                         'ack': {
                             'total': 0,
                             'delay_min': 0,
@@ -408,31 +414,31 @@ class TestManager(TestCase):
                             'delay_max': 0
                         },
                         'session': {
-                            'duration_min': None,
-                            'duration_avg': None,
-                            'duration_max': None
+                            'duration_min': 0,
+                            'duration_avg': 0,
+                            'duration_max': 0
                         },
                         'tags': {
                             'domain': [
                                 {
-                                    'name': 'd1',
+                                    'name': '__test_d1__',
                                     'ack_total': 0
                                 },
                                 {
-                                    'name': 'd2',
+                                    'name': '__test_d2__',
                                     'ack_total': 0
                                 }
                             ],
                             'perimeter': [
                                 {
-                                    'name': 'p1',
+                                    'name': '__test_p1__',
                                     'ack_total': 0
                                 }
                             ]
                         }
                     },
                     {
-                        'author': 'u2',
+                        'author': '__test_u2__',
                         'ack': {
                             'total': 0,
                             'delay_min': 0,
@@ -440,24 +446,24 @@ class TestManager(TestCase):
                             'delay_max': 0
                         },
                         'session': {
-                            'duration_min': None,
-                            'duration_avg': None,
-                            'duration_max': None
+                            'duration_min': 0,
+                            'duration_avg': 0,
+                            'duration_max': 0
                         },
                         'tags': {
                             'domain': [
                                 {
-                                    'name': 'd1',
+                                    'name': '__test_d1__',
                                     'ack_total': 0
                                 },
                                 {
-                                    'name': 'd2',
+                                    'name': '__test_d2__',
                                     'ack_total': 0
                                 }
                             ],
                             'perimeter': [
                                 {
-                                    'name': 'p1',
+                                    'name': '__test_p1__',
                                     'ack_total': 0
                                 }
                             ]
