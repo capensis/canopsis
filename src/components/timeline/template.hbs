@@ -30,6 +30,9 @@
               {{/if}}
               <span ></span>
               <span class="brick-timeline-title">{{step.name}}</span>    {{step.a}}
+              {{#if step.until}}
+                (until {{step.until}})
+              {{/if}}
             </h3>
 
             <div class="timeline-body">
@@ -45,7 +48,7 @@
       {{/each}}
      
       <li>
-        <i class="fa fa-clock-o bg-gray"></i>
+        <i class="fa fa-dot-circle-o bg-gray"></i>
       </li>
     </ul>
   </div>
