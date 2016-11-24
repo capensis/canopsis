@@ -7,9 +7,6 @@
 		"title": "Stealthy settings",
 		"keys":["stealthy_time", "stealthy_show"]
 	},{
-                "title": "Snooze",
-                "keys":["auto_snooze", "snooze_default_time"]
-	},{
 		"title": "Misc statuses",
 		"keys":["restore_event"]
         }],
@@ -45,19 +42,6 @@
 			"type": "boolean",
 			"required": true,
 			"description": "When true, consdider state change with different state level, otherwise consider a change at alert level."
-		},
-                "auto_snooze": {
-                        "type": "boolean",
-                        "required": true,
-                        "default": false,
-                        "description": "When true, new alarms will start snoozed for the snooze_default_time duration."
-                },
-                "snooze_default_time": {
-                        "type": "number",
-                        "required": true,
-                        "default": 300,
-                        "role": "duration",
-                        "description": "Default duration in seconds for any snoozed event that is received with no ``duration`` attribute."
-                }
+		}
 	}
 }
