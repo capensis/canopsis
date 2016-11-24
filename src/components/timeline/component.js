@@ -32,17 +32,18 @@ Ember.Application.initializer({
                         timelineData: undefined,
 
             statusToName: {
-                'ack':'Acknowledged by ',
-                'ackremove':'Ack removed by ',
-                'assocticket':'Ticket association by ',
-                'declareticket':'Ticket declared by ',
-                'cancel':'Canceled by ',
-                'uncancel':'Restored by ',
-                'statusinc':'Status increased',
-                'statusdec':'Status decreased',
-                'stateinc':'State increased',
-                'statedec':'State decreased',
-                'changestate':'State changed'
+                'ack': 'Acknowledged by ',
+                'ackremove': 'Ack removed by ',
+                'assocticket': 'Ticket association by ',
+                'declareticket': 'Ticket declared by ',
+                'cancel': 'Canceled by ',
+                'uncancel': 'Restored by ',
+                'statusinc': 'Status increased',
+                'statusdec': 'Status decreased',
+                'stateinc': 'State increased',
+                'statedec': 'State decreased',
+                'changestate': 'State changed',
+                'snooze': 'Snoozed by '
             },
 
             stateArray: [
@@ -68,17 +69,18 @@ Ember.Application.initializer({
             ],
 
             iconsAndColors: {
-                'ack':{'icon':'fa-check','color':'bg-purple'},
-                'ackremove':{'icon':'glyphicon glyphicon-ban-circle','color':'bg-purple'},
-                'assocticket':{'icon':'fa-ticket','color':'bg-blue'},
-                'declareticket':{'icon':'fa-ticket','color':'bg-blue'},
-                'cancel':{'icon':'glyphicon glyphicon-trash','color':'bg-gray'},
-                'uncancel':{'icon':'glyphicon glyphicon-share','color':'bg-gray'},
-                'statusinc':{'icon':'fa-sort-amount-asc','color':'bg-gray'},
-                'statusdec':{'icon':'fa-sort-amount-desc','color':'bg-gray'},
-                'stateinc':{'icon':'fa-flag','color':undefined},
-                'statedec':{'icon':'fa-flag','color':undefined},
-                'changestate':{'icon':'fa-flag','color':undefined}
+                'ack': {'icon': 'fa-check', 'color': 'bg-purple'},
+                'ackremove': {'icon': 'glyphicon glyphicon-ban-circle', 'color': 'bg-purple'},
+                'assocticket': {'icon': 'fa-ticket', 'color': 'bg-blue'},
+                'declareticket': {'icon': 'fa-ticket', 'color': 'bg-blue'},
+                'cancel': {'icon': 'glyphicon glyphicon-trash', 'color': 'bg-gray'},
+                'uncancel': {'icon': 'glyphicon glyphicon-share', 'color': 'bg-gray'},
+                'statusinc': {'icon': 'fa-chevron-up', 'color': 'bg-gray'},
+                'statusdec': {'icon': 'fa-chevron-down', 'color': 'bg-gray'},
+                'stateinc': {'icon': 'fa-flag', 'color': undefined},
+                'statedec': {'icon': 'fa-flag', 'color': undefined},
+                'changestate': {'icon': 'fa-flag', 'color': undefined},
+                'snooze': {'icon': 'fa-clock-o', 'color': 'bg-fuchsia'}
             },
 
             /**
@@ -90,7 +92,6 @@ Ember.Application.initializer({
 
                 var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alarm');
                 var query = {'entity_id': get(component, 'timelineData').entity_id};
-                console.error(get(component, 'timelineData'));
 
                 adapter.findQuery('alarm', 'get-current-alarm', query).then(function (result) {
                     // onfullfillment
@@ -118,6 +119,11 @@ Ember.Application.initializer({
 
                         if(step._t.indexOf('status') > -1)
                             step.status = get(component,'statusArray')[step.val];
+
+                        if(step._t === 'snooze') {
+                            var until = new Date(step.val * 1000);
+                            step.until = moment(until).format('h:mm:ss a');
+                        }
 
                         step.name = get(component,'statusToName')[step._t];
 
