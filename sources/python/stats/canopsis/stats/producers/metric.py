@@ -19,12 +19,12 @@
 # ---------------------------------
 
 from hashlib import sha1
-from uuid import uuid4
 
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
+from canopsis.influxdb.core import InfluxDBStorage
 
 from canopsis.timeserie.core import TimeSerie
 from canopsis.old.mfilter import check
@@ -110,6 +110,8 @@ class MetricProducer(MiddlewareRegistry):
         if perfdata is not None:
             self[MetricProducer.PERFDATA_MANAGER] = perfdata
 
+        self.idbs = InfluxDBStorage()
+
     def match(self, event):
         """
         Get filters names which match the event.
@@ -192,50 +194,36 @@ class MetricProducer(MiddlewareRegistry):
 
         return result
 
-    def _count(self, name, author='__canopsis__', extra_fields={}):
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'component',
-            'component': author,
-            'perf_data_array': [
-                {
-                    'metric': name,
-                    'value': 1,
-                    'type': 'GAUGE',
-                    # Prevent 2 metrics to be exactly the same so that influx
-                    # will ignore one.
-                    'uuid': str(uuid4()),
-                }
-            ]
+    def _count(
+        self,
+        name,
+        author='__canopsis__',
+        extra_fields={}
+    ):
+        tags = extra_fields
+        tags['component'] = author
+
+        point = {
+            'measurement': name,
+            'tags': tags,
+            'fields': {'value': 1}
         }
 
-        for key, value in extra_fields.items():
-            event['perf_data_array'][0][key] = value
+        self.idbs._conn.write_points([point])
 
-        return event
+    def _delay(
+        self,
+        name,
+        value,
+        author='__canopsis__', extra_fields={}
+    ):
+        tags = extra_fields
+        tags['component'] = author
 
-    def _delay(self, name, value, author='__canopsis__', extra_fields={}):
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'component',
-            'component': author,
-            'perf_data_array': [
-                {
-                    'metric': name,
-                    'value': value,
-                    'type': 'GAUGE',
-                    # Prevent 2 metrics to be exactly the same so that influx
-                    # will ignore one.
-                    'uuid': str(uuid4()),
-                }
-            ]
+        point = {
+            'measurement': name,
+            'tags': tags,
+            'fields': {'value': value}
         }
 
-        for key, value in extra_fields.items():
-            event['perf_data_array'][0][key] = value
-
-        return event
+        self.idbs._conn.write_points([point])

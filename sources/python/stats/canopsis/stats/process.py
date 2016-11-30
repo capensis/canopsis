@@ -22,7 +22,6 @@ from copy import copy
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
-from canopsis.engines.core import publish
 
 from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.stats.producers.event import EventMetricProducer
@@ -36,7 +35,11 @@ from canopsis.alerts.manager import Alerts
 def session_stats(usermgr, sessionmgr, logger):
     for expired in sessionmgr.sessions_close():
         duration = expired['session_stop'] - expired['session_start']
-        yield usermgr.session_duration(expired['_id'], duration)
+
+        usermgr.session_duration(
+            user=expired['_id'],
+            duration=duration
+        )
 
 
 def opened_alarm_stats(eventmgr, alertsmgr, storage, logger):
@@ -54,13 +57,15 @@ def opened_alarm_stats(eventmgr, alertsmgr, storage, logger):
                 alarm = docalarm[storage.VALUE]
                 extra = copy(alarm['extra'])
 
+                eventmgr.alarm_opened(
+                    extra_fields=extra
+                )
+
                 alertsmgr.update_current_alarm(
                     docalarm,
                     alarm,
                     tags='stats-opened'
                 )
-
-                yield eventmgr.alarm_opened(extra_fields=extra)
 
 
 def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
@@ -78,13 +83,16 @@ def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
             extra = copy(alarm['extra'])
 
             solved_delay = alarm['resolved'] - alarm_ts
-            yield eventmgr.alarm_solved_delay(solved_delay, extra_fields=extra)
+            eventmgr.alarm_solved_delay(
+                delay=solved_delay,
+                extra_fields=extra
+            )
 
             if alarm['ack'] is not None:
                 ack_ts = alarm['ack']['t']
 
-                yield eventmgr.alarm_ack_solved_delay(
-                    alarm['resolved'] - ack_ts,
+                eventmgr.alarm_ack_solved_delay(
+                    delay=alarm['resolved'] - ack_ts,
                     extra_fields=extra
                 )
 
@@ -102,9 +110,9 @@ def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
                     ref_ts = alarm_ts if ackremove is None else ackremove['t']
                     ack_delay = ack_ts - ref_ts
 
-                    yield usermgr.alarm_ack_delay(
-                        event['author'],
-                        ack_delay,
+                    usermgr.alarm_ack_delay(
+                        user=event['author'],
+                        delay=ack_delay,
                         extra_fields=extra
                     )
 
@@ -139,26 +147,21 @@ def beat_processing(
 
     storage = alertsmgr[alertsmgr.ALARM_STORAGE]
 
-    stats_events = []
-
-    stats_events += session_stats(usermgr, sessionmgr, logger)
+    session_stats(usermgr, sessionmgr, logger)
 
     with engine.Lock(engine, 'alarm_stats_computation') as l:
         if l.own():
-            stats_events += opened_alarm_stats(
+            opened_alarm_stats(
                 eventmgr,
                 alertsmgr,
                 storage,
                 logger
             )
 
-            stats_events += resolved_alarm_stats(
+            resolved_alarm_stats(
                 eventmgr,
                 usermgr,
                 alertsmgr,
                 storage,
                 logger
             )
-
-    for event in stats_events:
-        publish(publisher=engine.amqp, event=event, logger=logger)
