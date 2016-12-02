@@ -68,38 +68,48 @@ class TestManager(BaseTest):
         self.assertEqual(self.manager.stealthy_interval, 300)
         self.assertEqual(self.manager.stealthy_show_duration, 600)
         self.assertEqual(self.manager.restore_event, True)
-        self.assertEqual(self.manager.auto_snooze, False)
-        self.assertEqual(self.manager.snooze_default_time, 300)
 
     def test_make_alarm(self):
         alarm_id = '/fake/alarm/id'
 
-        self.assertTrue(self.manager.get_current_alarm(alarm_id) is None)
-        self.manager.make_alarm(
+        alarm = self.manager.make_alarm(
             alarm_id,
             {'connector': 'ut-connector', 'timestamp': 0}
         )
-        self.assertTrue(self.manager.get_current_alarm(alarm_id) is not None)
-        self.manager.make_alarm(
-            alarm_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
-        )
-        self.assertTrue(self.manager.get_current_alarm(alarm_id) is not None)
+        self.assertTrue(alarm is not None)
 
     def test_get_alarms(self):
         storage = self.manager[Alerts.ALARM_STORAGE]
 
         alarm0_id = '/fake/alarm/id0'
-        alarm1_id = '/fake/alarm/id1'
-
-        self.manager.make_alarm(
+        event0 = {
+            'connector': 'ut',
+            'connector_name': 'ut0',
+            'output': '...',
+            'timestamp': 0
+        }
+        alarm0 = self.manager.make_alarm(
             alarm0_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
+            event0
         )
-        self.manager.make_alarm(
+        alarm0 = self.manager.update_state(alarm0, 1, event0)
+        new_value0 = alarm0[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        self.manager.update_current_alarm(alarm0, new_value0)
+
+        alarm1_id = '/fake/alarm/id1'
+        event1 = {
+            'connector': 'ut',
+            'connector_name': 'ut0',
+            'output': '...',
+            'timestamp': 0
+        }
+        alarm1 = self.manager.make_alarm(
             alarm1_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
+            event1
         )
+        alarm1 = self.manager.update_state(alarm1, 1, event1)
+        new_value1 = alarm1[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        self.manager.update_current_alarm(alarm1, new_value1)
 
         # Case 1: unresolved alarms
         got = self.manager.get_alarms(resolved=False)
@@ -145,16 +155,34 @@ class TestManager(BaseTest):
         day = 24 * 3600
 
         alarm0_id = '/fake/alarm/id0'
-        alarm1_id = '/fake/alarm/id1'
-
-        self.manager.make_alarm(
+        event0 = {
+            'connector': 'ut',
+            'connector_name': 'ut0',
+            'output': '...',
+            'timestamp': day / 2
+        }
+        alarm0 = self.manager.make_alarm(
             alarm0_id,
-            {'connector': 'ut-connector', 'timestamp': day / 2}
+            event0
         )
-        self.manager.make_alarm(
+        alarm0 = self.manager.update_state(alarm0, 1, event0)
+        new_value0 = alarm0[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        self.manager.update_current_alarm(alarm0, new_value0)
+
+        alarm1_id = '/fake/alarm/id1'
+        event1 = {
+            'connector': 'ut',
+            'connector_name': 'ut0',
+            'output': '...',
+            'timestamp': 3 * day / 2
+        }
+        alarm1 = self.manager.make_alarm(
             alarm1_id,
-            {'connector': 'ut-connector', 'timestamp': 3 * day / 2}
+            event1
         )
+        alarm1 = self.manager.update_state(alarm1, 1, event1)
+        new_value1 = alarm1[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        self.manager.update_current_alarm(alarm1, new_value1)
 
         # Are subperiods well cut ?
         count = self.manager.count_alarms_by_period(0, day)
@@ -196,10 +224,19 @@ class TestManager(BaseTest):
         got = self.manager.get_current_alarm(alarm_id)
         self.assertTrue(got is None)
 
-        self.manager.make_alarm(
+        event = {
+            'connector': 'ut',
+            'connector_name': 'ut0',
+            'output': '...',
+            'timestamp': 0
+        }
+        alarm = self.manager.make_alarm(
             alarm_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
+            event
         )
+        alarm = self.manager.update_state(alarm, 1, event)
+        new_value = alarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        self.manager.update_current_alarm(alarm, new_value)
 
         got = self.manager.get_current_alarm(alarm_id)
         self.assertTrue(got is not None)
@@ -208,12 +245,11 @@ class TestManager(BaseTest):
         storage = self.manager[Alerts.ALARM_STORAGE]
 
         alarm_id = '/fake/alarm/id'
-        self.manager.make_alarm(
+        alarm = self.manager.make_alarm(
             alarm_id,
             {'connector': 'ut-connector', 'timestamp': 0}
         )
 
-        alarm = self.manager.get_current_alarm(alarm_id)
         value = alarm[storage.VALUE]
 
         value['state'] = {'val': 0}
@@ -230,12 +266,11 @@ class TestManager(BaseTest):
         storage = self.manager[Alerts.ALARM_STORAGE]
 
         alarm_id = '/fake/alarm/id'
-        self.manager.make_alarm(
+        alarm = self.manager.make_alarm(
             alarm_id,
             {'connector': 'ut-connector', 'timestamp': 0}
         )
 
-        alarm = self.manager.get_current_alarm(alarm_id)
         self.assertIsNotNone(alarm)
 
         value = alarm[storage.VALUE]
@@ -274,14 +309,11 @@ class TestManager(BaseTest):
             'output': 'UT message',
         }
 
-        self.manager.make_alarm(
+        alarm = self.manager.make_alarm(
             alarm_id,
             {'connector': 'ut-connector', 'timestamp': 0}
         )
-        alarm = self.manager.get_current_alarm(alarm_id)
-
-        self.manager.change_of_state(alarm, 0, 2, event)
-        alarm = self.manager.get_current_alarm(alarm_id)
+        alarm = self.manager.change_of_state(alarm, 0, 2, event)
 
         expected_state = {
             'a': 'ut-connector.ut-connector0',
@@ -307,8 +339,7 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value']['status'], expected_status)
         self.assertEqual(alarm['value']['steps'][1], expected_status)
 
-        self.manager.change_of_state(alarm, 2, 1, event)
-        alarm = self.manager.get_current_alarm(alarm_id)
+        alarm = self.manager.change_of_state(alarm, 2, 1, event)
 
         expected_state = {
             'a': 'ut-connector.ut-connector0',
@@ -334,14 +365,12 @@ class TestManager(BaseTest):
             'output': 'UT message',
         }
 
-        self.manager.make_alarm(
+        alarm = self.manager.make_alarm(
             alarm_id,
             {'connector': 'ut-connector', 'timestamp': 0}
         )
-        alarm = self.manager.get_current_alarm(alarm_id)
 
-        self.manager.change_of_status(alarm, 0, 1, event)
-        alarm = self.manager.get_current_alarm(alarm_id)
+        alarm = self.manager.change_of_status(alarm, 0, 1, event)
 
         expected_status = {
             'a': 'ut-connector.ut-connector0',
@@ -566,12 +595,11 @@ class TestManager(BaseTest):
         # Empty alarm ; no events sent
         alarm0_id = '/fake/alarm/id0'
 
-        self.manager.make_alarm(
+        alarm0 = self.manager.make_alarm(
             alarm0_id,
             {'connector': 'ut-connector', 'timestamp': 0}
         )
 
-        alarm0 = self.manager.get_current_alarm(alarm0_id)
         events = self.manager.get_events(alarm0)
         self.assertEqual(events, [])
 

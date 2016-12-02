@@ -22,6 +22,7 @@
 from unittest import TestCase, main
 from mock import MagicMock, patch
 
+from copy import copy
 from logging import WARNING
 
 from canopsis.engines.core import DROP
@@ -519,6 +520,159 @@ class KnownValues(TestCase):
         # No configuration, default configuration is loaded
         self.engine.configuration = {}
         self.assertEqual(self.engine.work(event), event)
+
+
+class OverrideTest(TestCase):
+    """
+    Extensive tests on event_filter specific operation `a_override`
+    """
+
+    def setUp(self):
+        # Initializing logging_level to WARNING prevents 'Engine initialized'
+        # INFO to be printed
+        self.engine = engine(name='overrider', logging_level=WARNING)
+        self.engine.logger.propagate = False
+
+        # Thoose events with minimal fields are shortcuts for test_* methods
+        self.event = {
+            'connector': '',
+            'connector_name': '',
+            'event_type': '',
+            'source_type': '',
+            'component': '',
+        }
+        self.expected_event = copy(self.event)
+
+    def test_afield_none(self):
+        action = {
+            'type': 'override',
+            'field': None,
+            'value': 'value',
+        }
+
+        self.assertIs(False, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_none(self):
+        action = {
+            'type': 'override',
+            'field': 'field',
+            'value': None,
+        }
+
+        self.assertIs(False, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_afield_not_in_event(self):
+        self.expected_event['field'] = 'value'
+
+        action = {
+            'type': 'override',
+            'field': 'field',
+            'value': 'value',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_not_list_event_afield_list(self):
+        self.event['perimeter'] = ['px', 'py']
+        self.expected_event['perimeter'] = ['px', 'py', 'p1']
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': 'p1',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_not_list_event_afield_not_list(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = 'p1'
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': 'p1',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_list_override_operation(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = ['p1', 'p2']
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': ['p1', 'p2'],
+            'operation': 'override',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+        self.event['perimeter'] = ['px', 'py']
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_list_append_operation(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = ['px', 'p1', 'p2']
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': ['p1', 'p2'],
+            'operation': 'append',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+        self.event['perimeter'] = ['px', 'py']
+        self.expected_event['perimeter'] = ['px', 'py', 'p1', 'p2']
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    # default operation is supposed to be 'append'
+    def test_avalue_list_default_operation(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = ['px', 'p1', 'p2']
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': ['p1', 'p2'],
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+        self.event['perimeter'] = ['px', 'py']
+        self.expected_event['perimeter'] = ['px', 'py', 'p1', 'p2']
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_list_unsupported_operation(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = 'px'
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': ['p1', 'p2'],
+            'operation': 'unsupported_op'
+        }
+
+        self.assertIs(False, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
 
 
 if __name__ == "__main__":

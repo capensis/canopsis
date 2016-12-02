@@ -36,13 +36,21 @@ class EventMetricProducer(MetricProducer):
     """
 
     def alarm_opened(self, extra_fields={}):
-        return self._count(
-            'alarm_opened_count', extra_fields=extra_fields)
+        self._count(
+            'alarm_opened_count',
+            extra_fields=extra_fields
+        )
 
     def alarm_ack_solved_delay(self, delay, extra_fields={}):
-        return self._delay(
-            'alarm_ack_solved_delay', delay, extra_fields=extra_fields)
+        self._delay(
+            'alarm_ack_solved_delay',
+            delay,
+            extra_fields=extra_fields
+        )
 
     def alarm_solved_delay(self, delay, extra_fields={}):
-        return self._delay(
-            'alarm_solved_delay', delay, extra_fields=extra_fields)
+        self._delay(
+            'alarm_solved_delay',
+            delay,
+            extra_fields=extra_fields
+        )

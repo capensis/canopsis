@@ -36,14 +36,14 @@ class UserMetricProducer(MetricProducer):
     """
 
     def session_duration(self, user, duration):
-        return self._delay(
+        self._delay(
             'session_duration',
             duration,
             author=user,
         )
 
     def alarm_ack_delay(self, user, delay, extra_fields={}):
-        return self._delay(
+        self._delay(
             'alarm_ack_delay',
             delay,
             author=user,

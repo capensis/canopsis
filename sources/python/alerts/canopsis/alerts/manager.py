@@ -286,10 +286,12 @@ class Alerts(MiddlewareRegistry):
                 _filter=query,
             )
 
-            results.append({
-                'date': date,
-                'count': limit if count > limit else count,
-            })
+            results.append(
+                {
+                    'date': date,
+                    'count': limit if count > limit else count,
+                }
+            )
 
         return results
 
@@ -442,13 +444,25 @@ class Alerts(MiddlewareRegistry):
         message = event.get('output', None)
 
         if event['event_type'] == Check.EVENT_TYPE:
-            if event[Check.STATE] != Check.OK:
-                self.make_alarm(entity_id, event)
-
             alarm = self.get_current_alarm(entity_id)
 
-            if alarm is not None:
-                self.archive_state(alarm, event[Check.STATE], event)
+            if alarm is None:
+                if event[Check.STATE] != Check.OK:
+                    alarm = self.make_alarm(entity_id, event)
+                    alarm = self.update_state(alarm, event[Check.STATE], event)
+
+                    self.update_current_alarm(
+                        alarm,
+                        alarm[self[Alerts.ALARM_STORAGE].VALUE]
+                    )
+
+            else:
+                self.update_state(alarm, event[Check.STATE], event)
+
+                self.update_current_alarm(
+                    alarm,
+                    alarm[self[Alerts.ALARM_STORAGE].VALUE]
+                )
 
         else:
             try:
@@ -480,11 +494,14 @@ class Alerts(MiddlewareRegistry):
                     self.update_current_alarm(alarm, new_value)
 
                     if status is not None:
-                        self.archive_status(alarm, status, event)
+                        alarm = self.update_status(alarm, status, event)
+                        new_value = alarm[self[Alerts.ALARM_STORAGE].VALUE]
 
-    def archive_state(self, alarm, state, event):
+                        self.update_current_alarm(alarm, new_value)
+
+    def update_state(self, alarm, state, event):
         """
-        Archive state if needed.
+        Update alarm state if needed.
 
         :param alarm: Alarm associated to state change event
         :type alarm: dict
@@ -494,6 +511,9 @@ class Alerts(MiddlewareRegistry):
 
         :param event: Associated event
         :type event: dict
+
+        :return: updated alarm
+        :rtype: dict
         """
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
@@ -501,11 +521,13 @@ class Alerts(MiddlewareRegistry):
         old_state = get_last_state(value, ts=event['timestamp'])
 
         if state != old_state:
-            self.change_of_state(alarm, old_state, state, event)
+            return self.change_of_state(alarm, old_state, state, event)
 
-    def archive_status(self, alarm, status, event):
+        return alarm
+
+    def update_status(self, alarm, status, event):
         """
-        Archive status if needed.
+        Update alarm status if needed.
 
         :param alarm: Alarm associated to status change event
         :type alarm: dict
@@ -515,6 +537,9 @@ class Alerts(MiddlewareRegistry):
 
         :param event: Associated event
         :type event: dict
+
+        :return: updated alarm
+        :rtype: dict
         """
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
@@ -522,16 +547,18 @@ class Alerts(MiddlewareRegistry):
         old_status = get_last_status(value, ts=event['timestamp'])
 
         if status != old_status:
-            self.change_of_status(
+            return self.change_of_status(
                 alarm,
                 old_status,
                 status,
                 event
             )
 
+        return alarm
+
     def change_of_state(self, alarm, old_state, state, event):
         """
-        Archive state change when ``archive_state()`` detected a state change.
+        Change state when ``update_state()`` detected a state change.
 
         :param alarm: Associated alarm to state change event
         :type alarm: dict
@@ -544,6 +571,9 @@ class Alerts(MiddlewareRegistry):
 
         :param event: Associated event
         :type event: dict
+
+        :return: alarm with changed state
+        :rtype: dict
         """
 
         if state > old_state:
@@ -558,13 +588,14 @@ class Alerts(MiddlewareRegistry):
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value, status = task(self, value, state, event)
-        self.update_current_alarm(alarm, new_value)
 
-        self.archive_status(alarm, status, event)
+        alarm[self[Alerts.ALARM_STORAGE].VALUE] = new_value
+
+        return self.update_status(alarm, status, event)
 
     def change_of_status(self, alarm, old_status, status, event):
         """
-        Archive status change when ``archive_status()`` detected a status
+        Change status when ``update_status()`` detected a status
         change.
 
         :param alarm: Associated alarm to status change event
@@ -578,6 +609,9 @@ class Alerts(MiddlewareRegistry):
 
         :param event: Associated event
         :type event: dict
+
+        :return: alarm with changed status
+        :rtype: dict
         """
 
         if status > old_status:
@@ -592,7 +626,10 @@ class Alerts(MiddlewareRegistry):
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value = task(self, value, status, event)
-        self.update_current_alarm(alarm, new_value)
+
+        alarm[self[Alerts.ALARM_STORAGE].VALUE] = new_value
+
+        return alarm
 
     def make_alarm(self, alarm_id, event):
         """
@@ -603,12 +640,15 @@ class Alerts(MiddlewareRegistry):
 
         :param event: Associated event
         :type event: dict
+
+        :return alarm document:
+        :rtype: dict
         """
 
-        alarm = self.get_current_alarm(alarm_id)
-
-        if alarm is None:
-            value = {
+        return {
+            self[Alerts.ALARM_STORAGE].DATA_ID: alarm_id,
+            self[Alerts.ALARM_STORAGE].TIMESTAMP: event['timestamp'],
+            self[Alerts.ALARM_STORAGE].VALUE: {
                 'state': None,
                 'status': None,
                 'ack': None,
@@ -624,8 +664,7 @@ class Alerts(MiddlewareRegistry):
                     if field in event
                 }
             }
-
-            self[Alerts.ALARM_STORAGE].put(alarm_id, value, event['timestamp'])
+        }
 
     def resolve_alarms(self):
         """
