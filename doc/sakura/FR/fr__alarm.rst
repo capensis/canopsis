@@ -54,8 +54,8 @@ Alarm step
 ----------
 
 The *alarm cycle* may only be ended after a status set to 0 if the period of
-potential flapping has elapsed. It **MUST** have a current state, which is
-called the *alarm step*, telling that:
+potential flapping has elapsed. It **MUST** have a list of steps. Each
+*alarm step*, **CAN** carry one information among those below:
 
  - the alarm is *on going*
  - the alarm is *flapping*
@@ -65,12 +65,12 @@ called the *alarm step*, telling that:
  - a ticket has been declared for the alarm
  - the alarm has been canceled
  - the alarm has been restored from its canceled state
- - the alarm escalated
- - the alarm decreased
+ - the alarm state escalated
+ - the alarm state decreased
  - the alarm has been snoozed
 
 Each step **MUST** be historized in its corresponding *alarm cycle*.
-And once the alarm ended, the cycle **SHOULD** be closed, and archived.
+And once the alarm ended, the cycle **MUST** be closed, and archived.
 
 .. _FR__Alarm__Step__Supervised:
 
@@ -87,6 +87,28 @@ User step
 A *user step* is an alarm step emitted by a Canopsis user. It **MUST** provides
 the author of this step change, and a message explaining why the change has been
 made.
+
+Flapping steps
+~~~~~~~~~~~~~~
+
+If an alarm is flapping and never stop being in this status, a large amount of
+state escalations and state decreases will be recorded. To prevent this from
+happening and alarms to be too voluminous, some state changes **CAN** be
+*cropped*.
+
+When a change of state is cropped, 2 step counters are incremented :
+
+ - a counter that counts the number of state escalations or decreases
+ - a counter that counts the number of state values : off (0), minor (1), major
+   (2), critical (3)
+
+Those kind of steps **MUST** be inserted in any order just after the last
+change of status or incremented when flapping steps are cropped. There are 6
+different counter types.
+
+State changes are cropped only if the number of state changes since the last
+change of status is superior to ``flapping_persistant_steps`` property
+(configurable).
 
 Functional test
 ---------------
