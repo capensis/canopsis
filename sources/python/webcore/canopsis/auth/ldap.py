@@ -44,7 +44,7 @@ class LDAPBackend(BaseBackend):
             s = self.session.get()
 
             if not s.get("auth_on", False) and not self.do_auth(s):
-                self.logger.error('Impossible to authenticate user')
+                self.logger.error(u'Impossible to authenticate user')
                 return HTTPError(403, "Forbidden")
 
             return callback(*args, **kwargs)

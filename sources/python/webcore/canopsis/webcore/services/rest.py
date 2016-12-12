@@ -210,7 +210,7 @@ def save_records(ws, namespace, ctype, _id, items):
             records.append(drecord)
 
         except Exception as err:
-            ws.logger.error('Impossible to save record: {0}'.format(
+            ws.logger.error(u'Impossible to save record: {0}'.format(
                 err
             ))
 

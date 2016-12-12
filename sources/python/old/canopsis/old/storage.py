@@ -828,7 +828,7 @@ class Storage(object):
         try:
             self.fs.delete(_id)
         except Exception as err:
-            self.logger.error('Error when remove binarie', err)
+            self.logger.error(u'Error when remove binarie', err)
 
     def check_binary(self, _id):
         self.check_connected()

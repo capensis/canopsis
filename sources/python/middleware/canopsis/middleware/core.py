@@ -467,20 +467,20 @@ class Middleware(Configurable):
 
         if not self.connected():
 
-            self.logger.debug('Trying to connect to %s' % self.uri)
+            self.logger.debug(u'Trying to connect to %s' % self.uri)
 
             self._conn = self._connect()
 
             # initialize the environment if connection is connected
             if self.connected():
-                self.logger.debug('Initialize the environment')
+                self.logger.debug(u'Initialize the environment')
                 self._init_env(self._conn)
 
             else:
                 self.logger.error("Connection failure to %s" % self.uri)
 
         else:
-            self.logger.debug('Already connected to %s' % self.uri)
+            self.logger.debug(u'Already connected to %s' % self.uri)
 
         return self.connected()
 

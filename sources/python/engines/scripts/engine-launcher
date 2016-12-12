@@ -178,7 +178,7 @@ class EngineLauncher(object):
 
             del engine_conf['next']
 
-        self.logger.info('Configuration loaded')
+        self.logger.info(u'Configuration loaded')
 
         self.engine_conf = engine_conf
         self.engine_extra = engine_extra

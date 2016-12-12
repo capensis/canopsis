@@ -128,7 +128,7 @@ class RightsModule(MigrationModule):
                     loaded += data
 
         except Exception as err:
-            self.logger.error('Unable to load JSON files "{0}": {1}'.format(
+            self.logger.error(u'Unable to load JSON files "{0}": {1}'.format(
                 path,
                 err
             ))
@@ -141,7 +141,7 @@ class RightsModule(MigrationModule):
         for action in data:
             for aid in action:
                 if self.manager.get_action(aid) is None or clear:
-                    self.logger.info('Initialize action: {0}'.format(aid))
+                    self.logger.info(u'Initialize action: {0}'.format(aid))
 
                     self.manager.add(
                         aid,
@@ -151,7 +151,7 @@ class RightsModule(MigrationModule):
     def add_users(self, data, clear):
         for user in data:
             if self.manager.get_user(user['_id']) is None or clear:
-                self.logger.info('Initialize user: {0}'.format(user['_id']))
+                self.logger.info(u'Initialize user: {0}'.format(user['_id']))
 
                 self.manager.create_user(
                     user['_id'],
@@ -176,14 +176,14 @@ class RightsModule(MigrationModule):
     def add_roles(self, data, clear):
         for role in data:
             if self.manager.get_role(role['_id']) is None or clear:
-                self.logger.info('Initialize role: {0}'.format(role['_id']))
+                self.logger.info(u'Initialize role: {0}'.format(role['_id']))
 
                 self.manager.create_role(
                     role['_id'],
                     role.get('profile', None)
                 )
 
-            self.logger.info('Updating role: {0}'.format(role['_id']))
+            self.logger.info(u'Updating role: {0}'.format(role['_id']))
             record = self.manager.get_role(role['_id'])
 
             rights = record.get('rights', {})

@@ -72,7 +72,7 @@ class Schema2MongoDB(object):
             schema_id = os.path.splitext(filepath)[0]
 
             with open(abspath) as f:
-                self.logger.info('Loading: {0}'.format(abspath))
+                self.logger.info(u'Loading: {0}'.format(abspath))
 
                 try:
                     self.schemas[schema_id] = json.load(f)
@@ -88,7 +88,7 @@ class Schema2MongoDB(object):
                     self.files_in_error.append({'file': filepath, 'cause': e})
 
     def build_one(self, schema_id):
-        self.logger.info('Building: {0}'.format(schema_id))
+        self.logger.info(u'Building: {0}'.format(schema_id))
 
         self.hierarchy = [schema_id]
 
@@ -182,7 +182,7 @@ class Schema2MongoDB(object):
         storage.remove()
 
         for schema_id in self.schemas:
-            self.logger.info('Saving: {0}'.format(schema_id))
+            self.logger.info(u'Saving: {0}'.format(schema_id))
 
             crecord_name = schema_id.split(".")[-1]
 
@@ -197,8 +197,8 @@ class Schema2MongoDB(object):
 
     def show(self):
         if self.files_in_error:
-            self.logger.error('-' * 40)
-            self.logger.error(' + Files that could not be loaded')
+            self.logger.error(u'-' * 40)
+            self.logger.error(u' + Files that could not be loaded')
 
         for fileitem in self.files_in_error:
             self.logger.error(

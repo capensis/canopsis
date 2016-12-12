@@ -174,4 +174,4 @@ if not args.nofile:
             if json_output['success']:
                 print(' + File successfuly removed from canopsis briefcase')
         except Exception as err:
-            logger.error('Error when trying to remove file: %s' % err)
+            logger.error(u'Error when trying to remove file: %s' % err)

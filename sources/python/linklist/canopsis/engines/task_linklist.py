@@ -67,10 +67,10 @@ class engine(TaskHandler):
             l_filter = linklist.get('mfilter')
             l_list = linklist.get('filterlink')
 
-            self.logger.debug('proceed linklist {}'.format(name))
+            self.logger.debug(u'proceed linklist {}'.format(name))
 
             if not l_list or not l_filter:
-                self.logger.info('Cannot proceed linklist for {}'.format(name))
+                self.logger.info(u'Cannot proceed linklist for {}'.format(name))
             else:
                 # Find context element ids matched by filter
                 context_ids = self.get_ids_for_filter(l_filter)
@@ -83,7 +83,7 @@ class engine(TaskHandler):
                     # Append all links/labels to the context element
                     links[context_id] += l_list
 
-        self.logger.debug('links')
+        self.logger.debug(u'links')
         self.logger.debug(links)
 
         entities = self.context.get_entities(links.keys())
@@ -102,9 +102,9 @@ class engine(TaskHandler):
         Upsert computed links to the entity link storage
         """
 
-        self.logger.debug(' + entity')
+        self.logger.debug(u' + entity')
         self.logger.debug(entity)
-        self.logger.debug(' + links')
+        self.logger.debug(u' + links')
         self.logger.debug(links)
 
         context = {
@@ -139,7 +139,7 @@ class engine(TaskHandler):
         )
 
         for event in events:
-            self.logger.debug('rk : {}'.format(event['_id']))
+            self.logger.debug(u'rk : {}'.format(event['_id']))
             entity = self.context.get_entity(event)
             entity_id = self.context.get_entity_id(entity)
             context_ids.append(entity_id)
