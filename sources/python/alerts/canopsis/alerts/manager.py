@@ -96,6 +96,15 @@ class Alerts(MiddlewareRegistry):
         return self.config.get('bagot_freq', 0)
 
     @property
+    def flapping_persistant_steps(self):
+        """
+        Number of state change steps to keep in case of long term flapping.
+        Most recent steps are kept.
+        """
+
+        return self.config.get('persistant_steps', 10)
+
+    @property
     def stealthy_interval(self):
         """
         Interval used to check for stealthy alarm status.
@@ -447,22 +456,26 @@ class Alerts(MiddlewareRegistry):
             alarm = self.get_current_alarm(entity_id)
 
             if alarm is None:
-                if event[Check.STATE] != Check.OK:
-                    alarm = self.make_alarm(entity_id, event)
-                    alarm = self.update_state(alarm, event[Check.STATE], event)
+                if event[Check.STATE] == Check.OK:
+                    # If a check event with an OK state concerns an entity for
+                    # which no alarm is opened, there is no point continuing
+                    return
 
-                    self.update_current_alarm(
-                        alarm,
-                        alarm[self[Alerts.ALARM_STORAGE].VALUE]
-                    )
+                # Check is not OK
+                alarm = self.make_alarm(entity_id, event)
+                alarm = self.update_state(alarm, event[Check.STATE], event)
 
             else:
-                self.update_state(alarm, event[Check.STATE], event)
+                # Alarm is already opened
+                alarm = self.update_state(alarm, event[Check.STATE], event)
 
-                self.update_current_alarm(
-                    alarm,
-                    alarm[self[Alerts.ALARM_STORAGE].VALUE]
-                )
+            alarm[self[Alerts.ALARM_STORAGE].VALUE] = self.crop_flapping_steps(
+                alarm[self[Alerts.ALARM_STORAGE].VALUE])
+
+            self.update_current_alarm(
+                alarm,
+                alarm[self[Alerts.ALARM_STORAGE].VALUE]
+            )
 
         else:
             try:
@@ -665,6 +678,46 @@ class Alerts(MiddlewareRegistry):
                 }
             }
         }
+
+    def crop_flapping_steps(self, alarm):
+        """
+        Remove old state changes for alarms that are flapping over long periods
+        of time.
+
+        :param dict alarm: Alarm value
+
+        :return: Alarm with croped steps or alarm if nothing to remove
+        :rtype: dict
+        """
+
+        p_steps = self.flapping_persistant_steps
+
+        if p_steps < 0:
+            self.logger.warning(
+                "Peristant steps is {} (< 0) : aborting flapping steps crop "
+                "operation".format(p_steps)
+            )
+            return alarm
+
+        last_status_i = alarm['steps'].index(alarm['status'])
+
+        state_changes = filter(
+            lambda step: step['_t'] in ['stateinc', 'statedec'],
+            alarm['steps'][last_status_i + 1:]
+        )
+
+        number_to_crop = len(state_changes) - p_steps
+
+        if not number_to_crop > 0:
+            return alarm
+
+        # Steps are ordered by time asc. So here removing the first ones mean
+        # removing the older ones.
+        for i in range(1, number_to_crop + 1):
+            alarm['steps'].pop(last_status_i + i)
+
+        # Due to python mutability, changes are forwarded to the alarm dict
+        return alarm
 
     def resolve_alarms(self):
         """
