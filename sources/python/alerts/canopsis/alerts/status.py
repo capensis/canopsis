@@ -117,6 +117,7 @@ def is_flapping(manager, alarm):
             break
 
         if statestep is None and step['_t'] in ['stateinc', 'statedec']:
+            freq += 1
             statestep = step
 
         elif step['_t'] == 'stateinc' and statestep['_t'] == 'statedec':
