@@ -48,6 +48,7 @@ class BaseTest(TestCase):
                 'crecord_type': 'statusmanagement',
                 'bagot_time': 3600,
                 'bagot_freq': 10,
+                'flapping_peristant_steps': 10,
                 'stealthy_time': 300,
                 'stealthy_show': 600,
                 'restore_event': True,
@@ -65,6 +66,7 @@ class TestManager(BaseTest):
     def test_config(self):
         self.assertEqual(self.manager.flapping_interval, 3600)
         self.assertEqual(self.manager.flapping_freq, 10)
+        self.assertEqual(self.manager.flapping_persistant_steps, 10)
         self.assertEqual(self.manager.stealthy_interval, 300)
         self.assertEqual(self.manager.stealthy_show_duration, 600)
         self.assertEqual(self.manager.restore_event, True)
@@ -590,6 +592,121 @@ class TestManager(BaseTest):
         self.assertEqual(len(alarm['value']['steps']), 4)
         self.assertEqual(alarm['value']['steps'][3], expected_status)
         self.assertEqual(alarm['value']['status'], expected_status)
+
+    def test_crop_flapping_steps(self):
+        # Creating alarm /component/test/test0/ut-comp1
+        KO = {
+            'connector': 'test',
+            'connector_name': 'test0',
+            'source_type': 'component',
+            'component': 'ut-comp1',
+            'event_type': 'check',
+            'state': '1',
+            'output': '...'
+        }
+
+        OK = {
+            'connector': 'test',
+            'connector_name': 'test0',
+            'source_type': 'component',
+            'component': 'ut-comp1',
+            'event_type': 'check',
+            'state': 0,
+            'output': '...'
+        }
+
+        for i in range(0, 9):
+            KO['timestamp'] = 2 * i * 300
+            self.manager.archive(KO)
+
+            OK['timestamp'] = (2 * i + 1) * 300
+            self.manager.archive(OK)
+
+        KO['timestamp'] = 2 * (i + 1) * 300
+        self.manager.archive(KO)
+
+        # At this point we have inserted 19 check events. The alarm has
+        # changed its status to flapping after the 10th. There are only 9
+        # state changes after the last status change. It means we should not
+        # have any state crop.
+
+        alarm_id = '/component/test/test0/ut-comp1'
+        docalarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertIsNot(docalarm, None)
+
+        alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+
+        last_status_i = alarm['steps'].index(alarm['status'])
+        state_steps = filter(
+            lambda step: step['_t'] in ['stateinc', 'statedec'],
+            alarm['steps'][last_status_i + 1:]
+        )
+
+        self.assertEqual(len(state_steps), 9)
+
+        # Creating alarm /component/test/test0/ut-comp2
+        KO['component'] = 'ut-comp2'
+        OK['component'] = 'ut-comp2'
+
+        for i in range(0, 10):
+            KO['timestamp'] = 2 * i * 300
+            self.manager.archive(KO)
+
+            OK['timestamp'] = (2 * i + 1) * 300
+            self.manager.archive(OK)
+
+        KO['timestamp'] = 2 * (i + 1) * 300
+        self.manager.archive(KO)
+
+        # 21 flapping checks inserted. 10 checks to trigger flapping status.
+        # 11 state changes after this change of status. Expecting 1 state to
+        # be cropped.
+
+        alarm_id = '/component/test/test0/ut-comp2'
+        docalarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertIsNot(docalarm, None)
+
+        alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+
+        last_status_i = alarm['steps'].index(alarm['status'])
+        state_steps = filter(
+            lambda step: step['_t'] in ['stateinc', 'statedec'],
+            alarm['steps'][last_status_i + 1:]
+        )
+
+        self.assertEqual(len(state_steps), 10)
+
+        # Creating alarm /component/test/test0/ut-comp3
+        KO['component'] = 'ut-comp3'
+        OK['component'] = 'ut-comp3'
+
+        for i in range(0, 100):
+            KO['timestamp'] = 2 * i * 300
+            self.manager.archive(KO)
+
+            OK['timestamp'] = (2 * i + 1) * 300
+            self.manager.archive(OK)
+
+        # 100 flapping checks inserted. 10 checks to trigger flapping status.
+        # 90 state changes after this change of status. Expecting 80 state to
+        # be cropped.
+
+        alarm_id = '/component/test/test0/ut-comp3'
+        docalarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertIsNot(docalarm, None)
+
+        alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+
+        last_status_i = alarm['steps'].index(alarm['status'])
+        state_steps = filter(
+            lambda step: step['_t'] in ['stateinc', 'statedec'],
+            alarm['steps'][last_status_i + 1:]
+        )
+
+        self.assertEqual(len(state_steps), 10)
 
     def test_get_events(self):
         # Empty alarm ; no events sent
