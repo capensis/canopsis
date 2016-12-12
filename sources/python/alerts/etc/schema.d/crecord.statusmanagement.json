@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "Bagot settings",
-		"keys":["bagot_freq", "bagot_time"]
+		"keys":["bagot_freq", "bagot_time", "flapping_persistant_steps"]
 	},{
 		"title": "Stealthy settings",
 		"keys":["stealthy_time", "stealthy_show"]
@@ -38,6 +38,12 @@
 			"role": "duration",
 			"description": "Duration to consider when computing bagot oscillation."
 		},
+                "flapping_persistant_steps": {
+			"type": "number",
+			"required": true,
+			"default": 10,
+			"description": "Number of state changes step to keep in case of long term flapping. If some steps have to be cropped, most recent ones are kept."
+                },
 		"restore_event": {
 			"type": "boolean",
 			"required": true,
