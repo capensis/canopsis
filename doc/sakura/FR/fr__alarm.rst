@@ -23,6 +23,8 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "Jean-Baptiste Braun", "2016/12/13", "0.3", "Add steps hard limit", ""
+   "Jean-Baptiste Braun", "2016/12/13", "0.2", "Add flapping crop feature", ""
    "David Delassus", "2015/10/22", "0.1", "Document creation", ""
 
 Contents
@@ -68,6 +70,7 @@ potential flapping has elapsed. It **MUST** have a list of steps. Each
  - the alarm state escalated
  - the alarm state decreased
  - the alarm has been snoozed
+ - the number of steps has reached an hard limit
 
 Each step **MUST** be historized in its corresponding *alarm cycle*.
 And once the alarm ended, the cycle **MUST** be closed, and archived.
@@ -109,6 +112,23 @@ different counter types.
 State changes are cropped only if the number of state changes since the last
 change of status is superior to ``flapping_persistant_steps`` property
 (configurable).
+
+Hard limit
+~~~~~~~~~~
+
+`Hard limit` is a watchdog feature preventing an alarm to grow too big, in case
+of `flapping steps cropping` not being enough. It simply controls the maximum
+number of steps that an alarm can have.
+
+If a step should be appended whereas the has limit has been reached, it
+**MUST** be discarded and can *not* be retrieved.
+
+The only step allowed to be considered when an alarm has reached its hard limit
+is an alarm cancelation.
+
+`Hard limit` number of steps to be kept is configurable. This value **CAN** be
+updated at any moment, and alarms that had been frozen **MUST** continue to
+record steps if this limit has been extended.
 
 Functional test
 ---------------
