@@ -49,6 +49,7 @@ class BaseTest(TestCase):
                 'bagot_time': 3600,
                 'bagot_freq': 10,
                 'flapping_peristant_steps': 10,
+                'hard_limit': 100,
                 'stealthy_time': 300,
                 'stealthy_show': 600,
                 'restore_event': True,
@@ -67,6 +68,7 @@ class TestManager(BaseTest):
         self.assertEqual(self.manager.flapping_interval, 3600)
         self.assertEqual(self.manager.flapping_freq, 10)
         self.assertEqual(self.manager.flapping_persistant_steps, 10)
+        self.assertEqual(self.manager.hard_limit, 100)
         self.assertEqual(self.manager.stealthy_interval, 300)
         self.assertEqual(self.manager.stealthy_show_duration, 600)
         self.assertEqual(self.manager.restore_event, True)
@@ -708,6 +710,99 @@ class TestManager(BaseTest):
 
         self.assertEqual(len(state_steps), 10)
 
+    def test_is_hard_limit_reached(self):
+        cases = [
+            {
+                'alarm': {'hard_limit': None},
+                'expected': False
+            },
+            {
+                'alarm': {'hard_limit': {'val': 99}},
+                'expected': False
+            },
+            {
+                'alarm': {'hard_limit': {'val': 100}},
+                'expected': True
+            },
+            {
+                'alarm': {'hard_limit': {'val': 101}},
+                'expected': True
+            }
+        ]
+
+        for case in cases:
+            res = self.manager.is_hard_limit_reached(case['alarm'])
+
+            self.assertIs(res, case['expected'])
+
+    def test_check_hard_limit(self):
+        from types import NoneType
+
+        cases = [
+            {
+                'alarm': {
+                    'hard_limit': None,
+                    'steps': []
+                },
+                'expected': {
+                    'type_hard_limit': NoneType,
+                    'len_steps': 0
+                }
+            },
+            {
+                'alarm': {
+                    'hard_limit': None,
+                    'steps': [i for i in range(99)]
+                },
+                'expected': {
+                    'type_hard_limit': NoneType,
+                    'len_steps': 99
+                }
+            },
+            {
+                'alarm': {
+                    'hard_limit': None,
+                    'steps': [i for i in range(100)]
+                },
+                'expected': {
+                    'type_hard_limit': dict,
+                    'len_steps': 101
+                }
+            },
+            {
+                'alarm': {
+                    'hard_limit': {'val': 101},
+                    'steps': [i for i in range(200)]
+                },
+                'expected': {
+                    'type_hard_limit': dict,
+                    'len_steps': 200
+                }
+            },
+            {
+                'alarm': {
+                    'hard_limit': {'val': 99},
+                    'steps': [i for i in range(100)]
+                },
+                'expected': {
+                    'type_hard_limit': dict,
+                    'len_steps': 101
+                }
+            }
+        ]
+
+        for case in cases:
+            alarm = self.manager.check_hard_limit(case['alarm'])
+
+            self.assertIs(
+                type(alarm['hard_limit']),
+                case['expected']['type_hard_limit']
+            )
+            self.assertEqual(
+                len(alarm['steps']),
+                case['expected']['len_steps']
+            )
+
     def test_get_events(self):
         # Empty alarm ; no events sent
         alarm0_id = '/fake/alarm/id0'
@@ -1098,6 +1193,34 @@ class TestTasks(BaseTest):
         self.assertTrue(
             alarm['status'] is get_previous_step(alarm, 'statusdec')
         )
+
+    def test_hard_limit(self):
+        class Manager(object):
+            hard_limit = 100
+
+        mgr = Manager()
+        alarm = {'hard_limit': None, 'steps': []}
+
+        task = get_task('alerts.systemaction.hard_limit')
+
+        alarm = task(mgr, alarm)
+
+        self.assertIsNot(alarm['hard_limit'], None)
+        self.assertEqual(len(alarm['steps']), 1)
+        self.assertEqual(alarm['steps'][0], alarm['hard_limit'])
+
+        self.assertEqual(alarm['hard_limit']['_t'], 'hardlimit')
+        self.assertIs(type(alarm['hard_limit']['t']), int)
+        self.assertEqual(alarm['hard_limit']['a'], '__canopsis__')
+        self.assertEqual(
+            alarm['hard_limit']['m'],
+            (
+                'This alarm has reached an hard limit (100 steps recorded) : '
+                'no more steps will be appended. Please cancel this alarm or '
+                'extend hard limit value.'
+            )
+        )
+        self.assertEqual(alarm['hard_limit']['val'], 100)
 
 
 if __name__ == '__main__':

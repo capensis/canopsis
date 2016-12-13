@@ -105,6 +105,16 @@ class Alerts(MiddlewareRegistry):
         return self.config.get('persistant_steps', 10)
 
     @property
+    def hard_limit(self):
+        """
+        Maximum number of steps an alarm can have. Only alarm cancelation or
+        hard limit extension are possible ways to interact with an alarm that
+        has reached this point.
+        """
+
+        return self.config.get('hard_limit', 100)
+
+    @property
     def stealthy_interval(self):
         """
         Interval used to check for stealthy alarm status.
@@ -465,12 +475,17 @@ class Alerts(MiddlewareRegistry):
                 alarm = self.make_alarm(entity_id, event)
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
-            else:
-                # Alarm is already opened
+            else:  # Alarm is already opened
+                if self.is_hard_limit_reached(alarm):
+                    return
+
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
-            alarm[self[Alerts.ALARM_STORAGE].VALUE] = self.crop_flapping_steps(
-                alarm[self[Alerts.ALARM_STORAGE].VALUE])
+            value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+
+            value = self.crop_flapping_steps(value)
+
+            value = self.check_hard_limit(value)
 
             self.update_current_alarm(
                 alarm,
@@ -494,23 +509,30 @@ class Alerts(MiddlewareRegistry):
                             entity_id
                         )
                     )
+                    return
 
-                else:
-                    value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                if self.is_hard_limit_reached(alarm):
+                    # Only cancel is allowed when hard limit has been reached
+                    if event['event_type'] != 'cancel':
+                        return
 
-                    new_value = task(self, value, author, message, event)
-                    status = None
+                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
-                    if isinstance(new_value, tuple):
-                        new_value, status = new_value
+                new_value = task(self, value, author, message, event)
+                status = None
+
+                if isinstance(new_value, tuple):
+                    new_value, status = new_value
+
+                new_value = self.check_hard_limit(new_value)
+
+                self.update_current_alarm(alarm, new_value)
+
+                if status is not None:
+                    alarm = self.update_status(alarm, status, event)
+                    new_value = alarm[self[Alerts.ALARM_STORAGE].VALUE]
 
                     self.update_current_alarm(alarm, new_value)
-
-                    if status is not None:
-                        alarm = self.update_status(alarm, status, event)
-                        new_value = alarm[self[Alerts.ALARM_STORAGE].VALUE]
-
-                        self.update_current_alarm(alarm, new_value)
 
     def update_state(self, alarm, state, event):
         """
@@ -667,6 +689,7 @@ class Alerts(MiddlewareRegistry):
                 'ack': None,
                 'canceled': None,
                 'snooze': None,
+                'hard_limit': None,
                 'ticket': None,
                 'resolved': None,
                 'steps': [],
@@ -686,7 +709,7 @@ class Alerts(MiddlewareRegistry):
 
         :param dict alarm: Alarm value
 
-        :return: Alarm with croped steps or alarm if nothing to remove
+        :return: Alarm with cropped steps or alarm if nothing to remove
         :rtype: dict
         """
 
@@ -718,6 +741,51 @@ class Alerts(MiddlewareRegistry):
 
         # Due to python mutability, changes are forwarded to the alarm dict
         return alarm
+
+    def is_hard_limit_reached(self, alarm):
+        """
+        Check if an hard limit is on going.
+
+        :param dict alarm: Alarm value
+
+        :return: False if hard_limit property is None or if configured value is
+          greater than recorded value, True otherwise
+        :rtype: boolean
+        """
+
+        limit = alarm.get('hard_limit', None)
+
+        if limit is None:
+            return False
+
+        if limit['val'] < self.hard_limit:
+            return False
+
+        return True
+
+    def check_hard_limit(self, alarm):
+        """
+        Update hard limit informations if number of steps has exceeded this
+        limit.
+
+        :param dict alarm: Alarm value
+
+        :return: Alarm with hard limit informations or alarm if nothing to do
+        :rtype: dict
+        """
+
+        limit = alarm.get('hard_limit', None)
+
+        if limit is not None:
+            if limit['val'] >= self.hard_limit:
+                return alarm
+
+        if len(alarm['steps']) >= self.hard_limit:
+            task = get_task('alerts.systemaction.hard_limit')
+            return task(self, alarm)
+
+        else:
+            return alarm
 
     def resolve_alarms(self):
         """

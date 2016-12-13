@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "Bagot settings",
-		"keys":["bagot_freq", "bagot_time", "flapping_persistant_steps"]
+		"keys":["bagot_freq", "bagot_time", "flapping_persistant_steps", "hard_limit"]
 	},{
 		"title": "Stealthy settings",
 		"keys":["stealthy_time", "stealthy_show"]
@@ -43,6 +43,12 @@
 			"required": true,
 			"default": 10,
 			"description": "Number of state changes step to keep in case of long term flapping. If some steps have to be cropped, most recent ones are kept."
+                },
+                "hard_limit": {
+			"type": "number",
+			"required": true,
+			"default": 100,
+			"description": "Maximum number of steps an alarm can have. Only alarm cancelation or hard limit extension are possible ways to interact with an alarm that has reached this point."
                 },
 		"restore_event": {
 			"type": "boolean",

@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from time import time
+
 from canopsis.alerts.status import (
     compute_status, OFF, CANCELED, get_previous_step)
 
@@ -283,6 +285,30 @@ def status_decrease(manager, alarm, status, event):
     }
 
     alarm['status'] = step
+    alarm['steps'].append(step)
+
+    return alarm
+
+
+@register_task('alerts.systemaction.hard_limit')
+def hard_limit(manager, alarm):
+    """
+    Called when the system detects an hard limit overtake.
+    """
+
+    step = {
+        '_t': 'hardlimit',
+        't': int(time()),
+        'a': '__canopsis__',
+        'm': (
+            'This alarm has reached an hard limit ({} steps recorded) : no '
+            'more steps will be appended. Please cancel this alarm or extend '
+            'hard limit value.'.format(manager.hard_limit)
+        ),
+        'val': manager.hard_limit
+    }
+
+    alarm['hard_limit'] = step
     alarm['steps'].append(step)
 
     return alarm
