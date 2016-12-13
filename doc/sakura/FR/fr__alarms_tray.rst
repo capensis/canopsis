@@ -129,11 +129,26 @@ If the expression contains only alphanumerical characters (+ eventual spaces,
 underscores, minuses), this expression **MUST** be searched on a list of
 configurable fields.
 
-Users **CAN** also perform advanced searches with a simple DSL. As a first
-step, this DSL will allow queries like ``<field>:<value>[ <f2>:<v2>[...]]``.
+Users **CAN** also perform advanced searches with a simple DSL.
+
+Search DSL
+~~~~~~~~~~
+
+This DSL **MUST** allow the following conditional expressions :
+
+ - ``FIELD = VALUE`` (+ ``!=``, ``<``, ``<=``, ``>``, ``>=``, ``REGEX``,
+   ``!REGEX``, ``IN``, ``NIN``)
+ - ``FIELD < VALUE AND FIELD2 REGEX VALUE2`` (+ ``OR``)
+ - ``F1 = V1 OR (F2 = V2 AND F3 = V3)``
+ - ``ALL F1 = V1`` (meta-parameter changing search behaviour)
 
 Those quick searches **MUST** apply a filter on the subset of alarms returned
-by the permanent filter.
+by the permanent `filter` by default. Quick searches **CAN** apply a filter on
+all alarms (ignoring current `filter`) if the expression is prefixed by
+``ALL``.
+
+UI **SHOULD** warn users whose search expressions are not *grammatically*
+correct.
 
 Columns sorting
 ---------------
