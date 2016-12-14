@@ -248,7 +248,7 @@ Alarm step "snooze" data model
    val, timestamp, date until end of snooze
 
 Alarm step "statecounter" data model
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. csv-table::
    :header: Field, Description, Default Value
@@ -257,10 +257,10 @@ Alarm step "statecounter" data model
    t, step timestamp, timestamp of last status change
    a, step author, author of last status change
    m, step message, ````
-   val, dict, keys are ``statedec`` ``stateinc`` ``state0`` ``state1`` ``state2`` and ``state3`` and values are counters
+   val, dict, keys are ``statedec``, ``stateinc``, ``state:0``, ``state:1``, ``state:2`` and ``state:3`` and values are counters
 
 Alarm step "hardlimit" data model
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. csv-table::
    :header: Field, Description, Default Value
