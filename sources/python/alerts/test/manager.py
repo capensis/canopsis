@@ -617,12 +617,26 @@ class TestManager(BaseTest):
             'output': '...'
         }
 
-        for i in range(0, 9):
+        assocticket = {
+            'connector': 'test',
+            'connector_name': 'test0',
+            'source_type': 'component',
+            'component': 'ut-comp1',
+            'author': 'user0',
+            'event_type': 'declareticket',
+            'ticket': 'ticket',
+            'output': '...'
+        }
+
+        for i in range(9):
             KO['timestamp'] = 2 * i * 300
             self.manager.archive(KO)
 
             OK['timestamp'] = (2 * i + 1) * 300
             self.manager.archive(OK)
+
+            assocticket['timestamp'] = (2 * i + 1) * 300 + 10
+            self.manager.archive(assocticket)
 
         KO['timestamp'] = 2 * (i + 1) * 300
         self.manager.archive(KO)
@@ -640,23 +654,31 @@ class TestManager(BaseTest):
         alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
 
         last_status_i = alarm['steps'].index(alarm['status'])
+
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
             alarm['steps'][last_status_i + 1:]
         )
-
         self.assertEqual(len(state_steps), 9)
+
+        # 4 KO + 4 OK + 5 assocticket + 1 KO = 14 steps
+        all_steps = alarm['steps'][last_status_i + 1:]
+        self.assertEqual(len(all_steps), 14)
 
         # Creating alarm /component/test/test0/ut-comp2
         KO['component'] = 'ut-comp2'
         OK['component'] = 'ut-comp2'
+        assocticket['component'] = 'ut-comp2'
 
-        for i in range(0, 10):
+        for i in range(10):
             KO['timestamp'] = 2 * i * 300
             self.manager.archive(KO)
 
             OK['timestamp'] = (2 * i + 1) * 300
             self.manager.archive(OK)
+
+            assocticket['timestamp'] = (2 * i + 1) * 300 + 10
+            self.manager.archive(assocticket)
 
         KO['timestamp'] = 2 * (i + 1) * 300
         self.manager.archive(KO)
@@ -673,26 +695,41 @@ class TestManager(BaseTest):
         alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
 
         last_status_i = alarm['steps'].index(alarm['status'])
+
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
             alarm['steps'][last_status_i + 1:]
         )
-
         self.assertEqual(len(state_steps), 10)
+
+        # 10 remaining state changes + 6 assocticket + 1 statecounter
+        all_steps = alarm['steps'][last_status_i + 1:]
+        self.assertEqual(len(all_steps), 17)
+
+        expected_counter = {
+            'stateinc': 1,
+            'state:1': 1
+        }
+        counter = alarm['steps'][last_status_i + 1]
+        self.assertEqual(counter['val'], expected_counter)
 
         # Creating alarm /component/test/test0/ut-comp3
         KO['component'] = 'ut-comp3'
         OK['component'] = 'ut-comp3'
+        assocticket['component'] = 'ut-comp3'
 
-        for i in range(0, 100):
+        for i in range(40):
             KO['timestamp'] = 2 * i * 300
             self.manager.archive(KO)
 
             OK['timestamp'] = (2 * i + 1) * 300
             self.manager.archive(OK)
 
-        # 100 flapping checks inserted. 10 checks to trigger flapping status.
-        # 90 state changes after this change of status. Expecting 80 state to
+            assocticket['timestamp'] = (2 * i + 1) * 300 + 10
+            self.manager.archive(assocticket)
+
+        # 80 flapping checks inserted. 10 checks to trigger flapping status.
+        # 70 state changes after this change of status. Expecting 60 state to
         # be cropped.
 
         alarm_id = '/component/test/test0/ut-comp3'
@@ -703,12 +740,25 @@ class TestManager(BaseTest):
         alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
 
         last_status_i = alarm['steps'].index(alarm['status'])
+
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
             alarm['steps'][last_status_i + 1:]
         )
-
         self.assertEqual(len(state_steps), 10)
+
+        # 10 remaining state changes + 36 assocticket + 1 statecounter
+        all_steps = alarm['steps'][last_status_i + 1:]
+        self.assertEqual(len(all_steps), 47)
+
+        expected_counter = {
+            'statedec': 30,
+            'stateinc': 30,
+            'state:0': 30,
+            'state:1': 30
+        }
+        counter = alarm['steps'][last_status_i + 1]
+        self.assertEqual(counter['val'], expected_counter)
 
     def test_is_hard_limit_reached(self):
         cases = [
@@ -1193,6 +1243,185 @@ class TestTasks(BaseTest):
         self.assertTrue(
             alarm['status'] is get_previous_step(alarm, 'statusdec')
         )
+
+    def test_update_state_counter(self):
+        cases = [
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    'steps': [{'a': 'ut', 't': 0}]
+                },
+                'diff_counter': {},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {}
+                    }
+                ]
+            },
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    'steps': [{'a': 'ut', 't': 0}]
+                },
+                'diff_counter': {'item': 0},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {'item': 0}
+                    }
+                ]
+            },
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    'steps': [{'a': 'ut', 't': 0}, {'_t': 'customstep'}]
+                },
+                'diff_counter': {'item1': 10, 'item2': 15},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {'item1': 10, 'item2': 15}
+                    },
+                    {
+                        '_t': 'customstep'
+                    }
+                ]
+            },
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    'steps': [
+                        {
+                            'a': 'ut',
+                            't': 0
+                        },
+                        {
+                            '_t': 'statecounter',
+                            'a': 'ut',
+                            't': 0,
+                            'm': '',
+                            'val': {'item1': 3}
+                        },
+                        {
+                            '_t': 'customstep'
+                        }
+                    ]
+                },
+                'diff_counter': {'item1': 2, 'item2': 4},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {'item1': 5, 'item2': 4}
+                    },
+                    {
+                        '_t': 'customstep'
+                    }
+                ]
+            },
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 10
+                    },
+                    'steps': [
+                        {
+                            'a': 'ut',
+                            't': 0
+                        },
+                        {
+                            '_t': 'statecounter',
+                            'a': 'ut',
+                            't': 0,
+                            'm': '',
+                            'val': {'item1': 3}
+                        },
+                        {
+                            '_t': 'customstep'
+                        },
+                        {
+                            'a': 'ut',
+                            't': 10
+                        }
+                    ]
+                },
+                'diff_counter': {'item1': 2, 'item2': 4},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {'item1': 3}
+                    },
+                    {
+                        '_t': 'customstep'
+                    },
+                    {
+                        'a': 'ut',
+                        't': 10
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 10,
+                        'm': '',
+                        'val': {'item1': 2, 'item2': 4}
+                    }
+                ]
+            }
+        ]
+
+        task = get_task('alerts.systemaction.update_state_counter')
+        for case in cases:
+            alarm = task(case['alarm'], case['diff_counter'])
+
+            self.assertEqual(alarm['steps'], case['expected_steps'])
 
     def test_hard_limit(self):
         class Manager(object):

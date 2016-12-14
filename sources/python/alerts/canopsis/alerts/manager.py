@@ -476,7 +476,8 @@ class Alerts(MiddlewareRegistry):
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
             else:  # Alarm is already opened
-                if self.is_hard_limit_reached(alarm):
+                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                if self.is_hard_limit_reached(value):
                     return
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
@@ -487,10 +488,7 @@ class Alerts(MiddlewareRegistry):
 
             value = self.check_hard_limit(value)
 
-            self.update_current_alarm(
-                alarm,
-                alarm[self[Alerts.ALARM_STORAGE].VALUE]
-            )
+            self.update_current_alarm(alarm, value)
 
         else:
             try:
@@ -511,12 +509,12 @@ class Alerts(MiddlewareRegistry):
                     )
                     return
 
-                if self.is_hard_limit_reached(alarm):
+                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+
+                if self.is_hard_limit_reached(value):
                     # Only cancel is allowed when hard limit has been reached
                     if event['event_type'] != 'cancel':
                         return
-
-                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
                 new_value = task(self, value, author, message, event)
                 status = None
@@ -734,12 +732,24 @@ class Alerts(MiddlewareRegistry):
         if not number_to_crop > 0:
             return alarm
 
-        # Steps are ordered by time asc. So here removing the first ones mean
-        # removing the older ones.
-        for i in range(1, number_to_crop + 1):
-            alarm['steps'].pop(last_status_i + i)
+        crop_counter = {}
 
-        # Due to python mutability, changes are forwarded to the alarm dict
+        # Removed steps are supposed unique due to their timestamps, so as
+        # `remove` method does not cause any collisions.
+        for i in range(number_to_crop):
+            # Increase statedec or stateinc counter
+            t = state_changes[i]['_t']
+            crop_counter[t] = crop_counter.get(t, 0) + 1
+
+            # Increase {0,1,2,3} counter
+            s = 'state:{}'.format(state_changes[i]['val'])
+            crop_counter[s] = crop_counter.get(s, 0) + 1
+
+            alarm['steps'].remove(state_changes[i])
+
+        task = get_task('alerts.systemaction.update_state_counter')
+        alarm = task(alarm, crop_counter)
+
         return alarm
 
     def is_hard_limit_reached(self, alarm):
