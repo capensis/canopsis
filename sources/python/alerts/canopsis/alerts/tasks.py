@@ -290,6 +290,52 @@ def status_decrease(manager, alarm, status, event):
     return alarm
 
 
+@register_task('alerts.systemaction.update_state_counter')
+def update_state_counter(alarm, diff_counter):
+    """
+    Create or update alarm state counter related to last status change.
+
+    :param dict alarm: Alarm value
+    :param dict diff_counter: Update existing counter with this one (or
+      start with this one if no exist yet)
+
+    :return: Alarm with updated or newly created counter
+    :rtype: dict
+    """
+
+    counter_i = alarm['steps'].index(alarm['status']) + 1
+
+    if len(alarm['steps']) == counter_i:
+        # The last step is the last change of status
+        counter_template = {
+            '_t': 'statecounter',
+            'a': alarm['status']['a'],
+            't': alarm['status']['t'],
+            'm': '',
+            'val': {}
+        }
+
+        alarm['steps'].append(counter_template)
+
+    elif alarm['steps'][counter_i]['_t'] != 'statecounter':
+        counter_template = {
+            '_t': 'statecounter',
+            'a': alarm['status']['a'],
+            't': alarm['status']['t'],
+            'm': '',
+            'val': {}
+        }
+
+        alarm['steps'].insert(counter_i, counter_template)
+
+    counter = alarm['steps'][counter_i]['val']
+
+    for category, diff_count in diff_counter.items():
+        counter[category] = counter.get(category, 0) + diff_count
+
+    return alarm
+
+
 @register_task('alerts.systemaction.hard_limit')
 def hard_limit(manager, alarm):
     """
