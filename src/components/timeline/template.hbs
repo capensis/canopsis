@@ -29,14 +29,14 @@
                 </span>
               {{/if}}
               <span ></span>
-              <span class="brick-timeline-title">{{step.name}}</span>    {{step.a}}
+              <span class="brick-timeline-title">{{step.name}}</span>
               {{#if step.until}}
                 (until {{step.until}})
               {{/if}}
             </h3>
 
             <div class="timeline-body">
-              {{step.m}}
+              {{{step.m}}}
             </div>
 {{!--             <div class="timeline-footer">
               <a class="btn btn-primary btn-xs">Read more</a>
@@ -48,7 +48,7 @@
       {{/each}}
      
       <li>
-        <i class="fa fa-dot-circle-o bg-gray"></i>
+        <i class="fa fa-circle-o bg-gray"></i>
       </li>
     </ul>
   </div>
