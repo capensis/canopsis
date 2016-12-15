@@ -26,19 +26,17 @@ brick timeline
 
 You need to clone the git repository and copy directory to Canopsis path
 
-    $ su - canopsis 
-    $ cd var/www
-    $ ./bin/brickmanager install brick-timeline
+    $ su - canopsis
+    $ brickmanager install brick-timeline
 
 Then, you need to enable the brick
 
-    $ ./bin/brickmanager enable brick-timeline
+    $ brickmanager enable brick-timeline
 
 You can see enabled bricks
 
     $ su - canopsis
-    $ cd var/www
-    $ ./bin/brickmanager list
+    $ brickmanager list
     [u'core', u'uibase', u'monitoring', ..., **u'brick-timeline'**]
 
 ## Usage
@@ -53,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-timeline/blob/mast
 
 ### Lint
 
-Tested on commit : 300f2a4.
+Tested on commit : 2929cb2.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
