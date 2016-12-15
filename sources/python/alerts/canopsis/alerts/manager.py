@@ -71,10 +71,7 @@ class Alerts(MiddlewareRegistry):
     @config.setter
     def config(self, value):
         if value is None:
-            value = self[Alerts.CONFIG_STORAGE].get_elements(
-                query={'crecord_type': 'statusmanagement'}
-            )
-            value = {} if not value else value[0]
+            value = self.load_config()
 
         self._config = value
 
@@ -178,6 +175,12 @@ class Alerts(MiddlewareRegistry):
 
         if context is not None:
             self[Alerts.CONTEXT_MANAGER] = context
+
+    def load_config(self):
+        value = self[Alerts.CONFIG_STORAGE].get_elements(
+            query={'crecord_type': 'statusmanagement'}
+        )
+        return {} if not value else value[0]
 
     def get_alarms(
             self,

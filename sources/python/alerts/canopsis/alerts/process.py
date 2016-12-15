@@ -52,4 +52,6 @@ def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
     if alertsmgr is None:
         alertsmgr = singleton_per_scope(Alerts)
 
+    alertsmgr.config = alertsmgr.load_config()
+
     alertsmgr.resolve_alarms()
