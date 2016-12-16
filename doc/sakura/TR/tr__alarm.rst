@@ -435,7 +435,7 @@ Task: State increase
 
 ``alerts.systemaction.state_increase(manager, alarm, state, event) -> new_value, status``:
 
- * `manager`` as an ``Alerts`` configurable: the task caller
+ * ``manager`` as an ``Alerts`` configurable: the task caller
  * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
  * ``state`` as ``int``: the increased state
  * ``event`` as a ``dict``: the :ref:`check event <FR__Event__Check>`
@@ -453,7 +453,7 @@ Task: State decrease
 
 ``alerts.systemaction.state_decrease(manager, alarm, state, event) -> new_value, status``:
 
- * `manager`` as an ``Alerts`` configurable: the task caller
+ * ``manager`` as an ``Alerts`` configurable: the task caller
  * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
  * ``state`` as ``int``: the decreased state
  * ``event`` as a ``dict``: the :ref:`check event <FR__Event__Check>`
@@ -471,7 +471,7 @@ Task: Status increase
 
 ``alerts.systemaction.status_increase(manager, alarm, status, event) -> new_value``:
 
- * `manager`` as an ``Alerts`` configurable: the task caller
+ * ``manager`` as an ``Alerts`` configurable: the task caller
  * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
  * ``status`` as ``int``: the increased status
  * ``event`` as a ``dict``: the :ref:`check event <FR__Event__Check>`
@@ -487,7 +487,7 @@ Task: Status deccrease
 
 ``alerts.systemaction.status_decrease(manager, alarm, status, event) -> new_value``:
 
- * `manager`` as an ``Alerts`` configurable: the task caller
+ * ``manager`` as an ``Alerts`` configurable: the task caller
  * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
  * ``status`` as ``int``: the decreased status
  * ``event`` as a ``dict``: the :ref:`check event <FR__Event__Check>`
