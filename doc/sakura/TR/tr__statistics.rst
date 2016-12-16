@@ -39,7 +39,7 @@ This engine does detect, process and tag 3 different objects :
 .. _TR__Statistics__Engine:
 
 Expired sessions
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 Expired sessions are sessions for which now() - ``last_check`` is greater than
 ``alive_session_duration`` (property in ``PREFIX/etc/session/session.conf``).
