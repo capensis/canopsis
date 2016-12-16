@@ -105,7 +105,7 @@ class LDAPBackend(BaseBackend):
         if not result:
             self.logger.error("No match found for user: {0}".format(user))
             return False
-        
+
         elif len(result) > 1:
             self.logger.warning("User matched multiple DN: {0}".format(
                 json.dumps([dn for dn, _ in result])
@@ -120,13 +120,16 @@ class LDAPBackend(BaseBackend):
             self.logger.error("Invalid credentials: {0}".format(err))
             return False
 
-        info = {
-            "_id": user,
-            "external": True,
-            "enable": True,
-            "contact": {},
-            "role": config["default_role"]
-        }
+        info = mgr.get_user(user)
+
+        if not info:
+            info = {
+                "_id": user,
+                "external": True,
+                "enable": True,
+                "contact": {},
+                "role": config["default_role"]
+            }
 
         for field in config["attrs"].keys():
             val = data.get(config["attrs"][field], None)

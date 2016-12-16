@@ -18,15 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from hashlib import sha1
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
+from canopsis.influxdb.core import InfluxDBStorage
 
 from canopsis.timeserie.core import TimeSerie
 from canopsis.old.mfilter import check
-
-from hashlib import sha1
 
 
 CONF_PATH = 'stats/producers/metric.conf'
@@ -109,6 +110,8 @@ class MetricProducer(MiddlewareRegistry):
         if perfdata is not None:
             self[MetricProducer.PERFDATA_MANAGER] = perfdata
 
+        self.idbs = InfluxDBStorage()
+
     def match(self, event):
         """
         Get filters names which match the event.
@@ -178,7 +181,7 @@ class MetricProducer(MiddlewareRegistry):
             }
 
             _, tags = self[MetricProducer.PERFDATA_MANAGER].get(
-                metric_id, with_tags=True
+                metric_id, with_meta=True
             )
 
             if tags is not None:
@@ -191,83 +194,36 @@ class MetricProducer(MiddlewareRegistry):
 
         return result
 
-    def _counter(self, name, event, author='__canopsis__'):
-        """
-        Generate counters for each matching filter.
+    def _count(
+        self,
+        name,
+        author='__canopsis__',
+        extra_fields={}
+    ):
+        tags = extra_fields
+        tags['component'] = author
 
-        :param name: Counter's name
-        :type name: str
-
-        :param event: Event to check against filters
-        :type event: dict
-
-        :param author: Statistic author (default: __canopsis__)
-        :type author: str
-
-        :returns: perf event as dict
-        """
-
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': author,
-            'resource': name,
-            'perf_data_array': [
-                {
-                    'metric': filtername,
-                    'value': 1,
-                    'type': 'COUNTER'
-                }
-                for filtername in self.match(event)
-            ]
+        point = {
+            'measurement': name,
+            'tags': tags,
+            'fields': {'value': 1}
         }
 
-        return event
+        self.idbs._conn.write_points([point])
 
-    def _delay(self, name, value, author='__canopsis__'):
-        """
-        Generate gauge and counter for delay statistic.
+    def _delay(
+        self,
+        name,
+        value,
+        author='__canopsis__', extra_fields={}
+    ):
+        tags = extra_fields
+        tags['component'] = author
 
-        :param name: Delay's name
-        :type name: str
-
-        :param value: Delay
-        :type value: float
-
-        :param author: Statistic author (default: __canopsis__)
-        :type author: str
-
-        :returns: perf event as dict
-        """
-
-        event = {
-            'connector': 'canopsis',
-            'connector_name': 'stats',
-            'event_type': 'perf',
-            'source_type': 'resource',
-            'component': author,
-            'resource': name,
-            'perf_data_array': [
-                {
-                    'metric': 'sum',
-                    'value': value,
-                    'type': 'COUNTER'
-                },
-                {
-                    'metric': 'last',
-                    'value': value,
-                    'type': 'GAUGE'
-                }
-            ]
+        point = {
+            'measurement': name,
+            'tags': tags,
+            'fields': {'value': value}
         }
 
-        for operator in ['min', 'max', 'average']:
-            entity = self[MetricProducer.PERFDATA_MANAGER].get_metric_entity(
-                'last', event
-            )
-
-            self.may_create_stats_serie(entity, operator)
-
-        return event
+        self.idbs._conn.write_points([point])

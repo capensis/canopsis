@@ -138,11 +138,12 @@ class Session(MiddlewareRegistry):
 
             return now
 
-    def duration(self):
+    def sessions_close(self):
         """
-        Return event, for each user, containing the session_duration metric.
+        Close sessions that are expired (last_check + session_duration =< now)
 
-        :returns: list of events
+        :returns: Closed sessions
+        :rtype: list
         """
 
         storage = self[Session.SESSION_STORAGE]
@@ -164,42 +165,4 @@ class Session(MiddlewareRegistry):
 
             storage.put_element(element=session)
 
-        # Generate events
-        events = []
-
-        for session in inactive_sessions:
-            duration = session['session_stop'] - session['session_start']
-            event = {
-                'timestamp': now,
-                'connector': 'canopsis',
-                'connector_name': 'session',
-                'event_type': 'perf',
-                'source_type': 'resource',
-                'component': session[storage.ID],
-                'resource': 'session_duration',
-                'perf_data_array': [
-                    {
-                        'metric': 'last',
-                        'value': duration,
-                        'type': 'GAUGE',
-                        'unit': 's'
-                    },
-                    {
-                        'metric': 'sum',
-                        'value': duration,
-                        'type': 'COUNTER',
-                        'unit': 's'
-                    }
-                ]
-            }
-
-            events.append(event)
-
-            for operator in ['min', 'max', 'average']:
-                perfdatamgr = self[Session.PERFDATA_MANAGER]
-                producer = self[Session.METRIC_PRODUCER]
-
-                entity = perfdatamgr.get_metric_entity('last', event)
-                producer.may_create_stats_serie(entity, operator)
-
-        return events
+        return inactive_sessions

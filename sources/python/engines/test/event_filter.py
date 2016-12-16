@@ -19,155 +19,240 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.init import Init
-
 from unittest import TestCase, main
+from mock import MagicMock, patch
 
-from logging import DEBUG, INFO
+from copy import copy
+from logging import WARNING
 
-from canopsis.engines import DROP
+from canopsis.engines.core import DROP
 from canopsis.engines.event_filter import engine
 
 # TODO, reset theses tests because they are not accurate and not clean
 
-conf = {'rules': [
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'changeme'},
-         'actions': [{
-                'type': 'override',
-                'field': 'connector',
-                'value': 'it_works'},
-             {'type': 'pass'}],
-         'name': 'change-connector-name'},
+conf = {
+    'rules': [
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'changeme'},
+            'actions': [
+                {
+                   'type': 'override',
+                   'field': 'connector',
+                   'value': 'it_works',
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'change-connector-name',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'nagios'},
-         'actions': [{'type': 'pass'}],
-         'name': 'check-connector-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'nagios'},
+            'actions': [{'type': 'pass'}],
+            'name': 'check-connector-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'collectd'},
-         'actions': [{'type': 'drop'}],
-         'name': 'check-connector-drop'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'collectd'},
+            'actions': [{'type': 'drop'}],
+            'name': 'check-connector-drop',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'priority'},
-         'actions': [{'type': 'pass'}],
-         'name': 'check-connector-pass2'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'priority'},
+            'actions': [{'type': 'pass'}],
+            'name': 'check-connector-pass2',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'test_field': {'$gt': 1378713357}},
-         'actions': [{'type': 'drop'}],
-         'name': 'check-gt-drop'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'test_field': {'$gt': 1378713357}},
+            'actions': [{'type': 'drop'}],
+            'name': 'check-gt-drop',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {"tags": {"$in": ["collectd2event"]}},
-         'name': 'check-in-default'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {"tags": {"$in": ["collectd2event"]}},
+            'name': 'check-in-default'
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'nagios'},
-         'actions': [{'type': 'pass'}],
-         'name': 'chec-connector-pass3'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'nagios'},
+            'actions': [{'type': 'pass'}],
+            'name': 'chec-connector-pass3',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'second_rule'},
-         'actions': [{'type': 'pass'}],
-         'name': 'chec-connector-pass4'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'second_rule'},
+            'actions': [{'type': 'pass'}],
+            'name': 'chec-connector-pass4',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'priority'},
-         'actions': [{'type': 'drop'}],
-         'name': 'check-connector-drop2'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'priority'},
+            'actions': [{'type': 'drop'}],
+            'name': 'check-connector-drop2',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'test_field': {'$eq': 'Engine'}},
-         'actions': [{'type': 'pass'}],
-         'name': 'check-eq-pass2'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'test_field': {'$eq': 'Engine'}},
+            'actions': [{'type': 'pass'}],
+            'name': 'check-eq-pass2',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'tags': {'$in': ["tag2"]}},
-         'actions': [{
-                'type': 'remove',
-                'key': 'tags',
-                'element': 'tag2'},
-             {'type': 'pass'}],
-         'name': 'change-tag-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'tags': {'$in': ["tag2"]}},
+            'actions': [
+                {
+                   'type': 'remove',
+                   'key': 'tags',
+                   'element': 'tag2',
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'change-tag-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'perfdatas': {'$in': ["perf1"]}},
-         'actions': [{
-                'type': 'remove',
-                'key': 'perfdatas',
-                'element': 'perf1'},
-             {'type': 'pass'}],
-         'name': 'remove-perdata-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'perfdatas': {'$in': ["perf1"]}},
+            'actions': [
+                {
+                   'type': 'remove',
+                   'key': 'perfdatas',
+                   'element': 'perf1',
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'remove-perdata-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'remove_me': "True"},
-         'actions': [{
-                'type': 'remove',
-                'key': 'remove_me'},
-             {'type': 'pass'}],
-         'name': 'remove-eventfield-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'remove_me': "True"},
+            'actions': [
+                {
+                   'type': 'remove',
+                   'key': 'remove_me',
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'remove-eventfield-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': "add_here"},
-         'actions': [{
-                'type': 'override',
-                'field': 'added_field',
-                'value': "this_was_added_at_runtime"},
-             {'type': 'pass'}],
-         'name': 'add-eventfield-pass'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': "add_here"},
+            'actions': [
+                {
+                    'type': 'override',
+                    'field': 'added_field',
+                    'value': "this_was_added_at_runtime",
+                },
+                {
+                    'type': 'pass',
+                },
+            ],
+            'name': 'add-eventfield-pass',
+        },
 
-        {'description': 'unit test rule',
-         '_id': 'unittestidrule',
-         'mfilter': {'test_field': {'$gt': 1378713357}},
-         'actions': [{'type': 'drop'}],
-         'name': 'check-gt-drop2'},
+        {
+            'description': 'unit test rule',
+            '_id': 'unittestidrule',
+            'mfilter': {'test_field': {'$gt': 1378713357}},
+            'actions': [{'type': 'drop'}],
+            'name': 'check-gt-drop2',
+        },
 
-        {'description': 're route',
-         '_id': 'unittestidrule',
-         'mfilter': {'connector': 'route_me'},
-         'actions': [{
-                'type': 'route',
-                'route': 'new_route_defined'}],
-         'name': 're-route'},
+        {
+            'description': 're route',
+            '_id': 'unittestidrule',
+            'mfilter': {'connector': 'route_me'},
+            'actions': [
+                {
+                   'type': 'route',
+                   'route': 'new_route_defined',
+                },
+            ],
+            'name': 're-route',
+        },
 
-        {'description': 'rm & add hostgroup',
-         '_id': 'unittestidrule',
-         'mfilter': {"hostgroups": {"$in": ["linux mint"]}},
-         'actions': [{'type': 'remove',
-                      'key': 'hostgroups',
-                      'element': 'linux mint'},
-                     {'type': 'override',
-                      'field': 'hostgroups',
-                      'value': 'debian jessie'}],
-         'name': 'rm-hostgroup-add-hostgroup-pass'}
-        ],
-        'priority': 2,
-        'default_action': 'drop',
-        'configuration': 'white_black_lists'}
+        {
+            'description': 'rm & add hostgroup',
+            '_id': 'unittestidrule',
+            'mfilter': {"hostgroups": {"$in": ["linux mint"]}},
+            'actions': [
+                {
+                    'type': 'remove',
+                    'key': 'hostgroups',
+                    'element': 'linux mint',
+                },
+                {
+                    'type': 'override',
+                    'field': 'hostgroups',
+                    'value': 'debian jessie',
+                },
+            ],
+            'name': 'rm-hostgroup-add-hostgroup-pass',
+        },
+
+        {
+            'description': 'test snooze',
+            '_id': 'unittestidrule',
+            'mfilter': {'tags': {'$in': 'snooze_me'}},
+            'actions': [
+                {
+                    'type': 'snooze',
+                    'duration': 300,
+                },
+            ],
+            'name': 'autosnooze'
+        },
+    ],
+    'priority': 2,
+    'default_action': 'drop',
+    'configuration': 'white_black_lists',
+}
 
 
 class KnownValues(TestCase):
 
     def setUp(self):
         self.engine = engine(
-            **{'name': 'passdropity', 'logging_level': INFO})
+            name='passdropity',
+            logging_level=WARNING,
+        )
 
         self.engine.next_amqp_queues = ["consolidation"]
         self.engine.drop_event_count = 0
@@ -347,6 +432,79 @@ class KnownValues(TestCase):
         event = self.engine.work(event)
         self.assertEqual(self.engine.next_amqp_queues[0], "new_route_defined")
 
+    def test_snooze(self):
+
+        self.engine.amqp = MagicMock()
+        self.engine.cm = MagicMock()
+        self.engine.am = MagicMock()
+
+        # get_current_alarm should return None if an alarm concerning an
+        # entity is not currently openened
+        self.engine.am.get_current_alarm = MagicMock(return_value=None)
+
+        def patched_publish(event, publisher, **kwargs):
+            self.published = event
+
+        event = {
+            'connector': 'co',
+            'connector_name': 'cn',
+            'event_type': 'check',
+            'state': 1,
+            'source_type': 'resource',
+            'component': 'cpt',
+            'resource': 'r',
+            'tags': ['snooze_me'],
+        }
+
+        with patch(
+                'canopsis.engines.event_filter.publish',
+                new=MagicMock(side_effect=patched_publish),
+        ):
+            self.engine.work(event)
+
+        generated_snooze = {
+            'connector': 'co',
+            'connector_name': 'cn',
+            'source_type': 'resource',
+            'component': 'cpt',
+            'resource': 'r',
+            'event_type': 'snooze',
+            'duration': 300,
+            'author': 'event_filter',
+            'output': 'Auto snooze generated by rule "autosnooze"',
+        }
+        self.assertEqual(self.published, generated_snooze)
+
+        del self.published
+
+    def test_no_snooze(self):
+
+        self.engine.amqp = MagicMock()
+        self.engine.cm = MagicMock()
+        self.engine.am = MagicMock()
+        self.engine.am.get_current_alarm = MagicMock(return_value='alarm')
+
+        def patched_publish(event, publisher, **kwargs):
+            self.published = 'something published'
+
+        event = {
+            'connector': 'co',
+            'connector_name': 'cn',
+            'source_type': 'resource',
+            'component': 'cpt',
+            'resource': 'r',
+            'event_type': 'check',
+            'author': 'event_filter',
+        }
+
+        with patch(
+                'canopsis.engines.event_filter.publish',
+                new=MagicMock(side_effect=patched_publish),
+        ):
+            self.engine.work(event)
+
+        self.assertFalse(hasattr(self, 'published'))
+
     def test_no_conf(self):
 
         event = {
@@ -362,6 +520,159 @@ class KnownValues(TestCase):
         # No configuration, default configuration is loaded
         self.engine.configuration = {}
         self.assertEqual(self.engine.work(event), event)
+
+
+class OverrideTest(TestCase):
+    """
+    Extensive tests on event_filter specific operation `a_override`
+    """
+
+    def setUp(self):
+        # Initializing logging_level to WARNING prevents 'Engine initialized'
+        # INFO to be printed
+        self.engine = engine(name='overrider', logging_level=WARNING)
+        self.engine.logger.propagate = False
+
+        # Thoose events with minimal fields are shortcuts for test_* methods
+        self.event = {
+            'connector': '',
+            'connector_name': '',
+            'event_type': '',
+            'source_type': '',
+            'component': '',
+        }
+        self.expected_event = copy(self.event)
+
+    def test_afield_none(self):
+        action = {
+            'type': 'override',
+            'field': None,
+            'value': 'value',
+        }
+
+        self.assertIs(False, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_none(self):
+        action = {
+            'type': 'override',
+            'field': 'field',
+            'value': None,
+        }
+
+        self.assertIs(False, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_afield_not_in_event(self):
+        self.expected_event['field'] = 'value'
+
+        action = {
+            'type': 'override',
+            'field': 'field',
+            'value': 'value',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_not_list_event_afield_list(self):
+        self.event['perimeter'] = ['px', 'py']
+        self.expected_event['perimeter'] = ['px', 'py', 'p1']
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': 'p1',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_not_list_event_afield_not_list(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = 'p1'
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': 'p1',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_list_override_operation(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = ['p1', 'p2']
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': ['p1', 'p2'],
+            'operation': 'override',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+        self.event['perimeter'] = ['px', 'py']
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_list_append_operation(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = ['px', 'p1', 'p2']
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': ['p1', 'p2'],
+            'operation': 'append',
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+        self.event['perimeter'] = ['px', 'py']
+        self.expected_event['perimeter'] = ['px', 'py', 'p1', 'p2']
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    # default operation is supposed to be 'append'
+    def test_avalue_list_default_operation(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = ['px', 'p1', 'p2']
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': ['p1', 'p2'],
+        }
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+        self.event['perimeter'] = ['px', 'py']
+        self.expected_event['perimeter'] = ['px', 'py', 'p1', 'p2']
+
+        self.assertIs(True, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
+
+    def test_avalue_list_unsupported_operation(self):
+        self.event['perimeter'] = 'px'
+        self.expected_event['perimeter'] = 'px'
+
+        action = {
+            'type': 'override',
+            'field': 'perimeter',
+            'value': ['p1', 'p2'],
+            'operation': 'unsupported_op'
+        }
+
+        self.assertIs(False, self.engine.a_override(self.event, action))
+        self.assertEqual(self.expected_event, self.event)
 
 
 if __name__ == "__main__":

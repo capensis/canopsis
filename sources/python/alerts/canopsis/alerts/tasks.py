@@ -18,7 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.alerts.status import compute_status, CANCELED, get_last_status
+from canopsis.alerts.status import (
+    compute_status, OFF, CANCELED, get_previous_step)
 
 from canopsis.task.core import register_task
 
@@ -26,7 +27,7 @@ from canopsis.task.core import register_task
 @register_task('alerts.useraction.ack')
 def acknowledge(manager, alarm, author, message, event):
     """
-    Called when a user add an acknowledgment on an alarm.
+    Called when a user adds an acknowledgment on an alarm.
     """
 
     step = {
@@ -45,7 +46,7 @@ def acknowledge(manager, alarm, author, message, event):
 @register_task('alerts.useraction.ackremove')
 def unacknowledge(manager, alarm, author, message, event):
     """
-    Called when a user remove an acknowledgment from an alarm.
+    Called when a user removes an acknowledgment from an alarm.
     """
 
     step = {
@@ -100,7 +101,18 @@ def restore(manager, alarm, author, message, event):
     status = None
 
     if manager.restore_event:
-        status = get_last_status(alarm, ts=canceled['t'])
+        status = get_previous_step(
+            alarm,
+            ['statusinc', 'statusdec'],
+            ts=canceled['t']
+        )
+
+        if status is not None:
+            status = status['val']
+        else:
+            # This is not supposed to happen since a restored alarm
+            # should have a status before its cancelation
+            status = OFF
 
     else:
         status = compute_status(manager, alarm)
@@ -111,7 +123,7 @@ def restore(manager, alarm, author, message, event):
 @register_task('alerts.useraction.declareticket')
 def declare_ticket(manager, alarm, author, message, event):
     """
-    Called when a user declare a ticket for an alarm.
+    Called when a user declares a ticket for an alarm.
     """
 
     step = {
@@ -131,7 +143,7 @@ def declare_ticket(manager, alarm, author, message, event):
 @register_task('alerts.useraction.assocticket')
 def associate_ticket(manager, alarm, author, message, event):
     """
-    Called when a user associate a ticket to an alarm.
+    Called when a user associates a ticket to an alarm.
     """
 
     step = {
@@ -151,7 +163,7 @@ def associate_ticket(manager, alarm, author, message, event):
 @register_task('alerts.useraction.changestate')
 def change_state(manager, alarm, author, message, event):
     """
-    Called when a user manually change the state of an alarm.
+    Called when a user manually changes the state of an alarm.
     """
 
     step = {
@@ -168,10 +180,32 @@ def change_state(manager, alarm, author, message, event):
     return alarm
 
 
+@register_task('alerts.useraction.snooze')
+def snooze(manager, alarm, author, message, event):
+    """
+    Called when a user snoozes an alarm.
+    """
+
+    until = event['timestamp'] + event.get('duration', 300)
+
+    step = {
+        '_t': 'snooze',
+        't': event['timestamp'],
+        'a': author,
+        'm': message,
+        'val': until
+    }
+
+    alarm['snooze'] = step
+    alarm['steps'].append(step)
+
+    return alarm
+
+
 @register_task('alerts.systemaction.state_increase')
 def state_increase(manager, alarm, state, event):
     """
-    Called when the system detect a state escalation on an alarm.
+    Called when the system detects a state escalation on an alarm.
     """
 
     step = {
@@ -194,7 +228,7 @@ def state_increase(manager, alarm, state, event):
 @register_task('alerts.systemaction.state_decrease')
 def state_decrease(manager, alarm, state, event):
     """
-    Called when the system detect a state decrease on an alarm.
+    Called when the system detects a state decrease on an alarm.
     """
 
     step = {
@@ -217,7 +251,7 @@ def state_decrease(manager, alarm, state, event):
 @register_task('alerts.systemaction.status_increase')
 def status_increase(manager, alarm, status, event):
     """
-    Called when the system detect a status escalation on an alarm.
+    Called when the system detects a status escalation on an alarm.
     """
 
     step = {
@@ -237,7 +271,7 @@ def status_increase(manager, alarm, status, event):
 @register_task('alerts.systemaction.status_decrease')
 def status_decrease(manager, alarm, status, event):
     """
-    Called when the system detect a status decrease on an alarm.
+    Called when the system detects a status decrease on an alarm.
     """
 
     step = {

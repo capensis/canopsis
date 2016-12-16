@@ -9,7 +9,7 @@
 	},{
 		"title": "Misc statuses",
 		"keys":["restore_event"]
-	}],
+        }],
 	"properties": {
 		"stealthy_time": {
 			"type": "number",
@@ -38,7 +38,7 @@
 			"role": "duration",
 			"description": "Duration to consider when computing bagot oscillation."
 		},
-		"restore_event":{
+		"restore_event": {
 			"type": "boolean",
 			"required": true,
 			"description": "When true, consdider state change with different state level, otherwise consider a change at alert level."

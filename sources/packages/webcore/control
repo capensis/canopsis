@@ -42,7 +42,7 @@ function pre_update() {
     BUILD_DATE=$(date)
     BUILD_TIMESTAMP=$(date +%s)
     GIT_COMMIT=$(git log -n 1 --pretty=format:"%H")
-    echo "{\"build-date\": \"$BUILD_DATE\",\"build-timestamp\": $BUILD_TIMESTAMP, \"git-commit\": \"$GIT_COMMIT\"}" > $PREFIX/var/www/canopsis/canopsis-meta.json
+    echo "{\"build-date\": \"$BUILD_DATE\",\"build-timestamp\": $BUILD_TIMESTAMP, \"git-commit\": \"$GIT_COMMIT\"}" > $PREFIX/var/www/src/canopsis/canopsis-meta.json
     echo "Post-install $NAME $VERSION-$RELEASE ..."
 
 

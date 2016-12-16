@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 
@@ -29,7 +31,20 @@ def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
     if alertsmgr is None:
         alertsmgr = singleton_per_scope(Alerts)
 
-    alertsmgr.archive(event)
+    encoded_event = {}
+
+    for k, v in event.items():
+        try:
+            k = k.encode('utf-8')
+        except:
+            pass
+        try:
+            v = v.encode('utf-8')
+        except:
+            pass
+        encoded_event[k] = v
+
+    alertsmgr.archive(encoded_event)
 
 
 @register_task

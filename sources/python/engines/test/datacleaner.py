@@ -23,7 +23,7 @@ from unittest import TestCase, main
 from mock import MagicMock
 from time import time
 from logging import ERROR
-from canopsis.engines.datacleaner import engine
+from canopsis.engines.cleaner import engine
 
 
 class DataCleanerTest(TestCase):

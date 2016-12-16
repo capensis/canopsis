@@ -1,10 +1,10 @@
 #!/bin/bash
 
-NAME="npmbox-packages"
-VERSION="0.1"
+NAME="webcore-deps"
+VERSION="1.0.0"
 RELEASE=0
-DESCRIPTION=""
-REQUIRES="canohome nodejs npmbox"
+DESCRIPTION="install dependencies for brickmanager"
+REQUIRES="canohome nodejs"
 
 function pre_install() {
     echo "Pre-install $NAME $VERSION-$RELEASE ..."
