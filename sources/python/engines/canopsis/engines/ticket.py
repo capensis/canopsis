@@ -52,7 +52,7 @@ class engine(Engine):
                 del self.config['job']['rrule']
 
             if event['event_type'] == 'declareticket':
-                self.logger.debug('Declare Ticket')
+                self.logger.debug(u'Declare Ticket')
 
                 try:
                     refevt = self.store.get(

@@ -182,14 +182,14 @@ class WebServer(Configurable):
         self.auth_backends = {}
 
     def __call__(self):
-        self.logger.info('Initialize gevent signal-handlers')
+        self.logger.info(u'Initialize gevent signal-handlers')
         gevent.signal(SIGTERM, self.exit)
         gevent.signal(SIGINT, self.exit)
 
-        self.logger.info('Start AMQP thread')
+        self.logger.info(u'Start AMQP thread')
         self.amqp.start()
 
-        self.logger.info('Initialize WSGI Application')
+        self.logger.info(u'Initialize WSGI Application')
         self.app = BottleApplication()
 
         self.load_auth_backends()
@@ -204,7 +204,7 @@ class WebServer(Configurable):
         if name in self.webmodules:
             return True
 
-        self.logger.info('Loading webservice: {0}'.format(name))
+        self.logger.info(u'Loading webservice: {0}'.format(name))
 
         try:
             mod = importlib.import_module(modname)
@@ -241,7 +241,7 @@ class WebServer(Configurable):
         if name in self.auth_backends:
             return True
 
-        self.logger.info('Load authentication backend: {0}'.format(name))
+        self.logger.info(u'Load authentication backend: {0}'.format(name))
 
         try:
             mod = importlib.import_module(modname)

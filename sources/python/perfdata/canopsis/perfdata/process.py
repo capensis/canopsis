@@ -47,7 +47,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
 
     # Parse perfdata
     if perf_data:
-        logger.debug(' + perf_data: {0}'.format(perf_data))
+        logger.debug(u' + perf_data: {0}'.format(perf_data))
 
         try:
             perf_data_array += manager.parse_perfdata(perf_data)
@@ -59,7 +59,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
                 )
             )
 
-    logger.debug(' + perf_data_array: {0}'.format(perf_data_array))
+    logger.debug(u' + perf_data_array: {0}'.format(perf_data_array))
 
     # Add status informations
     event_type = event.get('event_type')
@@ -68,7 +68,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
 
     if event_type is not None and event_type in handled_event_types:
 
-        logger.debug('Add status informations')
+        logger.debug(u'Add status informations')
 
         state = int(event.get('state', 0))
         state_type = int(event.get('state_type', 0))
@@ -97,7 +97,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             if perf_data_array_with_Nones[name] is not None
         }
 
-    logger.debug('perf_data_array: {0}'.format(perf_data_array))
+    logger.debug(u'perf_data_array: {0}'.format(perf_data_array))
 
     event = deepcopy(event)
 

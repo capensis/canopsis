@@ -428,7 +428,7 @@ class engine(Engine):
             'default_action': self.find_default_action()
         }
 
-        self.logger.debug('Reload configuration rules')
+        self.logger.debug(u'Reload configuration rules')
         records = self.storage.find(
             {'crecord_type': 'filter', 'enable': True},
             sort='priority'
@@ -442,13 +442,13 @@ class engine(Engine):
             try:
                 record_dump["mfilter"] = loads(record_dump["mfilter"])
             except Exception:
-                self.logger.info('Invalid mfilter {}, filter {}'.format(
+                self.logger.info(u'Invalid mfilter {}, filter {}'.format(
                     record_dump['mfilter'],
                     record_dump['name'],
 
                 ))
 
-            self.logger.debug('Loading record_dump:')
+            self.logger.debug(u'Loading record_dump:')
             self.logger.debug(record_dump)
             self.configuration['rules'].append(record_dump)
 

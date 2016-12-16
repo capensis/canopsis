@@ -44,13 +44,13 @@ class engine(Engine):
             self.do_job(job)
 
         else:
-            self.logger.error('Invalid job: {0}'.format(job))
+            self.logger.error(u'Invalid job: {0}'.format(job))
 
     def pre_run(self):
         self.beat()
 
     def beat(self):
-        self.logger.info('Reload jobs')
+        self.logger.info(u'Reload jobs')
 
         now = int(time())
         prev = now - self.beat_interval
@@ -71,7 +71,7 @@ class engine(Engine):
         for job in jobs:
             job = job.dump()
 
-            self.logger.debug('Job: {0}'.format(job))
+            self.logger.debug(u'Job: {0}'.format(job))
 
             if job['last_execution'] <= 0:
                 self.do_job(job)
@@ -90,7 +90,7 @@ class engine(Engine):
                     self.do_job(job)
 
     def do_job(self, job):
-        self.logger.info('Execute job: {0}'.format(job))
+        self.logger.info(u'Execute job: {0}'.format(job))
 
         job['params']['jobid'] = job['_id']
         job['params']['jobctx'] = job.get('context', {})
