@@ -21,58 +21,78 @@ from __future__ import unicode_literals
 
 from canopsis.common.ws import route
 from canopsis.alerts.manager import Alerts
+from canopsis.alerts.reader import AlertsReader
 
 
 def exports(ws):
 
     am = Alerts()
+    ar = AlertsReader()
 
     @route(
-            ws.application.get,
-            name='alerts/alarms',
-            payload=['resolved', 'tags', 'exclude_tags'],
+        ws.application.get,
+        name='alerts/alarms2',
+        payload=[
+            'tstart',
+            'tstop',
+            'opened',
+            'closed',
+            'filter',
+            'search',
+            'sort',
+            'limit',
+            'offset'
+        ]
     )
-    def get_alarms(
-            resolved=False,
-            tags=None,
-            exclude_tags=None,
-            snoozed=False,
-            limit=5,
-            start=0,
+    def get_alarms2(
+            tstart,
+            tstop,
+            opened=True,
+            closed=False,
+            consolidations=[],
             filter={},
-            sort=[{"direction": "ASC"}],
+            search='',
+            sort={'opened': 'DESC'},
+            limit=50,
+            offset=0
     ):
         """
-        Get alarms
+        Return filtered, sorted and paginated alarms.
 
-        :param bool resolved: If ``True``, returns only resolved alarms, else
-          returns only unresolved alarms (default: ``False``).
+        :param int tstart: Beginning timestamp of requested period
+        :param int tstop: End timestamp of requested period
 
-        :param tags: Tags which must be set on alarm (optional)
-        :type tags: str or list
+        :param bool opened: If True, consider alarms that are currently opened
+        :param bool closed: If False, consider alarms that have been closed
 
-        :param exclude_tags: Tags which must not be set on alarm (optional)
-        :type tags: str or list
+        :param list consolidations: List of extra columns to compute for each
+          returned result.
 
-        :param int limit: Number of entries returned (TODO)
+        :param dict filter: Mongo filter. Keys are UI column names.
+        :param str search: Search expression in custom DSL.
 
-        :param int start: Pagination index (TODO)
+        :param dict sort: Dict with only one key. Key is the name of the column
+          to sort, and value is either "ASC" or "DESC".
 
-        :param dict filter: TODO
+        :param int limit: Maximum number of alarms to return.
+        :param int offset: Number of alarms to skip (pagination)
 
-        :param list sort: TODO
-
-        :returns: Iterable of alarms matching
+        :returns: List of sorted alarms + pagination informations
+        :rtype: dict
         """
 
-        alarms = am.get_alarms(
-            resolved=resolved,
-            tags=tags,
-            exclude_tags=exclude_tags,
-            snoozed=snoozed,
+        return ar.get_alarms2(
+            tstart=tstart,
+            tstop=tstop,
+            opened=opened,
+            closed=closed,
+            consolidations=[],
+            filter_=filter,
+            search=search,
+            sort=sort,
+            limit=limit,
+            offset=offset
         )
-
-        return alarms
 
     @route(
             ws.application.get,
@@ -105,7 +125,7 @@ def exports(ws):
         :rtype: list
         """
 
-        return am.count_alarms_by_period(
+        return ar.count_alarms_by_period(
             start,
             stop,
             limit=limit,

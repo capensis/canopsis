@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2016 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -22,12 +22,11 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.model import Parameter
-from canopsis.context.manager import Context
 
-from canopsis.timeserie.timewindow import (
-    get_offset_timewindow, Interval, TimeWindow)
+from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
+from canopsis.context.manager import Context
 
 from canopsis.event.manager import Event
 from canopsis.check import Check
@@ -139,12 +138,12 @@ class Alerts(MiddlewareRegistry):
         self._extra_fields = value
 
     def __init__(
-        self,
-        extra_fields=None,
-        config_storage=None,
-        alarm_storage=None,
-        context=None,
-        *args, **kwargs
+            self,
+            extra_fields=None,
+            config_storage=None,
+            alarm_storage=None,
+            context=None,
+            *args, **kwargs
     ):
         super(Alerts, self).__init__(*args, **kwargs)
 
@@ -243,57 +242,6 @@ class Alerts(MiddlewareRegistry):
                 alarm['entity'] = entity
 
         return alarms_by_entity
-
-    def count_alarms_by_period(
-            self,
-            start,
-            stop,
-            subperiod={'day': 1},
-            limit=100,
-            query={},
-    ):
-        """
-        Count alarms that have been opened during (stop - start) period.
-
-        :param start: Beginning timestamp of period
-        :type start: int
-
-        :param stop: End timestamp of period
-        :type stop: int
-
-        :param subperiod: Cut (stop - start) in ``subperiod`` subperiods
-        :type subperiod: dict
-
-        :param limit: Counts cannot exceed this value
-        :type limit: int
-
-        :param query: Custom mongodb filter for alarms
-        :type query: dict
-
-        :return: List in which each item contains an interval and the
-                 related count
-        :rtype: list
-        """
-
-        intervals = Interval.get_intervals_by_period(start, stop, subperiod)
-
-        results = []
-        for date in intervals:
-            count = self[Alerts.ALARM_STORAGE].count(
-                data_ids=None,
-                timewindow=TimeWindow(start=date['begin'], stop=date['end']),
-                window_start_bind=True,
-                _filter=query,
-            )
-
-            results.append(
-                {
-                    'date': date,
-                    'count': limit if count > limit else count,
-                }
-            )
-
-        return results
 
     def get_current_alarm(self, alarm_id):
         """
