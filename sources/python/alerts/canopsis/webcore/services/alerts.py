@@ -44,7 +44,7 @@ def exports(ws):
             'offset'
         ]
     )
-    def get_alarms2(
+    def get_alarms(
             tstart,
             tstop,
             opened=True,
@@ -81,7 +81,7 @@ def exports(ws):
         :rtype: dict
         """
 
-        return ar.get_alarms2(
+        return ar.get(
             tstart=tstart,
             tstop=tstop,
             opened=opened,
