@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from time import time
+
 from canopsis.alerts.status import (
     compute_status, OFF, CANCELED, get_previous_step)
 
@@ -219,8 +221,8 @@ def state_increase(manager, alarm, state, event):
     if alarm['state'] is None or alarm['state']['_t'] != 'changestate':
         alarm['state'] = step
 
-    status = compute_status(manager, alarm)
     alarm['steps'].append(step)
+    status = compute_status(manager, alarm)
 
     return alarm, status
 
@@ -242,8 +244,8 @@ def state_decrease(manager, alarm, state, event):
     if alarm['state'] is None or alarm['state']['_t'] != 'changestate':
         alarm['state'] = step
 
-    status = compute_status(manager, alarm)
     alarm['steps'].append(step)
+    status = compute_status(manager, alarm)
 
     return alarm, status
 
@@ -283,6 +285,76 @@ def status_decrease(manager, alarm, status, event):
     }
 
     alarm['status'] = step
+    alarm['steps'].append(step)
+
+    return alarm
+
+
+@register_task('alerts.systemaction.update_state_counter')
+def update_state_counter(alarm, diff_counter):
+    """
+    Create or update alarm state counter related to last status change.
+
+    :param dict alarm: Alarm value
+    :param dict diff_counter: Update existing counter with this one (or
+      start with this one if no exist yet)
+
+    :return: Alarm with updated or newly created counter
+    :rtype: dict
+    """
+
+    counter_i = alarm['steps'].index(alarm['status']) + 1
+
+    if len(alarm['steps']) == counter_i:
+        # The last step is the last change of status
+        counter_template = {
+            '_t': 'statecounter',
+            'a': alarm['status']['a'],
+            't': alarm['status']['t'],
+            'm': '',
+            'val': {}
+        }
+
+        alarm['steps'].append(counter_template)
+
+    elif alarm['steps'][counter_i]['_t'] != 'statecounter':
+        counter_template = {
+            '_t': 'statecounter',
+            'a': alarm['status']['a'],
+            't': alarm['status']['t'],
+            'm': '',
+            'val': {}
+        }
+
+        alarm['steps'].insert(counter_i, counter_template)
+
+    counter = alarm['steps'][counter_i]['val']
+
+    for category, diff_count in diff_counter.items():
+        counter[category] = counter.get(category, 0) + diff_count
+
+    return alarm
+
+
+@register_task('alerts.systemaction.hard_limit')
+def hard_limit(manager, alarm):
+    """
+    Called when the system detects an hard limit overtake.
+    """
+
+    step = {
+        '_t': 'hardlimit',
+        't': int(time()),
+        'a': '__canopsis__',
+        'm': (
+            'This alarm has reached an hard limit ({} steps recorded) : no '
+            'more steps will be appended. Please cancel this alarm or extend '
+            'hard limit value.'.format(manager.hard_limit)
+        ),
+        'val': manager.hard_limit
+    }
+
+    alarm['hard_limit'] = step
     alarm['steps'].append(step)
 
     return alarm

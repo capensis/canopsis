@@ -91,7 +91,7 @@ class InfluxDBBase(DataBase):
         if self.proxies:
             connection_args['proxies'] = self.proxies
 
-        self.logger.debug('Trying to connect to {0}'.format(connection_args))
+        self.logger.debug(u'Trying to connect to {0}'.format(connection_args))
 
         try:
             result = conncls(**connection_args)

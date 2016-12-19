@@ -127,7 +127,7 @@ class JSONLoaderModule(MigrationModule):
                     storage.update(mfilter, doc, upsert=True)
 
                 else:
-                    self.logger.info('Document "{0}" not updatable'.format(
+                    self.logger.info(u'Document "{0}" not updatable'.format(
                         doc['loader_id']
                     ))
 

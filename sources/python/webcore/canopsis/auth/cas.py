@@ -55,7 +55,7 @@ class CASBackend(BaseBackend):
             config = self.get_config()
 
             if not config:
-                self.logger.error('CAS configuration not found')
+                self.logger.error(u'CAS configuration not found')
                 return callback(*args, **kwargs)
 
             server = config.get('server')
@@ -97,10 +97,10 @@ class CASBackend(BaseBackend):
             res = requests.get(validate_url, verify=False)
 
             if res.status_code != 200:
-                self.logger.error('Impossible to validate ticket')
+                self.logger.error(u'Impossible to validate ticket')
                 return False
 
-            self.logger.debug('Parsing CAS server response')
+            self.logger.debug(u'Parsing CAS server response')
 
             user = None
             xmlroot = xml.etree.ElementTree.fromstring(res.content)
@@ -122,7 +122,7 @@ class CASBackend(BaseBackend):
             record = self.session.get_user(user)
 
             if not record:
-                self.logger.info('Creating user {0} in database'.format(user))
+                self.logger.info(u'Creating user {0} in database'.format(user))
 
                 record = {
                     '_id': user,

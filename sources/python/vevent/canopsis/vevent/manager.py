@@ -359,7 +359,7 @@ class VEventManager(MiddlewareRegistry):
             self[VEventManager.STORAGE].put_element(
                 _id=uid, element=document
             )
-            self.logger.info('document', document)
+            self.logger.info(u'document', document)
             document['_id'] = uid
 
             result.append(document)

@@ -328,7 +328,7 @@ class Factory(object):
         # Create the Topology
         root_id = f.get_root_id()
         self.create_topology(root_id, conn_list, node_list)
-        self.logger.info('Topology {} is created successfully.'.format(root_id))
+        self.logger.info(u'Topology {} is created successfully.'.format(root_id))
         print 'Topology {} is created successfully.'.format(root_id)
 
     def build_all(self):
@@ -346,10 +346,10 @@ class Factory(object):
         top = manager.get_graphs(ids=comp_ID)
         if top is not None:
             top.delete(manager)
-            self.logger.info('Component {} is deleted ...'.format(comp_ID))
+            self.logger.info(u'Component {} is deleted ...'.format(comp_ID))
             print 'Component {} is deleted'.format(comp_ID)
         else:
-            self.logger.info('Component {} does no exist in the Database ...'.format(comp_ID))
+            self.logger.info(u'Component {} does no exist in the Database ...'.format(comp_ID))
             print 'Component {} does no exist in the Database ...'.format(comp_ID)
 
 if __name__ == '__main__':

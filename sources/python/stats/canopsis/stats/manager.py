@@ -659,7 +659,7 @@ class Stats(MiddlewareRegistry):
             else:
                 query = query[:-1]
 
-        self.logger.debug('Processing query `{}`'.format(query))
+        self.logger.debug(u'Processing query `{}`'.format(query))
         result = self.influxdbstg.raw_query(query)
 
         # If something went wrong (bad metric_id, bad aggregation...),

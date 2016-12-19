@@ -101,7 +101,7 @@ class engine(Engine):
 
             # When selector computed, sla may be asked to be computed.
             if selector.dosla:
-                self.logger.debug('Start processing SLA')
+                self.logger.debug(u'Start processing SLA')
 
                 # Retrieve user ui settings
                 # This template should be always set
@@ -132,7 +132,7 @@ class engine(Engine):
                 )
 
         else:
-            self.logger.debug('Nothing to do')
+            self.logger.debug(u'Nothing to do')
 
         selector.save()
 
@@ -170,8 +170,8 @@ class engine(Engine):
         else:
             # Define or reset ack key for selector generated event
             selector_event['ack'] = {}
-            self.logger.debug('Event not acknowleged')
+            self.logger.debug(u'Event not acknowleged')
 
         publish(publisher=self.amqp, event=selector_event, rk=rk)
 
-        self.logger.debug('Event sent')
+        self.logger.debug(u'Event sent')
