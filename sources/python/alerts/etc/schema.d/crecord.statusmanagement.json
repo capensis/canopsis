@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "Bagot settings",
-		"keys":["bagot_freq", "bagot_time", "flapping_persistant_steps", "hard_limit"]
+		"keys":["bagot_freq", "bagot_time"]
 	},{
 		"title": "Stealthy settings",
 		"keys":["stealthy_time", "stealthy_show"]
