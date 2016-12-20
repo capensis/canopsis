@@ -35,6 +35,180 @@ class TestReader(BaseTest):
         self.reader[AlertsReader.ALARM_STORAGE] = \
             self.manager[Alerts.ALARM_STORAGE]
 
+        self.reader._alarms = {
+            'properties': {
+                'connector': {'stored_name': 'v.ctr'},
+                'component': {'stored_name': 'v.cpt'},
+                'entity_id': {'stored_name': 'd'}
+            }
+        }
+
+    def test_translate_key(self):
+        cases = [
+            {
+                'key': 'untranslated_key',
+                'tkey': 'untranslated_key'
+            },
+            {
+                'key': 'connector',
+                'tkey': 'v.ctr'
+            },
+            {
+                'key': 'entity_id',
+                'tkey': 'd'
+            }
+        ]
+
+        for case in cases:
+            tkey = self.reader.translate_key(case['key'])
+            self.assertEqual(tkey, case['tkey'])
+
+    def test_translate_filter(self):
+        cases = [
+            {
+                'filter': {},
+                'tfilter': {}
+            },
+            {
+                'filter': {'connector': 'c'},
+                'tfilter': {'v.ctr': 'c'}
+            },
+            {
+                'filter': {'$or': [{'connector': 'c1'}, {'component': 'c2'}]},
+                'tfilter': {'$or': [{'v.ctr': 'c1'}, {'v.cpt': 'c2'}]}
+            },
+            {
+                'filter': {
+                    '$or': [
+                        {'entity_id': {'$gte': 12}, 'untranslated': 'val'},
+                        {'connector': 'c1'},
+                        {'$or': [{'component': 'c2'}, {'untranslated': 'val'}]}
+                    ]
+                },
+                'tfilter': {
+                    '$or': [
+                        {'d': {'$gte': 12}, 'untranslated': 'val'},
+                        {'v.ctr': 'c1'},
+                        {'$or': [{'v.cpt': 'c2'}, {'untranslated': 'val'}]}
+                    ]
+                }
+            }
+        ]
+
+        for case in cases:
+            tfilter = self.reader.translate_filter(case['filter'])
+            self.assertEqual(tfilter, case['tfilter'])
+
+    def test_get_time_filter(self):
+        # opened=False, closed=False
+        self.assertIs(
+            self.reader.get_time_filter(
+                opened=False, closed=False, tstart=0, tstop=0),
+            None
+        )
+
+        # opened=True, closed=False
+        expected_opened = {'v.resolved': None, 't': {'$gte': 2}}
+        self.assertEqual(
+            self.reader.get_time_filter(
+                opened=True, closed=False, tstart=1, tstop=2),
+            expected_opened
+        )
+
+        # opened=False, closed=True
+        expected_closed = {
+            'v.resolved': {'$neq': None},
+            '$or': [
+                {'t': {'$gte': 1, '$lte': 2}},
+                {'v.resolved': {'$gte': 1, '$lte': 2}},
+                {'t': {'$lte': 1}, 'v.resolved': {'$gte': 2}}
+            ]
+        }
+        self.assertEqual(
+            self.reader.get_time_filter(
+                opened=False, closed=True, tstart=1, tstop=2),
+            expected_closed
+        )
+
+        # opened=True, closed=True
+        expected_both = {'$or': [expected_opened, expected_closed]}
+        self.assertEqual(
+            self.reader.get_time_filter(
+                opened=True, closed=True, tstart=1, tstop=2),
+            expected_both
+        )
+
+    def test_get_opened_time_filter(self):
+        cases = [
+            {
+                'tstop': 0,
+                'expected': {'v.resolved': None, 't': {'$gte': 0}}
+            },
+            {
+                'tstop': 42,
+                'expected': {'v.resolved': None, 't': {'$gte': 42}}
+            }
+        ]
+
+        for case in cases:
+            time_filter = self.reader.get_opened_time_filter(case['tstop'])
+            self.assertEqual(time_filter, case['expected'])
+
+    def test_get_closed_time_filter(self):
+        cases = [
+            {
+                'tstart': 0,
+                'tstop': 0,
+                'expected': {
+                    'v.resolved': {'$neq': None},
+                    '$or': [
+                        {'t': {'$gte': 0, '$lte': 0}},
+                        {'v.resolved': {'$gte': 0, '$lte': 0}},
+                        {'t': {'$lte': 0}, 'v.resolved': {'$gte': 0}}
+                    ]
+                }
+            },
+            {
+                'tstart': 1,
+                'tstop': 2,
+                'expected': {
+                    'v.resolved': {'$neq': None},
+                    '$or': [
+                        {'t': {'$gte': 1, '$lte': 2}},
+                        {'v.resolved': {'$gte': 1, '$lte': 2}},
+                        {'t': {'$lte': 1}, 'v.resolved': {'$gte': 2}}
+                    ]
+                }
+            }
+        ]
+
+        for case in cases:
+            time_filter = self.reader.get_closed_time_filter(
+                case['tstart'],
+                case['tstop']
+            )
+            self.assertEqual(time_filter, case['expected'])
+
+    def test_translate_sort(self):
+        cases = [
+            {
+                'sort': {},
+                'tsort': {}
+            },
+            {
+                'sort': {'untranslated': 1},
+                'tsort': {'untranslated': 1}
+            },
+            {
+                'sort': {'component': -1},
+                'tsort': {'v.cpt': -1}
+            }
+        ]
+
+        for case in cases:
+            tsort = self.reader.translate_sort(case['sort'])
+            self.assertEqual(tsort, case['tsort'])
+
     def test_count_alarms_by_period(self):
         day = 24 * 3600
 

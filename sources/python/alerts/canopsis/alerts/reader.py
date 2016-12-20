@@ -18,6 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from sys import prefix
+from os.path import join
+from json import load
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
@@ -44,12 +48,14 @@ class AlertsReader(MiddlewareRegistry):
 
     CONFIG_STORAGE = 'config_storage'
     ALARM_STORAGE = 'alarm_storage'
+    ALARM_FIELDS_STORAGE = 'alarm_fields_storage'
     CONTEXT_MANAGER = 'context'
 
     def __init__(
             self,
             extra_fields=None,
             alarm_storage=None,
+            alarm_fields_storage=None,
             context=None,
             *args, **kwargs
     ):
@@ -61,20 +67,86 @@ class AlertsReader(MiddlewareRegistry):
         if alarm_storage is not None:
             self[AlertsReader.ALARM_STORAGE] = alarm_storage
 
+        if alarm_fields_storage is not None:
+            self[AlertsReader.ALARM_FIELDS_STORAGE] = alarm_fields_storage
+
         if context is not None:
             self[AlertsReader.CONTEXT_MANAGER] = context
+
+    @property
+    def alarm_fields(self):
+        if not hasattr(self, '_alarms'):
+            self.load_config()
+
+        return self._alarms
+
+    def load_config(self):
+        with open(join(prefix, 'etc/schema.d/alarm_fields.json')) as fh:
+            self._alarms = load(fh)
+
+    def translate_key(self, key):
+        if key in self.alarm_fields['properties']:
+            return self.alarm_fields['properties'][key]['stored_name']
+
+        return key
+
+    def translate_filter(self, filter_):
+        if type(filter_) is list:
+            for i, f in enumerate(filter_):
+                filter_[i] = self.translate_filter(f)
+
+        elif type(filter_) is dict:
+            for key, value in filter_.items():
+                new_value = self.translate_filter(value)
+                filter_[key] = new_value
+
+                new_key = self.translate_key(key)
+                filter_[new_key] = filter_.pop(key)
+
+        return filter_
+
+    def translate_sort(self, sort):
+        for key, value in sort.items():
+            new_key = self.translate_key(key)
+            sort[new_key] = sort.pop(key)
+
+        return sort
 
     def interpret_search(self, search):
         return {}, 'current'
 
-    def get_opened_time_filter(tstart, tstop):
-        return {'tstart': tstart, 'tstop': tstop, 'opened': True}
+    def get_time_filter(self, opened, closed, tstart, tstop):
+        if opened and closed:
+            return {
+                '$or': [
+                    self.get_opened_time_filter(tstop),
+                    self.get_closed_time_filter(tstart, tstop)
+                ]
+            }
 
-    def get_closed_time_filter(tstart, tstop):
-        return {'tstart': tstart, 'tstop': tstop, 'closed': True}
+        if opened and not closed:
+            return self.get_opened_time_filter(tstop)
 
-    def translate_filter(filter_):
-        return filter_
+        if not opened and closed:
+            return self.get_closed_time_filter(tstart, tstop)
+
+        return None
+
+    def get_opened_time_filter(self, tstop):
+        return {
+            'v.resolved': None,
+            't': {'$gte': tstop}
+        }
+
+    def get_closed_time_filter(self, tstart, tstop):
+        return {
+            'v.resolved': {'$neq': None},
+            '$or': [
+                {'t': {'$gte': tstart, '$lte': tstop}},
+                {'v.resolved': {'$gte': tstart, '$lte': tstop}},
+                {'t': {'$lte': tstart}, 'v.resolved': {'$gte': tstop}}
+            ]
+        }
 
     def get(
             self,
@@ -101,7 +173,7 @@ class AlertsReader(MiddlewareRegistry):
         :param list consolidations: List of extra columns to compute for each
           returned result.
 
-        :param dict filter_: Mongo filter. Keys are UI column names.
+        :param dict filter_: Mongo filter.
         :param str search: Search expression in custom DSL.
 
         :param dict sort: Dict with only one key. Key is the name of the column
@@ -115,41 +187,27 @@ class AlertsReader(MiddlewareRegistry):
         """
 
         search_filter, search_context = self.interpret_search(search)
+        search_filter = self.translate_filter(search_filter)
 
         if search_context == 'all':
             # Use only this filter to search
             alarms = 'a'
 
         else:
-            # Nothing to return
-            if not opened and not closed:
+            time_filter = self.get_time_filter(
+                opened=opened, closed=closed,
+                tstart=tstart, tstop=tstop
+            )
+
+            if time_filter is None:
                 return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
-            time_filter = {}
-
-            if opened:
-                time_filter = self.get_opened_time_filter(tstart, tstop)
-
-            if closed:
-                if not time_filter:
-                    time_filter = self.get_closed_time_filter(tstart, tstop)
-
-                else:
-                    time_filter = {
-                        '$or': [
-                            time_filter,
-                            self.get_closed_time_filter(tstart, tstop)
-                        ]
-                    }
-
-            filter_ = self.translate_filter(filter_)
-            if time_filter:
-                filter_ = {
-                    '$and': [
-                        time_filter,
-                        filter_
-                    ]
-                }
+            filter_ = {
+                '$and': [
+                    time_filter,
+                    self.translate_filter(filter_)
+                ]
+            }
 
             # Use filter to get results
             alarms = 'b'
