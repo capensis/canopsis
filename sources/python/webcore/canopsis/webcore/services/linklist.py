@@ -13,7 +13,7 @@ def exports(ws):
     @route(ws.application.delete, payload=['ids'])
     def linklist(ids):
         link_list_manager.remove(ids)
-        ws.logger.info('Delete : {}'.format(ids))
+        ws.logger.info(u'Delete : {}'.format(ids))
         return True
 
     @route(

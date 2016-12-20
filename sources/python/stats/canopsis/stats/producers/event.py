@@ -35,23 +35,22 @@ class EventMetricProducer(MetricProducer):
     Metric producer for event statistics.
     """
 
-    def alarm(self, event):
-        return self._counter('alarm', event)
+    def alarm_opened(self, extra_fields={}):
+        self._count(
+            'alarm_opened_count',
+            extra_fields=extra_fields
+        )
 
-    def alarm_ack(self, event):
-        return self._counter('alarm_ack', event)
+    def alarm_ack_solved_delay(self, delay, extra_fields={}):
+        self._delay(
+            'alarm_ack_solved_delay',
+            delay,
+            extra_fields=extra_fields
+        )
 
-    def alarm_ack_solved(self, event):
-        return self._counter('alarm_ack_solved', event)
-
-    def alarm_solved(self, event):
-        return self._counter('alarm_solved', event)
-
-    def alarm_ack_delay(self, delay):
-        return self._delay('alarm_ack_delay', delay)
-
-    def alarm_ack_solved_delay(self, delay):
-        return self._delay('alarm_ack_solved_delay', delay)
-
-    def alarm_solved_delay(self, delay):
-        return self._delay('alarm_solved_delay', delay)
+    def alarm_solved_delay(self, delay, extra_fields={}):
+        self._delay(
+            'alarm_solved_delay',
+            delay,
+            extra_fields=extra_fields
+        )

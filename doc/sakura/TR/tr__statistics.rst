@@ -4,7 +4,7 @@
 Canopsis Statistics Generator
 =============================
 
-This document specifies how the Statistics Generator must be implemented.
+This document specifies how the Statistics Generator is implemented.
 
 .. contents::
    :depth: 3
@@ -13,8 +13,6 @@ References
 ==========
 
  - :ref:`FR::Statistics <FR__Statistics>`
- - :ref:`FR::Configurable <FR__Configurable>`
- - :ref:`FR::Event <FR__Event>`
  - :ref:`FR::Engine <FR__Engine>`
  - :ref:`FR::Webservice <FR__Webservice>`
 
@@ -24,96 +22,55 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "Jean-Baptiste Braun", "2016/22/11", "0.2", "New stats engine, new metrics", ""
    "David Delassus", "2015/10/15", "0.1", "Document creation", ""
 
 Contents
 ========
 
-.. _TR__Statistics__MetricProducer:
+Stats engine
+------------
 
-Metric Producer
----------------
-
-A :ref:`configurable registry <FR__Configurable__Registry>` will provide:
-
- - a :ref:`filter configuration <FR__Statistics__Configuration>` storage
- - a method returning ``True`` or ``False`` wether an :ref:`event <FR__Event>` match the filter or not
- - a method to create an :ref:`aggregated serie <FR__Serie>` from a :ref:`basic metric <FR__Statistics__Desc>`
-
-.. _TR__Statistics__UserMetricProducer:
-
-User Metric Producer
---------------------
-
-A subclass of the :ref:`MetricProducer <TR__Statistics__MetricProducer>` configurable,
-providing:
-
- - a method per :ref:`resource <FR__Statistics__User>`:
-    - parameters:
-        - the username as a parameter
-        - the events involved
-    - returns: one or more :ref:`metrics <FR__Event__Perf>` to publish
-
-.. _TR__Statistics__EventMetricProducer:
-
-Event Metric Producer
----------------------
-
-A subclass of the :ref:`MetricProducer <TR__Statistics__MetricProducer>` configurable,
-providing:
-
- - a method per :ref:`resource <FR__Statistics__Event>`:
-    - parameters:
-        - the events involved
-    - returns: one or more :ref:`metrics <FR__Event__Perf>` to publish
+This engine does detect, process and tag 3 different objects :
+  - expired sessions (via session manager)
+  - opened alarms
+  - closed alarms
 
 .. _TR__Statistics__Engine:
 
-Statistics engine
------------------
+Expired sessions
+~~~~~~~~~~~~~~~~
 
-An :ref:`engine <FR__Engine>` will listen for the following events:
+Expired sessions are sessions for which now() - ``last_check`` is greater than
+``alive_session_duration`` (property in ``PREFIX/etc/session/session.conf``).
 
- - :ref:`check events <FR__Event__Check>`
- - :ref:`ack events <FR__Event__Check>`
+A session is in this state if ``/keepalive`` route has not been recently
+called.
 
-This engine will be composed of the :ref:`UserMetricProducer <TR__Statistics__UserMetricProducer>` and the :ref:`EventMetricProducer <TR__Statistics__EventMetricProducer>`, which will be used to:
+Those sessions are closed by the engine by setting ``active`` to ``False`` and
+``session_stop`` to now().
 
- - periodically fetch filters from storage
- - cache check events with an OK state, and ack events, to know the involved events when needed
- - if the event match one filter, call methods from both :ref:`MetricProducer <TR__Statistics__MetricProducer>`
- - publish all the returned events
+.. _TR__Statistics__Sessions:
 
-*NB: after benchmarking, we may have to dispatch those calls in specific engines.*
+Opened and closed alarms
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. _TR__Statistics__Webservice:
+On each beat, the engine retrieves alarms that are not tagged with
+``stats-opened`` on one hand and alarms not tagged with ``stats-resolved``
+while being resolved on the other hand.
 
-Statistics webservice
----------------------
+The first category allows to produce ``alarm_opened_count`` metric and the
+second one ``alarm_ack_delay``, ``alarm_ack_solved_delay`` and
+``alarm_solved_delay`` metrics. The engine tags corresponding alarms
+afterwards.
 
-A :ref:`webservice <FR__Webservice>` will provide two routes:
+.. info:: Metrics that are computed when an alarm is closed are stored with
+  now() as timestamp. It implies if an alarm is closed 3 days after its
+  acknowledgement, the ack will be recorded 3 days a posteriori.
 
- - one to call when a Canopsis UI is opened, which will increment a counter for the user
- - one to call when a Canopsis UI is closed, which will decrement a counter for the user
+.. info:: The four ``alarm_*`` metrics have an attached value. This value is
+  worth a duration, except for alarm_opened_count, for which a duration is not
+  relevent (only timestamp matters). For homogeneity purpose, a value is
+  stored, but it's always 1.
 
-When the counter is incremented, and was ``0``, the current timestamp will be registered.
-When the counter fall back to ``0``, the difference between the registered timestamp and the current timestamp will be published as a metric.
-
-Unit tests
-==========
-
-.. warning::
-
-   **TODO:** unit test of each MetricProducer methods
-
-.. warning::
-
-   **TODO:** unit test of each type of UserMetricProducer method
-
-.. warning::
-
-   **TODO:** unit test of each type of EventMetricProducer method
-
-.. warning::
-
-   **TODO:** unit test for each route of the webservice
+.. _TR__Statistics__Alarms:

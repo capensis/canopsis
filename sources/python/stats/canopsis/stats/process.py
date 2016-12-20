@@ -18,9 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from copy import copy
+
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
-from canopsis.engines.core import publish
 
 from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.stats.producers.event import EventMetricProducer
@@ -29,6 +30,97 @@ from canopsis.session.manager import Session
 
 from canopsis.alerts.status import get_previous_step
 from canopsis.alerts.manager import Alerts
+
+
+def session_stats(usermgr, sessionmgr, logger):
+    for expired in sessionmgr.sessions_close():
+        duration = expired['session_stop'] - expired['session_start']
+
+        usermgr.session_duration(
+            user=expired['_id'],
+            duration=duration
+        )
+
+
+def opened_alarm_stats(eventmgr, alertsmgr, storage, logger):
+    for resolved in [False, True]:
+        alarms = alertsmgr.get_alarms(
+            resolved=resolved,
+            exclude_tags='stats-opened'
+        )
+
+        for entity_id in alarms:
+            for docalarm in alarms[entity_id]:
+
+                docalarm[storage.DATA_ID] = entity_id
+
+                alarm = docalarm[storage.VALUE]
+                extra = copy(alarm['extra'])
+
+                eventmgr.alarm_opened(
+                    extra_fields=extra
+                )
+
+                alertsmgr.update_current_alarm(
+                    docalarm,
+                    alarm,
+                    tags='stats-opened'
+                )
+
+
+def resolved_alarm_stats(eventmgr, usermgr, alertsmgr, storage, logger):
+    resolved_alarms = alertsmgr.get_alarms(
+        resolved=True,
+        exclude_tags='stats-resolved'
+    )
+
+    for entity_id in resolved_alarms:
+        for docalarm in resolved_alarms[entity_id]:
+            docalarm[storage.DATA_ID] = entity_id
+            alarm = docalarm[storage.VALUE]
+            alarm_ts = docalarm[storage.TIMESTAMP]
+
+            extra = copy(alarm['extra'])
+
+            solved_delay = alarm['resolved'] - alarm_ts
+            eventmgr.alarm_solved_delay(
+                delay=solved_delay,
+                extra_fields=extra
+            )
+
+            if alarm['ack'] is not None:
+                ack_ts = alarm['ack']['t']
+
+                eventmgr.alarm_ack_solved_delay(
+                    delay=alarm['resolved'] - ack_ts,
+                    extra_fields=extra
+                )
+
+            alarm_events = alertsmgr.get_events(docalarm)
+            for event in alarm_events:
+                if event['event_type'] == 'ack':
+                    ack_ts = event['timestamp']
+
+                    ackremove = get_previous_step(
+                        alarm,
+                        'ackremove',
+                        ts=ack_ts
+                    )
+
+                    ref_ts = alarm_ts if ackremove is None else ackremove['t']
+                    ack_delay = ack_ts - ref_ts
+
+                    usermgr.alarm_ack_delay(
+                        user=event['author'],
+                        delay=ack_delay,
+                        extra_fields=extra
+                    )
+
+            alertsmgr.update_current_alarm(
+                docalarm,
+                alarm,
+                tags='stats-resolved'
+            )
 
 
 @register_task
@@ -54,82 +146,22 @@ def beat_processing(
         alertsmgr = singleton_per_scope(Alerts)
 
     storage = alertsmgr[alertsmgr.ALARM_STORAGE]
-    events = sessionmgr.duration()
+
+    session_stats(usermgr, sessionmgr, logger)
 
     with engine.Lock(engine, 'alarm_stats_computation') as l:
         if l.own():
-            resolved_alarms = alertsmgr.get_alarms(
-                resolved=True,
-                exclude_tags='stats'
+            opened_alarm_stats(
+                eventmgr,
+                alertsmgr,
+                storage,
+                logger
             )
 
-            for data_id in resolved_alarms:
-                for docalarm in resolved_alarms[data_id]:
-                    docalarm[storage.DATA_ID] = data_id
-                    alarm = docalarm[storage.VALUE]
-                    alarm_ts = docalarm[storage.TIMESTAMP]
-                    alarm_events = alertsmgr.get_events(docalarm)
-
-                    solved_delay = alarm['resolved'] - alarm_ts
-                    events.append(eventmgr.alarm_solved_delay(solved_delay))
-
-                    if alarm['ack'] is not None:
-                        ack_ts = alarm['ack']['t']
-                        ackremove = get_previous_step(
-                            alarm,
-                            'ackremove',
-                            ts=ack_ts
-                        )
-                        ts = alarm_ts if ackremove is None else ackremove['t']
-                        ack_delay = ack_ts - ts
-
-                        events.append(eventmgr.alarm_ack_delay(ack_delay))
-                        events.append(
-                            eventmgr.alarm_ack_solved_delay(
-                                solved_delay - ack_delay
-                            )
-                        )
-
-                        events.append(usermgr.alarm_ack_delay(
-                            alarm['ack']['a'],
-                            ack_delay
-                        ))
-
-                    if len(alarm_events) > 0:
-                        events.append(eventmgr.alarm(alarm_events[0]))
-
-                    for event in alarm_events:
-                        if event['event_type'] == 'ack':
-                            events.append(eventmgr.alarm_ack(event))
-                            events.append(
-                                usermgr.alarm_ack(event, event['author'])
-                            )
-
-                        elif event['timestamp'] == alarm['resolved']:
-                            events.append(eventmgr.alarm_solved(event))
-
-                            if alarm['ack'] is not None:
-                                events.append(eventmgr.alarm_ack_solved(event))
-
-                                events.append(
-                                    usermgr.alarm_ack_solved(
-                                        alarm['ack']['a'],
-                                        alarm['resolved'] - alarm['ack']['t']
-                                    )
-                                )
-
-                                events.append(
-                                    usermgr.alarm_solved(
-                                        alarm['ack']['a'],
-                                        alarm['resolved'] - alarm_ts
-                                    )
-                                )
-
-                    alertsmgr.update_current_alarm(
-                        docalarm,
-                        alarm,
-                        tags='stats'
-                    )
-
-    for event in events:
-        publish(publisher=engine.amqp, event=event, logger=logger)
+            resolved_alarm_stats(
+                eventmgr,
+                usermgr,
+                alertsmgr,
+                storage,
+                logger
+            )

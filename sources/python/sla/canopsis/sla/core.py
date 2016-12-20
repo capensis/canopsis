@@ -90,7 +90,7 @@ class Sla(object):
         timewindow = timewindow_dict['seconds']
 
         timewindow_date_start = now - timewindow
-        self.logger.debug('Timewindow is {}, timestamp is {}'.format(
+        self.logger.debug(u'Timewindow is {}, timestamp is {}'.format(
             timewindow,
             timewindow_date_start
         ))
@@ -103,7 +103,7 @@ class Sla(object):
             now
         )
 
-        self.logger.debug('Sla length information is {}'.format(
+        self.logger.debug(u'Sla length information is {}'.format(
             len(sla_information)
         ))
 
@@ -112,10 +112,10 @@ class Sla(object):
             sla_information,
             now
         )
-        self.logger.debug('Sla measures is {}'.format(sla_measures))
-        self.logger.debug('Sla times is {}'.format(sla_times))
+        self.logger.debug(u'Sla measures is {}'.format(sla_measures))
+        self.logger.debug(u'Sla times is {}'.format(sla_times))
 
-        self.logger.debug('Alert level is {}'.format(alert_level))
+        self.logger.debug(u'Alert level is {}'.format(alert_level))
         # Compute alerts precent depending on user algorithm
         alerts_percent, alerts_duration = \
             self.get_alert_percent(
@@ -124,7 +124,7 @@ class Sla(object):
                 alert_level
             )
 
-        self.logger.debug('Alert percent : {} , Alert duration : {}'.format(
+        self.logger.debug(u'Alert percent : {} , Alert duration : {}'.format(
             alerts_percent,
             alerts_duration
         ))
@@ -147,9 +147,9 @@ class Sla(object):
             sla_critical
         )
 
-        self.logger.debug('Sla computed state is {}'.format(state))
+        self.logger.debug(u'Sla computed state is {}'.format(state))
 
-        self.logger.debug('thresholds : warning {}, critical {}'.format(
+        self.logger.debug(u'thresholds : warning {}, critical {}'.format(
             sla_warning,
             sla_critical
         ))
@@ -196,7 +196,7 @@ class Sla(object):
 
         availability = 1.0 - alerts_percent
 
-        self.logger.debug('availability {} warning {}, critical {}'.format(
+        self.logger.debug(u'availability {} warning {}, critical {}'.format(
             availability,
             warning,
             critical
@@ -238,7 +238,7 @@ class Sla(object):
             'timestamp': {'$lt': timewindow_date_start}
         }, projection, sort=[('timestamp', -1)])
 
-        self.logger.debug('previous event log {}'.format(previous_event_log))
+        self.logger.debug(u'previous event log {}'.format(previous_event_log))
 
         # Default value is set as no previous information
         if previous_event_log is None:
@@ -304,7 +304,7 @@ class Sla(object):
 
         for state in sla_times:
             sla_time = float(sla_times[state])
-            self.logger.debug('state {} time {} total {} now {}, start {}'.format(
+            self.logger.debug(u'state {} time {} total {} now {}, start {}'.format(
                 state, sla_time, total_time, now , sla_information[0]['state']
             ))
             percent = sla_time / total_time
@@ -360,7 +360,7 @@ class Sla(object):
 
             # Embed sla measures first date in the output
             output = output.replace('[TSTART]', TSTART)
-            self.logger.info('SLA computed output is : {}'.format(output))
+            self.logger.info(u'SLA computed output is : {}'.format(output))
             return output
         else:
             self.logger.warning('Sla template is not a string, nothing done.')
@@ -410,7 +410,7 @@ class Sla(object):
         period_options = {
             timewindow_dict['durationType']: timewindow_dict['value']
         }
-        self.logger.debug('period options {}, now {}'.format(
+        self.logger.debug(u'period options {}, now {}'.format(
             period_options,
             now
         ))
@@ -419,7 +419,7 @@ class Sla(object):
 
         periodic_timestamp = period.round_timestamp(now, next_period=True)
 
-        self.logger.debug('periodic timestamp {}'.format(periodic_timestamp))
+        self.logger.debug(u'periodic timestamp {}'.format(periodic_timestamp))
 
         event = forger(
             connector='sla',
@@ -435,11 +435,11 @@ class Sla(object):
             timestamp=periodic_timestamp
         )
 
-        self.logger.info('publishing sla {}, states {}'.format(
+        self.logger.info(u'publishing sla {}, states {}'.format(
             display_name,
             sla_measures
         ))
 
-        self.logger.debug('event : {}'.format(pp.pformat(event)))
+        self.logger.debug(u'event : {}'.format(pp.pformat(event)))
 
         return event

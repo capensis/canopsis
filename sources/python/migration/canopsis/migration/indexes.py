@@ -114,7 +114,7 @@ class IndexesModule(MigrationModule):
 
     def init(self):
         for collection in IndexesModule.INDEXES:
-            self.logger.info('Indexing collection: {0}'.format(collection))
+            self.logger.info(u'Indexing collection: {0}'.format(collection))
             col = self.storage.get_backend(collection)
             col.drop_indexes()
 

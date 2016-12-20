@@ -103,7 +103,7 @@ def dynmodloads(_path='.', subdef=False, pattern='.*', logger=None):
             module = load_source(name, joinpath(_path, mfile))
 
         except ImportError as err:
-            logger.error('Impossible to import {0}: {1}'.format(name, err))
+            logger.error(u'Impossible to import {0}: {1}'.format(name, err))
 
         else:
             loaded[name] = module
@@ -120,7 +120,7 @@ def dynmodloads(_path='.', subdef=False, pattern='.*', logger=None):
 
                 for mydef in alldefs:
                     if mydef not in builtindefs and regsearch(pattern, mydef):
-                        logger.debug('from {0} import {1}'.format(
+                        logger.debug(u'from {0} import {1}'.format(
                             name, mydef
                         ))
 

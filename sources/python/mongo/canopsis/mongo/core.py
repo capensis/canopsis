@@ -116,7 +116,7 @@ class MongoDataBase(DataBase):
                 }
             )
 
-        self.logger.debug('Trying to connect to {0}'.format(connection_args))
+        self.logger.debug(u'Trying to connect to {0}'.format(connection_args))
 
         try:
             result = MongoClient(**connection_args)
@@ -585,14 +585,14 @@ class MongoStorage(MongoDataBase, Storage):
             error = result_query.get("writeConcernError", None)
 
             if error is not None:
-                self.logger.error(' error in writing document: {0}'.format(
+                self.logger.error(u' error in writing document: {0}'.format(
                     error))
                 result = None
 
             error = result_query.get("writeError")
 
             if error is not None:
-                self.logger.error(' error in writing document: {0}'.format(
+                self.logger.error(u' error in writing document: {0}'.format(
                     error))
                 result = None
 
@@ -623,7 +623,7 @@ class MongoStorage(MongoDataBase, Storage):
                 .format(command, kwargs, backend))
 
         except OperationFailure as of:
-            self.logger.error('{0} during running command {1}({2}) of in {3}'
+            self.logger.error(u'{0} during running command {1}({2}) of in {3}'
                 .format(of, command, kwargs, backend))
 
         return result

@@ -97,7 +97,7 @@ class InfluxDBDataBase(DataBase):
         if self.proxies:
             connection_args['proxies'] = self.proxies
 
-        self.logger.debug('Trying to connect to {0}'.format(connection_args))
+        self.logger.debug(u'Trying to connect to {0}'.format(connection_args))
 
         try:
             result = conncls(**connection_args)
@@ -179,6 +179,9 @@ class InfluxDBCursor(Cursor):
 
 class InfluxDBStorage(InfluxDBDataBase, Storage):
     """Influxdb Storage."""
+
+    def raw_query(self, query):
+        return self._conn.query(query)
 
     def get_elements(
             self,
@@ -266,12 +269,12 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
 
 
 def paramstoquery(
-        ids=None, projection=None, skip=None, sort=None, limit=None, query=None,
-        tags=None
+        ids=None, projection=None, skip=None, sort=None, limit=None,
+        query=None, tags=None
 ):
     """transform storage parameters to a influxdb query."""
 
-    #construct from
+    # construct from
     if ids is None:
         _from = 'FROM *'
 
@@ -325,13 +328,12 @@ def paramstoquery(
     _limit = 'LIMIT {0}'.format(limit) if limit else ''
 
     # construct where
-    _query = query
     if query is None:
         if tags is not None:
-            _query = tags
+            query = tags
 
     elif tags is not None:
-        _query.update(tags)
+        query.update(tags)
 
     if query is None:
         _where = ''
