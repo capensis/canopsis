@@ -46,8 +46,8 @@
     "opened": {
       "stored_name": "t"
     },
-    "solved": {
-      "stored_name": "v.solved"
+    "resolved": {
+      "stored_name": "v.resolved"
     },
     "domain": {
       "stored_name": "v.extra.domain"

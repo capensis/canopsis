@@ -36,7 +36,7 @@ def exports(ws):
             'tstart',
             'tstop',
             'opened',
-            'closed',
+            'resolved',
             'filter',
             'search',
             'sort',
@@ -48,7 +48,7 @@ def exports(ws):
             tstart,
             tstop,
             opened=True,
-            closed=False,
+            resolved=False,
             consolidations=[],
             filter={},
             search='',
@@ -63,7 +63,7 @@ def exports(ws):
         :param int tstop: End timestamp of requested period
 
         :param bool opened: If True, consider alarms that are currently opened
-        :param bool closed: If False, consider alarms that have been closed
+        :param bool resolved: If False, consider alarms that have been resolved
 
         :param list consolidations: List of extra columns to compute for each
           returned result.
@@ -85,7 +85,7 @@ def exports(ws):
             tstart=tstart,
             tstop=tstop,
             opened=opened,
-            closed=closed,
+            resolved=resolved,
             consolidations=[],
             filter_=filter,
             search=search,

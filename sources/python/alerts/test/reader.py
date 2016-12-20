@@ -100,23 +100,23 @@ class TestReader(BaseTest):
             self.assertEqual(tfilter, case['tfilter'])
 
     def test_get_time_filter(self):
-        # opened=False, closed=False
+        # opened=False, resolved=False
         self.assertIs(
             self.reader.get_time_filter(
-                opened=False, closed=False, tstart=0, tstop=0),
+                opened=False, resolved=False, tstart=0, tstop=0),
             None
         )
 
-        # opened=True, closed=False
+        # opened=True, resolved=False
         expected_opened = {'v.resolved': None, 't': {'$gte': 2}}
         self.assertEqual(
             self.reader.get_time_filter(
-                opened=True, closed=False, tstart=1, tstop=2),
+                opened=True, resolved=False, tstart=1, tstop=2),
             expected_opened
         )
 
-        # opened=False, closed=True
-        expected_closed = {
+        # opened=False, resolved=True
+        expected_resolved = {
             'v.resolved': {'$neq': None},
             '$or': [
                 {'t': {'$gte': 1, '$lte': 2}},
@@ -126,15 +126,15 @@ class TestReader(BaseTest):
         }
         self.assertEqual(
             self.reader.get_time_filter(
-                opened=False, closed=True, tstart=1, tstop=2),
-            expected_closed
+                opened=False, resolved=True, tstart=1, tstop=2),
+            expected_resolved
         )
 
-        # opened=True, closed=True
-        expected_both = {'$or': [expected_opened, expected_closed]}
+        # opened=True, resolved=True
+        expected_both = {'$or': [expected_opened, expected_resolved]}
         self.assertEqual(
             self.reader.get_time_filter(
-                opened=True, closed=True, tstart=1, tstop=2),
+                opened=True, resolved=True, tstart=1, tstop=2),
             expected_both
         )
 
@@ -154,7 +154,7 @@ class TestReader(BaseTest):
             time_filter = self.reader.get_opened_time_filter(case['tstop'])
             self.assertEqual(time_filter, case['expected'])
 
-    def test_get_closed_time_filter(self):
+    def test_get_resolved_time_filter(self):
         cases = [
             {
                 'tstart': 0,
@@ -183,7 +183,7 @@ class TestReader(BaseTest):
         ]
 
         for case in cases:
-            time_filter = self.reader.get_closed_time_filter(
+            time_filter = self.reader.get_resolved_time_filter(
                 case['tstart'],
                 case['tstop']
             )

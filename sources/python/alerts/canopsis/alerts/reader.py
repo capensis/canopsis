@@ -115,20 +115,20 @@ class AlertsReader(MiddlewareRegistry):
     def interpret_search(self, search):
         return {}, 'current'
 
-    def get_time_filter(self, opened, closed, tstart, tstop):
-        if opened and closed:
+    def get_time_filter(self, opened, resolved, tstart, tstop):
+        if opened and resolved:
             return {
                 '$or': [
                     self.get_opened_time_filter(tstop),
-                    self.get_closed_time_filter(tstart, tstop)
+                    self.get_resolved_time_filter(tstart, tstop)
                 ]
             }
 
-        if opened and not closed:
+        if opened and not resolved:
             return self.get_opened_time_filter(tstop)
 
-        if not opened and closed:
-            return self.get_closed_time_filter(tstart, tstop)
+        if not opened and resolved:
+            return self.get_resolved_time_filter(tstart, tstop)
 
         return None
 
@@ -138,7 +138,7 @@ class AlertsReader(MiddlewareRegistry):
             't': {'$gte': tstop}
         }
 
-    def get_closed_time_filter(self, tstart, tstop):
+    def get_resolved_time_filter(self, tstart, tstop):
         return {
             'v.resolved': {'$neq': None},
             '$or': [
@@ -153,7 +153,7 @@ class AlertsReader(MiddlewareRegistry):
             tstart,
             tstop,
             opened=True,
-            closed=False,
+            resolved=False,
             consolidations=[],
             filter_={},
             search='',
@@ -168,7 +168,7 @@ class AlertsReader(MiddlewareRegistry):
         :param int tstop: End timestamp of requested period
 
         :param bool opened: If True, consider alarms that are currently opened
-        :param bool closed: If False, consider alarms that have been closed
+        :param bool resolved: If False, consider alarms that have been resolved
 
         :param list consolidations: List of extra columns to compute for each
           returned result.
@@ -195,7 +195,7 @@ class AlertsReader(MiddlewareRegistry):
 
         else:
             time_filter = self.get_time_filter(
-                opened=opened, closed=closed,
+                opened=opened, resolved=resolved,
                 tstart=tstart, tstop=tstop
             )
 
