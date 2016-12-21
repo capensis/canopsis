@@ -24,6 +24,23 @@ from grako.model import NodeWalker
 
 
 class Walker(NodeWalker):
+    compop_table = {
+        '<=': '$lte',
+        '<': '$lt',
+        '=': '$eq',
+        '!=': '$neq',
+        '>=': '$gte',
+        '>': '$gt',
+        'IN': '$in',
+        'NIN': '$nin',
+        'LIKE': '$regex'
+    }
+
+    condop_table = {
+        'AND': '$and',
+        'OR': '$or'
+    }
+
     def walk_forward_value(self, node):
         return self.walk(node.value)
 
@@ -54,7 +71,10 @@ class Walker(NodeWalker):
         intpart = self.walk(node.intpart)
         floatpart = self.walk(node.floatpart)
 
-        floating = sign * (intpart + 0.1 * floatpart)
+        floatpart_len = len(str(floatpart))
+        floatpart *= pow(10, -floatpart_len)
+
+        floating = sign * (intpart + floatpart)
         return floating
 
     def walk_true(self, node):
@@ -66,17 +86,43 @@ class Walker(NodeWalker):
     def walk_none(self, node):
         return None
 
-    def walk_condop(self, node):
+    def walk_key(self, node):
         return node.value
+
+    def walk_compop(self, node):
+        return self.compop_table[node.value]
+
+    def walk_comparison(self, node):
+        left = self.walk(node.left)
+        op = self.walk(node.compop)
+        right = self.walk(node.right)
+
+        if op == '$eq':
+            return {left: right}
+
+        return {left: {op: right}}
+
+    def walk_condop(self, node):
+        return self.condop_table[node.value]
 
     def walk_condition(self, node):
         left = self.walk(node.left)
+
+        if node.condop is None:
+            return left
+
         condop = self.walk(node.condop)
         right = self.walk(node.right)
 
-        ret = 'left={} op={} right={}'.format(left, condop, right)
+        return {condop: [left, right]}
 
-        return ret
+    def walk_search(self, node):
+        condition = self.walk(node.condition)
+
+        if node.scope is None:
+            return ('this', condition)
+
+        return ('all', condition)
 
     def walk_AST(self, node):
-        return self.walk(node.request)
+        return self.walk(node.search)

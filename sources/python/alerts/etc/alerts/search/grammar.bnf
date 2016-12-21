@@ -12,9 +12,9 @@ true::true = "TRUE" ;
 false::false = "FALSE" ;
 digits::digits = value:/[0-9]+/ ;
 characters::characters = value:/\w*/ ;
+sign::sign = value:( "+" | "-" ) ;
 
 string::forward_value = '"' value:characters '"' | "'" value:characters "'" ;
-sign::sign = value:( "+" | "-" ) ;
 integer::integer = [ sign:sign ] value:digits ;
 floating::floating = [ sign:sign ] intpart:digits "." floatpart:digits ;
 boolean::forward_value = value:( true | false ) ;
@@ -23,13 +23,20 @@ none::none = "NULL";
 
 (* GENERIC *)
 @name
-key::forward_value = value:( /[_a-zA-Z][_a-zA-Z0-9]*(\.[_a-zA-Z][_a-zA-Z0-9]*)*/ ) ;
+key::key = value:( /[_a-zA-Z][_a-zA-Z0-9]*(\.[_a-zA-Z][_a-zA-Z0-9]*)*/ ) ;
 value::forward_value = value:( string | floating | integer | boolean | none ) ;
 (*/GENERIC *)
 
 (* CONDITION *)
-condop::condop = value:( "AND" | "OR" | "<=" | "<" | "=" | "!=" | ">=" | ">" | "IN" | "NIN" | "LIKE" ) ;
-condition::condition = "(" left:key condop:condop right:value ")" ;
+compop::compop = value:( "<=" | "<" | "=" | "!=" | ">=" | ">" | "IN" | "NIN" | "LIKE" ) ;
+comparison::comparison = left:key compop:compop right:value ;
+
+condop::condop = value:( "AND" | "OR" ) ;
+condition::condition = left:comparison [ condop:condop right:condition ] ;
 (*/CONDITION *)
 
-start = condition:condition ;
+(* SEARCH *)
+search::search = [ scope:( "ALL" ) ] condition:condition $ ;
+(*/SEARCH *)
+
+start = search:search ;
