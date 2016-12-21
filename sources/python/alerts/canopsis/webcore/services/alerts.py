@@ -31,7 +31,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='alerts/alarms2',
+        name='alerts/get_alarms',
         payload=[
             'tstart',
             'tstop',
@@ -39,9 +39,10 @@ def exports(ws):
             'resolved',
             'filter',
             'search',
-            'sort',
-            'limit',
-            'offset'
+            'sort_key',
+            'sort_dir',
+            'skip',
+            'limit'
         ]
     )
     def get_alarms(
@@ -52,9 +53,10 @@ def exports(ws):
             consolidations=[],
             filter={},
             search='',
-            sort={'opened': 'DESC'},
-            limit=50,
-            offset=0
+            sort_key='opened',
+            sort_dir='DESC',
+            skip=0,
+            limit=50
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -66,16 +68,16 @@ def exports(ws):
         :param bool resolved: If False, consider alarms that have been resolved
 
         :param list consolidations: List of extra columns to compute for each
-          returned result.
+          returned result
 
-        :param dict filter: Mongo filter. Keys are UI column names.
-        :param str search: Search expression in custom DSL.
+        :param dict filter: Mongo filter. Keys are UI column names
+        :param str search: Search expression in custom DSL
 
-        :param dict sort: Dict with only one key. Key is the name of the column
-          to sort, and value is either "ASC" or "DESC".
+        :param str sort_key: Name of the column to sort
+        :param str sort_dir: Either "ASC" or "DESC"
 
-        :param int limit: Maximum number of alarms to return.
-        :param int offset: Number of alarms to skip (pagination)
+        :param int skip: Number of alarms to skip (pagination)
+        :param int limit: Maximum number of alarms to return
 
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
@@ -89,9 +91,10 @@ def exports(ws):
             consolidations=[],
             filter_=filter,
             search=search,
-            sort=sort,
-            limit=limit,
-            offset=offset
+            sort_key=sort_key,
+            sort_dir=sort_dir,
+            skip=skip,
+            limit=limit
         )
 
     @route(

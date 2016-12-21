@@ -117,7 +117,7 @@ class TestReader(BaseTest):
 
         # opened=False, resolved=True
         expected_resolved = {
-            'v.resolved': {'$neq': None},
+            'v.resolved': {'$ne': None},
             '$or': [
                 {'t': {'$gte': 1, '$lte': 2}},
                 {'v.resolved': {'$gte': 1, '$lte': 2}},
@@ -160,7 +160,7 @@ class TestReader(BaseTest):
                 'tstart': 0,
                 'tstop': 0,
                 'expected': {
-                    'v.resolved': {'$neq': None},
+                    'v.resolved': {'$ne': None},
                     '$or': [
                         {'t': {'$gte': 0, '$lte': 0}},
                         {'v.resolved': {'$gte': 0, '$lte': 0}},
@@ -172,7 +172,7 @@ class TestReader(BaseTest):
                 'tstart': 1,
                 'tstop': 2,
                 'expected': {
-                    'v.resolved': {'$neq': None},
+                    'v.resolved': {'$ne': None},
                     '$or': [
                         {'t': {'$gte': 1, '$lte': 2}},
                         {'v.resolved': {'$gte': 1, '$lte': 2}},
@@ -192,22 +192,33 @@ class TestReader(BaseTest):
     def test_translate_sort(self):
         cases = [
             {
-                'sort': {},
-                'tsort': {}
+                'sort_key': 'untranslated',
+                'sort_dir': 'DESC',
+                'tkey': 'untranslated',
+                'tdir': -1
             },
             {
-                'sort': {'untranslated': 1},
-                'tsort': {'untranslated': 1}
+                'sort_key': 'untranslated',
+                'sort_dir': 'ASC',
+                'tkey': 'untranslated',
+                'tdir': 1
             },
             {
-                'sort': {'component': -1},
-                'tsort': {'v.cpt': -1}
+                'sort_key': 'component',
+                'sort_dir': 'DESC',
+                'tkey': 'v.cpt',
+                'tdir': -1
             }
         ]
 
         for case in cases:
-            tsort = self.reader.translate_sort(case['sort'])
-            self.assertEqual(tsort, case['tsort'])
+            tkey, tdir = self.reader.translate_sort(
+                case['sort_key'],
+                case['sort_dir']
+            )
+
+            self.assertEqual(tkey, case['tkey'])
+            self.assertEqual(tdir, case['tdir'])
 
     def test_count_alarms_by_period(self):
         day = 24 * 3600
