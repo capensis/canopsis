@@ -29,6 +29,8 @@ from canopsis.configuration.model import Parameter
 
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 
+from canopsis.alerts.search.interpreter import interpret
+
 
 CONF_PATH = 'alerts/manager.conf'
 CATEGORY = 'ALERTS'
@@ -112,9 +114,6 @@ class AlertsReader(MiddlewareRegistry):
 
         return sort
 
-    def interpret_search(self, search):
-        return {}, 'current'
-
     def get_time_filter(self, opened, resolved, tstart, tstop):
         if opened and resolved:
             return {
@@ -186,7 +185,7 @@ class AlertsReader(MiddlewareRegistry):
         :rtype: dict
         """
 
-        search_filter, search_context = self.interpret_search(search)
+        search_context, search_filter = interpret(search)
         search_filter = self.translate_filter(search_filter)
 
         if search_context == 'all':
