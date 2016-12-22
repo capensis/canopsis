@@ -148,7 +148,7 @@ class AlertsReader(MiddlewareRegistry):
     def get_opened_time_filter(self, tstop):
         return {
             'v.resolved': None,
-            't': {'$gte': tstop}
+            't': {'$lte': tstop}
         }
 
     def get_resolved_time_filter(self, tstart, tstop):
@@ -239,13 +239,13 @@ class AlertsReader(MiddlewareRegistry):
         sort_key, sort_dir = self.translate_sort(sort_key, sort_dir)
         alarms = alarms.sort(sort_key, sort_dir)
 
-        total = alarms.count()
-        first = 0 if total == 0 else skip + 1
-
         alarms = alarms.skip(skip)
         alarms = alarms.limit(limit)
 
-        last = 0 if total == 0 else skip + alarms.count()
+        total = alarms.count()
+        limited_total = alarms.count(True)
+        first = 0 if limited_total == 0 else skip + 1
+        last = 0 if limited_total == 0 else skip + limited_total
 
         res = {
             'alarms': list(alarms),

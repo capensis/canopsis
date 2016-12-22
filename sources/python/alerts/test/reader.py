@@ -108,7 +108,7 @@ class TestReader(BaseTest):
         )
 
         # opened=True, resolved=False
-        expected_opened = {'v.resolved': None, 't': {'$gte': 2}}
+        expected_opened = {'v.resolved': None, 't': {'$lte': 2}}
         self.assertEqual(
             self.reader.get_time_filter(
                 opened=True, resolved=False, tstart=1, tstop=2),
@@ -142,11 +142,11 @@ class TestReader(BaseTest):
         cases = [
             {
                 'tstop': 0,
-                'expected': {'v.resolved': None, 't': {'$gte': 0}}
+                'expected': {'v.resolved': None, 't': {'$lte': 0}}
             },
             {
                 'tstop': 42,
-                'expected': {'v.resolved': None, 't': {'$gte': 42}}
+                'expected': {'v.resolved': None, 't': {'$lte': 42}}
             }
         ]
 
