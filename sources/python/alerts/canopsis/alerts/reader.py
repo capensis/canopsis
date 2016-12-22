@@ -222,19 +222,12 @@ class AlertsReader(MiddlewareRegistry):
             if time_filter is None:
                 return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
-            filter_ = {
-                '$and': [
-                    time_filter,
-                    self.translate_filter(filter_)
-                ]
-            }
+            filter_ = {'$and': [time_filter, self.translate_filter(filter_)]}
 
-            # Use filter to get results
-            alarms = self.mc.canopsis.periodical_alarm.find(filter_)
-
-            # Use search_filter to get results from previous results
             if search_filter:
-                alarms = alarms.find(search_filter)
+                filter_ = {'$and': [filter_, search_filter]}
+
+            alarms = self.mc.canopsis.periodical_alarm.find(filter_)
 
         sort_key, sort_dir = self.translate_sort(sort_key, sort_dir)
         alarms = alarms.sort(sort_key, sort_dir)
