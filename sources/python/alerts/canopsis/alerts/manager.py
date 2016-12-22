@@ -633,6 +633,10 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.ALARM_STORAGE].DATA_ID: alarm_id,
             self[Alerts.ALARM_STORAGE].TIMESTAMP: event['timestamp'],
             self[Alerts.ALARM_STORAGE].VALUE: {
+                'connector': event['connector'],
+                'connector_name': event['connector_name'],
+                'component': event['component'],
+                'resource': event.get('resource', None),
                 'state': None,
                 'status': None,
                 'ack': None,
