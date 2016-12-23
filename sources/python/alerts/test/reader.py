@@ -227,6 +227,7 @@ class TestReader(BaseTest):
         event0 = {
             'connector': 'ut',
             'connector_name': 'ut0',
+            'component': 'c',
             'output': '...',
             'timestamp': day / 2
         }
@@ -242,6 +243,7 @@ class TestReader(BaseTest):
         event1 = {
             'connector': 'ut',
             'connector_name': 'ut0',
+            'component': 'c',
             'output': '...',
             'timestamp': 3 * day / 2
         }

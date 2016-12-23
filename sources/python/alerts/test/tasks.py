@@ -25,6 +25,9 @@ from canopsis.task.core import get_task
 
 from canopsis.alerts.status import get_previous_step, CANCELED
 
+from canopsis.entitylink.manager import Entitylink
+from canopsis.pbehavior.manager import PBehaviorManager
+
 from base import BaseTest
 
 
@@ -307,6 +310,33 @@ class TestTasks(BaseTest):
         self.assertTrue(
             alarm['status'] is get_previous_step(alarm, 'statusdec')
         )
+
+    def test_linklist(self):
+        self.llm = Entitylink()
+
+        eid0 = '/entity/id'
+        linklist_eid0 = {
+            'computed_links': [{'label': 'doc', 'url': 'http://path/to/doc'}]
+        }
+        self.llm.put(_id=eid0, document=linklist_eid0)
+
+        task = get_task('alerts.consolidation.linklist')
+
+        res = task(self, {'d': eid0})
+        self.assertEqual(
+            res,
+            {
+                'd': eid0,
+                'linklist': linklist_eid0['computed_links']
+            }
+        )
+
+        eid1 = '/no/link/entity'
+        res = task(self, {'d': eid1})
+        self.assertEqual(res, {'d': eid1, 'linklist': []})
+
+    def test_pbehaviors(self):
+        PBehaviorManager()
 
 
 if __name__ == '__main__':

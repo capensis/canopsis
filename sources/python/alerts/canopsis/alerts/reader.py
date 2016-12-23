@@ -28,10 +28,14 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.model import Parameter
+from canopsis.task.core import get_task
 
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 
 from canopsis.alerts.search.interpreter import interpret
+
+from canopsis.entitylink.manager import Entitylink
+from canopsis.pbehavior.manager import PBehaviorManager
 
 
 CONF_PATH = 'alerts/manager.conf'
@@ -76,6 +80,9 @@ class AlertsReader(MiddlewareRegistry):
 
         if context is not None:
             self[AlertsReader.CONTEXT_MANAGER] = context
+
+        self.pbm = PBehaviorManager()
+        self.llm = Entitylink()
 
         self.mc = MongoClient(
             'mongodb://cpsmongo:canopsis@localhost:27017/canopsis')
@@ -167,6 +174,21 @@ class AlertsReader(MiddlewareRegistry):
 
         return interpret(search, grammar_file=self.grammar)
 
+    def consolidate_alarms(self, alarms, consolidations):
+        for c in consolidations:
+            task = get_task(
+                'alerts.consolidation.{}'.format(c),
+                cacheonly=True
+            )
+
+            if task is None:
+                raise ValueError('Unknown consolidation "{}"'.format(c))
+
+            for a in alarms:
+                a = task(self, a)
+
+        return alarms
+
     def get(
             self,
             tstart,
@@ -211,7 +233,7 @@ class AlertsReader(MiddlewareRegistry):
 
         if search_context == 'all':
             # Use only this filter to search
-            alarms = self.mc.canopsis.periodical_alarm.find(search_filter)
+            query = self.mc.canopsis.periodical_alarm.find(search_filter)
 
         else:
             time_filter = self.get_time_filter(
@@ -227,21 +249,25 @@ class AlertsReader(MiddlewareRegistry):
             if search_filter:
                 filter_ = {'$and': [filter_, search_filter]}
 
-            alarms = self.mc.canopsis.periodical_alarm.find(filter_)
+            query = self.mc.canopsis.periodical_alarm.find(filter_)
 
         sort_key, sort_dir = self.translate_sort(sort_key, sort_dir)
-        alarms = alarms.sort(sort_key, sort_dir)
+        query = query.sort(sort_key, sort_dir)
 
-        alarms = alarms.skip(skip)
-        alarms = alarms.limit(limit)
+        query = query.skip(skip)
+        query = query.limit(limit)
 
-        total = alarms.count()
-        limited_total = alarms.count(True)
+        total = query.count()
+        limited_total = query.count(True)
         first = 0 if limited_total == 0 else skip + 1
         last = 0 if limited_total == 0 else skip + limited_total
 
+        alarms = list(query)
+
+        alarms = self.consolidate_alarms(alarms, consolidations)
+
         res = {
-            'alarms': list(alarms),
+            'alarms': alarms,
             'total': total,
             'first': first,
             'last': last

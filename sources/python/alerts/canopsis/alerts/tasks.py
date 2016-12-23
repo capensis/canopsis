@@ -358,3 +358,35 @@ def hard_limit(manager, alarm):
     alarm['steps'].append(step)
 
     return alarm
+
+
+@register_task('alerts.consolidation.linklist')
+def linklist(manager, alarm):
+    """
+    Called to add a linklist field to an alarm.
+    """
+
+    entity_id = alarm['d']
+
+    linklist = list(manager.llm.find(ids=[entity_id]))
+
+    if not linklist:
+        alarm['linklist'] = []
+
+    else:
+        alarm['linklist'] = linklist[0]['computed_links']
+
+    return alarm
+
+
+@register_task('alerts.consolidation.pbehaviors')
+def pbehaviors(manager, alarm):
+    """
+    Called to add a pbehaviors field to an alarm.
+    """
+
+    entity_id = alarm['d']
+
+    alarm['pbehaviors'] = manager.pbm.getending(entity_id)
+
+    return alarm

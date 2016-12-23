@@ -43,7 +43,12 @@ class TestManager(BaseTest):
 
         alarm = self.manager.make_alarm(
             alarm_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': 0
+            }
         )
         self.assertTrue(alarm is not None)
 
@@ -54,6 +59,7 @@ class TestManager(BaseTest):
         event0 = {
             'connector': 'ut',
             'connector_name': 'ut0',
+            'component': 'c',
             'output': '...',
             'timestamp': 0
         }
@@ -69,6 +75,7 @@ class TestManager(BaseTest):
         event1 = {
             'connector': 'ut',
             'connector_name': 'ut0',
+            'component': 'c',
             'output': '...',
             'timestamp': 0
         }
@@ -129,6 +136,7 @@ class TestManager(BaseTest):
         event = {
             'connector': 'ut',
             'connector_name': 'ut0',
+            'component': 'c',
             'output': '...',
             'timestamp': 0
         }
@@ -149,7 +157,12 @@ class TestManager(BaseTest):
         alarm_id = '/fake/alarm/id'
         alarm = self.manager.make_alarm(
             alarm_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': 0
+            }
         )
 
         value = alarm[storage.VALUE]
@@ -170,7 +183,12 @@ class TestManager(BaseTest):
         alarm_id = '/fake/alarm/id'
         alarm = self.manager.make_alarm(
             alarm_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': 0
+            }
         )
 
         self.assertIsNotNone(alarm)
@@ -208,12 +226,17 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'connector': 'ut-connector',
             'connector_name': 'ut-connector0',
-            'output': 'UT message',
+            'output': 'UT message'
         }
 
         alarm = self.manager.make_alarm(
             alarm_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': 0
+            }
         )
         alarm = self.manager.change_of_state(alarm, 0, 2, event)
 
@@ -269,7 +292,12 @@ class TestManager(BaseTest):
 
         alarm = self.manager.make_alarm(
             alarm_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': 0
+            }
         )
 
         alarm = self.manager.change_of_status(alarm, 0, 1, event)
@@ -757,7 +785,12 @@ class TestManager(BaseTest):
 
         alarm0 = self.manager.make_alarm(
             alarm0_id,
-            {'connector': 'ut-connector', 'timestamp': 0}
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': 0
+            }
         )
 
         events = self.manager.get_events(alarm0)
