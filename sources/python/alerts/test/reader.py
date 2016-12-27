@@ -35,7 +35,7 @@ class TestReader(BaseTest):
         self.reader[AlertsReader.ALARM_STORAGE] = \
             self.manager[Alerts.ALARM_STORAGE]
 
-        self.reader._alarms = {
+        self.reader._alarm_fields = {
             'properties': {
                 'connector': {'stored_name': 'v.ctr'},
                 'component': {'stored_name': 'v.cpt'},

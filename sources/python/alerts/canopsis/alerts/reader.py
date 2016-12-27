@@ -20,7 +20,6 @@
 
 from sys import prefix
 from os.path import join
-from json import load
 
 from pymongo import MongoClient
 
@@ -33,6 +32,8 @@ from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 
 from canopsis.alerts.search.interpreter import interpret
+
+from canopsis.tools.schema import get as get_schema
 
 from canopsis.entitylink.manager import Entitylink
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -56,15 +57,11 @@ class AlertsReader(MiddlewareRegistry):
 
     CONFIG_STORAGE = 'config_storage'
     ALARM_STORAGE = 'alarm_storage'
-    ALARM_FIELDS_STORAGE = 'alarm_fields_storage'
-    CONTEXT_MANAGER = 'context'
 
     def __init__(
             self,
             extra_fields=None,
             alarm_storage=None,
-            alarm_fields_storage=None,
-            context=None,
             *args, **kwargs
     ):
         super(AlertsReader, self).__init__(*args, **kwargs)
@@ -74,12 +71,6 @@ class AlertsReader(MiddlewareRegistry):
 
         if alarm_storage is not None:
             self[AlertsReader.ALARM_STORAGE] = alarm_storage
-
-        if alarm_fields_storage is not None:
-            self[AlertsReader.ALARM_FIELDS_STORAGE] = alarm_fields_storage
-
-        if context is not None:
-            self[AlertsReader.CONTEXT_MANAGER] = context
 
         self.pbm = PBehaviorManager()
         self.llm = Entitylink()
@@ -92,14 +83,10 @@ class AlertsReader(MiddlewareRegistry):
 
     @property
     def alarm_fields(self):
-        if not hasattr(self, '_alarms'):
-            self.load_config()
+        if not hasattr(self, '_alarm_fields'):
+            self._alarm_fields = get_schema('alarm_fields')
 
-        return self._alarms
-
-    def load_config(self):
-        with open(join(prefix, 'etc/schema.d/alarm_fields.json')) as fh:
-            self._alarms = load(fh)
+        return self._alarm_fields
 
     def translate_key(self, key):
         if key in self.alarm_fields['properties']:
