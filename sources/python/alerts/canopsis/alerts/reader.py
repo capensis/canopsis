@@ -21,8 +21,6 @@
 from sys import prefix
 from os.path import join
 
-from pymongo import MongoClient
-
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
@@ -74,10 +72,6 @@ class AlertsReader(MiddlewareRegistry):
 
         self.pbm = PBehaviorManager()
         self.llm = Entitylink()
-
-        self.mc = MongoClient(
-            'mongodb://cpsmongo:canopsis@localhost:27017/canopsis')
-        self.mc.canopsis.authenticate('cpsmongo', 'canopsis')
 
         self.grammar = join(prefix, 'etc/alerts/search/grammar.bnf')
 
@@ -220,7 +214,8 @@ class AlertsReader(MiddlewareRegistry):
 
         if search_context == 'all':
             # Use only this filter to search
-            query = self.mc.canopsis.periodical_alarm.find(search_filter)
+            query = self[AlertsReader.ALARM_STORAGE]._backend.find(
+                search_filter)
 
         else:
             time_filter = self.get_time_filter(
@@ -236,7 +231,7 @@ class AlertsReader(MiddlewareRegistry):
             if search_filter:
                 filter_ = {'$and': [filter_, search_filter]}
 
-            query = self.mc.canopsis.periodical_alarm.find(filter_)
+            query = self[AlertsReader.ALARM_STORAGE]._backend.find(filter_)
 
         sort_key, sort_dir = self.translate_sort(sort_key, sort_dir)
         query = query.sort(sort_key, sort_dir)
