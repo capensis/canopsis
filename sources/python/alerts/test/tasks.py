@@ -20,6 +20,7 @@
 # ---------------------------------
 
 from unittest import main
+from time import time
 
 from canopsis.task.core import get_task
 
@@ -335,8 +336,58 @@ class TestTasks(BaseTest):
         res = task(self, {'d': eid1})
         self.assertEqual(res, {'d': eid1, 'linklist': []})
 
+        del self.llm
+
     def test_pbehaviors(self):
-        PBehaviorManager()
+        self.pbm = PBehaviorManager()
+
+        task = get_task('alerts.consolidation.pbehaviors')
+
+        eid0 = '/expired/pbehavior/entity'
+        pb0 = {
+            'behaviors': ['downtime'],
+            'crecord_write_time': None,
+            'enable': True,
+            'id': None,
+            'source': eid0,
+            'crecord_type': 'pbehavior',
+            'rrule': None,
+            'duration': None,
+            'dtend': 0,
+            'dtstart': 0,
+            'crecord_creation_time': None,
+            'crecord_name': None
+        }
+        self.pbm.put([pb0])
+
+        alarm0 = task(self, {'d': eid0})
+        self.assertEqual(alarm0, {'d': eid0, 'pbehaviors': {}})
+
+        now = int(time())
+        eid1 = '/ongoing/pbehavior/entity'
+        pb1 = {
+            'behaviors': ['downtime'],
+            'crecord_write_time': None,
+            'enable': True,
+            'id': None,
+            'source': eid1,
+            'crecord_type': 'pbehavior',
+            'rrule': None,
+            'duration': None,
+            'dtend': now + 1000,
+            'dtstart': now,
+            'crecord_creation_time': None,
+            'crecord_name': None
+        }
+        self.pbm.put([pb1])
+
+        alarm1 = task(self, {'d': eid1})
+        self.assertEqual(
+            alarm1,
+            {'d': eid1, 'pbehaviors': {'downtime': now + 1000}}
+        )
+
+        del self.pbm
 
 
 if __name__ == '__main__':
