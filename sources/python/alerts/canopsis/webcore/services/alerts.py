@@ -98,6 +98,30 @@ def exports(ws):
         )
 
     @route(
+        ws.application.get,
+        name='alerts/validate_search',
+        payload=['expression']
+    )
+    def validate_search(expression):
+        """
+        Tell if a search expression is valid from a grammatical propespective.
+
+        :param str expression: Search expression
+
+        :returns: True if valid, False otherwise
+        :rtype: bool
+        """
+
+        try:
+            ar.interpret_search(expression)
+
+        except ValueError:
+            return False
+
+        else:
+            return True
+
+    @route(
             ws.application.get,
             name='alerts/count',
             payload=['start', 'stop', 'limit', 'select'],
