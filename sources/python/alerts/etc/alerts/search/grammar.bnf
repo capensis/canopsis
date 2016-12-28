@@ -32,7 +32,9 @@ compop::compop = value:( "<=" | "<" | "=" | "!=" | ">=" | ">" | "IN" | "NIN" | 
 comparison::comparison = left:key compop:compop right:value ;
 
 condop::condop = value:( "AND" | "OR" ) ;
-condition::condition = left:comparison [ condop:condop right:condition ] ;
+next_condition::next_condition = condop:condop right:comparison ;
+
+condition::condition = left:comparison { next:next_condition }* ;
 (*/CONDITION *)
 
 (* SEARCH *)

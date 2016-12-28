@@ -28,7 +28,7 @@ class Walker(NodeWalker):
         '<=': '$lte',
         '<': '$lt',
         '=': '$eq',
-        '!=': '$neq',
+        '!=': '$ne',
         '>=': '$gte',
         '>': '$gt',
         'IN': '$in',
@@ -105,16 +105,24 @@ class Walker(NodeWalker):
     def walk_condop(self, node):
         return self.condop_table[node.value]
 
+    def walk_next_condition(self, node):
+        return self.walk(node.condop), self.walk(node.right)
+
     def walk_condition(self, node):
-        left = self.walk(node.left)
+        condition = self.walk(node.left)
 
-        if node.condop is None:
-            return left
+        # Whatever documentation says, it is not a list in case of no value
+        if node.next is None:
+            return condition
 
-        condop = self.walk(node.condop)
-        right = self.walk(node.right)
+        # ... neither in case of single value
+        if type(node.next) is not list:
+            node.next = [node.next]
 
-        return {condop: [left, right]}
+        for op, right in [self.walk(n) for n in node.next]:
+            condition = {op: [condition, right]}
+
+        return condition
 
     def walk_search(self, node):
         condition = self.walk(node.condition)
