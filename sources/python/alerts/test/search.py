@@ -125,7 +125,7 @@ class TestSearch(TestCase):
             },
             {
                 'search': 'a != 1',
-                'expected_filter': {'a': {'$neq': 1}}
+                'expected_filter': {'a': {'$ne': 1}}
             },
             {
                 'search': 'a >= 1',
@@ -167,22 +167,50 @@ class TestSearch(TestCase):
                 'search': 'a = 1 OR b = 2',
                 'expected_filter': {'$or': [{'a': 1}, {'b': 2}]}
             },
-            # {
-            #     'search': 'a = 1 AND b = 2 OR c = 3',
-            #     'expected_filter': {}
-            # },
-            # {
-            #     'search': 'a = 1 OR b = 2 AND c = 3',
-            #     'expected_filter': {}
-            # },
-            # {
-            #     'search': (
-            #         'ALL a LIKE 1 OR b <= 2 AND c = 3 AND d != 4 OR '
-            #         'f > "cinq"'
-            #     ),
-            #     'expected_scope': 'all',
-            #     'expected_filter': {}
-            # }
+            {
+                'search': 'a = 1 AND b = 2 OR c = 3',
+                'expected_filter': {
+                    '$or': [{'$and': [{'a': 1}, {'b': 2}]}, {'c': 3}]
+                }
+            },
+            {
+                'search': 'a = 1 OR b = 2 AND c = 3',
+                'expected_filter': {
+                    '$and': [
+                        {'$or': [{'a': 1}, {'b': 2}]}, {'c': 3}
+                    ]
+                }
+            },
+            {
+                'search': (
+                    'ALL a LIKE 1 OR b <= 2 AND c = 3 AND d != 4 OR '
+                    'f > "five"'
+                ),
+                'expected_scope': 'all',
+
+                'expected_filter': {
+                    '$or': [
+                        {
+                            '$and': [
+                                {
+                                    '$and': [
+                                        {
+                                            '$or': [
+                                                {'a': {'$regex': 1}},
+                                                {'b': {'$lte': 2}}
+                                            ]
+                                        },
+                                        {'c': 3}
+                                    ]
+                                },
+                                {'d': {'$ne': 4}}
+                            ]
+                        },
+                        {'f': {'$gt': 'five'}}
+                    ]
+                }
+
+            }
         ]
 
         for case in cases:
