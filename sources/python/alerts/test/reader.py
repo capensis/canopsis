@@ -43,7 +43,7 @@ class TestReader(BaseTest):
             }
         }
 
-    def test_translate_key(self):
+    def test__translate_key(self):
         cases = [
             {
                 'key': 'untranslated_key',
@@ -60,10 +60,10 @@ class TestReader(BaseTest):
         ]
 
         for case in cases:
-            tkey = self.reader.translate_key(case['key'])
+            tkey = self.reader._translate_key(case['key'])
             self.assertEqual(tkey, case['tkey'])
 
-    def test_translate_filter(self):
+    def test__translate_filter(self):
         cases = [
             {
                 'filter': {},
@@ -96,13 +96,13 @@ class TestReader(BaseTest):
         ]
 
         for case in cases:
-            tfilter = self.reader.translate_filter(case['filter'])
+            tfilter = self.reader._translate_filter(case['filter'])
             self.assertEqual(tfilter, case['tfilter'])
 
-    def test_get_time_filter(self):
+    def test__get_time_filter(self):
         # opened=False, resolved=False
         self.assertIs(
-            self.reader.get_time_filter(
+            self.reader._get_time_filter(
                 opened=False, resolved=False, tstart=0, tstop=0),
             None
         )
@@ -110,7 +110,7 @@ class TestReader(BaseTest):
         # opened=True, resolved=False
         expected_opened = {'v.resolved': None, 't': {'$lte': 2}}
         self.assertEqual(
-            self.reader.get_time_filter(
+            self.reader._get_time_filter(
                 opened=True, resolved=False, tstart=1, tstop=2),
             expected_opened
         )
@@ -125,7 +125,7 @@ class TestReader(BaseTest):
             ]
         }
         self.assertEqual(
-            self.reader.get_time_filter(
+            self.reader._get_time_filter(
                 opened=False, resolved=True, tstart=1, tstop=2),
             expected_resolved
         )
@@ -133,12 +133,12 @@ class TestReader(BaseTest):
         # opened=True, resolved=True
         expected_both = {'$or': [expected_opened, expected_resolved]}
         self.assertEqual(
-            self.reader.get_time_filter(
+            self.reader._get_time_filter(
                 opened=True, resolved=True, tstart=1, tstop=2),
             expected_both
         )
 
-    def test_get_opened_time_filter(self):
+    def test__get_opened_time_filter(self):
         cases = [
             {
                 'tstop': 0,
@@ -151,10 +151,10 @@ class TestReader(BaseTest):
         ]
 
         for case in cases:
-            time_filter = self.reader.get_opened_time_filter(case['tstop'])
+            time_filter = self.reader._get_opened_time_filter(case['tstop'])
             self.assertEqual(time_filter, case['expected'])
 
-    def test_get_resolved_time_filter(self):
+    def test__get_resolved_time_filter(self):
         cases = [
             {
                 'tstart': 0,
@@ -183,13 +183,13 @@ class TestReader(BaseTest):
         ]
 
         for case in cases:
-            time_filter = self.reader.get_resolved_time_filter(
+            time_filter = self.reader._get_resolved_time_filter(
                 case['tstart'],
                 case['tstop']
             )
             self.assertEqual(time_filter, case['expected'])
 
-    def test_translate_sort(self):
+    def test__translate_sort(self):
         cases = [
             {
                 'sort_key': 'untranslated',
@@ -212,7 +212,7 @@ class TestReader(BaseTest):
         ]
 
         for case in cases:
-            tkey, tdir = self.reader.translate_sort(
+            tkey, tdir = self.reader._translate_sort(
                 case['sort_key'],
                 case['sort_dir']
             )

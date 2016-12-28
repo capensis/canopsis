@@ -37,6 +37,7 @@ def exports(ws):
             'tstop',
             'opened',
             'resolved',
+            'consolidations',
             'filter',
             'search',
             'sort_key',
@@ -65,12 +66,12 @@ def exports(ws):
         :param int tstop: End timestamp of requested period
 
         :param bool opened: If True, consider alarms that are currently opened
-        :param bool resolved: If False, consider alarms that have been resolved
+        :param bool resolved: If True, consider alarms that have been resolved
 
         :param list consolidations: List of extra columns to compute for each
-          returned result
+          returned alarm. Extra columns are "pbehaviors" and/or "linklist".
 
-        :param dict filter: Mongo filter. Keys are UI column names
+        :param dict filter: Mongo filter. Keys are UI column names.
         :param str search: Search expression in custom DSL
 
         :param str sort_key: Name of the column to sort

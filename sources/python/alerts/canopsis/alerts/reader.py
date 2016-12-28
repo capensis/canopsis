@@ -82,28 +82,51 @@ class AlertsReader(MiddlewareRegistry):
 
         return self._alarm_fields
 
-    def translate_key(self, key):
+    def _translate_key(self, key):
         if key in self.alarm_fields['properties']:
             return self.alarm_fields['properties'][key]['stored_name']
 
         return key
 
-    def translate_filter(self, filter_):
+    def _translate_filter(self, filter_):
+        """
+        Translate a mongo filter key names. Input keys are UI column names and
+        output keys are corresponding keys in the alarm collection.
+
+        :param dict filter_: Mongo filter written by an user
+
+        :return: Mongo filter usable in a query
+        :rtype: dict
+        """
+
         if type(filter_) is list:
             for i, f in enumerate(filter_):
-                filter_[i] = self.translate_filter(f)
+                filter_[i] = self._translate_filter(f)
 
         elif type(filter_) is dict:
             for key, value in filter_.items():
-                new_value = self.translate_filter(value)
+                new_value = self._translate_filter(value)
                 filter_[key] = new_value
 
-                new_key = self.translate_key(key)
+                new_key = self._translate_key(key)
                 filter_[new_key] = filter_.pop(key)
 
         return filter_
 
-    def translate_sort(self, key, dir_):
+    def _translate_sort(self, key, dir_):
+        """
+        Translate sort parameters.
+
+        :param str key: UI column name to sort
+        :param str dir_: Direction ('ASC' or 'DESC')
+
+        :return: Key usable in a sort operation and translated direction for
+          pymongo
+        :rtype: tuple
+
+        :raises ValueError: If dir_ is not 'ASC' nor 'DESC'
+        """
+
         if dir_ not in ['ASC', 'DESC']:
             raise ValueError(
                 'Sort direction must be "ASC" or "DESC" (got "{}")'.format(
@@ -111,35 +134,73 @@ class AlertsReader(MiddlewareRegistry):
                 )
             )
 
-        tkey = self.translate_key(key)
+        tkey = self._translate_key(key)
         tdir = 1 if dir_ == 'ASC' else -1
 
         return tkey, tdir
 
-    def get_time_filter(self, opened, resolved, tstart, tstop):
+    def _get_time_filter(self, opened, resolved, tstart, tstop):
+        """
+        Transform opened, resolved, tstart and tstop parameters into a mongo
+        filter specific to alarms collection.
+
+        :param bool opened: If True, the filter will select documents that have
+          been opened before tstop
+        :param bool resolved: If True, the filter will select documents that
+          have been opened, were opened or have been resolved during tstart and
+          tstop.
+
+        :param int tstart: Timestamp
+        :param int tstop: Timestamp
+
+        :return: Specific mongo filter or None if opened and resolved are False
+        :rtype: dict or None
+        """
+
         if opened and resolved:
             return {
                 '$or': [
-                    self.get_opened_time_filter(tstop),
-                    self.get_resolved_time_filter(tstart, tstop)
+                    self._get_opened_time_filter(tstop),
+                    self._get_resolved_time_filter(tstart, tstop)
                 ]
             }
 
         if opened and not resolved:
-            return self.get_opened_time_filter(tstop)
+            return self._get_opened_time_filter(tstop)
 
         if not opened and resolved:
-            return self.get_resolved_time_filter(tstart, tstop)
+            return self._get_resolved_time_filter(tstart, tstop)
 
         return None
 
-    def get_opened_time_filter(self, tstop):
+    def _get_opened_time_filter(self, tstop):
+        """
+        Get a specific mongo filter selecting documents that have been opened
+        before tstop.
+
+        :param int tstop: Timestamp
+
+        :return: Mongo filter
+        :rtype: dict
+        """
+
         return {
             'v.resolved': None,
             't': {'$lte': tstop}
         }
 
-    def get_resolved_time_filter(self, tstart, tstop):
+    def _get_resolved_time_filter(self, tstart, tstop):
+        """
+        Get a specific mongo filter selecting documents that have been opened,
+        were opened or have been resolved during tstart and tstop.
+
+        :param int tstart: Timestamp
+        :param int tstop: Timestamp
+
+        :return: Specific mongo filter
+        :rtype: dict
+        """
+
         return {
             'v.resolved': {'$ne': None},
             '$or': [
@@ -150,12 +211,33 @@ class AlertsReader(MiddlewareRegistry):
         }
 
     def interpret_search(self, search):
+        """
+        Parse a search expression to return a mongo filter and a search scope.
+
+        :param str search: Search expression
+
+        :return: Scope ('this' or 'all') and filter (dict)
+        :rtype: tuple
+
+        :raises ValueError: If search is not grammatically correct
+        """
+
         if not search:
             return ('this', {})
 
         return interpret(search, grammar_file=self.grammar)
 
-    def consolidate_alarms(self, alarms, consolidations):
+    def _consolidate_alarms(self, alarms, consolidations):
+        """
+        Add extra keys to a list of alarms.
+
+        :param list alarms: List of alarms as dict
+        :param list consolidations: List of extra keys to add.
+
+        :return: Alarms with extra keys
+        :rtype: list
+        """
+
         for c in consolidations:
             task = get_task(
                 'alerts.consolidation.{}'.format(c),
@@ -191,10 +273,10 @@ class AlertsReader(MiddlewareRegistry):
         :param int tstop: End timestamp of requested period
 
         :param bool opened: If True, consider alarms that are currently opened
-        :param bool resolved: If False, consider alarms that have been resolved
+        :param bool resolved: If True, consider alarms that have been resolved
 
         :param list consolidations: List of extra columns to compute for each
-          returned result
+          returned alarm. Extra columns are "pbehaviors" and/or "linklist".
 
         :param dict filter_: Mongo filter
         :param str search: Search expression in custom DSL
@@ -210,7 +292,7 @@ class AlertsReader(MiddlewareRegistry):
         """
 
         search_context, search_filter = self.interpret_search(search)
-        search_filter = self.translate_filter(search_filter)
+        search_filter = self._translate_filter(search_filter)
 
         if search_context == 'all':
             # Use only this filter to search
@@ -218,7 +300,7 @@ class AlertsReader(MiddlewareRegistry):
                 search_filter)
 
         else:
-            time_filter = self.get_time_filter(
+            time_filter = self._get_time_filter(
                 opened=opened, resolved=resolved,
                 tstart=tstart, tstop=tstop
             )
@@ -226,14 +308,14 @@ class AlertsReader(MiddlewareRegistry):
             if time_filter is None:
                 return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
-            filter_ = {'$and': [time_filter, self.translate_filter(filter_)]}
+            filter_ = {'$and': [time_filter, self._translate_filter(filter_)]}
 
             if search_filter:
                 filter_ = {'$and': [filter_, search_filter]}
 
             query = self[AlertsReader.ALARM_STORAGE]._backend.find(filter_)
 
-        sort_key, sort_dir = self.translate_sort(sort_key, sort_dir)
+        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
         query = query.sort(sort_key, sort_dir)
 
         query = query.skip(skip)
@@ -246,7 +328,7 @@ class AlertsReader(MiddlewareRegistry):
 
         alarms = list(query)
 
-        alarms = self.consolidate_alarms(alarms, consolidations)
+        alarms = self._consolidate_alarms(alarms, consolidations)
 
         res = {
             'alarms': alarms,
