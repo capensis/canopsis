@@ -31,7 +31,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='alerts/get_alarms',
+        name='alerts/get-alarms',
         payload=[
             'tstart',
             'tstop',
@@ -100,7 +100,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='alerts/validate_search',
+        name='alerts/search/validate',
         payload=['expression']
     )
     def validate_search(expression):
