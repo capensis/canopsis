@@ -137,6 +137,15 @@ class Alerts(MiddlewareRegistry):
         return self.config.get('restore_event', False)
 
     @property
+    def cancel_autosolve_delay(self):
+        """
+        Once a canceled alarm is resolved, it cannot be uncanceled. This delay
+        allows users to uncancel an alarm if they made a mistake.
+        """
+
+        return self.config.get('cancel_autosolve_delay', 3600)
+
+    @property
     def extra_fields(self):
         """
         Array of fields to save from event in alarm.
@@ -819,4 +828,27 @@ class Alerts(MiddlewareRegistry):
 
                     if (now - t) > self.flapping_interval:
                         alarm['resolved'] = t
+                        self.update_current_alarm(docalarm, alarm)
+
+    def resolve_cancels(self):
+        """
+        Loop over all canceled alarms, and resolve the ones that are in this
+        status for too long.
+        """
+
+        storage = self[Alerts.ALARM_STORAGE]
+        result = self.get_alarms(resolved=False)
+
+        now = int(time())
+
+        for data_id in result:
+            for docalarm in result[data_id]:
+                docalarm[storage.DATA_ID] = data_id
+                alarm = docalarm.get(storage.VALUE)
+
+                if alarm['canceled'] is not None:
+                    canceled_ts = alarm['canceled']['t']
+
+                    if (now - canceled_ts) >= self.cancel_autosolve_delay:
+                        alarm['resolved'] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
