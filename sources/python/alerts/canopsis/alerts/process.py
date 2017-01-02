@@ -55,3 +55,5 @@ def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
     alertsmgr.config = alertsmgr.load_config()
 
     alertsmgr.resolve_alarms()
+
+    alertsmgr.resolve_cancels()

@@ -8,7 +8,7 @@
 		"keys":["stealthy_time", "stealthy_show"]
 	},{
 		"title": "Misc statuses",
-		"keys":["restore_event"]
+		"keys":["restore_event", "cancel_autosolve_delay"]
         }],
 	"properties": {
 		"stealthy_time": {
@@ -54,6 +54,13 @@
 			"type": "boolean",
 			"required": true,
 			"description": "When true, consdider state change with different state level, otherwise consider a change at alert level."
+		},
+		"cancel_autosolve_delay": {
+			"type": "number",
+			"required": true,
+			"default": 3600,
+			"role": "duration",
+			"description": "Once a canceled alarm is resolved, it can not be uncanceled. This delay allows users to uncancel an alarm if they made a mistake."
 		}
 	}
 }
