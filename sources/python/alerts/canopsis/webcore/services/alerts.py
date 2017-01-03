@@ -89,7 +89,7 @@ def exports(ws):
             tstop=tstop,
             opened=opened,
             resolved=resolved,
-            consolidations=[],
+            consolidations=consolidations,
             filter_=filter,
             search=search,
             sort_key=sort_key,
