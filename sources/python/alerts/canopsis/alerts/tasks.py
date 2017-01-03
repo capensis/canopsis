@@ -371,10 +371,13 @@ def linklist(manager, alarm):
     linklist = list(manager.llm.find(ids=[entity_id]))
 
     if not linklist:
-        alarm['linklist'] = []
+        alarm['linklist'] = {}
 
     else:
-        alarm['linklist'] = linklist[0]['computed_links']
+        if '_id' in linklist[0]:
+            linklist[0].pop('_id')
+
+        alarm['linklist'] = linklist[0]
 
     return alarm
 
