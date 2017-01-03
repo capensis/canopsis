@@ -377,7 +377,7 @@ The user must be able to set multiple infopopup on multiple columns.
 Column Renderering
 ^^^^^^^^^^^^^^^^^^
 
-The user must be able to select colums he wants to show on the main table within the widget conf form.  
+The user must be able to select columns he wants to show on the main table within the widget conf form.  
 
 Some data have to be shown with a renderer. 
 For example, a timestamp must use a special timestamp renderer.  
@@ -415,12 +415,22 @@ If there is no role associated with the attribute, you have to render value as s
 Linklist
 ^^^^^^^^
 
+Talk about linklist category and rendering with "I" button
+
+
 Pbehavior
 ^^^^^^^^^
 
-
 Timeline
 ^^^^^^^^
+
+The TR you have to show in the main table describe an alarm.  
+There are many other informations available by calling another webservice, **steps**.  
+
+In the main table, each tr must show a "+" that will call a component that represent steps.
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-service-weather/raw/master/doc/screenshots/timeline.png
+
 
 Glossary
 --------
