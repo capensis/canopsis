@@ -291,24 +291,27 @@ class AlertsReader(MiddlewareRegistry):
         :rtype: dict
         """
 
+        time_filter = self._get_time_filter(
+            opened=opened, resolved=resolved,
+            tstart=tstart, tstop=tstop
+        )
+
+        if time_filter is None:
+            return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
+
         search_context, search_filter = self.interpret_search(search)
         search_filter = self._translate_filter(search_filter)
 
         if search_context == 'all':
-            # Use only this filter to search
+            search_filter = {'$and': [time_filter, search_filter]}
+
             query = self[AlertsReader.ALARM_STORAGE]._backend.find(
                 search_filter)
 
         else:
-            time_filter = self._get_time_filter(
-                opened=opened, resolved=resolved,
-                tstart=tstart, tstop=tstop
-            )
+            filter_ = self._translate_filter(filter_)
 
-            if time_filter is None:
-                return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
-
-            filter_ = {'$and': [time_filter, self._translate_filter(filter_)]}
+            filter_ = {'$and': [time_filter, filter_]}
 
             if search_filter:
                 filter_ = {'$and': [filter_, search_filter]}
