@@ -28,7 +28,7 @@ Tab 2 : Columns
 
 Like the existing "list widget", this one should allow users to select columns to be shown on the table
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-service-weather/raw/master/doc/screenshots/conf_columns.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/conf_columns.png
 
 
 Tab 3 : Mixins
