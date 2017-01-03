@@ -3,7 +3,7 @@
 @@keyword :: ALL
 @@keyword :: TRUE FALSE NULL
 @@keyword :: NOT AND OR
-@@keyword :: IN NIN LIKE
+@@keyword :: CONTAINS LIKE
 
 (*/KEYWORDS *)
 
@@ -29,7 +29,7 @@ not::not = "NOT" ;
 (*/GENERIC *)
 
 (* CONDITION *)
-compop::compop = value:( "<=" | "<" | "=" | "!=" | ">=" | ">" | "IN" | "NIN" | "LIKE" ) ;
+compop::compop = value:( "<=" | "<" | "=" | "!=" | ">=" | ">" | "CONTAINS" | "LIKE" ) ;
 comparison::comparison = [ not:not ] left:key compop:compop right:value ;
 
 condop::condop = value:( "AND" | "OR" ) ;

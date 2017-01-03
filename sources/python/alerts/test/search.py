@@ -141,12 +141,8 @@ class TestSearch(TestCase):
                 'expected_filter': {'a': {'$gt': 1}}
             },
             {
-                'search': 'a IN 1',
-                'expected_filter': {'a': {'$in': 1}}
-            },
-            {
-                'search': 'a NIN 1',
-                'expected_filter': {'a': {'$nin': 1}}
+                'search': 'a CONTAINS 1',
+                'expected_filter': {'a': {'$in': [1]}}
             },
             {
                 'search': 'a LIKE 1',
@@ -155,6 +151,10 @@ class TestSearch(TestCase):
             {
                 'search': 'NOT a = 1',
                 'expected_filter': {'a': {'$not': {'$eq': 1}}}
+            },
+            {
+                'search': 'NOT a CONTAINS 1',
+                'expected_filter': {'a': {'$nin': [1]}}
             },
             {
                 'search': 'NOT a LIKE "1"',

@@ -33,8 +33,7 @@ class Walker(NodeWalker):
         '!=': '$ne',
         '>=': '$gte',
         '>': '$gt',
-        'IN': '$in',
-        'NIN': '$nin',
+        'CONTAINS': '$in',
         'LIKE': '$regex'
     }
 
@@ -104,11 +103,18 @@ class Walker(NodeWalker):
         right = self.walk(node.right)
 
         if not_ is None:
-            return {left: {op: right}}
+            if op == '$in':
+                return {left: {op: [right]}}
+
+            else:
+                return {left: {op: right}}
 
         else:
             if op == '$regex':
                 return {left: {'$not': compile_(right)}}
+
+            elif op == '$in':
+                return {left: {'$nin': [right]}}
 
             else:
                 return {left: {'$not': {op: right}}}
