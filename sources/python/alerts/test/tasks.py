@@ -317,7 +317,8 @@ class TestTasks(BaseTest):
 
         eid0 = '/entity/id'
         linklist_eid0 = {
-            'computed_links': [{'label': 'doc', 'url': 'http://path/to/doc'}]
+            'computed_links': [{'label': 'doc', 'url': 'http://path/to/doc'}],
+            'entity_links': [{'label': 'support', 'url': 'http://path/to/sup'}]
         }
         self.llm.put(_id=eid0, document=linklist_eid0)
 
@@ -328,13 +329,13 @@ class TestTasks(BaseTest):
             res,
             {
                 'd': eid0,
-                'linklist': linklist_eid0['computed_links']
+                'linklist': linklist_eid0
             }
         )
 
         eid1 = '/no/link/entity'
         res = task(self, {'d': eid1})
-        self.assertEqual(res, {'d': eid1, 'linklist': []})
+        self.assertEqual(res, {'d': eid1, 'linklist': {}})
 
         del self.llm
 
