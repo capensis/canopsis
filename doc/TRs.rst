@@ -31,6 +31,13 @@ Like the existing "list widget", this one should allow users to select columns t
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/conf_columns.png
 
 
+Tab 3 : Info Popup
+^^^^^^^^^^^^^^^^^^
+
+The user must be able to define a template (with handlebars) which could be compiled when he clicks on a cell.  
+For example, if I click on a connector cell, a popup will be displayed with informations from the template.
+
+
 Tab 3 : Mixins
 ^^^^^^^^^^^^^^
 
@@ -81,6 +88,45 @@ Here is the raw schema => https://git.canopsis.net/canopsis-ui-bricks/brick-alar
 **TO BE COMPLETED BY FLO**
 
 You can find some datasets compliant with schema here : https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/tree/master/datasets
+
+
+WebService
+^^^^^^^^^^
+
+**TO BE COMPLETED**
+
+.. code-block::
+
+  def get_alarms(
+             tstart,
+             tstop,
+             opened=True,
+             resolved=False,
+             consolidations=[],
+             filter={},
+             search='',
+             sort_key='opened',
+             sort_dir='DESC',
+             skip=0,
+             limit=50
+     ):
+         """
+         Return filtered, sorted and paginated alarms.
+         :param int tstart: Beginning timestamp of requested period
+         :param int tstop: End timestamp of requested period
+         :param bool opened: If True, consider alarms that are currently opened
+         :param bool resolved: If True, consider alarms that have been resolved
+         :param list consolidations: List of extra columns to compute for each
+           returned alarm. Extra columns are "pbehaviors" and/or "linklist".
+         :param dict filter: Mongo filter. Keys are UI column names.
+         :param str search: Search expression in custom DSL
+         :param str sort_key: Name of the column to sort
+         :param str sort_dir: Either "ASC" or "DESC"
+         :param int skip: Number of alarms to skip (pagination)
+         :param int limit: Maximum number of alarms to return
+         :returns: List of sorted alarms + pagination informations
+         :rtype: dict
+         """
 
 
 Main description
@@ -265,22 +311,116 @@ Here is a list of actions that need to be handled by the widget :
    "assocticket", "assocticket", "Add a ticket number into Canopsis", "See `Schema <https://git.canopsis.net/canopsis/canopsis/blob/develop/sources/python/alerts/etc/schema.d/cevent.assocticket.json>`_. "
    
 
+Rendering
+=========
+
+Main table
+^^^^^^^^^^
+
+* The main table must repect adminlte standards  https://almsaeedstudio.com/themes/AdminLTE/pages/tables/simple.html
+* It must be responsive (big screen, desktop, mobile)
+* 50 tr must be shown in 1 second, not more.
+* Pagination (done by the backend)
+* Sort (done by the backend)
+
+
+Array Search
+^^^^^^^^^^^^
+
+The widget must show a input to make searches
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/search.png
+
+A dsl is provided by the backend to perform searches.  
+
+**TO BE COMPLETED BY FLO** => Donner les infos de la route à appeler avec ses paramètres
+
+
 Action buttons
 ^^^^^^^^^^^^^^
 
-In the widget, actions must be shown to the user by a group of buttons that must be callable by a handlebar renderer. 
+In the widget, a column must be dedicated to user actions.  
 
- {{ actions list="confirm invalidate declareticket pause" }}
- 
-must show
+In the widget conf form, there must be a checkbox to do such a thing.  
+Actions are shown only if the user is authorized to. Don't forget to include this contraint.
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-service-weather/raw/master/doc/screenshots/eventsactions1.png
+Here are available actions :
 
-Actions definitions must be included into a dedicated `ember mixin`.
+* ACK / FastACK / UnACK  (glyphicon-saved / glyphicon-ok / glyphicon-ban-circle)
+* Declareticket (fa-ticket)
+* Assocticket (fa-thumb-tack)
+* Cancel alarm (glyphicon-trash) 
+* Chnage criticity (fa-exclamation-triangle)
+* Restore Alarm (glyphicon-share-alt)
 
-**To do such a thing, have a look at existing mixins in the project**
+Each action is associated with a font
+
+Executing an action is the same thing as sending an event.  
+
+Action forms must be picked from the actual "list widget".
+
+**TO BE COMPLETED BY FLO**
 
 
+
+Info Popup
+^^^^^^^^^^
+
+When set, a popup can be displayed by clicking in a cell.  
+Popup results from a template compilation which can be defined by the user.  
+
+The user must be able to set multiple infopopup on multiple columns.
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-service-weather/raw/master/doc/screenshots/recordinfopopup.png
+
+
+Column Renderering
+^^^^^^^^^^^^^^^^^^
+
+The user must be able to select colums he wants to show on the main table within the widget conf form.  
+
+Some data have to be shown with a renderer. 
+For example, a timestamp must use a special timestamp renderer.  
+The mapping between data and renderer is done via the schema.  
+
+
+.. code-block::
+
+ "opened": {
+       "stored_name": "t",
+       "role" : "timestamp"
+     },
+
+With these informations, you know that you have to call the renderer below
+
+.. code-block::
+
+ $ cat uibase/src/renderers/renderer-timestamp.hbs 
+ {{!*
+  * @renderer timestamp
+ }}
+ {{#unless attr.options.hideDate}}
+     <div>{{timestamp value attr}}</div>
+ {{/unless}}
+ {{#if attr.options.canDisplayAgo}}
+     <small class="text-muted">
+         <span class="glyphicon glyphicon-time"></span>
+         {{timeSince value}}
+     </small>
+ {{/if}} 
+
+If there is no role associated with the attribute, you have to render value as string.
+
+
+Linklist
+^^^^^^^^
+
+Pbehavior
+^^^^^^^^^
+
+
+Timeline
+^^^^^^^^
 
 Glossary
 --------
