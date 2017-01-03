@@ -116,7 +116,7 @@ def exports(ws):
         try:
             ar.interpret_search(expression)
 
-        except ValueError:
+        except Exception:
             return False
 
         else:
