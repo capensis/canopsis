@@ -371,7 +371,7 @@ Popup results from a template compilation which can be defined by the user.
 
 The user must be able to set multiple infopopup on multiple columns.
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-service-weather/raw/master/doc/screenshots/recordinfopopup.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/recordinfopopup.png
 
 
 Column Renderering
@@ -429,7 +429,7 @@ There are many other informations available by calling another webservice, **ste
 
 In the main table, each tr must show a "+" that will call a component that represent steps.
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-service-weather/raw/master/doc/screenshots/timeline.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/timeline.png
 
 
 Glossary
