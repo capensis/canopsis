@@ -143,30 +143,66 @@ def generate():
                     }
                 ]),
                 'output': ' '.join(randword(3) for i in range(4)),
-                'solved': None,
+                'resolved': None,
                 'extra': {
                     'domain': choice(domains),
                     'perimeter': choice(perimeters)
                 },
-                'linklist': [],
-                'pbehaviour': choice([
-                    None,
+                'linklist': {
+                    'computed_links': []
+                },
+                'pbehaviors': choice([None, []]),
+                'hard_limit': 'to be ignored...',
+                'steps': ['to be ignored...']
+            },
+            'd': entity_id,
+            't': randts(tstart, tstop)
+        }
+
+        if choice([True, True, False]):
+            for i in range(randint(2, 4)):
+                randurl = 'http{}://{}'.format(choice(['', 's']), uuid4().hex)
+                alarm['v']['linklist']['computed_links'].append(
                     {
-                        'names': choice([['downtime'], ['downtime', 'other']]),
-                        'on_going': choice([True, False]),
+                        'url': randurl,
+                        'label': randword(3)
+                    }
+                )
+
+        if choice([True, False, False]):
+            alarm['v']['linklist']['event_links'] = []
+
+            for i in range(randint(2, 4)):
+                randurl = 'http{}://{}'.format(choice(['', 's']), uuid4().hex)
+                alarm['v']['linklist']['event_links'].append(
+                    {
+                        'url': randurl,
+                        'label': randword(3)
+                    }
+                )
+
+        if alarm['v']['pbehaviors'] == []:
+            if choice([True, False]):
+                alarm['v']['pbehaviors'].append(
+                    {
+                        'name': 'downtime',
+                        'enabled': choice([True, False]),
                         'tstart': randts(tstart, tstop),
                         'tstop': randts(tstart, tstop),
                         'rrule': randrrule(),
                     }
-                ]),
-            },
-            'd': entity_id,
-            't': randts(tstart, tstop),
-        }
+                )
 
-        for i in range(randint(2, 4)):
-            randurl = 'http{}://{}'.format(choice(['', 's']), uuid4().hex)
-            alarm['v']['linklist'].append(randurl)
+            if choice([True, False]):
+                alarm['v']['pbehaviors'].append(
+                    {
+                        'name': 'custom pbehavior',
+                        'enabled': choice([True, False]),
+                        'tstart': randts(tstart, tstop),
+                        'tstop': randts(tstart, tstop),
+                        'rrule': randrrule(),
+                    }
+                )
 
         ds['alarms'].append(alarm)
 
