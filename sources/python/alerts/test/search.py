@@ -20,6 +20,7 @@
 # ---------------------------------
 
 from unittest import TestCase, main
+from re import compile as compile_
 
 from canopsis.alerts.search.interpreter import interpret
 
@@ -31,16 +32,20 @@ class TestSearch(TestCase):
         cases = [
             {
                 'search': 'a = "a"',
-                'expected_filter': {'a': 'a'}
+                'expected_filter': {'a': {'$eq': 'a'}}
             },
             {
-                'search': 'a = "a" AND b = "b"',
-                'expected_filter': {'$and': [{'a': 'a'}, {'b': 'b'}]}
+                'search': 'a = "a" AND NOT b = "b"',
+                'expected_filter': {
+                    '$and': [
+                        {'a': {'$eq': 'a'}}, {'b': {'$not': {'$eq': 'b'}}}
+                    ]
+                }
             },
             {
                 'search': 'ALL a = "a"',
                 'expected_scope': 'all',
-                'expected_filter': {'a': 'a'}
+                'expected_filter': {'a': {'$eq': 'a'}}
             }
         ]
 
@@ -57,47 +62,47 @@ class TestSearch(TestCase):
         cases = [
             {
                 'search': 'a = "a"',
-                'expected_filter': {'a': 'a'}
+                'expected_filter': {'a': {'$eq': 'a'}}
             },
             {
                 'search': "a = 'a'",
-                'expected_filter': {'a': 'a'}
+                'expected_filter': {'a': {'$eq': 'a'}}
             },
             {
                 'search': 'a = 1',
-                'expected_filter': {'a': 1}
+                'expected_filter': {'a': {'$eq': 1}}
             },
             {
                 'search': 'a = +1',
-                'expected_filter': {'a': 1}
+                'expected_filter': {'a': {'$eq': 1}}
             },
             {
                 'search': 'a = -1',
-                'expected_filter': {'a': -1}
+                'expected_filter': {'a': {'$eq': -1}}
             },
             {
                 'search': 'a = 1.2345',
-                'expected_filter': {'a': 1.2345}
+                'expected_filter': {'a': {'$eq': 1.2345}}
             },
             {
                 'search': 'a = +1.2345',
-                'expected_filter': {'a': 1.2345}
+                'expected_filter': {'a': {'$eq': 1.2345}}
             },
             {
                 'search': 'a = -1.2345',
-                'expected_filter': {'a': -1.2345}
+                'expected_filter': {'a': {'$eq': -1.2345}}
             },
             {
                 'search': 'a = TRUE',
-                'expected_filter': {'a': True}
+                'expected_filter': {'a': {'$eq': True}}
             },
             {
                 'search': 'a = FALSE',
-                'expected_filter': {'a': False}
+                'expected_filter': {'a': {'$eq': False}}
             },
             {
                 'search': 'a = NULL',
-                'expected_filter': {'a': None}
+                'expected_filter': {'a': {'$eq': None}}
             }
         ]
 
@@ -121,7 +126,7 @@ class TestSearch(TestCase):
             },
             {
                 'search': 'a = 1',
-                'expected_filter': {'a': 1}
+                'expected_filter': {'a': {'$eq': 1}}
             },
             {
                 'search': 'a != 1',
@@ -146,6 +151,14 @@ class TestSearch(TestCase):
             {
                 'search': 'a LIKE 1',
                 'expected_filter': {'a': {'$regex': 1}}
+            },
+            {
+                'search': 'NOT a = 1',
+                'expected_filter': {'a': {'$not': {'$eq': 1}}}
+            },
+            {
+                'search': 'NOT a LIKE "1"',
+                'expected_filter': {'a': {'$not': compile_(u'1')}}
             }
         ]
 
@@ -161,23 +174,40 @@ class TestSearch(TestCase):
         cases = [
             {
                 'search': 'a = 1 AND b = 2',
-                'expected_filter': {'$and': [{'a': 1}, {'b': 2}]}
+                'expected_filter': {
+                    '$and': [{'a': {'$eq': 1}}, {'b': {'$eq': 2}}]
+                }
             },
             {
                 'search': 'a = 1 OR b = 2',
-                'expected_filter': {'$or': [{'a': 1}, {'b': 2}]}
+                'expected_filter': {
+                    '$or': [{'a': {'$eq': 1}}, {'b': {'$eq': 2}}]
+                }
             },
             {
                 'search': 'a = 1 AND b = 2 OR c = 3',
                 'expected_filter': {
-                    '$or': [{'$and': [{'a': 1}, {'b': 2}]}, {'c': 3}]
+                    '$or': [
+                        {
+                            '$and': [
+                                {'a': {'$eq': 1}},
+                                {'b': {'$eq': 2}}
+                            ]
+                        },
+                        {'c': {'$eq': 3}}
+                    ]
                 }
             },
             {
                 'search': 'a = 1 OR b = 2 AND c = 3',
                 'expected_filter': {
                     '$and': [
-                        {'$or': [{'a': 1}, {'b': 2}]}, {'c': 3}
+                        {
+                            '$or': [
+                                {'a': {'$eq': 1}}, {'b': {'$eq': 2}}
+                            ]
+                        },
+                        {'c': {'$eq': 3}}
                     ]
                 }
             },
@@ -200,7 +230,7 @@ class TestSearch(TestCase):
                                                 {'b': {'$lte': 2}}
                                             ]
                                         },
-                                        {'c': 3}
+                                        {'c': {'$eq': 3}}
                                     ]
                                 },
                                 {'d': {'$ne': 4}}

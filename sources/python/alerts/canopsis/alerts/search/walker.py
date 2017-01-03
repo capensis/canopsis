@@ -20,6 +20,8 @@
 
 from __future__ import unicode_literals
 
+from re import compile as compile_
+
 from grako.model import NodeWalker
 
 
@@ -89,18 +91,27 @@ class Walker(NodeWalker):
     def walk_key(self, node):
         return node.value
 
+    def walk_not(self, node):
+        return True
+
     def walk_compop(self, node):
         return self.compop_table[node.value]
 
     def walk_comparison(self, node):
+        not_ = self.walk(node.not_)
         left = self.walk(node.left)
         op = self.walk(node.compop)
         right = self.walk(node.right)
 
-        if op == '$eq':
-            return {left: right}
+        if not_ is None:
+            return {left: {op: right}}
 
-        return {left: {op: right}}
+        else:
+            if op == '$regex':
+                return {left: {'$not': compile_(right)}}
+
+            else:
+                return {left: {'$not': {op: right}}}
 
     def walk_condop(self, node):
         return self.condop_table[node.value]
