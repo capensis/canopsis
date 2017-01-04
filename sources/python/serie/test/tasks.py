@@ -21,8 +21,9 @@
 
 from unittest import main
 
+#TODO4-01-2017
 #from canopsis.serie.tasks import new_operator, operatorset
-from manager import BaseTestSerieManager
+#from manager import BaseTestSerieManager
 
 
 #class TestSerieTasks(BaseTestSerieManager):
