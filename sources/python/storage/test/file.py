@@ -165,5 +165,6 @@ class MongoFileStorageTest(TestCase):
 
             self.assertRaises(Exception, fs.seek, 2)
 
+
 if __name__ == '__main__':
     main()

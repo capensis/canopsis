@@ -27,7 +27,7 @@ from canopsis.storage.composite import CompositeStorage
 
 from canopsis.configuration.configurable.decorator import conf_paths
 
-from .base import BaseTestConfiguration, BaseStorageTest
+from base import BaseTestConfiguration, BaseStorageTest
 
 
 @conf_paths('storage/test-composite.conf')
