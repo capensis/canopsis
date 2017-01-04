@@ -21,7 +21,6 @@
 
 from unittest import TestCase, main
 from canopsis.linklist.dbconfigurationmanager import DBConfiguration
-from uuid import uuid4
 
 DEBUG = False
 
@@ -36,10 +35,6 @@ class DBConfigurationTest(TestCase):
         initialize a manager.
         """
         self.dbconfigurationmanager = DBConfiguration()
-
-
-class DBConfigurationTest(CheckManagerTest):
-    pass
 
 
 if __name__ == '__main__':

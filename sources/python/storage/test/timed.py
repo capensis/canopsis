@@ -22,8 +22,9 @@
 from unittest import main
 
 from canopsis.timeserie.timewindow import TimeWindow
+from canopsis.configuration.configurable.decorator import conf_paths
 
-from .base import BaseTestConfiguration, BaseStorageTest
+from base import BaseTestConfiguration, BaseStorageTest
 
 
 @conf_paths('storage/test-timed.conf')
@@ -85,9 +86,13 @@ class PeriodicStoreTest(BaseStorageTest):
 
             data = storage.get(data_id=data_id, timewindow=timewindow)
             self.assertEquals(len(data), points_count_in_timewindow)
-            self.assertEquals(data,
-                [point for point in sorted_points
-                if point[0] in timewindow])
+            self.assertEquals(
+                data,
+                [
+                    point for point in sorted_points
+                    if point[0] in timewindow
+                ]
+            )
 
             storage.remove(data_id=data_id, timewindow=timewindow)
 

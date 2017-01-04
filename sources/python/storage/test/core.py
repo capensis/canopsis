@@ -24,7 +24,7 @@ from unittest import main
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage
 
-from .base import BaseTestConfiguration, BaseStorageTest
+from base import BaseTestConfiguration, BaseStorageTest
 
 from tempfile import NamedTemporaryFile
 

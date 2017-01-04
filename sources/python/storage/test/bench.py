@@ -19,18 +19,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+from unittest import main
 
-from canopsis.storage.core import Storage
+from base import BaseStorageTest
 
-from .base import BaseTestConfiguration, BaseStorageTest
+# from time import time
 
-from time import time
+# try:
+#     from threading import Thread
 
-try:
-    from threading import Thread
-except ImportError:
-    from dummy_threading import Thread
+# except ImportError:
+#     from dummy_threading import Thread
 
 
 class Bench(BaseStorageTest):
@@ -74,116 +73,120 @@ class Bench(BaseStorageTest):
 
         self.max_connections = 1
 
-    def tearDown(self):
-        """
-        End the test
-        """
+    # TODO 4-01-2017
+    # def tearDown(self):
+    #     """
+    #     End the test
+    #     """
 
-        # remove all data from collection
-        self.storage.drop()
+    #     # remove all data from collection
+    #     self.storage.drop()
 
-    def test(self):
-        """
-        Run tests.
-        """
+    # TODO 4-01-2017
+    # def test(self):
+    #     """
+    #     Run tests.
+    #     """
 
-        threads = [
-            Thread(target=self._test_CRUD) for i in range(self.max_connections)
-        ]
+    #     threads = [
+    #         Thread(target=self._test_CRUD)
+    #         for i in range(self.max_connections)
+    #     ]
 
-        for thread in threads:
-            thread.start()
+    #     for thread in threads:
+    #         thread.start()
 
-        for thread in threads:
-            thread.join()
+    #     for thread in threads:
+    #         thread.join()
 
-    def _test_CRUD(self):
-        """
-        Bench CRUD commands
-        """
+    # TODO 4-01-2017
+    # def _test_CRUD(self):
+    #     """
+    #     Bench CRUD commands
+    #     """
 
-        print(
-            'Starting bench on %s with %s documents'
-            %
-            (self.commands, self.count)
-        )
+    #     print(
+    #         'Starting bench on %s with %s documents'
+    #         %
+    #         (self.commands, self.count)
+    #     )
 
-        stats_per_command = {
-            command[0]: {'min': None, 'max': None, 'mean': 0}
-            for command in self.commands
-        }
+    #     stats_per_command = {
+    #         command[0]: {'min': None, 'max': None, 'mean': 0}
+    #         for command in self.commands
+    #     }
 
-        min_t, max_t, mean_t = None, None, 0
+    #     min_t, max_t, mean_t = None, None, 0
 
-        for i in range(self.iteration):
+    #     for i in range(self.iteration):
 
-            total = 0
+    #         total = 0
 
-            for index, command in enumerate(self.commands):
+    #         for index, command in enumerate(self.commands):
 
-                fn = command[1]
-                command = command[0]
+    #             fn = command[1]
+    #             command = command[0]
 
-                start = time()
+    #             start = time()
 
-                if command == 'update':
-                    documents = self.documents_to_update
-                else:
-                    documents = self.documents
+    #             if command == 'update':
+    #                 documents = self.documents_to_update
+    #             else:
+    #                 documents = self.documents
 
-                for j in range(self.count):
+    #             for j in range(self.count):
 
-                    fn(
-                        spec={'_id': str(self.count)},
-                        document=documents[j]
-                    )
+    #                 fn(
+    #                     spec={'_id': str(self.count)},
+    #                     document=documents[j]
+    #                 )
 
-                stop = time()
+    #             stop = time()
 
-                duration = stop - start
-                stats = stats_per_command[command]
-                if stats['min'] is None or stats['min'] > duration:
-                    stats['min'] = duration
-                if stats['max'] is None or stats['max'] < duration:
-                    stats['max'] = duration
-                stats['mean'] += duration
+    #             duration = stop - start
+    #             stats = stats_per_command[command]
+    #             if stats['min'] is None or stats['min'] > duration:
+    #                 stats['min'] = duration
+    #             if stats['max'] is None or stats['max'] < duration:
+    #                 stats['max'] = duration
+    #             stats['mean'] += duration
 
-                bench_msg = 'command: %s, iteration: %s, time: %s'
+    #             bench_msg = 'command: %s, iteration: %s, time: %s'
 
-                print(
-                    bench_msg % (command, i, duration)
-                )
+    #             print(
+    #                 bench_msg % (command, i, duration)
+    #             )
 
-                total += duration
+    #             total += duration
 
-            if min_t is None or min_t > total:
-                min_t = total
-            if max_t is None or max_t < total:
-                max_t = total
-            mean_t += total
+    #         if min_t is None or min_t > total:
+    #             min_t = total
+    #         if max_t is None or max_t < total:
+    #             max_t = total
+    #         mean_t += total
 
-            bench_msg = 'CRUD: %s' % total
+    #         bench_msg = 'CRUD: %s' % total
 
-            print(bench_msg)
+    #         print(bench_msg)
 
-        # update mean per command
-        for command in self.commands:
-            stats = stats_per_command[command[0]]
-            stats['mean'] = stats['mean'] / self.iteration
-            bench_msg = 'command: %s, min: %s, max: %s, mean: %s'
-            print(
-                bench_msg
-                %
-                (command[0], stats['min'], stats['max'], stats['mean'])
-            )
+    #     # update mean per command
+    #     for command in self.commands:
+    #         stats = stats_per_command[command[0]]
+    #         stats['mean'] = stats['mean'] / self.iteration
+    #         bench_msg = 'command: %s, min: %s, max: %s, mean: %s'
+    #         print(
+    #             bench_msg
+    #             %
+    #             (command[0], stats['min'], stats['max'], stats['mean'])
+    #         )
 
-        # update mean for all CRUD operations
-        mean_t = mean_t / self.iteration
+    #     # update mean for all CRUD operations
+    #     mean_t = mean_t / self.iteration
 
-        bench_msg = "all command, min: %s, max: %s, mean: %s"
-        print(
-            bench_msg % (min_t, max_t, mean_t)
-        )
+    #     bench_msg = "all command, min: %s, max: %s, mean: %s"
+    #     print(
+    #         bench_msg % (min_t, max_t, mean_t)
+    #     )
 
 
 if __name__ == '__main__':
