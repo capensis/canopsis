@@ -324,14 +324,19 @@ class AlertsReader(MiddlewareRegistry):
         query = query.skip(skip)
         query = query.limit(limit)
 
+        alarms = list(query)
+
         total = query.count()
-        limited_total = query.count(True)
+        limited_total = len(alarms)  # Manual count is much faster than mongo's
         first = 0 if limited_total == 0 else skip + 1
         last = 0 if limited_total == 0 else skip + limited_total
 
-        alarms = list(query)
-
         alarms = self._consolidate_alarms(alarms, consolidations)
+
+        # Steps are never meant to be used in UI and would just cost
+        # unnecessary bandwidth.
+        for a in alarms:
+            a['v'].pop('steps')
 
         res = {
             'alarms': alarms,
