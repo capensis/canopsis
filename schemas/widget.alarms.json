@@ -36,7 +36,7 @@
             "title": "Display events statistics",
             "description": "Enable/disable events statistics",
             "type": "boolean"
-        },
+    },
 		"show_users": {
             "title": "Display users statistics",
             "description": "Enable/disable users statistics",

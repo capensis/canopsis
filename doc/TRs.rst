@@ -11,6 +11,7 @@ The widget configuration is organized around menus which look like this:
 
 * General
 * Columns
+* Info Popup
 * Mixins
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/conf_tab_alarms.png
@@ -19,7 +20,7 @@ The widget configuration is organized around menus which look like this:
 Tab 1 : General
 ^^^^^^^^^^^^^^^
 
-* The widget needs a title.  
+* The widget needs a title.
 * If there are no user preferences, default_sort_key and default_sort_dir may be defined
 
 
@@ -34,11 +35,11 @@ Like the existing "list widget", this one should allow users to select columns t
 Tab 3 : Info Popup
 ^^^^^^^^^^^^^^^^^^
 
-The user must be able to define a template (with handlebars) which could be compiled when he clicks on a cell.  
+The user must be able to define a template (with handlebars) which could be compiled when he clicks on a cell.
 For example, if I click on a connector cell, a popup will be displayed with informations from the template.
 
 
-Tab 3 : Mixins
+Tab 4 : Mixins
 ^^^^^^^^^^^^^^
 
 This tab is automaticaly added with the schema def.
@@ -47,17 +48,17 @@ This tab is automaticaly added with the schema def.
 Data schema
 ===========
 
-In order for you to understand what is needed to display table, here is the data schema with explanations.  
-All needed informations are described in it. If it's not clear, feel free to contact us.  
+In order for you to understand what is needed to display table, here is the data schema with explanations.
+All needed informations are described in it. If it's not clear, feel free to contact us.
 
-You have to know that data are provided by an adapter which relies on a webservice.  
-In order to use only frontend concepts, we provide 1 dataset (in floder `datasets`) which can be loaded by the adapter.  
+You have to know that data are provided by an adapter which relies on a webservice.
+In order to use only frontend concepts, we provide 1 dataset (in folder `datasets`) which can be loaded by the adapter.
 
 
 .. code-block::
 
   return this.ajax('/static/canopsis/brick-alarms/datasets/ds1.json', 'GET', {data: ""});
-  
+
 These data are already available in the alamrs controller. the "fetchData" method of the controller get these data.
 
 
@@ -67,7 +68,7 @@ These data are already available in the alamrs controller. the "fetchData" metho
 
     fetchData: function() {
         var controller = this;
-    
+
         var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:serviceweatherdata');
         adapter.findQuery('serviceweatherdata', {}).then(function (result) {
             // onfullfillment
@@ -77,8 +78,8 @@ These data are already available in the alamrs controller. the "fetchData" metho
             console.error('ERROR in the adapter: ', reason);
         });
     },
-    
-the "result" variable give you the data. 
+
+the "result" variable give you the data.
 
 
 Raw schema
@@ -165,7 +166,7 @@ Extra description
 
    "Extra", "e1", "string", "Extra1", "Extra fields that come with the alarm"
    "", "e2", "string", "Extra2", "Extra fields that come with the alarm"
-   
+
 
 State description
 ^^^^^^^^^^^^^^^^^
@@ -260,17 +261,17 @@ Linklist description
    "", "label", "string", "Ticket", "Label associated to an url"
 
 
-Linklist is a list of urls associated to the entity.  
-Links must appear in the modal like potentialy any other variables but with special helper.  
+Linklist is a list of urls associated to the entity.
+Links must appear in the modal like potentialy any other variables but with special helper.
 
 The goal is to let the user access a handlebar renderer
 
  {{ linklist category="procedure" }}
- 
-Must return something like 
+
+Must return something like
 
  foreach linklist with category = "procedure"
- 
+
  <a href="http://urloflinklist">labeloflinklist</a><br>
 
 
@@ -283,7 +284,7 @@ Pbehavior description
 
    "pbehavior", "behavior", "string", "maintenance pause", "Name of the behavior"
    "", "isActive", "boolean", "True False", "Is the pbehavior active ?"
-   "", "dtstart", "number/timestamp", "1476705600", "Timestamp of the begin of pbehavior" 
+   "", "dtstart", "number/timestamp", "1476705600", "Timestamp of the begin of pbehavior"
    "", "dtstop", "number/timestamp", "1476706600", "Timestamp of the end of pbehavior"
    "", "rrule", "structure attr1 : string, attr2 : string", "text=Every Week, rule='FREQ=WEEKLY'", "Reccurent rule of the behavior"
 
@@ -292,8 +293,8 @@ Pbehavior description
 Actions / Events
 ================
 
-In the widget, users may be able to execute actions.  
-In the Canopsis world, actions are performed via sending messages to a AMQP bus.  
+In the widget, users may be able to execute actions.
+In the Canopsis world, actions are performed via sending messages to a AMQP bus.
 
 Listing
 ^^^^^^^
@@ -309,7 +310,7 @@ Here is a list of actions that need to be handled by the widget :
    "pause", "pbehavior", "Change criticity of an alarm", "{}"
    "declareticket", "declareticket", "Call a API/email of an external tool to create a ticket", "See `Schema <https://git.canopsis.net/canopsis/canopsis/blob/develop/sources/python/alerts/etc/schema.d/cevent.declareticket.json>`_. "
    "assocticket", "assocticket", "Add a ticket number into Canopsis", "See `Schema <https://git.canopsis.net/canopsis/canopsis/blob/develop/sources/python/alerts/etc/schema.d/cevent.assocticket.json>`_. "
-   
+
 
 Rendering
 =========
@@ -331,7 +332,7 @@ The widget must show a input to make searches
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/search.png
 
-A dsl is provided by the backend to perform searches.  
+A dsl is provided by the backend to perform searches.
 
 **TO BE COMPLETED BY FLO** => Donner les infos de la route à appeler avec ses paramètres
 
@@ -339,9 +340,9 @@ A dsl is provided by the backend to perform searches.
 Action buttons
 ^^^^^^^^^^^^^^
 
-In the widget, a column must be dedicated to user actions.  
+In the widget, a column must be dedicated to user actions.
 
-In the widget conf form, there must be a checkbox to do such a thing.  
+In the widget conf form, there must be a checkbox to do such a thing.
 Actions are shown only if the user is authorized to. Don't forget to include this contraint.
 
 Here are available actions :
@@ -349,13 +350,13 @@ Here are available actions :
 * ACK / FastACK / UnACK  (glyphicon-saved / glyphicon-ok / glyphicon-ban-circle)
 * Declareticket (fa-ticket)
 * Assocticket (fa-thumb-tack)
-* Cancel alarm (glyphicon-trash) 
+* Cancel alarm (glyphicon-trash)
 * Chnage criticity (fa-exclamation-triangle)
 * Restore Alarm (glyphicon-share-alt)
 
 Each action is associated with a font
 
-Executing an action is the same thing as sending an event.  
+Executing an action is the same thing as sending an event.
 
 Action forms must be picked from the actual "list widget".
 
@@ -366,8 +367,8 @@ Action forms must be picked from the actual "list widget".
 Info Popup
 ^^^^^^^^^^
 
-When set, a popup can be displayed by clicking in a cell.  
-Popup results from a template compilation which can be defined by the user.  
+When set, a popup can be displayed by clicking in a cell.
+Popup results from a template compilation which can be defined by the user.
 
 The user must be able to set multiple infopopup on multiple columns.
 
@@ -377,11 +378,11 @@ The user must be able to set multiple infopopup on multiple columns.
 Column Renderering
 ^^^^^^^^^^^^^^^^^^
 
-The user must be able to select columns he wants to show on the main table within the widget conf form.  
+The user must be able to select columns he wants to show on the main table within the widget conf form.
 
-Some data have to be shown with a renderer. 
-For example, a timestamp must use a special timestamp renderer.  
-The mapping between data and renderer is done via the schema.  
+Some data have to be shown with a renderer.
+For example, a timestamp must use a special timestamp renderer.
+The mapping between data and renderer is done via the schema.
 
 
 .. code-block::
@@ -395,7 +396,7 @@ With these informations, you know that you have to call the renderer below
 
 .. code-block::
 
- $ cat uibase/src/renderers/renderer-timestamp.hbs 
+ $ cat uibase/src/renderers/renderer-timestamp.hbs
  {{!*
   * @renderer timestamp
  }}
@@ -407,7 +408,7 @@ With these informations, you know that you have to call the renderer below
          <span class="glyphicon glyphicon-time"></span>
          {{timeSince value}}
      </small>
- {{/if}} 
+ {{/if}}
 
 If there is no role associated with the attribute, you have to render value as string.
 
@@ -427,8 +428,8 @@ Pbehavior
 Timeline
 ^^^^^^^^
 
-The TR you have to show in the main table describe an alarm.  
-There are many other informations available by calling another webservice, **steps**.  
+The TR you have to show in the main table describe an alarm.
+There are many other informations available by calling another webservice, **steps**.
 
 In the main table, each tr must show a "+" that will call a component that represent steps.
 
@@ -441,11 +442,9 @@ Glossary
 .. code-block::
 
     Entity
-        An entity is a config item in Canopsis with a type.  
+        An entity is a config item in Canopsis with a type.
         Type could be `component`, `resource`, `selector`
 
     Schema
-        A schema is a way to represent data.  
+        A schema is a way to represent data.
         In Canopsis, schemas are in JSON format
- 
-
