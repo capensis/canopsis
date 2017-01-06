@@ -17,7 +17,7 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Ember.Application.initializer({
+/*Ember.Application.initializer({
     name: 'AlarmsSerializer',
     after: ['ApplicationSerializer'],
     initialize: function(container, application) {
@@ -25,4 +25,4 @@ Ember.Application.initializer({
         var serializer = AppSerializer.extend({});
         application.register('serializer:alarms', serializer);
     }
-});
+});*/
