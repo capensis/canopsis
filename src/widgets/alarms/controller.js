@@ -79,7 +79,10 @@ Ember.Application.initializer({
              */
             fetchAlarms: function() {
               var controller = this;
-              var query = {};
+              var query = {
+                tstart: 0,
+                tstop: 0
+              };
 
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
               adapter.findQuery('alerts', query).then(function (result) {
