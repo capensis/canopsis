@@ -22,10 +22,10 @@ Ember.Application.initializer({
     after: ['TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'AlarmsView', 'UserconfigurationMixin', 'SchemasLoader'],
     initialize: function(container, application) {
 		var timeWindowUtils = container.lookupFactory('utility:timewindow'),
-        dataUtils = container.lookupFactory('utility:data'),
-			  WidgetFactory = container.lookupFactory('factory:widget'),
-        viewMixin = container.lookupFactory('view:alarms'),
-			  UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
+        	dataUtils = container.lookupFactory('utility:data'),
+			WidgetFactory = container.lookupFactory('factory:widget'),
+        	viewMixin = container.lookupFactory('view:alarms'),
+			UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
 
         var get = Ember.get,
             set = Ember.set,
@@ -48,8 +48,8 @@ Ember.Application.initializer({
          */
         var widget = WidgetFactory('alarms',{
 
-    		    viewMixins: [
-                viewMixin
+			viewMixins: [
+                 viewMixin
             ],
 
             /**
@@ -58,40 +58,154 @@ Ember.Application.initializer({
              */
             init: function() {
                 this._super.apply(this, arguments);
+				//this.setParams();
 
-    				    set(this, 'store', DS.Store.extend({
+				set(this, 'store', DS.Store.extend({
                     container: get(this, 'container')
                 }));
-
-                this.fetchAlarms();
             },
+
+			/**
+			 * @method updateInterval
+			 */
+			/*updateInterval: function(interval) {
+                var from = get(interval, 'timestamp.$gte'),
+                    to = get(interval, 'timestamp.$lte');
+
+                if(!isNone(from)) {
+                    set(this, 'from', from * 1000);
+                }
+                else {
+                    set(this, 'from', undefined);
+                }
+
+                if(!isNone(to)) {
+                    set(this, 'to', to * 1000);
+                }
+                else {
+                    set(this, 'to', undefined);
+                }
+
+                this.setParams();
+            },*/
 
             /**
              * Set the reload to true in order to redraw events
              * extend the native refreshContent method
              * @method refreshContent
              */
-            refreshContent: function () {},
+            refreshContent: function () {
+				// Not implemented because backend too long, feature not useful for this widget
+            },
+
+            /**
+             * Set widget params to create an Ember object to manipulate
+             * @method setParams
+             */
+			setParams: function() {
+            	var controller = this;
+
+				var tw = timeWindowUtils.getFromTo(
+                    get(controller, 'time_window'),
+                    get(controller, 'time_window_offset')
+                );
+
+				var from = tw[0],
+                    to = tw[1];
+
+                /* live reporting support */
+                var liveFrom = get(controller, 'from'),
+                    liveTo = get(controller, 'to');
+
+				if (!isNone(liveFrom)) {
+                    from = liveFrom;
+                }
+
+                if (!isNone(liveTo)) {
+                    to = liveTo;
+                }
+
+				var widgetParams = {
+					timewindow: {
+						from: parseInt(from / 1000),
+                    	to: parseInt(to / 1000)
+					},
+					title: get(controller, 'model.title'),
+					domain: get(controller, 'model.domain'),
+					perimeter: get(controller, 'model.perimeter'),
+					user: get(controller, 'model.user'),
+					show_events: get(controller, 'model.show_events'),
+					show_users: get(controller, 'model.show_users')
+				};
+
+				set(controller, 'widgetParams', widgetParams);
+				if (get(controller, 'model.show_events')) {
+					controller.fetchEvents();
+				}
+				if (get(controller, 'model.show_users')) {
+					controller.fetchUser();
+				}
+            },
 
             /**
              * Get events statistics from backend
              * @method fetchEvents
              */
-            fetchAlarms: function() {
-              var controller = this;
-              var query = {
-                tstart: 0,
-                tstop: 0
-              };
+            fetchEvents: function() {
+            	var controller = this;
 
-              var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
-              adapter.findQuery('alerts', query).then(function (result) {
-                  // onfullfillment
-                  var alerts = get(result, 'data');
-                  console.error('alerts', alerts);
-              }, function (reason) {                                                                                                                     console.error('ERROR in the adapter: ', reason);
-                  // onrejection
-              });
+				var tags= {
+					domain: get(controller, 'widgetParams.domain'),
+					perimeter: get(controller, 'widgetParams.perimeter')
+				};
+
+				var tag = JSON.stringify(tags);
+				var query = {
+					tstart: get(controller, 'widgetParams.timewindow.from'),
+					tstop: get(controller, 'widgetParams.timewindow.to'),
+					tags: tag
+				};
+
+				var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:statstableevents');
+                adapter.findQuery('statstableevents', query).then(function (result) {
+            		// onfullfillment
+					var stats = get(result, 'data');
+					set(controller, 'statsevent', stats[0]);
+					controller.trigger('disableLoading');
+                }, function (reason) {                                                                                                                     console.error('ERROR in the adapter: ', reason);
+            	});
+			},
+
+            /**
+             * Get user statistics from backend
+             * @method fetchUser
+             */
+            fetchUser: function() {
+            	var controller = this;
+
+				var tags= {
+                    domain: get(controller, 'widgetParams.domain'),
+                    perimeter: get(controller, 'widgetParams.perimeter')
+                };
+
+				var tag = JSON.stringify(tags);
+                var query = {
+                    tstart: get(controller, 'widgetParams.timewindow.from'),
+                    tstop: get(controller, 'widgetParams.timewindow.to'),
+                    users: get(controller, 'widgetParams.user'),
+					tags: tag
+                };
+
+                var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:statstableuser');
+            	adapter.findQuery('statstableuser', query).then(function (result) {
+                    // onfullfillment
+					var stats = get(result, 'data');
+					set(controller, 'statsuser', stats);
+					controller.trigger('disableLoading');
+                }, function (reason) {
+                    // onrejection
+                    console.error('ERROR in the adapter: ', reason);
+                });
             }
 
         }, listOptions);

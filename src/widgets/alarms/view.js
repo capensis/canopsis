@@ -33,12 +33,29 @@ Ember.Application.initializer({
          */
         var view = Ember.Mixin.create({
 
+
+			/**
+			 * disable loading css when the controller get data
+ 			 * @method disableLoading
+ 			 */
+			/*disableLoading: function () {
+				if (this.$('overlay') !== undefined) {
+					this.$('.overlay').remove();
+					this.$('.fa-spin').remove();
+				}
+			},*/
+
             /**
              * Create the fullcalendar at the beginning and catch every changed view
              * @method didInsertElement
              */
             didInsertElement: function () {
-				this._super.apply(this, arguments);
+				/*this._super.apply(this, arguments);
+                var globalView = this;
+                var controller = get(globalView, 'controller');
+				this.$('.box').append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
+
+				controller.on('disableLoading',this, this.disableLoading);*/
 			},
 
             /**
