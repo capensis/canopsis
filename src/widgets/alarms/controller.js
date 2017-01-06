@@ -77,7 +77,7 @@ Ember.Application.initializer({
              * Get events statistics from backend
              * @method fetchEvents
              */
-            fetchEvents: function() {
+            fetchAlarms: function() {
               var controller = this;
               var query = {};
 
