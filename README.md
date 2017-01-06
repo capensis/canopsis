@@ -26,19 +26,17 @@ Alarms widget for Canopsis
 
 You need to clone the git repository and copy directory to Canopsis path
 
-    $ su - canopsis 
-    $ cd var/www
-    $ ./bin/brickmanager install brick-alarms
+    $ su - canopsis
+    $ brickmanager install brick-alarms
 
 Then, you need to enable the brick
 
-    $ ./bin/brickmanager enable brick-alarms
+    $ brickmanager enable brick-alarms
 
 You can see enabled bricks
 
     $ su - canopsis
-    $ cd var/www
-    $ ./bin/brickmanager list
+    $ brickmanager list
     [u'core', u'uibase', u'monitoring', ..., **u'brick-alarms'**]
 
 ## Usage
@@ -53,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master
 
 ### Lint
 
-Tested on commit : [ERROR : The brick is not in a dedicated git repository].
+Tested on commit : 18eb977.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -73,4 +71,4 @@ Tested on commit : [ERROR : The brick is not in a dedicated git repository].
 ## Additional-info
 
 Minified version : 4 files (size: 24K)
-Development version : 3 files (size: 36K)
+Development version : 5 files (size: 40K)
