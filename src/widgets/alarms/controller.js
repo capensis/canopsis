@@ -81,11 +81,11 @@ Ember.Application.initializer({
               var controller = this;
               var query = {};
 
-              var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:statstableevents');
-              adapter.findQuery('alarms', query).then(function (result) {
+              var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+              adapter.findQuery('alerts', query).then(function (result) {
                   // onfullfillment
-                  var alarms = get(result, 'data');
-                  console.error('alarms');
+                  var alerts = get(result, 'data');
+                  console.error('alerts', alerts);
               }, function (reason) {                                                                                                                     console.error('ERROR in the adapter: ', reason);
                   // onrejection
               });

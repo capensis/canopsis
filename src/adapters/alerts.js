@@ -6,7 +6,7 @@
  * Canopsis is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  (at your option) any later version.
  *
  * Canopsis is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,12 +17,22 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*Ember.Application.initializer({
-    name: 'AlarmsSerializer',
-    after: ['ApplicationSerializer'],
+Ember.Application.initializer({
+    name: 'AlertsAdapter',
+    after: ['ApplicationAdapter'],
     initialize: function(container, application) {
-        var AppSerializer = container.lookupFactory('serializer:application');
-        var serializer = AppSerializer.extend({});
-        application.register('serializer:alarms', serializer);
+        var ApplicationAdapter = container.lookupFactory('adapter:application');
+
+        // Adapter beginning
+        var adapter = ApplicationAdapter.extend({
+
+            // Method called in the controller to fetch data
+            findQuery: function(store, query) {
+				        var url = '/alerts/get-alarms';
+                return this.ajax(url, 'GET', {data: query});
+            }
+        });
+
+        application.register('adapter:alerts', adapter);
     }
-});*/
+});

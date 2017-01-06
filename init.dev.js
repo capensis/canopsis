@@ -19,16 +19,16 @@
 
  require.config({
     paths: {
-        'statstable': 'canopsis/brick-alarms/src/widgets/alarms/statstable',
+        'alarms': 'canopsis/brick-alarms/src/widgets/alarms/alarms',
 
     }
 });
 
  define([
-    'canopsis/brick-alarms/src/adapters/alarms',
-    'canopsis/brick-alarms/src/serializers/alarms',
+    'canopsis/brick-alarms/src/adapters/alerts',
+    'canopsis/brick-alarms/src/serializers/alerts',
+    'ehbs!alarms',
     'canopsis/brick-alarms/src/widgets/alarms/controller',
-    'ehbs!statstable',
     'canopsis/brick-alarms/src/widgets/alarms/view'
 ], function () {
     
