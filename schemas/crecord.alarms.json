@@ -41,7 +41,7 @@
                     "resolved": {
                       "type": "object"
                     },
-                    "resource": {
+                    "resource": {
                       "type": "string"
                     },
                     "extra": {

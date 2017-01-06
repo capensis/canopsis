@@ -17,7 +17,7 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
-window.bricks['brick-alarms'].schemasArray = ["text!canopsis/brick-alarms/schemas/widget.alarms.json"];
+window.bricks['brick-alarms'].schemasArray = ["text!canopsis/brick-alarms/schemas/crecord.alarms.json","text!canopsis/brick-alarms/schemas/widget.alarms.json"];
 
 define(window.bricks['brick-alarms'].schemasArray, function () {
     for (var i = 0; i < arguments.length; i++) {

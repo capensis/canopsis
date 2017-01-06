@@ -25,6 +25,8 @@
 });
 
  define([
+    'canopsis/brick-alarms/src/adapters/alarms',
+    'canopsis/brick-alarms/src/serializers/alarms',
     'canopsis/brick-alarms/src/widgets/alarms/controller',
     'ehbs!statstable',
     'canopsis/brick-alarms/src/widgets/alarms/view'

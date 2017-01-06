@@ -17,19 +17,12 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
- require.config({
-    paths: {
-        'statstable': 'canopsis/brick-alarms/src/widgets/alarms/statstable',
-
+Ember.Application.initializer({
+    name: 'AlarmsSerializer',
+    after: ['ApplicationSerializer'],
+    initialize: function(container, application) {
+        var AppSerializer = container.lookupFactory('serializer:application');
+        var serializer = AppSerializer.extend({});
+        application.register('serializer:alarms', serializer);
     }
-});
-
-define([
-    'canopsis/brick-alarms/src/adapters/alarms',
-    'canopsis/brick-alarms/src/serializers/alarms',
-    'canopsis/brick-alarms/src/widgets/alarms/controller',
-    'ehbs!statstable',
-    'canopsis/brick-alarms/src/widgets/alarms/view'
-], function () {
-    
 });
