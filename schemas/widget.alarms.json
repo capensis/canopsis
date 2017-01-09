@@ -5,24 +5,14 @@
     },
 	"categories": [{
 		"title": "General",
-		"keys":["title", "show_events", "show_users"]
+		"keys":["title", "default_sort_key", "default_sort_dir"]
 	},{
-		"title": "Time Window",
-		"keys":["time_window", "time_window_offset"]
+		"title": "Columns",
+		"keys":["columns"]
 	},{
-		"title": "Domains",
+		"title": "Info popup",
 		"keys":[
-			"domain"
-		]
-	},{
-		"title": "Perimeters",
-		"keys":[
-			"perimeter"
-		]
-	},{
-		"title": "Users",
-		"keys":[
-			"user"
+			"popup"
 		]
 	},{
 		"title": "Mixins",
@@ -32,48 +22,25 @@
 		"title":{
 			"type": "string"
 		},
-		"show_events": {
-            "title": "Display events statistics",
-            "description": "Enable/disable events statistics",
-            "type": "boolean"
+		"default_sort_key": {
+            "title": "Choose the key to sort",
+            "description": "Choose the key to sort",
+            "type": "string"
     },
-		"show_users": {
-            "title": "Display users statistics",
-            "description": "Enable/disable users statistics",
-            "type": "boolean"
-        },
-        "time_window": {
-            "type": "number",
-            "role": "duration",
-            "default": 86400,
-            "title": "Time Window for data fetching"
-        },
-        "time_window_offset": {
-            "type": "number",
-            "role": "duration",
-            "default": 0,
-            "title": "Time window offset from now"
-        },
-		"domain": {
+		"default_sort_dir": {
+        "title": "Choose the sort direction",
+        "description": "Choose the sort direction",
+        "type": "string"
+    },
+    "columns": {
 			"type": "array",
 			"items": {
 				"type": "string"
 			},
 			"reorderable": true
-		},
-		"perimeter": {
-			"type": "array",
-			"items": {
+    },
+		"popup": {
 				"type": "string"
-			},
-			"reorderable": true
-		},
-		"user": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			},
-			"reorderable": true
 		}
 	}
 }
