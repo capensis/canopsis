@@ -371,10 +371,10 @@ class AlertsReader(MiddlewareRegistry):
 
             # No cache entry found (or no up-to-date entry)
             if truncate:
-                count = query.limit(limit).count()
+                count = query.limit(limit).count(True)
 
             else:
-                count = query.count()
+                count = query.count(True)
 
             self.count_cache[cache_key] = {
                 'value': count,
@@ -391,7 +391,7 @@ class AlertsReader(MiddlewareRegistry):
         else:
             if self.cache_config.get('opened_truncate'):
                 limit = self.cache_config.get('opened_limit')
-                count = query.limit(limit).count()
+                count = query.limit(limit).count(True)
 
                 if count == limit:
                     return count, True
@@ -400,7 +400,7 @@ class AlertsReader(MiddlewareRegistry):
                     return count, False
 
             else:
-                return query.count(), False
+                return query.count(True), False
 
     def get(
             self,

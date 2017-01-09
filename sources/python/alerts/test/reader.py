@@ -275,7 +275,7 @@ class TestReader(BaseTest):
             def __init__(self, count):
                 self.c = count
 
-            def count(self):
+            def count(self, *args):
                 return self.c
 
             def limit(self, _):
@@ -324,7 +324,7 @@ class TestReader(BaseTest):
                 self.c = count
                 self.l = limit
 
-            def count(self):
+            def count(self, *args):
                 if self.l is None:
                     return self.c
 
