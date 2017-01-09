@@ -121,7 +121,7 @@ Here is the webservice used, you can see all available parameters:
          :param int tstop: End timestamp of requested period
          :param bool opened: If True, consider alarms that are currently opened
          :param bool resolved: If True, consider alarms that have been resolved
-         :param list consolidations: List of extra columns to compute for each
+         :param list lookups: List of extra columns to compute for each
            returned alarm. Extra columns are "pbehaviors" and/or "linklist".
          :param dict filter: Mongo filter. Keys are UI column names.
          :param str search: Search expression in custom DSL
@@ -129,6 +129,7 @@ Here is the webservice used, you can see all available parameters:
          :param str sort_dir: Either "ASC" or "DESC"
          :param int skip: Number of alarms to skip (pagination)
          :param int limit: Maximum number of alarms to return
+         :param bool truncated: If True, a notification is sent if the max alarms count is exceeded
          :returns: List of sorted alarms + pagination informations
          :rtype: dict
          """
@@ -394,10 +395,10 @@ If there is no role associated with the attribute, you have to render value as s
 Customfilterlist
 ^^^^^^^^^^^^^^^^
 
-In the widget, users must be able to set data filters.  
+In the widget, users must be able to set data filters.
 
-This is done by using a lib called **querybuilder**.  
-The library is already included in Canopsis.  
+This is done by using a lib called **querybuilder**.
+The library is already included in Canopsis.
 Filters are formatted as mongodb filters.
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/customfilterlist.png
