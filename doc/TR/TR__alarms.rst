@@ -339,6 +339,44 @@ In the widget conf, user must be able to select these columns.
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/responsive_list.png
 
+Column Renderering
+^^^^^^^^^^^^^^^^^^
+
+The user must be able to select columns and order he wants to show on the main table within the widget conf form.
+
+Some data have to be shown with a renderer.
+For example, a timestamp must use a special timestamp renderer.
+The mapping between data and renderer is done via the schema.
+
+
+.. code-block::
+
+ "opened": {
+       "stored_name": "t",
+       "role" : "timestamp"
+     },
+
+With these informations, you know that you have to call the renderer below
+
+.. code-block::
+
+ $ cat uibase/src/renderers/renderer-timestamp.hbs
+ {{!*
+  * @renderer timestamp
+ }}
+ {{#unless attr.options.hideDate}}
+     <div>{{timestamp value attr}}</div>
+ {{/unless}}
+ {{#if attr.options.canDisplayAgo}}
+     <small class="text-muted">
+         <span class="glyphicon glyphicon-time"></span>
+         {{timeSince value}}
+     </small>
+ {{/if}}
+
+If there is no role associated with the attribute, you have to render value as string.
+
+
 
 Array Search
 ^^^^^^^^^^^^
@@ -408,42 +446,6 @@ The user must be able to set multiple infopopup on multiple columns.
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/recordinfopopup.png
 
 
-Column Renderering
-^^^^^^^^^^^^^^^^^^
-
-The user must be able to select columns he wants to show on the main table within the widget conf form.
-
-Some data have to be shown with a renderer.
-For example, a timestamp must use a special timestamp renderer.
-The mapping between data and renderer is done via the schema.
-
-
-.. code-block::
-
- "opened": {
-       "stored_name": "t",
-       "role" : "timestamp"
-     },
-
-With these informations, you know that you have to call the renderer below
-
-.. code-block::
-
- $ cat uibase/src/renderers/renderer-timestamp.hbs
- {{!*
-  * @renderer timestamp
- }}
- {{#unless attr.options.hideDate}}
-     <div>{{timestamp value attr}}</div>
- {{/unless}}
- {{#if attr.options.canDisplayAgo}}
-     <small class="text-muted">
-         <span class="glyphicon glyphicon-time"></span>
-         {{timeSince value}}
-     </small>
- {{/if}}
-
-If there is no role associated with the attribute, you have to render value as string.
 
 
 Linklist
@@ -459,7 +461,9 @@ The widget has to display it like on screenshots
 Pbehavior
 ^^^^^^^^^
 
-**TO BE COMPLETED**
+The widget must be able to display pbehaviors if there is some.  
+Pick an icon from library and make a renderer for that.  
+Pbehaviors must be displayed like **ack** or **ticket**
 
 
 Timeline
