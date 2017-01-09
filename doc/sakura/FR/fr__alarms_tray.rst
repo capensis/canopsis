@@ -136,10 +136,10 @@ Search DSL
 
 This DSL **MUST** allow the following conditional expressions :
 
- - ``FIELD = VALUE`` (+ ``!=``, ``<``, ``<=``, ``>``, ``>=``, ``REGEX``,
-   ``!REGEX``, ``IN``, ``NIN``)
- - ``FIELD < VALUE AND FIELD2 REGEX VALUE2`` (+ ``OR``)
- - ``F1 = V1 OR (F2 = V2 AND F3 = V3)``
+ - ``FIELD = VALUE`` (and ``!=``, ``<``, ``<=``, ``>``, ``>=``, ``CONTAINS``,
+   ``LIKE`` operators)
+ - ``NOT FIELD CONTAINS VALUE`` (comparison negation)
+ - ``FIELD < VALUE AND FIELD2 REGEX VALUE2`` (and ``OR`` condition operator)
  - ``ALL F1 = V1`` (meta-parameter changing search behaviour)
 
 Those quick searches **MUST** apply a filter on the subset of alarms returned
@@ -149,6 +149,8 @@ all alarms (ignoring current `filter`) if the expression is prefixed by
 
 UI **SHOULD** warn users whose search expressions are not *grammatically*
 correct.
+
+**Note:** Expressions with parenthesis are not supported.
 
 Columns sorting
 ---------------
@@ -169,5 +171,9 @@ Results **MUST** be paginated. Alarms tray **MUST** show at any time :
 
  - first and last indexes of displayed alarms
  - number of alarms in total
+ - optionally whether or not total number has been truncated
 
 Those values **MUST** take in account filters, searches and date intervals.
+
+**Note:** For performance reasons, the number of alarms in total can be
+approximated or truncated.
