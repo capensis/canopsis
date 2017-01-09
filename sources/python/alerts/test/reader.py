@@ -139,24 +139,73 @@ class TestReader(BaseTest):
             expected_both
         )
 
+        # opened=True, resolved=True, tstart=tstop=None
+        self.assertEqual(
+            self.reader._get_time_filter(
+                opened=True, resolved=True,
+                tstart=None, tstop=None
+            ),
+            {}
+        )
+
     def test__get_opened_time_filter(self):
         cases = [
             {
+                'tstart': None,
+                'tstop': None,
+                'expected': {'v.resolved': None}
+            },
+            {
+                'tstart': None,
                 'tstop': 0,
                 'expected': {'v.resolved': None, 't': {'$lte': 0}}
             },
             {
+                'tstart': None,
+                'tstop': 42,
+                'expected': {'v.resolved': None, 't': {'$lte': 42}}
+            },
+            {
+                'tstart': 13,
+                'tstop': None,
+                'expected': {'v.resolved': None, 't': {'$lte': 13}}
+            },
+            {
+                'tstart': 13,
                 'tstop': 42,
                 'expected': {'v.resolved': None, 't': {'$lte': 42}}
             }
         ]
 
         for case in cases:
-            time_filter = self.reader._get_opened_time_filter(case['tstop'])
+            time_filter = self.reader._get_opened_time_filter(
+                case['tstart'],
+                case['tstop']
+            )
             self.assertEqual(time_filter, case['expected'])
 
     def test__get_resolved_time_filter(self):
         cases = [
+            {
+                'tstart': None,
+                'tstop': None,
+                'expected': {'v.resolved': {'$ne': None}}
+            },
+            {
+                'tstart': 13,
+                'tstop': None,
+                'expected': {
+                    'v.resolved': {'$ne': None, '$gte': 13}
+                }
+            },
+            {
+                'tstart': None,
+                'tstop': 42,
+                'expected': {
+                    'v.resolved': {'$ne': None},
+                    't': {'$lte': 42}
+                }
+            },
             {
                 'tstart': 0,
                 'tstop': 0,

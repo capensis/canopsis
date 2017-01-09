@@ -167,73 +167,102 @@ class AlertsReader(MiddlewareRegistry):
     def _get_time_filter(self, opened, resolved, tstart, tstop):
         """
         Transform opened, resolved, tstart and tstop parameters into a mongo
-        filter specific to alarms collection.
+        filter. This filter is specific to alarms collection.
 
-        :param bool opened: If True, the filter will select documents that have
-          been opened before tstop
-        :param bool resolved: If True, the filter will select documents that
-          have been opened, were opened or have been resolved during tstart and
-          tstop.
+        :param bool opened: If True, select opened alarms
+        :param bool resolved: If True, select resolved alarms
 
-        :param int tstart: Timestamp
-        :param int tstop: Timestamp
+        :param tstart: Timestamp
+        :param tstop: Timestamp
+        :type tstart: int or None
+        :type tstop: int or None
 
         :return: Specific mongo filter or None if opened and resolved are False
         :rtype: dict or None
         """
 
         if opened and resolved:
-            return {
-                '$or': [
-                    self._get_opened_time_filter(tstop),
-                    self._get_resolved_time_filter(tstart, tstop)
-                ]
-            }
+            if tstart is None and tstop is None:
+                return {}
 
-        if opened and not resolved:
-            return self._get_opened_time_filter(tstop)
+            else:
+                return {
+                    '$or': [
+                        self._get_opened_time_filter(tstart, tstop),
+                        self._get_resolved_time_filter(tstart, tstop)
+                    ]
+                }
 
-        if not opened and resolved:
+        if opened:
+            return self._get_opened_time_filter(tstart, tstop)
+
+        if resolved:
             return self._get_resolved_time_filter(tstart, tstop)
 
         return None
 
-    def _get_opened_time_filter(self, tstop):
+    def _get_opened_time_filter(self, tstart, tstop):
         """
-        Get a specific mongo filter selecting documents that have been opened
-        before tstop.
+        Get a specific mongo filter.
 
-        :param int tstop: Timestamp
+        :param tstart: Timestamp
+        :param tstop: Timestamp
+        :type tstart: int or None
+        :type tstop: int or None
 
         :return: Mongo filter
         :rtype: dict
         """
 
-        return {
-            'v.resolved': None,
-            't': {'$lte': tstop}
-        }
+        if tstop is not None:
+            return {
+                'v.resolved': None,
+                't': {'$lte': tstop}
+            }
+
+        elif tstart is not None:
+            return {
+                'v.resolved': None,
+                't': {'$lte': tstart}
+            }
+
+        else:
+            return {'v.resolved': None}
 
     def _get_resolved_time_filter(self, tstart, tstop):
         """
-        Get a specific mongo filter selecting documents that have been opened,
-        were opened or have been resolved during tstart and tstop.
+        Get a specific mongo filter.
 
-        :param int tstart: Timestamp
-        :param int tstop: Timestamp
+        :param tstart: Timestamp
+        :param tstop: Timestamp
+        :type tstart: int or None
+        :type tstop: int or None
 
         :return: Specific mongo filter
         :rtype: dict
         """
 
-        return {
-            'v.resolved': {'$ne': None},
-            '$or': [
-                {'t': {'$gte': tstart, '$lte': tstop}},
-                {'v.resolved': {'$gte': tstart, '$lte': tstop}},
-                {'t': {'$lte': tstart}, 'v.resolved': {'$gte': tstop}}
-            ]
-        }
+        if tstart is not None and tstop is not None:
+            return {
+                'v.resolved': {'$ne': None},
+                '$or': [
+                    {'t': {'$gte': tstart, '$lte': tstop}},
+                    {'v.resolved': {'$gte': tstart, '$lte': tstop}},
+                    {'t': {'$lte': tstart}, 'v.resolved': {'$gte': tstop}}
+                ]
+            }
+
+        elif tstart is not None:
+            return {'v.resolved': {'$ne': None, '$gte': tstart}}
+
+        elif tstop is not None:
+            return {
+                'v.resolved': {'$ne': None},
+                't': {'$lte': tstop}
+            }
+
+        else:
+            return {'v.resolved': {'$ne': None}}
 
     def interpret_search(self, search):
         """
@@ -340,7 +369,7 @@ class AlertsReader(MiddlewareRegistry):
                     else:
                         return count, False
 
-            # No (up-to-date) cache entry found
+            # No cache entry found (or no up-to-date entry)
             if truncate:
                 count = query.limit(limit).count()
 
@@ -375,8 +404,8 @@ class AlertsReader(MiddlewareRegistry):
 
     def get(
             self,
-            tstart,
-            tstop,
+            tstart=None,
+            tstop=None,
             opened=True,
             resolved=False,
             lookups=[],
@@ -390,8 +419,10 @@ class AlertsReader(MiddlewareRegistry):
         """
         Return filtered, sorted and paginated alarms.
 
-        :param int tstart: Beginning timestamp of requested period
-        :param int tstop: End timestamp of requested period
+        :param tstart: Beginning timestamp of requested period
+        :param tstop: End timestamp of requested period
+        :type tstart: int or None
+        :type tstop: int or None
 
         :param bool opened: If True, consider alarms that are currently opened
         :param bool resolved: If True, consider alarms that have been resolved

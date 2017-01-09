@@ -47,8 +47,8 @@ def exports(ws):
         ]
     )
     def get_alarms(
-            tstart,
-            tstop,
+            tstart=None,
+            tstop=None,
             opened=True,
             resolved=False,
             lookups=[],
@@ -62,8 +62,10 @@ def exports(ws):
         """
         Return filtered, sorted and paginated alarms.
 
-        :param int tstart: Beginning timestamp of requested period
-        :param int tstop: End timestamp of requested period
+        :param tstart: Beginning timestamp of requested period
+        :param tstop: End timestamp of requested period
+        :type tstart: int or None
+        :type tstop: int or None
 
         :param bool opened: If True, consider alarms that are currently opened
         :param bool resolved: If True, consider alarms that have been resolved
