@@ -37,7 +37,7 @@ def exports(ws):
             'tstop',
             'opened',
             'resolved',
-            'consolidations',
+            'lookups',
             'filter',
             'search',
             'sort_key',
@@ -51,7 +51,7 @@ def exports(ws):
             tstop,
             opened=True,
             resolved=False,
-            consolidations=[],
+            lookups=[],
             filter={},
             search='',
             sort_key='opened',
@@ -68,7 +68,7 @@ def exports(ws):
         :param bool opened: If True, consider alarms that are currently opened
         :param bool resolved: If True, consider alarms that have been resolved
 
-        :param list consolidations: List of extra columns to compute for each
+        :param list lookups: List of extra columns to compute for each
           returned alarm. Extra columns are "pbehaviors" and/or "linklist".
 
         :param dict filter: Mongo filter. Keys are UI column names.
@@ -89,7 +89,7 @@ def exports(ws):
             tstop=tstop,
             opened=opened,
             resolved=resolved,
-            consolidations=consolidations,
+            lookups=lookups,
             filter_=filter,
             search=search,
             sort_key=sort_key,

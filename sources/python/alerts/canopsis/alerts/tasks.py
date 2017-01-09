@@ -360,7 +360,7 @@ def hard_limit(manager, alarm):
     return alarm
 
 
-@register_task('alerts.consolidation.linklist')
+@register_task('alerts.lookup.linklist')
 def linklist(manager, alarm):
     """
     Called to add a linklist field to an alarm.
@@ -382,7 +382,7 @@ def linklist(manager, alarm):
     return alarm
 
 
-@register_task('alerts.consolidation.pbehaviors')
+@register_task('alerts.lookup.pbehaviors')
 def pbehaviors(manager, alarm):
     """
     Called to add a pbehaviors field to an alarm.

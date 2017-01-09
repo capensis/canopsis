@@ -252,25 +252,25 @@ class AlertsReader(MiddlewareRegistry):
 
         return interpret(search, grammar_file=self.grammar)
 
-    def _consolidate_alarms(self, alarms, consolidations):
+    def _lookup(self, alarms, lookups):
         """
         Add extra keys to a list of alarms.
 
         :param list alarms: List of alarms as dict
-        :param list consolidations: List of extra keys to add.
+        :param list lookups: List of extra keys to add.
 
         :return: Alarms with extra keys
         :rtype: list
         """
 
-        for c in consolidations:
+        for l in lookups:
             task = get_task(
-                'alerts.consolidation.{}'.format(c),
+                'alerts.lookup.{}'.format(l),
                 cacheonly=True
             )
 
             if task is None:
-                raise ValueError('Unknown consolidation "{}"'.format(c))
+                raise ValueError('Unknown lookup "{}"'.format(l))
 
             for a in alarms:
                 a = task(self, a)
@@ -379,7 +379,7 @@ class AlertsReader(MiddlewareRegistry):
             tstop,
             opened=True,
             resolved=False,
-            consolidations=[],
+            lookups=[],
             filter_={},
             search='',
             sort_key='opened',
@@ -396,7 +396,7 @@ class AlertsReader(MiddlewareRegistry):
         :param bool opened: If True, consider alarms that are currently opened
         :param bool resolved: If True, consider alarms that have been resolved
 
-        :param list consolidations: List of extra columns to compute for each
+        :param list lookups: List of extra columns to compute for each
           returned alarm. Extra columns are "pbehaviors" and/or "linklist".
 
         :param dict filter_: Mongo filter
@@ -455,7 +455,7 @@ class AlertsReader(MiddlewareRegistry):
         first = 0 if limited_total == 0 else skip + 1
         last = 0 if limited_total == 0 else skip + limited_total
 
-        alarms = self._consolidate_alarms(alarms, consolidations)
+        alarms = self._lookup(alarms, lookups)
 
         # Steps are never meant to be used in UI and would just cost
         # unnecessary bandwidth.

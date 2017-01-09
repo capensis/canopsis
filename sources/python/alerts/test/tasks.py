@@ -322,7 +322,7 @@ class TestTasks(BaseTest):
         }
         self.llm.put(_id=eid0, document=linklist_eid0)
 
-        task = get_task('alerts.consolidation.linklist')
+        task = get_task('alerts.lookup.linklist')
 
         res = task(self, {'d': eid0})
         self.assertEqual(
@@ -342,7 +342,7 @@ class TestTasks(BaseTest):
     def test_pbehaviors(self):
         self.pbm = PBehaviorManager()
 
-        task = get_task('alerts.consolidation.pbehaviors')
+        task = get_task('alerts.lookup.pbehaviors')
 
         eid0 = '/expired/pbehavior/entity'
         pb0 = {
