@@ -375,14 +375,17 @@ Here are available actions :
 * Declareticket (fa-ticket)
 * Assocticket (fa-thumb-tack)
 * Cancel alarm (glyphicon-trash)
-* Chnage criticity (fa-exclamation-triangle)
+* Change criticity (fa-exclamation-triangle)
 * Restore Alarm (glyphicon-share-alt)
 
 Each action is associated with a font
 
 Executing an action is the same thing as sending an event.
 
-Action forms must be picked from the actual "list widget".
+Action forms must be picked from the actual "list widget".  
+For example, ACK form look like thie :
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/ackform.png
 
 **TO BE COMPLETED BY FLO**
 
@@ -440,7 +443,11 @@ If there is no role associated with the attribute, you have to render value as s
 Linklist
 ^^^^^^^^
 
-Talk about linklist category and rendering with "I" button
+As said before, linklists are links with categories that are attached to an entity. 
+The widget has to display it like on screenshots
+
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/linklistrender.png
 
 
 Pbehavior
@@ -459,6 +466,26 @@ In the main table, each tr must show a "+" that will call a component that repre
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/timeline.png
 
+
+Live Reporting
+^^^^^^^^^^^^^^
+
+
+In Canopsis, users are able to select data that fit timeperiod.  
+
+User first clicks on 
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/livereporting1.png
+
+
+And then, he selects period
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/livereporting2.png
+
+
+**From** and **to** are then provided to the widget as timestamps
+
+**TO BE COMPLETED BY FLO**
 
 Glossary
 --------
