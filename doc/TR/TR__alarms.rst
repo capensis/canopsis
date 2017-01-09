@@ -52,49 +52,53 @@ In order for you to understand what is needed to display table, here is the data
 All needed informations are described in it. If it's not clear, feel free to contact us.
 
 You have to know that data are provided by an adapter which relies on a webservice.
-In order to use only frontend concepts, we provide 1 dataset (in folder `datasets`) which can be loaded by the adapter.
+In order to use only frontend concepts, we already provide the adapter that call the webservice. So that you just need to use the adapter.
 
 
 .. code-block::
 
-  return this.ajax('/static/canopsis/brick-alarms/datasets/ds1.json', 'GET', {data: ""});
+  findQuery: function(store, query) {
+      var url = '/alerts/get-alarms';
+      return this.ajax(url, 'GET', {data: query});
+  }
 
-These data are already available in the alamrs controller. the "fetchData" method of the controller get these data.
+These data are already available in the alarms controller. the "fetchAlarms" method of the controller get these data.
 
 
 **TO BE COMPLETED BY FLO**
 
 .. code-block::
 
-    fetchData: function() {
-        var controller = this;
+  fetchAlarms: function() {
+    var controller = this;
+    var query = {
+      tstart: 0,
+      tstop: 0
+    };
 
-        var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:serviceweatherdata');
-        adapter.findQuery('serviceweatherdata', {}).then(function (result) {
-            // onfullfillment
-            console.log('Raw data', result);
-        }, function (reason) {
-            // onrejection
-            console.error('ERROR in the adapter: ', reason);
-        });
-    },
+    var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+    adapter.findQuery('alerts', query).then(function (result) {
+        // onfullfillment
+        var alerts = get(result, 'data');
+    }, function (reason) {                                                                                                                     console.error('ERROR in the adapter: ', reason);
+        // onrejection
+    });
+  }
 
-the "result" variable give you the data.
+the "alerts" variable give you the data.
 
 
 Raw schema
 ^^^^^^^^^^
 
-Here is the raw schema => https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/schemas/crecord.alarms.json
-**TO BE COMPLETED BY FLO**
-
-You can find some datasets compliant with schema here : https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/tree/master/datasets
-
+* First, You already have inserted data in your environment so the existing adapter gives you data
+* If you need it, Here is the raw schema => https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/schemas/crecord.alerts.json
+* If there is an issue with the backend, You can find some datasets compliant with schema here : https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/tree/master/datasets
 
 WebService
 ^^^^^^^^^^
 
-**TO BE COMPLETED**
+Here is the webservice used, you can see all available parameters:
 
 .. code-block::
 
@@ -129,6 +133,17 @@ WebService
          :rtype: dict
          """
 
+You have to get these parameters from the widget configuration form to use it with the adapter.
+
+.. code-block::
+
+  var query = {
+    tstart: 0,
+    tstop: 0
+  };
+
+  var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+  adapter.findQuery('alerts', query).then(function (result) {...}
 
 Main description
 ^^^^^^^^^^^^^^^^
@@ -264,7 +279,7 @@ Linklist description
 Linklist is a list of urls associated to the entity.
 Links must appear in the modal like potentialy any other variables but with special helper.
 
-The goal is to let the user access a handlebar renderer
+The goal is to let the user access a handlebar for the renderer
 
  {{ linklist category="procedure" }}
 
@@ -318,7 +333,7 @@ Rendering
 Main table
 ^^^^^^^^^^
 
-* The main table must repect adminlte standards  https://almsaeedstudio.com/themes/AdminLTE/pages/tables/simple.html
+* The main table must respect adminlte standards  https://almsaeedstudio.com/themes/AdminLTE/pages/tables/simple.html
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/general_render.png
 
@@ -332,9 +347,9 @@ Main table
 Responsive
 ^^^^^^^^^^
 
-As the widget is a table, the responsive feature can take args to perform.  
-The user must be able to spécify columns that can be not printed if display does not permit it.  
-In the widget conf, user must be able to select these columns.
+As the widget is a table, the responsive feature can take args to perform.
+The user must be able to specify columns that can be not printed if display does not permit it.
+In the widget configuration, user must be able to select these columns.
 
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/responsive_list.png
@@ -342,7 +357,7 @@ In the widget conf, user must be able to select these columns.
 Column Renderering
 ^^^^^^^^^^^^^^^^^^
 
-The user must be able to select columns and order he wants to show on the main table within the widget conf form.
+The user must be able to select columns and order he wants to show on the main table within the widget configuration form.
 
 Some data have to be shown with a renderer.
 For example, a timestamp must use a special timestamp renderer.
@@ -377,11 +392,10 @@ With these informations, you know that you have to call the renderer below
 If there is no role associated with the attribute, you have to render value as string.
 
 
-
 Array Search
 ^^^^^^^^^^^^
 
-The widget must show a input to make searches
+The widget must show an input to make searches
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/search.png
 
@@ -390,13 +404,12 @@ You can find it here : https://git.canopsis.net/canopsis/canopsis/blob/develop/s
 
 Finaly, you can find some general informations about searches here : https://git.canopsis.net/canopsis/canopsis/blob/develop/doc/sakura/FR/fr__alarms_tray.rst#search-dsl
 
-Before sending a query to the default route, you need to validate the expression provided by users.  
-Once it is validated, you can perform search by using the default route.  
-If it's not validated, you must inform user of that. A message telling about the wrong expression
+Before sending a query to the default route, you need to validate the expression provided by users.
+Once it is validated, you can perform search by using the default route.
+If it's not validated, you must inform the user of that. A message telling about the wrong expression.
 
-**TO BE COMPLETED BY FLO** => Donner les infos de la route à appeler avec ses paramètres
+**TO BE COMPLETED** => Informations about the second adapter
 alerts/search/validate?expression=<EXPRESSION>
-
 
 
 Action buttons
@@ -404,8 +417,8 @@ Action buttons
 
 In the widget, a column must be dedicated to user actions.
 
-In the widget conf form, there must be a checkbox to do such a thing.
-Actions are shown only if the user is authorized to. Don't forget to include this contraint.
+In the widget configuration form, there must be a checkbox to do such a thing.
+Actions are shown only if the user is authorized to. Don't forget to include this constraint.
 
 Here are available actions :
 
@@ -417,27 +430,27 @@ Here are available actions :
 * Restore Alarm (glyphicon-share-alt)
 * Snooze alarm (fa-clock-o)
 
-Each action is associated with a font
+Each action is associated with a font/icon
 
 Executing an action is the same thing as sending an event.
 
-Action forms must be picked from the actual "list widget".  
-For example, ACK form look like thie :
+Action forms must be picked from the actual "list widget".
+For example, ACK form look like this :
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/ackform.png
 
 
-Massive actions can be performed too by seclecting multiple alarms 
+Massive actions can be performed too by seclecting multiple alarms
 
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/massiveactions.png
 
-**TO BE COMPLETED BY FLO**
+**TO BE COMPLETED** -> informations about sendevent and some explanation
 
 
 **Rules that apply to actions**
 
-* Except **snooze action**, all actions apply to ack'ed alarms
+* Except **snooze action**, all actions apply to acked alarms
 * **Restore Alarm** apply to Cancelled alarms
 
 
@@ -455,7 +468,7 @@ The user must be able to set multiple infopopup on multiple columns.
 Linklist
 ^^^^^^^^
 
-As said before, linklists are links with categories that are attached to an entity. 
+As said before, linklists are links with categories that are attached to an entity.
 The widget has to display it like on screenshots
 
 
@@ -465,8 +478,8 @@ The widget has to display it like on screenshots
 Pbehavior
 ^^^^^^^^^
 
-The widget must be able to display pbehaviors if there is some.  
-Pick an icon from library and make a renderer for that.  
+The widget must be able to display pbehaviors if there is some.
+Pick an icon from library and make a renderer for that.
 Pbehaviors must be displayed like **ack** or **ticket**
 
 
@@ -480,16 +493,21 @@ In the main table, each tr must show a "+" that will call a component that repre
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/timeline.png
 
+In order to have the timeline in your widget, you first need to develop your widget in a way to accept the 'listlinedetail' mixin and then you have to call the component by editing the mixin with this:
 
-**TO BE COMPLETED BY FLO** Comment instancie t-on le composant timeline ?
+.. code-block::
+
+   {{ component-timeline timelineData=this._data }}
+
+For more details, please have a look at this documentation: https://git.canopsis.net/canopsis-ui-bricks/brick-timeline/blob/master/doc/ED/ed__brickTimeline.rst
+
 
 Live Reporting
 ^^^^^^^^^^^^^^
 
+In Canopsis, users are able to select data that fit timeperiod.
 
-In Canopsis, users are able to select data that fit timeperiod.  
-
-User first clicks on 
+The user first clicks on
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/livereporting1.png
 
@@ -501,7 +519,31 @@ And then, he selects period
 
 **From** and **to** are then provided to the widget as timestamps
 
-**TO BE COMPLETED BY FLO**
+Here is an example of live reporting support that you could use in your widget:
+
+.. code-block::
+
+  var controller = this;
+
+			var tw = timeWindowUtils.getFromTo(
+                  get(controller, 'time_window'),
+                  get(controller, 'time_window_offset')
+              );
+
+			var from = tw[0],
+                  to = tw[1];
+
+              /* live reporting support */
+              var liveFrom = get(controller, 'from'),
+                  liveTo = get(controller, 'to');
+
+			if (!isNone(liveFrom)) {
+                  from = liveFrom;
+              }
+
+              if (!isNone(liveTo)) {
+                  to = liveTo;
+              }
 
 Glossary
 --------
