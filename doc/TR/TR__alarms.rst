@@ -426,6 +426,12 @@ For example, ACK form look like thie :
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/ackform.png
 
+
+Massive actions can be performed too by seclecting multiple alarms 
+
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/massiveactions.png
+
 **TO BE COMPLETED BY FLO**
 
 
