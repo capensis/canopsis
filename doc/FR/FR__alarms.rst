@@ -4,7 +4,7 @@ FR alarms
 .. contents:: Table of contents
 
 
-.. image:: ../_static/
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/general_render.png
 
 
 Synopsis
