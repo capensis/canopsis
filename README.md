@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master
 
 ### Lint
 
-Tested on commit : 28da5c8.
+Tested on commit : ee3940e.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
