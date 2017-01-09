@@ -377,6 +377,7 @@ Here are available actions :
 * Cancel alarm (glyphicon-trash)
 * Change criticity (fa-exclamation-triangle)
 * Restore Alarm (glyphicon-share-alt)
+* Snooze alarm (fa-clock-o)
 
 Each action is associated with a font
 
@@ -389,6 +390,11 @@ For example, ACK form look like thie :
 
 **TO BE COMPLETED BY FLO**
 
+
+**Rules that apply to actions**
+
+* Except **snooze action**, all actions apply to ack'ed alarms
+* **Restore Alarm** apply to Cancelled alarms
 
 
 Info Popup
@@ -466,6 +472,8 @@ In the main table, each tr must show a "+" that will call a component that repre
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/timeline.png
 
+
+**TO BE COMPLETED BY FLO** Comment instancie t-on le composant timeline ?
 
 Live Reporting
 ^^^^^^^^^^^^^^
