@@ -319,10 +319,25 @@ Main table
 ^^^^^^^^^^
 
 * The main table must repect adminlte standards  https://almsaeedstudio.com/themes/AdminLTE/pages/tables/simple.html
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/general_render.png
+
+
 * It must be responsive (big screen, desktop, mobile)
 * 50 tr must be shown in 1 second, not more.
 * Pagination (done by the backend)
 * Sort (done by the backend)
+
+
+Responsive
+^^^^^^^^^^
+
+As the widget is a table, the responsive feature can take args to perform.  
+The user must be able to spécify columns that can be not printed if display does not permit it.  
+In the widget conf, user must be able to select these columns.
+
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/responsive_list.png
 
 
 Array Search
@@ -333,8 +348,17 @@ The widget must show a input to make searches
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/search.png
 
 A dsl is provided by the backend to perform searches.
+You can find it here : https://git.canopsis.net/canopsis/canopsis/blob/develop/sources/python/alerts/etc/alerts/search/grammar.bnf
+
+Finaly, you can find some general informations about searches here : https://git.canopsis.net/canopsis/canopsis/blob/develop/doc/sakura/FR/fr__alarms_tray.rst#search-dsl
+
+Before sending a query to the default route, you need to validate the expression provided by users.  
+Once it is validated, you can perform search by using the default route.  
+If it's not validated, you must inform user of that. A message telling about the wrong expression
 
 **TO BE COMPLETED BY FLO** => Donner les infos de la route à appeler avec ses paramètres
+alerts/search/validate?expression=<EXPRESSION>
+
 
 
 Action buttons
