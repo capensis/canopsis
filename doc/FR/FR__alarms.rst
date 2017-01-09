@@ -18,9 +18,13 @@ Why ?
 =====
 
 Actual list widget is full featured and generic but suffers from a lack of performance. ~4s to render 50 alarms.  
+
+
 Canopsis needs to get a new one with the functional requirements than the existing one plus better performance. ~1s to render 50 alarms.  
 
 The new widget style must be the same than the existing one.  
+
+
 Have a look at the view.event view in Canopsis => http://alarms.canopsis.net/en/static/canopsis/index.html#/userview/view.event
 
 The main used theme is still **adminlte** => https://almsaeedstudio.com/themes/AdminLTE/index2.html
