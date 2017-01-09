@@ -391,6 +391,20 @@ With these informations, you know that you have to call the renderer below
 
 If there is no role associated with the attribute, you have to render value as string.
 
+Customfilterlist
+^^^^^^^^^^^^^^^^
+
+In the widget, users must be able to set data filters.  
+
+This is done by using a lib called **querybuilder**.  
+The library is already included in Canopsis.  
+Filters are formatted as mongodb filters.
+
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/customfilterlist.png
+
+Generated filters must be forwarded as webservice parameters.
+
+**TO BE COMPLETED BY FLO**
 
 Array Search
 ^^^^^^^^^^^^
