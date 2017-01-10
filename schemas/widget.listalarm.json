@@ -5,7 +5,7 @@
     },
 	"categories": [{
 		"title": "General",
-		"keys":["title", "default_sort_key", "default_sort_dir"]
+		"keys":["title", "default_sort_column"]
 	},{
 		"title": "Columns",
 		"keys":["columns"]
@@ -22,15 +22,9 @@
 		"title":{
 			"type": "string"
 		},
-		"default_sort_key": {
-            "title": "Choose the key to sort",
-            "description": "Choose the key to sort",
-            "type": "string"
-    },
-		"default_sort_dir": {
-        "title": "Choose the sort direction",
-        "description": "Choose the sort direction",
-        "type": "string"
+		"default_sort_column": {
+			"type": "object",
+			"role": "sortable"
     },
     "columns": {
 			"type": "array",

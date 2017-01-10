@@ -21,7 +21,7 @@ Tab 1 : General
 ^^^^^^^^^^^^^^^
 
 * The widget needs a title.
-* If there are no user preferences, default_sort_key and default_sort_dir may be defined
+* If there are no user preferences, default_sort_column may be defined
 
 
 Tab 2 : Columns
