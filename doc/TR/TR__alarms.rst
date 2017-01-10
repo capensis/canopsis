@@ -14,7 +14,7 @@ The widget configuration is organized around menus which look like this:
 * Info Popup
 * Mixins
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/conf_tab_alarms.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/conf_tab_alarms.png
 
 
 Tab 1 : General
@@ -29,7 +29,7 @@ Tab 2 : Columns
 
 Like the existing "list widget", this one should allow users to select columns to be shown on the table
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/conf_columns.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/conf_columns.png
 
 
 Tab 3 : Info Popup
@@ -89,7 +89,7 @@ Raw schema
 ^^^^^^^^^^
 
 * First, You already have inserted data in your environment so the existing adapter gives you data
-* If you need it, Here is the raw schema => https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/schemas/crecord.alerts.json
+* If you need it, Here is the raw schema => https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/schemas/crecord.alerts.json
 * If there is an issue with the backend, You can find some datasets compliant with schema here : https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/tree/master/datasets
 
 WebService
@@ -333,7 +333,7 @@ Main table
 
 * The main table must respect adminlte standards  https://almsaeedstudio.com/themes/AdminLTE/pages/tables/simple.html
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/general_render.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/general_render.png
 
 
 * It must be responsive (big screen, desktop, mobile)
@@ -350,7 +350,7 @@ The user must be able to specify columns that can be not printed if display does
 In the widget configuration, user must be able to select these columns.
 
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/responsive_list.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/responsive_list.png
 
 Column Renderering
 ^^^^^^^^^^^^^^^^^^
@@ -398,7 +398,7 @@ This is done by using a lib called **querybuilder**.
 The library is already included in Canopsis.
 Filters are formatted as mongodb filters.
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/customfilterlist.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/customfilterlist.png
 
 Generated filters must be forwarded as webservice parameters.
 
@@ -413,7 +413,7 @@ Array Search
 
 The widget must show an input to make searches
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/search.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/search.png
 
 A dsl is provided by the backend to perform searches.
 You can find it here : https://git.canopsis.net/canopsis/canopsis/blob/develop/sources/python/alerts/etc/alerts/search/grammar.bnf
@@ -471,13 +471,13 @@ Executing an action is the same thing as sending an event.
 Action forms must be picked from the actual "list widget".
 For example, ACK form look like this :
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/ackform.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/ackform.png
 
 
 Massive actions can be performed too by seclecting multiple alarms
 
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/massiveactions.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/massiveactions.png
 
 To do these actions, a mixin is already done here: https://git.canopsis.net/canopsis/canopsis-webcore/blob/master/src/canopsis/monitoring/src/mixins/sendevent.js
 Do not hesitate to entirely use it (integrate to your widget) in order to use the same methods.
@@ -496,7 +496,7 @@ Popup results from a template compilation which can be defined by the user.
 
 The user must be able to set multiple infopopup on multiple columns.
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/recordinfopopup.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/recordinfopopup.png
 
 
 Linklist
@@ -506,7 +506,7 @@ As said before, linklists are links with categories that are attached to an enti
 The widget has to display it like on screenshots
 
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/linklistrender.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/linklistrender.png
 
 
 Pbehavior
@@ -525,7 +525,7 @@ There are many other informations available by calling another webservice, **ste
 
 In the main table, each tr must show a "+" that will call a component that represent steps.
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/timeline.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/timeline.png
 
 In order to have the timeline in your widget, you first need to develop your widget in a way to accept the 'listlinedetail' mixin and then you have to call the component by editing the mixin with this:
 
@@ -543,12 +543,12 @@ In Canopsis, users are able to select data that fit timeperiod.
 
 The user first clicks on
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/livereporting1.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/livereporting1.png
 
 
 And then, he selects period
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/livereporting2.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/livereporting2.png
 
 
 **From** and **to** are then provided to the widget as timestamps

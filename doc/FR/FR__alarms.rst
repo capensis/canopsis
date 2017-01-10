@@ -4,25 +4,25 @@ FR alarms
 .. contents:: Table of contents
 
 
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/general_render.png
+.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/general_render.png
 
 
 Synopsis
 ========
 
-Create a new widget list with the same features than the first one.  
+Create a new widget list with the same features than the first one.
 Priority is focused on performance : less than 1s to render 50 alarms.
 
 
 Why ?
 =====
 
-Actual list widget is full featured and generic but suffers from a lack of performance. ~4s to render 50 alarms.  
+Actual list widget is full featured and generic but suffers from a lack of performance. ~4s to render 50 alarms.
 
 
-Canopsis needs to get a new one with the functional requirements than the existing one plus better performance. ~1s to render 50 alarms.  
+Canopsis needs to get a new one with the functional requirements than the existing one plus better performance. ~1s to render 50 alarms.
 
-The new widget style must be the same than the existing one.  
+The new widget style must be the same than the existing one.
 
 
 Have a look at the view.event view in Canopsis => http://alarms.canopsis.net/en/static/canopsis/index.html#/userview/view.event
@@ -41,6 +41,5 @@ Features
     - Ticket
     - Pbehaviors
     - Linklist
-    
-- This widget must be responsive
 
+- This widget must be responsive
