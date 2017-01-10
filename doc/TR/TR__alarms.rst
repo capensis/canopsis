@@ -64,9 +64,6 @@ In order to use only frontend concepts, we already provide the adapter that call
 
 These data are already available in the alarms controller. the "fetchAlarms" method of the controller get these data.
 
-
-**TO BE COMPLETED BY FLO**
-
 .. code-block::
 
   fetchAlarms: function() {
@@ -405,7 +402,11 @@ Filters are formatted as mongodb filters.
 
 Generated filters must be forwarded as webservice parameters.
 
-**TO BE COMPLETED BY FLO**
+These kind of filters are set by the user with the customfilterlist mixin.
+This mixin is integrated to your widget and you can use its code to get filter and call adapter with it.
+
+Please have a look to the related mixin to see how to get the filter set by the user:
+https://git.canopsis.net/canopsis/canopsis-webcore/blob/master/src/canopsis/uibase/src/mixins/customfilterlist.js
 
 Array Search
 ^^^^^^^^^^^^
@@ -417,15 +418,33 @@ The widget must show an input to make searches
 A dsl is provided by the backend to perform searches.
 You can find it here : https://git.canopsis.net/canopsis/canopsis/blob/develop/sources/python/alerts/etc/alerts/search/grammar.bnf
 
-Finaly, you can find some general informations about searches here : https://git.canopsis.net/canopsis/canopsis/blob/develop/doc/sakura/FR/fr__alarms_tray.rst#search-dsl
+Finally, you can find some general informations about searches here : https://git.canopsis.net/canopsis/canopsis/blob/develop/doc/sakura/FR/fr__alarms_tray.rst#search-dsl
 
 Before sending a query to the default route, you need to validate the expression provided by users.
 Once it is validated, you can perform search by using the default route.
 If it's not validated, you must inform the user of that. A message telling about the wrong expression.
 
-**TO BE COMPLETED** => Informations about the second adapter
-alerts/search/validate?expression=<EXPRESSION>
+As with the first route, this one is also provided with an adapter: 'alertexpression' that return true or false if the expression is valid or not.
 
+.. code-block::
+
+  valideExpression: function () {
+    var controller = this;
+
+    var query = {
+      expression: 'a=1'
+    };
+
+    var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alertexpression');
+    adapter.findQuery('alertexpression', query).then(function (result) {
+          // onfullfillment
+          var result = get(result, 'data');
+          console.error('alertexpression result', result);
+    }, function (reason) {
+          // onrejection
+          console.error('ERROR in the adapter: ', reason);
+    });
+  }
 
 Action buttons
 ^^^^^^^^^^^^^^
@@ -460,8 +479,8 @@ Massive actions can be performed too by seclecting multiple alarms
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/raw/master/doc/screenshots/massiveactions.png
 
-**TO BE COMPLETED** -> informations about sendevent and some explanation
-
+To do these actions, a mixin is already done here: https://git.canopsis.net/canopsis/canopsis-webcore/blob/master/src/canopsis/monitoring/src/mixins/sendevent.js
+Do not hesitate to entirely use it (integrate to your widget) in order to use the same methods.
 
 **Rules that apply to actions**
 
