@@ -34,7 +34,8 @@
 			"reorderable": true
     },
 		"popup": {
-				"type": "string"
+				"type": "string",
+				"role": "textarea"
 		}
 	}
 }
