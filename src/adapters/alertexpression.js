@@ -6,7 +6,7 @@
  * Canopsis is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  (at your option) any later version.
  *
  * Canopsis is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,20 +17,22 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
- require.config({
-    paths: {
-        'listalarm': 'canopsis/brick-listalarm/src/widgets/listalarm/listalarm',
+Ember.Application.initializer({
+    name: 'AlertExpressionAdapter',
+    after: ['ApplicationAdapter'],
+    initialize: function(container, application) {
+        var ApplicationAdapter = container.lookupFactory('adapter:application');
 
+        // Adapter beginning
+        var adapter = ApplicationAdapter.extend({
+
+            // Method called in the controller to fetch data
+            findQuery: function(store, query) {
+				        var url = '/alerts/search/validate';
+                return this.ajax(url, 'GET', {data: query});
+            }
+        });
+
+        application.register('adapter:alertexpression', adapter);
     }
-});
-
-define([
-    'canopsis/brick-listalarm/src/adapters/alertexpression',
-    'canopsis/brick-listalarm/src/adapters/alerts',
-    'canopsis/brick-listalarm/src/serializers/alertexpression',
-    'canopsis/brick-listalarm/src/serializers/alerts',
-    'canopsis/brick-listalarm/src/widgets/listalarm/controller',
-    'ehbs!listalarm'
-], function () {
-    
 });

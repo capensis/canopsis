@@ -17,20 +17,12 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
- require.config({
-    paths: {
-        'listalarm': 'canopsis/brick-listalarm/src/widgets/listalarm/listalarm',
-
+Ember.Application.initializer({
+    name: 'AlertExpressionSerializer',
+    after: ['ApplicationSerializer'],
+    initialize: function(container, application) {
+        var AppSerializer = container.lookupFactory('serializer:application');
+        var serializer = AppSerializer.extend({});
+        application.register('serializer:alertexpression', serializer);
     }
-});
-
-define([
-    'canopsis/brick-listalarm/src/adapters/alertexpression',
-    'canopsis/brick-listalarm/src/adapters/alerts',
-    'canopsis/brick-listalarm/src/serializers/alertexpression',
-    'canopsis/brick-listalarm/src/serializers/alerts',
-    'canopsis/brick-listalarm/src/widgets/listalarm/controller',
-    'ehbs!listalarm'
-], function () {
-    
 });

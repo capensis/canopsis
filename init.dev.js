@@ -25,7 +25,9 @@
 });
 
  define([
+    'canopsis/brick-listalarm/src/adapters/alertexpression',
     'canopsis/brick-listalarm/src/adapters/alerts',
+    'canopsis/brick-listalarm/src/serializers/alertexpression',
     'canopsis/brick-listalarm/src/serializers/alerts',
     'canopsis/brick-listalarm/src/widgets/listalarm/controller',
     'ehbs!listalarm'

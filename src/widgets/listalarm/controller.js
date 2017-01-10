@@ -21,10 +21,10 @@ Ember.Application.initializer({
     name: 'ListAlarmWidget',
     after: ['TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'SchemasLoader'],
     initialize: function(container, application) {
-		var timeWindowUtils = container.lookupFactory('utility:timewindow'),
-        	dataUtils = container.lookupFactory('utility:data'),
-			WidgetFactory = container.lookupFactory('factory:widget'),
-			UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
+		    var timeWindowUtils = container.lookupFactory('utility:timewindow'),
+            dataUtils = container.lookupFactory('utility:data'),
+			      WidgetFactory = container.lookupFactory('factory:widget'),
+			      UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
 
         var get = Ember.get,
             set = Ember.set,
@@ -38,12 +38,12 @@ Ember.Application.initializer({
         };
 
         /**
-         * This widget allows to display events, with or without reccurence rules, on a calendar.
+         * This widget allows to display alarms, with action possible on them.
          *
-         * @memberOf canopsis.frontend.brick-calendar
+         * @memberOf canopsis.frontend.brick-listalarm
          * @mixes UserConfigurationMixin
-         * @class WidgetStatsTable
-         * @widget calendar
+         * @class WidgetListAlarm
+         * @widget listalarm
          */
         var widget = WidgetFactory('listalarm',{
 
@@ -57,6 +57,7 @@ Ember.Application.initializer({
             init: function() {
                 this._super.apply(this, arguments);
 				        this.fetchAlarms();
+                this.valideExpression();
 
 				        set(this, 'store', DS.Store.extend({
                     container: get(this, 'container')
@@ -72,6 +73,10 @@ Ember.Application.initializer({
 				          // Not implemented because backend too long, feature not useful for this widget
             },
 
+            /**
+             * Get the Alarms from the backend using the adapter
+             * @method fetchAlarms
+             */
             fetchAlarms: function() {
             	var controller = this;
 
@@ -82,6 +87,28 @@ Ember.Application.initializer({
                     // onfullfillment
 					          var alerts = get(result, 'data');
                     console.error('alerts', alerts);
+              }, function (reason) {
+                    // onrejection
+                    console.error('ERROR in the adapter: ', reason);
+              });
+            },
+
+            /**
+             * Get the Alarms from the backend using the adapter
+             * @method valideExpression
+             */
+            valideExpression: function () {
+              var controller = this;
+
+              var query = {
+                expression: 'a=1'
+              };
+
+              var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alertexpression');
+            	adapter.findQuery('alertexpression', query).then(function (result) {
+                    // onfullfillment
+					          var result = get(result, 'data');
+                    console.error('alertexpression result', result);
               }, function (reason) {
                     // onrejection
                     console.error('ERROR in the adapter: ', reason);
