@@ -21,7 +21,6 @@
 from canopsis.engines.core import Engine, publish
 from canopsis.check.archiver import Archiver, BAGOT, STEALTHY
 from canopsis.context.manager import Context
-from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.old.storage import CONFIG
 from copy import deepcopy
 from csv import reader
@@ -45,7 +44,6 @@ class engine(Engine):
         self.comment_types = reader([CONFIG.get('events', 'comments')]).next()
 
         self.context = Context()
-        self.pbehavior = PBehaviorManager()
         self.beat()
 
         self.log_bulk_amount = 100
@@ -65,15 +63,6 @@ class engine(Engine):
 
     def store_check(self, event):
         _id = self.archiver.check_event(event['rk'], event)
-
-        if event.get('downtime', False):
-            entity = self.context.get_entity(event)
-            entity_id = self.context.get_entity_id(entity)
-            endts = self.pbehavior.getending(
-                source=entity_id, behaviors='downtime'
-            )
-
-            event['previous_state_change_ts'] = endts
 
         if _id:
             event['_id'] = _id

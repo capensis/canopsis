@@ -207,33 +207,48 @@ class Formatter(object):
         ops_list = []
         chk_list = []
         sel_list = []
-        top_list = []
         components = {}
         if kind == 0:
             components = self.get_components()
         else:
             components = self.comp_formatter()
         for d in self.get_components().keys():
-            if self.iequal(components.get(d).get(self.TYPE[0]), self.EVENT_TYPE[0]):
+            if self.iequal(
+                    components.get(d).get(self.TYPE[0]),
+                    self.EVENT_TYPE[0]
+            ):
                 tmp_dict = {}
                 tmp_dict[d] = components.get(d)
                 ops_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[0]] = ops_list
-            if self.iequal(components.get(d).get(self.TYPE[0]), self.EVENT_TYPE[1]):
+
+            if self.iequal(
+                    components.get(d).get(self.TYPE[0]),
+                    self.EVENT_TYPE[1]
+            ):
                 tmp_dict = {}
                 tmp_dict[d] = components.get(d)
                 chk_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[1]] = chk_list
-            if self.iequal(components.get(d).get(self.TYPE[0]), self.EVENT_TYPE[2]):
+
+            if self.iequal(
+                    components.get(d).get(self.TYPE[0]),
+                    self.EVENT_TYPE[2]
+            ):
                 tmp_dict = {}
                 tmp_dict[d] = components.get(d)
                 sel_list.append(tmp_dict)
                 event_comp[self.EVENT_TYPE[2]] = sel_list
-            if self.iequal(components.get(d).get(self.TYPE[0]), self.EVENT_TYPE[3]):
+
+            if self.iequal(
+                    components.get(d).get(self.TYPE[0]),
+                    self.EVENT_TYPE[3]
+            ):
                 tmp_dict = {}
                 tmp_dict[d] = components.get(d)
-                top_list.append(tmp_dict)
-                event_comp[self.EVENT_TYPE[3]] = top_list
+                sel_list.append(tmp_dict)
+                event_comp[self.EVENT_TYPE[3]] = sel_list
+
         return event_comp
 
     def get_source_type(self):
@@ -247,12 +262,20 @@ class Formatter(object):
         resr_list = []
         comp_list = []
         for d in self.get_components().keys():
-            if self.iequal(self.get_components().get(d).get(self.TYPE[1]), self.SOURCE_TYPE[0]):
+            if self.iequal(
+                    self.get_components().get(d).get(self.TYPE[1]),
+                    self.SOURCE_TYPE[0]
+            ):
                 resr_list.append(self.get_components().get(d))
                 source_type[self.SOURCE_TYPE[0]] = resr_list
-            if self.iequal(self.get_components().get(d).get(self.TYPE[1]), self.SOURCE_TYPE[1]):
+
+            if self.iequal(
+                    self.get_components().get(d).get(self.TYPE[1]),
+                    self.SOURCE_TYPE[1]
+            ):
                 comp_list.append(self.get_components().get(d))
                 source_type[self.SOURCE_TYPE[1]] = comp_list
+
         return source_type
 
     def match_operator(self, comps):
@@ -266,21 +289,41 @@ class Formatter(object):
         operators = {}
         components = comps
         for comp in components.get(self.EVENT_TYPE[0]):
-            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[0]):
+            if self.iequal(
+                    comp.values()[0].get('component'),
+                    self.OPERATOR_ID[0]
+            ):
                 clt_list.append(comp)
                 operators[self.OPERATOR_ID[0]] = clt_list
-            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[1]):
+
+            if self.iequal(
+                    comp.values()[0].get('component'),
+                    self.OPERATOR_ID[1]
+            ):
                 wst_list.append(comp)
                 operators[self.OPERATOR_ID[1]] = wst_list
-            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[2]):
+
+            if self.iequal(
+                    comp.values()[0].get('component'),
+                    self.OPERATOR_ID[2]
+            ):
                 and_list.append(comp)
                 operators[self.OPERATOR_ID[2]] = and_list
-            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[3]):
+
+            if self.iequal(
+                    comp.values()[0].get('component'),
+                    self.OPERATOR_ID[3]
+            ):
                 or_list.append(comp)
                 operators[self.OPERATOR_ID[3]] = or_list
-            if self.iequal(comp.values()[0].get('component'), self.OPERATOR_ID[4]):
+
+            if self.iequal(
+                    comp.values()[0].get('component'),
+                    self.OPERATOR_ID[4]
+            ):
                 bes_list.append(comp)
                 operators[self.OPERATOR_ID[4]] = bes_list
+
         return operators
 
     def get_operators(self):
@@ -344,25 +387,62 @@ class Formatter(object):
         comma = ","
         separator = ":"
         missing_ctx = []
+
         if comp is None:
             top = self.get_event_type().get(self.EVENT_TYPE[3])[0]
         else:
             top = self.get_components().get(comp)
+
         if top.get(self.CONTEXT[0]) is not None:
             missing_ctx.append(self.CONTEXT[0])
-            data += quote + self.CONTEXT[0] + quote + separator + quote + top.get(self.CONTEXT[0]) + quote + comma
+            data += '{0}{1}{0}{2}{0}{3}{0}{4}'.format(
+                quote,
+                self.CONTEXT[0],
+                separator,
+                top.get(self.CONTEXT[0]),
+                comma
+            )
+
         if top.get(self.CONTEXT[1]) is not None:
             missing_ctx.append(self.CONTEXT[1])
-            data += quote + self.CONTEXT[1] + quote + separator + quote + top.get(self.CONTEXT[1]) + quote + comma
+            data += '{0}{1}{0}{2}{0}{3}{0}{4}'.format(
+                quote,
+                self.CONTEXT[1],
+                separator,
+                top.get(self.CONTEXT[1]),
+                comma
+            )
+
         if top.get(self.CONTEXT[2]) is not None:
             missing_ctx.append(self.CONTEXT[2])
-            data += quote + self.CONTEXT[2] + quote + separator + quote + top.get(self.CONTEXT[2]) + quote + comma
+            data += '{0}{1}{0}{2}{0}{3}{0}{4}'.format(
+                quote,
+                self.CONTEXT[2],
+                separator,
+                top.get(self.CONTEXT[2]),
+                comma
+            )
+
         if top.get(self.CONTEXT[3]) is not None:
             missing_ctx.append(self.CONTEXT[3])
-            data += quote + self.CONTEXT[3] + quote + separator + quote + top.get(self.CONTEXT[3]) + quote + comma
+            data += '{0}{1}{0}{2}{0}{3}{0}{4}'.format(
+                quote,
+                self.CONTEXT[3],
+                separator,
+                top.get(self.CONTEXT[3]),
+                comma
+            )
+
         if top.get(self.CONTEXT[4]) is not None:
             missing_ctx.append(self.CONTEXT[4])
-            data += quote + self.CONTEXT[4] + quote + separator + quote + top.get(self.CONTEXT[4]) + quote + comma
+            data += '{0}{1}{0}{2}{0}{3}{0}{4}'.format(
+                quote,
+                self.CONTEXT[4],
+                separator,
+                top.get(self.CONTEXT[4]),
+                comma
+            )
+
         query = start + data.rstrip(comma) + end
         return query, self.diff(missing_ctx)
 
@@ -372,7 +452,8 @@ class Formatter(object):
         if self.get_components() is not None:
             comps = self.get_components().copy()
         else:
-            self.logger.info(u'The topology: {} does not exist in the database ...'.format(self.qr))
+            self.logger.info(
+                u'Topology {} does not exist in database...'.format(self.qr))
             comps = {}
         for c in self.get_component_keys():
             q, lst = self.query_generator(c)
@@ -381,12 +462,14 @@ class Formatter(object):
             if len(res) != 0:
                 for d in lst:
                     if self.iequal(d, 'type'):
-                        comps.get(c)[unicode(d)] = unicode(comps.get(c).get(self.TYPE[0]))
+                        comps.get(c)[unicode(d)] = unicode(
+                            comps.get(c).get(self.TYPE[0]))
+
                     else:
                         comps.get(c)[unicode(d)] = res.get(unicode(d))
+
             if len(res) == 0:
                 self.logger.info(u'Component whithout event data {}'.format(c))
-                #print res
         return comps
 
     def get_root(self):
@@ -419,8 +502,9 @@ class Formatter(object):
         '''
         try:
             return a.lower() == b.lower()
-        except AttributeError, e:
+        except AttributeError as e:
             return a == b
 
+
 if __name__ == '__main__':
-	pass
+    pass
