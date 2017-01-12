@@ -60,7 +60,6 @@ function create_slinks() {
     # create_python_slink auth 0.1
     # create_python_slink middleware 0.1
     # create_python_slink mom 0.1
-    # create_python_slink rpc 0.1
 
     for paths in "$SRC/sources/python/connectors/var/snmp $CPS/var/" "$SRC/sources/python/webcore/canopsis $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/"
     do

@@ -94,10 +94,9 @@ the file ``sources/build.d/40_canolibs.install`` :
    PROJECTS[3]='middleware'
    PROJECTS[4]='old'
    PROJECTS[5]='schema'
-   PROJECTS[6]='rpc'
-   PROJECTS[7]='mom'
-   PROJECTS[8]='storage'
-   PROJECTS[9]='mongo'
+   PROJECTS[6]='mom'
+   PROJECTS[7]='storage'
+   PROJECTS[8]='mongo'
    # ...
 
 Simply add a line ``PROJECTS[XX]='simplepy'`` at the correct place (there is no
