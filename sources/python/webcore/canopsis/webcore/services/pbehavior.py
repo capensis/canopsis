@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2016 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,9 +18,93 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 from canopsis.common.ws import route
 from canopsis.pbehavior.manager import PBehaviorManager
 
 
 def exports(ws):
+
     pbm = PBehaviorManager()
+
+    @route(
+        ws.application.post,
+        name='pbehavior/create',
+        payload=[
+            'name', 'filter', 'author',
+            'tstart', 'tstop', 'rrule',
+            'enabled',
+            'connector', 'connector_name'
+        ]
+    )
+    def create(
+            name, filter, author,
+            tstart, tstop, rrule=None,
+            enabled=True,
+            connector='canopsis', connector_name='canopsis'
+    ):
+        return pbm.create(
+            name=name, filter_=filter, author=author,
+            tstart=tstart, tstop=tstop, rrule=rrule,
+            enabled=enabled,
+            connector=connector, connector_name=connector_name
+        )
+
+    @route(
+        ws.application.get,
+        name='pbehavior/read',
+        payload=['_id']
+    )
+    def read(_id=None):
+        return 'read'
+
+    @route(
+        ws.application.put,
+        name='pbehavior/update',
+        payload=[
+            '_id',
+            'name', 'filter',
+            'tstart', 'tstop', 'rrule',
+            'enabled'
+        ]
+    )
+    def update(
+            _id,
+            name=None, filter=None,
+            tstart=None, tstop=None, rrule=None,
+            enabled=None
+    ):
+        return 'update'
+
+    @route(
+        ws.application.delete,
+        name='pbehavior/delete',
+        payload=['_id']
+    )
+    def delete(_id):
+        return 'delete'
+
+    @route(
+        ws.application.post,
+        name='pbehavior/comment/create',
+        payload=['pbehavior_id', 'author', 'message']
+    )
+    def create_comment(pbehavior_id, author, message):
+        return 'create comment'
+
+    @route(
+        ws.application.put,
+        name='pbehavior/comment/update',
+        payload=['pbehavior_id', '_id', 'auhtor', 'message']
+    )
+    def update_comment(pbehavior_id, _id, author=None, message=None):
+        return 'update comment'
+
+    @route(
+        ws.application.delete,
+        name='pbehavior/comment/delete',
+        payload=['pbehavior_id', '_id']
+    )
+    def delete_comment(pbehavior_id, _id):
+        return 'delete comment'

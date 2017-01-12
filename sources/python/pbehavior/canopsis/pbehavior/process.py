@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,11 +18,31 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.vevent.ctxpropreg import CTXVEventRegistry
+from __future__ import unicode_literals
+
+from canopsis.common.utils import singleton_per_scope
+from canopsis.task.core import register_task
+
+from canopsis.pbehavior.manager import PBehaviorManager
 
 
-class CTXPBehaviorRegistry(CTXVEventRegistry):
-    """In charge of ctx pbehavior properties.
-    """
+@register_task
+def event_processing(engine, event, pbm=None, logger=None, **kwargs):
+    if pbm is None:
+        pbm = singleton_per_scope(PBehaviorManager)
 
-    __datatype__ = 'pbehavior'  #: default datatype name
+    pbm
+
+    # process pbehavior events...
+
+    logger.error('processing: {}'.format(event))
+
+
+@register_task
+def beat_processing(engine, pbm=None, logger=None, **kwargs):
+    if pbm is None:
+        pbm = singleton_per_scope(PBehaviorManager)
+
+    res = pbm.compute_pbehaviors_filters()
+
+    logger.error(res)
