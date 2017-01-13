@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 "Capensis" [http://www.capensis.com]
  *
  * This file is part of Canopsis.
@@ -18,36 +18,11 @@
  */
 
 Ember.Application.initializer({
-    name: 'AlarmsView',
+    name: 'AlertExpressionSerializer',
+    after: ['ApplicationSerializer'],
     initialize: function(container, application) {
-
-        var get = Ember.get,
-            set = Ember.set,
-            isNone = Ember.isNone;
-
-        /**
-         * This mixin is the widget's view.
-         *
-         * @class viewMixin
-         * @memberOf canopsis.frontend.brick-calendar
-         */
-        var view = Ember.Mixin.create({
-
-            /**
-             * Create the fullcalendar at the beginning and catch every changed view
-             * @method didInsertElement
-             */
-            didInsertElement: function () {
-				this._super.apply(this, arguments);
-			},
-
-            /**
-             * Disable all triggered actions and destroy all view's objects
-             * @method willDestroyElement
-             */
-            willDestroyElement: function() {
-            }
-        });
-        application.register('view:alarms', view);
+        var AppSerializer = container.lookupFactory('serializer:application');
+        var serializer = AppSerializer.extend({});
+        application.register('serializer:alertexpression', serializer);
     }
 });
