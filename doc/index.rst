@@ -1,7 +1,7 @@
-.. _alarms:
+.. _listalarm:
 
 =====================================================================
-Alarms Canopsis Brick
+Listalarm Canopsis Brick
 =====================================================================
 
 Alarms widget for Canopsis

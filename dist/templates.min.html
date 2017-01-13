@@ -1,4 +1,27 @@
-<script type="text/x-handlebars" data-template-name="statstable"><div>
-    Bac à alarms
-</div>
-</script>
+<script type="text/x-handlebars" data-template-name="components/component-alarmraw">{{#each field in fields}}
+    {{#component-alarmtd alarm=alarm field=field}}
+    {{/component-alarmtd}}
+{{/each}}  </script>
+<script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{value}}</script>
+<script type="text/x-handlebars" data-template-name="listalarm">
+<div class="box-body">
+    <div class="table-responsive">
+        <table class="table no-margin">
+            <thead>
+                <tr>
+                    {{#each field in controller.fields}}
+                        <th>{{field}}</th>
+                    {{/each}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#each alarm in controller.alarms}}
+                
+                    {{#component-alarmraw alarm=alarm fields=controller.fields}}
+                    {{/component-alarmraw}}
+
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div></script>

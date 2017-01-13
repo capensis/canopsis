@@ -17,12 +17,12 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
-window.bricks['brick-alarms'].schemasArray = ["text!canopsis/brick-alarms/schemas/widget.alarms.json"];
+window.bricks['brick-listalarm'].schemasArray = ["text!canopsis/brick-listalarm/schemas/crecord.alerts.json","text!canopsis/brick-listalarm/schemas/widget.listalarm.json"];
 
-define(window.bricks['brick-alarms'].schemasArray, function () {
+define(window.bricks['brick-listalarm'].schemasArray, function () {
     for (var i = 0; i < arguments.length; i++) {
-        var schemaName = window.bricks['brick-alarms'].schemasArray[i];
-        var urlPrefix = 'canopsis/brick-alarms/schemas/';
+        var schemaName = window.bricks['brick-listalarm'].schemasArray[i];
+        var urlPrefix = 'canopsis/brick-listalarm/schemas/';
 
         //remove "text!" and the brick schema folder prefix
         schemaName = schemaName.slice(5 + urlPrefix.length);

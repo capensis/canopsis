@@ -19,15 +19,24 @@
 
  require.config({
     paths: {
-        'statstable': 'canopsis/brick-alarms/src/widgets/alarms/statstable',
+        'components/component-alarmraw': 'canopsis/brick-listalarm/src/components/alarmraw/template',
+        'components/component-alarmtd': 'canopsis/brick-listalarm/src/components/alarmtd/template',
+        'listalarm': 'canopsis/brick-listalarm/src/widgets/listalarm/listalarm',
 
     }
 });
 
 define([
-    'canopsis/brick-alarms/src/widgets/alarms/controller',
-    'ehbs!statstable',
-    'canopsis/brick-alarms/src/widgets/alarms/view'
+    'canopsis/brick-listalarm/src/adapters/alertexpression',
+    'canopsis/brick-listalarm/src/adapters/alerts',
+    'canopsis/brick-listalarm/src/components/alarmraw/component',
+    'ehbs!components/component-alarmraw',
+    'canopsis/brick-listalarm/src/components/alarmtd/component',
+    'ehbs!components/component-alarmtd',
+    'canopsis/brick-listalarm/src/serializers/alertexpression',
+    'canopsis/brick-listalarm/src/serializers/alerts',
+    'canopsis/brick-listalarm/src/widgets/listalarm/controller',
+    'ehbs!listalarm'
 ], function () {
     
 });
