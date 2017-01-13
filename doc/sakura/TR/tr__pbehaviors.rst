@@ -205,7 +205,7 @@ Getting started
 ^^^^^^^^^^^^^^^
 
 Sources
--------
+~~~~~~~
 
 A new branch has been created on canopsis open core project :
 ``feature-pbehaviors``. Changes must be commited in this branch. This branch
@@ -228,7 +228,7 @@ contains :
 Examples showing how to achieve main operations are provided in source files.
 
 Environment
------------
+~~~~~~~~~~~
 
 A development environment is available at ... . It has been deployed from the
 ``feature-pbehaviors`` branch.
@@ -242,7 +242,7 @@ Once you changed some code, you can reload it with :
   * or ``service webserver restart``
 
 Logs
-----
+~~~~
 
 Log files that should be used are :
 
