@@ -211,19 +211,19 @@ A new branch has been created on canopsis open core project :
 ``feature-pbehaviors``. Changes must be commited in this branch. This branch
 contains :
 
- * pbehavior manager in
-   ``sources/python/pbehavior/canopsis/pbehavior/manager.py``.  Business logic
-   must be written in this file (methods described in the table above).
- * pbehavior webservice in
-   ``sources/python/webcore/canopsis/webcore/services/pbehavior.py``. This file
-   contains proxy functions that must rely on the manager. Routes should be
-   requestable : <ip>:<port>/pbehavior/create
- * pbehavior engine in
-   ``sources/python/pbehavior/canopsis/pbehavior/process.py``.  An engine is
-   composed of 2 functions :
+* pbehavior manager in
+  ``sources/python/pbehavior/canopsis/pbehavior/manager.py``.  Business logic
+  must be written in this file (methods described in the table above).
+* pbehavior webservice in
+  ``sources/python/webcore/canopsis/webcore/services/pbehavior.py``. This file
+  contains proxy functions that must rely on the manager. Routes should be
+  requestable : <ip>:<port>/pbehavior/create
+* pbehavior engine in
+  ``sources/python/pbehavior/canopsis/pbehavior/process.py``.  An engine is
+  composed of 2 functions :
 
-   - event_processing : called each time an event is received
-   - beat_processing : called once a minute
+  - event_processing : called each time an event is received
+  - beat_processing : called once a minute
 
 Examples showing how to achieve main operations are provided in source files.
 
