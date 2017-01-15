@@ -74,7 +74,9 @@ Ember.Application.initializer({
                 params.forEach(function(param) {
                     console.error(param + ': ' + controller.get('model.' + param));
                 });
-                console.error("default_sort_column: " + controller.get('model.default_sort_column.property') + "-" + controller.get('model.default_sort_column.direction'))
+                console.error("default_sort_column: " + controller.get('model.default_sort_column.property') + "-" + controller.get('model.default_sort_column.direction'));
+                console.error("columnts: " + controller.get('model.columns').join(' '))
+                
             },
 
             /**
@@ -137,8 +139,8 @@ Ember.Application.initializer({
 
             setAlarmsForShow: function (alarms) {
 
-              var mock = ['component', 'resource', 'connector', 'connector_name', 'state'];
-							var fields = this.parseFields(mock);
+              var configColumns = get(this, 'model.columns');
+							var fields = this.parseFields(configColumns);
               var controller = this;
               var alarmsArr = alarms.map(function(alarm) {
                 var newAlarm = {};
@@ -165,7 +167,7 @@ Ember.Application.initializer({
 								obj['name'] = column;
 
 								obj['isSortable'] = column == sortColumn;
-								obj['isASC'] = order == 'ASC'
+								obj['isASC'] = order == 'ASC';
 
 								if (nestedObjects.includes(column)) {
 									obj['getValue'] = column + '.val';

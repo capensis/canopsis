@@ -11,7 +11,7 @@
                 <tr>
                     {{#each field in controller.fields}}
                         {{#if field.isSortable}}
-                            <th>{{field.name}} <span {{bind-attr class=":glyphicon field.isASC:glyphicon-sort-by-attributes:glyphicon-sort-by-attributes-alt"}} aria-hidden="true"></span></th>
+                            <th>{{field.name}} <span {{bind-attr class=":glyphicon field.isASC:glyphicon-sort-by-alphabet:glyphicon-sort-by-alphabet-alt"}} aria-hidden="true"></span></th>
                         {{else}}
                             <th>{{field.name}}</th>                    
                         {{/if}}
