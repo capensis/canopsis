@@ -1,8 +1,4 @@
-<script type="text/x-handlebars" data-template-name="components/component-alarmraw">{{#each field in fields}}
-    {{#component-alarmtd alarm=alarm field=field}}
-    {{/component-alarmtd}}
-{{/each}}  </script>
-<script type="text/x-handlebars" data-template-name="components/component-alarmtable"><div class="box-body">
+<div class="box-body">
     <div class="table-responsive">
         <table class="table no-margin">
             <thead>
@@ -16,7 +12,6 @@
                     {{/each}}
                 </tr>
             </thead>
-
             <tbody>
                 {{#each alarm in sAlarms}}
                 
@@ -28,7 +23,3 @@
         </table>
     </div>
 </div>
-</script>
-<script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{value}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#component-alarmtable defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
-{{/component-alarmtable}}</script>

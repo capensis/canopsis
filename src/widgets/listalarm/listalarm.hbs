@@ -1,27 +1,2 @@
-
-<div class="box-body">
-    <div class="table-responsive">
-        <table class="table no-margin">
-            <thead>
-                <tr>
-                    {{#each field in controller.fields}}
-                        {{#if field.isSortable}}
-                            <th>{{field.name}} <span {{bind-attr class=":glyphicon field.isASC:glyphicon-sort-by-alphabet:glyphicon-sort-by-alphabet-alt"}} aria-hidden="true"></span></th>
-                        {{else}}
-                            <th>{{field.name}}</th>                    
-                        {{/if}}
-                    {{/each}}
-                </tr>
-            </thead>
-            
-            <tbody>
-                {{#each alarm in controller.alarms}}
-                
-                    {{#component-alarmraw alarm=alarm fields=controller.fields}}
-                    {{/component-alarmraw}}
-
-                {{/each}}
-            </tbody>
-        </table>
-    </div>
-</div>
+{{#component-alarmtable defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
+{{/component-alarmtable}}

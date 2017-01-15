@@ -63,7 +63,7 @@ Ember.Application.initializer({
                     container: get(this, 'container')
                 }));
                 this.showParams();
-
+                this.setFields();
                 
             },
 
@@ -137,10 +137,12 @@ Ember.Application.initializer({
               });
             },
 
-            setAlarmsForShow: function (alarms) {
+            setFields: function () {
+              this.set('fields', this.parseFields(get(this, 'model.columns')));              
+            },
 
-              var configColumns = get(this, 'model.columns');
-							var fields = this.parseFields(configColumns);
+            setAlarmsForShow: function (alarms) {
+              var fields = get(this, 'fields');
               var controller = this;
               var alarmsArr = alarms.map(function(alarm) {
                 var newAlarm = {};
@@ -151,7 +153,6 @@ Ember.Application.initializer({
               });
 
               this.set('alarms', alarmsArr);
-              this.set('fields', fields);
             },
 
 						parseFields: function (columns) {
@@ -178,7 +179,19 @@ Ember.Application.initializer({
 							});
 
 							return fields;
-						}
+						},
+
+            sortColumn: function() {
+              var column = get(this, 'fields').findBy('name', get(this, 'controller.default_sort_column.property'));
+              if (!column) {
+                column = get(this, 'fields.firstObject');
+                column['isSortable'] = true;
+                column['isASC'] = get(this, 'controller.default_sort_column.property');
+                console.error('the column "' + get(this, 'controller.default_sort_column.property') + '" was not found.');
+                return column;
+              }
+              return column;
+            }.property('controller.default_sort_column.property', 'fields.[]'),
 
         }, listOptions);
 
