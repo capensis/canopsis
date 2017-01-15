@@ -23,7 +23,7 @@ Ember.Application.initializer({
             value: function() {
                 var alarm = get(this, 'alarm');
                 var field = get(this, 'field');
-                return get(alarm, field)
+                return get(alarm, field.name)
             }.property('alarm', 'field'),
         });
 

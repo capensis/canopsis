@@ -93,7 +93,12 @@ Ember.Application.initializer({
             fetchAlarms: function() {
               var controller = this;
 
-              var query = { tstart: 1483225200, tstop: 1583225200 };
+              var query = {
+								tstart: 1483225200,
+								tstop: 1583225200,
+								sort_key: this.get('model.default_sort_column.property'),
+           			sort_dir: this.get('model.default_sort_column.direction')
+							};
 
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
             	adapter.findQuery('alerts', query).then(function (result) {
@@ -131,19 +136,47 @@ Ember.Application.initializer({
             },
 
             setAlarmsForShow: function (alarms) {
-              var fields = ['component', 'resource', 'connector', 'connector_name'];
+
+              var mock = ['component', 'resource', 'connector', 'connector_name', 'state'];
+							var fields = this.parseFields(mock);
               var controller = this;
               var alarmsArr = alarms.map(function(alarm) {
                 var newAlarm = {};
                 fields.forEach(function(field) {
-                  newAlarm[field] = alarm['v'][field]
+                  newAlarm[field.name] = get(Ember.Object.create(alarm), 'v.' + field.getValue)
                 })
                 return newAlarm;
               });
 
               this.set('alarms', alarmsArr);
               this.set('fields', fields);
-            }
+            },
+
+						parseFields: function (columns) {
+							var nestedObjects = ['state', 'status'];
+							var fields = [];
+							var sortColumn = this.get('model.default_sort_column.property');
+							var order = this.get('model.default_sort_column.direction');
+							
+
+							fields = columns.map(function(column) {
+								var obj = {};
+
+								obj['name'] = column;
+
+								obj['isSortable'] = column == sortColumn;
+								obj['isASC'] = order == 'ASC'
+
+								if (nestedObjects.includes(column)) {
+									obj['getValue'] = column + '.val';
+								} else {
+									obj['getValue'] = column;
+								}
+								return obj;
+							});
+
+							return fields;
+						}
 
         }, listOptions);
 

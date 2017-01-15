@@ -10,10 +10,15 @@
             <thead>
                 <tr>
                     {{#each field in controller.fields}}
-                        <th>{{field}}</th>
+                        {{#if field.isSortable}}
+                            <th>{{field.name}} <span {{bind-attr class=":glyphicon field.isASC:glyphicon-sort-by-attributes:glyphicon-sort-by-attributes-alt"}} aria-hidden="true"></span></th>
+                        {{else}}
+                            <th>{{field.name}}</th>                    
+                        {{/if}}
                     {{/each}}
                 </tr>
             </thead>
+            
             <tbody>
                 {{#each alarm in controller.alarms}}
                 
