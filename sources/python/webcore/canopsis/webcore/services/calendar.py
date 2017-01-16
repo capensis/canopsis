@@ -81,7 +81,7 @@ def exports(ws):
         :return: new documents.
         :rtype: list
         """
-        ws.logger.debug('eventcategories, {}'.format(
+        ws.logger.debug(u'eventcategories, {}'.format(
             dumps(eventcategories, indent=2)
         ))
         calendarDocument = cm.get_document(
@@ -91,7 +91,7 @@ def exports(ws):
             dtstart=dtstart,
             dtend=dtend
         )
-        ws.logger.debug('calendarDocument, {}'.format(
+        ws.logger.debug(u'calendarDocument, {}'.format(
             dumps(calendarDocument, indent=2)
         ))
         calendar_vevents = []
@@ -111,7 +111,7 @@ def exports(ws):
         :rtype: boolean
         """
         cm.remove(uids=ids)
-        ws.logger.info('Delete : {}'.format(ids))
+        ws.logger.info(u'Delete : {}'.format(ids))
         return True
 
     @route(

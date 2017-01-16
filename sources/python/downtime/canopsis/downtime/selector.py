@@ -96,7 +96,7 @@ class Selector(Record):
 
     def load(self, dump):
 
-        self.logger.debug('Loading selector from record')
+        self.logger.debug(u'Loading selector from record')
 
         mfilter = dump.get('mfilter', '{}')
 
@@ -242,7 +242,7 @@ class Selector(Record):
 
             cfilter['$and'].append(downtime)
 
-        self.logger.debug('Generated cfilter is')
+        self.logger.debug(u'Generated cfilter is')
 
         return cfilter
 
@@ -354,7 +354,7 @@ class Selector(Record):
         elif isinstance(mfilter, dict):
             mfilter['ack.isAck'] = {'$ne': True}
 
-        self.logger.debug('Selector mfilter')
+        self.logger.debug(u'Selector mfilter')
 
         # Computes worst state for events that are not acknowleged
         result_ack_worst_state = self.storage.get_backend(
@@ -557,9 +557,9 @@ class Selector(Record):
 
         # Do not publish metrics by removing them from event
         if not time_to_publish and not is_different:
-            self.logger.debug('Will not publish selector event')
+            self.logger.debug(u'Will not publish selector event')
             return False
         else:
-            self.logger.info('Selector event publication')
+            self.logger.info(u'Selector event publication')
             self.last_publication_date = int(time())
             return True

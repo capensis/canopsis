@@ -65,13 +65,13 @@ class MongoOIDsModule(MigrationModule):
 
     def update(self):
         if self.get_version('mongo_oids') < 1:
-            self.logger.info('Migrating to version 1')
+            self.logger.info(u'Migrating to version 1')
 
             self.update_to_version_1()
             self.set_version('mongo_oids', 1)
 
         if self.get_version('mongo_oids') < 2:
-            self.logger.info('Migrating to version 2')
+            self.logger.info(u'Migrating to version 2')
             self.update_periodic2periodical()
             self.set_version('mongo_oids', 2)
 

@@ -250,7 +250,7 @@ class Archiver(Configurable):
             )
 
         if reset_type not in [BAGOT, STEALTHY]:
-            self.logger.info('wrong reset type given, will not process')
+            self.logger.info(u'wrong reset type given, will not process')
             return
 
         # Dynamic method parameter depends on reset type input

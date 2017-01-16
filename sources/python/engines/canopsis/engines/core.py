@@ -189,7 +189,7 @@ class Engine(object):
                 self.RUN = False
 
             except KeyboardInterrupt:
-                self.logger.info('Stop request')
+                self.logger.info(u'Stop request')
                 self.RUN = False
 
         self.post_run()
@@ -432,7 +432,7 @@ class TaskHandler(Engine):
         self.amqp_queue = self.name
 
     def work(self, msg, *args, **kwargs):
-        self.logger.info('Received job: {0}'.format(msg))
+        self.logger.info(u'Received job: {0}'.format(msg))
 
         start = int(time())
 

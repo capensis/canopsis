@@ -78,7 +78,7 @@ class engine(Engine):
         self.cache_acks = {}
         for ack in query:
             self.cache_acks[ack['rk']] = 1
-            self.logger.debug(' + ack cache key > ' + ack['rk'])
+            self.logger.debug(u' + ack cache key > ' + ack['rk'])
 
     def get_metric_name_adp(self, event):
 
@@ -130,7 +130,7 @@ class engine(Engine):
 
         # If event is of type ack, then ack reference event
         if event['event_type'] == 'ack':
-            self.logger.debug('Ack event found, will proceed ack.')
+            self.logger.debug(u'Ack event found, will proceed ack.')
 
             rk = event.get('referer', event.get('ref_rk', None))
 
@@ -266,7 +266,7 @@ class engine(Engine):
                     exchange=self.acknowledge_on
                 )
 
-                self.logger.debug('Ack internal metric sent. {}'.format(
+                self.logger.debug(u'Ack internal metric sent. {}'.format(
                     dumps(ack_event['perf_data_array'], indent=2)
                 ))
 
@@ -285,7 +285,7 @@ class engine(Engine):
                     exchange=self.acknowledge_on
                 )
 
-            self.logger.debug('Reloading ack cache')
+            self.logger.debug(u'Reloading ack cache')
             self.reload_ack_cache()
 
         # If event is acknowledged, and went back to normal, remove the ack
@@ -369,7 +369,7 @@ class engine(Engine):
         # If the event is in problem state,
         # update the solved state of acknowledgement
         elif ackremove or (state != 0 and state_type == 1):
-            self.logger.debug('Alert on event, preparing ACK statement.')
+            self.logger.debug(u'Alert on event, preparing ACK statement.')
 
             self.stbackend.find_and_modify(
                 query={'rk': event['rk'], 'solved': True},
@@ -384,7 +384,7 @@ class engine(Engine):
             )
 
         if logevent:
-            self.logger.debug('publishing log event {}'.format(
+            self.logger.debug(u'publishing log event {}'.format(
                 dumps(logevent, indent=2)
             ))
             publish(

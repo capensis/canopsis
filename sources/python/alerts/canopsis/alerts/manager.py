@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2016 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -22,12 +22,11 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.model import Parameter
-from canopsis.context.manager import Context
 
-from canopsis.timeserie.timewindow import (
-    get_offset_timewindow, Interval, TimeWindow)
+from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
+from canopsis.context.manager import Context
 
 from canopsis.event.manager import Event
 from canopsis.check import Check
@@ -71,10 +70,7 @@ class Alerts(MiddlewareRegistry):
     @config.setter
     def config(self, value):
         if value is None:
-            value = self[Alerts.CONFIG_STORAGE].get_elements(
-                query={'crecord_type': 'statusmanagement'}
-            )
-            value = {} if not value else value[0]
+            value = self.load_config()
 
         self._config = value
 
@@ -94,6 +90,25 @@ class Alerts(MiddlewareRegistry):
         """
 
         return self.config.get('bagot_freq', 0)
+
+    @property
+    def flapping_persistant_steps(self):
+        """
+        Number of state change steps to keep in case of long term flapping.
+        Most recent steps are kept.
+        """
+
+        return self.config.get('persistant_steps', 10)
+
+    @property
+    def hard_limit(self):
+        """
+        Maximum number of steps an alarm can have. Only alarm cancelation or
+        hard limit extension are possible ways to interact with an alarm that
+        has reached this point.
+        """
+
+        return self.config.get('hard_limit', 100)
 
     @property
     def stealthy_interval(self):
@@ -121,6 +136,15 @@ class Alerts(MiddlewareRegistry):
         return self.config.get('restore_event', False)
 
     @property
+    def cancel_autosolve_delay(self):
+        """
+        Once a canceled alarm is resolved, it cannot be uncanceled. This delay
+        allows users to uncancel an alarm if they made a mistake.
+        """
+
+        return self.config.get('cancel_autosolve_delay', 3600)
+
+    @property
     def extra_fields(self):
         """
         Array of fields to save from event in alarm.
@@ -139,12 +163,12 @@ class Alerts(MiddlewareRegistry):
         self._extra_fields = value
 
     def __init__(
-        self,
-        extra_fields=None,
-        config_storage=None,
-        alarm_storage=None,
-        context=None,
-        *args, **kwargs
+            self,
+            extra_fields=None,
+            config_storage=None,
+            alarm_storage=None,
+            context=None,
+            *args, **kwargs
     ):
         super(Alerts, self).__init__(*args, **kwargs)
 
@@ -159,6 +183,12 @@ class Alerts(MiddlewareRegistry):
 
         if context is not None:
             self[Alerts.CONTEXT_MANAGER] = context
+
+    def load_config(self):
+        value = self[Alerts.CONFIG_STORAGE].get_elements(
+            query={'crecord_type': 'statusmanagement'}
+        )
+        return {} if not value else value[0]
 
     def get_alarms(
             self,
@@ -243,57 +273,6 @@ class Alerts(MiddlewareRegistry):
                 alarm['entity'] = entity
 
         return alarms_by_entity
-
-    def count_alarms_by_period(
-            self,
-            start,
-            stop,
-            subperiod={'day': 1},
-            limit=100,
-            query={},
-    ):
-        """
-        Count alarms that have been opened during (stop - start) period.
-
-        :param start: Beginning timestamp of period
-        :type start: int
-
-        :param stop: End timestamp of period
-        :type stop: int
-
-        :param subperiod: Cut (stop - start) in ``subperiod`` subperiods
-        :type subperiod: dict
-
-        :param limit: Counts cannot exceed this value
-        :type limit: int
-
-        :param query: Custom mongodb filter for alarms
-        :type query: dict
-
-        :return: List in which each item contains an interval and the
-                 related count
-        :rtype: list
-        """
-
-        intervals = Interval.get_intervals_by_period(start, stop, subperiod)
-
-        results = []
-        for date in intervals:
-            count = self[Alerts.ALARM_STORAGE].count(
-                data_ids=None,
-                timewindow=TimeWindow(start=date['begin'], stop=date['end']),
-                window_start_bind=True,
-                _filter=query,
-            )
-
-            results.append(
-                {
-                    'date': date,
-                    'count': limit if count > limit else count,
-                }
-            )
-
-        return results
 
     def get_current_alarm(self, alarm_id):
         """
@@ -447,22 +426,29 @@ class Alerts(MiddlewareRegistry):
             alarm = self.get_current_alarm(entity_id)
 
             if alarm is None:
-                if event[Check.STATE] != Check.OK:
-                    alarm = self.make_alarm(entity_id, event)
-                    alarm = self.update_state(alarm, event[Check.STATE], event)
+                if event[Check.STATE] == Check.OK:
+                    # If a check event with an OK state concerns an entity for
+                    # which no alarm is opened, there is no point continuing
+                    return
 
-                    self.update_current_alarm(
-                        alarm,
-                        alarm[self[Alerts.ALARM_STORAGE].VALUE]
-                    )
+                # Check is not OK
+                alarm = self.make_alarm(entity_id, event)
+                alarm = self.update_state(alarm, event[Check.STATE], event)
 
-            else:
-                self.update_state(alarm, event[Check.STATE], event)
+            else:  # Alarm is already opened
+                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                if self.is_hard_limit_reached(value):
+                    return
 
-                self.update_current_alarm(
-                    alarm,
-                    alarm[self[Alerts.ALARM_STORAGE].VALUE]
-                )
+                alarm = self.update_state(alarm, event[Check.STATE], event)
+
+            value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+
+            value = self.crop_flapping_steps(value)
+
+            value = self.check_hard_limit(value)
+
+            self.update_current_alarm(alarm, value)
 
         else:
             try:
@@ -481,23 +467,30 @@ class Alerts(MiddlewareRegistry):
                             entity_id
                         )
                     )
+                    return
 
-                else:
-                    value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
-                    new_value = task(self, value, author, message, event)
-                    status = None
+                if self.is_hard_limit_reached(value):
+                    # Only cancel is allowed when hard limit has been reached
+                    if event['event_type'] != 'cancel':
+                        return
 
-                    if isinstance(new_value, tuple):
-                        new_value, status = new_value
+                new_value = task(self, value, author, message, event)
+                status = None
+
+                if isinstance(new_value, tuple):
+                    new_value, status = new_value
+
+                new_value = self.check_hard_limit(new_value)
+
+                self.update_current_alarm(alarm, new_value)
+
+                if status is not None:
+                    alarm = self.update_status(alarm, status, event)
+                    new_value = alarm[self[Alerts.ALARM_STORAGE].VALUE]
 
                     self.update_current_alarm(alarm, new_value)
-
-                    if status is not None:
-                        alarm = self.update_status(alarm, status, event)
-                        new_value = alarm[self[Alerts.ALARM_STORAGE].VALUE]
-
-                        self.update_current_alarm(alarm, new_value)
 
     def update_state(self, alarm, state, event):
         """
@@ -649,11 +642,16 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.ALARM_STORAGE].DATA_ID: alarm_id,
             self[Alerts.ALARM_STORAGE].TIMESTAMP: event['timestamp'],
             self[Alerts.ALARM_STORAGE].VALUE: {
+                'connector': event['connector'],
+                'connector_name': event['connector_name'],
+                'component': event['component'],
+                'resource': event.get('resource', None),
                 'state': None,
                 'status': None,
                 'ack': None,
                 'canceled': None,
                 'snooze': None,
+                'hard_limit': None,
                 'ticket': None,
                 'resolved': None,
                 'steps': [],
@@ -665,6 +663,103 @@ class Alerts(MiddlewareRegistry):
                 }
             }
         }
+
+    def crop_flapping_steps(self, alarm):
+        """
+        Remove old state changes for alarms that are flapping over long periods
+        of time.
+
+        :param dict alarm: Alarm value
+
+        :return: Alarm with cropped steps or alarm if nothing to remove
+        :rtype: dict
+        """
+
+        p_steps = self.flapping_persistant_steps
+
+        if p_steps < 0:
+            self.logger.warning(
+                "Peristant steps is {} (< 0) : aborting flapping steps crop "
+                "operation".format(p_steps)
+            )
+            return alarm
+
+        last_status_i = alarm['steps'].index(alarm['status'])
+
+        state_changes = filter(
+            lambda step: step['_t'] in ['stateinc', 'statedec'],
+            alarm['steps'][last_status_i + 1:]
+        )
+
+        number_to_crop = len(state_changes) - p_steps
+
+        if not number_to_crop > 0:
+            return alarm
+
+        crop_counter = {}
+
+        # Removed steps are supposed unique due to their timestamps, so as
+        # `remove` method does not cause any collisions.
+        for i in range(number_to_crop):
+            # Increase statedec or stateinc counter
+            t = state_changes[i]['_t']
+            crop_counter[t] = crop_counter.get(t, 0) + 1
+
+            # Increase {0,1,2,3} counter
+            s = 'state:{}'.format(state_changes[i]['val'])
+            crop_counter[s] = crop_counter.get(s, 0) + 1
+
+            alarm['steps'].remove(state_changes[i])
+
+        task = get_task('alerts.systemaction.update_state_counter')
+        alarm = task(alarm, crop_counter)
+
+        return alarm
+
+    def is_hard_limit_reached(self, alarm):
+        """
+        Check if an hard limit is on going.
+
+        :param dict alarm: Alarm value
+
+        :return: False if hard_limit property is None or if configured value is
+          greater than recorded value, True otherwise
+        :rtype: boolean
+        """
+
+        limit = alarm.get('hard_limit', None)
+
+        if limit is None:
+            return False
+
+        if limit['val'] < self.hard_limit:
+            return False
+
+        return True
+
+    def check_hard_limit(self, alarm):
+        """
+        Update hard limit informations if number of steps has exceeded this
+        limit.
+
+        :param dict alarm: Alarm value
+
+        :return: Alarm with hard limit informations or alarm if nothing to do
+        :rtype: dict
+        """
+
+        limit = alarm.get('hard_limit', None)
+
+        if limit is not None:
+            if limit['val'] >= self.hard_limit:
+                return alarm
+
+        if len(alarm['steps']) >= self.hard_limit:
+            task = get_task('alerts.systemaction.hard_limit')
+            return task(self, alarm)
+
+        else:
+            return alarm
 
     def resolve_alarms(self):
         """
@@ -685,4 +780,27 @@ class Alerts(MiddlewareRegistry):
 
                     if (now - t) > self.flapping_interval:
                         alarm['resolved'] = t
+                        self.update_current_alarm(docalarm, alarm)
+
+    def resolve_cancels(self):
+        """
+        Loop over all canceled alarms, and resolve the ones that are in this
+        status for too long.
+        """
+
+        storage = self[Alerts.ALARM_STORAGE]
+        result = self.get_alarms(resolved=False)
+
+        now = int(time())
+
+        for data_id in result:
+            for docalarm in result[data_id]:
+                docalarm[storage.DATA_ID] = data_id
+                alarm = docalarm.get(storage.VALUE)
+
+                if alarm['canceled'] is not None:
+                    canceled_ts = alarm['canceled']['t']
+
+                    if (now - canceled_ts) >= self.cancel_autosolve_delay:
+                        alarm['resolved'] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)

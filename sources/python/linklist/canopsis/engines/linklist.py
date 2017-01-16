@@ -64,7 +64,7 @@ class engine(Engine):
 
         if event_links:
 
-            self.logger.debug('found links into the event {}: {}'.format(
+            self.logger.debug(u'found links into the event {}: {}'.format(
                 event['rk'],
                 event_links
             ))

@@ -1,0 +1,59 @@
+{
+  "title": "Alarm fields",
+  "description": "Association between human readable names and stored fields names",
+
+  "type": "object",
+  "properties": {
+    "uid": {
+      "stored_name": "_id"
+    },
+    "connector": {
+      "stored_name": "v.connector"
+    },
+    "connector_name": {
+      "stored_name": "v.connector_name"
+    },
+    "component": {
+      "stored_name": "v.component"
+    },
+    "resource": {
+      "stored_name": "v.resource"
+    },
+    "entity_id": {
+      "stored_name": "d"
+    },
+    "state": {
+      "stored_name": "v.state.val"
+    },
+    "status": {
+      "stored_name": "v.status.val"
+    },
+    "snooze": {
+      "stored_name": "v.snooze"
+    },
+    "ack": {
+      "stored_name": "v.ack"
+    },
+    "cancel": {
+      "stored_name": "v.cancel"
+    },
+    "ticket": {
+      "stored_name": "v.ticket.val"
+    },
+    "output": {
+      "stored_name": "output"
+    },
+    "opened": {
+      "stored_name": "t"
+    },
+    "resolved": {
+      "stored_name": "v.resolved"
+    },
+    "domain": {
+      "stored_name": "v.extra.domain"
+    },
+    "perimeter": {
+      "stored_name": "v.extra.perimeter"
+    }
+  }
+}

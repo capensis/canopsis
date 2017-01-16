@@ -24,6 +24,7 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 
 from canopsis.alerts.manager import Alerts
+from canopsis.alerts.reader import AlertsReader
 
 
 @register_task
@@ -52,4 +53,12 @@ def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
     if alertsmgr is None:
         alertsmgr = singleton_per_scope(Alerts)
 
+    alertsreader = singleton_per_scope(AlertsReader)
+
+    alertsmgr.config = alertsmgr.load_config()
+
     alertsmgr.resolve_alarms()
+
+    alertsmgr.resolve_cancels()
+
+    alertsreader.clean_fast_count_cache()

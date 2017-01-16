@@ -21,58 +21,108 @@ from __future__ import unicode_literals
 
 from canopsis.common.ws import route
 from canopsis.alerts.manager import Alerts
+from canopsis.alerts.reader import AlertsReader
 
 
 def exports(ws):
 
     am = Alerts()
+    ar = AlertsReader()
 
     @route(
-            ws.application.get,
-            name='alerts/alarms',
-            payload=['resolved', 'tags', 'exclude_tags'],
+        ws.application.get,
+        name='alerts/get-alarms',
+        payload=[
+            'tstart',
+            'tstop',
+            'opened',
+            'resolved',
+            'lookups',
+            'filter',
+            'search',
+            'sort_key',
+            'sort_dir',
+            'skip',
+            'limit'
+        ]
     )
     def get_alarms(
+            tstart=None,
+            tstop=None,
+            opened=True,
             resolved=False,
-            tags=None,
-            exclude_tags=None,
-            snoozed=False,
-            limit=5,
-            start=0,
+            lookups=[],
             filter={},
-            sort=[{"direction": "ASC"}],
+            search='',
+            sort_key='opened',
+            sort_dir='DESC',
+            skip=0,
+            limit=50
     ):
         """
-        Get alarms
+        Return filtered, sorted and paginated alarms.
 
-        :param bool resolved: If ``True``, returns only resolved alarms, else
-          returns only unresolved alarms (default: ``False``).
+        :param tstart: Beginning timestamp of requested period
+        :param tstop: End timestamp of requested period
+        :type tstart: int or None
+        :type tstop: int or None
 
-        :param tags: Tags which must be set on alarm (optional)
-        :type tags: str or list
+        :param bool opened: If True, consider alarms that are currently opened
+        :param bool resolved: If True, consider alarms that have been resolved
 
-        :param exclude_tags: Tags which must not be set on alarm (optional)
-        :type tags: str or list
+        :param list lookups: List of extra columns to compute for each
+          returned alarm. Extra columns are "pbehaviors" and/or "linklist".
 
-        :param int limit: Number of entries returned (TODO)
+        :param dict filter: Mongo filter. Keys are UI column names.
+        :param str search: Search expression in custom DSL
 
-        :param int start: Pagination index (TODO)
+        :param str sort_key: Name of the column to sort
+        :param str sort_dir: Either "ASC" or "DESC"
 
-        :param dict filter: TODO
+        :param int skip: Number of alarms to skip (pagination)
+        :param int limit: Maximum number of alarms to return
 
-        :param list sort: TODO
-
-        :returns: Iterable of alarms matching
+        :returns: List of sorted alarms + pagination informations
+        :rtype: dict
         """
 
-        alarms = am.get_alarms(
+        return ar.get(
+            tstart=tstart,
+            tstop=tstop,
+            opened=opened,
             resolved=resolved,
-            tags=tags,
-            exclude_tags=exclude_tags,
-            snoozed=snoozed,
+            lookups=lookups,
+            filter_=filter,
+            search=search,
+            sort_key=sort_key,
+            sort_dir=sort_dir,
+            skip=skip,
+            limit=limit
         )
 
-        return alarms
+    @route(
+        ws.application.get,
+        name='alerts/search/validate',
+        payload=['expression']
+    )
+    def validate_search(expression):
+        """
+        Tell if a search expression is valid from a grammatical propespective.
+
+        :param str expression: Search expression
+
+        :returns: True if valid, False otherwise
+        :rtype: bool
+        """
+
+        try:
+            ar.interpret_search(expression)
+
+        except Exception:
+            return False
+
+        else:
+            return True
 
     @route(
             ws.application.get,
@@ -105,7 +155,7 @@ def exports(ws):
         :rtype: list
         """
 
-        return am.count_alarms_by_period(
+        return ar.count_alarms_by_period(
             start,
             stop,
             limit=limit,

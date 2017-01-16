@@ -170,7 +170,7 @@ class Formatter(object):
     def print_keys(self):
         tdata = self.data
         for k, v in tdata.iteritems():
-            self.logger.info('Key: {} - Value: {}'.format(k, v))
+            self.logger.info(u'Key: {} - Value: {}'.format(k, v))
 
     def get_value(self, value):
         '''
@@ -372,7 +372,7 @@ class Formatter(object):
         if self.get_components() is not None:
             comps = self.get_components().copy()
         else:
-            self.logger.info('The topology: {} does not exist in the database ...'.format(self.qr))
+            self.logger.info(u'The topology: {} does not exist in the database ...'.format(self.qr))
             comps = {}
         for c in self.get_component_keys():
             q, lst = self.query_generator(c)
@@ -385,7 +385,7 @@ class Formatter(object):
                     else:
                         comps.get(c)[unicode(d)] = res.get(unicode(d))
             if len(res) == 0:
-                self.logger.info('Component whithout event data {}'.format(c))
+                self.logger.info(u'Component whithout event data {}'.format(c))
                 #print res
         return comps
 
