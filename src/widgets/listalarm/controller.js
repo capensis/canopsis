@@ -92,14 +92,16 @@ Ember.Application.initializer({
              * Get the Alarms from the backend using the adapter
              * @method fetchAlarms
              */
-            fetchAlarms: function() {
+            fetchAlarms: function(params) {
               var controller = this;
+              var iParams = params || {};
 
               var query = {
-								tstart: 1483225200,
-								tstop: 1583225200,
-								sort_key: this.get('model.default_sort_column.property'),
-           			sort_dir: this.get('model.default_sort_column.direction')
+                resolved: true,
+                tstart: iParams['tstart'] || 1483225200,
+								tstop: iParams['tstop'] || 1583225200,
+								sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
+           			sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction')
 							};
 
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
@@ -192,6 +194,17 @@ Ember.Application.initializer({
               }
               return column;
             }.property('controller.default_sort_column.property', 'fields.[]'),
+
+            actions: {
+              updateSortField: function (field) {
+                var params = {};
+
+                params['sort_key'] = field.name;
+                params['sort_dir'] = field.isASC ? 'ASC' : 'DESC';
+                
+                this.fetchAlarms(params);
+              }
+            }
 
         }, listOptions);
 

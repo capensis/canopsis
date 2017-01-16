@@ -9,14 +9,13 @@
                 <tr>
                     {{#each field in fields}}
                         {{#if field.isSortable}}
-                            <th {{action 'click' field}}>{{field.name}} <span {{bind-attr class=":glyphicon field.isASC:glyphicon-sort-by-alphabet:glyphicon-sort-by-alphabet-alt"}} aria-hidden="true"></span></th>
+                            <th {{action 'click' field}}>{{field.name}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
                         {{else}}
                             <th {{action 'click' field}}>{{field.name}}</th>                    
                         {{/if}}
                     {{/each}}
                 </tr>
             </thead>
-
             <tbody>
                 {{#each alarm in sAlarms}}
                 
@@ -30,5 +29,5 @@
 </div>
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{value}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#component-alarmtable defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
+<script type="text/x-handlebars" data-template-name="listalarm">{{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
 {{/component-alarmtable}}</script>

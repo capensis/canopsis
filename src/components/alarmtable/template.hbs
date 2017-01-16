@@ -5,7 +5,7 @@
                 <tr>
                     {{#each field in fields}}
                         {{#if field.isSortable}}
-                            <th {{action 'click' field}}>{{field.name}} <span {{bind-attr class=":glyphicon field.isASC:glyphicon-sort-by-alphabet:glyphicon-sort-by-alphabet-alt"}} aria-hidden="true"></span></th>
+                            <th {{action 'click' field}}>{{field.name}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
                         {{else}}
                             <th {{action 'click' field}}>{{field.name}}</th>                    
                         {{/if}}

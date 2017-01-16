@@ -22,12 +22,8 @@ Ember.Application.initializer({
             }.property('defaultSortColumn'),
 
             sAlarms: function() {
-                return Ember.ArrayProxy.extend(Ember.SortableMixin).create({
-                    sortProperties: [this.get('currentSortColumn.name')],
-                    sortAscending: this.get('currentSortColumn.isASC'),
-                    content: get(this, 'alarms')
-                });
-            }.property('alarms', 'currentSortColumn.isASC', 'currentSortColumn.name'),
+                return this.get('alarms');
+            }.property('alarms'),
 
             actions: {
                 click: function (field) {
@@ -39,6 +35,7 @@ Ember.Application.initializer({
                         this.set('currentSortColumn.isSortable', true);
                         this.set('currentSortColumn.isASC', true);
                     }
+                    this.sendAction('action', this.get('currentSortColumn'));
                 }
             }
             
