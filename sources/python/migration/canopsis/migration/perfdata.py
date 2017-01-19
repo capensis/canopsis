@@ -66,13 +66,13 @@ class PerfdataModule(MigrationModule):
     def update(self):
         # FIXME
         if self.get_version('perfdata') < 1 and False:
-            self.logger.info('Migrating to version 1')
+            self.logger.info(u'Migrating to version 1')
 
             self.update_to_version_1()
             self.set_version('perfdata', 1)
 
         if self.get_version('perfdata') < 2:
-            self.logger.info('Migrating to version 2')
+            self.logger.info(u'Migrating to version 2')
             self.update_mongo2influxdb()
             self.set_version('perfdata', 2)
 

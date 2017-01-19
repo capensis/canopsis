@@ -61,7 +61,7 @@ class ViewsModule(MigrationModule):
                 if 'items' in view['containerwidget']:
                     self.find_weathers(view['containerwidget']['items'])
 
-            self.logger.info('Updating view: {0}'.format(view['_id']))
+            self.logger.info(u'Updating view: {0}'.format(view['_id']))
 
             try:
                 self.storage.put_element(element=view, _id=view['_id'])
@@ -76,7 +76,7 @@ class ViewsModule(MigrationModule):
 
                 backup.append(view)
 
-            self.logger.info('Ensure rights for view: {0}'.format(view['_id']))
+            self.logger.info(u'Ensure rights for view: {0}'.format(view['_id']))
 
             actions = self.rights.get_action([view['_id']])
 
@@ -97,7 +97,7 @@ class ViewsModule(MigrationModule):
             with open(filepath, 'w') as f:
                 json.dump(backup, f)
 
-            self.logger.info('Backup found at: {0}'.format(filepath))
+            self.logger.info(u'Backup found at: {0}'.format(filepath))
 
     def find_weathers(self, items):
         # Recursively find all weathers in the view

@@ -104,19 +104,19 @@ def exports(ws):
 
             prefix = len('cservice.')
 
-            ws.logger.info('found {} cservices'.format(len(records)))
+            ws.logger.info(u'found {} cservices'.format(len(records)))
 
             for cservice in records:
                 cservice = cservice.dump()
                 cname = cservice['crecord_name']
                 cservices[cname] = cservice
 
-                ws.logger.info('found cservices type {}'.format(cname))
+                ws.logger.info(u'found cservices type {}'.format(cname))
 
                 if cname == 'casconfig':
                     cservice['server'] = cservice['server'].rstrip('/')
                     cservice['service'] = cservice['service'].rstrip('/')
-                    ws.logger.info('cas config : server {}, service {}'.format(
+                    ws.logger.info(u'cas config : server {}, service {}'.format(
                         cservice['server'],
                         cservice['service'],
                     ))

@@ -48,6 +48,8 @@ class BaseTest(TestCase):
                 'crecord_type': 'statusmanagement',
                 'bagot_time': 3600,
                 'bagot_freq': 10,
+                'flapping_peristant_steps': 10,
+                'hard_limit': 100,
                 'stealthy_time': 300,
                 'stealthy_show': 600,
                 'restore_event': True,
@@ -65,6 +67,8 @@ class TestManager(BaseTest):
     def test_config(self):
         self.assertEqual(self.manager.flapping_interval, 3600)
         self.assertEqual(self.manager.flapping_freq, 10)
+        self.assertEqual(self.manager.flapping_persistant_steps, 10)
+        self.assertEqual(self.manager.hard_limit, 100)
         self.assertEqual(self.manager.stealthy_interval, 300)
         self.assertEqual(self.manager.stealthy_show_duration, 600)
         self.assertEqual(self.manager.restore_event, True)
@@ -591,6 +595,264 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value']['steps'][3], expected_status)
         self.assertEqual(alarm['value']['status'], expected_status)
 
+    def test_crop_flapping_steps(self):
+        # Creating alarm /component/test/test0/ut-comp1
+        KO = {
+            'connector': 'test',
+            'connector_name': 'test0',
+            'source_type': 'component',
+            'component': 'ut-comp1',
+            'event_type': 'check',
+            'state': '1',
+            'output': '...'
+        }
+
+        OK = {
+            'connector': 'test',
+            'connector_name': 'test0',
+            'source_type': 'component',
+            'component': 'ut-comp1',
+            'event_type': 'check',
+            'state': 0,
+            'output': '...'
+        }
+
+        assocticket = {
+            'connector': 'test',
+            'connector_name': 'test0',
+            'source_type': 'component',
+            'component': 'ut-comp1',
+            'author': 'user0',
+            'event_type': 'declareticket',
+            'ticket': 'ticket',
+            'output': '...'
+        }
+
+        for i in range(9):
+            KO['timestamp'] = 2 * i * 300
+            self.manager.archive(KO)
+
+            OK['timestamp'] = (2 * i + 1) * 300
+            self.manager.archive(OK)
+
+            assocticket['timestamp'] = (2 * i + 1) * 300 + 10
+            self.manager.archive(assocticket)
+
+        KO['timestamp'] = 2 * (i + 1) * 300
+        self.manager.archive(KO)
+
+        # At this point we have inserted 19 check events. The alarm has
+        # changed its status to flapping after the 10th. There are only 9
+        # state changes after the last status change. It means we should not
+        # have any state crop.
+
+        alarm_id = '/component/test/test0/ut-comp1'
+        docalarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertIsNot(docalarm, None)
+
+        alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+
+        last_status_i = alarm['steps'].index(alarm['status'])
+
+        state_steps = filter(
+            lambda step: step['_t'] in ['stateinc', 'statedec'],
+            alarm['steps'][last_status_i + 1:]
+        )
+        self.assertEqual(len(state_steps), 9)
+
+        # 4 KO + 4 OK + 5 assocticket + 1 KO = 14 steps
+        all_steps = alarm['steps'][last_status_i + 1:]
+        self.assertEqual(len(all_steps), 14)
+
+        # Creating alarm /component/test/test0/ut-comp2
+        KO['component'] = 'ut-comp2'
+        OK['component'] = 'ut-comp2'
+        assocticket['component'] = 'ut-comp2'
+
+        for i in range(10):
+            KO['timestamp'] = 2 * i * 300
+            self.manager.archive(KO)
+
+            OK['timestamp'] = (2 * i + 1) * 300
+            self.manager.archive(OK)
+
+            assocticket['timestamp'] = (2 * i + 1) * 300 + 10
+            self.manager.archive(assocticket)
+
+        KO['timestamp'] = 2 * (i + 1) * 300
+        self.manager.archive(KO)
+
+        # 21 flapping checks inserted. 10 checks to trigger flapping status.
+        # 11 state changes after this change of status. Expecting 1 state to
+        # be cropped.
+
+        alarm_id = '/component/test/test0/ut-comp2'
+        docalarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertIsNot(docalarm, None)
+
+        alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+
+        last_status_i = alarm['steps'].index(alarm['status'])
+
+        state_steps = filter(
+            lambda step: step['_t'] in ['stateinc', 'statedec'],
+            alarm['steps'][last_status_i + 1:]
+        )
+        self.assertEqual(len(state_steps), 10)
+
+        # 10 remaining state changes + 6 assocticket + 1 statecounter
+        all_steps = alarm['steps'][last_status_i + 1:]
+        self.assertEqual(len(all_steps), 17)
+
+        expected_counter = {
+            'stateinc': 1,
+            'state:1': 1
+        }
+        counter = alarm['steps'][last_status_i + 1]
+        self.assertEqual(counter['val'], expected_counter)
+
+        # Creating alarm /component/test/test0/ut-comp3
+        KO['component'] = 'ut-comp3'
+        OK['component'] = 'ut-comp3'
+        assocticket['component'] = 'ut-comp3'
+
+        for i in range(40):
+            KO['timestamp'] = 2 * i * 300
+            self.manager.archive(KO)
+
+            OK['timestamp'] = (2 * i + 1) * 300
+            self.manager.archive(OK)
+
+            assocticket['timestamp'] = (2 * i + 1) * 300 + 10
+            self.manager.archive(assocticket)
+
+        # 80 flapping checks inserted. 10 checks to trigger flapping status.
+        # 70 state changes after this change of status. Expecting 60 state to
+        # be cropped.
+
+        alarm_id = '/component/test/test0/ut-comp3'
+        docalarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertIsNot(docalarm, None)
+
+        alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+
+        last_status_i = alarm['steps'].index(alarm['status'])
+
+        state_steps = filter(
+            lambda step: step['_t'] in ['stateinc', 'statedec'],
+            alarm['steps'][last_status_i + 1:]
+        )
+        self.assertEqual(len(state_steps), 10)
+
+        # 10 remaining state changes + 36 assocticket + 1 statecounter
+        all_steps = alarm['steps'][last_status_i + 1:]
+        self.assertEqual(len(all_steps), 47)
+
+        expected_counter = {
+            'statedec': 30,
+            'stateinc': 30,
+            'state:0': 30,
+            'state:1': 30
+        }
+        counter = alarm['steps'][last_status_i + 1]
+        self.assertEqual(counter['val'], expected_counter)
+
+    def test_is_hard_limit_reached(self):
+        cases = [
+            {
+                'alarm': {'hard_limit': None},
+                'expected': False
+            },
+            {
+                'alarm': {'hard_limit': {'val': 99}},
+                'expected': False
+            },
+            {
+                'alarm': {'hard_limit': {'val': 100}},
+                'expected': True
+            },
+            {
+                'alarm': {'hard_limit': {'val': 101}},
+                'expected': True
+            }
+        ]
+
+        for case in cases:
+            res = self.manager.is_hard_limit_reached(case['alarm'])
+
+            self.assertIs(res, case['expected'])
+
+    def test_check_hard_limit(self):
+        from types import NoneType
+
+        cases = [
+            {
+                'alarm': {
+                    'hard_limit': None,
+                    'steps': []
+                },
+                'expected': {
+                    'type_hard_limit': NoneType,
+                    'len_steps': 0
+                }
+            },
+            {
+                'alarm': {
+                    'hard_limit': None,
+                    'steps': [i for i in range(99)]
+                },
+                'expected': {
+                    'type_hard_limit': NoneType,
+                    'len_steps': 99
+                }
+            },
+            {
+                'alarm': {
+                    'hard_limit': None,
+                    'steps': [i for i in range(100)]
+                },
+                'expected': {
+                    'type_hard_limit': dict,
+                    'len_steps': 101
+                }
+            },
+            {
+                'alarm': {
+                    'hard_limit': {'val': 101},
+                    'steps': [i for i in range(200)]
+                },
+                'expected': {
+                    'type_hard_limit': dict,
+                    'len_steps': 200
+                }
+            },
+            {
+                'alarm': {
+                    'hard_limit': {'val': 99},
+                    'steps': [i for i in range(100)]
+                },
+                'expected': {
+                    'type_hard_limit': dict,
+                    'len_steps': 101
+                }
+            }
+        ]
+
+        for case in cases:
+            alarm = self.manager.check_hard_limit(case['alarm'])
+
+            self.assertIs(
+                type(alarm['hard_limit']),
+                case['expected']['type_hard_limit']
+            )
+            self.assertEqual(
+                len(alarm['steps']),
+                case['expected']['len_steps']
+            )
+
     def test_get_events(self):
         # Empty alarm ; no events sent
         alarm0_id = '/fake/alarm/id0'
@@ -981,6 +1243,213 @@ class TestTasks(BaseTest):
         self.assertTrue(
             alarm['status'] is get_previous_step(alarm, 'statusdec')
         )
+
+    def test_update_state_counter(self):
+        cases = [
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    'steps': [{'a': 'ut', 't': 0}]
+                },
+                'diff_counter': {},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {}
+                    }
+                ]
+            },
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    'steps': [{'a': 'ut', 't': 0}]
+                },
+                'diff_counter': {'item': 0},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {'item': 0}
+                    }
+                ]
+            },
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    'steps': [{'a': 'ut', 't': 0}, {'_t': 'customstep'}]
+                },
+                'diff_counter': {'item1': 10, 'item2': 15},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {'item1': 10, 'item2': 15}
+                    },
+                    {
+                        '_t': 'customstep'
+                    }
+                ]
+            },
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    'steps': [
+                        {
+                            'a': 'ut',
+                            't': 0
+                        },
+                        {
+                            '_t': 'statecounter',
+                            'a': 'ut',
+                            't': 0,
+                            'm': '',
+                            'val': {'item1': 3}
+                        },
+                        {
+                            '_t': 'customstep'
+                        }
+                    ]
+                },
+                'diff_counter': {'item1': 2, 'item2': 4},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {'item1': 5, 'item2': 4}
+                    },
+                    {
+                        '_t': 'customstep'
+                    }
+                ]
+            },
+            {
+                'alarm': {
+                    'status': {
+                        'a': 'ut',
+                        't': 10
+                    },
+                    'steps': [
+                        {
+                            'a': 'ut',
+                            't': 0
+                        },
+                        {
+                            '_t': 'statecounter',
+                            'a': 'ut',
+                            't': 0,
+                            'm': '',
+                            'val': {'item1': 3}
+                        },
+                        {
+                            '_t': 'customstep'
+                        },
+                        {
+                            'a': 'ut',
+                            't': 10
+                        }
+                    ]
+                },
+                'diff_counter': {'item1': 2, 'item2': 4},
+                'expected_steps': [
+                    {
+                        'a': 'ut',
+                        't': 0
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 0,
+                        'm': '',
+                        'val': {'item1': 3}
+                    },
+                    {
+                        '_t': 'customstep'
+                    },
+                    {
+                        'a': 'ut',
+                        't': 10
+                    },
+                    {
+                        '_t': 'statecounter',
+                        'a': 'ut',
+                        't': 10,
+                        'm': '',
+                        'val': {'item1': 2, 'item2': 4}
+                    }
+                ]
+            }
+        ]
+
+        task = get_task('alerts.systemaction.update_state_counter')
+        for case in cases:
+            alarm = task(case['alarm'], case['diff_counter'])
+
+            self.assertEqual(alarm['steps'], case['expected_steps'])
+
+    def test_hard_limit(self):
+        class Manager(object):
+            hard_limit = 100
+
+        mgr = Manager()
+        alarm = {'hard_limit': None, 'steps': []}
+
+        task = get_task('alerts.systemaction.hard_limit')
+
+        alarm = task(mgr, alarm)
+
+        self.assertIsNot(alarm['hard_limit'], None)
+        self.assertEqual(len(alarm['steps']), 1)
+        self.assertEqual(alarm['steps'][0], alarm['hard_limit'])
+
+        self.assertEqual(alarm['hard_limit']['_t'], 'hardlimit')
+        self.assertIs(type(alarm['hard_limit']['t']), int)
+        self.assertEqual(alarm['hard_limit']['a'], '__canopsis__')
+        self.assertEqual(
+            alarm['hard_limit']['m'],
+            (
+                'This alarm has reached an hard limit (100 steps recorded) : '
+                'no more steps will be appended. Please cancel this alarm or '
+                'extend hard limit value.'
+            )
+        )
+        self.assertEqual(alarm['hard_limit']['val'], 100)
 
 
 if __name__ == '__main__':
