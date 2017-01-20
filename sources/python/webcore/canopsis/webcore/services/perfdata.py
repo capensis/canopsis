@@ -50,7 +50,7 @@ def exports(ws):
     )
     def perfdata(
         metric_id, timewindow=None, period=None, with_meta=True,
-        limit=0, skip=0, timeserie=None, meta=None, sliding_time=True
+        limit=0, skip=0, timeserie=None, meta=None, sliding_time=False
     ):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)

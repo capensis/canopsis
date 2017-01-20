@@ -20,12 +20,15 @@
 
 from canopsis.engines.core import Engine, DROP, publish
 
+from canopsis.alerts.manager import Alerts
+from canopsis.context.manager import Context
+
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.event import forger, get_routingkey
 from canopsis.old.mfilter import check
 
-import json
+from json import loads
 from time import time
 
 
@@ -83,22 +86,64 @@ class engine(Engine):
         afield = action.get('field', None)
         avalue = action.get('value', None)
 
-        # This mus be a hard check because value can be a boolean or a null integer
-        if afield is not None and avalue is not None:
-            if afield in event and isinstance(event[afield], list):
+        # This must be a hard check because value can be a boolean or a null
+        # integer
+        if afield is None or avalue is None:
+            self.logger.error(
+                "Malformed action ('field' and 'value' required): {}".format(
+                    action
+                )
+            )
+            return False
+
+        if afield not in event:
+            self.logger.debug("Overriding: '{}' -> '{}'".format(
+                afield, avalue))
+            event[afield] = avalue
+            return True
+
+        # afield is in event
+        if not isinstance(avalue, list):
+            if isinstance(event[afield], list):
+                self.logger.debug("Appending: '{}' to '{}'".format(
+                    avalue, afield))
                 event[afield].append(avalue)
+
             else:
+                self.logger.debug("Overriding: '{}' -> '{}'".format(
+                    afield, avalue))
                 event[afield] = avalue
-            self.logger.debug(
-                u"    + {}: Override: '{}' -> '{}'".format(
-                    event['rk'], afield, avalue))
+
             return True
 
         else:
-            self.logger.error(
-                u"Action malformed (needs 'field' and 'value'): {}".format(
-                    action))
-            return False
+            # operation field is supported only for list values
+            op = action.get('operation', 'append')
+
+            if op == 'override':
+                self.logger.debug("Overriding: '{}' -> '{}'".format(
+                    afield, avalue))
+                event[afield] = avalue
+                return True
+
+            elif op == 'append':
+                self.logger.debug("Appending: '{}' to '{}'".format(
+                    avalue, afield))
+
+                if isinstance(event[afield], list):
+                    event[afield] += avalue
+                else:
+                    event[afield] = [event[afield]] + avalue
+
+                return True
+
+            else:
+                self.logger.error(
+                    "Operation '{}' unsupported (action '{}')".format(
+                        op, action
+                    )
+                )
+                return False
 
     def a_remove(self, event, action):
         """Remove an event from a field in event or the whole field if no
@@ -223,27 +268,100 @@ class engine(Engine):
 
     def a_exec_job(self, event, action, name):
         records = self.storage.find(
-            {'crecord_type': 'job', '_id': action['job'] }
+            {'crecord_type': 'job', '_id': action['job']}
         )
         for record in records:
             job = record.dump()
             job['context'] = event
-            publish(publisher=self.amqp, event=job, rk='Engine_scheduler', exchange='amq.direct')
-            #publish(publisher=self.amqp, event=job, rk='Engine_scheduler')
+            publish(
+                publisher=self.amqp,
+                event=job,
+                rk='Engine_scheduler',
+                exchange='amq.direct'
+            )
+            # publish(publisher=self.amqp, event=job, rk='Engine_scheduler')
         return True
+
+    def a_snooze(self, event, action, name):
+        """
+        Snooze event checks
+
+        :param dict event: event to be snoozed
+        :param dict action: action
+        :param str name: name of the rule
+
+        :returns: True if a snooze has been sent, False otherwise
+        :rtype: boolean
+        """
+        # Only check events can trigger an auto-snooze
+        if event['event_type'] != 'check':
+            return False
+
+        # A check OK cannot trigger an auto-snooze
+        if event['state'] == 0:
+            return False
+
+        # Alerts manager caching
+        if not hasattr(self, 'am'):
+            self.am = Alerts()
+
+        # Context manager caching
+        if not hasattr(self, 'cm'):
+            self.cm = Context()
+
+        entity = self.cm.get_entity(event)
+        entity_id = self.cm.get_entity_id(entity)
+
+        current_alarm = self.am.get_current_alarm(entity_id)
+        if current_alarm is None:
+            snooze = {
+                'connector': event.get('connector', ''),
+                'connector_name': event.get('connector_name', ''),
+                'source_type': event.get('source_type', ''),
+                'component': event.get('component', ''),
+                'event_type': 'snooze',
+                'duration': action['duration'],
+                'author': 'event_filter',
+                'output': 'Auto snooze generated by rule "{}"'.format(name),
+            }
+
+            if 'resource' in event:
+                snooze['resource'] = event['resource']
+
+            publish(event=snooze, publisher=self.amqp)
+
+            return True
+
+        return False
+
+    def a_baseline(self, event, actions, name):
+        """a_baseline
+
+        :param event:
+        :param action: baseline conf in event filter
+        :param name:
+        """
+        event['baseline_name'] = actions['baseline_name']
+        event['check_frequency'] = actions['check_frequency']
+
+        publish(event=event, publisher=self.amqp,
+                rk='Engine_baseline', exchange='amq.direct')
 
     def apply_actions(self, event, actions):
         pass_event = False
-        actionMap = {'drop': self.a_drop,
-                     'pass': self.a_pass,
-                     'override': self.a_modify,
-                     'remove': self.a_modify,
-					 'execjob': self.a_exec_job,
-                     'route': self.a_route
-					}
+        actionMap = {
+            'drop': self.a_drop,
+            'pass': self.a_pass,
+            'override': self.a_modify,
+            'remove': self.a_modify,
+            'execjob': self.a_exec_job,
+            'route': self.a_route,
+            'snooze': self.a_snooze,
+            'baseline': self.a_baseline
+        }
 
         for name, action in actions:
-            if (action['type'] in actionMap):
+            if action['type'] in actionMap:
                 ret = actionMap[action['type'].lower()](event, action, name)
                 if ret:
                     pass_event = True
@@ -257,7 +375,7 @@ class engine(Engine):
         rk = get_routingkey(event)
         default_action = self.configuration.get('default_action', 'pass')
 
-        # list of actions supported
+        # list of supported actions
 
         rules = self.configuration.get('rules', [])
         to_apply = []
@@ -276,7 +394,7 @@ class engine(Engine):
             if filterItem['mfilter'] and check(filterItem['mfilter'], event):
 
                 self.logger.debug(
-                    u'Event: {}, filter matches'.format(event['rk'])
+                    u'Event: {}, filter matches'.format(event.get('rk', event))
                 )
 
                 for action in actions:
@@ -324,7 +442,7 @@ class engine(Engine):
             'default_action': self.find_default_action()
         }
 
-        self.logger.debug('Reload configuration rules')
+        self.logger.debug(u'Reload configuration rules')
         records = self.storage.find(
             {'crecord_type': 'filter', 'enable': True},
             sort='priority'
@@ -336,15 +454,15 @@ class engine(Engine):
             self.set_loaded(record_dump)
 
             try:
-                record_dump["mfilter"] = json.loads(record_dump["mfilter"])
+                record_dump["mfilter"] = loads(record_dump["mfilter"])
             except Exception:
-                self.logger.info('Invalid mfilter {}, filter {}'.format(
+                self.logger.info(u'Invalid mfilter {}, filter {}'.format(
                     record_dump['mfilter'],
                     record_dump['name'],
 
                 ))
 
-            self.logger.debug('Loading record_dump:')
+            self.logger.debug(u'Loading record_dump:')
             self.logger.debug(record_dump)
             self.configuration['rules'].append(record_dump)
 
@@ -410,5 +528,3 @@ class engine(Engine):
             "No default action found. Assuming default action is pass"
         )
         return 'pass'
-
-

@@ -86,7 +86,7 @@ class engine(Engine):
                         selector.tags.append(selector_dump[selector_tag])
                 self.selectors.append(selector)
 
-        self.logger.debug('Reloaded %s selectors' % (len(self.selectors)))
+        self.logger.debug(u'Reloaded %s selectors' % (len(self.selectors)))
 
     def add_tag(self, event, field=None, value=None):
         """
@@ -128,7 +128,7 @@ class engine(Engine):
 
             add_tag = False
             cfilter = False
-            self.logger.debug('Filter {}: type {}'.format(
+            self.logger.debug(u'Filter {}: type {}'.format(
                 selector.mfilter,
                 type(selector.mfilter))
             )
@@ -165,5 +165,5 @@ class engine(Engine):
         selectors are implied in tag definition
         """
 
-        self.logger.debug('Refresh selector records cache for event tag.')
+        self.logger.debug(u'Refresh selector records cache for event tag.')
         self.reload_selectors()

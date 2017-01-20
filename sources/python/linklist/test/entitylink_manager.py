@@ -56,7 +56,7 @@ class CheckManagerTest(TestCase):
     def linklist_count_equals(self, count):
         result = list(self.get_linklist())
         if DEBUG:
-            print result
+            print(result)
         result = len(result)
         self.assertEqual(result, count)
 

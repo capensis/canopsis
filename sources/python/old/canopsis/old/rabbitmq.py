@@ -374,7 +374,7 @@ class Amqp(Thread):
                             exchange=self.get_exchange(exchange_name.encode('utf-8'))
                         )
 
-                        self.logger.debug('publish {} in exchange {}'.format(
+                        self.logger.debug(u'publish {} in exchange {}'.format(
                             routing_key,
                             exchange_name
                         ))
@@ -388,7 +388,7 @@ class Amqp(Thread):
                         self.disconnect()
                         self.connect()
             else:
-                self.logger.error('Not connected ... try reconnecting')
+                self.logger.error(u'Not connected ... try reconnecting')
                 self.connect()
 
             if not operation_success:

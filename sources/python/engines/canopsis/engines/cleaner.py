@@ -114,7 +114,7 @@ class engine(Engine):
 
         # Parse perfdata
         if perf_data:
-            self.logger.debug(' + perf_data: {0}'.format(perf_data))
+            self.logger.debug(u' + perf_data: {0}'.format(perf_data))
 
             try:
                 perf_data_array += PerfDataParser(perf_data).perf_data_array

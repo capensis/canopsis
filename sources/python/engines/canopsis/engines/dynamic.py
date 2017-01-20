@@ -92,7 +92,7 @@ class engine(Engine, Configurable):
             try:
                 value = get_task(value)
             except ImportError:
-                self.logger.error('Impossible to load %s' % value)
+                self.logger.error(u'Impossible to load %s' % value)
                 value = event_processing
 
         # set _event_processing and work
@@ -124,7 +124,7 @@ class engine(Engine, Configurable):
             try:
                 value = get_task(value)
             except ImportError:
-                self.logger.error('Impossible to load %s' % value)
+                self.logger.error(u'Impossible to load %s' % value)
                 value = beat_processing
 
         # set _beat_processing and work

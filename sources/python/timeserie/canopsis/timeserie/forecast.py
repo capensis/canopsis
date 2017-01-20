@@ -28,7 +28,7 @@ def validateSerie(aggregatedValuesByTime):
     Recovery of last continued background of numerical serie
     """
 
-    logger.debug('validate_serie')
+    logger.debug(u'validate_serie')
 
     validity = ''
 
@@ -37,7 +37,7 @@ def validateSerie(aggregatedValuesByTime):
 
     try:
         none = aggregatedValues.index(None)
-        logger.debug('there is None in aggregation list : %s', str(none))
+        logger.debug(u'there is None in aggregation list : %s', str(none))
         noneValueIndices = []
 
         for indice in range(length_AggregatedValuesByTime):
@@ -45,7 +45,7 @@ def validateSerie(aggregatedValuesByTime):
             if aggregatedValues[indice] is None:
                 noneValueIndices.append(indice)
 
-        logger.debug('None value number : %s' % len(noneValueIndices))
+        logger.debug(u'None value number : %s' % len(noneValueIndices))
 
         if len(noneValueIndices) == length_AggregatedValuesByTime:
             validity = 'none'
@@ -56,13 +56,13 @@ def validateSerie(aggregatedValuesByTime):
             firstValidIndice = noneValueIndices[-1] + 1
 
     except Exception as e:
-        logger.debug('Error : %s', e)
-        logger.debug('No "None" in the dataset')
+        logger.debug(u'Error : %s', e)
+        logger.debug(u'No "None" in the dataset')
         validity = 'all'
         firstValidIndice = 0
 
-    logger.debug('validity : %s' % validity)
-    logger.debug('firstValidIndice : %s' % firstValidIndice)
+    logger.debug(u'validity : %s' % validity)
+    logger.debug(u'firstValidIndice : %s' % firstValidIndice)
 
     return {'validity': validity, 'firstValidIndice': firstValidIndice}
 
@@ -71,7 +71,7 @@ def detectAlerts(serie, alertList):
     """
     Detect if values in the serie correspond in alerts
     """
-    logger.debug('detectAlerts')
+    logger.debug(u'detectAlerts')
 
     for alert in alertList:
 
@@ -124,18 +124,18 @@ def detectAlerts(serie, alertList):
 
 def calculateRMSE(dataset1, dataset2):
 
-    logger.debug('calculateRMSE')
+    logger.debug(u'calculateRMSE')
 
     timePointNb = len(dataset1)
 
     if timePointNb != len(dataset2):
-        logger.debug('length of datasets no compatible')
+        logger.debug(u'length of datasets no compatible')
         return -1
     else:
         SCR = 0
 
-        logger.debug('dataset1 : %s' % dataset1)
-        logger.debug('dataset2 : %s' % dataset2)
+        logger.debug(u'dataset1 : %s' % dataset1)
+        logger.debug(u'dataset2 : %s' % dataset2)
 
         #for timePoint1,timePoint2 in dataset1,dataset2 :
         for t in range(timePointNb):
@@ -148,18 +148,18 @@ def calculateRMSE(dataset1, dataset2):
 
         MSE = SCR / float(timePointNb)
 
-        logger.debug('MSE : %s ' % MSE)
+        logger.debug(u'MSE : %s ' % MSE)
 
         RMSE = MSE ** 0.5
 
-        logger.debug('RMSE : %s ' % RMSE)
+        logger.debug(u'RMSE : %s ' % RMSE)
 
         return RMSE
 
 
 def calculateAutoCorrelation(serie):
 
-    logger.debug('calculateAutoCorrelation')
+    logger.debug(u'calculateAutoCorrelation')
 
     y0 = [0 for val in serie]
     autoCorrelationSerie = [[0,0] for val in serie]
@@ -174,7 +174,7 @@ def calculateAutoCorrelation(serie):
             autoCorrelationSerie[p][1] += \
                 (serie[n][1] - serieMean) * (serie[n - p][1] - serieMean)
 
-    logger.debug('Auto-correlation serie : %s ' % autoCorrelationSerie)
+    logger.debug(u'Auto-correlation serie : %s ' % autoCorrelationSerie)
     return autoCorrelationSerie
 
 
@@ -208,13 +208,13 @@ def calculateMobileMean(serie, degree):
 
             mobileAverageSerie.append([serie[i][0], mobileMean])
 
-    logger.debug('mobileAverageSerie : %s' % mobileAverageSerie)
+    logger.debug(u'mobileAverageSerie : %s' % mobileAverageSerie)
 
     return mobileAverageSerie
 
 
 def detectParticularPoints(serie):
-    logger.debug(' detectParticularPoints ')
+    logger.debug(u' detectParticularPoints ')
 
     summits = list()
     hollow = list()
@@ -392,7 +392,7 @@ def repairOutliers(serie, outliers, optimizedParameters ):
 
 
 def optimiseHoltWintersAlgorithm( serie, seasonality=None, method=None ):
-    logger.debug('optimiseHoltWintersAlgorithm')
+    logger.debug(u'optimiseHoltWintersAlgorithm')
 
     alpha = [ 0.1*i for i in xrange(1,10) ]
     beta = [ 0.1*i for i in xrange(1,10) ]
@@ -537,7 +537,7 @@ def optimiseHoltWintersAlgorithm( serie, seasonality=None, method=None ):
 
 
 def calculateHoltWintersLinearMethod( serie, duration, alpha=0.3, beta=0.1,callback=None ):
-    logger.debug('calculateHoltWintersLinearMethod')
+    logger.debug(u'calculateHoltWintersLinearMethod')
     #logger.debug(  "##########################################################" )
     #logger.debug(  " Initial values " )
     #logger.debug(  '%s' % serie )
@@ -592,7 +592,7 @@ def calculateHoltWintersLinearMethod( serie, duration, alpha=0.3, beta=0.1,callb
 def calculateHoltWintersAdditiveSeasonalMethod( serie, duration, season,
                                                 alpha=0.3, beta=0.3, gamma=0.3 ):
 
-    logger.debug('calculateHoltWintersAdditiveSeasonalMethod')
+    logger.debug(u'calculateHoltWintersAdditiveSeasonalMethod')
 
     serieLength  =  len( serie )
 
@@ -648,7 +648,7 @@ def calculateHoltWintersMultiplicativeSeasonalMethod(  serie, duration,
                                                    season, alpha=0.3,
                                                    beta=0.3, gamma=0.3 ):
 
-    logger.debug('calculateHoltWintersMultiplicativeSeasonalMethod')
+    logger.debug(u'calculateHoltWintersMultiplicativeSeasonalMethod')
 
     serieLength  =  len( serie )
 
@@ -925,12 +925,12 @@ class Forecast(object):
         Get forecasted points from points and forecast properties.
         """
 
-        logger.debug('forecast: points: %s' % points)
+        logger.debug(u'forecast: points: %s' % points)
 
         noneindexes = \
             [index for index, point in enumerate(points) if point[1] is None]
 
-        logger.debug('noneindexes: %s' % noneindexes)
+        logger.debug(u'noneindexes: %s' % noneindexes)
 
         # remove None values
         y = [point[1] for point in points if point[1] is not None]
@@ -965,7 +965,7 @@ class Forecast(object):
 
         date = datetime.fromtimestamp(points[-1][0])
 
-        logger.debug('last_point: %s, date: %s' % (points[-1], date))
+        logger.debug(u'last_point: %s, date: %s' % (points[-1], date))
 
         for index in range(len(points), len(F)):
             date = timewindow.get_next_date(
@@ -975,9 +975,9 @@ class Forecast(object):
             point = [timestamp, F[index]]
             result.append(point)
 
-        logger.debug('points: %s' % points)
+        logger.debug(u'points: %s' % points)
 
-        logger.debug('result: %s' % result)
+        logger.debug(u'result: %s' % result)
 
         logger.debug(
             'len(points): %s, len(y): %s, len(F): %s, len(result): %s' %

@@ -25,14 +25,17 @@ from unittest import main
 
 from canopsis.timeserie.timewindow import TimeWindow
 from canopsis.configuration.model import Parameter
+from canopsis.configuration.configurable.decorator import conf_paths
+from canopsis.configuration.configurable.decorator import add_category
 
-from .base import BaseTestConfiguration, BaseStorageTest
+from base import BaseTestConfiguration, BaseStorageTest
 
 from time import time
 
 
-@conf_paths(
-    'storage/timedbench.conf',
+@conf_paths('storage/timedbench.conf')
+@add_category(
+    'TEST',
     content=[
         Parameter('batch_sizes', Parameter.array),
         Parameter('counts', Parameter.array),
@@ -94,6 +97,7 @@ class TimedBench(BaseStorageTest):
                     msg='Deleting operation in process...',
                     func=storage.remove, count=count, batch=batch_size
                 )
+
 
 if __name__ == '__main__':
     main()

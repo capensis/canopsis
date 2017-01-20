@@ -27,7 +27,7 @@ from canopsis.context.manager import Context
 from canopsis.old.record import Record
 
 from base64 import b64decode
-import json
+from json import loads
 
 
 def get_records(ws, namespace, ctype=None, _id=None, **params):
@@ -57,9 +57,9 @@ def get_records(ws, namespace, ctype=None, _id=None, **params):
     else:
         sort = ensure_iterable(sort)
 
-    if isinstance(sort, basestring):
+    if isinstance(sort, basestring):  # NOQA
         try:
-            sort = json.loads(sort)
+            sort = loads(sort)
         except ValueError as json_error:
             ws.logger.warning('Unable to parse sort field : {} {}'.format(
                 sort, json_error
@@ -170,6 +170,9 @@ def get_records(ws, namespace, ctype=None, _id=None, **params):
 
                 output.append(data)
 
+    with open('/tmp/lolog', 'a+') as fh:
+        fh.write('output={},total={}\n'.format(output, total))
+
     return output, total
 
 
@@ -210,7 +213,7 @@ def save_records(ws, namespace, ctype, _id, items):
             records.append(drecord)
 
         except Exception as err:
-            ws.logger.error('Impossible to save record: {0}'.format(
+            ws.logger.error(u'Impossible to save record: {0}'.format(
                 err
             ))
 
@@ -223,7 +226,7 @@ def delete_records(ws, namespace, ctype, _id, data):
             ids = []
 
             for item in data:
-                if isinstance(item, basestring):
+                if isinstance(item, basestring):  # NOQA
                     ids.append(item)
 
                 elif isinstance(item, dict):
@@ -340,30 +343,30 @@ def exports(ws):
 
         return records, nrecords
 
-    @route(ws.application.put, raw_body=True, adapt=False)
+    @route(ws.application.put, raw_body=True, adapt=False)  # NOQA
     def rest(namespace, ctype, _id=None, body='[]', **kwargs):
         try:
-            items = ensure_iterable(json.loads(body))
+            items = ensure_iterable(loads(body))
 
         except ValueError as err:
             return HTTPError(500, 'Impossible to parse body: {0}'.format(err))
 
         return save_records(ws, namespace, ctype, _id, items)
 
-    @route(ws.application.post, raw_body=True, adapt=False)
+    @route(ws.application.post, raw_body=True, adapt=False)  # NOQA
     def rest(namespace, ctype, _id=None, body='[]', **kwargs):
         try:
-            items = ensure_iterable(json.loads(body))
+            items = ensure_iterable(loads(body))
 
         except ValueError as err:
             return HTTPError(500, 'Impossible to parse body: {0}'.format(err))
 
         return save_records(ws, namespace, ctype, _id, items)
 
-    @route(ws.application.delete, raw_body=True, adapt=False)
+    @route(ws.application.delete, raw_body=True, adapt=False)  # NOQA
     def rest(namespace, ctype, _id=None, body='[]', **kwargs):
         try:
-            data = json.loads(body)
+            data = loads(body)
 
         except ValueError:
             data = None

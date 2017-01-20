@@ -67,7 +67,7 @@ class OpenTSDBDataBase(DataBase):
         if self.port:
             connection_args['port'] = self.port
 
-        self.logger.debug('Trying to connect to {0}'.format(connection_args))
+        self.logger.debug(u'Trying to connect to {0}'.format(connection_args))
 
         try:
             result = Client(**connection_args)
