@@ -340,17 +340,22 @@ class TestTasks(BaseTest):
         del self.llm
 
     def test_pbehaviors(self):
-        self.pbm = PBehaviorManager()
+        class TestManager(object):
+            pbm = PBehaviorManager()
+
+        tm = TestManager()
+        eid = '/eid'
+        # Ugly, but required if last execution failed
+        tm.pbm['vevent_storage']._backend.remove({'source': eid})
 
         task = get_task('alerts.lookup.pbehaviors')
 
-        eid0 = '/expired/pbehavior/entity'
-        pb0 = {
+        pb1 = {
             'behaviors': ['downtime'],
             'crecord_write_time': None,
             'enable': True,
             'id': None,
-            'source': eid0,
+            'source': eid,
             'crecord_type': 'pbehavior',
             'rrule': None,
             'duration': None,
@@ -359,19 +364,26 @@ class TestTasks(BaseTest):
             'crecord_creation_time': None,
             'crecord_name': None
         }
-        self.pbm.put([pb0])
+        tm.pbm.put([pb1])
 
-        alarm0 = task(self, {'d': eid0})
-        self.assertEqual(alarm0, {'d': eid0, 'pbehaviors': {}})
+        alarm1 = task(tm, {'d': eid})
+        expected_pb1 = {
+            u'enabled': True,
+            u'name': [u'downtime'],
+            u'dtstart': 0,
+            u'dtend': 0,
+            u'rrule': None
+        }
+
+        self.assertEqual(alarm1, {'d': eid, 'pbehaviors': [expected_pb1]})
 
         now = int(time())
-        eid1 = '/ongoing/pbehavior/entity'
-        pb1 = {
+        pb2 = {
             'behaviors': ['downtime'],
             'crecord_write_time': None,
             'enable': True,
             'id': None,
-            'source': eid1,
+            'source': eid,
             'crecord_type': 'pbehavior',
             'rrule': None,
             'duration': None,
@@ -380,15 +392,26 @@ class TestTasks(BaseTest):
             'crecord_creation_time': None,
             'crecord_name': None
         }
-        self.pbm.put([pb1])
+        tm.pbm.put([pb2])
 
-        alarm1 = task(self, {'d': eid1})
+        alarm2 = task(tm, {'d': eid})
+        expected_pb2 = {
+            u'enabled': True,
+            u'name': [u'downtime'],
+            u'dtstart': now,
+            u'dtend': now + 1000,
+            u'rrule': None
+        }
+
         self.assertEqual(
-            alarm1,
-            {'d': eid1, 'pbehaviors': {'downtime': now + 1000}}
+            alarm2,
+            {'d': eid, 'pbehaviors': [expected_pb2, expected_pb1]}
         )
 
-        del self.pbm
+        alarm3 = task(tm, {'d': '/unexisting/eid'})
+        self.assertEqual(alarm3, {'d': '/unexisting/eid', 'pbehaviors': []})
+
+        tm.pbm['vevent_storage']._backend.remove({'source': eid})
 
 
 if __name__ == '__main__':

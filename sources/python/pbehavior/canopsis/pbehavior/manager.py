@@ -101,6 +101,50 @@ class PBehaviorManager(VEventManager):
 
         return result
 
+    def get_behaviors(self, entity_id):
+        """
+        Return all pbehaviors related to an entity_id, sorted by descending
+        dtstart.
+
+        :param str entity_id: Id for which behaviors have to be returned
+
+        :return: List of pbehaviors as dict, with name, dtstart, dtend, rrule
+          and enabled keys
+        :rtype: list of dict
+        """
+
+        query = self['vevent_storage']._backend.aggregate(
+            [
+                {
+                    '$match': {'source': entity_id}
+                },
+                {
+                    '$project': {
+                        '_id': 0,
+                        'enabled': '$enable',
+                        'name': '$behaviors',
+                        'dtstart': 1,
+                        'dtend': 1,
+                        'rrule': 1
+                    }
+                },
+                {
+                    '$sort': {'dtstart': -1}
+                }
+            ]
+        )
+
+        res = query['result']
+
+        if not res:
+            return []
+
+        elif type(res) is dict:
+            return [res]
+
+        else:
+            return res
+
     def getending(self, source, behaviors=None, ts=None):
         """Get end date of corresponding behaviors if a timestamp is in a
         behavior period.
