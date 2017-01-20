@@ -24,6 +24,7 @@ from canopsis.old.storage import get_storage
 
 from copy import deepcopy
 from time import time
+from time import sleep
 
 
 class engine(Engine):
@@ -62,6 +63,17 @@ class engine(Engine):
 
                 except KeyError:
                     refevt = {}
+
+                if refevt['ack'] == {}:
+                    sleep(2)
+                    try:
+                        refevt = self.store.get(
+                            event['ref_rk'], namespace='events'
+                        )
+                        refevt = refevt.dump()
+
+                    except KeyError:
+                        refevt = {}
 
                 job = deepcopy(self.config['job'])
                 job['_id'] = self.config['_id']

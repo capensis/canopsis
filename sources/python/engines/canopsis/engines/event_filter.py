@@ -334,6 +334,19 @@ class engine(Engine):
 
         return False
 
+    def a_baseline(self, event, actions, name):
+        """a_baseline
+
+        :param event:
+        :param action: baseline conf in event filter
+        :param name:
+        """
+        event['baseline_name'] = actions['baseline_name']
+        event['check_frequency'] = actions['check_frequency']
+
+        publish(event=event, publisher=self.amqp,
+                rk='Engine_baseline', exchange='amq.direct')
+
     def apply_actions(self, event, actions):
         pass_event = False
         actionMap = {
@@ -344,6 +357,7 @@ class engine(Engine):
             'execjob': self.a_exec_job,
             'route': self.a_route,
             'snooze': self.a_snooze,
+            'baseline': self.a_baseline
         }
 
         for name, action in actions:
