@@ -110,7 +110,7 @@ class Context(MiddlewareRegistry):
                 'perf',
                 'check',
                 'ack',
-                'ackremove'
+                'ackremove',
                 'declareticket',
                 'assocticket',
                 'cancel',
