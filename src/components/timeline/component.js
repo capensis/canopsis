@@ -43,8 +43,20 @@ Ember.Application.initializer({
                 'stateinc': 'State increased',
                 'statedec': 'State decreased',
                 'changestate': 'State changed',
-                'snooze': 'Snoozed by '
+                'snooze': 'Snoozed by ',
+                'statecounter': 'Cropped states (since last change of status)',
+                'hardlimit': 'Hard limit reached !'
             },
+
+            authoredName: [
+                'ack',
+                'ackremove',
+                'assocticket',
+                'declareticket',
+                'cancel',
+                'uncancel',
+                'snooze'
+            ],
 
             stateArray: [
                 'Ok',
@@ -61,7 +73,7 @@ Ember.Application.initializer({
                 'canceled'
             ],
 
-            colorArray:[
+            colorArray: [
                 'bg-green',
                 'bg-yellow',
                 'bg-orange',
@@ -80,7 +92,9 @@ Ember.Application.initializer({
                 'stateinc': {'icon': 'fa-flag', 'color': undefined},
                 'statedec': {'icon': 'fa-flag', 'color': undefined},
                 'changestate': {'icon': 'fa-flag', 'color': undefined},
-                'snooze': {'icon': 'fa-clock-o', 'color': 'bg-fuchsia'}
+                'snooze': {'icon': 'fa-clock-o', 'color': 'bg-fuchsia'},
+                'statecounter': {'icon': 'fa-scissors', 'color': 'bg-black'},
+                'hardlimit': {'icon': 'fa-warning', 'color': 'bg-red'}
             },
 
             /**
@@ -105,27 +119,53 @@ Ember.Application.initializer({
                         step.date = moment(date).format('LL');
                         step.time = moment(date).format('h:mm:ss a');
 
+                        if (!(step._t in get(component, 'iconsAndColors'))) {
+                            console.warning('Unknown step "' + step._t + '" : skipping');
+                            continue;
+                        }
+
                         //build color class
-                        step.color = get(component,'iconsAndColors')[step._t].color;
+                        step.color = get(component, 'iconsAndColors')[step._t].color;
                         //set icon
-                        step.icon = get(component,'iconsAndColors')[step._t].icon;
+                        step.icon = get(component, 'iconsAndColors')[step._t].icon;
 
                         //if no color, it's a state/value, so color
-                        if(!step.color)
+                        if (!step.color)
                             step.color = get(component,'colorArray')[step.val];
 
-                        if(step._t.indexOf('state') > -1)
+                        if (step._t.indexOf('state') > -1)
                             step.state = get(component,'stateArray')[step.val];
 
-                        if(step._t.indexOf('status') > -1)
+                        if (step._t.indexOf('status') > -1)
                             step.status = get(component,'statusArray')[step.val];
 
-                        if(step._t === 'snooze') {
+                        if (step._t === 'snooze') {
                             var until = new Date(step.val * 1000);
                             step.until = moment(until).format('h:mm:ss a');
                         }
 
-                        step.name = get(component,'statusToName')[step._t];
+                        if (step._t === 'statecounter') {
+                            step.m = '<table class="table table-hover"><tbody>';
+
+                            step.m += '<tr><th>State increases</th><th>' + step.val.stateinc + '</th></tr>';
+                            step.m += '<tr><th>State decreases</th><th>' + step.val.statedec + '</th></tr>';
+
+                            for (v in step.val) {
+                                if (v.startsWith('state:')) {
+                                    var state = parseInt(v.replace('state:', ''), 10);
+                                    var state_label = get(component, 'stateArray')[state];
+                                    /* Custom states (other than 0, 1, 2, 3) are not supported */
+                                    step.m += '<tr><th>State ' + state_label + '</th><th>' + step.val[v] + '</th></tr>';
+                                } 
+                            }
+
+                            step.m += '</tbody></table>';
+                        }
+
+                        step.name = get(component, 'statusToName')[step._t];
+                        if (get(component, 'authoredName').indexOf(step._t) != -1) {
+                            step.name += step.a;
+                        }
 
                         steps.push(step);
                     }
