@@ -145,7 +145,6 @@ Ember.Application.initializer({
                         }
 
                         if (step._t === 'statecounter') {
-                            console.error('hey');
                             step.m = '<table class="table table-hover"><tbody>';
 
                             step.m += '<tr><th>State increases</th><th>' + step.val.stateinc + '</th></tr>';
@@ -161,7 +160,6 @@ Ember.Application.initializer({
                             }
 
                             step.m += '</tbody></table>';
-                            console.error(step.m);
                         }
 
                         step.name = get(component, 'statusToName')[step._t];
