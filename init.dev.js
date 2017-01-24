@@ -22,6 +22,7 @@
         'components/component-alarmraw': 'canopsis/brick-listalarm/src/components/alarmraw/template',
         'components/component-alarmtable': 'canopsis/brick-listalarm/src/components/alarmtable/template',
         'components/component-alarmtd': 'canopsis/brick-listalarm/src/components/alarmtd/template',
+        'components/component-popup': 'canopsis/brick-listalarm/src/components/popup/template',
         'listalarm': 'canopsis/brick-listalarm/src/widgets/listalarm/listalarm',
 
     }
@@ -36,6 +37,9 @@
     'ehbs!components/component-alarmtable',
     'canopsis/brick-listalarm/src/components/alarmtd/component',
     'ehbs!components/component-alarmtd',
+    'canopsis/brick-listalarm/src/components/popup/component',
+    'ehbs!components/component-popup',
+    'canopsis/brick-listalarm/src/mixins/rinfopop',
     'canopsis/brick-listalarm/src/serializers/alertexpression',
     'canopsis/brick-listalarm/src/serializers/alerts',
     'canopsis/brick-listalarm/src/widgets/listalarm/controller',

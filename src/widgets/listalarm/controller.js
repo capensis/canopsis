@@ -47,8 +47,10 @@ Ember.Application.initializer({
          */
         var widget = WidgetFactory('listalarm',{
 
-			viewMixins: [
-            ],
+            viewMixins: [
+                ],
+
+            needs: ['rinfopop'],
 
             /**
              * Create the widget and set widget params into Ember vars

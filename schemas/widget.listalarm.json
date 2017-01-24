@@ -11,9 +11,7 @@
 		"keys":["columns"]
 	},{
 		"title": "Info popup",
-		"keys":[
-			"popup"
-		]
+		"keys":["popup"]
 	},{
 		"title": "Mixins",
 		"keys":["mixins"]
@@ -34,8 +32,11 @@
 			"reorderable": true
     },
 		"popup": {
-				"type": "string",
-				"role": "textarea"
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "pair"
+			}
 		}
 	}
 }
