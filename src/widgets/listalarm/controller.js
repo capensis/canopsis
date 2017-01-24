@@ -19,12 +19,13 @@
 
 Ember.Application.initializer({
     name: 'ListAlarmWidget',
-    after: ['TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'SchemasLoader'],
+    after: ['TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader'],
     initialize: function(container, application) {
 		    var timeWindowUtils = container.lookupFactory('utility:timewindow'),
             dataUtils = container.lookupFactory('utility:data'),
 			      WidgetFactory = container.lookupFactory('factory:widget'),
 			      UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
+				  RinfopopMixin = container.lookupFactory('mixin:rinfopop');
 
         var get = Ember.get,
             set = Ember.set,
@@ -33,7 +34,8 @@ Ember.Application.initializer({
         // load the viewMixin
         var listOptions = {
             mixins: [
-                UserConfigurationMixin
+                UserConfigurationMixin,
+				RinfopopMixin
             ]
         };
 
@@ -50,7 +52,7 @@ Ember.Application.initializer({
             viewMixins: [
                 ],
 
-            needs: ['rinfopop'],
+            //needs: ['rinfopop'],
 
             /**
              * Create the widget and set widget params into Ember vars
