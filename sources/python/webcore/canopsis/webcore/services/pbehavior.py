@@ -34,20 +34,20 @@ def exports(ws):
         payload=[
             'name', 'filter', 'author',
             'tstart', 'tstop', 'rrule',
-            'enabled',
+            'enabled', 'comments',
             'connector', 'connector_name'
         ]
     )
     def create(
             name, filter, author,
             tstart, tstop, rrule=None,
-            enabled=True,
+            enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis'
     ):
         return pbm.create(
-            name=name, filter_=filter, author=author,
+            name=name, filter=filter, author=author,
             tstart=tstart, tstop=tstop, rrule=rrule,
-            enabled=enabled,
+            enabled=enabled, comments=comments,
             connector=connector, connector_name=connector_name
         )
 
@@ -57,7 +57,7 @@ def exports(ws):
         payload=['_id']
     )
     def read(_id=None):
-        return 'read'
+        return pbm.read(_id)
 
     @route(
         ws.application.put,
@@ -73,9 +73,13 @@ def exports(ws):
             _id,
             name=None, filter=None,
             tstart=None, tstop=None, rrule=None,
-            enabled=None
+            enabled=None, comments=None,
+            connector=None, connector_name=None,
+            author=None
     ):
-        return 'update'
+        params = locals()
+        params.pop('_id')
+        return pbm.update(_id, **params)
 
     @route(
         ws.application.delete,
@@ -83,7 +87,7 @@ def exports(ws):
         payload=['_id']
     )
     def delete(_id):
-        return 'delete'
+        return pbm.delete(_id)
 
     @route(
         ws.application.post,
@@ -91,7 +95,7 @@ def exports(ws):
         payload=['pbehavior_id', 'author', 'message']
     )
     def create_comment(pbehavior_id, author, message):
-        return 'create comment'
+        return pbm.create_pbehavior_comment(pbehavior_id, author, message)
 
     @route(
         ws.application.put,
@@ -99,7 +103,10 @@ def exports(ws):
         payload=['pbehavior_id', '_id', 'auhtor', 'message']
     )
     def update_comment(pbehavior_id, _id, author=None, message=None):
-        return 'update comment'
+        return pbm.update_pbehavior_comment(
+            pbehavior_id, _id,
+            author=author, message=message
+        )
 
     @route(
         ws.application.delete,
@@ -107,4 +114,5 @@ def exports(ws):
         payload=['pbehavior_id', '_id']
     )
     def delete_comment(pbehavior_id, _id):
-        return 'delete comment'
+        return pbm.delete_pbehavior_comment(pbehavior_id, _id)
+
