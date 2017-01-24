@@ -170,9 +170,6 @@ def get_records(ws, namespace, ctype=None, _id=None, **params):
 
                 output.append(data)
 
-    with open('/tmp/lolog', 'a+') as fh:
-        fh.write('output={},total={}\n'.format(output, total))
-
     return output, total
 
 
