@@ -29,21 +29,22 @@
 </div>
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{value}}</script>
-<script type="text/x-handlebars" data-template-name="components/component-popup"><div class="modal fade" style='width: 100%;'>
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">test</h4>
-      </div>
-      <div class="modal-body">
-        {{view columnView contextBinding=columnViewContext}}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div></script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
+<script type="text/x-handlebars" data-template-name="components/component-search"><div class="input-group input-group-sm">
+      {{input value=value class="form-control inlineInput" placeholder="Search" type="text"}}
+      <span class="input-group-btn">
+          <button {{action 'resetValue'}} class="btn btn-default btn-flat">
+              <span class="glyphicon glyphicon-remove-circle"></span>
+          </button>
+          <button {{action 'search'}} class="btn btn-primary btn-flat">
+              <span class="fa fa-search"></span>
+          </button>
+      </span>
+</div>
+{{#unless isValid}}
+  <p>Invalid search query</p>
+{{/unless}}</script>
+<script type="text/x-handlebars" data-template-name="listalarm">{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
+{{/component-search}}
+
+{{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
 {{/component-alarmtable}}</script>

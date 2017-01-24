@@ -50,7 +50,10 @@ Ember.Application.initializer({
             viewMixins: [
                 ],
 
-            needs: ['rinfopop'],
+            // needs: ['rinfopop'],
+            searchText: '',
+            isValidSearchText: true,
+            
 
             /**
              * Create the widget and set widget params into Ember vars
@@ -59,7 +62,7 @@ Ember.Application.initializer({
             init: function() {
                 this._super.apply(this, arguments);
 				        this.fetchAlarms();
-                this.valideExpression();
+                // this.valideExpression();
 
 				        set(this, 'store', DS.Store.extend({
                     container: get(this, 'container')
@@ -103,7 +106,8 @@ Ember.Application.initializer({
                 tstart: iParams['tstart'] || 1483225200,
 								tstop: iParams['tstop'] || 1583225200,
 								sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
-           			sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction')
+           			sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction'),
+                search: iParams['search'] || ''
 							};
 
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
@@ -123,22 +127,36 @@ Ember.Application.initializer({
              * Get the Alarms from the backend using the adapter
              * @method valideExpression
              */
-            valideExpression: function () {
+            isValidExpression: function (expression) {
               var controller = this;
 
               var query = {
-                expression: 'a=1'
+                expression: expression
               };
+
+              var rs = false;
 
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alertexpression');
             	adapter.findQuery('alertexpression', query).then(function (result) {
                     // onfullfillment
 					          var result = get(result, 'data');
                     console.error('alertexpression result', result);
+                    controller.set('isValidSearchText', result[0]);
+                    if (result[0]) {
+                      var params = {};
+
+                      params['search'] = expression;                      
+                      
+                      controller.fetchAlarms(params);
+                    }
+                    
+                    // rs = result[0];
               }, function (reason) {
                     // onrejection
+                    // rs = false;
                     console.error('ERROR in the adapter: ', reason);
               });
+              // return rs;              
             },
 
             setFields: function () {
@@ -197,6 +215,8 @@ Ember.Application.initializer({
               return column;
             }.property('controller.default_sort_column.property', 'fields.[]'),
 
+
+
             actions: {
               updateSortField: function (field) {
                 var params = {};
@@ -205,6 +225,16 @@ Ember.Application.initializer({
                 params['sort_dir'] = field.isASC ? 'ASC' : 'DESC';
                 
                 this.fetchAlarms(params);
+              },
+              
+              search: function (text) {
+                console.error('search', text);
+                console.error(this.isValidExpression(text));
+                this.isValidExpression(text);
+                  // console.error('request for search')
+                // } else {
+                  // this.set('isValidSearchText', false)
+                // }
               }
             }
 
