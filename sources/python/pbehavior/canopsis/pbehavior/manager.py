@@ -19,8 +19,8 @@
 # ---------------------------------
 
 from calendar import timegm
-from copy import deepcopy
 from datetime import datetime
+from json import loads, dumps
 
 from bson.objectid import ObjectId
 
@@ -42,7 +42,6 @@ class BasePBehavior(dict):
     _EDITABLE_FIELDS = ()
 
     def __init__(self, **kwargs):
-        replace_special_characters(kwargs)
         for key, value in kwargs.iteritems():
             if key in self._FIELDS:
                 self.__dict__[key] = value
@@ -66,7 +65,6 @@ class BasePBehavior(dict):
         return None
 
     def update(self, **kwargs):
-        replace_special_characters(kwargs)
         for key, value in kwargs.iteritems():
             if key in self._EDITABLE_FIELDS:
                 self.__dict__[key] = value
@@ -94,6 +92,16 @@ class PBehavior(BasePBehavior):
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
                         CONNECTOR, CONNECTOR_NAME, AUTHOR)
+
+    def __init__(self, **kwargs):
+        if PBehavior.FILTER in kwargs:
+            kwargs[PBehavior.FILTER] = dumps(kwargs[PBehavior.FILTER])
+        super(PBehavior, self).__init__(**kwargs)
+
+    def update(self, **kwargs):
+        if PBehavior.FILTER in kwargs:
+            kwargs[PBehavior.FILTER] = dumps(kwargs[PBehavior.FILTER])
+        super(PBehavior, self).update(**kwargs)
 
 
 class Comment(BasePBehavior):
@@ -290,33 +298,14 @@ class PBehaviorManager(MiddlewareRegistry):
             query={PBehavior.FILTER: {'$exists': True}}
         )
         for pb in pbehaviors:
-            _pb = deepcopy(pb)
-            replace_special_characters(_pb, old='_$', new='$')
-            entities = context[Context.CTX_STORAGE].get_elements(
-                query=_pb[PBehavior.FILTER]
-            )
+            if isinstance(pb[PBehavior.FILTER], (str, unicode)):
+                filters = loads(pb[PBehavior.FILTER])
+            else:
+                filters = pb[PBehavior.FILTER]
+            entities = context[Context.CTX_STORAGE].get_elements(query=filters)
+
             pb[PBehavior.EIDS] = [e['_id'] for e in entities]
             self.pbehavior_storage.put_element(element=pb, _id=pb['_id'])
 
     def _check_response(self, response):
         return True if 'ok' in response and response['ok'] == 1 else False
-
-
-def replace_special_characters(d, old='$', new='_$'):
-    """
-    Replace special characters in the dictionary
-    :param dict d: dictionary to edit
-    :param str old: old symbol
-    :param str new: new symbol
-    :return:
-    """
-    for key, value in d.iteritems():
-        if isinstance(key, (str, unicode)) and key.startswith(old):
-            new_key = key.replace(old, new, 1)
-            d[new_key] = d.pop(key)
-        if isinstance(value, dict):
-            replace_special_characters(value, old=old, new=new)
-        if isinstance(value, list):
-            for elem in value:
-                if isinstance(elem, dict):
-                    replace_special_characters(elem, old=old, new=new)
