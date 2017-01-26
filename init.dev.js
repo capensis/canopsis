@@ -25,6 +25,7 @@
         'components/component-columntemplate': 'canopsis/brick-listalarm/src/components/columntemplate/template',
         'components/component-popupinfo': 'canopsis/brick-listalarm/src/components/popupinfo/template',
         'editor-pair': 'canopsis/brick-listalarm/src/editors/editor-pair',
+        'components/component-search': 'canopsis/brick-listalarm/src/components/search/template',
         'listalarm': 'canopsis/brick-listalarm/src/widgets/listalarm/listalarm',
 
     }
@@ -44,6 +45,8 @@
     'canopsis/brick-listalarm/src/components/popupinfo/component',
     'ehbs!components/component-popupinfo',
     'ehbs!editor-pair',
+    'canopsis/brick-listalarm/src/components/search/component',
+    'ehbs!components/component-search',
     'canopsis/brick-listalarm/src/mixins/rinfopop',
     'canopsis/brick-listalarm/src/serializers/alertexpression',
     'canopsis/brick-listalarm/src/serializers/alerts',

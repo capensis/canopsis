@@ -34,6 +34,7 @@
 </div>
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{value}}</script>
+<<<<<<< HEAD
 <script type="text/x-handlebars" data-template-name="components/component-columntemplate"><div class="form-inline">
     <div class="form-group">
         Column name: {{input value=column class="form-control" type="text"}}
@@ -62,4 +63,24 @@
 }}
 {{component-columntemplate content=attr.value}}</script>
 <script type="text/x-handlebars" data-template-name="listalarm">{{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
+=======
+<script type="text/x-handlebars" data-template-name="components/component-search"><div class="input-group input-group-sm">
+      {{input value=value class="form-control inlineInput" placeholder="Search" type="text"}}
+      <span class="input-group-btn">
+          <button {{action 'resetValue'}} class="btn btn-default btn-flat">
+              <span class="glyphicon glyphicon-remove-circle"></span>
+          </button>
+          <button {{action 'search'}} class="btn btn-primary btn-flat">
+              <span class="fa fa-search"></span>
+          </button>
+      </span>
+</div>
+{{#unless isValid}}
+  <p>Invalid search query</p>
+{{/unless}}</script>
+<script type="text/x-handlebars" data-template-name="listalarm">{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
+{{/component-search}}
+
+{{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
+>>>>>>> search
 {{/component-alarmtable}}</script>
