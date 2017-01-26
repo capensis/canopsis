@@ -229,7 +229,7 @@ Ember.Application.initializer({
               
               search: function (text) {
                 console.error('search', text);
-                console.error(this.isValidExpression(text));
+                // console.error(this.isValidExpression(text));
                 this.isValidExpression(text);
                   // console.error('request for search')
                 // } else {
