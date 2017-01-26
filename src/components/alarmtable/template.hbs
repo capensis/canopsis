@@ -1,3 +1,8 @@
+{{#each tmpl in Ember.columnTemplates}}
+  {{#component-popupinfo columnName=tmpl.columnName clickedField=clickedField clickedAlarm=clickedAlarm updater=updater}}
+  {{/component-popupinfo}}
+{{/each}}
+
 <div class="box-body">
     <div class="table-responsive">
         <table class="table no-margin">
@@ -15,7 +20,7 @@
             <tbody>
                 {{#each alarm in sAlarms}}
                 
-                    {{#component-alarmraw alarm=alarm fields=controller.fields}}
+                    {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick'}}
                     {{/component-alarmraw}}
 
                 {{/each}}

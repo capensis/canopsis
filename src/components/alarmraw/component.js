@@ -21,6 +21,12 @@ Ember.Application.initializer({
                 set(this, 'fields', get(this, 'fields'));                
               },
 
+              actions: {
+                  tdClick: function (alarm, field) {
+                      this.sendAction('action', alarm, field);
+                  }
+              }
+
         });
 
         application.register('component:component-alarmraw', component);

@@ -25,7 +25,7 @@ Ember.Application.initializer({
             dataUtils = container.lookupFactory('utility:data'),
 			      WidgetFactory = container.lookupFactory('factory:widget'),
 			      UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
-				  RinfopopMixin = container.lookupFactory('mixin:rinfopop');
+				  // RinfopopMixin = container.lookupFactory('mixin:rinfopop');
 
         var get = Ember.get,
             set = Ember.set,
@@ -35,7 +35,7 @@ Ember.Application.initializer({
         var listOptions = {
             mixins: [
                 UserConfigurationMixin,
-				RinfopopMixin
+				// RinfopopMixin
             ]
         };
 
@@ -68,7 +68,19 @@ Ember.Application.initializer({
                 }));
                 this.showParams();
                 this.setFields();
+                this.loadTemplates(this.get('model.popup'));
                 
+            },
+
+            loadTemplates: function (templates) {
+                Ember.columnTemplates = templates.map(function (obj) {
+                  return {
+                    columnName: obj.column,
+                    columnTemplate: Ember.View.extend({
+                      template: Ember.HTMLBars.compile(obj.template)
+                    })                    
+                  }
+                })
             },
 
             showParams: function () {
@@ -102,8 +114,8 @@ Ember.Application.initializer({
 
               var query = {
                 resolved: true,
-                tstart: iParams['tstart'] || 1483225200,
-								tstop: iParams['tstop'] || 1583225200,
+                tstart: iParams['tstart'] || 14832250,
+								tstop: iParams['tstop'] || 1485405720112,
 								sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
            			sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction')
 							};
@@ -114,7 +126,7 @@ Ember.Application.initializer({
 					          var alerts = get(result, 'data');
                     controller.setAlarmsForShow(alerts[0]['alarms']);
 
-                    console.log('alerts::', alerts);
+                    console.error('alerts::', alerts);
               }, function (reason) {
                     // onrejection
                     // console.error('ERROR in the adapter: ', reason);

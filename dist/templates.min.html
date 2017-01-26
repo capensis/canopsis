@@ -1,8 +1,13 @@
 <script type="text/x-handlebars" data-template-name="components/component-alarmraw">{{#each field in fields}}
-    {{#component-alarmtd alarm=alarm field=field}}
+    {{#component-alarmtd alarm=alarm field=field action='tdClick'}}
     {{/component-alarmtd}}
 {{/each}}  </script>
-<script type="text/x-handlebars" data-template-name="components/component-alarmtable"><div class="box-body">
+<script type="text/x-handlebars" data-template-name="components/component-alarmtable">{{#each tmpl in Ember.columnTemplates}}
+  {{#component-popupinfo columnName=tmpl.columnName clickedField=clickedField clickedAlarm=clickedAlarm updater=updater}}
+  {{/component-popupinfo}}
+{{/each}}
+
+<div class="box-body">
     <div class="table-responsive">
         <table class="table no-margin">
             <thead>
@@ -19,7 +24,7 @@
             <tbody>
                 {{#each alarm in sAlarms}}
                 
-                    {{#component-alarmraw alarm=alarm fields=controller.fields}}
+                    {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick'}}
                     {{/component-alarmraw}}
 
                 {{/each}}
@@ -29,21 +34,32 @@
 </div>
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{value}}</script>
-<script type="text/x-handlebars" data-template-name="components/component-popup"><div class="modal fade" style='width: 100%;'>
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">test</h4>
-      </div>
-      <div class="modal-body">
-        {{view columnView contextBinding=columnViewContext}}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
+<script type="text/x-handlebars" data-template-name="components/component-columntemplate"><div class="form-inline">
+    <div class="form-group">
+        Column name: {{input value=column class="form-control" type="text"}}
     </div>
-  </div>
+    <div class="form-group">
+        Template name: {{input value=template class="form-control" type="text"}}
+    </div>
 </div></script>
+<script type="text/x-handlebars" data-template-name="components/component-popupinfo"><div style="position: absolute; left: 50%;display:none;" class="popupinfo">
+    <div style="position: relative; left: -50%;">
+        <div class="text-center alert alert-info alert-dismissable">
+            <i class="fa fa-info"></i>
+            <button {{action 'hide'}} type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <div class="recordinfopopuphandle">
+                <b>info</b><hr/>
+            </div>
+            <div class="recordinfopopupcontent">
+                {{view columnTemplate contextBinding=clickedAlarm}}
+            </div>
+        </div>
+    </div>       
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="editor-pair">{{!*
+ * @editor pair
+}}
+{{component-columntemplate content=attr.value}}</script>
 <script type="text/x-handlebars" data-template-name="listalarm">{{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
 {{/component-alarmtable}}</script>

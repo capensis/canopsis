@@ -36,6 +36,15 @@ Ember.Application.initializer({
                         this.set('currentSortColumn.isASC', true);
                     }
                     this.sendAction('action', this.get('currentSortColumn'));
+                },
+
+                tdClick: function (alarm, field) {
+                    // if cell is clickable
+                    if (Ember.columnTemplates.findBy('columnName', field.name)) {       
+                        this.set('clickedAlarm', alarm);
+                        this.set('clickedField', field);
+                        this.set('updater', (new Date()).getTime());
+                    }
                 }
             }
             

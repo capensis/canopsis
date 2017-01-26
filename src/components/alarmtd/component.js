@@ -20,6 +20,10 @@ Ember.Application.initializer({
                 set(this, 'field', get(this, 'field'));                
               },
 
+            click: function () {
+                this.sendAction('action', this.get('alarm'), this.get('field'));
+            },
+
             value: function() {
                 var alarm = get(this, 'alarm');
                 var field = get(this, 'field');
