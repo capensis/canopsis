@@ -22,8 +22,9 @@
 from copy import deepcopy
 from calendar import timegm
 from datetime import datetime, timedelta
+from json import dumps
+from uuid import uuid4
 
-from bson.objectid import ObjectId
 from mock import patch, PropertyMock
 from unittest import main, TestCase
 
@@ -44,11 +45,11 @@ class TestManager(TestCase):
 
         self.pbm[PBehaviorManager.PBEHAVIOR_STORAGE] = pbehavior_storage
 
-        self.pbehavior_id = str(ObjectId())
-        self.comment_id = str(ObjectId())
+        self.pbehavior_id = str(uuid4())
+        self.comment_id = str(uuid4())
         self.pbehavior = {
             'name': 'test',
-            'filter': {'connector': 'nagios-test-connector'},
+            'filter': dumps({'connector': 'nagios-test-connector'}),
             'comments': [{
                 '_id': self.comment_id,
                 'author': 'test_author_comment',
@@ -107,18 +108,30 @@ class TestManager(TestCase):
         self.assertEqual(len(pb['comments']), 2)
 
     def test_update_pbehavior_comment(self):
-        self.pbm.update_pbehavior_comment(
+        new_author, new_message = 'new_author', 'new_message'
+        result = self.pbm.update_pbehavior_comment(
             self.pbehavior_id, self.comment_id,
-            author='new_author',
-            message='new_message'
+            author=new_author,
+            message=new_message
         )
+        self.assertIsNotNone(result)
+        self.assertTrue(isinstance(result, dict))
+        self.assertEqual(result['message'], new_message)
+        self.assertEqual(result['author'], new_author)
+
         pb = self.pbm.get(
             self.pbehavior_id,
             query={'comments': {'$elemMatch': {'_id': self.comment_id}}}
         )
         self.assertTrue(isinstance(pb['comments'], list))
-        self.assertEqual(pb['comments'][0]['author'], 'new_author')
-        self.assertEqual(pb['comments'][0]['message'], 'new_message')
+        self.assertEqual(pb['comments'][0]['author'], new_author)
+        self.assertEqual(pb['comments'][0]['message'], new_message)
+
+        pb2 = self.pbm.get(
+            'id_does_not_exist',
+            query={'comments': {'$elemMatch': {'_id': self.comment_id}}}
+        )
+        self.assertIsNone(pb2)
 
     def test_delete_pbehavior_comment(self):
         self.pbm.create_pbehavior_comment(self.pbehavior_id, 'author', 'msg')
@@ -154,19 +167,19 @@ class TestManager(TestCase):
     def test_compute_pbehaviors_filters(self, mock_context):
         mock_context.return_value = Context(data_scope='test_context')
         entities = [{
-            '_id': 1,
+            'entity_id': 1,
             'name': 'engine-test1',
             'type': 'metric-test',
             'connector': 'canopsis-test-connector',
             'connector_name': 'canopsis-test',
         }, {
-            '_id': 2,
+            'entity_id': 2,
             'name': 'big-engine-test2',
             'type': 'metric-test',
             'connector': 'canopsis-test-connector',
             'connector_name': 'canopsis-test',
         }, {
-            '_id': 3,
+            'entity_id': 3,
             'name': 'test_context3',
             'type': 'resource-test',
             'connector': 'nagios-test-connector',

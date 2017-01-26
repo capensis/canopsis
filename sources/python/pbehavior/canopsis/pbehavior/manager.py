@@ -21,9 +21,9 @@
 from calendar import timegm
 from datetime import datetime
 from json import loads, dumps
+from uuid import uuid4
 
-from bson.objectid import ObjectId
-
+from canopsis.common.utils import singleton_per_scope
 from canopsis.context.manager import Context
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
@@ -128,7 +128,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
     @property
     def context(self):
-        return Context()
+        return singleton_per_scope(Context)
 
     def get(self, _id, query=None):
         """Get pbehavior by id.
@@ -165,7 +165,7 @@ class PBehaviorManager(MiddlewareRegistry):
             data.update(comments=[])
         else:
             for c in data.comments:
-                c.update({'_id': str(ObjectId())})
+                c.update({'_id': str(uuid4())})
         result = self.pbehavior_storage.put_element(element=data.to_dict())
         return result
 
@@ -212,7 +212,7 @@ class PBehaviorManager(MiddlewareRegistry):
         :param str message: text of the comment
         """
         comments = {
-            Comment.ID: str(ObjectId()),
+            Comment.ID: str(uuid4()),
             Comment.AUTHOR: author,
             Comment.TS: timegm(datetime.utcnow().timetuple()),
             Comment.MESSAGE: message
@@ -239,6 +239,9 @@ class PBehaviorManager(MiddlewareRegistry):
             pbehavior_id,
             query={PBehavior.COMMENTS: {'$elemMatch': {'_id': _id}}}
         )
+        if not pbehavior:
+            return None
+
         _comments = pbehavior[PBehavior.COMMENTS]
         if not _comments:
             return None
@@ -298,13 +301,11 @@ class PBehaviorManager(MiddlewareRegistry):
             query={PBehavior.FILTER: {'$exists': True}}
         )
         for pb in pbehaviors:
-            if isinstance(pb[PBehavior.FILTER], (str, unicode)):
-                filters = loads(pb[PBehavior.FILTER])
-            else:
-                filters = pb[PBehavior.FILTER]
-            entities = context[Context.CTX_STORAGE].get_elements(query=filters)
+            entities = context[Context.CTX_STORAGE].get_elements(
+                query=loads(pb[PBehavior.FILTER])
+            )
 
-            pb[PBehavior.EIDS] = [e['_id'] for e in entities]
+            pb[PBehavior.EIDS] = [e['entity_id'] for e in entities]
             self.pbehavior_storage.put_element(element=pb, _id=pb['_id'])
 
     def _check_response(self, response):
