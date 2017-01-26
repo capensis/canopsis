@@ -154,6 +154,12 @@ function post_install_mongodb() {
     echo "  + Create admin user ..."
     launch_cmd 1 $PREFIX/bin/mongo admin --eval "\"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase', 'root']})\""
 
+    echo "  + Reconfigure mongodb"
+    launch_cmd 1 sed -i "\"s/disabled/enabled/\"" $PREFIX/etc/mongodb.conf
+
+    echo "  + Restart mongodb"
+    launch_cmd 1 service mongodb restart
+
     echo "  + Create $cpsuser user ..."
     launch_cmd 1 $PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval "\"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
 

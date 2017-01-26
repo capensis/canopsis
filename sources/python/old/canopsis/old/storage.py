@@ -29,6 +29,7 @@ import gridfs
 from bson import objectid
 
 from pymongo import Connection
+from pymongo import MongoClient
 from pymongo import ASCENDING
 from pymongo import DESCENDING
 
@@ -188,7 +189,11 @@ class Storage(object):
         if self.connected:
             return True
 
-        self.conn = Connection(self.uri, safe=True)
+        f = open('/home/tgosselin/fichierdelog', 'a')
+        f.write('{0}\n'.format(self.uri))
+        f.close()
+
+        self.conn = MongoClient(self.uri, safe=True)
         self.db = self.conn[self.mongo_db]
 
         manipulators = self.db.incoming_manipulators
