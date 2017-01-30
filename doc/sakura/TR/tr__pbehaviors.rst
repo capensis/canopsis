@@ -152,9 +152,51 @@ Here is the structure of a compliant message
 
 .. code-block::
 
- frfr
- trft
- ftr
+    {
+      "event_type": "pbehavior",
+      "pbehavior_name": "downtime",
+      "start": ts,
+      "end": ts,
+      "duration": ts,
+      "action": "create" or "delete" only
+      + classic event fields
+    }
+    
+for creating actions, create an entry with this fields:
+
+.. code-block::
+
+    "name": pbehavior_name,
+    "filter": {
+      "entity_id": /resource/connector/connector_name/component/resource (for a resource, test type field value (component or resource))
+    },
+    "comments": no comments,
+    "tstart": start,
+    "tstop": end,
+    "rrule": "",
+    "enabled": True,
+    "eids": [],
+    "connector": comes from the event,
+    "connector_name": comes from the event
+    "author": comes from the event
+
+
+for deleting actions, delete an entry with exactly the same fields as it is given for these ones:
+remove an entry in mongo with this filter:
+
+.. code-block::
+
+    "filter": {
+      "entity_id": /resource/connector/connector_name/component/resource (for a resource, test type field value (component or resource))
+    },
+    "name": pbehavior_name,
+    "tstart": start,
+    "tstop": end,
+    "rrule": "",
+    connector": comes from the event,
+    "connector_name": comes from the event
+
+And whatever for the others.
 
 
 Event Filter
