@@ -152,28 +152,74 @@ Here is the structure of a compliant message
 
 .. code-block::
 
- frfr
- trft
- ftr
+    {
+      "event_type": "pbehavior",
+      "pbehavior_name": "downtime",
+      "start": ts,
+      "end": ts,
+      "duration": ts,
+      "action": "create" or "delete" only
+      + classic event fields
+    }
+    
+for creating actions, create an entry with this fields:
+
+.. code-block::
+
+    "name": pbehavior_name,
+    "filter": {
+      "entity_id": /resource/connector/connector_name/component/resource (for a resource, test type field value (component or resource))
+    },
+    "comments": no comments,
+    "tstart": start,
+    "tstop": end,
+    "rrule": "",
+    "enabled": True,
+    "eids": [],
+    "connector": comes from the event,
+    "connector_name": comes from the event
+    "author": comes from the event
+
+
+for deleting actions, delete an entry with exactly the same fields as it is given for these ones:
+remove an entry in mongo with this filter:
+
+.. code-block::
+
+    "filter": {
+      "entity_id": /resource/connector/connector_name/component/resource (for a resource, test type field value (component or resource))
+    },
+    "name": pbehavior_name,
+    "tstart": start,
+    "tstop": end,
+    "rrule": "",
+    connector": comes from the event,
+    "connector_name": comes from the event
+
+And whatever for the others.
 
 
 Event Filter
 ^^^^^^^^^^^^
 
+The event filter handle one or several events thanks to a filter and apply action(s) to these events
 The current event filter engine must be compliant with Pbehaviors.  
 
-An event filter is composed of 
+Actually, an event filter is composed of 
 
 * A filter
 * A list of actions
 
-The event filter must now provide a way to match pbehaviors 
+The event filter must now provide a way to match pbehaviors you implement, so it has to become 
 
 * A filter
 * A list of within/without pbehaviors
 * A list of actions
 
-You have to add a new method in the manager, **check_pbehaviors** with following args :
+This new point let the user include pbehaviors to handle or not an event.
+For example, if an event match the given filter AND this event is included in pbehavior1 OR this event is not included in pbehavior2, then the event filter handle this event and apply given actions.
+
+In order to add this new point in event filter, you have to add a new method in the manager, **check_pbehaviors** with following args :
 
 * entity_id
 * in=[ pbehavior_name, ]
@@ -182,6 +228,11 @@ You have to add a new method in the manager, **check_pbehaviors** with following
 This method return a boolean if the entity_id is currently in **in** arg and out **out** arg.  
 **in** and **out** are evaluated with **tstart**, **tstop**, and **rrule** timestamps compared to **now**
 
+To fit your changes, you also have to change the schemas in the database related to the event_filter:
+
+* Connect to mongo `mongo canopsis -u cpsmongo -p canopsis`
+* Find the event filter schema in object collection
+* Modify this schema: add the pbehaviors settings.
 
 Selector / SLA
 ^^^^^^^^^^^^^^
