@@ -140,7 +140,7 @@ class PBehaviorManager(MiddlewareRegistry):
     def create(
         self,
         name, filter, author,
-        tstart, tstop, rrule=None,
+        tstart, tstop, rrule='',
         enabled=True, comments=None,
         connector='canopsis', connector_name='canopsis'
     ):
@@ -195,12 +195,14 @@ class PBehaviorManager(MiddlewareRegistry):
             return pbehavior.to_dict()
         return None
 
-    def delete(self, _id):
+    def delete(self, _id=None, _filter=None):
         """
         Delete pbehavior record
         :param str _id: pbehavior id
         """
-        result = self.pbehavior_storage.remove_elements(ids=_id)
+        result = self.pbehavior_storage.remove_elements(
+            ids=_id, _filter=_filter
+        )
 
         return self._check_response(result)
 
@@ -296,12 +298,11 @@ class PBehaviorManager(MiddlewareRegistry):
         """
         Compute all filters and update eids attributes
         """
-        context = self.context
         pbehaviors = self.pbehavior_storage.get_elements(
             query={PBehavior.FILTER: {'$exists': True}}
         )
         for pb in pbehaviors:
-            entities = context[Context.CTX_STORAGE].get_elements(
+            entities = self.context[Context.CTX_STORAGE].get_elements(
                 query=loads(pb[PBehavior.FILTER])
             )
 

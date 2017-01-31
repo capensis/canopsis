@@ -19,31 +19,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from copy import deepcopy
 from calendar import timegm
+from copy import deepcopy
 from datetime import datetime, timedelta
 from json import dumps
 from uuid import uuid4
 
 from mock import patch, PropertyMock
-from unittest import main, TestCase
-
+from unittest import main
 
 from canopsis.context.manager import Context
-from canopsis.middleware.core import Middleware
-from canopsis.pbehavior.manager import PBehaviorManager
+
+from base import BaseTest
 
 
-class TestManager(TestCase):
+class TestManager(BaseTest):
     def setUp(self):
-        pbehavior_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testpbehavior://'
-        )
-
-        self.pbm = PBehaviorManager()
-        self.context = Context(data_scope='test_context')
-
-        self.pbm[PBehaviorManager.PBEHAVIOR_STORAGE] = pbehavior_storage
+        super(TestManager, self).setUp()
 
         self.pbehavior_id = str(uuid4())
         self.comment_id = str(uuid4())
@@ -68,10 +60,6 @@ class TestManager(TestCase):
         data = deepcopy(self.pbehavior)
         data.update({'_id': self.pbehavior_id})
         self.pbm.pbehavior_storage.put_element(element=data)
-
-    def tearDown(self):
-        self.pbm.pbehavior_storage.remove_elements()
-        self.context[Context.CTX_STORAGE].remove_elements()
 
     def test_create(self):
         pb = self.pbm.create(**self.pbehavior)

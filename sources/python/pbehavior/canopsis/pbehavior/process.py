@@ -20,10 +20,22 @@
 
 from __future__ import unicode_literals
 
+from json import dumps
+
+from canopsis.context.manager import Context
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
+from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 
-from canopsis.pbehavior.manager import PBehaviorManager
+
+EVENT_TYPE = 'pbehavior'
+PBEHAVIOR_CREATE = 'create'
+PBEHAVIOR_DELETE = 'delete'
+
+
+def logger_error(logger, *args):
+    logger.error('Failed to perform the action {} '
+                 'for the event: {}'.format(*args))
 
 
 @register_task
@@ -31,18 +43,44 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
     if pbm is None:
         pbm = singleton_per_scope(PBehaviorManager)
 
-    pbm
+    if event.get('event_type') == EVENT_TYPE:
+        cm = singleton_per_scope(Context)
+        entity = cm.get_entity(event)
+        entity_id = cm.get_entity_id(entity)
 
-    # process pbehavior events...
+        filter = {'entity_id': entity_id}
+        if event.get('action') == PBEHAVIOR_CREATE:
+            result = pbm.create(
+                event['pbehavior_name'], filter, event['author'],
+                event['start'], event['end'],
+                connector=event['connector'],
+                connector_name=event['connector_name']
+            )
+            if not result:
+                logger_error(logger, event['action'], event)
 
-    logger.error('processing: {}'.format(event))
+        elif event.get('action') == PBEHAVIOR_DELETE:
+            result = pbm.delete(_filter={
+                PBehavior.FILTER: dumps(filter),
+                PBehavior.NAME: event['pbehavior_name'],
+                PBehavior.TSTART: event['start'],
+                PBehavior.TSTOP: event['end'],
+                PBehavior.RRULE: '',
+                PBehavior.CONNECTOR: event['connector'],
+                PBehavior.CONNECTOR_NAME: event['connector_name'],
+            })
+            if not result:
+                logger_error(logger, event['action'], event)
+        else:
+            logger_error(logger, event['action'], event)
 
 
 @register_task
 def beat_processing(engine, pbm=None, logger=None, **kwargs):
     if pbm is None:
         pbm = singleton_per_scope(PBehaviorManager)
+    try:
+        pbm.compute_pbehaviors_filters()
+    except Exception as e:
+        logger.error('Processing error {}'.format(str(e)))
 
-    res = pbm.compute_pbehaviors_filters()
-
-    logger.error(res)
