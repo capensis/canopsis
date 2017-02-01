@@ -20,12 +20,14 @@
  require.config({
     paths: {
         'components/component-alarmraw': 'canopsis/brick-listalarm/src/components/alarmraw/template',
+        'components/component-alarmstate': 'canopsis/brick-listalarm/src/components/alarmstate/template',
         'components/component-alarmtable': 'canopsis/brick-listalarm/src/components/alarmtable/template',
         'components/component-alarmtd': 'canopsis/brick-listalarm/src/components/alarmtd/template',
         'components/component-columntemplate': 'canopsis/brick-listalarm/src/components/columntemplate/template',
         'components/component-popupinfo': 'canopsis/brick-listalarm/src/components/popupinfo/template',
-        'editor-pair': 'canopsis/brick-listalarm/src/editors/editor-pair',
         'components/component-search': 'canopsis/brick-listalarm/src/components/search/template',
+        'editor-pair': 'canopsis/brick-listalarm/src/editors/editor-pair',
+        'editor-radio': 'canopsis/brick-listalarm/src/editors/editor-radio',
         'listalarm': 'canopsis/brick-listalarm/src/widgets/listalarm/listalarm',
 
     }
@@ -36,6 +38,8 @@
     'canopsis/brick-listalarm/src/adapters/alerts',
     'canopsis/brick-listalarm/src/components/alarmraw/component',
     'ehbs!components/component-alarmraw',
+    'canopsis/brick-listalarm/src/components/alarmstate/component',
+    'ehbs!components/component-alarmstate',
     'canopsis/brick-listalarm/src/components/alarmtable/component',
     'ehbs!components/component-alarmtable',
     'canopsis/brick-listalarm/src/components/alarmtd/component',
@@ -44,9 +48,10 @@
     'ehbs!components/component-columntemplate',
     'canopsis/brick-listalarm/src/components/popupinfo/component',
     'ehbs!components/component-popupinfo',
-    'ehbs!editor-pair',
     'canopsis/brick-listalarm/src/components/search/component',
     'ehbs!components/component-search',
+    'ehbs!editor-pair',
+    'ehbs!editor-radio',
     'canopsis/brick-listalarm/src/mixins/rinfopop',
     'canopsis/brick-listalarm/src/serializers/alertexpression',
     'canopsis/brick-listalarm/src/serializers/alerts',

@@ -2,6 +2,20 @@
     {{#component-alarmtd alarm=alarm field=field action='tdClick'}}
     {{/component-alarmtd}}
 {{/each}}  </script>
+<script type="text/x-handlebars" data-template-name="components/component-alarmstate"><div class="form-group">
+    <div class="radio">
+        <label>
+            {{view Ember.RadioButton name="alarmStateSelecation" selectionBinding="state" value="opened"}}
+            opened
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            {{view Ember.RadioButton name="alarmStateSelecation" selectionBinding="state" value="resolved"}}
+            resolved
+        </label>
+    </div>
+</div></script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmtable">{{#each tmpl in Ember.columnTemplates}}
   {{#component-popupinfo columnName=tmpl.columnName clickedField=clickedField clickedAlarm=clickedAlarm updater=updater}}
   {{/component-popupinfo}}
@@ -34,7 +48,6 @@
 </div>
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{value}}</script>
-<<<<<<< HEAD
 <script type="text/x-handlebars" data-template-name="components/component-columntemplate"><div class="form-inline">
     <div class="form-group">
         Column name: {{input value=column class="form-control" type="text"}}
@@ -58,14 +71,8 @@
     </div>       
 </div>
 </script>
-<script type="text/x-handlebars" data-template-name="editor-pair">{{!*
- * @editor pair
-}}
-{{component-columntemplate content=attr.value}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
-=======
-<script type="text/x-handlebars" data-template-name="components/component-search"><div class="input-group input-group-sm">
-      {{input value=value class="form-control inlineInput" placeholder="Search" type="text"}}
+<script type="text/x-handlebars" data-template-name="components/component-search"><div class="input-group input-group-sm col-xs-3">
+      {{input insert-newline='search' value=value class="form-control inlineInput" placeholder="Search" type="text"}}
       <span class="input-group-btn">
           <button {{action 'resetValue'}} class="btn btn-default btn-flat">
               <span class="glyphicon glyphicon-remove-circle"></span>
@@ -78,9 +85,16 @@
 {{#unless isValid}}
   <p>Invalid search query</p>
 {{/unless}}</script>
+<script type="text/x-handlebars" data-template-name="editor-pair">{{!*
+ * @editor pair
+}}
+{{component-columntemplate content=attr.value}}</script>
+<script type="text/x-handlebars" data-template-name="editor-radio">{{!*
+ * @editor radio
+}}
+{{component-alarmstate content=attr.value}}</script>
 <script type="text/x-handlebars" data-template-name="listalarm">{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}
 
 {{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
->>>>>>> search
 {{/component-alarmtable}}</script>

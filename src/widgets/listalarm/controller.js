@@ -70,8 +70,30 @@ Ember.Application.initializer({
                 }));
                 this.showParams();
                 this.setFields();
+                this.loadRadioButtonView();                
                 this.loadTemplates(this.get('model.popup'));
-                
+            },
+
+            loadRadioButtonView: function () {
+                view = Ember.View.extend({
+                    tagName : "input",
+                    type : "radio",
+                    attributeBindings : [ "name", "type", "value", "checked:checked:" ],
+                    click : function() {
+                        console.error(this);
+                        this.set("selection", this.$().val())
+                    },
+                    checked : function() {
+                        return this.get("value") == this.get("selection");   
+                    }.property()
+                });
+                try {
+                  if (!Ember.RadioButton) {
+                    Ember.RadioButton = view;
+                  }
+                } catch (err) {
+
+                }
             },
 
             loadTemplates: function (templates) {
@@ -93,7 +115,8 @@ Ember.Application.initializer({
                     console.error(param + ': ' + controller.get('model.' + param));
                 });
                 console.error("default_sort_column: " + controller.get('model.default_sort_column.property') + "-" + controller.get('model.default_sort_column.direction'));
-                console.error("columnts: " + controller.get('model.columns').join(' '))
+                console.error("columnts: " + controller.get('model.columns').join(' ')),
+                console.error("alarms_state_filter: " + controller.get('model.alarms_state_filter.state'))
                 
             },
 
@@ -113,14 +136,16 @@ Ember.Application.initializer({
             fetchAlarms: function(params) {
               var controller = this;
               var iParams = params || {};
+              var filterState = this.get('model.alarms_state_filter.state') || 'opened';
 
               var query = {
-                resolved: true,
-                tstart: iParams['tstart'] || 14832250,
-								tstop: iParams['tstop'] || 1485405720112,
+                tstart: iParams['tstart'] || 0,
+								tstop: iParams['tstop'] || 0,
 								sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
            			sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction'),
-                search: iParams['search'] || ''
+                search: iParams['search'] || '',
+                opened: filterState == 'opened',
+                resolved: filterState == 'resolved'
 							};
 
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
