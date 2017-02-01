@@ -31,15 +31,13 @@ from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 EVENT_TYPE = 'pbehavior'
 PBEHAVIOR_CREATE = 'create'
 PBEHAVIOR_DELETE = 'delete'
-
-
-def logger_error(logger, *args):
-    logger.error('Failed to perform the action {} '
-                 'for the event: {}'.format(*args))
+ERROR_MSG = 'Failed to perform the action {} for the event: {}'
 
 
 @register_task
 def event_processing(engine, event, pbm=None, logger=None, **kwargs):
+    logger.debug("Start processing event {}".format(event))
+
     if pbm is None:
         pbm = singleton_per_scope(PBehaviorManager)
 
@@ -47,6 +45,10 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
         cm = singleton_per_scope(Context)
         entity = cm.get_entity(event)
         entity_id = cm.get_entity_id(entity)
+
+        logger.debug("entity_id: {}\naction: {}".format(
+            entity_id, event.get('action'))
+        )
 
         filter = {'entity_id': entity_id}
         if event.get('action') == PBEHAVIOR_CREATE:
@@ -57,7 +59,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 connector_name=event['connector_name']
             )
             if not result:
-                logger_error(logger, event['action'], event)
+                logger.error(ERROR_MSG.format(event['action'], event))
 
         elif event.get('action') == PBEHAVIOR_DELETE:
             result = pbm.delete(_filter={
@@ -70,13 +72,15 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 PBehavior.CONNECTOR_NAME: event['connector_name'],
             })
             if not result:
-                logger_error(logger, event['action'], event)
+                logger.error(ERROR_MSG.format(event['action'], event))
         else:
-            logger_error(logger, event['action'], event)
+            logger.error(ERROR_MSG.format(event['action'], event))
 
 
 @register_task
 def beat_processing(engine, pbm=None, logger=None, **kwargs):
+    logger.debug("Start beat processing")
+
     if pbm is None:
         pbm = singleton_per_scope(PBehaviorManager)
     try:
