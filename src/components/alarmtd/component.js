@@ -13,6 +13,8 @@ Ember.Application.initializer({
          */
         var component = Ember.Component.extend({
             tagName: 'td',
+            renderers: ['state_val'],
+
             init: function() {
                 this._super();
 
@@ -27,8 +29,16 @@ Ember.Application.initializer({
             value: function() {
                 var alarm = get(this, 'alarm');
                 var field = get(this, 'field');
-                return get(alarm, field.name)
+                return alarm[field.getValue];
             }.property('alarm', 'field'),
+
+            hasRenderer: function () {
+                return this.get('renderers').includes(this.get('field.name').replace(/\./g, "_"))
+            }.property('alarm'),
+
+            renderer: function () {
+                return this.get('field.name').replace(/\./g, "_")
+            }.property('alarm.name')
         });
 
         application.register('component:component-alarmtd', component);

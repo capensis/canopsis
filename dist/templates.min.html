@@ -47,7 +47,11 @@
     </div>
 </div>
 </script>
-<script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{value}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{#if hasRenderer}}
+  {{component-renderer rendererType=field.name value=value}}
+{{else}}
+  {{value}}
+{{/if}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-columntemplate"><div class="form-inline">
     <div class="form-group">
         Column name: {{input value=column class="form-control" type="text"}}
@@ -71,6 +75,7 @@
     </div>       
 </div>
 </script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererstate"><span {{bind-attr class=spanClass}}>{{caption}}</span></script>
 <script type="text/x-handlebars" data-template-name="components/component-search"><div class="input-group input-group-sm col-xs-3">
       {{input insert-newline='search' value=value class="form-control inlineInput" placeholder="Search" type="text"}}
       <span class="input-group-btn">
@@ -93,8 +98,13 @@
  * @editor radio
 }}
 {{component-alarmstate content=attr.value}}</script>
+<script type="text/x-handlebars" data-template-name="_state_val">{{#component-rendererstate value=value}}
+{{/component-rendererstate}}</script>
 <script type="text/x-handlebars" data-template-name="listalarm">{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}
 
 {{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
-{{/component-alarmtable}}</script>
+{{/component-alarmtable}}
+
+
+{{component-renderer rendererType='state_val' value=3 }}</script>

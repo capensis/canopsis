@@ -207,7 +207,12 @@ Ember.Application.initializer({
               var alarmsArr = alarms.map(function(alarm) {
                 var newAlarm = {};
                 fields.forEach(function(field) {
-                  newAlarm[field.name] = get(Ember.Object.create(alarm), 'v.' + field.getValue)
+                  if (field.name != 't') {
+                    newAlarm[field.name] = get(Ember.Object.create(alarm), 'v.' + field.getValue)
+                  } else {
+                    newAlarm[field.name] = get(Ember.Object.create(alarm), 't')                    
+                  }
+
                 })
                 return newAlarm;
               });
@@ -216,7 +221,7 @@ Ember.Application.initializer({
             },
 
 						parseFields: function (columns) {
-							var nestedObjects = ['state', 'status'];
+							// var nestedObjects = ['state', 'status'];
 							var fields = [];
 							var sortColumn = this.get('model.default_sort_column.property');
 							var order = this.get('model.default_sort_column.direction');
@@ -230,11 +235,11 @@ Ember.Application.initializer({
 								obj['isSortable'] = column == sortColumn;
 								obj['isASC'] = order == 'ASC';
 
-								if (nestedObjects.includes(column)) {
-									obj['getValue'] = column + '.val';
-								} else {
-									obj['getValue'] = column;
-								}
+								// if (nestedObjects.includes(column)) {
+									// obj['getValue'] = column + '.val';
+								// } else {
+                obj['getValue'] = column;
+								// }
 								return obj;
 							});
 
