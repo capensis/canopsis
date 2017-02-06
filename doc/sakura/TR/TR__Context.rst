@@ -83,8 +83,8 @@ Document in collection measurements:
 .. code-block:: javascript
 
     {
-        '_id': //
-        'tags': //
+        '_id': //measurements _id
+        'tags': //lists of measurements tags
     }
 
 Technical guide
