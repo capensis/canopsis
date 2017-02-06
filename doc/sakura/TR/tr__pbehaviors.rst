@@ -237,7 +237,18 @@ To fit your changes, you also have to change the schemas in the database related
 Selector / SLA
 ^^^^^^^^^^^^^^
 
-The selector engine aggregates entity states to build new entities.  
+Selector
+~~~~~~~~
+
+The selector engine aggregates entity states to build new entities.
+
+* First, selectors are defined by the user with a filter. This filter aggregates several entities. To do that, you have to see in the context all entities that match the filter.
+* Then the engine selector will find all alarms related to these entities. (The old selector system uses 'events' collection but we want to migrate to 'alarms' collections) 
+* Finally, the engine will compute the entity state with the rule given by the user (worst state, best state, mean, etc...)
+
+SLA
+~~~
+
 It can be combined to the sla lib that will calcultate availability rates.  
 Some behaviors affects SLA rates.  
 For example, if a entity is in downtime, a selector which uses that entity must not be affected.  
