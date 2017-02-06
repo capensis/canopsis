@@ -243,8 +243,10 @@ Selector
 The selector engine aggregates entity states to build new entities.
 
 * First, selectors are defined by the user with a filter. This filter aggregates several entities. To do that, you have to see in the context all entities that match the filter.
-* Then the engine selector will find all alarms related to these entities. (The old selector system uses 'events' collection but we want to migrate to 'alarms' collections) 
+* Then the engine selector will find all alarms related to these entities. (The old selector system uses 'events' collection but we want to migrate to 'alerts' collections) 
 * Finally, the engine will compute the entity state with the rule given by the user (worst state, best state, mean, etc...)
+
+This new selector engine has to be adaptable, in order to let us use it with our new context, actually in development that let this engine do only one request (context and alerts at the same time).
 
 SLA
 ~~~
