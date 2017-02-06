@@ -48,7 +48,7 @@
 </div>
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{#if hasRenderer}}
-  {{component-renderer rendererType=field.name value=value}}
+  {{component-renderer rendererType=renderer value=value}}
 {{else}}
   {{value}}
 {{/if}}</script>
@@ -57,7 +57,7 @@
         Column name: {{input value=column class="form-control" type="text"}}
     </div>
     <div class="form-group">
-        Template name: {{input value=template class="form-control" type="text"}}
+        Template: {{summernote-editor content=template}}
     </div>
 </div></script>
 <script type="text/x-handlebars" data-template-name="components/component-popupinfo"><div style="position: absolute; left: 50%;display:none;" class="popupinfo">
@@ -75,7 +75,11 @@
     </div>       
 </div>
 </script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererack">t:{{value.t}}
+a:{{value.a}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstate"><span {{bind-attr class=spanClass}}>{{caption}}</span></script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererstatetimestamp">{{timeSince timestamp}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererstatusval">{{status}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-search"><div class="input-group input-group-sm col-xs-3">
       {{input insert-newline='search' value=value class="form-control inlineInput" placeholder="Search" type="text"}}
       <span class="input-group-btn">
@@ -98,13 +102,16 @@
  * @editor radio
 }}
 {{component-alarmstate content=attr.value}}</script>
+<script type="text/x-handlebars" data-template-name="_ack">{{#component-rendererack value=value}}
+{{/component-rendererack}}</script>
+<script type="text/x-handlebars" data-template-name="_state_t">{{#component-rendererstatetimestamp value=value}}
+{{/component-rendererstatetimestamp}}</script>
 <script type="text/x-handlebars" data-template-name="_state_val">{{#component-rendererstate value=value}}
 {{/component-rendererstate}}</script>
+<script type="text/x-handlebars" data-template-name="_status_val">{{#component-rendererstatusval value=value}}
+{{/component-rendererstatusval}}</script>
 <script type="text/x-handlebars" data-template-name="listalarm">{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}
 
 {{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
-{{/component-alarmtable}}
-
-
-{{component-renderer rendererType='state_val' value=3 }}</script>
+{{/component-alarmtable}}</script>
