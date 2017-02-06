@@ -22,7 +22,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
-   "Thomas Gosselin", "2017/02/06", "1.0", "context engine specifiation", ""
+   "Thomas Gosselin, Arthur Dewarumez", "2017/02/06", "1.0", "context engine specifiation", ""
 
 Contents
 ========
@@ -36,9 +36,9 @@ description:
 >>>>>>>>>>>>
 
 The context engine is in charge to keep the context's graph up to date.
-He extracts connector, resource and component from events, 
+He extracts connector, resource and component from events,
 He builds ids and check if connectors, resources and components are already in the graph and if links exists.
-if needed the engine will update the graph.
+If needed, the engine will update the graph.
 
 
 Software architecture and costing
@@ -56,7 +56,7 @@ Document in collection users:
         '_id': //user's id
         'name': //user's name
         'org': // user's organisation
-        'access_to': //list of organisations 
+        'access_to': //list of organisations the user can access
     }
 
 Document in collection Organisations:
@@ -67,9 +67,9 @@ Document in collection Organisations:
         '_id': //organisation's id
         'name': //organisation's name
         'parents': //list of organisation's parents _id
-        'children': //list of organisation's childre _id
-        'views': //list of organisation's views
-        'users': //list of users attached at the organisation
+        'children': //list of organisation's children _id
+        'views': //list of organisation's views _id
+        'users': //list of users _id attached at the organisation
     }
 
 Document in collection Entities:
