@@ -32,6 +32,14 @@ Contents
 Engine
 ------
 
+description:
+>>>>>>>>>>>>
+
+The context engine is in charge to keep the context's graph up to date.
+He extracts connector, resource and component from events, 
+He builds ids and check if connectors, resources and components are already in the graph and if links exists.
+if needed the engine will update the graph.
+
 
 Software architecture and costing
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
