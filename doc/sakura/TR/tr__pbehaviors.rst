@@ -248,8 +248,12 @@ The selector engine aggregates entity states to build new entities.
 
 This new selector engine has to be adaptable, in order to let us use it with our new context, actually in development that let this engine do only one request (context and alerts at the same time).
 
+You can retrieve the old engine in develop branch of this repo at this place: canopsis/sources/python/engines/canopsis/engines/selector.py
+
 SLA
 ~~~
+
+SLA ARE NOT READY FOR THE MOMENT - WE HAVE TO SPECIFY THEM BEFORE IMPLEMENT THEM. PLEASE DO NOT PAY ATTENTION TO ANY METHOD RELATED TO THE SLA IF YOU FIND THEM.
 
 It can be combined to the sla lib that will calcultate availability rates.  
 Some behaviors affects SLA rates.  
