@@ -46,7 +46,7 @@ Software architecture and costing
 
 Data Model:
 
-ICI ON MET LE SCHÉMA TOUT ÇA
+.. figure:: ../_static/images/context/data_model.png
 
 Document in collection users:
 
