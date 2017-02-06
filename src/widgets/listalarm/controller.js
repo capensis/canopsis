@@ -143,6 +143,7 @@ Ember.Application.initializer({
 								tstop: iParams['tstop'] || 0,
 								sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
            			sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction'),
+                filter: iParams['filter'] || this.get('model.filter'),
                 search: iParams['search'] || '',
                 opened: filterState == 'opened',
                 resolved: filterState == 'resolved'

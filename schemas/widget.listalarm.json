@@ -5,7 +5,7 @@
     },
 	"categories": [{
 		"title": "General",
-		"keys":["title", "default_sort_column", "alarms_state_filter"]
+		"keys":["title", "default_sort_column", "alarms_state_filter", "filter"]
 	},{
 		"title": "Columns",
 		"keys":["columns"]
@@ -27,6 +27,10 @@
 		"alarms_state_filter": {
 			"type": "object",
 			"role": "radio"
+		},
+		"filter": {
+			"type": "string",
+			"role": "cfilterwithproperties"
 		},
     "columns": {
 			"type": "array",
