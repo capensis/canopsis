@@ -14,8 +14,6 @@ References
 
 List of referenced functional and technical requirements...
 
-- :ref:`FR::Title <FR__Title>`
-- :ref:`TR::Other-Title <TR__Other_Title>`
 
 Updates
 =======
@@ -34,7 +32,6 @@ Contents
 Engine
 ------
 
-Description related to :ref:`desc <FR__Title__Desc>`.
 
 Software architecture and costing
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -46,6 +43,7 @@ ICI ON MET LE SCHÉMA TOUT ÇA
 Document in collection users:
 
 .. code-block:: javascript
+
     {
         '_id': //user's id
         'name': //user's name
@@ -56,6 +54,7 @@ Document in collection users:
 Document in collection Organisations:
 
 .. code-block:: javascript
+
     {
         '_id': //organisation's id
         'name': //organisation's name
@@ -68,6 +67,7 @@ Document in collection Organisations:
 Document in collection Entities:
 
 .. code-block:: javascript
+
     {
         '_id': //entity's' id
         'name': //entity's name
@@ -81,6 +81,7 @@ Document in collection Entities:
 Document in collection measurements:
 
 .. code-block:: javascript
+
     {
         '_id': //
         'tags': //
