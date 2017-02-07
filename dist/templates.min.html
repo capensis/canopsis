@@ -28,9 +28,9 @@
                 <tr>
                     {{#each field in fields}}
                         {{#if field.isSortable}}
-                            <th {{action 'click' field}}>{{field.name}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
+                            <th {{action 'click' field}}>{{field.humanName}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
                         {{else}}
-                            <th {{action 'click' field}}>{{field.name}}</th>                    
+                            <th {{action 'click' field}}>{{field.humanName}}</th>                    
                         {{/if}}
                     {{/each}}
                 </tr>
@@ -102,13 +102,13 @@ a:{{value.a}}</script>
  * @editor radio
 }}
 {{component-alarmstate content=attr.value}}</script>
-<script type="text/x-handlebars" data-template-name="_ack">{{#component-rendererack value=value}}
+<script type="text/x-handlebars" data-template-name="_v_ack">{{#component-rendererack value=value}}
 {{/component-rendererack}}</script>
-<script type="text/x-handlebars" data-template-name="_state_t">{{#component-rendererstatetimestamp value=value}}
+<script type="text/x-handlebars" data-template-name="_v_state_t">{{#component-rendererstatetimestamp value=value}}
 {{/component-rendererstatetimestamp}}</script>
-<script type="text/x-handlebars" data-template-name="_state_val">{{#component-rendererstate value=value}}
+<script type="text/x-handlebars" data-template-name="_v_state_val">{{#component-rendererstate value=value}}
 {{/component-rendererstate}}</script>
-<script type="text/x-handlebars" data-template-name="_status_val">{{#component-rendererstatusval value=value}}
+<script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
 <script type="text/x-handlebars" data-template-name="listalarm">{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}

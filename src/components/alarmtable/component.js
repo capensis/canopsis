@@ -40,7 +40,7 @@ Ember.Application.initializer({
 
                 tdClick: function (alarm, field) {
                     // if cell is clickable
-                    if (Ember.columnTemplates.findBy('columnName', field.name)) {       
+                    if (Ember.columnTemplates.findBy('columnName', field.humanName)) {       
                         this.set('clickedAlarm', alarm);
                         this.set('clickedField', field);
                         this.set('updater', (new Date()).getTime());

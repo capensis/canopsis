@@ -13,7 +13,7 @@ Ember.Application.initializer({
             },
 
             upd: function () {
-                if (this.get('columnName') == this.get('clickedField.name')) {
+                if (this.get('columnName') == this.get('clickedField.humanName')) {
                     $('.popupinfo').hide();                                                
                     console.error(this.get('columnName'), this.get('columnTemplate'), this.get('clickedField'), this.get('clickedAlarm'))
                     this.$('.popupinfo').fadeIn(500);                    

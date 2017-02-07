@@ -25,7 +25,6 @@ Ember.Application.initializer({
             dataUtils = container.lookupFactory('utility:data'),
 			      WidgetFactory = container.lookupFactory('factory:widget'),
 			      UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
-				  // RinfopopMixin = container.lookupFactory('mixin:rinfopop');
 
         var get = Ember.get,
             set = Ember.set,
@@ -35,7 +34,6 @@ Ember.Application.initializer({
         var listOptions = {
             mixins: [
                 UserConfigurationMixin,
-				// RinfopopMixin
             ]
         };
 
@@ -54,7 +52,25 @@ Ember.Application.initializer({
 
             searchText: '',
             isValidSearchText: true,
-            
+            humanReadableColumnNames: {
+              'uid': '_id',
+              'connector': 'v.connector',
+              'connector_name': 'v.connector_name',
+              'component': 'v.component',
+              'resource': 'v.resource',
+              'entity_id': 'd',
+              'state': 'v.state.val',
+              'status': 'v.status.val',
+              'snooze': 'v.snooze',
+              'ack': 'v.ack',
+              'cancel': 'v.cancel',
+              'ticket.val': 'v.ticket.val',
+              'output': 'output',
+              'opened': 't',
+              'resolved': 'v.resolved',
+              'domain': 'v.extra.domain',
+              'perimeter': 'v.extra.perimeter'
+            },            
 
             /**
              * Create the widget and set widget params into Ember vars
@@ -173,8 +189,6 @@ Ember.Application.initializer({
                 expression: expression
               };
 
-              var rs = false;
-
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alertexpression');
             	adapter.findQuery('alertexpression', query).then(function (result) {
                     // onfullfillment
@@ -189,13 +203,10 @@ Ember.Application.initializer({
                       controller.fetchAlarms(params);
                     }
                     
-                    // rs = result[0];
               }, function (reason) {
                     // onrejection
-                    // rs = false;
                     console.error('ERROR in the adapter: ', reason);
               });
-              // return rs;              
             },
 
             setFields: function () {
@@ -208,12 +219,9 @@ Ember.Application.initializer({
               var alarmsArr = alarms.map(function(alarm) {
                 var newAlarm = {};
                 fields.forEach(function(field) {
-                  if (field.name != 't') {
-                    newAlarm[field.name] = get(Ember.Object.create(alarm), 'v.' + field.getValue)
-                  } else {
-                    newAlarm[field.name] = get(Ember.Object.create(alarm), 't')                    
-                  }
-
+                    var val = get(Ember.Object.create(alarm), field.getValue);
+                    newAlarm[field.name] = val;
+                    newAlarm[field.humanName] = val;
                 })
                 return newAlarm;
               });
@@ -222,7 +230,7 @@ Ember.Application.initializer({
             },
 
 						parseFields: function (columns) {
-							// var nestedObjects = ['state', 'status'];
+              var controller = this;
 							var fields = [];
 							var sortColumn = this.get('model.default_sort_column.property');
 							var order = this.get('model.default_sort_column.direction');
@@ -231,16 +239,11 @@ Ember.Application.initializer({
 							fields = columns.map(function(column) {
 								var obj = {};
 
-								obj['name'] = column;
-
+								obj['name'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
+                obj['humanName'] = column;
 								obj['isSortable'] = column == sortColumn;
 								obj['isASC'] = order == 'ASC';
-
-								// if (nestedObjects.includes(column)) {
-									// obj['getValue'] = column + '.val';
-								// } else {
-                obj['getValue'] = column;
-								// }
+                obj['getValue'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
 								return obj;
 							});
 
@@ -251,8 +254,12 @@ Ember.Application.initializer({
               var column = get(this, 'fields').findBy('name', get(this, 'controller.default_sort_column.property'));
               if (!column) {
                 column = get(this, 'fields.firstObject');
-                column['isSortable'] = true;
-                column['isASC'] = get(this, 'controller.default_sort_column.property');
+                try {
+                  column['isSortable'] = true;
+                  column['isASC'] = get(this, 'controller.default_sort_column.property');                
+                } catch (err) {
+                  console.error('alarm!!!');
+                }
                 console.error('the column "' + get(this, 'controller.default_sort_column.property') + '" was not found.');
                 return column;
               }

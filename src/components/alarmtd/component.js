@@ -13,13 +13,10 @@ Ember.Application.initializer({
          */
         var component = Ember.Component.extend({
             tagName: 'td',
-            renderers: ['state_val', 'state_t', 'status_val', 'ack'],
+            renderers: ['v_state_val', 'v_state_t', 'v_status_val', 'v_ack'],
 
             init: function() {
                 this._super();
-
-                set(this, 'alarm', get(this, 'alarm'));
-                set(this, 'field', get(this, 'field'));                
               },
 
             click: function () {
