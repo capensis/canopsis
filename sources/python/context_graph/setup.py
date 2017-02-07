@@ -1,4 +1,4 @@
-from canopsis.comon.setup import setup
+from canopsis.common.setup import setup
 
 install_requires = ['canopsis.common']
 
