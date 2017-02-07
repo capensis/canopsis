@@ -50,7 +50,7 @@ class TestManager(BaseTest):
             }],
             'tstart': timegm(datetime.utcnow().timetuple()),
             'tstop': timegm((datetime.utcnow() + timedelta(days=1)).timetuple()),
-            'rrule': 'FREQ=DAILY',
+            'rrule': 'FREQ=DAILY;INTERVAL=2;COUNT=3',
             'enabled': True,
             'connector': 'test_connector',
             'connector_name': 'test_connector_name',
@@ -60,6 +60,30 @@ class TestManager(BaseTest):
         data = deepcopy(self.pbehavior)
         data.update({'_id': self.pbehavior_id})
         self.pbm.pbehavior_storage.put_element(element=data)
+
+        self.entity_id_1 = '/component/collectd/pbehavior/test1/'
+        self.entity_id_2 = '/component/collectd/pbehavior/test2/'
+        self.entity_id_3 = '/component/collectd/pbehavior/test3/'
+
+        self.entities = [{
+            'entity_id': self.entity_id_1,
+            'name': 'engine-test1',
+            'type': 'metric-test',
+            'connector': 'canopsis-test-connector',
+            'connector_name': 'canopsis-test',
+        }, {
+            'entity_id': self.entity_id_2,
+            'name': 'big-engine-test2',
+            'type': 'metric-test',
+            'connector': 'canopsis-test-connector',
+            'connector_name': 'canopsis-test',
+        }, {
+            'entity_id': self.entity_id_3,
+            'name': 'test_context3',
+            'type': 'resource-test',
+            'connector': 'nagios-test-connector',
+            'connector_name': 'nagios-test',
+        }]
 
     def test_create(self):
         pb = self.pbm.create(**self.pbehavior)
@@ -140,9 +164,9 @@ class TestManager(BaseTest):
         pbehavior_2.update({'eids': [5, 6],
                             'tstart': timegm((datetime.utcnow() + timedelta(days=1)).timetuple())})
 
-        self.pbm.pbehavior_storage.put_element(element=self.pbehavior)
-        self.pbm.pbehavior_storage.put_element(element=pbehavior_1)
-        self.pbm.pbehavior_storage.put_element(element=pbehavior_2)
+        self.pbm.pbehavior_storage.put_elements(
+            elements=(self.pbehavior, pbehavior_1, pbehavior_2)
+        )
         pbs = self.pbm.get_pbehaviors(2)
 
         self.assertTrue(isinstance(pbs, list))
@@ -154,26 +178,7 @@ class TestManager(BaseTest):
     @patch('canopsis.pbehavior.manager.PBehaviorManager.context', new_callable=PropertyMock)
     def test_compute_pbehaviors_filters(self, mock_context):
         mock_context.return_value = Context(data_scope='test_context')
-        entities = [{
-            'entity_id': 1,
-            'name': 'engine-test1',
-            'type': 'metric-test',
-            'connector': 'canopsis-test-connector',
-            'connector_name': 'canopsis-test',
-        }, {
-            'entity_id': 2,
-            'name': 'big-engine-test2',
-            'type': 'metric-test',
-            'connector': 'canopsis-test-connector',
-            'connector_name': 'canopsis-test',
-        }, {
-            'entity_id': 3,
-            'name': 'test_context3',
-            'type': 'resource-test',
-            'connector': 'nagios-test-connector',
-            'connector_name': 'nagios-test',
-        }]
-        self.context[Context.CTX_STORAGE].put_elements(entities)
+        self.context[Context.CTX_STORAGE].put_elements(self.entities)
         self.pbm.compute_pbehaviors_filters()
         pb = self.pbm.get(self.pbehavior_id)
 
@@ -181,7 +186,7 @@ class TestManager(BaseTest):
         self.assertTrue('eids' in pb)
         self.assertTrue(isinstance(pb['eids'], list))
         self.assertEqual(len(pb['eids']), 1)
-        self.assertEqual(pb['eids'][0], 3)
+        self.assertEqual(pb['eids'][0], self.entity_id_3)
 
         pb = deepcopy(self.pbehavior)
         pb.update({
@@ -203,6 +208,53 @@ class TestManager(BaseTest):
         self.assertTrue('eids' in pb)
         self.assertTrue(isinstance(pb['eids'], list))
         self.assertEqual(len(pb['eids']), 3)
+
+    def test_check_pbehaviors(self):
+        pbehavior_1 = deepcopy(self.pbehavior)
+        pbehavior_2 = deepcopy(self.pbehavior)
+        pbehavior_3 = deepcopy(self.pbehavior)
+        pbehavior_4 = deepcopy(self.pbehavior)
+
+        pb_name1, pb_name2, pb_name3, pb_name4 = 'name1', 'name3', 'name3', 'name4'
+
+        pbehavior_1.update(
+            {'name': pb_name1,
+             'eids': [self.entity_id_1, self.entity_id_2],
+             'tstart': timegm(datetime.utcnow().timetuple()),
+             'tstop': timegm((datetime.utcnow() + timedelta(days=8)).timetuple())}
+        )
+
+        pbehavior_2.update({'name': pb_name2})
+
+        pbehavior_3.update(
+            {'name': pb_name3,
+             'eids': [self.entity_id_2, self.entity_id_3],
+             'tstart': timegm(datetime.utcnow().timetuple()),
+             'tstop': timegm((datetime.utcnow() + timedelta(days=8)).timetuple())}
+        )
+
+        pbehavior_4.update({'name': pb_name4})
+
+        self.pbm.pbehavior_storage.put_elements(
+            elements=(pbehavior_1, pbehavior_2, pbehavior_3, pbehavior_4)
+        )
+
+        self.entities[0]['timestamp'] = timegm((datetime.utcnow() + timedelta(days=2)).timetuple())
+        self.entities[1]['timestamp'] = timegm(datetime.utcnow().timetuple()),
+        self.entities[2]['timestamp'] = timegm((datetime.utcnow() - timedelta(days=2)).timetuple())
+
+        self.context[Context.CTX_STORAGE].put_elements(self.entities)
+
+        result = self.pbm.check_pbehaviors(
+            self.entity_id_1, [pb_name1, pb_name2], [pb_name3, pb_name4]
+        )
+        self.assertTrue(result)
+
+        result = self.pbm.check_pbehaviors(
+            self.entity_id_3, [pb_name3, pb_name4], [pb_name1, pb_name2]
+        )
+
+        self.assertFalse(result)
 
 
 if __name__ == '__main__':

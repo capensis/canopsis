@@ -20,6 +20,7 @@
 
 from calendar import timegm
 from datetime import datetime
+from dateutil.rrule import rrulestr
 from json import loads, dumps
 from uuid import uuid4
 
@@ -308,6 +309,54 @@ class PBehaviorManager(MiddlewareRegistry):
 
             pb[PBehavior.EIDS] = [e['entity_id'] for e in entities]
             self.pbehavior_storage.put_element(element=pb, _id=pb['_id'])
+
+    def check_pbehaviors(self, entity_id, list_in, list_out):
+        """
+        :param str entity_id:
+        :param list list_in: list of pbehavior names
+        :param list list_out: list of pbehavior names
+        :return: bool if the entity_id is currently in list_in arg and out list_out arg
+        """
+        return (self._check_pbehavior(entity_id, list_in) and
+                not self._check_pbehavior(entity_id, list_out))
+
+    def _check_pbehavior(self, entity_id, pb_names):
+        """
+        :param str entity_id:
+        :param list pb_names: list of pbehavior names
+        :return: bool if the entity_id is currently in pb_names arg
+        """
+        cm = singleton_per_scope(Context)
+        entity = cm.get_entity_by_id(entity_id)
+        event = cm.get_event(entity)
+
+        pbehaviors = self.pbehavior_storage.get_elements(
+            query={
+                PBehavior.NAME: {'$in': pb_names},
+                PBehavior.EIDS: {'$in': [entity_id]}
+            }
+        )
+
+        names = []
+        fromts = datetime.fromtimestamp
+        for pb in pbehaviors:
+            tstart = fromts(pb['tstart'])
+            tstop = fromts(pb['tstop'])
+
+            dt_list = list(
+                rrulestr(pb['rrule'], dtstart=tstart).between(
+                    tstart, tstop, inc=True
+                )
+            )
+
+            if (len(dt_list) >= 2 and
+                fromts(event['timestamp']) >= dt_list[0] and
+                fromts(event['timestamp']) <= dt_list[-1]):
+                names.append(pb['name'])
+
+        result = set(pb_names).isdisjoint(set(names))
+
+        return not result
 
     def _check_response(self, response):
         return True if 'ok' in response and response['ok'] == 1 else False

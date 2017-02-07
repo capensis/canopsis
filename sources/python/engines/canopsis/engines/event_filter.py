@@ -22,11 +22,12 @@ from canopsis.engines.core import Engine, DROP, publish
 
 from canopsis.alerts.manager import Alerts
 from canopsis.context.manager import Context
-
+from canopsis.common.utils import singleton_per_scope
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.event import forger, get_routingkey
 from canopsis.old.mfilter import check
+from canopsis.pbehavior.manager import PBehaviorManager
 
 from json import loads
 from time import time
@@ -382,6 +383,24 @@ class engine(Engine):
                 self.logger.debug(
                     u'Event: {}, filter matches'.format(event.get('rk', event))
                 )
+
+                if 'pbehaviors' in filterItem:
+                    pbehaviors = filterItem.get('pbehaviors', {})
+                    list_in = [v['$in'] for v in pbehaviors.values() if 'in' in v]
+                    list_out = [v['$in'] for v in pbehaviors.values() if 'out' in v]
+
+                    if list_in or list_out:
+                        pbm = singleton_per_scope(PBehaviorManager)
+
+                        entity = self.cm.get_entity(event)
+                        entity_id = self.cm.get_entity_id(entity)
+
+                        result = pbm.check_pbehavior(
+                            entity_id, list_in, list_out
+                        )
+
+                        if not result:
+                            break
 
                 for action in actions:
                     if action['type'].lower() == 'drop':
