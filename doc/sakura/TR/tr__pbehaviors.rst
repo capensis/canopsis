@@ -237,7 +237,24 @@ To fit your changes, you also have to change the schemas in the database related
 Selector / SLA
 ^^^^^^^^^^^^^^
 
-The selector engine aggregates entity states to build new entities.  
+Selector
+~~~~~~~~
+
+The selector engine aggregates entity states to build new entities.
+
+* First, selectors are defined by the user with a filter. This filter aggregates several entities. To do that, you have to see in the context all entities that match the filter.
+* Then the engine selector will find all alarms related to these entities. (The old selector system uses 'events' collection but we want to migrate to 'alerts' collections) 
+* Finally, the engine will compute the entity state with the rule given by the user (worst state, best state, mean, etc...)
+
+This new selector engine has to be adaptable, in order to let us use it with our new context, actually in development that let this engine do only one request (context and alerts at the same time).
+
+You can retrieve the old engine in develop branch of this repo at this place: canopsis/sources/python/engines/canopsis/engines/selector.py
+
+SLA
+~~~
+
+SLA ARE NOT READY FOR THE MOMENT - WE HAVE TO SPECIFY THEM BEFORE IMPLEMENT THEM. PLEASE DO NOT PAY ATTENTION TO ANY METHOD RELATED TO THE SLA IF YOU FIND THEM.
+
 It can be combined to the sla lib that will calcultate availability rates.  
 Some behaviors affects SLA rates.  
 For example, if a entity is in downtime, a selector which uses that entity must not be affected.  
