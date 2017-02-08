@@ -7,11 +7,10 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 
 
-CONF_PATH = 'context_graph/manager.conf'
-CATEGORY = 'CONTEXTGRAPH'
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
+
+@conf_paths('context_graph/manager.conf')
+@add_category('CONTEXTGRAPH')
 class ContextGraph(MiddlewareRegistry):
     """ContextGraph"""
 
@@ -35,18 +34,21 @@ class ContextGraph(MiddlewareRegistry):
         :param comp_id: id of component
         :return type: boolean
         """
+        return len(list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': comp_id}))) > 0
 
     def check_re(self, re_id):
         """_check_re
 
         :param re_id:
         """
+        return len(list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': re_id}))) > 0
 
     def check_conn(self, conn_id):
         """_check_conn
 
         :param conn_id:
         """
+        return len(list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': conn_id}))) > 0
 
     def check_links(self, conn_id, comp_id, re_id):
         """_check_links
@@ -56,12 +58,22 @@ class ContextGraph(MiddlewareRegistry):
         :param re_id:
         """
 
-    def _checks_conn_re_link(self, conn_id, re_id):
+    def _check_conn_re_link(self, conn_id, re_id):
         """_checks_conn_re_link
 
         :param conn_id:
         :param re_id:
         """
+
+    def check_comp_to_re_link(self, re_id, comp_id):
+        comp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': comp_id}))
+        for i in comp:
+            if not re_id in i['depends']:
+                tmp = i
+                tmp['depends'].append(re_id)
+                self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
+
+
     def _check_conn_comp_link(self, conn_id, comp_id):
         """_check_conn_comp_link
 
@@ -69,17 +81,26 @@ class ContextGraph(MiddlewareRegistry):
         :param comp_id:
         """
 
+    def _check_comp_re_link(self, comp_id, re_id):
+        """_check_com_re_link
+
+        :param comp_id:
+        :param re_id:
+        """
+
     def add_comp(self, comp):
         """add_comp
 
         :param comp:
         """
+        self[ContextGraph.ENTITIES_STORAGE].put_element(element=comp)
 
     def add_re(self, re):
         """add_re
 
         :param re:
         """
+        self[ContextGraph.ENTITIES_STORAGE].put_element(element=re)
 
     def add_conn(self, conn):
         """add_conn

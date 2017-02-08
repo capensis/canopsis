@@ -30,12 +30,44 @@ def event_processing(
     :param cm:
     :param **kwargs:
     """
-    #generate id
+    comp_id = event['component']
+    re_id = '{0}/{1}'.format(event['resource'], comp_id)
+    conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
 
-    if context_graph_manager.check_comp(comp_id):
-        pass
-    if context_graph_manager.check_re(re_id):
-        pass
-    if context_graph_manager.check_conn(comm_id):
+
+    if not context_graph_manager.check_comp(comp_id):
+        depends = [conn_id]
+        if 'resource' in event.keys():
+            depends.append(re_id)
+            context_graph_manager.add_re({
+                '_id': re_id,
+                'name': event['resource'],
+                'type': 'resource',
+                'depends': [conn_id],
+                'impact': [comp_id],
+                'measurements': [],
+                'infos': {}
+            })
+        context_graph_manager.add_comp({
+            '_id': comp_id,
+            'name': comp_id,
+            'type': 'component',
+            'depends': depends,
+            'impact': [],
+            'measurements': [],
+            'infos': {}
+        })
+    if not context_graph_manager.check_re(re_id):
+        context_graph_manager.add_re({
+                '_id': re_id,
+                'name': event['resource'],
+                'type': 'resource',
+                'depends': [conn_id],
+                'impact': [comp_id],
+                'measurements': [],
+                'infos': {}
+        })
+        context_graph_manager.check_comp_to_re_link(re_id, comp_id)
+    if context_graph_manager.check_conn(conn_id):
         pass
 
