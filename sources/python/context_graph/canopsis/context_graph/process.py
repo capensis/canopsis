@@ -67,7 +67,18 @@ def event_processing(
                 'measurements': [],
                 'infos': {}
         })
-        context_graph_manager.check_comp_to_re_link(re_id, comp_id)
-    if context_graph_manager.check_conn(conn_id):
-        pass
+        context_graph_manager.manage_comp_to_re_link(re_id, comp_id)
+    if not context_graph_manager.check_conn(conn_id):
+        logger.error('add connector')
+        context_graph_manager.add_conn({
+            '_id': conn_id,
+            'name': event['connector_name'],
+            'type': 'connector',
+            'depends': [],
+            'impact': [comp_id, re_id],
+            'measurements': [],
+            'infos': {}
+        })
+        context_graph_manager.manage_re_to_conn_link(conn_id, re_id)
+        context_graph_manager.manage_comp_to_conn_link(conn_id, comp_id)
 

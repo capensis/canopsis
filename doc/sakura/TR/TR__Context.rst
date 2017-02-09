@@ -70,6 +70,7 @@ Document in collection Organisations:
         'children': //list of organisation's children _id
         'views': //list of organisation's views _id
         'users': //list of users _id attached at the organisation
+        'entities': //list of entities _id
     }
 
 Document in collection Entities:
