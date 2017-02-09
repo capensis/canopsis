@@ -22,10 +22,19 @@ def create_comp(id, name, depends=[], impact=[], measurements=[], infos={}):
     return create_entity(id,
                          name,
                          "component",
-                         depends=[],
-                         impact=[],
-                         measurements=[],
-                         infos={})
+                         depends,
+                         impact,
+                         measurements,
+                         infos)
+
+def create_conn(id, name, depends=[], impact=[], measurements=[], infos={}):
+    return create_entity(id,
+                         name,
+                         "connector",
+                         depends,
+                         impact,
+                         measurements,
+                         infos)
 
 
 class TestManager(TestCase):
@@ -144,6 +153,18 @@ class TestManager(TestCase):
         self.manager.add_comp(comp)
         tmp_comp=self.entities_storage.get_elements(ids=id)
         self.assertEqual(comp, tmp_comp)
+
+    def test_add_con(self):
+        id = "conn1"
+        conn = create_conn(id,
+                           "conn1_name",
+                           depends=["foo0", "bar0", "foo1", "bar1"],
+                           impact=["comp1", "comp2", "comp3", "comp4"],
+                           measurements=["m1", "m2", "m3"],
+                           infos={"title": "Foo", "content": "bar"})
+        self.manager.add_conn(conn)
+        tmp_conn=self.entities_storage.get_elements(ids=id)
+        self.assertEqual(conn, tmp_conn)
 
 
 if __name__ == '__main__':
