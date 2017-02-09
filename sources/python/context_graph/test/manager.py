@@ -6,23 +6,46 @@ from unittest import main, TestCase
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 
+
+def create_entity(id, name, etype, depends=[], impact=[], measurements=[], infos={}):
+    return {'_id': id,
+            'type': etype,
+            'name': name,
+            'depends': depends,
+            'impact': impact,
+            'measurements': measurements,
+            'infos': infos
+    }
+
+
+def create_comp(id, name, depends=[], impact=[], measurements=[], infos={}):
+    return create_entity(id,
+                         name,
+                         "component",
+                         depends=[],
+                         impact=[],
+                         measurements=[],
+                         infos={})
+
+
 class TestManager(TestCase):
 
     def setUp(self):
-        self.manager = ContextGraph()
-        self.entities_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testentities'
+        self.manager=ContextGraph()
+        self.entities_storage=Middleware.get_middleware_by_uri(
+            'storage-default-testentities://'
         )
-        self.organisations_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testorganisations'
+        self.organisations_storage=Middleware.get_middleware_by_uri(
+            'storage-default-testorganisations://'
         )
-        self.users_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testusers'
+        self.users_storage=Middleware.get_middleware_by_uri(
+            'storage-default-testusers://'
         )
 
-        self.manager[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
-        self.manager[ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
-        self.manager[ContextGraph.USERS_STORAGE] = self.users_storage
+        self.manager[ContextGraph.ENTITIES_STORAGE]=self.entities_storage
+        self.manager[
+            ContextGraph.ORGANISATIONS_STORAGE]=self.organisations_storage
+        self.manager[ContextGraph.USERS_STORAGE]=self.users_storage
 
         self.entities_storage.put_element(
             element={
@@ -74,7 +97,7 @@ class TestManager(TestCase):
 
         self.organisations_storage.put_element(
             element={
-                    '_id': 'org-1',
+                '_id': 'org-1',
                     'name': 'org-1',
                     'parents': '',
                     'children': [],
@@ -98,8 +121,8 @@ class TestManager(TestCase):
         self.organisations_storage.remove_elements()
 
     def test_check_comp(self):
-        self.assertEqual(self.manager.chek_comp('c1'), True)
-        self.assertEqual(self.manager.chek_comp('c2'), False)
+        self.assertEqual(self.manager.check_comp('c1'), True)
+        self.assertEqual(self.manager.check_comp('c2'), False)
 
     def test_check_re(self):
         self.assertEqual(self.manager.check_re('r1/c1'), True)
@@ -109,8 +132,18 @@ class TestManager(TestCase):
         self.assertEqual(self.manager.check_conn('conn1'), True)
         self.assertEqual(self.manager.check_conn('conn2'), False)
 
-    def test_check_links(self):
-        pass
+    def test_add_comp(self):
+        id="comp1"
+        comp=create_comp(id,
+                           "comp1_name",
+                           depends=["conn1", "conn2", "conn3", "conn4"],
+                           impact=["res1", "res2", "res3", "res4"],
+                           measurements=["m1", "m2", "m3"],
+                           infos={"title": "Foo", "content": "bar"})
+
+        self.manager.add_comp(comp)
+        tmp_comp=self.entities_storage.get_elements(ids=id)
+        self.assertEqual(comp, tmp_comp)
 
 
 if __name__ == '__main__':
