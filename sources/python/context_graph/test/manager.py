@@ -92,25 +92,25 @@ class TestManager(TestCase):
             }
         )
 
-        def trearDown(self):
-            self.entities_storage.remove_elements()
-            self.organisations_storage.remove_elements()
-            self.organisations_storage.remove_elements()
+    def trearDown(self):
+        self.entities_storage.remove_elements()
+        self.organisations_storage.remove_elements()
+        self.organisations_storage.remove_elements()
 
-        def test_check_comp(self):
-            self.assertEqual(self.manager.chek_comp('c1'), True)
-            self.assertEqual(self.manager.chek_comp('c2'), False)
+    def test_check_comp(self):
+        self.assertEqual(self.manager.chek_comp('c1'), True)
+        self.assertEqual(self.manager.chek_comp('c2'), False)
 
-        def test_check_re(self):
-            self.assertEqual(self.manager.check_re('r1/c1'), True)
-            self.assertEqual(self.manager.check_re('r2/c1'), False)
+    def test_check_re(self):
+        self.assertEqual(self.manager.check_re('r1/c1'), True)
+        self.assertEqual(self.manager.check_re('r2/c1'), False)
 
-        def test_check_conn(self):
-            self.assertEqual(self.manager.check_conn('conn1'), True)
-            self.assertEqual(self.manager.check_conn('conn2'), False)
+    def test_check_conn(self):
+        self.assertEqual(self.manager.check_conn('conn1'), True)
+        self.assertEqual(self.manager.check_conn('conn2'), False)
 
-        def test_check_links(self):
-            pass
+    def test_check_links(self):
+        pass
 
 
 if __name__ == '__main__':
