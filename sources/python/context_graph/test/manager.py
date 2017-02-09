@@ -15,7 +15,7 @@ def create_entity(id, name, etype, depends=[], impact=[], measurements=[], infos
             'impact': impact,
             'measurements': measurements,
             'infos': infos
-    }
+            }
 
 
 def create_comp(id, name, depends=[], impact=[], measurements=[], infos={}):
@@ -27,6 +27,7 @@ def create_comp(id, name, depends=[], impact=[], measurements=[], infos={}):
                          measurements,
                          infos)
 
+
 def create_conn(id, name, depends=[], impact=[], measurements=[], infos={}):
     return create_entity(id,
                          name,
@@ -37,24 +38,34 @@ def create_conn(id, name, depends=[], impact=[], measurements=[], infos={}):
                          infos)
 
 
+def create_re(id, name, depends=[], impact=[], measurements=[], infos={}):
+    return create_entity(id,
+                         name,
+                         "resource",
+                         depends,
+                         impact,
+                         measurements,
+                         infos)
+
+
 class TestManager(TestCase):
 
     def setUp(self):
-        self.manager=ContextGraph()
-        self.entities_storage=Middleware.get_middleware_by_uri(
+        self.manager = ContextGraph()
+        self.entities_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
-        self.organisations_storage=Middleware.get_middleware_by_uri(
+        self.organisations_storage = Middleware.get_middleware_by_uri(
             'storage-default-testorganisations://'
         )
-        self.users_storage=Middleware.get_middleware_by_uri(
+        self.users_storage = Middleware.get_middleware_by_uri(
             'storage-default-testusers://'
         )
 
-        self.manager[ContextGraph.ENTITIES_STORAGE]=self.entities_storage
+        self.manager[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
         self.manager[
-            ContextGraph.ORGANISATIONS_STORAGE]=self.organisations_storage
-        self.manager[ContextGraph.USERS_STORAGE]=self.users_storage
+            ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
+        self.manager[ContextGraph.USERS_STORAGE] = self.users_storage
 
         self.entities_storage.put_element(
             element={
@@ -142,8 +153,8 @@ class TestManager(TestCase):
         self.assertEqual(self.manager.check_conn('conn2'), False)
 
     def test_add_comp(self):
-        id="comp1"
-        comp=create_comp(id,
+        id = "comp1"
+        comp = create_comp(id,
                            "comp1_name",
                            depends=["conn1", "conn2", "conn3", "conn4"],
                            impact=["res1", "res2", "res3", "res4"],
@@ -151,7 +162,7 @@ class TestManager(TestCase):
                            infos={"title": "Foo", "content": "bar"})
 
         self.manager.add_comp(comp)
-        tmp_comp=self.entities_storage.get_elements(ids=id)
+        tmp_comp = self.entities_storage.get_elements(ids=id)
         self.assertEqual(comp, tmp_comp)
 
     def test_add_con(self):
@@ -163,8 +174,20 @@ class TestManager(TestCase):
                            measurements=["m1", "m2", "m3"],
                            infos={"title": "Foo", "content": "bar"})
         self.manager.add_conn(conn)
-        tmp_conn=self.entities_storage.get_elements(ids=id)
+        tmp_conn = self.entities_storage.get_elements(ids=id)
         self.assertEqual(conn, tmp_conn)
+
+    def test_add_re(self):
+        id = "re1"
+        re = create_re(id,
+                       "re1_name",
+                       depends=["foo", "bar", "foo", "bar"],
+                       impact=["comp1", "comp2", "comp3", "comp4"],
+                       measurements=["m1", "m2", "m3"],
+                       infos={"title": "Foo", "content": "bar"})
+        self.manager.add_re(re)
+        tmp_re = self.entities_storage.get_elements(ids=id)
+        self.assertEqual(re, tmp_re)
 
 
 if __name__ == '__main__':
