@@ -31,7 +31,9 @@ def event_processing(
     :param **kwargs:
     """
     comp_id = event['component']
-    re_id = '{0}/{1}'.format(event['resource'], comp_id)
+    re_id = None
+    if 'resource' in event.keys():
+        re_id = '{0}/{1}'.format(event['resource'], comp_id)
     conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
 
 
@@ -57,28 +59,33 @@ def event_processing(
             'measurements': [],
             'infos': {}
         })
-    if not context_graph_manager.check_re(re_id):
-        context_graph_manager.add_re({
-                '_id': re_id,
-                'name': event['resource'],
-                'type': 'resource',
-                'depends': [conn_id],
-                'impact': [comp_id],
-                'measurements': [],
-                'infos': {}
-        })
-        context_graph_manager.manage_comp_to_re_link(re_id, comp_id)
+    if re_id is not None:
+        if not context_graph_manager.check_re(re_id):
+            context_graph_manager.add_re({
+                    '_id': re_id,
+                    'name': event['resource'],
+                    'type': 'resource',
+                    'depends': [conn_id],
+                    'impact': [comp_id],
+                    'measurements': [],
+                    'infos': {}
+            })
+            context_graph_manager.manage_comp_to_re_link(re_id, comp_id)
     if not context_graph_manager.check_conn(conn_id):
+        impact = [comp_id]
+        if re_id is not None:
+            impact.append(re_id)
         context_graph_manager.add_conn({
             '_id': conn_id,
             'name': event['connector_name'],
             'type': 'connector',
             'depends': [],
-            'impact': [comp_id, re_id],
+            'impact': impact,
             'measurements': [],
             'infos': {}
         })
         context_graph_manager.manage_re_to_conn_link(conn_id, re_id)
         context_graph_manager.manage_comp_to_conn_link(conn_id, comp_id)
     context_graph_manager._check_conn_comp_link(conn_id, comp_id)
-    context_graph_manager._check_conn_re_link(conn_id, re_id)
+    if re_id is not None:
+        context_graph_manager._check_conn_re_link(conn_id, re_id)
