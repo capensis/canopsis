@@ -58,13 +58,6 @@ class ContextGraph(MiddlewareRegistry):
         :param re_id:
         """
 
-    def _check_conn_re_link(self, conn_id, re_id):
-        """_checks_conn_re_link
-
-        :param conn_id:
-        :param re_id:
-        """
-
     def manage_comp_to_re_link(self, re_id, comp_id):
         comp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': comp_id}))
         for i in comp:
@@ -85,7 +78,7 @@ class ContextGraph(MiddlewareRegistry):
     def manage_comp_to_conn_link(self, conn_id, comp_id):
         comp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': comp_id}))
         for i in comp:
-            if not comp_id in i['depends']:
+            if not conn_id in i['depends']:
                 tmp = i
                 tmp['depends'].append(conn_id)
                 self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
@@ -96,6 +89,37 @@ class ContextGraph(MiddlewareRegistry):
         :param conn_id:
         :param comp_id:
         """
+        conn = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id':conn_id}))
+        comp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id':comp_id}))
+        for i in conn:
+            for j in comp:
+                if not comp_id in i['impact']:
+                    tmp = i
+                    tmp['impact'].append(comp_id)
+                    self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
+                if not conn_id in j['depends']:
+                    tmp = j
+                    tmp['depends'].append(conn_id)
+                    self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
+
+    def _check_conn_re_link(self, conn_id, re_id):
+        """_checks_conn_re_link
+
+        :param conn_id:
+        :param re_id:
+        """
+        conn = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id':conn_id}))
+        re = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id':re_id}))
+        for i in conn:
+            for j in re:
+                if not re_id in i['impact']:
+                    tmp = i
+                    tmp['impact'].append(re_id)
+                    self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
+                if not conn_id in j['depends']:
+                    tmp = j
+                    tmp['depends'].append(conn_id)
+                    self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
 
     def _check_comp_re_link(self, comp_id, re_id):
         """_check_com_re_link

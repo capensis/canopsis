@@ -69,7 +69,6 @@ def event_processing(
         })
         context_graph_manager.manage_comp_to_re_link(re_id, comp_id)
     if not context_graph_manager.check_conn(conn_id):
-        logger.error('add connector')
         context_graph_manager.add_conn({
             '_id': conn_id,
             'name': event['connector_name'],
@@ -81,4 +80,5 @@ def event_processing(
         })
         context_graph_manager.manage_re_to_conn_link(conn_id, re_id)
         context_graph_manager.manage_comp_to_conn_link(conn_id, comp_id)
-
+    context_graph_manager._check_conn_comp_link(conn_id, comp_id)
+    context_graph_manager._check_conn_re_link(conn_id, re_id)
