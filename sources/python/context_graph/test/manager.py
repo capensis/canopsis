@@ -121,11 +121,11 @@ class TestManager(TestCase):
         self.organisations_storage.put_element(
             element={
                 '_id': 'org-1',
-                    'name': 'org-1',
-                    'parents': '',
-                    'children': [],
-                    'views': [],
-                    'users': []
+                'name': 'org-1',
+                'parents': '',
+                'children': [],
+                'views': [],
+                'users': []
             }
         )
 
@@ -167,7 +167,6 @@ class TestManager(TestCase):
         self.manager.add_comp(comp)
         tmp_comp = self.entities_storage.get_elements(ids=id)
         self.assertEqual(comp, tmp_comp)
-
 
     def test_add_con(self):
         id = "conn1"
@@ -266,7 +265,7 @@ class TestManager(TestCase):
         self.assertIn(conn3_id, doc["depends"])
 
     def test_check_links(self):
-        self.fail()
+        self.assertRaises(NotImplementedError, self.manager.check_links,None, None, None)
 
 
 if __name__ == '__main__':
