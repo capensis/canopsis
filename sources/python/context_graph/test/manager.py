@@ -138,10 +138,10 @@ class TestManager(TestCase):
             }
         )
 
-    # def trearDown(self):
-    #     self.entities_storage.remove_elements()
-    #     self.organisations_storage.remove_elements()
-    #     self.organisations_storage.remove_elements()
+    def trearDown(self):
+        self.entities_storage.remove_elements()
+        self.organisations_storage.remove_elements()
+        self.organisations_storage.remove_elements()
 
     def test_check_comp(self):
         self.assertEqual(self.manager.check_comp('c1'), True)
@@ -240,6 +240,33 @@ class TestManager(TestCase):
         self.assertIn(conn1_id, doc["depends"])
         self.assertIn(conn2_id, doc["depends"])
         self.assertIn(conn3_id, doc["depends"])
+
+    def test_manage_comp_to_conn_link(self):
+        comp1_id = "mrc_comp1"
+        conn1_id = "mrc_conn1"
+        conn2_id = "mrc_conn2"
+        conn3_id = "mrc_conn3"
+
+        comp1 = create_comp(comp1_id, comp1_id, depends=[conn1_id, conn2_id])
+        conn1 = create_conn(conn1_id, conn1_id, impact=[comp1_id])
+        conn2 = create_conn(conn2_id, conn2_id, impact=[comp1_id])
+        conn3 = create_conn(conn3_id, conn3_id)
+
+        self.manager.add_comp(comp1)
+        self.manager.add_conn(conn1)
+        self.manager.add_conn(conn2)
+        self.manager.add_conn(conn3)
+
+        self.manager.manage_comp_to_re_link(conn3_id, comp1_id)
+
+        doc = self.entities_storage.get_elements(ids=comp1_id)
+        # FIXME : did we receive more than one element ?
+        self.assertIn(conn1_id, doc["depends"])
+        self.assertIn(conn2_id, doc["depends"])
+        self.assertIn(conn3_id, doc["depends"])
+
+    def test_check_links(self):
+        self.fail()
 
 
 if __name__ == '__main__':
