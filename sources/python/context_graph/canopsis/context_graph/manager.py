@@ -57,6 +57,7 @@ class ContextGraph(MiddlewareRegistry):
         :param comp_id:
         :param re_id:
         """
+        raise NotImplementedError
 
     def manage_comp_to_re_link(self, re_id, comp_id):
         """Update component-resource link"""
