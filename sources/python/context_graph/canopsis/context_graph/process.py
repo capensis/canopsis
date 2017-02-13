@@ -157,4 +157,4 @@ def event_processing(
     if re_id is not None:
         update_link(re_id, conn_id, context)
 
-    context_graph_manager.put_entities(context.values)
+    context_graph_manager.put_entities(context.values())
