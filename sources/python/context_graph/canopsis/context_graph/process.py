@@ -14,8 +14,11 @@ from canopsis.context_graph.manager import ContextGraph
 
 context_graph_manager = ContextGraph()
 
+LOGGER = None
+
 
 def create_entity(id, name, etype, depends=[], impact=[], measurements=[], infos={}):
+    LOGGER.debug("Create entity of _id {0}".format(id))
     return {'_id': id,
             'type': etype,
             'name': name,
@@ -30,6 +33,7 @@ def update_depends_link(ent1_id, ent2_id, context):
     """
     Update depends link between from entity ent1 to ent2 in the context.
     """
+
     ent_from = context[ent1_id]
 
     # for ent in ent_from["depends"]:
@@ -37,6 +41,7 @@ def update_depends_link(ent1_id, ent2_id, context):
     #         ent_to["depends"].append(ent)
 
     if ent2_id not in ent_from["depends"]:
+        LOGGER.debug("Add {0} on the field depends of {1}.".format(ent2_id, ent1_id))
         ent_from.append(ent2_id)
 
 
@@ -51,9 +56,11 @@ def update_link(ent1_id, ent2_id, context):
     ent2 = context[ent2_id]
 
     if ent1_id not in ent2["impact"]:
+        LOGGER.debug("Add {0} on the field impacts of {1}.".format(ent1_id, ent2_id))
         ent2["impact"].append(ent1_id)
 
     if ent2_id not in ent1["depends"]:
+        LOGGER.debug("Add {0} on the field impacts of {1}.".format(ent2_id, ent3_id))
         ent1["depends"].append(ent2_id)
 
 
@@ -73,6 +80,9 @@ def event_processing(
     :param cm:
     :param **kwargs:
     """
+    global LOGGER
+
+    LOGGER = logger
 
     # Retreive id from id
     comp_id = event['component']
@@ -83,6 +93,10 @@ def event_processing(
 
     conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
 
+    LOGGER.debug("Resource id : {0}.".format(re_id))
+    LOGGER.debug("Component id : {0}.".format(comp_id))
+    LOGGER.debug("Connector id : {0}.".format(conn_id))
+
     related_ctx = context_graph_manager.get_entity([comp_id, re_id, conn_id])
 
     comp_there = False
@@ -91,12 +105,15 @@ def event_processing(
 
     for entity in related_ctx:
         if entity["_id"] == comp_id:
+            LOGGER.debug("Component {0} already exist in database".format(comp_id))
             comp_there = True
 
         if entity["_id"] == re_id:
+            LOGGER.debug("Resource {0} already exist in database".format(re_id))
             re_there = True
 
         if entity["_id"] == conn_id:
+            LOGGER.debug("Connector {0} already exist in database".format(conn_id))
             conn_there = True
 
     context = {}
@@ -120,6 +137,7 @@ def event_processing(
 
     # If comp did not exist, a resource is created above
     if re_id is not None and comp_there is True:
+        LOGGER.debug("Re_id is None and comp_there is True")
         if not re_there:
             re = create_entity(re_id,
                                event['resource'],
@@ -128,6 +146,7 @@ def event_processing(
                                [comp_id],
                                [],
                                {})
+            context[re_id] = re
 
         # update link between re_id and comp_id if needed
         update_depends_link(re_id, comp_id, context)
@@ -136,15 +155,15 @@ def event_processing(
         impact = [comp_id]
         if re_id is not None:
             impact.append(re_id)
-        conn = create_entity(conn_id,
-                             event['connector_name'],
-                             'connector',
-                             [],
-                             impact,
-                             [],
-                             {})
+            conn = create_entity(conn_id,
+                                 event['connector_name'],
+                                 'connector',
+                                 [],
+                                 impact,
+                                 [],
+                                 {})
 
-        context[conn_id] = conn
+            context[conn_id] = conn
 
         # update link from re to conn
         update_depends_link(re_id, conn_id, context)
@@ -155,6 +174,8 @@ def event_processing(
     update_link(comp_id, conn_id, context)
 
     if re_id is not None:
+        LOGGER.debug("Re_id is None")
         update_link(re_id, conn_id, context)
 
-    context_graph_manager.put_entities(context.values)
+    context_graph_manager.put_entities(context.values())
+    LOGGER.debug("The end.")
