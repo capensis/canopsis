@@ -57,8 +57,10 @@ class ContextGraph(MiddlewareRegistry):
         :param comp_id:
         :param re_id:
         """
+        raise NotImplementedError
 
     def manage_comp_to_re_link(self, re_id, comp_id):
+        """Update component-resource link"""
         comp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': comp_id}))
         for i in comp:
             if not re_id in i['depends']:
@@ -67,6 +69,7 @@ class ContextGraph(MiddlewareRegistry):
                 self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
 
     def manage_re_to_conn_link(self, conn_id, re_id):
+        """Update resource-connector link"""
         re = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': re_id}))
         for i in re:
             if not conn_id in i['depends']:
@@ -76,6 +79,7 @@ class ContextGraph(MiddlewareRegistry):
 
 
     def manage_comp_to_conn_link(self, conn_id, comp_id):
+        """Update component-connector link"""
         comp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': comp_id}))
         for i in comp:
             if not conn_id in i['depends']:

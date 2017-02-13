@@ -48,6 +48,10 @@ Data Model:
 
 .. figure:: ../_static/images/context/data_model.png
 
+Entities type relation models:
+
+.. figure:: ../_static/images/context/entities_type_relation.png
+
 Document in collection users:
 
 .. code-block:: javascript
