@@ -152,9 +152,9 @@ def event_processing(
         # update link from conn to comp
         update_depends_link(comp_id, conn_id, context)
 
-    update_link(comp_id, conn_id)
+    update_link(comp_id, conn_id, context)
 
     if re_id is not None:
-        update_link(re_id, conn_id)
+        update_link(re_id, conn_id, context)
 
     context_graph_manager.put_elements(context.values)
