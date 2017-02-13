@@ -52,6 +52,12 @@ class ContextGraph(MiddlewareRegistry):
 
         return list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
 
+    def put_entities(self, entities):
+        """
+        Store entities into database.
+        """
+        self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
+
     def check_re(self, re_id):
         """_check_re
 
