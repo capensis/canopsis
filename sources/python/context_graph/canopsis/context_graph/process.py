@@ -136,15 +136,15 @@ def event_processing(
         impact = [comp_id]
         if re_id is not None:
             impact.append(re_id)
-        conn = create_entity(conn_id,
-                             event['connector_name'],
-                             'connector',
-                             [],
-                             impact,
-                             [],
-                             {})
+            conn = create_entity(conn_id,
+                                 event['connector_name'],
+                                 'connector',
+                                 [],
+                                 impact,
+                                 [],
+                                 {})
 
-        context[conn_id] = conn
+            context[conn_id] = conn
 
         # update link from re to conn
         update_depends_link(re_id, conn_id, context)
