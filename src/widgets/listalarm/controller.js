@@ -19,12 +19,14 @@
 
 Ember.Application.initializer({
     name: 'ListAlarmWidget',
-    after: ['TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader'],
+    after: ['TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader', 'CustomfilterlistMixin'],
     initialize: function(container, application) {
 		    var timeWindowUtils = container.lookupFactory('utility:timewindow'),
             dataUtils = container.lookupFactory('utility:data'),
 			      WidgetFactory = container.lookupFactory('factory:widget'),
 			      UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
+
+            mx = container.lookupFactory('mixin:customfilterlist');
 
         var get = Ember.get,
             set = Ember.set,
@@ -34,6 +36,7 @@ Ember.Application.initializer({
         var listOptions = {
             mixins: [
                 UserConfigurationMixin,
+                mx
             ]
         };
 
@@ -46,6 +49,7 @@ Ember.Application.initializer({
          * @widget listalarm
          */
         var widget = WidgetFactory('listalarm',{
+            // needs: ['login', 'application'],
 
             viewMixins: [
                 ],
@@ -69,8 +73,20 @@ Ember.Application.initializer({
               'opened': 't',
               'resolved': 'v.resolved',
               'domain': 'v.extra.domain',
-              'perimeter': 'v.extra.perimeter'
-            },            
+              'perimeter': 'v.extra.perimeter',
+              'last_state_change': 'v.state.t',
+              'output': 'v.state.m'
+            },
+
+
+            hook: function() {
+              this.set('model.user_filters', this.get('user_filters'));
+              // this.saveUserConfiguration();
+              console.error('waaat');
+            }.observes('user_filters'),
+
+            // rights: Ember.computed.alias('controllers'),
+
 
             /**
              * Create the widget and set widget params into Ember vars
@@ -80,7 +96,7 @@ Ember.Application.initializer({
                 this._super.apply(this, arguments);
 				        this.fetchAlarms();
                 // this.valideExpression();
-
+                set(this, 'rights', {list_filters: {checksum: true}});
 				        set(this, 'store', DS.Store.extend({
                     container: get(this, 'container')
                 }));
@@ -159,7 +175,7 @@ Ember.Application.initializer({
 								tstop: iParams['tstop'] || 0,
 								sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
            			sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction'),
-                filter: iParams['filter'] || this.get('model.filter'),
+                // filter: iParams['filter'] || this.get('model.filter'),
                 search: iParams['search'] || '',
                 opened: filterState == 'opened',
                 resolved: filterState == 'resolved'

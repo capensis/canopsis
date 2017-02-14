@@ -7,10 +7,27 @@ Ember.Application.initializer({
 
         var component = Ember.Component.extend({
 
+            propertyMap: {
+                't': 'date',
+                'a': 'user'
+            },
+
+            properties: ['t', 'a'],
+
+            propertiesMap: function () {
+                var propertyMap = this.get('propertyMap');
+                var val = this.get('value');
+                return this.get('properties').map(function(prop) {
+                    return {
+                        'key': propertyMap[prop] || prop,
+                        'value': get(val, prop)
+                    }
+                })  
+            }.property('properties', 'propertyMap', 'value'),
+
             init: function() {
                 this._super();
               },
-
             
         });
 

@@ -75,8 +75,9 @@
     </div>       
 </div>
 </script>
-<script type="text/x-handlebars" data-template-name="components/component-rendererack">t:{{value.t}}
-a:{{value.a}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererack">{{#each prop in propertiesMap}}
+    {{prop.key}}: {{prop.value}}<br>
+{{/each}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstate"><span {{bind-attr class=spanClass}}>{{caption}}</span></script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstatetimestamp">{{timeSince timestamp}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstatusval">{{status}}</script>
@@ -110,7 +111,44 @@ a:{{value.a}}</script>
 {{/component-rendererstate}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
+<script type="text/x-handlebars" data-template-name="listalarm">{{#if controller.rights.list_filters.checksum}}
+    <div class="pull-right btn-group" data-toggle="btn-toggle">
+        {{#each filter in controller.filters_list}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active"}} data-col="all" {{action "setFilter" filter}}>
+                {{filter.title}}
+                1
+            </span>
+        {{/each}}
+        {{#each filter in controller.custom_filters_list}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "selectFilter" filter}}>
+                {{filter.title}}
+                2
+                <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+            </span>
+        {{/each}}
+        {{#each filter in controller.user_filters}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "setFilter" filter}}>
+                {{filter.title}}
+                3
+                <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+            </span>
+        {{/each}}
+        {{#if controller.mixinOptions.customfilterlist.can_mix_filters}}
+            {{#each operator in controller.customFilterOperators}}
+                <button {{bind-attr class=":btn operator.active:btn-primary:btn-default :btn-sm operator.active:active"}} {{action "setActiveOperator" operator}}>{{operator.display}}</button>
+            {{/each}}
+        {{/if}}
+        {{#if controller.canAddCustomFiltersInUserPreferences}}
+            <button type="button" class="btn btn-primary btn-sm btn-add-customfilter" {{action "addUserFilter"}} data-col="all">
+                <i class="fa fa-plus"></i> {{tr 'Add filter'}}
+            </button>
+        {{/if}}
+    </div>
+{{/if}}
+
+{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}
 
 {{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
