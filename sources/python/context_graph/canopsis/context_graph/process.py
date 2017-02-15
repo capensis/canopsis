@@ -10,6 +10,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.utils import singleton_per_scope
 
 from canopsis.context_graph.manager import ContextGraph
+import time
 
 
 context_graph_manager = ContextGraph()
@@ -84,6 +85,10 @@ def event_processing(
     :param **kwargs:
     """
 
+    time_get_ctx = None
+    time_process_ctx = None
+    time_update_ctx = None
+
     logger.critical("Context graph : process")
 
     logger.critical("Event : {0}".format(pprint.saferepr(event)))
@@ -101,7 +106,12 @@ def event_processing(
     logger.critical("Component id : {0}.".format(comp_id))
     logger.critical("Connector id : {0}.".format(conn_id))
 
+    start = time.time()
     related_ctx = context_graph_manager.get_entity([comp_id, re_id, conn_id])
+    end = time.time()
+    time_get_ctx = end - start
+
+    start = time.time()
 
     comp_there = False
     re_there = False
@@ -192,5 +202,15 @@ def event_processing(
         logger.critical("Re_id is None")
         update_link(logger, re_id, conn_id, context)
 
+    end = time.time()
+    time_process_ctx = end - start
+
+    logger.critical("Store {0} element.".format(len(context.values)))
+    logger.critical(len(context.values))
+    start = time.time()
     context_graph_manager.put_entities(context.values())
+    end = time.time()
+    time_update_ctx = end - start
+
+    logger.critical("Execution time :\n\tget context :{0}\n\tprocess context :{1}\n\tupdate context :{2}".format(time_get_ctx, time_process_ctx, time_update_ctx))
     logger.critical("The end.")
