@@ -32,7 +32,10 @@ def update_depends_link(logger, ent1_id, ent2_id, context):
     Update depends link between from entity ent1 to ent2 in the context.
     """
 
-    ent_from = context[ent1_id]
+    try:
+        ent_from = context[ent1_id]
+    except KeyError:
+        logger.warning("Cannot find {0} in the context".format(ent1_id))
 
     # for ent in ent_from["depends"]:
     #     if not ent in ent_to["depends"]:
@@ -49,8 +52,14 @@ def update_link(logger, ent1_id, ent2_id, context):
     identified by ent1_id the then add ent1_id in the field "depends"
     of ent2_id.
     """
-    ent1 = context[ent1_id]
-    ent2 = context[ent2_id]
+    try:
+        ent1 = context[ent1_id]
+    except KeyError:
+        logger.warning("Cannot find {0} in the context".format(ent1_id))
+    try:
+        ent2 = context[ent2_id]
+    except KeyError:
+        logger.warning("Cannot find {0} in the context".format(ent1_id))
 
     if ent1_id not in ent2["impact"]:
         ent2["impact"].append(ent1_id)
@@ -186,12 +195,16 @@ def event_processing(
     end = time.time()
     time_process_ctx = end - start
 
-    logger.critical("Store {0} element.".format(len(context.values)))
-    logger.critical(len(context.values))
     start = time.time()
     context_graph_manager.put_entities(context.values())
     end = time.time()
     time_update_ctx = end - start
 
-    logger.critical("Execution time :\n\tget context :{0}\n\tprocess context :{1}\n\tupdate context :{2}".format(time_get_ctx, time_process_ctx, time_update_ctx))
+    try:
+        lol = event["plop"]
+        logger.critical("Execution time :\n\tget context :{0}\n\tprocess context :{1}\n\tupdate context :{2}".format(time_get_ctx, time_process_ctx, time_update_ctx))
+    except KeyError:
+        pass
+
+
     logger.critical("The end.")
