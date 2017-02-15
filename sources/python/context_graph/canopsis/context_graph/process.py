@@ -17,7 +17,6 @@ context_graph_manager = ContextGraph()
 
 
 def create_entity(logger, id, name, etype, depends=[], impact=[], measurements=[], infos={}):
-    logger.critical("Create entity of _id {0}".format(id))
     return {'_id': id,
             'type': etype,
             'name': name,
@@ -40,8 +39,6 @@ def update_depends_link(logger, ent1_id, ent2_id, context):
     #         ent_to["depends"].append(ent)
 
     if ent2_id not in ent_from["depends"]:
-        logger.critical(
-            "Add {0} on the field depends of {1}.".format(ent2_id, ent1_id))
         ent_from["depends"].append(ent2_id)
 
 
@@ -56,13 +53,9 @@ def update_link(logger, ent1_id, ent2_id, context):
     ent2 = context[ent2_id]
 
     if ent1_id not in ent2["impact"]:
-        logger.critical(
-            "Add {0} on the field impacts of {1}.".format(ent1_id, ent2_id))
         ent2["impact"].append(ent1_id)
 
     if ent2_id not in ent1["depends"]:
-        logger.critical(
-            "Add {0} on the field impacts of {1}.".format(ent2_id, ent3_id))
         ent1["depends"].append(ent2_id)
 
 
@@ -91,8 +84,6 @@ def event_processing(
 
     logger.critical("Context graph : process")
 
-    logger.critical("Event : {0}".format(pprint.saferepr(event)))
-
     # Retreive id from id
     comp_id = event['component']
 
@@ -119,26 +110,18 @@ def event_processing(
 
     for entity in related_ctx:
         if entity["_id"] == comp_id:
-            logger.critical(
-                "Component {0} already exist in database".format(comp_id))
             comp_there = True
 
         if entity["_id"] == re_id:
-            logger.critical(
-                "Resource {0} already exist in database".format(re_id))
             re_there = True
 
         if entity["_id"] == conn_id:
-            logger.critical(
-                "Connector {0} already exist in database".format(conn_id))
             conn_there = True
 
     context = {}
 
     for doc in related_ctx:
         context[doc["_id"]] = doc
-
-    logger.critical("Local context : {0}".format(context))
 
     if not comp_there:
         depends = [conn_id]
@@ -160,7 +143,6 @@ def event_processing(
 
     # If comp did not exist, a resource is created above
     if re_id is not None and comp_there is True:
-        logger.critical("Re_id is None and comp_there is True")
         if not re_there:
             re = create_entity(logger,
                                re_id,
@@ -199,7 +181,6 @@ def event_processing(
     update_link(logger, comp_id, conn_id, context)
 
     if re_id is not None:
-        logger.critical("Re_id is None")
         update_link(logger, re_id, conn_id, context)
 
     end = time.time()
