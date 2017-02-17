@@ -56,10 +56,6 @@ class ContextGraph(MiddlewareRegistry):
         """
         Store entities into database.
         """
-        f = open("/tmp/plop.log", "a")
-        f.write("I put a lot of entities into the database\n")
-        f.write(str(entities) + "\n")
-        f.close()
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
     def check_re(self, re_id):
