@@ -35,7 +35,8 @@ def update_depends_link(logger, ent1_id, ent2_id, context):
     try:
         ent_from = context[ent1_id]
     except KeyError:
-        logger.warning("Cannot find {0} in the context".format(ent1_id))
+        pass
+        #logger.warning("Cannot find {0} in the context".format(ent1_id))
 
     # for ent in ent_from["depends"]:
     #     if not ent in ent_to["depends"]:
@@ -55,11 +56,13 @@ def update_link(logger, ent1_id, ent2_id, context):
     try:
         ent1 = context[ent1_id]
     except KeyError:
-        logger.warning("Cannot find {0} in the context".format(ent1_id))
+        pass
+        #logger.warning("Cannot find {0} in the context".format(ent1_id))
     try:
         ent2 = context[ent2_id]
     except KeyError:
-        logger.warning("Cannot find {0} in the context".format(ent1_id))
+        pass
+        #logger.warning("Cannot find {0} in the context".format(ent1_id))
 
     if ent1_id not in ent2["impact"]:
         ent2["impact"].append(ent1_id)
@@ -91,7 +94,7 @@ def event_processing(
     time_process_ctx = None
     time_update_ctx = None
 
-    logger.critical("Context graph : process")
+    #logger.critical("Context graph : process")
 
     # Retreive id from id
     comp_id = event['component']
@@ -102,9 +105,9 @@ def event_processing(
 
     conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
 
-    logger.critical("Resource id : {0}.".format(re_id))
-    logger.critical("Component id : {0}.".format(comp_id))
-    logger.critical("Connector id : {0}.".format(conn_id))
+    #logger.critical("Resource id : {0}.".format(re_id))
+    #logger.critical("Component id : {0}.".format(comp_id))
+    #logger.critical("Connector id : {0}.".format(conn_id))
 
     start = time.time()
     related_ctx = context_graph_manager.get_entity([comp_id, re_id, conn_id])
@@ -200,11 +203,6 @@ def event_processing(
     end = time.time()
     time_update_ctx = end - start
 
-    try:
-        lol = event["plop"]
-        logger.critical("Execution time :\n\tget context :{0}\n\tprocess context :{1}\n\tupdate context :{2}".format(time_get_ctx, time_process_ctx, time_update_ctx))
-    except KeyError:
-        pass
+    logger.critical("get context : {0}\tprocess context :{1}\tupdate context :{2}".format(time_get_ctx, time_process_ctx, time_update_ctx))
 
-
-    logger.critical("The end.")
+    #logger.critical("The end.")
