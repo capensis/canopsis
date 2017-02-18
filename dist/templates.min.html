@@ -81,19 +81,17 @@
 <script type="text/x-handlebars" data-template-name="components/component-rendererstate"><span {{bind-attr class=spanClass}}>{{caption}}</span></script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstatetimestamp">{{timeSince timestamp}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstatusval">{{status}}</script>
-<script type="text/x-handlebars" data-template-name="components/component-search"><div class="input-group input-group-sm col-xs-3">
-      {{input insert-newline='search' value=value class="form-control inlineInput" placeholder="Search" type="text"}}
-      <span class="input-group-btn">
-          <button {{action 'resetValue'}} class="btn btn-default btn-flat">
-              <span class="glyphicon glyphicon-remove-circle"></span>
-          </button>
-          <button {{action 'search'}} class="btn btn-primary btn-flat">
-              <span class="fa fa-search"></span>
-          </button>
-      </span>
-</div>
+<script type="text/x-handlebars" data-template-name="components/component-search">{{input insert-newline='search' value=value class="form-control inlineInput" placeholder="Search" type="text"}}
+<span class="input-group-btn">
+    <button {{action 'resetValue'}} class="btn btn-default btn-flat">
+        <span class="glyphicon glyphicon-remove-circle"></span>
+    </button>
+    <button {{action 'search'}} class="btn btn-primary btn-flat">
+        <span class="fa fa-search"></span>
+    </button>
+</span>
 {{#unless isValid}}
-  <p>Invalid search query</p>
+  <p class='search-invalid-message'>Invalid search query</p>
 {{/unless}}</script>
 <script type="text/x-handlebars" data-template-name="editor-pair">{{!*
  * @editor pair
@@ -111,18 +109,21 @@
 {{/component-rendererstate}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#if controller.rights.list_filters.checksum}}
+<script type="text/x-handlebars" data-template-name="listalarm">
+{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
+{{/component-search}}
+
+
+{{#if controller.rights.list_filters.checksum}}
     <div class="pull-right btn-group" data-toggle="btn-toggle">
         {{#each filter in controller.filters_list}}
             <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active"}} data-col="all" {{action "setFilter" filter}}>
                 {{filter.title}}
-                1
             </span>
         {{/each}}
         {{#each filter in controller.custom_filters_list}}
             <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "selectFilter" filter}}>
                 {{filter.title}}
-                2
                 <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
                 <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
             </span>
@@ -130,7 +131,6 @@
         {{#each filter in controller.user_filters}}
             <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "setFilter" filter}}>
                 {{filter.title}}
-                3
                 <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
                 <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
             </span>
@@ -148,8 +148,83 @@
     </div>
 {{/if}}
 
-{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
-{{/component-search}}
+
+<div class="pull-left dataTables_filter" style='margin-top:0'>
+    {{view Ember.Select
+        content=controller.itemsPerPagePropositions
+        value=controller.itemsPerPagePropositionSelected
+        class="inlineInput form-control input-sm"
+    }}
+    {{tr 'records per page'}}
+</div>
+
+
+{{!--2 / 6--}}
+{{#unless controller.hasOnePage}}
+    <div class="pull-right" style="padding-left:4px">
+        {{#unless controller.isFirstPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </button>
+            </span>
+        {{/unless}}
+        <span style="float:left; padding:4px">
+            {{controller.currentPage}} / {{controller.totalPages}}
+        </span>
+        {{#unless controller.isLastPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+            </span>
+        {{/unless}}
+    </div>
+{{/unless}}
 
 {{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
-{{/component-alarmtable}}</script>
+{{/component-alarmtable}}
+
+
+<div style='padding-bottom: 30px;'>
+{{!--pagination info--}}
+<div class="pull-left btn-group">
+    {{tr 'Showing'}} {{controller.paginationFirstItemIndex}} {{tr 'to'}} {{controller.paginationLastItemIndexx}} {{tr 'of'}} {{controller.itemsTotal}} {{tr 'entries'}}
+</div>
+
+{{!--2 / 6--}}
+{{#unless controller.hasOnePage}}
+    <div class="pull-right btn-group" style="padding-left:4px;">
+        {{#unless controller.isFirstPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </button>
+            </span>
+        {{/unless}}
+        <span style="float:left; padding:4px">
+            {{controller.currentPage}} / {{controller.totalPages}}
+        </span>
+        {{#unless controller.isLastPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+            </span>
+        {{/unless}}
+    </div>
+{{/unless}}
+
+</div></script>

@@ -75,6 +75,7 @@ define([
     'ehbs!_v_status_val',
     'canopsis/brick-listalarm/src/serializers/alertexpression',
     'canopsis/brick-listalarm/src/serializers/alerts',
+    'link!canopsis/brick-listalarm/src/style.css',
     'canopsis/brick-listalarm/src/widgets/listalarm/controller',
     'ehbs!listalarm'
 ], function () {

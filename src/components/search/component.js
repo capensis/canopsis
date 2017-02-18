@@ -6,6 +6,7 @@ Ember.Application.initializer({
             isNone = Ember.isNone;
 
         var component = Ember.Component.extend({
+            classNames: ['pull-left', 'input-group', 'input-group-sm', 'col-xs-3', 'search', 'search-padding'],
 
             init: function() {
                 this._super();
