@@ -1,4 +1,7 @@
 {{#each field in fields}}
     {{#component-alarmtd alarm=alarm field=field action='tdClick'}}
     {{/component-alarmtd}}
-{{/each}}  
+{{/each}}
+
+{{#component-alarmactions alarm=alarm}}
+{{/component-alarmactions}}

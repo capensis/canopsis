@@ -15,10 +15,11 @@
                             <th {{action 'click' field}}>{{field.humanName}}</th>                    
                         {{/if}}
                     {{/each}}
+                    <th>actions</th>        
                 </tr>
             </thead>
             <tbody>
-                {{#each alarm in sAlarms}}
+                {{#each alarm in alarms}}
                 
                     {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick'}}
                     {{/component-alarmraw}}

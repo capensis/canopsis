@@ -19,6 +19,7 @@
 
  require.config({
     paths: {
+        'components/component-alarmactions': 'canopsis/brick-listalarm/src/components/alarmactions/template',
         'components/component-alarmraw': 'canopsis/brick-listalarm/src/components/alarmraw/template',
         'components/component-alarmstate': 'canopsis/brick-listalarm/src/components/alarmstate/template',
         'components/component-alarmtable': 'canopsis/brick-listalarm/src/components/alarmtable/template',
@@ -44,6 +45,8 @@
 define([
     'canopsis/brick-listalarm/src/adapters/alertexpression',
     'canopsis/brick-listalarm/src/adapters/alerts',
+    'canopsis/brick-listalarm/src/components/alarmactions/component',
+    'ehbs!components/component-alarmactions',
     'canopsis/brick-listalarm/src/components/alarmraw/component',
     'ehbs!components/component-alarmraw',
     'canopsis/brick-listalarm/src/components/alarmstate/component',

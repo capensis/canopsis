@@ -1,7 +1,25 @@
+<script type="text/x-handlebars" data-template-name="components/component-alarmactions">{{#if hasLinks}}
+  <div class="btn-group" style="display:flex">
+      <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+          <i class="fa fa-info"></i>
+          <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" style="right:0; left:auto;">
+        {{#each link in alarm.linklist.event_links}}
+          <li>
+              <a target="_blank" {{bind-attr href=link.url}}>{{link.label}}</a>
+          </li>
+        {{/each}}
+      </ul>
+  </div>
+{{/if}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmraw">{{#each field in fields}}
     {{#component-alarmtd alarm=alarm field=field action='tdClick'}}
     {{/component-alarmtd}}
-{{/each}}  </script>
+{{/each}}
+
+{{#component-alarmactions alarm=alarm}}
+{{/component-alarmactions}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmstate"><div class="form-group">
     <div class="radio">
         <label>
@@ -33,10 +51,11 @@
                             <th {{action 'click' field}}>{{field.humanName}}</th>                    
                         {{/if}}
                     {{/each}}
+                    <th>actions</th>        
                 </tr>
             </thead>
             <tbody>
-                {{#each alarm in sAlarms}}
+                {{#each alarm in alarms}}
                 
                     {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick'}}
                     {{/component-alarmraw}}
@@ -109,8 +128,7 @@
 {{/component-rendererstate}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">
-{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
+<script type="text/x-handlebars" data-template-name="listalarm">{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}
 
 

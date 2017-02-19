@@ -21,9 +21,9 @@ Ember.Application.initializer({
                 return get(this, 'defaultSortColumn');
             }.property('defaultSortColumn'),
 
-            sAlarms: function() {
-                return this.get('alarms');
-            }.property('alarms'),
+            // sAlarms: function() {
+            //     return this.get('alarms');
+            // }.property('alarms'),
 
             actions: {
                 click: function (field) {

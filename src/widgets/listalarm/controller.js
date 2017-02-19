@@ -204,12 +204,20 @@ Ember.Application.initializer({
                       var val = get(Ember.Object.create(alarm), field.getValue);
                       newAlarm[field.name] = val;
                       newAlarm[field.humanName] = val;
+                      // data for testing
+                      newAlarm['linklist'] = {
+                        'event_links': [
+                          {
+                            'url': 'http://tasks.info/?co=Demo',
+                            'label': 'test'
+                          }
+                        ]
+                      }
                   })
                   return newAlarm;
                 });
               this.set('defTotal', Ember.totalAlarms);
-              this.set('loaded', true);
-              
+              this.set('loaded', true);              
               return alarmsArr;
 
             }.property('alarmss.@each', 'fields.[]'),
@@ -286,6 +294,7 @@ Ember.Application.initializer({
                 console.error("alarms_state_filter: " + controller.get('model.alarms_state_filter.state'))
                 
             },
+            
 
             /**
              * Set the reload to true in order to redraw events
