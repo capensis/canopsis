@@ -199,7 +199,8 @@ def event_processing(
     time_process_ctx = end - start
 
     start = time.time()
-    context_graph_manager.put_entities(context.values())
+    if not (conn_there and comp_there and re_there):
+        context_graph_manager.put_entities(context.values())
     end = time.time()
     time_update_ctx = end - start
 
