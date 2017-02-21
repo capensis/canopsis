@@ -24,6 +24,14 @@ Ember.Application.initializer({
               actions: {
                   tdClick: function (alarm, field) {
                       this.sendAction('action', alarm, field);
+                  },
+
+                  check: function (alarm) {
+                    //   this.toggleProperty('alarm.isSelected');
+                  },
+
+                  sendAction: function (action, alarm) {
+                      this.sendAction('saction', action, alarm);
                   }
               }
 

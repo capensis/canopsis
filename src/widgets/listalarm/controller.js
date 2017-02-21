@@ -19,12 +19,14 @@
 
 Ember.Application.initializer({
     name: 'ListAlarmWidget',
-    after: ['TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader', 'CustomfilterlistMixin'],
+    after: ['NotificationUtils' ,'TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader', 'CustomfilterlistMixin', 'CustomSendeventMixin'],
     initialize: function(container, application) {
 		    var timeWindowUtils = container.lookupFactory('utility:timewindow'),
             dataUtils = container.lookupFactory('utility:data'),
 			      WidgetFactory = container.lookupFactory('factory:widget'),
 			      UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
+			      SendeventMixin = container.lookupFactory('mixin:customsendevent');            
+            notificationUtils = container.lookupFactory('utility:notification');
 
             mx = container.lookupFactory('mixin:customfilterlist');
 
@@ -36,7 +38,8 @@ Ember.Application.initializer({
         var listOptions = {
             mixins: [
                 UserConfigurationMixin,
-                mx
+                mx,
+                SendeventMixin
             ]
         };
 
@@ -49,7 +52,7 @@ Ember.Application.initializer({
          * @widget listalarm
          */
         var widget = WidgetFactory('listalarm',{
-            // needs: ['login', 'application'],
+            needs: ['login', 'application'],
 
             viewMixins: [
                 ],
@@ -128,6 +131,37 @@ Ember.Application.initializer({
                 }
             }.observes('itemsPerPagePropositionSelected', 'itemsTotal', 'itemsPerPage'),
 
+
+            sendEventt: function(event_type, crecord) {
+              console.group('sendEvent:', arguments);
+              this.stopRefresh();
+              var crecords = [];
+              if (!isNone(crecord)) {
+                  console.log('event:', event_type, crecord);
+                  crecords.pushObject(crecord);
+              }
+              else {
+                  if (this.get('loaded')) {
+                    var content = get(this, 'alarms');
+                  } else {
+                    var content = Ember.A();
+                  }
+                  var selected = content.filterBy('isSelected', true);
+                  crecords = this.filterUsableCrecords(event_type, selected);
+                  console.log('events:', event_type, crecords);
+                  if(!crecords.length) {
+                      notificationUtils.warning(
+                          'No matching event found for event:',
+                          event_type
+                      );
+                      return;
+                  }
+              }
+              this.processEvent(event_type, 'handle', [crecords]);
+              this.setPendingOperation(crecords);
+              console.groupEnd();
+            },
+
             // getLivePeriod: function () {
             //     var tw = timeWindowUtils.getFromTo(
             //         get(this, 'time_window'),
@@ -199,25 +233,46 @@ Ember.Application.initializer({
               var controller = this;
               var fields = get(this, 'fields');
               var alarmsArr = get(this, 'alarmss').map(function(alarm) {
-                  var newAlarm = {};
+                  var newAlarm = Ember.Object.create();
                   fields.forEach(function(field) {
                       var val = get(Ember.Object.create(alarm), field.getValue);
+                      // controller.set(newAlarm, field.name, val);
+                      // controller.set(newAlarm, field.humanName, val);
+                      
                       newAlarm[field.name] = val;
                       newAlarm[field.humanName] = val;
-                      // data for testing
-                      newAlarm['linklist'] = {
-                        'event_links': [
-                          {
-                            'url': 'http://tasks.info/?co=Demo',
-                            'label': 'test'
-                          }
-                        ]
+ 
+                  });
+                  // controller.set(newAlarm, 'isSelected', false);
+                  
+                  newAlarm['isSelected'] = false;
+                  // controller.set(newAlarm, 'id', alarm.get('_id'));
+                  
+                  newAlarm['id'] = alarm._id;
+
+                  // data for testing
+                  // controller.set(newAlarm, 'linklist', {
+                  //   'event_links': [
+                  //     {
+                  //       'url': 'http://tasks.info/?co=Demo',
+                  //       'label': 'test'
+                  //     }
+                  //   ]
+                  // });
+
+
+                  newAlarm['linklist'] = {
+                    'event_links': [
+                      {
+                        'url': 'http://tasks.info/?co=Demo',
+                        'label': 'test'
                       }
-                  })
+                    ]
+                  }
                   return newAlarm;
                 });
               this.set('defTotal', Ember.totalAlarms);
-              this.set('loaded', true);              
+              this.set('loaded', true);  
               return alarmsArr;
 
             }.property('alarmss.@each', 'fields.[]'),
@@ -453,6 +508,15 @@ Ember.Application.initializer({
 
 
             actions: {
+              massAction: function (action) {
+                this.sendEventt(action.mixin_name);
+              },
+
+              sendCustomAction: function (action, alarm) {
+                console.error('controller', action, alarm);
+                this.sendEventt(action.mixin_name, alarm);
+              },
+
               updateSortField: function (field) {
                 this.set('alarmSearchOptions.sort_key', field.name);
                 this.set('alarmSearchOptions.sort_dir', field.isASC ? 'ASC' : 'DESC');

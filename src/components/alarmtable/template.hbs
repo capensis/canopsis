@@ -8,6 +8,13 @@
         <table class="table no-margin">
             <thead>
                 <tr>
+                    <th>
+                        <div class="checkbox">
+                            <label>
+                                {{input type="checkbox" checked=isAllChecked}}
+                            </label>
+                        </div>
+                    </th>
                     {{#each field in fields}}
                         {{#if field.isSortable}}
                             <th {{action 'click' field}}>{{field.humanName}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
@@ -21,7 +28,7 @@
             <tbody>
                 {{#each alarm in alarms}}
                 
-                    {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick'}}
+                    {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick' saction='sendAction'}}
                     {{/component-alarmraw}}
 
                 {{/each}}

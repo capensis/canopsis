@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-listalarm/blob/mas
 
 ### Lint
 
-Tested on commit : 52db58e.
+Tested on commit : 8af3248.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -62,6 +62,10 @@ Tested on commit : 52db58e.
 
 ### TODOS
 
+| File   | Note   |
+|--------|--------|
+| src/mixins/customsendevent.js | use an adapter for this |
+| src/mixins/customsendevent.js | refactor into sub classes |
 
 
 ### FIXMES
@@ -70,5 +74,5 @@ Tested on commit : 52db58e.
 
 ## Additional-info
 
-Minified version : 4 files (size: 60K)
-Development version : 38 files (size: 256K)
+Minified version : 4 files (size: 88K)
+Development version : 41 files (size: 308K)

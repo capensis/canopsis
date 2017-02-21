@@ -1,7 +1,14 @@
+<td>
+    <div class="checkbox">
+        <label>
+            {{input type="checkbox" checked=alarm.isSelected}}
+        </label>
+    </div>
+</td>
 {{#each field in fields}}
     {{#component-alarmtd alarm=alarm field=field action='tdClick'}}
     {{/component-alarmtd}}
 {{/each}}
 
-{{#component-alarmactions alarm=alarm}}
+{{#component-alarmactions alarm=alarm action='sendAction'}}
 {{/component-alarmactions}}

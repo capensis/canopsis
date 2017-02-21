@@ -1,3 +1,6 @@
+{{#component-selectionactions action='massAction'}}
+{{/component-selectionactions}}
+
 {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}
 
@@ -76,7 +79,7 @@
     </div>
 {{/unless}}
 
-{{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
+{{#component-alarmtable saction='sendCustomAction' action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
 {{/component-alarmtable}}
 
 

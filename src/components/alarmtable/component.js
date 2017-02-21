@@ -15,7 +15,15 @@ Ember.Application.initializer({
 
             init: function() {
                 this._super();
+                this.set('isAllChecked', false);
             },
+
+            // isAllChecked: function() {return truexxxx}.property(),
+
+            allSelectionObserver: function() {
+                var val = this.get('isAllChecked');
+                this.get('alarms').setEach('isSelected', val);
+            }.observes('isAllChecked'),
 
             currentSortColumn: function() {
                 return get(this, 'defaultSortColumn');
@@ -26,6 +34,7 @@ Ember.Application.initializer({
             // }.property('alarms'),
 
             actions: {
+
                 click: function (field) {
                     if (field == this.get('currentSortColumn')) {
                         this.set('currentSortColumn.isASC', !this.get('currentSortColumn.isASC'));
@@ -45,6 +54,10 @@ Ember.Application.initializer({
                         this.set('clickedField', field);
                         this.set('updater', (new Date()).getTime());
                     }
+                },
+
+                sendAction: function (action, alarm) {
+                    this.sendAction('saction', action, alarm);
                 }
             }
             

@@ -1,4 +1,10 @@
-<script type="text/x-handlebars" data-template-name="components/component-alarmactions">{{#if hasLinks}}
+<script type="text/x-handlebars" data-template-name="components/component-alarmactions">{{#each action in availableActions}}
+  <button {{action 'sendAction' action}} type="button" class="btn btn-xs btn-default">
+      <i {{bind-attr class=action.class}}></i>
+  </button>
+{{/each}}
+
+{{#if hasLinks}}
   <div class="btn-group" style="display:flex">
       <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
           <i class="fa fa-info"></i>
@@ -13,12 +19,19 @@
       </ul>
   </div>
 {{/if}}</script>
-<script type="text/x-handlebars" data-template-name="components/component-alarmraw">{{#each field in fields}}
+<script type="text/x-handlebars" data-template-name="components/component-alarmraw"><td>
+    <div class="checkbox">
+        <label>
+            {{input type="checkbox" checked=alarm.isSelected}}
+        </label>
+    </div>
+</td>
+{{#each field in fields}}
     {{#component-alarmtd alarm=alarm field=field action='tdClick'}}
     {{/component-alarmtd}}
 {{/each}}
 
-{{#component-alarmactions alarm=alarm}}
+{{#component-alarmactions alarm=alarm action='sendAction'}}
 {{/component-alarmactions}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmstate"><div class="form-group">
     <div class="radio">
@@ -44,6 +57,13 @@
         <table class="table no-margin">
             <thead>
                 <tr>
+                    <th>
+                        <div class="checkbox">
+                            <label>
+                                {{input type="checkbox" checked=isAllChecked}}
+                            </label>
+                        </div>
+                    </th>
                     {{#each field in fields}}
                         {{#if field.isSortable}}
                             <th {{action 'click' field}}>{{field.humanName}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
@@ -57,7 +77,7 @@
             <tbody>
                 {{#each alarm in alarms}}
                 
-                    {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick'}}
+                    {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick' saction='sendAction'}}
                     {{/component-alarmraw}}
 
                 {{/each}}
@@ -112,6 +132,15 @@
 {{#unless isValid}}
   <p class='search-invalid-message'>Invalid search query</p>
 {{/unless}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-selectionactions"><div class="pull-left">
+    {{tr 'Selection'}} :
+    {{#each action in actionsMap}}
+      <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
+          <span {{bind-attr class=action.class}}></span>
+          {{action.caption}}
+      </button>
+    {{/each}}
+</div></script>
 <script type="text/x-handlebars" data-template-name="editor-pair">{{!*
  * @editor pair
 }}
@@ -128,7 +157,10 @@
 {{/component-rendererstate}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
+<script type="text/x-handlebars" data-template-name="listalarm">{{#component-selectionactions action='massAction'}}
+{{/component-selectionactions}}
+
+{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}
 
 
@@ -206,7 +238,7 @@
     </div>
 {{/unless}}
 
-{{#component-alarmtable action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
+{{#component-alarmtable saction='sendCustomAction' action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
 {{/component-alarmtable}}
 
 
