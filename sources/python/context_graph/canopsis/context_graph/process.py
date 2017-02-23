@@ -52,7 +52,7 @@ def check_type(entities, expected):
     the expected type.
     :param entities: the entities to check.
     :param expected: the expected type.
-    :raises TypeError: if the entities does not match the expected one."""
+    :raises TypeError: if the entity does not match the expected one."""
     if entities["type"] != expected:
         raise TypeError("Entities {0} does not match {1}".format(
             entities["id"], expected))
@@ -80,8 +80,14 @@ def update_links_conn_res(conn, res):
     """Update depends and impact links between the conn connector and the
     res resource. Raise a TypeError if conn is not a connector and/or res
     is not a resource.
-    :conn: the connector to update
-    :res: the resource to update"""
+    :param conn: the connector to update
+    :param res: the resource to update
+    :raises TypeError: if the entities does not match the expected one."""
+    check_type(conn, "connector")
+    check_type(res, "resource")
+
+    update_depends_links(conn, res)
+    update_impact_links(res, conn)
 
 
 def update_links_conn_comp(conn, comp):
