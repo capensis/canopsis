@@ -170,7 +170,11 @@ def update_case5(entities, ids):
             pass
         else:
             # put re + update comp depends + update conn impact
-    else
+    else:
+        if re_there:
+            # put comp + maj impac in conn + update re depends
+        else:
+            # put comp + put re + update conn impact for comp and re
 
         
 
