@@ -47,17 +47,30 @@ def create_entity(
             }
 
 
+def check_type(entities, expected):
+    """Raise TypeError if the type of the entities entities does not match
+    the expected type.
+    :param entities: the entities to check.
+    :param expected: the expected type.
+    :raises TypeError: if the entities does not match the expected one."""
+    if entities["type"] != expected:
+        raise TypeError("Entities {0} does not match {1}".format(
+            entities["id"], expected))
+
+
 def update_depends_links(ent_from, ent_to):
     """Update the links depends from ent_from to ent_to. Basicaly, append
     the id of ent_to on the the "depends" of ent_from.
     :ent_from: the entities that will be updated
     :ent_to: the entities which id will be used to update :ent_from:"""
 
+
 def update_impact_links(ent_from, ent_to):
     """Update the links impact from ent_from to ent_to. Basicaly, append
     the id of ent_to on the the "impact" of ent_from.
     :ent_from: the entities that will be updated
     :ent_to: the entities which id will be used to update :ent_from:"""
+
 
 def update_links_conn_res(conn, res):
     """Update depends and impact links between the conn connector and the
@@ -66,12 +79,14 @@ def update_links_conn_res(conn, res):
     :conn: the connector to update
     :res: the resource to update"""
 
+
 def update_links_conn_comp(conn, comp):
     """Update depends and impact links between the conn connector and the
     comp component. Raise a TypeError if conn is not a connector and/or comp
     is not a component.
     :conn: the connector to update
     :comp: the component to update"""
+
 
 def update_links_res_comp(res, comp):
     """Update depends and impact links between the res resource and the
@@ -148,7 +163,6 @@ def event_processing(
 
     global LOGGER
     LOGGER = logger
-
 
     # Possible cases :
     # 0 -> Not in cache
