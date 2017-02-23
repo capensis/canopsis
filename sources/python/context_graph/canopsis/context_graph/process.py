@@ -29,7 +29,6 @@ def update_cache():
 
 
 def create_entity(
-        logger,
         id,
         name,
         etype,
@@ -137,7 +136,7 @@ def update_case1(entities, ids):
     if conn_there:
         if comp_there:
             if not re_there:
-                re = create_entity(logger, )
+                re = create_entity( )
                 # put re + update
                 pass
         else:
@@ -221,24 +220,22 @@ def update_case5(entities, ids):
 
 def update_case6(entities, ids):
     """Case 6 update entities"""
-    conn_there = 'conn_id' in ids
+    conn_there = False
+    res_pos = comp_pos = -1
+    for k, i in enumerat(entities):
+        if entities['_id'] == ids['conn_id']:
+            conn_there = True
+        if entities['type'] == 'component':
+            comp_pos = k
+        if entities['type'] == 'resource':
+            res_pos = k
     LOGGER.debug("Case 6.")
 
-<<<<<<< HEAD
-=======
-    for i, k in enumerate(entities):
-        if k['type'] == 'connector':
-            conn_there = True
-        if k['type'] == 'resource':
-            res_pos = i
-        if k['type'] == 'component':
-            comp_pos = i
-
->>>>>>> 232022cd885f2cb8a3e436456e8b26a440989c34
     if not conn_there:
-        # insert conn + maj impact depends in comp and re
-        # FIXME : find a better name
-        conn = create_entity(None, ids, ids, "connector")
+        conn = create_entity(
+            ids['conn_id'],
+            ids['conn_id'],
+            "connector")
         update_links_conn_res(conn, entities[res_pos])
         update_links_conn_comp(conn, entities[comp_pos])
         entities.append(conn)
