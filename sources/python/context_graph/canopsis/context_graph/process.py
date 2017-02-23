@@ -95,7 +95,8 @@ def update_links_conn_comp(conn, comp):
     comp component. Raise a TypeError if conn is not a connector and/or comp
     is not a component.
     :param conn: the connector to update
-    :param comp: the component to update"""
+    :param comp: the component to update
+    :raises TypeError: if the entities does not match the expected one."""
     check_type(conn, "connector")
     check_type(comp, "component")
 
@@ -107,8 +108,9 @@ def update_links_res_comp(res, comp):
     """Update depends and impact links between the res resource and the
     comp component. Raise a TypeError if res is not a resource and/or comp
     is not a component.
-    :res: the resource to update
-    :comp: the component to update"""
+    :param res: the resource to update
+    :param comp: the component to update
+    :raises TypeError: if the entities does not match the expected one."""
 
 
 def update_case1(entities):
@@ -190,7 +192,7 @@ def event_processing(
     #     1             0            1     -> case 3
     #     1             1            1     -> case 4
     #     1             0            0     -> case 5
-    #     1             1            0     -> case 6
+    #     0             1            0     -> case 6
     #
     #  Case 1 :
     #    Nothing exist in the cache, create every entities in database.
@@ -214,7 +216,7 @@ def event_processing(
     #    the component and the resource.
     #
     #  Case 6 :
-    #    Create a component then update the links between the component and
+    #    Create a connector then update the links between the connector and
     #    the resource.
 
     case = 0  # 0 -> exception raised
