@@ -153,13 +153,28 @@ def update_case4(entities, ids):
 
 def update_case5(entities, ids):
     """Case 5 update entities"""
+    conn_there = False
+    re_there = False
+    for i in entities:
+        if i['type'] == 'connector':
+            conn_there = True
+        if i['type'] == 'resource':
+            re_there = True
+    if conn_there:
+        if re_there:
+            pass
+        else:
+            # put re + update comp depends + update conn impact
+    else
+
+        
 
 
 def update_case6(entities, ids):
     """Case 6 update entities"""
     conn_there = False
     for i in entities:
-        if i['_id'] in ids:
+        if i['type'] == 'connector':
             conn_there = True
     if not conn_there:
         pass
