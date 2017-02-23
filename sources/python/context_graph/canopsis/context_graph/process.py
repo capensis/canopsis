@@ -61,8 +61,10 @@ def check_type(entities, expected):
 def update_depends_links(ent_from, ent_to):
     """Update the links depends from ent_from to ent_to. Basicaly, append
     the id of ent_to on the the "depends" of ent_from.
-    :ent_from: the entities that will be updated
-    :ent_to: the entities which id will be used to update :ent_from:"""
+    :param ent_from: the entities that will be updated
+    :param ent_to: the entities which id will be used to update ent_from"""
+    if ent_to["_id"] not in ent_from["depends"]:
+        ent_from["depends"] = ent_to["_id"]
 
 
 def update_impact_links(ent_from, ent_to):
@@ -70,6 +72,8 @@ def update_impact_links(ent_from, ent_to):
     the id of ent_to on the the "impact" of ent_from.
     :ent_from: the entities that will be updated
     :ent_to: the entities which id will be used to update :ent_from:"""
+    if ent_to["_id"] not in ent_from["impact"]:
+        ent_from["impact"] = ent_to["_id"]
 
 
 def update_links_conn_res(conn, res):
