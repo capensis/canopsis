@@ -139,16 +139,22 @@ def update_case1(entities, ids):
             if not re_there:
                 re = create_entity(logger, )
                 # put re + update
+                pass
         else:
             # push comp + put re + update conn
+            pass
     else:
         if comp_there:
             if re_there:
                 # put connector + updates comp re
+                pass
             else:
                 # put connector + put re + update comp
+                pass
         else:
             # put comp + put re + put conn
+            pass
+
 
 def update_case2(entities, ids):
     """Case 2 update entities"""
@@ -164,8 +170,11 @@ def update_case2(entities, ids):
             pass
         else:
             # insert re + maj comp depends + maj conn impact
+            pass
     else:
         # insert comp + insert re + maj conn impact with com and re
+        pass
+
 
 def update_case3(entities, ids):
     """Case 3 update entities"""
@@ -176,6 +185,7 @@ def update_case3(entities, ids):
             break
     if not re_there:
         # push re + update conn impact + update comp depends
+        pass
 
 
 def update_case4(entities, ids):
@@ -199,13 +209,14 @@ def update_case5(entities, ids):
             pass
         else:
             # put re + update comp depends + update conn impact
+            pass
     else:
         if re_there:
             # put comp + maj impac in conn + update re depends
+            pass
         else:
             # put comp + put re + update conn impact for comp and re
-
-
+            pass
 
 
 def update_case6(entities, ids):
@@ -213,12 +224,25 @@ def update_case6(entities, ids):
     conn_there = 'conn_id' in ids
     LOGGER.debug("Case 6.")
 
+<<<<<<< HEAD
+=======
+    for i, k in enumerate(entities):
+        if k['type'] == 'connector':
+            conn_there = True
+        if k['type'] == 'resource':
+            res_pos = i
+        if k['type'] == 'component':
+            comp_pos = i
+
+>>>>>>> 232022cd885f2cb8a3e436456e8b26a440989c34
     if not conn_there:
         # insert conn + maj impact depends in comp and re
-        update_links_conn_res(entities[conn_pos], entities[res_pos])
-        update_links_conn_comp(entities[conn_pos], entities[comp_pos])
+        # FIXME : find a better name
+        conn = create_entity(None, ids, ids, "connector")
+        update_links_conn_res(conn, entities[res_pos])
+        update_links_conn_comp(conn, entities[comp_pos])
+        entities.append(conn)
         context_graph_manager.put_entities(entities)
-
 
 
 def update_entities(case, ids):
