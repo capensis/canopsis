@@ -15,6 +15,8 @@ cache_comp = set(['comp_ids'])
 cache_conn = set(['conn_ids'])
 cache_re = set(['re_ids'])
 
+LOGGER = None
+
 
 def update_cache():
     global cache_re
@@ -45,45 +47,75 @@ def create_entity(
             }
 
 
-def update_depends_link(logger, ent1_id, ent2_id, context):
-    """
-    Update depends link between from entity ent1 to ent2 in the context.
-    """
-
-    try:
-        ent_from = context[ent1_id]
-    except KeyError:
-        pass
-
-    if ent2_id not in ent_from["depends"]:
-        ent_from["depends"].append(ent2_id)
+def check_type(entities, expected):
+    """Raise TypeError if the type of the entities entities does not match
+    the expected type.
+    :param entities: the entities to check.
+    :param expected: the expected type.
+    :raises TypeError: if the entity does not match the expected one."""
+    if entities["type"] != expected:
+        raise TypeError("Entities {0} does not match {1}".format(
+            entities["id"], expected))
 
 
-def update_link(logger, ent1_id, ent2_id, context):
-    """
-    Update depends link from entity ent1 to ent2 in the context.
-    Basicaly, add ent2_id in the field "impact" of the entity
-    identified by ent1_id the then add ent1_id in the field "depends"
-    of ent2_id.
-    """
-    try:
-        ent1 = context[ent1_id]
-    except KeyError:
-        pass
-    try:
-        ent2 = context[ent2_id]
-    except KeyError:
-        pass
+def update_depends_links(ent_from, ent_to):
+    """Update the links depends from ent_from to ent_to. Basicaly, append
+    the id of ent_to on the the "depends" of ent_from.
+    :param ent_from: the entities that will be updated
+    :param ent_to: the entities which id will be used to update ent_from"""
+    if ent_to["_id"] not in ent_from["depends"]:
+        ent_from["depends"] = ent_to["_id"]
 
-    if ent1_id not in ent2["impact"]:
-        ent2["impact"].append(ent1_id)
 
-    if ent2_id not in ent1["depends"]:
-        ent1["depends"].append(ent2_id)
+def update_impact_links(ent_from, ent_to):
+    """Update the links impact from ent_from to ent_to. Basicaly, append
+    the id of ent_to on the the "impact" of ent_from.
+    :ent_from: the entities that will be updated
+    :ent_to: the entities which id will be used to update :ent_from:"""
+    if ent_to["_id"] not in ent_from["impact"]:
+        ent_from["impact"] = ent_to["_id"]
+
+
+def update_links_conn_res(conn, res):
+    """Update depends and impact links between the conn connector and the
+    res resource. Raise a TypeError if conn is not a connector and/or res
+    is not a resource.
+    :param conn: the connector to update
+    :param res: the resource to update
+    :raises TypeError: if the entities does not match the expected one."""
+    check_type(conn, "connector")
+    check_type(res, "resource")
+
+    update_depends_links(conn, res)
+    update_impact_links(res, conn)
+
+
+def update_links_conn_comp(conn, comp):
+    """Update depends and impact links between the conn connector and the
+    comp component. Raise a TypeError if conn is not a connector and/or comp
+    is not a component.
+    :param conn: the connector to update
+    :param comp: the component to update
+    :raises TypeError: if the entities does not match the expected one."""
+    check_type(conn, "connector")
+    check_type(comp, "component")
+
+    update_depends_links(conn, comp)
+    update_impact_links(comp, conn)
+
+
+def update_links_res_comp(res, comp):
+    """Update depends and impact links between the res resource and the
+    comp component. Raise a TypeError if res is not a resource and/or comp
+    is not a component.
+    :param res: the resource to update
+    :param comp: the component to update
+    :raises TypeError: if the entities does not match the expected one."""
 
 
 def update_case1(entities, ids):
     """Case 1 update entities"""
+    LOGGER.debug("Case 1.")
     comp_there = False
     re_there = False
     conn_there = False
@@ -94,7 +126,6 @@ def update_case1(entities, ids):
             re_there = True
         elif i['type'] == 'connector':
             conn_there = True
-
 
 
 def update_case2(entities, ids):
@@ -117,21 +148,22 @@ def update_case3(entities, ids):
 
 def update_case4(entities, ids):
     """Case 4 update entities"""
-    pass
+    LOGGER.debug("Case 4 : nothing to do here.")
 
 
 def update_case5(entities, ids):
     """Case 5 update entities"""
-    
+
 
 def update_case6(entities, ids):
     """Case 6 update entities"""
-    conn_there = False:
+    conn_there = False
     for i in entities:
         if i['_id'] in ids:
             conn_there = True
     if not conn_there:
-        #insert conn + maj impact depends in comp and re
+        pass
+        # insert conn + maj impact depends in comp and re
 
 
 def update_entities(case, ids):
@@ -170,6 +202,9 @@ def event_processing(
     :param **kwargs:
     """
 
+    global LOGGER
+    LOGGER = logger
+
     # Possible cases :
     # 0 -> Not in cache
     # 1 −> In cache
@@ -181,7 +216,7 @@ def event_processing(
     #     1             0            1     -> case 3
     #     1             1            1     -> case 4
     #     1             0            0     -> case 5
-    #     1             1            0     -> case 6
+    #     0             1            0     -> case 6
     #
     #  Case 1 :
     #    Nothing exist in the cache, create every entities in database.
@@ -205,7 +240,7 @@ def event_processing(
     #    the component and the resource.
     #
     #  Case 6 :
-    #    Create a component then update the links between the component and
+    #    Create a connector then update the links between the connector and
     #    the resource.
 
     case = 0  # 0 -> exception raised
