@@ -40,46 +40,43 @@ def create_entity(logger, id, name, etype, depends=[], impact=[], measurements=[
             }
 
 
-def update_depends_link(logger, ent1_id, ent2_id, context):
-    """
-    Update depends link between from entity ent1 to ent2 in the context.
-    """
+def update_depends_links(ent_from, ent_to):
+    """Update the links depends from ent_from to ent_to. Basicaly, append
+    the id of ent_to on the the "depends" of ent_from.
+    :ent_from: the entities that will be updated
+    :ent_to: the entities which id will be used to update :ent_from:"""
 
-    try:
-        ent_from = context[ent1_id]
-    except KeyError:
-        pass
+def update_impact_links(ent_from, ent_to):
+    """Update the links impact from ent_from to ent_to. Basicaly, append
+    the id of ent_to on the the "impact" of ent_from.
+    :ent_from: the entities that will be updated
+    :ent_to: the entities which id will be used to update :ent_from:"""
 
-    if ent2_id not in ent_from["depends"]:
-        ent_from["depends"].append(ent2_id)
+def update_links_conn_res(conn, res):
+    """Update depends and impact links between the conn connector and the
+    res resource. Raise a TypeError if conn is not a connector and/or res
+    is not a resource.
+    :conn: the connector to update
+    :res: the resource to update"""
 
+def update_links_conn_comp(conn, comp):
+    """Update depends and impact links between the conn connector and the
+    comp component. Raise a TypeError if conn is not a connector and/or comp
+    is not a component.
+    :conn: the connector to update
+    :comp: the component to update"""
 
-def update_link(logger, ent1_id, ent2_id, context):
-    """
-    Update depends link from entity ent1 to ent2 in the context.
-    Basicaly, add ent2_id in the field "impact" of the entity
-    identified by ent1_id the then add ent1_id in the field "depends"
-    of ent2_id.
-    """
-    try:
-        ent1 = context[ent1_id]
-    except KeyError:
-        pass
-    try:
-        ent2 = context[ent2_id]
-    except KeyError:
-        pass
-
-    if ent1_id not in ent2["impact"]:
-        ent2["impact"].append(ent1_id)
-
-    if ent2_id not in ent1["depends"]:
-        ent1["depends"].append(ent2_id)
+def update_links_res_comp(res, comp):
+    """Update depends and impact links between the res resource and the
+    comp component. Raise a TypeError if res is not a resource and/or comp
+    is not a component.
+    :res: the resource to update
+    :comp: the component to update"""
 
 
 def update_case1(entities):
     """Case 1 update entities"""
-    pass
+    LOGGER.debug("Case 1.")
 
 def update_case2(entities):
     """Case 2 update entities"""
