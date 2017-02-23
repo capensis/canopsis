@@ -133,6 +133,46 @@ def event_processing(
     :param cm:
     :param **kwargs:
     """
+
+    # Possible cases :
+    # 0 -> Not in cache
+    # 1 −> In cache
+    #
+    #
+    #  Connector    Ressource    Component
+    #     0             0            0     -> case 1
+    #     0             0            1     -> case 2
+    #     1             0            1     -> case 3
+    #     1             1            1     -> case 4
+    #     1             0            0     -> case 5
+    #     1             1            0     -> case 6
+    #
+    #  Case 1 :
+    #    Nothing exist in the cache, create every entities in database.
+    #
+    #  Case 2 :
+    #    The component and the resource are not in the cache, so we need
+    #    to create a component and if the event had a resource
+    #    (resource != None) create a resource too, then update links between
+    #    this component and resource.
+    #
+    #  Case 3 :
+    #    Create a component and if the event had a resource create a resource
+    #    too, then update links between this component and resource.
+    #
+    #  Case 4 :
+    #    Every entity are in the cache so they are into the database, nothing
+    #    to do here.
+    #
+    #  Case 5 :
+    #    Create a component and the resource then update the links between
+    #    the component and the resource.
+    #
+    #  Case 6 :
+    #    Create a component then update the links between the component and
+    #    the resource.
+
+
     case = 0 # 0 -> exception raised
     entities = []
 
