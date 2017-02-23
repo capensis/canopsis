@@ -75,6 +75,48 @@ def update_link(logger, ent1_id, ent2_id, context):
         ent1["depends"].append(ent2_id)
 
 
+def update_case1(entities):
+    """Case 1 update entities"""
+    pass
+
+def update_case2(entities):
+    """Case 2 update entities"""
+    pass
+
+def update_case3(entities):
+    """Case 3 update entities"""
+    pass
+
+def update_case4(entities):
+    """Case 4 update entities"""
+    pass
+
+def update_case5(entities):
+    """Case 5 update entities"""
+    pass
+
+def update_case6(entities):
+    """Case 6 update entities"""
+    pass
+
+def update_entities(case, entities):
+    if case == 1:
+        update_case1(entities)
+    elif case == 2:
+        update_case2(entities)
+    elif case == 3:
+        update_case3(entities)
+    elif case == 4:
+        update_case4(entities)
+    elif case == 5:
+        update_case5(entities)
+    elif case == 6:
+        update_case6(entities)
+    else:
+        # FIXME : did a logger here is a good idea ?
+        raise ValueError("Unknown case : {0}.".format("case"))
+
+
 @register_task
 def event_processing(
         engine, event, manager=None, logger=None, ctx=None, tm=None, cm=None,
@@ -91,121 +133,13 @@ def event_processing(
     :param cm:
     :param **kwargs:
     """
+    case = 0 # 0 -> exception raised
+    entities = []
 
-    time_get_ctx = None
-    time_process_ctx = None
-    time_update_ctx = None
+    # add comment with the 6 possibles cases and an explaination
 
-    comp_id = event['component']
+    # cache and case determination
 
-    re_id = None
-    if 'resource' in event.keys():
-        re_id = '{0}/{1}'.format(event['resource'], comp_id)
+    # retrieves required entities from database
 
-    conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
-
-    start = time.time()
-    related_ctx = context_graph_manager.get_entity([comp_id, re_id, conn_id])
-    end = time.time()
-    time_get_ctx = end - start
-
-    start = time.time()
-
-    comp_there = False
-    re_there = False
-    conn_there = False
-
-    for entity in related_ctx:
-        if entity["_id"] == comp_id:
-            comp_there = True
-
-        if entity["_id"] == re_id:
-            re_there = True
-
-        if entity["_id"] == conn_id:
-            conn_there = True
-
-    context = {}
-
-    for doc in related_ctx:
-        context[doc["_id"]] = doc
-
-    if not comp_there:
-        depends = [conn_id]
-        if 'resource' in event.keys():
-            depends.append(re_id)
-            re = create_entity(logger,
-                               re_id,
-                               event['resource'],
-                               'resource',
-                               [conn_id],
-                               [comp_id],
-                               [],
-                               {})  # FIXME handles info if needed
-            context[re_id] = re
-        # FIXME handles info if needed
-        comp = create_entity(logger,
-                             comp_id, comp_id, 'component', depends, [], [], {})
-        context[comp_id] = comp
-
-    # If comp did not exist, a resource is created above
-    if re_id is not None and comp_there is True:
-        if not re_there:
-            re = create_entity(logger,
-                               re_id,
-                               event['resource'],
-                               'resource',
-                               [conn_id],
-                               [comp_id],
-                               [],
-                               {})
-            context[re_id] = re
-
-        # update link between re_id and comp_id if needed
-        update_depends_link(logger, re_id, comp_id, context)
-
-    if not conn_there:
-        impact = [comp_id]
-        if re_id is not None:
-            impact.append(re_id)
-            conn = create_entity(logger,
-                                 conn_id,
-                                 event['connector_name'],
-                                 'connector',
-                                 [],
-                                 impact,
-                                 [],
-                                 {})
-
-            context[conn_id] = conn
-
-        # update link from re to conn
-        update_depends_link(logger, re_id, conn_id, context)
-
-        # update link from conn to comp
-        update_depends_link(logger, comp_id, conn_id, context)
-
-    update_link(logger, comp_id, conn_id, context)
-
-    if re_id is not None:
-        update_link(logger, re_id, conn_id, context)
-
-    end = time.time()
-    time_process_ctx = end - start
-
-    start = time.time()
-    if not conn_there or not comp_there or not re_there:
-        context_graph_manager.put_entities(context.values())
-    end = time.time()
-    time_update_ctx = end - start
-
-    #logger.critical("get context : {0}\tprocess context :{1}\tupdate context :{2}".format(time_get_ctx, time_process_ctx, time_update_ctx))
-    update_cache()
-
-
-@register_task
-def beat(engine, logger=None, **kwargs):
-    update_cache()
-    logger.error(cache_comp)
-    logger.error(cache_re)
-    logger.error(cache_conn)
+    update_entities(case, entities)
