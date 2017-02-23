@@ -172,18 +172,28 @@ def update_case5(entities, ids):
             # put re + update comp depends + update conn impact
     else
 
-        
+
 
 
 def update_case6(entities, ids):
     """Case 6 update entities"""
     conn_there = False
+
     for i in entities:
         if i['type'] == 'connector':
             conn_there = True
+            conn_pos = i
+        if i['type'] == 'resource':
+            res_pos = i
+        if i['type'] == 'component':
+            comp_pos = i
+
     if not conn_there:
-        pass
         # insert conn + maj impact depends in comp and re
+        update_links_conn_res(entities[conn_pos], entities[res_pos])
+        update_links_conn_comp(entities[conn_pos], entities[comp_pos])
+        context_graph_manager.put_entities(entities)
+
 
 
 def update_entities(case, ids):
