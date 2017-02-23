@@ -94,8 +94,13 @@ def update_links_conn_comp(conn, comp):
     """Update depends and impact links between the conn connector and the
     comp component. Raise a TypeError if conn is not a connector and/or comp
     is not a component.
-    :conn: the connector to update
-    :comp: the component to update"""
+    :param conn: the connector to update
+    :param comp: the component to update"""
+    check_type(conn, "connector")
+    check_type(comp, "component")
+
+    update_depends_links(conn, comp)
+    update_impact_links(comp, conn)
 
 
 def update_links_res_comp(res, comp):
