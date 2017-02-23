@@ -136,9 +136,37 @@ def event_processing(
     case = 0 # 0 -> exception raised
     entities = []
 
+    comp_id = event['component']
+
+    re_id = None
+    if 'resource' in event.keys():
+        re_id = '{0}/{1}'.format(event['resource'], comp_id)
+
+    conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
+
     # add comment with the 6 possibles cases and an explaination
 
     # cache and case determination
+    if conn_id in cache_conn:
+        if comp_id in cache_comp:
+            if re_id is not None:
+                if re_id in cache_re:
+                    #4
+                else:
+                    #3
+        else:
+            if re_id is not None:
+                #2
+            else:
+                #2 toujours
+    else:
+        if comp_id in cache_comp:
+            if re_id is not None:
+                #6
+            else:
+                #5
+        else:
+            #1
 
     # retrieves required entities from database
 
