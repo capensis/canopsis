@@ -184,11 +184,13 @@ def update_case5(entities, ids):
     """Case 5 update entities"""
     conn_there = False
     re_there = False
-    for i in entities:
-        if i['type'] == 'connector':
+    for i, k in enumerate(entities):
+        if k['type'] == 'connector':
             conn_there = True
-        if i['type'] == 'resource':
+            conn_pos = i
+        if k['type'] == 'resource':
             re_there = True
+            re_pos = i
     if conn_there:
         if re_there:
             pass
@@ -208,13 +210,13 @@ def update_case6(entities, ids):
     conn_there = False
     LOGGER.debug("Case 6.")
 
-    for i in entities:
-        if i['type'] == 'connector':
+    for i, k in enumerate(entities):
+        if k['type'] == 'connector':
             conn_there = True
             conn_pos = i
-        if i['type'] == 'resource':
+        if k['type'] == 'resource':
             res_pos = i
-        if i['type'] == 'component':
+        if k['type'] == 'component':
             comp_pos = i
 
     if not conn_there:
