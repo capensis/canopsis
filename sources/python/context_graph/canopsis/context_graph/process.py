@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 
 from canopsis.task.core import register_task
 from canopsis.context_graph.manager import ContextGraph
-import time
 
 
 context_graph_manager = ContextGraph()
@@ -29,7 +28,15 @@ def update_cache():
     cache_conn = cache['conn_ids']
 
 
-def create_entity(logger, id, name, etype, depends=[], impact=[], measurements=[], infos={}):
+def create_entity(
+        logger,
+        id,
+        name,
+        etype,
+        depends=[],
+        impact=[],
+        measurements=[],
+        infos={}):
     return {'_id': id,
             'type': etype,
             'name': name,
@@ -78,25 +85,31 @@ def update_case1(entities):
     """Case 1 update entities"""
     LOGGER.debug("Case 1.")
 
+
 def update_case2(entities):
     """Case 2 update entities"""
     pass
+
 
 def update_case3(entities):
     """Case 3 update entities"""
     pass
 
+
 def update_case4(entities):
     """Case 4 update entities"""
     LOGGER.debug("Case 4 : nothing to do here.")
+
 
 def update_case5(entities):
     """Case 5 update entities"""
     pass
 
+
 def update_case6(entities):
     """Case 6 update entities"""
     pass
+
 
 def update_entities(case, entities):
     if case == 1:
@@ -175,14 +188,61 @@ def event_processing(
     #    Create a component then update the links between the component and
     #    the resource.
 
+    case = 0  # 0 -> exception raised
+    comp_id = event['component']
 
-    case = 0 # 0 -> exception raised
-    entities = []
+    re_id = None
+    if 'resource' in event.keys():
+        re_id = '{0}/{1}'.format(event['resource'], comp_id)
+
+    conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
 
     # add comment with the 6 possibles cases and an explaination
 
     # cache and case determination
+    ids = []
+
+    if conn_id in cache_conn:
+        if comp_id in cache_comp:
+            if re_id is not None:
+                if re_id not in cache_re:
+                    # 3
+                    ids.append(re_id)
+                    cache_re.add(re_id)
+                    case = 3
+                # else:
+                    # 4 => pass
+        else:
+            # 2
+            case = 2
+            ids.append(comp_id)
+            ids.append(conn_id)
+            cache_comp.add(comp_id)
+            if re_id is not None:
+                if re_id not in cache_re:
+                    ids.append(re_id)
+                    cache_re.add(re_id)
+    else:
+        # 6
+        case = 6
+        cache_conn.add(conn_id)
+        ids.append(conn_id)
+        ids.append(comp_id)
+        if comp_id in cache_comp:
+            if re_id is not None:
+                if re_id not in cache_re:
+                    # 5
+                    case = 5
+                    ids.append(re_id)
+                    cache_re.add(re_id)
+        else:
+            # 1
+            case = 1
+            cache_comp.add(comp_id)
+            if re_id is not None:
+                cache_re.add(re_id)
+                ids.append(re_id)
 
     # retrieves required entities from database
 
-    update_entities(case, entities)
+    update_entities(case, ids)
