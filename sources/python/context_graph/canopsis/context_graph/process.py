@@ -16,6 +16,8 @@ cache_comp = set(['comp_ids'])
 cache_conn = set(['conn_ids'])
 cache_re = set(['re_ids'])
 
+LOGGER = None
+
 
 def update_cache():
     global cache_re
@@ -89,7 +91,7 @@ def update_case3(entities):
 
 def update_case4(entities):
     """Case 4 update entities"""
-    pass
+    LOGGER.debug("Case 4 : nothing to do here.")
 
 def update_case5(entities):
     """Case 5 update entities"""
@@ -133,6 +135,10 @@ def event_processing(
     :param cm:
     :param **kwargs:
     """
+
+    global LOGGER
+    LOGGER = logger
+
 
     # Possible cases :
     # 0 -> Not in cache
