@@ -131,24 +131,48 @@ def update_case1(entities, ids):
             re_there = True
         elif i['type'] == 'connector':
             conn_there = True
-
+    
+    if conn_there:
+        if comp_there:
+            if not re_there:
+                # put re + update
+        else:
+            # push comp + put re + update conn 
+    else:
+        if comp_there:
+            if re_there:
+                # put connector + updates comp re
+            else:
+                # put connector + put re + update comp
+        else:
+            # put comp + put re + put conn
 
 def update_case2(entities, ids):
     """Case 2 update entities"""
     comp_there = False
     re_there = False
-    conn_there = False
     for i in entities:
         if i['type'] == 'component':
             comp_there = True
         elif i['type'] == 'resource':
             re_there = True
-        elif i['type'] == 'connector':
-            conn_there = True
-
+    if comp_there:
+        if re_there:
+            pass
+        else:
+            # insert re + maj comp depends + maj conn impact
+    else:
+        # insert comp + insert re + maj conn impact with com and re
 
 def update_case3(entities, ids):
     """Case 3 update entities"""
+    re_there = False
+    for i in entities:
+        if i['type'] == 'resource':
+            re_there = True
+            break
+    if not re_there:
+        # push re + update conn impact + update comp depends
 
 
 def update_case4(entities, ids):
@@ -185,6 +209,8 @@ def update_case6(entities, ids):
     for i in entities:
         if i['type'] == 'connector':
             conn_there = True
+            break
+    LOGGER.debug("Case 1.")
     if not conn_there:
         pass
         # insert conn + maj impact depends in comp and re
