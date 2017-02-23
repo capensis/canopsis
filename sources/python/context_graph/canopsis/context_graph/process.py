@@ -7,13 +7,24 @@ from __future__ import unicode_literals
 
 from canopsis.task.core import register_task
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.common.utils import singleton_per_scope
-
-from canopsis.context_graph.manager import ContextGraph
 import time
 
 
 context_graph_manager = ContextGraph()
+
+cache_comp = set(['comp_ids'])
+cache_conn = set(['conn_ids'])
+cache_re = set(['re_ids'])
+
+
+def update_cache():
+    global cache_re
+    global cache_comp
+    global cache_conn
+    cache = context_graph_manager.get_all_entities()
+    cache_re = cache['re_ids']
+    cache_comp = cache['comp_ids']
+    cache_conn = cache['conn_ids']
 
 
 def create_entity(logger, id, name, etype, depends=[], impact=[], measurements=[], infos={}):
@@ -36,11 +47,6 @@ def update_depends_link(logger, ent1_id, ent2_id, context):
         ent_from = context[ent1_id]
     except KeyError:
         pass
-        #logger.warning("Cannot find {0} in the context".format(ent1_id))
-
-    # for ent in ent_from["depends"]:
-    #     if not ent in ent_to["depends"]:
-    #         ent_to["depends"].append(ent)
 
     if ent2_id not in ent_from["depends"]:
         ent_from["depends"].append(ent2_id)
@@ -57,12 +63,10 @@ def update_link(logger, ent1_id, ent2_id, context):
         ent1 = context[ent1_id]
     except KeyError:
         pass
-        #logger.warning("Cannot find {0} in the context".format(ent1_id))
     try:
         ent2 = context[ent2_id]
     except KeyError:
         pass
-        #logger.warning("Cannot find {0} in the context".format(ent1_id))
 
     if ent1_id not in ent2["impact"]:
         ent2["impact"].append(ent1_id)
@@ -76,8 +80,6 @@ def event_processing(
         engine, event, manager=None, logger=None, ctx=None, tm=None, cm=None,
         **kwargs
 ):
-
-    import pprint
     """event_processing
 
     :param engine:
@@ -94,9 +96,6 @@ def event_processing(
     time_process_ctx = None
     time_update_ctx = None
 
-    #logger.critical("Context graph : process")
-
-    # Retreive id from id
     comp_id = event['component']
 
     re_id = None
@@ -104,10 +103,6 @@ def event_processing(
         re_id = '{0}/{1}'.format(event['resource'], comp_id)
 
     conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
-
-    #logger.critical("Resource id : {0}.".format(re_id))
-    #logger.critical("Component id : {0}.".format(comp_id))
-    #logger.critical("Connector id : {0}.".format(conn_id))
 
     start = time.time()
     related_ctx = context_graph_manager.get_entity([comp_id, re_id, conn_id])
@@ -204,6 +199,13 @@ def event_processing(
     end = time.time()
     time_update_ctx = end - start
 
-    logger.critical("get context : {0}\tprocess context :{1}\tupdate context :{2}".format(time_get_ctx, time_process_ctx, time_update_ctx))
+    #logger.critical("get context : {0}\tprocess context :{1}\tupdate context :{2}".format(time_get_ctx, time_process_ctx, time_update_ctx))
+    update_cache()
 
-    #logger.critical("The end.")
+
+@register_task
+def beat(engine, logger=None, **kwargs):
+    update_cache()
+    logger.error(cache_comp)
+    logger.error(cache_re)
+    logger.error(cache_conn)

@@ -86,7 +86,7 @@ class ContextGraph(MiddlewareRegistry):
         comp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
             query={'_id': comp_id}))
         for i in comp:
-            if not re_id in i['depends']:
+            if re_id not in i['depends']:
                 tmp = i
                 tmp['depends'].append(re_id)
                 self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
@@ -96,7 +96,7 @@ class ContextGraph(MiddlewareRegistry):
         re = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
             query={'_id': re_id}))
         for i in re:
-            if not conn_id in i['depends']:
+            if conn_id not in i['depends']:
                 tmp = i
                 tmp['depends'].append(conn_id)
                 self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
@@ -106,7 +106,7 @@ class ContextGraph(MiddlewareRegistry):
         comp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
             query={'_id': comp_id}))
         for i in comp:
-            if not conn_id in i['depends']:
+            if conn_id not in i['depends']:
                 tmp = i
                 tmp['depends'].append(conn_id)
                 self[ContextGraph.ENTITIES_STORAGE].put_element(element=tmp)
@@ -123,12 +123,12 @@ class ContextGraph(MiddlewareRegistry):
             query={'_id': comp_id}))
         for i in conn:
             for j in comp:
-                if not comp_id in i['impact']:
+                if comp_id not in i['impact']:
                     tmp = i
                     tmp['impact'].append(comp_id)
                     self[ContextGraph.ENTITIES_STORAGE].put_element(
                         element=tmp)
-                if not conn_id in j['depends']:
+                if conn_id not in j['depends']:
                     tmp = j
                     tmp['depends'].append(conn_id)
                     self[ContextGraph.ENTITIES_STORAGE].put_element(
@@ -146,12 +146,12 @@ class ContextGraph(MiddlewareRegistry):
             query={'_id': re_id}))
         for i in conn:
             for j in re:
-                if not re_id in i['impact']:
+                if re_id not in i['impact']:
                     tmp = i
                     tmp['impact'].append(re_id)
                     self[ContextGraph.ENTITIES_STORAGE].put_element(
                         element=tmp)
-                if not conn_id in j['depends']:
+                if conn_id not in j['depends']:
                     tmp = j
                     tmp['depends'].append(conn_id)
                     self[ContextGraph.ENTITIES_STORAGE].put_element(
@@ -184,3 +184,25 @@ class ContextGraph(MiddlewareRegistry):
         :param conn:
         """
         self[ContextGraph.ENTITIES_STORAGE].put_element(element=conn)
+
+    def get_all_entities(self):
+        """
+            get all entities ids by types
+        """
+        ret_val = {
+            'conn_ids': set([]),
+            'comp_ids': set([]),
+            're_ids': set([])
+        }
+        connectors = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'type': 'connector'}))
+        components = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'type': 'component'}))
+        resources = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'type': 'resource'}))
+
+        for i in connectors:
+            ret_val['conn_ids'].add(i['_id'])
+        for i in components:
+            ret_val['comp_ids'].add(i['_id'])
+        for i in resources:
+            ret_val['re_ids'].add(i['_id'])
+
+        return ret_val

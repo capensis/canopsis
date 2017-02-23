@@ -17,10 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
-__version__ = '0.1'
-
-__all__ = ['DataBase', 'Storage']
+from __future__ import unicode_literals
 
 from functools import reduce
 
@@ -37,6 +34,10 @@ from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
 from canopsis.configuration.model import Parameter
 from canopsis.middleware.core import Middleware
+
+__version__ = '0.1'
+
+__all__ = ['DataBase', 'Storage']
 
 
 class DataBase(Middleware):
