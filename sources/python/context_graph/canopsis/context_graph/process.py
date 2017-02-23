@@ -111,6 +111,11 @@ def update_links_res_comp(res, comp):
     :param res: the resource to update
     :param comp: the component to update
     :raises TypeError: if the entities does not match the expected one."""
+    check_type(res, "resource")
+    check_type(comp, "component")
+
+    update_depends_links(res, comp)
+    update_impact_links(comp, res)
 
 
 def update_case1(entities, ids):
