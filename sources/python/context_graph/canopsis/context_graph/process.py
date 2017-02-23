@@ -329,16 +329,16 @@ def event_processing(
     # add comment with the 6 possibles cases and an explaination
 
     # cache and case determination
-    ids = set([])
+    ids = []
 
     if conn_id in cache_conn:
         if comp_id in cache_comp:
             if re_id is not None:
                 if re_id not in cache_re:
                     # 3
-                    ids.add(re_id)
-                    ids.add(comp_id)
-                    ids.add(conn_id)
+                    ids.append(re_id)
+                    ids.append(comp_id)
+                    ids.append(conn_id)
                     cache_re.add(re_id)
                     case = 3
                 # else:
@@ -346,25 +346,25 @@ def event_processing(
         else:
             # 2
             case = 2
-            ids.add(comp_id)
-            ids.add(conn_id)
+            ids.append(comp_id)
+            ids.append(conn_id)
             cache_comp.add(comp_id)
             if re_id is not None:
                 if re_id not in cache_re:
-                    ids.add(re_id)
+                    ids.append(re_id)
                     cache_re.add(re_id)
     else:
         # 6
         case = 6
         cache_conn.add(conn_id)
-        ids.add(conn_id)
-        ids.add(comp_id)
+        ids.append(conn_id)
+        ids.append(comp_id)
         if comp_id in cache_comp:
             if re_id is not None:
                 if re_id not in cache_re:
                     # 5
                     case = 5
-                    ids.add(re_id)
+                    ids.append(re_id)
                     cache_re.add(re_id)
         else:
             # 1
@@ -372,7 +372,7 @@ def event_processing(
             cache_comp.add(comp_id)
             if re_id is not None:
                 cache_re.add(re_id)
-                ids.add(re_id)
+                ids.append(re_id)
 
     # retrieves required entities from database
     update_entities(case, ids)
