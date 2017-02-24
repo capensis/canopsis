@@ -29,7 +29,6 @@ def update_cache():
 
 
 def create_entity(
-        logger,
         id,
         name,
         etype,
@@ -124,9 +123,11 @@ def update_case1(entities, ids):
     comp_there = False
     re_there = False
     conn_there = False
-    for i in entities:
+    comp_pos = res_pos = conn_pos = -1
+    for k, i in enumerate(entities):
         if i['type'] == 'component':
             comp_there = True
+            comp_pos
         elif i['type'] == 'resource':
             re_there = True
         elif i['type'] == 'connector':
@@ -135,6 +136,7 @@ def update_case1(entities, ids):
     if conn_there:
         if comp_there:
             if not re_there:
+                re = create_entity( )
                 # put re + update
                 pass
         else:
@@ -219,20 +221,21 @@ def update_case5(entities, ids):
 def update_case6(entities, ids):
     """Case 6 update entities"""
     conn_there = False
+    res_pos = comp_pos = -1
+    for k, i in enumerat(entities):
+        if entities['_id'] == ids['conn_id']:
+            conn_there = True
+        if entities['type'] == 'component':
+            comp_pos = k
+        if entities['type'] == 'resource':
+            res_pos = k
     LOGGER.debug("Case 6.")
 
-    for i, k in enumerate(entities):
-        if k['type'] == 'connector':
-            conn_there = True
-        if k['type'] == 'resource':
-            res_pos = i
-        if k['type'] == 'component':
-            comp_pos = i
-
     if not conn_there:
-        # insert conn + maj impact depends in comp and re
-        # FIXME : find a better name
-        conn = create_entity(None, ids["conn_id"], ids["conn_id"], "connector")
+        conn = create_entity(
+            ids['conn_id'],
+            ids['conn_id'],
+            "connector")
         update_links_conn_res(conn, entities[res_pos])
         update_links_conn_comp(conn, entities[comp_pos])
         entities.append(conn)
@@ -240,7 +243,7 @@ def update_case6(entities, ids):
 
 
 def update_entities(case, ids):
-    tab_entities = context_graph_manager.get_entity(ids)
+    tab_entities = context_graph_manager.get_entity(ids.values())
     if case == 1:
         update_case1(tab_entities, ids)
     elif case == 2:
@@ -329,16 +332,16 @@ def event_processing(
     # add comment with the 6 possibles cases and an explaination
 
     # cache and case determination
-    ids = []
+    ids = {}
 
     if conn_id in cache_conn:
         if comp_id in cache_comp:
             if re_id is not None:
                 if re_id not in cache_re:
                     # 3
-                    ids.append(re_id)
-                    ids.append(comp_id)
-                    ids.append(conn_id)
+                    ids['re_id'] = re_id
+                    ids['comp_id'] = comp_id
+                    ids['conn_id'] = conn_id
                     cache_re.add(re_id)
                     case = 3
                 # else:
@@ -346,25 +349,25 @@ def event_processing(
         else:
             # 2
             case = 2
-            ids.append(comp_id)
-            ids.append(conn_id)
+            ids['comp_id'] = comp_id
+            ids['conn_id'] = conn_id
             cache_comp.add(comp_id)
             if re_id is not None:
                 if re_id not in cache_re:
-                    ids.append(re_id)
+                    ids['re_id'] = re_id
                     cache_re.add(re_id)
     else:
         # 6
         case = 6
         cache_conn.add(conn_id)
-        ids.append(conn_id)
-        ids.append(comp_id)
+        ids['conn_id'] = conn_id
+        ids['comp_id'] = comp_id
         if comp_id in cache_comp:
             if re_id is not None:
                 if re_id not in cache_re:
                     # 5
                     case = 5
-                    ids.append(re_id)
+                    ids['re_id'] = re_id
                     cache_re.add(re_id)
         else:
             # 1
@@ -372,7 +375,7 @@ def event_processing(
             cache_comp.add(comp_id)
             if re_id is not None:
                 cache_re.add(re_id)
-                ids.append(re_id)
+                ids['re_id'] = re_id
 
     # retrieves required entities from database
     update_entities(case, ids)
