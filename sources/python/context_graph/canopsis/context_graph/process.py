@@ -203,32 +203,56 @@ def update_case5(entities, ids):
         if k['type'] == 'resource':
             re_there = True
             re_pos = i
+        if k['type'] == 'component':
+            comp_pos = i
     if conn_there:
         if re_there:
-            pass
+            return
         else:
             # put re + update comp depends + update conn impact
-            pass
+            re = create_entity(ids["re_id"],
+                               ids["re_id"],
+                               "resource",
+                               [ids["conn_id"]],
+                               [ids["comp_id"]])
+            update_links_res_comp(re, entities[comp_pos])
+            update_links_conn_res(entities[conn_pos], re)
+            entities.append(re)
     else:
+        conn = create_entity(ids["conn_id"],
+                             ids["conn_id"],
+                             "connector")
+        entities.append(conn)
         if re_there:
-            # put comp + maj impac in conn + update re depends
-            pass
+            # put conn + maj impac in conn + update re depends
+            update_links_conn_comp(conn, entities[comp_pos])
+            update_links_conn_res(conn, entities[re_pos])
         else:
-            # put comp + put re + update conn impact for comp and re
-            pass
+            # put conn + put re + update conn impact for comp and re
+            re = create_entity(ids["re_id"],
+                               ids["re_id"],
+                               "resource",
+                               [ids["conn_id"]],
+                               [ids["comp_id"]])
+            update_links_res_comp(re, entities[comp_pos])
+            update_links_conn_res(conn, re)
+            update_links_conn_comp(conn, entities[comp_pos])
+            entities.append(re)
+    context_graph_manager.put_entities(entities)
 
 
 def update_case6(entities, ids):
     """Case 6 update entities"""
     conn_there = False
     res_pos = comp_pos = -1
-    for k, i in enumerat(entities):
+    for k, i in enumerate(entities):
         if entities['_id'] == ids['conn_id']:
             conn_there = True
         if entities['type'] == 'component':
             comp_pos = k
         if entities['type'] == 'resource':
             res_pos = k
+            res_pos = i
     LOGGER.debug("Case 6.")
 
     if not conn_there:
