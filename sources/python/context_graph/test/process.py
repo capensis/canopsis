@@ -34,6 +34,11 @@ class Test(TestCase):
     def setUp(self):
         setattr(process, 'LOGGER', Logger())
 
+    def tearDown(self):
+        process.cache_comp.clear()
+        process.cache_re.clear()
+        process.cache_conn.clear()
+
     def test_update_case_6(self):
         entities_t1 = [{'_id': 'comp_1',
                         'type': 'component',
@@ -50,7 +55,18 @@ class Test(TestCase):
         self.assertEquals(process.update_case6(entities_t1, ids), 1)
         self.assertEquals(process.update_case6(entities_t2, ids), 0)
 
-    def test_update_case_4(self):
+    def test_preprare_update_case_1(self):
+        pass
+
+    def test_preprare_update_case_2(self):
+        res_id = "re_1"
+        conn_id = "conn_id"
+        comp_id = "comp_id"
+
+    def test_preprare_update_case_3(self):
+        pass
+
+    def test_preprare_update_case_4(self):
         res_id = "re_1"
         conn_id = "conn_id"
         comp_id = "comp_id"
@@ -76,6 +92,12 @@ class Test(TestCase):
         self.assertItemsEqual(process.cache_re, expected_cache_re)
         self.assertItemsEqual(process.cache_comp, expected_cache_comp)
         self.assertItemsEqual(process.cache_conn, expected_cache_conn)
+
+    def test_preprare_update_case_5(self):
+        pass
+
+    def test_preprare_update_case_6(self):
+        pass
 
     def test_check_type(self):
         entities = {'_id': 'conn_1', 'type': 'connector'}
@@ -122,13 +144,16 @@ class Test(TestCase):
         self.assertTrue(e_1['impact'] == [e_2['_id']])
 
     def test_update_case_5():
-        # TO DO
+        pass
+
     def test_update_case_3():
-        # TO DO
+        pass
+
     def test_update_case_2():
-        # TO DO
+        pass
+
     def test_update_case_1():
-        # TO DO
+        pass
 
 if __name__ == '__main__':
     main()
