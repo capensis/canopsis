@@ -15,16 +15,6 @@ class Test(TestCase):
         self.assertEquals(process.update_case_6(entities_t2, ids), 1)
         self.assertEquals(process.update_case_6(entities_t2, ids), 0)
 
-    def test_prepare_update(event):
-        #  Connector    Resource    Component
-        #     0             0            0     -> case 1
-        #     1             0            0     -> case 2
-        #     1             0            1     -> case 3
-        #     1             1            1     -> case 4
-        #     0             0            1     -> case 5
-        #     0             1            1     -> case 6
-        pass
-
 
 if __name__ == '__main__':
     main()
