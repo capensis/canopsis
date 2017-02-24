@@ -119,11 +119,14 @@ def update_links_res_comp(res, comp):
 
 def update_case1(entities, ids):
     """Case 1 update entities"""
+
     LOGGER.debug("Case 1.")
+
     comp_there = False
     re_there = False
     conn_there = False
     comp_pos = re_pos = conn_pos = -1
+
     for k, i in enumerate(entities):
         if i['type'] == 'component':
             comp_there = True
@@ -136,8 +139,14 @@ def update_case1(entities, ids):
             conn_pos = k
 
     if conn_there:
+        LOGGER.debug(
+            "Connector {0} present in database".format(ids["conn_id"]))
         if comp_there:
+            LOGGER.debug(
+                "Component {0} present in database".format(ids["comp_id"]))
             if not re_there:
+                LOGGER.debug(
+                    "Resource {0} not present in database".format(ids["re_id"]))
                 re = create_entity(ids['re_id'], ids['re_id'], 'resource')
                 update_links_conn_res(entities[conn_pos], re)
                 update_links_res_comp(re, entities[conn_pos])
@@ -145,6 +154,8 @@ def update_case1(entities, ids):
                 context_graph_manager.put_entities(entities)
                 # put re + update
         else:
+            LOGGER.debug(
+                "Component {0} not present in database".format(ids["comp_id"]))
             # push comp + put re + update conn
             comp = create_entity(ids['comp_id'],
                                  ids['comp_id'],
@@ -160,8 +171,14 @@ def update_case1(entities, ids):
             entities.append(re)
             context_graph_manager.put_entities(entities)
     else:
+        LOGGER.debug(
+            "Connector {0} not present in database".format(ids["conn_id"]))
         if comp_there:
+            LOGGER.debug(
+                "Component {0} present in database".format(ids["comp_id"]))
             if re_there:
+                LOGGER.debug(
+                    "Resource {0} present in database".format(ids["re_id"]))
                 # put connector + updates comp re
                 conn = create_entity(ids['conn_id'],
                                      ids['conn_id'],
@@ -171,6 +188,8 @@ def update_case1(entities, ids):
                 entities.append(conn)
                 context_graph_manager.put_entities(entities)
             else:
+                LOGGER.debug(
+                    "Resource {0} not present in database".format(ids["re_id"]))
                 # put connector + put re + update comp
                 conn = create_entity(ids['conn_id'],
                                      ids['conn_id'],
@@ -186,6 +205,8 @@ def update_case1(entities, ids):
                 entities.append(re)
                 context_graph_manager.put_entities(entities)
         else:
+            LOGGER.debug(
+                "Component {0} not present in database".format(ids["comp_id"]))
             # put comp + put re + put conn
             comp = create_entity(ids['comp_id'],
                                  ids['comp_id'],
@@ -201,6 +222,7 @@ def update_case1(entities, ids):
                                  'connector',
                                  impact=[ids['comp_id'], ids['re_id']])
             context_graph_manager.put_entities([comp, re, conn])
+    LOGGER.debug("Entities : {0}".format(entities))
 
 
 def update_case2(entities, ids):
