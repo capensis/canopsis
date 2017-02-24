@@ -1,5 +1,5 @@
 from unittest import main, TestCase
-import process
+import canopsis.context_graph.process
 
 class Test(TestCase):
 
@@ -24,8 +24,6 @@ class Test(TestCase):
         #     0             0            1     -> case 5
         #     0             1            1     -> case 6
         pass
-
-
 
 
 if __name__ == '__main__':
