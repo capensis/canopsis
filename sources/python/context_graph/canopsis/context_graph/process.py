@@ -214,7 +214,7 @@ def update_case2(entities, ids):
             re_there = True
     if comp_there:
         if re_there:
-            pass
+            return
         else:
             # insert re + maj comp depends + maj conn impact
             pass
@@ -226,14 +226,20 @@ def update_case2(entities, ids):
 def update_case3(entities, ids):
     """Case 3 update entities"""
     re_there = False
-    for i in entities:
-        if i['type'] == 'resource':
+    for i, k in enumerate(entities):
+        if k['type'] == 'resource':
             re_there = True
-            break
+        if k['type'] == "component":
+            comp_pos = i
+        if k['type'] == "connector":
+            conn_pos = i
     if not re_there:
         # push re + update conn impact + update comp depends
-        pass
-
+        re = create_entity(ids["re_id"], ids["re_id"], "resource")
+        entities.append(re)
+        update_links_conn_res(entities[conn_pos], re)
+        update_links_res_comp(re, entities[comp_pos])
+        context_graph_manager.put_entities(entities)
 
 def update_case4(entities, ids):
     """Case 4 update entities"""
@@ -251,19 +257,42 @@ def update_case5(entities, ids):
         if k['type'] == 'resource':
             re_there = True
             re_pos = i
+        if k['type'] == 'component':
+            comp_pos = i
     if conn_there:
         if re_there:
-            pass
+            return
         else:
             # put re + update comp depends + update conn impact
-            pass
+            re = create_entity(ids["re_id"],
+                               ids["re_id"],
+                               "resource",
+                               [ids["conn_id"]],
+                               [ids["comp_id"]])
+            update_links_res_comp(re, entities[comp_pos])
+            update_links_conn_res(entities[conn_pos], re)
+            entities.append(re)
     else:
+        conn = create_entity(ids["conn_id"],
+                             ids["conn_id"],
+                             "connector")
+        entities.append(conn)
         if re_there:
             # put conn + maj impac in conn + update re depends
-            pass
+            update_links_conn_comp(conn, entities[comp_pos])
+            update_links_conn_res(conn, entities[re_pos])
         else:
-            # put comp + put re + update conn impact for comp and re
-            pass
+            # put conn + put re + update conn impact for comp and re
+            re = create_entity(ids["re_id"],
+                               ids["re_id"],
+                               "resource",
+                               [ids["conn_id"]],
+                               [ids["comp_id"]])
+            update_links_res_comp(re, entities[comp_pos])
+            update_links_conn_res(conn, re)
+            update_links_conn_comp(conn, entities[comp_pos])
+            entities.append(re)
+    context_graph_manager.put_entities(entities)
 
 
 def update_case6(entities, ids):
@@ -277,6 +306,7 @@ def update_case6(entities, ids):
             comp_pos = k
         if entities['type'] == 'resource':
             res_pos = k
+            res_pos = i
     LOGGER.debug("Case 6.")
 
     if not conn_there:
@@ -334,7 +364,7 @@ def event_processing(
     # 1 −> In cache
     #
     #
-    #  Connector    Ressource    Component
+    #  Connector    Resource    Component
     #     0             0            0     -> case 1
     #     1             0            0     -> case 2
     #     1             0            1     -> case 3
