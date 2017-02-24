@@ -54,7 +54,9 @@ def check_type(entities, expected):
     :raises TypeError: if the entity does not match the expected one."""
     if entities["type"] != expected:
         raise TypeError("Entities {0} does not match {1}".format(
-            entities["id"], expected))
+            entities["_id"], expected))
+    return True
+
 
 
 def update_depends_links(ent_from, ent_to):
