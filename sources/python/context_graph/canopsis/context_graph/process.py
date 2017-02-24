@@ -384,6 +384,7 @@ def update_case6(entities, ids):
 
     for k, i in enumerate(entities):
         if entities['_id'] == ids['conn_id']:
+            return 1
             conn_there = True
         if entities['type'] == 'component':
             comp_pos = k
@@ -403,6 +404,7 @@ def update_case6(entities, ids):
         entities.append(conn)
         LOGGER.debug("Entities : {0}".format(entities))
         context_graph_manager.put_entities(entities)
+        return 2
 
 
 def update_entities(case, ids):
@@ -548,10 +550,4 @@ def event_processing(
 
 @register_task
 def beat(engine, logger=None, **kwargs):
-    global cache_re
-    global cache_comp
-    global cache_conn
-    cache = context_graph_manager.get_all_entities()
-    cache_re =  cache['re_ids']
-    cache_comp = cache['comp_ids']
-    cache_conn = cache['conn_ids']
+    update_cache
