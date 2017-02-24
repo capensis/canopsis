@@ -117,6 +117,66 @@ def update_links_res_comp(res, comp):
     update_impact_links(comp, res)
 
 
+def prepare_update(event):
+    """Determine in which case the event depends and return the required ids
+    :param event: the event
+    :return: the case id and the required ids as a list"""
+    case = 0  # 0 -> exception raised
+    comp_id = event['component']
+
+    re_id = None
+    if 'resource' in event.keys():
+        re_id = '{0}/{1}'.format(event['resource'], comp_id)
+
+    conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
+
+    # add comment with the 6 possibles cases and an explaination
+
+    # cache and case determination
+    ids = {}
+
+    if conn_id in cache_conn:
+        if comp_id in cache_comp:
+            if re_id is not None:
+                if re_id not in cache_re: # Case 3
+                    ids['re_id'] = re_id
+                    ids['comp_id'] = comp_id
+                    ids['conn_id'] = conn_id
+                    cache_re.add(re_id)
+                    case = 3
+                else: # Case 4
+                    case = 4
+        else: # Case 2
+            case = 2
+            ids['comp_id'] = comp_id
+            ids['conn_id'] = conn_id
+            cache_comp.add(comp_id)
+            if re_id is not None:
+                if re_id not in cache_re:
+                    ids['re_id'] = re_id
+                    cache_re.add(re_id)
+    else: # Case 6
+        case = 6
+        cache_conn.add(conn_id)
+        ids['conn_id'] = conn_id
+        ids['comp_id'] = comp_id
+        if comp_id in cache_comp:
+            if re_id is not None:
+                if re_id not in cache_re: # Case 5
+
+                    case = 5
+                    ids['re_id'] = re_id
+                    cache_re.add(re_id)
+        else: # Case 1
+            case = 1
+            cache_comp.add(comp_id)
+            if re_id is not None:
+                cache_re.add(re_id)
+                ids['re_id'] = re_id
+
+    return case, ids
+
+
 def update_case1(entities, ids):
     """Case 1 update entities"""
 
@@ -485,65 +545,7 @@ def event_processing(
     #    Create a connector then update the links between the connector and
     #    the resource and between the connector and component.
 
-    case = 0  # 0 -> exception raised
-    comp_id = event['component']
-
-    re_id = None
-    if 'resource' in event.keys():
-        re_id = '{0}/{1}'.format(event['resource'], comp_id)
-
-    conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
-
-    # add comment with the 6 possibles cases and an explaination
-
-    # cache and case determination
-    ids = {}
-
-    if conn_id in cache_conn:
-        if comp_id in cache_comp:
-            if re_id is not None:
-                if re_id not in cache_re:
-                    # 3
-                    ids['re_id'] = re_id
-                    ids['comp_id'] = comp_id
-                    ids['conn_id'] = conn_id
-                    cache_re.add(re_id)
-                    case = 3
-                else:
-                    # 4 => pass
-                    case = 4
-        else:
-            # 2
-            case = 2
-            ids['comp_id'] = comp_id
-            ids['conn_id'] = conn_id
-            cache_comp.add(comp_id)
-            if re_id is not None:
-                if re_id not in cache_re:
-                    ids['re_id'] = re_id
-                    cache_re.add(re_id)
-    else:
-        # 6
-        case = 6
-        cache_conn.add(conn_id)
-        ids['conn_id'] = conn_id
-        ids['comp_id'] = comp_id
-        if comp_id in cache_comp:
-            if re_id is not None:
-                if re_id not in cache_re:
-                    # 5
-                    case = 5
-                    ids['re_id'] = re_id
-                    cache_re.add(re_id)
-        else:
-            # 1
-            case = 1
-            cache_comp.add(comp_id)
-            if re_id is not None:
-                cache_re.add(re_id)
-                ids['re_id'] = re_id
-
-    # retrieves required entities from database
+    case, ids = prepare_update(event)
     update_entities(case, ids)
 
     LOGGER.debug("*** The end. ***")
