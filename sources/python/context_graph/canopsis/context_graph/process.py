@@ -207,17 +207,16 @@ def update_case2(entities, ids):
     """Case 2 update entities"""
     comp_there = False
     re_there = False
-    comp_pos = re_pos = conn_pos = -1
-    for k, i in enumerat(entities):
+    comp_pos = conn_pos = -1
+    for k, i in enumerate(entities):
         if i['type'] == 'component':
             comp_there = True
             comp_pos = k
         elif i['type'] == 'resource':
             re_there = True
-            re_pos = k
         elif i['type'] == 'connector':
             conn_pos = k
-        
+
     if comp_there:
         if not re_there:
             # insert re + maj comp depends + maj conn impact
@@ -242,6 +241,7 @@ def update_case2(entities, ids):
         entities.append(re)
         context_graph_manager.put_entities(entities)
 
+
 def update_case3(entities, ids):
     """Case 3 update entities"""
     re_there = False
@@ -259,6 +259,7 @@ def update_case3(entities, ids):
         update_links_conn_res(entities[conn_pos], re)
         update_links_res_comp(re, entities[comp_pos])
         context_graph_manager.put_entities(entities)
+
 
 def update_case4(entities, ids):
     """Case 4 update entities"""
