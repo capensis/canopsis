@@ -207,21 +207,40 @@ def update_case2(entities, ids):
     """Case 2 update entities"""
     comp_there = False
     re_there = False
-    for i in entities:
+    comp_pos = re_pos = conn_pos = -1
+    for k, i in enumerat(entities):
         if i['type'] == 'component':
             comp_there = True
+            comp_pos = k
         elif i['type'] == 'resource':
             re_there = True
+            re_pos = k
+        elif i['type'] == 'connector':
+            conn_pos = k
+        
     if comp_there:
-        if re_there:
-            return
-        else:
+        if not re_there:
             # insert re + maj comp depends + maj conn impact
-            pass
+            re = create_entity(ids['re_id'], ids['re_id'], 'resource')
+            update_links_conn_res(entities[conn_pos], re)
+            update_links_res_comp(re, entities[comp_pos])
+            entities.append(re)
+            context_graph_manager.put_entities(entities)
     else:
         # insert comp + insert re + maj conn impact with com and re
-        pass
-
+        comp = create_entity(ids['comp_id'],
+                             ids['comp_id'],
+                             'component',
+                             depends=[ids['comp_id']])
+        re = create_entity(ids['re_id'],
+                           ids['re_id'],
+                           'resource',
+                           impact=[ids['comp_id']])
+        update_links_conn_res(entities[conn_pos], re)
+        update_links_conn_comp(entities[conn_pos], comp)
+        entities.append(comp)
+        entities.append(re)
+        context_graph_manager.put_entities(entities)
 
 def update_case3(entities, ids):
     """Case 3 update entities"""
