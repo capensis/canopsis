@@ -1,5 +1,5 @@
 from unittest import main, TestCase
-import process
+import canopsis.context_graph.process
 
 class Test(TestCase):
 
@@ -11,9 +11,6 @@ class Test(TestCase):
         ids = {'re_id': 're_1', 'comp_id': 'comp_1', 'conn_id': 'conn_1'}
         self.assertEquals(process.update_case_6(entities_t2, ids), 1)
         self.assertEquals(process.update_case_6(entities_t2, ids), 0)
-
-    def test_update_case_5
-
 
 
 if __name__ == '__main__':
