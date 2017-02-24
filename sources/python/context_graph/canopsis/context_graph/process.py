@@ -384,8 +384,8 @@ def update_case6(entities, ids):
 
     for k, i in enumerate(entities):
         if entities['_id'] == ids['conn_id']:
-            return 1
             conn_there = True
+            return 0 
         if entities['type'] == 'component':
             comp_pos = k
         if entities['type'] == 'resource':
@@ -404,7 +404,7 @@ def update_case6(entities, ids):
         entities.append(conn)
         LOGGER.debug("Entities : {0}".format(entities))
         context_graph_manager.put_entities(entities)
-        return 2
+        return 1
 
 
 def update_entities(case, ids):
