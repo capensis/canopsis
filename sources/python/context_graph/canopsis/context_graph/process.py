@@ -232,7 +232,7 @@ def update_case6(entities, ids):
     if not conn_there:
         # insert conn + maj impact depends in comp and re
         # FIXME : find a better name
-        conn = create_entity(None, ids, ids, "connector")
+        conn = create_entity(None, ids["conn_id"], ids["conn_id"], "connector")
         update_links_conn_res(conn, entities[res_pos])
         update_links_conn_comp(conn, entities[comp_pos])
         entities.append(conn)
