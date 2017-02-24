@@ -443,14 +443,13 @@ def update_case6(entities, ids):
     res_pos = comp_pos = -1
 
     for k, i in enumerate(entities):
-        if entities['_id'] == ids['conn_id']:
+        if i['_id'] == ids['conn_id']:
             conn_there = True
             return 0 
-        if entities['type'] == 'component':
+        if i['type'] == 'component':
             comp_pos = k
-        if entities['type'] == 'resource':
+        if i['type'] == 'resource':
             res_pos = k
-            res_pos = i
 
     if not conn_there:
         LOGGER.debug(

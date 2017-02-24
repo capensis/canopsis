@@ -30,7 +30,7 @@ class Test(TestCase):
                                                                                             'depends':[]}]
         entities_t2 = [{'_id': 'conn_1','type': 'connector'}, {'_id': 'comp_1','type': 'component'}, {'_id': 're_1','type': 'resource'}]
         ids = {'re_id': 're_1', 'comp_id': 'comp_1', 'conn_id': 'conn_1'}
-        self.assertEquals(process.update_case6(entities_t2, ids), 1)
+        self.assertEquals(process.update_case6(entities_t1, ids), 1)
         self.assertEquals(process.update_case6(entities_t2, ids), 0)
 
 
