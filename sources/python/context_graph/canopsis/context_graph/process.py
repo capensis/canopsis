@@ -65,7 +65,7 @@ def update_depends_links(ent_from, ent_to):
     :param ent_from: the entities that will be updated
     :param ent_to: the entities which id will be used to update ent_from"""
     if ent_to["_id"] not in ent_from["depends"]:
-        ent_from["depends"] = ent_to["_id"]
+        ent_from["depends"].append(ent_to["_id"])
 
 
 def update_impact_links(ent_from, ent_to):
@@ -74,7 +74,7 @@ def update_impact_links(ent_from, ent_to):
     :ent_from: the entities that will be updated
     :ent_to: the entities which id will be used to update :ent_from:"""
     if ent_to["_id"] not in ent_from["impact"]:
-        ent_from["impact"] = ent_to["_id"]
+        ent_from["impact"].append(ent_to["_id"])
 
 
 def update_links_conn_res(conn, res):
