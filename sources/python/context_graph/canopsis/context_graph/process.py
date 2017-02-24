@@ -545,3 +545,13 @@ def event_processing(
     update_entities(case, ids)
 
     LOGGER.debug("*** The end. ***")
+
+@register_task
+def beat(engine, logger=None, **kwargs):
+    global cache_re
+    global cache_comp
+    global cache_conn
+    cache = context_graph_manager.get_all_entities()
+    cache_re =  cache['re_ids']
+    cache_comp = cache['comp_ids']
+    cache_conn = cache['conn_ids']
