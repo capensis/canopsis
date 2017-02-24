@@ -57,8 +57,6 @@ def check_type(entities, expected):
             entities["_id"], expected))
     return True
 
-
-
 def update_depends_links(ent_from, ent_to):
     """Update the links depends from ent_from to ent_to. Basicaly, append
     the id of ent_to on the the "depends" of ent_from.
