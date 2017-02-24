@@ -35,13 +35,19 @@ class Test(TestCase):
         setattr(process, 'LOGGER', Logger())
 
     def test_update_case_6(self):
-        entities_t1 = [{'_id': 'comp_1', 'type': 'component', 'impact': [], 'depends': []}, {'_id': 're_1', 'type':
-                                                                                             'resource', 'impact': [],
-                                                                                             'depends':[]}]
-        entities_t2 = [{'_id': 'conn_1', 'type': 'connector'}, {
-            '_id': 'comp_1', 'type': 'component'}, {'_id': 're_1', 'type': 'resource'}]
+        entities_t1 = [{'_id': 'comp_1',
+                        'type': 'component',
+                        'impact': [],
+                        'depends': []},
+                       {'_id': 're_1',
+                        'type': 'resource',
+                        'impact': [],
+                        'depends': []}]
+        entities_t2 = [{'_id': 'conn_1', 'type': 'connector'},
+                       {'_id': 'comp_1', 'type': 'component'},
+                       {'_id': 're_1', 'type': 'resource'}]
         ids = {'re_id': 're_1', 'comp_id': 'comp_1', 'conn_id': 'conn_1'}
-        self.assertEquals(process.update_case6(entities_t2, ids), 1)
+        self.assertEquals(process.update_case6(entities_t1, ids), 1)
         self.assertEquals(process.update_case6(entities_t2, ids), 0)
 
     def test_update_case_4(self):
@@ -72,7 +78,50 @@ class Test(TestCase):
         self.assertItemsEqual(process.cache_conn, expected_cache_conn)
 
 
+    def test_check_type(self):
+        entities = {'_id': 'conn_1', 'type': 'connector'}
+        self.assertTrue(process.check_type(entities, 'connector'))
+        # self.assertRaises(TypeError, process.check_type(entities, 'component'))
+        # ^ test ok but assertRaises does not works...
 
+    def test_update_depends_links(self):
+        e_1 = {
+            '_id': 'comp_1',
+            'type': 'component',
+            'impact': [],
+            'depends': []
+        }
+        e_2 = {
+            '_id': 'conn_1',
+            'type': 'connector',
+            'impact': [],
+            'depends': []
+        }
+        process.update_depends_links(e_1, e_2)
+        self.assertTrue(e_2['_id'] in e_1['depends'])
+        process.update_depends_links(e_1, e_2)
+        print(e_1)
+        self.assertTrue(e_1['depends'] == [e_2['_id']])
+
+    def test_update_impact_links(self):
+        e_1 = {
+            '_id': 'comp_1',
+            'type': 'component',
+            'impact': [],
+            'depends': []
+        }
+        e_2 = {
+            '_id': 'conn_1',
+            'type': 'connector',
+            'impact': [],
+            'depends': []
+        }
+        process.update_impact_links(e_1, e_2)
+        self.assertTrue(e_2['_id'] in e_1['impact'])
+        process.update_impact_links(e_1, e_2)
+        print(e_1)
+        self.assertTrue(e_1['impact'] == [e_2['_id']])
+>>>>>>> a069b1745224197b052a9873ec39ccfaed7d8555
 
 if __name__ == '__main__':
     main()

@@ -54,7 +54,9 @@ def check_type(entities, expected):
     :raises TypeError: if the entity does not match the expected one."""
     if entities["type"] != expected:
         raise TypeError("Entities {0} does not match {1}".format(
-            entities["id"], expected))
+            entities["_id"], expected))
+    return True
+
 
 
 def update_depends_links(ent_from, ent_to):
@@ -63,7 +65,7 @@ def update_depends_links(ent_from, ent_to):
     :param ent_from: the entities that will be updated
     :param ent_to: the entities which id will be used to update ent_from"""
     if ent_to["_id"] not in ent_from["depends"]:
-        ent_from["depends"] = ent_to["_id"]
+        ent_from["depends"].append(ent_to["_id"])
 
 
 def update_impact_links(ent_from, ent_to):
@@ -72,7 +74,7 @@ def update_impact_links(ent_from, ent_to):
     :ent_from: the entities that will be updated
     :ent_to: the entities which id will be used to update :ent_from:"""
     if ent_to["_id"] not in ent_from["impact"]:
-        ent_from["impact"] = ent_to["_id"]
+        ent_from["impact"].append(ent_to["_id"])
 
 
 def update_links_conn_res(conn, res):
@@ -443,14 +445,13 @@ def update_case6(entities, ids):
     res_pos = comp_pos = -1
 
     for k, i in enumerate(entities):
-        if entities['_id'] == ids['conn_id']:
+        if i['_id'] == ids['conn_id']:
             conn_there = True
             return 0 
-        if entities['type'] == 'component':
+        if i['type'] == 'component':
             comp_pos = k
-        if entities['type'] == 'resource':
+        if i['type'] == 'resource':
             res_pos = k
-            res_pos = i
 
     if not conn_there:
         LOGGER.debug(
