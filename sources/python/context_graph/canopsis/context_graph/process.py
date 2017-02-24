@@ -227,6 +227,9 @@ def update_case1(entities, ids):
 
 def update_case2(entities, ids):
     """Case 2 update entities"""
+
+    LOGGER.debug("Case 2")
+
     comp_there = False
     re_there = False
     comp_pos = conn_pos = -1
@@ -240,14 +243,23 @@ def update_case2(entities, ids):
             conn_pos = k
 
     if comp_there:
+        LOGGER.debug(
+            "Component {0} present in database".format(ids["comp_id"]))
         if not re_there:
+            LOGGER.debug(
+                "Resource {0} not present in database".format(ids["re_id"]))
             # insert re + maj comp depends + maj conn impact
             re = create_entity(ids['re_id'], ids['re_id'], 'resource')
             update_links_conn_res(entities[conn_pos], re)
             update_links_res_comp(re, entities[comp_pos])
             entities.append(re)
             context_graph_manager.put_entities(entities)
+        else:
+            LOGGER.debug(
+                "Resource {0} present in database. Do nothing".format(ids["re_id"]))
     else:
+        LOGGER.debug(
+            "Component {0} not present in database".format(ids["comp_id"]))
         # insert comp + insert re + maj conn impact with com and re
         comp = create_entity(ids['comp_id'],
                              ids['comp_id'],
@@ -262,6 +274,7 @@ def update_case2(entities, ids):
         entities.append(comp)
         entities.append(re)
         context_graph_manager.put_entities(entities)
+        LOGGER.debug("Entities : {0}".format(entities))
 
 
 def update_case3(entities, ids):
@@ -278,6 +291,8 @@ def update_case3(entities, ids):
             conn_pos = i
 
     if not re_there:
+        LOGGER.debug(
+            "Resource {0} not present in datase.".format(ids["re_id"]))
         # push re + update conn impact + update comp depends
         re = create_entity(ids["re_id"], ids["re_id"], "resource")
         entities.append(re)
