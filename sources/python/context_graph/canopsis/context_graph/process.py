@@ -421,7 +421,7 @@ def update_entities(case, ids):
         update_case6(tab_entities, ids)
     else:
         # FIXME : did a logger here is a good idea ?
-        raise ValueError("Unknown case : {0}.".format("case"))
+        raise ValueError("Unknown case : {0}.".format(case))
 
 
 @register_task
@@ -507,8 +507,9 @@ def event_processing(
                     ids['conn_id'] = conn_id
                     cache_re.add(re_id)
                     case = 3
-                # else:
+                else:
                     # 4 => pass
+                    case = 4
         else:
             # 2
             case = 2
