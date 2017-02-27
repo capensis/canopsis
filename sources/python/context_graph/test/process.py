@@ -60,9 +60,16 @@ class Test(TestCase):
 
         self.assertDictEqual(ids, expected_ids)
         self.assertEqual(case, 2)
-        self.assertIn(res_id, process.cache_re)
-        self.assertIn(comp_id, process.cache_comp)
-        self.assertIn(conn_id, process.cache_conn)
+
+        expected_cache_re = set()
+        expected_cache_re.add(res_id)
+        expected_cache_comp = set()
+        expected_cache_comp.add(comp_id)
+        expected_cache_conn = set()
+        expected_cache_conn.add(conn_id)
+        self.assertSetEqual(process.cache_re, expected_cache_re)
+        self.assertSetEqual(process.cache_comp, expected_cache_comp)
+        self.assertSetEqual(process.cache_conn, expected_cache_conn)
 
     def test_preprare_update_case_2_re_none(self):
         res_id = None
@@ -80,9 +87,15 @@ class Test(TestCase):
 
         self.assertDictEqual(ids, expected_ids)
         self.assertEqual(case, 2)
-        self.assertNotIn(res_id, process.cache_re)
-        self.assertIn(comp_id, process.cache_comp)
-        self.assertIn(conn_id, process.cache_conn)
+
+        expected_cache_re = set()
+        expected_cache_comp = set()
+        expected_cache_comp.add(comp_id)
+        expected_cache_conn = set()
+        expected_cache_conn.add(conn_id)
+        self.assertSetEqual(process.cache_re, expected_cache_re)
+        self.assertSetEqual(process.cache_comp, expected_cache_comp)
+        self.assertSetEqual(process.cache_conn, expected_cache_conn)
 
     def test_preprare_update_case_3(self):
         res_id = "re_id"
@@ -102,9 +115,16 @@ class Test(TestCase):
 
         self.assertEqual(case, 3)
         self.assertDictEqual(ids, expected_ids)
-        self.assertIn(res_id, process.cache_re)
-        self.assertIn(comp_id, process.cache_comp)
-        self.assertIn(conn_id, process.cache_conn)
+
+        expected_cache_re = set()
+        expected_cache_re.add(res_id)
+        expected_cache_comp = set()
+        expected_cache_comp.add(comp_id)
+        expected_cache_conn = set()
+        expected_cache_conn.add(conn_id)
+        self.assertSetEqual(process.cache_re, expected_cache_re)
+        self.assertSetEqual(process.cache_comp, expected_cache_comp)
+        self.assertSetEqual(process.cache_conn, expected_cache_conn)
 
     def test_preprare_update_case_4(self):
         res_id = "re_1"
@@ -129,9 +149,9 @@ class Test(TestCase):
         expected_cache_comp.add(comp_id)
         expected_cache_conn = set()
         expected_cache_conn.add(conn_id)
-        self.assertItemsEqual(process.cache_re, expected_cache_re)
-        self.assertItemsEqual(process.cache_comp, expected_cache_comp)
-        self.assertItemsEqual(process.cache_conn, expected_cache_conn)
+        self.assertSetEqual(process.cache_re, expected_cache_re)
+        self.assertSetEqual(process.cache_comp, expected_cache_comp)
+        self.assertSetEqual(process.cache_conn, expected_cache_conn)
 
     def test_preprare_update_case_5(self):
         pass
