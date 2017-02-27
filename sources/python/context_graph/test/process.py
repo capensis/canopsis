@@ -41,7 +41,30 @@ class Test(TestCase):
         process.cache_conn.clear()
 
     def test_preprare_update_case_1(self):
-        pass
+        res_id = "re_id"
+        conn_id = "conn_id"
+        comp_id = "comp_id"
+
+        event = create_event(conn_id, conn_id, comp=comp_id, res=res_id)
+
+        case, ids = process.prepare_update(event)
+
+        expected_ids = {'comp_id': comp_id,
+                        're_id': res_id + "/" + comp_id,
+                        'conn_id': conn_id + "/" + conn_id}
+
+        self.assertDictEqual(ids, expected_ids)
+        self.assertEqual(case, 1)
+
+        expected_cache_re = set()
+        expected_cache_re.add(res_id + "/" + comp_id)
+        expected_cache_comp = set()
+        expected_cache_comp.add(comp_id)
+        expected_cache_conn = set()
+        expected_cache_conn.add(conn_id + "/" + conn_id)
+        self.assertSetEqual(process.cache_re, expected_cache_re)
+        self.assertSetEqual(process.cache_comp, expected_cache_comp)
+        self.assertSetEqual(process.cache_conn, expected_cache_conn)
 
     def test_preprare_update_case_2(self):
         res_id = "re_id"
@@ -140,7 +163,7 @@ class Test(TestCase):
         case, ids = process.prepare_update(event)
 
         self.assertEqual(case, 4)
-        self.assertListEqual(ids, {})
+        self.assertDictEqual(ids, {})
 
         # check cache state
         expected_cache_re = set()
@@ -154,10 +177,89 @@ class Test(TestCase):
         self.assertSetEqual(process.cache_conn, expected_cache_conn)
 
     def test_preprare_update_case_5(self):
-        pass
+        res_id = "re_id"
+        conn_id = "conn_id"
+        comp_id = "comp_id"
+
+        expected_ids = {'comp_id': comp_id,
+                        're_id': res_id + "/" + comp_id,
+                        'conn_id': conn_id + "/" + conn_id}
+
+        event = create_event(conn_id, conn_id, comp_id, res_id)
+
+        process.cache_comp.add(comp_id)
+
+        case, ids = process.prepare_update(event)
+
+        self.assertEqual(case, 5)
+        self.assertDictEqual(ids, expected_ids)
+
+        # check cache state
+        expected_cache_re = set()
+        expected_cache_re.add(res_id)
+        expected_cache_comp = set()
+        expected_cache_comp.add(comp_id)
+        expected_cache_conn = set()
+        expected_cache_conn.add(conn_id)
+        self.assertSetEqual(process.cache_re, expected_cache_re)
+        self.assertSetEqual(process.cache_comp, expected_cache_comp)
+        self.assertSetEqual(process.cache_conn, expected_cache_conn)
+
+    def test_preprare_update_case_5_re_none(self):
+        res_id = None
+        conn_id = "conn_id"
+        comp_id = "comp_id"
+
+        expected_ids = {'comp_id': comp_id,
+                        'conn_id': conn_id + "/" + conn_id}
+
+        event = create_event(conn_id, conn_id, comp_id, res_id)
+
+        process.cache_comp.add(comp_id)
+
+        case, ids = process.prepare_update(event)
+
+        self.assertEqual(case, 5)
+        self.assertDictEqual(ids, expected_ids)
+
+        # check cache state
+        expected_cache_re = set()
+        expected_cache_re.add(res_id)
+        expected_cache_comp = set()
+        expected_cache_comp.add(comp_id)
+        expected_cache_conn = set()
+        expected_cache_conn.add(conn_id)
+        self.assertSetEqual(process.cache_re, expected_cache_re)
+        self.assertSetEqual(process.cache_comp, expected_cache_comp)
+        self.assertSetEqual(process.cache_conn, expected_cache_conn)
 
     def test_preprare_update_case_6(self):
-        pass
+        res_id = "re_id"
+        conn_id = "conn_id"
+        comp_id = "comp_id"
+
+        expected_ids = {'comp_id': comp_id,
+                        're_id': res_id + "/" + comp_id,
+                        'conn_id': conn_id + "/" + conn_id}
+
+        event = create_event(conn_id, conn_id, comp_id, res_id)
+
+        case, ids = process.prepare_update(event)
+
+        self.assertEqual(case, 6)
+        self.assertDictEqual(ids, expected_ids)
+
+        # check cache state
+        expected_cache_re = set()
+        expected_cache_re.add(res_id)
+        expected_cache_comp = set()
+        expected_cache_comp.add(comp_id)
+        expected_cache_conn = set()
+        expected_cache_conn.add(conn_id)
+        self.assertSetEqual(process.cache_re, expected_cache_re)
+        self.assertSetEqual(process.cache_comp, expected_cache_comp)
+        self.assertSetEqual(process.cache_conn, expected_cache_conn)
+
 
     def test_check_type(self):
         entities = {'_id': 'conn_1', 'type': 'connector'}
