@@ -85,7 +85,26 @@ class Test(TestCase):
         self.assertIn(conn_id, process.cache_conn)
 
     def test_preprare_update_case_3(self):
-        pass
+        res_id = "re_id"
+        conn_id = "conn_id"
+        comp_id = "comp_id"
+
+        process.cache_comp.add(comp_id)
+        process.cache_conn.add(conn_id)
+
+        event = create_event(conn_id, conn_id, comp_id, res_id)
+
+        case, ids = process.prepare_update(event)
+
+        expected_ids = {'comp_id': comp_id,
+                        're_id': res_id + "/" + comp_id,
+                        'conn_id': conn_id + "/" + conn_id}
+
+        self.assertEqual(case, 3)
+        self.assertDictEqual(ids, expected_ids)
+        self.assertIn(res_id, process.cache_re)
+        self.assertIn(comp_id, process.cache_comp)
+        self.assertIn(conn_id, process.cache_conn)
 
     def test_preprare_update_case_4(self):
         res_id = "re_1"
