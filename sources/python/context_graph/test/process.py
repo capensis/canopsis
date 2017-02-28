@@ -53,8 +53,8 @@ class Test(TestCase):
                         're_id': res_id + "/" + comp_id,
                         'conn_id': conn_id + "/" + conn_id}
 
-        self.assertDictEqual(ids, expected_ids)
         self.assertEqual(case, 1)
+        self.assertDictEqual(ids, expected_ids)
 
         expected_cache_re = set()
         expected_cache_re.add(res_id + "/" + comp_id)
@@ -295,7 +295,6 @@ class Test(TestCase):
         process.update_depends_links(e_1, e_2)
         self.assertTrue(e_2['_id'] in e_1['depends'])
         process.update_depends_links(e_1, e_2)
-        print(e_1)
         self.assertTrue(e_1['depends'] == [e_2['_id']])
 
     def test_update_impact_links(self):
