@@ -375,6 +375,8 @@ def update_case3(entities, ids):
         update_links_res_comp(re, entities[comp_pos])
         LOGGER.debug("Entities : {0}".format(entities))
         context_graph_manager.put_entities(entities)
+        return 0
+    return 1
 
 
 def update_case4(entities, ids):
