@@ -162,23 +162,31 @@ def prepare_update(event):
                 if re_id not in cache_re:
                     ids['re_id'] = re_id
                     cache_re.add(re_id)
-    else:  # Case 6
-        case = 6
-        cache_conn.add(conn_id)
-        ids['conn_id'] = conn_id
-        ids['comp_id'] = comp_id
+    else:
         if comp_id in cache_comp:
-            case = 5
-            if re_id is not None:
-                if re_id not in cache_re:  # Case 5
-                    ids['re_id'] = re_id
+            if re_id in cache_re or re_id is None:  # case 6
+                case = 6
+                ids["conn_id"] = conn_id
+                ids["comp_id"] = comp_id
+                ids["res_id"] = re_id
+                cache_conn.add(conn_id)
+            else:  # case 5
+                case = 5
+                ids["conn_id"] = conn_id
+                ids["comp_id"] = comp_id
+                cache_conn.add(conn_id)
+                if re_id is not None:
+                    ids["re_id"] = re_id
                     cache_re.add(re_id)
-        else:  # Case 1
+        else:
             case = 1
+            ids["conn_id"] = conn_id
+            ids["comp_id"] = comp_id
             cache_comp.add(comp_id)
+            cache_conn.add(conn_id)
             if re_id is not None:
-                cache_re.add(re_id)
                 ids['re_id'] = re_id
+                cache_re.add(re_id)
 
     return case, ids
 
