@@ -11,9 +11,10 @@ from canopsis.context_graph.manager import ContextGraph
 
 context_graph_manager = ContextGraph()
 
-cache_comp = set(['comp_ids'])
-cache_conn = set(['conn_ids'])
-cache_re = set(['re_ids'])
+
+cache_comp = set()
+cache_conn = set()
+cache_re = set()
 
 LOGGER = None
 
@@ -56,6 +57,7 @@ def check_type(entities, expected):
         raise TypeError("Entities {0} does not match {1}".format(
             entities["_id"], expected))
     return True
+
 
 def update_depends_links(ent_from, ent_to):
     """Update the links depends from ent_from to ent_to. Basicaly, append
@@ -130,23 +132,28 @@ def prepare_update(event):
 
     conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
 
-    # add comment with the 6 possibles cases and an explaination
+    LOGGER.debug("Comp_id : {0}, re_id : {1}, conn_id : {2}.".format(
+        comp_id, re_id, conn_id))
 
     # cache and case determination
     ids = {}
 
+    print("Cache_re : " + str(cache_re))
+    print("Cache_comp : " + str(cache_comp))
+    print("Cache_conn : " + str(cache_conn))
+
     if conn_id in cache_conn:
         if comp_id in cache_comp:
             if re_id is not None:
-                if re_id not in cache_re: # Case 3
+                if re_id not in cache_re:  # Case 3
                     ids['re_id'] = re_id
                     ids['comp_id'] = comp_id
                     ids['conn_id'] = conn_id
                     cache_re.add(re_id)
                     case = 3
-                else: # Case 4
+                else:  # Case 4
                     case = 4
-        else: # Case 2
+        else:  # Case 2
             case = 2
             ids['comp_id'] = comp_id
             ids['conn_id'] = conn_id
@@ -155,19 +162,18 @@ def prepare_update(event):
                 if re_id not in cache_re:
                     ids['re_id'] = re_id
                     cache_re.add(re_id)
-    else: # Case 6
+    else:  # Case 6
         case = 6
         cache_conn.add(conn_id)
         ids['conn_id'] = conn_id
         ids['comp_id'] = comp_id
         if comp_id in cache_comp:
+            case = 5
             if re_id is not None:
-                if re_id not in cache_re: # Case 5
-
-                    case = 5
+                if re_id not in cache_re:  # Case 5
                     ids['re_id'] = re_id
                     cache_re.add(re_id)
-        else: # Case 1
+        else:  # Case 1
             case = 1
             cache_comp.add(comp_id)
             if re_id is not None:
@@ -445,7 +451,7 @@ def update_case6(entities, ids):
     for k, i in enumerate(entities):
         if i['_id'] == ids['conn_id']:
             conn_there = True
-            return 0 
+            return 0
         if i['type'] == 'component':
             comp_pos = k
         if i['type'] == 'resource':
@@ -505,6 +511,11 @@ def event_processing(
     global LOGGER
     LOGGER = logger
 
+    import pprint
+
+    fd = open("/tmp/plop.log", 'a')
+    fd.write("EVENT : \n{0}\n".format(pprint.pformat(event)))
+
     # Possible cases :
     # 0 -> Not in cache
     # 1 −> In cache
@@ -540,14 +551,20 @@ def event_processing(
     #    Create a connector and if the event have a resource create a resource
     #    and if needed update the links between the component and the resource.
     #
+    # FIXME did the case 6 can occur with a resource at None ?
     #  Case 6 :
     #    Create a connector then update the links between the connector and
     #    the resource and between the connector and component.
 
     case, ids = prepare_update(event)
+
+    fd.write("case : {0}\n".format(case))
+    fd.write("ids : {0}\n".format(ids))
+    fd.close()
     update_entities(case, ids)
 
     LOGGER.debug("*** The end. ***")
+
 
 @register_task
 def beat(engine, logger=None, **kwargs):
