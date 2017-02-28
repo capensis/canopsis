@@ -264,10 +264,20 @@ class Test(TestCase):
 
 
     def test_check_type(self):
-        entities = {'_id': 'conn_1', 'type': 'connector'}
-        self.assertTrue(process.check_type(entities, 'connector'))
-        # self.assertRaises(TypeError, process.check_type(entities, 'component'))
-        # ^ test ok but assertRaises does not works...
+        re_entity = {'_id': 'conn_1', 'type': 'resource'}
+        con_entity = {'_id': 'conn_1', 'type': 'connector'}
+        comp_entity = {'_id': 'conn_1', 'type': 'component'}
+
+        self.assertTrue(process.check_type(con_entity, 'connector'))
+        self.assertTrue(process.check_type(re_entity, 'resource'))
+        self.assertTrue(process.check_type(comp_entity, 'component'))
+
+        with self.assertRaises(TypeError):
+            process.check_type(con_entity, "not_a_connector")
+        with self.assertRaises(TypeError):
+            process.check_type(comp_entity, "not_a_component")
+        with self.assertRaises(TypeError):
+            process.check_type(re_entity, "not_a_resource")
 
     def test_update_depends_links(self):
         e_1 = {
