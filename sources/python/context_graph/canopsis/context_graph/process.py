@@ -12,9 +12,7 @@ from canopsis.context_graph.manager import ContextGraph
 context_graph_manager = ContextGraph()
 
 
-cache_comp = set()
-cache_conn = set()
-cache_re = set()
+cache = set()
 
 LOGGER = None
 
@@ -119,76 +117,77 @@ def update_links_res_comp(res, comp):
     update_impact_links(comp, res)
 
 
+
 def prepare_update(event):
     """Determine in which case the event depends and return the required ids
     :param event: the event
     :return: the case id and the required ids as a list"""
-    case = 0  # 0 -> exception raised
-    comp_id = event['component']
+    # case = 0  # 0 -> exception raised
+    # comp_id = event['component']
 
-    re_id = None
-    if 'resource' in event.keys():
-        re_id = '{0}/{1}'.format(event['resource'], comp_id)
+    # re_id = None
+    # if 'resource' in event.keys():
+    #     re_id = '{0}/{1}'.format(event['resource'], comp_id)
 
-    conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
+    # conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
 
-    LOGGER.debug("Comp_id : {0}, re_id : {1}, conn_id : {2}.".format(
-        comp_id, re_id, conn_id))
+    # LOGGER.debug("Comp_id : {0}, re_id : {1}, conn_id : {2}.".format(
+    #     comp_id, re_id, conn_id))
 
-    # cache and case determination
-    ids = {}
+    # # cache and case determination
+    # ids = {}
 
-    print("Cache_re : " + str(cache_re))
-    print("Cache_comp : " + str(cache_comp))
-    print("Cache_conn : " + str(cache_conn))
+    # print("Cache_re : " + str(cache_re))
+    # print("Cache_comp : " + str(cache_comp))
+    # print("Cache_conn : " + str(cache_conn))
 
-    if conn_id in cache_conn:
-        if comp_id in cache_comp:
-            if re_id is not None:
-                if re_id not in cache_re:  # Case 3
-                    ids['re_id'] = re_id
-                    ids['comp_id'] = comp_id
-                    ids['conn_id'] = conn_id
-                    cache_re.add(re_id)
-                    case = 3
-                else:  # Case 4
-                    case = 4
-        else:  # Case 2
-            case = 2
-            ids['comp_id'] = comp_id
-            ids['conn_id'] = conn_id
-            cache_comp.add(comp_id)
-            if re_id is not None:
-                if re_id not in cache_re:
-                    ids['re_id'] = re_id
-                    cache_re.add(re_id)
-    else:
-        if comp_id in cache_comp:
-            if re_id in cache_re or re_id is None:  # case 6
-                case = 6
-                ids["conn_id"] = conn_id
-                ids["comp_id"] = comp_id
-                ids["res_id"] = re_id
-                cache_conn.add(conn_id)
-            else:  # case 5
-                case = 5
-                ids["conn_id"] = conn_id
-                ids["comp_id"] = comp_id
-                cache_conn.add(conn_id)
-                if re_id is not None:
-                    ids["re_id"] = re_id
-                    cache_re.add(re_id)
-        else:
-            case = 1
-            ids["conn_id"] = conn_id
-            ids["comp_id"] = comp_id
-            cache_comp.add(comp_id)
-            cache_conn.add(conn_id)
-            if re_id is not None:
-                ids['re_id'] = re_id
-                cache_re.add(re_id)
+    # if conn_id in cache_conn:
+    #     if comp_id in cache_comp:
+    #         if re_id is not None:
+    #             if re_id not in cache_re:  # Case 3
+    #                 ids['re_id'] = re_id
+    #                 ids['comp_id'] = comp_id
+    #                 ids['conn_id'] = conn_id
+    #                 cache_re.add(re_id)
+    #                 case = 3
+    #             else:  # Case 4
+    #                 case = 4
+    #     else:  # Case 2
+    #         case = 2
+    #         ids['comp_id'] = comp_id
+    #         ids['conn_id'] = conn_id
+    #         cache_comp.add(comp_id)
+    #         if re_id is not None:
+    #             if re_id not in cache_re:
+    #                 ids['re_id'] = re_id
+    #                 cache_re.add(re_id)
+    # else:
+    #     if comp_id in cache_comp:
+    #         if re_id in cache_re or re_id is None:  # case 6
+    #             case = 6
+    #             ids["conn_id"] = conn_id
+    #             ids["comp_id"] = comp_id
+    #             ids["res_id"] = re_id
+    #             cache_conn.add(conn_id)
+    #         else:  # case 5
+    #             case = 5
+    #             ids["conn_id"] = conn_id
+    #             ids["comp_id"] = comp_id
+    #             cache_conn.add(conn_id)
+    #             if re_id is not None:
+    #                 ids["re_id"] = re_id
+    #                 cache_re.add(re_id)
+    #     else:
+    #         case = 1
+    #         ids["conn_id"] = conn_id
+    #         ids["comp_id"] = comp_id
+    #         cache_comp.add(comp_id)
+    #         cache_conn.add(conn_id)
+    #         if re_id is not None:
+    #             ids['re_id'] = re_id
+    #             cache_re.add(re_id)
 
-    return case, ids
+    #return case, ids
 
 
 def update_case1(entities, ids):
