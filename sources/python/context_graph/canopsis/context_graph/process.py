@@ -277,7 +277,8 @@ def update_case1(entities, ids):
             comp = create_entity(ids['comp_id'],
                                  ids['comp_id'],
                                  'component',
-                                 depends=[ids['re_id'], ids['conn_id']])
+                                 depends=[ids['re_id'], ids['conn_id']],
+                                 impact=[])
             re = create_entity(ids['re_id'],
                                ids['re_id'],
                                'resource',
@@ -286,7 +287,8 @@ def update_case1(entities, ids):
             conn = create_entity(ids['conn_id'],
                                  ids['conn_id'],
                                  'connector',
-                                 impact=[ids['comp_id'], ids['re_id']])
+                                 impact=[ids['comp_id'], ids['re_id']],
+                                 depends=[])
             context_graph_manager.put_entities([comp, re, conn])
     LOGGER.debug("Entities : {0}".format(entities))
 
