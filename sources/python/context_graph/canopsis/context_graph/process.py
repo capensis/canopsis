@@ -220,8 +220,13 @@ def update_case1(entities, ids):
                 "Component {0} present in database".format(ids["comp_id"]))
             if not re_there:
                 LOGGER.debug(
-                    "Resource {0} not present in database".format(ids["re_id"]))
-                re = create_entity(ids['re_id'], ids['re_id'], 'resource')
+                    "Resource {0} not present in database".format(
+                        ids["re_id"]))
+                re = create_entity(ids['re_id'],
+                                   ids['re_id'],
+                                   'resource',
+                                   impact=[],
+                                   depends=[])
                 update_links_conn_res(entities[conn_pos], re)
                 update_links_res_comp(re, entities[conn_pos])
                 entities.append(re)
@@ -263,7 +268,8 @@ def update_case1(entities, ids):
                 context_graph_manager.put_entities(entities)
             else:
                 LOGGER.debug(
-                    "Resource {0} not present in database".format(ids["re_id"]))
+                    "Resource {0} not present in database".format(
+                        ids["re_id"]))
                 # put connector + put re + update comp
                 conn = create_entity(ids['conn_id'],
                                      ids['conn_id'],
@@ -332,7 +338,8 @@ def update_case2(entities, ids):
             context_graph_manager.put_entities(entities)
         else:
             LOGGER.debug(
-                "Resource {0} present in database. Do nothing".format(ids["re_id"]))
+                "Resource {0} present in database. Do nothing".format(
+                    ids["re_id"]))
     else:
         LOGGER.debug(
             "Component {0} not present in database".format(ids["comp_id"]))
@@ -376,6 +383,8 @@ def update_case3(entities, ids):
         update_links_res_comp(re, entities[comp_pos])
         LOGGER.debug("Entities : {0}".format(entities))
         context_graph_manager.put_entities(entities)
+        return 0
+    return 1
 
 
 def update_case4(entities, ids):

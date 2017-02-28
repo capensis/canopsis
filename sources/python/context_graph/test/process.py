@@ -323,7 +323,21 @@ class Test(TestCase):
         pass
 
     def test_update_case_3(self):
-        pass
+        entities_t1 = [{'_id': 'comp_1',
+                        'type': 'component',
+                        'impact': [],
+                        'depends': []},
+                       {'_id': 'conn_1',
+                        'type': 'connector',
+                        'impact': [],
+                        'depends': []}]
+        entities_t2 = [{'_id': 'conn_1', 'type': 'connector'},
+                       {'_id': 'comp_1', 'type': 'component'},
+                       {'_id': 're_1', 'type': 'resource'}]
+        ids = {'re_id': 're_1', 'comp_id': 'comp_1', 'conn_id': 'conn_1'}
+        self.assertEquals(process.update_case3(entities_t1, ids), 0)
+        self.assertEquals(process.update_case3(entities_t2, ids), 1)
+
 
     def test_update_case_5(self):
         pass
