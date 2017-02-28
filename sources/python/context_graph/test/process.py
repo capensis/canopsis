@@ -224,7 +224,6 @@ class Test(TestCase):
 
         # check cache state
         expected_cache_re = set()
-        expected_cache_re.add(res_id + "/" + comp_id)
         expected_cache_comp = set()
         expected_cache_comp.add(comp_id)
         expected_cache_conn = set()
@@ -244,6 +243,9 @@ class Test(TestCase):
 
         event = create_event(conn_id, conn_id, comp_id, res_id)
 
+        process.cache_comp.add(comp_id)
+        process.cache_re.add(res_id + "/" + comp_id)
+
         case, ids = process.prepare_update(event)
 
         self.assertEqual(case, 6)
@@ -251,11 +253,11 @@ class Test(TestCase):
 
         # check cache state
         expected_cache_re = set()
-        expected_cache_re.add(res_id)
+        expected_cache_re.add(res_id + "/" + comp_id)
         expected_cache_comp = set()
         expected_cache_comp.add(comp_id)
         expected_cache_conn = set()
-        expected_cache_conn.add(conn_id)
+        expected_cache_conn.add(conn_id + "/" + conn_id)
         self.assertSetEqual(process.cache_re, expected_cache_re)
         self.assertSetEqual(process.cache_comp, expected_cache_comp)
         self.assertSetEqual(process.cache_conn, expected_cache_conn)
