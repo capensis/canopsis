@@ -600,6 +600,13 @@ def event_processing(
     #    the resource and between the connector and component.
 
     ids = gen_ids(event)
+    # determine presence here
+    # update cache here
+
+    entites_in_db = context_graph_manager.get_entity(ids.values()) 
+    data = set(entites_in_db.values())
+    determine_presence(ids, data)
+
 
 
     LOGGER.debug("*** The end. ***")
