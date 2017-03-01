@@ -3,6 +3,10 @@ from __future__ import unicode_literals
 from unittest import main, TestCase
 import canopsis.context_graph.process as process
 
+from canopsis.context_graph.manager import ContextGraph
+
+context_graph_manager = ContextGraph()
+
 
 class Logger(object):
 
@@ -35,231 +39,27 @@ class Test(TestCase):
         setattr(process, 'LOGGER', Logger())
 
     def tearDown(self):
-        process.cache_comp.clear()
-        process.cache_re.clear()
-        process.cache_conn.clear()
+        process.cache.clear()
 
-    def test_preprare_update_case_1(self):
-        res_id = "re_id"
-        conn_id = "conn_id"
-        comp_id = "comp_id"
+    def test_create_entity(self):
+        id = "id_1"
+        name = "name_1"
+        etype = "entity type"
+        depends = ["id_2", "id_3", "id_4", "id_5"]
+        impacts = ["id_6", "id_7", "id_8", "id_9"]
+        measurements = {"tag_1": "data_1", "tag_2": "data_2"}
+        infos = {"info_1": "foo_1", "info_2": "bar_2"}
 
-        event = create_event(conn_id, conn_id, comp=comp_id, res=res_id)
+        ent = process.create_entity(id, name, etype, depends,
+                                   impacts, measurements, infos)
 
-        case, ids = process.prepare_update(event)
-
-        expected_ids = {'comp_id': comp_id,
-                        're_id': res_id + "/" + comp_id,
-                        'conn_id': conn_id + "/" + conn_id}
-
-        self.assertEqual(case, 1)
-        self.assertDictEqual(ids, expected_ids)
-
-        expected_cache_re = set()
-        expected_cache_re.add(res_id + "/" + comp_id)
-        expected_cache_comp = set()
-        expected_cache_comp.add(comp_id)
-        expected_cache_conn = set()
-        expected_cache_conn.add(conn_id + "/" + conn_id)
-        self.assertSetEqual(process.cache_re, expected_cache_re)
-        self.assertSetEqual(process.cache_comp, expected_cache_comp)
-        self.assertSetEqual(process.cache_conn, expected_cache_conn)
-
-    def test_preprare_update_case_2(self):
-        res_id = "re_id"
-        conn_id = "conn_id"
-        comp_id = "comp_id"
-
-        process.cache_conn.add(conn_id + "/" + conn_id)
-
-        event = create_event(conn_id, conn_id, comp=comp_id, res=res_id)
-
-        case, ids = process.prepare_update(event)
-
-        expected_ids = {'comp_id': comp_id,
-                        're_id': res_id + "/" + comp_id,
-                        'conn_id': conn_id + "/" + conn_id}
-
-        self.assertDictEqual(ids, expected_ids)
-        self.assertEqual(case, 2)
-
-        expected_cache_re = set()
-        expected_cache_re.add(res_id + "/" + comp_id)
-        expected_cache_comp = set()
-        expected_cache_comp.add(comp_id)
-        expected_cache_conn = set()
-        expected_cache_conn.add(conn_id + "/" + conn_id)
-        self.assertSetEqual(process.cache_re, expected_cache_re)
-        self.assertSetEqual(process.cache_comp, expected_cache_comp)
-        self.assertSetEqual(process.cache_conn, expected_cache_conn)
-
-    def test_preprare_update_case_2_re_none(self):
-        res_id = None
-        conn_id = "conn_id"
-        comp_id = "comp_id"
-
-        process.cache_conn.add(conn_id + "/" + conn_id)
-
-        event = create_event(conn_id, conn_id, comp=comp_id, res=res_id)
-
-        case, ids = process.prepare_update(event)
-
-        expected_ids = {'comp_id': comp_id,
-                        'conn_id': conn_id + "/" + conn_id}
-
-        self.assertDictEqual(ids, expected_ids)
-        self.assertEqual(case, 2)
-
-        expected_cache_re = set()
-        expected_cache_comp = set()
-        expected_cache_comp.add(comp_id)
-        expected_cache_conn = set()
-        expected_cache_conn.add(conn_id + "/" + conn_id)
-        self.assertSetEqual(process.cache_re, expected_cache_re)
-        self.assertSetEqual(process.cache_comp, expected_cache_comp)
-        self.assertSetEqual(process.cache_conn, expected_cache_conn)
-
-    def test_preprare_update_case_3(self):
-        res_id = "re_id"
-        conn_id = "conn_id"
-        comp_id = "comp_id"
-
-        process.cache_comp.add(comp_id)
-        process.cache_conn.add(conn_id + "/" + conn_id)
-
-        event = create_event(conn_id, conn_id, comp_id, res_id)
-
-        case, ids = process.prepare_update(event)
-
-        expected_ids = {'comp_id': comp_id,
-                        're_id': res_id + "/" + comp_id,
-                        'conn_id': conn_id + "/" + conn_id}
-
-        self.assertEqual(case, 3)
-        self.assertDictEqual(ids, expected_ids)
-
-        expected_cache_re = set()
-        expected_cache_re.add(res_id + "/" + comp_id)
-        expected_cache_comp = set()
-        expected_cache_comp.add(comp_id)
-        expected_cache_conn = set()
-        expected_cache_conn.add(conn_id + "/" + conn_id)
-        self.assertSetEqual(process.cache_re, expected_cache_re)
-        self.assertSetEqual(process.cache_comp, expected_cache_comp)
-        self.assertSetEqual(process.cache_conn, expected_cache_conn)
-
-    def test_preprare_update_case_4(self):
-        res_id = "re_1"
-        conn_id = "conn_id"
-        comp_id = "comp_id"
-
-        event = create_event(conn_id, conn_id, comp_id, res_id)
-
-        process.cache_re.add(res_id + "/" + comp_id)
-        process.cache_comp.add(comp_id)
-        process.cache_conn.add(conn_id + "/" + conn_id)
-
-        case, ids = process.prepare_update(event)
-
-        self.assertEqual(case, 4)
-        self.assertDictEqual(ids, {})
-
-        # check cache state
-        expected_cache_re = set()
-        expected_cache_re.add(res_id + "/" + comp_id)
-        expected_cache_comp = set()
-        expected_cache_comp.add(comp_id)
-        expected_cache_conn = set()
-        expected_cache_conn.add(conn_id + "/" + conn_id)
-        self.assertSetEqual(process.cache_re, expected_cache_re)
-        self.assertSetEqual(process.cache_comp, expected_cache_comp)
-        self.assertSetEqual(process.cache_conn, expected_cache_conn)
-
-    def test_preprare_update_case_5(self):
-        res_id = "re_id"
-        conn_id = "conn_id"
-        comp_id = "comp_id"
-
-        expected_ids = {'comp_id': comp_id,
-                        're_id': res_id + "/" + comp_id,
-                        'conn_id': conn_id + "/" + conn_id}
-
-        event = create_event(conn_id, conn_id, comp_id, res_id)
-
-        process.cache_comp.add(comp_id)
-
-        case, ids = process.prepare_update(event)
-
-        self.assertEqual(case, 5)
-        self.assertDictEqual(ids, expected_ids)
-
-        # check cache state
-        expected_cache_re = set()
-        expected_cache_re.add(res_id + "/" + comp_id)
-        expected_cache_comp = set()
-        expected_cache_comp.add(comp_id)
-        expected_cache_conn = set()
-        expected_cache_conn.add(conn_id + "/" + conn_id)
-        self.assertSetEqual(process.cache_re, expected_cache_re)
-        self.assertSetEqual(process.cache_comp, expected_cache_comp)
-        self.assertSetEqual(process.cache_conn, expected_cache_conn)
-
-    def test_preprare_update_case_5_re_none(self):
-        res_id = None
-        conn_id = "conn_id"
-        comp_id = "comp_id"
-
-        expected_ids = {'comp_id': comp_id,
-                        'conn_id': conn_id + "/" + conn_id}
-
-        event = create_event(conn_id, conn_id, comp_id, res_id)
-
-        process.cache_comp.add(comp_id)
-
-        case, ids = process.prepare_update(event)
-
-        self.assertEqual(case, 5)
-        self.assertDictEqual(ids, expected_ids)
-
-        # check cache state
-        expected_cache_re = set()
-        expected_cache_comp = set()
-        expected_cache_comp.add(comp_id)
-        expected_cache_conn = set()
-        expected_cache_conn.add(conn_id + "/" + conn_id)
-        self.assertSetEqual(process.cache_re, expected_cache_re)
-        self.assertSetEqual(process.cache_comp, expected_cache_comp)
-        self.assertSetEqual(process.cache_conn, expected_cache_conn)
-
-    def test_preprare_update_case_6(self):
-        res_id = "re_id"
-        conn_id = "conn_id"
-        comp_id = "comp_id"
-
-        expected_ids = {'comp_id': comp_id,
-                        're_id': res_id + "/" + comp_id,
-                        'conn_id': conn_id + "/" + conn_id}
-
-        event = create_event(conn_id, conn_id, comp_id, res_id)
-
-        process.cache_comp.add(comp_id)
-        process.cache_re.add(res_id + "/" + comp_id)
-
-        case, ids = process.prepare_update(event)
-
-        self.assertEqual(case, 6)
-        self.assertDictEqual(ids, expected_ids)
-
-        # check cache state
-        expected_cache_re = set()
-        expected_cache_re.add(res_id + "/" + comp_id)
-        expected_cache_comp = set()
-        expected_cache_comp.add(comp_id)
-        expected_cache_conn = set()
-        expected_cache_conn.add(conn_id + "/" + conn_id)
-        self.assertSetEqual(process.cache_re, expected_cache_re)
-        self.assertSetEqual(process.cache_comp, expected_cache_comp)
-        self.assertSetEqual(process.cache_conn, expected_cache_conn)
+        self.assertEqual(id, ent["_id"])
+        self.assertEqual(name, ent["name"])
+        self.assertEqual(etype, ent["type"])
+        self.assertEqual(depends, ent["depends"])
+        self.assertEqual(impacts, ent["impact"])
+        self.assertEqual(measurements, ent["measurements"])
+        self.assertEqual(infos, ent["infos"])
 
     def test_check_type(self):
         re_entity = {'_id': 'conn_1', 'type': 'resource'}
@@ -355,97 +155,97 @@ class Test(TestCase):
         self.assertEquals(process.update_case6(entities_t1, ids), 1)
         self.assertEquals(process.update_case6(entities_t2, ids), 0)
 
-        def test_determine_presence(ids, data):
-            """Determine the case with the list of id ids and the data as a set of ids.
-            :param ids: a list of ids
-            :parama data: a set of ids
-            :return: a tuple with the case number and the ids related.
-            """
-            cache = set(['comp_1', 're_1', 'conn_1'])
-            ids_test1 = {
-                'comp_id': 'comp_2',
-                're_id': 're_2',
-                'conn_id': 'conn_2'}
-            ids_test2 = {
-                'conn_id': 'conn_1',
-                'comp_id': 'comp_2',
-                're_id': 're_2'}
-            ids_test3 = {
-                'conn_id': 'conn_1',
-                'comp_id': 'comp_1',
-                're_id': 're_2'}
-            ids_test4 = {
-                'conn_id': 'conn_1',
-                'comp_id': 'comp_1',
-                're_id': 're_1'}
-            ids_test5 = {
-                'comp_id': 'comp_1',
-                're_id': 're_2',
-                'conn_id': 'conn_2'}
-            ids_test6 = {
-                're_id': 're_1',
-                'comp_id': 'comp_1',
-                'conn_id': 'conn_2'}
-            self.assertEqual(
-                process.determine_case(ids_test1, cache),
-                (False, False, False))
-            self.assertEqual(
-                process.determine_case(ids_test2, cache),
-                (True, False, False))
-            self.assertEqual(
-                process.determine_case(ids_test3, cache),
-                (True, True, False))
-            self.assertEqual(
-                process.determine_case(ids_test4, cache),
-                (True, True, True))
-            self.assertEqual(
-                process.determine_case(ids_test5, cache),
-                (False, True, False))
-            self.assertEqual(
-                process.determine_case(ids_test6, cache),
-                (False, True, True))
-            ids_test1_none = {
-                'comp_id': 'comp_2',
-                're_id': None,
-                'conn_id': 'conn_2'}
-            ids_test2_none = {
-                'conn_id': 'conn_1',
-                'comp_id': 'comp_2',
-                're_id': None}
-            ids_test3_none = {
-                'conn_id': 'conn_1',
-                'comp_id': 'comp_1',
-                're_id': None}
-            ids_test4_none = {
-                'conn_id': 'conn_1',
-                'comp_id': 'comp_1',
-                're_id': None}
-            ids_test5_none = {
-                'comp_id': 'comp_1',
-                're_id': None,
-                'conn_id': 'conn_2'}
-            ids_test6_none = {
-                're_id': None,
-                'comp_id': 'comp_1',
-                'conn_id': 'conn_2'}
-            self.assertEqual(
-                process.determine_case(ids_test1_none, cache),
-                (False, False, None))
-            self.assertEqual(
-                process.determine_case(ids_test2_none, cache),
-                (True, False, None))
-            self.assertEqual(
-                process.determine_case(ids_test3_none, cache),
-                (True, True, None))
-            self.assertEqual(
-                process.determine_case(ids_test4_none, cache),
-                (True, True, None))
-            self.assertEqual(
-                process.determine_case(ids_test5_none, cache),
-                (False, True, None))
-            self.assertEqual(
-                process.determine_case(ids_test6_none, cache),
-                (False, True, None))
+    def test_determine_presence(self):
+        """Determine the case with the list of id ids and the data as a set of ids.
+        :param ids: a list of ids
+        :parama data: a set of ids
+        :return: a tuple with the case number and the ids related.
+        """
+        cache = set(['comp_1', 're_1', 'conn_1'])
+        ids_test1 = {
+            'comp_id': 'comp_2',
+            're_id': 're_2',
+            'conn_id': 'conn_2'}
+        ids_test2 = {
+            'conn_id': 'conn_1',
+            'comp_id': 'comp_2',
+            're_id': 're_2'}
+        ids_test3 = {
+            'conn_id': 'conn_1',
+            'comp_id': 'comp_1',
+            're_id': 're_2'}
+        ids_test4 = {
+            'conn_id': 'conn_1',
+            'comp_id': 'comp_1',
+            're_id': 're_1'}
+        ids_test5 = {
+            'comp_id': 'comp_1',
+            're_id': 're_2',
+            'conn_id': 'conn_2'}
+        ids_test6 = {
+            're_id': 're_1',
+            'comp_id': 'comp_1',
+            'conn_id': 'conn_2'}
+        self.assertEqual(
+            process.determine_presence(ids_test1, cache),
+            (False, False, False))
+        self.assertEqual(
+            process.determine_presence(ids_test2, cache),
+            (True, False, False))
+        self.assertEqual(
+            process.determine_presence(ids_test3, cache),
+            (True, True, False))
+        self.assertEqual(
+            process.determine_presence(ids_test4, cache),
+            (True, True, True))
+        self.assertEqual(
+            process.determine_presence(ids_test5, cache),
+            (False, True, False))
+        self.assertEqual(
+            process.determine_presence(ids_test6, cache),
+            (False, True, True))
+        ids_test1_none = {
+            'comp_id': 'comp_2',
+            're_id': None,
+            'conn_id': 'conn_2'}
+        ids_test2_none = {
+            'conn_id': 'conn_1',
+            'comp_id': 'comp_2',
+            're_id': None}
+        ids_test3_none = {
+            'conn_id': 'conn_1',
+            'comp_id': 'comp_1',
+            're_id': None}
+        ids_test4_none = {
+            'conn_id': 'conn_1',
+            'comp_id': 'comp_1',
+            're_id': None}
+        ids_test5_none = {
+            'comp_id': 'comp_1',
+            're_id': None,
+            'conn_id': 'conn_2'}
+        ids_test6_none = {
+            're_id': None,
+            'comp_id': 'comp_1',
+            'conn_id': 'conn_2'}
+        self.assertEqual(
+            process.determine_presence(ids_test1_none, cache),
+            (False, False, None))
+        self.assertEqual(
+            process.determine_presence(ids_test2_none, cache),
+            (True, False, None))
+        self.assertEqual(
+            process.determine_presence(ids_test3_none, cache),
+            (True, True, None))
+        self.assertEqual(
+            process.determine_presence(ids_test4_none, cache),
+            (True, True, None))
+        self.assertEqual(
+            process.determine_presence(ids_test5_none, cache),
+            (False, True, None))
+        self.assertEqual(
+            process.determine_presence(ids_test6_none, cache),
+            (False, True, None))
 
 
 if __name__ == '__main__':
