@@ -174,7 +174,7 @@ def update_context_case1(ids):
         depends=[],
         impact=[ids['re_id'], ids['comp_id']]
     )
-    context_graph_manager.put_entities([comp, re, conn])
+    return [comp, re, conn]
 
 
 def update_context_case1_re_none(ids):
@@ -193,7 +193,7 @@ def update_context_case1_re_none(ids):
         depends=[],
         impact=[ids['comp_id']]
     )
-    context_graph_manager.put_entities([comp, conn])
+    return [comp, conn]
 
 
 def update_context_case2(ids, in_db):
@@ -217,7 +217,7 @@ def update_context_case2(ids, in_db):
     )
     update_links_conn_res(in_db[0], re)
     update_links_conn_comp(in_db[0], comp)
-    context_graph_manager.put_entities([comp, re, in_db[0]])
+    return [comp, re, in_db[0]]
 
 
 def update_context_case2_re_none(ids, in_db):
@@ -233,7 +233,7 @@ def update_context_case2_re_none(ids, in_db):
         impact=[]
     )
     update_links_conn_comp(in_db[0], comp)
-    context_graph_manager.put_entities([comp, in_db[0]])
+    return [comp, in_db[0]]
 
 
 def update_context_case3(ids, in_db):
@@ -255,7 +255,7 @@ def update_context_case3(ids, in_db):
     )
     update_links_res_comp(re, comp)
     update_links_conn_res(conn, re)
-    context_graph_manager.put_entities([comp, re, conn])
+    return [comp, re, conn]
 
 
 def update_context_case5(ids, in_db):
@@ -287,7 +287,7 @@ def update_context_case5(ids, in_db):
         update_links_conn_res(connector, resource)
 
     update_links_conn_comp(connector, component)
-    context_graph_manager.put_entities([connector, component, resource])
+    return [connector, component, resource]
 
 
 def update_context_case6(ids, in_db):
@@ -306,23 +306,28 @@ def update_context_case6(ids, in_db):
 
     if ids["re_id"] is not None:
         update_links_conn_res(connector, resource)
+        return [connector, component, resource]
 
-    context_graph_manager.put_entities([connector, component, resource])
+    return [connector, component]
 
 
 def update_context(presence, ids, in_db):
+    to_update = None
     if presence == (False, False, False):
-        update_context_case1(ids)
+        # Case 1
+        to_update = update_context_case1(ids)
+
     elif presence == (False, False, None):
         # Case 1
-        update_context_case1(ids)
+        to_update = update_context_case1(ids)
+
     elif presence == (True, False, False) or presence == (True, False, None):
         # Case 2
-        update_context_case2(ids, in_db)
+        to_update = update_context_case2(ids, in_db)
 
     elif presence == (True, True, False):
         # Case 3
-        update_context_case3(ids, in_db)
+        to_update = update_context_case3(ids, in_db)
 
     elif presence == (True, True, True):
         # Case 4
@@ -330,17 +335,19 @@ def update_context(presence, ids, in_db):
 
     elif presence == (False, True, False) or presence == (False, True, None):
         # Case 5
-        update_context_case5(ids, in_db)
+        to_update = update_context_case5(ids, in_db)
 
     elif presence == (False, True, True) or presence == (False, True, None):
         # Case 6
-        update_context_case6(ids, in_db)
+        to_update = update_context_case6(ids, in_db)
 
     else:
         LOGGER.warning(
             "No case for the given presence : {0} and ids {1}".format(
                 presence, ids))
         raise ValueError("No case for the given ids and data.")
+
+    context_graph_manager.put_entities(to_update)
 
 
 def gen_ids(event):
