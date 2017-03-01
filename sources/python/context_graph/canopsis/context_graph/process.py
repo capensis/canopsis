@@ -451,7 +451,15 @@ def update_case6(entities, ids):
 def update_context(presence, ids):
     if presence == (False, False, False) or presence == (False, False, None):
         # Case 1
-        pass
+        create_entity(
+            ids['comp_id'],
+            ids['comp_id'],
+            'component',
+            depends = [],
+            impact = []
+        )
+        create_entity()
+        create_entity()
 
     elif presence == (True, False, False) or presence == (True, False, None):
         # Case 2
