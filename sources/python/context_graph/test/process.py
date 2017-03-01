@@ -4,7 +4,6 @@ from unittest import main, TestCase
 import canopsis.context_graph.process as process
 
 
-
 class Logger(object):
 
     def debug(self, log):
@@ -262,7 +261,6 @@ class Test(TestCase):
         self.assertSetEqual(process.cache_comp, expected_cache_comp)
         self.assertSetEqual(process.cache_conn, expected_cache_conn)
 
-
     def test_check_type(self):
         re_entity = {'_id': 'conn_1', 'type': 'resource'}
         con_entity = {'_id': 'conn_1', 'type': 'connector'}
@@ -338,7 +336,6 @@ class Test(TestCase):
         self.assertEquals(process.update_case3(entities_t1, ids), 0)
         self.assertEquals(process.update_case3(entities_t2, ids), 1)
 
-
     def test_update_case_5(self):
         pass
 
@@ -357,6 +354,99 @@ class Test(TestCase):
         ids = {'re_id': 're_1', 'comp_id': 'comp_1', 'conn_id': 'conn_1'}
         self.assertEquals(process.update_case6(entities_t1, ids), 1)
         self.assertEquals(process.update_case6(entities_t2, ids), 0)
+
+        def test_determine_presence(ids, data):
+            """Determine the case with the list of id ids and the data as a set of ids.
+            :param ids: a list of ids
+            :parama data: a set of ids
+            :return: a tuple with the case number and the ids related.
+            """
+            cache = set(['comp_1', 're_1', 'conn_1'])
+            ids_test1 = {
+                'comp_id': 'comp_2',
+                're_id': 're_2',
+                'conn_id': 'conn_2'}
+            ids_test2 = {
+                'conn_id': 'conn_1',
+                'comp_id': 'comp_2',
+                're_id': 're_2'}
+            ids_test3 = {
+                'conn_id': 'conn_1',
+                'comp_id': 'comp_1',
+                're_id': 're_2'}
+            ids_test4 = {
+                'conn_id': 'conn_1',
+                'comp_id': 'comp_1',
+                're_id': 're_1'}
+            ids_test5 = {
+                'comp_id': 'comp_1',
+                're_id': 're_2',
+                'conn_id': 'conn_2'}
+            ids_test6 = {
+                're_id': 're_1',
+                'comp_id': 'comp_1',
+                'conn_id': 'conn_2'}
+            self.assertEqual(
+                process.determine_case(ids_test1, cache),
+                (False, False, False))
+            self.assertEqual(
+                process.determine_case(ids_test2, cache),
+                (True, False, False))
+            self.assertEqual(
+                process.determine_case(ids_test3, cache),
+                (True, True, False))
+            self.assertEqual(
+                process.determine_case(ids_test4, cache),
+                (True, True, True))
+            self.assertEqual(
+                process.determine_case(ids_test5, cache),
+                (False, True, False))
+            self.assertEqual(
+                process.determine_case(ids_test6, cache),
+                (False, True, True))
+            ids_test1_none = {
+                'comp_id': 'comp_2',
+                're_id': None,
+                'conn_id': 'conn_2'}
+            ids_test2_none = {
+                'conn_id': 'conn_1',
+                'comp_id': 'comp_2',
+                're_id': None}
+            ids_test3_none = {
+                'conn_id': 'conn_1',
+                'comp_id': 'comp_1',
+                're_id': None}
+            ids_test4_none = {
+                'conn_id': 'conn_1',
+                'comp_id': 'comp_1',
+                're_id': None}
+            ids_test5_none = {
+                'comp_id': 'comp_1',
+                're_id': None,
+                'conn_id': 'conn_2'}
+            ids_test6_none = {
+                're_id': None,
+                'comp_id': 'comp_1',
+                'conn_id': 'conn_2'}
+            self.assertEqual(
+                process.determine_case(ids_test1_none, cache),
+                (False, False, None))
+            self.assertEqual(
+                process.determine_case(ids_test2_none, cache),
+                (True, False, None))
+            self.assertEqual(
+                process.determine_case(ids_test3_none, cache),
+                (True, True, None))
+            self.assertEqual(
+                process.determine_case(ids_test4_none, cache),
+                (True, True, None))
+            self.assertEqual(
+                process.determine_case(ids_test5_none, cache),
+                (False, True, None))
+            self.assertEqual(
+                process.determine_case(ids_test6_none, cache),
+                (False, True, None))
+
 
 if __name__ == '__main__':
     main()

@@ -189,20 +189,16 @@ class ContextGraph(MiddlewareRegistry):
         """
             get all entities ids by types
         """
-        ret_val = {
-            'conn_ids': set([]),
-            'comp_ids': set([]),
-            're_ids': set([])
-        }
+        ret_val = set([])
         connectors = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'type': 'connector'}))
         components = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'type': 'component'}))
         resources = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'type': 'resource'}))
 
         for i in connectors:
-            ret_val['conn_ids'].add(i['_id'])
+            ret_val.add(i['_id'])
         for i in components:
-            ret_val['comp_ids'].add(i['_id'])
+            ret_val.add(i['_id'])
         for i in resources:
-            ret_val['re_ids'].add(i['_id'])
+            ret_val.add(i['_id'])
 
         return ret_val

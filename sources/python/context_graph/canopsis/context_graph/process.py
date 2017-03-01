@@ -18,13 +18,8 @@ LOGGER = None
 
 
 def update_cache():
-    global cache_re
-    global cache_comp
-    global cache_conn
+    global cache
     cache = context_graph_manager.get_all_entities()
-    cache_re = cache['re_ids']
-    cache_comp = cache['comp_ids']
-    cache_conn = cache['conn_ids']
 
 
 def create_entity(
@@ -530,4 +525,4 @@ def event_processing(
 
 @register_task
 def beat(engine, logger=None, **kwargs):
-    update_cache
+    update_cache()
