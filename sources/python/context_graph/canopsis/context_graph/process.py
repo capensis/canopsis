@@ -41,6 +41,7 @@ def create_entity(
 
 
 def check_type(entities, expected):
+    LOGGER.error('6')
     """Raise TypeError if the type of the entities entities does not match
     the expected type.
     :param entities: the entities to check.
@@ -375,16 +376,15 @@ def event_processing(
 
     global LOGGER
     LOGGER = logger
-
     ids = gen_ids(event)
 
     presence = determine_presence(ids, cache)
 
-    if presence == (True, True, True) or (True, True, None):
+    if presence == (True, True, True) or presence == (True, True, None):
         # Everything is in cache, so we skip
         return None
-
     add_missing_ids(presence, ids)
+
 
     entities_in_db = context_graph_manager.get_entity(ids.values())
     data = set()
@@ -393,10 +393,9 @@ def event_processing(
 
     presence = determine_presence(ids, data)
 
-    if presence == (True, True, True) or (True, True, None):
+    if presence == (True, True, True) or presence == (True, True, None):
         # Everything is in cache, so we skip
         return None
-
     update_context(presence, ids, entities_in_db)
     LOGGER.debug("*** The end. ***")
 
