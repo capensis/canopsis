@@ -135,6 +135,17 @@ def determine_presence(ids, data):
 
     return (conn_here, comp_here, res_here)
 
+def add_missing_ids(presence, ids):
+    """Update the cache"""
+    if presence[0] == False: # Update connector
+        cache.add(ids["conn_id"])
+
+    if presence[1] == False: # Update component
+        cache.add(ids["comp_id"])
+
+    if presence[2] == False: # Update resource
+        cache.add(ids["res_id"])
+
 
 def update_case1(entities, ids):
     """Case 1 update entities"""
@@ -475,50 +486,15 @@ def event_processing(
     global LOGGER
     LOGGER = logger
 
-    # Possible cases :
-    # 0 -> Not in cache
-    # 1 −> In cache
-    #
-    #
-    #  Connector    Resource    Component
-    #     0             0            0     -> case 1
-    #     1             0            0     -> case 2
-    #     1             0            1     -> case 3
-    #     1             1            1     -> case 4
-    #     0             0            1     -> case 5
-    #     0             1            1     -> case 6
-    #
-    #
-    #  Case 1 :
-    #    Nothing exist in the cache, create every entities in database.
-    #
-    #  Case 2 :
-    #    The component and the resource are not in the cache, so we need
-    #    to create a component and if the event had a resource
-    #    (resource != None) create a resource too, then update links between
-    #    this component and resource.
-    #
-    #  Case 3 :
-    #    If the event have a resource create a resource
-    #    too, then update links between this component and resource and between
-    #    connector and resource.
-    #
-    #  Case 4 :
-    #    Every entity are in the cache so they are into the database, nothing
-    #    to do here.
-    #
-    #  Case 5 :
-    #    Create a connector and if the event have a resource create a resource
-    #    and if needed update the links between the component and the resource.
-    #
-    # FIXME did the case 6 can occur with a resource at None ?
-    #  Case 6 :
-    #    Create a connector then update the links between the connector and
-    #    the resource and between the connector and component.
+    ids = {}
 
-    case, ids = prepare_update(event)
+    presence = determine_presence(ids, cache)
 
-    update_entities(case, ids)
+    if presence == (True, True, True) or (True, True, None):
+        # Every thing is in cache, so we skip
+        return None
+
+    add_missing_ids(presence, ids)
 
     LOGGER.debug("*** The end. ***")
 
