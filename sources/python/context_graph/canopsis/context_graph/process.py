@@ -12,7 +12,7 @@ from canopsis.context_graph.manager import ContextGraph
 context_graph_manager = ContextGraph()
 
 
-ids_cache = set()
+cache = set()
 
 LOGGER = None
 
@@ -128,8 +128,8 @@ def determine_presence(ids, data):
     conn_here = ids['conn_id'] in data
     comp_here = ids['comp_id'] in data
 
-    if ids['res_id'] is not None:
-        res_here = ids['res_id'] in data
+    if ids['re_id'] is not None:
+        res_here = ids['re_id'] in data
     else:
         res_here = None
 
@@ -145,7 +145,7 @@ def add_missing_ids(presence, ids):
         cache.add(ids["comp_id"])
 
     if not presence[2]:  # Update resource
-        cache.add(ids["res_id"])
+        cache.add(ids['re_id'])
 
 
 def update_context_case1(ids):
