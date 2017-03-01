@@ -294,35 +294,26 @@ def update_case5(entities, ids):
     context_graph_manager.put_entities(entities)
 
 
-def update_case6(entities, ids):
-    """Case 6 update entities"""
-    LOGGER.debug("Case 6.")
+def update_context_case6(ids, in_db):
+    LOGGER.debug("Update context case 6.")
 
-    conn_there = False
-    res_pos = comp_pos = -1
+    resource = None
 
-    for k, i in enumerate(entities):
-        if i['_id'] == ids['conn_id']:
-            conn_there = True
-            return 0
-        if i['type'] == 'component':
-            comp_pos = k
-        if i['type'] == 'resource':
-            res_pos = k
+    for entity in in_db:
+        if entity["type"] == "resource":
+            resource = entity
+        elif entity["type"] == "component":
+            component = entity
+        elif entity["type"] == "connector":
+            connector = entity
 
-    if not conn_there:
-        LOGGER.debug(
-            "Connector {0} not present in database.".format(ids['conn_id']))
-        conn = create_entity(
-            ids['conn_id'],
-            ids['conn_id'],
-            "connector")
-        update_links_conn_res(conn, entities[res_pos])
-        update_links_conn_comp(conn, entities[comp_pos])
-        entities.append(conn)
-        LOGGER.debug("Entities : {0}".format(entities))
-        context_graph_manager.put_entities(entities)
-        return 1
+
+    conn = create_entity(ids["conn_id"], ids["conn_id"], connector)
+
+    update_links_conn_comp(connector, component)
+
+    if ids["re_id"] is not None:
+        update_links_conn_res(connector, resource)
 
 
 def update_context(presence, ids, in_db):
@@ -331,7 +322,7 @@ def update_context(presence, ids, in_db):
         update_case1(ids)
     elif presence == (True, False, False) or presence == (True, False, None):
         # Case 2
-		update_context_case2(ids, in_db)
+        update_context_case2(ids, in_db)
 
     elif presence == (True, True, False):
         # Case 3
@@ -347,12 +338,12 @@ def update_context(presence, ids, in_db):
 
     elif presence == (False, True, True) or presence == (False, True, None):
         # Case 6
-        pass
+        update_context_case6(ids, in_db)
 
     else:
         LOGGER.warning(
             "No case for the given presence : {0} and ids {1}".format(presence, ids))
-        raise ValueError("No case for the given ids and data.")<Paste>
+        raise ValueError("No case for the given ids and data.")
 
 def add_missing_ids_cache(presence, ids):
 
