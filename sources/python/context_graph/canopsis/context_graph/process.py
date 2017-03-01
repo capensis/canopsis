@@ -12,7 +12,7 @@ from canopsis.context_graph.manager import ContextGraph
 context_graph_manager = ContextGraph()
 
 
-cache = set()
+ids_cache = set()
 
 LOGGER = None
 
@@ -117,6 +117,59 @@ def update_links_res_comp(res, comp):
     update_impact_links(comp, res)
 
 
+def determine_case(ids, data):
+    """Determine the case with the list of id ids and the data as a set of ids.
+    :param ids: a list of ids
+    :parama data: a set of ids
+    :return: a tuple with the case number and the related ids following the
+    following pattern (connector id, component id, resource id).
+    """
+
+
+    conn_here = ids['conn_id'] in data
+    comp_here = ids['comp_id'] in data
+
+    if ids['res_id'] is not None:
+        res_here = ids['res_id'] in data
+    else:
+        res_here = None
+
+    magic = (conn_here, res_here, comp_here)
+    related_ids = (None, None, None)
+
+    case = 0
+
+    if magic == (False, False, False) or magic == (False, False, None):
+        # Case 1
+        case = 1
+
+    elif magic == (True, False, False) or magic == (True, False, None):
+        # Case 2
+        case = 2
+
+    elif magic == (True, True, False):
+        # Case 3
+        case = 3
+
+    elif magic == (True, True, True):
+        # Case 4
+        case = 4
+
+    elif magic == (False, True, False) or magic == (False, True, None):
+        # Case 5
+        case = 5
+
+    elif magic == (False, True, True) or magic == (False, True, None):
+        # Case 6
+        case = 6
+
+    else:
+        LOGGER.warning(
+            "No case for the given ids : {0} and data {1}".format(ids, data))
+        raise ValueError("No case for the given ids and data.")
+
+    return case, related_ids
+
 
 def prepare_update(event):
     """Determine in which case the event depends and return the required ids
@@ -187,7 +240,7 @@ def prepare_update(event):
     #             ids['re_id'] = re_id
     #             cache_re.add(re_id)
 
-    #return case, ids
+    # return case, ids
 
 
 def update_case1(entities, ids):
@@ -529,11 +582,6 @@ def event_processing(
     global LOGGER
     LOGGER = logger
 
-    import pprint
-
-    fd = open("/tmp/plop.log", 'a')
-    fd.write("EVENT : \n{0}\n".format(pprint.pformat(event)))
-
     # Possible cases :
     # 0 -> Not in cache
     # 1 −> In cache
@@ -546,6 +594,7 @@ def event_processing(
     #     1             1            1     -> case 4
     #     0             0            1     -> case 5
     #     0             1            1     -> case 6
+    #
     #
     #  Case 1 :
     #    Nothing exist in the cache, create every entities in database.
