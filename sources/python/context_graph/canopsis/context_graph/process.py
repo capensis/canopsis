@@ -122,7 +122,7 @@ def determine_presence(ids, data):
     :return: a tuple of boolean of None following pattern
     (connector presence, component presence, resource presence).
 
-    .. note :: currently an only a resource can be None in an canopsis event.
+    .. note :: currently only a resource can be None in an canopsis event.
     """
 
     conn_here = ids['conn_id'] in data
@@ -144,7 +144,7 @@ def add_missing_ids(presence, ids):
     if not presence[1]:  # Update component
         cache.add(ids["comp_id"])
 
-    if not presence[2]:  # Update resource
+    if presence[2] is not None and not presence[2] :  # Update resource
         cache.add(ids['re_id'])
 
 
