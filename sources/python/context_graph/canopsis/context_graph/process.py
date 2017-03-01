@@ -257,7 +257,7 @@ def update_context_case3(ids, in_db):
     )
     update_links_res_comp(re, comp)
     update_links_conn_res(conn, re)
-    LOGGER.error(' GREP cas 3 put {1}'.format([comp, re, conn]))
+    LOGGER.error(' GREP cas 3 put {0}'.format([comp, re, conn]))
     context_graph_manager.put_entities([comp, re, conn])
 
 
