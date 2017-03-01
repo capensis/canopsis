@@ -117,14 +117,17 @@ def update_links_res_comp(res, comp):
     update_impact_links(comp, res)
 
 
-def determine_case(ids, data):
-    """Determine the case with the list of id ids and the data as a set of ids.
-    :param ids: a list of ids
+def determine_presence(ids, data):
+    """Determine if the ids are in data. If the ids is present in data, the
+    element of the tuple that show the presence of the ids will be set to True.
+    False otherwise. If the ids given is set to None, the matching element will
+    be set to None.
+    :parama ids: a set of dict of ids
     :parama data: a set of ids
-    :return: a tuple with the case number and the related ids following the
-    following pattern (connector id, component id, resource id).
-    """
+    :return: a tuple of boolean of None following pattern
+    (connector presence, component presence, resource presence).
 
+    """
 
     conn_here = ids['conn_id'] in data
     comp_here = ids['comp_id'] in data
@@ -134,41 +137,7 @@ def determine_case(ids, data):
     else:
         res_here = None
 
-    magic = (conn_here, res_here, comp_here)
-    related_ids = (None, None, None)
-
-    case = 0
-
-    if magic == (False, False, False) or magic == (False, False, None):
-        # Case 1
-        case = 1
-
-    elif magic == (True, False, False) or magic == (True, False, None):
-        # Case 2
-        case = 2
-
-    elif magic == (True, True, False):
-        # Case 3
-        case = 3
-
-    elif magic == (True, True, True):
-        # Case 4
-        case = 4
-
-    elif magic == (False, True, False) or magic == (False, True, None):
-        # Case 5
-        case = 5
-
-    elif magic == (False, True, True) or magic == (False, True, None):
-        # Case 6
-        case = 6
-
-    else:
-        LOGGER.warning(
-            "No case for the given ids : {0} and data {1}".format(ids, data))
-        raise ValueError("No case for the given ids and data.")
-
-    return case, related_ids
+    return (conn_here, comp_here, res_here)
 
 
 def prepare_update(event):
@@ -625,9 +594,6 @@ def event_processing(
 
     case, ids = prepare_update(event)
 
-    fd.write("case : {0}\n".format(case))
-    fd.write("ids : {0}\n".format(ids))
-    fd.close()
     update_entities(case, ids)
 
     LOGGER.debug("*** The end. ***")
