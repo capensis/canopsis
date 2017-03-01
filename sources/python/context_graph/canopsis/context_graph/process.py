@@ -448,28 +448,40 @@ def update_case6(entities, ids):
         return 1
 
 
-def update_entities(case, ids):
-    tab_entities = context_graph_manager.get_entity(ids.values())
-    if case == 1:
-        update_case1(tab_entities, ids)
-    elif case == 2:
-        update_case2(tab_entities, ids)
-    elif case == 3:
-        update_case3(tab_entities, ids)
-    elif case == 4:
-        update_case4(tab_entities, ids)
-    elif case == 5:
-        update_case5(tab_entities, ids)
-    elif case == 6:
-        update_case6(tab_entities, ids)
+def update_context(presence, ids):
+    if presence == (False, False, False) or presence == (False, False, None):
+        # Case 1
+        pass
+
+    elif presence == (True, False, False) or presence == (True, False, None):
+        # Case 2
+        pass
+
+    elif presence == (True, True, False):
+        # Case 3
+        pass
+
+    elif presence == (True, True, True):
+        # Case 4
+        pass
+
+    elif presence == (False, True, False) or presence == (False, True, None):
+        # Case 5
+        pass
+
+    elif presence == (False, True, True) or presence == (False, True, None):
+        # Case 6
+        pass
+
     else:
-        # FIXME : did a logger here is a good idea ?
-        raise ValueError("Unknown case : {0}.".format(case))
+        LOGGER.warning(
+            "No case for the given presence : {0} and ids {1}".format(presence, ids))
+        raise ValueError("No case for the given ids and data.")
 
 
 def gen_ids(event):
     ret_val = {
-        'comp_id': '{0}'.format(event['component'])
+        'comp_id': '{0}'.format(event['component']),
         're_id': None,
         'conn_id': '{0}/{1}'.format(event['connector'], event['connector_name'])
     }
