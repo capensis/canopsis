@@ -138,13 +138,13 @@ def determine_presence(ids, data):
 
 def add_missing_ids(presence, ids):
     """Update the cache"""
-    if presence[0] == False:  # Update connector
+    if not presence[0]:  # Update connector
         cache.add(ids["conn_id"])
 
-    if presence[1] == False:  # Update component
+    if not presence[1]:  # Update component
         cache.add(ids["comp_id"])
 
-    if presence[2] == False:  # Update resource
+    if not presence[2]:  # Update resource
         cache.add(ids["res_id"])
 
 
@@ -156,22 +156,22 @@ def update_context_case1(ids):
         ids['comp_id'],
         ids['comp_id'],
         'component',
-        depends = [ids['conn_id'], ids['re_id']],
-        impact = []
+        depends=[ids['conn_id'], ids['re_id']],
+        impact=[]
     )
     re = create_entity(
         ids['re_id'],
         ids['re_id'],
         'resource',
-        depends = [ids['conn_id']],
-        impact = [ids['comp_id']]
+        depends=[ids['conn_id']],
+        impact=[ids['comp_id']]
     )
     conn = create_entity(
         ids['conn_id'],
         ids['conn_id'],
         'connector',
-        depends = [],
-        impact = [ids['re_id'], ids['comp_id']]
+        depends=[],
+        impact=[ids['re_id'], ids['comp_id']]
     )
     context_graph_manager.put_entities([comp, re, conn])
 
@@ -182,17 +182,18 @@ def update_context_case1_re_none(ids):
         ids['comp_id'],
         ids['comp_id'],
         'component',
-        depends = [ids['conn_id']],
-        impact = []
+        depends=[ids['conn_id']],
+        impact=[]
     )
     conn = create_entity(
         ids['conn_id'],
         ids['conn_id'],
         'connector',
-        depends = [],
-        impact = [ids['comp_id']]
+        depends=[],
+        impact=[ids['comp_id']]
     )
-    context_graph_manager.put_entities([comp,conn])
+    context_graph_manager.put_entities([comp, conn])
+
 
 def update_context_case2(ids, in_db):
     """Case 2 update entities"""
@@ -203,15 +204,15 @@ def update_context_case2(ids, in_db):
         ids['comp_id'],
         ids['comp_id'],
         'component',
-        depends = [ids['re_id']],
-        impact = []
+        depends=[ids['re_id']],
+        impact=[]
     )
     re = create_entity(
         ids['re_id'],
         ids['re_id'],
         'resource',
-        depends = [],
-        impact = [ids['comp_id']]
+        depends=[],
+        impact=[ids['comp_id']]
     )
     update_links_conn_res(in_db[0], re)
     update_links_conn_comp(in_db[0], comp)
@@ -227,8 +228,8 @@ def update_context_case2_re_none(ids, in_db):
         ids['comp_id'],
         ids['comp_id'],
         'component',
-        depends = [],
-        impact = []
+        depends=[],
+        impact=[]
     )
     update_links_conn_comp(in_db[0], comp)
     context_graph_manager.put_entities([comp, in_db[0]])
@@ -248,8 +249,8 @@ def update_context_case3(ids, in_db):
         ids['re_id'],
         ids['re_id'],
         'resource',
-        depends = [],
-        impact = []
+        depends=[],
+        impact=[]
     )
     update_links_res_comp(re, comp)
     update_links_conn_res(conn, re)
@@ -305,7 +306,6 @@ def update_context_case6(ids, in_db):
             component = entity
 
     connector = create_entity(ids["conn_id"], ids["conn_id"], "connector")
-
     update_links_conn_comp(connector, component)
 
     if ids["re_id"] is not None:
@@ -342,26 +342,18 @@ def update_context(presence, ids, in_db):
 
     else:
         LOGGER.warning(
-            "No case for the given presence : {0} and ids {1}".format(presence, ids))
+            "No case for the given presence : {0} and ids {1}".format(
+                presence, ids))
         raise ValueError("No case for the given ids and data.")
-
-def add_missing_ids_cache(presence, ids):
-
-    if presence[0] == False:
-        cache.add(ids["conn_id"])
-
-    if presence[1] == False:
-        cache.add(ids["comp_id"])
-
-    if presence[2] == False:
-        cache.add(ids["res_id"])
 
 
 def gen_ids(event):
     ret_val = {
         'comp_id': '{0}'.format(event['component']),
         're_id': None,
-        'conn_id': '{0}/{1}'.format(event['connector'], event['connector_name'])
+        'conn_id': '{0}/{1}'.format(
+            event['connector'],
+            event['connector_name'])
     }
     if 'resource' in event.keys():
         ret_val['re_id'] = '{0}/{1}'.format(event['resource'],
@@ -399,9 +391,9 @@ def event_processing(
 
     add_missing_ids(presence, ids)
 
-    entites_in_db = context_graph_manager.get_entity(ids.values())
+    entities_in_db = context_graph_manager.get_entity(ids.values())
     data = set()
-    for i in entites_in_db:
+    for i in entities_in_db:
         data.add(i['_id'])
 
     presence = determine_presence(ids, data)
@@ -409,8 +401,6 @@ def event_processing(
     if presence == (True, True, True) or (True, True, None):
         # Everything is in cache, so we skip
         return None
-
-    add_missing_ids_cache(presence, entities_in_db)
 
     update_context(presence, ids, entities_in_db)
     LOGGER.debug("*** The end. ***")
