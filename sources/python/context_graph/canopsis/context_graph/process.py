@@ -261,11 +261,6 @@ def update_context_case3(ids, in_db):
     context_graph_manager.put_entities([comp, re, conn])
 
 
-def update_case4(entities, ids):
-    """Case 4 update entities"""
-    LOGGER.debug("Case 4 : nothing to do here.")
-
-
 def update_context_case5(ids, in_db):
     """Case 5 update entities"""
     # (False, True, False) or (False, True, None)
