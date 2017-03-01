@@ -448,35 +448,16 @@ def update_case6(entities, ids):
         return 1
 
 
-def update_context(presence, ids):
-    if presence == (False, False, False) or presence == (False, False, None):
-        # Case 1
-        pass
+def add_missing_ids_cache(presence, ids):
 
-    elif presence == (True, False, False) or presence == (True, False, None):
-        # Case 2
-        pass
+    if presence[0] == False:
+        cache.add(ids["conn_id"])
 
-    elif presence == (True, True, False):
-        # Case 3
-        pass
+    if presence[1] == False:
+        cache.add(ids["comp_id"])
 
-    elif presence == (True, True, True):
-        # Case 4
-        pass
-
-    elif presence == (False, True, False) or presence == (False, True, None):
-        # Case 5
-        pass
-
-    elif presence == (False, True, True) or presence == (False, True, None):
-        # Case 6
-        pass
-
-    else:
-        LOGGER.warning(
-            "No case for the given presence : {0} and ids {1}".format(presence, ids))
-        raise ValueError("No case for the given ids and data.")
+    if presence[2] == False:
+        cache.add(ids["res_id"])
 
 
 def gen_ids(event):
@@ -522,14 +503,17 @@ def event_processing(
     add_missing_ids(presence, ids)
 
     entites_in_db = context_graph_manager.get_entity(ids.values())
-    data = set() 
+    data = set()
     for i in entites_in_db:
         data.add(i['_id'])
+
     presence = determine_presence(ids, data)
+
     if presence == (True, True, True) or (True, True, None):
         # Everything is in cache, so we skip
         return None
-    update_context(presence, entities_in_db)
+
+    add_missing_ids_cache(presence, entities_in_db)
 
     LOGGER.debug("*** The end. ***")
 
