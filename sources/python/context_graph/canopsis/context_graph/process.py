@@ -134,8 +134,6 @@ def determine_presence(ids, data):
     else:
         res_here = None
 
-    LOGGER.error('determine presence ids: {0}, in {1} donne {2}'.format(ids, data, (conn_here, comp_here, res_here)))
-
     return (conn_here, comp_here, res_here)
 
 
@@ -257,7 +255,6 @@ def update_context_case3(ids, in_db):
     )
     update_links_res_comp(re, comp)
     update_links_conn_res(conn, re)
-    LOGGER.error(' GREP cas 3 put {0}'.format([comp, re, conn]))
     context_graph_manager.put_entities([comp, re, conn])
 
 
@@ -379,36 +376,26 @@ def event_processing(
 
     global LOGGER
     LOGGER = logger
-    LOGGER.error('1')
     ids = gen_ids(event)
 
-    LOGGER.error('2')
     presence = determine_presence(ids, cache)
-    LOGGER.error('3')
-    LOGGER.error(presence)
 
     if presence == (True, True, True) or presence == (True, True, None):
         # Everything is in cache, so we skip
-        logger.error('CAS 4 DANS LE CACHE!!!!')
         return None
-    LOGGER.error('4')
     add_missing_ids(presence, ids)
 
-    logger.error('5')
 
     entities_in_db = context_graph_manager.get_entity(ids.values())
     data = set()
     for i in entities_in_db:
         data.add(i['_id'])
 
-    logger.error('6')
     presence = determine_presence(ids, data)
 
-    logger.error('7')
     if presence == (True, True, True) or presence == (True, True, None):
         # Everything is in cache, so we skip
         return None
-    logger.error('8')
     update_context(presence, ids, entities_in_db)
     LOGGER.debug("*** The end. ***")
 
