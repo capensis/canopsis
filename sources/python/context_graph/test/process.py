@@ -298,6 +298,25 @@ class Test(TestCase):
                 "conn_id": conn_id, "comp_id": comp_id})
         process.cache.clear()
 
+    def test_gen_ids(self):
+        conn_id = "conn_id"
+        conn_name = "conn_name"
+        comp_id = "comp_id"
+        re_id = "re_id"
+
+        event = create_event(conn_id, conn_name, comp_id, re_id)
+        event_re_none = create_event(conn_id, conn_name, comp_id, None)
+
+        expected = {"comp_id": comp_id,
+                    "conn_id": "{0}/{1}".format(conn_id, conn_name),
+                    "re_id": "{0}/{1}".format(re_id, comp_id)}
+
+        expected_re_none = {"comp_id": comp_id,
+                    "conn_id": "{0}/{1}".format(conn_id, conn_name)}
+
+        self.assertEqual(process.gen_ids(event), expected)
+        self.assertEqual(process.gen_ids(event_re_none), expected_re_none)
+
 
 if __name__ == '__main__':
     main()
