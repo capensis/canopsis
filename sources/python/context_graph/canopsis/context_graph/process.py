@@ -261,72 +261,36 @@ def update_case4(entities, ids):
     LOGGER.debug("Case 4 : nothing to do here.")
 
 
-def update_case5(entities, ids):
+def update_context_case5(ids, in_db):
     """Case 5 update entities"""
+    # (False, True, False) or (False, True, None)
 
-    LOGGER.debug("Case 5")
+    LOGGER.debug("Update context case 6.")
 
-    conn_there = False
-    re_there = False
+    resource = None
 
-    for i, k in enumerate(entities):
-        if k['type'] == 'connector':
-            conn_there = True
-            conn_pos = i
-        if k['type'] == 'resource':
-            re_there = True
-            re_pos = i
-        if k['type'] == 'component':
-            comp_pos = i
+    for entity in in_db:
+        if entity["type"] == "resource":
+            resource = entity
+        elif entity["type"] == "component":
+            component = entity
 
-    if conn_there:
-        LOGGER.debug(
-            "Connector {0} present in database.".format(ids['conn_id']))
-        if re_there:
-            LOGGER.debug(
-                "Resource {0} present in database.".format(ids['re_id']))
-            return
-        else:
-            LOGGER.debug(
-                "Resource {0} not present in database.".format(ids['re_id']))
-            # put re + update comp depends + update conn impact
-            re = create_entity(ids["re_id"],
-                               ids["re_id"],
-                               "resource",
-                               [ids["conn_id"]],
-                               [ids["comp_id"]])
-            update_links_res_comp(re, entities[comp_pos])
-            update_links_conn_res(entities[conn_pos], re)
-            entities.append(re)
+    connector = create_entity(ids["conn_id"],
+                              ids["conn_id"],
+                              "connector")
+
+    if resource is not None:
+        resource = create_entity(ids["re_id"],
+                                 ids["re_id"],
+                                 "return esource")
+        update_links_res_comp(resource, component)
+        update_links_conn_res(connector, resource)
+
     else:
-        LOGGER.debug(
-            "Connector {0} not present in database.".format(ids['conn_id']))
+        update_links_conn_res(connector, resource)
 
-        conn = create_entity(ids["conn_id"],
-                             ids["conn_id"],
-                             "connector")
-        entities.append(conn)
-        if re_there:
-            LOGGER.debug(
-                "Resource {0} present in database.".format(ids['re_id']))
-            # put conn + maj impac in conn + update re depends
-            update_links_conn_comp(conn, entities[comp_pos])
-            update_links_conn_res(conn, entities[re_pos])
-        else:
-            # put conn + put re + update conn impact for comp and re
-            LOGGER.debug(
-                "Resource {0} not present in database.".format(ids['re_id']))
-            re = create_entity(ids["re_id"],
-                               ids["re_id"],
-                               "resource",
-                               [ids["conn_id"]],
-                               [ids["comp_id"]])
-            update_links_res_comp(re, entities[comp_pos])
-            update_links_conn_res(conn, re)
-            update_links_conn_comp(conn, entities[comp_pos])
-            entities.append(re)
-    LOGGER.debug("Entities : {0}".format(entities))
-    context_graph_manager.put_entities(entities)
+    update_links_conn_comp(connector, component)
+    context_graph_manager.put_entities([connector, component, resource])
 
 
 def update_context_case6(ids, in_db):
@@ -339,16 +303,15 @@ def update_context_case6(ids, in_db):
             resource = entity
         elif entity["type"] == "component":
             component = entity
-        elif entity["type"] == "connector":
-            connector = entity
 
-
-    conn = create_entity(ids["conn_id"], ids["conn_id"], connector)
+    connector = create_entity(ids["conn_id"], ids["conn_id"], "connector")
 
     update_links_conn_comp(connector, component)
 
     if ids["re_id"] is not None:
         update_links_conn_res(connector, resource)
+
+    context_graph_manager.put_entities([connector, component, resource])
 
 
 def update_context(presence, ids, in_db):
@@ -371,7 +334,7 @@ def update_context(presence, ids, in_db):
 
     elif presence == (False, True, False) or presence == (False, True, None):
         # Case 5
-        pass
+        update_context_case5(ids, in_db)
 
     elif presence == (False, True, True) or presence == (False, True, None):
         # Case 6
