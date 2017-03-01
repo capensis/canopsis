@@ -135,15 +135,16 @@ def determine_presence(ids, data):
 
     return (conn_here, comp_here, res_here)
 
+
 def add_missing_ids(presence, ids):
     """Update the cache"""
-    if presence[0] == False: # Update connector
+    if presence[0] == False:  # Update connector
         cache.add(ids["conn_id"])
 
-    if presence[1] == False: # Update component
+    if presence[1] == False:  # Update component
         cache.add(ids["comp_id"])
 
-    if presence[2] == False: # Update resource
+    if presence[2] == False:  # Update resource
         cache.add(ids["res_id"])
 
 
@@ -466,6 +467,18 @@ def update_entities(case, ids):
         raise ValueError("Unknown case : {0}.".format(case))
 
 
+def gen_ids(event):
+    ret_val = {
+        'comp_id': '{0}'.format(event['component'])
+        're_id': None,
+        'conn_id': '{0}/{1}'.format(event['connector'], event['connector_name'])
+    }
+    if 'resource' in event.keys():
+        ret_val['re_id'] = '{0}/{1}'.format(event['resource'],
+                                            event['component'])
+    return ret_val
+
+
 @register_task
 def event_processing(
         engine, event, manager=None, logger=None, ctx=None, tm=None, cm=None,
@@ -486,15 +499,19 @@ def event_processing(
     global LOGGER
     LOGGER = logger
 
-    ids = {}
+    ids = gen_ids(event)
 
     presence = determine_presence(ids, cache)
 
     if presence == (True, True, True) or (True, True, None):
-        # Every thing is in cache, so we skip
+        # Everything is in cache, so we skip
         return None
 
     add_missing_ids(presence, ids)
+
+    entites_in_db = context_graph_manager.get_entity(ids.values())
+    data = set(entites_in_db.values())
+    determine_presence(ids, data)
 
     LOGGER.debug("*** The end. ***")
 
