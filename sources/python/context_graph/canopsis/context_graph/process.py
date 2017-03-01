@@ -12,9 +12,7 @@ from canopsis.context_graph.manager import ContextGraph
 context_graph_manager = ContextGraph()
 
 
-cache_comp = set()
-cache_conn = set()
-cache_re = set()
+ids_cache = set()
 
 LOGGER = None
 
@@ -114,68 +112,99 @@ def update_links_res_comp(res, comp):
     update_impact_links(comp, res)
 
 
+def determine_presence(ids, data):
+    """Determine if the ids are in data. If the ids is present in data, the
+    element of the tuple that show the presence of the ids will be set to True.
+    False otherwise. If the ids given is set to None, the matching element will
+    be set to None.
+    :parama ids: a set of dict of ids
+    :parama data: a set of ids
+    :return: a tuple of boolean of None following pattern
+    (connector presence, component presence, resource presence).
+
+    """
+
+    conn_here = ids['conn_id'] in data
+    comp_here = ids['comp_id'] in data
+
+    if ids['res_id'] is not None:
+        res_here = ids['res_id'] in data
+    else:
+        res_here = None
+
+    return (conn_here, comp_here, res_here)
+
+
 def prepare_update(event):
     """Determine in which case the event depends and return the required ids
     :param event: the event
     :return: the case id and the required ids as a list"""
-    case = 0  # 0 -> exception raised
-    comp_id = event['component']
+    # case = 0  # 0 -> exception raised
+    # comp_id = event['component']
 
-    re_id = None
-    if 'resource' in event.keys():
-        re_id = '{0}/{1}'.format(event['resource'], comp_id)
+    # re_id = None
+    # if 'resource' in event.keys():
+    #     re_id = '{0}/{1}'.format(event['resource'], comp_id)
 
-    conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
+    # conn_id = '{0}/{1}'.format(event['connector'], event['connector_name'])
 
-    LOGGER.debug("Comp_id : {0}, re_id : {1}, conn_id : {2}.".format(
-        comp_id, re_id, conn_id))
+    # LOGGER.debug("Comp_id : {0}, re_id : {1}, conn_id : {2}.".format(
+    #     comp_id, re_id, conn_id))
 
-    # cache and case determination
-    ids = {}
+    # # cache and case determination
+    # ids = {}
 
-    print("Cache_re : " + str(cache_re))
-    print("Cache_comp : " + str(cache_comp))
-    print("Cache_conn : " + str(cache_conn))
+    # print("Cache_re : " + str(cache_re))
+    # print("Cache_comp : " + str(cache_comp))
+    # print("Cache_conn : " + str(cache_conn))
 
-    if conn_id in cache_conn:
-        if comp_id in cache_comp:
-            if re_id is not None:
-                if re_id not in cache_re:  # Case 3
-                    ids['re_id'] = re_id
-                    ids['comp_id'] = comp_id
-                    ids['conn_id'] = conn_id
-                    cache_re.add(re_id)
-                    case = 3
-                else:  # Case 4
-                    case = 4
-        else:  # Case 2
-            case = 2
-            ids['comp_id'] = comp_id
-            ids['conn_id'] = conn_id
-            cache_comp.add(comp_id)
-            if re_id is not None:
-                if re_id not in cache_re:
-                    ids['re_id'] = re_id
-                    cache_re.add(re_id)
-    else:  # Case 6
-        case = 6
-        cache_conn.add(conn_id)
-        ids['conn_id'] = conn_id
-        ids['comp_id'] = comp_id
-        if comp_id in cache_comp:
-            case = 5
-            if re_id is not None:
-                if re_id not in cache_re:  # Case 5
-                    ids['re_id'] = re_id
-                    cache_re.add(re_id)
-        else:  # Case 1
-            case = 1
-            cache_comp.add(comp_id)
-            if re_id is not None:
-                cache_re.add(re_id)
-                ids['re_id'] = re_id
+    # if conn_id in cache_conn:
+    #     if comp_id in cache_comp:
+    #         if re_id is not None:
+    #             if re_id not in cache_re:  # Case 3
+    #                 ids['re_id'] = re_id
+    #                 ids['comp_id'] = comp_id
+    #                 ids['conn_id'] = conn_id
+    #                 cache_re.add(re_id)
+    #                 case = 3
+    #             else:  # Case 4
+    #                 case = 4
+    #     else:  # Case 2
+    #         case = 2
+    #         ids['comp_id'] = comp_id
+    #         ids['conn_id'] = conn_id
+    #         cache_comp.add(comp_id)
+    #         if re_id is not None:
+    #             if re_id not in cache_re:
+    #                 ids['re_id'] = re_id
+    #                 cache_re.add(re_id)
+    # else:
+    #     if comp_id in cache_comp:
+    #         if re_id in cache_re or re_id is None:  # case 6
+    #             case = 6
+    #             ids["conn_id"] = conn_id
+    #             ids["comp_id"] = comp_id
+    #             ids["res_id"] = re_id
+    #             cache_conn.add(conn_id)
+    #         else:  # case 5
+    #             case = 5
+    #             ids["conn_id"] = conn_id
+    #             ids["comp_id"] = comp_id
+    #             cache_conn.add(conn_id)
+    #             if re_id is not None:
+    #                 ids["re_id"] = re_id
+    #                 cache_re.add(re_id)
+    #     else:
+    #         case = 1
+    #         ids["conn_id"] = conn_id
+    #         ids["comp_id"] = comp_id
+    #         cache_comp.add(comp_id)
+    #         cache_conn.add(conn_id)
+    #         if re_id is not None:
+    #             ids['re_id'] = re_id
+    #             cache_re.add(re_id)
 
-    return case, ids
+    # return case, ids
 
 
 def update_case1(entities, ids):
@@ -517,11 +546,6 @@ def event_processing(
     global LOGGER
     LOGGER = logger
 
-    import pprint
-
-    fd = open("/tmp/plop.log", 'a')
-    fd.write("EVENT : \n{0}\n".format(pprint.pformat(event)))
-
     # Possible cases :
     # 0 -> Not in cache
     # 1 −> In cache
@@ -534,6 +558,7 @@ def event_processing(
     #     1             1            1     -> case 4
     #     0             0            1     -> case 5
     #     0             1            1     -> case 6
+    #
     #
     #  Case 1 :
     #    Nothing exist in the cache, create every entities in database.
@@ -564,9 +589,6 @@ def event_processing(
 
     case, ids = prepare_update(event)
 
-    fd.write("case : {0}\n".format(case))
-    fd.write("ids : {0}\n".format(ids))
-    fd.close()
     update_entities(case, ids)
 
     LOGGER.debug("*** The end. ***")
