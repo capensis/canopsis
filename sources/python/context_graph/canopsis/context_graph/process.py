@@ -448,19 +448,56 @@ def update_case6(entities, ids):
         return 1
 
 
-def update_context(presence, ids):
+def update_context(presence, ids, in_bdd):
     if presence == (False, False, False) or presence == (False, False, None):
         # Case 1
-        create_entity(
+        comp = create_entity(
             ids['comp_id'],
             ids['comp_id'],
             'component',
-            depends = [],
+            depends = [ids['conn_id'], ids['re_id']],
             impact = []
         )
-        create_entity()
-        create_entity()
+        re = create_entity(
+            ids['re_id'],
+            ids['re_id'],
+            'resource',
+            depends = [ids['conn_id']],
+            impact = [ids['comp_id']]
+        )
+        conn = create_entity(
+            ids['conn_id'],
+            ids['conn_id'],
+            'connector',
+            depends = [],
+            impact = [ids['re_id'], ids['comp_id']]
+        )
+        context_graph_manager.put_entities([comp, re, conn])
 
+    elif presence == (True, False, False) or presence == (True, False, None):
+        # Case 2
+		
+
+    elif presence == (True, True, False):
+        # Case 3
+        pass
+
+    elif presence == (True, True, True):
+        # Case 4
+        pass
+
+    elif presence == (False, True, False) or presence == (False, True, None):
+        # Case 5
+        pass
+
+    elif presence == (False, True, True) or presence == (False, True, None):
+        # Case 6
+        pass
+
+    else:
+        LOGGER.warning(
+            "No case for the given presence : {0} and ids {1}".format(presence, ids))
+        raise ValueError("No case for the given ids and data.")<Paste>
 
 def add_missing_ids_cache(presence, ids):
 
@@ -529,6 +566,7 @@ def event_processing(
 
     add_missing_ids_cache(presence, entities_in_db)
 
+    update_context(presence, ids, entities_in_db)
     LOGGER.debug("*** The end. ***")
 
 
