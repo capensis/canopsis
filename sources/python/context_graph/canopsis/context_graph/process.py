@@ -510,8 +510,14 @@ def event_processing(
     add_missing_ids(presence, ids)
 
     entites_in_db = context_graph_manager.get_entity(ids.values())
-    data = set(entites_in_db.values())
-    determine_presence(ids, data)
+    data = set() 
+    for i in entites_in_db:
+        data.add(i['_id'])
+    presence = determine_presence(ids, data)
+    if presence == (True, True, True) or (True, True, None):
+        # Everything is in cache, so we skip
+        return None
+    update_context(presence, entities_in_db)
 
     LOGGER.debug("*** The end. ***")
 
