@@ -353,10 +353,10 @@ def update_context_case6(ids, in_db):
 
 def update_context(presence, ids, in_db):
     if presence == (False, False, False):
-        update_case1(ids)
+        update_context_case1(ids)
     elif presence == (False, False, None):
         # Case 1
-        update_case1(ids)
+        update_context_case1(ids)
     elif presence == (True, False, False) or presence == (True, False, None):
         # Case 2
         update_context_case2(ids, in_db)
