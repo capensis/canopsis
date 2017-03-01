@@ -152,7 +152,6 @@ def update_context_case1(ids):
     """Case 1 update entities"""
 
     LOGGER.debug("Case 1.")
-
     comp = create_entity(
         ids['comp_id'],
         ids['comp_id'],
@@ -176,6 +175,25 @@ def update_context_case1(ids):
     )
     context_graph_manager.put_entities([comp, re, conn])
 
+
+def update_context_case1_re_none(ids):
+    LOGGER.debug("Case 1 re none.")
+    comp = create_entity(
+        ids['comp_id'],
+        ids['comp_id'],
+        'component',
+        depends = [ids['conn_id']],
+        impact = []
+    )
+    conn = create_entity(
+        ids['conn_id'],
+        ids['conn_id'],
+        'connector',
+        depends = [],
+        impact = [ids['comp_id']]
+    )
+    context_graph_manager.put_entities([comp,conn])
+
 def update_context_case2(ids, in_db):
     """Case 2 update entities"""
 
@@ -198,6 +216,23 @@ def update_context_case2(ids, in_db):
     update_links_conn_res(in_db[0], re)
     update_links_conn_comp(in_db[0], comp)
     context_graph_manager.put_entities([comp, re, in_db[0]])
+
+
+def update_context_case2_re_none(ids, in_db):
+    """Case 2 update entities"""
+
+    LOGGER.debug("Case 2 re none ")
+
+    comp = create_entity(
+        ids['comp_id'],
+        ids['comp_id'],
+        'component',
+        depends = [],
+        impact = []
+    )
+    update_links_conn_comp(in_db[0], comp)
+    context_graph_manager.put_entities([comp, in_db[0]])
+
 
 def update_context_case3(ids, in_db):
     """Case 3 update entities"""
@@ -326,12 +361,18 @@ def update_case6(entities, ids):
 
 
 def update_context(presence, ids, in_db):
-    if presence == (False, False, False) or presence == (False, False, None):
+    if presence == (False, False, False) 
+        pdate_case1(ids)
+    elif presence == (False, False, None):
         # Case 1
-        update_case1(ids)
-    elif presence == (True, False, False) or presence == (True, False, None):
-        # Case 2
+        update_case1_re_none(ids)
+
+    elif presence == (True, False, False)  
 		update_context_case2(ids, in_db)
+    
+    elif presence == (True, False, None):
+        # Case 2
+		update_context_case2_re_none(ids, in_db)
 
     elif presence == (True, True, False):
         # Case 3
