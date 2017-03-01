@@ -526,6 +526,18 @@ def update_entities(case, ids):
         raise ValueError("Unknown case : {0}.".format(case))
 
 
+def gen_ids(event):
+    ret_val = {
+        'comp_id': '{0}'.format(event['component'])
+        're_id': None
+        'conn_id': '{0}/{1}'.format(event['connector'], event['connector_name'])
+    }
+    if 'resource' in event.keys():
+        ret_val['re_id'] = '{0}/{1}'.format(event['resource'],
+                                            event['component'])
+    return ret_val
+
+
 @register_task
 def event_processing(
         engine, event, manager=None, logger=None, ctx=None, tm=None, cm=None,
@@ -587,9 +599,8 @@ def event_processing(
     #    Create a connector then update the links between the connector and
     #    the resource and between the connector and component.
 
-    case, ids = prepare_update(event)
+    ids = gen_ids(event)
 
-    update_entities(case, ids)
 
     LOGGER.debug("*** The end. ***")
 
