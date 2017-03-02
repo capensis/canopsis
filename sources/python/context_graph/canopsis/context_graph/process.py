@@ -109,8 +109,8 @@ def update_links_res_comp(res, comp):
     check_type(res, "resource")
     check_type(comp, "component")
 
-    update_depends_links(res, comp)
-    update_impact_links(comp, res)
+    update_impact_links(res, comp)
+    update_depends_links(comp, res)
 
 
 def determine_presence(ids, data):
