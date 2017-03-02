@@ -378,7 +378,6 @@ class Test(TestCase):
         conn_name = "conn_name"
         comp_id = "comp_id"
 
-
         event = create_event(conn_id, conn_name, comp_id)
         ids = process.gen_ids(event)
 
@@ -392,14 +391,85 @@ class Test(TestCase):
                                               "component",
                                               depends=[ids["conn_id"]])
 
-        res = process.update_context_case1(ids)
-
+        res = process.update_context_case1_re_none(ids)
         result_conn, result_comp, result_re = prepare_test_update_context(res)
 
-        print(result_comp)
         self.assertDictEqual(expected_comp, result_comp)
         self.assertDictEqual(expected_conn, result_conn)
 
+    def test_update_context_case2(self):
+        conn_id = "conn_id"
+        conn_name = "conn_name"
+        comp_id = "comp_id"
+        re_id = "re_id"
+
+        ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
+
+        expected_conn = process.create_entity(ids["conn_id"],
+                                              ids["conn_id"],
+                                              "connector",
+                                              impact=sorted([ids["comp_id"],
+                                                             ids["re_id"]]))
+
+        expected_comp = process.create_entity(ids["comp_id"],
+                                              ids["comp_id"],
+                                              "component",
+                                              depends=sorted([ids["conn_id"],
+                                                              ids["re_id"]]))
+
+        expected_re = process.create_entity(ids["re_id"],
+                                            ids["re_id"],
+                                            "resource",
+                                            impact=[ids["comp_id"]],
+                                            depends=[ids["conn_id"]])
+
+
+        conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
+                                     "{0}/{1}".format(conn_id, conn_name),
+                                     "connector",
+                                     impact=[],
+                                     depends=[])
+
+        res = process.update_context_case2(ids, [conn])
+        result_conn, result_comp, result_re = prepare_test_update_context(res)
+
+        self.assertDictEqual(expected_conn, result_conn)
+        self.assertDictEqual(expected_comp, result_comp)
+        self.assertDictEqual(expected_re, result_re)
+
+    def test_update_context_case2_re_none(self):
+        conn_id = "conn_id"
+        conn_name = "conn_name"
+        comp_id = "comp_id"
+
+        ids = process.gen_ids(create_event(conn_id, conn_name, comp_id))
+
+        expected_conn = process.create_entity(ids["conn_id"],
+                                              ids["conn_id"],
+                                              "connector",
+                                              impact=sorted([ids["comp_id"],
+                                                             ids["re_id"]]))
+
+        expected_comp = process.create_entity(ids["comp_id"],
+                                              ids["comp_id"],
+                                              "component",
+                                              depends=sorted([ids["conn_id"],
+                                                              ids["re_id"]]))
+
+
+        conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
+                                     "{0}/{1}".format(conn_id, conn_name),
+                                     "connector",
+                                     impact=[],
+                                     depends=[])
+
+        res = process.update_context_case2(ids, [conn])
+        result_conn, result_comp, result_re = prepare_test_update_context(res)
+
+        self.assertDictEqual(expected_conn, result_conn)
+        self.assertDictEqual(expected_comp, result_comp)
+
+    def test_update_context_case3(self):
 
 
 if __name__ == '__main__':
