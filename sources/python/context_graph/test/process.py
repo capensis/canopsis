@@ -22,6 +22,9 @@ class Logger(object):
     def critical(self, log):
         print("CRITICAL : {0}".format(log))
 
+    def error(self, log):
+        print("ERROR : {0}".format(log))
+
 
 def create_event(conn, conn_name,  comp=None, res=None):
     event = {"connector": conn, "connector_name": conn_name}
@@ -31,6 +34,24 @@ def create_event(conn, conn_name,  comp=None, res=None):
     if res is not None:
         event["resource"] = res
     return event
+
+def prepare_test_update_context(result):
+    conn = None
+    comp = None
+    re = None
+
+    for entity in result:
+        entity["impact"] = sorted(entity["impact"])
+        entity["depends"] = sorted(entity["depends"])
+
+    for entity in result:
+        if entity["type"] == "connector":
+            conn = entity
+        elif entity["type"] == "component":
+            comp = entity
+        elif entity["type"] == "resource":
+            re = entity
+    return conn, comp, re
 
 
 class Test(TestCase):
@@ -111,7 +132,6 @@ class Test(TestCase):
         process.update_impact_links(e_1, e_2)
         self.assertTrue(e_2['_id'] in e_1['impact'])
         process.update_impact_links(e_1, e_2)
-        print(e_1)
         self.assertTrue(e_1['impact'] == [e_2['_id']])
 
     def test_update_case_1(self):
@@ -312,10 +332,74 @@ class Test(TestCase):
                     "re_id": "{0}/{1}".format(re_id, comp_id)}
 
         expected_re_none = {"comp_id": comp_id,
-                    "conn_id": "{0}/{1}".format(conn_id, conn_name)}
+                            "conn_id": "{0}/{1}".format(conn_id, conn_name),
+                            "re_id": None}
 
         self.assertEqual(process.gen_ids(event), expected)
         self.assertEqual(process.gen_ids(event_re_none), expected_re_none)
+
+    def test_update_context_case1(self):
+        conn_id = "conn_id"
+        conn_name = "conn_name"
+        comp_id = "comp_id"
+        re_id = "re_id"
+
+        event = create_event(conn_id, conn_name, comp_id, re_id)
+        ids = process.gen_ids(event)
+
+        expected_conn = process.create_entity(ids["conn_id"],
+                                              ids["conn_id"],
+                                              "connector",
+                                              impact=sorted([ids["comp_id"],
+                                                             ids["re_id"]]))
+
+        expected_comp = process.create_entity(ids["comp_id"],
+                                              ids["comp_id"],
+                                              "component",
+                                              depends=sorted([ids["conn_id"],
+                                                              ids["re_id"]]))
+
+        expected_re = process.create_entity(ids["re_id"],
+                                            ids["re_id"],
+                                            "resource",
+                                            impact=[ids["comp_id"]],
+                                            depends=[ids["conn_id"]])
+
+        res = process.update_context_case1(ids)
+
+        result_conn, result_comp, result_re = prepare_test_update_context(res)
+
+        self.assertDictEqual(expected_comp, result_comp)
+        self.assertDictEqual(expected_conn, result_conn)
+        self.assertDictEqual(expected_re, result_re)
+
+    def test_update_context_case1_re_none(self):
+        conn_id = "conn_id"
+        conn_name = "conn_name"
+        comp_id = "comp_id"
+
+
+        event = create_event(conn_id, conn_name, comp_id)
+        ids = process.gen_ids(event)
+
+        expected_conn = process.create_entity(ids["conn_id"],
+                                              ids["conn_id"],
+                                              "connector",
+                                              impact=[ids["comp_id"]])
+
+        expected_comp = process.create_entity(ids["comp_id"],
+                                              ids["comp_id"],
+                                              "component",
+                                              depends=[ids["conn_id"]])
+
+        res = process.update_context_case1(ids)
+
+        result_conn, result_comp, result_re = prepare_test_update_context(res)
+
+        print(result_comp)
+        self.assertDictEqual(expected_comp, result_comp)
+        self.assertDictEqual(expected_conn, result_conn)
+
 
 
 if __name__ == '__main__':
