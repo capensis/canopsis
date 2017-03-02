@@ -78,7 +78,8 @@ Ember.Application.initializer({
               'domain': 'v.extra.domain',
               'perimeter': 'v.extra.perimeter',
               'last_state_change': 'v.state.t',
-              'output': 'v.state.m'
+              'output': 'v.state.m',
+              'pbehaviors': 'v.pbehaviors'
             },
 
             /**
@@ -118,6 +119,13 @@ Ember.Application.initializer({
                   skip: 0,
                   limit: this.get('model.itemsPerPage') || 50
                 });
+
+
+
+                // timeWindowUtils.getFromTo(
+                //     get(this, 'time_window'),
+                //     get(this, 'time_window_offset')
+                // );
             },
 
             // rewrite totalPages
@@ -162,29 +170,12 @@ Ember.Application.initializer({
               console.groupEnd();
             },
 
-            // getLivePeriod: function () {
-            //     var tw = timeWindowUtils.getFromTo(
-            //         get(this, 'time_window'),
-            //         get(this, 'time_window_offset')
-            //     );
-            //     var from = tw[0],
-            //         to = tw[1];
-
-            //     /* live reporting support */
-            //     var liveFrom = get(this, 'from'),
-            //         liveTo = get(this, 'to');
-            //     if (!isNone(liveFrom)) {
-            //         from = liveFrom;
-            //     }
-            //     if (!isNone(liveTo)) {
-            //         to = liveTo;
-            //     }
-            //     return {'from': from, 'to': to};
-            // },
-
-            findItems: function() {
-              console.error('FINDITMENS');
-            }.observes('widgetData'),
+            alarmsTimestamp: 0,
+            // for updating list of alarms
+            timelineListener: function() {
+              this.set('alarmSearchOptions.tstart', this.get('controllers.application.interval.timestamp.$gte') || 0);
+              this.set('alarmSearchOptions.tstop', this.get('controllers.application.interval.timestamp.$lte') || 0);
+            }.observes('controllers.application.interval.timestamp'),
 
             alarmss: function() {
               var controller = this;
@@ -197,6 +188,34 @@ Ember.Application.initializer({
               var options = this.get('alarmSearchOptions');
               console.error('reload original alarms with params', options);              
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+
+// ---------------------------------------------------------------
+// timeline component test
+
+// msg
+// :
+// "get_alarms() got an unexpected keyword argument 'get-current-alarm'"
+// traceback
+// :
+// "Traceback (most recent call last):↵  File "/opt/canopsis/local/lib/python2.7/site-packages/canopsis.common-0.1-py2.7.egg/canopsis/common/ws.py", line 272, in interceptor↵    result_function = function(*args, **kwargs)↵TypeError: get_alarms() got an unexpected keyword argument 'get-current-alarm'↵"
+// type
+// :
+// "<type 'exceptions.TypeError'>"
+              // adapter.findQuery('alarm', 'get-current-alarm', {'entity_id': "5bec98d2-d64c-11e6-ac64-00163e74f879"}).then(function (result) {
+
+              //   console.error('teeeest', result);
+              // });
+
+
+
+                // timeWindowUtils.getFromTo(
+                //     get(this, 'time_window'),
+                //     get(this, 'time_window_offset')
+                // );
+// ---------------------------------------------------------------
+
+
+
               
               return DS.PromiseArray.create({
                 promise: adapter.findQuery('alerts', options).then(function (alarms) {
@@ -219,7 +238,8 @@ Ember.Application.initializer({
 
             }.property('alarmSearchOptions.search', 'alarmSearchOptions.resolved',
                         'alarmSearchOptions.sort_key', 'alarmSearchOptions.sort_dir', 'alarmSearchOptions.filter',
-                        'alarmSearchOptions.skip', 'alarmSearchOptions.limit'),
+                        'alarmSearchOptions.skip', 'alarmSearchOptions.limit', 'alarmSearchOptions.tstart',
+                        'alarmSearchOptions.tstop'),
 
             fields: function() {
               return this.parseFields(get(this, 'model.columns'));
@@ -233,6 +253,15 @@ Ember.Application.initializer({
               var controller = this;
               var fields = get(this, 'fields');
               var alarmsArr = get(this, 'alarmss').map(function(alarm) {
+                  alarm['v']['pbehaviors'] = [
+                    {
+                      "tstop": 1483311600,
+                      "enabled": false,
+                      "name": "downtime",
+                      "tstart": 1483225200,
+                      "rrule": "FREQ=WEEKLY"
+                    }
+                  ];
                   var newAlarm = Ember.Object.create();
                   fields.forEach(function(field) {
                       var val = get(Ember.Object.create(alarm), field.getValue);
@@ -247,6 +276,9 @@ Ember.Application.initializer({
                   
                   newAlarm['isSelected'] = false;
                   // controller.set(newAlarm, 'id', alarm.get('_id'));
+
+                  newAlarm['isExpanded'] = false;
+                  
                   
                   newAlarm['id'] = alarm._id;
 
@@ -268,7 +300,18 @@ Ember.Application.initializer({
                         'label': 'test'
                       }
                     ]
-                  }
+                  };
+
+                  // newAlarm['pbehaviors'] = [
+                  //   {
+                  //     "tstop": 1483311600,
+                  //     "enabled": false,
+                  //     "name": "downtime",
+                  //     "tstart": 1483225200,
+                  //     "rrule": "FREQ=WEEKLY"
+                  //   }
+                  // ];
+
                   return newAlarm;
                 });
               this.set('defTotal', Ember.totalAlarms);

@@ -8,10 +8,10 @@ Ember.Application.initializer({
         var component = Ember.Component.extend({
 
             list: {
-              0: {color: 'bg-red', name: 'Critical'},
-              1: {color: 'bg-yellow', name: 'Minor'},
-              2: {color: 'bg-green', name: 'Good'},
-              3: {color: 'bg-blue', name: 'Undef'}              
+                0: {color: 'bg-green', name: 'Info'},
+                1: {color: 'bg-yellow', name: 'Minor'},
+                2: {color: 'bg-orange', name: 'Major'},
+                3: {color: 'bg-red', name: 'Critical'}            
             },
 
             init: function() {

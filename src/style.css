@@ -13,3 +13,7 @@
   padding-right:0;
   overflow:visible;
 }
+
+.invisible {
+  display: none;
+}

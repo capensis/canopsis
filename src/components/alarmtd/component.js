@@ -13,7 +13,7 @@ Ember.Application.initializer({
          */
         var component = Ember.Component.extend({
             tagName: 'td',
-            renderers: ['v_state_val', 'v_state_t', 'v_status_val', 'v_ack'],
+            renderers: ['v_state_val', 'v_state_t', 'v_status_val', 'v_ack', 'v_pbehaviors'],
 
             init: function() {
                 this._super();

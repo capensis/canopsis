@@ -8,12 +8,12 @@
         <table class="table no-margin">
             <thead>
                 <tr>
+                    <th style='padding-left: 0;'>
+                        {{component-checkbox checked=isAllChecked class="toggle"}}
+                    </th>
+
                     <th>
-                        <div class="checkbox">
-                            <label>
-                                {{input type="checkbox" checked=isAllChecked}}
-                            </label>
-                        </div>
+                        {{!--timeline--}}
                     </th>
                     {{#each field in fields}}
                         {{#if field.isSortable}}
@@ -27,10 +27,11 @@
             </thead>
             <tbody>
                 {{#each alarm in alarms}}
-                
                     {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick' saction='sendAction'}}
                     {{/component-alarmraw}}
 
+                    {{#component-customtimeline alarm=alarm fieldsAmount=15}}
+                    {{/component-customtimeline}}
                 {{/each}}
             </tbody>
         </table>

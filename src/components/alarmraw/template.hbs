@@ -1,9 +1,9 @@
+<td style='padding-left: 0;'>
+    {{component-checkbox checked=alarm.isSelected class="toggle"}}
+</td>
+
 <td>
-    <div class="checkbox">
-        <label>
-            {{input type="checkbox" checked=alarm.isSelected}}
-        </label>
-    </div>
+    <span {{action 'expand'}} {{bind-attr class=expandClass}} style='cursor: pointer;'></span>
 </td>
 {{#each field in fields}}
     {{#component-alarmtd alarm=alarm field=field action='tdClick'}}

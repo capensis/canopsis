@@ -19,21 +19,33 @@ Ember.Application.initializer({
 
                 set(this, 'alarm', get(this, 'alarm'));
                 set(this, 'fields', get(this, 'fields'));                
-              },
+            },
 
-              actions: {
-                  tdClick: function (alarm, field) {
-                      this.sendAction('action', alarm, field);
-                  },
+            expandClass: function () {
+                var cl = '';
+                if (this.get('alarm.isExpanded')) {
+                    cl = 'glyphicon-minus';
+                } else {
+                    cl = 'glyphicon-plus';
+                }
+                return 'glyphicon ' + cl;
+            }.property('alarm.isExpanded'),
 
-                  check: function (alarm) {
-                    //   this.toggleProperty('alarm.isSelected');
-                  },
+            actions: {
+                tdClick: function (alarm, field) {
+                    this.sendAction('action', alarm, field);
+                },
 
-                  sendAction: function (action, alarm) {
-                      this.sendAction('saction', action, alarm);
-                  }
-              }
+                sendAction: function (action, alarm) {
+                    this.sendAction('saction', action, alarm);
+                },
+
+                expand: function () {
+                    this.toggleProperty('alarm.isExpanded');
+                //   console.error('df');
+                //   this.set('timeline', this.get('alarm'));
+                }
+            }
 
         });
 
