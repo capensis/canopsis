@@ -105,6 +105,12 @@ class Test(TestCase):
             'type': 'component',
             'impact': [],
             'depends': []
+        self.assertDictEqual(re_res_1, {
+                '_id': 're_1',
+                'name': 're_1',
+                'type': 'resource',
+                'impact': ['comp_1'],
+                'depends': ['conn_1']})
         }
         e_2 = {
             '_id': 'conn_1',
@@ -163,6 +169,12 @@ class Test(TestCase):
     def test_update_case_6(self):
         entities_t1 = [{'_id': 'comp_1',
                         'type': 'component',
+        self.assertDictEqual(re_res_1, {
+                '_id': 're_1',
+                'name': 're_1',
+                'type': 'resource',
+                'impact': ['comp_1'],
+                'depends': ['conn_1']})
                         'impact': [],
                         'depends': []},
                        {'_id': 're_1',
@@ -572,25 +584,31 @@ class Test(TestCase):
 
         for i in comp_res_1:
             if isinstance(comp_res_1[i], list):
-                comp_res_1[i] = sorted(comp_res_1)
+                comp_res_1[i] = sorted(comp_res_1[i])
         for i in conn_res_1:
             if isinstance(conn_res_1[i], list):
-                conn_res_1[i] = sorted(conn_res_1)
+                conn_res_1[i] = sorted(conn_res_1[i])
         for i in re_res_1:
             if isinstance(re_res_1[i], list):
-                re_res_1[i] = sorted(re_res_1)
+                re_res_1[i] = sorted(re_res_1[i])
         for i in comp_res_2:
             if isinstance(comp_res_2[i], list):
-                comp_res_2[i] = sorted(comp_res_2)
+                comp_res_2[i] = sorted(comp_res_2[i])
         for i in conn_res_2:
             if isinstance(conn_res_2[i], list):
-                conn_res_2[i] = sorted(conn_res_2)
+                conn_res_2[i] = sorted(conn_res_2[i])
         self.assertDictEqual(comp_res_1, {
                 '_id': 'comp_1',
                 'name': 'comp_1',
                 'type': 'component',
             'impact': [],
             'depends': sorted(['re_1', 'conn_1'])})
+        print(re_res_1, {
+                '_id': 're_1',
+                'name': 're_1',
+                'type': 'resource',
+                'impact': ['comp_1'],
+                'depends': ['conn_1']})
         self.assertDictEqual(re_res_1, {
                 '_id': 're_1',
                 'name': 're_1',
