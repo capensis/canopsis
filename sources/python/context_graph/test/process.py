@@ -604,6 +604,77 @@ class Test(TestCase):
 #                'type': 'connector',
 #                'impact': sorted(['comp_1']),
 #                'depends': []})
+    def test_update_context_case5(self):
+        conn_id = "conn_id"
+        conn_name = "conn_name"
+        comp_id = "comp_id"
+        re_id = "re_id"
+
+        ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
+
+
+
+        expected_conn = process.create_entity(ids["conn_id"],
+                                              ids["conn_id"],
+                                              "connector",
+                                              impact=sorted([ids["comp_id"],
+                                                             ids["re_id"]]))
+
+        expected_comp = process.create_entity(ids["comp_id"],
+                                              ids["comp_id"],
+                                              "component",
+                                              impact=[],
+                                              depends=sorted([ids["conn_id"],
+                                                              ids["re_id"]]))
+
+        expected_re = process.create_entity(ids["re_id"],
+                                            ids["re_id"],
+                                            "resource",
+                                            impact=[ids["comp_id"]],
+                                            depends=[ids["conn_id"]])
+
+        comp = process.create_entity(comp_id,
+                                     comp_id,
+                                     "component",
+                                     impact=[],
+                                     depends=[])
+
+        res = process.update_context_case5(ids, [comp])
+        result_conn, result_comp, result_re = prepare_test_update_context(res)
+
+        self.assertDictEqual(expected_conn, result_conn)
+        self.assertDictEqual(expected_comp, result_comp)
+        self.assertDictEqual(expected_re, result_re)
+
+    def test_update_context_case5_re_none(self):
+        conn_id = "conn_id"
+        conn_name = "conn_name"
+        comp_id = "comp_id"
+
+        ids = process.gen_ids(create_event(conn_id, conn_name, comp_id))
+
+        expected_conn = process.create_entity(ids["conn_id"],
+                                              ids["conn_id"],
+                                              "connector",
+                                              impact=[ids["comp_id"]])
+
+        expected_comp = process.create_entity(ids["comp_id"],
+                                              ids["comp_id"],
+                                              "component",
+                                              impact=[],
+                                              depends=[ids["conn_id"]])
+
+        comp = process.create_entity(comp_id,
+                                     comp_id,
+                                     "component",
+                                     impact=[],
+                                     depends=[])
+
+        res = process.update_context_case5(ids, [comp])
+        result_conn, result_comp, result_re = prepare_test_update_context(res)
+
+        self.assertDictEqual(expected_conn, result_conn)
+        self.assertDictEqual(expected_comp, result_comp)
 
 if __name__ == '__main__':
     main()

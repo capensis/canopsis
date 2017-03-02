@@ -282,19 +282,25 @@ def update_context_case5(ids, in_db):
         elif entity["type"] == "component":
             component = entity
 
+    LOGGER.debug("**** resource is {0}".format(resource))
+
     connector = create_entity(ids["conn_id"],
                               ids["conn_id"],
                               "connector")
 
-    if resource is not None:
+    if ids["re_id"] is not None:
+        LOGGER.debug("Ressource not None")
         resource = create_entity(ids["re_id"],
                                  ids["re_id"],
-                                 "return esource")
+                                 "resource")
         update_links_res_comp(resource, component)
         update_links_conn_res(connector, resource)
+        update_links_conn_comp(connector, component)
+        return [connector, component, resource]
 
+    LOGGER.debug("Ressource  None")
     update_links_conn_comp(connector, component)
-    return [connector, component, resource]
+    return [connector, component]
 
 
 def update_context_case6(ids, in_db):
