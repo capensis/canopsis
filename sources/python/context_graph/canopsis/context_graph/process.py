@@ -30,14 +30,23 @@ def create_entity(
         impact=[],
         measurements=[],
         infos={}):
-    return {'_id': id,
-            'type': etype,
-            'name': name,
-            'depends': depends,
-            'impact': impact,
-            'measurements': measurements,
-            'infos': infos
-            }
+    if etype == 'component':
+        return {'_id': id,
+                'type': etype,
+                'name': name,
+                'depends': depends,
+                'impact': impact,
+                'measurements': measurements,
+                'infos': infos
+                }
+    else:
+        return {'_id': id,
+                'type': etype,
+                'name': name,
+                'depends': depends,
+                'impact': impact,
+                'infos': infos
+                }
 
 
 def check_type(entities, expected):
@@ -303,6 +312,7 @@ def update_context_case6(ids, in_db):
     update_links_conn_comp(connector, component)
 
     if resource is not None:
+        LOGGER.error('je passe la connard')
         update_links_conn_res(connector, resource)
         return [connector, component, resource]
 
