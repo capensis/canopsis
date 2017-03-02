@@ -302,7 +302,7 @@ def update_context_case6(ids, in_db):
     connector = create_entity(ids["conn_id"], ids["conn_id"], "connector")
     update_links_conn_comp(connector, component)
 
-    if ids["re_id"] is not None:
+    if resource is not None:
         update_links_conn_res(connector, resource)
         return [connector, component, resource]
 

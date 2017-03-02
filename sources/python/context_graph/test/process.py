@@ -401,6 +401,109 @@ class Test(TestCase):
         self.assertDictEqual(expected_conn, result_conn)
 
 
+    def test_update_context_case6(self):
+        ids1 = {
+            're_id': None,
+            'conn_id': 'conn_1',
+            'comp_id': 'comp_1'
+        }
+        ids2 = {
+            're_id': 're_1',
+            'conn_id': 'conn_1',
+            'comp_id': 'comp_1'
+        }
+        in_db_1 = [
+            {
+                '_id': 're_1',
+                'name': 're_1',
+                'type': 'resource',
+                'impact': ['comp_1'],
+                'depends': []
+            },
+            {
+                '_id': 'comp_1',
+                'name': 'comp_1',
+                'type': 'component',
+                'impact': [],
+                'depends': ['re_1']}]
+        in_db_2 = [{
+            '_id': 'comp_1',
+            'name': 'comp_1',
+            'type': 'component',
+            'impact': [],
+            'depends': []}]
+        res_1 = process.update_context_case6(ids1, in_db_1) 
+        res_2 = process.update_context_case6(ids2, in_db_2)
+
+
+        comp_res_1 = None
+        conn_res_1 = None
+        re_res_1 = None
+        comp_res_2 = None
+        conn_res_2 = None
+        re_res_2 = None
+        for i in res_1:
+            if i['type'] == 'component':
+                comp_res_1= i
+            if i['type'] == 'resource':
+                re_res_1= i
+            if i['type'] == 'connector':
+                conn_res_1= i
+        for i in res_2:
+            if i['type'] == 'component':
+                comp_res_2 = i
+            if i['type'] == 'resource':
+                re_res_2 = i
+            if i['type'] == 'connector':
+                conn_res_2 = i
+
+        for i in comp_res_1:
+            if isinstance(comp_res_1[i], list):
+                comp_res_1[i] = sorted(comp_res_1)
+        for i in conn_res_1:
+            if isinstance(conn_res_1[i], list):
+                conn_res_1[i] = sorted(conn_res_1)
+        for i in re_res_1:
+            if isinstance(re_res_1[i], list):
+                re_res_1[i] = sorted(re_res_1)
+        for i in comp_res_2:
+            if isinstance(comp_res_2[i], list):
+                comp_res_2[i] = sorted(comp_res_2)
+        for i in conn_res_2:
+            if isinstance(conn_res_2[i], list):
+                conn_res_2[i] = sorted(conn_res_2)
+        self.assertDictEqual(comp_res_1, {
+                '_id': 'comp_1',
+                'name': 'comp_1',
+                'type': 'component',
+            'impact': [],
+            'depends': sorted(['re_1', 'conn_1'])})
+        self.assertDictEqual(re_res_1, {
+                '_id': 're_1',
+                'name': 're_1',
+                'type': 'resource',
+                'impact': ['comp_1'],
+                'depends': ['conn_1']})
+        self.assertDictEqual(conn_res_1, {
+                '_id': 'conn_1',
+                'name': 'conn_1',
+                'type': 'connector',
+                'impact': sorted(['comp_1', 're_1']),
+                'depends': []})
+
+        self.assertDictEqual(comp_res_1, {
+                '_id': 'comp_1',
+                'name': 'comp_1',
+                'type': 'component',
+                'impact': [],
+                'depends': sorted(['conn_1'])})
+        self.assertEqual(res_2, None)
+        self.assertDictEqual(conn_res_1, {
+                '_id': 'conn_1',
+                'name': 'conn_1',
+                'type': 'connector',
+                'impact': sorted(['comp_1']),
+                'depends': []})
 
 if __name__ == '__main__':
     main()
