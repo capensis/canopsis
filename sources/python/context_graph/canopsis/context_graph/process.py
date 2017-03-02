@@ -265,6 +265,7 @@ def update_context_case5(ids, in_db):
     LOGGER.debug("Update context case 6.")
 
     resource = None
+    component = None
 
     for entity in in_db:
         if entity["type"] == "resource":
@@ -281,9 +282,6 @@ def update_context_case5(ids, in_db):
                                  ids["re_id"],
                                  "return esource")
         update_links_res_comp(resource, component)
-        update_links_conn_res(connector, resource)
-
-    else:
         update_links_conn_res(connector, resource)
 
     update_links_conn_comp(connector, component)
