@@ -81,8 +81,8 @@ def update_links_conn_res(conn, res):
     check_type(conn, "connector")
     check_type(res, "resource")
 
-    update_depends_links(conn, res)
-    update_impact_links(res, conn)
+    update_impact_links(conn, res)
+    update_depends_links(res, conn)
 
 
 def update_links_conn_comp(conn, comp):
@@ -95,8 +95,8 @@ def update_links_conn_comp(conn, comp):
     check_type(conn, "connector")
     check_type(comp, "component")
 
-    update_depends_links(conn, comp)
-    update_impact_links(comp, conn)
+    update_impact_links(conn, comp)
+    update_depends_links(comp, conn)
 
 
 def update_links_res_comp(res, comp):
