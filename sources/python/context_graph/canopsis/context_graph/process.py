@@ -50,7 +50,6 @@ def create_entity(
 
 
 def check_type(entities, expected):
-    LOGGER.error('6')
     """Raise TypeError if the type of the entities entities does not match
     the expected type.
     :param entities: the entities to check.
