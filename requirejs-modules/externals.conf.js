@@ -17,17 +17,25 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
- require.config({
-    paths: {
 
+require.config({
+    paths: {
+        'rrule': 'canopsis/brick-rrule-editor/externals/rrule/lib/rrule',
+        'nlp': 'canopsis/brick-rrule-editor/externals/rrule/lib/nlp',
+    },
+    shim: {
+        'rrule':{
+            exports:'rrule',
+        },
+        'nlp': {
+            deps: ['rrule'],
+            exports:'nlp'
+        }
     }
 });
 
-define(['text!canopsis/brick-listalarm/dist/templates.min.html',
-    'link!canopsis/brick-listalarm/dist/brick.min.css',
-    'canopsis/brick-listalarm/requirejs-modules/externals.conf',
-    'canopsis/brick-listalarm/dist/brick.min'
-], function () {
-    
+define([
+    'nlp'
+    ], function () {
 });
 
