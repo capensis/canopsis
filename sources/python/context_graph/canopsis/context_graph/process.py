@@ -282,17 +282,20 @@ def update_context_case5(ids, in_db):
         elif entity["type"] == "component":
             component = entity
 
-    LOGGER.debug("**** resource is {0}".format(resource))
-
     connector = create_entity(ids["conn_id"],
                               ids["conn_id"],
-                              "connector")
+                              "connector",
+                              impact=[],
+                              depends=[])
 
     if ids["re_id"] is not None:
-        LOGGER.debug("Ressource not None")
+        #res_impact = [component["_id"]]
+        #res_depends = [connector["_id"]]
         resource = create_entity(ids["re_id"],
                                  ids["re_id"],
-                                 "resource")
+                                 "resource",
+                                 impact=[],
+                                 depends=[])
         update_links_res_comp(resource, component)
         update_links_conn_res(connector, resource)
         update_links_conn_comp(connector, component)
@@ -314,11 +317,14 @@ def update_context_case6(ids, in_db):
         elif entity["type"] == "component":
             component = entity
 
-    connector = create_entity(ids["conn_id"], ids["conn_id"], "connector")
+    connector = create_entity(ids["conn_id"],
+                              ids["conn_id"],
+                              "connector",
+                              impact=[],
+                              depends=[])
     update_links_conn_comp(connector, component)
 
     if resource is not None:
-        LOGGER.error('je passe la connard')
         update_links_conn_res(connector, resource)
         return [connector, component, resource]
 
