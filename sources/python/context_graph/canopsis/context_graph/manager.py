@@ -189,10 +189,8 @@ class ContextGraph(MiddlewareRegistry):
         """
             get all entities ids by types
         """
-        ret_val = set([])
-        entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={}))
-
-        for i in entities:
-            ret_val.add(i['_id'])
-
+        ret_val = set(list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+            query={},
+            projection={'_id': 1})))
+        # pritn(ret_val)
         return ret_val
