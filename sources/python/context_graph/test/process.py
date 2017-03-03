@@ -529,7 +529,7 @@ class Test(TestCase):
             'type': 'component',
             'impact': [],
             'depends': []}]
-        res_1 = process.update_context_case6(ids1, in_db_1) 
+        res_1 = process.update_context_case6(ids1, in_db_1)
         res_2 = process.update_context_case6(ids2, in_db_2)
 
 
@@ -553,8 +553,6 @@ class Test(TestCase):
                 re_res_2 = i
             if i['type'] == 'connector':
                 conn_res_2 = i
-                print(conn_res_2)
-
 
         for i in comp_res_1:
             if isinstance(comp_res_1[i], list):
@@ -598,12 +596,14 @@ class Test(TestCase):
                 'impact': [],
                 'depends': sorted(['conn_1'])})
         self.assertEqual(re_res_2, None)
-#        self.assertDictEqual(conn_res_2, {
-#                '_id': 'conn_1',
-#                'name': 'conn_1',
-#                'type': 'connector',
-#                'impact': sorted(['comp_1']),
-#                'depends': []})
+        self.assertDictEqual(conn_res_2, {'_id': 'conn_1',
+                                          'name': 'conn_1',
+                                          'type': 'connector',
+                                          'impact': sorted(['comp_1']),
+                                          'depends': [],
+                                          'infos':{}})
+
+
     def test_update_context_case5(self):
         conn_id = "conn_id"
         conn_name = "conn_name"
