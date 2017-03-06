@@ -307,14 +307,19 @@ Ember.Application.initializer({
             // -------------------------------------------------------
 
             filtersObserver: function() {
-              var filter = this.get('user_filters').findBy('isActive', true);
-              if (filter) {
-                var f = filter.filter || filter.get('filter');              
-                // console.error(f.replace('state', 'v.state.val'));
-                this.set('alarmSearchOptions.filter', f.replace('state', 'v.state.val'));
+              var userFilters = this.get('user_filters');
+              if (userFilters) {
+                var filter = userFilters.findBy('isActive', true);
+                if (filter) {
+                  var f = filter.filter || filter.get('filter');              
+                  // console.error(f.replace('state', 'v.state.val'));
+                  this.set('alarmSearchOptions.filter', f);
+                } else {
+                  // console.error('there is no filter');
+                  this.set('alarmSearchOptions.filter', undefined);                
+                }
               } else {
-                // console.error('there is no filter');
-                this.set('alarmSearchOptions.filter', undefined);                
+                this.set('alarmSearchOptions.filter', undefined);                                
               }
 
               // reg = new RegExp(/"[^,\$\[]+":/g);
