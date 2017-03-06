@@ -102,8 +102,13 @@ Ember.Application.initializer({
 
 
                 // var timestamps = this.getLivePeriod();
-                var fil = this.get('user_filters').findBy('isActive', true);
-                var filter = fil ? fil.filter : undefined;
+                try {
+                  var fil = this.get('user_filters').findBy('isActive', true);
+                  var filter = fil ? fil.filter : undefined;
+                } catch (err) {
+                  // console.error('error while selecting a filter', err);
+                  var filter = undefined;
+                }
                 var filterState = this.get('model.alarms_state_filter.state') || 'opened';
 
                 this.set('alarmSearchOptions', {
@@ -307,19 +312,24 @@ Ember.Application.initializer({
             // -------------------------------------------------------
 
             filtersObserver: function() {
-              var userFilters = this.get('user_filters');
-              if (userFilters) {
-                var filter = userFilters.findBy('isActive', true);
-                if (filter) {
-                  var f = filter.filter || filter.get('filter');              
-                  // console.error(f.replace('state', 'v.state.val'));
-                  this.set('alarmSearchOptions.filter', f);
+              try {
+                var userFilters = this.get('user_filters');
+                if (userFilters) {
+                  var filter = userFilters.findBy('isActive', true);
+                  if (filter) {
+                    var f = filter.filter || filter.get('filter');              
+                    // console.error(f.replace('state', 'v.state.val'));
+                    this.set('alarmSearchOptions.filter', f);
+                  } else {
+                    // console.error('there is no filter');
+                    this.set('alarmSearchOptions.filter', undefined);                
+                  }
                 } else {
-                  // console.error('there is no filter');
-                  this.set('alarmSearchOptions.filter', undefined);                
+                  this.set('alarmSearchOptions.filter', undefined);                                
                 }
-              } else {
-                this.set('alarmSearchOptions.filter', undefined);                                
+              } catch (err) {
+                  this.set('alarmSearchOptions.filter', undefined);                                
+                  // console.error('error while selecting a filter', err);
               }
 
               // reg = new RegExp(/"[^,\$\[]+":/g);
@@ -356,14 +366,18 @@ Ember.Application.initializer({
             },
 
             loadTemplates: function (templates) {
-                Ember.columnTemplates = templates.map(function (obj) {
-                  return {
-                    columnName: obj.column,
-                    columnTemplate: Ember.View.extend({
-                      template: Ember.HTMLBars.compile(obj.template)
-                    })                    
-                  }
-                })
+                try {
+                  Ember.columnTemplates = templates.map(function (obj) {
+                    return {
+                      columnName: obj.column,
+                      columnTemplate: Ember.View.extend({
+                        template: Ember.HTMLBars.compile(obj.template)
+                      })                    
+                    }
+                  })
+                } catch (err) {
+                  // console.error('error while loading column templates');
+                }
             },
 
             showParams: function () {
