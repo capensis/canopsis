@@ -196,3 +196,28 @@ class ContextGraph(MiddlewareRegistry):
             ret_val.add(i['_id'])
         # pritn(ret_val)
         return ret_val
+
+    def get(_type, names, context, extended):
+        """
+            function in context v1 ws
+        """
+
+    def get_by_id(ids, limit, skip, sort, with_count):
+        """
+            function in context v1 ws
+        """
+
+    def find(_type, context, _filter, extended, limit, skip, sort, with_count):
+        """
+            function in context v1 ws
+        """
+
+    def put(ids, _type, context, extended):
+        """
+            function in ws context v1
+        """
+
+    def unify_entities(entities, extended):
+        """
+            function in ws context v1
+        """
