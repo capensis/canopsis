@@ -95,7 +95,7 @@ Ember.Application.initializer({
 				        set(this, 'store', DS.Store.extend({
                     container: get(this, 'container')
                 }));
-                this.showParams();
+                // this.showParams();
                 // this.setFields();
                 this.loadRadioButtonView();                
                 this.loadTemplates(this.get('model.popup'));
@@ -119,13 +119,6 @@ Ember.Application.initializer({
                   skip: 0,
                   limit: this.get('model.itemsPerPage') || 50
                 });
-
-
-
-                // timeWindowUtils.getFromTo(
-                //     get(this, 'time_window'),
-                //     get(this, 'time_window_offset')
-                // );
             },
 
             // rewrite totalPages
@@ -158,10 +151,7 @@ Ember.Application.initializer({
                   crecords = this.filterUsableCrecords(event_type, selected);
                   console.log('events:', event_type, crecords);
                   if(!crecords.length) {
-                      notificationUtils.warning(
-                          'No matching event found for event:',
-                          event_type
-                      );
+                    console.error('there is no suitable alarms');
                       return;
                   }
               }
@@ -180,47 +170,14 @@ Ember.Application.initializer({
             alarmss: function() {
               var controller = this;
               this.set('loaded', false);              
-
-              // var timestamps = this.getLivePeriod();
-              // this.set('alarmSearchOptions.tstart', 0);
-              // this.set('alarmSearchOptions.tstop', 0);              
-
               var options = this.get('alarmSearchOptions');
-              console.error('reload original alarms with params', options);              
+              // console.error('reload original alarms with params', options);              
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
-
-// ---------------------------------------------------------------
-// timeline component test
-
-// msg
-// :
-// "get_alarms() got an unexpected keyword argument 'get-current-alarm'"
-// traceback
-// :
-// "Traceback (most recent call last):↵  File "/opt/canopsis/local/lib/python2.7/site-packages/canopsis.common-0.1-py2.7.egg/canopsis/common/ws.py", line 272, in interceptor↵    result_function = function(*args, **kwargs)↵TypeError: get_alarms() got an unexpected keyword argument 'get-current-alarm'↵"
-// type
-// :
-// "<type 'exceptions.TypeError'>"
-              // adapter.findQuery('alarm', 'get-current-alarm', {'entity_id': "5bec98d2-d64c-11e6-ac64-00163e74f879"}).then(function (result) {
-
-              //   console.error('teeeest', result);
-              // });
-
-
-
-                // timeWindowUtils.getFromTo(
-                //     get(this, 'time_window'),
-                //     get(this, 'time_window_offset')
-                // );
-// ---------------------------------------------------------------
-
-
-
               
               return DS.PromiseArray.create({
                 promise: adapter.findQuery('alerts', options).then(function (alarms) {
                   if (alarms.success) {
-                    console.error('loaded alarms: ', get(alarms, 'data.firstObject.alarms'));
+                    // console.error('loaded alarms: ', get(alarms, 'data.firstObject.alarms'));
                     Ember.totalAlarms = get(alarms, 'data.firstObject.total');
                     return get(alarms, 'data.firstObject.alarms');
                   } else {
@@ -281,6 +238,10 @@ Ember.Application.initializer({
                   
                   
                   newAlarm['id'] = alarm._id;
+                  newAlarm['entity_id'] = alarm.d;
+                  // newAlarm['cancelled'] = alarm.v.cancelled;
+
+                  newAlarm['changed'] = new Date().getTime();
 
                   // data for testing
                   // controller.set(newAlarm, 'linklist', {
@@ -292,6 +253,9 @@ Ember.Application.initializer({
                   //   ]
                   // });
 
+                  // newAlarm['state'] = 1;
+                  // newAlarm['v.state.val'] = 1;
+
 
                   newAlarm['linklist'] = {
                     'event_links': [
@@ -302,6 +266,12 @@ Ember.Application.initializer({
                     ]
                   };
 
+                  if (alarm.d.search('/resource/') == 0) {
+                    newAlarm['source_type'] = 'resource';
+                  };
+                  if (alarm.d.search('/component/') == 0) {
+                    newAlarm['source_type'] = 'component';
+                  };
                   // newAlarm['pbehaviors'] = [
                   //   {
                   //     "tstop": 1483311600,
@@ -324,8 +294,8 @@ Ember.Application.initializer({
               this.set('alarmSearchOptions.limit', this.get('itemsPerPage'));
               this.set('alarmSearchOptions.skip', this.get('itemsPerPage') * (this.get('currentPage') - 1));
               
-              console.error('current page', this.get('currentPage'));
-              console.error('itemsPerPage', this.get('itemsPerPage'));              
+              // console.error('current page', this.get('currentPage'));
+              // console.error('itemsPerPage', this.get('itemsPerPage'));              
             }.observes('currentPage', 'itemsPerPage'),
 
             paginationLastItemIndexx: function () {
@@ -339,12 +309,23 @@ Ember.Application.initializer({
             filtersObserver: function() {
               var filter = this.get('user_filters').findBy('isActive', true);
               if (filter) {
-                console.error(filter.filter || filter.get('filter'));
-                this.set('alarmSearchOptions.filter', filter.filter || filter.get('filter'));
+                var f = filter.filter || filter.get('filter');              
+                // console.error(f.replace('state', 'v.state.val'));
+                this.set('alarmSearchOptions.filter', f.replace('state', 'v.state.val'));
               } else {
-                console.error('there is no filter');
+                // console.error('there is no filter');
                 this.set('alarmSearchOptions.filter', undefined);                
               }
+
+              // reg = new RegExp(/"[^,\$\[]+":/g);
+              // var res;
+              // var f = filter.filter || filter.get('filter');
+              // while ((res = reg.exec(f)) !== null) {
+              //   if (this.get('humanReadableColumnNames')[res[0].substring(1, res[0].length - 2)]) {
+
+              //   }
+              //   // console.error(res);
+              // }
             }.observes('user_filters.@each.isActive'),
 
             loadRadioButtonView: function () {
@@ -353,7 +334,7 @@ Ember.Application.initializer({
                     type : "radio",
                     attributeBindings : [ "name", "type", "value", "checked:checked:" ],
                     click : function() {
-                        console.error(this);
+                        // console.error(this);
                         this.set("selection", this.$().val())
                     },
                     checked : function() {
@@ -400,6 +381,7 @@ Ember.Application.initializer({
              * @method refreshContent
              */
             refreshContent: function () {
+              // this.set('manualRefresh', new Date().getTime());
 				          // Not implemented because backend too long, feature not useful for this widget
             },
 
@@ -429,7 +411,7 @@ Ember.Application.initializer({
                     // onfullfillment
 					          var alerts = get(result, 'data');
                     controller.setAlarmsForShow(alerts[0]['alarms']);
-                    console.error('alerts::', alerts);
+                    // console.error('alerts::', alerts);
               }, function (reason) {
                     // onrejection
                     // console.error('ERROR in the adapter: ', reason);
@@ -450,7 +432,7 @@ Ember.Application.initializer({
               return DS.PromiseObject.create({
                 promise: adapter.findQuery('alertexpression', query).then(function (result) {
                   if (result.success) {
-                    console.error(result.data[0]);
+                    // console.error(result.data[0]);
                     return result.data[0];
                   } else {
                     throw new Error(result.data.msg);
@@ -465,51 +447,7 @@ Ember.Application.initializer({
                 })
               })
 
-              // var controller = this;
-
-              // var query = {
-              //   expression: expression
-              // };
-
-              // var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alertexpression');
-            	// adapter.findQuery('alertexpression', query).then(function (result) {
-              //       // onfullfillment
-					    //       var result = get(result, 'data');
-              //       console.error('alertexpression result', result);
-              //       controller.set('isValidSearchText', result[0]);
-              //       if (result[0]) {
-              //         var params = {};
-
-              //         params['search'] = expression;                      
-                      
-              //         controller.fetchAlarms(params);
-              //       }
-                    
-              // }, function (reason) {
-              //       // onrejection
-              //       console.error('ERROR in the adapter: ', reason);
-              // });
             },
-
-            // setFields: function () {
-            //   this.set('fields', this.parseFields(get(this, 'model.columns')));              
-            // },
-
-            // setAlarmsForShow: function (alarms) {
-            //   var fields = get(this, 'fields');
-            //   var controller = this;
-            //   var alarmsArr = alarms.map(function(alarm) {
-            //     var newAlarm = {};
-            //     fields.forEach(function(field) {
-            //         var val = get(Ember.Object.create(alarm), field.getValue);
-            //         newAlarm[field.name] = val;
-            //         newAlarm[field.humanName] = val;
-            //     })
-            //     return newAlarm;
-            //   });
-
-            //   this.set('alarms', alarmsArr);
-            // },
 
 						parseFields: function (columns) {
               var controller = this;
@@ -540,13 +478,136 @@ Ember.Application.initializer({
                   column['isSortable'] = true;
                   column['isASC'] = get(this, 'controller.default_sort_column.property');                
                 } catch (err) {
-                  console.error('alarm!!!');
+                  // console.error('alarm!!!');
                 }
                 console.error('the column "' + get(this, 'controller.default_sort_column.property') + '" was not found.');
                 return column;
               }
               return column;
             }.property('controller.default_sort_column.property', 'fields.[]'),
+
+
+            updateAlarm: function (alarmId) {
+
+              // this.get('alarms.firstObject').set('component', 'test');
+              // t=4;
+              var aa = this.get('alarms').findBy('id', alarmId);
+              if (aa) {
+                var self = this;
+                var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+
+              
+                  adapter.findQuery('alarm', 'get-current-alarm', {'entity_id': aa.get('entity_id')}).then(function (a) {
+                    // console.error('teest', a);
+                    var fields = self.get('fields');
+                    var alarm = a.data[0];
+                // var alarmsArr = get(this, 'alarmss').map(function(alarm) {
+                  alarm.v =alarm.value;
+                  alarm._id = 'aa';
+                  alarm.entity_id= alarm.data_id;
+                  alarm.d= alarm.data_id;
+                  
+                    alarm['v']['pbehaviors'] = [
+                      {
+                        "tstop": 1483311600,
+                        "enabled": false,
+                        "name": "downtime",
+                        "tstart": 1483225200,
+                        "rrule": "FREQ=WEEKLY"
+                      }
+                    ];
+                    var newAlarm = Ember.Object.create();
+                    fields.forEach(function(field) {
+                        var val = get(Ember.Object.create(alarm), field.getValue);
+                        // controller.set(newAlarm, field.name, val);
+                        // controller.set(newAlarm, field.humanName, val);
+                        
+                        // newAlarm[field.name] = val;
+                        // newAlarm[field.humanName] = val;
+
+                        // aa.set(field.name, val);
+                        aa.set(field.humanName, val);
+
+                    });
+                    // controller.set(newAlarm, 'isSelected', false);
+                    
+                    newAlarm['isSelected'] = false;
+                    // controller.set(newAlarm, 'id', alarm.get('_id'));
+
+                    newAlarm['isExpanded'] = false;
+                    
+                    
+                    newAlarm['id'] = alarm._id;
+                    newAlarm['entity_id'] = alarm.d;
+                    // newAlarm['cancelled'] = alarm.v.cancelled;
+
+                    // data for testing
+                    // controller.set(newAlarm, 'linklist', {
+                    //   'event_links': [
+                    //     {
+                    //       'url': 'http://tasks.info/?co=Demo',
+                    //       'label': 'test'
+                    //     }
+                    //   ]
+                    // });
+
+                    // newAlarm['state'] = 2;
+                    // newAlarm['v.state.val'] = 2;
+
+                    // newAlarm['changed'] = new Date().getTime;
+
+
+                    newAlarm['linklist'] = {
+                      'event_links': [
+                        {
+                          'url': 'http://tasks.info/?co=Demo',
+                          'label': 'test'
+                        }
+                      ]
+                    };
+
+                    if (alarm.d.search('/resource/') == 0) {
+                      newAlarm['source_type'] = 'resource';
+                    };
+                    if (alarm.d.search('/component/') == 0) {
+                      newAlarm['source_type'] = 'component';
+                    };
+
+                    // var t = self.get('alarms').objectAt(0);
+                    // Ember.set(t, 'state', 1);
+                    
+                    Ember.set(aa, 'changed', new Date().getTime());
+                    // self.set('alarms.firstObject', 1);
+                    t=2;
+                  })
+              } else {
+                console.error('alarm not found');
+              }
+
+    
+                // newAlarm['pbehaviors'] = [
+                //   {
+                //     "tstop": 1483311600,
+                //     "enabled": false,
+                //     "name": "downtime",
+                //     "tstart": 1483225200,
+                //     "rrule": "FREQ=WEEKLY"
+                //   }
+                // ];
+
+                // return newAlarm;
+              // });
+
+              // var a = this.get('alarms.firstObject');
+
+
+              // var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+            
+              //   adapter.findQuery('alarm', 'get-current-alarm', {'entity_id': a.get('entity_id')}).then(function (alarms) {
+              //     console.error('teest', alarms);
+              // })
+
+            },
 
 
 
@@ -556,7 +617,7 @@ Ember.Application.initializer({
               },
 
               sendCustomAction: function (action, alarm) {
-                console.error('controller', action, alarm);
+                // console.error('controller', action, alarm);
                 this.sendEventt(action.mixin_name, alarm);
               },
 
@@ -567,14 +628,15 @@ Ember.Application.initializer({
               
               search: function (text) {
                 var controller = this;
-                console.error('search ', text);
+                // console.error('search ', text);
                 this.isValidExpression(text).then(function(result) {
                   controller.set('isValidSearchText', result);
                   if (result) {
                     controller.set('alarmSearchOptions.search', text);
                   }
                 })
-              }
+              },
+
             }
 
         }, listOptions);

@@ -36,13 +36,13 @@ Ember.Application.initializer({
                 },
                 {
                     class: 'fa fa-ticket',
-                    internal_states: ['acked', 'cancelled'],
+                    internal_states: ['acked'],
                     name: 'declareticket',
                     mixin_name: 'declareticket'
                 },
                 {
                     class: 'fa fa-thumb-tack',
-                    internal_states: ['acked', 'cancelled'],
+                    internal_states: ['acked', 'removed'],
                     name: 'assocticket',
                     mixin_name: 'assocticket'
                 },
@@ -60,7 +60,7 @@ Ember.Application.initializer({
                 },
                 {
                     class: 'glyphicon glyphicon-share-alt',
-                    internal_states: ['cancelled'],
+                    internal_states: ['removed'],
                     name: 'restorealarm',
                     mixin_name: 'recovery'
                 },
@@ -70,6 +70,7 @@ Ember.Application.initializer({
                     name: 'snoozealarm',
                     mixin_name: 'snooze'
                 }
+                // TODO declare incident
             ]),
 
             init: function() {
@@ -84,16 +85,39 @@ Ember.Application.initializer({
             }.property('internalState'),
 
             internalState: function() {
-                if (this.get('state') == 0 && this.get('status') == 3) {
-                    return 'acked';
-                } else {
-                    if (this.get('state') == 1) {
-                        return 'cancelled'
-                    } else {
-                        return 'unacked'
-                    }
+                if (this.get('state') == 0 && !this.get('isAcked')) {
+                    return 'immutable';
                 }
+                if (this.get('state') > 0 && !this.get('isAcked')) {
+                    return 'unacked';
+                }
+                if (this.get('isAcked')) {
+                    return 'acked';
+                }
+                // if (!this.get('isCancelled')) {
+                //     return 'cancelled';
+                // }
+                return 'removed';
+                
+
+                // if (this.get('state') == 0 && this.get('status') == 3) {
+                //     return 'acked';
+                // } else {
+                //     if (this.get('state') == 1) {
+                //         return 'cancelled'
+                //     } else {
+                //         return 'unacked'
+                //     }
+                // }
             }.property('alarm.state', 'alarm.status'),
+
+            isAcked: function() {
+                return this.get('alarm.ack._t') != undefined;
+            }.property('alarm.ack._t'),
+
+            // isCancelled: function () {
+            //     return this.get('alarm.cancelled') != undefined;
+            // }.property('alarm.cancelled'),
 
             hasLinks: function() {
                 return this.get('alarm.linklist.event_links.length') > 0;

@@ -1,5 +1,5 @@
 {{#each action in availableActions}}
-  <button {{action 'sendAction' action}} type="button" class="btn btn-xs btn-default">
+  <button {{action 'sendAction' action}} {{bind-attr title=action.name}} type="button" class="btn btn-xs btn-default">
       <i {{bind-attr class=action.class}}></i>
   </button>
 {{/each}}

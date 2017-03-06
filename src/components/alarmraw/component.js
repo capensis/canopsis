@@ -42,8 +42,6 @@ Ember.Application.initializer({
 
                 expand: function () {
                     this.toggleProperty('alarm.isExpanded');
-                //   console.error('df');
-                //   this.set('timeline', this.get('alarm'));
                 }
             }
 

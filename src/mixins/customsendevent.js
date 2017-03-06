@@ -143,20 +143,11 @@ Ember.Application.initializer({
                     $.post('/event', {
                         event: JSON.stringify(post_events)
                     }).then(function(data) {
-                        void(data);
-                        Ember.run(function () {
-                            record.rollback();
-                            record.unloadRecord();
-                            console.log('safe_mode', safe_mode);
-                            if (safe_mode) {
-                                //Safe mode refresh data from server
-                                me.refreshContent();
-                            } else {
-                                //Refresh list at Ember level (js), do not triggers a server query yet.
-                                me.trigger('refresh');
-                            }
-                            resolve(arguments);
-                        });
+                        if (data.success) {
+                            me.updateAlarm(data.data[0].ref_rk);
+                        } else {
+                            console.error('error while send event', data.data.msg);
+                        }
                     });
                 });
             },

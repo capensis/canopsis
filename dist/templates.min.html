@@ -1,5 +1,5 @@
 <script type="text/x-handlebars" data-template-name="components/component-alarmactions">{{#each action in availableActions}}
-  <button {{action 'sendAction' action}} type="button" class="btn btn-xs btn-default">
+  <button {{action 'sendAction' action}} {{bind-attr title=action.name}} type="button" class="btn btn-xs btn-default">
       <i {{bind-attr class=action.class}}></i>
   </button>
 {{/each}}
@@ -160,7 +160,7 @@
 
 
 </td></script>
-<script type="text/x-handlebars" data-template-name="components/component-popupinfo"><div style="position: absolute; left: 50%;display:none;" class="popupinfo">
+<script type="text/x-handlebars" data-template-name="components/component-popupinfo"><div style="position: absolute; left: 50%;display:none;z-index:1000;" class="popupinfo">
     <div style="position: relative; left: -50%;">
         <div class="text-center alert alert-info alert-dismissable">
             <i class="fa fa-info"></i>
@@ -236,7 +236,9 @@
 {{/component-rendererstate}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#component-selectionactions action='massAction'}}
+<script type="text/x-handlebars" data-template-name="listalarm"><button {{action 'test'}}>test</button>
+
+{{#component-selectionactions action='massAction'}}
 {{/component-selectionactions}}
 
 {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}

@@ -91,7 +91,7 @@ Ember.Application.initializer({
                     var component = this;
 
                     var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alarm');
-                    var query = {'entity_id': this.get('alarm.id')};
+                    var query = {'entity_id': this.get('alarm.entity_id')};
 
                     adapter.findQuery('alarm', 'get-current-alarm', query).then(function (result) {
                         // onfullfillment
@@ -114,13 +114,13 @@ Ember.Application.initializer({
                             }
                         ];
                         var steps = [];
-                        // if (result.data) {
-                        if (true) {
-                            // for (var i = result.data[0].value.steps.length - 1 ; i >= 0 ; i--) {
-                            for (var i = test.length - 1; i >= 0 ; i--) {
+                        if (result.data) {
+                        // if (true) {
+                            for (var i = result.data[0].value.steps.length - 1 ; i >= 0 ; i--) {
+                            // for (var i = test.length - 1; i >= 0 ; i--) {
                                 
-                                // var step = result.data[0].value.steps[i];
-                                var step = test[i];
+                                var step = result.data[0].value.steps[i];
+                                // var step = test[i];
                                 
 
                                 //build time related information

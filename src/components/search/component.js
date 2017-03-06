@@ -10,7 +10,6 @@ Ember.Application.initializer({
 
             init: function() {
                 this._super();
-                console.error(this.get('isValid'))
               },
 
             removeInvalidSearchTextNotification: function () {

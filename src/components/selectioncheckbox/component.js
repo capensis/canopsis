@@ -13,8 +13,6 @@ Ember.Application.initializer({
          */
         var component = Ember.Component.extend({
 
-            
-
             init: function() {
                 this._super();
             },

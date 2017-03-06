@@ -18,8 +18,6 @@ Ember.Application.initializer({
                 this.set('isAllChecked', false);
             },
 
-            // isAllChecked: function() {return truexxxx}.property(),
-
             allSelectionObserver: function() {
                 var val = this.get('isAllChecked');
                 this.get('alarms').setEach('isSelected', val);
@@ -28,10 +26,6 @@ Ember.Application.initializer({
             currentSortColumn: function() {
                 return get(this, 'defaultSortColumn');
             }.property('defaultSortColumn'),
-
-            // sAlarms: function() {
-            //     return this.get('alarms');
-            // }.property('alarms'),
 
             actions: {
 
