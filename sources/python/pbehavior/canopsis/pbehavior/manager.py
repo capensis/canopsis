@@ -339,9 +339,10 @@ class PBehaviorManager(MiddlewareRegistry):
 
         names = []
         fromts = datetime.fromtimestamp
+        names_append = names.append
         for pb in pbehaviors:
-            tstart = fromts(pb['tstart'])
-            tstop = fromts(pb['tstop'])
+            tstart = fromts(pb[PBehavior.TSTART])
+            tstop = fromts(pb[PBehavior.TSTOP])
 
             dt_list = list(
                 rrulestr(pb['rrule'], dtstart=tstart).between(
@@ -352,7 +353,7 @@ class PBehaviorManager(MiddlewareRegistry):
             if (len(dt_list) >= 2 and
                 fromts(event['timestamp']) >= dt_list[0] and
                 fromts(event['timestamp']) <= dt_list[-1]):
-                names.append(pb['name'])
+                names_append(pb[PBehavior.NAME])
 
         result = set(pb_names).isdisjoint(set(names))
 
