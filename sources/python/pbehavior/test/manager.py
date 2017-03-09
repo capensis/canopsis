@@ -102,10 +102,13 @@ class TestManager(BaseTest):
         self.assertEqual(len(pbs), 1)
 
     def test_update(self):
-        self.pbm.update(self.pbehavior_id, name='test_name2')
+        self.pbm.update(self.pbehavior_id, name='test_name2',
+                        connector=None, connector_name=None)
         pb = self.pbm.get(self.pbehavior_id)
         self.assertTrue(pb is not None)
         self.assertEqual(pb['name'], 'test_name2')
+        self.assertEqual(pb['connector'], 'test_connector')
+        self.assertEqual(pb['connector_name'], 'test_connector_name')
 
     def test_delete(self):
         self.pbm.delete(_id=self.pbehavior_id)

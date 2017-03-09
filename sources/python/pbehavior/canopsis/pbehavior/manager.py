@@ -185,7 +185,8 @@ class PBehaviorManager(MiddlewareRegistry):
         :param dict kwargs: values pbehavior fields
         """
         pbehavior = PBehavior(**self.get(_id))
-        pbehavior.update(**kwargs)
+        new_data = {k: v for k, v in kwargs.iteritems() if v is not None}
+        pbehavior.update(**new_data)
 
         result = self.pbehavior_storage.put_element(
             element=pbehavior.to_dict(), _id=_id
