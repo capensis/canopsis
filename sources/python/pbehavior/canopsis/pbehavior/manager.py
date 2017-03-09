@@ -208,6 +208,14 @@ class PBehaviorManager(MiddlewareRegistry):
 
         return self._check_response(result)
 
+    def _update_pbehavior(self, pbehavior_id, query):
+        result = self.pbehavior_storage._update(
+            spec={'_id': pbehavior_id},
+            document=query,
+            multi=False, cache=False
+        )
+        return result
+
     def create_pbehavior_comment(self, pbehavior_id, author, message):
         """
         Сreate comment for pbehavior
@@ -215,21 +223,30 @@ class PBehaviorManager(MiddlewareRegistry):
         :param str author: author of the comment
         :param str message: text of the comment
         """
-        comments = {
-            Comment.ID: str(uuid4()),
+        comment_id = str(uuid4())
+        comment = {
+            Comment.ID: comment_id,
             Comment.AUTHOR: author,
             Comment.TS: timegm(datetime.utcnow().timetuple()),
             Comment.MESSAGE: message
         }
-        result = self.pbehavior_storage._update(
-            spec={'_id': pbehavior_id},
-            document={'$push': {PBehavior.COMMENTS: comments}},
-            multi=False, cache=False
-        )
+
+        query = {'$addToSet': {PBehavior.COMMENTS: comment}}
+
+        result = self._update_pbehavior(pbehavior_id, query)
+
+        if not result:
+            result = self._update_pbehavior(
+                pbehavior_id, {'$set': {PBehavior.COMMENTS: []}}
+            )
+            if not result:
+                return None
+
+            result = self._update_pbehavior(pbehavior_id, query)
 
         if (PBehaviorManager._UPDATE_FLAG in result and
                 result[PBehaviorManager._UPDATE_FLAG]):
-            return comments[Comment.ID]
+            return comment_id
         return None
 
     def update_pbehavior_comment(self, pbehavior_id, _id, **kwargs):
