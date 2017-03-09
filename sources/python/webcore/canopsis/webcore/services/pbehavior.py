@@ -100,7 +100,7 @@ def exports(ws):
     @route(
         ws.application.put,
         name='pbehavior/comment/update',
-        payload=['pbehavior_id', '_id', 'auhtor', 'message']
+        payload=['pbehavior_id', '_id', 'author', 'message']
     )
     def update_comment(pbehavior_id, _id, author=None, message=None):
         return pbm.update_pbehavior_comment(
