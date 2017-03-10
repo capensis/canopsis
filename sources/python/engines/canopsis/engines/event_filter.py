@@ -395,7 +395,7 @@ class engine(Engine):
                         entity = self.cm.get_entity(event)
                         entity_id = self.cm.get_entity_id(entity)
 
-                        result = pbm.check_pbehavior(
+                        result = pbm.check_pbehaviors(
                             entity_id, list_in, list_out
                         )
 
