@@ -34,13 +34,33 @@ class ContextGraph(MiddlewareRegistry):
         """
         return len(list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': comp_id}))) > 0
 
-    def get_entity(self, id):
+    def get_entity(self,
+                   id,
+                   limit=0,
+                   skip=0,
+                   sort=None,
+                   with_count=False,
+                   extended=False,
+                   context=None,
+                   create_if_not_exists=False):
         """
         Retreive the entity identified by his id. If id is a list of id,
         get_entity return every entities who match the ids present in the list
 
         :param id the id of the entity. id can be a list
+        :param int limit: Max number of elements to get. If 0 no limit.
+        :param int skip: first element index among searched list.
+        :type sort: list of {(str, {ASC, DESC}}), or str}
+        :param bool with_count: If True (False by default), add
+        count to the result.
+        :param bool create_if_not_exists: Create the event entity if it does
+            not exists (False by default).
+        :return an entity as a dict
+        :rtype: a dict or a None type.
         """
+        #FIXME : guess the meaning of extended and add it in the doc
+        #FIXME : guess the meaning of context and add it in the doc
+
         query = {"_id": None}
         if isinstance(id, type([])):
             ids = []
