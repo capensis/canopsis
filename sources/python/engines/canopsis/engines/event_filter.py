@@ -386,14 +386,14 @@ class engine(Engine):
 
                 if 'pbehaviors' in filterItem:
                     pbehaviors = filterItem.get('pbehaviors', {})
-                    list_in = [v['$in'] for v in pbehaviors.values() if 'in' in v]
-                    list_out = [v['$in'] for v in pbehaviors.values() if 'out' in v]
+                    list_in = pbehaviors.get('in', [])
+                    list_out = pbehaviors.get('out', [])
 
                     if list_in or list_out:
                         pbm = singleton_per_scope(PBehaviorManager)
-
-                        entity = self.cm.get_entity(event)
-                        entity_id = self.cm.get_entity_id(entity)
+                        cm = singleton_per_scope(Context)
+                        entity = cm.get_entity(event)
+                        entity_id = cm.get_entity_id(entity)
 
                         result = pbm.check_pbehaviors(
                             entity_id, list_in, list_out
