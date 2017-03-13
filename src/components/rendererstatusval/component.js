@@ -8,11 +8,11 @@ Ember.Application.initializer({
         var component = Ember.Component.extend({
 
             list: {
-                0: 'undef',
-                1: 'on going',
-                2: 'undef',
-                3: 'undef',
-                4: 'cancelled'
+                0: 'Off',
+                1: 'On going',
+                2: 'Stealthy',
+                3: 'Bagot',
+                4: 'Cancel'
             },
 
             init: function() {
