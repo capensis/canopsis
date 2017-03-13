@@ -183,7 +183,8 @@ class Context(MiddlewareRegistry):
 
         return children
 
-    def get_entity(
+    # FIXME find a better replacement name.
+    def get_entity_old(
             self, event, from_db=False, create_if_not_exists=False, cache=False
     ):
         """Get event entity.
