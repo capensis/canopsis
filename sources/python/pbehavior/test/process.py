@@ -27,6 +27,7 @@ from mock import Mock, patch
 from unittest import main
 
 from canopsis.pbehavior.process import (event_processing, beat_processing,
+                                        get_entity_id,
                                         PBEHAVIOR_CREATE, PBEHAVIOR_DELETE)
 
 from base import BaseTest
@@ -51,11 +52,8 @@ class TestProcess(BaseTest):
             "source_type": "resource"
         }
 
-        entity = self.context.get_entity(event)
-        entity_id = self.context.get_entity_id(entity)
-
         query = {'name': event['pbehavior_name'],
-                 'filter': dumps({'entity_id': entity_id}),
+                 'filter': dumps({'entity_id': get_entity_id(event)}),
                  'tstart': event['start'], 'tstop': event['end'],
                  'connector': event['connector'],
                  'connector_name': event['connector_name'],
@@ -76,6 +74,32 @@ class TestProcess(BaseTest):
         beat_processing(None, logger=Mock())
         self.assertEqual(mock_compute.call_count, 1)
         # method compute_pbehaviors_filters is tested in method TestManager.test_compute_pbehaviors_filters
+
+    def test_get_entity_id(self):
+        event = {
+            'source_type': 'component', 'component': 't_component',
+            'connector': 't_connector', 'connector_name': 't_connector_name',
+            'resource': 't_resource', 'selector': 't_selector'
+        }
+        entity_id = get_entity_id(event)
+        self.assertEqual(
+            '/component/t_connector/t_connector_name/t_component',
+            entity_id
+        )
+
+        event.update({'source_type': 'resource'})
+        entity_id = get_entity_id(event)
+        self.assertEqual(
+            '/resource/t_connector/t_connector_name/t_component/t_resource',
+            entity_id
+        )
+
+        event.update({'source_type': 'selector'})
+        entity_id = get_entity_id(event)
+        self.assertEqual(
+            '/selector/t_connector/t_connector_name/t_selector',
+            entity_id
+        )
 
 
 if __name__ == '__main__':

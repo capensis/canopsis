@@ -33,6 +33,39 @@ PBEHAVIOR_CREATE = 'create'
 PBEHAVIOR_DELETE = 'delete'
 ERROR_MSG = 'Failed to perform the action {} for the event: {}'
 
+COMPONENT = 'component'
+RESOURCE = 'resource'
+SELECTOR = 'selector'
+CONNECTOR = 'connector'
+CONNECTOR_NAME = 'connector_name'
+
+TEMPLATE = '/{}/{}/{}/{}'
+TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
+
+
+def get_entity_id(event):
+    source_type = event['source_type']
+
+    if source_type == COMPONENT:
+        first_word = COMPONENT
+    elif source_type == RESOURCE:
+        first_word = RESOURCE
+    else:
+        first_word = SELECTOR
+
+    args = [first_word, event.get(CONNECTOR, ''), event.get(CONNECTOR_NAME, '')]
+
+    template = TEMPLATE
+    if first_word == RESOURCE:
+        template = TEMPLATE_RESOURCE
+        args.append(event.get(COMPONENT, ''))
+
+    args.append(event.get(first_word, ''))
+
+    entity_id = template.format(*args)
+
+    return entity_id
+
 
 @register_task
 def event_processing(engine, event, pbm=None, logger=None, **kwargs):
@@ -42,9 +75,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
         pbm = singleton_per_scope(PBehaviorManager)
 
     if event.get('event_type') == EVENT_TYPE:
-        cm = singleton_per_scope(Context)
-        entity = cm.get_entity(event)
-        entity_id = cm.get_entity_id(entity)
+        entity_id = get_entity_id(event)
 
         logger.debug("entity_id: {}\naction: {}".format(
             entity_id, event.get('action'))
