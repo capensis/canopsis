@@ -267,6 +267,29 @@ class TestManager(TestCase):
     def test_check_links(self):
         self.assertRaises(NotImplementedError, self.manager.check_links,None, None, None)
 
+    def test_split_id(self):
+        id_1 = 'connector/connector_name/component/resource'
+        id_2 = 'connector/connector_name/component'
+
+        r_1 = {
+            'conn_id': 'connector/connector_name',
+            'comp_id': 'component',
+            're_id': 'resource/component'
+        }
+        r_2 = {
+            'conn_id': 'connector/connector_name',
+            'comp_id': 'component',
+            're_id': None
+        }
+        f = open('/home/tgosselin/fichierdelog', 'a')
+        f.write('{0}\n'.format(self.manager.split_id(id_1)))
+        f.write('{0}\n'.format(self.manager.split_id(id_2)))
+        f.close()
+        self.assertDictEqual(self.manager.split_id(id_1), r_1)
+        self.assertDictEqual(self.manager.split_id(id_2), r_2)
+
+
+
     def test_get_entity(self):
         pass
 
@@ -676,6 +699,7 @@ class ContextEntityTest(TestCase):
             'type': 'connector',
             ContextGraph.NAME: 'c'
         }
+=======
         self._assert_entity_id(entity, '/connector/c')
 
     def test_get_entity_id_connector_name(self):
