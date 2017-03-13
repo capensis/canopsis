@@ -206,6 +206,16 @@ class ContextGraph(MiddlewareRegistry):
         """
             function in context v1 ws
         """
+        result = self[ContextGraph.ENTITIES_STORAGE].get_elements(
+            ids=ids, 
+            limit=limit, 
+            skip=skip,
+            sort=sort,
+            with_count=with_count
+        )
+
+        return result 
+
 
     def find(_type, context, _filter, extended, limit, skip, sort, with_count):
         """
@@ -221,3 +231,27 @@ class ContextGraph(MiddlewareRegistry):
         """
             function in ws context v1
         """
+
+    def split_id(self, eid):
+        """
+            split an eid to get a dict with conn_id, comp_id and re_id
+        """
+
+        re_id = None
+        comp_id = None
+        conn_id = None
+
+        tab_id = eid.split('/')
+        
+        conn_id = '{0}/{1}'.format(tab_id[0], tab_id[1])
+        comp_id = '{0}'.format(tab_id[2])
+
+        if len(tab_id) == 4: 
+            re_id = '{0}/{1}'.format(tab_id[3], tab_id[2])
+        
+        result={
+            'conn_id': conn_id,
+            'comp_id': comp_id,
+            're_id': re_id
+        }
+        return result
