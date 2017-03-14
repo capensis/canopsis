@@ -72,7 +72,7 @@ class PerfData(MiddlewareRegistry):
         :returns: entity as dict
         """
 
-        entity = self.context.get_entity(event)
+        entity = self.context.get_entity_old(event)
 
         ctype = entity[Context.TYPE]
         entity[Context.TYPE] = 'metric'

@@ -140,7 +140,7 @@ class engine(TaskHandler):
 
         for event in events:
             self.logger.debug(u'rk : {}'.format(event['_id']))
-            entity = self.context.get_entity(event)
+            entity = self.context.get_entity_old(event)
             entity_id = self.context.get_entity_id(entity)
             context_ids.append(entity_id)
 

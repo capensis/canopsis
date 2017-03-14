@@ -223,7 +223,7 @@ class Topology(Graph, TopoVertice):
             # set entity
             ctxm = singleton_per_scope(Context)
             event = self.get_event(source=0, state=0)
-            entity = ctxm.get_entity(event)
+            entity = ctxm.get_entity_old(event)
             entity_id = ctxm.get_entity_id(entity)
             self.entity = entity_id
 
@@ -236,7 +236,7 @@ class Topology(Graph, TopoVertice):
             context = singleton_per_scope(Context)
         # get self entity
         event = self.get_event()
-        entity = context.get_entity(event)
+        entity = context.get_entity_old(event)
         ctx, _id = context.get_entity_context_and_name(entity=entity)
         entity = {Context.NAME: _id}
         # put the topology in the context by default

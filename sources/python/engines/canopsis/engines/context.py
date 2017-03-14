@@ -146,7 +146,7 @@ class engine(Engine):
                 pass
             encoded_event[k] = v
 
-        entity = self.context.get_entity(
+        entity = self.context.get_entity_old(
             encoded_event, from_db=True, create_if_not_exists=True, cache=True
         )
 

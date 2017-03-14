@@ -309,7 +309,7 @@ class engine(Engine):
         if not hasattr(self, 'cm'):
             self.cm = Context()
 
-        entity = self.cm.get_entity(event)
+        entity = self.cm.get_entity_old(event)
         entity_id = self.cm.get_entity_id(entity)
 
         current_alarm = self.am.get_current_alarm(entity_id)

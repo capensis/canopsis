@@ -416,7 +416,7 @@ class Alerts(MiddlewareRegistry):
         :type event: dict
         """
 
-        entity = self[Alerts.CONTEXT_MANAGER].get_entity(event)
+        entity = self[Alerts.CONTEXT_MANAGER].get_entity_old(event)
         entity_id = self[Alerts.CONTEXT_MANAGER].get_entity_id(entity)
 
         author = event.get('author', None)

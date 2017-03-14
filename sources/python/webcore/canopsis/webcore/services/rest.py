@@ -322,7 +322,7 @@ def exports(ws):
 
         for record in records:
             if record['crecord_type'] == 'event':
-                entity = ctxmgr.get_entity(record)
+                entity = ctxmgr.get_entity_old(record)
 
                 encoded_entity = {}
                 for k, v in entity.items():

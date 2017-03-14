@@ -64,7 +64,7 @@ class CTXLinklistRegistry(CTXPropRegistry):
             else:  # get entities from events
                 events = self.events.find_elements(query=mfilter)
                 for event in events:
-                    entity = self.context.get_entity(event)
+                    entity = self.context.get_entity_old(event)
                     entity_id = self.context.get_entity_id(entity)
                     if ids is None or entity_id in ids:
                         doc[ctx_id_field] = entity_id  # add eid to the doc
@@ -101,7 +101,7 @@ class CTXLinklistRegistry(CTXPropRegistry):
                 # get entities from events
                 events = self.events.find_elements(query=mfilter)
                 for event in events:
-                    entity = self.context.get_entity(event)
+                    entity = self.context.get_entity_old(event)
                     entity_id = self.context.get_entity_id(entity)
                     result.append(entity_id)
 

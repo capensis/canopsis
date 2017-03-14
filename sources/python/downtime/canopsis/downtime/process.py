@@ -67,7 +67,7 @@ def event_processing(
         manager = pbmgr
 
     evtype = event[Event.TYPE]
-    entity = context.get_entity(event)
+    entity = context.get_entity_old(event)
 
     encoded_entity = {}
     for k, v in entity.items():

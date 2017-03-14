@@ -86,7 +86,7 @@ def event_processing(
         # in case of topology node
         if source_type in [TopoNode.TYPE, Topology.TYPE]:
             # get entity and entity id
-            entity = ctx.get_entity(event)
+            entity = ctx.get_entity_old(event)
             entity_id = ctx.get_entity_id(entity)
             elt_id = ctx.get_name(entity_id)
             logger.debug(u"elt_id {0}".format(elt_id))
@@ -106,7 +106,7 @@ def event_processing(
 
         else:  # in case of entity event
             # get entity and entity id
-            entity = ctx.get_entity(event)
+            entity = ctx.get_entity_old(event)
             if entity is not None:
 
                 encoded_entity = {}

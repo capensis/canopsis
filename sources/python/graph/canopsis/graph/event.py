@@ -189,7 +189,7 @@ def event_processing(event, ctx=None, cm=None, gm=None, *args, **kwargs):
     if gm is None:
         gm = singleton_per_scope(GraphManager)
 
-    entity = cm.get_entity(event)
+    entity = cm.get_entity_old(event)
 
     if entity is not None:
         entity_id = cm.get_entity_id(entity)

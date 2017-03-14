@@ -67,7 +67,7 @@ class engine(Engine):
         _id = self.archiver.check_event(event['rk'], event)
 
         if event.get('downtime', False):
-            entity = self.context.get_entity(event)
+            entity = self.context.get_entity_old(event)
             entity_id = self.context.get_entity_id(entity)
             endts = self.pbehavior.getending(
                 source=entity_id, behaviors='downtime'

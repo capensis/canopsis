@@ -73,7 +73,7 @@ from canopsis.check import Check
 #            'source_type': 'component',
 #            'state': Check.OK
 #        }
-#        entity = self.context.get_entity(self.check)
+#        entity = self.context.get_entity_old(self.check)
 #        entity_id = self.context.get_entity_id(entity)
 #        self.node = TopoNode(entity=entity_id)
 #        self.node.save(self.manager)

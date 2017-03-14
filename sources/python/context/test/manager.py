@@ -222,7 +222,7 @@ class GetEntityTest(BaseContextTest):
 
     def _assert_entity_id(self, event, entity):
 
-        _entity = self.context.get_entity(event)
+        _entity = self.context.get_entity_old(event)
         self.assertEqual(entity, _entity)
 
     def test_noname_notype(self):
