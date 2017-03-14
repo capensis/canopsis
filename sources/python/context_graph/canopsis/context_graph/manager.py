@@ -197,27 +197,32 @@ class ContextGraph(MiddlewareRegistry):
         # pritn(ret_val)
         return ret_val
 
-    def get(_type, names, context, extended):
-        """
-            function in context v1 ws
+    def create_entity(self, entity):
+        """Create an entity in the contexte with the given entity."""
+        # TODO add traitement to check if every required field are present
+
+    def update_entity(self, id_, entity):
+        """Update an entity identified by id_ with the given entity."""
+        # TODO add traitement to check if every required field are present
+
+    def delete_enity(self, id_):
+        """Delete an entity identified by id_ from the context."""
+
+    def get_entities(self,
+                     query={},
+                     projection={},
+                     limit=0,
+                     sort=False,
+                     with_count=False):
+        """Retreives entities matching the query and the projection.
         """
 
-    def get_by_id(ids, limit, skip, sort, with_count):
-        """
-            function in context v1 ws
-        """
+        if isinstance(query, dict):
+            raise TypeError("Query must be a dict")
 
-    def find(_type, context, _filter, extended, limit, skip, sort, with_count):
-        """
-            function in context v1 ws
-        """
+        if isinstance(projection, dict):
+            raise TypeError("Projection must be a dict")
 
-    def put(ids, _type, context, extended):
-        """
-            function in ws context v1
-        """
+        result = self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query)
 
-    def unify_entities(entities, extended):
-        """
-            function in ws context v1
-        """
+        return list(result)
