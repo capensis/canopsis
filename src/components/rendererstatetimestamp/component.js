@@ -12,8 +12,14 @@ Ember.Application.initializer({
             },
 
             timestamp: function() {
-                return new Date(2017, 0, 30).getTime() / 1000; 
+                return this.get('value');
+                // return new Date(2017, 0, 30).getTime() / 1000; 
             }.property('value'),
+
+            dateFormat: function (date) {
+                var dDate = new Date(date);
+                return moment(dDate).format('MM/DD/YY hh:mm:ss');
+            },
 
         });
 

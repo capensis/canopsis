@@ -178,6 +178,7 @@
 <script type="text/x-handlebars" data-template-name="components/component-rendererack">{{#each prop in propertiesMap}}
     {{prop.key}}: {{prop.value}}<br>
 {{/each}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererextradetails">rend</script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererpbehaviors">{{#each pbeh in pbehMap}}
     {{pbeh}}<br>
 {{/each}}</script>
@@ -228,6 +229,8 @@
 {{component-alarmstate content=attr.value}}</script>
 <script type="text/x-handlebars" data-template-name="_v_ack">{{#component-rendererack value=value}}
 {{/component-rendererack}}</script>
+<script type="text/x-handlebars" data-template-name="_v_extra_details">{{#component-rendererextradetails value=value}}
+{{/component-rendererextradetails}}</script>
 <script type="text/x-handlebars" data-template-name="_v_pbehaviors">{{#component-rendererpbehaviors value=value}}
 {{/component-rendererpbehaviors}}</script>
 <script type="text/x-handlebars" data-template-name="_v_state_t">{{#component-rendererstatetimestamp value=value}}
@@ -236,9 +239,7 @@
 {{/component-rendererstate}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm"><button {{action 'test'}}>test</button>
-
-{{#component-selectionactions action='massAction'}}
+<script type="text/x-handlebars" data-template-name="listalarm">{{#component-selectionactions action='massAction'}}
 {{/component-selectionactions}}
 
 {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}

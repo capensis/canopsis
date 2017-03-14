@@ -79,8 +79,28 @@ Ember.Application.initializer({
               'perimeter': 'v.extra.perimeter',
               'last_state_change': 'v.state.t',
               'output': 'v.state.m',
-              'pbehaviors': 'v.pbehaviors'
+              'pbehaviors': 'v.pbehaviors',
+              'extra_details': 'v.extra_details'
             },
+
+            extraDeatialsEntities: [
+              {
+                name: 'snooze',
+                value: 'v.snooze'
+              },
+              {
+                name: 'ticket',
+                value: 'v.ticket'
+              },
+              {
+                name: 'ack',
+                value: 'v.ack'
+              },
+              {
+                name: 'pbehaviors',
+                value: 'v.pbehaviors'
+              }
+            ],
 
             /**
              * Create the widget and set widget params into Ember vars
@@ -182,7 +202,7 @@ Ember.Application.initializer({
               return DS.PromiseArray.create({
                 promise: adapter.findQuery('alerts', options).then(function (alarms) {
                   if (alarms.success) {
-                    // console.error('loaded alarms: ', get(alarms, 'data.firstObject.alarms'));
+                    console.error('loaded alarms: ', get(alarms, 'data.firstObject.alarms'));
                     Ember.totalAlarms = get(alarms, 'data.firstObject.total');
                     return get(alarms, 'data.firstObject.alarms');
                   } else {
@@ -215,15 +235,22 @@ Ember.Application.initializer({
               var controller = this;
               var fields = get(this, 'fields');
               var alarmsArr = get(this, 'alarmss').map(function(alarm) {
-                  alarm['v']['pbehaviors'] = [
-                    {
-                      "tstop": 1483311600,
-                      "enabled": false,
-                      "name": "downtime",
-                      "tstart": 1483225200,
-                      "rrule": "FREQ=WEEKLY"
-                    }
-                  ];
+                  // alarm['v']['pbehaviors'] = [
+                  //   {
+                  //     "tstop": 1483311600,
+                  //     "enabled": false,
+                  //     "name": "downtime",
+                  //     "tstart": 1483225200,
+                  //     "rrule": "FREQ=WEEKLY"
+                  //   }
+                  // ];
+
+                  alarm['v']['extra_details'] = {};
+                  controller.get('extraDeatialsEntities').forEach(function(item) {
+                    alarm['v']['extra_details'][item.name] = Ember.Object.create(alarm).get(item.value);
+                  })
+                  
+
                   var newAlarm = Ember.Object.create();
                   fields.forEach(function(field) {
                       var val = get(Ember.Object.create(alarm), field.getValue);
