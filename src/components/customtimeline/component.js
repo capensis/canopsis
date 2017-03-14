@@ -16,6 +16,7 @@ Ember.Application.initializer({
          */
         var component = Ember.Component.extend({
             tagName: 'tr',
+            
 
             classNameBindings: ['isHidden:invisible'],
 

@@ -117,7 +117,7 @@ Ember.Application.initializer({
                 }));
                 // this.showParams();
                 // this.setFields();
-                this.loadRadioButtonView();                
+                // this.loadRadioButtonView();                
                 this.loadTemplates(this.get('model.popup'));
 
 

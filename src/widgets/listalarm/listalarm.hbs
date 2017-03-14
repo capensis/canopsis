@@ -6,6 +6,34 @@
 {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}
 
+{{!--2 / 6--}}
+{{#unless controller.hasOnePage}}
+    <div class="pull-right" style="padding-left:4px">
+        {{#unless controller.isFirstPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </button>
+            </span>
+        {{/unless}}
+        <span style="float:left; padding:4px">
+            {{controller.currentPage}} / {{controller.totalPages}}
+        </span>
+        {{#unless controller.isLastPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+            </span>
+        {{/unless}}
+    </div>
+{{/unless}}
 
 {{#if controller.rights.list_filters.checksum}}
     <div class="pull-right btn-group" data-toggle="btn-toggle">
@@ -50,36 +78,6 @@
     }}
     {{tr 'records per page'}}
 </div>
-
-
-{{!--2 / 6--}}
-{{#unless controller.hasOnePage}}
-    <div class="pull-right" style="padding-left:4px">
-        {{#unless controller.isFirstPage}}
-            <span class="btn-group">
-                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
-                    <span class="glyphicon glyphicon-step-backward"></span>
-                </button>
-                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
-                    <span class="glyphicon glyphicon-chevron-left"></span>
-                </button>
-            </span>
-        {{/unless}}
-        <span style="float:left; padding:4px">
-            {{controller.currentPage}} / {{controller.totalPages}}
-        </span>
-        {{#unless controller.isLastPage}}
-            <span class="btn-group">
-                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
-                    <span class="glyphicon glyphicon-chevron-right"></span>
-                </button>
-                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
-                    <span class="glyphicon glyphicon-step-forward"></span>
-                </button>
-            </span>
-        {{/unless}}
-    </div>
-{{/unless}}
 
 {{#component-alarmtable saction='sendCustomAction' action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
 {{/component-alarmtable}}
