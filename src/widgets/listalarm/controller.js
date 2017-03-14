@@ -129,7 +129,7 @@ Ember.Application.initializer({
                   // console.error('error while selecting a filter', err);
                   var filter = undefined;
                 }
-                var filterState = this.get('model.alarms_state_filter.state') || 'opened';
+                var filterState = this.get('model.alarms_state_filter.state') || 'resolved';
 
                 this.set('alarmSearchOptions', {
                   tstart: 0,
