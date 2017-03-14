@@ -216,6 +216,7 @@ class ContextGraph(MiddlewareRegistry):
                      with_count=False):
         """Retreives entities matching the query and the projection.
         """
+        #TODO handle projection, limit, sort, with_count
 
         if isinstance(query, dict):
             raise TypeError("Query must be a dict")
