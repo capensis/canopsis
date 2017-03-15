@@ -27,6 +27,10 @@ Ember.Application.initializer({
                 return get(this, 'defaultSortColumn');
             }.property('defaultSortColumn'),
 
+            columnsAmount: function () {
+                return this.get('fields.length') + 3;
+            }.property('fields.length'),
+
             actions: {
 
                 click: function (field) {

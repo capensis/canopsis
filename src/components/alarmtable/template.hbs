@@ -30,8 +30,14 @@
                     {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick' saction='sendAction'}}
                     {{/component-alarmraw}}
 
-                    {{#component-customtimeline alarm=alarm fieldsAmount=15}}
-                    {{/component-customtimeline}}
+                    {{#if alarm.isExpanded}}
+                        <tr>
+                            <td {{bind-attr colspan=columnsAmount}}>
+                                {{#component-timeline timelineData=alarm}}
+                                {{/component-timeline}}
+                            </td>
+                        </tr>
+                    {{/if}}
                 {{/each}}
             </tbody>
         </table>

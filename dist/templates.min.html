@@ -79,8 +79,14 @@
                     {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick' saction='sendAction'}}
                     {{/component-alarmraw}}
 
-                    {{#component-customtimeline alarm=alarm fieldsAmount=15}}
-                    {{/component-customtimeline}}
+                    {{#if alarm.isExpanded}}
+                        <tr>
+                            <td {{bind-attr colspan=15}}>
+                                {{#component-timeline timelineData=alarm}}
+                                {{/component-timeline}}
+                            </td>
+                        </tr>
+                    {{/if}}
                 {{/each}}
             </tbody>
         </table>
@@ -178,7 +184,37 @@
 <script type="text/x-handlebars" data-template-name="components/component-rendererack">{{#each prop in propertiesMap}}
     {{prop.key}}: {{prop.value}}<br>
 {{/each}}</script>
-<script type="text/x-handlebars" data-template-name="components/component-rendererextradetails">rend</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererextradetails"><div {{bind-attr class='hasAck::invisible'}}>
+  {{#component-tooltip content=acktooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-purple">
+          <i class="fa fa-check"></i>
+      </span>
+  {{/component-tooltip}}
+</div>
+
+<div {{bind-attr class='hasTicket::invisible'}}>
+  {{#component-tooltip content=tickettooltip htmlEnabled=true noTranslation=true}}
+    <span class="badge bg-blue">
+      <i class="fa fa-ticket"></i>
+    </span>
+  {{/component-tooltip}}
+</div>
+
+<div {{bind-attr class='hasSnooze::invisible'}}>
+  {{#component-tooltip content=snoozetooltip htmlEnabled=true noTranslation=true}}
+    <span class="badge bg-red">
+      <i class="fa fa-clock-o"></i>
+    </span>
+  {{/component-tooltip}}
+</div>
+
+<div {{bind-attr class='hasPBehavior::invisible'}}>
+  {{#component-tooltip content=pbehaviortooltip htmlEnabled=true noTranslation=true}}
+    <span class="badge bg-aqua">
+      <i class="fa fa-code-fork"></i>
+    </span>
+  {{/component-tooltip}}
+</div></script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererpbehaviors">{{#each pbeh in pbehMap}}
     {{pbeh}}<br>
 {{/each}}</script>
@@ -239,7 +275,9 @@
 {{/component-rendererstate}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#component-selectionactions action='massAction'}}
+<script type="text/x-handlebars" data-template-name="listalarm">
+
+{{#component-selectionactions action='massAction'}}
 {{/component-selectionactions}}
 
 {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
