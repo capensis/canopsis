@@ -6,9 +6,9 @@ TODO
 Top priority :
 --------------
   * sources/python/context_graph/canopsis/context_graph/manager.py (write API)
-  * sources/python/webcore/canopsis/webcore/services/rest.py
+  * **DONE** sources/python/webcore/canopsis/webcore/services/rest.py
   * sources/python/ccalendar/canopsis/ccalendar/process.py
-  * sources/python/engines/canopsis/engines/event_filter.py
+  * **DONE** sources/python/engines/canopsis/engines/event_filter.py
   * sources/python/engines/canopsis/engines/eventstore.py
   * sources/python/serie/test/manager.py
   * sources/python/vevent/canopsis/vevent/process.py
