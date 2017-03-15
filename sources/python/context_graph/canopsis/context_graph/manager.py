@@ -207,6 +207,16 @@ class ContextGraph(MiddlewareRegistry):
 
     def delete_enity(self, id_):
         """Delete an entity identified by id_ from the context."""
+        entity = self[ContextGraph.ENTITIES_STORAGE].get_elements(
+            query={'_id':id}
+        ).next()
+        if entity['depends'] != []:
+            # update entity in depends list
+        if entity['impact'] != []:
+            # update entity in impact list
+
+        self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
+
 
     def get_entities(self,
                      query={},
