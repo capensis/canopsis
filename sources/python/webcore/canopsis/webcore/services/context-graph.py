@@ -45,7 +45,7 @@ def exports(ws):
 
     @route(
         ws.application.post, 
-        payload=['id_','entity']    
+        payload=['entity']    
     )
     def update_entity(id_, entity):
         """
