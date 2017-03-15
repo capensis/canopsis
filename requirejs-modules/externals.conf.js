@@ -20,8 +20,8 @@
 
 require.config({
     paths: {
-        'rrule': 'canopsis/brick-rrule-editor/externals/rrule/lib/rrule',
-        'nlp': 'canopsis/brick-rrule-editor/externals/rrule/lib/nlp',
+        'rrule': 'canopsis/brick-listalarm/externals/rrule/lib/rrule',
+        'nlp': 'canopsis/brick-listalarm/externals/rrule/lib/nlp',
     },
     shim: {
         'rrule':{
