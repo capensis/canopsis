@@ -44,8 +44,7 @@ def event_processing(event, veventmanager=None, **params):
         veventmanager = singleton_per_scope(VEventManager)
     context = singleton_per_scope(Context)
     # get source from the event
-    entity = context.get_entity(event)
-    source = context.get_entity_id(entity)
+    source = context.get_id(event)
     # get vevent from the event
     vevent = event[VEventManager.VEVENT]
     # add event information into veventmanager

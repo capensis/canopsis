@@ -16,6 +16,30 @@ class ContextGraph(MiddlewareRegistry):
     ORGANISATIONS_STORAGE = 'organisations_storage'
     USERS_STORAGE = 'measurements_storage'
 
+    RESOURCE = "resource"
+    COMPONENT = "component"
+    CONNECTOR = "connector"
+
+    @classmethod
+    def get_id(cls, event):
+        """Return the id extracted from the event as a string
+        :param event: the event from which we extract the id
+        :return type: boolean a string
+        """
+
+        source_type = event["type"]
+        id_ = ""
+
+        if source_type == cls.COMPONENT:
+            id_ = event["component"]
+        elif source_type == cls.RESOURCE:
+            id_ = "{0}/{1}".format(event["resource"], event["component"])
+        elif source_type == cls.CONNECTOR:
+            id_ = "{0}/{1}".format(event["connector"], event["connector_name"])
+
+        return id_
+
+
     def __init__(self, *args, **kwargs):
         """__init__
 

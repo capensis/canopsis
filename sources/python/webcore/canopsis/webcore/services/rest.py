@@ -23,7 +23,7 @@ from bottle import HTTPError, response
 from canopsis.common.ws import route
 
 from canopsis.common.utils import ensure_iterable
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.old.record import Record
 
 from base64 import b64decode
@@ -256,7 +256,7 @@ def delete_records(ws, namespace, ctype, _id, data):
 
 
 def exports(ws):
-    ctxmgr = Context()
+    ctxmgr = ContextGraph()
 
     @route(ws.application.get, name='rest/indexes', response=lambda r, a: r)
     def indexes(collection):
@@ -322,7 +322,8 @@ def exports(ws):
 
         for record in records:
             if record['crecord_type'] == 'event':
-                entity = ctxmgr.get_entity(record)
+                entity_id = ctxmgr.get_id(record)
+                entity = ctxmgr.get_entity(entity_id)
 
                 encoded_entity = {}
                 for k, v in entity.items():
@@ -336,7 +337,7 @@ def exports(ws):
                         pass
                     encoded_entity[k] = v
 
-                record['entity_id'] = ctxmgr.get_entity_id(encoded_entity)
+                record['entity_id'] = ctxmgr.get_id(encoded_entity)
 
         return records, nrecords
 
