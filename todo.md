@@ -9,7 +9,7 @@ Top priority :
   * **DONE** sources/python/webcore/canopsis/webcore/services/rest.py
   * **DONE** sources/python/ccalendar/canopsis/ccalendar/process.py
   * **DONE** sources/python/engines/canopsis/engines/event_filter.py
-  * sources/python/engines/canopsis/engines/eventstore.py
+  * **DONE** sources/python/engines/canopsis/engines/eventstore.py
   * sources/python/serie/test/manager.py
   * sources/python/vevent/canopsis/vevent/process.py
   * sources/python/perfdata/canopsis/perfdata/process.py
