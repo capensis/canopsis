@@ -224,13 +224,56 @@ class ContextGraph(MiddlewareRegistry):
     def create_entity(self, entity):
         """Create an entity in the contexte with the given entity."""
         # TODO add traitement to check if every required field are present
+        if entity['depends'] != []:
+            # update
+            for i in entity['depends']:
+                tmp = self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                    query={'_id': i}
+                )
+                tmp['impact'].append(entity['_id'])
+                self[ContextGraph.ENTITIES_STORAGE].put_element(tmp)
+                
+        if entity['impact'] != []:
+            # update
+            for i in entity['impact']:
+                tmp = self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                    query={'_id': i}
+                )
+                tmp['depends'].append(entity['_id'])
+                self[ContextGraph.ENTITIES_STORAGE].put_element(tmp)
 
-    def update_entity(self, id_, entity):
+        self[ContextGraph.ENTITIES_STORAGE].put_element(entity)
+
+    def update_entity(self, entity):
         """Update an entity identified by id_ with the given entity."""
         # TODO add traitement to check if every required field are present
+        self[ContextGraph.ENTITIES_STORAGE].put_element(entity)
+        
 
     def delete_enity(self, id_):
         """Delete an entity identified by id_ from the context."""
+        entity = self[ContextGraph.ENTITIES_STORAGE].get_elements(
+            query={'_id':id}
+        ).next()
+        if entity['depends'] != []:
+            # update entity in depends list
+            for i in entity['depends']:
+                tmp = self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                    query={'_id': i}
+                ).next()
+                tmp['impact'].remove(i)
+                self[ContextGraph.ENTITIES_STORAGE].put_element(tmp)
+        if entity['impact'] != []:
+            # update entity in impact list
+            for i in entity['impact']:
+                tmp = self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                    query={'_id': i}
+                ).next()
+                tmp['depends'].remove(i)
+                self[ContextGraph.ENTITIES_STORAGE].put_element(tmp)
+
+        self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
+
 
     def get_entities(self,
                      query={},
