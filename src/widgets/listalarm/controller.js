@@ -115,9 +115,8 @@ Ember.Application.initializer({
 				        set(this, 'store', DS.Store.extend({
                     container: get(this, 'container')
                 }));
-                // this.showParams();
+                this.showParams();
                 // this.setFields();
-                // this.loadRadioButtonView();                
                 this.loadTemplates(this.get('model.popup'));
 
 
@@ -369,28 +368,6 @@ Ember.Application.initializer({
               //   // console.error(res);
               // }
             }.observes('user_filters.@each.isActive'),
-
-            loadRadioButtonView: function () {
-                view = Ember.View.extend({
-                    tagName : "input",
-                    type : "radio",
-                    attributeBindings : [ "name", "type", "value", "checked:checked:" ],
-                    click : function() {
-                        // console.error(this);
-                        this.set("selection", this.$().val())
-                    },
-                    checked : function() {
-                        return this.get("value") == this.get("selection");   
-                    }.property()
-                });
-                try {
-                  if (!Ember.RadioButton) {
-                    Ember.RadioButton = view;
-                  }
-                } catch (err) {
-
-                }
-            },
 
             loadTemplates: function (templates) {
                 try {

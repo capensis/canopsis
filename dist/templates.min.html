@@ -36,13 +36,15 @@
 <script type="text/x-handlebars" data-template-name="components/component-alarmstate"><div class="form-group">
     <div class="radio">
         <label>
-            {{view Ember.RadioButton name="alarmStateSelecation" selectionBinding="state" value="opened"}}
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="opened"}}
+            {{/component-radio}}
             opened
         </label>
     </div>
     <div class="radio">
         <label>
-            {{view Ember.RadioButton name="alarmStateSelecation" selectionBinding="state" value="resolved"}}
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="resolved"}}
+            {{/component-radio}}
             resolved
         </label>
     </div>
@@ -175,10 +177,61 @@
     </div>       
 </div>
 </script>
+<script type="text/x-handlebars" data-template-name="components/component-radio">{{#each action in availableActions}}
+  <button {{action 'sendAction' action}} {{bind-attr title=action.name}} type="button" class="btn btn-xs btn-default">
+      <i {{bind-attr class=action.class}}></i>
+  </button>
+{{/each}}
+
+{{#if hasLinks}}
+  <div class="btn-group" style="display:flex">
+      <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+          <i class="fa fa-info"></i>
+          <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" style="right:0; left:auto;">
+        {{#each link in alarm.linklist.event_links}}
+          <li>
+              <a target="_blank" {{bind-attr href=link.url}}>{{link.label}}</a>
+          </li>
+        {{/each}}
+      </ul>
+  </div>
+{{/if}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererack">{{#each prop in propertiesMap}}
     {{prop.key}}: {{prop.value}}<br>
 {{/each}}</script>
-<script type="text/x-handlebars" data-template-name="components/component-rendererextradetails">rend</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererextradetails"><div {{bind-attr class='hasAck::invisible'}}>
+  {{#component-tooltip content=acktooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-purple">
+          <i class="fa fa-check"></i>
+      </span>
+  {{/component-tooltip}}
+</div>
+
+<div {{bind-attr class='hasTicket::invisible'}}>
+  {{#component-tooltip content=tickettooltip htmlEnabled=true noTranslation=true}}
+    <span class="badge bg-blue">
+      <i class="fa fa-ticket"></i>
+    </span>
+  {{/component-tooltip}}
+</div>
+
+<div {{bind-attr class='hasSnooze::invisible'}}>
+  {{#component-tooltip content=snoozetooltip htmlEnabled=true noTranslation=true}}
+    <span class="badge bg-red">
+      <i class="fa fa-clock-o"></i>
+    </span>
+  {{/component-tooltip}}
+</div>
+
+<div {{bind-attr class='hasPBehavior::invisible'}}>
+  {{#component-tooltip content=pbehaviortooltip htmlEnabled=true noTranslation=true}}
+    <span class="badge bg-aqua">
+      <i class="fa fa-code-fork"></i>
+    </span>
+  {{/component-tooltip}}
+</div></script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererpbehaviors">{{#each pbeh in pbehMap}}
     {{pbeh}}<br>
 {{/each}}</script>
@@ -245,6 +298,34 @@
 {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
 {{/component-search}}
 
+{{!--2 / 6--}}
+{{#unless controller.hasOnePage}}
+    <div class="pull-right" style="padding-left:4px">
+        {{#unless controller.isFirstPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </button>
+            </span>
+        {{/unless}}
+        <span style="float:left; padding:4px">
+            {{controller.currentPage}} / {{controller.totalPages}}
+        </span>
+        {{#unless controller.isLastPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+            </span>
+        {{/unless}}
+    </div>
+{{/unless}}
 
 {{#if controller.rights.list_filters.checksum}}
     <div class="pull-right btn-group" data-toggle="btn-toggle">
@@ -289,36 +370,6 @@
     }}
     {{tr 'records per page'}}
 </div>
-
-
-{{!--2 / 6--}}
-{{#unless controller.hasOnePage}}
-    <div class="pull-right" style="padding-left:4px">
-        {{#unless controller.isFirstPage}}
-            <span class="btn-group">
-                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
-                    <span class="glyphicon glyphicon-step-backward"></span>
-                </button>
-                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
-                    <span class="glyphicon glyphicon-chevron-left"></span>
-                </button>
-            </span>
-        {{/unless}}
-        <span style="float:left; padding:4px">
-            {{controller.currentPage}} / {{controller.totalPages}}
-        </span>
-        {{#unless controller.isLastPage}}
-            <span class="btn-group">
-                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
-                    <span class="glyphicon glyphicon-chevron-right"></span>
-                </button>
-                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
-                    <span class="glyphicon glyphicon-step-forward"></span>
-                </button>
-            </span>
-        {{/unless}}
-    </div>
-{{/unless}}
 
 {{#component-alarmtable saction='sendCustomAction' action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
 {{/component-alarmtable}}
