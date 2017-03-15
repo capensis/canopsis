@@ -81,8 +81,14 @@
                     {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick' saction='sendAction'}}
                     {{/component-alarmraw}}
 
-                    {{#component-customtimeline alarm=alarm fieldsAmount=15}}
-                    {{/component-customtimeline}}
+                    {{#if alarm.isExpanded}}
+                        <tr>
+                            <td {{bind-attr colspan=15}}>
+                                {{#component-timeline timelineData=alarm}}
+                                {{/component-timeline}}
+                            </td>
+                        </tr>
+                    {{/if}}
                 {{/each}}
             </tbody>
         </table>
@@ -292,7 +298,9 @@
 {{/component-rendererstate}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
-<script type="text/x-handlebars" data-template-name="listalarm">{{#component-selectionactions action='massAction'}}
+<script type="text/x-handlebars" data-template-name="listalarm">
+
+{{#component-selectionactions action='massAction'}}
 {{/component-selectionactions}}
 
 {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}

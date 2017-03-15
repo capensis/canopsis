@@ -130,9 +130,19 @@ Ember.Application.initializer({
                 }
                 var filterState = this.get('model.alarms_state_filter.state') || 'resolved';
 
+                var tstart = 0, tstop = 0;
+                if (filterState == 'opened') {
+                  tstart = 0;
+                  tstop = new Date().getTime();
+                } else {
+                  var d = new Date();
+                  tstart = d.setMonth(d.getMonth() - 1)
+                  tstop = new Date().getTime();
+                }
+
                 this.set('alarmSearchOptions', {
-                  tstart: 0,
-                  tstop: 0,
+                  tstart: tstart,
+                  tstop: tstop,
                   opened: filterState == 'opened',
                   resolved: filterState == 'resolved',
                   // consolidations: [],
@@ -145,6 +155,7 @@ Ember.Application.initializer({
                 });
             },
 
+            
             // rewrite totalPages
             totalPagess: function() {
                 if (get(this, 'itemsTotal') === 0) {
@@ -195,7 +206,7 @@ Ember.Application.initializer({
               var controller = this;
               this.set('loaded', false);              
               var options = this.get('alarmSearchOptions');
-              // console.error('reload original alarms with params', options);              
+              console.error('reload original alarms with params', options);              
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
               
               return DS.PromiseArray.create({
@@ -270,6 +281,9 @@ Ember.Application.initializer({
                   
                   newAlarm['id'] = alarm._id;
                   newAlarm['entity_id'] = alarm.d;
+                  // newAlarm['entity_id'] = '/resource/feeder/feeder/feeder_component/feeder_resource';
+                  
+                  // /resource/feeder/feeder/feeder_component/feeder_resource
                   // newAlarm['cancelled'] = alarm.v.cancelled;
 
                   newAlarm['changed'] = new Date().getTime();
