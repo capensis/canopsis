@@ -200,6 +200,11 @@ class ContextGraph(MiddlewareRegistry):
     def create_entity(self, entity):
         """Create an entity in the contexte with the given entity."""
         # TODO add traitement to check if every required field are present
+        if entity['depends'] != []:
+            # update
+        if entity['impact'] != []:
+            # update
+        self[ContextGraph.ENTITIES_STORAGE].put_element(entity)
 
     def update_entity(self, id_, entity):
         """Update an entity identified by id_ with the given entity."""
