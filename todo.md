@@ -10,7 +10,7 @@ Top priority :
   * **DONE** sources/python/ccalendar/canopsis/ccalendar/process.py
   * **DONE** sources/python/engines/canopsis/engines/event_filter.py
   * **DONE** sources/python/engines/canopsis/engines/eventstore.py
-  * sources/python/serie/test/manager.py
+  * **DONE** sources/python/serie/test/manager.py
   * sources/python/vevent/canopsis/vevent/process.py
   * sources/python/perfdata/canopsis/perfdata/process.py
   * sources/python/linklist/canopsis/linklist/ctxpropreg.py
