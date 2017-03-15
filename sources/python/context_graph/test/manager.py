@@ -7,7 +7,14 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 
 
-def create_entity(id, name, etype, depends=[], impact=[], measurements=[], infos={}):
+def create_entity(
+        id,
+        name,
+        etype,
+        depends=[],
+        impact=[],
+        measurements=[],
+        infos={}):
     return {'_id': id,
             'type': etype,
             'name': name,
@@ -143,6 +150,53 @@ class TestManager(TestCase):
         self.organisations_storage.remove_elements()
         self.organisations_storage.remove_elements()
 
+    def test_create_entity(self):
+        entity = {
+            '_id': 'test_create',
+            'name': 'test_create',
+            'depends': [],
+            'impact': [],
+            'infos': {}
+        }
+        entity2 = {
+            '_id': 'test_create2',
+            'name': 'test_create2',
+            'depends': [],
+            'impact': [],
+            'infos': {}
+        }
+        self.manager.create_entity(entity)
+        self.manager.create_entity(entity2)
+        self.assertDictEqual(
+            entity,
+            self.manager.get_entities(query={'_id': 'test_create'})[0]
+        )
+
+    def test_delete_entity(self):
+        entity = {
+            '_id': 'test_entity',
+            'name': 'test_entity',
+            'depends': [],
+            'impact': ['test_entity2'],
+            'infos': {}
+        }
+        entity2 = {
+            '_id': 'test_entity2',
+            'name': 'test_entity2',
+            'depends': ['test_entity'],
+            'impact': [],
+            'infos': {}
+        }
+        self.manager.create_entity(entity)
+        self.manager.create_entity(entity2)
+        print(self.manager.get_entities(query={'_id': 'test_entity2'}))
+        self.manager.delete_entity('test_entity')
+        print(self.manager.get_entities(query={'_id': 'test_entity2'}))
+        self.assertEqual(
+            [],
+            self.manager.get_entities(query={'_id': 'test_entity2'})[0]['depends']
+        )
+
     def test_check_comp(self):
         self.assertEqual(self.manager.check_comp('c1'), True)
         self.assertEqual(self.manager.check_comp('c2'), False)
@@ -265,14 +319,19 @@ class TestManager(TestCase):
         self.assertIn(conn3_id, doc["depends"])
 
     def test_check_links(self):
-        self.assertRaises(NotImplementedError, self.manager.check_links,None, None, None)
+        self.assertRaises(
+
+            NotImplementedError,
+            self.manager.check_links,
+            None,
+            None,
+            None)
 
     def test_get_entity(self):
         pass
 
 
-
-## Test of deprecated functions
+# Test of deprecated functions
 class ContextStorageTest(TestCase):
     """Test access to the context storage.
     """
@@ -929,7 +988,7 @@ class GetNameTest(TestCase):
         self._assert_name(_type='other', result='f')
 
     # TODO 4-01-2017
-    #def test_error(self):
+    # def test_error(self):
     #    """Test with _type is not in entity_id.
     #    """
 
@@ -960,7 +1019,7 @@ class GetEntityByIdTest(TestCase):
         self.assertEqual(entity_to_compare, entity)
 
     # TODO 4-01-2017
-    #def test_entity_empty(self):
+    # def test_entity_empty(self):
     #    """Test with empty name entity.
     #    """
 
