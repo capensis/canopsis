@@ -24,7 +24,7 @@ from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
 import uuid
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 CONF_PATH = 'linklist/linklist.conf'
 CATEGORY = 'LINKLIST'
@@ -43,7 +43,7 @@ class Entitylink(MiddlewareRegistry):
     def __init__(self, *args, **kwargs):
 
         super(Entitylink, self).__init__(*args, **kwargs)
-        self.context = Context()
+        self.context = ContextGraph()
 
     def get_or_create_from_event(self, event):
         """
@@ -71,7 +71,8 @@ class Entitylink(MiddlewareRegistry):
 
         :param event: an event to search a context id from
         """
-        entity = self.context.get_entity(event)
+        entity_id = self.context.get_id(event)
+        entity = self.context.get_entity(entity_id)
 
         encoded_entity = {}
         for k, v in entity.items():
@@ -85,7 +86,7 @@ class Entitylink(MiddlewareRegistry):
                 pass
             encoded_entity[k] = v
 
-        entity_id = self.context.get_entity_id(encoded_entity)
+        entity_id = encoded_entity["_id"]
         return entity_id
 
     def get_links_from_event(self, event):

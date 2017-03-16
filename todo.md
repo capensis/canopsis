@@ -17,19 +17,18 @@ Top priority :
 
 Bottom priority :
 -----------------
-  * sources/python/linklist/canopsis/linklist/ctxpropreg.py
+  * **DONE** sources/python/linklist/canopsis/linklist/ctxpropreg.py
+  * **DONE** sources/python/linklist/canopsis/entitylink/manager.py
+  * **DONE** sources/python/linklist/canopsis/engines/task_linklist.py
   * sources/python/alerts/canopsis/alerts/manager.py
   * sources/python/alerts/canopsis/alerts/manager.py
   * sources/python/context/test/manager.py
   * sources/python/context/scripts/migration_id_name.py
   * sources/python/downtime/canopsis/downtime/process.py
   * sources/python/downtime/canopsis/downtime/selector.py
+  * sources/python/downtime/test/process.py
   * sources/python/engines/canopsis/engines/context.py
   * sources/python/webcore/canopsis/webcore/services/context.py
-  * sources/python/linklist/canopsis/entitylink/manager.py
-  * sources/python/linklist/canopsis/engines/task_linklist.py
-  * sources/python/linklist/canopsis/linklist/ctxpropreg.py
-  * sources/python/downtime/test/process.py
 
 Function to replace
 -------------------
