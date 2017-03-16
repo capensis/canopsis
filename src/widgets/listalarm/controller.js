@@ -102,6 +102,8 @@ Ember.Application.initializer({
               }
             ],
 
+            manualUpdateAlarms: 0,
+
             /**
              * Create the widget and set widget params into Ember vars
              * @method init
@@ -158,9 +160,13 @@ Ember.Application.initializer({
                 tstart = d.setMonth(d.getMonth() - 1)
                 tstop = new Date().getTime();
               }
+              // return {
+              //   tstart: tstart,
+              //   tstop: tstop
+              // }
               return {
-                tstart: tstart,
-                tstop: tstop
+                tstart: 0,
+                tstop: 0
               }
             },
 
@@ -246,7 +252,7 @@ Ember.Application.initializer({
             }.property('alarmSearchOptions.search', 'alarmSearchOptions.resolved',
                         'alarmSearchOptions.sort_key', 'alarmSearchOptions.sort_dir', 'alarmSearchOptions.filter',
                         'alarmSearchOptions.skip', 'alarmSearchOptions.limit', 'alarmSearchOptions.tstart',
-                        'alarmSearchOptions.tstop'),
+                        'alarmSearchOptions.tstop', 'manualUpdateAlarms'),
 
             fields: function() {
               return this.parseFields(get(this, 'model.columns'));
@@ -685,6 +691,7 @@ Ember.Application.initializer({
                   controller.set('isValidSearchText', result);
                   if (result) {
                     controller.set('alarmSearchOptions.search', text);
+                    controller.set('manualUpdateAlarms', new Date().getTime());
                   }
                 })
               },
