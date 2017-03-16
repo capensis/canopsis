@@ -130,19 +130,12 @@ Ember.Application.initializer({
                 }
                 var filterState = this.get('model.alarms_state_filter.state') || 'resolved';
 
-                var tstart = 0, tstop = 0;
-                if (filterState == 'opened') {
-                  tstart = 0;
-                  tstop = new Date().getTime();
-                } else {
-                  var d = new Date();
-                  tstart = d.setMonth(d.getMonth() - 1)
-                  tstop = new Date().getTime();
-                }
+
+                var timestamps = this.defultTimestamps(filterState);
 
                 this.set('alarmSearchOptions', {
-                  tstart: tstart,
-                  tstop: tstop,
+                  tstart: timestamps.tstart,
+                  tstop: timestamps.tstop,
                   opened: filterState == 'opened',
                   resolved: filterState == 'resolved',
                   // consolidations: [],
@@ -153,6 +146,22 @@ Ember.Application.initializer({
                   skip: 0,
                   limit: this.get('model.itemsPerPage') || 50
                 });
+            },
+
+            defultTimestamps: function (state) {
+              var tstart = 0, tstop = 0;
+              if (state == 'opened') {
+                tstart = 0;
+                tstop = new Date().getTime();
+              } else {
+                var d = new Date();
+                tstart = d.setMonth(d.getMonth() - 1)
+                tstop = new Date().getTime();
+              }
+              return {
+                tstart: tstart,
+                tstop: tstop
+              }
             },
 
             
@@ -198,8 +207,14 @@ Ember.Application.initializer({
             alarmsTimestamp: 0,
             // for updating list of alarms
             timelineListener: function() {
-              this.set('alarmSearchOptions.tstart', this.get('controllers.application.interval.timestamp.$gte') || 0);
-              this.set('alarmSearchOptions.tstop', this.get('controllers.application.interval.timestamp.$lte') || 0);
+              if (this.get('controllers.application.interval.timestamp.$gte')) {
+                this.set('alarmSearchOptions.tstart', this.get('controllers.application.interval.timestamp.$gte') || 0);
+                this.set('alarmSearchOptions.tstop', this.get('controllers.application.interval.timestamp.$lte') || 0);
+              } else {
+                var def = this.defultTimestamps(this.get('model.alarms_state_filter.state') || 'resolved');
+                this.set('alarmSearchOptions.tstart', def.tstart);
+                this.set('alarmSearchOptions.tstop', def.tstop);
+              }
             }.observes('controllers.application.interval.timestamp'),
 
             alarmss: function() {
