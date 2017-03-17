@@ -20,8 +20,7 @@ Bottom priority :
   * **DONE** sources/python/linklist/canopsis/linklist/ctxpropreg.py
   * **DONE** sources/python/linklist/canopsis/entitylink/manager.py
   * **DONE** sources/python/linklist/canopsis/engines/task_linklist.py
-  * sources/python/alerts/canopsis/alerts/manager.py
-  * sources/python/alerts/canopsis/alerts/manager.py
+  * **DONE** sources/python/alerts/canopsis/alerts/manager.py
   * sources/python/context/test/manager.py
   * sources/python/context/scripts/migration_id_name.py
   * **DONE** sources/python/downtime/canopsis/downtime/process.py
