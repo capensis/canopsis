@@ -27,7 +27,7 @@ Bottom priority :
   * **DONE** sources/python/downtime/canopsis/downtime/selector.py
   * sources/python/downtime/test/process.py
   * sources/python/engines/canopsis/engines/context.py
-  * sources/python/webcore/canopsis/webcore/services/context.py
+  * **WIP**  sources/python/webcore/canopsis/webcore/services/context.py
 
 Function to replace
 -------------------
