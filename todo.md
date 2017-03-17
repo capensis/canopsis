@@ -24,8 +24,8 @@ Bottom priority :
   * sources/python/alerts/canopsis/alerts/manager.py
   * sources/python/context/test/manager.py
   * sources/python/context/scripts/migration_id_name.py
-  * sources/python/downtime/canopsis/downtime/process.py
-  * sources/python/downtime/canopsis/downtime/selector.py
+  * **DONE** sources/python/downtime/canopsis/downtime/process.py
+  * **DONE** sources/python/downtime/canopsis/downtime/selector.py
   * sources/python/downtime/test/process.py
   * sources/python/engines/canopsis/engines/context.py
   * sources/python/webcore/canopsis/webcore/services/context.py
