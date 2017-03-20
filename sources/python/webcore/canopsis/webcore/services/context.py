@@ -19,9 +19,9 @@
 # ---------------------------------
 
 from canopsis.common.ws import route
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
-manager = Context()
+manager = ContextGraph()
 
 
 def exports(ws):
@@ -30,10 +30,12 @@ def exports(ws):
     def context(_type, names=None, context=None, extended=None):
         if names:
             names = [n.strip() for n in names.split(',')]
-
+        """
         result = manager.get(
             _type=_type, names=names, context=context, extended=extended)
-
+        """
+        # this is a test before adapter refactoring
+        result = manager.get_entity(names)
         return result
 
     @route(ws.application.get, name='context/ids')
@@ -45,15 +47,16 @@ def exports(ws):
     def context_by_id(
         ids=None, limit=0, start=0, sort=None, with_count=False
     ):
-
-        result = manager.get_by_id(
+        """
+        result = manager.get(
             ids=ids,
             limit=limit,
             skip=start,
             sort=sort,
             with_count=with_count
         )
-
+        """
+        result = manager.get_entity(ids)
         return result
 
     @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter'])
@@ -61,7 +64,8 @@ def exports(ws):
         _type=None, context=None, _filter=None, extended=False,
         limit=0, start=0, sort=None
     ):
-
+        """
+        
         result = manager.find(
             _type=_type,
             context=context,
@@ -72,35 +76,41 @@ def exports(ws):
             sort=sort,
             with_count=True
         )
-
+        """
+        result = manager.get_entities(
+            query=_filter,
+            limit=limit,
+            start=start, 
+            sort=sort
+        )
         return result
 
     @route(ws.application.put, payload=[
         '_type', 'entity', 'context', 'extended_id'
     ])
     def context(_type, entity, context=None, extended_id=None):
+        """
         manager.put(
             _type=_type,
             entity=entity,
             context=context,
             extended_id=extended_id
         )
-
+        """
+        manager.create_entity(entity=entity)
         return entity
 
     @route(ws.application.delete, payload=[
         'context', 'ids', '_type', 'extended'
     ])
     def context(ids=None, _type=None, context=None, extended=False):
+        """
         manager.remove(
             ids=ids,
             _type=_type,
             context=context,
             extended=extended
+        )"""
+        manager.delete_entity(
+            ids
         )
-
-    @route(ws.application.post, payload=['entities', 'extended'])
-    def unify(entities, extended=False):
-        result = manager.unify_entities(entities=entities, extended=extended)
-
-        return result
