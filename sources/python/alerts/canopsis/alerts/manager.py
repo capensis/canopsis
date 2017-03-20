@@ -26,7 +26,7 @@ from canopsis.configuration.model import Parameter
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 from canopsis.event.manager import Event
 from canopsis.check import Check
@@ -265,9 +265,9 @@ class Alerts(MiddlewareRegistry):
             timewindow=timewindow
         )
 
-        cm = Context()
+        cm = ContextGraph()
         for entity_id, alarms in alarms_by_entity.items():
-            entity = cm.get_entity_by_id(entity_id)
+            entity = cm.get_entity(entity_id)
             entity['entity_id'] = entity_id
             for alarm in alarms:
                 alarm['entity'] = entity
@@ -341,7 +341,7 @@ class Alerts(MiddlewareRegistry):
         alarm_id = alarm[storage.DATA_ID]
         alarm = alarm[storage.VALUE]
 
-        entity = self[Alerts.CONTEXT_MANAGER].get_entity_by_id(alarm_id)
+        entity = self[Alerts.CONTEXT_MANAGER].get_entity(alarm_id)
 
         no_author_types = ['stateinc', 'statedec', 'statusinc', 'statusdec']
         check_referer_types = [
@@ -416,8 +416,7 @@ class Alerts(MiddlewareRegistry):
         :type event: dict
         """
 
-        entity = self[Alerts.CONTEXT_MANAGER].get_entity(event)
-        entity_id = self[Alerts.CONTEXT_MANAGER].get_entity_id(entity)
+        entity_id = self[Alerts.CONTEXT_MANAGER].get_id(event)
 
         author = event.get('author', None)
         message = event.get('output', None)

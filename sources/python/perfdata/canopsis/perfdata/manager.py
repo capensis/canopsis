@@ -27,7 +27,7 @@ from canopsis.configuration.configurable.decorator import (
 )
 from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 from numbers import Number
 
@@ -72,13 +72,14 @@ class PerfData(MiddlewareRegistry):
         :returns: entity as dict
         """
 
-        entity = self.context.get_entity(event)
+        id_ = self.context.get_id(event)
+        entity = self.context.get_entity(id_)
 
-        ctype = entity[Context.TYPE]
-        entity[Context.TYPE] = 'metric'
+        ctype = entity[ContextGraph.TYPE]
+        entity[ContextGraph.TYPE] = 'metric'
 
-        entity[ctype] = entity[Context.NAME]
-        entity[Context.NAME] = metricname
+        entity[ctype] = entity[ContextGraph.NAME]
+        entity[ContextGraph.NAME] = metricname
 
         return entity
 
@@ -86,12 +87,12 @@ class PerfData(MiddlewareRegistry):
 
         tags = {} if meta is None else meta.copy()
 
-        entity = self[PerfData.CONTEXT_MANAGER].get_entity_by_id(metric_id)
+        entity = self[PerfData.CONTEXT_MANAGER].get_entity(metric_id)
 
         tags.update(entity)
-        tags[Context.EID] = metric_id
+        tags[ContextGraph.EID] = metric_id
 
-        data_id = tags.pop(Context.NAME)
+        data_id = tags.pop(ContextGraph.NAME)
 
         return data_id, tags
 

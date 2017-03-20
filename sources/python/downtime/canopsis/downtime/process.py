@@ -21,7 +21,7 @@
 """Module in charge of defining downtime processing in engines."""
 from __future__ import unicode_literals
 
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import register_task
 from canopsis.event import Event
@@ -33,7 +33,7 @@ from datetime import datetime, timedelta
 from icalendar import Event as vEvent
 
 
-ctxmgr = Context()  #: default context manager
+ctxmgr = ContextGraph()  #: default context manager
 pbmgr = PBehaviorManager()  #: default pbehavior manager
 
 events = get_storage(
@@ -67,7 +67,8 @@ def event_processing(
         manager = pbmgr
 
     evtype = event[Event.TYPE]
-    entity = context.get_entity(event)
+    id_ = context.get_id(event)
+    entity = context.get_entity(id_)
 
     encoded_entity = {}
     for k, v in entity.items():
@@ -81,7 +82,7 @@ def event_processing(
             pass
         encoded_entity[k] = v
 
-    eid = context.get_entity_id(encoded_entity)
+    eid = encoded_entity["_id"]
 
     if evtype == DOWNTIME:
         ev = vEvent()
