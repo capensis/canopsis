@@ -74,7 +74,11 @@ class ContextGraph(MiddlewareRegistry):
         else:
             query["_id"] = id
 
-        return list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
+        result = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
+        if len(result) == 1:
+            return result[0]
+        else:
+            return result
 
     def put_entities(self, entities):
         """
