@@ -66,7 +66,7 @@ Ember.Application.initializer({
                 },
                 {
                     class: 'fa fa-clock-o',
-                    internal_states: ['unacked'],
+                    internal_states: ['unacked', 'acked','removed'],
                     name: 'snoozealarm',
                     mixin_name: 'snooze'
                 }

@@ -55,6 +55,7 @@ Ember.Application.initializer({
             needs: ['login', 'application'],
 
             viewMixins: [
+              mx
                 ],
 
             searchText: '',

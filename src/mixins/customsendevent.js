@@ -260,7 +260,7 @@ Ember.Application.initializer({
                      * @description:
                      */
                     extract: function(record, crecord, formRecord) {
-                        record.ref_rk = get(crecord, 'id');
+                        record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
                         record.id = this.getRoutingKey(record);
@@ -319,7 +319,7 @@ Ember.Application.initializer({
                      * @description:
                      */
                     extract: function(record, crecord, formRecord) {
-                        record.ref_rk = get(crecord, 'id');
+                        record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
                         record.id = this.getRoutingKey(record);
@@ -374,7 +374,7 @@ Ember.Application.initializer({
                         if (!isNone(formRecord)) {
                             record.output = get(formRecord, 'output');
                         }
-                        record.ref_rk = get(crecord, 'id');
+                        record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
                         record.id = this.getRoutingKey(record);
@@ -403,7 +403,7 @@ Ember.Application.initializer({
                 declareticket: {
                     extract: function(record, crecord, formRecord) {
                         void(formRecord);
-                        record.ref_rk = get(crecord, 'id');
+                        record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
                         record.id = this.getRoutingKey(record);
@@ -424,7 +424,7 @@ Ember.Application.initializer({
                 },
                 assocticket: {
                     extract: function(record, crecord, formRecord) {
-                        record.ref_rk = get(crecord, 'id');
+                        record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
                         record.id = this.getRoutingKey(record);
@@ -450,7 +450,7 @@ Ember.Application.initializer({
                 },
                 cancel: {
                     extract: function(record, crecord, formRecord) {
-                        record.ref_rk = get(crecord, 'id');
+                        record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
                         if (formRecord !== undefined) {
@@ -500,7 +500,7 @@ Ember.Application.initializer({
                 },
                 uncancel: {
                     extract: function(record, crecord, formRecord) {
-                        record.ref_rk = get(crecord, 'id');
+                        record.ref_rk = get(crecord, 'entity_id');
                         record.state_type = 1;
                         record.state = 0;
                         record.cancel = 0;
