@@ -27,7 +27,7 @@ class ContextGraph(MiddlewareRegistry):
         :return type: boolean a string
         """
 
-        source_type = event["type"]
+        source_type = event["source_type"]
         id_ = ""
 
         if source_type == cls.COMPONENT:
