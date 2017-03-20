@@ -91,6 +91,7 @@
     'ehbs!components/component-selectioncheckbox',
     'ehbs!editor-pair',
     'ehbs!editor-radio',
+    'canopsis/brick-listalarm/src/helpers/absoluteTimeSince',
     'canopsis/brick-listalarm/src/mixins/customsendevent',
     'canopsis/brick-listalarm/src/mixins/rinfopop',
     'ehbs!_v_ack',

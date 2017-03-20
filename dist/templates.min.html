@@ -83,7 +83,7 @@
 
                     {{#if alarm.isExpanded}}
                         <tr>
-                            <td {{bind-attr colspan=15}}>
+                            <td {{bind-attr colspan=columnsAmount}}>
                                 {{#component-timeline timelineData=alarm}}
                                 {{/component-timeline}}
                             </td>
@@ -242,20 +242,22 @@
     {{pbeh}}<br>
 {{/each}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstate"><span {{bind-attr class=spanClass}}>{{caption}}</span></script>
-<script type="text/x-handlebars" data-template-name="components/component-rendererstatetimestamp">{{timeSince timestamp}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererstatetimestamp">{{absoluteTimeSince timestamp}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstatusval">{{status}}</script>
-<script type="text/x-handlebars" data-template-name="components/component-search">{{input insert-newline='search' value=value class="form-control inlineInput" placeholder="Search" type="text"}}
-<span class="input-group-btn">
-    <button {{action 'resetValue'}} class="btn btn-default btn-flat">
-        <span class="glyphicon glyphicon-remove-circle"></span>
-    </button>
-    <button {{action 'search'}} class="btn btn-primary btn-flat">
-        <span class="fa fa-search"></span>
-    </button>
-</span>
-{{#unless isValid}}
-  <p class='search-invalid-message'>Invalid search query</p>
-{{/unless}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-search"><div class='input-group input-group-sm'>
+    {{input insert-newline='search' value=value class="form-control inlineInput" placeholder="Search" type="text"}}
+    <span class="input-group-btn">
+        <button {{action 'resetValue'}} class="btn btn-default btn-flat">
+            <span class="glyphicon glyphicon-remove-circle"></span>
+        </button>
+        <button {{action 'search'}} class="btn btn-primary btn-flat">
+            <span class="fa fa-search"></span>
+        </button>
+    </span>
+    {{#unless isValid}}
+    <p class='search-invalid-message'>Invalid search query</p>
+    {{/unless}}
+</div></script>
 <script type="text/x-handlebars" data-template-name="components/component-selectionactions"><div class="pull-left">
     {{tr 'Selection'}} :
     {{#each action in actionsMap}}
@@ -300,40 +302,57 @@
 {{/component-rendererstatusval}}</script>
 <script type="text/x-handlebars" data-template-name="listalarm">
 
-{{#component-selectionactions action='massAction'}}
-{{/component-selectionactions}}
+<div class="pull-left">
+    {{#component-selectionactions action='massAction'}}
+    {{/component-selectionactions}}
 
-{{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
-{{/component-search}}
+</div>
 
-{{!--2 / 6--}}
-{{#unless controller.hasOnePage}}
-    <div class="pull-right" style="padding-left:4px">
-        {{#unless controller.isFirstPage}}
-            <span class="btn-group">
-                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
-                    <span class="glyphicon glyphicon-step-backward"></span>
-                </button>
-                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
-                    <span class="glyphicon glyphicon-chevron-left"></span>
-                </button>
+<div class="pull-right btn-group" data-toggle="btn-toggle">
+    {{!--2 / 6--}}
+    {{#unless controller.hasOnePage}}
+        <div class="pull-right" style="padding-left:4px">
+            {{#unless controller.isFirstPage}}
+                <span class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                        <span class="glyphicon glyphicon-step-backward"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </button>
+                </span>
+            {{/unless}}
+            <span style="float:left; padding:4px">
+                {{controller.currentPage}} / {{controller.totalPages}}
             </span>
-        {{/unless}}
-        <span style="float:left; padding:4px">
-            {{controller.currentPage}} / {{controller.totalPages}}
-        </span>
-        {{#unless controller.isLastPage}}
-            <span class="btn-group">
-                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
-                    <span class="glyphicon glyphicon-chevron-right"></span>
-                </button>
-                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
-                    <span class="glyphicon glyphicon-step-forward"></span>
-                </button>
-            </span>
-        {{/unless}}
+            {{#unless controller.isLastPage}}
+                <span class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                        <span class="glyphicon glyphicon-step-forward"></span>
+                    </button>
+                </span>
+            {{/unless}}
+        </div>
+    {{/unless}}
+</div>
+<div style="clear:both; padding-top:4px"></div>
+
+
+
+    {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
+    {{/component-search}}
+    
+    <div class="pull-left dataTables_filter" style='margin-top:0'>
+        {{view Ember.Select
+            content=controller.itemsPerPagePropositions
+            value=controller.itemsPerPagePropositionSelected
+            class="inlineInput form-control input-sm"
+        }}
+        {{tr 'records per page'}}
     </div>
-{{/unless}}
 
 {{#if controller.rights.list_filters.checksum}}
     <div class="pull-right btn-group" data-toggle="btn-toggle">
@@ -369,15 +388,7 @@
     </div>
 {{/if}}
 
-
-<div class="pull-left dataTables_filter" style='margin-top:0'>
-    {{view Ember.Select
-        content=controller.itemsPerPagePropositions
-        value=controller.itemsPerPagePropositionSelected
-        class="inlineInput form-control input-sm"
-    }}
-    {{tr 'records per page'}}
-</div>
+<div style="clear:both; padding-top:4px"></div>
 
 {{#component-alarmtable saction='sendCustomAction' action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
 {{/component-alarmtable}}
