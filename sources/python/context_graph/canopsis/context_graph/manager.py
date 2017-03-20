@@ -226,23 +226,33 @@ class ContextGraph(MiddlewareRegistry):
         # TODO add traitement to check if every required field are present
         if entity['depends'] != []:
             # update
+            query = {'$or': []}
             for i in entity['depends']:
-                tmp = self[ContextGraph.ENTITIES_STORAGE].get_elements(
-                    query={'_id': i}
-                )
-                for j in tmp:
+                query['$or'].append({'_id': i})
+            tmp = self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                query=query
+            )
+            for j in tmp:
+                try:
                     j['impact'].append(entity['_id'])
                     self[ContextGraph.ENTITIES_STORAGE].put_element(j)
+                except ValueError:
+                    pass
 
         if entity['impact'] != []:
             # update
+            query = {'$or': []}
             for i in entity['impact']:
-                tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-                    query={'_id': i}
-                ))
-                for j in tmp:
+                query['$or'].append({'_id': i})
+            tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                query=query
+            ))
+            for j in tmp:
+                try:
                     j['depends'].append(entity['_id'])
                     self[ContextGraph.ENTITIES_STORAGE].put_element(j)
+                except ValueError:
+                    pass
 
         self[ContextGraph.ENTITIES_STORAGE].put_element(entity)
 
@@ -258,26 +268,34 @@ class ContextGraph(MiddlewareRegistry):
         ))[0]
         if entity['depends'] != []:
             # update entity in depends list
+            query = {'$or': []}
             for i in entity['depends']:
-                tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-                    query={'_id': i}
-                ))
-                for j in tmp:
+                query['$or'].append({'_id': i})
+
+            tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                query=query
+            ))
+            for j in tmp:
+                try:
                     j['impact'].remove(id_)
                     self[ContextGraph.ENTITIES_STORAGE].put_element(j)
+                except ValueError:
+                    pass
         if entity['impact'] != []:
             # update entity in impact list
+            query={'$or': []}
             for i in entity['impact']:
-                tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-                    query={'_id': i}
-                ))
-                for j in tmp:
-                    try:
-                        j['depends'].remove(id_)
-                    except ValueError:
-                        # a corriger mais je tente comme ça pour les tests
-                        pass
-                    self[ContextGraph.ENTITIES_STORAGE].put_element(j)
+                query['$or'].append({'_id': i})
+            tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                query=query
+            ))
+            for j in tmp:
+                try:
+                    j['depends'].remove(id_)
+                except ValueError:
+                    # a corriger mais je tente comme ça pour les tests
+                    pass
+                self[ContextGraph.ENTITIES_STORAGE].put_element(j)
 
         self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
 

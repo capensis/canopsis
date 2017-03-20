@@ -341,7 +341,8 @@ class ContextStorageTest(TestCase):
         self.context.remove()
 
     def tearDown(self):
-        self.context.remove()
+        pass
+        #self.context.remove()
 
     def test_ctx_storage(self):
         """Test to access to the ctx storage.
