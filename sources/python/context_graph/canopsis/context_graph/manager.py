@@ -28,7 +28,11 @@ class ContextGraph(MiddlewareRegistry):
         """
         if '_id' in event:
             return event['_id']
-        source_type = event['source_type']
+        source_type = ''
+        if 'source_type' in event:
+            source_type = event['source_type']
+        elif 'type' in event:
+            source_type = event['type']
 
         id_ = ""
 
