@@ -315,6 +315,7 @@ class ContextGraph(MiddlewareRegistry):
                      query={},
                      projection={},
                      limit=0,
+                     start=0,
                      sort=False,
                      with_count=False):
         """Retreives entities matching the query and the projection.
