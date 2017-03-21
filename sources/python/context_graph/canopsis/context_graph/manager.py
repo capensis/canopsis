@@ -27,8 +27,10 @@ class ContextGraph(MiddlewareRegistry):
         :param event: the event from which we extract the id
         :return type: boolean a string
         """
+        if '_id' in event:
+            return event['_id']
+        source_type = event['source_type']
 
-        source_type = event["source_type"]
         id_ = ""
 
         if source_type == cls.COMPONENT:
@@ -78,6 +80,8 @@ class ContextGraph(MiddlewareRegistry):
         result = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
         if len(result) == 1:
             return result[0]
+        elif len(result) == 0:
+            return {}
         else:
             return result
 
