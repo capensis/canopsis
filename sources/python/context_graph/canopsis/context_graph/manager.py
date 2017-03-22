@@ -329,7 +329,12 @@ class ContextGraph(MiddlewareRegistry):
             raise TypeError("Projection must be a dict")
 
         result = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-            query=query
+            query=query,
+            limit=limit, 
+            skip=start,
+            sort=sort, 
+            projection=projection,
+            with_count=with_count
         ))
 
         return result
