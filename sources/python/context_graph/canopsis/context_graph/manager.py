@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
+from canopsis.event import forger
 
 
 @conf_paths('context_graph/manager.conf')
@@ -336,5 +337,32 @@ class ContextGraph(MiddlewareRegistry):
             projection=projection,
             with_count=with_count
         ))
+
+        return result
+
+
+    def get_event(self, entity, event_type='check', **kwargs):
+        """Get an event from an entity.
+
+        :param dict entity: entity to convert to an event.
+        :param str event_type: specific event_type. Default check.
+        :param dict kwargs: additional fields to put in the event.
+        :rtype: dict
+        """
+
+        kwargs['event_type'] = event_type
+
+        # In some cases, name is present but is component in fact
+        if 'name' in entity:
+            if 'component' not in entity:
+                entity['component'] = entity['name']
+            entity.pop('name')
+
+        # fill kwargs with entity values
+        for field in entity:
+            kwargs[field] = entity[field]
+
+        # forge the event
+        result = forger(**kwargs)
 
         return result
