@@ -316,6 +316,7 @@ class ContextGraph(MiddlewareRegistry):
                      query={},
                      projection={},
                      limit=0,
+                     start=0,
                      sort=False,
                      with_count=False):
         """Retreives entities matching the query and the projection.
@@ -329,7 +330,12 @@ class ContextGraph(MiddlewareRegistry):
             raise TypeError("Projection must be a dict")
 
         result = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-            query=query
+            query=query,
+            limit=limit, 
+            skip=start,
+            sort=sort, 
+            projection=projection,
+            with_count=with_count
         ))
 
         return result
