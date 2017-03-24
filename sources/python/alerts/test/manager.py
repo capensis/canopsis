@@ -19,11 +19,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+#from __future__ import unicode_literals
+
 from unittest import main
 
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import OFF
+from canopsis.context_graph.manager import ContextGraph
 
 from base import BaseTest
 
@@ -797,6 +800,19 @@ class TestManager(BaseTest):
         events = self.manager.get_events(alarm0)
         self.assertEqual(events, [])
 
+        cm = ContextGraph()
+        component = { "_id" : "ut-comp",
+                      "impact" : [],
+                      "name" : "ut-comp",
+                      "measurements" : [],
+                      "depends" : [],
+                      "infos" : { },
+                      "type" : "component",
+                      "connector" : "test",
+                      "connector_name" : "test0" }
+
+        cm.put_entities(component)
+
         # Only a check OK
         alarm1_id = 'ut-comp'
 
@@ -841,9 +857,8 @@ class TestManager(BaseTest):
             'state': 1,
         }
         self.manager.archive(event)
-        print("Do not skip me")
-        alarm1 = self.manager.get_current_alarm(alarm1_id)
 
+        alarm1 = self.manager.get_current_alarm(alarm1_id)
         events = self.manager.get_events(alarm1)
 
         expected_event0 = {
@@ -893,9 +908,11 @@ class TestManager(BaseTest):
 
         self.assertEqual(len(events), 3)
 
-        self.assertEqual(events[0], expected_event0)
-        self.assertEqual(events[1], expected_event1)
-        self.assertEqual(events[2], expected_event2)
+        self.assertDictEqual(events[0], expected_event0)
+        self.assertDictEqual(events[1], expected_event1)
+        self.assertDictEqual(events[2], expected_event2)
+
+        cm.delete_entity(component["_id"])
 
 
 if __name__ == '__main__':

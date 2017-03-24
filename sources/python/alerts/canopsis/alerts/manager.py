@@ -295,6 +295,7 @@ class Alerts(MiddlewareRegistry):
             limit=1
         )
 
+
         if result is not None:
             result = result[0]
             result[storage.DATA_ID] = alarm_id
@@ -375,9 +376,18 @@ class Alerts(MiddlewareRegistry):
             'assocticket': 'ticket',
             'snooze': 'duration'
         }
-
         events = []
         eventmodel = self[Alerts.CONTEXT_MANAGER].get_event(entity)
+        try:
+            eventmodel.pop("_id")
+            eventmodel.pop("depends")
+            eventmodel.pop("impact")
+            eventmodel.pop("infos")
+            eventmodel.pop("measurements")
+            eventmodel.pop("type")
+        except KeyError:
+            # FIXME : A logger would be nice
+            pass
 
         for step in alarm['steps']:
             event = eventmodel.copy()
