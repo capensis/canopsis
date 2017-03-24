@@ -93,6 +93,8 @@ class ContextGraph(MiddlewareRegistry):
         """
         Store entities into database.
         """
+        if not isinstance(entities, list):
+            entities = [entities]
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
     def check_re(self, re_id):
@@ -331,9 +333,9 @@ class ContextGraph(MiddlewareRegistry):
 
         result = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
             query=query,
-            limit=limit, 
+            limit=limit,
             skip=start,
-            sort=sort, 
+            sort=sort,
             projection=projection,
             with_count=with_count
         ))
