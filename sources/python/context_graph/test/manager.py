@@ -1130,5 +1130,49 @@ class GetEvent(TestCase):
         self.assertEqual(event['output'], 'test')
 
 
+class GetID(TestCase):
+
+    def setUp(self):
+        self.event = {
+            'connector': 'connector',
+            'connector_name': 'connector-0',
+            'component': 'c',
+            'output': '...',
+            'timestamp': 0,
+            'source_type': None,
+            'resource': 'resource-0'
+        }
+
+    def test_get_id_component(self):
+        self.event["source_type"] = 'component'
+        expected_id = self.event["component"]
+        result = ContextGraph.get_id(self.event)
+
+        self.assertEquals(result, expected_id)
+
+    def test_get_id_resource(self):
+        self.event["source_type"] = 'resource'
+        expected_id = "{0}/{1}".format(self.event["resource"],
+                                       self.event["component"])
+        result = ContextGraph.get_id(self.event)
+
+        self.assertEquals(result, expected_id)
+
+    def test_get_id_connector(self):
+        self.event["source_type"] = 'connector'
+        expected_id = "{0}/{1}".format(self.event["connector"],
+                                       self.event["connector_name"])
+        result = ContextGraph.get_id(self.event)
+
+        self.assertEquals(result, expected_id)
+
+    def test_get_id_error(self):
+        self.event["source_type"] = 'something_else'
+        error_desc = "Event type should be 'connector', 'resource' or\
+            'component' not {0}.".format(self.event["source_type"])
+        with self.assertRaisesRegexp(ValueError, error_desc):
+            ContextGraph.get_id(self.event)
+
+
 if __name__ == '__main__':
     main()

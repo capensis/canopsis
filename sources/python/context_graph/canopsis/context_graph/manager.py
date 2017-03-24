@@ -29,6 +29,7 @@ class ContextGraph(MiddlewareRegistry):
         """
         if '_id' in event:
             return event['_id']
+
         source_type = ''
         if 'source_type' in event:
             source_type = event['source_type']
@@ -43,6 +44,10 @@ class ContextGraph(MiddlewareRegistry):
             id_ = "{0}/{1}".format(event["resource"], event["component"])
         elif source_type == cls.CONNECTOR:
             id_ = "{0}/{1}".format(event["connector"], event["connector_name"])
+        else:
+            error_desc = "Event type should be 'connector', 'resource' or\
+            'component' not {0}.".format(source_type)
+            raise ValueError(error_desc)
 
         return id_
 
