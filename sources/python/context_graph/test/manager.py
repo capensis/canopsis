@@ -194,7 +194,8 @@ class TestManager(TestCase):
         print(self.manager.get_entities(query={'_id': 'test_entity2'}))
         self.assertEqual(
             [],
-            self.manager.get_entities(query={'_id': 'test_entity2'})[0]['depends']
+            self.manager.get_entities(query={'_id': 'test_entity2'})[
+                0]['depends']
         )
 
     def test_check_comp(self):
@@ -331,6 +332,8 @@ class TestManager(TestCase):
         pass
 
 # Need to be adapted
+
+
 class GetEvent(TestCase):
     """Test get_event method.
     """
@@ -338,26 +341,31 @@ class GetEvent(TestCase):
     def setUp(self):
         self.context = ContextGraph(data_scope='test_context')
         self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()
-        self.entity_id = '/a/b/c/d/e/f'
 
     def tearDown(self):
         self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()
 
     def test_get_check_event(self):
 
-        entity_id = '/other/a/b/c'
+        entity_id = '/a/b/c'
+        name = "name-a"
 
-        entity = self.context.get_entity_by_id(entity_id)
+        entity = create_conn(entity_id, name, depends=[],
+                             impact=[], measurements=[], infos={})
 
         event = self.context.get_event(
             entity, event_type='check', output='test'
         )
+
+        # TODO : check more fields.
+        # FIXME : Did testing with different kind of entities is useful ?
 
         self.assertEqual(event['event_type'], 'check')
         self.assertEqual(event['output'], 'test')
 
 
 class GetID(TestCase):
+
     def setUp(self):
         self.event = {
             'connector': 'connector',
