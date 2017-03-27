@@ -145,7 +145,7 @@ class TestManager(TestCase):
             }
         )
 
-    def trearDown(self):
+    def tearDown(self):
         self.entities_storage.remove_elements()
         self.organisations_storage.remove_elements()
         self.organisations_storage.remove_elements()
