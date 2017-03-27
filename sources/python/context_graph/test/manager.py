@@ -337,11 +337,11 @@ class GetEvent(TestCase):
 
     def setUp(self):
         self.context = ContextGraph(data_scope='test_context')
-        self.context.remove()
+        self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()
         self.entity_id = '/a/b/c/d/e/f'
 
     def tearDown(self):
-        self.context.remove()
+        self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()
 
     def test_get_check_event(self):
 
