@@ -26,7 +26,6 @@ from unittest import main
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import OFF
-from canopsis.context_graph.manager import ContextGraph
 
 from base import BaseTest
 
@@ -783,7 +782,6 @@ class TestManager(BaseTest):
             )
 
     def test_get_events(self):
-
         # Empty alarm ; no events sent
         alarm0_id = '/fake/alarm/id0'
 
@@ -800,7 +798,6 @@ class TestManager(BaseTest):
         events = self.manager.get_events(alarm0)
         self.assertEqual(events, [])
 
-        cm = ContextGraph()
         component = { "_id" : "ut-comp",
                       "impact" : [],
                       "name" : "ut-comp",
@@ -811,7 +808,7 @@ class TestManager(BaseTest):
                       "connector" : "test",
                       "connector_name" : "test0" }
 
-        cm.put_entities(component)
+        self.manager.context_manager.put_entities(component)
 
         # Only a check OK
         alarm1_id = 'ut-comp'
@@ -912,7 +909,7 @@ class TestManager(BaseTest):
         self.assertDictEqual(events[1], expected_event1)
         self.assertDictEqual(events[2], expected_event2)
 
-        cm.delete_entity(component["_id"])
+        self.manager.context_manager.delete_entity(component["_id"])
 
 
 if __name__ == '__main__':

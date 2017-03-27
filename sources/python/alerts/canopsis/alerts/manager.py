@@ -182,7 +182,9 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.ALARM_STORAGE] = alarm_storage
 
         if context is not None:
-            self[Alerts.CONTEXT_MANAGER] = context
+            self[Alerts.CONTEXT_MANAGER]= context
+
+        self.context_manager = ContextGraph()
 
     def load_config(self):
         value = self[Alerts.CONFIG_STORAGE].get_elements(
@@ -265,9 +267,8 @@ class Alerts(MiddlewareRegistry):
             timewindow=timewindow
         )
 
-        cm = ContextGraph()
         for entity_id, alarms in alarms_by_entity.items():
-            entity = cm.get_entity(entity_id)
+            entity = self.context_manager.get_entity(entity_id)
             entity['entity_id'] = entity_id
             for alarm in alarms:
                 alarm['entity'] = entity
@@ -342,7 +343,7 @@ class Alerts(MiddlewareRegistry):
         alarm_id = alarm[storage.DATA_ID]
         alarm = alarm[storage.VALUE]
 
-        entity = self[Alerts.CONTEXT_MANAGER].get_entity(alarm_id)
+        entity = self.context_manager.get_entity(alarm_id)
 
         no_author_types = ['stateinc', 'statedec', 'statusinc', 'statusdec']
         check_referer_types = [
@@ -377,7 +378,7 @@ class Alerts(MiddlewareRegistry):
             'snooze': 'duration'
         }
         events = []
-        eventmodel = self[Alerts.CONTEXT_MANAGER].get_event(entity)
+        eventmodel = self.context_manager.get_event(entity)
         try:
             eventmodel.pop("_id")
             eventmodel.pop("depends")
@@ -426,7 +427,7 @@ class Alerts(MiddlewareRegistry):
         :type event: dict
         """
 
-        entity_id = self[Alerts.CONTEXT_MANAGER].get_id(event)
+        entity_id = self.context_manager.get_id(event)
 
         author = event.get('author', None)
         message = event.get('output', None)
