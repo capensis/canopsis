@@ -302,11 +302,6 @@ class TestManager(TestCase):
             None,
             None)
 
-    def test_get_entity(self):
-        pass
-
-# Need to be adapted
-
 
 class GetEvent(TestCase):
     """Test get_event method.
@@ -411,7 +406,7 @@ class CheckComp(BaseTest):
         self.assertEqual(self.manager.check_comp('c2'), False)
 
 
-def CheckRe(BaseTest):
+class CheckRe(BaseTest):
 
     def setUp(self):
         super(CheckRe, self).setUp()
@@ -429,10 +424,10 @@ def CheckRe(BaseTest):
         self.assertEqual(self.manager.check_re('r2/c1'), False)
 
 
-def CheckConn(BaseTest):
+class CheckConn(BaseTest):
 
     def setUp(self):
-        super(CheckRe, self).setUp()
+        super(CheckConn, self).setUp()
         entity = {'_id': 'conn1/conn-name',
                   'type': 'connector',
                   'name': 'conn-name',
@@ -445,6 +440,72 @@ def CheckConn(BaseTest):
     def test_check_conn(self):
         self.assertEqual(self.manager.check_conn('conn1/conn-name'), True)
         self.assertEqual(self.manager.check_conn('conn2'), False)
+
+
+class GetEntitiesByID(BaseTest):
+
+    def setUp(self):
+        super(GetEntitiesByID, self).setUp()
+
+    def test_get_entity_by_id_id(self):
+        entity = {'_id': 'conn1/conn-name',
+                  'type': 'connector',
+                  'name': 'conn-name',
+                  'depends': [],
+                  'impact': [],
+                  'measurements': [],
+                  'infos': {}}
+
+        self.manager.put_entities(entity)
+
+        result = self.manager.get_entities_by_id(entity["_id"])
+        self.assertIsInstance(result, type({}))
+        self.assertDictEqual(result, entity)
+
+    def test_get_entity_by_id_ids(self):
+        entities = [{'_id': 'conn1/conn-name1',
+                  'type': 'connector',
+                  'name': 'conn-name1',
+                  'depends': [],
+                  'impact': [],
+                  'measurements': [],
+                     'infos': {}},
+        {'_id': 'conn2/conn-name2',
+                  'type': 'connector',
+                  'name': 'conn-name2',
+                  'depends': [],
+                  'impact': [],
+                  'measurements': [],
+                  'infos': {}},
+                    {'_id': 'conn3/conn-name3',
+                  'type': 'connector',
+                  'name': 'conn-name3',
+                  'depends': [],
+                  'impact': [],
+                  'measurements': [],
+                  'infos': {}}]
+
+        sorted(entities)
+        self.manager.put_entities(entities)
+
+        ids = [x["_id"] for x in entities]
+
+        result = self.manager.get_entities_by_id(ids)
+
+        sorted(result)
+        self.assertIsInstance(result, type([]))
+        self.assertListEqual(result, entities)
+
+    def test_get_entity_by_id(self):
+        """Test the behaviour of the get_entity_by_id function with the id
+        of a nonexistant entity"""
+
+        result = self.manager.get_entities_by_id("id")
+
+        sorted(result)
+        self.assertIsInstance(result, type({}))
+        self.assertDictEqual(result, {})
+
 
 
 if __name__ == '__main__':

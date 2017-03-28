@@ -268,7 +268,7 @@ class Alerts(MiddlewareRegistry):
         )
 
         for entity_id, alarms in alarms_by_entity.items():
-            entity = self.context_manager.get_entity(entity_id)
+            entity = self.context_manager.get_entities_by_id(entity_id)
             entity['entity_id'] = entity_id
             for alarm in alarms:
                 alarm['entity'] = entity
@@ -343,7 +343,7 @@ class Alerts(MiddlewareRegistry):
         alarm_id = alarm[storage.DATA_ID]
         alarm = alarm[storage.VALUE]
 
-        entity = self.context_manager.get_entity(alarm_id)
+        entity = self.context_manager.get_entities_by_id(alarm_id)
 
         no_author_types = ['stateinc', 'statedec', 'statusinc', 'statusdec']
         check_referer_types = [

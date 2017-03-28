@@ -70,7 +70,7 @@ class ContextGraph(MiddlewareRegistry):
         """
         return len(list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': comp_id}))) > 0
 
-    def get_entity(self, id):
+    def get_entities_by_id(self, id):
         """
         Retreive the entity identified by his id. If id is a list of id,
         get_entity return every entities who match the ids present in the list
@@ -90,6 +90,7 @@ class ContextGraph(MiddlewareRegistry):
         if len(result) == 1:
             return result[0]
         elif len(result) == 0:
+            # Return {} due to the plentiful of iteration on the keys of entity
             return {}
         else:
             return result

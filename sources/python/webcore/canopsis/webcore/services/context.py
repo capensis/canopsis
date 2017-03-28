@@ -35,7 +35,7 @@ def exports(ws):
             _type=_type, names=names, context=context, extended=extended)
         """
         # this is a test before adapter refactoring
-        result = manager.get_entity(names)
+        result = manager.get_entities_by_id(names)
         return result
 
     @route(ws.application.get, name='context/ids')
@@ -56,7 +56,7 @@ def exports(ws):
             with_count=with_count
         )
         """
-        result = manager.get_entity(ids)
+        result = manager.get_entities_by_id(ids)
         return result
 
     @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter'])
@@ -65,7 +65,7 @@ def exports(ws):
         limit=0, start=0, sort=None
     ):
         """
-        
+
         result = manager.find(
             _type=_type,
             context=context,
@@ -80,7 +80,7 @@ def exports(ws):
         result = manager.get_entities(
             query=_filter,
             limit=limit,
-            start=start, 
+            start=start,
             sort=sort
         )
         return result

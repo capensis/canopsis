@@ -73,7 +73,7 @@ class PerfData(MiddlewareRegistry):
         """
 
         id_ = self.context.get_id(event)
-        entity = self.context.get_entity(id_)
+        entity = self.context.get_entities_by_id(id_)
 
         ctype = entity[ContextGraph.TYPE]
         entity[ContextGraph.TYPE] = 'metric'
@@ -87,7 +87,7 @@ class PerfData(MiddlewareRegistry):
 
         tags = {} if meta is None else meta.copy()
 
-        entity = self[PerfData.CONTEXT_MANAGER].get_entity(metric_id)
+        entity = self[PerfData.CONTEXT_MANAGER].get_entities_by_id(metric_id)
 
         tags.update(entity)
         tags[ContextGraph.EID] = metric_id

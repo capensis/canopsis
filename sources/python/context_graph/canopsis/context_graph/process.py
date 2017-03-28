@@ -412,7 +412,7 @@ def event_processing(
     add_missing_ids(presence, ids)
 
 
-    entities_in_db = context_graph_manager.get_entity(ids.values())
+    entities_in_db = context_graph_manager.get_entities_by_id(ids.values())
     data = set()
     for i in entities_in_db:
         data.add(i['_id'])
