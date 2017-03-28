@@ -25,6 +25,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "Romain Hennuyer", "2017/03/28", "0.4", "Add steps comment", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.3", "Add steps hard limit", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.2", "Add flapping crop feature", ""
    "David Delassus", "2015/10/26", "0.1", "Document creation", ""
@@ -177,6 +178,19 @@ Alarm step "cancel" data model
    t, step timestamp, ``event["timestamp"]``
    a, step author, alarm canceling author
    m, step message, alarm canceling message
+
+.. _TR__Alarm__DataModel__Comment:
+
+Alarm step "comment" data model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. csv-table::
+   :header: Field, Description, Default Value
+
+   _t, step type, ``comment``
+   t, step timestamp, ``event["timestamp"]``
+   a, step author, comment author
+   m, step message, comment message
 
 .. _TR__Alarm__DataModel__Restore:
 
@@ -396,6 +410,24 @@ Task: Cancel
 **Expected:**
 
  - the alarm ``cancel`` **MUST** be set to :ref:`cancel step <TR__Alarm__DataModel__Cancel>`
+ - the step **MUST** be added to the ``steps`` set of the alarm
+ - the alarm **MUST** be returned as ``new_value``
+
+Task: comment
+-----------------
+
+``alerts.useraction.comment(manager, alarm, author, message, event) -> new_value``:
+
+ * ``manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to comment
+ * ``author`` as a ``string``: the comment author
+ * ``message`` as a ``string``: the comment message
+ * ``event`` as a ``dict``: the :ref:`comment event <FR__Event__Comment>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``comment`` **MUST** be set to :ref:`comment step <TR__Alarm__DataModel__Comment>`
  - the step **MUST** be added to the ``steps`` set of the alarm
  - the alarm **MUST** be returned as ``new_value``
 

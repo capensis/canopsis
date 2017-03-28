@@ -23,6 +23,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "Romain Hennuyer", "2017/03/28", "0.4", "Add steps comment", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.3", "Add steps hard limit", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.2", "Add flapping crop feature", ""
    "David Delassus", "2015/10/22", "0.1", "Document creation", ""
@@ -46,6 +47,7 @@ An alarm is described by a set of :ref:`events <FR__Event>`:
  - eventually an :ref:`alarm canceling event <FR__Event__Cancel>`
  - eventually an :ref:`alarm restoring event <FR__Event__Uncancel>`
  - eventually an :ref:`alarm snooze event <FR__Event__Snooze>`
+ - eventually an :ref:`alarm comment event <FR__Event__Comment>`
 
 This set of events is called, in Canopsis, an *alarm cycle* and is associated to
 a :ref:`contextual entity <FR__Context__Entity>`.
@@ -71,6 +73,7 @@ potential flapping has elapsed. It **MUST** have a list of steps. Each
  - the alarm state decreased
  - the alarm has been snoozed
  - the number of steps has reached an hard limit
+ - the alarm has been commented
 
 Each step **MUST** be historized in its corresponding *alarm cycle*.
 And once the alarm ended, the cycle **MUST** be closed, and archived.
