@@ -105,6 +105,24 @@ class TestTasks(BaseTest):
             alarm['canceled'] is get_previous_step(alarm, 'cancel')
         )
 
+    def test_comment(self):
+        event = {'timestamp': 0}
+
+        task = get_task('alerts.useraction.comment')
+        alarm = task(
+            self.manager,
+            self.alarm,
+            'testauthor',
+            'test message',
+            event
+        )
+
+        self.assertFalse(alarm['steps'] is None)
+        self.assertEqual(alarm['steps'][0]['t'], 0)
+        self.assertEqual(alarm['steps'][0]['_t'], 'comment')
+        self.assertEqual(alarm['steps'][0]['a'], 'testauthor')
+        self.assertEqual(alarm['steps'][0]['m'], 'test message')
+
     def test_restore(self):
         event = {'timestamp': 0}
 

@@ -83,6 +83,24 @@ def cancel(manager, alarm, author, message, event):
     return alarm, CANCELED
 
 
+@register_task('alerts.useraction.comment')
+def comment(manager, alarm, author, message, event):
+    """
+    Called when a user adds a comment on an alarm.
+    """
+
+    step = {
+        '_t': 'comment',
+        't': event['timestamp'],
+        'a': author,
+        'm': message
+    }
+
+    alarm['steps'].append(step)
+
+    return alarm
+
+
 @register_task('alerts.useraction.uncancel')
 def restore(manager, alarm, author, message, event):
     """
