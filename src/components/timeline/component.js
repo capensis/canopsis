@@ -110,8 +110,6 @@ Ember.Application.initializer({
                 var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alarm');
                 var query = {'entity_id': get(component, 'timelineData').entity_id};
 
-                var previousDate = undefined;
-
                 adapter.findQuery('alarm', 'get-current-alarm', query).then(function (result) {
                     // onfullfillment
 
@@ -122,12 +120,6 @@ Ember.Application.initializer({
                         //build time related information
                         var date = new Date(step.t*1000);
                         step.date = moment(date).format('LL');
-
-                        if(step.date != previousDate)
-                            step.showDate = true;
-                        else
-                            step.showDate = false;
-
                         step.time = moment(date).format('h:mm:ss a');
 
                         if (!(step._t in get(component, 'iconsAndColors'))) {
@@ -179,10 +171,6 @@ Ember.Application.initializer({
                         }
 
                         steps.push(step);
-
-
-                        //stock previous date
-                        previousDate = step.date;
                     }
 
                     /* steps can be null if entity has no current alarm. */
