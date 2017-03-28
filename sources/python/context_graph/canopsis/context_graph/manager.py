@@ -357,6 +357,9 @@ class ContextGraph(MiddlewareRegistry):
         :rtype: dict
         """
 
+        # keys from entity that should not be in event
+        delete_keys = ["_id", "depends", "impact", "type"]
+
         kwargs['event_type'] = event_type
 
         # In some cases, name is present but is component in fact
@@ -365,9 +368,14 @@ class ContextGraph(MiddlewareRegistry):
                 entity['component'] = entity['name']
             entity.pop('name')
 
+        # remove key that should not be in the event
+        tmp = entity.copy()
+        for key in delete_keys:
+            tmp.pop(key)
+
         # fill kwargs with entity values
-        for field in entity:
-            kwargs[field] = entity[field]
+        for field in tmp:
+            kwargs[field] = tmp[field]
 
         # forge the event
         result = forger(**kwargs)

@@ -169,7 +169,7 @@ class TestManager(TestCase):
         self.manager.create_entity(entity2)
         self.assertDictEqual(
             entity,
-            self.manager.get_entities(query={'_id': 'test_create'})[0]
+            self.manager.get_entities(query={'_id': 'test_create'}[0])
         )
 
     def test_delete_entity(self):
@@ -189,9 +189,7 @@ class TestManager(TestCase):
         }
         self.manager.create_entity(entity)
         self.manager.create_entity(entity2)
-        print(self.manager.get_entities(query={'_id': 'test_entity2'}))
         self.manager.delete_entity('test_entity')
-        print(self.manager.get_entities(query={'_id': 'test_entity2'}))
         self.assertEqual(
             [],
             self.manager.get_entities(query={'_id': 'test_entity2'})[
@@ -347,21 +345,32 @@ class GetEvent(TestCase):
 
     def test_get_check_event(self):
 
-        entity_id = '/a/b/c'
-        name = "name-a"
+        # set of required field
+        fields = sorted(['component', 'connector', 'connector_name',
+                         'event_type', 'infos', 'long_output', 'measurements',
+                         'output', 'source_type', 'state', 'state_type',
+                         'timestamp'])
 
-        entity = create_conn(entity_id, name, depends=[],
-                             impact=[], measurements=[], infos={})
+        conn = "conn"
+        conn_name = "conn-name"
+        entity_id = conn + "/" + conn_name
+        measurements = ["measurements1", "measurements2"]
+        infos = {"info1": "data1",
+                 "info2": "data2",
+                 "info3": "data3"}
+
+        entity = create_conn(entity_id, conn_name, depends=[],
+                             impact=[], measurements=measurements, infos=infos)
 
         event = self.context.get_event(
             entity, event_type='check', output='test'
         )
 
-        # TODO : check more fields.
-        # FIXME : Did testing with different kind of entities is useful ?
-
+        self.assertListEqual(sorted(event.keys()), fields)
         self.assertEqual(event['event_type'], 'check')
         self.assertEqual(event['output'], 'test')
+        self.assertListEqual(event['measurements'], measurements)
+        self.assertDictEqual(event['infos'], infos)
 
 
 class GetID(TestCase):
