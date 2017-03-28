@@ -4,11 +4,14 @@
     <ul class="timeline">
 
       {{#each steps as |step|}}
-        <li class="time-label">
-          <span class="bg-red">
-            {{step.date}}
-          </span>
-        </li>
+        {{#if step.showDate}}
+          <li class="time-label">
+            
+            <span class="bg-red">
+              {{step.date}}
+            </span>
+          </li>
+        {{/if}}
         <!-- /.timeline-label -->
         <!-- timeline item -->
         <li>
