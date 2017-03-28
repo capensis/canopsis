@@ -208,26 +208,6 @@ class ContextGraph(MiddlewareRegistry):
         :param re_id:
         """
 
-    def add_comp(self, comp):
-        """add_comp
-
-        :param comp:
-        """
-        self[ContextGraph.ENTITIES_STORAGE].put_element(element=comp)
-
-    def add_re(self, re):
-        """add_re
-
-        :param re:
-        """
-        self[ContextGraph.ENTITIES_STORAGE].put_element(element=re)
-
-    def add_conn(self, conn):
-        """add_conn
-
-        :param conn:
-        """
-        self[ContextGraph.ENTITIES_STORAGE].put_element(element=conn)
 
     def get_all_entities(self):
         """

@@ -221,43 +221,6 @@ class TestManager(TestCase):
                 0]['depends']
         )
 
-    def test_add_comp(self):
-        id = "comp1"
-        comp = create_comp(id,
-                           "comp1_name",
-                           depends=["conn1", "conn2", "conn3", "conn4"],
-                           impact=["res1", "res2", "res3", "res4"],
-                           measurements=["m1", "m2", "m3"],
-                           infos={"title": "Foo", "content": "bar"})
-
-        self.manager.add_comp(comp)
-        tmp_comp = self.entities_storage.get_elements(ids=id)
-        self.assertEqual(comp, tmp_comp)
-
-    def test_add_con(self):
-        id = "conn1"
-        conn = create_conn(id,
-                           "conn1_name",
-                           depends=["foo0", "bar0", "foo1", "bar1"],
-                           impact=["comp1", "comp2", "comp3", "comp4"],
-                           measurements=["m1", "m2", "m3"],
-                           infos={"title": "Foo", "content": "bar"})
-        self.manager.add_conn(conn)
-        tmp_conn = self.entities_storage.get_elements(ids=id)
-        self.assertEqual(conn, tmp_conn)
-
-    def test_add_re(self):
-        id = "re1"
-        re = create_re(id,
-                       "re1_name",
-                       depends=["foo", "bar", "foo", "bar"],
-                       impact=["comp1", "comp2", "comp3", "comp4"],
-                       measurements=["m1", "m2", "m3"],
-                       infos={"title": "Foo", "content": "bar"})
-        self.manager.add_re(re)
-        tmp_re = self.entities_storage.get_elements(ids=id)
-        self.assertEqual(re, tmp_re)
-
     def test_manage_comp_to_re_link(self):
         conn1_id = "mcr_conn1"
         re1_id = "mcr_re1"
@@ -269,10 +232,10 @@ class TestManager(TestCase):
         re2 = create_re(re2_id, re2_id, impact=[conn1_id])
         re3 = create_re(re3_id, re3_id)
 
-        self.manager.add_conn(conn1)
-        self.manager.add_re(re1)
-        self.manager.add_re(re2)
-        self.manager.add_re(re3)
+        self.manager.put_entities(conn1)
+        self.manager.put_entities(re1)
+        self.manager.put_entities(re2)
+        self.manager.put_entities(re3)
 
         self.manager.manage_comp_to_re_link(re3_id, conn1_id)
 
@@ -293,10 +256,10 @@ class TestManager(TestCase):
         conn2 = create_conn(conn2_id, conn2_id, impact=[re1_id])
         conn3 = create_conn(conn3_id, conn3_id)
 
-        self.manager.add_re(re1)
-        self.manager.add_conn(conn1)
-        self.manager.add_conn(conn2)
-        self.manager.add_conn(conn3)
+        self.manager.put_entities(re1)
+        self.manager.put_entities(conn1)
+        self.manager.put_entities(conn2)
+        self.manager.put_entities(conn3)
 
         self.manager.manage_comp_to_re_link(conn3_id, re1_id)
 
@@ -317,10 +280,10 @@ class TestManager(TestCase):
         conn2 = create_conn(conn2_id, conn2_id, impact=[comp1_id])
         conn3 = create_conn(conn3_id, conn3_id)
 
-        self.manager.add_comp(comp1)
-        self.manager.add_conn(conn1)
-        self.manager.add_conn(conn2)
-        self.manager.add_conn(conn3)
+        self.manager.put_entities(comp1)
+        self.manager.put_entities(conn1)
+        self.manager.put_entities(conn2)
+        self.manager.put_entities(conn3)
 
         self.manager.manage_comp_to_re_link(conn3_id, comp1_id)
 
