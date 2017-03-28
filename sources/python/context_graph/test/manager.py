@@ -444,9 +444,6 @@ class CheckConn(BaseTest):
 
 class GetEntitiesByID(BaseTest):
 
-    def setUp(self):
-        super(GetEntitiesByID, self).setUp()
-
     def test_get_entity_by_id_id(self):
         entity = {'_id': 'conn1/conn-name',
                   'type': 'connector',
@@ -464,26 +461,26 @@ class GetEntitiesByID(BaseTest):
 
     def test_get_entity_by_id_ids(self):
         entities = [{'_id': 'conn1/conn-name1',
-                  'type': 'connector',
-                  'name': 'conn-name1',
-                  'depends': [],
-                  'impact': [],
-                  'measurements': [],
+                     'type': 'connector',
+                     'name': 'conn-name1',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
                      'infos': {}},
-        {'_id': 'conn2/conn-name2',
-                  'type': 'connector',
-                  'name': 'conn-name2',
-                  'depends': [],
-                  'impact': [],
-                  'measurements': [],
-                  'infos': {}},
+                    {'_id': 'conn2/conn-name2',
+                     'type': 'connector',
+                     'name': 'conn-name2',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
+                     'infos': {}},
                     {'_id': 'conn3/conn-name3',
-                  'type': 'connector',
-                  'name': 'conn-name3',
-                  'depends': [],
-                  'impact': [],
-                  'measurements': [],
-                  'infos': {}}]
+                     'type': 'connector',
+                     'name': 'conn-name3',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
+                     'infos': {}}]
 
         sorted(entities)
         self.manager.put_entities(entities)
@@ -506,6 +503,55 @@ class GetEntitiesByID(BaseTest):
         self.assertIsInstance(result, type({}))
         self.assertDictEqual(result, {})
 
+
+class PutEntities(BaseTest):
+
+    def test_put_entities_entity(self):
+        entity = {'_id': 'conn1/conn-name',
+                  'type': 'connector',
+                  'name': 'conn-name',
+                  'depends': [],
+                  'impact': [],
+                  'measurements': [],
+                  'infos': {}}
+
+        self.manager.put_entities(entity)
+
+        result = self.manager.get_entities_by_id(entity["_id"])
+
+        self.assertDictEqual(result, entity)
+
+    def test_put_entities_entities(self):
+        entities = [{'_id': 'conn1/conn-name1',
+                     'type': 'connector',
+                     'name': 'conn-name1',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
+                     'infos': {}},
+                    {'_id': 'conn2/conn-name2',
+                     'type': 'connector',
+                     'name': 'conn-name2',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
+                     'infos': {}},
+                    {'_id': 'conn3/conn-name3',
+                     'type': 'connector',
+                     'name': 'conn-name3',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
+                     'infos': {}}]
+        sorted(entities)
+
+        self.manager.put_entities(entities)
+
+        ids = [x["_id"] for x in entities]
+
+        result = self.manager.get_entities_by_id(ids)
+        sorted(result)
+        self.assertListEqual(result, entities)
 
 
 if __name__ == '__main__':
