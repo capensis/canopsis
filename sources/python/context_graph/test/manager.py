@@ -128,7 +128,7 @@ class TestManager(TestCase):
 
         self.entities_storage.put_element(
             element={
-                '_id': 'conn1',
+                '_id': 'conn1/conn1',
                 'type': 'connector',
                 'name': 'conn1',
                 'depends': [],
@@ -220,18 +220,6 @@ class TestManager(TestCase):
             self.manager.get_entities(query={'_id': 'test_entity2'})[
                 0]['depends']
         )
-
-    def test_check_comp(self):
-        self.assertEqual(self.manager.check_comp('c1'), True)
-        self.assertEqual(self.manager.check_comp('c2'), False)
-
-    def test_check_re(self):
-        self.assertEqual(self.manager.check_re('r1/c1'), True)
-        self.assertEqual(self.manager.check_re('r2/c1'), False)
-
-    def test_check_conn(self):
-        self.assertEqual(self.manager.check_conn('conn1'), True)
-        self.assertEqual(self.manager.check_conn('conn2'), False)
 
     def test_add_comp(self):
         id = "comp1"
@@ -476,6 +464,25 @@ def CheckRe(BaseTest):
     def test_check_re(self):
         self.assertEqual(self.manager.check_re('r1/c1'), True)
         self.assertEqual(self.manager.check_re('r2/c1'), False)
+
+
+def CheckConn(BaseTest):
+
+    def setUp(self):
+        super(CheckRe, self).setUp()
+        entity = {'_id': 'conn1/conn-name',
+                  'type': 'connector',
+                  'name': 'conn-name',
+                  'depends': [],
+                  'impact': [],
+                  'measurements': [],
+                  'infos': {}}
+        self.manager.put_entities(entity)
+
+    def test_check_conn(self):
+        self.assertEqual(self.manager.check_conn('conn1/conn-name'), True)
+        self.assertEqual(self.manager.check_conn('conn2'), False)
+
 
 if __name__ == '__main__':
     main()

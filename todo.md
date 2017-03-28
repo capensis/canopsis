@@ -64,9 +64,9 @@ ContextGraph Unit test
   * **DONE** def check_comp(self, comp_id):
   * **DONE** def get_event(self, entity, event_type='check', **kwargs):
   * **DONE** def check_re(self, re_id):
+  * **DONE** def check_conn(self, conn_id):
   * def get_entity(self, id):
   * def put_entities(self, entities):
-  * def check_conn(self, conn_id):
   * def check_links(self, conn_id, comp_id, re_id):
   * def manage_comp_to_re_link(self, re_id, comp_id):
   * def manage_re_to_conn_link(self, conn_id, re_id):
