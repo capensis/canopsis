@@ -60,8 +60,8 @@ Function not used or only used inside the manager
 
 ContextGraph Unit test
 ----------------------
-  * def get_id(cls, event):
-  * def check_comp(self, comp_id):
+  * **DONE** def get_id(cls, event):
+  * **DONE** def check_comp(self, comp_id):
   * def get_entity(self, id):
   * def put_entities(self, entities):
   * def check_re(self, re_id):
@@ -81,4 +81,4 @@ ContextGraph Unit test
   * def update_entity(self, entity):
   * def delete_entity(self, id_):
   * def get_entities(self,
-  * def get_event(self, entity, event_type='check', **kwargs):
+  * **DONE** def get_event(self, entity, event_type='check', **kwargs):

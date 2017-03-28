@@ -58,6 +58,31 @@ def create_re(id, name, depends=[], impact=[], measurements=[], infos={}):
                          infos)
 
 
+class BaseTest(TestCase):
+
+    def setUp(self):
+        self.manager = ContextGraph()
+        self.entities_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testentities://'
+        )
+        self.organisations_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testorganisations://'
+        )
+        self.users_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testusers://'
+        )
+
+        self.manager[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
+        self.manager[
+            ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
+        self.manager[ContextGraph.USERS_STORAGE] = self.users_storage
+
+    def tearDown(self):
+        self.entities_storage.remove_elements()
+        self.organisations_storage.remove_elements()
+        self.organisations_storage.remove_elements()
+
+
 class TestManager(TestCase):
 
     def setUp(self):
@@ -416,6 +441,23 @@ class GetID(TestCase):
         with self.assertRaisesRegexp(ValueError, error_desc):
             ContextGraph.get_id(self.event)
 
+
+class CheckComp(BaseTest):
+
+    def setUp(self):
+        super(CheckComp, self).setUp()
+        entity = {'_id': 'c1',
+                  'type': 'component',
+                  'name': 'c1',
+                  'depends': [],
+                  'impact': [],
+                  'measurements': [],
+                  'infos': {}}
+        self.manager.put_entities(entity)
+
+    def test_check_comp(self):
+        self.assertEqual(self.manager.check_comp('c1'), True)
+        self.assertEqual(self.manager.check_comp('c2'), False)
 
 if __name__ == '__main__':
     main()
