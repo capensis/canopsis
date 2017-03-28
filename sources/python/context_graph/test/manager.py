@@ -553,6 +553,45 @@ class PutEntities(BaseTest):
         sorted(result)
         self.assertListEqual(result, entities)
 
+class GetAllEntitiesId(BaseTest):
+
+    def setUp(self):
+        super(GetAllEntitiesId, self).setUp()
+        entities = [{'_id': 'conn1/conn-name1',
+                     'type': 'connector',
+                     'name': 'conn-name1',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
+                     'infos': {}},
+                    {'_id': 'conn2/conn-name2',
+                     'type': 'connector',
+                     'name': 'conn-name2',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
+                     'infos': {}},
+                    {'_id': 'conn3/conn-name3',
+                     'type': 'connector',
+                     'name': 'conn-name3',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
+                     'infos': {}},
+                    {'_id': 'conn4/conn-name4',
+                     'type': 'connector',
+                     'name': 'conn-name3',
+                     'depends': [],
+                     'impact': [],
+                     'measurements': [],
+                     'infos': {}}]
+
+        expected = set()
+        for entity in entities:
+            expected.add(entity["_id"])
+
+        result = self.manager.get_all_entities()
+        self.assertSetEqual(result, expected)
 
 if __name__ == '__main__':
     main()

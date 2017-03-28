@@ -19,7 +19,7 @@ LOGGER = None
 
 def update_cache():
     global cache
-    cache = context_graph_manager.get_all_entities()
+    cache = context_graph_manager.get_all_entities_id()
 
 
 def create_entity(

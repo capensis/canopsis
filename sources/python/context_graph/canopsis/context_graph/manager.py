@@ -210,7 +210,7 @@ class ContextGraph(MiddlewareRegistry):
         """
 
 
-    def get_all_entities(self):
+    def get_all_entities_id(self):
         """
             get all entities ids by types
         """
