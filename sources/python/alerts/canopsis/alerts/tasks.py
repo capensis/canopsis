@@ -96,6 +96,7 @@ def comment(manager, alarm, author, message, event):
         'm': message
     }
 
+    alarm['comment'] = step
     alarm['steps'].append(step)
 
     return alarm
