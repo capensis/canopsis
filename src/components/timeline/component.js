@@ -37,6 +37,7 @@ Ember.Application.initializer({
                 'assocticket': 'Ticket association by ',
                 'declareticket': 'Ticket declared by ',
                 'cancel': 'Canceled by ',
+                'comment': 'Comment by ',
                 'uncancel': 'Restored by ',
                 'statusinc': 'Status increased',
                 'statusdec': 'Status decreased',
@@ -54,6 +55,7 @@ Ember.Application.initializer({
                 'assocticket',
                 'declareticket',
                 'cancel',
+                'comment',
                 'uncancel',
                 'snooze'
             ],
@@ -86,6 +88,7 @@ Ember.Application.initializer({
                 'assocticket': {'icon': 'fa-ticket', 'color': 'bg-blue'},
                 'declareticket': {'icon': 'fa-ticket', 'color': 'bg-blue'},
                 'cancel': {'icon': 'glyphicon glyphicon-trash', 'color': 'bg-gray'},
+                'comment': {'icon': 'fa-comment-o', 'color': 'bg-teal'},
                 'uncancel': {'icon': 'glyphicon glyphicon-share', 'color': 'bg-gray'},
                 'statusinc': {'icon': 'fa-chevron-up', 'color': 'bg-gray'},
                 'statusdec': {'icon': 'fa-chevron-down', 'color': 'bg-gray'},
