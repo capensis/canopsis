@@ -459,5 +459,23 @@ class CheckComp(BaseTest):
         self.assertEqual(self.manager.check_comp('c1'), True)
         self.assertEqual(self.manager.check_comp('c2'), False)
 
+
+def CheckRe(BaseTest):
+
+    def setUp(self):
+        super(CheckRe, self).setUp()
+        entity = {'_id': 'r1/c1',
+                  'type': 'resource',
+                  'name': 'r1',
+                  'depends': [],
+                  'impact': [],
+                  'measurements': [],
+                  'infos': {}}
+        self.manager.put_entities(entity)
+
+    def test_check_re(self):
+        self.assertEqual(self.manager.check_re('r1/c1'), True)
+        self.assertEqual(self.manager.check_re('r2/c1'), False)
+
 if __name__ == '__main__':
     main()
