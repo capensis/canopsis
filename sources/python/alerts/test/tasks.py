@@ -117,11 +117,10 @@ class TestTasks(BaseTest):
             event
         )
 
-        self.assertFalse(alarm['steps'] is None)
-        self.assertEqual(alarm['steps'][0]['t'], 0)
-        self.assertEqual(alarm['steps'][0]['_t'], 'comment')
-        self.assertEqual(alarm['steps'][0]['a'], 'testauthor')
-        self.assertEqual(alarm['steps'][0]['m'], 'test message')
+        self.assertFalse(alarm['comment'] is None)
+        self.assertEqual(alarm['comment']['t'], 0)
+        self.assertEqual(alarm['comment']['a'], 'testauthor')
+        self.assertEqual(alarm['comment']['m'], 'test message')
 
     def test_restore(self):
         event = {'timestamp': 0}
