@@ -68,7 +68,7 @@ ContextGraph Unit test
   * **DONE** def get_entities_by_id(self, id):
   * **DONE** def put_entities(self, entities):
   * **DONE** def get_all_entities_id(self):
-  * def check_links(self, conn_id, comp_id, re_id):
+  * **DONE** def check_links(self, conn_id, comp_id, re_id):
   * def manage_comp_to_re_link(self, re_id, comp_id):
   * def manage_re_to_conn_link(self, conn_id, re_id):
   * def manage_comp_to_conn_link(self, conn_id, comp_id):

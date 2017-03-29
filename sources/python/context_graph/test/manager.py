@@ -555,8 +555,7 @@ class PutEntities(BaseTest):
 
 class GetAllEntitiesId(BaseTest):
 
-    def setUp(self):
-        super(GetAllEntitiesId, self).setUp()
+    def test_get_all_entities_id(self):
         entities = [{'_id': 'conn1/conn-name1',
                      'type': 'connector',
                      'name': 'conn-name1',
@@ -592,6 +591,15 @@ class GetAllEntitiesId(BaseTest):
 
         result = self.manager.get_all_entities()
         self.assertSetEqual(result, expected)
+
+
+class CheckLinks(BaseTest):
+
+    def test_check_links(self):
+        with self.assertRaises(NotImplementedError):
+            self.manager.check_links(None, None, None)
+
+
 
 if __name__ == '__main__':
     main()
