@@ -27,9 +27,13 @@ Ember.Application.initializer({
         var adapter = ApplicationAdapter.extend({
 
             // Method called in the controller to fetch data
-            findQuery: function(store, query) {
+            findQuery: function(store, query, q) {
 				        var url = '/alerts/get-alarms';
-                return this.ajax(url, 'GET', {data: query});
+                if (query == 'get-current-alarm') {
+                    return this.ajax('/alerts/get-current-alarm', 'GET', {data: q});
+                } else {
+                    return this.ajax(url, 'GET', {data: query});
+                };
             }
         });
 

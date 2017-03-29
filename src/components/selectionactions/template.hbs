@@ -1,0 +1,9 @@
+<div class="pull-left">
+    {{tr 'Selection'}} :
+    {{#each action in actionsMap}}
+      <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
+          <span {{bind-attr class=action.class}}></span>
+          {{action.caption}}
+      </button>
+    {{/each}}
+</div>

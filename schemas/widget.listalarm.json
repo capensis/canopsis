@@ -5,15 +5,13 @@
     },
 	"categories": [{
 		"title": "General",
-		"keys":["title", "default_sort_column"]
+		"keys":["title", "default_sort_column", "alarms_state_filter"]
 	},{
 		"title": "Columns",
 		"keys":["columns"]
 	},{
 		"title": "Info popup",
-		"keys":[
-			"popup"
-		]
+		"keys":["popup"]
 	},{
 		"title": "Mixins",
 		"keys":["mixins"]
@@ -26,6 +24,18 @@
 			"type": "object",
 			"role": "sortable"
     },
+		"alarms_state_filter": {
+			"type": "object",
+			"role": "radio"
+		},
+		"user_filters": {
+			"type": "boolean",
+			"isUserPreference": true
+		},
+		"itemsPerPage": {
+			"type": "integer",
+			"isUserPreference": true
+		},
     "columns": {
 			"type": "array",
 			"items": {
@@ -34,8 +44,11 @@
 			"reorderable": true
     },
 		"popup": {
-				"type": "string",
-				"role": "textarea"
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "pair"
+			}
 		}
 	}
 }
