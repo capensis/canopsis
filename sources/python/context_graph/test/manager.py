@@ -741,7 +741,7 @@ class UpdateDependancies(BaseTest):
         with self.assertRaisesRegexp(ValueError, desc):
             self.manager._ContextGraph__update_dependancies(None, status,
                                                             "impact")
-    def __test_delete(self, from_, to, delete):
+    def __test(self, from_, to, delete):
         template = {'_id': None,
                     'type': 'connector',
                     'name': 'conn-name1',
@@ -807,16 +807,87 @@ class UpdateDependancies(BaseTest):
                         entity["_id"]))
 
     def test_update_dependancies_entity_depends_delete(self):
-        self.__test_delete("depends", "impact", True)
+        self.__test("depends", "impact", True)
 
     def test_update_dependancies_entity_impact_delete(self):
-        self.__test_delete("impact", "depends", True)
+        self.__test("impact", "depends", True)
 
     def test_update_dependancies_entity_depends_insert(self):
-        self.__test_delete("depends", "impact", False)
+        self.__test("depends", "impact", False)
 
     def test_update_dependancies_entity_impact_insert(self):
-        self.__test_delete("impact", "depends", False)
+        self.__test("impact", "depends", False)
+
+class DeleteEntity(BaseTest):
+
+    def test_delete_entity_wrong_id(self):
+        id_ = "this_is_not_an_id"
+        desc = "No entity found for the following id : {0}".format(id_)
+
+        with self.assertRaisesRegexp(ValueError, desc):
+            self.manager.delete_entity(id_)
+
+    def __test(self, from_, to):
+        template = {'_id': None,
+                    'type': 'connector',
+                    'name': 'conn-name1',
+                    'depends': [],
+                    'impact': [],
+                    'measurements': [],
+                    'infos': {}}
+        self.ent1 = template.copy()
+        self.ent2 = template.copy()
+        self.ent3 = template.copy()
+        self.ent4 = template.copy()
+
+        self.ent1["_id"] = "ent1"
+        self.ent1[from_] = ["ent2", "ent3"]
+        self.ent2["_id"] = "ent2"
+        self.ent2[to] = ["ent1"]
+        self.ent3["_id"] = "ent3"
+        self.ent3[to] = ["ent1", "dummy"]
+        self.ent4["_id"] = "ent4"
+        self.ent4[from_] = ["dummy"]
+
+        self.manager.put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
+
+        self.manager.delete_entity(self.ent1["_id"])
+
+        result = self.manager.get_entities_by_id([self.ent1,
+                                                  self.ent2,
+                                                  self.ent3,
+                                                  self.ent4])
+
+        for entity in result:
+            if entity["_id"] == "ent1":
+                self.fail("The entity ent1 should be deleted")
+
+            if entity["_id"] == "ent2":
+                expected = template.copy()
+                expected["_id"] = "ent2"
+
+                self.assertEqualEntities(entity, expected)
+
+            elif entity["_id"] == "ent3":
+                expected = template.copy()
+                expected["_id"] = "ent3"
+                expected[to] = ["dummy"]
+
+                self.assertEqualEntities(entity, expected)
+
+            elif entity["_id"] == "ent4":
+                expected = template.copy()
+                expected["_id"] = "ent4"
+                expected[to] = ["dummy"]
+
+                self.assertEqualEntities(entity, expected)
+
+    def test_delete_entity_depends(self):
+        self.__test("depends", "impact")
+
+    def test_delete_entity_depends(self):
+        self.__test("impact", "depends")
+
 
 
 if __name__ == '__main__':

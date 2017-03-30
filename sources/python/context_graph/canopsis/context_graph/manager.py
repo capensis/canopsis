@@ -360,39 +360,22 @@ class ContextGraph(MiddlewareRegistry):
 
     def delete_entity(self, id_):
         """Delete an entity identified by id_ from the context."""
-        entity = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-            query={'_id': id_}
-        ))[0]
-        if entity['depends'] != []:
-            # update entity in depends list
-            query = {'$or': []}
-            for i in entity['depends']:
-                query['$or'].append({'_id': i})
+        try:
+            entity = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                query={'_id': id_}))[0]
+        except IndexError:
+            desc = "No entity found for the following id : {0}".format(id_)
+            raise ValueError(desc)
 
-            tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-                query=query
-            ))
-            for j in tmp:
-                try:
-                    j['impact'].remove(id_)
-                    self[ContextGraph.ENTITIES_STORAGE].put_element(j)
-                except ValueError:
-                    pass
-        if entity['impact'] != []:
-            # update entity in impact list
-            query = {'$or': []}
-            for i in entity['impact']:
-                query['$or'].append({'_id': i})
-            tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-                query=query
-            ))
-            for j in tmp:
-                try:
-                    j['depends'].remove(id_)
-                except ValueError:
-                    # a corriger mais je tente comme ça pour les tests
-                    pass
-                self[ContextGraph.ENTITIES_STORAGE].put_element(j)
+        status = {"deletions": entity["depends"],
+                  "insertions": []}
+        updated_entities = self.__update_dependancies(entity, status, "depends")
+        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+
+        status = {"deletions": entity["impact"],
+                  "insertions": []}
+        updated_entities = self.__update_dependancies(entity, status, "impact")
+        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
 
