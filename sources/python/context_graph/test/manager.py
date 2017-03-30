@@ -82,6 +82,12 @@ class BaseTest(TestCase):
         self.organisations_storage.remove_elements()
         self.organisations_storage.remove_elements()
 
+    def assertEqualEntities(self, entity1, entity2):
+        sorted(entity1["depends"])
+        sorted(entity1["impact"])
+        sorted(entity2["depends"])
+        sorted(entity2["impact"])
+        self.assertDictEqual(entity1, entity2)
 
 class TestManager(TestCase):
 
@@ -624,13 +630,6 @@ class UpdateEntity(BaseTest):
 
         self.manager.put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
 
-    def assertEqualEntities(self, entity1, entity2):
-        sorted(entity1["depends"])
-        sorted(entity1["impact"])
-        sorted(entity2["depends"])
-        sorted(entity2["impact"])
-        self.assertDictEqual(entity1, entity2)
-
     def test_update_entity_wrong_id(self):
         fake_entity = {"_id": "wrong id"}
         error_desc = "The _id {0} does not match any entity in database."\
@@ -717,6 +716,107 @@ class UpdateEntity(BaseTest):
 
         entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
         self.assertEqualEntities(self.ent4, entity)
+
+
+class UpdateDependancies(BaseTest):
+
+    def test_update_dependancies_wrong_type(self):
+
+        desc = "Dependancy_type should be depends or impact not {0}."
+
+        with self.assertRaisesRegexp(ValueError, desc.format(None)):
+            self.manager._ContextGraph__update_dependancies(None, None, None)
+
+    def test_update_dependancies_entity_not_found_in_db(self):
+
+        status = {"deletions": ["ent2", "ent3"]}
+
+        desc = "Could not find some entity in database."
+        with self.assertRaisesRegexp(ValueError, desc):
+            self.manager._ContextGraph__update_dependancies(None, status,
+                                                            "impact")
+
+        status = {"insertions": ["ent2", "ent3"],
+                  "deletions": []}
+        with self.assertRaisesRegexp(ValueError, desc):
+            self.manager._ContextGraph__update_dependancies(None, status,
+                                                            "impact")
+    def __test_delete(self, from_, to, delete):
+        template = {'_id': None,
+                    'type': 'connector',
+                    'name': 'conn-name1',
+                    'depends': [],
+                    'impact': [],
+                    'measurements': [],
+                    'infos': {}}
+        self.ent1 = template.copy()
+        self.ent2 = template.copy()
+        self.ent3 = template.copy()
+        self.ent4 = template.copy()
+
+        self.ent1["_id"] = "ent1"
+        self.ent1[from_] = ["ent2", "ent3"]
+        self.ent2["_id"] = "ent2"
+        self.ent3["_id"] = "ent3"
+        self.ent4["_id"] = "ent4"
+        self.ent4[to] = ["dummy"]
+
+        if delete:
+            self.ent2[to] = ["ent1"]
+            self.ent3[to] = ["ent1", "dummy"]
+        else:
+            self.ent3[to] = ["dummy"]
+
+        self.manager.put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
+
+        if delete:
+            status = {"deletions": ["ent2", "ent3"],
+                      "insertions":[]}
+        else:
+            status = {"deletions": [],
+                      "insertions":["ent2", "ent3"]}
+
+        result = self.manager._ContextGraph__update_dependancies(self.ent1,
+                                                                 status,
+                                                                 from_)
+
+        for entity in result:
+            if entity["_id"] == "ent2":
+                expected = template.copy()
+                expected["_id"] = "ent2"
+
+                if delete is False:
+                    expected[to] = ["ent1"]
+
+                self.assertEqualEntities(entity, expected)
+
+            elif entity["_id"] == "ent3":
+                expected = template.copy()
+                expected["_id"] = "ent3"
+
+                if delete is False:
+                    expected[to] = ["dummy", "ent1"]
+                else:
+                    expected[to] = ["dummy"]
+
+                self.assertEqualEntities(entity, expected)
+
+            else:
+                self.fail(
+                    "The entity of id {0} should not be here".format(
+                        entity["_id"]))
+
+    def test_update_dependancies_entity_depends_delete(self):
+        self.__test_delete("depends", "impact", True)
+
+    def test_update_dependancies_entity_impact_delete(self):
+        self.__test_delete("impact", "depends", True)
+
+    def test_update_dependancies_entity_depends_insert(self):
+        self.__test_delete("depends", "impact", False)
+
+    def test_update_dependancies_entity_impact_insert(self):
+        self.__test_delete("impact", "depends", False)
 
 
 if __name__ == '__main__':

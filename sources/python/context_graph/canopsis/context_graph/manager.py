@@ -300,7 +300,11 @@ class ContextGraph(MiddlewareRegistry):
             raise ValueError("Could not find some entity in database.")
 
         for entity in entities:
-            entity[to].remove(from_entity["_id"])
+            try:
+                entity[to].remove(from_entity["_id"])
+            except ValueError:
+                # TODO add a log.debug
+                pass
 
         updated_entities += entities
 
