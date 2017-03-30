@@ -19,6 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from time import time
 from unittest import TestCase, main
 
 from canopsis.middleware.core import Middleware
@@ -179,16 +180,17 @@ class TestStatus(TestCase):
         self.assertFalse(got)
 
     def test_is_stealthy(self):
+        now = int(time())
         self.alarm['steps'].append({
             '_t': 'stateinc',
-            't': 0,
+            't': now - 1,
             'a': 'test',
             'm': 'test',
             'val': Check.CRITICAL
         })
         self.alarm['state'] = {
             '_t': 'statedec',
-            't': 1,
+            't': now,
             'a': 'test',
             'm': 'test',
             'val': Check.OK

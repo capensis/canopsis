@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from time import time
+
 from canopsis.common.utils import ensure_iterable
 from canopsis.check import Check
 
@@ -144,16 +146,18 @@ def is_stealthy(manager, alarm):
     :param alarm: Alarm history
     :type alarm: dict
 
-    :returns: ``True`` if alarm is stealthy, ``False`` otherwise
+    :returns: ``True`` if alarm is supposed to be stealthy, ``False`` otherwise
     """
 
     ts = alarm['state']['t']
 
     for step in reversed(alarm['steps']):
-        if (ts - step['t']) > manager.stealthy_show_duration:
-            break
-
-        elif (ts - step['t']) > manager.stealthy_interval:
+        delta1 = ts - step['t']  # delta from last state change
+        delta2 = int(time()) - step['t']  # delta from now
+        if delta1 > manager.stealthy_show_duration or \
+           delta1 > manager.stealthy_interval or \
+           delta2 > manager.stealthy_show_duration or \
+           delta2 > manager.stealthy_interval:
             break
 
         if step['_t'] in ['stateinc', 'statedec']:

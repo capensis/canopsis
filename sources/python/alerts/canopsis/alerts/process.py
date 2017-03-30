@@ -61,4 +61,6 @@ def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
 
     alertsmgr.resolve_cancels()
 
+    alertsmgr.resolve_stealthy()
+
     alertsreader.clean_fast_count_cache()
