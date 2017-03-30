@@ -553,6 +553,7 @@ class PutEntities(BaseTest):
         sorted(result)
         self.assertListEqual(result, entities)
 
+
 class GetAllEntitiesId(BaseTest):
 
     def test_get_all_entities_id(self):
@@ -599,6 +600,90 @@ class CheckLinks(BaseTest):
         with self.assertRaises(NotImplementedError):
             self.manager.check_links(None, None, None)
 
+
+class UpdateEntity(BaseTest):
+
+    def setUp(self):
+        super(UpdateEntity, self).setUp()
+        template = {'_id': None,
+                    'type': 'connector',
+                    'name': 'conn-name1',
+                    'depends': [],
+                    'impact': [],
+                    'measurements': [],
+                    'infos': {}}
+        self.ent1 = template.copy()
+        self.ent2 = template.copy()
+        self.ent3 = template.copy()
+        self.ent4 = template.copy()
+
+        self.ent1["_id"] = "ent1"
+        self.ent2["_id"] = "ent2"
+        self.ent3["_id"] = "ent3"
+        self.ent4["_id"] = "ent4"
+
+        self.manager.put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
+
+    def assertEqualEntities(self, entity1, entity2):
+        sorted(entity1["depends"])
+        sorted(entity1["impact"])
+        sorted(entity2["depends"])
+        sorted(entity2["impact"])
+        self.assertDictEqual(entity1, entity2)
+
+    def test_update_entity_wrong_id(self):
+        fake_entity = {"_id": "wrong id"}
+        error_desc = "The _id {0} does not match any entity in database."\
+                     .format(fake_entity["_id"])
+        with self.assertRaisesRegexp(ValueError, error_desc):
+            self.manager.update_entity(fake_entity)
+
+    def test_update_entity_update_depends_insert_multiple(self):
+        self.ent1["depends"] = ["ent2", "ent3"]
+        self.manager.update_entity(self.ent1)
+
+        entity = self.manager.get_entities_by_id(self.ent1["_id"])
+        self.assertEqualEntities(self.ent1, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent2["_id"])
+        self.ent2["impact"] = ["ent1"]
+        self.assertEqualEntities(self.ent2, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent3["_id"])
+        self.ent3["impact"] = ["ent1"]
+        self.assertEqualEntities(self.ent3, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent4["_id"])
+        self.assertEqualEntities(self.ent4, entity)
+
+    def test_update_entity_update_depends_insert_single(self):
+        self.ent1["depends"] = ["ent2"]
+        self.manager.update_entity(self.ent1)
+
+        entity = self.manager.get_entities_by_id(self.ent1["_id"])
+        self.assertEqualEntities(self.ent1, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent2["_id"])
+        self.ent2["impact"] = ["ent1"]
+        self.assertEqualEntities(self.ent2, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent3["_id"])
+        self.assertEqualEntities(self.ent3, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent4["_id"])
+        self.assertEqualEntities(self.ent4, entity)
+
+    def test_update_entity_update_impact_insert_multiple(self):
+        pass
+
+    def test_update_entity_update_impact_insert_single(self):
+        pass
+
+    def test_update_entity_update_impact_missing_ids(self):
+        pass
+
+    def test_update_entity_update_depends_missing_ids(self):
+        pass
 
 
 if __name__ == '__main__':

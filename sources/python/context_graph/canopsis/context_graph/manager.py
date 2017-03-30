@@ -51,6 +51,35 @@ class ContextGraph(MiddlewareRegistry):
 
         return id_
 
+    @classmethod
+    def is_equals(cls, entity1, entity2):
+        """Compare two entities and return True if the 2 entity are equals.
+        False otherwise"""
+        keys1 = entity1.keys()
+        keys2 = entity2.keys()
+
+        if len(keys1) != len(keys2):
+            return False
+
+        sorted(keys1)
+        sorted(keys2)
+
+        if keys1 != keys2:
+            return False
+
+        for key in keys1:
+            if isinstance(entity1[key], list):
+                # copy and sorte the list
+                list1 = sorted(entity1[key][:])
+                list2 = sorted(entity2[key][:])
+
+                if list1 != list2:
+                    return False
+            else:
+                if entity1[key] != entity2[key]:
+                    return False
+
+        return True
 
     def __init__(self, *args, **kwargs):
         """__init__
@@ -86,7 +115,8 @@ class ContextGraph(MiddlewareRegistry):
         else:
             query["_id"] = id
 
-        result = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
+        result = list(
+            self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
         if len(result) == 1:
             return result[0]
         elif len(result) == 0:
@@ -209,7 +239,6 @@ class ContextGraph(MiddlewareRegistry):
         :param re_id:
         """
 
-
     def get_all_entities_id(self):
         """
             get all entities ids by types
@@ -219,7 +248,6 @@ class ContextGraph(MiddlewareRegistry):
         ret_val = set([])
         for i in entities:
             ret_val.add(i['_id'])
-        # pritn(ret_val)
         return ret_val
 
     def create_entity(self, entity):
@@ -257,10 +285,91 @@ class ContextGraph(MiddlewareRegistry):
 
         self[ContextGraph.ENTITIES_STORAGE].put_element(entity)
 
+    def __update_dependancies(self, from_entity, status, dependancy_type):
+        if dependancy_type == "depends":
+            to = "impact"
+        elif dependancy_type == "impact":
+            to = "depends"
+        else:
+            raise ValueError(
+                "Dependancy_type should be depends or impact not {0}.".format(
+                    dependancy_type))
+
+        updated_entities = []
+
+        # retreive the entities that were link to from_entity to remove the
+        # reference of the 'from_entity'
+        entities = self.get_entities_by_id(status["deletions"])
+
+        if len(entities) != len(status["deletions"]):
+            raise ValueError("Could not find some entity in database.")
+
+        # If no elements are not found by get_entities_by_id return {}
+        if entities != {}:
+            # Because get_all_entities_id can return a dict...
+            if isinstance(entities, dict):
+                entities = [entities]
+
+            for entity in entities:
+                entity[to].remove(from_entity["_id"])
+
+            updated_entities += entities
+
+        # retreive the entities that was not link to from_entity to add a
+        # reference of the 'from_entity'
+        entities = self.get_entities_by_id(status["insertions"])
+
+        if len(entities) != len(status["insertions"]):
+            raise ValueError("Could not find some entity in database.")
+
+        # If no elements are not found by get_entities_by_id return {}
+        if entities != {}:
+            # Because get_all_entities_id can return a dict...
+            if isinstance(entities, dict):
+                entities = [entities]
+
+            for entity in entities:
+                entity[to].append(from_entity["_id"])
+
+            updated_entities += entities
+
+        return updated_entities
+
     def update_entity(self, entity):
         """Update an entity identified by id_ with the given entity."""
-        # TODO add traitement to check if every required field are present
-        self[ContextGraph.ENTITIES_STORAGE].put_element(entity)
+
+        def compare_change(old, new):
+            """Retourn a dict with the insertion and the deletion"""
+
+            s_old = set(list(old))
+            s_new = set(list(new))
+            deletions = s_old.difference(s_new)
+            insertions = s_new.difference(s_old)
+
+            return {"deletions": list(deletions),
+                    "insertions": list(insertions)}
+
+        old_entity = self.get_entities_by_id(entity["_id"])
+
+        if old_entity == {}:
+            raise ValueError(
+                "The _id {0} does not match any entity in database.".format(
+                    entity["_id"]))
+
+        # check if the old entity differ from the updated one
+        if self.is_equals(old_entity, entity):
+            # nothing to do.
+            return
+
+        status = compare_change(old_entity["depends"], entity["depends"])
+        updated_entities = self.__update_dependancies(entity, status, "depends")
+        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+
+        status = compare_change(old_entity["impact"], entity["impact"])
+        updated_entities = self.__update_dependancies(entity, status, "impact")
+
+        updated_entities.append(entity)
+        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
     def delete_entity(self, id_):
         """Delete an entity identified by id_ from the context."""
@@ -284,7 +393,7 @@ class ContextGraph(MiddlewareRegistry):
                     pass
         if entity['impact'] != []:
             # update entity in impact list
-            query={'$or': []}
+            query = {'$or': []}
             for i in entity['impact']:
                 query['$or'].append({'_id': i})
             tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
@@ -327,7 +436,6 @@ class ContextGraph(MiddlewareRegistry):
         ))
 
         return result
-
 
     def get_event(self, entity, event_type='check', **kwargs):
         """Get an event from an entity.
