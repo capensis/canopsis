@@ -332,9 +332,9 @@ class ContextGraph(MiddlewareRegistry):
             return {"deletions": list(deletions),
                     "insertions": list(insertions)}
 
-        old_entity = self.get_entities_by_id(entity["_id"])[0]
-
-        if old_entity == {}:
+        try:
+            old_entity = self.get_entities_by_id(entity["_id"])[0]
+        except IndexError:
             raise ValueError(
                 "The _id {0} does not match any entity in database.".format(
                     entity["_id"]))

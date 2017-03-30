@@ -21,12 +21,12 @@ Bottom priority :
   * **DONE** sources/python/linklist/canopsis/entitylink/manager.py
   * **DONE** sources/python/linklist/canopsis/engines/task_linklist.py
   * **DONE** sources/python/alerts/canopsis/alerts/manager.py
-  * **DONE**sources/python/context/test/manager.py
-  * **DONE**sources/python/context/scripts/migration_id_name.py
+  * **DONE** sources/python/context/test/manager.py
+  * **DONE** sources/python/context/scripts/migration_id_name.py
   * **DONE** sources/python/downtime/canopsis/downtime/process.py
   * **DONE** sources/python/downtime/canopsis/downtime/selector.py
-  * **DONE**sources/python/downtime/test/process.py
-  * **DONE**sources/python/engines/canopsis/engines/context.py
+  * **DONE** sources/python/downtime/test/process.py
+  * **DONE** sources/python/engines/canopsis/engines/context.py
   * **WIP**  sources/python/webcore/canopsis/webcore/services/context.py
 
 Function to replace
@@ -60,6 +60,9 @@ Function not used or only used inside the manager
 
 ContextGraph Unit test
 ----------------------
+  * **SKIP** def add_comp(self, comp):
+  * **SKIP** def add_re(self, re):
+  * **SKIP** def add_conn(self, conn):
   * **DONE** def get_id(cls, event):
   * **DONE** def check_comp(self, comp_id):
   * **DONE** def get_event(self, entity, event_type='check', \**kwargs):
@@ -69,16 +72,13 @@ ContextGraph Unit test
   * **DONE** def put_entities(self, entities):
   * **DONE** def get_all_entities_id(self):
   * **DONE** def check_links(self, conn_id, comp_id, re_id):
+  * **DONE** def update_entity(self, entity):
   * def manage_comp_to_re_link(self, re_id, comp_id):
   * def manage_re_to_conn_link(self, conn_id, re_id):
   * def manage_comp_to_conn_link(self, conn_id, comp_id):
   * def _check_conn_comp_link(self, conn_id, comp_id):
   * def _check_conn_re_link(self, conn_id, re_id):
   * def _check_comp_re_link(self, comp_id, re_id):
-  * **SKIP** def add_comp(self, comp):
-  * **SKIP** def add_re(self, re):
-  * **SKIP** def add_conn(self, conn):
   * def create_entity(self, entity):
-  * def update_entity(self, entity):
   * def delete_entity(self, id_):
   * def get_entities(self,

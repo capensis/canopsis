@@ -638,33 +638,61 @@ class UpdateEntity(BaseTest):
         with self.assertRaisesRegexp(ValueError, error_desc):
             self.manager.update_entity(fake_entity)
 
-    def test_update_entity_update_depends_insert_multiple(self):
-        self.ent1["depends"] = ["ent2", "ent3"]
+    def __test_multiple(self, from_, to):
+        self.ent1[from_] = ["ent2", "ent3"]
         self.manager.update_entity(self.ent1)
 
         entity = self.manager.get_entities_by_id(self.ent1["_id"])[0]
         self.assertEqualEntities(self.ent1, entity)
 
         entity = self.manager.get_entities_by_id(self.ent2["_id"])[0]
-        self.ent2["impact"] = ["ent1"]
+        self.ent2[to] = ["ent1"]
         self.assertEqualEntities(self.ent2, entity)
 
         entity = self.manager.get_entities_by_id(self.ent3["_id"])[0]
-        self.ent3["impact"] = ["ent1"]
+        self.ent3[to] = ["ent1"]
         self.assertEqualEntities(self.ent3, entity)
 
         entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
         self.assertEqualEntities(self.ent4, entity)
+
+    def __test_single(self, from_, to):
+        self.ent1[from_] = ["ent2"]
+        self.manager.update_entity(self.ent1)
+
+        entity = self.manager.get_entities_by_id(self.ent1["_id"])[0]
+        self.assertEqualEntities(self.ent1, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent2["_id"])[0]
+        self.ent2[to] = ["ent1"]
+        self.assertEqualEntities(self.ent2, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent3["_id"])[0]
+        self.assertEqualEntities(self.ent3, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
+        self.assertEqualEntities(self.ent4, entity)
+
+    def test_update_entity_update_depends_insert_multiple(self):
+        self.__test_multiple("depends", "impact")
 
     def test_update_entity_update_depends_insert_single(self):
-        self.ent1["depends"] = ["ent2"]
-        self.manager.update_entity(self.ent1)
+        self.__test_single("depends", "impact")
 
-        entity = self.manager.get_entities_by_id(self.ent1["_id"])[0]
-        self.assertEqualEntities(self.ent1, entity)
+    def test_update_entity_update_impact_insert_multiple(self):
+        self.__test_multiple("impact", "depends")
+
+    def test_update_entity_update_impact_insert_single(self):
+        self.__test_single("impact", "depends")
+
+    def test_update_entity_update_impact_missing_ids(self):
+        not_id = "no_an_entity_id"
+        self.ent1["depends"] = [not_id]
+        desc = "Could not find some entity in database."
+        with self.assertRaisesRegexp(ValueError, desc):
+            self.manager.update_entity(self.ent1)
 
         entity = self.manager.get_entities_by_id(self.ent2["_id"])[0]
-        self.ent2["impact"] = ["ent1"]
         self.assertEqualEntities(self.ent2, entity)
 
         entity = self.manager.get_entities_by_id(self.ent3["_id"])[0]
@@ -673,17 +701,22 @@ class UpdateEntity(BaseTest):
         entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
         self.assertEqualEntities(self.ent4, entity)
 
-    def test_update_entity_update_impact_insert_multiple(self):
-        pass
-
-    def test_update_entity_update_impact_insert_single(self):
-        pass
-
-    def test_update_entity_update_impact_missing_ids(self):
-        pass
-
     def test_update_entity_update_depends_missing_ids(self):
-        pass
+        not_id = "no_an_entity_id"
+        self.ent1["depends"] = [not_id]
+
+        desc = "Could not find some entity in database."
+        with self.assertRaisesRegexp(ValueError, desc):
+            self.manager.update_entity(self.ent1)
+
+        entity = self.manager.get_entities_by_id(self.ent2["_id"])[0]
+        self.assertEqualEntities(self.ent2, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent3["_id"])[0]
+        self.assertEqualEntities(self.ent3, entity)
+
+        entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
+        self.assertEqualEntities(self.ent4, entity)
 
 
 if __name__ == '__main__':
