@@ -455,7 +455,7 @@ class GetEntitiesByID(BaseTest):
 
         self.manager.put_entities(entity)
 
-        result = self.manager.get_entities_by_id(entity["_id"])
+        result = self.manager.get_entities_by_id(entity["_id"])[0]
         self.assertIsInstance(result, type({}))
         self.assertDictEqual(result, entity)
 
@@ -497,7 +497,7 @@ class GetEntitiesByID(BaseTest):
         """Test the behaviour of the get_entity_by_id function with the id
         of a nonexistant entity"""
 
-        result = self.manager.get_entities_by_id("id")
+        result = self.manager.get_entities_by_id("id")[0]
 
         sorted(result)
         self.assertIsInstance(result, type({}))
@@ -517,7 +517,7 @@ class PutEntities(BaseTest):
 
         self.manager.put_entities(entity)
 
-        result = self.manager.get_entities_by_id(entity["_id"])
+        result = self.manager.get_entities_by_id(entity["_id"])[0]
 
         self.assertDictEqual(result, entity)
 
@@ -642,35 +642,35 @@ class UpdateEntity(BaseTest):
         self.ent1["depends"] = ["ent2", "ent3"]
         self.manager.update_entity(self.ent1)
 
-        entity = self.manager.get_entities_by_id(self.ent1["_id"])
+        entity = self.manager.get_entities_by_id(self.ent1["_id"])[0]
         self.assertEqualEntities(self.ent1, entity)
 
-        entity = self.manager.get_entities_by_id(self.ent2["_id"])
+        entity = self.manager.get_entities_by_id(self.ent2["_id"])[0]
         self.ent2["impact"] = ["ent1"]
         self.assertEqualEntities(self.ent2, entity)
 
-        entity = self.manager.get_entities_by_id(self.ent3["_id"])
+        entity = self.manager.get_entities_by_id(self.ent3["_id"])[0]
         self.ent3["impact"] = ["ent1"]
         self.assertEqualEntities(self.ent3, entity)
 
-        entity = self.manager.get_entities_by_id(self.ent4["_id"])
+        entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
         self.assertEqualEntities(self.ent4, entity)
 
     def test_update_entity_update_depends_insert_single(self):
         self.ent1["depends"] = ["ent2"]
         self.manager.update_entity(self.ent1)
 
-        entity = self.manager.get_entities_by_id(self.ent1["_id"])
+        entity = self.manager.get_entities_by_id(self.ent1["_id"])[0]
         self.assertEqualEntities(self.ent1, entity)
 
-        entity = self.manager.get_entities_by_id(self.ent2["_id"])
+        entity = self.manager.get_entities_by_id(self.ent2["_id"])[0]
         self.ent2["impact"] = ["ent1"]
         self.assertEqualEntities(self.ent2, entity)
 
-        entity = self.manager.get_entities_by_id(self.ent3["_id"])
+        entity = self.manager.get_entities_by_id(self.ent3["_id"])[0]
         self.assertEqualEntities(self.ent3, entity)
 
-        entity = self.manager.get_entities_by_id(self.ent4["_id"])
+        entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
         self.assertEqualEntities(self.ent4, entity)
 
     def test_update_entity_update_impact_insert_multiple(self):

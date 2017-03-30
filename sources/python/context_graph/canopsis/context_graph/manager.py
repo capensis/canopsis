@@ -117,13 +117,8 @@ class ContextGraph(MiddlewareRegistry):
 
         result = list(
             self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
-        if len(result) == 1:
-            return result[0]
-        elif len(result) == 0:
-            # Return {} due to the plentiful of iteration on the keys of entity
-            return {}
-        else:
-            return result
+
+        return result
 
     def put_entities(self, entities):
         """
@@ -304,16 +299,10 @@ class ContextGraph(MiddlewareRegistry):
         if len(entities) != len(status["deletions"]):
             raise ValueError("Could not find some entity in database.")
 
-        # If no elements are not found by get_entities_by_id return {}
-        if entities != {}:
-            # Because get_all_entities_id can return a dict...
-            if isinstance(entities, dict):
-                entities = [entities]
+        for entity in entities:
+            entity[to].remove(from_entity["_id"])
 
-            for entity in entities:
-                entity[to].remove(from_entity["_id"])
-
-            updated_entities += entities
+        updated_entities += entities
 
         # retreive the entities that was not link to from_entity to add a
         # reference of the 'from_entity'
@@ -322,16 +311,10 @@ class ContextGraph(MiddlewareRegistry):
         if len(entities) != len(status["insertions"]):
             raise ValueError("Could not find some entity in database.")
 
-        # If no elements are not found by get_entities_by_id return {}
-        if entities != {}:
-            # Because get_all_entities_id can return a dict...
-            if isinstance(entities, dict):
-                entities = [entities]
+        for entity in entities:
+            entity[to].append(from_entity["_id"])
 
-            for entity in entities:
-                entity[to].append(from_entity["_id"])
-
-            updated_entities += entities
+        updated_entities += entities
 
         return updated_entities
 
@@ -349,7 +332,7 @@ class ContextGraph(MiddlewareRegistry):
             return {"deletions": list(deletions),
                     "insertions": list(insertions)}
 
-        old_entity = self.get_entities_by_id(entity["_id"])
+        old_entity = self.get_entities_by_id(entity["_id"])[0]
 
         if old_entity == {}:
             raise ValueError(
@@ -460,7 +443,10 @@ class ContextGraph(MiddlewareRegistry):
         # remove key that should not be in the event
         tmp = entity.copy()
         for key in delete_keys:
-            tmp.pop(key)
+            try:
+                tmp.pop(key)
+            except KeyError:
+                pass
 
         # fill kwargs with entity values
         for field in tmp:

@@ -68,7 +68,7 @@ def event_processing(
 
     evtype = event[Event.TYPE]
     id_ = context.get_id(event)
-    entity = context.get_entities_by_id(id_)
+    entity = context.get_entities_by_id(id_)[0]
 
     encoded_entity = {}
     for k, v in entity.items():

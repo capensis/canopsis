@@ -72,7 +72,7 @@ class Entitylink(MiddlewareRegistry):
         :param event: an event to search a context id from
         """
         entity_id = self.context.get_id(event)
-        entity = self.context.get_entities_by_id(entity_id)
+        entity = self.context.get_entities_by_id(entity_id)[0]
 
         encoded_entity = {}
         for k, v in entity.items():
