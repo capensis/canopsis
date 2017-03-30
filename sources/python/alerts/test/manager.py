@@ -19,11 +19,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from time import time
 from unittest import main
 
-from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.alerts.manager import Alerts
-from canopsis.alerts.status import OFF
+from canopsis.alerts.status import OFF, STEALTHY
+from canopsis.check import Check
+from canopsis.timeserie.timewindow import get_offset_timewindow
 
 from base import BaseTest
 
@@ -218,6 +220,66 @@ class TestManager(BaseTest):
         value = alarm[storage.VALUE]
 
         self.assertEqual(value['resolved'], value['status']['t'])
+
+    def test_resolve_stealthy(self):
+        storage = self.manager[Alerts.ALARM_STORAGE]
+        now = int(time()) - self.manager.stealthy_show_duration - 1
+
+        alarm_id = '/fake/alarm/id'
+        alarm = self.manager.make_alarm(
+            alarm_id,
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': now
+            }
+        )
+        self.assertIsNotNone(alarm)
+
+        # Init stealthy state
+        value = alarm[storage.VALUE]
+        value['status'] = {
+            't': now,
+            'val': STEALTHY
+        }
+        value['state'] = {
+            't': now,
+            'val': Check.OK
+        }
+        value['steps'] = [
+            {
+                '_t': 'stateinc',
+                't': now - 1,
+                'a': 'test',
+                'm': 'test',
+                'val': Check.CRITICAL
+            },
+            {
+                '_t': 'statedec',
+                't': now,
+                'a': 'test',
+                'm': 'test',
+                'val': Check.OK
+            }
+        ]
+        self.manager.update_current_alarm(alarm, value)
+
+        self.manager.resolve_stealthy()
+
+        alarm = storage.get(
+            alarm_id,
+            timewindow=get_offset_timewindow(),
+            _filter={
+                'resolved': {'$exists': True}
+            },
+            limit=1
+        )
+        self.assertTrue(alarm)
+        alarm = alarm[0]
+        value = alarm[storage.VALUE]
+
+        self.assertEqual(value['status']['val'], OFF)
 
     def test_change_of_state(self):
         alarm_id = '/fake/alarm/id'
@@ -468,6 +530,7 @@ class TestManager(BaseTest):
     def test_archive_status_changed(self):
         alarm_id = '/component/test/test0/ut-comp'
 
+        # Force status to minor
         event0 = {
             'source_type': 'component',
             'connector': 'test',
@@ -476,7 +539,7 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 1,
+            'state': Check.MINOR,
         }
         self.manager.archive(event0)
 
@@ -487,7 +550,7 @@ class TestManager(BaseTest):
             '_t': 'statusinc',
             'm': 'test message',
             't': 0,
-            'val': 1,
+            'val': Check.MINOR,
         }
 
         self.assertEqual(len(alarm['value']['steps']), 2)
@@ -503,7 +566,7 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 0,
+            'state': Check.OK,
         }
         self.manager.archive(event1)
 
@@ -511,10 +574,10 @@ class TestManager(BaseTest):
 
         expected_status = {
             'a': 'test.test0',
-            '_t': 'statusinc',
+            '_t': 'statusdec',
             'm': 'test message',
             't': 0,
-            'val': 2,
+            'val': Check.OK,
         }
 
         self.assertEqual(len(alarm['value']['steps']), 4)

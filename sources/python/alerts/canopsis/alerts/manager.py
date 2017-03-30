@@ -31,7 +31,9 @@ from canopsis.context.manager import Context
 from canopsis.event.manager import Event
 from canopsis.check import Check
 
-from canopsis.alerts.status import get_last_state, get_last_status, OFF
+from canopsis.alerts.status import (
+    get_last_state, get_last_status,
+    OFF, STEALTHY, is_stealthy, get_previous_step)
 
 from time import time
 
@@ -781,6 +783,43 @@ class Alerts(MiddlewareRegistry):
                     if (now - t) > self.flapping_interval:
                         alarm['resolved'] = t
                         self.update_current_alarm(docalarm, alarm)
+
+    def resolve_stealthy(self):
+        """
+        Loop over all stealthy alarms, and check if it can be return to off
+        status.
+        """
+
+        storage = self[Alerts.ALARM_STORAGE]
+        result = self.get_alarms(resolved=False)
+
+        for data_id in result:
+            for docalarm in result[data_id]:
+                docalarm[storage.DATA_ID] = data_id
+                alarm = docalarm.get(storage.VALUE)
+
+                # Only look at stealthy status
+                if get_last_status(alarm) != STEALTHY:
+                    continue
+
+                # Is the state stealthy still valid ?
+                if is_stealthy(self, alarm):
+                    continue
+
+                event = {
+                    'timestamp': int(time()),  # now
+                    'output': 'automaticly resolved after stealthy shown time',
+                    'connector': alarm['connector'],
+                    'connector_name': alarm['connector_name']
+                }
+                # Updating the alarm state
+                alarm_new = self.change_of_status(
+                    docalarm,
+                    STEALTHY,
+                    OFF,
+                    event
+                )
+                self.update_current_alarm(docalarm, alarm_new['value'])
 
     def resolve_cancels(self):
         """
