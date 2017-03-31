@@ -23,9 +23,14 @@ class ContextGraph(MiddlewareRegistry):
 
     @classmethod
     def get_id(cls, event):
-        """Return the id extracted from the event as a string
-        :param event: the event from which we extract the id
-        :return type: boolean a string
+        """Return the id extracted from the event as a string.
+        If the event come from a component, the id will follow the pattern
+        "component". If the event come from resource, the id will follow the
+        pattern resource/component. If the event come from a connector, the
+        id will follow the pattern "connector/connector_name".
+
+        :param event: the event from which we extract the id.
+        :return type: the id as a string
         """
         if '_id' in event:
             return event['_id']
@@ -54,7 +59,12 @@ class ContextGraph(MiddlewareRegistry):
     @classmethod
     def is_equals(cls, entity1, entity2):
         """Compare two entities and return True if the 2 entity are equals.
-        False otherwise"""
+        False otherwise.
+
+        :param entity1: the first entity
+        :param entity2: the first entity
+        :return type: a boolean
+        """
         keys1 = entity1.keys()
         keys2 = entity2.keys()
 
@@ -91,11 +101,14 @@ class ContextGraph(MiddlewareRegistry):
 
     def get_entities_by_id(self, id):
         """
-        Retreive the entity identified by his id. If id is a list of id,
-        get_entity return every entities who match the ids present in the list
+        Retreive the entity identified by an id. If id is a list of id,
+        get_entities_by_id return every entities who match the ids present
+        in the list
 
-        :param id the id of the entity. id can be a list
+        :param id: the id of an entity. id can be a list
+        :return type: a list of entity
         """
+
         query = {"_id": None}
         if isinstance(id, type([])):
             ids = []
@@ -112,7 +125,12 @@ class ContextGraph(MiddlewareRegistry):
 
     def put_entities(self, entities):
         """
-        Store entities into database.
+        Store entities into database. Do no use this function unless you know
+        exactly what you are doing. This function does not update the
+        impact and depends links between entities. If you want these feature,
+        use create_entity.
+
+        :param entities: the entities to store in database
         """
         if not isinstance(entities, list):
             entities = [entities]
@@ -120,7 +138,8 @@ class ContextGraph(MiddlewareRegistry):
 
     def get_all_entities_id(self):
         """
-            get all entities ids by types
+        Get the ids of every stored entities.
+        :return type: a set with every entities id.
         """
         entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
             query={}))
@@ -130,27 +149,69 @@ class ContextGraph(MiddlewareRegistry):
         return ret_val
 
     def create_entity(self, entity):
-        """Create an entity in the contexte with the given entity."""
-        # TODO add traitement to check if every required field are present
+        """Create an entity in the context with the given entity. This will
+        update the depends and impact links between entities. If they are
+        one or several id in the fields depends and/or impact, this function
+        will update every related entity by adding the entity id in the correct
+        field.
+
+        If the entity contains one or several unknowned entity id, a ValueError
+        will be same id as
+
+        If an entity is already store with same id as than entity, a ValueError
+        will be raised with a description.
+
+        Other exception maybe raised, see __update_dependancies.
+
+        :param entity: the new entity.
+        """
+
+        # TODO add treatment to check if every required field are present
 
         entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-                query={'_id': entity["_id"]}))
+            query={'_id': entity["_id"]}))
+
         if len(entities) > 0:
             desc = "An entity  id {0} already exist".format(entities[0]["_id"])
             raise ValueError(desc)
 
+        # update depends/impact links
         status = {"insertions": entity["depends"],
                   "deletions": []}
         updated_entities = self.__update_dependancies(entity, status, "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
+        # update impact/depends links
         status = {"insertions": entity["impact"],
                   "deletions": []}
         updated_entities = self.__update_dependancies(entity, status, "impact")
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
-    def __update_dependancies(self, from_entity, status, dependancy_type):
+    def __update_dependancies(self, id_, status, dependancy_type):
+        """Return the list of entities whom the depends or impact fields are
+        updated by removing or adding the id_.
+
+        Dependancy_type allow you to specify the type of links (impact/depends
+        or depends/impact) link.
+
+        Status must contain two keys : insertions and deletions. The key
+        insertions "contains" a list of entities id that need to be updated by
+        adding the from_entity id in the field impact/depends.The key
+        deletions "contains" a list of entities id that need to be updated by
+        removing the from_entity id in the field impact/depends.
+
+        If some entities are not found with the ids from the list behind the
+        keys "insertions and "deletion" a ValueError will be raised.
+
+        :param id_: the entity to add or remove
+        :param status: a dict with two keys "insertions" and "deletion"
+        :param dependancy_type: a string. "depends" to update the depends/impact
+        links and "impact" to update the impact/depends links
+
+        :return type: a list of entities.
+        """
+
         if dependancy_type == "depends":
             to = "impact"
         elif dependancy_type == "impact":
@@ -169,9 +230,10 @@ class ContextGraph(MiddlewareRegistry):
         if len(entities) != len(status["deletions"]):
             raise ValueError("Could not find some entity in database.")
 
+        # update the related entities
         for entity in entities:
             try:
-                entity[to].remove(from_entity["_id"])
+                entity[to].remove(id_)
             except ValueError:
                 # TODO add a log.debug
                 pass
@@ -185,18 +247,29 @@ class ContextGraph(MiddlewareRegistry):
         if len(entities) != len(status["insertions"]):
             raise ValueError("Could not find some entity in database.")
 
+        # update the related entities
         for entity in entities:
-            entity[to].append(from_entity["_id"])
+            entity[to].append(id_)
 
         updated_entities += entities
 
         return updated_entities
 
     def update_entity(self, entity):
-        """Update an entity identified by id_ with the given entity."""
+        """Update an entity identified by id_ with the given entity.
+        If needed, the fields impact/depends of the related entity will be
+        updated.
+
+        If the entity does not exist exist in database, a ValueError will be
+        raise.
+
+        Other exception maybe raised, see __update_dependancies.
+
+        :param entity: the entity updated
+        """
 
         def compare_change(old, new):
-            """Retourn a dict with the insertion and the deletion"""
+            """Retourn a dict with the insertion and the deletion."""
 
             s_old = set(list(old))
             s_new = set(list(new))
@@ -218,10 +291,12 @@ class ContextGraph(MiddlewareRegistry):
             # nothing to do.
             return
 
+        # update depends/impact links
         status = compare_change(old_entity["depends"], entity["depends"])
         updated_entities = self.__update_dependancies(entity, status, "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
+        # update impact/depends links
         status = compare_change(old_entity["impact"], entity["impact"])
         updated_entities = self.__update_dependancies(entity, status, "impact")
 
@@ -229,7 +304,19 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
     def delete_entity(self, id_):
-        """Delete an entity identified by id_ from the context."""
+        """Delete an entity identified by id_ from the context.
+
+        If needed, the fields impact/depends of the related entity will be
+        updated.
+
+        If the entity does not exist exist in database, a ValueError will be
+        raise.
+
+        Other exception maybe raised, see __update_dependancies.
+
+        :param id_: the id of the entity to delete.
+        """
+
         try:
             entity = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
                 query={'_id': id_}))[0]
@@ -237,11 +324,13 @@ class ContextGraph(MiddlewareRegistry):
             desc = "No entity found for the following id : {0}".format(id_)
             raise ValueError(desc)
 
+        # update depends/impact links
         status = {"deletions": entity["depends"],
                   "insertions": []}
         updated_entities = self.__update_dependancies(entity, status, "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
+        # update impact/depends links
         status = {"deletions": entity["impact"],
                   "insertions": []}
         updated_entities = self.__update_dependancies(entity, status, "impact")
@@ -259,6 +348,7 @@ class ContextGraph(MiddlewareRegistry):
         """Retreives entities matching the query and the projection.
         """
         # TODO handle projection, limit, sort, with_count
+        # TODO complete docstring
 
         if not isinstance(query, dict):
             raise TypeError("Query must be a dict")
