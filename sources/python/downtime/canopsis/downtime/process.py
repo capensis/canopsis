@@ -68,6 +68,7 @@ def event_processing(
 
     evtype = event[Event.TYPE]
     id_ = context.get_id(event)
+    """
     entity = context.get_entities_by_id(id_)[0]
 
     encoded_entity = {}
@@ -81,8 +82,23 @@ def event_processing(
         except:
             pass
         encoded_entity[k] = v
-
-    eid = encoded_entity["_id"]
+    """
+    eid = ''
+    if 'resource' in event.keys():
+        eid = '/{0}/{1}/{2}/{3}/{4}'.format(
+            event['source_type'],
+            event['connector'],
+            event['connector_name'],
+            event['component'],
+            event['resource']
+        )
+    else:
+        eid = '/{0}/{1}/{2}/{3}'.format(
+            event['source_type'],
+            event['connector'],
+            event['connector_name'],
+            event['component']
+        )
 
     if evtype == DOWNTIME:
         ev = vEvent()

@@ -322,22 +322,24 @@ def exports(ws):
 
         for record in records:
             if record['crecord_type'] == 'event':
-                entity_id = ctxmgr.get_id(record)
-                entity = ctxmgr.get_entities_by_id(entity_id)[0]
+                eid = ''
+                if 'resource' in record.keys():
+                    eid = '/{0}/{1}/{2}/{3}/{4}'.format(
+                        record['source_type'],
+                        record['connector'],
+                        record['connector_name'],
+                        record['component'],
+                        record['resource']
+                    )
+                else:
+                    eid = '/{0}/{1}/{2}/{3}'.format(
+                        record['source_type'],
+                        record['connector'],
+                        record['connector_name'],
+                        record['component']
+                    )
+                record['entity_id'] = eid
 
-                encoded_entity = {}
-                for k, v in entity.items():
-                    try:
-                        k = k.encode('utf-8')
-                    except:
-                        pass
-                    try:
-                        v = v.encode('utf-8')
-                    except:
-                        pass
-                    encoded_entity[k] = v
-
-                record['entity_id'] = ctxmgr.get_id(encoded_entity)
 
         return records, nrecords
 
