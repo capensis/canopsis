@@ -77,6 +77,14 @@ class BaseTest(TestCase):
             ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
         self.manager[ContextGraph.USERS_STORAGE] = self.users_storage
 
+        self.template = {'_id': None,
+                         'type': 'connector',
+                         'name': 'conn-name1',
+                         'depends': [],
+                         'impact': [],
+                         'measurements': [],
+                         'infos': {}}
+
     def tearDown(self):
         self.entities_storage.remove_elements()
         self.organisations_storage.remove_elements()
@@ -89,107 +97,13 @@ class BaseTest(TestCase):
         sorted(entity2["impact"])
         self.assertDictEqual(entity1, entity2)
 
-class TestManager(TestCase):
-
-    def setUp(self):
-        self.manager = ContextGraph()
-        self.entities_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testentities://'
-        )
-        self.organisations_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testorganisations://'
-        )
-        self.users_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testusers://'
-        )
-
-        self.manager[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
-        self.manager[
-            ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
-        self.manager[ContextGraph.USERS_STORAGE] = self.users_storage
-
-        self.entities_storage.put_element(
-            element={
-                '_id': 'r1/c1',
-                'type': 'resource',
-                'name': 'r1',
-                'depends': [],
-                'impact': [],
-                'measurements': [],
-                'infos': {}
-            }
-        )
-
-        self.entities_storage.put_element(
-            element={
-                '_id': 'c1',
-                'type': 'component',
-                'name': 'c1',
-                'depends': [],
-                'impact': [],
-                'measurements': [],
-                'infos': {}
-            }
-        )
-
-        self.entities_storage.put_element(
-            element={
-                '_id': 'conn1/conn1',
-                'type': 'connector',
-                'name': 'conn1',
-                'depends': [],
-                'impact': [],
-                'measurements': [],
-                'infos': {}
-            }
-        )
-
-        self.entities_storage.put_element(
-            element={
-                '_id': 'r1/c1',
-                'type': 'resource',
-                'name': 'r1',
-                'depends': [],
-                'impact': [],
-                'measurements': [],
-                'infos': {}
-            }
-        )
-
-        self.organisations_storage.put_element(
-            element={
-                '_id': 'org-1',
-                'name': 'org-1',
-                'parents': '',
-                'children': [],
-                'views': [],
-                'users': []
-            }
-        )
-
-        self.users_storage.put_element(
-            element={
-                '_id': 'user_1',
-                'name': 'jean',
-                'org': 'org-1',
-                'access_to':  ['org-1']
-            }
-        )
-
-    def tearDown(self):
-        self.entities_storage.remove_elements()
-        self.organisations_storage.remove_elements()
-        self.organisations_storage.remove_elements()
-
 class GetEvent(TestCase):
     """Test get_event method.
     """
 
     def setUp(self):
+        super(GetEvent, self).setUp()
         self.context = ContextGraph(data_scope='test_context')
-        self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()
-
-    def tearDown(self):
         self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()
 
     def test_get_check_event(self):
@@ -266,99 +180,36 @@ class GetID(TestCase):
             ContextGraph.get_id(self.event)
 
 
-class CheckComp(BaseTest):
-
-    def setUp(self):
-        super(CheckComp, self).setUp()
-        entity = {'_id': 'c1',
-                  'type': 'component',
-                  'name': 'c1',
-                  'depends': [],
-                  'impact': [],
-                  'measurements': [],
-                  'infos': {}}
-        self.manager.put_entities(entity)
-
-    def test_check_comp(self):
-        self.assertEqual(self.manager.check_comp('c1'), True)
-        self.assertEqual(self.manager.check_comp('c2'), False)
-
-
-class CheckRe(BaseTest):
-
-    def setUp(self):
-        super(CheckRe, self).setUp()
-        entity = {'_id': 'r1/c1',
-                  'type': 'resource',
-                  'name': 'r1',
-                  'depends': [],
-                  'impact': [],
-                  'measurements': [],
-                  'infos': {}}
-        self.manager.put_entities(entity)
-
-    def test_check_re(self):
-        self.assertEqual(self.manager.check_re('r1/c1'), True)
-        self.assertEqual(self.manager.check_re('r2/c1'), False)
-
-
-class CheckConn(BaseTest):
-
-    def setUp(self):
-        super(CheckConn, self).setUp()
-        entity = {'_id': 'conn1/conn-name',
-                  'type': 'connector',
-                  'name': 'conn-name',
-                  'depends': [],
-                  'impact': [],
-                  'measurements': [],
-                  'infos': {}}
-        self.manager.put_entities(entity)
-
-    def test_check_conn(self):
-        self.assertEqual(self.manager.check_conn('conn1/conn-name'), True)
-        self.assertEqual(self.manager.check_conn('conn2'), False)
-
-
 class GetEntitiesByID(BaseTest):
 
     def test_get_entity_by_id_id(self):
-        entity = {'_id': 'conn1/conn-name',
-                  'type': 'connector',
-                  'name': 'conn-name',
-                  'depends': [],
-                  'impact': [],
-                  'measurements': [],
-                  'infos': {}}
+        entity = self.template.copy()
+        entity['_id'] = 'conn1/conn-name'
+        entity['type'] = 'connector'
+        entity['name'] = 'conn-name'
 
         self.manager.put_entities(entity)
 
-        result = self.manager.get_entities_by_id(entity["_id"])[0]
-        self.assertIsInstance(result, type({}))
-        self.assertDictEqual(result, entity)
+        result = self.manager.get_entities_by_id(entity["_id"])
+        self.assertIsInstance(result, type([]))
+        self.assertDictEqual(result[0], entity)
 
     def test_get_entity_by_id_ids(self):
-        entities = [{'_id': 'conn1/conn-name1',
-                     'type': 'connector',
-                     'name': 'conn-name1',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}},
-                    {'_id': 'conn2/conn-name2',
-                     'type': 'connector',
-                     'name': 'conn-name2',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}},
-                    {'_id': 'conn3/conn-name3',
-                     'type': 'connector',
-                     'name': 'conn-name3',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}}]
+        entities = [self.template.copy(),
+                    self.template.copy(),
+                    self.template.copy()]
+
+        entities[0]['_id'] = 'conn1/conn-name1'
+        entities[0]['type'] = 'connector'
+        entities[0]['name'] = 'conn-name1'
+
+        entities[1]['_id'] = 'conn2/conn-name2'
+        entities[1]['type'] ='connector'
+        entities[1]['name'] = 'conn-name2'
+
+        entities[2]['_id'] = 'conn3/conn-name3'
+        entities[2]['type'] = 'connector'
+        entities[2]['name'] = 'conn-name3'
 
         sorted(entities)
         self.manager.put_entities(entities)
@@ -384,13 +235,10 @@ class GetEntitiesByID(BaseTest):
 class PutEntities(BaseTest):
 
     def test_put_entities_entity(self):
-        entity = {'_id': 'conn1/conn-name',
-                  'type': 'connector',
-                  'name': 'conn-name',
-                  'depends': [],
-                  'impact': [],
-                  'measurements': [],
-                  'infos': {}}
+        entity = self.template.copy()
+        entity['_id'] = 'conn1/conn-name'
+        entity['type'] = 'connector'
+        entity['name'] = 'conn-name'
 
         self.manager.put_entities(entity)
 
@@ -399,27 +247,22 @@ class PutEntities(BaseTest):
         self.assertDictEqual(result, entity)
 
     def test_put_entities_entities(self):
-        entities = [{'_id': 'conn1/conn-name1',
-                     'type': 'connector',
-                     'name': 'conn-name1',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}},
-                    {'_id': 'conn2/conn-name2',
-                     'type': 'connector',
-                     'name': 'conn-name2',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}},
-                    {'_id': 'conn3/conn-name3',
-                     'type': 'connector',
-                     'name': 'conn-name3',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}}]
+        entities = [self.template.copy(),
+                    self.template.copy(),
+                    self.template.copy()]
+
+        entities[0]['_id'] = 'conn1/conn-name1'
+        entities[0]['type'] = 'connector'
+        entities[0]['name'] = 'conn-name1'
+
+        entities[1]['_id'] = 'conn2/conn-name2'
+        entities[1]['type'] ='connector'
+        entities[1]['name'] = 'conn-name2'
+
+        entities[2]['_id'] = 'conn3/conn-name3'
+        entities[2]['type'] = 'connector'
+        entities[2]['name'] = 'conn-name3'
+
         sorted(entities)
 
         self.manager.put_entities(entities)
@@ -434,34 +277,21 @@ class PutEntities(BaseTest):
 class GetAllEntitiesId(BaseTest):
 
     def test_get_all_entities_id(self):
-        entities = [{'_id': 'conn1/conn-name1',
-                     'type': 'connector',
-                     'name': 'conn-name1',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}},
-                    {'_id': 'conn2/conn-name2',
-                     'type': 'connector',
-                     'name': 'conn-name2',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}},
-                    {'_id': 'conn3/conn-name3',
-                     'type': 'connector',
-                     'name': 'conn-name3',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}},
-                    {'_id': 'conn4/conn-name4',
-                     'type': 'connector',
-                     'name': 'conn-name3',
-                     'depends': [],
-                     'impact': [],
-                     'measurements': [],
-                     'infos': {}}]
+        entities = [self.template.copy(),
+                    self.template.copy(),
+                    self.template.copy()]
+
+        entities[0]['_id'] = 'conn1/conn-name1'
+        entities[0]['type'] = 'connector'
+        entities[0]['name'] = 'conn-name1'
+
+        entities[1]['_id'] = 'conn2/conn-name2'
+        entities[1]['type'] ='connector'
+        entities[1]['name'] = 'conn-name2'
+
+        entities[2]['_id'] = 'conn3/conn-name3'
+        entities[2]['type'] = 'connector'
+        entities[2]['name'] = 'conn-name3'
 
         self.manager.put_entities(entities)
         expected = set()
@@ -472,28 +302,15 @@ class GetAllEntitiesId(BaseTest):
         self.assertSetEqual(result, expected)
 
 
-class CheckLinks(BaseTest):
-
-    def test_check_links(self):
-        with self.assertRaises(NotImplementedError):
-            self.manager.check_links(None, None, None)
-
-
 class UpdateEntity(BaseTest):
 
     def setUp(self):
         super(UpdateEntity, self).setUp()
-        template = {'_id': None,
-                    'type': 'connector',
-                    'name': 'conn-name1',
-                    'depends': [],
-                    'impact': [],
-                    'measurements': [],
-                    'infos': {}}
-        self.ent1 = template.copy()
-        self.ent2 = template.copy()
-        self.ent3 = template.copy()
-        self.ent4 = template.copy()
+
+        self.ent1 = self.template.copy()
+        self.ent2 = self.template.copy()
+        self.ent3 = self.template.copy()
+        self.ent4 = self.template.copy()
 
         self.ent1["_id"] = "ent1"
         self.ent2["_id"] = "ent2"
@@ -614,17 +431,11 @@ class UpdateDependancies(BaseTest):
             self.manager._ContextGraph__update_dependancies(None, status,
                                                             "impact")
     def __test(self, from_, to, delete):
-        template = {'_id': None,
-                    'type': 'connector',
-                    'name': 'conn-name1',
-                    'depends': [],
-                    'impact': [],
-                    'measurements': [],
-                    'infos': {}}
-        self.ent1 = template.copy()
-        self.ent2 = template.copy()
-        self.ent3 = template.copy()
-        self.ent4 = template.copy()
+
+        self.ent1 = self.template.copy()
+        self.ent2 = self.template.copy()
+        self.ent3 = self.template.copy()
+        self.ent4 = self.template.copy()
 
         self.ent1["_id"] = "ent1"
         self.ent1[from_] = ["ent2", "ent3"]
@@ -654,7 +465,7 @@ class UpdateDependancies(BaseTest):
 
         for entity in result:
             if entity["_id"] == "ent2":
-                expected = template.copy()
+                expected = self.template.copy()
                 expected["_id"] = "ent2"
 
                 if delete is False:
@@ -663,7 +474,7 @@ class UpdateDependancies(BaseTest):
                 self.assertEqualEntities(entity, expected)
 
             elif entity["_id"] == "ent3":
-                expected = template.copy()
+                expected = self.template.copy()
                 expected["_id"] = "ent3"
 
                 if delete is False:
@@ -700,17 +511,10 @@ class DeleteEntity(BaseTest):
             self.manager.delete_entity(id_)
 
     def __test(self, from_, to):
-        template = {'_id': None,
-                    'type': 'connector',
-                    'name': 'conn-name1',
-                    'depends': [],
-                    'impact': [],
-                    'measurements': [],
-                    'infos': {}}
-        self.ent1 = template.copy()
-        self.ent2 = template.copy()
-        self.ent3 = template.copy()
-        self.ent4 = template.copy()
+        self.ent1 = self.template.copy()
+        self.ent2 = self.template.copy()
+        self.ent3 = self.template.copy()
+        self.ent4 = self.template.copy()
 
         self.ent1["_id"] = "ent1"
         self.ent1[from_] = ["ent2", "ent3"]
@@ -735,20 +539,20 @@ class DeleteEntity(BaseTest):
                 self.fail("The entity ent1 should be deleted")
 
             if entity["_id"] == "ent2":
-                expected = template.copy()
+                expected = self.template.copy()
                 expected["_id"] = "ent2"
 
                 self.assertEqualEntities(entity, expected)
 
             elif entity["_id"] == "ent3":
-                expected = template.copy()
+                expected = self.template.copy()
                 expected["_id"] = "ent3"
                 expected[to] = ["dummy"]
 
                 self.assertEqualEntities(entity, expected)
 
             elif entity["_id"] == "ent4":
-                expected = template.copy()
+                expected = self.template.copy()
                 expected["_id"] = "ent4"
                 expected[to] = ["dummy"]
 
@@ -763,13 +567,10 @@ class DeleteEntity(BaseTest):
 class CreateEntity(BaseTest):
 
     def test_create_entity_entity_exists(self):
-        entity = {'_id': "I am here",
-                    'type': 'connector',
-                    'name': 'conn-name1',
-                    'depends': [],
-                    'impact': [],
-                    'measurements': [],
-                    'infos': {}}
+        entity = self.template.copy()
+        entity['_id'] = "I am here"
+        entity['type'] = 'connector'
+        entity['name'] = 'conn-name1'
 
         self.manager.create_entity(entity)
 
@@ -778,17 +579,10 @@ class CreateEntity(BaseTest):
             self.manager.create_entity(entity)
 
     def __test(self, from_, to):
-        template = {'_id': None,
-                    'type': 'connector',
-                    'name': 'conn-name1',
-                    'depends': [],
-                    'impact': [],
-                    'measurements': [],
-                    'infos': {}}
-        self.ent1 = template.copy()
-        self.ent2 = template.copy()
-        self.ent3 = template.copy()
-        self.ent4 = template.copy()
+        self.ent1 = self.template.copy()
+        self.ent2 = self.template.copy()
+        self.ent3 = self.template.copy()
+        self.ent4 = self.template.copy()
 
         self.ent1["_id"] = "ent1"
         self.ent1[from_] = ["ent2", "ent3"]

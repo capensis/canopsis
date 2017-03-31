@@ -89,16 +89,6 @@ class ContextGraph(MiddlewareRegistry):
         """
         super(ContextGraph, self).__init__(*args, **kwargs)
 
-    def check_comp(self, comp_id):
-        """_check_comp
-
-        check if the component exists in database
-
-        :param comp_id: id of component
-        :return type: boolean
-        """
-        return len(list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': comp_id}))) > 0
-
     def get_entities_by_id(self, id):
         """
         Retreive the entity identified by his id. If id is a list of id,
@@ -127,29 +117,6 @@ class ContextGraph(MiddlewareRegistry):
         if not isinstance(entities, list):
             entities = [entities]
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
-
-    def check_re(self, re_id):
-        """_check_re
-
-        :param re_id:
-        """
-        return len(list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': re_id}))) > 0
-
-    def check_conn(self, conn_id):
-        """_check_conn
-
-        :param conn_id:
-        """
-        return len(list(self[ContextGraph.ENTITIES_STORAGE].get_elements(query={'_id': conn_id}))) > 0
-
-    def check_links(self, conn_id, comp_id, re_id):
-        """_check_links
-
-        :param conn_id:
-        :param comp_id:
-        :param re_id:
-        """
-        raise NotImplementedError
 
     def get_all_entities_id(self):
         """
