@@ -459,9 +459,8 @@ class UpdateDependancies(BaseTest):
             status = {"deletions": [],
                       "insertions":["ent2", "ent3"]}
 
-        result = self.manager._ContextGraph__update_dependancies(self.ent1,
-                                                                 status,
-                                                                 from_)
+        result = self.manager._ContextGraph__update_dependancies(
+            self.ent1["_id"], status, from_)
 
         for entity in result:
             if entity["_id"] == "ent2":

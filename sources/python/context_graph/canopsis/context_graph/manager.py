@@ -178,13 +178,15 @@ class ContextGraph(MiddlewareRegistry):
         # update depends/impact links
         status = {"insertions": entity["depends"],
                   "deletions": []}
-        updated_entities = self.__update_dependancies(entity, status, "depends")
+        updated_entities = self.__update_dependancies(entity["_id"],
+                                                      status, "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
         status = {"insertions": entity["impact"],
                   "deletions": []}
-        updated_entities = self.__update_dependancies(entity, status, "impact")
+        updated_entities = self.__update_dependancies(entity["_id"],
+                                                      status, "impact")
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
@@ -294,12 +296,14 @@ class ContextGraph(MiddlewareRegistry):
 
         # update depends/impact links
         status = compare_change(old_entity["depends"], entity["depends"])
-        updated_entities = self.__update_dependancies(entity, status, "depends")
+        updated_entities = self.__update_dependancies(entity["_id"],
+                                                      status, "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
         status = compare_change(old_entity["impact"], entity["impact"])
-        updated_entities = self.__update_dependancies(entity, status, "impact")
+        updated_entities = self.__update_dependancies(entity["_id"],
+                                                      status, "impact")
 
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
@@ -328,13 +332,15 @@ class ContextGraph(MiddlewareRegistry):
         # update depends/impact links
         status = {"deletions": entity["depends"],
                   "insertions": []}
-        updated_entities = self.__update_dependancies(entity, status, "depends")
+        updated_entities = self.__update_dependancies(id_,
+                                                      status, "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
         status = {"deletions": entity["impact"],
                   "insertions": []}
-        updated_entities = self.__update_dependancies(entity, status, "impact")
+        updated_entities = self.__update_dependancies(id_,
+                                                      status, "impact")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
