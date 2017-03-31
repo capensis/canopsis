@@ -74,6 +74,7 @@ ContextGraph Unit test
   * **DONE** def check_links(self, conn_id, comp_id, re_id):
   * **DONE** def update_entity(self, entity):
   * **DONE** def __update_dependancies(self, from_entity, status, dependancy_type):
+  * **DONE** def delete_entity(self, id_):
   * def manage_comp_to_re_link(self, re_id, comp_id):
   * def manage_re_to_conn_link(self, conn_id, re_id):
   * def manage_comp_to_conn_link(self, conn_id, comp_id):
@@ -81,5 +82,4 @@ ContextGraph Unit test
   * def _check_conn_re_link(self, conn_id, re_id):
   * def _check_comp_re_link(self, comp_id, re_id):
   * def create_entity(self, entity):
-  * def delete_entity(self, id_):
   * def get_entities(self,

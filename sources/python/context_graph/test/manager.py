@@ -840,7 +840,7 @@ class DeleteEntity(BaseTest):
     def test_delete_entity_depends(self):
         self.__test("depends", "impact")
 
-    def test_delete_entity_depends(self):
+    def test_delete_entity_impact(self):
         self.__test("impact", "depends")
 
 
