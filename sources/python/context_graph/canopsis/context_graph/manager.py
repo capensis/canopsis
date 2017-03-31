@@ -384,7 +384,8 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         # keys from entity that should not be in event
-        delete_keys = ["_id", "depends", "impact", "type"]
+        delete_keys = ["_id", "depends", "impact", "type", "measurements",
+                       "infos"]
 
         kwargs['event_type'] = event_type
 
