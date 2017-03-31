@@ -235,8 +235,9 @@ class ContextGraph(MiddlewareRegistry):
             try:
                 entity[to].remove(id_)
             except ValueError:
-                # TODO add a log.debug
-                pass
+                desc = "No {0} id in the {1} of the entity of id {2}.".format(
+                    id_, to, entity["_id"])
+                self.logger.debug(desc)
 
         updated_entities += entities
 
