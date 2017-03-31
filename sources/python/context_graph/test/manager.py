@@ -181,51 +181,6 @@ class TestManager(TestCase):
         self.organisations_storage.remove_elements()
         self.organisations_storage.remove_elements()
 
-    def test_create_entity(self):
-        entity = {
-            '_id': 'test_create',
-            'name': 'test_create',
-            'depends': [],
-            'impact': [],
-            'infos': {}
-        }
-        entity2 = {
-            '_id': 'test_create2',
-            'name': 'test_create2',
-            'depends': [],
-            'impact': [],
-            'infos': {}
-        }
-        self.manager.create_entity(entity)
-        self.manager.create_entity(entity2)
-        self.assertDictEqual(
-            entity,
-            self.manager.get_entities(query={'_id': 'test_create'}[0])
-        )
-
-    def test_delete_entity(self):
-        entity = {
-            '_id': 'test_entity',
-            'name': 'test_entity',
-            'depends': [],
-            'impact': ['test_entity2'],
-            'infos': {}
-        }
-        entity2 = {
-            '_id': 'test_entity2',
-            'name': 'test_entity2',
-            'depends': ['test_entity'],
-            'impact': [],
-            'infos': {}
-        }
-        self.manager.create_entity(entity)
-        self.manager.create_entity(entity2)
-        self.manager.delete_entity('test_entity')
-        self.assertEqual(
-            [],
-            self.manager.get_entities(query={'_id': 'test_entity2'})[
-                0]['depends']
-        )
 
     def test_manage_comp_to_re_link(self):
         conn1_id = "mcr_conn1"
@@ -503,11 +458,10 @@ class GetEntitiesByID(BaseTest):
         """Test the behaviour of the get_entity_by_id function with the id
         of a nonexistant entity"""
 
-        result = self.manager.get_entities_by_id("id")[0]
+        result = self.manager.get_entities_by_id("id")
 
-        sorted(result)
-        self.assertIsInstance(result, type({}))
-        self.assertDictEqual(result, {})
+        self.assertIsInstance(result, type([]))
+        self.assertEqual(len(result), 0)
 
 
 class PutEntities(BaseTest):
@@ -592,11 +546,12 @@ class GetAllEntitiesId(BaseTest):
                      'measurements': [],
                      'infos': {}}]
 
+        self.manager.put_entities(entities)
         expected = set()
         for entity in entities:
             expected.add(entity["_id"])
 
-        result = self.manager.get_all_entities()
+        result = self.manager.get_all_entities_id()
         self.assertSetEqual(result, expected)
 
 
