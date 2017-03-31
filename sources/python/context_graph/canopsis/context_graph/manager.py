@@ -248,37 +248,23 @@ class ContextGraph(MiddlewareRegistry):
     def create_entity(self, entity):
         """Create an entity in the contexte with the given entity."""
         # TODO add traitement to check if every required field are present
-        if entity['depends'] != []:
-            # update
-            query = {'$or': []}
-            for i in entity['depends']:
-                query['$or'].append({'_id': i})
-            tmp = self[ContextGraph.ENTITIES_STORAGE].get_elements(
-                query=query
-            )
-            for j in tmp:
-                try:
-                    j['impact'].append(entity['_id'])
-                    self[ContextGraph.ENTITIES_STORAGE].put_element(j)
-                except ValueError:
-                    pass
 
-        if entity['impact'] != []:
-            # update
-            query = {'$or': []}
-            for i in entity['impact']:
-                query['$or'].append({'_id': i})
-            tmp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-                query=query
-            ))
-            for j in tmp:
-                try:
-                    j['depends'].append(entity['_id'])
-                    self[ContextGraph.ENTITIES_STORAGE].put_element(j)
-                except ValueError:
-                    pass
+        entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+                query={'_id': entity["_id"]}))
+        if len(entities) > 0:
+            desc = "An entity  id {0} already exist".format(entities[0]["_id"])
+            raise ValueError(desc)
 
-        self[ContextGraph.ENTITIES_STORAGE].put_element(entity)
+        status = {"insertions": entity["depends"],
+                  "deletions": []}
+        updated_entities = self.__update_dependancies(entity, status, "depends")
+        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+
+        status = {"insertions": entity["impact"],
+                  "deletions": []}
+        updated_entities = self.__update_dependancies(entity, status, "impact")
+        updated_entities.append(entity)
+        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
     def __update_dependancies(self, from_entity, status, dependancy_type):
         if dependancy_type == "depends":

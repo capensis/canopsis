@@ -843,6 +843,71 @@ class DeleteEntity(BaseTest):
     def test_delete_entity_impact(self):
         self.__test("impact", "depends")
 
+class CreateEntity(BaseTest):
+
+    def test_create_entity_entity_exists(self):
+        entity = {'_id': "I am here",
+                    'type': 'connector',
+                    'name': 'conn-name1',
+                    'depends': [],
+                    'impact': [],
+                    'measurements': [],
+                    'infos': {}}
+
+        self.manager.create_entity(entity)
+
+        desc = "An entity  id {0} already exist".format(entity["_id"])
+        with self.assertRaisesRegexp(ValueError, desc):
+            self.manager.create_entity(entity)
+
+    def __test(self, from_, to):
+        template = {'_id': None,
+                    'type': 'connector',
+                    'name': 'conn-name1',
+                    'depends': [],
+                    'impact': [],
+                    'measurements': [],
+                    'infos': {}}
+        self.ent1 = template.copy()
+        self.ent2 = template.copy()
+        self.ent3 = template.copy()
+        self.ent4 = template.copy()
+
+        self.ent1["_id"] = "ent1"
+        self.ent1[from_] = ["ent2", "ent3"]
+        self.ent2["_id"] = "ent2"
+        self.ent2[to] = []
+        self.ent3["_id"] = "ent3"
+        self.ent3[to] = ["dummy"]
+        self.ent4["_id"] = "ent4"
+        self.ent4[from_] = ["dummy"]
+        self.ent4[to] = ["dummy"]
+
+        self.manager.put_entities(self.ent2)
+        self.manager.put_entities(self.ent3)
+        self.manager.put_entities(self.ent4)
+
+        self.manager.create_entity(self.ent1)
+
+        result = self.manager.get_entities_by_id(self.ent1["_id"])[0]
+        self.assertEqualEntities(result, self.ent1)
+
+        result = self.manager.get_entities_by_id(self.ent2["_id"])[0]
+        self.ent2["impact"].append(self.ent1["_id"])
+        self.assertEqualEntities(result, self.ent2)
+
+        result = self.manager.get_entities_by_id(self.ent3["_id"])[0]
+        self.ent3["impact"].append(self.ent1["_id"])
+        self.assertEqualEntities(result, self.ent3)
+
+        result = self.manager.get_entities_by_id(self.ent4["_id"])[0]
+        self.assertEqualEntities(result, self.ent4)
+
+    def test_create_entity_entity_depends(self):
+        self.__test("depends", "impact")
+
+    def test_create_entity_entity_impact(self):
+        self.__test("depends", "impact")
 
 
 if __name__ == '__main__':

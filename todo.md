@@ -81,5 +81,5 @@ ContextGraph Unit test
   * def _check_conn_comp_link(self, conn_id, comp_id):
   * def _check_conn_re_link(self, conn_id, re_id):
   * def _check_comp_re_link(self, comp_id, re_id):
-  * def create_entity(self, entity):
+  * **DONE** def create_entity(self, entity):
   * def get_entities(self,
