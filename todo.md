@@ -72,13 +72,14 @@ ContextGraph Unit test
   * **DONE** def put_entities(self, entities):
   * **DONE** def get_all_entities_id(self):
   * **DONE** def check_links(self, conn_id, comp_id, re_id):
+  * **DONE** def __update_dependancies(self, from_entity, status, dependancy_type):
   * **DONE** def update_entity(self, entity):
-  * def manage_comp_to_re_link(self, re_id, comp_id):
-  * def manage_re_to_conn_link(self, conn_id, re_id):
-  * def manage_comp_to_conn_link(self, conn_id, comp_id):
-  * def _check_conn_comp_link(self, conn_id, comp_id):
-  * def _check_conn_re_link(self, conn_id, re_id):
-  * def _check_comp_re_link(self, comp_id, re_id):
-  * def create_entity(self, entity):
-  * def delete_entity(self, id_):
+  * **DONE** def delete_entity(self, id_):
+  * **DONE** def create_entity(self, entity):
+  * **SKIP** def manage_comp_to_re_link(self, re_id, comp_id):
+  * **SKIP** def manage_re_to_conn_link(self, conn_id, re_id):
+  * **SKIP** def manage_comp_to_conn_link(self, conn_id, comp_id):
+  * **SKIP** def _check_conn_comp_link(self, conn_id, comp_id):
+  * **SKIP** def _check_conn_re_link(self, conn_id, re_id):
+  * **SKIP** def _check_comp_re_link(self, comp_id, re_id):
   * def get_entities(self,
