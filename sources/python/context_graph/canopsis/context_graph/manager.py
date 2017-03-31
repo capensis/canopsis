@@ -151,59 +151,6 @@ class ContextGraph(MiddlewareRegistry):
         """
         raise NotImplementedError
 
-    def _check_conn_comp_link(self, conn_id, comp_id):
-        """_check_conn_comp_link
-
-        :param conn_id:
-        :param comp_id:
-        """
-        conn = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-            query={'_id': conn_id}))
-        comp = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-            query={'_id': comp_id}))
-        for i in conn:
-            for j in comp:
-                if comp_id not in i['impact']:
-                    tmp = i
-                    tmp['impact'].append(comp_id)
-                    self[ContextGraph.ENTITIES_STORAGE].put_element(
-                        element=tmp)
-                if conn_id not in j['depends']:
-                    tmp = j
-                    tmp['depends'].append(conn_id)
-                    self[ContextGraph.ENTITIES_STORAGE].put_element(
-                        element=tmp)
-
-    def _check_conn_re_link(self, conn_id, re_id):
-        """_checks_conn_re_link
-
-        :param conn_id:
-        :param re_id:
-        """
-        conn = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-            query={'_id': conn_id}))
-        re = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-            query={'_id': re_id}))
-        for i in conn:
-            for j in re:
-                if re_id not in i['impact']:
-                    tmp = i
-                    tmp['impact'].append(re_id)
-                    self[ContextGraph.ENTITIES_STORAGE].put_element(
-                        element=tmp)
-                if conn_id not in j['depends']:
-                    tmp = j
-                    tmp['depends'].append(conn_id)
-                    self[ContextGraph.ENTITIES_STORAGE].put_element(
-                        element=tmp)
-
-    def _check_comp_re_link(self, comp_id, re_id):
-        """_check_com_re_link
-
-        :param comp_id:
-        :param re_id:
-        """
-
     def get_all_entities_id(self):
         """
             get all entities ids by types
