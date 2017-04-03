@@ -869,7 +869,6 @@ class TestManager(BaseTest):
             'state': 1,
             'state_type': 1,
             'timestamp': 0,
-            'source_type': 'component',
         }
 
         expected_event1 = {
@@ -884,7 +883,6 @@ class TestManager(BaseTest):
             'state_type': 1,
             'status': 1,
             'timestamp': 0,
-            'source_type': 'component',
         }
 
         expected_event2 = {
@@ -900,7 +898,6 @@ class TestManager(BaseTest):
             'state_type': 1,
             'state': 0,
             'timestamp': 0,
-            'source_type': 'component',
         }
 
         self.assertEqual(len(events), 3)
