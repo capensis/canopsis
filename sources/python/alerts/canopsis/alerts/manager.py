@@ -33,9 +33,10 @@ from canopsis.check import Check
 
 from canopsis.selector.manager import Selector
 
+from canopsis.alerts import AlarmField
 from canopsis.alerts.status import (
     get_last_state, get_last_status,
-    OFF, STEALTHY, is_stealthy, get_previous_step)
+    OFF, STEALTHY, is_stealthy, get_previous_step, is_keeped_state)
 
 from time import time
 
@@ -260,7 +261,9 @@ class Alerts(MiddlewareRegistry):
             ]}
 
         if not snoozed:
-            no_snooze_cond = {'$or': [
+            no_snooze_cond = {
+                '$or':
+                [
                     {'snooze': None},
                     {'snooze.val': {'$lte': int(time())}}
                 ]
@@ -547,7 +550,6 @@ class Alerts(MiddlewareRegistry):
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
         old_state = get_last_state(value, ts=event['timestamp'])
-
         if state != old_state:
             return self.change_of_state(alarm, old_state, state, event)
 
@@ -604,6 +606,18 @@ class Alerts(MiddlewareRegistry):
         :rtype: dict
         """
 
+        storage_value = self[Alerts.ALARM_STORAGE].VALUE
+        # Check for a forced state on this alarm
+        if is_keeped_state(alarm['value']):
+            if state == Check.OK:
+                # Disengaging 'keepstate' flag
+                alarm[storage_value][AlarmField.state.value]['_t'] = None
+            else:
+                self.logger.info('Entity {} not allowed to change state: ignoring'
+                                 .format(alarm['data_id']))
+                return alarm
+
+        # Escalation
         if state > old_state:
             task = get_task(
                 'alerts.systemaction.state_increase', cacheonly=True
@@ -614,10 +628,11 @@ class Alerts(MiddlewareRegistry):
                 'alerts.systemaction.state_decrease', cacheonly=True
             )
 
+        # Executing task
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
         new_value, status = task(self, value, state, event)
 
-        alarm[self[Alerts.ALARM_STORAGE].VALUE] = new_value
+        alarm[storage_value] = new_value
 
         return self.update_status(alarm, status, event)
 

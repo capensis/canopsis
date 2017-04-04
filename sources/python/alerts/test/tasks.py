@@ -24,7 +24,8 @@ from time import time
 
 from canopsis.task.core import get_task
 
-from canopsis.alerts.status import get_previous_step, CANCELED
+from canopsis.alerts import AlarmField
+from canopsis.alerts.status import get_previous_step, CANCELED, is_keeped_state
 
 from canopsis.entitylink.manager import Entitylink
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -117,10 +118,10 @@ class TestTasks(BaseTest):
             event
         )
 
-        self.assertFalse(alarm['comment'] is None)
-        self.assertEqual(alarm['comment']['t'], 0)
-        self.assertEqual(alarm['comment']['a'], 'testauthor')
-        self.assertEqual(alarm['comment']['m'], 'test message')
+        self.assertFalse(alarm[AlarmField.comment.value] is None)
+        self.assertEqual(alarm[AlarmField.comment.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.comment.value]['a'], 'testauthor')
+        self.assertEqual(alarm[AlarmField.comment.value]['m'], 'test message')
 
     def test_restore(self):
         event = {'timestamp': 0}
@@ -217,6 +218,7 @@ class TestTasks(BaseTest):
         self.assertTrue(
             alarm['state'] is get_previous_step(alarm, 'changestate')
         )
+        self.assertTrue(is_keeped_state(alarm))
 
     def test_snooze(self):
         event = {

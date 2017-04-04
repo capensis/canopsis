@@ -123,7 +123,7 @@ Hard limit
 of `flapping steps cropping` not being enough. It simply controls the maximum
 number of steps that an alarm can have.
 
-If a step should be appended whereas the has limit has been reached, it
+If a step should be appended whereas the limit has been reached, it
 **MUST** be discarded and can *not* be retrieved.
 
 The only step allowed to be considered when an alarm has reached its hard limit

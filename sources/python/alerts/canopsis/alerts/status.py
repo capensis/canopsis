@@ -136,6 +136,23 @@ def is_flapping(manager, alarm):
     return False
 
 
+def is_keeped_state(alarm):
+    """
+    Check if an alarm state must be keeped.
+
+    :param manager: Alerts manager
+    :type manager: canopsis.alerts.manager.Alerts
+
+    :param alarm: Alarm history
+    :type alarm: dict
+
+    :returns: ``True`` if alarm state is forced, ``False`` otherwise
+    """
+    state = alarm['state']
+
+    return state is not None and state['_t'] == 'changestate'
+
+
 def is_stealthy(manager, alarm):
     """
     Check if alarm is stealthy.

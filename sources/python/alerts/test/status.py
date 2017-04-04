@@ -29,7 +29,7 @@ from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import (
     ONGOING, CANCELED, OFF,
     is_flapping, is_stealthy, compute_status, get_last_state, get_last_status,
-    get_previous_step
+    get_previous_step, is_keeped_state
 )
 
 
@@ -219,6 +219,18 @@ class TestStatus(TestCase):
         got = is_stealthy(self.manager, self.alarm)
 
         self.assertFalse(got)
+
+    def test_is_keeped_state(self):
+        self.alarm['state'] = {}
+        self.alarm['state']['_t'] = 'changestate'
+
+        self.assertTrue(is_keeped_state(self.alarm))
+
+    def test_isnot_keeped_state(self):
+        self.alarm['state'] = {}
+        self.alarm['state']['_t'] = None
+
+        self.assertFalse(is_keeped_state(self.alarm))
 
     def test_is_ongoing(self):
         self.alarm['state'] = {
