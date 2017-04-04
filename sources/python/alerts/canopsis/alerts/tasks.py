@@ -20,8 +20,9 @@
 
 from time import time
 
+from canopsis.alerts import AlarmField
 from canopsis.alerts.status import (
-    compute_status, OFF, CANCELED, get_previous_step)
+    compute_status, OFF, CANCELED, get_previous_step, is_keeped_state)
 
 from canopsis.task.core import register_task
 
@@ -90,13 +91,13 @@ def comment(manager, alarm, author, message, event):
     """
 
     step = {
-        '_t': 'comment',
+        '_t': AlarmField.comment.value,
         't': event['timestamp'],
         'a': author,
         'm': message
     }
 
-    alarm['comment'] = step
+    alarm[AlarmField.comment.value] = step
     alarm['steps'].append(step)
 
     return alarm
@@ -237,7 +238,7 @@ def state_increase(manager, alarm, state, event):
         'val': state
     }
 
-    if alarm['state'] is None or alarm['state']['_t'] != 'changestate':
+    if alarm['state'] is None or not is_keeped_state(alarm):
         alarm['state'] = step
 
     alarm['steps'].append(step)
@@ -260,7 +261,7 @@ def state_decrease(manager, alarm, state, event):
         'val': state
     }
 
-    if alarm['state'] is None or alarm['state']['_t'] != 'changestate':
+    if alarm['state'] is None or not is_keeped_state(alarm):
         alarm['state'] = step
 
     alarm['steps'].append(step)

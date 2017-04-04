@@ -23,7 +23,7 @@ from time import time
 from unittest import main
 
 from canopsis.alerts.manager import Alerts
-from canopsis.alerts.status import OFF, STEALTHY
+from canopsis.alerts.status import OFF, STEALTHY, is_keeped_state
 from canopsis.check import Check
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
@@ -427,6 +427,7 @@ class TestManager(BaseTest):
     def test_archive_state_changed(self):
         alarm_id = '/component/test/test0/ut-comp'
 
+        # Testing state creation
         event0 = {
             'source_type': 'component',
             'connector': 'test',
@@ -453,6 +454,7 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value']['steps'][0], expected_state)
         self.assertEqual(alarm['value']['state'], expected_state)
 
+        # Testing state increase
         event1 = {
             'source_type': 'component',
             'connector': 'test',
@@ -478,6 +480,62 @@ class TestManager(BaseTest):
         self.assertEqual(len(alarm['value']['steps']), 3)
         self.assertEqual(alarm['value']['steps'][2], expected_state)
         self.assertEqual(alarm['value']['state'], expected_state)
+
+        # Testing keeped state
+        event1 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'changestate',
+            'state': 1,
+        }
+        self.manager.archive(event1)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertEqual(len(alarm['value']['steps']), 4)
+        self.assertEqual(alarm['value']['state']['val'], 1)
+        self.assertTrue(is_keeped_state(alarm['value']))
+
+        event1 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 3,
+        }
+        self.manager.archive(event1)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertEqual(len(alarm['value']['steps']), 4)
+        self.assertEqual(alarm['value']['state']['val'], 1)
+        self.assertTrue(is_keeped_state(alarm['value']))
+
+        # Disengaging keepstate
+        event1 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': 0,
+        }
+        self.manager.archive(event1)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertEqual(len(alarm['value']['steps']), 6)
+        self.assertEqual(alarm['value']['state']['val'], 0)
+        self.assertFalse(is_keeped_state(alarm['value']))
 
     def test_archive_status_nochange(self):
         alarm_id = '/component/test/test0/ut-comp'

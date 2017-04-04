@@ -25,6 +25,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "Romain Hennuyer", "2017/04/04", "0.5", "Updating change state description", ""
    "Romain Hennuyer", "2017/03/28", "0.4", "Add steps comment", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.3", "Add steps hard limit", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.2", "Add flapping crop feature", ""
@@ -503,6 +504,8 @@ Task: Change State
  - the alarm ``ticket`` **MUST** be set to the :ref:`change state step <TR__Alarm__DataModel__ChangeState>`
  - the step **MUST** be added to the ``steps`` set of the alarm
  - the alarm **MUST** be returned as ``new_value``
+ - the alarm **MUST** be recognized as an unchangable state
+ - the alarm **MUST** always update his state if the state is OK (0)
 
 Task: State increase
 --------------------
@@ -596,4 +599,9 @@ Utility: Is stealthy ?
 ----------------------
 
 ``is_stealthy(manager, alarm) -> result``:
+
+Utility: Is keeped state ?
+----------------------
+
+``is_keeped_state(alarm) -> result``:
 

@@ -19,3 +19,16 @@
 # ---------------------------------
 
 __version__ = '0.1'
+
+from enum import Enum
+
+
+class AlarmField(Enum):
+    # Possible fields for an alarm
+    comment = 'comment'
+    state = 'state'
+    # TODO : extend to other fields (steps, ack, cancel, status, extra...)
+    # canceled = 'canceled'
+
+    def __str__(self):
+        return str(self.value)
