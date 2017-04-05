@@ -193,10 +193,10 @@ def change_state(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': message,
-        'val': event['state']
+        'val': event[AlarmField.state.value]
     }
 
-    alarm['state'] = step
+    alarm[AlarmField.state.value] = step
     alarm['steps'].append(step)
 
     return alarm
@@ -238,8 +238,8 @@ def state_increase(manager, alarm, state, event):
         'val': state
     }
 
-    if alarm['state'] is None or not is_keeped_state(alarm):
-        alarm['state'] = step
+    if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
+        alarm[AlarmField.state.value] = step
 
     alarm['steps'].append(step)
     status = compute_status(manager, alarm)
@@ -261,8 +261,8 @@ def state_decrease(manager, alarm, state, event):
         'val': state
     }
 
-    if alarm['state'] is None or not is_keeped_state(alarm):
-        alarm['state'] = step
+    if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
+        alarm[AlarmField.state.value] = step
 
     alarm['steps'].append(step)
     status = compute_status(manager, alarm)

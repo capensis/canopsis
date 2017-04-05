@@ -36,7 +36,8 @@ from canopsis.selector.manager import Selector
 from canopsis.alerts import AlarmField
 from canopsis.alerts.status import (
     get_last_state, get_last_status,
-    OFF, STEALTHY, is_stealthy, get_previous_step, is_keeped_state)
+    OFF, STEALTHY, is_stealthy, get_previous_step, is_keeped_state
+)
 
 from time import time
 
@@ -696,7 +697,7 @@ class Alerts(MiddlewareRegistry):
                 'connector_name': event['connector_name'],
                 'component': event['component'],
                 'resource': event.get('resource', None),
-                'state': None,
+                AlarmField.state.value: None,
                 'status': None,
                 'ack': None,
                 'canceled': None,
