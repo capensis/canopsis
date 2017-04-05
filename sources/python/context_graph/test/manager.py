@@ -110,20 +110,15 @@ class GetEvent(TestCase):
 
         # set of required field
         fields = sorted(['component', 'connector', 'connector_name',
-                         'event_type', 'infos', 'long_output', 'measurements',
-                         'output', 'source_type', 'state', 'state_type',
-                         'timestamp'])
+                         'event_type', 'long_output', 'output', 'source_type',
+                         'state', 'state_type', 'timestamp'])
 
         conn = "conn"
         conn_name = "conn-name"
         entity_id = conn + "/" + conn_name
-        measurements = ["measurements1", "measurements2"]
-        infos = {"info1": "data1",
-                 "info2": "data2",
-                 "info3": "data3"}
 
         entity = create_conn(entity_id, conn_name, depends=[],
-                             impact=[], measurements=measurements, infos=infos)
+                             impact=[])
 
         event = self.context.get_event(
             entity, event_type='check', output='test'
@@ -132,8 +127,6 @@ class GetEvent(TestCase):
         self.assertListEqual(sorted(event.keys()), fields)
         self.assertEqual(event['event_type'], 'check')
         self.assertEqual(event['output'], 'test')
-        self.assertListEqual(event['measurements'], measurements)
-        self.assertDictEqual(event['infos'], infos)
 
 
 class GetID(TestCase):

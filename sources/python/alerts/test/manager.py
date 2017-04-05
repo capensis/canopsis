@@ -900,6 +900,8 @@ class TestManager(BaseTest):
             'timestamp': 0,
         }
 
+        print(events[0])
+
         self.assertEqual(len(events), 3)
 
         self.assertDictEqual(events[0], expected_event0)
