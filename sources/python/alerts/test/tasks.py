@@ -38,7 +38,7 @@ class TestTasks(BaseTest):
         super(TestTasks, self).setUp()
 
         self.alarm = {
-            'state': None,
+            AlarmField.state.value: None,
             'status': None,
             'ack': None,
             'canceled': None,
@@ -210,13 +210,13 @@ class TestTasks(BaseTest):
             event
         )
 
-        self.assertTrue(alarm['state'] is not None)
-        self.assertEqual(alarm['state']['t'], 0)
-        self.assertEqual(alarm['state']['a'], 'testauthor')
-        self.assertEqual(alarm['state']['m'], 'test message')
-        self.assertEqual(alarm['state']['val'], 2)
+        self.assertTrue(alarm[AlarmField.state.value] is not None)
+        self.assertEqual(alarm[AlarmField.state.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.state.value]['a'], 'testauthor')
+        self.assertEqual(alarm[AlarmField.state.value]['m'], 'test message')
+        self.assertEqual(alarm[AlarmField.state.value]['val'], 2)
         self.assertTrue(
-            alarm['state'] is get_previous_step(alarm, 'changestate')
+            alarm[AlarmField.state.value] is get_previous_step(alarm, 'changestate')
         )
         self.assertTrue(is_keeped_state(alarm))
 
@@ -259,13 +259,13 @@ class TestTasks(BaseTest):
         task = get_task('alerts.systemaction.state_increase')
         alarm, _ = task(self.manager, self.alarm, state, event)
 
-        self.assertTrue(alarm['state'] is not None)
-        self.assertEqual(alarm['state']['t'], 0)
-        self.assertEqual(alarm['state']['a'], 'test.test0')
-        self.assertEqual(alarm['state']['m'], 'test message')
-        self.assertEqual(alarm['state']['val'], state)
+        self.assertTrue(alarm[AlarmField.state.value] is not None)
+        self.assertEqual(alarm[AlarmField.state.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.state.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.state.value]['m'], 'test message')
+        self.assertEqual(alarm[AlarmField.state.value]['val'], state)
         self.assertTrue(
-            alarm['state'] is get_previous_step(alarm, 'stateinc')
+            alarm[AlarmField.state.value] is get_previous_step(alarm, 'stateinc')
         )
 
     def test_state_decrease(self):
@@ -280,13 +280,13 @@ class TestTasks(BaseTest):
         task = get_task('alerts.systemaction.state_decrease')
         alarm, _ = task(self.manager, self.alarm, state, event)
 
-        self.assertTrue(alarm['state'] is not None)
-        self.assertEqual(alarm['state']['t'], 0)
-        self.assertEqual(alarm['state']['a'], 'test.test0')
-        self.assertEqual(alarm['state']['m'], 'test message')
-        self.assertEqual(alarm['state']['val'], state)
+        self.assertTrue(alarm[AlarmField.state.value] is not None)
+        self.assertEqual(alarm[AlarmField.state.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.state.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.state.value]['m'], 'test message')
+        self.assertEqual(alarm[AlarmField.state.value]['val'], state)
         self.assertTrue(
-            alarm['state'] is get_previous_step(alarm, 'statedec')
+            alarm[AlarmField.state.value] is get_previous_step(alarm, 'statedec')
         )
 
     def test_status_increase(self):
