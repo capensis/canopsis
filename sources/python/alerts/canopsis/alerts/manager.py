@@ -268,14 +268,15 @@ class Alerts(MiddlewareRegistry):
         )
 
         for entity_id, alarms in alarms_by_entity.items():
+            entity = self.context_manager.get_entities_by_id(entity_id)
             try:
-                entity = self.context_manager.get_entities_by_id(entity_id)[0]
+                entity = entity[0]
             except IndexError:
                 entity = {}
+
             entity['entity_id'] = entity_id
             for alarm in alarms:
                 alarm['entity'] = entity
-
         return alarms_by_entity
 
     def get_current_alarm(self, alarm_id):
@@ -346,10 +347,11 @@ class Alerts(MiddlewareRegistry):
         alarm_id = alarm[storage.DATA_ID]
         alarm = alarm[storage.VALUE]
 
+        entity = self.context_manager.get_entities_by_id(alarm_id)
         try:
-            entity = self.context_manager.get_entities_by_id(alarm_id)[0]
+            entity = entity[0]
         except IndexError:
-            entity = {}
+                entity = {}
 
         no_author_types = ['stateinc', 'statedec', 'statusinc', 'statusdec']
         check_referer_types = [
@@ -438,9 +440,9 @@ class Alerts(MiddlewareRegistry):
         author = event.get('author', None)
         message = event.get('output', None)
 
+
         if event['event_type'] == Check.EVENT_TYPE:
             alarm = self.get_current_alarm(entity_id)
-
             if alarm is None:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
