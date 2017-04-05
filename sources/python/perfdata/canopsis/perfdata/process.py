@@ -113,6 +113,9 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             perf_data = perf_data.copy()
             event_with_metric = deepcopy(event)
             event_with_metric['type'] = 'metric'
+
+            perf_metric = perf_data['metric']
+
             event_with_metric[ContextGraph.NAME] = perf_data.pop('metric')
 
             encoded_event_with_metric = {}
@@ -130,10 +133,12 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             metric_id = manager.context.get_id(encoded_event_with_metric)
 
             value = perf_data.pop('value', None)
+            
+            encoded_event_with_metric['perf_metric'] = perf_metric
 
             manager.put(
                 metric_id=metric_id, points=[(timestamp, value)],
-                meta=perf_data, cache=True
+                meta=perf_data, cache=True, event=encoded_event_with_metric
             )
 
     return event

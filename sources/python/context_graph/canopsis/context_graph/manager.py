@@ -16,6 +16,7 @@ class ContextGraph(MiddlewareRegistry):
     ENTITIES_STORAGE = 'entities_storage'
     ORGANISATIONS_STORAGE = 'organisations_storage'
     USERS_STORAGE = 'measurements_storage'
+    NAME = 'name' 
 
     RESOURCE = "resource"
     COMPONENT = "component"
