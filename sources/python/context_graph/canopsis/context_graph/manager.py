@@ -16,7 +16,7 @@ class ContextGraph(MiddlewareRegistry):
     ENTITIES_STORAGE = 'entities_storage'
     ORGANISATIONS_STORAGE = 'organisations_storage'
     USERS_STORAGE = 'measurements_storage'
-    NAME = 'name' 
+    NAME = 'name'
 
     RESOURCE = "resource"
     COMPONENT = "component"
@@ -33,8 +33,6 @@ class ContextGraph(MiddlewareRegistry):
         :param event: the event from which we extract the id.
         :return type: the id as a string
         """
-        if '_id' in event:
-            return event['_id']
 
         source_type = ''
         if 'source_type' in event:
