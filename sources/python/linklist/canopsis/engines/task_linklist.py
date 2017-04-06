@@ -20,7 +20,7 @@
 
 from canopsis.engines.core import TaskHandler
 from canopsis.linklist.manager import Linklist
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.event.manager import Event
 from canopsis.entitylink.manager import Entitylink
 from json import loads
@@ -42,7 +42,7 @@ class engine(TaskHandler):
     def handle_task(self, job):
 
         self.link_list_manager = Linklist()
-        self.context = Context()
+        self.context = ContextGraph()
         self.event = Event()
         self.entity_link_manager = Entitylink()
 
@@ -111,9 +111,7 @@ class engine(TaskHandler):
             'computed_links': links
         }
 
-        _id = self.context.get_entity_id(entity)
-
-        self.entity_link_manager.put(_id, context)
+        self.entity_link_manager.put(entity["_id"], context)
 
     def get_ids_for_filter(self, l_filter):
 
@@ -140,8 +138,9 @@ class engine(TaskHandler):
 
         for event in events:
             self.logger.debug(u'rk : {}'.format(event['_id']))
-            entity = self.context.get_entity_old(event)
-            entity_id = self.context.get_entity_id(entity)
+
+            entity_id = self.context.get_id(event)
+
             context_ids.append(entity_id)
 
         return context_ids

@@ -31,25 +31,55 @@ def exports(ws):
         """
             :return all json for d3 representation
         """
-    @route(ws.application.get)
-    def get_entities(eids, is_active=True, **kwargs):
-        """
-            :return get_entities
-        """
+        return manager.get_entities()
 
-    @route(ws.application.put)
-    def put_entities(entities):
+    @route(
+        ws.application.put,
+        payload['entity']
+    )
+    def put_entities(entity):
         """
             put entities in db
         """
-    @route(ws.application.post)
-    def update_entity(entity):
+        return manager.create_entity(entity)
+
+    @route(
+        ws.application.post, 
+        payload=['entity']    
+    )
+    def update_entity(id_, entity):
         """
             update entity in db
         """
+        return manager.update_entity(id_, entity)
+
     
-    @route(ws.application.delete)
-    def delete_entity(eid):
+    @route(
+        ws.application.delete,
+        payload=['id_']
+    )
+    def delete_entity(id_):
         """
             remove  etity
         """
+        return manager.delete_entity(id_)
+
+
+    @route(
+        ws.application.get,
+        payload=['query', 'projection', 'limit', 'sort', 'with_count']
+    )
+    def get_entities(
+            query={},
+            projection={},
+            limit=0, 
+            sort=False,
+            with_count=False
+    )
+    return get_entities(
+        query=query,
+        projection=projection,
+        limit=limit,
+        sort=sort, 
+        with_count=with_count
+    )

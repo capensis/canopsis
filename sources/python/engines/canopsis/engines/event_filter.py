@@ -21,7 +21,7 @@
 from canopsis.engines.core import Engine, DROP, publish
 
 from canopsis.alerts.manager import Alerts
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
@@ -307,10 +307,9 @@ class engine(Engine):
 
         # Context manager caching
         if not hasattr(self, 'cm'):
-            self.cm = Context()
+            self.cm = ContextGraph()
 
-        entity = self.cm.get_entity_old(event)
-        entity_id = self.cm.get_entity_id(entity)
+        entity_id = self.cm.get_id(event)
 
         current_alarm = self.am.get_current_alarm(entity_id)
         if current_alarm is None:

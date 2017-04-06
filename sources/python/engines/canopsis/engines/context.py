@@ -20,7 +20,7 @@
 from __future__ import unicode_literals
 
 from canopsis.engines.core import Engine
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 try:
     from threading import Lock
 except ImportError:
@@ -39,7 +39,7 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kwargs)
 
         # get a context
-        self.context = Context()
+        self.context = ContextGraph()
         """
         TODO: sla
         # get a storage for sla macro
@@ -73,7 +73,7 @@ class engine(Engine):
         self.entities_by_entity_ids = {}
         self.lock.release()
 
-        entities = self.context[Context.CTX_STORAGE].get_elements(
+        entities = self.context[ContextGraph.CTX_STORAGE].get_elements(
             ids=entities_by_entity_ids.keys()
         )
 
@@ -84,9 +84,7 @@ class engine(Engine):
             context = self.context
             for entity_id in entities_by_entity_ids:
                 _type, entity, ctx = entities_by_entity_ids[entity_id]
-                context.put(
-                    _type=_type, entity=entity, context=ctx
-                )
+                context.put_entities([entity])
 
     def work(self, event, *args, **kwargs):
         mCrit = 'PROC_CRITICAL'
@@ -119,19 +117,15 @@ class engine(Engine):
         # add hostgroups
         for hostgroup in hostgroups:
             hostgroup_data = {
-                Context.NAME: hostgroup
+                ContextGraph.NAME: hostgroup
             }
-            self.context.put(
-                _type='hostgroup', entity=hostgroup_data, cache=True
-            )
+            self.context.put_entities([hostgroup_data])
         # add servicegroups
         for servicegroup in servicegroups:
             servgroup_data = {
-                Context.NAME: servicegroup
+                ContextGraph.NAME: servicegroup
             }
-            self.context.put(
-                _type='servicegroup', entity=servgroup_data, cache=True
-            )
+            self.context.put_entities([servgroup_data])
 
         # get related entity
         encoded_event = {}
@@ -146,9 +140,10 @@ class engine(Engine):
                 pass
             encoded_event[k] = v
 
-        entity = self.context.get_entity_old(
-            encoded_event, from_db=True, create_if_not_exists=True, cache=True
-        )
+        # FIXME : get entity in the previous context had an option
+        # create_if_not_exists in case of trouble, it might be a good start
+        # to look at it.
+        entity = self.context.get_entity(encoded_event)
 
         # set service groups and hostgroups
         if resource:
@@ -168,10 +163,7 @@ class engine(Engine):
             del entity['resource']
 
         # put the status entity in the context
-        self.context.put(
-            _type=entity[Context.TYPE], entity=entity, context=context,
-            cache=True
-        )
+        self.context.put_entities([entity])
 
         # udpdate context information with resource and component
         if resource:
@@ -180,17 +172,14 @@ class engine(Engine):
             context['component'] = name
 
         # remove type from context because type will be metric
-        del context[Context.TYPE]
+        del context[ContextGraph.TYPE]
 
         # add perf data (may be done in the engine perfdata)
         for perfdata in event.get('perf_data_array', []):
             perfdata_entity = {}
             name = perfdata['metric']
-            perfdata_entity[Context.NAME] = name
+            perfdata_entity[ContextGraph.NAME] = name
             perfdata_entity['internal'] = perfdata['metric'].startswith('cps')
-            self.context.put(
-                _type='metric', entity=perfdata_entity, context=context,
-                cache=True
-            )
+            self.context.put_entities([perfdata_entity])
 
         return event

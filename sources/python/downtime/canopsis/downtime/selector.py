@@ -25,7 +25,7 @@ from canopsis.common.utils import lookup
 from canopsis.common.utils import singleton_per_scope
 
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 from canopsis.downtime.process import DOWNTIME  #TODO: in configuration please
 

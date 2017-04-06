@@ -27,7 +27,7 @@ from canopsis.configuration.configurable.decorator import (
 )
 from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 from numbers import Number
 
@@ -63,35 +63,38 @@ class PerfData(MiddlewareRegistry):
         if context is not None:
             self[PerfData.CONTEXT_MANAGER] = context
 
-    def get_metric_entity(self, metricname, event):
-        """Get metric entity from event and metric name.
-
-        :param str metricname: entity name.
-        :param dict event: event used to generate entity.
-
-        :returns: entity as dict
-        """
-
-        entity = self.context.get_entity_old(event)
-
-        ctype = entity[Context.TYPE]
-        entity[Context.TYPE] = 'metric'
-
-        entity[ctype] = entity[Context.NAME]
-        entity[Context.NAME] = metricname
-
-        return entity
-
-    def _data_id_tags(self, metric_id, meta=None):
+    def _data_id_tags(self, metric_id, meta=None, event={}):
 
         tags = {} if meta is None else meta.copy()
 
-        entity = self[PerfData.CONTEXT_MANAGER].get_entity_by_id(metric_id)
+        # entity = self[PerfData.CONTEXT_MANAGER].get_entities_by_id(metric_id)[0]
 
+        entity = {}
+
+        eid = '/metric/{0}/{1}/{2}/{3}/{4}'.format(
+            event['connector'],
+            event['connector_name'],
+            event['component'],
+            event['resource'],
+            event['perf_metric']
+        )
+
+        entity = {
+            'connector':  event['connector'],
+            'connector_name': event['connector_name'],
+            'component': event['component'],
+            'resource': event['resource'],
+            'eid': eid,
+            'type': 'metric',
+            # 'retention': meta['retention'],
+            # 'unit': meta['unit']
+
+        }
         tags.update(entity)
-        tags[Context.EID] = metric_id
+        tags[eid] = metric_id
 
-        data_id = tags.pop(Context.NAME)
+        data_id = tags.pop(eid)
+
 
         return data_id, tags
 
@@ -191,7 +194,7 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    def put(self, metric_id, points, meta=None, cache=False):
+    def put(self, metric_id, points, meta=None, cache=False, event={}):
         """Put a (list of) couple (timestamp, value), a tags into
         rated_documents.
 
@@ -210,7 +213,7 @@ class PerfData(MiddlewareRegistry):
                 # transform points into a tuple
                 points = (points,)
 
-            data_id, tags = self._data_id_tags(metric_id, meta)
+            data_id, tags = self._data_id_tags(metric_id, meta, event=event)
 
             # update data in a cache (a)synchronous way
             self[PerfData.PERFDATA_STORAGE].put(

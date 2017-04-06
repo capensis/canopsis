@@ -23,9 +23,11 @@ from unittest import TestCase
 
 from canopsis.middleware.core import Middleware
 from canopsis.alerts.manager import Alerts
+from canopsis.context_graph.manager import ContextGraph
 
 
 class BaseTest(TestCase):
+
     def setUp(self):
         self.alarm_storage = Middleware.get_middleware_by_uri(
             'storage-periodical-testalarm://'
@@ -33,10 +35,15 @@ class BaseTest(TestCase):
         self.config_storage = Middleware.get_middleware_by_uri(
             'storage-default-testconfig://'
         )
+        self.context_graph_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testentities://'
+        )
 
         self.manager = Alerts()
         self.manager[Alerts.ALARM_STORAGE] = self.alarm_storage
         self.manager[Alerts.CONFIG_STORAGE] = self.config_storage
+        self.manager.context_manager[
+            ContextGraph.ENTITIES_STORAGE] = self.context_graph_storage
 
         self.config_storage.put_element(
             element={

@@ -26,7 +26,7 @@ from canopsis.configuration.model import Parameter
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
 from canopsis.task.core import get_task
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 from canopsis.event.manager import Event
 from canopsis.check import Check
@@ -182,7 +182,9 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.ALARM_STORAGE] = alarm_storage
 
         if context is not None:
-            self[Alerts.CONTEXT_MANAGER] = context
+            self[Alerts.CONTEXT_MANAGER]= context
+
+        self.context_manager = ContextGraph()
 
     def load_config(self):
         value = self[Alerts.CONFIG_STORAGE].get_elements(
@@ -265,13 +267,16 @@ class Alerts(MiddlewareRegistry):
             timewindow=timewindow
         )
 
-        cm = Context()
         for entity_id, alarms in alarms_by_entity.items():
-            entity = cm.get_entity_by_id(entity_id)
+            entity = self.context_manager.get_entities_by_id(entity_id)
+            try:
+                entity = entity[0]
+            except IndexError:
+                entity = {}
+
             entity['entity_id'] = entity_id
             for alarm in alarms:
                 alarm['entity'] = entity
-
         return alarms_by_entity
 
     def get_current_alarm(self, alarm_id):
@@ -294,6 +299,7 @@ class Alerts(MiddlewareRegistry):
             },
             limit=1
         )
+
 
         if result is not None:
             result = result[0]
@@ -341,7 +347,11 @@ class Alerts(MiddlewareRegistry):
         alarm_id = alarm[storage.DATA_ID]
         alarm = alarm[storage.VALUE]
 
-        entity = self[Alerts.CONTEXT_MANAGER].get_entity_by_id(alarm_id)
+        entity = self.context_manager.get_entities_by_id(alarm_id)
+        try:
+            entity = entity[0]
+        except IndexError:
+                entity = {}
 
         no_author_types = ['stateinc', 'statedec', 'statusinc', 'statusdec']
         check_referer_types = [
@@ -375,9 +385,18 @@ class Alerts(MiddlewareRegistry):
             'assocticket': 'ticket',
             'snooze': 'duration'
         }
-
         events = []
-        eventmodel = self[Alerts.CONTEXT_MANAGER].get_event(entity)
+        eventmodel = self.context_manager.get_event(entity)
+        try:
+            eventmodel.pop("_id")
+            eventmodel.pop("depends")
+            eventmodel.pop("impact")
+            eventmodel.pop("infos")
+            eventmodel.pop("measurements")
+            eventmodel.pop("type")
+        except KeyError:
+            # FIXME : A logger would be nice
+            pass
 
         for step in alarm['steps']:
             event = eventmodel.copy()
@@ -416,15 +435,14 @@ class Alerts(MiddlewareRegistry):
         :type event: dict
         """
 
-        entity = self[Alerts.CONTEXT_MANAGER].get_entity_old(event)
-        entity_id = self[Alerts.CONTEXT_MANAGER].get_entity_id(entity)
+        entity_id = self.context_manager.get_id(event)
 
         author = event.get('author', None)
         message = event.get('output', None)
 
+
         if event['event_type'] == Check.EVENT_TYPE:
             alarm = self.get_current_alarm(entity_id)
-
             if alarm is None:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for

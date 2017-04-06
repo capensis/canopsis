@@ -21,7 +21,7 @@
 from canopsis.linklist.manager import Linklist
 from canopsis.ctxprop.registry import CTXPropRegistry
 from canopsis.mongo.core import MongoStorage
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 from json import loads
 
@@ -38,7 +38,7 @@ class CTXLinklistRegistry(CTXPropRegistry):
 
         self.manager = Linklist()
         self.events = MongoStorage(table='events')
-        self.context = Context()
+        self.context = ContextGraph()
 
     def _get_documents(self, ids, query):
         """Get documents related to input ids and query.
@@ -64,8 +64,8 @@ class CTXLinklistRegistry(CTXPropRegistry):
             else:  # get entities from events
                 events = self.events.find_elements(query=mfilter)
                 for event in events:
-                    entity = self.context.get_entity_old(event)
-                    entity_id = self.context.get_entity_id(entity)
+                    entity_id = self.context.get_id(event)
+
                     if ids is None or entity_id in ids:
                         doc[ctx_id_field] = entity_id  # add eid to the doc
                         result.append(doc)
@@ -101,8 +101,8 @@ class CTXLinklistRegistry(CTXPropRegistry):
                 # get entities from events
                 events = self.events.find_elements(query=mfilter)
                 for event in events:
-                    entity = self.context.get_entity_old(event)
-                    entity_id = self.context.get_entity_id(entity)
+                    entity_id = self.context.get_id(event)
+
                     result.append(entity_id)
 
         return result

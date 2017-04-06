@@ -23,7 +23,7 @@ from unittest import TestCase, main
 
 from canopsis.middleware.core import Middleware
 from canopsis.perfdata.manager import PerfData
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.serie.manager import Serie
 
 ##TODO4-01-2017

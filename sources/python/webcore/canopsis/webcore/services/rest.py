@@ -23,7 +23,7 @@ from bottle import HTTPError, response
 from canopsis.common.ws import route
 
 from canopsis.common.utils import ensure_iterable
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.old.record import Record
 
 from base64 import b64decode
@@ -256,7 +256,7 @@ def delete_records(ws, namespace, ctype, _id, data):
 
 
 def exports(ws):
-    ctxmgr = Context()
+    ctxmgr = ContextGraph()
 
     @route(ws.application.get, name='rest/indexes', response=lambda r, a: r)
     def indexes(collection):
@@ -322,21 +322,23 @@ def exports(ws):
 
         for record in records:
             if record['crecord_type'] == 'event':
-                entity = ctxmgr.get_entity_old(record)
-
-                encoded_entity = {}
-                for k, v in entity.items():
-                    try:
-                        k = k.encode('utf-8')
-                    except:
-                        pass
-                    try:
-                        v = v.encode('utf-8')
-                    except:
-                        pass
-                    encoded_entity[k] = v
-
-                record['entity_id'] = ctxmgr.get_entity_id(encoded_entity)
+                eid = ''
+                if 'resource' in record.keys():
+                    eid = '/{0}/{1}/{2}/{3}/{4}'.format(
+                        record['source_type'],
+                        record['connector'],
+                        record['connector_name'],
+                        record['component'],
+                        record['resource']
+                    )
+                else:
+                    eid = '/{0}/{1}/{2}/{3}'.format(
+                        record['source_type'],
+                        record['connector'],
+                        record['connector_name'],
+                        record['component']
+                    )
+                record['entity_id'] = eid
 
         return records, nrecords
 

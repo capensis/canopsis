@@ -21,7 +21,7 @@
 """Module in charge of defining downtime processing in engines."""
 from __future__ import unicode_literals
 
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import register_task
 from canopsis.event import Event
@@ -33,7 +33,7 @@ from datetime import datetime, timedelta
 from icalendar import Event as vEvent
 
 
-ctxmgr = Context()  #: default context manager
+ctxmgr = ContextGraph()  #: default context manager
 pbmgr = PBehaviorManager()  #: default pbehavior manager
 
 events = get_storage(
@@ -67,21 +67,23 @@ def event_processing(
         manager = pbmgr
 
     evtype = event[Event.TYPE]
-    entity = context.get_entity_old(event)
 
-    encoded_entity = {}
-    for k, v in entity.items():
-        try:
-            k = k.encode('utf-8')
-        except:
-            pass
-        try:
-            v = v.encode('utf-8')
-        except:
-            pass
-        encoded_entity[k] = v
-
-    eid = context.get_entity_id(encoded_entity)
+    eid = ''
+    if 'resource' in event.keys():
+        eid = '/{0}/{1}/{2}/{3}/{4}'.format(
+            event['source_type'],
+            event['connector'],
+            event['connector_name'],
+            event['component'],
+            event['resource']
+        )
+    else:
+        eid = '/{0}/{1}/{2}/{3}'.format(
+            event['source_type'],
+            event['connector'],
+            event['connector_name'],
+            event['component']
+        )
 
     if evtype == DOWNTIME:
         ev = vEvent()
@@ -138,7 +140,7 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
         manager = pbmgr
 
     entity_ids = manager.whois(query=DOWNTIME_QUERY)
-    entities = context.get_entities(list(entity_ids))
+    entities = context.get_entities_by_id(list(entity_ids))
 
     spec = {}
 

@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+#from __future__ import unicode_literals
+
 from unittest import main
 
 from canopsis.timeserie.timewindow import get_offset_timewindow
@@ -316,7 +318,7 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value']['steps'][0], expected_status)
 
     def test_archive_state_nochange(self):
-        alarm_id = '/component/test/test0/ut-comp'
+        alarm_id = 'ut-comp'
 
         event0 = {
             'source_type': 'component',
@@ -363,7 +365,7 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value']['state'], expected_state)
 
     def test_archive_state_changed(self):
-        alarm_id = '/component/test/test0/ut-comp'
+        alarm_id = 'ut-comp'
 
         event0 = {
             'source_type': 'component',
@@ -418,7 +420,7 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value']['state'], expected_state)
 
     def test_archive_status_nochange(self):
-        alarm_id = '/component/test/test0/ut-comp'
+        alarm_id = 'ut-comp'
 
         event0 = {
             'source_type': 'component',
@@ -466,7 +468,7 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value']['status'], expected_status)
 
     def test_archive_status_changed(self):
-        alarm_id = '/component/test/test0/ut-comp'
+        alarm_id = 'ut-comp'
 
         event0 = {
             'source_type': 'component',
@@ -572,7 +574,7 @@ class TestManager(BaseTest):
         # state changes after the last status change. It means we should not
         # have any state crop.
 
-        alarm_id = '/component/test/test0/ut-comp1'
+        alarm_id = 'ut-comp1'
         docalarm = self.manager.get_current_alarm(alarm_id)
 
         self.assertIsNot(docalarm, None)
@@ -613,7 +615,7 @@ class TestManager(BaseTest):
         # 11 state changes after this change of status. Expecting 1 state to
         # be cropped.
 
-        alarm_id = '/component/test/test0/ut-comp2'
+        alarm_id = 'ut-comp2'
         docalarm = self.manager.get_current_alarm(alarm_id)
 
         self.assertIsNot(docalarm, None)
@@ -658,7 +660,7 @@ class TestManager(BaseTest):
         # 70 state changes after this change of status. Expecting 60 state to
         # be cropped.
 
-        alarm_id = '/component/test/test0/ut-comp3'
+        alarm_id = 'ut-comp3'
         docalarm = self.manager.get_current_alarm(alarm_id)
 
         self.assertIsNot(docalarm, None)
@@ -796,8 +798,20 @@ class TestManager(BaseTest):
         events = self.manager.get_events(alarm0)
         self.assertEqual(events, [])
 
+        component = { "_id" : "ut-comp",
+                      "impact" : [],
+                      "name" : "ut-comp",
+                      "measurements" : [],
+                      "depends" : [],
+                      "infos" : { },
+                      "type" : "component",
+                      "connector" : "test",
+                      "connector_name" : "test0" }
+
+        self.manager.context_manager.put_entities(component)
+
         # Only a check OK
-        alarm1_id = '/component/test/test0/ut-comp'
+        alarm1_id = 'ut-comp'
 
         event = {
             'source_type': 'component',
@@ -855,7 +869,6 @@ class TestManager(BaseTest):
             'state': 1,
             'state_type': 1,
             'timestamp': 0,
-            'type': 'component',
         }
 
         expected_event1 = {
@@ -870,7 +883,6 @@ class TestManager(BaseTest):
             'state_type': 1,
             'status': 1,
             'timestamp': 0,
-            'type': 'component',
         }
 
         expected_event2 = {
@@ -886,13 +898,15 @@ class TestManager(BaseTest):
             'state_type': 1,
             'state': 0,
             'timestamp': 0,
-            'type': 'component',
         }
 
         self.assertEqual(len(events), 3)
-        self.assertEqual(events[0], expected_event0)
-        self.assertEqual(events[1], expected_event1)
-        self.assertEqual(events[2], expected_event2)
+
+        self.assertDictEqual(events[0], expected_event0)
+        self.assertDictEqual(events[1], expected_event1)
+        self.assertDictEqual(events[2], expected_event2)
+
+        self.manager.context_manager.delete_entity(component["_id"])
 
 
 if __name__ == '__main__':

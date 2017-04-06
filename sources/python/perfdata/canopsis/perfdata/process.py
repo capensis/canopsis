@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from canopsis.task.core import register_task
 
 from canopsis.perfdata.manager import PerfData
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 from copy import deepcopy
 
@@ -113,7 +113,10 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             perf_data = perf_data.copy()
             event_with_metric = deepcopy(event)
             event_with_metric['type'] = 'metric'
-            event_with_metric[Context.NAME] = perf_data.pop('metric')
+
+            perf_metric = perf_data['metric']
+
+            event_with_metric[ContextGraph.NAME] = perf_data.pop('metric')
 
             encoded_event_with_metric = {}
             for k, v in event_with_metric.items():
@@ -127,15 +130,15 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
                     pass
                 encoded_event_with_metric[k] = v
 
-            metric_id = manager.context.get_entity_id(
-                encoded_event_with_metric
-            )
+            metric_id = manager.context.get_id(encoded_event_with_metric)
 
             value = perf_data.pop('value', None)
+            
+            encoded_event_with_metric['perf_metric'] = perf_metric
 
             manager.put(
                 metric_id=metric_id, points=[(timestamp, value)],
-                meta=perf_data, cache=True
+                meta=perf_data, cache=True, event=encoded_event_with_metric
             )
 
     return event
