@@ -121,7 +121,6 @@ Ember.Application.initializer({
                         //build time related information
                         var date = new Date(step.t*1000);
                         step.date = moment(date).format('LL');
-						console.error('coucou', previousDate, step.date);
                         if(step.date != previousDate)
                             step.showDate = true;
                         else
