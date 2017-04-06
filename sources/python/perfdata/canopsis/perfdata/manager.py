@@ -63,32 +63,32 @@ class PerfData(MiddlewareRegistry):
         if context is not None:
             self[PerfData.CONTEXT_MANAGER] = context
 
-    def get_metric_entity(self, metricname, event):
-        """Get metric entity from event and metric name.
+    # def get_metric_entity(self, metricname, event):
+    #     """Get metric entity from event and metric name.
 
-        :param str metricname: entity name.
-        :param dict event: event used to generate entity.
+    #     :param str metricname: entity name.
+    #     :param dict event: event used to generate entity.
 
-        :returns: entity as dict
-        """
+    #     :returns: entity as dict
+    #     """
 
-        id_ = self.context.get_id(event)
-        entity = self.context.get_entities_by_id(id_)[0]
+    #     id_ = self.context.get_id(event)
+    #     entity = self.context.get_entities_by_id(id_)[0]
 
-        ctype = entity[ContextGraph.TYPE]
-        entity[ContextGraph.TYPE] = 'metric'
+    #     ctype = entity[ContextGraph.TYPE]
+    #     entity[ContextGraph.TYPE] = 'metric'
 
-        entity[ctype] = entity[ContextGraph.NAME]
-        entity[ContextGraph.NAME] = metricname
+    #     entity[ctype] = entity[ContextGraph.NAME]
+    #     entity[ContextGraph.NAME] = metricname
 
-        return entity
+    #     return entity
 
     def _data_id_tags(self, metric_id, meta=None, event={}):
 
         tags = {} if meta is None else meta.copy()
 
         # entity = self[PerfData.CONTEXT_MANAGER].get_entities_by_id(metric_id)[0]
-    
+
         entity = {}
 
         eid = '/metric/{0}/{1}/{2}/{3}/{4}'.format(
@@ -98,13 +98,13 @@ class PerfData(MiddlewareRegistry):
             event['resource'],
             event['perf_metric']
         )
-        
+
         entity = {
             'connector':  event['connector'],
             'connector_name': event['connector_name'],
             'component': event['component'],
             'resource': event['resource'],
-            'eid': eid, 
+            'eid': eid,
             'type': 'metric',
             # 'retention': meta['retention'],
             # 'unit': meta['unit']
@@ -114,7 +114,7 @@ class PerfData(MiddlewareRegistry):
         tags[eid] = metric_id
 
         data_id = tags.pop(eid)
-        
+
 
         return data_id, tags
 
