@@ -20,6 +20,7 @@
 
 from time import time
 
+from canopsis.alerts import AlarmField
 from canopsis.common.utils import ensure_iterable
 from canopsis.check import Check
 
@@ -91,8 +92,8 @@ def get_last_status(alarm, ts=None):
     :returns: Most recent status
     """
 
-    if alarm['status'] is not None:
-        return alarm['status']['val']
+    if alarm[AlarmField.status.value] is not None:
+        return alarm[AlarmField.status.value]['val']
 
     return OFF
 
@@ -197,7 +198,7 @@ def compute_status(manager, alarm):
     :returns: Alarm status as int
     """
 
-    if alarm['canceled'] is not None:
+    if alarm[AlarmField.canceled.value] is not None:
         return CANCELED
 
     if is_flapping(manager, alarm):

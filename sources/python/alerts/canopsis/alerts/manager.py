@@ -260,8 +260,8 @@ class Alerts(MiddlewareRegistry):
             no_snooze_cond = {
                 '$or':
                 [
-                    {'snooze': None},
-                    {'snooze.val': {'$lte': int(time())}}
+                    {AlarmField.snooze.value: None},
+                    {'{}.val'.format(AlarmField.snooze.value): {'$lte': int(time())}}
                 ]
             }
             query = {'$and': [query, no_snooze_cond]}
@@ -351,8 +351,10 @@ class Alerts(MiddlewareRegistry):
 
         no_author_types = ['stateinc', 'statedec', 'statusinc', 'statusdec']
         check_referer_types = [
-            'ack', 'ackremove',
-            'cancel', 'uncancel',
+            'ack',
+            'ackremove',
+            'cancel',
+            'uncancel',
             'declareticket',
             'assocticket',
             'changestate'
@@ -665,12 +667,12 @@ class Alerts(MiddlewareRegistry):
                 'component': event['component'],
                 'resource': event.get('resource', None),
                 AlarmField.state.value: None,
-                'status': None,
-                'ack': None,
-                'canceled': None,
-                'snooze': None,
+                AlarmField.status.value: None,
+                AlarmField.ack.value: None,
+                AlarmField.canceled.value: None,
+                AlarmField.snooze.value: None,
                 'hard_limit': None,
-                'ticket': None,
+                AlarmField.ticket.value: None,
                 'resolved': None,
                 'steps': [],
                 'tags': [],
@@ -702,7 +704,7 @@ class Alerts(MiddlewareRegistry):
             )
             return alarm
 
-        last_status_i = alarm['steps'].index(alarm['status'])
+        last_status_i = alarm['steps'].index(alarm[AlarmField.status.value])
 
         state_changes = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
@@ -793,7 +795,7 @@ class Alerts(MiddlewareRegistry):
                 alarm = docalarm.get(storage.VALUE)
 
                 if get_last_status(alarm) == OFF:
-                    t = alarm['status']['t']
+                    t = alarm[AlarmField.status.value]['t']
                     now = int(time())
 
                     if (now - t) > self.flapping_interval:
@@ -853,8 +855,8 @@ class Alerts(MiddlewareRegistry):
                 docalarm[storage.DATA_ID] = data_id
                 alarm = docalarm.get(storage.VALUE)
 
-                if alarm['canceled'] is not None:
-                    canceled_ts = alarm['canceled']['t']
+                if alarm[AlarmField.canceled.value] is not None:
+                    canceled_ts = alarm[AlarmField.canceled.value]['t']
 
                     if (now - canceled_ts) >= self.cancel_autosolve_delay:
                         alarm['resolved'] = canceled_ts

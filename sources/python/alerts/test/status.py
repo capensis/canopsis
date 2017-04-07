@@ -25,6 +25,7 @@ from unittest import TestCase, main
 from canopsis.middleware.core import Middleware
 from canopsis.check import Check
 
+from canopsis.alerts import AlarmField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import (
     ONGOING, CANCELED, OFF,
@@ -61,10 +62,10 @@ class TestStatus(TestCase):
 
         self.alarm = {
             'state': None,
-            'status': None,
-            'ack': None,
-            'canceled': None,
-            'ticket': None,
+            AlarmField.status.value: None,
+            AlarmField.ack.value: None,
+            AlarmField.canceled.value: None,
+            AlarmField.ticket.value: None,
             'resolved': None,
             'steps': [],
             'tags': []
@@ -244,7 +245,7 @@ class TestStatus(TestCase):
         self.assertEqual(got, ONGOING)
 
     def test_is_canceled(self):
-        self.alarm['canceled'] = {
+        self.alarm[AlarmField.canceled.value] = {
             '_t': 'cancel',
             't': 0,
             'a': 'test',
@@ -283,7 +284,7 @@ class TestStatus(TestCase):
         got = get_last_status(self.alarm)
         self.assertEqual(got, OFF)
 
-        self.alarm['status'] = {
+        self.alarm[AlarmField.status.value] = {
             '_t': 'statusinc',
             't': 0,
             'a': 'test',
