@@ -59,34 +59,34 @@ class ContextGraphImport(ContextGraph):
 
         return ctx
 
-    def a_delete_entity(self):
+    def a_delete_entity(self, ci, entities_to_update, update):
         pass
 
-    def a_update_entity(self):
+    def a_update_entity(self, ci, entities_to_update, update):
         pass
 
-    def a_create_entity(self):
+    def a_create_entity(self, ci, entities_to_update, update):
         pass
 
-    def a_disable_entity(self):
+    def a_disable_entity(self, ci, entities_to_update, update):
         pass
 
-    def a_enable_entity(self):
+    def a_enable_entity(self, ci, entities_to_update, update):
         pass
 
-    def a_delete_link(self):
+    def a_delete_link(self, link, entities_to_update, update):
         pass
 
-    def a_update_link(self):
+    def a_update_link(self, link, entities_to_update, update):
         pass
 
-    def a_create_link(self):
+    def a_create_link(self, link, entities_to_update, update):
         pass
 
-    def a_disable_link(self):
+    def a_disable_link(self, link, entities_to_update, update):
         pass
 
-    def a_enable_link(self):
+    def a_enable_link(self, link, entities_to_update, update):
         pass
 
     def _check_schema(self, json):
@@ -130,36 +130,36 @@ class ContextGraphImport(ContextGraph):
 
         self._check_schema(json)
 
-        ent_to_update = self.__get_entities_to_update(json)
+        entities_to_update = self.__get_entities_to_update(json)
 
         update = {}
 
         for ci in json[self.CIS]:
             if ci[self.ACTION] == self.DELETE:
-                pass
+                self.a_delete_entity(ci, entities_to_update, update)
             if ci[self.ACTION] == self.CREATE:
-                pass
+                self.a_delete_entity(ci, entities_to_update, update)
             elif ci[self.ACTION] == self.UPDATE:
-                pass
+                self.a_delete_entity(ci, entities_to_update, update)
             elif ci[self.ACTION] == self.DISABLE:
-                pass
+                self.a_delete_entity(ci, entities_to_update, update)
             elif ci[self.ACTION] == self.ENABLE:
-                pass
+                self.a_delete_entity(ci, entities_to_update, update)
             else:
                 raise ValueError("The action {0} is not recognized\n".format(
                     ci[self.ACTION]))
 
         for link in json[self.LINKS]:
             if link[self.ACTION] == self.DELETE:
-                pass
+                self.a_delete_link(link, entities_to_update, update)
             if link[self.ACTION] == self.CREATE:
-                pass
+                self.a_delete_link(link, entities_to_update, update)
             elif link[self.ACTION] == self.UPDATE:
-                pass
+                self.a_delete_link(link, entities_to_update, update)
             elif link[self.ACTION] == self.DISABLE:
-                pass
+                self.a_delete_link(link, entities_to_update, update)
             elif link[self.ACTION] == self.ENABLE:
-                pass
+                self.a_delete_link(link, entities_to_update, update)
             else:
                 raise ValueError("The action {0} is not recognized\n".format(
                     link[self.ACTION]))
