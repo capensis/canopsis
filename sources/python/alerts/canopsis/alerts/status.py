@@ -47,13 +47,13 @@ def get_previous_step(alarm, steptypes, ts=None):
     :returns: Most recent step
     """
 
-    if len(alarm['steps']) > 0:
+    if len(alarm[AlarmField.steps.value]) > 0:
         if ts is None:
-            ts = alarm['steps'][-1]['t'] + 1
+            ts = alarm[AlarmField.steps.value][-1]['t'] + 1
 
         steptypes = ensure_iterable(steptypes)
 
-        for step in reversed(alarm['steps']):
+        for step in reversed(alarm[AlarmField.steps.value]):
             if step['t'] < ts and step['_t'] in steptypes:
                 return step
 
@@ -73,8 +73,8 @@ def get_last_state(alarm, ts=None):
     :returns: Most recent state
     """
 
-    if alarm['state'] is not None:
-        return alarm['state']['val']
+    if alarm[AlarmField.state.value] is not None:
+        return alarm[AlarmField.state.value]['val']
 
     return Check.OK
 
@@ -113,9 +113,9 @@ def is_flapping(manager, alarm):
 
     statestep = None
     freq = 0
-    ts = alarm['state']['t']
+    ts = alarm[AlarmField.state.value]['t']
 
-    for step in reversed(alarm['steps']):
+    for step in reversed(alarm[AlarmField.steps.value]):
         if (ts - step['t']) > manager.flapping_interval:
             break
 
@@ -149,7 +149,7 @@ def is_keeped_state(alarm):
 
     :returns: ``True`` if alarm state is forced, ``False`` otherwise
     """
-    state = alarm['state']
+    state = alarm[AlarmField.state.value]
 
     return state is not None and state['_t'] == 'changestate'
 
@@ -167,9 +167,9 @@ def is_stealthy(manager, alarm):
     :returns: ``True`` if alarm is supposed to be stealthy, ``False`` otherwise
     """
 
-    ts = alarm['state']['t']
+    ts = alarm[AlarmField.state.value]['t']
 
-    for step in reversed(alarm['steps']):
+    for step in reversed(alarm[AlarmField.steps.value]):
         delta1 = ts - step['t']  # delta from last state change
         delta2 = int(time()) - step['t']  # delta from now
         if delta1 > manager.stealthy_show_duration or \
@@ -179,7 +179,7 @@ def is_stealthy(manager, alarm):
             break
 
         if step['_t'] in ['stateinc', 'statedec']:
-            if step['val'] != Check.OK and alarm['state']['val'] == Check.OK:
+            if step['val'] != Check.OK and alarm[AlarmField.state.value]['val'] == Check.OK:
                 return True
 
     return False
@@ -207,7 +207,7 @@ def compute_status(manager, alarm):
     elif is_stealthy(manager, alarm):
         return STEALTHY
 
-    elif alarm['state']['val'] != Check.OK:
+    elif alarm[AlarmField.state.value]['val'] != Check.OK:
         return ONGOING
 
     else:

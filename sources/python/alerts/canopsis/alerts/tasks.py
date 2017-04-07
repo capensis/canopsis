@@ -41,7 +41,7 @@ def acknowledge(manager, alarm, author, message, event):
     }
 
     alarm[AlarmField.ack.value] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -60,7 +60,7 @@ def unacknowledge(manager, alarm, author, message, event):
     }
 
     alarm[AlarmField.ack.value] = None
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -79,7 +79,7 @@ def cancel(manager, alarm, author, message, event):
     }
 
     alarm[AlarmField.canceled.value] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm, CANCELED
 
@@ -98,7 +98,7 @@ def comment(manager, alarm, author, message, event):
     }
 
     alarm[AlarmField.comment.value] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -118,7 +118,7 @@ def restore(manager, alarm, author, message, event):
 
     canceled = alarm[AlarmField.canceled.value]
     alarm[AlarmField.canceled.value] = None
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     status = None
 
@@ -157,7 +157,7 @@ def declare_ticket(manager, alarm, author, message, event):
     }
 
     alarm[AlarmField.ticket.value] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -177,7 +177,7 @@ def associate_ticket(manager, alarm, author, message, event):
     }
 
     alarm[AlarmField.ticket.value] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -197,7 +197,7 @@ def change_state(manager, alarm, author, message, event):
     }
 
     alarm[AlarmField.state.value] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -219,7 +219,7 @@ def snooze(manager, alarm, author, message, event):
     }
 
     alarm[AlarmField.snooze.value] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -241,7 +241,7 @@ def state_increase(manager, alarm, state, event):
     if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
         alarm[AlarmField.state.value] = step
 
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
     status = compute_status(manager, alarm)
 
     return alarm, status
@@ -264,7 +264,7 @@ def state_decrease(manager, alarm, state, event):
     if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
         alarm[AlarmField.state.value] = step
 
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
     status = compute_status(manager, alarm)
 
     return alarm, status
@@ -285,7 +285,7 @@ def status_increase(manager, alarm, status, event):
     }
 
     alarm[AlarmField.status.value] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -305,7 +305,7 @@ def status_decrease(manager, alarm, status, event):
     }
 
     alarm[AlarmField.status.value] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -323,9 +323,9 @@ def update_state_counter(alarm, diff_counter):
     :rtype: dict
     """
 
-    counter_i = alarm['steps'].index(alarm[AlarmField.status.value]) + 1
+    counter_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value]) + 1
 
-    if len(alarm['steps']) == counter_i:
+    if len(alarm[AlarmField.steps.value]) == counter_i:
         # The last step is the last change of status
         counter_template = {
             '_t': 'statecounter',
@@ -335,9 +335,9 @@ def update_state_counter(alarm, diff_counter):
             'val': {}
         }
 
-        alarm['steps'].append(counter_template)
+        alarm[AlarmField.steps.value].append(counter_template)
 
-    elif alarm['steps'][counter_i]['_t'] != 'statecounter':
+    elif alarm[AlarmField.steps.value][counter_i]['_t'] != 'statecounter':
         counter_template = {
             '_t': 'statecounter',
             'a': alarm[AlarmField.status.value]['a'],
@@ -346,9 +346,9 @@ def update_state_counter(alarm, diff_counter):
             'val': {}
         }
 
-        alarm['steps'].insert(counter_i, counter_template)
+        alarm[AlarmField.steps.value].insert(counter_i, counter_template)
 
-    counter = alarm['steps'][counter_i]['val']
+    counter = alarm[AlarmField.steps.value][counter_i]['val']
 
     for category, diff_count in diff_counter.items():
         counter[category] = counter.get(category, 0) + diff_count
@@ -374,8 +374,8 @@ def hard_limit(manager, alarm):
         'val': manager.hard_limit
     }
 
-    alarm['hard_limit'] = step
-    alarm['steps'].append(step)
+    alarm[AlarmField.hard_limit.value] = step
+    alarm[AlarmField.steps.value].append(step)
 
     return alarm
 
@@ -391,13 +391,13 @@ def linklist(manager, alarm):
     linklist = list(manager.llm.find(ids=[entity_id]))
 
     if not linklist:
-        alarm['linklist'] = {}
+        alarm[AlarmField.linklist.value] = {}
 
     else:
         if '_id' in linklist[0]:
             linklist[0].pop('_id')
 
-        alarm['linklist'] = linklist[0]
+        alarm[AlarmField.linklist.value] = linklist[0]
 
     return alarm
 
@@ -410,6 +410,6 @@ def pbehaviors(manager, alarm):
 
     entity_id = alarm['d']
 
-    alarm['pbehaviors'] = manager.pbm.get_behaviors(entity_id)
+    alarm[AlarmField.pbehaviors.value] = manager.pbm.get_behaviors(entity_id)
 
     return alarm

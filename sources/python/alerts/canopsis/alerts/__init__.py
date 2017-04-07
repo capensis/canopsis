@@ -29,11 +29,17 @@ class AlarmField(Enum):
     ackremove = 'ackremove'
     canceled = 'canceled'  # != cancel
     comment = 'comment'
+    extra = 'extra'
+    hard_limit = 'hard_limit'
+    linklist = 'linklist'
+    pbehaviors = 'phbehaviors'
+    resolved = 'resolved'
     snooze = 'snooze'
     state = 'state'
     status = 'status'
+    steps = 'steps'
+    tags = 'tags'
     ticket = 'ticket'
-    # TODO : extend to other fields (steps, extra, resolved, tags, resource...)
 
     def __str__(self):
         return str(self.value)

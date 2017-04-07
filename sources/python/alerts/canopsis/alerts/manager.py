@@ -304,7 +304,7 @@ class Alerts(MiddlewareRegistry):
             alarm_id,
             timewindow=get_offset_timewindow(),
             _filter={
-                'resolved': None
+                AlarmField.resolved.value: None
             },
             limit=1
         )
@@ -337,8 +337,8 @@ class Alerts(MiddlewareRegistry):
 
         if tags is not None:
             for tag in ensure_iterable(tags):
-                if tag not in new_value['tags']:
-                    new_value['tags'].append(tag)
+                if tag not in new_value[AlarmField.tags.value]:
+                    new_value[AlarmField.tags.value].append(tag)
 
         storage.put(alarm_id, new_value, alarm_ts)
 
@@ -411,7 +411,7 @@ class Alerts(MiddlewareRegistry):
             # FIXME : A logger would be nice
             pass
 
-        for step in alarm['steps']:
+        for step in alarm[AlarmField.steps.value]:
             event = eventmodel.copy()
             event['timestamp'] = step['t']
             event['output'] = step['m']
@@ -433,8 +433,8 @@ class Alerts(MiddlewareRegistry):
             event['event_type'] = typemap[step['_t']]
 
             for field in self.extra_fields:
-                if field in alarm['extra']:
-                    event[field] = alarm['extra'][field]
+                if field in alarm[AlarmField.extra.value]:
+                    event[field] = alarm[AlarmField.extra.value][field]
 
             events.append(event)
 
@@ -704,12 +704,12 @@ class Alerts(MiddlewareRegistry):
                 AlarmField.ack.value: None,
                 AlarmField.canceled.value: None,
                 AlarmField.snooze.value: None,
-                'hard_limit': None,
+                AlarmField.hard_limit.value: None,
                 AlarmField.ticket.value: None,
-                'resolved': None,
-                'steps': [],
-                'tags': [],
-                'extra': {
+                AlarmField.resolved.value: None,
+                AlarmField.steps.value: [],
+                AlarmField.tags.value: [],
+                AlarmField.extra.value: {
                     field: event[field]
                     for field in self.extra_fields
                     if field in event
@@ -737,11 +737,11 @@ class Alerts(MiddlewareRegistry):
             )
             return alarm
 
-        last_status_i = alarm['steps'].index(alarm[AlarmField.status.value])
+        last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
 
         state_changes = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
-            alarm['steps'][last_status_i + 1:]
+            alarm[AlarmField.steps.value][last_status_i + 1:]
         )
 
         number_to_crop = len(state_changes) - p_steps
@@ -762,7 +762,7 @@ class Alerts(MiddlewareRegistry):
             s = 'state:{}'.format(state_changes[i]['val'])
             crop_counter[s] = crop_counter.get(s, 0) + 1
 
-            alarm['steps'].remove(state_changes[i])
+            alarm[AlarmField.steps.value].remove(state_changes[i])
 
         task = get_task('alerts.systemaction.update_state_counter')
         alarm = task(alarm, crop_counter)
@@ -780,7 +780,7 @@ class Alerts(MiddlewareRegistry):
         :rtype: boolean
         """
 
-        limit = alarm.get('hard_limit', None)
+        limit = alarm.get(AlarmField.hard_limit.value, None)
 
         if limit is None:
             return False
@@ -801,13 +801,13 @@ class Alerts(MiddlewareRegistry):
         :rtype: dict
         """
 
-        limit = alarm.get('hard_limit', None)
+        limit = alarm.get(AlarmField.hard_limit.value, None)
 
         if limit is not None:
             if limit['val'] >= self.hard_limit:
                 return alarm
 
-        if len(alarm['steps']) >= self.hard_limit:
+        if len(alarm[AlarmField.steps.value]) >= self.hard_limit:
             task = get_task('alerts.systemaction.hard_limit')
             return task(self, alarm)
 
@@ -832,7 +832,7 @@ class Alerts(MiddlewareRegistry):
                     now = int(time())
 
                     if (now - t) > self.flapping_interval:
-                        alarm['resolved'] = t
+                        alarm[AlarmField.resolved.value] = t
                         self.update_current_alarm(docalarm, alarm)
 
     def resolve_stealthy(self):
@@ -892,7 +892,7 @@ class Alerts(MiddlewareRegistry):
                     canceled_ts = alarm[AlarmField.canceled.value]['t']
 
                     if (now - canceled_ts) >= self.cancel_autosolve_delay:
-                        alarm['resolved'] = canceled_ts
+                        alarm[AlarmField.resolved.value] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
 
     def get_alarm_with_eid(self, eid, resolved=False):

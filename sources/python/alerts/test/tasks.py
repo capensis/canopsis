@@ -43,9 +43,9 @@ class TestTasks(BaseTest):
             AlarmField.ack.value: None,
             AlarmField.canceled.value: None,
             AlarmField.ticket.value: None,
-            'resolved': None,
-            'steps': [],
-            'tags': []
+            AlarmField.resolved.value: None,
+            AlarmField.steps.value: [],
+            AlarmField.tags.value: []
         }
 
     def test_acknowledge(self):
@@ -348,13 +348,13 @@ class TestTasks(BaseTest):
             res,
             {
                 'd': eid0,
-                'linklist': linklist_eid0
+                AlarmField.linklist.value: linklist_eid0
             }
         )
 
         eid1 = '/no/link/entity'
         res = task(self, {'d': eid1})
-        self.assertEqual(res, {'d': eid1, 'linklist': {}})
+        self.assertEqual(res, {'d': eid1, AlarmField.linklist.value: {}})
 
         del self.llm
 
@@ -394,7 +394,8 @@ class TestTasks(BaseTest):
             u'rrule': None
         }
 
-        self.assertEqual(alarm1, {'d': eid, 'pbehaviors': [expected_pb1]})
+        result = {'d': eid, AlarmField.pbehaviors.value: [expected_pb1]}
+        self.assertEqual(alarm1, result)
 
         now = int(time())
         pb2 = {
@@ -422,13 +423,12 @@ class TestTasks(BaseTest):
             u'rrule': None
         }
 
-        self.assertEqual(
-            alarm2,
-            {'d': eid, 'pbehaviors': [expected_pb2, expected_pb1]}
-        )
+        result = {'d': eid, AlarmField.pbehaviors.value: [expected_pb2, expected_pb1]}
+        self.assertEqual(alarm2, result)
 
         alarm3 = task(tm, {'d': '/unexisting/eid'})
-        self.assertEqual(alarm3, {'d': '/unexisting/eid', 'pbehaviors': []})
+        result = {'d': '/unexisting/eid', AlarmField.pbehaviors.value: []}
+        self.assertEqual(alarm3, result)
 
         tm.pbm['vevent_storage']._backend.remove({'source': eid})
 
