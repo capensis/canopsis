@@ -170,15 +170,15 @@ class TestManager(BaseTest):
 
         value = alarm[storage.VALUE]
 
-        value['state'] = {'val': 0}
+        value[AlarmField.state.value] = {'val': 0}
 
         self.manager.update_current_alarm(alarm, value, tags='test')
 
         alarm = self.manager.get_current_alarm(alarm_id)
         value = alarm[storage.VALUE]
 
-        self.assertTrue(value['state'] is not None)
-        self.assertTrue('test' in value['tags'])
+        self.assertTrue(value[AlarmField.state.value] is not None)
+        self.assertTrue('test' in value[AlarmField.tags.value])
 
     def test_resolve_alarms(self):
         storage = self.manager[Alerts.ALARM_STORAGE]
@@ -212,7 +212,7 @@ class TestManager(BaseTest):
             alarm_id,
             timewindow=get_offset_timewindow(),
             _filter={
-                'resolved': {'$exists': True}
+                AlarmField.resolved.value: {'$exists': True}
             },
             limit=1
         )
@@ -220,7 +220,8 @@ class TestManager(BaseTest):
         alarm = alarm[0]
         value = alarm[storage.VALUE]
 
-        self.assertEqual(value['resolved'], value[AlarmField.status.value]['t'])
+        self.assertEqual(value[AlarmField.resolved.value],
+                         value[AlarmField.status.value]['t'])
 
     def test_resolve_stealthy(self):
         storage = self.manager[Alerts.ALARM_STORAGE]
@@ -244,11 +245,11 @@ class TestManager(BaseTest):
             't': now,
             'val': STEALTHY
         }
-        value['state'] = {
+        value[AlarmField.state.value] = {
             't': now,
             'val': Check.OK
         }
-        value['steps'] = [
+        value[AlarmField.steps.value] = [
             {
                 '_t': 'stateinc',
                 't': now - 1,
@@ -272,7 +273,7 @@ class TestManager(BaseTest):
             alarm_id,
             timewindow=get_offset_timewindow(),
             _filter={
-                'resolved': {'$exists': True}
+                AlarmField.resolved.value: {'$exists': True}
             },
             limit=1
         )
@@ -320,12 +321,12 @@ class TestManager(BaseTest):
         }
 
         # Make sure no more steps are added
-        self.assertEqual(len(alarm['value']['steps']), 2)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
 
-        self.assertEqual(alarm['value']['state'], expected_state)
-        self.assertEqual(alarm['value']['steps'][0], expected_state)
+        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
-        self.assertEqual(alarm['value']['steps'][1], expected_status)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
 
         alarm = self.manager.change_of_state(alarm, 2, 1, event)
 
@@ -338,10 +339,10 @@ class TestManager(BaseTest):
         }
 
         # Make sure no more steps are added
-        self.assertEqual(len(alarm['value']['steps']), 3)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 3)
 
-        self.assertEqual(alarm['value']['state'], expected_state)
-        self.assertEqual(alarm['value']['steps'][2], expected_state)
+        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][2], expected_state)
 
     def test_change_of_status(self):
         alarm_id = '/fake/alarm/id'
@@ -375,8 +376,8 @@ class TestManager(BaseTest):
 
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
-        self.assertEqual(len(alarm['value']['steps']), 1)
-        self.assertEqual(alarm['value']['steps'][0], expected_status)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 1)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_status)
 
     def test_archive_state_nochange(self):
         alarm_id = '/component/test/test0/ut-comp'
@@ -389,7 +390,7 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 1,
+            'state': Check.MINOR,
         }
         self.manager.archive(event0)
 
@@ -403,9 +404,9 @@ class TestManager(BaseTest):
             'val': 1,
         }
 
-        self.assertEqual(len(alarm['value']['steps']), 2)
-        self.assertEqual(alarm['value']['steps'][0], expected_state)
-        self.assertEqual(alarm['value']['state'], expected_state)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
+        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
         event1 = {
             'source_type': 'component',
@@ -415,15 +416,15 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 1,
+            'state': Check.MINOR,
         }
         self.manager.archive(event1)
 
         alarm = self.manager.get_current_alarm(alarm_id)
 
-        self.assertEqual(len(alarm['value']['steps']), 2)
-        self.assertEqual(alarm['value']['steps'][0], expected_state)
-        self.assertEqual(alarm['value']['state'], expected_state)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
+        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
     def test_archive_state_changed(self):
         alarm_id = '/component/test/test0/ut-comp'
@@ -437,7 +438,7 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 1,
+            'state': Check.MINOR,
         }
         self.manager.archive(event0)
 
@@ -451,9 +452,9 @@ class TestManager(BaseTest):
             'val': 1,
         }
 
-        self.assertEqual(len(alarm['value']['steps']), 2)
-        self.assertEqual(alarm['value']['steps'][0], expected_state)
-        self.assertEqual(alarm['value']['state'], expected_state)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
+        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
         # Testing state increase
         event1 = {
@@ -464,7 +465,7 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 2,
+            'state': Check.MAJOR,
         }
         self.manager.archive(event1)
 
@@ -478,9 +479,9 @@ class TestManager(BaseTest):
             'val': 2,
         }
 
-        self.assertEqual(len(alarm['value']['steps']), 3)
-        self.assertEqual(alarm['value']['steps'][2], expected_state)
-        self.assertEqual(alarm['value']['state'], expected_state)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 3)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][2], expected_state)
+        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
         # Testing keeped state
         event1 = {
@@ -491,14 +492,14 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'changestate',
-            'state': 1,
+            'state': Check.MINOR,
         }
         self.manager.archive(event1)
 
         alarm = self.manager.get_current_alarm(alarm_id)
 
-        self.assertEqual(len(alarm['value']['steps']), 4)
-        self.assertEqual(alarm['value']['state']['val'], 1)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 4)
+        self.assertEqual(alarm['value'][AlarmField.state.value]['val'], 1)
         self.assertTrue(is_keeped_state(alarm['value']))
 
         event1 = {
@@ -509,14 +510,14 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 3,
+            'state': Check.CRITICAL,
         }
         self.manager.archive(event1)
 
         alarm = self.manager.get_current_alarm(alarm_id)
 
-        self.assertEqual(len(alarm['value']['steps']), 4)
-        self.assertEqual(alarm['value']['state']['val'], 1)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 4)
+        self.assertEqual(alarm['value'][AlarmField.state.value]['val'], 1)
         self.assertTrue(is_keeped_state(alarm['value']))
 
         # Disengaging keepstate
@@ -528,14 +529,14 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 0,
+            'state': Check.OK,
         }
         self.manager.archive(event1)
 
         alarm = self.manager.get_current_alarm(alarm_id)
 
-        self.assertEqual(len(alarm['value']['steps']), 6)
-        self.assertEqual(alarm['value']['state']['val'], 0)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 6)
+        self.assertEqual(alarm['value'][AlarmField.state.value]['val'], 0)
         self.assertFalse(is_keeped_state(alarm['value']))
 
     def test_archive_status_nochange(self):
@@ -549,7 +550,7 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 1,
+            'state': Check.MINOR,
         }
         self.manager.archive(event0)
 
@@ -563,8 +564,8 @@ class TestManager(BaseTest):
             'val': 1,
         }
 
-        self.assertEqual(len(alarm['value']['steps']), 2)
-        self.assertEqual(alarm['value']['steps'][1], expected_status)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         # Force status to stealthy
@@ -576,14 +577,14 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 2,
+            'state': Check.MAJOR,
         }
         self.manager.archive(event1)
 
         alarm = self.manager.get_current_alarm(alarm_id)
 
-        self.assertEqual(len(alarm['value']['steps']), 3)
-        self.assertEqual(alarm['value']['steps'][1], expected_status)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 3)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
     def test_archive_status_changed(self):
@@ -612,8 +613,8 @@ class TestManager(BaseTest):
             'val': Check.MINOR,
         }
 
-        self.assertEqual(len(alarm['value']['steps']), 2)
-        self.assertEqual(alarm['value']['steps'][1], expected_status)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         # Force status to stealthy
@@ -639,8 +640,8 @@ class TestManager(BaseTest):
             'val': Check.OK,
         }
 
-        self.assertEqual(len(alarm['value']['steps']), 4)
-        self.assertEqual(alarm['value']['steps'][3], expected_status)
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 4)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][3], expected_status)
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
     def test_crop_flapping_steps(self):
@@ -661,7 +662,7 @@ class TestManager(BaseTest):
             'source_type': 'component',
             'component': 'ut-comp1',
             'event_type': 'check',
-            'state': 0,
+            'state': Check.OK,
             'output': '...'
         }
 
@@ -701,16 +702,16 @@ class TestManager(BaseTest):
 
         alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
 
-        last_status_i = alarm['steps'].index(alarm[AlarmField.status.value])
+        last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
 
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
-            alarm['steps'][last_status_i + 1:]
+            alarm[AlarmField.steps.value][last_status_i + 1:]
         )
         self.assertEqual(len(state_steps), 9)
 
         # 4 KO + 4 OK + 5 assocticket + 1 KO = 14 steps
-        all_steps = alarm['steps'][last_status_i + 1:]
+        all_steps = alarm[AlarmField.steps.value][last_status_i + 1:]
         self.assertEqual(len(all_steps), 14)
 
         # Creating alarm /component/test/test0/ut-comp2
@@ -742,23 +743,23 @@ class TestManager(BaseTest):
 
         alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
 
-        last_status_i = alarm['steps'].index(alarm[AlarmField.status.value])
+        last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
 
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
-            alarm['steps'][last_status_i + 1:]
+            alarm[AlarmField.steps.value][last_status_i + 1:]
         )
         self.assertEqual(len(state_steps), 10)
 
         # 10 remaining state changes + 6 assocticket + 1 statecounter
-        all_steps = alarm['steps'][last_status_i + 1:]
+        all_steps = alarm[AlarmField.steps.value][last_status_i + 1:]
         self.assertEqual(len(all_steps), 17)
 
         expected_counter = {
             'stateinc': 1,
             'state:1': 1
         }
-        counter = alarm['steps'][last_status_i + 1]
+        counter = alarm[AlarmField.steps.value][last_status_i + 1]
         self.assertEqual(counter['val'], expected_counter)
 
         # Creating alarm /component/test/test0/ut-comp3
@@ -787,16 +788,16 @@ class TestManager(BaseTest):
 
         alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
 
-        last_status_i = alarm['steps'].index(alarm[AlarmField.status.value])
+        last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
 
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
-            alarm['steps'][last_status_i + 1:]
+            alarm[AlarmField.steps.value][last_status_i + 1:]
         )
         self.assertEqual(len(state_steps), 10)
 
         # 10 remaining state changes + 36 assocticket + 1 statecounter
-        all_steps = alarm['steps'][last_status_i + 1:]
+        all_steps = alarm[AlarmField.steps.value][last_status_i + 1:]
         self.assertEqual(len(all_steps), 47)
 
         expected_counter = {
@@ -805,25 +806,25 @@ class TestManager(BaseTest):
             'state:0': 30,
             'state:1': 30
         }
-        counter = alarm['steps'][last_status_i + 1]
+        counter = alarm[AlarmField.steps.value][last_status_i + 1]
         self.assertEqual(counter['val'], expected_counter)
 
     def test_is_hard_limit_reached(self):
         cases = [
             {
-                'alarm': {'hard_limit': None},
+                'alarm': {AlarmField.hard_limit.value: None},
                 'expected': False
             },
             {
-                'alarm': {'hard_limit': {'val': 99}},
+                'alarm': {AlarmField.hard_limit.value: {'val': 99}},
                 'expected': False
             },
             {
-                'alarm': {'hard_limit': {'val': 100}},
+                'alarm': {AlarmField.hard_limit.value: {'val': 100}},
                 'expected': True
             },
             {
-                'alarm': {'hard_limit': {'val': 101}},
+                'alarm': {AlarmField.hard_limit.value: {'val': 101}},
                 'expected': True
             }
         ]
@@ -839,8 +840,8 @@ class TestManager(BaseTest):
         cases = [
             {
                 'alarm': {
-                    'hard_limit': None,
-                    'steps': []
+                    AlarmField.hard_limit.value: None,
+                    AlarmField.steps.value: []
                 },
                 'expected': {
                     'type_hard_limit': NoneType,
@@ -849,8 +850,8 @@ class TestManager(BaseTest):
             },
             {
                 'alarm': {
-                    'hard_limit': None,
-                    'steps': [i for i in range(99)]
+                    AlarmField.hard_limit.value: None,
+                    AlarmField.steps.value: [i for i in range(99)]
                 },
                 'expected': {
                     'type_hard_limit': NoneType,
@@ -859,8 +860,8 @@ class TestManager(BaseTest):
             },
             {
                 'alarm': {
-                    'hard_limit': None,
-                    'steps': [i for i in range(100)]
+                    AlarmField.hard_limit.value: None,
+                    AlarmField.steps.value: [i for i in range(100)]
                 },
                 'expected': {
                     'type_hard_limit': dict,
@@ -869,8 +870,8 @@ class TestManager(BaseTest):
             },
             {
                 'alarm': {
-                    'hard_limit': {'val': 101},
-                    'steps': [i for i in range(200)]
+                    AlarmField.hard_limit.value: {'val': 101},
+                    AlarmField.steps.value: [i for i in range(200)]
                 },
                 'expected': {
                     'type_hard_limit': dict,
@@ -879,8 +880,8 @@ class TestManager(BaseTest):
             },
             {
                 'alarm': {
-                    'hard_limit': {'val': 99},
-                    'steps': [i for i in range(100)]
+                    AlarmField.hard_limit.value: {'val': 99},
+                    AlarmField.steps.value: [i for i in range(100)]
                 },
                 'expected': {
                     'type_hard_limit': dict,
@@ -893,11 +894,11 @@ class TestManager(BaseTest):
             alarm = self.manager.check_hard_limit(case['alarm'])
 
             self.assertIs(
-                type(alarm['hard_limit']),
+                type(alarm[AlarmField.hard_limit.value]),
                 case['expected']['type_hard_limit']
             )
             self.assertEqual(
-                len(alarm['steps']),
+                len(alarm[AlarmField.steps.value]),
                 case['expected']['len_steps']
             )
 
@@ -929,7 +930,7 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 0,
+            'state': Check.OK,
         }
         self.manager.archive(event)
 
@@ -945,7 +946,7 @@ class TestManager(BaseTest):
             'timestamp': 0,
             'output': 'test message',
             'event_type': 'check',
-            'state': 1,
+            'state': Check.MINOR,
         }
         self.manager.archive(event)
 
@@ -959,7 +960,7 @@ class TestManager(BaseTest):
             'output': 'test message',
             'event_type': 'ack',
             'state_type': 1,
-            'state': 1,
+            'state': Check.MINOR,
         }
         self.manager.archive(event)
 
@@ -974,7 +975,7 @@ class TestManager(BaseTest):
             'long_output': None,
             'output': 'test message',
             'source_type': 'component',
-            'state': 1,
+            'state': Check.MINOR,
             'state_type': 1,
             'timestamp': 0,
             'type': 'component',
@@ -988,7 +989,7 @@ class TestManager(BaseTest):
             'long_output': None,
             'output': u'test message',
             'source_type': 'component',
-            'state': 0,
+            'state': Check.OK,
             'state_type': 1,
             'status': 1,
             'timestamp': 0,
@@ -1006,7 +1007,7 @@ class TestManager(BaseTest):
             'output': 'test message',
             'source_type': 'component',
             'state_type': 1,
-            'state': 0,
+            'state': Check.OK,
             'timestamp': 0,
             'type': 'component',
         }
