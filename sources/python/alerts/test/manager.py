@@ -24,6 +24,7 @@
 from time import time
 from unittest import main
 
+from canopsis.alerts import AlarmField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import OFF, STEALTHY, is_keeped_state
 from canopsis.check import Check
@@ -198,7 +199,7 @@ class TestManager(BaseTest):
         self.assertIsNotNone(alarm)
 
         value = alarm[storage.VALUE]
-        value['status'] = {
+        value[AlarmField.status.value] = {
             't': 0,
             'val': OFF
         }
@@ -221,7 +222,7 @@ class TestManager(BaseTest):
         alarm = alarm[0]
         value = alarm[storage.VALUE]
 
-        self.assertEqual(value['resolved'], value['status']['t'])
+        self.assertEqual(value['resolved'], value[AlarmField.status.value]['t'])
 
     def test_resolve_stealthy(self):
         storage = self.manager[Alerts.ALARM_STORAGE]
@@ -241,7 +242,7 @@ class TestManager(BaseTest):
 
         # Init stealthy state
         value = alarm[storage.VALUE]
-        value['status'] = {
+        value[AlarmField.status.value] = {
             't': now,
             'val': STEALTHY
         }
@@ -281,7 +282,7 @@ class TestManager(BaseTest):
         alarm = alarm[0]
         value = alarm[storage.VALUE]
 
-        self.assertEqual(value['status']['val'], OFF)
+        self.assertEqual(value[AlarmField.status.value]['val'], OFF)
 
     def test_change_of_state(self):
         alarm_id = '/fake/alarm/id'
@@ -325,7 +326,7 @@ class TestManager(BaseTest):
 
         self.assertEqual(alarm['value']['state'], expected_state)
         self.assertEqual(alarm['value']['steps'][0], expected_state)
-        self.assertEqual(alarm['value']['status'], expected_status)
+        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
         self.assertEqual(alarm['value']['steps'][1], expected_status)
 
         alarm = self.manager.change_of_state(alarm, 2, 1, event)
@@ -374,7 +375,7 @@ class TestManager(BaseTest):
             'val': 1,
         }
 
-        self.assertEqual(alarm['value']['status'], expected_status)
+        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         self.assertEqual(len(alarm['value']['steps']), 1)
         self.assertEqual(alarm['value']['steps'][0], expected_status)
@@ -566,7 +567,7 @@ class TestManager(BaseTest):
 
         self.assertEqual(len(alarm['value']['steps']), 2)
         self.assertEqual(alarm['value']['steps'][1], expected_status)
-        self.assertEqual(alarm['value']['status'], expected_status)
+        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         # Force status to stealthy
         event1 = {
@@ -585,7 +586,7 @@ class TestManager(BaseTest):
 
         self.assertEqual(len(alarm['value']['steps']), 3)
         self.assertEqual(alarm['value']['steps'][1], expected_status)
-        self.assertEqual(alarm['value']['status'], expected_status)
+        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
     def test_archive_status_changed(self):
         alarm_id = 'ut-comp'
@@ -615,7 +616,7 @@ class TestManager(BaseTest):
 
         self.assertEqual(len(alarm['value']['steps']), 2)
         self.assertEqual(alarm['value']['steps'][1], expected_status)
-        self.assertEqual(alarm['value']['status'], expected_status)
+        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         # Force status to stealthy
         event1 = {
@@ -642,7 +643,7 @@ class TestManager(BaseTest):
 
         self.assertEqual(len(alarm['value']['steps']), 4)
         self.assertEqual(alarm['value']['steps'][3], expected_status)
-        self.assertEqual(alarm['value']['status'], expected_status)
+        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
     def test_crop_flapping_steps(self):
         # Creating alarm /component/test/test0/ut-comp1
@@ -702,7 +703,7 @@ class TestManager(BaseTest):
 
         alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
 
-        last_status_i = alarm['steps'].index(alarm['status'])
+        last_status_i = alarm['steps'].index(alarm[AlarmField.status.value])
 
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
@@ -743,7 +744,7 @@ class TestManager(BaseTest):
 
         alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
 
-        last_status_i = alarm['steps'].index(alarm['status'])
+        last_status_i = alarm['steps'].index(alarm[AlarmField.status.value])
 
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
@@ -788,7 +789,7 @@ class TestManager(BaseTest):
 
         alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
 
-        last_status_i = alarm['steps'].index(alarm['status'])
+        last_status_i = alarm['steps'].index(alarm[AlarmField.status.value])
 
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],

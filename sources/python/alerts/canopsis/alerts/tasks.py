@@ -40,7 +40,7 @@ def acknowledge(manager, alarm, author, message, event):
         'm': message
     }
 
-    alarm['ack'] = step
+    alarm[AlarmField.ack.value] = step
     alarm['steps'].append(step)
 
     return alarm
@@ -59,7 +59,7 @@ def unacknowledge(manager, alarm, author, message, event):
         'm': message
     }
 
-    alarm['ack'] = None
+    alarm[AlarmField.ack.value] = None
     alarm['steps'].append(step)
 
     return alarm
@@ -78,7 +78,7 @@ def cancel(manager, alarm, author, message, event):
         'm': message
     }
 
-    alarm['canceled'] = step
+    alarm[AlarmField.canceled.value] = step
     alarm['steps'].append(step)
 
     return alarm, CANCELED
@@ -91,7 +91,7 @@ def comment(manager, alarm, author, message, event):
     """
 
     step = {
-        '_t': AlarmField.comment.value,
+        '_t': 'comment',
         't': event['timestamp'],
         'a': author,
         'm': message
@@ -116,8 +116,8 @@ def restore(manager, alarm, author, message, event):
         'm': message
     }
 
-    canceled = alarm['canceled']
-    alarm['canceled'] = None
+    canceled = alarm[AlarmField.canceled.value]
+    alarm[AlarmField.canceled.value] = None
     alarm['steps'].append(step)
 
     status = None
@@ -156,7 +156,7 @@ def declare_ticket(manager, alarm, author, message, event):
         'val': None
     }
 
-    alarm['ticket'] = step
+    alarm[AlarmField.ticket.value] = step
     alarm['steps'].append(step)
 
     return alarm
@@ -176,7 +176,7 @@ def associate_ticket(manager, alarm, author, message, event):
         'val': event['ticket']
     }
 
-    alarm['ticket'] = step
+    alarm[AlarmField.ticket.value] = step
     alarm['steps'].append(step)
 
     return alarm
@@ -193,7 +193,7 @@ def change_state(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': message,
-        'val': event[AlarmField.state.value]
+        'val': event['state']
     }
 
     alarm[AlarmField.state.value] = step
@@ -218,7 +218,7 @@ def snooze(manager, alarm, author, message, event):
         'val': until
     }
 
-    alarm['snooze'] = step
+    alarm[AlarmField.snooze.value] = step
     alarm['steps'].append(step)
 
     return alarm
@@ -284,7 +284,7 @@ def status_increase(manager, alarm, status, event):
         'val': status
     }
 
-    alarm['status'] = step
+    alarm[AlarmField.status.value] = step
     alarm['steps'].append(step)
 
     return alarm
@@ -304,7 +304,7 @@ def status_decrease(manager, alarm, status, event):
         'val': status
     }
 
-    alarm['status'] = step
+    alarm[AlarmField.status.value] = step
     alarm['steps'].append(step)
 
     return alarm
@@ -323,14 +323,14 @@ def update_state_counter(alarm, diff_counter):
     :rtype: dict
     """
 
-    counter_i = alarm['steps'].index(alarm['status']) + 1
+    counter_i = alarm['steps'].index(alarm[AlarmField.status.value]) + 1
 
     if len(alarm['steps']) == counter_i:
         # The last step is the last change of status
         counter_template = {
             '_t': 'statecounter',
-            'a': alarm['status']['a'],
-            't': alarm['status']['t'],
+            'a': alarm[AlarmField.status.value]['a'],
+            't': alarm[AlarmField.status.value]['t'],
             'm': '',
             'val': {}
         }
@@ -340,8 +340,8 @@ def update_state_counter(alarm, diff_counter):
     elif alarm['steps'][counter_i]['_t'] != 'statecounter':
         counter_template = {
             '_t': 'statecounter',
-            'a': alarm['status']['a'],
-            't': alarm['status']['t'],
+            'a': alarm[AlarmField.status.value]['a'],
+            't': alarm[AlarmField.status.value]['t'],
             'm': '',
             'val': {}
         }

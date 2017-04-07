@@ -25,10 +25,15 @@ from enum import Enum
 
 class AlarmField(Enum):
     # Possible fields for an alarm
+    ack = 'ack'
+    ackremove = 'ackremove'
+    canceled = 'canceled'  # != cancel
     comment = 'comment'
+    snooze = 'snooze'
     state = 'state'
-    # TODO : extend to other fields (steps, ack, cancel, status, extra...)
-    # canceled = 'canceled'
+    status = 'status'
+    ticket = 'ticket'
+    # TODO : extend to other fields (steps, extra, resolved, tags, resource...)
 
     def __str__(self):
         return str(self.value)

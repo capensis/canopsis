@@ -39,10 +39,10 @@ class TestTasks(BaseTest):
 
         self.alarm = {
             AlarmField.state.value: None,
-            'status': None,
-            'ack': None,
-            'canceled': None,
-            'ticket': None,
+            AlarmField.status.value: None,
+            AlarmField.ack.value: None,
+            AlarmField.canceled.value: None,
+            AlarmField.ticket.value: None,
             'resolved': None,
             'steps': [],
             'tags': []
@@ -60,11 +60,11 @@ class TestTasks(BaseTest):
             event
         )
 
-        self.assertTrue(alarm['ack'] is not None)
-        self.assertEqual(alarm['ack']['t'], 0)
-        self.assertEqual(alarm['ack']['a'], 'testauthor')
-        self.assertEqual(alarm['ack']['m'], 'test message')
-        self.assertTrue(alarm['ack'] is get_previous_step(alarm, 'ack'))
+        self.assertTrue(alarm[AlarmField.ack.value] is not None)
+        self.assertEqual(alarm[AlarmField.ack.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.ack.value]['a'], 'testauthor')
+        self.assertEqual(alarm[AlarmField.ack.value]['m'], 'test message')
+        self.assertTrue(alarm[AlarmField.ack.value] is get_previous_step(alarm, 'ack'))
 
     def test_unacknowledge(self):
         event = {'timestamp': 0}
@@ -78,7 +78,7 @@ class TestTasks(BaseTest):
             event
         )
 
-        self.assertTrue(alarm['ack'] is None)
+        self.assertTrue(alarm[AlarmField.ack.value] is None)
 
         unack = get_previous_step(alarm, 'ackremove')
         self.assertEqual(unack['t'], 0)
@@ -98,12 +98,12 @@ class TestTasks(BaseTest):
         )
 
         self.assertEqual(statusval, CANCELED)
-        self.assertTrue(alarm['canceled'] is not None)
-        self.assertEqual(alarm['canceled']['t'], 0)
-        self.assertEqual(alarm['canceled']['a'], 'testauthor')
-        self.assertEqual(alarm['canceled']['m'], 'test message')
+        self.assertTrue(alarm[AlarmField.canceled.value] is not None)
+        self.assertEqual(alarm[AlarmField.canceled.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.canceled.value]['a'], 'testauthor')
+        self.assertEqual(alarm[AlarmField.canceled.value]['m'], 'test message')
         self.assertTrue(
-            alarm['canceled'] is get_previous_step(alarm, 'cancel')
+            alarm[AlarmField.canceled.value] is get_previous_step(alarm, 'cancel')
         )
 
     def test_comment(self):
@@ -127,7 +127,7 @@ class TestTasks(BaseTest):
         event = {'timestamp': 0}
 
         task = get_task('alerts.useraction.uncancel')
-        self.alarm['canceled'] = {
+        self.alarm[AlarmField.canceled.value] = {
             '_t': 'cancel',
             't': 0,
             'a': 'testauthor',
@@ -142,7 +142,7 @@ class TestTasks(BaseTest):
             event
         )
 
-        self.assertTrue(alarm['canceled'] is None)
+        self.assertTrue(alarm[AlarmField.canceled.value] is None)
 
         uncancel = get_previous_step(alarm, 'uncancel')
         self.assertFalse(uncancel is None)
@@ -162,13 +162,13 @@ class TestTasks(BaseTest):
             event
         )
 
-        self.assertTrue(alarm['ticket'] is not None)
-        self.assertEqual(alarm['ticket']['t'], 0)
-        self.assertEqual(alarm['ticket']['a'], 'testauthor')
-        self.assertEqual(alarm['ticket']['m'], 'test message')
-        self.assertEqual(alarm['ticket']['val'], None)
+        self.assertTrue(alarm[AlarmField.ticket.value] is not None)
+        self.assertEqual(alarm[AlarmField.ticket.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.ticket.value]['a'], 'testauthor')
+        self.assertEqual(alarm[AlarmField.ticket.value]['m'], 'test message')
+        self.assertEqual(alarm[AlarmField.ticket.value]['val'], None)
         self.assertTrue(
-            alarm['ticket'] is get_previous_step(alarm, 'declareticket')
+            alarm[AlarmField.ticket.value] is get_previous_step(alarm, 'declareticket')
         )
 
     def test_assoc_ticket(self):
@@ -186,13 +186,13 @@ class TestTasks(BaseTest):
             event
         )
 
-        self.assertTrue(alarm['ticket'] is not None)
-        self.assertEqual(alarm['ticket']['t'], 0)
-        self.assertEqual(alarm['ticket']['a'], 'testauthor')
-        self.assertEqual(alarm['ticket']['m'], 'test message')
-        self.assertEqual(alarm['ticket']['val'], 1234)
+        self.assertTrue(alarm[AlarmField.ticket.value] is not None)
+        self.assertEqual(alarm[AlarmField.ticket.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.ticket.value]['a'], 'testauthor')
+        self.assertEqual(alarm[AlarmField.ticket.value]['m'], 'test message')
+        self.assertEqual(alarm[AlarmField.ticket.value]['val'], 1234)
         self.assertTrue(
-            alarm['ticket'] is get_previous_step(alarm, 'assocticket')
+            alarm[AlarmField.ticket.value] is get_previous_step(alarm, 'assocticket')
         )
 
     def test_change_state(self):
@@ -238,13 +238,13 @@ class TestTasks(BaseTest):
             event,
         )
 
-        self.assertIsNot(alarm['snooze'], None)
-        self.assertEqual(alarm['snooze']['t'], 0)
-        self.assertEqual(alarm['snooze']['a'], 'testauthor')
-        self.assertEqual(alarm['snooze']['m'], 'test message')
-        self.assertEqual(alarm['snooze']['val'], 0 + 3600)
+        self.assertIsNot(alarm[AlarmField.snooze.value], None)
+        self.assertEqual(alarm[AlarmField.snooze.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.snooze.value]['a'], 'testauthor')
+        self.assertEqual(alarm[AlarmField.snooze.value]['m'], 'test message')
+        self.assertEqual(alarm[AlarmField.snooze.value]['val'], 0 + 3600)
         self.assertTrue(
-            alarm['snooze'] is get_previous_step(alarm, 'snooze')
+            alarm[AlarmField.snooze.value] is get_previous_step(alarm, 'snooze')
         )
 
     def test_state_increase(self):
@@ -301,13 +301,13 @@ class TestTasks(BaseTest):
         task = get_task('alerts.systemaction.status_increase')
         alarm = task(self.manager, self.alarm, statusval, event)
 
-        self.assertTrue(alarm['status'] is not None)
-        self.assertEqual(alarm['status']['t'], 0)
-        self.assertEqual(alarm['status']['a'], 'test.test0')
-        self.assertEqual(alarm['status']['m'], 'test message')
-        self.assertEqual(alarm['status']['val'], statusval)
+        self.assertTrue(alarm[AlarmField.status.value] is not None)
+        self.assertEqual(alarm[AlarmField.status.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.status.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.status.value]['m'], 'test message')
+        self.assertEqual(alarm[AlarmField.status.value]['val'], statusval)
         self.assertTrue(
-            alarm['status'] is get_previous_step(alarm, 'statusinc')
+            alarm[AlarmField.status.value] is get_previous_step(alarm, 'statusinc')
         )
 
     def test_status_decrease(self):
@@ -322,13 +322,13 @@ class TestTasks(BaseTest):
         task = get_task('alerts.systemaction.status_decrease')
         alarm = task(self.manager, self.alarm, statusval, event)
 
-        self.assertTrue(alarm['status'] is not None)
-        self.assertEqual(alarm['status']['t'], 0)
-        self.assertEqual(alarm['status']['a'], 'test.test0')
-        self.assertEqual(alarm['status']['m'], 'test message')
-        self.assertEqual(alarm['status']['val'], statusval)
+        self.assertTrue(alarm[AlarmField.status.value] is not None)
+        self.assertEqual(alarm[AlarmField.status.value]['t'], 0)
+        self.assertEqual(alarm[AlarmField.status.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.status.value]['m'], 'test message')
+        self.assertEqual(alarm[AlarmField.status.value]['val'], statusval)
         self.assertTrue(
-            alarm['status'] is get_previous_step(alarm, 'statusdec')
+            alarm[AlarmField.status.value] is get_previous_step(alarm, 'statusdec')
         )
 
     def test_linklist(self):
