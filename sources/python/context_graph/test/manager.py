@@ -399,6 +399,21 @@ class UpdateEntity(BaseTest):
         entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
         self.assertEqualEntities(self.ent4, entity)
 
+    def test_update_other_fields(self):
+        new_entity = self.ent1.copy()
+        new_entity['infos'] = {"Change":True}
+
+        self.manager.update_entity(new_entity)
+        result = self.manager.get_entities_by_id(self.ent1["_id"])[0]
+        self.assertEqualEntities(result, new_entity)
+
+    def test_update_no_update(self):
+        new_entity = self.ent1.copy()
+
+        self.manager.update_entity(new_entity)
+        result = self.manager.get_entities_by_id(self.ent1["_id"])[0]
+        self.assertEqualEntities(result, new_entity)
+
 
 class UpdateDependancies(BaseTest):
 
