@@ -120,12 +120,8 @@ class ContextGraphImport(ContextGraph):
         if isinstance(json, str):
             json = ast.literal_eval(json)
 
-        self._check_schema(json)
-
         self.entities_to_update = self.__get_entities_to_update(json)
 
-        self.update = {}
-        self.delete = []
 
         for ci in json[self.CIS]:
             if ci[self.ACTION] == self.DELETE:
