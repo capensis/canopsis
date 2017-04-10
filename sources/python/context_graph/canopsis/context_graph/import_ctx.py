@@ -24,6 +24,18 @@ class ContextGraphImport(ContextGraph):
     DISABLE = "disable"
     ENABLE = "enable"
 
+    def __init__(self, *args, **kwargs):
+        """__init__
+
+        :param *args:
+        :param **kwargs:
+        """
+        super(ContextGraphImport, self).__init__(*args, **kwargs)
+
+        self.entities_to_update = {}
+        self.update = {}
+        self.delete = []
+
     def __get_entities_to_update(self, json):
         # a set so no duplicate ids without effort and low time complexity
         ids = set()
@@ -44,7 +56,34 @@ class ContextGraphImport(ContextGraph):
         return ctx
 
     def __a_delete_entity(self, ci):
-        pass
+        id_ = ci["_id"]
+        try:
+            entity = self.entities_to_update.get(id_["_id"])
+        except IndexError:
+            desc = "No entity found for the following id : {0}".format(id_)
+            raise ValueError(desc)
+
+        # update depends/impact links
+        # Est ce que c'est utile ?
+        status = {"deletions": entity["depends"],
+                  "insertions": []}
+        updated_entities = self.__update_dependancies(id_, status, "depends")
+        for entity in updated_entities:
+            if self.update.has_key(entity["_id"]):
+                self.update[entity["_id"]]['impact'].remove(entity["_id"])
+            else:
+                self.update[entity["_id"]] = entity
+
+        # update impact/depends links
+        status = {"deletions": entity["impact"],
+                  "insertions": []}
+        updated_entities = self.__update_dependancies(id_, status, "impact")
+        for entity in updated_entities:
+            if self.update.has_key(entity["_id"]):
+                self.update[entity["_id"]]['depends'].remove(entity["_id"])
+            else:
+                self.update[entity["_id"]] = entity
+
 
     def __a_update_entity(self, ci):
         pass
@@ -62,7 +101,7 @@ class ContextGraphImport(ContextGraph):
         pass
 
     def __a_update_link(self, link):
-        pass
+        raise NotImplementedError()
 
     def __a_create_link(self, link):
         pass
@@ -86,6 +125,7 @@ class ContextGraphImport(ContextGraph):
         self.entities_to_update = self.__get_entities_to_update(json)
 
         self.update = {}
+        self.delete = []
 
         for ci in json[self.CIS]:
             if ci[self.ACTION] == self.DELETE:
