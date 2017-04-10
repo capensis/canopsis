@@ -27,13 +27,23 @@ class BaseTest(TestCase):
             ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
         self.ctx_import[ContextGraph.USERS_STORAGE] = self.users_storage
 
-        self.template = {'_id': None,
-                         'type': 'connector',
-                         'name': 'conn-name1',
-                         'depends': [],
-                         'impact': [],
-                         'measurements': [],
-                         'infos': {}}
+        self.template_ent = {'_id': None,
+                             'type': 'connector',
+                             'name': 'conn-name1',
+                             'depends': [],
+                             'impact': [],
+                             'measurements': [],
+                             'infos': {}}
+        self.template_ci = {ContextGraphImport.ID: None,
+                            ContextGraphImport.NAME: "Name",
+                            ContextGraphImport.TYPE: "Type",
+                            ContextGraphImport.INFOS: {},
+                            ContextGraphImport.ACTION: None}
+
+        self.template_link = {ContextGraphImport.FROM: None,
+                              ContextGraphImport.TO: None,
+                              ContextGraphImport.INFOS: {},
+                              ContextGraphImport.ACTION: None}
 
     def tearDown(self):
         self.entities_storage.remove_elements()
@@ -60,9 +70,9 @@ class GetEntitiesToUpdate(BaseTest):
                 self.assertEqualEntities(entity, entities[id_])
 
     def test_entities(self):
-        entities = {"ent1": self.template.copy(),
-                    "ent2": self.template.copy(),
-                    "ent3": self.template.copy()}
+        entities = {"ent1": self.template_ent.copy(),
+                    "ent2": self.template_ent.copy(),
+                    "ent3": self.template_ent.copy()}
 
         entities["ent1"]["_id"] = "ent1"
         entities["ent2"]["_id"] = "ent2"
@@ -84,9 +94,9 @@ class GetEntitiesToUpdate(BaseTest):
 
 
     def test_no_entities(self):
-        entities = {"ent1": self.template.copy(),
-                    "ent2": self.template.copy(),
-                    "ent3": self.template.copy()}
+        entities = {"ent1": self.template_ent.copy(),
+                    "ent2": self.template_ent.copy(),
+                    "ent3": self.template_ent.copy()}
 
         entities["ent1"]["_id"] = "ent1"
         entities["ent2"]["_id"] = "ent2"
@@ -102,6 +112,49 @@ class GetEntitiesToUpdate(BaseTest):
         ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(json)
 
         self._test(ctx, entities)
+
+class AUpdateEntity(BaseTest):
+
+    def setUp(self):
+        super(AUpdateEntity, self).setUp()
+
+
+    def test_no_entities(self):
+        json = json = {ContextGraphImport.CIS: [{"_id": "ent1"}],
+                                                ContextGraphImport.LINKS: []}
+        self.ctx_import._ContextGraphImport__get_entities_to_update(json)
+
+        ci = self.template_ci.copy()
+        ci["_id"] = "not_an_entity"
+
+        desc = "The ci of id {0} does not match any existing entity.".format(
+                ci["_id"])
+
+        with self.assertRaisesRegexp(KeyError, desc):
+            self.ctx_import._ContextGraphImport__a_update_entity(ci)
+
+    def test_entities(self):
+        json = json = {ContextGraphImport.CIS: [{"_id": "ent1"}],
+                                                ContextGraphImport.LINKS: []}
+        self.ctx_import._ContextGraphImport__get_entities_to_update(json)
+
+
+        ent = self.template_ent.copy()
+        ent[ContextGraphImport.ID] = "ent1"
+        self.ctx_import.entities_to_update["ent1"] = ent
+
+        ci = self.template_ci.copy()
+        expected =  self.template_ent.copy()
+
+        expected["_id"] = ci["_id"] = "ent1"
+        expected["name"] = ci["name"] = "other_name"
+        expected["type"] = ci["type"] = "other_type"
+        expected["infos"] = ci["infos"] = {"infos": "infos"}
+
+
+        self.ctx_import._ContextGraphImport__a_update_entity(ci)
+
+        self.assertEqualEntities(self.ctx_import.update["ent1"], expected)
 
 
 if __name__ == '__main__':

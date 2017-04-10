@@ -13,7 +13,7 @@ class ContextGraphImport(ContextGraph):
     TO = "to"
     ACTION = "action"
     TYPE = "type"
-    EXTRAS = "extras"
+    INFOS = "infos"
     ACTION = "action"
     ID = "_id"
     NAME = "name"
@@ -56,6 +56,7 @@ class ContextGraphImport(ContextGraph):
         return ctx
 
     def __a_delete_entity(self, ci):
+        # TODO rewrite this function
         id_ = ci["_id"]
         try:
             entity = self.entities_to_update.get(id_["_id"])
@@ -86,7 +87,20 @@ class ContextGraphImport(ContextGraph):
 
 
     def __a_update_entity(self, ci):
-        pass
+        if not self.entities_to_update.has_key(ci["_id"]):
+            desc = "The ci of id {0} does not match any existing entity.".format(
+                ci["_id"])
+            raise KeyError(desc)
+
+        entity = self.entities_to_update[ci[self.ID]]
+
+        fields_to_update = [self.NAME, self.INFOS,self.TYPE]
+
+        for field in fields_to_update:
+            entity[field] = ci[field]
+
+        self.update[ci[self.ID]] = entity
+
 
     def __a_create_entity(self, ci):
         pass
