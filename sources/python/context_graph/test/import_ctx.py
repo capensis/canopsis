@@ -216,8 +216,8 @@ class ADeleteLink(BaseTest):
             'from': 'e1',
             'to': 'e2'
         })
-        self.assertEqual(self.ctx_import.update[]['impact'], [])
-        self.assertEqual(self.ctx_import.update[]['depends'], [])
+        self.assertEqual(self.ctx_import.update['e1']['impact'], [])
+        self.assertEqual(self.ctx_import.update['e2']['depends'], [])
 
     def test_delete_link_e1_e2_2(self):
         self.ctx_import.update = {'e2':{'depends': ['e1']}}
@@ -227,8 +227,8 @@ class ADeleteLink(BaseTest):
             'from': 'e1',
             'to': 'e2'
         })
-        self.assertEqual(self.ctx_import.update[]['impact'], [])
-        self.assertEqual(self.ctx_import.update[]['depends'], [])
+        self.assertEqual(self.ctx_import.update['e1']['impact'], [])
+        self.assertEqual(self.ctx_import.update['e2']['depends'], [])
 
 
 if __name__ == '__main__':
