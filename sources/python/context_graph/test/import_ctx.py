@@ -410,6 +410,13 @@ class ADeleteLink(BaseTest):
         self.assertEqual(self.ctx_import.update['e1']['impact'], [])
         self.assertEqual(self.ctx_import.update['e2']['depends'], [])
 
+class NotImplem(BaseTest):
+    def update_link(self):
+        self.assertRaises(NotImplementedError, self.ctx_import__a_update_link())
+    def disable_link(self):
+        self.assertRaises(NotImplementedError, self.ctx_import__a_disable_link())
+    def enable_link(self):
+        self.assertRaises(NotImplementedError, self.ctx_import__a_enable_link())
 
 if __name__ == '__main__':
     main()
