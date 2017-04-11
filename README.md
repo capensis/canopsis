@@ -3,7 +3,7 @@
 </a>
 
 <a href="https://travis-ci.org/capensis/canopsis">
-    <img src="https://travis-ci.org/capensis/canopsis.svg"/>
+    <img src="https://travis-ci.org/capensis/canopsis.svg?branch=master"/>
 </a>
 
 ## What is Canopsis ?
