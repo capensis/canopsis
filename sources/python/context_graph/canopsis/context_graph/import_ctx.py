@@ -144,20 +144,21 @@ class ContextGraphImport(ContextGraph):
         self.update[ci[self.K_ID]] = entity
 
     def __a_delete_link(self, link):
-        pass
+        self.update[link[self.K_FROM]]['impact'].remove(link[self.K_TO])
+        self.update[link[self.K_TO]]['depends'].remove(link[self.K_FROM])
 
     def __a_update_link(self, link):
         raise NotImplementedError()
 
     def __a_create_link(self, link):
-        pass
+        self.update[link[self.K_FROM]]['impact'].append(link[self.K_TO])
+        self.update[link[self.K_TO]]['depends'].append(link[self.K_FROM])
 
     def __a_disable_link(self, link):
-        pass
-
+        raise NotImplementedError()
+    
     def __a_enable_link(self, link):
-        pass
-
+        raise NotImplementedError()
 
     def import_context(self, json):
         if (not isinstance(json, dict) or isinstance(json, str)):
