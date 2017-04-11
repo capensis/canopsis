@@ -17,6 +17,8 @@ class ContextGraphImport(ContextGraph):
     K_ACTION = "action"
     K_ID = "_id"
     K_NAME = "name"
+    K_ENABLE = "enable"
+    K_DISABLE = "disable"
 
     A_DELETE = "delete"
     A_CREATE = "create"
@@ -46,7 +48,7 @@ class ContextGraphImport(ContextGraph):
                 entity = self.get_entities_by_id(ci[self.K_ID])[0]
 
                 for id_ in entity["depends"] + entity["impact"]:
-                    ci.add(id_)
+                    ids.add(id_)
 
         for link in json[self.K_LINKS]:
             ids.add(link[self.K_FROM])
@@ -123,25 +125,42 @@ class ContextGraphImport(ContextGraph):
 
         self.update[ci[self.K_ID]] = entity
 
-    def __a_disable_entity(self, ci):
+    def __change_state_entity(self, ci, state):
+        if state != self.K_DISABLE and state != self.K_ENABLE:
+            raise ValueError("{0} is not a valid state.".format(state))
+
+        id_ = ci[self.K_ID]
+
         if not self.entities_to_update.has_key(ci[self.K_ID]):
             desc = "The ci of id {0} does not match any existing entity.".format(
-                ci[self.K_ID])
+                id_)
             raise KeyError(desc)
 
-        if not self.update.has_key(ci[self.K_ID]):
-            self.update[ci[self.K_ID]] = self.entities_to_update.copy()
-        # self.update[ci[self.K_ID]][self.K_INFOS][]
+        # If the entity is not in the update dict, add it
+        if not self.update.has_key(id_):
+            self.update[id_] = self.entities_to_update[id_].copy()
+
+        # Update entity the fields enable/disable of infos
+        timestamp = ci[self.K_INFOS][state]
+
+        if not isinstance(timestamp, list):
+            timestamp = [timestamp]
+
+        if self.update[id_][self.K_INFOS].has_key(state):
+
+            if self.update[id_][self.K_INFOS][state] is None:
+                self.update[id_][self.K_INFOS][state] = timestamp
+            else:
+                self.update[id_][self.K_INFOS][state] += timestamp
+
+        else:
+            self.update[id_][self.K_INFOS][state] = timestamp
+
+    def __a_disable_entity(self, ci):
+        self.__change_state_entity(ci, self.K_DISABLE)
 
     def __a_enable_entity(self, ci):
-        if not self.entities_to_update.has_key(ci[self.K_ID]):
-            desc = "The ci of id {0} does not match any existing entity.".format(
-                ci[self.K_ID])
-            raise KeyError(desc)
-
-        entity = self.entities_to_update.copy()
-        # store the enable timestamp
-        self.update[ci[self.K_ID]] = entity
+        self.__change_state_entity(ci, self.K_DISABLE)
 
     def __a_delete_link(self, link):
         if link[self.K_FROM] not in self.update.keys():
