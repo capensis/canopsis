@@ -20,9 +20,10 @@
 
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.context_graph.import_ctx import ContextGraphImport
 
 manager = ContextGraph()
-
+import_manager = ContextGraphImport()
 
 def exports(ws):
 
@@ -83,3 +84,11 @@ def exports(ws):
         sort=sort, 
         with_count=with_count
     )
+    
+    @route(
+        ws.application.put,
+        payload=['json']
+    )
+    def put_graph(json={}):
+        return import_manager.import_context(json)
+
