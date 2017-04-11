@@ -192,6 +192,17 @@ class ACreateLink(BaseTest):
         self.assertEqual(self.ctx_import.update['e1']['impact'], ['e2'])
         self.assertEqual(self.ctx_import.update['e2']['depends'], ['e1'])
 
+    def test_create_link_e1_e2(self):
+        self.ctx_import.update = {'e2':{'depends': []}}
+        self.ctx_import.entities_to_update = {'e1':{'impact': []}}
+        self.ctx_import.__a_create_link({
+            '_id':'e1-to-e2',
+            'from': 'e1',
+            'to': 'e2'
+        })
+        self.assertEqual(self.ctx_import.update['e1']['impact'], ['e2'])
+        self.assertEqual(self.ctx_import.update['e2']['depends'], ['e1'])
+
 
 
 if __name__ == '__main__':
