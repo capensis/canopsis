@@ -410,6 +410,24 @@ class ADeleteLink(BaseTest):
         self.assertEqual(self.ctx_import.update['e1']['impact'], [])
         self.assertEqual(self.ctx_import.update['e2']['depends'], [])
 
+class AUpdateLink(BaseTest):
+
+    def test(self):
+        with self.assertRaises(NotImplementedError):
+            self.ctx_import._ContextGraphImport__a_update_link(None)
+
+class ADisableLink(BaseTest):
+
+    def test(self):
+        with self.assertRaises(NotImplementedError):
+            self.ctx_import._ContextGraphImport__a_disable_link(None)
+
+class AEnableLink(BaseTest):
+
+    def test(self):
+        with self.assertRaises(NotImplementedError):
+            self.ctx_import._ContextGraphImport__a_enable_link(None)
+
 
 if __name__ == '__main__':
     main()
