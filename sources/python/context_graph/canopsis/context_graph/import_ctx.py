@@ -42,6 +42,11 @@ class ContextGraphImport(ContextGraph):
 
         for ci in json[self.K_CIS]:
             ids.add(ci[self.K_ID])
+            if ci[self.K_ACTION] == self.A_DELETE:
+                entity = self.get_entities_by_id(ci[self.K_ID])[0]
+
+                for id_ in entity["depends"] + entity["impact"]:
+                    ci.add(id_)
 
         for link in json[self.K_LINKS]:
             ids.add(link[self.K_FROM])
