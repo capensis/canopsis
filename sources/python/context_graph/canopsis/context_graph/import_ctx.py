@@ -144,6 +144,10 @@ class ContextGraphImport(ContextGraph):
         self.update[ci[self.K_ID]] = entity
 
     def __a_delete_link(self, link):
+        if not link[self.K_FROM] in self.update.keys():
+            self.update[self.K_FROM] = self.entities_to_update[self.K_FROM]
+        if not link[self.K_TO] in self.update.keys():
+            self.update[self.K_TO] = self.entities_to_update[self.K_TO]
         self.update[link[self.K_FROM]]['impact'].remove(link[self.K_TO])
         self.update[link[self.K_TO]]['depends'].remove(link[self.K_FROM])
 
@@ -151,6 +155,10 @@ class ContextGraphImport(ContextGraph):
         raise NotImplementedError()
 
     def __a_create_link(self, link):
+        if not link[self.K_FROM] in self.update.keys():
+            self.update[self.K_FROM] = self.entities_to_update[self.K_FROM]
+        if not link[self.K_TO] in self.update.keys():
+            self.update[self.K_TO] = self.entities_to_update[self.K_TO]
         self.update[link[self.K_FROM]]['impact'].append(link[self.K_TO])
         self.update[link[self.K_TO]]['depends'].append(link[self.K_FROM])
 
