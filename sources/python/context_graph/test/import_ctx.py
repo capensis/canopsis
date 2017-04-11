@@ -34,16 +34,16 @@ class BaseTest(TestCase):
                              'impact': [],
                              'measurements': [],
                              'infos': {}}
-        self.template_ci = {ContextGraphImport.ID: None,
-                            ContextGraphImport.NAME: "Name",
-                            ContextGraphImport.TYPE: "Type",
-                            ContextGraphImport.INFOS: {},
-                            ContextGraphImport.ACTION: None}
+        self.template_ci = {ContextGraphImport.K_ID: None,
+                            ContextGraphImport.K_NAME: "Name",
+                            ContextGraphImport.K_TYPE: "Type",
+                            ContextGraphImport.K_INFOS: {},
+                            ContextGraphImport.K_ACTION: None}
 
-        self.template_link = {ContextGraphImport.FROM: None,
-                              ContextGraphImport.TO: None,
-                              ContextGraphImport.INFOS: {},
-                              ContextGraphImport.ACTION: None}
+        self.template_link = {ContextGraphImport.K_FROM: None,
+                              ContextGraphImport.K_TO: None,
+                              ContextGraphImport.K_INFOS: {},
+                              ContextGraphImport.K_ACTION: None}
 
     def tearDown(self):
         self.entities_storage.remove_elements()
@@ -80,13 +80,13 @@ class GetEntitiesToUpdate(BaseTest):
 
         self.ctx_import.put_entities(entities.values())
 
-        json = {ContextGraphImport.CIS: [{"_id": "ent1"},
-                                         {"_id": "ent2"},
-                                         {"_id": "ent3"}],
-                ContextGraphImport.LINKS: [{ContextGraphImport.FROM: "ent1",
-                                            ContextGraphImport.TO: "ent2"},
-                                           {ContextGraphImport.FROM: "ent1",
-                                            ContextGraphImport.TO: "ent3"}]}
+        json = {ContextGraphImport.K_CIS: [{ContextGraphImport.K_ID: "ent1"},
+                                         {ContextGraphImport.K_ID: "ent2"},
+                                         {ContextGraphImport.K_ID: "ent3"}],
+                ContextGraphImport.K_LINKS: [{ContextGraphImport.K_FROM: "ent1",
+                                            ContextGraphImport.K_TO: "ent2"},
+                                           {ContextGraphImport.K_FROM: "ent1",
+                                            ContextGraphImport.K_TO: "ent3"}]}
 
         ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(json)
 
@@ -106,8 +106,8 @@ class GetEntitiesToUpdate(BaseTest):
 
         entities = {}
 
-        json = {ContextGraphImport.CIS: [],
-                ContextGraphImport.LINKS: []}
+        json = {ContextGraphImport.K_CIS: [],
+                ContextGraphImport.K_LINKS: []}
 
         ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(json)
 
@@ -120,39 +120,60 @@ class AUpdateEntity(BaseTest):
 
 
     def test_no_entities(self):
-        json = json = {ContextGraphImport.CIS: [{"_id": "ent1"}],
-                                                ContextGraphImport.LINKS: []}
-        self.ctx_import._ContextGraphImport__get_entities_to_update(json)
-
         ci = self.template_ci.copy()
-        ci["_id"] = "not_an_entity"
+        ci[ContextGraphImport.K_ID] = "not_an_entity"
 
         desc = "The ci of id {0} does not match any existing entity.".format(
-                ci["_id"])
+                ci[ContextGraphImport.K_ID])
 
         with self.assertRaisesRegexp(KeyError, desc):
             self.ctx_import._ContextGraphImport__a_update_entity(ci)
 
     def test_entities(self):
-        json = json = {ContextGraphImport.CIS: [{"_id": "ent1"}],
-                                                ContextGraphImport.LINKS: []}
-        self.ctx_import._ContextGraphImport__get_entities_to_update(json)
-
-
         ent = self.template_ent.copy()
-        ent[ContextGraphImport.ID] = "ent1"
+        ent[ContextGraphImport.K_ID] = "ent1"
         self.ctx_import.entities_to_update["ent1"] = ent
 
         ci = self.template_ci.copy()
         expected =  self.template_ent.copy()
 
-        expected["_id"] = ci["_id"] = "ent1"
-        expected["name"] = ci["name"] = "other_name"
-        expected["type"] = ci["type"] = "other_type"
-        expected["infos"] = ci["infos"] = {"infos": "infos"}
+        expected["_id"] = ci[ContextGraphImport.K_ID] = "ent1"
+        expected["name"] = ci[ContextGraphImport.K_NAME] = "other_name"
+        expected["type"] = ci[ContextGraphImport.K_TYPE] = "other_type"
+        expected["infos"] = ci[ContextGraphImport.K_INFOS] = {"infos": "infos"}
 
 
         self.ctx_import._ContextGraphImport__a_update_entity(ci)
+
+        self.assertEqualEntities(self.ctx_import.update["ent1"], expected)
+
+
+class ACreateEntity(BaseTest):
+
+    def test_existing_entity(self):
+        ent = self.template_ent.copy()
+        ent[ContextGraphImport.K_ID] = "ent1"
+        self.ctx_import.entities_to_update["ent1"] = ent
+
+        ci = self.template_ci.copy()
+        ci[ContextGraphImport.K_ID] = "ent1"
+
+        desc = "The ci of id {0} match an existing entity.".format(
+                ci[ContextGraphImport.K_ID])
+
+        with self.assertRaisesRegexp(ValueError, desc):
+            self.ctx_import._ContextGraphImport__a_create_entity(ci)
+
+    def test_nonexistent_event(self):
+        ci = self.template_ci.copy()
+        expected =  self.template_ent.copy()
+
+        expected["_id"] = ci[ContextGraphImport.K_ID] = "ent1"
+        expected["name"] = ci[ContextGraphImport.K_NAME] = "other_name"
+        expected["type"] = ci[ContextGraphImport.K_TYPE] = "other_type"
+        expected["infos"] = ci[ContextGraphImport.K_INFOS] = {"infos": "infos"}
+
+        self.ctx_import._ContextGraphImport__a_create_entity(ci)
 
         self.assertEqualEntities(self.ctx_import.update["ent1"], expected)
 
