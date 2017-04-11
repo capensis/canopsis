@@ -178,13 +178,9 @@ class ACreateEntity(BaseTest):
         self.assertEqualEntities(self.ctx_import.update["ent1"], expected)
 
 class ACreateLink(BaseTest):
-
-    def setUp(self):
-        super(ACreateLink, self).setUp()
-    
     def test_create_link_e1_e2(self):
         self.ctx_import.update = {'e1':{'impact': []}, 'e2':{'depends': []}}
-        self.ctx_import.__a_create_link({
+        self.ctx_import._ContextGraphImport__a_create_link({
             '_id':'e1-to-e2',
             'from': 'e1',
             'to': 'e2'
@@ -195,7 +191,7 @@ class ACreateLink(BaseTest):
     def test_create_link_e1_e2_2(self):
         self.ctx_import.update = {'e2':{'depends': []}}
         self.ctx_import.entities_to_update = {'e1':{'impact': []}}
-        self.ctx_import.__a_create_link({
+        self.ctx_import._ContextGraphImport__a_create_link({
             '_id':'e1-to-e2',
             'from': 'e1',
             'to': 'e2'
@@ -205,28 +201,20 @@ class ACreateLink(BaseTest):
 
 
 class ADeleteLink(BaseTest):
-
-    def setUp(self):
-        super(ACreateLink, self).setUp()
-    
     def test_delete__link_e1_e2(self):
         self.ctx_import.update = {'e1':{'impact': ['e2']}, 'e2':{'depends': ['e1']}}
-        self.ctx_import.__a_delete_link({
-            '_id':'e1-to-e2',
-            'from': 'e1',
-            'to': 'e2'
-        })
+        self.ctx_import._ContextGraphImport__a_delete_link(
+            {'_id': 'e1-to-e2', 'from': 'e1', 'to': 'e2'}
+        )
         self.assertEqual(self.ctx_import.update['e1']['impact'], [])
         self.assertEqual(self.ctx_import.update['e2']['depends'], [])
 
     def test_delete_link_e1_e2_2(self):
         self.ctx_import.update = {'e2':{'depends': ['e1']}}
         self.ctx_import.entities_to_update = {'e1':{'impact': ['e2']}}
-        self.ctx_import.__a_delete_link({
-            '_id':'e1-to-e2',
-            'from': 'e1',
-            'to': 'e2'
-        })
+        self.ctx_import._ContextGraphImport__a_delete_link(
+            {'_id': 'e1-to-e2', 'from': 'e1', 'to': 'e2'}
+        )
         self.assertEqual(self.ctx_import.update['e1']['impact'], [])
         self.assertEqual(self.ctx_import.update['e2']['depends'], [])
 
