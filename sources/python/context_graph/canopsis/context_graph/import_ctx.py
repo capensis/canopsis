@@ -17,6 +17,8 @@ class ContextGraphImport(ContextGraph):
     K_ACTION = "action"
     K_ID = "_id"
     K_NAME = "name"
+    K_ENABLE = "enable"
+    K_DISABLE = "disable"
 
     A_DELETE = "delete"
     A_CREATE = "create"
@@ -46,7 +48,7 @@ class ContextGraphImport(ContextGraph):
                 entity = self.get_entities_by_id(ci[self.K_ID])[0]
 
                 for id_ in entity["depends"] + entity["impact"]:
-                    ci.add(id_)
+                    ids.add(id_)
 
         for link in json[self.K_LINKS]:
             ids.add(link[self.K_FROM])
@@ -131,7 +133,14 @@ class ContextGraphImport(ContextGraph):
 
         if not self.update.has_key(ci[self.K_ID]):
             self.update[ci[self.K_ID]] = self.entities_to_update.copy()
-        # self.update[ci[self.K_ID]][self.K_INFOS][]
+
+        timestamp = ci[self.K_INFOS][self.K_DISABLE]
+
+        if self.update[ci[self.K_ID]][self.K_INFOS]["disable"] == None:
+            self.update[ci[self.K_ID]][self.K_INFOS]["disable"] = [timestamp]
+        else:
+            self.update[ci[self.K_ID]][self.K_INFOS][
+                "disable"].append(timestamp)
 
     def __a_enable_entity(self, ci):
         if not self.entities_to_update.has_key(ci[self.K_ID]):
@@ -139,9 +148,16 @@ class ContextGraphImport(ContextGraph):
                 ci[self.K_ID])
             raise KeyError(desc)
 
-        entity = self.entities_to_update.copy()
-        # store the enable timestamp
-        self.update[ci[self.K_ID]] = entity
+        if not self.update.has_key(ci[self.K_ID]):
+            self.update[ci[self.K_ID]] = self.entities_to_update.copy()
+
+        timestamp = ci[self.K_INFOS][self.K_DISABLE]
+
+        if self.update[ci[self.K_ID]][self.K_INFOS]["enable"] == None:
+            self.update[ci[self.K_ID]][self.K_INFOS]["enable"] = [timestamp]
+        else:
+            self.update[ci[self.K_ID]][self.K_INFOS][
+                "disable"].append(timestamp)
 
     def __a_delete_link(self, link):
         pass
