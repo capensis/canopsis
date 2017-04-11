@@ -192,7 +192,7 @@ class ACreateLink(BaseTest):
         self.assertEqual(self.ctx_import.update['e1']['impact'], ['e2'])
         self.assertEqual(self.ctx_import.update['e2']['depends'], ['e1'])
 
-    def test_create_link_e1_e2(self):
+    def test_create_link_e1_e2_2(self):
         self.ctx_import.update = {'e2':{'depends': []}}
         self.ctx_import.entities_to_update = {'e1':{'impact': []}}
         self.ctx_import.__a_create_link({
@@ -203,6 +203,32 @@ class ACreateLink(BaseTest):
         self.assertEqual(self.ctx_import.update['e1']['impact'], ['e2'])
         self.assertEqual(self.ctx_import.update['e2']['depends'], ['e1'])
 
+
+class ADeleteLink(BaseTest):
+
+    def setUp(self):
+        super(ACreateLink, self).setUp()
+    
+    def test_delete__link_e1_e2(self):
+        self.ctx_import.update = {'e1':{'impact': ['e2']}, 'e2':{'depends': ['e1']}}
+        self.ctx_import.__a_delete_link({
+            '_id':'e1-to-e2',
+            'from': 'e1',
+            'to': 'e2'
+        })
+        self.assertEqual(self.ctx_import.update[]['impact'], [])
+        self.assertEqual(self.ctx_import.update[]['depends'], [])
+
+    def test_delete_link_e1_e2_2(self):
+        self.ctx_import.update = {'e2':{'depends': ['e1']}}
+        self.ctx_import.entities_to_update = {'e1':{'impact': ['e2']}}
+        self.ctx_import.__a_delete_link({
+            '_id':'e1-to-e2',
+            'from': 'e1',
+            'to': 'e2'
+        })
+        self.assertEqual(self.ctx_import.update[]['impact'], [])
+        self.assertEqual(self.ctx_import.update[]['depends'], [])
 
 
 if __name__ == '__main__':
