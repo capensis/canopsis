@@ -163,20 +163,31 @@ class ContextGraphImport(ContextGraph):
         self.__change_state_entity(ci, self.K_DISABLE)
 
     def __a_delete_link(self, link):
-        pass
+        if link[self.K_FROM] not in self.update.keys():
+            self.update[link[self.K_FROM]] = self.entities_to_update[link[self.K_FROM]]
+
+        if link[self.K_TO] not in self.update.keys():
+            self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
+
+        self.update[link[self.K_FROM]]['impact'].remove(link[self.K_TO])
+        self.update[link[self.K_TO]]['depends'].remove(link[self.K_FROM])
 
     def __a_update_link(self, link):
         raise NotImplementedError()
 
     def __a_create_link(self, link):
-        pass
+        if link[self.K_FROM] not in self.update.keys():
+            self.update[link[self.K_FROM]] = self.entities_to_update[link[self.K_FROM]]
+        if link[self.K_TO] not in self.update.keys():
+            self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
+        self.update[link[self.K_FROM]]['impact'].append(link[self.K_TO])
+        self.update[link[self.K_TO]]['depends'].append(link[self.K_FROM])
 
     def __a_disable_link(self, link):
-        pass
-
+        raise NotImplementedError()
+    
     def __a_enable_link(self, link):
-        pass
-
+        raise NotImplementedError()
 
     def import_context(self, json):
         if (not isinstance(json, dict) or isinstance(json, str)):
