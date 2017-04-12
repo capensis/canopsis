@@ -113,7 +113,7 @@ class ContextGraphImport(ContextGraph):
         if not self.entities_to_update.has_key(ci[self.K_ID]):
             desc = "The ci of id {0} does not match any existing entity.".format(
                 ci[self.K_ID])
-            raise KeyError(desc)
+            raise ValueError(desc)
 
         entity = self.entities_to_update[ci[self.K_ID]]
 
@@ -168,7 +168,7 @@ class ContextGraphImport(ContextGraph):
         if not self.entities_to_update.has_key(ci[self.K_ID]):
             desc = "The ci of id {0} does not match any existing entity.".format(
                 id_)
-            raise KeyError(desc)
+            raise ValueError(desc)
 
         # If the entity is not in the update dict, add it
         if not self.update.has_key(id_):
@@ -212,10 +212,13 @@ class ContextGraphImport(ContextGraph):
 
         :param link: the link that identify a link (see the JSON specification).
         """
+
         if link[self.K_FROM] not in self.update.keys():
             self.update[link[self.K_FROM]] = self.entities_to_update[link[self.K_FROM]]
+
         if link[self.K_TO] not in self.update.keys():
             self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
+
         self.update[link[self.K_FROM]]['impact'].remove(link[self.K_TO])
         self.update[link[self.K_TO]]['depends'].remove(link[self.K_FROM])
 
@@ -228,10 +231,13 @@ class ContextGraphImport(ContextGraph):
 
         :param link: the link that identify a link (see the JSON specification).
         """
+
         if link[self.K_FROM] not in self.update.keys():
             self.update[link[self.K_FROM]] = self.entities_to_update[link[self.K_FROM]]
+
         if link[self.K_TO] not in self.update.keys():
             self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
+
         self.update[link[self.K_FROM]]['impact'].append(link[self.K_TO])
         self.update[link[self.K_TO]]['depends'].append(link[self.K_FROM])
 

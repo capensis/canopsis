@@ -165,7 +165,7 @@ class AUpdateEntity(BaseTest):
         desc = "The ci of id {0} does not match any existing entity.".format(
             ci[ContextGraphImport.K_ID])
 
-        with self.assertRaisesRegexp(KeyError, desc):
+        with self.assertRaisesRegexp(ValueError, desc):
             self.ctx_import._ContextGraphImport__a_update_entity(ci)
 
     def test_entities(self):
@@ -224,7 +224,7 @@ class ADisableEntity(BaseTest):
         desc = "The ci of id {0} does not match any existing entity.".format(
             ci[ContextGraphImport.K_ID])
 
-        with self.assertRaisesRegexp(KeyError, desc):
+        with self.assertRaisesRegexp(ValueError, desc):
             self.ctx_import._ContextGraphImport__a_disable_entity(ci)
 
     def test_entities_single_timestamp(self):
@@ -304,7 +304,7 @@ def AEnableEntity(BaseTest):
         desc = "The ci of id {0} does not match any existing entity.".format(
             ci[ContextGraphImport.K_ID])
 
-        with self.assertRaisesRegexp(KeyError, desc):
+        with self.assertRaisesRegexp(ValueError, desc):
             self.ctx_import._ContextGraphImport__a_enable_entity(ci)
 
 
