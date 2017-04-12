@@ -7,6 +7,9 @@ import ast
 
 class ContextGraphImport(ContextGraph):
 
+    # TODO add a feature to restore the context if an error occured during while
+    # is pushed into the database
+
     K_CIS = "cis"
     K_LINKS = "links"
     K_FROM = "from"
@@ -285,3 +288,12 @@ class ContextGraphImport(ContextGraph):
             else:
                 raise ValueError("The action {0} is not recognized\n".format(
                     link[self.K_ACTION]))
+
+        for id_ in self.update:
+            if id_ in self.delete:
+                desc = "The entity {0} to be deleted is updated in "\
+                       "the same import. Update aborted.".format(id_)
+                raise ValueError(desc)
+
+        self.put_entities(self.update.values())
+        self._delete_entity(self.delete)
