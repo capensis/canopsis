@@ -10,18 +10,21 @@ class ContextGraphImport(ContextGraph):
     # TODO add a feature to restore the context if an error occured during while
     # is pushed into the database
 
-    K_CIS = "cis"
     K_LINKS = "links"
     K_FROM = "from"
     K_TO = "to"
-    K_ACTION = "action"
-    K_TYPE = "type"
-    K_INFOS = "infos"
-    K_ACTION = "action"
+    K_CIS = "cis"
     K_ID = "_id"
     K_NAME = "name"
+    K_TYPE = "type"
+    K_DEPENDS = "depends"
+    K_IMPACT = "impact"
+    K_MEASUREMENTS = "measurements"
+    K_INFOS = "infos"
+    K_ACTION = "action"
     K_ENABLE = "enable"
     K_DISABLE = "disable"
+    K_PROPERTIES = "action_properties"
 
     A_DELETE = "delete"
     A_CREATE = "create"
@@ -120,7 +123,8 @@ class ContextGraphImport(ContextGraph):
 
         entity = self.entities_to_update[ci[self.K_ID]]
 
-        fields_to_update = [self.K_NAME, self.K_INFOS,self.K_TYPE]
+        fields_to_update = [self.K_NAME, self.K_TYPE, self.K_DEPENDS,
+                            self.K_IMPACT, self.K_MEASUREMENTS, self.K_INFOS]
 
         for field in fields_to_update:
             entity[field] = ci[field]
@@ -144,9 +148,9 @@ class ContextGraphImport(ContextGraph):
         entity = {'_id': ci[self.K_ID],
                   'type': ci[self.K_TYPE],
                   'name': ci[self.K_NAME],
-                  'depends': [],
-                  'impact': [],
-                  'measurements': [],
+                  'depends': ci[self.K_DEPENDS],
+                  'impact': ci[self.K_IMPACT],
+                  'measurements': ci[self.K_MEASUREMENTS],
                   'infos': ci[self.K_INFOS]}
 
         self.update[ci[self.K_ID]] = entity
@@ -185,13 +189,13 @@ class ContextGraphImport(ContextGraph):
 
         if self.update[id_][self.K_INFOS].has_key(state):
 
-            if self.update[id_][self.K_INFOS][state] is None:
-                self.update[id_][self.K_INFOS][state] = timestamp
+            if self.update[id_][self.K_PROPERTIES][state] is None:
+                self.update[id_][self.K_PROPERTIES][state] = timestamp
             else:
-                self.update[id_][self.K_INFOS][state] += timestamp
+                self.update[id_][self.K_PROPERTIES][state] += timestamp
 
         else:
-            self.update[id_][self.K_INFOS][state] = timestamp
+            self.update[id_][self.K_PROPERTIES][state] = timestamp
 
     def __a_disable_entity(self, ci):
         """Disable an entity defined by ci. For more information, see
