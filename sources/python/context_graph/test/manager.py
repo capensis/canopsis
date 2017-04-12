@@ -266,6 +266,61 @@ class PutEntities(BaseTest):
         sorted(result)
         self.assertListEqual(result, entities)
 
+class DeleteEntities(BaseTest):
+
+    def test_no_entities(self):
+        id1 = "ent1"
+        id2 = "not_an_entity_id"
+        entity = self.template.copy()
+        entity["_id"] = id1
+        entity['type'] = 'connector'
+        entity['name'] = 'conn-name'
+
+        self.manager.put_entities(entity)
+
+        self.manager._delete_entities(id2)
+
+        result = self.manager.get_entities_by_id([id1, id2])
+
+        self.assertEqual(len(result), 1)
+        self.assertEqualEntities(entity, result[0])
+
+    def test_entity(self):
+        id_ = "ent1"
+        entity = self.template.copy()
+        entity["_id"] = id_
+        entity['type'] = 'connector'
+        entity['name'] = 'conn-name'
+
+        self.manager.put_entities(entity)
+
+        self.manager._delete_entities(id_)
+
+        result = self.manager.get_entities_by_id(id_)
+
+        self.assertEqual(len(result), 0)
+
+    def test_entities(self):
+        id1 = "ent1"
+        entity1 = self.template.copy()
+        entity1["_id"] = id1
+        entity1['type'] = 'connector'
+        entity1['name'] = 'conn-name'
+
+        id2 = "ent2"
+        entity2 = self.template.copy()
+        entity2["_id"] = id2
+        entity2['type'] = 'connector'
+        entity2['name'] = 'conn-name'
+
+        self.manager.put_entities([entity1, entity2])
+
+        self.manager._delete_entities([id1, id2])
+
+        result = self.manager.get_entities_by_id([id1, id2])
+
+        self.assertEqual(len(result), 0)
+
 
 class GetAllEntitiesId(BaseTest):
 
