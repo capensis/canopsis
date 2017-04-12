@@ -84,7 +84,7 @@ class engine(Engine):
             context = self.context
             for entity_id in entities_by_entity_ids:
                 _type, entity, ctx = entities_by_entity_ids[entity_id]
-                context.put_entities([entity])
+                context._put_entities([entity])
 
     def work(self, event, *args, **kwargs):
         mCrit = 'PROC_CRITICAL'
@@ -119,13 +119,13 @@ class engine(Engine):
             hostgroup_data = {
                 ContextGraph.NAME: hostgroup
             }
-            self.context.put_entities([hostgroup_data])
+            self.context._put_entities([hostgroup_data])
         # add servicegroups
         for servicegroup in servicegroups:
             servgroup_data = {
                 ContextGraph.NAME: servicegroup
             }
-            self.context.put_entities([servgroup_data])
+            self.context._put_entities([servgroup_data])
 
         # get related entity
         encoded_event = {}
@@ -163,7 +163,7 @@ class engine(Engine):
             del entity['resource']
 
         # put the status entity in the context
-        self.context.put_entities([entity])
+        self.context._put_entities([entity])
 
         # udpdate context information with resource and component
         if resource:
@@ -180,6 +180,6 @@ class engine(Engine):
             name = perfdata['metric']
             perfdata_entity[ContextGraph.NAME] = name
             perfdata_entity['internal'] = perfdata['metric'].startswith('cps')
-            self.context.put_entities([perfdata_entity])
+            self.context._put_entities([perfdata_entity])
 
         return event

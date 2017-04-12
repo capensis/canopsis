@@ -295,5 +295,5 @@ class ContextGraphImport(ContextGraph):
                        "the same import. Update aborted.".format(id_)
                 raise ValueError(desc)
 
-        self.put_entities(self.update.values())
+        self._put_entities(self.update.values())
         self._delete_entity(self.delete)
