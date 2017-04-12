@@ -39,12 +39,18 @@ class ContextGraphImport(ContextGraph):
         self.delete = []
 
     def __get_entities_to_update(self, json):
+        """Return every entities id required for the update
+        :param json: the json with every actions required for the update
+        :param rtype: a dict with the entity id as a key and the entity as
+        a value
+        """
         # a set so no duplicate ids without effort and low time complexity
         ids = set()
 
         for ci in json[self.K_CIS]:
             ids.add(ci[self.K_ID])
             if ci[self.K_ACTION] == self.A_DELETE:
+                # we need to retreive every related entity to update the links
                 entity = self.get_entities_by_id(ci[self.K_ID])[0]
 
                 for id_ in entity["depends"] + entity["impact"]:
@@ -63,6 +69,15 @@ class ContextGraphImport(ContextGraph):
         return ctx
 
     def __a_delete_entity(self, ci):
+        """Update the entities related with the entity to be deleted disigned
+        by ci and store them into self.update. Add the id of entity to be
+        deleted into self.delete.
+
+        If the entity to be deleted is not initially store in the context,
+        a ValueError will be raised.
+
+        :param ci: the ci (see the JSON specification).
+        """
 
         id_ = ci[self.K_ID]
 
@@ -85,6 +100,16 @@ class ContextGraphImport(ContextGraph):
         self.delete.append(id_)
 
     def __a_update_entity(self, ci):
+        """Update the entity with the information stored into the ci and store
+        the result into self.update.
+
+        If the entity to be updated is not initially store in the context,
+        a ValueError will be raised.
+
+        :param ci: the ci (see the JSON specification).
+        """
+
+
         if not self.entities_to_update.has_key(ci[self.K_ID]):
             desc = "The ci of id {0} does not match any existing entity.".format(
                 ci[self.K_ID])
@@ -101,6 +126,13 @@ class ContextGraphImport(ContextGraph):
 
 
     def __a_create_entity(self, ci):
+        """Create an entity with a ci and store it into self.update
+
+        If the new entity is initially store in the context, a ValueError will
+        be raised.
+
+        :param ci: the ci (see the JSON specification).
+        """
         if self.entities_to_update.has_key(ci[self.K_ID]):
             desc = "The ci of id {0} match an existing entity.".format(
                 ci["_id"])
@@ -117,6 +149,17 @@ class ContextGraphImport(ContextGraph):
         self.update[ci[self.K_ID]] = entity
 
     def __change_state_entity(self, ci, state):
+        """Change the state (enable/disable) of an entity and store the result
+        into self.update.
+
+        If state does not match enable or disable, a ValueError will be raised.
+
+        :param ci: the ci (see the JSON specification).
+        :param state: if the state is "disable", the timestamp of the
+        deactivation of the entity will be store into the fields infos.disable.
+        Same behaviour with "enable" but the timestamp will be store into
+        infos.enable.
+        """
         if state != self.K_DISABLE and state != self.K_ENABLE:
             raise ValueError("{0} is not a valid state.".format(state))
 
@@ -148,18 +191,31 @@ class ContextGraphImport(ContextGraph):
             self.update[id_][self.K_INFOS][state] = timestamp
 
     def __a_disable_entity(self, ci):
+        """Disable an entity defined by ci. For more information, see
+        __change_state.
+
+        :param ci: the ci (see the JSON specification).
+        """
         self.__change_state_entity(ci, self.K_DISABLE)
 
     def __a_enable_entity(self, ci):
-        self.__change_state_entity(ci, self.K_DISABLE)
+        """Enable an entity defined by ci. For more information, see
+        __change_state.
+
+        :param ci: the ci (see the JSON specification).
+        """
+        self.__change_state_entity(ci, self.K_ENABLE)
 
     def __a_delete_link(self, link):
+        """Delete a link between two entity and store the modify entities
+        into self.udpate.
+
+        :param link: the link that identify a link (see the JSON specification).
+        """
         if link[self.K_FROM] not in self.update.keys():
             self.update[link[self.K_FROM]] = self.entities_to_update[link[self.K_FROM]]
-
         if link[self.K_TO] not in self.update.keys():
             self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
-
         self.update[link[self.K_FROM]]['impact'].remove(link[self.K_TO])
         self.update[link[self.K_TO]]['depends'].remove(link[self.K_FROM])
 
@@ -167,6 +223,11 @@ class ContextGraphImport(ContextGraph):
         raise NotImplementedError()
 
     def __a_create_link(self, link):
+        """Create a link between two entity and store the modify entities
+        into self.udpate.
+
+        :param link: the link that identify a link (see the JSON specification).
+        """
         if link[self.K_FROM] not in self.update.keys():
             self.update[link[self.K_FROM]] = self.entities_to_update[link[self.K_FROM]]
         if link[self.K_TO] not in self.update.keys():
@@ -188,7 +249,6 @@ class ContextGraphImport(ContextGraph):
             json = ast.literal_eval(json)
 
         self.entities_to_update = self.__get_entities_to_update(json)
-
 
         for ci in json[self.K_CIS]:
             if ci[self.K_ACTION] == self.A_DELETE:
