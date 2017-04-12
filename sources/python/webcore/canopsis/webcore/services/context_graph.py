@@ -36,7 +36,7 @@ def exports(ws):
 
     @route(
         ws.application.put,
-        payload['entity']
+        payload=['entity']
     )
     def put_entities(entity):
         """
@@ -76,14 +76,14 @@ def exports(ws):
             limit=0, 
             sort=False,
             with_count=False
-    )
-    return get_entities(
-        query=query,
-        projection=projection,
-        limit=limit,
-        sort=sort, 
-        with_count=with_count
-    )
+    ):
+        return get_entities(
+            query=query,
+            projection=projection,
+            limit=limit,
+            sort=sort, 
+            with_count=with_count
+        )
     
     @route(
         ws.application.put,
