@@ -63,35 +63,26 @@ class ContextGraphImport(ContextGraph):
         return ctx
 
     def __a_delete_entity(self, ci):
-        # TODO rewrite this function
+
         id_ = ci[self.K_ID]
+
         try:
-            entity = self.entities_to_update.get(id_[self.K_ID])
-        except IndexError:
+            entity = self.entities_to_update[ci[self.K_ID]]
+        except KeyError:
             desc = "No entity found for the following id : {0}".format(id_)
             raise ValueError(desc)
 
-        # update depends/impact links
-        # Est ce que c'est utile ?
-        status = {"deletions": entity["depends"],
-                  "insertions": []}
-        updated_entities = self.__update_dependancies(id_, status, "depends")
-        for entity in updated_entities:
-            if self.update.has_key(entity["_id"]):
-                self.update[entity["_id"]]['impact'].remove(entity["_id"])
-            else:
-                self.update[entity["_id"]] = entity
+        # Update the depends/impact link
+        for ent_id in entity["depends"]:
+            self.update[ent_id] = self.entities_to_update[ent_id].copy()
+            self.update[ent_id]["impact"].remove(id_)
 
-        # update impact/depends links
-        status = {"deletions": entity["impact"],
-                  "insertions": []}
-        updated_entities = self.__update_dependancies(id_, status, "impact")
-        for entity in updated_entities:
-            if self.update.has_key(entity["_id"]):
-                self.update[entity["_id"]]['depends'].remove(entity["_id"])
-            else:
-                self.update[entity["_id"]] = entity
+        # Update the impact/depends link
+        for ent_id in entity["impact"]:
+            self.update[ent_id] = self.entities_to_update[ent_id].copy()
+            self.update[ent_id]["depends"].remove(id_)
 
+        self.delete.append(id_)
 
     def __a_update_entity(self, ci):
         if not self.entities_to_update.has_key(ci[self.K_ID]):
@@ -185,7 +176,7 @@ class ContextGraphImport(ContextGraph):
 
     def __a_disable_link(self, link):
         raise NotImplementedError()
-    
+
     def __a_enable_link(self, link):
         raise NotImplementedError()
 

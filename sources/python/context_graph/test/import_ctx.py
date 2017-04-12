@@ -6,6 +6,7 @@ from unittest import main, TestCase
 from canopsis.context_graph.import_ctx import ContextGraphImport
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
+import copy
 
 
 class BaseTest(TestCase):
@@ -296,6 +297,17 @@ class ADisableEntity(BaseTest):
 
 def AEnableEntity(BaseTest):
 
+    def test_no_entities(self):
+        ci = self.template_ci.copy()
+        ci[ContextGraphImport.K_ID] = "ent1"
+
+        desc = "The ci of id {0} does not match any existing entity.".format(
+            ci[ContextGraphImport.K_ID])
+
+        with self.assertRaisesRegexp(KeyError, desc):
+            self.ctx_import._ContextGraphImport__a_enable_entity(ci)
+
+
     def test_entities_single_timestamp(self):
         id1 = "ent1"
         id2 = "ent2"
@@ -370,6 +382,7 @@ class ChangeStateEntity(BaseTest):
             self.ctx_import._ContextGraphImport__change_state_entity(None,
                                                                      state)
 class ACreateLink(BaseTest):
+
     def test_create_link_e1_e2(self):
         self.ctx_import.update = {'e1':{'impact': []}, 'e2':{'depends': []}}
         self.ctx_import._ContextGraphImport__a_create_link({
@@ -412,11 +425,94 @@ class ADeleteLink(BaseTest):
 
 class NotImplem(BaseTest):
     def update_link(self):
-        self.assertRaises(NotImplementedError, self.ctx_import__a_update_link())
+        self.assertRaises(NotImplementedError, self.ctx_import._ContextGraphImport__a_update_link())
+
     def disable_link(self):
-        self.assertRaises(NotImplementedError, self.ctx_import__a_disable_link())
+        self.assertRaises(NotImplementedError, self.ctx_import._ContextGraphImport__a_disable_link())
+
     def enable_link(self):
-        self.assertRaises(NotImplementedError, self.ctx_import__a_enable_link())
+        self.assertRaises(NotImplementedError, self.ctx_import._ContextGraphImport__a_enable_link())
+
+class ADeleteEntity(BaseTest):
+
+    def test_no_entities(self):
+        ci = self.template_ci.copy()
+        ci[ContextGraphImport.K_ID] = "not_an_id"
+
+        desc = "No entity found for the following id : {0}".format(
+            ci[ContextGraphImport.K_ID])
+
+        with self.assertRaisesRegexp(ValueError, desc):
+            self.ctx_import._ContextGraphImport__a_delete_entity(ci)
+
+    def test_entities(self):
+        id1 = "ent1"
+        id2 = "ent2"
+        id3 = "ent3"
+        id4 = "ent5"
+        id5 = "ent5"
+        id6 = "ent6"
+        id7 = "ent7"
+
+        ci = self.template_ci.copy()
+        ci[ContextGraphImport.K_ID] = id1
+        ci[ContextGraphImport.K_ACTION] = ContextGraphImport.A_DELETE
+
+        entities = {id1: self.template_ent.copy(),
+                    id2: self.template_ent.copy(),
+                    id3: self.template_ent.copy(),
+                    id4: self.template_ent.copy(),
+                    id5: self.template_ent.copy(),
+                    id6: self.template_ent.copy(),
+                    id7: self.template_ent.copy()}
+
+        entities[id1]["_id"] = id1
+        entities[id1]["depends"] = [id2, id3, id4]
+        entities[id1]["impact"] = [id5, id6, id7]
+
+        entities[id2]["_id"] = id2
+        entities[id2]["impact"] = [id1, "dummy0", "dummy1"]
+
+        entities[id3]["_id"] = id3
+        entities[id3]["impact"] = [id1, "dummy0"]
+
+        entities[id4]["_id"] = id4
+        entities[id4]["impact"] = [id1]
+
+        entities[id5]["_id"] = id5
+        entities[id5]["depends"] = [id1, "dummy0", "dummy1"]
+
+        entities[id6]["_id"] = id6
+        entities[id6]["depends"] = [id1, "dummy0"]
+
+        entities[id7]["_id"] = id7
+        entities[id7]["depends"] = [id1, "dummy0"]
+
+        update_expected = copy.deepcopy(entities)
+
+        del(update_expected[id1])
+        update_expected[id2]["impact"].remove(id1)
+        update_expected[id3]["impact"].remove(id1)
+        update_expected[id4]["impact"].remove(id1)
+        update_expected[id5]["depends"].remove(id1)
+        update_expected[id6]["depends"].remove(id1)
+        update_expected[id7]["depends"].remove(id1)
+
+        self.ctx_import.entities_to_update = entities
+
+        self.ctx_import._ContextGraphImport__a_delete_entity(ci)
+
+        for key in update_expected:
+            try:
+                entity = self.ctx_import.update[key]
+            except KeyError:
+                self.fail("Missing entity of id {0} in update.".format(key))
+
+            self.assertEqualEntities(entity, update_expected[key])
+
+        delete_expected = [id1]
+        self.assertListEqual(self.ctx_import.delete, delete_expected)
+
 
 if __name__ == '__main__':
     main()
