@@ -26,7 +26,7 @@ class ContextGraphImport(ContextGraph):
     K_DISABLE = "disable"
     K_PROPERTIES = "action_properties"
 
-    A_DELETE = "delete"
+    A_DELETE = u"delete"
     A_CREATE = "create"
     A_UPDATE = "update"
     A_DISABLE = "disable"
@@ -266,7 +266,7 @@ class ContextGraphImport(ContextGraph):
         for ci in json[self.K_CIS]:
             if ci[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_entity(ci)
-            if ci[self.K_ACTION] == self.A_CREATE:
+            elif ci[self.K_ACTION] == self.A_CREATE:
                 self.__a_create_entity(ci)
             elif ci[self.K_ACTION] == self.A_UPDATE:
                 self.__a_update_entity(ci)
@@ -281,7 +281,7 @@ class ContextGraphImport(ContextGraph):
         for link in json[self.K_LINKS]:
             if link[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_link(link)
-            if link[self.K_ACTION] == self.A_CREATE:
+            elif link[self.K_ACTION] == self.A_CREATE:
                 self.__a_create_link(link)
             elif link[self.K_ACTION] == self.A_UPDATE:
                 self.__a_update_link(link)
@@ -301,3 +301,6 @@ class ContextGraphImport(ContextGraph):
 
         self.put_entities(self.update.values())
         self._delete_entities(self.delete)
+
+        self.update = {}
+        self.delete = []

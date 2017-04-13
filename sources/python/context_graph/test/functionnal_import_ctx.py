@@ -5,6 +5,7 @@ import urllib
 from http.cookiejar import CookieJar
 import sys
 import argparse
+from time import sleep
 
 
 def test(auth, serv):
@@ -23,7 +24,7 @@ def test(auth, serv):
         print('error: the provided authkey does not match any user')
         sys.exit()
 
-    # test entity creation
+    print('test entity creation')
     js = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"create"}],"links":[]}'
     params = urllib.parse.urlencode({'json': js})
     print('http://{0}/coucou/bouh?{1}'.format(serv, params))
@@ -31,9 +32,11 @@ def test(auth, serv):
     r = opener.open(req)
     print(r.read())
 
-    #test entity deletion
-    js = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"delete"}],"links":[]}'
-    params = urllib.parse.urlencode({'json': js})
+    sleep(2)
+
+    print('test entity deletion')
+    deletion = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"delete"}],"links":[]}'
+    params = urllib.parse.urlencode({'json': deletion})
     print('http://{0}/coucou/bouh?{1}'.format(serv, params))
     req = urllib.request.Request(url='http://{0}/coucou/bouh?{1}'.format(serv, params),method='PUT')
     r = opener.open(req)
