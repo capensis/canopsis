@@ -135,6 +135,19 @@ class ContextGraph(MiddlewareRegistry):
             entities = [entities]
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
+    def _delete_entities(self, entities):
+        """
+        Remove entities from database. Do no use this function unless you know
+        exactly what you are doing. This function does not update the
+        impact and depends links between entities. If you want these feature,
+        use delete_entity.
+
+        :param entities: the entities to remove from database
+        """
+        if not isinstance(entities, list):
+            entities = [entities]
+        self[ContextGraph.ENTITIES_STORAGE].remove_elements(entities)
+
     def get_all_entities_id(self):
         """
         Get the ids of every stored entities.

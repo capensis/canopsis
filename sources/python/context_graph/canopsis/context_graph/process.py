@@ -366,7 +366,7 @@ def update_context(presence, ids, in_db):
                 presence, ids))
         raise ValueError("No case for the given ids and data.")
 
-    context_graph_manager.put_entities(to_update)
+    context_graph_manager._put_entities(to_update)
 
 
 def gen_ids(event):
