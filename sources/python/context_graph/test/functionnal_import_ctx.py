@@ -53,6 +53,8 @@ def test(auth, serv):
     r = opener.open(req)
     print(r.read())
 
+    sleep(2)
+
     print('link test')
     print('link creation between 2 entities')
     link_create = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"create"},{"_id":"resource_1/host_1","name":"resource_1","impact":[],"depends":[],"type":"resource","infos":{},"action":"create"}],"links":[{"_id":"resource_1/host_1-to-host_1","from":"resource_1/host_1","to":"host_1","infos":{},"action":"create"}]}'
@@ -62,6 +64,27 @@ def test(auth, serv):
     r = opener.open(req)
     print(r.read())
 
+    sleep(2)
+
+    print('link deletion between 2 entities')
+    link_delete = '{"cis":[],"links":[{"_id":"resource_1/host_1-to-host_1","from":"resource_1/host_1","to":"host_1","infos":{},"action":"delete"}]}'
+    params = urllib.parse.urlencode({'json': link_delete})
+    print('http://{0}/coucou/bouh?{1}'.format(serv, params))
+    req = urllib.request.Request(url='http://{0}/coucou/bouh?{1}'.format(serv, params),method='PUT')
+    r = opener.open(req)
+    print(r.read())
+
+    sleep(2)
+
+    print('cleaning')
+    clean = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"delete"},{"_id":"resource_1/host_1","name":"resource_1","impact":[],"depends":[],"type":"resource","infos":{},"action":"delete"}],"links":[]}'
+    params = urllib.parse.urlencode({'json': clean})
+    print('http://{0}/coucou/bouh?{1}'.format(serv, params))
+    req = urllib.request.Request(url='http://{0}/coucou/bouh?{1}'.format(serv, params),method='PUT')
+    r = opener.open(req)
+    print(r.read())
+
+    print('Done')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
