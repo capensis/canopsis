@@ -150,7 +150,7 @@ class ContextGraphImport(ContextGraph):
                   'name': ci[self.K_NAME],
                   'depends': ci[self.K_DEPENDS],
                   'impact': ci[self.K_IMPACT],
-                  'measurements': ci[self.K_MEASUREMENTS],
+                  #'measurements': ci[self.K_MEASUREMENTS],
                   'infos': ci[self.K_INFOS]}
 
         self.update[ci[self.K_ID]] = entity
@@ -299,5 +299,5 @@ class ContextGraphImport(ContextGraph):
                        "the same import. Update aborted.".format(id_)
                 raise ValueError(desc)
 
-        self._put_entities(self.update.values())
-        self._delete_entity(self.delete)
+        self.put_entities(self.update.values())
+        self._delete_entities(self.delete)
