@@ -66,7 +66,7 @@ class ContextGraphImport(ContextGraph):
         # TODO rewrite this function
         id_ = ci[self.K_ID]
         try:
-            entity = self.entities_to_update.get(id_[self.K_ID])
+            entity = self.entities_to_update.get(id_)
         except IndexError:
             desc = "No entity found for the following id : {0}".format(id_)
             raise ValueError(desc)
@@ -203,13 +203,13 @@ class ContextGraphImport(ContextGraph):
             if ci[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_entity(ci)
             if ci[self.K_ACTION] == self.A_CREATE:
-                self.__a_delete_entity(ci)
+                self.__a_create_entity(ci)
             elif ci[self.K_ACTION] == self.A_UPDATE:
-                self.__a_delete_entity(ci)
+                self.__a_update_entity(ci)
             elif ci[self.K_ACTION] == self.A_DISABLE:
-                self.__a_delete_entity(ci)
+                self.__a_disable_entity(ci)
             elif ci[self.K_ACTION] == self.A_ENABLE:
-                self.__a_delete_entity(ci)
+                self.__a_enable_entity(ci)
             else:
                 raise ValueError("The action {0} is not recognized\n".format(
                     ci[self.K_ACTION]))
@@ -218,13 +218,13 @@ class ContextGraphImport(ContextGraph):
             if link[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_link(link)
             if link[self.K_ACTION] == self.A_CREATE:
-                self.__a_delete_link(link)
+                self.__a_create_link(link)
             elif link[self.K_ACTION] == self.A_UPDATE:
-                self.__a_delete_link(link)
+                self.__a_update_link(link)
             elif link[self.K_ACTION] == self.A_DISABLE:
-                self.__a_delete_link(link)
+                self.__a_disable_link(link)
             elif link[self.K_ACTION] == self.A_ENABLE:
-                self.__a_delete_link(link)
+                self.__a_enable_link(link)
             else:
                 raise ValueError("The action {0} is not recognized\n".format(
                     link[self.K_ACTION]))
