@@ -1,17 +1,19 @@
-import urllib
-from http.cookiejar import CookieJar
-import sys
 import argparse
 import json
+import sys
+import urllib
+from http.cookiejar import CookieJar
+from unittest import TestCase, TestSuite, TextTestRunner
+
 import pymongo
-from unittest import main, TestCase, TestSuite, TextTestRunner
+
 
 class Test(TestCase):
     def __init__(self, server, authkey):
         super(Test, self).__init__('test_graph_import')
         self.server = server
         self.authkey = authkey
-     
+
     def test_graph_import(self):
         # auth
         cj = CookieJar()
@@ -36,62 +38,64 @@ class Test(TestCase):
         print('test entity creation')
         js = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"create"}],"links":[]}'
         params = urllib.parse.urlencode({'json': js})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params),method='PUT')
-        r = opener.open(req)
+        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
+        opener.open(req)
 
-        self.assertDictEqual(col.find_one({'_id': 'host_1'}),{'impact': [], 'name': 'host_1', 'type': 'component', 'infos': {}, '_id': 'host_1', 'depends': []})
+        self.assertDictEqual(col.find_one({'_id': 'host_1'}),
+                             {'impact': [], 'name': 'host_1', 'type': 'component', 'infos': {}, '_id': 'host_1',
+                              'depends': []})
 
         print('test update entity')
         update = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{"coucou":"bouh"},"action":"update"}],"links":[]}'
         params = urllib.parse.urlencode({'json': update})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params),method='PUT')
-        r = opener.open(req)
+        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
+        opener.open(req)
 
         self.assertDictEqual(col.find_one({'_id': 'host_1'}), {'impact': [], 'name': 'host_1', 'type': 'component',
                                                                'infos': {'coucou': 'bouh'}, '_id': 'host_1', 'depends':
-                                                               []})
-
+                                                                   []})
 
         print('test entity deletion')
         deletion = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"delete"}],"links":[]}'
         params = urllib.parse.urlencode({'json': deletion})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params),method='PUT')
-        r = opener.open(req)
+        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
+        opener.open(req)
 
         print('link test')
         print('link creation between 2 entities')
         link_create = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"create"},{"_id":"resource_1/host_1","name":"resource_1","impact":[],"depends":[],"type":"resource","infos":{},"action":"create"}],"links":[{"_id":"resource_1/host_1-to-host_1","from":"resource_1/host_1","to":"host_1","infos":{},"action":"create"}]}'
         params = urllib.parse.urlencode({'json': link_create})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params),method='PUT')
-        r = opener.open(req)
-
+        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
+        opener.open(req)
 
         self.assertDictEqual(col.find_one({'_id': 'host_1'}), {'impact': [], 'name': 'host_1', 'type': 'component',
                                                                'infos': {}, '_id': 'host_1', 'depends':
-                                                               ['resource_1/host_1']})
-        self.assertDictEqual(col.find_one({'_id': 'resource_1/host_1'}), {'impact': ['host_1'], 'name': 'resource_1', 'type':
-                                                                          'resource', 'infos': {}, '_id':
-                                                                          'resource_1/host_1', 'depends': []})
+                                                                   ['resource_1/host_1']})
+        self.assertDictEqual(col.find_one({'_id': 'resource_1/host_1'}),
+                             {'impact': ['host_1'], 'name': 'resource_1', 'type':
+                                 'resource', 'infos': {}, '_id':
+                                  'resource_1/host_1', 'depends': []})
 
         print('link deletion between 2 entities')
         link_delete = '{"cis":[],"links":[{"_id":"resource_1/host_1-to-host_1","from":"resource_1/host_1","to":"host_1","infos":{},"action":"delete"}]}'
         params = urllib.parse.urlencode({'json': link_delete})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params),method='PUT')
-        r = opener.open(req)
+        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
+        opener.open(req)
 
         self.assertDictEqual(col.find_one({'_id': 'host_1'}), {'impact': [], 'name': 'host_1', 'type': 'component',
                                                                'infos': {}, '_id': 'host_1', 'depends': []})
         self.assertDictEqual(col.find_one({'_id': 'resource_1/host_1'}), {'impact': [], 'name': 'resource_1', 'type':
-                                                                          'resource', 'infos': {}, '_id':
-                                                                          'resource_1/host_1', 'depends': []})
+            'resource', 'infos': {}, '_id':
+                                                                              'resource_1/host_1', 'depends': []})
 
         print('cleaning')
         clean = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"delete"},{"_id":"resource_1/host_1","name":"resource_1","impact":[],"depends":[],"type":"resource","infos":{},"action":"delete"}],"links":[]}'
         params = urllib.parse.urlencode({'json': clean})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params),method='PUT')
-        r = opener.open(req)
+        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
+        opener.open(req)
 
         print('Done')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -104,5 +108,3 @@ if __name__ == '__main__':
     suite.addTest(Test(serv, auth))
     t = TextTestRunner()
     t.run(suite)
-    
-
