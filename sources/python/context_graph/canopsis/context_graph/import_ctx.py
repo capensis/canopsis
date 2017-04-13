@@ -123,8 +123,13 @@ class ContextGraphImport(ContextGraph):
 
         entity = self.entities_to_update[ci[self.K_ID]]
 
-        fields_to_update = [self.K_NAME, self.K_TYPE, self.K_DEPENDS,
-                            self.K_IMPACT, self.K_MEASUREMENTS, self.K_INFOS]
+        fields_to_update = [
+            self.K_NAME,
+            self.K_TYPE,
+            self.K_DEPENDS,
+            self.K_IMPACT,
+            # self.K_MEASUREMENTS,
+            self.K_INFOS]
 
         for field in fields_to_update:
             entity[field] = ci[field]

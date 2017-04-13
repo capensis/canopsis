@@ -33,6 +33,17 @@ def test(auth, serv):
     print(r.read())
 
     sleep(2)
+    
+
+    print('test update entity')
+    update = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{"coucou":"bouh"},"action":"update"}],"links":[]}'
+    params = urllib.parse.urlencode({'json': update})
+    print('http://{0}/coucou/bouh?{1}'.format(serv, params))
+    req = urllib.request.Request(url='http://{0}/coucou/bouh?{1}'.format(serv, params),method='PUT')
+    r = opener.open(req)
+    print(r.read())
+
+    sleep(2)
 
     print('test entity deletion')
     deletion = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"delete"}],"links":[]}'
