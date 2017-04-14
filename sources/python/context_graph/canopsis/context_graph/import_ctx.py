@@ -230,7 +230,7 @@ class ContextGraphImport(ContextGraph):
 
         # set default value for required fields
         if not ci.has_key(self.K_NAME):
-            ci[self.K_NAME] = ci[self.K_TYPE]
+            ci[self.K_NAME] = ci[self.K_ID]
         if not ci.has_key(self.K_DEPENDS):
             ci[self.K_DEPENDS] = []
         if not ci.has_key(self.K_IMPACT):
