@@ -903,5 +903,82 @@ class ImportChecker(TestCase):
         self._test_state(ContextGraphImport.K_LINKS,
                          ContextGraphImport.A_ENABLE)
 
+    def test_OK_single_ci(self):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+    def test_OK_multiple_ci(self):
+        json = self.template_json.copy()
+
+        ci0 = self.template_ci.copy()
+        ci0[ContextGraphImport.K_ID] = "id0"
+        ci1 = self.template_ci.copy()
+        ci1[ContextGraphImport.K_ID] = "id1"
+        ci2 = self.template_ci.copy()
+        ci2[ContextGraphImport.K_ID] = "id2"
+
+        json[ContextGraphImport.K_CIS] = [ci0, ci1, ci2]
+
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+    def test_OK_single_link(self):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_LINKS] = [self.template_link.copy()]
+
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+    def test_OK_multiple_link(self):
+        json = self.template_json.copy()
+
+        link0 = self.template_link.copy()
+        link0[ContextGraphImport.K_ID] = "id0"
+        link1 = self.template_link.copy()
+        link1[ContextGraphImport.K_ID] = "id1"
+        link2 = self.template_link.copy()
+        link2[ContextGraphImport.K_ID] = "id2"
+
+        json[ContextGraphImport.K_LINKS] = [link0, link1, link2]
+
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+    def test_OK_both(self):
+        json = self.template_json.copy()
+
+        link0 = self.template_link.copy()
+        link0[ContextGraphImport.K_ID] = "id0"
+        link1 = self.template_link.copy()
+        link1[ContextGraphImport.K_ID] = "id1"
+        link2 = self.template_link.copy()
+        link2[ContextGraphImport.K_ID] = "id2"
+
+        ci0 = self.template_ci.copy()
+        ci0[ContextGraphImport.K_ID] = "id0"
+        ci1 = self.template_ci.copy()
+        ci1[ContextGraphImport.K_ID] = "id1"
+        ci2 = self.template_ci.copy()
+        ci2[ContextGraphImport.K_ID] = "id2"
+
+        json[ContextGraphImport.K_LINKS] = [link0, link1, link2]
+        json[ContextGraphImport.K_CIS] = [ci0, ci1, ci2]
+
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
 if __name__ == '__main__':
     main()
