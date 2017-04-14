@@ -81,7 +81,7 @@ class GetEntitiesToUpdate(BaseTest):
         entities["ent2"]["_id"] = "ent2"
         entities["ent3"]["_id"] = "ent3"
 
-        self.ctx_import.put_entities(entities.values())
+        self.ctx_import._put_entities(entities.values())
 
         json = {ContextGraphImport.K_CIS: [{ContextGraphImport.K_ID: "ent1",
                                             ContextGraphImport.K_ACTION:
@@ -110,7 +110,7 @@ class GetEntitiesToUpdate(BaseTest):
         entities["ent2"]["_id"] = "ent2"
         entities["ent3"]["_id"] = "ent3"
 
-        self.ctx_import.put_entities(entities.values())
+        self.ctx_import._put_entities(entities.values())
 
         entities = {}
 
@@ -138,7 +138,7 @@ class GetEntitiesToUpdate(BaseTest):
         entities["ent5"]["_id"] = "ent5"
         entities["ent6"]["_id"] = "ent6"
 
-        self.ctx_import.put_entities(entities.values())
+        self.ctx_import._put_entities(entities.values())
 
         json = {ContextGraphImport.K_CIS: [{ContextGraphImport.K_ID: "ent1",
                                             ContextGraphImport.K_ACTION:
