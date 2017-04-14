@@ -236,7 +236,7 @@ class ADisableEntity(BaseTest):
         ci = {ContextGraphImport.K_ID: id1,
               ContextGraphImport.K_ACTION:
               ContextGraphImport.A_DISABLE,
-              ContextGraphImport.K_INFOS: {
+              ContextGraphImport.K_PROPERTIES: {
                   ContextGraphImport.K_DISABLE: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
@@ -270,7 +270,7 @@ class ADisableEntity(BaseTest):
         ci = {ContextGraphImport.K_ID: id1,
               ContextGraphImport.K_ACTION:
               ContextGraphImport.A_DISABLE,
-              ContextGraphImport.K_INFOS: {
+              ContextGraphImport.K_PROPERTIES: {
                   ContextGraphImport.K_DISABLE: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
@@ -316,7 +316,7 @@ def AEnableEntity(BaseTest):
         timestamp = 12345
         ci = {ContextGraphImport.K_ID: id1,
               ContextGraphImport.K_ACTION: ContextGraphImport.A_ENABLE,
-              ContextGraphImport.K_INFOS: {
+              ContextGraphImport.K_PROPERTIES: {
                   ContextGraphImport.K_ENABLE: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
@@ -350,7 +350,7 @@ def AEnableEntity(BaseTest):
         ci = {ContextGraphImport.K_ID: id1,
               ContextGraphImport.K_ACTION: ContextGraphImport.A_ENABLE,
               ContextGraphImport.K_INFOS: {
-                  ContextGraphImport.K_ENABLE: timestamp}}
+                  ContextGraphImport.K_PROPERTIES: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
                     id2: self.template_ent.copy(),}

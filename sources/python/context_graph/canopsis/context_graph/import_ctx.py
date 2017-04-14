@@ -160,7 +160,7 @@ class ContextGraphImport(ContextGraph):
         id_ = ci[self.K_ID]
 
         try:
-            entity = self.entities_to_update.get(id_)
+            entity = self.entities_to_update[id_]
         except KeyError:
             desc = "No entity found for the following id : {0}".format(id_)
             raise ValueError(desc)
@@ -200,11 +200,15 @@ class ContextGraphImport(ContextGraph):
             self.K_TYPE,
             self.K_DEPENDS,
             self.K_IMPACT,
-            # self.K_MEASUREMENTS,
+            self.K_MEASUREMENTS,
             self.K_INFOS]
 
+        # if a a fields is missing we assume we did not need to update it
         for field in fields_to_update:
-            entity[field] = ci[field]
+            try:
+                entity[field] = ci[field]
+            except KeyError:
+                pass
 
         self.update[ci[self.K_ID]] = entity
 
@@ -217,17 +221,31 @@ class ContextGraphImport(ContextGraph):
 
         :param ci: the ci (see the JSON specification).
         """
+        # TODO handle the creation of the name if needed and if the id
+        # match the id scheme used in canopsis
         if self.entities_to_update.has_key(ci[self.K_ID]):
             desc = "The ci of id {0} match an existing entity.".format(
                 ci["_id"])
             raise ValueError(desc)
+
+        # set default value for required fields
+        if not ci.has_key(self.K_NAME):
+            ci[self.K_NAME] = ci[self.K_TYPE]
+        if not ci.has_key(self.K_DEPENDS):
+            ci[self.K_DEPENDS] = []
+        if not ci.has_key(self.K_IMPACT):
+            ci[self.K_IMPACT] = []
+        if not ci.has_key(self.K_MEASUREMENTS):
+            ci[self.K_MEASUREMENTS] = []
+        if not ci.has_key(self.K_INFOS):
+            ci[self.K_INFOS] = {}
 
         entity = {'_id': ci[self.K_ID],
                   'type': ci[self.K_TYPE],
                   'name': ci[self.K_NAME],
                   'depends': ci[self.K_DEPENDS],
                   'impact': ci[self.K_IMPACT],
-                  #'measurements': ci[self.K_MEASUREMENTS],
+                  'measurements': ci[self.K_MEASUREMENTS],
                   'infos': ci[self.K_INFOS]}
 
         self.update[ci[self.K_ID]] = entity
@@ -259,20 +277,20 @@ class ContextGraphImport(ContextGraph):
             self.update[id_] = self.entities_to_update[id_].copy()
 
         # Update entity the fields enable/disable of infos
-        timestamp = ci[self.K_INFOS][state]
+        timestamp = ci[self.K_PROPERTIES][state]
 
         if not isinstance(timestamp, list):
             timestamp = [timestamp]
 
         if self.update[id_][self.K_INFOS].has_key(state):
 
-            if self.update[id_][self.K_PROPERTIES][state] is None:
-                self.update[id_][self.K_PROPERTIES][state] = timestamp
+            if self.update[id_][self.K_INFOS][state] is None:
+                self.update[id_][self.K_INFOS][state] = timestamp
             else:
-                self.update[id_][self.K_PROPERTIES][state] += timestamp
+                self.update[id_][self.K_INFOS][state] += timestamp
 
         else:
-            self.update[id_][self.K_PROPERTIES][state] = timestamp
+            self.update[id_][self.K_INFOS][state] = timestamp
 
     def __a_disable_entity(self, ci):
         """Disable an entity defined by ci. For more information, see
