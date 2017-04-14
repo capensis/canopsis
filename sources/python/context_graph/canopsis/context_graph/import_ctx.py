@@ -1,8 +1,78 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
-from canopsis.context_graph.manager import ContextGraph
 import ast
+import jsonschema
+from canopsis.context_graph.manager import ContextGraph
+
+
+def import_checker(json):
+
+    a_pattern = "^delete$|^create$|^update$|^disable$|^enable$"
+    t_pattern = "^resource$|^component$|^connector"
+    ci_required = [ContextGraphImport.K_ID,
+                   ContextGraphImport.K_ACTION,
+                   ContextGraphImport.K_TYPE]
+
+    link_required = [ContextGraphImport.K_ID,
+                     ContextGraphImport.K_FROM,
+                     ContextGraphImport.K_TO,
+                     ContextGraphImport.K_ACTION]
+
+
+    schema = {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "properties": {
+            ContextGraphImport.K_CIS: {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": ci_required,
+                    "uniqueItems": True,
+                    "properties": {
+                        ContextGraphImport.K_ID: {"type": "string"},
+                        ContextGraphImport.K_NAME: {"type": "string"},
+                        ContextGraphImport.K_DEPENDS: {"type": "array",
+                                                       "items": {
+                                                           "type": "string"}},
+                        ContextGraphImport.K_IMPACT: {"type": "array",
+                                                      "items": {
+                                                          "type": "string"}},
+                        ContextGraphImport.K_MEASUREMENTS: {"type": "array",
+                                                            "items":
+                                                            {"type":
+                                                             "string"}},
+                        ContextGraphImport.K_INFOS: {"type": "object"},
+                        ContextGraphImport.K_ACTION: {"type": "string",
+                                                      "pattern": a_pattern},
+                        ContextGraphImport.K_TYPE: {"type": "string",
+                                                    "pattern": t_pattern},
+                        ContextGraphImport.K_PROPERTIES: {"type": "object"}}}},
+            ContextGraphImport.K_LINKS: {
+                "type": "array",
+                "items": {
+                    "uniqueItems": True,
+                    "type": "object",
+                    "required": link_required,
+                    "properties": {
+                        ContextGraphImport.K_ID: {"type": "string"},
+                        ContextGraphImport.K_FROM: {"type": "string"},
+                        ContextGraphImport.K_TO: {"type": "string"},
+                        ContextGraphImport.K_INFOS: {"type": "object"},
+                        ContextGraphImport.K_ACTION: {"type": "string",
+                                                      "pattern": a_pattern},
+                        ContextGraphImport.K_PROPERTIES: {"type": "object"}}}}}}
+
+    jsonschema.validate(json, schema)
+
+    for elt in json[ContextGraphImport.K_CIS] + \
+        json[ContextGraphImport.K_LINKS]:
+
+        state = elt[ContextGraphImport.K_ACTION]
+        if state == ContextGraphImport.A_DISABLE or \
+           state == ContextGraphImport.A_ENABLE:
+            elt[ContextGraphImport.K_PROPERTIES][state]
 
 
 class ContextGraphImport(ContextGraph):
@@ -26,6 +96,8 @@ class ContextGraphImport(ContextGraph):
     K_DISABLE = "disable"
     K_PROPERTIES = "action_properties"
 
+    # If you add an action, remember to add in the a_pattern string in method
+    # import_checker
     A_DELETE = "delete"
     A_CREATE = "create"
     A_UPDATE = "update"
@@ -260,6 +332,8 @@ class ContextGraphImport(ContextGraph):
 
         if isinstance(json, str):
             json = ast.literal_eval(json)
+
+        import_checker(json)
 
         self.entities_to_update = self.__get_entities_to_update(json)
 

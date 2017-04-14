@@ -4,9 +4,11 @@
 from unittest import main, TestCase
 
 from canopsis.context_graph.import_ctx import ContextGraphImport
+from canopsis.context_graph.import_ctx import import_checker
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 import copy
+from jsonschema.exceptions import ValidationError
 
 
 class BaseTest(TestCase):
@@ -202,7 +204,7 @@ class ACreateEntity(BaseTest):
         with self.assertRaisesRegexp(ValueError, desc):
             self.ctx_import._ContextGraphImport__a_create_entity(ci)
 
-    def test_nonexistent_event(self):
+    def test_nonexistent_entity(self):
         ci = self.template_ci.copy()
         expected = self.template_ent.copy()
 
@@ -513,6 +515,393 @@ class ADeleteEntity(BaseTest):
         delete_expected = [id1]
         self.assertListEqual(self.ctx_import.delete, delete_expected)
 
+class ImportChecker(TestCase):
+    """I only check a kind of error on one fields, not every kind of error on
+    every fields. I assume that the error will be triggered whatever the fields
+    are.
+    """
+
+    def setUp(self):
+
+        self.template_ci = {ContextGraphImport.K_ID: "id",
+                            ContextGraphImport.K_NAME: "name",
+                            ContextGraphImport.K_TYPE: "resource",
+                            ContextGraphImport.K_DEPENDS: [],
+                            ContextGraphImport.K_IMPACT: [],
+                            ContextGraphImport.K_MEASUREMENTS: [],
+                            ContextGraphImport.K_INFOS: {},
+                            ContextGraphImport.K_ACTION:
+                            ContextGraphImport.A_CREATE,
+                            ContextGraphImport.K_PROPERTIES: {}}
+
+        self.template_link = {ContextGraphImport.K_ID: "id",
+                              ContextGraphImport.K_FROM: "from",
+                              ContextGraphImport.K_TO: "to",
+                              ContextGraphImport.K_INFOS: {},
+                              ContextGraphImport.K_ACTION:
+                              ContextGraphImport.A_CREATE,
+                              ContextGraphImport.K_PROPERTIES: {}}
+
+        self.template_json = {ContextGraphImport.K_CIS: [],
+                              ContextGraphImport.K_LINKS: []}
+
+        self._desc_fail = "import_checker() raise an exception {0}!"
+
+    def test_empty_import(self):
+        with self.assertRaises(KeyError):
+            import_checker({})
+
+    def test_cis_links(self):
+        json = self.template_json
+        # check cis with right type
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check cis with wrong type
+        json[ContextGraphImport.K_CIS] = {}
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        # check links with wrong type
+        json[ContextGraphImport.K_CIS] = []
+        json[ContextGraphImport.K_LINKS] = {}
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+    def test_ci_id(self):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+
+        # check ci.id with right type
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check ci.id with wrong type
+        json[ContextGraphImport.K_CIS][0][ContextGraphImport.K_ID] = 1
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        # check missing ci.id
+        json[ContextGraphImport.K_CIS][0].pop(ContextGraphImport.K_ID)
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+    def test_ci_name(self):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+
+        # check ci.name with right type
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check ci.name with wrong type
+        json[ContextGraphImport.K_CIS][0][ContextGraphImport.K_NAME] = 1
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+    def _test_ci_array_string(self, key):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+
+        # check ci.depends with right type
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check ci.depends with wrong type
+        json[ContextGraphImport.K_CIS][0][key] = 1
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        json[ContextGraphImport.K_CIS][0][key] = [1,2]
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        json[ContextGraphImport.K_CIS][0][key] = [1,"ok"]
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        # check with out ci.depends
+        json[ContextGraphImport.K_CIS][0].pop(key)
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+    def test_ci_depends(self):
+        self._test_ci_array_string(ContextGraphImport.K_DEPENDS)
+
+    def test_ci_impact(self):
+        self._test_ci_array_string(ContextGraphImport.K_IMPACT)
+
+    def test_ci_measurements(self):
+        self._test_ci_array_string(ContextGraphImport.K_MEASUREMENTS)
+
+    def _test_ci_object(self, key, required=False):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+
+        # check ci.{key} with right type
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check ci.depends with wrong type
+        json[ContextGraphImport.K_CIS][0][key] = 1
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        # check with out ci.{key}
+        if required is True:
+            json[ContextGraphImport.K_CIS][0].pop(key)
+            try:
+                import_checker(json)
+            except Exception as e:
+                self.fail(self._desc_fail.format(e))
+
+    def test_ci_infos(self):
+        self._test_ci_object(ContextGraphImport.K_INFOS, False)
+
+    def _test_action(self, key):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+        json[ContextGraphImport.K_CIS][0][ContextGraphImport.K_PROPERTIES] \
+         = {ContextGraphImport.A_DISABLE: [],
+            ContextGraphImport.A_ENABLE: []}
+
+        # check ci.action with good action.
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = ContextGraphImport.A_CREATE
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = ContextGraphImport.A_DELETE
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = ContextGraphImport.A_DISABLE
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = ContextGraphImport.A_ENABLE
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = ContextGraphImport.A_UPDATE
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check ci.action with an action that did not match the pattern
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = "update_not"
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = "not_update"
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = "Update"
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = "a strange action"
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+    def test_ci_action(self):
+        self._test_action(ContextGraphImport.K_CIS)
+
+    def test_ci_type(self):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+
+        # check ci.action with good action.
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_TYPE] = "resource"
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_TYPE] = "component"
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_TYPE] = "connector"
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check ci.action with an action that did not match the pattern
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = "resource_not"
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = "not_resource"
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = "Resource"
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        json[ContextGraphImport.K_CIS][0]\
+            [ContextGraphImport.K_ACTION] = "a strange resource"
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+    def test_ci_properties(self):
+        self._test_ci_object(ContextGraphImport.K_PROPERTIES, False)
+
+    def _test_link_string(self, key, required=False):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_LINKS] = [self.template_link.copy()]
+
+        # check link.{key} with right type
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check link.{key} with wrong type
+        json[ContextGraphImport.K_LINKS][0][key] = 1
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        # check missing link.{key}
+        if required is True:
+            json[ContextGraphImport.K_LINKS][0].pop(key)
+            with self.assertRaises(ValidationError):
+                import_checker(json)
+
+    def test_link_id(self):
+        self._test_link_string(ContextGraphImport.K_ID, required=True)
+
+    def test_link_from(self):
+        self._test_link_string(ContextGraphImport.K_FROM, required=True)
+
+    def test_link_to(self):
+        self._test_link_string(ContextGraphImport.K_TO, required=True)
+
+    def _test_link_object(self, key, required=False):
+        json = self.template_json.copy()
+        json[ContextGraphImport.K_LINKS] = [self.template_link.copy()]
+
+        # check ci.{key} with right type
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check ci.depends with wrong type
+        json[ContextGraphImport.K_LINKS][0][key] = 1
+        with self.assertRaises(ValidationError):
+            import_checker(json)
+
+        # check with out ci.{key}
+        if required is True:
+            json[ContextGraphImport.K_LINKS][0].pop(key)
+            try:
+                import_checker(json)
+            except Exception as e:
+                self.fail(self._desc_fail.format(e))
+
+    def test_link_infos(self):
+        self._test_link_object(ContextGraphImport.K_INFOS, required=False)
+
+    def test_link_action(self):
+        self._test_action(ContextGraphImport.K_LINKS)
+
+    def test_link_properties(self):
+        self._test_link_object(ContextGraphImport.K_PROPERTIES, required=False)
+
+    def _test_state(self, object_, state):
+        json = self.template_json.copy()
+
+        if object_ == ContextGraphImport.K_CIS:
+            obj = self.template_ci.copy()
+            json[ContextGraphImport.K_CIS] = [obj]
+            obj_key = ContextGraphImport.K_LINKS
+        elif object_ == ContextGraphImport.K_LINKS:
+            obj = self.template_link.copy()
+            json[ContextGraphImport.K_LINKS] = [obj]
+            obj_key = ContextGraphImport.K_LINKS
+        else:
+            self.fail("Unrecognized object_ {0}".format(object_))
+
+        if state == ContextGraphImport.K_ENABLE:
+            other_state = ContextGraphImport.K_DISABLE
+        elif state == ContextGraphImport.K_DISABLE:
+            other_state = ContextGraphImport.K_ENABLE
+        else:
+            self.fail("Unrecognized state {0}".format(object_))
+
+        # {object_}.action : {state} without {object_}.properties.{state}
+        obj[ContextGraphImport.K_ACTION] = state
+        with self.assertRaises(KeyError):
+            import_checker(json)
+
+        # {object_}.action : {state} with {object_}.properties.{state}
+        obj[ContextGraphImport.K_PROPERTIES] = {state: []}
+        try:
+            import_checker(json)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # {object_}.action : {state} with ci.properties.{other_state} and
+        # without {object_}.properties.{state}
+        obj[ContextGraphImport.K_PROPERTIES] = {other_state: []}
+        with self.assertRaises(KeyError):
+            import_checker(json)
+
+    def test_ci_disable_with_properties(self):
+        self._test_state(ContextGraphImport.K_CIS, ContextGraphImport.A_DISABLE)
+
+    def test_link_disable_with_properties(self):
+        self._test_state(ContextGraphImport.K_LINKS,
+                         ContextGraphImport.A_DISABLE)
+
+    def test_ci_enable_with_properties(self):
+        self._test_state(ContextGraphImport.K_CIS,
+                         ContextGraphImport.A_ENABLE)
+
+    def test_link_enable_with_properties(self):
+        self._test_state(ContextGraphImport.K_LINKS,
+                         ContextGraphImport.A_ENABLE)
 
 if __name__ == '__main__':
     main()
