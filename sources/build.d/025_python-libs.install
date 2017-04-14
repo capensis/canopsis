@@ -54,6 +54,9 @@ function easy_install_all_libs() {
 	easy_install_pylib unittest2
         easy_install_pylib chardet
         easy_install_pylib grako==3.18.1
+	easy_install_pylib functools32
+	easy_install_pylib vcversioner
+	easy_install_pylib jsonschema
 }
 
 function install(){
