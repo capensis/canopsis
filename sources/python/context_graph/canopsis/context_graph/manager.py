@@ -122,7 +122,7 @@ class ContextGraph(MiddlewareRegistry):
 
         return result
 
-    def put_entities(self, entities):
+    def _put_entities(self, entities):
         """
         Store entities into database. Do no use this function unless you know
         exactly what you are doing. This function does not update the
