@@ -160,7 +160,7 @@ class ContextGraphImport(ContextGraph):
         id_ = ci[self.K_ID]
 
         try:
-            entity = self.entities_to_update[ci[self.K_ID]]
+            entity = self.entities_to_update.get(id_)
         except KeyError:
             desc = "No entity found for the following id : {0}".format(id_)
             raise ValueError(desc)
@@ -195,8 +195,13 @@ class ContextGraphImport(ContextGraph):
 
         entity = self.entities_to_update[ci[self.K_ID]]
 
-        fields_to_update = [self.K_NAME, self.K_TYPE, self.K_DEPENDS,
-                            self.K_IMPACT, self.K_MEASUREMENTS, self.K_INFOS]
+        fields_to_update = [
+            self.K_NAME,
+            self.K_TYPE,
+            self.K_DEPENDS,
+            self.K_IMPACT,
+            # self.K_MEASUREMENTS,
+            self.K_INFOS]
 
         for field in fields_to_update:
             entity[field] = ci[field]
@@ -222,7 +227,7 @@ class ContextGraphImport(ContextGraph):
                   'name': ci[self.K_NAME],
                   'depends': ci[self.K_DEPENDS],
                   'impact': ci[self.K_IMPACT],
-                  'measurements': ci[self.K_MEASUREMENTS],
+                  #'measurements': ci[self.K_MEASUREMENTS],
                   'infos': ci[self.K_INFOS]}
 
         self.update[ci[self.K_ID]] = entity
@@ -340,14 +345,14 @@ class ContextGraphImport(ContextGraph):
         for ci in json[self.K_CIS]:
             if ci[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_entity(ci)
-            if ci[self.K_ACTION] == self.A_CREATE:
-                self.__a_delete_entity(ci)
+            elif ci[self.K_ACTION] == self.A_CREATE:
+                self.__a_create_entity(ci)
             elif ci[self.K_ACTION] == self.A_UPDATE:
-                self.__a_delete_entity(ci)
+                self.__a_update_entity(ci)
             elif ci[self.K_ACTION] == self.A_DISABLE:
-                self.__a_delete_entity(ci)
+                self.__a_disable_entity(ci)
             elif ci[self.K_ACTION] == self.A_ENABLE:
-                self.__a_delete_entity(ci)
+                self.__a_enable_entity(ci)
             else:
                 raise ValueError("The action {0} is not recognized\n".format(
                     ci[self.K_ACTION]))
@@ -355,14 +360,14 @@ class ContextGraphImport(ContextGraph):
         for link in json[self.K_LINKS]:
             if link[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_link(link)
-            if link[self.K_ACTION] == self.A_CREATE:
-                self.__a_delete_link(link)
+            elif link[self.K_ACTION] == self.A_CREATE:
+                self.__a_create_link(link)
             elif link[self.K_ACTION] == self.A_UPDATE:
-                self.__a_delete_link(link)
+                self.__a_update_link(link)
             elif link[self.K_ACTION] == self.A_DISABLE:
-                self.__a_delete_link(link)
+                self.__a_disable_link(link)
             elif link[self.K_ACTION] == self.A_ENABLE:
-                self.__a_delete_link(link)
+                self.__a_enable_link(link)
             else:
                 raise ValueError("The action {0} is not recognized\n".format(
                     link[self.K_ACTION]))
@@ -373,5 +378,8 @@ class ContextGraphImport(ContextGraph):
                        "the same import. Update aborted.".format(id_)
                 raise ValueError(desc)
 
-        self._put_entities(self.update.values())
-        self._delete_entity(self.delete)
+        self.put_entities(self.update.values())
+        self._delete_entities(self.delete)
+
+        self.update = {}
+        self.delete = []

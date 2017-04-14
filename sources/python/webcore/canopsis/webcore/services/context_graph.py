@@ -21,13 +21,14 @@
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.context_graph.import_ctx import ContextGraphImport
+import json as j
 
 manager = ContextGraph()
 import_manager = ContextGraphImport()
 
 def exports(ws):
 
-    @route(ws.application.get)
+    @route(ws.application.get, name='context_graph/all')
     def all():
         """
             :return all json for d3 representation
@@ -87,8 +88,13 @@ def exports(ws):
     
     @route(
         ws.application.put,
+        name='coucou/bouh',
         payload=['json']
     )
-    def put_graph(json={}):
-        return import_manager.import_context(json)
+    def put_graph(json='{}'):
+        if isinstance(json, dict):
+            import_manager.import_context(json)
+        elif isinstance(json, str):
+            js = j.loads(json)
+            import_manager.import_context(js)
 
