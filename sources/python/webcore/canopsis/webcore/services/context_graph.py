@@ -111,12 +111,12 @@ def exports(ws):
         }
 
         for i in entities_list:
-            ret_json['nodes'].append({'group':1, 'name': i['_id']})
+            ret_json['nodes'].append({'group':1, 'id': i['_id']})
 
         for i in entities_list:
-            source = ret_json['nodes'].index({'group': 1, 'name': i['_id']}) + 1
+            source = i['_id']
             for j in i['depends']:
-                target = ret_json['nodes'].index({'group': 1, 'name':j})
+                target = j
                 ret_json['links'].append({'value': 1, 'source': source, 'target': target})
 
         return ret_json
