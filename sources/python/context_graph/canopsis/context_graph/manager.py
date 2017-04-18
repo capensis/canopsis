@@ -359,7 +359,7 @@ class ContextGraph(MiddlewareRegistry):
 
     def get_entities(self,
                      query={},
-                     projection={},
+                     projection=None,
                      limit=0,
                      start=0,
                      sort=False,
@@ -371,9 +371,6 @@ class ContextGraph(MiddlewareRegistry):
 
         if not isinstance(query, dict):
             raise TypeError("Query must be a dict")
-
-        if not isinstance(projection, dict):
-            raise TypeError("Projection must be a dict")
 
         result = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
             query=query,

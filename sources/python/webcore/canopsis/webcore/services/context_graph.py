@@ -98,3 +98,26 @@ def exports(ws):
             js = j.loads(json)
             import_manager.import_context(js)
 
+    @route(
+        ws.application.get,
+        name='truc/machin'
+    )
+    def get_graph():
+        entities_list = manager.get_entities()        
+
+        ret_json = {
+            'links':[],
+            'nodes':[]
+        }
+
+        for i in entities_list:
+            ret_json['nodes'].append({'group':1, 'name': i['_id']})
+
+        for i in entities_list:
+            source = ret_json['nodes'].index({'group': 1, 'name': i['_id']})
+            for j in i['depends']:
+                target = ret_json['nodes'].index({'group': 1, 'name':j})
+                ret_json['links'].append({'value': 1, 'source': source, 'target': target})
+
+        return ret_json
+
