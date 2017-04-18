@@ -181,7 +181,7 @@ class GetEntitiesByID(BaseTest):
         entity['type'] = 'connector'
         entity['name'] = 'conn-name'
 
-        self.manager.put_entities(entity)
+        self.manager._put_entities(entity)
 
         result = self.manager.get_entities_by_id(entity["_id"])
         self.assertIsInstance(result, type([]))
@@ -205,7 +205,7 @@ class GetEntitiesByID(BaseTest):
         entities[2]['name'] = 'conn-name3'
 
         sorted(entities)
-        self.manager.put_entities(entities)
+        self.manager._put_entities(entities)
 
         ids = [x["_id"] for x in entities]
 
@@ -233,7 +233,7 @@ class PutEntities(BaseTest):
         entity['type'] = 'connector'
         entity['name'] = 'conn-name'
 
-        self.manager.put_entities(entity)
+        self.manager._put_entities(entity)
 
         result = self.manager.get_entities_by_id(entity["_id"])[0]
 
@@ -258,7 +258,7 @@ class PutEntities(BaseTest):
 
         sorted(entities)
 
-        self.manager.put_entities(entities)
+        self.manager._put_entities(entities)
 
         ids = [x["_id"] for x in entities]
 
@@ -276,7 +276,7 @@ class DeleteEntities(BaseTest):
         entity['type'] = 'connector'
         entity['name'] = 'conn-name'
 
-        self.manager.put_entities(entity)
+        self.manager._put_entities(entity)
 
         self.manager._delete_entities(id2)
 
@@ -292,7 +292,7 @@ class DeleteEntities(BaseTest):
         entity['type'] = 'connector'
         entity['name'] = 'conn-name'
 
-        self.manager.put_entities(entity)
+        self.manager._put_entities(entity)
 
         self.manager._delete_entities(id_)
 
@@ -313,7 +313,7 @@ class DeleteEntities(BaseTest):
         entity2['type'] = 'connector'
         entity2['name'] = 'conn-name'
 
-        self.manager.put_entities([entity1, entity2])
+        self.manager._put_entities([entity1, entity2])
 
         self.manager._delete_entities([id1, id2])
 
@@ -341,7 +341,7 @@ class GetAllEntitiesId(BaseTest):
         entities[2]['type'] = 'connector'
         entities[2]['name'] = 'conn-name3'
 
-        self.manager.put_entities(entities)
+        self.manager._put_entities(entities)
         expected = set()
         for entity in entities:
             expected.add(entity["_id"])
@@ -365,7 +365,7 @@ class UpdateEntity(BaseTest):
         self.ent3["_id"] = "ent3"
         self.ent4["_id"] = "ent4"
 
-        self.manager.put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
+        self.manager._put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
 
     def test_update_entity_wrong_id(self):
         fake_entity = {"_id": "wrong id"}
@@ -513,7 +513,7 @@ class UpdateDependancies(BaseTest):
         else:
             self.ent3[to] = ["dummy"]
 
-        self.manager.put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
+        self.manager._put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
 
         if delete:
             status = {"deletions": ["ent2", "ent3"],
@@ -587,7 +587,7 @@ class DeleteEntity(BaseTest):
         self.ent4["_id"] = "ent4"
         self.ent4[from_] = ["dummy"]
 
-        self.manager.put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
+        self.manager._put_entities([self.ent1, self.ent2, self.ent3, self.ent4])
 
         self.manager.delete_entity(self.ent1["_id"])
 
@@ -656,9 +656,9 @@ class CreateEntity(BaseTest):
         self.ent4[from_] = ["dummy"]
         self.ent4[to] = ["dummy"]
 
-        self.manager.put_entities(self.ent2)
-        self.manager.put_entities(self.ent3)
-        self.manager.put_entities(self.ent4)
+        self.manager._put_entities(self.ent2)
+        self.manager._put_entities(self.ent3)
+        self.manager._put_entities(self.ent4)
 
         self.manager.create_entity(self.ent1)
 

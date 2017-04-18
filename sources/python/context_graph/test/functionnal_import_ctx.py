@@ -99,7 +99,8 @@ class Test(TestCase):
 
     def tearDown(self):
         self.col.remove({'_id': 'host_1'})
-        pass
+        self.col.remove({'_id': 'resource_1/host_1'})
+        self.col.remove({'_id': 'resource_1/host_1'})
 
 
 if __name__ == '__main__':
