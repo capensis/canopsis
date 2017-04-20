@@ -70,8 +70,8 @@ class ContextGraph(MiddlewareRegistry):
         if len(keys1) != len(keys2):
             return False
 
-        sorted(keys1)
-        sorted(keys2)
+        keys1 = sorted(keys1)
+        keys2 = sorted(keys2)
 
         if keys1 != keys2:
             return False
