@@ -515,6 +515,68 @@ class ADeleteEntity(BaseTest):
         delete_expected = [id1]
         self.assertListEqual(self.ctx_import.delete, delete_expected)
 
+
+    def test_delete_entities_and_related_entities(self):
+        """Remove an entity and later delete an entity with a links to the first
+        entity."""
+        deleted_id = "deleted_ent"
+        id_ = "id1"
+
+        entity = self.template_ent.copy()
+        entity["_id"] = id_
+        entity["impact"] = [deleted_id]
+
+        self.ctx_import.entities_to_update = {id_: entity}
+
+        self.ctx_import.delete = [deleted_id]
+
+        ci = self.template_ci.copy()
+        ci[ContextGraphImport.K_ID] = id_
+        ci[ContextGraphImport.K_ACTION] = ContextGraphImport.A_DELETE
+        ci[ContextGraphImport.K_TYPE] = "resource"
+        ci[ContextGraphImport.K_IMPACT] = [deleted_id]
+
+        try:
+            self.ctx_import._ContextGraphImport__a_delete_entity(ci)
+        except Exception, e:
+            self.fail("The error \"{0}\" was raised".format(e))
+
+        self.assertListEqual(self.ctx_import.delete, [deleted_id, id_])
+        self.assertDictEqual(self.ctx_import.update, {})
+
+        self.ctx_import.delete = [deleted_id]
+        ci[ContextGraphImport.K_IMPACT] = []
+        ci[ContextGraphImport.K_DEPENDS] = [deleted_id]
+        try:
+            self.ctx_import._ContextGraphImport__a_delete_entity(ci)
+        except Exception, e:
+            self.fail("The error \"{0}\" was raised".format(e))
+
+        self.ctx_import.update = {}
+        self.ctx_import.delete = [deleted_id]
+        try:
+            self.ctx_import._ContextGraphImport__a_delete_entity(ci)
+        except Exception, e:
+            self.fail("The error \"{0}\" was raised".format(e))
+        self.assertListEqual(self.ctx_import.delete, [deleted_id, id_])
+
+        self.assertDictEqual(self.ctx_import.update, {})
+
+
+        self.ctx_import.update = {}
+        self.ctx_import.delete = [deleted_id]
+
+        ci[ContextGraphImport.K_IMPACT] = [deleted_id]
+        ci[ContextGraphImport.K_DEPENDS] = []
+        try:
+            self.ctx_import._ContextGraphImport__a_delete_entity(ci)
+        except Exception, e:
+            self.fail("The error \"{0}\" was raised".format(e))
+        self.assertListEqual(self.ctx_import.delete, [deleted_id, id_])
+
+        self.assertDictEqual(self.ctx_import.update, {})
+
+
 class ImportChecker(TestCase):
     """I only check a kind of error on one fields, not every kind of error on
     every fields. I assume that the error will be triggered whatever the fields
@@ -979,6 +1041,7 @@ class ImportChecker(TestCase):
             import_checker(json)
         except Exception as e:
             self.fail(self._desc_fail.format(e))
+
 
 if __name__ == '__main__':
     main()
