@@ -420,3 +420,8 @@ class ContextGraph(MiddlewareRegistry):
         result = forger(**kwargs)
 
         return result
+
+    def get_graph_impact(self, _id, deepness=None):
+        col = self[self.ENTITIES_STORAGE]._backend
+
+        
