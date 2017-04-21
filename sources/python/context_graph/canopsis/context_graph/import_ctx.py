@@ -167,13 +167,32 @@ class ContextGraphImport(ContextGraph):
 
         # Update the depends/impact link
         for ent_id in entity["depends"]:
+            if ent_id in self.delete:
+                # the entity of id ent_id is already deleted, skipping
+                continue
+
             self.update[ent_id] = self.entities_to_update[ent_id].copy()
-            self.update[ent_id]["impact"].remove(id_)
+            try:
+                self.update[ent_id]["impact"].remove(id_)
+            except ValueError:
+                raise ValueError("Try to remove {0} from impacts field of"\
+                                 "entity {1}.".format(id_, ent_id))
 
         # Update the impact/depends link
         for ent_id in entity["impact"]:
+            if ent_id in self.delete:
+                # the entity of id ent_id is already deleted, skipping
+                continue
+
             self.update[ent_id] = self.entities_to_update[ent_id].copy()
-            self.update[ent_id]["depends"].remove(id_)
+            try:
+                self.update[ent_id]["depends"].remove(id_)
+            except ValueError:
+                raise ValueError("Try to remove {0} from impacts field of"\
+                                 "entity {1}.".format(id_, ent_id))
+
+        if id_ in self.update.keys():
+            self.update.pop(id_)
 
         self.delete.append(id_)
 
@@ -198,8 +217,6 @@ class ContextGraphImport(ContextGraph):
         fields_to_update = [
             self.K_NAME,
             self.K_TYPE,
-            self.K_DEPENDS,
-            self.K_IMPACT,
             self.K_MEASUREMENTS,
             self.K_INFOS]
 
@@ -358,6 +375,12 @@ class ContextGraphImport(ContextGraph):
 
         import_checker(json)
 
+        # In case the previous import failed and raise an exception, we clean\
+        #    now
+        self.update.clear()
+        for i in range(len(self.delete)):
+            self.delete.pop(0)
+
         self.entities_to_update = self.__get_entities_to_update(json)
 
         for ci in json[self.K_CIS]:
@@ -398,6 +421,3 @@ class ContextGraphImport(ContextGraph):
 
         self._put_entities(self.update.values())
         self._delete_entities(self.delete)
-
-        self.update = {}
-        self.delete = []
