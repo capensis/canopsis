@@ -115,9 +115,12 @@ def exports(ws):
 
         for i in entities_list:
             source = i['_id']
-            for j in i['depends']:
-                target = j
+            for target in i['depends']:
                 ret_json['links'].append({'value': 1, 'source': source, 'target': target})
+
+        f = open('/opt/canopsis/tmp/graph.json', 'w')
+        f.write(j.dumps(ret_json))
+        f.close()
 
         return ret_json
 
