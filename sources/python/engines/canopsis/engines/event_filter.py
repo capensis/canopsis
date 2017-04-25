@@ -41,42 +41,12 @@ class engine(Engine):
         account = Account(user="root", group="root")
         self.storage = get_storage(logging_level=self.logging_level,
                                    account=account)
-        self.derogations = []
         self.name = kargs['name']
         self.drop_event_count = 0
         self.pass_event_count = 0
 
     def pre_run(self):
         self.beat()
-
-    def time_conditions(self, derogation):
-        conditions = derogation.get('time_conditions', None)
-
-        if not isinstance(conditions, list):
-            self.logger.error(("Invalid time conditions field in '%s': %s"
-                               % (derogation['_id'], conditions)))
-            self.logger.debug(derogation)
-            return False
-
-        result = False
-
-        now = time()
-        for condition in conditions:
-            if (condition['type'] == 'time_interval'
-                    and condition['startTs']
-                    and condition['stopTs']):
-                always = condition.get('always', False)
-
-                if always:
-                    self.logger.debug(" + 'time_interval' is 'always'")
-                    result = True
-
-                elif (now >= condition['startTs']
-                      and now < condition['stopTs']):
-                    self.logger.debug(" + 'time_interval' Match")
-                    result = True
-
-        return result
 
     def a_override(self, event, action):
         """Override a field from event or add a new one if it does not have
@@ -435,7 +405,6 @@ class engine(Engine):
     def beat(self, *args, **kargs):
         """ Configuration reload for realtime ui changes handling """
 
-        self.derogations = []
         self.configuration = {
             'rules': [],
             'default_action': self.find_default_action()
