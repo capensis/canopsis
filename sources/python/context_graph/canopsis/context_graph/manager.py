@@ -422,6 +422,88 @@ class ContextGraph(MiddlewareRegistry):
         return result
 
     def get_graph_impact(self, _id, deepness=None):
-        col = self[self.ENTITIES_STORAGE]._backend
+        col = self[ContextGraph.ENTITIES_STORAGE]._backend
+        ag = []
 
+        match = {'$match': {'_id': _id}}
+        ag.append(match)
+
+        glookup = {
+            '$graphLookup': {
+                    'from': 'default_entities',
+                    'startWith': '$_id',
+                    'connectFromField': 'impact',
+                    'connectToField': '_id',
+                    'depthField': 'depth',
+                    'as': 'graph'
+                }
+        }
+        if deepness is not None:
+            glookup['$graphLookup']['maxDepth'] = deepness
+        ag.append(glookup)
+
+
+        res = col.aggregate(ag)
+        return res['result'][0]
         
+    def get_graph_depends(self, _id, deepness=None):
+        col = self[ContextGraph.ENTITIES_STORAGE]._backend
+        ag = []
+
+        match = {'$match': {'_id': _id}}
+        ag.append(match)
+
+        glookup = {
+            '$graphLookup': {
+                    'from': 'default_entities',
+                    'startWith': '$_id',
+                    'connectFromField': 'depends',
+                    'connectToField': '_id',
+                    'depthField': 'depth',
+                    'as': 'graph'
+                }
+        }
+        if deepness is not None:
+            glookup['$graphLookup']['maxDepth'] = deepness
+        ag.append(glookup)
+
+        f = open('/home/tgosselin/fichierdelog', 'a')
+        f.write('deepness: {0}\n'.format(deepness))
+        f.close()
+
+        res = col.aggregate(ag)
+        return res['result'][0]
+
+    def get_leaves_impact(self, _id, deepness=None):
+        graph = self.get_graph_impact(_id, deepness)
+        ret_val = []
+
+        if graph['graph'] == []:
+            graph = graph.pop('graph')
+            ret_val.append(graph)
+
+        for i in graph['graph']:
+            if i['impact'] == [] or i['depth'] == deepness:
+                ret_val.append(i)
+
+        return ret_val
+
+    def get_leaves_depends(self, _id, deepness=None):
+
+        graph = self.get_graph_depends(_id, deepness)
+        ret_val = []
+
+        if graph['graph'] == []:
+            graph = graph.pop('graph')
+            ret_val.append(graph)
+
+        for i in graph['graph']:
+
+            f = open('/home/tgosselin/fichierdelog', 'a')
+            f.write('{0}\n'.format(i))
+            f.close()
+
+            if i['depends'] == [] or i['depth'] == deepness:
+                ret_val.append(i)
+
+        return ret_val

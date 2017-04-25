@@ -124,3 +124,34 @@ def exports(ws):
 
         return ret_json
 
+    @route(
+        ws.application.get,
+        name='getgraphimpact',
+        payload=['_id', 'deepness']
+    )
+    def get_graph_impact(_id, deepness=None):
+        return manager.get_graph_impact(_id, deepness)
+
+    @route(
+        ws.application.get,
+        name='getgraphdepends',
+        payload=['_id', 'deepness']
+    )
+    def get_graph_depends(_id, deepness=None):
+        return manager.get_graph_depends(_id, deepness)
+
+    @route(
+        ws.application.get,
+        name='getleavesdepends',
+        payload=['_id', 'deepness']
+    )
+    def get_leaves_depends(_id, deepness=None):
+        return manager.get_leaves_depends(_id, deepness)
+
+    @route(
+        ws.application.get,
+        name='getleavesimpact',
+        payload=['_id', 'deepness']
+    )
+    def get_leaves_impact(_id, deepness=None):
+        return manager.get_leaves_impact(_id, deepness)
