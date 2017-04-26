@@ -97,6 +97,7 @@ class ContextGraph(MiddlewareRegistry):
         :param **kwargs:
         """
         super(ContextGraph, self).__init__(*args, **kwargs)
+        self.collection_name = 'default_entities'
 
     def get_entities_by_id(self, id):
         """
@@ -430,7 +431,7 @@ class ContextGraph(MiddlewareRegistry):
 
         glookup = {
             '$graphLookup': {
-                    'from': 'default_entities',
+                    'from': self.collection_name,
                     'startWith': '$_id',
                     'connectFromField': 'impact',
                     'connectToField': '_id',
@@ -455,7 +456,7 @@ class ContextGraph(MiddlewareRegistry):
 
         glookup = {
             '$graphLookup': {
-                    'from': 'default_entities',
+                    'from': self.collection_name,
                     'startWith': '$_id',
                     'connectFromField': 'depends',
                     'connectToField': '_id',
@@ -466,10 +467,6 @@ class ContextGraph(MiddlewareRegistry):
         if deepness is not None:
             glookup['$graphLookup']['maxDepth'] = deepness
         ag.append(glookup)
-
-        f = open('/home/tgosselin/fichierdelog', 'a')
-        f.write('deepness: {0}\n'.format(deepness))
-        f.close()
 
         res = col.aggregate(ag)
         return res['result'][0]
@@ -498,11 +495,6 @@ class ContextGraph(MiddlewareRegistry):
             ret_val.append(graph)
 
         for i in graph['graph']:
-
-            f = open('/home/tgosselin/fichierdelog', 'a')
-            f.write('{0}\n'.format(i))
-            f.close()
-
             if i['depends'] == [] or i['depth'] == deepness:
                 ret_val.append(i)
 
