@@ -690,7 +690,7 @@ class TestGraphRequests(BaseTest):
         super(TestGraphRequests, self).setUp()
         self.manager.collection_name = 'default_testentities'
 
-    def test_truc(self):
+    def test(self):
         ent1 = create_entity(
             id = 'e1',
             name = 'e1',
@@ -1017,8 +1017,127 @@ class TestGraphRequests(BaseTest):
             u'type': u'component',
             u'depends': [u'e3']
         }])
-#    def tearDown(self):
-#        pass
+
+class TestLeavesRequests(BaseTest):
+
+    def setUp(self):
+        super(TestLeavesRequests, self).setUp()
+        self.manager.collection_name = 'default_testentities'
+
+    def test(self):
+        ent1 = create_entity(
+            id = 'e1',
+            name = 'e1',
+            etype = 'component',
+            depends = [],
+            impact = ['e2']
+        )
+        ent2 = create_entity(
+            id = 'e2',
+            name = 'e2',
+            etype = 'component',
+            depends = ['e1'],
+            impact = ['e3']
+        )
+        ent3 = create_entity(
+            id = 'e3',
+            name = 'e3',
+            etype = 'component',
+            depends = ['e2'],
+            impact = ['e4']
+        ) 
+        ent4 = create_entity(
+            id = 'e4',
+            name = 'e4',
+            etype = 'component',
+            depends = ['e3'],
+            impact = []
+        )
+
+        self.manager._put_entities(ent1)
+        self.manager._put_entities(ent2)
+        self.manager._put_entities(ent3)
+        self.manager._put_entities(ent4)
+
+        res = self.manager.get_leaves_depends('e4')
+        self.assertEqual(res, 
+                         [{
+                             u'impact': [u'e2'], 
+                             u'name': u'e1', 
+                             u'measurements': [], 
+                             u'depth': 3L, 
+                             u'depends': [],
+                             u'infos': {}, 
+                             u'_id': u'e1', 
+                             u'type': u'component'
+                           }]
+                         )
+        
+        res = self.manager.get_leaves_depends('e4' ,deepness=0)
+        self.assertEqual(res, 
+                         [{
+                           u'impact': [], 
+                             u'name': u'e4', 
+                             u'measurements': [], 
+                             u'depth': 0L, 
+                             u'depends': [u'e3'],
+                             u'infos': {}, 
+                             u'_id': u'e4', 
+                             u'type': u'component'
+                         }])
+
+        res = self.manager.get_leaves_depends('e4', deepness=1)
+        self.assertEqual(res, 
+                         [{
+                             u'impact': [u'e4'], 
+                             u'name': u'e3', 
+                             u'measurements': [], 
+                             u'depth': 1L,
+                             u'depends': [u'e2'],
+                             u'infos': {}, 
+                             u'_id': u'e3', 
+                             u'type': u'component'
+                         }])
+
+        res = self.manager.get_leaves_depends('e4' ,deepness=2)
+        self.assertEqual(res, 
+                         [{
+                             u'impact': [u'e3'], 
+                             u'name': u'e2', 
+                             u'measurements': [], 
+                             u'depth': 2L, 
+                             u'depends': [u'e1'], 
+                             u'infos': {}, 
+                             u'_id': u'e2', 
+                             u'type': u'component'
+                         }])
+
+        res = self.manager.get_leaves_depends('e4', deepness=3)
+        self.assertEqual(res, 
+                         [{
+                             u'impact': [u'e2'], 
+                             u'name': u'e1', 
+                             u'measurements': [], 
+                             u'depth': 3L, 
+                             u'depends': [],
+                             u'infos': {}, 
+                             u'_id': u'e1', 
+                             u'type': u'component'
+                           }]
+                         )
+
+        res = self.manager.get_leaves_impact('e1')
+        self.assertEqual(res, 
+                         [{
+                             u'impact': [], 
+                             u'name': u'e4', 
+                             u'measurements': [], 
+                             u'depth': 3L, 
+                             u'depends': [u'e3'],
+                             u'infos': {}, 
+                             u'_id': u'e4', 
+                             u'type': u'component'
+                         }])
 
 if __name__ == '__main__':
     main()
