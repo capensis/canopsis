@@ -88,7 +88,7 @@ def exports(ws):
     
     @route(
         ws.application.put,
-        name='coucou/bouh',
+        name='api/context_graph/import',
         payload=['json']
     )
     def put_graph(json='{}'):
@@ -100,7 +100,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='truc/machin'
+        name='api/context_graph/d3_graph'
     )
     def get_graph():
         entities_list = manager.get_entities()        
@@ -126,7 +126,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='getgraphimpact',
+        name='api/context_graph/graph_impact',
         payload=['_id', 'deepness']
     )
     def get_graph_impact(_id, deepness=None):
@@ -134,7 +134,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='getgraphdepends',
+        name='api/context_graph/graph_depends',
         payload=['_id', 'deepness']
     )
     def get_graph_depends(_id, deepness=None):
@@ -142,7 +142,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='getleavesdepends',
+        name='api/context_graph/leaves_depends',
         payload=['_id', 'deepness']
     )
     def get_leaves_depends(_id, deepness=None):
@@ -150,8 +150,12 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='getleavesimpact',
+        name='api/context_graph/leaves_impact',
         payload=['_id', 'deepness']
     )
     def get_leaves_impact(_id, deepness=None):
         return manager.get_leaves_impact(_id, deepness)
+
+    @ws.application.get('/api/context_graph/import/status/<cid>')
+    def get_status(cid):
+        return import_manager.get_import_status(cid)

@@ -470,8 +470,8 @@ class ContextGraphImport(ContextGraph):
         if check:
             return self[self.IMPORT_STORAGE].put_elements(doc)
         else:
-            raise ValueError:
-                self.logger.error('not in db')
+            raise ValueError
+            self.logger.error('not in db')
             
     def get_import_status(self, _id):
         """
