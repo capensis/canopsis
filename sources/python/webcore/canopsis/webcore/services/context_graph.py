@@ -134,7 +134,7 @@ def exports(ws):
             return {__ERROR: __STORE_ERROR.format(str(ioerror))}
 
         except:
-            {__ERROR: __OTHER_ERROR.format(str(ioerror))}
+            return {__ERROR: __OTHER_ERROR.format(str(ioerror))}
 
     @route(
         ws.application.get,
