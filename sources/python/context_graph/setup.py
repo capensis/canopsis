@@ -5,5 +5,6 @@ install_requires = ['canopsis.common']
 setup(
     description='A context as a graph',
     install_requires=install_requires,
-    keyword="context_graph"
+    keyword="context_graph",
+    scripts=["scripts/import.py"]
 )

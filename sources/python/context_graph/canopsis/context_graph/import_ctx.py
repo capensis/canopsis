@@ -1,78 +1,9 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
-import ast
 import jsonschema
+import ijson
 from canopsis.context_graph.manager import ContextGraph
-
-
-def import_checker(json):
-
-    a_pattern = "^delete$|^create$|^update$|^disable$|^enable$"
-    t_pattern = "^resource$|^component$|^connector"
-    ci_required = [ContextGraphImport.K_ID,
-                   ContextGraphImport.K_ACTION,
-                   ContextGraphImport.K_TYPE]
-
-    link_required = [ContextGraphImport.K_ID,
-                     ContextGraphImport.K_FROM,
-                     ContextGraphImport.K_TO,
-                     ContextGraphImport.K_ACTION]
-
-
-    schema = {
-        "type": "object",
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "properties": {
-            ContextGraphImport.K_CIS: {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "required": ci_required,
-                    "uniqueItems": True,
-                    "properties": {
-                        ContextGraphImport.K_ID: {"type": "string"},
-                        ContextGraphImport.K_NAME: {"type": "string"},
-                        ContextGraphImport.K_DEPENDS: {"type": "array",
-                                                       "items": {
-                                                           "type": "string"}},
-                        ContextGraphImport.K_IMPACT: {"type": "array",
-                                                      "items": {
-                                                          "type": "string"}},
-                        ContextGraphImport.K_MEASUREMENTS: {"type": "array",
-                                                            "items":
-                                                            {"type":
-                                                             "string"}},
-                        ContextGraphImport.K_INFOS: {"type": "object"},
-                        ContextGraphImport.K_ACTION: {"type": "string",
-                                                      "pattern": a_pattern},
-                        ContextGraphImport.K_TYPE: {"type": "string",
-                                                    "pattern": t_pattern},
-                        ContextGraphImport.K_PROPERTIES: {"type": "object"}}}},
-            ContextGraphImport.K_LINKS: {
-                "type": "array",
-                "items": {
-                    "uniqueItems": True,
-                    "type": "object",
-                    "required": link_required,
-                    "properties": {
-                        ContextGraphImport.K_ID: {"type": "string"},
-                        ContextGraphImport.K_FROM: {"type": "string"},
-                        ContextGraphImport.K_TO: {"type": "string"},
-                        ContextGraphImport.K_INFOS: {"type": "object"},
-                        ContextGraphImport.K_ACTION: {"type": "string",
-                                                      "pattern": a_pattern},
-                        ContextGraphImport.K_PROPERTIES: {"type": "object"}}}}}}
-
-    jsonschema.validate(json, schema)
-
-    for elt in json[ContextGraphImport.K_CIS] + \
-        json[ContextGraphImport.K_LINKS]:
-
-        state = elt[ContextGraphImport.K_ACTION]
-        if state == ContextGraphImport.A_DISABLE or \
-           state == ContextGraphImport.A_ENABLE:
-            elt[ContextGraphImport.K_PROPERTIES][state]
 
 
 class ContextGraphImport(ContextGraph):
@@ -104,6 +35,67 @@ class ContextGraphImport(ContextGraph):
     A_DISABLE = "disable"
     A_ENABLE = "enable"
 
+
+    __A_PATTERN = "^delete$|^create$|^update$|^disable$|^enable$"
+    __T_PATTERN = "^resource$|^component$|^connector"
+    __CI_REQUIRED = [K_ID,
+                     K_ACTION,
+                     K_TYPE]
+    __LINK_REQUIRED = [K_ID,
+                       K_FROM,
+                       K_TO,
+                       K_ACTION]
+
+    SCHEMA = {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "properties": {
+            K_CIS: {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "type": "array",
+                "items": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "type": "object",
+                    "required": __CI_REQUIRED,
+                    "uniqueItems": True,
+                    "properties": {
+                        K_ID: {"type": "string"},
+                        K_NAME: {"type": "string"},
+                        K_DEPENDS: {"type": "array",
+                                         "items": {
+                                             "type": "string"}},
+                        K_IMPACT: {"type": "array",
+                                        "items": {
+                                            "type": "string"}},
+                        K_MEASUREMENTS: {"type": "array",
+                                              "items":
+                                              {"type":
+                                               "string"}},
+                        K_INFOS: {"type": "object"},
+                        K_ACTION: {"type": "string",
+                                        "pattern": __A_PATTERN},
+                        K_TYPE: {"type": "string",
+                                      "pattern": __T_PATTERN},
+                        K_PROPERTIES: {"type": "object"}}}},
+            K_LINKS: {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "type": "array",
+                "items": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "uniqueItems": True,
+                    "type": "object",
+                    "required": __LINK_REQUIRED,
+                    "properties": {
+                        K_ID: {"type": "string"},
+                        K_FROM: {"type": "array",
+                                      "items": {
+                                          "type": "string"}},
+                        K_TO: {"type": "string"},
+                        K_INFOS: {"type": "object"},
+                        K_ACTION: {"type": "string",
+                                        "pattern": __A_PATTERN},
+                        K_PROPERTIES: {"type": "object"}}}}}}
+
     def __init__(self, *args, **kwargs):
         """__init__
 
@@ -116,7 +108,23 @@ class ContextGraphImport(ContextGraph):
         self.update = {}
         self.delete = []
 
-    def __get_entities_to_update(self, json):
+    @classmethod
+    def check_element(cls, element, type_):
+
+        jsonschema.validate(element, cls.SCHEMA["properties"][type_]["items"])
+
+        state = element[ContextGraphImport.K_ACTION]
+        if state == ContextGraphImport.A_DISABLE\
+           or state == ContextGraphImport.A_ENABLE:
+            element[ContextGraphImport.K_PROPERTIES][state]
+
+    def clean_attributes(self):
+        self.entities_to_update.clear()
+        self.update.clear()
+        del self.delete[:]
+
+
+    def __get_entities_to_update(self, file_):
         """Return every entities id required for the update
         :param json: the json with every actions required for the update
         :param rtype: a dict with the entity id as a key and the entity as
@@ -125,21 +133,28 @@ class ContextGraphImport(ContextGraph):
         # a set so no duplicate ids without effort and low time complexity
         ids = set()
 
-        for ci in json[self.K_CIS]:
+        for ci in ijson.items(file_, "{0}.item".format(self.K_CIS)):
             ids.add(ci[self.K_ID])
+
+            # we need to retreive every related entity to update the links
             if ci[self.K_ACTION] == self.A_DELETE:
-                # we need to retreive every related entity to update the links
+            # FIXME do the get_entities_by_id in one call Then add all impacts\
+                # depends
                 entity = self.get_entities_by_id(ci[self.K_ID])[0]
 
                 for id_ in entity["depends"] + entity["impact"]:
                     ids.add(id_)
 
-        for link in json[self.K_LINKS]:
-            ids.add(link[self.K_FROM])
-            ids.add(link[self.K_TO])
+        file_.seek(0)
 
-        ctx = {}
+        for link in ijson.items(file_, "{0}.item".format(self.K_LINKS)):
+            for id_ in link[self.K_FROM]:
+                ids.add(id_)
+
+            ids.add(link[self.K_ID])
+
         result = self.get_entities_by_id(list(ids))
+        ctx = {}
 
         for doc in result:
             ctx[doc[self.K_ID]] = doc
@@ -351,14 +366,15 @@ class ContextGraphImport(ContextGraph):
         :param link: the link that identify a link (see the JSON specification).
         """
 
-        if link[self.K_FROM] not in self.update.keys():
-            self.update[link[self.K_FROM]] = self.entities_to_update[link[self.K_FROM]]
-
         if link[self.K_TO] not in self.update.keys():
             self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
 
-        self.update[link[self.K_FROM]]['impact'].append(link[self.K_TO])
-        self.update[link[self.K_TO]]['depends'].append(link[self.K_FROM])
+        for ci_id in link[self.K_FROM]:
+            if ci_id not in self.update.keys():
+                self.update[ci_id] = self.entities_to_update[ci_id]
+
+            self.update[ci_id]['impact'].append(link[self.K_TO])
+            self.update[link[self.K_TO]]['depends'].append(ci_id)
 
     def __a_disable_link(self, link):
         raise NotImplementedError()
@@ -366,24 +382,21 @@ class ContextGraphImport(ContextGraph):
     def __a_enable_link(self, link):
         raise NotImplementedError()
 
-    def import_context(self, json):
-        if (not isinstance(json, dict) or isinstance(json, str)):
-            raise ValueError("Json should a string or a dict")
-
-        if isinstance(json, str):
-            json = ast.literal_eval(json)
-
-        import_checker(json)
+    def import_context(self, file_, id_):
+        fd = open(file_, 'r')
 
         # In case the previous import failed and raise an exception, we clean\
-        #    now
-        self.update.clear()
-        for i in range(len(self.delete)):
-            self.delete.pop(0)
+            #    now
+        self.clean_attributes()
 
-        self.entities_to_update = self.__get_entities_to_update(json)
+        self.entities_to_update = self.__get_entities_to_update(fd)
 
-        for ci in json[self.K_CIS]:
+        fd.seek(0)
+
+        for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
+
+            # add function to check if the element is correct and if the state is right
+            self.check_element(ci, self.K_CIS)
             if ci[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_entity(ci)
             elif ci[self.K_ACTION] == self.A_CREATE:
@@ -398,7 +411,10 @@ class ContextGraphImport(ContextGraph):
                 raise ValueError("The action {0} is not recognized\n".format(
                     ci[self.K_ACTION]))
 
-        for link in json[self.K_LINKS]:
+        fd.seek(0)
+
+        for link in ijson.items(fd, "{0}.item".format(self.K_LINKS)):
+            self.check_element(link, self.K_LINKS)
             if link[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_link(link)
             elif link[self.K_ACTION] == self.A_CREATE:
@@ -421,3 +437,5 @@ class ContextGraphImport(ContextGraph):
 
         self._put_entities(self.update.values())
         self._delete_entities(self.delete)
+
+        self.clean_attributes()
