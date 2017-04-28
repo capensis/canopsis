@@ -49,5 +49,6 @@ unittest2==1.1.0
 chardet==2.3.0
 grako==3.18.1
 jsonschema==2.6.0
-vcversioner=2.16.0.0
-functools32=3.2.3-2
+vcversioneri==2.16.0.0
+functools32==3.2.3-2
+ijson==2.3.0
