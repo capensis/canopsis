@@ -4,7 +4,6 @@
 from unittest import main, TestCase
 
 from canopsis.context_graph.import_ctx import ContextGraphImport
-from canopsis.context_graph.import_ctx import import_checker
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 import copy
@@ -24,8 +23,12 @@ class BaseTest(TestCase):
         self.users_storage = Middleware.get_middleware_by_uri(
             'storage-default-testusers://'
         )
+        self.import_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testimport://'
+        )
 
         self.ctx_import[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
+        self.ctx_import[ContextGraph.IMPORT_STORAGE] = self.import_storage
         self.ctx_import[
             ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
         self.ctx_import[ContextGraph.USERS_STORAGE] = self.users_storage
@@ -52,6 +55,7 @@ class BaseTest(TestCase):
         self.entities_storage.remove_elements()
         self.organisations_storage.remove_elements()
         self.organisations_storage.remove_elements()
+        self.import_storage.remove_elements()
 
     def assertEqualEntities(self, entity1, entity2):
         sorted(entity1["depends"])
@@ -1042,6 +1046,22 @@ class ImportChecker(TestCase):
         except Exception as e:
             self.fail(self._desc_fail.format(e))
 
+    
+class TestImportFunctions(BaseTest):
+
+    def test_ongoing(self):
+        self.assertEqual(self.ctx_import.on_going_in_db(), False)
+        self.ctx_import[ContextGraph.IMPORT_STORAGE].put_element({'_id':'id', 'state': 'on going'})
+        self.assertEqual(self.ctx_import.on_going_in_db(), True)
+
+    def check_id(self):
+        self.assertEqual(self.ctx_import.check_id('id'), False)
+        self.ctx_import[ContextGraph.IMPORT_STORAGE].put_element({'_id':'id', 'state': 'on going'})
+        self.assertEqual(self.ctx_import.check_id('id'), True)
+        
+    def getimporstatus(self):
+        self.ctx_import[ContextGraph.IMPORT_STORAGE].put_element({'_id':'id', 'state': 'on going'})
+        self.assertEqual(self.ctx_import.get_import_status('id'), 'on going')
 
 if __name__ == '__main__':
     main()
