@@ -21,10 +21,30 @@
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.context_graph.import_ctx import ContextGraphImport
+from uuid import uuid4
 import json as j
+import os
 
 manager = ContextGraph()
 import_manager = ContextGraphImport()
+
+__FILE = "~/tmp/import-{0}.json"
+__IMPORT_ID = "import_id"
+__ERROR = "error"
+__STORE_ERROR = "Impossible to store the file on the disk : {0}."
+__OTHER_ERROR = "An error occured : {0}."
+__CANNOT_EXEC_IMPORT = "Error while calling the process responsible"\
+                       " of the import"
+
+def get_uuid():
+    """Return an UUID never used for an import. If the generated UUID is already
+    used, try again until an UUID not used is created"""
+
+    uuid = uuid4()
+    while not import_manager.check_id(uuid):
+        uuid = uuid4()
+
+    return str(uuid)
 
 def exports(ws):
 
@@ -46,8 +66,8 @@ def exports(ws):
         return manager.create_entity(entity)
 
     @route(
-        ws.application.post, 
-        payload=['entity']    
+        ws.application.post,
+        payload=['entity']
     )
     def update_entity(id_, entity):
         """
@@ -55,7 +75,7 @@ def exports(ws):
         """
         return manager.update_entity(id_, entity)
 
-    
+
     @route(
         ws.application.delete,
         payload=['id_']
@@ -74,7 +94,7 @@ def exports(ws):
     def get_entities(
             query={},
             projection={},
-            limit=0, 
+            limit=0,
             sort=False,
             with_count=False
     ):
@@ -82,28 +102,46 @@ def exports(ws):
             query=query,
             projection=projection,
             limit=limit,
-            sort=sort, 
+            sort=sort,
             with_count=with_count
         )
-    
+
     @route(
         ws.application.put,
         name='coucou/bouh',
         payload=['json']
     )
     def put_graph(json='{}'):
-        if isinstance(json, dict):
-            import_manager.import_context(json)
-        elif isinstance(json, str):
-            js = j.loads(json)
-            import_manager.import_context(js)
+        uuid = get_uuid()
+        try:
+            file_ = __FILE.format(uuid)
+
+            if os.path.exists(file_):
+                return {__ERROR: __STORE_ERROR.format("A file with the same "\
+                                                      "name already exists")}
+
+            with open(file_, 'x') as fd:
+                j.dump(json, fd)
+
+            status = os.spawnl(os.P_NOWAIT, "import.py", file_)
+
+            if status == 127:
+                return {__ERROR: __CANNOT_EXEC_IMPORT}
+
+            return {__IMPORT_ID : str(uuid)}
+
+        except IOError as ioerror:
+            return {__ERROR: __STORE_ERROR.format(str(ioerror))}
+
+        except:
+            {__ERROR: __OTHER_ERROR.format(str(ioerror))}
 
     @route(
         ws.application.get,
         name='truc/machin'
     )
     def get_graph():
-        entities_list = manager.get_entities()        
+        entities_list = manager.get_entities()
 
         ret_json = {
             'links':[],
