@@ -160,6 +160,9 @@ function post_install_mongodb() {
     echo "  + Restart mongodb"
     launch_cmd 1 service mongodb restart
 
+    echo " + Wait mongodb"
+    sleep 10
+
     echo "  + Create $cpsuser user ..."
     launch_cmd 1 $PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval "\"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
 
