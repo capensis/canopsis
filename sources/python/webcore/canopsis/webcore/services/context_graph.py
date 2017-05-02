@@ -48,7 +48,7 @@ def get_uuid():
 
 def exports(ws):
 
-    @route(ws.application.get, name='context_graph/all')
+    @route(ws.application.get, name='contextgraph/all')
     def all():
         """
             :return all json for d3 representation
@@ -108,10 +108,12 @@ def exports(ws):
 
     @route(
         ws.application.put,
-        name='api/context_graph/import',
+        name='api/contextgraph/import',
         payload=['json']
     )
     def put_graph(json='{}'):
+        return 'coucou'
+        """
         uuid = get_uuid()
         try:
             file_ = __FILE.format(uuid)
@@ -135,6 +137,7 @@ def exports(ws):
 
         except:
             return {__ERROR: __OTHER_ERROR.format(str(ioerror))}
+        """
 
     @route(
         ws.application.get,
@@ -164,7 +167,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='api/context_graph/graph_impact',
+        name='api/contextgraph/graph_impact',
         payload=['_id', 'deepness']
     )
     def get_graph_impact(_id, deepness=None):
@@ -172,7 +175,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='api/context_graph/graph_depends',
+        name='api/contextgraph/graph_depends',
         payload=['_id', 'deepness']
     )
     def get_graph_depends(_id, deepness=None):
@@ -180,7 +183,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='api/context_graph/leaves_depends',
+        name='api/contextgraph/leaves_depends',
         payload=['_id', 'deepness']
     )
     def get_leaves_depends(_id, deepness=None):
@@ -188,12 +191,12 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='api/context_graph/leaves_impact',
+        name='api/contextgraph/leaves_impact',
         payload=['_id', 'deepness']
     )
     def get_leaves_impact(_id, deepness=None):
         return manager.get_leaves_impact(_id, deepness)
 
-    @ws.application.get('/api/context_graph/import/status/<cid>')
+    @ws.application.get('/api/contextgraph/import/status/<cid>')
     def get_status(cid):
         return import_manager.get_import_status(cid)
