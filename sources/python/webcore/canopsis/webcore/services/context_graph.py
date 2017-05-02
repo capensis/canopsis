@@ -139,7 +139,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='api/context_graph/d3_graph'
+        name='api/contextgraph/d3graph'
     )
     def get_graph():
         entities_list = manager.get_entities()
@@ -165,7 +165,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='api/contextgraph/graph_impact',
+        name='api/contextgraph/graphimpact',
         payload=['_id', 'deepness']
     )
     def get_graph_impact(_id, deepness=None):
@@ -173,7 +173,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='api/contextgraph/graph_depends',
+        name='api/contextgraph/graphdepends',
         payload=['_id', 'deepness']
     )
     def get_graph_depends(_id, deepness=None):
@@ -181,7 +181,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='api/contextgraph/leaves_depends',
+        name='api/contextgraph/leavesdepends',
         payload=['_id', 'deepness']
     )
     def get_leaves_depends(_id, deepness=None):
@@ -189,7 +189,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='api/contextgraph/leaves_impact',
+        name='api/contextgraph/leavesimpact',
         payload=['_id', 'deepness']
     )
     def get_leaves_impact(_id, deepness=None):
