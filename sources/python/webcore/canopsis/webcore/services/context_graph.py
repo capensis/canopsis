@@ -28,7 +28,7 @@ import os
 manager = ContextGraph()
 import_manager = ContextGraphImport()
 
-__FILE = "~/tmp/import-{0}.json"
+__FILE = "/opt/canopsis/tmp/import-{0}.json"
 __IMPORT_ID = "import_id"
 __ERROR = "error"
 __STORE_ERROR = "Impossible to store the file on the disk : {0}."
@@ -41,7 +41,7 @@ def get_uuid():
     used, try again until an UUID not used is created"""
 
     uuid = uuid4()
-    while not import_manager.check_id(uuid):
+    while import_manager.check_id(uuid):
         uuid = uuid4()
 
     return str(uuid)
@@ -112,17 +112,16 @@ def exports(ws):
         payload=['json']
     )
     def put_graph(json='{}'):
-        return 'coucou'
-        """
         uuid = get_uuid()
         try:
             file_ = __FILE.format(uuid)
+
 
             if os.path.exists(file_):
                 return {__ERROR: __STORE_ERROR.format("A file with the same "\
                                                       "name already exists")}
 
-            with open(file_, 'x') as fd:
+            with open(file_, 'w') as fd:
                 j.dump(json, fd)
 
             status = os.spawnl(os.P_NOWAIT, "import.py", file_)
@@ -135,9 +134,8 @@ def exports(ws):
         except IOError as ioerror:
             return {__ERROR: __STORE_ERROR.format(str(ioerror))}
 
-        except:
-            return {__ERROR: __OTHER_ERROR.format(str(ioerror))}
-        """
+        except Exception as error:
+            return {__ERROR: __OTHER_ERROR.format(str(error))}
 
     @route(
         ws.application.get,
