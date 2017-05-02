@@ -5,6 +5,7 @@ function create_python_slink() {
     # first argument is the project, second if given is the version (default 0.1)
     if [ -f $1 ]; then exit 1; fi;
     project=$1
+    echo $project
     if [ -f $2 ];
         then version="0.1";
         else version=$2;
@@ -42,25 +43,69 @@ function create_slinks() {
         eval $lns
     done
     # canolibs
-    create_canolibs_slink
+    # create_canolibs_slink
     # create_python_slink cli 0.1
-    # create_python_slink common 0.1
-    # create_python_slink configuration 0.1
+    #create_python_slink common 0.1
+    #create_python_slink configuration 0.1
     # create_python_slink connectors 0.1
     # create_python_slink context 0.1
-    # create_python_slink engines 0.1
-    # create_python_slink mongo 0.1
-    # create_python_slink old 0.1
-    # create_python_slink organisation 0.1
-    # create_python_slink perfdata 0.1
-    # create_python_slink storage 0.1
-    # create_python_slink timeserie 0.1
-    # create_python_slink tools 0.1
-    # create_python_slink topology 0.1
-    # create_python_slink auth 0.1
-    # create_python_slink middleware 0.1
+    #create_python_slink engines 0.1
+    #create_python_slink mongo 0.1
+    #create_python_slink old 0.1
+    #create_python_slink organisation 0.1
+    #create_python_slink perfdata 0.1
+    #create_python_slink storage 0.1
+    #create_python_slink timeserie 0.1
+    #create_python_slink tools 0.1
+    #create_python_slink topology 0.1
+    #create_python_slink auth 0.1
+    #create_python_slink middleware 0.1
+    #create_python_slink context_graph 0.1
     # create_python_slink mom 0.1
     # create_python_slink rpc 0.1
+    
+    # new version:
+    create_python_slink common 0.1
+    create_python_slink old 0.1
+    create_python_slink configuration 0.1
+    create_python_slink timeserie 0.1
+    create_python_slink middleware 0.1
+    create_python_slink task 0.1
+    create_python_slink rpc 0.1
+    create_python_slink mom 0.1
+    create_python_slink storage 0.1
+    create_python_slink mongo 0.1
+    create_python_slink schema 0.1
+    create_python_slink ctxprop 0.1
+    create_python_slink event 0.1
+    create_python_slink kombu 0.1
+    create_python_slink context 0.1
+    create_python_slink context_graph 0.1
+    create_python_slink monitoring 0.1
+    create_python_slink perfdata 0.1
+    create_python_slink tools 0.1
+    create_python_slink sla 0.1
+    create_python_slink engines 0.1
+    create_python_slink connectors 0.1
+    create_python_slink cli 0.1
+    create_python_slink organisation 0.1
+    create_python_slink check 0.1
+    create_python_slink graph 0.1
+    create_python_slink topology 0.1
+    create_python_slink linklist 0.1
+    create_python_slink vevent 0.1
+    create_python_slink ccalendar 0.1
+    create_python_slink pbehavior 0.1
+    create_python_slink downtime 0.1
+    create_python_slink session 0.1
+    create_python_slink webcore 0.1
+    create_python_slink alerts 0.1
+    create_python_slink serie 0.1
+    create_python_slink stats 0.1
+    create_python_slink migration 0.1
+    create_python_slink influxdb 0.1
+
+
 
     for paths in "$SRC/sources/python/connectors/var/snmp $CPS/var/" "$SRC/sources/python/webcore/canopsis $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/"
     do
