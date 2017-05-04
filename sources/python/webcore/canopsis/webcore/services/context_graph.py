@@ -21,12 +21,14 @@
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.context_graph.import_ctx import ContextGraphImport
+from canopsis.alerts.manager import Alerts
 from uuid import uuid4
 import json as j
 import os
 
 manager = ContextGraph()
 import_manager = ContextGraphImport()
+alerts_manager = Alerts()
 
 __FILE = "/opt/canopsis/tmp/import-{0}.json"
 __IMPORT_ID = "import_id"
@@ -89,7 +91,11 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        payload=['query', 'projection', 'limit', 'sort', 'with_count']
+        payload=['query', 
+        'projection', 
+        'limit', 
+        'sort', 
+        'with_count']
     )
     def get_entities(
             query={},
@@ -121,7 +127,8 @@ def exports(ws):
                 return {__ERROR: __STORE_ERROR.format("A file with the same "\
                                                       "name already exists")}
 
-            with open(file_, 'w') as fd:
+            with open(file_, 
+            	'w') as fd:
                 j.dump(json, fd)
 
             status = os.spawnl(os.P_NOWAIT, "import.py", file_)
@@ -137,6 +144,16 @@ def exports(ws):
         except Exception as error:
             return {__ERROR: __OTHER_ERROR.format(str(error))}
 
+
+    def get_state(_id):
+        """
+            va chercher si il y a une alarme ouverte d'une entitée et si oui choppe l'etat si non return 0
+        """
+        al = alerts_manager.get_alarm_with_eid(_id, resolved=False)
+        if al == []:
+            return 0
+        return al[0]['v']['state']['val']
+
     @route(
         ws.application.get,
         name='api/contextgraph/d3graph'
@@ -150,22 +167,28 @@ def exports(ws):
         }
 
         for i in entities_list:
-            ret_json['nodes'].append({'group':1, 'id': i['_id']})
+            ret_json['nodes'].append({'group':1, 
+                                      'id': i['_id'], 
+                                      'name': i['name'], 
+                                      'state': get_state(i['_id'])})
 
         for i in entities_list:
             source = i['_id']
             for target in i['depends']:
-                ret_json['links'].append({'value': 1, 'source': source, 'target': target})
+                ret_json['links'].append({'value': 1, 
+                	'source': source, 
+                'target': target})
 
         directory = '/opt/canopsis/var/www/src/canopsis/d3graph'
         if not os.path.exists(directory):
             os.makedirs(directory)
-            l = ['<!DOCTYPE html>\n', '<meta charset="utf-8">\n', '<style>\n', '\n', '.links line {\n', '  stroke: #999;\n', '  stroke-opacity: 0.6;\n', '}\n', '\n', '.nodes circle {\n', '  stroke: #fff;\n', '  stroke-width: 1.5px;\n', '}\n', '\n', '</style>\n', '<svg width="1000" height="900"></svg>\n', '<script src="https://d3js.org/d3.v4.min.js"></script>\n', '<script>\n', '\n', 'var svg = d3.select("svg"),\n', '    width = +svg.attr("width"),\n', '    height = +svg.attr("height");\n', '\n', 'var color = d3.scaleOrdinal(d3.schemeCategory20);\n', '\n', 'var simulation = d3.forceSimulation()\n', '    .force("link", d3.forceLink().id(function(d) { return d.id; }))\n', '    .force("charge", d3.forceManyBody())\n', '    .force("center", d3.forceCenter(width / 2, height / 2));\n', '\n', 'd3.json("graph.json", function(error, graph) {\n', '  if (error) throw error;\n', '\n', '  var link = svg.append("g")\n', '      .attr("class", "links")\n', '    .selectAll("line")\n', '    .data(graph.links)\n', '    .enter().append("line")\n', '      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });\n', '\n', '  var node = svg.append("g")\n', '      .attr("class", "nodes")\n', '    .selectAll("circle")\n', '    .data(graph.nodes)\n', '    .enter().append("circle")\n', '      .attr("r", 5)\n', '      .attr("fill", function(d) { return color(d.group); })\n', '      .call(d3.drag()\n', '          .on("start", dragstarted)\n', '          .on("drag", dragged)\n', '          .on("end", dragended));\n', '\n', '  node.append("title")\n', '      .text(function(d) { return d.id; });\n', '\n', '  simulation\n', '      .nodes(graph.nodes)\n', '      .on("tick", ticked);\n', '\n', '  simulation.force("link")\n', '      .links(graph.links);\n', '\n', '  function ticked() {\n', '    link\n', '        .attr("x1", function(d) { return d.source.x; })\n', '        .attr("y1", function(d) { return d.source.y; })\n', '        .attr("x2", function(d) { return d.target.x; })\n', '        .attr("y2", function(d) { return d.target.y; });\n', '\n', '    node\n', '        .attr("cx", function(d) { return d.x; })\n', '        .attr("cy", function(d) { return d.y; });\n', '  }\n', '});\n', '\n', 'function dragstarted(d) {\n', '  if (!d3.event.active) simulation.alphaTarget(0.3).restart();\n', '  d.fx = d.x;\n', '  d.fy = d.y;\n', '}\n', '\n', 'function dragged(d) {\n', '  d.fx = d3.event.x;\n', '  d.fy = d3.event.y;\n', '}\n', '\n', 'function dragended(d) {\n', '  if (!d3.event.active) simulation.alphaTarget(0);\n', '  d.fx = null;\n', '  d.fy = null;\n', '}\n', '\n', '</script>\n', '\n']
+            l = ['<!DOCTYPE html>\n', '<meta charset="utf-8">\n', '<style>\n', '\n', '.links line {\n', '  stroke: #999;\n', '  stroke-opacity: 0.6;\n', '}\n', '\n', '.nodes circle {\n', '  stroke: #fff;\n', '  stroke-width: 0.5px;\n', '}\n', '\n', '</style>\n', '<svg width="1000" height="900"></svg>\n', '<script src="https://d3js.org/d3.v4.min.js"></script>\n', '<script>\n', '\n', 'var svg = d3.select("svg"),\n', '    width = +svg.attr("width"),\n', '    height = +svg.attr("height");\n', '\n', 'var color = d3.scaleOrdinal(d3.schemeCategory20);\n', '\n', 'var manybody = d3.forceManyBody()\n', '    .strength(-500)\n', '\n', 'var simulation = d3.forceSimulation()\n', '    .force("link", d3.forceLink().id(function(d) { return d.id; }))\n', '    .force("charge", manybody)\n', '    .force("center", d3.forceCenter(width / 2, height / 2));\n', '\n', 'd3.json("graph.json", function(error, graph) {\n', '  if (error) throw error;\n', '\n', '  var link = svg.append("g")\n', '      .attr("class", "links")\n', '    .selectAll("line")\n', '    .data(graph.links)\n', '    .enter().append("line")\n', '      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });\n', '\n', '  var node = svg.append("g")\n', '      .attr("class", "nodes")\n', '    .selectAll("circle")\n', '    .data(graph.nodes)\n', '    .enter().append("circle")\n', '      .attr("r", 5)\n', '      .attr("fill", function(d) { return color(d.group); })\n', '      .call(d3.drag()\n', '          .on("start", dragstarted)\n', '          .on("drag", dragged)\n', '          .on("end", dragended));\n', '\n', '  var text = svg.append("g")\n', '      .attr("class", "text")\n', '    .selectAll("text")\n', '    .data(graph.nodes)\n', '    .enter().append("text")\n', '    .text(function(d) {return d.name + " - " + d.state});\n', '\n', '  node.append("title")\n', '      .text(function(d) { return d.id; });\n', '\n', '  simulation\n', '      .nodes(graph.nodes)\n', '      .on("tick", ticked);\n', '\n', '  simulation.force("link")\n', '      .links(graph.links);\n', '\n', '  function ticked() {\n', '    link\n', '        .attr("x1", function(d) { return d.source.x; })\n', '        .attr("y1", function(d) { return d.source.y; })\n', '        .attr("x2", function(d) { return d.target.x; })\n', '        .attr("y2", function(d) { return d.target.y; });\n', '\n', '    node\n', '        .attr("cx", function(d) { return d.x; })\n', '        .attr("cy", function(d) { return d.y; });\n', '    text\n', '        .attr("x", function(d) { return d.x + 5})\n', '        .attr("y", function(d) { return d.y})\n', '  }\n', '});\n', '\n', 'function dragstarted(d) {\n', '  if (!d3.event.active) simulation.alphaTarget(0.3).restart();\n', '  d.fx = d.x;\n', '  d.fy = d.y;\n', '}\n', '\n', 'function dragged(d) {\n', '  d.fx = d3.event.x;\n', '  d.fy = d3.event.y;\n', '}\n', '\n', 'function dragended(d) {\n', '  if (!d3.event.active) simulation.alphaTarget(0);\n', '  d.fx = null;\n', '  d.fy = null;\n', '}\n', '\n', '</script>\n', '\n']
             a = open('/opt/canopsis/var/www/src/canopsis/d3graph/index.html', 'a')
             for i in l:
                 a.write(i)
             a.close()
-        f = open('/opt/canopsis/var/www/src/canopsis/d3graph/graph.json', 'w')
+        f = open('/opt/canopsis/var/www/src/canopsis/d3graph/graph.json', 
+        	'w')
         f.write(j.dumps(ret_json))
         f.close()
 
@@ -174,7 +197,8 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/graphimpact',
-        payload=['_id', 'deepness']
+        payload=['_id', 
+        'deepness']
     )
     def get_graph_impact(_id, deepness=None):
         return manager.get_graph_impact(_id, deepness)
@@ -182,7 +206,8 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/graphdepends',
-        payload=['_id', 'deepness']
+        payload=['_id', 
+        'deepness']
     )
     def get_graph_depends(_id, deepness=None):
         return manager.get_graph_depends(_id, deepness)
@@ -190,7 +215,8 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/leavesdepends',
-        payload=['_id', 'deepness']
+        payload=['_id', 
+        'deepness']
     )
     def get_leaves_depends(_id, deepness=None):
         return manager.get_leaves_depends(_id, deepness)
@@ -198,7 +224,8 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/leavesimpact',
-        payload=['_id', 'deepness']
+        payload=['_id', 
+        'deepness']
     )
     def get_leaves_impact(_id, deepness=None):
         return manager.get_leaves_impact(_id, deepness)

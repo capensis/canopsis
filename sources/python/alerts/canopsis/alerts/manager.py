@@ -822,3 +822,15 @@ class Alerts(MiddlewareRegistry):
                     if (now - canceled_ts) >= self.cancel_autosolve_delay:
                         alarm['resolved'] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
+
+    def get_alarm_with_eid(self, eid, resolved=False):
+        """
+            get alarms on eids
+        """
+        query = {'d':eid}
+        if resolved:
+            query['resolved'] = {'$ne': None}
+        else:
+            query['resolved'] = None
+        return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
+
