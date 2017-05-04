@@ -23,6 +23,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.context_graph.import_ctx import ContextGraphImport
 from uuid import uuid4
 import json as j
+import signal
 import os
 
 manager = ContextGraph()
@@ -136,11 +137,18 @@ def exports(ws):
         # except Exception as error:
         #     return {__ERROR: __OTHER_ERROR.format(str(error))}
 
-        if isinstance(json, dict):
-            import_manager.import_context(json)
-        elif isinstance(json, str):
-            js = j.loads(json)
-            import_manager.import_context(js)
+        uuid = get_uuid()
+
+        fd = open("/tmp/importd.pid", 'r')
+        pid = int(fd.readline())
+        fd.close()
+
+        try:
+            os.kill(pid, signal.SIGUSR1)
+        except OSError as e:
+            return {__ERROR: e}
+        else:
+            return {__IMPORT_ID: uuid}
 
     @route(
         ws.application.get,
