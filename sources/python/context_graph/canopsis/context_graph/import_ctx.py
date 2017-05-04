@@ -1,9 +1,106 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.configuration.configurable.decorator import conf_paths
+from canopsis.configuration.configurable.decorator import add_category
 import jsonschema
 import ijson
-from canopsis.context_graph.manager import ContextGraph
+
+class ImportKey():
+
+    # Status
+    ST_PENDING = "pending"
+    ST_ONGOING = "ongoing"
+    ST_FAILED = "failed"
+    ST_DONE = "done"
+
+    # Fields
+    F_CREATION = "creation"
+    F_ID = "_id"
+    F_STATUS = "status"
+    F_INFO = "info"
+    F_EXECTIME = "exec_time"
+    F_START = "start"
+    F_STATS = "stats"
+
+CONF_FILE = 'context_graph/manager.conf'
+CATEGORY = "IMPORTCONTEXT"
+
+@conf_paths(CONF_FILE)
+@add_category(CATEGORY)
+class Manager(MiddlewareRegistry):
+    """The manager use to interact with the default_importgraph collecion."""
+
+    STORAGE = 'import_storage'
+
+    def __init__(self, *args, **kwargs):
+        """__init__
+        :param *args:
+        :param **kwargs:
+        """
+        super(Manager, self).__init__(*args, **kwargs)
+
+    def get_next_uuid(self):
+        """Retreive the uuid of the next import to process using his creation
+        date.
+        :return the uuid as a string or None if they are no new import
+        to process.
+        """
+        imports = list(self[self.STORAGE].get_elements(
+            query={ImportKey.F_STATUS: ImportKey.ST_PENDING}))
+
+        if len(imports) == 0:
+            return None
+
+        next_ = imports[0]
+
+        for import_ in imports:
+            if import_[ImportKey.F_CREATION] <\
+               next_[ImportKey.F_CREATION]:
+                next_ = import_
+
+        return next_[ImportKey.F_ID]
+
+    def is_present(self, uuid):
+        """Return true if the given import uuid exist in database.
+        :param uuid: the given import uuid
+        :return type: boolean
+        :return True if the uuid exist in database. False otherwise
+        """
+
+        imports = list(self[self.STORAGE].get_elements(
+            query={ImportKey.F_ID: uuid}))
+
+        return True if len(imports) == 1 else False
+
+    def update_status(self, uuid, infos):
+        """Update an import status with the fields of kwargs.
+        If a field present in kwargs is not intended to be updated, it will
+        be silently ignored.
+        If no import status are found for the uuid an exception ValueError
+        will be raised.
+        :param uuid: the uuid of the import to update:
+        :param infos: the fields and values to update as a dict:
+        """
+        authorized_fields = [ImportKey.F_STATUS,
+                             ImportKey.F_INFO,
+                             ImportKey.F_EXECTIME,
+                             ImportKey.F_START,
+                             ImportKey.F_STATS]
+
+        if not self.is_present(uuid):
+            raise ValueError("No import with the given uuid"\
+                             " ({0}).".format(uuid))
+
+        new_status = {ImportKey.F_ID: uuid}
+
+        for field in authorized_fields:
+            if infos.has_key(field):
+                new_status[field] = infos[field]
+
+        self[self.STORAGE].put_element(new_status)
 
 
 class ContextGraphImport(ContextGraph):
