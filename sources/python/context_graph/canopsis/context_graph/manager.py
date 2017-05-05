@@ -152,7 +152,7 @@ class ContextGraph(MiddlewareRegistry):
             self.extra_fields = extra_fields
 
 
-    def get_entities_by_id(self, id):
+    def get_entities_by_id(self, _id):
         """
         Retreive the entity identified by an id. If id is a list of id,
         get_entities_by_id return every entities who match the ids present
@@ -165,11 +165,11 @@ class ContextGraph(MiddlewareRegistry):
         query = {"_id": None}
         if isinstance(id, type([])):
             ids = []
-            for i in id:
+            for i in _id:
                 ids.append(i)
             query["_id"] = {"$in": ids}
         else:
-            query["_id"] = id
+            query["_id"] = _id
 
         result = list(
             self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
