@@ -129,9 +129,8 @@ def exports(ws):
         #     with open(file_, 'w') as fd:
         #         j.dump(json, fd)
 
-            with open(file_, 
-            	'w') as fd:
-                j.dump(json, fd)
+        with open(file_, 'w') as fd:
+            j.dump(json, fd)
         #     status = os.spawnle(os.P_NOWAIT, "import.py", file_)
 
         #     if status == 127:
