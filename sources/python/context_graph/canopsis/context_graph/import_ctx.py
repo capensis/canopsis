@@ -46,56 +46,46 @@ class ContextGraphImport(ContextGraph):
                        K_TO,
                        K_ACTION]
 
-    SCHEMA = {
-        "type": "object",
+    CIS_SCHEMA = {
         "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "required": __CI_REQUIRED,
+        "uniqueItems": True,
         "properties": {
-            K_CIS: {
-                "$schema": "http://json-schema.org/draft-04/schema#",
-                "type": "array",
-                "items": {
-                    "$schema": "http://json-schema.org/draft-04/schema#",
-                    "type": "object",
-                    "required": __CI_REQUIRED,
-                    "uniqueItems": True,
-                    "properties": {
-                        K_ID: {"type": "string"},
-                        K_NAME: {"type": "string"},
-                        K_DEPENDS: {"type": "array",
-                                         "items": {
-                                             "type": "string"}},
-                        K_IMPACT: {"type": "array",
-                                        "items": {
-                                            "type": "string"}},
-                        K_MEASUREMENTS: {"type": "array",
-                                              "items":
-                                              {"type":
-                                               "string"}},
-                        K_INFOS: {"type": "object"},
-                        K_ACTION: {"type": "string",
-                                        "pattern": __A_PATTERN},
-                        K_TYPE: {"type": "string",
-                                      "pattern": __T_PATTERN},
-                        K_PROPERTIES: {"type": "object"}}}},
-            K_LINKS: {
-                "$schema": "http://json-schema.org/draft-04/schema#",
-                "type": "array",
-                "items": {
-                    "$schema": "http://json-schema.org/draft-04/schema#",
-                    "uniqueItems": True,
-                    "type": "object",
-                    "required": __LINK_REQUIRED,
-                    "properties": {
-                        K_ID: {"type": "string"},
-                        K_FROM: {"type": "array",
-                                      "items": {
-                                          "type": "string"}},
-                        K_TO: {"type": "string"},
-                        K_INFOS: {"type": "object"},
-                        K_ACTION: {"type": "string",
-                                        "pattern": __A_PATTERN},
-                        K_PROPERTIES: {"type": "object"}}}}}}
+            K_ID: {"type": "string"},
+            K_NAME: {"type": "string"},
+            K_DEPENDS: {"type": "array",
+                        "items": {
+                            "type": "string"}},
+            K_IMPACT: {"type": "array",
+                       "items": {
+                           "type": "string"}},
+            K_MEASUREMENTS: {"type": "array",
+                             "items":
+                             {"type":
+                              "string"}},
+            K_INFOS: {"type": "object"},
+            K_ACTION: {"type": "string",
+                       "pattern": __A_PATTERN},
+            K_TYPE: {"type": "string",
+                     "pattern": __T_PATTERN},
+            K_PROPERTIES: {"type": "object"}}}
 
+    LINKS_SCHEMA = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "uniqueItems": True,
+        "type": "object",
+        "required": __LINK_REQUIRED,
+        "properties": {
+            K_ID: {"type": "string"},
+            K_FROM: {"type": "array",
+                     "items": {
+                         "type": "string"}},
+            K_TO: {"type": "string"},
+            K_INFOS: {"type": "object"},
+            K_ACTION: {"type": "string",
+                       "pattern": __A_PATTERN},
+            K_PROPERTIES: {"type": "object"}}}
 
 
     def __init__(self, *args, **kwargs):
@@ -113,7 +103,14 @@ class ContextGraphImport(ContextGraph):
     @classmethod
     def check_element(cls, element, type_):
 
-        jsonschema.validate(element, cls.SCHEMA["properties"][type_]["items"])
+        if type_ == cls.K_LINKS:
+            schema = cls.LINKS_SCHEMA
+        elif type_ == cls.K_CIS:
+            schema = cls.CIS_SCHEMA
+        else:
+            raise ValueError("Unknowed type {0}\n".format(type_))
+
+        jsonschema.validate(element, schema)
 
         state = element[ContextGraphImport.K_ACTION]
         if state == ContextGraphImport.A_DISABLE\
@@ -384,7 +381,16 @@ class ContextGraphImport(ContextGraph):
     def __a_enable_link(self, link):
         raise NotImplementedError()
 
-    def import_context(self, file_, id_):
+    # def import_context(self, file_, id_):
+    def import_context(self, data):
+        import json
+        # Ugly temporary patch
+        file_ = "/opt/canopsis/tmp/import.json"
+        fd = open(file_, "w+")
+        fd.write(json.dumps(data))
+        fd.close()
+        # end of ugly temporary patch
+
         fd = open(file_, 'r')
 
         # In case the previous import failed and raise an exception, we clean\
@@ -472,7 +478,7 @@ class ContextGraphImport(ContextGraph):
         else:
             raise ValueError
             self.logger.error('not in db')
-            
+
     def get_import_status(self, _id):
         """
             return the status of import

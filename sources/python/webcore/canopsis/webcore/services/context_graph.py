@@ -118,31 +118,38 @@ def exports(ws):
         payload=['json']
     )
     def put_graph(json='{}'):
-        uuid = get_uuid()
-        try:
-            file_ = __FILE.format(uuid)
+        # uuid = get_uuid()
+        # try:
+        #     file_ = __FILE.format(uuid)
 
+        #     if os.path.exists(file_):
+        #         return {__ERROR: __STORE_ERROR.format("A file with the same "\
+        #                                               "name already exists")}
 
-            if os.path.exists(file_):
-                return {__ERROR: __STORE_ERROR.format("A file with the same "\
-                                                      "name already exists")}
+        #     with open(file_, 'w') as fd:
+        #         j.dump(json, fd)
 
             with open(file_, 
             	'w') as fd:
                 j.dump(json, fd)
+        #     status = os.spawnle(os.P_NOWAIT, "import.py", file_)
 
-            status = os.spawnl(os.P_NOWAIT, "import.py", file_)
+        #     if status == 127:
+        #         return {__ERROR: __CANNOT_EXEC_IMPORT}
 
-            if status == 127:
-                return {__ERROR: __CANNOT_EXEC_IMPORT}
+        #     return {__IMPORT_ID : str(uuid)}
 
-            return {__IMPORT_ID : str(uuid)}
+        # except IOError as ioerror:
+        #     return {__ERROR: __STORE_ERROR.format(str(ioerror))}
 
-        except IOError as ioerror:
-            return {__ERROR: __STORE_ERROR.format(str(ioerror))}
+        # except Exception as error:
+        #     return {__ERROR: __OTHER_ERROR.format(str(error))}
 
-        except Exception as error:
-            return {__ERROR: __OTHER_ERROR.format(str(error))}
+        if isinstance(json, dict):
+            import_manager.import_context(json)
+        elif isinstance(json, str):
+            js = j.loads(json)
+            import_manager.import_context(js)
 
 
     def get_state(_id):
