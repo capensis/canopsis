@@ -20,7 +20,8 @@
 
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.context_graph.import_ctx import ContextGraphImport
+from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey,\
+    Manager
 from uuid import uuid4
 import json as j
 import signal
@@ -28,14 +29,15 @@ import os
 
 manager = ContextGraph()
 import_manager = ContextGraphImport()
+import_col_man = Manager()
 
 __FILE = "/opt/canopsis/tmp/import-{0}.json"
 __IMPORT_ID = "import_id"
 __ERROR = "error"
-__STORE_ERROR = "Impossible to store the file on the disk : {0}."
+__PARSE_PID_ERROR = "Impossible to parse the pid file."
 __OTHER_ERROR = "An error occured : {0}."
-__CANNOT_EXEC_IMPORT = "Error while calling the process responsible"\
-                       " of the import"
+__STORE_ERROR = "Impossible to store the import: {0}."
+__PID_NOT_MATCH = "The PID does not match any process."
 
 def get_uuid():
     """Return an UUID never used for an import. If the generated UUID is already
@@ -113,42 +115,40 @@ def exports(ws):
         payload=['json']
     )
     def put_graph(json='{}'):
-        # uuid = get_uuid()
-        # try:
-        #     file_ = __FILE.format(uuid)
 
-        #     if os.path.exists(file_):
-        #         return {__ERROR: __STORE_ERROR.format("A file with the same "\
-        #                                               "name already exists")}
-
-        #     with open(file_, 'w') as fd:
-        #         j.dump(json, fd)
-
-        #     status = os.spawnle(os.P_NOWAIT, "import.py", file_)
-
-        #     if status == 127:
-        #         return {__ERROR: __CANNOT_EXEC_IMPORT}
-
-        #     return {__IMPORT_ID : str(uuid)}
-
-        # except IOError as ioerror:
-        #     return {__ERROR: __STORE_ERROR.format(str(ioerror))}
-
-        # except Exception as error:
-        #     return {__ERROR: __OTHER_ERROR.format(str(error))}
+        with open(ImportKey.PID_FILE, 'r') as fd:
+            try:
+                pid = int(fd.readline())
+            except ValueError:
+                return {__ERROR: __PARSE_PID_ERROR}
 
         uuid = get_uuid()
-
-        fd = open("/tmp/importd.pid", 'r')
-        pid = int(fd.readline())
-        fd.close()
+        # FIXME: A race condition may occur here
+        import_col_man.create_import_status(uuid)
 
         try:
+            file_ = __FILE.format(uuid)
+
+            if os.path.exists(file_):
+                return {__ERROR: __STORE_ERROR.format(
+                    "an import already exist with the same id on the disk")}
+
+            with open(file_, 'w') as fd:
+                j.dump(json, fd)
+
             os.kill(pid, signal.SIGUSR1)
-        except OSError as e:
-            return {__ERROR: e}
-        else:
-            return {__IMPORT_ID: uuid}
+
+            return {__IMPORT_ID : str(uuid)}
+
+        except IOError as ioerror:
+            return {__ERROR: __STORE_ERROR.format(str(ioerror))}
+
+        except OSError:
+            return {__ERROR: __PID_NOT_MATCH}
+
+        except Exception as error:
+            return {__ERROR: __OTHER_ERROR.format(str(error))}
+
 
     @route(
         ws.application.get,

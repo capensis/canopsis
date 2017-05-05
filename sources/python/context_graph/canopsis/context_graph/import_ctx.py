@@ -7,8 +7,9 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 import jsonschema
 import ijson
+import time
 
-class ImportKey():
+class ImportKey:
 
     # Status
     ST_PENDING = "pending"
@@ -24,6 +25,9 @@ class ImportKey():
     F_EXECTIME = "exec_time"
     F_START = "start"
     F_STATS = "stats"
+
+    # daemon PID file
+    PID_FILE = "/opt/canopsis/var/run/importd.pid"
 
 CONF_FILE = 'context_graph/manager.conf'
 CATEGORY = "IMPORTCONTEXT"
@@ -99,6 +103,23 @@ class Manager(MiddlewareRegistry):
         for field in authorized_fields:
             if infos.has_key(field):
                 new_status[field] = infos[field]
+
+        self[self.STORAGE].put_element(new_status)
+
+    def create_import_status(self, uuid):
+        """Create a new import status. It will be create with the given uuid,
+        the creation date corresponding to the call of this function and the
+        PENDING status.
+        :param uuid: the uuid as a string
+        """
+
+        if self.is_present(uuid):
+            raise ValueError("An import status with the same uuid ({0}) "\
+                             " already exist.")
+
+        new_status = {ImportKey.F_ID: uuid,
+                      ImportKey.F_CREATION: time.asctime(),
+                      ImportKey.F_STATUS: ImportKey.ST_PENDING}
 
         self[self.STORAGE].put_element(new_status)
 
