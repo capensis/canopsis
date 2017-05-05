@@ -28,6 +28,8 @@ class ImportKey:
 
     # daemon PID file
     PID_FILE = "/opt/canopsis/var/run/importd.pid"
+    # import file pattern
+    IMPORT_FILE = "/opt/canopsis/tmp/import_{0}.json"
 
 CONF_FILE = 'context_graph/manager.conf'
 CATEGORY = "IMPORTCONTEXT"
@@ -499,20 +501,14 @@ class ContextGraphImport(ContextGraph):
     def __a_enable_link(self, link):
         raise NotImplementedError()
 
-    # def import_context(self, file_, id_):
-    def import_context(self, data):
-        import json
-        # Ugly temporary patch
-        file_ = "/opt/canopsis/tmp/import.json"
-        fd = open(file_, "w+")
-        fd.write(json.dumps(data))
-        fd.close()
-        # end of ugly temporary patch
+    def import_context(self, uuid):
+
+        file_ = ImportKey.IMPORT_FILE.format(uuid)
 
         fd = open(file_, 'r')
 
-        # In case the previous import failed and raise an exception, we clean\
-            #    now
+        # In case the previous import failed and/or raise an exception, we\
+            # clean now
         self.clean_attributes()
 
         self.entities_to_update = self.__get_entities_to_update(fd)

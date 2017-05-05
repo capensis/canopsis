@@ -31,7 +31,6 @@ manager = ContextGraph()
 import_manager = ContextGraphImport()
 import_col_man = Manager()
 
-__FILE = "/opt/canopsis/tmp/import-{0}.json"
 __IMPORT_ID = "import_id"
 __ERROR = "error"
 __PARSE_PID_ERROR = "Impossible to parse the pid file."
@@ -127,7 +126,7 @@ def exports(ws):
         import_col_man.create_import_status(uuid)
 
         try:
-            file_ = __FILE.format(uuid)
+            file_ = ImportKey.IMPORT_FILE.format(uuid)
 
             if os.path.exists(file_):
                 return {__ERROR: __STORE_ERROR.format(
