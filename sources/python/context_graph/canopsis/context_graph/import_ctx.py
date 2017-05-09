@@ -25,6 +25,8 @@ class ImportKey:
     F_EXECTIME = "exec_time"
     F_START = "start"
     F_STATS = "stats"
+    F_DELETED = "deleted"
+    F_UPDATED = "updated"
 
     # daemon PID file
     PID_FILE = "/opt/canopsis/var/run/importd.pid"
@@ -40,6 +42,7 @@ class Manager(MiddlewareRegistry):
     """The manager use to interact with the default_importgraph collecion."""
 
     STORAGE = 'import_storage'
+    DATE_FORMAT = "%a %b %d %H:%M:%S %Y"
 
     def __init__(self, *args, **kwargs):
         """__init__
@@ -60,9 +63,13 @@ class Manager(MiddlewareRegistry):
         if len(imports) == 0:
             return None
 
+
         next_ = imports[0]
+        next_[ImportKey.F_CREATION] = time.strptime(
+            str(next_[ImportKey.F_CREATION]), self.DATE_FORMAT)
 
         for import_ in imports:
+
             if import_[ImportKey.F_CREATION] <\
                next_[ImportKey.F_CREATION]:
                 next_ = import_
@@ -131,8 +138,8 @@ class Manager(MiddlewareRegistry):
 
             :return: True if an import is on going
         """
-        result = list(self[self.IMPORT_STORAGE].find_elements(
-            query={'state': 'on going'}))
+        result = list(self[self.STORAGE].find_elements(
+            query={ImportKey.F_STATUS: ImportKey.ST_ONGOING}))
 
         return len() == 1
 
@@ -140,22 +147,22 @@ class Manager(MiddlewareRegistry):
         """
             check if an id is already taken
         """
-        result = list(self[self.IMPORT_STORAGE].get_elements(
-            query={'_id':_id}))
+        result = list(self[self.STORAGE].get_elements(
+            query={ImportKey.F_ID: _id}))
 
         return len(result) == 1
 
-    def get_state_import(self, _id):
+    def get_import_status(self, _id):
         """
         return the state of an import.
         :param _id: the id of the import
         :return type: a string containg one of the following value "pending",
         "ongoing","failed" or "done".
         """
-        status = list(self[self.IMPORT_STORAGE].get_elements(
-            query={'_id': _id}))[0]
+        status = list(self[self.STORAGE].get_elements(
+            query={ImportKey.F_ID: _id}))[0]
 
-        return status['state']
+        return status
 
 class ContextGraphImport(ContextGraph):
 
@@ -533,6 +540,11 @@ class ContextGraphImport(ContextGraph):
         raise NotImplementedError()
 
     def import_context(self, uuid):
+        """Import a new context.
+
+        :param uuid: the uuid of the import to process
+        :return type: a tuple (updated entities, deleted entities)
+        """
 
         file_ = ImportKey.IMPORT_FILE.format(uuid)
 
@@ -588,7 +600,11 @@ class ContextGraphImport(ContextGraph):
                        "the same import. Update aborted.".format(id_)
                 raise ValueError(desc)
 
+        updated_entities = len(self.update)
+        deleted_entities = len(self.delete)
+
         self._put_entities(self.update.values())
         self._delete_entities(self.delete)
 
         self.clean_attributes()
+        return updated_entities, deleted_entities

@@ -7,15 +7,15 @@ import os
 import sys
 import time
 
-#TODO: stack the import −> add a counter or use a mutex
-#TODO: change the logging format to match the one used on canopsis
+# TODO: stack the import -> add a counter or use a mutex
+# TODO: change the logging format to match the one used on canopsis
 
 ROOT = "/opt/canopsis/"
 UMASK = 0
 
 E_DAEMON_CREATION = "Error while creating the daemon."
 E_CHANGE_DIR = "Impossible to change the current working directory to " + \
-                   ROOT + "."
+    ROOT + "."
 E_IMPORT_FAILED = "Error during the import of id {0} : {1}."
 I_IMPORT_DONE = "Import {0} done."
 I_START_IMPORT = "Start import {0}."
@@ -35,7 +35,7 @@ def import_handler(signum, stack):
     start = time.time()
     report = {}
     try:
-        importer.import_context(uuid)
+        updated, deleted = importer.import_context(uuid)
 
     except Exception as e:
         report = {ImportKey.F_STATUS: ImportKey.ST_FAILED,
@@ -43,7 +43,11 @@ def import_handler(signum, stack):
         logging.error(E_IMPORT_FAILED.format(uuid, e))
 
     else:
-        report = {ImportKey.F_STATUS: ImportKey.ST_DONE}
+        report = {ImportKey.F_STATUS: ImportKey.ST_DONE,
+                  ImportKey.F_STATS:
+                  {ImportKey.F_DELETED: deleted,
+                   ImportKey.F_UPDATED: updated}}
+
         logging.info(I_IMPORT_DONE.format(uuid))
 
     end = time.time()
@@ -53,10 +57,20 @@ def import_handler(signum, stack):
     del(importer)
     del(manager)
 
+
 def daemon_loop():
     signal.signal(signal.SIGUSR1, import_handler)
-    while True: # Main loop. Weee
+    fd = open("/tmp/plop.log", 'a')
+
+    while True:  # Main loop. Weee
+        fd.write("Signal\n")
+        fd.flush()
         signal.pause()
+        fd.write("\treceived\n")
+        fd.flush()
+    fd.close()
+
+
 
 def daemonize(function):
     try:
@@ -65,10 +79,10 @@ def daemonize(function):
         logging.error(E_DAEMON_CREATION)
         exit(1)
 
-    if pid > 0: # parent
+    if pid > 0:  # parent
         exit(0)
 
-    else: # child
+    else:  # child
         sid = os.setsid()
         signal.signal(signal.SIGUSR1, signal.SIG_IGN)
         signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -80,7 +94,7 @@ def daemonize(function):
             logging.error(E_DAEMON_CREATION)
             exit(1)
 
-        if pid > 0: # parent
+        if pid > 0:  # parent
             exit(0)
         else:
             try:
@@ -108,9 +122,8 @@ def daemonize(function):
         function()
 
 
-
 def main():
-    logging.basicConfig(filename='/opt/canopsis/var/log/impord.log',
+    logging.basicConfig(filename='/opt/canopsis/var/log/importd.log',
                         level=logging.DEBUG)
     daemonize(daemon_loop)
 
