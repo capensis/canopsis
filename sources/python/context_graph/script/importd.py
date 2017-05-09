@@ -24,7 +24,6 @@ I_DAEMON_RUNNING = "The daemon is running with the pid {0}."
 
 def import_handler(signum, stack):
 
-
     importer = ContextGraphImport()
     manager = Manager()
 
@@ -58,7 +57,6 @@ def daemon_loop():
     signal.signal(signal.SIGUSR1, import_handler)
     while True: # Main loop. Weee
         signal.pause()
-
 
 def daemonize(function):
     try:
@@ -100,7 +98,7 @@ def daemonize(function):
             except OSError:
                 pass
 
-        pid = os.getgid()
+        pid = os.getpid()
 
         with open(ImportKey.PID_FILE, 'w') as fd:
             fd.write("{0}".format(pid))
