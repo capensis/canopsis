@@ -125,6 +125,37 @@ class Manager(MiddlewareRegistry):
 
         self[self.STORAGE].put_element(new_status)
 
+    def on_going_in_db(self):
+        """
+            check if there is an import on going
+
+            :return: True if an import is on going
+        """
+        result = list(self[self.IMPORT_STORAGE].find_elements(
+            query={'state': 'on going'}))
+
+        return len() == 1
+
+    def check_id(self, _id):
+        """
+            check if an id is already taken
+        """
+        result = list(self[self.IMPORT_STORAGE].get_elements(
+            query={'_id':_id}))
+
+        return len(result) == 1
+
+    def get_state_import(self, _id):
+        """
+        return the state of an import.
+        :param _id: the id of the import
+        :return type: a string containg one of the following value "pending",
+        "ongoing","failed" or "done".
+        """
+        status = list(self[self.IMPORT_STORAGE].get_elements(
+            query={'_id': _id}))[0]
+
+        return status['state']
 
 class ContextGraphImport(ContextGraph):
 
@@ -561,40 +592,3 @@ class ContextGraphImport(ContextGraph):
         self._delete_entities(self.delete)
 
         self.clean_attributes()
-
-    def on_going_in_db(self):
-        """
-            check if there is an import on going
-
-            :return: True if an import is on going
-        """
-        return len(list(self[self.IMPORT_STORAGE].find_elements(query={'state': 'on going'}))) == 1
-
-    def check_id(self, _id):
-        """
-            check if an id is already taken
-        """
-        return len(list(self[self.IMPORT_STORAGE].get_elements(query={'_id': _id}))) == 1
-
-    def put_import(self, doc):
-        """
-            put an inport in db
-        """
-        return self[self.IMPORT_STORAGE].put_elements(doc)
-
-    def update_import(self, doc):
-        """
-            update import in db
-        """
-        check = len(list(self[self.IMPORT_STORAGE].get_elements(query={'_id': doc['_id']}))) == 1
-        if check:
-            return self[self.IMPORT_STORAGE].put_elements(doc)
-        else:
-            raise ValueError
-            self.logger.error('not in db')
-
-    def get_import_status(self, _id):
-        """
-            return the status of import
-        """
-        return list(self[self.IMPORT_STORAGE].get_elements(query={'_id': _id}))[0]['state']

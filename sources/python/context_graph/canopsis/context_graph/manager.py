@@ -15,7 +15,6 @@ class ContextGraph(MiddlewareRegistry):
 
     ENTITIES_STORAGE = 'entities_storage'
     ORGANISATIONS_STORAGE = 'organisations_storage'
-    IMPORT_STORAGE = 'import_storage'
     USERS_STORAGE = 'measurements_storage'
     NAME = 'name'
 
@@ -447,7 +446,7 @@ class ContextGraph(MiddlewareRegistry):
 
         res = col.aggregate(ag)
         return res['result'][0]
-        
+
     def get_graph_depends(self, _id, deepness=None):
         col = self[ContextGraph.ENTITIES_STORAGE]._backend
         ag = []
