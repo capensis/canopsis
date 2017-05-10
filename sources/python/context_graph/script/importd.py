@@ -46,6 +46,10 @@ def process_import():
     importer = ContextGraphImport()
 
     uuid = manager.get_next_uuid()
+
+    if uuid is None:
+        return
+
     logging.info("Processing import {0}.".format(uuid))
 
     logging.info(I_START_IMPORT.format(uuid))
