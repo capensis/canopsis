@@ -21,6 +21,20 @@ I_IMPORT_DONE = "Import {0} done."
 I_START_IMPORT = "Start import {0}."
 I_DAEMON_RUNNING = "The daemon is running with the pid {0}."
 
+def execution_time(exec_time):
+    """Return from exec_time a human readable string that represent the
+    execution time in a human readable format"""
+
+    exec_time = int(exec_time) # we do not care of everything under the second
+
+    hours =  exec_time / 3600
+    minutes = (exec_time - 3600 * hours) / 60
+    seconds = exec_time - (hours * 3600) - (minutes * 60)
+
+    return "{0}:{1}:{2}".format(str(hours).zfill(2),
+                                str(minutes).zfill(2),
+                                str(seconds).zfill(2))
+
 
 def import_handler(signum, stack):
 
@@ -51,7 +65,7 @@ def import_handler(signum, stack):
         logging.info(I_IMPORT_DONE.format(uuid))
 
     end = time.time()
-    report[ImportKey.F_EXECTIME] = end - start
+    report[ImportKey.F_EXECTIME] = execution_time(end - start)
     manager.update_status(uuid, report)
 
     del(importer)
