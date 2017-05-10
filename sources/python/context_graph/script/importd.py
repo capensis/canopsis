@@ -7,6 +7,7 @@ import os
 import sys
 import time
 import threading
+import atexit
 
 # TODO: stack the import -> add a counter or use a mutex
 # TODO: change the logging format to match the one used on canopsis
@@ -23,10 +24,10 @@ I_IMPORT_DONE = "Import {0} done."
 I_START_IMPORT = "Start import {0}."
 I_DAEMON_RUNNING = "The daemon is running with the pid {0}."
 
-import_mutex = threading.Lock()
-
-counter = 0
 manager = Manager()
+
+def cleanup():
+    os.remove(ImportKey.PID_FILE)
 
 def execution_time(exec_time):
     """Return from exec_time a human readable string that represent the
@@ -77,6 +78,7 @@ def process_import():
     report[ImportKey.F_EXECTIME] = execution_time(end - start)
     manager.update_status(uuid, report)
 
+    os.remove(ImportKey.IMPORT_FILE.format(uuid))
     del(importer)
 
 def sig_usr1_handler(signum, stack):
@@ -135,6 +137,8 @@ def daemonize(function):
                 pass
 
         pid = os.getpid()
+
+        atexit.register(cleanup)
 
         with open(ImportKey.PID_FILE, 'w') as fd:
             fd.write("{0}".format(pid))
