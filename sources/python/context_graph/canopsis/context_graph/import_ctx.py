@@ -6,6 +6,7 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 import jsonschema
+import threading
 import ijson
 import time
 
@@ -291,35 +292,57 @@ class ContextGraphImport(ContextGraph):
         self.update.clear()
         del self.delete[:]
 
-
     def __get_entities_to_update(self, file_):
         """Return every entities id required for the update
         :param json: the json with every actions required for the update
         :param rtype: a dict with the entity id as a key and the entity as
         a value
         """
+        ids_cis = set()
+        ids_links = set()
+
         # a set so no duplicate ids without effort and low time complexity
-        ids = set()
+        def __get_entities_to_update_links(file_):
+            fd = open(file_, 'r')
+            for link in ijson.items(fd, "{0}.item".format(self.K_LINKS)):
+                for id_ in link[self.K_FROM]:
+                    ids_links.add(id_)
 
-        for ci in ijson.items(file_, "{0}.item".format(self.K_CIS)):
-            ids.add(ci[self.K_ID])
+                ids_links.add(link[self.K_ID])
+            fd.close()
 
-            # we need to retreive every related entity to update the links
-            if ci[self.K_ACTION] == self.A_DELETE:
-            # FIXME do the get_entities_by_id in one call Then add all impacts\
-                # depends
-                entity = self.get_entities_by_id(ci[self.K_ID])[0]
+        def __get_entities_to_update_cis(file_):
+            fd = open(file_, 'r');
+            for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
+                ids_cis.add(ci[self.K_ID])
 
-                for id_ in entity["depends"] + entity["impact"]:
-                    ids.add(id_)
+                # we need to retreive every related entity to update the links
+                if ci[self.K_ACTION] == self.A_DELETE:
+                    # FIXME do the get_entities_by_id in one call Then add all
+                        # impacts depends
+                    entity = self.get_entities_by_id(ci[self.K_ID])[0]
 
-        file_.seek(0)
+                    for id_ in entity["depends"] + entity["impact"]:
+                        ids_cis.add(id_)
+            fd.close()
 
-        for link in ijson.items(file_, "{0}.item".format(self.K_LINKS)):
-            for id_ in link[self.K_FROM]:
-                ids.add(id_)
+        cis_thd = threading.Thread(group=None,
+                                   target=__get_entities_to_update_cis,
+                                   name="cis thread",
+                                   args=(file_,))
 
-            ids.add(link[self.K_ID])
+        links_thd = threading.Thread(group=None,
+                                     target=__get_entities_to_update_links,
+                                     name="links thread",
+                                     args=(file_,))
+
+        cis_thd.start()
+        links_thd.start()
+
+        cis_thd.join()
+        links_thd.join()
+
+        ids = ids_links.union(ids_cis)
 
         result = self.get_entities_by_id(list(ids))
         ctx = {}
@@ -565,7 +588,7 @@ class ContextGraphImport(ContextGraph):
             # clean now
         self.clean_attributes()
 
-        self.entities_to_update = self.__get_entities_to_update(fd)
+        self.entities_to_update = self.__get_entities_to_update(file_)
 
         fd.seek(0)
 
