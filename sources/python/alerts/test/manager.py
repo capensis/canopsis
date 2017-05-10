@@ -19,7 +19,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from time import time
+from datetime import datetime, timedelta
+import operator
+import time
 from unittest import main
 
 from canopsis.alerts import AlarmField
@@ -225,7 +227,7 @@ class TestManager(BaseTest):
 
     def test_resolve_stealthy(self):
         storage = self.manager[Alerts.ALARM_STORAGE]
-        now = int(time()) - self.manager.stealthy_show_duration - 1
+        now = int(time.time()) - self.manager.stealthy_show_duration - 1
 
         alarm_id = '/fake/alarm/id'
         alarm = self.manager.make_alarm(
@@ -1016,6 +1018,81 @@ class TestManager(BaseTest):
         self.assertEqual(events[0], expected_event0)
         self.assertEqual(events[1], expected_event1)
         self.assertEqual(events[2], expected_event2)
+
+    def test_check_alarm(self):
+        now = datetime.now() - timedelta(minutes=31)
+        now_stamp = int(time.mktime(now.timetuple()))
+        alarm, value = self.gen_fake_alarm(now_stamp)
+
+        self.assertFalse(self.manager.check_alarm(alarm, 'cacao', operator.eq, 'maigre'))
+        self.assertFalse(self.manager.check_alarm(alarm, 'component', operator.eq, 'bb'))
+        self.assertTrue(self.manager.check_alarm(alarm, 'component', operator.eq, 'c'))
+
+    """
+    def test_check_alarm_filters(self):
+        import logging
+        steam_handler = logging.StreamHandler()
+        self.manager.logger.addHandler(steam_handler)
+
+        #now = datetime.now() + timedelta(minutes=31)
+        now_stamp = int(time.mktime(datetime.now().timetuple()))
+
+        alarm, value = self.gen_fake_alarm(now_stamp)
+        alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
+        self.manager.update_current_alarm(alarm, value)
+
+        self.manager.check_alarm_filters()
+
+        result = self.manager.get_alarms(resolved=False)
+        self.assertTrue(alarm_id in result)
+        self.assertEqual(len(result[alarm_id]), 1)
+        self.assertEqual(result[alarm_id][0]['value']['state']['val'],
+                         Check.MINOR)
+        self.assertTrue(self.manager.AF_RUN in result[alarm_id][0]['value'])
+        alarm_filters1 = result[alarm_id][0]['value'][self.manager.AF_RUN]
+        #print(alarm_filters1)
+        self.assertTrue(isinstance(alarm_filters1, dict))
+
+        # The filter has already been applied => alarm must not change
+        now_stamp = int(time.mktime(datetime.now().timetuple()))
+        alarm, value = self.gen_fake_alarm(now_stamp)
+        alarm_id2 = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
+
+        self.manager.check_alarm_filters()
+        result = self.manager.get_alarms(resolved=False)
+        #print(result)
+        alarm_filters2 = result[alarm_id2][0]['value'][self.manager.AF_RUN]
+        for key in alarm_filters1.keys():
+            self.assertEqual(alarm_filters1[key], alarm_filters2[key])
+    """
+
+    def gen_fake_alarm(self, moment):
+        # Generate a fake alarm.
+        alarm_id = '/fake/alarm/id'
+        alarm = self.manager.make_alarm(
+            alarm_id,
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': moment
+            }
+        )
+        value = alarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        value[AlarmField.state.value] = {
+            't': moment,
+            'val': Check.MINOR
+        }
+        value[AlarmField.steps.value] = [
+            {
+                '_t': 'stateinc',
+                't': moment,
+                'a': 'test',
+                'm': 'test',
+                'val': Check.MINOR
+            }
+        ]
+        return alarm, value
 
 
 if __name__ == '__main__':

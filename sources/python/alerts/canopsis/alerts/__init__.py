@@ -35,7 +35,7 @@ class AlarmField(Enum):
     pbehaviors = 'phbehaviors'
     resolved = 'resolved'
     snooze = 'snooze'
-    state = 'state'
+    state = u'state'
     status = 'status'
     steps = 'steps'
     tags = 'tags'
