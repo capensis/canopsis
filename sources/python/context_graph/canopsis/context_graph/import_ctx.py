@@ -141,7 +141,18 @@ class Manager(MiddlewareRegistry):
         result = list(self[self.STORAGE].find_elements(
             query={ImportKey.F_STATUS: ImportKey.ST_ONGOING}))
 
-        return len() == 1
+        return len(result) == 1
+
+    def pending_in_db(self):
+        """
+            check if there is a pending import in database
+
+            :return: True if a pending import in database
+        """
+        result = list(self[self.STORAGE].find_elements(
+            query={ImportKey.F_STATUS: ImportKey.ST_PENDING}))
+
+        return len(result) > 0
 
     def check_id(self, _id):
         """

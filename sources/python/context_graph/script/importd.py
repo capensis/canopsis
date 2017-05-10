@@ -6,6 +6,7 @@ import logging
 import os
 import sys
 import time
+import threading
 
 # TODO: stack the import -> add a counter or use a mutex
 # TODO: change the logging format to match the one used on canopsis
@@ -17,9 +18,15 @@ E_DAEMON_CREATION = "Error while creating the daemon."
 E_CHANGE_DIR = "Impossible to change the current working directory to " + \
     ROOT + "."
 E_IMPORT_FAILED = "Error during the import of id {0} : {1}."
+E_BEYOND_REPAIR = "An error beyond repair occured : {0}. Exiting."
 I_IMPORT_DONE = "Import {0} done."
 I_START_IMPORT = "Start import {0}."
 I_DAEMON_RUNNING = "The daemon is running with the pid {0}."
+
+import_mutex = threading.Lock()
+
+counter = 0
+manager = Manager()
 
 def execution_time(exec_time):
     """Return from exec_time a human readable string that represent the
@@ -35,13 +42,11 @@ def execution_time(exec_time):
                                 str(minutes).zfill(2),
                                 str(seconds).zfill(2))
 
-
-def import_handler(signum, stack):
-
+def process_import():
     importer = ContextGraphImport()
-    manager = Manager()
 
     uuid = manager.get_next_uuid()
+    logging.info("Processing import {0}.".format(uuid))
 
     logging.info(I_START_IMPORT.format(uuid))
     manager.update_status(uuid, {ImportKey.F_STATUS: ImportKey.ST_ONGOING})
@@ -69,22 +74,21 @@ def import_handler(signum, stack):
     manager.update_status(uuid, report)
 
     del(importer)
-    del(manager)
 
+def sig_usr1_handler(signum, stack):
+    signal.signal(signal.SIGUSR1, signal.SIG_IGN)
+    process_import()
+
+    while manager.pending_in_db():
+        process_import()
+
+    signal.signal(signal.SIGUSR1, sig_usr1_handler)
 
 def daemon_loop():
-    signal.signal(signal.SIGUSR1, import_handler)
-    fd = open("/tmp/plop.log", 'a')
+    signal.signal(signal.SIGUSR1, sig_usr1_handler)
 
     while True:  # Main loop. Weee
-        fd.write("Signal\n")
-        fd.flush()
         signal.pause()
-        fd.write("\treceived\n")
-        fd.flush()
-    fd.close()
-
-
 
 def daemonize(function):
     try:
@@ -133,10 +137,15 @@ def daemonize(function):
 
         logging.info(I_DAEMON_RUNNING.format(pid))
 
-        function()
+        try:
+            function()
+        except Exception as e:
+            logging.critical(E_BEYOND_REPAIR.format(e))
 
 
 def main():
+
+
     logging.basicConfig(filename='/opt/canopsis/var/log/importd.log',
                         level=logging.DEBUG)
     daemonize(daemon_loop)
