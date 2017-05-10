@@ -43,7 +43,7 @@ def get_uuid():
     used, try again until an UUID not used is created"""
 
     uuid = uuid4()
-    while import_manager.check_id(uuid):
+    while import_col_man.check_id(uuid):
         uuid = uuid4()
 
     return str(uuid)
@@ -217,4 +217,4 @@ def exports(ws):
 
     @ws.application.get('/api/contextgraph/import/status/<cid>')
     def get_status(cid):
-        return import_manager.get_import_status(cid)
+        return import_col_man.get_import_status(cid)
