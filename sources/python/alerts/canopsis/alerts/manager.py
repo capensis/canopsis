@@ -36,10 +36,12 @@ from canopsis.selector.manager import Selector
 from canopsis.alerts import AlarmField
 from canopsis.alerts.status import (
     get_last_state, get_last_status,
-    OFF, STEALTHY, is_stealthy, get_previous_step, is_keeped_state
+    OFF, STEALTHY, is_stealthy, is_keeped_state
 )
 
-from time import time
+from datetime import datetime, timedelta
+import operator
+import time
 
 
 CONF_PATH = 'alerts/manager.conf'
@@ -61,6 +63,8 @@ class Alerts(MiddlewareRegistry):
     CONFIG_STORAGE = 'config_storage'
     ALARM_STORAGE = 'alarm_storage'
     CONTEXT_MANAGER = 'context'
+
+    AF_RUN = 'alarm_filters_run'
 
     @property
     def config(self):
@@ -266,7 +270,7 @@ class Alerts(MiddlewareRegistry):
                 '$or':
                 [
                     {AlarmField.snooze.value: None},
-                    {'{}.val'.format(AlarmField.snooze.value): {'$lte': int(time())}}
+                    {'{}.val'.format(AlarmField.snooze.value): {'$lte': int(time.time())}}
                 ]
             }
             query = {'$and': [query, no_snooze_cond]}
@@ -459,11 +463,6 @@ class Alerts(MiddlewareRegistry):
                 self.logger.critical('error no enabled in entity')
                 pass
 
-
-        author = event.get('author', None)
-        message = event.get('output', None)
-
-
         if event['event_type'] == Check.EVENT_TYPE:
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
@@ -492,46 +491,69 @@ class Alerts(MiddlewareRegistry):
             self.update_current_alarm(alarm, value)
 
         else:
-            try:
-                task = get_task('alerts.useraction.{0}'.format(
-                    event['event_type']
-                ), cacheonly=True)
+            self.execute_task('alerts.useraction.{}'
+                              .format(event['event_type']),
+                              event=event,
+                              entity_id=entity_id)
 
-            except ImportError:
-                task = None
+    def execute_task(self, name, event, entity_id,
+                     author=None, new_state=None, diff_counter=None):
+        """
+        Find and execute a task.
+        """
+        # Find the corresponding task
+        try:
+            task = get_task(name, cacheonly=True)
+        except ImportError:
+            self.logger.warning('Unkown task {}'.format(name))
+            return
 
-            if task is not None:
-                alarm = self.get_current_alarm(entity_id)
-                if alarm is None:
-                    self.logger.warning(
-                        'Entity {} has no current alarm : ignoring'.format(
-                            entity_id
-                        )
-                    )
-                    return
+        # Find the corresponding alarm
+        alarm = self.get_current_alarm(entity_id)
+        if alarm is None:
+            self.logger.warning(
+                'Entity {} has no current alarm : ignoring'.format(entity_id)
+            )
+            return
 
-                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
-                if self.is_hard_limit_reached(value):
-                    # Only cancel is allowed when hard limit has been reached
-                    if event['event_type'] != 'cancel':
-                        return
+        if self.is_hard_limit_reached(value):
+            # Only cancel is allowed when hard limit has been reached
+            if event['event_type'] != 'cancel':
+                return
 
-                new_value = task(self, value, author, message, event)
-                status = None
+        # Execute the desired task
+        if '.systemaction' in name:
+            new_value = task(self, value, new_state, event)
+        elif '.useraction' in name:
+            message = event.get('output', None)
+            new_value = task(self, value, author, message, event)
+        elif '.lookup' in name or '.check' in name:
+            new_value = task(self, value)
+        elif '.crop' in name:
+            new_value = task(self, value, diff_counter)
+        else:
+            self.logger.warning('Unkown task type for {}'.format(name))
+            return
 
-                if isinstance(new_value, tuple):
-                    new_value, status = new_value
+        # Some tasks return two values (a value and a status)
+        status = None
+        if isinstance(new_value, tuple):
+            new_value, status = new_value
 
-                new_value = self.check_hard_limit(new_value)
+        new_value = self.check_hard_limit(new_value)
 
-                self.update_current_alarm(alarm, new_value)
+        self.update_current_alarm(alarm, new_value)
 
-                if status is not None:
-                    alarm = self.update_status(alarm, status, event)
-                    new_value = alarm[self[Alerts.ALARM_STORAGE].VALUE]
+        # If needed, update status
+        if status is not None:
+            alarm = self.update_status(alarm, status, event)
+            new_value = alarm[self[Alerts.ALARM_STORAGE].VALUE]
 
-                    self.update_current_alarm(alarm, new_value)
+            self.update_current_alarm(alarm, new_value)
+
+        return new_value
 
     def update_state(self, alarm, state, event):
         """
@@ -764,7 +786,7 @@ class Alerts(MiddlewareRegistry):
 
             alarm[AlarmField.steps.value].remove(state_changes[i])
 
-        task = get_task('alerts.systemaction.update_state_counter')
+        task = get_task('alerts.crop.update_state_counter')
         alarm = task(alarm, crop_counter)
 
         return alarm
@@ -808,7 +830,7 @@ class Alerts(MiddlewareRegistry):
                 return alarm
 
         if len(alarm[AlarmField.steps.value]) >= self.hard_limit:
-            task = get_task('alerts.systemaction.hard_limit')
+            task = get_task('alerts.check.hard_limit')
             return task(self, alarm)
 
         else:
@@ -829,7 +851,7 @@ class Alerts(MiddlewareRegistry):
 
                 if get_last_status(alarm) == OFF:
                     t = alarm[AlarmField.status.value]['t']
-                    now = int(time())
+                    now = int(time.time())
 
                     if (now - t) > self.flapping_interval:
                         alarm[AlarmField.resolved.value] = t
@@ -858,7 +880,7 @@ class Alerts(MiddlewareRegistry):
                     continue
 
                 event = {
-                    'timestamp': int(time()),  # now
+                    'timestamp': int(time.time()),  # now
                     'output': 'automaticly resolved after stealthy shown time',
                     'connector': alarm['connector'],
                     'connector_name': alarm['connector_name']
@@ -881,7 +903,7 @@ class Alerts(MiddlewareRegistry):
         storage = self[Alerts.ALARM_STORAGE]
         result = self.get_alarms(resolved=False)
 
-        now = int(time())
+        now = int(time.time())
 
         for data_id in result:
             for docalarm in result[data_id]:
@@ -895,6 +917,7 @@ class Alerts(MiddlewareRegistry):
                         alarm[AlarmField.resolved.value] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
 
+<<<<<<< HEAD
     def get_alarm_with_eid(self, eid, resolved=False):
         """
             get alarms on eids
@@ -906,3 +929,93 @@ class Alerts(MiddlewareRegistry):
             query['resolved'] = None
         return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
 
+=======
+    def check_alarm_filters(self):
+        """
+        Do actions on alarms based on certain conditions/filters.
+
+        Alarm[self.AF_RUN] = {alarm_id: timestamp_of_last_execution}
+        """
+        lifter = {
+            '_id': 'unidquilestjoli',
+            'limit': timedelta(minutes=30),
+            'key': 'connector',
+            'operator': operator.eq,
+            'value': 'ut-connector',
+            'task': ['alerts.systemaction.status_increase'],
+        }
+        # TODO: put that filter in the storage
+
+        author = 'system'
+        message = 'auto increment'
+
+        now = datetime.now()
+        now_stamp = int(time.mktime(now.timetuple()))
+
+        storage = self[Alerts.ALARM_STORAGE]
+        result = self.get_alarms(resolved=False)
+
+        for data_id in result:
+            for docalarm in result[data_id]:
+                # Continue only if the filter condition is valid
+                if not self.check_alarm(docalarm,
+                                        lifter['key'],
+                                        lifter['operator'],
+                                        lifter['value']):
+                    self.logger.critical('check alarm is false')
+                    continue
+
+                date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
+                # Continue only if the limit duration condition is valid
+                if date + lifter['limit'] < now:
+                    continue
+                # Only execute the filter once per reached limit
+                if self.AF_RUN in docalarm[storage.VALUE]:
+                    last = datetime.fromtimestamp(
+                        docalarm[storage.VALUE][self.AF_RUN][lifter['_id']])
+                    if now - last < lifter['limit']:
+                        self.logger.critical('already runned: {}'.format(last))
+                        continue
+
+                value = docalarm[storage.VALUE]
+                event = {
+                    'timestamp': now_stamp,
+                    'connector': value['connector'],
+                    'connector_name': value['connector_name'],
+                    'output': message,
+                }
+                new_state = value[AlarmField.state.value]['val'] + 1
+                # Executing each actions
+                for lifter_task in lifter['task']:
+                    self.logger.critical('execute task {}'.format(lifter_task))
+                    new_value = self.execute_task(name=lifter_task,
+                                                  event=event,
+                                                  entity_id=data_id,
+                                                  author=author,
+                                                  new_state=new_state)
+                    #self.logger.critical(new_value)
+
+                # Mark the alarm that this filter has been applied
+                if new_value is None:
+                    continue
+                if self.AF_RUN not in new_value:
+                    new_value[self.AF_RUN] = {}
+                new_value[self.AF_RUN][lifter['_id']] = now_stamp
+
+                real_alarm = self.get_current_alarm(data_id)
+                # TODO: alarms from get_alarms() and get_current_alarm() return
+                # different things !! we should unify this two (Alarm object ?)
+                self.update_current_alarm(real_alarm, new_value)
+
+    def check_alarm(self, alarm, key, operat, value):
+        """
+        Check if a specific in the alarm compared to a value by an operator.
+
+        """
+        #if not isinstance(operat, operator): return False
+
+        if key in alarm[self[Alerts.ALARM_STORAGE].VALUE]:
+            return operat(alarm[self[Alerts.ALARM_STORAGE].VALUE][key], value)
+
+        return False
+>>>>>>> first draft of alarm-filters ; task renaming based on their signature

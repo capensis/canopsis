@@ -310,7 +310,7 @@ def status_decrease(manager, alarm, status, event):
     return alarm
 
 
-@register_task('alerts.systemaction.update_state_counter')
+@register_task('alerts.crop.update_state_counter')
 def update_state_counter(alarm, diff_counter):
     """
     Create or update alarm state counter related to last status change.
@@ -356,7 +356,7 @@ def update_state_counter(alarm, diff_counter):
     return alarm
 
 
-@register_task('alerts.systemaction.hard_limit')
+@register_task('alerts.check.hard_limit')
 def hard_limit(manager, alarm):
     """
     Called when the system detects an hard limit overtake.
