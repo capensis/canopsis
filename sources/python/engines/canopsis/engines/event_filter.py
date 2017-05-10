@@ -29,7 +29,6 @@ from canopsis.event import forger, get_routingkey
 from canopsis.old.mfilter import check
 
 from json import loads
-from time import time
 
 
 class engine(Engine):
