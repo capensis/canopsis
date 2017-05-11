@@ -33,6 +33,8 @@ from calendar import timegm
 
 from datetime import datetime, timedelta
 
+import time
+
 from uuid import uuid4 as uuid
 
 MAXTS = 2147483647  #: maximal timestamp
@@ -291,7 +293,7 @@ class VEventManager(MiddlewareRegistry):
 
             document = None
 
-            if isinstance(vevent, dict):
+            if not isinstance(vevent, Event):  # Event inherit from dict...
 
                 document = vevent
                 # get uid
@@ -318,13 +320,13 @@ class VEventManager(MiddlewareRegistry):
                 # prepare the document with specific properties
                 document = self._get_vevent_properties(vevent=vevent)
                 # get dtstart
-                dtstart = vevent.get(VEventManager.DTSTART, 0)
+                dtstart = vevent.get(VEventManager.DTSTART, 0).dt
                 if isinstance(dtstart, datetime):
-                    dtstart = timegm(dtstart.timetuple())
+                    dtstart = int(time.mktime(dtstart.timetuple()))
                 # get dtend
-                dtend = vevent.get(VEventManager.DTEND, 0)
+                dtend = vevent.get(VEventManager.DTEND, 0).dt
                 if isinstance(dtend, datetime):
-                    dtend = timegm(dtend.timetuple())
+                    dtend = int(time.mktime(dtend.timetuple()))
                 # get rrule
                 rrule = vevent.get(VEventManager.RRULE)
                 if rrule is not None:
@@ -336,7 +338,7 @@ class VEventManager(MiddlewareRegistry):
                 # get duration
                 duration = vevent.get(VEventManager.DURATION)
                 if duration:
-                    duration = duration.total_seconds()
+                    duration = duration.dt.total_seconds()
                 # get uid
                 uid = vevent.get(VEventManager.UID)
                 if not uid:
@@ -354,7 +356,7 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.RRULE: rrule
                 })
 
-            self._update_element(element=document)
+            #self._update_element(element=document)
 
             self[VEventManager.STORAGE].put_element(
                 _id=uid, element=document
