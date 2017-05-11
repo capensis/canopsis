@@ -26,17 +26,19 @@ Alarms widget for Canopsis
 
 You need to clone the git repository and copy directory to Canopsis path
 
-    $ su - canopsis
-    $ brickmanager install brick-listalarm
+    $ su - canopsis 
+    $ cd var/www
+    $ ./bin/brickmanager install brick-listalarm
 
 Then, you need to enable the brick
 
-    $ brickmanager enable brick-listalarm
+    $ ./bin/brickmanager enable brick-listalarm
 
 You can see enabled bricks
 
     $ su - canopsis
-    $ brickmanager list
+    $ cd var/www
+    $ ./bin/brickmanager list
     [u'core', u'uibase', u'monitoring', ..., **u'brick-listalarm'**]
 
 ## Usage
@@ -51,7 +53,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-listalarm/blob/mas
 
 ### Lint
 
-Tested on commit : 8e004f6.
+Tested on commit : 23bcfab.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -74,5 +76,5 @@ Tested on commit : 8e004f6.
 
 ## Additional-info
 
-Minified version : 4 files (size: 116K)
-Development version : 54 files (size: 396K)
+Minified version : 4 files (size: 100K)
+Development version : 54 files (size: 292K)
