@@ -365,6 +365,8 @@ class ContextGraphImport(ContextGraph):
         ctx = {}
 
         for doc in result:
+            doc[self.K_DEPENDS] = set(doc[self.K_DEPENDS])
+            doc[self.K_IMPACT] = set(doc[self.K_IMPACT])
             ctx[doc[self.K_ID]] = doc
 
         return ctx
