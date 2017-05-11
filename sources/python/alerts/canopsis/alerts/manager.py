@@ -34,13 +34,13 @@ from canopsis.check import Check
 from canopsis.selector.manager import Selector
 
 from canopsis.alerts import AlarmField
+from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
     get_last_state, get_last_status,
     OFF, STEALTHY, is_stealthy, is_keeped_state
 )
 
-from datetime import datetime, timedelta
-import operator
+from datetime import datetime
 import time
 
 
@@ -62,6 +62,7 @@ class Alerts(MiddlewareRegistry):
 
     CONFIG_STORAGE = 'config_storage'
     ALARM_STORAGE = 'alarm_storage'
+    FILTER_STORAGE = 'filter_storage'
     CONTEXT_MANAGER = 'context'
 
     AF_RUN = 'alarm_filters_run'
@@ -177,6 +178,7 @@ class Alerts(MiddlewareRegistry):
             extra_fields=None,
             config_storage=None,
             alarm_storage=None,
+            filter_storage=None,
             context=None,
             *args, **kwargs
     ):
@@ -190,6 +192,9 @@ class Alerts(MiddlewareRegistry):
 
         if alarm_storage is not None:
             self[Alerts.ALARM_STORAGE] = alarm_storage
+
+        if filter_storage is not None:
+            self[Alerts.FILTER_STORAGE] = filter_storage
 
         if context is not None:
             self[Alerts.CONTEXT_MANAGER]= context
@@ -917,7 +922,6 @@ class Alerts(MiddlewareRegistry):
                         alarm[AlarmField.resolved.value] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
 
-<<<<<<< HEAD
     def get_alarm_with_eid(self, eid, resolved=False):
         """
             get alarms on eids
@@ -929,23 +933,12 @@ class Alerts(MiddlewareRegistry):
             query['resolved'] = None
         return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
 
-=======
     def check_alarm_filters(self):
         """
         Do actions on alarms based on certain conditions/filters.
 
         Alarm[self.AF_RUN] = {alarm_id: timestamp_of_last_execution}
         """
-        lifter = {
-            '_id': 'unidquilestjoli',
-            'limit': timedelta(minutes=30),
-            'key': 'connector',
-            'operator': operator.eq,
-            'value': 'ut-connector',
-            'task': ['alerts.systemaction.status_increase'],
-        }
-        # TODO: put that filter in the storage
-
         author = 'system'
         message = 'auto increment'
 
@@ -954,68 +947,56 @@ class Alerts(MiddlewareRegistry):
 
         storage = self[Alerts.ALARM_STORAGE]
         result = self.get_alarms(resolved=False)
-
+        # TODO : start from declared filters instead
         for data_id in result:
             for docalarm in result[data_id]:
-                # Continue only if the filter condition is valid
-                if not self.check_alarm(docalarm,
-                                        lifter['key'],
-                                        lifter['operator'],
-                                        lifter['value']):
-                    self.logger.critical('check alarm is false')
-                    continue
-
-                date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
-                # Continue only if the limit duration condition is valid
-                if date + lifter['limit'] < now:
-                    continue
-                # Only execute the filter once per reached limit
-                if self.AF_RUN in docalarm[storage.VALUE]:
-                    last = datetime.fromtimestamp(
-                        docalarm[storage.VALUE][self.AF_RUN][lifter['_id']])
-                    if now - last < lifter['limit']:
-                        self.logger.critical('already runned: {}'.format(last))
+                for lifter in AlarmFilters(storage=self[Alerts.FILTER_STORAGE],
+                                           alarm_id=data_id):
+                    #print(lifter)
+                    value = docalarm[storage.VALUE]
+                    # Continue only if the filter condition is valid
+                    if not lifter.check_alarm(value):
+                        #self.logger.critical('check alarm is false')
                         continue
 
-                value = docalarm[storage.VALUE]
-                event = {
-                    'timestamp': now_stamp,
-                    'connector': value['connector'],
-                    'connector_name': value['connector_name'],
-                    'output': message,
-                }
-                new_state = value[AlarmField.state.value]['val'] + 1
-                # Executing each actions
-                for lifter_task in lifter['task']:
-                    self.logger.critical('execute task {}'.format(lifter_task))
-                    new_value = self.execute_task(name=lifter_task,
-                                                  event=event,
-                                                  entity_id=data_id,
-                                                  author=author,
-                                                  new_state=new_state)
-                    #self.logger.critical(new_value)
+                    date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
+                    # Continue only if the limit condition is valid
+                    if date + lifter.limit < now:
+                        continue
+                    # Only execute the filter once per reached limit
+                    if self.AF_RUN in value:
+                        last = datetime.fromtimestamp(
+                            value[self.AF_RUN][lifter._id])
+                        if now - last < lifter.limit:
+                            #self.logger.critical('already runned at {}'.format(last))
+                            continue
 
-                # Mark the alarm that this filter has been applied
-                if new_value is None:
-                    continue
-                if self.AF_RUN not in new_value:
-                    new_value[self.AF_RUN] = {}
-                new_value[self.AF_RUN][lifter['_id']] = now_stamp
+                    event = {
+                        'timestamp': now_stamp,
+                        'connector': value['connector'],
+                        'connector_name': value['connector_name'],
+                        'output': message,
+                    }
+                    new_state = value[AlarmField.state.value]['val'] + 1
+                    # Executing each actions
+                    new_value = None
+                    for task in lifter.tasks:
+                        #self.logger.critical('execute task {}'.format(task))
+                        new_value = self.execute_task(name=task,
+                                                      event=event,
+                                                      entity_id=data_id,
+                                                      author=author,
+                                                      new_state=new_state)
 
-                real_alarm = self.get_current_alarm(data_id)
-                # TODO: alarms from get_alarms() and get_current_alarm() return
-                # different things !! we should unify this two (Alarm object ?)
-                self.update_current_alarm(real_alarm, new_value)
+                    # Mark the alarm that this filter has been applied
+                    if new_value is None:
+                        continue
+                    if self.AF_RUN not in new_value:
+                        new_value[self.AF_RUN] = {}
+                    new_value[self.AF_RUN][lifter._id] = now_stamp
 
-    def check_alarm(self, alarm, key, operat, value):
-        """
-        Check if a specific in the alarm compared to a value by an operator.
+                    real_alarm = self.get_current_alarm(data_id)
+                    # TODO: alarms from get_alarms() and get_current_alarm() return
+                    # different things !! we should unify this two (Alarm object ?)
+                    self.update_current_alarm(real_alarm, new_value)
 
-        """
-        #if not isinstance(operat, operator): return False
-
-        if key in alarm[self[Alerts.ALARM_STORAGE].VALUE]:
-            return operat(alarm[self[Alerts.ALARM_STORAGE].VALUE][key], value)
-
-        return False
->>>>>>> first draft of alarm-filters ; task renaming based on their signature

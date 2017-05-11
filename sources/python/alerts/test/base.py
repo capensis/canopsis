@@ -21,9 +21,11 @@
 
 from unittest import TestCase
 
-from canopsis.middleware.core import Middleware
+from canopsis.alerts import AlarmField
 from canopsis.alerts.manager import Alerts
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.check import Check
+from canopsis.middleware.core import Middleware
 
 
 class BaseTest(TestCase):
@@ -35,8 +37,8 @@ class BaseTest(TestCase):
         self.config_storage = Middleware.get_middleware_by_uri(
             'storage-default-testconfig://'
         )
-        self.context_graph_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testentities://'
+        self.filter_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testalarmfilter://'
         )
 
         self.manager = Alerts()
@@ -44,6 +46,7 @@ class BaseTest(TestCase):
         self.manager[Alerts.CONFIG_STORAGE] = self.config_storage
         self.manager.context_manager[
             ContextGraph.ENTITIES_STORAGE] = self.context_graph_storage
+        self.manager[Alerts.FILTER_STORAGE] = self.filter_storage
 
         self.config_storage.put_element(
             element={
@@ -61,4 +64,38 @@ class BaseTest(TestCase):
         )
 
     def tearDown(self):
+        """Teardown"""
         self.alarm_storage.remove_elements()
+        self.filter_storage.remove_elements()
+
+    def gen_fake_alarm(self, moment):
+        """
+        Generate a fake alarm/value.
+        """
+        alarm_id = '/fake/alarm/id'
+        alarm = self.manager.make_alarm(
+            alarm_id,
+            {
+                'connector': 'fake-connector',
+                'connector_name': 'fake-connector-name',
+                'component': 'c',
+                'timestamp': moment
+            }
+        )
+
+        value = alarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        value[AlarmField.state.value] = {
+            't': moment,
+            'val': Check.MINOR
+        }
+        value[AlarmField.steps.value] = [
+            {
+                '_t': 'stateinc',
+                't': moment,
+                'a': 'fake-author',
+                'm': 'fake-message',
+                'val': Check.MINOR
+            }
+        ]
+
+        return alarm, value
