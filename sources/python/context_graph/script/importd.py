@@ -57,7 +57,7 @@ def process_import():
 
     logging.info(I_START_IMPORT.format(uuid))
     manager.update_status(uuid, {ImportKey.F_STATUS: ImportKey.ST_ONGOING,
-                                 ImportKey.F_START: time.localtime()})
+                                 ImportKey.F_START: time.asctime()})
 
     start = time.time()
     report = {}
