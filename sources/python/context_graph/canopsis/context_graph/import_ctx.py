@@ -115,6 +115,7 @@ class Manager(MiddlewareRegistry):
         authorized_fields = [ImportKey.F_STATUS,
                              ImportKey.F_INFO,
                              ImportKey.F_EXECTIME,
+                             ImportKey.F_START,
                              ImportKey.F_STATS]
 
         if not self.is_present(uuid):
