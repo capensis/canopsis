@@ -83,6 +83,10 @@
 			"type": "string",
 			"required": true
 		},
+		"component_alias": {
+			"type": "string",
+			"required": true
+		},
 		"resource": {
 			"type": "string",
 			"required": true,
