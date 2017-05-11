@@ -115,7 +115,6 @@ class Manager(MiddlewareRegistry):
         authorized_fields = [ImportKey.F_STATUS,
                              ImportKey.F_INFO,
                              ImportKey.F_EXECTIME,
-                             ImportKey.F_START,
                              ImportKey.F_STATS]
 
         if not self.is_present(uuid):
@@ -389,27 +388,27 @@ class ContextGraphImport(ContextGraph):
             raise ValueError(desc)
 
         # Update the depends/impact link
-        for ent_id in entity["depends"]:
+        for ent_id in entity[self.K_DEPENDS]:
             if ent_id in self.delete:
                 # the entity of id ent_id is already deleted, skipping
                 continue
 
             self.update[ent_id] = self.entities_to_update[ent_id].copy()
             try:
-                self.update[ent_id]["impact"].remove(id_)
+                self.update[ent_id][self.K_IMPACT].remove(id_)
             except ValueError:
                 raise ValueError("Try to remove {0} from impacts field of"\
                                  "entity {1}.".format(id_, ent_id))
 
         # Update the impact/depends link
-        for ent_id in entity["impact"]:
+        for ent_id in entity[self.K_IMPACT]:
             if ent_id in self.delete:
                 # the entity of id ent_id is already deleted, skipping
                 continue
 
             self.update[ent_id] = self.entities_to_update[ent_id].copy()
             try:
-                self.update[ent_id]["depends"].remove(id_)
+                self.update[ent_id][self.K_DEPENDS].remove(id_)
             except ValueError:
                 raise ValueError("Try to remove {0} from impacts field of"\
                                  "entity {1}.".format(id_, ent_id))
@@ -450,6 +449,10 @@ class ContextGraphImport(ContextGraph):
             except KeyError:
                 pass
 
+        for entity in self.update.values():
+            entity[self.K_DEPENDS] = set(entity[self.K_DEPENDS])
+            entity[self.K_IMPACT] = set(entity[self.K_IMPACT])
+
         self.update[ci[self.K_ID]] = entity
 
 
@@ -472,9 +475,13 @@ class ContextGraphImport(ContextGraph):
         if not ci.has_key(self.K_NAME):
             ci[self.K_NAME] = ci[self.K_ID]
         if not ci.has_key(self.K_DEPENDS):
-            ci[self.K_DEPENDS] = []
+            ci[self.K_DEPENDS] = set()
+        else:
+            ci[self.K_DEPENDS] = set(ci[self.K_DEPENDS])
         if not ci.has_key(self.K_IMPACT):
-            ci[self.K_IMPACT] = []
+            ci[self.K_IMPACT] = set()
+        else:
+            ci[self.K_IMPACT] = set(ci[self.K_IMPACT])
         if not ci.has_key(self.K_MEASUREMENTS):
             ci[self.K_MEASUREMENTS] = []
         if not ci.has_key(self.K_INFOS):
@@ -561,8 +568,8 @@ class ContextGraphImport(ContextGraph):
         if link[self.K_TO] not in self.update.keys():
             self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
 
-        self.update[link[self.K_FROM]]['impact'].remove(link[self.K_TO])
-        self.update[link[self.K_TO]]['depends'].remove(link[self.K_FROM])
+        self.update[link[self.K_FROM]][self.K_IMPACT].remove(link[self.K_TO])
+        self.update[link[self.K_TO]][self.K_IMPACT].remove(link[self.K_FROM])
 
     def __a_update_link(self, link):
         raise NotImplementedError()
@@ -581,8 +588,8 @@ class ContextGraphImport(ContextGraph):
             if ci_id not in self.update.keys():
                 self.update[ci_id] = self.entities_to_update[ci_id]
 
-            self.update[ci_id]['impact'].append(link[self.K_TO])
-            self.update[link[self.K_TO]]['depends'].append(ci_id)
+            self.update[ci_id][self.K_IMPACT].add(link[self.K_TO])
+            self.update[link[self.K_TO]][self.K_DEPENDS].add(ci_id)
 
     def __a_disable_link(self, link):
         raise NotImplementedError()
@@ -660,6 +667,10 @@ class ContextGraphImport(ContextGraph):
 
         updated_entities = len(self.update)
         deleted_entities = len(self.delete)
+
+        for entity in self.update.values():
+            entity[self.K_IMPACT] = list(entity[self.K_IMPACT])
+            entity[self.K_DEPENDS] = list(entity[self.K_DEPENDS])
 
         start = time.time()
         self._put_entities(self.update.values())

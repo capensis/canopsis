@@ -158,8 +158,6 @@ def daemonize(function):
 
 
 def main():
-
-
     logging.basicConfig(filename='/opt/canopsis/var/log/importd.log',
                         level=logging.DEBUG)
     daemonize(daemon_loop)
