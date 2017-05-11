@@ -161,14 +161,14 @@ Ember.Application.initializer({
                 tstart = d.setMonth(d.getMonth() - 1)
                 tstop = new Date().getTime();
               }
-              return {
-                tstart: tstart,
-                tstop: tstop
-              }
               // return {
-              //   tstart: 0,
-              //   tstop: 0
+              //   tstart: tstart,
+              //   tstop: tstop
               // }
+              return {
+                tstart: 0,
+                tstop: 0
+              }
             },
 
             
