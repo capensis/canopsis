@@ -90,7 +90,8 @@ def event_processing(
         ev.add('dtstart', datetime.fromtimestamp(event['start']))
         ev.add('dtend', datetime.fromtimestamp(event['end']))
         ev.add('dtstamp', datetime.fromtimestamp(event['entry']))
-        ev.add('duration', timedelta(event['duration']))
+        if not event.get('fixed', True):
+            ev.add('duration', timedelta(seconds=event['duration']))
         ev.add('contact', event['author'])
 
         manager.put(source=eid, vevents=[ev])
