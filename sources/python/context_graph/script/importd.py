@@ -23,6 +23,8 @@ E_BEYOND_REPAIR = "An error beyond repair occured : {0}. Exiting."
 I_IMPORT_DONE = "Import {0} done."
 I_START_IMPORT = "Start import {0}."
 I_DAEMON_RUNNING = "The daemon is running with the pid {0}."
+I_QUEUED_IMPORT = "Queued import, processing import."
+I_NO_QUEUED_IMPORT = "No queued import. Go back to sleep."
 
 manager = Manager()
 
@@ -44,7 +46,7 @@ def execution_time(exec_time):
                                 str(seconds).zfill(2))
 
 def process_import():
-    importer = ContextGraphImport()
+    importer = ContextGraphImport(logger=logging)
 
     uuid = manager.get_next_uuid()
 
@@ -54,7 +56,8 @@ def process_import():
     logging.info("Processing import {0}.".format(uuid))
 
     logging.info(I_START_IMPORT.format(uuid))
-    manager.update_status(uuid, {ImportKey.F_STATUS: ImportKey.ST_ONGOING})
+    manager.update_status(uuid, {ImportKey.F_STATUS: ImportKey.ST_ONGOING,
+                                 ImportKey.F_START: time.localtime()})
 
     start = time.time()
     report = {}
@@ -85,9 +88,12 @@ def sig_usr1_handler(signum, stack):
     signal.signal(signal.SIGUSR1, signal.SIG_IGN)
     process_import()
 
+
     while manager.pending_in_db():
+        logging.info(I_QUEUED_IMPORT)
         process_import()
 
+    logging.info(I_NO_QUEUED_IMPORT)
     signal.signal(signal.SIGUSR1, sig_usr1_handler)
 
 def daemon_loop():

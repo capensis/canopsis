@@ -10,6 +10,23 @@ import threading
 import ijson
 import time
 
+CONF_FILE = 'context_graph/manager.conf'
+CATEGORY = "IMPORTCONTEXT"
+
+def execution_time(exec_time):
+    """Return from exec_time a human readable string that represent the
+    execution time in a human readable format"""
+
+    exec_time = int(exec_time) # we do not care of everything under the second
+
+    hours =  exec_time / 3600
+    minutes = (exec_time - 3600 * hours) / 60
+    seconds = exec_time - (hours * 3600) - (minutes * 60)
+
+    return "{0}:{1}:{2}".format(str(hours).zfill(2),
+                                str(minutes).zfill(2),
+                                str(seconds).zfill(2))
+
 class ImportKey:
 
     # Status
@@ -33,9 +50,6 @@ class ImportKey:
     PID_FILE = "/opt/canopsis/var/run/importd.pid"
     # import file pattern
     IMPORT_FILE = "/opt/canopsis/tmp/import_{0}.json"
-
-CONF_FILE = 'context_graph/manager.conf'
-CATEGORY = "IMPORTCONTEXT"
 
 @conf_paths(CONF_FILE)
 @add_category(CATEGORY)
@@ -258,13 +272,16 @@ class ContextGraphImport(ContextGraph):
             K_PROPERTIES: {"type": "object"}}}
 
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, logger=None, *args, **kwargs):
         """__init__
 
         :param *args:
         :param **kwargs:
         """
         super(ContextGraphImport, self).__init__(*args, **kwargs)
+
+        if logger is not None:
+            self.logger = logger
 
         self.entities_to_update = {}
         self.update = {}
@@ -588,12 +605,14 @@ class ContextGraphImport(ContextGraph):
             # clean now
         self.clean_attributes()
 
+        start = time.time()
         self.entities_to_update = self.__get_entities_to_update(file_)
+        end = time.time()
 
-        fd.seek(0)
+        self.logger.debug("Import {0} : get_entities_to_update {1}.".format(uuid, execution_time(end - start)))
 
+        start = time.time()
         for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
-
             # add function to check if the element is correct and if the state is right
             self.check_element(ci, self.K_CIS)
             if ci[self.K_ACTION] == self.A_DELETE:
@@ -609,9 +628,12 @@ class ContextGraphImport(ContextGraph):
             else:
                 raise ValueError("The action {0} is not recognized\n".format(
                     ci[self.K_ACTION]))
+        end = time.time()
+        self.logger.debug("Import {0} : update cis {1}.".format(uuid, execution_time(end - start)))
 
         fd.seek(0)
 
+        start = time.time()
         for link in ijson.items(fd, "{0}.item".format(self.K_LINKS)):
             self.check_element(link, self.K_LINKS)
             if link[self.K_ACTION] == self.A_DELETE:
@@ -627,6 +649,8 @@ class ContextGraphImport(ContextGraph):
             else:
                 raise ValueError("The action {0} is not recognized\n".format(
                     link[self.K_ACTION]))
+        end = time.time()
+        self.logger.debug("Import {0} : update links {1}.".format(uuid, execution_time(end - start)))
 
         for id_ in self.update:
             if id_ in self.delete:
@@ -637,8 +661,15 @@ class ContextGraphImport(ContextGraph):
         updated_entities = len(self.update)
         deleted_entities = len(self.delete)
 
+        start = time.time()
         self._put_entities(self.update.values())
+        end = time.time()
+        self.logger.debug("Import {0} : push updated entities {1}.".format(uuid, execution_time(end - start)))
+
+        start = time.time()
         self._delete_entities(self.delete)
+        end = time.time()
+        self.logger.debug("Import {0} : delete entities {1}.".format(uuid, execution_time(end - start)))
 
         self.clean_attributes()
         return updated_entities, deleted_entities
