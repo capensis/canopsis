@@ -137,7 +137,11 @@ Ember.Application.initializer({
 				        set(this, 'store', DS.Store.extend({
                     container: get(this, 'container')
                 }));
-                set(this, 'defaultFilter', this.get('model.mixins').findBy('name', 'customfilterlist').default_filter);
+                try {
+                  set(this, 'defaultFilter', this.get('model.mixins').findBy('name', 'customfilterlist').default_filter);
+                } catch (e) {
+                   set(this, 'defaultFilter', '');
+                }
 
 
                 this.showParams();
