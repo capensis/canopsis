@@ -42,6 +42,7 @@ events = get_storage(
 ).get_backend()
 
 DOWNTIME = 'downtime'  #: downtime pbehavior value
+PBEHAVIOR = 'pbehavior'  #: another downtime pbehavior value
 
 DOWNTIME_QUERY = PBehaviorManager.get_query(behaviors=DOWNTIME)
 
@@ -83,7 +84,7 @@ def event_processing(
 
     eid = context.get_entity_id(encoded_entity)
 
-    if evtype == DOWNTIME:
+    if evtype in [DOWNTIME, PBEHAVIOR]:
         ev = vEvent()
         ev.add('X-Canopsis-BehaviorType', '["{0}"]'.format(DOWNTIME))
         ev.add('summary', event['output'])
