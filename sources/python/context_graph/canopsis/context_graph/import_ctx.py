@@ -396,7 +396,8 @@ class ContextGraphImport(ContextGraph):
                 # the entity of id ent_id is already deleted, skipping
                 continue
 
-            self.update[ent_id] = self.entities_to_update[ent_id].copy()
+            if ent_id not in self.update:
+                self.update[ent_id] = self.entities_to_update[ent_id].copy()
             try:
                 self.update[ent_id][self.K_IMPACT].remove(id_)
             except ValueError:
@@ -409,14 +410,15 @@ class ContextGraphImport(ContextGraph):
                 # the entity of id ent_id is already deleted, skipping
                 continue
 
-            self.update[ent_id] = self.entities_to_update[ent_id].copy()
+            if ent_id not in self.update:
+                self.update[ent_id] = self.entities_to_update[ent_id].copy()
             try:
                 self.update[ent_id][self.K_DEPENDS].remove(id_)
             except ValueError:
                 raise ValueError("Try to remove {0} from impacts field of"\
                                  "entity {1}.".format(id_, ent_id))
 
-        if id_ in self.update.keys():
+        if id_ in self.update:
             self.update.pop(id_)
 
         self.delete.append(id_)
@@ -432,7 +434,7 @@ class ContextGraphImport(ContextGraph):
         """
 
 
-        if not self.entities_to_update.has_key(ci[self.K_ID]):
+        if ci[self.K_ID] not in self.entities_to_update:
             desc = "The ci of id {0} does not match any existing entity.".format(
                 ci[self.K_ID])
             raise ValueError(desc)
@@ -452,10 +454,6 @@ class ContextGraphImport(ContextGraph):
             except KeyError:
                 pass
 
-        for entity in self.update.values():
-            entity[self.K_DEPENDS] = set(entity[self.K_DEPENDS])
-            entity[self.K_IMPACT] = set(entity[self.K_IMPACT])
-
         self.update[ci[self.K_ID]] = entity
 
 
@@ -469,7 +467,7 @@ class ContextGraphImport(ContextGraph):
         """
         # TODO handle the creation of the name if needed and if the id
         # match the id scheme used in canopsis
-        if self.entities_to_update.has_key(ci[self.K_ID]):
+        if ci[self.K_ID] in self.entities_to_update:
             desc = "The ci of id {0} match an existing entity.".format(
                 ci["_id"])
             raise ValueError(desc)
@@ -517,13 +515,13 @@ class ContextGraphImport(ContextGraph):
 
         id_ = ci[self.K_ID]
 
-        if not self.entities_to_update.has_key(ci[self.K_ID]):
+        if ci[self.K_ID] not in self.entities_to_update:
             desc = "The ci of id {0} does not match any existing entity.".format(
                 id_)
             raise ValueError(desc)
 
         # If the entity is not in the update dict, add it
-        if not self.update.has_key(id_):
+        if id_ not in self.update:
             self.update[id_] = self.entities_to_update[id_].copy()
 
         # Update entity the fields enable/disable of infos
@@ -565,10 +563,10 @@ class ContextGraphImport(ContextGraph):
         :param link: the link that identify a link (see the JSON specification).
         """
 
-        if link[self.K_FROM] not in self.update.keys():
+        if link[self.K_FROM] not in self.update:
             self.update[link[self.K_FROM]] = self.entities_to_update[link[self.K_FROM]]
 
-        if link[self.K_TO] not in self.update.keys():
+        if link[self.K_TO] not in self.update:
             self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
 
         self.update[link[self.K_FROM]][self.K_IMPACT].remove(link[self.K_TO])
@@ -584,11 +582,11 @@ class ContextGraphImport(ContextGraph):
         :param link: the link that identify a link (see the JSON specification).
         """
 
-        if link[self.K_TO] not in self.update.keys():
+        if link[self.K_TO] not in self.update:
             self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
 
         for ci_id in link[self.K_FROM]:
-            if ci_id not in self.update.keys():
+            if ci_id not in self.update:
                 self.update[ci_id] = self.entities_to_update[ci_id]
 
             self.update[ci_id][self.K_IMPACT].add(link[self.K_TO])
