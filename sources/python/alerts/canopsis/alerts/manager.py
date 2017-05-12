@@ -939,64 +939,60 @@ class Alerts(MiddlewareRegistry):
 
         Alarm[self.AF_RUN] = {alarm_id: timestamp_of_last_execution}
         """
-        author = 'system'
-        message = 'auto increment'
+        AUTHOR = 'system'
+        MESSAGE = 'executing alarm filter action'
 
         now = datetime.now()
         now_stamp = int(time.mktime(now.timetuple()))
 
         storage = self[Alerts.ALARM_STORAGE]
-        result = self.get_alarms(resolved=False)
-        # TODO : start from declared filters instead
-        for data_id in result:
-            for docalarm in result[data_id]:
-                for lifter in AlarmFilters(storage=self[Alerts.FILTER_STORAGE],
-                                           alarm_id=data_id):
-                    #print(lifter)
-                    value = docalarm[storage.VALUE]
-                    # Continue only if the filter condition is valid
-                    if not lifter.check_alarm(value):
-                        #self.logger.critical('check alarm is false')
+        alarm_filters = AlarmFilters(storage=self[Alerts.FILTER_STORAGE])
+
+        for alarm_id, filters in alarm_filters.get_filters().items():
+            docalarm = self.get_current_alarm(alarm_id)
+            # For each filter on this alarm
+            for lifter in filters:
+                value = docalarm[storage.VALUE]
+                # Continue only if the filter condition is valid
+                if not lifter.check_alarm(value):
+                    #self.logger.critical('check alarm is false')
+                    continue
+
+                date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
+                # Continue only if the limit condition is valid
+                if date + lifter.limit < now:
+                    continue
+                # Only execute the filter once per reached limit
+                if self.AF_RUN in value:
+                    last = datetime.fromtimestamp(
+                        value[self.AF_RUN][lifter._id])
+                    if now - last < lifter.limit:
+                        #self.logger.critical('already runned at {}'.format(last))
                         continue
 
-                    date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
-                    # Continue only if the limit condition is valid
-                    if date + lifter.limit < now:
-                        continue
-                    # Only execute the filter once per reached limit
-                    if self.AF_RUN in value:
-                        last = datetime.fromtimestamp(
-                            value[self.AF_RUN][lifter._id])
-                        if now - last < lifter.limit:
-                            #self.logger.critical('already runned at {}'.format(last))
-                            continue
+                event = {
+                    'timestamp': now_stamp,
+                    'connector': value['connector'],
+                    'connector_name': value['connector_name'],
+                    'output': MESSAGE,
+                }
+                new_state = value[AlarmField.state.value]['val'] + 1
+                # Execute each defined action
+                new_value = None
+                for task in lifter.tasks:
+                    #self.logger.critical('execute task {}'.format(task))
+                    new_value = self.execute_task(name=task,
+                                                  event=event,
+                                                  entity_id=alarm_id,
+                                                  author=AUTHOR,
+                                                  new_state=new_state)
 
-                    event = {
-                        'timestamp': now_stamp,
-                        'connector': value['connector'],
-                        'connector_name': value['connector_name'],
-                        'output': message,
-                    }
-                    new_state = value[AlarmField.state.value]['val'] + 1
-                    # Executing each actions
-                    new_value = None
-                    for task in lifter.tasks:
-                        #self.logger.critical('execute task {}'.format(task))
-                        new_value = self.execute_task(name=task,
-                                                      event=event,
-                                                      entity_id=data_id,
-                                                      author=author,
-                                                      new_state=new_state)
+                # Mark the alarm that this filter has been applied
+                if new_value is None:
+                    continue
+                if self.AF_RUN not in new_value:
+                    new_value[self.AF_RUN] = {}
+                new_value[self.AF_RUN][lifter._id] = now_stamp
 
-                    # Mark the alarm that this filter has been applied
-                    if new_value is None:
-                        continue
-                    if self.AF_RUN not in new_value:
-                        new_value[self.AF_RUN] = {}
-                    new_value[self.AF_RUN][lifter._id] = now_stamp
-
-                    real_alarm = self.get_current_alarm(data_id)
-                    # TODO: alarms from get_alarms() and get_current_alarm() return
-                    # different things !! we should unify this two (Alarm object ?)
-                    self.update_current_alarm(real_alarm, new_value)
+                self.update_current_alarm(docalarm, new_value)
 

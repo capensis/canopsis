@@ -23,16 +23,32 @@ from datetime import datetime, timedelta
 import time
 from unittest import main
 
-from canopsis.alerts.filter import AlarmFilter
+from canopsis.alerts.filter import AlarmFilters, AlarmFilter
 
 from base import BaseTest
 
 
 class TestFilter(BaseTest):
+    def test_get_filters(self):
+        alarm, value = self.gen_fake_alarm()
+        alarm_id = '/fake/alarm/id'
+
+        lifter = AlarmFilter({
+            'alarms': [alarm_id, '/not/a/real/alarm/id']
+        }, storage=self.filter_storage)
+        lifter.save()
+        lifter = AlarmFilter({
+            'alarms': [alarm_id]
+        }, storage=self.filter_storage)
+        lifter.save()
+
+        alarm_filters = AlarmFilters(storage=self.filter_storage).get_filters()
+        self.assertTrue(isinstance(alarm_filters, dict))
+        self.assertEqual(len(alarm_filters), 2)
+        self.assertTrue(alarm_id in alarm_filters)
+
     def test_check_alarm(self):
-        now = datetime.now() - timedelta(minutes=31)
-        now_stamp = int(time.mktime(now.timetuple()))
-        alarm, value = self.gen_fake_alarm(now_stamp)
+        alarm, value = self.gen_fake_alarm()
 
         lifter = AlarmFilter({
             'operator': 'eq',
@@ -52,6 +68,13 @@ class TestFilter(BaseTest):
             'operator': 'eq',
             'key': 'component',
             'value': 'c'
+        })
+        self.assertTrue(lifter.check_alarm(value))
+
+        lifter = AlarmFilter({
+            'operator': 'ge',
+            'key': 'state.val',
+            'value': 1
         })
         self.assertTrue(lifter.check_alarm(value))
 

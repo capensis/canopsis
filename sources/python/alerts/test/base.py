@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from datetime import datetime
+import time
 from unittest import TestCase
 
 from canopsis.alerts import AlarmField
@@ -68,10 +70,13 @@ class BaseTest(TestCase):
         self.alarm_storage.remove_elements()
         self.filter_storage.remove_elements()
 
-    def gen_fake_alarm(self, moment):
+    def gen_fake_alarm(self, moment=None):
         """
         Generate a fake alarm/value.
         """
+        if moment is None:
+            moment = int(time.mktime(datetime.now().timetuple()))
+
         alarm_id = '/fake/alarm/id'
         alarm = self.manager.make_alarm(
             alarm_id,
