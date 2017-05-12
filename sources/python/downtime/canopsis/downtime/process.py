@@ -84,7 +84,7 @@ def event_processing(
 
     eid = context.get_entity_id(encoded_entity)
 
-    if evtype in [DOWNTIME, PBEHAVIOR]:
+    if evtype == DOWNTIME or (evtype == PBEHAVIOR and event['pbehavior_name'] == DOWNTIME):
         ev = vEvent()
         ev.add('X-Canopsis-BehaviorType', '["{0}"]'.format(DOWNTIME))
         ev.add('summary', event['output'])
