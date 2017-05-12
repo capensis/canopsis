@@ -24,29 +24,41 @@ import operator
 
 class AlarmFilters(object):
     """
-        A set of alarm filters, linked to a specific alarm.
+        Access to a set of alarm filters.
     """
 
-    def __init__(self, storage, alarm_id):
+    def __init__(self, storage):
         self.storage = storage
-        self.alarm_id = alarm_id
 
-        query = {
-            'alarms': {
-                '$in': [self.alarm_id]
+    def get_filters(self):
+        """
+        List and generate all <AlarmFilter> grouped by alarm id.
+
+        :rtype: dict
+        """
+        result = {}
+
+        # Get all alarms with at least one filter
+        alarms = self.storage._backend.distinct('alarms')
+        for alarm_id in alarms:
+            query = {
+                'alarms': {
+                    '$in': [alarm_id]
+                }
             }
-        }
-        self.elements = self.storage.find_elements(query=query)
 
-        self.filters = []
-        for element in self.elements:
-            self.filters.append(AlarmFilter(element=element))
+            # Get filters associate with this alarm
+            for element in self.storage.find_elements(query=query):
+                if alarm_id not in result:
+                    result[alarm_id] = []
+                # Instanciate each AlarmFilter on this alarm
+                result[alarm_id].append(AlarmFilter(element=element,
+                                                    storage=self.storage))
 
-    def __iter__(self):
-        return iter(self.filters)
+        return result
 
     def __repr__(self):
-        return "AlarmFilters of {}: {}".format(self.alarm_id, self.elements)
+        return "AlarmFilters of {}".format(self.storage)
 
 
 class AlarmFilter(object):
@@ -68,17 +80,18 @@ class AlarmFilter(object):
         self.element = element  # has persisted in the db
         self.storage = storage
 
+        # Map and converter element parts as attribute
         for k, v in self.element.items():
             self[k] = v
 
     def __setitem__(self, key, item):
         value = item
-        if key == 'operator' and hasattr(operator, item):
-            # Operator conversion
-            value = getattr(operator, item)
-        elif key == 'limit' and isinstance(item, int):
+        if key == 'limit' and isinstance(item, int):
             # Limit conversion
             value = timedelta(minutes=item)
+        elif key == 'operator' and hasattr(operator, item):
+            # Operator conversion
+            value = getattr(operator, item)
 
         setattr(self, key, value)
         self.element[key] = item
@@ -91,26 +104,35 @@ class AlarmFilter(object):
         :type alarm_value: dict
         :rtype: bool
         """
-        if not isinstance(alarm_value, dict):
+        # Find the target value
+        val = alarm_value
+        for mckey in self.key.split('.'):
+            val = val.get(mckey)
+
+        # Try to evaluate the filter
+        try:
+            return self.operator(val, self.value)
+        except:
             return False
-
-        if self.key in alarm_value:
-            return self.operator(alarm_value[self.key], self.value)
-
-        return False
 
     def save(self):
         """
         Save this filter into the db.
+
+        :raises Exception: when storage is not avalaible
         """
         if self.storage is not None:
             return self.storage.put_element(element=self.element)
 
-        # TODO: use the local logger instead
-        print("No storage available to save into !")
+        raise Exception("No storage available to save into !")
 
     def __repr__(self):
-        #return "AlarmFilter: {}".format(dir(self))
-        return ("AlarmFilter: (after {} ; {} {} {} ; {})"
-                .format(self.limit, self.key, self.operator,
-                        self.value, self.tasks))
+        if hasattr(self, 'limit') and hasattr(self, 'key') \
+           and hasattr(self, 'operator') and hasattr(self, 'value') \
+           and hasattr(self, 'tasks'):
+
+            return ("AlarmFilter: {(after {} ; {} {} {} ; {})}"
+                    .format(self.limit, self.key, self.operator,
+                            self.value, self.tasks))
+
+        return "AlarmFilter: {}".format(self.element)
