@@ -102,6 +102,29 @@ Ember.Application.initializer({
               'extra_details': 'v.extra_details'
             },
 
+            mandatoryFields: [
+              {
+                getValue: 'v.connector',
+                name: 'connector',
+                humanName: 'connector'
+              },
+              {
+                getValue: 'v.connector_name',
+                name: 'connector_name',
+                humanName: 'connector_name'
+              },
+              {
+                getValue: 'v.component',
+                name: 'component',
+                humanName: 'component'
+              },
+              {
+                getValue: 'v.resource',
+                name: 'resource',
+                humanName: 'resource'
+              }
+            ],
+
             extraDeatialsEntities: [
               {
                 name: 'snooze',
@@ -310,9 +333,22 @@ Ember.Application.initializer({
                   controller.get('extraDeatialsEntities').forEach(function(item) {
                     alarm['v']['extra_details'][item.name] = Ember.Object.create(alarm).get(item.value);
                   })
+
+
+
                   
 
                   var newAlarm = Ember.Object.create();
+
+
+                  controller.get('mandatoryFields').forEach(function(field) {
+                      var val = get(Ember.Object.create(alarm), field.getValue);
+                      
+                      newAlarm[field.name] = val;
+                      newAlarm[field.humanName] = val;
+ 
+                  });
+
                   fields.forEach(function(field) {
                       var val = get(Ember.Object.create(alarm), field.getValue);
                       // controller.set(newAlarm, field.name, val);
@@ -322,6 +358,9 @@ Ember.Application.initializer({
                       newAlarm[field.humanName] = val;
  
                   });
+
+
+       
                   // controller.set(newAlarm, 'isSelected', false);
                   
                   newAlarm['isSelected'] = false;
@@ -604,6 +643,7 @@ Ember.Application.initializer({
                       //   }
                       // ];
                       var newAlarm = Ember.Object.create();
+
                       fields.forEach(function(field) {
                           if (field.humanName != 'extra_details') {
                             var val = get(Ember.Object.create(alarm), field.getValue);
