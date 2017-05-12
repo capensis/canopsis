@@ -86,8 +86,6 @@ def process_import():
 
 def sig_usr1_handler(signum, stack):
     signal.signal(signal.SIGUSR1, signal.SIG_IGN)
-    process_import()
-
 
     while manager.pending_in_db():
         logging.info(I_QUEUED_IMPORT)
@@ -98,6 +96,9 @@ def sig_usr1_handler(signum, stack):
 
 def daemon_loop():
     signal.signal(signal.SIGUSR1, sig_usr1_handler)
+
+    # call to sig_usr1_handler to process every pending import
+    sig_usr1_handler(None, None)
 
     while True:  # Main loop. Weee
         signal.pause()
