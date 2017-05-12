@@ -151,7 +151,7 @@ def is_keeped_state(alarm):
     """
     state = alarm[AlarmField.state.value]
 
-    return state is not None and state['_t'] == 'changestate'
+    return state is not None and '_t' in state and state['_t'] == 'changestate'
 
 
 def is_stealthy(manager, alarm):

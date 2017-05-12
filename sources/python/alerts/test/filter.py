@@ -19,8 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from datetime import datetime, timedelta
-import time
 from unittest import main
 
 from canopsis.alerts.filter import AlarmFilters, AlarmFilter

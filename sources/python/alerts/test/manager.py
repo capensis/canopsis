@@ -1020,22 +1020,17 @@ class TestManager(BaseTest):
         self.assertEqual(events[2], expected_event2)
 
     def test_check_alarm_filters(self):
-        import logging
-        steam_handler = logging.StreamHandler()
-        self.manager.logger.addHandler(steam_handler)
-
         # Apply a filter on a new alarm
-        #now = datetime.now() + timedelta(minutes=31)
         now_stamp = int(time.mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(now_stamp)
         alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
         lifter = AlarmFilter({
             'alarms': [alarm_id],
-            'limit': 60,
+            'limit': -1,
             'operator': 'eq',
             'key': 'connector',
             'value': 'fake-connector',
-            'tasks': ['alerts.systemaction.status_increase'],
+            'tasks': ['alerts.systemaction.state_increase'],
         }, storage=self.manager[Alerts.FILTER_STORAGE])
         lifter.save()
 
@@ -1047,7 +1042,7 @@ class TestManager(BaseTest):
         self.assertTrue(alarm_id in result)
         self.assertEqual(len(result[alarm_id]), 1)
         self.assertEqual(result[alarm_id][0]['value']['state']['val'],
-                         Check.MINOR)
+                         Check.MAJOR)
         self.assertTrue(self.manager.AF_RUN in result[alarm_id][0]['value'])
         alarm_filters1 = result[alarm_id][0]['value'][self.manager.AF_RUN]
         self.assertTrue(isinstance(alarm_filters1, dict))
@@ -1062,6 +1057,10 @@ class TestManager(BaseTest):
         alarm_filters2 = result[alarm_id2][0]['value'][self.manager.AF_RUN]
         for key in alarm_filters1.keys():
             self.assertEqual(alarm_filters1[key], alarm_filters2[key])
+
+        # Verify that the state has correctly been increased
+        self.assertEqual(result[alarm_id][0]['value']['state']['val'],
+                         Check.MAJOR)
 
 
 if __name__ == '__main__':

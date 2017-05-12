@@ -86,7 +86,7 @@ class AlarmFilter(object):
 
     def __setitem__(self, key, item):
         value = item
-        if key == 'limit' and isinstance(item, int):
+        if key == 'limit' and isinstance(item, (int, float)):
             # Limit conversion
             value = timedelta(minutes=item)
         elif key == 'operator' and hasattr(operator, item):
@@ -104,12 +104,12 @@ class AlarmFilter(object):
         :type alarm_value: dict
         :rtype: bool
         """
-        # Find the target value
+        # Find the targeted value
         val = alarm_value
         for mckey in self.key.split('.'):
             val = val.get(mckey)
 
-        # Try to evaluate the filter
+        # Try to evaluate the filter condition
         try:
             return self.operator(val, self.value)
         except:
@@ -127,12 +127,4 @@ class AlarmFilter(object):
         raise Exception("No storage available to save into !")
 
     def __repr__(self):
-        if hasattr(self, 'limit') and hasattr(self, 'key') \
-           and hasattr(self, 'operator') and hasattr(self, 'value') \
-           and hasattr(self, 'tasks'):
-
-            return ("AlarmFilter: {(after {} ; {} {} {} ; {})}"
-                    .format(self.limit, self.key, self.operator,
-                            self.value, self.tasks))
-
         return "AlarmFilter: {}".format(self.element)
