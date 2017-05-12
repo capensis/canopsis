@@ -380,7 +380,10 @@ Ember.Application.initializer({
                         record.id = this.getRoutingKey(record);
                     },
                     filter: function(record) {
-                        return (get(record, 'ack.author') && get(record, 'ack.isAck'));
+                        var isCanceled = get(record, 'canceled') != undefined;
+                        var isAcked = get(record, 'extra_details.ack') != undefined;
+                        return !isCanceled && isAcked;
+                        // return (get(record, 'ack.author') && get(record, 'ack.isAck'));
                     },
                     handle: function(crecords) {
                         var record = this.getDisplayRecord('ackremove', crecords[0]);
@@ -555,8 +558,8 @@ Ember.Application.initializer({
                         set(crecord, 'state', 0);
                     },
                     filter: function(record) {
-                        void(record);
-                        return false;
+                        var isCanceled = get(record, 'canceled') != undefined;
+                        return isCanceled;
                     },
                     handle: function(crecords) {
                         var record = crecords[0];

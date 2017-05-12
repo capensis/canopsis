@@ -254,7 +254,7 @@ Ember.Application.initializer({
                   crecords = this.filterUsableCrecords(event_type, selected);
                   console.log('events:', event_type, crecords);
                   if(!crecords.length) {
-                    console.error('there is no suitable alarms');
+                    console.error('there are no suitable alarms');
                       return;
                   }
               }
