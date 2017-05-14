@@ -28,7 +28,11 @@ Ember.Application.initializer({
 
             isChangedByUser: function () {
                 return this.get('value._t') == 'changestate'
-            }.property('value._t')
+            }.property('value._t'),
+
+            isCanceled: function () {
+                return this.get('value.canceled') != undefined;
+            }.property('value.canceled'),
 
         });
 

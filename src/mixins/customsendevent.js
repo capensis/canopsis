@@ -427,7 +427,7 @@ Ember.Application.initializer({
                     },
                     handle: function(crecords) {
                         var record = this.getDisplayRecord('pbehavior', crecords[0]);
-                        this.getEventForm('pbehavior', record, crecords, 'pbehaviorform');
+                        this.getEventForm('pbehavior', record, crecords);
                     },
                     transform: function(crecord, record) {
                         console.log('transform method for ack remove', crecord, record);

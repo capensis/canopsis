@@ -122,6 +122,11 @@ Ember.Application.initializer({
                 getValue: 'v.resource',
                 name: 'resource',
                 humanName: 'resource'
+              },
+              {
+                getValue: 'v.state',
+                name: 'state',
+                humanName: 'state'
               }
             ],
 
@@ -160,13 +165,15 @@ Ember.Application.initializer({
 				        set(this, 'store', DS.Store.extend({
                     container: get(this, 'container')
                 }));
-                try {
-                  set(this, 'defaultFilter', this.get('model.mixins').findBy('name', 'customfilterlist').default_filter);
-                } catch (e) {
-                   set(this, 'defaultFilter', '');
-                }
 
+                // this.set('filters_list', []);
+                // this.get('filters_list').push(Ember.Object.create({filter: this.get('model.mixins').findBy('name', 'customfilterlist').default_filter, title: 'test', isActive: false}))
 
+                // try {
+                //   set(this, 'defaultFilter', this.get('model.mixins').findBy('name', 'customfilterlist').default_filter);
+                // } catch (e) {
+                //    set(this, 'defaultFilter', '');
+                // }
                 this.showParams();
                 // this.setFields();
                 this.loadTemplates(this.get('model.popup'));
@@ -222,6 +229,10 @@ Ember.Application.initializer({
               //   tstop: 0
               // }
             },
+
+            testObserver: function() {
+              console.error(this.get('user_filters'));
+            }.observes('user_filters.@each'),
 
             
             // rewrite totalPages
@@ -371,6 +382,8 @@ Ember.Application.initializer({
                   
                   newAlarm['id'] = alarm._id;
                   newAlarm['entity_id'] = alarm.d;
+
+                  newAlarm['state']['canceled'] = alarm.v.canceled;
                   // newAlarm['entity_id'] = '/resource/feeder/feeder/feeder_component/feeder_resource';
                   
                   // /resource/feeder/feeder/feeder_component/feeder_resource
@@ -444,8 +457,9 @@ Ember.Application.initializer({
             filtersObserver: function() {
               try {
                 var userFilters = this.get('user_filters');
-                if (userFilters) {
-                  var filter = userFilters.findBy('isActive', true);
+                var filtersList = this.get('filters_list');
+                if (userFilters || filtersList) {
+                  var filter = userFilters.findBy('isActive', true) || filtersList.findBy('isActive', true);
                   if (filter) {
                     var f = filter.filter || filter.get('filter');         
                     // console.error(f.replace('state', 'v.state.val'));
@@ -462,7 +476,7 @@ Ember.Application.initializer({
                   // console.error('error while selecting a filter', err);
               }
 
-            }.observes('user_filters.@each.isActive'),
+            }.observes('user_filters.@each.isActive', 'filters_list.@each.isActive'),
 
             loadTemplates: function (templates) {
                 try {

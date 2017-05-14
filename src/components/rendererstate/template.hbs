@@ -1,6 +1,16 @@
-<span {{bind-attr class=spanClass}}>{{caption}}</span>
-{{#if isChangedByUser}}
-  <span {{bind-attr class=spanClass}}>
-    <i class="fa fa-male"></i>
-  </span>
+{{#if isCanceled}}
+  <span>Canceled</span>
+  {{#if isChangedByUser}}
+    <span>
+      <i class="fa fa-male"></i>
+    </span>
+  {{/if}}
+{{else}}
+  <span {{bind-attr class=spanClass}}>{{caption}}</span>
+  {{#if isChangedByUser}}
+    <span {{bind-attr class=spanClass}}>
+      <i class="fa fa-male"></i>
+    </span>
+  {{/if}}
+
 {{/if}}
