@@ -6,7 +6,6 @@ import logging
 import os
 import sys
 import time
-import threading
 import atexit
 
 # TODO: stack the import -> add a counter or use a mutex
@@ -66,8 +65,10 @@ def process_import():
 
     except Exception as e:
         report = {ImportKey.F_STATUS: ImportKey.ST_FAILED,
-                  ImportKey.F_INFO: str(e)}
-        logging.error(E_IMPORT_FAILED.format(uuid, e))
+                  ImportKey.F_INFO: repr(e)}
+        logging.error(E_IMPORT_FAILED.format(uuid, repr(e)))
+        logging.exception(e)
+
 
     else:
         report = {ImportKey.F_STATUS: ImportKey.ST_DONE,
@@ -136,7 +137,7 @@ def daemonize(function):
                 os.umask(UMASK)
 
         fd_to_close = [sys.stderr, sys.stdout, sys.stdin]
-
+        fd_to_close = []
         for fd in fd_to_close:
             try:
                 fd.close()
@@ -155,7 +156,8 @@ def daemonize(function):
         try:
             function()
         except Exception as e:
-            logging.critical(E_BEYOND_REPAIR.format(e))
+            logging.critical(E_BEYOND_REPAIR.format(repr(e)))
+            logging.exception(e)
 
 
 def main():
