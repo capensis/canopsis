@@ -230,9 +230,10 @@ Ember.Application.initializer({
               // }
             },
 
-            testObserver: function() {
-              console.error(this.get('user_filters'));
-            }.observes('user_filters.@each'),
+            filtersObserver: function() {
+              // console.error(this.get('selected_filter.filter'));
+              this.set('alarmSearchOptions.filter', this.get('selected_filter.filter') || {});  
+            }.observes('selected_filter'),
 
             
             // rewrite totalPages
@@ -454,29 +455,29 @@ Ember.Application.initializer({
 
             // -------------------------------------------------------
 
-            filtersObserver: function() {
-              try {
-                var userFilters = this.get('user_filters');
-                var filtersList = this.get('filters_list');
-                if (userFilters || filtersList) {
-                  var filter = userFilters.findBy('isActive', true) || filtersList.findBy('isActive', true);
-                  if (filter) {
-                    var f = filter.filter || filter.get('filter');         
-                    // console.error(f.replace('state', 'v.state.val'));
-                    this.set('alarmSearchOptions.filter', f);
-                  } else {
-                    // console.error('there is no filter');
-                    this.set('alarmSearchOptions.filter', undefined);                
-                  }
-                } else {
-                  this.set('alarmSearchOptions.filter', undefined);                                
-                }
-              } catch (err) {
-                  this.set('alarmSearchOptions.filter', undefined);                                
-                  // console.error('error while selecting a filter', err);
-              }
+            // filtersObserver: function() {
+            //   try {
+            //     var userFilters = this.get('user_filters');
+            //     var filtersList = this.get('filters_list');
+            //     if (userFilters || filtersList) {
+            //       var filter = userFilters.findBy('isActive', true) || filtersList.findBy('isActive', true);
+            //       if (filter) {
+            //         var f = filter.filter || filter.get('filter');         
+            //         // console.error(f.replace('state', 'v.state.val'));
+            //         this.set('alarmSearchOptions.filter', f);
+            //       } else {
+            //         // console.error('there is no filter');
+            //         this.set('alarmSearchOptions.filter', undefined);                
+            //       }
+            //     } else {
+            //       this.set('alarmSearchOptions.filter', undefined);                                
+            //     }
+            //   } catch (err) {
+            //       this.set('alarmSearchOptions.filter', undefined);                                
+            //       // console.error('error while selecting a filter', err);
+            //   }
 
-            }.observes('user_filters.@each.isActive', 'filters_list.@each.isActive'),
+            // }.observes('user_filters.@each.isActive', 'filters_list.@each.isActive'),
 
             loadTemplates: function (templates) {
                 try {
