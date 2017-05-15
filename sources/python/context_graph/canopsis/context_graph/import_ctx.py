@@ -315,10 +315,10 @@ class ContextGraphImport(ContextGraph):
         :param rtype: a dict with the entity id as a key and the entity as
         a value
         """
+        # a set so no duplicate ids without effort and lower time complexity
         ids_cis = set()
         ids_links = set()
 
-        # a set so no duplicate ids without effort and low time complexity
         def __get_entities_to_update_links(file_):
             fd = open(file_, 'r')
             for link in ijson.items(fd, "{0}.item".format(self.K_LINKS)):
@@ -563,14 +563,16 @@ class ContextGraphImport(ContextGraph):
         :param link: the link that identify a link (see the JSON specification).
         """
 
-        if link[self.K_FROM] not in self.update:
-            self.update[link[self.K_FROM]] = self.entities_to_update[link[self.K_FROM]]
+        for id_ in link[self.K_FROM]:
+            if id_ not in self.update:
+                self.update[id_] = self.entities_to_update[id_]
 
         if link[self.K_TO] not in self.update:
             self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
 
-        self.update[link[self.K_FROM]][self.K_IMPACT].remove(link[self.K_TO])
-        self.update[link[self.K_TO]][self.K_IMPACT].remove(link[self.K_FROM])
+        for id_ in link[self.K_FROM]:
+            self.update[id_][self.K_IMPACT].remove(link[self.K_TO])
+            self.update[link[self.K_TO]][self.K_DEPENDS].remove(id_)
 
     def __a_update_link(self, link):
         raise NotImplementedError()

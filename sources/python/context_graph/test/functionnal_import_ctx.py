@@ -179,7 +179,6 @@ class Test(unittest.TestCase):
         self.test_json_links_list_items()
         self.ent_col.remove({"_id": {"$in": ["id_test", "id_test1"]}})
 
-
     def test_empty_json(self):
         uuid = self._launch_import(JSON_EMPTY)
         report = list(self.imp_col.find({ImportKey.F_ID: uuid}))[0]
