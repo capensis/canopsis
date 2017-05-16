@@ -430,7 +430,7 @@ Ember.Application.initializer({
                         this.getEventForm('pbehavior', record, crecords);
                     },
                     transform: function(crecord, record) {
-                        console.log('transform method for ack remove', crecord, record);
+                        console.log('transform method for ack remove', crecord, record, 'pbehavior');
                         // crecord.set('ack', undefined);
                         // crecord.set('declare_ticket_author', undefined);
                         // crecord.set('declare_ticket_date', undefined);
@@ -657,7 +657,7 @@ Ember.Application.initializer({
                     },
                     handle: function(crecords) {
                         var record = this.getDisplayRecord('snooze', crecords[0]);
-                        this.getEventForm('snooze', record, crecords);
+                        this.getEventForm('snooze', record, crecords, 'snoozeform');
                     },
                     transform: function(crecord, record) {
                         console.log('transform method for ack snooze', crecord, record);
