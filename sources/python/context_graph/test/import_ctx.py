@@ -1102,22 +1102,7 @@ class ImportChecker(TestCase):
         except Exception as e:
             self.fail(self._desc_fail.format(e))
 
-
-class TestImportFunctions(BaseTest):
-
-    def test_ongoing(self):
-        self.assertEqual(self.ctx_import.on_going_in_db(), False)
-        self.ctx_import[ContextGraph.IMPORT_STORAGE].put_element({'_id':'id', 'state': 'on going'})
-        self.assertEqual(self.ctx_import.on_going_in_db(), True)
-
-    def check_id(self):
-        self.assertEqual(self.ctx_import.check_id('id'), False)
-        self.ctx_import[ContextGraph.IMPORT_STORAGE].put_element({'_id':'id', 'state': 'on going'})
-        self.assertEqual(self.ctx_import.check_id('id'), True)
-
-    def getimporstatus(self):
-        self.ctx_import[ContextGraph.IMPORT_STORAGE].put_element({'_id':'id', 'state': 'on going'})
-        self.assertEqual(self.ctx_import.get_import_status('id'), 'on going')
+#TODO : implement unit tests for the import report manager
 
 if __name__ == '__main__':
     main()
