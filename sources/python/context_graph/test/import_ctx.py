@@ -484,13 +484,16 @@ class ADeleteLink(BaseTest):
 
 class NotImplem(BaseTest):
     def update_link(self):
-        self.assertRaises(NotImplementedError, self.ctx_import._ContextGraphImport__a_update_link())
+        self.assertRaises(NotImplementedError,
+                          self.ctx_import._ContextGraphImport__a_update_link())
 
     def disable_link(self):
-        self.assertRaises(NotImplementedError, self.ctx_import._ContextGraphImport__a_disable_link())
+        self.assertRaises(NotImplementedError,
+                          self.ctx_import._ContextGraphImport__a_disable_link())
 
     def enable_link(self):
-        self.assertRaises(NotImplementedError, self.ctx_import._ContextGraphImport__a_enable_link())
+        self.assertRaises(NotImplementedError,
+                          self.ctx_import._ContextGraphImport__a_enable_link())
 
 class ADeleteEntity(BaseTest):
 
