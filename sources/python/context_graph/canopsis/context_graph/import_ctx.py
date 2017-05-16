@@ -325,7 +325,8 @@ class ContextGraphImport(ContextGraph):
                 for id_ in link[self.K_FROM]:
                     ids_links.add(id_)
 
-                ids_links.add(link[self.K_ID])
+                # ids_cis.add(ci[self.K_ID])
+                ids_links.add(link[self.K_TO])
             fd.close()
 
         def __get_entities_to_update_cis(file_):

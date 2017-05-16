@@ -3,10 +3,11 @@
 
 from unittest import main, TestCase
 
-from canopsis.context_graph.import_ctx import ContextGraphImport
+from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 import copy
+import json
 from jsonschema.exceptions import ValidationError
 
 
@@ -28,10 +29,11 @@ class BaseTest(TestCase):
         )
 
         self.ctx_import[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
-        self.ctx_import[ContextGraph.IMPORT_STORAGE] = self.import_storage
         self.ctx_import[
             ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
         self.ctx_import[ContextGraph.USERS_STORAGE] = self.users_storage
+
+        self.uuid = "test"
 
         self.template_ent = {'_id': None,
                              'type': 'connector',
@@ -64,6 +66,16 @@ class BaseTest(TestCase):
         sorted(entity2["impact"])
         self.assertDictEqual(entity1, entity2)
 
+    @classmethod
+    def store_import(self, data, uuid):
+        """Store the data in the right directory and with the right ID. The
+        return the filename"""
+        fname = ImportKey.IMPORT_FILE.format(uuid)
+        with open(fname, "w") as fd:
+            json.dump(data, fd)
+
+        return fname
+
 
 class GetEntitiesToUpdate(BaseTest):
 
@@ -77,6 +89,7 @@ class GetEntitiesToUpdate(BaseTest):
                 self.assertEqualEntities(entity, entities[id_])
 
     def test_entities(self):
+
         entities = {"ent1": self.template_ent.copy(),
                     "ent2": self.template_ent.copy(),
                     "ent3": self.template_ent.copy()}
@@ -86,6 +99,12 @@ class GetEntitiesToUpdate(BaseTest):
         entities["ent3"]["_id"] = "ent3"
 
         self.ctx_import._put_entities(entities.values())
+
+        for entity in entities.values():
+            entity[ContextGraphImport.K_DEPENDS] = set(
+                entity[ContextGraphImport.K_DEPENDS])
+            entity[ContextGraphImport.K_IMPACT] = set(
+                entity[ContextGraphImport.K_IMPACT])
 
         json = {ContextGraphImport.K_CIS: [{ContextGraphImport.K_ID: "ent1",
                                             ContextGraphImport.K_ACTION:
@@ -101,7 +120,9 @@ class GetEntitiesToUpdate(BaseTest):
                                              {ContextGraphImport.K_FROM: "ent1",
                                               ContextGraphImport.K_TO: "ent3"}]}
 
-        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(json)
+        fname = self.store_import(json, self.uuid)
+
+        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(fname)
 
         self._test(ctx, entities)
 
@@ -116,12 +137,20 @@ class GetEntitiesToUpdate(BaseTest):
 
         self.ctx_import._put_entities(entities.values())
 
+        for entity in entities.values():
+            entity[ContextGraphImport.K_DEPENDS] = set(
+                entity[ContextGraphImport.K_DEPENDS])
+            entity[ContextGraphImport.K_IMPACT] = set(
+                entity[ContextGraphImport.K_IMPACT])
+
         entities = {}
 
         json = {ContextGraphImport.K_CIS: [],
                 ContextGraphImport.K_LINKS: []}
 
-        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(json)
+        fname = self.store_import(json, self.uuid)
+
+        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(fname)
 
         self._test(ctx, entities)
 
@@ -144,6 +173,12 @@ class GetEntitiesToUpdate(BaseTest):
 
         self.ctx_import._put_entities(entities.values())
 
+        for entity in entities.values():
+            entity[ContextGraphImport.K_DEPENDS] = set(
+                entity[ContextGraphImport.K_DEPENDS])
+            entity[ContextGraphImport.K_IMPACT] = set(
+                entity[ContextGraphImport.K_IMPACT])
+
         json = {ContextGraphImport.K_CIS: [{ContextGraphImport.K_ID: "ent1",
                                             ContextGraphImport.K_ACTION:
                                             ContextGraphImport.A_UPDATE},
@@ -155,7 +190,9 @@ class GetEntitiesToUpdate(BaseTest):
                                             ContextGraphImport.A_DELETE}],
                 ContextGraphImport.K_LINKS: []}
 
-        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(json)
+        fname = self.store_import(json, self.uuid)
+
+        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(fname)
         self._test(ctx, entities)
 
 
@@ -1046,7 +1083,7 @@ class ImportChecker(TestCase):
         except Exception as e:
             self.fail(self._desc_fail.format(e))
 
-    
+
 class TestImportFunctions(BaseTest):
 
     def test_ongoing(self):
@@ -1058,7 +1095,7 @@ class TestImportFunctions(BaseTest):
         self.assertEqual(self.ctx_import.check_id('id'), False)
         self.ctx_import[ContextGraph.IMPORT_STORAGE].put_element({'_id':'id', 'state': 'on going'})
         self.assertEqual(self.ctx_import.check_id('id'), True)
-        
+
     def getimporstatus(self):
         self.ctx_import[ContextGraph.IMPORT_STORAGE].put_element({'_id':'id', 'state': 'on going'})
         self.assertEqual(self.ctx_import.get_import_status('id'), 'on going')
