@@ -254,6 +254,11 @@ class ACreateEntity(BaseTest):
         expected["type"] = ci[ContextGraphImport.K_TYPE] = "other_type"
         expected["infos"] = ci[ContextGraphImport.K_INFOS] = {"infos": "infos"}
 
+        expected[ContextGraphImport.K_DEPENDS] = set(
+            expected[ContextGraphImport.K_DEPENDS])
+        expected[ContextGraphImport.K_IMPACT] = set(
+            expected[ContextGraphImport.K_IMPACT])
+
         self.ctx_import._ContextGraphImport__a_create_entity(ci)
 
         self.assertEqualEntities(self.ctx_import.update["ent1"], expected)
@@ -286,8 +291,8 @@ class ADisableEntity(BaseTest):
         entities[id1]["_id"] = id1
         entities[id1]["type"] = "resource"
         entities[id1]["name"] = "entity_1"
-        entities[id1]["depends"] = ["1"]
-        entities[id1]["impact"] = ["2"]
+        entities[id1]["depends"] = set(["1"])
+        entities[id1]["impact"] = set(["2"])
         entities[id1]["measurements"] = ["m1"]
         entities[id1]["infos"] = {}
 
@@ -306,13 +311,12 @@ class ADisableEntity(BaseTest):
     def test_entities_multiple_timestamp(self):
         id1 = "ent1"
         id2 = "ent2"
-        timestamp = [12345, 67890]
+        timestamp = [67890]
 
         ci = {ContextGraphImport.K_ID: id1,
-              ContextGraphImport.K_ACTION:
-              ContextGraphImport.A_DISABLE,
-              ContextGraphImport.K_PROPERTIES: {
-                  ContextGraphImport.K_DISABLE: timestamp}}
+              ContextGraphImport.K_ACTION: ContextGraphImport.A_DISABLE,
+              ContextGraphImport.K_PROPERTIES:
+              {ContextGraphImport.K_DISABLE: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
                     id2: self.template_ent.copy(),}
@@ -320,25 +324,29 @@ class ADisableEntity(BaseTest):
         entities[id1]["_id"] = id1
         entities[id1]["type"] = "resource"
         entities[id1]["name"] = "entity_1"
-        entities[id1]["depends"] = ["1"]
-        entities[id1]["impact"] = ["2"]
+        entities[id1]["depends"] = set(["1"])
+        entities[id1]["impact"] = set(["2"])
         entities[id1]["measurements"] = ["m1"]
-        entities[id1]["infos"] = {}
+        entities[id1]["infos"] = {"disable": [12345]}
 
         self.ctx_import.entities_to_update = entities
 
         self.ctx_import._ContextGraphImport__a_disable_entity(ci)
 
         expected = entities[id1].copy()
-        expected["infos"] = {ContextGraphImport.K_DISABLE : timestamp}
+        timestamp += [12345]
+        expected["infos"] = {ContextGraphImport.K_DISABLE : sorted(timestamp)}
 
-        self.assertEqualEntities(self.ctx_import.update[id1], expected)
+        result = self.ctx_import.update[id1]
+        result["infos"]["disable"] = sorted(result["infos"]["disable"])
+
+        self.assertEqualEntities(result, expected)
 
         with self.assertRaises(KeyError):
             self.ctx_import.update[id2]
 
 
-def AEnableEntity(BaseTest):
+class AEnableEntity(BaseTest):
 
     def test_no_entities(self):
         ci = self.template_ci.copy()
@@ -366,8 +374,8 @@ def AEnableEntity(BaseTest):
         entities[id1]["_id"] = id1
         entities[id1]["type"] = "resource"
         entities[id1]["name"] = "entity_1"
-        entities[id1]["depends"] = ["1"]
-        entities[id1]["impact"] = ["2"]
+        entities[id1]["depends"] = set(["1"])
+        entities[id1]["impact"] = set(["2"])
         entities[id1]["measurements"] = ["m1"]
         entities[id1]["infos"] = {}
 
@@ -386,12 +394,12 @@ def AEnableEntity(BaseTest):
     def test_entities_multiple_timestamp(self):
         id1 = "ent1"
         id2 = "ent2"
-        timestamp = [12345, 67890]
+        timestamp = [67890]
 
         ci = {ContextGraphImport.K_ID: id1,
               ContextGraphImport.K_ACTION: ContextGraphImport.A_ENABLE,
-              ContextGraphImport.K_INFOS: {
-                  ContextGraphImport.K_PROPERTIES: timestamp}}
+              ContextGraphImport.K_PROPERTIES:
+              {ContextGraphImport.K_ENABLE: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
                     id2: self.template_ent.copy(),}
@@ -399,19 +407,23 @@ def AEnableEntity(BaseTest):
         entities[id1]["_id"] = id1
         entities[id1]["type"] = "resource"
         entities[id1]["name"] = "entity_1"
-        entities[id1]["depends"] = ["1"]
-        entities[id1]["impact"] = ["2"]
+        entities[id1]["depends"] = set(["1"])
+        entities[id1]["impact"] = set(["2"])
         entities[id1]["measurements"] = ["m1"]
-        entities[id1]["infos"] = {}
+        entities[id1]["infos"] = {"enable": [12345]}
 
         self.ctx_import.entities_to_update = entities
 
         self.ctx_import._ContextGraphImport__a_enable_entity(ci)
 
         expected = entities[id1].copy()
-        expected["infos"] = {ContextGraphImport.K_ENABLE : timestamp}
+        timestamp += [12345]
+        expected["infos"] = {ContextGraphImport.K_ENABLE : sorted(timestamp)}
 
-        self.assertEqualEntities(self.ctx_import.update[id1], expected)
+        result = self.ctx_import.update[id1]
+        result["infos"]["enable"] = sorted(result["infos"]["enable"])
+
+        self.assertEqualEntities(result, expected)
 
         with self.assertRaises(KeyError):
             self.ctx_import.update[id2]
