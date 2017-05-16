@@ -439,8 +439,8 @@ class ChangeStateEntity(BaseTest):
 class ACreateLink(BaseTest):
 
     def test_create_link_e1_e2(self):
-        self.ctx_import.update = {'e1':{'impact': set([])},
-                                  'e2':{'depends': set([])}}
+        self.ctx_import.update = {'e1':{'impact': set()},
+                                  'e2':{'depends': set()}}
         self.ctx_import._ContextGraphImport__a_create_link({
             ContextGraphImport.K_ID:'e1-to-e2',
             ContextGraphImport.K_FROM: ['e1'],
@@ -450,8 +450,8 @@ class ACreateLink(BaseTest):
         self.assertEqual(self.ctx_import.update['e2']['depends'], set(['e1']))
 
     def test_create_link_e1_e2_2(self):
-        self.ctx_import.update = {'e2':{'depends': set([])}}
-        self.ctx_import.entities_to_update = {'e1':{'impact': set([])}}
+        self.ctx_import.update = {'e2':{'depends': set()}}
+        self.ctx_import.entities_to_update = {'e1':{'impact': set()}}
         self.ctx_import._ContextGraphImport__a_create_link({
             ContextGraphImport.K_ID:'e1-to-e2',
             ContextGraphImport.K_FROM: ['e1'],
@@ -462,22 +462,25 @@ class ACreateLink(BaseTest):
 
 
 class ADeleteLink(BaseTest):
-    def test_delete__link_e1_e2(self):
-        self.ctx_import.update = {'e1':{'impact': ['e2']}, 'e2':{'depends': ['e1']}}
-        self.ctx_import._ContextGraphImport__a_delete_link(
-            {'_id': 'e1-to-e2', 'from': 'e1', 'to': 'e2'}
-        )
-        self.assertEqual(self.ctx_import.update['e1']['impact'], [])
-        self.assertEqual(self.ctx_import.update['e2']['depends'], [])
+    def test_delete_link_e1_e2(self):
+        self.ctx_import.update = {'e1':{'impact': set(['e2'])},
+                                  'e2':{'depends': set(['e1'])}}
+        self.ctx_import._ContextGraphImport__a_delete_link({
+            ContextGraphImport.K_ID: 'e1-to-e2',
+            ContextGraphImport.K_FROM: ['e1'],
+            ContextGraphImport.K_TO: 'e2'})
+        self.assertEqual(self.ctx_import.update['e1']['impact'], set())
+        self.assertEqual(self.ctx_import.update['e2']['depends'], set())
 
     def test_delete_link_e1_e2_2(self):
-        self.ctx_import.update = {'e2':{'depends': ['e1']}}
-        self.ctx_import.entities_to_update = {'e1':{'impact': ['e2']}}
-        self.ctx_import._ContextGraphImport__a_delete_link(
-            {'_id': 'e1-to-e2', 'from': 'e1', 'to': 'e2'}
-        )
-        self.assertEqual(self.ctx_import.update['e1']['impact'], [])
-        self.assertEqual(self.ctx_import.update['e2']['depends'], [])
+        self.ctx_import.update = {'e2':{'depends': set(['e1'])}}
+        self.ctx_import.entities_to_update = {'e1':{'impact': set(['e2'])}}
+        self.ctx_import._ContextGraphImport__a_delete_link({
+            ContextGraphImport.K_ID: 'e1-to-e2',
+             ContextGraphImport.K_FROM: ['e1'],
+             ContextGraphImport.K_TO: 'e2'})
+        self.assertEqual(self.ctx_import.update['e1']['impact'], set())
+        self.assertEqual(self.ctx_import.update['e2']['depends'], set())
 
 class NotImplem(BaseTest):
     def update_link(self):
