@@ -601,6 +601,36 @@ class ContextGraphImport(ContextGraph):
     def __a_enable_link(self, link):
         raise NotImplementedError()
 
+    @classmethod
+    def __superficial_check(cls, fd):
+        """Check if the cis and links field are a list. If not, raise a
+        jsonschema.ValidationError. It move the cursor of the fd to back 0."""
+
+        cis_end = False
+        links_end = False
+
+        parser = ijson.parse(fd)
+        for prefix, event, value in parser:
+            if prefix == "cis":
+                if event == "end_array":
+                    cis_end = True
+            if prefix == "links":
+                if event == "end_array":
+                    links_end = True
+
+        fd.seek(0)
+
+        if (cis_end == True) and (links_end == True):
+            return True
+        elif (cis_end == False) and (links_end == False):
+            raise jsonschema.ValidationError(
+                "CIS and LINKS should be an array.")
+        elif cis_end == False:
+            raise jsonschema.ValidationError("CIS should be an array.")
+        elif links_end == False:
+            raise jsonschema.ValidationError("LINKS should be an array.")
+
+
     def import_context(self, uuid):
         """Import a new context.
 
@@ -615,6 +645,11 @@ class ContextGraphImport(ContextGraph):
         # In case the previous import failed and/or raise an exception, we\
             # clean now
         self.clean_attributes()
+
+        start = time.time()
+        self.__superficial_check(fd)
+        end = time.time()
+        self.logger.debug("Import {0} : superficial check {1}.".format(uuid, execution_time(end - start)))
 
         start = time.time()
         self.entities_to_update = self.__get_entities_to_update(file_)
