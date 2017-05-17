@@ -167,6 +167,10 @@ def exports(ws):
     def get_graph():
         entities_list = manager.get_entities()
 
+        entities_dico = {}
+        for i in entities_list:
+            entities_dico[i['_id']] = i
+
         ret_json = {
             'links':[],
             'nodes':[]
@@ -180,10 +184,13 @@ def exports(ws):
 
         for i in entities_list:
             source = i['_id']
-            for target in i['depends']:
-                ret_json['links'].append({'value': 1, 
-                	'source': source, 
-                'target': target})
+            for target in i['impact']:
+                if entities_dico[source]['type'] == 'resource' and entities_dico[target]['type'] == 'connector':
+                    pass
+                else:
+                    ret_json['links'].append({'value': 1, 
+                        'source': source, 
+                    'target': target})
 
         directory = '/opt/canopsis/var/www/src/canopsis/d3graph'
         if not os.path.exists(directory):
