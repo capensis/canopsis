@@ -19,7 +19,6 @@
 # ---------------------------------
 
 from datetime import timedelta
-import json
 import operator
 from uuid import uuid4 as uuid
 
@@ -223,6 +222,9 @@ class AlarmFilter(object):
         raise Exception("No storage available to save into !")
 
     def serialize(self):
+        """
+        Return a printable element (especially for json serialization)
+        """
         return self.element
 
     def __repr__(self):

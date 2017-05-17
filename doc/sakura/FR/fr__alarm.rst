@@ -135,10 +135,13 @@ updated at any moment, and alarms that had been frozen **MUST** continue to
 record steps if this limit has been extended.
 
 Alarm filter
-~~~~~~~~~~~~
+------------
 `Alarm filters` permit to automate one or more actions when an alarm has a
 specific property value (for example, state > 1) and a certain amount of minutes
 have past since the last alarm update.
+
+In `etc/alerts/manager.conf`, you can specify the author name and the message
+putted in the alarm (when the executed action need one).
 
 Functional test
 ---------------

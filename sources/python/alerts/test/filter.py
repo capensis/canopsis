@@ -61,27 +61,28 @@ class TestFilter(BaseTest):
             'alarms': [alarm_id],
         }
 
+        # CREATE
         result = alarm_filters.create_filter(element)
         element['_id'] = result._id
         self.assertEqual(result.value, 'value')
-
+        #GET
         result = alarm_filters.get_filters()
         self.assertEqual(result[alarm_id][0].element, element)
 
         result = alarm_filters.update_filter('/not/an/alarm',
                                              key='key', value='another')
         self.assertTrue(result is None)
-
+        # UPDATE
         result = alarm_filters.update_filter(element['_id'],
                                              key='key', value='another')
         self.assertEqual(result.key, 'another')
-
+        # GET
         result = alarm_filters.get_filters()
         self.assertEqual(result[alarm_id][0].key, 'another')
-
+        # DELTE
         result = alarm_filters.delete_filter(element['_id'])
         self.assertEqual(result['ok'], 1.0)
-
+        # GET
         result = alarm_filters.get_filters()
         self.assertEqual(result, {})
 

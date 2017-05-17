@@ -916,7 +916,8 @@ class Alerts(MiddlewareRegistry):
         """
         Do actions on alarms based on certain conditions/filters.
 
-        Alarm[self.AF_RUN] = {alarm_id: timestamp_of_last_execution}
+        Can alter an alarm as follow:
+        Alarm[self.AF_RUN] = [{alarm_id: timestamp_of_last_execution}]
         """
         now = datetime.now()
         now_stamp = int(time.mktime(now.timetuple()))

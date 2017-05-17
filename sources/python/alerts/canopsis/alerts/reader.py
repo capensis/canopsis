@@ -93,11 +93,9 @@ class AlertsReader(MiddlewareRegistry):
 
             self._cache_config = {
                 'expiration': values.get('expiration').value,
-                'resolved_truncate':
-                    values.get('resolved_truncate').value,
+                'resolved_truncate': values.get('resolved_truncate').value,
                 'resolved_limit': values.get('resolved_limit').value,
-                'opened_truncate':
-                    values.get('opened_truncate').value,
+                'opened_truncate': values.get('opened_truncate').value,
                 'opened_limit': values.get('opened_limit').value
             }
 
