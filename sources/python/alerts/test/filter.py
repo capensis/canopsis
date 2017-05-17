@@ -45,6 +45,46 @@ class TestFilter(BaseTest):
         self.assertEqual(len(alarm_filters), 2)
         self.assertTrue(alarm_id in alarm_filters)
 
+    def test_crud(self):
+        alarm_filters = AlarmFilters(storage=self.filter_storage)
+
+        result = alarm_filters.get_filters()
+        self.assertEqual(result, {})
+
+        alarm_id = '/fake/alarm/id'
+        element = {
+            'limit': 30.0,
+            'key': 'key',
+            'operator': 'neq',
+            'value': 'value',
+            'tasks': ['alerts.useraction.comment'],
+            'alarms': [alarm_id],
+        }
+
+        result = alarm_filters.create_filter(element)
+        element['_id'] = result._id
+        self.assertEqual(result.value, 'value')
+
+        result = alarm_filters.get_filters()
+        self.assertEqual(result[alarm_id][0].element, element)
+
+        result = alarm_filters.update_filter('/not/an/alarm',
+                                             key='key', value='another')
+        self.assertTrue(result is None)
+
+        result = alarm_filters.update_filter(element['_id'],
+                                             key='key', value='another')
+        self.assertEqual(result.key, 'another')
+
+        result = alarm_filters.get_filters()
+        self.assertEqual(result[alarm_id][0].key, 'another')
+
+        result = alarm_filters.delete_filter(element['_id'])
+        self.assertEqual(result['ok'], 1.0)
+
+        result = alarm_filters.get_filters()
+        self.assertEqual(result, {})
+
     def test_check_alarm(self):
         alarm, value = self.gen_fake_alarm()
 

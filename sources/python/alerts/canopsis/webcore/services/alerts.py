@@ -19,6 +19,8 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
+import json
+
 from canopsis.common.ws import route
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
@@ -125,9 +127,9 @@ def exports(ws):
             return True
 
     @route(
-            ws.application.get,
-            name='alerts/count',
-            payload=['start', 'stop', 'limit', 'select'],
+        ws.application.get,
+        name='alerts/count',
+        payload=['start', 'stop', 'limit', 'select'],
     )
     def count_by_period(
             start,
@@ -163,9 +165,9 @@ def exports(ws):
         )
 
     @route(
-            ws.application.get,
-            name='alerts/get-current-alarm',
-            payload=['entity_id'],
+        ws.application.get,
+        name='alerts/get-current-alarm',
+        payload=['entity_id'],
     )
     def get_current_alarm(entity_id):
         """
@@ -177,3 +179,81 @@ def exports(ws):
         """
 
         return am.get_current_alarm(entity_id)
+
+    @route(
+        ws.application.get,
+        name='alerts-filter',
+        payload=['entity_id'],
+    )
+    def get_filter(entity_id):
+        """
+        Get all filters linked with an alarm.
+
+        :param str entity_id: Entity ID of the alarm-filter
+
+        :returns: a list of <AlarmFilter>
+        """
+        filters = am.alarm_filters.get_filter(entity_id)
+        if filters is None:
+            return None
+
+        return [l.serialize() for l in filters]
+
+    @route(
+        ws.application.put,
+        name='alerts-filter',
+        payload=['element']
+    )
+    def create_filter(element):
+        """
+        Add a new alarm filter.
+
+        - limit (int, float): The time since the last event (in minutes) before evaluating the filter
+        - key (str): The key to analyse in the alarm
+        - operator (str): How to compare 'key' and 'value' (see operator python package)
+        - value (int, float, str): The awaited value of 'key' in alarm
+        - tasks ([str]): a list of task names to execute (see tasks.py)
+        - alarms ([str]): a list of alarms to apply to
+
+        :returns: an <AlarmFilter>
+        """
+
+        return am.alarm_filters.create_filter(element=element).serialize()
+
+    @route(
+        ws.application.post,
+        name='alerts-filter',
+        payload=['entity_id', 'key', 'value'],
+    )
+    def update_filter(entity_id, key, value):
+        """
+        Update an existing alam filter.
+
+        :param entity_id: Entity ID of the alarm-filter
+        :type entity_id: str
+        :param key: the key to update in the alarm
+        :type key: str
+        :param value: the associated value
+        :type value: str
+        """
+        return am.alarm_filters.update_filter(alarm_id=entity_id,
+                                              key=key,
+                                              value=value).serialize()
+
+    @route(
+        ws.application.delete,
+        name='alerts-filter',
+        payload=['entity_id'],
+    )
+    def delete_filter(entity_id):
+        """
+        Delete a filter, based on his id.
+
+        :param entity_id: Entity ID of the alarm-filter
+        :type entity_id: str
+
+        :returns: dict
+        """
+        ws.logger.info(u'Delete alarm-filter : {}'.format(entity_id))
+
+        return am.alarm_filters.delete_filter(entity_id)
