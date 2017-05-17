@@ -19,8 +19,6 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
-import json
-
 from canopsis.common.ws import route
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
