@@ -20,13 +20,13 @@
 
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
+from canopsis.configuration.configurable.decorator import add_config
 from canopsis.configuration.model import Parameter
 
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
-from canopsis.task.core import get_task
 from canopsis.context.manager import Context
+from canopsis.task.core import get_task
 
 from canopsis.event.manager import Event
 from canopsis.check import Check
@@ -43,14 +43,19 @@ import time
 
 
 CONF_PATH = 'alerts/manager.conf'
-CATEGORY = 'ALERTS'
-CONTENT = [
+ALERTS = 'ALERTS'
+ALERTS_CNT = [
     Parameter('extra_fields', Parameter.array())
+]
+FILTER = 'FILTER'
+FILTER_CNT = [
+    Parameter('author', str),
+    Parameter('message', str)
 ]
 
 
 @conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
+@add_config({ALERTS: ALERTS_CNT, FILTER: FILTER_CNT})
 class Alerts(MiddlewareRegistry):
     """
     Alarm cycle managment.
@@ -82,6 +87,22 @@ class Alerts(MiddlewareRegistry):
             value = self.load_config()
 
         self._config = value
+
+    @property
+    def filter_config(self):
+        if not hasattr(self, '_filter_config'):
+            values = self.conf.get(FILTER)
+
+            self._filter_config = {
+                'author': values.get('author').value,
+                'message': values.get('message').value,
+            }
+
+        return self._filter_config
+
+    @property
+    def alarm_filters(self):
+        return AlarmFilters(storage=self[Alerts.FILTER_STORAGE])
 
     @property
     def flapping_interval(self):
@@ -485,9 +506,9 @@ class Alerts(MiddlewareRegistry):
         # Find the corresponding alarm
         alarm = self.get_current_alarm(entity_id)
         if alarm is None:
-            self.logger.warning(
-                'Entity {} has no current alarm : ignoring'.format(entity_id)
-            )
+            #self.logger.warning(
+            #    'Entity {} has no current alarm : ignoring'.format(entity_id)
+            #)
             return
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
@@ -897,16 +918,12 @@ class Alerts(MiddlewareRegistry):
 
         Alarm[self.AF_RUN] = {alarm_id: timestamp_of_last_execution}
         """
-        AUTHOR = 'system'
-        MESSAGE = 'executing alarm filter action'
-
         now = datetime.now()
         now_stamp = int(time.mktime(now.timetuple()))
 
         storage = self[Alerts.ALARM_STORAGE]
-        alarm_filters = AlarmFilters(storage=self[Alerts.FILTER_STORAGE])
 
-        for alarm_id, filters in alarm_filters.get_filters().items():
+        for alarm_id, filters in self.alarm_filters.get_filters().items():
             docalarm = self.get_current_alarm(alarm_id)
             if docalarm is None:
                 continue
@@ -935,7 +952,7 @@ class Alerts(MiddlewareRegistry):
                     'timestamp': now_stamp,
                     'connector': value['connector'],
                     'connector_name': value['connector_name'],
-                    'output': MESSAGE,
+                    'output': self.filter_config['message'],
                 }
                 new_state = value[AlarmField.state.value]['val']
                 # Execute each defined action
@@ -952,7 +969,7 @@ class Alerts(MiddlewareRegistry):
                     new_value = self.execute_task(name=task,
                                                   event=event,
                                                   entity_id=alarm_id,
-                                                  author=AUTHOR,
+                                                  author=self.filter_config['author'],
                                                   new_state=new_state_bis)
 
                 if new_value is None:
