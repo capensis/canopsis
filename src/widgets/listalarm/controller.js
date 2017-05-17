@@ -197,8 +197,8 @@ Ember.Application.initializer({
                   // tstop: timestamps.tstop,
                   // tstart: 0,
                   // tstop: 0,
-                  // opened: filterState == 'opened',
-                  // resolved: filterState == 'resolved',
+                  opened: filterState == 'opened',
+                  resolved: filterState == 'resolved',
                   // consolidations: [],
                   // filter: filter,
                   filter: {},                  
@@ -384,7 +384,9 @@ Ember.Application.initializer({
                   newAlarm['id'] = alarm._id;
                   newAlarm['entity_id'] = alarm.d;
 
-                  newAlarm['state']['canceled'] = alarm.v.canceled;
+                  // newAlarm['state']['canceled'] = alarm.v.canceled;
+                  newAlarm.set('state.canceled', alarm.v.canceled);
+                  
                   // newAlarm['entity_id'] = '/resource/feeder/feeder/feeder_component/feeder_resource';
                   
                   // /resource/feeder/feeder/feeder_component/feeder_resource
@@ -628,10 +630,11 @@ Ember.Application.initializer({
               var aa = this.get('alarms').findBy('id', alarmId);
               if (aa) {
                 var self = this;
+                var filterState = this.get('model.alarms_state_filter.state') || 'resolved';
                 var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
 
               
-                  adapter.findQuery('alarm', 'get-current-alarm', {'entity_id': aa.get('entity_id')}).then(function (a) {
+                  adapter.findQuery('alarm', 'get-current-alarm', {'opened': filterState == 'opened', 'resolved': filterState == 'resolved','entity_id': aa.get('entity_id')}).then(function (a) {
                     if (a.success) {
                     // console.error('teest', a);
                       var fields = self.get('fields');

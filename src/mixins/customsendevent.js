@@ -408,10 +408,10 @@ Ember.Application.initializer({
                         if (!isNone(formRecord)) {
                             record.output = get(formRecord, 'output');
                         }
-                        record.pbehavior_name = 'downtime';
-                        record.tstart = 1;
-                        record.tstop = 2;
-                        record.duration = 3;
+                        // record.pbehavior_name = 'downtime';
+                        // record.tstart = 1;
+                        // record.tstop = 2;
+                        // record.duration = 3;
                         record.action = 'create';
                         
                         // record.rrule = 'FREQ=DAILY';
@@ -427,7 +427,7 @@ Ember.Application.initializer({
                     },
                     handle: function(crecords) {
                         var record = this.getDisplayRecord('pbehavior', crecords[0]);
-                        this.getEventForm('pbehavior', record, crecords);
+                        this.getEventForm('pbehavior', record, crecords, 'pbehaviorform');
                     },
                     transform: function(crecord, record) {
                         console.log('transform method for ack remove', crecord, record, 'pbehavior');
@@ -650,7 +650,7 @@ Ember.Application.initializer({
                         // record.event_type = 'check';
                         // record.keep_state = true;
                         // record.state_type = 1;
-                        record.duration = 3;
+                        // record.duration = 3;
                     },
                     filter: function(record) {
                         return (get(record, 'state'));

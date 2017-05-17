@@ -92,9 +92,9 @@ Ember.Application.initializer({
                 var actions = this.get('actionsMap').filter(function(item, index, enumerable) {
                     return item.internal_states.includes(intState)
                 });
-                // if (this.get('isSnoozed')) {
-                //     actions.removeObject(actions.findBy('mixin_name', 'snooze'))
-                // };
+                if (this.get('isSnoozed')) {
+                    actions.removeObject(actions.findBy('mixin_name', 'snooze'))
+                };
                 return actions;
             }.property('internalState', 'isSnoozed'),
             internalState: function() {

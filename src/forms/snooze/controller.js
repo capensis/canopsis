@@ -166,7 +166,7 @@ Ember.Application.initializer({
                         var modelAttributes = this.getAttributes();
                         var refModelCategories = referenceModel.proto().categories;
 
-                        // refModelCategories[0].keys
+                        refModelCategories[0].keys[5] = 'duration';
 
 
                         for (var i = 0, li = refModelCategories.length; refModelCategories && i < li; i++) {
@@ -181,6 +181,12 @@ Ember.Application.initializer({
                                 if(key === "separator") {
                                     createdCategory.keys[j] = this.generateRoleAttribute('separator');
                                 } else {
+
+                                    if (key === "duration") {
+                                        // find duration attr
+                                        attr = get(window.schemasRegistry.getByName('pbehavior').EmberModel, get(this, 'attributesKey')).get('duration');
+                                    }
+
                                     if (key !== undefined && attr === undefined) {
                                         notificationUtils.error("An attribute that does not exists seems to be referenced in schema categories" + key);
                                         console.error(referenceModel, attr, modelAttributes);
