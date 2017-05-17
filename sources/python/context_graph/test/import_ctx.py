@@ -42,20 +42,21 @@ class BaseTest(TestCase):
                              'impact': [],
                              'measurements': [],
                              'infos': {}}
-        self.template_ci = {ContextGraphImport.K_ID: None,
+        self.template_ci = {ContextGraphImport.K_ID: "id",
                             ContextGraphImport.K_NAME: "Name",
-                            ContextGraphImport.K_TYPE: "Type",
+                            ContextGraphImport.K_TYPE: "resource",
                             ContextGraphImport.K_INFOS: {},
-                            ContextGraphImport.K_ACTION: None}
+                            ContextGraphImport.K_ACTION:
+                            ContextGraphImport.A_CREATE}
 
         self.template_link = {ContextGraphImport.K_FROM: None,
                               ContextGraphImport.K_TO: None,
                               ContextGraphImport.K_INFOS: {},
-                              ContextGraphImport.K_ACTION: None}
+                              ContextGraphImport.K_ACTION:
+                            ContextGraphImport.A_CREATE}
 
     def tearDown(self):
         self.entities_storage.remove_elements()
-        self.organisations_storage.remove_elements()
         self.organisations_storage.remove_elements()
         self.import_storage.remove_elements()
 
@@ -649,11 +650,10 @@ class ImportChecker(BaseTest):
         self._desc_fail = "The check of the import raise an exception {0}!"
 
     def test_empty_import(self):
-        BaseTest.store_import({}, self.uuid)
-        try:
+        self.store_import({}, self.uuid)
+        with self.assertRaisesRegexp(ValidationError,
+                                     "CIS and LINKS should be an array."):
             self.ctx_import.import_context(self.uuid)
-        except Exception:
-            self.fail(self._desc_fail)
 
     def test_cis_links(self):
         data = self.template_json.copy()
@@ -687,25 +687,40 @@ class ImportChecker(BaseTest):
                                      "CIS and LINKS should be an array."):
             self.ctx_import.import_context(self.uuid)
 
-    def test_ci_id(self):
-        json = self.template_json.copy()
-        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+    def test_ci_id_ok(self):
+        data = self.template_json.copy()
+        ci = self.template_ci.copy()
+        ci[ContextGraphImport.K_ID] = "id"
+        data[ContextGraphImport.K_CIS] = [ci]
 
         # check ci.id with right type
+        BaseTest.store_import(data, self.uuid)
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
             self.fail(self._desc_fail.format(e))
 
+    def test_ci_id_wrong_type(self):
+        data = self.template_json.copy()
+        ci = self.template_ci.copy()
+        ci[ContextGraphImport.K_ID] = 1
+        data[ContextGraphImport.K_CIS] = [ci]
+
         # check ci.id with wrong type
-        json[ContextGraphImport.K_CIS][0][ContextGraphImport.K_ID] = 1
+        self.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
+
+    def test_ci_id_no_id(self):
+        data = self.template_json.copy()
+        ci = self.template_ci.copy()
+        ci.pop(ContextGraphImport.K_ID)
+        data[ContextGraphImport.K_CIS] = [ci]
 
         # check missing ci.id
-        json[ContextGraphImport.K_CIS][0].pop(ContextGraphImport.K_ID)
+        BaseTest.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
 
     def test_ci_name(self):
         json = self.template_json.copy()
