@@ -9,6 +9,7 @@ import jsonschema
 import threading
 import ijson
 import time
+import Queue
 
 CONF_FILE = 'context_graph/manager.conf'
 CATEGORY = "IMPORTCONTEXT"
@@ -26,6 +27,18 @@ def execution_time(exec_time):
     return "{0}:{1}:{2}".format(str(hours).zfill(2),
                                 str(minutes).zfill(2),
                                 str(seconds).zfill(2))
+
+class ExceptionThread(threading.Thread):
+
+    def __init__(self, *args, **kwargs):
+        super(ExceptionThread, self).__init__(*args, **kwargs)
+        self.except_queue = Queue.Queue()
+
+    def run(self):
+        try:
+            super(ExceptionThread, self).run()
+        except Exception as e:
+            self.except_queue.put_nowait(e)
 
 class ImportKey:
 
@@ -344,21 +357,33 @@ class ContextGraphImport(ContextGraph):
                         ids_cis.add(id_)
             fd.close()
 
-        cis_thd = threading.Thread(group=None,
+        cis_thd = ExceptionThread(group=None,
                                    target=__get_entities_to_update_cis,
-                                   name="cis thread",
+                                   name="cis_thread",
                                    args=(file_,))
 
-        links_thd = threading.Thread(group=None,
+        links_thd = ExceptionThread(group=None,
                                      target=__get_entities_to_update_links,
-                                     name="links thread",
+                                     name="links_thread",
                                      args=(file_,))
+
+        threads = [cis_thd, links_thd]
 
         cis_thd.start()
         links_thd.start()
 
         cis_thd.join()
         links_thd.join()
+
+        for thread in threads:
+            try:
+                excep = thread.except_queue.get_nowait()
+            except Queue.Empty:
+                pass
+            else:
+                self.logger.error("Exception in {0}".format(thread.getName()))
+                self.logger.exception(excep)
+                raise excep
 
         ids = ids_links.union(ids_cis)
 
