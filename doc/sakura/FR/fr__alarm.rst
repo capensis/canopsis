@@ -23,6 +23,7 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "Romain Hennuyer", "2017/05/17", "0.5", "Add alarm filter", ""
    "Romain Hennuyer", "2017/03/28", "0.4", "Add steps comment", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.3", "Add steps hard limit", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.2", "Add flapping crop feature", ""
@@ -132,6 +133,12 @@ is an alarm cancelation.
 `Hard limit` number of steps to be kept is configurable. This value **CAN** be
 updated at any moment, and alarms that had been frozen **MUST** continue to
 record steps if this limit has been extended.
+
+Alarm filter
+~~~~~~~~~~~~
+`Alarm filters` permit to automate one or more actions when an alarm has a
+specific property value (for example, state > 1) and a certain amount of minutes
+have past since the last alarm update.
 
 Functional test
 ---------------
