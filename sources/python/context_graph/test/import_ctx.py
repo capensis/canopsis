@@ -722,80 +722,110 @@ class ImportChecker(BaseTest):
         with self.assertRaises(ValidationError):
             self.ctx_import.import_context(self.uuid)
 
-    def test_ci_name(self):
-        json = self.template_json.copy()
-        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+    def test_ci_name_ok(self):
+        data = self.template_json.copy()
+        data[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+        self.store_import(data, self.uuid)
 
         # check ci.name with right type
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
             self.fail(self._desc_fail.format(e))
+
+    def test_ci_name_wrong_type(self):
+        data = self.template_json.copy()
+        ci = self.template_ci.copy()
+        ci[ContextGraphImport.K_NAME] = 1
+        data[ContextGraphImport.K_CIS] = [ci]
+        self.store_import(data, self.uuid)
 
         # check ci.name with wrong type
-        json[ContextGraphImport.K_CIS][0][ContextGraphImport.K_NAME] = 1
         with self.assertRaises(ValidationError):
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
 
-    def _test_ci_array_string(self, key):
-        json = self.template_json.copy()
-        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+    def test_ci_measurements_empty(self):
+        data = self.template_json.copy()
+        data[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+        self.store_import(data, self.uuid)
 
-        # check ci.depends with right type
+        # check ci.key with right type
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
             self.fail(self._desc_fail.format(e))
-
-        # check ci.depends with wrong type
-        json[ContextGraphImport.K_CIS][0][key] = 1
-        with self.assertRaises(ValidationError):
-            import_checker(json)
-
-        json[ContextGraphImport.K_CIS][0][key] = [1,2]
-        with self.assertRaises(ValidationError):
-            import_checker(json)
-
-        json[ContextGraphImport.K_CIS][0][key] = [1,"ok"]
-        with self.assertRaises(ValidationError):
-            import_checker(json)
-
-        # check with out ci.depends
-        json[ContextGraphImport.K_CIS][0].pop(key)
-        try:
-            import_checker(json)
-        except Exception as e:
-            self.fail(self._desc_fail.format(e))
-
-    def test_ci_depends(self):
-        self._test_ci_array_string(ContextGraphImport.K_DEPENDS)
-
-    def test_ci_impact(self):
-        self._test_ci_array_string(ContextGraphImport.K_IMPACT)
 
     def test_ci_measurements(self):
-        self._test_ci_array_string(ContextGraphImport.K_MEASUREMENTS)
+        data = self.template_json.copy()
+        ci = self.template_ci.copy()
+        data[ContextGraphImport.K_CIS] = [ci]
+
+        ci[ContextGraphImport.K_MEASUREMENTS] = ["measurmement1",
+                                                 "measurmement2"]
+        self.store_import(data, self.uuid)
+        try:
+            self.ctx_import.import_context(self.uuid)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+
+    def test_ci_measurements_wrong_type(self):
+        data = self.template_json.copy()
+        ci = self.template_ci.copy()
+        data[ContextGraphImport.K_CIS] = [ci]
+
+        ci[ContextGraphImport.K_MEASUREMENTS] = 1
+        self.store_import(data, self.uuid)
+
+        # check ci.key with wrong type
+        with self.assertRaises(ValidationError):
+            self.ctx_import.import_context(self.uuid)
+
+
+        ci[ContextGraphImport.K_MEASUREMENTS] = [1,2]
+        self.store_import(data, self.uuid)
+        with self.assertRaises(ValidationError):
+            self.ctx_import.import_context(self.uuid)
+
+        ci[ContextGraphImport.K_MEASUREMENTS] = [1,"ok"]
+        self.store_import(data, self.uuid)
+        with self.assertRaises(ValidationError):
+            self.ctx_import.import_context(self.uuid)
+
+    def test_ci_measurements_no_key(self):
+        data = self.template_json.copy()
+        ci = self.template_ci.copy()
+        data[ContextGraphImport.K_CIS] = [ci]
+
+        # check with out ci.key
+        self.store_import(data, self.uuid)
+        try:
+            self.ctx_import.import_context(self.uuid)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
 
     def _test_ci_object(self, key, required=False):
-        json = self.template_json.copy()
-        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+        data = self.template_json.copy()
 
         # check ci.{key} with right type
+        data[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+        self.store_import(data, self.uuid)
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
             self.fail(self._desc_fail.format(e))
 
         # check ci.depends with wrong type
-        json[ContextGraphImport.K_CIS][0][key] = 1
+        data[ContextGraphImport.K_CIS][0][key] = 1
+        self.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
 
         # check with out ci.{key}
         if required is True:
-            json[ContextGraphImport.K_CIS][0].pop(key)
+            data[ContextGraphImport.K_CIS][0].pop(key)
             try:
-                import_checker(json)
+                self.ctx_import.import_context(self.uuid)
             except Exception as e:
                 self.fail(self._desc_fail.format(e))
 
