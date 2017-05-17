@@ -198,9 +198,6 @@ class GetEntitiesToUpdate(BaseTest):
 
 class AUpdateEntity(BaseTest):
 
-    def setUp(self):
-        super(AUpdateEntity, self).setUp()
-
     def test_no_entities(self):
         ci = self.template_ci.copy()
         ci[ContextGraphImport.K_ID] = "not_an_entity"
@@ -637,60 +634,58 @@ class ADeleteEntity(BaseTest):
         self.assertDictEqual(self.ctx_import.update, {})
 
 
-class ImportChecker(TestCase):
+class ImportChecker(BaseTest):
     """I only check a kind of error on one fields, not every kind of error on
     every fields. I assume that the error will be triggered whatever the fields
     are.
     """
 
     def setUp(self):
-
-        self.template_ci = {ContextGraphImport.K_ID: "id",
-                            ContextGraphImport.K_NAME: "name",
-                            ContextGraphImport.K_TYPE: "resource",
-                            ContextGraphImport.K_DEPENDS: [],
-                            ContextGraphImport.K_IMPACT: [],
-                            ContextGraphImport.K_MEASUREMENTS: [],
-                            ContextGraphImport.K_INFOS: {},
-                            ContextGraphImport.K_ACTION:
-                            ContextGraphImport.A_CREATE,
-                            ContextGraphImport.K_PROPERTIES: {}}
-
-        self.template_link = {ContextGraphImport.K_ID: "id",
-                              ContextGraphImport.K_FROM: "from",
-                              ContextGraphImport.K_TO: "to",
-                              ContextGraphImport.K_INFOS: {},
-                              ContextGraphImport.K_ACTION:
-                              ContextGraphImport.A_CREATE,
-                              ContextGraphImport.K_PROPERTIES: {}}
+        super(ImportChecker, self).setUp()
 
         self.template_json = {ContextGraphImport.K_CIS: [],
                               ContextGraphImport.K_LINKS: []}
-
-        self._desc_fail = "import_checker() raise an exception {0}!"
+        self.uuid = "test"
+        self._desc_fail = "The check of the import raise an exception {0}!"
 
     def test_empty_import(self):
-        with self.assertRaises(KeyError):
-            import_checker({})
+        BaseTest.store_import({}, self.uuid)
+        try:
+            self.ctx_import.import_context(self.uuid)
+        except Exception:
+            self.fail(self._desc_fail)
 
     def test_cis_links(self):
-        json = self.template_json
+        data = self.template_json.copy()
+        BaseTest.store_import(data, self.uuid)
         # check cis with right type
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
             self.fail(self._desc_fail.format(e))
 
         # check cis with wrong type
-        json[ContextGraphImport.K_CIS] = {}
-        with self.assertRaises(ValidationError):
-            import_checker(json)
+        data[ContextGraphImport.K_CIS] = {}
+        BaseTest.store_import(data, self.uuid)
+        with self.assertRaisesRegexp(ValidationError,
+                                     "CIS should be an array."):
+            self.ctx_import.import_context(self.uuid)
 
         # check links with wrong type
-        json[ContextGraphImport.K_CIS] = []
-        json[ContextGraphImport.K_LINKS] = {}
-        with self.assertRaises(ValidationError):
-            import_checker(json)
+        data[ContextGraphImport.K_CIS] = []
+        data[ContextGraphImport.K_LINKS] = {}
+        BaseTest.store_import(data, self.uuid)
+        with self.assertRaisesRegexp(ValidationError,
+                                     "LINKS should be an array."):
+            self.ctx_import.import_context(self.uuid)
+
+        # check links and cis with wrong type
+        data[ContextGraphImport.K_CIS] = {}
+        data[ContextGraphImport.K_LINKS] = {}
+        BaseTest.store_import(data, self.uuid)
+        with self.assertRaisesRegexp(ValidationError,
+                                     "CIS and LINKS should be an array."):
+            self.ctx_import.import_context(self.uuid)
 
     def test_ci_id(self):
         json = self.template_json.copy()
