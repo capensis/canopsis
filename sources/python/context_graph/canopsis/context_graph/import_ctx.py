@@ -324,6 +324,8 @@ class ContextGraphImport(ContextGraph):
 
     def __get_entities_to_update(self, file_):
         """Return every entities id required for the update
+
+        If a ci or link does not match the schema a ValidationError is raised.
         :param json: the json with every actions required for the update
         :param rtype: a dict with the entity id as a key and the entity as
         a value
@@ -335,6 +337,7 @@ class ContextGraphImport(ContextGraph):
         def __get_entities_to_update_links(file_):
             fd = open(file_, 'r')
             for link in ijson.items(fd, "{0}.item".format(self.K_LINKS)):
+                self.check_element(link, self.K_LINKS)
                 for id_ in link[self.K_FROM]:
                     ids_links.add(id_)
 
@@ -345,6 +348,7 @@ class ContextGraphImport(ContextGraph):
         def __get_entities_to_update_cis(file_):
             fd = open(file_, 'r');
             for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
+                self.check_element(ci, self.K_CIS)
                 ids_cis.add(ci[self.K_ID])
 
                 # we need to retreive every related entity to update the links
@@ -684,8 +688,6 @@ class ContextGraphImport(ContextGraph):
 
         start = time.time()
         for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
-            # add function to check if the element is correct and if the state is right
-            self.check_element(ci, self.K_CIS)
             if ci[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_entity(ci)
             elif ci[self.K_ACTION] == self.A_CREATE:
@@ -706,7 +708,6 @@ class ContextGraphImport(ContextGraph):
 
         start = time.time()
         for link in ijson.items(fd, "{0}.item".format(self.K_LINKS)):
-            self.check_element(link, self.K_LINKS)
             if link[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_link(link)
             elif link[self.K_ACTION] == self.A_CREATE:
