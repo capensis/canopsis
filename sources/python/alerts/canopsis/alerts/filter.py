@@ -156,8 +156,8 @@ class AlarmFilter(object):
 
         filter = {
             '_id': 'deadbeef',
-            'alarms': ['/id/of/linked/alarm']
-            'limit': timedelta(minutes=30),
+            'alarms': ['/id/of/linked/alarm'],
+            'limit': timedelta(seconds=30),
             'key': 'connector',
             'operator': operator.eq,
             'value': 'connector_value',
@@ -183,7 +183,7 @@ class AlarmFilter(object):
         value = item
         # Limit conversion
         if key == self.LIMIT and isinstance(item, (int, float)):
-            value = timedelta(minutes=item)
+            value = timedelta(seconds=item)
         # Operator conversion
         elif key == self.OPERATOR and hasattr(operator, item):
             value = getattr(operator, item)
