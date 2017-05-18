@@ -11,6 +11,8 @@ import ijson
 import time
 import Queue
 
+#FIXME : move the check of the element in the superficial check method
+
 CONF_FILE = 'context_graph/manager.conf'
 CATEGORY = "IMPORTCONTEXT"
 
