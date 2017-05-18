@@ -3,12 +3,14 @@
 
 from unittest import main, TestCase
 
-from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey
+from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey,\
+    Manager
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 import copy
 import json
 import os
+import time
 from jsonschema.exceptions import ValidationError
 
 
@@ -1355,6 +1357,80 @@ class ImportChecker(BaseTest):
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
+
+class ReportManager(TestCase):
+
+    def setUp(self):
+        self.import_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testgraphimport://'
+        )
+        self.template_report = {ImportKey.F_ID: None,
+                                ImportKey.F_STATUS: None,
+                                ImportKey.F_CREATION: None,
+                                ImportKey.F_START: None,
+                                ImportKey.F_EXECTIME: None,
+                                ImportKey.F_STATS: {
+                                    ImportKey.F_DELETED: None,
+                                    ImportKey.F_UPDATED: None}}
+
+        self.manager = Manager()
+        self.manager[Manager.STORAGE] = self.import_storage
+
+        self.uuid = "i-am-an-uuid"
+
+    def tearDown(self):
+        self.import_storage.remove_elements()
+
+
+    def test_get_next_uuid(self):
+        uuid_0 = self.uuid + "_0"
+        uuid_1 = self.uuid + "_1"
+        self.manager.create_import_status(uuid_0)
+        self.manager.create_import_status(uuid_1)
+        self.manager.update_status(uuid_0,
+                                   {ImportKey.F_STATUS: ImportKey.ST_DONE})
+
+        report = self.manager.get_import_status(uuid_1)
+        self.assertEqual(report[ImportKey.F_ID], uuid_1)
+        self.assertEqual(report[ImportKey.F_STATUS], ImportKey.ST_PENDING)
+        try:
+             time.strptime(report[ImportKey.F_CREATION], Manager.DATE_FORMAT)
+        except ValueError:
+            self.fail("Error while converting the creation time.")
+
+
+    def test_get_next_uuid_no_uuid(self):
+        # test without pending report
+        pass
+
+    def test_is_present(self):
+        pass
+
+    def test_update_status_authorized(self):
+        # test id update succeed on authorized fields
+        pass
+
+    def test_update_status_not_authorized(self):
+        # test id update did not succeed on authorized fields
+        pass
+
+    def test_create_import(self):
+        # check if field are correct
+        pass
+
+    def test_on_going_db(self):
+        pass
+
+    def test_pending_in_db(self):
+        pass
+
+    def test_check_id(self):
+        # add id in db and check if the id exist or not
+        pass
+
+    def test_get_import_status(self):
+        # create complicated report and retreive it
+        pass
 
 
 if __name__ == '__main__':
