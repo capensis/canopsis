@@ -238,8 +238,7 @@ class ContextGraphImport(ContextGraph):
     __CI_REQUIRED = [K_ID,
                      K_ACTION,
                      K_TYPE]
-    __LINK_REQUIRED = [K_ID,
-                       K_FROM,
+    __LINK_REQUIRED = [K_FROM,
                        K_TO,
                        K_ACTION]
 
