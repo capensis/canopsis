@@ -407,15 +407,13 @@ Ember.Application.initializer({
                     extract: function(record, crecord, formRecord) {
                         if (!isNone(formRecord)) {
                             record.output = get(formRecord, 'output');
+                            record.dtstart = get(formRecord, 'dtstart');
+                            record.dtstop = get(formRecord, 'dtstop');
+                            record.rrule = get(formRecord, 'rrule');
+                            record.pbehavior_name = get(formRecord, 'name');
                         }
                         // record.pbehavior_name = 'downtime';
-                        // record.tstart = 1;
-                        // record.tstop = 2;
-                        // record.duration = 3;
-                        record.action = 'create';
-                        
-                        // record.rrule = 'FREQ=DAILY';
-                        // record.name = 'test';
+
                         // record.filter = {};
                         // record.comments = '';
                         // record.enabled = true;
@@ -646,7 +644,9 @@ Ember.Application.initializer({
                         if(!isNone(formRecord)) {
                             record.state = get(formRecord, 'state');
                             record.output = get(formRecord, 'output');
+                            record.duration = get(formRecord, 'duration');                        
                         }
+                        
                         // record.event_type = 'check';
                         // record.keep_state = true;
                         // record.state_type = 1;

@@ -136,11 +136,6 @@ Ember.Application.initializer({
                 }
             }.property('formContext'),
 
-            obss: function() {
-              console.error('asdfasd');
-            }.observes('categories.content'),
-
-
             //getting attributes (keys and values as seen on the form)
             categorized_attributes: function() {
                 var inspectedDataItem = get(this, 'inspectedDataItem');
@@ -186,7 +181,6 @@ Ember.Application.initializer({
 
 
                                     if (key === "name") {
-                                        console.error('name!!!');
                                         attr = {
                                             'isAttribute': true,
                                             'name': 'name',
