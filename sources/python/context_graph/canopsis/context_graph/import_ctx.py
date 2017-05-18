@@ -250,16 +250,10 @@ class ContextGraphImport(ContextGraph):
         "properties": {
             K_ID: {"type": "string"},
             K_NAME: {"type": "string"},
-            K_DEPENDS: {"type": "array",
-                        "items": {
-                            "type": "string"}},
-            K_IMPACT: {"type": "array",
-                       "items": {
-                           "type": "string"}},
+
             K_MEASUREMENTS: {"type": "array",
-                             "items":
-                             {"type":
-                              "string"}},
+                             "items": {
+                                 "type": "string"}},
             K_INFOS: {"type": "object"},
             K_ACTION: {"type": "string",
                        "pattern": __A_PATTERN},
