@@ -8,6 +8,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 import copy
 import json
+import os
 from jsonschema.exceptions import ValidationError
 
 
@@ -59,6 +60,10 @@ class BaseTest(TestCase):
         self.entities_storage.remove_elements()
         self.organisations_storage.remove_elements()
         self.import_storage.remove_elements()
+        try:
+            os.remove(ImportKey.IMPORT_FILE.format(self.uuid))
+        except:
+            pass
 
     def assertEqualEntities(self, entity1, entity2):
         sorted(entity1["depends"])
