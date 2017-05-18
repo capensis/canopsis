@@ -25,9 +25,6 @@ class BaseTest(TestCase):
         self.users_storage = Middleware.get_middleware_by_uri(
             'storage-default-testusers://'
         )
-        self.import_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testimport://'
-        )
 
         self.ctx_import[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
         self.ctx_import[
@@ -54,8 +51,7 @@ class BaseTest(TestCase):
                               ContextGraphImport.K_TO: None,
                               ContextGraphImport.K_INFOS: {},
                               ContextGraphImport.K_ACTION:
-                            ContextGraphImport.A_CREATE}
-
+                              ContextGraphImport.A_CREATE}
 
         self.template_json = {ContextGraphImport.K_CIS: [],
                               ContextGraphImport.K_LINKS: []}
@@ -63,7 +59,7 @@ class BaseTest(TestCase):
     def tearDown(self):
         self.entities_storage.remove_elements()
         self.organisations_storage.remove_elements()
-        self.import_storage.remove_elements()
+        self.users_storage.remove_elements()
         try:
             os.remove(ImportKey.IMPORT_FILE.format(self.uuid))
         except:
@@ -132,14 +128,14 @@ class GetEntitiesToUpdate(BaseTest):
         for i in range(len(cis)):
             cis[i][ContextGraphImport.K_ACTION] = ContextGraphImport.A_DELETE
             cis[i][ContextGraphImport.K_TYPE] = ContextGraphImport.RESOURCE
-            cis[i][ContextGraphImport.K_ID] = "ent{0}".format(i+1)
-
+            cis[i][ContextGraphImport.K_ID] = "ent{0}".format(i + 1)
 
         data[ContextGraphImport.K_CIS] = cis
         data[ContextGraphImport.K_LINKS] = links
         fname = self.store_import(data, self.uuid)
 
-        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(fname)
+        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(
+            fname)
 
         self._test(ctx, entities)
 
@@ -167,7 +163,8 @@ class GetEntitiesToUpdate(BaseTest):
 
         fname = self.store_import(json, self.uuid)
 
-        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(fname)
+        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(
+            fname)
 
         self._test(ctx, entities)
 
@@ -215,7 +212,8 @@ class GetEntitiesToUpdate(BaseTest):
 
         fname = self.store_import(json, self.uuid)
 
-        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(fname)
+        ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(
+            fname)
         self._test(ctx, entities)
 
 
@@ -283,6 +281,7 @@ class ACreateEntity(BaseTest):
 
         self.assertEqualEntities(self.ctx_import.update["ent1"], expected)
 
+
 class ADisableEntity(BaseTest):
 
     def test_no_entities(self):
@@ -306,7 +305,7 @@ class ADisableEntity(BaseTest):
                   ContextGraphImport.K_DISABLE: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
-                    id2: self.template_ent.copy(),}
+                    id2: self.template_ent.copy(), }
 
         entities[id1]["_id"] = id1
         entities[id1]["type"] = "resource"
@@ -321,7 +320,7 @@ class ADisableEntity(BaseTest):
         self.ctx_import._ContextGraphImport__a_disable_entity(ci)
 
         expected = entities[id1].copy()
-        expected["infos"] = {ContextGraphImport.K_DISABLE : [timestamp]}
+        expected["infos"] = {ContextGraphImport.K_DISABLE: [timestamp]}
 
         self.assertEqualEntities(self.ctx_import.update[id1], expected)
 
@@ -339,7 +338,7 @@ class ADisableEntity(BaseTest):
               {ContextGraphImport.K_DISABLE: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
-                    id2: self.template_ent.copy(),}
+                    id2: self.template_ent.copy(), }
 
         entities[id1]["_id"] = id1
         entities[id1]["type"] = "resource"
@@ -355,7 +354,7 @@ class ADisableEntity(BaseTest):
 
         expected = entities[id1].copy()
         timestamp += [12345]
-        expected["infos"] = {ContextGraphImport.K_DISABLE : sorted(timestamp)}
+        expected["infos"] = {ContextGraphImport.K_DISABLE: sorted(timestamp)}
 
         result = self.ctx_import.update[id1]
         result["infos"]["disable"] = sorted(result["infos"]["disable"])
@@ -378,7 +377,6 @@ class AEnableEntity(BaseTest):
         with self.assertRaisesRegexp(ValueError, desc):
             self.ctx_import._ContextGraphImport__a_enable_entity(ci)
 
-
     def test_entities_single_timestamp(self):
         id1 = "ent1"
         id2 = "ent2"
@@ -389,7 +387,7 @@ class AEnableEntity(BaseTest):
                   ContextGraphImport.K_ENABLE: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
-                    id2: self.template_ent.copy(),}
+                    id2: self.template_ent.copy(), }
 
         entities[id1]["_id"] = id1
         entities[id1]["type"] = "resource"
@@ -404,7 +402,7 @@ class AEnableEntity(BaseTest):
         self.ctx_import._ContextGraphImport__a_enable_entity(ci)
 
         expected = entities[id1].copy()
-        expected["infos"] = {ContextGraphImport.K_ENABLE : [timestamp]}
+        expected["infos"] = {ContextGraphImport.K_ENABLE: [timestamp]}
 
         self.assertEqualEntities(self.ctx_import.update[id1], expected)
 
@@ -422,7 +420,7 @@ class AEnableEntity(BaseTest):
               {ContextGraphImport.K_ENABLE: timestamp}}
 
         entities = {id1: self.template_ent.copy(),
-                    id2: self.template_ent.copy(),}
+                    id2: self.template_ent.copy(), }
 
         entities[id1]["_id"] = id1
         entities[id1]["type"] = "resource"
@@ -438,7 +436,7 @@ class AEnableEntity(BaseTest):
 
         expected = entities[id1].copy()
         timestamp += [12345]
-        expected["infos"] = {ContextGraphImport.K_ENABLE : sorted(timestamp)}
+        expected["infos"] = {ContextGraphImport.K_ENABLE: sorted(timestamp)}
 
         result = self.ctx_import.update[id1]
         result["infos"]["enable"] = sorted(result["infos"]["enable"])
@@ -448,6 +446,7 @@ class AEnableEntity(BaseTest):
         with self.assertRaises(KeyError):
             self.ctx_import.update[id2]
 
+
 class ChangeStateEntity(BaseTest):
 
     def test(self):
@@ -456,13 +455,15 @@ class ChangeStateEntity(BaseTest):
         with self.assertRaisesRegexp(ValueError, desc):
             self.ctx_import._ContextGraphImport__change_state_entity(None,
                                                                      state)
+
+
 class ACreateLink(BaseTest):
 
     def test_create_link_e1_e2(self):
-        self.ctx_import.update = {'e1':{'impact': set()},
-                                  'e2':{'depends': set()}}
+        self.ctx_import.update = {'e1': {'impact': set()},
+                                  'e2': {'depends': set()}}
         self.ctx_import._ContextGraphImport__a_create_link({
-            ContextGraphImport.K_ID:'e1-to-e2',
+            ContextGraphImport.K_ID: 'e1-to-e2',
             ContextGraphImport.K_FROM: ['e1'],
             ContextGraphImport.K_TO: 'e2'
         })
@@ -470,10 +471,10 @@ class ACreateLink(BaseTest):
         self.assertEqual(self.ctx_import.update['e2']['depends'], set(['e1']))
 
     def test_create_link_e1_e2_2(self):
-        self.ctx_import.update = {'e2':{'depends': set()}}
-        self.ctx_import.entities_to_update = {'e1':{'impact': set()}}
+        self.ctx_import.update = {'e2': {'depends': set()}}
+        self.ctx_import.entities_to_update = {'e1': {'impact': set()}}
         self.ctx_import._ContextGraphImport__a_create_link({
-            ContextGraphImport.K_ID:'e1-to-e2',
+            ContextGraphImport.K_ID: 'e1-to-e2',
             ContextGraphImport.K_FROM: ['e1'],
             ContextGraphImport.K_TO: 'e2'
         })
@@ -483,8 +484,8 @@ class ACreateLink(BaseTest):
 
 class ADeleteLink(BaseTest):
     def test_delete_link_e1_e2(self):
-        self.ctx_import.update = {'e1':{'impact': set(['e2'])},
-                                  'e2':{'depends': set(['e1'])}}
+        self.ctx_import.update = {'e1': {'impact': set(['e2'])},
+                                  'e2': {'depends': set(['e1'])}}
         self.ctx_import._ContextGraphImport__a_delete_link({
             ContextGraphImport.K_ID: 'e1-to-e2',
             ContextGraphImport.K_FROM: ['e1'],
@@ -493,14 +494,15 @@ class ADeleteLink(BaseTest):
         self.assertEqual(self.ctx_import.update['e2']['depends'], set())
 
     def test_delete_link_e1_e2_2(self):
-        self.ctx_import.update = {'e2':{'depends': set(['e1'])}}
-        self.ctx_import.entities_to_update = {'e1':{'impact': set(['e2'])}}
+        self.ctx_import.update = {'e2': {'depends': set(['e1'])}}
+        self.ctx_import.entities_to_update = {'e1': {'impact': set(['e2'])}}
         self.ctx_import._ContextGraphImport__a_delete_link({
             ContextGraphImport.K_ID: 'e1-to-e2',
-             ContextGraphImport.K_FROM: ['e1'],
-             ContextGraphImport.K_TO: 'e2'})
+            ContextGraphImport.K_FROM: ['e1'],
+            ContextGraphImport.K_TO: 'e2'})
         self.assertEqual(self.ctx_import.update['e1']['impact'], set())
         self.assertEqual(self.ctx_import.update['e2']['depends'], set())
+
 
 class NotImplem(BaseTest):
     def update_link(self):
@@ -514,6 +516,7 @@ class NotImplem(BaseTest):
     def enable_link(self):
         self.assertRaises(NotImplementedError,
                           self.ctx_import._ContextGraphImport__a_enable_link())
+
 
 class ADeleteEntity(BaseTest):
 
@@ -595,7 +598,6 @@ class ADeleteEntity(BaseTest):
         delete_expected = [id1]
         self.assertListEqual(self.ctx_import.delete, delete_expected)
 
-
     def test_delete_entities_and_related_entities(self):
         """Remove an entity and later delete an entity with a links to the first
         entity."""
@@ -641,7 +643,6 @@ class ADeleteEntity(BaseTest):
         self.assertListEqual(self.ctx_import.delete, [deleted_id, id_])
 
         self.assertDictEqual(self.ctx_import.update, {})
-
 
         self.ctx_import.update = {}
         self.ctx_import.delete = [deleted_id]
@@ -793,7 +794,6 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-
     def test_ci_measurements_wrong_type(self):
         data = self.template_json.copy()
         ci = self.template_ci.copy()
@@ -806,13 +806,12 @@ class ImportChecker(BaseTest):
         with self.assertRaises(ValidationError):
             self.ctx_import.import_context(self.uuid)
 
-
-        ci[ContextGraphImport.K_MEASUREMENTS] = [1,2]
+        ci[ContextGraphImport.K_MEASUREMENTS] = [1, 2]
         self.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
             self.ctx_import.import_context(self.uuid)
 
-        ci[ContextGraphImport.K_MEASUREMENTS] = [1,"ok"]
+        ci[ContextGraphImport.K_MEASUREMENTS] = [1, "ok"]
         self.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
             self.ctx_import.import_context(self.uuid)
@@ -840,7 +839,8 @@ class ImportChecker(BaseTest):
         with self.assertRaises(ValidationError):
             self.ctx_import.import_context(self.uuid)
 
-        result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
+        result = self.ctx_import.get_entities_by_id(
+            ci[ContextGraphImport.K_ID])
         self.assertListEqual(result, [])
 
         # check ci without ci.{key}
@@ -865,7 +865,8 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-        result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
+        result = self.ctx_import.get_entities_by_id(
+            ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
         expected[ContextGraphImport.K_ID] = ci[ContextGraphImport.K_ID]
         expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
@@ -889,14 +890,14 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-        result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
+        result = self.ctx_import.get_entities_by_id(
+            ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
         expected[ContextGraphImport.K_ID] = ci[ContextGraphImport.K_ID]
         expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
         expected[ContextGraphImport.K_TYPE] = ci[ContextGraphImport.K_TYPE]
 
         self.assertEqualEntities(result[0], expected)
-
 
         # Disable an entity
         ci[ContextGraphImport.K_ACTION] = ContextGraphImport.A_DISABLE
@@ -908,7 +909,8 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-        result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
+        result = self.ctx_import.get_entities_by_id(
+            ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
         expected[ContextGraphImport.K_ID] = ci[ContextGraphImport.K_ID]
         expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
@@ -927,12 +929,12 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-        result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
+        result = self.ctx_import.get_entities_by_id(
+            ci[ContextGraphImport.K_ID])
         expected[ContextGraphImport.K_INFOS][
             ContextGraphImport.A_DISABLE].append(54321)
 
         self.assertEqualEntities(result[0], expected)
-
 
         # Enable an entity
         ci.pop(ContextGraphImport.K_PROPERTIES)
@@ -945,7 +947,8 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-        result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
+        result = self.ctx_import.get_entities_by_id(
+            ci[ContextGraphImport.K_ID])
         expected[ContextGraphImport.K_INFOS][
             ContextGraphImport.A_ENABLE] = [67890]
 
@@ -961,11 +964,11 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-        result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
+        result = self.ctx_import.get_entities_by_id(
+            ci[ContextGraphImport.K_ID])
         expected[ContextGraphImport.K_INFOS][
             ContextGraphImport.A_ENABLE].append(9876)
         self.assertEqualEntities(result[0], expected)
-
 
         # Update an entity
         ci[ContextGraphImport.K_ACTION] = ContextGraphImport.A_UPDATE
@@ -978,9 +981,9 @@ class ImportChecker(BaseTest):
             self.fail(self._desc_fail.format(repr(e)))
 
         expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
-        result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
+        result = self.ctx_import.get_entities_by_id(
+            ci[ContextGraphImport.K_ID])
         self.assertEqualEntities(result[0], expected)
-
 
         # Not a correct action
         ci[ContextGraphImport.K_ACTION] = "update_not"
@@ -1021,8 +1024,8 @@ class ImportChecker(BaseTest):
     def _test_ci_type(self, resource):
 
         if resource not in [ContextGraphImport.COMPONENT,
-                             ContextGraphImport.CONNECTOR,
-                             ContextGraphImport.RESOURCE]:
+                            ContextGraphImport.CONNECTOR,
+                            ContextGraphImport.RESOURCE]:
             self.fail("Unrecognized type")
 
         data = self.template_json.copy()
@@ -1119,13 +1122,13 @@ class ImportChecker(BaseTest):
         link[ContextGraphImport.K_FROM] = [1, 2]
         self.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
-                self.ctx_import.import_context(self.uuid)
+            self.ctx_import.import_context(self.uuid)
 
         # check link.from with wront type
         link[ContextGraphImport.K_FROM] = 1
         self.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
-                self.ctx_import.import_context(self.uuid)
+            self.ctx_import.import_context(self.uuid)
 
     def _test_link_object(self, key, required=False):
         data = self.template_json.copy()
@@ -1216,7 +1219,8 @@ class ImportChecker(BaseTest):
             self.fail(self._desc_fail.format(repr(e)))
 
     def test_ci_disable_with_properties(self):
-        self._test_state(ContextGraphImport.K_CIS, ContextGraphImport.A_DISABLE)
+        self._test_state(ContextGraphImport.K_CIS,
+                         ContextGraphImport.A_DISABLE)
 
     def test_link_disable_with_properties(self):
         # self._test_state(ContextGraphImport.K_LINKS,
@@ -1352,7 +1356,6 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-#TODO : implement unit tests for the import report manager
 
 if __name__ == '__main__':
     main()
