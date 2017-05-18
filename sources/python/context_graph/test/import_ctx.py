@@ -1037,57 +1037,113 @@ class ImportChecker(BaseTest):
         self._test_ci_object(ContextGraphImport.K_PROPERTIES, False)
 
     def _test_link_string(self, key, required=False):
-        json = self.template_json.copy()
-        json[ContextGraphImport.K_LINKS] = [self.template_link.copy()]
+        entity = self.template_ent.copy()
+        entity["_id"] = "id"
+        self.ctx_import._put_entities(entity)
+
+        data = self.template_json.copy()
+        link = self.template_link.copy()
+        link[ContextGraphImport.K_FROM] = []
+        link[ContextGraphImport.K_TO] = "id"
+        data[ContextGraphImport.K_LINKS] = [link]
 
         # check link.{key} with right type
+        self.store_import(data, self.uuid)
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
             self.fail(self._desc_fail.format(e))
 
         # check link.{key} with wrong type
-        json[ContextGraphImport.K_LINKS][0][key] = 1
+        link[key] = 1
+        self.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
 
         # check missing link.{key}
         if required is True:
-            json[ContextGraphImport.K_LINKS][0].pop(key)
+            link.pop(key)
+            self.store_import(data, self.uuid)
             with self.assertRaises(ValidationError):
-                import_checker(json)
+                self.ctx_import.import_context(self.uuid)
 
     def test_link_id(self):
-        self._test_link_string(ContextGraphImport.K_ID, required=True)
-
-    def test_link_from(self):
-        self._test_link_string(ContextGraphImport.K_FROM, required=True)
+        self._test_link_string(ContextGraphImport.K_ID, required=False)
 
     def test_link_to(self):
         self._test_link_string(ContextGraphImport.K_TO, required=True)
 
-    def _test_link_object(self, key, required=False):
-        json = self.template_json.copy()
-        json[ContextGraphImport.K_LINKS] = [self.template_link.copy()]
+    def test_link_from(self):
+        entity = self.template_ent.copy()
+        entity["_id"] = "id"
+        self.ctx_import._put_entities(entity)
 
-        # check ci.{key} with right type
+        data = self.template_json.copy()
+        link = self.template_link.copy()
+        link[ContextGraphImport.K_FROM] = []
+        link[ContextGraphImport.K_TO] = "id"
+        data[ContextGraphImport.K_LINKS] = [link]
+
+        # check link.from with empty list
+        self.store_import(data, self.uuid)
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
             self.fail(self._desc_fail.format(e))
 
-        # check ci.depends with wrong type
-        json[ContextGraphImport.K_LINKS][0][key] = 1
+        # check link.from with list of string
+        link[ContextGraphImport.K_FROM] = ["id", "id"]
+        self.store_import(data, self.uuid)
+        try:
+            self.ctx_import.import_context(self.uuid)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
+
+        # check link.from with list of int
+        link[ContextGraphImport.K_FROM] = [1, 2]
+        self.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
-            import_checker(json)
+                self.ctx_import.import_context(self.uuid)
+
+        # check link.from with wront type
+        link[ContextGraphImport.K_FROM] = 1
+        self.store_import(data, self.uuid)
+        with self.assertRaises(ValidationError):
+                self.ctx_import.import_context(self.uuid)
+
+    def _test_link_object(self, key, required=False):
+        data = self.template_json.copy()
+        link = self.template_link.copy()
+        link[ContextGraphImport.K_FROM] = []
+        link[ContextGraphImport.K_TO] = "id"
+        data[ContextGraphImport.K_LINKS] = [link]
+
+        # check ci.depends with wrong type
+        link[key] = 1
+        self.store_import(data, self.uuid)
+        with self.assertRaises(ValidationError):
+            self.ctx_import.import_context(self.uuid)
+
+        entity = self.template_ent.copy()
+        entity["_id"] = "id"
+        self.ctx_import._put_entities(entity)
 
         # check with out ci.{key}
         if required is True:
-            json[ContextGraphImport.K_LINKS][0].pop(key)
+            link.pop(key)
+            self.store_import(data, self.uuid)
             try:
-                import_checker(json)
+                self.ctx_import.import_context(self.uuid)
             except Exception as e:
                 self.fail(self._desc_fail.format(e))
+
+        # check ci.{key} with right type
+        link[key] = {}
+        self.store_import(data, self.uuid)
+        try:
+            self.ctx_import.import_context(self.uuid)
+        except Exception as e:
+            self.fail(self._desc_fail.format(e))
 
     def test_link_infos(self):
         self._test_link_object(ContextGraphImport.K_INFOS, required=False)
