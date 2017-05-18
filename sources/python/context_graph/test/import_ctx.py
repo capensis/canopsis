@@ -56,6 +56,10 @@ class BaseTest(TestCase):
                               ContextGraphImport.K_ACTION:
                             ContextGraphImport.A_CREATE}
 
+
+        self.template_json = {ContextGraphImport.K_CIS: [],
+                              ContextGraphImport.K_LINKS: []}
+
     def tearDown(self):
         self.entities_storage.remove_elements()
         self.organisations_storage.remove_elements()
@@ -104,7 +108,7 @@ class GetEntitiesToUpdate(BaseTest):
         entities["ent2"]["_id"] = "ent2"
         entities["ent3"]["_id"] = "ent3"
 
-        self.ctx_import._put_entities(entities.values())
+        self.entities_storage.put_elements(entities.values())
 
         for entity in entities.values():
             entity[ContextGraphImport.K_DEPENDS] = set(
@@ -112,21 +116,28 @@ class GetEntitiesToUpdate(BaseTest):
             entity[ContextGraphImport.K_IMPACT] = set(
                 entity[ContextGraphImport.K_IMPACT])
 
-        json = {ContextGraphImport.K_CIS: [{ContextGraphImport.K_ID: "ent1",
-                                            ContextGraphImport.K_ACTION:
-                                            ContextGraphImport.A_DELETE},
-                                           {ContextGraphImport.K_ID: "ent2",
-                                            ContextGraphImport.K_ACTION:
-                                            ContextGraphImport.A_DELETE},
-                                           {ContextGraphImport.K_ID: "ent3",
-                                            ContextGraphImport.K_ACTION:
-                                            ContextGraphImport.A_DELETE}],
-                ContextGraphImport.K_LINKS: [{ContextGraphImport.K_FROM: "ent1",
-                                              ContextGraphImport.K_TO: "ent2"},
-                                             {ContextGraphImport.K_FROM: "ent1",
-                                              ContextGraphImport.K_TO: "ent3"}]}
+        data = self.template_json.copy()
 
-        fname = self.store_import(json, self.uuid)
+        cis = [self.template_ci.copy(),
+               self.template_ci.copy(),
+               self.template_ci.copy()]
+
+        links = [{ContextGraphImport.K_FROM: ["ent1"],
+                  ContextGraphImport.K_TO: "ent2",
+                  ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE},
+                 {ContextGraphImport.K_FROM: ["ent1"],
+                  ContextGraphImport.K_TO: "ent3",
+                  ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE}]
+
+        for i in range(len(cis)):
+            cis[i][ContextGraphImport.K_ACTION] = ContextGraphImport.A_DELETE
+            cis[i][ContextGraphImport.K_TYPE] = ContextGraphImport.RESOURCE
+            cis[i][ContextGraphImport.K_ID] = "ent{0}".format(i+1)
+
+
+        data[ContextGraphImport.K_CIS] = cis
+        data[ContextGraphImport.K_LINKS] = links
+        fname = self.store_import(data, self.uuid)
 
         ctx = self.ctx_import._ContextGraphImport__get_entities_to_update(fname)
 
@@ -187,13 +198,19 @@ class GetEntitiesToUpdate(BaseTest):
 
         json = {ContextGraphImport.K_CIS: [{ContextGraphImport.K_ID: "ent1",
                                             ContextGraphImport.K_ACTION:
-                                            ContextGraphImport.A_UPDATE},
+                                            ContextGraphImport.A_UPDATE,
+                                            ContextGraphImport.K_TYPE:
+                                            ContextGraphImport.RESOURCE},
                                            {ContextGraphImport.K_ID: "ent2",
                                             ContextGraphImport.K_ACTION:
-                                            ContextGraphImport.A_UPDATE},
+                                            ContextGraphImport.A_UPDATE,
+                                            ContextGraphImport.K_TYPE:
+                                            ContextGraphImport.RESOURCE},
                                            {ContextGraphImport.K_ID: "ent3",
                                             ContextGraphImport.K_ACTION:
-                                            ContextGraphImport.A_DELETE}],
+                                            ContextGraphImport.A_DELETE,
+                                            ContextGraphImport.K_TYPE:
+                                            ContextGraphImport.RESOURCE}],
                 ContextGraphImport.K_LINKS: []}
 
         fname = self.store_import(json, self.uuid)
@@ -646,11 +663,14 @@ class ImportChecker(BaseTest):
     are.
     """
 
+    def put_dummy_entity(self, id_):
+        entity = self.template_ent.copy()
+        entity["_id"] = id_
+        self.ctx_import._put_entities(entity)
+
     def setUp(self):
         super(ImportChecker, self).setUp()
 
-        self.template_json = {ContextGraphImport.K_CIS: [],
-                              ContextGraphImport.K_LINKS: []}
         self.uuid = "test"
         self._desc_fail = "The check of the import raise an exception {0}!"
 
@@ -662,16 +682,16 @@ class ImportChecker(BaseTest):
 
     def test_cis_links(self):
         data = self.template_json.copy()
-        BaseTest.store_import(data, self.uuid)
+        self.store_import(data, self.uuid)
         # check cis with right type
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         # check cis with wrong type
         data[ContextGraphImport.K_CIS] = {}
-        BaseTest.store_import(data, self.uuid)
+        self.store_import(data, self.uuid)
         with self.assertRaisesRegexp(ValidationError,
                                      "CIS should be an array."):
             self.ctx_import.import_context(self.uuid)
@@ -679,7 +699,7 @@ class ImportChecker(BaseTest):
         # check links with wrong type
         data[ContextGraphImport.K_CIS] = []
         data[ContextGraphImport.K_LINKS] = {}
-        BaseTest.store_import(data, self.uuid)
+        self.store_import(data, self.uuid)
         with self.assertRaisesRegexp(ValidationError,
                                      "LINKS should be an array."):
             self.ctx_import.import_context(self.uuid)
@@ -687,7 +707,7 @@ class ImportChecker(BaseTest):
         # check links and cis with wrong type
         data[ContextGraphImport.K_CIS] = {}
         data[ContextGraphImport.K_LINKS] = {}
-        BaseTest.store_import(data, self.uuid)
+        self.store_import(data, self.uuid)
         with self.assertRaisesRegexp(ValidationError,
                                      "CIS and LINKS should be an array."):
             self.ctx_import.import_context(self.uuid)
@@ -699,11 +719,11 @@ class ImportChecker(BaseTest):
         data[ContextGraphImport.K_CIS] = [ci]
 
         # check ci.id with right type
-        BaseTest.store_import(data, self.uuid)
+        self.store_import(data, self.uuid)
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
     def test_ci_id_wrong_type(self):
         data = self.template_json.copy()
@@ -723,7 +743,7 @@ class ImportChecker(BaseTest):
         data[ContextGraphImport.K_CIS] = [ci]
 
         # check missing ci.id
-        BaseTest.store_import(data, self.uuid)
+        self.store_import(data, self.uuid)
         with self.assertRaises(ValidationError):
             self.ctx_import.import_context(self.uuid)
 
@@ -736,7 +756,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
     def test_ci_name_wrong_type(self):
         data = self.template_json.copy()
@@ -758,7 +778,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
     def test_ci_measurements(self):
         data = self.template_json.copy()
@@ -771,7 +791,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
 
     def test_ci_measurements_wrong_type(self):
@@ -807,7 +827,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
     def _test_ci_object(self, key, required=False):
         data = self.template_json.copy()
@@ -830,7 +850,7 @@ class ImportChecker(BaseTest):
             try:
                 self.ctx_import.import_context(self.uuid)
             except Exception as e:
-                self.fail(self._desc_fail.format(e))
+                self.fail(self._desc_fail.format(repr(e)))
 
             result = self.ctx_import.get_entities_by_id(ci[
                 ContextGraphImport.K_ID])
@@ -843,7 +863,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
@@ -867,7 +887,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
@@ -886,7 +906,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
@@ -905,7 +925,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
         expected[ContextGraphImport.K_INFOS][
@@ -923,7 +943,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
         expected[ContextGraphImport.K_INFOS][
@@ -939,7 +959,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
         expected[ContextGraphImport.K_INFOS][
@@ -955,7 +975,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
         result = self.ctx_import.get_entities_by_id(ci[ContextGraphImport.K_ID])
@@ -989,7 +1009,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         result = self.ctx_import.get_entities_by_id("id")
         expected = []
@@ -1014,7 +1034,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         result = self.ctx_import.get_entities_by_id("id")
         expected = self.template_ent.copy()
@@ -1037,9 +1057,7 @@ class ImportChecker(BaseTest):
         self._test_ci_object(ContextGraphImport.K_PROPERTIES, False)
 
     def _test_link_string(self, key, required=False):
-        entity = self.template_ent.copy()
-        entity["_id"] = "id"
-        self.ctx_import._put_entities(entity)
+        self.put_dummy_entity("id")
 
         data = self.template_json.copy()
         link = self.template_link.copy()
@@ -1052,7 +1070,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         # check link.{key} with wrong type
         link[key] = 1
@@ -1074,9 +1092,7 @@ class ImportChecker(BaseTest):
         self._test_link_string(ContextGraphImport.K_TO, required=True)
 
     def test_link_from(self):
-        entity = self.template_ent.copy()
-        entity["_id"] = "id"
-        self.ctx_import._put_entities(entity)
+        self.put_dummy_entity("id")
 
         data = self.template_json.copy()
         link = self.template_link.copy()
@@ -1089,7 +1105,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         # check link.from with list of string
         link[ContextGraphImport.K_FROM] = ["id", "id"]
@@ -1097,7 +1113,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         # check link.from with list of int
         link[ContextGraphImport.K_FROM] = [1, 2]
@@ -1124,9 +1140,7 @@ class ImportChecker(BaseTest):
         with self.assertRaises(ValidationError):
             self.ctx_import.import_context(self.uuid)
 
-        entity = self.template_ent.copy()
-        entity["_id"] = "id"
-        self.ctx_import._put_entities(entity)
+        self.put_dummy_entity("id")
 
         # check with out ci.{key}
         if required is True:
@@ -1135,7 +1149,7 @@ class ImportChecker(BaseTest):
             try:
                 self.ctx_import.import_context(self.uuid)
             except Exception as e:
-                self.fail(self._desc_fail.format(e))
+                self.fail(self._desc_fail.format(repr(e)))
 
         # check ci.{key} with right type
         link[key] = {}
@@ -1143,7 +1157,7 @@ class ImportChecker(BaseTest):
         try:
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
     def test_link_infos(self):
         self._test_link_object(ContextGraphImport.K_INFOS, required=False)
@@ -1155,14 +1169,13 @@ class ImportChecker(BaseTest):
         self._test_link_object(ContextGraphImport.K_PROPERTIES, required=False)
 
     def _test_state(self, object_, state):
-        entity = self.template_ent.copy()
-        entity["_id"] = "id"
-        self.ctx_import._put_entities(entity)
+        self.put_dummy_entity("id")
 
         data = self.template_json.copy()
 
         if object_ == ContextGraphImport.K_CIS:
             obj = self.template_ci.copy()
+            obj[ContextGraphImport.K_ID] = "id"
             data[ContextGraphImport.K_CIS] = [obj]
             obj_key = ContextGraphImport.K_LINKS
         elif object_ == ContextGraphImport.K_LINKS:
@@ -1187,14 +1200,6 @@ class ImportChecker(BaseTest):
         with self.assertRaises(KeyError):
             self.ctx_import.import_context(self.uuid)
 
-        # {object_}.action : {state} with {object_}.properties.{state}
-        obj[ContextGraphImport.K_PROPERTIES] = {state: []}
-        self.store_import(data, self.uuid)
-        try:
-            self.ctx_import.import_context(self.uuid)
-        except Exception as e:
-            self.fail(self._desc_fail.format(repr(e)))
-
         # {object_}.action : {state} with ci.properties.{other_state} and
         # without {object_}.properties.{state}
         obj[ContextGraphImport.K_PROPERTIES] = {other_state: []}
@@ -1202,32 +1207,67 @@ class ImportChecker(BaseTest):
         with self.assertRaises(KeyError):
             self.ctx_import.import_context(self.uuid)
 
+        # {object_}.action : {state} with {object_}.properties.{state}
+        obj[ContextGraphImport.K_PROPERTIES] = {state: [123456]}
+        self.store_import(data, self.uuid)
+        try:
+            self.ctx_import.import_context(self.uuid)
+        except Exception as e:
+            self.fail(self._desc_fail.format(repr(e)))
+
     def test_ci_disable_with_properties(self):
         self._test_state(ContextGraphImport.K_CIS, ContextGraphImport.A_DISABLE)
 
     def test_link_disable_with_properties(self):
-        self._test_state(ContextGraphImport.K_LINKS,
-                         ContextGraphImport.A_DISABLE)
+        # self._test_state(ContextGraphImport.K_LINKS,
+        #                  ContextGraphImport.A_DISABLE)
+        data = self.template_json.copy()
+        link = self.template_link.copy()
+        data[ContextGraphImport.K_LINKS] = [link]
+        link[ContextGraphImport.K_FROM] = []
+        link[ContextGraphImport.K_TO] = "id"
+        link[ContextGraphImport.K_ACTION] = ContextGraphImport.A_DISABLE
+        link[ContextGraphImport.K_PROPERTIES] = {ContextGraphImport.A_DISABLE:
+                                                 [123456]}
+        self.store_import(data, self.uuid)
+
+        self.put_dummy_entity("id")
+        with self.assertRaises(NotImplementedError):
+            self.ctx_import.import_context(self.uuid)
 
     def test_ci_enable_with_properties(self):
         self._test_state(ContextGraphImport.K_CIS,
                          ContextGraphImport.A_ENABLE)
 
     def test_link_enable_with_properties(self):
-        self._test_state(ContextGraphImport.K_LINKS,
-                         ContextGraphImport.A_ENABLE)
+        # self._test_state(ContextGraphImport.K_LINKS,
+        #                  ContextGraphImport.A_ENABLE)
+        data = self.template_json.copy()
+        link = self.template_link.copy()
+        data[ContextGraphImport.K_LINKS] = [link]
+        link[ContextGraphImport.K_FROM] = []
+        link[ContextGraphImport.K_TO] = "id"
+        link[ContextGraphImport.K_ACTION] = ContextGraphImport.A_DISABLE
+        link[ContextGraphImport.K_PROPERTIES] = {ContextGraphImport.A_DISABLE:
+                                                 [123456]}
+        self.store_import(data, self.uuid)
+
+        self.put_dummy_entity("id")
+        with self.assertRaises(NotImplementedError):
+            self.ctx_import.import_context(self.uuid)
 
     def test_OK_single_ci(self):
-        json = self.template_json.copy()
-        json[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+        data = self.template_json.copy()
+        data[ContextGraphImport.K_CIS] = [self.template_ci.copy()]
+        self.store_import(data, self.uuid)
 
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
     def test_OK_multiple_ci(self):
-        json = self.template_json.copy()
+        data = self.template_json.copy()
 
         ci0 = self.template_ci.copy()
         ci0[ContextGraphImport.K_ID] = "id0"
@@ -1236,48 +1276,65 @@ class ImportChecker(BaseTest):
         ci2 = self.template_ci.copy()
         ci2[ContextGraphImport.K_ID] = "id2"
 
-        json[ContextGraphImport.K_CIS] = [ci0, ci1, ci2]
-
+        data[ContextGraphImport.K_CIS] = [ci0, ci1, ci2]
+        self.store_import(data, self.uuid)
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
     def test_OK_single_link(self):
-        json = self.template_json.copy()
-        json[ContextGraphImport.K_LINKS] = [self.template_link.copy()]
+        data = self.template_json.copy()
+        link = self.template_link.copy()
+        self.put_dummy_entity("id1")
+        self.put_dummy_entity("id2")
+        link[ContextGraphImport.K_FROM] = ["id2"]
+        link[ContextGraphImport.K_TO] = "id1"
+        data[ContextGraphImport.K_LINKS] = [link]
 
+        self.store_import(data, self.uuid)
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
     def test_OK_multiple_link(self):
-        json = self.template_json.copy()
+        data = self.template_json.copy()
+
+        self.put_dummy_entity("id0")
+        self.put_dummy_entity("id1")
+        self.put_dummy_entity("id2")
 
         link0 = self.template_link.copy()
-        link0[ContextGraphImport.K_ID] = "id0"
+        link0[ContextGraphImport.K_TO] = "id0"
+        link0[ContextGraphImport.K_FROM] = ["id1"]
         link1 = self.template_link.copy()
-        link1[ContextGraphImport.K_ID] = "id1"
+        link1[ContextGraphImport.K_TO] = "id1"
+        link1[ContextGraphImport.K_FROM] = ["id2"]
         link2 = self.template_link.copy()
-        link2[ContextGraphImport.K_ID] = "id2"
+        link2[ContextGraphImport.K_TO] = "id2"
+        link2[ContextGraphImport.K_FROM] = ["id0"]
 
-        json[ContextGraphImport.K_LINKS] = [link0, link1, link2]
+        data[ContextGraphImport.K_LINKS] = [link0, link1, link2]
 
+        self.store_import(data, self.uuid)
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
     def test_OK_both(self):
-        json = self.template_json.copy()
+        data = self.template_json.copy()
 
         link0 = self.template_link.copy()
-        link0[ContextGraphImport.K_ID] = "id0"
+        link0[ContextGraphImport.K_TO] = "id0"
+        link0[ContextGraphImport.K_FROM] = ["id1"]
         link1 = self.template_link.copy()
-        link1[ContextGraphImport.K_ID] = "id1"
+        link1[ContextGraphImport.K_TO] = "id1"
+        link1[ContextGraphImport.K_FROM] = ["id2"]
         link2 = self.template_link.copy()
-        link2[ContextGraphImport.K_ID] = "id2"
+        link2[ContextGraphImport.K_TO] = "id2"
+        link2[ContextGraphImport.K_FROM] = ["id0"]
 
         ci0 = self.template_ci.copy()
         ci0[ContextGraphImport.K_ID] = "id0"
@@ -1286,13 +1343,14 @@ class ImportChecker(BaseTest):
         ci2 = self.template_ci.copy()
         ci2[ContextGraphImport.K_ID] = "id2"
 
-        json[ContextGraphImport.K_LINKS] = [link0, link1, link2]
-        json[ContextGraphImport.K_CIS] = [ci0, ci1, ci2]
+        data[ContextGraphImport.K_LINKS] = [link0, link1, link2]
+        data[ContextGraphImport.K_CIS] = [ci0, ci1, ci2]
 
+        self.store_import(data, self.uuid)
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
 #TODO : implement unit tests for the import report manager
 
