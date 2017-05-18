@@ -948,6 +948,8 @@ class Alerts(MiddlewareRegistry):
                         value[self.AF_RUN][lifter._id])
                     if last + lifter.limit < now:
                         continue
+                    self.logger.info('Rerunning tasks on {} after {} seconds'
+                                     .format(alarm_id, lifter.limit))
 
                 event = {
                     'timestamp': now_stamp,
@@ -965,8 +967,8 @@ class Alerts(MiddlewareRegistry):
                     elif 'systemaction.state_decrease' in task:
                         new_state_bis = new_state_bis - 1
 
-                    self.logger.debug('Executing task {} on {}'
-                                      .format(task, alarm_id))
+                    self.logger.info('Automatically execute {} on {}'
+                                     .format(task, alarm_id))
                     new_value = self.execute_task(name=task,
                                                   event=event,
                                                   entity_id=alarm_id,
