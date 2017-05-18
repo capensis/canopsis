@@ -1155,16 +1155,22 @@ class ImportChecker(BaseTest):
         self._test_link_object(ContextGraphImport.K_PROPERTIES, required=False)
 
     def _test_state(self, object_, state):
-        json = self.template_json.copy()
+        entity = self.template_ent.copy()
+        entity["_id"] = "id"
+        self.ctx_import._put_entities(entity)
+
+        data = self.template_json.copy()
 
         if object_ == ContextGraphImport.K_CIS:
             obj = self.template_ci.copy()
-            json[ContextGraphImport.K_CIS] = [obj]
+            data[ContextGraphImport.K_CIS] = [obj]
             obj_key = ContextGraphImport.K_LINKS
         elif object_ == ContextGraphImport.K_LINKS:
             obj = self.template_link.copy()
-            json[ContextGraphImport.K_LINKS] = [obj]
+            data[ContextGraphImport.K_LINKS] = [obj]
             obj_key = ContextGraphImport.K_LINKS
+            obj[ContextGraphImport.K_FROM] = []
+            obj[ContextGraphImport.K_TO] = "id"
         else:
             self.fail("Unrecognized object_ {0}".format(object_))
 
@@ -1177,21 +1183,24 @@ class ImportChecker(BaseTest):
 
         # {object_}.action : {state} without {object_}.properties.{state}
         obj[ContextGraphImport.K_ACTION] = state
+        self.store_import(data, self.uuid)
         with self.assertRaises(KeyError):
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
 
         # {object_}.action : {state} with {object_}.properties.{state}
         obj[ContextGraphImport.K_PROPERTIES] = {state: []}
+        self.store_import(data, self.uuid)
         try:
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
         except Exception as e:
-            self.fail(self._desc_fail.format(e))
+            self.fail(self._desc_fail.format(repr(e)))
 
         # {object_}.action : {state} with ci.properties.{other_state} and
         # without {object_}.properties.{state}
         obj[ContextGraphImport.K_PROPERTIES] = {other_state: []}
+        self.store_import(data, self.uuid)
         with self.assertRaises(KeyError):
-            import_checker(json)
+            self.ctx_import.import_context(self.uuid)
 
     def test_ci_disable_with_properties(self):
         self._test_state(ContextGraphImport.K_CIS, ContextGraphImport.A_DISABLE)
