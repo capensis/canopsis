@@ -154,7 +154,7 @@ class Manager(MiddlewareRegistry):
 
         if self.is_present(uuid):
             raise ValueError("An import status with the same uuid ({0}) "\
-                             " already exist.")
+                             "already exist.".format(uuid))
 
         new_status = {ImportKey.F_ID: uuid,
                       ImportKey.F_CREATION: time.asctime(),
@@ -197,13 +197,15 @@ class Manager(MiddlewareRegistry):
         """
         return the state of an import.
         :param _id: the id of the import
-        :return type: a string containg one of the following value "pending",
-        "ongoing","failed" or "done".
+        :return dict: the report.
         """
         status = list(self[self.STORAGE].get_elements(
-            query={ImportKey.F_ID: _id}))[0]
+            query={ImportKey.F_ID: _id}))
 
-        return status
+        if len(status) > 0:
+            return status[0]
+
+        return None
 
 class ContextGraphImport(ContextGraph):
 
