@@ -1549,12 +1549,28 @@ class ReportManager(TestCase):
                                ImportKey.ST_DONE)
 
     def test_check_id(self):
-        # add id in db and check if the id exist or not
-        pass
+        self.assertFalse(self.manager.check_id(self.uuid))
+        self.manager.create_import_status(self.uuid)
+        self.assertTrue(self.manager.check_id(self.uuid))
 
     def test_get_import_status(self):
-        # create complicated report and retreive it
-        pass
+        self.manager.create_import_status(self.uuid)
+
+        expected = self.manager.get_import_status(self.uuid)
+
+        update = {ImportKey.F_STATUS: ImportKey.ST_DONE,
+                  ImportKey.F_INFO: "Nothing wrong",
+                  ImportKey.F_EXECTIME: "01:23:45",
+                  ImportKey.F_START: "54:32:01",
+                  ImportKey.F_STATS: "Stats"}
+
+        for k in update.keys():
+            expected[k] = update[k]
+
+        self.manager.update_status(self.uuid, update)
+        result = self.manager.get_import_status(self.uuid)
+
+        self.assertDictEqual(result, expected)
 
 
 if __name__ == '__main__':
