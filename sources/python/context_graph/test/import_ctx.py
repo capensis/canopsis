@@ -1518,11 +1518,35 @@ class ReportManager(TestCase):
         except:
             self.fail("An exception different of ValueError was raised")
 
-    def test_on_going_db(self):
-        pass
+    def _test_state_on_db(self, func, state, other_state):
+        uuid_0 = self.uuid + "_0"
+        uuid_1 = self.uuid + "_1"
+        uuid_2 = self.uuid + "_2"
+
+        self.manager.create_import_status(uuid_0)
+        self.manager.create_import_status(uuid_1)
+        self.manager.create_import_status(uuid_2)
+
+        self.manager.update_status(uuid_0,
+                                   {ImportKey.F_STATUS: ImportKey.ST_DONE})
+        self.manager.update_status(uuid_1,
+                                   {ImportKey.F_STATUS: ImportKey.ST_FAILED})
+        self.manager.update_status(uuid_2,
+                                   {ImportKey.F_STATUS: state})
+
+        self.assertTrue(func())
+        self.manager.update_status(uuid_2, {ImportKey.F_STATUS: other_state})
+        self.assertFalse(func())
+
+    def test_on_going_in_db(self):
+        self._test_state_on_db(self.manager.on_going_in_db,
+                               ImportKey.ST_ONGOING,
+                               ImportKey.ST_DONE)
 
     def test_pending_in_db(self):
-        pass
+        self._test_state_on_db(self.manager.pending_in_db,
+                               ImportKey.ST_PENDING,
+                               ImportKey.ST_DONE)
 
     def test_check_id(self):
         # add id in db and check if the id exist or not
