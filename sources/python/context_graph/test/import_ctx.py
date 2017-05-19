@@ -1385,12 +1385,23 @@ class ReportManager(TestCase):
     def test_get_next_uuid(self):
         uuid_0 = self.uuid + "_0"
         uuid_1 = self.uuid + "_1"
+        uuid_2 = self.uuid + "_2"
+        uuid_3 = self.uuid + "_3"
+
         self.manager.create_import_status(uuid_0)
         self.manager.create_import_status(uuid_1)
+        self.manager.create_import_status(uuid_2)
+        self.manager.create_import_status(uuid_3)
+
         self.manager.update_status(uuid_0,
                                    {ImportKey.F_STATUS: ImportKey.ST_DONE})
+        self.manager.update_status(uuid_2,
+                                   {ImportKey.F_STATUS: ImportKey.ST_ONGOING})
+        self.manager.update_status(uuid_3,
+                                   {ImportKey.F_STATUS: ImportKey.ST_FAILED})
 
-        report = self.manager.get_import_status(uuid_1)
+        uuid = self.manager.get_next_uuid()
+        report = self.manager.get_import_status(uuid)
         self.assertEqual(report[ImportKey.F_ID], uuid_1)
         self.assertEqual(report[ImportKey.F_STATUS], ImportKey.ST_PENDING)
         try:
@@ -1398,10 +1409,35 @@ class ReportManager(TestCase):
         except ValueError:
             self.fail("Error while converting the creation time.")
 
-
     def test_get_next_uuid_no_uuid(self):
-        # test without pending report
-        pass
+        uuid_0 = self.uuid + "_0"
+        uuid_1 = self.uuid + "_1"
+        uuid_2 = self.uuid + "_2"
+
+        self.manager.create_import_status(uuid_0)
+        self.manager.create_import_status(uuid_1)
+        self.manager.create_import_status(uuid_2)
+
+        self.manager.update_status(uuid_0,
+                                   {ImportKey.F_STATUS: ImportKey.ST_DONE})
+        self.manager.update_status(uuid_1,
+                                   {ImportKey.F_STATUS: ImportKey.ST_ONGOING})
+        self.manager.update_status(uuid_2,
+                                   {ImportKey.F_STATUS: ImportKey.ST_FAILED})
+
+        uuid = self.manager.get_next_uuid()
+        self.assertEquals(uuid, None)
+
+    def test_get_next_uuid_multiple(self):
+        uuid_0 = self.uuid + "_0"
+        uuid_1 = self.uuid + "_1"
+
+        self.manager.create_import_status(uuid_0)
+        time.sleep(2)
+        self.manager.create_import_status(uuid_1)
+
+        uuid = self.manager.get_next_uuid()
+        self.assertEquals(uuid, uuid_0)
 
     def test_is_present(self):
         pass
