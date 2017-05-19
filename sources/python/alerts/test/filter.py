@@ -27,96 +27,113 @@ from base import BaseTest
 
 
 class TestFilter(BaseTest):
-    def test_get_filters(self):
+    def test_get_filter_s(self):
         alarm, value = self.gen_fake_alarm()
-        alarm_id = '/fake/alarm/id'
+        self.alarm_storage.put_elements([alarm])
 
-        lifter = AlarmFilter({
-            'alarms': [alarm_id, '/not/a/real/alarm/id']
+        lifter = self.gen_alarm_filter({
+            AlarmFilter.FILTER: '{"$or":[{"value.connector":{"$eq":"wrong-connector"}}]}'
         }, storage=self.filter_storage)
         lifter.save()
-        lifter = AlarmFilter({
-            'alarms': [alarm_id]
+        lifter = self.gen_alarm_filter({
+            AlarmFilter.FILTER: '{"$or":[{"value.connector":{"$eq":"fake-connector"}}]}'
         }, storage=self.filter_storage)
         lifter.save()
 
-        alarm_filters = AlarmFilters(storage=self.filter_storage).get_filters()
-        self.assertTrue(isinstance(alarm_filters, dict))
-        self.assertEqual(len(alarm_filters), 2)
-        self.assertTrue(alarm_id in alarm_filters)
+        # get_filters()
+        alarm_filters = AlarmFilters(storage=self.filter_storage,
+                                     alarm_storage=self.alarm_storage)
+        result = alarm_filters.get_filters()
+        _id = result[0][0]._id
+        self.assertTrue(isinstance(result, list))
+        self.assertEqual(len(result), 1)
+
+        # get_filter()
+        result = alarm_filters.get_filter(_id)
+        self.assertEqual(result[AlarmFilter.UID], _id)
 
     def test_crud(self):
-        alarm_filters = AlarmFilters(storage=self.filter_storage)
+        alarm_filters = AlarmFilters(storage=self.filter_storage,
+                                     alarm_storage=self.alarm_storage)
 
         result = alarm_filters.get_filters()
-        self.assertEqual(result, {})
+        self.assertEqual(result, [])
 
-        alarm_id = '/fake/alarm/id'
+        # Init
+        alarm, value = self.gen_fake_alarm()
+        self.alarm_storage.put_elements([alarm])
+
         element = {
-            'limit': 30.0,
-            'key': 'key',
-            'operator': 'neq',
-            'value': 'value',
-            'tasks': ['alerts.useraction.comment'],
-            'alarms': [alarm_id],
+            AlarmFilter.LIMIT: 30.0,
+            AlarmFilter.KEY: 'key',
+            AlarmFilter.OPERATOR: 'neq',
+            AlarmFilter.VALUE: 'value',
+            AlarmFilter.TASKS: ['alerts.useraction.comment'],
+            AlarmFilter.FILTER: '{"data_id":{"$eq":"/fake/alarm/id"}}'
         }
 
         # CREATE
         result = alarm_filters.create_filter(element)
         element['_id'] = result._id
-        self.assertEqual(result.value, 'value')
-        #GET
+        self.assertEqual(result[AlarmFilter.VALUE], 'value')
+
+        # GET
         result = alarm_filters.get_filters()
-        self.assertEqual(result[alarm_id][0].element, element)
+        self.assertEqual(result[0][0].element, element)
 
         result = alarm_filters.update_filter('/not/an/alarm',
-                                             key='key', value='another')
+                                             key=AlarmFilter.KEY,
+                                             value='another')
         self.assertTrue(result is None)
+
         # UPDATE
         result = alarm_filters.update_filter(element['_id'],
-                                             key='key', value='another')
-        self.assertEqual(result.key, 'another')
+                                             key=AlarmFilter.KEY,
+                                             value='another')
+        self.assertEqual(result[AlarmFilter.KEY], 'another')
+
         # GET
         result = alarm_filters.get_filters()
-        self.assertEqual(result[alarm_id][0].key, 'another')
-        # DELTE
+        self.assertEqual(result[0][0][AlarmFilter.KEY], 'another')
+
+        # DELETE
         result = alarm_filters.delete_filter(element['_id'])
         self.assertEqual(result['ok'], 1.0)
+
         # GET
         result = alarm_filters.get_filters()
-        self.assertEqual(result, {})
+        self.assertEqual(result, [])
 
     def test_check_alarm(self):
         alarm, value = self.gen_fake_alarm()
 
         lifter = AlarmFilter({
-            'operator': 'eq',
-            'key': 'cacao',
-            'value': 'maigre'
+            AlarmFilter.OPERATOR: 'eq',
+            AlarmFilter.KEY: 'cacao',
+            AlarmFilter.VALUE: 'maigre'
         })
-        self.assertFalse(lifter.check_alarm(value))
+        self.assertFalse(lifter.check_alarm(alarm))
 
         lifter = AlarmFilter({
-            'operator': 'eq',
-            'key': 'component',
-            'value': 'bbb'
+            AlarmFilter.OPERATOR: 'eq',
+            AlarmFilter.KEY: 'value.component',
+            AlarmFilter.VALUE: 'bbb'
         })
-        self.assertFalse(lifter.check_alarm(value))
+        self.assertFalse(lifter.check_alarm(alarm))
 
         lifter = AlarmFilter({
-            'operator': 'eq',
-            'key': 'component',
-            'value': 'c'
+            AlarmFilter.OPERATOR: 'eq',
+            AlarmFilter.KEY: 'value.component',
+            AlarmFilter.VALUE: 'c'
         })
-        self.assertTrue(lifter.check_alarm(value))
+        self.assertTrue(lifter.check_alarm(alarm))
 
         lifter = AlarmFilter({
-            'operator': 'ge',
-            'key': 'state.val',
-            'value': 1
+            AlarmFilter.OPERATOR: 'ge',
+            AlarmFilter.KEY: 'value.state.val',
+            AlarmFilter.VALUE: 1
         })
-        self.assertTrue(lifter.check_alarm(value))
-
+        self.assertTrue(lifter.check_alarm(alarm))
 
 if __name__ == '__main__':
     main()
