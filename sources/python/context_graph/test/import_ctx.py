@@ -1440,7 +1440,13 @@ class ReportManager(TestCase):
         self.assertEquals(uuid, uuid_0)
 
     def test_is_present(self):
-        pass
+        uuid_0 = self.uuid + "_0"
+        uuid_1 = self.uuid + "_1"
+
+        self.manager.create_import_status(uuid_0)
+
+        self.assertTrue(self.manager.is_present(uuid_0))
+        self.assertFalse(self.manager.is_present(uuid_1))
 
     def test_update_status_authorized(self):
         # test id update succeed on authorized fields
