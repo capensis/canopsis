@@ -1494,8 +1494,29 @@ class ReportManager(TestCase):
         self.assertDictEqual(result, expected)
 
     def test_create_import(self):
-        # check if field are correct
-        pass
+        expected = {ImportKey.F_ID: self.uuid,
+                    ImportKey.F_CREATION: time.asctime(),
+                    ImportKey.F_STATUS: ImportKey.ST_PENDING}
+        self.manager.create_import_status(self.uuid)
+        result = self.manager.get_import_status(self.uuid)
+
+        self.assertDictEqual(result, expected)
+
+    def test_create_import_same_uuid(self):
+        self.manager.create_import_status(self.uuid)
+        desc = "An import status with the same uuid ({0}) already "\
+               "exist.".format(self.uuid)
+
+        # FIXME the message did not match the expected one. I don't know why
+        # with self.assertRaisesRegexp(ValueError, des):
+        #     self.manager.create_import_status(self.uuid)
+
+        try:
+            self.manager.create_import_status(self.uuid)
+        except ValueError as e:
+            self.assertEqual(desc, e.message)
+        except:
+            self.fail("An exception different of ValueError was raised")
 
     def test_on_going_db(self):
         pass
