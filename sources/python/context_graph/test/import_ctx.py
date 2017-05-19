@@ -1381,7 +1381,6 @@ class ReportManager(TestCase):
     def tearDown(self):
         self.import_storage.remove_elements()
 
-
     def test_get_next_uuid(self):
         uuid_0 = self.uuid + "_0"
         uuid_1 = self.uuid + "_1"
@@ -1449,12 +1448,50 @@ class ReportManager(TestCase):
         self.assertFalse(self.manager.is_present(uuid_1))
 
     def test_update_status_authorized(self):
-        # test id update succeed on authorized fields
-        pass
+        uuid_0 = self.uuid + "_0"
+        uuid_1 = self.uuid + "_1"
+
+        self.manager.create_import_status(uuid_0)
+        self.manager.create_import_status(uuid_1)
+
+        expected_1 = self.manager.get_import_status(uuid_1)
+        expected_0 = self.manager.get_import_status(uuid_0)
+
+        update = {ImportKey.F_STATUS: ImportKey.ST_DONE,
+                  ImportKey.F_INFO: "Nothing wrong",
+                  ImportKey.F_EXECTIME: "01:23:45",
+                  ImportKey.F_START: "54:32:01",
+                  ImportKey.F_STATS: "Stats"}
+
+        for k in update.keys():
+            expected_0[k] = update[k]
+
+        self.manager.update_status(uuid_0, update)
+
+        result_0 = self.manager.get_import_status(uuid_0)
+        result_1 = self.manager.get_import_status(uuid_1)
+
+        self.assertDictEqual(result_0, expected_0)
+        self.assertDictEqual(result_1, expected_1)
+
+    def test_update_status_authorized_no_uuid(self):
+        with self.assertRaises(ValueError):
+            self.manager.update_status("uuid", {})
 
     def test_update_status_not_authorized(self):
-        # test id update did not succeed on authorized fields
-        pass
+        uuid = self.uuid
+
+        self.manager.create_import_status(uuid)
+        expected = self.manager.get_import_status(uuid)
+
+        update = {ImportKey.F_ID: ImportKey.ST_DONE,
+                  ImportKey.F_CREATION: "01:23:45"}
+
+        self.manager.update_status(uuid, update)
+
+        result = self.manager.get_import_status(uuid)
+
+        self.assertDictEqual(result, expected)
 
     def test_create_import(self):
         # check if field are correct
