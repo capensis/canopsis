@@ -102,7 +102,8 @@ class Alerts(MiddlewareRegistry):
 
     @property
     def alarm_filters(self):
-        return AlarmFilters(storage=self[Alerts.FILTER_STORAGE])
+        return AlarmFilters(storage=self[Alerts.FILTER_STORAGE],
+                            alarm_storage=self[Alerts.ALARM_STORAGE])
 
     @property
     def flapping_interval(self):
@@ -506,9 +507,9 @@ class Alerts(MiddlewareRegistry):
         # Find the corresponding alarm
         alarm = self.get_current_alarm(entity_id)
         if alarm is None:
-            #self.logger.warning(
-            #    'Entity {} has no current alarm : ignoring'.format(entity_id)
-            #)
+            self.logger.debug(
+                'Entity {} has no current alarm : ignoring'.format(entity_id)
+            )
             return
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
@@ -916,7 +917,7 @@ class Alerts(MiddlewareRegistry):
         """
         Do actions on alarms based on certain conditions/filters.
 
-        Can alter an alarm as follow:
+        This method can alter an alarm as follow:
         Alarm[self.AF_RUN] = [{alarm_id: timestamp_of_last_execution}]
         """
         now = datetime.now()
@@ -924,63 +925,67 @@ class Alerts(MiddlewareRegistry):
 
         storage = self[Alerts.ALARM_STORAGE]
 
-        for alarm_id, filters in self.alarm_filters.get_filters().items():
-            docalarm = self.get_current_alarm(alarm_id)
-            if docalarm is None:
+        for lifter, docalarm in self.alarm_filters.get_filters():
+            value = docalarm[storage.Key.VALUE]
+            alarm_id = docalarm[storage.Key.DATA_ID]
+            self.logger.debug('Checking alarmfilter {}'.format(lifter))
+
+            # Continue only if the filter condition is valid
+            if not lifter.check_alarm(value):
+                self.logger.debug('AlarmFilter: Filter condition is invalid')
                 continue
 
-            # For each filter on this alarm
-            for lifter in filters:
-                value = docalarm[storage.VALUE]
+            date = datetime.fromtimestamp(docalarm[storage.Key.TIMESTAMP])
+            # Continue only if the limit condition is valid
+            if date + lifter.limit > now:
+                self.logger.debug('AlarmFilter: Limit condition is invalid')
+                continue
 
-                # Continue only if the filter condition is valid
-                if not lifter.check_alarm(value):
+            # Only execute the filter once per reached limit
+            if self.AF_RUN in value and lifter._id in value[self.AF_RUN]:
+                last = datetime.fromtimestamp(
+                    value[self.AF_RUN][lifter._id])
+                if last + lifter.limit < now:
                     continue
+                self.logger.info('Rerunning tasks on {} after {} seconds'
+                                 .format(alarm_id, lifter.limit))
 
-                date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
-                # Continue only if the limit condition is valid
-                if date + lifter.limit > now:
-                    continue
+            event = {
+                'timestamp': now_stamp,
+                'connector': value['connector'],
+                'connector_name': value['connector_name'],
+                'output': self.filter_config['message'],
+            }
+            new_state = value[AlarmField.state.value]['val']
+            # Execute each defined action
+            new_value = None
+            for task in lifter.tasks:
+                new_state_bis = new_state
+                if 'systemaction.state_increase' in task:
+                    new_state_bis = new_state_bis + 1
+                elif 'systemaction.state_decrease' in task:
+                    new_state_bis = new_state_bis - 1
 
-                # Only execute the filter once per reached limit
-                if self.AF_RUN in value and lifter._id in value[self.AF_RUN]:
-                    last = datetime.fromtimestamp(
-                        value[self.AF_RUN][lifter._id])
-                    if last + lifter.limit < now:
-                        continue
-                    self.logger.info('Rerunning tasks on {} after {} seconds'
-                                     .format(alarm_id, lifter.limit))
+                self.logger.info('Automatically execute {} on {}'
+                                 .format(task, alarm_id))
+                new_value = self.execute_task(name=task,
+                                              event=event,
+                                              entity_id=alarm_id,
+                                              author=self.filter_config['author'],
+                                              new_state=new_state_bis)
 
-                event = {
-                    'timestamp': now_stamp,
-                    'connector': value['connector'],
-                    'connector_name': value['connector_name'],
-                    'output': self.filter_config['message'],
-                }
-                new_state = value[AlarmField.state.value]['val']
-                # Execute each defined action
-                new_value = None
-                for task in lifter.tasks:
-                    new_state_bis = new_state
-                    if 'systemaction.state_increase' in task:
-                        new_state_bis = new_state_bis + 1
-                    elif 'systemaction.state_decrease' in task:
-                        new_state_bis = new_state_bis - 1
+            if new_value is None:
+                continue
 
-                    self.logger.info('Automatically execute {} on {}'
-                                     .format(task, alarm_id))
-                    new_value = self.execute_task(name=task,
-                                                  event=event,
-                                                  entity_id=alarm_id,
-                                                  author=self.filter_config['author'],
-                                                  new_state=new_state_bis)
+            # Mark the alarm that this filter has been applied
+            if self.AF_RUN not in new_value:
+                new_value[self.AF_RUN] = {}
+            new_value[self.AF_RUN][lifter._id] = now_stamp
 
-                if new_value is None:
-                    continue
+            # ... as shitty as MongoPeriodicalStorage
+            docalarm[storage.DATA_ID] = docalarm[storage.Key.DATA_ID]
+            docalarm[storage.TIMESTAMP] = docalarm[storage.Key.TIMESTAMP]
+            docalarm[storage.VALUE] = docalarm[storage.Key.VALUE]
+            # TODO: fix MongoPeriodicalStorage and go back removing that
 
-                # Mark the alarm that this filter has been applied
-                if self.AF_RUN not in new_value:
-                    new_value[self.AF_RUN] = {}
-                new_value[self.AF_RUN][lifter._id] = now_stamp
-
-                self.update_current_alarm(docalarm, new_value)
+            self.update_current_alarm(docalarm, new_value)

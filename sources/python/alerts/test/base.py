@@ -24,8 +24,10 @@ import time
 from unittest import TestCase
 
 from canopsis.alerts import AlarmField
+from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.check import Check
+from canopsis.common.utils import merge_two_dicts
 from canopsis.middleware.core import Middleware
 
 
@@ -100,3 +102,20 @@ class BaseTest(TestCase):
         ]
 
         return alarm, value
+
+    def gen_alarm_filter(self, update={}, storage=None):
+        """
+        Generate a standard alarm filter.
+        """
+        base = {
+            AlarmFilter.LIMIT: 180.0,
+            AlarmFilter.FILTER: '',
+            AlarmFilter.KEY: 'component',
+            AlarmFilter.OPERATOR: 'eq',
+            AlarmFilter.VALUE: 'component',
+            AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
+        }
+
+        dictio = merge_two_dicts(base, update)
+
+        return AlarmFilter(dictio, storage=storage)

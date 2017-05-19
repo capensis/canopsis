@@ -211,7 +211,7 @@ def exports(ws):
         - operator (str): How to compare 'key' and 'value' (see operator python package)
         - value (int, float, str): The awaited value of 'key' in alarm
         - tasks ([str]): a list of task names to execute (see tasks.py)
-        - alarms ([str]): a list of alarms to apply to
+        - filter ([str]): a filter query on alarms
 
         :returns: an <AlarmFilter>
         """

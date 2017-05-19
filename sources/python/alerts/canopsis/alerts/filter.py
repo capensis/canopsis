@@ -19,6 +19,7 @@
 # ---------------------------------
 
 from datetime import timedelta
+import json
 import operator
 from uuid import uuid4 as uuid
 
@@ -28,9 +29,9 @@ class AlarmFilters(object):
         Access to a set of alarm filters.
     """
 
-    def __init__(self, storage):
-        self.storage = storage
-        self.filters = None  # All alarm filters, as dict, grouped by alarm_id
+    def __init__(self, storage, alarm_storage):
+        self.storage = storage  # A alarmfilter storage
+        self.alarm_storage = alarm_storage  # An alarm storage
 
     def create_filter(self, element):
         """
@@ -41,11 +42,11 @@ class AlarmFilters(object):
         :rtype: <AlarmFilter>
         """
         # Validating element minimal structure
-        for key in ['limit', 'key', 'operator', 'value', 'tasks', 'alarms']:
+        for key in [AlarmFilter.LIMIT, AlarmFilter.KEY, AlarmFilter.OPERATOR,
+                    AlarmFilter.VALUE, AlarmFilter.TASKS, AlarmFilter.FILTER]:
             if key not in element:
                 return None
 
-        self.filters = None  # Invalidate filter list cache
         af = AlarmFilter(element=element, storage=self.storage)
         af.save()
 
@@ -59,7 +60,6 @@ class AlarmFilters(object):
         :type entity_id: str
         :rtype: dict
         """
-        self.filters = None  # Invalidate filter list cache
         return self.storage.remove_elements(ids=[entity_id])
 
     def update_filter(self, alarm_id, key, value):
@@ -74,9 +74,8 @@ class AlarmFilters(object):
         :type value: str
         :rtype: <AlarmFilter>
         """
-        self.filters = None  # Invalidate filter list cache
         query = {'_id': alarm_id}
-        element = list(self.storage.find_elements(query=query))
+        element = list(self.storage.get_elements(query=query))
         if element is None or len(element) <= 0:
             return None
 
@@ -86,65 +85,46 @@ class AlarmFilters(object):
 
         return lifter
 
-    def get_filter(self, alarm_id):
+    def get_filter(self, alarmfilter_id):
         """
         Retreive the list of filters linked to a specific alarm.
 
-        :param alarm_id: the desired alarm_id
-        :type alarm_id: str
+        :param alarmfilter_id: the desired alarmfilter_id
+        :type alarmfilter_id: str
         :rtype: list or None
         """
-        if self.filters is None:
-            self.filters = self._get_filters()
+        query = {
+            AlarmFilter.UID: alarmfilter_id
+        }
+        all_filters = list(self.storage.get_elements(query=query))
 
-        return self.filters.get(alarm_id, None)
+        return all_filters[0]
 
     def get_filters(self):
         """
         Retreive the list of all filters.
 
-        :rtype: list
+        :rtype: [(AlarmFilter, Alarm)]
         """
-        if self.filters is None:
-            self.filters = self._get_filters()
+        results = []
 
-        return self.filters
+        all_filters = list(self.storage.get_elements())
+        for yummy in all_filters:
+            mfilter = yummy[AlarmFilter.FILTER]
 
-    def _get_filters(self):
-        """
-        List and generate all <AlarmFilter> grouped by alarm id.
+            # Instanciate each AlarmFilter on this alarm
+            new_filter = self.create_filter(yummy)
+            try:
+                query = json.loads(mfilter)
+            except:
+                # Cannot parse mfilter
+                continue
 
-        :rtype: dict
-        """
-        result = {}
-        known_filters = {}
+            for alarm in list(self.alarm_storage.get_elements(query=query)):
+                if new_filter is not None:
+                    results.append((new_filter, alarm))
 
-        # Get all alarms with at least one filter
-        alarms = list(self.storage._backend.distinct('alarms'))
-        for alarm_id in alarms:
-            query = {
-                'alarms': {
-                    '$in': [alarm_id]
-                }
-            }
-
-            # Get filters associate with this alarm
-            for element in self.storage.find_elements(query=query):
-                if alarm_id not in result:
-                    result[alarm_id] = []
-
-                # Deduplicate AlarmFilter objects
-                element_id = element.get('_id', None)
-                if element_id in known_filters:
-                    result[alarm_id].append(known_filters[element_id])
-                    continue
-
-                # Instanciate each AlarmFilter on this alarm
-                new_filter = self.create_filter(element)
-                result[alarm_id].append(new_filter)
-                known_filters[element_id] = new_filter
-
-        return result
+        return results
 
     def __repr__(self):
         return "AlarmFilters of {}".format(self.storage)
@@ -156,17 +136,22 @@ class AlarmFilter(object):
 
         filter = {
             '_id': 'deadbeef',
-            'alarms': ['/id/of/linked/alarm'],
+            'entity_filter': '{\"$or\":[{\"connector\":{\"$eq\":\"connector\"}}]}'
             'limit': timedelta(seconds=30),
-            'key': 'connector',
-            'operator': operator.eq,
-            'value': 'connector_value',
+            'condition_key': 'connector',
+            'condition_operator': operator.eq,
+            'condition_value': 'connector_value',
             'tasks': ['alerts.systemaction.status_increase'],
         }
     """
     UID = '_id'
     LIMIT = 'limit'
-    OPERATOR = 'operator'
+    KEY = 'condition_key'
+    OPERATOR = 'condition_operator'
+    VALUE = 'condition_value'
+    FILTER = 'entity_filter'
+    TASKS = 'tasks'
+    #FORMAT = 'output_format'
 
     def __init__(self, element, storage=None):
         self.element = element  # has persisted in the db
@@ -191,22 +176,28 @@ class AlarmFilter(object):
         setattr(self, key, value)
         self.element[key] = item
 
-    def check_alarm(self, alarm_value):
-        """
-        Check if a filter is valide for a specified alarm value.
+    def __getitem__(self, key):
+        if hasattr(self, key):
+            return getattr(self, key)
 
-        :param alarm_value: An alarm value
-        :type alarm_value: dict
+    def check_alarm(self, alarm):
+        """
+        Check if a filter is valide for a specified alarm.
+
+        :param alarm: An alarm
+        :type alarm: dict
         :rtype: bool
         """
-        # Find the targeted value
-        val = alarm_value
-        for mckey in self.key.split('.'):
-            val = val.get(mckey)
+        # Unstack the targeted value
+        for mckey in self[self.KEY].split('.'):
+            alarm = alarm.get(mckey, None)
+            if alarm is None:
+                # Cannot find the value
+                return False
 
         # Try to evaluate the filter condition
         try:
-            return self.operator(val, self.value)
+            return self[self.OPERATOR](alarm, self[self.VALUE])
         except:
             return False
 

@@ -137,8 +137,14 @@ record steps if this limit has been extended.
 Alarm filter
 ------------
 `Alarm filters` permit to automate one or more actions when an alarm has a
-specific property value (for example, state > 1) and a certain amount of secondes
+specific property value (for example, state > 1) and a certain amount of seconds
 have past since the last alarm update.
+
+An `alarm filter` is composed of:
+ - a filter to select targeted alarms
+ - a limit of time after which the filter became active
+ - a set key/operator/value, which determine if the alarm is compatible with the filter
+ - a list of tasks to execute
 
 In `etc/alerts/manager.conf`, you can specify the author name and the message
 putted in the alarm (when the executed action need one).
