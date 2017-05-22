@@ -407,10 +407,14 @@ Ember.Application.initializer({
                     extract: function(record, crecord, formRecord) {
                         if (!isNone(formRecord)) {
                             record.output = get(formRecord, 'output');
-                            record.dtstart = get(formRecord, 'dtstart');
-                            record.dtstop = get(formRecord, 'dtstop');
+                            // record.dtstart = get(formRecord, 'dtstart');
+                            // record.dtstop = get(formRecord, 'dtstop');
+                            record.start = get(formRecord, 'dtstart');
+                            record.end = get(formRecord, 'dtend');
                             record.rrule = get(formRecord, 'rrule');
-                            record.pbehavior_name = get(formRecord, 'name');
+                            record.pbehavior_name = 'downtime';
+                            record.action = 'create';
+                            record.name = get(formRecord, 'name');
                         }
                         // record.pbehavior_name = 'downtime';
 

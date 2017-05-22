@@ -17,3 +17,14 @@
 .invisible {
   display: none;
 }
+
+.actions-wrapper {
+  width: 85px;
+  margin: 3px;
+}
+
+.actions-parent {
+  display: flex;
+  flex-wrap: wrap;
+  /*margin: -10px 0 0 -10px;*/
+}

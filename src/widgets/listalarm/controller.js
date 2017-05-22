@@ -633,8 +633,12 @@ Ember.Application.initializer({
                 var filterState = this.get('model.alarms_state_filter.state') || 'resolved';
                 var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
 
-              
-                  adapter.findQuery('alarm', 'get-current-alarm', {'opened': filterState == 'opened', 'resolved': filterState == 'resolved','entity_id': aa.get('entity_id')}).then(function (a) {
+                  var f = {
+                    'd': aa.get('entity_id')
+                  }
+                  adapter.findQuery('alarm', 'get-current-alarm', {'entity_id': aa.get('entity_id')}).then(function (a) {
+                  // adapter.findQuery('alarm', 'get-current-alarm', { 'opened': filterState == 'opened', 'resolved': filterState == 'resolved', 'filter': "{'d': 'as'}" }).then(function (a) {
+                    
                     if (a.success) {
                     // console.error('teest', a);
                       var fields = self.get('fields');
