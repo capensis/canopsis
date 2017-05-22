@@ -84,7 +84,9 @@ Ember.Application.initializer({
             }.property('value.pbihaviors'),
 
             dateFormat: function (date) {
-                var dDate = new Date(date);
+                var mEpoch = parseInt(date);
+                if (mEpoch < 10000000000) mEpoch *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but JS uses milliseconds)
+                var dDate = new Date(mEpoch);
                 return moment(dDate).format('MM/DD/YY hh:mm:ss');
             },
         });
