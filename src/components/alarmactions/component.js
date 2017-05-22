@@ -95,8 +95,11 @@ Ember.Application.initializer({
                 if (this.get('isSnoozed')) {
                     actions.removeObject(actions.findBy('mixin_name', 'snooze'))
                 };
+                if (this.get('isChangedByUser')) {
+                    actions.removeObject(actions.findBy('mixin_name', 'cancelack'))                    
+                }
                 return actions;
-            }.property('internalState', 'isSnoozed'),
+            }.property('internalState', 'isSnoozed', 'isChangedByUser'),
             internalState: function() {
                 if (this.get('isCanceled')) {
                     return 'cancelled';
@@ -129,6 +132,11 @@ Ember.Application.initializer({
             hasLinks: function() {
                 return this.get('alarm.linklist.event_links.length') > 0;
             }.property('alarm.linklist.event_links'),
+
+            isChangedByUser: function () {
+                return this.get('alarm.state._t') == 'changestate'
+            }.property('alarm.state._t'),
+
             actions: {
                 sendAction: function (action) {
                     this.sendAction('action', action, this.get('alarm'));

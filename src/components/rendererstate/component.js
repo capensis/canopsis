@@ -30,10 +30,9 @@ Ember.Application.initializer({
                 return this.get('value._t') == 'changestate'
             }.property('value._t'),
 
-            isCanceled: function () {
+            isCancelled: function () {
                 return this.get('value.canceled') != undefined;
             }.property('value.canceled'),
-
         });
 
         application.register('component:component-rendererstate', component);
