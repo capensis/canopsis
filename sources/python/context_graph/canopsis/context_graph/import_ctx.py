@@ -66,6 +66,9 @@ class ImportKey:
     # import file pattern
     IMPORT_FILE = "/opt/canopsis/tmp/import_{0}.json"
 
+    EVT_IMPORT_UUID = "jobs_uuid"
+    EVT_JOBID = "jobid"
+
 @conf_paths(CONF_FILE)
 @add_category(CATEGORY)
 class Manager(MiddlewareRegistry):

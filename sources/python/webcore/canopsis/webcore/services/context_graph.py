@@ -22,6 +22,7 @@ from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey,\
     Manager
+from canopsis.engines.core import publish
 from uuid import uuid4
 import json as j
 import signal
@@ -30,13 +31,19 @@ import os
 manager = ContextGraph()
 import_manager = ContextGraphImport()
 import_col_man = Manager()
+# publisher = Amqp()
+# publisher.start()
+
+event_body = {ImportKey.EVT_IMPORT_UUID: None,
+              ImportKey.EVT_JOBID: None}
 
 __IMPORT_ID = "import_id"
 __ERROR = "error"
-__PARSE_PID_ERROR = "Impossible to parse the pid file."
 __OTHER_ERROR = "An error occured : {0}."
+__EVT_ERROR = "error while sending a event to the task : {0}."
 __STORE_ERROR = "Impossible to store the import: {0}."
-__PID_NOT_MATCH = "The PID does not match any process."
+
+RK = "task_importctx"
 
 def get_uuid():
     """Return an UUID never used for an import. If the generated UUID is already
@@ -115,38 +122,37 @@ def exports(ws):
     )
     def put_graph(json='{}'):
 
-        with open(ImportKey.PID_FILE, 'r') as fd:
-            try:
-                pid = int(fd.readline())
-            except ValueError:
-                return {__ERROR: __PARSE_PID_ERROR}
-
         uuid = get_uuid()
         # FIXME: A race condition may occur here
         import_col_man.create_import_status(uuid)
 
+        file_ = ImportKey.IMPORT_FILE.format(uuid)
+
+        if os.path.exists(file_):
+            return {__ERROR: __STORE_ERROR.format(
+                "an import already exist with the same id on the disk")}
+
         try:
-            file_ = ImportKey.IMPORT_FILE.format(uuid)
-
-            if os.path.exists(file_):
-                return {__ERROR: __STORE_ERROR.format(
-                    "an import already exist with the same id on the disk")}
-
             with open(file_, 'w') as fd:
                 j.dump(json, fd)
-
-            os.kill(pid, signal.SIGUSR1)
-
-            return {__IMPORT_ID : str(uuid)}
-
         except IOError as ioerror:
             return {__ERROR: __STORE_ERROR.format(str(ioerror))}
 
-        except OSError:
-            return {__ERROR: __PID_NOT_MATCH}
+        try:
+            event = event_body.copy()
+            event[ImportKey.EVT_IMPORT_UUID] = uuid
+            event[ImportKey.EVT_JOBID] = uuid
+            publish(event,
+                    ws.amqp,
+                    rk=RK,
+                    exchange='amq.direct',
+                    logger=ws.logger)
+        except Exception as e:
+            ws.logger.error(e)
+            return {__ERROR: __EVT_ERROR.format(repr(e))}
 
-        except Exception as error:
-            return {__ERROR: __OTHER_ERROR.format(str(error))}
+        return {__IMPORT_ID : str(uuid)}
+
 
 
     @route(
