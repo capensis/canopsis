@@ -1022,15 +1022,14 @@ class TestManager(BaseTest):
     def test_check_alarm_filters(self):
         # Apply a filter on a new alarm
         now_stamp = int(time.mktime(datetime.now().timetuple()))
-        alarm, value = self.gen_fake_alarm(now_stamp)
+        alarm, value = self.gen_fake_alarm(moment=now_stamp)
         alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
         lifter = self.gen_alarm_filter({
-            AlarmFilter.FILTER: '{{"$or":[{{"d":{{"$eq":"{}"}}}}]}}'.format(alarm_id),
+            AlarmFilter.FILTER: ('{{"{}":{{"$eq":"{}"}}}}'
+                                 .format(self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID, alarm_id)),
             AlarmFilter.LIMIT: -1,
-            AlarmFilter.KEY: 'connector',
-            AlarmFilter.OPERATOR: 'eq',
-            AlarmFilter.VALUE: 'fake-connector',
-            'tasks': ['alerts.systemaction.state_increase'],
+            AlarmFilter.CONDITION: '{"v.connector": {"$eq": "fake-connector"}}',
+            AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
         }, storage=self.manager[Alerts.FILTER_STORAGE])
         lifter.save()
 
@@ -1049,7 +1048,7 @@ class TestManager(BaseTest):
 
         # The filter has already been applied => alarm must not change
         now_stamp = int(time.mktime(datetime.now().timetuple()))
-        alarm, value = self.gen_fake_alarm(now_stamp)
+        alarm, value = self.gen_fake_alarm(moment=now_stamp)
         alarm_id2 = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
 
         self.manager.check_alarm_filters()

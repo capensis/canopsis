@@ -32,11 +32,11 @@ class TestFilter(BaseTest):
         self.alarm_storage.put_elements([alarm])
 
         lifter = self.gen_alarm_filter({
-            AlarmFilter.FILTER: '{"$or":[{"value.connector":{"$eq":"wrong-connector"}}]}'
+            AlarmFilter.FILTER: '{"value.connector":{"$eq":"wrong-connector"}}'
         }, storage=self.filter_storage)
         lifter.save()
         lifter = self.gen_alarm_filter({
-            AlarmFilter.FILTER: '{"$or":[{"value.connector":{"$eq":"fake-connector"}}]}'
+            AlarmFilter.FILTER: '{"value.connector":{"$eq":"fake-connector"}}'
         }, storage=self.filter_storage)
         lifter.save()
 
@@ -65,36 +65,36 @@ class TestFilter(BaseTest):
 
         element = {
             AlarmFilter.LIMIT: 30.0,
-            AlarmFilter.KEY: 'key',
-            AlarmFilter.OPERATOR: 'neq',
-            AlarmFilter.VALUE: 'value',
+            AlarmFilter.CONDITION: {},
             AlarmFilter.TASKS: ['alerts.useraction.comment'],
-            AlarmFilter.FILTER: '{"data_id":{"$eq":"/fake/alarm/id"}}'
+            AlarmFilter.FILTER: {"data_id": {"$eq": alarm[self.alarm_storage.DATA_ID]}}
         }
 
         # CREATE
         result = alarm_filters.create_filter(element)
+        result.save()
+        self.assertEqual(result[AlarmFilter.CONDITION], {})
         element['_id'] = result._id
-        self.assertEqual(result[AlarmFilter.VALUE], 'value')
 
         # GET
         result = alarm_filters.get_filters()
         self.assertEqual(result[0][0].element, element)
 
+        another_cond = '{"key": {"$eq": "another"}}'
         result = alarm_filters.update_filter('/not/an/alarm',
-                                             key=AlarmFilter.KEY,
-                                             value='another')
+                                             key=AlarmFilter.CONDITION,
+                                             value=another_cond)
         self.assertTrue(result is None)
 
         # UPDATE
         result = alarm_filters.update_filter(element['_id'],
-                                             key=AlarmFilter.KEY,
-                                             value='another')
-        self.assertEqual(result[AlarmFilter.KEY], 'another')
+                                             key=AlarmFilter.CONDITION,
+                                             value=another_cond)
+        self.assertEqual(result[AlarmFilter.CONDITION]['key']['$eq'], 'another')
 
         # GET
         result = alarm_filters.get_filters()
-        self.assertEqual(result[0][0][AlarmFilter.KEY], 'another')
+        self.assertEqual(result[0][0][AlarmFilter.CONDITION]['key']['$eq'], 'another')
 
         # DELETE
         result = alarm_filters.delete_filter(element['_id'])
@@ -106,34 +106,28 @@ class TestFilter(BaseTest):
 
     def test_check_alarm(self):
         alarm, value = self.gen_fake_alarm()
+        self.manager.update_current_alarm(alarm, value)
 
         lifter = AlarmFilter({
-            AlarmFilter.OPERATOR: 'eq',
-            AlarmFilter.KEY: 'cacao',
-            AlarmFilter.VALUE: 'maigre'
-        })
+            AlarmFilter.CONDITION: {"cacao": {"$eq": 'maigre'}},
+        }, storage=self.filter_storage, alarm_storage=self.alarm_storage)
         self.assertFalse(lifter.check_alarm(alarm))
 
         lifter = AlarmFilter({
-            AlarmFilter.OPERATOR: 'eq',
-            AlarmFilter.KEY: 'value.component',
-            AlarmFilter.VALUE: 'bbb'
-        })
+            AlarmFilter.CONDITION: {"v.component": {"$eq": 'bb'}},
+        }, storage=self.filter_storage, alarm_storage=self.alarm_storage)
         self.assertFalse(lifter.check_alarm(alarm))
 
         lifter = AlarmFilter({
-            AlarmFilter.OPERATOR: 'eq',
-            AlarmFilter.KEY: 'value.component',
-            AlarmFilter.VALUE: 'c'
-        })
+            AlarmFilter.CONDITION: {"v.component": {"$eq": 'c'}},
+        }, storage=self.filter_storage, alarm_storage=self.alarm_storage)
         self.assertTrue(lifter.check_alarm(alarm))
 
         lifter = AlarmFilter({
-            AlarmFilter.OPERATOR: 'ge',
-            AlarmFilter.KEY: 'value.state.val',
-            AlarmFilter.VALUE: 1
-        })
+            AlarmFilter.CONDITION: {"v.state.val": {"$gte": 1}},
+        }, storage=self.filter_storage, alarm_storage=self.alarm_storage)
         self.assertTrue(lifter.check_alarm(alarm))
+
 
 if __name__ == '__main__':
     main()
