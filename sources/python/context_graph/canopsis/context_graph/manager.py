@@ -4,12 +4,20 @@ from __future__ import unicode_literals
 
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
+from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
 
+CONF_PATH = 'context_graph/manager.conf'
+CATEGORY = 'CONTEXTGRAPH'
+CONTENT = [
+    Parameter('event_types', Parameter.array()), 
+    Parameter('extra_fields', Parameter.array()), 
+] 
 
-@conf_paths('context_graph/manager.conf')
-@add_category('CONTEXTGRAPH')
+
+@conf_paths(CONF_PATH)
+@add_category(CATEGORY, content=CONTENT)
 class ContextGraph(MiddlewareRegistry):
     """ContextGraph"""
 
@@ -21,6 +29,43 @@ class ContextGraph(MiddlewareRegistry):
     RESOURCE = "resource"
     COMPONENT = "component"
     CONNECTOR = "connector"
+
+    @property
+    def event_types(self):
+        """
+        Array of event_type 
+        """
+
+        if not hasattr(self, '_event_types'):
+            self.event_types = None
+
+        return self._event_types
+
+    @event_types.setter
+    def event_types(self, value):
+        if value is None:
+            value = []
+
+        self._event_types = value
+
+    @property
+    def extra_fields(self):
+        """
+        Array of fields to save from event in entity.
+        """
+
+        if not hasattr(self, '_extra_fields'):
+            self.extra_fields = None
+
+        return self._extra_fields
+
+    @extra_fields.setter
+    def extra_fields(self, value):
+        if value is None:
+            value = []
+
+        self._extra_fields = value
+
 
     @classmethod
     def get_id(cls, event):
@@ -90,7 +135,7 @@ class ContextGraph(MiddlewareRegistry):
 
         return True
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, event_types=None, extra_fields=None, *args, **kwargs):
         """__init__
 
         :param *args:
@@ -99,7 +144,14 @@ class ContextGraph(MiddlewareRegistry):
         super(ContextGraph, self).__init__(*args, **kwargs)
         self.collection_name = 'default_entities'
 
-    def get_entities_by_id(self, id):
+        if event_types is None:
+            self.event_types = event_types
+
+        if extra_fields is None:
+            self.extra_fields = extra_fields
+
+
+    def get_entities_by_id(self, _id):
         """
         Retreive the entity identified by an id. If id is a list of id,
         get_entities_by_id return every entities who match the ids present
@@ -112,11 +164,11 @@ class ContextGraph(MiddlewareRegistry):
         query = {"_id": None}
         if isinstance(id, type([])):
             ids = []
-            for i in id:
+            for i in _id:
                 ids.append(i)
             query["_id"] = {"$in": ids}
         else:
-            query["_id"] = id
+            query["_id"] = _id
 
         result = list(
             self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))

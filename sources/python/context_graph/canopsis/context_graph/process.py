@@ -330,7 +330,7 @@ def update_context_case6(ids, in_db):
     return [connector, component]
 
 
-def update_context(presence, ids, in_db):
+def update_context(presence, ids, in_db, extra_infos):
     to_update = None
     if presence == (False, False, False):
         # Case 1
@@ -366,6 +366,11 @@ def update_context(presence, ids, in_db):
                 presence, ids))
         raise ValueError("No case for the given ids and data.")
 
+    for i in to_update:
+        i['infos']['enabled'] = True
+        for j in extra_infos.keys():
+            i['infos'][j] = extra_infos[j]
+
     context_graph_manager._put_entities(to_update)
 
 
@@ -399,6 +404,8 @@ def event_processing(
     :param cm:
     :param **kwargs:
     """
+    if event['event_type'] not in context_graph_manager.event_types:
+        return None
 
     global LOGGER
     LOGGER = logger
@@ -422,7 +429,13 @@ def event_processing(
     if presence == (True, True, True) or presence == (True, True, None):
         # Everything is in cache, so we skip
         return None
-    update_context(presence, ids, entities_in_db)
+    
+    extra_infos = {}
+    for field in context_graph_manager.extra_fields:
+        if field in event.keys():
+            extra_infos[field] = event[field]
+
+    update_context(presence, ids, entities_in_db, extra_infos)
     LOGGER.debug("*** The end. ***")
 
 

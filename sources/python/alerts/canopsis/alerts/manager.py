@@ -437,6 +437,11 @@ class Alerts(MiddlewareRegistry):
 
         entity_id = self.context_manager.get_id(event)
 
+        entity = self.context_manager.get_entities_by_id(entity_id)
+        if entity != []:
+            if self.context_manager.get[0]['infos']['enabled'] == False:
+                return 
+
         author = event.get('author', None)
         message = event.get('output', None)
 
