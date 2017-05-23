@@ -69,6 +69,8 @@ class ImportKey:
     EVT_IMPORT_UUID = "jobs_uuid"
     EVT_JOBID = "jobid"
 
+    JOB_ID = "importctx_{0}"
+
 @conf_paths(CONF_FILE)
 @add_category(CATEGORY)
 class Manager(MiddlewareRegistry):

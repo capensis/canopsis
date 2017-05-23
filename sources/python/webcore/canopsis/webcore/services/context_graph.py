@@ -141,7 +141,7 @@ def exports(ws):
         try:
             event = event_body.copy()
             event[ImportKey.EVT_IMPORT_UUID] = uuid
-            event[ImportKey.EVT_JOBID] = uuid
+            event[ImportKey.EVT_JOBID] = ImportKey.JOB_ID.format(uuid)
             publish(event,
                     ws.amqp,
                     rk=RK,
