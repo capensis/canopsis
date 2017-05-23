@@ -20,30 +20,46 @@
 
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
+<<<<<<< HEAD
 from canopsis.context_graph.import_ctx import ContextGraphImport
 from canopsis.alerts.manager import Alerts
+=======
+from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey,\
+    Manager
+from canopsis.engines.core import publish
+>>>>>>> feature-import-context-daemon
 from uuid import uuid4
 import json as j
+import signal
 import os
 
 manager = ContextGraph()
 import_manager = ContextGraphImport()
+<<<<<<< HEAD
 alerts_manager = Alerts()
+=======
+import_col_man = Manager()
+# publisher = Amqp()
+# publisher.start()
 
-__FILE = "/opt/canopsis/tmp/import-{0}.json"
+event_body = {ImportKey.EVT_IMPORT_UUID: None,
+              ImportKey.EVT_JOBID: None}
+>>>>>>> feature-import-context-daemon
+
 __IMPORT_ID = "import_id"
 __ERROR = "error"
-__STORE_ERROR = "Impossible to store the file on the disk : {0}."
 __OTHER_ERROR = "An error occured : {0}."
-__CANNOT_EXEC_IMPORT = "Error while calling the process responsible"\
-                       " of the import"
+__EVT_ERROR = "error while sending a event to the task : {0}."
+__STORE_ERROR = "Impossible to store the import: {0}."
+
+RK = "task_importctx"
 
 def get_uuid():
     """Return an UUID never used for an import. If the generated UUID is already
     used, try again until an UUID not used is created"""
 
     uuid = uuid4()
-    while import_manager.check_id(uuid):
+    while import_col_man.check_id(uuid):
         uuid = uuid4()
 
     return str(uuid)
@@ -91,10 +107,10 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        payload=['query', 
-        'projection', 
-        'limit', 
-        'sort', 
+        payload=['query',
+        'projection',
+        'limit',
+        'sort',
         'with_count']
     )
     def get_entities(
@@ -118,37 +134,39 @@ def exports(ws):
         payload=['json']
     )
     def put_graph(json='{}'):
-        # uuid = get_uuid()
-        # try:
-        #     file_ = __FILE.format(uuid)
 
-        #     if os.path.exists(file_):
-        #         return {__ERROR: __STORE_ERROR.format("A file with the same "\
-        #                                               "name already exists")}
+        uuid = get_uuid()
+        # FIXME: A race condition may occur here
+        import_col_man.create_import_status(uuid)
 
-        #     with open(file_, 'w') as fd:
-        #         j.dump(json, fd)
+        file_ = ImportKey.IMPORT_FILE.format(uuid)
 
-        with open(file_, 'w') as fd:
-            j.dump(json, fd)
-        #     status = os.spawnle(os.P_NOWAIT, "import.py", file_)
+        if os.path.exists(file_):
+            return {__ERROR: __STORE_ERROR.format(
+                "an import already exist with the same id on the disk")}
 
-        #     if status == 127:
-        #         return {__ERROR: __CANNOT_EXEC_IMPORT}
+        try:
+            with open(file_, 'w') as fd:
+                j.dump(json, fd)
+        except IOError as ioerror:
+            return {__ERROR: __STORE_ERROR.format(str(ioerror))}
 
-        #     return {__IMPORT_ID : str(uuid)}
+        try:
+            event = event_body.copy()
+            event[ImportKey.EVT_IMPORT_UUID] = uuid
+            event[ImportKey.EVT_JOBID] = ImportKey.JOB_ID.format(uuid)
+            publish(event,
+                    ws.amqp,
+                    rk=RK,
+                    exchange='amq.direct',
+                    logger=ws.logger)
+        except Exception as e:
+            ws.logger.error(e)
+            return {__ERROR: __EVT_ERROR.format(repr(e))}
 
-        # except IOError as ioerror:
-        #     return {__ERROR: __STORE_ERROR.format(str(ioerror))}
+        return {__IMPORT_ID : str(uuid)}
 
-        # except Exception as error:
-        #     return {__ERROR: __OTHER_ERROR.format(str(error))}
 
-        if isinstance(json, dict):
-            import_manager.import_context(json)
-        elif isinstance(json, str):
-            js = j.loads(json)
-            import_manager.import_context(js)
 
 
     def get_state(_id):
@@ -173,16 +191,16 @@ def exports(ws):
         }
 
         for i in entities_list:
-            ret_json['nodes'].append({'group':1, 
-                                      'id': i['_id'], 
-                                      'name': i['name'], 
+            ret_json['nodes'].append({'group':1,
+                                      'id': i['_id'],
+                                      'name': i['name'],
                                       'state': get_state(i['_id'])})
 
         for i in entities_list:
             source = i['_id']
             for target in i['depends']:
-                ret_json['links'].append({'value': 1, 
-                	'source': source, 
+                ret_json['links'].append({'value': 1,
+                	'source': source,
                 'target': target})
 
         directory = '/opt/canopsis/var/www/src/canopsis/d3graph'
@@ -193,7 +211,7 @@ def exports(ws):
             for i in l:
                 a.write(i)
             a.close()
-        f = open('/opt/canopsis/var/www/src/canopsis/d3graph/graph.json', 
+        f = open('/opt/canopsis/var/www/src/canopsis/d3graph/graph.json',
         	'w')
         f.write(j.dumps(ret_json))
         f.close()
@@ -203,7 +221,7 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/graphimpact',
-        payload=['_id', 
+        payload=['_id',
         'deepness']
     )
     def get_graph_impact(_id, deepness=None):
@@ -212,7 +230,7 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/graphdepends',
-        payload=['_id', 
+        payload=['_id',
         'deepness']
     )
     def get_graph_depends(_id, deepness=None):
@@ -221,7 +239,7 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/leavesdepends',
-        payload=['_id', 
+        payload=['_id',
         'deepness']
     )
     def get_leaves_depends(_id, deepness=None):
@@ -230,7 +248,7 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/leavesimpact',
-        payload=['_id', 
+        payload=['_id',
         'deepness']
     )
     def get_leaves_impact(_id, deepness=None):
@@ -238,4 +256,4 @@ def exports(ws):
 
     @ws.application.get('/api/contextgraph/import/status/<cid>')
     def get_status(cid):
-        return import_manager.get_import_status(cid)
+        return import_col_man.get_import_status(cid)

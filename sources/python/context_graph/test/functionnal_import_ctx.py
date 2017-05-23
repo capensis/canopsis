@@ -1,116 +1,303 @@
 import argparse
+import requests
+import re
 import json
-import sys
-import urllib
-from http.cookiejar import CookieJar
-from unittest import TestCase, TestSuite, TextTestRunner
+import time
+import unittest
+from pymongo import MongoClient
+from canopsis.context_graph.import_ctx import ImportKey, ContextGraphImport
 
-import pymongo
+URL_BASE = "http://{0}:8082/"
+URL_IMPORT = "{0}api/contextgraph/import"
+URL_STATUS = "{0}api/contextgraph/import/status/{1}"
+URL_AUTH = "{0}/?authkey={1}"
+URL_MONGO = 'mongodb://cpsmongo:canopsis@{0}:27017/canopsis'
+
+ENTITIES_COL = "default_entities"
+IMPORT_COL = "default_importgraph"
+
+JSON_EMPTY = {}
+JSON_CIS_LIST_ONE = {ContextGraphImport.K_CIS:[
+    {ContextGraphImport.K_ID: 'id_test',
+     ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+     ContextGraphImport.K_PROPERTIES: {},
+     ContextGraphImport.K_DEPENDS: [],
+     ContextGraphImport.K_IMPACT: [],
+     ContextGraphImport.K_INFOS: {},
+     ContextGraphImport.K_MEASUREMENTS: [],
+     ContextGraphImport.K_NAME: 'id_test',
+     ContextGraphImport.K_TYPE: 'connector'}]}
+
+JSON_CIS_LIST = {ContextGraphImport.K_CIS:[
+    {ContextGraphImport.K_ID: 'id_test',
+     ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+     ContextGraphImport.K_PROPERTIES: {},
+     ContextGraphImport.K_DEPENDS: [],
+     ContextGraphImport.K_IMPACT: [],
+     ContextGraphImport.K_INFOS: {},
+     ContextGraphImport.K_MEASUREMENTS: [],
+     ContextGraphImport.K_NAME: 'id_test',
+     ContextGraphImport.K_TYPE: 'connector'},
+    {ContextGraphImport.K_ID: 'id_test1',
+     ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+     ContextGraphImport.K_PROPERTIES: {},
+     ContextGraphImport.K_DEPENDS: [],
+     ContextGraphImport.K_IMPACT: [],
+     ContextGraphImport.K_INFOS: {},
+     ContextGraphImport.K_MEASUREMENTS: [],
+     ContextGraphImport.K_NAME: 'id_test1',
+     ContextGraphImport.K_TYPE: 'connector'}]}
+
+JSON_LINKS_LIST_ONE = {
+    ContextGraphImport.K_CIS:[
+        {ContextGraphImport.K_ID: 'id_test',
+         ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+         ContextGraphImport.K_PROPERTIES: {},
+         ContextGraphImport.K_DEPENDS: [],
+         ContextGraphImport.K_IMPACT: [],
+         ContextGraphImport.K_INFOS: {},
+         ContextGraphImport.K_MEASUREMENTS: [],
+         ContextGraphImport.K_NAME: 'id_test',
+         ContextGraphImport.K_TYPE: 'connector'},
+        {ContextGraphImport.K_ID: 'id_test1',
+         ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+         ContextGraphImport.K_PROPERTIES: {},
+         ContextGraphImport.K_DEPENDS: [],
+         ContextGraphImport.K_IMPACT: [],
+         ContextGraphImport.K_INFOS: {},
+         ContextGraphImport.K_MEASUREMENTS: [],
+         ContextGraphImport.K_NAME: 'id_test1',
+         ContextGraphImport.K_TYPE: 'connector'}],
+    ContextGraphImport.K_LINKS:[
+        {ContextGraphImport.K_ID: "id_0",
+         ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+         ContextGraphImport.K_PROPERTIES: {},
+         ContextGraphImport.K_FROM: ["id_test"],
+         ContextGraphImport.K_INFOS: {},
+         ContextGraphImport.K_TO: "id_test1"}]}
+
+JSON_LINKS_LIST = {
+    ContextGraphImport.K_CIS:[
+        {ContextGraphImport.K_ID: 'id_test',
+         ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+         ContextGraphImport.K_PROPERTIES: {},
+         ContextGraphImport.K_DEPENDS: [],
+         ContextGraphImport.K_IMPACT: [],
+         ContextGraphImport.K_INFOS: {},
+         ContextGraphImport.K_MEASUREMENTS: [],
+         ContextGraphImport.K_NAME: 'id_test',
+         ContextGraphImport.K_TYPE: 'connector'},
+        {ContextGraphImport.K_ID: 'id_test1',
+         ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+         ContextGraphImport.K_PROPERTIES: {},
+         ContextGraphImport.K_DEPENDS: [],
+         ContextGraphImport.K_IMPACT: [],
+         ContextGraphImport.K_INFOS: {},
+         ContextGraphImport.K_MEASUREMENTS: [],
+         ContextGraphImport.K_NAME: 'id_test1',
+         ContextGraphImport.K_TYPE: 'connector'}],
+    ContextGraphImport.K_LINKS:[
+        {ContextGraphImport.K_ID: "id_0",
+         ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+         ContextGraphImport.K_PROPERTIES: {},
+         ContextGraphImport.K_FROM: ["id_test"],
+         ContextGraphImport.K_INFOS: {},
+         ContextGraphImport.K_TO: "id_test1"},
+        {ContextGraphImport.K_ID: "id_1",
+         ContextGraphImport.K_ACTION: ContextGraphImport.A_CREATE,
+         ContextGraphImport.K_PROPERTIES: {},
+         ContextGraphImport.K_FROM: ["id_test1"],
+         ContextGraphImport.K_INFOS: {},
+         ContextGraphImport.K_TO: "id_test"}]}
+
+class Test(unittest.TestCase):
+
+    def __init__(self, ent_col, imp_col):
+        super(Test, self).__init__("all_tests")
+        self.session = None
+        self.cookies = None
+        self.ent_col = ent_col
+        self.imp_col = imp_col
+
+    def setUp(self):
+        self.ent_col.remove({})
+
+        self.session = requests.Session()
+        response = self.session.get(URL_AUTH)
+
+        if re.search("<title>Canopsis | Login</title>", response.text)\
+           is not None:
+            self.fail("Authentication error.")
+
+        self.cookies = response.cookies
+
+    def _launch_import(self, import_):
+        data = json.dumps({"json": import_})
+        headers = {"Content-type": "application/json", "Accept": "text/plain"}
+
+        response = self.session.put(URL_IMPORT,
+                               data=data,
+                               headers=headers,
+                               cookies=self.cookies)
+
+        if re.search('"success": false', response.text) is not None:
+            self.fail("Error during import : {0}".format(response.text))
+
+        else:
+            response = json.loads(response.text)
+            id_ = response["data"][0]["import_id"]
+            status = ImportKey.ST_ONGOING
+
+            while status not in [ImportKey.ST_FAILED, ImportKey.ST_DONE]:
+                time.sleep(1)
+                response =  self.session.get(URL_STATUS.format(URL_BASE, id_))
+                response = json.loads(response.text)
+                status = response[ImportKey.F_STATUS]
+
+            if status == ImportKey.ST_FAILED:
+                self.fail("The import failed : {0}" +
+                          response[ImportKey.F_INFO])
+
+        return id_
+
+    def _check_import_report(self, report, status, deleted, updated):
+        self.assertEqual(report[ImportKey.F_STATUS], status)
+        self.assertEqual(report[ImportKey.F_STATS]\
+                         [ImportKey.F_DELETED], deleted)
+        self.assertEqual(report[ImportKey.F_STATS]\
+                         [ImportKey.F_UPDATED], updated)
+
+    def all_tests(self):
+        self.test_empty_json()
+        self.ent_col.remove({"_id": {"$in": ["id_test", "id_test1"]}})
+        self.test_json_cis_list_item()
+        self.ent_col.remove({"_id": {"$in": ["id_test", "id_test1"]}})
+        self.test_json_cis_list_items()
+        self.ent_col.remove({"_id": {"$in": ["id_test", "id_test1"]}})
+        self.test_json_links_list_item()
+        self.ent_col.remove({"_id": {"$in": ["id_test", "id_test1"]}})
+        self.test_json_links_list_items()
+        self.ent_col.remove({"_id": {"$in": ["id_test", "id_test1"]}})
+
+    def test_empty_json(self):
+        uuid = self._launch_import(JSON_EMPTY)
+        report = list(self.imp_col.find({ImportKey.F_ID: uuid}))[0]
+        self._check_import_report(report, ImportKey.ST_DONE, 0, 0)
+
+        entities = list(self.ent_col.find({"_id":
+                                           {"$in": ["id_test", "id_test1"]}}))
+
+        self.assertListEqual(entities, [])
+
+    def assertListEntitiesEquals(self, l1, l2):
+        self.assertEqual(len(l1), len(l2))
+        l1 = sorted(l1)
+        l2 = sorted(l2)
+        for i in range(len(l1)):
+            self.assertDictEqual(l1[i], l2[i])
+
+    def test_json_cis_list_item(self):
+        uuid = self._launch_import(JSON_CIS_LIST_ONE)
+        report = list(self.imp_col.find({ImportKey.F_ID: uuid}))[0]
+
+        self._check_import_report(report, ImportKey.ST_DONE, 0, 1)
+
+        expected = JSON_CIS_LIST_ONE[ContextGraphImport.K_CIS]
+        expected[0].pop(ContextGraphImport.K_ACTION)
+        expected[0].pop(ContextGraphImport.K_PROPERTIES)
+
+        entities = list(self.ent_col.find({"_id":
+                                           {"$in": ["id_test"]}}))
+
+        self.assertListEntitiesEquals(entities, expected)
+
+    def test_json_cis_list_items(self):
+        uuid = self._launch_import(JSON_CIS_LIST)
+        report = list(self.imp_col.find({ImportKey.F_ID: uuid}))[0]
+
+        self._check_import_report(report, ImportKey.ST_DONE, 0, 2)
+
+        expected = JSON_CIS_LIST[ContextGraphImport.K_CIS]
+        for i in range(len(expected)):
+            expected[i].pop(ContextGraphImport.K_ACTION)
+            expected[i].pop(ContextGraphImport.K_PROPERTIES)
+        entities = list(self.ent_col.find({"_id":
+                                           {"$in": ["id_test", "id_test1"]}}))
+
+        self.assertListEntitiesEquals(entities, expected)
+
+    def test_json_links_list_item(self):
+        uuid = self._launch_import(JSON_LINKS_LIST_ONE)
+        report = list(self.imp_col.find({ImportKey.F_ID: uuid}))[0]
+
+        self._check_import_report(report, ImportKey.ST_DONE, 0, 2)
+
+        expected = JSON_LINKS_LIST_ONE[ContextGraphImport.K_CIS]
+        for i in range(len(expected)):
+            expected[i].pop(ContextGraphImport.K_ACTION)
+            expected[i].pop(ContextGraphImport.K_PROPERTIES)
+            if expected[i][ContextGraphImport.K_ID] == "id_test":
+                expected[i][ContextGraphImport.K_IMPACT] = ["id_test1"]
+            if expected[i][ContextGraphImport.K_ID] == "id_test1":
+                expected[i][ContextGraphImport.K_DEPENDS] = ["id_test"]
+
+        entities = list(self.ent_col.find({"_id":
+                                           {"$in": ["id_test", "id_test1"]}}))
+
+        self.assertListEntitiesEquals(entities, expected)
+
+    def test_json_links_list_items(self):
+        uuid = self._launch_import(JSON_LINKS_LIST)
+        report = list(self.imp_col.find({ImportKey.F_ID: uuid}))[0]
+
+        self._check_import_report(report, ImportKey.ST_DONE, 0, 2)
+
+        expected = JSON_LINKS_LIST[ContextGraphImport.K_CIS]
+        for i in range(len(expected)):
+            expected[i].pop(ContextGraphImport.K_ACTION)
+            expected[i].pop(ContextGraphImport.K_PROPERTIES)
+            if expected[i][ContextGraphImport.K_ID] == "id_test":
+                expected[i][ContextGraphImport.K_IMPACT] = ["id_test1"]
+                expected[i][ContextGraphImport.K_DEPENDS] = ["id_test1"]
+            if expected[i][ContextGraphImport.K_ID] == "id_test1":
+                expected[i][ContextGraphImport.K_DEPENDS] = ["id_test"]
+                expected[i][ContextGraphImport.K_IMPACT] = ["id_test"]
+        entities = list(self.ent_col.find({"_id":
+                                           {"$in": ["id_test", "id_test1"]}}))
+
+        self.assertListEntitiesEquals(entities, expected)
 
 
-class Test(TestCase):
-    def __init__(self, server, authkey):
-        super(Test, self).__init__('test_graph_import')
-        self.server = server
-        self.authkey = authkey
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a', type=str, dest="authkey", help='authkey')
+    parser.add_argument('-w', type=str, dest="web_host", default="locahost",
+                        help='The webserver address.')
+    parser.add_argument('-m', type=str, dest="mongo_host", default="locahost",
+                        help='The mongodb address.')
+    return parser.parse_args()
 
-        self.client = pymongo.MongoClient('mongodb://cpsmongo:canopsis@{0}:27017/canopsis'.format(self.server))
-        self.db = self.client.canopsis
-        self.col = self.client.canopsis['default_entities']
+def setup(args):
+    global URL_BASE, URL_IMPORT, URL_AUTH
 
-    def test_graph_import(self):
-        # auth
-        cj = CookieJar()
-        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
-        r = opener.open('http://{0}:8082/autologin/{1}'.format(self.server, self.authkey))
-        charset = r.info().get_param('charset', 'utf8')
-        try:
-            response = json.loads(r.read().decode(charset))
-        except Exception as err:
-            print('bad response from server {0}'.format(err))
-            sys.exit()
+    client = MongoClient(URL_MONGO.format(args.mongo_host))
+    db = client.canopsis
+    ent_col = db[ENTITIES_COL]
+    imp_col = db[IMPORT_COL]
 
-        if not response['success']:
-            print('error: the provided authkey does not match any user')
-            sys.exit()
+    URL_BASE = URL_BASE.format(args.web_host)
+    URL_AUTH = URL_AUTH.format(URL_BASE, args.authkey)
+    URL_IMPORT = URL_IMPORT.format(URL_BASE)
 
-        print('test entities')
-        print('test entity creation')
-        js = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"measurements":[],"type":"component","infos":{},"action":"create"}],"links":[]}'
-        params = urllib.parse.urlencode({'json': js})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
-        opener.open(req)
+    return ent_col, imp_col
 
-        self.assertDictEqual(self.col.find_one({'_id': 'host_1'}),
-                             {'impact': [], 'name': 'host_1', 'type': 'component', 'infos': {}, "measurements":[], '_id': 'host_1',
-                              'depends': []})
-
-        print('test update entity')
-        update = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","measurements":[], "infos":{"coucou":"bouh"},"action":"update"}],"links":[]}'
-        params = urllib.parse.urlencode({'json': update})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
-        opener.open(req)
-
-        self.assertDictEqual(self.col.find_one({'_id': 'host_1'}), {'impact': [], 'name': 'host_1', 'type': 'component',
-                                                               'infos': {'coucou': 'bouh'}, '_id': 'host_1', 'depends':
-                                                                    [], "measurements":[]})
-
-        print('test entity deletion')
-        deletion = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"delete"}],"links":[]}'
-        params = urllib.parse.urlencode({'json': deletion})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
-        opener.open(req)
-
-        print('link test')
-        print('link creation between 2 entities')
-        link_create = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"create"},{"_id":"resource_1/host_1","name":"resource_1","impact":[],"depends":[],"type":"resource","infos":{},"action":"create"}],"links":[{"_id":"resource_1/host_1-to-host_1","from":"resource_1/host_1","to":"host_1","infos":{},"action":"create"}]}'
-        params = urllib.parse.urlencode({'json': link_create})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
-        opener.open(req)
-
-        self.assertDictEqual(self.col.find_one({'_id': 'host_1'}),
-                             {'impact': [], 'name': 'host_1', 'type': 'component',
-                              'infos': {}, '_id': 'host_1', 'depends':
-                              ['resource_1/host_1'], "measurements":[]})
-
-        self.assertDictEqual(self.col.find_one({'_id': 'resource_1/host_1'}),
-                             {'impact': ['host_1'], 'name': 'resource_1', 'type':
-                                 'resource', 'infos': {}, '_id':
-                                  'resource_1/host_1', 'depends': [], "measurements":[]})
-
-        print('link deletion between 2 entities')
-        link_delete = '{"cis":[],"links":[{"_id":"resource_1/host_1-to-host_1", "measurements":[], "from":"resource_1/host_1","to":"host_1","infos":{},"action":"delete"}]}'
-        params = urllib.parse.urlencode({'json': link_delete})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
-        opener.open(req)
-
-        self.assertDictEqual(self.col.find_one({'_id': 'host_1'}), {'impact': [], 'name': 'host_1', 'type': 'component',
-                                                               'infos': {}, '_id': 'host_1', 'depends': [], "measurements":[]})
-        self.assertDictEqual(self.col.find_one({'_id': 'resource_1/host_1'}), {'impact': [], 'name': 'resource_1', 'type':
-            'resource', 'infos': {}, '_id': 'resource_1/host_1', 'depends': [], "measurements":[]})
-
-        print('cleaning')
-        clean = '{"cis":[{"_id":"host_1","name":"host_1","impact":[],"depends":[],"type":"component","infos":{},"action":"delete"},{"_id":"resource_1/host_1","name":"resource_1","impact":[],"depends":[],"type":"resource","infos":{},"action":"delete"}],"links":[]}'
-        params = urllib.parse.urlencode({'json': clean})
-        req = urllib.request.Request(url='http://{0}:8082/coucou/bouh?{1}'.format(self.server, params), method='PUT')
-        opener.open(req)
-
-        print('Done')
-
-    def tearDown(self):
-        self.col.remove({'_id': 'host_1'})
-        self.col.remove({'_id': 'resource_1/host_1'})
-        self.col.remove({'_id': 'resource_1/host_1'})
-
+def main():
+    args = parse_args()
+    ent_col, imp_col = setup(args)
+    suite = unittest.TestSuite()
+    suite.addTest(Test(ent_col, imp_col))
+    t = unittest.TextTestRunner()
+    t.run(suite)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-a', type=str, help='authkey')
-    parser.add_argument('-s', type=str, help='server')
-    args = parser.parse_args()
-    serv = args.s
-    auth = args.a
-    suite = TestSuite()
-    suite.addTest(Test(serv, auth))
-    t = TextTestRunner()
-    t.run(suite)
+    main()
