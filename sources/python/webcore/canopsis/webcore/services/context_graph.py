@@ -20,37 +20,30 @@
 
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
-<<<<<<< HEAD
-from canopsis.context_graph.import_ctx import ContextGraphImport
 from canopsis.alerts.manager import Alerts
-=======
 from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey,\
     Manager
 from canopsis.engines.core import publish
->>>>>>> feature-import-context-daemon
+
 from uuid import uuid4
 import json as j
 import signal
 import os
 
 manager = ContextGraph()
-import_manager = ContextGraphImport()
-<<<<<<< HEAD
 alerts_manager = Alerts()
-=======
 import_col_man = Manager()
-# publisher = Amqp()
-# publisher.start()
 
-event_body = {ImportKey.EVT_IMPORT_UUID: None,
-              ImportKey.EVT_JOBID: None}
->>>>>>> feature-import-context-daemon
 
 __IMPORT_ID = "import_id"
 __ERROR = "error"
 __OTHER_ERROR = "An error occured : {0}."
 __EVT_ERROR = "error while sending a event to the task : {0}."
 __STORE_ERROR = "Impossible to store the import: {0}."
+
+
+event_body = {ImportKey.EVT_IMPORT_UUID: None,
+              ImportKey.EVT_JOBID: None}
 
 RK = "task_importctx"
 
