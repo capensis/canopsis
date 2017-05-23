@@ -5,11 +5,23 @@ from canopsis.engines.core import TaskHandler, publish
 from canopsis.event import forger
 from canopsis.context_graph.import_ctx import ImportKey as Keys,\
     ContextGraphImport, Manager
+from canopsis.configuration.configurable.decorator import conf_paths,\
+    add_category
+from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.configuration.model import Parameter
+
+TASK_CONF = "TASK_IMPORTCTX"
+CONTENT = {
+    Parameter("thd_warn_min_per_import", parser=int), Parameter(
+        "thd_crit_min_per_import", parser=int)
+}
 
 MSG_SUCCEED = "Import {0} succeed."
 MSG_FAILED = "Import {0} failed."
-ST_OK = 0
-ST_KO = 3
+ST_INFO = 0
+ST_MINOR = 1
+ST_WARNING = 2
+ST_CRITICAL = 3
 
 perf_data_array = [{
     'metric': 'importctx/execution_time',
@@ -25,8 +37,6 @@ perf_data_array = [{
     'unit': 'ent'
 }]
 
-# event =
-
 
 def human_exec_time(exec_time):
     """Return from time a human readable string that represent the execution
@@ -39,7 +49,9 @@ def human_exec_time(exec_time):
         str(hours).zfill(2), str(minutes).zfill(2), str(seconds).zfill(2))
 
 
-class engine(TaskHandler):
+@conf_paths("context_graph/manager.conf")
+@add_category(TASK_CONF, content=CONTENT)
+class engine(TaskHandler, MiddlewareRegistry):
 
     etype = "task_importctx"
 
@@ -47,14 +59,30 @@ class engine(TaskHandler):
     I_IMPORT_DONE = "Import {0} done."
     I_START_IMPORT = "Start import {0}."
 
-    def send_perfdata(self, uuid, time, updated, deleted, state):
+    def send_perfdata(self, uuid, time, updated, deleted):
+
+        if not hasattr(self, "thd_warn_s"):
+            values = values = self.conf.get(TASK_CONF)
+            self._thd_warn_s = values.get("thd_warn_min_per_import").value * 60
+
+
+        if not hasattr(self, "thd_crit_s"):
+            values = values = self.conf.get(TASK_CONF)
+            self._thd_crit_s = values.get("thd_crit_min_per_import").value * 60
+
+        if time > self._thd_crit_s:
+            state = ST_WARNING
+        elif time > self._thd_warn_s:
+            state = ST_MINOR
+        else:
+            state = ST_INFO
 
         perf_data_array[0]["value"] = time
         perf_data_array[1]["value"] = updated
         perf_data_array[2]["value"] = deleted
 
-        output = "execution {0} sec, updated ent"\
-                 " {1}, deleted ent {2}".format(time, updated, deleted)
+        output = "execution : {0} sec, updated ent :"\
+                 " {1}, deleted ent : {2}".format(time, updated, deleted)
 
         event = forger(
             connector="Engine",
@@ -83,6 +111,8 @@ class engine(TaskHandler):
 
         start = time.time()
         report = {}
+        updated = 0
+        deleted = 0
 
         try:
             updated, deleted = importer.import_context(uuid)
@@ -93,7 +123,7 @@ class engine(TaskHandler):
             self.logger.error(self.E_IMPORT_FAILED.format(uuid, repr(e)))
             self.logger.exception(e)
             msg = MSG_FAILED.format(uuid)
-            state = ST_KO
+            state = ST_CRITICAL
 
         else:
             report = {
@@ -103,23 +133,21 @@ class engine(TaskHandler):
                     Keys.F_UPDATED: updated
                 }
             }
-
             self.logger.info(self.I_IMPORT_DONE.format(uuid))
             msg = MSG_SUCCEED.format(uuid)
-            state = ST_OK
+            state = ST_INFO
 
         end = time.time()
         delta = end - start
         report[Keys.F_EXECTIME] = human_exec_time(delta)
         report_manager.update_status(uuid, report)
 
-        self.send_perfdata(uuid, delta, updated, deleted, 0)
+        self.send_perfdata(uuid, delta, updated, deleted)
 
         try:
             os.remove(Keys.IMPORT_FILE.format(uuid))
         except:
             pass
-
 
         del importer
 
