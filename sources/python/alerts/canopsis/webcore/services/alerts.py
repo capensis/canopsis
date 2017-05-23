@@ -215,8 +215,10 @@ def exports(ws):
 
         :returns: an <AlarmFilter>
         """
+        new = am.alarm_filters.create_filter(element=element)
+        new.save()
 
-        return am.alarm_filters.create_filter(element=element).serialize()
+        return new.serialize()
 
     @route(
         ws.application.post,

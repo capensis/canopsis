@@ -968,21 +968,28 @@ class Alerts(MiddlewareRegistry):
         storage = self[Alerts.ALARM_STORAGE]
 
         for lifter, docalarm in self.alarm_filters.get_filters():
-            value = docalarm[storage.Key.VALUE]
-            alarm_id = docalarm[storage.Key.DATA_ID]
+            # Thanks to get_alarms(), renaming keys
+            # (... as shittily as MongoPeriodicalStorage)
+            docalarm[storage.DATA_ID] = docalarm.pop(storage.Key.DATA_ID)
+            docalarm[storage.TIMESTAMP] = docalarm.pop(storage.Key.TIMESTAMP)
+            docalarm[storage.VALUE] = docalarm.pop(storage.Key.VALUE)
+            # TODO: fix MongoPeriodicalStorage and go back removing that
+
+            alarm_id = docalarm[storage.DATA_ID]
             self.logger.debug('Checking alarmfilter {}'.format(lifter))
 
             # Continue only if the filter condition is valid
-            if not lifter.check_alarm(value):
+            if not lifter.check_alarm(docalarm):
                 self.logger.debug('AlarmFilter: Filter condition is invalid')
                 continue
 
-            date = datetime.fromtimestamp(docalarm[storage.Key.TIMESTAMP])
+            date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
             # Continue only if the limit condition is valid
             if date + lifter.limit > now:
                 self.logger.debug('AlarmFilter: Limit condition is invalid')
                 continue
 
+            value = docalarm[storage.VALUE]
             # Only execute the filter once per reached limit
             if self.AF_RUN in value and lifter._id in value[self.AF_RUN]:
                 last = datetime.fromtimestamp(
@@ -1023,12 +1030,6 @@ class Alerts(MiddlewareRegistry):
             if self.AF_RUN not in new_value:
                 new_value[self.AF_RUN] = {}
             new_value[self.AF_RUN][lifter._id] = now_stamp
-
-            # ... as shitty as MongoPeriodicalStorage
-            docalarm[storage.DATA_ID] = docalarm[storage.Key.DATA_ID]
-            docalarm[storage.TIMESTAMP] = docalarm[storage.Key.TIMESTAMP]
-            docalarm[storage.VALUE] = docalarm[storage.Key.VALUE]
-            # TODO: fix MongoPeriodicalStorage and go back removing that
 
             self.update_current_alarm(docalarm, new_value)
 

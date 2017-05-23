@@ -23,6 +23,8 @@ from datetime import datetime
 import time
 from unittest import TestCase
 
+from uuid import uuid4 as uuid
+
 from canopsis.alerts import AlarmField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
@@ -72,7 +74,7 @@ class BaseTest(TestCase):
         self.alarm_storage.remove_elements()
         self.filter_storage.remove_elements()
 
-    def gen_fake_alarm(self, moment=None):
+    def gen_fake_alarm(self, update={}, moment=None):
         """
         Generate a fake alarm/value.
         """
@@ -86,6 +88,7 @@ class BaseTest(TestCase):
                 'connector': 'fake-connector',
                 'connector_name': 'fake-connector-name',
                 'component': 'c',
+                'output': 'out',
                 'timestamp': moment
             }
         )
@@ -105,7 +108,9 @@ class BaseTest(TestCase):
             }
         ]
 
-        return alarm, value
+        dictio = merge_two_dicts(alarm, update)
+
+        return dictio, value
 
     def gen_alarm_filter(self, update={}, storage=None):
         """
@@ -114,9 +119,7 @@ class BaseTest(TestCase):
         base = {
             AlarmFilter.LIMIT: 180.0,
             AlarmFilter.FILTER: '',
-            AlarmFilter.KEY: 'component',
-            AlarmFilter.OPERATOR: 'eq',
-            AlarmFilter.VALUE: 'component',
+            AlarmFilter.CONDITION: {},
             AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
         }
 

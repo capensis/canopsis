@@ -17,16 +17,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
+from six import string_types
 
 from datetime import timedelta
 import json
-import operator
 from uuid import uuid4 as uuid
 
 
 class AlarmFilters(object):
     """
         Access to a set of alarm filters.
+
+        TODO: link to the global logger
     """
 
     def __init__(self, storage, alarm_storage):
@@ -42,13 +45,15 @@ class AlarmFilters(object):
         :rtype: <AlarmFilter>
         """
         # Validating element minimal structure
-        for key in [AlarmFilter.LIMIT, AlarmFilter.KEY, AlarmFilter.OPERATOR,
-                    AlarmFilter.VALUE, AlarmFilter.TASKS, AlarmFilter.FILTER]:
+        for key in [AlarmFilter.LIMIT, AlarmFilter.CONDITION,
+                    AlarmFilter.TASKS, AlarmFilter.FILTER]:
             if key not in element:
+                print('Missingg key {} to create the filter'.foramt(key))
                 return None
 
-        af = AlarmFilter(element=element, storage=self.storage)
-        af.save()
+        af = AlarmFilter(element=element,
+                         storage=self.storage,
+                         alarm_storage=self.alarm_storage)
 
         return af
 
@@ -102,7 +107,7 @@ class AlarmFilters(object):
 
     def get_filters(self):
         """
-        Retreive the list of all filters.
+        Retreive the list of all filters with their alarm.
 
         :rtype: [(AlarmFilter, Alarm)]
         """
@@ -117,9 +122,10 @@ class AlarmFilters(object):
             try:
                 query = json.loads(mfilter)
             except:
-                # Cannot parse mfilter
+                print('Cannot parse mfilter: {}'.format(new_filter))
                 continue
 
+            # Associate a filter with his matching alarm
             for alarm in list(self.alarm_storage.get_elements(query=query)):
                 if new_filter is not None:
                     results.append((new_filter, alarm))
@@ -136,26 +142,23 @@ class AlarmFilter(object):
 
         filter = {
             '_id': 'deadbeef',
-            'entity_filter': '{\"$or\":[{\"connector\":{\"$eq\":\"connector\"}}]}'
+            'entity_filter': '{"connector":{"$eq":"connector"}}'
             'limit': timedelta(seconds=30),
-            'condition_key': 'connector',
-            'condition_operator': operator.eq,
-            'condition_value': 'connector_value',
+            'condition': '{"connector":{"$eq":"connector_value"}}'
             'tasks': ['alerts.systemaction.status_increase'],
         }
     """
     UID = '_id'
     LIMIT = 'limit'
-    KEY = 'condition_key'
-    OPERATOR = 'condition_operator'
-    VALUE = 'condition_value'
+    CONDITION = 'condition'
     FILTER = 'entity_filter'
     TASKS = 'tasks'
     #FORMAT = 'output_format'
 
-    def __init__(self, element, storage=None):
+    def __init__(self, element, storage=None, alarm_storage=None):
         self.element = element  # has persisted in the db
         self.storage = storage
+        self.alarm_storage = alarm_storage
 
         if not element.get(self.UID, False):
             element[self.UID] = str(uuid())
@@ -169,9 +172,17 @@ class AlarmFilter(object):
         # Limit conversion
         if key == self.LIMIT and isinstance(item, (int, float)):
             value = timedelta(seconds=item)
-        # Operator conversion
-        elif key == self.OPERATOR and hasattr(operator, item):
-            value = getattr(operator, item)
+        # Condition conversion
+        elif key == self.CONDITION and isinstance(item, string_types):
+            try:
+                value = json.loads(item)
+            except:
+                print('Cannot parse condition item {}'.format(item))
+                return
+
+        # Dict serialization conversion
+        if key in [self.CONDITION, self.FILTER] and isinstance(item, dict):
+            item = json.dumps(item)
 
         setattr(self, key, value)
         self.element[key] = item
@@ -188,18 +199,16 @@ class AlarmFilter(object):
         :type alarm: dict
         :rtype: bool
         """
-        # Unstack the targeted value
-        for mckey in self[self.KEY].split('.'):
-            alarm = alarm.get(mckey, None)
-            if alarm is None:
-                # Cannot find the value
-                return False
+        alarm_id = alarm[self.alarm_storage.DATA_ID]
+        query = {
+            '$and': [
+                self[self.CONDITION],
+                {self.alarm_storage.Key.DATA_ID: {'$eq': alarm_id}}
+            ]
+        }
+        result = list(self.alarm_storage.find_elements(query))
 
-        # Try to evaluate the filter condition
-        try:
-            return self[self.OPERATOR](alarm, self[self.VALUE])
-        except:
-            return False
+        return len(result) > 0
 
     def save(self):
         """
@@ -208,7 +217,7 @@ class AlarmFilter(object):
         :raises Exception: when storage is not avalaible
         """
         if self.storage is not None:
-            return self.storage.put_element(element=self.element)
+            return self.storage._backend.save(self.element)
 
         raise Exception("No storage available to save into !")
 
