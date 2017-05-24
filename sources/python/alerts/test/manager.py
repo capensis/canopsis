@@ -1048,8 +1048,7 @@ class TestManager(BaseTest):
             AlarmFilter.LIMIT: -1,
             AlarmFilter.CONDITION: '{"v.connector": {"$eq": "fake-connector"}}',
             AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
-            AlarmFilter.FORMAT: '>> {foo}',
-            AlarmFilter.OUTPUT_PARAMS: {'foo': 'bar'},
+            AlarmFilter.FORMAT: '>> foo',
         }, storage=self.manager[Alerts.FILTER_STORAGE])
         lifter.save()
 
@@ -1069,7 +1068,7 @@ class TestManager(BaseTest):
         # Output validation
         steps = result[alarm_id][0]['value'][AlarmField.steps.value]
         message = sorted(steps, key=itemgetter('t'))[-1]['m']
-        self.assertEqual(message, '>> bar')
+        self.assertEqual(message, '>> foo')
 
         # The filter has already been applied => alarm must not change
         now_stamp = int(mktime(datetime.now().timetuple()))

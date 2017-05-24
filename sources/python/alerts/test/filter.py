@@ -134,17 +134,15 @@ class TestFilter(BaseTest):
 
         lifter = AlarmFilter({
             AlarmFilter.FORMAT: "",
-            AlarmFilter.OUTPUT_PARAMS: {},
         }, storage=self.filter_storage, alarm_storage=self.alarm_storage)
 
         self.assertEqual(lifter.output(''), "")
 
         lifter = AlarmFilter({
-            AlarmFilter.FORMAT: "{old} -- {foo}",
-            AlarmFilter.OUTPUT_PARAMS: {"foo": "bar"},
+            AlarmFilter.FORMAT: "{old} -- foo",
         }, storage=self.filter_storage, alarm_storage=self.alarm_storage)
 
-        self.assertEqual(lifter.output('toto'), "toto -- bar")
+        self.assertEqual(lifter.output('toto'), "toto -- foo")
 
 
 if __name__ == '__main__':
