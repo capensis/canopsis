@@ -162,16 +162,18 @@ An example of filter structure:
         "tasks" : [
             "alerts.systemaction.status_increase"
         ],
-        "output_format": "{old} -- message {foo}",
-        "output_params": {"foo": "bar"}
+        "output_format": "{old} -- message"
     }
 
 This filter only match entities with their rk equal to "/fake/alarm/id". If
 nothing has append during 3 minutes and if "key" value of the entity is not
 equal to "mala", it execute the task "status_increase".
 
+A list of all available tasks can be founded in :ref:`the corresponding
+documentation <TR__Alarm>`.
+
 For the output message, it takes the old one (« {old} »), and append it a
-static string (« -- message ») and configured one (« "foo" »).
+static string (« -- message »).
 
 In `etc/alerts/manager.conf`, you can specify the author name putted in the
 alarm (when the executed action need one).
