@@ -156,7 +156,6 @@ class AlarmFilter(object):
     FILTER = 'entity_filter'
     TASKS = 'tasks'
     FORMAT = 'output_format'
-    OUTPUT_PARAMS = 'output_params'
 
     def __init__(self, element, storage=None, alarm_storage=None):
         self.element = element  # has persisted in the db
@@ -222,8 +221,7 @@ class AlarmFilter(object):
         :rtype: str
         """
         if self[self.FORMAT] is not None:
-            params = self[self.OUTPUT_PARAMS] if hasattr(self, self.OUTPUT_PARAMS) else {}
-            return self[self.FORMAT].format(old=old, **params)
+            return self[self.FORMAT].format(old=old)
 
         return old
 
