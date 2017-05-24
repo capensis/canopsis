@@ -1025,9 +1025,10 @@ class TestManager(BaseTest):
         now_stamp = int(time.mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
         alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
+        did = self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID
+
         lifter = self.gen_alarm_filter({
-            AlarmFilter.FILTER: ('{{"{}":{{"$eq":"{}"}}}}'
-                                 .format(self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID, alarm_id)),
+            AlarmFilter.FILTER: {did: {"$eq": alarm_id}},
             AlarmFilter.LIMIT: -1,
             AlarmFilter.CONDITION: '{"v.connector": {"$eq": "fake-connector"}}',
             AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
