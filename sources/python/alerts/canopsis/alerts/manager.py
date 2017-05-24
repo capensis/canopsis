@@ -979,13 +979,15 @@ class Alerts(MiddlewareRegistry):
 
             # Continue only if the filter condition is valid
             if not lifter.check_alarm(docalarm):
-                self.logger.debug('AlarmFilter: Filter condition is invalid')
+                self.logger.debug('AlarmFilter {}: Filter condition is invalid'
+                                  .format(lifter._id))
                 continue
 
             date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
             # Continue only if the limit condition is valid
             if date + lifter.limit > now:
-                self.logger.debug('AlarmFilter: Limit condition is invalid')
+                self.logger.debug('AlarmFilter {}: Limit condition is invalid'
+                                  .format(lifter._id))
                 continue
 
             value = docalarm[storage.VALUE]

@@ -170,8 +170,8 @@ This filter only match entities with their rk equal to "/fake/alarm/id". If
 nothing has append during 3 minutes and if "key" value of the entity is not
 equal to "mala", it execute the task "status_increase".
 
-For the output message, it takes the one (« {old} »), and append it a static
-string and configured one (« "foo" »).
+For the output message, it takes the old one (« {old} »), and append it a
+static string (« -- message ») and configured one (« "foo" »).
 
 In `etc/alerts/manager.conf`, you can specify the author name putted in the
 alarm (when the executed action need one).
