@@ -67,19 +67,19 @@ class AlarmFilters(object):
         """
         return self.storage.remove_elements(ids=[entity_id])
 
-    def update_filter(self, alarm_id, key, value):
+    def update_filter(self, filter_id, key, value):
         """
-        Retreive the list of filters linked to a specific alarm.
+        Update an alarm filter value.
 
-        :param alarm_id: the desried alarm_id
-        :type alarm_id: str
+        :param filter_id: the desired filter_id
+        :type filter_id: str
         :param key: the key to update
         :type key: str
         :param value: the value to put
         :type value: str
         :rtype: <AlarmFilter>
         """
-        query = {'_id': alarm_id}
+        query = {'_id': filter_id}
         element = list(self.storage.get_elements(query=query))
         if element is None or len(element) <= 0:
             return None
@@ -103,7 +103,7 @@ class AlarmFilters(object):
         }
         all_filters = list(self.storage.get_elements(query=query))
 
-        return all_filters[0]
+        return [AlarmFilter(fil) for fil in all_filters]
 
     def get_filters(self):
         """
@@ -146,6 +146,8 @@ class AlarmFilter(object):
             'limit': timedelta(seconds=30),
             'condition': '{"connector":{"$eq":"connector_value"}}'
             'tasks': ['alerts.systemaction.status_increase'],
+            'output_format': '{old} -- message {foo}',
+            'output_params': {'foo': 'bar'}
         }
     """
     UID = '_id'
@@ -153,7 +155,8 @@ class AlarmFilter(object):
     CONDITION = 'condition'
     FILTER = 'entity_filter'
     TASKS = 'tasks'
-    #FORMAT = 'output_format'
+    FORMAT = 'output_format'
+    OUTPUT_PARAMS = 'output_params'
 
     def __init__(self, element, storage=None, alarm_storage=None):
         self.element = element  # has persisted in the db
@@ -209,6 +212,20 @@ class AlarmFilter(object):
         result = list(self.alarm_storage.find_elements(query))
 
         return len(result) > 0
+
+    def output(self, old=''):
+        """
+        Modifiy an output message according to the filter parameters.
+
+        :param old: the old output message, if needed in the format
+        :type old': str
+        :rtype: str
+        """
+        if self[self.FORMAT] is not None:
+            params = self[self.OUTPUT_PARAMS] if hasattr(self, self.OUTPUT_PARAMS) else {}
+            return self[self.FORMAT].format(old=old, **params)
+
+        return old
 
     def save(self):
         """

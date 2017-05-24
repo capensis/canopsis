@@ -29,14 +29,14 @@ from base import BaseTest
 class TestFilter(BaseTest):
     def test_get_filter_s(self):
         alarm, value = self.gen_fake_alarm()
-        self.alarm_storage.put_elements([alarm])
+        self.manager.update_current_alarm(alarm, value)
 
         lifter = self.gen_alarm_filter({
-            AlarmFilter.FILTER: '{"value.connector":{"$eq":"wrong-connector"}}'
+            AlarmFilter.FILTER: '{"v.connector":{"$eq":"wrong-connector"}}'
         }, storage=self.filter_storage)
         lifter.save()
         lifter = self.gen_alarm_filter({
-            AlarmFilter.FILTER: '{"value.connector":{"$eq":"fake-connector"}}'
+            AlarmFilter.FILTER: '{"v.connector":{"$eq":"fake-connector"}}'
         }, storage=self.filter_storage)
         lifter.save()
 
@@ -50,7 +50,7 @@ class TestFilter(BaseTest):
 
         # get_filter()
         result = alarm_filters.get_filter(_id)
-        self.assertEqual(result[AlarmFilter.UID], _id)
+        self.assertEqual(result[0][AlarmFilter.UID], _id)
 
     def test_crud(self):
         alarm_filters = AlarmFilters(storage=self.filter_storage,
@@ -61,13 +61,13 @@ class TestFilter(BaseTest):
 
         # Init
         alarm, value = self.gen_fake_alarm()
-        self.alarm_storage.put_elements([alarm])
+        self.manager.update_current_alarm(alarm, value)
 
         element = {
             AlarmFilter.LIMIT: 30.0,
             AlarmFilter.CONDITION: {},
             AlarmFilter.TASKS: ['alerts.useraction.comment'],
-            AlarmFilter.FILTER: {"data_id": {"$eq": alarm[self.alarm_storage.DATA_ID]}}
+            AlarmFilter.FILTER: {"d": {"$eq": alarm[self.alarm_storage.DATA_ID]}}
         }
 
         # CREATE
@@ -127,6 +127,24 @@ class TestFilter(BaseTest):
             AlarmFilter.CONDITION: {"v.state.val": {"$gte": 1}},
         }, storage=self.filter_storage, alarm_storage=self.alarm_storage)
         self.assertTrue(lifter.check_alarm(alarm))
+
+    def test_output(self):
+        alarm, value = self.gen_fake_alarm()
+        self.manager.update_current_alarm(alarm, value)
+
+        lifter = AlarmFilter({
+            AlarmFilter.FORMAT: "",
+            AlarmFilter.OUTPUT_PARAMS: {},
+        }, storage=self.filter_storage, alarm_storage=self.alarm_storage)
+
+        self.assertEqual(lifter.output(''), "")
+
+        lifter = AlarmFilter({
+            AlarmFilter.FORMAT: "{old} -- {foo}",
+            AlarmFilter.OUTPUT_PARAMS: {"foo": "bar"},
+        }, storage=self.filter_storage, alarm_storage=self.alarm_storage)
+
+        self.assertEqual(lifter.output('toto'), "toto -- bar")
 
 
 if __name__ == '__main__':

@@ -71,7 +71,7 @@ class TestRoutes(TestCase):
         self.assertTrue(is_successful(r))
         rjson = r.json()
         self.assertTrue('data' in rjson)
-        self.assertEqual(rjson['data'], None)
+        self.assertEqual(rjson['data'], [])
 
         # PUT
         r = self.session.put(base, cookies=self.cookies)
@@ -81,12 +81,10 @@ class TestRoutes(TestCase):
         params = {
             "element": {
                 'limit': 30.0,
-                'key': 'key',
-                'operator': 'eq',
-                'value': 'value',
+                'condition': {},
                 'tasks': ['alerts.systemaction.status_increase',
                           'alerts.systemaction.status_decrease'],
-                'alarms': [alarm_id],
+                'entity_filter': {"d": {"$eq": alarm_id}},
             }
         }
         r = self.session.put(base,
@@ -96,7 +94,7 @@ class TestRoutes(TestCase):
         data = r.json()['data']
         self.assertEqual(len(data), 1)
         filter_id = data[0]['_id']
-        self.assertEqual(data[0]['alarms'], [alarm_id])
+        self.assertEqual(data[0]['limit'], 30.0)
 
         # POST
         r = self.session.post(base, cookies=self.cookies)
@@ -105,8 +103,8 @@ class TestRoutes(TestCase):
 
         params = {
             'entity_id': filter_id,
-            'key': 'operator',
-            'value': 'neq'
+            'key': 'condition',
+            'value': {'key': {'$neq': 'value'}},
         }
         r = self.session.post(base, data=json.dumps(params),
                               headers=self.headers, cookies=self.cookies)
@@ -114,17 +112,17 @@ class TestRoutes(TestCase):
         data = r.json()['data']
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['_id'], filter_id)
-        self.assertEqual(data[0]['operator'], 'neq')
+        self.assertTrue('condition' in data[0])
 
         # GET (again)
         r = self.session.get(base,
-                             params={'entity_id': alarm_id},
+                             params={'entity_id': filter_id},
                              cookies=self.cookies)
         self.assertTrue(is_successful(r))
         data = r.json()['data']
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['_id'], filter_id)
-        self.assertEqual(data[0]['operator'], 'neq')
+        self.assertTrue('condition' in data[0])
 
         # DELETE
         r = self.session.delete(base, cookies=self.cookies)

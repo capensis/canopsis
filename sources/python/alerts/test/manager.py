@@ -19,10 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+<<<<<<< HEAD
 #from __future__ import unicode_literals
 
 from datetime import datetime, timedelta
 import operator
+from operator import itemgetter
 from time import time, mktime
 from unittest import main
 
@@ -1045,6 +1047,8 @@ class TestManager(BaseTest):
             AlarmFilter.LIMIT: -1,
             AlarmFilter.CONDITION: '{"v.connector": {"$eq": "fake-connector"}}',
             AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
+            AlarmFilter.FORMAT: '>> {foo}',
+            AlarmFilter.OUTPUT_PARAMS: {'foo': 'bar'},
         }, storage=self.manager[Alerts.FILTER_STORAGE])
         lifter.save()
 
@@ -1060,6 +1064,11 @@ class TestManager(BaseTest):
         self.assertTrue(self.manager.AF_RUN in result[alarm_id][0]['value'])
         alarm_filters1 = result[alarm_id][0]['value'][self.manager.AF_RUN]
         self.assertTrue(isinstance(alarm_filters1, dict))
+
+        # Output validation
+        steps = result[alarm_id][0]['value'][AlarmField.steps.value]
+        message = sorted(steps, key=itemgetter('t'))[-1]['m']
+        self.assertEqual(message, '>> bar')
 
         # The filter has already been applied => alarm must not change
         now_stamp = int(mktime(datetime.now().timetuple()))

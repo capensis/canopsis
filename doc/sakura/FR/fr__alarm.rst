@@ -141,13 +141,40 @@ specific property value (for example, state > 1) and a certain amount of seconds
 have past since the last alarm update.
 
 An `alarm filter` is composed of:
- - a filter to select targeted alarms
+ - a filter to select targeted entities
  - a limit of time after which the filter became active
- - a set key/operator/value, which determine if the alarm is compatible with the filter
+ - a condition, which determine if the alarm is compatible with the filter
  - a list of tasks to execute
+ - an output format and a list of output parameters to personalize the output message
 
-In `etc/alerts/manager.conf`, you can specify the author name and the message
-putted in the alarm (when the executed action need one).
+The filter and the condition are mongo type filters. The limit is number
+(interpreted as seconds). The output format is a python format type string and
+the output parameters is a dictionary.
+
+An example of filter structure:
+
+.. code-block:: javascript
+
+    {
+        "entity_filter" : "{\"d\": {\"$eq\": \"/fake/alarm/id\"}}"
+        "limit" : 180.0,
+        "condition" : "{\"key\": {\"$neq\": \"mala\"}}",
+        "tasks" : [
+            "alerts.systemaction.status_increase"
+        ],
+        "output_format": "{old} -- message {foo}",
+        "output_params": {"foo": "bar"}
+    }
+
+This filter only match entities with their rk equal to "/fake/alarm/id". If
+nothing has append during 3 minutes and if "key" value of the entity is not
+equal to "mala", it execute the task "status_increase".
+
+For the output message, it takes the one (« {old} »), and append it a static
+string and configured one (« "foo" »).
+
+In `etc/alerts/manager.conf`, you can specify the author name putted in the
+alarm (when the executed action need one).
 
 Functional test
 ---------------

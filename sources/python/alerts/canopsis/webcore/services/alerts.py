@@ -236,7 +236,7 @@ def exports(ws):
         :param value: the associated value
         :type value: str
         """
-        return am.alarm_filters.update_filter(alarm_id=entity_id,
+        return am.alarm_filters.update_filter(filter_id=entity_id,
                                               key=key,
                                               value=value).serialize()
 
