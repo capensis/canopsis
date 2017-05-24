@@ -39,6 +39,7 @@ from canopsis.alerts.status import (
 )
 
 from datetime import datetime
+from operator import itemgetter
 import time
 
 
@@ -50,7 +51,6 @@ ALERTS_CNT = [
 FILTER = 'FILTER'
 FILTER_CNT = [
     Parameter('author', str),
-    Parameter('message', str)
 ]
 
 
@@ -94,8 +94,7 @@ class Alerts(MiddlewareRegistry):
             values = self.conf.get(FILTER)
 
             self._filter_config = {
-                'author': values.get('author').value,
-                'message': values.get('message').value,
+                'author': values.get('author').value
             }
 
         return self._filter_config
@@ -957,11 +956,15 @@ class Alerts(MiddlewareRegistry):
                 self.logger.info('Rerunning tasks on {} after {} seconds'
                                  .format(alarm_id, lifter.limit))
 
+            # Getting most recent step message
+            steps = docalarm[storage.VALUE][AlarmField.steps.value]
+            message = sorted(steps, key=itemgetter('t'))[-1]['m']
+            # Generating a corresponding event
             event = {
                 'timestamp': now_stamp,
                 'connector': value['connector'],
                 'connector_name': value['connector_name'],
-                'output': self.filter_config['message'],
+                'output': lifter.output(message)
             }
             new_state = value[AlarmField.state.value]['val']
             # Execute each defined action
