@@ -7,7 +7,6 @@ from canopsis.context_graph.manager import ContextGraph
 
 context_graph_manager = ContextGraph()
 
-
 class Logger(object):
 
     def debug(self, log):
@@ -54,11 +53,21 @@ def prepare_test_update_context(result):
             re = entity
     return conn, comp, re
 
-
 class Test(TestCase):
+
+    def assertEqualEntities(self, entity1, entity2):
+        entity1["depends"] = sorted(entity1["depends"])
+        entity1["impact"] = sorted(entity1["impact"])
+        entity2["depends"] = sorted(entity2["depends"])
+        entity2["impact"] = sorted(entity2["impact"])
+        self.assertDictEqual(entity1, entity2)
 
     def setUp(self):
         setattr(process, 'LOGGER', Logger())
+        self.conf_file = "etc/context_graph/manager.conf"
+        self.category = "CONTEXTGRAPH"
+        self.extra_fields = "extra_fields"
+        self.authorized_info_keys = "authorized_info_keys"
 
     def tearDown(self):
         process.cache.clear()
@@ -675,6 +684,77 @@ class Test(TestCase):
 
         self.assertDictEqual(expected_conn, result_conn)
         self.assertDictEqual(expected_comp, result_comp)
+
+    def test_info_field(self):
+
+        authorized_info_keys = ["domain","perimeter","comment"]
+
+        conn_id = "conn_id"
+        conn_name = "conn_name"
+        comp_id = "comp_id"
+        re_id = "re_id"
+
+        event = create_event(conn_id, conn_name, comp_id, re_id)
+
+        ids = process.gen_ids(event)
+
+        evt_ent_id = process.get_event_id(ids, event)
+
+        expected_conn = process.create_entity(ids["conn_id"],
+                                              ids["conn_id"],
+                                              "connector",
+                                              impact=sorted([ids["comp_id"],
+                                                             ids["re_id"]]))
+
+        expected_comp = process.create_entity(ids["comp_id"],
+                                              ids["comp_id"],
+                                              "component",
+                                              depends=sorted([ids["conn_id"],
+                                                              ids["re_id"]]))
+
+        expected_re = process.create_entity(ids["re_id"],
+                                            ids["re_id"],
+                                            "resource",
+                                            impact=[ids["comp_id"]],
+                                            depends=[ids["conn_id"]])
+
+        event["infos"] = {}
+        expected_re["infos"] = {}
+        for key in authorized_info_keys:
+            if key == "enable":
+                continue
+
+            event["infos"][key] = str(key) + "_data"
+            expected_re["infos"][key] = str(key) + "_data"
+
+        event["infos"]["not_authorized_key"] = "not_an_authorized_key_data"
+
+        process.update_context((False, False, False),
+                               ids,
+                               [],
+                               {},
+                               evt_ent_id,
+                               event_infos=event["infos"])
+
+        result_re = context_graph_manager.get_entities_by_id(ids["re_id"])[0]
+        result_conn = context_graph_manager.get_entities_by_id(ids["conn_id"])[0]
+        result_comp = context_graph_manager.get_entities_by_id(ids["comp_id"])[0]
+
+        self.assertTrue("enable" in result_re["infos"].keys())
+        self.assertTrue("enable" in result_conn["infos"].keys())
+        self.assertTrue("enable" in result_comp["infos"].keys())
+
+
+        result_re["infos"].pop("enable")
+        self.assertEqualEntities(expected_re, result_re)
+
+        result_conn["infos"].pop("enable")
+        expected_conn["infos"].pop("enable")
+        self.assertEqualEntities(expected_conn, result_conn)
+
+        result_comp["infos"].pop("enable")
+        self.assertEqualEntities(expected_comp, result_comp)
+
 
 if __name__ == '__main__':
     main()
