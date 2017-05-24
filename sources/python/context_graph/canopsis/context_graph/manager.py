@@ -11,9 +11,10 @@ from canopsis.event import forger
 CONF_PATH = 'context_graph/manager.conf'
 CATEGORY = 'CONTEXTGRAPH'
 CONTENT = [
-    Parameter('event_types', Parameter.array()), 
-    Parameter('extra_fields', Parameter.array()), 
-] 
+    Parameter('event_types', Parameter.array()),
+    Parameter('extra_fields', Parameter.array()),
+    Parameter('authorized_info_keys', Parameter.array())
+]
 
 
 @conf_paths(CONF_PATH)
@@ -33,7 +34,7 @@ class ContextGraph(MiddlewareRegistry):
     @property
     def event_types(self):
         """
-        Array of event_type 
+        Array of event_type
         """
 
         if not hasattr(self, '_event_types'):
@@ -134,6 +135,19 @@ class ContextGraph(MiddlewareRegistry):
                     return False
 
         return True
+
+    def keys_info_filter(self, info):
+        """Remove non authorized key present in the info field. See the
+        configuration path givent to the class, by default
+        etc/context_graph/manager.conf
+        """
+        if not hasattr(self, "authorized_info_keys"):
+            values = values = self.conf.get(CATEGORY)
+            self.authorized_info_keys = values.get("authorized_info_keys").value
+
+        for key in info.keys():
+            if key not in self.authorized_info_keys:
+                info.pop(key)
 
     def __init__(self, event_types=None, extra_fields=None, *args, **kwargs):
         """__init__
