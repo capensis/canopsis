@@ -170,7 +170,7 @@ nothing has append during 3 minutes and if "key" value of the entity is not
 equal to "mala", it execute the task "status_increase".
 
 A list of all available tasks can be founded in :ref:`the corresponding
-documentation <TR__Alarm>`.
+documentation <TR__Alarm>` (all are available, except `assocticket`).
 
 For the output message, it takes the old one (« {old} »), and append it a
 static string (« -- message »).

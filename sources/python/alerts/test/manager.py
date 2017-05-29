@@ -1069,6 +1069,30 @@ class TestManager(BaseTest):
         self.assertEqual(result[alarm_id][0]['value']['state']['val'],
                          Check.MAJOR)
 
+    def test_check_alarm_filters_keepstate(self):
+        # Testing keepstate flag
+        now_stamp = int(time.mktime(datetime.now().timetuple()))
+        alarm, value = self.gen_fake_alarm(moment=now_stamp)
+        alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
+        did = self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID
+
+        lifter = self.gen_alarm_filter({
+            AlarmFilter.FILTER: {did: {"$eq": alarm_id}},
+            AlarmFilter.LIMIT: -1,
+            AlarmFilter.CONDITION: {},
+            AlarmFilter.TASKS: ['alerts.systemaction.state_increase',
+                                'alerts.useraction.keepstate']
+        }, storage=self.manager[Alerts.FILTER_STORAGE])
+        lifter.save()
+
+        self.manager.update_current_alarm(alarm, value)
+
+        self.manager.check_alarm_filters()
+
+        result = self.manager.get_alarms(resolved=False)
+        state = result[alarm_id][0]['value']['state']
+        self.assertEqual(state['_t'], 'changestate')
+        self.assertEqual(state['val'], Check.MAJOR)
 
 if __name__ == '__main__':
     main()

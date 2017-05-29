@@ -206,13 +206,8 @@ def exports(ws):
         """
         Add a new alarm filter.
 
-        - limit (int, float): The time since the last event (in minutes) before evaluating the filter
-        - key (str): The key to analyse in the alarm
-        - operator (str): How to compare 'key' and 'value' (see operator python package)
-        - value (int, float, str): The awaited value of 'key' in alarm
-        - tasks ([str]): a list of task names to execute (see tasks.py)
-        - filter ([str]): a filter query on alarms
-
+        :param element: a full filter to insert
+        :type element: dict
         :returns: an <AlarmFilter>
         """
         new = am.alarm_filters.create_filter(element=element)

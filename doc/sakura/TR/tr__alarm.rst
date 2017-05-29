@@ -490,7 +490,7 @@ Task: Associate ticket
 Task: Change State
 ------------------
 
-``alerts.useraction.changestate(manager, alarm, author, message, event) -> new_value``:
+``alerts.useraction.changestate(manager, alarm, author, message, event) -> new_value`` (as same as ``alerts.useraction.keepstate``):
 
  * ``manager`` as an ``Alerts`` configurable: the task caller
  * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
