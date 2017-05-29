@@ -957,7 +957,7 @@ class Alerts(MiddlewareRegistry):
         Do actions on alarms based on certain conditions/filters.
 
         This method can alter an alarm as follow:
-        Alarm[AlarmField.filter_runs.value] = [{alarm_id: last_execution timestamp}]
+        Alarm[AlarmField.filter_runs.value] = {alarm_id: [execution timestamp]}
         """
         now = datetime.now()
         now_stamp = int(time.mktime(now.timetuple()))
@@ -992,8 +992,14 @@ class Alerts(MiddlewareRegistry):
             value = docalarm[storage.VALUE]
             # Only execute the filter once per reached limit
             if filter_runs in value and lifter._id in value[filter_runs]:
-                last = datetime.fromtimestamp(value[filter_runs][lifter._id])
-                if last + lifter.limit < now:
+                executions = value[filter_runs][lifter._id]
+                if len(executions) >= lifter.repeat:
+                    # Already repeated enough times
+                    continue
+
+                last = datetime.fromtimestamp(max(executions))
+                if last + lifter.limit > now:
+                    # Too soon to execute one more time all tasks
                     continue
                 self.logger.info('Rerunning tasks on {} after {} seconds'
                                  .format(alarm_id, lifter.limit))
@@ -1041,7 +1047,9 @@ class Alerts(MiddlewareRegistry):
             new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             if filter_runs not in new_value:
                 new_value[filter_runs] = {}
-            new_value[filter_runs][lifter._id] = now_stamp
+            if lifter._id not in new_value[filter_runs]:
+                new_value[filter_runs][lifter._id] = []
+            new_value[filter_runs][lifter._id].append(now_stamp)
 
             self.update_current_alarm(docalarm, new_value)
 

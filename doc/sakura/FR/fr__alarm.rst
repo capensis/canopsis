@@ -162,7 +162,8 @@ An example of filter structure:
         "tasks" : [
             "alerts.systemaction.status_increase"
         ],
-        "output_format": "{old} -- message"
+        "output_format": "{old} -- message",
+        "repeat": 1
     }
 
 This filter only match entities with their rk equal to "/fake/alarm/id". If
@@ -174,6 +175,9 @@ documentation <TR__Alarm>` (all are available, except `assocticket`).
 
 For the output message, it takes the old one (« {old} »), and append it a
 static string (« -- message »).
+
+The `repeat` parameter indicate how many times a filter can be applied on an 
+entity (with sufficient limit, filter, and condition). The default value is ``« 1 »``.
 
 In `etc/alerts/manager.conf`, you can specify the author name putted in the
 alarm (when the executed action need one).
