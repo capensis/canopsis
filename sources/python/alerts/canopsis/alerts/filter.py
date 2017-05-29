@@ -146,8 +146,7 @@ class AlarmFilter(object):
             'limit': timedelta(seconds=30),
             'condition': '{"connector":{"$eq":"connector_value"}}'
             'tasks': ['alerts.systemaction.status_increase'],
-            'output_format': '{old} -- message {foo}',
-            'output_params': {'foo': 'bar'}
+            'output_format': '{old} -- message {foo}'
         }
     """
     UID = '_id'

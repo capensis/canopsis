@@ -42,7 +42,10 @@ def is_successful(r):
 
 class TestRoutes(TestCase):
     def setUp(self):
-        self.headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
+        self.headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
         self.url = 'http://localhost:8082/'
         self.session = requests.Session()
 
@@ -67,7 +70,8 @@ class TestRoutes(TestCase):
         self.assertTrue(is_successful(r))
         self.assertFalse(r.json()['success'])
 
-        r = self.session.get(base, params={'entity_id': alarm_id}, cookies=self.cookies)
+        r = self.session.get(base, params={'entity_id': alarm_id},
+                             cookies=self.cookies)
         self.assertTrue(is_successful(r))
         rjson = r.json()
         self.assertTrue('data' in rjson)

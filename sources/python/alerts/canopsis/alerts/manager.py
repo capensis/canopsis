@@ -71,6 +71,7 @@ class Alerts(MiddlewareRegistry):
     CONTEXT_MANAGER = 'context'
 
     AF_RUN = 'alarm_filters_run'
+    # TODO: move that to AlarmField
 
     @property
     def config(self):
@@ -967,12 +968,12 @@ class Alerts(MiddlewareRegistry):
         storage = self[Alerts.ALARM_STORAGE]
 
         for lifter, docalarm in self.alarm_filters.get_filters():
-            # Thanks to get_alarms(), renaming keys
+            # Thanks to get_alarms(), we must renaming keys
             # (... as shittily as MongoPeriodicalStorage)
             docalarm[storage.DATA_ID] = docalarm.pop(storage.Key.DATA_ID)
             docalarm[storage.TIMESTAMP] = docalarm.pop(storage.Key.TIMESTAMP)
             docalarm[storage.VALUE] = docalarm.pop(storage.Key.VALUE)
-            # TODO: fix MongoPeriodicalStorage and go back removing that
+            # TODO: fix MongoPeriodicalStorage and go back remove that
 
             alarm_id = docalarm[storage.DATA_ID]
             self.logger.debug('Checking alarmfilter {}'.format(lifter))
@@ -993,8 +994,7 @@ class Alerts(MiddlewareRegistry):
             value = docalarm[storage.VALUE]
             # Only execute the filter once per reached limit
             if self.AF_RUN in value and lifter._id in value[self.AF_RUN]:
-                last = datetime.fromtimestamp(
-                    value[self.AF_RUN][lifter._id])
+                last = datetime.fromtimestamp(value[self.AF_RUN][lifter._id])
                 if last + lifter.limit < now:
                     continue
                 self.logger.info('Rerunning tasks on {} after {} seconds'
@@ -1010,15 +1010,19 @@ class Alerts(MiddlewareRegistry):
                 'connector_name': value['connector_name'],
                 'output': lifter.output(message)
             }
-            new_state = value[AlarmField.state.value]['val']
+            vstate = AlarmField.state.value
+
             # Execute each defined action
-            new_value = None
+            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
+            updated_once = False
             for task in lifter.tasks:
-                new_state_bis = new_state
+                if vstate in new_value:
+                    event[vstate] = new_value[vstate]['val']  # for changestate
+
                 if 'systemaction.state_increase' in task:
-                    new_state_bis = new_state_bis + 1
+                    event[vstate] = event[vstate] + 1
                 elif 'systemaction.state_decrease' in task:
-                    new_state_bis = new_state_bis - 1
+                    event[vstate] = event[vstate] - 1
 
                 self.logger.info('Automatically execute {} on {}'
                                  .format(task, alarm_id))
@@ -1026,12 +1030,17 @@ class Alerts(MiddlewareRegistry):
                                               event=event,
                                               entity_id=alarm_id,
                                               author=self.filter_config['author'],
-                                              new_state=new_state_bis)
+                                              new_state=event[vstate])
 
-            if new_value is None:
+                if new_value is not None:
+                    updated_once = True
+                    self.update_current_alarm(docalarm, new_value)
+
+            if not updated_once:
                 continue
 
             # Mark the alarm that this filter has been applied
+            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             if self.AF_RUN not in new_value:
                 new_value[self.AF_RUN] = {}
             new_value[self.AF_RUN][lifter._id] = now_stamp

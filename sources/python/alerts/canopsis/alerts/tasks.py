@@ -183,6 +183,7 @@ def associate_ticket(manager, alarm, author, message, event):
 
 
 @register_task('alerts.useraction.changestate')
+@register_task('alerts.useraction.keepstate')
 def change_state(manager, alarm, author, message, event):
     """
     Called when a user manually changes the state of an alarm.
