@@ -130,10 +130,13 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
                     pass
                 encoded_event_with_metric[k] = v
 
-            metric_id = manager.context.get_id(encoded_event_with_metric)
+            if encoded_event_with_metric["source_type"][0:9] == "importctx":
+                metric_id = encoded_event_with_metric["source_type"]
+            else:
+                metric_id = manager.context.get_id(encoded_event_with_metric)
 
             value = perf_data.pop('value', None)
-            
+
             encoded_event_with_metric['perf_metric'] = perf_metric
 
             manager.put(
