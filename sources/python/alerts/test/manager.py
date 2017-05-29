@@ -1050,7 +1050,7 @@ class TestManager(BaseTest):
         alarm_filters1 = res_alarm['value'][AlarmField.filter_runs.value]
         self.assertTrue(isinstance(alarm_filters1, dict))
 
-        # Output validation
+        # Output transcription validation
         steps = result[alarm_id][0]['value'][AlarmField.steps.value]
         message = sorted(steps, key=itemgetter('t'))[-1]['m']
         self.assertEqual(message, '>> foo')
@@ -1094,6 +1094,44 @@ class TestManager(BaseTest):
         state = result[alarm_id][0]['value']['state']
         self.assertEqual(state['_t'], 'changestate')
         self.assertEqual(state['val'], Check.MAJOR)
+
+    def test_check_alarm_filters_repeat(self):
+        # Testing repeat flag
+        now_stamp = int(time.mktime(datetime.now().timetuple()))
+        alarm, value = self.gen_fake_alarm(moment=now_stamp)
+        alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
+        did = self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID
+
+        lifter = self.gen_alarm_filter({
+            AlarmFilter.FILTER: {did: {"$eq": alarm_id}},
+            AlarmFilter.LIMIT: 1,
+            AlarmFilter.CONDITION: {},
+            AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
+            AlarmFilter.REPEAT: 2
+        }, storage=self.manager[Alerts.FILTER_STORAGE])
+        lifter.save()
+
+        self.manager.update_current_alarm(alarm, value)
+
+        time.sleep(1.1)
+        self.manager.check_alarm_filters()
+
+        time.sleep(1.1)
+        self.manager.check_alarm_filters()
+
+        result = self.manager.get_alarms(resolved=False)
+        state = result[alarm_id][0]['value']['state']
+        self.assertEqual(state['_t'], 'stateinc')
+        self.assertEqual(state['val'], Check.CRITICAL)
+
+        # This one should not do anything
+        time.sleep(1.1)
+        self.manager.check_alarm_filters()
+
+        result = self.manager.get_alarms(resolved=False)
+        state = result[alarm_id][0]['value']['state']
+        self.assertEqual(state['_t'], 'stateinc')
+        self.assertEqual(state['val'], Check.CRITICAL)
 
 if __name__ == '__main__':
     main()

@@ -48,7 +48,7 @@ class AlarmFilters(object):
         for key in [AlarmFilter.LIMIT, AlarmFilter.CONDITION,
                     AlarmFilter.TASKS, AlarmFilter.FILTER]:
             if key not in element:
-                print('Missingg key {} to create the filter'.foramt(key))
+                print('Missing key {} to create the filter'.foramt(key))
                 return None
 
         af = AlarmFilter(element=element,
@@ -146,7 +146,8 @@ class AlarmFilter(object):
             'limit': timedelta(seconds=30),
             'condition': '{"connector":{"$eq":"connector_value"}}'
             'tasks': ['alerts.systemaction.status_increase'],
-            'output_format': '{old} -- message {foo}'
+            'output_format': '{old} -- message {foo}',
+            'repeat': 1
         }
     """
     UID = '_id'
@@ -155,6 +156,7 @@ class AlarmFilter(object):
     FILTER = 'entity_filter'
     TASKS = 'tasks'
     FORMAT = 'output_format'
+    REPEAT = 'repeat'
 
     def __init__(self, element, storage=None, alarm_storage=None):
         self.element = element  # has persisted in the db
@@ -165,6 +167,8 @@ class AlarmFilter(object):
             element[self.UID] = str(uuid())
 
         # Map and converter element parts as attribute
+        if self.REPEAT not in self.element:
+            self[self.REPEAT] = 1  # default value
         for k, v in self.element.items():
             self[k] = v
 
