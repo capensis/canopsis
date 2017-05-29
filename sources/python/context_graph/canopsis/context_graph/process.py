@@ -464,8 +464,11 @@ def event_processing(
             extra_infos[field] = event[field]
 
     evt_id = get_event_id(ids, event)
-    update_context(presence, ids, entities_in_db, extra_infos, evt_id,
-                   event["infos"])
+    try:
+        evt_info = event["infos"]
+    except KeyError:
+        evt_info = {}
+    update_context(presence, ids, entities_in_db, extra_infos, evt_id, evt_info)
     LOGGER.debug("*** The end. ***")
 
 
