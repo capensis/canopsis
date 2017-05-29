@@ -22,19 +22,20 @@ from six import string_types
 
 from datetime import timedelta
 import json
+import logging
 from uuid import uuid4 as uuid
 
 
 class AlarmFilters(object):
     """
-        Access to a set of alarm filters.
-
-        TODO: link to the global logger
+        Easy access to a set of alarm filters.
     """
 
     def __init__(self, storage, alarm_storage):
         self.storage = storage  # A alarmfilter storage
         self.alarm_storage = alarm_storage  # An alarm storage
+
+        self.logger = logging.getLogger('alerts')
 
     def create_filter(self, element):
         """
@@ -48,7 +49,8 @@ class AlarmFilters(object):
         for key in [AlarmFilter.LIMIT, AlarmFilter.CONDITION,
                     AlarmFilter.TASKS, AlarmFilter.FILTER]:
             if key not in element:
-                print('Missing key {} to create the filter'.foramt(key))
+                self.logger.error('Missing key "{}" to properlly create the filter'
+                                  .format(key))
                 return None
 
         af = AlarmFilter(element=element,
@@ -122,7 +124,8 @@ class AlarmFilters(object):
             try:
                 query = json.loads(mfilter)
             except:
-                print('Cannot parse mfilter: {}'.format(new_filter))
+                self.logger.warning('Cannot parse mfilter: {}'
+                                    .format(new_filter))
                 continue
 
             # Associate a filter with his matching alarm
@@ -138,15 +141,14 @@ class AlarmFilters(object):
 
 class AlarmFilter(object):
     """
-        An alarm filter.
+        An alarm filter object.
 
         filter = {
-            '_id': 'deadbeef',
-            'entity_filter': '{"connector":{"$eq":"connector"}}'
+            'entity_filter': '{"v.connector":{"$eq":"connector"}}'
             'limit': timedelta(seconds=30),
-            'condition': '{"connector":{"$eq":"connector_value"}}'
+            'condition': '{"v.connector":{"$eq":"connector_value"}}'
             'tasks': ['alerts.systemaction.status_increase'],
-            'output_format': '{old} -- message {foo}',
+            'output_format': '{old} -- message',
             'repeat': 1
         }
     """
@@ -182,7 +184,9 @@ class AlarmFilter(object):
             try:
                 value = json.loads(item)
             except:
-                print('Cannot parse condition item {}'.format(item))
+                self.logger = logging.getLogger('alerts')
+                self.logger.error('Cannot parse condition item "{}"'
+                                  .format(item))
                 return
 
         # Dict serialization conversion
@@ -241,7 +245,9 @@ class AlarmFilter(object):
 
     def serialize(self):
         """
-        Return a printable element (especially for json serialization)
+        Return a printable element (especially for json serialization).
+
+        :rtype: dict
         """
         return self.element
 

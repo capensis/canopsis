@@ -151,7 +151,7 @@ The filter and the condition are mongo type filters. The limit is number
 (interpreted as seconds). The output format is a python format type string and
 the output parameters is a dictionary.
 
-An example of filter structure:
+An example of a alarm filter structure (stored in `default_alarmfilter`):
 
 .. code-block:: javascript
 
@@ -176,7 +176,7 @@ documentation <TR__Alarm>` (all are available, except `assocticket`).
 For the output message, it takes the old one (« {old} »), and append it a
 static string (« -- message »).
 
-The `repeat` parameter indicate how many times a filter can be applied on an 
+The `repeat` parameter indicate how many times a filter can be applied on an
 entity (with sufficient limit, filter, and condition). The default value is ``« 1 »``.
 
 In `etc/alerts/manager.conf`, you can specify the author name putted in the
