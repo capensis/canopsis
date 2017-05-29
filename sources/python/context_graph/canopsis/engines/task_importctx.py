@@ -24,17 +24,17 @@ ST_WARNING = 2
 ST_CRITICAL = 3
 
 perf_data_array = [{
-    'metric': 'importctx/execution_time',
+    'metric': 'execution_time',
     'value': None,
-    'unit': 's'
+    'unit': 'GAUGE'
 }, {
-    'metric': 'importctx/ent_updated',
+    'metric': 'ent_updated',
     'value': None,
-    'unit': 'ent'
+    'unit': 'GAUGE'
 }, {
-    'metric': 'importctx/ent_deleted',
+    'metric': 'ent_deleted',
     'value': None,
-    'unit': 'ent'
+    'unit': 'GAUGE'
 }]
 
 
@@ -84,11 +84,15 @@ class engine(TaskHandler, MiddlewareRegistry):
         output = "execution : {0} sec, updated ent :"\
                  " {1}, deleted ent : {2}".format(time, updated, deleted)
 
+        self.logger.critical("AMQP queue = {0}".format(self.amqp_queue))
+
+
         event = forger(
-            connector="Engine",
-            connector_name="engine",
+            connector="Taskhandler",
+            connector_name=self.etype,
+            component=uuid,
             event_type="check",
-            source_type=Keys.JOB_ID.format(uuid),
+            source_type="task_importctx/report",
             resource=self.amqp_queue,
             state=state,
             state_type=1,

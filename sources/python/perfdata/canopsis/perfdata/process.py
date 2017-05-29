@@ -130,7 +130,8 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
                     pass
                 encoded_event_with_metric[k] = v
 
-            if encoded_event_with_metric["source_type"][0:9] == "importctx":
+            if encoded_event_with_metric["source_type"][0:14] ==\
+               "task_importctx":
                 metric_id = encoded_event_with_metric["source_type"]
             else:
                 metric_id = manager.context.get_id(encoded_event_with_metric)
