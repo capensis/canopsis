@@ -70,9 +70,6 @@ class Alerts(MiddlewareRegistry):
     FILTER_STORAGE = 'filter_storage'
     CONTEXT_MANAGER = 'context'
 
-    AF_RUN = 'alarm_filters_run'
-    # TODO: move that to AlarmField
-
     @property
     def config(self):
         """
@@ -960,10 +957,11 @@ class Alerts(MiddlewareRegistry):
         Do actions on alarms based on certain conditions/filters.
 
         This method can alter an alarm as follow:
-        Alarm[self.AF_RUN] = [{alarm_id: timestamp_of_last_execution}]
+        Alarm[AlarmField.filter_runs.value] = [{alarm_id: last_execution timestamp}]
         """
         now = datetime.now()
         now_stamp = int(time.mktime(now.timetuple()))
+        filter_runs = AlarmField.filter_runs.value
 
         storage = self[Alerts.ALARM_STORAGE]
 
@@ -993,8 +991,8 @@ class Alerts(MiddlewareRegistry):
 
             value = docalarm[storage.VALUE]
             # Only execute the filter once per reached limit
-            if self.AF_RUN in value and lifter._id in value[self.AF_RUN]:
-                last = datetime.fromtimestamp(value[self.AF_RUN][lifter._id])
+            if filter_runs in value and lifter._id in value[filter_runs]:
+                last = datetime.fromtimestamp(value[filter_runs][lifter._id])
                 if last + lifter.limit < now:
                     continue
                 self.logger.info('Rerunning tasks on {} after {} seconds'
@@ -1041,9 +1039,9 @@ class Alerts(MiddlewareRegistry):
 
             # Mark the alarm that this filter has been applied
             new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
-            if self.AF_RUN not in new_value:
-                new_value[self.AF_RUN] = {}
-            new_value[self.AF_RUN][lifter._id] = now_stamp
+            if filter_runs not in new_value:
+                new_value[filter_runs] = {}
+            new_value[filter_runs][lifter._id] = now_stamp
 
             self.update_current_alarm(docalarm, new_value)
 

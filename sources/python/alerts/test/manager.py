@@ -1059,10 +1059,11 @@ class TestManager(BaseTest):
         result = self.manager.get_alarms(resolved=False)
         self.assertTrue(alarm_id in result)
         self.assertEqual(len(result[alarm_id]), 1)
-        self.assertEqual(result[alarm_id][0]['value']['state']['val'],
+        res_alarm = result[alarm_id][0]
+        self.assertEqual(res_alarm['value']['state']['val'],
                          Check.MAJOR)
-        self.assertTrue(self.manager.AF_RUN in result[alarm_id][0]['value'])
-        alarm_filters1 = result[alarm_id][0]['value'][self.manager.AF_RUN]
+        self.assertTrue(AlarmField.filter_runs.value in res_alarm['value'])
+        alarm_filters1 = res_alarm['value'][AlarmField.filter_runs.value]
         self.assertTrue(isinstance(alarm_filters1, dict))
 
         # Output validation
@@ -1077,7 +1078,7 @@ class TestManager(BaseTest):
 
         self.manager.check_alarm_filters()
         result = self.manager.get_alarms(resolved=False)
-        alarm_filters2 = result[alarm_id2][0]['value'][self.manager.AF_RUN]
+        alarm_filters2 = result[alarm_id2][0]['value'][AlarmField.filter_runs.value]
         for key in alarm_filters1.keys():
             self.assertEqual(alarm_filters1[key], alarm_filters2[key])
 

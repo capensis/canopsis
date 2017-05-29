@@ -40,6 +40,7 @@ class AlarmField(Enum):
     steps = 'steps'
     tags = 'tags'
     ticket = 'ticket'
+    filter_runs = 'filter_runs'  # trace alarm filter executions
 
     def __str__(self):
         return str(self.value)
