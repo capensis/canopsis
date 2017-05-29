@@ -160,7 +160,7 @@ function post_install_mongodb() {
     echo "  + Restart mongodb"
     launch_cmd 1 service mongodb restart
 
-    echo " + Wait restart"
+    echo " + Wait mongodb"
     sleep 10
 
     echo "  + Create $cpsuser user ..."
