@@ -25,8 +25,6 @@ from canopsis.middleware.core import Middleware
 from canopsis.entitylink.manager import Entitylink
 from uuid import uuid4
 
-DEBUG = False
-
 
 class CheckManagerTest(TestCase):
     """
@@ -53,25 +51,14 @@ class CheckManagerTest(TestCase):
     def tearDown(self):
         self.entity_storage.remove_elements()
 
-    def clean(self):
-        self.manager.remove(self.ids)
-
-    def get_linklist(self):
-        return self.manager.find(ids=self.ids)
-
     def linklist_count_equals(self, count):
-        result = list(self.get_linklist())
-        if DEBUG:
-            print(result)
-        result = len(result)
-        self.assertEqual(result, count)
+        result = list(self.manager.find(ids=self.ids))
+        self.assertEqual(len(result), count)
 
 
 class LinkListTest(CheckManagerTest):
 
     def test_put(self):
-        self.clean()
-
         self.manager.put(
             self.id,
             self.document_content
@@ -80,8 +67,6 @@ class LinkListTest(CheckManagerTest):
         self.linklist_count_equals(1)
 
     def test_get(self):
-        self.clean()
-
         self.manager.put(
             self.id,
             self.document_content
@@ -101,8 +86,6 @@ class LinkListTest(CheckManagerTest):
         self.assertEqual(len(list(result)), 1)
 
     def test_remove(self):
-        self.clean()
-
         self.linklist_count_equals(0)
 
         self.manager.put(
