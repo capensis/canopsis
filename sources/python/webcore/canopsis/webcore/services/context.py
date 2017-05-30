@@ -77,8 +77,13 @@ def exports(ws):
             with_count=True
         )
         """
+
+        query = {}
+        if _filter is not None:
+            query.update(_filter)
+
         result = manager.get_entities(
-            query=_filter,
+            query=query,
             limit=limit,
             start=start,
             sort=sort
