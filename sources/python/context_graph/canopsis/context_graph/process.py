@@ -332,7 +332,7 @@ def update_context_case6(ids, in_db):
     return [connector, component]
 
 
-def update_context(presence, ids, in_db, extra_infos, event_id,
+def update_context(presence, ids, in_db, event, extra_infos, event_id,
                    event_infos=None):
 
     if event_infos == None:
@@ -464,11 +464,11 @@ def event_processing(
             extra_infos[field] = event[field]
 
     evt_id = get_event_id(ids, event)
-    try:
+    if "infos" in event:
         evt_info = event["infos"]
-    except KeyError:
+    else:
         evt_info = {}
-    update_context(presence, ids, entities_in_db, extra_infos, evt_id, evt_info)
+    update_context(presence, ids, entities_in_db, event, extra_infos, evt_id, evt_info)
     LOGGER.debug("*** The end. ***")
 
 
