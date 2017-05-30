@@ -86,7 +86,7 @@ Ember.Application.initializer({
               'resource': 'v.resource',
               'entity_id': 'd',
               'state': 'v.state',
-              'status': 'v.status.val',
+              'status': 'v.status',
               'snooze': 'v.snooze',
               'ack': 'v.ack',
               'cancel': 'v.cancel',
