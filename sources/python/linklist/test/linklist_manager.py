@@ -20,10 +20,9 @@
 # ---------------------------------
 
 from unittest import TestCase, main
-from canopsis.linklist.manager import Linklist
 from uuid import uuid4
 
-DEBUG = False
+from canopsis.linklist.manager import Linklist
 
 
 class CheckManagerTest(TestCase):
@@ -54,10 +53,7 @@ class CheckManagerTest(TestCase):
         return self.manager.find(ids=self.ids)
 
     def linklist_count_equals(self, count):
-        result = list(self.get_linklist())
-        if DEBUG:
-            print result
-        result = len(result)
+        result = len(list(self.get_linklist()))
         self.assertEqual(result, count)
 
 

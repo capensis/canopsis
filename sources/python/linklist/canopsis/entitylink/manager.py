@@ -19,11 +19,9 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
-from time import time
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
-import uuid
 from canopsis.context_graph.manager import ContextGraph
 
 CONF_PATH = 'linklist/linklist.conf'

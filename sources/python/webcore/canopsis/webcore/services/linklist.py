@@ -11,7 +11,7 @@ entity_link_manager = Entitylink()
 def exports(ws):
 
     @route(ws.application.delete, payload=['ids'])
-    def linklist(ids):
+    def del_linklist(ids):
         link_list_manager.remove(ids)
         ws.logger.info(u'Delete : {}'.format(ids))
         return True
@@ -21,7 +21,7 @@ def exports(ws):
         payload=['document'],
         name='linklist/put'
     )
-    def linklist(document):
+    def put_linklist(document):
         ws.logger.debug({
             'document': document,
             'type': type(document)
@@ -32,7 +32,7 @@ def exports(ws):
         return True
 
     @route(ws.application.post, payload=['limit', 'start', 'sort', 'filter'])
-    def linklist(limit=0, start=0, sort=None, filter={}):
+    def post_linklist(limit=0, start=0, sort=None, filter={}):
         result = link_list_manager.find(
             limit=limit,
             skip=start,
@@ -47,6 +47,6 @@ def exports(ws):
         payload=['event'],
         name='entitylink'
     )
-    def linklist(event):
+    def get_linklist(event):
         ws.logger.debug({'received event': event})
         return entity_link_manager.get_links_from_event(event)
