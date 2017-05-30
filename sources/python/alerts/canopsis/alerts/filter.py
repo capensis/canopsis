@@ -144,12 +144,12 @@ class AlarmFilter(object):
         An alarm filter object.
 
         filter = {
-            'entity_filter': '{"v.connector":{"$eq":"connector"}}'
-            'limit': timedelta(seconds=30),
-            'condition': '{"v.connector":{"$eq":"connector_value"}}'
-            'tasks': ['alerts.systemaction.status_increase'],
-            'output_format': '{old} -- message',
-            'repeat': 1
+            "entity_filter": {"d": {"$eq": "/fake/alarm/id"}},
+            "limit": timedelta(seconds=30),
+            "condition": {"v.state.val": {"$eq": 1}},
+            "tasks": ["alerts.systemaction.state_increase"],
+            "output_format": "{old} -- message",
+            "repeat": 1
         }
     """
     UID = '_id'

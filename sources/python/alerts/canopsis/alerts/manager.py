@@ -959,7 +959,7 @@ class Alerts(MiddlewareRegistry):
                 if last + lifter.limit > now:
                     # Too soon to execute one more time all tasks
                     continue
-                self.logger.info('Rerunning tasks on {} after {} seconds'
+                self.logger.info('Rerunning tasks on {} after {} hours'
                                  .format(alarm_id, lifter.limit))
 
             # Getting most recent step message
