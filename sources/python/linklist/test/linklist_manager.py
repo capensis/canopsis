@@ -22,6 +22,7 @@
 from unittest import TestCase, main
 from uuid import uuid4
 
+from canopsis.middleware.core import Middleware
 from canopsis.linklist.manager import Linklist
 
 
@@ -31,11 +32,12 @@ class CheckManagerTest(TestCase):
     """
 
     def setUp(self):
-        """
-        initialize a manager.
-        """
-
+        self.linklist_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testlinklist://'
+        )
         self.manager = Linklist()
+        self.manager[Linklist.LINKLIST_STORAGE] = self.linklist_storage
+
         self.name = 'testlinklist'
         self.id = str(uuid4())
         self.ids = [self.id]
@@ -45,6 +47,9 @@ class CheckManagerTest(TestCase):
             'linklist': ['http://canopsis.org'],
             'mfilter': '{"$and": [{"connector": "collectd"}]}'
         }
+
+    def tearDown(self):
+        self.linklist_storage.remove_elements()
 
     def clean(self):
         self.manager.remove(self.ids)

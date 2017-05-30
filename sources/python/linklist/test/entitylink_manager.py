@@ -20,6 +20,8 @@
 # ---------------------------------
 
 from unittest import TestCase, main
+
+from canopsis.middleware.core import Middleware
 from canopsis.entitylink.manager import Entitylink
 from uuid import uuid4
 
@@ -32,11 +34,12 @@ class CheckManagerTest(TestCase):
     """
 
     def setUp(self):
-        """
-        initialize a manager.
-        """
-
+        self.entity_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testentitylink://'
+        )
         self.manager = Entitylink()
+        self.manager[Entitylink.ENTITY_STORAGE] = self.entity_storage
+
         self.name = 'testentitylink'
         self.id = str(uuid4())
         self.ids = [self.id]
@@ -46,6 +49,9 @@ class CheckManagerTest(TestCase):
                 'url': 'http://www.canopsis.org'
             }]
         }
+
+    def tearDown(self):
+        self.entity_storage.remove_elements()
 
     def clean(self):
         self.manager.remove(self.ids)
