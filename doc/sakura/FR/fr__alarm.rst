@@ -158,9 +158,9 @@ An example of a alarm filter structure (stored in `default_alarmfilter`):
     {
         "entity_filter" : "{\"d\": {\"$eq\": \"/fake/alarm/id\"}}"
         "limit" : 180.0,
-        "condition" : "{\"key\": {\"$neq\": \"mala\"}}",
+        "condition" : "{\"v.state.val\": {\"$gte\": 1}}",
         "tasks" : [
-            "alerts.systemaction.status_increase"
+            "alerts.systemaction.state_increase"
         ],
         "output_format": "{old} -- message",
         "repeat": 1
