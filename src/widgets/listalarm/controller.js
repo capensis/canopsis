@@ -386,6 +386,7 @@ Ember.Application.initializer({
 
                   // newAlarm['state']['canceled'] = alarm.v.canceled;
                   newAlarm.set('state.canceled', alarm.v.canceled);
+
                   
                   // newAlarm['entity_id'] = '/resource/feeder/feeder/feeder_component/feeder_resource';
                   
@@ -688,6 +689,8 @@ Ember.Application.initializer({
                       aa.set('isExpanded', false);
 
                       aa.set('canceled', get(Ember.Object.create(alarm), 'v.canceled'));
+
+                      // aa.set('status.val', 4);
                       
                       
                       // newAlarm['id'] = alarm._id;

@@ -101,17 +101,17 @@ Ember.Application.initializer({
                 return actions;
             }.property('internalState', 'isSnoozed', 'isChangedByUser'),
             internalState: function() {
+                if (this.get('alarm.state.val') == 0) {
+                    return 'immutable';
+                }
                 if (this.get('isCanceled')) {
                     return 'cancelled';
                 }
                 if (this.get('isAcked')) {
                     return 'acked';
                 }
-                if (this.get('state') == 0) {
-                    return 'immutable';
-                }
                 return 'unacked';
-            }.property('alarm.state', 'isCanceled', 'isAcked'),
+            }.property('alarm.state.val', 'isCanceled', 'isAcked'),
             isAcked: function() {
                 return this.get('alarm.extra_details.ack') != undefined;
             }.property('alarm.changed', 'alarm.extra_details'),
