@@ -79,11 +79,7 @@ class DBConfiguration(MiddlewareRegistry):
         return result
 
     # Not tested with old object collection system: TODO
-    def put(
-        self,
-        _id,
-        document
-    ):
+    def put(self, _id, document):
         """
         Persistance layer for upsert operations
 
@@ -96,10 +92,7 @@ class DBConfiguration(MiddlewareRegistry):
         )
 
     # Not tested with old object collection system: TODO
-    def remove(
-        self,
-        ids
-    ):
+    def remove(self, ids):
         """
         Remove fields persisted in a default storage.
 

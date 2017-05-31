@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from canopsis.engines.core import Engine
 from canopsis.entitylink.manager import Entitylink
@@ -49,7 +50,6 @@ class engine(Engine):
             )
 
     def work(self, event, *args, **kwargs):
-
         """
         Check if event contains any url interesting keys.
         When one of self.link_field found, it is added to the event entity link
@@ -64,7 +64,7 @@ class engine(Engine):
 
         if event_links:
 
-            self.logger.debug(u'found links into the event {}: {}'.format(
+            self.logger.debug('found links into the event {}: {}'.format(
                 event['rk'],
                 event_links
             ))

@@ -7,11 +7,15 @@ from canopsis.entitylink.manager import Entitylink
 link_list_manager = Linklist()
 entity_link_manager = Entitylink()
 
+DEFAULT_ROUTE = 'linklist'
+
 
 def exports(ws):
 
-    @route(ws.application.delete, payload=['ids'])
-    def del_linklist(ids):
+    @route(ws.application.delete,
+           payload=['ids'],
+           name=DEFAULT_ROUTE)
+    def delete(ids):
         link_list_manager.remove(ids)
         ws.logger.info(u'Delete : {}'.format(ids))
         return True
@@ -21,7 +25,7 @@ def exports(ws):
         payload=['document'],
         name='linklist/put'
     )
-    def put_linklist(document):
+    def put(document):
         ws.logger.debug({
             'document': document,
             'type': type(document)
@@ -31,8 +35,10 @@ def exports(ws):
 
         return True
 
-    @route(ws.application.post, payload=['limit', 'start', 'sort', 'filter'])
-    def post_linklist(limit=0, start=0, sort=None, filter={}):
+    @route(ws.application.post,
+           payload=['limit', 'start', 'sort', 'filter'],
+           name=DEFAULT_ROUTE)
+    def get(limit=0, start=0, sort=None, filter={}):
         result = link_list_manager.find(
             limit=limit,
             skip=start,
@@ -47,6 +53,6 @@ def exports(ws):
         payload=['event'],
         name='entitylink'
     )
-    def get_linklist(event):
+    def get_entitylink(event):
         ws.logger.debug({'received event': event})
         return entity_link_manager.get_links_from_event(event)
