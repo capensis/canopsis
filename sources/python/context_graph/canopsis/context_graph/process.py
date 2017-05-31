@@ -9,9 +9,11 @@ import time
 
 from canopsis.task.core import register_task
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.perfdata.manager import Perfdata
 
 
 context_graph_manager = ContextGraph()
+pertfdata_manager = Perfdata()
 
 
 cache = set()
@@ -22,7 +24,6 @@ LOGGER = None
 def update_cache():
     global cache
     cache = context_graph_manager.get_all_entities_id()
-
 
 def create_entity(
         id,
@@ -158,9 +159,34 @@ def add_missing_ids(presence, ids):
     if presence[2] is not None and not presence[2] :  # Update resource
         cache.add(ids['re_id'])
 
+def create_ent_metric(event):
+    result = []
+    #perf_data_array
+    if "perf_data" in event and event["perf_data"] is not None:
+        parser = Perfdata(event["perf_data"])
+        result += parser.perf_data_array()
 
-def update_context_case1(ids):
+    for perf in event["perf_data_array"]:
+        id_ = "/metric/{0}/{1}/{2}/{3}".format(event["connector"],
+                                               event["connector_name"],
+                                               event["component"],
+                                               perf["metric"])
+        ent_metric = create_entity(id=id_,
+                                   name=perf["metric"],
+                                   etype="metric",
+                                   depends=[],
+                                   impact=[event["resource"]],
+                                   measurements={},
+                                   infos={})
+        result.append(ent_metric)
+
+    return result
+
+
+def update_context_case1(ids, event):
     """Case 1 update entities"""
+
+    result = []
 
     LOGGER.debug("Case 1.")
     comp = create_entity(
@@ -170,13 +196,7 @@ def update_context_case1(ids):
         depends=[ids['conn_id'], ids['re_id']],
         impact=[]
     )
-    re = create_entity(
-        ids['re_id'],
-        ids['re_id'],
-        'resource',
-        depends=[ids['conn_id']],
-        impact=[ids['comp_id']]
-    )
+
     conn = create_entity(
         ids['conn_id'],
         ids['conn_id'],
@@ -184,7 +204,24 @@ def update_context_case1(ids):
         depends=[],
         impact=[ids['re_id'], ids['comp_id']]
     )
-    return [comp, re, conn]
+
+    result.append(comp)
+    result.append(conn)
+
+    if event["event_type"] == "perf":
+        result += create_ent_metric(event)
+    else:
+        re = create_entity(
+            ids['re_id'],
+            ids['re_id'],
+            'resource',
+            depends=[ids['conn_id']],
+            impact=[ids['comp_id']]
+        )
+
+        result.append(re)
+
+        return result
 
 
 def update_context_case1_re_none(ids):
@@ -332,20 +369,28 @@ def update_context_case6(ids, in_db):
     return [connector, component]
 
 
-def update_context(presence, ids, in_db, event, extra_infos, event_id,
-                   event_infos=None):
+def update_context(presence, ids, in_db, event):
 
-    if event_infos == None:
-        event_infos = {}
+    extra_infos = {}
+    for field in context_graph_manager.extra_fields:
+        if field in event.keys():
+            extra_infos[field] = event[field]
+
+    event_id = get_event_id(ids, event)
+
+    if "infos" in event:
+        event_info = event["infos"]
+    else:
+        event_info = {}
 
     to_update = None
     if presence == (False, False, False):
         # Case 1
-        to_update = update_context_case1(ids)
+        to_update = update_context_case1(ids, event)
 
     elif presence == (False, False, None):
         # Case 1
-        to_update = update_context_case1(ids)
+        to_update = update_context_case1_re_none(ids)
 
     elif presence == (True, False, False) or presence == (True, False, None):
         # Case 2
@@ -382,8 +427,8 @@ def update_context(presence, ids, in_db, event, extra_infos, event_id,
     for key in extra_infos:
         evt_entity['infos'][key] = extra_infos[key]
 
-    for key in event_infos:
-        evt_entity["infos"][key] = event_infos[key]
+    for key in event_info:
+        evt_entity["infos"][key] = event_info[key]
 
     context_graph_manager.keys_info_filter(evt_entity["infos"])
     context_graph_manager._put_entities(to_update)
@@ -432,6 +477,7 @@ def event_processing(
     :param cm:
     :param **kwargs:
     """
+
     if event['event_type'] not in context_graph_manager.event_types:
         return None
 
@@ -458,17 +504,7 @@ def event_processing(
         # Everything is in cache, so we skip
         return None
 
-    extra_infos = {}
-    for field in context_graph_manager.extra_fields:
-        if field in event.keys():
-            extra_infos[field] = event[field]
-
-    evt_id = get_event_id(ids, event)
-    if "infos" in event:
-        evt_info = event["infos"]
-    else:
-        evt_info = {}
-    update_context(presence, ids, entities_in_db, event, extra_infos, evt_id, evt_info)
+    update_context(presence, ids, entities_in_db, event)
     LOGGER.debug("*** The end. ***")
 
 
