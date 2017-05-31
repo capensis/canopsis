@@ -409,14 +409,14 @@ Ember.Application.initializer({
                   // newAlarm['v.state.val'] = 1;
 
 
-                  newAlarm['linklist'] = {
-                    'event_links': [
-                      {
-                        'url': 'http://tasks.info/?co=Demo',
-                        'label': 'test'
-                      }
-                    ]
-                  };
+                  // newAlarm['linklist'] = {
+                  //   'event_links': [
+                  //     {
+                  //       'url': 'http://tasks.info/?co=Demo',
+                  //       'label': 'test'
+                  //     }
+                  //   ]
+                  // };
 
                   if (alarm.d.search('/resource/') == 0) {
                     newAlarm['source_type'] = 'resource';
