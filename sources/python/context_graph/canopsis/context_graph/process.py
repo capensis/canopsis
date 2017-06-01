@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """Module in chage of defining the graph context and updating
  it when it's needed."""
 
@@ -11,10 +10,8 @@ from canopsis.task.core import register_task
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.perfdata.manager import Perfdata
 
-
 context_graph_manager = ContextGraph()
 pertfdata_manager = Perfdata()
-
 
 cache = set()
 
@@ -25,31 +22,33 @@ def update_cache():
     global cache
     cache = context_graph_manager.get_all_entities_id()
 
-def create_entity(
-        id,
-        name,
-        etype,
-        depends=[],
-        impact=[],
-        measurements=[],
-        infos={}):
+
+def create_entity(id,
+                  name,
+                  etype,
+                  depends=[],
+                  impact=[],
+                  measurements=[],
+                  infos={}):
     if etype == 'component':
-        return {'_id': id,
-                'type': etype,
-                'name': name,
-                'depends': depends,
-                'impact': impact,
-                'measurements': measurements,
-                'infos': infos
-                }
+        return {
+            '_id': id,
+            'type': etype,
+            'name': name,
+            'depends': depends,
+            'impact': impact,
+            'measurements': measurements,
+            'infos': infos
+        }
     else:
-        return {'_id': id,
-                'type': etype,
-                'name': name,
-                'depends': depends,
-                'impact': impact,
-                'infos': infos
-                }
+        return {
+            '_id': id,
+            'type': etype,
+            'name': name,
+            'depends': depends,
+            'impact': impact,
+            'infos': infos
+        }
 
 
 def check_type(entities, expected):
@@ -156,8 +155,9 @@ def add_missing_ids(presence, ids):
     if not presence[1]:  # Update component
         cache.add(ids["comp_id"])
 
-    if presence[2] is not None and not presence[2] :  # Update resource
+    if presence[2] is not None and not presence[2]:  # Update resource
         cache.add(ids['re_id'])
+
 
 def create_ent_metric(event):
     result = []
@@ -167,17 +167,17 @@ def create_ent_metric(event):
         result += parser.perf_data_array()
 
     for perf in event["perf_data_array"]:
-        id_ = "/metric/{0}/{1}/{2}/{3}".format(event["connector"],
-                                               event["connector_name"],
-                                               event["component"],
-                                               perf["metric"])
-        ent_metric = create_entity(id=id_,
-                                   name=perf["metric"],
-                                   etype="metric",
-                                   depends=[],
-                                   impact=[event["resource"]],
-                                   measurements={},
-                                   infos={})
+        id_ = "/metric/{0}/{1}/{2}/{3}".format(
+            event["connector"], event["connector_name"], event["component"],
+            perf["metric"])
+        ent_metric = create_entity(
+            id=id_,
+            name=perf["metric"],
+            etype="metric",
+            depends=[],
+            impact=[event["resource"]],
+            measurements={},
+            infos={})
         result.append(ent_metric)
 
     return result
@@ -194,16 +194,14 @@ def update_context_case1(ids, event):
         ids['comp_id'],
         'component',
         depends=[ids['conn_id'], ids['re_id']],
-        impact=[]
-    )
+        impact=[])
 
     conn = create_entity(
         ids['conn_id'],
         ids['conn_id'],
         'connector',
         depends=[],
-        impact=[ids['re_id'], ids['comp_id']]
-    )
+        impact=[ids['re_id'], ids['comp_id']])
 
     result.append(comp)
     result.append(conn)
@@ -216,8 +214,7 @@ def update_context_case1(ids, event):
             ids['re_id'],
             'resource',
             depends=[ids['conn_id']],
-            impact=[ids['comp_id']]
-        )
+            impact=[ids['comp_id']])
 
         result.append(re)
 
@@ -231,15 +228,13 @@ def update_context_case1_re_none(ids):
         ids['comp_id'],
         'component',
         depends=[ids['conn_id']],
-        impact=[]
-    )
+        impact=[])
     conn = create_entity(
         ids['conn_id'],
         ids['conn_id'],
         'connector',
         depends=[],
-        impact=[ids['comp_id']]
-    )
+        impact=[ids['comp_id']])
     return [comp, conn]
 
 
@@ -253,15 +248,13 @@ def update_context_case2(ids, in_db):
         ids['comp_id'],
         'component',
         depends=[ids['re_id']],
-        impact=[]
-    )
+        impact=[])
     re = create_entity(
         ids['re_id'],
         ids['re_id'],
         'resource',
         depends=[],
-        impact=[ids['comp_id']]
-    )
+        impact=[ids['comp_id']])
     update_links_conn_res(in_db[0], re)
     update_links_conn_comp(in_db[0], comp)
     return [comp, re, in_db[0]]
@@ -273,12 +266,7 @@ def update_context_case2_re_none(ids, in_db):
     LOGGER.debug("Case 2 re none ")
 
     comp = create_entity(
-        ids['comp_id'],
-        ids['comp_id'],
-        'component',
-        depends=[],
-        impact=[]
-    )
+        ids['comp_id'], ids['comp_id'], 'component', depends=[], impact=[])
     update_links_conn_comp(in_db[0], comp)
     return [comp, in_db[0]]
 
@@ -294,12 +282,7 @@ def update_context_case3(ids, in_db):
         elif i['type'] == 'component':
             comp = i
     re = create_entity(
-        ids['re_id'],
-        ids['re_id'],
-        'resource',
-        depends=[],
-        impact=[]
-    )
+        ids['re_id'], ids['re_id'], 'resource', depends=[], impact=[])
     update_links_res_comp(re, comp)
     update_links_conn_res(conn, re)
     return [comp, re, conn]
@@ -320,20 +303,14 @@ def update_context_case5(ids, in_db):
         elif entity["type"] == "component":
             component = entity
 
-    connector = create_entity(ids["conn_id"],
-                              ids["conn_id"],
-                              "connector",
-                              impact=[],
-                              depends=[])
+    connector = create_entity(
+        ids["conn_id"], ids["conn_id"], "connector", impact=[], depends=[])
 
     if ids["re_id"] is not None:
         #res_impact = [component["_id"]]
         #res_depends = [connector["_id"]]
-        resource = create_entity(ids["re_id"],
-                                 ids["re_id"],
-                                 "resource",
-                                 impact=[],
-                                 depends=[])
+        resource = create_entity(
+            ids["re_id"], ids["re_id"], "resource", impact=[], depends=[])
         update_links_res_comp(resource, component)
         update_links_conn_res(connector, resource)
         update_links_conn_comp(connector, component)
@@ -355,11 +332,8 @@ def update_context_case6(ids, in_db):
         elif entity["type"] == "component":
             component = entity
 
-    connector = create_entity(ids["conn_id"],
-                              ids["conn_id"],
-                              "connector",
-                              impact=[],
-                              depends=[])
+    connector = create_entity(
+        ids["conn_id"], ids["conn_id"], "connector", impact=[], depends=[])
     update_links_conn_comp(connector, component)
 
     if resource is not None:
@@ -413,9 +387,8 @@ def update_context(presence, ids, in_db, event):
         to_update = update_context_case6(ids, in_db)
 
     else:
-        LOGGER.warning(
-            "No case for the given presence : {0} and ids {1}".format(
-                presence, ids))
+        LOGGER.warning("No case for the given presence : {0} and ids {1}".
+                       format(presence, ids))
         raise ValueError("No case for the given ids and data.")
 
     evt_entity = None
@@ -438,14 +411,14 @@ def gen_ids(event):
     ret_val = {
         'comp_id': '{0}'.format(event['component']),
         're_id': None,
-        'conn_id': '{0}/{1}'.format(
-            event['connector'],
-            event['connector_name'])
+        'conn_id': '{0}/{1}'.format(event['connector'],
+                                    event['connector_name'])
     }
     if 'resource' in event.keys():
         ret_val['re_id'] = '{0}/{1}'.format(event['resource'],
                                             event['component'])
     return ret_val
+
 
 def get_event_id(ids, event):
     """Retreive the event id from the dict generated by gen_ids function
@@ -462,10 +435,14 @@ def get_event_id(ids, event):
 
 
 @register_task
-def event_processing(
-        engine, event, manager=None, logger=None, ctx=None, tm=None, cm=None,
-        **kwargs
-):
+def event_processing(engine,
+                     event,
+                     manager=None,
+                     logger=None,
+                     ctx=None,
+                     tm=None,
+                     cm=None,
+                     **kwargs):
     """event_processing
 
     :param engine:
@@ -491,7 +468,6 @@ def event_processing(
         # Everything is in cache, so we skip
         return None
     add_missing_ids(presence, ids)
-
 
     entities_in_db = context_graph_manager.get_entities_by_id(ids.values())
     data = set()
