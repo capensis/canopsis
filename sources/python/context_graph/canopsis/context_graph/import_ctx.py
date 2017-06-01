@@ -18,7 +18,9 @@ CATEGORY = "IMPORTCONTEXT"
 
 def execution_time(exec_time):
     """Return from exec_time a human readable string that represent the
-    execution time in a human readable format"""
+    execution time in a human readable format.
+    :param exec_time: the execution time
+    :type exec_time: a float"""
 
     exec_time = int(exec_time) # we do not care of everything under the second
 
@@ -31,6 +33,7 @@ def execution_time(exec_time):
                                 str(seconds).zfill(2))
 
 class ExceptionThread(threading.Thread):
+    """Wrapper to support handling exception"""
 
     def __init__(self, *args, **kwargs):
         super(ExceptionThread, self).__init__(*args, **kwargs)
@@ -43,6 +46,7 @@ class ExceptionThread(threading.Thread):
             self.except_queue.put_nowait(e)
 
 class ImportKey:
+    """Usefull values for the import."""
 
     # Status
     ST_PENDING = "pending"
@@ -168,10 +172,8 @@ class Manager(MiddlewareRegistry):
         self[self.STORAGE].put_element(new_status)
 
     def on_going_in_db(self):
-        """
-            check if there is an import on going
-
-            :return: True if an import is on going
+        """Check if there is an import on going
+        :return: True if an import is on going
         """
         result = list(self[self.STORAGE].find_elements(
             query={ImportKey.F_STATUS: ImportKey.ST_ONGOING}))
@@ -179,10 +181,8 @@ class Manager(MiddlewareRegistry):
         return len(result) == 1
 
     def pending_in_db(self):
-        """
-            check if there is a pending import in database
-
-            :return: True if a pending import in database
+        """Check if there is a pending import in database
+        :return: True if a pending import in database
         """
         result = list(self[self.STORAGE].find_elements(
             query={ImportKey.F_STATUS: ImportKey.ST_PENDING}))
@@ -190,8 +190,9 @@ class Manager(MiddlewareRegistry):
         return len(result) > 0
 
     def check_id(self, _id):
-        """
-            check if an id is already taken
+        """Check if an id is already taken.
+        :param _id: the id to check
+        :return: True if the id is in db. False otherwise
         """
         result = list(self[self.STORAGE].get_elements(
             query={ImportKey.F_ID: _id}))
@@ -199,8 +200,7 @@ class Manager(MiddlewareRegistry):
         return len(result) == 1
 
     def get_import_status(self, _id):
-        """
-        return the state of an import.
+        """Return the state of an import.
         :param _id: the id of the import
         :return dict: the report.
         """
@@ -214,6 +214,8 @@ class Manager(MiddlewareRegistry):
 
 
 class ContextGraphImport(ContextGraph):
+    """The manager in charge of an import of a context.
+    """
 
     # TODO add a feature to restore the context if an error occured during while
     # is pushed into the database
@@ -305,6 +307,12 @@ class ContextGraphImport(ContextGraph):
 
     @classmethod
     def check_element(cls, element, type_):
+        """Check an element with a schema schema specified by his type.
+        :param element: the element to check
+        :param type_: the expected type of the element
+        :raise: ValueError if the type_ is not correct
+        :raise: ValidationError if the element does not match the schema
+        """
 
         if type_ == cls.K_LINKS:
             schema = cls.LINKS_SCHEMA
@@ -338,6 +346,7 @@ class ContextGraphImport(ContextGraph):
         ids_links = set()
 
         def __get_entities_to_update_links(file_):
+            """Parse the file_ to extract every link"""
             fd = open(file_, 'r')
             for link in ijson.items(fd, "{0}.item".format(self.K_LINKS)):
                 self.check_element(link, self.K_LINKS)
@@ -349,6 +358,7 @@ class ContextGraphImport(ContextGraph):
             fd.close()
 
         def __get_entities_to_update_cis(file_):
+            """Parse the file_ to extract every CI"""
             fd = open(file_, 'r');
             for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
                 self.check_element(ci, self.K_CIS)
@@ -382,6 +392,7 @@ class ContextGraphImport(ContextGraph):
         cis_thd.join()
         links_thd.join()
 
+        # Unqueue an raise existing exception
         for thread in threads:
             try:
                 excep = thread.except_queue.get_nowait()
@@ -397,6 +408,7 @@ class ContextGraphImport(ContextGraph):
         result = self.get_entities_by_id(list(ids))
         ctx = {}
 
+        # transform "depends" and "impact" list in set for improved performance
         for doc in result:
             doc[self.K_DEPENDS] = set(doc[self.K_DEPENDS])
             doc[self.K_IMPACT] = set(doc[self.K_IMPACT])
@@ -466,10 +478,9 @@ class ContextGraphImport(ContextGraph):
         :param ci: the ci (see the JSON specification).
         """
 
-
         if ci[self.K_ID] not in self.entities_to_update:
-            desc = "The ci of id {0} does not match any existing entity.".format(
-                ci[self.K_ID])
+            desc = "The ci of id {0} does not match any existing"\
+                   " entity.".format(ci[self.K_ID])
             raise ValueError(desc)
 
         entity = self.entities_to_update[ci[self.K_ID]]
@@ -553,8 +564,8 @@ class ContextGraphImport(ContextGraph):
         id_ = ci[self.K_ID]
 
         if ci[self.K_ID] not in self.entities_to_update:
-            desc = "The ci of id {0} does not match any existing entity.".format(
-                id_)
+            desc = "The ci of id {0} does not match any existing"\
+                   " entity.".format(id_)
             raise ValueError(desc)
 
         # If the entity is not in the update dict, add it
@@ -605,7 +616,8 @@ class ContextGraphImport(ContextGraph):
                 self.update[id_] = self.entities_to_update[id_]
 
         if link[self.K_TO] not in self.update:
-            self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
+            self.update[link[self.K_TO]] = self.entities_to_update\
+                                           [link[self.K_TO]]
 
         for id_ in link[self.K_FROM]:
             self.update[id_][self.K_IMPACT].remove(link[self.K_TO])
@@ -622,7 +634,8 @@ class ContextGraphImport(ContextGraph):
         """
 
         if link[self.K_TO] not in self.update:
-            self.update[link[self.K_TO]] = self.entities_to_update[link[self.K_TO]]
+            self.update[link[self.K_TO]] = self.entities_to_update\
+                                           [link[self.K_TO]]
 
         for ci_id in link[self.K_FROM]:
             if ci_id not in self.update:
@@ -685,14 +698,19 @@ class ContextGraphImport(ContextGraph):
         start = time.time()
         self.__superficial_check(fd)
         end = time.time()
-        self.logger.debug("Import {0} : superficial check {1}.".format(uuid, execution_time(end - start)))
+        self.logger.debug("Import {0} : superficial"\
+                          " check {1}.".format(uuid,
+                                               execution_time(end - start)))
 
         start = time.time()
         self.entities_to_update = self.__get_entities_to_update(file_)
         end = time.time()
 
-        self.logger.debug("Import {0} : get_entities_to_update {1}.".format(uuid, execution_time(end - start)))
+        self.logger.debug("Import {0} : get_entities_to"\
+                          "_update {1}.".format(uuid,
+                                                execution_time(end - start)))
 
+        # Process cis list
         start = time.time()
         for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
             if ci[self.K_ACTION] == self.A_DELETE:
@@ -713,6 +731,7 @@ class ContextGraphImport(ContextGraph):
 
         fd.seek(0)
 
+        # Process link list
         start = time.time()
         for link in ijson.items(fd, "{0}.item".format(self.K_LINKS)):
             if link[self.K_ACTION] == self.A_DELETE:
@@ -726,10 +745,11 @@ class ContextGraphImport(ContextGraph):
             elif link[self.K_ACTION] == self.A_ENABLE:
                 self.__a_enable_link(link)
             else:
-                raise ValueError("The action {0} is not recognized\n".format(
+                raise ValueError("The action {0} is not recognized".format(
                     link[self.K_ACTION]))
         end = time.time()
-        self.logger.debug("Import {0} : update links {1}.".format(uuid, execution_time(end - start)))
+        self.logger.debug("Import {0} : update links"\
+                          " {1}.".format(uuid, execution_time(end - start)))
 
         for id_ in self.update:
             if id_ in self.delete:
@@ -747,12 +767,15 @@ class ContextGraphImport(ContextGraph):
         start = time.time()
         self._put_entities(self.update.values())
         end = time.time()
-        self.logger.debug("Import {0} : push updated entities {1}.".format(uuid, execution_time(end - start)))
+        self.logger.debug("Import {0} : push updated"\
+                          " entities {1}.".format(uuid,
+                                                  execution_time(end - start)))
 
         start = time.time()
         self._delete_entities(self.delete)
         end = time.time()
-        self.logger.debug("Import {0} : delete entities {1}.".format(uuid, execution_time(end - start)))
+        self.logger.debug("Import {0} : delete entities"\
+                          " {1}.".format(uuid, execution_time(end - start)))
 
         self.clean_attributes()
         return updated_entities, deleted_entities
