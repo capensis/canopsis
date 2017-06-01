@@ -173,7 +173,7 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         query = {"_id": None}
-        if isinstance(id, type([])):
+        if isinstance(_id, list):
             ids = []
             for i in _id:
                 ids.append(i)
@@ -488,6 +488,8 @@ class ContextGraph(MiddlewareRegistry):
         return result
 
     def get_graph_impact(self, _id, deepness=None):
+        """
+        """
         col = self[ContextGraph.ENTITIES_STORAGE]._backend
         ag = []
 
@@ -512,6 +514,8 @@ class ContextGraph(MiddlewareRegistry):
         return res['result'][0]
 
     def get_graph_depends(self, _id, deepness=None):
+        """
+        """
         col = self[ContextGraph.ENTITIES_STORAGE]._backend
         ag = []
 
@@ -536,6 +540,8 @@ class ContextGraph(MiddlewareRegistry):
         return res['result'][0]
 
     def get_leaves_impact(self, _id, deepness=None):
+        """
+        """
         graph = self.get_graph_impact(_id, deepness)
         ret_val = []
 
@@ -550,7 +556,8 @@ class ContextGraph(MiddlewareRegistry):
         return ret_val
 
     def get_leaves_depends(self, _id, deepness=None):
-
+        """
+        """
         graph = self.get_graph_depends(_id, deepness)
         ret_val = []
 
