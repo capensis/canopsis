@@ -75,7 +75,6 @@ class engine(TaskHandler, MiddlewareRegistry):
             values = values = self.conf.get(TASK_CONF)
             self._thd_warn_s = values.get("thd_warn_min_per_import").value * 60
 
-
         if not hasattr(self, "thd_crit_s"):
             values = values = self.conf.get(TASK_CONF)
             self._thd_crit_s = values.get("thd_crit_min_per_import").value * 60
@@ -165,7 +164,7 @@ class engine(TaskHandler, MiddlewareRegistry):
 
         try:
             os.remove(Keys.IMPORT_FILE.format(uuid))
-        except:
+        except Exception as e:
             pass
 
         del importer
