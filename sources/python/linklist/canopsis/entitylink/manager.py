@@ -49,29 +49,34 @@ class Entitylink(MiddlewareRegistry):
 
         :param event: an event that may have an entity link stored
             if not, an entity link entry is created and is returned
+        :type event:
         """
+        entity_list = list(self.get_links_from_event(event))
+
+        if len(entity_list) > 0:
+            return entity_list[0]
+
+        _id = self.get_id_from_event(event)
+        self.put(_id, {
+            'computed_links': [],
+            'event_links': []
+        })
 
         entity_list = list(self.get_links_from_event(event))
 
-        if entity_list:
+        if len(entity_list) > 0:
             return entity_list[0]
-        else:
-            _id = self.get_id_from_event(event)
-            self.put(_id, {
-                'computed_links': [],
-                'event_links': []
-            })
-            return list(self.get_links_from_event(event))[0]
 
     def get_id_from_event(self, event):
         """
         Find a context id from an event.
 
         :param event: an event to search a context id from
+        :type event:
         """
         entity_id = self.context.get_id(event)
         entity = self.context.get_entities_by_id(entity_id)
-        if len(entity) == 0:
+        if len(entity) <= 0:
             return None
 
         entity = entity[0]
