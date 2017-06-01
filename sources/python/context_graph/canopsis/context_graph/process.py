@@ -19,6 +19,8 @@ LOGGER = None
 
 
 def update_cache():
+    """Update the entity cache "cache"
+    """
     global cache
     cache = context_graph_manager.get_all_entities_id()
 
@@ -30,6 +32,24 @@ def create_entity(id,
                   impact=[],
                   measurements=[],
                   infos={}):
+    """Create an entity with following information.
+    :param id: the entity id
+    :type id: a string
+    :param name: the entity name
+    :type name: a string
+    :param etype: the entity type
+    :type etype: a string
+    :param depends: every entities that depends of the current entity
+    :type depends: a list
+    :param impact: every entities that depends of the current entity
+    :type impact: a list
+    :param measurements: measurements link to the current entity
+    :type measurements: a dict
+    :param infos: information related to the entity
+    :type infos: a dict
+
+    :return: a dict
+    """
     if etype == 'component':
         return {
             '_id': id,
@@ -55,8 +75,12 @@ def check_type(entities, expected):
     """Raise TypeError if the type of the entities entities does not match
     the expected type.
     :param entities: the entities to check.
+    :type entities: a dict
     :param expected: the expected type.
-    :raises TypeError: if the entity does not match the expected one."""
+    :type expected: a string
+    :raises TypeError: if the entity does not match the expected one.
+    :return: true if the entity match the given type
+    """
     if entities["type"] != expected:
         raise TypeError("Entities {0} does not match {1}".format(
             entities["_id"], expected))
@@ -148,7 +172,7 @@ def determine_presence(ids, data):
 
 
 def add_missing_ids(presence, ids):
-    """Update the cache"""
+    """Add missing id in the cache. See determine_presence function."""
     if not presence[0]:  # Update connector
         cache.add(ids["conn_id"])
 
@@ -160,8 +184,14 @@ def add_missing_ids(presence, ids):
 
 
 def create_ent_metric(event):
+    """Create a metric entity from an event.
+    :param event: the event to use to create the metric entity
+    :type event: a dict.
+    :return: an event
+    :return type: a dict"""
     result = []
-    #perf_data_array
+
+    # Parse the perf_data field.
     if "perf_data" in event and event["perf_data"] is not None:
         parser = Perfdata(event["perf_data"])
         result += parser.perf_data_array()
@@ -184,7 +214,14 @@ def create_ent_metric(event):
 
 
 def update_context_case1(ids, event):
-    """Case 1 update entities"""
+    """Case 1 update entities. No resource, component or connector exist in
+    the context.
+    :param ids: the tuple of ids.
+    :type ids: a tuple
+    :param event: the event to process
+    :type event: a dict.
+    :return: a list of entities (as a dict)
+    """
 
     result = []
 
@@ -218,10 +255,16 @@ def update_context_case1(ids, event):
 
         result.append(re)
 
-        return result
+    return result
 
 
 def update_context_case1_re_none(ids):
+    """Case 1 update entities. No component or connector exist in
+    the context and no resource are define in the event.
+    :param ids: the tuple of ids.
+    :type ids: a tuple
+    :return: a list of entities (as a dict)
+    """
     LOGGER.debug("Case 1 re none.")
     comp = create_entity(
         ids['comp_id'],
@@ -239,7 +282,13 @@ def update_context_case1_re_none(ids):
 
 
 def update_context_case2(ids, in_db):
-    """Case 2 update entities"""
+    """Case 2 update entities. A component exist in the context
+    but no connector nor resource.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
 
     LOGGER.debug("Case 2")
 
@@ -261,7 +310,13 @@ def update_context_case2(ids, in_db):
 
 
 def update_context_case2_re_none(ids, in_db):
-    """Case 2 update entities"""
+    """Case 2 update entities. A component exist in the context
+    but no connector and no resource are in the event.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
 
     LOGGER.debug("Case 2 re none ")
 
@@ -272,7 +327,14 @@ def update_context_case2_re_none(ids, in_db):
 
 
 def update_context_case3(ids, in_db):
-    """Case 3 update entities"""
+    """Case 3 update entities. A component and connector exist in the context
+    but no resource.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
+
     LOGGER.debug("Case 3")
     comp = {}
     conn = {}
@@ -289,8 +351,13 @@ def update_context_case3(ids, in_db):
 
 
 def update_context_case5(ids, in_db):
-    """Case 5 update entities"""
-    # (False, True, False) or (False, True, None)
+    """Case 5 update entities. A connector exist in the context
+    but no component.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
 
     LOGGER.debug("Update context case 6.")
 
@@ -322,6 +389,14 @@ def update_context_case5(ids, in_db):
 
 
 def update_context_case6(ids, in_db):
+    """Case 6 update entities. A connector and a resource exist in the context
+    but no component.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
+
     LOGGER.debug("Update context case 6.")
 
     resource = None
@@ -344,7 +419,12 @@ def update_context_case6(ids, in_db):
 
 
 def update_context(presence, ids, in_db, event):
-
+    """Update the context.
+    :param presence: information about a entity exist in the database
+    :param ids: a list of ids.
+    :param in_db: the related entities from the context
+    :param event: the current event
+    """
     extra_infos = {}
     for field in context_graph_manager.extra_fields:
         if field in event.keys():
@@ -366,9 +446,12 @@ def update_context(presence, ids, in_db, event):
         # Case 1
         to_update = update_context_case1_re_none(ids)
 
-    elif presence == (True, False, False) or presence == (True, False, None):
+    elif presence == (True, False, False):
         # Case 2
         to_update = update_context_case2(ids, in_db)
+
+    elif presence == (True, False, None):
+        to_update = update_context_case2_re_none(ids, in_db)
 
     elif presence == (True, True, False):
         # Case 3
@@ -408,6 +491,9 @@ def update_context(presence, ids, in_db, event):
 
 
 def gen_ids(event):
+    """Generate the id of entity present in an event
+    :param event: the current event
+    """
     ret_val = {
         'comp_id': '{0}'.format(event['component']),
         're_id': None,
