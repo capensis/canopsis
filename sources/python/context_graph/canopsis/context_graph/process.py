@@ -541,8 +541,6 @@ def event_processing(engine,
     :param **kwargs:
     """
 
-    logger.critical(":-)")
-
     if event['event_type'] not in context_graph_manager.event_types:
         return None
 
