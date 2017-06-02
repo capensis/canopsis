@@ -8,10 +8,10 @@ import time
 
 from canopsis.task.core import register_task
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.perfdata.manager import Perfdata
+from canopsis.perfdata.manager import PerfData
 
 context_graph_manager = ContextGraph()
-pertfdata_manager = Perfdata()
+pertfdata_manager = PerfData()
 
 cache = set()
 
@@ -193,7 +193,7 @@ def create_ent_metric(event):
 
     # Parse the perf_data field.
     if "perf_data" in event and event["perf_data"] is not None:
-        parser = Perfdata(event["perf_data"])
+        parser = PerfData(event["perf_data"])
         result += parser.perf_data_array()
 
     for perf in event["perf_data_array"]:
@@ -245,15 +245,15 @@ def update_context_case1(ids, event):
 
     if event["event_type"] == "perf":
         result += create_ent_metric(event)
-    else:
-        re = create_entity(
-            ids['re_id'],
-            ids['re_id'],
-            'resource',
-            depends=[ids['conn_id']],
-            impact=[ids['comp_id']])
 
-        result.append(re)
+    re = create_entity(
+        ids['re_id'],
+        ids['re_id'],
+        'resource',
+        depends=[ids['conn_id']],
+        impact=[ids['comp_id']])
+    result.append(re)
+
 
     return result
 
@@ -540,6 +540,8 @@ def event_processing(engine,
     :param cm:
     :param **kwargs:
     """
+
+    logger.critical(":-)")
 
     if event['event_type'] not in context_graph_manager.event_types:
         return None
