@@ -375,7 +375,8 @@ def update_context(presence, ids, in_db, event, extra_infos, event_id,
 
     evt_entity = None
     for entity in to_update:
-        entity['infos']['enable'] = [time.time()]
+        #entity['infos']['enable'] = [time.time()]
+        entity['infos']['enabled'] = True
         if entity["_id"] == event_id:
             evt_entity = entity
 

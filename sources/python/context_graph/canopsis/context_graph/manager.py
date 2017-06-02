@@ -327,7 +327,8 @@ class ContextGraph(MiddlewareRegistry):
         entities = self.get_entities_by_id(status["insertions"])
 
         if len(entities) != len(status["insertions"]):
-            raise ValueError("Could not find some entity in database.")
+            self.logger.critical('lol c pas normal')
+            # raise ValueError("Could not find some entity in database.")
 
         # update the related entities
         for entity in entities:
