@@ -80,7 +80,10 @@ def exports(ws):
 
         query = {}
         if _filter is not None:
+            _filter = {"$and":[{"type": _type}, _filter]}
             query.update(_filter)
+        else:
+            query.update({"type":_type})
 
         result = manager.get_entities(
             query=query,
