@@ -35,6 +35,10 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
     """Perfdata engine synchronous processing.
     """
 
+    # if the event does not have a resource, no perfdata can be created.
+    if "resource" not in event:
+        return None
+
     if manager is None:
         manager = perfdatamgr
 

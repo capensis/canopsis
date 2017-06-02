@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """Module in chage of defining the graph context and updating
  it when it's needed."""
 
@@ -9,10 +8,10 @@ import time
 
 from canopsis.task.core import register_task
 from canopsis.context_graph.manager import ContextGraph
-
+from canopsis.perfdata.manager import PerfData
 
 context_graph_manager = ContextGraph()
-
+pertfdata_manager = PerfData()
 
 cache = set()
 
@@ -20,43 +19,68 @@ LOGGER = None
 
 
 def update_cache():
+    """Update the entity cache "cache"
+    """
     global cache
     cache = context_graph_manager.get_all_entities_id()
 
 
-def create_entity(
-        id,
-        name,
-        etype,
-        depends=[],
-        impact=[],
-        measurements=[],
-        infos={}):
+def create_entity(id,
+                  name,
+                  etype,
+                  depends=[],
+                  impact=[],
+                  measurements=[],
+                  infos={}):
+    """Create an entity with following information.
+    :param id: the entity id
+    :type id: a string
+    :param name: the entity name
+    :type name: a string
+    :param etype: the entity type
+    :type etype: a string
+    :param depends: every entities that depends of the current entity
+    :type depends: a list
+    :param impact: every entities that depends of the current entity
+    :type impact: a list
+    :param measurements: measurements link to the current entity
+    :type measurements: a dict
+    :param infos: information related to the entity
+    :type infos: a dict
+
+    :return: a dict
+    """
     if etype == 'component':
-        return {'_id': id,
-                'type': etype,
-                'name': name,
-                'depends': depends,
-                'impact': impact,
-                'measurements': measurements,
-                'infos': infos
-                }
+        return {
+            '_id': id,
+            'type': etype,
+            'name': name,
+            'depends': depends,
+            'impact': impact,
+            'measurements': measurements,
+            'infos': infos
+        }
     else:
-        return {'_id': id,
-                'type': etype,
-                'name': name,
-                'depends': depends,
-                'impact': impact,
-                'infos': infos
-                }
+        return {
+            '_id': id,
+            'type': etype,
+            'name': name,
+            'depends': depends,
+            'impact': impact,
+            'infos': infos
+        }
 
 
 def check_type(entities, expected):
     """Raise TypeError if the type of the entities entities does not match
     the expected type.
     :param entities: the entities to check.
+    :type entities: a dict
     :param expected: the expected type.
-    :raises TypeError: if the entity does not match the expected one."""
+    :type expected: a string
+    :raises TypeError: if the entity does not match the expected one.
+    :return: true if the entity match the given type
+    """
     if entities["type"] != expected:
         raise TypeError("Entities {0} does not match {1}".format(
             entities["_id"], expected))
@@ -148,19 +172,58 @@ def determine_presence(ids, data):
 
 
 def add_missing_ids(presence, ids):
-    """Update the cache"""
+    """Add missing id in the cache. See determine_presence function."""
     if not presence[0]:  # Update connector
         cache.add(ids["conn_id"])
 
     if not presence[1]:  # Update component
         cache.add(ids["comp_id"])
 
-    if presence[2] is not None and not presence[2] :  # Update resource
+    if presence[2] is not None and not presence[2]:  # Update resource
         cache.add(ids['re_id'])
 
 
-def update_context_case1(ids):
-    """Case 1 update entities"""
+def create_ent_metric(event):
+    """Create a metric entity from an event.
+    :param event: the event to use to create the metric entity
+    :type event: a dict.
+    :return: an event
+    :return type: a dict"""
+    result = []
+
+    # Parse the perf_data field.
+    if "perf_data" in event and event["perf_data"] is not None:
+        parser = PerfData(event["perf_data"])
+        result += parser.perf_data_array()
+
+    for perf in event["perf_data_array"]:
+        id_ = "/metric/{0}/{1}/{2}/{3}".format(
+            event["connector"], event["connector_name"], event["component"],
+            perf["metric"])
+        ent_metric = create_entity(
+            id=id_,
+            name=perf["metric"],
+            etype="metric",
+            depends=[],
+            impact=[event["resource"]],
+            measurements={},
+            infos={})
+        result.append(ent_metric)
+
+    return result
+
+
+def update_context_case1(ids, event):
+    """Case 1 update entities. No resource, component or connector exist in
+    the context.
+    :param ids: the tuple of ids.
+    :type ids: a tuple
+    :param event: the event to process
+    :type event: a dict.
+    :return: a list of entities (as a dict)
+    """
+
+    result = []
 
     LOGGER.debug("Case 1.")
     comp = create_entity(
@@ -168,46 +231,64 @@ def update_context_case1(ids):
         ids['comp_id'],
         'component',
         depends=[ids['conn_id'], ids['re_id']],
-        impact=[]
-    )
-    re = create_entity(
-        ids['re_id'],
-        ids['re_id'],
-        'resource',
-        depends=[ids['conn_id']],
-        impact=[ids['comp_id']]
-    )
+        impact=[])
+
     conn = create_entity(
         ids['conn_id'],
         ids['conn_id'],
         'connector',
         depends=[],
-        impact=[ids['re_id'], ids['comp_id']]
-    )
-    return [comp, re, conn]
+        impact=[ids['re_id'], ids['comp_id']])
+
+    result.append(comp)
+    result.append(conn)
+
+    if event["event_type"] == "perf":
+        result += create_ent_metric(event)
+
+    re = create_entity(
+        ids['re_id'],
+        ids['re_id'],
+        'resource',
+        depends=[ids['conn_id']],
+        impact=[ids['comp_id']])
+    result.append(re)
+
+
+    return result
 
 
 def update_context_case1_re_none(ids):
+    """Case 1 update entities. No component or connector exist in
+    the context and no resource are define in the event.
+    :param ids: the tuple of ids.
+    :type ids: a tuple
+    :return: a list of entities (as a dict)
+    """
     LOGGER.debug("Case 1 re none.")
     comp = create_entity(
         ids['comp_id'],
         ids['comp_id'],
         'component',
         depends=[ids['conn_id']],
-        impact=[]
-    )
+        impact=[])
     conn = create_entity(
         ids['conn_id'],
         ids['conn_id'],
         'connector',
         depends=[],
-        impact=[ids['comp_id']]
-    )
+        impact=[ids['comp_id']])
     return [comp, conn]
 
 
 def update_context_case2(ids, in_db):
-    """Case 2 update entities"""
+    """Case 2 update entities. A component exist in the context
+    but no connector nor resource.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
 
     LOGGER.debug("Case 2")
 
@@ -216,38 +297,44 @@ def update_context_case2(ids, in_db):
         ids['comp_id'],
         'component',
         depends=[ids['re_id']],
-        impact=[]
-    )
+        impact=[])
     re = create_entity(
         ids['re_id'],
         ids['re_id'],
         'resource',
         depends=[],
-        impact=[ids['comp_id']]
-    )
+        impact=[ids['comp_id']])
     update_links_conn_res(in_db[0], re)
     update_links_conn_comp(in_db[0], comp)
     return [comp, re, in_db[0]]
 
 
 def update_context_case2_re_none(ids, in_db):
-    """Case 2 update entities"""
+    """Case 2 update entities. A component exist in the context
+    but no connector and no resource are in the event.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
 
     LOGGER.debug("Case 2 re none ")
 
     comp = create_entity(
-        ids['comp_id'],
-        ids['comp_id'],
-        'component',
-        depends=[],
-        impact=[]
-    )
+        ids['comp_id'], ids['comp_id'], 'component', depends=[], impact=[])
     update_links_conn_comp(in_db[0], comp)
     return [comp, in_db[0]]
 
 
 def update_context_case3(ids, in_db):
-    """Case 3 update entities"""
+    """Case 3 update entities. A component and connector exist in the context
+    but no resource.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
+
     LOGGER.debug("Case 3")
     comp = {}
     conn = {}
@@ -257,20 +344,20 @@ def update_context_case3(ids, in_db):
         elif i['type'] == 'component':
             comp = i
     re = create_entity(
-        ids['re_id'],
-        ids['re_id'],
-        'resource',
-        depends=[],
-        impact=[]
-    )
+        ids['re_id'], ids['re_id'], 'resource', depends=[], impact=[])
     update_links_res_comp(re, comp)
     update_links_conn_res(conn, re)
     return [comp, re, conn]
 
 
 def update_context_case5(ids, in_db):
-    """Case 5 update entities"""
-    # (False, True, False) or (False, True, None)
+    """Case 5 update entities. A connector exist in the context
+    but no component.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
 
     LOGGER.debug("Update context case 6.")
 
@@ -283,20 +370,14 @@ def update_context_case5(ids, in_db):
         elif entity["type"] == "component":
             component = entity
 
-    connector = create_entity(ids["conn_id"],
-                              ids["conn_id"],
-                              "connector",
-                              impact=[],
-                              depends=[])
+    connector = create_entity(
+        ids["conn_id"], ids["conn_id"], "connector", impact=[], depends=[])
 
     if ids["re_id"] is not None:
         #res_impact = [component["_id"]]
         #res_depends = [connector["_id"]]
-        resource = create_entity(ids["re_id"],
-                                 ids["re_id"],
-                                 "resource",
-                                 impact=[],
-                                 depends=[])
+        resource = create_entity(
+            ids["re_id"], ids["re_id"], "resource", impact=[], depends=[])
         update_links_res_comp(resource, component)
         update_links_conn_res(connector, resource)
         update_links_conn_comp(connector, component)
@@ -308,6 +389,14 @@ def update_context_case5(ids, in_db):
 
 
 def update_context_case6(ids, in_db):
+    """Case 6 update entities. A connector and a resource exist in the context
+    but no component.
+    :param ids: the tuple of ids.
+    :param type: a tuple
+    :param in_db: a list of the rest of entity in the event.
+    :type in_db: a tuple
+    :return: a list of entities (as a dict)"""
+
     LOGGER.debug("Update context case 6.")
 
     resource = None
@@ -318,11 +407,8 @@ def update_context_case6(ids, in_db):
         elif entity["type"] == "component":
             component = entity
 
-    connector = create_entity(ids["conn_id"],
-                              ids["conn_id"],
-                              "connector",
-                              impact=[],
-                              depends=[])
+    connector = create_entity(
+        ids["conn_id"], ids["conn_id"], "connector", impact=[], depends=[])
     update_links_conn_comp(connector, component)
 
     if resource is not None:
@@ -332,24 +418,40 @@ def update_context_case6(ids, in_db):
     return [connector, component]
 
 
-def update_context(presence, ids, in_db, event, extra_infos, event_id,
-                   event_infos=None):
+def update_context(presence, ids, in_db, event):
+    """Update the context.
+    :param presence: information about a entity exist in the database
+    :param ids: a list of ids.
+    :param in_db: the related entities from the context
+    :param event: the current event
+    """
+    extra_infos = {}
+    for field in context_graph_manager.extra_fields:
+        if field in event.keys():
+            extra_infos[field] = event[field]
 
-    if event_infos == None:
-        event_infos = {}
+    event_id = get_event_id(ids, event)
+
+    if "infos" in event:
+        event_info = event["infos"]
+    else:
+        event_info = {}
 
     to_update = None
     if presence == (False, False, False):
         # Case 1
-        to_update = update_context_case1(ids)
+        to_update = update_context_case1(ids, event)
 
     elif presence == (False, False, None):
         # Case 1
-        to_update = update_context_case1(ids)
+        to_update = update_context_case1_re_none(ids)
 
-    elif presence == (True, False, False) or presence == (True, False, None):
+    elif presence == (True, False, False):
         # Case 2
         to_update = update_context_case2(ids, in_db)
+
+    elif presence == (True, False, None):
+        to_update = update_context_case2_re_none(ids, in_db)
 
     elif presence == (True, True, False):
         # Case 3
@@ -368,9 +470,8 @@ def update_context(presence, ids, in_db, event, extra_infos, event_id,
         to_update = update_context_case6(ids, in_db)
 
     else:
-        LOGGER.warning(
-            "No case for the given presence : {0} and ids {1}".format(
-                presence, ids))
+        LOGGER.warning("No case for the given presence : {0} and ids {1}".
+                       format(presence, ids))
         raise ValueError("No case for the given ids and data.")
 
     evt_entity = None
@@ -383,25 +484,28 @@ def update_context(presence, ids, in_db, event, extra_infos, event_id,
     for key in extra_infos:
         evt_entity['infos'][key] = extra_infos[key]
 
-    for key in event_infos:
-        evt_entity["infos"][key] = event_infos[key]
+    for key in event_info:
+        evt_entity["infos"][key] = event_info[key]
 
     context_graph_manager.keys_info_filter(evt_entity["infos"])
     context_graph_manager._put_entities(to_update)
 
 
 def gen_ids(event):
+    """Generate the id of entity present in an event
+    :param event: the current event
+    """
     ret_val = {
         'comp_id': '{0}'.format(event['component']),
         're_id': None,
-        'conn_id': '{0}/{1}'.format(
-            event['connector'],
-            event['connector_name'])
+        'conn_id': '{0}/{1}'.format(event['connector'],
+                                    event['connector_name'])
     }
     if 'resource' in event.keys():
         ret_val['re_id'] = '{0}/{1}'.format(event['resource'],
                                             event['component'])
     return ret_val
+
 
 def get_event_id(ids, event):
     """Retreive the event id from the dict generated by gen_ids function
@@ -418,10 +522,14 @@ def get_event_id(ids, event):
 
 
 @register_task
-def event_processing(
-        engine, event, manager=None, logger=None, ctx=None, tm=None, cm=None,
-        **kwargs
-):
+def event_processing(engine,
+                     event,
+                     manager=None,
+                     logger=None,
+                     ctx=None,
+                     tm=None,
+                     cm=None,
+                     **kwargs):
     """event_processing
 
     :param engine:
@@ -433,6 +541,7 @@ def event_processing(
     :param cm:
     :param **kwargs:
     """
+
     if event['event_type'] not in context_graph_manager.event_types:
         return None
 
@@ -447,7 +556,6 @@ def event_processing(
         return None
     add_missing_ids(presence, ids)
 
-
     entities_in_db = context_graph_manager.get_entities_by_id(ids.values())
     data = set()
     for i in entities_in_db:
@@ -459,17 +567,7 @@ def event_processing(
         # Everything is in cache, so we skip
         return None
 
-    extra_infos = {}
-    for field in context_graph_manager.extra_fields:
-        if field in event.keys():
-            extra_infos[field] = event[field]
-
-    evt_id = get_event_id(ids, event)
-    if "infos" in event:
-        evt_info = event["infos"]
-    else:
-        evt_info = {}
-    update_context(presence, ids, entities_in_db, event, extra_infos, evt_id, evt_info)
+    update_context(presence, ids, entities_in_db, event)
     LOGGER.debug("*** The end. ***")
 
 

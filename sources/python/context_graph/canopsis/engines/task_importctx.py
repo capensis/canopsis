@@ -60,16 +60,26 @@ class engine(TaskHandler, MiddlewareRegistry):
     I_START_IMPORT = "Start import {0}."
 
     def send_perfdata(self, uuid, time, updated, deleted):
+        """Send stat about the import through a perfdata event.
+        :param uuid: the import uuid
+        :type uuid: a string
+        :param time: the execution time of the import
+        :type time: a float
+        :param updated: the number of updated entities during the import
+        :type updated: an integer
+        :param deleted: the number of deleted entities during the import
+        :type deleted: an integer
+        """
 
         if not hasattr(self, "thd_warn_s"):
             values = values = self.conf.get(TASK_CONF)
             self._thd_warn_s = values.get("thd_warn_min_per_import").value * 60
 
-
         if not hasattr(self, "thd_crit_s"):
             values = values = self.conf.get(TASK_CONF)
             self._thd_crit_s = values.get("thd_crit_min_per_import").value * 60
 
+        # define the state according to the duration of the import
         if time > self._thd_crit_s:
             state = ST_WARNING
         elif time > self._thd_warn_s:
@@ -86,7 +96,7 @@ class engine(TaskHandler, MiddlewareRegistry):
 
         self.logger.critical("AMQP queue = {0}".format(self.amqp_queue))
 
-
+        # create a perfdata event
         event = forger(
             connector="Taskhandler",
             connector_name=self.etype,
@@ -102,6 +112,10 @@ class engine(TaskHandler, MiddlewareRegistry):
         publish(event, self.amqp)
 
     def handle_task(self, job):
+        """Handlt the import.
+        :param job: the event.
+        :type job: a dict"""
+
         importer = ContextGraphImport(logger=self.logger)
         report_manager = Manager()
 
@@ -150,7 +164,7 @@ class engine(TaskHandler, MiddlewareRegistry):
 
         try:
             os.remove(Keys.IMPORT_FILE.format(uuid))
-        except:
+        except Exception as e:
             pass
 
         del importer
