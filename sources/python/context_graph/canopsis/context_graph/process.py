@@ -31,7 +31,8 @@ def create_entity(id,
                   depends=[],
                   impact=[],
                   measurements=[],
-                  infos={}):
+                  infos={},
+                  **kwargs):
     """Create an entity with following information.
     :param id: the entity id
     :type id: a string
@@ -50,8 +51,8 @@ def create_entity(id,
 
     :return: a dict
     """
-    if etype == 'component':
-        return {
+
+    ent = {
             '_id': id,
             'type': etype,
             'name': name,
@@ -60,15 +61,14 @@ def create_entity(id,
             'measurements': measurements,
             'infos': infos
         }
-    else:
-        return {
-            '_id': id,
-            'type': etype,
-            'name': name,
-            'depends': depends,
-            'impact': impact,
-            'infos': infos
-        }
+
+    for key in kwargs:
+        ent[key] = kwargs[key]
+
+    if etype == 'component':
+        ent.pop("measurements")
+
+    return ent
 
 
 def check_type(entities, expected):
@@ -207,7 +207,11 @@ def create_ent_metric(event):
             depends=[],
             impact=[event["resource"]],
             measurements={},
-            infos={})
+            infos={},
+            resource=event["resource"],
+            component=event["component"],
+            connector=event["connector"],
+            connector_name=event["connector_name"])
         result.append(ent_metric)
 
     return result
