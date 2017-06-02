@@ -39,6 +39,7 @@ PROJECTS[36]='serie'
 PROJECTS[37]='stats'
 PROJECTS[38]='migration'
 PROJECTS[39]='influxdb'
+PROJECTS[40]='selector'
 
 
 function build() {

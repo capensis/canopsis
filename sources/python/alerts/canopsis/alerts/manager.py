@@ -31,6 +31,8 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.event.manager import Event
 from canopsis.check import Check
 
+from canopsis.selector.manager import Selector
+
 from canopsis.alerts.status import get_last_state, get_last_status, OFF
 
 from time import time
@@ -185,6 +187,7 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.CONTEXT_MANAGER]= context
 
         self.context_manager = ContextGraph()
+        self.selector_manager = Selector()
 
     def load_config(self):
         value = self[Alerts.CONFIG_STORAGE].get_elements(
@@ -333,6 +336,8 @@ class Alerts(MiddlewareRegistry):
 
         storage.put(alarm_id, new_value, alarm_ts)
 
+        self.selector_manager.alarm_changed(alarm['data_id'])
+
     def get_events(self, alarm):
         """
         Rebuild events from alarm history.
@@ -439,8 +444,13 @@ class Alerts(MiddlewareRegistry):
 
         entity = self.context_manager.get_entities_by_id(entity_id)
         if entity != []:
-            if self.context_manager.get[0]['infos']['enabled'] == False:
-                return 
+            try:
+                if not entity[0]['infos']['enabled']:
+                    return 
+            except Exception:
+                self.logger.critical('error no enabled in entity')
+                pass
+
 
         author = event.get('author', None)
         message = event.get('output', None)
