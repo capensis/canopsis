@@ -13,7 +13,7 @@ Ember.Application.initializer({
          */
         var component = Ember.Component.extend({
             tagName: 'td',
-            renderers: ['v_state_val', 'v_state_t', 'v_status_val', 'v_extra_details', ],
+            renderers: ['v_state', 'v_state_t', 'v_status', 'v_extra_details', ],
             // renderers: ['v_state_val'],
 
             init: function() {
@@ -27,7 +27,8 @@ Ember.Application.initializer({
             value: function() {
                 var alarm = get(this, 'alarm');
                 var field = get(this, 'field');
-                return alarm[field.humanName];
+                var val = alarm[field.humanName];
+                return val;
             }.property('alarm.changed', 'field'),
 
             hasRenderer: function () {
@@ -38,13 +39,13 @@ Ember.Application.initializer({
                 return this.get('field.name').replace(/\./g, "_")
             }.property('alarm.name'),
 
-            vv: function() {
-                return Ember.View.extend({
-                    // template: Ember.HTMLBars.compile("{{#component-rendererstate value=2}}{{/component-rendererstate}}")
-                    template: Ember.HTMLBars.compile("renderer")
+            // vv: function() {
+            //     return Ember.View.extend({
+            //         // template: Ember.HTMLBars.compile("{{#component-rendererstate value=2}}{{/component-rendererstate}}")
+            //         template: Ember.HTMLBars.compile("renderer")
                     
-                });
-            }.property('field'),
+            //     });
+            // }.property('field'),
         });
 
         application.register('component:component-alarmtd', component);

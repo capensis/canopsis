@@ -144,7 +144,7 @@ Ember.Application.initializer({
                         event: JSON.stringify(post_events)
                     }).then(function(data) {
                         if (data.success) {
-                            me.updateAlarm(data.data[0].ref_rk);
+                            me.updateAlarm(data.data[0].id.replace(/\..*/, ''));
                         } else {
                             console.error('error while send event', data.data.msg);
                         }
@@ -380,7 +380,10 @@ Ember.Application.initializer({
                         record.id = this.getRoutingKey(record);
                     },
                     filter: function(record) {
-                        return (get(record, 'ack.author') && get(record, 'ack.isAck'));
+                        var isCanceled = get(record, 'canceled') != undefined;
+                        var isAcked = get(record, 'extra_details.ack') != undefined;
+                        return !isCanceled && isAcked;
+                        // return (get(record, 'ack.author') && get(record, 'ack.isAck'));
                     },
                     handle: function(crecords) {
                         var record = this.getDisplayRecord('ackremove', crecords[0]);
@@ -398,6 +401,48 @@ Ember.Application.initializer({
                             timestamp: datesUtils.getNow(),
                             author: record.author
                         }));
+                    }
+                },
+                pbehavior: {
+                    extract: function(record, crecord, formRecord) {
+                        if (!isNone(formRecord)) {
+                            record.output = get(formRecord, 'output');
+                            // record.dtstart = get(formRecord, 'dtstart');
+                            // record.dtstop = get(formRecord, 'dtstop');
+                            record.start = get(formRecord, 'dtstart');
+                            record.end = get(formRecord, 'dtend');
+                            record.rrule = get(formRecord, 'rrule');
+                            record.pbehavior_name = 'downtime';
+                            record.action = 'create';
+                            record.name = get(formRecord, 'name');
+                        }
+                        // record.pbehavior_name = 'downtime';
+
+                        // record.filter = {};
+                        // record.comments = '';
+                        // record.enabled = true;
+                        // record.eids = [];
+                        // record.
+                    },
+                    filter: function(record) {
+                        return (get(record, 'ack.author') && get(record, 'ack.isAck'));
+                    },
+                    handle: function(crecords) {
+                        var record = this.getDisplayRecord('pbehavior', crecords[0]);
+                        this.getEventForm('pbehavior', record, crecords, 'pbehaviorform');
+                    },
+                    transform: function(crecord, record) {
+                        console.log('transform method for ack remove', crecord, record, 'pbehavior');
+                        // crecord.set('ack', undefined);
+                        // crecord.set('declare_ticket_author', undefined);
+                        // crecord.set('declare_ticket_date', undefined);
+                        // crecord.set('ticket', undefined);
+                        // crecord.set('ticket_date', undefined);
+                        // crecord.set('ack_remove', Ember.Object.create({
+                        //     comment: record.output,
+                        //     timestamp: datesUtils.getNow(),
+                        //     author: record.author
+                        // }));
                     }
                 },
                 declareticket: {
@@ -478,6 +523,36 @@ Ember.Application.initializer({
                         });
                     }
                 },
+                cancelack: {
+                    extract: function(record, crecord, formRecord) {
+                        record.ref_rk = get(crecord, 'entity_id');
+                        record.state = 0;
+                        record.state_type = 1;
+                        if (formRecord !== undefined) {
+                            record.output = get(formRecord, 'output');
+                        }
+                        record.cancel = 1;
+                    },
+                    filter: function(record) {
+                        return (get(record, 'ack.isAck'));
+                    },
+                    handle: function(crecords) {
+                        var record = this.getDisplayRecord('cancel', crecords[0]);
+                        this.getEventForm('cancel', record, crecords);
+                    },
+                    transform: function(crecord, record) {
+                        console.log('transform method for cancel -> crecords', crecord, 'record', record);
+                        crecord.set('ack.isCancel',true);
+                        crecord.set('ack.isAck',false);
+                        crecord.set('status', 4);
+                        crecord.set('cancel',{
+                            comment: record.output,
+                            timestamp: datesUtils.getNow(),
+                            author: record.author,
+                            previous_status: record.state
+                        });
+                    }
+                },
                 recovery: {
                     extract: function(record, crecord, formRecord) {
                         void(formRecord);
@@ -485,8 +560,8 @@ Ember.Application.initializer({
                         set(crecord, 'state', 0);
                     },
                     filter: function(record) {
-                        void(record);
-                        return false;
+                        var isCanceled = get(record, 'canceled') != undefined;
+                        return isCanceled;
                     },
                     handle: function(crecords) {
                         var record = crecords[0];
@@ -543,7 +618,8 @@ Ember.Application.initializer({
                             record.state = get(formRecord, 'state');
                             record.output = get(formRecord, 'output');
                         }
-                        record.event_type = 'check';
+                        // diff with the previous widget
+                        record.event_type = 'changestate';
                         record.keep_state = true;
                         record.state_type = 1;
                     },
@@ -572,49 +648,31 @@ Ember.Application.initializer({
                         if(!isNone(formRecord)) {
                             record.state = get(formRecord, 'state');
                             record.output = get(formRecord, 'output');
+                            record.duration = get(formRecord, 'duration');                        
                         }
-                        record.event_type = 'check';
-                        record.keep_state = true;
-                        record.state_type = 1;
+                        
+                        // record.event_type = 'check';
+                        // record.keep_state = true;
+                        // record.state_type = 1;
+                        // record.duration = 3;
                     },
                     filter: function(record) {
                         return (get(record, 'state'));
                     },
                     handle: function(crecords) {
-                        var record = this.getDisplayRecord('changestate', crecords[0]);
-                        this.getEventForm('changestate', record, crecords);
+                        var record = this.getDisplayRecord('snooze', crecords[0]);
+                        this.getEventForm('snooze', record, crecords, 'snoozeform');
                     },
                     transform: function(crecord, record) {
-                        console.log('transform method for ack changestate', crecord, record);
-                        crecord.set('state', record.state);
-                        if (record.state === 0) {
-                            crecord.set('ack', undefined);
-                        } else {
-                            crecord.set('cancel', undefined);
-                        }
-                        set(crecord, 'change_state_output', get(record, 'output'));
-                        set(crecord, 'keep_state', true);
-                    }
-                },
-
-                user: {
-                    extract: function(record, crecord, formRecord) {
-                        void(formRecord);
-                        record.output = get(crecord, 'output');
-                        record.display_name = get(this, 'login.firstname') + ' ' + get(this, 'login.lastname');
-                    },
-                    filter: function(crecords) {
-                        void(crecords);
-                        return false;
-                    },
-                    handle: function(crecords) {
-                        var record = this.getDisplayRecord('user', crecords[0]);
-                        notificationUtils.info(__('event "user" sent'));
-                        this.submitEvents(crecords, record, 'user');
-                    },
-                    transform: function(crecord, record) {
-                        console.log('transform method for user', crecord, record);
-                        //TODO
+                        console.log('transform method for ack snooze', crecord, record);
+                        // crecord.set('state', record.state);
+                        // if (record.state === 0) {
+                        //     crecord.set('ack', undefined);
+                        // } else {
+                        //     crecord.set('cancel', undefined);
+                        // }
+                        // set(crecord, 'change_state_output', get(record, 'output'));
+                        // set(crecord, 'keep_state', true);
                     }
                 },
                 comment: {

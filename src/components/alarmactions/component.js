@@ -4,7 +4,6 @@ Ember.Application.initializer({
         var get = Ember.get,
             set = Ember.set,
             isNone = Ember.isNone;
-
         /**
          * This is the eventcategories component for the widget calendar
          *
@@ -14,7 +13,6 @@ Ember.Application.initializer({
         var component = Ember.Component.extend({
             tagName: 'td',
             classNames: ['action-cell'],
-
             actionsMap: Ember.A([
                 {
                     class: 'glyphicon glyphicon-saved',
@@ -31,26 +29,39 @@ Ember.Application.initializer({
                 {
                     class: 'glyphicon glyphicon-ban-circle',
                     internal_states: ['acked'],
-                    name: 'unack',
+                    name: 'cancelack',
                     mixin_name: 'ackremove'
                 },
                 {
                     class: 'fa fa-ticket',
-                    internal_states: ['acked'],
-                    name: 'declareticket',
+                    internal_states: ['acked', 'cancelled'],
+                    name: 'declareanincident',
                     mixin_name: 'declareticket'
                 },
                 {
                     class: 'fa fa-thumb-tack',
-                    internal_states: ['acked', 'removed'],
-                    name: 'assocticket',
+                    internal_states: ['acked', 'cancelled'],
+                    name: 'assignticketnumber',
                     mixin_name: 'assocticket'
                 },
+                // teeeeeeeeeeeeeeeeeeeest
+                {
+                    class: 'fa fa-calendar-o',
+                    internal_states: ['immutable' ,'unacked', 'acked', 'cancelled'],
+                    name: 'pbehavior',
+                    mixin_name: 'pbehavior'
+                },
+                // {
+                //     class: 'glyphicon glyphicon-trash',
+                //     internal_states: ['acked'],
+                //     name: 'cancelalarm',
+                //     mixin_name: 'cancel'
+                // },
                 {
                     class: 'glyphicon glyphicon-trash',
                     internal_states: ['acked'],
-                    name: 'cancelalarm',
-                    mixin_name: 'cancel'
+                    name: 'removealarm',
+                    mixin_name: 'cancelack'
                 },
                 {
                     class: 'fa fa-exclamation-triangle',
@@ -60,68 +71,71 @@ Ember.Application.initializer({
                 },
                 {
                     class: 'glyphicon glyphicon-share-alt',
-                    internal_states: ['removed'],
+                    internal_states: ['cancelled'],
                     name: 'restorealarm',
                     mixin_name: 'recovery'
                 },
                 {
                     class: 'fa fa-clock-o',
-                    internal_states: ['unacked', 'acked','removed'],
+                    internal_states: ['unacked', 'acked', 'cancelled'],
                     name: 'snoozealarm',
                     mixin_name: 'snooze'
                 }
                 // TODO declare incident
             ]),
-
             init: function() {
                 this._super();
               },
-
             availableActions: function() {
                 var intState = this.get('internalState');
-                return this.get('actionsMap').filter(function(item, index, enumerable) {
+                // return this.get('actionsMap');
+                var actions = this.get('actionsMap').filter(function(item, index, enumerable) {
                     return item.internal_states.includes(intState)
                 });
-            }.property('internalState'),
-
+                if (this.get('isSnoozed')) {
+                    actions.removeObject(actions.findBy('mixin_name', 'snooze'))
+                };
+                if (this.get('isChangedByUser')) {
+                    actions.removeObject(actions.findBy('mixin_name', 'cancelack'))                    
+                }
+                return actions;
+            }.property('internalState', 'isSnoozed', 'isChangedByUser'),
             internalState: function() {
-                if (this.get('state') == 0 && !this.get('isAcked')) {
+                if (this.get('alarm.state.val') == 0) {
                     return 'immutable';
                 }
-                if (this.get('state') > 0 && !this.get('isAcked')) {
-                    return 'unacked';
+                if (this.get('isCanceled')) {
+                    return 'cancelled';
                 }
                 if (this.get('isAcked')) {
                     return 'acked';
                 }
-                // if (!this.get('isCancelled')) {
-                //     return 'cancelled';
-                // }
-                return 'removed';
-                
-
-                // if (this.get('state') == 0 && this.get('status') == 3) {
-                //     return 'acked';
-                // } else {
-                //     if (this.get('state') == 1) {
-                //         return 'cancelled'
-                //     } else {
-                //         return 'unacked'
-                //     }
-                // }
-            }.property('alarm.state', 'alarm.status'),
-
+                return 'unacked';
+            }.property('alarm.state.val', 'isCanceled', 'isAcked'),
             isAcked: function() {
-                return this.get('alarm.ack._t') != undefined;
-            }.property('alarm.ack._t'),
-
-            // isCancelled: function () {
-            //     return this.get('alarm.cancelled') != undefined;
-            // }.property('alarm.cancelled'),
-
+                return this.get('alarm.extra_details.ack') != undefined;
+            }.property('alarm.changed', 'alarm.extra_details'),
+//             isRemoved: function() {
+//                 return false;
+// // TODO temporary solution
+//             }.property('alarm.ack._t'),
+            isCanceled: function () {
+                return this.get('alarm.canceled') != undefined;
+            }.property('alarm.canceled'),
+//             isRestored: function () {
+//                 return false;
+// // TODO temporary solution
+//             }.property('alarm.ack._t'),
+            isSnoozed: function () {
+                return this.get('alarm.extra_details.snooze') != undefined; 
+            }.property('alarm.extra_details.snooze'),
             hasLinks: function() {
                 return this.get('alarm.linklist.event_links.length') > 0;
             }.property('alarm.linklist.event_links'),
+
+            isChangedByUser: function () {
+                return this.get('alarm.state._t') == 'changestate'
+            }.property('alarm.state._t'),
 
             actions: {
                 sendAction: function (action) {
@@ -129,7 +143,6 @@ Ember.Application.initializer({
                 }
             }
         });
-
         application.register('component:component-alarmactions', component);
     }
 });

@@ -19,13 +19,20 @@ Ember.Application.initializer({
               },
 
             spanClass: function() {
-                return [this.get('list')[this.get('value')]['color'], 'badge'].join(' ')
-            }.property('value'),
+                return [this.get('list')[this.get('value.val')]['color'], 'badge'].join(' ')
+            }.property('value.val'),
 
             caption: function() {
-                return this.get('list')[this.get('value')]['name']
-            }.property('value'),
+                return this.get('list')[this.get('value.val')]['name']
+            }.property('value.val'),
 
+            isChangedByUser: function () {
+                return this.get('value._t') == 'changestate'
+            }.property('value._t'),
+
+            isCancelled: function () {
+                return this.get('value.canceled') != undefined;
+            }.property('value.canceled'),
         });
 
         application.register('component:component-rendererstate', component);
