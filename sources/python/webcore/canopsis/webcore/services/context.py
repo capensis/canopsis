@@ -85,13 +85,19 @@ def exports(ws):
         else:
             query.update({"type":_type})
 
-        result = manager.get_entities(
+        cursor, count = manager.get_entities(
             query=query,
             limit=limit,
             start=start,
-            sort=sort
+            sort=sort,
+            with_count=True
         )
-        return result
+
+        data = []
+        for ent in cursor:
+            data.append(ent)
+
+        return data, count
 
     @route(ws.application.put, payload=[
         '_type', 'entity', 'context', 'extended_id'
