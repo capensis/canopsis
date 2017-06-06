@@ -558,7 +558,7 @@ class ContextGraphImport(ContextGraph):
         Same behaviour with "enable" but the timestamp will be store into
         infos.enable.
         """
-        if state != self.K_DISABLE and state != self.K_ENABLE:
+        if state != self.A_DISABLE and state != self.A_ENABLE:
             raise ValueError("{0} is not a valid state.".format(state))
 
         id_ = ci[self.K_ID]
@@ -572,21 +572,29 @@ class ContextGraphImport(ContextGraph):
         if id_ not in self.update:
             self.update[id_] = self.entities_to_update[id_].copy()
 
+        if state == self.A_DISABLE:
+            key_history = "disable_history"
+        else:
+            key_history = "disable_history"
+
         # Update entity the fields enable/disable of infos
-        timestamp = ci[self.K_PROPERTIES][state]
+        timestamp = ci[self.K_PROPERTIES][key_history]
 
         if not isinstance(timestamp, list):
-            timestamp = [timestamp]
-
-        if self.update[id_][self.K_INFOS].has_key(state):
-
-            if self.update[id_][self.K_INFOS][state] is None:
-                self.update[id_][self.K_INFOS][state] = timestamp
+            if timestamp is None:
+                timestamp = []
             else:
-                self.update[id_][self.K_INFOS][state] += timestamp
+                timestamp = [timestamp]
+
+        if self.update[id_][self.K_INFOS].has_key(key_history):
+
+            if self.update[id_][self.K_INFOS][key_history] is None:
+                self.update[id_][self.K_INFOS][key_history] = timestamp
+            else:
+                self.update[id_][self.K_INFOS][key_history] += timestamp
 
         else:
-            self.update[id_][self.K_INFOS][state] = timestamp
+            self.update[id_][self.K_INFOS][key_history] = timestamp
 
     def __a_disable_entity(self, ci):
         """Disable an entity defined by ci. For more information, see

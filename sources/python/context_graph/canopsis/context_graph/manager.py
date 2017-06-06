@@ -247,7 +247,7 @@ class ContextGraph(MiddlewareRegistry):
                 entity["infos"]["enable_history"] = [int(time.time())]
             else:
                 infos = entity["infos"]
-                if not isinstance(entity["infos"]["enable_history"], []):
+                if not isinstance(entity["infos"]["enable_history"], list):
                     infos["enable_history"] = [infos["enable_history"]]
 
                 infos["enable_history"].append(int(time.time()))
