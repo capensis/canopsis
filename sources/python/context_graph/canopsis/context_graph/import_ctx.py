@@ -1,6 +1,8 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
@@ -404,7 +406,6 @@ class ContextGraphImport(ContextGraph):
                 raise excep
 
         ids = ids_links.union(ids_cis)
-
         result = self.get_entities_by_id(list(ids))
         ctx = {}
 
@@ -563,7 +564,7 @@ class ContextGraphImport(ContextGraph):
 
         id_ = ci[self.K_ID]
 
-        if ci[self.K_ID] not in self.entities_to_update:
+        if id_ not in self.entities_to_update:
             desc = "The ci of id {0} does not match any existing"\
                    " entity.".format(id_)
             raise ValueError(desc)
@@ -574,11 +575,13 @@ class ContextGraphImport(ContextGraph):
 
         if state == self.A_DISABLE:
             key_history = "disable_history"
+            key = self.K_DISABLE
         else:
-            key_history = "disable_history"
+            key_history = "enable_history"
+            key = self.K_ENABLE
 
         # Update entity the fields enable/disable of infos
-        timestamp = ci[self.K_PROPERTIES][key_history]
+        timestamp = ci[self.K_PROPERTIES][key]
 
         if not isinstance(timestamp, list):
             if timestamp is None:
@@ -721,6 +724,7 @@ class ContextGraphImport(ContextGraph):
         # Process cis list
         start = time.time()
         for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
+            self.logger.debug("Current ci : {0}".format(ci))
             if ci[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_entity(ci)
             elif ci[self.K_ACTION] == self.A_CREATE:
@@ -742,6 +746,7 @@ class ContextGraphImport(ContextGraph):
         # Process link list
         start = time.time()
         for link in ijson.items(fd, "{0}.item".format(self.K_LINKS)):
+            self.logger.debug("Current link : {0}".format(link))
             if link[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_link(link)
             elif link[self.K_ACTION] == self.A_CREATE:
