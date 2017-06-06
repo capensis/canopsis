@@ -19,11 +19,9 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
-from time import time
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
-import uuid
 from canopsis.context_graph.manager import ContextGraph
 
 CONF_PATH = 'linklist/linklist.conf'
@@ -47,32 +45,41 @@ class Entitylink(MiddlewareRegistry):
 
     def get_or_create_from_event(self, event):
         """
-        Find or create an entity link document
+        Find or create an entity link document.
 
         :param event: an event that may have an entity link stored
             if not, an entity link entry is created and is returned
+        :type event:
         """
+        entity_list = list(self.get_links_from_event(event))
+
+        if len(entity_list) > 0:
+            return entity_list[0]
+
+        _id = self.get_id_from_event(event)
+        self.put(_id, {
+            'computed_links': [],
+            'event_links': []
+        })
 
         entity_list = list(self.get_links_from_event(event))
 
-        if entity_list:
+        if len(entity_list) > 0:
             return entity_list[0]
-        else:
-            _id = self.get_id_from_event(event)
-            self.put(_id, {
-                'computed_links': [],
-                'event_links': []
-            })
-            return list(self.get_links_from_event(event))[0]
 
     def get_id_from_event(self, event):
         """
-        Find a context id from an event
+        Find a context id from an event.
 
         :param event: an event to search a context id from
+        :type event:
         """
         entity_id = self.context.get_id(event)
-        entity = self.context.get_entities_by_id(entity_id)[0]
+        entity = self.context.get_entities_by_id(entity_id)
+        if len(entity) <= 0:
+            return None
+
+        entity = entity[0]
 
         encoded_entity = {}
         for k, v in entity.items():
@@ -86,12 +93,11 @@ class Entitylink(MiddlewareRegistry):
                 pass
             encoded_entity[k] = v
 
-        entity_id = encoded_entity["_id"]
-        return entity_id
+        return encoded_entity["_id"]
 
     def get_links_from_event(self, event):
         """
-        Try to find an entity link from a given event
+        Try to find an entity link from a given event.
 
         :param event: a canopsis event
         """
@@ -108,9 +114,8 @@ class Entitylink(MiddlewareRegistry):
         with_count=False,
         _filter={},
     ):
-
         """
-        Retrieve information from data sources
+        Retrieve information from data sources.
 
         :param ids: an id list for document to search
         :param limit: maximum record fetched at once
@@ -128,14 +133,9 @@ class Entitylink(MiddlewareRegistry):
         )
         return result
 
-    def put(
-        self,
-        _id,
-        document,
-        cache=False
-    ):
+    def put(self, _id, document, cache=False):
         """
-        Persistance layer for upsert operations
+        Persistance layer for upsert operations.
 
         :param _id: entity id
         :param document: contains link information for entities
@@ -145,10 +145,7 @@ class Entitylink(MiddlewareRegistry):
             _id=_id, element=document, cache=cache
         )
 
-    def remove(
-        self,
-        ids
-    ):
+    def remove(self, ids):
         """
         Remove fields persisted in a default storage.
 
