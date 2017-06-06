@@ -18,12 +18,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from unittest import TestCase, main
-from canopsis.entitylink.manager import Entitylink
 from uuid import uuid4
 
-DEBUG = False
+from canopsis.entitylink.manager import Entitylink
+from canopsis.event import forger
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.middleware.core import Middleware
 
 
 class CheckManagerTest(TestCase):
@@ -32,11 +35,12 @@ class CheckManagerTest(TestCase):
     """
 
     def setUp(self):
-        """
-        initialize a manager.
-        """
-
         self.manager = Entitylink()
+        self.entity_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testentitylink://'
+        )
+        self.manager[Entitylink.ENTITY_STORAGE] = self.entity_storage
+
         self.name = 'testentitylink'
         self.id = str(uuid4())
         self.ids = [self.id]
@@ -47,40 +51,43 @@ class CheckManagerTest(TestCase):
             }]
         }
 
-    def clean(self):
-        self.manager.remove(self.ids)
+        self.manager.put(
+            self.id,
+            self.document_content
+        )
 
-    def get_linklist(self):
-        return self.manager.find(ids=self.ids)
+        # init a context
+        self.context_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testentities://'
+        )
+        self.manager.context[ContextGraph.ENTITIES_STORAGE] = self.context_storage
+
+        entity = {
+            '_id': "a_component",
+            'type': 'component',
+            'name': 'conn-name1',
+            'depends': [],
+            'impact': [],
+            'measurements': [],
+            'infos': {}
+        }
+        self.manager.context.create_entity(entity)
+
+    def tearDown(self):
+        self.entity_storage.remove_elements()
+        self.context_storage.remove_elements()
 
     def linklist_count_equals(self, count):
-        result = list(self.get_linklist())
-        if DEBUG:
-            print(result)
-        result = len(result)
-        self.assertEqual(result, count)
+        result = list(self.manager.find(ids=self.ids))
+        self.assertEqual(len(result), count)
 
 
 class LinkListTest(CheckManagerTest):
 
     def test_put(self):
-        self.clean()
-
-        self.manager.put(
-            self.id,
-            self.document_content
-        )
-
         self.linklist_count_equals(1)
 
     def test_get(self):
-        self.clean()
-
-        self.manager.put(
-            self.id,
-            self.document_content
-        )
-
         self.manager.put(
             self.id + '1',
             self.document_content
@@ -95,20 +102,31 @@ class LinkListTest(CheckManagerTest):
         self.assertEqual(len(list(result)), 1)
 
     def test_remove(self):
-        self.clean()
-
-        self.linklist_count_equals(0)
-
-        self.manager.put(
-            self.id,
-            self.document_content
-        )
-
         self.linklist_count_equals(1)
 
         self.manager.remove(self.ids)
 
         self.linklist_count_equals(0)
+
+    def test_get_id_from_event(self):
+        event = forger(
+            event_type="check",
+            component="a_component",
+            #state=1,
+            #output="output",
+        )
+        res = self.manager.get_id_from_event(event=event)
+        self.assertEqual(res, 'a_component')
+
+    def test_get_or_create_from_event(self):
+        event = forger(
+            event_type="check",
+            component="a_component",
+        )
+
+        res = self.manager.get_or_create_from_event(event=event)
+        self.assertTrue(isinstance(res, dict))
+        self.assertEqual(res['_id'], 'a_component')
 
 
 if __name__ == '__main__':

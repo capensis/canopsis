@@ -69,7 +69,6 @@ class ContextGraph(MiddlewareRegistry):
 
         self._extra_fields = value
 
-
     @classmethod
     def get_id(cls, event):
         """Return the id extracted from the event as a string.
@@ -81,7 +80,6 @@ class ContextGraph(MiddlewareRegistry):
         :param event: the event from which we extract the id.
         :return type: the id as a string
         """
-
         source_type = ''
         if 'source_type' in event:
             source_type = event['source_type']
@@ -97,8 +95,8 @@ class ContextGraph(MiddlewareRegistry):
         elif source_type == cls.CONNECTOR:
             id_ = "{0}/{1}".format(event["connector"], event["connector_name"])
         else:
-            error_desc = "Event type should be 'connector', 'resource' or\
-            'component' not {0}.".format(source_type)
+            error_desc = ("Event type should be 'connector', 'resource' or"
+                          "'component' not {}.".format(source_type))
             raise ValueError(error_desc)
 
         return id_
@@ -167,7 +165,6 @@ class ContextGraph(MiddlewareRegistry):
         if extra_fields is None:
             self.extra_fields = extra_fields
 
-
     def get_entities_by_id(self, _id):
         """
         Retreive the entity identified by an id. If id is a list of id,
@@ -219,6 +216,8 @@ class ContextGraph(MiddlewareRegistry):
     def get_all_entities_id(self):
         """
         Get the ids of every stored entities.
+        TODO: use an iterator instead
+
         :return type: a set with every entities id.
         """
         entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
@@ -521,6 +520,8 @@ class ContextGraph(MiddlewareRegistry):
         return result
 
     def get_graph_impact(self, _id, deepness=None):
+        """
+        """
         col = self[ContextGraph.ENTITIES_STORAGE]._backend
         ag = []
 
@@ -529,23 +530,24 @@ class ContextGraph(MiddlewareRegistry):
 
         glookup = {
             '$graphLookup': {
-                    'from': self.collection_name,
-                    'startWith': '$_id',
-                    'connectFromField': 'impact',
-                    'connectToField': '_id',
-                    'depthField': 'depth',
-                    'as': 'graph'
-                }
+                'from': self.collection_name,
+                'startWith': '$_id',
+                'connectFromField': 'impact',
+                'connectToField': '_id',
+                'depthField': 'depth',
+                'as': 'graph'
+            }
         }
         if deepness is not None:
             glookup['$graphLookup']['maxDepth'] = deepness
         ag.append(glookup)
 
-
         res = col.aggregate(ag)
         return res['result'][0]
 
     def get_graph_depends(self, _id, deepness=None):
+        """
+        """
         col = self[ContextGraph.ENTITIES_STORAGE]._backend
         ag = []
 
@@ -554,13 +556,13 @@ class ContextGraph(MiddlewareRegistry):
 
         glookup = {
             '$graphLookup': {
-                    'from': self.collection_name,
-                    'startWith': '$_id',
-                    'connectFromField': 'depends',
-                    'connectToField': '_id',
-                    'depthField': 'depth',
-                    'as': 'graph'
-                }
+                'from': self.collection_name,
+                'startWith': '$_id',
+                'connectFromField': 'depends',
+                'connectToField': '_id',
+                'depthField': 'depth',
+                'as': 'graph'
+            }
         }
         if deepness is not None:
             glookup['$graphLookup']['maxDepth'] = deepness
@@ -570,6 +572,8 @@ class ContextGraph(MiddlewareRegistry):
         return res['result'][0]
 
     def get_leaves_impact(self, _id, deepness=None):
+        """
+        """
         graph = self.get_graph_impact(_id, deepness)
         ret_val = []
 
@@ -584,7 +588,8 @@ class ContextGraph(MiddlewareRegistry):
         return ret_val
 
     def get_leaves_depends(self, _id, deepness=None):
-
+        """
+        """
         graph = self.get_graph_depends(_id, deepness)
         ret_val = []
 

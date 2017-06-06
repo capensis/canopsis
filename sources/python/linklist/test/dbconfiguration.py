@@ -22,8 +22,6 @@
 from unittest import TestCase, main
 from canopsis.linklist.dbconfigurationmanager import DBConfiguration
 
-DEBUG = False
-
 
 class DBConfigurationTest(TestCase):
     """
@@ -31,10 +29,13 @@ class DBConfigurationTest(TestCase):
     """
 
     def setUp(self):
-        """
-        initialize a manager.
-        """
         self.dbconfigurationmanager = DBConfiguration()
+
+
+class DBTest(DBConfigurationTest):
+
+    def test_instanciate(self):
+        pass
 
 
 if __name__ == '__main__':

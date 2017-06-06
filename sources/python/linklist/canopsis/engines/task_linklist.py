@@ -17,13 +17,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
-from canopsis.engines.core import TaskHandler
+from json import loads
+
 from canopsis.linklist.manager import Linklist
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.event.manager import Event
+from canopsis.engines.core import TaskHandler
 from canopsis.entitylink.manager import Entitylink
-from json import loads
+from canopsis.event.manager import Event
 
 
 class engine(TaskHandler):
@@ -40,18 +42,17 @@ class engine(TaskHandler):
     }
 
     def handle_task(self, job):
+        """
+        This task computes all links associated to an entity.
+        Link association are managed by entity link system.
 
+        :param job: an entity
+        """
         self.link_list_manager = Linklist()
         self.context = ContextGraph()
         self.event = Event()
         self.entity_link_manager = Entitylink()
-
-        """
-        This task computes all links associated to an entity.
-        Link association are managed by entity link system.
-        """
-
-        for entity_id in self.context.iter_ids():
+        for entity_id in self.context.get_all_entities_id():
             self.entity_link_manager.put(entity_id, {
                 'computed_links': []
             })
@@ -67,10 +68,10 @@ class engine(TaskHandler):
             l_filter = linklist.get('mfilter')
             l_list = linklist.get('filterlink')
 
-            self.logger.debug(u'proceed linklist {}'.format(name))
+            self.logger.debug('proceed linklist {}'.format(name))
 
             if not l_list or not l_filter:
-                self.logger.info(u'Cannot proceed linklist for {}'.format(name))
+                self.logger.info('Cannot proceed linklist for {}'.format(name))
             else:
                 # Find context element ids matched by filter
                 context_ids = self.get_ids_for_filter(l_filter)
@@ -83,10 +84,9 @@ class engine(TaskHandler):
                     # Append all links/labels to the context element
                     links[context_id] += l_list
 
-        self.logger.debug(u'links')
-        self.logger.debug(links)
+        self.logger.debug('links: {}'.format(links))
 
-        entities = self.context.get_entities(links.keys())
+        entities = self.context.get_entities(query={"_id": {"$in": links.keys()}})
 
         for entity in entities:
             self.update_context_with_links(
@@ -97,15 +97,17 @@ class engine(TaskHandler):
         return (0, 'Link list computation complete')
 
     def update_context_with_links(self, entity, links):
-
         """
-        Upsert computed links to the entity link storage
+        Upsert computed links to the entity link storage.
+
+        :param entity:
+        :type entity:
+        :param links:
+        :type links: list
         """
 
-        self.logger.debug(u' + entity')
-        self.logger.debug(entity)
-        self.logger.debug(u' + links')
-        self.logger.debug(links)
+        self.logger.debug(' + entity {}'.format(entity))
+        self.logger.debug(' + links {}'.format(links))
 
         context = {
             'computed_links': links
@@ -114,11 +116,13 @@ class engine(TaskHandler):
         self.entity_link_manager.put(entity["_id"], context)
 
     def get_ids_for_filter(self, l_filter):
-
         """
         Retrieve a list of id from event collection.
         Can be performance killer as matching mfilter
         is only available on the event collection at the moment
+
+        :param l_filter:
+        :type l_filter:
         """
 
         context_ids = []
@@ -137,7 +141,7 @@ class engine(TaskHandler):
         )
 
         for event in events:
-            self.logger.debug(u'rk : {}'.format(event['_id']))
+            self.logger.debug('rk : {}'.format(event['_id']))
 
             entity_id = self.context.get_id(event)
 
