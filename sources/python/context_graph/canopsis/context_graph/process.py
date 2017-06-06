@@ -33,7 +33,7 @@ def create_entity(id,
                   measurements=[],
                   infos={},
                   **kwargs):
-    """Create an entity with following information.
+    """Create an entity with following information and put it state at enable.
     :param id: the entity id
     :type id: a string
     :param name: the entity name
@@ -67,6 +67,11 @@ def create_entity(id,
 
     if etype == 'component':
         ent.pop("measurements")
+
+    context_graph_manager._enable_entity(ent)
+
+    import pprint
+    LOGGER.critical("CREATE ENT : {0}\n".format(pprint.pformat(ent)))
 
     return ent
 
@@ -488,8 +493,15 @@ def update_context(presence, ids, in_db, event):
     for key in extra_infos:
         evt_entity['infos'][key] = extra_infos[key]
 
+    import pprint
+    for ent in to_update:
+        LOGGER.critical("UPDATE CTX BFR : {0}\n".format(pprint.pformat(ent)))
+
     for key in event_info:
         evt_entity["infos"][key] = event_info[key]
+
+    for ent in to_update:
+        LOGGER.critical("UPDATE CTX AFR : {0}\n".format(pprint.pformat(ent)))
 
     context_graph_manager.keys_info_filter(evt_entity["infos"])
     context_graph_manager._put_entities(to_update)
