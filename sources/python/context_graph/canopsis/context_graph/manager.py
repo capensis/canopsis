@@ -8,6 +8,8 @@ from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
 
+import time
+
 CONF_PATH = 'context_graph/manager.conf'
 CATEGORY = 'CONTEXTGRAPH'
 CONTENT = [
@@ -141,6 +143,7 @@ class ContextGraph(MiddlewareRegistry):
         configuration path givent to the class, by default
         etc/context_graph/manager.conf
         """
+
         if not hasattr(self, "authorized_info_keys"):
             values = values = self.conf.get(CATEGORY)
             self.authorized_info_keys = values.get("authorized_info_keys").value
@@ -200,6 +203,7 @@ class ContextGraph(MiddlewareRegistry):
         """
         if not isinstance(entities, list):
             entities = [entities]
+
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
     def _delete_entities(self, entities):
@@ -227,6 +231,28 @@ class ContextGraph(MiddlewareRegistry):
             ret_val.add(i['_id'])
         return ret_val
 
+    @classmethod
+    def _enable_entity(cls, entity):
+        """Enable an entity. If the given entity does not have an infos.state
+        field create it with a the enable status then create an
+        infos.enable_history field with the current timestamp.
+
+        :param entity: an entity
+        :type entity: a dict
+        """
+        if "state" not in entity["infos"]:
+            entity["infos"]["state"] = "enable"
+
+            if "enable_history" not in entity["infos"]:
+                entity["infos"]["enable_history"] = [int(time.time())]
+            else:
+                infos = entity["infos"]
+                if not isinstance(entity["infos"]["enable_history"], []):
+                    infos["enable_history"] = [infos["enable_history"]]
+
+                infos["enable_history"].append(int(time.time()))
+
+
     def create_entity(self, entity):
         """Create an entity in the context with the given entity. This will
         update the depends and impact links between entities. If they are
@@ -240,12 +266,20 @@ class ContextGraph(MiddlewareRegistry):
         If an entity is already store with same id as than entity, a ValueError
         will be raised with a description.
 
+        If an entity does not have a field infos.state, it will enable
+        the entity with the current timestamp. This will create two fields
+        infos.state and a infos.enable_history. Infos.state will store the
+        current state of the entity (enable) and infos.enable_history will
+        store the enable time.
+
         Other exception maybe raised, see __update_dependancies.
 
         :param entity: the new entity.
         """
 
         # TODO add treatment to check if every required field are present
+
+        self._enable_entity(entity)
 
         entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
             query={'_id': entity["_id"]}))
