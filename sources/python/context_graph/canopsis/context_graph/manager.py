@@ -179,11 +179,8 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         query = {"_id": None}
-        if isinstance(id, type([])):
-            ids = []
-            for i in _id:
-                ids.append(i)
-            query["_id"] = {"$in": ids}
+        if isinstance(_id, list):
+            query["_id"] = {"$in": _id}
         else:
             query["_id"] = _id
 
