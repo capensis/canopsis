@@ -324,7 +324,7 @@ Ember.Application.initializer({
                         record.state_type = 1;
                         record.id = this.getRoutingKey(record);
                         record.ticket = 'ticket';
-                        record.output = get(record, 'output');
+                        record.output = 'auto ack by ' + get(record, 'author');
                     },
                     /**
                      * @method fastack_filter
@@ -345,7 +345,7 @@ Ember.Application.initializer({
                     handle: function(crecords) {
                         var record = this.getDisplayRecord('ack', crecords[0]);
                         var fastackmsg = get(this, 'mixinOptions.sendevent.fastackmsg');
-                        record.set('output', fastackmsg)
+                        record.set('output', 'auto ack by ' + get(record, 'author'))
                         this.submitEvents(crecords, record, 'ack');
                     },
                     /**
