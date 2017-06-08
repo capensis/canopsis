@@ -36,7 +36,7 @@ Defects
 Work
 ^^^^
 
-* Rewrite pbehaviors model to fit new needs.  
+* Rewrite pbehaviors model to fit new needs.
 * We won't work on current pbehavior code, new work from scratch.
 
 
@@ -55,7 +55,7 @@ This need to be adapted like :
 
 .. code-block::
 
- { 
+ {
  	"_id" : string,
  	"name" : string,
  	"filter" : string,
@@ -63,7 +63,7 @@ This need to be adapted like :
  	    "_id": string,
  	    "author": string,
  	    "ts": timestamp,
- 	    "message": string 
+ 	    "message": string
  	} ],
  	"tstart" : timestamp,
  	"tstop" : timestamp,
@@ -73,7 +73,7 @@ This need to be adapted like :
  	"connector" : string,
  	"connector_name" : string,
  	"author" : string
- } 
+ }
 
 * _id : the unique id of the pbehavior, handled by mongodb itself
 * name : the name of the pbehavior
@@ -111,8 +111,8 @@ Manager
 Engines
 ^^^^^^^
 
-In canopsis, events are processed by engines.  
-Engines generaly receive events by consuming AMQP Queue.  
+In canopsis, events are processed by engines.
+Engines generaly receive events by consuming AMQP Queue.
 
 An engine consists in 2 methods :
 
@@ -133,7 +133,7 @@ This new engine **pbehavior** has 2 goals :
 
 **1 Compute pbehaviors filter**
 
-At every engine beat, the engine must 
+At every engine beat, the engine must
 
 * Iterate on pbehaviors filters
 * For each filter, ask the canopsis context to get a list of entity ids
@@ -142,13 +142,13 @@ At every engine beat, the engine must
 
 **2 Consume events**
 
-When there is a message (event_type: pbehavior) in a AMQP queue (corresponding to the engine queue), the engine must 
+When there is a message (event_type: pbehavior) in a AMQP queue (corresponding to the engine queue), the engine must
 
 * Read the message
 * Understand which kind of operation the message deals with
 * Create or Delete the corresponding pbehavior
 
-Here is the structure of a compliant message 
+Here is the structure of a compliant message
 
 .. code-block::
 
@@ -157,11 +157,13 @@ Here is the structure of a compliant message
       "pbehavior_name": "downtime",
       "start": ts,
       "end": ts,
-      "duration": ts,
+      "comment": "a comment about the pbehaviour",
+      "author": "the author",
       "action": "create" or "delete" only
+	  "rrule": "an rrule",
       + classic event fields
     }
-    
+
 for creating actions, create an entry with this fields:
 
 .. code-block::
@@ -203,14 +205,14 @@ Event Filter
 ^^^^^^^^^^^^
 
 The event filter handle one or several events thanks to a filter and apply action(s) to these events
-The current event filter engine must be compliant with Pbehaviors.  
+The current event filter engine must be compliant with Pbehaviors.
 
-Actually, an event filter is composed of 
+Actually, an event filter is composed of
 
 * A filter
 * A list of actions
 
-The event filter must now provide a way to match pbehaviors you implement, so it has to become 
+The event filter must now provide a way to match pbehaviors you implement, so it has to become
 
 * A filter
 * A list of within/without pbehaviors
@@ -225,7 +227,7 @@ In order to add this new point in event filter, you have to add a new method in 
 * in=[ pbehavior_name, ]
 * out=[ pbehavior_name, ]
 
-This method return a boolean if the entity_id is currently in **in** arg and out **out** arg.  
+This method return a boolean if the entity_id is currently in **in** arg and out **out** arg.
 **in** and **out** are evaluated with **tstart**, **tstop**, and **rrule** timestamps compared to **now**
 
 To fit your changes, you also have to change the schemas in the database related to the event_filter:
@@ -243,7 +245,7 @@ Selector
 The selector engine aggregates entity states to build new entities.
 
 * First, selectors are defined by the user with a filter. This filter aggregates several entities. To do that, you have to see in the context all entities that match the filter.
-* Then the engine selector will find all alarms related to these entities. (The old selector system uses 'events' collection but we want to migrate to 'alerts' collections) 
+* Then the engine selector will find all alarms related to these entities. (The old selector system uses 'events' collection but we want to migrate to 'alerts' collections)
 * Finally, the engine will compute the entity state with the rule given by the user (worst state, best state, mean, etc...)
 
 This new selector engine has to be adaptable, in order to let us use it with our new context, actually in development that let this engine do only one request (context and alerts at the same time).
@@ -255,9 +257,9 @@ SLA
 
 SLA ARE NOT READY FOR THE MOMENT - WE HAVE TO SPECIFY THEM BEFORE IMPLEMENT THEM. PLEASE DO NOT PAY ATTENTION TO ANY METHOD RELATED TO THE SLA IF YOU FIND THEM.
 
-It can be combined to the sla lib that will calcultate availability rates.  
-Some behaviors affects SLA rates.  
-For example, if a entity is in downtime, a selector which uses that entity must not be affected.  
+It can be combined to the sla lib that will calcultate availability rates.
+Some behaviors affects SLA rates.
+For example, if a entity is in downtime, a selector which uses that entity must not be affected.
 
 
 Connectors
@@ -266,7 +268,7 @@ Connectors
 **neb2amqp**
 
 
-As the `neb2amqp` connector is handling `downtime` events, it needs to fit the new pvehavior schema.  
+As the `neb2amqp` connector is handling `downtime` events, it needs to fit the new pvehavior schema.
 
 
 Getting started
@@ -333,13 +335,13 @@ By :
 Action buttons
 ^^^^^^^^^^^^^^
 
-As ack, ticket, and other actions, `pbehaviors` must have it's own action buttons.  
+As ack, ticket, and other actions, `pbehaviors` must have it's own action buttons.
 
 It has to be available on the following views :
 
 * alarms
 * context
-* other widgets : have a look at https://git.canopsis.net/canopsis-ui-bricks/brick-service-weather/blob/master/doc/TR/TR_service_weather.rst  
+* other widgets : have a look at https://git.canopsis.net/canopsis-ui-bricks/brick-service-weather/blob/master/doc/TR/TR_service_weather.rst
 Work has maybe be already done
 
 
