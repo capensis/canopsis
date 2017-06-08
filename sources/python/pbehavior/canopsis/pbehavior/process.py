@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 
 from json import dumps
 
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
@@ -74,7 +75,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
         pbm = singleton_per_scope(PBehaviorManager)
 
     if event.get('event_type') == EVENT_TYPE:
-        entity_id = get_entity_id(event)
+        entity_id = ContextGraph.get_id(event)
 
         logger.debug("entity_id: {}\naction: {}".format(
             entity_id, event.get('action'))
@@ -86,7 +87,9 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 event['pbehavior_name'], filter, event['author'],
                 event['start'], event['end'],
                 connector=event['connector'],
-                connector_name=event['connector_name']
+                comments=event['comment'],
+                connector_name=event['connector_name'],
+                rrule=event['rrule']
             )
             if not result:
                 logger.error(ERROR_MSG.format(event['action'], event))
