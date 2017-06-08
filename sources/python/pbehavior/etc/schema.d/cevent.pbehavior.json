@@ -37,10 +37,6 @@
                 "delete"
             ],
             "required": true
-        },
-        "entity_id": {
-            "required": true,
-            "type": "array"
         }
     }
 }
