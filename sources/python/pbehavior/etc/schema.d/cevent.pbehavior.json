@@ -19,10 +19,6 @@
             "required": true,
             "type": "string"
         },
-        "duration": {
-            "required": true,
-            "type": "string"
-        },
         "author": {
             "required": true,
             "type": "string"
