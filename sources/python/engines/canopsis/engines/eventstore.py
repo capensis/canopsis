@@ -66,14 +66,6 @@ class engine(Engine):
     def store_check(self, event):
         _id = self.archiver.check_event(event['rk'], event)
 
-        if event.get('downtime', False):
-            entity_id = self.context.get_id(event)
-            endts = self.pbehavior.getending(
-                source=entity_id, behaviors='downtime'
-            )
-
-            event['previous_state_change_ts'] = endts
-
         if _id:
             event['_id'] = _id
             event['event_id'] = event['rk']

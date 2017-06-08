@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,4 +19,25 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = "0.1"
+
+from unittest import TestCase
+
+from canopsis.context.manager import Context
+from canopsis.middleware.core import Middleware
+from canopsis.pbehavior.manager import PBehaviorManager
+
+
+class BaseTest(TestCase):
+    def setUp(self):
+        pbehavior_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testpbehavior://'
+        )
+
+        self.pbm = PBehaviorManager()
+        self.context = Context(data_scope='test_context')
+
+        self.pbm[PBehaviorManager.PBEHAVIOR_STORAGE] = pbehavior_storage
+
+    def tearDown(self):
+        self.pbm.pbehavior_storage.remove_elements()
+        self.context[Context.CTX_STORAGE].remove_elements()

@@ -465,6 +465,14 @@ class MongoStorage(MongoDataBase, Storage):
 
         return oldvalue if not result else newvalue
 
+    def aggregate(self, query, table=None, **kwargs):
+        query = query or {}
+        table = table or self.get_table()
+
+        result = self._get_backend(backend=table).aggregate(query, **kwargs)
+
+        return result
+
     def _element_id(self, element):
 
         return element.get(MongoStorage.ID, None)
