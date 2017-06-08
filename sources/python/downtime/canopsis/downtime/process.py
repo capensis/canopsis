@@ -36,7 +36,7 @@ from icalendar import Event as vEvent
 ctxmgr = Context()  #: default context manager
 pbmgr = PBehaviorManager()  #: default pbehavior manager
 
-events = get_storage(
+events_storage = get_storage(
     namespace='events',
     account=Account(user='root', group='root')
 ).get_backend()
@@ -85,39 +85,41 @@ def event_processing(
     eid = context.get_entity_id(encoded_entity)
 
     if evtype == DOWNTIME or (evtype == PBEHAVIOR and event['pbehavior_name'] == DOWNTIME):
-        ev = vEvent()
-        ev.add('X-Canopsis-BehaviorType', '["{0}"]'.format(DOWNTIME))
-        ev.add('summary', event['output'])
-        ev.add('dtstart', datetime.fromtimestamp(event['start']))
-        ev.add('dtend', datetime.fromtimestamp(event['end']))
-        ev.add('dtstamp', datetime.fromtimestamp(event['entry']))
-        if not event.get('fixed', True):
-            ev.add('duration', timedelta(seconds=event['duration']))
-        ev.add('contact', event['author'])
+        action = event["action"]
+        # listing identical events
+        bhvs = manager.get_behaviors(entity_id=eid)
+        logger.debug('DOWNTIME {} :) :) {}'.format(action, bhvs))
+        uids = [b.get('_id', None) for b in bhvs if b['dtstart'] == event['start'] and b['dtend'] == event['end']]
 
-        manager.put(source=eid, vevents=[ev])
+        if action == 'delete':
+            # Remove corresponding behaviors (same source/start/end)
+            logger.info('Removing behaviors {}'.format(uids))
+            manager.remove(uids=uids)
 
-        if manager.getending(
-            source=eid, behaviors=DOWNTIME, ts=event['timestamp']
-        ):
-            events.update(
-                {
-                    'connector': event['connector'],
-                    'connector_name': event['connector_name'],
-                    'component': event['component'],
-                    'resource': event.get('resource', None)
-                },
-                {
-                    '$set': {
-                        DOWNTIME: True
-                    }
-                }
-            )
+        elif action == 'create' and not event["was_started"]:
+            if len(uids) > 0:
+                # Behavior already created !
+                logger.info('Behavior already created for {}'.format(eid))
+                return event
+
+            logger.info('Creating behavior for source {}'.format(eid))
+            ev = vEvent()
+            ev.add('X-Canopsis-BehaviorType', '["{}"]'.format(DOWNTIME))
+            ev.add('summary', event['output'])
+            ev.add('dtstart', datetime.fromtimestamp(event['start']))
+            ev.add('dtend', datetime.fromtimestamp(event['end']))
+            ev.add('dtstamp', datetime.fromtimestamp(event['entry']))
+            if not event.get('fixed', True):
+                ev.add('duration', timedelta(seconds=event['duration']))
+            ev.add('contact', event['author'])
+
+            manager.put(source=eid, vevents=[ev])
+
+        elif event["was_started"]:
+            logger.info('Behavior starting event for {}. Ignoring'.format(eid))
 
     else:
-        event[DOWNTIME] = manager.getending(
-            source=eid, behaviors=DOWNTIME
-        ) is not None
+        event[DOWNTIME] = manager.getending(source=eid, behaviors=DOWNTIME) is not None
 
     return event
 
@@ -141,15 +143,15 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
 
     entity_ids = manager.whois(query=DOWNTIME_QUERY)
     entities = context.get_entities(list(entity_ids))
+    logger.debug('BEAT: {} //// {}'.format(entity_ids, list(entities)))
 
-    spec = {}
-
+    # (Un)setting behaviors
+    unsetting = {}
+    setting = {}
     for key in ['connector', 'connector_name', 'component', 'resource']:
-        spec[key] = {
-            '$nin': [
-                e.get(key, None)
-                for e in entities
-            ]
-        }
+        unsetting[key] = {'$nin': [e.get(key, None) for e in entities]}
+        setting[key] = {'$in': [e.get(key, None) for e in entities]}
 
-    events.update(spec, {'$set': {DOWNTIME: False}})
+    logger.debug('BEAT Update: {} **** {}'.format(unsetting, setting))
+    events_storage.update(unsetting, {'$set': {DOWNTIME: False}})
+    events_storage.update(setting, {'$set': {DOWNTIME: True}})

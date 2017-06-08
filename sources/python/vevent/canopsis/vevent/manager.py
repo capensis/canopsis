@@ -18,8 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-"""
-"""
+from __future__ import unicode_literals
 
 from canopsis.common.init import basestring
 from canopsis.configuration.configurable.decorator import (
@@ -28,8 +27,6 @@ from canopsis.configuration.configurable.decorator import (
 from canopsis.middleware.registry import MiddlewareRegistry
 
 from icalendar import Event
-
-from calendar import timegm
 
 from datetime import datetime, timedelta
 
@@ -361,7 +358,7 @@ class VEventManager(MiddlewareRegistry):
             self[VEventManager.STORAGE].put_element(
                 _id=uid, element=document
             )
-            self.logger.info(u'document', document)
+            self.logger.info('put document: {}'.format(document))
             document['_id'] = uid
 
             result.append(document)

@@ -5,3 +5,6 @@ log
 doc/locale
 /sources/packages/ssl-conf/blacklist
 build_messages.txt
+*.coverage
+*.cache
+*~
