@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from six import string_types
 from calendar import timegm
 from datetime import datetime
 from dateutil.rrule import rrulestr
@@ -159,8 +160,30 @@ class PBehaviorManager(MiddlewareRegistry):
         :param str connector_name:  a string representing the name of connector that has generated the pbehavior
         :return:
         """
+
+        if enabled in ["True", "true"]:
+            enabled = True
+        elif enabled in ["False", "false"]:
+            enabled = False
+        else:
+            raise ValueError("The enabled value does not match a boolean")
+
+        if comments is not None:
+            for comment in comments:
+                if "author" in comment:
+                    if not isinstance(comment["author"], string_types):
+                        raise ValueError("The author field must be an string")
+                else:
+                    raise ValueError("The author field is missing")
+                if "message" in comment:
+                    if not isinstance(comment["message"], string_types):
+                        raise ValueError("The message field must be an string")
+                else:
+                    raise ValueError("The message field is missing")
+
         kw = locals()
         kw.pop('self')
+
         data = PBehavior(**kw)
         if not data.comments or not isinstance(data.comments, list):
             data.update(comments=[])

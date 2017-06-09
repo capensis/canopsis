@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-
+from six import string_types
 from canopsis.common.ws import route
 from canopsis.pbehavior.manager import PBehaviorManager
 
@@ -57,6 +57,19 @@ def exports(ws):
         payload=['_id']
     )
     def read(_id=None):
+        ok = False
+        if isinstance(_id, string_types):
+            ok = True
+        elif isinstance(_id, list):
+            ok = True
+            for elt in _id:
+                if not isinstance(elt, string_types):
+                    ok = False
+
+        if not ok:
+            raise ValueError("_id should be str, a list, None (null) not"\
+                             "{0}".format(type(_id)))
+
         return pbm.read(_id)
 
     @route(
@@ -115,4 +128,3 @@ def exports(ws):
     )
     def delete_comment(pbehavior_id, _id):
         return pbm.delete_pbehavior_comment(pbehavior_id, _id)
-
