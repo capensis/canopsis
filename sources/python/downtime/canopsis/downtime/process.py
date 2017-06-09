@@ -142,15 +142,18 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
         manager = pbmgr
 
     entity_ids = manager.whois(query=DOWNTIME_QUERY)
-    entities = context.get_entities(list(entity_ids))
-    logger.debug('BEAT: {} //// {}'.format(entity_ids, list(entities)))
+    entities = list(context.get_entities(list(entity_ids)))
+    logger.debug('BEAT: {} //// {}'.format(entity_ids, entities))
 
     # (Un)setting behaviors
     unsetting = {}
     setting = {}
-    for key in ['connector', 'connector_name', 'component', 'resource']:
+    for key in ['connector', 'connector_name', 'component']:
         unsetting[key] = {'$nin': [e.get(key, None) for e in entities]}
         setting[key] = {'$in': [e.get(key, None) for e in entities]}
+    # Convertion name to resource
+    unsetting['resource'] = {'$nin': [e.get('name', None) for e in entities]}
+    setting['resource'] = {'$in': [e.get('name', None) for e in entities]}
 
     logger.debug('BEAT Update: {} **** {}'.format(unsetting, setting))
     events_storage.update(unsetting, {'$set': {DOWNTIME: False}})
