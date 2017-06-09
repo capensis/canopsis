@@ -87,7 +87,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 event['pbehavior_name'], filter, event['author'],
                 event['start'], event['end'],
                 connector=event['connector'],
-                comments=event['comment'],
+                comments=event['comments'],
                 connector_name=event['connector_name'],
                 rrule=event['rrule']
             )

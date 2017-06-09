@@ -23,9 +23,22 @@
             "required": true,
             "type": "string"
         },
-        "comment": {
+        "comments": {
             "required": true,
-            "type": "string"
+            "type": "array",
+			"item": {
+				"type": "object",
+				"properties": {
+					"author": {
+						"type": "string",
+						"required": true
+					},
+					"message": {
+						"type": "string",
+						"required": true
+					}
+				}
+			}
         },
         "rrule": {
             "required": true,
