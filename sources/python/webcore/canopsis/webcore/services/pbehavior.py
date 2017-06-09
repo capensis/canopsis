@@ -47,9 +47,11 @@ def check_values(data):
 
     # check dict values
     for k in ["comments"]:
-        check(data, k, list)
+
         if data["comments"] is None:
             continue
+
+        check(data, k, list)
 
         for elt in data["comments"]:
             if not isinstance(elt, dict):
