@@ -24,6 +24,48 @@ from canopsis.common.ws import route
 from canopsis.pbehavior.manager import PBehaviorManager
 
 
+
+def check_values(data):
+    """Check if the values present in data respect the specification. If
+    the values are correct do nothing. If not, raise a ValueError
+    :param dict data: the data."""
+
+    def check(data, key, type_):
+        if key in data and data[key] is not None:
+            if not isinstance(data[key], type_):
+                raise ValueError("The {0} must be a {1} not {2}".format(
+                    key, type_, type(data[key])))
+
+    # check str values
+    for k in ["name", "author", "rrule", "component", "connector",
+              "connector_name"]:
+        check(data, k, string_types)
+
+    # check int values
+    for k in ["tstart", "tstop"]:
+        check(data, k, int)
+
+    # check dict values
+    for k in ["comments"]:
+        check(data, k, list)
+        if data["comments"] is None:
+            continue
+
+        for elt in data["comments"]:
+            if not isinstance(elt, dict):
+                raise ValueError("The list {0} store only {1} not {2}".format(
+                    k, dict, type(elt)))
+
+    if "enabled" not in data or data["enabled"] is None:
+        return
+
+    if data["enabled"] in ["True", "true"]:
+        data["enabled"] = True
+    elif data["enabled"] in ["False", "false"]:
+        data["enabled"] = False
+    else:
+        raise ValueError("The enabled value does not match a boolean")
+
 def exports(ws):
 
     pbm = PBehaviorManager()
@@ -44,6 +86,10 @@ def exports(ws):
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis'
     ):
+
+        data = locals()
+        check_values(data)
+
         return pbm.create(
             name=name, filter=filter, author=author,
             tstart=tstart, tstop=tstop, rrule=rrule,
@@ -91,7 +137,9 @@ def exports(ws):
             author=None
     ):
         params = locals()
+        check_values(params)
         params.pop('_id')
+
         return pbm.update(_id, **params)
 
     @route(
