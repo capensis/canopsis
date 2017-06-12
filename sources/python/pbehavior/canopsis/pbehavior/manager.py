@@ -406,4 +406,6 @@ class PBehaviorManager(MiddlewareRegistry):
         return not result
 
     def _check_response(self, response):
-        return True if 'ok' in response and response['ok'] == 1 else False
+        ack = True if "ok" in response and response["ok"] == 1 else False
+        return {"acknowledged" : ack,
+                "deletedCount" : response["n"]}
