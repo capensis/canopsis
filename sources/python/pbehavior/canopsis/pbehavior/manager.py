@@ -208,6 +208,7 @@ class PBehaviorManager(MiddlewareRegistry):
         :param dict kwargs: values pbehavior fields
         """
         pb_value = self.get(_id)
+
         if pb_value is None:
             raise ValueError("The id does not match any pebahvior")
 
@@ -216,7 +217,7 @@ class PBehaviorManager(MiddlewareRegistry):
         pbehavior.update(**new_data)
 
         result = self.pbehavior_storage.put_element(
-            element=pbehavior.to_dict(), _id=_id
+            element=new_data, _id=_id
         )
 
         if (PBehaviorManager._UPDATE_FLAG in result and

@@ -141,6 +141,7 @@ def exports(ws):
         params = locals()
         check_values(params)
         params.pop('_id')
+        params.pop('pbm')
 
         return pbm.update(_id, **params)
 
