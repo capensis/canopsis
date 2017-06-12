@@ -48,6 +48,9 @@ def check_values(data):
     # check dict values
     for k in ["comments"]:
 
+        if "comments" not in data:
+            continue
+
         if data["comments"] is None:
             continue
 
@@ -151,6 +154,7 @@ def exports(ws):
         payload=['_id']
     )
     def delete(_id):
+
         return pbm.delete(_id)
 
     @route(
@@ -159,6 +163,8 @@ def exports(ws):
         payload=['pbehavior_id', 'author', 'message']
     )
     def create_comment(pbehavior_id, author, message):
+        author = str(author)
+        message = str(author)
         return pbm.create_pbehavior_comment(pbehavior_id, author, message)
 
     @route(
@@ -167,6 +173,8 @@ def exports(ws):
         payload=['pbehavior_id', '_id', 'author', 'message']
     )
     def update_comment(pbehavior_id, _id, author=None, message=None):
+        author = str(author)
+        message = str(message)
         return pbm.update_pbehavior_comment(
             pbehavior_id, _id,
             author=author, message=message
