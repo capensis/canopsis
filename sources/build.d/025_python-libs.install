@@ -61,6 +61,7 @@ function easy_install_all_libs() {
     easy_install_pylib ipaddress
     easy_install_pylib enum34
     easy_install_pylib asn1crypto
+    easy_install_pylib idna
     easy_install_pylib cryptography
     easy_install_pylib paramiko
 }
