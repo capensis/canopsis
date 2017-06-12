@@ -51,8 +51,11 @@ function easy_install_all_libs() {
 	easy_install_pylib testtools
 	easy_install_pylib traceback2
 	easy_install_pylib unittest2
-        easy_install_pylib chardet
-        easy_install_pylib grako==3.18.1
+    easy_install_pylib chardet
+    easy_install_pylib grako==3.18.1
+    easy_install_pylib bcrypt
+    easy_install_pylib PyNaCl
+    easy_install_pylib paramiko
 }
 
 function install(){
