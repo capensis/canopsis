@@ -57,6 +57,7 @@ function easy_install_all_libs() {
     easy_install_pylib cffi
     easy_install_pylib bcrypt
     easy_install_pylib PyNaCl
+    easy_install_pylib pyasn1
     easy_install_pylib paramiko
 }
 
