@@ -207,6 +207,10 @@ class PBehaviorManager(MiddlewareRegistry):
         :param str _id: pbehavior id
         :param dict kwargs: values pbehavior fields
         """
+        pb_value = self.get(_id)
+        if pb_value is None:
+            raise ValueError("The id does not match any pebahvior")
+
         pbehavior = PBehavior(**self.get(_id))
         new_data = {k: v for k, v in kwargs.iteritems() if v is not None}
         pbehavior.update(**new_data)
