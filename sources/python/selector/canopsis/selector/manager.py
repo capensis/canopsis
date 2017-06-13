@@ -23,11 +23,11 @@ class Selector(MiddlewareRegistry):
 
     def __init__(self, *args, **kwargs):
         super(Selector, self).__init__(*args, **kwargs)
-        object_storage = Middleware.get_middleware_by_uri(
+        self.object_storage = Middleware.get_middleware_by_uri(
             'storage-default://',
             table='object'
         )
-        self[Selector.OBJECT_STORAGE] = object_storage
+        self[Selector.OBJECT_STORAGE] = self.object_storage
         alerts_storage = Middleware.get_middleware_by_uri(
             'mongodb-periodical-alarm://'
         )
@@ -45,7 +45,7 @@ class Selector(MiddlewareRegistry):
         )
         depends_list = self.context_graph.get_entities(
             query=json.loads(body['mfilter']),
-            projection={'_id':1}
+            projection={'_id': 1}
         )
         d = []
         for i in depends_list:
@@ -66,12 +66,20 @@ class Selector(MiddlewareRegistry):
 
         self.calcul_state(selector_id)
 
-    def delete_selector(self):
+    def delete_selector(self, selector_id):
         """
-            delete selector entity in context
+            disable selector entity in context
         """
-        # supprimer l'entitée selector les liens seront delete auto 
-        # supprimer l'alarme correspondant au selector
+        object_selector = list(self.object_storage._backend.find(
+            {'_id': selector_id}
+        ))[0]
+        selector_entity = self.context_graph.get_entities_by_id(
+            '/selector/{0}'.format(object_selector['display_name'])
+        )[0]
+        selector_entity['infos']['enabled'] = False
+        self.logger.critical(selector_entity)
+        self.context_graph.update_entity(selector_entity)
+        
 
     def calcul_state(self, selector_id):
         """
@@ -85,18 +93,24 @@ class Selector(MiddlewareRegistry):
         entities = s['depends']
         display_name = s['name']
 
-        r = list(self[Selector.ALERTS_STORAGE]._backend.find({'d': {'$in': entities}}))
+        r = list(self[Selector.ALERTS_STORAGE]._backend.find(
+            {'d': {'$in': entities}}
+        ))
         states = []
         for i in r:
             if i['v']['resolved'] == None and i['d'] in entities:
-               states.append(i['v']['state']['val']) 
+                # add here a check of pebehavior to take into account or not
+                # the alarm's state
+                states.append(i['v']['state']['val']) 
 
         nb_entities = len(entities)
         nb_crit = states.count(3)
         nb_major = states.count(2)
         nb_minor = states.count(1)
         nb_ok = nb_entities - (nb_crit + nb_major + nb_minor)
-
+        
+        # here add selection for calculation method actually it's worst state 
+        # by default and think to add pbehavior in tab
         computed_state = self.worst_state(nb_crit, nb_major, nb_minor)
         output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
             nb_ok,
@@ -140,3 +154,9 @@ class Selector(MiddlewareRegistry):
         for i in selectors:
             if alarm_id in i['depends']:
                 self.calcul_state(i['_id'])
+
+    def sla_calcul(self, selector_id):
+        """
+            launch the sla calcul
+        """
+

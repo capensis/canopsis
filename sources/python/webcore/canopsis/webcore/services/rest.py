@@ -377,5 +377,8 @@ def exports(ws):
 
         except ValueError:
             data = None
+        
+        if ctype == 'selector':
+            selector_manager.delete_selector(_id)
 
         return delete_records(ws, namespace, ctype, _id, data)
