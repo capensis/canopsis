@@ -160,7 +160,7 @@ Here is the structure of a compliant message
       "comment": "a comment about the pbehaviour",
       "author": "the author",
       "action": "create" or "delete" only
-	  "rrule": "an rrule",
+      "rrule": "an rrule",
       + classic event fields
     }
 
