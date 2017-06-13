@@ -32,7 +32,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        name='weather/get/selector',
+        name='weather/get/selectors',
         payload=[
             'selector_filter'
         ]
@@ -46,28 +46,58 @@ def exports(ws):
         ret_val = []
         for i in selector_list:
             tmp = {}
-            f = open('/home/tgosselin/fichierdelog', 'a')
-            f.write('{0}'.format(alarm_manager.get(filter_={'d':i['_id']})))
-            f.close()
             tmp_alarm = alarm_manager.get(filter_={'d' : i['_id']})['alarms']
 
             tmp['entity_id'] = i['_id']
-            try:
-                tmp['criticity'] = i['infos']['criticity']
-            except:
-                tmp['criticity'] = ''
-            try:
-                tmp['org'] = i['infos']['org']
-            except:
-                tmp['org'] = ''
-            tmp['sla_text'] = 'ca arrive avec les sla'
+            tmp['criticity'] = i['infos'].get('criticity','')
+            tmp['org'] = i['infos'].get('org', '')
+            tmp['sla_text'] = '' # when sla
             tmp['display_name'] = i['name']
             if tmp_alarm != []:
                 tmp['state'] = tmp_alarm[0]['v']['state']
                 tmp['status'] = tmp_alarm[0]['v']['status']
                 tmp['snooze'] = tmp_alarm[0]['v']['snooze']
                 tmp['ack'] = tmp_alarm[0]['v']['ack']
-            tmp['pbehavior'] = []
-            tmp['linklist'] = []
+            tmp['pbehavior'] = [] # add this when it's ready
+            tmp['linklist'] = [] # add this when it's ready
             ret_val.append(tmp)
         return ret_val
+
+    @route(
+        ws.application.get,
+        name='weathe/get/selector',
+        payload=['selector_id']
+    )
+    def get_a_seletor(
+        selector_id
+    ):
+        """
+            get selector and entities for the second part.
+        """
+        selector_entity = context_manager.get_entities(
+            query={'_id': selector_id}
+        )[0]
+        entities = context_manager.get_entities(
+            query=json.loads(selector_entity['infos']['mfilter'])
+        )
+        ret_val = []
+        for i in entities:
+            tmp_val = {}
+            tmp_alarm = alarm_manager.get(filter_={'d':i['_id']})['alarms']
+            
+            tmp_val['entity_id'] = i['_id']
+            tmp_val['sla_text'] = '' # when sla
+            tmp_val['org'] = i['infos'].get('org', '')
+            tmp_val['display_name'] = selector_entity['display_name'] # check if we need selector here
+            tmp_val['name'] = i['name']
+            if tmp_alarm != []:
+                tmp_val['state'] = tmp_alarm[0]['v']['state']
+                tmp_val['status'] = tmp_alarm[0]['v']['status']
+                tmp_val['snooze'] = tmp_alarm[0]['v']['snooze']
+                tmp_val['ack'] = tmp_alarm[0]['v']['ack']
+            tmp_val['pbehavior'] = [] # wait for pbehavior
+            tmp_val['linklist'] = [] # wait for linklist
+
+
+
+        
