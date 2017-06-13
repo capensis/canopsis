@@ -120,7 +120,7 @@ class PBehaviorManager(VEventManager):
                 },
                 {
                     '$project': {
-                        '_id': 0,
+                        '_id': 1,
                         'enabled': '$enable',
                         'name': '$behaviors',
                         'dtstart': 1,

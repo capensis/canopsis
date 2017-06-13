@@ -31,6 +31,10 @@ from canopsis.old.storage import get_storage
 
 from datetime import datetime, timedelta
 from icalendar import Event as vEvent
+import time
+
+from calendar import timegm
+from dateutil.rrule import rrulestr
 
 
 ctxmgr = Context()  #: default context manager
@@ -88,7 +92,7 @@ def event_processing(
         action = event["action"]
         # listing identical events
         bhvs = manager.get_behaviors(entity_id=eid)
-        logger.debug('DOWNTIME {} :) :) {}'.format(action, bhvs))
+        #logger.debug('DOWNTIME {} :) :) {}>>> \n{} --- {}'.format(action, bhvs, event['start'], event['end']))
         uids = [b.get('_id', None) for b in bhvs if b['dtstart'] == event['start'] and b['dtend'] == event['end']]
 
         if action == 'delete':
@@ -143,18 +147,45 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
 
     entity_ids = manager.whois(query=DOWNTIME_QUERY)
     entities = list(context.get_entities(list(entity_ids)))
-    logger.debug('BEAT: {} //// {}'.format(entity_ids, entities))
+    #logger.debug('BEAT: {} //// {}'.format(entity_ids, entities))
 
-    # (Un)setting behaviors
+    # Generating event filters
     unsetting = {}
     setting = {}
-    for key in ['connector', 'connector_name', 'component']:
-        unsetting[key] = {'$nin': [e.get(key, None) for e in entities]}
-        setting[key] = {'$in': [e.get(key, None) for e in entities]}
-    # Convertion name to resource
-    unsetting['resource'] = {'$nin': [e.get('name', None) for e in entities]}
-    setting['resource'] = {'$in': [e.get('name', None) for e in entities]}
+    for entity in entities:
+        table = entity['_id'].split('/')[2:]  # striping '' and 'pbehavior'
+        for idx, key in enumerate(['connector', 'connector_name', 'component', 'resource']):
+            index = key
+            if idx == len(table) - 1:
+                # The last key of entity is named 'name'
+                index = 'name'
+            if index not in entity:
+                continue
 
-    logger.debug('BEAT Update: {} **** {}'.format(unsetting, setting))
+            # List init
+            if key not in unsetting:
+                unsetting[key] = {'$nin': []}
+            if key not in setting:
+                setting[key] = {'$in': []}
+
+            unsetting[key]['$nin'].append(entity[index])
+            setting[key]['$in'].append(entity[index])
+
+    # (Un)setting passed behaviors
     events_storage.update(unsetting, {'$set': {DOWNTIME: False}})
-    events_storage.update(setting, {'$set': {DOWNTIME: True}})
+
+    # Enabling started behaviors
+    events = events_storage.find(setting)
+    for event in events:
+        if DOWNTIME in event and event[DOWNTIME]:
+            #logger.debug('Downtime already set for {}'.format(event['_id']))
+            continue
+
+        entity = ctxmgr.get_entity(event, from_db=True)
+        entity_id = entity['_id'].replace('/resource/', '/pbehavior/')  # Dirty part !
+        mge = manager.getending(source=entity_id, behaviors=DOWNTIME)
+        #logger.debug('++++ {} ++ {}'.format(entity_id, mge))
+
+        if mge:
+            logger.info('Enabling downtime for entity {}'.format(entity_id))
+            events_storage.update({'_id': event['_id']}, {'$set': {DOWNTIME: True}})
