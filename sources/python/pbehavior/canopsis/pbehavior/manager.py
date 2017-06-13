@@ -349,7 +349,7 @@ class PBehaviorManager(MiddlewareRegistry):
             query={PBehavior.FILTER: {'$exists': True}}
         )
         for pb in pbehaviors:
-            entities = self.context[Context.CTX_STORAGE].get_elements(
+            entities = self.context[ContextGraph.ENTITIES_STORAGE].get_elements(
                 query=loads(pb[PBehavior.FILTER])
             )
 
@@ -372,8 +372,8 @@ class PBehaviorManager(MiddlewareRegistry):
         :param list pb_names: list of pbehavior names
         :return: bool if the entity_id is currently in pb_names arg
         """
-        cm = singleton_per_scope(Context)
-        entity = cm.get_entity_by_id(entity_id)
+        cm = singleton_per_scope(ContextGraph)
+        entity = cm.get_entity_by_id(entity_id)[0]
         event = cm.get_event(entity)
 
         pbehaviors = self.pbehavior_storage.get_elements(
