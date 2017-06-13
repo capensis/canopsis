@@ -26,5 +26,6 @@
 .actions-parent {
   display: flex;
   flex-wrap: wrap;
+  position: relative;
   /*margin: -10px 0 0 -10px;*/
 }

@@ -98,7 +98,7 @@ Ember.Application.initializer({
               'perimeter': 'v.extra.perimeter',
               'last_state_change': 'v.state.t',
               'output': 'v.state.m',
-              'pbehaviors': 'v.pbehaviors',
+              'pbehaviors': 'pbehaviors',
               'extra_details': 'v.extra_details'
             },
 
@@ -145,7 +145,7 @@ Ember.Application.initializer({
               },
               {
                 name: 'pbehaviors',
-                value: 'v.pbehaviors'
+                value: 'pbehaviors'
               }
             ],
 
@@ -200,6 +200,7 @@ Ember.Application.initializer({
                   opened: filterState == 'opened',
                   resolved: filterState == 'resolved',
                   // consolidations: [],
+                  lookups: JSON.stringify(["pbehaviors", "linklist"]) ,
                   filter: filter,
                   // filter: {},                  
                   // search: '',
@@ -331,15 +332,23 @@ Ember.Application.initializer({
               var controller = this;
               var fields = get(this, 'fields');
               var alarmsArr = get(this, 'alarmss').map(function(alarm) {
-                  // alarm['v']['pbehaviors'] = [
+                  // alarm['pbehaviors'] = [
                   //   {
-                  //     "tstop": 1483311600,
+                  //     "dtstop": 1483311600,
                   //     "enabled": false,
                   //     "name": "downtime",
-                  //     "tstart": 1483225200,
+                  //     "dtstart": 1483225200,
                   //     "rrule": "FREQ=WEEKLY"
                   //   }
                   // ];
+                  // alarm.linklist = {
+                  //   'event_links': [
+                  //     {
+                  //       'url': 'http://tasks.info/?co=Demo',
+                  //       'label': 'test'
+                  //     }
+                  //   ]
+                  // };
 
                   alarm['v']['extra_details'] = {};
                   controller.get('extraDeatialsEntities').forEach(function(item) {
@@ -408,7 +417,7 @@ Ember.Application.initializer({
                   // newAlarm['state'] = 1;
                   // newAlarm['v.state.val'] = 1;
 
-
+                  newAlarm.linklist = alarm.linklist;
                   // newAlarm['linklist'] = {
                   //   'event_links': [
                   //     {

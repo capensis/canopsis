@@ -57,7 +57,7 @@ Ember.Application.initializer({
                     return ['<center>',
                         '<b>' + __('Periodic behavior') + '</b><br/>',
                         this.get('value.pbehaviors').map(function(pbeh) {
-                            return pbeh.behavior + ' <br/>'
+                            return pbeh.name + ' <br/>'
                                 + self.dateFormat(pbeh.dtstart) + ' - ' + self.dateFormat(pbeh.dtstop) + ' <br/>'
                                 + pbeh.rrule + ' <br/>'
                         }).join('') + ' <br/><br/> ',
@@ -80,7 +80,7 @@ Ember.Application.initializer({
             }.property('value.ack'),
 
             hasPBehavior: function() {
-                return this.get('value.pbehaviors') != null;
+                return this.get('value.pbehaviors').length != 0;
             }.property('value.pbihaviors'),
 
             dateFormat: function (date) {
