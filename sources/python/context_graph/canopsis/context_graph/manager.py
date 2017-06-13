@@ -203,7 +203,7 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
         # rebuild selectors links
-        build_all_links()
+        build_all_links(self)
 
     def _delete_entities(self, entities):
         """
@@ -304,7 +304,7 @@ class ContextGraph(MiddlewareRegistry):
 
         # rebuild selectors links
         if entity['type'] != 'selector':
-            build_all_links()
+            build_all_links(self)
 
     def __update_dependancies(self, id_, status, dependancy_type):
         """Return the list of entities whom the depends or impact fields are
@@ -425,7 +425,7 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # rebuild selectors links
-        build_all_links()
+        build_all_links(self)
 
     def delete_entity(self, id_):
         """Delete an entity identified by id_ from the context.
@@ -465,7 +465,7 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
 
         # rebuild selectors links
-        build_all_links()
+        build_all_links(self)
 
     def get_entities(self,
                      query={},

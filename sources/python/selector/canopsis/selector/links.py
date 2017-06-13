@@ -5,12 +5,10 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from json import loads
 
 
-def build_links(selector_entity):
+def build_links(selector_entity, context_graph):
     """
         check and build links of a selector,
     """
-    from canopsis.context_graph.manager import ContextGraph
-    context_graph = ContextGraph()
     mfilter = loads(selector_entity['infos']['mfilter'])
     dep = context_graph.get_entities(
         query=mfilter,
@@ -21,11 +19,11 @@ def build_links(selector_entity):
             selector_entity['depends'].append(i['_id'])
     context_graph.update_entity(selector_entity)
 
-def build_all_links():
+def build_all_links(context_graph):
     """
         check and rebuild links of all selector entities
     """
     selectors = context_graph.get_entities(query={'type': 'selector'})
     for i in selectors:
-        build_links(i)
+        build_links(i, context_graph)
 
