@@ -81,7 +81,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
             entity_id, event.get('action'))
         )
 
-        filter = {'entity_id': entity_id}
+        filter = {'_id': entity_id}
         if event.get('action') == PBEHAVIOR_CREATE:
             result = pbm.create(
                 event['pbehavior_name'], filter, event['author'],

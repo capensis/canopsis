@@ -147,7 +147,7 @@ class PBehaviorManager(MiddlewareRegistry):
         connector='canopsis', connector_name='canopsis'
     ):
         """
-        Method creates pbehaviro record
+        Method creates pbehavior record
         :param str name: filtering options
         :param dict filter: a mongo filter that match entities from canopsis context
         :param str author: the name of the user/app that has generated the pbehavior
@@ -349,13 +349,15 @@ class PBehaviorManager(MiddlewareRegistry):
         pbehaviors = self.pbehavior_storage.get_elements(
             query={PBehavior.FILTER: {'$exists': True}}
         )
+
         for pb in pbehaviors:
+
             entities = self.context[ContextGraph.ENTITIES_STORAGE].get_elements(
                 query=loads(pb[PBehavior.FILTER])
             )
 
-            pb[PBehavior.EIDS] = [e['entity_id'] for e in entities]
-            self.pbehavior_storage.put_element(element=pb, _id=pb['_id'])
+            pb[PBehavior.EIDS] = [e['_id'] for e in entities]
+            self.pbehavior_storage.put_element(element=pb)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
