@@ -8,6 +8,8 @@ from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
 
+from canopsis.selector.links import build_all_links
+
 import time
 
 CONF_PATH = 'context_graph/manager.conf'
@@ -200,6 +202,9 @@ class ContextGraph(MiddlewareRegistry):
 
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
+        # rebuild selectors links
+        build_all_links()
+
     def _delete_entities(self, entities):
         """
         Remove entities from database. Do no use this function unless you know
@@ -248,7 +253,6 @@ class ContextGraph(MiddlewareRegistry):
 
                 infos["enable_history"].append(int(time.time()))
 
-
     def create_entity(self, entity):
         """Create an entity in the context with the given entity. This will
         update the depends and impact links between entities. If they are
@@ -274,7 +278,6 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         # TODO add treatment to check if every required field are present
-
         self._enable_entity(entity)
 
         entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
@@ -298,6 +301,10 @@ class ContextGraph(MiddlewareRegistry):
                                                       status, "impact")
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+
+        # rebuild selectors links
+        if entity['type'] != 'selector':
+            build_all_links()
 
     def __update_dependancies(self, id_, status, dependancy_type):
         """Return the list of entities whom the depends or impact fields are
@@ -417,6 +424,9 @@ class ContextGraph(MiddlewareRegistry):
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
+        # rebuild selectors links
+        build_all_links()
+
     def delete_entity(self, id_):
         """Delete an entity identified by id_ from the context.
 
@@ -453,6 +463,9 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
+
+        # rebuild selectors links
+        build_all_links()
 
     def get_entities(self,
                      query={},

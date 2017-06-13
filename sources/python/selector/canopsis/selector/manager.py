@@ -159,4 +159,3 @@ class Selector(MiddlewareRegistry):
         """
             launch the sla calcul
         """
-
