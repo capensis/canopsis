@@ -161,9 +161,9 @@ class PBehaviorManager(MiddlewareRegistry):
         :return:
         """
 
-        if enabled in ["True", "true"]:
+        if enabled in [True, "True", "true"]:
             enabled = True
-        elif enabled in ["False", "false"]:
+        elif enabled in [False, "False", "false"]:
             enabled = False
         else:
             raise ValueError("The enabled value does not match a boolean")
@@ -230,6 +230,7 @@ class PBehaviorManager(MiddlewareRegistry):
         Delete pbehavior record
         :param str _id: pbehavior id
         """
+
         result = self.pbehavior_storage.remove_elements(
             ids=_id, _filter=_filter
         )

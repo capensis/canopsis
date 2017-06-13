@@ -69,13 +69,13 @@ def get_entity_id(event):
 
 @register_task
 def event_processing(engine, event, pbm=None, logger=None, **kwargs):
-    logger.debug("Start processing event {}".format(event))
 
     if pbm is None:
         pbm = singleton_per_scope(PBehaviorManager)
 
     if event.get('event_type') == EVENT_TYPE:
         entity_id = ContextGraph.get_id(event)
+        logger.debug("Start processing event {}".format(event))
 
         logger.debug("entity_id: {}\naction: {}".format(
             entity_id, event.get('action'))
@@ -87,7 +87,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 event['pbehavior_name'], filter, event['author'],
                 event['start'], event['end'],
                 connector=event['connector'],
-                comments=event['comments'],
+                comments=event.get('comments', None),
                 connector_name=event['connector_name'],
                 rrule=event['rrule']
             )
@@ -100,7 +100,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 PBehavior.NAME: event['pbehavior_name'],
                 PBehavior.TSTART: event['start'],
                 PBehavior.TSTOP: event['end'],
-                PBehavior.RRULE: '',
+                PBehavior.RRULE: event['rrule'],
                 PBehavior.CONNECTOR: event['connector'],
                 PBehavior.CONNECTOR_NAME: event['connector_name'],
             })
