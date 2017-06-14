@@ -33,9 +33,6 @@ from datetime import datetime, timedelta
 from icalendar import Event as vEvent
 import time
 
-from calendar import timegm
-from dateutil.rrule import rrulestr
-
 
 ctxmgr = Context()  #: default context manager
 pbmgr = PBehaviorManager()  #: default pbehavior manager
@@ -92,7 +89,6 @@ def event_processing(
         action = event["action"]
         # listing identical events
         bhvs = manager.get_behaviors(entity_id=eid)
-        #logger.debug('DOWNTIME {} :) :) {}>>> \n{} --- {}'.format(action, bhvs, event['start'], event['end']))
         uids = [b.get('_id', None) for b in bhvs if b['dtstart'] == event['start'] and b['dtend'] == event['end']]
 
         if action == 'delete':
@@ -176,16 +172,18 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
 
     # Enabling started behaviors
     events = events_storage.find(setting)
+    now = int(time.time())
     for event in events:
         if DOWNTIME in event and event[DOWNTIME]:
             #logger.debug('Downtime already set for {}'.format(event['_id']))
             continue
 
-        entity = ctxmgr.get_entity(event, from_db=True)
+        entity = context.get_entity(event, from_db=True)
         entity_id = entity['_id'].replace('/resource/', '/pbehavior/')  # Dirty part !
-        mge = manager.getending(source=entity_id, behaviors=DOWNTIME)
-        #logger.debug('++++ {} ++ {}'.format(entity_id, mge))
 
-        if mge:
-            logger.info('Enabling downtime for entity {}'.format(entity_id))
-            events_storage.update({'_id': event['_id']}, {'$set': {DOWNTIME: True}})
+        bhvs = manager.get_behaviors(entity_id=entity_id)[0]
+        mge = manager.getending(source=entity_id, behaviors=DOWNTIME)
+        if 'dtstart' in bhvs and mge and bhvs['dtstart'] <= now <= mge:
+            logger.info('Enabling downtime for event {}'.format(event['_id']))
+            events_storage.update({'_id': event['_id']},
+                                  {'$set': {DOWNTIME: True}})
