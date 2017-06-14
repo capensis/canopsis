@@ -162,8 +162,7 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
             setting[key]['$in'].append(entity[index])
 
     # (Un)setting passed behaviors
-    #ret = events_storage.update({'$not': setting}, {'$set': {DOWNTIME: False}})
-    ret = events_storage.update({}, {'$set': {DOWNTIME: False}}, multi=True)
+    events_storage.update({}, {'$set': {DOWNTIME: False}}, multi=True)
 
     # Enabling started behaviors
     events = events_storage.find(setting)
