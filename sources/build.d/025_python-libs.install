@@ -20,7 +20,6 @@ function easy_install_all_libs() {
 	easy_install_pylib apscheduler
 	easy_install_pylib msgpack-python
 	easy_install_pylib supervisor
-	easy_install_pylib isit
 	easy_install_pylib icalendar
 	easy_install_pylib pytz
 	easy_install_pylib kombu

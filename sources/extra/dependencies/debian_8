@@ -1,15 +1,4 @@
 #!/bin/sh
 apt-get update
 
-apt-get install -y libssl1.0.0 libevent-dev bzip2 build-essential zlib1g-dev libreadline-gplv2-dev libdb5.1-dev libncurses5-dev libexpat1-dev xmlto libcurl4-gnutls-dev git-core libssl-dev libpcre3-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev xsltproc curl libbz2-dev xvfb libmysqlclient-dev libsasl2-dev python-dev python-ldap nettle-dev xz-utils libxml2-dev libxslt1-dev gcc libghc-gnutls-dev libldap2-dev
-
-libdb5="libdb5.1_5.1.29-5_amd64.deb"
-libdb5dev="libdb5.1-dev_5.1.29-5_amd64.deb"
-
-wget http://ftp.fr.debian.org/debian/pool/main/d/db/$libdb5
-wget http://ftp.fr.debian.org/debian/pool/main/d/db/$libdb5dev
-
-dpkg -i $libdb5
-dpkg -i $libdb5dev
-
-rm $libdb5 $libdb5dev
+apt-get install -y libssl1.0.0 libevent-dev bzip2 build-essential zlib1g-dev libreadline-gplv2-dev libdb5.3-dev libncurses5-dev libexpat1-dev xmlto libcurl4-gnutls-dev git-core libssl-dev libpcre3-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev xsltproc curl libbz2-dev xvfb libmysqlclient-dev libsasl2-dev python-dev python-ldap nettle-dev xz-utils libxml2-dev libxslt1-dev gcc libghc-gnutls-dev libldap2-dev
