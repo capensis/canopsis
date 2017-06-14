@@ -237,7 +237,7 @@ class ContextGraph(MiddlewareRegistry):
         :type entity: a dict
         """
         if "state" not in entity["infos"]:
-            entity["infos"]["state"] = "enable"
+            entity["infos"]["enabled"] = True
 
             if "enable_history" not in entity["infos"]:
                 entity["infos"]["enable_history"] = [int(time.time())]
