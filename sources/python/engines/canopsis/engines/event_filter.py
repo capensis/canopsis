@@ -437,12 +437,8 @@ class engine(Engine):
         """ Configuration reload for realtime ui changes handling """
 
         self.derogations = []
-        self.configuration = {
-            'rules': [],
-            'default_action': self.find_default_action()
-        }
+        tmprules = []
 
-        self.logger.debug(u'Reload configuration rules')
         records = self.storage.find(
             {'crecord_type': 'filter', 'enable': True},
             sort='priority'
@@ -464,7 +460,13 @@ class engine(Engine):
 
             self.logger.debug(u'Loading record_dump:')
             self.logger.debug(record_dump)
-            self.configuration['rules'].append(record_dump)
+            tmprules.append(record_dump)
+
+        self.logger.debug(u'Reload configuration rules')
+        self.configuration = {
+            'rules': tmprules,
+            'default_action': self.find_default_action()
+        }
 
         self.logger.info(
             'Loaded {} rules'.format(len(self.configuration['rules']))
