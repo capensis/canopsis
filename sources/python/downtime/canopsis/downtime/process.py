@@ -118,9 +118,6 @@ def event_processing(
         elif event["was_started"]:
             logger.info('Behavior starting event for {}. Ignoring'.format(eid))
 
-    else:
-        event[DOWNTIME] = manager.getending(source=eid, behaviors=DOWNTIME) is not None
-
     return event
 
 
@@ -134,6 +131,7 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
         pbmgr.
     :param Logger logger: logger to use in this task.
     """
+    now = int(time.time())
 
     if context is None:
         context = ctxmgr
@@ -141,12 +139,11 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
     if manager is None:
         manager = pbmgr
 
-    entity_ids = manager.whois(query=DOWNTIME_QUERY)
+    entity_ids = manager.whois(query=DOWNTIME_QUERY, dtstart=now)
     entities = list(context.get_entities(list(entity_ids)))
-    #logger.debug('BEAT: {} //// {}'.format(entity_ids, entities))
+    #logger.info('BEAT: {} //// {}'.format(entity_ids, entities))
 
     # Generating event filters
-    unsetting = {}
     setting = {}
     for entity in entities:
         table = entity['_id'].split('/')[2:]  # striping '' and 'pbehavior'
@@ -159,20 +156,17 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
                 continue
 
             # List init
-            if key not in unsetting:
-                unsetting[key] = {'$nin': []}
             if key not in setting:
                 setting[key] = {'$in': []}
 
-            unsetting[key]['$nin'].append(entity[index])
             setting[key]['$in'].append(entity[index])
 
     # (Un)setting passed behaviors
-    events_storage.update(unsetting, {'$set': {DOWNTIME: False}})
+    #ret = events_storage.update({'$not': setting}, {'$set': {DOWNTIME: False}})
+    ret = events_storage.update({}, {'$set': {DOWNTIME: False}}, multi=True)
 
     # Enabling started behaviors
     events = events_storage.find(setting)
-    now = int(time.time())
     for event in events:
         if DOWNTIME in event and event[DOWNTIME]:
             #logger.debug('Downtime already set for {}'.format(event['_id']))
@@ -181,7 +175,10 @@ def beat_processing(engine, context=None, manager=None, logger=None, **kwargs):
         entity = context.get_entity(event, from_db=True)
         entity_id = entity['_id'].replace('/resource/', '/pbehavior/')  # Dirty part !
 
-        bhvs = manager.get_behaviors(entity_id=entity_id)[0]
+        bhvs = manager.get_behaviors(entity_id=entity_id)
+        if len(bhvs) == 0:
+            continue
+        bhvs = bhvs[0]
         mge = manager.getending(source=entity_id, behaviors=DOWNTIME)
         if 'dtstart' in bhvs and mge and bhvs['dtstart'] <= now <= mge:
             logger.info('Enabling downtime for event {}'.format(event['_id']))
