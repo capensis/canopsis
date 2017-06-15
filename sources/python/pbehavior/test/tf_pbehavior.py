@@ -28,12 +28,13 @@ from ast import literal_eval
 from time import sleep, time
 from urllib import urlencode
 from pymongo import MongoClient
-from canopsis.pbhevior.manager import PBehaviorManager
+from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.context_graph.manager import ContextGraph
 
 PBH_RESOURCE = "pbh_resource"
-PBH_CONNECTOR = "pbh_connector",
+PBH_CONNECTOR = "pbh_connector"
 PBH_CON_NAME = PBH_CONNECTOR + "_name"
-PBH_COMPONENT= "pbh_component",
+PBH_COMPONENT= "pbh_component"
 
 RESOURCE_ID = "{0}/{1}".format(PBH_RESOURCE, PBH_COMPONENT)
 
@@ -44,6 +45,7 @@ MONGO_HOST = "localhost"
 URL_BASE = "http://{0}:8082".format(WEB_HOST)
 URL_AUTH = "{0}/?authkey={1}"
 URL_PBEH = "{0}/pbehavior/create?{1}".format(URL_BASE, None)
+URL_SEND = "{0}/event".format(WEB_HOST)
 URL_MONGO = 'mongodb://cpsmongo:canopsis@{0}:27017/canopsis'.format(MONGO_HOST)
 
 ENTITIES_COL = "default_entities"
@@ -63,8 +65,8 @@ FILTER = {
     "priority": 1,
     "run_once": True,
     "crecord_type": "filter",
-    "mfilter": "{\"$or\":[{\"connector\":{\"$eq\":\"{0}\"}}]}".format(
-        PBH_CONNECTOR),
+    "mfilter": "{{\"$or\":[{{\"connector\":{{\"$eq\":\"{conn}\"}}}}]}}".format(
+        conn=PBH_CONNECTOR),
     "crecord_creation_time": 1497367809,
     "crecord_name": None,
     "description": "I am a nice filter"
@@ -80,9 +82,19 @@ DEL_FILTER = {
         "value": "yep_it's_me"
     }],
     "crecord_type": "filter",
-    "mfilter": "{\"$or\":[{\"connector\":{\"$eq\":\"i_am_a_connector\"}}]}",
+    "mfilter": "{{\"$or\":[{{\"connector\":{{\"$eq\":\"{conn}\"}}}}]}}".format(
+        conn=PBH_CONNECTOR),
     "description": "I am a nice filter"
 }
+
+to_delete = ["break", "crecord_write_time", "crecord_write_time", "priority",
+             "run_once", "crecord_type", "crecord_creation_time",
+             "crecord_name"]
+
+DEL_FILTER = FILTER.copy()
+for key in to_delete:
+    DEL_FILTER.pop(key)
+
 
 PBEHAVIOR = {
     "name": "A name",
@@ -94,6 +106,17 @@ PBEHAVIOR = {
     "enabled": True,
     "connector": PBH_CONNECTOR,
     "connector_name": PBH_CON_NAME
+}
+
+EVENT = {
+    "component" : PBH_COMPONENT,
+    "resource" : PBH_RESOURCE,
+    "source_type" : "resource",
+    "event_type" : "check",
+    "connector" : PBH_CONNECTOR,
+    "connector_name" : PBH_CON_NAME,
+    "output" :"oh my god ! an awesome output",
+    "state" :0
 }
 
 BEAT = 2
@@ -159,8 +182,18 @@ class BaseTest(unittest.TestCase):
         else:
             self.fail("Impossible to insert the pbehavior.")
 
+    def _send_event(self, event):
+        response = self.session.post(WEB_HOST, data=urlencode(event))
+
+        response = literal_eval(response)
+        if response["sucess"] is False:
+            self.fail("Error while sending the check event")
+
+
     def _create_rrule(self):
         pass
+
+    # def __check_resource(self, id_,
 
     def setUp(self):
         client = MongoClient(URL_MONGO)
@@ -172,10 +205,36 @@ class BaseTest(unittest.TestCase):
         self.pbehavior_ids = []
 
         self.pbm = PBehaviorManager()
+        self.cm= ContextGraph()
 
     def tearDown(self):
         self._remove_filter()
         # TODO remove entity created in the context
+
+class Test(BaseTest):
+
+    def in_OK_out_OK(self):
+        kwargs = {}
+        kwargs["rrule"] = self._create_rrule()
+        pb_in = self._create_pbehavior(**kwargs)
+        pb_out = self._create_pbehavior(in_=False, **kwargs)
+        self.pbm.compute_pbehaviors_filters()
+
+        kwargs = {}
+        kwargs["in"] = [pb_in]
+        kwargs["out"] = [pb_out]
+        self._insert_filter(**kwargs)
+
+        self._send_event(EVENT)
+
+        print("Waiting for the event to be handle by the engines")
+        sleep(5)
+
+        res = self.cm.get_entities_by_id(RESOURCE_ID)[0]
+        print(res)
+
+
+
 
 
 if __name__ == "__main__":
