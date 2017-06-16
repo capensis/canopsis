@@ -38,9 +38,13 @@ def exports(ws):
     ws.application.router.add_filter('id_filter', id_filter)
 
     @ws.application.route('/weather/selectors/<selector_filter:mongo_filter>')
-    def get_selector(
-        selector_filter
-    ):
+    def get_selector(selector_filter):
+        """
+        Get a list of selectors from a mongo filter.
+
+        :param dict selector_filter: a mongo filter to find selectors
+        :rtype: dict
+        """
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
 
@@ -66,11 +70,13 @@ def exports(ws):
         return ret_val
 
     @ws.application.route("/weather/selectors/<selector_id:id_filter>")
-    def weatherselectors(
-        selector_id
-    ):
+    def weatherselectors(selector_id):
         """
-            get selector and entities for the second part.
+        Get selector and contextual informations.
+
+        :param str selector_id: the selector_id to search for
+        :return: a list of agglomerated values of entities in the selector
+        :rtype: list
         """
         try:
             selector_entity = context_manager.get_entities(
