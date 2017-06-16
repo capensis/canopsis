@@ -120,6 +120,7 @@ Ember.Application.initializer({
              */
             submitEvents: function(crecords, record, event_type) {
                 var me = this;
+                var store = get(this, 'widgetDataStore');                
                 var safe_mode = this.get('controllers.application.frontendConfig.safe_mode');
                 console.log('safe_mode', safe_mode);
                 return new Ember.RSVP.Promise(function(resolve, reject) {
@@ -138,6 +139,8 @@ Ember.Application.initializer({
                         if (!safe_mode) {
                             me.processEvent(event_type, 'transform', [crecords[i], post_event]);
                         }
+                        // in order to prevent an error when a user ack and fast ack on the same alarm
+                        store.deleteRecord(record);
                     }
                     //TODO use an adapter for this
                     $.post('/event', {

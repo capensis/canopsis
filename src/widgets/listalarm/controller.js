@@ -646,15 +646,15 @@ Ember.Application.initializer({
                   var f = {
                     'd': aa.get('entity_id')
                   }
-                  adapter.findQuery('alarm', 'get-current-alarm', {'entity_id': aa.get('entity_id')}).then(function (a) {
-                  // adapter.findQuery('alarm', 'get-current-alarm', { 'opened': filterState == 'opened', 'resolved': filterState == 'resolved', 'filter': "{'d': 'as'}" }).then(function (a) {
+                  // adapter.findQuery('alarm', 'get-current-alarm', {'entity_id': aa.get('entity_id')}).then(function (a) {
+                  adapter.findQuery('alarm', { lookups: JSON.stringify(["pbehaviors", "linklist"]), 'filter': ('{"$or":[{"_id":"d4bca256-47a9-11e7-b03a-d6d3e2df9b3b"}]}') }).then(function (a) {
                     
                     if (a.success) {
                     // console.error('teest', a);
                       var fields = self.get('fields');
-                      var alarm = a.data[0];
+                      var alarm = a.data[0].alarms[0];
                   // var alarmsArr = get(this, 'alarmss').map(function(alarm) {
-                      alarm.v =alarm.value;
+                      // alarm.v =alarm.value;
                       // aa._id = 'aa';
                       aa.entity_id= alarm.data_id;
                       aa.d= alarm.data_id;

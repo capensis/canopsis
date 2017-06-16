@@ -80,6 +80,9 @@ Ember.Application.initializer({
             }.property('value.ack'),
 
             hasPBehavior: function() {
+                if (this.get('value.pbehaviors') == null) {
+                    return false
+                }
                 return this.get('value.pbehaviors').length != 0;
             }.property('value.pbihaviors'),
 
