@@ -20,23 +20,18 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.ws import route
+from canopsis.common.ws import RouteLeRetour as route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.reader import AlertsReader
 
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
 
+from bottle import abort
 
 def exports(ws):
 
-    @route(
-        ws.application.get,
-        name='weather/get/selectors',
-        payload=[
-            'selector_filter'
-        ]
-    )
+    @ws.application.route('weather/selectors/<selector_filter>')
     def get_selector(
             selector_filter
     ):
@@ -63,12 +58,8 @@ def exports(ws):
             ret_val.append(tmp)
         return ret_val
 
-    @route(
-        ws.application.get,
-        name='weathe/get/selector',
-        payload=['selector_id']
-    )
-    def get_a_seletor(
+    @ws.application.route("/weather/selectors/<selector_id>")
+    def weatherselectors(
         selector_id
     ):
         """
@@ -97,7 +88,7 @@ def exports(ws):
                 tmp_val['ack'] = tmp_alarm[0]['v']['ack']
             tmp_val['pbehavior'] = [] # wait for pbehavior
             tmp_val['linklist'] = [] # wait for linklist
-
+        return ret_val
 
 
         
