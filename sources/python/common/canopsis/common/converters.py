@@ -19,12 +19,11 @@
 # ---------------------------------
 
 """
-Here are all url converters used to convert/validate bottle url parameters.
+All url converters used to convert/validate bottle url parameters.
 """
 
 from __future__ import unicode_literals
 
-from bottle import abort
 import json
 import logging
 
@@ -33,23 +32,31 @@ logger = logging.getLogger('webserver')
 
 def mongo_filter(config):
     """
-    Parse mongo filter format from url
+    Parse mongo filter format from url.
     """
     regexp = r'{.+}'
 
     def to_python(match):
         """
         Convert and validate the url parameter to python
+
+        :param match: the matched portion of the url with regexp
+        :type match: str
+        :rtype: dict
         """
         try:
             return json.loads(match)
         except:
             logger.error('Cannot parse url parameter: {}'.format(match))
-            return abort(400)
+            return ''
 
     def to_url(filter_):
         """
         Convert json object to url format
+
+        :param filter_: the object to convert to an url
+        :type filter_: dict
+        :rtype: str
         """
         return filter_  # a simple dict !
 
@@ -58,20 +65,22 @@ def mongo_filter(config):
 
 def id_filter(config):
     """
-    Parse an id from url
+    Parse a generic id.
     """
     regexp = r'.+'
 
     def to_python(match):
         """
-        Convert and validate the url parameter to python
+        Convert and validate the url parameter to python.
+
+        :rtype: str
         """
         # TODO: do more stuff, like searching the ID into db
         return match
 
     def to_url(filter_):
         """
-        Convert json object to url format
+        Convert json object to url format.
         """
         return filter_
 
