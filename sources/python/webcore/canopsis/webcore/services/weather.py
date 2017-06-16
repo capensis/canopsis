@@ -20,42 +20,48 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.ws import RouteLeRetour as route
-from canopsis.context_graph.manager import ContextGraph
+import json
+
 from canopsis.alerts.reader import AlertsReader
+from canopsis.common.converters import mongo_filter
+from canopsis.context_graph.manager import ContextGraph
 
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
 
-from bottle import abort
 
 def exports(ws):
 
-    @ws.application.route('weather/selectors/<selector_filter>')
+    ws.application.router.add_filter('mongo_filter', mongo_filter)
+
+    @ws.application.route('/weather/selectors/<selector_filter:mongo_filter>')
     def get_selector(
-            selector_filter
+        selector_filter
     ):
+        selector_filter = {}
+        return
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
-        
+
         ret_val = []
         for i in selector_list:
             tmp = {}
-            tmp_alarm = alarm_manager.get(filter_={'d' : i['_id']})['alarms']
+            tmp_alarm = alarm_manager.get(filter_={'d': i['_id']})['alarms']
 
             tmp['entity_id'] = i['_id']
-            tmp['criticity'] = i['infos'].get('criticity','')
+            tmp['criticity'] = i['infos'].get('criticity', '')
             tmp['org'] = i['infos'].get('org', '')
-            tmp['sla_text'] = '' # when sla
+            tmp['sla_text'] = ''  # when sla
             tmp['display_name'] = i['name']
             if tmp_alarm != []:
                 tmp['state'] = tmp_alarm[0]['v']['state']
                 tmp['status'] = tmp_alarm[0]['v']['status']
                 tmp['snooze'] = tmp_alarm[0]['v']['snooze']
                 tmp['ack'] = tmp_alarm[0]['v']['ack']
-            tmp['pbehavior'] = [] # add this when it's ready
-            tmp['linklist'] = [] # add this when it's ready
+            tmp['pbehavior'] = []  # add this when it's ready
+            tmp['linklist'] = []  # add this when it's ready
             ret_val.append(tmp)
+
         return ret_val
 
     @ws.application.route("/weather/selectors/<selector_id>")
@@ -74,21 +80,19 @@ def exports(ws):
         ret_val = []
         for i in entities:
             tmp_val = {}
-            tmp_alarm = alarm_manager.get(filter_={'d':i['_id']})['alarms']
-            
+            tmp_alarm = alarm_manager.get(filter_={'d': i['_id']})['alarms']
+
             tmp_val['entity_id'] = i['_id']
-            tmp_val['sla_text'] = '' # when sla
+            tmp_val['sla_text'] = ''  # when sla
             tmp_val['org'] = i['infos'].get('org', '')
-            tmp_val['display_name'] = selector_entity['display_name'] # check if we need selector here
+            tmp_val['display_name'] = selector_entity['display_name']  # check if we need selector here
             tmp_val['name'] = i['name']
             if tmp_alarm != []:
                 tmp_val['state'] = tmp_alarm[0]['v']['state']
                 tmp_val['status'] = tmp_alarm[0]['v']['status']
                 tmp_val['snooze'] = tmp_alarm[0]['v']['snooze']
                 tmp_val['ack'] = tmp_alarm[0]['v']['ack']
-            tmp_val['pbehavior'] = [] # wait for pbehavior
-            tmp_val['linklist'] = [] # wait for linklist
+            tmp_val['pbehavior'] = []  # wait for pbehavior
+            tmp_val['linklist'] = []  # wait for linklist
+
         return ret_val
-
-
-        
