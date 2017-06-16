@@ -20,25 +20,29 @@
 
 from __future__ import unicode_literals
 
+from bottle import abort, response
+import json
+
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.reader import AlertsReader
+from canopsis.common.converters import mongo_filter, id_filter
+from canopsis.context_graph.manager import ContextGraph
 
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
 
-from bottle import abort, response
-import json
-
-
 def exports(ws):
-    @ws.application.route('weather/selectors/<selector_filter>')
+
+    ws.application.router.add_filter('mongo_filter', mongo_filter)
+    ws.application.router.add_filter('id_filter', id_filter)
+
+    @ws.application.route('/weather/selectors/<selector_filter:mongo_filter>')
     def get_selector(selector_filter):
         """
-        Return the list of the selectors that match the filter
-        Every selector will be return the corresponding alarm, sla, pbehavior
-        and linklist.
-        :param dict selector_filter: a mongo filter used to select selector
-        :return list: the selectors that match selector_filter
+        Get a list of selectors from a mongo filter.
+
+        :param dict selector_filter: a mongo filter to find selectors
+        :rtype: dict
         """
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
@@ -61,12 +65,17 @@ def exports(ws):
             tmp['pbehavior'] = []  # add this when it's ready
             tmp['linklist'] = []  # add this when it's ready
             ret_val.append(tmp)
+
         return ret_val
 
-    @ws.application.route("/weather/selectors/<selector_id>")
+    @ws.application.route("/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(selector_id):
         """
-            get selector and entities for the second part.
+        Get selector and contextual informations.
+
+        :param str selector_id: the selector_id to search for
+        :return: a list of agglomerated values of entities in the selector
+        :rtype: list
         """
         try:
             selector_entity = context_manager.get_entities(
