@@ -31,6 +31,7 @@ from canopsis.context_graph.manager import ContextGraph
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
 
+
 def exports(ws):
 
     ws.application.router.add_filter('mongo_filter', mongo_filter)
@@ -44,6 +45,7 @@ def exports(ws):
         :param dict selector_filter: a mongo filter to find selectors
         :rtype: dict
         """
+
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
 
@@ -66,7 +68,8 @@ def exports(ws):
             tmp['linklist'] = []  # add this when it's ready
             ret_val.append(tmp)
 
-        return ret_val
+        response.content_type = "application/json"
+        return json.dumps(ret_val)
 
     @ws.application.route("/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(selector_id):
@@ -81,7 +84,7 @@ def exports(ws):
             selector_entity = context_manager.get_entities(
                 query={'_id': selector_id})[0]
         except IndexError:
-            abort(404, "No selfuch selector")
+            abort(404, "No such selector")
 
         entities = context_manager.get_entities(
             query=json.loads(selector_entity['infos']['mfilter']))

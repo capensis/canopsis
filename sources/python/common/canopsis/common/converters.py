@@ -48,7 +48,7 @@ def mongo_filter(config):
             return json.loads(match)
         except:
             logger.error('Cannot parse url parameter: {}'.format(match))
-            return ''
+            raise
 
     def to_url(filter_):
         """
