@@ -23,7 +23,7 @@ from __future__ import unicode_literals
 import json
 
 from canopsis.alerts.reader import AlertsReader
-from canopsis.common.converters import mongo_filter
+from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.context_graph.manager import ContextGraph
 
 context_manager = ContextGraph()
@@ -33,13 +33,12 @@ alarm_manager = AlertsReader()
 def exports(ws):
 
     ws.application.router.add_filter('mongo_filter', mongo_filter)
+    ws.application.router.add_filter('id_filter', id_filter)
 
     @ws.application.route('/weather/selectors/<selector_filter:mongo_filter>')
     def get_selector(
         selector_filter
     ):
-        selector_filter = {}
-        return
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
 
@@ -64,7 +63,7 @@ def exports(ws):
 
         return ret_val
 
-    @ws.application.route("/weather/selectors/<selector_id>")
+    @ws.application.route("/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(
         selector_id
     ):
