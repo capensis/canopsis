@@ -17,11 +17,17 @@ import json
 
 
 class Selector(MiddlewareRegistry):
+    """Selector"""
 
     OBJECT_STORAGE = ''
     ALERTS_STORAGE = ''
 
     def __init__(self, *args, **kwargs):
+        """__init__
+
+        :param *args:
+        :param **kwargs:
+        """
         super(Selector, self).__init__(*args, **kwargs)
         self.object_storage = Middleware.get_middleware_by_uri(
             'storage-default://',
@@ -42,6 +48,8 @@ class Selector(MiddlewareRegistry):
     def create_selector(self, body):
         """
             create selector entity in context and link to entities
+
+            :param dict body: selector conf
         """
         selector_id = 'selector-{0}'.format(
             body['display_name']
@@ -51,16 +59,16 @@ class Selector(MiddlewareRegistry):
             query=json.loads(body['mfilter']),
             projection={'_id': 1}
         )
-        d = []
-        for i in depends_list:
-            d.append(i['_id'])
+        depend_list = []
+        for entity_id in depends_list:
+            depend_list.append(i['_id'])
 
         entity = create_entity(
             id=selector_id, 
             name=body['display_name'],
             etype='selector',
             impact=[],
-            depends=d,
+            depends=depend_list,
             infos={
                 'mfilter': body['mfilter'],
                 'enabled': True,
@@ -80,7 +88,10 @@ class Selector(MiddlewareRegistry):
 
     def delete_selector(self, selector_id):
         """
+            delete_selector
             disable selector entity in context
+
+            :param string selector_id: selector_id
         """
         object_selector = list(self.object_storage._backend.find(
             {'_id': selector_id}
@@ -95,25 +106,29 @@ class Selector(MiddlewareRegistry):
 
     def calcul_state(self, selector_id):
         """
+            calcul_state
+
             send an event selector with the new state of the selector
+
+            :param selector_id: selector id
         """
         self.logger.critical('calcul')
-        s = self.context_graph.get_entities(
+        selector_entity = self.context_graph.get_entities(
             query={'_id': selector_id}
         )[0]
 
-        entities = s['depends']
-        display_name = s['name']
+        entities = selector_entity['depends']
+        display_name = selector_entity['name']
 
-        r = list(self[Selector.ALERTS_STORAGE]._backend.find(
+        alarm_list = list(self[Selector.ALERTS_STORAGE]._backend.find(
             {'d': {'$in': entities}}
         ))
         states = []
-        for i in r:
-            if i['v']['resolved'] == None and i['d'] in entities:
+        for alarm in alarm_list:
+            if alarm['v']['resolved'] == None and alarm['d'] in entities:
                 # add here a check of pebehavior to take into account or not
                 # the alarm's state
-                states.append(i['v']['state']['val']) 
+                states.append(alarm['v']['state']['val']) 
 
         nb_entities = len(entities)
         nb_crit = states.count(3)
@@ -130,17 +145,23 @@ class Selector(MiddlewareRegistry):
             nb_major,
             nb_crit
         )
-        self.logger.critical(computed_state)
-        self.logger.critical(s)
         
-        if computed_state != s['infos']['state']:
+        if computed_state != selector_entity['infos']['state']:
             self.logger.critical('update entity')
-            s['infos']['state'] = computed_state
-            self.context_graph.update_entity(s)
+            selector_entity['infos']['state'] = computed_state
+            self.context_graph.update_entity(selector_entity)
 
         self.publish_event(display_name, computed_state, output)
 
     def worst_state(self, nb_crit, nb_major, nb_minor):
+        """worst_state
+            
+        :param int nb_crit: critical number
+        :param int nb_major: major number
+        :param int nb_minor: minor number
+        :return int state: return the worst state
+        """
+
         if nb_crit > 0:
             return 3
         elif nb_major > 0:
@@ -151,6 +172,14 @@ class Selector(MiddlewareRegistry):
             return 0
 
     def publish_event(self, display_name, computed_state, output):
+        """publish_event
+        
+        publish an event selector on amqp
+
+        :param display_name: selector display_name
+        :param computed_state: selector state
+        :param output: selector output
+        """
         event = forger(
             connector="canopsis",
             connector_name="engine",
@@ -169,19 +198,26 @@ class Selector(MiddlewareRegistry):
         self.logger.critical('published {0}'.format(event))
 
     def alarm_changed(self, alarm_id):
+        """alarm_changed
+        
+        launch a caculation of a selector state
+
+        :param alarm_id: alarm id
+        """
         selectors = self.context_graph.get_entities(query={'type':'selector'})
         for i in selectors:
             if alarm_id in i['depends']:
                 self.calcul_state(i['_id'])
 
-    def sla_calcul(self, selector_id, state):
-        """
+    def sla_compute(self, selector_id, state):
+        """sla_calcul
             launch the sla calcul
+
+        :param selector_id: selector id 
+        :param state: selector state
         """
         sla_tab = list(self.sla_storage.get_elements(query={'_id': selector_id}))[0]
         sla_tab['states'][state] = sla_tab['states'][state] + 1
-
-        self.logger.critical(sla_tab)
 
         self.sla_storage.put_element(sla_tab)
         """
@@ -192,7 +228,7 @@ class Selector(MiddlewareRegistry):
              sla_tab['states'][3]))))
         """
 
-    def calcul_slas(self):
+    def compute_slas(self):
         """
             launch the sla calcul for each selectors
         """
@@ -200,4 +236,4 @@ class Selector(MiddlewareRegistry):
             query={'type': 'selector', 'infos.enabled': True}
         )
         for i in selector_list:
-            self.sla_calcul(i['_id'], i['infos']['state'])
+            self.sla_compute(i['_id'], i['infos']['state'])

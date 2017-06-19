@@ -50,24 +50,29 @@ def exports(ws):
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
 
-        ret_val = []
-        for i in selector_list:
-            tmp = {}
-            tmp_alarm = alarm_manager.get(filter_={'d': i['_id']})['alarms']
+        selectors = []
+        for selector in selector_list:
+            entiched_entity = {}
+            tmp_alarm = alarm_manager.get(
+                filter_={'d': selector['_id']}
+            )['alarms']
 
-            tmp['entity_id'] = i['_id']
-            tmp['criticity'] = i['infos'].get('criticity', '')
-            tmp['org'] = i['infos'].get('org', '')
-            tmp['sla_text'] = ''  # when sla
-            tmp['display_name'] = i['name']
+            enriched_entity['entity_id'] = selector['_id']
+            enriched_entity['criticity'] = selector['infos'].get(
+                'criticity', 
+                ''
+            )
+            enriched_entity['org'] = selector['infos'].get('org', '')
+            enriched_entity['sla_text'] = ''  # when sla
+            enriched_entity['display_name'] = selector['name']
             if tmp_alarm != []:
-                tmp['state'] = tmp_alarm[0]['v']['state']
-                tmp['status'] = tmp_alarm[0]['v']['status']
-                tmp['snooze'] = tmp_alarm[0]['v']['snooze']
-                tmp['ack'] = tmp_alarm[0]['v']['ack']
-            tmp['pbehavior'] = []  # add this when it's ready
-            tmp['linklist'] = []  # add this when it's ready
-            ret_val.append(tmp)
+                enriched_entity['state'] = tmp_alarm[0]['v']['state']
+                enriched_entity['status'] = tmp_alarm[0]['v']['status']
+                enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
+                enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
+            enriched_entity['pbehavior'] = []  # add this when it's ready
+            enriched_entity['linklist'] = []  # add this when it's ready
+            selectors.append(enriched_entity)
 
         return gen_json(response, ret_val)
 
@@ -92,24 +97,26 @@ def exports(ws):
         entities = context_manager.get_entities(
             query=json.loads(selector_entity['infos']['mfilter']))
 
-        ret_val = []
-        for i in entities:
-            tmp_val = {}
-            tmp_alarm = alarm_manager.get(filter_={'d': i['_id']})['alarms']
+        entities_list = []
+        for entity in entities:
+            enriched_entity = {}
+            tmp_alarm = alarm_manager.get(
+                filter_={'d': entity['_id']}
+            )['alarms']
 
-            tmp_val['entity_id'] = i['_id']
-            tmp_val['sla_text'] = ''  # TODO when sla, use it
-            tmp_val['org'] = i['infos'].get('org', '')
-            tmp_val['display_name'] = selector_entity[
+            enriched_entity['entity_id'] = entity['_id']
+            enriched_entity['sla_text'] = ''  # TODO when sla, use it
+            enriched_entity['org'] = entity['infos'].get('org', '')
+            enriched_entity['display_name'] = selector_entity[
                 'name']  # check if we need selector here
-            tmp_val['name'] = i['name']
+            enriched_entity['name'] = entity['name']
             if tmp_alarm != []:
-                tmp_val['state'] = tmp_alarm[0]['v']['state']
-                tmp_val['status'] = tmp_alarm[0]['v']['status']
-                tmp_val['snooze'] = tmp_alarm[0]['v']['snooze']
-                tmp_val['ack'] = tmp_alarm[0]['v']['ack']
-            tmp_val['pbehavior'] = []  # TODO wait for pbehavior
-            tmp_val['linklist'] = []  # TODO wait for linklist
-            ret_val.append(tmp_val)
+                enriched_entity['state'] = tmp_alarm[0]['v']['state']
+                enriched_entity['status'] = tmp_alarm[0]['v']['status']
+                enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
+                enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
+            enriched_entity['pbehavior'] = []  # TODO wait for pbehavior
+            enriched_entity['linklist'] = []  # TODO wait for linklist
+            entities_list.append(enriched_entity)
 
         return gen_json(response, ret_val)
