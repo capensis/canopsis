@@ -54,3 +54,25 @@ def mongo_filter(config):
         return filter_  # a simple dict !
 
     return regexp, to_python, to_url
+
+
+def id_filter(config):
+    """
+    Parse an id from url
+    """
+    regexp = r'.+'
+
+    def to_python(match):
+        """
+        Convert and validate the url parameter to python
+        """
+        # TODO: do more stuff, like searching the ID into db
+        return match
+
+    def to_url(filter_):
+        """
+        Convert json object to url format
+        """
+        return filter_
+
+    return regexp, to_python, to_url
