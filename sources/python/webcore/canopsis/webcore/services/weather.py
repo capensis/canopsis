@@ -21,25 +21,25 @@
 from __future__ import unicode_literals
 
 from canopsis.context_graph.manager import ContextGraph
+import json
+
 from canopsis.alerts.reader import AlertsReader
+from canopsis.common.converters import mongo_filter
+from canopsis.context_graph.manager import ContextGraph
 
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
 
 from bottle import abort, response
-import json
-
 
 def exports(ws):
-    @ws.application.route('weather/selectors/<selector_filter>')
-    def get_selector(selector_filter):
-        """
-        Return the list of the selectors that match the filter
-        Every selector will be return the corresponding alarm, sla, pbehavior
-        and linklist.
-        :param dict selector_filter: a mongo filter used to select selector
-        :return list: the selectors that match selector_filter
-        """
+
+    ws.application.router.add_filter('mongo_filter', mongo_filter)
+
+    @ws.application.route('/weather/selectors/<selector_filter:mongo_filter>')
+    def get_selector(
+        selector_filter
+    ):
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
 
@@ -61,6 +61,7 @@ def exports(ws):
             tmp['pbehavior'] = []  # add this when it's ready
             tmp['linklist'] = []  # add this when it's ready
             ret_val.append(tmp)
+
         return ret_val
 
     @ws.application.route("/weather/selectors/<selector_id>")
