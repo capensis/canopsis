@@ -19,11 +19,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-<<<<<<< HEAD
 #from __future__ import unicode_literals
 
-from datetime import datetime, timedelta
-import operator
+from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 from unittest import main
