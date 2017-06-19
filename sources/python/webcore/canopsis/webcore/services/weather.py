@@ -77,7 +77,7 @@ def exports(ws):
             enriched_entity['linklist'] = []  # add this when it's ready
             selectors.append(enriched_entity)
 
-        return gen_json(response, enriched_entity)
+        return gen_json(response, selectors)
 
     @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(selector_id):
@@ -123,4 +123,4 @@ def exports(ws):
             enriched_entity['linklist'] = []  # TODO wait for linklist
             entities_list.append(enriched_entity)
 
-        return gen_json(response, enriched_entity)
+        return gen_json(response, selectors)
