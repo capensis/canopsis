@@ -121,4 +121,4 @@ def exports(ws):
             enriched_entity['linklist'] = []  # TODO wait for linklist
             entities_list.append(enriched_entity)
 
-        return gen_json(response, selectors)
+        return gen_json(response, entities_list)
