@@ -6,9 +6,12 @@ selector_manager = Selector()
 
 @register_task
 def beat_processing(engine, logger=None, **kwargs):
+    """beat_processing
+    selector's beat processing
+
+    :param engine: selector engine
+    :param logger: engin logger
+    :param **kwargs:
     """
-        selector's beat processing to launch sla calculs
-    """
-    logger.critical('beat_selector')
-    selector_manager.calcul_slas()
+    selector_manager.compute_slas()
 
