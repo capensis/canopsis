@@ -34,7 +34,7 @@ def mongo_filter(config):
     """
     Parse mongo filter format from url.
     """
-    regexp = r'{.+}'
+    regexp = r'{.*}'
 
     def to_python(match):
         """
