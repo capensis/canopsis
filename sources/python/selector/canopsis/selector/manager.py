@@ -217,20 +217,26 @@ class Selector(MiddlewareRegistry):
         :param selector_id: selector id 
         :param state: selector state
         """
-        """
         sla_tab = list(self.sla_storage.get_elements(query={'_id': selector_id}))[0]
         sla_tab['states'][state] = sla_tab['states'][state] + 1
 
         self.sla_storage.put_element(sla_tab)
+        
+        selector_conf = list(self.object_storage.get_elements(
+            query={'_id':selector_id}
+        ))[0]
 
-
+        
 
         sla = Sla(
             self.object_storage,
             'test/de/rk/on/verra/plus/tard',
-
+            selector_conf['sla_output_tpl'],
+            selector_conf['sla_timewindow'],
+            selector_conf['sla_warning'],
+            selector_conf['alert_level'],
+            selector_conf['display_name']
         )
-        """
         """
         self.logger.critical('{0}'.format((
             sla_tab['states']/

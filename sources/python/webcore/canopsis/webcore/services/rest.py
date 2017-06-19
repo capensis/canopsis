@@ -177,6 +177,7 @@ def get_records(ws, namespace, ctype=None, _id=None, **params):
 
 
 def save_records(ws, namespace, ctype, _id, items):
+
     records = []
 
     for data in items:
@@ -364,10 +365,11 @@ def exports(ws):
             return HTTPError(500, 'Impossible to parse body: {0}'.format(err))
 
 
-        for i in loads(body):
+        for i in items:
             if i['crecord_type'] == 'selector':
                 selector_manager.create_selector(i)
-
+                i['_id'] = 'selector-{0}'.format(i['display_name'])
+        
         return save_records(ws, namespace, ctype, _id, items)
 
     @route(ws.application.delete, raw_body=True, adapt=False)  # NOQA
