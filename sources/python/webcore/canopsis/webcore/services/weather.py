@@ -91,10 +91,10 @@ def exports(ws):
             selector_entity = context_manager.get_entities(
                 query={'_id': selector_id})[0]
         except IndexError:
-            return_ = {"name" : "resource_not_found",
+            json_error = {"name" : "resource_not_found",
                       "description": "the selector_id does not match"
                       " any selector"}
-            return gen_json_error(response, return_, 404)
+            return gen_json_error(response, json_error, 404)
 
         entities = context_manager.get_entities(
             query=json.loads(selector_entity['infos']['mfilter']))
