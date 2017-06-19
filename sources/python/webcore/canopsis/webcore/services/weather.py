@@ -20,9 +20,15 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.ws import route
+from bottle import abort, response
+import json
+
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.reader import AlertsReader
+from canopsis.common.converters import mongo_filter, id_filter
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.webcore.utils import gen_json, gen_json_error
+
 
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
@@ -30,74 +36,91 @@ alarm_manager = AlertsReader()
 
 def exports(ws):
 
-    @route(
-        ws.application.get,
-        name='weather/get/selectors',
-        payload=[
-            'selector_filter'
-        ]
+    ws.application.router.add_filter('mongo_filter', mongo_filter)
+    ws.application.router.add_filter('id_filter', id_filter)
+
+    @ws.application.route(
+        '/api/v2/weather/selectors/<selector_filter:mongo_filter>'
     )
-    def get_selector(
-            selector_filter
-    ):
+    def get_selector(selector_filter):
+        """
+        Get a list of selectors from a mongo filter.
+
+        :param dict selector_filter: a mongo filter to find selectors
+        :rtype: dict
+        """
+
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
-        
-        ret_val = []
-        for i in selector_list:
-            tmp = {}
-            tmp_alarm = alarm_manager.get(filter_={'d' : i['_id']})['alarms']
 
-            tmp['entity_id'] = i['_id']
-            tmp['criticity'] = i['infos'].get('criticity','')
-            tmp['org'] = i['infos'].get('org', '')
-            tmp['sla_text'] = '' # when sla
-            tmp['display_name'] = i['name']
+        selectors = []
+        for selector in selector_list:
+            enriched_entity = {}
+            tmp_alarm = alarm_manager.get(
+                filter_={'d': selector['_id']}
+            )['alarms']
+
+            enriched_entity['entity_id'] = selector['_id']
+            enriched_entity['criticity'] = selector['infos'].get(
+                'criticity',
+                ''
+            )
+            enriched_entity['org'] = selector['infos'].get('org', '')
+            enriched_entity['sla_text'] = ''  # when sla
+            enriched_entity['display_name'] = selector['name']
             if tmp_alarm != []:
-                tmp['state'] = tmp_alarm[0]['v']['state']
-                tmp['status'] = tmp_alarm[0]['v']['status']
-                tmp['snooze'] = tmp_alarm[0]['v']['snooze']
-                tmp['ack'] = tmp_alarm[0]['v']['ack']
-            tmp['pbehavior'] = [] # add this when it's ready
-            tmp['linklist'] = [] # add this when it's ready
-            ret_val.append(tmp)
-        return ret_val
+                enriched_entity['state'] = tmp_alarm[0]['v']['state']
+                enriched_entity['status'] = tmp_alarm[0]['v']['status']
+                enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
+                enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
+            enriched_entity['pbehavior'] = []  # add this when it's ready
+            enriched_entity['linklist'] = []  # add this when it's ready
+            selectors.append(enriched_entity)
 
-    @route(
-        ws.application.get,
-        name='weathe/get/selector',
-        payload=['selector_id']
-    )
-    def get_a_seletor(
-        selector_id
-    ):
+        return gen_json(response, selectors)
+
+    @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
+    def weatherselectors(selector_id):
         """
-            get selector and entities for the second part.
+        Get selector and contextual informations.
+
+        :param str selector_id: the selector_id to search for
+        :return: a list of agglomerated values of entities in the selector
+        :rtype: list
         """
-        selector_entity = context_manager.get_entities(
-            query={'_id': selector_id}
-        )[0]
+        context_manager.logger.critical(selector_id)
+        try:
+            selector_entity = context_manager.get_entities(
+                query={'_id': selector_id})[0]
+        except IndexError:
+            json_error = {"name" : "resource_not_found",
+                      "description": "the selector_id does not match"
+                      " any selector"}
+            return gen_json_error(response, json_error, 404)
+
         entities = context_manager.get_entities(
-            query=json.loads(selector_entity['infos']['mfilter'])
-        )
-        ret_val = []
-        for i in entities:
-            tmp_val = {}
-            tmp_alarm = alarm_manager.get(filter_={'d':i['_id']})['alarms']
-            
-            tmp_val['entity_id'] = i['_id']
-            tmp_val['sla_text'] = '' # when sla
-            tmp_val['org'] = i['infos'].get('org', '')
-            tmp_val['display_name'] = selector_entity['display_name'] # check if we need selector here
-            tmp_val['name'] = i['name']
+            query=json.loads(selector_entity['infos']['mfilter']))
+
+        entities_list = []
+        for entity in entities:
+            enriched_entity = {}
+            tmp_alarm = alarm_manager.get(
+                filter_={'d': entity['_id']}
+            )['alarms']
+
+            enriched_entity['entity_id'] = entity['_id']
+            enriched_entity['sla_text'] = ''  # TODO when sla, use it
+            enriched_entity['org'] = entity['infos'].get('org', '')
+            enriched_entity['display_name'] = selector_entity[
+                'name']  # check if we need selector here
+            enriched_entity['name'] = entity['name']
             if tmp_alarm != []:
-                tmp_val['state'] = tmp_alarm[0]['v']['state']
-                tmp_val['status'] = tmp_alarm[0]['v']['status']
-                tmp_val['snooze'] = tmp_alarm[0]['v']['snooze']
-                tmp_val['ack'] = tmp_alarm[0]['v']['ack']
-            tmp_val['pbehavior'] = [] # wait for pbehavior
-            tmp_val['linklist'] = [] # wait for linklist
+                enriched_entity['state'] = tmp_alarm[0]['v']['state']
+                enriched_entity['status'] = tmp_alarm[0]['v']['status']
+                enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
+                enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
+            enriched_entity['pbehavior'] = []  # TODO wait for pbehavior
+            enriched_entity['linklist'] = []  # TODO wait for linklist
+            entities_list.append(enriched_entity)
 
-
-
-        
+        return gen_json(response, entities_list)
