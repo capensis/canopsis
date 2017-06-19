@@ -27,6 +27,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.webcore.utils import gen_json, gen_json_error
 
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
@@ -68,8 +69,7 @@ def exports(ws):
             tmp['linklist'] = []  # add this when it's ready
             ret_val.append(tmp)
 
-        response.content_type = "application/json"
-        return json.dumps(ret_val)
+        return gen_json(response, ret_val)
 
     @ws.application.route("/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(selector_id):
@@ -84,7 +84,10 @@ def exports(ws):
             selector_entity = context_manager.get_entities(
                 query={'_id': selector_id})[0]
         except IndexError:
-            abort(404, "No such selector")
+            return_ = {"name" : "resource_not_found",
+                      "description": "the selector_id does not match"
+                      " any selector"}
+            return gen_json_error(response, return_, 404)
 
         entities = context_manager.get_entities(
             query=json.loads(selector_entity['infos']['mfilter']))
@@ -109,5 +112,4 @@ def exports(ws):
             tmp_val['linklist'] = []  # TODO wait for linklist
             ret_val.append(tmp_val)
 
-        response.content_type = "application/json"
-        return json.dumps(ret_val)
+        return gen_json(response, ret_val)
