@@ -52,10 +52,12 @@ def exports(ws):
 
         selectors = []
         for selector in selector_list:
-            entiched_entity = {}
+            enriched_entity = {}
             tmp_alarm = alarm_manager.get(
                 filter_={'d': selector['_id']}
             )['alarms']
+
+            context_manager.logger.critical('selector: {0}'.format(selector))
 
             enriched_entity['entity_id'] = selector['_id']
             enriched_entity['criticity'] = selector['infos'].get(
