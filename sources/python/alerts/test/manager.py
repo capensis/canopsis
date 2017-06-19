@@ -23,7 +23,7 @@
 
 from datetime import datetime
 from operator import itemgetter
-from time import time, mktime
+from time import time, mktime, sleep
 from unittest import main
 
 from canopsis.alerts import AlarmField
@@ -924,17 +924,19 @@ class TestManager(BaseTest):
         events = self.manager.get_events(alarm0)
         self.assertEqual(events, [])
 
-        component = { "_id" : "ut-comp",
-                      "impact" : [],
-                      "name" : "ut-comp",
-                      "measurements" : [],
-                      "depends" : [],
-                      "infos" : { },
-                      "type" : "component",
-                      "connector" : "test",
-                      "connector_name" : "test0" }
+        component = {
+            "_id": "ut-comp",
+            "impact": [],
+            "name": "ut-comp",
+            "measurements": [],
+            "depends": [],
+            "infos": {},
+            "type": "component",
+            "connector": "test",
+            "connector_name": "test0"
+        }
 
-        self.manager.context_manager.put_entities(component)
+        self.manager.context_manager._put_entities(component)
 
         # Only a check OK
         alarm1_id = 'ut-comp'
@@ -1086,7 +1088,7 @@ class TestManager(BaseTest):
 
     def test_check_alarm_filters_keepstate(self):
         # Testing keepstate flag
-        now_stamp = int(time.mktime(datetime.now().timetuple()))
+        now_stamp = int(mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
         alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
         did = self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID
@@ -1111,7 +1113,7 @@ class TestManager(BaseTest):
 
     def test_check_alarm_filters_repeat(self):
         # Testing repeat flag
-        now_stamp = int(time.mktime(datetime.now().timetuple()))
+        now_stamp = int(mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
         alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
         did = self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID
@@ -1127,10 +1129,10 @@ class TestManager(BaseTest):
 
         self.manager.update_current_alarm(alarm, value)
 
-        time.sleep(1.1)
+        sleep(1.1)
         self.manager.check_alarm_filters()
 
-        time.sleep(1.1)
+        sleep(1.1)
         self.manager.check_alarm_filters()
 
         result = self.manager.get_alarms(resolved=False)
@@ -1139,7 +1141,7 @@ class TestManager(BaseTest):
         self.assertEqual(state['val'], Check.CRITICAL)
 
         # This one should not do anything
-        time.sleep(1.1)
+        sleep(1.1)
         self.manager.check_alarm_filters()
 
         result = self.manager.get_alarms(resolved=False)

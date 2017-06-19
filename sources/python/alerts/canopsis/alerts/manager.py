@@ -25,17 +25,12 @@ from canopsis.configuration.model import Parameter
 
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
-<<<<<<< HEAD
 from canopsis.context_graph.manager import ContextGraph
-=======
-from canopsis.context.manager import Context
->>>>>>> 6961fc14ee22574ae02c5f620702f93c48603239
 from canopsis.task.core import get_task
 
 from canopsis.event.manager import Event
 from canopsis.check import Check
 
-<<<<<<< HEAD
 from canopsis.selector.manager import Selector
 
 from canopsis.alerts import AlarmField
@@ -45,18 +40,9 @@ from canopsis.alerts.status import (
     OFF, STEALTHY, is_stealthy, is_keeped_state
 )
 
-=======
-from canopsis.alerts import AlarmField
-from canopsis.alerts.filter import AlarmFilters
-from canopsis.alerts.status import (
-    get_last_state, get_last_status,
-    OFF, STEALTHY, is_stealthy, is_keeped_state
-)
-
->>>>>>> 6961fc14ee22574ae02c5f620702f93c48603239
 from datetime import datetime
 from operator import itemgetter
-import time
+from time import time, mktime
 
 
 CONF_PATH = 'alerts/manager.conf'
@@ -305,10 +291,9 @@ class Alerts(MiddlewareRegistry):
 
         if not snoozed:
             no_snooze_cond = {
-                '$or':
-                [
+                '$or': [
                     {AlarmField.snooze.value: None},
-                    {'{}.val'.format(AlarmField.snooze.value): {'$lte': int(time.time())}}
+                    {'snooze.val': {'$lte': int(time())}}
                 ]
             }
             query = {'$and': [query, no_snooze_cond]}
@@ -350,7 +335,6 @@ class Alerts(MiddlewareRegistry):
             },
             limit=1
         )
-
 
         if result is not None:
             result = result[0]
@@ -441,7 +425,6 @@ class Alerts(MiddlewareRegistry):
             'snooze': 'duration'
         }
         events = []
-<<<<<<< HEAD
         eventmodel = self.context_manager.get_event(entity)
         try:
             eventmodel.pop("_id")
@@ -453,9 +436,6 @@ class Alerts(MiddlewareRegistry):
         except KeyError:
             # FIXME : A logger would be nice
             pass
-=======
-        eventmodel = self[Alerts.CONTEXT_MANAGER].get_event(entity)
->>>>>>> 6961fc14ee22574ae02c5f620702f93c48603239
 
         for step in alarm[AlarmField.steps.value]:
             event = eventmodel.copy()
@@ -496,18 +476,15 @@ class Alerts(MiddlewareRegistry):
 
         entity_id = self.context_manager.get_id(event)
 
-<<<<<<< HEAD
         entity = self.context_manager.get_entities_by_id(entity_id)
         if entity != []:
             try:
                 if not entity[0]['infos']['enabled']:
-                    return 
+                    return
             except Exception:
                 self.logger.critical('error no enabled in entity')
                 pass
 
-=======
->>>>>>> 6961fc14ee22574ae02c5f620702f93c48603239
         if event['event_type'] == Check.EVENT_TYPE:
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
@@ -540,7 +517,6 @@ class Alerts(MiddlewareRegistry):
                               .format(event['event_type']),
                               event=event,
                               entity_id=entity_id)
-<<<<<<< HEAD
 
     def execute_task(self, name, event, entity_id,
                      author=None, new_state=None, diff_counter=None):
@@ -564,31 +540,6 @@ class Alerts(MiddlewareRegistry):
 
         value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
-=======
-
-    def execute_task(self, name, event, entity_id,
-                     author=None, new_state=None, diff_counter=None):
-        """
-        Find and execute a task.
-        """
-        # Find the corresponding task
-        try:
-            task = get_task(name, cacheonly=True)
-        except ImportError:
-            self.logger.warning('Unkown task {}'.format(name))
-            return
-
-        # Find the corresponding alarm
-        alarm = self.get_current_alarm(entity_id)
-        if alarm is None:
-            self.logger.debug(
-                'Entity {} has no current alarm : ignoring'.format(entity_id)
-            )
-            return
-
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
-
->>>>>>> 6961fc14ee22574ae02c5f620702f93c48603239
         if self.is_hard_limit_reached(value):
             # Only cancel is allowed when hard limit has been reached
             if event['event_type'] != 'cancel':
@@ -922,7 +873,7 @@ class Alerts(MiddlewareRegistry):
 
                 if get_last_status(alarm) == OFF:
                     t = alarm[AlarmField.status.value]['t']
-                    now = int(time.time())
+                    now = int(time())
 
                     if (now - t) > self.flapping_interval:
                         alarm[AlarmField.resolved.value] = t
@@ -951,7 +902,7 @@ class Alerts(MiddlewareRegistry):
                     continue
 
                 event = {
-                    'timestamp': int(time.time()),  # now
+                    'timestamp': int(time()),  # now
                     'output': 'automaticly resolved after stealthy shown time',
                     'connector': alarm['connector'],
                     'connector_name': alarm['connector_name']
@@ -974,7 +925,7 @@ class Alerts(MiddlewareRegistry):
         storage = self[Alerts.ALARM_STORAGE]
         result = self.get_alarms(resolved=False)
 
-        now = int(time.time())
+        now = int(time())
 
         for data_id in result:
             for docalarm in result[data_id]:
@@ -988,7 +939,6 @@ class Alerts(MiddlewareRegistry):
                         alarm[AlarmField.resolved.value] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
 
-<<<<<<< HEAD
     def get_alarm_with_eid(self, eid, resolved=False):
         """
             get alarms on eids
@@ -1000,8 +950,6 @@ class Alerts(MiddlewareRegistry):
             query['resolved'] = None
         return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
 
-=======
->>>>>>> 6961fc14ee22574ae02c5f620702f93c48603239
     def check_alarm_filters(self):
         """
         Do actions on alarms based on certain conditions/filters.
@@ -1010,7 +958,7 @@ class Alerts(MiddlewareRegistry):
         Alarm[AlarmField.filter_runs.value] = {alarm_id: [execution timestamp]}
         """
         now = datetime.now()
-        now_stamp = int(time.mktime(now.timetuple()))
+        now_stamp = int(mktime(now.timetuple()))
         filter_runs = AlarmField.filter_runs.value
 
         storage = self[Alerts.ALARM_STORAGE]

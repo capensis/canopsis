@@ -23,8 +23,6 @@ from datetime import datetime
 import time
 from unittest import TestCase
 
-from uuid import uuid4 as uuid
-
 from canopsis.alerts import AlarmField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
@@ -42,6 +40,9 @@ class BaseTest(TestCase):
         )
         self.config_storage = Middleware.get_middleware_by_uri(
             'storage-default-testconfig://'
+        )
+        self.context_graph_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testcontext://'
         )
         self.filter_storage = Middleware.get_middleware_by_uri(
             'storage-default-testalarmfilter://'
@@ -73,6 +74,7 @@ class BaseTest(TestCase):
         """Teardown"""
         self.alarm_storage.remove_elements()
         self.filter_storage.remove_elements()
+        self.context_graph_storage.remove_elements()
 
     def gen_fake_alarm(self, update={}, moment=None):
         """
