@@ -12,6 +12,7 @@ from canopsis.context_graph.process import create_entity
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
 from canopsis.old.rabbitmq import Amqp
+from canopsis.sla.core import Sla
 
 import json
 
@@ -61,7 +62,7 @@ class Selector(MiddlewareRegistry):
         )
         depend_list = []
         for entity_id in depends_list:
-            depend_list.append(i['_id'])
+            depend_list.append(entity_id['_id'])
 
         entity = create_entity(
             id=selector_id, 
@@ -216,10 +217,20 @@ class Selector(MiddlewareRegistry):
         :param selector_id: selector id 
         :param state: selector state
         """
+        """
         sla_tab = list(self.sla_storage.get_elements(query={'_id': selector_id}))[0]
         sla_tab['states'][state] = sla_tab['states'][state] + 1
 
         self.sla_storage.put_element(sla_tab)
+
+
+
+        sla = Sla(
+            self.object_storage,
+            'test/de/rk/on/verra/plus/tard',
+
+        )
+        """
         """
         self.logger.critical('{0}'.format((
             sla_tab['states']/
@@ -235,5 +246,8 @@ class Selector(MiddlewareRegistry):
         selector_list = self.context_graph.get_entities(
             query={'type': 'selector', 'infos.enabled': True}
         )
-        for i in selector_list:
-            self.sla_compute(i['_id'], i['infos']['state'])
+        for selector in selector_list:
+            self.sla_compute(
+                selector['_id'], 
+                selector['infos']['state']
+            )
