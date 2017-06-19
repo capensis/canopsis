@@ -26,7 +26,6 @@ import json
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
-from canopsis.context_graph.manager import ContextGraph
 
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
@@ -37,7 +36,9 @@ def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
 
-    @ws.application.route('/weather/selectors/<selector_filter:mongo_filter>')
+    @ws.application.route(
+        '/api/v2/weather/selectors/<selector_filter:mongo_filter>'
+    )
     def get_selector(selector_filter):
         """
         Get a list of selectors from a mongo filter.
@@ -58,7 +59,7 @@ def exports(ws):
 
             enriched_entity['entity_id'] = selector['_id']
             enriched_entity['criticity'] = selector['infos'].get(
-                'criticity', 
+                'criticity',
                 ''
             )
             enriched_entity['org'] = selector['infos'].get('org', '')
@@ -76,7 +77,7 @@ def exports(ws):
         response.content_type = "application/json"
         return json.dumps(selectors)
 
-    @ws.application.route("/weather/selectors/<selector_id:id_filter>")
+    @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(selector_id):
         """
         Get selector and contextual informations.
