@@ -56,8 +56,6 @@ def exports(ws):
                 filter_={'d': selector['_id']}
             )['alarms']
 
-            context_manager.logger.critical('selector: {0}'.format(selector))
-
             enriched_entity['entity_id'] = selector['_id']
             enriched_entity['criticity'] = selector['infos'].get(
                 'criticity', 
@@ -87,6 +85,7 @@ def exports(ws):
         :return: a list of agglomerated values of entities in the selector
         :rtype: list
         """
+        context_manager.logger.critical(selector_id)
         try:
             selector_entity = context_manager.get_entities(
                 query={'_id': selector_id})[0]
