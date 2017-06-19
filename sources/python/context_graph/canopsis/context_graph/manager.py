@@ -425,7 +425,8 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # rebuild selectors links
-        build_all_links(self)
+        if entity['type'] != 'selector':
+            build_all_links(self)
 
     def delete_entity(self, id_):
         """Delete an entity identified by id_ from the context.

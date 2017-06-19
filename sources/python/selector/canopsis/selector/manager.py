@@ -32,6 +32,10 @@ class Selector(MiddlewareRegistry):
             'mongodb-periodical-alarm://'
         )
         self[Selector.ALERTS_STORAGE] = alerts_storage
+
+        self.sla_storage = Middleware.get_middleware_by_uri(
+            'storage-default-sla://'
+        )
         
         self.context_graph = ContextGraph()
 
@@ -39,7 +43,7 @@ class Selector(MiddlewareRegistry):
         """
             create selector entity in context and link to entities
         """
-        selector_id = '/selector/{0}'.format(
+        selector_id = 'selector-{0}'.format(
             body['display_name']
 
         )
@@ -60,9 +64,17 @@ class Selector(MiddlewareRegistry):
             infos={
                 'mfilter': body['mfilter'],
                 'enabled': True,
+                'state': 0
             }
         )
         self.context_graph.create_entity(entity)
+
+        self.sla_storage.put_element(
+            element={
+                '_id': selector_id,
+                'states': [0, 0, 0, 0, 0] 
+            }
+        )
 
         self.calcul_state(selector_id)
 
@@ -74,20 +86,20 @@ class Selector(MiddlewareRegistry):
             {'_id': selector_id}
         ))[0]
         selector_entity = self.context_graph.get_entities_by_id(
-            '/selector/{0}'.format(object_selector['display_name'])
+            'selector-{0}'.format(object_selector['display_name'])
         )[0]
         selector_entity['infos']['enabled'] = False
-        self.logger.critical(selector_entity)
         self.context_graph.update_entity(selector_entity)
+        self.sla_storage.remove_elements(ids=[selector_id])
         
 
     def calcul_state(self, selector_id):
         """
             send an event selector with the new state of the selector
         """
+        self.logger.critical('calcul')
         s = self.context_graph.get_entities(
-            query={'_id': selector_id},
-            projection={'depends':1, 'name': 1}
+            query={'_id': selector_id}
         )[0]
 
         entities = s['depends']
@@ -118,6 +130,13 @@ class Selector(MiddlewareRegistry):
             nb_major,
             nb_crit
         )
+        self.logger.critical(computed_state)
+        self.logger.critical(s)
+        
+        if computed_state != s['infos']['state']:
+            self.logger.critical('update entity')
+            s['infos']['state'] = computed_state
+            self.context_graph.update_entity(s)
 
         self.publish_event(display_name, computed_state, output)
 
@@ -155,7 +174,30 @@ class Selector(MiddlewareRegistry):
             if alarm_id in i['depends']:
                 self.calcul_state(i['_id'])
 
-    def sla_calcul(self, selector_id):
+    def sla_calcul(self, selector_id, state):
         """
             launch the sla calcul
         """
+        sla_tab = list(self.sla_storage.get_elements(query={'_id': selector_id}))[0]
+        sla_tab['states'][state] = sla_tab['states'][state] + 1
+
+        self.logger.critical(sla_tab)
+
+        self.sla_storage.put_element(sla_tab)
+        """
+        self.logger.critical('{0}'.format((
+            sla_tab['states']/
+            (sla_tab['states'][1] +
+             sla_tab['states'][2] +
+             sla_tab['states'][3]))))
+        """
+
+    def calcul_slas(self):
+        """
+            launch the sla calcul for each selectors
+        """
+        selector_list = self.context_graph.get_entities(
+            query={'type': 'selector', 'infos.enabled': True}
+        )
+        for i in selector_list:
+            self.sla_calcul(i['_id'], i['infos']['state'])
