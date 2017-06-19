@@ -51,10 +51,12 @@ def exports(ws):
 
         selectors = []
         for selector in selector_list:
-            entiched_entity = {}
+            enriched_entity = {}
             tmp_alarm = alarm_manager.get(
                 filter_={'d': selector['_id']}
             )['alarms']
+
+            context_manager.logger.critical('selector: {0}'.format(selector))
 
             enriched_entity['entity_id'] = selector['_id']
             enriched_entity['criticity'] = selector['infos'].get(
@@ -74,7 +76,7 @@ def exports(ws):
             selectors.append(enriched_entity)
 
         response.content_type = "application/json"
-        return json.dumps(ret_val)
+        return json.dumps(selectors)
 
     @ws.application.route("/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(selector_id):
