@@ -42,7 +42,7 @@ class BaseTest(TestCase):
             'storage-default-testconfig://'
         )
         self.context_graph_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testcontext://'
+            'storage-default-testentities://'
         )
         self.filter_storage = Middleware.get_middleware_by_uri(
             'storage-default-testalarmfilter://'
