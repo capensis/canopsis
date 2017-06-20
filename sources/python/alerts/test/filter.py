@@ -54,6 +54,21 @@ class TestFilter(BaseTest):
         result = alarm_filters.get_filter(_id)
         self.assertEqual(result[0][AlarmFilter.UID], _id)
 
+    def test_get_filters_empty_filter(self):
+        alarm, value = self.gen_fake_alarm()
+        self.manager.update_current_alarm(alarm, value)
+        lifter = self.gen_alarm_filter({
+            AlarmFilter.FILTER: ''
+        }, storage=self.filter_storage)
+        lifter.save()
+
+        alarm_filters = AlarmFilters(storage=self.filter_storage,
+                                     alarm_storage=self.alarm_storage,
+                                     logger=logging.getLogger('alerts'))
+        result = alarm_filters.get_filters()
+        self.assertTrue(isinstance(result, list))
+        self.assertTrue(len(result) >= 1)
+
     def test_crud(self):
         alarm_filters = AlarmFilters(storage=self.filter_storage,
                                      alarm_storage=self.alarm_storage,
@@ -112,27 +127,27 @@ class TestFilter(BaseTest):
         self.manager.update_current_alarm(alarm, value)
 
         lifter = AlarmFilter(element={
-            AlarmFilter.CONDITION: {"cacao": {"$eq": 'maigre'}},
-        },
-        storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
+                AlarmFilter.CONDITION: {"cacao": {"$eq": 'maigre'}},
+            },
+            storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
         self.assertFalse(lifter.check_alarm(alarm))
 
         lifter = AlarmFilter(element={
-            AlarmFilter.CONDITION: {"v.component": {"$eq": 'bb'}},
-        },
-        storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
+                AlarmFilter.CONDITION: {"v.component": {"$eq": 'bb'}},
+            },
+            storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
         self.assertFalse(lifter.check_alarm(alarm))
 
         lifter = AlarmFilter(element={
-            AlarmFilter.CONDITION: {"v.component": {"$eq": 'c'}},
-        },
-        storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
+                AlarmFilter.CONDITION: {"v.component": {"$eq": 'c'}},
+            },
+            storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
         self.assertTrue(lifter.check_alarm(alarm))
 
         lifter = AlarmFilter(element={
-            AlarmFilter.CONDITION: {"v.state.val": {"$gte": 1}},
-        },
-        storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
+                AlarmFilter.CONDITION: {"v.state.val": {"$gte": 1}},
+            },
+            storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
         self.assertTrue(lifter.check_alarm(alarm))
 
     def test_output(self):
@@ -150,7 +165,6 @@ class TestFilter(BaseTest):
         }, storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
 
         self.assertEqual(lifter.output('toto'), "toto -- foo")
-
 
 if __name__ == '__main__':
     main()

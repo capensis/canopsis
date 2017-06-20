@@ -478,12 +478,13 @@ class Alerts(MiddlewareRegistry):
         entity_id = self.context_manager.get_id(event)
 
         entity = self.context_manager.get_entities_by_id(entity_id)
+        # Check if an entity is enabled
         if entity != []:
             try:
                 if not entity[0]['infos']['enabled']:
                     return
             except Exception:
-                self.logger.critical('error no enabled in entity')
+                self.logger.warning('entity not in context')
                 pass
 
         if event['event_type'] == Check.EVENT_TYPE:
@@ -1051,4 +1052,3 @@ class Alerts(MiddlewareRegistry):
             new_value[filter_runs][lifter._id].append(now_stamp)
 
             self.update_current_alarm(docalarm, new_value)
-

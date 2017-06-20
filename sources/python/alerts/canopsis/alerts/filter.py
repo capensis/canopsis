@@ -128,12 +128,14 @@ class AlarmFilters(object):
 
             # Instanciate each AlarmFilter on this alarm
             new_filter = self.create_filter(yummy)
-            try:
-                query = json.loads(mfilter)
-            except:
-                self.logger.warning('Cannot parse mfilter: {}'
-                                    .format(new_filter))
-                continue
+            query = None
+            if isinstance(mfilter, string_types) and mfilter != '':
+                try:
+                    query = json.loads(mfilter)
+                except:
+                    self.logger.warning('Cannot parse mfilter "{}"'
+                                        .format(mfilter))
+                    continue
 
             # Associate a filter with his matching alarm
             for alarm in list(self.alarm_storage.get_elements(query=query)):
