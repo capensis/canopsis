@@ -199,12 +199,12 @@ class PBehaviorManager(MiddlewareRegistry):
         :param list,str: the id(s) as a str or a list of string
         :return list: a list of pbehavior
         """
-        if not isinstance(id_, (list, str)):
+        if not isinstance(id_, (list, str, unicode)):
             raise TypeError(self.__TYPE_ERR)
 
         if isinstance(id_, list):
             for element in id_:
-                if not isinstance(element, str):
+                if not isinstance(element, (str, unicode)):
                     raise TypeError(self.__TYPE_ERR)
         else:
             id_ = list(id_)
