@@ -102,7 +102,8 @@ class Alerts(MiddlewareRegistry):
     @property
     def alarm_filters(self):
         return AlarmFilters(storage=self[Alerts.FILTER_STORAGE],
-                            alarm_storage=self[Alerts.ALARM_STORAGE])
+                            alarm_storage=self[Alerts.ALARM_STORAGE],
+                            logger=self.logger)
 
     @property
     def flapping_interval(self):

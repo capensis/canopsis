@@ -20,6 +20,7 @@
 # ---------------------------------
 
 from datetime import datetime
+import logging
 import time
 from unittest import TestCase
 
@@ -35,6 +36,8 @@ from canopsis.middleware.core import Middleware
 class BaseTest(TestCase):
 
     def setUp(self):
+        self.logger = logging.getLogger('alerts')
+
         self.alarm_storage = Middleware.get_middleware_by_uri(
             'storage-periodical-testalarm://'
         )
@@ -127,4 +130,4 @@ class BaseTest(TestCase):
 
         dictio = merge_two_dicts(base, update)
 
-        return AlarmFilter(dictio, storage=storage)
+        return AlarmFilter(dictio, logger=self.logger, storage=storage)

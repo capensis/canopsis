@@ -22,7 +22,6 @@ from six import string_types
 
 from datetime import timedelta
 import json
-import logging
 from uuid import uuid4 as uuid
 
 
@@ -31,11 +30,16 @@ class AlarmFilters(object):
         Easy access to a set of alarm filters.
     """
 
-    def __init__(self, storage, alarm_storage):
+    def __init__(self, storage, alarm_storage, logger):
+        """AlarmFilters Constructor !
+
+        :param storage storage: where to find alarm filters definitions
+        :param storage alarm_storage: where to find all alarms
+        :param logger logger: where to log
+        """
         self.storage = storage  # A alarmfilter storage
         self.alarm_storage = alarm_storage  # An alarm storage
-
-        self.logger = logging.getLogger('alerts')
+        self.logger = logger
 
     def create_filter(self, element):
         """
@@ -55,7 +59,8 @@ class AlarmFilters(object):
 
         af = AlarmFilter(element=element,
                          storage=self.storage,
-                         alarm_storage=self.alarm_storage)
+                         alarm_storage=self.alarm_storage,
+                         logger=self.logger)
 
         return af
 
@@ -105,7 +110,7 @@ class AlarmFilters(object):
         }
         all_filters = list(self.storage.get_elements(query=query))
 
-        return [AlarmFilter(fil) for fil in all_filters]
+        return [AlarmFilter(fil, logger=self.logger) for fil in all_filters]
 
     def get_filters(self):
         """
@@ -160,8 +165,9 @@ class AlarmFilter(object):
     FORMAT = 'output_format'
     REPEAT = 'repeat'
 
-    def __init__(self, element, storage=None, alarm_storage=None):
+    def __init__(self, element, logger, storage=None, alarm_storage=None):
         self.element = element  # has persisted in the db
+        self.logger = logger
         self.storage = storage
         self.alarm_storage = alarm_storage
 
@@ -184,7 +190,6 @@ class AlarmFilter(object):
             try:
                 value = json.loads(item)
             except:
-                self.logger = logging.getLogger('alerts')
                 self.logger.error('Cannot parse condition item "{}"'
                                   .format(item))
                 return
