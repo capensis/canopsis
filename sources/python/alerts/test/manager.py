@@ -26,7 +26,7 @@ from operator import itemgetter
 from time import time, mktime, sleep
 from unittest import main
 
-from canopsis.alerts import AlarmField
+from canopsis.alerts import AlarmField, States
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import OFF, STEALTHY, is_keeped_state
@@ -496,7 +496,7 @@ class TestManager(BaseTest):
             'component': 'ut-comp',
             'timestamp': 0,
             'output': 'test message',
-            'event_type': 'changestate',
+            'event_type': States.changestate.value,
             'state': Check.MINOR,
         }
         self.manager.archive(event1)
@@ -1108,7 +1108,7 @@ class TestManager(BaseTest):
 
         result = self.manager.get_alarms(resolved=False)
         state = result[alarm_id][0]['value']['state']
-        self.assertEqual(state['_t'], 'changestate')
+        self.assertEqual(state['_t'], States.changestate.value)
         self.assertEqual(state['val'], Check.MAJOR)
 
     def test_check_alarm_filters_repeat(self):

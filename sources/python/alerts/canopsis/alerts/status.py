@@ -20,7 +20,7 @@
 
 from time import time
 
-from canopsis.alerts import AlarmField
+from canopsis.alerts import AlarmField, States
 from canopsis.common.utils import ensure_iterable
 from canopsis.check import Check
 
@@ -151,7 +151,7 @@ def is_keeped_state(alarm):
     """
     state = alarm[AlarmField.state.value]
 
-    return state is not None and '_t' in state and state['_t'] == 'changestate'
+    return state is not None and '_t' in state and state['_t'] == States.changestate.value
 
 
 def is_stealthy(manager, alarm):

@@ -33,7 +33,7 @@ from canopsis.check import Check
 
 from canopsis.selector.manager import Selector
 
-from canopsis.alerts import AlarmField
+from canopsis.alerts import AlarmField, States
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
     get_last_state, get_last_status,
@@ -413,7 +413,7 @@ class Alerts(MiddlewareRegistry):
             'uncancel': 'uncancel',
             'declareticket': 'declareticket',
             'assocticket': 'assocticket',
-            'changestate': 'changestate',
+            'changestate': States.changestate.value,
             'snooze': 'snooze'
         }
         valmap = {

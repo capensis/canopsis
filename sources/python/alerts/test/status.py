@@ -25,7 +25,7 @@ from unittest import TestCase, main
 from canopsis.middleware.core import Middleware
 from canopsis.check import Check
 
-from canopsis.alerts import AlarmField
+from canopsis.alerts import AlarmField, States
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import (
     ONGOING, CANCELED, OFF,
@@ -223,7 +223,7 @@ class TestStatus(TestCase):
 
     def test_is_keeped_state(self):
         self.alarm[AlarmField.state.value] = {}
-        self.alarm[AlarmField.state.value]['_t'] = 'changestate'
+        self.alarm[AlarmField.state.value]['_t'] = States.changestate.value
 
         self.assertTrue(is_keeped_state(self.alarm))
 

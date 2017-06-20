@@ -20,7 +20,7 @@
 
 from time import time
 
-from canopsis.alerts import AlarmField
+from canopsis.alerts import AlarmField, States
 from canopsis.alerts.status import (
     compute_status, OFF, CANCELED, get_previous_step, is_keeped_state)
 
@@ -190,7 +190,7 @@ def change_state(manager, alarm, author, message, event):
     """
 
     step = {
-        '_t': 'changestate',
+        '_t': States.changestate.value,
         't': event['timestamp'],
         'a': author,
         'm': message,

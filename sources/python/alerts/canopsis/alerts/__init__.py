@@ -18,12 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 __version__ = '0.1'
 
 from enum import Enum
 
 
-class AlarmField(Enum):
+class DefaultEnum(Enum):
+
+    def __str__(self):
+        return str(self.value)
+
+
+class AlarmField(DefaultEnum):
     # Possible fields for an alarm
     ack = 'ack'
     ackremove = 'ackremove'
@@ -35,12 +43,17 @@ class AlarmField(Enum):
     pbehaviors = 'phbehaviors'
     resolved = 'resolved'
     snooze = 'snooze'
-    state = u'state'
+    state = 'state'
     status = 'status'
     steps = 'steps'
     tags = 'tags'
     ticket = 'ticket'
     filter_runs = 'filter_runs'  # trace alarm filter executions
 
-    def __str__(self):
-        return str(self.value)
+
+class States(DefaultEnum):
+    # Possible values for alarm states
+
+    # TODO: apply with other values like stateinc, statetdec, ack, ackremove,
+    # cancel, uncancel, declareticket, assocticket, snooze...
+    changestate = 'changestate'

@@ -165,6 +165,8 @@ class AlarmFilter(object):
     FORMAT = 'output_format'
     REPEAT = 'repeat'
 
+    DEFAULT_REPEAT_NUMBER = 1
+
     def __init__(self, element, logger, storage=None, alarm_storage=None):
         self.element = element  # has persisted in the db
         self.logger = logger
@@ -176,7 +178,7 @@ class AlarmFilter(object):
 
         # Map and converter element parts as attribute
         if self.REPEAT not in self.element:
-            self[self.REPEAT] = 1  # default value
+            self[self.REPEAT] = self.DEFAULT_REPEAT_NUMBER
         for k, v in self.element.items():
             self[k] = v
 
@@ -207,7 +209,7 @@ class AlarmFilter(object):
 
     def check_alarm(self, alarm):
         """
-        Check if a filter is valide for a specified alarm.
+        Check if a filter is valid for a specified alarm.
 
         :param alarm: An alarm
         :type alarm: dict

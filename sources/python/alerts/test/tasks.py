@@ -24,7 +24,7 @@ from time import time
 
 from canopsis.task.core import get_task
 
-from canopsis.alerts import AlarmField
+from canopsis.alerts import AlarmField, States
 from canopsis.alerts.status import get_previous_step, CANCELED, is_keeped_state
 
 from canopsis.entitylink.manager import Entitylink
@@ -216,7 +216,7 @@ class TestTasks(BaseTest):
         self.assertEqual(alarm[AlarmField.state.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.state.value]['val'], 2)
         self.assertTrue(
-            alarm[AlarmField.state.value] is get_previous_step(alarm, 'changestate')
+            alarm[AlarmField.state.value] is get_previous_step(alarm, States.changestate.value)
         )
         self.assertTrue(is_keeped_state(alarm))
 
