@@ -24,6 +24,8 @@ from datetime import timedelta
 import json
 from uuid import uuid4 as uuid
 
+from canopsis.storage.exceptions import StorageUnavailable
+
 
 class AlarmFilters(object):
     """
@@ -243,12 +245,12 @@ class AlarmFilter(object):
         """
         Save this filter into the db.
 
-        :raises Exception: when storage is not avalaible
+        :raises StorageException: when storage is not avalaible
         """
         if self.storage is not None:
             return self.storage._backend.save(self.element)
 
-        raise Exception("No storage available to save into !")
+        raise StorageUnavailable()
 
     def serialize(self):
         """
