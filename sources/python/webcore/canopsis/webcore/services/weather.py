@@ -28,6 +28,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
+from canopsis.common.utils import get_rrule_freq
 from canopsis.webcore.utils import gen_json, gen_json_error
 
 context_manager = ContextGraph()
@@ -47,15 +48,8 @@ def __format_pbehavior(pbehavior):
     # parse the rrule to get is "text"
     rrule = {}
     rrule["rrule"] = pbehavior["rrule"]
-    parts = re.split(";", pbehavior["rrule"])
-    freq = None
-    idx = 0
-    while freq is None and idx < len(parts):
-        if parts[idx][:4] == "FREQ":
-            freq = re.split("=", parts)[1]
 
-    if freq is None:
-        raise ValueError("No FREQ property found in the rrule string")
+    freq = get_rrule_freq(pbehavior["rrule"])
 
     if freq == "SECONDLY":
         rrule["text"] = EVERY.format("second")
@@ -75,7 +69,10 @@ def __format_pbehavior(pbehavior):
     pbehavior["rrule"] = rrule
 
     for key in to_delete:
-        pbehavior.pop(key)
+        try:
+            pbehavior.pop(key)
+        except KeyError:
+            pass
 
 
 def add_pbehavior_info(selectors):
@@ -129,9 +126,9 @@ def exports(ws):
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
 
             enriched_entity['linklist'] = []  # add this when it's ready
-            add_pbehavior_info(selectors)
             selectors.append(enriched_entity)
 
+        add_pbehavior_info(selectors)
         return gen_json(response, selectors)
 
     @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
