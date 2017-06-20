@@ -75,18 +75,18 @@ def __format_pbehavior(pbehavior):
             pass
 
 
-def add_pbehavior_info(selectors):
+def add_pbehavior_info(enriched_entity):
     """Add pbehavior related field to selectors. This function will add
     the related pbehavior in 'pbehavior', add the
     'hasactivepbehaviorinentities' and 'hasallactivepbehaviorinentities'
     with the correct value."""
 
-    for selector in selectors:
-        selector["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
-            selector["depends"])
+    enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
+        enriched_entity['entity_id']
+    )
 
-        for pbehavior in selector["pbehavior"]:
-            __format_pbehavior(pbehavior)
+    for pbehavior in enriched_entity["pbehavior"]:
+        __format_pbehavior(pbehavior)
 
 
 def exports(ws):
@@ -126,9 +126,9 @@ def exports(ws):
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
 
             enriched_entity['linklist'] = []  # add this when it's ready
+            add_pbehavior_info(enriched_entity)
             selectors.append(enriched_entity)
 
-        add_pbehavior_info(selectors)
         return gen_json(response, selectors)
 
     @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
@@ -172,8 +172,10 @@ def exports(ws):
                 enriched_entity['status'] = tmp_alarm[0]['v']['status']
                 enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
-            enriched_entity['pbehavior'] = []  # TODO wait for pbehavior
             enriched_entity['linklist'] = []  # TODO wait for linklist
+
+            add_pbehavior_info(enriched_entity)
+
             entities_list.append(enriched_entity)
 
         return gen_json(response, entities_list)
