@@ -123,6 +123,7 @@ class PBehaviorManager(MiddlewareRegistry):
     PBEHAVIOR_STORAGE = 'pbehavior_storage'
 
     _UPDATE_FLAG = 'updatedExisting'
+    __TYPE_ERR = "id_ must be a list of string or a string"
 
     @property
     def pbehavior_storage(self):
@@ -192,6 +193,26 @@ class PBehaviorManager(MiddlewareRegistry):
                 c.update({'_id': str(uuid4())})
         result = self.pbehavior_storage.put_element(element=data.to_dict())
         return result
+
+    def get_pbehaviors_by_eid(self, id_):
+        """Retreive from database every pbehavior that contains the given id_
+        :param list,str: the id(s) as a str or a list of string
+        :return list: a list of pbehavior
+        """
+        if not isinstance(id_, (list, str)):
+            raise TypeError(self.__TYPE_ERR)
+
+        if isinstance(id_, list):
+            for element in id_:
+                if not isinstance(element, str):
+                    raise TypeError(self.__TYPE_ERR)
+        else:
+            id_ = list(id_)
+
+        cursor = self.pbehavior_storage.get_elements(
+            query={PBehavior.EIDS:{"$in":id_}})
+
+        return list(cursor)
 
     def read(self, _id=None):
         """Get pbehavior or list pbehaviors.
