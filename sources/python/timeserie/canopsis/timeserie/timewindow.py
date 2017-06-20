@@ -724,10 +724,7 @@ class TimeWindow(object):
 
     def __repr__(self):
 
-        message = "TimeWindow(tz:{0}):{1}"
-        result = message.format(self.timezone, self.interval)
-
-        return result
+        return "TimeWindow(tz:{}):{}".format(self.timezone, self.interval)
 
     def __contains__(self, *timestamps):
         """True if input timestamps are in this timewindow."""

@@ -25,6 +25,8 @@ Updates
 .. csv-table::
    :header: "Author(s)", "Date", "Version", "Summary", "Accepted by"
 
+   "Romain Hennuyer", "2017/04/04", "0.5", "Updating change state description", ""
+   "Romain Hennuyer", "2017/03/28", "0.4", "Add steps comment", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.3", "Add steps hard limit", ""
    "Jean-Baptiste Braun", "2016/12/13", "0.2", "Add flapping crop feature", ""
    "David Delassus", "2015/10/26", "0.1", "Document creation", ""
@@ -177,6 +179,19 @@ Alarm step "cancel" data model
    t, step timestamp, ``event["timestamp"]``
    a, step author, alarm canceling author
    m, step message, alarm canceling message
+
+.. _TR__Alarm__DataModel__Comment:
+
+Alarm step "comment" data model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. csv-table::
+   :header: Field, Description, Default Value
+
+   _t, step type, ``comment``
+   t, step timestamp, ``event["timestamp"]``
+   a, step author, comment author
+   m, step message, comment message
 
 .. _TR__Alarm__DataModel__Restore:
 
@@ -399,6 +414,24 @@ Task: Cancel
  - the step **MUST** be added to the ``steps`` set of the alarm
  - the alarm **MUST** be returned as ``new_value``
 
+Task: comment
+-----------------
+
+``alerts.useraction.comment(manager, alarm, author, message, event) -> new_value``:
+
+ * ``manager`` as an ``Alerts`` configurable: the task caller
+ * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to comment
+ * ``author`` as a ``string``: the comment author
+ * ``message`` as a ``string``: the comment message
+ * ``event`` as a ``dict``: the :ref:`comment event <FR__Event__Comment>`
+ * ``new_value`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the new alarm value
+
+**Expected:**
+
+ - the alarm ``comment`` **MUST** be set to :ref:`comment step <TR__Alarm__DataModel__Comment>`
+ - the step **MUST** be added to the ``steps`` set of the alarm
+ - the alarm **MUST** be returned as ``new_value``
+
 Task: Restore
 -------------
 
@@ -457,7 +490,7 @@ Task: Associate ticket
 Task: Change State
 ------------------
 
-``alerts.useraction.changestate(manager, alarm, author, message, event) -> new_value``:
+``alerts.useraction.changestate(manager, alarm, author, message, event) -> new_value`` (as same as ``alerts.useraction.keepstate``):
 
  * ``manager`` as an ``Alerts`` configurable: the task caller
  * ``alarm`` as described by the :ref:`alarm data model <TR__Alarm__DataModel>`: the alarm to change
@@ -471,6 +504,8 @@ Task: Change State
  - the alarm ``ticket`` **MUST** be set to the :ref:`change state step <TR__Alarm__DataModel__ChangeState>`
  - the step **MUST** be added to the ``steps`` set of the alarm
  - the alarm **MUST** be returned as ``new_value``
+ - the alarm **MUST** be recognized as an unchangable state
+ - the alarm **MUST** always update his state if the state is OK (0)
 
 Task: State increase
 --------------------
@@ -564,4 +599,9 @@ Utility: Is stealthy ?
 ----------------------
 
 ``is_stealthy(manager, alarm) -> result``:
+
+Utility: Is keeped state ?
+----------------------
+
+``is_keeped_state(alarm) -> result``:
 

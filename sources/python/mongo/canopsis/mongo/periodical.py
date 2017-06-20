@@ -29,6 +29,7 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
 
     class Key:
         """Index key names."""
+        # TODO: removing Key class to correctly overriding PeriodicalStorage ?
 
         DATA_ID = 'd'  #: data id index name.
         VALUE = 'v'  #: value index name.
@@ -158,6 +159,9 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
             value_to_append = {
                 PeriodicalStorage.TIMESTAMP: timestamp,
                 PeriodicalStorage.VALUE: value
+                # Should rather be :
+                #MongoPeriodicalStorage.Key.TIMESTAMP: timestamp,
+                #MongoPeriodicalStorage.Key.VALUE: value
             }
 
             if data_id not in result:

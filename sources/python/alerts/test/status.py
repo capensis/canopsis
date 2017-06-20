@@ -19,16 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from time import time
 from unittest import TestCase, main
 
 from canopsis.middleware.core import Middleware
 from canopsis.check import Check
 
+from canopsis.alerts import AlarmField, States
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import (
     ONGOING, CANCELED, OFF,
     is_flapping, is_stealthy, compute_status, get_last_state, get_last_status,
-    get_previous_step
+    get_previous_step, is_keeped_state
 )
 
 
@@ -59,18 +61,18 @@ class TestStatus(TestCase):
         )
 
         self.alarm = {
-            'state': None,
-            'status': None,
-            'ack': None,
-            'canceled': None,
-            'ticket': None,
-            'resolved': None,
-            'steps': [],
-            'tags': []
+            AlarmField.state.value: None,
+            AlarmField.status.value: None,
+            AlarmField.ack.value: None,
+            AlarmField.canceled.value: None,
+            AlarmField.ticket.value: None,
+            AlarmField.resolved.value: None,
+            AlarmField.steps.value: [],
+            AlarmField.tags.value: []
         }
 
     def test_is_flapping(self):
-        self.alarm['steps'] = [
+        self.alarm[AlarmField.steps.value] = [
             {
                 '_t': 'stateinc',
                 't': 0,
@@ -150,13 +152,13 @@ class TestStatus(TestCase):
             },
         ]
 
-        self.alarm['state'] = self.alarm['steps'][-1]
+        self.alarm[AlarmField.state.value] = self.alarm[AlarmField.steps.value][-1]
 
         got = is_flapping(self.manager, self.alarm)
         self.assertTrue(got)
 
     def test_isnot_flapping(self):
-        self.alarm['steps'] = [
+        self.alarm[AlarmField.steps.value] = [
             {
                 '_t': 'stateinc',
                 't': 0,
@@ -173,22 +175,23 @@ class TestStatus(TestCase):
             }
         ]
 
-        self.alarm['state'] = self.alarm['steps'][-1]
+        self.alarm[AlarmField.state.value] = self.alarm[AlarmField.steps.value][-1]
 
         got = is_flapping(self.manager, self.alarm)
         self.assertFalse(got)
 
     def test_is_stealthy(self):
-        self.alarm['steps'].append({
+        now = int(time())
+        self.alarm[AlarmField.steps.value].append({
             '_t': 'stateinc',
-            't': 0,
+            't': now - 1,
             'a': 'test',
             'm': 'test',
             'val': Check.CRITICAL
         })
-        self.alarm['state'] = {
+        self.alarm[AlarmField.state.value] = {
             '_t': 'statedec',
-            't': 1,
+            't': now,
             'a': 'test',
             'm': 'test',
             'val': Check.OK
@@ -199,14 +202,14 @@ class TestStatus(TestCase):
         self.assertTrue(got)
 
     def test_isnot_stealthy(self):
-        self.alarm['steps'].append({
+        self.alarm[AlarmField.steps.value].append({
             '_t': 'stateinc',
             't': 0,
             'a': 'test',
             'm': 'test',
             'val': Check.CRITICAL
         })
-        self.alarm['state'] = {
+        self.alarm[AlarmField.state.value] = {
             '_t': 'statedec',
             't': 601,
             'a': 'test',
@@ -218,8 +221,20 @@ class TestStatus(TestCase):
 
         self.assertFalse(got)
 
+    def test_is_keeped_state(self):
+        self.alarm[AlarmField.state.value] = {}
+        self.alarm[AlarmField.state.value]['_t'] = States.changestate.value
+
+        self.assertTrue(is_keeped_state(self.alarm))
+
+    def test_isnot_keeped_state(self):
+        self.alarm[AlarmField.state.value] = {}
+        self.alarm[AlarmField.state.value]['_t'] = None
+
+        self.assertFalse(is_keeped_state(self.alarm))
+
     def test_is_ongoing(self):
-        self.alarm['state'] = {
+        self.alarm[AlarmField.state.value] = {
             '_t': 'stateinc',
             't': 0,
             'a': 'test',
@@ -230,7 +245,7 @@ class TestStatus(TestCase):
         self.assertEqual(got, ONGOING)
 
     def test_is_canceled(self):
-        self.alarm['canceled'] = {
+        self.alarm[AlarmField.canceled.value] = {
             '_t': 'cancel',
             't': 0,
             'a': 'test',
@@ -240,7 +255,7 @@ class TestStatus(TestCase):
         self.assertEqual(got, CANCELED)
 
     def test_is_off(self):
-        self.alarm['state'] = {
+        self.alarm[AlarmField.state.value] = {
             '_t': 'statedec',
             't': 0,
             'a': 'test',
@@ -254,7 +269,7 @@ class TestStatus(TestCase):
         got = get_last_state(self.alarm)
         self.assertEqual(got, Check.OK)
 
-        self.alarm['state'] = {
+        self.alarm[AlarmField.state.value] = {
             '_t': 'stateinc',
             't': 0,
             'a': 'test',
@@ -269,7 +284,7 @@ class TestStatus(TestCase):
         got = get_last_status(self.alarm)
         self.assertEqual(got, OFF)
 
-        self.alarm['status'] = {
+        self.alarm[AlarmField.status.value] = {
             '_t': 'statusinc',
             't': 0,
             'a': 'test',
@@ -287,7 +302,7 @@ class TestStatus(TestCase):
             'a': 'test',
             'm': 'test'
         }
-        self.alarm['steps'].append(expected)
+        self.alarm[AlarmField.steps.value].append(expected)
 
         step = get_previous_step(self.alarm, 'teststep')
 

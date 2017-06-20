@@ -97,7 +97,7 @@ class PeriodTest(TestCase):
 
         for unitindex, unit in enumerate(Period.UNITS):
 
-            if unit in (Period.MONTH, Period.WEEK):
+            if unit in (Period.MONTH, Period.YEAR):
                 continue
 
             for i in range(0, 5):
@@ -140,7 +140,7 @@ class PeriodTest(TestCase):
 
     def test_round_timestamp(self):
 
-        self.test_round_datetime(time())
+        self.test_round_datetime(int(time()))
 
     def test_get_max_unit(self):
 

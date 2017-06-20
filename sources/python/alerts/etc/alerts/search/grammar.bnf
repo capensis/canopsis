@@ -11,7 +11,7 @@
 true::true = "TRUE" ;
 false::false = "FALSE" ;
 digits::digits = value:/[0-9]+/ ;
-characters::characters = value:/\w*/ ;
+characters::characters = value:/[\-_a-zA-Z][\-_a-zA-Z0-9]*(\.[\-_a-zA-Z][\-_a-zA-Z0-9]*)*/ ;
 sign::sign = value:( "+" | "-" ) ;
 
 string::forward_value = '"' value:characters '"' | "'" value:characters "'" ;
