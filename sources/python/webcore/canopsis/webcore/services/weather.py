@@ -77,9 +77,8 @@ def __format_pbehavior(pbehavior):
 
 def add_pbehavior_info(enriched_entity):
     """Add pbehavior related field to selectors. This function will add
-    the related pbehavior in 'pbehavior', add the
-    'hasactivepbehaviorinentities' and 'hasallactivepbehaviorinentities'
-    with the correct value."""
+    the related pbehavior in 'pbehavior'.
+    """
 
     enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
         enriched_entity['entity_id']
