@@ -199,6 +199,7 @@ class PBehaviorManager(MiddlewareRegistry):
         :param list,str: the id(s) as a str or a list of string
         :return list: a list of pbehavior
         """
+
         if not isinstance(id_, (list, str, unicode)):
             raise TypeError(self.__TYPE_ERR)
 
@@ -207,7 +208,7 @@ class PBehaviorManager(MiddlewareRegistry):
                 if not isinstance(element, (str, unicode)):
                     raise TypeError(self.__TYPE_ERR)
         else:
-            id_ = list(id_)
+            id_ = [id_]
 
         cursor = self.pbehavior_storage.get_elements(
             query={PBehavior.EIDS:{"$in":id_}})

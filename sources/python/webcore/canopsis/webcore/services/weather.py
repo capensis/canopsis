@@ -31,6 +31,8 @@ from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.webcore.utils import gen_json, gen_json_error
 
+LOGGER = None
+
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
@@ -86,6 +88,8 @@ def add_pbehavior_info(enriched_entity):
     enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
         enriched_entity['entity_id'])
 
+    LOGGER.debug("Pbehavior list : {0}".format(enriched_entity["pbehavior"]))
+
     for pbehavior in enriched_entity["pbehavior"]:
         __format_pbehavior(pbehavior)
 
@@ -97,7 +101,7 @@ def add_pbehavior_status(data):
     :param list data: the data to parse
     """
     for entity in data:
-        enabled_list = [pbh["enabled"] for pbh in entity["pbehavior"]]
+        enabled_list = [pbh["isActive"] for pbh in entity["pbehavior"]]
 
         if len(enabled_list) == 0:
             all_active = False
@@ -111,6 +115,8 @@ def add_pbehavior_status(data):
 
 
 def exports(ws):
+    global LOGGER
+    LOGGER = ws.logger
 
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
@@ -127,6 +133,8 @@ def exports(ws):
 
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
+
+        LOGGER.debug("Selector list : {0}".format(selector_list))
 
         selectors = []
         for selector in selector_list:
@@ -162,7 +170,7 @@ def exports(ws):
         :return: a list of agglomerated values of entities in the selector
         :rtype: list
         """
-        context_manager.logger.critical(selector_id)
+        context_manager.logger.debug("Selector id : {0}".format(selector_id))
         try:
             selector_entity = context_manager.get_entities(
                 query={'_id': selector_id})[0]
