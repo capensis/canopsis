@@ -35,10 +35,13 @@ context_manager = ContextGraph()
 alarm_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
 
+
 def __format_pbehavior(pbehavior):
     EVERY = "Every {0}"
-    to_delete = ["_id", "connector", "author", "comments", "filter",
-                 "connector_name", "eid"]
+    to_delete = [
+        "_id", "connector", "author", "comments", "filter", "connector_name",
+        "eid"
+    ]
 
     pbehavior["behavior"] = pbehavior.pop("name")
     pbehavior["dtstart"] = pbehavior.pop("tstart")
@@ -81,15 +84,15 @@ def add_pbehavior_info(enriched_entity):
     """
 
     enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
-        enriched_entity['entity_id']
-    )
+        enriched_entity['entity_id'])
 
     for pbehavior in enriched_entity["pbehavior"]:
         __format_pbehavior(pbehavior)
 
+
 def add_pbehavior_status(data):
     """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
-    in every dict in data. Data must be a list of dict that contains a key
+    on every dict in data. Data must be a list of dict that contains a key
     "pbehavior" in order to work properly
     :param list data: the data to parse
     """
@@ -103,7 +106,7 @@ def add_pbehavior_status(data):
 
         one_more_active = any(enabled_list)
 
-        entity["haspbehaviorinentities"] = one_more_active
+        entity["hasactivepbehaviorinentities"] = one_more_active
         entity["hasallactivepbehaviorinentities"] = all_active
 
 
