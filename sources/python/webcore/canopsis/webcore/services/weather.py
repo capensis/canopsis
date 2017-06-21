@@ -87,6 +87,25 @@ def add_pbehavior_info(enriched_entity):
     for pbehavior in enriched_entity["pbehavior"]:
         __format_pbehavior(pbehavior)
 
+def add_pbehavior_status(data):
+    """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
+    in every dict in data. Data must be a list of dict that contains a key
+    "pbehavior" in order to work properly
+    :param list data: the data to parse
+    """
+    for entity in data:
+        enabled_list = [pbh["enabled"] for pbh in entity["pbehavior"]]
+
+        if len(enabled_list) == 0:
+            all_active = False
+        else:
+            all_active = all(enabled_list)
+
+        one_more_active = any(enabled_list)
+
+        entity["haspbehaviorinentities"] = one_more_active
+        entity["hasallactivepbehaviorinentities"] = all_active
+
 
 def exports(ws):
 
@@ -128,6 +147,7 @@ def exports(ws):
             add_pbehavior_info(enriched_entity)
             selectors.append(enriched_entity)
 
+        add_pbehavior_status(selectors)
         return gen_json(response, selectors)
 
     @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
@@ -177,4 +197,5 @@ def exports(ws):
 
             entities_list.append(enriched_entity)
 
+        add_pbehavior_status(entities_list)
         return gen_json(response, entities_list)
