@@ -17,12 +17,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
 """
 Python webcore utility library.
 """
 
 from __future__ import unicode_literals
 
+from bottle import response
 import json
 
 CONTENT_TYPE_JSON = "application/json"
@@ -32,14 +34,13 @@ ERR_ALLOWED_KEYS = ["name", "description"]
 MSG_ELT_NOT_DICT = "The element inside a JSON should be a dict"
 
 
-def __gen_json(response, result, status, allowed_keys=None):
+def __gen_json(result, status, allowed_keys=None):
     """Generate a standard JSON, set the response to the given status and
     add a Content-Type header with "application/json".
 
     If allowed_keys is set, only the keys contained in allowed_keys will
     be added in the JSON or in the element inside the JSON
 
-    :param response: the bottle response
     :param dict,list result: the data the API send back
     :param int status: the status to return
     :param list allowed_keys: the list of the key the json should contains
@@ -59,8 +60,6 @@ def __gen_json(response, result, status, allowed_keys=None):
 
             if allowed_keys is not None:
                 for key in allowed_keys:
-                    with open("/tmp/plop", 'a') as fd:
-                        fd.write("{0}\n".format(element))
                     json_element[key] = element.get(key, "")
             else:
                 json_element = element.copy()
@@ -78,24 +77,24 @@ def __gen_json(response, result, status, allowed_keys=None):
     return json.dumps(json_body)
 
 
-def gen_json_error(response, result, status):
+def gen_json_error(result, status):
     """Generate a standard error JSON, set the response to the given
     status and header "Content-type" to "application/json".
 
-    :param response: the bottle response
+    :param dict,list result: the data the API send back
     :param int status: the status to return
     :return str: a string representation of the JSON.
     """
-    return __gen_json(response, result, status, ERR_ALLOWED_KEYS)
+    return __gen_json(result, status, ERR_ALLOWED_KEYS)
 
 
-def gen_json(response, result, status=200, allowed_keys=None):
+def gen_json(result, status=200, allowed_keys=None):
     """Generate a standard JSON, set the response to the given
     status and header "Content-type" to "application/json".
 
-    :param response: the bottle response
+    :param dict,list result: the data the API send back
     :param int status: the status to return, default 200
     :param list allowed_keys: the list of the keys allowed in the JSON
     :return str: a string representation of the JSON.
     """
-    return __gen_json(response, result, status, allowed_keys=allowed_keys)
+    return __gen_json(result, status, allowed_keys=allowed_keys)
