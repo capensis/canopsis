@@ -234,7 +234,7 @@ class ContextGraph(MiddlewareRegistry):
 
     @classmethod
     def _enable_entity(cls, entity):
-        """Enable an entity. If the given entity does not have an infos.tate
+        """Enable an entity. If the given entity does not have an infos.enabled
         field create it with a the enable status then create an
         infos.enable_history field with the current timestamp.
 
