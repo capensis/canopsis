@@ -42,7 +42,7 @@ def __format_pbehavior(pbehavior):
     EVERY = "Every {0}"
     to_delete = [
         "_id", "connector", "author", "comments", "filter", "connector_name",
-        "eid"
+        "eids"
     ]
 
     pbehavior["behavior"] = pbehavior.pop("name")
