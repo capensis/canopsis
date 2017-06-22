@@ -33,18 +33,14 @@ class Watcher(MiddlewareRegistry):
         """
         super(Watcher, self).__init__(*args, **kwargs)
         self.object_storage = Middleware.get_middleware_by_uri(
-            'storage-default://',
-            table='object'
-        )
+            'storage-default://', table='object')
         self[Watcher.OBJECT_STORAGE] = self.object_storage
         alerts_storage = Middleware.get_middleware_by_uri(
-            'mongodb-periodical-alarm://'
-        )
+            'mongodb-periodical-alarm://')
         self[Watcher.ALERTS_STORAGE] = alerts_storage
 
         self.sla_storage = Middleware.get_middleware_by_uri(
-            'storage-default-sla://'
-        )
+            'storage-default-sla://')
 
         self.context_graph = ContextGraph()
 
@@ -54,14 +50,9 @@ class Watcher(MiddlewareRegistry):
 
         :param dict body: watcher conf
         """
-        watcher_id = 'watcher-{0}'.format(
-            body['display_name']
-
-        )
+        watcher_id = 'watcher-{0}'.format(body['display_name'])
         depends_list = self.context_graph.get_entities(
-            query=json.loads(body['mfilter']),
-            projection={'_id': 1}
-        )
+            query=json.loads(body['mfilter']), projection={'_id': 1})
         depend_list = []
         for entity_id in depends_list:
             depend_list.append(entity_id['_id'])
@@ -72,20 +63,14 @@ class Watcher(MiddlewareRegistry):
             etype='watcher',
             impact=[],
             depends=depend_list,
-            infos={
-                'mfilter': body['mfilter'],
-                'enabled': True,
-                'state': 0
-            }
-        )
+            infos={'mfilter': body['mfilter'],
+                   'enabled': True,
+                   'state': 0})
         self.context_graph.create_entity(entity)
 
         self.sla_storage.put_element(
-            element={
-                '_id': watcher_id,
-                'states': [0, 0, 0, 0, 0]
-            }
-        )
+            element={'_id': watcher_id,
+                     'states': [0, 0, 0, 0, 0]})
 
         self.calcul_state(watcher_id)
 
@@ -95,15 +80,66 @@ class Watcher(MiddlewareRegistry):
 
         :param string watcher_id: watcher_id
         """
-        object_watcher = list(self.object_storage._backend.find(
-            {'_id': watcher_id}
-        ))[0]
+        object_watcher = list(
+            self.object_storage._backend.find({
+                '_id': watcher_id
+            }))[0]
         watcher_entity = self.context_graph.get_entities_by_id(
-            'watcher-{0}'.format(object_watcher['display_name'])
-        )[0]
+            'watcher-{0}'.format(object_watcher['display_name']))[0]
         watcher_entity['infos']['enabled'] = False
         self.context_graph.update_entity(watcher_entity)
         self.sla_storage.remove_elements(ids=[watcher_id])
+
+    def get_watcher(self, watcher_id):
+        """Retreive from database the watcher specified by is watcher id.
+
+        :param str watcher_id: the watcher id
+        :return dict: the wanted watcher. None, if no watcher match the
+        watcher_id
+        """
+        watcher = self.context_graph.get_entities_by_id(watcher_id)
+
+        try:
+            return watcher[0]
+        except IndexError:
+            return None
+
+    def update_watcher(self, watcher_id, updated_field):
+        """Update the watcher specified by is watcher id with updated_field.
+
+        Raise a ValueError, if the watcher_id do not match any entity.
+
+        :param str watcher_id: the watcher_id of the watcher to update
+        :param dict updated_field: the fields to update
+        """
+
+        watcher = self.get_watcher(watcher_id)
+        if watcher is None:
+            raise ValueError("No watcher found for the following"\
+                             " id : {0}".format(watcher_id))
+
+        if "mfilter" in watcher["infos"] and \
+           "mfilter" in updated_field["infos"] and \
+           watcher["infos"]["mfilter"] != updated_field["infos"]["mfilter"]:
+
+            query = json.loads(updated_field["infos"]['mfilter'])
+            entities = self.context_graph.get_entities(
+                query=query, projection={'_id': 1})
+
+            watcher["depends"] = []
+
+            [watcher["depends"].append(entity["_id"]) for entity in entities]
+
+        for key in updated_field:
+
+            if key == "infos":  # update fields inside infos
+                for info_key in updated_field["infos"]:
+                    watcher["infos"][info_key] = updated_field["infos"][
+                        info_key]
+
+            watcher[key] = updated_field[key]
+
+        self.context_graph.update_entity(watcher)
 
     def calcul_state(self, watcher_id):
         """
@@ -113,15 +149,16 @@ class Watcher(MiddlewareRegistry):
         """
         self.logger.debug('calcul')
         watcher_entity = self.context_graph.get_entities(
-            query={'_id': watcher_id}
-        )[0]
+            query={'_id': watcher_id})[0]
 
         entities = watcher_entity['depends']
         display_name = watcher_entity['name']
 
-        alarm_list = list(self[Watcher.ALERTS_STORAGE]._backend.find(
-            {'d': {'$in': entities}}
-        ))
+        alarm_list = list(self[Watcher.ALERTS_STORAGE]._backend.find({
+            'd': {
+                '$in': entities
+            }
+        }))
         states = []
         for alarm in alarm_list:
             if alarm['v']['resolved'] is None and alarm['d'] in entities:
@@ -139,11 +176,9 @@ class Watcher(MiddlewareRegistry):
         # by default and think to add pbehavior in tab
         computed_state = self.worst_state(nb_crit, nb_major, nb_minor)
         output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
-            nb_ok,
-            nb_minor,
-            nb_major,
-            nb_crit
-        )
+            nb_ok, nb_minor, nb_major, nb_crit)
+
+        self.logger.debug(output)
 
         if computed_state != watcher_entity['infos']['state']:
             self.logger.critical('update entity')
@@ -187,8 +222,7 @@ class Watcher(MiddlewareRegistry):
             state=computed_state,
             output=output,
             perf_data_array=[],
-            display_name=display_name
-        )
+            display_name=display_name)
 
         rk = get_routingkey(event)
         amqp = Amqp()
@@ -213,24 +247,19 @@ class Watcher(MiddlewareRegistry):
         :param watcher_id: watcher id
         :param state: watcher state
         """
-        sla_tab = list(self.sla_storage.get_elements(query={'_id': watcher_id}))[0]
+        sla_tab = list(
+            self.sla_storage.get_elements(query={'_id': watcher_id}))[0]
         sla_tab['states'][state] = sla_tab['states'][state] + 1
 
         self.sla_storage.put_element(sla_tab)
 
-        watcher_conf = list(self.object_storage.get_elements(
-            query={'_id':watcher_id}
-        ))[0]
+        watcher_conf = list(
+            self.object_storage.get_elements(query={'_id': watcher_id}))[0]
 
-        sla = Sla(
-            self.object_storage,
-            'test/de/rk/on/verra/plus/tard',
-            watcher_conf['sla_output_tpl'],
-            watcher_conf['sla_timewindow'],
-            watcher_conf['sla_warning'],
-            watcher_conf['alert_level'],
-            watcher_conf['display_name']
-        )
+        sla = Sla(self.object_storage, 'test/de/rk/on/verra/plus/tard',
+                  watcher_conf['sla_output_tpl'],
+                  watcher_conf['sla_timewindow'], watcher_conf['sla_warning'],
+                  watcher_conf['alert_level'], watcher_conf['display_name'])
 
         # self.logger.critical('{0}'.format((
         #     sla_tab['states']/
@@ -243,10 +272,7 @@ class Watcher(MiddlewareRegistry):
         Launch the sla calcul for each watchers.
         """
         watcher_list = self.context_graph.get_entities(
-            query={'type': 'watcher', 'infos.enabled': True}
-        )
+            query={'type': 'watcher',
+                   'infos.enabled': True})
         for watcher in watcher_list:
-            self.sla_compute(
-                watcher['_id'],
-                watcher['infos']['state']
-            )
+            self.sla_compute(watcher['_id'], watcher['infos']['state'])
