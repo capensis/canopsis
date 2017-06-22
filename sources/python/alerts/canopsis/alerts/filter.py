@@ -76,25 +76,25 @@ class AlarmFilters(object):
         """
         return self.storage.remove_elements(ids=[entity_id])
 
-    def update_filter(self, filter_id, key, value):
+    def update_filter(self, filter_id, values):
         """
         Update an alarm filter value.
 
         :param filter_id: the desired filter_id
         :type filter_id: str
-        :param key: the key to update
-        :type key: str
-        :param value: the value to put
-        :type value: str
+        :param values: an update dict to merge with current filter
+        :type values: dict
         :rtype: <AlarmFilter>
         """
         query = {'_id': filter_id}
         element = list(self.storage.get_elements(query=query))
         if element is None or len(element) <= 0:
+            self.logger.debug('No alarm filter to update')
             return None
 
         lifter = self.create_filter(element.pop())
-        lifter[key] = value
+        for key in values.keys():
+            lifter[key] = values[key]
         lifter.save()
 
         return lifter
