@@ -234,14 +234,14 @@ class ContextGraph(MiddlewareRegistry):
 
     @classmethod
     def _enable_entity(cls, entity):
-        """Enable an entity. If the given entity does not have an infos.state
+        """Enable an entity. If the given entity does not have an infos.enabled
         field create it with a the enable status then create an
         infos.enable_history field with the current timestamp.
 
         :param entity: an entity
         :type entity: a dict
         """
-        if "state" not in entity["infos"]:
+        if "enabled" not in entity["infos"]:
             entity["infos"]["enabled"] = True
 
             if "enable_history" not in entity["infos"]:
