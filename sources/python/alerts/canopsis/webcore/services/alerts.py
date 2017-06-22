@@ -202,12 +202,12 @@ def exports(ws):
 
         return gen_json([l.serialize() for l in filters])
 
-    @ws.application.put(
+    @ws.application.post(
         '/api/v2/alerts/filters'
     )
     def create_filter():
         """
-        Add a new alarm filter.
+        Create a new alarm filter.
 
         :returns: an <AlarmFilter>
         """
@@ -222,7 +222,7 @@ def exports(ws):
 
         return gen_json(new.serialize())
 
-    @ws.application.post(
+    @ws.application.put(
         '/api/v2/alerts/filters/<entity_id:id_filter>'
     )
     def update_filter(entity_id):
@@ -236,16 +236,13 @@ def exports(ws):
         """
         dico = request.json
 
-        if dico is None or len(dico) <= 0:
+        if dico is None or not isinstance(dico, dict) or len(dico) <= 0:
             return gen_json_error({'description': 'wrong update dict'}, HTTP_ERROR)
 
-        key = dico.keys().pop()  # first founded key only
-        value = dico[key]
-
-        af = am.alarm_filters.update_filter(filter_id=entity_id,
-                                            key=key, value=value)
+        af = am.alarm_filters.update_filter(filter_id=entity_id, values=dico)
         if not isinstance(af, AlarmFilter):
-            return gen_json_error({'description': 'failed to update filter'}, HTTP_ERROR)
+            return gen_json_error({'description': 'failed to update filter'},
+                                  HTTP_ERROR)
 
         return gen_json(af.serialize())
 

@@ -66,7 +66,7 @@ class TestRoutes(TestCase):
     def test_alert_filter_routes(self):
         alarm_id = 'fake_alarm_id'
         filter_id = 'fake_filter_id'
-        base = '{}{}'.format(self.url, 'api/v2/alerts/filter')
+        base = '{}{}'.format(self.url, 'api/v2/alerts/filters')
 
         # GET
         r = self.session.get(base, cookies=self.cookies)
@@ -77,9 +77,9 @@ class TestRoutes(TestCase):
         self.assertTrue(is_successful(r))
         self.assertEqual(r.json(), [])
 
-        # PUT
-        r = self.session.put(base, cookies=self.cookies, headers=self.headers)
-        self.assertEqual(r.status_code, 405)
+        # POST
+        r = self.session.post(base, cookies=self.cookies, headers=self.headers)
+        self.assertEqual(r.status_code, 400)
 
         params = {
             'condition': {},
@@ -88,30 +88,32 @@ class TestRoutes(TestCase):
             'tasks': ['alerts.systemaction.status_increase',
                       'alerts.systemaction.status_decrease'],
         }
-        r = self.session.put(base,
-                             data=json.dumps(params),
-                             cookies=self.cookies, headers=self.headers)
+        r = self.session.post(base,
+                              data=json.dumps(params),
+                              cookies=self.cookies, headers=self.headers)
         self.assertTrue(is_successful(r))
         data = r.json()
         self.assertTrue(isinstance(data, dict))
         filter_id = data['_id']  # Get the real filter_id
         self.assertEqual(data['limit'], 30.0)
 
-        # POST
-        r = self.session.post(base, cookies=self.cookies, headers=self.headers)
+        # PUT
+        r = self.session.put(base, cookies=self.cookies, headers=self.headers)
         self.assertEqual(r.status_code, 405)
 
         params = {
-            'condition': {'key': {'$neq': 'value'}}
+            'condition': {'key': {'$neq': 'value'}},
+            'repeat': 6
         }
-        r = self.session.post(base + '/' + filter_id,
-                              data=json.dumps(params),
-                              headers=self.headers, cookies=self.cookies)
+        r = self.session.put(base + '/' + filter_id,
+                             data=json.dumps(params),
+                             headers=self.headers, cookies=self.cookies)
         self.assertTrue(is_successful(r))
         data = r.json()
         self.assertTrue(isinstance(data, dict))
         self.assertEqual(data['_id'], filter_id)
         self.assertTrue('condition' in data)
+        self.assertEqual(data['repeat'], 6)
 
         # GET (again)
         r = self.session.get(base + '/' + filter_id,
