@@ -47,7 +47,7 @@ def __format_pbehavior(pbehavior):
 
     pbehavior["behavior"] = pbehavior.pop("name")
     pbehavior["dtstart"] = pbehavior.pop("tstart")
-    pbehavior["dtstop"] = pbehavior.pop("tstop")
+    pbehavior["dtend"] = pbehavior.pop("tstop")
     pbehavior["isActive"] = pbehavior.pop("enabled")
 
     # parse the rrule to get is "text"
