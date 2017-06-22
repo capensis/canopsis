@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
 from canopsis.middleware.core import Middleware
 
 from canopsis.context_graph.manager import ContextGraph
@@ -43,14 +41,14 @@ class Selector(MiddlewareRegistry):
         self.sla_storage = Middleware.get_middleware_by_uri(
             'storage-default-sla://'
         )
-        
+
         self.context_graph = ContextGraph()
 
     def create_selector(self, body):
         """
-            create selector entity in context and link to entities
+        Create selector entity in context and link to entities.
 
-            :param dict body: selector conf
+        :param dict body: selector conf
         """
         selector_id = 'selector-{0}'.format(
             body['display_name']
@@ -65,7 +63,7 @@ class Selector(MiddlewareRegistry):
             depend_list.append(entity_id['_id'])
 
         entity = create_entity(
-            id=selector_id, 
+            id=selector_id,
             name=body['display_name'],
             etype='selector',
             impact=[],
@@ -81,7 +79,7 @@ class Selector(MiddlewareRegistry):
         self.sla_storage.put_element(
             element={
                 '_id': selector_id,
-                'states': [0, 0, 0, 0, 0] 
+                'states': [0, 0, 0, 0, 0]
             }
         )
 
@@ -89,10 +87,9 @@ class Selector(MiddlewareRegistry):
 
     def delete_selector(self, selector_id):
         """
-            delete_selector
-            disable selector entity in context
+        Delete_selector & disable selector entity in context.
 
-            :param string selector_id: selector_id
+        :param string selector_id: selector_id
         """
         object_selector = list(self.object_storage._backend.find(
             {'_id': selector_id}
@@ -103,15 +100,12 @@ class Selector(MiddlewareRegistry):
         selector_entity['infos']['enabled'] = False
         self.context_graph.update_entity(selector_entity)
         self.sla_storage.remove_elements(ids=[selector_id])
-        
 
     def calcul_state(self, selector_id):
         """
-            calcul_state
+        Send an event selector with the new state of the selector.
 
-            send an event selector with the new state of the selector
-
-            :param selector_id: selector id
+        :param selector_id: selector id
         """
         self.logger.critical('calcul')
         selector_entity = self.context_graph.get_entities(
@@ -126,18 +120,18 @@ class Selector(MiddlewareRegistry):
         ))
         states = []
         for alarm in alarm_list:
-            if alarm['v']['resolved'] == None and alarm['d'] in entities:
+            if alarm['v']['resolved'] is None and alarm['d'] in entities:
                 # add here a check of pebehavior to take into account or not
                 # the alarm's state
-                states.append(alarm['v']['state']['val']) 
+                states.append(alarm['v']['state']['val'])
 
         nb_entities = len(entities)
         nb_crit = states.count(3)
         nb_major = states.count(2)
         nb_minor = states.count(1)
         nb_ok = nb_entities - (nb_crit + nb_major + nb_minor)
-        
-        # here add selection for calculation method actually it's worst state 
+
+        # here add selection for calculation method actually it's worst state
         # by default and think to add pbehavior in tab
         computed_state = self.worst_state(nb_crit, nb_major, nb_minor)
         output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
@@ -146,7 +140,7 @@ class Selector(MiddlewareRegistry):
             nb_major,
             nb_crit
         )
-        
+
         if computed_state != selector_entity['infos']['state']:
             self.logger.critical('update entity')
             selector_entity['infos']['state'] = computed_state
@@ -155,8 +149,8 @@ class Selector(MiddlewareRegistry):
         self.publish_event(display_name, computed_state, output)
 
     def worst_state(self, nb_crit, nb_major, nb_minor):
-        """worst_state
-            
+        """Calculate the worst state.
+
         :param int nb_crit: critical number
         :param int nb_major: major number
         :param int nb_minor: minor number
@@ -173,9 +167,8 @@ class Selector(MiddlewareRegistry):
             return 0
 
     def publish_event(self, display_name, computed_state, output):
-        """publish_event
-        
-        publish an event selector on amqp
+        """
+        Publish an event selector on amqp.
 
         :param display_name: selector display_name
         :param computed_state: selector state
@@ -196,12 +189,11 @@ class Selector(MiddlewareRegistry):
         rk = get_routingkey(event)
         amqp = Amqp()
         publish(event=event, publisher=amqp, rk=rk, logger=self.logger)
-        self.logger.critical('published {0}'.format(event))
+        #self.logger.critical('published {0}'.format(event))
 
     def alarm_changed(self, alarm_id):
-        """alarm_changed
-        
-        launch a caculation of a selector state
+        """
+        Launch a caculation of a selector state.
 
         :param alarm_id: alarm id
         """
@@ -211,22 +203,20 @@ class Selector(MiddlewareRegistry):
                 self.calcul_state(i['_id'])
 
     def sla_compute(self, selector_id, state):
-        """sla_calcul
-            launch the sla calcul
+        """
+        Launch the sla calcul.
 
-        :param selector_id: selector id 
+        :param selector_id: selector id
         :param state: selector state
         """
         sla_tab = list(self.sla_storage.get_elements(query={'_id': selector_id}))[0]
         sla_tab['states'][state] = sla_tab['states'][state] + 1
 
         self.sla_storage.put_element(sla_tab)
-        
-        selector_conf = list(self.object_storage.get_elements(
-            query={'_id':selector_id}
-        ))[0]
 
-        
+        selector_conf = list(self.object_storage.get_elements(
+            query={'_id': selector_id}
+        ))[0]
 
         sla = Sla(
             self.object_storage,
@@ -247,13 +237,13 @@ class Selector(MiddlewareRegistry):
 
     def compute_slas(self):
         """
-            launch the sla calcul for each selectors
+        Launch the sla calcul for each selectors.
         """
         selector_list = self.context_graph.get_entities(
             query={'type': 'selector', 'infos.enabled': True}
         )
         for selector in selector_list:
             self.sla_compute(
-                selector['_id'], 
+                selector['_id'],
                 selector['infos']['state']
             )
