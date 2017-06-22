@@ -127,32 +127,31 @@ def exports(ws):
     ws.application.router.add_filter('id_filter', id_filter)
 
     @ws.application.route(
-        '/api/v2/weather/selectors/<selector_filter:mongo_filter>')
-    def get_selector(selector_filter):
+        '/api/v2/weather/watchers/<watcher_filter:mongo_filter>'
+    )
+    def get_watcher(watcher_filter):
         """
-        Get a list of selectors from a mongo filter.
+        Get a list of watchers from a mongo filter.
 
-        :param dict selector_filter: a mongo filter to find selectors
+        :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
 
-        selector_filter['type'] = 'selector'
-        selector_list = context_manager.get_entities(query=selector_filter)
+        watcher_filter['type'] = 'watcher'
+        watcher_list = context_manager.get_entities(query=watcher_filter)
 
-        ws.logger.debug("Selector list: {}".format(selector_list))
-
-        selectors = []
-        for selector in selector_list:
+        watchers = []
+        for watcher in watcher_list:
             enriched_entity = {}
-            tmp_alarm = alarm_manager.get(filter_={'d':
-                                                   selector['name']})['alarms']
+            tmp_alarm = alarm_manager.get(
+                filter_={'d': watcher['_id']}
+            )['alarms']
 
-            enriched_entity['entity_id'] = selector['_id']
-            enriched_entity['criticity'] = selector['infos'].get(
-                'criticity', '')
-            enriched_entity['org'] = selector['infos'].get('org', '')
+            enriched_entity['entity_id'] = watcher['_id']
+            enriched_entity['criticity'] = watcher['infos'].get('criticity', '')
+            enriched_entity['org'] = watcher['infos'].get('org', '')
             enriched_entity['sla_text'] = ''  # when sla
-            enriched_entity['display_name'] = selector['name']
+            enriched_entity['display_name'] = watcher['name']
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm[0]['v']['state']
                 enriched_entity['status'] = tmp_alarm[0]['v']['status']
@@ -171,40 +170,40 @@ def exports(ws):
 
             enriched_entity['linklist'] = []  # add this when it's ready
             add_pbehavior_info(enriched_entity)
-            selectors.append(enriched_entity)
+            watchers.append(enriched_entity)
 
-        add_pbehavior_status(selectors)
+        add_pbehavior_status(watchers)
 
-        return gen_json(selectors)
+        return gen_json(watchers)
 
-    @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
-    def weatherselectors(selector_id):
+    @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
+    def weatherwatchers(watcher_id):
         """
-        Get selector and contextual informations.
+        Get watcher and contextual informations.
 
-        :param str selector_id: the selector_id to search for
-        :return: a list of agglomerated values of entities in the selector
+        :param str watcher_id: the watcher_id to search for
+        :return: a list of agglomerated values of entities in the watcher
         :rtype: list
         """
         try:
-            selector_entity = context_manager.get_entities(
-                query={'_id': selector_id, 'type': 'selector'})[0]
+            watcher_entity = context_manager.get_entities(
+                query={'_id': watcher_id, 'type': 'watcher'})[0]
         except IndexError:
             json_error = {
                 "name": "resource_not_found",
-                "description": "the selector_id does not match any selector"
+                "description": "the watcher_id does not match any watcher"
             }
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
-        # Find entities with the selector filter
+        # Find entities with the watcher filter
         try:
-            query = json.loads(selector_entity['infos']['mfilter'])
+            query = json.loads(watcher_entity['infos']['mfilter'])
         except:
             json_error = {
                 "name": "filter_not_found",
                 "description": "impossible to load the desired filter"
             }
-            ws.logger.error(selector_entity['infos'])
+            ws.logger.error(watcher_entity['infos'])
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         entities = context_manager.get_entities(query=query)
