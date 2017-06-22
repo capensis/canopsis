@@ -5,8 +5,8 @@ from canopsis.common.setup import setup
 install_requires = ['canopsis.common']
 
 setup(
-    description='selector package',
+    description='watcher package',
     install_requires=install_requires,
-    keywords='selector'
+    keywords='watcher'
 )
 
