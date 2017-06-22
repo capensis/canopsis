@@ -8,7 +8,7 @@ from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
 
-from canopsis.selector.links import build_all_links
+from canopsis.watcher.links import build_all_links
 
 import time
 
@@ -202,7 +202,7 @@ class ContextGraph(MiddlewareRegistry):
 
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
-        # rebuild selectors links
+        # rebuild watchers links
         build_all_links(self)
 
     def _delete_entities(self, entities):
@@ -302,8 +302,8 @@ class ContextGraph(MiddlewareRegistry):
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
-        # rebuild selectors links
-        if entity['type'] != 'selector':
+        # rebuild watchers links
+        if entity['type'] != 'watcher':
             build_all_links(self)
 
     def __update_dependancies(self, id_, status, dependancy_type):
@@ -424,8 +424,8 @@ class ContextGraph(MiddlewareRegistry):
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
-        # rebuild selectors links
-        if entity['type'] != 'selector':
+        # rebuild watchers links
+        if entity['type'] != 'watcher':
             build_all_links(self)
 
     def delete_entity(self, id_):
@@ -465,7 +465,7 @@ class ContextGraph(MiddlewareRegistry):
 
         self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
 
-        # rebuild selectors links
+        # rebuild watchers links
         build_all_links(self)
 
     def get_entities(self,
