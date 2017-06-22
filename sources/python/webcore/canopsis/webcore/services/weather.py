@@ -20,7 +20,6 @@
 
 from __future__ import unicode_literals
 
-from bottle import abort, response
 import json
 import re
 
@@ -170,10 +169,9 @@ def exports(ws):
         :return: a list of agglomerated values of entities in the selector
         :rtype: list
         """
-        context_manager.logger.debug("Selector id : {0}".format(selector_id))
         try:
             selector_entity = context_manager.get_entities(
-                query={'_id': selector_id})[0]
+                query={'_id': selector_id, 'type': 'selector'})[0]
         except IndexError:
             json_error = {
                 "name": "resource_not_found",
@@ -181,9 +179,22 @@ def exports(ws):
                 " any selector"
             }
             return gen_json_error(response, json_error, 404)
+                "description": "selector_id does not match any selector"
+            }
+            return gen_json_error(json_error, 404)
 
-        entities = context_manager.get_entities(
-            query=json.loads(selector_entity['infos']['mfilter']))
+        # Find entities with the selector filter
+        try:
+            query = json.loads(selector_entity['infos']['mfilter'])
+        except:
+            json_error = {
+                "name": "filter_not_found",
+                "description": "impossible to load the desired filter"
+            }
+            ws.logger.error(selector_entity['infos'])
+            return gen_json_error(json_error, 404)
+
+        entities = context_manager.get_entities(query=query)
 
         entities_list = []
         for entity in entities:

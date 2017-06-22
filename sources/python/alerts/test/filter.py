@@ -24,6 +24,7 @@ from unittest import main
 from canopsis.alerts.filter import AlarmFilters, AlarmFilter
 
 from base import BaseTest
+from datetime import timedelta
 import logging
 
 
@@ -99,16 +100,19 @@ class TestFilter(BaseTest):
         self.assertEqual(result[0][0].element, element)
 
         another_cond = '{"key": {"$eq": "another"}}'
+        update = {AlarmFilter.CONDITION: another_cond}
         result = alarm_filters.update_filter('/not/an/alarm',
-                                             key=AlarmFilter.CONDITION,
-                                             value=another_cond)
+                                             values=update)
         self.assertTrue(result is None)
 
         # UPDATE
-        result = alarm_filters.update_filter(element['_id'],
-                                             key=AlarmFilter.CONDITION,
-                                             value=another_cond)
+        result = alarm_filters.update_filter(element['_id'], values=update)
         self.assertEqual(result[AlarmFilter.CONDITION]['key']['$eq'], 'another')
+
+        update = {AlarmFilter.LIMIT: 666, AlarmFilter.REPEAT: 3}
+        result = alarm_filters.update_filter(element['_id'], values=update)
+        self.assertEqual(result[AlarmFilter.LIMIT], timedelta(seconds=666))
+        self.assertEqual(result[AlarmFilter.REPEAT], 3)
 
         # GET
         result = alarm_filters.get_filters()

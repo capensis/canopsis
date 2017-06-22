@@ -25,6 +25,8 @@ from unittest import main, TestCase
 
 from canopsis.middleware.core import Middleware
 
+# TODO: replace session.post(data=...) with 'json=' param, on requests>=2.4.2 only
+
 
 def is_successful(r):
     # requests built-in exception handler. Is None if okay
@@ -62,84 +64,76 @@ class TestRoutes(TestCase):
         self.assertEqual(login.status_code, 200)
 
     def test_alert_filter_routes(self):
-        alarm_id = '/fake/alarm/id'
-        base = '{}{}'.format(self.url, 'alerts-filter')
+        alarm_id = 'fake_alarm_id'
+        filter_id = 'fake_filter_id'
+        base = '{}{}'.format(self.url, 'api/v2/alerts/filters')
 
         # GET
         r = self.session.get(base, cookies=self.cookies)
-        self.assertTrue(is_successful(r))
-        self.assertFalse(r.json()['success'])
+        self.assertEqual(r.status_code, 405)
 
-        r = self.session.get(base, params={'entity_id': alarm_id},
+        r = self.session.get(base + '/' + filter_id,
                              cookies=self.cookies)
         self.assertTrue(is_successful(r))
-        rjson = r.json()
-        self.assertTrue('data' in rjson)
-        self.assertEqual(rjson['data'], [])
-
-        # PUT
-        r = self.session.put(base, cookies=self.cookies)
-        self.assertTrue(is_successful(r))
-        self.assertFalse(r.json()['success'])
-
-        params = {
-            "element": {
-                'limit': 30.0,
-                'condition': {},
-                'tasks': ['alerts.systemaction.status_increase',
-                          'alerts.systemaction.status_decrease'],
-                'entity_filter': {"d": {"$eq": alarm_id}},
-            }
-        }
-        r = self.session.put(base,
-                             data=json.dumps(params),
-                             cookies=self.cookies, headers=self.headers)
-        self.assertTrue(is_successful(r))
-        data = r.json()['data']
-        self.assertEqual(len(data), 1)
-        filter_id = data[0]['_id']
-        self.assertEqual(data[0]['limit'], 30.0)
+        self.assertEqual(r.json(), [])
 
         # POST
-        r = self.session.post(base, cookies=self.cookies)
-        self.assertTrue(is_successful(r))
-        self.assertFalse(r.json()['success'])
+        r = self.session.post(base, cookies=self.cookies, headers=self.headers)
+        self.assertEqual(r.status_code, 400)
 
         params = {
-            'entity_id': filter_id,
-            'key': 'condition',
-            'value': {'key': {'$neq': 'value'}},
+            'condition': {},
+            'entity_filter': {"d": {"$eq": alarm_id}},
+            'limit': 30.0,
+            'tasks': ['alerts.systemaction.status_increase',
+                      'alerts.systemaction.status_decrease'],
         }
-        r = self.session.post(base, data=json.dumps(params),
-                              headers=self.headers, cookies=self.cookies)
+        r = self.session.post(base,
+                              data=json.dumps(params),
+                              cookies=self.cookies, headers=self.headers)
         self.assertTrue(is_successful(r))
-        data = r.json()['data']
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['_id'], filter_id)
-        self.assertTrue('condition' in data[0])
+        data = r.json()
+        self.assertTrue(isinstance(data, dict))
+        filter_id = data['_id']  # Get the real filter_id
+        self.assertEqual(data['limit'], 30.0)
+
+        # PUT
+        r = self.session.put(base, cookies=self.cookies, headers=self.headers)
+        self.assertEqual(r.status_code, 405)
+
+        params = {
+            'condition': {'key': {'$neq': 'value'}},
+            'repeat': 6
+        }
+        r = self.session.put(base + '/' + filter_id,
+                             data=json.dumps(params),
+                             headers=self.headers, cookies=self.cookies)
+        self.assertTrue(is_successful(r))
+        data = r.json()
+        self.assertTrue(isinstance(data, dict))
+        self.assertEqual(data['_id'], filter_id)
+        self.assertTrue('condition' in data)
+        self.assertEqual(data['repeat'], 6)
 
         # GET (again)
-        r = self.session.get(base,
-                             params={'entity_id': filter_id},
+        r = self.session.get(base + '/' + filter_id,
                              cookies=self.cookies)
         self.assertTrue(is_successful(r))
-        data = r.json()['data']
-        self.assertEqual(len(data), 1)
+        data = r.json()
+        self.assertTrue(isinstance(data, list))
         self.assertEqual(data[0]['_id'], filter_id)
         self.assertTrue('condition' in data[0])
 
         # DELETE
         r = self.session.delete(base, cookies=self.cookies)
-        self.assertTrue(is_successful(r))
-        self.assertFalse(r.json()['success'])
+        self.assertEqual(r.status_code, 405)
 
-        r = self.session.delete(base,
-                                params={'entity_id': filter_id},
+        r = self.session.delete(base + '/' + filter_id,
                                 cookies=self.cookies)
         self.assertTrue(is_successful(r))
-        data = r.json()['data']
-        self.assertEqual(len(data), 1)
-        self.assertTrue('ok' in data[0])
+        data = r.json()
+        self.assertTrue(isinstance(data, dict))
+        self.assertTrue('ok' in data)
 
 
 if __name__ == '__main__':
