@@ -563,3 +563,16 @@ class dictproperty(object):
             return self
 
         return self._proxy(obj, self._fget, self._fset, self._fdel)
+
+
+def merge_two_dicts(x, y):
+    """
+    Given two dicts, merge them into a new dict as a shallow copy.
+
+    In python3, simply replace with {**x, **y}
+
+    :rtype: dict
+    """
+    z = x.copy()
+    z.update(y)
+    return z

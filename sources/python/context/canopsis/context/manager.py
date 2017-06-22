@@ -117,6 +117,9 @@ class Context(MiddlewareRegistry):
                 'uncancel',
                 'changestate',
                 'snooze'
+                'downtime',
+                'snooze',
+                'comment'
             ]
 
         self._accept_event_types = value

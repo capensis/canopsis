@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -17,7 +17,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
-[CONTEXT]
-accept_event_types=perf,check,ack,ackremove,declareticket,assocticket,cancel,uncancel,changestate,downtime,snooze,comment
-ctx_storage_uri=mongodb-composite-context://
+
+class StorageUnavailable(Exception):
+    """Handle Storage unavailable errors"""
+
+    def __init__(self, value=None):
+        self.value = "No storage available for this operation"
+        if value is not None:
+            self.value = value
+
+    def __str__(self):
+        return self.value
