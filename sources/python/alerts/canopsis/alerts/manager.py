@@ -31,7 +31,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.event.manager import Event
 from canopsis.check import Check
 
-from canopsis.selector.manager import Selector
+from canopsis.watcher.manager import Watcher
 
 from canopsis.alerts.status import get_last_state, get_last_status, OFF
 
@@ -187,7 +187,7 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.CONTEXT_MANAGER]= context
 
         self.context_manager = ContextGraph()
-        self.selector_manager = Selector()
+        self.watcher_manager = Watcher()
 
     def load_config(self):
         value = self[Alerts.CONFIG_STORAGE].get_elements(
@@ -336,7 +336,7 @@ class Alerts(MiddlewareRegistry):
 
         storage.put(alarm_id, new_value, alarm_ts)
 
-        self.selector_manager.alarm_changed(alarm['data_id'])
+        self.watcher_manager.alarm_changed(alarm['data_id'])
 
     def get_events(self, alarm):
         """
