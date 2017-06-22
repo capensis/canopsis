@@ -27,6 +27,10 @@ from __future__ import unicode_literals
 from bottle import response
 import json
 
+HTTP_ERROR = 400
+HTTP_NOT_FOUND = 404
+HTTP_NOT_ALLOWED = 405
+
 CONTENT_TYPE_JSON = "application/json"
 
 ERR_ALLOWED_KEYS = ["name", "description"]
