@@ -4,6 +4,7 @@ from canopsis.watcher.manager import Watcher
 
 watcher_manager = Watcher()
 
+
 @register_task
 def beat_processing(engine, logger=None, **kwargs):
     """beat_processing

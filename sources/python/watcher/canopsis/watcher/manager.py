@@ -19,10 +19,8 @@ STATE_MAJOR = 2
 STATE_MINOR = 1
 
 
-
-
 class Watcher(MiddlewareRegistry):
-    """Watcher"""
+    """Watcher class"""
 
     OBJECT_STORAGE = ''
     ALERTS_STORAGE = ''
@@ -107,7 +105,6 @@ class Watcher(MiddlewareRegistry):
         self.context_graph.update_entity(watcher_entity)
         self.sla_storage.remove_elements(ids=[watcher_id])
 
-
     def calcul_state(self, watcher_id):
         """
         Send an event selector with the new state of the selector.
@@ -147,8 +144,6 @@ class Watcher(MiddlewareRegistry):
             nb_major,
             nb_crit
         )
-
-        self.debug(output)
 
         if computed_state != watcher_entity['infos']['state']:
             self.logger.critical('update entity')
@@ -206,7 +201,7 @@ class Watcher(MiddlewareRegistry):
 
         :param alarm_id: alarm id
         """
-        watchers = self.context_graph.get_entities(query={'type':'watcher'})
+        watchers = self.context_graph.get_entities(query={'type': 'watcher'})
         for i in watchers:
             if alarm_id in i['depends']:
                 self.calcul_state(i['_id'])
@@ -255,4 +250,3 @@ class Watcher(MiddlewareRegistry):
                 watcher['_id'],
                 watcher['infos']['state']
             )
-
