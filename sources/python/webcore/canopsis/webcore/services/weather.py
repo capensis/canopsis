@@ -20,10 +20,8 @@
 
 from __future__ import unicode_literals
 
-from bottle import abort, response
 import json
 
-from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.context_graph.manager import ContextGraph
@@ -61,10 +59,7 @@ def exports(ws):
             )['alarms']
 
             enriched_entity['entity_id'] = watcher['_id']
-            enriched_entity['criticity'] = watcher['infos'].get(
-                'criticity',
-                ''
-            )
+            enriched_entity['criticity'] = watcher['infos'].get('criticity', '')
             enriched_entity['org'] = watcher['infos'].get('org', '')
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
@@ -75,9 +70,10 @@ def exports(ws):
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
             enriched_entity['pbehavior'] = []  # add this when it's ready
             enriched_entity['linklist'] = []  # add this when it's ready
+
             watchers.append(enriched_entity)
 
-        return gen_json(response, watchers)
+        return gen_json(selectors)
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
     def weatherwatchers(watcher_id):
@@ -88,18 +84,29 @@ def exports(ws):
         :return: a list of agglomerated values of entities in the watcher
         :rtype: list
         """
-        context_manager.logger.critical(watcher_id)
+        # Find the selector
         try:
             watcher_entity = context_manager.get_entities(
-                query={'_id': watcher_id})[0]
+                query={'_id': watcher_id, 'type': 'selector'})[0]
         except IndexError:
-            json_error = {"name" : "resource_not_found",
-                      "description": "the watcher_id does not match"
-                      " any watcher"}
-            return gen_json_error(response, json_error, 404)
+            json_error = {
+                "name": "resource_not_found",
+                "description": "watcher_id does not match any selector"
+            }
+            return gen_json_error(json_error, 404)
 
-        entities = context_manager.get_entities(
-            query=json.loads(watcher_entity['infos']['mfilter']))
+        # Find entities with the selector filter
+        try:
+            query = json.loads(watcher_entity['infos']['mfilter'])
+        except:
+            json_error = {
+                "name": "filter_not_found",
+                "description": "impossible to load the desired filter"
+            }
+            ws.logger.error(watcher_entity['infos'])
+            return gen_json_error(json_error, 404)
+
+        entities = context_manager.get_entities(query=query)
 
         entities_list = []
         for entity in entities:
@@ -119,6 +126,7 @@ def exports(ws):
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
             enriched_entity['pbehavior'] = []  # TODO wait for pbehavior
             enriched_entity['linklist'] = []  # TODO wait for linklist
+
             entities_list.append(enriched_entity)
 
-        return gen_json(response, entities_list)
+        return gen_json(entities_list)

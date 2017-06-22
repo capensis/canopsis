@@ -22,6 +22,7 @@ from sys import prefix
 from os.path import join
 from time import time
 
+from canopsis.alerts import AlarmField
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_config
@@ -92,11 +93,9 @@ class AlertsReader(MiddlewareRegistry):
 
             self._cache_config = {
                 'expiration': values.get('expiration').value,
-                'resolved_truncate':
-                    values.get('resolved_truncate').value,
+                'resolved_truncate': values.get('resolved_truncate').value,
                 'resolved_limit': values.get('resolved_limit').value,
-                'opened_truncate':
-                    values.get('opened_truncate').value,
+                'opened_truncate': values.get('opened_truncate').value,
                 'opened_limit': values.get('opened_limit').value
             }
 
@@ -494,7 +493,7 @@ class AlertsReader(MiddlewareRegistry):
         # Steps are never meant to be used in UI and would just cost
         # unnecessary bandwidth.
         for a in alarms:
-            a['v'].pop('steps')
+            a['v'].pop(AlarmField.steps.value)
 
         res = {
             'alarms': alarms,

@@ -19,12 +19,19 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
-from canopsis.common.ws import route
+from bottle import request
+
+from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
+from canopsis.common.converters import id_filter
+from canopsis.common.ws import route
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
 def exports(ws):
+
+    ws.application.router.add_filter('id_filter', id_filter)
 
     am = Alerts()
     ar = AlertsReader()
@@ -125,9 +132,9 @@ def exports(ws):
             return True
 
     @route(
-            ws.application.get,
-            name='alerts/count',
-            payload=['start', 'stop', 'limit', 'select'],
+        ws.application.get,
+        name='alerts/count',
+        payload=['start', 'stop', 'limit', 'select'],
     )
     def count_by_period(
             start,
@@ -163,9 +170,9 @@ def exports(ws):
         )
 
     @route(
-            ws.application.get,
-            name='alerts/get-current-alarm',
-            payload=['entity_id'],
+        ws.application.get,
+        name='alerts/get-current-alarm',
+        payload=['entity_id'],
     )
     def get_current_alarm(entity_id):
         """
@@ -177,3 +184,80 @@ def exports(ws):
         """
 
         return am.get_current_alarm(entity_id)
+
+    @ws.application.get(
+        '/api/v2/alerts/filters/<entity_id:id_filter>'
+    )
+    def get_filter(entity_id):
+        """
+        Get all filters linked with an alarm.
+
+        :param str entity_id: Entity ID of the alarm-filter
+
+        :returns: a list of <AlarmFilter>
+        """
+        filters = am.alarm_filters.get_filter(entity_id)
+        if filters is None:
+            return gen_json_error({'description': 'nothing to return'}, HTTP_ERROR)
+
+        return gen_json([l.serialize() for l in filters])
+
+    @ws.application.post(
+        '/api/v2/alerts/filters'
+    )
+    def create_filter():
+        """
+        Create a new alarm filter.
+
+        :returns: an <AlarmFilter>
+        """
+        # element is a full AlarmFilter (dict) to insert
+        element = request.json
+
+        if element is None:
+            return gen_json_error({'description': 'nothing to insert'}, HTTP_ERROR)
+
+        new = am.alarm_filters.create_filter(element=element)
+        new.save()
+
+        return gen_json(new.serialize())
+
+    @ws.application.put(
+        '/api/v2/alerts/filters/<entity_id:id_filter>'
+    )
+    def update_filter(entity_id):
+        """
+        Update an existing alam filter.
+
+        :param entity_id: Entity ID of the alarm-filter
+        :type entity_id: str
+        :returns: <AlarmFilter>
+        :rtype: dict
+        """
+        dico = request.json
+
+        if dico is None or not isinstance(dico, dict) or len(dico) <= 0:
+            return gen_json_error({'description': 'wrong update dict'}, HTTP_ERROR)
+
+        af = am.alarm_filters.update_filter(filter_id=entity_id, values=dico)
+        if not isinstance(af, AlarmFilter):
+            return gen_json_error({'description': 'failed to update filter'},
+                                  HTTP_ERROR)
+
+        return gen_json(af.serialize())
+
+    @ws.application.delete(
+        '/api/v2/alerts/filters/<entity_id:id_filter>'
+    )
+    def delete_filter(entity_id):
+        """
+        Delete a filter, based on his id.
+
+        :param entity_id: Entity ID of the alarm-filter
+        :type entity_id: str
+
+        :rtype: dict
+        """
+        ws.logger.info('Delete alarm-filter : {}'.format(entity_id))
+
+        return gen_json(am.alarm_filters.delete_filter(entity_id))

@@ -21,13 +21,11 @@
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.manager import Alerts
-from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey,\
-    Manager
+from canopsis.context_graph.import_ctx import ImportKey, Manager
 from canopsis.engines.core import publish
 
 from uuid import uuid4
 import json as j
-import signal
 import os
 
 manager = ContextGraph()
@@ -47,6 +45,7 @@ event_body = {ImportKey.EVT_IMPORT_UUID: None,
 
 RK = "task_importctx"
 
+
 def get_uuid():
     """Return an UUID never used for an import. If the generated UUID is already
     used, try again until an UUID not used is created"""
@@ -56,6 +55,7 @@ def get_uuid():
         uuid = uuid4()
 
     return str(uuid)
+
 
 def exports(ws):
 
@@ -86,7 +86,6 @@ def exports(ws):
         """
         return manager.update_entity(id_, entity)
 
-
     @route(
         ws.application.delete,
         payload=['id_']
@@ -96,7 +95,6 @@ def exports(ws):
             remove  etity
         """
         return manager.delete_entity(id_)
-
 
     @route(
         ws.application.get,
@@ -157,10 +155,7 @@ def exports(ws):
             ws.logger.error(e)
             return {__ERROR: __EVT_ERROR.format(repr(e))}
 
-        return {__IMPORT_ID : str(uuid)}
-
-
-
+        return {__IMPORT_ID: str(uuid)}
 
     def get_state(_id):
         """
@@ -183,12 +178,12 @@ def exports(ws):
             entities_dico[i['_id']] = i
 
         ret_json = {
-            'links':[],
-            'nodes':[]
+            'links': [],
+            'nodes': []
         }
 
         for i in entities_list:
-            ret_json['nodes'].append({'group':1,
+            ret_json['nodes'].append({'group': 1,
                                       'id': i['_id'],
                                       'name': i['name'],
                                       'state': get_state(i['_id'])})
@@ -199,9 +194,11 @@ def exports(ws):
                 if entities_dico[source]['type'] == 'resource' and entities_dico[target]['type'] == 'connector':
                     pass
                 else:
-                    ret_json['links'].append({'value': 1,
+                    ret_json['links'].append({
+                        'value': 1,
                         'source': source,
-                    'target': target})
+                        'target': target
+                    })
 
         directory = '/opt/canopsis/var/www/src/canopsis/d3graph'
         if not os.path.exists(directory):
@@ -211,8 +208,7 @@ def exports(ws):
             for i in l:
                 a.write(i)
             a.close()
-        f = open('/opt/canopsis/var/www/src/canopsis/d3graph/graph.json',
-        	'w')
+        f = open('/opt/canopsis/var/www/src/canopsis/d3graph/graph.json', 'w')
         f.write(j.dumps(ret_json))
         f.close()
 
@@ -221,8 +217,7 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/graphimpact',
-        payload=['_id',
-        'deepness']
+        payload=['_id', 'deepness']
     )
     def get_graph_impact(_id, deepness=None):
         return manager.get_graph_impact(_id, deepness)
@@ -230,8 +225,7 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/graphdepends',
-        payload=['_id',
-        'deepness']
+        payload=['_id', 'deepness']
     )
     def get_graph_depends(_id, deepness=None):
         return manager.get_graph_depends(_id, deepness)
@@ -239,8 +233,7 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/leavesdepends',
-        payload=['_id',
-        'deepness']
+        payload=['_id', 'deepness']
     )
     def get_leaves_depends(_id, deepness=None):
         return manager.get_leaves_depends(_id, deepness)
@@ -248,8 +241,7 @@ def exports(ws):
     @route(
         ws.application.get,
         name='api/contextgraph/leavesimpact',
-        payload=['_id',
-        'deepness']
+        payload=['_id', 'deepness']
     )
     def get_leaves_impact(_id, deepness=None):
         return manager.get_leaves_impact(_id, deepness)
