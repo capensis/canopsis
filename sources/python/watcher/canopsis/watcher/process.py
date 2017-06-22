@@ -1,18 +1,16 @@
 # -*- coding:utf-8 -*-
 from canopsis.task.core import register_task
-from canopsis.selector.manager import Selector
+from canopsis.watcher.manager import Watcher
 
-selector_manager = Selector()
-
+watcher_manager = Watcher()
 
 @register_task
 def beat_processing(engine, logger=None, **kwargs):
     """beat_processing
-    selector's beat processing
+    watcher's beat processing
 
-    :param engine: selector engine
+    :param engine: watcher engine
     :param logger: engin logger
     :param **kwargs:
     """
-    selector_manager.compute_slas()
-
+    watcher_manager.compute_slas()

@@ -14,9 +14,15 @@ from canopsis.sla.core import Sla
 
 import json
 
+STATE_CRITICAL = 3
+STATE_MAJOR = 2
+STATE_MINOR = 1
 
-class Selector(MiddlewareRegistry):
-    """Selector"""
+
+
+
+class Watcher(MiddlewareRegistry):
+    """Watcher"""
 
     OBJECT_STORAGE = ''
     ALERTS_STORAGE = ''
@@ -27,16 +33,16 @@ class Selector(MiddlewareRegistry):
         :param *args:
         :param **kwargs:
         """
-        super(Selector, self).__init__(*args, **kwargs)
+        super(Watcher, self).__init__(*args, **kwargs)
         self.object_storage = Middleware.get_middleware_by_uri(
             'storage-default://',
             table='object'
         )
-        self[Selector.OBJECT_STORAGE] = self.object_storage
+        self[Watcher.OBJECT_STORAGE] = self.object_storage
         alerts_storage = Middleware.get_middleware_by_uri(
             'mongodb-periodical-alarm://'
         )
-        self[Selector.ALERTS_STORAGE] = alerts_storage
+        self[Watcher.ALERTS_STORAGE] = alerts_storage
 
         self.sla_storage = Middleware.get_middleware_by_uri(
             'storage-default-sla://'
@@ -44,13 +50,13 @@ class Selector(MiddlewareRegistry):
 
         self.context_graph = ContextGraph()
 
-    def create_selector(self, body):
+    def create_watcher(self, body):
         """
         Create selector entity in context and link to entities.
 
-        :param dict body: selector conf
+        :param dict body: watcher conf
         """
-        selector_id = 'selector-{0}'.format(
+        watcher_id = 'watcher-{0}'.format(
             body['display_name']
 
         )
@@ -63,9 +69,9 @@ class Selector(MiddlewareRegistry):
             depend_list.append(entity_id['_id'])
 
         entity = create_entity(
-            id=selector_id,
+            id=watcher_id,
             name=body['display_name'],
-            etype='selector',
+            etype='watcher',
             impact=[],
             depends=depend_list,
             infos={
@@ -78,44 +84,45 @@ class Selector(MiddlewareRegistry):
 
         self.sla_storage.put_element(
             element={
-                '_id': selector_id,
+                '_id': watcher_id,
                 'states': [0, 0, 0, 0, 0]
             }
         )
 
-        self.calcul_state(selector_id)
+        self.calcul_state(watcher_id)
 
-    def delete_selector(self, selector_id):
+    def delete_watcher(self, watcher_id):
         """
         Delete_selector & disable selector entity in context.
 
-        :param string selector_id: selector_id
+        :param string watcher_id: watcher_id
         """
-        object_selector = list(self.object_storage._backend.find(
-            {'_id': selector_id}
+        object_watcher = list(self.object_storage._backend.find(
+            {'_id': watcher_id}
         ))[0]
-        selector_entity = self.context_graph.get_entities_by_id(
-            'selector-{0}'.format(object_selector['display_name'])
+        watcher_entity = self.context_graph.get_entities_by_id(
+            'watcher-{0}'.format(object_watcher['display_name'])
         )[0]
-        selector_entity['infos']['enabled'] = False
-        self.context_graph.update_entity(selector_entity)
-        self.sla_storage.remove_elements(ids=[selector_id])
+        watcher_entity['infos']['enabled'] = False
+        self.context_graph.update_entity(watcher_entity)
+        self.sla_storage.remove_elements(ids=[watcher_id])
 
-    def calcul_state(self, selector_id):
+
+    def calcul_state(self, watcher_id):
         """
         Send an event selector with the new state of the selector.
 
-        :param selector_id: selector id
+        :param watcher_id: watcher id
         """
-        self.logger.critical('calcul')
-        selector_entity = self.context_graph.get_entities(
-            query={'_id': selector_id}
+        self.logger.debug('calcul')
+        watcher_entity = self.context_graph.get_entities(
+            query={'_id': watcher_id}
         )[0]
 
-        entities = selector_entity['depends']
-        display_name = selector_entity['name']
+        entities = watcher_entity['depends']
+        display_name = watcher_entity['name']
 
-        alarm_list = list(self[Selector.ALERTS_STORAGE]._backend.find(
+        alarm_list = list(self[Watcher.ALERTS_STORAGE]._backend.find(
             {'d': {'$in': entities}}
         ))
         states = []
@@ -126,9 +133,9 @@ class Selector(MiddlewareRegistry):
                 states.append(alarm['v']['state']['val'])
 
         nb_entities = len(entities)
-        nb_crit = states.count(3)
-        nb_major = states.count(2)
-        nb_minor = states.count(1)
+        nb_crit = states.count(STATE_CRITICAL)
+        nb_major = states.count(STATE_MAJOR)
+        nb_minor = states.count(STATE_MINOR)
         nb_ok = nb_entities - (nb_crit + nb_major + nb_minor)
 
         # here add selection for calculation method actually it's worst state
@@ -141,10 +148,12 @@ class Selector(MiddlewareRegistry):
             nb_crit
         )
 
-        if computed_state != selector_entity['infos']['state']:
+        self.debug(output)
+
+        if computed_state != watcher_entity['infos']['state']:
             self.logger.critical('update entity')
-            selector_entity['infos']['state'] = computed_state
-            self.context_graph.update_entity(selector_entity)
+            watcher_entity['infos']['state'] = computed_state
+            self.context_graph.update_entity(watcher_entity)
 
         self.publish_event(display_name, computed_state, output)
 
@@ -168,16 +177,16 @@ class Selector(MiddlewareRegistry):
 
     def publish_event(self, display_name, computed_state, output):
         """
-        Publish an event selector on amqp.
+        Publish an event watcher on amqp
 
-        :param display_name: selector display_name
-        :param computed_state: selector state
-        :param output: selector output
+        :param display_name: watcher display_name
+        :param computed_state: watcher state
+        :param output: watcher output
         """
         event = forger(
             connector="canopsis",
             connector_name="engine",
-            event_type="selector",
+            event_type="watcher",
             source_type="component",
             component=display_name,
             state=computed_state,
@@ -193,57 +202,57 @@ class Selector(MiddlewareRegistry):
 
     def alarm_changed(self, alarm_id):
         """
-        Launch a caculation of a selector state.
+        Launch a computation of a watcher state.
 
         :param alarm_id: alarm id
         """
-        selectors = self.context_graph.get_entities(query={'type':'selector'})
-        for i in selectors:
+        watchers = self.context_graph.get_entities(query={'type':'watcher'})
+        for i in watchers:
             if alarm_id in i['depends']:
                 self.calcul_state(i['_id'])
 
-    def sla_compute(self, selector_id, state):
+    def sla_compute(self, watcher_id, state):
         """
         Launch the sla calcul.
 
-        :param selector_id: selector id
-        :param state: selector state
+        :param watcher_id: watcher id
+        :param state: watcher state
         """
-        sla_tab = list(self.sla_storage.get_elements(query={'_id': selector_id}))[0]
+        sla_tab = list(self.sla_storage.get_elements(query={'_id': watcher_id}))[0]
         sla_tab['states'][state] = sla_tab['states'][state] + 1
 
         self.sla_storage.put_element(sla_tab)
 
-        selector_conf = list(self.object_storage.get_elements(
-            query={'_id': selector_id}
+        watcher_conf = list(self.object_storage.get_elements(
+            query={'_id':watcher_id}
         ))[0]
 
         sla = Sla(
             self.object_storage,
             'test/de/rk/on/verra/plus/tard',
-            selector_conf['sla_output_tpl'],
-            selector_conf['sla_timewindow'],
-            selector_conf['sla_warning'],
-            selector_conf['alert_level'],
-            selector_conf['display_name']
+            watcher_conf['sla_output_tpl'],
+            watcher_conf['sla_timewindow'],
+            watcher_conf['sla_warning'],
+            watcher_conf['alert_level'],
+            watcher_conf['display_name']
         )
-        """
-        self.logger.critical('{0}'.format((
-            sla_tab['states']/
-            (sla_tab['states'][1] +
-             sla_tab['states'][2] +
-             sla_tab['states'][3]))))
-        """
+
+        # self.logger.critical('{0}'.format((
+        #     sla_tab['states']/
+        #     (sla_tab['states'][1] +
+        #      sla_tab['states'][2] +
+        #      sla_tab['states'][3]))))
 
     def compute_slas(self):
         """
-        Launch the sla calcul for each selectors.
+        Launch the sla calcul for each watchers.
         """
-        selector_list = self.context_graph.get_entities(
-            query={'type': 'selector', 'infos.enabled': True}
+        watcher_list = self.context_graph.get_entities(
+            query={'type': 'watcher', 'infos.enabled': True}
         )
-        for selector in selector_list:
+        for watcher in watcher_list:
             self.sla_compute(
-                selector['_id'],
-                selector['infos']['state']
+                watcher['_id'],
+                watcher['infos']['state']
             )
+
