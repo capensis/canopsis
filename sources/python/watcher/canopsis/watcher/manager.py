@@ -105,6 +105,58 @@ class Watcher(MiddlewareRegistry):
         self.context_graph.update_entity(watcher_entity)
         self.sla_storage.remove_elements(ids=[watcher_id])
 
+    def get_watcher(self, watcher_id):
+        """Retreive from database the watcher specified by is watcher id.
+
+        :param str watcher_id: the watcher id
+        :return dict: the wanted watcher. None, if no watcher match the
+        watcher_id
+        """
+        watcher = self.context_graph.get_entities_by_id(watcher_id)
+
+        try:
+            return watcher[0]
+        except IndexError:
+            return None
+
+    def update_watcher(self, watcher_id, updated_field):
+        """Update the watcher specified by is watcher id with updated_field.
+
+        Raise a ValueError, if the watcher_id do not match any entity.
+
+        :param str watcher_id: the watcher_id of the watcher to update
+        :param dict updated_field: the fields to update
+        """
+
+        watcher = self.get_watcher(watcher_id)
+        if watcher is None:
+            raise ValueError("No watcher found for the following"\
+                             " id : {0}".format(watcher_id))
+
+        if "mfilter" in watcher["infos"] and \
+           "mfilter" in updated_field["infos"] and \
+           watcher["infos"]["mfilter"] != updated_field["infos"]["mfilter"]:
+
+            query = json.loads(updated_field["infos"]['mfilter'])
+            entities = self.context_graph.get_entities(
+                query=query, projection={'_id': 1})
+
+            watcher["depends"] = []
+
+            [watcher["depends"].append(entity["_id"]) for entity in entities]
+
+        for key in updated_field:
+
+            if key == "infos": # update fields inside infos
+                for info_key in updated_field["infos"]:
+                    watcher["infos"][info_key] = updated_field["infos"][info_key]
+
+            watcher[key] = updated_field[key]
+
+        print(watcher)
+
+        self.context_graph.update_entity(watcher)
+
     def calcul_state(self, watcher_id):
         """
         Send an event watcher with the new state of the watcher.
