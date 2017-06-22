@@ -2,8 +2,6 @@
 from __future__ import unicode_literals
 
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
 from canopsis.middleware.core import Middleware
 
 from canopsis.context_graph.manager import ContextGraph
@@ -54,9 +52,9 @@ class Watcher(MiddlewareRegistry):
 
     def create_watcher(self, body):
         """
-            create watcher entity in context and link it to entities
+        Create watcher entity in context and link to entities.
 
-            :param dict body: watcher conf
+        :param dict body: watcher conf
         """
         watcher_id = 'watcher-{0}'.format(
             body['display_name']
@@ -95,9 +93,9 @@ class Watcher(MiddlewareRegistry):
 
     def delete_watcher(self, watcher_id):
         """
-            Delete watcher and disable entities linked to the watcher in context
+        Delete watcher & disable watcher entity in context.
 
-            :param string watcher_id: watcher_id
+        :param string watcher_id: watcher id
         """
         object_watcher = list(self.object_storage._backend.find(
             {'_id': watcher_id}
@@ -112,11 +110,9 @@ class Watcher(MiddlewareRegistry):
 
     def calcul_state(self, watcher_id):
         """
-            Compute state
+        Send an event watcher with the new state of the watcher.
 
-            send an event watcher with the new state of the watcher
-
-            :param watcher_id: watcher id
+        :param watcher_id: watcher id
         """
         self.logger.debug('calcul')
         watcher_entity = self.context_graph.get_entities(
@@ -131,7 +127,7 @@ class Watcher(MiddlewareRegistry):
         ))
         states = []
         for alarm in alarm_list:
-            if alarm['v']['resolved'] == None and alarm['d'] in entities:
+            if alarm['v']['resolved'] is None and alarm['d'] in entities:
                 # add here a check of pebehavior to take into account or not
                 # the alarm's state
                 states.append(alarm['v']['state']['val'])
@@ -152,8 +148,6 @@ class Watcher(MiddlewareRegistry):
             nb_crit
         )
 
-        self.debug(output)
-
         if computed_state != watcher_entity['infos']['state']:
             self.logger.critical('update entity')
             watcher_entity['infos']['state'] = computed_state
@@ -162,7 +156,7 @@ class Watcher(MiddlewareRegistry):
         self.publish_event(display_name, computed_state, output)
 
     def worst_state(self, nb_crit, nb_major, nb_minor):
-        """Worst state
+        """Calculate the worst state.
 
         :param int nb_crit: critical number
         :param int nb_major: major number
@@ -180,9 +174,8 @@ class Watcher(MiddlewareRegistry):
             return 0
 
     def publish_event(self, display_name, computed_state, output):
-        """publish_event
-
-        Publish an event watcher on amqp
+        """
+        Publish an event watcher on amqp.
 
         :param display_name: watcher display_name
         :param computed_state: watcher state
@@ -203,12 +196,11 @@ class Watcher(MiddlewareRegistry):
         rk = get_routingkey(event)
         amqp = Amqp()
         publish(event=event, publisher=amqp, rk=rk, logger=self.logger)
-        self.logger.critical('published {0}'.format(event))
+        #self.logger.critical('published {0}'.format(event))
 
     def alarm_changed(self, alarm_id):
-        """alarm_changed
-
-        Launch a computation of a watcher state
+        """
+        Launch a calculation of a watcher state.
 
         :param alarm_id: alarm id
         """
@@ -218,8 +210,8 @@ class Watcher(MiddlewareRegistry):
                 self.calcul_state(i['_id'])
 
     def sla_compute(self, watcher_id, state):
-        """sla_calcul
-            launch the sla calcul
+        """
+        Launch the sla calcul.
 
         :param watcher_id: watcher id
         :param state: watcher state
@@ -232,7 +224,6 @@ class Watcher(MiddlewareRegistry):
         watcher_conf = list(self.object_storage.get_elements(
             query={'_id':watcher_id}
         ))[0]
-
 
         sla = Sla(
             self.object_storage,
@@ -252,7 +243,7 @@ class Watcher(MiddlewareRegistry):
 
     def compute_slas(self):
         """
-            launch the sla calcul for each watchers
+        Launch the sla calcul for each watchers.
         """
         watcher_list = self.context_graph.get_entities(
             query={'type': 'watcher', 'infos.enabled': True}
