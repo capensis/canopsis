@@ -58,6 +58,7 @@ watcher_dict = {
     "state": None,
     "state_algorithm": None,
     "state_when_all_ack": "worststate",
+    "_id": "watcher_id"
 }
 
 
@@ -71,7 +72,7 @@ class TestWatcherAPI(BaseApiTest):
         self.base = '{}/{}'.format(self.URL_BASE, 'api/v2/watchers')
 
     def test_CRUD(self):
-        watcher_id = "watcher-{}".format(watcher_dict['display_name'])
+        watcher_id = watcher_dict['_id']
 
         # GET
         r = self._send(url=self.base,
