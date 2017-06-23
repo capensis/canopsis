@@ -84,7 +84,7 @@ class Selector(Record):
         }
 
         self.logger = getLogger('Selector')
-        self.context = singleton_per_scope(Context)
+        self.context = singleton_per_scope(ContextGraph)
         self.pbehavior = singleton_per_scope(PBehaviorManager)
         # Canopsis filter management for mongo
         self.cfilter = Filter()
@@ -227,7 +227,7 @@ class Selector(Record):
 
         entityids = self.pbehavior.whois(query=query)
 
-        entities = self.context.get_entities(list(entityids))
+        entities = self.context.get_entities_by_id(list(entityids))
 
         if entities:
             downtime = {
