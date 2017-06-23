@@ -178,9 +178,6 @@ def exports(ws):
                 "description": "the selector_id does not match"
                 " any selector"
             }
-            return gen_json_error(response, json_error, 404)
-                "description": "selector_id does not match any selector"
-            }
             return gen_json_error(json_error, 404)
 
         # Find entities with the selector filter
