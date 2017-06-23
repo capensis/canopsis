@@ -61,9 +61,9 @@ class Watcher(MiddlewareRegistry):
 
         :param dict body: watcher conf
         """
-        body['_id'] = 'watcher-{0}'.format(body['display_name'])
-        self[self.WATCHER_STORAGE].put_element(body)
-
+        watcher_id = body['_id']
+        depends_list = self.context_graph.get_entities(
+            query=json.loads(body['mfilter']), projection={'_id': 1})
         depend_list = []
         watcher_id = 'watcher-{}'.format(body['display_name'])
 
@@ -211,7 +211,12 @@ class Watcher(MiddlewareRegistry):
             watcher_entity['infos']['state'] = computed_state
             self.context_graph.update_entity(watcher_entity)
 
-        self.publish_event(display_name, computed_state, output)
+        self.publish_event(
+            display_name,
+            computed_state,
+            output,
+            watcher_entity['_id']
+        )
 
     def compute_slas(self):
         """
@@ -223,7 +228,7 @@ class Watcher(MiddlewareRegistry):
         for watcher in watcher_list:
             self.sla_compute(watcher['_id'], watcher['infos']['state'])
 
-    def publish_event(self, display_name, computed_state, output):
+    def publish_event(self, display_name, computed_state, output, _id):
         """
         Publish an event watcher on amqp.
 
@@ -236,9 +241,10 @@ class Watcher(MiddlewareRegistry):
         event = forger(
             connector="canopsis",
             connector_name="engine",
-            event_type="watcher",
+            event_type="check",
             source_type="component",
             component=display_name,
+            resource=_id,
             state=computed_state,
             output=output,
             perf_data_array=[],
