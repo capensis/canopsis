@@ -440,6 +440,7 @@ class ContextGraph(MiddlewareRegistry):
         Other exception maybe raised, see __update_dependancies.
 
         :param id_: the id of the entity to delete.
+        :returns: the result of the query by mongodb
         """
 
         try:
@@ -463,10 +464,12 @@ class ContextGraph(MiddlewareRegistry):
                                                       status, "impact")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
-        self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
+        result = self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
 
         # rebuild watchers links
         build_all_links(self)
+
+        return result
 
     def get_entities(self,
                      query={},

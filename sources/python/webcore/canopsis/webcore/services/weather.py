@@ -73,7 +73,7 @@ def exports(ws):
 
             watchers.append(enriched_entity)
 
-        return gen_json(selectors)
+        return gen_json(watchers)
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
     def weatherwatchers(watcher_id):
