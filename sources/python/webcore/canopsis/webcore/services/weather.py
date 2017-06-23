@@ -146,7 +146,7 @@ def exports(ws):
             tmp_alarm = alarm_manager.get(
                 filter_={'d': '{0}/{1}'.format(
                     watcher['_id'],
-                    watcher['display_name']
+                    watcher['name']
                 )}
             )['alarms']
 

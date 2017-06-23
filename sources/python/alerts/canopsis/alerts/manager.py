@@ -475,7 +475,6 @@ class Alerts(MiddlewareRegistry):
         :param event: Event to archive
         :type event: dict
         """
-
         entity_id = self.context_manager.get_id(event)
 
         entity = self.context_manager.get_entities_by_id(entity_id)
