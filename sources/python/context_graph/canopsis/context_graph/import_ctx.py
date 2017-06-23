@@ -248,7 +248,7 @@ class ContextGraphImport(ContextGraph):
 
 
     __A_PATTERN = "^delete$|^create$|^update$|^disable$|^enable$"
-    __T_PATTERN = "^resource$|^component$|^connector"
+    __T_PATTERN = "^resource$|^component$|^connector$|^watcher$"
     __CI_REQUIRED = [K_ID,
                      K_ACTION,
                      K_TYPE]
