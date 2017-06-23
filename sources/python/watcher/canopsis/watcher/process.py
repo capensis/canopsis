@@ -14,4 +14,4 @@ def beat_processing(engine, logger=None, **kwargs):
     :param logger: engin logger
     :param **kwargs:
     """
-    watcher_manager.compute_slas()
+    #watcher_manager.compute_slas()
