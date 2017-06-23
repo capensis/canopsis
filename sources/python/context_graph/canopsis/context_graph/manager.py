@@ -3,14 +3,15 @@
 from __future__ import unicode_literals
 
 from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
-
 from canopsis.selector.links import build_all_links
 
 import time
+import jsonschema
 
 CONF_PATH = 'context_graph/manager.conf'
 CONTEXT_CAT = 'CONTEXTGRAPH'
@@ -20,32 +21,55 @@ CONTEXT_CONTENT = [
     Parameter('extra_fields', Parameter.array()),
 ]
 
-FILTER_CONTENT = [
-    Parameter('schema_id')
-]
+FILTER_CONTENT = [Parameter('schema_id')]
+
 
 @conf_paths(CONF_PATH)
 @add_category(INFOSFILTER_CAT, content=FILTER_CONTENT)
-class InfosFilter():
+class InfosFilter(MiddlewareRegistry):
 
-    def __init__(self):
-        pass
+    OBJ_STORAGE = "OBJECT_STORAGE"
 
-    def _parse_schema(self):
-        """Parse the schema and generate the internal structure used to filter
-        the infos dict."""
+    def __init__(self, logger=None):
+        self.obj_storage = Middleware.get_middleware_by_uri(
+            'mongodb-periodical-watcher://')
+
+        self.reload_schema()
+        self.parse_schema()
+        self.logger = logger
 
     def reload_schema(self):
-        """Reload the schema."""
+        """Reload the schema and regenerate the internal structure used to
+        filter the infos dict."""
+
+        if not hasattr(self, "schema_id"):
+            values = self.conf.get(INFOSFILTER_CAT)
+            self._schema_id = values.get("schema_id").value
+
+        self._schema = self.obj_storage.get_elements(
+            query={"_id": self.schema_id})
+
+        if self._schema_id is None:
+            raise ValueError("No infos schema found in database.")
+
+        if isinstance(self._schema, []):
+            self._schema = self._schema[0]
 
     def filter(self, infos):
-        """Filter the fieds in infos. If a key from infos did not exist
-        in the schema, it will deleted. It will be deleted too, if the value
-        did not match the expected type defined in schema.
+        """Filter the fieds in infos. If a key from infos did not exist in the
+        schema, it will deleted. If a a field type did not match the expected
+        one or a required field is missing, the error will logged and the
+        filtering will be stopped.
 
         :param dict infos: the dict to parse
         """
 
+        try:
+            jsonschema.validate(infos, self._schema)
+        except jsonschema.ValidationError as v_err:
+            self.logger.warning(v_err.message)
+
+        key_to_parse = set(self._schema.keys())
 
 
 @conf_paths(CONF_PATH)
@@ -173,7 +197,8 @@ class ContextGraph(MiddlewareRegistry):
 
         if not hasattr(self, "authorized_info_keys"):
             values = values = self.conf.get(CATEGORY)
-            self.authorized_info_keys = values.get("authorized_info_keys").value
+            self.authorized_info_keys = values.get(
+                "authorized_info_keys").value
 
         for key in info.keys():
             if key not in self.authorized_info_keys:
@@ -252,8 +277,8 @@ class ContextGraph(MiddlewareRegistry):
 
         :return type: a set with every entities id.
         """
-        entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-            query={}))
+        entities = list(
+            self[ContextGraph.ENTITIES_STORAGE].get_elements(query={}))
         ret_val = set([])
         for i in entities:
             ret_val.add(i['_id'])
@@ -315,17 +340,15 @@ class ContextGraph(MiddlewareRegistry):
             raise ValueError(desc)
 
         # update depends/impact links
-        status = {"insertions": entity["depends"],
-                  "deletions": []}
-        updated_entities = self.__update_dependancies(entity["_id"],
-                                                      status, "depends")
+        status = {"insertions": entity["depends"], "deletions": []}
+        updated_entities = self.__update_dependancies(entity["_id"], status,
+                                                      "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
-        status = {"insertions": entity["impact"],
-                  "deletions": []}
-        updated_entities = self.__update_dependancies(entity["_id"],
-                                                      status, "impact")
+        status = {"insertions": entity["impact"], "deletions": []}
+        updated_entities = self.__update_dependancies(entity["_id"], status,
+                                                      "impact")
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
@@ -422,8 +445,10 @@ class ContextGraph(MiddlewareRegistry):
             deletions = s_old.difference(s_new)
             insertions = s_new.difference(s_old)
 
-            return {"deletions": list(deletions),
-                    "insertions": list(insertions)}
+            return {
+                "deletions": list(deletions),
+                "insertions": list(insertions)
+            }
 
         try:
             old_entity = self.get_entities_by_id(entity["_id"])[0]
@@ -439,14 +464,14 @@ class ContextGraph(MiddlewareRegistry):
 
         # update depends/impact links
         status = compare_change(old_entity["depends"], entity["depends"])
-        updated_entities = self.__update_dependancies(entity["_id"],
-                                                      status, "depends")
+        updated_entities = self.__update_dependancies(entity["_id"], status,
+                                                      "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
         status = compare_change(old_entity["impact"], entity["impact"])
-        updated_entities = self.__update_dependancies(entity["_id"],
-                                                      status, "impact")
+        updated_entities = self.__update_dependancies(entity["_id"], status,
+                                                      "impact")
 
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
@@ -477,17 +502,13 @@ class ContextGraph(MiddlewareRegistry):
             raise ValueError(desc)
 
         # update depends/impact links
-        status = {"deletions": entity["depends"],
-                  "insertions": []}
-        updated_entities = self.__update_dependancies(id_,
-                                                      status, "depends")
+        status = {"deletions": entity["depends"], "insertions": []}
+        updated_entities = self.__update_dependancies(id_, status, "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
-        status = {"deletions": entity["impact"],
-                  "insertions": []}
-        updated_entities = self.__update_dependancies(id_,
-                                                      status, "impact")
+        status = {"deletions": entity["impact"], "insertions": []}
+        updated_entities = self.__update_dependancies(id_, status, "impact")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
@@ -516,8 +537,7 @@ class ContextGraph(MiddlewareRegistry):
             skip=start,
             sort=sort,
             projection=projection,
-            with_count=with_count
-        ))
+            with_count=with_count))
 
         return result
 
@@ -531,8 +551,9 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         # keys from entity that should not be in event
-        delete_keys = ["_id", "depends", "impact", "type", "measurements",
-                       "infos"]
+        delete_keys = [
+            "_id", "depends", "impact", "type", "measurements", "infos"
+        ]
 
         kwargs['event_type'] = event_type
 
