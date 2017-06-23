@@ -27,6 +27,7 @@ from __future__ import unicode_literals
 from bottle import response
 import json
 
+HTTP_OK = 200
 HTTP_ERROR = 400
 HTTP_NOT_FOUND = 404
 HTTP_NOT_ALLOWED = 405
@@ -50,9 +51,11 @@ def __gen_json(result, status, allowed_keys=None):
     :param list allowed_keys: the list of the key the json should contains
     :return str: a string representation of the JSON.
     """
+    json_body = {}
 
-    response.status = status
     response.content_type = CONTENT_TYPE_JSON
+    if isinstance(status, int):
+        response.status = status
 
     if isinstance(result, list):
         json_body = []
