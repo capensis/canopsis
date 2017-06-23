@@ -121,7 +121,7 @@ class StateCalculator(object):
 
         return wstate_for_ack
 
-    def get_infobagot(self, mfilter):
+    def get_infobagor(self, mfilter):
         _, infobagot = self.storage.get_elements(
             query={
                 '$and': [{'state': 0, 'status': 3}, mfilter]
@@ -155,7 +155,8 @@ class Selector(object):
             self,
             storage,
             record=None,
-            logging_level=None
+            logging_level=None,
+            logger=None
     ):
         self.storage = storage
 
@@ -166,13 +167,19 @@ class Selector(object):
         self.exclude_ids = []
         self.rk = None
 
-        self.logger = getLogger('Selector')
+        if logger is None:
+            self.logger = getLogger('Selector')
+        else:
+            self.logger = logger
+
+        if logging_level:
+            self.logger.setLevel(logging_level)
+
         self.context = singleton_per_scope(Context)
 
         # Canopsis filter management for mongo
         self.cfilter = Filter()
-        if logging_level:
-            self.logger.setLevel(logging_level)
+
         self.load(record.dump())
 
     @property
