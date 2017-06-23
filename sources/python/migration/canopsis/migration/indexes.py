@@ -96,9 +96,6 @@ class IndexesModule(MigrationModule):
             [('state', 1)],
             [('ack', 1)],
         ],
-        'downtime': [
-            [('start', 1), ('end', 1)]
-        ],
         'ack': [
             [('rk', 1), ('solved', 1)]
         ]

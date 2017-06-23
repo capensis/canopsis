@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,137 +18,172 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import ensure_iterable
+from __future__ import unicode_literals
+from six import string_types
 from canopsis.common.ws import route
 from canopsis.pbehavior.manager import PBehaviorManager
 
 
-DEFAULT_ROUTE = 'pbehavior'  #: route specifics to pbehavior document
 
+def check_values(data):
+    """Check if the values present in data respect the specification. If
+    the values are correct do nothing. If not, raise a ValueError
+    :param dict data: the data."""
+
+    def check(data, key, type_):
+        if key in data and data[key] is not None:
+            if not isinstance(data[key], type_):
+                raise ValueError("The {0} must be a {1} not {2}".format(
+                    key, type_, type(data[key])))
+
+    # check str values
+    for k in ["name", "author", "rrule", "component", "connector",
+              "connector_name"]:
+        check(data, k, string_types)
+
+    # check int values
+    for k in ["tstart", "tstop"]:
+        check(data, k, int)
+
+    # check dict values
+    for k in ["comments"]:
+
+        if "comments" not in data:
+            continue
+
+        if data["comments"] is None:
+            continue
+
+        check(data, k, list)
+
+        for elt in data["comments"]:
+            if not isinstance(elt, dict):
+                raise ValueError("The list {0} store only {1} not {2}".format(
+                    k, dict, type(elt)))
+
+    if "enabled" not in data or data["enabled"] is None:
+        return
+
+    if data["enabled"] in ["True", "true"]:
+        data["enabled"] = True
+    elif data["enabled"] in ["False", "false"]:
+        data["enabled"] = False
+    else:
+        raise ValueError("The enabled value does not match a boolean")
 
 def exports(ws):
+
     pbm = PBehaviorManager()
 
     @route(
         ws.application.post,
-        payload=['entity_ids', 'behaviors', 'start', 'end'],
-        name=DEFAULT_ROUTE
+        name='pbehavior/create',
+        payload=[
+            'name', 'filter', 'author',
+            'tstart', 'tstop', 'rrule',
+            'enabled', 'comments',
+            'connector', 'connector_name'
+        ]
     )
-    def find(entity_ids=None, behaviors=None, start=None, end=None):
-        """Find documents related to input entity id(s) and behavior(s).
+    def create(
+            name, filter, author,
+            tstart, tstop, rrule=None,
+            enabled=True, comments=None,
+            connector='canopsis', connector_name='canopsis'
+    ):
 
-        :param entity_ids:
-        :type entity_ids: list or str
-        :param behaviors:
-        :type behaviors: list or str
-        :param int start: start timestamp.
-        :param int end: end timestamp.
-        :return: entity documents with input behaviors.
-        :rtype: list
-        """
+        data = locals()
+        check_values(data)
 
-        query = PBehaviorManager.get_query(behaviors)
-
-        entity_ids = ensure_iterable(entity_ids)
-
-        result = pbm.values(
-            sources=entity_ids, query=query, dtstart=start, dtend=end
+        return pbm.create(
+            name=name, filter=filter, author=author,
+            tstart=tstart, tstop=tstop, rrule=rrule,
+            enabled=enabled, comments=comments,
+            connector=connector, connector_name=connector_name
         )
-
-        return result
-
-    @route(
-        ws.application.put, name=DEFAULT_ROUTE,
-        payload=['document']
-    )
-    def put(document):
-        """Put a pbehavior document.
-
-        :param str _id: document entity id.
-        :param dict document: pbehavior document.
-        :param bool cache: if True (False by default), use storage cache.
-        :return: _id if input pbehavior document has been putted. Otherwise
-            None.
-        :rtype: str
-        """
-
-        result = pbm.put(vevents=[document])
-
-        return result
-
-    @route(
-        ws.application.delete, payload=['ids'],
-        name=DEFAULT_ROUTE
-    )
-    def remove(ids=None):
-        """Remove document(s) by id.
-
-        :param ids: pbehavior document id(s). If None, remove all documents.
-        :type ids: list or str
-        :param bool cache: if True (False by default), use storage cache.
-        :return: removed document id(s).
-        :rtype: list
-        """
-
-        result = pbm.remove(uids=ids)
-
-        return result
 
     @route(
         ws.application.get,
-        payload=['behaviors', 'start', 'end'],
-        name='pbehavior/calendar'
+        name='pbehavior/read',
+        payload=['_id']
     )
-    def find_pbehavior(behaviors=None, start=None, end=None):
-        """Get pbehavior which are between a starting and a ending date. They are filtered by behavior
+    def read(_id=None):
+        ok = False
+        if isinstance(_id, string_types):
+            ok = True
+        elif isinstance(_id, list):
+            ok = True
+            for elt in _id:
+                if not isinstance(elt, string_types):
+                    ok = False
 
-        :param string behaviors: behavior to filter the query (optionnal)
-        :param timestamp start: begin of the filtered period
-        :param timestamp end: end of the filtered period
-        :return: matchable events
-        :rtype: list
-        """
+        if not ok:
+            raise ValueError("_id should be str, a list, None (null) not"\
+                             "{0}".format(type(_id)))
 
-        storage = pbm[PBehaviorManager.STORAGE]
+        return pbm.read(_id)
 
-        if behaviors is None:
-            pbehavior_list = storage.find_elements(query={
-                '$or': [
-                    {
-                        'dtstart': {'$gte': start},
-                        'dtstart': {'$lte': end}
-                    },
-                    {
-                        'dtend': {'$gte': start},
-                        'dtend': {'$lte': end}
-                    },
-                    {
-                        'dtstart': {'$lte': start},
-                        'dtend': {'gte': end}
-                    }
-                ]
-            })
-        else:
-            pbehavior_list = storage.find_elements(query={
-                '$and': [
-                    {'behaviors': behaviors},
-                    {
-                        '$or': [
-                            {
-                                'dtstart': {'$gte': start},
-                                'dtstart': {'$lte': end}
-                            },
-                            {
-                                'dtend': {'$gte': start},
-                                'dtend': {'$lte': end}
-                            },
-                            {
-                                'dtstart': {'$lte': start},
-                                'dtend': {'gte': end}
-                            }
-                        ]
-                    }
-                ]
-            })
+    @route(
+        ws.application.put,
+        name='pbehavior/update',
+        payload=[
+            '_id',
+            'name', 'filter',
+            'tstart', 'tstop', 'rrule',
+            'enabled'
+        ]
+    )
+    def update(
+            _id,
+            name=None, filter=None,
+            tstart=None, tstop=None, rrule=None,
+            enabled=None, comments=None,
+            connector=None, connector_name=None,
+            author=None
+    ):
+        params = locals()
+        check_values(params)
+        params.pop('_id')
+        params.pop('pbm')
 
-        return list(pbehavior_list)
+        return pbm.update(_id, **params)
+
+    @route(
+        ws.application.delete,
+        name='pbehavior/delete',
+        payload=['_id']
+    )
+    def delete(_id):
+
+        return pbm.delete(_id)
+
+    @route(
+        ws.application.post,
+        name='pbehavior/comment/create',
+        payload=['pbehavior_id', 'author', 'message']
+    )
+    def create_comment(pbehavior_id, author, message):
+        author = str(author)
+        message = str(author)
+        return pbm.create_pbehavior_comment(pbehavior_id, author, message)
+
+    @route(
+        ws.application.put,
+        name='pbehavior/comment/update',
+        payload=['pbehavior_id', '_id', 'author', 'message']
+    )
+    def update_comment(pbehavior_id, _id, author=None, message=None):
+        author = str(author)
+        message = str(message)
+        return pbm.update_pbehavior_comment(
+            pbehavior_id, _id,
+            author=author, message=message
+        )
+
+    @route(
+        ws.application.delete,
+        name='pbehavior/comment/delete',
+        payload=['pbehavior_id', '_id']
+    )
+    def delete_comment(pbehavior_id, _id):
+        return pbm.delete_pbehavior_comment(pbehavior_id, _id)

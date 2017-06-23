@@ -116,6 +116,7 @@ class Context(MiddlewareRegistry):
                 'cancel',
                 'uncancel',
                 'changestate',
+                'snooze'
                 'downtime',
                 'snooze',
                 'comment'

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -19,180 +19,253 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main, TestCase
+from calendar import timegm
+from copy import deepcopy
+from datetime import datetime, timedelta
+from json import dumps
+from uuid import uuid4
 
-from canopsis.pbehavior.manager import PBehaviorManager
+from mock import patch, PropertyMock
+from unittest import main
 
-from icalendar import Event
+from canopsis.context.manager import Context
 
-from time import time
+from base import BaseTest
 
 
-class PBehaviorManagerTest(TestCase):
-    """Test PBehaviorManager.
-    """
-
+class TestManager(BaseTest):
     def setUp(self):
+        super(TestManager, self).setUp()
 
-        # create a new PBehaviorManager
-        self.manager = PBehaviorManager(data_scope='test_pbehavior')
+        self.pbehavior_id = str(uuid4())
+        self.comment_id = str(uuid4())
+        self.pbehavior = {
+            'name': 'test',
+            'filter': dumps({'connector': 'nagios-test-connector'}),
+            'comments': [{
+                '_id': self.comment_id,
+                'author': 'test_author_comment',
+                'ts': timegm(datetime.utcnow().timetuple()),
+                'message': 'test_message'
+            }],
+            'tstart': timegm(datetime.utcnow().timetuple()),
+            'tstop': timegm((datetime.utcnow() + timedelta(days=1)).timetuple()),
+            'rrule': 'FREQ=DAILY;INTERVAL=2;COUNT=3',
+            'enabled': True,
+            'connector': 'test_connector',
+            'connector_name': 'test_connector_name',
+            'author': 'test_author'
+        }
 
-    def tearDown(self):
-        # drop behaviors
-        self.manager.remove()
+        data = deepcopy(self.pbehavior)
+        data.update({'_id': self.pbehavior_id})
+        self.pbm.pbehavior_storage.put_element(element=data)
 
+        self.entity_id_1 = '/component/collectd/pbehavior/test1/'
+        self.entity_id_2 = '/component/collectd/pbehavior/test2/'
+        self.entity_id_3 = '/component/collectd/pbehavior/test3/'
 
-class GetDocumentProperties(PBehaviorManagerTest):
-    """Test method _get_document_properties.
-    """
+        self.entities = [{
+            'entity_id': self.entity_id_1,
+            'name': 'engine-test1',
+            'type': 'metric-test',
+            'connector': 'canopsis-test-connector',
+            'connector_name': 'canopsis-test',
+        }, {
+            'entity_id': self.entity_id_2,
+            'name': 'big-engine-test2',
+            'type': 'metric-test',
+            'connector': 'canopsis-test-connector',
+            'connector_name': 'canopsis-test',
+        }, {
+            'entity_id': self.entity_id_3,
+            'name': 'test_context3',
+            'type': 'resource-test',
+            'connector': 'nagios-test-connector',
+            'connector_name': 'nagios-test',
+        }]
 
-    def test_empty(self):
-        """Test with an empty document.
-        """
+    def test_create(self):
+        pb = self.pbm.create(**self.pbehavior)
+        self.assertTrue(pb is not None)
 
-        document = {}
-        result = self.manager._get_document_properties(document=document)
-        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: []})
+        pb_new = deepcopy(self.pbehavior)
+        pb_new.update({'filter': {'author': {'$in': ['author1, author2']}}})
+        pb = self.pbm.create(**pb_new)
+        self.assertTrue(pb is not None)
 
-    def test(self):
-        """Test with pbehaviors.
-        """
+    def test_read(self):
+        pb = self.pbm.read(_id=self.pbehavior_id)
+        pbs = self.pbm.read()
+        self.assertTrue(pb is not None)
+        self.assertTrue(isinstance(pbs, list))
+        self.assertEqual(len(pbs), 1)
 
-        document = {PBehaviorManager.BEHAVIORS: ['test']}
-        result = self.manager._get_document_properties(document=document)
-        self.assertEqual(result, document)
+    def test_update(self):
+        self.pbm.update(self.pbehavior_id, name='test_name2',
+                        connector=None, connector_name=None)
+        pb = self.pbm.get(self.pbehavior_id)
+        self.assertTrue(pb is not None)
+        self.assertEqual(pb['name'], 'test_name2')
+        self.assertEqual(pb['connector'], 'test_connector')
+        self.assertEqual(pb['connector_name'], 'test_connector_name')
 
+    def test_delete(self):
+        self.pbm.delete(_id=self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id)
+        self.assertTrue(pb is None)
 
-class GetVeventProperties(PBehaviorManagerTest):
-    """Test method _get_vevent_properties.
-    """
+    def test_create_pbehavior_comment(self):
+        self.pbm.create_pbehavior_comment(self.pbehavior_id, 'author', 'msg')
+        pb = self.pbm.get(self.pbehavior_id)
+        self.assertTrue('comments' in pb)
+        self.assertTrue(isinstance(pb['comments'], list))
+        self.assertEqual(len(pb['comments']), 2)
 
-    def test_empty(self):
-        """Test with an empty vevent.
-        """
+        self.pbm._update_pbehavior(self.pbehavior_id, {'$set': {'comments': None}})
+        self.pbm.create_pbehavior_comment(self.pbehavior_id, 'author', 'msg')
+        pb = self.pbm.get(self.pbehavior_id)
+        self.assertTrue('comments' in pb)
+        self.assertTrue(isinstance(pb['comments'], list))
+        self.assertEqual(len(pb['comments']), 1)
 
-        vevent = Event()
-        result = self.manager._get_vevent_properties(vevent=vevent)
-        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: []})
-
-    def test(self):
-        """Test with a vevent containing pbehaviors.
-        """
-
-        iCalvevent = 'BEGIN:VEVENT\n{0}:["test"]\nEND:VEVENT'.format(
-            PBehaviorManager.BEHAVIOR_TYPE
+    def test_update_pbehavior_comment(self):
+        new_author, new_message = 'new_author', 'new_message'
+        result = self.pbm.update_pbehavior_comment(
+            self.pbehavior_id, self.comment_id,
+            author=new_author,
+            message=new_message
         )
-        vevent = Event.from_ical(iCalvevent)
-        result = self.manager._get_vevent_properties(vevent=vevent)
-        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: ['test']})
+        self.assertIsNotNone(result)
+        self.assertTrue(isinstance(result, dict))
+        self.assertEqual(result['message'], new_message)
+        self.assertEqual(result['author'], new_author)
 
+        pb = self.pbm.get(
+            self.pbehavior_id,
+            query={'comments': {'$elemMatch': {'_id': self.comment_id}}}
+        )
+        self.assertTrue(isinstance(pb['comments'], list))
+        self.assertEqual(pb['comments'][0]['author'], new_author)
+        self.assertEqual(pb['comments'][0]['message'], new_message)
 
-class GetQuery(PBehaviorManagerTest):
-    """Test method get_query.
-    """
+        pb2 = self.pbm.get(
+            'id_does_not_exist',
+            query={'comments': {'$elemMatch': {'_id': self.comment_id}}}
+        )
+        self.assertIsNone(pb2)
 
-    def test_empty(self):
+    def test_delete_pbehavior_comment(self):
+        self.pbm.create_pbehavior_comment(self.pbehavior_id, 'author', 'msg')
+        pb = self.pbm.get(self.pbehavior_id)
+        self.assertEqual(len(pb['comments']), 2)
 
-        result = PBehaviorManager.get_query(behaviors=[])
-        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: []})
+        self.pbm.delete_pbehavior_comment(self.pbehavior_id, self.comment_id)
+        pb = self.pbm.get(self.pbehavior_id)
+        self.assertEqual(len(pb['comments']), 1)
 
-    def test(self):
+    def test_get_pbehaviors(self):
+        pbehavior_1 = deepcopy(self.pbehavior)
+        pbehavior_2 = deepcopy(self.pbehavior)
+        self.pbehavior.update({'eids': [1, 2, 3],
+                               'tstart': timegm((datetime.utcnow() + timedelta(days=3)).timetuple())})
+        pbehavior_1.update({'eids': [2, 4, 5],
+                            'tstart': timegm((datetime.utcnow() + timedelta(days=2)).timetuple())})
+        pbehavior_2.update({'eids': [5, 6],
+                            'tstart': timegm((datetime.utcnow() + timedelta(days=1)).timetuple())})
 
-        behaviors = ['test']
-        result = PBehaviorManager.get_query(behaviors=behaviors)
-        self.assertEqual(result, {PBehaviorManager.BEHAVIORS: behaviors})
+        self.pbm.pbehavior_storage.put_elements(
+            elements=(self.pbehavior, pbehavior_1, pbehavior_2)
+        )
+        pbs = self.pbm.get_pbehaviors(2)
 
+        self.assertTrue(isinstance(pbs, list))
+        self.assertEqual(len(pbs), 2)
 
-class GetEnding(PBehaviorManagerTest):
-    """Test method getending.
-    """
+        pbs_2 = sorted(pbs, key=lambda el: el['tstart'], reverse=True)
+        self.assertEqual(pbs, pbs_2)
 
-    def setUp(self):
+    @patch('canopsis.pbehavior.manager.PBehaviorManager.context', new_callable=PropertyMock)
+    def test_compute_pbehaviors_filters(self, mock_context):
+        mock_context.return_value = Context(data_scope='test_context')
+        self.context[Context.CTX_STORAGE].put_elements(self.entities)
+        self.pbm.compute_pbehaviors_filters()
+        pb = self.pbm.get(self.pbehavior_id)
 
-        super(GetEnding, self).setUp()
+        self.assertTrue(pb is not None)
+        self.assertTrue('eids' in pb)
+        self.assertTrue(isinstance(pb['eids'], list))
+        self.assertEqual(len(pb['eids']), 1)
+        self.assertEqual(pb['eids'][0], self.entity_id_3)
 
-        self.source = 'test'
-        self.behaviors = ['behavior']
-        self.document = PBehaviorManager.get_document(
-            source=self.source,
-            behaviors=self.behaviors
+        pb = deepcopy(self.pbehavior)
+        pb.update({
+                    'filter': {
+                        '$or': [
+                            {'type': 'resource-test'},
+                            {'name': {
+                                '$in':
+                                    ['engine-test1', 'big-engine-test2']
+                                }
+                            }]
+                        }
+                   })
+        pb_id = self.pbm.create(**pb)
+        self.pbm.compute_pbehaviors_filters()
+        pb = self.pbm.get(pb_id)
+
+        self.assertTrue(pb is not None)
+        self.assertTrue('eids' in pb)
+        self.assertTrue(isinstance(pb['eids'], list))
+        self.assertEqual(len(pb['eids']), 3)
+
+    def test_check_pbehaviors(self):
+        pbehavior_1 = deepcopy(self.pbehavior)
+        pbehavior_2 = deepcopy(self.pbehavior)
+        pbehavior_3 = deepcopy(self.pbehavior)
+        pbehavior_4 = deepcopy(self.pbehavior)
+
+        pb_name1, pb_name2, pb_name3, pb_name4 = 'name1', 'name3', 'name3', 'name4'
+
+        pbehavior_1.update(
+            {'name': pb_name1,
+             'eids': [self.entity_id_1, self.entity_id_2],
+             'tstart': timegm(datetime.utcnow().timetuple()),
+             'tstop': timegm((datetime.utcnow() + timedelta(days=8)).timetuple())}
         )
 
-    def test_alltime(self):
-        """Test getending method where time is everytime.
-        """
+        pbehavior_2.update({'name': pb_name2})
 
-        # check all time
-        self.manager.put(vevents=[self.document])
-        ending = self.manager.getending(source=self.source)
-        self.assertEqual(
-            ending,
-            {self.behaviors[0]: self.document[PBehaviorManager.DTEND]}
+        pbehavior_3.update(
+            {'name': pb_name3,
+             'eids': [self.entity_id_2, self.entity_id_3],
+             'tstart': timegm(datetime.utcnow().timetuple()),
+             'tstop': timegm((datetime.utcnow() + timedelta(days=8)).timetuple())}
         )
 
-    def test_alltimes(self):
-        """Test getending method where several times exist in everytime.
-        """
+        pbehavior_4.update({'name': pb_name4})
 
-        future = time() + 10000
-        count = 5
-
-        documents = [
-            self.document.copy()
-            for i in range(count)
-        ]
-        for i in range(len(documents)):
-            documents[i][PBehaviorManager.UID] = str(i)
-            documents[i][PBehaviorManager.DTEND] = future - i
-        # check all time
-        self.manager.put(vevents=documents)
-        ending = self.manager.getending(source=self.source)
-        self.assertEqual(
-            ending,
-            {self.behaviors[0]: future}
+        self.pbm.pbehavior_storage.put_elements(
+            elements=(pbehavior_1, pbehavior_2, pbehavior_3, pbehavior_4)
         )
 
-    def test_wrong_source(self):
-        """Test when source does not exist.
-        """
+        self.entities[0]['timestamp'] = timegm((datetime.utcnow() + timedelta(days=2)).timetuple())
+        self.entities[1]['timestamp'] = timegm(datetime.utcnow().timetuple()),
+        self.entities[2]['timestamp'] = timegm((datetime.utcnow() - timedelta(days=2)).timetuple())
 
-        ending = self.manager.getending(source='wrong source')
-        self.assertFalse(ending)
+        self.context[Context.CTX_STORAGE].put_elements(self.entities)
 
-    def test_excluded_time(self):
-        """Test in a time which does not exist at ts.
-        """
+        result = self.pbm.check_pbehaviors(
+            self.entity_id_1, [pb_name1, pb_name2], [pb_name3, pb_name4]
+        )
+        self.assertTrue(result)
 
-        self.document[PBehaviorManager.DTEND] = time()
-        self.manager.put(vevents=[self.document])
-        ending = self.manager.getending(source=self.source)
-        self.assertFalse(ending)
-
-    def test_included_time(self):
-        """Test to get ending date when dtstart and dtend are given.
-        """
-
-        self.document[PBehaviorManager.DTSTART] = time()
-        self.document[PBehaviorManager.DTEND] = time() + 10000
-
-        self.manager.put(vevents=[self.document])
-        ending = self.manager.getending(source=self.source)
-        self.assertEqual(
-            ending, {self.behaviors[0]: self.document[PBehaviorManager.DTEND]}
+        result = self.pbm.check_pbehaviors(
+            self.entity_id_3, [pb_name3, pb_name4], [pb_name1, pb_name2]
         )
 
-    def test_rrule(self):
-        """Test to get ending date when an rrule.
-        """
+        self.assertFalse(result)
 
-        self.document[PBehaviorManager.DTSTART] = time()
-        self.document[PBehaviorManager.DTEND] = time() + 10000
-        self.document[PBehaviorManager.RRULE] = "FREQ=DAILY"
-        self.manager.put(vevents=[self.document])
-        ending = self.manager.getending(source=self.source)
-        self.assertEqual(
-            ending, {self.behaviors[0]: self.document[PBehaviorManager.DTEND]}
-        )
 
 if __name__ == '__main__':
     main()

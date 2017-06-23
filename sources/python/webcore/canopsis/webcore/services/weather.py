@@ -21,25 +21,107 @@
 from __future__ import unicode_literals
 
 import json
+import re
 
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
-from canopsis.context_graph.manager import ContextGraph
+from canopsis.common.utils import get_rrule_freq
 from canopsis.webcore.utils import gen_json, gen_json_error
 
+LOGGER = None
 
 context_manager = ContextGraph()
 alarm_manager = AlertsReader()
+pbehavior_manager = PBehaviorManager()
+
+
+def __format_pbehavior(pbehavior):
+    EVERY = "Every {0}"
+    to_delete = [
+        "_id", "connector", "author", "comments", "filter", "connector_name",
+        "eids"
+    ]
+
+    pbehavior["behavior"] = pbehavior.pop("name")
+    pbehavior["dtstart"] = pbehavior.pop("tstart")
+    pbehavior["dtend"] = pbehavior.pop("tstop")
+    pbehavior["isActive"] = pbehavior.pop("enabled")
+
+    # parse the rrule to get is "text"
+    rrule = {}
+    rrule["rrule"] = pbehavior["rrule"]
+
+    freq = get_rrule_freq(pbehavior["rrule"])
+
+    if freq == "SECONDLY":
+        rrule["text"] = EVERY.format("second")
+    elif freq == "MINUTELY":
+        rrule["text"] = EVERY.format("minute")
+    elif freq == "HOURLY":
+        rrule["text"] = EVERY.format("hour")
+    elif freq == "DAILY":
+        rrule["text"] = EVERY.format("day")
+    elif freq == "WEEKLY":
+        rrule["text"] = EVERY.format("week")
+    elif freq == "MONTHLY":
+        rrule["text"] = EVERY.format("hour")
+    elif freq == "YEARLY":
+        rrule["text"] = EVERY.format("year")
+
+    pbehavior["rrule"] = rrule
+
+    for key in to_delete:
+        try:
+            pbehavior.pop(key)
+        except KeyError:
+            pass
+
+
+def add_pbehavior_info(enriched_entity):
+    """Add pbehavior related field to selectors. This function will add
+    the related pbehavior in 'pbehavior'.
+    """
+
+    enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
+        enriched_entity['entity_id'])
+
+    LOGGER.debug("Pbehavior list : {0}".format(enriched_entity["pbehavior"]))
+
+    for pbehavior in enriched_entity["pbehavior"]:
+        __format_pbehavior(pbehavior)
+
+
+def add_pbehavior_status(data):
+    """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
+    on every dict in data. Data must be a list of dict that contains a key
+    "pbehavior" in order to work properly
+    :param list data: the data to parse
+    """
+    for entity in data:
+        enabled_list = [pbh["isActive"] for pbh in entity["pbehavior"]]
+
+        if len(enabled_list) == 0:
+            all_active = False
+        else:
+            all_active = all(enabled_list)
+
+        one_more_active = any(enabled_list)
+
+        entity["hasactivepbehaviorinentities"] = one_more_active
+        entity["hasallactivepbehaviorinentities"] = all_active
 
 
 def exports(ws):
+    global LOGGER
+    LOGGER = ws.logger
 
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
 
     @ws.application.route(
-        '/api/v2/weather/selectors/<selector_filter:mongo_filter>'
-    )
+        '/api/v2/weather/selectors/<selector_filter:mongo_filter>')
     def get_selector(selector_filter):
         """
         Get a list of selectors from a mongo filter.
@@ -51,15 +133,17 @@ def exports(ws):
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
 
+        LOGGER.debug("Selector list : {0}".format(selector_list))
+
         selectors = []
         for selector in selector_list:
             enriched_entity = {}
-            tmp_alarm = alarm_manager.get(
-                filter_={'d': selector['_id']}
-            )['alarms']
+            tmp_alarm = alarm_manager.get(filter_={'d':
+                                                   selector['_id']})['alarms']
 
             enriched_entity['entity_id'] = selector['_id']
-            enriched_entity['criticity'] = selector['infos'].get('criticity', '')
+            enriched_entity['criticity'] = selector['infos'].get(
+                'criticity', '')
             enriched_entity['org'] = selector['infos'].get('org', '')
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = selector['name']
@@ -68,12 +152,13 @@ def exports(ws):
                 enriched_entity['status'] = tmp_alarm[0]['v']['status']
                 enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
-            enriched_entity['pbehavior'] = []  # add this when it's ready
-            enriched_entity['linklist'] = []  # add this when it's ready
 
+            enriched_entity['linklist'] = []  # add this when it's ready
+            add_pbehavior_info(enriched_entity)
             selectors.append(enriched_entity)
 
-        return gen_json(selectors)
+        add_pbehavior_status(selectors)
+        return gen_json(response, selectors)
 
     @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(selector_id):
@@ -84,14 +169,14 @@ def exports(ws):
         :return: a list of agglomerated values of entities in the selector
         :rtype: list
         """
-        # Find the selector
         try:
             selector_entity = context_manager.get_entities(
                 query={'_id': selector_id, 'type': 'selector'})[0]
         except IndexError:
             json_error = {
                 "name": "resource_not_found",
-                "description": "selector_id does not match any selector"
+                "description": "the selector_id does not match"
+                " any selector"
             }
             return gen_json_error(json_error, 404)
 
@@ -111,9 +196,8 @@ def exports(ws):
         entities_list = []
         for entity in entities:
             enriched_entity = {}
-            tmp_alarm = alarm_manager.get(
-                filter_={'d': entity['_id']}
-            )['alarms']
+            tmp_alarm = alarm_manager.get(filter_={'d':
+                                                   entity['_id']})['alarms']
 
             enriched_entity['entity_id'] = entity['_id']
             enriched_entity['sla_text'] = ''  # TODO when sla, use it
@@ -126,9 +210,11 @@ def exports(ws):
                 enriched_entity['status'] = tmp_alarm[0]['v']['status']
                 enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
-            enriched_entity['pbehavior'] = []  # TODO wait for pbehavior
             enriched_entity['linklist'] = []  # TODO wait for linklist
+
+            add_pbehavior_info(enriched_entity)
 
             entities_list.append(enriched_entity)
 
-        return gen_json(entities_list)
+        add_pbehavior_status(entities_list)
+        return gen_json(response, entities_list)
