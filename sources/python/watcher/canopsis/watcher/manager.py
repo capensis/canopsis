@@ -32,10 +32,9 @@ class Watcher(MiddlewareRegistry):
         super(Watcher, self).__init__(*args, **kwargs)
 
         self[Watcher.WATCHER_STORAGE] = Middleware.get_middleware_by_uri(
-            'mongodb-periodical-watcher://')
-        alerts_storage = Middleware.get_middleware_by_uri(
+            'mongodb-default-watcher://')
+        self[Watcher.ALERTS_STORAGE] = Middleware.get_middleware_by_uri(
             'mongodb-periodical-alarm://')
-        self[Watcher.ALERTS_STORAGE] = alerts_storage
 
         self.sla_storage = Middleware.get_middleware_by_uri(
             'storage-default-sla://')
@@ -61,12 +60,21 @@ class Watcher(MiddlewareRegistry):
         Create selector entity in context and link to entities.
 
         :param dict body: watcher conf
-        :rtype: <Watcher>
         """
-        watcher_id = 'watcher-{0}'.format(body['display_name'])
-        depends_list = self.context_graph.get_entities(
-            query=json.loads(body['mfilter']), projection={'_id': 1})
+        body['_id'] = 'watcher-{0}'.format(body['display_name'])
+        self[self.WATCHER_STORAGE].put_element(body)
+
         depend_list = []
+        watcher_id = 'watcher-{}'.format(body['display_name'])
+
+        try:
+            query = json.loads(body['mfilter'])
+        except:
+            self.logger.error('Cannot parse mfilter on watcher')
+            return None
+
+        depends_list = self.context_graph.get_entities(
+            query=query, projection={'_id': 1})
         for entity_id in depends_list:
             depend_list.append(entity_id['_id'])
 
@@ -79,15 +87,13 @@ class Watcher(MiddlewareRegistry):
             infos={'mfilter': body['mfilter'],
                    'enabled': True,
                    'state': 0})
-        watcher = self.context_graph.create_entity(entity)
+        self.context_graph.create_entity(entity)
 
         self.sla_storage.put_element(
             element={'_id': watcher_id,
                      'states': [0, 0, 0, 0, 0]})
 
         self.calcul_state(watcher_id)
-
-        return watcher
 
     def update_watcher(self, watcher_id, updated_field):
         """Update the watcher specified by is watcher id with updated_field.
@@ -101,54 +107,56 @@ class Watcher(MiddlewareRegistry):
         """
 
         watcher = self.get_watcher(watcher_id)
-        watcher_copy = watcher.copy()
 
-        if watcher_copy is None:
+        if watcher is None:
             raise ValueError("No watcher found for the following"
                              " id: {}".format(watcher_id))
 
-        if "mfilter" in watcher_copy["infos"] and \
+        if "infos" in watcher and \
+           "mfilter" in watcher["infos"] and \
+           "infos" in updated_field and \
            "mfilter" in updated_field["infos"] and \
-           watcher_copy["infos"]["mfilter"] != updated_field["infos"]["mfilter"]:
+           watcher["infos"]["mfilter"] != updated_field["infos"]["mfilter"]:
 
             query = json.loads(updated_field["infos"]['mfilter'])
             entities = self.context_graph.get_entities(
                 query=query, projection={'_id': 1})
 
-            watcher_copy["depends"] = []
+            watcher["depends"] = []
 
-            [watcher_copy["depends"].append(entity["_id"]) for entity in entities]
+            [watcher["depends"].append(entity["_id"]) for entity in entities]
 
         for key in updated_field:
 
             if key == "infos":  # update fields inside infos
                 for info_key in updated_field["infos"]:
-                    watcher_copy["infos"][info_key] = updated_field["infos"][
+                    watcher["infos"][info_key] = updated_field["infos"][
                         info_key]
 
-            watcher_copy[key] = updated_field[key]
+            watcher[key] = updated_field[key]
 
-        self.context_graph.update_entity(watcher_copy)
-
-        return watcher
+        self.context_graph.update_entity(watcher)
 
     def delete_watcher(self, watcher_id):
         """
-        Delete_selector & disable selector entity in context.
+        Delete watcher & disable watcher entity in context.
 
         :param string watcher_id: watcher_id
-        :returns: Mongo dict which confirme deletion
+        :returns: the mongodb dict response
         """
         object_watcher = list(
             self[self.WATCHER_STORAGE]._backend.find({
                 '_id': watcher_id
             }))[0]
         watcher_entity = self.context_graph.get_entities_by_id(
-            'watcher-{0}'.format(object_watcher['display_name']))[0]
+            'watcher-{}'.format(object_watcher['display_name']))[0]
         watcher_entity['infos']['enabled'] = False
+
         self.context_graph.update_entity(watcher_entity)
 
-        return self.sla_storage.remove_elements(ids=[watcher_id])
+        self.sla_storage.remove_elements(ids=[watcher_id])
+
+        return self[self.WATCHER_STORAGE].remove_elements(ids=[watcher_id])
 
     def alarm_changed(self, alarm_id):
         """
