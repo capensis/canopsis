@@ -144,7 +144,10 @@ def exports(ws):
         for watcher in watcher_list:
             enriched_entity = {}
             tmp_alarm = alarm_manager.get(
-                filter_={'d': watcher['_id']}
+                filter_={'d': '{0}/{1}'.format(
+                    watcher['_id'],
+                    watcher['display_name']
+                )}
             )['alarms']
 
             enriched_entity['entity_id'] = watcher['_id']

@@ -65,7 +65,6 @@ class Watcher(MiddlewareRegistry):
         depends_list = self.context_graph.get_entities(
             query=json.loads(body['mfilter']), projection={'_id': 1})
         depend_list = []
-        watcher_id = 'watcher-{}'.format(body['display_name'])
 
         try:
             query = json.loads(body['mfilter'])
@@ -149,7 +148,7 @@ class Watcher(MiddlewareRegistry):
                 '_id': watcher_id
             }))[0]
         watcher_entity = self.context_graph.get_entities_by_id(
-            'watcher-{}'.format(object_watcher['display_name']))[0]
+            object_watcher['_id'])[0]
         watcher_entity['infos']['enabled'] = False
 
         self.context_graph.update_entity(watcher_entity)
@@ -241,7 +240,7 @@ class Watcher(MiddlewareRegistry):
         event = forger(
             connector="canopsis",
             connector_name="engine",
-            event_type="check",
+            event_type="watcher",
             source_type="component",
             component=display_name,
             resource=_id,
