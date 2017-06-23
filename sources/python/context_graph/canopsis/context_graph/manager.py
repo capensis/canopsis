@@ -13,16 +13,43 @@ from canopsis.selector.links import build_all_links
 import time
 
 CONF_PATH = 'context_graph/manager.conf'
-CATEGORY = 'CONTEXTGRAPH'
-CONTENT = [
+CONTEXT_CAT = 'CONTEXTGRAPH'
+INFOSFILTER_CAT = "INFOS_FILTER"
+CONTEXT_CONTENT = [
     Parameter('event_types', Parameter.array()),
     Parameter('extra_fields', Parameter.array()),
-    Parameter('authorized_info_keys', Parameter.array())
 ]
+
+FILTER_CONTENT = [
+    Parameter('schema_id')
+]
+
+@conf_paths(CONF_PATH)
+@add_category(INFOSFILTER_CAT, content=FILTER_CONTENT)
+class InfosFilter():
+
+    def __init__(self):
+        pass
+
+    def _parse_schema(self):
+        """Parse the schema and generate the internal structure used to filter
+        the infos dict."""
+
+    def reload_schema(self):
+        """Reload the schema."""
+
+    def filter(self, infos):
+        """Filter the fieds in infos. If a key from infos did not exist
+        in the schema, it will deleted. It will be deleted too, if the value
+        did not match the expected type defined in schema.
+
+        :param dict infos: the dict to parse
+        """
+
 
 
 @conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
+@add_category(CONTEXT_CAT, content=CONTEXT_CONTENT)
 class ContextGraph(MiddlewareRegistry):
     """ContextGraph"""
 
