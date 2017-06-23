@@ -40,9 +40,10 @@ class StateCalculator(object):
         self.logger = logger
 
     def get_states(self, mfilter):
-        self.validate_filter(mfilter)
         if not mfilter:
             return {}
+
+        self.validate_filter(mfilter)
 
         result = self.storage.aggregate([
             {'$match': mfilter},
@@ -94,9 +95,10 @@ class StateCalculator(object):
         return state
 
     def get_worst_state_for_ack(self, mfilter):
-        self.validate_filter(mfilter)
         if not mfilter:
             return {}
+
+        self.validate_filter(mfilter)
 
         ack_clause = {'ack.isAck': {'$ne': True}, 'ack': {'$exists': True}}
 
