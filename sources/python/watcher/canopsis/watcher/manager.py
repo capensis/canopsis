@@ -24,6 +24,7 @@ class Watcher(MiddlewareRegistry):
 
     OBJECT_STORAGE = ''
     ALERTS_STORAGE = ''
+    WATCHER_STORAGE = "WATCHER_STORAGE"
 
     def __init__(self, *args, **kwargs):
         """__init__
@@ -32,9 +33,9 @@ class Watcher(MiddlewareRegistry):
         :param **kwargs:
         """
         super(Watcher, self).__init__(*args, **kwargs)
-        self.object_storage = Middleware.get_middleware_by_uri(
-            'storage-default://', table='object')
-        self[Watcher.OBJECT_STORAGE] = self.object_storage
+
+        self[Watcher.WATCHER_STORAGE] = Middleware.get_middleware_by_uri(
+            'mongodb-periodical-watcher://')
         alerts_storage = Middleware.get_middleware_by_uri(
             'mongodb-periodical-alarm://')
         self[Watcher.ALERTS_STORAGE] = alerts_storage
@@ -81,7 +82,7 @@ class Watcher(MiddlewareRegistry):
         :param string watcher_id: watcher_id
         """
         object_watcher = list(
-            self.object_storage._backend.find({
+            self[self.WATCHER_STORAGE]._backend.find({
                 '_id': watcher_id
             }))[0]
         watcher_entity = self.context_graph.get_entities_by_id(
@@ -254,9 +255,9 @@ class Watcher(MiddlewareRegistry):
         self.sla_storage.put_element(sla_tab)
 
         watcher_conf = list(
-            self.object_storage.get_elements(query={'_id': watcher_id}))[0]
+            self[self.WATCHER_STORAGE].get_elements(query={'_id': watcher_id}))[0]
 
-        sla = Sla(self.object_storage, 'test/de/rk/on/verra/plus/tard',
+        sla = Sla(self[self.WATCHER_STORAGE], 'test/de/rk/on/verra/plus/tard',
                   watcher_conf['sla_output_tpl'],
                   watcher_conf['sla_timewindow'], watcher_conf['sla_warning'],
                   watcher_conf['alert_level'], watcher_conf['display_name'])
