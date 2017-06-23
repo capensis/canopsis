@@ -320,4 +320,8 @@ class Selector(object):
         return data
 
     def save(self, data):
+        """Store the data in database.
+
+        :param dict data: the data to store
+        """
         self.storage.put_element(data)
