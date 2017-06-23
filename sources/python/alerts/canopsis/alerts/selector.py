@@ -121,7 +121,7 @@ class StateCalculator(object):
 
         return wstate_for_ack
 
-    def get_infobagor(self, mfilter):
+    def get_infobagot(self, mfilter):
         _, infobagot = self.storage.get_elements(
             query={
                 '$and': [{'state': 0, 'status': 3}, mfilter]

@@ -130,7 +130,7 @@ class SelectorTest(TestCase):
 
         self.assertEqual(0, wstate_for_ack)
 
-        infobagot = self.cstate.get_infobagor(mfilter)
+        infobagot = self.cstate.get_infobagot(mfilter)
 
         self.assertEqual(1, infobagot)
 
