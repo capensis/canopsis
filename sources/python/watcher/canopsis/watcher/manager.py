@@ -50,7 +50,7 @@ class Watcher(MiddlewareRegistry):
 
         :param dict body: watcher conf
         """
-        watcher_id = 'watcher-{0}'.format(body['display_name'])
+        watcher_id = body['_id']
         depends_list = self.context_graph.get_entities(
             query=json.loads(body['mfilter']), projection={'_id': 1})
         depend_list = []
@@ -84,8 +84,7 @@ class Watcher(MiddlewareRegistry):
             self.object_storage._backend.find({
                 '_id': watcher_id
             }))[0]
-        watcher_entity = self.context_graph.get_entities_by_id(
-            'watcher-{0}'.format(object_watcher['display_name']))[0]
+        watcher_entity = self.context_graph.get_entities_by_id(watcher_id)[0]
         watcher_entity['infos']['enabled'] = False
         self.context_graph.update_entity(watcher_entity)
         self.sla_storage.remove_elements(ids=[watcher_id])
@@ -185,7 +184,12 @@ class Watcher(MiddlewareRegistry):
             watcher_entity['infos']['state'] = computed_state
             self.context_graph.update_entity(watcher_entity)
 
-        self.publish_event(display_name, computed_state, output)
+        self.publish_event(
+            display_name,
+            computed_state,
+            output,
+            watcher_entity['_id']
+        )
 
     def worst_state(self, nb_crit, nb_major, nb_minor):
         """Calculate the worst state.
@@ -205,7 +209,7 @@ class Watcher(MiddlewareRegistry):
         else:
             return 0
 
-    def publish_event(self, display_name, computed_state, output):
+    def publish_event(self, display_name, computed_state, output, _id):
         """
         Publish an event watcher on amqp
 
@@ -216,9 +220,10 @@ class Watcher(MiddlewareRegistry):
         event = forger(
             connector="canopsis",
             connector_name="engine",
-            event_type="watcher",
+            event_type="check",
             source_type="component",
             component=display_name,
+            resource=_id,
             state=computed_state,
             output=output,
             perf_data_array=[],
