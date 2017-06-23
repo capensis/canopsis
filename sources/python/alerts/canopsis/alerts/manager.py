@@ -474,7 +474,6 @@ class Alerts(MiddlewareRegistry):
         :param event: Event to archive
         :type event: dict
         """
-
         entity_id = self.context_manager.get_id(event)
 
         entity = self.context_manager.get_entities_by_id(entity_id)
@@ -487,7 +486,10 @@ class Alerts(MiddlewareRegistry):
                 self.logger.warning('entity not in context')
                 pass
 
-        if event['event_type'] == Check.EVENT_TYPE:
+        if (
+                event['event_type'] == Check.EVENT_TYPE 
+                or event['event_type'] == 'watcher'
+        ):
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
                 if event[Check.STATE] == Check.OK:
