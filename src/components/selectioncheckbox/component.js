@@ -6,13 +6,15 @@ Ember.Application.initializer({
             isNone = Ember.isNone;
 
         /**
-         * This is the eventcategories component for the widget calendar
+         * This is the selectioncheckbox component for the widget listalrms
          *
-         * @class eventcategories component
-         * @memberOf canopsis.frontend.brick-calendar
+         * @class selectioncheckbox component
          */
         var component = Ember.Component.extend({
 
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
             },

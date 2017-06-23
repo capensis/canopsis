@@ -6,24 +6,35 @@ Ember.Application.initializer({
             isNone = Ember.isNone;
 
         /**
-         * This is the eventcategories component for the widget calendar
+         * This is the alarmtd component for the widget listalarm
          *
-         * @class eventcategories component
-         * @memberOf canopsis.frontend.brick-calendar
+         * @class eventcategories alarmtd
          */
         var component = Ember.Component.extend({
             tagName: 'td',
-            renderers: ['v_state', 'v_state_t', 'v_status', 'v_extra_details', ],
-            // renderers: ['v_state_val'],
 
+            /**
+             * @property renderers
+             */
+            renderers: ['v_state', 'v_state_t', 'v_status', 'v_extra_details', ],
+
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
               },
 
+            /**
+             * @mthod click
+             */
             click: function () {
                 this.sendAction('action', this.get('alarm'), this.get('field'));
             },
 
+            /**
+             * @property value
+             */
             value: function() {
                 var alarm = get(this, 'alarm');
                 var field = get(this, 'field');
@@ -31,21 +42,19 @@ Ember.Application.initializer({
                 return val;
             }.property('alarm.changed', 'field'),
 
+            /**
+             * @property hasRenderer
+             */
             hasRenderer: function () {
                 return this.get('renderers').includes(this.get('field.name').replace(/\./g, "_"))
             }.property('alarm'),
 
+            /**
+             * @property renderer
+             */
             renderer: function () {
                 return this.get('field.name').replace(/\./g, "_")
             }.property('alarm.name'),
-
-            // vv: function() {
-            //     return Ember.View.extend({
-            //         // template: Ember.HTMLBars.compile("{{#component-rendererstate value=2}}{{/component-rendererstate}}")
-            //         template: Ember.HTMLBars.compile("renderer")
-                    
-            //     });
-            // }.property('field'),
         });
 
         application.register('component:component-alarmtd', component);

@@ -6,15 +6,17 @@ Ember.Application.initializer({
             isNone = Ember.isNone;
 
         /**
-         * This is the eventcategories component for the widget calendar
+         * This is the selectionactions component for the widget listalarm
          *
-         * @class eventcategories component
-         * @memberOf canopsis.frontend.brick-calendar
+         * @class selectionactions component
          */
         var component = Ember.Component.extend({
             tagName: 'td',
             classNames: ['action-cell'],
 
+            /**
+             * @property actionsMap
+             */
             actionsMap: Ember.A([
                 {
                     class: 'glyphicon glyphicon-ok',
@@ -38,11 +40,17 @@ Ember.Application.initializer({
                 }
             ]),
 
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
             },
 
             actions: {
+                /**
+                 * @property sendAction
+                 */
                 sendAction: function (action) {
                     this.sendAction('action', action);
                 }

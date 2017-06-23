@@ -6,16 +6,25 @@ Ember.Application.initializer({
             isNone = Ember.isNone;
 
         /**
-         * This is the eventcategories component for the widget calendar
+         * This is the columntemplate component for the widget listalarm
          *
-         * @class eventcategories component
-         * @memberOf canopsis.frontend.brick-calendar
+         * @class columntemplate component
          */
         var component = Ember.Component.extend({
 
+            /**
+             * @property template
+             */
             template: undefined,
+
+            /**
+             * @property column
+             */
             column: undefined,
 
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
                 if (!isNone(this.get('content'))) {
@@ -24,6 +33,9 @@ Ember.Application.initializer({
                 }
               },
 
+            /**
+             * @method onUpdate
+             */
             onUpdate: function() {
                 this.set('content', {
                     column: get(this, 'column'),

@@ -143,6 +143,8 @@ Ember.Application.initializer({
                 if (inspectedDataItem !== undefined) {
                     console.log("inspectedDataItem attributes", this.getAttributes());
                     var itemType = this.getInspectedItemType();
+                    console.error('itemType', itemType);
+                    console.error('schemas', window.schemasRegistry);
                     var referenceModel = window.schemasRegistry.getByName(itemType).EmberModel;
                     if (itemType !== undefined) {
                         var options = get(this, 'options'),
@@ -159,9 +161,12 @@ Ember.Application.initializer({
                         }
                         set(this, 'categories', []);
                         var modelAttributes = this.getAttributes();
+                        console.error('YOYOOO:', referenceModel.proto());
                         var refModelCategories = referenceModel.proto().categories;
 
-                        refModelCategories.pop();
+                        if (refModelCategories.length > 1) {
+                            refModelCategories.pop();
+                        }
 
                         refModelCategories[0].keys[3] = 'name';
 

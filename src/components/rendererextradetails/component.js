@@ -5,13 +5,24 @@ Ember.Application.initializer({
             set = Ember.set,
             isNone = Ember.isNone;
             __ = Ember.String.loc;
+        /**
+         * This is the rendererextradetails component for the widget listalarm
+         *
+         * @class rendererextradetails component
+         */
 
         var component = Ember.Component.extend({
 
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
             },
 
+            /**
+             * @property acktooltip
+             */
             acktooltip: function() {
                 if (this.get('hasAck')) {
                     return ['<center>',
@@ -26,6 +37,9 @@ Ember.Application.initializer({
                 }
             }.property('value.ack.t', 'hasAck'),
 
+            /**
+             * @property snoozetooltip
+             */
             snoozetooltip: function() {
                 if (this.get('hasSnooze')) {
                     return ['<center>',
@@ -39,6 +53,9 @@ Ember.Application.initializer({
                 }
             }.property('value.snooze.a', 'hasSnooze'),
 
+            /**
+             * @property tickettooltip
+             */
             tickettooltip: function() {
                 if (this.get('hasTicket')) {
                     return ['<center>',
@@ -51,6 +68,9 @@ Ember.Application.initializer({
                 }
             }.property('value.ticket.a', 'hasTicket'),
 
+            /**
+             * @property pbehaviortooltip
+             */
             pbehaviortooltip: function() {
                 if (this.get('hasPBehavior')) {
                     var self = this;
@@ -67,18 +87,30 @@ Ember.Application.initializer({
                 }
             }.property('value.pbehaviors.@each.behavior', 'hasPBehavior'),
 
+            /**
+             * @property hasSnooze
+             */
             hasSnooze: function() {
                 return this.get('value.snooze') != null;
             }.property('value.snooze'),
 
+            /**
+             * @property hasTicket
+             */
             hasTicket: function() {
                 return this.get('value.ticket') != null;
             }.property('value.ticket'),
 
+            /**
+             * @property hasAck
+             */
             hasAck: function() {
                 return this.get('value.ack') != null;
             }.property('value.ack'),
 
+            /**
+             * @property hasPBehavior
+             */
             hasPBehavior: function() {
                 if (this.get('value.pbehaviors') == null) {
                     return false
@@ -86,6 +118,9 @@ Ember.Application.initializer({
                 return this.get('value.pbehaviors').length != 0;
             }.property('value.pbihaviors'),
 
+            /**
+             * @property dateFormat
+             */
             dateFormat: function (date) {
                 var mEpoch = parseInt(date);
                 if (mEpoch < 10000000000) mEpoch *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but JS uses milliseconds)

@@ -6,16 +6,24 @@ Ember.Application.initializer({
             isNone = Ember.isNone;
 
         /**
-         * This is the eventcategories component for the widget calendar
+         * This is the alarmstate component for the widget listalarm
          *
-         * @class eventcategories component
-         * @memberOf canopsis.frontend.brick-calendar
+         * @class alarmstate component
          */
         var component = Ember.Component.extend({
-
+            /**
+             * @property state
+             */
             state: undefined,
+
+            /**
+             * @property isSelected
+             */
             isSelected: 0,
 
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
                 if (!isNone(this.get('content'))) {
@@ -23,6 +31,9 @@ Ember.Application.initializer({
                 }
               },
 
+            /**
+             * @method onUpdate
+             */
             onUpdate: function() {
                 this.set('content', {
                     state: get(this, 'state'),

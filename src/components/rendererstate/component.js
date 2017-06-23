@@ -4,9 +4,17 @@ Ember.Application.initializer({
         var get = Ember.get,
             set = Ember.set,
             isNone = Ember.isNone;
+        /**
+         * This is the rendererstate component for the widget listalarm
+         *
+         * @class rendererstate component
+         */
 
         var component = Ember.Component.extend({
 
+            /**
+             * @property list
+             */
             list: {
                 0: {color: 'bg-green', name: 'Info'},
                 1: {color: 'bg-yellow', name: 'Minor'},
@@ -14,22 +22,37 @@ Ember.Application.initializer({
                 3: {color: 'bg-red', name: 'Critical'}            
             },
 
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
               },
 
+            /**
+             * @property spanClass
+             */
             spanClass: function() {
                 return [this.get('list')[this.get('value.val')]['color'], 'badge'].join(' ')
             }.property('value.val'),
 
+            /**
+             * @property caption
+             */
             caption: function() {
                 return this.get('list')[this.get('value.val')]['name']
             }.property('value.val'),
 
+            /**
+             * @property isChangedByUser
+             */
             isChangedByUser: function () {
                 return this.get('value._t') == 'changestate'
             }.property('value._t'),
 
+            /**
+             * @property isCancelled
+             */
             isCancelled: function () {
                 return this.get('value.canceled') != undefined;
             }.property('value.canceled'),

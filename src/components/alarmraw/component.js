@@ -6,20 +6,25 @@ Ember.Application.initializer({
             isNone = Ember.isNone;
 
         /**
-         * This is the eventcategories component for the widget calendar
+         * This is the alarmraw component for the widget listalarm
          *
-         * @class eventcategories component
-         * @memberOf canopsis.frontend.brick-calendar
+         * @class alarmraw component
          */
         var component = Ember.Component.extend({
             tagName: 'tr',
 
+            /**
+             * @method init
+             */   
             init: function() {
                 this._super();
-
                 set(this, 'alarm', get(this, 'alarm'));
                 set(this, 'fields', get(this, 'fields'));                
             },
+
+            /**
+             * @property expandClass
+             */
 
             expandClass: function () {
                 var cl = '';
@@ -32,14 +37,23 @@ Ember.Application.initializer({
             }.property('alarm.isExpanded'),
 
             actions: {
+                /**
+                 * @method tdClick
+                 */
                 tdClick: function (alarm, field) {
                     this.sendAction('action', alarm, field);
                 },
 
+                /**
+                 * @method sendAction
+                 */
                 sendAction: function (action, alarm) {
                     this.sendAction('saction', action, alarm);
                 },
 
+                /**
+                 * @method expand
+                 */
                 expand: function () {
                     this.toggleProperty('alarm.isExpanded');
                 }
