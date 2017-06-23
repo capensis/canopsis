@@ -97,35 +97,6 @@ class Watcher(MiddlewareRegistry):
 
         self.calcul_state(watcher_id)
 
-    def delete_watcher(self, watcher_id):
-        """
-        Delete_selector & disable selector entity in context.
-
-        :param string watcher_id: watcher_id
-        """
-        object_watcher = list(
-            self.object_storage._backend.find({
-                '_id': watcher_id
-            }))[0]
-        watcher_entity = self.context_graph.get_entities_by_id(watcher_id)[0]
-        watcher_entity['infos']['enabled'] = False
-        self.context_graph.update_entity(watcher_entity)
-        self.sla_storage.remove_elements(ids=[watcher_id])
-
-    def get_watcher(self, watcher_id):
-        """Retreive from database the watcher specified by is watcher id.
-
-        :param str watcher_id: the watcher id
-        :return dict: the wanted watcher. None, if no watcher match the
-        watcher_id
-        """
-        watcher = self.context_graph.get_entities_by_id(watcher_id)
-
-        try:
-            return watcher[0]
-        except IndexError:
-            return None
-
     def update_watcher(self, watcher_id, updated_field):
         """Update the watcher specified by is watcher id with updated_field.
 
