@@ -26,7 +26,7 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.context.manager import Context
 
 
-class CalculatorState(object):
+class StateCalculator(object):
 
     OFF = 0  #: off state value
     MINOR = 1  #: minor state value
@@ -40,9 +40,10 @@ class CalculatorState(object):
         self.logger = logger
 
     def get_states(self, mfilter):
-        self.validate_filter(mfilter)
         if not mfilter:
             return {}
+
+        self.validate_filter(mfilter)
 
         result = self.storage.aggregate([
             {'$match': mfilter},
@@ -94,9 +95,10 @@ class CalculatorState(object):
         return state
 
     def get_worst_state_for_ack(self, mfilter):
-        self.validate_filter(mfilter)
         if not mfilter:
             return {}
+
+        self.validate_filter(mfilter)
 
         ack_clause = {'ack.isAck': {'$ne': True}, 'ack': {'$exists': True}}
 
@@ -115,7 +117,7 @@ class CalculatorState(object):
 
         self.logger.debug(u' + states for ack: {}'.format(states_for_ack))
 
-        wstate_for_ack = CalculatorState.get_worst_state(states_for_ack)
+        wstate_for_ack = StateCalculator.get_worst_state(states_for_ack)
 
         return wstate_for_ack
 
@@ -138,10 +140,10 @@ class CalculatorState(object):
 class Selector(object):
 
     TEMPLATE_REPLACE = {
-        CalculatorState.OFF: '[OFF]',
-        CalculatorState.MINOR: '[MINOR]',
-        CalculatorState.MAJOR: '[MAJOR]',
-        CalculatorState.CRITICAL: '[CRITICAL]',
+        StateCalculator.OFF: '[OFF]',
+        StateCalculator.MINOR: '[MINOR]',
+        StateCalculator.MAJOR: '[MAJOR]',
+        StateCalculator.CRITICAL: '[CRITICAL]',
     }
 
     DEFAULT_TEMPLATE = (
@@ -153,7 +155,8 @@ class Selector(object):
             self,
             storage,
             record=None,
-            logging_level=None
+            logging_level=None,
+            logger=None
     ):
         self.storage = storage
 
@@ -164,13 +167,19 @@ class Selector(object):
         self.exclude_ids = []
         self.rk = None
 
-        self.logger = getLogger('Selector')
+        if logger is None:
+            self.logger = getLogger('Selector')
+        else:
+            self.logger = logger
+
+        if logging_level:
+            self.logger.setLevel(logging_level)
+
         self.context = singleton_per_scope(Context)
 
         # Canopsis filter management for mongo
         self.cfilter = Filter()
-        if logging_level:
-            self.logger.setLevel(logging_level)
+
         self.load(record.dump())
 
     @property
@@ -261,7 +270,7 @@ class Selector(object):
 
         self.logger.debug(" + selector statment agregation {}".format(mfilter))
 
-        cstate = CalculatorState(self.storage, self.logger)
+        cstate = StateCalculator(self.storage, self.logger)
 
         mfilter = self.makeMfilter()
 
@@ -271,7 +280,7 @@ class Selector(object):
 
         states = cstate.get_states(_filter)
 
-        state = CalculatorState.get_worst_state(states)
+        state = StateCalculator.get_worst_state(states)
 
         wstate_for_ack = cstate.get_worst_state_for_ack(mfilter)
 
@@ -295,7 +304,7 @@ class Selector(object):
         output = self.output_tpl.replace('[TOTAL]', str(total))
 
         # output computation
-        for value in CalculatorState.gen_worst_state(states):
+        for value in StateCalculator.gen_worst_state(states):
             output = output.replace(Selector.TEMPLATE_REPLACE[value], str(value))
 
         data = {
@@ -311,4 +320,8 @@ class Selector(object):
         return data
 
     def save(self, data):
+        """Store the data in database.
+
+        :param dict data: the data to store
+        """
         self.storage.put_element(data)

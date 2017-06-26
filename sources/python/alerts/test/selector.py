@@ -2,7 +2,7 @@ from unittest import TestCase, main
 from mock import Mock
 
 from canopsis.alerts.manager import Alerts
-from canopsis.alerts.selector import CalculatorState, Selector
+from canopsis.alerts.selector import StateCalculator, Selector
 from canopsis.context.manager import Context
 from canopsis.middleware.core import Middleware
 
@@ -103,7 +103,7 @@ class SelectorTest(TestCase):
     def test_get_states(self):
         alarm_storage = self.alert_manager[Alerts.ALARM_STORAGE]
 
-        self.cstate = CalculatorState(
+        self.cstate = StateCalculator(
             alarm_storage, Mock()
         )
 
@@ -130,7 +130,7 @@ class SelectorTest(TestCase):
 
         self.assertEqual(0, wstate_for_ack)
 
-        infobagot = self.cstate.get_infobagor(mfilter)
+        infobagot = self.cstate.get_infobagot(mfilter)
 
         self.assertEqual(1, infobagot)
 

@@ -134,10 +134,6 @@ class BaseTest(unittest.TestCase):
         print("Waiting {0}s for the beat".format(BEAT))
         sleep(BEAT)
 
-    def _remove_filter(self):
-        # self.obj_col.delete_many(DEL_FILTER)
-        pass
-
     def _authenticate(self):
         session = requests.Session()
         response = session.get(URL_AUTH.format(URL_BASE, AUTH_KEY))
@@ -206,10 +202,6 @@ class BaseTest(unittest.TestCase):
 
         self.pbm = PBehaviorManager()
         self.cm= ContextGraph()
-
-    def tearDown(self):
-        self._remove_filter()
-        # TODO remove entity created in the context
 
 class Test(BaseTest):
 
