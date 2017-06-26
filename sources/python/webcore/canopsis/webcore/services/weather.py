@@ -153,7 +153,6 @@ def exports(ws):
             enriched_entity['org'] = selector['infos'].get('org', '')
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = selector['name']
-            enriched_entitity['source_type'] = selector['type']
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm[0]['v']['state']
                 enriched_entity['status'] = tmp_alarm[0]['v']['status']
