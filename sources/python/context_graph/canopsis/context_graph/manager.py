@@ -61,8 +61,6 @@ class InfosFilter(MiddlewareRegistry):
         except IndexError:
             raise ValueError("No infos schema found in database.")
 
-        print(self._schema)
-
         if isinstance(self._schema, list):
             self._schema = self._schema[0]
             if not isinstance(self._schema, dict):
@@ -99,7 +97,6 @@ class InfosFilter(MiddlewareRegistry):
             jsonschema.validate(infos, self._schema)
         except jsonschema.ValidationError as v_err:
             self.logger.warning(v_err.message)
-            print("Error")
 
         schema = self._schema["schema"]["properties"]
         self.__clean(infos, copy.deepcopy(infos), schema)
