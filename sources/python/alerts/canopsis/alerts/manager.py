@@ -54,6 +54,7 @@ FILTER = 'FILTER'
 FILTER_CNT = [
     Parameter('author', str),
 ]
+TYPE_SELECTOR = 'selector'
 
 
 @conf_paths(CONF_PATH)
@@ -487,7 +488,7 @@ class Alerts(MiddlewareRegistry):
                 self.logger.warning('entity not in context')
                 pass
 
-        if event['event_type'] == Check.EVENT_TYPE or event['event_type'] == 'selector':
+        if event['event_type'] == Check.EVENT_TYPE or event['event_type'] == TYPE_SELECTOR:
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
                 if event[Check.STATE] == Check.OK:
