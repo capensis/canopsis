@@ -249,6 +249,8 @@ class ContextGraph(MiddlewareRegistry):
         if extra_fields is None:
             self.extra_fields = extra_fields
 
+        self.filter_ = InfosFilter(logger=self.logger)
+
     def get_entities_by_id(self, _id):
         """
         Retreive the entity identified by an id. If id is a list of id,
@@ -281,6 +283,9 @@ class ContextGraph(MiddlewareRegistry):
         """
         if not isinstance(entities, list):
             entities = [entities]
+
+        for entity in entities:
+            self.filter_.filter(entity["infos"])
 
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
@@ -380,6 +385,10 @@ class ContextGraph(MiddlewareRegistry):
         updated_entities = self.__update_dependancies(entity["_id"], status,
                                                       "impact")
         updated_entities.append(entity)
+
+        for entity in updated_entities:
+            self.filter_.filter(entity["infos"])
+
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # rebuild selectors links
