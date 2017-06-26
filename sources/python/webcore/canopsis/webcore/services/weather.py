@@ -182,8 +182,7 @@ def exports(ws):
         except IndexError:
             json_error = {
                 "name": "resource_not_found",
-                "description": "the selector_id does not match"
-                " any selector"
+                "description": "the selector_id does not match any selector"
             }
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
@@ -209,8 +208,6 @@ def exports(ws):
             enriched_entity['entity_id'] = entity['_id']
             enriched_entity['sla_text'] = ''  # TODO when sla, use it
             enriched_entity['org'] = entity['infos'].get('org', '')
-            enriched_entity['display_name'] = selector_entity[
-                'name']  # check if we need selector here
             enriched_entity['name'] = entity['name']
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm[0]['v']['state']
