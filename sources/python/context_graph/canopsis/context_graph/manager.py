@@ -23,7 +23,7 @@ CONTEXT_CONTENT = [
     Parameter('schema_id')
 ]
 
-DEFAULT_SCHEMA_ID = "schema_infos"
+DEFAULT_SCHEMA_ID = "context_graph.filter_infos"
 
 
 @conf_paths(CONF_PATH)
@@ -36,7 +36,7 @@ class InfosFilter(MiddlewareRegistry):
     def __init__(self, logger=None):
         super(InfosFilter, self).__init__()
         self.obj_storage = Middleware.get_middleware_by_uri(
-            'storage-default://', table='object')
+            'storage-default://', table='schemas')
 
         self.reload_schema()
         self.logger = logger
@@ -55,11 +55,13 @@ class InfosFilter(MiddlewareRegistry):
             else:
                 self._schema_id = id_.value
 
-        self._schema = self.obj_storage.get_elements(
-            query={"_id": self._schema_id}, projection={"_id": 0})[0]
-
-        if self._schema_id is None:
+        try:
+            self._schema = self.obj_storage.get_elements(
+                query={"_id": self._schema_id}, projection={"_id": 0})[0]
+        except IndexError:
             raise ValueError("No infos schema found in database.")
+
+        print(self._schema)
 
         if isinstance(self._schema, list):
             self._schema = self._schema[0]
@@ -97,8 +99,9 @@ class InfosFilter(MiddlewareRegistry):
             jsonschema.validate(infos, self._schema)
         except jsonschema.ValidationError as v_err:
             self.logger.warning(v_err.message)
+            print("Error")
 
-        schema = self._schema["infos"]["properties"]
+        schema = self._schema["schema"]["properties"]
         self.__clean(infos, copy.deepcopy(infos), schema)
 
 
