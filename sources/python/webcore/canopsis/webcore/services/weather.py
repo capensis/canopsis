@@ -21,14 +21,13 @@
 from __future__ import unicode_literals
 
 import json
-import re
 
-from canopsis.context_graph.manager import ContextGraph
-from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
-from canopsis.webcore.utils import gen_json, gen_json_error
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
 LOGGER = None
 
@@ -38,6 +37,10 @@ pbehavior_manager = PBehaviorManager()
 
 
 def __format_pbehavior(pbehavior):
+    """Rewrite en pbehavior from db format to front format.
+
+    :param dict pbehavior: a pbehavior dict
+    """
     EVERY = "Every {0}"
     to_delete = [
         "_id", "connector", "author", "comments", "filter", "connector_name",
@@ -66,7 +69,7 @@ def __format_pbehavior(pbehavior):
     elif freq == "WEEKLY":
         rrule["text"] = EVERY.format("week")
     elif freq == "MONTHLY":
-        rrule["text"] = EVERY.format("hour")
+        rrule["text"] = EVERY.format("month")
     elif freq == "YEARLY":
         rrule["text"] = EVERY.format("year")
 
@@ -82,6 +85,8 @@ def __format_pbehavior(pbehavior):
 def add_pbehavior_info(enriched_entity):
     """Add pbehavior related field to selectors. This function will add
     the related pbehavior in 'pbehavior'.
+
+    :param dict enriched_entity: the entity to enrich
     """
 
     enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
@@ -97,6 +102,7 @@ def add_pbehavior_status(data):
     """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
     on every dict in data. Data must be a list of dict that contains a key
     "pbehavior" in order to work properly
+
     :param list data: the data to parse
     """
     for entity in data:
@@ -133,7 +139,7 @@ def exports(ws):
         selector_filter['type'] = 'selector'
         selector_list = context_manager.get_entities(query=selector_filter)
 
-        LOGGER.debug("Selector list : {0}".format(selector_list))
+        ws.logger.debug("Selector list: {}".format(selector_list))
 
         selectors = []
         for selector in selector_list:
@@ -158,7 +164,8 @@ def exports(ws):
             selectors.append(enriched_entity)
 
         add_pbehavior_status(selectors)
-        return gen_json(response, selectors)
+
+        return gen_json(selectors)
 
     @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(selector_id):
@@ -178,7 +185,7 @@ def exports(ws):
                 "description": "the selector_id does not match"
                 " any selector"
             }
-            return gen_json_error(json_error, 404)
+            return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         # Find entities with the selector filter
         try:
@@ -189,7 +196,7 @@ def exports(ws):
                 "description": "impossible to load the desired filter"
             }
             ws.logger.error(selector_entity['infos'])
-            return gen_json_error(json_error, 404)
+            return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         entities = context_manager.get_entities(query=query)
 
@@ -217,4 +224,5 @@ def exports(ws):
             entities_list.append(enriched_entity)
 
         add_pbehavior_status(entities_list)
-        return gen_json(response, entities_list)
+
+        return gen_json(entities_list)
