@@ -158,6 +158,16 @@ def exports(ws):
                 enriched_entity['status'] = tmp_alarm[0]['v']['status']
                 enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
+                enriched_entity['connector'] = tmp_alarm[0]['v']['connector']
+                enriched_entity['connector_name'] = (
+                    tmp_alarm[0]['v']['connector_name']
+                )
+                enriched_entity['component'] = tmp_alarm[0]['v']['component']
+                enriched_entity['component'] = tmp_alarm[0]['v']['component']
+                if 'resource' in tmp_alarm[0]['v'].keys():
+                    enriched_entity['resource'] = tmp_alarm[0]['v']['resource']
+            else:
+                enriched_entity['state'] = 0
 
             enriched_entity['linklist'] = []  # add this when it's ready
             add_pbehavior_info(enriched_entity)
@@ -214,6 +224,15 @@ def exports(ws):
                 enriched_entity['status'] = tmp_alarm[0]['v']['status']
                 enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
+                enriched_entity['connector'] = tmp_alarm[0]['v']['connector']
+                enriched_entity['connector_name'] = (
+                    tmp_alarm[0]['v']['connector_name']
+                )
+                enriched_entity['component'] = tmp_alarm[0]['v']['component']
+                if 'resource' in tmp_alarm[0]['v'].keys():
+                    enriched_entity['resource'] = tmp_alarm[0]['v']['resource']
+            else:
+                enriched_entity['state'] = 0
             enriched_entity['linklist'] = []  # TODO wait for linklist
 
             add_pbehavior_info(enriched_entity)
