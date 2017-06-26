@@ -12,6 +12,7 @@ from canopsis.selector.links import build_all_links
 
 import time
 import jsonschema
+import copy
 
 CONF_PATH = 'context_graph/manager.conf'
 CONTEXT_CAT = 'CONTEXTGRAPH'
@@ -19,41 +20,69 @@ INFOSFILTER_CAT = "INFOS_FILTER"
 CONTEXT_CONTENT = [
     Parameter('event_types', Parameter.array()),
     Parameter('extra_fields', Parameter.array()),
+    Parameter('schema_id')
 ]
 
-FILTER_CONTENT = [Parameter('schema_id')]
+DEFAULT_SCHEMA_ID = "schema_infos"
 
 
 @conf_paths(CONF_PATH)
-@add_category(INFOSFILTER_CAT, content=FILTER_CONTENT)
+@add_category(CONTEXT_CAT, content=CONTEXT_CONTENT)
 class InfosFilter(MiddlewareRegistry):
+    """Class use to clean the infos field of an entity"""
 
     OBJ_STORAGE = "OBJECT_STORAGE"
 
     def __init__(self, logger=None):
+        super(InfosFilter, self).__init__()
         self.obj_storage = Middleware.get_middleware_by_uri(
-            'mongodb-periodical-watcher://')
+            'storage-default://', table='object')
 
         self.reload_schema()
-        self.parse_schema()
         self.logger = logger
 
     def reload_schema(self):
         """Reload the schema and regenerate the internal structure used to
         filter the infos dict."""
 
-        if not hasattr(self, "schema_id"):
-            values = self.conf.get(INFOSFILTER_CAT)
-            self._schema_id = values.get("schema_id").value
+        if not hasattr(self, "_schema_id"):
+            values = self.conf.get(CONTEXT_CAT)
+            id_ = values.get("_schema_id")
+            #  Ugly hack because we cannot retreive the value of schema_id in
+            # the manager.conf file
+            if id_ is None:
+                self._schema_id = DEFAULT_SCHEMA_ID
+            else:
+                self._schema_id = id_.value
 
         self._schema = self.obj_storage.get_elements(
-            query={"_id": self.schema_id})
+            query={"_id": self._schema_id}, projection={"_id": 0})[0]
 
         if self._schema_id is None:
             raise ValueError("No infos schema found in database.")
 
-        if isinstance(self._schema, []):
+        if isinstance(self._schema, list):
             self._schema = self._schema[0]
+            if not isinstance(self._schema, dict):
+                raise ValueError("The schema should be a dict not"\
+                                 " a {0}.".format(type(self._schema)))
+
+    def __clean(self, infos, iteration_dict, schema):
+        """Recursive method use to clean the infos dict following the given
+        schema. If a key or a sub key of infos is not in schema, it will
+        be deleted.
+
+        :param dict infos: the info field to clean
+        :pararm dict iteration_dict: a copy of infos used to iterate over every
+        keys in infos
+        :param dict schema: the schema used to clean select the key to delete.
+        """
+
+        for key in iteration_dict:
+            if key not in schema:
+                infos.pop(key)
+            elif isinstance(iteration_dict[key], dict):
+                self.__clean(infos[key], iteration_dict[key], schema[key])
 
     def filter(self, infos):
         """Filter the fieds in infos. If a key from infos did not exist in the
@@ -69,7 +98,8 @@ class InfosFilter(MiddlewareRegistry):
         except jsonschema.ValidationError as v_err:
             self.logger.warning(v_err.message)
 
-        key_to_parse = set(self._schema.keys())
+        schema = self._schema["infos"]["properties"]
+        self.__clean(infos, copy.deepcopy(infos), schema)
 
 
 @conf_paths(CONF_PATH)
@@ -196,7 +226,7 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         if not hasattr(self, "authorized_info_keys"):
-            values = values = self.conf.get(CATEGORY)
+            values = self.conf.get(CONTEXT_CAT)
             self.authorized_info_keys = values.get(
                 "authorized_info_keys").value
 
