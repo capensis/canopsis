@@ -21,7 +21,6 @@
 from __future__ import unicode_literals
 
 import json
-import re
 
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -152,13 +151,23 @@ def exports(ws):
                 enriched_entity['status'] = tmp_alarm[0]['v']['status']
                 enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
+                enriched_entity['connector'] = tmp_alarm[0]['v']['connector']
+                enriched_entity['connector_name'] = (
+                    tmp_alarm[0]['v']['connector_name']
+                )
+                enriched_entity['component'] = tmp_alarm[0]['v']['component']
+                enriched_entity['component'] = tmp_alarm[0]['v']['component']
+                if 'resource' in tmp_alarm[0]['v'].keys():
+                    enriched_entity['resource'] = tmp_alarm[0]['v']['resource']
+            else:
+                enriched_entity['state'] = 0
 
             enriched_entity['linklist'] = []  # add this when it's ready
             add_pbehavior_info(enriched_entity)
             selectors.append(enriched_entity)
 
         add_pbehavior_status(selectors)
-        return gen_json(response, selectors)
+        return gen_json(selectors)
 
     @ws.application.route("/api/v2/weather/selectors/<selector_id:id_filter>")
     def weatherselectors(selector_id):
@@ -177,9 +186,6 @@ def exports(ws):
                 "name": "resource_not_found",
                 "description": "the selector_id does not match"
                 " any selector"
-            }
-            return gen_json_error(response, json_error, 404)
-                "description": "selector_id does not match any selector"
             }
             return gen_json_error(json_error, 404)
 
@@ -205,14 +211,21 @@ def exports(ws):
             enriched_entity['entity_id'] = entity['_id']
             enriched_entity['sla_text'] = ''  # TODO when sla, use it
             enriched_entity['org'] = entity['infos'].get('org', '')
-            enriched_entity['display_name'] = selector_entity[
-                'name']  # check if we need selector here
             enriched_entity['name'] = entity['name']
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm[0]['v']['state']
                 enriched_entity['status'] = tmp_alarm[0]['v']['status']
                 enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
                 enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
+                enriched_entity['connector'] = tmp_alarm[0]['v']['connector']
+                enriched_entity['connector_name'] = (
+                    tmp_alarm[0]['v']['connector_name']
+                )
+                enriched_entity['component'] = tmp_alarm[0]['v']['component']
+                if 'resource' in tmp_alarm[0]['v'].keys():
+                    enriched_entity['resource'] = tmp_alarm[0]['v']['resource']
+            else:
+                enriched_entity['state'] = 0
             enriched_entity['linklist'] = []  # TODO wait for linklist
 
             add_pbehavior_info(enriched_entity)
@@ -220,4 +233,4 @@ def exports(ws):
             entities_list.append(enriched_entity)
 
         add_pbehavior_status(entities_list)
-        return gen_json(response, entities_list)
+        return gen_json(entities_list)
