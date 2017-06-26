@@ -87,18 +87,16 @@ def exports(ws):
         :return: a list of agglomerated values of entities in the watcher
         :rtype: list
         """
-        # Find the selector
         try:
             watcher_entity = context_manager.get_entities(
-                query={'_id': watcher_id, 'type': 'selector'})[0]
+                query={'_id': watcher_id, 'type': 'watcher'})[0]
         except IndexError:
             json_error = {
                 "name": "resource_not_found",
-                "description": "watcher_id does not match any selector"
+                "description": "watcher_id does not match any watcher"
             }
             return gen_json_error(json_error, 404)
 
-        # Find entities with the selector filter
         try:
             query = json.loads(watcher_entity['infos']['mfilter'])
         except:
