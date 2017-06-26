@@ -219,21 +219,6 @@ class ContextGraph(MiddlewareRegistry):
 
         return True
 
-    def keys_info_filter(self, info):
-        """Remove non authorized key present in the info field. See the
-        configuration path givent to the class, by default
-        etc/context_graph/manager.conf
-        """
-
-        if not hasattr(self, "authorized_info_keys"):
-            values = self.conf.get(CONTEXT_CAT)
-            self.authorized_info_keys = values.get(
-                "authorized_info_keys").value
-
-        for key in info.keys():
-            if key not in self.authorized_info_keys:
-                info.pop(key)
-
     def __init__(self, event_types=None, extra_fields=None, *args, **kwargs):
         """__init__
 

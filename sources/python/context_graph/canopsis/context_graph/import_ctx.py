@@ -495,8 +495,6 @@ class ContextGraphImport(ContextGraph):
         # if a a fields is missing we assume we did not need to update it
         for field in fields_to_update:
             try:
-                if field == ContextGraphImport.K_INFOS:
-                    self.keys_info_filter(ci[field])
                 entity[field] = ci[field]
             except KeyError:
                 pass
@@ -534,8 +532,6 @@ class ContextGraphImport(ContextGraph):
             ci[self.K_MEASUREMENTS] = []
         if not ci.has_key(self.K_INFOS):
             ci[self.K_INFOS] = {}
-        else:
-            self.keys_info_filter(ci[self.K_INFOS])
 
         entity = {'_id': ci[self.K_ID],
                   'type': ci[self.K_TYPE],
