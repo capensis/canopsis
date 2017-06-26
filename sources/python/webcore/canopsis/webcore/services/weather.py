@@ -145,7 +145,7 @@ def exports(ws):
         for selector in selector_list:
             enriched_entity = {}
             tmp_alarm = alarm_manager.get(filter_={'d':
-                                                   selector['_id']})['alarms']
+                                                   selector['name']})['alarms']
 
             enriched_entity['entity_id'] = selector['_id']
             enriched_entity['criticity'] = selector['infos'].get(
