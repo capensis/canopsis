@@ -51,5 +51,40 @@ class GetWatcher(BaseTest):
         print(self.manager.get_watcher('watcher-one'))
 
 
+class CreateWatcher(BaseTest):
+
+    def test_create_watcher(self):
+        body = {
+            '_id': 'an_id',
+            'mfilter': '{}',
+            'display_name': 'a_name'
+        }
+        self.assertTrue(
+            OrderedDict(body) == (
+                OrderedDict(
+                    self.watcher_storage.find_elements(query={'_id': 'an_id'})
+                )
+            )
+        )
+        entity = self.context_graph_manager.get_entities_by_id('an_id')
+        print(type(entity))
+        entity[u'infos'].pop('enable_history', None)
+        print(entity)
+        self.assertTrue(
+            OrderedDict(
+                {
+                    u'impact': [],
+                    u'name': u'one',
+                    u'measurements': [],
+                    u'depends': [],
+                    u'infos': {
+                        u'enabled': True
+                    },
+                    u'_id': u'watcher-one',
+                    u'type': u'watcher'
+                }
+            ) == OrderedDict(entity)
+        )
+
 if __name__ == "__main__":
     main()

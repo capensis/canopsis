@@ -169,7 +169,7 @@ def exports(ws):
                 if 'resource' in tmp_alarm[0]['v'].keys():
                     enriched_entity['resource'] = tmp_alarm[0]['v']['resource']
             else:
-                enriched_entity['state'] = 0
+                enriched_entity['state'] = {'val': 0}
 
             enriched_entity['linklist'] = []  # add this when it's ready
             add_pbehavior_info(enriched_entity)
@@ -235,7 +235,7 @@ def exports(ws):
                 if 'resource' in tmp_alarm[0]['v'].keys():
                     enriched_entity['resource'] = tmp_alarm[0]['v']['resource']
             else:
-                enriched_entity['state'] = 0
+                enriched_entity['state'] = {'val': 0}
             enriched_entity['linklist'] = []  # TODO wait for linklist
 
             add_pbehavior_info(enriched_entity)

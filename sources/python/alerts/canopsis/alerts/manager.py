@@ -488,8 +488,8 @@ class Alerts(MiddlewareRegistry):
                 pass
 
         if (
-                event['event_type'] == Check.EVENT_TYPE 
-                or event['event_type'] == 'watcher'
+            event['event_type'] == Check.EVENT_TYPE
+            or event['event_type'] == 'watcher'
         ):
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
