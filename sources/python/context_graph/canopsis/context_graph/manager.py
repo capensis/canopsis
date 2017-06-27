@@ -81,7 +81,7 @@ class InfosFilter(MiddlewareRegistry):
             if key not in schema:
                 infos.pop(key)
             elif isinstance(iteration_dict[key], dict):
-                self.__clean(infos[key], iteration_dict[key], schema[key])
+                self.__clean(infos[key], infos[key].copy(), schema[key])
 
     def filter(self, infos):
         """Filter the fieds in infos. If a key from infos did not exist in the
