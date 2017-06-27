@@ -3,26 +3,107 @@
 from __future__ import unicode_literals
 
 from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
-
-from canopsis.watcher.links import build_all_links
+from canopsis.selector.links import build_all_links
 
 import time
+import jsonschema
+import copy
 
 CONF_PATH = 'context_graph/manager.conf'
-CATEGORY = 'CONTEXTGRAPH'
-CONTENT = [
+CONTEXT_CAT = 'CONTEXTGRAPH'
+INFOSFILTER_CAT = "INFOS_FILTER"
+CONTEXT_CONTENT = [
     Parameter('event_types', Parameter.array()),
     Parameter('extra_fields', Parameter.array()),
-    Parameter('authorized_info_keys', Parameter.array())
+    Parameter('schema_id')
 ]
+
+DEFAULT_SCHEMA_ID = "context_graph.filter_infos"
 
 
 @conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
+@add_category(CONTEXT_CAT, content=CONTEXT_CONTENT)
+class InfosFilter(MiddlewareRegistry):
+    """Class use to clean the infos field of an entity"""
+
+    OBJ_STORAGE = "OBJECT_STORAGE"
+
+    def __init__(self, logger=None):
+        super(InfosFilter, self).__init__()
+        self.obj_storage = Middleware.get_middleware_by_uri(
+            'storage-default://', table='schemas')
+
+        self.reload_schema()
+        self.logger = logger
+
+    def reload_schema(self):
+        """Reload the schema and regenerate the internal structure used to
+        filter the infos dict."""
+
+        if not hasattr(self, "_schema_id"):
+            values = self.conf.get(CONTEXT_CAT)
+            id_ = values.get("_schema_id")
+            #  Ugly hack because we cannot retreive the value of schema_id in
+            # the manager.conf file
+            if id_ is None:
+                self._schema_id = DEFAULT_SCHEMA_ID
+            else:
+                self._schema_id = id_.value
+
+        try:
+            self._schema = self.obj_storage.get_elements(
+                query={"_id": self._schema_id}, projection={"_id": 0})[0]
+        except IndexError:
+            raise ValueError("No infos schema found in database.")
+
+        if isinstance(self._schema, list):
+            self._schema = self._schema[0]
+            if not isinstance(self._schema, dict):
+                raise ValueError("The schema should be a dict not"\
+                                 " a {0}.".format(type(self._schema)))
+
+    def __clean(self, infos, iteration_dict, schema):
+        """Recursive method use to clean the infos dict following the given
+        schema. If a key or a sub key of infos is not in schema, it will
+        be deleted.
+
+        :param dict infos: the info field to clean
+        :pararm dict iteration_dict: a copy of infos used to iterate over every
+        keys in infos
+        :param dict schema: the schema used to clean select the key to delete.
+        """
+
+        for key in iteration_dict:
+            if key not in schema:
+                infos.pop(key)
+            elif isinstance(iteration_dict[key], dict):
+                self.__clean(infos[key], iteration_dict[key], schema[key])
+
+    def filter(self, infos):
+        """Filter the fieds in infos. If a key from infos did not exist in the
+        schema, it will deleted. If a a field type did not match the expected
+        one or a required field is missing, the error will logged and the
+        filtering will be stopped.
+
+        :param dict infos: the dict to parse
+        """
+
+        try:
+            jsonschema.validate(infos, self._schema)
+        except jsonschema.ValidationError as v_err:
+            self.logger.warning(v_err.message)
+
+        schema = self._schema["schema"]["properties"]
+        self.__clean(infos, copy.deepcopy(infos), schema)
+
+
+@conf_paths(CONF_PATH)
+@add_category(CONTEXT_CAT, content=CONTEXT_CONTENT)
 class ContextGraph(MiddlewareRegistry):
     """ContextGraph"""
 
@@ -138,20 +219,6 @@ class ContextGraph(MiddlewareRegistry):
 
         return True
 
-    def keys_info_filter(self, info):
-        """Remove non authorized key present in the info field. See the
-        configuration path givent to the class, by default
-        etc/context_graph/manager.conf
-        """
-
-        if not hasattr(self, "authorized_info_keys"):
-            values = values = self.conf.get(CATEGORY)
-            self.authorized_info_keys = values.get("authorized_info_keys").value
-
-        for key in info.keys():
-            if key not in self.authorized_info_keys:
-                info.pop(key)
-
     def __init__(self, event_types=None, extra_fields=None, *args, **kwargs):
         """__init__
 
@@ -166,6 +233,8 @@ class ContextGraph(MiddlewareRegistry):
 
         if extra_fields is None:
             self.extra_fields = extra_fields
+
+        self.filter_ = InfosFilter(logger=self.logger)
 
     def get_entities_by_id(self, _id):
         """
@@ -200,9 +269,12 @@ class ContextGraph(MiddlewareRegistry):
         if not isinstance(entities, list):
             entities = [entities]
 
+        for entity in entities:
+            self.filter_.filter(entity["infos"])
+
         self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
-        # rebuild watchers links
+        # rebuild selectors links
         build_all_links(self)
 
     def _delete_entities(self, entities):
@@ -225,8 +297,8 @@ class ContextGraph(MiddlewareRegistry):
 
         :return type: a set with every entities id.
         """
-        entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
-            query={}))
+        entities = list(
+            self[ContextGraph.ENTITIES_STORAGE].get_elements(query={}))
         ret_val = set([])
         for i in entities:
             ret_val.add(i['_id'])
@@ -288,22 +360,24 @@ class ContextGraph(MiddlewareRegistry):
             raise ValueError(desc)
 
         # update depends/impact links
-        status = {"insertions": entity["depends"],
-                  "deletions": []}
-        updated_entities = self.__update_dependancies(entity["_id"],
-                                                      status, "depends")
+        status = {"insertions": entity["depends"], "deletions": []}
+        updated_entities = self.__update_dependancies(entity["_id"], status,
+                                                      "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
-        status = {"insertions": entity["impact"],
-                  "deletions": []}
-        updated_entities = self.__update_dependancies(entity["_id"],
-                                                      status, "impact")
+        status = {"insertions": entity["impact"], "deletions": []}
+        updated_entities = self.__update_dependancies(entity["_id"], status,
+                                                      "impact")
         updated_entities.append(entity)
+
+        for entity in updated_entities:
+            self.filter_.filter(entity["infos"])
+
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
-        # rebuild watchers links
-        if entity['type'] != 'watcher':
+        # rebuild selectors links
+        if entity['type'] != 'selector':
             build_all_links(self)
 
     def __update_dependancies(self, id_, status, dependancy_type):
@@ -395,8 +469,10 @@ class ContextGraph(MiddlewareRegistry):
             deletions = s_old.difference(s_new)
             insertions = s_new.difference(s_old)
 
-            return {"deletions": list(deletions),
-                    "insertions": list(insertions)}
+            return {
+                "deletions": list(deletions),
+                "insertions": list(insertions)
+            }
 
         try:
             old_entity = self.get_entities_by_id(entity["_id"])[0]
@@ -412,20 +488,20 @@ class ContextGraph(MiddlewareRegistry):
 
         # update depends/impact links
         status = compare_change(old_entity["depends"], entity["depends"])
-        updated_entities = self.__update_dependancies(entity["_id"],
-                                                      status, "depends")
+        updated_entities = self.__update_dependancies(entity["_id"], status,
+                                                      "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
         status = compare_change(old_entity["impact"], entity["impact"])
-        updated_entities = self.__update_dependancies(entity["_id"],
-                                                      status, "impact")
+        updated_entities = self.__update_dependancies(entity["_id"], status,
+                                                      "impact")
 
         updated_entities.append(entity)
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
-        # rebuild watchers links
-        if entity['type'] != 'watcher':
+        # rebuild selectors links
+        if entity['type'] != 'selector':
             build_all_links(self)
 
     def delete_entity(self, id_):
@@ -440,7 +516,6 @@ class ContextGraph(MiddlewareRegistry):
         Other exception maybe raised, see __update_dependancies.
 
         :param id_: the id of the entity to delete.
-        :returns: the result of the query by mongodb
         """
 
         try:
@@ -451,25 +526,19 @@ class ContextGraph(MiddlewareRegistry):
             raise ValueError(desc)
 
         # update depends/impact links
-        status = {"deletions": entity["depends"],
-                  "insertions": []}
-        updated_entities = self.__update_dependancies(id_,
-                                                      status, "depends")
+        status = {"deletions": entity["depends"], "insertions": []}
+        updated_entities = self.__update_dependancies(id_, status, "depends")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
-        status = {"deletions": entity["impact"],
-                  "insertions": []}
-        updated_entities = self.__update_dependancies(id_,
-                                                      status, "impact")
+        status = {"deletions": entity["impact"], "insertions": []}
+        updated_entities = self.__update_dependancies(id_, status, "impact")
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
-        result = self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
+        self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
 
-        # rebuild watchers links
+        # rebuild selectors links
         build_all_links(self)
-
-        return result
 
     def get_entities(self,
                      query={},
@@ -492,8 +561,7 @@ class ContextGraph(MiddlewareRegistry):
             skip=start,
             sort=sort,
             projection=projection,
-            with_count=with_count
-        ))
+            with_count=with_count))
 
         return result
 
@@ -507,8 +575,9 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         # keys from entity that should not be in event
-        delete_keys = ["_id", "depends", "impact", "type", "measurements",
-                       "infos"]
+        delete_keys = [
+            "_id", "depends", "impact", "type", "measurements", "infos"
+        ]
 
         kwargs['event_type'] = event_type
 
