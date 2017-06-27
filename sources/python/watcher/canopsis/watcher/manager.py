@@ -75,10 +75,6 @@ class Watcher(MiddlewareRegistry):
 
         depend_list = []
 
-        query = watcher_finder
-
-        depends_list = self.context_graph.get_entities(
-            query=query, projection={'_id': 1})
         for entity_id in depends_list:
             depend_list.append(entity_id['_id'])
 
