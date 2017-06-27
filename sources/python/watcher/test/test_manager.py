@@ -7,6 +7,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 from canopsis.watcher.manager import Watcher
 from canopsis.context_graph.process import create_entity
+from collections import OrderedDict
 
 
 class BaseTest(TestCase):
@@ -48,24 +49,27 @@ class GetWatcher(BaseTest):
         self.context_graph_manager.create_entity(watcher_entity)
         print(self.manager.get_watcher('watcher-one'))
 
-    def create_watcher(self):
+
+class CreateWatcher(BaseTest):
+
+    def test_create_watcher(self):
         body = {
             '_id': 'an_id',
             'mfilter': '{}',
             'display_name': 'a_name'
         }
         self.assertTrue(
-            sortedDict(body) == (
-                sortedDict(
+            OrderedDict(body) == (
+                OrderedDict(
                     self.watcher_storage.find_elements(query={'_id': 'an_id'})
                 )
             )
         )
         entity = self.context_graph_manager.get_entities_by_id('an_id')
-        entity['infos'].pop('enable_history', None)
-        """
+        del entity['infos']['enable_history']
+        print(entity)
         self.assertTrue(
-            sortedDict(
+            OrderedDict(
                 {
                     u'impact': [],
                     u'name': u'one',
@@ -73,12 +77,12 @@ class GetWatcher(BaseTest):
                     u'depends': [],
                     u'infos': {
                         u'enabled': True
-                    }
+                    },
                     u'_id': u'watcher-one',
                     u'type': u'watcher'
                 }
-            )
+            ) == OrderedDict(entity)
         )
-        """
+
 if __name__ == "__main__":
     main()
