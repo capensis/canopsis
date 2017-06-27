@@ -1,13 +1,47 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 from unittest import main, TestCase
 
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.context_graph.process import create_entity
 from canopsis.middleware.core import Middleware
 from canopsis.watcher.manager import Watcher
-from canopsis.context_graph.process import create_entity
 from collections import OrderedDict
+
+watcher_one = "watcher-one"
+watcher_example = {
+    "_id": watcher_one,
+    "alert_level": "minor",
+    "crecord_creation_time": None,
+    "crecord_name": None,
+    "crecord_type": "selector",
+    "crecord_write_time": None,
+    "display_name": "a_displayed_name",
+    "description": "a_description",
+    "dosla": True,
+    "dostate": True,
+    "downtimes_as_ok": True,
+    "enable": True,
+    "exclude_ids": [],
+    "include_ids": [],
+    "last_dispatcher_update": None,
+    "loaded": False,
+    "mfilter": "{}",
+    "output_tpl": "Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL], Ack count [ACK], Total: [TOTAL]",
+    "sla_critical": 75,
+    "sla_output_tpl": "Available: [P_AVAIL]%, Off: [OFF]%, Minor: [MINOR]%, Major: [MAJOR]%, Critical: [CRITICAL]%, Alerts [ALERTS]%, sla start [TSTART],  time available [T_AVAIL], time alert [T_ALERT]",
+    "sla_timewindow": {
+        "seconds": 12,
+        "durationType": "second",
+        "value": 12
+    },
+    "sla_warning": 90,
+    "state": None,
+    "state_algorithm": None,
+    "state_when_all_ack": "worststate",
+}
 
 
 class BaseTest(TestCase):
@@ -36,6 +70,7 @@ class BaseTest(TestCase):
         self.watcher_storage.remove_elements()
         self.alerts_storage.remove_elements()
         self.entities_storage.remove_elements()
+
 
 class GetWatcher(BaseTest):
 
@@ -67,22 +102,39 @@ class CreateWatcher(BaseTest):
         )
         entity = self.context_graph_manager.get_entities_by_id('an_id')
         del entity['infos']['enable_history']
-        print(entity)
         self.assertTrue(
             OrderedDict(
                 {
-                    u'impact': [],
-                    u'name': u'one',
-                    u'measurements': [],
-                    u'depends': [],
-                    u'infos': {
-                        u'enabled': True
+                    '_id': 'watcher-one',
+                    'impact': [],
+                    'name': 'one',
+                    'measurements': [],
+                    'depends': [],
+                    'infos': {
+                        'enabled': True
                     },
-                    u'_id': u'watcher-one',
-                    u'type': u'watcher'
+                    'type': 'watcher'
                 }
             ) == OrderedDict(entity)
         )
+        entity['infos'].pop('enable_history', None)
+
+
+class DeleteWatcher(BaseTest):
+
+    def test_delete_watcher(self):
+        self.manager.create_watcher(watcher_example)
+        get_w = self.manager.get_watcher('watcher-one')
+        self.assertTrue(isinstance(get_w, dict))
+        self.assertEqual(get_w['_id'], watcher_one)
+
+        del_w = self.manager.delete_watcher('watcher-one')
+        self.assertTrue(isinstance(del_w, dict))
+        self.assertEqual(del_w['n'], 1)
+
+        get_w = self.manager.get_watcher('watcher-one')
+        self.assertTrue(isinstance(get_w, dict))
+        self.assertFalse(get_w['infos']['enabled'])
 
 if __name__ == "__main__":
     main()
