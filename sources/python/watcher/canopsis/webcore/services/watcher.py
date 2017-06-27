@@ -76,7 +76,7 @@ def exports(ws):
                 {'value error'},
                 HTTP_ERROR
             )
-       if watcher is None:
+        if watcher is None:
             return gen_json_error(
                 {'can\'t decode mfilter'},
                 HTTP_ERROR
