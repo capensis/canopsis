@@ -50,7 +50,7 @@ class MockLogger:
         self.test_instance = test_instance
 
     def warning(self, _):
-        self.test_instance.asertTrue(True)
+        self.test_instance.assertTrue(True)
 
 class BaseTest(TestCase):
 
@@ -59,7 +59,16 @@ class BaseTest(TestCase):
         self.infosfilter._schema = SCHEMA
 
 class TestReloadSchema(BaseTest):
-    pass
+
+    def test_wrong_id(self):
+        self.infosfilter._schema_id = "I am not an ID"
+        desc = "No infos schema found in database."
+        with self.assertRaisesRegexp(ValueError, desc):
+            self.infosfilter.reload_schema()
+
+    def test_good_id(self):
+        self.infosfilter.reload_schema()
+        self.assertTrue(True)
 
 
 if __name__ == '__main__':
