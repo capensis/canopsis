@@ -70,10 +70,15 @@ def exports(ws):
                 HTTP_ERROR)
 
         try:
-            watcher.create_watcher(body=element)
+            watcher = watcher.create_watcher(body=element)
         except ValueError:
             return gen_json_error(
-                {'description': 'can\'t load mfilter'},
+                {'value error'},
+                HTTP_ERROR
+            )
+       if watcher is None:
+            return gen_json_error(
+                {'can\'t decode mfilter'},
                 HTTP_ERROR
             )
 

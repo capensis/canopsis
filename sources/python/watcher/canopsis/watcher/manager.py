@@ -62,7 +62,11 @@ class Watcher(MiddlewareRegistry):
         :param dict body: watcher conf
         """
         watcher_id = body['_id']
-        watcher_finder = json.loads(body['mfilter'])
+        try:
+            watcher_finder = json.loads(body['mfilter'])
+        except ValueError:
+            self.logger.error('can t decode mfilter')
+            return None
         depends_list = self.context_graph.get_entities(
             query=watcher_finder,
             projection={'_id': 1}
