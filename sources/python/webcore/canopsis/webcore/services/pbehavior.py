@@ -24,7 +24,6 @@ from canopsis.common.ws import route
 from canopsis.pbehavior.manager import PBehaviorManager
 
 
-
 def check_values(data):
     """Check if the values present in data respect the specification. If
     the values are correct do nothing. If not, raise a ValueError
@@ -61,7 +60,7 @@ def check_values(data):
                 raise ValueError("The list {0} store only {1} not {2}".format(
                     k, dict, type(elt)))
 
-    if "enabled" not in data or data["enabled"] is None:
+    if "enabled" not in data or data["enabled"] is None or isinstance(data['enabled'], bool):
         return
 
     if data["enabled"] in ["True", "true"]:
@@ -70,6 +69,7 @@ def check_values(data):
         data["enabled"] = False
     else:
         raise ValueError("The enabled value does not match a boolean")
+
 
 def exports(ws):
 
