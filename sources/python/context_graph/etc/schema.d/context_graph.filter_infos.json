@@ -1,0 +1,26 @@
+{
+   "_id":"schema_infos",
+   "type":"object",
+   "required":[
+      "enabled",
+      "enabled_history",
+      "disabled_history"
+   ],
+   "properties":{
+      "enabled":{
+        "type": "boolean"
+      },
+      "enabled_history":{
+         "type":"array",
+         "items":{
+            "type":"number"
+         }
+      },
+      "disabled_history":{
+         "type":"array",
+         "items":{
+            "type":"number"
+         }
+      }
+   }
+}

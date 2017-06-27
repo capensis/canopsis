@@ -492,7 +492,6 @@ def update_context(presence, ids, in_db, event):
     for key in event_info:
         evt_entity["infos"][key] = event_info[key]
 
-    context_graph_manager.keys_info_filter(evt_entity["infos"])
     context_graph_manager._put_entities(to_update)
 
 
