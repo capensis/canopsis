@@ -95,6 +95,8 @@ class Watcher(MiddlewareRegistry):
         """
         self.calcul_state(watcher_id)
 
+        return True  # TODO: return really something
+
     def update_watcher(self, watcher_id, updated_field):
         """Update the watcher specified by is watcher id with updated_field.
 
