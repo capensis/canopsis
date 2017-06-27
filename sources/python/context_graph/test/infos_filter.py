@@ -93,25 +93,25 @@ class TestFilter(BaseTest):
     def test_not_match_schema(self):
         infos = TEMPLATE_INFOS.copy()
 
-        infos[Keys.F_ENABLED] = 1
-        infos[Keys.F_DISABLED_HIST] = [1]
-        infos[Keys.F_ENABLED_HIST] = [1]
+        infos[Keys.F_ENABLED.value] = 1
+        infos[Keys.F_DISABLED_HIST.value] = [1]
+        infos[Keys.F_ENABLED_HIST.value] = [1]
         self.infosfilter.filter(infos)
 
         self.assertTrue(self.logger.called)
         self.logger.called = True
 
-        infos[Keys.F_ENABLED] = True
-        infos[Keys.F_DISABLED_HIST] = "string"
-        infos[Keys.F_ENABLED_HIST] = [1]
+        infos[Keys.F_ENABLED.value] = True
+        infos[Keys.F_DISABLED_HIST.value] = "string"
+        infos[Keys.F_ENABLED_HIST.value] = [1]
         self.infosfilter.filter(infos)
 
         self.assertTrue(self.logger.called)
         self.logger.called = True
 
-        infos[Keys.F_ENABLED] = True
-        infos[Keys.F_DISABLED_HIST] = "string"
-        infos[Keys.F_ENABLED_HIST] = [1]
+        infos[Keys.F_ENABLED.value] = True
+        infos[Keys.F_DISABLED_HIST.value] = "string"
+        infos[Keys.F_ENABLED_HIST.value] = [1]
         self.infosfilter.filter(infos)
 
         self.assertTrue(self.logger.called)
@@ -120,12 +120,69 @@ class TestFilter(BaseTest):
     def test_match_schema(self):
         infos = TEMPLATE_INFOS.copy()
 
-        infos[Keys.F_ENABLED] = True
-        infos[Keys.F_DISABLED_HIST] = [1]
-        infos[Keys.F_ENABLED_HIST] = [1]
+        infos[Keys.F_ENABLED.value] = True
+        infos[Keys.F_DISABLED_HIST.value] = [1]
+        infos[Keys.F_ENABLED_HIST.value] = [1]
         self.infosfilter.filter(infos)
         self.logger.called = False
 
+class TestClean(BaseTest):
+
+    def test_not_match_schema(self):
+        infos = TEMPLATE_INFOS.copy()
+
+        infos[Keys.F_ENABLED.value] = True
+        infos[Keys.F_DISABLED_HIST.value] = "string"
+        infos[Keys.F_ENABLED_HIST.value] = [1]
+
+        expected = infos.copy()
+        infos["No_allowed_key"] = [1]
+
+        self.infosfilter.filter(infos)
+
+        self.assertDictEqual(expected, infos)
+
+    def test_match_schema(self):
+        infos = TEMPLATE_INFOS.copy()
+
+        infos[Keys.F_ENABLED.value] = True
+        infos[Keys.F_DISABLED_HIST.value] = [1]
+        infos[Keys.F_ENABLED_HIST.value] = [1]
+
+        expected = infos.copy()
+        infos["No_allowed_key"] = [1]
+
+        self.infosfilter.filter(infos)
+
+        self.assertDictEqual(expected, infos)
+
+    def test_clean(self):
+        schema = SCHEMA.copy()
+
+        schema["schema"]["properties"]["recursif"] = {
+                Keys.K_PROPERTIES.value:
+            SCHEMA["schema"][Keys.K_PROPERTIES.value].copy()
+            }
+
+        infos = TEMPLATE_INFOS.copy()
+
+        infos[Keys.F_ENABLED.value] = True
+        infos[Keys.F_DISABLED_HIST.value] = [1]
+        infos[Keys.F_ENABLED_HIST.value] = [1]
+        recursif = infos.copy()
+        infos["recursif"] = recursif
+
+        expected = infos.copy()
+        infos["recursif"]["to_delete"] = "Yeah"
+
+        self.infosfilter._InfosFilter__clean(infos,
+                                             infos.copy(),
+                                             schema["schema"]["properties"])
+
+        print("Infos {0}\n".format(infos))
+        print("Expected {0}\n".format(expected))
+
+        self.assertDictEqual(expected, infos)
 
 if __name__ == '__main__':
     main()
