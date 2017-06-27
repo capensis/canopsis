@@ -179,9 +179,6 @@ class TestClean(BaseTest):
                                              infos.copy(),
                                              schema["schema"]["properties"])
 
-        print("Infos {0}\n".format(infos))
-        print("Expected {0}\n".format(expected))
-
         self.assertDictEqual(expected, infos)
 
 if __name__ == '__main__':
