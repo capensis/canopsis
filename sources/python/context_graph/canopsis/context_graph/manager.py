@@ -240,6 +240,8 @@ class ContextGraph(MiddlewareRegistry):
 
         :param entity: an entity
         :type entity: a dict
+        :param int timestamp: a timestamp. If None, the current timestamp will
+        be use.
         """
 
         if timestamp is None:
