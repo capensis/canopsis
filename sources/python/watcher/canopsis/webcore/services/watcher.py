@@ -70,13 +70,13 @@ def exports(ws):
                 HTTP_ERROR)
 
         try:
-            watcher = watcher.create_watcher(body=element)
+            watcher_create = watcher.create_watcher(body=element)
         except ValueError:
             return gen_json_error(
                 {'value error'},
                 HTTP_ERROR
             )
-        if watcher is None:
+        if watcher_create is None:
             return gen_json_error(
                 {'can\'t decode mfilter'},
                 HTTP_ERROR
@@ -116,7 +116,7 @@ def exports(ws):
 
         :param watcher_id: ID of the watcher
         :type watcher_id: str
-        :returns: nothing
+        :returns: mongo result dict of the deletion
         """
         ws.logger.info('Delete watcher : {}'.format(watcher_id))
 
