@@ -1,10 +1,14 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 from unittest import main, TestCase
 
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
+
+from infos_filter import Keys, SCHEMA, TEMPLATE_INFOS
 
 
 def create_entity(
@@ -23,7 +27,6 @@ def create_entity(
             'measurements': measurements,
             'infos': infos
             }
-
 
 def create_comp(id, name, depends=[], impact=[], measurements=[], infos={}):
     """Create a component with the given parameters"""
@@ -56,7 +59,6 @@ def create_re(id, name, depends=[], impact=[], measurements=[], infos={}):
                          impact,
                          measurements,
                          infos)
-
 
 class BaseTest(TestCase):
 
@@ -97,6 +99,40 @@ class BaseTest(TestCase):
         sorted(entity2["impact"])
         self.assertDictEqual(entity1, entity2)
 
+    def _insertion_filter_test(self, function):
+        infos = TEMPLATE_INFOS.copy()
+
+        infos[Keys.F_ENABLED.value] = True
+        infos[Keys.F_DISABLED_HIST.value] = [1]
+        infos[Keys.F_ENABLED_HIST.value] = [1]
+
+        entity = create_entity("id", "a name", "resource", infos=infos)
+
+        expected = entity.copy()
+
+        infos["I am not allowed to be here"] = [1]
+        infos["me too"] = [1]
+
+        function(entity)
+        result = self.manager.get_entities_by_id("id")[0]
+
+        self.assertEqualEntities(result, expected)
+
+    def _insertion_filter_test_not_allowed_field(self, function):
+        infos = TEMPLATE_INFOS.copy()
+
+        infos[Keys.F_ENABLED.value] = True
+        infos[Keys.F_DISABLED_HIST.value] = [1]
+        infos[Keys.F_ENABLED_HIST.value] = [1]
+
+        entity = create_entity("id", "a name", "resource", infos=infos)
+
+        expected = entity.copy()
+
+        function(entity)
+        result = self.manager.get_entities_by_id("id")[0]
+
+        self.assertEqualEntities(result, expected)
 
 class GetEvent(TestCase):
     """Test get_event method.
@@ -266,6 +302,12 @@ class PutEntities(BaseTest):
         result = self.manager.get_entities_by_id(ids)
         sorted(result)
         self.assertListEqual(result, entities)
+
+    def test_create_infos_filter(self):
+        self._insertion_filter_test(self.manager._put_entities)
+
+    def test_create_infos_filter_not_allowed_field(self):
+        self._insertion_filter_test(self.manager._put_entities)
 
 class DeleteEntities(BaseTest):
 
@@ -682,6 +724,12 @@ class CreateEntity(BaseTest):
 
     def test_create_entity_entity_impact(self):
         self.__test("depends", "impact")
+
+    def test_create_infos_filter(self):
+        self._insertion_filter_test(self.manager.create_entity)
+
+    def test_create_infos_filter_not_allowed_field(self):
+        self._insertion_filter_test(self.manager.create_entity)
 
 
 class TestGraphRequests(BaseTest):
