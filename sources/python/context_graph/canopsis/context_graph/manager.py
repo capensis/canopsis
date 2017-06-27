@@ -20,7 +20,6 @@ INFOSFILTER_CAT = "INFOS_FILTER"
 CONTEXT_CONTENT = [
     Parameter('event_types', Parameter.array()),
     Parameter('extra_fields', Parameter.array()),
-    Parameter('schema_id')
 ]
 
 DEFAULT_SCHEMA_ID = "context_graph.filter_infos"
