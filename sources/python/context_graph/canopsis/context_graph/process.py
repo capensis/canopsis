@@ -482,7 +482,12 @@ def update_context(presence, ids, in_db, event):
 
     evt_entity = None
     for entity in to_update:
-        #entity['infos']['enable'] = [time.time()]
+
+        # If there is no "enabled_history" field in "infos", we assume
+        # the entity was just create
+        if "enable_history" not in entity["infos"]:
+            ContextGraph._enable_entity(entity, event["timestamp"])
+
         if entity["_id"] == event_id:
             evt_entity = entity
 

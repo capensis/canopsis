@@ -233,7 +233,7 @@ class ContextGraph(MiddlewareRegistry):
         return ret_val
 
     @classmethod
-    def _enable_entity(cls, entity):
+    def _enable_entity(cls, entity, timestamp=None):
         """Enable an entity. If the given entity does not have an infos.enabled
         field create it with a the enable status then create an
         infos.enable_history field with the current timestamp.
@@ -241,17 +241,21 @@ class ContextGraph(MiddlewareRegistry):
         :param entity: an entity
         :type entity: a dict
         """
+
+        if timestamp is None:
+            timestamp = int(time.time())
+
         if "enabled" not in entity["infos"]:
             entity["infos"]["enabled"] = True
 
             if "enable_history" not in entity["infos"]:
-                entity["infos"]["enable_history"] = [int(time.time())]
+                entity["infos"]["enable_history"] = [timestamp]
             else:
                 infos = entity["infos"]
                 if not isinstance(entity["infos"]["enable_history"], list):
                     infos["enable_history"] = [infos["enable_history"]]
 
-                infos["enable_history"].append(int(time.time()))
+                infos["enable_history"].append(timestamp)
 
     def create_entity(self, entity):
         """Create an entity in the context with the given entity. This will
