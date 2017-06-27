@@ -45,7 +45,10 @@ def exports(ws):
         """
         watcher_obj = watcher.get_watcher(watcher_id)
         if watcher_obj is None:
-            return gen_json_error({'description': 'nothing to return'}, HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'nothing to return'},
+                HTTP_ERROR
+            )
 
         return gen_json(watcher_obj)
 
@@ -62,9 +65,17 @@ def exports(ws):
         element = request.json
 
         if element is None:
-            return gen_json_error({'description': 'nothing to insert'}, HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'nothing to insert'},
+                HTTP_ERROR)
 
-        watcher.create_watcher(body=element)
+        try:
+            watcher.create_watcher(body=element)
+        except ValueError:
+            return gen_json_error(
+                {'description': 'can\'t load mfilter'},
+                HTTP_ERROR
+            )
 
         return gen_json({})
 
@@ -82,7 +93,10 @@ def exports(ws):
         dico = request.json
 
         if dico is None or not isinstance(dico, dict) or len(dico) <= 0:
-            return gen_json_error({'description': 'wrong update dict'}, HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'wrong update dict'},
+                HTTP_ERROR
+            )
 
         watcher.update_watcher(watcher_id=watcher_id, updated_field=dico)
 

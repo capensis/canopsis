@@ -487,7 +487,10 @@ class Alerts(MiddlewareRegistry):
                 self.logger.warning('entity not in context')
                 pass
 
-        if event['event_type'] == Check.EVENT_TYPE or event['event_type'] == TYPE_SELECTOR:
+        if (
+                event['event_type'] == Check.EVENT_TYPE 
+                or event['event_type'] == 'watcher'
+        ):
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
                 if event[Check.STATE] == Check.OK:

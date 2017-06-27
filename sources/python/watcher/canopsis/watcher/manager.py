@@ -62,15 +62,16 @@ class Watcher(MiddlewareRegistry):
         :param dict body: watcher conf
         """
         watcher_id = body['_id']
+        watcher_finder = json.loads(body['mfilter'])
         depends_list = self.context_graph.get_entities(
-            query=json.loads(body['mfilter']), projection={'_id': 1})
+            query=watcher_finder,
+            projection={'_id': 1}
+        )
+        self[self.WATCHER_STORAGE].put_element(body)
+
         depend_list = []
 
-        try:
-            query = json.loads(body['mfilter'])
-        except:
-            self.logger.error('Cannot parse mfilter on watcher')
-            return None
+        query = watcher_finder
 
         depends_list = self.context_graph.get_entities(
             query=query, projection={'_id': 1})
@@ -87,11 +88,11 @@ class Watcher(MiddlewareRegistry):
                    'enabled': True,
                    'state': 0})
         self.context_graph.create_entity(entity)
-
+        """
         self.sla_storage.put_element(
             element={'_id': watcher_id,
                      'states': [0, 0, 0, 0, 0]})
-
+        """
         self.calcul_state(watcher_id)
 
     def update_watcher(self, watcher_id, updated_field):
@@ -261,6 +262,7 @@ class Watcher(MiddlewareRegistry):
         :param watcher_id: watcher id
         :param state: watcher state
         """
+        """
         sla_tab = list(
             self.sla_storage.get_elements(query={'_id': watcher_id}))[0]
         sla_tab['states'][state] = sla_tab['states'][state] + 1
@@ -283,6 +285,7 @@ class Watcher(MiddlewareRegistry):
         #     (sla_tab['states'][1] +
         #      sla_tab['states'][2] +
         #      sla_tab['states'][3]))))
+        """
 
     def worst_state(self, nb_crit, nb_major, nb_minor):
         """Calculate the worst state.
