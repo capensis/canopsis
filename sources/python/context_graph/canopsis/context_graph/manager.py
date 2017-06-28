@@ -8,7 +8,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
-from canopsis.selector.links import build_all_links
+from canopsis.watcher.links import build_all_links
 
 import time
 import jsonschema
