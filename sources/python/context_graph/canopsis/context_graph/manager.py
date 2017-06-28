@@ -178,7 +178,7 @@ class ContextGraph(MiddlewareRegistry):
         elif source_type == cls.CONNECTOR:
             id_ = "{0}/{1}".format(event["connector"], event["connector_name"])
         else:
-            error_desc = ("Event type should be 'connector', 'resource' or"
+            error_desc = ("Event type should be 'connector', 'resource' or "
                           "'component' not {}.".format(source_type))
             raise ValueError(error_desc)
 
@@ -362,7 +362,7 @@ class ContextGraph(MiddlewareRegistry):
             query={'_id': entity["_id"]}))
 
         if len(entities) > 0:
-            desc = "An entity  id {0} already exist".format(entities[0]["_id"])
+            desc = "An entity id {0} already exist".format(entities[0]["_id"])
             raise ValueError(desc)
 
         # update depends/impact links

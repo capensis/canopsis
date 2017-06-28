@@ -1,6 +1,7 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 from unittest import main, TestCase
 
 from canopsis.context_graph.manager import ContextGraph
@@ -168,8 +169,8 @@ class GetID(TestCase):
 
     def test_get_id_error(self):
         self.event["source_type"] = 'something_else'
-        error_desc = "Event type should be 'connector', 'resource' or\
-            'component' not {0}.".format(self.event["source_type"])
+        error_desc = ("Event type should be 'connector', 'resource' or "
+                      "'component' not {0}.".format(self.event["source_type"]))
         with self.assertRaisesRegexp(ValueError, error_desc):
             ContextGraph.get_id(self.event)
 
@@ -266,6 +267,7 @@ class PutEntities(BaseTest):
         result = self.manager.get_entities_by_id(ids)
         sorted(result)
         self.assertListEqual(result, entities)
+
 
 class DeleteEntities(BaseTest):
 
@@ -494,6 +496,7 @@ class UpdateDependancies(BaseTest):
         with self.assertRaisesRegexp(ValueError, desc):
             self.manager._ContextGraph__update_dependancies(None, status,
                                                             "impact")
+
     def __test(self, from_, to, delete):
 
         self.ent1 = self.template.copy()
@@ -518,10 +521,10 @@ class UpdateDependancies(BaseTest):
 
         if delete:
             status = {"deletions": ["ent2", "ent3"],
-                      "insertions":[]}
+                      "insertions": []}
         else:
             status = {"deletions": [],
-                      "insertions":["ent2", "ent3"]}
+                      "insertions": ["ent2", "ent3"]}
 
         result = self.manager._ContextGraph__update_dependancies(
             self.ent1["_id"], status, from_)
@@ -563,6 +566,7 @@ class UpdateDependancies(BaseTest):
 
     def test_update_dependancies_entity_impact_insert(self):
         self.__test("impact", "depends", False)
+
 
 class DeleteEntity(BaseTest):
 
@@ -627,6 +631,7 @@ class DeleteEntity(BaseTest):
     def test_delete_entity_impact(self):
         self.__test("impact", "depends")
 
+
 class CreateEntity(BaseTest):
 
     def test_create_entity_entity_exists(self):
@@ -637,7 +642,7 @@ class CreateEntity(BaseTest):
 
         self.manager.create_entity(entity)
 
-        desc = "An entity  id {0} already exist".format(entity["_id"])
+        desc = "An entity id {0} already exist".format(entity["_id"])
         with self.assertRaisesRegexp(ValueError, desc):
             self.manager.create_entity(entity)
 
@@ -681,7 +686,7 @@ class CreateEntity(BaseTest):
         self.__test("depends", "impact")
 
     def test_create_entity_entity_impact(self):
-        self.__test("depends", "impact")
+        self.__test("impact", "depends")
 
 
 class TestGraphRequests(BaseTest):
@@ -692,32 +697,32 @@ class TestGraphRequests(BaseTest):
 
     def test(self):
         ent1 = create_entity(
-            id = 'e1',
-            name = 'e1',
-            etype = 'component',
-            depends = [],
-            impact = ['e2']
+            id='e1',
+            name='e1',
+            etype='component',
+            depends=[],
+            impact=['e2']
         )
         ent2 = create_entity(
-            id = 'e2',
-            name = 'e2',
-            etype = 'component',
-            depends = ['e1'],
-            impact = ['e3']
+            id='e2',
+            name='e2',
+            etype='component',
+            depends=['e1'],
+            impact=['e3']
         )
         ent3 = create_entity(
-            id = 'e3',
-            name = 'e3',
-            etype = 'component',
-            depends = ['e2'],
-            impact = ['e4']
+            id='e3',
+            name='e3',
+            etype='component',
+            depends=['e2'],
+            impact=['e4']
         )
         ent4 = create_entity(
-            id = 'e4',
-            name = 'e4',
-            etype = 'component',
-            depends = ['e3'],
-            impact = []
+            id='e4',
+            name='e4',
+            etype='component',
+            depends=['e3'],
+            impact=[]
         )
 
         self.manager._put_entities(ent1)
