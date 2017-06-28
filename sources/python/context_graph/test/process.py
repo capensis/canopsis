@@ -128,7 +128,7 @@ class Test(TestCase):
         self.assertEqual(etype, ent["type"])
         self.assertEqual(depends, ent["depends"])
         self.assertEqual(impacts, ent["impact"])
-        self.assertIn("measurements", ent.keys())
+        self.assertNotIn("measurements", ent.keys())
         self.assertEqual(infos, ent["infos"])
 
     def test_check_type(self):
