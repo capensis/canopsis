@@ -31,6 +31,7 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kwargs)
         self.entity_link_manager = Entitylink()
         self.db_configuration_manager = DBConfiguration()
+        self.link_field = []
         self.reload_configuration()
 
     def beat(self):
