@@ -100,7 +100,7 @@ class Test(TestCase):
         measurements = {"tag_1": "data_1", "tag_2": "data_2"}
         infos = {"info_1": "foo_1", "info_2": "bar_2"}
 
-        ent = process.create_entity(id, name, etype, depends,
+        ent = process.create_entity(id_, name, etype, depends,
                                     impacts, measurements, infos)
 
         self.assertEqual(id_, ent["_id"])
@@ -617,25 +617,32 @@ class Test(TestCase):
         for i in conn_res_2:
             if isinstance(conn_res_2[i], list):
                 conn_res_2[i] = sorted(conn_res_2[i])
-        self.assertDictEqual(comp_res_1, {
+
+        expected_comp_res_1 = {
                 '_id': 'comp_1',
                 'name': 'comp_1',
                 'type': 'component',
                 'impact': [],
-                'depends': sorted(['re_1', 'conn_1'])})
-        self.assertDictEqual(re_res_1, {
+                'depends': sorted(['re_1', 'conn_1'])}
+
+        expected_re_res_1 = {
                 '_id': 're_1',
                 'name': 're_1',
                 'type': 'resource',
                 'impact': ['comp_1'],
-                'depends': ['conn_1']})
-        self.assertDictEqual(conn_res_1, {
+                'depends': ['conn_1']}
+
+        expected_conn_res_1 = {
                 '_id': 'conn_1',
                 'name': 'conn_1',
                 'type': 'connector',
                 'impact': sorted(['comp_1', 're_1']),
                 'depends': [],
-                'infos': {}})
+                'infos': {}}
+
+        self.assertEqualEntities(expected_comp_res_1, comp_res_1)
+        self.assertEqualEntities(expected_re_res_1, re_res_1)
+        self.assertEqualEntities(expected_conn_res_1, conn_res_1)
 
         self.assertDictEqual(comp_res_2, {
                 '_id': 'comp_1',
