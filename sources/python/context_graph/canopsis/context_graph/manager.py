@@ -383,7 +383,7 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # rebuild selectors links
-        if entity['type'] != 'selector':
+        if entity['type'] != 'watcher':
             build_all_links(self)
 
     def __update_dependancies(self, id_, status, dependancy_type):
@@ -507,7 +507,7 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # rebuild selectors links
-        if entity['type'] != 'selector':
+        if entity['type'] != 'watcher':
             build_all_links(self)
 
     def delete_entity(self, id_):
