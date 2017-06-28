@@ -398,7 +398,7 @@ class Test(TestCase):
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
 
-        res = process.update_context_case1(ids)
+        res = process.update_context_case1(ids, event)
 
         result_conn, result_comp, result_re = prepare_test_update_context(res)
 
@@ -737,8 +737,6 @@ class Test(TestCase):
 
         ids = process.gen_ids(event)
 
-        evt_ent_id = process.get_event_id(ids, event)
-
         infos = {"enabled": True,
                  "enable_history":[int(time.time())]}
 
@@ -747,21 +745,21 @@ class Test(TestCase):
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]),
-                                              infos=infos)
+                                              infos=infos.copy())
 
         expected_comp = process.create_entity(ids["comp_id"],
                                               ids["comp_id"],
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]),
-                                              infos=infos)
+                                              infos=infos.copy())
 
         expected_re = process.create_entity(ids["re_id"],
                                             ids["re_id"],
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]],
-                                            infos=infos)
+                                            infos=infos.copy())
 
         process.update_context((False, False, False),
                                ids,
