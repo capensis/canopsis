@@ -5,28 +5,37 @@ import canopsis.context_graph.process as process
 
 from canopsis.context_graph.manager import ContextGraph
 
+import time
+
 context_graph_manager = ContextGraph()
 
 class Logger(object):
 
     def debug(self, log):
-        print("DEBUG : {0}".format(log))
+        # print("DEBUG : {0}".format(log))
+        pass
 
     def info(self, log):
-        print("INFO : {0}".format(log))
+        # print("INFO : {0}".format(log))
+        pass
 
     def warning(self, log):
-        print("WARNING : {0}".format(log))
+        # print("WARNING : {0}".format(log))
+        pass
 
     def critical(self, log):
-        print("CRITICAL : {0}".format(log))
+        # print("CRITICAL : {0}".format(log))
+        pass
 
     def error(self, log):
-        print("ERROR : {0}".format(log))
+        # print("ERROR : {0}".format(log))
+        pass
 
 
-def create_event(conn, conn_name,  comp=None, res=None):
-    event = {"connector": conn, "connector_name": conn_name}
+def create_event(conn, conn_name,  comp=None, res=None, event_type="check"):
+    event = {"connector": conn,
+             "connector_name": conn_name,
+             "event_type": event_type}
     if comp is not None:
         event["component"] = comp
 
@@ -55,12 +64,22 @@ def prepare_test_update_context(result):
 
 class Test(TestCase):
 
-    def assertEqualEntities(self, entity1, entity2):
-        entity1["depends"] = sorted(entity1["depends"])
-        entity1["impact"] = sorted(entity1["impact"])
-        entity2["depends"] = sorted(entity2["depends"])
-        entity2["impact"] = sorted(entity2["impact"])
-        self.assertDictEqual(entity1, entity2)
+    GRACE_PERIOD = 3
+
+    def assertEqualEntities(self, expected, result):
+        expected["depends"] = sorted(expected["depends"])
+        expected["impact"] = sorted(expected["impact"])
+        result["depends"] = sorted(result["depends"])
+        result["impact"] = sorted(result["impact"])
+
+        # check infos.enabled_history field
+        result_ts = result[u"infos"][u"enable_history"][-1]
+        expected_ts = expected[u"infos"][u"enable_history"][-1]
+        self.assertTrue(result_ts - expected_ts < self.GRACE_PERIOD)
+        result["infos"].pop("enable_history")
+        expected["infos"].pop("enable_history")
+
+        self.assertDictEqual(expected, result)
 
     def setUp(self):
         setattr(process, 'LOGGER', Logger())
@@ -73,9 +92,9 @@ class Test(TestCase):
         process.cache.clear()
 
     def test_create_entity(self):
-        id = "id_1"
+        id_ = "id_1"
         name = "name_1"
-        etype = "component"
+        etype = "resource"
         depends = ["id_2", "id_3", "id_4", "id_5"]
         impacts = ["id_6", "id_7", "id_8", "id_9"]
         measurements = {"tag_1": "data_1", "tag_2": "data_2"}
@@ -84,12 +103,32 @@ class Test(TestCase):
         ent = process.create_entity(id, name, etype, depends,
                                     impacts, measurements, infos)
 
-        self.assertEqual(id, ent["_id"])
+        self.assertEqual(id_, ent["_id"])
         self.assertEqual(name, ent["name"])
         self.assertEqual(etype, ent["type"])
         self.assertEqual(depends, ent["depends"])
         self.assertEqual(impacts, ent["impact"])
         self.assertEqual(measurements, ent["measurements"])
+        self.assertEqual(infos, ent["infos"])
+
+    def test_create_component(self):
+        id_ = "id_1"
+        name = "name_1"
+        etype = "component"
+        depends = ["id_2", "id_3", "id_4", "id_5"]
+        impacts = ["id_6", "id_7", "id_8", "id_9"]
+        measurements = {"tag_1": "data_1", "tag_2": "data_2"}
+        infos = {"info_1": "foo_1", "info_2": "bar_2"}
+
+        ent = process.create_entity(id_, name, etype, depends,
+                                    impacts, measurements, infos)
+
+        self.assertEqual(id_, ent["_id"])
+        self.assertEqual(name, ent["name"])
+        self.assertEqual(etype, ent["type"])
+        self.assertEqual(depends, ent["depends"])
+        self.assertEqual(impacts, ent["impact"])
+        self.assertIn("measurements", ent.keys())
         self.assertEqual(infos, ent["infos"])
 
     def test_check_type(self):
@@ -700,59 +739,42 @@ class Test(TestCase):
 
         evt_ent_id = process.get_event_id(ids, event)
 
+        infos = {"enabled": True,
+                 "enable_history":[int(time.time())]}
+
         expected_conn = process.create_entity(ids["conn_id"],
                                               ids["conn_id"],
                                               "connector",
                                               impact=sorted([ids["comp_id"],
-                                                             ids["re_id"]]))
+                                                             ids["re_id"]]),
+                                              infos=infos)
 
         expected_comp = process.create_entity(ids["comp_id"],
                                               ids["comp_id"],
                                               "component",
                                               depends=sorted([ids["conn_id"],
-                                                              ids["re_id"]]))
+                                                              ids["re_id"]]),
+                                              infos=infos)
 
         expected_re = process.create_entity(ids["re_id"],
                                             ids["re_id"],
                                             "resource",
                                             impact=[ids["comp_id"]],
-                                            depends=[ids["conn_id"]])
-
-        event["infos"] = {}
-        expected_re["infos"] = {}
-        for key in authorized_info_keys:
-            if key == "enable":
-                continue
-
-            event["infos"][key] = str(key) + "_data"
-            expected_re["infos"][key] = str(key) + "_data"
-
-        event["infos"]["not_authorized_key"] = "not_an_authorized_key_data"
+                                            depends=[ids["conn_id"]],
+                                            infos=infos)
 
         process.update_context((False, False, False),
                                ids,
                                [],
-                               {},
-                               evt_ent_id,
-                               event_infos=event["infos"])
+                               event)
 
         result_re = context_graph_manager.get_entities_by_id(ids["re_id"])[0]
         result_conn = context_graph_manager.get_entities_by_id(ids["conn_id"])[0]
         result_comp = context_graph_manager.get_entities_by_id(ids["comp_id"])[0]
 
-        self.assertTrue("enable" in result_re["infos"].keys())
-        self.assertTrue("enable" in result_conn["infos"].keys())
-        self.assertTrue("enable" in result_comp["infos"].keys())
 
-
-        result_re["infos"].pop("enable")
         self.assertEqualEntities(expected_re, result_re)
-
-        result_conn["infos"].pop("enable")
-        expected_conn["infos"].pop("enable")
         self.assertEqualEntities(expected_conn, result_conn)
-
-        result_comp["infos"].pop("enable")
         self.assertEqualEntities(expected_comp, result_comp)
 
 
