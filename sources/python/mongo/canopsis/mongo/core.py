@@ -104,8 +104,9 @@ class MongoDataBase(DataBase):
             connection_args['replicaSet'] = self.replicaset
             connection_args['read_preference'] = self.read_preference
 
-        connection_args['j'] = self.journaling
         connection_args['w'] = 1 if self.safe else 0
+        if self.safe:
+            connection_args['j'] = self.journaling
 
         if self.ssl:
             connection_args.update(
