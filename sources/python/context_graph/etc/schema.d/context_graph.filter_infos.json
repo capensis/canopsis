@@ -21,6 +21,12 @@
          "items":{
             "type":"number"
          }
+      },
+      "state":{
+        "type": "number"
+      },
+      "mfilter":{
+        "type": "string"
       }
    }
 }
