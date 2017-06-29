@@ -21,9 +21,6 @@
 
 from unittest import TestCase, main
 from canopsis.ccalendar.manager import CalendarManager
-from uuid import uuid4
-
-DEBUG = False
 
 
 class CalendarManagerTest(TestCase):
@@ -96,7 +93,6 @@ class CalendarTest(CalendarManagerTest):
 
     def test_values(self):
         query = {'category': '1', 'output': 'test'}
-        print ('print of query', query)
         result = self.manager.values(
             query=query,
             limit=5,
