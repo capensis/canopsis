@@ -580,7 +580,6 @@ class Test(TestCase):
         res_1 = process.update_context_case6(ids1, in_db_1)
         res_2 = process.update_context_case6(ids2, in_db_2)
 
-
         comp_res_1 = None
         conn_res_1 = None
         re_res_1 = None
@@ -619,44 +618,52 @@ class Test(TestCase):
                 conn_res_2[i] = sorted(conn_res_2[i])
 
         expected_comp_res_1 = {
-                '_id': 'comp_1',
-                'name': 'comp_1',
-                'type': 'component',
-                'impact': [],
-                'depends': sorted(['re_1', 'conn_1'])}
+            '_id': 'comp_1',
+            'name': 'comp_1',
+            'type': 'component',
+            'impact': [],
+            'depends': sorted(['re_1', 'conn_1'])}
 
         expected_re_res_1 = {
-                '_id': 're_1',
-                'name': 're_1',
-                'type': 'resource',
-                'impact': ['comp_1'],
-                'depends': ['conn_1']}
+            '_id': 're_1',
+            'name': 're_1',
+            'type': 'resource',
+            'impact': ['comp_1'],
+            'depends': ['conn_1']}
 
         expected_conn_res_1 = {
-                '_id': 'conn_1',
-                'name': 'conn_1',
-                'type': 'connector',
-                'impact': sorted(['comp_1', 're_1']),
-                'depends': [],
-                'infos': {}}
+            '_id': 'conn_1',
+            'name': 'conn_1',
+            'type': 'connector',
+            'impact': sorted(['comp_1', 're_1']),
+            'depends': [],
+            'measurements': {}}
 
-        self.assertEqualEntities(expected_comp_res_1, comp_res_1)
-        self.assertEqualEntities(expected_re_res_1, re_res_1)
-        self.assertEqualEntities(expected_conn_res_1, conn_res_1)
+        # delete the infos field of the connector objetc newly created,
+        # we did not check how the infos is generated
+        del conn_res_1["infos"]
+
+        # We use assertDictEqual instead of assertEqualEntities because
+        # we did not push the entity in the context, so the infos fields
+        # is not created
+        self.assertDictEqual(expected_comp_res_1, comp_res_1)
+        self.assertDictEqual(expected_re_res_1, re_res_1)
+        self.assertDictEqual(expected_conn_res_1, conn_res_1)
 
         self.assertDictEqual(comp_res_2, {
-                '_id': 'comp_1',
-                'name': 'comp_1',
-                'type': 'component',
-                'impact': [],
-                'depends': sorted(['conn_1'])})
+            '_id': 'comp_1',
+            'name': 'comp_1',
+            'type': 'component',
+            'impact': [],
+            'depends': sorted(['conn_1'])})
         self.assertEqual(re_res_2, None)
+        del conn_res_2["infos"]
         self.assertDictEqual(conn_res_2, {'_id': 'conn_1',
                                           'name': 'conn_1',
                                           'type': 'connector',
                                           'impact': sorted(['comp_1']),
                                           'depends': [],
-                                          'infos':{}})
+                                          'measurements': {}})
 
 
     def test_update_context_case5(self):
