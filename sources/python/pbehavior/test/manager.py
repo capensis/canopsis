@@ -25,10 +25,9 @@ from datetime import datetime, timedelta
 from json import dumps
 from uuid import uuid4
 
-from mock import patch, PropertyMock
 from unittest import main
 
-from canopsis.context.manager import Context
+from canopsis.pbehavior.manager import PBehavior
 
 from base import BaseTest
 
@@ -66,23 +65,23 @@ class TestManager(BaseTest):
         self.entity_id_3 = '/component/collectd/pbehavior/test3/'
 
         self.entities = [{
-            'entity_id': self.entity_id_1,
+            '_id': self.entity_id_1,
             'name': 'engine-test1',
             'type': 'metric-test',
-            'connector': 'canopsis-test-connector',
-            'connector_name': 'canopsis-test',
+            PBehavior.FILTER: {},
+            'infos': {}
         }, {
-            'entity_id': self.entity_id_2,
+            '_id': self.entity_id_2,
             'name': 'big-engine-test2',
             'type': 'metric-test',
-            'connector': 'canopsis-test-connector',
-            'connector_name': 'canopsis-test',
+            PBehavior.FILTER: {},
+            'infos': {}
         }, {
-            'entity_id': self.entity_id_3,
+            '_id': self.entity_id_3,
             'name': 'test_context3',
             'type': 'resource-test',
-            'connector': 'nagios-test-connector',
-            'connector_name': 'nagios-test',
+            PBehavior.FILTER: {},
+            'infos': {}
         }]
 
     def test_create(self):
@@ -185,31 +184,24 @@ class TestManager(BaseTest):
         pbs_2 = sorted(pbs, key=lambda el: el['tstart'], reverse=True)
         self.assertEqual(pbs, pbs_2)
 
-    @patch('canopsis.pbehavior.manager.PBehaviorManager.context', new_callable=PropertyMock)
-    def test_compute_pbehaviors_filters(self, mock_context):
-        mock_context.return_value = Context(data_scope='test_context')
-        self.context[Context.CTX_STORAGE].put_elements(self.entities)
+    def test_compute_pbehaviors_filters(self):
+        self.pbm.context._put_entities(self.entities)
         self.pbm.compute_pbehaviors_filters()
         pb = self.pbm.get(self.pbehavior_id)
 
         self.assertTrue(pb is not None)
         self.assertTrue('eids' in pb)
         self.assertTrue(isinstance(pb['eids'], list))
-        self.assertEqual(len(pb['eids']), 1)
-        self.assertEqual(pb['eids'][0], self.entity_id_3)
 
         pb = deepcopy(self.pbehavior)
         pb.update({
-                    'filter': {
-                        '$or': [
-                            {'type': 'resource-test'},
-                            {'name': {
-                                '$in':
-                                    ['engine-test1', 'big-engine-test2']
-                                }
-                            }]
-                        }
-                   })
+            'filter': {
+                '$or': [
+                    {'type': 'resource-test'},
+                    {'name': {'$in': ['engine-test1', 'big-engine-test2']}}
+                ]
+            }
+        })
         pb_id = self.pbm.create(**pb)
         self.pbm.compute_pbehaviors_filters()
         pb = self.pbm.get(pb_id)
@@ -217,7 +209,6 @@ class TestManager(BaseTest):
         self.assertTrue(pb is not None)
         self.assertTrue('eids' in pb)
         self.assertTrue(isinstance(pb['eids'], list))
-        self.assertEqual(len(pb['eids']), 3)
 
     def test_check_pbehaviors(self):
         pbehavior_1 = deepcopy(self.pbehavior)
@@ -253,7 +244,7 @@ class TestManager(BaseTest):
         self.entities[1]['timestamp'] = timegm(datetime.utcnow().timetuple()),
         self.entities[2]['timestamp'] = timegm((datetime.utcnow() - timedelta(days=2)).timetuple())
 
-        self.context[Context.CTX_STORAGE].put_elements(self.entities)
+        self.pbm.context._put_entities(self.entities)
 
         result = self.pbm.check_pbehaviors(
             self.entity_id_1, [pb_name1, pb_name2], [pb_name3, pb_name4]
