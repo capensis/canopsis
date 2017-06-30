@@ -888,9 +888,9 @@ class ImportChecker(BaseTest):
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
-        expected[ContextGraphImport.K_ID] = ci[ContextGraphImport.K_ID]
-        expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
-        expected[ContextGraphImport.K_TYPE] = ci[ContextGraphImport.K_TYPE]
+        expected[Keys.ID] = ci[ContextGraphImport.K_ID]
+        expected[Keys.NAME] = ci[ContextGraphImport.K_NAME]
+        expected[Keys.TYPE] = ci[ContextGraphImport.K_TYPE]
         self.assertEqualEntities(result[0], expected)
 
     def test_ci_infos(self):
@@ -913,9 +913,9 @@ class ImportChecker(BaseTest):
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
-        expected[ContextGraphImport.K_ID] = ci[ContextGraphImport.K_ID]
-        expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
-        expected[ContextGraphImport.K_TYPE] = ci[ContextGraphImport.K_TYPE]
+        expected[Keys.ID] = ci[ContextGraphImport.K_ID]
+        expected[Keys.NAME] = ci[ContextGraphImport.K_NAME]
+        expected[Keys.TYPE] = ci[ContextGraphImport.K_TYPE]
 
         self.assertEqualEntities(result[0], expected)
 
@@ -932,11 +932,13 @@ class ImportChecker(BaseTest):
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
-        expected[ContextGraphImport.K_ID] = ci[ContextGraphImport.K_ID]
-        expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
-        expected[ContextGraphImport.K_TYPE] = ci[ContextGraphImport.K_TYPE]
-        expected[ContextGraphImport.K_INFOS] = ci[
-            ContextGraphImport.K_PROPERTIES]
+        expected[Keys.ID] = ci[ContextGraphImport.K_ID]
+        expected[Keys.NAME] = ci[ContextGraphImport.K_NAME]
+        expected[Keys.TYPE] = ci[ContextGraphImport.K_TYPE]
+        expected[Keys.INFOS] = {
+            Keys.DISABLE_HISTORY: ci[ContextGraphImport.K_PROPERTIES][ContextGraphImport.K_DISABLE],
+            Keys.ENABLED: False
+        }
 
         self.assertEqualEntities(result[0], expected)
 
@@ -951,8 +953,7 @@ class ImportChecker(BaseTest):
 
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
-        expected[ContextGraphImport.K_INFOS][
-            ContextGraphImport.A_DISABLE].append(54321)
+        expected[Keys.INFOS][Keys.DISABLE_HISTORY].append(54321)
 
         self.assertEqualEntities(result[0], expected)
 
@@ -969,8 +970,8 @@ class ImportChecker(BaseTest):
 
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
-        expected[ContextGraphImport.K_INFOS][
-            ContextGraphImport.A_ENABLE] = [67890]
+        expected[Keys.INFOS][Keys.ENABLE_HISTORY] = [67890]
+        expected[Keys.INFOS][Keys.ENABLED] = True
 
         self.assertEqualEntities(result[0], expected)
 
@@ -986,8 +987,8 @@ class ImportChecker(BaseTest):
 
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
-        expected[ContextGraphImport.K_INFOS][
-            ContextGraphImport.A_ENABLE].append(9876)
+        expected[Keys.INFOS][Keys.ENABLE_HISTORY].append(9876)
+        expected[Keys.INFOS][Keys.ENABLED] = True
         self.assertEqualEntities(result[0], expected)
 
         # Update an entity
