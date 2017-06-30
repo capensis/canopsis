@@ -1,6 +1,6 @@
 setuptools==20.2.2
 simplejson==2.1.6
-pymongo==2.7.2
+pymongo==2.8
 pycurl==7.19.5.1
 tornado==1.2.1
 python-daemon==1.5.5
