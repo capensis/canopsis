@@ -669,17 +669,30 @@ class CreateEntity(BaseTest):
         self.manager.create_entity(self.ent1)
 
         result = self.manager.get_entities_by_id(self.ent1["_id"])[0]
+        # Delete infos fields, we did not want to check the generation of infos
+        del result["infos"]
+        del self.ent1["infos"]
         self.assertEqualEntities(result, self.ent1)
 
         result = self.manager.get_entities_by_id(self.ent2["_id"])[0]
-        self.ent2["impact"].append(self.ent1["_id"])
+        self.ent2[to].append(self.ent1["_id"])
+        # Delete infos fields, we did not want to check the generation of infos
+        del result["infos"]
+        del self.ent2["infos"]
         self.assertEqualEntities(result, self.ent2)
 
         result = self.manager.get_entities_by_id(self.ent3["_id"])[0]
-        self.ent3["impact"].append(self.ent1["_id"])
+        self.ent3[to].append(self.ent1["_id"])
+        # Delete infos fields, we did not want to check the generation of infos
+        del result["infos"]
+        del self.ent3["infos"]
         self.assertEqualEntities(result, self.ent3)
 
         result = self.manager.get_entities_by_id(self.ent4["_id"])[0]
+
+        # Delete infos fields, we did not want to check the generation of infos
+        del result["infos"]
+        del self.ent4["infos"]
         self.assertEqualEntities(result, self.ent4)
 
     def test_create_entity_entity_depends(self):

@@ -30,7 +30,7 @@ def create_entity(id,
                   etype,
                   depends=[],
                   impact=[],
-                  measurements=[],
+                  measurements={},
                   infos={},
                   **kwargs):
     """Create an entity with following information and put it state at enable.

@@ -262,7 +262,8 @@ class ContextGraph(MiddlewareRegistry):
         Store entities into database. Do no use this function unless you know
         exactly what you are doing. This function does not update the
         impact and depends links between entities. If you want these feature,
-        use create_entity.
+        use create_entity. Nor add/update the the enable, enable_history or
+        disable_history.
 
         :param entities: the entities to store in database
         """
