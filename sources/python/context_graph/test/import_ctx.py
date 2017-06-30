@@ -420,7 +420,8 @@ class AEnableEntity(BaseTest):
         self.ctx_import._ContextGraphImport__a_enable_entity(ci)
 
         expected = entities[id1].copy()
-        expected[Keys.INFOS] = {ContextGraphImport.K_ENABLE: [timestamp]}
+        expected[Keys.INFOS] = {Keys.ENABLE_HISTORY: [timestamp],
+                                Keys.ENABLED: True}
 
         self.assertEqualEntities(self.ctx_import.update[id1], expected)
 
@@ -454,7 +455,8 @@ class AEnableEntity(BaseTest):
 
         expected = entities[id1].copy()
         timestamp += [12345]
-        expected[Keys.INFOS] = {ContextGraphImport.K_ENABLE: sorted(timestamp)}
+        expected[Keys.INFOS] = {Keys.ENABLE_HISTORY: sorted(timestamp),
+                                Keys.ENABLED: True}
 
         result = self.ctx_import.update[id1]
         result[Keys.INFOS][Keys.ENABLE_HISTORY] = sorted(result[Keys.INFOS][Keys.ENABLE_HISTORY])

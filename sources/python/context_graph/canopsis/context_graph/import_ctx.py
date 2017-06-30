@@ -577,7 +577,7 @@ class ContextGraphImport(ContextGraph):
         else:
             key_history = "enable_history"
             key = self.K_ENABLE
-            self.update[id_][self.K_INFOS][self.K_ENABLED] = False
+            self.update[id_][self.K_INFOS][self.K_ENABLED] = True
 
         # Update entity the fields enable/disable of infos
         timestamp = ci[self.K_PROPERTIES][key]
