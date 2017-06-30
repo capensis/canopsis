@@ -125,13 +125,13 @@ class PBehaviorManager(MiddlewareRegistry):
     _UPDATE_FLAG = 'updatedExisting'
     __TYPE_ERR = "id_ must be a list of string or a string"
 
+    def __init__(self, *args, **kwargs):
+        super(PBehaviorManager, self).__init__(*args, **kwargs)
+        self.context = singleton_per_scope(ContextGraph)
+
     @property
     def pbehavior_storage(self):
         return self[PBehaviorManager.PBEHAVIOR_STORAGE]
-
-    @property
-    def context(self):
-        return singleton_per_scope(ContextGraph)
 
     def get(self, _id, query=None):
         """Get pbehavior by id.
@@ -159,7 +159,8 @@ class PBehaviorManager(MiddlewareRegistry):
         :param list of dict comments: a list of comments made by users
         :param str connector: a string representing the type of connector that has generated the pbehavior
         :param str connector_name:  a string representing the name of connector that has generated the pbehavior
-        :return:
+        :return: created element eid
+        :rtype: str
         """
 
         if enabled in [True, "True", "true"]:
@@ -192,6 +193,7 @@ class PBehaviorManager(MiddlewareRegistry):
             for c in data.comments:
                 c.update({'_id': str(uuid4())})
         result = self.pbehavior_storage.put_element(element=data.to_dict())
+
         return result
 
     def get_pbehaviors_by_eid(self, id_):
@@ -362,6 +364,7 @@ class PBehaviorManager(MiddlewareRegistry):
             sort={PBehavior.TSTART: -1}
         )
         result = [PBehavior(**pb).to_dict() for pb in pbehaviors]
+
         return result
 
     def compute_pbehaviors_filters(self):
@@ -373,7 +376,6 @@ class PBehaviorManager(MiddlewareRegistry):
         )
 
         for pb in pbehaviors:
-
             entities = self.context[ContextGraph.ENTITIES_STORAGE].get_elements(
                 query=loads(pb[PBehavior.FILTER])
             )
@@ -397,9 +399,13 @@ class PBehaviorManager(MiddlewareRegistry):
         :param list pb_names: list of pbehavior names
         :return: bool if the entity_id is currently in pb_names arg
         """
-        cm = singleton_per_scope(ContextGraph)
-        entity = cm.get_entity_by_id(entity_id)[0]
-        event = cm.get_event(entity)
+        try:
+            entity = self.context.get_entities_by_id(entity_id)[0]
+        except:
+            self.logger.error('Unable to check_behavior on {} entity_id'
+                              .format(entity_id))
+            return None
+        event = self.context.get_event(entity)
 
         pbehaviors = self.pbehavior_storage.get_elements(
             query={
@@ -410,7 +416,6 @@ class PBehaviorManager(MiddlewareRegistry):
 
         names = []
         fromts = datetime.fromtimestamp
-        names_append = names.append
         for pb in pbehaviors:
             tstart = fromts(pb[PBehavior.TSTART])
             tstop = fromts(pb[PBehavior.TSTOP])
@@ -424,7 +429,7 @@ class PBehaviorManager(MiddlewareRegistry):
             if (len(dt_list) >= 2 and
                 fromts(event['timestamp']) >= dt_list[0] and
                 fromts(event['timestamp']) <= dt_list[-1]):
-                names_append(pb[PBehavior.NAME])
+                names.append(pb[PBehavior.NAME])
 
         result = set(pb_names).isdisjoint(set(names))
 
@@ -432,5 +437,5 @@ class PBehaviorManager(MiddlewareRegistry):
 
     def _check_response(self, response):
         ack = True if "ok" in response and response["ok"] == 1 else False
-        return {"acknowledged" : ack,
-                "deletedCount" : response["n"]}
+        return {"acknowledged": ack,
+                "deletedCount": response["n"]}

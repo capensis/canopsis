@@ -19,10 +19,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-
 from unittest import TestCase
 
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 
@@ -32,12 +31,17 @@ class BaseTest(TestCase):
         pbehavior_storage = Middleware.get_middleware_by_uri(
             'storage-default-testpbehavior://'
         )
+        entities_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testentities://'
+        )
 
         self.pbm = PBehaviorManager()
-        self.context = Context(data_scope='test_context')
+        self.context = ContextGraph()
+        self.context[ContextGraph.ENTITIES_STORAGE] = entities_storage
+        self.pbm.context = self.context
 
         self.pbm[PBehaviorManager.PBEHAVIOR_STORAGE] = pbehavior_storage
 
     def tearDown(self):
         self.pbm.pbehavior_storage.remove_elements()
-        self.context[Context.CTX_STORAGE].remove_elements()
+        self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()

@@ -94,17 +94,18 @@ class CreateWatcher(BaseTest):
             'mfilter': '{}',
             'display_name': 'a_name'
         }
-        self.assertTrue(
-            OrderedDict(body) == (
-                OrderedDict(
-                    self.watcher_storage.find_elements(query={'_id': 'an_id'})
-                )
-            )
-        )
-        entity = self.context_graph_manager.get_entities_by_id('an_id')
+        self.manager.create_watcher(body)
+        watcher = list(
+            self.watcher_storage.find_elements(query={'_id': 'an_id'})
+        )[0]
+        self.assertTrue(sorted(list(body.values())) == sorted(list(watcher.values())))
+        entity = self.context_graph_manager.get_entities_by_id('an_id')[0]
+        print('------------------')
+        print(entity)
+        print('------------------')
         del entity['infos']['enable_history']
         self.assertTrue(
-            OrderedDict(
+            sorted(list(
                 {
                     '_id': 'watcher-one',
                     'impact': [],
@@ -116,7 +117,7 @@ class CreateWatcher(BaseTest):
                     },
                     'type': 'watcher'
                 }
-            ) == OrderedDict(entity)
+            )) == sorted(list(entity.values()))
         )
         entity['infos'].pop('enable_history', None)
 
@@ -136,6 +137,24 @@ class DeleteWatcher(BaseTest):
         get_w = self.manager.get_watcher('watcher-one')
         self.assertTrue(isinstance(get_w, dict))
         self.assertFalse(get_w['infos']['enabled'])
+
+class GetWatcher(BaseTest):
+
+    def test_get_watcher(self):
+        self.manager.create_watcher(watcher_example)
+        get_w = self.manager.get_watcher('watcher-one')
+        self.assertTrue(isinstance(get_w, dict))
+        self.assertEqual(get_w['_id'], watcher_one)
+        self.assertEqual(None, self.manager.get_watcher('watcher_two'))
+
+class WorstState(BaseTest):
+
+    def test_worst_state(self):
+        self.assertEqual(self.manager.worst_state(0,0,0), 0)
+        self.assertEqual(self.manager.worst_state(0,0,1), 1)
+        self.assertEqual(self.manager.worst_state(0,1,0), 2)
+        self.assertEqual(self.manager.worst_state(1,0,0), 3)
+
 
 if __name__ == "__main__":
     main()
