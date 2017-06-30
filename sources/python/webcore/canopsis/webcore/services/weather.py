@@ -29,6 +29,8 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
+from ast import literal_eval
+
 LOGGER = None
 
 context_manager = ContextGraph()
@@ -56,22 +58,23 @@ def __format_pbehavior(pbehavior):
     rrule = {}
     rrule["rrule"] = pbehavior["rrule"]
 
-    freq = get_rrule_freq(pbehavior["rrule"])
+    if pbehavior["rrule"] is not None:
+        freq = get_rrule_freq(pbehavior["rrule"])
 
-    if freq == "SECONDLY":
-        rrule["text"] = EVERY.format("second")
-    elif freq == "MINUTELY":
-        rrule["text"] = EVERY.format("minute")
-    elif freq == "HOURLY":
-        rrule["text"] = EVERY.format("hour")
-    elif freq == "DAILY":
-        rrule["text"] = EVERY.format("day")
-    elif freq == "WEEKLY":
-        rrule["text"] = EVERY.format("week")
-    elif freq == "MONTHLY":
-        rrule["text"] = EVERY.format("month")
-    elif freq == "YEARLY":
-        rrule["text"] = EVERY.format("year")
+        if freq == "SECONDLY":
+            rrule["text"] = EVERY.format("second")
+        elif freq == "MINUTELY":
+            rrule["text"] = EVERY.format("minute")
+        elif freq == "HOURLY":
+            rrule["text"] = EVERY.format("hour")
+        elif freq == "DAILY":
+            rrule["text"] = EVERY.format("day")
+        elif freq == "WEEKLY":
+            rrule["text"] = EVERY.format("week")
+        elif freq == "MONTHLY":
+            rrule["text"] = EVERY.format("month")
+        elif freq == "YEARLY":
+            rrule["text"] = EVERY.format("year")
 
     pbehavior["rrule"] = rrule
 
@@ -92,31 +95,53 @@ def add_pbehavior_info(enriched_entity):
     enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
         enriched_entity['entity_id'])
 
-    LOGGER.debug("Pbehavior list : {0}".format(enriched_entity["pbehavior"]))
-
     for pbehavior in enriched_entity["pbehavior"]:
         __format_pbehavior(pbehavior)
-
-
-def add_pbehavior_status(data):
+ 
+def add_pbehavior_status(watchers):
     """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
     on every dict in data. Data must be a list of dict that contains a key
-    "pbehavior" in order to work properly
+    "pbehavior" in order to work properly.
 
-    :param list data: the data to parse
+    If the field "mfilter" is present in the element of data, ignore
+    the pbehavior present in the element en retreive them directly from
+    database. Then remove the field "mfilter".
+
+    :param list data: the watcher to parse
     """
-    for entity in data:
-        enabled_list = [pbh["isActive"] for pbh in entity["pbehavior"]]
 
-        if len(enabled_list) == 0:
-            all_active = False
-        else:
-            all_active = all(enabled_list)
+    for entity in watchers:
+        
+        has_active_pbh = False
+        has_all_active_pbh = True
+        all_eids = []
+        if "mfilter" in entity:  # retreive pbehavior using the filter.
+            entities = context_manager.get_entities(literal_eval(
+                entity["mfilter"]),
+                {"_id":1})
 
-        one_more_active = any(enabled_list)
+            eids = [ent["_id"] for ent in entities]
+ 
+            pbehavior = pbehavior_manager.get_pbehaviors_by_eid(eids)
 
-        entity["hasactivepbehaviorinentities"] = one_more_active
-        entity["hasallactivepbehaviorinentities"] = all_active
+            pbh_active_list = [x for x in pbehavior if "enabled" in x and x["enabled"]]
+            as_active = len(pbh_active_list) > 0
+            if as_active:
+                has_active_pbh = True
+
+            for xx in [x['eids'] for x in pbehavior]:
+                all_eids = all_eids + xx
+            has_all_active_pbh = set(eids) == set(all_eids)
+
+        has_active_pbh = has_active_pbh and not has_all_active_pbh
+
+        entity["hasallactivepbehaviorinentities"] = has_all_active_pbh
+        entity["hasactivepbehaviorinentities"] = has_active_pbh
+
+        # cleaning entity
+        if "mfilter" in entity:
+            del entity["mfilter"]
+            # entity["pbehavior"] = []
 
 
 def exports(ws):
@@ -172,6 +197,7 @@ def exports(ws):
                 enriched_entity['state'] = {'val': 0}
 
             enriched_entity['linklist'] = []  # add this when it's ready
+            enriched_entity["mfilter"] = watcher["infos"]["mfilter"]
             add_pbehavior_info(enriched_entity)
             watchers.append(enriched_entity)
 
@@ -241,7 +267,5 @@ def exports(ws):
             add_pbehavior_info(enriched_entity)
 
             entities_list.append(enriched_entity)
-
-        add_pbehavior_status(entities_list)
 
         return gen_json(entities_list)
