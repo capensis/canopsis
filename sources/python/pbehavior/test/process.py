@@ -49,15 +49,18 @@ class TestProcess(BaseTest):
             "connector_name": "test_connector_name",
             "author": "test_author",
             "component": 'test_component',
-            "source_type": "resource"
+            "source_type": "resource",
+            "resource": "a_resource"
         }
 
-        query = {'name': event['pbehavior_name'],
-                 'filter': dumps({'entity_id': get_entity_id(event)}),
-                 'tstart': event['start'], 'tstop': event['end'],
-                 'connector': event['connector'],
-                 'connector_name': event['connector_name'],
-                 'author': event['author']}
+        query = {
+            'name': event['pbehavior_name'],
+            'filter': dumps({'entity_id': get_entity_id(event)}),
+            'tstart': event['start'], 'tstop': event['end'],
+            'connector': event['connector'],
+            'connector_name': event['connector_name'],
+            'author': event['author']
+        }
 
         event_processing(None, event, pbm=self.pbm, logger=Mock())
         pbehavior = list(self.pbm.pbehavior_storage.get_elements(query=query))
@@ -77,9 +80,12 @@ class TestProcess(BaseTest):
 
     def test_get_entity_id(self):
         event = {
-            'source_type': 'component', 'component': 't_component',
-            'connector': 't_connector', 'connector_name': 't_connector_name',
-            'resource': 't_resource', 'selector': 't_selector'
+            'source_type': 'component',
+            'component': 't_component',
+            'connector': 't_connector',
+            'connector_name': 't_connector_name',
+            'resource': 't_resource',
+            'selector': 't_selector'
         }
         entity_id = get_entity_id(event)
         self.assertEqual(

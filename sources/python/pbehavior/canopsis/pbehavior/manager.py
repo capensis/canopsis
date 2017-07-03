@@ -271,10 +271,12 @@ class PBehaviorManager(MiddlewareRegistry):
 
     def create_pbehavior_comment(self, pbehavior_id, author, message):
         """
-        Сreate comment for pbehavior
+        Сreate comment for pbehavior.
+
         :param str pbehavior_id: pbehavior id
         :param str author: author of the comment
         :param str message: text of the comment
+        :return:
         """
         comment_id = str(uuid4())
         comment = {
@@ -304,10 +306,12 @@ class PBehaviorManager(MiddlewareRegistry):
 
     def update_pbehavior_comment(self, pbehavior_id, _id, **kwargs):
         """
-        Update the comment record
+        Update the comment record.
+
         :param str pbehavior_id: pbehavior id
         :param str_id: comment id
         :param dict kwargs: values comment fields
+        :return:
         """
         pbehavior = self.get(
             pbehavior_id,
@@ -336,9 +340,11 @@ class PBehaviorManager(MiddlewareRegistry):
 
     def delete_pbehavior_comment(self, pbehavior_id, _id):
         """
-        Delete comment record
+        Delete comment record.
+
         :param str pbehavior_id: pbehavior id
         :param str _id: comment id
+        :return:
         """
         result = self.pbehavior_storage._update(
             spec={'_id': pbehavior_id},
@@ -355,8 +361,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
         :param str entity_id: Id for which behaviors have to be returned
 
-        :return: List of pbehaviors as dict, with name, tstart, tstop, rrule
-          and enabled keys
+        :return: pbehaviors, with name, tstart, tstop, rrule and enabled keys
         :rtype: list of dict
         """
         pbehaviors = self.pbehavior_storage.get_elements(
@@ -369,7 +374,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
     def compute_pbehaviors_filters(self):
         """
-        Compute all filters and update eids attributes
+        Compute all filters and update eids attributes.
         """
         pbehaviors = self.pbehavior_storage.get_elements(
             query={PBehavior.FILTER: {'$exists': True}}
@@ -385,6 +390,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
+
         :param str entity_id:
         :param list list_in: list of pbehavior names
         :param list list_out: list of pbehavior names
@@ -395,6 +401,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
     def _check_pbehavior(self, entity_id, pb_names):
         """
+
         :param str entity_id:
         :param list pb_names: list of pbehavior names
         :return: bool if the entity_id is currently in pb_names arg
@@ -420,11 +427,13 @@ class PBehaviorManager(MiddlewareRegistry):
             tstart = fromts(pb[PBehavior.TSTART])
             tstop = fromts(pb[PBehavior.TSTOP])
 
-            dt_list = list(
-                rrulestr(pb['rrule'], dtstart=tstart).between(
-                    tstart, tstop, inc=True
+            dt_list = [tstart, tstop]
+            if pb['rrule'] is not None:
+                dt_list = list(
+                    rrulestr(pb['rrule'], dtstart=tstart).between(
+                        tstart, tstop, inc=True
+                    )
                 )
-            )
 
             if (len(dt_list) >= 2 and
                 fromts(event['timestamp']) >= dt_list[0] and

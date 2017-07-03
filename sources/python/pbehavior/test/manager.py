@@ -38,17 +38,18 @@ class TestManager(BaseTest):
 
         self.pbehavior_id = str(uuid4())
         self.comment_id = str(uuid4())
+        now = datetime.utcnow()
         self.pbehavior = {
             'name': 'test',
             'filter': dumps({'connector': 'nagios-test-connector'}),
             'comments': [{
                 '_id': self.comment_id,
                 'author': 'test_author_comment',
-                'ts': timegm(datetime.utcnow().timetuple()),
+                'ts': timegm(now.timetuple()),
                 'message': 'test_message'
             }],
-            'tstart': timegm(datetime.utcnow().timetuple()),
-            'tstop': timegm((datetime.utcnow() + timedelta(days=1)).timetuple()),
+            'tstart': timegm(now.timetuple()),
+            'tstop': timegm((now + timedelta(days=1)).timetuple()),
             'rrule': 'FREQ=DAILY;INTERVAL=2;COUNT=3',
             'enabled': True,
             'connector': 'test_connector',
@@ -211,27 +212,32 @@ class TestManager(BaseTest):
         self.assertTrue(isinstance(pb['eids'], list))
 
     def test_check_pbehaviors(self):
+        now = datetime.utcnow()
         pbehavior_1 = deepcopy(self.pbehavior)
         pbehavior_2 = deepcopy(self.pbehavior)
         pbehavior_3 = deepcopy(self.pbehavior)
         pbehavior_4 = deepcopy(self.pbehavior)
 
-        pb_name1, pb_name2, pb_name3, pb_name4 = 'name1', 'name3', 'name3', 'name4'
+        pb_name1, pb_name2, pb_name3, pb_name4 = 'name1', 'name2', 'name3', 'name4'
 
         pbehavior_1.update(
-            {'name': pb_name1,
-             'eids': [self.entity_id_1, self.entity_id_2],
-             'tstart': timegm(datetime.utcnow().timetuple()),
-             'tstop': timegm((datetime.utcnow() + timedelta(days=8)).timetuple())}
+            {
+                'name': pb_name1,
+                'eids': [self.entity_id_1, self.entity_id_2],
+                'tstart': timegm(now.timetuple()),
+                'tstop': timegm((now + timedelta(days=8)).timetuple())
+            }
         )
 
         pbehavior_2.update({'name': pb_name2})
 
         pbehavior_3.update(
-            {'name': pb_name3,
-             'eids': [self.entity_id_2, self.entity_id_3],
-             'tstart': timegm(datetime.utcnow().timetuple()),
-             'tstop': timegm((datetime.utcnow() + timedelta(days=8)).timetuple())}
+            {
+                'name': pb_name3,
+                'eids': [self.entity_id_2, self.entity_id_3],
+                'tstart': timegm(now.timetuple()),
+                'tstop': timegm((now + timedelta(days=8)).timetuple())
+            }
         )
 
         pbehavior_4.update({'name': pb_name4})
@@ -240,9 +246,9 @@ class TestManager(BaseTest):
             elements=(pbehavior_1, pbehavior_2, pbehavior_3, pbehavior_4)
         )
 
-        self.entities[0]['timestamp'] = timegm((datetime.utcnow() + timedelta(days=2)).timetuple())
-        self.entities[1]['timestamp'] = timegm(datetime.utcnow().timetuple()),
-        self.entities[2]['timestamp'] = timegm((datetime.utcnow() - timedelta(days=2)).timetuple())
+        self.entities[0]['timestamp'] = timegm((now + timedelta(days=2)).timetuple())
+        self.entities[1]['timestamp'] = timegm(now.timetuple())
+        self.entities[2]['timestamp'] = timegm((now - timedelta(days=2)).timetuple())
 
         self.pbm.context._put_entities(self.entities)
 
@@ -254,9 +260,33 @@ class TestManager(BaseTest):
         result = self.pbm.check_pbehaviors(
             self.entity_id_3, [pb_name3, pb_name4], [pb_name1, pb_name2]
         )
-
         self.assertFalse(result)
 
+    def test_check_pbehavior(self):
+        now = datetime.utcnow()
+        pbehavior_1 = deepcopy(self.pbehavior)
+        pb_name1 = 'name1'
+        pbehavior_1.update(
+            {
+                'name': pb_name1,
+                'eids': [self.entity_id_1, self.entity_id_2],
+                'tstart': timegm(now.timetuple()),
+                'tstop': timegm((now + timedelta(days=8)).timetuple())
+            }
+        )
+        self.pbm.pbehavior_storage.put_elements(
+            elements=(pbehavior_1,)
+        )
+
+        self.entities[0]['timestamp'] = timegm((now - timedelta(days=2)).timetuple())
+        self.entities[1]['timestamp'] = timegm((now - timedelta(seconds=2)).timetuple())
+        self.pbm.context._put_entities(self.entities)
+
+        # Check is a passed pbehavior is detected as not triggered
+        result = self.pbm._check_pbehavior(
+            self.entity_id_1, [pb_name1]
+        )
+        self.assertFalse(result)
 
 if __name__ == '__main__':
     main()
