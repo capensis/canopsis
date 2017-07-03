@@ -116,9 +116,9 @@ def add_pbehavior_status(watchers):
         has_active_pbh = False
         has_all_active_pbh = False
         all_eids = []
-        if "mfilter" in entity:  # retreive pbehavior using the filter.
-            entities = context_manager.get_entities(literal_eval(
-                entity["mfilter"]),
+        if "mfilter" in entity:  # retreive pbehavior using the filter
+            entities = context_manager.get_entities(
+                literal_eval(entity["mfilter"]),
                 {"_id": 1}
             )
 
@@ -127,14 +127,15 @@ def add_pbehavior_status(watchers):
             pbehavior = pbehavior_manager.get_pbehaviors_by_eid(eids)
 
             pbh_active_list = [x for x in pbehavior if "enabled" in x and x["enabled"]]
-            as_active = len(pbh_active_list) > 0
-            if as_active:
-                has_active_pbh = True
+
+            has_active_pbh = len(pbh_active_list) > 0
 
             for xx in [x['eids'] for x in pbehavior]:
                 all_eids = all_eids + xx
+
             has_all_active_pbh = set(eids) == set(all_eids)
 
+        # has_active and has_all_active are exclude each one anothers
         has_active_pbh = has_active_pbh and not has_all_active_pbh
 
         entity["hasallactivepbehaviorinentities"] = has_all_active_pbh
