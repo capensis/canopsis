@@ -11,7 +11,7 @@ from canopsis.check import Check
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
 from canopsis.old.rabbitmq import Amqp
-from canopsis.pbehavior.manager import PBehavioManager
+from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.sla.core import Sla
 
 import json
