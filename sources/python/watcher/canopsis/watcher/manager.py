@@ -11,7 +11,7 @@ from canopsis.check import Check
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
 from canopsis.old.rabbitmq import Amqp
-from canopsis.pbhavior.manager import PBehavioManager
+from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.sla.core import Sla
 
 import json
@@ -41,7 +41,7 @@ class Watcher(MiddlewareRegistry):
             'storage-default-sla://')
 
         self.context_graph = ContextGraph()
-        self.pbhavior_manager = PBehavioManager()
+        self.pbehavior_manager = PBehaviorManager()
 
     def get_watcher(self, watcher_id):
         """Retreive from database the watcher specified by is watcher id.

@@ -449,10 +449,10 @@ class PBehaviorManager(MiddlewareRegistry):
         return {"acknowledged": ack,
                 "deletedCount": response["n"]}
 
-    def get_active_pbheviors(self, eids):
+    def get_active_pbehaviors(self, eids):
         """
         Return a list of active pbehaviors linked to some entites.
-        
+
         :param list eids: the desired entities id
         :return: list of pbehaviors
         """

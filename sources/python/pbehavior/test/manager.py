@@ -289,7 +289,7 @@ class TestManager(BaseTest):
             self.entity_id_1, [pb_name1]
         )
         self.assertFalse(result)
-    
+
     def test_get_active_pbheviors(self):
         now = datetime.utcnow()
         pbehavior_1 = deepcopy(self.pbehavior)

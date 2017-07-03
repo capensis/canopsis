@@ -61,29 +61,13 @@ def exports(ws):
 
     @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter'])
     def context(
-        _type=None, context=None, _filter=None, extended=False,
+        context=None, _filter=None, extended=False,
         limit=0, start=0, sort=None
     ):
-        """
-
-        result = manager.find(
-            _type=_type,
-            context=context,
-            _filter=_filter,
-            extended=extended,
-            limit=limit,
-            skip=start,
-            sort=sort,
-            with_count=True
-        )
-        """
 
         query = {}
         if _filter is not None:
-            _filter = {"$and":[{"type": _type}, _filter]}
             query.update(_filter)
-        else:
-            query.update({"type":_type})
 
         cursor, count = manager.get_entities(
             query=query,
