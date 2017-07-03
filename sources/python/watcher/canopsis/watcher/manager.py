@@ -194,9 +194,9 @@ class Watcher(MiddlewareRegistry):
         states = []
         for alarm in alarm_list:
             if alarm['v']['resolved'] is None and alarm['d'] in entities:
-                if not self.pbhavior_manager.get_active_pbehaviors([alarm['d']]):
+                if len(self.pbhavior_manager.get_active_pbehaviors([alarm['d']])) == 0:
                     states.append(alarm['v']['state']['val'])
-        if not states:
+        if states == []:
             for alarm in alarm_list:
                 if alarm['v']['resolved'] is None and alarm['d'] in entities:
                     states.append(alarm['v']['state']['val'])
