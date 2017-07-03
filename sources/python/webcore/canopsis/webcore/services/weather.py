@@ -97,7 +97,8 @@ def add_pbehavior_info(enriched_entity):
 
     for pbehavior in enriched_entity["pbehavior"]:
         __format_pbehavior(pbehavior)
- 
+
+
 def add_pbehavior_status(watchers):
     """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
     on every dict in data. Data must be a list of dict that contains a key
@@ -107,21 +108,22 @@ def add_pbehavior_status(watchers):
     the pbehavior present in the element en retreive them directly from
     database. Then remove the field "mfilter".
 
-    :param list data: the watcher to parse
+    :param list watchers: the watchers to parse
     """
 
     for entity in watchers:
-        
+
         has_active_pbh = False
-        has_all_active_pbh = True
+        has_all_active_pbh = False
         all_eids = []
         if "mfilter" in entity:  # retreive pbehavior using the filter.
             entities = context_manager.get_entities(literal_eval(
                 entity["mfilter"]),
-                {"_id":1})
+                {"_id": 1}
+            )
 
             eids = [ent["_id"] for ent in entities]
- 
+
             pbehavior = pbehavior_manager.get_pbehaviors_by_eid(eids)
 
             pbh_active_list = [x for x in pbehavior if "enabled" in x and x["enabled"]]
@@ -141,7 +143,6 @@ def add_pbehavior_status(watchers):
         # cleaning entity
         if "mfilter" in entity:
             del entity["mfilter"]
-            # entity["pbehavior"] = []
 
 
 def exports(ws):
