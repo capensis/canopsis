@@ -42,6 +42,7 @@ def __format_pbehavior(pbehavior):
     """Rewrite en pbehavior from db format to front format.
 
     :param dict pbehavior: a pbehavior dict
+    :return: a formatted pbehavior
     """
     EVERY = "Every {0}"
     to_delete = [
@@ -52,7 +53,6 @@ def __format_pbehavior(pbehavior):
     pbehavior["behavior"] = pbehavior.pop("name")
     pbehavior["dtstart"] = pbehavior.pop("tstart")
     pbehavior["dtend"] = pbehavior.pop("tstop")
-    pbehavior["isActive"] = pbehavior.pop("enabled")
 
     # parse the rrule to get is "text"
     rrule = {}
@@ -84,6 +84,8 @@ def __format_pbehavior(pbehavior):
         except KeyError:
             pass
 
+    return pbehavior
+
 
 def add_pbehavior_info(enriched_entity):
     """Add pbehavior related field to selectors. This function will add
@@ -95,8 +97,12 @@ def add_pbehavior_info(enriched_entity):
     enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
         enriched_entity['entity_id'])
 
+    pmcp = pbehavior_manager._check_pbehavior
     for pbehavior in enriched_entity["pbehavior"]:
-        __format_pbehavior(pbehavior)
+        pbehavior = __format_pbehavior(pbehavior)
+
+        pbehavior["isActive"] = pmcp(entity_id=enriched_entity['entity_id'],
+                                     pb_names=[pbehavior['behavior']])
 
 
 def add_pbehavior_status(watchers):
@@ -110,12 +116,11 @@ def add_pbehavior_status(watchers):
 
     :param list watchers: the watchers to parse
     """
-
     for entity in watchers:
 
         has_active_pbh = False
         has_all_active_pbh = False
-        all_eids = []
+        act_eids = []
         if "mfilter" in entity:  # retreive pbehavior using the filter
             entities = context_manager.get_entities(
                 literal_eval(entity["mfilter"]),
@@ -124,16 +129,15 @@ def add_pbehavior_status(watchers):
 
             eids = [ent["_id"] for ent in entities]
 
-            pbehavior = pbehavior_manager.get_pbehaviors_by_eid(eids)
-
-            pbh_active_list = [x for x in pbehavior if "enabled" in x and x["enabled"]]
+            pbh_active_list = pbehavior_manager.get_active_pbehaviors(eids)
 
             has_active_pbh = len(pbh_active_list) > 0
 
-            for xx in [x['eids'] for x in pbehavior]:
-                all_eids = all_eids + xx
+            for p_eid in [x['eids'] for x in pbh_active_list]:
+                act_eids = act_eids + p_eid
 
-            has_all_active_pbh = set(eids) == set(all_eids)
+            # as many active entity as all entities and at least one pbehavior
+            has_all_active_pbh = set(eids) == set(act_eids) and len(act_eids) > 0
 
         # has_active and has_all_active are exclude each one anothers
         has_active_pbh = has_active_pbh and not has_all_active_pbh

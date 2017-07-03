@@ -213,7 +213,8 @@ class PBehaviorManager(MiddlewareRegistry):
             id_ = [id_]
 
         cursor = self.pbehavior_storage.get_elements(
-            query={PBehavior.EIDS:{"$in":id_}})
+            query={PBehavior.EIDS: {"$in": id_}}
+        )
 
         return list(cursor)
 
