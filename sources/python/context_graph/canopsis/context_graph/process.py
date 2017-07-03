@@ -234,14 +234,14 @@ def update_context_case1(ids, event):
     LOGGER.debug("Case 1.")
     comp = create_entity(
         ids['comp_id'],
-        ids['comp_id'],
+        event['component'],
         'component',
         depends=[ids['conn_id'], ids['re_id']],
         impact=[])
 
     conn = create_entity(
         ids['conn_id'],
-        ids['conn_id'],
+        event['connector_name'],
         'connector',
         depends=[],
         impact=[ids['re_id'], ids['comp_id']])
@@ -254,7 +254,7 @@ def update_context_case1(ids, event):
 
     re = create_entity(
         ids['re_id'],
-        ids['re_id'],
+        event['resource'],
         'resource',
         depends=[ids['conn_id']],
         impact=[ids['comp_id']])
@@ -264,7 +264,7 @@ def update_context_case1(ids, event):
     return result
 
 
-def update_context_case1_re_none(ids):
+def update_context_case1_re_none(ids, event):
     """Case 1 update entities. No component or connector exist in
     the context and no resource are define in the event.
     :param ids: the tuple of ids.
@@ -274,20 +274,20 @@ def update_context_case1_re_none(ids):
     LOGGER.debug("Case 1 re none.")
     comp = create_entity(
         ids['comp_id'],
-        ids['comp_id'],
+        event['component'],
         'component',
         depends=[ids['conn_id']],
         impact=[])
     conn = create_entity(
         ids['conn_id'],
-        ids['conn_id'],
+        event['connector_name'],
         'connector',
         depends=[],
         impact=[ids['comp_id']])
     return [comp, conn]
 
 
-def update_context_case2(ids, in_db):
+def update_context_case2(ids, in_db, event):
     """Case 2 update entities. A component exist in the context
     but no connector nor resource.
     :param ids: the tuple of ids.
@@ -300,13 +300,13 @@ def update_context_case2(ids, in_db):
 
     comp = create_entity(
         ids['comp_id'],
-        ids['comp_id'],
+        event['component'],
         'component',
         depends=[ids['re_id']],
         impact=[])
     re = create_entity(
         ids['re_id'],
-        ids['re_id'],
+        event['resource'],
         'resource',
         depends=[],
         impact=[ids['comp_id']])
@@ -315,7 +315,7 @@ def update_context_case2(ids, in_db):
     return [comp, re, in_db[0]]
 
 
-def update_context_case2_re_none(ids, in_db):
+def update_context_case2_re_none(ids, in_db, event):
     """Case 2 update entities. A component exist in the context
     but no connector and no resource are in the event.
     :param ids: the tuple of ids.
@@ -327,12 +327,12 @@ def update_context_case2_re_none(ids, in_db):
     LOGGER.debug("Case 2 re none ")
 
     comp = create_entity(
-        ids['comp_id'], ids['comp_id'], 'component', depends=[], impact=[])
+        ids['comp_id'], event['component'], 'component', depends=[], impact=[])
     update_links_conn_comp(in_db[0], comp)
     return [comp, in_db[0]]
 
 
-def update_context_case3(ids, in_db):
+def update_context_case3(ids, in_db, event):
     """Case 3 update entities. A component and connector exist in the context
     but no resource.
     :param ids: the tuple of ids.
@@ -350,13 +350,13 @@ def update_context_case3(ids, in_db):
         elif i['type'] == 'component':
             comp = i
     re = create_entity(
-        ids['re_id'], ids['re_id'], 'resource', depends=[], impact=[])
+        ids['re_id'], event['resource'], 'resource', depends=[], impact=[])
     update_links_res_comp(re, comp)
     update_links_conn_res(conn, re)
     return [comp, re, conn]
 
 
-def update_context_case5(ids, in_db):
+def update_context_case5(ids, in_db, event):
     """Case 5 update entities. A connector exist in the context
     but no component.
     :param ids: the tuple of ids.
@@ -377,13 +377,13 @@ def update_context_case5(ids, in_db):
             component = entity
 
     connector = create_entity(
-        ids["conn_id"], ids["conn_id"], "connector", impact=[], depends=[])
+        ids["conn_id"], event["connector_name"], "connector", impact=[], depends=[])
 
     if ids["re_id"] is not None:
         #res_impact = [component["_id"]]
         #res_depends = [connector["_id"]]
         resource = create_entity(
-            ids["re_id"], ids["re_id"], "resource", impact=[], depends=[])
+            ids["re_id"], event["resource"], "resource", impact=[], depends=[])
         update_links_res_comp(resource, component)
         update_links_conn_res(connector, resource)
         update_links_conn_comp(connector, component)
@@ -394,7 +394,7 @@ def update_context_case5(ids, in_db):
     return [connector, component]
 
 
-def update_context_case6(ids, in_db):
+def update_context_case6(ids, in_db, event):
     """Case 6 update entities. A connector and a resource exist in the context
     but no component.
     :param ids: the tuple of ids.
@@ -414,7 +414,7 @@ def update_context_case6(ids, in_db):
             component = entity
 
     connector = create_entity(
-        ids["conn_id"], ids["conn_id"], "connector", impact=[], depends=[])
+        ids["conn_id"], event["connector_name"], "connector", impact=[], depends=[])
     update_links_conn_comp(connector, component)
 
     if resource is not None:
@@ -450,18 +450,18 @@ def update_context(presence, ids, in_db, event):
 
     elif presence == (False, False, None):
         # Case 1
-        to_update = update_context_case1_re_none(ids)
+        to_update = update_context_case1_re_none(ids, event)
 
     elif presence == (True, False, False):
         # Case 2
-        to_update = update_context_case2(ids, in_db)
+        to_update = update_context_case2(ids, in_db, event)
 
     elif presence == (True, False, None):
-        to_update = update_context_case2_re_none(ids, in_db)
+        to_update = update_context_case2_re_none(ids, in_db, event)
 
     elif presence == (True, True, False):
         # Case 3
-        to_update = update_context_case3(ids, in_db)
+        to_update = update_context_case3(ids, in_db, event)
 
     elif presence == (True, True, True):
         # Case 4
@@ -469,11 +469,11 @@ def update_context(presence, ids, in_db, event):
 
     elif presence == (False, True, False) or presence == (False, True, None):
         # Case 5
-        to_update = update_context_case5(ids, in_db)
+        to_update = update_context_case5(ids, in_db, event)
 
     elif presence == (False, True, True) or presence == (False, True, None):
         # Case 6
-        to_update = update_context_case6(ids, in_db)
+        to_update = update_context_case6(ids, in_db, event)
 
     else:
         LOGGER.warning("No case for the given presence : {0} and ids {1}".

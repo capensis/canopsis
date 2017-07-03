@@ -381,19 +381,19 @@ class Test(TestCase):
         ids = process.gen_ids(event)
 
         expected_conn = process.create_entity(ids["conn_id"],
-                                              ids["conn_id"],
+                                              conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
         expected_comp = process.create_entity(ids["comp_id"],
-                                              ids["comp_id"],
+                                              comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
         expected_re = process.create_entity(ids["re_id"],
-                                            ids["re_id"],
+                                            re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
@@ -415,16 +415,16 @@ class Test(TestCase):
         ids = process.gen_ids(event)
 
         expected_conn = process.create_entity(ids["conn_id"],
-                                              ids["conn_id"],
+                                              conn_name,
                                               "connector",
                                               impact=[ids["comp_id"]])
 
         expected_comp = process.create_entity(ids["comp_id"],
-                                              ids["comp_id"],
+                                              comp_id,
                                               "component",
                                               depends=[ids["conn_id"]])
 
-        res = process.update_context_case1_re_none(ids)
+        res = process.update_context_case1_re_none(ids, event)
         result_conn, result_comp, result_re = prepare_test_update_context(res)
 
         self.assertDictEqual(expected_comp, result_comp)
@@ -436,33 +436,34 @@ class Test(TestCase):
         comp_id = "comp_id"
         re_id = "re_id"
 
+        event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
 
         expected_conn = process.create_entity(ids["conn_id"],
-                                              ids["conn_id"],
+                                              conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
         expected_comp = process.create_entity(ids["comp_id"],
-                                              ids["comp_id"],
+                                              comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
         expected_re = process.create_entity(ids["re_id"],
-                                            ids["re_id"],
+                                            re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
 
         conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
-                                     "{0}/{1}".format(conn_id, conn_name),
+                                     conn_name,
                                      "connector",
                                      impact=[],
                                      depends=[])
 
-        res = process.update_context_case2(ids, [conn])
+        res = process.update_context_case2(ids, [conn], event)
         result_conn, result_comp, result_re = prepare_test_update_context(res)
 
         self.assertDictEqual(expected_conn, result_conn)
@@ -474,27 +475,27 @@ class Test(TestCase):
         conn_name = "conn_name"
         comp_id = "comp_id"
 
+        event = create_event(conn_id, conn_name, comp_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id))
 
         expected_conn = process.create_entity(ids["conn_id"],
-                                              ids["conn_id"],
+                                              conn_name,
                                               "connector",
-                                              impact=sorted([ids["comp_id"],
-                                                             ids["re_id"]]))
+                                              impact=sorted([ids["comp_id"]]))
 
         expected_comp = process.create_entity(ids["comp_id"],
-                                              ids["comp_id"],
+                                              comp_id,
                                               "component",
-                                              depends=sorted([ids["conn_id"],
-                                                              ids["re_id"]]))
+                                              depends=sorted([ids["conn_id"]]))
 
         conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
-                                     "{0}/{1}".format(conn_id, conn_name),
+                                     conn_name,
                                      "connector",
                                      impact=[],
                                      depends=[])
 
-        res = process.update_context_case2(ids, [conn])
+
+        res = process.update_context_case2_re_none(ids, [conn], event)
         result_conn, result_comp, result_re = prepare_test_update_context(res)
 
         self.assertDictEqual(expected_conn, result_conn)
@@ -506,28 +507,29 @@ class Test(TestCase):
         comp_id = "comp_id"
         re_id = "re_id"
 
+        event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
 
         expected_conn = process.create_entity(ids["conn_id"],
-                                              ids["conn_id"],
+                                              conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
         expected_comp = process.create_entity(ids["comp_id"],
-                                              ids["comp_id"],
+                                              comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
         expected_re = process.create_entity(ids["re_id"],
-                                            ids["re_id"],
+                                            re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
 
         conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
-                                     "{0}/{1}".format(conn_id, conn_name),
+                                     conn_name,
                                      "connector",
                                      impact=[comp_id],
                                      depends=[])
@@ -539,7 +541,7 @@ class Test(TestCase):
                                      depends=["{0}/{1}".format(conn_id,
                                                                conn_name)])
 
-        res = process.update_context_case3(ids, [conn, comp])
+        res = process.update_context_case3(ids, [conn, comp], event)
         result_conn, result_comp, result_re = prepare_test_update_context(res)
 
         self.assertDictEqual(expected_conn, result_conn)
@@ -577,8 +579,11 @@ class Test(TestCase):
             'type': 'component',
             'impact': [],
             'depends': []}]
-        res_1 = process.update_context_case6(ids1, in_db_1)
-        res_2 = process.update_context_case6(ids2, in_db_2)
+
+        event = create_event("conn_1", "conn_1", "comp_1")
+
+        res_1 = process.update_context_case6(ids1, in_db_1, event)
+        res_2 = process.update_context_case6(ids2, in_db_2, event)
 
         comp_res_1 = None
         conn_res_1 = None
@@ -672,25 +677,26 @@ class Test(TestCase):
         comp_id = "comp_id"
         re_id = "re_id"
 
+        event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
 
 
 
         expected_conn = process.create_entity(ids["conn_id"],
-                                              ids["conn_id"],
+                                              conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
         expected_comp = process.create_entity(ids["comp_id"],
-                                              ids["comp_id"],
+                                              comp_id,
                                               "component",
                                               impact=[],
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
         expected_re = process.create_entity(ids["re_id"],
-                                            ids["re_id"],
+                                            re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
@@ -701,7 +707,7 @@ class Test(TestCase):
                                      impact=[],
                                      depends=[])
 
-        res = process.update_context_case5(ids, [comp])
+        res = process.update_context_case5(ids, [comp], event)
         result_conn, result_comp, result_re = prepare_test_update_context(res)
 
         self.assertDictEqual(expected_conn, result_conn)
@@ -714,14 +720,15 @@ class Test(TestCase):
         comp_id = "comp_id"
 
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id))
+        event = create_event(conn_id, conn_name, comp_id)
 
         expected_conn = process.create_entity(ids["conn_id"],
-                                              ids["conn_id"],
+                                              conn_name,
                                               "connector",
                                               impact=[ids["comp_id"]])
 
         expected_comp = process.create_entity(ids["comp_id"],
-                                              ids["comp_id"],
+                                              comp_id,
                                               "component",
                                               impact=[],
                                               depends=[ids["conn_id"]])
@@ -732,7 +739,7 @@ class Test(TestCase):
                                      impact=[],
                                      depends=[])
 
-        res = process.update_context_case5(ids, [comp])
+        res = process.update_context_case5(ids, [comp], event)
         result_conn, result_comp, result_re = prepare_test_update_context(res)
 
         self.assertDictEqual(expected_conn, result_conn)
@@ -755,21 +762,21 @@ class Test(TestCase):
                  "enable_history":[int(time.time())]}
 
         expected_conn = process.create_entity(ids["conn_id"],
-                                              ids["conn_id"],
+                                              conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]),
                                               infos=infos.copy())
 
         expected_comp = process.create_entity(ids["comp_id"],
-                                              ids["comp_id"],
+                                              comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]),
                                               infos=infos.copy())
 
         expected_re = process.create_entity(ids["re_id"],
-                                            ids["re_id"],
+                                            re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]],
