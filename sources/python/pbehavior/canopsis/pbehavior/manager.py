@@ -448,3 +448,17 @@ class PBehaviorManager(MiddlewareRegistry):
         ack = True if "ok" in response and response["ok"] == 1 else False
         return {"acknowledged": ack,
                 "deletedCount": response["n"]}
+
+    def get_active_pbheviors(self, eids):
+        """
+        Return a list of active pbehaviors linked to some entites.
+        
+        :param list eids: the desired entities id
+        :return: list of pbehaviors
+        """
+        result = []
+        for eid in eids:
+            pbhs = self.get_pbehaviors(eid)
+            result = result + [x for x in pbhs if self._check_pbehavior(eid, [x['name']])]
+
+        return result

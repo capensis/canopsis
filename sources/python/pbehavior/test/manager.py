@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 from calendar import timegm
 from copy import deepcopy
 from datetime import datetime, timedelta
@@ -287,6 +289,30 @@ class TestManager(BaseTest):
             self.entity_id_1, [pb_name1]
         )
         self.assertFalse(result)
+    
+    def test_get_active_pbheviors(self):
+        now = datetime.utcnow()
+        pbehavior_1 = deepcopy(self.pbehavior)
+        pbehavior_2 = deepcopy(self.pbehavior)
+        pbehavior_1.update({'eids': [self.entity_id_1],
+                            'name': 'pb1',
+                            'tstart': timegm(now.timetuple()),
+                            'tstop': timegm((now + timedelta(days=2)).timetuple()),
+                            'rrule': None
+                            })
+        pbehavior_2.update({'eids': [self.entity_id_3],
+                            'name': 'pb2',
+                            'tstart': timegm(now.timetuple())})
+
+        self.pbm.pbehavior_storage.put_elements(
+            elements=(pbehavior_1, pbehavior_2)
+        )
+
+        self.pbm.context._put_entities(self.entities)
+
+        tab = self.pbm.get_active_pbheviors([self.entity_id_1, self.entity_id_2])
+        names = [x['name'] for x in tab]
+        self.assertEqual(names, ['pb1'])
 
 if __name__ == '__main__':
     main()
