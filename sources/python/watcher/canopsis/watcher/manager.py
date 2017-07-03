@@ -11,7 +11,7 @@ from canopsis.check import Check
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
 from canopsis.old.rabbitmq import Amqp
-from canopsis.pbhavior.manager import PBehavioManager
+from canopsis.pbehavior.manager import PBehavioManager
 from canopsis.sla.core import Sla
 
 import json
@@ -41,7 +41,7 @@ class Watcher(MiddlewareRegistry):
             'storage-default-sla://')
 
         self.context_graph = ContextGraph()
-        self.pbhavior_manager = PBehavioManager()
+        self.pbehavior_manager = PBehavioManager()
 
     def get_watcher(self, watcher_id):
         """Retreive from database the watcher specified by is watcher id.
@@ -194,7 +194,7 @@ class Watcher(MiddlewareRegistry):
         states = []
         for alarm in alarm_list:
             if alarm['v']['resolved'] is None and alarm['d'] in entities:
-                if not self.pbhavior_manager.get_active_pbehaviors([alarm['d']]):
+                if not self.pbehavior_manager.get_active_pbehaviors([alarm['d']]):
                     states.append(alarm['v']['state']['val'])
         if not states:
             for alarm in alarm_list:
