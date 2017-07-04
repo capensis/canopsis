@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- co ding: utf-8 -*-
 from __future__ import unicode_literals
 
 from canopsis.middleware.registry import MiddlewareRegistry
@@ -173,6 +173,11 @@ class Watcher(MiddlewareRegistry):
             if alarm_id in i['depends']:
                 self.calcul_state(i['_id'])
 
+    def compute_watchers(self):
+        watchers = list(self[Watcher.WATCHER_STORAGE].get_elements(query={}))
+        for watcher in watchers:
+            self.calcul_state(watcher['_id'])
+
     def calcul_state(self, watcher_id):
         """
         Send an event watcher with the new state of the watcher.
@@ -194,7 +199,7 @@ class Watcher(MiddlewareRegistry):
         states = []
         for alarm in alarm_list:
             if alarm['v']['resolved'] is None and alarm['d'] in entities:
-                if len(self.pbhavior_manager.get_active_pbehaviors([alarm['d']])) == 0:
+                if len(self.pbehavior_manager.get_active_pbehaviors([alarm['d']])) == 0:
                     states.append(alarm['v']['state']['val'])
         if states == []:
             for alarm in alarm_list:
