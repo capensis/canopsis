@@ -227,6 +227,7 @@ class Alerts(MiddlewareRegistry):
         value = self[Alerts.CONFIG_STORAGE].get_elements(
             query={'crecord_type': 'statusmanagement'}
         )
+
         return {} if not value else value[0]
 
     def get_alarms(
@@ -257,7 +258,7 @@ class Alerts(MiddlewareRegistry):
                         returns alarms even if they are snoozed.
         :type snoozed: bool
 
-        :returns: Iterable of alarms matching
+        :returns: Iterable of alarms matching: {alarm_id: [alarm_dict]}
         """
 
         query = {}
@@ -315,7 +316,25 @@ class Alerts(MiddlewareRegistry):
             entity['entity_id'] = entity_id
             for alarm in alarms:
                 alarm['entity'] = entity
+
         return alarms_by_entity
+
+    def get_alarm_with_eid(self, eid, resolved=False):
+        """
+        Get alarms from an eid.
+
+        :param eid: The desired entity_id
+        :type eid: str
+        :param resolved: Only see resolved, or unresolved alarms
+        :type resolved: bool
+        """
+        query = {'d': eid}
+        if resolved:
+            query['resolved'] = {'$ne': None}
+        else:
+            query['resolved'] = None
+
+        return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
 
     def get_current_alarm(self, alarm_id):
         """
@@ -527,6 +546,19 @@ class Alerts(MiddlewareRegistry):
                      author=None, new_state=None, diff_counter=None):
         """
         Find and execute a task.
+
+        :param name: Name of the task to execute
+        :type name: str
+        :param event: Event to archive
+        :type event: dict
+        :param entity_id: Id of the alarm
+        :type entity_id: str
+        :param author: If needed, the author of the event
+        :type author: str
+        :param new_state: If needed, the new state in the event
+        :type new_state: int
+        :param diff_counter: For crop events, the new value of the counter
+        :type diff_counter: int
         """
         # Find the corresponding task
         try:
@@ -884,6 +916,57 @@ class Alerts(MiddlewareRegistry):
                         alarm[AlarmField.resolved.value] = t
                         self.update_current_alarm(docalarm, alarm)
 
+    def resolve_cancels(self):
+        """
+        Loop over all canceled alarms, and resolve the ones that are in this
+        status for too long.
+        """
+
+        storage = self[Alerts.ALARM_STORAGE]
+        result = self.get_alarms(resolved=False)
+
+        now = int(time())
+
+        for data_id in result:
+            for docalarm in result[data_id]:
+                docalarm[storage.DATA_ID] = data_id
+                alarm = docalarm.get(storage.VALUE)
+
+                if alarm[AlarmField.canceled.value] is not None:
+                    canceled_ts = alarm[AlarmField.canceled.value]['t']
+
+                    if (now - canceled_ts) >= self.cancel_autosolve_delay:
+                        alarm[AlarmField.resolved.value] = canceled_ts
+                        self.update_current_alarm(docalarm, alarm)
+
+    def resolve_snoozes(self):
+        """
+        Loop over all snoozed alarms, and restore them if needed.
+        """
+
+        now = int(time())
+        storage = self[Alerts.ALARM_STORAGE]
+        result = self.get_alarms(resolved=False, snoozed=True)
+
+        for data_id in result:
+            for docalarm in result[data_id]:
+                docalarm[storage.DATA_ID] = data_id
+                alarm = docalarm.get(storage.VALUE)
+
+                # if the alarm is snoozed...
+                if alarm is None or \
+                   AlarmField.snooze.value not in alarm or \
+                   not isinstance(alarm[AlarmField.snooze.value], dict):
+                    continue
+
+                # ... and snooze is over ...
+                if now > alarm[AlarmField.snooze.value]['val']:
+                    # ... remove the 'snooze' key in alarm
+                    alarm[AlarmField.snooze.value] = None
+                    self.logger.info('Clear snooze value on alarm {}'
+                                     .format(data_id))
+                    self.update_current_alarm(docalarm, alarm)
+
     def resolve_stealthy(self):
         """
         Loop over all stealthy alarms, and check if it can be return to off
@@ -920,40 +1003,6 @@ class Alerts(MiddlewareRegistry):
                     event
                 )
                 self.update_current_alarm(docalarm, alarm_new['value'])
-
-    def resolve_cancels(self):
-        """
-        Loop over all canceled alarms, and resolve the ones that are in this
-        status for too long.
-        """
-
-        storage = self[Alerts.ALARM_STORAGE]
-        result = self.get_alarms(resolved=False)
-
-        now = int(time())
-
-        for data_id in result:
-            for docalarm in result[data_id]:
-                docalarm[storage.DATA_ID] = data_id
-                alarm = docalarm.get(storage.VALUE)
-
-                if alarm[AlarmField.canceled.value] is not None:
-                    canceled_ts = alarm[AlarmField.canceled.value]['t']
-
-                    if (now - canceled_ts) >= self.cancel_autosolve_delay:
-                        alarm[AlarmField.resolved.value] = canceled_ts
-                        self.update_current_alarm(docalarm, alarm)
-
-    def get_alarm_with_eid(self, eid, resolved=False):
-        """
-            get alarms on eids
-        """
-        query = {'d':eid}
-        if resolved:
-            query['resolved'] = {'$ne': None}
-        else:
-            query['resolved'] = None
-        return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
 
     def check_alarm_filters(self):
         """
