@@ -109,6 +109,7 @@ def is_flapping(manager, alarm):
     :type alarm: dict
 
     :returns: ``True`` if alarm is flapping, ``False`` otherwise
+    :rtype: bool
     """
 
     statestep = None
@@ -148,6 +149,7 @@ def is_keeped_state(alarm):
     :type alarm: dict
 
     :returns: ``True`` if alarm state is forced, ``False`` otherwise
+    :rtype: bool
     """
     state = alarm[AlarmField.state.value]
 
@@ -165,6 +167,7 @@ def is_stealthy(manager, alarm):
     :type alarm: dict
 
     :returns: ``True`` if alarm is supposed to be stealthy, ``False`` otherwise
+    :rtype: bool
     """
 
     ts = alarm[AlarmField.state.value]['t']
@@ -196,6 +199,7 @@ def compute_status(manager, alarm):
     :type alarm: dict
 
     :returns: Alarm status as int
+    :rtype: int
     """
 
     if alarm[AlarmField.canceled.value] is not None:

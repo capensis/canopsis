@@ -527,6 +527,19 @@ class Alerts(MiddlewareRegistry):
                      author=None, new_state=None, diff_counter=None):
         """
         Find and execute a task.
+
+        :param name: Name of the task to execute
+        :type name: str
+        :param event: Event to archive
+        :type event: dict
+        :param entity_id: Id of the alarm
+        :type entity_id: str
+        :param author: If needed, the author of the event
+        :type author: str
+        :param new_state: If needed, the new state in the event
+        :type new_state: int
+        :param diff_counter: For crop events, the new value of the counter
+        :type diff_counter: int
         """
         # Find the corresponding task
         try:
@@ -946,13 +959,19 @@ class Alerts(MiddlewareRegistry):
 
     def get_alarm_with_eid(self, eid, resolved=False):
         """
-            get alarms on eids
+        Get alarms from an eid.
+
+        :param eid: The desired entity_id
+        :type eid: str
+        :param resolved: Only see resolved, or unresolved alarms
+        :type resolved: bool
         """
-        query = {'d':eid}
+        query = {'d': eid}
         if resolved:
             query['resolved'] = {'$ne': None}
         else:
             query['resolved'] = None
+
         return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
 
     def check_alarm_filters(self):
