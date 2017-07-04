@@ -258,7 +258,7 @@ class Alerts(MiddlewareRegistry):
                         returns alarms even if they are snoozed.
         :type snoozed: bool
 
-        :returns: Iterable of alarms matching
+        :returns: Iterable of alarms matching: {alarm_id: [alarm_dict]}
         """
 
         query = {}
@@ -316,6 +316,7 @@ class Alerts(MiddlewareRegistry):
             entity['entity_id'] = entity_id
             for alarm in alarms:
                 alarm['entity'] = entity
+
         return alarms_by_entity
 
     def get_alarm_with_eid(self, eid, resolved=False):
@@ -937,6 +938,34 @@ class Alerts(MiddlewareRegistry):
                     if (now - canceled_ts) >= self.cancel_autosolve_delay:
                         alarm[AlarmField.resolved.value] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
+
+    def resolve_snoozes(self):
+        """
+        Loop over all snoozed alarms, and restore them if needed.
+        """
+
+        now = int(time())
+        storage = self[Alerts.ALARM_STORAGE]
+        result = self.get_alarms(resolved=False, snoozed=True)
+
+        for data_id in result:
+            for docalarm in result[data_id]:
+                docalarm[storage.DATA_ID] = data_id
+                alarm = docalarm.get(storage.VALUE)
+
+                # if the alarm is snoozed...
+                if alarm is None or \
+                   AlarmField.snooze.value not in alarm or \
+                   not isinstance(alarm[AlarmField.snooze.value], dict):
+                    continue
+
+                # ... and snooze is over ...
+                if now > alarm[AlarmField.snooze.value]['val']:
+                    # ... remove the 'snooze' key in alarm
+                    alarm[AlarmField.snooze.value] = None
+                    self.logger.info('Clear snooze value on alarm {}'
+                                     .format(data_id))
+                    self.update_current_alarm(docalarm, alarm)
 
     def resolve_stealthy(self):
         """

@@ -30,6 +30,7 @@ from canopsis.alerts import AlarmField, States
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import OFF, STEALTHY, is_keeped_state
+from canopsis.alerts.tasks import snooze
 from canopsis.check import Check
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
@@ -227,6 +228,37 @@ class TestManager(BaseTest):
 
         self.assertEqual(value[AlarmField.resolved.value],
                          value[AlarmField.status.value]['t'])
+
+    def test_resolve_snoozes(self):
+        storage = self.manager[Alerts.ALARM_STORAGE]
+
+        event = {
+            'connector': 'ut-connector',
+            'connector_name': 'ut-connector0',
+            'component': 'c',
+            'duration': 0,
+            'timestamp': 0
+        }
+        alarm_id = '/fake/alarm/id'
+        alarm = self.manager.make_alarm(alarm_id, event)
+        self.assertIsNotNone(alarm)
+        alarm[AlarmField.steps.value] = []
+
+        # Execute a snooze on this alarm !!!
+        value = snooze(self.manager, alarm, 'author', 'message', event)
+        self.manager.update_current_alarm(alarm, value)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+        self.assertIsNotNone(alarm)
+        value = alarm[storage.VALUE]
+        self.assertIsNotNone(value[AlarmField.snooze.value])
+
+        self.manager.resolve_snoozes()
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+        self.assertIsNotNone(alarm)
+        value = alarm[storage.VALUE]
+        self.assertIsNone(value[AlarmField.snooze.value])
 
     def test_resolve_stealthy(self):
         storage = self.manager[Alerts.ALARM_STORAGE]
