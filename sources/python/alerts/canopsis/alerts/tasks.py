@@ -411,6 +411,6 @@ def pbehaviors(manager, alarm):
 
     entity_id = alarm['d']
 
-    alarm[AlarmField.pbehaviors.value] = manager.pbm.get_behaviors(entity_id)
+    alarm['pbehaviors'] = manager.pbm.get_pbehaviors(entity_id)
 
     return alarm

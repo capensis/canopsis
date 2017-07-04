@@ -25,9 +25,7 @@ from canopsis.common.utils import lookup
 from canopsis.common.utils import singleton_per_scope
 
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.context_graph.manager import ContextGraph
-
-from canopsis.downtime.process import DOWNTIME  #TODO: in configuration please
+from canopsis.context.manager import Context
 
 from json import loads
 from logging import getLogger
@@ -222,27 +220,6 @@ class Selector(Record):
             includes=self.include_ids,
             excludes=self.exclude_ids,
         )
-
-        query = PBehaviorManager.get_query(behaviors='downtime')
-
-        entityids = self.pbehavior.whois(query=query)
-
-        entities = self.context.get_entities(list(entityids))
-
-        if entities:
-            downtime = {
-                '$or': [
-                    {DOWNTIME: False},
-                    {DOWNTIME: {'$exists': False}}
-                ]
-            }
-
-            if '$and' not in cfilter:
-                cfilter = {'$and': [cfilter]}
-
-            cfilter['$and'].append(downtime)
-
-        self.logger.debug(u'Generated cfilter is')
 
         return cfilter
 

@@ -104,7 +104,7 @@ function create_slinks() {
     create_python_slink stats 0.1
     create_python_slink migration 0.1
     create_python_slink influxdb 0.1
-    create_python_slink selector 0.1
+    create_python_slink watcher 0.1
 
 
 

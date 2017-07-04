@@ -175,3 +175,4 @@ class engine(Engine):
         publish(publisher=self.amqp, event=selector_event, rk=rk)
 
         self.logger.debug(u'Event sent')
+

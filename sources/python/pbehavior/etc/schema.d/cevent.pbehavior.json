@@ -1,0 +1,55 @@
+{
+    "type": "object",
+    "properties": {
+        "event_type": {
+            "enum": [
+                "pbehavior"
+            ],
+            "required": true
+        },
+        "pbehavior_name": {
+            "required": true,
+            "type": "string"
+        },
+        "start": {
+            "required": true,
+            "type": "string"
+        },
+        "end": {
+            "required": true,
+            "type": "string"
+        },
+        "author": {
+            "required": true,
+            "type": "string"
+        },
+        "comments": {
+            "required": true,
+            "type": "array",
+			"item": {
+				"type": "object",
+				"properties": {
+					"author": {
+						"type": "string",
+						"required": true
+					},
+					"message": {
+						"type": "string",
+						"required": true
+					}
+				}
+			}
+        },
+        "rrule": {
+            "required": true,
+            "type": "string"
+        },
+        "action": {
+            "enum": [
+                "create",
+                "delete"
+            ],
+            "required": true
+        }
+    }
+}

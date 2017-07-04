@@ -10,17 +10,23 @@
       "enabled":{
         "type": "boolean"
       },
-      "enabled_history":{
+      "enable_history":{
          "type":"array",
          "items":{
             "type":"number"
          }
       },
-      "disabled_history":{
+      "disable_history":{
          "type":"array",
          "items":{
             "type":"number"
          }
+      },
+      "state":{
+        "type": "number"
+      },
+      "mfilter":{
+        "type": "string"
       }
    }
 }

@@ -8,7 +8,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
-from canopsis.selector.links import build_all_links
+from canopsis.watcher.links import build_all_links
 
 import time
 import jsonschema
@@ -177,7 +177,7 @@ class ContextGraph(MiddlewareRegistry):
         elif source_type == cls.CONNECTOR:
             id_ = "{0}/{1}".format(event["connector"], event["connector_name"])
         else:
-            error_desc = ("Event type should be 'connector', 'resource' or"
+            error_desc = ("Event type should be 'connector', 'resource' or "
                           "'component' not {}.".format(source_type))
             raise ValueError(error_desc)
 
@@ -261,7 +261,8 @@ class ContextGraph(MiddlewareRegistry):
         Store entities into database. Do no use this function unless you know
         exactly what you are doing. This function does not update the
         impact and depends links between entities. If you want these feature,
-        use create_entity.
+        use create_entity. Nor add/update the the enable, enable_history or
+        disable_history.
 
         :param entities: the entities to store in database
         """
@@ -304,25 +305,31 @@ class ContextGraph(MiddlewareRegistry):
         return ret_val
 
     @classmethod
-    def _enable_entity(cls, entity):
+    def _enable_entity(cls, entity, timestamp=None):
         """Enable an entity. If the given entity does not have an infos.enabled
         field create it with a the enable status then create an
         infos.enable_history field with the current timestamp.
 
         :param entity: an entity
         :type entity: a dict
+        :param int timestamp: a timestamp. If None, the current timestamp will
+        be use.
         """
+
+        if timestamp is None:
+            timestamp = int(time.time())
+
         if "enabled" not in entity["infos"]:
             entity["infos"]["enabled"] = True
 
             if "enable_history" not in entity["infos"]:
-                entity["infos"]["enable_history"] = [int(time.time())]
+                entity["infos"]["enable_history"] = [timestamp]
             else:
                 infos = entity["infos"]
                 if not isinstance(entity["infos"]["enable_history"], list):
                     infos["enable_history"] = [infos["enable_history"]]
 
-                infos["enable_history"].append(int(time.time()))
+                infos["enable_history"].append(timestamp)
 
     def create_entity(self, entity):
         """Create an entity in the context with the given entity. This will
@@ -355,7 +362,7 @@ class ContextGraph(MiddlewareRegistry):
             query={'_id': entity["_id"]}))
 
         if len(entities) > 0:
-            desc = "An entity  id {0} already exist".format(entities[0]["_id"])
+            desc = "An entity id {0} already exist".format(entities[0]["_id"])
             raise ValueError(desc)
 
         # update depends/impact links
@@ -376,7 +383,7 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # rebuild selectors links
-        if entity['type'] != 'selector':
+        if entity['type'] != 'watcher':
             build_all_links(self)
 
     def __update_dependancies(self, id_, status, dependancy_type):
@@ -500,7 +507,7 @@ class ContextGraph(MiddlewareRegistry):
         self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # rebuild selectors links
-        if entity['type'] != 'selector':
+        if entity['type'] != 'watcher':
             build_all_links(self)
 
     def delete_entity(self, id_):

@@ -13,6 +13,19 @@ import os
 import time
 from jsonschema.exceptions import ValidationError
 
+class Keys:
+
+    ID = "_id"
+    TYPE = "type"
+    NAME = "name"
+    DEPENDS = "depends"
+    IMPACT = "impact"
+    MEASUREMENTS = "measurements"
+    INFOS = "infos"
+    DISABLE_HISTORY = "disable_history"
+    ENABLE_HISTORY = "enable_history"
+    ENABLED = "enabled"
+
 
 class BaseTest(TestCase):
 
@@ -35,13 +48,13 @@ class BaseTest(TestCase):
 
         self.uuid = "test"
 
-        self.template_ent = {'_id': None,
-                             'type': 'connector',
-                             'name': 'conn-name1',
-                             'depends': [],
-                             'impact': [],
-                             'measurements': [],
-                             'infos': {}}
+        self.template_ent = {Keys.ID: None,
+                             Keys.TYPE: 'connector',
+                             Keys.NAME: 'conn-name1',
+                             Keys.DEPENDS: [],
+                             Keys.IMPACT: [],
+                             Keys.MEASUREMENTS: [],
+                             Keys.INFOS: {}}
         self.template_ci = {ContextGraphImport.K_ID: "id",
                             ContextGraphImport.K_NAME: "Name",
                             ContextGraphImport.K_TYPE: "resource",
@@ -68,10 +81,10 @@ class BaseTest(TestCase):
             pass
 
     def assertEqualEntities(self, entity1, entity2):
-        sorted(entity1["depends"])
-        sorted(entity1["impact"])
-        sorted(entity2["depends"])
-        sorted(entity2["impact"])
+        sorted(entity1[Keys.DEPENDS])
+        sorted(entity1[Keys.IMPACT])
+        sorted(entity2[Keys.DEPENDS])
+        sorted(entity2[Keys.IMPACT])
         self.assertDictEqual(entity1, entity2)
 
     @classmethod
@@ -102,9 +115,9 @@ class GetEntitiesToUpdate(BaseTest):
                     "ent2": self.template_ent.copy(),
                     "ent3": self.template_ent.copy()}
 
-        entities["ent1"]["_id"] = "ent1"
-        entities["ent2"]["_id"] = "ent2"
-        entities["ent3"]["_id"] = "ent3"
+        entities["ent1"][Keys.ID] = "ent1"
+        entities["ent2"][Keys.ID] = "ent2"
+        entities["ent3"][Keys.ID] = "ent3"
 
         self.entities_storage.put_elements(entities.values())
 
@@ -146,9 +159,9 @@ class GetEntitiesToUpdate(BaseTest):
                     "ent2": self.template_ent.copy(),
                     "ent3": self.template_ent.copy()}
 
-        entities["ent1"]["_id"] = "ent1"
-        entities["ent2"]["_id"] = "ent2"
-        entities["ent3"]["_id"] = "ent3"
+        entities["ent1"][Keys.ID] = "ent1"
+        entities["ent2"][Keys.ID] = "ent2"
+        entities["ent3"][Keys.ID] = "ent3"
 
         self.ctx_import._put_entities(entities.values())
 
@@ -178,14 +191,14 @@ class GetEntitiesToUpdate(BaseTest):
                     "ent5": self.template_ent.copy(),
                     "ent6": self.template_ent.copy()}
 
-        entities["ent1"]["_id"] = "ent1"
-        entities["ent2"]["_id"] = "ent2"
-        entities["ent3"]["_id"] = "ent3"
-        entities["ent3"]["depends"] = ["ent4"]
-        entities["ent3"]["impact"] = ["ent5", "ent6"]
-        entities["ent4"]["_id"] = "ent4"
-        entities["ent5"]["_id"] = "ent5"
-        entities["ent6"]["_id"] = "ent6"
+        entities["ent1"][Keys.ID] = "ent1"
+        entities["ent2"][Keys.ID] = "ent2"
+        entities["ent3"][Keys.ID] = "ent3"
+        entities["ent3"][Keys.DEPENDS] = ["ent4"]
+        entities["ent3"][Keys.IMPACT] = ["ent5", "ent6"]
+        entities["ent4"][Keys.ID] = "ent4"
+        entities["ent5"][Keys.ID] = "ent5"
+        entities["ent6"][Keys.ID] = "ent6"
 
         self.ctx_import._put_entities(entities.values())
 
@@ -239,10 +252,10 @@ class AUpdateEntity(BaseTest):
         ci = self.template_ci.copy()
         expected = self.template_ent.copy()
 
-        expected["_id"] = ci[ContextGraphImport.K_ID] = "ent1"
-        expected["name"] = ci[ContextGraphImport.K_NAME] = "other_name"
-        expected["type"] = ci[ContextGraphImport.K_TYPE] = "other_type"
-        expected["infos"] = ci[ContextGraphImport.K_INFOS] = {"infos": "infos"}
+        expected[Keys.ID] = ci[ContextGraphImport.K_ID] = "ent1"
+        expected[Keys.NAME] = ci[ContextGraphImport.K_NAME] = "other_name"
+        expected[Keys.TYPE] = ci[ContextGraphImport.K_TYPE] = "other_type"
+        expected[Keys.INFOS] = ci[ContextGraphImport.K_INFOS] = {"infos": "infos"}
 
         self.ctx_import._ContextGraphImport__a_update_entity(ci)
 
@@ -269,10 +282,10 @@ class ACreateEntity(BaseTest):
         ci = self.template_ci.copy()
         expected = self.template_ent.copy()
 
-        expected["_id"] = ci[ContextGraphImport.K_ID] = "ent1"
-        expected["name"] = ci[ContextGraphImport.K_NAME] = "other_name"
-        expected["type"] = ci[ContextGraphImport.K_TYPE] = "other_type"
-        expected["infos"] = ci[ContextGraphImport.K_INFOS] = {"infos": "infos"}
+        expected[Keys.ID] = ci[ContextGraphImport.K_ID] = "ent1"
+        expected[Keys.NAME] = ci[ContextGraphImport.K_NAME] = "other_name"
+        expected[Keys.TYPE] = ci[ContextGraphImport.K_TYPE] = "other_type"
+        expected[Keys.INFOS] = ci[ContextGraphImport.K_INFOS] = {"infos": "infos"}
 
         expected[ContextGraphImport.K_DEPENDS] = set(
             expected[ContextGraphImport.K_DEPENDS])
@@ -309,20 +322,21 @@ class ADisableEntity(BaseTest):
         entities = {id1: self.template_ent.copy(),
                     id2: self.template_ent.copy(), }
 
-        entities[id1]["_id"] = id1
-        entities[id1]["type"] = "resource"
-        entities[id1]["name"] = "entity_1"
-        entities[id1]["depends"] = set(["1"])
-        entities[id1]["impact"] = set(["2"])
-        entities[id1]["measurements"] = ["m1"]
-        entities[id1]["infos"] = {}
+        entities[id1][Keys.ID] = id1
+        entities[id1][Keys.TYPE] = "resource"
+        entities[id1][Keys.NAME] = "entity_1"
+        entities[id1][Keys.DEPENDS] = set(["1"])
+        entities[id1][Keys.IMPACT] = set(["2"])
+        entities[id1][Keys.MEASUREMENTS] = ["m1"]
+        entities[id1][Keys.INFOS] = {}
 
         self.ctx_import.entities_to_update = entities
 
         self.ctx_import._ContextGraphImport__a_disable_entity(ci)
 
         expected = entities[id1].copy()
-        expected["infos"] = {ContextGraphImport.K_DISABLE: [timestamp]}
+        expected[Keys.INFOS] = {Keys.DISABLE_HISTORY: [timestamp],
+                                Keys.ENABLED: False}
 
         self.assertEqualEntities(self.ctx_import.update[id1], expected)
 
@@ -342,13 +356,14 @@ class ADisableEntity(BaseTest):
         entities = {id1: self.template_ent.copy(),
                     id2: self.template_ent.copy(), }
 
-        entities[id1]["_id"] = id1
-        entities[id1]["type"] = "resource"
-        entities[id1]["name"] = "entity_1"
-        entities[id1]["depends"] = set(["1"])
-        entities[id1]["impact"] = set(["2"])
-        entities[id1]["measurements"] = ["m1"]
-        entities[id1]["infos"] = {"disable": [12345]}
+        entities[id1][Keys.ID] = id1
+        entities[id1][Keys.TYPE] = "resource"
+        entities[id1][Keys.NAME] = "entity_1"
+        entities[id1][Keys.DEPENDS] = set(["1"])
+        entities[id1][Keys.IMPACT] = set(["2"])
+        entities[id1][Keys.MEASUREMENTS] = ["m1"]
+        entities[id1][Keys.INFOS] = {Keys.DISABLE_HISTORY: [12345],
+                                Keys.ENABLED: False}
 
         self.ctx_import.entities_to_update = entities
 
@@ -356,10 +371,11 @@ class ADisableEntity(BaseTest):
 
         expected = entities[id1].copy()
         timestamp += [12345]
-        expected["infos"] = {ContextGraphImport.K_DISABLE: sorted(timestamp)}
+        expected[Keys.INFOS] = {Keys.DISABLE_HISTORY: sorted(timestamp),
+                                Keys.ENABLED: False}
 
         result = self.ctx_import.update[id1]
-        result["infos"]["disable"] = sorted(result["infos"]["disable"])
+        result[Keys.INFOS][Keys.DISABLE_HISTORY] = sorted(result[Keys.INFOS][Keys.DISABLE_HISTORY])
 
         self.assertEqualEntities(result, expected)
 
@@ -391,20 +407,21 @@ class AEnableEntity(BaseTest):
         entities = {id1: self.template_ent.copy(),
                     id2: self.template_ent.copy(), }
 
-        entities[id1]["_id"] = id1
-        entities[id1]["type"] = "resource"
-        entities[id1]["name"] = "entity_1"
-        entities[id1]["depends"] = set(["1"])
-        entities[id1]["impact"] = set(["2"])
-        entities[id1]["measurements"] = ["m1"]
-        entities[id1]["infos"] = {}
+        entities[id1][Keys.ID] = id1
+        entities[id1][Keys.TYPE] = "resource"
+        entities[id1][Keys.NAME] = "entity_1"
+        entities[id1][Keys.DEPENDS] = set(["1"])
+        entities[id1][Keys.IMPACT] = set(["2"])
+        entities[id1][Keys.MEASUREMENTS] = ["m1"]
+        entities[id1][Keys.INFOS] = {}
 
         self.ctx_import.entities_to_update = entities
 
         self.ctx_import._ContextGraphImport__a_enable_entity(ci)
 
         expected = entities[id1].copy()
-        expected["infos"] = {ContextGraphImport.K_ENABLE: [timestamp]}
+        expected[Keys.INFOS] = {Keys.ENABLE_HISTORY: [timestamp],
+                                Keys.ENABLED: True}
 
         self.assertEqualEntities(self.ctx_import.update[id1], expected)
 
@@ -424,13 +441,13 @@ class AEnableEntity(BaseTest):
         entities = {id1: self.template_ent.copy(),
                     id2: self.template_ent.copy(), }
 
-        entities[id1]["_id"] = id1
-        entities[id1]["type"] = "resource"
-        entities[id1]["name"] = "entity_1"
-        entities[id1]["depends"] = set(["1"])
-        entities[id1]["impact"] = set(["2"])
-        entities[id1]["measurements"] = ["m1"]
-        entities[id1]["infos"] = {"enable": [12345]}
+        entities[id1][Keys.ID] = id1
+        entities[id1][Keys.TYPE] = "resource"
+        entities[id1][Keys.NAME] = "entity_1"
+        entities[id1][Keys.DEPENDS] = set(["1"])
+        entities[id1][Keys.IMPACT] = set(["2"])
+        entities[id1][Keys.MEASUREMENTS] = ["m1"]
+        entities[id1][Keys.INFOS] = {Keys.ENABLE_HISTORY: [12345]}
 
         self.ctx_import.entities_to_update = entities
 
@@ -438,10 +455,11 @@ class AEnableEntity(BaseTest):
 
         expected = entities[id1].copy()
         timestamp += [12345]
-        expected["infos"] = {ContextGraphImport.K_ENABLE: sorted(timestamp)}
+        expected[Keys.INFOS] = {Keys.ENABLE_HISTORY: sorted(timestamp),
+                                Keys.ENABLED: True}
 
         result = self.ctx_import.update[id1]
-        result["infos"]["enable"] = sorted(result["infos"]["enable"])
+        result[Keys.INFOS][Keys.ENABLE_HISTORY] = sorted(result[Keys.INFOS][Keys.ENABLE_HISTORY])
 
         self.assertEqualEntities(result, expected)
 
@@ -462,48 +480,48 @@ class ChangeStateEntity(BaseTest):
 class ACreateLink(BaseTest):
 
     def test_create_link_e1_e2(self):
-        self.ctx_import.update = {'e1': {'impact': set()},
-                                  'e2': {'depends': set()}}
+        self.ctx_import.update = {'e1': {Keys.IMPACT: set()},
+                                  'e2': {Keys.DEPENDS: set()}}
         self.ctx_import._ContextGraphImport__a_create_link({
             ContextGraphImport.K_ID: 'e1-to-e2',
             ContextGraphImport.K_FROM: ['e1'],
             ContextGraphImport.K_TO: 'e2'
         })
-        self.assertEqual(self.ctx_import.update['e1']['impact'], set(['e2']))
-        self.assertEqual(self.ctx_import.update['e2']['depends'], set(['e1']))
+        self.assertEqual(self.ctx_import.update['e1'][Keys.IMPACT], set(['e2']))
+        self.assertEqual(self.ctx_import.update['e2'][Keys.DEPENDS], set(['e1']))
 
     def test_create_link_e1_e2_2(self):
-        self.ctx_import.update = {'e2': {'depends': set()}}
-        self.ctx_import.entities_to_update = {'e1': {'impact': set()}}
+        self.ctx_import.update = {'e2': {Keys.DEPENDS: set()}}
+        self.ctx_import.entities_to_update = {'e1': {Keys.IMPACT: set()}}
         self.ctx_import._ContextGraphImport__a_create_link({
             ContextGraphImport.K_ID: 'e1-to-e2',
             ContextGraphImport.K_FROM: ['e1'],
             ContextGraphImport.K_TO: 'e2'
         })
-        self.assertEqual(self.ctx_import.update['e1']['impact'], set(['e2']))
-        self.assertEqual(self.ctx_import.update['e2']['depends'], set(['e1']))
+        self.assertEqual(self.ctx_import.update['e1'][Keys.IMPACT], set(['e2']))
+        self.assertEqual(self.ctx_import.update['e2'][Keys.DEPENDS], set(['e1']))
 
 
 class ADeleteLink(BaseTest):
     def test_delete_link_e1_e2(self):
-        self.ctx_import.update = {'e1': {'impact': set(['e2'])},
-                                  'e2': {'depends': set(['e1'])}}
+        self.ctx_import.update = {'e1': {Keys.IMPACT: set(['e2'])},
+                                  'e2': {Keys.DEPENDS: set(['e1'])}}
         self.ctx_import._ContextGraphImport__a_delete_link({
             ContextGraphImport.K_ID: 'e1-to-e2',
             ContextGraphImport.K_FROM: ['e1'],
             ContextGraphImport.K_TO: 'e2'})
-        self.assertEqual(self.ctx_import.update['e1']['impact'], set())
-        self.assertEqual(self.ctx_import.update['e2']['depends'], set())
+        self.assertEqual(self.ctx_import.update['e1'][Keys.IMPACT], set())
+        self.assertEqual(self.ctx_import.update['e2'][Keys.DEPENDS], set())
 
     def test_delete_link_e1_e2_2(self):
-        self.ctx_import.update = {'e2': {'depends': set(['e1'])}}
-        self.ctx_import.entities_to_update = {'e1': {'impact': set(['e2'])}}
+        self.ctx_import.update = {'e2': {Keys.DEPENDS: set(['e1'])}}
+        self.ctx_import.entities_to_update = {'e1': {Keys.IMPACT: set(['e2'])}}
         self.ctx_import._ContextGraphImport__a_delete_link({
             ContextGraphImport.K_ID: 'e1-to-e2',
             ContextGraphImport.K_FROM: ['e1'],
             ContextGraphImport.K_TO: 'e2'})
-        self.assertEqual(self.ctx_import.update['e1']['impact'], set())
-        self.assertEqual(self.ctx_import.update['e2']['depends'], set())
+        self.assertEqual(self.ctx_import.update['e1'][Keys.IMPACT], set())
+        self.assertEqual(self.ctx_import.update['e2'][Keys.DEPENDS], set())
 
 
 class NotImplem(BaseTest):
@@ -553,37 +571,37 @@ class ADeleteEntity(BaseTest):
                     id6: self.template_ent.copy(),
                     id7: self.template_ent.copy()}
 
-        entities[id1]["_id"] = id1
-        entities[id1]["depends"] = [id2, id3, id4]
-        entities[id1]["impact"] = [id5, id6, id7]
+        entities[id1][Keys.ID] = id1
+        entities[id1][Keys.DEPENDS] = [id2, id3, id4]
+        entities[id1][Keys.IMPACT] = [id5, id6, id7]
 
-        entities[id2]["_id"] = id2
-        entities[id2]["impact"] = [id1, "dummy0", "dummy1"]
+        entities[id2][Keys.ID] = id2
+        entities[id2][Keys.IMPACT] = [id1, "dummy0", "dummy1"]
 
-        entities[id3]["_id"] = id3
-        entities[id3]["impact"] = [id1, "dummy0"]
+        entities[id3][Keys.ID] = id3
+        entities[id3][Keys.IMPACT] = [id1, "dummy0"]
 
-        entities[id4]["_id"] = id4
-        entities[id4]["impact"] = [id1]
+        entities[id4][Keys.ID] = id4
+        entities[id4][Keys.IMPACT] = [id1]
 
-        entities[id5]["_id"] = id5
-        entities[id5]["depends"] = [id1, "dummy0", "dummy1"]
+        entities[id5][Keys.ID] = id5
+        entities[id5][Keys.DEPENDS] = [id1, "dummy0", "dummy1"]
 
-        entities[id6]["_id"] = id6
-        entities[id6]["depends"] = [id1, "dummy0"]
+        entities[id6][Keys.ID] = id6
+        entities[id6][Keys.DEPENDS] = [id1, "dummy0"]
 
-        entities[id7]["_id"] = id7
-        entities[id7]["depends"] = [id1, "dummy0"]
+        entities[id7][Keys.ID] = id7
+        entities[id7][Keys.DEPENDS] = [id1, "dummy0"]
 
         update_expected = copy.deepcopy(entities)
 
         del(update_expected[id1])
-        update_expected[id2]["impact"].remove(id1)
-        update_expected[id3]["impact"].remove(id1)
-        update_expected[id4]["impact"].remove(id1)
-        update_expected[id5]["depends"].remove(id1)
-        update_expected[id6]["depends"].remove(id1)
-        update_expected[id7]["depends"].remove(id1)
+        update_expected[id2][Keys.IMPACT].remove(id1)
+        update_expected[id3][Keys.IMPACT].remove(id1)
+        update_expected[id4][Keys.IMPACT].remove(id1)
+        update_expected[id5][Keys.DEPENDS].remove(id1)
+        update_expected[id6][Keys.DEPENDS].remove(id1)
+        update_expected[id7][Keys.DEPENDS].remove(id1)
 
         self.ctx_import.entities_to_update = entities
 
@@ -607,8 +625,8 @@ class ADeleteEntity(BaseTest):
         id_ = "id1"
 
         entity = self.template_ent.copy()
-        entity["_id"] = id_
-        entity["impact"] = [deleted_id]
+        entity[Keys.ID] = id_
+        entity[Keys.IMPACT] = [deleted_id]
 
         self.ctx_import.entities_to_update = {id_: entity}
 
@@ -668,7 +686,7 @@ class ImportChecker(BaseTest):
 
     def put_dummy_entity(self, id_):
         entity = self.template_ent.copy()
-        entity["_id"] = id_
+        entity[Keys.ID] = id_
         self.ctx_import._put_entities(entity)
 
     def setUp(self):
@@ -870,9 +888,9 @@ class ImportChecker(BaseTest):
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
-        expected[ContextGraphImport.K_ID] = ci[ContextGraphImport.K_ID]
-        expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
-        expected[ContextGraphImport.K_TYPE] = ci[ContextGraphImport.K_TYPE]
+        expected[Keys.ID] = ci[ContextGraphImport.K_ID]
+        expected[Keys.NAME] = ci[ContextGraphImport.K_NAME]
+        expected[Keys.TYPE] = ci[ContextGraphImport.K_TYPE]
         self.assertEqualEntities(result[0], expected)
 
     def test_ci_infos(self):
@@ -895,9 +913,9 @@ class ImportChecker(BaseTest):
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
-        expected[ContextGraphImport.K_ID] = ci[ContextGraphImport.K_ID]
-        expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
-        expected[ContextGraphImport.K_TYPE] = ci[ContextGraphImport.K_TYPE]
+        expected[Keys.ID] = ci[ContextGraphImport.K_ID]
+        expected[Keys.NAME] = ci[ContextGraphImport.K_NAME]
+        expected[Keys.TYPE] = ci[ContextGraphImport.K_TYPE]
 
         self.assertEqualEntities(result[0], expected)
 
@@ -914,11 +932,13 @@ class ImportChecker(BaseTest):
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
         expected = self.template_ent.copy()
-        expected[ContextGraphImport.K_ID] = ci[ContextGraphImport.K_ID]
-        expected[ContextGraphImport.K_NAME] = ci[ContextGraphImport.K_NAME]
-        expected[ContextGraphImport.K_TYPE] = ci[ContextGraphImport.K_TYPE]
-        expected[ContextGraphImport.K_INFOS] = ci[
-            ContextGraphImport.K_PROPERTIES]
+        expected[Keys.ID] = ci[ContextGraphImport.K_ID]
+        expected[Keys.NAME] = ci[ContextGraphImport.K_NAME]
+        expected[Keys.TYPE] = ci[ContextGraphImport.K_TYPE]
+        expected[Keys.INFOS] = {
+            Keys.DISABLE_HISTORY: ci[ContextGraphImport.K_PROPERTIES][ContextGraphImport.K_DISABLE],
+            Keys.ENABLED: False
+        }
 
         self.assertEqualEntities(result[0], expected)
 
@@ -933,8 +953,7 @@ class ImportChecker(BaseTest):
 
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
-        expected[ContextGraphImport.K_INFOS][
-            ContextGraphImport.A_DISABLE].append(54321)
+        expected[Keys.INFOS][Keys.DISABLE_HISTORY].append(54321)
 
         self.assertEqualEntities(result[0], expected)
 
@@ -951,8 +970,8 @@ class ImportChecker(BaseTest):
 
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
-        expected[ContextGraphImport.K_INFOS][
-            ContextGraphImport.A_ENABLE] = [67890]
+        expected[Keys.INFOS][Keys.ENABLE_HISTORY] = [67890]
+        expected[Keys.INFOS][Keys.ENABLED] = True
 
         self.assertEqualEntities(result[0], expected)
 
@@ -968,8 +987,8 @@ class ImportChecker(BaseTest):
 
         result = self.ctx_import.get_entities_by_id(
             ci[ContextGraphImport.K_ID])
-        expected[ContextGraphImport.K_INFOS][
-            ContextGraphImport.A_ENABLE].append(9876)
+        expected[Keys.INFOS][Keys.ENABLE_HISTORY].append(9876)
+        expected[Keys.INFOS][Keys.ENABLED] = True
         self.assertEqualEntities(result[0], expected)
 
         # Update an entity

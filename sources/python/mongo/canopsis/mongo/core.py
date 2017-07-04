@@ -104,8 +104,9 @@ class MongoDataBase(DataBase):
             connection_args['replicaSet'] = self.replicaset
             connection_args['read_preference'] = self.read_preference
 
-        connection_args['j'] = self.journaling
         connection_args['w'] = 1 if self.safe else 0
+        if self.safe:
+            connection_args['j'] = self.journaling
 
         if self.ssl:
             connection_args.update(
@@ -464,6 +465,14 @@ class MongoStorage(MongoDataBase, Storage):
             result = None
 
         return oldvalue if not result else newvalue
+
+    def aggregate(self, query, table=None, **kwargs):
+        query = query or {}
+        table = table or self.get_table()
+
+        result = self._get_backend(backend=table).aggregate(query, **kwargs)
+
+        return result
 
     def _element_id(self, element):
 

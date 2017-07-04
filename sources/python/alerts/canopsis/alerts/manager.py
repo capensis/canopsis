@@ -31,7 +31,7 @@ from canopsis.task.core import get_task
 from canopsis.event.manager import Event
 from canopsis.check import Check
 
-from canopsis.selector.manager import Selector
+from canopsis.watcher.manager import Watcher
 
 from canopsis.alerts import AlarmField, States
 from canopsis.alerts.filter import AlarmFilters
@@ -54,6 +54,7 @@ FILTER = 'FILTER'
 FILTER_CNT = [
     Parameter('author', str),
 ]
+TYPE_SELECTOR = 'selector'
 
 
 @conf_paths(CONF_PATH)
@@ -220,7 +221,7 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.CONTEXT_MANAGER]= context
 
         self.context_manager = ContextGraph()
-        self.selector_manager = Selector()
+        self.watcher_manager = Watcher()
 
     def load_config(self):
         value = self[Alerts.CONFIG_STORAGE].get_elements(
@@ -369,7 +370,7 @@ class Alerts(MiddlewareRegistry):
 
         storage.put(alarm_id, new_value, alarm_ts)
 
-        self.selector_manager.alarm_changed(alarm['data_id'])
+        self.watcher_manager.alarm_changed(alarm['data_id'])
 
     def get_events(self, alarm):
         """
@@ -474,7 +475,6 @@ class Alerts(MiddlewareRegistry):
         :param event: Event to archive
         :type event: dict
         """
-
         entity_id = self.context_manager.get_id(event)
 
         entity = self.context_manager.get_entities_by_id(entity_id)
@@ -487,7 +487,10 @@ class Alerts(MiddlewareRegistry):
                 self.logger.warning('entity not in context')
                 pass
 
-        if event['event_type'] == Check.EVENT_TYPE:
+        if (
+            event['event_type'] == Check.EVENT_TYPE
+            or event['event_type'] == 'watcher'
+        ):
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
                 if event[Check.STATE] == Check.OK:

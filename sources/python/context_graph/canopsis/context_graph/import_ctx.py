@@ -237,6 +237,7 @@ class ContextGraphImport(ContextGraph):
     K_ENABLE = "enable"
     K_DISABLE = "disable"
     K_PROPERTIES = "action_properties"
+    K_ENABLED = "enabled"
 
     # If you add an action, remember to add in the a_pattern string in method
     # import_checker
@@ -248,7 +249,7 @@ class ContextGraphImport(ContextGraph):
 
 
     __A_PATTERN = "^delete$|^create$|^update$|^disable$|^enable$"
-    __T_PATTERN = "^resource$|^component$|^connector"
+    __T_PATTERN = "^resource$|^component$|^connector$|^watcher$"
     __CI_REQUIRED = [K_ID,
                      K_ACTION,
                      K_TYPE]
@@ -572,9 +573,11 @@ class ContextGraphImport(ContextGraph):
         if state == self.A_DISABLE:
             key_history = "disable_history"
             key = self.K_DISABLE
+            self.update[id_][self.K_INFOS][self.K_ENABLED] = False
         else:
             key_history = "enable_history"
             key = self.K_ENABLE
+            self.update[id_][self.K_INFOS][self.K_ENABLED] = True
 
         # Update entity the fields enable/disable of infos
         timestamp = ci[self.K_PROPERTIES][key]

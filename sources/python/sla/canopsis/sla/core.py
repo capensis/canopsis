@@ -18,9 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = '0.1'
-
-
 from canopsis.common.init import basestring
 from time import time
 from logging import getLogger
@@ -33,6 +30,9 @@ from canopsis.event.manager import Event
 from canopsis.perfdata.manager import SLIDING_TIME
 
 pp = PrettyPrinter(indent=2)
+
+
+__version__ = '0.1'
 
 
 class Sla(object):
@@ -304,9 +304,13 @@ class Sla(object):
 
         for state in sla_times:
             sla_time = float(sla_times[state])
-            self.logger.debug(u'state {} time {} total {} now {}, start {}'.format(
-                state, sla_time, total_time, now , sla_information[0]['state']
-            ))
+            self.logger.debug(
+                u'state {} time {} total {} now {}, start {}'.format(
+                    state, sla_time,
+                    total_time, now,
+                    sla_information[0]['state']
+                )
+            )
             percent = sla_time / total_time
             sla_measures[state] = percent
 
