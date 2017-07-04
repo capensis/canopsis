@@ -22,7 +22,9 @@ from __future__ import unicode_literals
 from six import string_types
 from canopsis.common.ws import route
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.watcher.manager import Watcher
 
+watcher_manager = Watcher()
 
 def check_values(data):
     """Check if the values present in data respect the specification. If
@@ -95,12 +97,16 @@ def exports(ws):
         data = locals()
         check_values(data)
 
-        return pbm.create(
+        result =  pbm.create(
             name=name, filter=filter, author=author,
             tstart=tstart, tstop=tstop, rrule=rrule,
             enabled=enabled, comments=comments,
             connector=connector, connector_name=connector_name
         )
+
+        watcher_manager.compute_watchers()
+
+        return result
 
     @route(
         ws.application.get,
