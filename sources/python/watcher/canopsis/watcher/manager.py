@@ -174,6 +174,9 @@ class Watcher(MiddlewareRegistry):
                 self.calcul_state(i['_id'])
 
     def compute_watchers(self):
+        """
+            compute all watchers states
+        """
         watchers = list(self[Watcher.WATCHER_STORAGE].get_elements(query={}))
         for watcher in watchers:
             self.calcul_state(watcher['_id'])

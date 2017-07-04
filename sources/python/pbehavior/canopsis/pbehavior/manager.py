@@ -31,7 +31,6 @@ from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.watcher.utils import compute_watchers
 
 # Might be useful when dealing with rrules
 # from dateutil.rrule import rrulestr
@@ -194,8 +193,6 @@ class PBehaviorManager(MiddlewareRegistry):
             for c in data.comments:
                 c.update({'_id': str(uuid4())})
         result = self.pbehavior_storage.put_element(element=data.to_dict())
-
-        compute_watchers() 
 
         return result
 

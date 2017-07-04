@@ -26,6 +26,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
+from canopsis.watcher.manager import Watcher
 
 
 EVENT_TYPE = 'pbehavior'
@@ -41,6 +42,8 @@ CONNECTOR_NAME = 'connector_name'
 
 TEMPLATE = '/{}/{}/{}/{}'
 TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
+
+watcher_manager = Watcher()
 
 
 def get_entity_id(event):
@@ -108,6 +111,10 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 logger.error(ERROR_MSG.format(event['action'], event))
         else:
             logger.error(ERROR_MSG.format(event['action'], event))
+
+    watcher_manager.compute_watchers()
+
+    return event
 
 
 @register_task
