@@ -26,6 +26,8 @@ from canopsis.alerts.status import (
 
 from canopsis.task.core import register_task
 
+SNOOZE_DEFAULT_DURATION = 300
+
 
 @register_task('alerts.useraction.ack')
 def acknowledge(manager, alarm, author, message, event):
@@ -209,7 +211,7 @@ def snooze(manager, alarm, author, message, event):
     Called when a user snoozes an alarm.
     """
 
-    until = event['timestamp'] + event.get('duration', 300)
+    until = event['timestamp'] + event.get('duration', SNOOZE_DEFAULT_DURATION)
 
     step = {
         '_t': 'snooze',
