@@ -172,11 +172,35 @@ class ContextGraph(MiddlewareRegistry):
         id_ = ""
 
         if source_type == cls.COMPONENT:
-            id_ = event["component"]
+            try:
+                id_ = event["component"].encode('utf-8')
+            except UnicodeEncodeError:
+                id_ = event['component']
+
         elif source_type == cls.RESOURCE:
-            id_ = "{0}/{1}".format(event["resource"], event["component"])
+            try:
+                id_ = "{0}/{1}".format(
+                    event["resource"].encode('utf-8'),
+                    event["component"].encode('utf-8')
+                )
+            except UnicodeEncodeError:
+                id_ = "{0}/{1}".format(
+                    event["resource"],
+                    event["component"]
+                )
+
         elif source_type == cls.CONNECTOR:
-            id_ = "{0}/{1}".format(event["connector"], event["connector_name"])
+            try:
+                id_ = "{0}/{1}".format(
+                    event["connector"].encode('utf-8'),
+                    event["connector_name"].encode('utf-8')
+                )
+            except UnicodeEncodeError:
+                id_ = "{0}/{1}".format(
+                    event["connector"],
+                    event["connector_name"]
+                )
+
         else:
             error_desc = ("Event type should be 'connector', 'resource' or "
                           "'component' not {}.".format(source_type))
