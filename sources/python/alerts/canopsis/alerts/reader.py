@@ -22,7 +22,7 @@ from sys import prefix
 from os.path import join
 from time import time
 
-from canopsis.alerts import AlarmField
+from canopsis.alerts.enums import AlarmField
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_config

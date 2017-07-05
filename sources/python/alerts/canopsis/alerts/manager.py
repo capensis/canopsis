@@ -30,10 +30,9 @@ from canopsis.task.core import get_task
 
 from canopsis.event.manager import Event
 from canopsis.check import Check
-
 from canopsis.watcher.manager import Watcher
 
-from canopsis.alerts import AlarmField, States
+from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
     get_last_state, get_last_status,
@@ -1009,11 +1008,13 @@ class Alerts(MiddlewareRegistry):
         Do actions on alarms based on certain conditions/filters.
 
         This method can alter an alarm as follow:
-        Alarm[AlarmField.filter_runs.value] = {alarm_id: [execution timestamp]}
+        Alarm[AlarmField.alarm_filter.value][AlarmFilterField.runs.value] = {
+            alarm_id: [execution timestamp]
+        }
         """
         now = datetime.now()
         now_stamp = int(mktime(now.timetuple()))
-        filter_runs = AlarmField.filter_runs.value
+        FILTER_RUNS = AlarmFilterField.runs.value
 
         storage = self[Alerts.ALARM_STORAGE]
 
@@ -1042,9 +1043,11 @@ class Alerts(MiddlewareRegistry):
                 continue
 
             value = docalarm[storage.VALUE]
+            alarmfilter = value.get(AlarmField.alarmfilter.value, None)
             # Only execute the filter once per reached limit
-            if filter_runs in value and lifter._id in value[filter_runs]:
-                executions = value[filter_runs][lifter._id]
+            if alarmfilter is not None and FILTER_RUNS in alarmfilter \
+               and lifter._id in alarmfilter[FILTER_RUNS]:
+                executions = alarmfilter[FILTER_RUNS][lifter._id]
                 if len(executions) >= lifter.repeat:
                     # Already repeated enough times
                     continue
@@ -1097,10 +1100,15 @@ class Alerts(MiddlewareRegistry):
 
             # Mark the alarm that this filter has been applied
             new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
-            if filter_runs not in new_value:
-                new_value[filter_runs] = {}
-            if lifter._id not in new_value[filter_runs]:
-                new_value[filter_runs][lifter._id] = []
-            new_value[filter_runs][lifter._id].append(now_stamp)
+            alarmfilter = new_value.get(AlarmField.alarmfilter.value, None)
+            if alarmfilter is None:
+                alarmfilter = {}
+            if FILTER_RUNS not in alarmfilter:
+                alarmfilter[FILTER_RUNS] = {}
+            if lifter._id not in alarmfilter[FILTER_RUNS]:
+                alarmfilter[FILTER_RUNS][lifter._id] = []
+
+            alarmfilter[FILTER_RUNS][lifter._id].append(now_stamp)
+            new_value[AlarmField.alarmfilter.value] = alarmfilter
 
             self.update_current_alarm(docalarm, new_value)
