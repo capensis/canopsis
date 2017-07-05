@@ -344,17 +344,15 @@ class ContextGraph(MiddlewareRegistry):
         if timestamp is None:
             timestamp = int(time.time())
 
-        if "enabled" not in entity["infos"]:
-            entity["infos"]["enabled"] = True
+        entity["enabled"] = True
 
-            if "enable_history" not in entity["infos"]:
-                entity["infos"]["enable_history"] = [timestamp]
-            else:
-                infos = entity["infos"]
-                if not isinstance(entity["infos"]["enable_history"], list):
-                    infos["enable_history"] = [infos["enable_history"]]
+        if "enable_history" not in entity:
+            entity["enable_history"] = [timestamp]
+        else:
+            if not isinstance(entity["infos"]["enable_history"], list):
+                entity["enable_history"] = [entity["enable_history"]]
 
-                infos["enable_history"].append(timestamp)
+            entity["enable_history"].append(timestamp)
 
     def create_entity(self, entity):
         """Create an entity in the context with the given entity. This will
