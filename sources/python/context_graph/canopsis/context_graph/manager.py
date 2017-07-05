@@ -96,9 +96,12 @@ class InfosFilter(MiddlewareRegistry):
             jsonschema.validate(infos, self._schema)
         except jsonschema.ValidationError as v_err:
             self.logger.warning(v_err.message)
-
-        schema = self._schema["schema"]["properties"]
-        self.__clean(infos, copy.deepcopy(infos), schema)
+        try:
+            schema = self._schema["schema"]["properties"]
+        except KeyError:
+            self.logger.warning("No properties field")
+        else:
+            self.__clean(infos, copy.deepcopy(infos), schema)
 
 
 @conf_paths(CONF_PATH)
