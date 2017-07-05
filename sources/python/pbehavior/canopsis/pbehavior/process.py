@@ -97,6 +97,10 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
             if not result:
                 logger.error(ERROR_MSG.format(event['action'], event))
 
+            else:
+                watcher_manager.compute_watchers()
+
+
         elif event.get('action') == PBEHAVIOR_DELETE:
             result = pbm.delete(_filter={
                 PBehavior.FILTER: dumps(filter),
@@ -109,10 +113,12 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
             })
             if not result:
                 logger.error(ERROR_MSG.format(event['action'], event))
+            else:
+                watcher_manager.compute_watchers()
+
         else:
             logger.error(ERROR_MSG.format(event['action'], event))
 
-    watcher_manager.compute_watchers()
 
     return event
 
