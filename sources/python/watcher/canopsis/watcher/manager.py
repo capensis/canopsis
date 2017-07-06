@@ -128,9 +128,7 @@ class Watcher(MiddlewareRegistry):
                 entities = self.context_graph.get_entities(
                     query=query, projection={'_id': 1})
 
-                watcher["depends"] = []
-
-                [watcher["depends"].append(entity["_id"]) for entity in entities]
+                watcher["depends"] = [entity["_id"] for entity in entities]
 
         for key in updated_field:
 
