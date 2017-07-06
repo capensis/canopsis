@@ -85,10 +85,13 @@ class Watcher(MiddlewareRegistry):
             name=body['display_name'],
             etype='watcher',
             impact=[],
-            depends=depend_list,
-            infos={'mfilter': body['mfilter'],
-                   'enabled': True,
-                   'state': 0})
+            depends=depend_list
+        )
+
+        #adding the fields specific to the Watcher entities
+        entity['mfilter'] = body['mfilter']
+        entity['state'] = 0
+
         self.context_graph.create_entity(entity)
         """
         self.sla_storage.put_element(
@@ -116,19 +119,18 @@ class Watcher(MiddlewareRegistry):
             raise ValueError("No watcher found for the following"
                              " id: {}".format(watcher_id))
 
-        if "infos" in watcher and \
-           "mfilter" in watcher["infos"] and \
-           "infos" in updated_field and \
-           "mfilter" in updated_field["infos"] and \
-           watcher["infos"]["mfilter"] != updated_field["infos"]["mfilter"]:
 
-            query = json.loads(updated_field["infos"]['mfilter'])
-            entities = self.context_graph.get_entities(
-                query=query, projection={'_id': 1})
+        if "mfilter" in watcher and "mfilter" in updated_field:
+            if updated_field['mfilter'] != watcher['mfilter']:
+                watcher['mfilter'] = updated_field['mfilter']
 
-            watcher["depends"] = []
+                query = json.loads(updated_field['mfilter'])
+                entities = self.context_graph.get_entities(
+                    query=query, projection={'_id': 1})
 
-            [watcher["depends"].append(entity["_id"]) for entity in entities]
+                watcher["depends"] = []
+
+                [watcher["depends"].append(entity["_id"]) for entity in entities]
 
         for key in updated_field:
 
@@ -221,8 +223,8 @@ class Watcher(MiddlewareRegistry):
         output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
             nb_ok, nb_minor, nb_major, nb_crit)
 
-        if computed_state != watcher_entity['infos']['state']:
-            watcher_entity['infos']['state'] = computed_state
+        if computed_state != watcher_entity['state']:
+            watcher_entity['state'] = computed_state
             self.context_graph.update_entity(watcher_entity)
 
         self.publish_event(
