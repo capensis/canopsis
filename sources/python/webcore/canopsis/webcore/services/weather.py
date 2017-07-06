@@ -187,23 +187,23 @@ def exports(ws):
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
             if tmp_alarm != []:
-                enriched_entity['state'] = tmp_alarm[0]['v']['state']
-                enriched_entity['status'] = tmp_alarm[0]['v']['status']
-                enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
-                enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
-                enriched_entity['connector'] = tmp_alarm[0]['v']['connector']
+                current_alarm = tmp_alarm[0]['v']
+                enriched_entity['state'] = current_alarm['state']
+                enriched_entity['status'] = current_alarm['status']
+                enriched_entity['snooze'] = current_alarm['snooze']
+                enriched_entity['ack'] = current_alarm['ack']
+                enriched_entity['connector'] = current_alarm['connector']
                 enriched_entity['connector_name'] = (
-                    tmp_alarm[0]['v']['connector_name']
+                    current_alarm['connector_name']
                 )
-                enriched_entity['component'] = tmp_alarm[0]['v']['component']
-                enriched_entity['component'] = tmp_alarm[0]['v']['component']
+                enriched_entity['component'] = current_alarm['component']
                 if 'resource' in tmp_alarm[0]['v'].keys():
-                    enriched_entity['resource'] = tmp_alarm[0]['v']['resource']
+                    enriched_entity['resource'] = current_alarm['resource']
             else:
                 enriched_entity['state'] = {'val': 0}
 
             enriched_entity['linklist'] = []  # add this when it's ready
-            enriched_entity["mfilter"] = watcher["infos"]["mfilter"]
+            enriched_entity["mfilter"] = watcher["mfilter"]
             add_pbehavior_info(enriched_entity)
             watchers.append(enriched_entity)
 
@@ -232,7 +232,7 @@ def exports(ws):
 
         # Find entities with the watcher filter
         try:
-            query = json.loads(watcher_entity['infos']['mfilter'])
+            query = json.loads(watcher_entity['mfilter'])
         except:
             json_error = {
                 "name": "filter_not_found",

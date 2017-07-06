@@ -11,7 +11,7 @@ def build_links(watcher_entity, context_graph):
     :param watcher_entity:
     :param context_graph:
     """
-    mfilter = loads(watcher_entity['infos']['mfilter'])
+    mfilter = loads(watcher_entity['mfilter'])
     dep = context_graph.get_entities(
         query=mfilter,
         projection={'_id': 1}
