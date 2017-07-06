@@ -120,7 +120,7 @@ class Watcher(MiddlewareRegistry):
                              " id: {}".format(watcher_id))
 
 
-        if "mfilter" in watcher and "mfilter" in updated_field:
+        if "mfilter" in watcher.keys() and "mfilter" in updated_field.keys():
             if updated_field['mfilter'] != watcher['mfilter']:
                 watcher['mfilter'] = updated_field['mfilter']
 
