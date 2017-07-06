@@ -188,7 +188,6 @@ def exports(ws):
             enriched_entity['display_name'] = watcher['name']
             if tmp_alarm != []:
                 current_alarm = tmp_alarm[0]['v']
-                enriched_entity.update(current_alarm)
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
                 enriched_entity['snooze'] = current_alarm['snooze']
