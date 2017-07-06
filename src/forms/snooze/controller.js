@@ -180,6 +180,23 @@ Ember.Application.initializer({
                                     if (key === "duration") {
                                         // find duration attr
                                         attr = get(window.schemasRegistry.getByName('pbehavior').EmberModel, get(this, 'attributesKey')).get('duration');
+                                        // attr = undefined;
+                                        if (attr === undefined) {
+                                            // hardcoded attr if there is no that attr on a platform
+                                            attr = {
+                                                default: 0,
+                                                name: 'duration',
+                                                type: 'integer',
+                                                options: {
+                                                    default: 0,
+                                                    description: "Duration in seconds (warning: 1 month = 365 days / 12).",
+                                                    hiddenInForm: false,
+                                                    required: false, 
+                                                    role: 'duration',
+                                                    type: 'integer'
+                                                }
+                                            }
+                                        }
                                     }
 
                                     if (key !== undefined && attr === undefined) {
