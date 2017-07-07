@@ -573,11 +573,11 @@ class ContextGraphImport(ContextGraph):
         if state == self.A_DISABLE:
             key_history = "disable_history"
             key = self.K_DISABLE
-            self.update[id_][self.K_INFOS][self.K_ENABLED] = False
+            self.update[id_][self.K_ENABLED] = False
         else:
             key_history = "enable_history"
             key = self.K_ENABLE
-            self.update[id_][self.K_INFOS][self.K_ENABLED] = True
+            self.update[id_][self.K_ENABLED] = True
 
         # Update entity the fields enable/disable of infos
         timestamp = ci[self.K_PROPERTIES][key]
@@ -588,15 +588,15 @@ class ContextGraphImport(ContextGraph):
             else:
                 timestamp = [timestamp]
 
-        if self.update[id_][self.K_INFOS].has_key(key_history):
+        if self.update[id_].has_key(key_history):
 
-            if self.update[id_][self.K_INFOS][key_history] is None:
-                self.update[id_][self.K_INFOS][key_history] = timestamp
+            if self.update[id_][key_history] is None:
+                self.update[id_][key_history] = timestamp
             else:
-                self.update[id_][self.K_INFOS][key_history] += timestamp
+                self.update[id_][key_history] += timestamp
 
         else:
-            self.update[id_][self.K_INFOS][key_history] = timestamp
+            self.update[id_][key_history] = timestamp
 
     def __a_disable_entity(self, ci):
         """Disable an entity defined by ci. For more information, see
