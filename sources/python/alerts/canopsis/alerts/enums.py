@@ -29,6 +29,7 @@ Some enumerations linked to Alarms.
 
 class AlarmField(DefaultEnum):
     # Possible fields for an alarm
+    _id = '_id'
     ack = 'ack'
     ackremove = 'ackremove'
     canceled = 'canceled'  # != cancel

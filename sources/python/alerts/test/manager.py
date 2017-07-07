@@ -1082,6 +1082,7 @@ class TestManager(BaseTest):
             AlarmFilter.CONDITION: '{"v.connector": {"$eq": "fake-connector"}}',
             AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
             AlarmFilter.FORMAT: '>> foo',
+            AlarmFilter.REPEAT: 1
         }, storage=self.manager[Alerts.FILTER_STORAGE])
         lifter.save()
 
@@ -1093,8 +1094,7 @@ class TestManager(BaseTest):
         self.assertTrue(alarm_id in result)
         self.assertEqual(len(result[alarm_id]), 1)
         res_alarm = result[alarm_id][0]
-        self.assertEqual(res_alarm['value']['state']['val'],
-                         Check.MAJOR)
+        self.assertEqual(res_alarm['value']['state']['val'], Check.MAJOR)
         self.assertTrue(AlarmField.alarmfilter.value in res_alarm['value'])
         alarm_filters1 = res_alarm['value'][AlarmField.alarmfilter.value][runs]
         self.assertTrue(isinstance(alarm_filters1, dict))
@@ -1120,7 +1120,7 @@ class TestManager(BaseTest):
                          Check.MAJOR)
 
     def test_check_alarm_filters_keepstate(self):
-        # Testing keepstate flag
+        # Testing keepstate flag on alarm filters
         now_stamp = int(mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
         alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
