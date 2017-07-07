@@ -20,6 +20,7 @@
 
 from __future__ import unicode_literals
 
+from ast import literal_eval
 import json
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
@@ -31,9 +32,6 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
-from ast import literal_eval
-
-LOGGER = None
 
 context_manager = ContextGraph()
 alarm_manager = Alerts()
@@ -172,8 +170,6 @@ def add_pbehavior_status(watchers):
 
 
 def exports(ws):
-    global LOGGER
-    LOGGER = ws.logger
 
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
@@ -280,18 +276,21 @@ def exports(ws):
             enriched_entity['source_type'] = entity['type']
             enriched_entity['state'] = {'val': 0}
             if tmp_alarm != []:
-                enriched_entity['state'] = tmp_alarm[0]['v']['state']
-                enriched_entity['status'] = tmp_alarm[0]['v']['status']
-                enriched_entity['snooze'] = tmp_alarm[0]['v']['snooze']
-                enriched_entity['ack'] = tmp_alarm[0]['v']['ack']
-                enriched_entity['connector'] = tmp_alarm[0]['v']['connector']
+                current_alarm = tmp_alarm[0]['v']
+                enriched_entity['state'] = current_alarm['state']
+                enriched_entity['status'] = current_alarm['status']
+                enriched_entity['snooze'] = current_alarm['snooze']
+                enriched_entity['ack'] = current_alarm['ack']
+                enriched_entity['connector'] = current_alarm['connector']
                 enriched_entity['connector_name'] = (
-                    tmp_alarm[0]['v']['connector_name']
+                    current_alarm['connector_name']
                 )
-                enriched_entity['component'] = tmp_alarm[0]['v']['component']
-                enriched_entity['automatic_action_timer'] = tmp_alarm[0]['v'].get(AlarmField.alarmfilter.value, {}).get(AlarmFilterField.next_run.value, None)
-                if 'resource' in tmp_alarm[0]['v'].keys():
-                    enriched_entity['resource'] = tmp_alarm[0]['v']['resource']
+                enriched_entity['component'] = current_alarm['component']
+                next_run = (current_alarm.get(AlarmField.alarmfilter.value, {})
+                                         .get(AlarmFilterField.next_run.value, None))
+                enriched_entity['automatic_action_timer'] = next_run
+                if 'resource' in current_alarm.keys():
+                    enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entity['linklist'] = []  # TODO wait for linklist
 
