@@ -487,18 +487,15 @@ class ContextGraphImport(ContextGraph):
 
         entity = self.entities_to_update[ci[self.K_ID]]
 
-        fields_to_update = [
-            self.K_NAME,
-            self.K_TYPE,
-            self.K_MEASUREMENTS,
-            self.K_INFOS]
-
-        # if a a fields is missing we assume we did not need to update it
-        for field in fields_to_update:
+        for key in [self.K_ACTION, self.K_PROPERTIES]:
             try:
-                entity[field] = ci[field]
+                del ci[key]
             except KeyError:
-                pass
+                msg = "No key {0} in ci of id {1}."
+                self.logger.debug(msg.format(key,ci[self.K_ID]))
+
+        for key in ci:
+            entity[key] = ci[key]
 
         self.update[ci[self.K_ID]] = entity
 
@@ -534,13 +531,15 @@ class ContextGraphImport(ContextGraph):
         if not ci.has_key(self.K_INFOS):
             ci[self.K_INFOS] = {}
 
+
         for key in [self.K_ACTION, self.K_PROPERTIES]:
             try:
                 del ci[key]
             except KeyError:
                 msg = "No key {0} in ci of id {1}."
-                self.logger.debug(msg.format(key,ci[self.K_ID])
+                self.logger.debug(msg.format(key,ci[self.K_ID]))
 
+        entity = {}
         for key in ci:
             entity[key] = ci[key]
 
