@@ -349,7 +349,7 @@ class ContextGraph(MiddlewareRegistry):
         if "enable_history" not in entity:
             entity["enable_history"] = [timestamp]
         else:
-            if not isinstance(entity["infos"]["enable_history"], list):
+            if not isinstance(entity["enable_history"], list):
                 entity["enable_history"] = [entity["enable_history"]]
 
             entity["enable_history"].append(timestamp)
