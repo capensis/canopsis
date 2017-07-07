@@ -81,10 +81,26 @@ class BaseTest(TestCase):
             pass
 
     def assertEqualEntities(self, entity1, entity2):
-        sorted(entity1[Keys.DEPENDS])
-        sorted(entity1[Keys.IMPACT])
-        sorted(entity2[Keys.DEPENDS])
-        sorted(entity2[Keys.IMPACT])
+        entity1[Keys.DEPENDS] = sorted(entity1[Keys.DEPENDS])
+        entity1[Keys.IMPACT] = sorted(entity1[Keys.IMPACT])
+        entity1[Keys.DEPENDS] = sorted(entity2[Keys.DEPENDS])
+        entity2[Keys.IMPACT] = sorted(entity2[Keys.IMPACT])
+        try:
+            entity1[Keys.DISABLE_HISTORY] = sorted(entity1[Keys.DISABLE_HISTORY])
+        except:
+            pass
+        try:
+            entity1[Keys.ENABLE_HISTORY] = sorted(entity1[Keys.ENABLE_HISTORY])
+        except:
+            pass
+        try:
+            entity2[Keys.DISABLE_HISTORY] = sorted(entity2[Keys.DISABLE_HISTORY])
+        except:
+            pass
+        try:
+            entity2[Keys.ENABLE_HISTORY] = sorted(entity2[Keys.ENABLE_HISTORY])
+        except:
+            pass
         self.assertDictEqual(entity1, entity2)
 
     @classmethod
@@ -335,8 +351,8 @@ class ADisableEntity(BaseTest):
         self.ctx_import._ContextGraphImport__a_disable_entity(ci)
 
         expected = entities[id1].copy()
-        expected[Keys.INFOS] = {Keys.DISABLE_HISTORY: [timestamp],
-                                Keys.ENABLED: False}
+        expected[Keys.DISABLE_HISTORY] = [timestamp]
+        expected[Keys.ENABLED] = False
 
         self.assertEqualEntities(self.ctx_import.update[id1], expected)
 
@@ -922,7 +938,7 @@ class ImportChecker(BaseTest):
 
         # Disable an entity
         ci[ContextGraphImport.K_ACTION] = ContextGraphImport.A_DISABLE
-        ci[ContextGraphImport.A_DISABLE] = [12345]
+        ci[ContextGraphImport.K_PROPERTIES] = {ContextGraphImport.A_DISABLE: 12345}
         self.store_import(data, self.uuid)
         try:
             self.ctx_import.import_context(self.uuid)
@@ -936,13 +952,13 @@ class ImportChecker(BaseTest):
         expected[Keys.NAME] = ci[ContextGraphImport.K_NAME]
         expected[Keys.TYPE] = ci[ContextGraphImport.K_TYPE]
         expected[Keys.INFOS] = {}
-        expected[Keys.DISABLE_HISTORY] = ci[ContextGraphImport.K_DISABLE]
+        expected[Keys.DISABLE_HISTORY] = [ci[ContextGraphImport.K_PROPERTIES][ContextGraphImport.K_DISABLE]]
         expected[Keys.ENABLED] = False
 
         self.assertEqualEntities(result[0], expected)
 
         ci[ContextGraphImport.K_ACTION] = ContextGraphImport.A_DISABLE
-        ci[ContextGraphImport.A_DISABLE] = [54321]
+        ci[ContextGraphImport.K_PROPERTIES][ContextGraphImport.A_DISABLE] = [54321]
         self.store_import(data, self.uuid)
         try:
             self.ctx_import.import_context(self.uuid)
