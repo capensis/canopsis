@@ -26,6 +26,7 @@ from canopsis.watcher.manager import Watcher
 
 watcher_manager = Watcher()
 
+
 def check_values(data):
     """Check if the values present in data respect the specification. If
     the values are correct do nothing. If not, raise a ValueError
