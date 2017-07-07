@@ -32,10 +32,15 @@ class Logger(object):
         pass
 
 
-def create_event(conn, conn_name,  comp=None, res=None, event_type="check"):
+def create_event(conn, conn_name,  comp=None, res=None, event_type="check", timestamp=None):
+
+    if timestamp is None:
+        timestamp = int(time.time())
+
     event = {"connector": conn,
              "connector_name": conn_name,
-             "event_type": event_type}
+             "event_type": event_type,
+             "timestamp" : timestamp}
     if comp is not None:
         event["component"] = comp
 
@@ -73,11 +78,11 @@ class Test(TestCase):
         result["impact"] = sorted(result["impact"])
 
         # check infos.enabled_history field
-        result_ts = result[u"infos"][u"enable_history"][-1]
-        expected_ts = expected[u"infos"][u"enable_history"][-1]
+        result_ts = result[u"enable_history"][-1]
+        expected_ts = expected[u"enable_history"][-1]
         self.assertTrue(result_ts - expected_ts < self.GRACE_PERIOD)
-        result["infos"].pop("enable_history")
-        expected["infos"].pop("enable_history")
+        # result["infos"].pop("enable_history")
+        # expected["infos"].pop("enable_history")
 
         self.assertDictEqual(expected, result)
 
@@ -627,14 +632,16 @@ class Test(TestCase):
             'name': 'comp_1',
             'type': 'component',
             'impact': [],
-            'depends': sorted(['re_1', 'conn_1'])}
+            'depends': sorted(['re_1', 'conn_1']),
+            }
 
         expected_re_res_1 = {
             '_id': 're_1',
             'name': 're_1',
             'type': 'resource',
             'impact': ['comp_1'],
-            'depends': ['conn_1']}
+            'depends': ['conn_1'],
+            }
 
         expected_conn_res_1 = {
             '_id': 'conn_1',
@@ -642,17 +649,19 @@ class Test(TestCase):
             'type': 'connector',
             'impact': sorted(['comp_1', 're_1']),
             'depends': [],
-            'measurements': {}}
+            'measurements': {},
+            'infos': {}}
 
-        # delete the infos field of the connector objetc newly created,
-        # we did not check how the infos is generated
-        del conn_res_1["infos"]
-
-        # We use assertDictEqual instead of assertEqualEntities because
-        # we did not push the entity in the context, so the infos fields
-        # is not created
         self.assertDictEqual(expected_comp_res_1, comp_res_1)
         self.assertDictEqual(expected_re_res_1, re_res_1)
+
+        self.assertTrue(conn_res_1["enabled"])
+        self.assertIn("enable_history", conn_res_1)
+        self.assertIs(type(conn_res_1["enable_history"][0]), int)
+
+        del conn_res_1["enabled"]
+        del conn_res_1["enable_history"]
+
         self.assertDictEqual(expected_conn_res_1, conn_res_1)
 
         self.assertDictEqual(comp_res_2, {
@@ -662,13 +671,21 @@ class Test(TestCase):
             'impact': [],
             'depends': sorted(['conn_1'])})
         self.assertEqual(re_res_2, None)
-        del conn_res_2["infos"]
+
+        self.assertTrue(conn_res_2["enabled"])
+        self.assertIn("enable_history", conn_res_2)
+        self.assertIs(type(conn_res_2["enable_history"][0]), int)
+
+        del conn_res_2["enabled"]
+        del conn_res_2["enable_history"]
+
         self.assertDictEqual(conn_res_2, {'_id': 'conn_1',
                                           'name': 'conn_1',
                                           'type': 'connector',
                                           'impact': sorted(['comp_1']),
                                           'depends': [],
-                                          'measurements': {}})
+                                          'measurements': {},
+                                          'infos':{}})
 
 
     def test_update_context_case5(self):
@@ -758,29 +775,26 @@ class Test(TestCase):
 
         ids = process.gen_ids(event)
 
-        infos = {"enabled": True,
-                 "enable_history":[int(time.time())]}
-
         expected_conn = process.create_entity(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]),
-                                              infos=infos.copy())
+                                              infos={})
 
         expected_comp = process.create_entity(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]),
-                                              infos=infos.copy())
+                                              infos={})
 
         expected_re = process.create_entity(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]],
-                                            infos=infos.copy())
+                                            infos={})
 
         process.update_context((False, False, False),
                                ids,
@@ -790,7 +804,6 @@ class Test(TestCase):
         result_re = context_graph_manager.get_entities_by_id(ids["re_id"])[0]
         result_conn = context_graph_manager.get_entities_by_id(ids["conn_id"])[0]
         result_comp = context_graph_manager.get_entities_by_id(ids["comp_id"])[0]
-
 
         self.assertEqualEntities(expected_re, result_re)
         self.assertEqualEntities(expected_conn, result_conn)
