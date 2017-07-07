@@ -100,26 +100,35 @@ class CreateWatcher(BaseTest):
         )[0]
         self.assertTrue(sorted(list(body.values())) == sorted(list(watcher.values())))
         entity = self.context_graph_manager.get_entities_by_id('an_id')[0]
-        print('------------------')
-        print(entity)
-        print('------------------')
-        del entity['infos']['enable_history']
-        self.assertTrue(
-            sorted(list(
-                {
-                    '_id': 'watcher-one',
-                    'impact': [],
-                    'name': 'one',
-                    'measurements': [],
-                    'depends': [],
-                    'infos': {
-                        'enabled': True
-                    },
-                    'type': 'watcher'
-                }
-            )) == sorted(list(entity.values()))
-        )
         entity['infos'].pop('enable_history', None)
+
+        expected = {
+            '_id': 'an_id',
+            'impact': [],
+            'name': 'a_name',
+            'measurements': {},
+            'depends': [],
+            'mfilter': '{}',
+            'state': 0,
+            'infos': {
+                'enabled': True
+            },
+            'type': 'watcher'
+        }
+
+        self.assertEquals(expected['_id'], entity['_id'])
+        self.assertEquals(expected['impact'], entity['impact'])
+        self.assertEquals(expected['name'], entity['name'])
+        self.assertEquals(expected['measurements'], entity['measurements'])
+        self.assertEquals(expected['depends'], entity['depends'])
+        self.assertEquals(expected['mfilter'], entity['mfilter'])
+        self.assertEquals(expected['state'], entity['state'])
+        self.assertEquals(expected['type'], entity['type'])
+        self.assertEquals(expected['infos']['enabled'], entity['infos']['enabled'])
+
+        self.assertTrue(
+            sorted(list(expected)) == sorted(list(entity))
+        )
 
 
 class DeleteWatcher(BaseTest):
