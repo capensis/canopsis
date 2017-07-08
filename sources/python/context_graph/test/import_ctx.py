@@ -83,7 +83,7 @@ class BaseTest(TestCase):
     def assertEqualEntities(self, entity1, entity2):
         entity1[Keys.DEPENDS] = sorted(entity1[Keys.DEPENDS])
         entity1[Keys.IMPACT] = sorted(entity1[Keys.IMPACT])
-        entity1[Keys.DEPENDS] = sorted(entity2[Keys.DEPENDS])
+        entity2[Keys.DEPENDS] = sorted(entity2[Keys.DEPENDS])
         entity2[Keys.IMPACT] = sorted(entity2[Keys.IMPACT])
         try:
             entity1[Keys.DISABLE_HISTORY] = sorted(entity1[Keys.DISABLE_HISTORY])
@@ -351,6 +351,8 @@ class ADisableEntity(BaseTest):
         self.ctx_import._ContextGraphImport__a_disable_entity(ci)
 
         expected = entities[id1].copy()
+        expected[Keys.DEPENDS] = list(expected[Keys.DEPENDS])
+        expected[Keys.IMPACT] = list(expected[Keys.IMPACT])
         expected[Keys.DISABLE_HISTORY] = [timestamp]
         expected[Keys.ENABLED] = False
 
@@ -387,6 +389,8 @@ class ADisableEntity(BaseTest):
 
         expected = entities[id1].copy()
         timestamp += [12345]
+        expected[Keys.DEPENDS] = list(expected[Keys.DEPENDS])
+        expected[Keys.IMPACT] = list(expected[Keys.IMPACT])
         expected[Keys.DISABLE_HISTORY] = sorted(timestamp)
         expected[Keys.ENABLED] = False
 
@@ -436,9 +440,10 @@ class AEnableEntity(BaseTest):
         self.ctx_import._ContextGraphImport__a_enable_entity(ci)
 
         expected = entities[id1].copy()
+        expected[Keys.DEPENDS] = list(expected[Keys.DEPENDS])
+        expected[Keys.IMPACT] = list(expected[Keys.IMPACT])
         expected[Keys.ENABLE_HISTORY] = [timestamp]
         expected[Keys.ENABLED] = True
-
 
         self.assertEqualEntities(self.ctx_import.update[id1], expected)
 
@@ -471,6 +476,8 @@ class AEnableEntity(BaseTest):
         self.ctx_import._ContextGraphImport__a_enable_entity(ci)
 
         expected = entities[id1].copy()
+        expected[Keys.DEPENDS] = list(expected[Keys.DEPENDS])
+        expected[Keys.IMPACT] = list(expected[Keys.IMPACT])
         timestamp += [12345]
         expected[Keys.ENABLE_HISTORY] = sorted(timestamp)
         expected[Keys.ENABLED] = True
@@ -974,7 +981,7 @@ class ImportChecker(BaseTest):
         # Enable an entity
         ci.pop(ContextGraphImport.K_PROPERTIES)
         ci[ContextGraphImport.K_ACTION] = ContextGraphImport.A_ENABLE
-        ci[ContextGraphImport.A_ENABLE] = [67890]
+        ci[ContextGraphImport.K_PROPERTIES] = {ContextGraphImport.A_ENABLE: 67890}
         self.store_import(data, self.uuid)
         try:
             self.ctx_import.import_context(self.uuid)
@@ -990,7 +997,7 @@ class ImportChecker(BaseTest):
 
         ci.pop(ContextGraphImport.K_PROPERTIES)
         ci[ContextGraphImport.K_ACTION] = ContextGraphImport.A_ENABLE
-        ci[ContextGraphImport.A_ENABLE] =  [9876]
+        ci[ContextGraphImport.K_PROPERTIES] = {ContextGraphImport.A_ENABLE: 9876}
         self.store_import(data, self.uuid)
         try:
             self.ctx_import.import_context(self.uuid)
