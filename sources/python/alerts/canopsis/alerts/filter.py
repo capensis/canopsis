@@ -227,9 +227,9 @@ class AlarmFilter(object):
             and_.append(self[self.CONDITION])
 
         query = {'$and': and_}
-        result = list(self.alarm_storage.find_elements(query))
+        result = self.alarm_storage._backend.find(query).count()
 
-        return len(result) > 0
+        return result > 0
 
     def next_run(self, alarm):
         """
