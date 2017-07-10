@@ -24,6 +24,7 @@ from datetime import timedelta
 import json
 from uuid import uuid4 as uuid
 
+from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.storage.exceptions import StorageUnavailable
 
 
@@ -220,15 +221,38 @@ class AlarmFilter(object):
         :rtype: bool
         """
         alarm_id = alarm[self.alarm_storage.DATA_ID]
-        query = {
-            '$and': [
-                self[self.CONDITION],
-                {self.alarm_storage.Key.DATA_ID: {'$eq': alarm_id}}
-            ]
-        }
-        result = list(self.alarm_storage.find_elements(query))
 
-        return len(result) > 0
+        and_ = [{self.alarm_storage.Key.DATA_ID: {'$eq': alarm_id}}]
+        if self[self.CONDITION] is not None:
+            and_.append(self[self.CONDITION])
+
+        query = {'$and': and_}
+        result = self.alarm_storage._backend.find(query).count()
+
+        return result > 0
+
+    def next_run(self, alarm):
+        """
+        Compute the next run timestamp on the desired alarm
+
+        :param dict alarm: the arlarm dict to test
+        :returns: a timestamp
+        :rtype: int or None
+        """
+        value = alarm[self.alarm_storage.VALUE]
+        alarmfilter = value.get(AlarmField.alarmfilter.value, {})
+        runs = alarmfilter.get(AlarmFilterField.runs.value, {})
+        executions = runs.get(alarm[AlarmField._id.value], [])
+
+        if self.check_alarm(alarm) and len(executions) < self.repeat:
+            limit = self.element[self.LIMIT]
+            if len(executions) > 0:
+
+                return executions[-1] + limit
+
+            return value[AlarmField.state.value]['t'] + limit
+
+        return None
 
     def output(self, old=''):
         """

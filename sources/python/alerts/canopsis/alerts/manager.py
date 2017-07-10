@@ -30,10 +30,9 @@ from canopsis.task.core import get_task
 
 from canopsis.event.manager import Event
 from canopsis.check import Check
-
 from canopsis.watcher.manager import Watcher
 
-from canopsis.alerts import AlarmField, States
+from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
     get_last_state, get_last_status,
@@ -1008,12 +1007,12 @@ class Alerts(MiddlewareRegistry):
         """
         Do actions on alarms based on certain conditions/filters.
 
-        This method can alter an alarm as follow:
-        Alarm[AlarmField.filter_runs.value] = {alarm_id: [execution timestamp]}
+        This method can alter alarm[AlarmField.alarm_filter]
         """
         now = datetime.now()
         now_stamp = int(mktime(now.timetuple()))
-        filter_runs = AlarmField.filter_runs.value
+        RUNS = AlarmFilterField.runs.value
+        NEXT = AlarmFilterField.next_run.value
 
         storage = self[Alerts.ALARM_STORAGE]
 
@@ -1028,11 +1027,15 @@ class Alerts(MiddlewareRegistry):
             alarm_id = docalarm[storage.DATA_ID]
             self.logger.debug('Checking alarmfilter {}'.format(lifter))
 
-            # Continue only if the filter condition is valid
-            if not lifter.check_alarm(docalarm):
-                self.logger.debug('AlarmFilter {}: Filter condition is invalid'
-                                  .format(lifter._id))
-                continue
+            value = docalarm[storage.VALUE]
+            if AlarmField.alarmfilter.value not in value:
+                value[AlarmField.alarmfilter.value] = {}
+            # Updating next_run timestamp
+            next_run = lifter.next_run(docalarm)
+            old_next_run = value[AlarmField.alarmfilter.value].get(NEXT, None)
+            if old_next_run != next_run:
+                value[AlarmField.alarmfilter.value][NEXT] = next_run
+                self.update_current_alarm(docalarm, value)
 
             date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
             # Continue only if the limit condition is valid
@@ -1041,10 +1044,17 @@ class Alerts(MiddlewareRegistry):
                                   .format(lifter._id))
                 continue
 
-            value = docalarm[storage.VALUE]
+            # Continue only if the filter condition is valid
+            if not lifter.check_alarm(docalarm):
+                self.logger.debug('AlarmFilter {}: Filter condition is invalid'
+                                  .format(lifter._id))
+                continue
+
+            alarmfilter = value.get(AlarmField.alarmfilter.value, {})
             # Only execute the filter once per reached limit
-            if filter_runs in value and lifter._id in value[filter_runs]:
-                executions = value[filter_runs][lifter._id]
+            if len(alarmfilter) > 0 and RUNS in alarmfilter \
+               and lifter._id in alarmfilter[RUNS]:
+                executions = alarmfilter[RUNS][lifter._id]
                 if len(executions) >= lifter.repeat:
                     # Already repeated enough times
                     continue
@@ -1059,7 +1069,7 @@ class Alerts(MiddlewareRegistry):
             # Getting most recent step message
             steps = docalarm[storage.VALUE][AlarmField.steps.value]
             message = sorted(steps, key=itemgetter('t'))[-1]['m']
-            # Generating a corresponding event
+
             event = {
                 'timestamp': now_stamp,
                 'connector': value['connector'],
@@ -1097,10 +1107,13 @@ class Alerts(MiddlewareRegistry):
 
             # Mark the alarm that this filter has been applied
             new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
-            if filter_runs not in new_value:
-                new_value[filter_runs] = {}
-            if lifter._id not in new_value[filter_runs]:
-                new_value[filter_runs][lifter._id] = []
-            new_value[filter_runs][lifter._id].append(now_stamp)
+            alarmfilter = new_value.get(AlarmField.alarmfilter.value, {})
+            if RUNS not in alarmfilter:
+                alarmfilter[RUNS] = {}
+            if lifter._id not in alarmfilter[RUNS]:
+                alarmfilter[RUNS][lifter._id] = []
+
+            alarmfilter[RUNS][lifter._id].append(now_stamp)
+            new_value[AlarmField.alarmfilter.value] = alarmfilter
 
             self.update_current_alarm(docalarm, new_value)

@@ -20,7 +20,7 @@
 
 from time import time
 
-from canopsis.alerts import AlarmField, States
+from canopsis.alerts.enums import AlarmField, States
 from canopsis.common.utils import ensure_iterable
 from canopsis.check import Check
 
