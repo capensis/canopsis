@@ -295,8 +295,22 @@ Ember.Application.initializer({
                     var categoryName = schema.categories[i].title;
                     for (var j = 0; j < schema.categories[i].keys.length; j++) {
                         var key = schema.categories[i].keys[j];
+                        var deepkeys = key.split('.'),
+                            attribute = schema;
 
-                        var attribute = schema.properties[key];
+                        $.each(deepkeys, function(idx, key) {
+                            if (attribute !== undefined && attribute.properties !== undefined) {
+                                attribute = attribute.properties[key];
+                            }
+                            else {
+                                attribute = undefined;
+                            }
+                        });
+
+                        if (attribute === undefined) {
+                            attribute = {'type': 'string'};
+                        }
+
                         var name = key;
 
                         var filterElementDict = {
@@ -386,3 +400,4 @@ Ember.Application.initializer({
         application.register('component:component-querybuilder', component);
     }
 });
+
