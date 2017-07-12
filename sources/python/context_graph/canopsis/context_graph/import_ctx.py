@@ -666,19 +666,24 @@ class ContextGraphImport(ContextGraph):
         """Check if the cis and links field are a list. If not, raise a
         jsonschema.ValidationError. It move the cursor of the fd to back 0."""
 
+        cis = False
         cis_start = False
         cis_end = False
+        links = False
         links_start = False
         links_end = False
+
 
         parser = ijson.parse(fd)
         for prefix, event, value in parser:
             if prefix == "cis":
+                cis = True
                 if event == "end_array":
                     cis_end = True
                 if event == "start_array":
                     cis_start = True
             if prefix == "links":
+                links = True
                 if event == "end_array":
                     links_end = True
                 if event == "start_array":
@@ -686,19 +691,20 @@ class ContextGraphImport(ContextGraph):
 
         fd.seek(0)
 
-        cis_ok = cis_start is cis_end
-        links_ok = links_start is links_end
+        cis_status = (cis, cis_start, cis_end)
+        links_status = (links, links_start, links_end)
 
-        if cis_end is True and links_end is True:
+        ok = [(True, True, True), (False, False, False)]
+
+        if cis_status in ok and links_status in ok:
             return True
-        elif cis_ok is False and links_ok is False:
+        elif cis_status not in ok and links_status not in ok:
             raise jsonschema.ValidationError(
                 "CIS and LINKS should be an array.")
-        elif cis_ok is False:
+        elif cis_status not in ok:
             raise jsonschema.ValidationError("CIS should be an array.")
-        elif links_ok is False:
+        elif links_status not in ok:
             raise jsonschema.ValidationError("LINKS should be an array.")
-
 
     def import_context(self, uuid):
         """Import a new context.
