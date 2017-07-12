@@ -60,7 +60,8 @@ class BaseTest(TestCase):
                             ContextGraphImport.K_TYPE: "resource",
                             ContextGraphImport.K_INFOS: {},
                             ContextGraphImport.K_ACTION:
-                            ContextGraphImport.A_CREATE}
+                            ContextGraphImport.A_CREATE,
+                            ContextGraphImport.K_PROPERTIES:{}}
 
         self.template_link = {ContextGraphImport.K_FROM: None,
                               ContextGraphImport.K_TO: None,
@@ -721,9 +722,10 @@ class ImportChecker(BaseTest):
 
     def test_empty_import(self):
         self.store_import({}, self.uuid)
-        with self.assertRaisesRegexp(ValidationError,
-                                     "CIS and LINKS should be an array."):
+        try:
             self.ctx_import.import_context(self.uuid)
+        except Exception as e:
+            self.fail("Exception {0} raise".format(e))
 
     def test_cis_links(self):
         data = self.template_json.copy()
