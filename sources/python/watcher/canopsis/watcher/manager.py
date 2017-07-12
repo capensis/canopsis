@@ -187,7 +187,6 @@ class Watcher(MiddlewareRegistry):
 
         :param watcher_id: watcher id
         """
-        self.logger.debug('calcul')
         watcher_entity = self.context_graph.get_entities(
             query={'_id': watcher_id})[0]
 
@@ -221,7 +220,8 @@ class Watcher(MiddlewareRegistry):
         output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
             nb_ok, nb_minor, nb_major, nb_crit)
 
-        if computed_state != watcher_entity['state']:
+        # Updating watcher state
+        if computed_state != watcher_entity.get('state', None):
             watcher_entity['state'] = computed_state
             self.context_graph.update_entity(watcher_entity)
 
