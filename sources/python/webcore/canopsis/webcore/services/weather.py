@@ -96,7 +96,6 @@ def add_pbehavior_info(enriched_entity):
     """
     enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
         enriched_entity['entity_id'])
-
     pmcp = pbehavior_manager._check_pbehavior
     for pbehavior in enriched_entity["pbehavior"]:
         pbehavior = __format_pbehavior(pbehavior)
@@ -168,6 +167,71 @@ def add_pbehavior_status(watchers):
 
     return watchers
 
+def watcher_status(watcher, pbehavior_eids_merged):
+    """
+        watcher_status
+
+        :param dict watcher: watcher entity document
+        :param set pbehavior_eids_merged: set with eids
+        :return dict pbhevahior: dict with pbehavior infos has active 
+
+    """
+    from logging import getLogger
+    logger = getLogger('webserver')
+    logger.critical('get_active_pbehaviors_on_watchers')
+    logger.critical('merged {0}'.format(pbehavior_eids_merged))
+    logger.critical('watcher depends {0}'.format(watcher['depends']))
+    logger.critical('watcher {0}'.format(watcher))
+
+    ret_dict = {
+        'has_active_pbh': False,
+        'has_all_active_pbh': False
+    }
+    bool_set = set([])
+    for entity_id in watcher['depends']:
+        if entity_id in pbehavior_eids_merged:
+            bool_set.add(True)
+        else:
+            bool_set.add(False)
+
+    if True in bool_set and False in bool_set: 
+        ret_dict['has_all_active_pbh'] = True
+        logger.critical(ret_dict)
+        return ret_dict
+    elif True in bool_set: 
+        ret_dict['has_all_active_pbh'] = True
+        logger.critical(ret_dict)
+        return ret_dict
+    else:
+        logger.critical(ret_dict)
+        return ret_dict
+
+
+def get_active_pbehaviors_on_watchers(
+        watchers_ids,
+        active_pb_dict,
+        active_pb_dict_full
+):
+    """
+        get_active_pbehaviors_on_watchers.
+
+        :param list watchers_ids:
+        :return dict: dict of watcher with list of active pbehavior 
+
+    """
+    import logging
+    logger = logging.getLogger('webserver')
+    logger.critical('get_active_pbehaviorson_watchers')
+    active_pb_on_watchers = {}
+    for watcher_id in watchers_ids:
+        tmp_pb = []
+        for key, eids in active_pb_dict.items():
+            if watcher_id in eids:
+                tmp_pb.append(active_pb_dict_full[key])
+        active_pb_on_watchers[watcher_id] = tmp_pb
+    logger.critical(active_pb_on_watchers)
+    return active_pb_on_watchers
+
 
 def exports(ws):
 
@@ -184,22 +248,59 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
-
+        from time import time
+        start = time()
+        ws.logger.critical('t1: {}'.format(start))
         watcher_filter['type'] = 'watcher'
         watcher_list = context_manager.get_entities(query=watcher_filter)
 
         alarmfilters = alarm_manager.alarm_filters.get_filters()
         alarmfilters = {x: y for x, y in alarmfilters}
 
+        actives_pb = pbehavior_manager.get_all_active_pbehaviors()
+        active_pb_dict = {}
+        active_pb_dict_full = {}
+        for pb in actives_pb:
+            ws.logger.critical('active_pb_dict : {0}'.format(pb))
+            active_pb_dict[pb['_id']] = set(pb['eids'])
+            active_pb_dict_full[pb['_id']] = pb
+
+        alarm_watchers_ids = []
+        for watcher in watcher_list:
+            alarm_watchers_ids.append('{0}/{1}'.format(
+                    watcher['_id'],
+                    watcher['name']
+                )
+            )
+        active_pbehaviors = get_active_pbehaviors_on_watchers(
+            alarm_watchers_ids,
+            active_pb_dict,
+            active_pb_dict_full
+        ) 
+        alarm_list = alarmreader_manager.get(
+            filter_={'_id': {'$in': alarm_watchers_ids}}
+        )['alarms']
+        alarm_dict = {}
+        for alarm in alarm_list:
+            alarm_dict[alarm['d']] = alarm['v']
+
+        merged_pbehaviors_eids = set([])
+        ws.logger.critical('qmsldkfjqmlsdkfjqmlsdkfj')
+        ws.logger.critical(active_pb_dict)
+        for v in active_pb_dict.values():
+            ws.logger.critical('value: {0}'.format(v))
+            for i in v:
+                ws.logger.critical(i)
+                merged_pbehaviors_eids.add(i)
+            
+
         watchers = []
         for watcher in watcher_list:
             enriched_entity = {}
-            tmp_alarm = alarmreader_manager.get(
-                filter_={'d': '{0}/{1}'.format(
-                    watcher['_id'],
-                    watcher['name']
-                )}
-            )['alarms']
+            tmp_alarm = alarm_dict.get(
+                '{0}/{1}'.format(watcher['_id'], watcher['name']),
+                []
+            )
 
             enriched_entity['entity_id'] = watcher['_id']
             enriched_entity['criticity'] = watcher['infos'].get('criticity', '')
@@ -208,26 +309,35 @@ def exports(ws):
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['state'] = {'val': 0}
             if tmp_alarm != []:
-                current_alarm = tmp_alarm[0]['v']
-                enriched_entity['state'] = current_alarm['state']
-                enriched_entity['status'] = current_alarm['status']
-                enriched_entity['snooze'] = current_alarm['snooze']
-                enriched_entity['ack'] = current_alarm['ack']
-                enriched_entity['connector'] = current_alarm['connector']
+                enriched_entity['state'] = tmp_alarm['state']
+                enriched_entity['status'] = tmp_alarm['status']
+                enriched_entity['snooze'] = tmp_alarm['snooze']
+                enriched_entity['ack'] = tmp_alarm['ack']
+                enriched_entity['connector'] = tmp_alarm['connector']
                 enriched_entity['connector_name'] = (
-                    current_alarm['connector_name']
+                    tmp_alarm['connector_name']
                 )
-                enriched_entity['component'] = current_alarm['component']
+                enriched_entity['component'] = tmp_alarm['component']
                 if 'resource' in tmp_alarm[0]['v'].keys():
-                    enriched_entity['resource'] = current_alarm['resource']
+                    enriched_entity['resource'] = tmp_alarm['resource']
 
             enriched_entity['linklist'] = []  # TODO: add this when it's ready
             enriched_entity["mfilter"] = watcher["mfilter"]
 
-            add_pbehavior_info(enriched_entity)
+            enriched_entity['pbehavior'] = active_pbehaviors.get(
+                watcher['_id'],
+                []
+            )
+            truc = watcher_status(watcher, merged_pbehaviors_eids)
+            enriched_entity["hasallactivepbehaviorinentities"] = truc['has_active_pbh']
+            enriched_entity["hasactivepbehaviorinentities"] = truc['has_all_active_pbh']
+
             watchers.append(enriched_entity)
 
-        watchers = add_pbehavior_status(watchers)
+        ws.logger.critical('build truc : {0}'.format(time() - start))
+        #watchers = add_pbehavior_status(watchers)
+
+        ws.logger.critical('coucou : {0}'.format(time() - start))
 
         return gen_json(watchers)
 
