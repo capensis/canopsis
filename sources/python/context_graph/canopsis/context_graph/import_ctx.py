@@ -666,6 +666,13 @@ class ContextGraphImport(ContextGraph):
         """Check if the cis and links field are a list. If not, raise a
         jsonschema.ValidationError. It move the cursor of the fd to back 0."""
 
+
+        # cis and links store if a field cis and links are found in the import
+        # *_start store if a the beginning of a json array are found in the cis
+        # and links fields of an import
+        # *_end store if a the end of a json array are found in the cis and
+        # links fields of an import
+
         cis = False
         cis_start = False
         cis_end = False
@@ -694,6 +701,8 @@ class ContextGraphImport(ContextGraph):
         cis_status = (cis, cis_start, cis_end)
         links_status = (links, links_start, links_end)
 
+        # ok is a filter to ascertain if a cis/link field of an import is
+        # correct.
         ok = [(True, True, True), (False, False, False)]
 
         if cis_status in ok and links_status in ok:
