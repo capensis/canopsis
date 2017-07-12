@@ -1369,6 +1369,26 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
+    def test_no_links(self):
+        data = self.template_json.copy()
+        del data["links"]
+
+        self.store_import(data, self.uuid)
+        try:
+            self.ctx_import.import_context(self.uuid)
+        except Exception as e:
+            self.fail(self._desc_fail.format(repr(e)))
+
+    def test_no_cis(self):
+        data = self.template_json.copy()
+        del data[ContextGraphImport.K_CIS]
+
+        self.store_import(data, self.uuid)
+        try:
+            self.ctx_import.import_context(self.uuid)
+        except  Exception as e:
+            self.fail(self._desc_fail.format(repr(e)))
+
     def test_OK_both(self):
         data = self.template_json.copy()
 
