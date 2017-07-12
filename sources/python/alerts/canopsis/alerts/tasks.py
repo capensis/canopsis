@@ -20,7 +20,7 @@
 
 from time import time
 
-from canopsis.alerts import AlarmField, States
+from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.status import (
     compute_status, OFF, CANCELED, get_previous_step, is_keeped_state)
 

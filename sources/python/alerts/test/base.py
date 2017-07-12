@@ -24,7 +24,7 @@ import logging
 import time
 from unittest import TestCase
 
-from canopsis.alerts import AlarmField
+from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.context_graph.manager import ContextGraph

@@ -19,14 +19,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-#from __future__ import unicode_literals
+from __future__ import unicode_literals
 
 from datetime import datetime
 from operator import itemgetter
 from time import time, mktime, sleep
 from unittest import main
 
-from canopsis.alerts import AlarmField, States
+from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import OFF, STEALTHY, is_keeped_state
@@ -1069,6 +1069,7 @@ class TestManager(BaseTest):
         self.manager.context_manager.delete_entity(component["_id"])
 
     def test_check_alarm_filters(self):
+        runs = AlarmFilterField.runs.value
         # Apply a filter on a new alarm
         now_stamp = int(mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
@@ -1081,6 +1082,7 @@ class TestManager(BaseTest):
             AlarmFilter.CONDITION: '{"v.connector": {"$eq": "fake-connector"}}',
             AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
             AlarmFilter.FORMAT: '>> foo',
+            AlarmFilter.REPEAT: 1
         }, storage=self.manager[Alerts.FILTER_STORAGE])
         lifter.save()
 
@@ -1092,10 +1094,9 @@ class TestManager(BaseTest):
         self.assertTrue(alarm_id in result)
         self.assertEqual(len(result[alarm_id]), 1)
         res_alarm = result[alarm_id][0]
-        self.assertEqual(res_alarm['value']['state']['val'],
-                         Check.MAJOR)
-        self.assertTrue(AlarmField.filter_runs.value in res_alarm['value'])
-        alarm_filters1 = res_alarm['value'][AlarmField.filter_runs.value]
+        self.assertEqual(res_alarm['value']['state']['val'], Check.MAJOR)
+        self.assertTrue(AlarmField.alarmfilter.value in res_alarm['value'])
+        alarm_filters1 = res_alarm['value'][AlarmField.alarmfilter.value][runs]
         self.assertTrue(isinstance(alarm_filters1, dict))
 
         # Output transcription validation
@@ -1110,7 +1111,7 @@ class TestManager(BaseTest):
 
         self.manager.check_alarm_filters()
         result = self.manager.get_alarms(resolved=False)
-        alarm_filters2 = result[alarm_id2][0]['value'][AlarmField.filter_runs.value]
+        alarm_filters2 = result[alarm_id2][0]['value'][AlarmField.alarmfilter.value][runs]
         for key in alarm_filters1.keys():
             self.assertEqual(alarm_filters1[key], alarm_filters2[key])
 
@@ -1119,7 +1120,7 @@ class TestManager(BaseTest):
                          Check.MAJOR)
 
     def test_check_alarm_filters_keepstate(self):
-        # Testing keepstate flag
+        # Testing keepstate flag on alarm filters
         now_stamp = int(mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
         alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]

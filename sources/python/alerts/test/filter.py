@@ -21,6 +21,7 @@
 
 from unittest import main
 
+from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters, AlarmFilter
 
 from base import BaseTest
@@ -130,6 +131,12 @@ class TestFilter(BaseTest):
         alarm, value = self.gen_fake_alarm()
         self.manager.update_current_alarm(alarm, value)
 
+        lifter = AlarmFilter(element={},
+                             storage=self.filter_storage,
+                             alarm_storage=self.alarm_storage,
+                             logger=self.logger)
+        self.assertTrue(lifter.check_alarm(alarm))
+
         lifter = AlarmFilter(element={
                 AlarmFilter.CONDITION: {"cacao": {"$eq": 'maigre'}},
             },
@@ -153,6 +160,36 @@ class TestFilter(BaseTest):
             },
             storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
         self.assertTrue(lifter.check_alarm(alarm))
+
+    def test_next_run(self):
+        delta = 100
+        alarm, value = self.gen_fake_alarm(moment=0)
+        alarm['_id'] = alarm['data_id']
+        self.manager.update_current_alarm(alarm, value)
+
+        # Check no repeat
+        lifter = AlarmFilter({
+            AlarmFilter.REPEAT: 0,
+        }, storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
+        self.assertIsNone(lifter.next_run(alarm))
+
+        # Check simple next run
+        lifter = AlarmFilter({
+            AlarmFilter.LIMIT: delta,
+        }, storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
+        self.assertTrue(lifter.next_run(alarm) >= delta)
+
+        # Check next next run date
+        value[AlarmField.alarmfilter.value] = {}
+        value[AlarmField.alarmfilter.value][AlarmFilterField.runs.value] = {
+            alarm['_id']: [666]
+        }
+        self.manager.update_current_alarm(alarm, value)
+        lifter = AlarmFilter({
+            AlarmFilter.LIMIT: delta,
+            AlarmFilter.REPEAT: 2
+        }, storage=self.filter_storage, alarm_storage=self.alarm_storage, logger=self.logger)
+        self.assertEqual(lifter.next_run(alarm), 666 + delta)
 
     def test_output(self):
         alarm, value = self.gen_fake_alarm()

@@ -20,7 +20,6 @@ INFOSFILTER_CAT = "INFOS_FILTER"
 CONTEXT_CONTENT = [
     Parameter('event_types', Parameter.array()),
     Parameter('extra_fields', Parameter.array()),
-    Parameter('schema_id')
 ]
 
 DEFAULT_SCHEMA_ID = "context_graph.filter_infos"
@@ -82,7 +81,7 @@ class InfosFilter(MiddlewareRegistry):
             if key not in schema:
                 infos.pop(key)
             elif isinstance(iteration_dict[key], dict):
-                self.__clean(infos[key], iteration_dict[key], schema[key])
+                self.__clean(infos[key], infos[key].copy(), schema[key])
 
     def filter(self, infos):
         """Filter the fieds in infos. If a key from infos did not exist in the
@@ -97,9 +96,12 @@ class InfosFilter(MiddlewareRegistry):
             jsonschema.validate(infos, self._schema)
         except jsonschema.ValidationError as v_err:
             self.logger.warning(v_err.message)
-
-        schema = self._schema["schema"]["properties"]
-        self.__clean(infos, copy.deepcopy(infos), schema)
+        try:
+            schema = self._schema["schema"]["properties"]
+        except KeyError:
+            self.logger.warning("No properties field")
+        else:
+            self.__clean(infos, copy.deepcopy(infos), schema)
 
 
 @conf_paths(CONF_PATH)

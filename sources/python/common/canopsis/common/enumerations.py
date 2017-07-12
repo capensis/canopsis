@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,4 +18,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = '0.1'
+from __future__ import unicode_literals
+
+from enum import Enum
+
+
+class DefaultEnum(Enum):
+    """Default simple Enum class
+
+    Extends:
+        Enum
+    """
+
+    def __str__(self):
+        return str(self.value)
