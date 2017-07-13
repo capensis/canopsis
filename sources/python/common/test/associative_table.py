@@ -39,13 +39,12 @@ class AssociativeTableTest(TestCase):
         key2 = 'ré'
 
         assoc = self.assoc_manager.get('test')
-        print(assoc)
         self.assertTrue(isinstance(assoc, AssociativeTable))
         self.assertEqual(assoc.get(key1), None)
 
         assoc.set(key1, 'mineur')
         get = assoc.get(key1)
-        self.assertListEqual(get, ['mineur'])
+        self.assertEqual(get, 'mineur')
 
         assoc.set(key2, ['majeur'])
         get = assoc.get(key2)

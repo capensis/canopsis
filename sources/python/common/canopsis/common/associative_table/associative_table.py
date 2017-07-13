@@ -37,18 +37,21 @@ class AssociativeTable(object):
     def get(self, key):
         """
         Search stored value.
+
+        :param str key: the key to retreive
+        :rtype: an AUTHORIZED_TYPES
         """
         return self.content.get(key, None)
 
     def set(self, key, value):
         """
-        Write stored list.
+        Update a specific element.
 
         :param str key: the key to access
-        :param obecjt value: the list to update
-        :rtype: bool
+        :param object value: the list to update
         """
         if not isinstance(value, AUTORIZED_TYPES):
-            raise ValueError('Unauthorized insertion type')
+            raise ValueError('Unauthorized insertion type {}'
+                             .format(type(value)))
 
         self.content[key] = value
