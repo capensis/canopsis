@@ -253,53 +253,52 @@ def exports(ws):
         watcher_list = context_manager.get_entities(query=watcher_filter)
 
         depends_merged = set([])
-
-        actives_pb = pbehavior_manager.get_all_active_pbehaviors()
         active_pb_dict = {}
         active_pb_dict_full = {}
+        alarm_watchers_ids = []
+        entity_watchers_ids = []
+        alarm_dict = {}
+        merged_pbehaviors_eids = set([])
+        next_run_dict = {}
+        watchers = []
+
+        actives_pb = pbehavior_manager.get_all_active_pbehaviors()
         for pb in actives_pb:
+
             active_pb_dict[pb['_id']] = set(pb.get('eids', []))
             active_pb_dict_full[pb['_id']] = pb
 
-        alarm_watchers_ids = []
-        entity_watchers_ids = []
         for watcher in watcher_list:
             for depends_id in watcher['depends']:
                 depends_merged.add(depends_id)
             entity_watchers_ids.append(watcher['_id'])
-            alarm_watchers_ids.append('{0}/{1}'.format(
-                watcher['_id'],
-                watcher['name']
-            )
+            alarm_watchers_ids.append(
+                '{0}/{1}'.format(watcher['_id'], watcher['name'])
             )
         active_pbehaviors = get_active_pbehaviors_on_watchers(
             entity_watchers_ids,
             active_pb_dict,
             active_pb_dict_full
         )
+        for eids_tab in active_pb_dict.values():
+            for eid in eids_tab:
+                merged_pbehaviors_eids.add(eid)
+
         alarm_list = alarmreader_manager.get(
             filter_={'d': {'$in': alarm_watchers_ids}}
         )['alarms']
 
-        alarm_dict = {}
         for alarm in alarm_list:
             alarm_dict[alarm['d']] = alarm['v']
-
-        merged_pbehaviors_eids = set([])
-        for v in active_pb_dict.values():
-            for i in v:
-                merged_pbehaviors_eids.add(i)
 
         alerts_list_on_depends = alarmreader_manager.get(
             filter_={'d': {'$in': list(depends_merged)}}
         )['alarms']
 
-        next_run_dict = {}
         for alert in alerts_list_on_depends:
             if 'alarmfilter' in alert['v']:
                 next_run_dict[alert['d']] = alert['v']['alarmfilter']['next_run']
 
-        watchers = []
         for watcher in watcher_list:
             enriched_entity = {}
             tmp_alarm = alarm_dict.get(
@@ -313,7 +312,7 @@ def exports(ws):
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['state'] = {'val': 0}
-            if tmp_alarm != []:
+            if tmp_alarm:
                 enriched_entity['state'] = tmp_alarm['state']
                 enriched_entity['status'] = tmp_alarm['status']
                 enriched_entity['snooze'] = tmp_alarm['snooze']
