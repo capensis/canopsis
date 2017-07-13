@@ -176,12 +176,6 @@ def watcher_status(watcher, pbehavior_eids_merged):
         :return dict pbhevahior: dict with pbehavior infos has active 
 
     """
-    import logging
-    logger = logging.getLogger('webserver')
-    logger.critical('---------------------------------')
-    logger.critical('watcher: {0}\n, pb_merged: {1}\n'.format(watcher, pbehavior_eids_merged))
-    logger.critical('---------------------------------')
-
     ret_dict = {
         'has_active_pbh': False,
         'has_all_active_pbh': False
@@ -192,8 +186,6 @@ def watcher_status(watcher, pbehavior_eids_merged):
             bool_set.add(True)
         else:
             bool_set.add(False)
-
-    logger.critical(bool_set)
 
     if True in bool_set and False in bool_set:
         ret_dict['has_active_pbh'] = True
@@ -217,8 +209,6 @@ def get_active_pbehaviors_on_watchers(
         :return dict: dict of watcher with list of active pbehavior 
 
     """
-    import logging
-    logger = logging.getLogger('webserver')
 
     active_pb_on_watchers = {}
     for watcher_id in watchers_ids:
@@ -230,7 +220,6 @@ def get_active_pbehaviors_on_watchers(
             pb['isActive'] = True
         active_pb_on_watchers[watcher_id] = tmp_pb
 
-    logger.critical('active_pb_on_watcher: {0}'.format(active_pb_on_watchers))
     return active_pb_on_watchers
 
 
@@ -292,11 +281,6 @@ def exports(ws):
             filter_={'d': {'$in': alarm_watchers_ids}}
         )['alarms']
 
-        ws.logger.critical('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-        ws.logger.critical(alarm_list)
-        ws.logger.critical(alarm_watchers_ids)
-        ws.logger.critical('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-
         alarm_dict = {}
         for alarm in alarm_list:
             alarm_dict[alarm['d']] = alarm['v']
@@ -314,11 +298,6 @@ def exports(ws):
         for alert in alerts_list_on_depends:
             if 'alarmfilter' in alert['v']:
                 next_run_dict[alert['d']] = alert['v']['alarmfilter']['next_run']
-
-
-        ws.logger.critical('########################################')
-        ws.logger.critical(alarm_dict)
-        ws.logger.critical('########################################')
 
         watchers = []
         for watcher in watcher_list:
