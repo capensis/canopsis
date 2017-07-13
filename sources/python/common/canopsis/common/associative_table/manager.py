@@ -19,52 +19,43 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+import logging
 
+from canopsis.common.ini_parser import IniParser
 from canopsis.common.associative_table.associative_table import AssociativeTable
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.model import Parameter
+from canopsis.middleware.core import Middleware
+#from canopsis.configuration.configurable.decorator import (
+#    conf_paths, add_category
+#)
+#from canopsis.middleware.registry import MiddlewareRegistry
+#from canopsis.configuration.model import Parameter
 
 CONF_PATH = 'common/associative_table.conf'
 AT_CAT = 'ASSOCIATIVE_TABLE'
-
-NAME = 'name'
-KEY = 'key'
-CONTENT = 'content'
-BASE = {
-    KEY: '',
-    CONTENT: {}
-}
-
-AT_CONTENT = [
-    Parameter('associative_table_storage_uri')
-]
+AT_K_STORAGE = 'associative_table_storage_uri'
 
 
-@conf_paths(CONF_PATH)
-@add_category(AT_CAT, content=AT_CONTENT)
-class AssociativeTableManager(MiddlewareRegistry):
+class AssociativeTableManager():
     """
     AssociativeTable, grouped in a single collection and indexed with a table
     name.
     """
 
-    ASSOC_STORAGE = 'associative_table_storage_uri'
-
     def __init__(self, storage=None, *args, **kwargs):
-        super(AssociativeTableManager, self).__init__(*args, **kwargs)
+        self.logger = logging.getLogger('common')
 
-        if storage is not None:
-            self[AssociativeTableManager.ASSOC_STORAGE] = storage
+        self.config = IniParser(path=CONF_PATH, logger=self.logger)
 
-    @property
-    def storage(self):
-        """
-        Simple access to the storage.
-        """
-        return self[AssociativeTableManager.ASSOC_STORAGE]
+        self.storage = storage
+        if storage is None:
+            section = self.config.get(AT_CAT)
+            if AT_K_STORAGE in section:
+                self.storage = Middleware.get_middleware_by_uri(
+                    section[AT_K_STORAGE]
+                )
+            else:
+                self.logger.error('Cannot read {} parameter in configuration'
+                                  .format(AT_K_STORAGE))
 
     def get(self, table_name):
         """
@@ -74,20 +65,23 @@ class AssociativeTableManager(MiddlewareRegistry):
         :rtype: <AssociativeTable>
         """
         query = {
-            NAME: {"$eq": table_name}
+            table_name: {"$exists": True}
         }
         table = self.storage._backend.find(query)
-        print(table)
 
-        if table.count() == 0:
-            print('Impossible to find associative table {}. Creating one...'
-                  .format(table_name))
-            base = {NAME: BASE}
-            base[NAME][KEY] = table_name
-            table = self.storage._backend.insert_one(base)
-            print(table)
+        if table.count() > 0:
+            content = list(table.limit(1))[0]
+            content.pop('_id')
+            return AssociativeTable(table_name=table_name, content=content)
 
-        return AssociativeTable(table_name=table_name, content=table)
+        self.logger.info('Impossible to find associative table "{}". '
+                         'Creating new one...'.format(table_name))
+        base = {
+            table_name: {}
+        }
+        self.storage._backend.insert(base)
+
+        return AssociativeTable(table_name=table_name, content={})
 
     def save(self, atable):
         """
@@ -96,6 +90,4 @@ class AssociativeTableManager(MiddlewareRegistry):
         :param object atable: the table to update
         :returns: mongo response
         """
-        _id = {NAME: atable.table_name}
-
-        return self.storage._backend.update(_id, atable.content)
+        return self.storage._backend.update(atable.table_name, atable.content)
