@@ -32,7 +32,6 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
-
 context_manager = ContextGraph()
 alarm_manager = Alerts()
 alarmreader_manager = AlertsReader()
@@ -167,6 +166,7 @@ def add_pbehavior_status(watchers):
 
     return watchers
 
+
 def watcher_status(watcher, pbehavior_eids_merged):
     """
         watcher_status
@@ -176,12 +176,11 @@ def watcher_status(watcher, pbehavior_eids_merged):
         :return dict pbhevahior: dict with pbehavior infos has active 
 
     """
-    from logging import getLogger
-    logger = getLogger('webserver')
-    logger.critical('get_active_pbehaviors_on_watchers')
-    logger.critical('merged {0}'.format(pbehavior_eids_merged))
-    logger.critical('watcher depends {0}'.format(watcher['depends']))
-    logger.critical('watcher {0}'.format(watcher))
+    import logging
+    logger = logging.getLogger('webserver')
+    logger.critical('---------------------------------')
+    logger.critical('watcher: {0}\n, pb_merged: {1}\n'.format(watcher, pbehavior_eids_merged))
+    logger.critical('---------------------------------')
 
     ret_dict = {
         'has_active_pbh': False,
@@ -194,23 +193,22 @@ def watcher_status(watcher, pbehavior_eids_merged):
         else:
             bool_set.add(False)
 
-    if True in bool_set and False in bool_set: 
-        ret_dict['has_all_active_pbh'] = True
-        logger.critical(ret_dict)
+    logger.critical(bool_set)
+
+    if True in bool_set and False in bool_set:
+        ret_dict['has_active_pbh'] = True
         return ret_dict
-    elif True in bool_set: 
+    elif True in bool_set:
         ret_dict['has_all_active_pbh'] = True
-        logger.critical(ret_dict)
         return ret_dict
     else:
-        logger.critical(ret_dict)
         return ret_dict
 
 
 def get_active_pbehaviors_on_watchers(
-        watchers_ids,
-        active_pb_dict,
-        active_pb_dict_full
+    watchers_ids,
+    active_pb_dict,
+    active_pb_dict_full
 ):
     """
         get_active_pbehaviors_on_watchers.
@@ -221,20 +219,34 @@ def get_active_pbehaviors_on_watchers(
     """
     import logging
     logger = logging.getLogger('webserver')
-    logger.critical('get_active_pbehaviorson_watchers')
+
     active_pb_on_watchers = {}
     for watcher_id in watchers_ids:
         tmp_pb = []
         for key, eids in active_pb_dict.items():
             if watcher_id in eids:
                 tmp_pb.append(active_pb_dict_full[key])
+        for pb in tmp_pb:
+            pb['isActive'] = True
         active_pb_on_watchers[watcher_id] = tmp_pb
-    logger.critical(active_pb_on_watchers)
+
+    logger.critical('active_pb_on_watcher: {0}'.format(active_pb_on_watchers))
     return active_pb_on_watchers
 
 
-def exports(ws):
+def get_next_run_alert(watcher_depends, alert_next_run_dict):
+    list_next_run = []
+    for depend in watcher_depends:
+        tmp_next_run = alert_next_run_dict.get(depend, None)
+        if tmp_next_run:
+            list_next_run.append(tmp_next_run)
+    if list_next_run:
+        return min(list_next_run)
+    else:
+        return None
 
+
+def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
 
@@ -248,51 +260,65 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
-        from time import time
-        start = time()
-        ws.logger.critical('t1: {}'.format(start))
         watcher_filter['type'] = 'watcher'
         watcher_list = context_manager.get_entities(query=watcher_filter)
 
-        alarmfilters = alarm_manager.alarm_filters.get_filters()
-        alarmfilters = {x: y for x, y in alarmfilters}
+        depends_merged = set([])
 
         actives_pb = pbehavior_manager.get_all_active_pbehaviors()
         active_pb_dict = {}
         active_pb_dict_full = {}
         for pb in actives_pb:
-            ws.logger.critical('active_pb_dict : {0}'.format(pb))
-            active_pb_dict[pb['_id']] = set(pb['eids'])
+            active_pb_dict[pb['_id']] = set(pb.get('eids', []))
             active_pb_dict_full[pb['_id']] = pb
 
         alarm_watchers_ids = []
+        entity_watchers_ids = []
         for watcher in watcher_list:
+            for depends_id in watcher['depends']:
+                depends_merged.add(depends_id)
+            entity_watchers_ids.append(watcher['_id'])
             alarm_watchers_ids.append('{0}/{1}'.format(
-                    watcher['_id'],
-                    watcher['name']
-                )
+                watcher['_id'],
+                watcher['name']
+            )
             )
         active_pbehaviors = get_active_pbehaviors_on_watchers(
-            alarm_watchers_ids,
+            entity_watchers_ids,
             active_pb_dict,
             active_pb_dict_full
-        ) 
+        )
         alarm_list = alarmreader_manager.get(
-            filter_={'_id': {'$in': alarm_watchers_ids}}
+            filter_={'d': {'$in': alarm_watchers_ids}}
         )['alarms']
+
+        ws.logger.critical('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        ws.logger.critical(alarm_list)
+        ws.logger.critical(alarm_watchers_ids)
+        ws.logger.critical('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
         alarm_dict = {}
         for alarm in alarm_list:
             alarm_dict[alarm['d']] = alarm['v']
 
         merged_pbehaviors_eids = set([])
-        ws.logger.critical('qmsldkfjqmlsdkfjqmlsdkfj')
-        ws.logger.critical(active_pb_dict)
         for v in active_pb_dict.values():
-            ws.logger.critical('value: {0}'.format(v))
             for i in v:
-                ws.logger.critical(i)
                 merged_pbehaviors_eids.add(i)
-            
+
+        alerts_list_on_depends = alarmreader_manager.get(
+            filter_={'d': {'$in': list(depends_merged)}}
+        )['alarms']
+
+        next_run_dict = {}
+        for alert in alerts_list_on_depends:
+            if 'alarmfilter' in alert['v']:
+                next_run_dict[alert['d']] = alert['v']['alarmfilter']['next_run']
+
+
+        ws.logger.critical('########################################')
+        ws.logger.critical(alarm_dict)
+        ws.logger.critical('########################################')
 
         watchers = []
         for watcher in watcher_list:
@@ -318,7 +344,7 @@ def exports(ws):
                     tmp_alarm['connector_name']
                 )
                 enriched_entity['component'] = tmp_alarm['component']
-                if 'resource' in tmp_alarm[0]['v'].keys():
+                if 'resource' in tmp_alarm.keys():
                     enriched_entity['resource'] = tmp_alarm['resource']
 
             enriched_entity['linklist'] = []  # TODO: add this when it's ready
@@ -329,15 +355,13 @@ def exports(ws):
                 []
             )
             truc = watcher_status(watcher, merged_pbehaviors_eids)
-            enriched_entity["hasallactivepbehaviorinentities"] = truc['has_active_pbh']
-            enriched_entity["hasactivepbehaviorinentities"] = truc['has_all_active_pbh']
+            enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
+            enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
+            tmp_next_run = get_next_run_alert(watcher.get('depends', []), next_run_dict)
+            if tmp_next_run:
+                enriched_entity['automatic_action_timer'] = tmp_next_run
 
             watchers.append(enriched_entity)
-
-        ws.logger.critical('build truc : {0}'.format(time() - start))
-        #watchers = add_pbehavior_status(watchers)
-
-        ws.logger.critical('coucou : {0}'.format(time() - start))
 
         return gen_json(watchers)
 
@@ -368,7 +392,6 @@ def exports(ws):
                 "name": "filter_not_found",
                 "description": "impossible to load the desired filter"
             }
-            ws.logger.error(watcher_entity['infos'])
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         entities = context_manager.get_entities(query=query)
@@ -397,7 +420,7 @@ def exports(ws):
                 )
                 enriched_entity['component'] = current_alarm['component']
                 next_run = (current_alarm.get(AlarmField.alarmfilter.value, {})
-                                         .get(AlarmFilterField.next_run.value, None))
+                            .get(AlarmFilterField.next_run.value, None))
                 enriched_entity['automatic_action_timer'] = next_run
                 if 'resource' in current_alarm.keys():
                     enriched_entity['resource'] = current_alarm['resource']
