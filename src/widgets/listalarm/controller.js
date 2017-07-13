@@ -394,13 +394,11 @@ Ember.Application.initializer({
                   newAlarm['changed'] = new Date().getTime();
                   newAlarm.linklist = alarm.linklist;
 
-                  if (alarm.d.search('/resource/') == 0) {
+                  if (alarm.v.resource) {
                     newAlarm['source_type'] = 'resource';
-                  };
-                  if (alarm.d.search('/component/') == 0) {
+                  } else {
                     newAlarm['source_type'] = 'component';
-                  };
-
+                  }
                   return newAlarm;
                 });
               this.set('defTotal', Ember.totalAlarms);
@@ -589,13 +587,13 @@ Ember.Application.initializer({
                 var f = {
                   'd': aa.get('entity_id')
                 }
-                  adapter.findQuery('alarm', { lookups: JSON.stringify(["pbehaviors", "linklist"]), 'filter': ('{"$or":[{"_id":"d4bca256-47a9-11e7-b03a-d6d3e2df9b3b"}]}') }).then(function (a) {
+                  adapter.findQuery('alarm', { lookups: JSON.stringify(["pbehaviors", "linklist"]), 'filter': ('{"$or":[{"_id":"'+ aa.get('id') +'"}]}') }).then(function (a) {
                     
                     if (a.success) {
                       var fields = self.get('fields');
                       var alarm = a.data[0].alarms[0];
-                      aa.entity_id= alarm.data_id;
-                      aa.d= alarm.data_id;
+                      aa.entity_id= alarm._id;
+                      aa.d= alarm._id;
                       aa.set('extra_details', Ember.Object.create());
                       controller.get('extraDeatialsEntities').forEach(function(item) {
                         aa.set('extra_details.' + item.name, Ember.Object.create(alarm).get(item.value));

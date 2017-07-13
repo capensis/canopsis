@@ -162,13 +162,24 @@ Ember.Application.initializer({
                         set(this, 'categories', []);
                         var modelAttributes = this.getAttributes();
                         console.error('YOYOOO:', referenceModel.proto());
-                        var refModelCategories = referenceModel.proto().categories;
+                        // var refModelCategories = referenceModel.proto().categories;
 
-                        if (refModelCategories.length > 1) {
-                            refModelCategories.pop();
-                        }
+                        // if (refModelCategories.length > 1) {
+                        //     refModelCategories.pop();
+                        // }
 
-                        refModelCategories[0].keys[3] = 'name';
+                        // refModelCategories[0].keys[3] = 'name';
+                        var refModelCategories = [
+                            {
+                                keys: [
+                                    'start',
+                                    'end',
+                                    'rrule',
+                                    'name'
+                                ],
+                                title: 'General'
+                            }
+                        ]
 
 
                         for (var i = 0, li = refModelCategories.length; refModelCategories && i < li; i++) {
