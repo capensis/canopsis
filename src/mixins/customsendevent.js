@@ -81,7 +81,7 @@ Ember.Application.initializer({
                 console.group('getDataFromRecord');
                 console.log('get data from record:', event_type, formRecord);
                 var record = {
-                    authkey: get(this, 'login.authkey'),
+                    // authkey: get(this, 'login.authkey'),
                     author: get(this, 'login._id'),
                     id: get(crecord, 'id'),
                     connector: get(crecord, 'connector'),
@@ -147,7 +147,9 @@ Ember.Application.initializer({
                         event: JSON.stringify(post_events)
                     }).then(function(data) {
                         if (data.success) {
-                            me.updateAlarm(data.data[0].id.replace(/\..*/, ''));
+                            // me.updateAlarm(data.data[0].id.replace(/\..*/, ''));
+                            me.updateAlarm(data.data[0].id);
+                            
                         } else {
                             console.error('error while send event', data.data.msg);
                         }
@@ -266,7 +268,7 @@ Ember.Application.initializer({
                         record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
-                        record.id = this.getRoutingKey(record);
+                        // record.id = this.getRoutingKey(record);
                         if (formRecord !== undefined) {
                             record.ticket = get(formRecord, 'ticket');
                             record.output = get(formRecord, 'output');
@@ -325,7 +327,7 @@ Ember.Application.initializer({
                         record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
-                        record.id = this.getRoutingKey(record);
+                        // record.id = this.getRoutingKey(record);
                         record.ticket = 'ticket';
                         record.output = 'auto ack by ' + get(record, 'author');
                     },
@@ -380,7 +382,7 @@ Ember.Application.initializer({
                         record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
-                        record.id = this.getRoutingKey(record);
+                        // record.id = this.getRoutingKey(record);
                     },
                     filter: function(record) {
                         var isCanceled = get(record, 'canceled') != undefined;
@@ -454,7 +456,7 @@ Ember.Application.initializer({
                         record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
-                        record.id = this.getRoutingKey(record);
+                        // record.id = this.getRoutingKey(record);
                         record.output = 'declare ticket';
                     },
                     filter: function(record) {
@@ -475,7 +477,7 @@ Ember.Application.initializer({
                         record.ref_rk = get(crecord, 'entity_id');
                         record.state = 0;
                         record.state_type = 1;
-                        record.id = this.getRoutingKey(record);
+                        // record.id = this.getRoutingKey(record);
                         if (formRecord === undefined) {
                             record.output = __('Associated ticket number');
                         } else {

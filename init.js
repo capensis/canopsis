@@ -34,6 +34,7 @@
         'components/component-rendererstate': 'canopsis/brick-listalarm/src/components/rendererstate/template',
         'components/component-rendererstatetimestamp': 'canopsis/brick-listalarm/src/components/rendererstatetimestamp/template',
         'components/component-rendererstatus': 'canopsis/brick-listalarm/src/components/rendererstatus/template',
+        'components/component-rendererstatusval': 'canopsis/brick-listalarm/src/components/rendererstatusval/template',
         'components/component-search': 'canopsis/brick-listalarm/src/components/search/template',
         'components/component-selectionactions': 'canopsis/brick-listalarm/src/components/selectionactions/template',
         'components/component-selectioncheckbox': 'canopsis/brick-listalarm/src/components/selectioncheckbox/template',
@@ -47,6 +48,7 @@
         '_v_state': 'canopsis/brick-listalarm/src/partials/_v_state',
         '_v_state_t': 'canopsis/brick-listalarm/src/partials/_v_state_t',
         '_v_status': 'canopsis/brick-listalarm/src/partials/_v_status',
+        '_v_status_val': 'canopsis/brick-listalarm/src/partials/_v_status_val',
         'listalarm': 'canopsis/brick-listalarm/src/widgets/listalarm/listalarm',
 
     }
@@ -85,6 +87,8 @@ define([
     'ehbs!components/component-rendererstatetimestamp',
     'canopsis/brick-listalarm/src/components/rendererstatus/component',
     'ehbs!components/component-rendererstatus',
+    'canopsis/brick-listalarm/src/components/rendererstatusval/component',
+    'ehbs!components/component-rendererstatusval',
     'canopsis/brick-listalarm/src/components/search/component',
     'ehbs!components/component-search',
     'canopsis/brick-listalarm/src/components/selectionactions/component',
@@ -106,6 +110,7 @@ define([
     'ehbs!_v_state',
     'ehbs!_v_state_t',
     'ehbs!_v_status',
+    'ehbs!_v_status_val',
     'canopsis/brick-listalarm/src/serializers/alertexpression',
     'canopsis/brick-listalarm/src/serializers/alerts',
     'link!canopsis/brick-listalarm/src/style.css',
