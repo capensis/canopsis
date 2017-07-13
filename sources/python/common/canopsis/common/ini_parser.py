@@ -19,6 +19,10 @@
 # ---------------------------------
 
 import ConfigParser
+from os.path import join
+import sys
+
+CONF_DIR = join(sys.prefix, 'etc')  # Default canopsis conf dir
 
 
 class IniParser(object):
@@ -31,7 +35,7 @@ class IniParser(object):
         self.path = path
 
         self.config = ConfigParser.ConfigParser()
-        self.config.read(self.path)
+        self.config.read(join(CONF_DIR, self.path))
 
     def get_sections(self):
         """
