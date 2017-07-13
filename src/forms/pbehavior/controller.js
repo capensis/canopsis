@@ -181,6 +181,14 @@ Ember.Application.initializer({
                             }
                         ]
 
+                        modelAttributes.get('start')['type'] = 'timestamp'
+                        modelAttributes.get('start')['options']['type'] = 'timestamp'
+
+                        modelAttributes.get('end')['type'] = 'timestamp'
+                        modelAttributes.get('end')['options']['type'] = 'timestamp'
+                        
+                        
+
 
                         for (var i = 0, li = refModelCategories.length; refModelCategories && i < li; i++) {
                             var category = refModelCategories[i],
