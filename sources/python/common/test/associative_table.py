@@ -70,8 +70,8 @@ class AssociativeTableTest(TestCase):
         self.assertTrue(res['updatedExisting'])
         self.assertEqual(res['n'], 1)
 
-        assoc_table = self.assoc_manager.get(masterkey)
-        self.assertDictEqual(assoc_table.get_all(), {'titi': 'grosminet'})
+        assoc_table2 = self.assoc_manager.get(masterkey)
+        self.assertDictEqual(assoc_table2.get_all(), {'titi': 'grosminet'})
 
 if __name__ == '__main__':
     main()

@@ -29,6 +29,9 @@ CONF_PATH = 'common/associative_table.conf'
 AT_CAT = 'ASSOCIATIVE_TABLE'
 AT_K_STORAGE = 'associative_table_storage_uri'
 
+NAME = 'name'
+CONTENT = 'content'
+
 
 class AssociativeTableManager():
     """
@@ -60,19 +63,20 @@ class AssociativeTableManager():
         :rtype: <AssociativeTable>
         """
         query = {
-            table_name: {"$exists": True}
+            NAME: {"$eq": table_name}
         }
         table = self.storage._backend.find(query)
 
         if table.count() > 0:
-            content = list(table.limit(1))[0].get(table_name, {})
+            content = list(table.limit(1))[0].get(CONTENT, {})
             return AssociativeTable(table_name=table_name,
                                     content=content)
 
         self.logger.info('Impossible to find associative table "{}". '
                          'Creating new one...'.format(table_name))
         base = {
-            table_name: {}
+            NAME: table_name,
+            CONTENT: {}
         }
         self.storage._backend.insert(base)
 
@@ -85,7 +89,10 @@ class AssociativeTableManager():
         :param object atable: the table to update
         :returns: mongo response
         """
-        find = {atable.table_name: {"$exists": True}}
-        update = {atable.table_name: atable.get_all()}
+        find = {NAME: {"$eq": atable.table_name}}
+        update = {
+            NAME: atable.table_name,
+            CONTENT: atable.get_all()
+        }
 
         return self.storage._backend.update(find, update)
