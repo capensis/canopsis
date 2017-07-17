@@ -8,17 +8,17 @@
 		"keys":["component", "resource", "domain", "perimeter"]
 	},{
 		"title": "Event",
-		"keys":["event_type", "status", "state"]
+		"keys":["event_type", "status", "state", "ack.isAck"]
 	}],
 	"showEditButton": true,
 	"properties": {
 		"hostgroups": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "role" : "tags"
-        },
+			"type": "array",
+	   		"items": {
+				"type": "string"
+			},
+			"role" : "tags"
+		},
 		"change_state_output": {
 			"type": "string"
 		},
@@ -39,7 +39,12 @@
 		},
 		"ack": {
 			"type": "object",
-			"role": "ack"
+			"role": "ack",
+			"properties": {
+				"isAck": {
+					"type" : "boolean"
+				}
+			}
 		},
 		"ack_remove": {
 			"type": "object"
@@ -61,13 +66,13 @@
 			"title": "last state change"
 
 		},
-        "tags": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "role" : "tags"
-        },
+		"tags": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "tags"
+		},
 		"ticket_date": {
 			"type": "number"
 		},
