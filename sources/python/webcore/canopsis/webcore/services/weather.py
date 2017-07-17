@@ -193,8 +193,7 @@ def watcher_status(watcher, pbehavior_eids_merged):
     elif True in bool_set:
         ret_dict['has_all_active_pbh'] = True
         return ret_dict
-    else:
-        return ret_dict
+    return ret_dict
 
 
 def get_active_pbehaviors_on_watchers(
@@ -206,7 +205,9 @@ def get_active_pbehaviors_on_watchers(
         get_active_pbehaviors_on_watchers.
 
         :param list watchers_ids:
-        :return dict: dict of watcher with list of active pbehavior 
+        :param list active_pb_dict: list of dict with key: pbheavior_id value: set of eids
+        :param list active_pb_dict_full: list of pbehavior dict
+        :return dict: dict of watcher with list of active pbehavior
 
     """
 
@@ -224,6 +225,12 @@ def get_active_pbehaviors_on_watchers(
 
 
 def get_next_run_alert(watcher_depends, alert_next_run_dict):
+    """
+
+    :param watcher_depends: list of eids
+    :param alert_next_run_dict: dict with next run infos for alarm filter
+    :return: a timestamp with next alarm filter information or None
+    """
     list_next_run = []
     for depend in watcher_depends:
         tmp_next_run = alert_next_run_dict.get(depend, None)
@@ -312,7 +319,7 @@ def exports(ws):
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['state'] = {'val': 0}
-            if tmp_alarm:
+            if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
                 enriched_entity['status'] = tmp_alarm['status']
                 enriched_entity['snooze'] = tmp_alarm['snooze']

@@ -474,5 +474,4 @@ class PBehaviorManager(MiddlewareRegistry):
         ret_val= list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
             query=query
         ))
-        self.logger.critical(ret_val)
         return ret_val
