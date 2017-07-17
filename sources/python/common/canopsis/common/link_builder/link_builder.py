@@ -1,17 +1,38 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
 
 from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractmethod
-from canopsis.common.ini_parser import IniParser
 import importlib
 import inspect
 import re
+
+from canopsis.common.ini_parser import IniParser
 
 CONF_FILE = "etc/common/link_builder.conf"
 BUILDERS_CAT = "LINK_BUILDERS"
 DEFAULT_BUILDER_CAT = "DEFAULT_BUILDER"
 PACKAGE_NAME = "canopsis.common.link_builder.{0}"
+
 
 class HypertextLinkManager:
 
@@ -23,9 +44,9 @@ class HypertextLinkManager:
         builders_info = parser.get(BUILDERS_CAT)
 
         for key in builders_info:
-            builders_info[key] = re.split(self.SEPARATOR , builders_info[key])
+            builders_info[key] = re.split(self.SEPARATOR, builders_info[key])
 
-            if builders_info[key][-1] == '': # in case of a trailing separator
+            if builders_info[key][-1] == '':  # in case of a trailing separator
                 del builders_info[-1]
 
         self.builders = []
@@ -49,7 +70,7 @@ class HypertextLinkManager:
             # an instance in the builders list
             for class_name in builders_info[fname]:
                 if class_name not in classes:
-                    logger.warning("Cannot find {0}"\
+                    logger.warning("Cannot find {0} "
                                    "class in {1}.".format(class_name, fname))
                     continue
 
@@ -67,7 +88,8 @@ class HypertextLinkManager:
 
         :param dict entity: the entity to handle
         :param options: the options
-        :return list: a list of links as a string."""
+        :return list: a list of links as a string.
+        """
         result = []
         for builder in self.builders:
             result.append(builder.build(entity, options))
@@ -81,10 +103,12 @@ class HypertextLinkBuilder:
 
     @abstractmethod
     def build(self, entity, options):
-        """Build links from an entity and the given option
+        """Build links from an entity and the given option.
+
         :param dict entity: the entity to handle
         :param options: the options
-        :return list: a list of links as a string."""
+        :return list: a list of links as a string.
+        """
         raise NotImplementedError()
 
 

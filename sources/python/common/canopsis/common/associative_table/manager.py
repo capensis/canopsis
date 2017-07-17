@@ -21,14 +21,9 @@
 from __future__ import unicode_literals
 import logging
 
-from canopsis.common.ini_parser import IniParser
 from canopsis.common.associative_table.associative_table import AssociativeTable
+from canopsis.common.ini_parser import IniParser
 from canopsis.middleware.core import Middleware
-#from canopsis.configuration.configurable.decorator import (
-#    conf_paths, add_category
-#)
-#from canopsis.middleware.registry import MiddlewareRegistry
-#from canopsis.configuration.model import Parameter
 
 CONF_PATH = 'common/associative_table.conf'
 AT_CAT = 'ASSOCIATIVE_TABLE'
@@ -42,7 +37,7 @@ class AssociativeTableManager():
     """
 
     def __init__(self, storage=None, *args, **kwargs):
-        self.logger = logging.getLogger('common')
+        self.logger = logging.getLogger('common')  # TODO: route to a real file
 
         self.config = IniParser(path=CONF_PATH, logger=self.logger)
 
