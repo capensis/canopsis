@@ -23,6 +23,7 @@ from calendar import timegm
 from datetime import datetime
 from dateutil.rrule import rrulestr
 from json import loads, dumps
+from time import time
 from uuid import uuid4
 
 from canopsis.common.utils import singleton_per_scope
@@ -460,6 +461,17 @@ class PBehaviorManager(MiddlewareRegistry):
         result = []
         for eid in eids:
             pbhs = self.get_pbehaviors(eid)
-            result = result + [x for x in pbhs if self._check_pbehavior(eid, [x['name']])]
+            result = result + [x for x in pbhs if self._check_pbehavior(
+                eid, [x['name']]
+            )]
 
         return result
+
+    def get_all_active_pbehaviors(self):
+        now = int(time())
+        query = {'$and': [{'tstop' : {'$gt': now}}, {'tstart': {'$lt': now}}]}
+
+        ret_val= list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
+            query=query
+        ))
+        return ret_val
