@@ -182,10 +182,7 @@ def watcher_status(watcher, pbehavior_eids_merged):
     }
     bool_set = set([])
     for entity_id in watcher['depends']:
-        if entity_id in pbehavior_eids_merged:
-            bool_set.add(True)
-        else:
-            bool_set.add(False)
+        bool_set.add(entity_id in pbehavior_eids_merged)
 
     if True in bool_set and False in bool_set:
         ret_dict['has_active_pbh'] = True
@@ -226,6 +223,7 @@ def get_active_pbehaviors_on_watchers(
 
 def get_next_run_alert(watcher_depends, alert_next_run_dict):
     """
+    get the next run of alarm filter
 
     :param watcher_depends: list of eids
     :param alert_next_run_dict: dict with next run infos for alarm filter
