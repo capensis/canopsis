@@ -24,70 +24,68 @@ from __future__ import unicode_literals
 from abc import ABCMeta, abstractmethod
 import importlib
 import inspect
-import re
 
-from canopsis.common.ini_parser import IniParser
+from canopsis.common.associative_table.manager import AssociativeTableManager
 
-CONF_FILE = "etc/common/link_builder.conf"
-BUILDERS_CAT = "LINK_BUILDERS"
-DEFAULT_BUILDER_CAT = "DEFAULT_BUILDER"
 PACKAGE_NAME = "canopsis.common.link_builder.{0}"
 
 
 class HypertextLinkManager:
+    """
+    Try to load an instanciate HypertextLinkBuilder classes, according to a
+    configuration.
 
-    SEPARATOR = ','
+    The configuration associate a filename in link_builder folder, to an
+    AssociativeTable table name.
+    Thus, classes in the same file will use the same configuration dict.
+    """
 
     def __init__(self, config, logger):
+        """
+        :param <AssociativeTable> config: association of a target filename with
+        another AssociativeTable table_name
+        :param Logger logger: where to log things
+        """
         self.config = config
-        parser = IniParser(CONF_FILE, logger)
-        builders_info = parser.get(BUILDERS_CAT)
-
-        for key in builders_info:
-            builders_info[key] = re.split(self.SEPARATOR, builders_info[key])
-
-            if builders_info[key][-1] == '':  # in case of a trailing separator
-                del builders_info[-1]
+        self.logger = logger
+        self.at_manager = AssociativeTableManager()
 
         self.builders = []
 
-        # build the list builders
-        for fname in builders_info:
+        # build all available builders in the config collection
+        builders_info = config.get_all()
+        for fname, options in builders_info.items():
 
             mod_name = PACKAGE_NAME.format(fname)
             mod = None
             try:
                 mod = importlib.import_module(mod_name)
             except ImportError:
-                logger.warning("Cannot import {0}.".format(mod_name))
+                logger.warning("Cannot import {}.".format(mod_name))
                 continue
 
             members = inspect.getmembers(mod, inspect.isclass)
 
-            classes = {name: obj for name, obj in members}
+            founded = []
+            # we search for classes that inherit from HypertextLinkBuilder
+            for classe_name, classe in members:
+                if classe is not HypertextLinkBuilder and \
+                   HypertextLinkBuilder in inspect.getmro(classe):
 
-            # if the class_name is a subclass of HypertextLinkBuilder, and add
-            # an instance in the builders list
-            for class_name in builders_info[fname]:
-                if class_name not in classes:
-                    logger.warning("Cannot find {0} "
-                                   "class in {1}.".format(class_name, fname))
-                    continue
+                    founded.append(classe_name)
+                    assoc_table = self.at_manager.get(options)
+                    self.builders.append(classe(assoc_table.get_all()))
 
-                class_obj = classes[class_name]
-                if HypertextLinkBuilder in inspect.getmro(class_obj):
-                    # TODO add the option here
-                    self.builders.append(class_obj(None))
-                else:
-                    msg = "Class {0} is not a subclass of {1}"
-                    logger.warning(msg.format(class_name, HypertextLinkBuilder))
+            if len(founded) == 0:
+                msg = "Any classes of {} is a subclass of {}. Ignoring it..."
+                logger.warning(msg.format(mod_name, HypertextLinkBuilder))
 
-    def links_for_entity(self, entity, options):
+    def links_for_entity(self, entity, options=None):
         """Generate links for the entity with the builder specify in the
         configuration.
 
         :param dict entity: the entity to handle
-        :param options: the options
+        :param dict options: the options
         :return list: a list of links as a string.
         """
         result = []
@@ -99,23 +97,18 @@ class HypertextLinkManager:
 
 class HypertextLinkBuilder:
 
+    """
+    Abstract class for all LinkBuilder classes.
+    """
+
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def build(self, entity, options):
+    def build(self, entity, options=None):
         """Build links from an entity and the given option.
 
         :param dict entity: the entity to handle
-        :param options: the options
-        :return list: a list of links as a string.
+        :param dict options: the options table
+        :return list: a list of links as strings.
         """
         raise NotImplementedError()
-
-
-class BasicLinkBuilder(HypertextLinkBuilder):
-
-    def __init__(self, options):
-        self.options = options
-
-    def build(self, entity, options):
-        pass
