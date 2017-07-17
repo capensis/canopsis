@@ -26,19 +26,17 @@ Query builder editor
 
 You need to clone the git repository and copy directory to Canopsis path
 
-    $ su - canopsis 
-    $ cd var/www
-    $ ./bin/brickmanager install brick-querybuilder
+    $ su - canopsis
+    $ brickmanager install brick-querybuilder
 
 Then, you need to enable the brick
 
-    $ ./bin/brickmanager enable brick-querybuilder
+    $ brickmanager enable brick-querybuilder
 
 You can see enabled bricks
 
     $ su - canopsis
-    $ cd var/www
-    $ ./bin/brickmanager list
+    $ brickmanager list
     [u'core', u'uibase', u'monitoring', ..., **u'brick-querybuilder'**]
 
 ## Usage
@@ -49,11 +47,11 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/blob/
 
 ### Tests
 
-The last build was not a full build. Please use the "full-compile" npm script to make test results show up here.
+
 
 ### Lint
 
-Tested on commit : d30d0c9.
+Tested on commit : 23b58f4.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -75,5 +73,5 @@ Tested on commit : d30d0c9.
 
 ## Additional-info
 
-Minified version : 5 files (size: 40K)
-Development version : 4 files (size: 44K)
+Minified version : 4 files (size: 24K)
+Development version : 4 files (size: 28K)
