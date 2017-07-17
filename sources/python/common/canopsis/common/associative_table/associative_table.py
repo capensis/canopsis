@@ -43,6 +43,9 @@ class AssociativeTable(object):
         """
         return self.content.get(key, None)
 
+    def get_all(self):
+        return self.content
+
     def set(self, key, value):
         """
         Update a specific element.

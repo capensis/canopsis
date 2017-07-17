@@ -23,13 +23,22 @@ from unittest import TestCase, main
 
 from canopsis.common.associative_table.associative_table import AssociativeTable
 from canopsis.common.associative_table.manager import AssociativeTableManager
+from canopsis.middleware.core import Middleware
 
 
 class AssociativeTableTest(TestCase):
     """Test the associative table module.
     """
     def setUp(self):
-        self.assoc_manager = AssociativeTableManager()
+        self.storage = Middleware.get_middleware_by_uri(
+            'storage-default-testassociativetable://'
+        )
+
+        self.assoc_manager = AssociativeTableManager(storage=self.storage)
+
+    def tearDown(self):
+        """Teardown"""
+        self.storage.remove_elements()
 
     def test_associative_table(self):
         """
@@ -50,6 +59,19 @@ class AssociativeTableTest(TestCase):
         get = assoc.get(key2)
         self.assertListEqual(assoc.get(key2), ['majeur'])
 
+    def test_associative_table_manager(self):
+        masterkey = 'masterkey'
+
+        assoc_table = self.assoc_manager.get(masterkey)
+        self.assertDictEqual(assoc_table.get_all(), {})
+
+        assoc_table.set('titi', 'grosminet')
+        res = self.assoc_manager.save(assoc_table)
+        self.assertTrue(res['updatedExisting'])
+        self.assertEqual(res['n'], 1)
+
+        assoc_table = self.assoc_manager.get(masterkey)
+        self.assertDictEqual(assoc_table.get_all(), {'titi': 'grosminet'})
 
 if __name__ == '__main__':
     main()

@@ -37,7 +37,7 @@ class AssociativeTableManager():
     """
 
     def __init__(self, storage=None, *args, **kwargs):
-        self.logger = logging.getLogger('common')  # TODO: route to a real file
+        self.logger = logging.getLogger('webserver')  # TODO: route to a real file
 
         self.config = IniParser(path=CONF_PATH, logger=self.logger)
 
@@ -65,9 +65,9 @@ class AssociativeTableManager():
         table = self.storage._backend.find(query)
 
         if table.count() > 0:
-            content = list(table.limit(1))[0]
-            content.pop('_id')
-            return AssociativeTable(table_name=table_name, content=content)
+            content = list(table.limit(1))[0].get(table_name, {})
+            return AssociativeTable(table_name=table_name,
+                                    content=content)
 
         self.logger.info('Impossible to find associative table "{}". '
                          'Creating new one...'.format(table_name))
@@ -85,4 +85,7 @@ class AssociativeTableManager():
         :param object atable: the table to update
         :returns: mongo response
         """
-        return self.storage._backend.update(atable.table_name, atable.content)
+        find = {atable.table_name: {"$exists": True}}
+        update = {atable.table_name: atable.get_all()}
+
+        return self.storage._backend.update(find, update)
