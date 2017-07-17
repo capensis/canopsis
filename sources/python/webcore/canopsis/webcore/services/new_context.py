@@ -20,25 +20,42 @@
 
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
-
+from bottle import request
+from json import loads
+from canopsis.webcore.utils import gen_json_error, HTTP_ERROR, gen_json
 manager = ContextGraph()
 
 
 def exports(ws):
 
     @ws.application.route(
-        '/api/v2/context/_filter:=_filter&start:=start&sort:=sort&limit:=limit'
+        '/api/v2/context/<_filter>'
     )
     def context(
         _filter=None,
-        limit=0,
-        start=0,
-        sort=None
     ):
+        ws.logger.critical(_filter)
+        limit = 0
+        sort = None
+        start = 0
+        payload = {}
+        if request.json is not None:
+            payload = request.json
+        if 'limit' in payload.keys():
+            limit = payload['limit']
+        if 'start' in payload.keys():
+            start = payload['skip']
+        if 'sort' in payload.keys():
+            sort = payload['sort']
+
 
         query = {}
         if _filter is not None:
-            query.update(_filter)
+            try:
+                query = loads(_filter)
+            except ValueError:
+                return gen_json_error({'description': 'can t load filter'}, HTTP_ERROR)
+
 
         cursor, count = manager.get_entities(
             query=query,
@@ -52,4 +69,4 @@ def exports(ws):
         for ent in cursor:
             data.append(ent)
 
-        return data, count
+        return gen_json(data)
