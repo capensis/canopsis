@@ -19,6 +19,7 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+from operator import itemgetter
 
 from canopsis.webcore.utils import gen_json
 
@@ -44,6 +45,8 @@ def inspect_routes(app):
 
 def exports(ws):
 
+    bottle_app = ws.application  # keep bottle ref before beaker transformation
+
     @ws.application.get('/api/v2/rule/them/all/<path>')
     @ws.application.get('/api/v2/rule/them/all/')
     def get_routes(path=None):
@@ -53,14 +56,15 @@ def exports(ws):
         :param str path: limit the listing to path including this value
         """
         themall = []
-        for prefixes, route_3 in inspect_routes(ws.application):
-            abs_prefix = '/'.join(part for p in prefixes for part in p.split('/'))
+        for prefixes, route_3 in inspect_routes(bottle_app):
             if path is None or path in route_3.rule:
                 route = {
                     'method': route_3.method,
-                    'path': abs_prefix,
                     'rule': route_3.rule
                 }
                 themall.append(route)
 
-        return gen_json(themall)
+        ta = sorted(themall, key=itemgetter('rule'))
+        ta = ['{method} -- {rule}'.format(**r) for r in ta]
+
+        return gen_json(ta)

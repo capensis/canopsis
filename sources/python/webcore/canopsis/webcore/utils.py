@@ -61,17 +61,13 @@ def __gen_json(result, status, allowed_keys=None):
         json_body = []
 
         for element in result:
-            json_element = {}
-            if not isinstance(element, dict):
-                raise ValueError(MSG_ELT_NOT_DICT)
-
-            if allowed_keys is not None:
+            if allowed_keys is not None and isinstance(element, dict):
+                json_element = {}
                 for key in allowed_keys:
                     json_element[key] = element.get(key, "")
+                json_body.append(json_element)
             else:
-                json_element = element.copy()
-
-            json_body.append(json_element)
+                json_body.append(element)
 
     elif isinstance(result, dict):
         if allowed_keys is None:
