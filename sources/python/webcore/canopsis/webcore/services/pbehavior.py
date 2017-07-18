@@ -19,7 +19,9 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+from json import loads
 from six import string_types
+
 from canopsis.common.ws import route
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.manager import Watcher
@@ -60,8 +62,15 @@ def check_values(data):
 
         for elt in data["comments"]:
             if not isinstance(elt, dict):
-                raise ValueError("The list {0} store only {1} not {2}".format(
-                    k, dict, type(elt)))
+                raise ValueError("The list {0} store only {1} not {2}"
+                                 .format(k, dict, type(elt)))
+
+    if "filter" in data and isinstance(data["filter"], string_types):
+        try:
+            data["filter"] = loads(data["filter"])
+        except ValueError:
+            raise ValueError("Cant decode mfilter parameter: {}"
+                             .format(data["filter"]))
 
     if "enabled" not in data or data["enabled"] is None or isinstance(data['enabled'], bool):
         return
@@ -98,7 +107,7 @@ def exports(ws):
         data = locals()
         check_values(data)
 
-        result =  pbm.create(
+        result = pbm.create(
             name=name, filter=filter, author=author,
             tstart=tstart, tstop=tstop, rrule=rrule,
             enabled=enabled, comments=comments,

@@ -487,18 +487,15 @@ class ContextGraphImport(ContextGraph):
 
         entity = self.entities_to_update[ci[self.K_ID]]
 
-        fields_to_update = [
-            self.K_NAME,
-            self.K_TYPE,
-            self.K_MEASUREMENTS,
-            self.K_INFOS]
-
-        # if a a fields is missing we assume we did not need to update it
-        for field in fields_to_update:
+        for key in [self.K_ACTION, self.K_PROPERTIES]:
             try:
-                entity[field] = ci[field]
+                del ci[key]
             except KeyError:
-                pass
+                msg = "No key {0} in ci of id {1}."
+                self.logger.debug(msg.format(key,ci[self.K_ID]))
+
+        for key in ci:
+            entity[key] = ci[key]
 
         self.update[ci[self.K_ID]] = entity
 
@@ -534,13 +531,17 @@ class ContextGraphImport(ContextGraph):
         if not ci.has_key(self.K_INFOS):
             ci[self.K_INFOS] = {}
 
-        entity = {'_id': ci[self.K_ID],
-                  'type': ci[self.K_TYPE],
-                  'name': ci[self.K_NAME],
-                  'depends': ci[self.K_DEPENDS],
-                  'impact': ci[self.K_IMPACT],
-                  'measurements': ci[self.K_MEASUREMENTS],
-                  'infos': ci[self.K_INFOS]}
+
+        for key in [self.K_ACTION, self.K_PROPERTIES]:
+            try:
+                del ci[key]
+            except KeyError:
+                msg = "No key {0} in ci of id {1}."
+                self.logger.debug(msg.format(key,ci[self.K_ID]))
+
+        entity = {}
+        for key in ci:
+            entity[key] = ci[key]
 
         self.update[ci[self.K_ID]] = entity
 
@@ -573,11 +574,11 @@ class ContextGraphImport(ContextGraph):
         if state == self.A_DISABLE:
             key_history = "disable_history"
             key = self.K_DISABLE
-            self.update[id_][self.K_INFOS][self.K_ENABLED] = False
+            self.update[id_][self.K_ENABLED] = False
         else:
             key_history = "enable_history"
             key = self.K_ENABLE
-            self.update[id_][self.K_INFOS][self.K_ENABLED] = True
+            self.update[id_][self.K_ENABLED] = True
 
         # Update entity the fields enable/disable of infos
         timestamp = ci[self.K_PROPERTIES][key]
@@ -588,15 +589,15 @@ class ContextGraphImport(ContextGraph):
             else:
                 timestamp = [timestamp]
 
-        if self.update[id_][self.K_INFOS].has_key(key_history):
+        if self.update[id_].has_key(key_history):
 
-            if self.update[id_][self.K_INFOS][key_history] is None:
-                self.update[id_][self.K_INFOS][key_history] = timestamp
+            if self.update[id_][key_history] is None:
+                self.update[id_][key_history] = timestamp
             else:
-                self.update[id_][self.K_INFOS][key_history] += timestamp
+                self.update[id_][key_history] += timestamp
 
         else:
-            self.update[id_][self.K_INFOS][key_history] = timestamp
+            self.update[id_][key_history] = timestamp
 
     def __a_disable_entity(self, ci):
         """Disable an entity defined by ci. For more information, see
@@ -665,30 +666,54 @@ class ContextGraphImport(ContextGraph):
         """Check if the cis and links field are a list. If not, raise a
         jsonschema.ValidationError. It move the cursor of the fd to back 0."""
 
+
+        # cis and links store if a field cis and links are found in the import
+        # *_start store if a the beginning of a json array are found in the cis
+        # and links fields of an import
+        # *_end store if a the end of a json array are found in the cis and
+        # links fields of an import
+
+        cis = False
+        cis_start = False
         cis_end = False
+        links = False
+        links_start = False
         links_end = False
+
 
         parser = ijson.parse(fd)
         for prefix, event, value in parser:
             if prefix == "cis":
+                cis = True
                 if event == "end_array":
                     cis_end = True
+                if event == "start_array":
+                    cis_start = True
             if prefix == "links":
+                links = True
                 if event == "end_array":
                     links_end = True
+                if event == "start_array":
+                    links_start = True
 
         fd.seek(0)
 
-        if (cis_end == True) and (links_end == True):
+        cis_status = (cis, cis_start, cis_end)
+        links_status = (links, links_start, links_end)
+
+        # ok is a filter to ascertain if a cis/link field of an import is
+        # correct.
+        ok = [(True, True, True), (False, False, False)]
+
+        if cis_status in ok and links_status in ok:
             return True
-        elif (cis_end == False) and (links_end == False):
+        elif cis_status not in ok and links_status not in ok:
             raise jsonschema.ValidationError(
                 "CIS and LINKS should be an array.")
-        elif cis_end == False:
+        elif cis_status not in ok:
             raise jsonschema.ValidationError("CIS should be an array.")
-        elif links_end == False:
+        elif links_status not in ok:
             raise jsonschema.ValidationError("LINKS should be an array.")
-
 
     def import_context(self, uuid):
         """Import a new context.
