@@ -57,8 +57,12 @@ def exports(ws):
 
         if element is None or not isinstance(element, dict):
             return gen_json_error(
-                {'description': 'nothing to insert'},
-                HTTP_ERROR)
+                {'description': 'nothing to insert'}, HTTP_ERROR)
+
+        assoctable = atmanager.get(name)
+        if assoctable is not None:
+            return gen_json_error(
+                {'description': 'already exist'}, HTTP_ERROR)
 
         assoctable = atmanager.create(name)
 
