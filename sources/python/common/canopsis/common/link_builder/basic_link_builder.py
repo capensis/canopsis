@@ -27,6 +27,11 @@ from canopsis.common.utils import merge_two_dicts
 
 class BasicLinkBuilder(HypertextLinkBuilder):
 
+    """
+    Basic builder which read a base_url parameter, and enrich it with entity
+    values.
+    """
+
     def __init__(self, options={}):
         self.options = options
 

@@ -55,6 +55,22 @@ class AssociativeTableManager():
                 self.logger.error('Cannot read {} parameter in configuration'
                                   .format(AT_K_STORAGE))
 
+    def create(self, table_name):
+        """
+        Create a new AssociativeTable object
+
+        :param str table_name: the table name
+        :rtype: <AssociativeTable>
+        """
+        base = {
+            NAME: table_name,
+            CONTENT: {}
+        }
+        self.logger.info('Creating associative table "{}".'.format(table_name))
+        self.storage._backend.insert(base)
+
+        return AssociativeTable(table_name=table_name, content={})
+
     def get(self, table_name):
         """
         Search for this table name in the collection.
@@ -72,15 +88,9 @@ class AssociativeTableManager():
             return AssociativeTable(table_name=table_name,
                                     content=content)
 
-        self.logger.info('Impossible to find associative table "{}". '
-                         'Creating new one...'.format(table_name))
-        base = {
-            NAME: table_name,
-            CONTENT: {}
-        }
-        self.storage._backend.insert(base)
-
-        return AssociativeTable(table_name=table_name, content={})
+        self.logger.info('Impossible to find associative table "{}".'
+                         .format(table_name))
+        return None
 
     def save(self, atable):
         """

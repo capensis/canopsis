@@ -47,7 +47,7 @@ class AssociativeTableTest(TestCase):
         key1 = 'do'
         key2 = 'ré'
 
-        assoc = self.assoc_manager.get('test')
+        assoc = self.assoc_manager.create('test')
         self.assertTrue(isinstance(assoc, AssociativeTable))
         self.assertEqual(assoc.get(key1), None)
 
@@ -63,6 +63,9 @@ class AssociativeTableTest(TestCase):
         masterkey = 'masterkey'
 
         assoc_table = self.assoc_manager.get(masterkey)
+        self.assertEqual(assoc_table, None)
+
+        assoc_table = self.assoc_manager.create(masterkey)
         self.assertDictEqual(assoc_table.get_all(), {})
 
         assoc_table.set('titi', 'grosminet')

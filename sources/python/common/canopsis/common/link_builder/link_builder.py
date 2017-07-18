@@ -37,7 +37,8 @@ class HypertextLinkManager:
 
     The configuration associate a filename in link_builder folder, to an
     AssociativeTable table name.
-    Thus, classes in the same file will use the same configuration dict.
+    Thus, classes in the same file will use the same configuration dict and we
+    cannot instanciate the same class with other parameters.
     """
 
     def __init__(self, config, logger):

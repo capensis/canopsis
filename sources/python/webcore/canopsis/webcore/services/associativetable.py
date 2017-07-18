@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 
 from bottle import request
 
-from canopsis.common.associativetable.manager import AssociativeTableManager
+from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
@@ -45,10 +45,9 @@ def exports(ws):
         return gen_json(content)
 
     @ws.application.post('/api/v2/associativetable/<name>')
-    @ws.application.put('/api/v2/associativetable/<name>')
-    def upsert_associativetable(name):
+    def insert_associativetable(name):
         """
-        Create or update an associative table.
+        Create an associative table.
 
         :param str name: name of the associative table
         :returns: mongo result dict
@@ -58,10 +57,38 @@ def exports(ws):
 
         if element is None or not isinstance(element, dict):
             return gen_json_error(
-                {'description': 'nothing to upsert'},
+                {'description': 'nothing to insert'},
+                HTTP_ERROR)
+
+        assoctable = atmanager.create(name)
+
+        for key, val in element.items():
+            assoctable.set(key, val)
+
+        result = atmanager.save(assoctable)
+
+        return gen_json(result)
+
+    @ws.application.put('/api/v2/associativetable/<name>')
+    def update_associativetable(name):
+        """
+        Update an associative table.
+
+        :param str name: name of the associative table
+        :returns: mongo result dict
+        """
+        # element is a full AssociativeTable (dict) to upsert
+        element = request.json
+
+        if element is None or not isinstance(element, dict):
+            return gen_json_error(
+                {'description': 'nothing to update'},
                 HTTP_ERROR)
 
         assoctable = atmanager.get(name)
+        if assoctable is None:
+            return gen_json_error(
+                {'description': 'cannot find object'}, HTTP_ERROR)
 
         for key, val in element.items():
             assoctable.set(key, val)
@@ -80,7 +107,7 @@ def exports(ws):
         :param str name: name of the associative table
         :returns: mongo result dict of the deletion
         """
-        ws.logger.info('Deleting associative table : {}'.format(name))
+        ws.logger.info('Deleting associative table: {}'.format(name))
 
         deletion_dict = atmanager.delete(name)
 
