@@ -499,7 +499,7 @@ class Alerts(MiddlewareRegistry):
         # Check if an entity is enabled
         if entity != []:
             try:
-                if not entity[0]['infos']['enabled']:
+                if not entity[0]['enabled']:
                     return
             except Exception:
                 self.logger.warning('entity not in context')
@@ -539,6 +539,7 @@ class Alerts(MiddlewareRegistry):
             self.execute_task('alerts.useraction.{}'
                               .format(event['event_type']),
                               event=event,
+                              author=event.get('author', None),
                               entity_id=entity_id)
 
     def execute_task(self, name, event, entity_id,
