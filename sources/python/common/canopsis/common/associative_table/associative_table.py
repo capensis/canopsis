@@ -51,7 +51,7 @@ class AssociativeTable(object):
         Update a specific element.
 
         :param str key: the key to access
-        :param object value: the list to update
+        :param object value: the value to update
         """
         if not isinstance(value, AUTORIZED_TYPES):
             raise ValueError('Unauthorized insertion type {}'

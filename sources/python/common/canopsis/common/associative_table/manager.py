@@ -84,7 +84,7 @@ class AssociativeTableManager():
 
     def save(self, atable):
         """
-        Write stored list.
+        Update an AssociativeTable in db.
 
         :param object atable: the table to update
         :returns: mongo response
@@ -96,3 +96,17 @@ class AssociativeTableManager():
         }
 
         return self.storage._backend.update(find, update)
+
+    def delete(self, table_name):
+        """
+        Delete an associative table object.
+
+        :param str table_name: the name of the table.
+        :returns: mongo response
+        """
+        query = {
+            NAME: {"$eq": table_name}
+        }
+        result = self.storage._backend.remove(query)
+
+        return result
