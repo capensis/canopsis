@@ -40,15 +40,16 @@ class LinkBuilderTest(TestCase):
         )
         self.at_manager = AssociativeTableManager(storage=self.at_storage)
 
-        self.config = self.at_manager.get('test_hlm')
+        self.config = self.at_manager.create('test_hlm')
         self.config.set('basic_link_builder', 'test_blb')
         self.at_manager.save(self.config)
 
-        blb = self.at_manager.get('test_blb')
+        blb = self.at_manager.create('test_blb')
         blb.set('base_url', 'http://example.com/?id={0}')
         self.at_manager.save(blb)
 
-        self.htl_manager = HypertextLinkManager(self.config, self.logger)
+        self.htl_manager = HypertextLinkManager(self.config.get_all(),
+                                                self.logger)
 
         self.entity = create_entity(
             id='entity-one',
@@ -62,11 +63,11 @@ class LinkBuilderTest(TestCase):
 
     def test_links_for_entity(self):
         res = self.htl_manager.links_for_entity(entity=self.entity)
-        self.assertListEqual(res, [''])
+        self.assertListEqual(res, [])
 
         res = self.htl_manager.links_for_entity(entity=self.entity,
                                                 options={})
-        self.assertListEqual(res, [''])
+        self.assertListEqual(res, [])
 
         options = {
             'base_url': 'http://example.com/{type}'

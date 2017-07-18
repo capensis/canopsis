@@ -32,18 +32,18 @@ PACKAGE_NAME = "canopsis.common.link_builder.{0}"
 
 class HypertextLinkManager:
     """
-    Try to load an instanciate HypertextLinkBuilder classes, according to a
-    configuration.
+    Try to load an instanciate HypertextLinkBuilder classes, according to
+    a configuration.
 
     The configuration associate a filename in link_builder folder, to an
     AssociativeTable table name.
-    Thus, classes in the same file will use the same configuration dict and we
-    cannot instanciate the same class with other parameters.
+    Thus, classes in the same file will use the same configuration dict and
+    we cannot instanciate the same class with other parameters.
     """
 
     def __init__(self, config, logger):
         """
-        :param <AssociativeTable> config: association of a target filename with
+        :param dict config: association of a target filename with
         another AssociativeTable table_name
         :param Logger logger: where to log things
         """
@@ -54,8 +54,7 @@ class HypertextLinkManager:
         self.builders = []
 
         # build all available builders in the config collection
-        builders_info = config.get_all()
-        for fname, options in builders_info.items():
+        for fname, options in self.config.items():
 
             mod_name = PACKAGE_NAME.format(fname)
             mod = None
@@ -74,8 +73,12 @@ class HypertextLinkManager:
                    HypertextLinkBuilder in inspect.getmro(classe):
 
                     founded.append(classe_name)
+                    conf = {}
                     assoc_table = self.at_manager.get(options)
-                    self.builders.append(classe(assoc_table.get_all()))
+                    if assoc_table is not None:
+                        conf = assoc_table.get_all()
+
+                    self.builders.append(classe(conf))
 
             if len(founded) == 0:
                 msg = "Any classes of {} is a subclass of {}. Ignoring it..."
@@ -87,11 +90,13 @@ class HypertextLinkManager:
 
         :param dict entity: the entity to handle
         :param dict options: the options
-        :return list: a list of links as a string.
+        :return list: a list of links as a string
         """
         result = []
         for builder in self.builders:
-            result.append(builder.build(entity, options))
+            link = builder.build(entity, options)
+            if link not in ['', None]:
+                result.append(link)
 
         return result
 
@@ -110,6 +115,6 @@ class HypertextLinkBuilder:
 
         :param dict entity: the entity to handle
         :param dict options: the options table
-        :return list: a list of links as strings.
+        :return str: a link
         """
         raise NotImplementedError()
