@@ -29,25 +29,29 @@ manager = ContextGraph()
 def exports(ws):
 
     @ws.application.route(
-        '/api/v2/context/<_filter>'
+        '/api/v2/context/<_filter>',
+    )
+    @ws.application.route(
+        '/api/v2/context/',
     )
     def context(
         _filter=None,
     ):
-        ws.logger.critical(_filter)
-        limit = 0
-        sort = None
-        start = 0
-        payload = {}
-        if request.json is not None:
-            payload = request.json
-        if 'limit' in payload.keys():
-            limit = payload['limit']
-        if 'start' in payload.keys():
-            start = payload['skip']
-        if 'sort' in payload.keys():
-            sort = payload['sort']
+        """
+        get entities in graph_context with a filter
 
+        payload: limit: limit of return size
+                 start: skip fields
+                 sort: sort
+
+        :param _filter: mongo filter
+        :return: list of object
+        """
+        if _filter is None:
+            filter = '{}'
+        limit = request.query.limit or 0
+        sort = request.query.sort or None
+        start = request.query.start or 0
 
         query = {}
         if _filter is not None:
@@ -59,8 +63,8 @@ def exports(ws):
 
         cursor, count = manager.get_entities(
             query=query,
-            limit=limit,
-            start=start,
+            limit=int(limit),
+            start=int(start),
             sort=sort,
             with_count=True
         )
