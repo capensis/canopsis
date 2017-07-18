@@ -173,8 +173,7 @@ def watcher_status(watcher, pbehavior_eids_merged):
 
         :param dict watcher: watcher entity document
         :param set pbehavior_eids_merged: set with eids
-        :return dict pbhevahior: dict with pbehavior infos has active 
-
+        :return dict pbhevahior: dict with pbehavior infos has active
     """
     ret_dict = {
         'has_active_pbh': False,
@@ -317,6 +316,7 @@ def exports(ws):
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['state'] = {'val': 0}
+            enriched_entity['linklist'] = watcher['links']
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
                 enriched_entity['status'] = tmp_alarm['status']
@@ -330,7 +330,6 @@ def exports(ws):
                 if 'resource' in tmp_alarm.keys():
                     enriched_entity['resource'] = tmp_alarm['resource']
 
-            enriched_entity['linklist'] = []  # TODO: add this when it's ready
             enriched_entity["mfilter"] = watcher["mfilter"]
 
             enriched_entity['pbehavior'] = active_pbehaviors.get(
@@ -391,6 +390,7 @@ def exports(ws):
             enriched_entity['name'] = entity['name']
             enriched_entity['source_type'] = entity['type']
             enriched_entity['state'] = {'val': 0}
+            enriched_entity['linklist'] = entity['links']
             if tmp_alarm != []:
                 current_alarm = tmp_alarm[0]['v']
                 enriched_entity['state'] = current_alarm['state']
@@ -407,8 +407,6 @@ def exports(ws):
                 enriched_entity['automatic_action_timer'] = next_run
                 if 'resource' in current_alarm.keys():
                     enriched_entity['resource'] = current_alarm['resource']
-
-            enriched_entity['linklist'] = []  # TODO wait for linklist
 
             add_pbehavior_info(enriched_entity)
 

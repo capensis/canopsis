@@ -2,20 +2,24 @@
 
 from __future__ import unicode_literals
 
+import copy
+import jsonschema
+import time
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.middleware.core import Middleware
+from canopsis.common.associative_table.manager import AssociativeTableManager
+from canopsis.common.ini_parser import IniParser
+from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 
-import time
-import jsonschema
-import copy
-
 CONF_PATH = 'context_graph/manager.conf'
 CONTEXT_CAT = 'CONTEXTGRAPH'
+CTX_HYPERLINK = "hypertextlink_conf"
 INFOSFILTER_CAT = "INFOS_FILTER"
 CONTEXT_CONTENT = [
     Parameter('event_types', Parameter.array()),
@@ -259,6 +263,16 @@ class ContextGraph(MiddlewareRegistry):
 
         if extra_fields is None:
             self.extra_fields = extra_fields
+
+        # For links building
+        self.at_manager = AssociativeTableManager()
+        parser = IniParser(CONF_PATH, self.logger)
+        self.hypertextlink_conf = parser.get(CONTEXT_CAT).get(CTX_HYPERLINK, "")
+        if self.hypertextlink_conf != "":
+            atable = self.at_manager.get(self.hypertextlink_conf)
+            if atable is not None:
+                conf = atable.get_all()
+                self.hlb_manager = HypertextLinkManager(conf, self.logger)
 
         self.filter_ = InfosFilter(logger=self.logger)
 
@@ -568,7 +582,6 @@ class ContextGraph(MiddlewareRegistry):
 
         self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
 
-        # rebuild selectors links
         build_all_links(self)
 
     def get_entities(self,
@@ -578,10 +591,21 @@ class ContextGraph(MiddlewareRegistry):
                      start=0,
                      sort=False,
                      with_count=False):
-        """Retreives entities matching the query and the projection.
         """
-        # TODO handle projection, limit, sort, with_count
-        # TODO complete docstring
+        Retreives entities matching the query and the projection.
+
+        :param dict query: set of couple of (field name, field value)
+        :param int limit: max number of elements to get
+        :param int start: first element index among searched list
+        :param sort: contains a list of couples of field (name, ASC/DESC)
+            or field name which denots an implicitelly ASC order
+        :type sort: list of {(str, {ASC, DESC}}), or str}
+        :param bool with_count: If True (False by default), add count to
+            the result
+
+        :return: a list of entities
+        :rtype: list of dict elements
+        """
 
         if not isinstance(query, dict):
             raise TypeError("Query must be a dict")
@@ -592,7 +616,14 @@ class ContextGraph(MiddlewareRegistry):
             skip=start,
             sort=sort,
             projection=projection,
-            with_count=with_count))
+            with_count=with_count
+        ))
+
+        # Enrich each entity with http links
+        for res in result:
+            res['links'] = []
+            if hasattr(self, 'hlb_manager'):
+                res['links'] = self.hlb_manager.links_for_entity(res)
 
         return result
 
