@@ -468,7 +468,7 @@ class Alerts(MiddlewareRegistry):
                 event[field] = step['val']
 
             if step['_t'] not in no_author_types:
-                event['author'] = step['a']
+                event[self.AUTHOR] = step['a']
 
             if step['_t'] in check_referer_types:
                 event['event_type'] = 'check'
