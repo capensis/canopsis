@@ -69,6 +69,7 @@ class Alerts(MiddlewareRegistry):
     ALARM_STORAGE = 'alarm_storage'
     FILTER_STORAGE = 'filter_storage'
     CONTEXT_MANAGER = 'context'
+    AUTHOR = 'author'
 
     @property
     def config(self):
@@ -539,7 +540,7 @@ class Alerts(MiddlewareRegistry):
             self.execute_task('alerts.useraction.{}'
                               .format(event['event_type']),
                               event=event,
-                              author=event.get('author', None),
+                              author=event.get(self.AUTHOR, None),
                               entity_id=entity_id)
 
     def execute_task(self, name, event, entity_id,
