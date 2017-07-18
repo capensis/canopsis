@@ -60,7 +60,7 @@ class LinkBuilderTest(TestCase):
         """Teardown"""
         self.at_storage.remove_elements()
 
-    def test_hypertextlinkbuilder(self):
+    def test_links_for_entity(self):
         res = self.htl_manager.links_for_entity(entity=self.entity)
         self.assertListEqual(res, [''])
 

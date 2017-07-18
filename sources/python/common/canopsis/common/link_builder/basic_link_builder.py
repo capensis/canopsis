@@ -22,15 +22,17 @@
 from __future__ import unicode_literals
 
 from canopsis.common.link_builder.link_builder import HypertextLinkBuilder
+from canopsis.common.utils import merge_two_dicts
 
 
 class BasicLinkBuilder(HypertextLinkBuilder):
 
-    def __init__(self, options=None):
+    def __init__(self, options={}):
         self.options = options
 
-    def build(self, entity, options=None):
-        if isinstance(options, dict):
-            return options.get('base_url', '').format(**entity)
+    def build(self, entity, options={}):
+        opt = merge_two_dicts(self.options, options)
+        if 'base_url' in opt:
+            return opt['base_url'].format(**entity)
 
         return ''

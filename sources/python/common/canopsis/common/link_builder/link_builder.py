@@ -80,7 +80,7 @@ class HypertextLinkManager:
                 msg = "Any classes of {} is a subclass of {}. Ignoring it..."
                 logger.warning(msg.format(mod_name, HypertextLinkBuilder))
 
-    def links_for_entity(self, entity, options=None):
+    def links_for_entity(self, entity, options={}):
         """Generate links for the entity with the builder specify in the
         configuration.
 
@@ -104,7 +104,7 @@ class HypertextLinkBuilder:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def build(self, entity, options=None):
+    def build(self, entity, options={}):
         """Build links from an entity and the given option.
 
         :param dict entity: the entity to handle
