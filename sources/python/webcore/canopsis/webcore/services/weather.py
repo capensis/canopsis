@@ -244,8 +244,7 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
     for i in watcher_depends:
         tmp_alarm = alarm_dict.get(i, {})
         if tmp_alarm != {}:
-            if tmp_alarm.get('ack', None) is None:
-                ret_val = True
+            ret_val = tmp_alarm.get('ack', None) is None
     return ret_val       
 
 
