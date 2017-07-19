@@ -33,16 +33,15 @@ class HypertextLinkManager:
     Try to load an instanciate HypertextLinkBuilder classes, according to
     a configuration.
 
-    The configuration associate a filename in link_builder folder, to a
-    dict.
+    The configuration associate a filename in link_builder folder, to a dict.
     Thus, classes in the same file will use the same configuration dict and
     we cannot instanciate the same class with other parameters.
     """
 
     def __init__(self, config, logger):
         """
-        :param dict config: association of a target filename with
-        another AssociativeTable table_name
+        :param dict config: association of a target filename with a
+        configuration dict
         :param Logger logger: where to log things
         """
         self.config = config
@@ -50,7 +49,7 @@ class HypertextLinkManager:
 
         self.builders = []
 
-        # build all available builders in the config collection
+        # instanciate all available builders in the config
         for fname, options in self.config.items():
 
             mod_name = PACKAGE_NAME.format(fname)
@@ -77,8 +76,8 @@ class HypertextLinkManager:
                 logger.warning(msg.format(mod_name, HypertextLinkBuilder))
 
     def links_for_entity(self, entity, options={}):
-        """Generate links for the entity with the builder specify in the
-        configuration.
+        """
+        Generate links for the entity with the builder specify in the configuration.
 
         :param dict entity: the entity to handle
         :param dict options: the options
