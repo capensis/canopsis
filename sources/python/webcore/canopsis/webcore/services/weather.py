@@ -396,7 +396,6 @@ def exports(ws):
                 entities[eid]['cur_alarm'] = alarm['v']
 
         active_pbs = pbehavior_manager.get_all_active_pbehaviors()
-        pmcp = pbehavior_manager._check_pbehavior
 
         for active_pb in active_pbs:
             active_pb_eids = set(active_pb['eids'])
@@ -404,11 +403,7 @@ def exports(ws):
             active_pb_cleaned = __format_pbehavior(active_pb_dirty)
 
             for eid in active_pb_eids:
-                active_pb_cleaned["isActive"] = pmcp(
-                    entity_id=eid,
-                    pb_names=[active_pb_cleaned['behavior']]
-                )
-
+                active_pb_cleaned['isActive'] = True
                 entities[eid]['pbehaviors'].append(active_pb_cleaned)
 
         for entity_id, entity in entities.iteritems():
