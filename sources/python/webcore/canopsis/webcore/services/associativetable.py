@@ -42,7 +42,10 @@ def exports(ws):
         """
         content = atmanager.get(name).get_all()
 
-        return gen_json(content)
+        if content is None:
+            return gen_json({})
+
+        return gen_json(content.get_all())
 
     @ws.application.post('/api/v2/associativetable/<name>')
     def insert_associativetable(name):

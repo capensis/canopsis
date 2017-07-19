@@ -76,7 +76,7 @@ class AssociativeTableManager():
         Search for this table name in the collection.
 
         :param str table_name: the table name
-        :rtype: <AssociativeTable>
+        :rtype: <AssociativeTable> or None
         """
         query = {
             NAME: {"$eq": table_name}
