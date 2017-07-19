@@ -77,6 +77,9 @@ def __gen_json(result, status, allowed_keys=None):
             for key in allowed_keys:
                 json_body[key] = result.get(key, "")
 
+    else:
+        json_body = result
+
     return json.dumps(json_body)
 
 
