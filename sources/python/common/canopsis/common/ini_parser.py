@@ -53,7 +53,10 @@ class IniParser(object):
         :rtype: dict
         """
         result = {}
-        # TODO: if the section doesnt exist ?!
+
+        if section not in self.get_sections():
+            return result
+
         for key, item in self.config.items(section):
             if key in result:
                 self.logger.warning('Duplicated key {} in section {}'
