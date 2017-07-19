@@ -425,7 +425,7 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['linklist'] = entity['links']
+            enriched_entity['linklist'] = raw_entity['links']
 
             if current_alarm:
                 enriched_entity['state'] = current_alarm['state']
