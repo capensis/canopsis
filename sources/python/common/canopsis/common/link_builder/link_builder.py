@@ -64,12 +64,12 @@ class HypertextLinkManager:
 
             founded = []
             # we search for classes that inherit from HypertextLinkBuilder
-            for classe_name, classe in members:
-                if classe is not HypertextLinkBuilder and \
-                   HypertextLinkBuilder in inspect.getmro(classe):
+            for member, member_type in members:
+                if member_type is not HypertextLinkBuilder and \
+                   HypertextLinkBuilder in inspect.getmro(member_type):
 
-                    founded.append(classe_name)
-                    self.builders.append(classe(options))
+                    founded.append(member)
+                    self.builders.append(member_type(options))
 
             if len(founded) == 0:
                 msg = "Any classes of {} is a subclass of {}. Ignoring it..."
