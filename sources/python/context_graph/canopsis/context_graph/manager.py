@@ -265,7 +265,7 @@ class ContextGraph(MiddlewareRegistry):
             self.extra_fields = extra_fields
 
         # For links building
-        self.at_manager = AssociativeTableManager()
+        self.at_manager = AssociativeTableManager(logger=self.logger)
         parser = IniParser(CONF_PATH, self.logger)
         self.hypertextlink_conf = parser.get(CONTEXT_CAT).get(CTX_HYPERLINK, "")
         if self.hypertextlink_conf != "":

@@ -19,6 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import logging
 from unittest import TestCase, main
 
 from canopsis.common.associative_table.associative_table import AssociativeTable
@@ -30,11 +31,14 @@ class AssociativeTableTest(TestCase):
     """Test the associative table module.
     """
     def setUp(self):
+        self.logger = logging.getLogger()
+        self.logger.setLevel(logging.DEBUG)
         self.storage = Middleware.get_middleware_by_uri(
             'storage-default-testassociativetable://'
         )
 
-        self.assoc_manager = AssociativeTableManager(storage=self.storage)
+        self.assoc_manager = AssociativeTableManager(logger=self.logger,
+                                                     storage=self.storage)
 
     def tearDown(self):
         """Teardown"""

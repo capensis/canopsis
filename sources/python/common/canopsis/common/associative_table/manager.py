@@ -19,7 +19,6 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-import logging
 
 from canopsis.common.associative_table.associative_table import AssociativeTable
 from canopsis.common.ini_parser import IniParser
@@ -39,12 +38,10 @@ class AssociativeTableManager():
     name.
     """
 
-    def __init__(self, storage=None, *args, **kwargs):
-        self.logger = logging.getLogger('webserver')  # TODO: route to a real file
+    def __init__(self, logger, storage=None, path=CONF_PATH, *args, **kwargs):
+        self.logger = logger
+        self.config = IniParser(path=path, logger=self.logger)
 
-        self.config = IniParser(path=CONF_PATH, logger=self.logger)
-
-        self.storage = storage
         if storage is None:
             section = self.config.get(AT_CAT)
             if AT_K_STORAGE in section:
@@ -54,6 +51,8 @@ class AssociativeTableManager():
             else:
                 self.logger.error('Cannot read {} parameter in configuration'
                                   .format(AT_K_STORAGE))
+        else:
+            self.storage = storage
 
     def create(self, table_name):
         """

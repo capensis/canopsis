@@ -28,7 +28,7 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 def exports(ws):
 
-    atmanager = AssociativeTableManager()
+    atmanager = AssociativeTableManager(logger=ws.logger)
 
     @ws.application.get(
         '/api/v2/associativetable/<name>'
