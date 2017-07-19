@@ -25,8 +25,6 @@ from abc import ABCMeta, abstractmethod
 import importlib
 import inspect
 
-from canopsis.common.associative_table.manager import AssociativeTableManager
-
 PACKAGE_NAME = "canopsis.common.link_builder.{0}"
 
 
@@ -35,8 +33,8 @@ class HypertextLinkManager:
     Try to load an instanciate HypertextLinkBuilder classes, according to
     a configuration.
 
-    The configuration associate a filename in link_builder folder, to an
-    AssociativeTable table name.
+    The configuration associate a filename in link_builder folder, to a
+    dict.
     Thus, classes in the same file will use the same configuration dict and
     we cannot instanciate the same class with other parameters.
     """
@@ -49,7 +47,6 @@ class HypertextLinkManager:
         """
         self.config = config
         self.logger = logger
-        self.at_manager = AssociativeTableManager()
 
         self.builders = []
 
@@ -73,12 +70,7 @@ class HypertextLinkManager:
                    HypertextLinkBuilder in inspect.getmro(classe):
 
                     founded.append(classe_name)
-                    conf = {}
-                    assoc_table = self.at_manager.get(options)
-                    if assoc_table is not None:
-                        conf = assoc_table.get_all()
-
-                    self.builders.append(classe(conf))
+                    self.builders.append(classe(options))
 
             if len(founded) == 0:
                 msg = "Any classes of {} is a subclass of {}. Ignoring it..."

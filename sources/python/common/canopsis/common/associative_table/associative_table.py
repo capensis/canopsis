@@ -44,6 +44,9 @@ class AssociativeTable(object):
         return self.content.get(key, None)
 
     def get_all(self):
+        """
+        Return all the content
+        """
         return self.content
 
     def set(self, key, value):

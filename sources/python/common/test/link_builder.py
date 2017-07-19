@@ -22,7 +22,6 @@
 import logging
 from unittest import TestCase, main
 
-from canopsis.common.associative_table.associative_table import AssociativeTable
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.context_graph.process import create_entity
@@ -33,7 +32,8 @@ class LinkBuilderTest(TestCase):
     """Test the hyperlink table module.
     """
     def setUp(self):
-        self.logger = logging.getLogger('webservice')  # TODO: put a real logger
+        self.logger = logging.getLogger()
+        self.logger.setLevel(logging.DEBUG)
 
         self.at_storage = Middleware.get_middleware_by_uri(
             'storage-default-testassociativetable://'
@@ -41,12 +41,8 @@ class LinkBuilderTest(TestCase):
         self.at_manager = AssociativeTableManager(storage=self.at_storage)
 
         self.config = self.at_manager.create('test_hlm')
-        self.config.set('basic_link_builder', 'test_blb')
+        self.config.set('basic_link_builder', {})
         self.at_manager.save(self.config)
-
-        blb = self.at_manager.create('test_blb')
-        blb.set('base_url', 'http://example.com/?id={0}')
-        self.at_manager.save(blb)
 
         self.htl_manager = HypertextLinkManager(self.config.get_all(),
                                                 self.logger)
@@ -67,6 +63,14 @@ class LinkBuilderTest(TestCase):
 
         res = self.htl_manager.links_for_entity(entity=self.entity,
                                                 options={})
+        self.assertListEqual(res, [])
+
+        options = {
+            'obiwan': 'jedi',
+            'darthvader': 'sith'
+        }
+        res = self.htl_manager.links_for_entity(entity=self.entity,
+                                                options=options)
         self.assertListEqual(res, [])
 
         options = {
