@@ -239,6 +239,20 @@ def get_next_run_alert(watcher_depends, alert_next_run_dict):
     else:
         return None
 
+def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
+    """
+        alert_not_ack_in_watcher check if an alert is not ack in watcher depends
+
+        :param watcher_depends: list of depends
+        :param alarm_dict: alarm dict
+
+    """
+    for depend in watcher_depends:
+        tmp_alarm = alarm_dict.get(depend, {})
+        if tmp_alarm != {} and tmp_alarm.get('ack', None) is None:
+            return True
+    return False       
+
 
 def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
@@ -290,7 +304,7 @@ def exports(ws):
                 merged_pbehaviors_eids.add(eid)
 
         alarm_list = alarmreader_manager.get(
-            filter_={'d': {'$in': alarm_watchers_ids}}
+            filter_={}
         )['alarms']
 
         for alarm in alarm_list:
@@ -337,6 +351,7 @@ def exports(ws):
                 watcher['_id'],
                 []
             )
+            enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(watcher['depends'], alarm_dict)
             truc = watcher_status(watcher, merged_pbehaviors_eids)
             enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
             enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
