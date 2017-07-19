@@ -240,8 +240,8 @@ def get_next_run_alert(watcher_depends, alert_next_run_dict):
         return None
 
 def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
-    for i in watcher_depends:
-        tmp_alarm = alarm_dict.get(i, {})
+    for depend in watcher_depends:
+        tmp_alarm = alarm_dict.get(depend, {})
         if tmp_alarm != {} and tmp_alarm.get('ack', None) is None:
             return True
     return False       
