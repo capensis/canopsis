@@ -379,9 +379,6 @@ def exports(ws):
         entity_ids = [entity['_id'] for entity in raw_entities]
         enriched_entities = []
 
-        tmp_alarms = alarmreader_manager.get(filter_={'d': {'$in': entity_ids}})
-        alarms = tmp_alarms['alarms']
-
         entities = {}
         for raw_entity in raw_entities:
             reid = raw_entity['_id']
@@ -391,6 +388,8 @@ def exports(ws):
                 'pbehaviors': []
             }
 
+        tmp_alarms = alarmreader_manager.get(filter_={'d': {'$in': entity_ids}})
+        alarms = tmp_alarms['alarms']
         for alarm in alarms:
             eid = alarm['d']
             if entities[eid]['cur_alarm'] is None:
