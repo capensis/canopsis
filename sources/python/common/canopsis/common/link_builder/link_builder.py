@@ -85,9 +85,7 @@ class HypertextLinkManager:
         """
         result = []
         for builder in self.builders:
-            link = builder.build(entity, options)
-            if link not in ['', None]:
-                result.append(link)
+            result = result + builder.build(entity, options)
 
         return result
 
@@ -106,6 +104,6 @@ class HypertextLinkBuilder:
 
         :param dict entity: the entity to handle
         :param dict options: the options table
-        :return str: a link
+        :rtype: list
         """
         raise NotImplementedError()

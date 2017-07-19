@@ -38,6 +38,6 @@ class BasicLinkBuilder(HypertextLinkBuilder):
     def build(self, entity, options={}):
         opt = merge_two_dicts(self.options, options)
         if 'base_url' in opt:
-            return opt['base_url'].format(**entity)
+            return [opt['base_url'].format(**entity)]
 
-        return ''
+        return []
