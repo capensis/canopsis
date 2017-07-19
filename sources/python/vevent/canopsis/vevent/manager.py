@@ -18,19 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from calendar import timegm
+from datetime import datetime, timedelta
+from icalendar import Event
+from uuid import uuid4 as uuid
+
 from canopsis.common.init import basestring
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
 from canopsis.middleware.registry import MiddlewareRegistry
-
-from icalendar import Event
-
-from calendar import timegm
-
-from datetime import datetime, timedelta
-
-from uuid import uuid4 as uuid
 
 MAXTS = 2147483647  #: maximal timestamp
 

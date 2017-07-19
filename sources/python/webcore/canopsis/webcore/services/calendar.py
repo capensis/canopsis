@@ -18,9 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.ws import route
-from canopsis.ccalendar.manager import CalendarManager
 from json import dumps
+
+from canopsis.ccalendar.manager import CalendarManager
+from canopsis.common.ws import route
+
 cm = CalendarManager()
 
 
