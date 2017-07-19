@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 
 from ast import literal_eval
 import json
+import copy
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
@@ -85,23 +86,6 @@ def __format_pbehavior(pbehavior):
             pass
 
     return pbehavior
-
-
-def add_pbehavior_info(enriched_entity):
-    """Add pbehavior related field to selectors. This function will add
-    the related pbehavior in 'pbehavior'.
-
-    :param dict enriched_entity: the entity to enrich
-    """
-    enriched_entity["pbehavior"] = pbehavior_manager.get_pbehaviors_by_eid(
-        enriched_entity['entity_id'])
-    pmcp = pbehavior_manager._check_pbehavior
-    for pbehavior in enriched_entity["pbehavior"]:
-        pbehavior = __format_pbehavior(pbehavior)
-
-        pbehavior["isActive"] = pmcp(entity_id=enriched_entity['entity_id'],
-                                     pb_names=[pbehavior['behavior']])
-
 
 def add_pbehavior_status(watchers):
     """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
@@ -382,29 +366,50 @@ def exports(ws):
         enriched_entities = []
 
         tmp_alarms = alarmreader_manager.get(filter_={'d': {'$in': entity_ids}})
-        tmp_alarms = tmp_alarms['alarms']
+        alarms = tmp_alarms['alarms']
 
         entities = {}
         for raw_entity in raw_entities:
             reid = raw_entity['_id']
-            entities[reid] = {'entity': raw_entity, 'cur_alarm': None}
+            entities[reid] = {
+                'entity': raw_entity,
+                'cur_alarm': None,
+                'pbehaviors': []
+            }
 
-        for tmp_alarm in tmp_alarms:
-            eid = tmp_alarm['d']
+        for alarm in alarms:
+            eid = alarm['d']
             if entities[eid]['cur_alarm'] is None:
-                entities[eid]['cur_alarm'] = tmp_alarm['v']
+                entities[eid]['cur_alarm'] = alarm['v']
+
+        active_pbs = pbehavior_manager.get_all_active_pbehaviors()
+        pmcp = pbehavior_manager._check_pbehavior
+
+        for active_pb in active_pbs:
+            active_pb_eids = set(active_pb['eids'])
+            active_pb_dirty = copy.deepcopy(active_pb)
+            active_pb_cleaned = __format_pbehavior(active_pb_dirty)
+
+            for eid in active_pb_eids:
+                active_pb_cleaned["isActive"] = pmcp(
+                    entity_id=eid,
+                    pb_names=[active_pb_cleaned['behavior']]
+                )
+
+                entities[eid]['pbehaviors'].append(active_pb_cleaned)
 
         for entity_id, entity in entities.iteritems():
             enriched_entity = {}
 
             current_alarm = entity['cur_alarm']
-            entity = entity['entity']
+            raw_entity = entity['entity']
+            enriched_entity['pbehavior'] = entity['pbehaviors']
 
             enriched_entity['entity_id'] = entity_id
             enriched_entity['sla_text'] = ''  # TODO when sla, use it
-            enriched_entity['org'] = entity['infos'].get('org', '')
-            enriched_entity['name'] = entity['name']
-            enriched_entity['source_type'] = entity['type']
+            enriched_entity['org'] = raw_entity['infos'].get('org', '')
+            enriched_entity['name'] = raw_entity['name']
+            enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
             if current_alarm:
                 enriched_entity['state'] = current_alarm['state']
@@ -423,8 +428,6 @@ def exports(ws):
                     enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entity['linklist'] = []  # TODO wait for linklist
-
-            add_pbehavior_info(enriched_entity)
 
             enriched_entities.append(enriched_entity)
 
