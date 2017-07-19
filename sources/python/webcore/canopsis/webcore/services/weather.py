@@ -377,22 +377,37 @@ def exports(ws):
             }
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
-        entities = context_manager.get_entities(query=query)
+        raw_entities = context_manager.get_entities(query=query)
+        entity_ids = [entity['_id'] for entity in raw_entities]
+        enriched_entities = []
 
-        entities_list = []
-        for entity in entities:
+        tmp_alarms = alarmreader_manager.get(filter_={'d': {'$in': entity_ids}})
+        tmp_alarms = tmp_alarms['alarms']
+
+        entities = {}
+        for raw_entity in raw_entities:
+            reid = raw_entity['_id']
+            entities[reid] = {'entity': raw_entity, 'alarms': []}
+
+        for tmp_alarm in tmp_alarms:
+            #if tmp_alarm['d'] in entities:
+            eid = tmp_alarm['d']
+            entities[eid]['alarms'].append(tmp_alarm)
+
+        for entity_id, entity in entities.iteritems():
             enriched_entity = {}
-            tmp_alarm = alarmreader_manager.get(filter_={'d': entity['_id']})
-            tmp_alarm = tmp_alarm['alarms']
 
-            enriched_entity['entity_id'] = entity['_id']
+            entity_alarms = entity['alarms']
+            entity = entity['entity']
+
+            enriched_entity['entity_id'] = entity_id
             enriched_entity['sla_text'] = ''  # TODO when sla, use it
             enriched_entity['org'] = entity['infos'].get('org', '')
             enriched_entity['name'] = entity['name']
             enriched_entity['source_type'] = entity['type']
             enriched_entity['state'] = {'val': 0}
-            if tmp_alarm != []:
-                current_alarm = tmp_alarm[0]['v']
+            if entity_alarms:
+                current_alarm = entity_alarms[0]['v']
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
                 enriched_entity['snooze'] = current_alarm['snooze']
@@ -405,13 +420,13 @@ def exports(ws):
                 next_run = (current_alarm.get(AlarmField.alarmfilter.value, {})
                             .get(AlarmFilterField.next_run.value, None))
                 enriched_entity['automatic_action_timer'] = next_run
-                if 'resource' in current_alarm.keys():
+                if 'resource' in current_alarm:
                     enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entity['linklist'] = []  # TODO wait for linklist
 
             add_pbehavior_info(enriched_entity)
 
-            entities_list.append(enriched_entity)
+            enriched_entities.append(enriched_entity)
 
-        return gen_json(entities_list)
+        return gen_json(enriched_entities)
