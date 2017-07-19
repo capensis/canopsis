@@ -576,3 +576,13 @@ def merge_two_dicts(x, y):
     z = x.copy()
     z.update(y)
     return z
+
+
+def is_mongo_successfull(dico):
+    """
+    Check if a pymongo dict response report a success ({'ok': 1.0, 'n': 2})
+
+    :param dict dico: a pymongo dict response on update, remove...
+    :rtype: bool
+    """
+    return 'ok' in dico and dico['ok'] == 1.0

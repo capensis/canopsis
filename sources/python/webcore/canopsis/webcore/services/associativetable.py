@@ -40,7 +40,7 @@ def exports(ws):
         :param str name: name of the associative table
         :returns: <AssociativeTable>
         """
-        content = atmanager.get(name).get_all()
+        content = atmanager.get(name)
 
         if content is None:
             return gen_json({})
@@ -53,7 +53,7 @@ def exports(ws):
         Create an associative table.
 
         :param str name: name of the associative table
-        :returns: mongo result dict
+        :returns: bool
         """
         # element is a full AssociativeTable (dict) to upsert
         element = request.json
@@ -72,9 +72,7 @@ def exports(ws):
         for key, val in element.items():
             assoctable.set(key, val)
 
-        result = atmanager.save(assoctable)
-
-        return gen_json(result)
+        return gen_json(atmanager.save(assoctable))
 
     @ws.application.put('/api/v2/associativetable/<name>')
     def update_associativetable(name):
@@ -82,7 +80,7 @@ def exports(ws):
         Update an associative table.
 
         :param str name: name of the associative table
-        :returns: mongo result dict
+        :rtype: bool
         """
         # element is a full AssociativeTable (dict) to upsert
         element = request.json
@@ -100,9 +98,7 @@ def exports(ws):
         for key, val in element.items():
             assoctable.set(key, val)
 
-        result = atmanager.save(assoctable)
-
-        return gen_json(result)
+        return gen_json(atmanager.save(assoctable))
 
     @ws.application.delete(
         '/api/v2/associativetable/<name>'
@@ -112,10 +108,6 @@ def exports(ws):
         Delete a associative table, based on his id.
 
         :param str name: name of the associative table
-        :returns: mongo result dict of the deletion
+        :rtype: bool
         """
-        ws.logger.info('Deleting associative table: {}'.format(name))
-
-        deletion_dict = atmanager.delete(name)
-
-        return gen_json(deletion_dict)
+        return gen_json(atmanager.delete(name))

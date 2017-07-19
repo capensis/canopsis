@@ -74,14 +74,13 @@ class AssociativeTableTest(TestCase):
 
         assoc_table.set('titi', 'grosminet')
         res = self.assoc_manager.save(assoc_table)
-        self.assertTrue(res['updatedExisting'])
-        self.assertEqual(res['n'], 1)
+        self.assertTrue(res)
 
         assoc_table2 = self.assoc_manager.get(masterkey)
         self.assertDictEqual(assoc_table2.get_all(), {'titi': 'grosminet'})
 
         res = self.assoc_manager.delete(masterkey)
-        self.assertEqual(res['n'], 1)
+        self.assertTrue(res)
 
 if __name__ == '__main__':
     main()

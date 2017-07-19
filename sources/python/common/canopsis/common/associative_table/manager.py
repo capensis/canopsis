@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 
 from canopsis.common.associative_table.associative_table import AssociativeTable
 from canopsis.common.ini_parser import IniParser
+from canopsis.common.utils import is_mongo_successfull
 from canopsis.middleware.core import Middleware
 
 CONF_PATH = 'common/associative_table.conf'
@@ -96,26 +97,28 @@ class AssociativeTableManager():
         Update an AssociativeTable in db.
 
         :param object atable: the table to update
-        :returns: mongo response
+        :rtype: bool
         """
         find = {NAME: {"$eq": atable.table_name}}
         update = {
             NAME: atable.table_name,
             CONTENT: atable.get_all()
         }
+        mongo_dict = self.storage._backend.update(find, update)
 
-        return self.storage._backend.update(find, update)
+        return is_mongo_successfull(mongo_dict)
 
     def delete(self, table_name):
         """
         Delete an associative table object.
 
         :param str table_name: the name of the table.
-        :returns: mongo response
+        :rtype: bool
         """
         query = {
             NAME: {"$eq": table_name}
         }
+        self.logger.info('Deleting associative table: {}'.format(table_name))
         result = self.storage._backend.remove(query)
 
-        return result
+        return is_mongo_successfull(result)
