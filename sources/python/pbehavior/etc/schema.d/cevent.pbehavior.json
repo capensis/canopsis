@@ -41,8 +41,9 @@
 			}
         },
         "rrule": {
-            "required": true,
-            "type": "string"
+            "required": false,
+            "type": "string",
+            "role": "rrule"
         },
         "action": {
             "enum": [
