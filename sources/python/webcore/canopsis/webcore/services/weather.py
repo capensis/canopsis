@@ -387,17 +387,17 @@ def exports(ws):
         entities = {}
         for raw_entity in raw_entities:
             reid = raw_entity['_id']
-            entities[reid] = {'entity': raw_entity, 'alarms': []}
+            entities[reid] = {'entity': raw_entity, 'cur_alarm': None}
 
         for tmp_alarm in tmp_alarms:
-            #if tmp_alarm['d'] in entities:
             eid = tmp_alarm['d']
-            entities[eid]['alarms'].append(tmp_alarm)
+            if entities[eid]['cur_alarm'] is None:
+                entities[eid]['cur_alarm'] = tmp_alarm['v']
 
         for entity_id, entity in entities.iteritems():
             enriched_entity = {}
 
-            entity_alarms = entity['alarms']
+            current_alarm = entity['cur_alarm']
             entity = entity['entity']
 
             enriched_entity['entity_id'] = entity_id
@@ -406,8 +406,7 @@ def exports(ws):
             enriched_entity['name'] = entity['name']
             enriched_entity['source_type'] = entity['type']
             enriched_entity['state'] = {'val': 0}
-            if entity_alarms:
-                current_alarm = entity_alarms[0]['v']
+            if current_alarm:
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
                 enriched_entity['snooze'] = current_alarm['snooze']
