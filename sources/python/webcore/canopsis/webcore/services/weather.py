@@ -267,8 +267,16 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
+        limit = request.query.limit or 0
+        start= request.query.start or 0
+        sort = request.query.sort or False
         watcher_filter['type'] = 'watcher'
-        watcher_list = context_manager.get_entities(query=watcher_filter)
+        watcher_list = context_manager.get_entities(
+            query=watcher_filter,
+            limit = limit,
+            start = start,
+            sort = sort
+        )
 
         depends_merged = set([])
         active_pb_dict = {}
