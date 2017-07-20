@@ -269,7 +269,7 @@ def exports(ws):
         :rtype: dict
         """
         limit = request.query.limit or '0'
-        start= request.query.start or '0'
+        start = request.query.start or '0'
         sort = request.query.sort or False
         start = int(start)
         limit = int(limit)
