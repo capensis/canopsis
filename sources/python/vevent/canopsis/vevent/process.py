@@ -25,9 +25,9 @@ graph nodes in order to execute theirs tasks.
 """
 
 from canopsis.common.utils import singleton_per_scope
-from canopsis.vevent.manager import VEventManager
 from canopsis.context_graphe.manager import ContextGraph
 from canopsis.task.core import register_task
+from canopsis.vevent.manager import VEventManager
 
 
 @register_task('vevent.event_processing')

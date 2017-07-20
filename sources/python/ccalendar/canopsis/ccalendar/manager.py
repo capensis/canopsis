@@ -23,9 +23,6 @@ from canopsis.configuration.configurable.decorator import (
 )
 from canopsis.vevent.manager import VEventManager
 
-from json import loads
-
-
 #: calendar manager configuration path
 CONF_PATH = 'calendar/calendar.conf'
 #: calendar manager configuration category name
