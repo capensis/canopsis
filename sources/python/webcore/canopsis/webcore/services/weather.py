@@ -276,9 +276,9 @@ def exports(ws):
         watcher_filter['type'] = 'watcher'
         watcher_list = context_manager.get_entities(
             query=watcher_filter,
-            limit = limit,
-            start = start,
-            sort = sort
+            limit=limit,
+            start=start,
+            sort=sort
         )
 
         depends_merged = set([])
