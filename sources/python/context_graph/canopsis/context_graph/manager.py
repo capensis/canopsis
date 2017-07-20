@@ -621,7 +621,7 @@ class ContextGraph(MiddlewareRegistry):
 
         # Enrich each entity with http links
         for res in result:
-            res['links'] = []
+            res['links'] = {}
             if hasattr(self, 'hlb_manager'):
                 res['links'] = self.hlb_manager.links_for_entity(res)
 
