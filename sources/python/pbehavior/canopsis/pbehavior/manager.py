@@ -186,6 +186,8 @@ class PBehaviorManager(MiddlewareRegistry):
 
         kw = locals()
         kw.pop('self')
+        if PBehavior.EIDS not in kw:
+            kw[PBehavior.EIDS] = []
 
         data = PBehavior(**kw)
         if not data.comments or not isinstance(data.comments, list):
