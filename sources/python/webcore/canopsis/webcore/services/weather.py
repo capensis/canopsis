@@ -37,6 +37,9 @@ context_manager = ContextGraph()
 alarm_manager = Alerts()
 alarmreader_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
+DEFAULT_LIMIT = '0'
+DEFAULT_START = '0'
+DEFAULT_SORT = False
 
 
 def __format_pbehavior(pbehavior):
@@ -268,9 +271,9 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
-        limit = request.query.limit or '0'
-        start = request.query.start or '0'
-        sort = request.query.sort or False
+        limit = request.query.limit or DEFAULT_LIMIT
+        start = request.query.start or DEFAULT_START
+        sort = request.query.sort or DEFAULT_SORT
         start = int(start)
         limit = int(limit)
         watcher_filter['type'] = 'watcher'
