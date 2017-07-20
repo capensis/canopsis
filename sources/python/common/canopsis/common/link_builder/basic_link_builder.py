@@ -33,11 +33,11 @@ class BasicLinkBuilder(HypertextLinkBuilder):
     """
 
     def __init__(self, options={}):
-        self.options = options
+        super(BasicLinkBuilder, self).__init__(options=options)
 
     def build(self, entity, options={}):
         opt = merge_two_dicts(self.options, options)
         if 'base_url' in opt:
-            return [opt['base_url'].format(**entity)]
+            return {self.category: [opt['base_url'].format(**entity)]}
 
-        return []
+        return {}
