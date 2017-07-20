@@ -45,8 +45,8 @@ class LinkBuilderTest(TestCase):
         self.config.set('basic_link_builder', {})
         self.at_manager.save(self.config)
 
-        self.htl_manager = HypertextLinkManager(self.config.get_all(),
-                                                self.logger)
+        self.htl_manager = HypertextLinkManager(config=self.config.get_all(),
+                                                logger=self.logger)
 
         self.entity = create_entity(
             id='entity-one',
@@ -60,11 +60,11 @@ class LinkBuilderTest(TestCase):
 
     def test_links_for_entity(self):
         res = self.htl_manager.links_for_entity(entity=self.entity)
-        self.assertListEqual(res, [])
+        self.assertDictEqual(res, {})
 
         res = self.htl_manager.links_for_entity(entity=self.entity,
                                                 options={})
-        self.assertListEqual(res, [])
+        self.assertDictEqual(res, {})
 
         options = {
             'obiwan': 'jedi',
@@ -72,14 +72,24 @@ class LinkBuilderTest(TestCase):
         }
         res = self.htl_manager.links_for_entity(entity=self.entity,
                                                 options=options)
-        self.assertListEqual(res, [])
+        self.assertDictEqual(res, {})
 
         options = {
             'base_url': 'http://example.com/{type}'
         }
         res = self.htl_manager.links_for_entity(entity=self.entity,
                                                 options=options)
-        self.assertListEqual(res, ['http://example.com/resource'])
+        self.assertDictEqual(res, {'links': ['http://example.com/resource']})
+
+        category = 'alexandrin'
+        config = {
+            'base_url': 'http://example.com/{type}',
+            'category': category
+        }
+        htl_manager2 = HypertextLinkManager(config={'basic_link_builder': config},
+                                            logger=self.logger)
+        res = htl_manager2.links_for_entity(entity=self.entity)
+        self.assertDictEqual(res, {category: ['http://example.com/resource']})
 
 
 if __name__ == '__main__':
