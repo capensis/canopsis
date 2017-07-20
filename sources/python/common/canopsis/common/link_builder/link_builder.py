@@ -77,7 +77,8 @@ class HypertextLinkManager:
 
     def links_for_entity(self, entity, options={}):
         """
-        Generate links for the entity with the builder specify in the configuration
+        Generate links for the entity with the builder specify in the
+        configuration
 
         :param dict entity: the entity to handle
         :param dict options: the options
@@ -98,8 +99,6 @@ class HypertextLinkBuilder:
 
     """
     Abstract class for all LinkBuilder classes.
-
-    Category is set on build only.
     """
 
     __metaclass__ = ABCMeta
@@ -110,6 +109,7 @@ class HypertextLinkBuilder:
     def __init__(self, options={}):
         self.options = options
 
+        # The category is set on instanciation (only)
         if self.CATEGORY_KEY in options:
             self.category = options[self.CATEGORY_KEY]
         else:
@@ -117,7 +117,8 @@ class HypertextLinkBuilder:
 
     @abstractmethod
     def build(self, entity, options={}):
-        """Build links from an entity and the given option.
+        """
+        Build links from an entity and the given option
 
         :param dict entity: the entity to handle
         :param dict options: the options table
