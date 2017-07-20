@@ -20,6 +20,7 @@
 
 from __future__ import unicode_literals
 
+from bottle import request
 from ast import literal_eval
 import json
 
@@ -267,9 +268,11 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
-        limit = request.query.limit or 0
-        start= request.query.start or 0
+        limit = request.query.limit or '0'
+        start= request.query.start or '0'
         sort = request.query.sort or False
+        start = int(start)
+        limit = int(limit)
         watcher_filter['type'] = 'watcher'
         watcher_list = context_manager.get_entities(
             query=watcher_filter,
