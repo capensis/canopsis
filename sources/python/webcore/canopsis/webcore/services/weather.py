@@ -324,6 +324,9 @@ def exports(ws):
                 '{0}/{1}'.format(watcher['_id'], watcher['name']),
                 []
             )
+            tmp_linklist = []
+            for k, v in watcher['links'].items():
+                tmp_linklist.append({'cat_name': k, 'links': v})
 
             enriched_entity['entity_id'] = watcher['_id']
             enriched_entity['infos'] = watcher['infos']
@@ -332,7 +335,7 @@ def exports(ws):
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['linklist'] = watcher['links']
+            enriched_entity['linklist'] = tmp_linklist
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
                 enriched_entity['status'] = tmp_alarm['status']
@@ -400,6 +403,9 @@ def exports(ws):
             enriched_entity = {}
             tmp_alarm = alarmreader_manager.get(filter_={'d': entity['_id']})
             tmp_alarm = tmp_alarm['alarms']
+            tmp_linklist = []
+            for k, v in entity['links'].items():
+                tmp_linklist.append({'cat_name': k, 'links': v})
 
             enriched_entity['entity_id'] = entity['_id']
             enriched_entity['infos'] = entity['infos']
@@ -408,7 +414,7 @@ def exports(ws):
             enriched_entity['name'] = entity['name']
             enriched_entity['source_type'] = entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['linklist'] = entity['links']
+            enriched_entity['linklist'] = tmp_linklist
             if tmp_alarm != []:
                 current_alarm = tmp_alarm[0]['v']
                 enriched_entity['state'] = current_alarm['state']

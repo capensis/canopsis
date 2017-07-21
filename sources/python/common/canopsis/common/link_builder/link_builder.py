@@ -91,7 +91,6 @@ class HypertextLinkManager:
                 if cat not in result:
                     result[cat] = []
                 result[cat] = result[cat] + build
-
         return result
 
 
