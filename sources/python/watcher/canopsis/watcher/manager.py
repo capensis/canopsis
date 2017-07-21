@@ -258,7 +258,6 @@ class Watcher(MiddlewareRegistry):
             event_type="watcher",
             source_type="component",
             component=display_name,
-            resource=_id,
             state=computed_state,
             output=output,
             perf_data_array=[],
