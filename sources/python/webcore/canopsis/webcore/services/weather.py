@@ -87,6 +87,7 @@ def __format_pbehavior(pbehavior):
 
     return pbehavior
 
+
 def add_pbehavior_status(watchers):
     """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
     on every dict in data. Data must be a list of dict that contains a key
@@ -418,7 +419,7 @@ def exports(ws):
             raw_entity = entity['entity']
 
             tmp_linklist = []
-            for k, v in entity['links'].items():
+            for k, v in raw_entity['links'].items():
                 tmp_linklist.append({'cat_name': k, 'links': v})
 
             enriched_entity['pbehavior'] = entity['pbehaviors']
