@@ -91,8 +91,11 @@ class HypertextLinkManager:
                 if cat not in result:
                     result[cat] = []
                 result[cat] = result[cat] + build
+        ret_val = []
+        for k, v in result:
+            ret_val.append({'cat_name': k, 'links': v})
 
-        return result
+        return ret_val
 
 
 class HypertextLinkBuilder:
