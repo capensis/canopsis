@@ -35,8 +35,8 @@ CONTENT = 'content'
 
 class AssociativeTableManager():
     """
-    AssociativeTable, grouped in a single collection and indexed with a table
-    name.
+    AssociativeTable, grouped in a single collection and indexed with a
+    table name.
     """
 
     def __init__(self, logger, storage=None, path=CONF_PATH, *args, **kwargs):

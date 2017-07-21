@@ -44,6 +44,40 @@ class InfosFilter(MiddlewareRegistry):
         self.reload_schema()
         self.logger = logger
 
+    @property
+    def event_types(self):
+        """
+        Array of event_type
+        """
+        if not hasattr(self, '_event_types'):
+            self.event_types = None
+
+        return self._event_types
+
+    @event_types.setter
+    def event_types(self, value):
+        if value is None:
+            value = []
+
+        self._event_types = value
+
+    @property
+    def extra_fields(self):
+        """
+        Array of fields to save from event in entity.
+        """
+        if not hasattr(self, '_extra_fields'):
+            self.extra_fields = None
+
+        return self._extra_fields
+
+    @extra_fields.setter
+    def extra_fields(self, value):
+        if value is None:
+            value = []
+
+        self._extra_fields = value
+
     def reload_schema(self):
         """Reload the schema and regenerate the internal structure used to
         filter the infos dict."""
@@ -67,7 +101,7 @@ class InfosFilter(MiddlewareRegistry):
         if isinstance(self._schema, list):
             self._schema = self._schema[0]
             if not isinstance(self._schema, dict):
-                raise ValueError("The schema should be a dict not"\
+                raise ValueError("The schema should be a dict not"
                                  " a {0}.".format(type(self._schema)))
 
     def __clean(self, infos, iteration_dict, schema):
