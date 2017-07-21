@@ -404,7 +404,7 @@ def exports(ws):
             tmp_alarm = alarmreader_manager.get(filter_={'d': entity['_id']})
             tmp_alarm = tmp_alarm['alarms']
             tmp_linklist = []
-            for k, v in entity['links'].items:
+            for k, v in entity['links'].items():
                 tmp_linklist.append({'cat_name': k, 'links': v})
 
             enriched_entity['entity_id'] = entity['_id']
