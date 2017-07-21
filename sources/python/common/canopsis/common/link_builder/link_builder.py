@@ -77,16 +77,20 @@ class HypertextLinkManager:
 
     def links_for_entity(self, entity, options={}):
         """
-        Generate links for the entity with the builder specify in the configuration.
+        Generate links for the entity with the builder specify in the
+        configuration
 
         :param dict entity: the entity to handle
         :param dict options: the options
-        :return list: a list of links as a string
+        :returns: an association of categories with a list of strings
+        :rtype: dict of list
         """
-        result = []
+        result = {}
         for builder in self.builders:
-            result = result + builder.build(entity, options)
-
+            for cat, build in builder.build(entity, options).items():
+                if cat not in result:
+                    result[cat] = []
+                result[cat] = result[cat] + build
         return result
 
 
@@ -98,12 +102,26 @@ class HypertextLinkBuilder:
 
     __metaclass__ = ABCMeta
 
+    CATEGORY_KEY = "category"
+    DEFAULT_CATEGORY = "links"
+
+    def __init__(self, options={}):
+        self.options = options
+
+        # The category is set on instanciation (only)
+        if self.CATEGORY_KEY in options:
+            self.category = options[self.CATEGORY_KEY]
+        else:
+            self.category = self.DEFAULT_CATEGORY
+
     @abstractmethod
     def build(self, entity, options={}):
-        """Build links from an entity and the given option.
+        """
+        Build links from an entity and the given option
 
         :param dict entity: the entity to handle
         :param dict options: the options table
-        :rtype: list
+        :returns: an association of categories with a list of strings
+        :rtype: dict of list
         """
         raise NotImplementedError()

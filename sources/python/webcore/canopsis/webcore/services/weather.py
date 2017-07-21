@@ -222,6 +222,7 @@ def get_next_run_alert(watcher_depends, alert_next_run_dict):
     else:
         return None
 
+
 def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
     """
         alert_not_ack_in_watcher check if an alert is not ack in watcher depends
@@ -234,7 +235,7 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
         tmp_alarm = alarm_dict.get(depend, {})
         if tmp_alarm != {} and tmp_alarm.get('ack', None) is None:
             return True
-    return False       
+    return False
 
 
 def exports(ws):
@@ -307,14 +308,18 @@ def exports(ws):
                 '{0}/{1}'.format(watcher['_id'], watcher['name']),
                 []
             )
+            tmp_linklist = []
+            for k, v in watcher['links'].items():
+                tmp_linklist.append({'cat_name': k, 'links': v})
 
             enriched_entity['entity_id'] = watcher['_id']
+            enriched_entity['infos'] = watcher['infos']
             enriched_entity['criticity'] = watcher['infos'].get('criticity', '')
             enriched_entity['org'] = watcher['infos'].get('org', '')
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['linklist'] = watcher['links']
+            enriched_entity['linklist'] = tmp_linklist
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
                 enriched_entity['status'] = tmp_alarm['status']
@@ -411,17 +416,22 @@ def exports(ws):
 
             current_alarm = entity['cur_alarm']
             raw_entity = entity['entity']
-            enriched_entity['pbehavior'] = entity['pbehaviors']
 
+            tmp_linklist = []
+            for k, v in entity['links'].items():
+                tmp_linklist.append({'cat_name': k, 'links': v})
+
+            enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
+            enriched_entity['linklist'] = tmp_linklist
+            enriched_entity['infos'] = raw_entity['infos']
             enriched_entity['sla_text'] = ''  # TODO when sla, use it
             enriched_entity['org'] = raw_entity['infos'].get('org', '')
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['linklist'] = raw_entity['links']
 
-            if current_alarm:
+            if current_alarm is not None:
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
                 enriched_entity['snooze'] = current_alarm['snooze']
