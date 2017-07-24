@@ -410,7 +410,8 @@ def exports(ws):
 
             for eid in active_pb_eids:
                 active_pb_cleaned['isActive'] = True
-                entities[eid]['pbehaviors'].append(active_pb_cleaned)
+                if eid in entities.keys():
+                    entities[eid]['pbehaviors'].append(active_pb_cleaned)
 
         for entity_id, entity in entities.iteritems():
             enriched_entity = {}
