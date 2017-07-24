@@ -19,7 +19,7 @@
 }
 
 .actions-wrapper {
-  width: 85px;
+  width: 110px;
   margin: 3px;
 }
 
@@ -28,4 +28,16 @@
   flex-wrap: wrap;
   position: relative;
   /*margin: -10px 0 0 -10px;*/
+}
+
+#formwrapper {
+  z-index: 9999
+}
+
+.bootstrap-datetimepicker-widget {
+  z-index: 10000
+}
+
+.actions-wrapper i {
+  width: 15px;
 }

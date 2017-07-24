@@ -577,7 +577,7 @@ Ember.Application.initializer({
              * @method updateAlarm
              * @description Update an alarm after performaning an action
              */
-            updateAlarm: function (alarmId) {
+            updateRecord: function (alarmId) {
               var controller = this;
               var aa = this.get('alarms').findBy('id', alarmId);
               if (aa) {

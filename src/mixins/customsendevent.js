@@ -120,7 +120,7 @@ Ember.Application.initializer({
              */
             submitEvents: function(crecords, record, event_type) {
                 var me = this;
-                var store = get(this, 'widgetDataStore');                
+                var store = get(this, 'widgetDataStore') || Ember['widgetDataStore'];                
                 var safe_mode = this.get('controllers.application.frontendConfig.safe_mode');
                 console.log('safe_mode', safe_mode);
                 return new Ember.RSVP.Promise(function(resolve, reject) {
@@ -148,7 +148,7 @@ Ember.Application.initializer({
                     }).then(function(data) {
                         if (data.success) {
                             // me.updateAlarm(data.data[0].id.replace(/\..*/, ''));
-                            me.updateAlarm(data.data[0].id);
+                            me.updateRecord(data.data[0].id);
                             
                         } else {
                             console.error('error while send event', data.data.msg);
@@ -222,7 +222,7 @@ Ember.Application.initializer({
              * @return record
              */
             getDisplayRecord: function(event_type, crecord) {
-                var store = get(this, 'widgetDataStore');
+                var store = get(this, 'widgetDataStore') || Ember['widgetDataStore'];
                 var recordData = this.getDataFromRecord(event_type, crecord);
                 var record = store.createRecord(event_type, recordData);
                 return record;
@@ -414,8 +414,8 @@ Ember.Application.initializer({
                             record.output = get(formRecord, 'output');
                             // record.dtstart = get(formRecord, 'dtstart');
                             // record.dtstop = get(formRecord, 'dtstop');
-                            record.start = get(formRecord, 'dtstart');
-                            record.end = get(formRecord, 'dtend');
+                            record.start = get(formRecord, 'start');
+                            record.end = get(formRecord, 'end');
                             record.rrule = get(formRecord, 'rrule');
                             record.pbehavior_name = 'downtime';
                             record.action = 'create';
