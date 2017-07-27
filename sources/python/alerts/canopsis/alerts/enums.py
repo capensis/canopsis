@@ -46,6 +46,7 @@ class AlarmField(DefaultEnum):
     tags = 'tags'
     ticket = 'ticket'
     alarmfilter = 'alarmfilter'  # see AlarmFilterField
+    created_at = 'created_at'
 
 
 class States(DefaultEnum):
