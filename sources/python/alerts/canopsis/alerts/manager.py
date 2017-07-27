@@ -756,7 +756,8 @@ class Alerts(MiddlewareRegistry):
         new_value = task(self, value, status, event)
 
         alarm[self[Alerts.ALARM_STORAGE].VALUE] = new_value
-
+        alarm['last_update_date'] = time()
+        
         return alarm
 
     def make_alarm(self, alarm_id, event):
@@ -781,6 +782,8 @@ class Alerts(MiddlewareRegistry):
                 'connector_name': event['connector_name'],
                 'component': event['component'],
                 'resource': event.get('resource', None),
+                AlarmField.created_at.value: int(time()),
+                AlarmField.last_update_value.value: int(time()),
                 AlarmField.state.value: None,
                 AlarmField.status.value: None,
                 AlarmField.ack.value: None,
