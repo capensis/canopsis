@@ -20,6 +20,7 @@
 
 from __future__ import unicode_literals
 
+from bottle import request
 from ast import literal_eval
 import json
 import copy
@@ -37,6 +38,9 @@ context_manager = ContextGraph()
 alarm_manager = Alerts()
 alarmreader_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
+DEFAULT_LIMIT = '0'
+DEFAULT_START = '0'
+DEFAULT_SORT = False
 
 
 def __format_pbehavior(pbehavior):
@@ -253,8 +257,18 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
+        limit = request.query.limit or DEFAULT_LIMIT
+        start = request.query.start or DEFAULT_START
+        sort = request.query.sort or DEFAULT_SORT
+        start = int(start)
+        limit = int(limit)
         watcher_filter['type'] = 'watcher'
-        watcher_list = context_manager.get_entities(query=watcher_filter)
+        watcher_list = context_manager.get_entities(
+            query=watcher_filter,
+            limit=limit,
+            start=start,
+            sort=sort
+        )
 
         depends_merged = set([])
         active_pb_dict = {}
