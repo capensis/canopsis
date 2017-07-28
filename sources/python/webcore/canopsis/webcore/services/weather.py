@@ -38,7 +38,7 @@ context_manager = ContextGraph()
 alarm_manager = Alerts()
 alarmreader_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
-DEFAULT_LIMIT = '0'
+DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
 
@@ -260,8 +260,15 @@ def exports(ws):
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
-        start = int(start)
-        limit = int(limit)
+        try:
+            start = int(start)
+        except ValueError:
+            start = int(DEFAULT_START)
+        try:
+            limit = int(limit)
+        except ValueError:
+            limit = int(DEFAULT_LIMIT)
+
         watcher_filter['type'] = 'watcher'
         watcher_list = context_manager.get_entities(
             query=watcher_filter,
