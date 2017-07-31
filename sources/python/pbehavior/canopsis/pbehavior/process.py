@@ -39,6 +39,7 @@ RESOURCE = 'resource'
 SELECTOR = 'selector'
 CONNECTOR = 'connector'
 CONNECTOR_NAME = 'connector_name'
+DEFAULT_AUTHOR = 'default author'
 
 TEMPLATE = '/{}/{}/{}/{}'
 TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
@@ -87,8 +88,11 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
         filter = {'_id': entity_id}
         if event.get('action') == PBEHAVIOR_CREATE:
             result = pbm.create(
-                event['pbehavior_name'], filter, event['author'],
-                event['start'], event['end'],
+                event['pbehavior_name'],
+                filter,
+                event.get('author', DEFAULT_AUTHOR),
+                event['start'],
+                event['end'],
                 connector=event['connector'],
                 comments=event.get('comments', None),
                 connector_name=event['connector_name'],
