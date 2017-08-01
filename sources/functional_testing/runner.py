@@ -21,15 +21,27 @@
 
 #from __future__ import unicode_literals
 
+import importlib
+from os import listdir
+from os.path import isfile, join
+import re
 import unittest
-
-import apis.webcore as webcore
 
 loader = unittest.TestLoader()
 suite = unittest.TestSuite()
 
-suite.addTests(loader.loadTestsFromModule(webcore))
-# TODO: load all test in apis folder
+path = 'apis'
+pyfile = re.compile('[^_].*\.py$')
+files = [f for f in listdir(path) if isfile(join(path, f)) and pyfile.match(f)]
+for f in files:
+    mod_name = 'apis.{}'.format('.'.join(f.split('.')[:-1]))
+    try:
+        mod = importlib.import_module(mod_name)
+    except ImportError:
+        print("Cannot import {}.".format(mod_name))
+        continue
+
+    suite.addTests(loader.loadTestsFromModule(mod))
 
 runner = unittest.TextTestRunner(verbosity=3)
 result = runner.run(suite)
