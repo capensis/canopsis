@@ -148,7 +148,7 @@ class Watcher(MiddlewareRegistry):
         :param string watcher_id: watcher_id
         :returns: the mongodb dict response
         """
-        self.context_graph.update_entity(watcher_id)
+        self.context_graph.delete_entity(watcher_id)
 
         self.sla_storage.remove_elements(ids=[watcher_id])
 

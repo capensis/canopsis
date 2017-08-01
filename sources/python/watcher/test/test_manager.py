@@ -109,9 +109,8 @@ class CreateWatcher(BaseTest):
             'depends': [],
             'mfilter': '{}',
             'state': 0,
-            'infos': {
-                'enabled': True
-            },
+            'enabled': True,
+            'infos': {},
             'type': 'watcher'
         }
 
@@ -123,11 +122,7 @@ class CreateWatcher(BaseTest):
         self.assertEquals(expected['mfilter'], entity['mfilter'])
         self.assertEquals(expected['state'], entity['state'])
         self.assertEquals(expected['type'], entity['type'])
-        self.assertEquals(expected['infos']['enabled'], entity['infos']['enabled'])
-
-        self.assertTrue(
-            sorted(list(expected)) == sorted(list(entity))
-        )
+        self.assertEquals(expected['enabled'], entity['enabled'])
 
 
 class DeleteWatcher(BaseTest):
@@ -143,8 +138,7 @@ class DeleteWatcher(BaseTest):
         self.assertEqual(del_w['n'], 1)
 
         get_w = self.manager.get_watcher('watcher-one')
-        self.assertTrue(isinstance(get_w, dict))
-        self.assertFalse(get_w['infos']['enabled'])
+        self.assertEqual(get_w, None)
 
 
 class GetWatcher(BaseTest):
