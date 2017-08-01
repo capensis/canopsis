@@ -148,15 +148,7 @@ class Watcher(MiddlewareRegistry):
         :param string watcher_id: watcher_id
         :returns: the mongodb dict response
         """
-        object_watcher = list(
-            self[self.WATCHER_STORAGE]._backend.find({
-                '_id': watcher_id
-            }))[0]
-        watcher_entity = self.context_graph.get_entities_by_id(
-            object_watcher['_id'])[0]
-        watcher_entity['infos']['enabled'] = False
-
-        self.context_graph.update_entity(watcher_entity)
+        self.context_graph.update_entity(watcher_id)
 
         self.sla_storage.remove_elements(ids=[watcher_id])
 
