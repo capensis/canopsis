@@ -48,7 +48,7 @@ def exports(ws):
     bottle_app = ws.application  # keep bottle ref before beaker transformation
 
     @ws.application.get('/api/v2/rule/them/all/<path>')
-    @ws.application.get('/api/v2/rule/them/all/')
+    @ws.application.get('/api/v2/rule/them/all')
     def get_routes(path=None):
         """
         List all routes in the webservice, according to a certain path.
