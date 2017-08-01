@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from __future__ import unicode_literals
+from collections import OrderedDict
 from unittest import main, TestCase
 
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.context_graph.process import create_entity
 from canopsis.middleware.core import Middleware
 from canopsis.watcher.manager import Watcher
-from collections import OrderedDict
 
 watcher_one = "watcher-one"
 watcher_example = {
@@ -83,7 +82,7 @@ class GetWatcher(BaseTest):
             'watcher'
         )
         self.context_graph_manager.create_entity(watcher_entity)
-        print(self.manager.get_watcher('watcher-one'))
+        #print(self.manager.get_watcher('watcher-one'))
 
 
 class CreateWatcher(BaseTest):
@@ -147,6 +146,7 @@ class DeleteWatcher(BaseTest):
         self.assertTrue(isinstance(get_w, dict))
         self.assertFalse(get_w['infos']['enabled'])
 
+
 class GetWatcher(BaseTest):
 
     def test_get_watcher(self):
@@ -156,13 +156,14 @@ class GetWatcher(BaseTest):
         self.assertEqual(get_w['_id'], watcher_one)
         self.assertEqual(None, self.manager.get_watcher('watcher_two'))
 
+
 class WorstState(BaseTest):
 
     def test_worst_state(self):
-        self.assertEqual(self.manager.worst_state(0,0,0), 0)
-        self.assertEqual(self.manager.worst_state(0,0,1), 1)
-        self.assertEqual(self.manager.worst_state(0,1,0), 2)
-        self.assertEqual(self.manager.worst_state(1,0,0), 3)
+        self.assertEqual(self.manager.worst_state(0, 0, 0), 0)
+        self.assertEqual(self.manager.worst_state(0, 0, 1), 1)
+        self.assertEqual(self.manager.worst_state(0, 1, 0), 2)
+        self.assertEqual(self.manager.worst_state(1, 0, 0), 3)
 
 
 if __name__ == "__main__":
