@@ -53,8 +53,7 @@ class BaseApiTest(unittest.TestCase):
         'Accept': 'application/json'
     }
 
-    #WEB_HOST = "localhost"
-    WEB_HOST = "172.16.0.20"
+    WEB_HOST = "localhost"
 
     URL_AUTHKEY = "{}/?authkey={}"
     URL_PLAIN = "{}/auth"
