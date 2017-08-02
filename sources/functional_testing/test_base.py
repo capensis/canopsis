@@ -116,13 +116,20 @@ class BaseApiTest(unittest.TestCase):
 
         self.cookies = response.cookies
 
-    def _send(self, url, data=None, headers=None, method=Method.get):
+    def _send(self,
+              url,
+              data=None,
+              headers=None,
+              method=Method.get,
+              params=None
+              ):
         """Send a http request.
 
         :param str url: the url to access
         :param str data: data to with with the request
         :param dict headers: change headers on the request
         :param Method method: which method to use
+        :param dict params: querystring parameters
         :rtype: <Response>
         """
         kwargs = {
@@ -133,6 +140,8 @@ class BaseApiTest(unittest.TestCase):
             kwargs['cookies'] = self.cookies
         if data is not None:
             kwargs['data'] = data
+        if params is not None:
+            kwargs['params'] = params
 
         response = self.session.request(url=url, **kwargs)
 
