@@ -20,13 +20,9 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-
 import json
-import unittest
 
-from canopsis.common.test_base import BaseApiTest, Method
-from canopsis.watcher.manager import Watcher
-from canopsis.webcore.utils import HTTP_ERROR, HTTP_NOT_ALLOWED, HTTP_OK
+from test_base import BaseApiTest, Method, HTTP
 
 # Sample watcher (to insert)
 watcher_dict = {
@@ -67,31 +63,29 @@ class TestWatcherAPI(BaseApiTest):
     def setUp(self):
         self._authenticate()  # default setup
 
-        self.watcher = Watcher()
-
         self.base = '{}/{}'.format(self.URL_BASE, 'api/v2/watchers')
 
-    def test_CRUD(self):
+    def test_watcher(self):
         watcher_id = watcher_dict['_id']
 
         # GET
         r = self._send(url=self.base,
                        method=Method.get)
-        self.assertEqual(r.status_code, HTTP_NOT_ALLOWED)
+        self.assertEqual(r.status_code, HTTP.NOT_ALLOWED.value)
 
         r = self._send(url=self.base + '/' + watcher_id,
                        method=Method.get)
-        self.assertEqual(r.status_code, HTTP_ERROR)
+        self.assertEqual(r.status_code, HTTP.ERROR.value)
 
         # POST
         r = self._send(url=self.base,
                        method=Method.post)
-        self.assertEqual(r.status_code, HTTP_ERROR)
+        self.assertEqual(r.status_code, HTTP.ERROR.value)
 
         r = self._send(url=self.base,
                        method=Method.post,
                        data=json.dumps(watcher_dict))
-        self.assertEqual(r.status_code, HTTP_OK)
+        self.assertEqual(r.status_code, HTTP.OK.value)
         data = r.json()
         self.assertTrue(isinstance(data, dict))
         # Nothing more to validate on this route
@@ -99,7 +93,7 @@ class TestWatcherAPI(BaseApiTest):
         # PUT
         r = self._send(url=self.base,
                        method=Method.put)
-        self.assertEqual(r.status_code, HTTP_NOT_ALLOWED)
+        self.assertEqual(r.status_code, HTTP.NOT_ALLOWED.value)
 
         params = {
             "sla_critical": 75,
@@ -109,7 +103,7 @@ class TestWatcherAPI(BaseApiTest):
         r = self._send(url=self.base + '/' + watcher_id,
                        method=Method.put,
                        data=json.dumps(params))
-        self.assertEqual(r.status_code, HTTP_OK)
+        self.assertEqual(r.status_code, HTTP.OK.value)
         data = r.json()
         self.assertTrue(isinstance(data, dict))
         # Nothing more to validate on this route
@@ -117,7 +111,7 @@ class TestWatcherAPI(BaseApiTest):
         # GET (again)
         r = self._send(url=self.base + '/' + watcher_id,
                        method=Method.get)
-        self.assertEqual(r.status_code, HTTP_OK)
+        self.assertEqual(r.status_code, HTTP.OK.value)
         data = r.json()
         self.assertTrue(isinstance(data, dict))
         self.assertEqual(data['sla_critical'], 75)
@@ -126,16 +120,12 @@ class TestWatcherAPI(BaseApiTest):
         # DELETE
         r = self._send(url=self.base,
                        method=Method.delete)
-        self.assertEqual(r.status_code, HTTP_NOT_ALLOWED)
+        self.assertEqual(r.status_code, HTTP.NOT_ALLOWED.value)
 
         r = self._send(url=self.base + '/' + watcher_id,
                        method=Method.delete)
-        self.assertEqual(r.status_code, HTTP_OK)
+        self.assertEqual(r.status_code, HTTP.OK.value)
         data = r.json()
         self.assertTrue(isinstance(data, dict))
         self.assertTrue('ok' in data)
         self.assertEqual(data['ok'], 1.0)
-
-if __name__ == "__main__":
-    # Warning ! Can polluate the database
-    unittest.main()
