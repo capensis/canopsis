@@ -29,7 +29,7 @@ Ember.Application.initializer({
             // Method called in the conntroller to fetch data
             findQuery: function(store, type, query, payload) {
                 var url = '/alerts/get-alarms?'
-                url += $.params(payload)
+                url += $.param(payload)
 
                 return this.ajax(url, 'GET');
             }
