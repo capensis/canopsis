@@ -1,3 +1,6 @@
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)
+
 import importlib
 import logging
 
@@ -5,7 +8,7 @@ from flask import Flask
 from flask_restful import Api
 
 from canopsis.common.ini_parser import IniParser
-from canopsis.webcore.flask_helpers import Resource
+from canopsis.webcore.apps.flask.helpers import Resource
 
 app = Flask(__name__)
 api = Api(app)
@@ -49,7 +52,7 @@ def init(app, api, exports_funcname='exports_v3', configuration='/opt/canopsis/e
             else:
                 app.logger.info('webservice {}: {} unavailable'.format(webservice, exports_funcname))
         else:
-            app.logger.info('webservice {} skipped'.format(webservice))
+            app.logger.info('webservice {}: skipped'.format(webservice))
 
 init(app, api)
 exports_v3(app, api)

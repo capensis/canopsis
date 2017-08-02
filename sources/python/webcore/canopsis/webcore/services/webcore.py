@@ -99,7 +99,7 @@ def exports(ws):
         return Methods.get_routes(ws.application, path=path)
 
 
-from canopsis.webcore.flask_helpers import Resource
+from canopsis.webcore.apps.flask.helpers import Resource
 
 class APIWebcore(Resource):
 
