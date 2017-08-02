@@ -63,13 +63,15 @@ class BaseApiTest(unittest.TestCase):
     WEB_HOST = "localhost"
     WEB_PORT = "8082"
 
-    URL_AUTHKEY = "{}/?authkey={}"
-    URL_PLAIN = "{}/auth"
+    URL_BASE = "http://{}:{}".format(WEB_HOST, WEB_PORT)
+    URL_PLAIN = "{}/auth".format(URL_BASE)
 
     """
+    URL_AUTHKEY = "{}/?authkey={}"
     def _authent_with_authkey(self):
         # Send authentification with a authkey by reading it in the database.
         from canopsis.middleware.core import Middleware
+
         user_storage = Middleware.get_middleware_by_uri(
             'storage-default-rights://'
         )
@@ -82,7 +84,7 @@ class BaseApiTest(unittest.TestCase):
 
     def _authent_plain(self):
         """
-        Send authentification with login/passwd.
+        Send authentification through clear login/passwd.
         """
         form = {
             'username': "root",
@@ -91,9 +93,8 @@ class BaseApiTest(unittest.TestCase):
         headers = {
             'Content-type': "application/x-www-form-urlencoded"
         }
-        url_auth = self.URL_PLAIN.format(self.URL_BASE)
 
-        return self._send(url_auth,
+        return self._send(self.URL_PLAIN,
                           data=form,
                           headers=headers,
                           method=Method.post)
@@ -102,8 +103,6 @@ class BaseApiTest(unittest.TestCase):
         """
         Do the authentification.
         """
-        self.URL_BASE = "http://{}:{}".format(self.WEB_HOST, self.WEB_PORT)
-
         self.session = requests.Session()
         response = self._authent_plain()
         #print("Login on {}".format(response.request.path_url))

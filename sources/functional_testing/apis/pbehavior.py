@@ -201,7 +201,7 @@ class TestPbehaviorAPI(BaseApiTest):
         self.assertIsNone(json['data'])
 
         # TODO: test create/update/delete too...
-        print('!!! Incomplete crud test !!!')
+        print('!!! Incomplete crud tests !!!')
 
     #def test_in_OK_out_OK(self):
     def in_OK_out_OK(self):

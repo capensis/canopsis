@@ -43,8 +43,8 @@ def add_modules_from_folder(suite, folder):
         mod_name = 'apis.{}'.format('.'.join(f.split('.')[:-1]))
         try:
             mod = importlib.import_module(mod_name)
-        except ImportError:
-            print('Cannot import {}'.format(mod_name))
+        except ImportError as exc:
+            print('Cannot import {} ({})'.format(mod_name, exc))
             continue
 
         suite.addTests(loader.loadTestsFromModule(mod))
