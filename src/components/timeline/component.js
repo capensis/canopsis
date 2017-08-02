@@ -107,11 +107,11 @@ Ember.Application.initializer({
             didInsertElement: function() {
                 var component = this;
 
-                var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alarm');
-                var query = {'entity_id': get(component, 'timelineData').entity_id};
+                var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:timeline');
+                var query =  {'d': get(component, 'timelineData').entity_id, 'opened':true, 'resolved':true,'sort_key':'t','sort_dir':'ASC','limit':1};
 
 
-                adapter.findQuery('alarm', 'get-current-alarm', query).then(function (result) {
+                adapter.findQuery('alarm', 'get-current-alarm', undefined, query).then(function (result) {
                     // onfullfillment
 					var previousDate = undefined;
                     var steps = [];
