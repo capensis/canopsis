@@ -28,6 +28,9 @@ import unittest
 
 
 class HTTP(Enum):
+    """
+    HTTP codes transcription.
+    """
     OK = 200
     ERROR = 400
     NOT_FOUND = 404
@@ -36,7 +39,7 @@ class HTTP(Enum):
 
 class Method(Enum):
     """
-    List of accepted HTTP methods
+    List of accepted HTTP methods.
     """
     get = 'GET'
     post = 'POST'
@@ -48,12 +51,17 @@ class Method(Enum):
 
 class BaseApiTest(unittest.TestCase):
 
+    """
+    Generic class to instanciate an API test.
+    """
+
     headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
 
     WEB_HOST = "localhost"
+    WEB_PORT = "8082"
 
     URL_AUTHKEY = "{}/?authkey={}"
     URL_PLAIN = "{}/auth"
@@ -85,10 +93,16 @@ class BaseApiTest(unittest.TestCase):
         }
         url_auth = self.URL_PLAIN.format(self.URL_BASE)
 
-        return self._send(url_auth, data=form, headers=headers, method=Method.post)
+        return self._send(url_auth,
+                          data=form,
+                          headers=headers,
+                          method=Method.post)
 
     def _authenticate(self):
-        self.URL_BASE = "http://{}:8082".format(self.WEB_HOST)
+        """
+        Do the authentification.
+        """
+        self.URL_BASE = "http://{}:{}".format(self.WEB_HOST, self.WEB_PORT)
 
         self.session = requests.Session()
         response = self._authent_plain()
