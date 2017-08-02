@@ -2,11 +2,17 @@ from flask_restful import Resource as FlaskResource
 
 class Resource(FlaskResource):
 
-    _routes = []
+    resource_routes = []
 
     @classmethod
-    def add_resources(cls, api):
+    def init(cls, app, api):
+        cls._app = app
+        cls._api = api
+        cls.add_resources()
+
+    @classmethod
+    def add_resources(cls):
         """
         Calls add_resource on api for every route defined in cls._routes.
         """
-        api.add_resource(cls, *cls._routes)
+        cls._api.add_resource(cls, *cls.resource_routes)

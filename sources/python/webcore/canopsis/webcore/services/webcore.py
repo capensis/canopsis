@@ -103,20 +103,14 @@ from canopsis.webcore.flask_helpers import Resource
 
 class APIWebcore(Resource):
 
-    _routes = [
+    resource_routes = [
         '/api/v3/routes/all/',
         '/api/v3/rule/them/all/',
         '/api/v3/rule/them/all/<string:path>'
     ]
 
-    @classmethod
-    def init(cls, app, api):
-        cls.app = app
-        cls.api = api
-
     def get(self, path=None):
-        return Methods.get_routes_v3(self.app, path=path)
+        return Methods.get_routes_v3(self._app, path=path)
 
 def exports_v3(app, api):
     APIWebcore.init(app, api)
-    APIWebcore.add_resources(api)
