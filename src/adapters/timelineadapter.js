@@ -18,7 +18,7 @@
  */
 
 Ember.Application.initializer({
-    name: 'ServiceWeatherDataAdapter',
+    name: 'TimelineAdapter',
     after: ['ApplicationAdapter'],
     initialize: function(container, application) {
         var ApplicationAdapter = container.lookupFactory('adapter:application');
