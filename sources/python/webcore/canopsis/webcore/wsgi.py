@@ -40,13 +40,13 @@ class AppMapper():
         start_response('404 Not Found', headers)
         return [html]
 
-from canopsis.webcore.apps.bottle.app import app as app_v1
+#from canopsis.webcore.apps.bottle.app import app as app_v1
 from canopsis.webcore.apps.flask.app import app as app_v3
 from canopsis.webcore.apps.flask.app import api as api_v3
 
 app_mappings = []
 app_mappings.append(['app_v3', '/api/v3{path:.*}', app_v3])
-app_mappings.append(['app_v2', '/api/v2{path:.*}', app_v1])
-app_mappings.append(['app_v1', '/{path:.*}', app_v1])
+#app_mappings.append(['app_v2', '/api/v2{path:.*}', app_v1])
+#app_mappings.append(['app_v1', '/{path:.*}', app_v1])
 
 app = AppMapper(app_mappings)
