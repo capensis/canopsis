@@ -42,6 +42,7 @@ class AppMapper():
 
 from canopsis.webcore.bottleapp import app as app_v1
 from canopsis.webcore.flaskapp import app as app_v3
+from canopsis.webcore.flaskapp import api as api_v3
 
 app_mappings = []
 app_mappings.append(['app_v3', '/api/v3{path:.*}', app_v3])

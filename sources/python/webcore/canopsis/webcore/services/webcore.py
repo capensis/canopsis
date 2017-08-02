@@ -19,10 +19,13 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+
+import urllib
 from operator import itemgetter
 
-from canopsis.webcore.utils import gen_json
+import flask
 
+from canopsis.webcore.utils import gen_json
 
 def inspect_routes(app):
     """
@@ -42,14 +45,10 @@ def inspect_routes(app):
         else:
             yield [], route_1
 
+class Methods:
 
-def exports(ws):
-
-    bottle_app = ws.application  # keep bottle ref before beaker transformation
-
-    @ws.application.get('/api/v2/rule/them/all/<path>')
-    @ws.application.get('/api/v2/rule/them/all/')
-    def get_routes(path=None):
+    @staticmethod
+    def get_routes(bottle_app, path=None):
         """
         List all routes in the webservice, according to a certain path.
 
@@ -68,3 +67,56 @@ def exports(ws):
         ta = ['{method} -- {rule}'.format(**r) for r in ta]
 
         return gen_json(ta)
+
+    @staticmethod
+    def get_routes_v3(app, path=None):
+        # http://flask.pocoo.org/snippets/117/
+        routes = []
+        for rule in app.url_map.iter_rules():
+
+            options = {}
+            for arg in rule.arguments:
+                options[arg] = "[{0}]".format(arg)
+
+            methods = urllib.unquote(','.join(rule.methods))
+            url = urllib.unquote(flask.url_for(rule.endpoint, **options))
+
+            route = {
+                'endpoint': rule.endpoint,
+                'methods': methods,
+                'url': url
+            }
+
+            routes.append(route)
+
+        return sorted(routes)
+
+def exports(ws):
+
+    @ws.application.get('/api/v2/rule/them/all/<path>')
+    @ws.application.get('/api/v2/rule/them/all/')
+    def get_routes(path=None):
+        return Methods.get_routes(ws.application, path=path)
+
+
+from canopsis.webcore.flask_helpers import Resource
+
+class APIWebcore(Resource):
+
+    _routes = [
+        '/api/v3/routes/all/',
+        '/api/v3/rule/them/all/',
+        '/api/v3/rule/them/all/<string:path>'
+    ]
+
+    @classmethod
+    def init(cls, app, api):
+        cls.app = app
+        cls.api = api
+
+    def get(self, path=None):
+        return Methods.get_routes_v3(self.app, path=path)
+
+def exports_v3(app, api):
+    APIWebcore.init(app, api)
+    APIWebcore.add_resources(api)
