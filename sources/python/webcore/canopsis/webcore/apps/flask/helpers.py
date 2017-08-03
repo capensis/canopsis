@@ -13,6 +13,10 @@ def authenticate(func):
     return wrapper
 
 class Resource(FlaskResource):
+    """
+    Define routes in cls.resource_routes respecting
+    http://flask-restful.readthedocs.io/en/0.3.5/quickstart.html#endpoints
+    """
 
     resource_routes = []
     method_decorators = [authenticate]
@@ -26,6 +30,6 @@ class Resource(FlaskResource):
     @classmethod
     def add_resources(cls):
         """
-        Calls add_resource on api for every route defined in cls._routes.
+        Calls add_resource on api for every route defined in cls.resource_routes list.
         """
         cls._api.add_resource(cls, *cls.resource_routes)

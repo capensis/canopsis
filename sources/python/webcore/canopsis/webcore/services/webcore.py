@@ -104,7 +104,7 @@ from canopsis.webcore.apps.flask.helpers import Resource
 class APIWebcore(Resource):
 
     resource_routes = [
-        '/api/v3/routes/all/',
+        '/api/v3/routes/all',
         '/api/v3/rule/them/all/',
         '/api/v3/rule/them/all/<string:path>'
     ]
