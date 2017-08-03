@@ -85,7 +85,7 @@ class APIRoot(Resource):
 
     def get(self):
         self._app.logger.info(session)
-        return {'message': 'authenticate with /auth | get routes with /api/v3/routes/all'}
+        return {'message': 'authenticate with /auth | get v3 routes with /api/v3/routes/all | get other routes with /api/v2/rule/them/all/'}
 
 def exports_v3(app, api):
     APIRoot.init(app, api)
