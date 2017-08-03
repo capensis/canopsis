@@ -22,9 +22,9 @@ def _auto_import(app, api, exports_funcname='exports_v3', configuration='/opt/ca
                 getattr(wsmod, exports_funcname)(app, api)
                 app.logger.info('webservice {}: loaded'.format(webservice))
             else:
-                app.logger.info('webservice {}: {} unavailable'.format(webservice, exports_funcname))
+                app.logger.debug('webservice {}: {} unavailable'.format(webservice, exports_funcname))
         else:
-            app.logger.info('webservice {}: skipped'.format(webservice))
+            app.logger.debug('webservice {}: skipped'.format(webservice))
 
 def _init(app):
     """
@@ -87,28 +87,8 @@ class APIRoot(Resource):
         self._app.logger.info(session)
         return {'message': 'authenticate with /api/v3/auth | get routes with /api/v3/rule/them/all/'}
 
-class APIAuth(Resource):
-
-    resource_routes = ['/api/v3/auth']
-    method_decorators = []
-
-    parser = reqparse.RequestParser()
-    parser.add_argument('username', required=True, type=str)
-    parser.add_argument('password', required=True, type=str)
-
-    def post(self):
-
-        args = self.parser.parse_args()
-
-        if args.username == 'root' and args.password == 'root':
-            session['authenticated'] = {'as': 'root'}
-            return True
-
-        return False, 401
-
 def exports_v3(app, api):
     APIRoot.init(app, api)
-    APIAuth.init(app, api)
 
 app, api = _init(app)
 exports_v3(app, api)

@@ -4,7 +4,8 @@ from flask_restful import Resource as FlaskResource
 
 def authenticate(func):
     def wrapper(*args, **kwargs):
-        if session.get('authenticated', False):
+        # compatibility with bottle and /auth route
+        if session.get('auth_on', False):
             return func(*args, **kwargs)
 
         flask_restful.abort(401)
