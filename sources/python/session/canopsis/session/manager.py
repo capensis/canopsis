@@ -46,7 +46,7 @@ class Session(MiddlewareRegistry):
         super(Session, self).__init__(*args, **kwargs)
 
         self.config = Configuration.load(CONF_PATH, Ini)
-        self.alive_session_duration = int(self.config.SESSION.alive_session_duration)
+        self.alive_session_duration = int(self.config.SESSION.get('alive_session_duration', 300))
 
         if session_storage is not None:
             self[Session.SESSION_STORAGE] = session_storage
@@ -56,20 +56,6 @@ class Session(MiddlewareRegistry):
 
         if perfdata_manager is not None:
             self[Session.PERFDATA_MANAGER] = perfdata_manager
-
-    @property
-    def alive_session_duration(self):
-        if not hasattr(self, '_alive_session_duration'):
-            self.alive_session_duration = None
-
-        return self._alive_session_duration
-
-    @alive_session_duration.setter
-    def alive_session_duration(self, value):
-        if value is None:
-            value = 300
-
-        self._alive_session_duration = value
 
     def keep_alive(self, username):
         """
