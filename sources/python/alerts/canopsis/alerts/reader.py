@@ -24,9 +24,6 @@ from time import time
 
 from canopsis.alerts.enums import AlarmField
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_config
-from canopsis.configuration.model import Parameter
 from canopsis.task.core import get_task
 
 from canopsis.timeserie.timewindow import Interval, TimeWindow
@@ -38,6 +35,7 @@ from canopsis.tools.schema import get as get_schema
 from canopsis.entitylink.manager import Entitylink
 from canopsis.pbehavior.manager import PBehaviorManager
 
+from canopsis.confng import Configuration, Ini
 
 CONF_PATH = 'alerts/manager.conf'
 
@@ -45,17 +43,8 @@ DEFAULT = 'ALERTS'
 DEFAULT_CNT = []
 
 CACHE = 'COUNT_CACHE'
-CACHE_CNT = [
-    Parameter('expiration', int),
-    Parameter('opened_truncate', Parameter.bool),
-    Parameter('opened_limit', int),
-    Parameter('resolved_truncate', Parameter.bool),
-    Parameter('resolved_limit', int)
-]
 
 
-@conf_paths(CONF_PATH)
-@add_config({DEFAULT: DEFAULT_CNT, CACHE: CACHE_CNT})
 class AlertsReader(MiddlewareRegistry):
     """
     Alarm cycle managment.
@@ -78,6 +67,7 @@ class AlertsReader(MiddlewareRegistry):
         self.count_cache = {}
 
         self.grammar = join(prefix, 'etc/alerts/search/grammar.bnf')
+        self.config = Configuration.load(CONF_PATH, Ini)
 
     @property
     def alarm_fields(self):
@@ -89,14 +79,14 @@ class AlertsReader(MiddlewareRegistry):
     @property
     def cache_config(self):
         if not hasattr(self, '_cache_config'):
-            values = self.conf.get(CACHE)
+            values = self.config.get(CACHE)
 
             self._cache_config = {
-                'expiration': values.get('expiration').value,
-                'resolved_truncate': values.get('resolved_truncate').value,
-                'resolved_limit': values.get('resolved_limit').value,
-                'opened_truncate': values.get('opened_truncate').value,
-                'opened_limit': values.get('opened_limit').value
+                'expiration': int(values.get('expiration')),
+                'resolved_truncate': values.get('resolved_truncate'),
+                'resolved_limit': int(values.get('resolved_limit')),
+                'opened_truncate': values.get('opened_truncate'),
+                'opened_limit': int(values.get('opened_limit'))
             }
 
         return self._cache_config
