@@ -104,8 +104,6 @@ class InfosFilter(MiddlewareRegistry):
             self.__clean(infos, copy.deepcopy(infos), schema)
 
 
-@conf_paths(CONF_PATH)
-@add_category(CONTEXT_CAT, content=CONTEXT_CONTENT)
 class ContextGraph(MiddlewareRegistry):
     """ContextGraph"""
 
@@ -117,42 +115,6 @@ class ContextGraph(MiddlewareRegistry):
     RESOURCE = "resource"
     COMPONENT = "component"
     CONNECTOR = "connector"
-
-    @property
-    def event_types(self):
-        """
-        Array of event_type
-        """
-
-        if not hasattr(self, '_event_types'):
-            self.event_types = None
-
-        return self._event_types
-
-    @event_types.setter
-    def event_types(self, value):
-        if value is None:
-            value = []
-
-        self._event_types = value
-
-    @property
-    def extra_fields(self):
-        """
-        Array of fields to save from event in entity.
-        """
-
-        if not hasattr(self, '_extra_fields'):
-            self.extra_fields = None
-
-        return self._extra_fields
-
-    @extra_fields.setter
-    def extra_fields(self, value):
-        if value is None:
-            value = []
-
-        self._extra_fields = value
 
     @classmethod
     def get_id(cls, event):
@@ -245,6 +207,9 @@ class ContextGraph(MiddlewareRegistry):
 
         return True
 
+    DEFAULT_EVENT_TYPES = []
+    DEFAULT_EXTRA_FIELDS = []
+
     def __init__(self, event_types=None, extra_fields=None, *args, **kwargs):
         """__init__
 
@@ -254,11 +219,16 @@ class ContextGraph(MiddlewareRegistry):
         super(ContextGraph, self).__init__(*args, **kwargs)
         self.collection_name = 'default_entities'
 
+        self.config = Configuration.load(CONF_PATH, Ini)
+        # FIXIT: as event_types and extra_fields are set from __init__ arguments... what's the point of this?
+        self.event_types = self.config.CONTEXTGRAPH.get('event_types', self.DEFAULT_EVENT_TYPES).split(',')
+        self.extra_fields = self.config.CONTEXTGRAPH.get('extra_fields', self.DEFAULT_EXTRA_FIELDS).split(',')
+
         if event_types is None:
-            self.event_types = event_types
+            self.event_types = self.DEFAULT_EVENT_TYPES
 
         if extra_fields is None:
-            self.extra_fields = extra_fields
+            self.extra_fields = self.DEFAULT_EXTRA_FIELDS
 
         # For links building
         self.at_manager = AssociativeTableManager(logger=self.logger)
