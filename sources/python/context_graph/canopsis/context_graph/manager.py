@@ -20,13 +20,7 @@ from canopsis.watcher.links import build_all_links
 from canopsis.confng import Configuration, Ini
 
 CONF_PATH = 'context_graph/manager.conf'
-CONTEXT_CAT = 'CONTEXTGRAPH'
 CTX_HYPERLINK = "hypertextlink_conf"
-INFOSFILTER_CAT = "INFOS_FILTER"
-CONTEXT_CONTENT = [
-    Parameter('event_types', Parameter.array()),
-    Parameter('extra_fields', Parameter.array()),
-]
 
 DEFAULT_SCHEMA_ID = "context_graph.filter_infos"
 
@@ -44,9 +38,12 @@ class InfosFilter(MiddlewareRegistry):
         self.config = Configuration.load(CONF_PATH, Ini)
         self.logger = logger
 
-        self.event_types = self.config.CONTEXTGRAPH.get('event_types', []).split(',')
-        self.extra_fields = self.config.CONTEXTGRAPH.get('extra_fields', []).split(',')
-        self.schema_id = self.config.INFOS_FILTER.get('schema_id', DEFAULT_SCHEMA_ID)
+        self.event_types = self.config.CONTEXTGRAPH.get(
+            'event_types', []).split(',')
+        self.extra_fields = self.config.CONTEXTGRAPH.get(
+            'extra_fields', []).split(',')
+        self.schema_id = self.config.INFOS_FILTER.get(
+            'schema_id', DEFAULT_SCHEMA_ID)
 
         self.reload_schema()
 
@@ -220,9 +217,12 @@ class ContextGraph(MiddlewareRegistry):
         self.collection_name = 'default_entities'
 
         self.config = Configuration.load(CONF_PATH, Ini)
-        # FIXIT: as event_types and extra_fields are set from __init__ arguments... what's the point of this?
-        self.event_types = self.config.CONTEXTGRAPH.get('event_types', self.DEFAULT_EVENT_TYPES).split(',')
-        self.extra_fields = self.config.CONTEXTGRAPH.get('extra_fields', self.DEFAULT_EXTRA_FIELDS).split(',')
+        # FIXIT: as event_types and extra_fields are set from __init__
+        # arguments... what's the point of this?
+        self.event_types = self.config.CONTEXTGRAPH.get(
+            'event_types', self.DEFAULT_EVENT_TYPES).split(',')
+        self.extra_fields = self.config.CONTEXTGRAPH.get(
+            'extra_fields', self.DEFAULT_EXTRA_FIELDS).split(',')
 
         if event_types is None:
             self.event_types = self.DEFAULT_EVENT_TYPES
@@ -232,8 +232,8 @@ class ContextGraph(MiddlewareRegistry):
 
         # For links building
         self.at_manager = AssociativeTableManager(logger=self.logger)
-        parser = IniParser(CONF_PATH, self.logger)
-        self.hypertextlink_conf = parser.get(CONTEXT_CAT).get(CTX_HYPERLINK, "")
+        self.hypertextlink_conf = self.config.CONTEXTGRAPH.get(
+            CTX_HYPERLINK, "")
         if self.hypertextlink_conf != "":
             atable = self.at_manager.get(self.hypertextlink_conf)
             if atable is not None:
