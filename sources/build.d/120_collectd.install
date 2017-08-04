@@ -30,7 +30,7 @@ function build(){
 
 	echo "   + Build ..."
 	rm -Rf build/ &> /dev/null
-	launch_log $NAME "make"
+	launch_log $NAME "make ${MAKEFLAGS}"
 	check_code $?
 }
 
