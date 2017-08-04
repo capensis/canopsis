@@ -9,11 +9,7 @@ import time
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.middleware.core import Middleware
 from canopsis.common.associative_table.manager import AssociativeTableManager
-from canopsis.common.ini_parser import IniParser
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.model import Parameter
-from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 
