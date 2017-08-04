@@ -26,12 +26,20 @@ import re
 import requests
 import unittest
 
-from canopsis.middleware.core import Middleware
+
+class HTTP(Enum):
+    """
+    HTTP codes transcription.
+    """
+    OK = 200
+    ERROR = 400
+    NOT_FOUND = 404
+    NOT_ALLOWED = 405
 
 
 class Method(Enum):
     """
-    List of accepted HTTP methods
+    List of accepted HTTP methods.
     """
     get = 'GET'
     post = 'POST'
@@ -43,29 +51,61 @@ class Method(Enum):
 
 class BaseApiTest(unittest.TestCase):
 
+    """
+    Generic class to instanciate an API test.
+    """
+
     headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
 
     WEB_HOST = "localhost"
+    WEB_PORT = "8082"
 
-    URL_AUTH = "{}/?authkey={}"
+    URL_BASE = "http://{}:{}".format(WEB_HOST, WEB_PORT)
+    URL_PLAIN = "{}/auth".format(URL_BASE)
 
-    def _authenticate(self):
-        self.URL_BASE = "http://{}:8082".format(self.WEB_HOST)
+    """
+    URL_AUTHKEY = "{}/?authkey={}"
+    def _authent_with_authkey(self):
+        # Send authentification with a authkey by reading it in the database.
+        from canopsis.middleware.core import Middleware
 
-        self.session = requests.Session()
-        # Getting authkey
         user_storage = Middleware.get_middleware_by_uri(
             'storage-default-rights://'
         )
         authkey = user_storage.find_elements(query={'_id': 'root'})
         authkey = list(authkey)[0]['authkey']
-
         url_auth = self.URL_AUTH.format(self.URL_BASE, authkey)
-        #print("Login on {}".format(url_auth))
-        response = self._send(url_auth)
+
+        return self._send(url_auth)
+    """
+
+    def _authent_plain(self):
+        """
+        Send authentification through clear login/passwd.
+        """
+        form = {
+            'username': "root",
+            'password': "root"
+        }
+        headers = {
+            'Content-type': "application/x-www-form-urlencoded"
+        }
+
+        return self._send(self.URL_PLAIN,
+                          data=form,
+                          headers=headers,
+                          method=Method.post)
+
+    def _authenticate(self):
+        """
+        Do the authentification.
+        """
+        self.session = requests.Session()
+        response = self._authent_plain()
+        #print("Login on {}".format(response.request.path_url))
 
         # Auth validation
         self.assertEqual(response.status_code, 200)
@@ -75,22 +115,32 @@ class BaseApiTest(unittest.TestCase):
 
         self.cookies = response.cookies
 
-    def _send(self, url, data=None, method=Method.get):
+    def _send(self,
+              url,
+              data=None,
+              headers=None,
+              method=Method.get,
+              params=None
+              ):
         """Send a http request.
 
         :param str url: the url to access
         :param str data: data to with with the request
+        :param dict headers: change headers on the request
         :param Method method: which method to use
+        :param dict params: querystring parameters
         :rtype: <Response>
         """
         kwargs = {
             'method': method.value,
-            'headers': self.headers
+            'headers': self.headers if headers is None else headers
         }
         if hasattr(self, 'cookies'):
             kwargs['cookies'] = self.cookies
         if data is not None:
             kwargs['data'] = data
+        if params is not None:
+            kwargs['params'] = params
 
         response = self.session.request(url=url, **kwargs)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -19,37 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import dateutil
-import unittest
-import re
-import json
-import requests
-from ast import literal_eval
-from time import sleep, time
-from urllib import urlencode
-from pymongo import MongoClient
-from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.context_graph.manager import ContextGraph
+from __future__ import unicode_literals
+
+from time import sleep
+
+from test_base import BaseApiTest, Method, HTTP
 
 PBH_RESOURCE = "pbh_resource"
 PBH_CONNECTOR = "pbh_connector"
 PBH_CON_NAME = PBH_CONNECTOR + "_name"
-PBH_COMPONENT= "pbh_component"
+PBH_COMPONENT = "pbh_component"
 
 RESOURCE_ID = "{0}/{1}".format(PBH_RESOURCE, PBH_COMPONENT)
-
-WEB_HOST = "localhost"
-AUTH_KEY = "b71786a6-4c4c-11e7-8da1-0800279471b5"
-MONGO_HOST = "localhost"
-
-URL_BASE = "http://{0}:8082".format(WEB_HOST)
-URL_AUTH = "{0}/?authkey={1}"
-URL_PBEH = "{0}/pbehavior/create?{1}".format(URL_BASE, None)
-URL_SEND = "{0}/event".format(WEB_HOST)
-URL_MONGO = 'mongodb://cpsmongo:canopsis@{0}:27017/canopsis'.format(MONGO_HOST)
-
-ENTITIES_COL = "default_entities"
-OBJECT_COL = "object"
 
 FILTER = {
     "_id": "delete_me",
@@ -65,13 +46,42 @@ FILTER = {
     "priority": 1,
     "run_once": True,
     "crecord_type": "filter",
-    "mfilter": "{{\"$or\":[{{\"connector\":{{\"$eq\":\"{conn}\"}}}}]}}".format(
-        conn=PBH_CONNECTOR),
+    "mfilter": "{{\"$or\":[{{\"connector\":{{\"$eq\":\"{conn}\"}}}}]}}"
+               .format(conn=PBH_CONNECTOR),
     "crecord_creation_time": 1497367809,
     "crecord_name": None,
     "description": "I am a nice filter"
     #TODO add in and out pbehaviors
 }
+
+EVENT = {
+    "component": PBH_COMPONENT,
+    "resource": PBH_RESOURCE,
+    "source_type": "resource",
+    "event_type": "check",
+    "connector": PBH_CONNECTOR,
+    "connector_name": PBH_CON_NAME,
+    "output": "oh my god ! an awesome output",
+    "state": 0
+}
+
+
+"""
+TODO: cleanup this (we cannot have managers here and requests are made by
+BaseApiTest class)
+
+WEB_HOST = "localhost"
+AUTH_KEY = "b71786a6-4c4c-11e7-8da1-0800279471b5"
+MONGO_HOST = "localhost"
+
+URL_BASE = "http://{0}:8082".format(WEB_HOST)
+URL_AUTH = "{0}/?authkey={1}"
+URL_PBEH = "{0}/pbehavior/create?{1}".format(URL_BASE, None)
+URL_SEND = "{0}/event".format(WEB_HOST)
+URL_MONGO = 'mongodb://cpsmongo:canopsis@{0}:27017/canopsis'.format(MONGO_HOST)
+
+ENTITIES_COL = "default_entities"
+OBJECT_COL = "object"
 
 DEL_FILTER = {
     "_id": "delete_me",
@@ -82,8 +92,8 @@ DEL_FILTER = {
         "value": "yep_it's_me"
     }],
     "crecord_type": "filter",
-    "mfilter": "{{\"$or\":[{{\"connector\":{{\"$eq\":\"{conn}\"}}}}]}}".format(
-        conn=PBH_CONNECTOR),
+    "mfilter": "{{\"$or\":[{{\"connector\":{{\"$eq\":\"{conn}\"}}}}]}}"
+               .format(conn=PBH_CONNECTOR),
     "description": "I am a nice filter"
 }
 
@@ -93,8 +103,8 @@ to_delete = ["break", "crecord_write_time", "crecord_write_time", "priority",
 
 DEL_FILTER = FILTER.copy()
 for key in to_delete:
-    DEL_FILTER.pop(key)
-
+    if key in DEL_FILTER:
+        DEL_FILTER.pop(key)
 
 PBEHAVIOR = {
     "name": "A name",
@@ -108,19 +118,7 @@ PBEHAVIOR = {
     "connector_name": PBH_CON_NAME
 }
 
-EVENT = {
-    "component" : PBH_COMPONENT,
-    "resource" : PBH_RESOURCE,
-    "source_type" : "resource",
-    "event_type" : "check",
-    "connector" : PBH_CONNECTOR,
-    "connector_name" : PBH_CON_NAME,
-    "output" :"oh my god ! an awesome output",
-    "state" :0
-}
-
 BEAT = 2
-
 
 class BaseTest(unittest.TestCase):
 
@@ -133,18 +131,6 @@ class BaseTest(unittest.TestCase):
         self.obj_col.insert(filter_)
         print("Waiting {0}s for the beat".format(BEAT))
         sleep(BEAT)
-
-    def _authenticate(self):
-        session = requests.Session()
-        response = session.get(URL_AUTH.format(URL_BASE, AUTH_KEY))
-        print("Attempting login on {0}".format(
-            URL_AUTH.format(URL_BASE, AUTH_KEY)))
-
-        if re.search("<title>Canopsis | Login</title>", response.text)\
-           is not None:
-            self.fail("Authentication error.")
-
-        return session
 
     def _create_pbehavior(self, in_=True, **kwargs):
         pb = PBEHAVIOR.copy()
@@ -178,56 +164,67 @@ class BaseTest(unittest.TestCase):
         else:
             self.fail("Impossible to insert the pbehavior.")
 
-    def _send_event(self, event):
-        response = self.session.post(WEB_HOST, data=urlencode(event))
-
-        response = literal_eval(response)
-        if response["sucess"] is False:
-            self.fail("Error while sending the check event")
-
-
-    def _create_rrule(self):
-        pass
-
-    # def __check_resource(self, id_,
-
     def setUp(self):
-        client = MongoClient(URL_MONGO)
-        self.ent_col = client.canopsis[ENTITIES_COL]
-        self.obj_col = client.canopsis[OBJECT_COL]
-
-        self.session = self._authenticate()
+        #client = MongoClient(URL_MONGO)
+        #self.ent_col = client.canopsis[ENTITIES_COL]
+        #self.obj_col = client.canopsis[OBJECT_COL]
 
         self.pbehavior_ids = []
 
-        self.pbm = PBehaviorManager()
-        self.cm= ContextGraph()
+        #self.pbm = PBehaviorManager()
+        #self.cm = ContextGraph()
+"""
 
-class Test(BaseTest):
 
+class TestPbehaviorAPI(BaseApiTest):
+
+    def setUp(self):
+        self._authenticate()  # default setup
+
+        self.base = '{}/{}'.format(self.URL_BASE, 'pbehavior')
+
+    def test_pbehavior(self):
+        pbehavior_id = 'fake_pbehavior_id'
+
+        # GET
+        r = self._send(url=self.base + '/read')
+        self.assertEqual(r.status_code, HTTP.OK.value)
+        json = r.json()
+        self.assertEqual(json['total'], 0)
+
+        r = self._send(url=self.base + '/read',
+                       params={'_id': pbehavior_id},
+                       headers='')
+        json = r.json()
+        self.assertEqual(r.status_code, HTTP.OK.value)
+        self.assertEqual(json['total'], 0)
+        self.assertIsNone(json['data'])
+
+        # TODO: test create/update/delete too...
+        print('!!! Incomplete crud tests !!!')
+
+    #def test_in_OK_out_OK(self):
     def in_OK_out_OK(self):
+        # TODO: finalize this test (whatever it does)
         kwargs = {}
-        kwargs["rrule"] = self._create_rrule()
+        #kwargs["rrule"] = self._create_rrule()
         pb_in = self._create_pbehavior(**kwargs)
         pb_out = self._create_pbehavior(in_=False, **kwargs)
-        self.pbm.compute_pbehaviors_filters()
+        #self.pbm.compute_pbehaviors_filters()
 
         kwargs = {}
         kwargs["in"] = [pb_in]
         kwargs["out"] = [pb_out]
         self._insert_filter(**kwargs)
 
-        self._send_event(EVENT)
+        r = self._send(url=self.URL_BASE,
+                       data=EVENT,
+                       method=Method.post)
+        self.assertEqual(r.status_code, HTTP.OK.value)
+        print(r)
 
         print("Waiting for the event to be handle by the engines")
         sleep(5)
 
-        res = self.cm.get_entities_by_id(RESOURCE_ID)[0]
-        print(res)
-
-
-
-
-
-if __name__ == "__main__":
-    unittest.main()
+        #res = self.cm.get_entities_by_id(RESOURCE_ID)[0]
+        #print(res)
