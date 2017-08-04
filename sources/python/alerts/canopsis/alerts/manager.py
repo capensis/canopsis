@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.middleware.core import Middleware
 from canopsis.middleware.registry import MiddlewareRegistry
 
 from canopsis.timeserie.timewindow import get_offset_timewindow
@@ -91,8 +92,8 @@ class Alerts(MiddlewareRegistry):
 
     @property
     def alarm_filters(self):
-        return AlarmFilters(storage=self[Alerts.FILTER_STORAGE],
-                            alarm_storage=self[Alerts.ALARM_STORAGE],
+        return AlarmFilters(storage=self.storages[Alerts.FILTER_STORAGE],
+                            alarm_storage=self.storages[Alerts.ALARM_STORAGE],
                             logger=self.logger)
 
     @property
@@ -194,26 +195,34 @@ class Alerts(MiddlewareRegistry):
     ):
         super(Alerts, self).__init__(*args, **kwargs)
 
+        self.config_ini = Configuration.load(CONF_PATH, Ini)
+
+        self.storages = {
+            self.CONFIG_STORAGE: Middleware.get_middleware_by_uri(self.config_ini.ALERTS.config_storage_uri),
+            self.ALARM_STORAGE: Middleware.get_middleware_by_uri(self.config_ini.ALERTS.alarm_storage_uri),
+            self.FILTER_STORAGE: Middleware.get_middleware_by_uri(self.config_ini.ALERTS.filter_storage_uri)
+        }
+
         if extra_fields is not None:
             self.extra_fields = extra_fields
 
         if config_storage is not None:
-            self[Alerts.CONFIG_STORAGE] = config_storage
+            self.storages[Alerts.CONFIG_STORAGE] = config_storage
 
         if alarm_storage is not None:
-            self[Alerts.ALARM_STORAGE] = alarm_storage
+            self.storages[Alerts.ALARM_STORAGE] = alarm_storage
 
         if filter_storage is not None:
-            self[Alerts.FILTER_STORAGE] = filter_storage
+            self.storages[Alerts.FILTER_STORAGE] = filter_storage
 
         if context is not None:
-            self[Alerts.CONTEXT_MANAGER]= context
+            self.storages[Alerts.CONTEXT_MANAGER]= context
 
         self.context_manager = ContextGraph()
         self.watcher_manager = Watcher()
 
     def load_config(self):
-        value = self[Alerts.CONFIG_STORAGE].get_elements(
+        value = self.storages[Alerts.CONFIG_STORAGE].get_elements(
             query={'crecord_type': 'statusmanagement'}
         )
 
@@ -290,7 +299,7 @@ class Alerts(MiddlewareRegistry):
             }
             query = {'$and': [query, no_snooze_cond]}
 
-        alarms_by_entity = self[Alerts.ALARM_STORAGE].find(
+        alarms_by_entity = self.storages[Alerts.ALARM_STORAGE].find(
             _filter=query,
             timewindow=timewindow
         )
@@ -323,7 +332,7 @@ class Alerts(MiddlewareRegistry):
         else:
             query['resolved'] = None
 
-        return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
+        return list(self.storages[Alerts.ALARM_STORAGE].get_elements(query=query))
 
     def get_current_alarm(self, alarm_id):
         """
@@ -335,7 +344,7 @@ class Alerts(MiddlewareRegistry):
         :returns: Alarm as dict if found, else None
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.storages[Alerts.ALARM_STORAGE]
 
         result = storage.get(
             alarm_id,
@@ -366,7 +375,7 @@ class Alerts(MiddlewareRegistry):
         :type tags: str or list
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.storages[Alerts.ALARM_STORAGE]
 
         alarm_id = alarm[storage.DATA_ID]
         alarm_ts = alarm[storage.TIMESTAMP]
@@ -390,7 +399,7 @@ class Alerts(MiddlewareRegistry):
         :returns: Array of events
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.storages[Alerts.ALARM_STORAGE]
         alarm_id = alarm[storage.DATA_ID]
         alarm = alarm[storage.VALUE]
 
@@ -511,13 +520,13 @@ class Alerts(MiddlewareRegistry):
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
             else:  # Alarm is already opened
-                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                value = alarm.get(self.storages[Alerts.ALARM_STORAGE].VALUE)
                 if self.is_hard_limit_reached(value):
                     return
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
-            value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+            value = alarm.get(self.storages[Alerts.ALARM_STORAGE].VALUE)
 
             value = self.crop_flapping_steps(value)
 
@@ -565,7 +574,7 @@ class Alerts(MiddlewareRegistry):
             )
             return
 
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.storages[Alerts.ALARM_STORAGE].VALUE)
 
         if self.is_hard_limit_reached(value):
             # Only cancel is allowed when hard limit has been reached
@@ -598,7 +607,7 @@ class Alerts(MiddlewareRegistry):
         # If needed, update status
         if status is not None:
             alarm = self.update_status(alarm, status, event)
-            new_value = alarm[self[Alerts.ALARM_STORAGE].VALUE]
+            new_value = alarm[self.storages[Alerts.ALARM_STORAGE].VALUE]
 
             self.update_current_alarm(alarm, new_value)
 
@@ -621,7 +630,7 @@ class Alerts(MiddlewareRegistry):
         :rtype: dict
         """
 
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.storages[Alerts.ALARM_STORAGE].VALUE)
 
         old_state = get_last_state(value, ts=event['timestamp'])
         if state != old_state:
@@ -646,7 +655,7 @@ class Alerts(MiddlewareRegistry):
         :rtype: dict
         """
 
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.storages[Alerts.ALARM_STORAGE].VALUE)
 
         old_status = get_last_status(value, ts=event['timestamp'])
 
@@ -680,7 +689,7 @@ class Alerts(MiddlewareRegistry):
         :rtype: dict
         """
 
-        storage_value = self[Alerts.ALARM_STORAGE].VALUE
+        storage_value = self.storages[Alerts.ALARM_STORAGE].VALUE
         # Check for a forced state on this alarm
         if is_keeped_state(alarm['value']):
             if state == Check.OK:
@@ -703,7 +712,7 @@ class Alerts(MiddlewareRegistry):
             )
 
         # Executing task
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.storages[Alerts.ALARM_STORAGE].VALUE)
         new_value, status = task(self, value, state, event)
 
         alarm[storage_value] = new_value
@@ -741,10 +750,10 @@ class Alerts(MiddlewareRegistry):
                 'alerts.systemaction.status_decrease', cacheonly=True
             )
 
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.storages[Alerts.ALARM_STORAGE].VALUE)
         new_value = task(self, value, status, event)
 
-        alarm[self[Alerts.ALARM_STORAGE].VALUE] = new_value
+        alarm[self.storages[Alerts.ALARM_STORAGE].VALUE] = new_value
         alarm['last_update_date'] = time()
         
         return alarm
@@ -764,9 +773,9 @@ class Alerts(MiddlewareRegistry):
         """
 
         return {
-            self[Alerts.ALARM_STORAGE].DATA_ID: alarm_id,
-            self[Alerts.ALARM_STORAGE].TIMESTAMP: event['timestamp'],
-            self[Alerts.ALARM_STORAGE].VALUE: {
+            self.storages[Alerts.ALARM_STORAGE].DATA_ID: alarm_id,
+            self.storages[Alerts.ALARM_STORAGE].TIMESTAMP: event['timestamp'],
+            self.storages[Alerts.ALARM_STORAGE].VALUE: {
                 'connector': event['connector'],
                 'connector_name': event['connector_name'],
                 'component': event['component'],
@@ -893,7 +902,7 @@ class Alerts(MiddlewareRegistry):
         Loop over all unresolved alarms, and check if it can be resolved.
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.storages[Alerts.ALARM_STORAGE]
         result = self.get_alarms(resolved=False)
 
         for data_id in result:
@@ -915,7 +924,7 @@ class Alerts(MiddlewareRegistry):
         status for too long.
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.storages[Alerts.ALARM_STORAGE]
         result = self.get_alarms(resolved=False)
 
         now = int(time())
@@ -938,7 +947,7 @@ class Alerts(MiddlewareRegistry):
         """
 
         now = int(time())
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.storages[Alerts.ALARM_STORAGE]
         result = self.get_alarms(resolved=False, snoozed=True)
 
         for data_id in result:
@@ -966,7 +975,7 @@ class Alerts(MiddlewareRegistry):
         status.
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.storages[Alerts.ALARM_STORAGE]
         result = self.get_alarms(resolved=False)
 
         for data_id in result:
@@ -1008,7 +1017,7 @@ class Alerts(MiddlewareRegistry):
         RUNS = AlarmFilterField.runs.value
         NEXT = AlarmFilterField.next_run.value
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.storages[Alerts.ALARM_STORAGE]
 
         for lifter, docalarm in self.alarm_filters.get_filters():
             # Thanks to get_alarms(), we must renaming keys

@@ -21,15 +21,15 @@ CTX_HYPERLINK = "hypertextlink_conf"
 DEFAULT_SCHEMA_ID = "context_graph.filter_infos"
 
 
-class InfosFilter(MiddlewareRegistry):
+class InfosFilter(object):
     """Class use to clean the infos field of an entity"""
 
-    OBJ_STORAGE = "OBJECT_STORAGE"
+    OBJ_STORAGE = 'storage-default://'
 
     def __init__(self, logger=None):
         super(InfosFilter, self).__init__()
         self.obj_storage = Middleware.get_middleware_by_uri(
-            'storage-default://', table='schemas')
+            self.OBJ_STORAGE, table='schemas')
 
         self.config = Configuration.load(CONF_PATH, Ini)
         self.logger = logger
@@ -102,7 +102,7 @@ class ContextGraph(MiddlewareRegistry):
 
     ENTITIES_STORAGE = 'entities_storage'
     ORGANISATIONS_STORAGE = 'organisations_storage'
-    USERS_STORAGE = 'measurements_storage'
+    MEASUREMENTS_STORAGE = 'measurements_storage'
     NAME = 'name'
 
     RESOURCE = "resource"
@@ -213,6 +213,11 @@ class ContextGraph(MiddlewareRegistry):
         self.collection_name = 'default_entities'
 
         self.config = Configuration.load(CONF_PATH, Ini)
+        self.storages = {
+            self.ENTITIES_STORAGE: Middleware.get_middleware_by_uri(self.config.CONTEXTGRAPH.entities_storage_uri),
+            self.ORGANISATIONS_STORAGE: Middleware.get_middleware_by_uri(self.config.CONTEXTGRAPH.organisations_storage_uri),
+            self.MEASUREMENTS_STORAGE: Middleware.get_middleware_by_uri(self.config.CONTEXTGRAPH.measurements_storage_uri),
+        }
         # FIXIT: as event_types and extra_fields are set from __init__
         # arguments... what's the point of this?
         self.event_types = self.config.CONTEXTGRAPH.get(
@@ -255,7 +260,7 @@ class ContextGraph(MiddlewareRegistry):
             query["_id"] = _id
 
         result = list(
-            self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
+            self.storages[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
 
         return result
 
@@ -275,7 +280,7 @@ class ContextGraph(MiddlewareRegistry):
         for entity in entities:
             self.filter_.filter(entity["infos"])
 
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
+        self.storages[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
 
         # rebuild selectors links
         build_all_links(self)
@@ -291,7 +296,7 @@ class ContextGraph(MiddlewareRegistry):
         """
         if not isinstance(entities, list):
             entities = [entities]
-        self[ContextGraph.ENTITIES_STORAGE].remove_elements(entities)
+        self.storages[ContextGraph.ENTITIES_STORAGE].remove_elements(entities)
 
     def get_all_entities_id(self):
         """
@@ -301,7 +306,7 @@ class ContextGraph(MiddlewareRegistry):
         :return type: a set with every entities id.
         """
         entities = list(
-            self[ContextGraph.ENTITIES_STORAGE].get_elements(query={}))
+            self.storages[ContextGraph.ENTITIES_STORAGE].get_elements(query={}))
         ret_val = set([])
         for i in entities:
             ret_val.add(i['_id'])
@@ -359,7 +364,7 @@ class ContextGraph(MiddlewareRegistry):
         # TODO add treatment to check if every required field are present
         self._enable_entity(entity)
 
-        entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+        entities = list(self.storages[ContextGraph.ENTITIES_STORAGE].get_elements(
             query={'_id': entity["_id"]}))
 
         if len(entities) > 0:
@@ -370,7 +375,7 @@ class ContextGraph(MiddlewareRegistry):
         status = {"insertions": entity["depends"], "deletions": []}
         updated_entities = self.__update_dependancies(entity["_id"], status,
                                                       "depends")
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.storages[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
         status = {"insertions": entity["impact"], "deletions": []}
@@ -381,7 +386,7 @@ class ContextGraph(MiddlewareRegistry):
         for entity in updated_entities:
             self.filter_.filter(entity["infos"])
 
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.storages[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # rebuild selectors links
         if entity['type'] != 'watcher':
@@ -497,7 +502,7 @@ class ContextGraph(MiddlewareRegistry):
         status = compare_change(old_entity["depends"], entity["depends"])
         updated_entities = self.__update_dependancies(entity["_id"], status,
                                                       "depends")
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.storages[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
         status = compare_change(old_entity["impact"], entity["impact"])
@@ -505,7 +510,7 @@ class ContextGraph(MiddlewareRegistry):
                                                       "impact")
 
         updated_entities.append(entity)
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.storages[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # rebuild selectors links
         if entity['type'] != 'watcher':
@@ -526,7 +531,7 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         try:
-            entity = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+            entity = list(self.storages[ContextGraph.ENTITIES_STORAGE].get_elements(
                 query={'_id': id_}))[0]
         except IndexError:
             desc = "No entity found for the following id : {0}".format(id_)
@@ -535,14 +540,14 @@ class ContextGraph(MiddlewareRegistry):
         # update depends/impact links
         status = {"deletions": entity["depends"], "insertions": []}
         updated_entities = self.__update_dependancies(id_, status, "depends")
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.storages[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
         # update impact/depends links
         status = {"deletions": entity["impact"], "insertions": []}
         updated_entities = self.__update_dependancies(id_, status, "impact")
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.storages[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
 
-        self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
+        self.storages[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
 
         build_all_links(self)
 
@@ -572,7 +577,7 @@ class ContextGraph(MiddlewareRegistry):
         if not isinstance(query, dict):
             raise TypeError("Query must be a dict")
 
-        result = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+        result = list(self.storages[ContextGraph.ENTITIES_STORAGE].get_elements(
             query=query,
             limit=limit,
             skip=start,
@@ -631,7 +636,7 @@ class ContextGraph(MiddlewareRegistry):
     def get_graph_impact(self, _id, deepness=None):
         """
         """
-        col = self[ContextGraph.ENTITIES_STORAGE]._backend
+        col = self.storages[ContextGraph.ENTITIES_STORAGE]._backend
         ag = []
 
         match = {'$match': {'_id': _id}}
@@ -657,7 +662,7 @@ class ContextGraph(MiddlewareRegistry):
     def get_graph_depends(self, _id, deepness=None):
         """
         """
-        col = self[ContextGraph.ENTITIES_STORAGE]._backend
+        col = self.storages[ContextGraph.ENTITIES_STORAGE]._backend
         ag = []
 
         match = {'$match': {'_id': _id}}
