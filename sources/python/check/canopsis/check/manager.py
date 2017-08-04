@@ -23,6 +23,8 @@ from canopsis.common.utils import lookup
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.check import Check
 
+from canopsis.confng import Configuration, Ini
+
 #: check manager conf path
 CONF_PATH = 'check/check.conf'
 
