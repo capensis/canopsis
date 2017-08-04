@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
 from time import time
 
 from canopsis.common.init import basestring
@@ -27,7 +28,6 @@ from canopsis.configuration.configurable.decorator import (
 )
 from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.context_graph.manager import ContextGraph
 
 from numbers import Number
 
@@ -94,7 +94,6 @@ class PerfData(MiddlewareRegistry):
         tags[eid] = metric_id
 
         data_id = tags.pop(eid)
-
 
         return data_id, tags
 
@@ -253,3 +252,40 @@ class PerfData(MiddlewareRegistry):
     def is_internal(self, metric):
 
         return metric['metric'].startswith('cps_')
+
+    def get_metric_infos(self, limit, start):
+        """
+        Retreive metrics informations from influx.
+
+        :param int limit: how many records to retreive
+        :param int start: skip n first elements
+        :rtype: list(dict)
+        """
+        data = self[PerfData.PERFDATA_STORAGE]._conn.query('SHOW SERIES;').raw
+
+        if "series" not in data:
+            return []
+
+        metric_infos = []
+        for serie in data['series']:
+            try:
+                index_ = serie['columns'].index('eid')
+            except:
+                self.logger.debug("Could not find eid in columns")
+                continue
+
+            for value in serie['values']:
+                split = value[index_].split('/')
+                dict_ = {
+                    '_id': value[index_],
+                    'type': 'metric',
+                    'connector': split[2],
+                    'connector_name': split[3],
+                    'component': split[4],
+                    'resource': split[5],
+                    'name': split[6],
+                    'internal': False  # TODO: calculate that
+                }
+                metric_infos.append(dict_)
+
+        return metric_infos[start:start+limit]

@@ -18,11 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from bottle import request
+
 from canopsis.common.ws import route
 from canopsis.common.utils import singleton_per_scope
 from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.timeserie.core import TimeSerie
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
 def exports(ws):
@@ -128,3 +131,20 @@ def exports(ws):
         result = manager.is_internal(metric)
 
         return result
+
+    @ws.application.get('/api/v2/perfdata/metric')
+    def get_context_metric():
+        """
+        Fetch metric informations.
+        """
+        limit = request.query.limit or 10000
+        start = request.query.start or 0
+        try:
+            limit = int(limit)
+            start = int(start)
+        except:
+            gen_json_error({'description': 'cannot parse parameters'})
+
+        rep = manager.get_metric_infos(limit, start)
+
+        return gen_json(rep)
