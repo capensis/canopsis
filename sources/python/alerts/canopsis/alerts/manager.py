@@ -19,9 +19,6 @@
 # ---------------------------------
 
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_config
-from canopsis.configuration.model import Parameter
 
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.common.utils import ensure_iterable
@@ -39,25 +36,17 @@ from canopsis.alerts.status import (
     OFF, STEALTHY, is_stealthy, is_keeped_state
 )
 
+from canopsis.confng import Configuration, Ini
+
 from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
 
 CONF_PATH = 'alerts/manager.conf'
-ALERTS = 'ALERTS'
-ALERTS_CNT = [
-    Parameter('extra_fields', Parameter.array())
-]
 FILTER = 'FILTER'
-FILTER_CNT = [
-    Parameter('author', str),
-]
-TYPE_SELECTOR = 'selector'
 
 
-@conf_paths(CONF_PATH)
-@add_config({ALERTS: ALERTS_CNT, FILTER: FILTER_CNT})
 class Alerts(MiddlewareRegistry):
     """
     Alarm cycle managment.
@@ -92,7 +81,7 @@ class Alerts(MiddlewareRegistry):
     @property
     def filter_config(self):
         if not hasattr(self, '_filter_config'):
-            values = self.conf.get(FILTER)
+            values = self.config.get(FILTER)
 
             self._filter_config = {
                 'author': values.get('author').value
