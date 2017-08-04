@@ -17,6 +17,8 @@ from canopsis.configuration.configurable.decorator import add_category
 from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 
+from canopsis.confng import Configuration, Ini
+
 CONF_PATH = 'context_graph/manager.conf'
 CONTEXT_CAT = 'CONTEXTGRAPH'
 CTX_HYPERLINK = "hypertextlink_conf"
@@ -29,8 +31,6 @@ CONTEXT_CONTENT = [
 DEFAULT_SCHEMA_ID = "context_graph.filter_infos"
 
 
-@conf_paths(CONF_PATH)
-@add_category(CONTEXT_CAT, content=CONTEXT_CONTENT)
 class InfosFilter(MiddlewareRegistry):
     """Class use to clean the infos field of an entity"""
 
@@ -41,65 +41,27 @@ class InfosFilter(MiddlewareRegistry):
         self.obj_storage = Middleware.get_middleware_by_uri(
             'storage-default://', table='schemas')
 
-        self.reload_schema()
+        self.config = Configuration.load(CONF_PATH, Ini)
         self.logger = logger
 
-    @property
-    def event_types(self):
-        """
-        Array of event_type
-        """
-        if not hasattr(self, '_event_types'):
-            self.event_types = None
+        self.event_types = self.config.CONTEXTGRAPH.get('event_types', []).split(',')
+        self.extra_fields = self.config.CONTEXTGRAPH.get('extra_fields', []).split(',')
+        self.schema_id = self.config.INFOS_FILTER.get('schema_id', DEFAULT_SCHEMA_ID)
 
-        return self._event_types
-
-    @event_types.setter
-    def event_types(self, value):
-        if value is None:
-            value = []
-
-        self._event_types = value
-
-    @property
-    def extra_fields(self):
-        """
-        Array of fields to save from event in entity.
-        """
-        if not hasattr(self, '_extra_fields'):
-            self.extra_fields = None
-
-        return self._extra_fields
-
-    @extra_fields.setter
-    def extra_fields(self, value):
-        if value is None:
-            value = []
-
-        self._extra_fields = value
+        self.reload_schema()
 
     def reload_schema(self):
         """Reload the schema and regenerate the internal structure used to
         filter the infos dict."""
 
-        if not hasattr(self, "_schema_id"):
-            values = self.conf.get(CONTEXT_CAT)
-            id_ = values.get("_schema_id")
-            #  Ugly hack because we cannot retreive the value of schema_id in
-            # the manager.conf file
-            if id_ is None:
-                self._schema_id = DEFAULT_SCHEMA_ID
-            else:
-                self._schema_id = id_.value
-
         try:
-            self._schema = self.obj_storage.get_elements(
-                query={"_id": self._schema_id}, projection={"_id": 0})[0]
+            schemas = self.obj_storage.get_elements(
+                query={"_id": self.schema_id}, projection={"_id": 0})
         except IndexError:
             raise ValueError("No infos schema found in database.")
 
-        if isinstance(self._schema, list):
-            self._schema = self._schema[0]
+        if len(schemas) > 0:
+            self._schema = schemas[0]
             if not isinstance(self._schema, dict):
                 raise ValueError("The schema should be a dict not"
                                  " a {0}.".format(type(self._schema)))

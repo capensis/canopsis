@@ -78,7 +78,7 @@ class BaseTest(TestCase):
 class TestReloadSchema(BaseTest):
 
     def test_wrong_id(self):
-        self.infosfilter._schema_id = "I am not an ID"
+        self.infosfilter.schema_id = "I am not an ID"
         desc = "No infos schema found in database."
         with self.assertRaisesRegexp(ValueError, desc):
             self.infosfilter.reload_schema()
