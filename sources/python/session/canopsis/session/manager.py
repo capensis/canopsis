@@ -19,23 +19,14 @@
 # ---------------------------------
 
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.configuration.model import Parameter
-
 from time import time
 
-CONF_PATH = 'session/session.conf'
+from canopsis.confng import Configuration, Ini
+
+CONF_PATH = 'etc/session/session.conf'
 CATEGORY = 'SESSION'
 
-CONFIG = [
-    Parameter('alive_session_duration', int),
-]
 
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONFIG)
 class Session(MiddlewareRegistry):
     """
     Manage session informations.
@@ -53,6 +44,9 @@ class Session(MiddlewareRegistry):
         *args, **kwargs
     ):
         super(Session, self).__init__(*args, **kwargs)
+
+        self.config = Configuration.load(CONF_PATH, Ini)
+        self.alive_session_duration = int(self.config.SESSION.alive_session_duration)
 
         if session_storage is not None:
             self[Session.SESSION_STORAGE] = session_storage
