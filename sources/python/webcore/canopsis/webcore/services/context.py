@@ -57,6 +57,7 @@ def exports(ws):
         )
         """
         result = manager.get_entities_by_id(ids)
+
         return result
 
     @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter'])
