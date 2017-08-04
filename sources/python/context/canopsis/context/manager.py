@@ -18,11 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.configuration.model import Parameter
-
+from canopsis.confng import Configuration, Ini
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.event import Event, forger
 from canopsis.storage.composite import CompositeStorage
@@ -30,13 +26,10 @@ from canopsis.storage.composite import CompositeStorage
 from urllib import unquote_plus
 
 
-CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
+CONF_PATH = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
-CONTENT = [Parameter('accept_event_types', Parameter.array())]
 
 
-@add_category(CATEGORY, content=CONTENT)
-@conf_paths(CONF_RESOURCE)
 class Context(MiddlewareRegistry):
     """
     Manage access to a context (connector, component, resource) elements
@@ -79,6 +72,9 @@ class Context(MiddlewareRegistry):
     ):
 
         super(Context, self).__init__(self, *args, **kwargs)
+
+        self.config = Configuration.load(CONF_PATH, Ini)
+        self.accept_event_types = self.config.CONTEXT.get('accept_event_types', []).split(',')
 
         self._context = context
 
