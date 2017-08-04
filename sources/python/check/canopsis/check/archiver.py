@@ -27,10 +27,6 @@ from canopsis.old.rabbitmq import Amqp
 from canopsis.event import get_routingkey
 
 from canopsis.engines.core import publish
-from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths
-)
 
 import pprint
 pp = pprint.PrettyPrinter(indent=2)
@@ -48,8 +44,6 @@ CONF_PATH = 'check/archiver.conf'
 CATEGORY = 'ARCHIVER'
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
 class Archiver(Configurable):
 
     def __init__(
