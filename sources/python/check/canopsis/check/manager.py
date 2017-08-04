@@ -20,15 +20,8 @@
 
 from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
-from canopsis.configuration.model import Parameter
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.check import Check
-
-#: check manager configuration category
-CATEGORY = 'CHECK'
 
 #: check manager conf path
 CONF_PATH = 'check/check.conf'
@@ -48,8 +41,6 @@ class InvalidState(Exception):
         )
 
 
-@add_category(CATEGORY, content=Parameter('types', parser=Parameter.array()))
-@conf_paths(CONF_PATH)
 class CheckManager(MiddlewareRegistry):
     """Manage entity checking state.
 
@@ -82,7 +73,8 @@ class CheckManager(MiddlewareRegistry):
 
         super(CheckManager, self).__init__(*args, **kwargs)
 
-        self.types = types
+        self.config = Configuration.load(CONF_PATH, Ini)
+        self.types = self.config.CHECK.get('types', []).split(',')
 
     # TODO , is it used, is it usefull to manage state this way
     def state(
