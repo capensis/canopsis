@@ -68,7 +68,7 @@ function build(){
 	check_code $?
 
 	echo " + Build ..."
-	launch_log $NAME "make"
+	launch_log $NAME "make ${MAKEFLAGS}"
 	check_code $?
 }
 
