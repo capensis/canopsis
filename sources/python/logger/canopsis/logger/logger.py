@@ -8,18 +8,34 @@ class Output(object):
 
     @staticmethod
     def make(arg):
+        """
+        Override this method, then return a subclass
+        of logging.Handler.
+
+        Like FileHandler, StreamHandler...
+        """
         raise NotImplementedError
 
 class OutputStream(object):
 
     @staticmethod
     def make(stream):
+        """
+        :param stream: any file-like object.
+        :return: stream handler
+        :rtype: logging.StreamHandler
+        """
         return logging.StreamHandler(stream)
 
 class OutputFile(object):
 
     @staticmethod
     def make(path):
+        """
+        :param path: path to file. If relative, will use canopsis.common.root_path as prefix.
+        :return: file handler
+        :rtype: logging.FileHandler
+        """
 
         if os.path.isabs(path):
             fpath = path
@@ -73,6 +89,8 @@ class Logger(object):
         :param output_cls: canopsis.logger.Output<output> class.
         :param level: logging.<LEVEL>
         :param fmt: format to apply. If None, defaults to Logger.DEFAULT_FORMAT.
+        :return: python logger.
+        :rtype: logging.Logger
         """
         if Logger._logger_exists(name):
             return logging.getLogger(name)
