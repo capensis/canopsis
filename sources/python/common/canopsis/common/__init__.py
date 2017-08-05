@@ -18,5 +18,30 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import os
+import sys
+
 __version__ = "0.1"
-__canopsis_path__ = '/opt/canopsis'
+
+__root = None
+if os.path.isdir(os.path.join(sys.prefix, 'etc')):
+    __root = sys.prefix
+
+else:
+    __root = os.path.abspath(
+        os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            '{}{}'.format(os.path.pardir, os.path.sep) * 6
+        )
+    )
+
+    if sys.prefix.startswith('/usr'):
+        __root = '/'
+
+    elif not os.path.isdir(os.path.join(__root, 'etc')):
+        __root = os.environ.get('CANOPSIS_ROOT', None)
+
+    elif os.path.isdir(os.path.join('opt', 'canopsis', 'etc')):
+        __root = os.path.join(os.path.sep, 'opt', 'canopsis')
+
+root_path = __root

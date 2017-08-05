@@ -1,7 +1,7 @@
 import os
 import logging
 
-from canopsis.common import __canopsis_path__ as canopath
+from canopsis.common import root_path as canopath
 
 
 class Output(object):
