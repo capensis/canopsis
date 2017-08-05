@@ -43,9 +43,9 @@ def _root_path():
         if os.path.isdir(os.path.join(root, 'etc')):
             return root
         else:
-            root = os.environ.get('CANOPSIS_ROOT', None)
+            root = os.path.join(os.environ.get('HOME', ''), 'etc')
 
-            if root is not None:
+            if os.path.isdir(root):
                 return root
 
         if os.path.isdir(os.path.join('opt', 'canopsis', 'etc')):
