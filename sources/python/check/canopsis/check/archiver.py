@@ -25,6 +25,7 @@ from canopsis.old.account import Account
 from canopsis.old.record import Record
 from canopsis.old.rabbitmq import Amqp
 from canopsis.event import get_routingkey
+from canopsis.logger import Logger
 
 from canopsis.engines.core import publish
 
@@ -41,17 +42,19 @@ BAGOT = 3
 CANCELED = 4
 
 CONF_PATH = 'check/archiver.conf'
+LOG_PATH = 'var/log/archiver.log'
 CATEGORY = 'ARCHIVER'
 
 
-class Archiver(Configurable):
+class Archiver(object):
 
     def __init__(
         self, namespace, confnamespace='object', storage=None, autolog=False,
-        *args, **kwargs
+        log_lvl, *args, **kwargs
     ):
 
         super(Archiver, self).__init__(*args, **kwargs)
+        self.logger = Logger.get('archiver', LOG_PATH, level=log_lvl)
         self.namespace = namespace
         self.namespace_log = namespace + '_log'
 

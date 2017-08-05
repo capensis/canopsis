@@ -22,8 +22,8 @@ from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.check import Check
-
-from canopsis.confng import Configuration, Ini
+from canopsis.middleware.core import Middleware
+from canopsis.confng import Configuration, Ini, cfg_to_array
 
 #: check manager conf path
 CONF_PATH = 'check/check.conf'
@@ -43,7 +43,7 @@ class InvalidState(Exception):
         )
 
 
-class CheckManager(MiddlewareRegistry):
+class CheckManager(object):
     """Manage entity checking state.
 
     A state is bound to an entity. Therefore, an entity id is a document state
@@ -76,7 +76,8 @@ class CheckManager(MiddlewareRegistry):
         super(CheckManager, self).__init__(*args, **kwargs)
 
         self.config = Configuration.load(CONF_PATH, Ini)
-        self.types = self.config.CHECK.get('types', []).split(',')
+        self.types = cfg_to_array(self.config.CHECK.get('types', ''))
+        self.storage = Middleware.get_middleware_by_uri(self.config.CHECK.check_storage_uri)
 
     # TODO , is it used, is it usefull to manage state this way
     def state(
@@ -102,7 +103,7 @@ class CheckManager(MiddlewareRegistry):
         # default result is None
         result = {}
         # get state document
-        state_documents = self[CheckManager.CHECK_STORAGE].get_elements(
+        state_documents = self.storage.get_elements(
             ids=ids, query=query
         )
         # if state document exists
@@ -130,7 +131,7 @@ class CheckManager(MiddlewareRegistry):
             id_name = CheckManager.ID
             state_name = CheckManager.STATE
             # save storage for quick access
-            storage = self[CheckManager.CHECK_STORAGE]
+            storage = self.storage
 
             # ensure entity_ids is a set
             if isinstance(ids, basestring):
@@ -216,7 +217,7 @@ class CheckManager(MiddlewareRegistry):
         :param bool cache: storage cache when udpate state.
         """
 
-        return self[CheckManager.CHECK_STORAGE].remove_elements(
+        return self.storage.remove_elements(
             ids=ids, _filter=query, cache=cache
         )
 
@@ -231,7 +232,7 @@ class CheckManager(MiddlewareRegistry):
         if state not in self.valid_states or not isinstance(state, int):
             raise InvalidState(state, self.valid_states)
 
-        return self[CheckManager.CHECK_STORAGE].put_element(
+        return self.storage.put_element(
             _id=entity_id,
             element={'state': state},
             cache=cache
@@ -243,7 +244,7 @@ class CheckManager(MiddlewareRegistry):
 
         :param ids: a list of identifier that may have a state in database.
         """
-        states = self[CheckManager.CHECK_STORAGE].get_elements(
+        states = self.storage.get_elements(
             ids=ids
         )
         return states
