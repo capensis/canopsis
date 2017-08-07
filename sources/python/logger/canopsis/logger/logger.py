@@ -1,13 +1,17 @@
 import os
 import logging
 
+from logging import FileHandler
+from logging import StreamHandler
+from logging.handlers import MemoryHandler
+
 from canopsis.common import root_path as canopath
 
 
 class Output(object):
 
     @staticmethod
-    def make(arg):
+    def make(arg, handler_args):
         """
         Override this method, then return a subclass
         of logging.Handler.
@@ -15,6 +19,16 @@ class Output(object):
         Like FileHandler, StreamHandler...
         """
         raise NotImplementedError
+
+    @staticmethod
+    def make_memory(capacity, flushlevel, target):
+        """
+        :param capacity: memory handler capacity
+        :param flushlevel: memory handler flush level.
+        :return: memory handler
+        :rtype: MemoryHandler
+        """
+        return MemoryHandler(capacity, flushLevel=flushlevel, target=target)
 
 class OutputStream(Output):
 
@@ -25,7 +39,7 @@ class OutputStream(Output):
         :return: stream handler
         :rtype: logging.StreamHandler
         """
-        return logging.StreamHandler(stream)
+        return StreamHandler(stream)
 
 class OutputFile(Output):
 
@@ -43,15 +57,15 @@ class OutputFile(Output):
         else:
             fpath = os.path.join(canopath, path)
 
-        return logging.FileHandler(fpath)
+        return FileHandler(fpath)
 
 
 class Logger(object):
 
-    DEFAULT_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
+    DEFAULT_FORMAT = u"[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
 
     FORMATS = {
-        logging.DEBUG: "[%(asctime)s] [%(levelname)s] [%(name)s] [%(process)d] [%(thread)d] [%(pathname)s] [%(lineno)d] %(message)s",
+        logging.DEBUG: u"[%(asctime)s] [%(levelname)s] [%(name)s] [%(process)d] [%(thread)d] [%(pathname)s] [%(lineno)d] %(message)s",
         logging.CRITICAL: DEFAULT_FORMAT,
         logging.ERROR: DEFAULT_FORMAT,
         logging.FATAL: DEFAULT_FORMAT,
@@ -61,19 +75,28 @@ class Logger(object):
     }
 
     @staticmethod
-    def _init(logger, output, output_cls, level, fmt):
+    def _init(logger, output, output_cls, level, fmt,
+              memory, memory_capacity, memory_flushlevel):
+        if isinstance(level, str):
+            level = getattr(logging, level.upper(), logging.INFO)
+
         logger.setLevel(level)
 
         if fmt is None:
             fmt = Logger.FORMATS.get(level, Logger.DEFAULT_FORMAT)
 
-        formatter = logging.Formatter(fmt)
+        formatter = logging.Formatter(fmt=fmt)
 
         handler = output_cls.make(output)
-        handler.setLevel(level)
         handler.setFormatter(formatter)
+        handler.setLevel(level)
 
-        logger.addHandler(handler)
+        if memory:
+            memory_handler = output_cls.make_memory(memory_capacity, memory_flushlevel, handler)
+            logger.addHandler(memory_handler)
+
+        else:
+            logger.addHandler(handler)
 
         return logger
 
@@ -82,13 +105,17 @@ class Logger(object):
         return name in logging.Logger.manager.loggerDict
 
     @staticmethod
-    def get(name, output, output_cls=OutputFile, level=logging.INFO, fmt=None):
+    def get(name, output, output_cls=OutputFile, level=logging.INFO, fmt=None,
+            memory=False, memory_capacity=100, memory_flushlevel=logging.WARNING):
         """
         :param name: logger name
         :param output: output given to output_cls. Can be anything from a file path, a stringio or a full URI. It only has to be supported by output_cls.
         :param output_cls: canopsis.logger.Output<output> class.
         :param level: logging.<LEVEL>
         :param fmt: format to apply. If None, defaults to Logger.DEFAULT_FORMAT.
+        :param memory: wrap logging handler with logging.handlers.MemoryHandler.
+        :param memory_capacity: MemoryHandler log capacity.
+        :param memory_flushlevel: if a log event is equal or greater than this level, force flush.
         :return: python logger.
         :rtype: logging.Logger
         """
@@ -96,4 +123,5 @@ class Logger(object):
             return logging.getLogger(name)
 
         logger = logging.getLogger(name)
-        return Logger._init(logger, output, output_cls, level, fmt)
+        return Logger._init(logger, output, output_cls, level, fmt,
+                            memory, memory_capacity, memory_flushlevel)

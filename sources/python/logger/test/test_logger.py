@@ -1,6 +1,8 @@
 import unittest
 import tempfile
 import os
+import logging
+import logging.handlers
 
 try:
     from io import StringIO
@@ -56,3 +58,29 @@ class TestLogger(unittest.TestCase):
             self.assertTrue(content[0][:-1].endswith(u'first_line'))
 
         os.unlink(tmpf.name)
+
+    def test_logger_memory(self):
+
+        output = StringIO()
+
+        logger = Logger.get('memory', output, OutputStream,
+                    level=logging.INFO,
+                    memory=True, memory_capacity=2, memory_flushlevel=logging.CRITICAL)
+
+        # under max capacity
+        logger.info(u'1')
+        output.seek(0)
+        lines = len(output.readlines())
+        self.assertEqual(lines, 0)
+
+        # max capacity
+        logger.info(u'2')
+        output.seek(0)
+        lines = len(output.readlines())
+        self.assertEqual(lines, 2)
+
+        # under max capacity but flush level
+        logger.critical(u'3')
+        output.seek(0)
+        lines = len(output.readlines())
+        self.assertEqual(lines, 3)
