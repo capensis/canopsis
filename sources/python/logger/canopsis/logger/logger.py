@@ -16,7 +16,7 @@ class Output(object):
         """
         raise NotImplementedError
 
-class OutputStream(object):
+class OutputStream(Output):
 
     @staticmethod
     def make(stream):
@@ -27,7 +27,7 @@ class OutputStream(object):
         """
         return logging.StreamHandler(stream)
 
-class OutputFile(object):
+class OutputFile(Output):
 
     @staticmethod
     def make(path):
