@@ -310,7 +310,7 @@ class TestManager(BaseTest):
 
         self.pbm.context._put_entities(self.entities)
 
-        tab = self.pbm.get_active_pbheviors([self.entity_id_1, self.entity_id_2])
+        tab = self.pbm.get_active_pbehaviors([self.entity_id_1, self.entity_id_2])
         names = [x['name'] for x in tab]
         self.assertEqual(names, ['pb1'])
 
