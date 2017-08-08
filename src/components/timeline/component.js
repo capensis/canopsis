@@ -114,7 +114,6 @@ Ember.Application.initializer({
 
                 adapter.findQuery('alarm', 'get-current-alarm', undefined, query).then(function (result) {
                     // onfullfillment
-                    alert(result)
 					var previousDate = undefined;
                     var steps = [];
                     if (result.data.length > 0 && result.data[0].alarms.length > 0){
