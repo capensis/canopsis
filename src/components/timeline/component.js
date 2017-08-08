@@ -116,8 +116,8 @@ Ember.Application.initializer({
                     // onfullfillment
 					var previousDate = undefined;
                     var steps = [];
-                    for (var i = result.data[0].value.steps.length - 1 ; i >= 0 ; i--) {
-                        var step = result.data[0].value.steps[i];
+                    for (var i = result.data[0].v.steps.length - 1 ; i >= 0 ; i--) {
+                        var step = result.data[0].v.steps[i];
 
                         //build time related information
                         var date = new Date(step.t*1000);
