@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-listalarm/blob/mas
 
 ### Lint
 
-Tested on commit : 14e7207.
+Tested on commit : fa38ef0.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -64,14 +64,14 @@ Tested on commit : 14e7207.
 
 | File   | Note   |
 |--------|--------|
-| src/forms/pbehavior/controller.js | search this value into schema |
-| src/forms/pbehavior/controller.js | refactor the 20 lines below in an utility function "getEditorForAttr" |
-| src/forms/pbehavior/controller.js | use the real schema, not the dict used to create it |
+| src/mixins/customsendevent.js | use an adapter for this |
+| src/mixins/customsendevent.js | refactor into sub classes |
 | src/forms/snooze/controller.js | search this value into schema |
 | src/forms/snooze/controller.js | refactor the 20 lines below in an utility function "getEditorForAttr" |
 | src/forms/snooze/controller.js | use the real schema, not the dict used to create it |
-| src/mixins/customsendevent.js | use an adapter for this |
-| src/mixins/customsendevent.js | refactor into sub classes |
+| src/forms/pbehavior/controller.js | search this value into schema |
+| src/forms/pbehavior/controller.js | refactor the 20 lines below in an utility function "getEditorForAttr" |
+| src/forms/pbehavior/controller.js | use the real schema, not the dict used to create it |
 
 
 ### FIXMES
@@ -80,5 +80,5 @@ Tested on commit : 14e7207.
 
 ## Additional-info
 
-Minified version : 4 files (size: 144K)
-Development version : 61 files (size: 364K)
+Minified version : 4 files (size: 156K)
+Development version : 61 files (size: 488K)
