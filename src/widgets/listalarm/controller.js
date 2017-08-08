@@ -21,11 +21,11 @@ Ember.Application.initializer({
     name: 'ListAlarmWidget',
     after: ['NotificationUtils' ,'TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader', 'CustomfilterlistMixin', 'CustomSendeventMixin'],
     initialize: function(container, application) {
-		    var timeWindowUtils = container.lookupFactory('utility:timewindow'),
+            var timeWindowUtils = container.lookupFactory('utility:timewindow'),
             dataUtils = container.lookupFactory('utility:data'),
-			      WidgetFactory = container.lookupFactory('factory:widget'),
-			      UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
-			      SendeventMixin = container.lookupFactory('mixin:customsendevent');            
+                  WidgetFactory = container.lookupFactory('factory:widget'),
+                  UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
+                  SendeventMixin = container.lookupFactory('mixin:customsendevent');
             notificationUtils = container.lookupFactory('utility:notification');
 
             mx = container.lookupFactory('mixin:customfilterlist');
@@ -173,7 +173,7 @@ Ember.Application.initializer({
 
                 set(this, 'loaded', false);
                 set(this, 'rights', {list_filters: {checksum: true}});
-				        set(this, 'store', DS.Store.extend({
+                        set(this, 'store', DS.Store.extend({
                     container: get(this, 'container')
                 }));
 
@@ -226,10 +226,10 @@ Ember.Application.initializer({
              * @method filtersObserver
              */
             filtersObserver: function() {
-              this.set('alarmSearchOptions.filter', this.get('selected_filter.filter') || {});  
+              this.set('alarmSearchOptions.filter', this.get('selected_filter.filter') || {});
             }.observes('selected_filter'),
 
-            
+
             /**
              * @property totalPagess
              */
@@ -296,11 +296,11 @@ Ember.Application.initializer({
              */
             originalAlarms: function() {
               var controller = this;
-              this.set('loaded', false);              
+              this.set('loaded', false);
               var options = this.get('alarmSearchOptions');
-              console.error('reload original alarms with params', options);              
+              console.error('reload original alarms with params', options);
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
-              
+
               return DS.PromiseArray.create({
                 promise: adapter.findQuery('alerts', options).then(function (alarms) {
                   if (alarms.success) {
@@ -316,7 +316,7 @@ Ember.Application.initializer({
                 })
                 .catch(function (err) {
                   console.error('unexpected error ', err);
-                  return [];                
+                  return [];
                 })
               })
 
@@ -377,7 +377,7 @@ Ember.Application.initializer({
                       var val = get(Ember.Object.create(alarm), field.getValue);
                       newAlarm[field.name] = val;
                       newAlarm[field.humanName] = val;
- 
+
                   });
 
                   fields.forEach(function(field) {
@@ -385,7 +385,7 @@ Ember.Application.initializer({
                       newAlarm[field.name] = val;
                       newAlarm[field.humanName] = val;
                   });
-                  
+
                   newAlarm['isSelected'] = false;
                   newAlarm['isExpanded'] = false;
                   newAlarm['id'] = alarm._id;
@@ -401,8 +401,8 @@ Ember.Application.initializer({
                   }
                   return newAlarm;
                 });
-              this.set('defTotal', Ember.totalAlarms);
-              this.set('loaded', true);  
+                this.set('defTotal', Ember.totalAlarms);
+                this.set('loaded', true);
               return alarmsArr;
 
             }.property('originalAlarms.@each', 'fields.[]'),
@@ -435,7 +435,7 @@ Ember.Application.initializer({
                       columnName: obj.column,
                       columnTemplate: Ember.View.extend({
                         template: Ember.HTMLBars.compile(obj.template)
-                      })                    
+                      })
                     }
                   })
                 } catch (err) {
@@ -456,9 +456,9 @@ Ember.Application.initializer({
                 console.error("default_sort_column: " + controller.get('model.default_sort_column.property') + "-" + controller.get('model.default_sort_column.direction'));
                 console.error("columnts: " + controller.get('model.columns').join(' ')),
                 console.error("alarms_state_filter: " + controller.get('model.alarms_state_filter.state'))
-                
+
             },
-            
+
 
             /**
              * Set the reload to true in order to redraw events
@@ -467,7 +467,7 @@ Ember.Application.initializer({
              */
             refreshContent: function () {
               // this.set('manualUpdateAlarms', new Date().getTime());
-				          // Not implemented because backend too long, feature not useful for this widget
+            // Not implemented because backend too long, feature not useful for this widget
             },
 
             /**
@@ -481,19 +481,19 @@ Ember.Application.initializer({
 
               var query = {
                 tstart: iParams['tstart'] || 0,
-								tstop: iParams['tstop'] || 0,
-								sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
-           			sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction'),
+                                tstop: iParams['tstop'] || 0,
+                                sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
+                        sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction'),
                 // filter: iParams['filter'] || this.get('model.filter'),
                 search: iParams['search'] || '',
                 opened: filterState == 'opened',
                 resolved: filterState == 'resolved'
-							};
+                            };
 
 
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
-            	adapter.findQuery('alerts', query).then(function (result) {
-					          var alerts = get(result, 'data');
+                adapter.findQuery('alerts', query).then(function (result) {
+                              var alerts = get(result, 'data');
                     controller.setAlarmsForShow(alerts[0]['alarms']);
               }, function (reason) {
                     console.error('ERROR in the adapter: ', reason);
@@ -524,7 +524,7 @@ Ember.Application.initializer({
                 })
                 .catch(function (err) {
                   console.error('unexpected error ', err);
-                  return false;                
+                  return false;
                 })
               })
 
@@ -533,25 +533,25 @@ Ember.Application.initializer({
             /**
              * @method parseFields
              */
-						parseFields: function (columns) {
+                        parseFields: function (columns) {
               var controller = this;
-							var fields = [];
-							var sortColumn = this.get('model.default_sort_column.property');
-							var order = this.get('model.default_sort_column.direction');
+                            var fields = [];
+                            var sortColumn = this.get('model.default_sort_column.property');
+                            var order = this.get('model.default_sort_column.direction');
 
-							fields = columns.map(function(column) {
-								var obj = {};
+                            fields = columns.map(function(column) {
+                                var obj = {};
 
-								obj['name'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
+                                obj['name'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
                 obj['humanName'] = column;
-								obj['isSortable'] = column == sortColumn;
-								obj['isASC'] = order == 'ASC';
+                                obj['isSortable'] = column == sortColumn;
+                                obj['isASC'] = order == 'ASC';
                 obj['getValue'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
-								return obj;
-							});
+                                return obj;
+                            });
 
-							return fields;
-						},
+                            return fields;
+                        },
 
             /**
              * @property sortColumn
@@ -563,7 +563,7 @@ Ember.Application.initializer({
                 column = get(this, 'fields.firstObject');
                 try {
                   column['isSortable'] = true;
-                  column['isASC'] = get(this, 'controller.default_sort_column.property');                
+                  column['isASC'] = get(this, 'controller.default_sort_column.property');
                 } catch (err) {
                 }
                 console.error('the column "' + get(this, 'controller.default_sort_column.property') + '" was not found.');
@@ -588,7 +588,7 @@ Ember.Application.initializer({
                   'd': aa.get('entity_id')
                 }
                   adapter.findQuery('alarm', { lookups: JSON.stringify(["pbehaviors", "linklist"]), 'filter': ('{"$or":[{"_id":"'+ aa.get('id') +'"}]}') }).then(function (a) {
-                    
+
                     if (a.success) {
                       var fields = self.get('fields');
                       var alarm = a.data[0].alarms[0];
@@ -611,14 +611,14 @@ Ember.Application.initializer({
                       aa.set('isSelected', false);
                       aa.set('isExpanded', false);
                       aa.set('canceled', get(Ember.Object.create(alarm), 'v.canceled'));
-                      
+
                       Ember.set(aa, 'changed', new Date().getTime());
 
                     } else {
                       console.error('unsuccessful request');
                     }
               })
-                  
+
               } else {
                 console.error('alarm not found');
               }
@@ -638,7 +638,7 @@ Ember.Application.initializer({
                 this.set('alarmSearchOptions.sort_key', field.name);
                 this.set('alarmSearchOptions.sort_dir', field.isASC ? 'ASC' : 'DESC');
               },
-              
+
               search: function (text) {
                 var controller = this;
                 this.isValidExpression(text).then(function(result) {

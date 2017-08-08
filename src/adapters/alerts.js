@@ -32,8 +32,8 @@ Ember.Application.initializer({
                 if (query == 'get-current-alarm') {
                     return this.ajax('/alerts/get-current-alarm', 'GET', {data: q});
                     // return this.ajax('/alerts/get-alarms', 'GET', {data: q});
-                    
                 } else {
+                    query["sort_key"] = "v." + query["sort_key"];
                     return this.ajax(url, 'GET', {data: query});
                 };
             }
