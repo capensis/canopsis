@@ -25,6 +25,7 @@
 });
 
  define([
+    'canopsis/brick-timeline/src/adapters/timelineadapter',
     'canopsis/brick-timeline/src/components/timeline/component',
     'ehbs!components/component-timeline',
     'link!canopsis/brick-timeline/src/style.css'
