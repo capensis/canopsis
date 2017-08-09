@@ -120,6 +120,8 @@ Ember.Application.initializer({
 
                         for (var i = result.data[0].alarms[0].v.steps.length - 1 ; i >= 0 ; i--) {
                             var step = result.data[0].alarms[0].v.steps[i];
+                            var index_state_check = 0
+                            var index_status_check = 0 
 
                             //build time related information
                             var date = new Date(step.t*1000);
@@ -145,10 +147,10 @@ Ember.Application.initializer({
                             if (!step.color)
                                 step.color = get(component,'colorArray')[step.val];
 
-                            if (step._t.indexOf('state') > -1)
+                            if (step._t.indexOf('state') >= index_state_check)
                                 step.state = get(component,'stateArray')[step.val];
 
-                            if (step._t.indexOf('status') > -1)
+                            if (step._t.indexOf('status') >= index_status_check)
                                 step.status = get(component,'statusArray')[step.val];
 
                             if (step._t === 'snooze') {
