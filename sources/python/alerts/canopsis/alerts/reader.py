@@ -442,6 +442,8 @@ class AlertsReader(MiddlewareRegistry):
         :param int skip: Number of alarms to skip (pagination)
         :param int limit: Maximum number of alarms to return
 
+        :param bool with_steps: True if you want alarm steps in your alarm.
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
