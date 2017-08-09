@@ -70,19 +70,16 @@ def exports(ws):
         if _filter is not None:
             query.update(_filter)
 
-        cursor, count = manager.get_entities(
+        data, count = manager.get_entities(
             query=query,
             limit=limit,
             start=start,
             sort=sort,
             with_count=True
         )
-
-        data = []
-        for ent in cursor:
-            data.append(ent)
-
-        return data, count
+        result = [count]
+        result += data
+        return result
 
     @route(ws.application.put, payload=[
         '_type', 'entity', 'context', 'extended_id'
