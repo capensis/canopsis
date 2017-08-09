@@ -46,8 +46,8 @@ class AlarmField(DefaultEnum):
     tags = 'tags'
     ticket = 'ticket'
     alarmfilter = 'alarmfilter'  # see AlarmFilterField
-    creation_date = 'creation_date'
-    last_update_date = 'last_update_date'
+    created_at = 'created_at'
+    last_update_value = 'last_update_value'
 
 
 class States(DefaultEnum):
