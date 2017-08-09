@@ -50,7 +50,7 @@ class Archiver(object):
 
     def __init__(
         self, namespace, confnamespace='object', storage=None, autolog=False,
-        log_lvl, *args, **kwargs
+        log_lvl='info', *args, **kwargs
     ):
 
         super(Archiver, self).__init__(*args, **kwargs)
@@ -77,20 +77,20 @@ class Archiver(object):
             self.logger.debug(" + Get storage")
             self.storage = get_storage(
                 namespace=namespace,
-                logging_level=self.log_lvl
+                logging_level=log_lvl
             )
         else:
             self.storage = storage
 
         self.conf_storage = get_storage(
             namespace=confnamespace,
-            logging_level=self.log_lvl
+            logging_level=log_lvl
         )
         self.conf_collection = self.conf_storage.get_backend(confnamespace)
         self.collection = self.storage.get_backend(namespace)
 
         self.amqp = Amqp(
-            logging_level=self.log_lvl,
+            logging_level=log_lvl,
             logging_name='archiver-amqp'
         )
 
