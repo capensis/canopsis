@@ -50,7 +50,8 @@ def exports(ws):
             'sort_key',
             'sort_dir',
             'skip',
-            'limit'
+            'limit',
+            'with_steps'
         ]
     )
     def get_alarms(
@@ -64,7 +65,8 @@ def exports(ws):
             sort_key='opened',
             sort_dir='DESC',
             skip=0,
-            limit=50
+            limit=50,
+            with_steps=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -104,7 +106,8 @@ def exports(ws):
             sort_key=sort_key,
             sort_dir=sort_dir,
             skip=skip,
-            limit=limit
+            limit=limit,
+            with_steps=with_steps
         )
 
     @route(

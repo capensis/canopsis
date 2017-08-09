@@ -416,7 +416,8 @@ class AlertsReader(MiddlewareRegistry):
             sort_key='opened',
             sort_dir='DESC',
             skip=0,
-            limit=50
+            limit=50,
+            with_steps=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -440,6 +441,8 @@ class AlertsReader(MiddlewareRegistry):
 
         :param int skip: Number of alarms to skip (pagination)
         :param int limit: Maximum number of alarms to return
+
+        :param bool with_steps: True if you want alarm steps in your alarm.
 
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
@@ -489,11 +492,10 @@ class AlertsReader(MiddlewareRegistry):
         last = 0 if limited_total == 0 else skip + limited_total
 
         alarms = self._lookup(alarms, lookups)
-
-        # Steps are never meant to be used in UI and would just cost
-        # unnecessary bandwidth.
-        for a in alarms:
-            a['v'].pop(AlarmField.steps.value)
+        
+        if not with_steps:
+            for a in alarms:
+                a['v'].pop(AlarmField.steps.value)
 
         res = {
             'alarms': alarms,
