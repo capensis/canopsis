@@ -24,8 +24,10 @@ import urllib
 from operator import itemgetter
 
 import flask
+from canopsis.webcore.apps.flask.helpers import Resource
 
 from canopsis.webcore.utils import gen_json
+
 
 def inspect_routes(app):
     """
@@ -45,6 +47,7 @@ def inspect_routes(app):
         else:
             yield [], route_1
 
+
 class Methods:
 
     @staticmethod
@@ -52,6 +55,7 @@ class Methods:
         """
         List all routes in the webservice, according to a certain path.
 
+        :param bottle_app: the bottle application
         :param str path: limit the listing to path including this value
         """
         themall = []
@@ -91,15 +95,16 @@ class Methods:
 
         return sorted(routes)
 
+
 def exports(ws):
 
+    bottle_app = ws.application  # keep bottle ref before beaker transformation
+
     @ws.application.get('/api/v2/rule/them/all/<path>')
-    @ws.application.get('/api/v2/rule/them/all/')
+    @ws.application.get('/api/v2/rule/them/all')
     def get_routes(path=None):
-        return Methods.get_routes(ws.application, path=path)
+        return Methods.get_routes(bottle_app, path=path)
 
-
-from canopsis.webcore.apps.flask.helpers import Resource
 
 class APIWebcore(Resource):
 
@@ -111,6 +116,7 @@ class APIWebcore(Resource):
 
     def get(self, path=None):
         return Methods.get_routes_v3(self._app, path=path)
+
 
 def exports_v3(app, api):
     APIWebcore.init(app, api)
