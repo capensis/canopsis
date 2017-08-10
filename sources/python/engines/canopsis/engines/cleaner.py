@@ -94,14 +94,18 @@ class engine(Engine):
         elif not isinstance(tags, list):
             event['tags'] = []
 
-        event["timestamp"] = int(event.get("timestamp", time()))
+        event['timestamp'] = int(event.get('timestamp', time()))
 
-        event["state"] = int(event.get("state", 0))
-        event["state_type"] = event.get("state_type", 1)
-        event["event_type"] = event.get("event_type", "check")
+        try:
+            event['state'] = int(event.get('state', 0))
+        except AttributeError:
+            self.logger.error('state convertion failed')
+            event['state'] = 0
+        event['state_type'] = event.get('state_type', 1)
+        event['event_type'] = event.get('event_type', 'check')
 
         default_status = 0 if not event["state"] else 1
-        event["status"] = event.get("status", default_status)
+        event['status'] = event.get("status", default_status)
 
         event['output'] = event.get('output', '')
 
