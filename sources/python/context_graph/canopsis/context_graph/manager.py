@@ -644,14 +644,21 @@ class ContextGraph(MiddlewareRegistry):
         if not isinstance(query, dict):
             raise TypeError("Query must be a dict")
 
-        result = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+        result = self[ContextGraph.ENTITIES_STORAGE].get_elements(
             query=query,
             limit=limit,
             skip=start,
             sort=sort,
             projection=projection,
             with_count=with_count
-        ))
+        )
+
+        if with_count:  
+            result = list(result[0])
+            count = result[1]
+        else:
+            result = list(result)
+        
 
         # Enrich each entity with http links
         for res in result:
@@ -659,7 +666,10 @@ class ContextGraph(MiddlewareRegistry):
             if hasattr(self, 'hlb_manager'):
                 res['links'] = self.hlb_manager.links_for_entity(res)
 
-        return result
+        if with_count:
+            return result, count
+        else:
+            return result
 
     def get_event(self, entity, event_type='check', **kwargs):
         """Get an event from an entity.
