@@ -149,6 +149,7 @@ Ember.Application.initializer({
                         if (data.success) {
                             // me.updateAlarm(data.data[0].id.replace(/\..*/, ''));
                             me.updateRecord(data.data[0].id);
+                            me.refreshContent();
                             
                         } else {
                             console.error('error while send event', data.data.msg);
