@@ -466,6 +466,8 @@ Ember.Application.initializer({
              * @method refreshContent
              */
             refreshContent: function () {
+              this.set('manualUpdateAlarms', new Date().getTime());
+              
               // this.set('manualUpdateAlarms', new Date().getTime());
             // Not implemented because backend too long, feature not useful for this widget
             },
