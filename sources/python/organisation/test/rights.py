@@ -21,6 +21,7 @@
 
 from logging import getLogger
 from unittest import main, TestCase
+
 from canopsis.organisation.rights import Rights
 
 
@@ -63,6 +64,10 @@ class RightsTest(TestCase):
         self.rights.delete_profile('profile_test2')
 
         self.rights.delete_role('role_test1bis')
+
+    def tearDown(self):
+        pass
+        # TODO: cleanup the mess in default_rights
 
     def tests(self):
         # Test creation of groups
@@ -192,7 +197,7 @@ class RightsTest(TestCase):
         self.rights.add_profile('role_test1bis', None, 'profile_test1')
         self.rights.add_group_profile('role_test1bis', 'group_test1')
         ##TODO4-01-2017
-		#self.assertEqual(
+        #self.assertEqual(
         #    self.rights.get_user_rights('jharris')['1237']['checksum'],
         #    15)
 
@@ -208,6 +213,42 @@ class RightsTest(TestCase):
         self.assertTrue(
             'name_changed' == self.rights.get_group('group_test2')['crecord_name']
             )
+
+        # Update fields
+        uid = 'my_user'
+        urole = 'admin'
+        values = {
+            '_id': uid,
+            #'authkey': 'deab-beef',
+            'contact': {
+                'address': '',
+                'name': 'Administrator'
+            },
+            #'crecord_name': uid,
+            #'crecord_type': 'user',
+            #'enable': True,
+            'external': False,
+            'mail': 'contact@example.com',
+            #'role': urole,
+            'shadowpasswd': 'DEADBEEF',
+            'ui_language': 'fr',
+        }
+
+        user = self.rights.create_user(
+            uid, urole,
+            contact=None,
+            rights=None,
+            groups=None
+        )
+        self.assertEqual(user['crecord_name'], uid)
+
+        self.rights.update_fields(uid, 'user', values)
+        r = self.rights.user_storage._backend.find({'_id': uid})
+        self.assertTrue(r.count() > 0)
+        content = list(r.limit(1))[0]
+        self.assertEqual(content['crecord_name'], uid)
+        self.assertEqual(content['ui_language'], 'fr')
+        self.assertEqual(content['mail'], 'contact@example.com')
 
 if __name__ == '__main__':
     main()
