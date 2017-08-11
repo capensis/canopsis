@@ -81,7 +81,7 @@ Ember.Application.initializer({
 
             /**
              * @method init
-             */   
+             */
             init: function() {
                 this._super();
               },
@@ -95,11 +95,12 @@ Ember.Application.initializer({
                 var actions = this.get('actionsMap').filter(function(item, index, enumerable) {
                     return item.internal_states.includes(intState)
                 });
+				console.error(this.get('isSnoozed'));
                 if (this.get('isSnoozed')) {
                     actions.removeObject(actions.findBy('mixin_name', 'snooze'))
                 };
                 if (this.get('isChangedByUser')) {
-                    actions.removeObject(actions.findBy('mixin_name', 'cancelack'))                    
+                    actions.removeObject(actions.findBy('mixin_name', 'cancelack'))
                 }
                 return actions;
             }.property('internalState', 'isSnoozed', 'isChangedByUser'),
@@ -138,7 +139,7 @@ Ember.Application.initializer({
              * @property isSnoozed
              */
             isSnoozed: function () {
-                return this.get('alarm.extra_details.snooze') != undefined; 
+                return this.get('alarm.extra_details.snooze') != undefined;
             }.property('alarm.extra_details.snooze'),
 
             /**
