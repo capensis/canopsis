@@ -73,7 +73,6 @@ Tested on commit : d6c2ef6.
 | src/forms/snooze/controller.js | refactor the 20 lines below in an utility function "getEditorForAttr" |
 | src/forms/snooze/controller.js | use the real schema, not the dict used to create it |
 
-
 ### FIXMES
 
 
