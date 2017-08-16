@@ -782,6 +782,7 @@ class Alerts(MiddlewareRegistry):
                 'connector_name': event['connector_name'],
                 'component': event['component'],
                 'resource': event.get('resource', None),
+                AlarmField.initial_output.value: event.get('output', ''),
                 AlarmField.created_at.value: int(time()),
                 AlarmField.last_update_value.value: int(time()),
                 AlarmField.state.value: None,
