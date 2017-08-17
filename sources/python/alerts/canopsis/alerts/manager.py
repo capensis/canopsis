@@ -564,8 +564,12 @@ class Alerts(MiddlewareRegistry):
         # Find the corresponding task
         try:
             task = get_task(name, cacheonly=True)
+            # FIXIT: https://git.canopsis.net/canopsis/canopsis/issues/298
+            if not callable(task):
+                raise ImportError('cannot import task "{}"'.format(name))
+
         except ImportError:
-            self.logger.warning('Unkown task {}'.format(name))
+            self.logger.warning('Unknown task {}'.format(name))
             return
 
         # Find the corresponding alarm
