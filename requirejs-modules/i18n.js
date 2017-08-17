@@ -17,19 +17,13 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
- require.config({
-    paths: {
-        'components/component-timeline': 'canopsis/brick-timeline/src/components/timeline/template',
+define([
+    'text!canopsis/brick-timeline/i18n/' + i18n.lang + '.json'
+], function (langFile) {
+    var langFile = JSON.parse(langFile);
+    var langKeys = Em.keys(langFile);
 
-    }
-});
-
- define([
-    'canopsis/brick-timeline/src/components/timeline/component',
-    'ehbs!components/component-timeline',
-    'link!canopsis/brick-timeline/src/style.css',
-    'canopsis/brick-timeline/requirejs-modules/i18n'
-], function () {
-    
+    for (var i = 0; i < langKeys.length; i++)
+        Em.STRINGS[langKeys[i]] = langFile[langKeys[i]];
 });
 
