@@ -4,6 +4,8 @@ Ember.Application.initializer({
         var get = Ember.get,
             set = Ember.set,
             isNone = Ember.isNone;
+            __ = Ember.String.loc;
+
         /**
          * This is the rendererstate component for the widget listalarm
          *
@@ -40,7 +42,7 @@ Ember.Application.initializer({
              * @property caption
              */
             caption: function() {
-                return this.get('list')[this.get('value.val')]['name']
+                return __(this.get('list')[this.get('value.val')]['name'])
             }.property('value.val'),
 
             /**

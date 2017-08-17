@@ -116,7 +116,8 @@
     'link!canopsis/brick-listalarm/src/style.css',
     'canopsis/brick-listalarm/src/widgets/listalarm/controller',
     'ehbs!listalarm',
-    'canopsis/brick-listalarm/requirejs-modules/externals.conf'
+    'canopsis/brick-listalarm/requirejs-modules/externals.conf',
+    'canopsis/brick-listalarm/requirejs-modules/i18n'
 ], function () {
     
 });

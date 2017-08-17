@@ -1,4 +1,5 @@
 # All ignoring files and directories for git repositories
+*~
 
 # Logging directory and related files
 logs/

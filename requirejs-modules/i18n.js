@@ -17,18 +17,12 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
- require.config({
-    paths: {
+define([
+    'text!canopsis/brick-listalarm/i18n/' + i18n.lang + '.json'
+], function (langFile) {
+    var langFile = JSON.parse(langFile);
+    var langKeys = Em.keys(langFile);
 
-    }
+    for (var i = 0; i < langKeys.length; i++)
+        Em.STRINGS[langKeys[i]] = langFile[langKeys[i]];
 });
-
-define(['text!canopsis/brick-listalarm/dist/templates.min.html',
-    'link!canopsis/brick-listalarm/dist/brick.min.css',
-    'canopsis/brick-listalarm/requirejs-modules/externals.conf',
-    'canopsis/brick-listalarm/requirejs-modules/i18n',
-    'canopsis/brick-listalarm/dist/brick.min'
-], function () {
-    
-});
-
