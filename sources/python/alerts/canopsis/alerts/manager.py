@@ -569,7 +569,7 @@ class Alerts(MiddlewareRegistry):
                 raise ImportError('cannot import task "{}"'.format(name))
 
         except ImportError:
-            self.logger.warning('Unknown task {}'.format(name))
+            self.logger.debug('Unknown task {}'.format(name))
             return
 
         # Find the corresponding alarm
