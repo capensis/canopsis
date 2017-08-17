@@ -89,7 +89,7 @@ Ember.Application.initializer({
                     event_type: event_type,
                     source_type: get(crecord, 'source_type'),
                     component: get(crecord, 'component'),
-                    state: get(crecord, 'state'),
+                    state: get(crecord, 'state.val'),
                     state_type: get(crecord, 'state_type'),
                     crecord_type: event_type,
                     timestamp:  datesUtils.getNow()
