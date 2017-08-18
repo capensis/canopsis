@@ -3,7 +3,7 @@
     {{#each action in actionsMap}}
       <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
           <span {{bind-attr class=action.class}}></span>
-          {{action.caption}}
+          {{tr action.caption}}
       </button>
     {{/each}}
 </div>

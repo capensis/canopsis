@@ -2,7 +2,7 @@
   <div class="actions-parent" style="display:flex">
 
     {{#each action in availableActions}}
-      <button {{action 'sendAction' action}} {{bind-attr title=action.name}} type="button" class="btn btn-xs btn-default">
+      <button {{action 'sendAction' action}} {{bind-attr title=action.translation}} type="button" class="btn btn-xs btn-default">
           <i {{bind-attr class=action.class}}></i>
       </button>
     {{/each}}
@@ -254,7 +254,7 @@
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstatusval">{{status}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-search"><div class='input-group input-group-sm'>
-    {{input insert-newline='search' value=value class="form-control inlineInput" placeholder="Search" type="text"}}
+    {{input insert-newline='search' value=value class="form-control inlineInput" placeholder=(tr 'Search') type="text"}}
     <span class="input-group-btn">
         <button {{action 'resetValue'}} class="btn btn-default btn-flat">
             <span class="glyphicon glyphicon-remove-circle"></span>
@@ -266,16 +266,18 @@
     {{#unless isValid}}
     <p class='search-invalid-message'>Invalid search query</p>
     {{/unless}}
-</div></script>
+</div>
+</script>
 <script type="text/x-handlebars" data-template-name="components/component-selectionactions"><div class="pull-left">
     {{tr 'Selection'}} :
     {{#each action in actionsMap}}
       <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
           <span {{bind-attr class=action.class}}></span>
-          {{action.caption}}
+          {{tr action.caption}}
       </button>
     {{/each}}
-</div></script>
+</div>
+</script>
 <script type="text/x-handlebars" data-template-name="components/component-selectioncheckbox"><div id="ember8909" class="ember-view toggle">
     <div class="icheckbox_minimal-grey" style="position: relative;">
         <input id="ember8910" class="ember-view ember-checkbox toggle" type="checkbox" style="position: absolute; opacity: 0;">
