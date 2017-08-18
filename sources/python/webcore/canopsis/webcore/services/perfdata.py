@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import json
+
 from bottle import request
 
 from canopsis.common.ws import route
@@ -148,3 +150,32 @@ def exports(ws):
         rep = manager.get_metric_infos(limit, start)
 
         return gen_json(rep)
+
+    @ws.application.post('/api/context/metric')
+    def context_metric():
+        json_result = {"total": None,
+                       "data": [],
+                       "success": None}
+
+        param = {}
+        try:
+            data_error = {}
+            param = json.loads(request.body.read())
+            limit = int(param["limit"])
+            start = int(param["start"])
+        except Exception as err:
+            data_error = {}
+            data_error["msg"] = err.message
+            data_error["traceback"] = "TODO"
+            data_error["type"] = type(err)
+            json_result["data"] = data_error
+            json_result["total"] = 0
+            json_result["success"] = False
+            return json_result
+
+        rep = manager.get_metric_infos(limit, start)
+
+        json_result["data"] = rep
+        json_result["total"] = len(rep)
+        json_result["success"] = True
+        return json_result
