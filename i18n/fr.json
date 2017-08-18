@@ -13,9 +13,9 @@
   "removealarm": "Supprimer une alarme",
   "changecriticity": "Changer la criticité",
   "restorealarm": "Restaurer une alarme",
-  "snoozealarm": "Mettre en sommeil",
+  "snoozealarm": "Reporter l'alarme",
   "Since": "Depuis",
-  "Snooze": "En sommeil",
+  "Snooze": "Reporté",
   "Ticket declared": "Ticket déclaré",
   "Periodic behavior": "Comportement périodique"
 }
