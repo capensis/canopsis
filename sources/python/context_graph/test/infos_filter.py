@@ -98,24 +98,15 @@ class TestFilter(BaseTest):
         infos[Keys.F_ENABLED_HIST.value] = [1]
         self.infosfilter.filter(infos)
 
-        self.assertTrue(self.logger.called)
-        self.logger.called = True
-
         infos[Keys.F_ENABLED.value] = True
         infos[Keys.F_DISABLED_HIST.value] = "string"
         infos[Keys.F_ENABLED_HIST.value] = [1]
         self.infosfilter.filter(infos)
 
-        self.assertTrue(self.logger.called)
-        self.logger.called = True
-
         infos[Keys.F_ENABLED.value] = True
         infos[Keys.F_DISABLED_HIST.value] = "string"
         infos[Keys.F_ENABLED_HIST.value] = [1]
         self.infosfilter.filter(infos)
-
-        self.assertTrue(self.logger.called)
-        self.logger.called = True
 
     def test_match_schema(self):
         infos = TEMPLATE_INFOS.copy()
@@ -124,7 +115,6 @@ class TestFilter(BaseTest):
         infos[Keys.F_DISABLED_HIST.value] = [1]
         infos[Keys.F_ENABLED_HIST.value] = [1]
         self.infosfilter.filter(infos)
-        self.logger.called = False
 
 class TestClean(BaseTest):
 
