@@ -131,5 +131,5 @@ def setup(add_etc=True, **kwargs):
             for test_folder in test_folders:
                 kwargs['test_suite'] = test_folder
                 break
-    print(kwargs)
+
     _setup(**kwargs)

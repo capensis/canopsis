@@ -19,7 +19,11 @@ class TestTracerManager(TestCase):
         self.manager.set_trace('test_trace_get1', 'unittest')
 
         trace = self.manager.get_by_id('test_trace_get1')
+
         self.assertEqual(trace[Trace.ID], 'test_trace_get1')
+        self.assertEqual(trace[Trace.TRIGGERED_BY], 'unittest')
+        self.assertEqual(trace[Trace.IMPACT_ENTITIES], [])
+        self.assertEqual(trace[Trace.EXTRA], {})
 
     def test_set_trace_error(self):
         with self.assertRaises(TraceSetError):
