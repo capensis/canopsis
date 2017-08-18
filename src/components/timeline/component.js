@@ -27,26 +27,27 @@ Ember.Application.initializer({
         var get = Ember.get,
             set = Ember.set,
             moment = window.moment;
+            __ = Ember.String.loc;
 
         var component = Ember.Component.extend({
                         timelineData: undefined,
 
             statusToName: {
-                'ack': 'Acknowledged by ',
-                'ackremove': 'Ack removed by ',
-                'assocticket': 'Ticket association by ',
-                'declareticket': 'Ticket declared by ',
-                'cancel': 'Canceled by ',
-                'comment': 'Comment by ',
-                'uncancel': 'Restored by ',
-                'statusinc': 'Status increased',
-                'statusdec': 'Status decreased',
-                'stateinc': 'State increased',
-                'statedec': 'State decreased',
-                'changestate': 'State changed',
-                'snooze': 'Snoozed by ',
-                'statecounter': 'Cropped states (since last change of status)',
-                'hardlimit': 'Hard limit reached !'
+                'ack': __('Acknowledged by '),
+                'ackremove': __('Ack removed by '),
+                'assocticket': __('Ticket association by '),
+                'declareticket': __('Ticket declared by '),
+                'cancel': __('Canceled by '),
+                'comment': __('Comment by '),
+                'uncancel': __('Restored by '),
+                'statusinc': __('Status increased'),
+                'statusdec': __('Status decreased'),
+                'stateinc': __('State increased'),
+                'statedec': __('State decreased'),
+                'changestate': __('State changed'),
+                'snooze': __('Snoozed by '),
+                'statecounter': __('Cropped states (since last change of status)'),
+                'hardlimit': __('Hard limit reached !')
             },
 
             authoredName: [
