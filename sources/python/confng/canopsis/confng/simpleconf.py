@@ -17,7 +17,9 @@ class Configuration(SimpleConf):
             conf_file = conf_path
 
         else:
-            for path in sys.path:
+            paths = ['/opt/canopsis/']
+            paths.extend(sys.path)
+            for path in paths:
 
                 fpath = os.path.join(path, conf_path)
 
