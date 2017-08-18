@@ -1,6 +1,6 @@
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common', 'leryan.types==0.0.17']
+install_requires = ['canopsis.common']
 
 setup(
     description='Canopsis NG Configuration',

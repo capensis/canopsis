@@ -1,10 +1,7 @@
 import sys
 import os
 
-from leryan.types.simpleconf import SimpleConf
-
-# those imports are for canopsis.confng scope.
-from leryan.types.simpleconf import Ini, Json
+from canopsis.confng.vendor import SimpleConf, Ini, Json
 
 class Configuration(SimpleConf):
 
