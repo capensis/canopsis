@@ -26,6 +26,18 @@ class TestLogger(unittest.TestCase):
 
         self.assertEqual(len(log_lines), 2)
 
+    def test_logger_string_level(self):
+
+        output = StringIO()
+        logger = Logger.get('ascii', output, OutputStream, level='info')
+
+        logger.info(u'fline')
+
+        output.seek(0)
+        log_lines = output.readlines()
+
+        self.assertEqual(len(log_lines), 1)
+
     def test_logger_dedup(self):
 
         output = StringIO()

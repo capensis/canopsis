@@ -1,6 +1,8 @@
 import os
 import logging
 
+from six import string_types
+
 from logging import FileHandler
 from logging import StreamHandler
 from logging.handlers import MemoryHandler
@@ -11,7 +13,7 @@ from canopsis.common import root_path as canopath
 class Output(object):
 
     @staticmethod
-    def make(arg, handler_args):
+    def make():
         """
         Override this method, then return a subclass
         of logging.Handler.
@@ -44,7 +46,7 @@ class OutputStream(Output):
 class OutputFile(Output):
 
     @staticmethod
-    def make(path):
+    def make(path, default_root_path=canopath):
         """
         :param path: path to file. If relative, will use canopsis.common.root_path as prefix.
         :return: file handler
@@ -55,7 +57,7 @@ class OutputFile(Output):
             fpath = path
 
         else:
-            fpath = os.path.join(canopath, path)
+            fpath = os.path.join(default_root_path, path)
 
         return FileHandler(fpath)
 
@@ -76,8 +78,9 @@ class Logger(object):
 
     @staticmethod
     def _init(logger, output, output_cls, level, fmt,
-              memory, memory_capacity, memory_flushlevel):
-        if isinstance(level, str):
+              memory, memory_capacity, memory_flushlevel,
+              driver_make_args):
+        if isinstance(level, string_types):
             level = getattr(logging, level.upper(), logging.INFO)
 
         logger.setLevel(level)
@@ -87,7 +90,7 @@ class Logger(object):
 
         formatter = logging.Formatter(fmt=fmt)
 
-        handler = output_cls.make(output)
+        handler = output_cls.make(output, **driver_make_args)
         handler.setFormatter(formatter)
         handler.setLevel(level)
 
@@ -106,7 +109,8 @@ class Logger(object):
 
     @staticmethod
     def get(name, output, output_cls=OutputFile, level=logging.INFO, fmt=None,
-            memory=False, memory_capacity=100, memory_flushlevel=logging.WARNING):
+            memory=False, memory_capacity=100, memory_flushlevel=logging.WARNING,
+            driver_make_args={}):
         """
         :param name: logger name
         :param output: output given to output_cls. Can be anything from a file path, a stringio or a full URI. It only has to be supported by output_cls.
@@ -116,6 +120,7 @@ class Logger(object):
         :param memory: wrap logging handler with logging.handlers.MemoryHandler.
         :param memory_capacity: MemoryHandler log capacity.
         :param memory_flushlevel: if a log event is equal or greater than this level, force flush.
+        :param dict driver_make_args: dict of arguments to pass to the Output<Driver>.make() function. Acts as the usual **kwargs.
         :return: python logger.
         :rtype: logging.Logger
         """
@@ -124,4 +129,5 @@ class Logger(object):
 
         logger = logging.getLogger(name)
         return Logger._init(logger, output, output_cls, level, fmt,
-                            memory, memory_capacity, memory_flushlevel)
+                            memory, memory_capacity, memory_flushlevel,
+                            driver_make_args)

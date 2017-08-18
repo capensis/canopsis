@@ -23,33 +23,21 @@ import sys
 
 __version__ = "0.1"
 
+class CanopsisUnsupportedEnvironment(Exception):
+    pass
+
 def _root_path():
     root = None
 
     if os.path.isdir(os.path.join(sys.prefix, 'etc')):
-        return sys.prefix
+        root = sys.prefix
+
+    elif os.path.isdir(os.path.join('opt', 'canopsis', 'etc')):
+        root = os.path.join(os.path.sep, 'opt', 'canopsis')
 
     else:
-        if sys.prefix.startswith('/usr'):
-            return '/'
-
-        root = os.path.abspath(
-            os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                '{}{}'.format(os.path.pardir, os.path.sep) * 6
-            )
-        )
-
-        if os.path.isdir(os.path.join(root, 'etc')):
-            return root
-        else:
-            root = os.path.join(os.environ.get('HOME', ''), 'etc')
-
-            if os.path.isdir(root):
-                return root
-
-        if os.path.isdir(os.path.join('opt', 'canopsis', 'etc')):
-            return os.path.join(os.path.sep, 'opt', 'canopsis')
+        msg = 'unsupported environment: cannot safely detect canopsis root path.'
+        raise CanopsisUnsupportedEnvironment(msg)
 
     return root
 
