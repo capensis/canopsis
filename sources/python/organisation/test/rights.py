@@ -196,10 +196,6 @@ class RightsTest(TestCase):
         self.rights.add_group_role('role_test1bis', 'group_test1')
         self.rights.add_profile('role_test1bis', None, 'profile_test1')
         self.rights.add_group_profile('role_test1bis', 'group_test1')
-        ##TODO4-01-2017
-        #self.assertEqual(
-        #    self.rights.get_user_rights('jharris')['1237']['checksum'],
-        #    15)
 
         # Change entity name
         self.assertTrue('group_test2' in self.rights.get_user('jharris')['group'])
@@ -219,17 +215,12 @@ class RightsTest(TestCase):
         urole = 'admin'
         values = {
             '_id': uid,
-            #'authkey': 'deab-beef',
             'contact': {
                 'address': '',
                 'name': 'Administrator'
             },
-            #'crecord_name': uid,
-            #'crecord_type': 'user',
-            #'enable': True,
             'external': False,
             'mail': 'contact@example.com',
-            #'role': urole,
             'shadowpasswd': 'DEADBEEF',
             'ui_language': 'fr',
         }
