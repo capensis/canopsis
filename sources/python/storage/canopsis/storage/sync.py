@@ -18,10 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-"""Storage synchronization module.
-"""
+"""Storage synchronization module."""
 
-from canopsis.configuration.parameters import Parameter, Configuration
+from canopsis.configuration.model import Parameter, Configuration
 from canopsis.middleware.registry import MiddlewareRegistry
 
 

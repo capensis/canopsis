@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.vevent.manager import VEventManager
 from canopsis.ctxprop.registry import CTXPropRegistry
+from canopsis.vevent.manager import VEventManager
 
 
 class CTXVEventRegistry(CTXPropRegistry):

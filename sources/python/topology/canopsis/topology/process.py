@@ -34,6 +34,7 @@ composed of the ``canopsis.topology.rule.condition.new_state`` condition and
 If this condition is checked, then other specific conditions can be applied
 such as those defined in the canopsis.topology.rule.action module.
 """
+from __future__ import unicode_literals
 
 from canopsis.topology.elements import Topology, TopoNode
 from canopsis.topology.manager import TopologyManager
@@ -85,15 +86,15 @@ def event_processing(
         # in case of topology node
         if source_type in [TopoNode.TYPE, Topology.TYPE]:
             # get entity and entity id
-            entity = ctx.get_entity(event)
+            entity = ctx.get_entity_old(event)
             entity_id = ctx.get_entity_id(entity)
             elt_id = ctx.get_name(entity_id)
-            logger.debug("elt_id {0}".format(elt_id))
+            logger.debug(u"elt_id {0}".format(elt_id))
             # process all targets
             elt = tm.get_elts(ids=elt_id)
             if elt is not None:
                 targets = tm.get_targets(ids=elt_id)
-                logger.debug("targets {0}".format(targets))
+                logger.debug(u"targets {0}".format(targets))
                 # process and save all targets
                 for target in targets:
                     target.process(
@@ -105,12 +106,25 @@ def event_processing(
 
         else:  # in case of entity event
             # get entity and entity id
-            entity = ctx.get_entity(event)
+            entity = ctx.get_entity_old(event)
             if entity is not None:
-                entity_id = ctx.get_entity_id(entity)
-                logger.debug("entity_id {0}".format(entity_id))
+
+                encoded_entity = {}
+                for k, v in entity.items():
+                    try:
+                        k = k.encode('utf-8')
+                    except:
+                        pass
+                    try:
+                        v = v.encode('utf-8')
+                    except:
+                        pass
+                    encoded_entity[k] = v
+
+                entity_id = ctx.get_entity_id(encoded_entity)
+                logger.debug(u"entity_id {0}".format(entity_id))
                 elts = tm.get_elts(info={TopoNode.ENTITY: entity_id})
-                logger.debug("elts {0}".format(elts))
+                logger.debug(u"elts {0}".format(elts))
                 # process all elts
                 for elt in elts:
                     elt.process(

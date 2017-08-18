@@ -1,0 +1,63 @@
+{
+  "crecord_type": "view",
+  "crecord_name" : "linklist.json",
+  "loader_id": "view.linklist",
+  "loader_no_update": false,
+  "enable": true,
+  "id": "view.linklist",
+  "_id": "view.linklist",
+  "crecord_write_time": 1408625322,
+  "containerwidget": {
+    "items": [
+      {
+        "widget": {
+          "item_actions": [
+            "actionbutton-edit",
+            "actionbutton-show",
+            "actionbutton-removeselection"
+          ],
+          "id" : "item_13019673-ebdf-6271-e595-6be734632b61",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be734632b61",
+          "title": "Link list",
+          "itemsPerPage": 10,
+          "filters": [],
+          "default_filter": null,
+          "cloaking": false,
+          "listed_crecord_type": "linklist",
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ],
+          "mixins": [
+            {
+              "name": "arraysearch",
+              "searchable_columns": ["name"]
+            },
+            { "name" : "editurlfield" },
+            { "name" : "pagination" },
+            { "name" : "crud" }
+          ],
+          "displayed_columns": [
+            "name",
+            "mfilter",
+            "filterlink"
+          ],
+          "actions_toolbar": [
+            "actionbutton-removeselection"
+          ],
+          "xtype": "list"
+        },
+        "xtype": "widgetwrapper",
+        "title": "wrapper"
+      }
+    ],
+    "widgetslotTemplate": null,
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "title": "container title vbox"
+  }
+}

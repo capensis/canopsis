@@ -18,8 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-"""Graph loader module.
-"""
+"""Graph loader module."""
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.graph.manager import GraphManager

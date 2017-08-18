@@ -8,18 +8,6 @@ This document describe how Canopsis is organized
 Schema
 ------
 
-TODO
+**One storage backend is missing on the diagram, Influxdb. Will be soon available.**
 
-
-Major Technologies used
------------------------
-
-Messaging: RabbitMQ
-^^^^^^^^^^^^^^^^^^^
-
-Database: MongoDB
-^^^^^^^^^^^^^^^^^
-
-Coding Language: Python / JS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+.. image:: ../../_static/images/architecture/technicaloverview.png

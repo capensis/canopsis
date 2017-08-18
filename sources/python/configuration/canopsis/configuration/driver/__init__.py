@@ -19,9 +19,9 @@
 # ---------------------------------
 
 from canopsis.common.utils import lookup, path
-
-from canopsis.configuration.parameters import \
+from canopsis.configuration.model import (
     Configuration, Parameter, Category, ParamList
+)
 
 
 class MetaConfigurationDriver(type):

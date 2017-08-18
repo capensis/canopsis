@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,22 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-"""
-"""
+from calendar import timegm
+from datetime import datetime, timedelta
+from icalendar import Event
+from uuid import uuid4 as uuid
 
 from canopsis.common.init import basestring
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
 from canopsis.middleware.registry import MiddlewareRegistry
-
-from icalendar import Event
-
-from calendar import timegm
-
-from datetime import datetime, timedelta
-
-from uuid import uuid4 as uuid
 
 MAXTS = 2147483647  #: maximal timestamp
 
@@ -291,7 +285,7 @@ class VEventManager(MiddlewareRegistry):
 
             document = None
 
-            if isinstance(vevent, dict) and not isinstance(vevent, Event):
+            if isinstance(vevent, dict):
 
                 document = vevent
                 # get uid
@@ -354,15 +348,21 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.RRULE: rrule
                 })
 
+            self._update_element(element=document)
+
             self[VEventManager.STORAGE].put_element(
                 _id=uid, element=document
             )
-
+            self.logger.info(u'document', document)
             document['_id'] = uid
 
             result.append(document)
 
         return result
+
+    def _update_element(self, element):
+        """ Update or format an element before to put it on database
+        """
 
     def remove(self, uids=None, query=None, cache=False):
         """Remove elements from storage where uids are given.

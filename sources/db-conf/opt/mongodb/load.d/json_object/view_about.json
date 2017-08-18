@@ -1,0 +1,35 @@
+{
+  "crecord_name" : "about.json",
+  "loader_id": "view.about",
+  "loader_no_update": false,
+  "id": "view.about",
+  "_id": "view.about",
+  "crecord_type": "view",
+  "crecord_write_time": 1400853201,
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "title": "container title vbox",
+    "_id": "test_view_vertical_container",
+    "items": [
+      {
+        "title": "about",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "xtype": "text",
+          "title": "About canopsis",
+          "html": "<a target='_blank' href='http://canopsis.org'>canopsis.org</a><br><a target='_blank' href='http://canopsis.com'>canopsis.com</a><br><a target='_blank' href='https://twitter.com/canopsis'>twitter</a>",
+          "filters": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -19,11 +19,14 @@
 # ---------------------------------
 
 from os import listdir
+
 from os.path import isfile, join
+
 from sys import prefix
+
 from lxml.etree import parse
 
-from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths

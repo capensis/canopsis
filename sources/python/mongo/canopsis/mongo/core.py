@@ -19,6 +19,7 @@
 # ---------------------------------
 
 from canopsis.common.init import basestring
+from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
 
@@ -29,12 +30,35 @@ from pymongo.errors import (
 )
 from pymongo.bulk import BulkOperationBuilder
 from pymongo.read_preferences import ReadPreference
+from pymongo.son_manipulator import SONManipulator
+from uuid import uuid1
 
 
+CONF_RESOURCE = 'mongo/storage.conf'
+
+
+class CanopsisSONManipulator(SONManipulator):
+    """Manage transformations on incoming/outgoing objects."""
+
+    def __init__(self, idfield, *args, **kwargs):
+        super(CanopsisSONManipulator, self).__init__(*args, **kwargs)
+
+        self.idfield = idfield
+
+    def transform_incoming(self, *args, **kwargs):
+        son = super(CanopsisSONManipulator, self).transform_incoming(
+            *args, **kwargs
+        )
+
+        if self.idfield not in son:
+            son[self.idfield] = str(uuid1())
+
+        return son
+
+
+@conf_paths(CONF_RESOURCE)
 class MongoDataBase(DataBase):
-    """
-    Manage access to a mongodb.
-    """
+    """Manage access to a mongodb."""
 
     def __init__(
             self, host=MongoClient.HOST, port=MongoClient.PORT,
@@ -80,8 +104,9 @@ class MongoDataBase(DataBase):
             connection_args['replicaSet'] = self.replicaset
             connection_args['read_preference'] = self.read_preference
 
-        connection_args['j'] = self.journaling
         connection_args['w'] = 1 if self.safe else 0
+        if self.safe:
+            connection_args['j'] = self.journaling
 
         if self.ssl:
             connection_args.update(
@@ -92,7 +117,7 @@ class MongoDataBase(DataBase):
                 }
             )
 
-        self.logger.debug('Trying to connect to {0}'.format(connection_args))
+        self.logger.debug(u'Trying to connect to {0}'.format(connection_args))
 
         try:
             result = MongoClient(**connection_args)
@@ -199,10 +224,22 @@ class MongoStorage(MongoDataBase, Storage):
     __protocol__ = 'mongodb'  #: register this class to the protocol mongodb
 
     ID = '_id'  #: ID mongo
+    TAGS = 'tags'  #: tags field name
 
     def _connect(self, *args, **kwargs):
-
         result = super(MongoStorage, self)._connect(*args, **kwargs)
+
+        manipulators = self._database.incoming_manipulators
+        manipulators += self._database.outgoing_manipulators
+
+        for manipulator in manipulators:
+            if isinstance(manipulator, CanopsisSONManipulator):
+                break
+
+        else:
+            self._database.add_son_manipulator(
+                CanopsisSONManipulator(MongoStorage.ID)
+            )
 
         # initialize cache
         if not hasattr(self, '_cache'):
@@ -250,16 +287,13 @@ class MongoStorage(MongoDataBase, Storage):
         return self._cache.execute()
 
     def drop(self, *args, **kwargs):
-        """
-        Drop self table.
-        """
 
         super(MongoStorage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
             self,
             ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
-            hint=None, projection=None,
+            hint=None, projection=None, tags=None,
             *args, **kwargs
     ):
 
@@ -273,6 +307,9 @@ class MongoStorage(MongoDataBase, Storage):
 
             else:
                 _query[MongoStorage.ID] = {'$in': ids}
+
+        if tags:
+            _query[MongoStorage.TAGS] = tags
 
         cursor = self._find(_query, projection)
 
@@ -308,9 +345,7 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _get_hint(self, query, cursor):
-        """
-        Get the best hint on input cursor for input query and returns it.
-        """
+        """Get the best hint on input cursor for input query and returns it."""
 
         result = None
 
@@ -357,22 +392,19 @@ class MongoStorage(MongoDataBase, Storage):
 
     def find_elements(
             self, query=None, limit=0, skip=0, sort=None, projection=None,
-            with_count=False,
+            tags=None, with_count=False,
             *args, **kwargs
     ):
 
         return self.get_elements(
-            query=query,
-            limit=limit,
-            skip=skip,
-            sort=sort,
-            with_count=with_count,
-            projection=projection,
+            query=query, limit=limit, skip=skip, sort=sort, tags=tags,
+            projection=projection, with_count=with_count,
             *args, **kwargs
         )
 
     def remove_elements(
-            self, ids=None, _filter=None, cache=False, *args, **kwargs
+            self, ids=None, _filter=None, tags=None, cache=False,
+            *args, **kwargs
     ):
 
         query = {}
@@ -384,20 +416,37 @@ class MongoStorage(MongoDataBase, Storage):
             else:
                 query[MongoStorage.ID] = ids
 
+        if tags:
+            query[MongoStorage.TAGS] = tags
+
         if _filter is not None:
             query.update(_filter)
 
-        self._remove(query, cache=cache)
+        return self._remove(query, cache=cache)
 
-    def put_element(self, element, _id=None, cache=False, *args, **kwargs):
+    def put_element(
+        self, element, _id=None, tags=None, cache=False, *args, **kwargs
+    ):
+
+        if tags is not None:
+            element.update(tags)
 
         if _id is None:
             _id = self._element_id(element)
 
-        return self._update(
-            spec={MongoStorage.ID: _id}, document={'$set': element},
-            multi=False, cache=cache
-        )
+        if _id is None:
+            return self._insert(document=element, cache=cache)
+
+        else:
+            return self._update(
+                spec={MongoStorage.ID: _id}, document={'$set': element},
+                multi=False, cache=cache
+            )
+
+    def put_elements(self, elements, tags=None, *args, **kwargs):
+
+        for element in elements:
+            self.put_element(element=element, tags=tags)
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
 
@@ -417,9 +466,17 @@ class MongoStorage(MongoDataBase, Storage):
 
         return oldvalue if not result else newvalue
 
+    def aggregate(self, query, table=None, **kwargs):
+        query = query or {}
+        table = table or self.get_table()
+
+        result = self._get_backend(backend=table).aggregate(query, **kwargs)
+
+        return result
+
     def _element_id(self, element):
 
-        return element[MongoStorage.ID]
+        return element.get(MongoStorage.ID, None)
 
     def all_indexes(self, *args, **kwargs):
 
@@ -525,8 +582,7 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _manage_query_error(self, result_query):
-        """
-        Manage mongo query error.
+        """Manage mongo query error.
 
         Returns result_query if no error encountered. Else None.
         """
@@ -538,14 +594,14 @@ class MongoStorage(MongoDataBase, Storage):
             error = result_query.get("writeConcernError", None)
 
             if error is not None:
-                self.logger.error(' error in writing document: {0}'.format(
+                self.logger.error(u' error in writing document: {0}'.format(
                     error))
                 result = None
 
             error = result_query.get("writeError")
 
             if error is not None:
-                self.logger.error(' error in writing document: {0}'.format(
+                self.logger.error(u' error in writing document: {0}'.format(
                     error))
                 result = None
 
@@ -576,16 +632,14 @@ class MongoStorage(MongoDataBase, Storage):
                 .format(command, kwargs, backend))
 
         except OperationFailure as of:
-            self.logger.error('{0} during running command {1}({2}) of in {3}'
+            self.logger.error(u'{0} during running command {1}({2}) of in {3}'
                 .format(of, command, kwargs, backend))
 
         return result
 
 
 class MongoCursor(Cursor):
-    """
-    In charge of handle cursors wit MongoDB.
-    """
+    """In charge of handle cursors wit MongoDB."""
 
     __slots__ = ('_len', ) + Cursor.__slots__
 

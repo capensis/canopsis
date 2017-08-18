@@ -31,6 +31,10 @@ then
     . $SRC_PATH/build-control/functions.sh
 fi
 
+# Export MAKEFLAGS
+
+export MAKEFLAGS="-j$(get_cpu_cores) ${MAKEFLAGS}"
+
 # Check slink
 
 if [ -e $PREFIX/.slinked ]
@@ -167,11 +171,11 @@ fi
 init_build_install
 init_submodules
 detect_os
-export_env
 
 if [ $CPSBUILD -eq 1 ]
 then
     extra_deps
+    export_env
     check_ssl
 
     if [ $CPSBUILDONE -eq 0 ]
@@ -195,9 +199,10 @@ then
         done
     fi
 
-    launch_update_pylibs
     fix_permissions
     launch_unittests
+else
+    export_env
 fi
 
 build_installer

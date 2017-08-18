@@ -18,6 +18,14 @@ Once canopsis installed, it is possible to get informations about current build.
       "git-commit": "202396bd8b2d200938cc353dccf590f3d6c2422f"
    }
 
+This is only available with the Ansible installation way.  
+
+If you want to know which release you are executing, please have a look at 
+
+.. code-block:: javascript
+
+   cat ~/etc/canopsis-version 
+
 
 How to find BDD Size ?
 ----------------------
@@ -42,7 +50,7 @@ you could access to RabbitMQ UI with this url :
 
 .. code-block:: text
 
-	[http://IP_CANOPSIS_SERVER:55672](http://IP_CANOPSIS_SERVER:55672)
+	[http://IP_CANOPSIS_SERVER:15672](http://IP_CANOPSIS_SERVER:15672)
 
 	* login : admin
 	* mdp : admin_password

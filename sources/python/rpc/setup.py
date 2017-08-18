@@ -21,7 +21,10 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common', 'canopsis.middleware']
+install_requires = [
+    'canopsis.common',
+    'canopsis.middleware'
+]
 
 setup(
     description='Canopsis remote procedure call',

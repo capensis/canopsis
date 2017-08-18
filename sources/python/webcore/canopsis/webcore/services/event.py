@@ -17,10 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from canopsis.common.utils import ensure_iterable
 from canopsis.common.ws import route
 from canopsis import schema
+from canopsis.event.eventslogmanager import EventsLog
+from canopsis.common.utils import singleton_per_scope
 
 from bottle import HTTPError
 import requests
@@ -28,6 +31,8 @@ import json
 
 
 def exports(ws):
+    manager = singleton_per_scope(EventsLog)
+
     @route(ws.application.post, name='event', payload=['event', 'url'])
     @route(ws.application.put, name='event', payload=['event', 'url'])
     def send_event(event, url=None):
@@ -64,11 +69,11 @@ def exports(ws):
                                 continue
 
                         rk = '{0}.{1}.{2}.{3}.{4}'.format(
-                            event['connector'],
-                            event['connector_name'],
-                            event['event_type'],
-                            event['source_type'],
-                            event['component']
+                            u'{0}'.format(event['connector']),
+                            u'{0}'.format(event['connector_name']),
+                            u'{0}'.format(event['event_type']),
+                            u'{0}'.format(event['source_type']),
+                            u'{0}'.format(event['component'])
                         )
 
                         if event['source_type'] == 'resource':
@@ -77,3 +82,24 @@ def exports(ws):
                         ws.amqp.publish(event, rk, exchange)
 
             return events
+
+    @route(ws.application.get,
+           name='eventslog/count',
+           payload=['tstart', 'tstop', 'limit', 'select']
+           )
+    def get_event_count_per_day(tstart, tstop, limit=100, select={}):
+        """ get eventslog log count for each days in a given period
+            :param tstart: timestamp of the begin period
+            :param tstop: timestamp of the end period
+            :param limit: limit the count number per day
+            :param select: filter for eventslog collection
+            :return: list in which each item contains an interval and the
+            related count
+            :rtype: list
+        """
+
+        results = manager.get_eventlog_count_by_period(
+            tstart, tstop, limit=limit, query=select
+        )
+
+        return results

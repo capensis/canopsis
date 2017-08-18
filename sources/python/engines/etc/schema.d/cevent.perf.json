@@ -1,0 +1,17 @@
+{
+	"type": "object",
+	"properties": {
+		"event_type": {
+			"enum": ["perf"],
+			"required": true
+		},
+		"perf_data": {
+			"type": "string",
+			"required": true
+		},
+		"perf_data_array": {
+			"type": "perfdataarray",
+			"required": true
+		}
+	}
+}

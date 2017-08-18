@@ -30,7 +30,8 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
     def all_indexes(self, *args, **kwargs):
 
         result = super(MongoCompositeStorage, self).all_indexes(
-            *args, **kwargs)
+            *args, **kwargs
+        )
 
         # add all sub_paths concatened with id
         for n, _ in enumerate(self.path):
@@ -67,14 +68,16 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                 query[CompositeStorage.NAME] = names
             else:
                 query[CompositeStorage.NAME] = {"$in": names}
+
         # get the right hint
         self_path = self.path
         hint = []
-        for index, p in enumerate(self_path):
-            if p in path:
-                hint.append((p, 1))
-        else:
-            hint.append((CompositeStorage.NAME, 1))
+
+        for _path in self_path:
+            if _path in path:
+                hint.append((_path, 1))
+
+        hint.append((CompositeStorage.NAME, 1))
 
         # get elements
         result = self.find_elements(
@@ -94,10 +97,12 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
             result, data_to_extend = [], result
             # for all data in result
             for data in data_to_extend:
+
                 # if data is shared, get shared data
                 if CompositeStorage.SHARED in data:
                     shared_id = data[CompositeStorage.SHARED]
                     data = list(self.get_shared_data(shared_ids=shared_id))
+
                 else:
                     data = [data]
                 # append data in result
@@ -142,6 +147,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         _set = {
             '$set': data_to_put
         }
+
         self._update(spec=query, document=_set, multi=False, cache=cache)
 
     def remove(
@@ -155,6 +161,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         if names is not None:
             if isiterable(names, is_str=False):
                 query[CompositeStorage.NAME] = {'$in': names}
+
             else:
                 parameters = {'justOne': 1}
                 query[CompositeStorage.NAME] = names
@@ -164,11 +171,12 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         # remove extended data
         if shared:
             _ids = []
-            data_to_remove = self.get(
-                path=path, names=names, shared=True)
+            data_to_remove = self.get(path=path, names=names, shared=True)
+
             for dtr in data_to_remove:
-                path, name = self.get_path_with_id(dtr)
+                path, name = self.get_path_with_name(data=dtr)
                 extended = self.get(path=path, name=name, shared=True)
                 _ids.append([data[MongoStorage.ID] for data in extended])
+
             document = {MongoStorage.ID: {'$in': _ids}}
             self._remove(document=document, cache=cache)

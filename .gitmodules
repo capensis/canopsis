@@ -1,11 +1,10 @@
-[submodule "sources/reporting/opt/casperjs"]
-	path = sources/reporting/opt/casperjs
-	url = https://github.com/n1k0/casperjs
 [submodule "sources/externals"]
 	path = sources/externals
 	url = https://git.canopsis.net/canopsis/canopsis-externals.git
-	branch = develop
+	ignore = dirty
+	branch = master
 [submodule "sources/webcore"]
 	path = sources/webcore
 	url = https://git.canopsis.net/canopsis/canopsis-webcore.git
-	branch = develop
+	ignore = dirty
+	branch = master

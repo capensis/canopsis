@@ -1,0 +1,49 @@
+{
+  "loader_id": "view.rights",
+  "loader_no_update": false,
+  "id": "view.rights",
+  "_id": "view.rights",
+  "crecord_type": "view",
+  "crecord_write_time": 1400853201,
+  "crecord_name": "Rights",
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "title": "container title vbox",
+    "_id": "test_view_vertical_container",
+    "items": [
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb66",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb66",
+          "xtype": "list",
+          "listed_crecord_type": "action",
+          "itemsPerPage": 5,
+          "title": "Rights",
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ],
+          "mixins": [
+            {"name": "sortablearray"},
+            {"name": "arraysearch"},
+            {"name": "pagination"},
+            {"name": "crud"}
+          ],
+          "displayed_columns": [
+            "_id",
+            "desc",
+            "type"
+          ]
+        }
+      }
+    ]
+  }
+}

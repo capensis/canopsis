@@ -30,7 +30,8 @@ CATEGORY = 'LINKLIST'
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class Linklist(MiddlewareRegistry):
-    """Manage linklist information in Canopsis.
+    """
+    Manage linklist information in Canopsis.
     """
 
     LINKLIST_STORAGE = 'linklist_storage'  #: linklist storage name
@@ -69,16 +70,12 @@ class Linklist(MiddlewareRegistry):
 
         return result
 
-    def put(
-        self,
-        document,
-        cache=False
-    ):
+    def put(self, document, cache=False):
         """Persistance layer for upsert operations.
 
-        :param dict document: document to put.
-        :param bool cache: if True (default false), use storage cache.
-        :return: put result.
+        :param dict document: document to put
+        :param bool cache: if True (default false), use storage cache
+        :return: put result
         :rtype: dict
         """
         if not document.get('id'):
@@ -90,13 +87,11 @@ class Linklist(MiddlewareRegistry):
             _id=document['_id'], element=document, cache=cache
         )
 
-    def remove(
-        self,
-        ids
-    ):
+    def remove(self, ids):
         """Remove fields persisted in a default storage.
 
-        :param element_id: identifier for the document to remove
+        :param ids: identifier for documents to remove
+        :type: ids: list
         """
 
         self[Linklist.LINKLIST_STORAGE].remove_elements(ids=ids)

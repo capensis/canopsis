@@ -35,7 +35,7 @@ from os.path import expanduser, splitext
 from os.path import join as joinpath
 from os import listdir
 
-from re import search as regsearch
+import re
 
 from .init import basestring
 
@@ -103,7 +103,7 @@ def dynmodloads(_path='.', subdef=False, pattern='.*', logger=None):
             module = load_source(name, joinpath(_path, mfile))
 
         except ImportError as err:
-            logger.error('Impossible to import {0}: {1}'.format(name, err))
+            logger.error(u'Impossible to import {0}: {1}'.format(name, err))
 
         else:
             loaded[name] = module
@@ -119,8 +119,8 @@ def dynmodloads(_path='.', subdef=False, pattern='.*', logger=None):
                 ]
 
                 for mydef in alldefs:
-                    if mydef not in builtindefs and regsearch(pattern, mydef):
-                        logger.debug('from {0} import {1}'.format(
+                    if mydef not in builtindefs and re.search(pattern, mydef):
+                        logger.debug(u'from {0} import {1}'.format(
                             name, mydef
                         ))
 
@@ -491,6 +491,28 @@ def prototype(typed_args=None, typed_kwargs=None, typed_return=None):
 
     return decorator
 
+def get_rrule_freq(rrule):
+    """Return the FREQ of a rrule as a string. Raise a ValueError if no
+    FREQ are found.
+
+    :param str rrule: a rrule as a string
+    :return str: one of these following values SECONDLY, MINUTELY, HOURLY,
+    DAILY, WEEKLY, MONTHLY, YEARLY as a string.
+    """
+
+    parts = re.split(";", rrule)
+    freq = None
+    idx = 0
+    while freq is None and idx < len(parts):
+        if parts[idx][:4] == "FREQ":
+            freq = re.split("=", parts[idx])[1]
+        idx += 1
+
+    if freq is None:
+        raise ValueError("No FREQ property found in the rrule string")
+
+    return freq
+
 
 class dictproperty(object):
     """
@@ -541,3 +563,26 @@ class dictproperty(object):
             return self
 
         return self._proxy(obj, self._fget, self._fset, self._fdel)
+
+
+def merge_two_dicts(x, y):
+    """
+    Given two dicts, merge them into a new dict as a shallow copy.
+
+    In python3, simply replace with {**x, **y}
+
+    :rtype: dict
+    """
+    z = x.copy()
+    z.update(y)
+    return z
+
+
+def is_mongo_successfull(dico):
+    """
+    Check if a pymongo dict response report a success ({'ok': 1.0, 'n': 2})
+
+    :param dict dico: a pymongo dict response on update, remove...
+    :rtype: bool
+    """
+    return 'ok' in dico and dico['ok'] == 1.0

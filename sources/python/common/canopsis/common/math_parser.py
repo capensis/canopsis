@@ -18,8 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from pyparsing import Literal, CaselessLiteral, Word, Combine, Optional,\
-    ZeroOrMore, Forward, nums, alphas, ParseException, delimitedList
+from pyparsing import (
+    Literal, CaselessLiteral, Word, Combine, Optional,
+    ZeroOrMore, Forward, nums, alphas, ParseException, delimitedList)
+from canopsis.common.utils import ensure_iterable
 import math
 import operator
 import re
@@ -30,21 +32,26 @@ class Formulas(object):
     # map operator symbols to corresponding arithmetic operations
     global epsilon
     epsilon = 1e-12
-    opn = { "+" : operator.add,
-            "-" : operator.sub,
-            "*" : operator.mul,
-            "/" : operator.truediv,
-            "^" : operator.pow }
-    fn  = { "sin" : math.sin,
-            "cos" : math.cos,
-            "tan" : math.tan,
-            "abs" : abs,
-            "trunc" : lambda a: int(a),
-            "round" : round,
-            "max" : lambda l: max(float(i) for i in l),
-            "min" : lambda l: min(float(i) for i in l),
-            "sum" : lambda l: sum(float(i) for i in l),
-            "sgn" : lambda a: abs(a)>epsilon and cmp(a,0) or 0}
+    opn = {
+        "+": operator.add,
+        "-": operator.sub,
+        "*": operator.mul,
+        "/": operator.truediv,
+        "^": operator.pow
+    }
+
+    fn = {
+        "sin": math.sin,
+        "cos": math.cos,
+        "tan": math.tan,
+        "abs": abs,
+        "trunc": lambda a: int(a),
+        "round": round,
+        "max": lambda l: max(float(i) for i in l),
+        "min": lambda l: min(float(i) for i in ensure_iterable(l)),
+        "sum": lambda l: sum(float(i) for i in l),
+        "sgn": lambda a: abs(a) > epsilon and ((a > 0) - (a < 0)) or 0
+    }
 
     def __init__(self, _dict=None):
         self.exprStack = []
@@ -99,8 +106,12 @@ class Formulas(object):
         if not self._bnf:
             point = Literal(".")
             e = CaselessLiteral("E")
-            fnumber = Combine(Word("+-"+nums, nums) + Optional(point + Optional(Word(nums))) + Optional(e + Word("+-"+nums, nums)))
-            ident = Word(alphas, alphas+nums+"_$")
+            fnumber = Combine(
+                Word("+-"+nums, nums) +
+                Optional(point + Optional(Word(nums))) +
+                Optional(e + Word("+-" + nums, nums))
+            )
+            ident = Word(alphas, alphas + nums + "_$")
             minus = Literal("-")
             plus = Literal("+")
             div = Literal("/")
@@ -113,14 +124,30 @@ class Formulas(object):
             pi = CaselessLiteral("PI")
 
             expr = Forward()
-            atom = (Optional("-") + ( pi | e | fnumber | ident + lpar + delimitedList(expr) + rpar ).setParseAction( self.push_first ) | ( lpar + expr.suppress() + rpar )).setParseAction(self.push_minus)
+            atom = (
+                Optional("-") +
+                (
+                    pi |
+                    e |
+                    fnumber |
+                    ident + lpar + delimitedList(expr) + rpar
+                ).setParseAction(self.push_first) |
+                (lpar + expr.suppress() + rpar)
+            ).setParseAction(self.push_minus)
 
-            # The right way to define exponentiation is -> 2^3^2 = 2^(3^2), not (2^3)^2.
+            # The right way to define exponentiation is -> 2^3^2 = 2^(3^2),
+            # not (2^3)^2.
             factor = Forward()
-            factor << atom + ZeroOrMore((expop + factor).setParseAction(self.push_first))
+            factor << atom + ZeroOrMore(
+                (expop + factor).setParseAction(self.push_first)
+            )
 
-            term = factor + ZeroOrMore((multop + factor).setParseAction(self.push_first))
-            expr << term + ZeroOrMore((addop + term).setParseAction(self.push_first))
+            term = factor + ZeroOrMore(
+                (multop + factor).setParseAction(self.push_first)
+            )
+            expr << term + ZeroOrMore(
+                (addop + term).setParseAction(self.push_first)
+            )
             self._bnf = expr
         return self._bnf
 
@@ -130,26 +157,38 @@ class Formulas(object):
         op = parsing_result.pop()
         if op == 'unary -':
             return -self.evaluate_parsing(parsing_result)
+
         if op in "+-*/^":
             op2 = self.evaluate_parsing(parsing_result)
             op1 = self.evaluate_parsing(parsing_result)
             return self.opn[op](op1, op2)
+
         elif op.lower() == "pi":
             return math.pi  # 3.1415926535
+
         elif op.lower() == "e":
             return math.e  # 2.718281828
+
         elif op.lower() in self.fn:
             t_op = op.lower()
             if t_op in ('max', 'min', 'sum'):
+                if type(parsing_result) is list:
+                    return self.fn[t_op](parsing_result)
+
                 return self.fn[t_op](self.evaluate_parsing(parsing_result))
+
             return self.fn[op](self.evaluate_parsing(parsing_result))
+
         elif re.search('^[a-zA-Z][a-zA-Z0-9_]*$', op):
             if op in self._dict:
                 return self._dict[op]
+
             else:
                 return 0
+
         elif op[0].isalpha():
             return 0
+
         else:
             return float(op)
 

@@ -50,7 +50,7 @@ def get_arg(args, index):
     try:
         arg = args[index]
     except:
-        logger.error('Missing parameters ...')
+        logger.error(u'Missing parameters ...')
         sys.exit(1)
     return arg
 
@@ -100,5 +100,5 @@ elif action == "rotate":
     manager.rotateAll(concurrency=concurrency)
 
 else:
-    logger.error('Invalid action ...')
+    logger.error(u'Invalid action ...')
     sys.exit(1)

@@ -1,0 +1,51 @@
+{
+  "loader_id": "view.streaming",
+  "loader_no_update": false,
+  "id": "view.streaming",
+  "_id": "view.streaming",
+  "crecord_type": "view",
+  "crecord_name": "streaming",
+  "enable": true,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],    "title": "container title vbox",
+    "items": [
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "id" : "item-fd5a-1ede-8ac2-6a1d66ad0100",
+          "refreshInterval": 10,
+          "refreshableWidget" : false,
+          "itemsPerPage": 15,
+          "xtype": "list",
+          "listed_crecord_type": "eventlog",
+          "display_record_field": "resource",
+          "record_template" : "<div>Connecteur : {{connector}}</div><div>Composant : {{component}} / Adresse IP : {{address}}</div><div>Hostgroups : {{hostgroups}}</div><div>Ressource : {{resource}}</div><div>Message :&nbsp;<span style=\"line-height: 1.428571429;\">{{output}}</span></div>",
+          "title": "Streaming",
+          "default_filter" : "{\n    \"$or\": [\n        {\n            \"event_type\": { \"$eq\" : \"comment\"\n        }},\n    {\n            \"event_type\": { \"$eq\" : \"user\"\n        }}]\n}",
+          "actions_toolbar": [],
+          "default_column_sort" : {
+            "direction" : "DESC",
+            "property" : "timestamp"
+          },
+          "filters" : [],
+          "mixins": [
+            { "name" : "customfilterlist" },
+            { "name" : "sortablearray" },
+            { "name" : "pagination" }
+          ],
+          "displayed_columns": [
+            "output",
+            "author",
+            "timestamp"
+          ]
+        }
+      }
+    ]
+  }
+}

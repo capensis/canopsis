@@ -276,4 +276,8 @@ def regex_match(phrase, pattern, options=None):
     options = regex_computeoptions(options)
     if phrase is None or pattern is None or options is None:
         return False
-    return bool(search(str(pattern), str(phrase), options))
+    return bool(search(
+        pattern.encode('utf-8'),
+        phrase.encode('utf-8'),
+        options
+    ))

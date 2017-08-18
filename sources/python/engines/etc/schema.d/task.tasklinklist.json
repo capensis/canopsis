@@ -1,0 +1,12 @@
+{
+	"type": "object",
+    "metadata": {
+        "icon": "fa fa-list"
+    },
+	"categories": [{
+		"title": "General",
+		"keys": []
+	}],
+	"properties": {
+	}
+}

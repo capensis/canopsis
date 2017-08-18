@@ -27,7 +27,6 @@ information managers such as the perfdata manager for example.
 from copy import deepcopy
 
 from canopsis.storage.core import Cursor
-from canopsis.context.manager import Context
 from canopsis.mongo.core import MongoStorage
 from canopsis.ctxprop.registry import CTXPropRegistry
 
@@ -47,7 +46,6 @@ class CTXOldRegistry(CTXPropRegistry):
         super(CTXOldRegistry, self).__init__(*args, **kwargs)
 
         self.storage = MongoStorage(table=table)
-        self.context = Context()
 
     def _do(self, command, ids, query, queryname, *args, **kwargs):
         """Execute storage command related to input ids and query.

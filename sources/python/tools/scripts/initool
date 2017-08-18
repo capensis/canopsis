@@ -18,7 +18,7 @@ def get_confopt(confpath, section, name):
         return False, err
 
 
-def set_confopt(confpath, section, name, value):
+def set_confopt(confpath, section, name=None, value=None):
     try:
         config = ConfigParser.ConfigParser()
         config.read(confpath)
@@ -26,7 +26,8 @@ def set_confopt(confpath, section, name, value):
         if not config.has_section(section):
             config.add_section(section)
 
-        config.set(section, name, value)
+        if name is not None:
+            config.set(section, name, value)
 
         with open(confpath, 'w') as f:
             config.write(f)
@@ -38,8 +39,8 @@ def set_confopt(confpath, section, name, value):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 5 or sys.argv[1] not in ['get', 'set']:
-        print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section name (value)"
+    if len(sys.argv) < 4 or sys.argv[1] not in ['get', 'set']:
+        print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section [name (value)]"
         sys.exit(1)
 
     elif sys.argv[1] == 'get':
@@ -50,12 +51,21 @@ if __name__ == '__main__':
             sys.exit(1)
 
     elif sys.argv[1] == 'set':
-        if len(sys.argv) < 6:
-            print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section name (value)"
+
+        success = None
+        error = None
+
+        if len(sys.argv) == 4:
+            success, error = set_confopt(*sys.argv[2:4])
+
+        elif len(sys.argv) < 6:
+            print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section [name (value)]"
             sys.exit(1)
 
-        success, error = set_confopt(*sys.argv[2:6])
+        else:
+            success, error = set_confopt(*sys.argv[2:6])
 
         if not success:
             print >>sys.stderr, error
             sys.exit(1)
+

@@ -21,7 +21,11 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common', 'canopsis.middleware']
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware'
+]
 
 setup(
     description='Canopsis messsage oriented middleware',

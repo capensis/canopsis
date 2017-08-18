@@ -68,7 +68,7 @@ class engine(TaskHandler):
         else:
             security_duration_limit = int(time())  # now
 
-            self.logger.info('Secure delay is set to false')
+            self.logger.info(u'Secure delay is set to false')
 
         self.logger.debug(
             'retention ts: {}, security ts: {}'.format(
@@ -85,15 +85,15 @@ class engine(TaskHandler):
 
             compare_duration = security_duration_limit
 
-        self.logger.debug('selected retention ts: {}'.format(
+        self.logger.debug(u'selected retention ts: {}'.format(
             datestr(compare_duration)
         ))
 
         return compare_duration
 
     def handle_task(self, job):
-        self.logger.debug('taskdataclean.handle_task()')
-        self.logger.debug('job: {0}'.format(job))
+        self.logger.debug(u'taskdataclean.handle_task()')
+        self.logger.debug(u'job: {0}'.format(job))
 
         # getting retention date limit
         retention_date_limit = self.get_retention_date(job)
@@ -123,7 +123,7 @@ class engine(TaskHandler):
             # effective collection clean
             count = clean_collection.remove(query)
 
-            self.logger.info('Clean complete for collection {}'.format(
+            self.logger.info(u'Clean complete for collection {}'.format(
                 collection
             ))
 

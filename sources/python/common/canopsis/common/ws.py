@@ -30,8 +30,12 @@ from inspect import getargspec
 
 from canopsis.common.utils import ensure_iterable, isiterable
 
+from urlparse import parse_qs
+from gzip import GzipFile
 from json import loads, dumps
+from math import isnan, isinf
 from bottle import request, HTTPError, HTTPResponse
+from bottle import response as BottleResponse
 from functools import wraps
 import traceback
 import logging
@@ -46,18 +50,38 @@ def adapt_canopsis_data_to_ember(data):
     """
 
     if isinstance(data, dict):
-        for item in data.values():
-            adapt_canopsis_data_to_ember(item)
+        for key, item in data.iteritems():
+            if isinstance(item, float) and (isnan(item) or isinf(item)):
+                data[key] = None
+
+            else:
+                if isinstance(item, (tuple, frozenset)):
+                    item = list(item)
+                    data[key] = item
+
+                adapt_canopsis_data_to_ember(item)
+
     elif isiterable(data, is_str=False):
-        for item in data:
-            adapt_canopsis_data_to_ember(item)
+        for i in range(len(data)):
+            item = data[i]
+
+            if isinstance(item, float) and (isnan(item) or isinf(item)):
+                data[i] = None
+
+            else:
+                if isinstance(item, (tuple, frozenset)):
+                    item = list(item)
+                    data[i] = item
+
+                adapt_canopsis_data_to_ember(item)
 
 
 def adapt_ember_data_to_canopsis(data):
 
     if isinstance(data, dict):
-        for item in data.values():
+        for key, item in data.iteritems():
             adapt_ember_data_to_canopsis(item)
+
     elif isiterable(data, is_str=False):
         for item in data:
             adapt_ember_data_to_canopsis(item)
@@ -89,6 +113,15 @@ def response(data, adapt=True):
         'data': result_data,
         'success': True
     }
+
+    headers = {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': 0
+    }
+
+    for hname in headers:
+        BottleResponse.set_header(hname, headers[hname])
 
     return result
 
@@ -166,16 +199,24 @@ class route(object):
         # generate an interceptor
         @wraps(function)
         def interceptor(*args, **kwargs):
-            params = request.params  # request params
+            if 'gzip' in request.get_header('Content-Encoding', ''):
+                with GzipFile(fileobj=request.body) as gzipped_body:
+                    body = gzipped_body.read()
+
+                params = parse_qs(body)
+
+            else:
+                params = request.params  # request params
+                body = request.body.readline()
 
             if self.raw_body:
-                kwargs['body'] = request.body.readline()
+                kwargs['body'] = body
 
             else:
                 # params are request params
                 try:
-                    loaded_body = loads(request.body.readline())
-                except ValueError:
+                    loaded_body = loads(body)
+                except (ValueError, TypeError):
                     pass
                 else:
                     for lb in loaded_body:
@@ -183,28 +224,32 @@ class route(object):
                         params[lb] = value
 
             # add body parameters in kwargs
-            for body_param in self.payload:
-                # if param is an array of values
-                array_body_param = '{0}[]'.format(body_param)
-                if array_body_param in params:
-                    param = params.getall(array_body_param)
+            for body_param in params:
+                if body_param.endswith('[]'):
+                    param = params.getall(body_param)
+                    body_param = body_param[:-2]
+
                     # try to convert all json param values to python
                     for i in range(len(param)):
                         try:
                             p = loads(param[i])
-                        except Exception:
+                        except (ValueError, TypeError):
                             pass
                         else:
                             param[i] = p
                 else:
                     # TODO: remove reference from bottle
                     param = params.get(body_param)
+
+                    if isinstance(param, list) and len(param) > 0:
+                        param = param[0]
+
                 # if param exists add it in kwargs in deserializing it
                 if param is not None:
                     try:
                         kwargs[body_param] = loads(param)
 
-                    except Exception:  # error while deserializing
+                    except (ValueError, TypeError):
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
 
@@ -242,7 +287,12 @@ class route(object):
                 }
 
             else:
-                if not isinstance(result_function, HTTPError):
+                #TODO: move it globaly, and move this module in webcore project
+                from canopsis.storage.file import FileStream
+
+                classes = (HTTPError, FileStream)
+
+                if not isinstance(result_function, classes):
                     result = self.response(
                         result_function, adapt=self.adapt)
 

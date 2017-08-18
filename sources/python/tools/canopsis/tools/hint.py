@@ -60,11 +60,11 @@ def set_hint(mfilter, collection, cursor, storage, logger):
     if indexes:
         try:
             cursor.hint(indexes)
-            logger.debug('Indexes found will use hint on cursor')
+            logger.debug(u'Indexes found will use hint on cursor')
         except Exception as e:
             logger.warning('Unable to set hint for cursor {}'.format(e))
     else:
-        logger.info('No index found for this query, will establish states')
+        logger.info(u'No index found for this query, will establish states')
 
         statistics = storage.get_backend('indexes_statistics')
         statistics.update({'_id': '.'.join(query_keys)},

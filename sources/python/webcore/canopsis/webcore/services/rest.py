@@ -17,17 +17,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from bottle import HTTPError, response
 from canopsis.common.ws import route
 
 from canopsis.common.utils import ensure_iterable
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.old.record import Record
 
 from base64 import b64decode
-import json
-
+from json import loads
 
 def get_records(ws, namespace, ctype=None, _id=None, **params):
     options = {
@@ -56,9 +56,9 @@ def get_records(ws, namespace, ctype=None, _id=None, **params):
     else:
         sort = ensure_iterable(sort)
 
-    if isinstance(sort, basestring):
+    if isinstance(sort, basestring):  # NOQA
         try:
-            sort = json.loads(sort)
+            sort = loads(sort)
         except ValueError as json_error:
             ws.logger.warning('Unable to parse sort field : {} {}'.format(
                 sort, json_error
@@ -173,6 +173,7 @@ def get_records(ws, namespace, ctype=None, _id=None, **params):
 
 
 def save_records(ws, namespace, ctype, _id, items):
+
     records = []
 
     for data in items:
@@ -209,7 +210,7 @@ def save_records(ws, namespace, ctype, _id, items):
             records.append(drecord)
 
         except Exception as err:
-            ws.logger.error('Impossible to save record: {0}'.format(
+            ws.logger.error(u'Impossible to save record: {0}'.format(
                 err
             ))
 
@@ -222,7 +223,7 @@ def delete_records(ws, namespace, ctype, _id, data):
             ids = []
 
             for item in data:
-                if isinstance(item, basestring):
+                if isinstance(item, basestring):  # NOQA
                     ids.append(item)
 
                 elif isinstance(item, dict):
@@ -255,7 +256,7 @@ def delete_records(ws, namespace, ctype, _id, data):
 
 
 def exports(ws):
-    ctxmgr = Context()
+    ctxmgr = ContextGraph()
 
     @route(ws.application.get, name='rest/indexes', response=lambda r, a: r)
     def indexes(collection):
@@ -321,38 +322,52 @@ def exports(ws):
 
         for record in records:
             if record['crecord_type'] == 'event':
-                entity = ctxmgr.get_entity(record)
-
-                record['entity_id'] = ctxmgr.get_entity_id(entity)
+                eid = ''
+                if 'resource' in record.keys():
+                    eid = '/{0}/{1}/{2}/{3}/{4}'.format(
+                        record['source_type'],
+                        record['connector'],
+                        record['connector_name'],
+                        record['component'],
+                        record['resource']
+                    )
+                else:
+                    eid = '/{0}/{1}/{2}/{3}'.format(
+                        record['source_type'],
+                        record['connector'],
+                        record['connector_name'],
+                        record['component']
+                    )
+                record['entity_id'] = eid
 
         return records, nrecords
 
-    @route(ws.application.put, raw_body=True, adapt=False)
-    def rest(namespace, ctype, _id=None, body='[]'):
+    @route(ws.application.put, raw_body=True, adapt=False)  # NOQA
+    def rest(namespace, ctype, _id=None, body='[]', **kwargs):
         try:
-            items = ensure_iterable(json.loads(body))
+            items = ensure_iterable(loads(body))
 
         except ValueError as err:
             return HTTPError(500, 'Impossible to parse body: {0}'.format(err))
 
         return save_records(ws, namespace, ctype, _id, items)
 
-    @route(ws.application.post, raw_body=True, adapt=False)
-    def rest(namespace, ctype, _id=None, body='[]'):
+    @route(ws.application.post, raw_body=True, adapt=False)  # NOQA
+    def rest(namespace, ctype, _id=None, body='[]', **kwargs):
         try:
-            items = ensure_iterable(json.loads(body))
+            items = ensure_iterable(loads(body))
 
         except ValueError as err:
             return HTTPError(500, 'Impossible to parse body: {0}'.format(err))
 
         return save_records(ws, namespace, ctype, _id, items)
 
-    @route(ws.application.delete, raw_body=True, adapt=False)
-    def rest(namespace, ctype, _id=None, body='[]'):
+    @route(ws.application.delete, raw_body=True, adapt=False)  # NOQA
+    def rest(namespace, ctype, _id=None, body='[]', **kwargs):
         try:
-            data = json.loads(body)
+            data = loads(body)
 
         except ValueError:
             data = None
-
+        
         return delete_records(ws, namespace, ctype, _id, data)

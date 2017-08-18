@@ -23,7 +23,7 @@ from canopsis.task.core import get_task
 from canopsis.engines.core import Engine
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.model import Parameter
 
 CONF_PATH = 'engines/engines.conf'  #: dynamic engine configuration path
 CATEGORY = 'ENGINE'  #: dynamic engine configuration category
@@ -92,7 +92,7 @@ class engine(Engine, Configurable):
             try:
                 value = get_task(value)
             except ImportError:
-                self.logger.error('Impossible to load %s' % value)
+                self.logger.error(u'Impossible to load %s' % value)
                 value = event_processing
 
         # set _event_processing and work
@@ -124,7 +124,7 @@ class engine(Engine, Configurable):
             try:
                 value = get_task(value)
             except ImportError:
-                self.logger.error('Impossible to load %s' % value)
+                self.logger.error(u'Impossible to load %s' % value)
                 value = beat_processing
 
         # set _beat_processing and work

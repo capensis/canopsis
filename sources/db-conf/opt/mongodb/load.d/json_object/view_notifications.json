@@ -1,0 +1,80 @@
+{
+  "crecord_write_time": 1440765495,
+  "enable": true,
+  "crecord_type": "view",
+  "crecord_creation_time": 0,
+  "crecord_name": "notifications.json",
+  "description": null,
+  "tags": [],
+  "author": null,
+  "internal": false,
+  "containerwidget": {
+    "xtype": "widgetcontainer",
+    "title": "container title vbox",
+    "mixins": [
+      {
+        "name": "verticallayout"
+      },
+      { "name": "widgetrefresh" },
+      { "name": "widgetfullscreen" }
+    ],
+    "tagName": null,
+    "widgetslotTemplate": null,
+    "items": [
+      {
+        "mixins": [],
+        "xtype": "widgetwrapper",
+        "title": "wrapper",
+        "widget": {
+          "xtype": "list",
+          "title": "Notification Jobs",
+          "mixins": [
+            {
+              "formoptions": {
+                "jtype": "notification"
+              },
+              "name": "crud",
+              "form": "jobform"
+            },
+            {
+              "name": "pagination"
+            },
+            {
+              "name": "sortablearray"
+            },
+            {
+              "name": "arraysearch"
+            },
+            {
+              "default_filter": "{\"$or\":[{\"jtype\":{\"$eq\":\"notification\"}}]}",
+              "name": "customfilterlist",
+              "filters": []
+            }
+          ],
+          "tagName": null,
+          "columnsOrder": [],
+          "default_column_sort": {
+            "direction": "ASC"
+          },
+          "useRenderers": true,
+          "listed_crecord_type": "job",
+          "displayed_columns": [
+            "crecord_name",
+            "task",
+            "last_execution"
+          ],
+          "contentTruncatedLength": 150,
+          "id": "list_3dceffe7-3042-0ec3-b711-535d7253e899",
+          "_id": "list_3dceffe7-3042-0ec3-b711-535d7253e899"
+        },
+        "id": "widgetwrapper_e731fd0b-fc54-a9b5-af31-dbbe8fd68e68",
+        "_id": "widgetwrapper_e731fd0b-fc54-a9b5-af31-dbbe8fd68e68"
+      }
+    ],
+    "id": "widgetcontainer_c8423f89-f9f6-bd2e-2288-3a7c12c8d207",
+    "_id": "widgetcontainer_c8423f89-f9f6-bd2e-2288-3a7c12c8d207"
+  },
+  "id": "view.notifications",
+  "_id": "view.notifications",
+  "loader_id": "view.notifications"
+}

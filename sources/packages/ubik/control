@@ -22,8 +22,6 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
-	launch_cmd 1 update_pylibs
-
 	if [ ! -e $PREFIX/etc/ubik.conf ]; then
 		cp $PREFIX/etc/ubik.conf.ori $PREFIX/etc/ubik.conf
 	fi

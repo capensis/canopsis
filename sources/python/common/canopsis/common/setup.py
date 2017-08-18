@@ -28,8 +28,6 @@ from sys import prefix as sys_prefix
 
 from canopsis.common.utils import lookup
 
-#import canopsis
-#from pkgutil import extend_path
 
 # TODO: set values in a dedicated configuration file
 AUTHOR = 'Capensis'

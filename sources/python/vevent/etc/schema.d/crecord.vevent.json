@@ -1,0 +1,50 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys": ["crecord_type", "uid", "source", "dtstart", "dtend", "rrule", "duration", "ical"]
+	}],
+    "properties": {
+        "uid": {
+            "type": "string",
+            "required": false,
+            "description": "Unique id."
+        },
+        "crecord_type": {
+            "enum": ["vevent"],
+            "required": true
+        },
+        "source": {
+        	"type": "string",
+        	"required": true,
+        	"description": "publishing entity id."
+        },
+        "dtstart": {
+            "type": "number",
+            "required": false,
+            "role": "timestamp",
+            "default": 0,
+            "description": "Start timestamp."
+        },
+        "dtend": {
+            "type": "number",
+            "required": false,
+            "role": "timestamp",
+            "default": 2147483647,
+            "description": "End timestamp."
+        },
+        "rrule": {
+            "type": "string",
+            "required": false,
+            "default": "",
+            "description": "Recurrent rule."
+        },
+        "duration": {
+            "type": "integer",
+            "required": false,
+            "role": "duration",
+            "default": 0,
+            "description": "Duration in seconds (warning: 1 month = 365 days / 12)."
+        }
+    }
+}

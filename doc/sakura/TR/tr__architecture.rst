@@ -10,9 +10,9 @@ deployment.
 References
 ==========
 
- - :ref:`FR__Architecture <FR__Architecture>`
- - :ref:`FR__Engine <FR__Engine>`
- - :ref:`TR__Package <TR__Package>`
+ - :ref:`FR::Architecture <FR__Architecture>`
+ - :ref:`FR::Engine <FR__Engine>`
+ - :ref:`TR::Package <TR__Package>`
 
 Updates
 =======

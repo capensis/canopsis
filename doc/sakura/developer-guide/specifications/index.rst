@@ -11,3 +11,4 @@ Specifications
    event
    status
    sla
+   statistics

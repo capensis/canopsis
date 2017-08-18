@@ -18,9 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = '0.1'
-
-
 from canopsis.common.init import basestring
 from time import time
 from logging import getLogger
@@ -28,8 +25,14 @@ from canopsis.event import forger
 from datetime import datetime
 from pprint import PrettyPrinter
 from canopsis.timeserie.timewindow import Period
+from canopsis.event.manager import Event
+
+from canopsis.perfdata.manager import SLIDING_TIME
 
 pp = PrettyPrinter(indent=2)
+
+
+__version__ = '0.1'
 
 
 class Sla(object):
@@ -72,7 +75,7 @@ class Sla(object):
     ):
 
         self.storage = storage
-
+        self.eventmanager = Event()
         self.type = 'sla'
 
         if logger:
@@ -87,12 +90,12 @@ class Sla(object):
         timewindow = timewindow_dict['seconds']
 
         timewindow_date_start = now - timewindow
-        self.logger.debug('Timewindow is {}, timestamp is {}'.format(
+        self.logger.debug(u'Timewindow is {}, timestamp is {}'.format(
             timewindow,
             timewindow_date_start
         ))
 
-        self.logger.debug('Computing sla for selector {}'.format(rk))
+        self.logger.debug(u'Computing sla for selector {}'.format(rk))
         # Retrieve sla information from selector record
         sla_information = self.get_sla_information(
             rk,
@@ -100,19 +103,19 @@ class Sla(object):
             now
         )
 
-        self.logger.debug('Sla length information is {}'.format(
+        self.logger.debug(u'Sla length information is {}'.format(
             len(sla_information)
         ))
 
         # Compute effective sla dict to be able to fill the ouput template
-        sla_measures, first_timestamp, sla_times = self.compute_sla(
+        sla_measures, sla_times = self.compute_sla(
             sla_information,
             now
         )
-        self.logger.debug('Sla measures is {}'.format(sla_measures))
-        self.logger.debug('Sla times is {}'.format(sla_times))
+        self.logger.debug(u'Sla measures is {}'.format(sla_measures))
+        self.logger.debug(u'Sla times is {}'.format(sla_times))
 
-        self.logger.debug('Alert level is {}'.format(alert_level))
+        self.logger.debug(u'Alert level is {}'.format(alert_level))
         # Compute alerts precent depending on user algorithm
         alerts_percent, alerts_duration = \
             self.get_alert_percent(
@@ -121,7 +124,7 @@ class Sla(object):
                 alert_level
             )
 
-        self.logger.debug('Alert percent : {} , Alert duration : {}'.format(
+        self.logger.debug(u'Alert percent : {} , Alert duration : {}'.format(
             alerts_percent,
             alerts_duration
         ))
@@ -135,7 +138,7 @@ class Sla(object):
             alerts_percent,
             alerts_duration,
             avail_duration,
-            first_timestamp,
+            timewindow_date_start,
         )
 
         state = self.compute_state(
@@ -144,9 +147,9 @@ class Sla(object):
             sla_critical
         )
 
-        self.logger.debug('Sla computed state is {}'.format(state))
+        self.logger.debug(u'Sla computed state is {}'.format(state))
 
-        self.logger.debug('thresholds : warning {}, critical {}'.format(
+        self.logger.debug(u'thresholds : warning {}, critical {}'.format(
             sla_warning,
             sla_critical
         ))
@@ -193,7 +196,7 @@ class Sla(object):
 
         availability = 1.0 - alerts_percent
 
-        self.logger.debug('availability {} warning {}, critical {}'.format(
+        self.logger.debug(u'availability {} warning {}, critical {}'.format(
             availability,
             warning,
             critical
@@ -221,60 +224,46 @@ class Sla(object):
         """Sla information is a list containing all state in the timewindow for
         current sla event."""
 
-        sla = []
-
         events_log = self.storage.get_backend('events_log')
-
-        # Fetch previous state
-        find_query = {
-            'rk': selector_rk,
-            'timestamp': {'$lte': timewindow_date_start}
-        }
+        sla_information = []
         projection = {
             'state': 1,
             'timestamp': 1,
             '_id': 0
         }
 
-        state_before = events_log.find_one(
-            find_query,
-            projection,
-            sort=[('timestamp', -1)]
-        )
-
-        self.logger.debug('state_before {}'.format(state_before))
-
-        if state_before:
-            self.logger.debug('State before found ! {}'.format(state_before))
-            state_before['timestamp'] = timewindow_date_start
-            sla.append(state_before)
-
-        # Fetch all state between before and now
-        sla_infos = events_log.find({
+        # Try to find last state
+        previous_event_log = events_log.find_one({
             'rk': selector_rk,
-            'timestamp': {'$gte': timewindow_date_start}
-        }, {
-            'state': 1,
-            'timestamp': 1,
-            '_id': 0
-        }, sort=[('timestamp', 1)])
+            'timestamp': {'$lt': timewindow_date_start}
+        }, projection, sort=[('timestamp', -1)])
 
-        for sla_info in sla_infos:
-            sla.append(sla_info)
+        self.logger.debug(u'previous event log {}'.format(previous_event_log))
 
-        # Add last delta time because state may remain until now
-        if len(sla) and sla[-1]['timestamp'] < now:
-            sla.append({
-                'timestamp': now,
-                'state': sla[-1]['state']
-            })
-            self.logger.debug('Add time until now for last state')
+        # Default value is set as no previous information
+        if previous_event_log is None:
+            previous_event_log = {
+                'state': 0,
+                'timestamp': timewindow_date_start
+            }
+        else:
+            previous_event_log['timestamp'] = timewindow_date_start
 
-        self.logger.debug('Sla information from events_log : {}'.format(
-            pp.pformat(sla)
+        sla_information.append(previous_event_log)
+
+        # Fetch all event log data in timewindow
+        sla_information += list(events_log.find(
+            {
+                'rk': selector_rk,
+                'timestamp': {'$gt': timewindow_date_start}
+            },
+            projection,
+            sort=[('timestamp', 1)]
         ))
 
-        return sla
+        self.logger.debug(u' # sla information {}'.format(sla_information))
+
+        return sla_information
 
     def compute_sla(self, sla_information, now):
 
@@ -290,6 +279,22 @@ class Sla(object):
             2: 0.0,
             3: 0.0,
         }
+
+        total_time = float(now - sla_information[0]['timestamp'])
+        previous_state = sla_information[0]['state']
+        previous_timestamp = sla_information[0]['timestamp']
+        duration = 0.0
+
+        for step in sla_information[1:]:
+            duration += step['timestamp'] - previous_timestamp
+            previous_timestamp = step['timestamp']
+            if step['state'] != previous_state:
+                sla_times[previous_state] += duration
+                previous_state = step['state']
+                duration = 0.0
+
+        sla_times[previous_state] += now - previous_timestamp
+
         sla_measures = {
             0: 0.0,
             1: 0.0,
@@ -297,54 +302,19 @@ class Sla(object):
             3: 0.0,
         }
 
-        # Compute duration between eache state change
-        # default value for first timestamp
-        first_timestamp = now
-        if len(sla_information):
+        for state in sla_times:
+            sla_time = float(sla_times[state])
+            self.logger.debug(
+                u'state {} time {} total {} now {}, start {}'.format(
+                    state, sla_time,
+                    total_time, now,
+                    sla_information[0]['state']
+                )
+            )
+            percent = sla_time / total_time
+            sla_measures[state] = percent
 
-            # Allow computing the percentage inside the timewindow
-            first_timestamp = date_start = sla_information[0]['timestamp']
-            previous_state = sla_information[0]['state']
-
-            self.logger.debug('Compute since {}, state were {}'.format(
-                date_start,
-                previous_state
-            ))
-
-            # compute what proportion of time the event
-            # remained in the same state
-            for sla_info in sla_information:
-                delta_time = sla_info['timestamp'] - date_start
-                date_start = sla_info['timestamp']
-                sla_times[previous_state] += delta_time
-                previous_state = sla_info['state']
-
-                self.logger.debug('Add time {} to state {}'.format(
-                    delta_time,
-                    sla_info['state'],
-                ))
-
-            self.logger.debug('Computed sla times are {}'.format(
-                sla_times
-            ))
-
-            total_time = now - first_timestamp
-            self.logger.debug('total_time {}, now {}, date_start {}'.format(
-                total_time,
-                now,
-                first_timestamp
-            ))
-
-            if total_time == 0:
-                # Avoids divid by 0 error
-                self.logger.warning('Tried to divide by 0 in compute sla')
-                total_time = 1
-
-            for state in sla_times:
-                percent = float(sla_times[state]) / float(total_time)
-                sla_measures[state] = percent
-
-        return sla_measures, first_timestamp, sla_times
+        return sla_measures, sla_times
 
     def compute_output(
         self,
@@ -379,6 +349,11 @@ class Sla(object):
             output = output.replace('[CRITICAL]', to_percent(sla_measures[3]))
             output = output.replace('[ALERTS]', to_percent(alerts_percent))
 
+            # Embed sla measures available total percentage in the output
+            output = output.replace('[P_AVAIL]', to_percent(
+                1.0 - alerts_percent)
+            )
+
             # Embed sla measures durations in the output
             output = output.replace('[T_AVAIL]', duration_to_time(
                 avail_duration)
@@ -389,7 +364,7 @@ class Sla(object):
 
             # Embed sla measures first date in the output
             output = output.replace('[TSTART]', TSTART)
-            self.logger.info('SLA computed output is : {}'.format(output))
+            self.logger.info(u'SLA computed output is : {}'.format(output))
             return output
         else:
             self.logger.warning('Sla template is not a string, nothing done.')
@@ -422,34 +397,33 @@ class Sla(object):
         perf_data_array.append({
             'metric': 'cps_avail',
             'value': round(availability, 2),
-            'max': 100
+            'max': 100,
+            SLIDING_TIME: True
         })
         perf_data_array.append({
             'metric': 'cps_avail_duration',
             'value': avail_duration,
+            SLIDING_TIME: True
         })
         perf_data_array.append({
             'metric': 'cps_alerts_duration',
             'value': alerts_duration,
+            SLIDING_TIME: True
         })
 
         period_options = {
             timewindow_dict['durationType']: timewindow_dict['value']
         }
-        self.logger.debug('period options {}, now {}'.format(
+        self.logger.debug(u'period options {}, now {}'.format(
             period_options,
             now
         ))
 
         period = Period(**period_options)
 
-        periodic_timestamp = period.round_timestamp(
-            now,
-            normalize=True,
-            next_period=True
-        )
+        periodic_timestamp = period.round_timestamp(now, next_period=True)
 
-        self.logger.debug('periodic timestamp {}'.format(periodic_timestamp))
+        self.logger.debug(u'periodic timestamp {}'.format(periodic_timestamp))
 
         event = forger(
             connector='sla',
@@ -465,11 +439,11 @@ class Sla(object):
             timestamp=periodic_timestamp
         )
 
-        self.logger.info('publishing sla {}, states {}'.format(
+        self.logger.info(u'publishing sla {}, states {}'.format(
             display_name,
             sla_measures
         ))
 
-        self.logger.debug('event : {}'.format(pp.pformat(event)))
+        self.logger.debug(u'event : {}'.format(pp.pformat(event)))
 
         return event

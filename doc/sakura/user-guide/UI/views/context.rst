@@ -13,7 +13,7 @@ extract those informations in order to create an **Entity**.
 
 The view *Context* allows you to see all detected entities.
 
-..note::
+.. note::
 
    Edition and suppression are ignored by the system. All modifications will be
    erased by the next incoming event.
@@ -51,25 +51,3 @@ It means the associated events won't appear in the following views:
  * Event : each alerts from the entity will be ignored
  * Selector : you won't be able to include the event in a selector
  * Context : new events will be missing from the context
-
-How to use
-----------
-
-By clicking on the **+** sign, you can unfold the *Periodic Behavior Manager*.
-This manager allows you to add/edit/remove a periodic behavior to an entity.
-
-.. image:: ../../../_static/images/pbehaviors/context1.png
-
-The **+** button in the table header allows you to add a periodic behavior:
-
-.. image:: ../../../_static/images/pbehaviors/create1.png
-
-.. image:: ../../../_static/images/pbehaviors/create2.png
-
-Then, all behaviors are listed with two possible actions: *edit*, and *remove*:
-
-.. image:: ../../../_static/images/pbehaviors/context2.png
-
-But periodic behaviors can be added directly via the view events:
-
-.. image:: ../../../_static/images/pbehaviors/events.png

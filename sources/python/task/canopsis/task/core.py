@@ -125,7 +125,7 @@ register_task()(register_tasks)
 
 
 @register_task
-def get_task(_id, cache=True):
+def get_task(_id, cache=True, cacheonly=False):
     """
     Get task related to an id which could be:
 
@@ -135,6 +135,8 @@ def get_task(_id, cache=True):
     :param str id: task id to get.
     :param bool cache: use cache system to quick access to task
         (True by default).
+    :param bool cacheonly: if True, do not try to lookup for resolving the task
+        searching.
 
     :raises ImportError: if task is not found in runtime.
     """
@@ -143,7 +145,7 @@ def get_task(_id, cache=True):
 
     if _id in __TASKS_BY_ID:
         result = __TASKS_BY_ID[_id]
-    else:
+    elif not cacheonly:
         result = lookup(path=_id, cached=cache)
 
     return result

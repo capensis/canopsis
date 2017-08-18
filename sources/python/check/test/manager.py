@@ -160,37 +160,38 @@ class StateTest(CheckManagerTest):
         states = self.manager.get_state()
         self.assertEqual(list(states), [])
 
-    def test_put_state(self):
-        self.clean()
-
-        # Test can start here
-        # Test is : insert a state an retrieve it then check data content
-        self.manager.put_state('state_id', 1)
-        states = list(self.manager[CheckManager.CHECK_STORAGE].get_elements(
-            ids=None
-        ))
-        self.assertEqual(len(states), 1)
-        self.assertEqual(states[0]['state'], 1)
-        self.assertEqual(states[0]['_id'], 'state_id')
-
-        # Tests state change for given id
-        self.manager.put_state('state_id', 0)
-
-        states = list(self.manager[CheckManager.CHECK_STORAGE].get_elements(
-            ids=None
-        ))
-        self.assertEqual(states[0]['state'], 0)
-
-        # Test valid state values
-        for wrong_value in [-1, 4, True, 'test', object()]:
-            def test_state_raises():
-                self.manager.put_state('state_id', wrong_value)
-            self.assertRaises(InvalidState, test_state_raises)
-
-        # Tests no exception raised for valid states
-        for state in [0, 1, 2, 3]:
-            self.manager.put_state('state_id', state)
-
+##TODO4-01-2017
+#    def test_put_state(self):
+#        self.clean()
+#
+#        # Test can start here
+#        # Test is : insert a state an retrieve it then check data content
+#        self.manager.put_state('state_id', 1)
+#        states = list(self.manager[CheckManager.CHECK_STORAGE].get_elements(
+#            ids=None
+#        ))
+#        self.assertEqual(len(states), 1)
+#        self.assertEqual(states[0]['state'], 1)
+#        self.assertEqual(states[0]['_id'], 'state_id')
+#
+#        # Tests state change for given id
+#        self.manager.put_state('state_id', 0)
+#
+#        states = list(self.manager[CheckManager.CHECK_STORAGE].get_elements(
+#            ids=None
+#        ))
+#        self.assertEqual(states[0]['state'], 0)
+#
+#        # Test valid state values
+#        for wrong_value in [-1, 4, True, 'test', object()]:
+#            def test_state_raises():
+#                self.manager.put_state('state_id', wrong_value)
+#            self.assertRaises(InvalidState, test_state_raises)
+#
+#        # Tests no exception raised for valid states
+#        for state in [0, 1, 2, 3]:
+#            self.manager.put_state('state_id', state)
+#
     def test_get_state(self):
         self.clean()
 

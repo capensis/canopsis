@@ -20,7 +20,7 @@
 
 from . import Configurable
 from canopsis.common.init import basestring
-from canopsis.configuration.parameters import Configuration, Category
+from canopsis.configuration.model import Configuration, Category
 from canopsis.common.utils import lookup
 
 from inspect import isclass

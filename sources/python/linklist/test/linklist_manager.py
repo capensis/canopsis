@@ -20,10 +20,10 @@
 # ---------------------------------
 
 from unittest import TestCase, main
-from canopsis.linklist.manager import Linklist
 from uuid import uuid4
 
-DEBUG = False
+from canopsis.middleware.core import Middleware
+from canopsis.linklist.manager import Linklist
 
 
 class CheckManagerTest(TestCase):
@@ -32,11 +32,12 @@ class CheckManagerTest(TestCase):
     """
 
     def setUp(self):
-        """
-        initialize a manager.
-        """
-
+        self.linklist_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testlinklist://'
+        )
         self.manager = Linklist()
+        self.manager[Linklist.LINKLIST_STORAGE] = self.linklist_storage
+
         self.name = 'testlinklist'
         self.id = str(uuid4())
         self.ids = [self.id]
@@ -47,25 +48,17 @@ class CheckManagerTest(TestCase):
             'mfilter': '{"$and": [{"connector": "collectd"}]}'
         }
 
-    def clean(self):
-        self.manager.remove(self.ids)
-
-    def get_linklist(self):
-        return self.manager.find(ids=self.ids)
+    def tearDown(self):
+        self.linklist_storage.remove_elements()
 
     def linklist_count_equals(self, count):
-        result = list(self.get_linklist())
-        if DEBUG:
-            print result
-        result = len(result)
-        self.assertEqual(result, count)
+        result = list(self.manager.find(ids=self.ids))
+        self.assertEqual(len(result), count)
 
 
 class LinkListTest(CheckManagerTest):
 
     def test_put(self):
-        self.clean()
-
         self.manager.put(
             self.document_content
         )
@@ -73,8 +66,6 @@ class LinkListTest(CheckManagerTest):
         self.linklist_count_equals(1)
 
     def test_get(self):
-        self.clean()
-
         self.manager.put(
             self.document_content
         )
@@ -94,8 +85,6 @@ class LinkListTest(CheckManagerTest):
         self.assertEqual(len(list(result)), 1)
 
     def test_remove(self):
-        self.clean()
-
         self.linklist_count_equals(0)
 
         self.manager.put(

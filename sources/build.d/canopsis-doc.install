@@ -6,10 +6,10 @@ function build() {
 
 function update_documentation() {
     rm -rf $PREFIX/var/lib/canopsis/doc
-    rm -rf $PREFIX/var/www/doc
+    rm -rf $PREFIX/var/www/src/doc
 
     mkdir -p $PREFIX/var/lib/canopsis/doc
-    mkdir -p $PREFIX/var/www/doc
+    mkdir -p $PREFIX/var/www/src/doc
 
     cd $SRC_PATH/../doc/sakura
 
@@ -18,21 +18,12 @@ function update_documentation() {
     cp -r * $PREFIX/var/lib/canopsis/doc
 
     chown -R $HUSER:$HGROUP $PREFIX/var/lib/canopsis/doc
-    chown -R $HUSER:$HGROUP $PREFIX/var/www/doc
+    chown -R $HUSER:$HGROUP $PREFIX/var/www/src/doc
 
     echo "--- Building documentation"
-    hash npm &> /dev/null
-
-    if [ $? -eq 1 ]; then
-        echo >&2 "npm not found. The Frontend API documentation will not be installed."
-    else
-        cd $PREFIX/var/www && npm install && npm run rst-doc
-        rm -Rf $PREFIX/var/lib/canopsis/doc/api/frontend
-        cp -R $PREFIX/var/www/docs/rst $PREFIX/var/lib/canopsis/doc/api/frontend
-    fi
 
     launch_cmd 1 "cd $PREFIX/var/lib/canopsis/doc && ./build.sh"
-    launch_cmd 1 "cp -r $PREFIX/var/lib/canopsis/doc/_build/html/* $PREFIX/var/www/doc"
+    launch_cmd 1 "cp -r $PREFIX/var/lib/canopsis/doc/_build/html/* $PREFIX/var/www/src/doc"
 }
 
 function install() {

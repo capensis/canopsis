@@ -1,0 +1,89 @@
+NAME="canolibs"
+
+PROJECTS=()
+PROJECTS+=('common')
+PROJECTS+=('old')
+PROJECTS+=('configuration')
+PROJECTS+=('timeserie')
+PROJECTS+=('middleware')
+PROJECTS+=('task')
+PROJECTS+=('rpc')
+PROJECTS+=('mom')
+PROJECTS+=('storage')
+PROJECTS+=('mongo')
+PROJECTS+=('schema')
+PROJECTS+=('ctxprop')
+PROJECTS+=('event')
+PROJECTS+=('kombu')
+PROJECTS+=('context')
+PROJECTS+=('context_graph')
+PROJECTS+=('monitoring')
+PROJECTS+=('perfdata')
+PROJECTS+=('tools')
+PROJECTS+=('watcher')
+PROJECTS+=('sla')
+PROJECTS+=('engines')
+PROJECTS+=('connectors')
+PROJECTS+=('cli')
+PROJECTS+=('organisation')
+PROJECTS+=('check')
+PROJECTS+=('graph')
+PROJECTS+=('topology')
+PROJECTS+=('linklist')
+PROJECTS+=('vevent')
+PROJECTS+=('ccalendar')
+PROJECTS+=('pbehavior')
+PROJECTS+=('session')
+PROJECTS+=('webcore')
+PROJECTS+=('alerts')
+PROJECTS+=('serie')
+PROJECTS+=('stats')
+PROJECTS+=('migration')
+PROJECTS+=('influxdb')
+PROJECTS+=('downtime')
+
+function build() {
+	true
+}
+
+function install() {
+    # install all projects
+    for project in "${PROJECTS[@]}"
+    do
+        echo "-- Install project: $project"
+        export CPS_PREFIX="$PREFIX/etc/"
+        cd $SRC_PATH/python/$project
+
+        launch_log $NAME 'python setup.py install'
+        check_code $? "Impossible to install $project"
+
+        install_pytests "$project"
+
+        chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
+    done
+
+    install_init "canopsis"
+
+    # TODO when fabric will be available
+    # launch_log $NAME fab -H localhost -u $HUSER -p canopsis setup
+}
+
+function update() {
+    # install all projects
+    for project in "${PROJECTS[@]}"
+    do
+        echo "-- Update project: $project"
+        export CPS_PREFIX="$PREFIX/etc/"
+        cd $SRC_PATH/python/$project
+
+        launch_log $NAME "python setup.py install --no-conf"
+        check_code $? "Impossible to update $project"
+
+        install_pytests "$project"
+
+        chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
+        update_conffiles ./etc
+    done
+
+    install_init "canopsis"
+}

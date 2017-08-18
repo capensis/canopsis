@@ -20,7 +20,7 @@
 
 from canopsis.engines.core import Engine, publish
 from canopsis.check.archiver import Archiver, BAGOT, STEALTHY
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.old.storage import CONFIG
 from copy import deepcopy
@@ -44,7 +44,7 @@ class engine(Engine):
         self.log_types = reader([CONFIG.get('events', 'logs')]).next()
         self.comment_types = reader([CONFIG.get('events', 'comments')]).next()
 
-        self.context = Context()
+        self.context = ContextGraph()
         self.pbehavior = PBehaviorManager()
         self.beat()
 
@@ -56,17 +56,15 @@ class engine(Engine):
     def beat(self):
         self.archiver.beat()
 
+        with self.Lock(self, 'eventstore_reset_status') as l:
+            if l.own():
+                self.reset_stealthy_event_duration = time()
+                self.archiver.reload_configuration()
+                self.archiver.reset_status_event(BAGOT)
+                self.archiver.reset_status_event(STEALTHY)
+
     def store_check(self, event):
         _id = self.archiver.check_event(event['rk'], event)
-
-        if event.get('downtime', False):
-            entity = self.context.get_entity(event)
-            entity_id = self.context.get_entity_id(entity)
-            endts = self.pbehavior.getending(
-                source=entity_id, behaviors='downtime'
-            )
-
-            event['previous_state_change_ts'] = endts
 
         if _id:
             event['_id'] = _id
@@ -137,13 +135,3 @@ class engine(Engine):
             self.store_log(event, store_new_event=False)
 
         return event
-
-    def consume_dispatcher(self, event, *args, **kargs):
-
-        # Process this each minute only
-        self.logger.info('proceed status reset')
-
-        self.reset_stealthy_event_duration = time()
-        self.archiver.reload_configuration()
-        self.archiver.reset_status_event(BAGOT)
-        self.archiver.reset_status_event(STEALTHY)

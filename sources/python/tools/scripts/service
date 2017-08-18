@@ -49,7 +49,7 @@ class Service(object):
         if name in listdir(Service.internaldir):
             self.internal = True
 
-        elif '{0}.conf'.format(name) in listdir(Service.supervisordir):
+        elif '{0}.conf'.format(name) in listdir(Service.supervisordir) or "*" in name:
             self.internal = False
 
             self.ensure_supervisord()
@@ -147,6 +147,9 @@ class Service(object):
                     format(self.name), shell=True)
                 return
 
+            elif action in ['mstart', 'mstop', 'mrestart']:
+                name = self.name
+
             else:
                 name = '{0}:*'.format(self.name)
 
@@ -161,7 +164,7 @@ class Service(object):
             Run action on service.
         """
 
-        if action not in ['start', 'stop', 'restart', 'status']:
+        if action not in ['start', 'stop', 'restart', 'status', 'mrestart', 'mstart', 'mstop']:
             raise RuntimeError('Unknown action {0}'.format(action))
 
         if self.internal:

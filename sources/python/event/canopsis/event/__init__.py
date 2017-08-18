@@ -129,6 +129,9 @@ def forger(
     keep_state=None,
     **kwargs
 ):
+    """
+    Build an event from scratch.
+    """
 
     if not timestamp:
         timestamp = int(time())

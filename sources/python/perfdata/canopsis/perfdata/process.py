@@ -17,11 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from canopsis.task.core import register_task
 
 from canopsis.perfdata.manager import PerfData
-from canopsis.context.manager import Context
+from canopsis.context_graph.manager import ContextGraph
 
 from copy import deepcopy
 
@@ -33,6 +34,10 @@ perfdatamgr = PerfData()
 def event_processing(engine, event, manager=None, logger=None, **kwargs):
     """Perfdata engine synchronous processing.
     """
+
+    # if the event does not have a resource, no perfdata can be created.
+    if "resource" not in event:
+        return None
 
     if manager is None:
         manager = perfdatamgr
@@ -46,7 +51,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
 
     # Parse perfdata
     if perf_data:
-        logger.debug(' + perf_data: {0}'.format(perf_data))
+        logger.debug(u' + perf_data: {0}'.format(perf_data))
 
         try:
             perf_data_array += manager.parse_perfdata(perf_data)
@@ -58,7 +63,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
                 )
             )
 
-    logger.debug(' + perf_data_array: {0}'.format(perf_data_array))
+    logger.debug(u' + perf_data_array: {0}'.format(perf_data_array))
 
     # Add status informations
     event_type = event.get('event_type')
@@ -67,7 +72,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
 
     if event_type is not None and event_type in handled_event_types:
 
-        logger.debug('Add status informations')
+        logger.debug(u'Add status informations')
 
         state = int(event.get('state', 0))
         state_type = int(event.get('state_type', 0))
@@ -96,7 +101,7 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             if perf_data_array_with_Nones[name] is not None
         }
 
-    logger.debug('perf_data_array: {0}'.format(perf_data_array))
+    logger.debug(u'perf_data_array: {0}'.format(perf_data_array))
 
     event = deepcopy(event)
 
@@ -112,16 +117,36 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             perf_data = perf_data.copy()
             event_with_metric = deepcopy(event)
             event_with_metric['type'] = 'metric'
-            event_with_metric[Context.NAME] = perf_data.pop('metric')
 
-            metric_id = manager.context.get_entity_id(
-                event_with_metric
-            )
+            perf_metric = perf_data['metric']
+
+            event_with_metric[ContextGraph.NAME] = perf_data.pop('metric')
+
+            encoded_event_with_metric = {}
+            for k, v in event_with_metric.items():
+                try:
+                    k = k.encode('utf-8')
+                except Exception:
+                    pass
+                try:
+                    v = v.encode('utf-8')
+                except Exception:
+                    pass
+                encoded_event_with_metric[k] = v
+
+            if encoded_event_with_metric["source_type"][0:14] ==\
+               "task_importctx":
+                metric_id = encoded_event_with_metric["source_type"]
+            else:
+                metric_id = manager.context.get_id(encoded_event_with_metric)
+
             value = perf_data.pop('value', None)
+
+            encoded_event_with_metric['perf_metric'] = perf_metric
 
             manager.put(
                 metric_id=metric_id, points=[(timestamp, value)],
-                meta=perf_data, cache=True
+                meta=perf_data, cache=True, event=encoded_event_with_metric
             )
 
     return event

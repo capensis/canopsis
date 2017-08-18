@@ -1,0 +1,43 @@
+NAME="erlang"
+
+function build(){
+	BASE="otp_src_$VERSION"
+	cd $SRC_PATH/externals
+
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tar.gz"
+	fi
+	cd  $BASE
+
+	export MAKEFLAGS=""
+
+	if [ -e Makefile ]
+	then
+		echo "   + Clean ..."
+		launch_log $NAME "make clean"
+		check_code $?
+	fi
+
+	echo "   + Configure ..."
+	launch_log $NAME "./configure --prefix=$PREFIX"
+	check_code $?
+
+	echo "   + Build ..."
+	rm -Rf build/ &> /dev/null
+	launch_log $NAME "make ${MAKEFLAGS}"
+	check_code $?
+}
+
+function install(){
+	BASE="otp_src_$VERSION"
+	cd $SRC_PATH/externals/$BASE
+
+	if [ ! -e 'build' ]; then
+		mkdir -p build
+		launch_log $NAME "make DESTDIR=$PWD/build/ install"
+		check_code $? 'Impossible to install erlang ...'
+	fi
+	
+	launch_log $NAME "cp -Rf build/$PREFIX/* $PREFIX/"
+	check_code $? 'Impossible to copy binaries ...'
+}

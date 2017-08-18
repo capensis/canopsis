@@ -22,63 +22,48 @@ from canopsis.storage.core import Storage
 
 
 class TimedStorage(Storage):
-    """
-    Store dedicated to manage timed data.
-    It saves one value at one timestamp.
-    Two consecutives timestamp values can not be same values.
-    """
+    """Storage dedicated to manage timed data."""
 
     __datatype__ = 'timed'
 
-    class Index:
-
-        TIMESTAMP = 0
-        VALUE = 1
-        DATA_ID = 2
-
-    DATA_ID = 'data_id'
-    VALUE = 'value'
     TIMESTAMP = 'timestamp'
+    VALUES = 'values'
+    PERIOD = 'period'
+    LAST_UPDATE = 'last_update'
+
+    def count(self, data_id, timewindow=None, tags=None):
+        """Get number of timed documents for input data_id."""
+
+        raise NotImplementedError()
+
+    def size(self, data_id=None, timewindow=None, tags=None, *args, **kwargs):
+        """Get size occupied by research filter data_id."""
+
+        raise NotImplementedError()
 
     def get(
-        self, data_ids, timewindow=None, limit=0, skip=0, sort=None
+            self, data_id, timewindow=None, limit=0, skip=0, sort=None,
+            tags=None
     ):
-        """
-        Get a dictionary of sorted list of triplet of dictionaries such as :
-
-        dict(
-            tuple(
-                timestamp,
-                dict(data_type, data_value), data id))
-
-        If timewindow is None, result is all timed document.
-
-        :return:
-        :rtype: dict of tuple(float, dict, str)
-        """
+        """Get a list of points."""
 
         raise NotImplementedError()
 
-    def count(self, data_id):
-        """
-        Get number of timed documents for input data_id.
-        """
+    def put(self, data_id, points, tags=None, cache=False):
+        """Put timed points in a timed collection with specific timed values.
 
-        raise NotImplementedError()
-
-    def put(self, data_id, value, timestamp, cache=False):
-        """
-        Put a dictionary of value by name in collection.
-
+        :param points: iterable of (timestamp, value).
+        :param list tags: indexed tags of points.
         :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def remove(self, data_ids, timewindow=None, cache=False):
-        """
-        Remove timed_data existing on input timewindow.
+    def remove(self, data_id, timewindow=None, cache=False, tags=None):
+        """Remove timed data related to data_id and timewindow.
 
+        :param canopsis.timeserie.timewindow.TimeWindow timewindow: Default
+            remove all timed data with input period.
         :param bool cache: use query cache if True (False by default).
         """
 

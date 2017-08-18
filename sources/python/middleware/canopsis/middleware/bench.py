@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.parameters import Parameter, Configuration
+from canopsis.configuration.model import Parameter, Configuration
 from canopsis.common.utils import lookup
 from canopsis.middleware.registry import MiddlewareRegistry
 

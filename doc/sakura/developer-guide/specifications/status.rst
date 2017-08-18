@@ -11,7 +11,7 @@ Possible statuses
 * 1 - On going
 * 2 - Stealthy
 * 3 - Bagot
-* 4 - cancel
+* 4 - Cancel
 
 
 *Off*
@@ -29,7 +29,7 @@ An Event is considered ``On going`` if its *Criticity* is in an alert state (> 0
 
 An Event is considered ``Stealthy`` if its *Criticity* changed from alert to stable in a specified amount of time.
 If the said Event has its *Criticity* changed again within the specified time, it is still considered ``Stealthy``.
-An Event will stay ``Stealthy`` for a specified time (See *stealthy_show_time*) and will then be ``Off`` if the last state was 0, ``On Going`` if it was an alert, or ``Bagot`` if it qualifies as such.
+An Event will stay ``Stealthy`` for a specified time (See *stealthy_show*) and will then be ``Off`` if the last state was 0, ``On Going`` if it was an alert, or ``Bagot`` if it qualifies as such.
 
 *Bagot*
 ~~~~~~~
@@ -71,7 +71,7 @@ A `statusmanagement` crecord is needed for the configuration of the time interva
                         "enum": ["statusmanagement"],
                         "required": true
                 },
-                
+
                 "restore_event": {
                         "type": "boolean",
                         "required": true,
@@ -86,7 +86,7 @@ A `statusmanagement` crecord is needed for the configuration of the time interva
                         "type": "number",
                         "required": true
                 },
-                
+
                 "stealthy_time": {
                         "type": "number",
                         "required": true

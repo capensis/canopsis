@@ -40,7 +40,7 @@ class AuthKeyBackend(BaseBackend):
                 user = self.do_auth()
 
                 if user and not self.install_account(user['_id'], user):
-                    self.logger.error('User {0} not allowed'.format(
+                    self.logger.error(u'User {0} not allowed'.format(
                         user['_id']
                     ))
 
@@ -66,7 +66,7 @@ class AuthKeyBackend(BaseBackend):
             user = self.session.get_user()
 
         if not user:
-            self.logger.error('Authentication failed for authkey: {0}'.format(
+            self.logger.error(u'Authentication failed for authkey: {0}'.format(
                 authkey
             ))
 

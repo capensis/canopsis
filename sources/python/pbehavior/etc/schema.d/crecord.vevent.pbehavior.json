@@ -1,0 +1,25 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["dtstart", "dtend", "rrule", "duration"]
+    },{
+        "title": "Behaviors",
+        "keys": ["behaviors"]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["pbehavior"],
+            "required": true
+        },
+        "rrule": {
+            "required": false,
+            "type": "string",
+            "role": "rrule"
+        },
+        "behaviors": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

@@ -32,3 +32,4 @@ Canopsis Specification
 
    FR/index
    TR/index
+   ED/index

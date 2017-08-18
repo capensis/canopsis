@@ -26,6 +26,7 @@ from time import time
 
 from canopsis.common.init import basestring, PYVER
 from canopsis.common.utils import ensure_unicode, forceUTF8
+from canopsis.monitoring.parser import PerfDataParser
 
 
 class engine(Engine):
@@ -93,15 +94,42 @@ class engine(Engine):
         elif not isinstance(tags, list):
             event['tags'] = []
 
-        event["timestamp"] = int(event.get("timestamp", time()))
+        event['timestamp'] = int(event.get('timestamp', time()))
 
-        event["state"] = event.get("state", 0)
-        event["state_type"] = event.get("state_type", 1)
-        event["event_type"] = event.get("event_type", "check")
+        try:
+            event['state'] = int(event.get('state', 0))
+        except AttributeError:
+            self.logger.error('state convertion failed')
+            event['state'] = 0
+        event['state_type'] = event.get('state_type', 1)
+        event['event_type'] = event.get('event_type', 'check')
 
         default_status = 0 if not event["state"] else 1
-        event["status"] = event.get("status", default_status)
+        event['status'] = event.get("status", default_status)
 
         event['output'] = event.get('output', '')
+
+        # Get perfdata
+        perf_data = event.get('perf_data')
+        perf_data_array = event.get('perf_data_array')
+
+        if perf_data_array is None:
+            perf_data_array = []
+
+        # Parse perfdata
+        if perf_data:
+            self.logger.debug(u' + perf_data: {0}'.format(perf_data))
+
+            try:
+                perf_data_array += PerfDataParser(perf_data).perf_data_array
+
+            except Exception as err:
+                self.logger.error(
+                    "Impossible to parse perfdata from: {0} ({1})".format(
+                        event, err
+                    )
+                )
+
+            event['perf_data_array'] = perf_data_array
 
         return event

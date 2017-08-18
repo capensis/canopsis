@@ -13,7 +13,6 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	launch_cmd 0 supervisorctl update
 
 	mkdir -p $PREFIX/etc/collectd.d
 	check_code $?

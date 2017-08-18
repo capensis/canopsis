@@ -1,0 +1,45 @@
+#!/bin/bash
+
+NAME="nodejs"
+VERSION="4.4.4"
+RELEASE=0
+DESCRIPTION=""
+REQUIRES="canohome"
+
+function pre_install() {
+    echo "Pre-install $NAME $VERSION-$RELEASE ..."
+    check_code $? 
+}
+
+function post_install() {
+    echo "Post-install $NAME $VERSION-$RELEASE ..."
+
+    launch_cmd 0 "npm cache clear"
+
+    check_code $? 
+}
+
+function pre_remove() {
+    echo "Pre-remove $NAME $VERSION-$RELEASE ..."
+    check_code $?
+}
+
+function post_remove() {
+    echo "Post-remove $NAME $VERSION-$RELEASE ..."
+    check_code $?
+}
+
+function pre_update() {
+    echo "Pre-update $NAME $VERSION-$RELEASE ..."
+    check_code $?
+}
+
+function post_update() {
+    echo "Post-update $NAME $VERSION-$RELEASE ..."
+    check_code $?
+}
+
+function purge() {
+    echo "Purge $NAME $VERSION-$RELEASE ..."
+    check_code $?
+}

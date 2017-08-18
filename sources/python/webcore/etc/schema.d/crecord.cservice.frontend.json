@@ -1,0 +1,61 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["title", "cfilter_allow_only_optimized_filters", "defaultview", "safe_mode"]
+	},{
+		"title": "Login",
+		"keys": ["login_footer"]
+	},{
+		"title": "Editors",
+		"keys": ["editors"]
+	},{
+		"title": "Key bindings",
+		"keys": ["keybindings"]
+	}],
+	"properties": {
+		"title": {
+			"type": "string"
+		},
+		"cfilter_allow_only_optimized_filters": {
+			"type": "boolean",
+			"default": true
+		},
+		"safe_mode": {
+			"type": "boolean",
+			"default": true
+		},
+		"debug_mode": {
+			"type": "boolean",
+			"default": true
+		},
+		"login_footer": {
+			"type": "string",
+			"default": ""
+		},
+		"defaultview": {
+			"title": "Default view",
+			"description": "The view to display when users log in",
+			"type": "string",
+			"role": "restobject",
+			"schemaType":"userviewsimplemodel",
+			"valueField":"id",
+			"labelField":"crecord_name"
+		},
+		"editors": {
+			"title": "Editors",
+			"description": "Editor overrides for schema types",
+			"type": "object",
+			"role": "simpledict"
+		},
+		"keybindings": {
+			"title": "Key bindings",
+			"description": "Web application key bindings",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "stringpair"
+			}
+		}
+	}
+}

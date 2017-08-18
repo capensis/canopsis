@@ -25,9 +25,9 @@ graph nodes in order to execute theirs tasks.
 """
 
 from canopsis.common.utils import singleton_per_scope
-from canopsis.vevent.manager import VEventManager
-from canopsis.context.manager import Context
+from canopsis.context_graphe.manager import ContextGraph
 from canopsis.task.core import register_task
+from canopsis.vevent.manager import VEventManager
 
 
 @register_task('vevent.event_processing')
@@ -42,10 +42,9 @@ def event_processing(event, veventmanager=None, **params):
     # initialiaze veventmanager
     if veventmanager is None:
         veventmanager = singleton_per_scope(VEventManager)
-    context = singleton_per_scope(Context)
+    context = singleton_per_scope(ContextGraph)
     # get source from the event
-    entity = context.get_entity(event)
-    source = context.get_entity_id(entity)
+    source = context.get_id(event)
     # get vevent from the event
     vevent = event[VEventManager.VEVENT]
     # add event information into veventmanager

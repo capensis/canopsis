@@ -22,15 +22,16 @@ How to try ?
 
 You can try Canopsis on demo platform:
 
-* Master branch (stable): http://sakura.canopsis.org
-* Devel branch (unstable): coming soon
+* Master branch (stable): http://sakura.canopsis.net
+* Devel branch (unstable): http://sakura-devel.canopsis.net
+
 
 How to install ?
 ----------------
 
-* Easy way (on `Debian 6 & ulterior`, `CentOS 6`, `Ubuntu 12.04 & ulterior` 64Bits) : `Install from sources <https://git.canopsis.net/canopsis/canopsis/blob/master/doc/sakura/administrator-guide/setup/install-from-sources.rst>`_
+* Easy way (on `Debian 7 & ulterior`, `CentOS 7`, `Ubuntu 12.04 & ulterior` 64Bits) : :ref:`admin-setup-install`
 
-* Coming soon : With Ansible playbooks
+* Coming soon : With Ansible playbooks, stay tuned !
 
 
 How to connect ?
@@ -47,11 +48,11 @@ Or any other source from : `Others <https://git.canopsis.net/canopsis-connectors
 How to use ?
 ------------
 
-See `Canopsis doc section <http://www.canopsis.org/learn>`_ or `directly <https://git.canopsis.net/canopsis/canopsis/tree/master/doc/sakura>`_
+See :ref:`Canopsis user guide <user>`.
 
 Links
 -----
 
-* Doc: https://canopsis.org/learn
+* Doc: https://canopsis.readthedocs.io
 * Community: http://www.canopsis.org
 * Forum (french) : http://forums.monitoring-fr.org/index.php?board=127.0

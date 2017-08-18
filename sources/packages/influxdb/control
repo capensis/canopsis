@@ -1,0 +1,45 @@
+#!/bin/bash
+
+NAME="influxdb"
+VERSION=0.10.1
+RELEASE=1
+DESCRIPTION=""
+REQUIRES="canohome python canolibs"
+
+function pre_install(){
+	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function post_install(){
+	echo "Post-install $NAME $VERSION-$RELEASE ..."
+	mkdir -p $PREFIX/var/log/influxdb
+	mkdir -p $PREFIX/var/lib/influxdb
+	chown $HUSER -R $PREFIX/var/log/influxdb
+	chown $HUSER -R $PREFIX/var/lib/influxdb
+}
+
+function pre_remove(){
+	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
+	launch_cmd 0 service influxdb stop
+}
+
+function post_remove(){
+	echo "Post-remove $NAME $VERSION-$RELEASE ..."
+}
+
+function pre_update(){
+	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	launch_cmd 0 service influxdb stop
+}
+
+function post_update(){
+	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function purge(){
+	echo "Purge $NAME $VERSION-$RELEASE ..."
+	rm -Rf $PREFIX/var/lib/influxdb
+	rm -Rf $PREFIX/var/log/influxdb
+}

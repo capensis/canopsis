@@ -2,6 +2,9 @@ log/
 externals/pylibs/*/
 packages/*/files.lst
 packages/*/files.tgz
+packages/influxdb/blacklist
+packages/nodejs/blacklist
+packages/webcore-deps/blacklist
 */draft
 */drafts
 externals/*/

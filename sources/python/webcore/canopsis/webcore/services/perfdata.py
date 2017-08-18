@@ -18,23 +18,27 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from bottle import request
+
 from canopsis.common.ws import route
+from canopsis.common.utils import singleton_per_scope
 from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.timeserie.core import TimeSerie
-
-manager = PerfData()
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
 def exports(ws):
 
-    @route(ws.application.post, payload=['metric_id', 'timewindow'])
-    def perfdata_count(metric_id, timewindow=None):
+    manager = singleton_per_scope(PerfData)
+
+    @route(ws.application.post, payload=['metric_id', 'timewindow', 'meta'])
+    def perfdata_count(metric_id, timewindow=None, meta=None):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
         result = manager.count(
-            metric_id=metric_id, timewindow=timewindow
+            metric_id=metric_id, timewindow=timewindow, meta=meta
         )
 
         return result
@@ -44,11 +48,12 @@ def exports(ws):
         payload=[
             'metric_id', 'with_meta',
             'limit', 'skip', 'period',
-            'timewindow', 'period', 'timeserie'
-        ])
+            'timewindow', 'period', 'timeserie', 'sliding_time'
+        ]
+    )
     def perfdata(
         metric_id, timewindow=None, period=None, with_meta=True,
-        limit=0, skip=0, timeserie=None
+        limit=0, skip=0, timeserie=None, meta=None, sliding_time=False
     ):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
@@ -71,72 +76,47 @@ def exports(ws):
         result = []
 
         for metric_id in metrics:
-            pts, meta = manager.get(
+            # meta -> _meta
+            pts, _meta = manager.get(
                 metric_id=metric_id, with_meta=True,
-                timewindow=timewindow, limit=limit, skip=skip
+                timewindow=timewindow, limit=limit, skip=skip,
+                meta=meta, sliding_time=sliding_time
             )
-            meta = meta[0]
+
+            _meta['data_id'] = metric_id
 
             if timeserie is not None:
-                pts = timeserie.calculate(pts, timewindow, meta=meta)
+                pts = timeserie.calculate(pts, timewindow, meta=_meta)
 
             if with_meta:
                 result.append({
-                    "points": pts,
-                    "meta": meta
+                    'points': pts,
+                    'meta': _meta
                 })
 
             else:
                 result.append({
-                    "points": pts
+                    'points': pts
                 })
 
         return (result, len(result))
 
-    @route(ws.application.post, payload=['timewindow', 'limit', 'sort'])
-    def perfdata_meta(metric_id, timewindow=None, limit=0, sort=None):
-        if timewindow is not None:
-            timewindow = TimeWindow(**timewindow)
-
-        result = manager.get_meta(
-            metric_id=metric_id, timewindow=timewindow, limit=limit, sort=sort
-        )
-
-        return result
-
-    @route(ws.application.put, payload=[
-        'metric_id', 'points', 'meta'
-    ])
+    @route(ws.application.put, payload=['metric_id', 'points', 'meta'])
     def perfdata(metric_id, points, meta=None):
-        manager.put(
-            metric_id=metric_id, points=points, meta=meta
-        )
+        manager.put(metric_id=metric_id, points=points, meta=meta)
 
         result = points
 
         return result
 
-    @route(ws.application.delete, payload=[
-        'metric_id', 'with_meta', 'timewindow'
-    ])
-    def perfdata(metric_id, with_meta=False, timewindow=None):
+    @route(ws.application.delete, payload=['metric_id', 'timewindow', 'meta'])
+    def perfdata(metric_id, timewindow=None, meta=None):
         if timewindow is not None:
             timewindow = TimeWindow(**timewindow)
 
-        manager.remove(
-            metric_id=metric_id, with_meta=with_meta,
-            timewindow=timewindow
-        )
+        manager.remove(metric_id=metric_id, timewindow=timewindow, meta=meta)
 
         result = None
-
-        return result
-
-    @route(ws.application.put, payload=['metric_id', 'meta', 'timestamp'])
-    def perfdata_meta(metric_id, meta, timestamp=None):
-        result = manager.put_meta(
-            metric_id=metric_id, meta=meta, timestamp=timestamp
-        )
 
         return result
 
@@ -151,3 +131,20 @@ def exports(ws):
         result = manager.is_internal(metric)
 
         return result
+
+    @ws.application.get('/api/v2/perfdata/metric')
+    def get_context_metric():
+        """
+        Fetch metric informations.
+        """
+        limit = request.query.limit or 10000
+        start = request.query.start or 0
+        try:
+            limit = int(limit)
+            start = int(start)
+        except:
+            gen_json_error({'description': 'cannot parse parameters'})
+
+        rep = manager.get_metric_infos(limit, start)
+
+        return gen_json(rep)

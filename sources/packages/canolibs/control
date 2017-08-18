@@ -16,8 +16,6 @@ function pre_install(){
 }
 
 function post_install(){
-	launch_cmd 0 supervisorctl update
-
 	echo "   + Update python-logging.conf"
 	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
 
@@ -26,6 +24,9 @@ function post_install(){
 	echo "   + Create logdir for engines"
 	mkdir -p $PREFIX/var/log/engines
 	check_code $?
+
+	echo "   + Update supervisord"
+	launch_cmd 0 supervisorctl update
 
 	echo "   + Fix permissions"
 	chown -R $HUSER:$HGROUP $PREFIX/etc

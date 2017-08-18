@@ -42,7 +42,7 @@ class engine(Engine):
             namespace='events', account=Account(user="root", group="root"))
 
     def beat(self):
-        self.logger.debug('entered in cancel BEAT')
+        self.logger.debug(u'entered in cancel BEAT')
 
     def work(self, event, *args, **kargs):
 

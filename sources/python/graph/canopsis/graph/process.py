@@ -45,7 +45,7 @@ def event_processing(event, ctx=None, **params):
     if ctx is None:
         ctx = {}
 
-    entity = context.get_entity(event)
+    entity = context.get_entity_old(event)
 
     if entity is not None:
         entity_id = context.get_entity_id(entity)

@@ -54,11 +54,7 @@ def exports(ws):
             if ename is not None:
                 identifier = 'name'
 
-                # Specific cases :
-                if etype == 'downtime':
-                    identifier = 'id'
-
-                elif etype == 'ack':
+                if etype == 'ack':
                     identifier = 'timestamp'
 
                 efilter[identifier] = ename
