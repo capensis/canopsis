@@ -33,11 +33,13 @@ from canopsis.common.utils import get_rrule_freq
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
+from canopsis.tracer.manager import TracerManager
 
 context_manager = ContextGraph()
 alarm_manager = Alerts()
 alarmreader_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
+tracer_manager = TracerManager()
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
@@ -242,6 +244,19 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
             return True
     return False
 
+def check_baseline(merged_eids_tracer, watcher_depends):
+    """
+    cehck if the watcher has an entity with a baseline active
+
+    :param set merged_eids_tracer: all entities withan active baseline
+    :param list watcher_depends: watcher entities
+    :return bool:true if the watcher has an entity with an active active_baseline
+    """
+    for entity_id in watcher_depends:
+        if entity_id in merged_eids_tracer:
+            return True
+    return False
+
 
 def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
@@ -286,6 +301,18 @@ def exports(ws):
         merged_pbehaviors_eids = set([])
         next_run_dict = {}
         watchers = []
+        baseline_tracers = []
+        merged_eids_tracer = []
+
+        active_baseline_tracer = tracer_manager.get(
+            {
+                'triggered_by': 'baseline',
+                'extra.active': True
+            }
+        )
+        for tracer in active_baseline_tracer:
+            merged_eids_tracer = merged_eids_tracer + tracer['impact_entities']
+        merged_eids_tracer = set(merged_eids_tracer)
 
         actives_pb = pbehavior_manager.get_all_active_pbehaviors()
         for pb in actives_pb:
@@ -365,6 +392,7 @@ def exports(ws):
             truc = watcher_status(watcher, merged_pbehaviors_eids)
             enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
             enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
+            enriched_entity['has_baseline'] = check_baseline(merged_eids_tracer, watcher['depends'])
             tmp_next_run = get_next_run_alert(watcher.get('depends', []), next_run_dict)
             if tmp_next_run:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
