@@ -20,6 +20,7 @@ class TraceNotFound(TraceError):
 class TraceSetError(TraceError):
     pass
 
+
 class Trace(FastEnum):
 
     TRIGGERED_BY = 'triggered_by'
@@ -71,7 +72,9 @@ class TracerManager(MiddlewareRegistry):
         if res.get('ok', 0) != 1.0:
             raise TraceSetError('put result: {}'.format(res))
 
-    def update_trace_entities(self, _id, impact_entities):
+        return res
+
+    def add_trace_entities(self, _id, impact_entities):
         """
         Update impact_entities of a trace.
 
@@ -81,14 +84,19 @@ class TracerManager(MiddlewareRegistry):
         trace = self.get_by_id(_id)
 
         entities = set(trace[Trace.IMPACT_ENTITIES])
+
+        len_before_update = len(entities)
+
         for entity_id in impact_entities:
             entities.add(entity_id)
 
-        trace[Trace.IMPACT_ENTITIES] = list(entities)
+        if len_before_update != len(entities):
+            trace[Trace.IMPACT_ENTITIES] = list(entities)
+            return self.storage.put_element(trace)
 
-        self.storage.put_element(trace)
+        return None
 
-    def update_trace_extra(self, _id, extra):
+    def set_trace_extra(self, _id, extra):
         """
         Update extra informations of a trace. This a simple replace,
         no merge is processed.
@@ -100,15 +108,19 @@ class TracerManager(MiddlewareRegistry):
 
         trace[Trace.EXTRA] = extra
 
-        self.storage.put_element(trace)
+        return self.storage.put_element(trace)
+
+    def del_trace(self, _id):
+        return self.storage.remove_elements(filter_={Trace.ID: _id})
 
     def get_by_id(self, _id):
         """
         :param str _id: trace id
         :rtype dict: trace
+        :raises TraceNotFound: no trace with given _id
         """
         query = {Trace.ID: _id}
-        res = list(self.storage.get_elements(query=query))
+        res = self.get(_filter=query)
 
         if len(res) == 0:
             raise TraceNotFound('no trace found with id {}'.format(_id))
