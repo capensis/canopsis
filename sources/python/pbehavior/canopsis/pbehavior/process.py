@@ -39,6 +39,7 @@ RESOURCE = 'resource'
 SELECTOR = 'selector'
 CONNECTOR = 'connector'
 CONNECTOR_NAME = 'connector_name'
+DEFAULT_AUTHOR = 'Default Author'
 
 TEMPLATE = '/{}/{}/{}/{}'
 TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
@@ -47,27 +48,7 @@ watcher_manager = Watcher()
 
 
 def get_entity_id(event):
-    source_type = event['source_type']
-
-    if source_type == COMPONENT:
-        first_word = COMPONENT
-    elif source_type == RESOURCE:
-        first_word = RESOURCE
-    else:
-        first_word = SELECTOR
-
-    args = [first_word, event.get(CONNECTOR, ''), event.get(CONNECTOR_NAME, '')]
-
-    template = TEMPLATE
-    if first_word == RESOURCE:
-        template = TEMPLATE_RESOURCE
-        args.append(event.get(COMPONENT, ''))
-
-    args.append(event.get(first_word, ''))
-
-    entity_id = template.format(*args)
-
-    return entity_id
+    return ContextGraph.get_id(event)
 
 
 @register_task
@@ -87,12 +68,12 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
         filter = {'_id': entity_id}
         if event.get('action') == PBEHAVIOR_CREATE:
             result = pbm.create(
-                event['pbehavior_name'], filter, event['author'],
+                event['pbehavior_name'], filter, event.get('author', DEFAULT_AUTHOR),
                 event['start'], event['end'],
                 connector=event['connector'],
                 comments=event.get('comments', None),
                 connector_name=event['connector_name'],
-                rrule=event['rrule']
+                rrule=event.get('rrule', None)
             )
             if not result:
                 logger.error(ERROR_MSG.format(event['action'], event))
@@ -107,7 +88,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 PBehavior.NAME: event['pbehavior_name'],
                 PBehavior.TSTART: event['start'],
                 PBehavior.TSTOP: event['end'],
-                PBehavior.RRULE: event['rrule'],
+                PBehavior.RRULE: event.get('rrule', None),
                 PBehavior.CONNECTOR: event['connector'],
                 PBehavior.CONNECTOR_NAME: event['connector_name'],
             })
