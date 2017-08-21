@@ -20,9 +20,11 @@
 
 from logging import ERROR
 from uuid import uuid4
+
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.mongo.core import MongoCursor
 
 CATEGORY = 'RIGHTS'
 
@@ -313,9 +315,9 @@ class Rights(MiddlewareRegistry):
         # Do nothing if it already exists
         if self.get_group(group_name):
             self.logger.error(
-                'Can not create group, group {0} already exists'.format(
-                    group_name)
-                )
+                'Can not create group, group {0} already exists'
+                .format(group_name)
+            )
             return None
 
         new_group = {
@@ -355,8 +357,8 @@ class Rights(MiddlewareRegistry):
         # Do nothing if it already exists
         if self.get_profile(p_name):
             self.logger.error(
-                'Can not create group, group {0} already exists'
-                .format(group_name)
+                'Can not create profil, profil {0} already exists'
+                .format(p_name)
             )
             return None
 
@@ -977,9 +979,13 @@ class Rights(MiddlewareRegistry):
 
         entity = self[e_type + '_storage'].get_elements(ids=e_id)
 
-        if entity and not isinstance(entity, list):
+        if isinstance(entity, MongoCursor):
+            entity = list(entity)[0]
+
+        if e_id is not None and entity is not None:
             for key in fields:
                 entity[key] = fields[key]
+
             return self[e_type + '_storage'].put_element(
                 _id=e_id, element=entity
             )
