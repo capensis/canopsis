@@ -118,6 +118,9 @@ def exports(ws):
         """
         ws.logger.info('Delete watcher : {}'.format(watcher_id))
 
-        deletion_dict = watcher.delete_watcher(watcher_id=watcher_id)
+        try:
+            result = gen_json(watcher.delete_watcher(watcher_id=watcher_id))
+        except ValueError, ex:
+            result = gen_json_error({'description': str(ex)}, HTTP_ERROR)
 
-        return gen_json(deletion_dict)
+        return result
