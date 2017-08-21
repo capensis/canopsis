@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import os
 import sys
 
@@ -11,6 +16,10 @@ class Configuration(SimpleConf):
         """
         Load configuration file regarding available paths from sys.path
         when conf_path isn't an absolute path.
+
+        :param str conf_path: the file location
+        :param object driver_cls: the class to use to read the file
+        :rtype: dict
         """
         conf_file = None
 

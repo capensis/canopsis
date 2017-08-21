@@ -1,10 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # https://github.com/Leryan/leryan.types/tree/v0.0.17
 
 from __future__ import unicode_literals
 
 from configparser import ConfigParser, ExtendedInterpolation
-from io import StringIO
 import json
+
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 
 class ObjectDict(dict):
@@ -52,6 +59,9 @@ class ObjectDict(dict):
 
 
 class Driver(object):
+    """
+    A generic driver class.
+    """
 
     def __init__(self, fh=None, sconf=None, *args, **kwargs):
         super(Driver, self).__init__(*args, **kwargs)
@@ -109,6 +119,9 @@ class Ini(Driver):
 
 
 class Json(Driver):
+    """
+    Read a json paylod and returns configuration as a dict.
+    """
 
     def export(self):
         return json.load(self._fh)
