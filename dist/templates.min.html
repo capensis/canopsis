@@ -659,15 +659,21 @@
 </p></script>
 <script type="text/x-handlebars" data-template-name="_v_ack">{{#component-rendererack value=value}}
 {{/component-rendererack}}</script>
+<script type="text/x-handlebars" data-template-name="_v_creation_date">{{timestamp value 'f'}}
+</script>
 <script type="text/x-handlebars" data-template-name="_v_extra_details">{{#component-rendererextradetails value=value}}
 {{/component-rendererextradetails}}</script>
+<script type="text/x-handlebars" data-template-name="_v_last_update_date">{{timestamp value 'r'}}
+
+</script>
 <script type="text/x-handlebars" data-template-name="_v_pbehaviors">{{#component-rendererpbehaviors value=value}}
 {{/component-rendererpbehaviors}}</script>
 <script type="text/x-handlebars" data-template-name="_v_state">{{#component-rendererstate value=value}}
 {{/component-rendererstate}}
 </script>
-<script type="text/x-handlebars" data-template-name="_v_state_t">{{#component-rendererstatetimestamp value=value}}
-{{/component-rendererstatetimestamp}}</script>
+<script type="text/x-handlebars" data-template-name="_v_state_t">{{timestamp value 'r'}}
+
+</script>
 <script type="text/x-handlebars" data-template-name="_v_status">{{#component-rendererstatus value=value}}
 {{/component-rendererstatus}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
