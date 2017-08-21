@@ -26,7 +26,6 @@ import json
 import copy
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
-from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
@@ -35,13 +34,11 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
 context_manager = ContextGraph()
-alarm_manager = Alerts()
 alarmreader_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
-
 
 def __format_pbehavior(pbehavior):
     """Rewrite en pbehavior from db format to front format.
@@ -243,6 +240,143 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
     return False
 
 
+def route_get_watcher(start, limit, sort, watcher_filter):
+    try:
+        start = int(start)
+    except ValueError:
+        start = int(DEFAULT_START)
+    try:
+        limit = int(limit)
+    except ValueError:
+        limit = int(DEFAULT_LIMIT)
+
+    watcher_filter['type'] = 'watcher'
+    watcher_list = context_manager.get_entities(
+        query=watcher_filter,
+        limit=limit,
+        start=start,
+        sort=sort
+    )
+
+    depends_merged = set([])
+    active_pb_dict = {}
+    active_pb_dict_full = {}
+    pb_dict = {}
+    pb_dict_full = {}
+    alarm_watchers_ids = []
+    entity_watchers_ids = []
+    alarm_dict = {}
+    merged_pbehaviors_eids = set([])
+    next_run_dict = {}
+    watchers = []
+
+    raw_storage = pbehavior_manager[pbehavior_manager.PBEHAVIOR_STORAGE]._backend
+    raw_pbehaviors = list(raw_storage.find({}))
+
+    actives_pb = pbehavior_manager.get_all_active_pbehaviors()
+    for pb in actives_pb:
+        active_pb_dict[pb['_id']] = set(pb.get('eids', []))
+        active_pb_dict_full[pb['_id']] = pb
+
+    for pb in raw_pbehaviors:
+        pb_dict[pb['_id']] = set(pb.get('eids', []))
+        pb_dict_full[pb['_id']] = pb
+
+    for watcher in watcher_list:
+        for depends_id in watcher['depends']:
+            depends_merged.add(depends_id)
+        entity_watchers_ids.append(watcher['_id'])
+        alarm_watchers_ids.append(
+            '{0}/{1}'.format(watcher['_id'], watcher['name'])
+        )
+
+    active_pbehaviors = get_active_pbehaviors_on_watchers(
+        entity_watchers_ids,
+        active_pb_dict,
+        active_pb_dict_full
+    )
+
+    def get_entities_for_watcher(watcher):
+        watcher_entity_filter = json.loads(watcher['mfilter'])
+        entities = list(context_manager.get_entities(query=watcher_entity_filter))
+        eids = [e['_id'] for e in entities]
+        return set(eids)
+
+    print(pb_dict)
+
+    watcher_eids = {}
+    for watcher in watcher_list:
+        eids = get_entities_for_watcher(watcher)
+        watcher_eids[watcher['_id']] = eids
+
+    print(watcher_eids)
+
+    for eids_tab in active_pb_dict.values():
+        for eid in eids_tab:
+            merged_pbehaviors_eids.add(eid)
+
+    alarm_list = alarmreader_manager.get(filter_={})['alarms']
+
+    for alarm in alarm_list:
+        alarm_dict[alarm['d']] = alarm['v']
+
+    alerts_list_on_depends = alarmreader_manager.get(
+        filter_={'d': {'$in': list(depends_merged)}}
+    )['alarms']
+
+    for alert in alerts_list_on_depends:
+        if 'alarmfilter' in alert['v']:
+            next_run_dict[alert['d']] = alert['v']['alarmfilter']['next_run']
+
+    for watcher in watcher_list:
+        enriched_entity = {}
+        tmp_alarm = alarm_dict.get(
+            '{0}/{1}'.format(watcher['_id'], watcher['name']),
+            []
+        )
+        tmp_linklist = []
+        for k, v in watcher['links'].items():
+            tmp_linklist.append({'cat_name': k, 'links': v})
+
+        enriched_entity['entity_id'] = watcher['_id']
+        enriched_entity['infos'] = watcher['infos']
+        enriched_entity['criticity'] = watcher['infos'].get('criticity', '')
+        enriched_entity['org'] = watcher['infos'].get('org', '')
+        enriched_entity['sla_text'] = ''  # when sla
+        enriched_entity['display_name'] = watcher['name']
+        enriched_entity['state'] = {'val': 0}
+        enriched_entity['linklist'] = tmp_linklist
+        if tmp_alarm != []:
+            enriched_entity['state'] = tmp_alarm['state']
+            enriched_entity['status'] = tmp_alarm['status']
+            enriched_entity['snooze'] = tmp_alarm['snooze']
+            enriched_entity['ack'] = tmp_alarm['ack']
+            enriched_entity['connector'] = tmp_alarm['connector']
+            enriched_entity['connector_name'] = (
+                tmp_alarm['connector_name']
+            )
+            enriched_entity['component'] = tmp_alarm['component']
+            if 'resource' in tmp_alarm.keys():
+                enriched_entity['resource'] = tmp_alarm['resource']
+
+        enriched_entity["mfilter"] = watcher["mfilter"]
+
+        enriched_entity['pbehavior'] = active_pbehaviors.get(
+            watcher['_id'],
+            []
+        )
+        enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(watcher['depends'], alarm_dict)
+        truc = watcher_status(watcher, merged_pbehaviors_eids)
+        enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
+        enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
+        tmp_next_run = get_next_run_alert(watcher.get('depends', []), next_run_dict)
+        if tmp_next_run:
+            enriched_entity['automatic_action_timer'] = tmp_next_run
+
+        watchers.append(enriched_entity)
+
+    return watchers
+
 def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
@@ -260,118 +394,7 @@ def exports(ws):
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
-        try:
-            start = int(start)
-        except ValueError:
-            start = int(DEFAULT_START)
-        try:
-            limit = int(limit)
-        except ValueError:
-            limit = int(DEFAULT_LIMIT)
-
-        watcher_filter['type'] = 'watcher'
-        watcher_list = context_manager.get_entities(
-            query=watcher_filter,
-            limit=limit,
-            start=start,
-            sort=sort
-        )
-
-        depends_merged = set([])
-        active_pb_dict = {}
-        active_pb_dict_full = {}
-        alarm_watchers_ids = []
-        entity_watchers_ids = []
-        alarm_dict = {}
-        merged_pbehaviors_eids = set([])
-        next_run_dict = {}
-        watchers = []
-
-        actives_pb = pbehavior_manager.get_all_active_pbehaviors()
-        for pb in actives_pb:
-
-            active_pb_dict[pb['_id']] = set(pb.get('eids', []))
-            active_pb_dict_full[pb['_id']] = pb
-
-        for watcher in watcher_list:
-            for depends_id in watcher['depends']:
-                depends_merged.add(depends_id)
-            entity_watchers_ids.append(watcher['_id'])
-            alarm_watchers_ids.append(
-                '{0}/{1}'.format(watcher['_id'], watcher['name'])
-            )
-        active_pbehaviors = get_active_pbehaviors_on_watchers(
-            entity_watchers_ids,
-            active_pb_dict,
-            active_pb_dict_full
-        )
-        for eids_tab in active_pb_dict.values():
-            for eid in eids_tab:
-                merged_pbehaviors_eids.add(eid)
-
-        alarm_list = alarmreader_manager.get(
-            filter_={}
-        )['alarms']
-
-        for alarm in alarm_list:
-            alarm_dict[alarm['d']] = alarm['v']
-
-        alerts_list_on_depends = alarmreader_manager.get(
-            filter_={'d': {'$in': list(depends_merged)}}
-        )['alarms']
-
-        for alert in alerts_list_on_depends:
-            if 'alarmfilter' in alert['v']:
-                next_run_dict[alert['d']] = alert['v']['alarmfilter']['next_run']
-
-        for watcher in watcher_list:
-            enriched_entity = {}
-            tmp_alarm = alarm_dict.get(
-                '{0}/{1}'.format(watcher['_id'], watcher['name']),
-                []
-            )
-            tmp_linklist = []
-            for k, v in watcher['links'].items():
-                tmp_linklist.append({'cat_name': k, 'links': v})
-
-            enriched_entity['entity_id'] = watcher['_id']
-            enriched_entity['infos'] = watcher['infos']
-            enriched_entity['criticity'] = watcher['infos'].get('criticity', '')
-            enriched_entity['org'] = watcher['infos'].get('org', '')
-            enriched_entity['sla_text'] = ''  # when sla
-            enriched_entity['display_name'] = watcher['name']
-            enriched_entity['state'] = {'val': 0}
-            enriched_entity['linklist'] = tmp_linklist
-            if tmp_alarm != []:
-                enriched_entity['state'] = tmp_alarm['state']
-                enriched_entity['status'] = tmp_alarm['status']
-                enriched_entity['snooze'] = tmp_alarm['snooze']
-                enriched_entity['ack'] = tmp_alarm['ack']
-                enriched_entity['connector'] = tmp_alarm['connector']
-                enriched_entity['connector_name'] = (
-                    tmp_alarm['connector_name']
-                )
-                enriched_entity['component'] = tmp_alarm['component']
-                if 'resource' in tmp_alarm.keys():
-                    enriched_entity['resource'] = tmp_alarm['resource']
-
-            enriched_entity["mfilter"] = watcher["mfilter"]
-
-            enriched_entity['pbehavior'] = active_pbehaviors.get(
-                watcher['_id'],
-                []
-            )
-            enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(watcher['depends'], alarm_dict)
-            truc = watcher_status(watcher, merged_pbehaviors_eids)
-            enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
-            enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
-            tmp_next_run = get_next_run_alert(watcher.get('depends', []), next_run_dict)
-            if tmp_next_run:
-                enriched_entity['automatic_action_timer'] = tmp_next_run
-
-            watchers.append(enriched_entity)
-
-        return gen_json(watchers)
+        return gen_json(route_get_watcher(limit, start, sort, watcher_filter))
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
     def weatherwatchers(watcher_id):
