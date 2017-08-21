@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# https://github.com/Leryan/leryan.types/tree/v0.0.17
+
 from __future__ import unicode_literals
 
 import os

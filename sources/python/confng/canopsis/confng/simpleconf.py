@@ -6,8 +6,11 @@ from __future__ import unicode_literals
 import os
 import sys
 
+from canopsis.common import root_path
 from canopsis.confng.vendor import SimpleConf
 
+class ConfigurationFileNotFound(Exception):
+    pass
 
 class Configuration(SimpleConf):
 
@@ -27,13 +30,12 @@ class Configuration(SimpleConf):
             conf_file = conf_path
 
         else:
-            for path in sys.path:
+            fpath = os.path.join(root_path, conf_path)
 
-                fpath = os.path.join(path, conf_path)
-
-                if os.path.isfile(fpath):
-                    conf_file = fpath
-                    break
+            if os.path.isfile(fpath):
+                conf_file = fpath
+            else:
+                raise ConfigurationFileNotFound(fpath)
 
         conf = {}
         with open(conf_file, 'r') as fh:

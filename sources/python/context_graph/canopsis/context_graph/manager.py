@@ -19,6 +19,7 @@ from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 
 CONF_PATH = 'context_graph/manager.conf'
+CONFNG_PATH = 'etc/{}'.format(CONF_PATH)
 CONTEXT_CAT = 'CONTEXTGRAPH'
 CTX_HYPERLINK = "hypertextlink_conf"
 INFOSFILTER_CAT = "INFOS_FILTER"
@@ -301,7 +302,7 @@ class ContextGraph(MiddlewareRegistry):
 
         # For links building
         self.at_manager = AssociativeTableManager(logger=self.logger)
-        parser = Configuration.load(conf_path=CONF_PATH, driver_cls=Ini)
+        parser = Configuration.load(conf_path=CONFNG_PATH, driver_cls=Ini)
         self.hypertextlink_conf = parser.get(CONTEXT_CAT, {}).get(CTX_HYPERLINK, "")
         if self.hypertextlink_conf != "":
             atable = self.at_manager.get(self.hypertextlink_conf)

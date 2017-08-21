@@ -26,7 +26,7 @@ from canopsis.confng.simpleconf import Configuration
 from canopsis.confng.vendor import Ini
 from canopsis.middleware.core import Middleware
 
-CONF_PATH = 'common/associative_table.conf'
+CONF_PATH = 'etc/common/associative_table.conf'
 AT_CAT = 'ASSOCIATIVE_TABLE'
 AT_K_STORAGE = 'associative_table_storage_uri'
 
