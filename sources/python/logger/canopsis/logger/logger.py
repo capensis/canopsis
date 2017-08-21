@@ -1,10 +1,11 @@
+from __future__ import unicode_literals
+
 import os
 import logging
 
 from six import string_types
 
-from logging import FileHandler
-from logging import StreamHandler
+from logging import FileHandler, StreamHandler
 from logging.handlers import MemoryHandler
 
 from canopsis.common import root_path as canopath
@@ -15,8 +16,7 @@ class Output(object):
     @staticmethod
     def make():
         """
-        Override this method, then return a subclass
-        of logging.Handler.
+        Override this method, then return a subclass of logging.Handler.
 
         Like FileHandler, StreamHandler...
         """
@@ -25,12 +25,16 @@ class Output(object):
     @staticmethod
     def make_memory(capacity, flushlevel, target):
         """
+        Same as make(), but with a memory buffer, flushed when full or
+        on critical events.
+
         :param capacity: memory handler capacity
         :param flushlevel: memory handler flush level.
         :return: memory handler
         :rtype: MemoryHandler
         """
         return MemoryHandler(capacity, flushLevel=flushlevel, target=target)
+
 
 class OutputStream(Output):
 
@@ -43,12 +47,13 @@ class OutputStream(Output):
         """
         return StreamHandler(stream)
 
+
 class OutputFile(Output):
 
     @staticmethod
     def make(path, default_root_path=canopath):
         """
-        :param path: path to file. If relative, will use canopsis.common.root_path as prefix.
+        :param str path: path to file. If relative, will use canopsis.common.root_path as prefix.
         :return: file handler
         :rtype: logging.FileHandler
         """
@@ -64,10 +69,10 @@ class OutputFile(Output):
 
 class Logger(object):
 
-    DEFAULT_FORMAT = u"[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
+    DEFAULT_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
 
     FORMATS = {
-        logging.DEBUG: u"[%(asctime)s] [%(levelname)s] [%(name)s] [%(process)d] [%(thread)d] [%(pathname)s] [%(lineno)d] %(message)s",
+        logging.DEBUG: "[%(asctime)s] [%(levelname)s] [%(name)s] [%(process)d] [%(thread)d] [%(pathname)s] [%(lineno)d] %(message)s",
         logging.CRITICAL: DEFAULT_FORMAT,
         logging.ERROR: DEFAULT_FORMAT,
         logging.FATAL: DEFAULT_FORMAT,
@@ -95,7 +100,9 @@ class Logger(object):
         handler.setLevel(level)
 
         if memory:
-            memory_handler = output_cls.make_memory(memory_capacity, memory_flushlevel, handler)
+            memory_handler = output_cls.make_memory(memory_capacity,
+                                                    memory_flushlevel,
+                                                    handler)
             logger.addHandler(memory_handler)
 
         else:
@@ -109,12 +116,14 @@ class Logger(object):
 
     @staticmethod
     def get(name, output, output_cls=OutputFile, level=logging.INFO, fmt=None,
-            memory=False, memory_capacity=100, memory_flushlevel=logging.WARNING,
-            driver_make_args={}):
+            memory=False, memory_capacity=100,
+            memory_flushlevel=logging.WARNING, driver_make_args={}):
         """
-        :param name: logger name
-        :param output: output given to output_cls. Can be anything from a file path, a stringio or a full URI. It only has to be supported by output_cls.
-        :param output_cls: canopsis.logger.Output<output> class.
+        Return the right logger.
+
+        :param str name: logger name
+        :param str output: output given to output_cls. Can be anything from a file path, a stringio or a full URI. It only has to be supported by output_cls.
+        :param class output_cls: canopsis.logger.Output<output> class.
         :param level: logging.<LEVEL>
         :param fmt: format to apply. If None, defaults to Logger.DEFAULT_FORMAT.
         :param memory: wrap logging handler with logging.handlers.MemoryHandler.

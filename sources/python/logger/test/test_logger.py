@@ -1,8 +1,10 @@
-import unittest
-import tempfile
-import os
+from __future__ import unicode_literals
+
 import logging
 import logging.handlers
+import os
+import tempfile
+import unittest
 
 try:
     from io import StringIO
@@ -11,6 +13,7 @@ except ImportError:
 
 from canopsis.logger import Logger, OutputFile, OutputStream
 
+
 class TestLogger(unittest.TestCase):
 
     def test_logger_stream(self):
@@ -18,8 +21,8 @@ class TestLogger(unittest.TestCase):
         output = StringIO()
         logger = Logger.get('stream', output, OutputStream)
 
-        logger.info(u'first_line')
-        logger.info(u'second_line')
+        logger.info('first_line')
+        logger.info('second_line')
 
         output.seek(0)
         log_lines = output.readlines()
@@ -31,7 +34,7 @@ class TestLogger(unittest.TestCase):
         output = StringIO()
         logger = Logger.get('ascii', output, OutputStream, level='info')
 
-        logger.info(u'fline')
+        logger.info('fline')
 
         output.seek(0)
         log_lines = output.readlines()
@@ -41,9 +44,9 @@ class TestLogger(unittest.TestCase):
     def test_logger_unicode_level(self):
 
         output = StringIO()
-        logger = Logger.get(u'unicode', output, OutputStream, level='info')
+        logger = Logger.get('unicode', output, OutputStream, level='info')
 
-        logger.info(u'fline')
+        logger.info('fline')
 
         output.seek(0)
         log_lines = output.readlines()
@@ -57,10 +60,10 @@ class TestLogger(unittest.TestCase):
         log1 = Logger.get('dedup', output, OutputStream)
         log2 = Logger.get('dedup', output, OutputStream)
 
-        log1.info(u'first_line')
-        log2.info(u'second_line')
-        log1.info(u'third_line')
-        log2.info(u'fourth_line')
+        log1.info('first_line')
+        log2.info('second_line')
+        log1.info('third_line')
+        log2.info('fourth_line')
 
         output.seek(0)
         log_lines = output.readlines()
@@ -74,12 +77,12 @@ class TestLogger(unittest.TestCase):
 
         logger = Logger.get('file', tmpf.name, OutputFile)
 
-        logger.info(u'first_line')
+        logger.info('first_line')
 
         with open(tmpf.name, 'r') as fh:
             content = fh.readlines()
             self.assertEqual(len(content), 1)
-            self.assertTrue(content[0][:-1].endswith(u'first_line'))
+            self.assertTrue(content[0][:-1].endswith('first_line'))
 
         os.unlink(tmpf.name)
 
@@ -88,23 +91,28 @@ class TestLogger(unittest.TestCase):
         output = StringIO()
 
         logger = Logger.get('memory', output, OutputStream,
-                    level=logging.INFO,
-                    memory=True, memory_capacity=2, memory_flushlevel=logging.CRITICAL)
+                            level=logging.INFO,
+                            memory=True,
+                            memory_capacity=2,
+                            memory_flushlevel=logging.CRITICAL)
 
         # under max capacity
-        logger.info(u'1')
+        logger.info('1')
         output.seek(0)
         lines = len(output.readlines())
         self.assertEqual(lines, 0)
 
         # max capacity
-        logger.info(u'2')
+        logger.info('2')
         output.seek(0)
         lines = len(output.readlines())
         self.assertEqual(lines, 2)
 
         # under max capacity but flush level
-        logger.critical(u'3')
+        logger.critical('3')
         output.seek(0)
         lines = len(output.readlines())
         self.assertEqual(lines, 3)
+
+if __name__ == '__main__':
+    unittest.main()
