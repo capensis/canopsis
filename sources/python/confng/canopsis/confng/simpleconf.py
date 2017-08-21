@@ -12,6 +12,9 @@ from canopsis.confng.vendor import SimpleConf
 class ConfigurationFileNotFound(Exception):
     pass
 
+class ConfigurationUnreachable(Exception):
+    pass
+
 class Configuration(SimpleConf):
 
     @staticmethod
@@ -22,6 +25,8 @@ class Configuration(SimpleConf):
 
         :param str conf_path: the file location
         :param object driver_cls: the class to use to read the file
+        :raises ConfigurationFileNotFound: configuration file is not present.
+        :raises ConfigurationUnreachable: cannot open configuration file.
         :rtype: dict
         """
         conf_file = None
@@ -38,8 +43,12 @@ class Configuration(SimpleConf):
                 raise ConfigurationFileNotFound(fpath)
 
         conf = {}
-        with open(conf_file, 'r') as fh:
-            driver = driver_cls(fh=fh, *args, **kwargs)
-            conf = SimpleConf.export(driver)
+
+        try:
+            with open(conf_file, 'r') as fh:
+                driver = driver_cls(fh=fh, *args, **kwargs)
+                conf = SimpleConf.export(driver)
+        except IOError, ex:
+            raise ConfigurationUnreachable(str(ex))
 
         return conf
