@@ -416,7 +416,7 @@ class AlertsReader(MiddlewareRegistry):
             sort_key='opened',
             sort_dir='DESC',
             skip=0,
-            limit=50,
+            limit=None,
             with_steps=False
     ):
         """
@@ -476,7 +476,8 @@ class AlertsReader(MiddlewareRegistry):
         query = query.sort(sort_key, sort_dir)
 
         query = query.skip(skip)
-        query = query.limit(limit)
+        if limit is not None: 
+            query = query.limit(limit)
 
         alarms = list(query)
         limited_total = len(alarms)  # Manual count is much faster than mongo's

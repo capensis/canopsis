@@ -564,8 +564,12 @@ class Alerts(MiddlewareRegistry):
         # Find the corresponding task
         try:
             task = get_task(name, cacheonly=True)
+            # FIXIT: https://git.canopsis.net/canopsis/canopsis/issues/298
+            if not callable(task):
+                raise ImportError('cannot import task "{}"'.format(name))
+
         except ImportError:
-            self.logger.warning('Unkown task {}'.format(name))
+            self.logger.debug('Unknown task {}'.format(name))
             return
 
         # Find the corresponding alarm
@@ -757,7 +761,7 @@ class Alerts(MiddlewareRegistry):
 
         alarm[self[Alerts.ALARM_STORAGE].VALUE] = new_value
         alarm['last_update_date'] = time()
-        
+
         return alarm
 
     def make_alarm(self, alarm_id, event):
