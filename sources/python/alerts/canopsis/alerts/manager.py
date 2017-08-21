@@ -564,8 +564,12 @@ class Alerts(MiddlewareRegistry):
         # Find the corresponding task
         try:
             task = get_task(name, cacheonly=True)
+            # FIXIT: https://git.canopsis.net/canopsis/canopsis/issues/298
+            if not callable(task):
+                raise ImportError('cannot import task "{}"'.format(name))
+
         except ImportError:
-            self.logger.warning('Unkown task {}'.format(name))
+            self.logger.debug('Unknown task {}'.format(name))
             return
 
         # Find the corresponding alarm
@@ -782,8 +786,8 @@ class Alerts(MiddlewareRegistry):
                 'connector_name': event['connector_name'],
                 'component': event['component'],
                 'resource': event.get('resource', None),
-                AlarmField.created_at.value: int(time()),
-                AlarmField.last_update_value.value: int(time()),
+                AlarmField.creation_date.value: int(time()),
+                AlarmField.last_update_date.value: int(time()),
                 AlarmField.state.value: None,
                 AlarmField.status.value: None,
                 AlarmField.ack.value: None,
