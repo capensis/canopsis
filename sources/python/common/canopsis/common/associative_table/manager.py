@@ -21,8 +21,9 @@
 from __future__ import unicode_literals
 
 from canopsis.common.associative_table.associative_table import AssociativeTable
-from canopsis.common.ini_parser import IniParser
 from canopsis.common.utils import is_mongo_successfull
+from canopsis.confng.simpleconf import Configuration
+from canopsis.confng.vendor import Ini
 from canopsis.middleware.core import Middleware
 
 CONF_PATH = 'common/associative_table.conf'
@@ -41,10 +42,10 @@ class AssociativeTableManager():
 
     def __init__(self, logger, storage=None, path=CONF_PATH, *args, **kwargs):
         self.logger = logger
-        self.config = IniParser(path=path, logger=self.logger)
+        self.config = Configuration.load(conf_path=path, driver_cls=Ini)
 
         if storage is None:
-            section = self.config.get(AT_CAT)
+            section = self.config.get(AT_CAT, {})
             if AT_K_STORAGE in section:
                 self.storage = Middleware.get_middleware_by_uri(
                     section[AT_K_STORAGE]
