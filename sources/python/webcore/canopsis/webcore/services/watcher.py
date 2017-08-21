@@ -56,6 +56,16 @@ def exports(ws):
         """
         Create a new watcher.
 
+        Required data:
+
+        JSON as text:
+
+        {
+            "mfilter": "JSON-encoded filter that applies on default_entities",
+            "display_name": "watcher_name",
+            "_id": "uniq_id"
+        }
+
         :returns: nothing
         """
         # element is a full Watcher (dict) to insert
@@ -68,8 +78,8 @@ def exports(ws):
 
         try:
             watcher_create = watcher.create_watcher(body=element)
-        except ValueError:
-            return gen_json_error({'description': 'value error'}, HTTP_ERROR)
+        except ValueError, ex:
+            return gen_json_error({'description': 'value error: {}'.format(ex)}, HTTP_ERROR)
         if watcher_create is None:
             return gen_json_error({'description': 'can\'t decode mfilter'}, HTTP_ERROR)
 
