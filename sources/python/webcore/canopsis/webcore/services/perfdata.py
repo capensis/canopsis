@@ -157,25 +157,31 @@ def exports(ws):
                        "data": [],
                        "success": None}
 
-        param = {}
+        rep = None
         try:
             data_error = {}
             param = json.loads(request.body.read())
             limit = int(param["limit"])
             start = int(param["start"])
+            if limit == 0:
+                limit = None
+            rep = manager.get_metric_infos(None, 0)
         except Exception as err:
             data_error = {}
-            data_error["msg"] = err.message
+            data_error["msg"] = str(err.message)
             data_error["traceback"] = "TODO"
-            data_error["type"] = type(err)
+            data_error["type"] = str(type(err))
             json_result["data"] = data_error
             json_result["total"] = 0
             json_result["success"] = False
             return json_result
 
-        rep = manager.get_metric_infos(limit, start)
+        if limit == None:
+            end = len(rep)
+        else:
+            end = start+limit
 
-        json_result["data"] = rep
+        json_result["data"] = rep[start:end]
         json_result["total"] = len(rep)
         json_result["success"] = True
         return json_result
