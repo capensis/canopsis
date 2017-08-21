@@ -2,9 +2,10 @@
 
 from __future__ import unicode_literals
 
-from io import StringIO
 from configparser import ConfigParser, ExtendedInterpolation
+from io import StringIO
 import json
+
 
 class ObjectDict(dict):
 

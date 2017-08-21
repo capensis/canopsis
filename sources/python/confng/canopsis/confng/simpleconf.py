@@ -1,7 +1,8 @@
-import sys
 import os
+import sys
 
-from canopsis.confng.vendor import SimpleConf, Ini, Json
+from canopsis.confng.vendor import SimpleConf
+
 
 class Configuration(SimpleConf):
 
