@@ -24,6 +24,10 @@ from bottle import request
 from ast import literal_eval
 import json
 import copy
+import datetime
+
+from dateutil.rrule import rruleset, rrulestr
+
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.reader import AlertsReader
@@ -239,6 +243,45 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
             return True
     return False
 
+def get_entities_for_watcher(watcher):
+    """
+    Returns entity ids for a watcher.
+
+    :param dict watcher: watcher object
+    :returns: set of entity matched by a watcher.
+    :rtype: set
+    """
+    watcher_entity_filter = json.loads(watcher['mfilter'])
+    entities = list(context_manager.get_entities(query=watcher_entity_filter))
+    eids = [e['_id'] for e in entities]
+    return set(eids)
+
+def get_pbehaviors_for_entitiy(entity_id, pbehaviors):
+    """
+    From an entity_id, find all applicable pbehaviors.
+
+    :param str entity_id: entity id
+    :param list pbehaviors: list of full pbehaviors
+    :returns: list of pbehaviors
+    :rtype: list
+    """
+    # FIXIT: perf:
+    entity_pb = []
+    for pb in pbehaviors:
+        if entity_id in set(pb['eids']):
+            entity_pb.append(pb)
+    return entity_pb
+
+def get_pb_range(pbehaviors):
+    rrset = rruleset()
+    for pb in pbehaviors:
+        rrule = rrulestr(pb['rrule'],
+            dtstart=datetime.datetime.fromtimestamp(pb['tstart']))
+        rrset.rrule(rrule)
+
+    rrset.rrule(rrulestr('FREQ=MINUTELY;BYMINUTE=0,10,20'))
+    rrset.rrule(rrulestr('FREQ=HOURLY;BYHOUR=1,2'))
+    print(rrset[:4])
 
 def route_get_watcher(start, limit, sort, watcher_filter):
     try:
@@ -270,8 +313,8 @@ def route_get_watcher(start, limit, sort, watcher_filter):
     next_run_dict = {}
     watchers = []
 
-    raw_storage = pbehavior_manager[pbehavior_manager.PBEHAVIOR_STORAGE]._backend
-    raw_pbehaviors = list(raw_storage.find({}))
+    raw_pb_storage = pbehavior_manager[pbehavior_manager.PBEHAVIOR_STORAGE]._backend
+    raw_pbehaviors = list(raw_pb_storage.find({}))
 
     actives_pb = pbehavior_manager.get_all_active_pbehaviors()
     for pb in actives_pb:
@@ -296,20 +339,15 @@ def route_get_watcher(start, limit, sort, watcher_filter):
         active_pb_dict_full
     )
 
-    def get_entities_for_watcher(watcher):
-        watcher_entity_filter = json.loads(watcher['mfilter'])
-        entities = list(context_manager.get_entities(query=watcher_entity_filter))
-        eids = [e['_id'] for e in entities]
-        return set(eids)
-
-    print(pb_dict)
-
     watcher_eids = {}
+    entity_pb = {}
     for watcher in watcher_list:
         eids = get_entities_for_watcher(watcher)
         watcher_eids[watcher['_id']] = eids
-
-    print(watcher_eids)
+        watcher_entity_pbs = []
+        for eid in eids:
+            watcher_entity_pbs.extend(get_pbehaviors_for_entitiy(eid, raw_pbehaviors))
+        pb_range = get_pb_range(watcher_entity_pbs)
 
     for eids_tab in active_pb_dict.values():
         for eid in eids_tab:
