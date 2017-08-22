@@ -366,7 +366,7 @@ def route_get_watchers(start, limit, sort, watcher_filter):
         for eid in eids:
             watcher_entity_pbs.extend(get_pbehaviors_for_entitiy(eid, raw_pbehaviors))
         pb_range = get_pb_range(watcher_entity_pbs)
-        watcher['pb_range'] = pb_range
+        watcher['pb_range'] = pb_range[:2]
 
     for eids_tab in active_pb_dict.values():
         for eid in eids_tab:
@@ -396,6 +396,7 @@ def route_get_watchers(start, limit, sort, watcher_filter):
             tmp_linklist.append({'cat_name': k, 'links': v})
 
         enriched_entity['entity_id'] = watcher['_id']
+        enriched_entity['pb_infos'] = {'range': watcher['pb_range']}
         enriched_entity['infos'] = watcher['infos']
         enriched_entity['criticity'] = watcher['infos'].get('criticity', '')
         enriched_entity['org'] = watcher['infos'].get('org', '')
