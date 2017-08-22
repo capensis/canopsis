@@ -30,6 +30,9 @@ from canopsis.timeserie.core import TimeSerie
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 NO_LIMIT = 0
+DEFAULT_LIMIT = 100
+DEFAULT_START = 0
+
 
 
 def exports(ws):
@@ -170,8 +173,8 @@ def exports(ws):
             else:
                 param = json.loads(param)
 
-            limit = int(param.get("limit", 100))
-            start = int(param.get("start", 0))
+            limit = int(param.get("limit", DEFAULT_LIMIT))
+            start = int(param.get("start", DEFAULT_START))
 
             if limit == NO_LIMIT:
                 limit = None
