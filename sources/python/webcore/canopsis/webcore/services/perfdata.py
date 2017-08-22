@@ -29,6 +29,8 @@ from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.timeserie.core import TimeSerie
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
+NO_LIMIT = 0
+
 
 def exports(ws):
 
@@ -160,10 +162,18 @@ def exports(ws):
         rep = None
         try:
             data_error = {}
-            param = json.loads(request.body.read())
-            limit = int(param["limit"])
-            start = int(param["start"])
-            if limit == 0:
+
+            param = request.body.read()
+
+            if param == "":
+                param = {}
+            else:
+                param = json.loads(param)
+
+            limit = int(param.get("limit", 100))
+            start = int(param.get("start", 0))
+
+            if limit == NO_LIMIT:
                 limit = None
             rep = manager.get_metric_infos(None, 0)
         except Exception as err:
