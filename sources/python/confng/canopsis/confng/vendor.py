@@ -36,6 +36,12 @@ class Driver(object):
 class FileDriver(Driver):
 
     def __init__(self, path, sconf=None, fh=None, default_root=root_path):
+        """
+        :param str path: absolute or relative path. if relative, will be concatenated to default_root: we do not support relative files from current workdir.
+        :param str sconf: configuration as string
+        :param file fh: file handler
+        :param str default_root: default root for relative paths
+        """
         super(FileDriver, self).__init__(path)
 
         if path is not None:
@@ -64,8 +70,7 @@ class Ini(FileDriver):
 
     def __init__(self, path=None, fh=None, sconf=None, with_interpolation=False, *args, **kwargs):
         """
-        :param fh: file-like object.
-        :param sconf: string containing INI-formatted configuration.
+        See FileDriver.__init__ doc for parameters.
         :param with_interpolation: enable ExtendedInterpolation. Default to False.
         """
 
