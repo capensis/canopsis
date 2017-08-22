@@ -28,6 +28,7 @@ def create_entity(
             'infos': infos
             }
 
+
 def create_comp(id, name, depends=[], impact=[], measurements=[], infos={}):
     """Create a component with the given parameters"""
     return create_entity(id,
@@ -60,6 +61,7 @@ def create_re(id, name, depends=[], impact=[], measurements=[], infos={}):
                          measurements,
                          infos)
 
+
 class BaseTest(TestCase):
 
     def setUp(self):
@@ -90,7 +92,7 @@ class BaseTest(TestCase):
     def tearDown(self):
         self.entities_storage.remove_elements()
         self.organisations_storage.remove_elements()
-        self.organisations_storage.remove_elements()
+        self.users_storage.remove_elements()
 
     def assertEqualEntities(self, entity1, entity2):
         sorted(entity1["depends"])
@@ -133,6 +135,7 @@ class BaseTest(TestCase):
         result = self.manager.get_entities_by_id("id")[0]
 
         self.assertEqualEntities(result, expected)
+
 
 class GetEvent(TestCase):
     """Test get_event method.
@@ -234,7 +237,7 @@ class GetEntitiesByID(BaseTest):
         entities[0]['name'] = 'conn-name1'
 
         entities[1]['_id'] = 'conn2/conn-name2'
-        entities[1]['type'] ='connector'
+        entities[1]['type'] = 'connector'
         entities[1]['name'] = 'conn-name2'
 
         entities[2]['_id'] = 'conn3/conn-name3'
@@ -286,7 +289,7 @@ class PutEntities(BaseTest):
         entities[0]['name'] = 'conn-name1'
 
         entities[1]['_id'] = 'conn2/conn-name2'
-        entities[1]['type'] ='connector'
+        entities[1]['type'] = 'connector'
         entities[1]['name'] = 'conn-name2'
 
         entities[2]['_id'] = 'conn3/conn-name3'
@@ -308,6 +311,7 @@ class PutEntities(BaseTest):
 
     def test_create_infos_filter_not_allowed_field(self):
         self._insertion_filter_test(self.manager._put_entities)
+
 
 class DeleteEntities(BaseTest):
 
@@ -499,7 +503,7 @@ class UpdateEntity(BaseTest):
 
     def test_update_other_fields(self):
         new_entity = self.ent1.copy()
-        new_entity['infos'] = {"Change":True}
+        new_entity['infos'] = {"Change": True}
 
         self.manager.update_entity(new_entity)
         result = self.manager.get_entities_by_id(self.ent1["_id"])[0]
@@ -780,78 +784,78 @@ class TestGraphRequests(BaseTest):
         res.sort()
         self.assertEqual(res, [
             {
-                u'impact': [u'e2'],
-                u'depth': 3L,
-                u'_id': u'e1',
-                u'name': u'e1',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': []
+                'impact': ['e2'],
+                'depth': 3L,
+                '_id': 'e1',
+                'name': 'e1',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': []
             }, {
-                u'impact': [u'e3'],
-                u'depth': 2L,
-                u'_id': u'e2',
-                u'name': u'e2',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e1']
+                'impact': ['e3'],
+                'depth': 2L,
+                '_id': 'e2',
+                'name': 'e2',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e1']
             }, {
-                u'impact': [u'e4'],
-                u'depth': 1L,
-                u'_id': u'e3',
-                u'name': u'e3',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e2']
+                'impact': ['e4'],
+                'depth': 1L,
+                '_id': 'e3',
+                'name': 'e3',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e2']
             }, {
-                u'impact': [],
-                u'depth': 0L,
-                u'_id': u'e4',
-                u'name': u'e4',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e3']
+                'impact': [],
+                'depth': 0L,
+                '_id': 'e4',
+                'name': 'e4',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e3']
             }
         ])
 
         res = self.manager.get_graph_depends('e4', deepness=0)['graph']
         res.sort()
         self.assertEqual(res, [{
-            u'impact': [],
-            u'depth': 0L,
-            u'_id': u'e4',
-            u'name': u'e4',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e3']
+            'impact': [],
+            'depth': 0L,
+            '_id': 'e4',
+            'name': 'e4',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e3']
         }])
 
         res = self.manager.get_graph_depends('e4', deepness=1)['graph']
         res.sort()
         self.assertEqual(res, [
             {
-                u'impact': [u'e4'],
-                u'depth': 1L,
-                u'_id': u'e3',
-                u'name': u'e3',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e2']
+                'impact': ['e4'],
+                'depth': 1L,
+                '_id': 'e3',
+                'name': 'e3',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e2']
             }, {
-                u'impact': [],
-                u'depth': 0L,
-                u'_id': u'e4',
-                u'name': u'e4',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e3']
+                'impact': [],
+                'depth': 0L,
+                '_id': 'e4',
+                'name': 'e4',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e3']
             }
         ])
 
@@ -859,215 +863,216 @@ class TestGraphRequests(BaseTest):
         res.sort()
         self.assertEqual(res, [
             {
-                u'impact': [u'e3'],
-                u'depth': 2L,
-                u'_id': u'e2',
-                u'name': u'e2',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e1']
+                'impact': ['e3'],
+                'depth': 2L,
+                '_id': 'e2',
+                'name': 'e2',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e1']
             }, {
-                u'impact': [u'e4'],
-                u'depth': 1L,
-                u'_id': u'e3',
-                u'name': u'e3',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e2']
+                'impact': ['e4'],
+                'depth': 1L,
+                '_id': 'e3',
+                'name': 'e3',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e2']
             }, {
-                u'impact': [],
-                u'depth': 0L,
-                u'_id': u'e4',
-                u'name': u'e4',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e3']
+                'impact': [],
+                'depth': 0L,
+                '_id': 'e4',
+                'name': 'e4',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e3']
             }])
 
         res = self.manager.get_graph_depends('e4', deepness=3)['graph']
         res.sort()
         self.assertEqual(res, [
             {
-                u'impact': [u'e2'],
-                u'depth': 3L,
-                u'_id': u'e1',
-                u'name': u'e1',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': []
+                'impact': ['e2'],
+                'depth': 3L,
+                '_id': 'e1',
+                'name': 'e1',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': []
             }, {
-                u'impact': [u'e3'],
-                u'depth': 2L,
-                u'_id': u'e2',
-                u'name': u'e2',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e1']
+                'impact': ['e3'],
+                'depth': 2L,
+                '_id': 'e2',
+                'name': 'e2',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e1']
             }, {
-                u'impact': [u'e4'],
-                u'depth': 1L,
-                u'_id': u'e3',
-                u'name': u'e3',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e2']
+                'impact': ['e4'],
+                'depth': 1L,
+                '_id': 'e3',
+                'name': 'e3',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e2']
             }, {
-                u'impact': [],
-                u'depth': 0L,
-                u'_id': u'e4',
-                u'name': u'e4',
-                u'infos': {},
-                u'measurements': [],
-                u'type': u'component',
-                u'depends': [u'e3']
+                'impact': [],
+                'depth': 0L,
+                '_id': 'e4',
+                'name': 'e4',
+                'infos': {},
+                'measurements': [],
+                'type': 'component',
+                'depends': ['e3']
             }
         ])
 
         res = self.manager.get_graph_impact('e1')['graph']
         res.sort()
         self.assertEqual(res, [{
-            u'impact': [u'e2'],
-            u'depth': 0L,
-            u'_id': u'e1',
-            u'name': u'e1',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': []
+            'impact': ['e2'],
+            'depth': 0L,
+            '_id': 'e1',
+            'name': 'e1',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': []
         }, {
-            u'impact': [u'e3'],
-            u'depth': 1L, u'_id':
-            u'e2', u'name': u'e2',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e1']
+            'impact': ['e3'],
+            'depth': 1L, '_id':
+            'e2', 'name': 'e2',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e1']
         }, {
-            u'impact': [u'e4'],
-            u'depth': 2L,
-            u'_id': u'e3',
-            u'name': u'e3',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e2']
+            'impact': ['e4'],
+            'depth': 2L,
+            '_id': 'e3',
+            'name': 'e3',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e2']
         }, {
-            u'impact': [],
-            u'depth': 3L, u'_id':
-            u'e4', u'name':
-            u'e4', u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e3']
+            'impact': [],
+            'depth': 3L, '_id':
+            'e4', 'name':
+            'e4', 'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e3']
         }])
 
         res = self.manager.get_graph_impact('e1', deepness=0)['graph']
         res.sort()
         self.assertEqual(res, [{
-            u'impact': [u'e2'],
-            u'depth': 0L,
-            u'_id': u'e1',
-            u'name': u'e1',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': []
+            'impact': ['e2'],
+            'depth': 0L,
+            '_id': 'e1',
+            'name': 'e1',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': []
         }])
 
         res = self.manager.get_graph_impact('e1', deepness=1)['graph']
         res.sort()
         self.assertEqual(res,[{
-            u'impact': [u'e2'],
-            u'depth': 0L,
-            u'_id': u'e1',
-            u'name': u'e1',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': []
+            'impact': ['e2'],
+            'depth': 0L,
+            '_id': 'e1',
+            'name': 'e1',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': []
         }, {
-            u'impact': [u'e3'],
-            u'depth': 1L, u'_id':
-            u'e2', u'name': u'e2',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e1']
+            'impact': ['e3'],
+            'depth': 1L, '_id':
+            'e2', 'name': 'e2',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e1']
         }])
 
         res = self.manager.get_graph_impact('e1', deepness=2)['graph']
         res.sort()
         self.assertEqual(res, [{
-            u'impact': [u'e2'],
-            u'depth': 0L,
-            u'_id': u'e1',
-            u'name': u'e1',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': []
+            'impact': ['e2'],
+            'depth': 0L,
+            '_id': 'e1',
+            'name': 'e1',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': []
         }, {
-            u'impact': [u'e3'],
-            u'depth': 1L, u'_id':
-            u'e2', u'name': u'e2',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e1']
+            'impact': ['e3'],
+            'depth': 1L, '_id':
+            'e2', 'name': 'e2',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e1']
         }, {
-            u'impact': [u'e4'],
-            u'depth': 2L,
-            u'_id': u'e3',
-            u'name': u'e3',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e2']
+            'impact': ['e4'],
+            'depth': 2L,
+            '_id': 'e3',
+            'name': 'e3',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e2']
         }])
 
         res = self.manager.get_graph_impact('e1', deepness=3)['graph']
         res.sort()
         self.assertEqual(res, [{
-            u'impact': [u'e2'],
-            u'depth': 0L,
-            u'_id': u'e1',
-            u'name': u'e1',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': []
+            'impact': ['e2'],
+            'depth': 0L,
+            '_id': 'e1',
+            'name': 'e1',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': []
         }, {
-            u'impact': [u'e3'],
-            u'depth': 1L, u'_id':
-            u'e2', u'name': u'e2',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e1']
+            'impact': ['e3'],
+            'depth': 1L, '_id':
+            'e2', 'name': 'e2',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e1']
         }, {
-            u'impact': [u'e4'],
-            u'depth': 2L,
-            u'_id': u'e3',
-            u'name': u'e3',
-            u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e2']
+            'impact': ['e4'],
+            'depth': 2L,
+            '_id': 'e3',
+            'name': 'e3',
+            'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e2']
         }, {
-            u'impact': [],
-            u'depth': 3L, u'_id':
-            u'e4', u'name':
-            u'e4', u'infos': {},
-            u'measurements': [],
-            u'type': u'component',
-            u'depends': [u'e3']
+            'impact': [],
+            'depth': 3L, '_id':
+            'e4', 'name':
+            'e4', 'infos': {},
+            'measurements': [],
+            'type': 'component',
+            'depends': ['e3']
         }])
+
 
 class TestLeavesRequests(BaseTest):
 
@@ -1077,32 +1082,32 @@ class TestLeavesRequests(BaseTest):
 
     def test(self):
         ent1 = create_entity(
-            id = 'e1',
-            name = 'e1',
-            etype = 'component',
-            depends = [],
-            impact = ['e2']
+            id='e1',
+            name='e1',
+            etype='component',
+            depends=[],
+            impact=['e2']
         )
         ent2 = create_entity(
-            id = 'e2',
-            name = 'e2',
-            etype = 'component',
-            depends = ['e1'],
-            impact = ['e3']
+            id='e2',
+            name='e2',
+            etype='component',
+            depends=['e1'],
+            impact=['e3']
         )
         ent3 = create_entity(
-            id = 'e3',
-            name = 'e3',
-            etype = 'component',
-            depends = ['e2'],
-            impact = ['e4']
+            id='e3',
+            name='e3',
+            etype='component',
+            depends=['e2'],
+            impact=['e4']
         )
         ent4 = create_entity(
-            id = 'e4',
-            name = 'e4',
-            etype = 'component',
-            depends = ['e3'],
-            impact = []
+            id='e4',
+            name='e4',
+            etype='component',
+            depends=['e3'],
+            impact=[]
         )
 
         self.manager._put_entities(ent1)
@@ -1113,81 +1118,81 @@ class TestLeavesRequests(BaseTest):
         res = self.manager.get_leaves_depends('e4')
         self.assertEqual(res,
                          [{
-                             u'impact': [u'e2'],
-                             u'name': u'e1',
-                             u'measurements': [],
-                             u'depth': 3L,
-                             u'depends': [],
-                             u'infos': {},
-                             u'_id': u'e1',
-                             u'type': u'component'
-                           }]
+                             'impact': ['e2'],
+                             'name': 'e1',
+                             'measurements': [],
+                             'depth': 3L,
+                             'depends': [],
+                             'infos': {},
+                             '_id': 'e1',
+                             'type': 'component'
+                         }]
                          )
 
-        res = self.manager.get_leaves_depends('e4' ,deepness=0)
+        res = self.manager.get_leaves_depends('e4', deepness=0)
         self.assertEqual(res,
                          [{
-                           u'impact': [],
-                             u'name': u'e4',
-                             u'measurements': [],
-                             u'depth': 0L,
-                             u'depends': [u'e3'],
-                             u'infos': {},
-                             u'_id': u'e4',
-                             u'type': u'component'
+                             'impact': [],
+                             'name': 'e4',
+                             'measurements': [],
+                             'depth': 0L,
+                             'depends': ['e3'],
+                             'infos': {},
+                             '_id': 'e4',
+                             'type': 'component'
                          }])
 
         res = self.manager.get_leaves_depends('e4', deepness=1)
         self.assertEqual(res,
                          [{
-                             u'impact': [u'e4'],
-                             u'name': u'e3',
-                             u'measurements': [],
-                             u'depth': 1L,
-                             u'depends': [u'e2'],
-                             u'infos': {},
-                             u'_id': u'e3',
-                             u'type': u'component'
+                             'impact': ['e4'],
+                             'name': 'e3',
+                             'measurements': [],
+                             'depth': 1L,
+                             'depends': ['e2'],
+                             'infos': {},
+                             '_id': 'e3',
+                             'type': 'component'
                          }])
 
-        res = self.manager.get_leaves_depends('e4' ,deepness=2)
+        res = self.manager.get_leaves_depends('e4', deepness=2)
         self.assertEqual(res,
                          [{
-                             u'impact': [u'e3'],
-                             u'name': u'e2',
-                             u'measurements': [],
-                             u'depth': 2L,
-                             u'depends': [u'e1'],
-                             u'infos': {},
-                             u'_id': u'e2',
-                             u'type': u'component'
+                             'impact': ['e3'],
+                             'name': 'e2',
+                             'measurements': [],
+                             'depth': 2L,
+                             'depends': ['e1'],
+                             'infos': {},
+                             '_id': 'e2',
+                             'type': 'component'
                          }])
 
         res = self.manager.get_leaves_depends('e4', deepness=3)
         self.assertEqual(res,
                          [{
-                             u'impact': [u'e2'],
-                             u'name': u'e1',
-                             u'measurements': [],
-                             u'depth': 3L,
-                             u'depends': [],
-                             u'infos': {},
-                             u'_id': u'e1',
-                             u'type': u'component'
-                           }]
+                             'impact': ['e2'],
+                             'name': 'e1',
+                             'measurements': [],
+                             'depth': 3L,
+                             'depends': [],
+                             'infos': {},
+                             '_id': 'e1',
+                             'type': 'component'
+                         }]
                          )
 
         res = self.manager.get_leaves_impact('e1')
         self.assertEqual(res,
                          [{
-                             u'impact': [],
-                             u'name': u'e4',
-                             u'measurements': [],
-                             u'depth': 3L,
-                             u'depends': [u'e3'],
-                             u'infos': {},
-                             u'_id': u'e4',
-                             u'type': u'component'
+                             'impact': [],
+                             'name': 'e4',
+                             'measurements': [],
+                             'depth': 3L,
+                             'depends': ['e3'],
+                             'infos': {},
+                             '_id': 'e4',
+                             'type': 'component'
                          }])
 
 if __name__ == '__main__':

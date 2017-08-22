@@ -48,6 +48,7 @@ class AlarmField(DefaultEnum):
     alarmfilter = 'alarmfilter'  # see AlarmFilterField
     creation_date = 'creation_date'
     last_update_date = 'last_update_date'
+    initial_output = 'initial_output'
 
 
 class States(DefaultEnum):

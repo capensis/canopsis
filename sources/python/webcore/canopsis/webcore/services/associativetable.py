@@ -23,12 +23,17 @@ from __future__ import unicode_literals
 from bottle import request
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
+from canopsis.middleware.core import Middleware
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
 def exports(ws):
 
-    atmanager = AssociativeTableManager(logger=ws.logger)
+    at_storage = Middleware.get_middleware_by_uri(
+        AssociativeTableManager.STORAGE_URI
+    )
+    atmanager = AssociativeTableManager(logger=ws.logger,
+                                        collection=at_storage._backend)
 
     @ws.application.get(
         '/api/v2/associativetable/<name>'
