@@ -175,7 +175,9 @@ def exports(ws):
 
             if limit == NO_LIMIT:
                 limit = None
-            rep = manager.get_metric_infos(None, 0)
+            # 0 because I need to retreive every metrics in order to create
+            # the total field of the result
+            rep = manager.get_metric_infos(limit=None, start=0)
         except Exception as err:
             data_error = {}
             data_error["msg"] = str(err.message)
