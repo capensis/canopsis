@@ -53,17 +53,13 @@ key = un, tableau, separe, par,des,virgules"""
         self.config = Configuration.load(conf_path=conf_file,
                                          driver_cls=Ini)
 
-        r = cfg_to_array(self.config.SECTION.key)
+        r = cfg_to_array(self.config['SECTION']['key'])
 
         self.assertTrue(isinstance(r, list))
         self.assertEqual(len(r), 6)
         self.assertEqual(r[3], 'par')
 
     def _check_conf(self, sc):
-        self.assertEqual(sc.sec1.k1, 'val')
-        self.assertEqual(sc.sec1.k2, '2')
-        self.assertEqual(sc.sec2.k1, 'v')
-        self.assertEqual(sc.sec2.k2, '3')
         self.assertEqual(sc['sec1']['k1'], 'val')
         self.assertEqual(sc['sec1']['k2'], '2')
         self.assertEqual(sc['sec2']['k1'], 'v')
