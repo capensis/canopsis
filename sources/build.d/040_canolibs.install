@@ -2,6 +2,8 @@ NAME="canolibs"
 
 PROJECTS=()
 PROJECTS+=('common')
+PROJECTS+=('confng')
+PROJECTS+=('logger')
 PROJECTS+=('old')
 PROJECTS+=('configuration')
 PROJECTS+=('timeserie')
