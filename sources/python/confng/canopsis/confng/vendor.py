@@ -37,10 +37,17 @@ class FileDriver(Driver):
 
     def __init__(self, path, sconf=None, fh=None, default_root=root_path):
         """
+        Used conf follow this preference order:
+
+            path
+            sconf
+            fh
+
         :param str path: absolute or relative path. if relative, will be concatenated to default_root: we do not support relative files from current workdir.
         :param str sconf: configuration as string
         :param file fh: file handler
         :param str default_root: default root for relative paths
+        :raises ValueError: path, sconf and fh are None
         """
         super(FileDriver, self).__init__(path)
 
