@@ -273,17 +273,35 @@ def get_pbehaviors_for_entitiy(entity_id, pbehaviors):
     return entity_pb
 
 def get_pb_range(pbehaviors):
+    """
+    Get the widest pbehavior range from all pbehaviors.
+    :param list pbehaviors: list of pbehavior objects.
+    :returns: tstart_min, tstop_max, rruleset
+    """
     rrset = rruleset()
+
+    tstart_min = None
+    tstop_max = None
+    tstarts = []
+    tstops = []
+
     for pb in pbehaviors:
+        tstarts.append(pb['tstart'])
+        tstops.append(pb['tstop'])
+
         rrule = rrulestr(pb['rrule'],
             dtstart=datetime.datetime.fromtimestamp(pb['tstart']))
         rrset.rrule(rrule)
 
-    rrset.rrule(rrulestr('FREQ=MINUTELY;BYMINUTE=0,10,20'))
-    rrset.rrule(rrulestr('FREQ=HOURLY;BYHOUR=1,2'))
-    print(rrset[:4])
+    if len(tstarts) > 0:
+        tstart_min = min(tstarts)
 
-def route_get_watcher(start, limit, sort, watcher_filter):
+    if len(tstops) > 0:
+        tstop_max = max(tstops)
+
+    return tstart_min, tstop_max, rrset
+
+def route_get_watchers(start, limit, sort, watcher_filter):
     try:
         start = int(start)
     except ValueError:
@@ -348,6 +366,7 @@ def route_get_watcher(start, limit, sort, watcher_filter):
         for eid in eids:
             watcher_entity_pbs.extend(get_pbehaviors_for_entitiy(eid, raw_pbehaviors))
         pb_range = get_pb_range(watcher_entity_pbs)
+        watcher['pb_range'] = pb_range
 
     for eids_tab in active_pb_dict.values():
         for eid in eids_tab:
@@ -432,7 +451,7 @@ def exports(ws):
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
-        return gen_json(route_get_watcher(limit, start, sort, watcher_filter))
+        return gen_json(route_get_watchers(limit, start, sort, watcher_filter))
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
     def weatherwatchers(watcher_id):
