@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import json
+
 from bottle import request
 
 from canopsis.common.ws import route
@@ -26,6 +28,11 @@ from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.timeserie.core import TimeSerie
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+
+NO_LIMIT = 0
+DEFAULT_LIMIT = 100
+DEFAULT_START = 0
+
 
 
 def exports(ws):
@@ -148,3 +155,48 @@ def exports(ws):
         rep = manager.get_metric_infos(limit, start)
 
         return gen_json(rep)
+
+    @ws.application.post('/api/context/metric')
+    def context_metric():
+        json_result = {"total": None,
+                       "data": [],
+                       "success": None}
+
+        rep = None
+        try:
+            data_error = {}
+
+            param = request.body.read()
+
+            if param == "":
+                param = {}
+            else:
+                param = json.loads(param)
+
+            limit = int(param.get("limit", DEFAULT_LIMIT))
+            start = int(param.get("start", DEFAULT_START))
+
+            if limit == NO_LIMIT:
+                limit = None
+            # 0 because I need to retreive every metrics in order to create
+            # the total field of the result
+            rep = manager.get_metric_infos(limit=None, start=0)
+        except Exception as err:
+            data_error = {}
+            data_error["msg"] = str(err.message)
+            data_error["traceback"] = "TODO"
+            data_error["type"] = str(type(err))
+            json_result["data"] = data_error
+            json_result["total"] = 0
+            json_result["success"] = False
+            return json_result
+
+        if limit == None:
+            end = len(rep)
+        else:
+            end = start+limit
+
+        json_result["data"] = rep[start:end]
+        json_result["total"] = len(rep)
+        json_result["success"] = True
+        return json_result

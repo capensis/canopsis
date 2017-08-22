@@ -288,4 +288,9 @@ class PerfData(MiddlewareRegistry):
                 }
                 metric_infos.append(dict_)
 
-        return metric_infos[start:start+limit]
+        if limit == None:         # No limit
+            end = len(metric_infos)
+        else:
+            end = start + limit
+
+        return metric_infos[start:end]
