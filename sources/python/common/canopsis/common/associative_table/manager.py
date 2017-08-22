@@ -21,13 +21,7 @@
 from __future__ import unicode_literals
 
 from canopsis.common.associative_table.associative_table import AssociativeTable
-from canopsis.common.ini_parser import IniParser
 from canopsis.common.utils import is_mongo_successfull
-from canopsis.middleware.core import Middleware
-
-CONF_PATH = 'common/associative_table.conf'
-AT_CAT = 'ASSOCIATIVE_TABLE'
-AT_K_STORAGE = 'associative_table_storage_uri'
 
 NAME = 'name'
 CONTENT = 'content'
@@ -39,21 +33,11 @@ class AssociativeTableManager():
     table name.
     """
 
-    def __init__(self, logger, storage=None, path=CONF_PATH, *args, **kwargs):
-        self.logger = logger
-        self.config = IniParser(path=path, logger=self.logger)
+    STORAGE_URI = 'mongodb-default-associativetable://'
 
-        if storage is None:
-            section = self.config.get(AT_CAT)
-            if AT_K_STORAGE in section:
-                self.storage = Middleware.get_middleware_by_uri(
-                    section[AT_K_STORAGE]
-                )
-            else:
-                self.logger.error('Cannot read {} parameter in configuration'
-                                  .format(AT_K_STORAGE))
-        else:
-            self.storage = storage
+    def __init__(self, logger, collection, *args, **kwargs):
+        self.logger = logger
+        self.collection = collection
 
     def create(self, table_name):
         """
@@ -67,7 +51,7 @@ class AssociativeTableManager():
             CONTENT: {}
         }
         self.logger.info('Creating associative table "{}".'.format(table_name))
-        self.storage._backend.insert(base)
+        self.collection.insert(base)
 
         return AssociativeTable(table_name=table_name, content={})
 
@@ -81,7 +65,7 @@ class AssociativeTableManager():
         query = {
             NAME: {"$eq": table_name}
         }
-        table = self.storage._backend.find(query)
+        table = self.collection.find(query)
 
         if table.count() > 0:
             content = list(table.limit(1))[0].get(CONTENT, {})
@@ -104,7 +88,7 @@ class AssociativeTableManager():
             NAME: atable.table_name,
             CONTENT: atable.get_all()
         }
-        mongo_dict = self.storage._backend.update(find, update)
+        mongo_dict = self.collection.update(find, update)
 
         return is_mongo_successfull(mongo_dict)
 
@@ -119,6 +103,6 @@ class AssociativeTableManager():
             NAME: {"$eq": table_name}
         }
         self.logger.info('Deleting associative table: {}'.format(table_name))
-        result = self.storage._backend.remove(query)
+        result = self.collection.remove(query)
 
         return is_mongo_successfull(result)

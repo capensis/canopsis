@@ -38,7 +38,7 @@ class AssociativeTableTest(TestCase):
         )
 
         self.assoc_manager = AssociativeTableManager(logger=self.logger,
-                                                     storage=self.storage)
+                                                     collection=self.storage._backend)
 
     def tearDown(self):
         """Teardown"""

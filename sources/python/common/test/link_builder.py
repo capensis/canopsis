@@ -38,7 +38,7 @@ class LinkBuilderTest(TestCase):
         self.at_storage = Middleware.get_middleware_by_uri(
             'storage-default-testassociativetable://'
         )
-        self.at_manager = AssociativeTableManager(storage=self.at_storage,
+        self.at_manager = AssociativeTableManager(collection=self.at_storage._backend,
                                                   logger=self.logger)
 
         self.config = self.at_manager.create('test_hlm')
