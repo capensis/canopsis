@@ -6,11 +6,7 @@ from __future__ import unicode_literals
 import os
 import sys
 
-from canopsis.common import root_path
 from canopsis.confng.vendor import SimpleConf
-
-class ConfigurationFileNotFound(Exception):
-    pass
 
 class ConfigurationUnreachable(Exception):
     pass
@@ -18,37 +14,22 @@ class ConfigurationUnreachable(Exception):
 class Configuration(SimpleConf):
 
     @staticmethod
-    def load(conf_path, driver_cls, *args, **kwargs):
+    def load(path, driver_cls, *args, **kwargs):
         """
-        Load configuration file regarding available paths from sys.path
-        when conf_path isn't an absolute path.
-
-        :param str conf_path: the file location
+        :param str path: configuration location. path format depends on the driver used
         :param object driver_cls: the class to use to read the file
-        :raises ConfigurationFileNotFound: configuration file is not present.
-        :raises ConfigurationUnreachable: cannot open configuration file.
+        :param args: positional parameters for driver_cls
+        :param kwargs: named parameters for driver_cls
+        :raises ConfigurationUnreachable: cannot open configuration
         :rtype: dict
         """
         conf_file = None
-
-        if os.path.isabs(conf_path):
-            conf_file = conf_path
-
-        else:
-            fpath = os.path.join(root_path, conf_path)
-
-            if os.path.isfile(fpath):
-                conf_file = fpath
-            else:
-                raise ConfigurationFileNotFound(fpath)
-
         conf = {}
 
         try:
-            with open(conf_file, 'r') as fh:
-                driver = driver_cls(fh=fh, *args, **kwargs)
-                conf = SimpleConf.export(driver)
-        except IOError, ex:
+            driver = driver_cls(path, *args, **kwargs)
+            conf = SimpleConf.export(driver)
+        except Exception, ex:
             raise ConfigurationUnreachable(str(ex))
 
         return conf

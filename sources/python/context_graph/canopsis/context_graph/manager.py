@@ -13,8 +13,7 @@ from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
-from canopsis.confng.simpleconf import Configuration
-from canopsis.confng.vendor import Ini
+from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 

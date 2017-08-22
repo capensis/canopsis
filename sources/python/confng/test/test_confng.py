@@ -10,8 +10,9 @@ import tempfile
 from unittest import TestCase, main
 
 from canopsis.confng.helpers import cfg_to_array
-from canopsis.confng.simpleconf import Configuration, SimpleConf
-from canopsis.confng.vendor import Ini, Json
+from canopsis.confng.simpleconf import SimpleConf
+from canopsis.confng import Configuration
+from canopsis.confng import Ini, Json
 
 
 class ConfigurationTest(TestCase):
@@ -50,8 +51,7 @@ key = un, tableau, separe, par,des,virgules"""
         with open(conf_file, 'w') as f:
             f.write(content)
 
-        self.config = Configuration.load(conf_path=conf_file,
-                                         driver_cls=Ini)
+        self.config = Configuration.load(conf_file, Ini)
 
         r = cfg_to_array(self.config['SECTION']['key'])
 
@@ -73,9 +73,8 @@ key = un, tableau, separe, par,des,virgules"""
         exception = None
 
         try:
-            with open(name, 'r') as fh:
-                sc = SimpleConf.export(driver_cls(fh=fh, *args, **kwargs))
-                func_check_conf(sc)
+            sc = SimpleConf.export(driver_cls(name, *args, **kwargs))
+            func_check_conf(sc)
 
         except Exception as ex:
             exception = ex
