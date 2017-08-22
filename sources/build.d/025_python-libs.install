@@ -5,7 +5,6 @@ function build(){
 }
 
 function easy_install_all_libs() {
-    easy_install_pylib leryan.types==0.0.17
 	easy_install_pylib simplejson
 	easy_install_pylib pymongo
 	easy_install_pylib pycurl
@@ -59,6 +58,7 @@ function easy_install_all_libs() {
 	easy_install_pylib jsonschema
 	easy_install_pylib ijson
 	easy_install_pylib enum34==1.1.6
+	easy_install_pylib configparser==3.5.0
 }
 
 function install(){

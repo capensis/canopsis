@@ -9,15 +9,17 @@ import time
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.middleware.core import Middleware
 from canopsis.common.associative_table.manager import AssociativeTableManager
-from canopsis.common.ini_parser import IniParser
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
+from canopsis.confng.simpleconf import Configuration
+from canopsis.confng.vendor import Ini
 from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 
 CONF_PATH = 'context_graph/manager.conf'
+CONFNG_PATH = 'etc/{}'.format(CONF_PATH)
 CONTEXT_CAT = 'CONTEXTGRAPH'
 CTX_HYPERLINK = "hypertextlink_conf"
 INFOSFILTER_CAT = "INFOS_FILTER"
@@ -300,8 +302,8 @@ class ContextGraph(MiddlewareRegistry):
 
         # For links building
         self.at_manager = AssociativeTableManager(logger=self.logger)
-        parser = IniParser(CONF_PATH, self.logger)
-        self.hypertextlink_conf = parser.get(CONTEXT_CAT).get(CTX_HYPERLINK, "")
+        parser = Configuration.load(conf_path=CONFNG_PATH, driver_cls=Ini)
+        self.hypertextlink_conf = parser.get(CONTEXT_CAT, {}).get(CTX_HYPERLINK, "")
         if self.hypertextlink_conf != "":
             atable = self.at_manager.get(self.hypertextlink_conf)
             if atable is not None:
@@ -653,12 +655,12 @@ class ContextGraph(MiddlewareRegistry):
             with_count=with_count
         )
 
-        if with_count:  
+        if with_count:
             result = list(result[0])
             count = result[1]
         else:
             result = list(result)
-        
+
 
         # Enrich each entity with http links
         for res in result:
