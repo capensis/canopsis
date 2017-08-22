@@ -17,7 +17,7 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 Ember.Application.initializer({
-    name:'CustomSendeventMixin',
+    name:'ListalarmCustomSendeventMixin',
     after: ['MixinFactory', 'FormsUtils', 'DatesUtils', 'NotificationUtils'],
     initialize: function(container, application) {
         var Mixin = container.lookupFactory('factory:mixin');
@@ -31,7 +31,7 @@ Ember.Application.initializer({
         /**
          * @mixin sendevent
          */
-        var mixin = Mixin('customsendevent', {
+        var mixin = Mixin('listalarmcustomsendevent', {
             needs: ['application'],
             /**
              * @method init
@@ -120,7 +120,7 @@ Ember.Application.initializer({
              */
             submitEvents: function(crecords, record, event_type) {
                 var me = this;
-                var store = get(this, 'widgetDataStore') || Ember['widgetDataStore'];                
+                var store = get(this, 'widgetDataStore') || Ember['widgetDataStore'];
                 var safe_mode = this.get('controllers.application.frontendConfig.safe_mode');
                 console.log('safe_mode', safe_mode);
                 return new Ember.RSVP.Promise(function(resolve, reject) {
@@ -150,7 +150,7 @@ Ember.Application.initializer({
                             // me.updateAlarm(data.data[0].id.replace(/\..*/, ''));
                             me.updateRecord(data.data[0].id);
                             me.refreshContent();
-                            
+
                         } else {
                             console.error('error while send event', data.data.msg);
                         }
@@ -654,9 +654,9 @@ Ember.Application.initializer({
                         if(!isNone(formRecord)) {
                             record.state = get(formRecord, 'state');
                             record.output = get(formRecord, 'output');
-                            record.duration = get(formRecord, 'duration');                        
+                            record.duration = get(formRecord, 'duration');
                         }
-                        
+
                         // record.event_type = 'check';
                         // record.keep_state = true;
                         // record.state_type = 1;
@@ -767,6 +767,6 @@ Ember.Application.initializer({
                 }
             }
         });
-        application.register('mixin:customsendevent', mixin);
+        application.register('mixin:listalarmcustomsendevent', mixin);
     }
 });
