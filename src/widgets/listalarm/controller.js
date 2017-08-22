@@ -126,9 +126,13 @@ Ember.Application.initializer({
                 getValue: 'v.state',
                 name: 'state',
                 humanName: 'state'
+              },
+              {
+                getValue: 'v.extra_details',
+                name: 'extra_details',
+                humanName: 'extra details'
               }
             ],
-
 
             /**
              * @property extraDeatialsEntities
@@ -349,23 +353,6 @@ Ember.Application.initializer({
               var controller = this;
               var fields = get(this, 'fields');
               var alarmsArr = get(this, 'originalAlarms').map(function(alarm) {
-                  // alarm['pbehaviors'] = [
-                  //   {
-                  //     "dtstop": 1483311600,
-                  //     "enabled": false,
-                  //     "name": "downtime",
-                  //     "dtstart": 1483225200,
-                  //     "rrule": "FREQ=WEEKLY"
-                  //   }
-                  // ];
-                  // alarm.linklist = {
-                  //   'event_links': [
-                  //     {
-                  //       'url': 'http://tasks.info/?co=Demo',
-                  //       'label': 'test'
-                  //     }
-                  //   ]
-                  // };
                   alarm['v']['extra_details'] = {};
                   controller.get('extraDeatialsEntities').forEach(function(item) {
                     alarm['v']['extra_details'][item.name] = Ember.Object.create(alarm).get(item.value);
@@ -467,7 +454,7 @@ Ember.Application.initializer({
              */
             refreshContent: function () {
               this.set('manualUpdateAlarms', new Date().getTime());
-              
+
               // this.set('manualUpdateAlarms', new Date().getTime());
             // Not implemented because backend too long, feature not useful for this widget
             },
