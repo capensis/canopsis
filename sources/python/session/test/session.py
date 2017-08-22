@@ -20,6 +20,7 @@
 # ---------------------------------
 
 from unittest import TestCase, main
+
 from canopsis.middleware.core import Middleware
 from canopsis.session.manager import Session
 

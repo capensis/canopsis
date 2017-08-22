@@ -18,24 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.configuration.model import Parameter
-
 from time import time
 
-CONF_PATH = 'session/session.conf'
-CATEGORY = 'SESSION'
+from canopsis.confng.simpleconf import Configuration
+from canopsis.confng.vendor import Ini
+from canopsis.middleware.registry import MiddlewareRegistry
 
-CONFIG = [
-    Parameter('alive_session_duration', int),
-]
+CONF_PATH = 'etc/session/session.conf'
+DEFAULT_ALIVE_SESSION_DURATION = 300
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONFIG)
 class Session(MiddlewareRegistry):
     """
     Manage session informations.
@@ -54,6 +46,11 @@ class Session(MiddlewareRegistry):
     ):
         super(Session, self).__init__(*args, **kwargs)
 
+        self.config = Configuration.load(CONF_PATH, Ini)
+        session = self.config.get('SESSION', {})
+        self.alive_session_duration = int(session.get('alive_session_duration',
+                                                      DEFAULT_ALIVE_SESSION_DURATION))
+
         if session_storage is not None:
             self[Session.SESSION_STORAGE] = session_storage
 
@@ -62,20 +59,6 @@ class Session(MiddlewareRegistry):
 
         if perfdata_manager is not None:
             self[Session.PERFDATA_MANAGER] = perfdata_manager
-
-    @property
-    def alive_session_duration(self):
-        if not hasattr(self, '_alive_session_duration'):
-            self.alive_session_duration = None
-
-        return self._alive_session_duration
-
-    @alive_session_duration.setter
-    def alive_session_duration(self, value):
-        if value is None:
-            value = 300
-
-        self._alive_session_duration = value
 
     def keep_alive(self, username):
         """
