@@ -19,13 +19,13 @@
 
 Ember.Application.initializer({
     name: 'ListAlarmWidget',
-    after: ['NotificationUtils' ,'TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader', 'CustomfilterlistMixin', 'CustomSendeventMixin'],
+    after: ['NotificationUtils' ,'TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader', 'CustomfilterlistMixin', 'ListalarmCustomSendeventMixin'],
     initialize: function(container, application) {
             var timeWindowUtils = container.lookupFactory('utility:timewindow'),
             dataUtils = container.lookupFactory('utility:data'),
                   WidgetFactory = container.lookupFactory('factory:widget'),
                   UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
-                  SendeventMixin = container.lookupFactory('mixin:customsendevent');
+                  SendeventMixin = container.lookupFactory('mixin:listalarmcustomsendevent');
             notificationUtils = container.lookupFactory('utility:notification');
 
             mx = container.lookupFactory('mixin:customfilterlist');
@@ -467,7 +467,7 @@ Ember.Application.initializer({
              */
             refreshContent: function () {
               this.set('manualUpdateAlarms', new Date().getTime());
-              
+
               // this.set('manualUpdateAlarms', new Date().getTime());
             // Not implemented because backend too long, feature not useful for this widget
             },
