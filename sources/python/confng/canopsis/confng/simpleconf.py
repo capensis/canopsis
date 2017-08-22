@@ -29,7 +29,7 @@ class Configuration(SimpleConf):
         try:
             driver = driver_cls(path, *args, **kwargs)
             conf = SimpleConf.export(driver)
-        except Exception, ex:
+        except IOError, ex:
             raise ConfigurationUnreachable(str(ex))
 
         return conf
