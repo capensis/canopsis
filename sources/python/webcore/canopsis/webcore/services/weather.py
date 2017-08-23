@@ -274,32 +274,36 @@ def get_pbehaviors_for_entitiy(entity_id, pbehaviors):
 
 def get_pb_range(pbehaviors):
     """
-    Get the widest pbehavior range from all pbehaviors.
+    FIXIT:
+     * Implémentation "cône": trois entités indisponibles sur des plages horaires différentes, considérer le fait que les plages se touchent pour déclencher l’indispo. Exemple:
+
+       Mongo: 9-10h
+       Rabbit: 10-11h
+       Webcore: 11-12h
+
+       -> range 9-12h
+
+     * Implémentation "union":
+
+       Mongo: 10-11h
+       Rabbit: 9-11h
+       Webcore: 10-14h
+
+       -> range 9-11h
+
     :param list pbehaviors: list of pbehavior objects.
     :returns: tstart_min, tstop_max, rruleset
     """
-    rrset = rruleset()
 
-    tstart_min = None
-    tstop_max = None
-    tstarts = []
-    tstops = []
+    ranges = []
 
     for pb in pbehaviors:
-        tstarts.append(pb['tstart'])
-        tstops.append(pb['tstop'])
+        tstart = pb['tstart']
+        tstop = pb['tstop']
 
-        rrule = rrulestr(pb['rrule'],
-            dtstart=datetime.datetime.fromtimestamp(pb['tstart']))
-        rrset.rrule(rrule)
+        ranges.append((tstart, tstop))
 
-    if len(tstarts) > 0:
-        tstart_min = min(tstarts)
-
-    if len(tstops) > 0:
-        tstop_max = max(tstops)
-
-    return tstart_min, tstop_max, rrset
+    return ranges
 
 def route_get_watchers(start, limit, sort, watcher_filter):
     try:
