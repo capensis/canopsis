@@ -50,7 +50,7 @@ Ember.Application.initializer({
                     mixin_name: 'assocticket'
                 },
                 {
-                    class: 'fa fa-calendar-o',
+                    class: 'fa fa-pause',
                     internal_states: ['immutable' ,'unacked', 'acked', 'cancelled'],
                     name: 'pbehavior',
                     mixin_name: 'pbehavior'

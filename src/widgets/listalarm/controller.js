@@ -298,13 +298,11 @@ Ember.Application.initializer({
               var controller = this;
               this.set('loaded', false);
               var options = this.get('alarmSearchOptions');
-              console.error('reload original alarms with params', options);
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
 
               return DS.PromiseArray.create({
                 promise: adapter.findQuery('alerts', options).then(function (alarms) {
                   if (alarms.success) {
-                    console.error('loaded alarms: ', get(alarms, 'data.firstObject.alarms'));
                     Ember.totalAlarms = get(alarms, 'data.firstObject.total');
                     return get(alarms, 'data.firstObject.alarms');
                   } else {
@@ -449,13 +447,9 @@ Ember.Application.initializer({
             showParams: function () {
                 var controller = this;
                 var params = ["popup", "title"];
-                console.error("brick's parameters");
                 params.forEach(function(param) {
-                    console.error(param + ': ' + controller.get('model.' + param));
+                    console.log(param + ': ' + controller.get('model.' + param));
                 });
-                console.error("default_sort_column: " + controller.get('model.default_sort_column.property') + "-" + controller.get('model.default_sort_column.direction'));
-                console.error("columnts: " + controller.get('model.columns').join(' ')),
-                console.error("alarms_state_filter: " + controller.get('model.alarms_state_filter.state'))
 
             },
 
@@ -568,7 +562,7 @@ Ember.Application.initializer({
                   column['isASC'] = get(this, 'controller.default_sort_column.property');
                 } catch (err) {
                 }
-                console.error('the column "' + get(this, 'controller.default_sort_column.property') + '" was not found.');
+                console.warn('the column "' + get(this, 'controller.default_sort_column.property') + '" was not found.');
                 return column;
               }
               return column;
