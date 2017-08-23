@@ -19,17 +19,17 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+from numbers import Number
 from time import time
 
 from canopsis.common.init import basestring
-from canopsis.monitoring.parser import PerfDataParser
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
-from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.monitoring.parser import PerfDataParser
+from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 
-from numbers import Number
 
 CONF_PATH = 'perfdata/perfdata.conf'
 CATEGORY = 'PERFDATA'
@@ -288,7 +288,7 @@ class PerfData(MiddlewareRegistry):
                 }
                 metric_infos.append(dict_)
 
-        if limit == None:         # No limit
+        if limit is None:         # No limit
             end = len(metric_infos)
         else:
             end = start + limit

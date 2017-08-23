@@ -22,10 +22,10 @@ from __future__ import unicode_literals
 
 from json import dumps
 
-from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.utils import singleton_per_scope
-from canopsis.task.core import register_task
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
+from canopsis.task.core import register_task
 from canopsis.watcher.manager import Watcher
 
 
@@ -81,7 +81,6 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
             else:
                 watcher_manager.compute_watchers()
 
-
         elif event.get('action') == PBEHAVIOR_DELETE:
             result = pbm.delete(_filter={
                 PBehavior.FILTER: dumps(filter),
@@ -99,7 +98,6 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
 
         else:
             logger.error(ERROR_MSG.format(event['action'], event))
-
 
     return event
 

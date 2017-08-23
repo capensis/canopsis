@@ -18,23 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from six import string_types
 from calendar import timegm
 from datetime import datetime
 from dateutil.rrule import rrulestr
 from json import loads, dumps
+from six import string_types
 from time import time
 from uuid import uuid4
 
 from canopsis.common.utils import singleton_per_scope
-from canopsis.context_graph.manager import ContextGraph
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.registry import MiddlewareRegistry
-
-# Might be useful when dealing with rrules
-# from dateutil.rrule import rrulestr
 
 CONF_PATH = 'pbehavior/pbehavior.conf'
 CATEGORY = 'PBEHAVIOR'
@@ -150,6 +147,7 @@ class PBehaviorManager(MiddlewareRegistry):
     ):
         """
         Method creates pbehavior record
+
         :param str name: filtering options
         :param dict filter: a mongo filter that match entities from canopsis context
         :param str author: the name of the user/app that has generated the pbehavior
@@ -205,12 +203,12 @@ class PBehaviorManager(MiddlewareRegistry):
         :return list: a list of pbehavior
         """
 
-        if not isinstance(id_, (list, str, unicode)):
+        if not isinstance(id_, (list, string_types)):
             raise TypeError(self.__TYPE_ERR)
 
         if isinstance(id_, list):
             for element in id_:
-                if not isinstance(element, (str, unicode)):
+                if not isinstance(element, string_types):
                     raise TypeError(self.__TYPE_ERR)
         else:
             id_ = [id_]
@@ -439,9 +437,9 @@ class PBehaviorManager(MiddlewareRegistry):
                     )
                 )
 
-            if (len(dt_list) >= 2 and
-                fromts(event['timestamp']) >= dt_list[0] and
-                fromts(event['timestamp']) <= dt_list[-1]):
+            if (len(dt_list) >= 2
+               and fromts(event['timestamp']) >= dt_list[0]
+               and fromts(event['timestamp']) <= dt_list[-1]):
                 names.append(pb[PBehavior.NAME])
 
         result = set(pb_names).isdisjoint(set(names))
@@ -471,9 +469,9 @@ class PBehaviorManager(MiddlewareRegistry):
 
     def get_all_active_pbehaviors(self):
         now = int(time())
-        query = {'$and': [{'tstop' : {'$gt': now}}, {'tstart': {'$lt': now}}]}
+        query = {'$and': [{'tstop': {'$gt': now}}, {'tstart': {'$lt': now}}]}
 
-        ret_val= list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
+        ret_val = list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
             query=query
         ))
         return ret_val

@@ -1,20 +1,17 @@
 # -*- co ding: utf-8 -*-
 from __future__ import unicode_literals
 
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.middleware.core import Middleware
+import json
 
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.context_graph.process import create_entity
-
 from canopsis.check import Check
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
+from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 from canopsis.old.rabbitmq import Amqp
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.sla.core import Sla
-
-import json
 
 
 class Watcher(MiddlewareRegistry):
@@ -118,7 +115,6 @@ class Watcher(MiddlewareRegistry):
         if watcher is None:
             raise ValueError("No watcher found for the following"
                              " id: {}".format(watcher_id))
-
 
         if "mfilter" in watcher.keys() and "mfilter" in updated_field.keys():
             if updated_field['mfilter'] != watcher['mfilter']:
