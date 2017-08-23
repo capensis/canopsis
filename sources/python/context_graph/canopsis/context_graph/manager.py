@@ -13,8 +13,7 @@ from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
-from canopsis.confng.simpleconf import Configuration
-from canopsis.confng.vendor import Ini
+from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 
@@ -307,7 +306,7 @@ class ContextGraph(MiddlewareRegistry):
         # For links building
         self.at_manager = AssociativeTableManager(logger=self.logger,
                                                   collection=self.at_storage._backend)
-        parser = Configuration.load(conf_path=CONFNG_PATH, driver_cls=Ini)
+        parser = Configuration.load(CONFNG_PATH, Ini)
         self.hypertextlink_conf = parser.get(CONTEXT_CAT, {}).get(CTX_HYPERLINK, "")
         if self.hypertextlink_conf != "":
             atable = self.at_manager.get(self.hypertextlink_conf)
