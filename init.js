@@ -40,10 +40,11 @@
         'components/component-selectioncheckbox': 'canopsis/brick-listalarm/src/components/selectioncheckbox/template',
         'editor-pair': 'canopsis/brick-listalarm/src/editors/editor-pair',
         'editor-radio': 'canopsis/brick-listalarm/src/editors/editor-radio',
-        'pbehaviorform': 'canopsis/brick-listalarm/src/forms/pbehavior/pbehaviorform',
         'snoozeform': 'canopsis/brick-listalarm/src/forms/snooze/snoozeform',
         '_v_ack': 'canopsis/brick-listalarm/src/partials/_v_ack',
+        '_v_creation_date': 'canopsis/brick-listalarm/src/partials/_v_creation_date',
         '_v_extra_details': 'canopsis/brick-listalarm/src/partials/_v_extra_details',
+        '_v_last_update_date': 'canopsis/brick-listalarm/src/partials/_v_last_update_date',
         '_v_pbehaviors': 'canopsis/brick-listalarm/src/partials/_v_pbehaviors',
         '_v_state': 'canopsis/brick-listalarm/src/partials/_v_state',
         '_v_state_t': 'canopsis/brick-listalarm/src/partials/_v_state_t',
@@ -97,15 +98,15 @@ define([
     'ehbs!components/component-selectioncheckbox',
     'ehbs!editor-pair',
     'ehbs!editor-radio',
-    'canopsis/brick-listalarm/src/forms/pbehavior/controller',
-    'ehbs!pbehaviorform',
     'canopsis/brick-listalarm/src/forms/snooze/controller',
     'ehbs!snoozeform',
     'canopsis/brick-listalarm/src/helpers/absoluteTimeSince',
-    'canopsis/brick-listalarm/src/mixins/customsendevent',
+    'canopsis/brick-listalarm/src/mixins/listalarmcustomsendevent',
     'canopsis/brick-listalarm/src/mixins/rinfopop',
     'ehbs!_v_ack',
+    'ehbs!_v_creation_date',
     'ehbs!_v_extra_details',
+    'ehbs!_v_last_update_date',
     'ehbs!_v_pbehaviors',
     'ehbs!_v_state',
     'ehbs!_v_state_t',
@@ -116,7 +117,8 @@ define([
     'link!canopsis/brick-listalarm/src/style.css',
     'canopsis/brick-listalarm/src/widgets/listalarm/controller',
     'ehbs!listalarm',
-    'canopsis/brick-listalarm/requirejs-modules/externals.conf'
+    'canopsis/brick-listalarm/requirejs-modules/externals.conf',
+    'canopsis/brick-listalarm/requirejs-modules/i18n'
 ], function () {
     
 });

@@ -4,6 +4,8 @@ Ember.Application.initializer({
         var get = Ember.get,
             set = Ember.set,
             isNone = Ember.isNone;
+            __ = Ember.String.loc;
+
         /**
          * This is the alarmactions component for the widget listalarm
          *
@@ -48,7 +50,7 @@ Ember.Application.initializer({
                     mixin_name: 'assocticket'
                 },
                 {
-                    class: 'fa fa-calendar-o',
+                    class: 'fa fa-pause',
                     internal_states: ['immutable' ,'unacked', 'acked', 'cancelled'],
                     name: 'pbehavior',
                     mixin_name: 'pbehavior'
@@ -84,6 +86,11 @@ Ember.Application.initializer({
              */
             init: function() {
                 this._super();
+
+                // Translating tooltips
+                this.get('actionsMap').filter(function(item, index, enumerable) {
+                        Ember.set(item, 'translation', __(item.name));
+                });
               },
 
             /**
@@ -91,11 +98,9 @@ Ember.Application.initializer({
              */
             availableActions: function() {
                 var intState = this.get('internalState');
-                // return this.get('actionsMap');
                 var actions = this.get('actionsMap').filter(function(item, index, enumerable) {
                     return item.internal_states.includes(intState)
                 });
-				console.error(this.get('isSnoozed'));
                 if (this.get('isSnoozed')) {
                     actions.removeObject(actions.findBy('mixin_name', 'snooze'))
                 };

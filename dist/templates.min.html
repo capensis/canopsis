@@ -2,7 +2,7 @@
   <div class="actions-parent" style="display:flex">
 
     {{#each action in availableActions}}
-      <button {{action 'sendAction' action}} {{bind-attr title=action.name}} type="button" class="btn btn-xs btn-default">
+      <button {{action 'sendAction' action}} {{bind-attr title=action.translation}} type="button" class="btn btn-xs btn-default">
           <i {{bind-attr class=action.class}}></i>
       </button>
     {{/each}}
@@ -254,7 +254,7 @@
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstatusval">{{status}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-search"><div class='input-group input-group-sm'>
-    {{input insert-newline='search' value=value class="form-control inlineInput" placeholder="Search" type="text"}}
+    {{input insert-newline='search' value=value class="form-control inlineInput" placeholder=(tr 'Search') type="text"}}
     <span class="input-group-btn">
         <button {{action 'resetValue'}} class="btn btn-default btn-flat">
             <span class="glyphicon glyphicon-remove-circle"></span>
@@ -266,16 +266,18 @@
     {{#unless isValid}}
     <p class='search-invalid-message'>Invalid search query</p>
     {{/unless}}
-</div></script>
+</div>
+</script>
 <script type="text/x-handlebars" data-template-name="components/component-selectionactions"><div class="pull-left">
     {{tr 'Selection'}} :
     {{#each action in actionsMap}}
       <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
           <span {{bind-attr class=action.class}}></span>
-          {{action.caption}}
+          {{tr action.caption}}
       </button>
     {{/each}}
-</div></script>
+</div>
+</script>
 <script type="text/x-handlebars" data-template-name="components/component-selectioncheckbox"><div id="ember8909" class="ember-view toggle">
     <div class="icheckbox_minimal-grey" style="position: relative;">
         <input id="ember8910" class="ember-view ember-checkbox toggle" type="checkbox" style="position: absolute; opacity: 0;">
@@ -297,185 +299,6 @@
  * @editor radio
 }}
 {{component-alarmstate content=attr.value}}</script>
-<script type="text/x-handlebars" data-template-name="pbehaviorform">{{#if controller.controllers.application.runtimeConfiguration.DEBUG}}
-    <div class="panel panel-warning">
-        <div class="panel-heading">
-            <h3 class="panel-title">Debug informations</h3>
-        </div>
-        <div class="panel-body">
-            inspectedItemType: {{inspectedItemType}}
-        </div>
-    </div>
-{{/if}}
-<p>
-    {{#if controller.categories}}
-        {{partialslot slot=controller._partials.toolbar tagName="ul" classNames="nav navbar-nav pull-right"}}
-    {{else}}
-        <div class="callout callout-danger">
-            <h4>
-                <span class="glyphicon glyphicon-warning-sign"></span>
-                 {{tr 'Schema not editable'}}
-            </h4>
-            <p>
-                {{tr 'This schema is not editable'}}.
-                {{#if controller.controllers.application.runtimeConfiguration.DEBUG}}
-                    <div>TODO warn administrators that the schema does not have categories.</div>
-                {{/if}}
-            </p>
-        </div>
-    {{/if}}
-    {{#unless controller.onePageDisplay}}
-        <ul class="nav nav-tabs">
-            {{#each category in controller.categories}}
-                {{#if category.keys.length}}
-                    <li {{bind-attr class="category.isDefault:active"}} id="{{unbound category.slug}}_tab"><a href="#{{unbound category.slug}}" data-toggle="tab">{{unbound tr category.title}}</a></li>
-                {{/if}}
-            {{/each}}
-        </ul>
-    {{/unless}}
-    <!-- Tab panes -->
-    <div class="tab-content">
-        {{#each category in controller.categories}}
-            {{#if category.keys.length}}
-                {{#if controller.onePageDisplay}}
-                    <center>
-                        <h4>{{tr category.title}}</h4>
-                    </center>
-                    {{#each attr in category.keys}}
-                        {{#if attr.model.options.readOnly}}
-                            <div>
-                                {{#if attr.model.options.title}}
-                                    <span class="label" style="color:black">
-                                        <b>
-                                            {{tr attr.model.options.title}}
-                                        </b>
-                                    </span>
-                                {{else}}
-                                    {{#if attr.field}}
-                                        <span class="label" style="color:black">
-                                            <b>
-                                                {{tr attr.field}}
-                                            </b>
-                                        </span>
-                                    {{/if}}
-                                {{/if}}
-                            {{component-renderer attr=attr record=controller.formContext value=attr.value}}
-                            </div>
-                        {{else}}
-                            {{#unless attr.model.options.hiddenInForm}}
-                                <div>
-                                    {{#if attr.model.options.title}}
-                                        <span class="label" style="color:black">
-                                            {{tr attr.model.options.title}}
-                                        </span>
-                                    {{else}}
-                                        {{#if attr.field}}
-                                            <span class="label" style="color:black">
-                                                {{tr attr.field}}
-                                            </span>
-                                        {{/if}}
-                                    {{/if}}
-                                    {{component-editor attr=attr form=this editorOverrides=controller.controllers.application.frontendConfig.editors}}
-                                </div>
-                            {{/unless}}
-                        {{/if}}
-                    {{/each}}
-                    <hr/>
-                {{else}}
-                    {{#if category.isDefault}}
-                        <div class="tab-pane active" id="{{unbound category.slug}}">
-                        {{#each attr in category.keys}}
-                            {{#if attr.model.options.readOnly}}
-                                <div>
-                                    {{#if attr.model.options.title}}
-                                        <span class="label" style="color:black">
-                                            <b>
-                                                {{tr attr.model.options.title}}
-                                            </b>
-                                        </span>
-                                    {{else}}
-                                        {{#if attr.field}}
-                                            <span class="label" style="color:black">
-                                                <b>
-                                                    {{tr attr.field}}
-                                                </b>
-                                            </span>
-                                        {{/if}}
-                                    {{/if}}
-                                   {{component-renderer attr=attr record=controller.formContext value=attr.value}}
-                                </div>
-                            {{else}}
-                                <div>
-                                    {{#if attr.model.options.title}}
-                                        <span class="label" style="color:black">
-                                            <b>
-                                                {{tr attr.model.options.title}}
-                                            </b>
-                                        </span>
-                                    {{else}}
-                                        {{#if attr.field}}
-                                            <span class="label" style="color:black">
-                                                <b>
-                                                    {{tr attr.field}}
-                                                </b>
-                                            </span>
-                                        {{/if}}
-                                    {{/if}}
-                                    {{component-editor attr=attr form=this editorOverrides=controller.controllers.application.frontendConfig.editors}}
-                                </div>
-                            {{/if}}
-                        {{/each}}
-                        </div>
-                    {{else}}
-                        <div class="tab-pane" id="{{unbound category.slug}}">
-                        {{#each attr in category.keys}}
-                            {{#if attr.model.options.readOnly}}
-                                <div>
-                                    {{#if attr.model.options.title}}
-                                        <span class="label" style="color:black">
-                                            <b>
-                                                {{tr attr.model.options.title}}
-                                            </b>
-                                        </span>
-                                    {{else}}
-                                        {{#if attr.field}}
-                                            <span class="label" style="color:black">
-                                                <b>
-                                                    {{tr attr.field}}
-                                                </b>
-                                            </span>
-                                        {{/if}}
-                                    {{/if}}
-                                    {{component-renderer attr=attr record=controller.formContext}}
-                                </div>
-                            {{else}}
-                                <div>
-                                    {{#if attr.model.options.title}}
-                                        <span class="label" style="color:black">
-                                            <b>
-                                                {{tr attr.model.options.title}}
-                                            </b>
-                                        </span>
-                                    {{else}}
-                                        {{#if attr.field}}
-                                            <span class="label" style="color:black">
-                                                <b>
-                                                    {{tr attr.field}}
-                                                </b>
-                                            </span>
-                                        {{/if}}
-                                    {{/if}}
-                                    {{component-editor attr=attr form=this editorOverrides=controller.controllers.application.frontendConfig.editors}}
-                                </div>
-                            {{/if}}
-                        {{/each}}
-                        </div>
-                    {{/if}}
-                {{/if}}
-            {{/if}}
-        {{/each}}
-    </div>
-</p></script>
 <script type="text/x-handlebars" data-template-name="snoozeform">{{#if controller.controllers.application.runtimeConfiguration.DEBUG}}
     <div class="panel panel-warning">
         <div class="panel-heading">
@@ -657,15 +480,21 @@
 </p></script>
 <script type="text/x-handlebars" data-template-name="_v_ack">{{#component-rendererack value=value}}
 {{/component-rendererack}}</script>
+<script type="text/x-handlebars" data-template-name="_v_creation_date">{{timestamp value 'f'}}
+</script>
 <script type="text/x-handlebars" data-template-name="_v_extra_details">{{#component-rendererextradetails value=value}}
 {{/component-rendererextradetails}}</script>
+<script type="text/x-handlebars" data-template-name="_v_last_update_date">{{timestamp value 'r'}}
+
+</script>
 <script type="text/x-handlebars" data-template-name="_v_pbehaviors">{{#component-rendererpbehaviors value=value}}
 {{/component-rendererpbehaviors}}</script>
 <script type="text/x-handlebars" data-template-name="_v_state">{{#component-rendererstate value=value}}
 {{/component-rendererstate}}
 </script>
-<script type="text/x-handlebars" data-template-name="_v_state_t">{{#component-rendererstatetimestamp value=value}}
-{{/component-rendererstatetimestamp}}</script>
+<script type="text/x-handlebars" data-template-name="_v_state_t">{{timestamp value 'r'}}
+
+</script>
 <script type="text/x-handlebars" data-template-name="_v_status">{{#component-rendererstatus value=value}}
 {{/component-rendererstatus}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
