@@ -306,7 +306,7 @@ class ContextGraph(MiddlewareRegistry):
         # For links building
         self.at_manager = AssociativeTableManager(logger=self.logger,
                                                   collection=self.at_storage._backend)
-        parser = Configuration.load(conf_path=CONFNG_PATH, driver_cls=Ini)
+        parser = Configuration.load(CONFNG_PATH, Ini)
         self.hypertextlink_conf = parser.get(CONTEXT_CAT, {}).get(CTX_HYPERLINK, "")
         if self.hypertextlink_conf != "":
             atable = self.at_manager.get(self.hypertextlink_conf)
