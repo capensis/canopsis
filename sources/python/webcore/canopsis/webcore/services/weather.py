@@ -289,6 +289,8 @@ def get_pb_range(pbehaviors):
        Rabbit: 9-11h
        Webcore: 10-14h
 
+       Les trois applis sont indispos en même temps de 9 à 11h.
+
        -> range 9-11h
 
     :param list pbehaviors: list of pbehavior objects.
