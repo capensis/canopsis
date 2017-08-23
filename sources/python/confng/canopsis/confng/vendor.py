@@ -55,7 +55,7 @@ class FileDriver(Driver):
             conf_file = path
 
             if not os.path.isabs(path):
-                conf_file = os.path.join(default_root, conf_path)
+                conf_file = os.path.join(default_root, path)
 
             self._fh = open(conf_file, 'r')
 
