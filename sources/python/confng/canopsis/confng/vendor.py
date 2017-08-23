@@ -5,30 +5,26 @@
 
 from __future__ import unicode_literals
 
-from configparser import ConfigParser, ExtendedInterpolation
 import json
+import os
+
+from configparser import ConfigParser, ExtendedInterpolation
 
 try:
     from io import StringIO
 except ImportError:
     from StringIO import StringIO
 
+from canopsis.common import root_path
 
 class Driver(object):
     """
     A generic driver class.
     """
 
-    def __init__(self, fh=None, sconf=None, *args, **kwargs):
+    def __init__(self, url, *args, **kwargs):
         super(Driver, self).__init__(*args, **kwargs)
-
-        if fh is None and sconf is None:
-            raise ValueError('pass either a file handler or a string')
-
-        if sconf is not None and fh is None:
-            fh = StringIO(sconf)
-
-        self._fh = fh
+        self._url = url
 
     def export(self):
         """
@@ -37,21 +33,55 @@ class Driver(object):
         raise NotImplementedError()
 
 
-class Ini(Driver):
+class FileDriver(Driver):
+
+    def __init__(self, path, sconf=None, fh=None, default_root=root_path):
+        """
+        Used conf follow this preference order:
+
+            path
+            sconf
+            fh
+
+        :param str path: absolute or relative path. if relative, will be concatenated to default_root: we do not support relative files from current workdir.
+        :param str sconf: configuration as string
+        :param file fh: file handler
+        :param str default_root: default root for relative paths
+        :raises ValueError: path, sconf and fh are None
+        """
+        super(FileDriver, self).__init__(path)
+
+        if path is not None:
+            conf_file = path
+
+            if not os.path.isabs(path):
+                conf_file = os.path.join(default_root, conf_path)
+
+            self._fh = open(conf_file, 'r')
+
+        elif sconf is not None:
+            self._fh = StringIO(sconf)
+
+        elif fh is not None:
+            self._fh = fh
+
+        else:
+            raise ValueError('pass either a file path, a file handler or a string')
+
+class Ini(FileDriver):
     """
     Reads ini file and returns configuration in a dict.
 
     Supports ExtendedInterpolation.
     """
 
-    def __init__(self, fh=None, sconf=None, with_interpolation=False, *args, **kwargs):
+    def __init__(self, path=None, fh=None, sconf=None, with_interpolation=False, *args, **kwargs):
         """
-        :param fh: file-like object.
-        :param sconf: string containing INI-formatted configuration.
+        See FileDriver.__init__ doc for parameters.
         :param with_interpolation: enable ExtendedInterpolation. Default to False.
         """
 
-        super(Ini, self).__init__(fh=fh, sconf=sconf, *args, **kwargs)
+        super(Ini, self).__init__(path=path, fh=fh, sconf=sconf, *args, **kwargs)
 
         self._with_interpolation = with_interpolation
 
@@ -74,7 +104,7 @@ class Ini(Driver):
         return conf
 
 
-class Json(Driver):
+class Json(FileDriver):
     """
     Read a json paylod and returns configuration as a dict.
     """
