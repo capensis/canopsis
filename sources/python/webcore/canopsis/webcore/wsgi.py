@@ -18,48 +18,34 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
+import importlib
 import gevent
 from gevent import monkey
 monkey.patch_all()
+import os
+from signal import SIGTERM, SIGINT
+import sys
 
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
 import mongodb_beaker  # needed by beaker
 
-from canopsis.configuration.model import Parameter, ParamList
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_config
-from canopsis.configuration.configurable import Configurable
-from canopsis.common.utils import setdefaultattr
-
-# TODO: replace with canopsis.mongo.MongoStorage
-from canopsis.old.storage import get_storage
+from canopsis.confng import Configuration, Ini
+from canopsis.confng.helpers import cfg_to_array
+from canopsis.logger import Logger
 from canopsis.old.account import Account
 from canopsis.old.rabbitmq import Amqp
+# TODO: replace with canopsis.mongo.MongoStorage
+from canopsis.old.storage import get_storage
 
-from signal import SIGTERM, SIGINT
-
-import importlib
-import sys
-import os
-
-
-config = {
-    'server': (
-        Parameter('debug', parser=Parameter.bool),
-        Parameter('enable_crossdomain_send_events', parser=Parameter.bool),
-        Parameter('root_directory', parser=Parameter.path)
-    ),
-    'auth': (
-        Parameter('providers', parser=Parameter.array(), critical=True)
-    ),
-    'session': (
-        Parameter('cookie_expires', parser=int),
-        Parameter('secret'),
-        Parameter('data_dir', parser=Parameter.path)
-    ),
-    'webservices': ParamList(parser=Parameter.bool)
-}
+DEFAULT_DEBUG = False
+DEFAULT_ECSE = False
+DEFAULT_ROOT_DIR = '~/var/www/src/'
+DEFAULT_COOKIES_EXPIRE = 300
+DEFAULT_SECRET = 'canopsis'
+DEFAULT_DATA_DIR = '~/var/cache/canopsis/webcore/'
 
 
 class EnsureAuthenticated(object):
@@ -84,94 +70,56 @@ class EnsureAuthenticated(object):
         return decorated
 
 
-@add_config(config)
-@conf_paths('webserver.conf')
-class WebServer(Configurable):
-    @property
-    def debug(self):
-        return setdefaultattr(self, '_debug', False)
+class WebServer():
 
-    @debug.setter
-    def debug(self, value):
-        self._debug = value
+    CONF_PATH = 'etc/webserver.conf'
+    LOG_FILE = 'var/log/webserver.log'
 
     @property
-    def enable_crossdomain_send_events(self):
-        return setdefaultattr(self, '_crossdomain_evt', False)
-
-    @enable_crossdomain_send_events.setter
-    def enable_crossdomain_send_events(self, value):
-        self._crossdomain_evt = value
-
-    @property
-    def root_directory(self):
-        return setdefaultattr(
-            self, '_rootdir',
-            os.path.expanduser('~/var/www/src/')
-        )
-
-    @root_directory.setter
-    def root_directory(self, value):
-        value = os.path.expanduser(value)
-
-        if os.path.exists(value):
-            self._rootdir = value
-
-    @property
-    def providers(self):
-        return setdefaultattr(self, '_providers', [])
-
-    @providers.setter
-    def providers(self, value):
-        self._providers = value
-
-    @property
-    def cookie_expires(self):
-        return setdefaultattr(self, '_cookie', 300)
-
-    @cookie_expires.setter
-    def cookie_expires(self, value):
-        self._cookie = value
-
-    @property
-    def secret(self):
-        return setdefaultattr(self, '_secret', 'canopsis')
-
-    @secret.setter
-    def secret(self, value):
-        self._secret = value
-
-    @property
-    def data_dir(self):
-        return setdefaultattr(
-            self, '_datadir',
-            os.path.expanduser('~/var/cache/canopsis/webcore/')
-        )
-
-    @data_dir.setter
-    def data_dir(self, value):
-        value = os.path.expanduser(value)
-
-        if os.path.exists(value):
-            self._datadir = value
-
-    # dict properties do not need setters
-
-    @property
-    def webservices(self):
-        if not hasattr(self, '_webservices'):
-            self._webservices = {}
-
-        return self._webservices
+    def application(self):
+        return self.app
 
     @property
     def beaker_url(self):
-        return '{0}.beaker'.format(self.db.uri)
+        return '{}.beaker'.format(self.db.uri)
+
+    @property
+    def skip_login(self):
+        return [bname for bname in self.auth_backends.keys()]
+
+    @property
+    def skip_logout(self):
+        return [
+            bname
+            for bname in self.auth_backends.keys()
+            if not self.auth_backends[bname].handle_logout
+        ]
 
     def __init__(self, *args, **kwargs):
-        super(WebServer, self).__init__(*args, **kwargs)
+        self.logger = Logger.get('webserver', self.LOG_FILE)
 
-        self.log_name = 'webserver'
+        self.config = Configuration.load(self.CONF_PATH, Ini)
+
+        server = self.config.get('server', {})
+        self.debug = server.get('debug', DEFAULT_DEBUG)
+        self.enable_crossdomain_send_events = server.get('enable_crossdomain_send_events',
+                                                         DEFAULT_ECSE)
+        self.root_directory = os.path.expanduser(server.get('root_directory',
+                                                            DEFAULT_ROOT_DIR))
+
+        auth = self.config.get('auth', {})
+        self.providers = cfg_to_array(auth.get('providers', ''))
+        if len(self.providers) == 0:
+            self.logger.critical('Missing providers. Cannot launch webcore module.')
+            raise RuntimeError('Missing providers')
+
+        session = self.config.get('session', {})
+        self.cookie_expires = int(session.get('cookie_expires',
+                                              DEFAULT_COOKIES_EXPIRE))
+        self.secret = session.get('secret', DEFAULT_SECRET)
+        self.data_dir = session.get('data_dir', DEFAULT_DATA_DIR)
+
+        self.webservices = self.config.get('webservices', {})
 
         # TODO: Replace with MongoStorage
         self.db = get_storage(account=Account(user='root', group='root'))
@@ -182,20 +130,21 @@ class WebServer(Configurable):
         self.auth_backends = {}
 
     def __call__(self):
-        self.logger.info(u'Initialize gevent signal-handlers')
+        self.logger.info('Initialize gevent signal-handlers')
         gevent.signal(SIGTERM, self.exit)
         gevent.signal(SIGINT, self.exit)
 
-        self.logger.info(u'Start AMQP thread')
+        self.logger.info('Start AMQP thread')
         self.amqp.start()
 
-        self.logger.info(u'Initialize WSGI Application')
+        self.logger.info('Initialize WSGI Application')
         self.app = BottleApplication()
 
         self.load_auth_backends()
         self.load_webservices()
         self.load_session()
 
+        self.logger.info('WSGI fully loaded.')
         return self
 
     def _load_webservice(self, name):
@@ -204,7 +153,7 @@ class WebServer(Configurable):
         if name in self.webmodules:
             return True
 
-        self.logger.info(u'Loading webservice: {0}'.format(name))
+        self.logger.info('Loading webservice: {0}'.format(name))
 
         try:
             mod = importlib.import_module(modname)
@@ -241,7 +190,7 @@ class WebServer(Configurable):
         if name in self.auth_backends:
             return True
 
-        self.logger.info(u'Load authentication backend: {0}'.format(name))
+        self.logger.info('Load authentication backend: {0}'.format(name))
 
         try:
             mod = importlib.import_module(modname)
@@ -302,22 +251,6 @@ class WebServer(Configurable):
 
             sys.exit(0)
 
-    @property
-    def application(self):
-        return self.app
-
-    @property
-    def skip_login(self):
-        return [bname for bname in self.auth_backends.keys()]
-
-    @property
-    def skip_logout(self):
-        return [
-            bname
-            for bname in self.auth_backends.keys()
-            if not self.auth_backends[bname].handle_logout
-        ]
-
     def require(self, modname):
         if not self._load_webservice(modname):
             raise ImportError(
@@ -328,6 +261,7 @@ class WebServer(Configurable):
 
     class Error(Exception):
         pass
+
 
 # Declare WSGI application
 ws = WebServer()()

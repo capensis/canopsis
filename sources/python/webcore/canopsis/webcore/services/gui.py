@@ -18,9 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.template import Template
 from bottle import static_file, request, redirect
 import os
+
+from canopsis.common.template import Template
 
 
 def exports(ws):
@@ -101,8 +102,6 @@ def exports(ws):
                 {'crecord_name': {'$in': ['casconfig', 'ldapconfig']}},
                 namespace='object'
             )
-
-            prefix = len('cservice.')
 
             ws.logger.info(u'found {} cservices'.format(len(records)))
 

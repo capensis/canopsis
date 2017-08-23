@@ -19,14 +19,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest
+from unittest import TestCase, main
 
 import canopsis.auth.cas as cas
-
 import canopsis.auth.mock as mock
 
 
-class TestCASBackend(unittest.TestCase):
+class TestCASBackend(TestCase):
     def mock_canopsis(self):
         cas.get_account = mock.auth.mock_get_account
         cas.delete_session = lambda: mock.auth.mock_delete_session(self)
@@ -128,3 +127,6 @@ class TestCASBackend(unittest.TestCase):
         self.try_unauth()
 
         self.assertFalse(self.session.get('auth_on', False))
+
+if __name__ == '__main__':
+    main()

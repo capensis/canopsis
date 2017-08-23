@@ -19,15 +19,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest
+from unittest import TestCase, main
 
 from canopsis.old.account import Account
 import canopsis.auth.base as base
-
 import canopsis.auth.mock as mock
 
 
-class TestBaseBackend(unittest.TestCase):
+class TestBaseBackend(TestCase):
     def mock_canopsis(self):
         base.check_root = mock.auth.mock_check_root
         base.check_group_rights = mock.auth.mock_check_group_rights
@@ -60,3 +59,6 @@ class TestBaseBackend(unittest.TestCase):
         res = self.backend.install_account(account)
 
         self.assertFalse(res)
+
+if __name__ == '__main__':
+    main()
