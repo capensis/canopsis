@@ -651,8 +651,8 @@ class TestManager(BaseTest):
         }
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
-        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
+        self.assertDictEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
+        self.assertDictEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         # Force status to stealthy
         event1 = {
@@ -678,8 +678,8 @@ class TestManager(BaseTest):
         }
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 4)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][3], expected_status)
-        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
+        self.assertDictEqual(alarm['value'][AlarmField.steps.value][3], expected_status)
+        self.assertDictEqual(alarm['value'][AlarmField.status.value], expected_status)
 
     def test_crop_flapping_steps(self):
         # Creating alarm /component/test/test0/ut-comp1

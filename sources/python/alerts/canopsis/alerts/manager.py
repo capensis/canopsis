@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2016 "Capensis" [http://www.capensis.com]
@@ -18,19 +19,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_config
-from canopsis.configuration.model import Parameter
-
-from canopsis.timeserie.timewindow import get_offset_timewindow
-from canopsis.common.utils import ensure_iterable
-from canopsis.context_graph.manager import ContextGraph
-from canopsis.task.core import get_task
-
-from canopsis.event.manager import Event
-from canopsis.check import Check
-from canopsis.watcher.manager import Watcher
+from __future__ import unicode_literals
+from datetime import datetime
+from operator import itemgetter
+from time import time, mktime
 
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
@@ -38,10 +30,18 @@ from canopsis.alerts.status import (
     get_last_state, get_last_status,
     OFF, STEALTHY, is_stealthy, is_keeped_state
 )
-
-from datetime import datetime
-from operator import itemgetter
-from time import time, mktime
+from canopsis.check import Check
+from canopsis.common.utils import ensure_iterable
+from canopsis.configuration.configurable.decorator import conf_paths
+from canopsis.configuration.model import Parameter
+from canopsis.configuration.configurable.decorator import add_config
+from canopsis.confng import Configuration, Ini
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.event.manager import Event
+from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.task.core import get_task
+from canopsis.timeserie.timewindow import get_offset_timewindow
+from canopsis.watcher.manager import Watcher
 
 
 CONF_PATH = 'alerts/manager.conf'
@@ -49,15 +49,13 @@ ALERTS = 'ALERTS'
 ALERTS_CNT = [
     Parameter('extra_fields', Parameter.array())
 ]
-FILTER = 'FILTER'
-FILTER_CNT = [
-    Parameter('author', str),
-]
 TYPE_SELECTOR = 'selector'
+
+DEFAULT_FILTER_AUTHOR = 'system'
 
 
 @conf_paths(CONF_PATH)
-@add_config({ALERTS: ALERTS_CNT, FILTER: FILTER_CNT})
+@add_config({ALERTS: ALERTS_CNT})
 class Alerts(MiddlewareRegistry):
     """
     Alarm cycle managment.
@@ -70,6 +68,8 @@ class Alerts(MiddlewareRegistry):
     FILTER_STORAGE = 'filter_storage'
     CONTEXT_MANAGER = 'context'
     AUTHOR = 'author'
+
+    CONF_PATH = 'etc/alerts/manager.conf'
 
     @property
     def config(self):
@@ -88,17 +88,6 @@ class Alerts(MiddlewareRegistry):
             value = self.load_config()
 
         self._config = value
-
-    @property
-    def filter_config(self):
-        if not hasattr(self, '_filter_config'):
-            values = self.conf.get(FILTER)
-
-            self._filter_config = {
-                'author': values.get('author').value
-            }
-
-        return self._filter_config
 
     @property
     def alarm_filters(self):
@@ -204,6 +193,10 @@ class Alerts(MiddlewareRegistry):
             *args, **kwargs
     ):
         super(Alerts, self).__init__(*args, **kwargs)
+
+        config = Configuration.load(self.CONF_PATH, Ini)
+        filter_ = config.get('FILTER', {})
+        self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
 
         if extra_fields is not None:
             self.extra_fields = extra_fields
@@ -1105,7 +1098,7 @@ class Alerts(MiddlewareRegistry):
                 new_value = self.execute_task(name=task,
                                               event=event,
                                               entity_id=alarm_id,
-                                              author=self.filter_config['author'],
+                                              author=self.filter_author,
                                               new_state=event[vstate])
 
                 if new_value is not None:
