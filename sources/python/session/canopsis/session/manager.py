@@ -20,8 +20,7 @@
 
 from time import time
 
-from canopsis.confng.simpleconf import Configuration
-from canopsis.confng.vendor import Ini
+from canopsis.confng import Configuration, Ini
 from canopsis.middleware.registry import MiddlewareRegistry
 
 CONF_PATH = 'etc/session/session.conf'
