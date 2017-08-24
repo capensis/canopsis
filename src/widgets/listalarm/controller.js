@@ -93,7 +93,8 @@ Ember.Application.initializer({
               'last_state_change': 'v.state.t',
               'output': 'v.state.m',
               'pbehaviors': 'pbehaviors',
-              'extra_details': 'v.extra_details'
+              'extra_details': 'v.extra_details',
+              'initial_output':'v.initial_output' 
             },
 
 
@@ -333,7 +334,7 @@ Ember.Application.initializer({
              * @description Stores choosen by user fileds
              */
             fields: function() {
-              return this.parseFields(get(this, 'model.columns'));
+                return this.parseFields(get(this, 'model.columns'));
             }.property('model.columns'),
 
             /**
@@ -509,32 +510,39 @@ Ember.Application.initializer({
                   console.error('unexpected error ', err);
                   return false;
                 })
-              })
+              });
 
             },
 
             /**
              * @method parseFields
              */
-                        parseFields: function (columns) {
-              var controller = this;
-                            var fields = [];
-                            var sortColumn = this.get('model.default_sort_column.property');
-                            var order = this.get('model.default_sort_column.direction');
+            parseFields: function (columns) {
+                var controller = this;
+                var fields = [];
+                var sortColumn = this.get('model.default_sort_column.property');
+                var order = this.get('model.default_sort_column.direction');
 
-                            fields = columns.map(function(column) {
-                                var obj = {};
+                fields = columns.map(function(column) {
+                    var obj = {};
+                    if (column.startsWith('infos')){
+                        obj['name'] = column;
+                        obj['humanName'] = column;
+                        obj['isSortable'] = column == sortColumn;
+                        obj['isASC'] = order == 'ASC';
+                        obj['getValue'] = column;
+                    } else {
+                        obj['name'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
+                        obj['humanName'] = column;
+                        obj['isSortable'] = column == sortColumn;
+                        obj['isASC'] = order == 'ASC';
+                        obj['getValue'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
+                    }
+                    return obj;
+                });
 
-                                obj['name'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
-                obj['humanName'] = column;
-                                obj['isSortable'] = column == sortColumn;
-                                obj['isASC'] = order == 'ASC';
-                obj['getValue'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
-                                return obj;
-                            });
-
-                            return fields;
-                        },
+                return fields;
+            },
 
             /**
              * @property sortColumn
