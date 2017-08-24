@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.check import Check
-from canopsis.check.manager import CheckManager, InvalidState
+from canopsis.check.manager import CheckManager
 
 
 class CheckManagerTest(TestCase):
@@ -31,14 +31,9 @@ class CheckManagerTest(TestCase):
     """
 
     def setUp(self):
-        """
-        initialize a manager.
-        """
-
         self.manager = CheckManager(data_scope='test_check')
 
     def tearDown(self):
-
         self.manager.del_state()
 
 

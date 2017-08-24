@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.check import Check
 from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
 from canopsis.configuration.model import Parameter
@@ -25,7 +26,6 @@ from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.check import Check
 
 #: check manager configuration category
 CATEGORY = 'CHECK'
