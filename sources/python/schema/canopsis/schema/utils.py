@@ -18,36 +18,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from lxml.etree import parse
 from os import listdir
-
 from os.path import isfile, join
-
 from sys import prefix
 
-from lxml.etree import parse
+from canopsis.confng import Configuration, Ini
 
-from canopsis.configuration.model import Parameter
-from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths
-)
+DEFAULT_SCHEMA_LOC = 'share/canopsis/schema'
 
 
-@conf_paths('schema/schema.conf')
-@add_category('SCHEMA', content=Parameter('schema_location'))
-class SchemaManager(Configurable):
+class SchemaManager():
 
-    def __init__(self, schema_location=None, *args, **kwargs):
-        super(SchemaManager, self).__init__(*args, **kwargs)
-        self._schema_location = schema_location
+    CONF_PATH = 'etc/schema/schema.conf'
 
-    @property
-    def schema_location(self):
-        return self._schema_location
-
-    @schema_location.setter
-    def schema_location(self, value):
-        self._schema_location = value
+    def __init__(self, *args, **kwargs):
+        self.config = Configuration.load(self.CONF_PATH, Ini)
+        schema = self.config.get('SCHEMA', {})
+        self.schema_location = schema.get('schema_location', DEFAULT_SCHEMA_LOC)
 
 try:
     _schema_manager = SchemaManager()
