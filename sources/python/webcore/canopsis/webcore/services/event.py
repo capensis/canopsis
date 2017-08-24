@@ -40,8 +40,10 @@ def exports(ws):
     def send_event_post():
         try:
             events = request.json
-        except ValueError:
-            return gen_json_error({'description':'malformed JSON'}, HTTP_ERROR)
+        except ValueError as verror:
+            return gen_json_error({'description':
+                                   'malformed JSON : {0}'.format(verror)},
+                                  HTTP_ERROR)
 
         if events is None:
             return gen_json_error(
