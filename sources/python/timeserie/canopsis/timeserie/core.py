@@ -23,20 +23,20 @@
 # provide only TimeSerie
 __all__ = ['TimeSerie']
 
-from canopsis.common.init import basestring
-from canopsis.timeserie.timewindow import Period, TimeWindow
-from canopsis.timeserie.aggregation import get_aggregation, DELTA
-from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.model import Parameter
-
 from math import isnan
 
-CONF_PATH = 'timeserie/timeserie.conf'
+from canopsis.confng import Configuration, Ini
+from canopsis.timeserie.timewindow import Period, TimeWindow
+from canopsis.timeserie.aggregation import get_aggregation, DELTA
+
+DEFAULT_AGGREGATION = 'MEAN'
+DEFAULT_PERIOD = None
+DEFAULT_FILL = False
+DEFAULT_ROUND_TIME = True
+DEFAULT_MAX_POINTS = 500
 
 
-@conf_paths(CONF_PATH)
-class TimeSerie(Configurable):
+class TimeSerie():
     """
     Time serie management. Contain a period and operation of aggregation,
     and a round time and a fill boolean properties.
@@ -48,6 +48,8 @@ class TimeSerie(Configurable):
     """
 
     __slots__ = ('period', 'max_points', 'round_time', 'aggregation', 'fill')
+
+    CONF_PATH = 'etc/timeserie/timeserie.conf'
 
     MAX_POINTS = 'max_points'
     AGGREGATION = 'aggregation'
@@ -65,25 +67,31 @@ class TimeSerie(Configurable):
 
     def __init__(
             self,
-            aggregation=VDEFAULT_AGGREGATION,
-            max_points=VMAX_POINTS,
+            aggregation=None,
+            max_points=None,
             period=None,
-            round_time=VROUND_TIME,
-            fill=VFILL,
+            round_time=None,
+            fill=None,
             *args, **kwargs
     ):
-
-        super(TimeSerie, self).__init__(*args, **kwargs)
-
-        # set protected attributes
-        self._period = None
-        self._aggregation = None
-
-        self.period = period
-        self.max_points = max_points
-        self.round_time = round_time
         self.aggregation = aggregation
+        self.max_points = max_points
+        self.period = period
+        self.round_time = round_time
         self.fill = fill
+
+        self.config = Configuration.load(self.CONF_PATH, Ini)
+        timeserie = self.config.get('TIMESERIE', {})
+        if aggregation is None:
+            self.aggregation = timeserie.get('aggregation', DEFAULT_AGGREGATION).upper()
+        if period is None:
+            self.period = timeserie.get('period', DEFAULT_PERIOD)
+        if fill is None:
+            self.fill = timeserie.get('fill', DEFAULT_FILL)
+        if round_time is None:
+            self.round_time = timeserie.get('round_time', DEFAULT_ROUND_TIME)
+        if max_points is None:
+            self.max_points = timeserie.get('max_points', DEFAULT_MAX_POINTS)
 
     def __repr__(self):
 
@@ -101,33 +109,6 @@ class TimeSerie(Configurable):
         result = isinstance(other, TimeSerie) and repr(self) == repr(other)
 
         return result
-
-    @property
-    def aggregation(self):
-        """Get this aggregation method."""
-
-        return self._aggregation.upper()
-
-    @aggregation.setter
-    def aggregation(self, value):
-        """Change of aggregation method."""
-
-        self._aggregation = value
-
-    @property
-    def period(self):
-        """Get this period."""
-
-        return self._period
-
-    @period.setter
-    def period(self, value):
-        """Change of period."""
-
-        if isinstance(value, basestring):
-            value = Period.from_str(value)
-
-        self._period = value
 
     def timesteps(self, timewindow):
         """Get a list of same longer intervals inside timewindow.
@@ -273,23 +254,6 @@ class TimeSerie(Configurable):
 
         return result
 
-    def _conf(self, *args, **kwargs):
-
-        result = super(TimeSerie, self)._conf(*args, **kwargs)
-
-        result.add_unified_category(
-            name=TimeSerie.CATEGORY,
-            new_content=(
-                Parameter(TimeSerie.AGGREGATION),
-                Parameter(TimeSerie.PERIOD, parser=Period.from_str),
-                Parameter(TimeSerie.FILL, parser=Parameter.bool),
-                Parameter(TimeSerie.ROUND_TIME, parser=Parameter.bool),
-                Parameter(TimeSerie.MAX_POINTS, parser=int)
-            )
-        )
-
-        return result
-
     def _get_period(self, timewindow):
         """Get a period related to input max_points or a period."""
 
@@ -375,6 +339,7 @@ METHODS = {
     'DERIVE': derive,
     'COUNTER': counter
 }
+
 
 def apply_transform(points, method=None):
     """Apply DERIVE, ABSOLUTE, COUNTER, GAUGE transforms to points.
