@@ -35,19 +35,22 @@ def exports(ws):
     manager = singleton_per_scope(EventsLog)
 
     @ws.application.post(
-        '/api/v2/event'        
+        '/api/v2/event'
     )
     def send_event_post():
-        events = request.json
-        
+        try:
+            events = request.json
+        except ValueError:
+            return gen_json_error({'description':'malformed JSON'}, HTTP_ERROR)
+
         if events is None:
             return gen_json_error(
-                {'description': 'nothing to return'}, 
+                {'description': 'nothing to return'},
                 HTTPError
-            ) 
+            )
 
         exchange = ws.amqp.exchange_name_events
-        
+
         if isinstance(events, dict):
             events = [events]
 
@@ -66,9 +69,9 @@ def exports(ws):
                             return gen_json_error(
                                 {'description': 'invalid event: {0}'.format(
                                     event
-                                )}, 
+                                )},
                                 HTTPError
-                            ) 
+                            )
 
                     rk = '{0}.{1}.{2}.{3}.{4}'.format(
                         u'{0}'.format(event['connector']),
