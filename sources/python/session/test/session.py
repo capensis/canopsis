@@ -34,7 +34,7 @@ class SessionManagerTest(TestCase):
         self.storage.connect()
 
         self.manager = Session()
-        self.manager[Session.SESSION_STORAGE] = self.storage
+        self.manager.session_storage = self.storage
 
         self.user = 'test_user'
 
