@@ -11,10 +11,10 @@ from setuptools import setup as _setup, find_packages
 from os import walk, getenv
 from os.path import join, dirname, expanduser, abspath, basename, exists
 
+import sys
+
 from sys import path, argv
 from sys import prefix as sys_prefix
-
-from canopsis.common.utils import lookup
 
 
 # TODO: set values in a dedicated configuration file
@@ -28,7 +28,7 @@ KEYWORDS = ' Canopsis Hypervision Hypervisor Monitoring'
 DEFAULT_VERSION = '0.1'
 
 TEST_FOLDERS = ['tests', 'test']
-
+VERSION = '2.4.6'
 
 def setup(add_etc=True, **kwargs):
     """
@@ -48,15 +48,10 @@ def setup(add_etc=True, **kwargs):
 
     # add path to python path
     path.append(_path)
-
-    # extend canopsis path with new sub modules and packages
-    # canopsis.__path__ = extend_path(canopsis.__path__, canopsis.__name__)
-
-    # get package
-    package = lookup("canopsis.{0}".format(name))
+    sys.stderr.write("{}\n".format(_path))
 
     # set default parameters if not setted
-    kwargs.setdefault('name', package.__name__)
+    kwargs.setdefault('name', 'canopsis')
     kwargs.setdefault('author', AUTHOR)
     kwargs.setdefault('author_email', AUTHOR_EMAIL)
     kwargs.setdefault('license', LICENSE)
@@ -67,7 +62,7 @@ def setup(add_etc=True, **kwargs):
     kwargs.setdefault('keywords', kwargs.get('keywords', '') + KEYWORDS)
 
     # set version
-    version = getattr(package, '__version__', DEFAULT_VERSION)
+    version = VERSION
     if version is not None:
         kwargs.setdefault('version', version)
 
@@ -99,11 +94,6 @@ def setup(add_etc=True, **kwargs):
                     scripts.append(join(root, _file))
             kwargs['scripts'] = scripts
 
-    # add packages
-    if 'packages' not in kwargs:
-        packages = find_packages(where=_path, exclude=TEST_FOLDERS)
-        kwargs['packages'] = packages
-
     # add description
     if 'long_description' not in kwargs:
         readme_path = join(_path, 'README')
@@ -120,4 +110,9 @@ def setup(add_etc=True, **kwargs):
                 kwargs['test_suite'] = test_folder
                 break
 
+    kwargs['packages'] = ['canopsis']
+
     _setup(**kwargs)
+
+if __name__ == '__main__':
+    setup()
