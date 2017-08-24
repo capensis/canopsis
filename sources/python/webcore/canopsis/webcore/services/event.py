@@ -64,7 +64,9 @@ def exports(ws):
 
                         if not schema.validate(event, sname):
                             return gen_json_error(
-                                {'description': 'invalid event'}, 
+                                {'description': 'invalid event: {0}'.format(
+                                    event
+                                )}, 
                                 HTTPError
                             ) 
 
