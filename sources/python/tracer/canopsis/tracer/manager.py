@@ -54,6 +54,7 @@ class TracerManager(MiddlewareRegistry):
         :param list impact_entities: list of entity ids
         :param dict extra: free-form dict, additional and optional informations
         :raises TraceSetError: on put_element error
+        :return dict res: result mongo
         """
         trace = {
             Trace.ID: _id,
@@ -80,6 +81,7 @@ class TracerManager(MiddlewareRegistry):
 
         :param str _id: trace id
         :param list impact_entities: list of entity ids
+        :return dict : result mongo
         """
         trace = self.get_by_id(_id)
 
@@ -103,6 +105,7 @@ class TracerManager(MiddlewareRegistry):
 
         :param str _id: trace id
         :param dict extra: new extra informations
+        :return dict : result mongo
         """
         trace = self.get_by_id(_id)
 
@@ -117,7 +120,7 @@ class TracerManager(MiddlewareRegistry):
         """
         :param str _id: trace id
         :rtype dict: trace
-        :raises TraceNotFound: no trace with given _id
+        :raise TraceNotFound: no trace with given _id
         """
         query = {Trace.ID: _id}
         res = self.get(_filter=query)
