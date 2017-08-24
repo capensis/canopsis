@@ -3,4 +3,5 @@
 
 requirements = [
     'potsdb',
+    'whisper'
 ]
