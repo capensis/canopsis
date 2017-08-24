@@ -334,7 +334,6 @@ Ember.Application.initializer({
              * @description Stores choosen by user fileds
              */
             fields: function() {
-                console.error('aaaah', this.parseFields(get(this,'model.columns')));
                 return this.parseFields(get(this, 'model.columns'));
             }.property('model.columns'),
 
