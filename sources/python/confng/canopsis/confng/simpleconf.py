@@ -8,8 +8,10 @@ import sys
 
 from canopsis.confng.vendor import SimpleConf
 
+
 class ConfigurationUnreachable(Exception):
     pass
+
 
 class Configuration(SimpleConf):
 
