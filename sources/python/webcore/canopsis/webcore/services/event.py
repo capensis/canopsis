@@ -38,44 +38,52 @@ def exports(ws):
         '/api/v2/event'        
     )
     def send_event_post():
-        event = request.json
+        events = request.json
         
-        if event is None:
+        if events is None:
             return gen_json_error(
                 {'description': 'nothing to return'}, 
                 HTTPError
             ) 
+
         exchange = ws.amqp.exchange_name_events
+        
+        if isinstance(events, dict):
+            events = [events]
 
-        if schema.validate(event, 'cevent'):
-            sname = 'cevent.{0}'.format(event['event_type'])
+        for event in events:
 
-            if schema.validate(event, sname):
-                if event['event_type'] == 'eue':
-                    sname = 'cevent.eue.{0}'.format(
-                        event['type_message']
+            if schema.validate(event, 'cevent'):
+                sname = 'cevent.{0}'.format(event['event_type'])
+
+                if schema.validate(event, sname):
+                    if event['event_type'] == 'eue':
+                        sname = 'cevent.eue.{0}'.format(
+                            event['type_message']
+                        )
+
+                        if not schema.validate(event, sname):
+                            return gen_json_error(
+                                {'description': 'invalid event: {0}'.format(
+                                    event
+                                )}, 
+                                HTTPError
+                            ) 
+
+                    rk = '{0}.{1}.{2}.{3}.{4}'.format(
+                        u'{0}'.format(event['connector']),
+                        u'{0}'.format(event['connector_name']),
+                        u'{0}'.format(event['event_type']),
+                        u'{0}'.format(event['source_type']),
+                        u'{0}'.format(event['component'])
                     )
 
-                    if not schema.validate(event, sname):
-                        return gen_json_error(
-                            {'description': 'invalid event'}, 
-                            HTTPError
-                        ) 
+                    if event['source_type'] == 'resource':
+                        rk = '{0}.{1}'.format(rk, event['resource'])
 
-                rk = '{0}.{1}.{2}.{3}.{4}'.format(
-                    u'{0}'.format(event['connector']),
-                    u'{0}'.format(event['connector_name']),
-                    u'{0}'.format(event['event_type']),
-                    u'{0}'.format(event['source_type']),
-                    u'{0}'.format(event['component'])
-                )
+                    ws.amqp.publish(event, rk, exchange)
 
-                if event['source_type'] == 'resource':
-                    rk = '{0}.{1}'.format(rk, event['resource'])
-
-                ws.amqp.publish(event, rk, exchange)
-
-        return event
+        return gen_json(events)
 
     @route(ws.application.post, name='event', payload=['event', 'url'])
     @route(ws.application.put, name='event', payload=['event', 'url'])
