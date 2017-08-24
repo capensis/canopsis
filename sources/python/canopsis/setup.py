@@ -48,7 +48,6 @@ def setup(add_etc=True, **kwargs):
 
     # add path to python path
     path.append(_path)
-    sys.stderr.write("{}\n".format(_path))
 
     # set default parameters if not setted
     kwargs.setdefault('name', 'canopsis')
@@ -57,7 +56,7 @@ def setup(add_etc=True, **kwargs):
     kwargs.setdefault('license', LICENSE)
     kwargs.setdefault('zip_safe', ZIP_SAFE)
     kwargs.setdefault('url', URL)
-    kwargs.setdefault('package_dir', {'': _path})
+    kwargs.setdefault('package_dir', {'canopsis': 'canopsis'})
 
     kwargs.setdefault('keywords', kwargs.get('keywords', '') + KEYWORDS)
 
@@ -110,7 +109,7 @@ def setup(add_etc=True, **kwargs):
                 kwargs['test_suite'] = test_folder
                 break
 
-    kwargs['packages'] = ['canopsis']
+    kwargs['packages'] = find_packages()
 
     _setup(**kwargs)
 
