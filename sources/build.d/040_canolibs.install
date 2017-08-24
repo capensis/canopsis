@@ -43,6 +43,7 @@ PROJECTS+=('stats')
 PROJECTS+=('migration')
 PROJECTS+=('influxdb')
 PROJECTS+=('downtime')
+PROJECTS+=('tracer')
 
 function build() {
 	true
