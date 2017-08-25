@@ -19,13 +19,13 @@
 
 Ember.Application.initializer({
     name: 'ListAlarmWidget',
-    after: ['NotificationUtils' ,'TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader', 'CustomfilterlistMixin', 'ListalarmCustomSendeventMixin'],
+    after: ['NotificationUtils' ,'TimeWindowUtils', 'DataUtils', 'WidgetFactory', 'UserconfigurationMixin', 'RinfopopMixin', 'SchemasLoader', 'CustomfilterlistMixin', 'CustomSendeventMixin'],
     initialize: function(container, application) {
             var timeWindowUtils = container.lookupFactory('utility:timewindow'),
             dataUtils = container.lookupFactory('utility:data'),
                   WidgetFactory = container.lookupFactory('factory:widget'),
                   UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
-                  SendeventMixin = container.lookupFactory('mixin:listalarmcustomsendevent');
+                  SendeventMixin = container.lookupFactory('mixin:customsendevent');
             notificationUtils = container.lookupFactory('utility:notification');
 
             mx = container.lookupFactory('mixin:customfilterlist');
