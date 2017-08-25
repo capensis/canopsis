@@ -98,8 +98,8 @@ class engine(Engine):
 
         try:
             event['state'] = int(event.get('state', 0))
-        except AttributeError:
-            self.logger.error('state convertion failed')
+        except:
+            self.logger.error('state convertion failed ({})'.format(event))
             event['state'] = 0
         event['state_type'] = event.get('state_type', 1)
         event['event_type'] = event.get('event_type', 'check')

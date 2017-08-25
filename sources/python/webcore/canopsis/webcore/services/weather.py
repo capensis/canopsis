@@ -32,14 +32,15 @@ from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 from canopsis.tracer.manager import TracerManager
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
 context_manager = ContextGraph()
 alarm_manager = Alerts()
 alarmreader_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
 tracer_manager = TracerManager()
+
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
@@ -189,13 +190,12 @@ def get_active_pbehaviors_on_watchers(
     active_pb_dict_full
 ):
     """
-        get_active_pbehaviors_on_watchers.
+    get_active_pbehaviors_on_watchers.
 
-        :param list watchers_ids:
-        :param list active_pb_dict: list of dict with key: pbheavior_id value: set of eids
-        :param list active_pb_dict_full: list of pbehavior dict
-        :return dict: dict of watcher with list of active pbehavior
-
+    :param list watchers_ids:
+    :param list active_pb_dict: list of dict with key: pbheavior_id value: set of eids
+    :param list active_pb_dict_full: list of pbehavior dict
+    :return dict: dict of watcher with list of active pbehavior
     """
 
     active_pb_on_watchers = {}
@@ -243,6 +243,7 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
         if tmp_alarm != {} and tmp_alarm.get('ack', None) is None:
             return True
     return False
+
 
 def check_baseline(merged_eids_tracer, watcher_depends):
     """
@@ -301,7 +302,6 @@ def exports(ws):
         merged_pbehaviors_eids = set([])
         next_run_dict = {}
         watchers = []
-        baseline_tracers = []
         merged_eids_tracer = []
 
         active_baseline_tracer = tracer_manager.get(
