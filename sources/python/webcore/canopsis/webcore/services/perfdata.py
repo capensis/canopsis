@@ -33,8 +33,6 @@ NO_LIMIT = 0
 DEFAULT_LIMIT = 100
 DEFAULT_START = 0
 
-
-
 def exports(ws):
 
     manager = singleton_per_scope(PerfData)
@@ -175,12 +173,19 @@ def exports(ws):
 
             limit = int(param.get("limit", DEFAULT_LIMIT))
             start = int(param.get("start", DEFAULT_START))
+            filter_ = param.get("_filter", {})
+
+            # Pars the filter_ field to retrieve the pattern.
+            if "name" in filter_:
+                filter_ = filter_["name"].get("$regex", None)
+            else:
+                filter_ = None
 
             if limit == NO_LIMIT:
                 limit = None
             # 0 because I need to retreive every metrics in order to create
             # the total field of the result
-            rep = manager.get_metric_infos(limit=None, start=0)
+            rep = manager.get_metric_infos(limit=None, start=0, filter_=filter_)
         except Exception as err:
             data_error = {}
             data_error["msg"] = str(err.message)

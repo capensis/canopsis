@@ -253,7 +253,7 @@ class PerfData(MiddlewareRegistry):
 
         return metric['metric'].startswith('cps_')
 
-    def get_metric_infos(self, limit, start):
+    def get_metric_infos(self, limit, start, filter_=None):
         """
         Retreive metrics informations from influx.
 
@@ -261,7 +261,14 @@ class PerfData(MiddlewareRegistry):
         :param int start: skip n first elements
         :rtype: list(dict)
         """
-        data = self[PerfData.PERFDATA_STORAGE]._conn.query('SHOW SERIES;').raw
+
+        query = None
+        if filter_ is None:
+            query = 'SHOW SERIES;'
+        else:
+            query = 'SHOW SERIES where "eid" =~ /.*{0}.*/;'.format(filter_)
+
+        data = self[PerfData.PERFDATA_STORAGE]._conn.query(query).raw
 
         if "series" not in data:
             return []
