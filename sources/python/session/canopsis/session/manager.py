@@ -21,9 +21,7 @@
 from time import time
 
 from canopsis.confng import Configuration, Ini
-from canopsis.middleware.core import Middleware
 
-DEFAULT_SESSION_STORAGE_URI = 'mongodb-default-session://'
 DEFAULT_METRIC_PRODUCER_VALUE = 'canopsis.stats.producers.metric.MetricProducer'
 DEFAULT_PERFDATA_MANAGER_VALUE = 'canopsis.perfdata.manager.PerfData'
 DEFAULT_ALIVE_SESSION_DURATION = 300
@@ -36,29 +34,27 @@ class Session():
 
     CONF_PATH = 'etc/session/session.conf'
 
+    SESSION_STORAGE_URI = 'mongodb-default-session://'
+
     SESSION_STORAGE = 'session_storage'
     METRIC_PRODUCER = 'metric_producer'
     PERFDATA_MANAGER = 'perfdata_manager'
 
     def __init__(
         self,
-        session_storage=None,
+        collection,
         metric_producer=None,
         perfdata_manager=None,
         *args, **kwargs
     ):
-        self.session_storage = session_storage
+        self.session_storage = collection
         self.metric_producer = metric_producer
         self.perfdata_manager = perfdata_manager
 
         self.config = Configuration.load(self.CONF_PATH, Ini)
         session = self.config.get('SESSION', {})
-        if session_storage is None:
-            self.session_storage_uri = session.get('session_storage_uri',
-                                                   DEFAULT_SESSION_STORAGE_URI)
-            self.session_storage = Middleware.get_middleware_by_uri(
-                self.session_storage_uri
-            )
+        self.session_storage_uri = session.get('session_storage_uri',
+                                               DEFAULT_SESSION_STORAGE_URI)
 
         self.metric_producer_value = session.get('metric_producer_value',
                                                  DEFAULT_METRIC_PRODUCER_VALUE)
