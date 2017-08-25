@@ -64,7 +64,7 @@ class engine(Engine):
                 except KeyError:
                     refevt = {}
 
-                if refevt['ack'] == {}:
+                if refevt.get('ack', {}) == {}:
                     sleep(2)
                     try:
                         refevt = self.store.get(
