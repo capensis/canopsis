@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-timeline/blob/mast
 
 ### Lint
 
-Tested on commit : d0e0c27.
+Tested on commit : 2f99d08.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -70,5 +70,5 @@ Tested on commit : d0e0c27.
 
 ## Additional-info
 
-Minified version : 4 files (size: 28K)
-Development version : 3 files (size: 32K)
+Minified version : 4 files (size: 32K)
+Development version : 4 files (size: 40K)
