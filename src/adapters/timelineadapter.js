@@ -6,7 +6,7 @@
  * Canopsis is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  (at your option) any later version.
  *
  * Canopsis is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,20 +17,26 @@
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
  */
 
- require.config({
-    paths: {
-        'components/component-timeline': 'canopsis/brick-timeline/src/components/timeline/template',
+Ember.Application.initializer({
+    name: 'TimelineAdapter',
+    after: ['ApplicationAdapter'],
+    initialize: function(container, application) {
+        var ApplicationAdapter = container.lookupFactory('adapter:application');
 
+        // Adapter beginning
+        var adapter = ApplicationAdapter.extend({
+
+            // Method called in the conntroller to fetch data
+            findQuery: function(store, type, query, payload) {
+                var url = '/alerts/get-alarms?'
+                url += $.param(payload)
+
+                return this.ajax(url, 'GET');
+            }
+        });
+
+        application.register('adapter:timeline', adapter);
     }
 });
 
- define([
-    'canopsis/brick-timeline/src/adapters/timelineadapter',
-    'canopsis/brick-timeline/src/components/timeline/component',
-    'ehbs!components/component-timeline',
-    'link!canopsis/brick-timeline/src/style.css',
-    'canopsis/brick-timeline/requirejs-modules/i18n'
-], function () {
-    
-});
 

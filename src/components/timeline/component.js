@@ -108,84 +108,90 @@ Ember.Application.initializer({
             didInsertElement: function() {
                 var component = this;
 
-                var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alarm');
-                var query = {'entity_id': get(component, 'timelineData').entity_id};
+                var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:timeline');
+                var encoded_query = JSON.stringify({'d': get(component, 'timelineData').entity_id});
+                var query =  {'filter': encoded_query, 'opened':true, 'resolved':true,'sort_key':'t','sort_dir':'ASC','limit':1,'with_steps':true};
 
 
-                adapter.findQuery('alarm', 'get-current-alarm', query).then(function (result) {
+                adapter.findQuery('alarm', 'get-current-alarm', undefined, query).then(function (result) {
                     // onfullfillment
 					var previousDate = undefined;
                     var steps = [];
-                    for (var i = result.data[0].value.steps.length - 1 ; i >= 0 ; i--) {
-                        var step = result.data[0].value.steps[i];
+                    if (result.data.length > 0 && result.data[0].alarms.length > 0){
 
-                        //build time related information
-                        var date = new Date(step.t*1000);
-                        step.date = moment(date).format('LL');
-                        if(step.date != previousDate)
-                            step.showDate = true;
-                        else
-                            step.showDate = false;
+                        for (var i = result.data[0].alarms[0].v.steps.length - 1 ; i >= 0 ; i--) {
+                            var step = result.data[0].alarms[0].v.steps[i];
+                            var index_state_check = 0
+                            var index_status_check = 0 
 
-                        step.time = moment(date).format('h:mm:ss a');
+                            //build time related information
+                            var date = new Date(step.t*1000);
+                            step.date = moment(date).format('LL');
+                            if(step.date != previousDate)
+                                step.showDate = true;
+                            else
+                                step.showDate = false;
 
-                        if (!(step._t in get(component, 'iconsAndColors'))) {
-                            console.warning('Unknown step "' + step._t + '" : skipping');
-                            continue;
-                        }
+                            step.time = moment(date).format('h:mm:ss a');
 
-                        //build color class
-                        step.color = get(component, 'iconsAndColors')[step._t].color;
-                        //set icon
-                        step.icon = get(component, 'iconsAndColors')[step._t].icon;
-
-                        //if no color, it's a state/value, so color
-                        if (!step.color)
-                            step.color = get(component,'colorArray')[step.val];
-
-                        if (step._t.indexOf('state') > -1)
-                            step.state = get(component,'stateArray')[step.val];
-
-                        if (step._t.indexOf('status') > -1)
-                            step.status = get(component,'statusArray')[step.val];
-
-                        if (step._t === 'snooze') {
-                            var until = new Date(step.val * 1000);
-                            step.until = moment(until).format('h:mm:ss a');
-                        }
-
-                        if (step._t === 'statecounter') {
-                            step.m = '<table class="table table-hover"><tbody>';
-
-                            step.m += '<tr><th>State increases</th><th>' + step.val.stateinc + '</th></tr>';
-                            step.m += '<tr><th>State decreases</th><th>' + step.val.statedec + '</th></tr>';
-
-                            for (v in step.val) {
-                                if (v.startsWith('state:')) {
-                                    var state = parseInt(v.replace('state:', ''), 10);
-                                    var state_label = get(component, 'stateArray')[state];
-                                    /* Custom states (other than 0, 1, 2, 3) are not supported */
-                                    step.m += '<tr><th>State ' + state_label + '</th><th>' + step.val[v] + '</th></tr>';
-                                }
+                            if (!(step._t in get(component, 'iconsAndColors'))) {
+                                console.warning('Unknown step "' + step._t + '" : skipping');
+                                continue;
                             }
 
-                            step.m += '</tbody></table>';
+                            //build color class
+                            step.color = get(component, 'iconsAndColors')[step._t].color;
+                            //set icon
+                            step.icon = get(component, 'iconsAndColors')[step._t].icon;
+
+                            //if no color, it's a state/value, so color
+                            if (!step.color)
+                                step.color = get(component,'colorArray')[step.val];
+
+                            if (step._t.indexOf('state') >= index_state_check)
+                                step.state = get(component,'stateArray')[step.val];
+
+                            if (step._t.indexOf('status') >= index_status_check)
+                                step.status = get(component,'statusArray')[step.val];
+
+                            if (step._t === 'snooze') {
+                                var until = new Date(step.val * 1000);
+                                step.until = moment(until).format('h:mm:ss a');
+                            }
+
+                            if (step._t === 'statecounter') {
+                                step.m = '<table class="table table-hover"><tbody>';
+
+                                step.m += '<tr><th>State increases</th><th>' + step.val.stateinc + '</th></tr>';
+                                step.m += '<tr><th>State decreases</th><th>' + step.val.statedec + '</th></tr>';
+
+                                for (v in step.val) {
+                                    if (v.startsWith('state:')) {
+                                        var state = parseInt(v.replace('state:', ''), 10);
+                                        var state_label = get(component, 'stateArray')[state];
+                                        /* Custom states (other than 0, 1, 2, 3) are not supported */
+                                        step.m += '<tr><th>State ' + state_label + '</th><th>' + step.val[v] + '</th></tr>';
+                                    }
+                                }
+
+                                step.m += '</tbody></table>';
+                            }
+
+                            step.name = get(component, 'statusToName')[step._t];
+                            if (get(component, 'authoredName').indexOf(step._t) != -1) {
+                                step.name += step.a;
+                            }
+
+                            steps.push(step);
+                            
+                            //stock previous date
+                            previousDate = step.date;
+                        
                         }
 
-                        step.name = get(component, 'statusToName')[step._t];
-                        if (get(component, 'authoredName').indexOf(step._t) != -1) {
-                            step.name += step.a;
-                        }
-
-                        steps.push(step);
-						
-						//stock previous date
-                        previousDate = step.date;
-                    
-					}
-
-                    /* steps can be null if entity has no current alarm. */
-                    set(component, 'steps', steps);
+                        /* steps can be null if entity has no current alarm. */
+                        set(component, 'steps', steps);
+                    }
                 }, function (reason) {
                     // onrejection
                     console.error('ERROR in the adapter: ', reason);
