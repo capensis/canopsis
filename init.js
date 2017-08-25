@@ -101,7 +101,6 @@ define([
     'canopsis/brick-listalarm/src/forms/snooze/controller',
     'ehbs!snoozeform',
     'canopsis/brick-listalarm/src/helpers/absoluteTimeSince',
-    'canopsis/brick-listalarm/src/mixins/listalarmcustomsendevent',
     'canopsis/brick-listalarm/src/mixins/rinfopop',
     'ehbs!_v_ack',
     'ehbs!_v_creation_date',
