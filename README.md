@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-listalarm/blob/mas
 
 ### Lint
 
-Tested on commit : 31ffedf.
+Tested on commit : d8e19b5.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -67,8 +67,6 @@ Tested on commit : 31ffedf.
 | src/forms/snooze/controller.js | search this value into schema |
 | src/forms/snooze/controller.js | refactor the 20 lines below in an utility function "getEditorForAttr" |
 | src/forms/snooze/controller.js | use the real schema, not the dict used to create it |
-| src/mixins/listalarmcustomsendevent.js | use an adapter for this |
-| src/mixins/listalarmcustomsendevent.js | refactor into sub classes |
 
 
 ### FIXMES
@@ -77,5 +75,5 @@ Tested on commit : 31ffedf.
 
 ## Additional-info
 
-Minified version : 4 files (size: 136K)
-Development version : 61 files (size: 460K)
+Minified version : 4 files (size: 120K)
+Development version : 60 files (size: 424K)
