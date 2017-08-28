@@ -49,7 +49,7 @@ def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
 
     try:
         alertsmgr.archive(encoded_event)
-    except ValueError, ex:
+    except ValueError as ex:
         engine.logger.error('cannot store event: {}'.format(ex))
 
 
