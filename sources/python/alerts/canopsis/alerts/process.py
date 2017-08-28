@@ -37,15 +37,20 @@ def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
     for k, v in event.items():
         try:
             k = k.encode('utf-8')
-        except:
+        except Exception:
             pass
+
         try:
             v = v.encode('utf-8')
-        except:
+        except Exception:
             pass
+
         encoded_event[k] = v
 
-    alertsmgr.archive(encoded_event)
+    try:
+        alertsmgr.archive(encoded_event)
+    except ValueError, ex:
+        engine.logger.error('cannot store event: {}'.format(ex))
 
 
 @register_task
