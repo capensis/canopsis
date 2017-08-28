@@ -19,6 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from time import sleep
 from unittest import TestCase, main
 
 from canopsis.middleware.core import Middleware
@@ -31,21 +32,21 @@ class SessionManagerTest(TestCase):
         self.storage = Middleware.get_middleware_by_uri(
             'mongodb-default-testsession://'
         )
-        self.storage.connect()
+        self.collection = self.storage._backend
 
-        self.manager = Session()
-        self.manager.session_storage = self.storage
+        self.manager = Session(collection=self.collection)
 
         self.user = 'test_user'
 
     def tearDown(self):
-        self.storage.remove_elements()
-        self.storage.disconnect()
+        self.collection.remove()
 
     def test_keep_alive(self):
+        self.manager.session_start(self.user)
+        sleep(1)
         got = self.manager.keep_alive(self.user)
 
-        session = self.storage.get_elements(ids=self.user)
+        session = self.collection.find_one({'_id': self.user})
 
         self.assertTrue(session is not None)
         self.assertEqual(got, session['last_check'])
@@ -53,7 +54,7 @@ class SessionManagerTest(TestCase):
     def test_session_start(self):
         got = self.manager.session_start(self.user)
 
-        session = self.storage.get_elements(ids=self.user)
+        session = self.collection.find_one({'_id': self.user})
 
         self.assertTrue(session is not None)
         self.assertTrue(session['active'])
@@ -71,10 +72,15 @@ class SessionManagerTest(TestCase):
         self.manager.session_start(self.user)
         self.assertTrue(self.manager.is_session_active(self.user))
 
-#TODO4-01-2017
-#    def test_duration(self):
-#        raise NotImplementedError('missing test')
+    def test_sessions_close(self):
+        got = self.manager.session_start(self.user)
 
+        self.manager.alive_session_duration = 0
+        self.assertTrue(got is not None)
+
+        sessions = self.manager.sessions_close()
+        self.assertTrue(len(sessions) > 0)
+        self.assertEqual(got, sessions[0]['last_check'])
 
 if __name__ == '__main__':
     main()

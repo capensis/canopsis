@@ -18,11 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.ws import route
 from bottle import request
+
 from .rights import get_manager as get_rights
-from canopsis.session.manager import Session
 from canopsis.common.utils import singleton_per_scope
+from canopsis.common.ws import route
+from canopsis.middleware.core import Middleware
+from canopsis.session.manager import Session
 
 
 def get():
@@ -67,7 +69,12 @@ def delete():
 
 def exports(ws):
 
-    session_manager = singleton_per_scope(Session)
+    kwargs = {
+        'collection': Middleware.get_middleware_by_uri(
+            Session.SESSION_STORAGE_URI
+        )._backend
+    }
+    session_manager = singleton_per_scope(Session, kwargs=kwargs)
 
     @route(ws.application.get, name='account/me', adapt=False)
     def get_me():

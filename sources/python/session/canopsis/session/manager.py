@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -30,13 +30,16 @@ DEFAULT_ALIVE_SESSION_DURATION = 300
 class Session():
     """
     Manage session informations.
+
+    TODO: Factories update/insert/find and is_mongo_successfull() in a
+          small lib in common.mongo
     """
 
     CONF_PATH = 'etc/session/session.conf'
 
     SESSION_STORAGE_URI = 'mongodb-default-session://'
 
-    SESSION_STORAGE = 'session_storage'
+    SESSION_COLLECTION = 'session_collection'
     METRIC_PRODUCER = 'metric_producer'
     PERFDATA_MANAGER = 'perfdata_manager'
 
@@ -47,14 +50,18 @@ class Session():
         perfdata_manager=None,
         *args, **kwargs
     ):
-        self.session_storage = collection
+        """
+        :param MongoCursor collcetion: the collection where user sessoins are located
+        :param metric_producer:
+        :param perfdata_manager:
+        """
+
+        self.session_collection = collection
         self.metric_producer = metric_producer
         self.perfdata_manager = perfdata_manager
 
         self.config = Configuration.load(self.CONF_PATH, Ini)
         session = self.config.get('SESSION', {})
-        self.session_storage_uri = session.get('session_storage_uri',
-                                               DEFAULT_SESSION_STORAGE_URI)
 
         self.metric_producer_value = session.get('metric_producer_value',
                                                  DEFAULT_METRIC_PRODUCER_VALUE)
@@ -70,14 +77,13 @@ class Session():
 
         :param username: user identifier
         :type username: string
-
-        :returns: check timestamp
+        :returns: last check timestamp
+        :rtype: timestamp
         """
-
         now = time()
-        self.session_storage.put_element(
-            _id=username, element={'last_check': now}
-        )
+        self.session_collection.update({'_id': username},
+                                       {'last_check': now})
+
         return now
 
     def is_session_active(self, username):
@@ -87,16 +93,17 @@ class Session():
 
         :param username: user identifier
         :type username: string
-
-        :returns: True if session is active, False otherwise
+        :returns: check if session is active or not
+        :rtype: bool
         """
-
-        session = self.session_storage.get_elements(ids=username)
+        session = self.session_collection.find_one({'_id': username})
 
         if session is None:
+
             return False
 
         else:
+
             return session['active']
 
     def session_start(self, username):
@@ -105,22 +112,21 @@ class Session():
 
         :param username: user identifier
         :type username: string
-
-        :returns: Start timestamp, or None if already started
+        :returns: when the has started
+        :rtype: timestamp or None
         """
 
         if not self.is_session_active(username):
             now = time()
-
-            self.session_storage.put_element(
-                _id=username,
-                element={
-                    'session_start': now,
-                    'last_check': now,
-                    'active': True,
-                    'session_stop': -1
-                }
-            )
+            element = {
+                'session_start': now,
+                'last_check': now,
+                'active': True,
+                'session_stop': -1
+            }
+            self.session_collection.update({'_id': username},
+                                           element,
+                                           upsert=True)
 
             return now
 
@@ -133,19 +139,19 @@ class Session():
         """
         now = time()
         inactive_ts = now - self.alive_session_duration
-        inactive_sessions = list(self.session_storage.get_elements(
-            query={
-                'last_check': {'$lte': inactive_ts},
-                'session_stop': -1,
-                'active': True
-            }
-        ))
+        query = {
+            'last_check': {'$lte': inactive_ts},
+            'session_stop': -1,
+            'active': True
+        }
+        inactive_sessions = list(self.session_collection.find(query))
 
-        # Update sessions in storage
         for session in inactive_sessions:
             session['session_stop'] = now
             session['active'] = False
 
-            self.session_storage.put_element(element=session)
+            self.session_collection.update({'_id': session['_id']},
+                                           session,
+                                           upsert=True)
 
         return inactive_sessions
