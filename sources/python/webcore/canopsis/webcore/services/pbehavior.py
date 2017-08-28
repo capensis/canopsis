@@ -23,7 +23,7 @@ from json import loads
 from six import string_types
 
 from canopsis.common.ws import route
-from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.pbehavior.manager import PBehaviorManager, check_valid_rrule
 from canopsis.watcher.manager import Watcher
 
 watcher_manager = Watcher()
@@ -81,6 +81,10 @@ def check_values(data):
         data["enabled"] = False
     else:
         raise ValueError("The enabled value does not match a boolean")
+
+    if 'rrule' in data:
+        rrule_valid, rrule_reason = check_valid_rrule(rrule)
+        raise ValueError(rrule_reason)
 
 
 def exports(ws):
