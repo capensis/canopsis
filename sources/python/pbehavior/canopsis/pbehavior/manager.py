@@ -42,7 +42,8 @@ CATEGORY = 'PBEHAVIOR'
 def check_valid_rrule(rrule):
     """
     :param str rrule: rrule as string
-    :rtype bool Exception: True if ok, exception
+    :returns: True|False, (None|'reason')|Exception
+    :rtype bool, Exception: True if ok, exception
     """
     if rrule == '' or rrule == None:
         return True, 'rrule is empty or None'
