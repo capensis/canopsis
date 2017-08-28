@@ -39,6 +39,20 @@ from canopsis.middleware.registry import MiddlewareRegistry
 CONF_PATH = 'pbehavior/pbehavior.conf'
 CATEGORY = 'PBEHAVIOR'
 
+def check_valid_rrule(rrule):
+    """
+    :param str rrule: rrule as string
+    :rtype bool Exception: True if ok, exception
+    """
+    if rrule == '' or rrule == None:
+        return True, 'rrule is empty or None'
+
+    try:
+        rrulestr(rrule)
+    except ValueError, ex:
+        return False, ex
+
+    return True, None
 
 class BasePBehavior(dict):
     _FIELDS = ()
@@ -171,6 +185,10 @@ class PBehaviorManager(MiddlewareRegistry):
         else:
             raise ValueError("The enabled value does not match a boolean")
 
+        rrule_valid, rrule_reason = check_valid_rrule(rrule)
+        if rrule_valid != True:
+            raise ValueError("Invalid RRULE: {}".format(rrule_reason))
+
         if comments is not None:
             for comment in comments:
                 if "author" in comment:
@@ -239,6 +257,11 @@ class PBehaviorManager(MiddlewareRegistry):
 
         if pb_value is None:
             raise ValueError("The id does not match any pebahvior")
+
+        rrule = kwargs.get('rrule', '')
+        rrule_valid, rrule_reason = check_valid_rrule(rrule)
+        if rrule_valid != True:
+            raise ValueError("Invalid RRULE: {}".format(rrule_reason))
 
         pbehavior = PBehavior(**self.get(_id))
         new_data = {k: v for k, v in kwargs.iteritems() if v is not None}
