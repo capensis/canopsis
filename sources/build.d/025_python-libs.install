@@ -59,7 +59,7 @@ function easy_install_all_libs() {
 	easy_install_pylib ijson
 	easy_install_pylib enum34==1.1.6
 	easy_install_pylib configparser==3.5.0
-}
+
 
 function install(){
 	easy_install_all_libs
