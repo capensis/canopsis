@@ -74,7 +74,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
             pb_connector = event.get('connector')
             pb_name = event.get('pbehavior_name')
             pb_connector_name = event.get('connector_name')
-        except KeyError, ex:
+        except KeyError as ex:
             logger.error('missing key in event: {}'.format(ex))
             return event
 

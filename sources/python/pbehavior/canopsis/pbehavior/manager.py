@@ -49,7 +49,7 @@ def check_valid_rrule(rrule):
 
     try:
         rrulestr(rrule)
-    except ValueError, ex:
+    except ValueError as ex:
         return False, ex
 
     return True, None
