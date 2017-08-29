@@ -114,7 +114,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
             else:
                 logger.error(ERROR_MSG.format(event['action'], event))
 
-        except ValueError, ex:
+        except ValueError as ex:
             logger.error('cannot handle event: {}'.format(ex))
 
     return event
