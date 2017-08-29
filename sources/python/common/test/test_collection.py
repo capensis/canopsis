@@ -30,7 +30,7 @@ class TestMongoCollection(unittest.TestCase):
 
     def tearDown(self):
         """Teardown"""
-        self.storage.remove_elements()
+        self.collection.remove()
 
     def test_update(self):
         res = self.collection.update(query={'_id': self.id_},
@@ -43,6 +43,21 @@ class TestMongoCollection(unittest.TestCase):
                                      upsert=True)
         self.assertTrue(MongoCollection.is_successfull(res))
         self.assertEqual(res['n'], 1)
+
+    def test_remove(self):
+        res = self.collection.update(query={'_id': self.id_},
+                                     document={'yin': 'yang'})
+        self.assertTrue(MongoCollection.is_successfull(res))
+        self.assertEqual(res['n'], 0)
+
+        res = self.collection.remove(query={'_id': self.id_})
+        self.assertTrue(MongoCollection.is_successfull(res))
+        self.assertEqual(res['n'], 0)
+
+        # Deleting the same object is done successfully
+        res = self.collection.remove(query={})
+        self.assertTrue(MongoCollection.is_successfull(res))
+        self.assertEqual(res['n'], 0)
 
     def test_find(self):
         res = self.collection.update(query={'_id': self.id_},

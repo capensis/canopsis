@@ -21,7 +21,7 @@
 from __future__ import unicode_literals
 
 from bson.errors import BSONError
-from pymongo.errors import PyMongoError
+from pymongo.errors import PyMongoError, OperationFailure
 
 from canopsis.logger import Logger
 
@@ -33,6 +33,9 @@ class CollectionSetError(Exception):
 class MongoCollection(object):
     """
     A mongodb collection handeling class, to ease access to mongodb.
+
+    ! Be carefull ! Ddon't rebuild a storage like the old one, with over
+    engineered classes/functions.
     """
 
     def __init__(self, collection, logger=None):
@@ -64,6 +67,9 @@ class MongoCollection(object):
     def insert(self, document):
         """
         Update an element in the collection.
+
+        :param dict document: the document to insert
+        :rtype: dict or None
         """
         return NotImplementedError()
 
@@ -77,7 +83,13 @@ class MongoCollection(object):
         :rtype: dict or None
         """
         try:
-            result = self.collection.update(query, document, upsert=upsert)
+            return self.collection.update(query, document, upsert=upsert)
+        except BSONError as ex:
+            raise CollectionSetError('document error: {}'.format(ex))
+        except PyMongoError as ex:
+            raise CollectionSetError('pymongo error: {}'.format(ex))
+        except OperationFailure:
+            self.logger.error('Operation failure while doing update')
         except TypeError:
             if not isinstance(query, dict):
                 self.logger.error('query is not a dict')
@@ -85,22 +97,26 @@ class MongoCollection(object):
                 self.logger.error('document is not a dict')
             if not isinstance(upsert, bool):
                 self.logger.error('upsert is not a boolean')
-            return None
-        except BSONError as ex:
-            raise CollectionSetError('document error: {}'.format(ex))
-        except PyMongoError as ex:
-            raise CollectionSetError('pymongo error: {}'.format(ex))
         except:
             self.logger.error('Unkown exception on collection update')
-            return None
 
-        return result
+        return None
 
-    def remove(self, query):
+    def remove(self, query={}):
         """
         Remove an element in the collection.
+
+        :param dict query:
+        :rtype: dict or None
         """
-        return NotImplementedError()
+        try:
+            return self.collection.remove(query)
+        except OperationFailure:
+            self.logger.error('Operation failure while doing remove')
+        except:
+            self.logger.error('Unkown error while doing remove')
+
+        return None
 
     @staticmethod
     def is_successfull(dico):
