@@ -310,3 +310,19 @@ class Watcher(MiddlewareRegistry):
             return 1
         else:
             return 0
+
+    def get_watcher_entities(watcher):
+        """
+
+        Returns entity ids for a watcher.
+
+        :param dict watcher: watcher object
+        :returns: set of entity matched by a watcher.
+        :rtype: set
+        """
+        watcher_entity_filter = json.loads(watcher['mfilter'])
+        entities = list(self.context_graph.get_entities(
+            query=watcher_entity_filter
+        ))
+        eids = [e['_id'] for e in entities]
+        return set(eids)

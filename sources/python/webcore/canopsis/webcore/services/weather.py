@@ -36,12 +36,14 @@ from canopsis.common.utils import get_rrule_freq
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.tracer.manager import TracerManager
+from canopsis.watcher.manager import Watcher as WatcherManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
 context_manager = ContextGraph()
 alarmreader_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
 tracer_manager = TracerManager()
+watcher_manager = WatcherManager()
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
@@ -245,19 +247,6 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
             return True
     return False
 
-def get_entities_for_watcher(watcher):
-    """
-    Returns entity ids for a watcher.
-
-    :param dict watcher: watcher object
-    :returns: set of entity matched by a watcher.
-    :rtype: set
-    """
-    watcher_entity_filter = json.loads(watcher['mfilter'])
-    entities = list(context_manager.get_entities(query=watcher_entity_filter))
-    eids = [e['_id'] for e in entities]
-    return set(eids)
-
 def get_pbehaviors_for_entitiy(entity_id, pbehaviors):
     """
     From an entity_id, find all applicable pbehaviors.
@@ -413,7 +402,7 @@ def exports(ws):
         watcher_eids = {}
         entity_pb = {}
         for watcher in watcher_list:
-            eids = get_entities_for_watcher(watcher)
+            eids = watcher_manager.get_watcher_entities(watcher)
             watcher_eids[watcher['_id']] = eids
             watcher_entity_pbs = []
             for eid in eids:
