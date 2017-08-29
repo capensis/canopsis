@@ -27,6 +27,7 @@ from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.context_graph.manager import ContextGraph
 
 
 def exports(ws):
@@ -35,6 +36,7 @@ def exports(ws):
 
     am = Alerts()
     ar = AlertsReader()
+    context_manager = ContextGraph()
 
     @route(
         ws.application.get,
@@ -95,7 +97,7 @@ def exports(ws):
         :rtype: dict
         """
 
-        return ar.get(
+        alarms = ar.get(
             tstart=tstart,
             tstop=tstop,
             opened=opened,
@@ -109,6 +111,32 @@ def exports(ws):
             limit=limit,
             with_steps=with_steps
         )
+        alarms_ids = []
+        for alarm in alarms['alarms']:
+            tmp_id = alarm.get('d')
+            if tmp_id:
+                alarms_ids.append(tmp_id)
+        entities = context_manager.get_entities_by_id(alarms_ids)
+        entity_dict = {}
+        for entity in entities:
+            entity_dict[entity.get('_id')] = entity
+
+        list_alarm = []
+        for alarm in alarms['alarms']:
+            tmp_entity_id = alarm['d']
+            
+            if tmp_entity_id in entity_dict:
+                if alarm.get('infos'):
+                    alarm['infos'].update(entity_dict[alarm['d']]['infos'])
+                    list_alarm.append(alarm)
+                else:
+                    alarm['infos'] = entity_dict[alarm['d']]['infos']
+                    list_alarm.append(alarm)
+            else: 
+                list_alarm.append(alarm)
+        alarms['alarms'] = list_alarm
+
+        return alarms
 
     @route(
         ws.application.get,

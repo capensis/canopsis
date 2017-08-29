@@ -23,16 +23,20 @@ from __future__ import unicode_literals
 from time import time
 
 from canopsis.confng import Configuration, Ini
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 
-CONF_PATH = 'etc/session/session.conf'
+DEFAULT_SESSION_STORAGE_URI = 'mongodb-default-session://'
+DEFAULT_METRIC_PRODUCER_VALUE = 'canopsis.stats.producers.metric.MetricProducer'
+DEFAULT_PERFDATA_MANAGER_VALUE = 'canopsis.perfdata.manager.PerfData'
 DEFAULT_ALIVE_SESSION_DURATION = 300
 
 
-class Session(MiddlewareRegistry):
+class Session():
     """
     Manage session informations.
     """
+
+    CONF_PATH = 'etc/session/session.conf'
 
     SESSION_STORAGE = 'session_storage'
     METRIC_PRODUCER = 'metric_producer'
@@ -45,21 +49,25 @@ class Session(MiddlewareRegistry):
         perfdata_manager=None,
         *args, **kwargs
     ):
-        super(Session, self).__init__(*args, **kwargs)
+        self.session_storage = session_storage
+        self.metric_producer = metric_producer
+        self.perfdata_manager = perfdata_manager
 
-        self.config = Configuration.load(CONF_PATH, Ini)
+        self.config = Configuration.load(self.CONF_PATH, Ini)
         session = self.config.get('SESSION', {})
+        if session_storage is None:
+            self.session_storage_uri = session.get('session_storage_uri',
+                                                   DEFAULT_SESSION_STORAGE_URI)
+            self.session_storage = Middleware.get_middleware_by_uri(
+                self.session_storage_uri
+            )
+
+        self.metric_producer_value = session.get('metric_producer_value',
+                                                 DEFAULT_METRIC_PRODUCER_VALUE)
+        self.perfdata_manager_value = session.get('perfdata_manager_value',
+                                                  DEFAULT_PERFDATA_MANAGER_VALUE)
         self.alive_session_duration = int(session.get('alive_session_duration',
                                                       DEFAULT_ALIVE_SESSION_DURATION))
-
-        if session_storage is not None:
-            self[Session.SESSION_STORAGE] = session_storage
-
-        if metric_producer is not None:
-            self[Session.METRIC_PRODUCER] = metric_producer
-
-        if perfdata_manager is not None:
-            self[Session.PERFDATA_MANAGER] = perfdata_manager
 
     def keep_alive(self, username):
         """
@@ -73,7 +81,7 @@ class Session(MiddlewareRegistry):
         """
 
         now = time()
-        self[Session.SESSION_STORAGE].put_element(
+        self.session_storage.put_element(
             _id=username, element={'last_check': now}
         )
         return now
@@ -89,7 +97,7 @@ class Session(MiddlewareRegistry):
         :returns: True if session is active, False otherwise
         """
 
-        session = self[Session.SESSION_STORAGE].get_elements(ids=username)
+        session = self.session_storage.get_elements(ids=username)
 
         if session is None:
             return False
@@ -110,7 +118,7 @@ class Session(MiddlewareRegistry):
         if not self.is_session_active(username):
             now = time()
 
-            self[Session.SESSION_STORAGE].put_element(
+            self.session_storage.put_element(
                 _id=username,
                 element={
                     'session_start': now,
@@ -129,12 +137,9 @@ class Session(MiddlewareRegistry):
         :returns: Closed sessions
         :rtype: list
         """
-
-        storage = self[Session.SESSION_STORAGE]
-
         now = time()
         inactive_ts = now - self.alive_session_duration
-        inactive_sessions = list(storage.get_elements(
+        inactive_sessions = list(self.session_storage.get_elements(
             query={
                 'last_check': {'$lte': inactive_ts},
                 'session_stop': -1,
@@ -147,6 +152,6 @@ class Session(MiddlewareRegistry):
             session['session_stop'] = now
             session['active'] = False
 
-            storage.put_element(element=session)
+            self.session_storage.put_element(element=session)
 
         return inactive_sessions
