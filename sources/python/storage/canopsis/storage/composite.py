@@ -307,7 +307,7 @@ class CompositeStorage(Storage):
             result = '{0}{1}{2}'.format(
                 result,
                 CompositeStorage.PATH_SEPARATOR,
-                quote_plus(name)
+                quote_plus(name.encode('utf-8'))
             )
 
         return result

@@ -21,7 +21,6 @@
 from canopsis.old.record import Record
 from canopsis.event import get_routingkey, forger
 from canopsis.old.cfilter import Filter
-from canopsis.common.utils import lookup
 from canopsis.common.utils import singleton_per_scope
 
 from canopsis.pbehavior.manager import PBehaviorManager
