@@ -35,20 +35,20 @@ class TestMongoCollection(unittest.TestCase):
     def test_update(self):
         res = self.collection.update(query={'_id': self.id_},
                                      document={'yin': 'yang'})
-        self.assertTrue(MongoCollection.is_mongo_successfull(res))
+        self.assertTrue(MongoCollection.is_successfull(res))
         self.assertEqual(res['n'], 0)
 
         res = self.collection.update(query={'_id': self.id_},
                                      document={'yin': 'yang'},
                                      upsert=True)
-        self.assertTrue(MongoCollection.is_mongo_successfull(res))
+        self.assertTrue(MongoCollection.is_successfull(res))
         self.assertEqual(res['n'], 1)
 
     def test_find(self):
         res = self.collection.update(query={'_id': self.id_},
                                      document={'yin': 'yang'},
                                      upsert=True)
-        self.assertTrue(MongoCollection.is_mongo_successfull(res))
+        self.assertTrue(MongoCollection.is_successfull(res))
         self.assertEqual(res['n'], 1)
 
         res = self.collection.find(query={'_id': self.id_})
@@ -64,22 +64,22 @@ class TestMongoCollection(unittest.TestCase):
         res = self.collection.update(query={'_id': 'anotherid'},
                                      document={'bambou': 'arbre'},
                                      upsert=True)
-        self.assertTrue(MongoCollection.is_mongo_successfull(res))
+        self.assertTrue(MongoCollection.is_successfull(res))
         self.assertEqual(res['n'], 1)
 
         res = self.collection.find_one(query={'_id': self.id_})
         self.assertTrue(isinstance(res, dict))
         self.assertEqual(res['yin'], 'yang')
 
-    def test_is_mongo_successfull(self):
+    def test_is_successfull(self):
         dico = {'ok': 1.0, 'n': 2}
-        self.assertTrue(MongoCollection.is_mongo_successfull(dico))
+        self.assertTrue(MongoCollection.is_successfull(dico))
 
-        dico = {'ok': 666.66, 'n': 1}
-        self.assertFalse(MongoCollection.is_mongo_successfull(dico))
+        dico = {'ok': 666.667, 'n': 1}
+        self.assertFalse(MongoCollection.is_successfull(dico))
 
         dico = {'n': 2}
-        self.assertFalse(MongoCollection.is_mongo_successfull(dico))
+        self.assertFalse(MongoCollection.is_successfull(dico))
 
 if __name__ == '__main__':
     unittest.main()

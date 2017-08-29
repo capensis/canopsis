@@ -20,7 +20,14 @@
 
 from __future__ import unicode_literals
 
+from bson.errors import BSONError
+from pymongo.errors import PyMongoError
+
 from canopsis.logger import Logger
+
+
+class CollectionSetError(Exception):
+    pass
 
 
 class MongoCollection(object):
@@ -79,6 +86,10 @@ class MongoCollection(object):
             if not isinstance(upsert, bool):
                 self.logger.error('upsert is not a boolean')
             return None
+        except BSONError as ex:
+            raise CollectionSetError('document error: {}'.format(ex))
+        except PyMongoError as ex:
+            raise CollectionSetError('pymongo error: {}'.format(ex))
         except:
             self.logger.error('Unkown exception on collection update')
             return None
@@ -92,7 +103,7 @@ class MongoCollection(object):
         return NotImplementedError()
 
     @staticmethod
-    def is_mongo_successfull(dico):
+    def is_successfull(dico):
         """
         Check if a pymongo dict response report a success ({'ok': 1.0, 'n': 2})
 
