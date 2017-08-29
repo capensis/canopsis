@@ -84,7 +84,8 @@ def check_values(data):
 
     if 'rrule' in data:
         rrule_valid, rrule_reason = check_valid_rrule(rrule)
-        raise ValueError(rrule_reason)
+        if rrule_valid != True:
+            raise ValueError(rrule_reason)
 
 
 def exports(ws):
