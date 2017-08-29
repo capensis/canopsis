@@ -30,9 +30,6 @@ DEFAULT_ALIVE_SESSION_DURATION = 300
 class Session():
     """
     Manage session informations.
-
-    TODO: Factories update/insert/find and is_mongo_successfull() in a
-          small lib in common.mongo
     """
 
     CONF_PATH = 'etc/session/session.conf'

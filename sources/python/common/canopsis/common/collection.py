@@ -34,8 +34,8 @@ class MongoCollection(object):
     """
     A mongodb collection handeling class, to ease access to mongodb.
 
-    ! Be carefull ! Ddon't rebuild a storage like the old one, with over
-    engineered classes/functions.
+    For futur generation: Behold ! Don't rebuild a storage layer like
+    the old one, with over engineered classes/functions.
     """
 
     def __init__(self, collection, logger=None):
@@ -121,7 +121,7 @@ class MongoCollection(object):
     @staticmethod
     def is_successfull(dico):
         """
-        Check if a pymongo dict response report a success ({'ok': 1.0, 'n': 2})
+        Check if a pymongo dict response is a success ({'ok': 1.0, 'n': 2})
 
         :param dict dico: a pymongo dict response on update, remove...
         :rtype: bool
