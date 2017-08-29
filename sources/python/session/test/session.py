@@ -19,9 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 from time import sleep
 from unittest import TestCase, main
 
+from canopsis.common.collection import MongoCollection
 from canopsis.middleware.core import Middleware
 from canopsis.session.manager import Session
 
@@ -32,7 +35,7 @@ class SessionManagerTest(TestCase):
         self.storage = Middleware.get_middleware_by_uri(
             'mongodb-default-testsession://'
         )
-        self.collection = self.storage._backend
+        self.collection = MongoCollection(self.storage._backend)
 
         self.manager = Session(collection=self.collection)
 
