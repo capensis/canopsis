@@ -24,14 +24,71 @@ from canopsis.common.ws import route
 from canopsis import schema
 from canopsis.event.eventslogmanager import EventsLog
 from canopsis.common.utils import singleton_per_scope
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
-from bottle import HTTPError
+from bottle import HTTPError, request
 import requests
 import json
 
 
 def exports(ws):
     manager = singleton_per_scope(EventsLog)
+
+    @ws.application.post(
+        '/api/v2/event'
+    )
+    def send_event_post():
+        try:
+            events = request.json
+        except ValueError as verror:
+            return gen_json_error({'description':
+                                   'malformed JSON : {0}'.format(verror)},
+                                  HTTP_ERROR)
+
+        if events is None:
+            return gen_json_error(
+                {'description': 'nothing to return'},
+                HTTPError
+            )
+
+        exchange = ws.amqp.exchange_name_events
+
+        if isinstance(events, dict):
+            events = [events]
+
+        for event in events:
+
+            if schema.validate(event, 'cevent'):
+                sname = 'cevent.{0}'.format(event['event_type'])
+
+                if schema.validate(event, sname):
+                    if event['event_type'] == 'eue':
+                        sname = 'cevent.eue.{0}'.format(
+                            event['type_message']
+                        )
+
+                        if not schema.validate(event, sname):
+                            return gen_json_error(
+                                {'description': 'invalid event: {0}'.format(
+                                    event
+                                )},
+                                HTTPError
+                            )
+
+                    rk = '{0}.{1}.{2}.{3}.{4}'.format(
+                        u'{0}'.format(event['connector']),
+                        u'{0}'.format(event['connector_name']),
+                        u'{0}'.format(event['event_type']),
+                        u'{0}'.format(event['source_type']),
+                        u'{0}'.format(event['component'])
+                    )
+
+                    if event['source_type'] == 'resource':
+                        rk = '{0}.{1}'.format(rk, event['resource'])
+
+                    ws.amqp.publish(event, rk, exchange)
+
+        return gen_json(events)
 
     @route(ws.application.post, name='event', payload=['event', 'url'])
     @route(ws.application.put, name='event', payload=['event', 'url'])
