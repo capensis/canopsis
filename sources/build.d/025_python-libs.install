@@ -26,7 +26,7 @@ function easy_install_all_libs() {
 	easy_install_pylib polib
 	easy_install_pylib python-ldap
 	easy_install_pylib validictory
-	easy_install_pylib psutil==1.0.1
+	easy_install_pylib "psutil==1.0.1"
 	easy_install_pylib pybars
 	easy_install_pylib PyMeta
 	easy_install_pylib greenlet
@@ -52,13 +52,14 @@ function easy_install_all_libs() {
 	easy_install_pylib traceback2
 	easy_install_pylib unittest2
 	easy_install_pylib chardet
-	easy_install_pylib grako==3.18.1
+	easy_install_pylib "grako==3.18.1"
 	easy_install_pylib functools32
 	easy_install_pylib vcversioner
 	easy_install_pylib jsonschema
 	easy_install_pylib ijson
-	easy_install_pylib enum34==1.1.6
-	easy_install_pylib configparser==3.5.0
+	easy_install_pylib "enum34==1.1.6"
+	easy_install_pylib "configparser==3.5.0"
+}
 
 
 function install(){
