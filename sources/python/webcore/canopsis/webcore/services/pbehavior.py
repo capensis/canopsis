@@ -74,6 +74,10 @@ def check_values(data):
             raise ValueError("Cant decode mfilter parameter: {}"
                              .format(data["filter"]))
 
+    if 'rrule' in data:
+        check_valid_rrule(data['rrule'])
+
+    # useful when enabled doesn't exist in document
     if "enabled" not in data or data["enabled"] is None or isinstance(data['enabled'], bool):
         return
 
@@ -83,11 +87,6 @@ def check_values(data):
         data["enabled"] = False
     else:
         raise ValueError("The enabled value does not match a boolean")
-
-    if 'rrule' in data:
-        rrule_valid, rrule_reason = check_valid_rrule(rrule)
-        if rrule_valid != True:
-            raise ValueError(rrule_reason)
 
 
 def exports(ws):
