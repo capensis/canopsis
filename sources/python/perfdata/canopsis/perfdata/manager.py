@@ -18,10 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from __future__ import unicode_literals
-from time import time
 
-from canopsis.common.init import basestring
+"""
+Perfdata manager.
+
+Handle basic operations on series and metrics data.
+"""
+
+from __future__ import unicode_literals, ba
+from time import time
+from numbers import Number
+
+#from canopsis.common.init import basestring
 from canopsis.monitoring.parser import PerfDataParser
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
@@ -29,7 +37,6 @@ from canopsis.configuration.configurable.decorator import (
 from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 from canopsis.middleware.registry import MiddlewareRegistry
 
-from numbers import Number
 
 CONF_PATH = 'perfdata/perfdata.conf'
 CATEGORY = 'PERFDATA'
@@ -48,6 +55,9 @@ class PerfData(MiddlewareRegistry):
 
     @property
     def context(self):
+        """Return the context graph manager
+        :rtype: an instance of the context graph manager"""
+
         return self[PerfData.CONTEXT_MANAGER]
 
     def __init__(
@@ -63,11 +73,22 @@ class PerfData(MiddlewareRegistry):
         if context is not None:
             self[PerfData.CONTEXT_MANAGER] = context
 
-    def _data_id_tags(self, metric_id, meta=None, event={}):
+    @staticmethod
+    def _data_id_tags(metric_id, meta=None, event=None):
+        """
+        Return the metric and the associated tags.
+
+        :param metric_id: the metric id
+        :param meta:
+        :param event: event use to generate the eid
+        :rtype : a tuple with the data id (the metric_id parameters untouched)
+        and tags
+        """
+
+        if event is None:
+            event = {}
 
         tags = {} if meta is None else meta.copy()
-
-        # entity = self[PerfData.CONTEXT_MANAGER].get_entities_by_id(metric_id)[0]
 
         entity = {}
 
@@ -88,8 +109,8 @@ class PerfData(MiddlewareRegistry):
             'type': 'metric',
             # 'retention': meta['retention'],
             # 'unit': meta['unit']
-
         }
+
         tags.update(entity)
         tags[eid] = metric_id
 
@@ -193,7 +214,7 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    def put(self, metric_id, points, meta=None, cache=False, event={}):
+    def put(self, metric_id, points, meta=None, cache=False, event=None):
         """Put a (list of) couple (timestamp, value), a tags into
         rated_documents.
 
@@ -203,6 +224,9 @@ class PerfData(MiddlewareRegistry):
         :param iterable points: points to put. One point (timestamp, value) or
             points (timestamp, values)+.
         """
+
+        if event is None:
+            event = {}
 
         # do something only if there are points to put
         if points:
@@ -249,7 +273,12 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    def is_internal(self, metric):
+    @staticmethod
+    def is_internal(metric):
+        """Check if the metrics is internal.
+        :param metric: a metrics as dict.
+        :rtype : a boolean
+        """
 
         return metric['metric'].startswith('cps_')
 
@@ -279,7 +308,7 @@ class PerfData(MiddlewareRegistry):
         for serie in data['series']:
             try:
                 index_ = serie['columns'].index('eid')
-            except:
+            except KeyError:
                 self.logger.debug("Could not find eid in columns")
                 continue
 
@@ -297,7 +326,7 @@ class PerfData(MiddlewareRegistry):
                 }
                 metric_infos.append(dict_)
 
-        if limit == None:         # No limit
+        if limit is None:         # No limit
             end = len(metric_infos)
         else:
             end = start + limit
