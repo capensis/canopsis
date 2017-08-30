@@ -29,6 +29,10 @@ LOG_NAME = 'collection'
 LOG_PATH = 'var/log/collection.log'
 
 
+class CollectionError(Exception):
+    pass
+
+
 class CollectionSetError(Exception):
     pass
 
@@ -80,46 +84,54 @@ class MongoCollection(object):
         """
         Update an element in the collection.
 
-        :param dict query: a query search
+        :param dict query: a mongo search query
         :param dict document: the document to update
         :param bool upsert: do insert if the document does not already exist
-        :rtype: dict or None
+        :raises: BSONError, PyMongoError, OperationFailure, TypeError
+        :rtype: dict
         """
         try:
             return self.collection.update(query, document, upsert=upsert)
-        except BSONError as ex:
-            raise CollectionSetError('document error: {}'.format(ex))
-        except PyMongoError as ex:
-            raise CollectionSetError('pymongo error: {}'.format(ex))
-        except OperationFailure:
-            self.logger.error('Operation failure while doing update')
-        except TypeError:
-            if not isinstance(query, dict):
-                self.logger.error('query is not a dict')
-            if not isinstance(document, dict):
-                self.logger.error('document is not a dict')
-            if not isinstance(upsert, bool):
-                self.logger.error('upsert is not a boolean')
-        except Exception:
-            self.logger.error('Unkown exception on collection update')
 
-        return None
+        except BSONError as ex:
+            message = 'document error: {}'.format(ex)
+        except PyMongoError as ex:
+            message = 'pymongo error: {}'.format(ex)
+        except OperationFailure:
+            message = 'Operation failure while doing update'
+        except TypeError:
+            message = []
+            if not isinstance(query, dict):
+                message.append('query is not a dict')
+            if not isinstance(document, dict):
+                message.append('document is not a dict')
+            if not isinstance(upsert, bool):
+                message.append('upsert is not a boolean')
+            message = ' ; '.join(message)
+        except Exception:
+            message = 'Unkown exception on collection update'
+
+        self.logger.error(message)
+        raise CollectionError(message)
 
     def remove(self, query={}):
         """
         Remove an element in the collection.
 
-        :param dict query:
-        :rtype: dict or None
+        :param dict query: a mongo search query
+        :raises: OperationFailure
+        :rtype: dict
         """
         try:
             return self.collection.remove(query)
-        except OperationFailure:
-            self.logger.error('Operation failure while doing remove')
-        except Exception:
-            self.logger.error('Unkown error while doing remove')
 
-        return None
+        except OperationFailure:
+            message = 'Operation failure while doing remove'
+        except Exception:
+            message = 'Unkown error while doing remove'
+
+        self.logger.error(message)
+        raise CollectionError(message)
 
     @staticmethod
     def is_successfull(dico):

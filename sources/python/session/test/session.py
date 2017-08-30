@@ -51,7 +51,7 @@ class SessionManagerTest(TestCase):
 
         session = self.collection.find_one({'_id': self.user})
 
-        self.assertTrue(session is not None)
+        self.assertTrue(isinstance(session, dict))
         self.assertEqual(got, session['last_check'])
 
     def test_session_start(self):
@@ -59,7 +59,7 @@ class SessionManagerTest(TestCase):
 
         session = self.collection.find_one({'_id': self.user})
 
-        self.assertTrue(session is not None)
+        self.assertTrue(isinstance(session, dict))
         self.assertTrue(session['active'])
         self.assertEqual(got, session['session_start'])
 
