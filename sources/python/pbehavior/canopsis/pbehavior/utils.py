@@ -20,7 +20,7 @@ def check_valid_rrule(rrule):
 
     try:
         rrulestr(rrule)
-    except ValueError, ex:
+    except ValueError as ex:
         raise ValueError('Invalid RRULE: {}'.format(ex))
 
     return True
