@@ -29,23 +29,26 @@ from canopsis.alerts.reader import AlertsReader
 
 @register_task
 def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
+    """
+    AMQP Event processing.
+    """
     if alertsmgr is None:
         alertsmgr = singleton_per_scope(Alerts)
 
     encoded_event = {}
 
-    for k, v in event.items():
+    for key, value in event.items():
         try:
-            k = k.encode('utf-8')
-        except Exception:
+            key = key.encode('utf-8')
+        except (UnicodeDecodeError, UnicodeEncodeError):
             pass
 
         try:
-            v = v.encode('utf-8')
-        except Exception:
+            value = value.encode('utf-8')
+        except (UnicodeDecodeError, UnicodeEncodeError):
             pass
 
-        encoded_event[k] = v
+        encoded_event[key] = value
 
     try:
         alertsmgr.archive(encoded_event)
@@ -55,6 +58,9 @@ def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
 
 @register_task
 def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
+    """
+    Scheduled process.
+    """
     if alertsmgr is None:
         alertsmgr = singleton_per_scope(Alerts)
 
