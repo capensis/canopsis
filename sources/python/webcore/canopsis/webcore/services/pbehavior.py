@@ -112,6 +112,20 @@ class RouteHandlerPBehavior(object):
                tstart, tstop, rrule,
                enabled, comments,
                connector, connector_name):
+        """
+        Create a pbehavior.
+
+        :param str name: pb name
+        :param str filter_: mongo filter applying on context graph, as string
+        :param str author: pb author
+        :param int tstart: start timestamp
+        :param int tstop: end timestamp
+        :param str rrule: RRULE
+        :param bool enabled: enable/disable this pb
+        :param list comments: list of comments: {'author': 'author', 'message': 'msg'}
+        :param str connector: connector
+        :param str connector_name: connector name
+        """
         data = locals()
         data.pop('self')
         check_values(data)
@@ -128,6 +142,13 @@ class RouteHandlerPBehavior(object):
         return result
 
     def read(self, _id):
+        """
+        Read a pbehavior.
+
+        :param str _id: pb id
+        :return: pbehavior
+        :rtype: dict
+        """
         ok = False
         if isinstance(_id, string_types):
             ok = True
@@ -146,6 +167,11 @@ class RouteHandlerPBehavior(object):
     def update(self, _id, name=None, filter_=None, tstart=None, tstop=None,
                rrule=None, enabled=None, comments=None, connector=None,
                connector_name=None, author=None):
+        """
+        Update pbehavior fields. Fields to None will **not** be updated.
+
+        :param str _id: pbehavior id
+        """
         params = locals()
         params.pop('_id')
         params.pop('self')
@@ -154,20 +180,48 @@ class RouteHandlerPBehavior(object):
         return self.pb_manager.update(_id, **params)
 
     def delete(self, _id):
+        """
+        Delete pbehavior.
+
+        :param str _id: pbehavior id
+        """
         return self.pb_manager.delete(_id)
 
     def create_comment(self, pb_id, author, message):
+        """
+        Create a new comment on a pbehavior.
+
+        :param str pb_id: pbehavior id
+        :param str author: author
+        :param str message: message
+        :return: comment id
+        :rtype: str
+        """
         author = str(author)
         message = str(message)
         return self.pb_manager.create_pbehavior_comment(pb_id, author, message)
 
     def update_comment(self, pb_id, _id, author, message):
+        """
+        Update an existing comment.
+
+        :param str pb_id: pbehavior id
+        :param str _id: comment id
+        :param str author: author
+        :param str message: message
+        """
         author = str(author)
         message = str(message)
         return self.pb_manager.update_pbehavior_comment(
             pb_id, _id, author=author, message=message)
 
     def delete_comment(self, pb_id, _id):
+        """
+        Delete an existing comment.
+
+        :param str pb_id: pbehavior id
+        :param str _id: comment id
+        """
         return self.pb_manager.delete_pbehavior_comment(pb_id, _id)
 
 def exports(ws):
