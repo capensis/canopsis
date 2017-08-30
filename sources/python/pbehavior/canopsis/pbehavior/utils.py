@@ -1,3 +1,7 @@
+"""
+Utils for pbehaviors.
+"""
+
 from dateutil.rrule import rrulestr
 
 

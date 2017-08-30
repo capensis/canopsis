@@ -18,6 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+pbehavior process
+"""
+
 from __future__ import unicode_literals
 
 from json import dumps
@@ -26,7 +30,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.utils import singleton_per_scope
 from canopsis.task.core import register_task
 from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
-from canopsis.watcher.manager import Watcher
+from canopsis.watcher.manager import Watcher as WatcherManager
 
 
 EVENT_TYPE = 'pbehavior'
@@ -44,7 +48,7 @@ DEFAULT_AUTHOR = 'Default Author'
 TEMPLATE = '/{}/{}/{}/{}'
 TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
 
-watcher_manager = Watcher()
+WATCHER_MANAGER = WatcherManager()
 
 
 def get_entity_id(event):
@@ -52,7 +56,8 @@ def get_entity_id(event):
 
 
 @register_task
-def event_processing(engine, event, pbm=None, logger=None, **kwargs):
+def event_processing(engine, event, pbm=None, logger=None,
+                     watcher_manager=WATCHER_MANAGER, **kwargs):
 
     if pbm is None:
         pbm = singleton_per_scope(PBehaviorManager)
@@ -62,8 +67,7 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
         logger.debug("Start processing event {}".format(event))
 
         logger.debug("entity_id: {}\naction: {}".format(
-            entity_id, event.get('action'))
-        )
+            entity_id, event.get('action')))
 
         pb_rrule = event.get('rrule', None)
         pb_comments = event.get('comments', None)
@@ -128,5 +132,5 @@ def beat_processing(engine, pbm=None, logger=None, **kwargs):
         pbm = singleton_per_scope(PBehaviorManager)
     try:
         pbm.compute_pbehaviors_filters()
-    except Exception as e:
-        logger.error('Processing error {}'.format(str(e)))
+    except Exception as ex:
+        logger.error('Processing error {}'.format(str(ex)))
