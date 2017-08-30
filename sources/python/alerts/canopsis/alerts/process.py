@@ -28,7 +28,7 @@ from canopsis.alerts.reader import AlertsReader
 
 
 @register_task
-def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
+def event_processing(engine, event, alertsmgr=None, **kwargs):
     """
     AMQP Event processing.
     """
@@ -57,7 +57,7 @@ def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
 
 
 @register_task
-def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
+def beat_processing(engine, alertsmgr=None, **kwargs):
     """
     Scheduled process.
     """
