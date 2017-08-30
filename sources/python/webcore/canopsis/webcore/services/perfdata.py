@@ -27,12 +27,11 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.timeserie.core import TimeSerie
-from canopsis.webcore.utils import gen_json, gen_json_error
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 NO_LIMIT = 0
 DEFAULT_LIMIT = 100
 DEFAULT_START = 0
-HTTP_CLT_ERROR = 400
 
 def exports(ws):
 
@@ -150,7 +149,7 @@ def exports(ws):
             start = int(start)
         except ValueError:
             gen_json_error({'description': 'cannot parse parameters'},
-                           HTTP_CLT_ERROR)
+                           HTTP_ERROR)
 
         rep = manager.get_metric_infos(limit, start)
 
@@ -160,7 +159,8 @@ def exports(ws):
     def context_metric():
         """Return every metrics matching a pattern. If they are not
         any pattern, every metrics will be returned.
-        :rtype: a dict with every matching entities.
+        :rtype: a dict
+        :return: a dict with every matching entities.
         """
         json_result = {"total": None,
                        "data": [],

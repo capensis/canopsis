@@ -29,7 +29,6 @@ from __future__ import unicode_literals
 from time import time
 from numbers import Number
 
-#from canopsis.common.init import basestring
 from canopsis.monitoring.parser import PerfDataParser
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
@@ -78,10 +77,11 @@ class PerfData(MiddlewareRegistry):
         """
         Return the metric and the associated tags.
 
-        :param metric_id: the metric id
-        :param meta:
+        :param str metric_id: the metric id
+        :param dict meta: ???
         :param event: event use to generate the eid
-        :rtype : a tuple with the data id (the metric_id parameters untouched)
+        :rtype : a tuple
+        :return: the data id (the metric_id parameters untouched)
         and tags
         """
 
