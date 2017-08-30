@@ -174,3 +174,32 @@ class TestPbehaviorWebservice(TestCase):
 
         pbehavior = self.rhpb.read(pb_id)
         self.assertIsNone(pbehavior)
+
+    def test_create_comment_pb(self):
+        pb_id = self.rhpb.create(**self.VALID_PB)
+
+        c1 = self.rhpb.create_comment(pb_id, author='pb_test', message='pb_comment_msg')
+        c2 = self.rhpb.create_comment(pb_id, author='pb_test', message='pb_comment_msg2')
+        c3 = self.rhpb.create_comment(pb_id, author='pb_test2', message='pb_comment_msg')
+        c4 = self.rhpb.create_comment(pb_id, author='pb_test2', message='pb_comment_msg2')
+
+        self.assertIsInstance(c1, str)
+        self.assertIsInstance(c2, str)
+        self.assertIsInstance(c3, str)
+        self.assertIsInstance(c4, str)
+
+        pbehavior = self.rhpb.read(pb_id)
+
+        comments = pbehavior.get('comments')
+
+        self.assertEquals(comments[0].get('author'), 'pb_test')
+        self.assertEquals(comments[0].get('message'), 'pb_comment_msg')
+
+        self.assertEquals(comments[1].get('author'), 'pb_test')
+        self.assertEquals(comments[1].get('message'), 'pb_comment_msg2')
+
+        self.assertEquals(comments[2].get('author'), 'pb_test2')
+        self.assertEquals(comments[2].get('message'), 'pb_comment_msg')
+
+        self.assertEquals(comments[3].get('author'), 'pb_test2')
+        self.assertEquals(comments[3].get('message'), 'pb_comment_msg2')

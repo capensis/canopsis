@@ -158,8 +158,8 @@ class RouteHandlerPBehavior(object):
 
     def create_comment(self, pb_id, author, message):
         author = str(author)
-        message = str(author)
-        return self.pb_manager.create_pbehavior_comment(pbehavior_id, author, message)
+        message = str(message)
+        return self.pb_manager.create_pbehavior_comment(pb_id, author, message)
 
     def update_comment(self, pb_id, _id, author, message):
         author = str(author)
@@ -167,8 +167,8 @@ class RouteHandlerPBehavior(object):
         return self.pb_manager.update_pbehavior_comment(
             pb_id, _id, author=author, message=message)
 
-    def delete_comment(self, pbehavior_id, _id):
-        return self.pb_manager.delete_pbehavior_comment(pbehavior_id, _id)
+    def delete_comment(self, pb_id, _id):
+        return self.pb_manager.delete_pbehavior_comment(pb_id, _id)
 
 def exports(ws):
 
