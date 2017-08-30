@@ -158,6 +158,19 @@ class TestPbehaviorWebservice(TestCase):
         self.assertEquals(updated_pb.get('tstop'), pbehavior.get('tstop') * 10)
         self.assertEquals(updated_pb.get('rrule'), 'FREQ=DAILY;BYDAY=SU')
         self.assertEquals(updated_pb.get('enabled'), True)
-        self.assertEquals(updated_pb.get('comments'), [{'author': 'test', 'message': 'test'}])
+        self.assertListEqual(updated_pb.get('comments'), [{'author': 'test', 'message': 'test'}])
         self.assertEquals(updated_pb.get('connector'), 'test_pb_new')
         self.assertEquals(updated_pb.get('connector_name'), 'test_pb_new')
+
+    def test_delete_pb(self):
+        pb_id = self.rhpb.create(**self.VALID_PB)
+
+        pbehavior = self.rhpb.read(pb_id)
+
+        self.assertEquals(pbehavior.get('name'), self.VALID_PB.get('name'))
+
+        delres = self.rhpb.delete(pb_id)
+        self.assertEquals(delres.get('deletedCount'), 1)
+
+        pbehavior = self.rhpb.read(pb_id)
+        self.assertIsNone(pbehavior)
