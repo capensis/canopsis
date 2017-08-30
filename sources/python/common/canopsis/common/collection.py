@@ -100,6 +100,9 @@ class MongoCollection(object):
         """
         Update an element in the collection.
 
+        Be carefull ! It behaves like mongos updates: the document
+        parameter will totally replace the old one.
+
         :param dict query: a mongo search query
         :param dict document: the document to update
         :param bool upsert: do insert if the document does not already exist

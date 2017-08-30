@@ -53,6 +53,10 @@ class TestMongoCollection(unittest.TestCase):
         self.assertTrue(MongoCollection.is_successfull(res))
         self.assertEqual(res['n'], 1)
 
+        res = self.collection.find_one(self.id_)
+        self.assertEqual(res['yin'], 'yang')
+        self.assertTrue('strange' not in res)
+
     def test_remove(self):
         res = self.collection.insert(document={'_id': self.id_, 'top': 'bottom'})
         self.assertIsNotNone(res)
