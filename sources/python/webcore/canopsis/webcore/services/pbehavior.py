@@ -23,7 +23,8 @@ from json import loads
 from six import string_types
 
 from canopsis.common.ws import route
-from canopsis.pbehavior.manager import PBehaviorManager, check_valid_rrule
+from canopsis.pbehavior.utils import check_valid_rrule
+from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.manager import Watcher
 
 watcher_manager = Watcher()
@@ -31,7 +32,8 @@ watcher_manager = Watcher()
 
 def check_values(data):
     """Check if the values present in data respect the specification. If
-    the values are correct do nothing. If not, raise a ValueError
+    the values are correct do nothing. If not, raises an error.
+    :raises ValueError: a value is invalid.
     :param dict data: the data."""
 
     def check(data, key, type_):

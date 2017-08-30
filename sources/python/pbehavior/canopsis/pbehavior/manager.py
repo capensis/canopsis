@@ -26,6 +26,7 @@ from json import loads, dumps
 from time import time
 from uuid import uuid4
 
+from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.configuration.configurable.decorator import (
@@ -39,21 +40,6 @@ from canopsis.middleware.registry import MiddlewareRegistry
 CONF_PATH = 'pbehavior/pbehavior.conf'
 CATEGORY = 'PBEHAVIOR'
 
-def check_valid_rrule(rrule):
-    """
-    :param str rrule: rrule as string
-    :returns: True|False, (None|'reason')|Exception
-    :rtype bool, Exception: True if ok, exception
-    """
-    if rrule == '' or rrule == None:
-        return True, 'rrule is empty or None'
-
-    try:
-        rrulestr(rrule)
-    except ValueError as ex:
-        return False, ex
-
-    return True, None
 
 class BasePBehavior(dict):
     _FIELDS = ()
@@ -175,6 +161,7 @@ class PBehaviorManager(MiddlewareRegistry):
         :param list of dict comments: a list of comments made by users
         :param str connector: a string representing the type of connector that has generated the pbehavior
         :param str connector_name:  a string representing the name of connector that has generated the pbehavior
+        :raises ValueError: invalid RRULE
         :return: created element eid
         :rtype: str
         """
@@ -186,9 +173,7 @@ class PBehaviorManager(MiddlewareRegistry):
         else:
             raise ValueError("The enabled value does not match a boolean")
 
-        rrule_valid, rrule_reason = check_valid_rrule(rrule)
-        if rrule_valid != True:
-            raise ValueError("Invalid RRULE: {}".format(rrule_reason))
+        check_valid_rrule(rrule)
 
         if comments is not None:
             for comment in comments:
@@ -253,16 +238,14 @@ class PBehaviorManager(MiddlewareRegistry):
         Update pbehavior record
         :param str _id: pbehavior id
         :param dict kwargs: values pbehavior fields
+        :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
         pb_value = self.get(_id)
 
         if pb_value is None:
             raise ValueError("The id does not match any pebahvior")
 
-        rrule = kwargs.get('rrule', '')
-        rrule_valid, rrule_reason = check_valid_rrule(rrule)
-        if rrule_valid != True:
-            raise ValueError("Invalid RRULE: {}".format(rrule_reason))
+        check_valid_rrule(kwargs.get('rrule', ''))
 
         pbehavior = PBehavior(**self.get(_id))
         new_data = {k: v for k, v in kwargs.iteritems() if v is not None}
