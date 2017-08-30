@@ -25,6 +25,9 @@ from pymongo.errors import PyMongoError, OperationFailure
 
 from canopsis.logger import Logger
 
+LOG_NAME = 'collection'
+LOG_PATH = 'var/log/collection.log'
+
 
 class CollectionSetError(Exception):
     pass
@@ -44,7 +47,7 @@ class MongoCollection(object):
         if logger is not None:
             self.logger = logger
         else:
-            self.logger = Logger.get('collection', 'var/log/collection.log')
+            self.logger = Logger.get(LOG_NAME, LOG_PATH)
 
     def find(self, query):
         """
@@ -97,7 +100,7 @@ class MongoCollection(object):
                 self.logger.error('document is not a dict')
             if not isinstance(upsert, bool):
                 self.logger.error('upsert is not a boolean')
-        except:
+        except Exception:
             self.logger.error('Unkown exception on collection update')
 
         return None
@@ -113,7 +116,7 @@ class MongoCollection(object):
             return self.collection.remove(query)
         except OperationFailure:
             self.logger.error('Operation failure while doing remove')
-        except:
+        except Exception:
             self.logger.error('Unkown error while doing remove')
 
         return None
