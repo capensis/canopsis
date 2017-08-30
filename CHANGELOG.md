@@ -3,6 +3,11 @@
 This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
 
 
+## Canopsis 2.5.0 (xx/xx/2017)
+
+- [#359](https://git.canopsis.net/canopsis/canopsis/issues/359)  refactor : Suppression de code mort
+
+
 ## Canopsis 2.4.5 (25/08/2017)
 
 
