@@ -25,7 +25,7 @@ Perfdata manager.
 Handle basic operations on series and metrics data.
 """
 
-from __future__ import unicode_literals, ba
+from __future__ import unicode_literals
 from time import time
 from numbers import Number
 
