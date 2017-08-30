@@ -308,7 +308,7 @@ class PerfData(MiddlewareRegistry):
         for serie in data['series']:
             try:
                 index_ = serie['columns'].index('eid')
-            except KeyError:
+            except ValueError:
                 self.logger.debug("Could not find eid in columns")
                 continue
 
