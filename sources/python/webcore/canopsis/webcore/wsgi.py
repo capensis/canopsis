@@ -95,10 +95,9 @@ class WebServer():
             if not self.auth_backends[bname].handle_logout
         ]
 
-    def __init__(self, *args, **kwargs):
-        self.logger = Logger.get('webserver', self.LOG_FILE)
-
-        self.config = Configuration.load(self.CONF_PATH, Ini)
+    def __init__(self, config, logger, *args, **kwargs):
+        self.config = config
+        self.logger = logger
 
         server = self.config.get('server', {})
         self.debug = server.get('debug', DEFAULT_DEBUG)
@@ -263,6 +262,8 @@ class WebServer():
         pass
 
 
+conf = Configuration.load(WebServer.CONF_PATH, Ini)
+logger = Logger.get('webserver', WebServer.LOG_FILE)
 # Declare WSGI application
-ws = WebServer()()
+ws = WebServer(config=conf, logger=logger).__call__()
 app = ws.application
