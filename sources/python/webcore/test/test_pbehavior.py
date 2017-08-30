@@ -18,6 +18,11 @@ class TestPbehavior(TestCase):
         'tstop': '8'
     }
 
+    INVALID_PB_TSTART_TSTOP = {
+        'tstart': 1000,
+        'tstop': 100
+    }
+
     INVALID_PB_COMMENTS = {
         'comments': '9'
     }
@@ -34,12 +39,26 @@ class TestPbehavior(TestCase):
         'rrule': 'FREQ=DAILY;INVALID'
     }
 
-    def test_check_values(self):
+    VALID_PB = {
+        'name': 'test_pb',
+        'author': 'test_case_pb',
+        'rrule': 'FREQ=DAILY;BYDAY=MO',
+        'component': 'test_case_pb',
+        'connector': 'unittest',
+        'connector_name': 'unittest',
+        'tstart': 1000,
+        'tstop': 10000,
+    }
+
+    def test_check_values_invalid_pb(self):
         with self.assertRaises(ValueError):
             check_values(self.INVALID_PB_STRINGS)
 
         with self.assertRaises(ValueError):
             check_values(self.INVALID_PB_INT)
+
+        with self.assertRaises(ValueError):
+            check_values(self.INVALID_PB_TSTART_TSTOP)
 
         with self.assertRaises(ValueError):
             check_values(self.INVALID_PB_COMMENTS)
@@ -52,3 +71,6 @@ class TestPbehavior(TestCase):
 
         with self.assertRaises(ValueError):
             check_values(self.INVALID_PB_RRULE)
+
+    def test_check_values_valid_pb(self):
+        check_values(self.VALID_PB)

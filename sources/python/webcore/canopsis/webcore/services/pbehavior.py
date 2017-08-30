@@ -51,6 +51,10 @@ def check_values(data):
     for k in ["tstart", "tstop"]:
         check(data, k, int)
 
+        if 'tstart' in data and 'tstop' in data:
+            if data['tstart'] >= data['tstop']:
+                raise ValueError('tstop cannot be inferior or equal to tstart')
+
     # check dict values
     for k in ["comments"]:
 
