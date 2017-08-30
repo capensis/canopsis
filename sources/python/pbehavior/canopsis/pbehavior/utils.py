@@ -1,3 +1,5 @@
+from dateutil.rrule import rrulestr
+
 
 def check_valid_rrule(rrule):
     """
@@ -16,3 +18,5 @@ def check_valid_rrule(rrule):
         rrulestr(rrule)
     except ValueError, ex:
         raise ValueError('Invalid RRULE: {}'.format(ex))
+
+    return True
