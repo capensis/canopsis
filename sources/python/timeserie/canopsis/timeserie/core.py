@@ -25,7 +25,6 @@ __all__ = ['TimeSerie']
 
 from math import isnan
 
-from canopsis.confng import Configuration, Ini
 from canopsis.timeserie.timewindow import Period, TimeWindow
 from canopsis.timeserie.aggregation import get_aggregation, DELTA
 
@@ -67,6 +66,7 @@ class TimeSerie():
 
     def __init__(
             self,
+            config,
             aggregation=None,
             max_points=None,
             period=None,
@@ -74,13 +74,13 @@ class TimeSerie():
             fill=None,
             *args, **kwargs
     ):
+        self.config = config
         self.aggregation = aggregation
         self.max_points = max_points
         self.period = period
         self.round_time = round_time
         self.fill = fill
 
-        self.config = Configuration.load(self.CONF_PATH, Ini)
         timeserie = self.config.get('TIMESERIE', {})
         if aggregation is None:
             self.aggregation = timeserie.get('aggregation', DEFAULT_AGGREGATION).upper()

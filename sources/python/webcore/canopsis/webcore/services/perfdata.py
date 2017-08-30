@@ -24,15 +24,15 @@ from bottle import request
 
 from canopsis.common.ws import route
 from canopsis.common.utils import singleton_per_scope
+from canopsis.confng import Configuration, Ini
 from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.timeserie.core import TimeSerie
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.webcore.utils import gen_json, gen_json_error
 
 NO_LIMIT = 0
 DEFAULT_LIMIT = 100
 DEFAULT_START = 0
-
 
 
 def exports(ws):
@@ -69,7 +69,8 @@ def exports(ws):
             if period is None:
                 period = timeserie.pop('period', None)
 
-            timeserie = TimeSerie(**timeserie)
+            conf = Configuration.load(TimeSerie.CONF_PATH, Ini)
+            timeserie = TimeSerie(config=conf, **timeserie)
 
             if period is not None:
                 timeserie.period = Period(**period)

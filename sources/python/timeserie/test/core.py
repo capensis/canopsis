@@ -26,6 +26,7 @@ from random import random, randint
 from time import time, mktime
 from unittest import main, TestCase
 
+from canopsis.confng import Configuration, Ini
 from canopsis.timeserie.core import TimeSerie
 from canopsis.timeserie.timewindow import TimeWindow, Period
 
@@ -33,7 +34,8 @@ from canopsis.timeserie.timewindow import TimeWindow, Period
 class TimeSerieTest(TestCase):
 
     def setUp(self):
-        self.timeserie = TimeSerie()
+        self.conf = Configuration.load(TimeSerie.CONF_PATH, Ini)
+        self.timeserie = TimeSerie(self.conf)
         points = [
             (ts, 1) for ts in range(0, 24 * 3600, 3600)
         ]
@@ -103,6 +105,7 @@ class TimeSerieTest(TestCase):
         ]
 
         timeserie = TimeSerie(
+            config=self.conf,
             aggregation='sum',
             period=period,
             round_time=True
@@ -157,7 +160,9 @@ class TimeSerieTest(TestCase):
                 kwargs = {'period': period}
                 period_length = unit_length * value
 
-                timeserie = TimeSerie(round_time=round_time, **kwargs)
+                timeserie = TimeSerie(config=self.conf,
+                                      round_time=round_time,
+                                      **kwargs)
 
                 timesteps = timeserie.timesteps(timewindow)
 

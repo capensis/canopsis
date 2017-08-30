@@ -32,13 +32,15 @@ class SchemaManager():
 
     CONF_PATH = 'etc/schema/schema.conf'
 
-    def __init__(self, *args, **kwargs):
-        self.config = Configuration.load(self.CONF_PATH, Ini)
+    def __init__(self, config, *args, **kwargs):
+        self.config = config
         schema = self.config.get('SCHEMA', {})
-        self.schema_location = schema.get('schema_location', DEFAULT_SCHEMA_LOC)
+        self.schema_location = schema.get('schema_location',
+                                          DEFAULT_SCHEMA_LOC)
 
+conf = Configuration.load(SchemaManager.CONF_PATH, Ini)
 try:
-    _schema_manager = SchemaManager()
+    _schema_manager = SchemaManager(conf)
 except IOError:
     _schema_manager = None
 
