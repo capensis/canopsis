@@ -51,10 +51,6 @@ TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
 WATCHER_MANAGER = WatcherManager()
 
 
-def get_entity_id(event):
-    return ContextGraph.get_id(event)
-
-
 @register_task
 def event_processing(engine, event, pbm=None, logger=None,
                      watcher_manager=WATCHER_MANAGER, **kwargs):
@@ -98,7 +94,6 @@ def event_processing(engine, event, pbm=None, logger=None,
 
                 else:
                     watcher_manager.compute_watchers()
-
 
             elif event.get('action') == PBEHAVIOR_DELETE:
                 result = pbm.delete(_filter={
