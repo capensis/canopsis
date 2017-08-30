@@ -25,22 +25,26 @@ from six import string_types
 from canopsis.common.ws import route
 from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.watcher.manager import Watcher
+from canopsis.watcher.manager import Watcher as WatcherManager
 
-watcher_manager = Watcher()
-
+def check(data, key, type_):
+    """
+    If key exists in data and data[key] != None, check for type_
+    :param dict data: data to check
+    :param str key: key in data dict
+    :param type type_: data[key] type to check
+    :raises ValueError: type_ doesn't match value's type
+    """
+    if key in data and data[key] is not None:
+        if not isinstance(data[key], type_):
+            raise ValueError("The {0} must be a {1} not {2}".format(
+                key, type_, type(data[key])))
 
 def check_values(data):
     """Check if the values present in data respect the specification. If
     the values are correct do nothing. If not, raises an error.
     :raises ValueError: a value is invalid.
     :param dict data: the data."""
-
-    def check(data, key, type_):
-        if key in data and data[key] is not None:
-            if not isinstance(data[key], type_):
-                raise ValueError("The {0} must be a {1} not {2}".format(
-                    key, type_, type(data[key])))
 
     # check str values
     for k in ["name", "author", "rrule", "component", "connector",
@@ -92,10 +96,82 @@ def check_values(data):
     else:
         raise ValueError("The enabled value does not match a boolean")
 
+class RouteHandlerPBehavior(object):
+
+    def __init__(self, pb_manager, watcher_manager):
+        """
+        :param PBehaviorManager pb_manager: pbehavior manager
+        :param WatcherManager watcher_manager: watcher manager
+        """
+        super(RouteHandlerPBehavior, self).__init__()
+        self.watcher_manager = watcher_manager
+        self.pb_manager = pb_manager
+
+    def create(self, name, filter_, author,
+               tstart, tstop, rrule,
+               enabled, comments,
+               connector, connector_name):
+        data = locals()
+        data.pop('self')
+        check_values(data)
+
+        result = self.pb_manager.create(
+            name=name, filter=filter_, author=author,
+            tstart=tstart, tstop=tstop, rrule=rrule,
+            enabled=enabled, comments=comments,
+            connector=connector, connector_name=connector_name
+        )
+
+        self.watcher_manager.compute_watchers()
+
+        return result
+
+    def read(self, _id):
+        ok = False
+        if isinstance(_id, string_types):
+            ok = True
+        elif isinstance(_id, list):
+            ok = True
+            for elt in _id:
+                if not isinstance(elt, string_types):
+                    ok = False
+
+        if not ok:
+            raise ValueError("_id should be str, a list, None (null) not"\
+                             "{0}".format(type(_id)))
+
+        return self.pb_manager.read(_id)
+
+    def update(self, _id, name, filter, tstart, tstop, rrule,
+            enabled, comments, connector, connector_name, author):
+        params = locals()
+        params.pop('_id')
+        params.pop('self')
+        check_values(params)
+
+        return self.pb_manager.update(_id, **params)
+
+    def delete(self, _id):
+        return self.pb_manager.delete(_id)
+
+    def create_comment(self, pb_id, author, message):
+        author = str(author)
+        message = str(author)
+        return self.pb_manager.create_pbehavior_comment(pbehavior_id, author, message)
+
+    def update_comment(self, pb_id, _id, author, message):
+        author = str(author)
+        message = str(message)
+        return self.pb_manager.update_pbehavior_comment(
+            pb_id, _id, author=author, message=message)
+
+    def delete_comment(self, pbehavior_id, _id):
+        return self.pb_manager.delete_pbehavior_comment(pbehavior_id, _id)
 
 def exports(ws):
 
-    pbm = PBehaviorManager()
+    rhpb = RouteHandlerPBehavior(
+        pbm=PBehaviorManager(), watcher_manager=WatcherManager())
 
     @route(
         ws.application.post,
@@ -114,19 +190,9 @@ def exports(ws):
             connector='canopsis', connector_name='canopsis'
     ):
 
-        data = locals()
-        check_values(data)
-
-        result = pbm.create(
-            name=name, filter=filter, author=author,
-            tstart=tstart, tstop=tstop, rrule=rrule,
-            enabled=enabled, comments=comments,
-            connector=connector, connector_name=connector_name
-        )
-
-        watcher_manager.compute_watchers()
-
-        return result
+        return rhpb.create(
+            name, filter, author, tstart, tstop,
+            rrule, enabled, comments, connector, connector_name)
 
     @route(
         ws.application.get,
@@ -134,20 +200,7 @@ def exports(ws):
         payload=['_id']
     )
     def read(_id=None):
-        ok = False
-        if isinstance(_id, string_types):
-            ok = True
-        elif isinstance(_id, list):
-            ok = True
-            for elt in _id:
-                if not isinstance(elt, string_types):
-                    ok = False
-
-        if not ok:
-            raise ValueError("_id should be str, a list, None (null) not"\
-                             "{0}".format(type(_id)))
-
-        return pbm.read(_id)
+        return rhpb.read(_id)
 
     @route(
         ws.application.put,
@@ -167,12 +220,11 @@ def exports(ws):
             connector=None, connector_name=None,
             author=None
     ):
-        params = locals()
-        check_values(params)
-        params.pop('_id')
-        params.pop('pbm')
+        return rhpb.update(
+            _id, name=name, filter_=filter, tstart=tstart, tstop=tstop,
+            rrule=rrule, enabled=enabled, comments=comments,
+            connector=connector, connector_name=connector_name, author=author)
 
-        return pbm.update(_id, **params)
 
     @route(
         ws.application.delete,
@@ -180,8 +232,7 @@ def exports(ws):
         payload=['_id']
     )
     def delete(_id):
-
-        return pbm.delete(_id)
+        return rhpb.delete(_id)
 
     @route(
         ws.application.post,
@@ -189,9 +240,7 @@ def exports(ws):
         payload=['pbehavior_id', 'author', 'message']
     )
     def create_comment(pbehavior_id, author, message):
-        author = str(author)
-        message = str(author)
-        return pbm.create_pbehavior_comment(pbehavior_id, author, message)
+        return rhpb.create_comment(pbehavior_id, author, message)
 
     @route(
         ws.application.put,
@@ -199,12 +248,7 @@ def exports(ws):
         payload=['pbehavior_id', '_id', 'author', 'message']
     )
     def update_comment(pbehavior_id, _id, author=None, message=None):
-        author = str(author)
-        message = str(message)
-        return pbm.update_pbehavior_comment(
-            pbehavior_id, _id,
-            author=author, message=message
-        )
+        return rhpb.update_comment(pbehavior_id, _id, author, message)
 
     @route(
         ws.application.delete,
@@ -212,4 +256,4 @@ def exports(ws):
         payload=['pbehavior_id', '_id']
     )
     def delete_comment(pbehavior_id, _id):
-        return pbm.delete_pbehavior_comment(pbehavior_id, _id)
+        return rhpb.delete_comment(pbehavior_id, _id)
