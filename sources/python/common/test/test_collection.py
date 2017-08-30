@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from pymongo.cursor import Cursor
+from six import string_types
 import unittest
 
 try:
@@ -32,9 +33,17 @@ class TestMongoCollection(unittest.TestCase):
         """Teardown"""
         self.collection.remove()
 
+    def test_insert(self):
+        res = self.collection.insert(document={'_id': self.id_})
+        self.assertEqual(res, self.id_)
+
+        res2 = self.collection.insert(document={'up': 'down'})
+        self.assertTrue(isinstance(res, string_types))
+        self.assertNotEqual(res, res2)
+
     def test_update(self):
         res = self.collection.update(query={'_id': self.id_},
-                                     document={'yin': 'yang'})
+                                     document={'strange': 'charm'})
         self.assertTrue(MongoCollection.is_successfull(res))
         self.assertEqual(res['n'], 0)
 
@@ -45,26 +54,21 @@ class TestMongoCollection(unittest.TestCase):
         self.assertEqual(res['n'], 1)
 
     def test_remove(self):
-        res = self.collection.update(query={'_id': self.id_},
-                                     document={'yin': 'yang'})
-        self.assertTrue(MongoCollection.is_successfull(res))
-        self.assertEqual(res['n'], 0)
+        res = self.collection.insert(document={'_id': self.id_, 'top': 'bottom'})
+        self.assertIsNotNone(res)
 
         res = self.collection.remove(query={'_id': self.id_})
         self.assertTrue(MongoCollection.is_successfull(res))
-        self.assertEqual(res['n'], 0)
+        self.assertEqual(res['n'], 1)
 
-        # Deleting the same object is done successfully
+        # Deleting non-existing object doesn't throw error
         res = self.collection.remove(query={})
         self.assertTrue(MongoCollection.is_successfull(res))
         self.assertEqual(res['n'], 0)
 
     def test_find(self):
-        res = self.collection.update(query={'_id': self.id_},
-                                     document={'yin': 'yang'},
-                                     upsert=True)
-        self.assertTrue(MongoCollection.is_successfull(res))
-        self.assertEqual(res['n'], 1)
+        res = self.collection.insert(document={'_id': self.id_, 'yin': 'yang'})
+        self.assertIsNotNone(res)
 
         res = self.collection.find(query={'_id': self.id_})
         self.assertTrue(isinstance(res, Cursor))
@@ -73,18 +77,14 @@ class TestMongoCollection(unittest.TestCase):
         self.assertEqual(res[0]['yin'], 'yang')
 
     def test_find_one(self):
-        res = self.collection.update(query={'_id': self.id_},
-                                     document={'yin': 'yang'},
-                                     upsert=True)
-        res = self.collection.update(query={'_id': 'anotherid'},
-                                     document={'bambou': 'arbre'},
-                                     upsert=True)
-        self.assertTrue(MongoCollection.is_successfull(res))
-        self.assertEqual(res['n'], 1)
+        res = self.collection.insert(document={'_id': self.id_, 'up': 'down'})
+        self.assertIsNotNone(res)
+        res = self.collection.insert(document={'strange': 'charm'})
+        self.assertIsNotNone(res)
 
         res = self.collection.find_one(query={'_id': self.id_})
         self.assertTrue(isinstance(res, dict))
-        self.assertEqual(res['yin'], 'yang')
+        self.assertEqual(res['up'], 'down')
 
     def test_is_successfull(self):
         dico = {'ok': 1.0, 'n': 2}

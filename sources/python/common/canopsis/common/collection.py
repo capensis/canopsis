@@ -76,9 +76,19 @@ class MongoCollection(object):
         Update an element in the collection.
 
         :param dict document: the document to insert
-        :rtype: dict or None
+        :returns: the _id in the document or a generated one
+        :rtype: str
         """
-        return NotImplementedError()
+        try:
+            return self.collection.insert(document)
+
+        except OperationFailure:
+            message = 'Operation failure while doing insert'
+        except Exception:
+            message = 'Unkown exception on collection insert'
+
+        self.logger.error(message)
+        raise CollectionError(message)
 
     def update(self, query, document, upsert=False):
         """
@@ -138,7 +148,7 @@ class MongoCollection(object):
         """
         Check if a pymongo dict response is a success ({'ok': 1.0, 'n': 2})
 
-        :param dict dico: a pymongo dict response on update, remove...
+        :param dict dico: a pymongo dict response on update and remove
         :rtype: bool
         """
         return 'ok' in dico and dico['ok'] == 1.0
