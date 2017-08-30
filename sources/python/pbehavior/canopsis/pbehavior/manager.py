@@ -239,7 +239,8 @@ class PBehaviorManager(MiddlewareRegistry):
         """
         Update pbehavior record
         :param str _id: pbehavior id
-        :param dict kwargs: values pbehavior fields
+        :param dict kwargs: values pbehavior fields. If a field is None, it will
+            **not** be updated.
         :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
         pb_value = self.get(_id)

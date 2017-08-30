@@ -56,7 +56,8 @@ def check_values(data):
         check(data, k, int)
 
         if 'tstart' in data and 'tstop' in data:
-            if data['tstart'] >= data['tstop']:
+            if data['tstart'] >= data['tstop'] and \
+               data['tstart'] is not None and data['tstop'] is not None:
                 raise ValueError('tstop cannot be inferior or equal to tstart')
 
     # check dict values
@@ -142,8 +143,9 @@ class RouteHandlerPBehavior(object):
 
         return self.pb_manager.read(_id)
 
-    def update(self, _id, name, filter, tstart, tstop, rrule,
-            enabled, comments, connector, connector_name, author):
+    def update(self, _id, name=None, filter_=None, tstart=None, tstop=None,
+               rrule=None, enabled=None, comments=None, connector=None,
+               connector_name=None, author=None):
         params = locals()
         params.pop('_id')
         params.pop('self')

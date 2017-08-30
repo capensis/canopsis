@@ -117,3 +117,47 @@ class TestPbehaviorWebservice(TestCase):
 
     def test_create_pb(self):
         self.rhpb.create(**self.VALID_PB)
+
+    def test_read_pb(self):
+        pb_id = self.rhpb.create(**self.VALID_PB)
+        self.assertIsInstance(pb_id, str)
+
+        pbehavior = self.rhpb.read(pb_id)
+
+        self.assertIsInstance(pbehavior, dict)
+        self.assertEquals(pbehavior.get('name'), self.VALID_PB.get('name'))
+
+    def test_update_pb(self):
+        pb_id = self.rhpb.create(**self.VALID_PB)
+
+        pbehavior = self.rhpb.read(pb_id)
+
+        self.assertEquals(pbehavior.get('name'), self.VALID_PB.get('name'))
+
+        updated_pb = self.VALID_PB.copy()
+        updated_pb['name'] = 'pb_new_name'
+        updated_pb['author'] = 'pb_new_author'
+        updated_pb['filter_'] = '{"new": "filter"}'
+        updated_pb['tstart'] = pbehavior.get('tstart') * 10
+        updated_pb['tstop'] = pbehavior.get('tstop') * 10
+        updated_pb['rrule'] = 'FREQ=DAILY;BYDAY=SU'
+        updated_pb['enabled'] = "true"
+        updated_pb['comments'] = [{'author': 'test', 'message': 'test'}]
+        updated_pb['connector'] = 'test_pb_new'
+        updated_pb['connector_name'] = 'test_pb_new'
+
+        res = self.rhpb.update(pb_id, **updated_pb)
+        self.assertIsInstance(res, dict)
+
+
+        updated_pb = self.rhpb.read(pb_id)
+        self.assertEquals(updated_pb.get('name'), 'pb_new_name')
+        self.assertEquals(updated_pb.get('author'), 'pb_new_author')
+        self.assertEquals(updated_pb.get('filter_'), '{"new": "filter"}')
+        self.assertEquals(updated_pb.get('tstart'), pbehavior.get('tstart') * 10)
+        self.assertEquals(updated_pb.get('tstop'), pbehavior.get('tstop') * 10)
+        self.assertEquals(updated_pb.get('rrule'), 'FREQ=DAILY;BYDAY=SU')
+        self.assertEquals(updated_pb.get('enabled'), True)
+        self.assertEquals(updated_pb.get('comments'), [{'author': 'test', 'message': 'test'}])
+        self.assertEquals(updated_pb.get('connector'), 'test_pb_new')
+        self.assertEquals(updated_pb.get('connector_name'), 'test_pb_new')
