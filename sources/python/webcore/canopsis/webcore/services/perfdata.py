@@ -33,8 +33,6 @@ NO_LIMIT = 0
 DEFAULT_LIMIT = 100
 DEFAULT_START = 0
 
-
-
 def exports(ws):
 
     manager = singleton_per_scope(PerfData)
@@ -149,8 +147,9 @@ def exports(ws):
         try:
             limit = int(limit)
             start = int(start)
-        except:
-            gen_json_error({'description': 'cannot parse parameters'})
+        except ValueError:
+            gen_json_error({'description': 'cannot parse parameters'},
+                           HTTP_ERROR)
 
         rep = manager.get_metric_infos(limit, start)
 
@@ -158,6 +157,11 @@ def exports(ws):
 
     @ws.application.post('/api/context/metric')
     def context_metric():
+        """Return every metrics matching a pattern. If they are not
+        any pattern, every metrics will be returned.
+        :rtype: a dict
+        :return: a dict with every matching entities.
+        """
         json_result = {"total": None,
                        "data": [],
                        "success": None}
@@ -175,12 +179,19 @@ def exports(ws):
 
             limit = int(param.get("limit", DEFAULT_LIMIT))
             start = int(param.get("start", DEFAULT_START))
+            filter_ = param.get("_filter", {})
+
+            # Pars the filter_ field to retrieve the pattern.
+            if "name" in filter_:
+                filter_ = filter_["name"].get("$regex", None)
+            else:
+                filter_ = None
 
             if limit == NO_LIMIT:
                 limit = None
             # 0 because I need to retreive every metrics in order to create
             # the total field of the result
-            rep = manager.get_metric_infos(limit=None, start=0)
+            rep = manager.get_metric_infos(limit=None, start=0, filter_=filter_)
         except Exception as err:
             data_error = {}
             data_error["msg"] = str(err.message)
