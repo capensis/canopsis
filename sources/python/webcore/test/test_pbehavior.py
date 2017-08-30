@@ -175,7 +175,7 @@ class TestPbehaviorWebservice(TestCase):
         pbehavior = self.rhpb.read(pb_id)
         self.assertIsNone(pbehavior)
 
-    def test_create_comment_pb(self):
+    def test_create_comments_pb(self):
         pb_id = self.rhpb.create(**self.VALID_PB)
 
         c1 = self.rhpb.create_comment(pb_id, author='pb_test', message='pb_comment_msg')
@@ -203,3 +203,40 @@ class TestPbehaviorWebservice(TestCase):
 
         self.assertEquals(comments[3].get('author'), 'pb_test2')
         self.assertEquals(comments[3].get('message'), 'pb_comment_msg2')
+
+    def test_update_comment_pb(self):
+        pb_id = self.rhpb.create(**self.VALID_PB)
+
+        c1 = self.rhpb.create_comment(pb_id, author='pb_test', message='pb_comment_msg')
+
+        self.assertIsInstance(c1, str)
+
+        self.rhpb.update_comment(pb_id, c1, author='pb_test_new', message='pb_comment_new')
+
+        pbehavior = self.rhpb.read(pb_id)
+        comments = pbehavior.get('comments')
+
+        self.assertEquals(len(comments), 1)
+        self.assertEquals(comments[0].get('author'), 'pb_test_new')
+        self.assertEquals(comments[0].get('message'), 'pb_comment_new')
+
+    def test_delete_comment_pb(self):
+        pb_id = self.rhpb.create(**self.VALID_PB)
+
+        c1 = self.rhpb.create_comment(pb_id, author='pb_test', message='pb_comment_msg')
+
+        self.assertIsInstance(c1, str)
+
+        pbehavior = self.rhpb.read(pb_id)
+        comments = pbehavior.get('comments')
+
+        self.assertEquals(len(comments), 1)
+
+        res = self.rhpb.delete_comment(pb_id, c1)
+
+        self.assertEquals(res.get('deletedCount'), 1)
+
+        pbehavior = self.rhpb.read(pb_id)
+        comments = pbehavior.get('comments')
+
+        self.assertEquals(len(comments), 0)
