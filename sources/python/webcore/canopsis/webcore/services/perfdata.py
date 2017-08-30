@@ -27,11 +27,12 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, Period
 from canopsis.timeserie.core import TimeSerie
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.webcore.utils import gen_json, gen_json_error
 
 NO_LIMIT = 0
 DEFAULT_LIMIT = 100
 DEFAULT_START = 0
+HTTP_CLT_ERROR = 400
 
 def exports(ws):
 
@@ -147,8 +148,9 @@ def exports(ws):
         try:
             limit = int(limit)
             start = int(start)
-        except:
-            gen_json_error({'description': 'cannot parse parameters'})
+        except ValueError:
+            gen_json_error({'description': 'cannot parse parameters'},
+                           HTTP_CLT_ERROR)
 
         rep = manager.get_metric_infos(limit, start)
 
