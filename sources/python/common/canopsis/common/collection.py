@@ -30,10 +30,16 @@ LOG_PATH = 'var/log/collection.log'
 
 
 class CollectionError(Exception):
+    """
+    Generic error on a MongoCollection.
+    """
     pass
 
 
 class CollectionSetError(Exception):
+    """
+    Error on a set in a MongoCollection.
+    """
     pass
 
 
@@ -82,10 +88,10 @@ class MongoCollection(object):
         try:
             return self.collection.insert(document)
 
-        except OperationFailure as of:
-            message = 'Operation failure while doing insert: {}'.format(of)
+        except OperationFailure as of_err:
+            message = 'Operation failure while doing insert: {}'.format(of_err)
         except Exception:
-            message = 'Unkown exception on collection insert'
+            message = 'Unknown exception on collection insert'
 
         self.logger.error(message)
         raise CollectionError(message)
@@ -107,8 +113,8 @@ class MongoCollection(object):
             message = 'document error: {}'.format(ex)
         except PyMongoError as ex:
             message = 'pymongo error: {}'.format(ex)
-        except OperationFailure as of:
-            message = 'Operation failure while doing update: {}'.format(of)
+        except OperationFailure as of_err:
+            message = 'Operation failure while doing update: {}'.format(of_err)
         except TypeError:
             message = []
             if not isinstance(query, dict):
@@ -119,7 +125,7 @@ class MongoCollection(object):
                 message.append('upsert is not a boolean')
             message = ' ; '.join(message)
         except Exception:
-            message = 'Unkown exception on collection update'
+            message = 'Unknown exception on collection update'
 
         self.logger.error(message)
         raise CollectionError(message)
@@ -135,10 +141,10 @@ class MongoCollection(object):
         try:
             return self.collection.remove(query)
 
-        except OperationFailure as of:
-            message = 'Operation failure while doing remove: {}'.format(of)
+        except OperationFailure as of_err:
+            message = 'Operation failure while doing remove: {}'.format(of_err)
         except Exception:
-            message = 'Unkown error while doing remove'
+            message = 'Unknown error while doing remove'
 
         self.logger.error(message)
         raise CollectionError(message)
