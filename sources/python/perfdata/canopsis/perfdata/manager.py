@@ -259,6 +259,8 @@ class PerfData(MiddlewareRegistry):
 
         :param int limit: how many records to retreive
         :param int start: skip n first elements
+        :param filter_: a string use to search specific metrics. If filter_ is
+        set to None, every metrics will be returned.
         :rtype: list(dict)
         """
 

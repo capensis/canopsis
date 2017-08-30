@@ -156,6 +156,10 @@ def exports(ws):
 
     @ws.application.post('/api/context/metric')
     def context_metric():
+        """Return every metrics matching a pattern. If they are not
+        any pattern, every metrics will be returned.
+        :rtype: a dict with every matching entities.
+        """
         json_result = {"total": None,
                        "data": [],
                        "success": None}
