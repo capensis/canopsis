@@ -65,9 +65,6 @@ def event_processing(engine, event, pbm=None, logger=None,
         logger.debug("entity_id: {}\naction: {}".format(
             entity_id, event.get('action')))
 
-        pb_rrule = event.get('rrule', None)
-        pb_comments = event.get('comments', None)
-        pb_author = event.get('author', DEFAULT_AUTHOR)
         try:
             pb_start = event.get('start')
             pb_end = event.get('end')
@@ -77,6 +74,10 @@ def event_processing(engine, event, pbm=None, logger=None,
         except KeyError as ex:
             logger.error('missing key in event: {}'.format(ex))
             return event
+
+        pb_rrule = event.get('rrule', None)
+        pb_comments = event.get('comments', None)
+        pb_author = event.get('author', DEFAULT_AUTHOR)
 
         try:
             filter_ = {'_id': entity_id}
