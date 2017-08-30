@@ -82,8 +82,8 @@ class MongoCollection(object):
         try:
             return self.collection.insert(document)
 
-        except OperationFailure:
-            message = 'Operation failure while doing insert'
+        except OperationFailure as of:
+            message = 'Operation failure while doing insert: {}'.format(of)
         except Exception:
             message = 'Unkown exception on collection insert'
 
@@ -107,8 +107,8 @@ class MongoCollection(object):
             message = 'document error: {}'.format(ex)
         except PyMongoError as ex:
             message = 'pymongo error: {}'.format(ex)
-        except OperationFailure:
-            message = 'Operation failure while doing update'
+        except OperationFailure as of:
+            message = 'Operation failure while doing update: {}'.format(of)
         except TypeError:
             message = []
             if not isinstance(query, dict):
@@ -135,8 +135,8 @@ class MongoCollection(object):
         try:
             return self.collection.remove(query)
 
-        except OperationFailure:
-            message = 'Operation failure while doing remove'
+        except OperationFailure as of:
+            message = 'Operation failure while doing remove: {}'.format(of)
         except Exception:
             message = 'Unkown error while doing remove'
 
