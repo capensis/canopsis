@@ -582,6 +582,8 @@ def is_mongo_successfull(dico):
     """
     Check if a pymongo dict response report a success ({'ok': 1.0, 'n': 2})
 
+    !! Duplicated with canopsis.common.collection !!
+
     :param dict dico: a pymongo dict response on update, remove...
     :rtype: bool
     """

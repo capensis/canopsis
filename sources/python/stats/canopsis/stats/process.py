@@ -20,16 +20,14 @@
 
 from copy import copy
 
+from canopsis.alerts.manager import Alerts
+from canopsis.alerts.status import get_previous_step
 from canopsis.common.utils import singleton_per_scope
-from canopsis.task.core import register_task
-
+from canopsis.middleware.core import Middleware
+from canopsis.session.manager import Session
 from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.stats.producers.event import EventMetricProducer
-
-from canopsis.session.manager import Session
-
-from canopsis.alerts.status import get_previous_step
-from canopsis.alerts.manager import Alerts
+from canopsis.task.core import register_task
 
 
 def session_stats(usermgr, sessionmgr, logger):
@@ -134,7 +132,12 @@ def beat_processing(
     **kwargs
 ):
     if sessionmgr is None:
-        sessionmgr = singleton_per_scope(Session)
+        kwargs = {
+            'collection': Middleware.get_middleware_by_uri(
+                Session.SESSION_STORAGE_URI
+            )._backend
+        }
+        sessionmgr = singleton_per_scope(Session, kwargs=kwargs)
 
     if eventmgr is None:
         eventmgr = singleton_per_scope(EventMetricProducer)

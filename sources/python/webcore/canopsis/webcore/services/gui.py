@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
 from bottle import static_file, request, redirect
 import os
 
@@ -60,7 +61,7 @@ def exports(ws):
     @ws.application.get('/:lang/:key/', skip=skip_login)
     @ws.application.get('/:lang/:key/index.html', skip=skip_login)
     def loginpage(lang='en', key=None):
-        s = session.get()
+        session = request.environ.get('beaker.session')
 
         # Try to authenticate user
         key = key or request.params.get('authkey', default=None)
@@ -90,7 +91,7 @@ def exports(ws):
         else:
             footer = None
 
-        if not ticket and not s.get('auth_on', False):
+        if not ticket and not session.get('auth_on', False):
             # Build cservice dict for login page templating
             cservices = {
                 'webserver': {provider: 1 for provider in ws.providers},
