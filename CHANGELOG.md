@@ -27,7 +27,6 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 ### Bug fixes and other non-functional changes:
 
 
-
 - [#344](https://git.canopsis.net/canopsis/canopsis/issues/344) fix(engines) : Lors de la création d'un pbehavior avec le widget service weather, le cleaner event crash.
 - [#339](https://git.canopsis.net/canopsis/canopsis/issues/339) fix(Mété de service) :  Erreur 404 sur api/v2/weather/watcher
 - [#338](https://git.canopsis.net/canopsis/canopsis/issues/338) fix(session) : storage non instancié

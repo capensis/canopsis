@@ -18,6 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+
+"""
+Perfdata manager.
+
+Handle basic operations on series and metrics data.
+"""
+
 from __future__ import unicode_literals
 from numbers import Number
 from time import time
@@ -48,6 +55,9 @@ class PerfData(MiddlewareRegistry):
 
     @property
     def context(self):
+        """Return the context graph manager
+        :rtype: an instance of the context graph manager"""
+
         return self[PerfData.CONTEXT_MANAGER]
 
     def __init__(
@@ -63,11 +73,23 @@ class PerfData(MiddlewareRegistry):
         if context is not None:
             self[PerfData.CONTEXT_MANAGER] = context
 
-    def _data_id_tags(self, metric_id, meta=None, event={}):
+    @staticmethod
+    def _data_id_tags(metric_id, meta=None, event=None):
+        """
+        Return the metric and the associated tags.
+
+        :param str metric_id: the metric id
+        :param dict meta: ???
+        :param event: event use to generate the eid
+        :rtype : a tuple
+        :return: the data id (the metric_id parameters untouched)
+        and tags
+        """
+
+        if event is None:
+            event = {}
 
         tags = {} if meta is None else meta.copy()
-
-        # entity = self[PerfData.CONTEXT_MANAGER].get_entities_by_id(metric_id)[0]
 
         entity = {}
 
@@ -88,8 +110,8 @@ class PerfData(MiddlewareRegistry):
             'type': 'metric',
             # 'retention': meta['retention'],
             # 'unit': meta['unit']
-
         }
+
         tags.update(entity)
         tags[eid] = metric_id
 
@@ -193,7 +215,7 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    def put(self, metric_id, points, meta=None, cache=False, event={}):
+    def put(self, metric_id, points, meta=None, cache=False, event=None):
         """Put a (list of) couple (timestamp, value), a tags into
         rated_documents.
 
@@ -203,6 +225,9 @@ class PerfData(MiddlewareRegistry):
         :param iterable points: points to put. One point (timestamp, value) or
             points (timestamp, values)+.
         """
+
+        if event is None:
+            event = {}
 
         # do something only if there are points to put
         if points:
@@ -249,19 +274,33 @@ class PerfData(MiddlewareRegistry):
 
         return result
 
-    def is_internal(self, metric):
+    @staticmethod
+    def is_internal(metric):
+        """Check if the metrics is internal.
+        :param metric: a metrics as dict.
+        :rtype : a boolean
+        """
 
         return metric['metric'].startswith('cps_')
 
-    def get_metric_infos(self, limit, start):
+    def get_metric_infos(self, limit, start, filter_=None):
         """
         Retreive metrics informations from influx.
 
         :param int limit: how many records to retreive
         :param int start: skip n first elements
+        :param filter_: a string use to search specific metrics. If filter_ is
+        set to None, every metrics will be returned.
         :rtype: list(dict)
         """
-        data = self[PerfData.PERFDATA_STORAGE]._conn.query('SHOW SERIES;').raw
+
+        query = None
+        if filter_ is None:
+            query = 'SHOW SERIES;'
+        else:
+            query = 'SHOW SERIES where "eid" =~ /.*{0}.*/;'.format(filter_)
+
+        data = self[PerfData.PERFDATA_STORAGE]._conn.query(query).raw
 
         if "series" not in data:
             return []
@@ -270,7 +309,7 @@ class PerfData(MiddlewareRegistry):
         for serie in data['series']:
             try:
                 index_ = serie['columns'].index('eid')
-            except:
+            except ValueError:
                 self.logger.debug("Could not find eid in columns")
                 continue
 
