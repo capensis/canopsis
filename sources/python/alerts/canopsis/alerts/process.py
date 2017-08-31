@@ -20,17 +20,20 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.utils import singleton_per_scope
-from canopsis.task.core import register_task
-
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
+from canopsis.common.utils import singleton_per_scope
+from canopsis.confng import Configuration, Ini
+from canopsis.task.core import register_task
 
 
 @register_task
 def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
     if alertsmgr is None:
-        alertsmgr = singleton_per_scope(Alerts)
+        kwargs = {
+            'config': Configuration.load(Alerts.CONF_PATH, Ini)
+        }
+        alertsmgr = singleton_per_scope(Alerts, kwargs=kwargs)
 
     encoded_event = {}
 
@@ -51,7 +54,10 @@ def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
 @register_task
 def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
     if alertsmgr is None:
-        alertsmgr = singleton_per_scope(Alerts)
+        kwargs = {
+            'config': Configuration.load(Alerts.CONF_PATH, Ini)
+        }
+        alertsmgr = singleton_per_scope(Alerts, kwargs=kwargs)
 
     alertsreader = singleton_per_scope(AlertsReader)
 

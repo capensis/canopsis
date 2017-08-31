@@ -35,7 +35,6 @@ from canopsis.common.utils import ensure_iterable
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_config
-from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event.manager import Event
 from canopsis.middleware.registry import MiddlewareRegistry
@@ -185,6 +184,7 @@ class Alerts(MiddlewareRegistry):
 
     def __init__(
             self,
+            config,
             extra_fields=None,
             config_storage=None,
             alarm_storage=None,
@@ -194,7 +194,7 @@ class Alerts(MiddlewareRegistry):
     ):
         super(Alerts, self).__init__(*args, **kwargs)
 
-        config = Configuration.load(self.CONF_PATH, Ini)
+        self.config = config
         filter_ = config.get('FILTER', {})
         self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
 
