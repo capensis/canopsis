@@ -25,7 +25,7 @@ from time import sleep
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 
-from base import BaseTest
+from test_base import BaseTest
 
 
 class TestReader(BaseTest):

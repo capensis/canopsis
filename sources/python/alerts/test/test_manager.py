@@ -34,7 +34,7 @@ from canopsis.alerts.tasks import snooze
 from canopsis.check import Check
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
-from base import BaseTest
+from test_base import BaseTest
 
 
 class TestManager(BaseTest):

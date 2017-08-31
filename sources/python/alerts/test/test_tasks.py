@@ -28,7 +28,7 @@ from canopsis.alerts.status import get_previous_step, CANCELED, is_keeped_state
 
 from canopsis.entitylink.manager import Entitylink
 
-from base import BaseTest
+from test_base import BaseTest
 
 
 class TestTasks(BaseTest):

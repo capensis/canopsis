@@ -24,7 +24,7 @@ from unittest import main
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters, AlarmFilter
 
-from base import BaseTest
+from test_base import BaseTest
 from datetime import timedelta
 import logging
 
