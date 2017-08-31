@@ -102,6 +102,7 @@ class MongoCollection(object):
 
         Be carefull ! It behaves like mongos updates: the document
         parameter will totally replace the old one.
+        Use { '$set': document } to softly update the document
 
         :param dict query: a mongo search query
         :param dict document: the document to update

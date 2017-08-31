@@ -18,23 +18,26 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Webservice for session managment.
+"""
+
+from __future__ import unicode_literals
 from bottle import request
 
-from .rights import get_manager as get_rights
 from canopsis.common.utils import singleton_per_scope
 from canopsis.common.ws import route
 from canopsis.middleware.core import Middleware
 from canopsis.session.manager import Session
-
-
-def get():
-    return request.environ.get('beaker.session')
+from .rights import get_manager as get_rights
 
 
 def get_user(_id=None):
-    s = get()
-
-    user = s.get('user', {})
+    """
+    Find current user, or return None
+    """
+    session = request.environ.get('beaker.session')
+    user = session.get('user', {})
 
     if not _id:
         _id = user.get('_id', None)
@@ -42,32 +45,39 @@ def get_user(_id=None):
     if not _id:
         return None
 
-    else:
-        rights = get_rights()
+    rights = get_rights()
+    user = rights.get_user(_id)
 
-        user = rights.get_user(_id)
+    if user:
+        user['rights'] = rights.get_user_rights(_id)
 
-        if user:
-            user['rights'] = rights.get_user_rights(_id)
-
-        return user
+    return user
 
 
 def create(user):
-    s = get()
-    s['user'] = user
-    s['auth_on'] = True
-    s.save()
+    """
+    Create a user session.
+    """
+    session = request.environ.get('beaker.session')
+    session['user'] = user
+    session['auth_on'] = True
+    session.save()
 
-    return s
+    return session
 
 
 def delete():
-    s = get()
-    s.delete()
+    """
+    Delete user user session.
+    """
+    session = request.environ.get('beaker.session')
+    session.delete()
 
 
 def exports(ws):
+    """
+    Expose session routes.
+    """
 
     kwargs = {
         'collection': Middleware.get_middleware_by_uri(
@@ -78,15 +88,25 @@ def exports(ws):
 
     @route(ws.application.get, name='account/me', adapt=False)
     def get_me():
+        """
+        Return the user account.
+        """
         user = get_user()
         user.pop('id', None)
         user.pop('eid', None)
+
         return user
 
     @route(ws.application.get, payload=['username'])
     def keepalive(username):
+        """
+        Maintain the current session.
+        """
         session_manager.keep_alive(username)
 
     @route(ws.application.get, payload=['username'])
     def sessionstart(username):
+        """
+        Start a new session.
+        """
         session_manager.session_start(username)

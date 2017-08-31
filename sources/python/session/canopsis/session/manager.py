@@ -18,6 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Session manager definition.
+"""
+
 from __future__ import unicode_literals
 
 from time import time
@@ -29,7 +33,7 @@ DEFAULT_PERFDATA_MANAGER_VALUE = 'canopsis.perfdata.manager.PerfData'
 DEFAULT_ALIVE_SESSION_DURATION = 300
 
 
-class Session():
+class Session(object):
     """
     Manage session informations.
     """
@@ -43,11 +47,10 @@ class Session():
     PERFDATA_MANAGER = 'perfdata_manager'
 
     def __init__(
-        self,
-        collection,
-        metric_producer=None,
-        perfdata_manager=None,
-        *args, **kwargs
+            self,
+            collection,
+            metric_producer=None,
+            perfdata_manager=None
     ):
         """
         :param MongoCursor collcetion: the collection where user sessoins are located
@@ -98,12 +101,9 @@ class Session():
         session = self.session_collection.find_one({'_id': username})
 
         if session is None:
-
             return False
 
-        else:
-
-            return session['active']
+        return session.get('active', False)
 
     def session_start(self, username):
         """
