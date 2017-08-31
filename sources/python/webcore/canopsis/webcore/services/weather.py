@@ -407,6 +407,7 @@ def exports(ws):
             watcher_entity_pbs = []
             for eid in eids:
                 watcher_entity_pbs.extend(get_pbehaviors_for_entitiy(eid, raw_pbehaviors))
+            watcher_entity_pbs.extend(active_pbehaviors.get(watcher['_id'], []))
             pb_range = get_pb_range(watcher_entity_pbs)
             watcher['pb_range'] = pb_range[:2]
 
