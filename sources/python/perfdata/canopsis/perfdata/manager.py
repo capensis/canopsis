@@ -205,7 +205,7 @@ class PerfData(MiddlewareRegistry):
         """
 
         # do something only if there are points to put
-        if points:
+        if len(points) > 0:
             first_point = points[0]
             # if first_point is a timestamp, points is one point
             if isinstance(first_point, (Number, basestring)):
