@@ -31,7 +31,7 @@ class CheckManagerTest(TestCase):
     """
 
     def setUp(self):
-        self.manager = CheckManager(data_scope='test_check')
+        self.manager = CheckManager()
 
     def tearDown(self):
         self.manager.del_state()
@@ -190,10 +190,10 @@ class StateTest(CheckManagerTest):
     def test_get_state(self):
         self.clean()
 
-        self.manager[CheckManager.CHECK_STORAGE].put_element(
+        self.manager.check_storage.put_element(
             _id='entity_id_1', element={'state': 1}
         )
-        self.manager[CheckManager.CHECK_STORAGE].put_element(
+        self.manager.check_storage.put_element(
             _id='entity_id_2', element={'state': 2}
         )
 
@@ -213,7 +213,7 @@ class StateTest(CheckManagerTest):
     def test_del_state(self):
         self.clean()
 
-        self.manager[CheckManager.CHECK_STORAGE].put_element(
+        self.manager.check_storage.put_element(
             _id='entity_id', element={'state': 1}
         )
         states = list(self.manager.get_state())
