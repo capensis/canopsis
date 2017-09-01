@@ -80,7 +80,7 @@ class Manager():
     CONF_FILE = 'etc/context_graph/manager.conf'
     CONFIG_CAT = "IMPORTCONTEXT"
     STORAGE_URI = "import_storage_uri"
-    DEFAULT_CONFIG = {STORAGE_URI: "mongodb-default-importctx://"}
+    DEFAULT_CONFIG = {STORAGE_URI: "mongodb-default-importgraph://"}
 
     def __init__(self, config=None, *args, **kwargs):
         """__init__
@@ -108,7 +108,6 @@ class Manager():
 
         if len(imports) == 0:
             return None
-
 
         next_ = imports[0]
         next_[ImportKey.F_CREATION] = time.strptime(
