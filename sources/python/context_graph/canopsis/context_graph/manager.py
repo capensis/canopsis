@@ -17,9 +17,8 @@ from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 
-CONF_PATH = 'context_graph/manager.conf'
-CONFNG_PATH = 'etc/{}'.format(CONF_PATH)
-CONTEXT_CAT = 'CONTEXTGRAPH'
+CONF_PATH = 'etc/context_graph/manager.conf'
+
 CTX_HYPERLINK = "hypertextlink_conf"
 INFOSFILTER_CAT = "INFOS_FILTER"
 CONTEXT_CONTENT = [
@@ -27,71 +26,49 @@ CONTEXT_CONTENT = [
     Parameter('extra_fields', Parameter.array()),
 ]
 
-DEFAULT_SCHEMA_ID = "context_graph.filter_infos"
+class ConfName:
 
+    SECT_GCTX = "CONTEXTGRAPH"
+    SECT_FILTER = "INFOS_FILTER"
 
-@conf_paths(CONF_PATH)
-@add_category(CONTEXT_CAT, content=CONTEXT_CONTENT)
-class InfosFilter(MiddlewareRegistry):
+    ENT_STORAGE = "entities_storage_uri"
+    ORG_STORAGE = "organisations_storage_uri"
+    USR_STORAGE = "users_storage_uri"
+    MEASURMNT_STORAGE = "measurements_storage_uri"
+    IMPORT_STORAGE= "import_storage_uri"
+    EVENT_TYPES = "event_types"
+    EXTRA_FIELDS = "extra_fields"
+    HYPERTEXTLNK_CONF = "hypertextlink_conf"
+    SCHEMA_ID = "schema_id"
+
+class InfosFilter:
     """Class use to clean the infos field of an entity"""
 
     OBJ_STORAGE = "OBJECT_STORAGE"
+    SCHEMA_ID = "schema_infos"
 
-    def __init__(self, logger=None):
-        super(InfosFilter, self).__init__()
+    def __init__(self, config=None, logger=None):
+        if config is None:
+            self.config = Configuration.load(CONF_PATH, Ini)
+        else:
+            self.config = config
+
         self.obj_storage = Middleware.get_middleware_by_uri(
             'storage-default://', table='schemas')
+
+        section = self.config.get(ConfName.SECT_GCTX)
+        self._event_types = section[ConfName.EVENT_TYPES]
+        self._extra_fields = section[ConfName.EXTRA_FIELDS]
+
+        section = self.config.get(ConfName.SECT_FILTER)
+        self._schema_id = section[ConfName.SCHEMA_ID]
 
         self.reload_schema()
         self.logger = logger
 
-    @property
-    def event_types(self):
-        """
-        Array of event_type
-        """
-        if not hasattr(self, '_event_types'):
-            self.event_types = None
-
-        return self._event_types
-
-    @event_types.setter
-    def event_types(self, value):
-        if value is None:
-            value = []
-
-        self._event_types = value
-
-    @property
-    def extra_fields(self):
-        """
-        Array of fields to save from event in entity.
-        """
-        if not hasattr(self, '_extra_fields'):
-            self.extra_fields = None
-
-        return self._extra_fields
-
-    @extra_fields.setter
-    def extra_fields(self, value):
-        if value is None:
-            value = []
-
-        self._extra_fields = value
-
     def reload_schema(self):
         """Reload the schema and regenerate the internal structure used to
         filter the infos dict."""
-
-        if not hasattr(self, "_schema_id"):
-            values = self.conf.get(CONTEXT_CAT)
-            id_ = values.get("_schema_id")
-            #  Ugly hack because we cannot retreive the value of schema_id in
-            # the manager.conf file
-            if id_ is None:
-                self._schema_id = DEFAULT_SCHEMA_ID
-            else:
-                self._schema_id = id_.value
 
         try:
             self._schema = self.obj_storage.get_elements(
@@ -306,7 +283,7 @@ class ContextGraph(MiddlewareRegistry):
         # For links building
         self.at_manager = AssociativeTableManager(logger=self.logger,
                                                   collection=self.at_storage._backend)
-        parser = Configuration.load(CONFNG_PATH, Ini)
+        parser = Configuration.load(CONF_PATH, Ini)
         self.hypertextlink_conf = parser.get(CONTEXT_CAT, {}).get(CTX_HYPERLINK, "")
         if self.hypertextlink_conf != "":
             atable = self.at_manager.get(self.hypertextlink_conf)
