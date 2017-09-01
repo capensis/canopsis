@@ -32,14 +32,19 @@ from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.tracer.manager import TracerManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
-context_manager = ContextGraph()
 conf = Configuration.load(Alerts.CONF_PATH, Ini)
+alerts_storage = Middleware.get_middleware_by_uri(
+    Alerts.ALERTS_STORAGE_URI
+)
+
+context_manager = ContextGraph()
 alarm_manager = Alerts(config=conf)
-alarmreader_manager = AlertsReader()
+alarmreader_manager = AlertsReader(config=conf, storage=alerts_storage)
 pbehavior_manager = PBehaviorManager()
 tracer_manager = TracerManager()
 

@@ -28,6 +28,7 @@ from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.middleware.core import Middleware
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
@@ -36,8 +37,12 @@ def exports(ws):
     ws.application.router.add_filter('id_filter', id_filter)
 
     conf = Configuration.load(Alerts.CONF_PATH, Ini)
+    alerts_storage = Middleware.get_middleware_by_uri(
+        Alerts.ALERTS_STORAGE_URI
+    )
+
     am = Alerts(config=conf)
-    ar = AlertsReader()
+    ar = AlertsReader(config=conf, storage=alerts_storage)
     context_manager = ContextGraph()
 
     @route(

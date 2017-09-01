@@ -19,11 +19,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
 from unittest import main
 from time import sleep
 
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
+from canopsis.confng import Configuration, Ini
+from canopsis.middleware.core import Middleware
 
 from base import BaseTest
 
@@ -32,9 +35,10 @@ class TestReader(BaseTest):
     def setUp(self):
         super(TestReader, self).setUp()
 
-        self.reader = AlertsReader()
-        self.reader[AlertsReader.ALARM_STORAGE] = \
-            self.manager[Alerts.ALARM_STORAGE]
+        conf = Configuration.load(Alerts.CONF_PATH, Ini)
+
+        self.reader = AlertsReader(config=conf,
+                                   storage=self.manager[Alerts.ALARM_STORAGE])
 
         self.reader._alarm_fields = {
             'properties': {
@@ -281,7 +285,7 @@ class TestReader(BaseTest):
             def limit(self, _):
                 return self
 
-        self.reader.cache_config = {'expiration': 1}
+        self.reader.expiration = 1
 
         query = MockQuery(count=11)
         count, truncated = self.reader._get_fast_count(
@@ -440,10 +444,8 @@ class TestReader(BaseTest):
         self.assertEqual(truncated, True)
 
         # 7) change configuration
-        self.reader.cache_config = {
-            'resolved_truncate': False,
-            'opened_truncate': False
-        }
+        self.reader.resolved_truncate = False
+        self.reader.opened_truncate = False
 
         query = MockQuery(count=200071)
 

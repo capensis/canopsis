@@ -66,6 +66,8 @@ class Alerts(MiddlewareRegistry):
     Used to archive events related to alarms in a TimedStorage.
     """
 
+    ALERTS_STORAGE_URI = 'mongodb-periodical-alarm://'
+
     CONFIG_STORAGE = 'config_storage'
     ALARM_STORAGE = 'alarm_storage'
     FILTER_STORAGE = 'filter_storage'
