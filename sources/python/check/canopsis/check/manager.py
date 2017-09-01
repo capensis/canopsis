@@ -71,7 +71,17 @@ class CheckManager(object):
 
     #: default function to apply when changing of state.
     DEFAULT_F = 'canopsis.check.task.criticity'
-    valid_states = [0, 1, 2, 3]
+
+    STATE_OK = 0
+    STATE_WARNING = 1
+    STATE_CRITICAL = 2
+    STATE_UNKNOWN = 3
+    VALID_STATES = [
+        STATE_OK,
+        STATE_WARNING,
+        STATE_CRITICAL,
+        STATE_UNKNOWN
+    ]
 
     def __init__(self, config=None, check_storage=None, *args, **kwargs):
         super(CheckManager, self).__init__(*args, **kwargs)
@@ -230,8 +240,8 @@ class CheckManager(object):
         :param state: the state to persist.
         """
 
-        if state not in self.valid_states or not isinstance(state, int):
-            raise InvalidState(state, self.valid_states)
+        if state not in self.VALID_STATES or not isinstance(state, int):
+            raise InvalidState(state, self.VALID_STATES)
 
         return self.check_storage.put_element(
             _id=entity_id,
