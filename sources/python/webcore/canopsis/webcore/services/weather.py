@@ -30,13 +30,15 @@ from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
+from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.tracer.manager import TracerManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
 context_manager = ContextGraph()
-alarm_manager = Alerts()
+conf = Configuration.load(Alerts.CONF_PATH, Ini)
+alarm_manager = Alerts(config=conf)
 alarmreader_manager = AlertsReader()
 pbehavior_manager = PBehaviorManager()
 tracer_manager = TracerManager()

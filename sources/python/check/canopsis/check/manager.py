@@ -21,23 +21,22 @@
 from canopsis.check import Check
 from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
-from canopsis.configuration.model import Parameter
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.confng import Configuration, Ini
+from canopsis.confng.helpers import cfg_to_array
 
-#: check manager configuration category
-CATEGORY = 'CHECK'
+from canopsis.middleware.core import Middleware
 
-#: check manager conf path
-CONF_PATH = 'check/check.conf'
+CONF_CATEGORY = 'CHECK'
+CONF_PATH = 'etc/check/check.conf'
+DEFAULT_TYPES = ''
+DEFAULT_CHECK_STORAGE_URI = 'mongodb-default-check://'
 
 
 class InvalidState(Exception):
     """Handle CheckManager errors."""
 
     def __init__(self, state, states):
+        super(InvalidState, self).__init__()
         self.state = state
         self.states = states
 
@@ -48,16 +47,12 @@ class InvalidState(Exception):
         )
 
 
-@add_category(CATEGORY, content=Parameter('types', parser=Parameter.array()))
-@conf_paths(CONF_PATH)
-class CheckManager(MiddlewareRegistry):
+class CheckManager(object):
     """Manage entity checking state.
 
     A state is bound to an entity. Therefore, an entity id is a document state
     id.
     """
-
-    CHECK_STORAGE = 'check_storage'  #: storage name.
 
     ID = '_id'  #: state id field name.
 
@@ -76,19 +71,38 @@ class CheckManager(MiddlewareRegistry):
 
     #: default function to apply when changing of state.
     DEFAULT_F = 'canopsis.check.task.criticity'
-    valid_states = [0, 1, 2, 3]
 
-    def __init__(self, types=None, *args, **kwargs):
+    STATE_OK = 0
+    STATE_WARNING = 1
+    STATE_CRITICAL = 2
+    STATE_UNKNOWN = 3
+    VALID_STATES = [
+        STATE_OK,
+        STATE_WARNING,
+        STATE_CRITICAL,
+        STATE_UNKNOWN
+    ]
 
+    def __init__(self, config=None, check_storage=None, *args, **kwargs):
         super(CheckManager, self).__init__(*args, **kwargs)
 
-        self.types = types
+        if config is None:
+            self.config = Configuration.load(CONF_PATH, Ini)
+        else:
+            self.config = config
 
-    # TODO , is it used, is it usefull to manage state this way
-    def state(
-        self, ids=None, state=None, criticity=HARD, f=DEFAULT_F, query=None,
-        cache=False
-    ):
+        self.config_check = self.config.get(CONF_CATEGORY, {})
+        self.types = cfg_to_array(self.config_check.get('types', DEFAULT_TYPES))
+
+        if check_storage is None:
+            self.check_storage = Middleware.get_middleware_by_uri(
+                self.config_check.get('check_storage_uri', DEFAULT_CHECK_STORAGE_URI)
+            )
+        else:
+            self.check_storage = check_storage
+
+    def state(self, ids=None, state=None, criticity=HARD,
+              f=DEFAULT_F, query=None, cache=False):
         """Get/update entity state(s).
 
         :param ids: entity id(s). Default is all entity ids.
@@ -108,7 +122,7 @@ class CheckManager(MiddlewareRegistry):
         # default result is None
         result = {}
         # get state document
-        state_documents = self[CheckManager.CHECK_STORAGE].get_elements(
+        state_documents = self.check_storage.get_elements(
             ids=ids, query=query
         )
         # if state document exists
@@ -135,8 +149,6 @@ class CheckManager(MiddlewareRegistry):
             # save field name for quick access
             id_name = CheckManager.ID
             state_name = CheckManager.STATE
-            # save storage for quick access
-            storage = self[CheckManager.CHECK_STORAGE]
 
             # ensure entity_ids is a set
             if isinstance(ids, basestring):
@@ -171,7 +183,7 @@ class CheckManager(MiddlewareRegistry):
 
                     # save new state_document if old != new
                     if state_document != new_state_document:
-                        storage.put_element(
+                        self.check_storage.put_element(
                             _id=_id, element=new_state_document, cache=cache
                         )
 
@@ -193,7 +205,7 @@ class CheckManager(MiddlewareRegistry):
                 )
 
                 # save it in storage
-                storage.put_element(
+                self.check_storage.put_element(
                     _id=entity_id, element=new_state_document, cache=cache
                 )
 
@@ -206,12 +218,6 @@ class CheckManager(MiddlewareRegistry):
 
         return result
 
-    """
-    Simple way to manage states.
-    The following methods allow crud operation on a state in database
-    with only a data couple of on identifier and an ID
-    """
-
     def del_state(self, ids=None, query=None, cache=False):
         """Delete states related to input ids. If ids is None, delete all
         states.
@@ -222,7 +228,7 @@ class CheckManager(MiddlewareRegistry):
         :param bool cache: storage cache when udpate state.
         """
 
-        return self[CheckManager.CHECK_STORAGE].remove_elements(
+        return self.check_storage.remove_elements(
             ids=ids, _filter=query, cache=cache
         )
 
@@ -234,10 +240,10 @@ class CheckManager(MiddlewareRegistry):
         :param state: the state to persist.
         """
 
-        if state not in self.valid_states or not isinstance(state, int):
-            raise InvalidState(state, self.valid_states)
+        if state not in self.VALID_STATES or not isinstance(state, int):
+            raise InvalidState(state, self.VALID_STATES)
 
-        return self[CheckManager.CHECK_STORAGE].put_element(
+        return self.check_storage.put_element(
             _id=entity_id,
             element={'state': state},
             cache=cache
@@ -249,7 +255,7 @@ class CheckManager(MiddlewareRegistry):
 
         :param ids: a list of identifier that may have a state in database.
         """
-        states = self[CheckManager.CHECK_STORAGE].get_elements(
+        states = self.check_storage.get_elements(
             ids=ids
         )
         return states

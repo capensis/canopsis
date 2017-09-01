@@ -18,18 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 
-CONF_PATH = 'event/event.conf'
-CATEGORY = 'EVENT'
+from canopsis.confng import Configuration, Ini
 
+class Event(object):
+    """
+    Manage events in Canopsis
+    """
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class Event(MiddlewareRegistry):
+    CONF_PATH = 'etc/event/event.conf'
+    CONF_CATEGORY = 'EVENT'
+    DEFAULT_EVENT_STORAGE_URI = 'mongodb-default-event://'
 
     default_state = 0
     EVENT_STORAGE = 'event_storage'
@@ -41,9 +41,21 @@ class Event(MiddlewareRegistry):
         3: 'critical'
     }
 
-    """
-    Manage events in Canopsis
-    """
+    def __init__(self, config=None, event_storage=None):
+        super(Event, self).__init__()
+        if config is None:
+            self.config = Configuration.load(self.CONF_PATH, Ini)
+        else:
+            self.config = config
+
+        self.config_event = self.config.get(self.CONF_CATEGORY, {})
+
+        if event_storage is None:
+            event_storage_uri = self.config_event.get(
+                'event_storage_uri', self.DEFAULT_EVENT_STORAGE_URI)
+            self.event_storage = Middleware.get_middleware_by_uri(event_storage_uri)
+        else:
+            self.event_storage = event_storage
 
     @staticmethod
     def get_rk(event):
@@ -113,7 +125,7 @@ class Event(MiddlewareRegistry):
         :param with_count: compute selection count when True
         """
 
-        result = self[Event.EVENT_STORAGE].get_elements(
+        result = self.event_storage.get_elements(
             ids=ids,
             skip=skip,
             sort=sort,

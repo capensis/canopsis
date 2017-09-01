@@ -21,6 +21,7 @@
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.manager import Alerts
+from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.import_ctx import ImportKey, Manager
 from canopsis.engines.core import publish
 from canopsis.confng import Configuration, Ini
@@ -29,11 +30,10 @@ from uuid import uuid4
 import json as j
 import os
 
-
-CONF_FILE = 'context_graph/manager.conf'
 manager = ContextGraph()
-alerts_manager = Alerts()
-import_col_man = Manager(Configuration.load(CONF_FILE, Ini))
+import_col_man = Manager(Configuration.load(Manager.CONF_FILE, Ini))
+conf = Configuration.load(Alerts.CONF_PATH, Ini)
+alerts_manager = Alerts(config=conf)
 
 
 __IMPORT_ID = "import_id"
@@ -101,11 +101,7 @@ def exports(ws):
 
     @route(
         ws.application.get,
-        payload=['query',
-        'projection',
-        'limit',
-        'sort',
-        'with_count']
+        payload=['query', 'projection', 'limit', 'sort', 'with_count']
     )
     def get_entities(
             query={},

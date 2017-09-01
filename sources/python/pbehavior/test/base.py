@@ -35,13 +35,11 @@ class BaseTest(TestCase):
             'storage-default-testentities://'
         )
 
-        self.pbm = PBehaviorManager()
+        self.pbm = PBehaviorManager(pb_storage=pbehavior_storage)
         self.context = ContextGraph()
         self.context[ContextGraph.ENTITIES_STORAGE] = entities_storage
         self.pbm.context = self.context
 
-        self.pbm[PBehaviorManager.PBEHAVIOR_STORAGE] = pbehavior_storage
-
     def tearDown(self):
-        self.pbm.pbehavior_storage.remove_elements()
+        self.pbm.pb_storage.remove_elements()
         self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()

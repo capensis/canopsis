@@ -77,7 +77,7 @@ class Manager():
 
     DATE_FORMAT = "%a %b %d %H:%M:%S %Y"
 
-    CONF_FILE = 'context_graph/manager.conf'
+    CONF_FILE = 'etc/context_graph/manager.conf'
     CONFIG_CAT = "IMPORTCONTEXT"
     STORAGE_URI = "import_storage_uri"
     DEFAULT_CONFIG = {STORAGE_URI: "mongodb-default-importctx://"}

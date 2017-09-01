@@ -19,6 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+#from __future__ import unicode_literals
 from datetime import datetime
 import logging
 import time
@@ -27,9 +28,10 @@ from unittest import TestCase
 from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
-from canopsis.context_graph.manager import ContextGraph
 from canopsis.check import Check
 from canopsis.common.utils import merge_two_dicts
+from canopsis.confng import Configuration, Ini
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 
 
@@ -50,8 +52,9 @@ class BaseTest(TestCase):
         self.filter_storage = Middleware.get_middleware_by_uri(
             'storage-default-testalarmfilter://'
         )
+        conf = Configuration.load(Alerts.CONF_PATH, Ini)
 
-        self.manager = Alerts()
+        self.manager = Alerts(config=conf)
         self.manager[Alerts.ALARM_STORAGE] = self.alarm_storage
         self.manager[Alerts.CONFIG_STORAGE] = self.config_storage
         self.manager.context_manager[
