@@ -60,6 +60,9 @@ key = un, tableau, separe, par,des,virgules"""
         self.assertEqual(r[3], 'par')
 
     def test_cfg_to_bool(self):
+        self.assertTrue(cfg_to_bool(True))
+        self.assertFalse(cfg_to_bool(False))
+
         fd, conf_file = tempfile.mkstemp()
         content = """[SECTION]
 vol = true

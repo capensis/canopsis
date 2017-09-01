@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from six import string_types
 
 
 def cfg_to_array(value, sep=','):
@@ -30,10 +31,13 @@ def cfg_to_bool(value):
     :raises: ValueError
     :rtype: bool
     """
-    value_cap = value.capitalize()
-    if value_cap == 'True':
-        return True
-    elif value_cap == 'False':
-        return False
+    if isinstance(value, bool):
+        return value
+    elif isinstance(value, string_types):
+        value_cap = value.capitalize()
+        if value_cap == 'True':
+            return True
+        elif value_cap == 'False':
+            return False
 
     raise ValueError('Cannot parse to boolean: {}'.format(value))
