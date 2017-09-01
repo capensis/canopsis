@@ -20,19 +20,13 @@
 
 from canopsis.middleware.core import Middleware
 
-from canopsis.confng import Configuration, Ini
-
 class Event(object):
     """
     Manage events in Canopsis
     """
-
-    CONF_PATH = 'etc/event/event.conf'
-    CONF_CATEGORY = 'EVENT'
     DEFAULT_EVENT_STORAGE_URI = 'mongodb-default-event://'
 
     default_state = 0
-    EVENT_STORAGE = 'event_storage'
 
     states_str = {
         0: 'info',
@@ -41,21 +35,23 @@ class Event(object):
         3: 'critical'
     }
 
-    def __init__(self, config=None, event_storage=None):
+    def __init__(self, event_storage):
         super(Event, self).__init__()
-        if config is None:
-            self.config = Configuration.load(self.CONF_PATH, Ini)
-        else:
-            self.config = config
+        self.event_storage = event_storage
 
-        self.config_event = self.config.get(self.CONF_CATEGORY, {})
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide default event_storage.
 
-        if event_storage is None:
-            event_storage_uri = self.config_event.get(
-                'event_storage_uri', self.DEFAULT_EVENT_STORAGE_URI)
-            self.event_storage = Middleware.get_middleware_by_uri(event_storage_uri)
-        else:
-            self.event_storage = event_storage
+        Do not use in tests.
+
+        :rtype: Union[canopsis.storage.core.Storage]
+        """
+        event_storage = Middleware.get_middleware_by_uri(
+            cls.DEFAULT_EVENT_STORAGE_URI, table='events')
+
+        return event_storage
 
     @staticmethod
     def get_rk(event):

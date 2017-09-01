@@ -59,6 +59,10 @@ class engine(TaskHandler, MiddlewareRegistry):
     I_IMPORT_DONE = "Import {0} done."
     I_START_IMPORT = "Start import {0}."
 
+    def __init__(self, *args, **kwargs):
+        self.importer = ContextGraphImport(logger=self.logger)
+        self.report_manager = Manager()
+
     def send_perfdata(self, uuid, time, updated, deleted):
         """Send stat about the import through a perfdata event.
         :param uuid: the import uuid
@@ -116,8 +120,7 @@ class engine(TaskHandler, MiddlewareRegistry):
         :param job: the event.
         :type job: a dict"""
 
-        importer = ContextGraphImport(logger=self.logger)
-        report_manager = Manager()
+
 
         self.logger.info(job)
 
@@ -125,7 +128,7 @@ class engine(TaskHandler, MiddlewareRegistry):
 
         self.logger.info("Processing import {0}.".format(uuid))
 
-        report_manager.update_status(uuid, {Keys.F_STATUS: Keys.ST_ONGOING})
+        self.report_manager.update_status(uuid, {Keys.F_STATUS: Keys.ST_ONGOING})
 
         start = time.time()
         report = {}
@@ -133,9 +136,9 @@ class engine(TaskHandler, MiddlewareRegistry):
         deleted = 0
 
         try:
-            updated, deleted = importer.import_context(uuid)
+            updated, deleted = self.importer.import_context(uuid)
 
-        except Exception as e:
+        except Exception as ex:
             report = {Keys.F_STATUS: Keys.ST_FAILED, Keys.F_INFO: repr(e)}
 
             self.logger.error(self.E_IMPORT_FAILED.format(uuid, repr(e)))
@@ -158,15 +161,13 @@ class engine(TaskHandler, MiddlewareRegistry):
         end = time.time()
         delta = end - start
         report[Keys.F_EXECTIME] = human_exec_time(delta)
-        report_manager.update_status(uuid, report)
+        self.report_manager.update_status(uuid, report)
 
         self.send_perfdata(uuid, delta, updated, deleted)
 
         try:
             os.remove(Keys.IMPORT_FILE.format(uuid))
-        except Exception as e:
+        except Exception as ex:
             pass
-
-        del importer
 
         return (state, msg)
