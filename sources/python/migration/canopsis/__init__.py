@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2015 "Capensis" [http://www.capensis.com]
@@ -19,11 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
-
-
-class TestEvent(TestCase):
-    pass
-
-if __name__ == '__main__':
-    main()
+# attach this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

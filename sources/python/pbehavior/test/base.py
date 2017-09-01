@@ -24,6 +24,7 @@ from unittest import TestCase
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.logger import Logger, OutputNull
 
 
 class BaseTest(TestCase):
@@ -35,13 +36,13 @@ class BaseTest(TestCase):
             'storage-default-testentities://'
         )
 
-        self.pbm = PBehaviorManager()
+        logger = Logger.get('test_pb', None, output_cls=OutputNull)
+
+        self.pbm = PBehaviorManager(logger=logger, pb_storage=pbehavior_storage)
         self.context = ContextGraph()
         self.context[ContextGraph.ENTITIES_STORAGE] = entities_storage
         self.pbm.context = self.context
 
-        self.pbm[PBehaviorManager.PBEHAVIOR_STORAGE] = pbehavior_storage
-
     def tearDown(self):
-        self.pbm.pbehavior_storage.remove_elements()
+        self.pbm.pb_storage.remove_elements()
         self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()

@@ -18,21 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 
-CONF_PATH = 'event/event.conf'
-CATEGORY = 'EVENT'
-
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class Event(MiddlewareRegistry):
+class Event(object):
+    """
+    Manage events in Canopsis
+    """
+    DEFAULT_EVENT_STORAGE_URI = 'mongodb-default-event://'
 
     default_state = 0
-    EVENT_STORAGE = 'event_storage'
 
     states_str = {
         0: 'info',
@@ -41,9 +35,23 @@ class Event(MiddlewareRegistry):
         3: 'critical'
     }
 
-    """
-    Manage events in Canopsis
-    """
+    def __init__(self, event_storage):
+        super(Event, self).__init__()
+        self.event_storage = event_storage
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide default event_storage.
+
+        Do not use in tests.
+
+        :rtype: Union[canopsis.storage.core.Storage]
+        """
+        event_storage = Middleware.get_middleware_by_uri(
+            cls.DEFAULT_EVENT_STORAGE_URI, table='events')
+
+        return event_storage
 
     @staticmethod
     def get_rk(event):
@@ -113,7 +121,7 @@ class Event(MiddlewareRegistry):
         :param with_count: compute selection count when True
         """
 
-        result = self[Event.EVENT_STORAGE].get_elements(
+        result = self.event_storage.get_elements(
             ids=ids,
             skip=skip,
             sort=sort,

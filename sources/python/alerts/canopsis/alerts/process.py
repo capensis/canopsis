@@ -28,7 +28,10 @@ from canopsis.task.core import register_task
 
 
 @register_task
-def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
+def event_processing(engine, event, alertsmgr=None, **kwargs):
+    """
+    AMQP Event processing.
+    """
     if alertsmgr is None:
         kwargs = {
             'config': Configuration.load(Alerts.CONF_PATH, Ini)
@@ -37,22 +40,30 @@ def event_processing(engine, event, alertsmgr=None, logger=None, **kwargs):
 
     encoded_event = {}
 
-    for k, v in event.items():
+    for key, value in event.items():
         try:
-            k = k.encode('utf-8')
-        except:
+            key = key.encode('utf-8')
+        except (UnicodeDecodeError, UnicodeEncodeError):
             pass
-        try:
-            v = v.encode('utf-8')
-        except:
-            pass
-        encoded_event[k] = v
 
-    alertsmgr.archive(encoded_event)
+        try:
+            value = value.encode('utf-8')
+        except (UnicodeDecodeError, UnicodeEncodeError):
+            pass
+
+        encoded_event[key] = value
+
+    try:
+        alertsmgr.archive(encoded_event)
+    except ValueError as ex:
+        engine.logger.error('cannot store event: {}'.format(ex))
 
 
 @register_task
-def beat_processing(engine, alertsmgr=None, logger=None, **kwargs):
+def beat_processing(engine, alertsmgr=None, **kwargs):
+    """
+    Scheduled process.
+    """
     if alertsmgr is None:
         kwargs = {
             'config': Configuration.load(Alerts.CONF_PATH, Ini)

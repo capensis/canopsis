@@ -73,7 +73,9 @@ class AlertsReader(object):
         self.resolved_limit = int(category.get('resolved_limit',
                                                DEFAULT_RESOLVED_LIMIT))
 
-        self.pbm = PBehaviorManager()
+        _, pb_storage = PBehaviorManager.provide_default_basics()
+
+        self.pbm = PBehaviorManager(logger=self.logger, pb_storage=pb_storage)
         self.llm = Entitylink()
 
         self.count_cache = {}

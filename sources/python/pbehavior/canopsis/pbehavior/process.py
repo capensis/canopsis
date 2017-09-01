@@ -28,7 +28,6 @@ from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 from canopsis.task.core import register_task
 from canopsis.watcher.manager import Watcher
 
-
 EVENT_TYPE = 'pbehavior'
 PBEHAVIOR_CREATE = 'create'
 PBEHAVIOR_DELETE = 'delete'
@@ -46,29 +45,31 @@ TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
 
 watcher_manager = Watcher()
 
+def init_managers():
+    pb_logger, pb_storage = PBehaviorManager.provide_default_basics()
+    pb_kwargs = {'logger': pb_logger, 'pb_storage': pb_storage}
+    pb_manager = singleton_per_scope(PBehaviorManager, kwargs=pb_kwargs)
+
+    return pb_manager
 
 def get_entity_id(event):
     return ContextGraph.get_id(event)
 
+_pb_manager = init_managers()
 
 @register_task
-def event_processing(engine, event, pbm=None, logger=None, **kwargs):
-
-    if pbm is None:
-        pbm = singleton_per_scope(PBehaviorManager)
-
+def event_processing(engine, event, pbm=_pb_manager, **kwargs):
     if event.get('event_type') == EVENT_TYPE:
         entity_id = ContextGraph.get_id(event)
-        logger.debug("Start processing event {}".format(event))
+        engine.logger.debug("Start processing event {}".format(event))
 
-        logger.debug("entity_id: {}\naction: {}".format(
-            entity_id, event.get('action'))
-        )
+        engine.logger.debug("entity_id: {}\naction: {}".format(
+            entity_id, event.get('action')))
 
-        filter = {'_id': entity_id}
+        filter_ = {'_id': entity_id}
         if event.get('action') == PBEHAVIOR_CREATE:
             result = pbm.create(
-                event['pbehavior_name'], filter, event.get('author', DEFAULT_AUTHOR),
+                event['pbehavior_name'], filter_, event.get('author', DEFAULT_AUTHOR),
                 event['start'], event['end'],
                 connector=event['connector'],
                 comments=event.get('comments', None),
@@ -76,14 +77,14 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 rrule=event.get('rrule', None)
             )
             if not result:
-                logger.error(ERROR_MSG.format(event['action'], event))
+                engine.logger.error(ERROR_MSG.format(event['action'], event))
 
             else:
                 watcher_manager.compute_watchers()
 
         elif event.get('action') == PBEHAVIOR_DELETE:
             result = pbm.delete(_filter={
-                PBehavior.FILTER: dumps(filter),
+                PBehavior.FILTER: dumps(filter_),
                 PBehavior.NAME: event['pbehavior_name'],
                 PBehavior.TSTART: event['start'],
                 PBehavior.TSTOP: event['end'],
@@ -92,23 +93,21 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
                 PBehavior.CONNECTOR_NAME: event['connector_name'],
             })
             if not result:
-                logger.error(ERROR_MSG.format(event['action'], event))
+                engine.logger.error(ERROR_MSG.format(event['action'], event))
             else:
                 watcher_manager.compute_watchers()
 
         else:
-            logger.error(ERROR_MSG.format(event['action'], event))
+            engine.logger.error(ERROR_MSG.format(event['action'], event))
 
     return event
 
 
 @register_task
-def beat_processing(engine, pbm=None, logger=None, **kwargs):
-    logger.debug("Start beat processing")
+def beat_processing(engine, pbm=_pb_manager, **kwargs):
+    engine.logger.debug("Start beat processing")
 
-    if pbm is None:
-        pbm = singleton_per_scope(PBehaviorManager)
     try:
         pbm.compute_pbehaviors_filters()
-    except Exception as e:
-        logger.error('Processing error {}'.format(str(e)))
+    except Exception as ex:
+        engine.logger.error('Processing error {}'.format(str(ex)))

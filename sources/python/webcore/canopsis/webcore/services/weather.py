@@ -45,7 +45,7 @@ alerts_storage = Middleware.get_middleware_by_uri(
 context_manager = ContextGraph()
 alarm_manager = Alerts(config=conf)
 alarmreader_manager = AlertsReader(config=conf, storage=alerts_storage)
-pbehavior_manager = PBehaviorManager()
+pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 tracer_manager = TracerManager()
 
 DEFAULT_LIMIT = '120'

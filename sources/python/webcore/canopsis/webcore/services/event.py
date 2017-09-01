@@ -19,6 +19,11 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
+import json
+
+import requests
+from bottle import HTTPError, request
+
 from canopsis.common.utils import ensure_iterable
 from canopsis.common.ws import route
 from canopsis import schema
@@ -26,13 +31,12 @@ from canopsis.event.eventslogmanager import EventsLog
 from canopsis.common.utils import singleton_per_scope
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
-from bottle import HTTPError, request
-import requests
-import json
-
 
 def exports(ws):
-    manager = singleton_per_scope(EventsLog)
+    el_kwargs = {
+        'el_storage': EventsLog.provide_default_basics()
+    }
+    manager = singleton_per_scope(EventsLog, kwargs=el_kwargs)
 
     @ws.application.post(
         '/api/v2/event'

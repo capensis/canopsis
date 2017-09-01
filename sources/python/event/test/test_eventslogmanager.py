@@ -21,17 +21,17 @@
 
 from unittest import TestCase, main
 from canopsis.event.eventslogmanager import EventsLog
-from canopsis.common.utils import singleton_per_scope
+from canopsis.middleware.core import Middleware
 
 
 class EventsLogManagerTest(TestCase):
     """Base class for eventslogmanager tests
     """
 
-    def setUp(self):
-        """initialize a manager
-        """
-        self.manager = singleton_per_scope(EventsLog)
+    @classmethod
+    def setUpClass(cls):
+        el_storage = Middleware.get_middleware_by_uri('mongodb-default-testeventslog://')
+        cls.manager = EventsLog(el_storage=el_storage)
 
     def tearDown(self):
         pass
@@ -44,7 +44,7 @@ class EventsLogTest(EventsLogManagerTest):
         def mock_find(query={}, limit=100, with_count=True):
             return None, 5
 
-        self.manager[EventsLog.EVENTSLOG_STORAGE].find_elements = mock_find
+        self.manager.el_storage.find_elements = mock_find
 
         result = self.manager.get_eventlog_count_by_period(
             1433113200,

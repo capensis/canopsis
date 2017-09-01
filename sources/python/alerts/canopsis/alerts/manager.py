@@ -40,7 +40,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_config
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.event.manager import Event
+from canopsis.event.manager import Event as EventManager
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
@@ -477,7 +477,7 @@ class Alerts(MiddlewareRegistry):
 
             if step['_t'] in check_referer_types:
                 event['event_type'] = 'check'
-                event['ref_rk'] = Event.get_rk(event)
+                event['ref_rk'] = EventManager.get_rk(event)
 
             if Check.STATE not in event:
                 event[Check.STATE] = get_last_state(alarm)

@@ -19,11 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+from canopsis.common.setup import setup
 
+install_requires = [
+    'canopsis.common',
+    'canopsis.configuration',
+    'canopsis.middleware',
+    'canopsis.old',
+    'canopsis.perfdata',
+    'canopsis.organisation'
+]
 
-class TestEvent(TestCase):
-    pass
-
-if __name__ == '__main__':
-    main()
+setup(
+    description='Canopsis migration module',
+    install_requires=install_requires,
+    keywords='migration')

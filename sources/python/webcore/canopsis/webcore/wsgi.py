@@ -182,6 +182,7 @@ class WebServer():
         for webservice in self.webservices:
             if self.webservices[webservice]:
                 self._load_webservice(webservice)
+        self.logger.info(u'Service loading completed.')
 
     def _load_auth_backend(self, name):
         modname = 'canopsis.auth.{0}'.format(name)
