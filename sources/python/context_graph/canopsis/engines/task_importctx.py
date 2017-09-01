@@ -119,9 +119,6 @@ class engine(TaskHandler, MiddlewareRegistry):
         """Handlt the import.
         :param job: the event.
         :type job: a dict"""
-
-
-
         self.logger.info(job)
 
         uuid = job[Keys.EVT_IMPORT_UUID]

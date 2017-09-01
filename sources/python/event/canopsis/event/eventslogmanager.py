@@ -18,15 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-  )
 from canopsis.middleware.core import Middleware
 from canopsis.timeserie.timewindow import Interval
-
-from canopsis.confng import Configuration, Ini
-
-DEFAULT_EL_STORAGE_URI = 'mongodb-default-eventslog://'
 
 
 class EventsLog(object):
@@ -34,23 +27,19 @@ class EventsLog(object):
     Manage events log in Canopsis
     """
 
-    CONF_PATH = 'etc/event/eventlog.conf'
-    CONF_CATEGORY = 'EVENTSLOG'
+    DEFAULT_EL_STORAGE_URI = 'mongodb-default-eventslog://'
 
-    def __init__(self, config=None, el_storage=None, *args, **kwargs):
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide default storage for EventsLog
+        """
+        return Middleware.get_middleware_by_uri(
+            cls.DEFAULT_EL_STORAGE_URI, table='events_log')
+
+    def __init__(self, el_storage, *args, **kwargs):
         super(EventsLog, self).__init__(*args, **kwargs)
-
-        if config is None:
-            self.config = Configuration.load(self.CONF_PATH, Ini)
-        else:
-            self.config = config
-
-        self.config_el = self.config.get(self.CONF_CATEGORY, {})
-
-        el_storage_uri = self.config_el.get('eventslog_storage_uri', DEFAULT_EL_STORAGE_URI)
-        if el_storage is None:
-            self.el_storage = Middleware.get_middleware_by_uri(el_storage_uri)
-
+        self.el_storage = el_storage
 
     def get_eventlog_count_by_period(
             self, tstart, tstop, limit=100, query={}.copy()):

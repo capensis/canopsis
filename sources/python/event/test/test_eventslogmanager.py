@@ -31,7 +31,10 @@ class EventsLogManagerTest(TestCase):
     def setUp(self):
         """initialize a manager
         """
-        self.manager = singleton_per_scope(EventsLog)
+        el_kwargs = {
+            'el_storage': EventsLog.provide_default_basics()
+        }
+        self.manager = singleton_per_scope(EventsLog, kwargs=el_kwargs)
 
     def tearDown(self):
         pass
