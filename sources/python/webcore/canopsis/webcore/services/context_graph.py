@@ -24,15 +24,16 @@ from canopsis.alerts.manager import Alerts
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.import_ctx import ImportKey, Manager
 from canopsis.engines.core import publish
+from canopsis.confng import Configuration, Ini
 
 from uuid import uuid4
 import json as j
 import os
 
 manager = ContextGraph()
+import_col_man = Manager(Configuration.load(Manager.CONF_FILE, Ini))
 conf = Configuration.load(Alerts.CONF_PATH, Ini)
 alerts_manager = Alerts(config=conf)
-import_col_man = Manager()
 
 
 __IMPORT_ID = "import_id"
