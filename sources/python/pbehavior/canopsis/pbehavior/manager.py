@@ -131,7 +131,7 @@ class PBehaviorManager(object):
         if config is None:
             self.config = Configuration.load(self.CONF_PATH, Ini)
         else:
-            self.config = None
+            self.config = config
 
         self.config_pb = self.config.get(self.CONF_CATEGORY, {})
 
