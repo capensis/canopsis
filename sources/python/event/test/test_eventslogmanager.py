@@ -21,20 +21,17 @@
 
 from unittest import TestCase, main
 from canopsis.event.eventslogmanager import EventsLog
-from canopsis.common.utils import singleton_per_scope
+from canopsis.middleware.core import Middleware
 
 
 class EventsLogManagerTest(TestCase):
     """Base class for eventslogmanager tests
     """
 
-    def setUp(self):
-        """initialize a manager
-        """
-        el_kwargs = {
-            'el_storage': EventsLog.provide_default_basics()
-        }
-        self.manager = singleton_per_scope(EventsLog, kwargs=el_kwargs)
+    @classmethod
+    def setUpClass(cls):
+        el_storage = Middleware.get_middleware_by_uri('mongodb-default-testeventslog://')
+        cls.manager = EventsLog(el_storage=el_storage)
 
     def tearDown(self):
         pass
