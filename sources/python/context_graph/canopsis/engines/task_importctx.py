@@ -139,10 +139,10 @@ class engine(TaskHandler, MiddlewareRegistry):
             updated, deleted = self.importer.import_context(uuid)
 
         except Exception as ex:
-            report = {Keys.F_STATUS: Keys.ST_FAILED, Keys.F_INFO: repr(e)}
+            report = {Keys.F_STATUS: Keys.ST_FAILED, Keys.F_INFO: repr(ex)}
 
-            self.logger.error(self.E_IMPORT_FAILED.format(uuid, repr(e)))
-            self.logger.exception(e)
+            self.logger.error(self.E_IMPORT_FAILED.format(uuid, repr(ex)))
+            self.logger.exception(ex)
             msg = MSG_FAILED.format(uuid)
             state = ST_CRITICAL
 
