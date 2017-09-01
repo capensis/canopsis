@@ -132,3 +132,14 @@
  	- reddit dédié ?
  		- voir les nouveaux contenus, la taille de la communauté
  		- Soutenu/dévelopé par une compagnie vs 1 Communauté ?
+
+
+## Todo : 
+
+- maquette de l'UI
+- specs des widgets / maquettes 
+- comparaison des frameworks
+- choix du framework JS
+- choix du framework CSS
+- définition du style de l'UI
+- planning
