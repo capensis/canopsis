@@ -39,7 +39,7 @@ class PerfdataModule(MigrationModule):
     def __init__(self, *args, **kwargs):
         super(PerfdataModule, self).__init__(*args, **kwargs)
 
-        self.manager = PerfData()
+        self.manager = PerfData(*PerfData.provide_default_basics())
 
     def init(self):
         pass
