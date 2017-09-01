@@ -22,9 +22,6 @@
 from time import time
 from unittest import TestCase, main
 
-from canopsis.middleware.core import Middleware
-from canopsis.check import Check
-
 from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import (
@@ -32,6 +29,9 @@ from canopsis.alerts.status import (
     is_flapping, is_stealthy, compute_status, get_last_state, get_last_status,
     get_previous_step, is_keeped_state
 )
+from canopsis.check import Check
+from canopsis.confng import Configuration, Ini
+from canopsis.middleware.core import Middleware
 
 
 class TestStatus(TestCase):
@@ -43,7 +43,8 @@ class TestStatus(TestCase):
             'storage-default-testconfig://'
         )
 
-        self.manager = Alerts()
+        conf = Configuration.load(Alerts.CONF_PATH, Ini)
+        self.manager = Alerts(config=conf)
         self.manager[Alerts.ALARM_STORAGE] = self.alarm_storage
         self.manager[Alerts.CONFIG_STORAGE] = self.config_storage
 

@@ -19,6 +19,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Alerts manager.
+"""
+
 from __future__ import unicode_literals
 from datetime import datetime
 from operator import itemgetter
@@ -90,6 +94,9 @@ class Alerts(MiddlewareRegistry):
 
     @property
     def alarm_filters(self):
+        """
+        Automatic filters and actions for alarms.
+        """
         return AlarmFilters(storage=self[Alerts.FILTER_STORAGE],
                             alarm_storage=self[Alerts.ALARM_STORAGE],
                             logger=self.logger)
@@ -194,7 +201,7 @@ class Alerts(MiddlewareRegistry):
     ):
         super(Alerts, self).__init__(*args, **kwargs)
 
-        self.config = config
+        self.config2 = config  # TODO: remove config and rename that
         filter_ = config.get('FILTER', {})
         self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
 
@@ -211,12 +218,15 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.FILTER_STORAGE] = filter_storage
 
         if context is not None:
-            self[Alerts.CONTEXT_MANAGER]= context
+            self[Alerts.CONTEXT_MANAGER] = context
 
         self.context_manager = ContextGraph()
         self.watcher_manager = Watcher()
 
     def load_config(self):
+        """
+        Reload the configuration.
+        """
         value = self[Alerts.CONFIG_STORAGE].get_elements(
             query={'crecord_type': 'statusmanagement'}
         )
@@ -402,7 +412,7 @@ class Alerts(MiddlewareRegistry):
         try:
             entity = entity[0]
         except IndexError:
-                entity = {}
+            entity = {}
 
         no_author_types = ['stateinc', 'statedec', 'statusinc', 'statusdec']
         check_referer_types = [
@@ -497,11 +507,10 @@ class Alerts(MiddlewareRegistry):
                     return
             except Exception:
                 self.logger.warning('entity not in context')
-                pass
 
         if (
-            event['event_type'] == Check.EVENT_TYPE
-            or event['event_type'] == 'watcher'
+                event['event_type'] == Check.EVENT_TYPE
+                or event['event_type'] == 'watcher'
         ):
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
@@ -894,8 +903,7 @@ class Alerts(MiddlewareRegistry):
             task = get_task('alerts.check.hard_limit')
             return task(self, alarm)
 
-        else:
-            return alarm
+        return alarm
 
     def resolve_alarms(self):
         """

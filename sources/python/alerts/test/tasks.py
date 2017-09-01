@@ -21,12 +21,10 @@
 
 from unittest import main
 
-from canopsis.task.core import get_task
-
 from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.status import get_previous_step, CANCELED, is_keeped_state
-
 from canopsis.entitylink.manager import Entitylink
+from canopsis.task.core import get_task
 
 from base import BaseTest
 

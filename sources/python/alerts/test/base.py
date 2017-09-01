@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-#from __future__ import unicode_literals
+from __future__ import unicode_literals
 from datetime import datetime
 import logging
 import time
