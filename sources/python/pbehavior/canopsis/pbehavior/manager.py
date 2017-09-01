@@ -121,6 +121,10 @@ class PBehaviorManager(object):
     __TYPE_ERR = "id_ must be a list of string or a string"
 
     def __init__(self, config=None, pb_storage=None):
+        """
+        :param dict config: configuration
+        :param pb_storage: PBehavior Storage object
+        """
         super(PBehaviorManager, self).__init__()
         self.context = singleton_per_scope(ContextGraph)
 
