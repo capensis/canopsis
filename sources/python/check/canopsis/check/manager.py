@@ -36,6 +36,7 @@ class InvalidState(Exception):
     """Handle CheckManager errors."""
 
     def __init__(self, state, states):
+        super(InvalidState, self).__init__()
         self.state = state
         self.states = states
 
