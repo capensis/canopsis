@@ -82,6 +82,9 @@ class AlertsReader(object):
 
     @property
     def alarm_fields(self):
+        """
+        alarm_field parameter
+        """
         if not hasattr(self, '_alarm_fields'):
             self._alarm_fields = get_schema('alarm_fields')
 
@@ -104,11 +107,11 @@ class AlertsReader(object):
         :rtype: dict
         """
 
-        if type(filter_) is list:
-            for i, f in enumerate(filter_):
-                filter_[i] = self._translate_filter(f)
+        if isinstance(filter_, list):
+            for i, fil in enumerate(filter_):
+                filter_[i] = self._translate_filter(fil)
 
-        elif type(filter_) is dict:
+        elif isinstance(filter_, dict):
             for key, value in filter_.items():
                 new_value = self._translate_filter(value)
                 filter_[key] = new_value
@@ -165,13 +168,12 @@ class AlertsReader(object):
             if tstart is None and tstop is None:
                 return {}
 
-            else:
-                return {
-                    '$or': [
-                        self._get_opened_time_filter(tstart, tstop),
-                        self._get_resolved_time_filter(tstart, tstop)
-                    ]
-                }
+            return {
+                '$or': [
+                    self._get_opened_time_filter(tstart, tstop),
+                    self._get_resolved_time_filter(tstart, tstop)
+                ]
+            }
 
         if opened:
             return self._get_opened_time_filter(tstart, tstop)
@@ -206,8 +208,7 @@ class AlertsReader(object):
                 't': {'$lte': tstart}
             }
 
-        else:
-            return {'v.resolved': None}
+        return {'v.resolved': None}
 
     def _get_resolved_time_filter(self, tstart, tstop):
         """
@@ -241,8 +242,7 @@ class AlertsReader(object):
                 't': {'$lte': tstop}
             }
 
-        else:
-            return {'v.resolved': {'$ne': None}}
+        return {'v.resolved': {'$ne': None}}
 
     def interpret_search(self, search):
         """
@@ -272,17 +272,17 @@ class AlertsReader(object):
         :rtype: list
         """
 
-        for l in lookups:
+        for lookup in lookups:
             task = get_task(
-                'alerts.lookup.{}'.format(l),
+                'alerts.lookup.{}'.format(lookup),
                 cacheonly=True
             )
 
             if task is None:
-                raise ValueError('Unknown lookup "{}"'.format(l))
+                raise ValueError('Unknown lookup "{}"'.format(lookup))
 
-            for a in alarms:
-                a = task(self, a)
+            for alarm in alarms:
+                alarm = task(self, alarm)
 
         return alarms
 
@@ -302,12 +302,8 @@ class AlertsReader(object):
         for key in to_clean:
             self.count_cache.pop(key)
 
-    def _get_fast_count(
-        self,
-        query,
-        tstart, tstop, opened, resolved,
-        filter_, search
-    ):
+    def _get_fast_count(self, query, tstart, tstop, opened, resolved, filter_,
+                        search):
         """
         Select the best way to count a query documents (try to avoid as much
         as possible mongo's .count()), and return a count as fast as possible.
@@ -459,8 +455,8 @@ class AlertsReader(object):
         alarms = self._lookup(alarms, lookups)
 
         if not with_steps:
-            for a in alarms:
-                a['v'].pop(AlarmField.steps.value)
+            for alarm in alarms:
+                alarm['v'].pop(AlarmField.steps.value)
 
         res = {
             'alarms': alarms,
