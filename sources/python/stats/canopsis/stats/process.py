@@ -23,10 +23,11 @@ from copy import copy
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import get_previous_step
 from canopsis.common.utils import singleton_per_scope
+from canopsis.confng import Configuration, Ini
 from canopsis.middleware.core import Middleware
 from canopsis.session.manager import Session
-from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.stats.producers.event import EventMetricProducer
+from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.task.core import register_task
 
 
@@ -146,7 +147,10 @@ def beat_processing(
         usermgr = singleton_per_scope(UserMetricProducer)
 
     if alertsmgr is None:
-        alertsmgr = singleton_per_scope(Alerts)
+        kwargs = {
+            'config': Configuration.load(Alerts.CONF_PATH, Ini)
+        }
+        alertsmgr = singleton_per_scope(Alerts, kwargs=kwargs)
 
     storage = alertsmgr[alertsmgr.ALARM_STORAGE]
 
