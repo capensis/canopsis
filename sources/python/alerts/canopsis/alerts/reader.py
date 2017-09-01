@@ -72,7 +72,9 @@ class AlertsReader(MiddlewareRegistry):
         if alarm_storage is not None:
             self[AlertsReader.ALARM_STORAGE] = alarm_storage
 
-        self.pbm = PBehaviorManager()
+        _, pb_storage = PBehaviorManager.provide_default_basics()
+
+        self.pbm = PBehaviorManager(logger=self.logger, pb_storage=pb_storage)
         self.llm = Entitylink()
 
         self.count_cache = {}
@@ -476,7 +478,7 @@ class AlertsReader(MiddlewareRegistry):
         query = query.sort(sort_key, sort_dir)
 
         query = query.skip(skip)
-        if limit is not None: 
+        if limit is not None:
             query = query.limit(limit)
 
         alarms = list(query)
@@ -493,7 +495,7 @@ class AlertsReader(MiddlewareRegistry):
         last = 0 if limited_total == 0 else skip + limited_total
 
         alarms = self._lookup(alarms, lookups)
-        
+
         if not with_steps:
             for a in alarms:
                 a['v'].pop(AlarmField.steps.value)

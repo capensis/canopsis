@@ -40,7 +40,7 @@ context_manager = ContextGraph()
 conf = Configuration.load(Alerts.CONF_PATH, Ini)
 alarm_manager = Alerts(config=conf)
 alarmreader_manager = AlertsReader()
-pbehavior_manager = PBehaviorManager()
+pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 tracer_manager = TracerManager()
 
 DEFAULT_LIMIT = '120'

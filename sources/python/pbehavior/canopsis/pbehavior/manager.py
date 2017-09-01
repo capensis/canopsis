@@ -30,7 +30,7 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 
-from canopsis.confng import Configuration, Ini
+from canopsis.logger import Logger
 
 
 class BasePBehavior(dict):
@@ -112,35 +112,38 @@ class Comment(BasePBehavior):
 
 class PBehaviorManager(object):
 
-    DEFAULT_PB_STORAGE_URI = 'mongodb-default-pbehavior://'
-    PBEHAVIOR_STORAGE = 'pbehavior_storage'
-    CONF_PATH = 'etc/pbehavior/pbehavior.conf'
-    CONF_CATEGORY = 'PBEHAVIOR'
+    PB_STORAGE_URI = 'mongodb-default-pbehavior://'
+    LOG_PATH = 'var/log/pbehaviormanager.log'
+    LOG_NAME = 'pbehaviormanager'
 
     _UPDATE_FLAG = 'updatedExisting'
     __TYPE_ERR = "id_ must be a list of string or a string"
 
-    def __init__(self, config=None, pb_storage=None):
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide the default configuration and logger objects
+        for PBehaviorManager.
+
+        Do not use those defaults for tests.
+
+        :return: config, logger, storage
+        :rtype: Union[dict, logging.Logger, canopsis.storage.core.Storage]
+        """
+        logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
+        pb_storage = Middleware.get_middleware_by_uri(cls.PB_STORAGE_URI)
+
+        return logger, pb_storage
+
+    def __init__(self, logger, pb_storage):
         """
         :param dict config: configuration
         :param pb_storage: PBehavior Storage object
         """
         super(PBehaviorManager, self).__init__()
         self.context = singleton_per_scope(ContextGraph)
-
-        if config is None:
-            self.config = Configuration.load(self.CONF_PATH, Ini)
-        else:
-            self.config = config
-
-        self.config_pb = self.config.get(self.CONF_CATEGORY, {})
-
-        if pb_storage is None:
-            pb_storage_uri = self.config_pb.get(
-                'pbehavior_storage_uri', self.DEFAULT_PB_STORAGE_URI)
-            self.pb_storage = Middleware.get_middleware_by_uri(pb_storage_uri)
-        else:
-            self.pb_storage = pb_storage
+        self.logger = logger
+        self.pb_storage = pb_storage
 
     def get(self, _id, query=None):
         """Get pbehavior by id.

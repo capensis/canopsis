@@ -5,7 +5,7 @@ import logging
 
 from six import string_types
 
-from logging import FileHandler, StreamHandler
+from logging import FileHandler, StreamHandler, NullHandler
 from logging.handlers import MemoryHandler
 
 from canopsis.common import root_path as canopath
@@ -14,7 +14,7 @@ from canopsis.common import root_path as canopath
 class Output(object):
 
     @staticmethod
-    def make():
+    def make(_):
         """
         Override this method, then return a subclass of logging.Handler.
 
@@ -65,6 +65,19 @@ class OutputFile(Output):
             fpath = os.path.join(default_root_path, path)
 
         return FileHandler(fpath)
+
+
+class OutputNull(Output):
+
+    @staticmethod
+    def make(_):
+        """
+        :param _: unused required argument
+        :return: null handler
+        :rtype: logging.NullHandler
+        """
+
+        return NullHandler()
 
 
 class Logger(object):

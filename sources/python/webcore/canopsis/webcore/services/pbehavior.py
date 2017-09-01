@@ -85,7 +85,7 @@ def check_values(data):
 
 def exports(ws):
 
-    pbm = PBehaviorManager()
+    pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
     @route(
         ws.application.post,

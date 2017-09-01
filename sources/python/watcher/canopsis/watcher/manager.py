@@ -38,7 +38,7 @@ class Watcher(MiddlewareRegistry):
             'storage-default-sla://')
 
         self.context_graph = ContextGraph()
-        self.pbehavior_manager = PBehaviorManager()
+        self.pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
     def get_watcher(self, watcher_id):
         """Retreive from database the watcher specified by is watcher id.
