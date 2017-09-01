@@ -28,26 +28,24 @@ from canopsis.confng import Configuration, Ini
 
 DEFAULT_EL_STORAGE_URI = 'mongodb-default-eventslog://'
 
-CONF_PATH = 'etc/event/eventlog.conf'
-CONF_CATEGORY = 'EVENTSLOG'
-
 
 class EventsLog(object):
-
-    EVENTSLOG_STORAGE = 'eventslog_storage'
     """
     Manage events log in Canopsis
     """
+
+    CONF_PATH = 'etc/event/eventlog.conf'
+    CONF_CATEGORY = 'EVENTSLOG'
 
     def __init__(self, config=None, el_storage=None, *args, **kwargs):
         super(EventsLog, self).__init__(*args, **kwargs)
 
         if config is None:
-            self.config = Configuration.load(CONF_PATH, Ini)
+            self.config = Configuration.load(self.CONF_PATH, Ini)
         else:
             self.config = config
 
-        self.config_el = self.config.get(CONF_CATEGORY, {})
+        self.config_el = self.config.get(self.CONF_CATEGORY, {})
 
         el_storage_uri = self.config_el.get('eventslog_storage_uri', DEFAULT_EL_STORAGE_URI)
         if el_storage is None:
