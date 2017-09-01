@@ -9,7 +9,7 @@ import os
 import tempfile
 from unittest import TestCase, main
 
-from canopsis.confng.helpers import cfg_to_array
+from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.confng.simpleconf import SimpleConf
 from canopsis.confng import Configuration
 from canopsis.confng import Ini, Json
@@ -58,6 +58,23 @@ key = un, tableau, separe, par,des,virgules"""
         self.assertTrue(isinstance(r, list))
         self.assertEqual(len(r), 6)
         self.assertEqual(r[3], 'par')
+
+    def test_cfg_to_bool(self):
+        fd, conf_file = tempfile.mkstemp()
+        content = """[SECTION]
+vol = true
+cape = vrai
+blond = FALSE"""  # = superman
+
+        with open(conf_file, 'w') as f:
+            f.write(content)
+
+        self.config = Configuration.load(conf_file, Ini)
+
+        self.assertTrue(cfg_to_bool(self.config['SECTION']['vol']))
+        self.assertFalse(cfg_to_bool(self.config['SECTION']['blond']))
+        with self.assertRaises(ValueError):
+            cfg_to_bool(self.config['SECTION']['cape'])
 
     def _check_conf(self, sc):
         self.assertEqual(sc['sec1']['k1'], 'val')

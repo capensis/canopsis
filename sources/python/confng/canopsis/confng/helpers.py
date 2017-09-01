@@ -20,3 +20,20 @@ def cfg_to_array(value, sep=','):
             f_values.append(val)
 
     return f_values
+
+
+def cfg_to_bool(value):
+    """
+    Convert a configuration line to a bool.
+
+    :param str value: a value to parse
+    :raises: ValueError
+    :rtype: bool
+    """
+    value_cap = value.capitalize()
+    if value_cap == 'True':
+        return True
+    elif value_cap == 'False':
+        return False
+
+    raise ValueError('Cannot parse to boolean: {}'.format(value))
