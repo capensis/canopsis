@@ -3,17 +3,18 @@
 
 from __future__ import unicode_literals
 
+import threading
+import Queue
+import time
+import jsonschema
+import ijson
+
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
-import jsonschema
-import threading
-import ijson
-import time
-import Queue
 
-#FIXME : move the check of the element in the superficial check method
+# FIXME : move the check of the element in the superficial check method
 
 CONF_FILE = 'context_graph/manager.conf'
 CATEGORY = "IMPORTCONTEXT"
@@ -26,7 +27,7 @@ def execution_time(exec_time):
 
     exec_time = int(exec_time) # we do not care of everything under the second
 
-    hours =  exec_time / 3600
+    hours = exec_time / 3600
     minutes = (exec_time - 3600 * hours) / 60
     seconds = exec_time - (hours * 3600) - (minutes * 60)
 
@@ -44,8 +45,8 @@ class ExceptionThread(threading.Thread):
     def run(self):
         try:
             super(ExceptionThread, self).run()
-        except Exception as e:
-            self.except_queue.put_nowait(e)
+        except Exception as err:
+            self.except_queue.put_nowait(err)
 
 class ImportKey:
     """Usefull values for the import."""
@@ -67,8 +68,6 @@ class ImportKey:
     F_DELETED = "deleted"
     F_UPDATED = "updated"
 
-    # daemon PID file
-    PID_FILE = "/opt/canopsis/var/run/importd.pid"
     # import file pattern
     IMPORT_FILE = "/opt/canopsis/tmp/import_{0}.json"
 
@@ -378,14 +377,14 @@ class ContextGraphImport(ContextGraph):
             fd.close()
 
         cis_thd = ExceptionThread(group=None,
-                                   target=__get_entities_to_update_cis,
-                                   name="cis_thread",
-                                   args=(file_,))
+                                  target=__get_entities_to_update_cis,
+                                  name="cis_thread",
+                                  args=(file_,))
 
         links_thd = ExceptionThread(group=None,
-                                     target=__get_entities_to_update_links,
-                                     name="links_thread",
-                                     args=(file_,))
+                                    target=__get_entities_to_update_links,
+                                    name="links_thread",
+                                    args=(file_,))
 
         threads = [cis_thd, links_thd]
 
@@ -492,7 +491,7 @@ class ContextGraphImport(ContextGraph):
                 del ci[key]
             except KeyError:
                 msg = "No key {0} in ci of id {1}."
-                self.logger.debug(msg.format(key,ci[self.K_ID]))
+                self.logger.debug(msg.format(key, ci[self.K_ID]))
 
         for key in ci:
             entity[key] = ci[key]
@@ -537,7 +536,7 @@ class ContextGraphImport(ContextGraph):
                 del ci[key]
             except KeyError:
                 msg = "No key {0} in ci of id {1}."
-                self.logger.debug(msg.format(key,ci[self.K_ID]))
+                self.logger.debug(msg.format(key, ci[self.K_ID]))
 
         entity = {}
         for key in ci:
@@ -680,9 +679,8 @@ class ContextGraphImport(ContextGraph):
         links_start = False
         links_end = False
 
-
         parser = ijson.parse(fd)
-        for prefix, event, value in parser:
+        for prefix, event, _ in parser:
             if prefix == "cis":
                 cis = True
                 if event == "end_array":
@@ -763,7 +761,8 @@ class ContextGraphImport(ContextGraph):
                 raise ValueError("The action {0} is not recognized\n".format(
                     ci[self.K_ACTION]))
         end = time.time()
-        self.logger.debug("Import {0} : update cis {1}.".format(uuid, execution_time(end - start)))
+        self.logger.debug("Import {0} : update cis {1}.".format(
+            uuid, execution_time(end - start)))
 
         fd.seek(0)
 
