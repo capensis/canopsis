@@ -10,14 +10,10 @@ import jsonschema
 import ijson
 
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
+from canopsis.middleware.core import Middleware
+from canopsis.confng import Configuration, Ini
 
 # FIXME : move the check of the element in the superficial check method
-
-CONF_FILE = 'context_graph/manager.conf'
-CATEGORY = "IMPORTCONTEXT"
 
 def execution_time(exec_time):
     """Return from exec_time a human readable string that represent the
@@ -76,20 +72,30 @@ class ImportKey:
 
     JOB_ID = "importctx_{0}"
 
-@conf_paths(CONF_FILE)
-@add_category(CATEGORY)
-class Manager(MiddlewareRegistry):
+class Manager():
     """The manager use to interact with the default_importgraph collecion."""
 
-    STORAGE = 'import_storage'
     DATE_FORMAT = "%a %b %d %H:%M:%S %Y"
 
-    def __init__(self, *args, **kwargs):
+    CONF_FILE = 'context_graph/manager.conf'
+    CONFIG_CAT = "IMPORTCONTEXT"
+    STORAGE_URI = "import_storage_uri"
+    DEFAULT_CONFIG = {STORAGE_URI: "mongodb-default-importctx://"}
+
+    def __init__(self, config=None, *args, **kwargs):
         """__init__
+        :param config: a configuration
         :param *args:
         :param **kwargs:
         """
-        super(Manager, self).__init__(*args, **kwargs)
+        if config is None:
+            self.config = Configuration.load(self.CONF_FILE, Ini)
+        else:
+            self.config = config
+
+        section = self.config.get(self.CONFIG_CAT, self.DEFAULT_CONFIG)
+        self.storage = Middleware.get_middleware_by_uri(
+            section[self.STORAGE_URI])
 
     def get_next_uuid(self):
         """Retreive the uuid of the next import to process using his creation
@@ -97,7 +103,7 @@ class Manager(MiddlewareRegistry):
         :return the uuid as a string or None if they are no new import
         to process.
         """
-        imports = list(self[self.STORAGE].get_elements(
+        imports = list(self.storage.get_elements(
             query={ImportKey.F_STATUS: ImportKey.ST_PENDING}))
 
         if len(imports) == 0:
@@ -123,7 +129,7 @@ class Manager(MiddlewareRegistry):
         :return True if the uuid exist in database. False otherwise
         """
 
-        imports = list(self[self.STORAGE].get_elements(
+        imports = list(self.storage.get_elements(
             query={ImportKey.F_ID: uuid}))
 
         return True if len(imports) == 1 else False
@@ -153,7 +159,7 @@ class Manager(MiddlewareRegistry):
             if infos.has_key(field):
                 new_status[field] = infos[field]
 
-        self[self.STORAGE].put_element(new_status)
+        self.storage.put_element(new_status)
 
     def create_import_status(self, uuid):
         """Create a new import status. It will be create with the given uuid,
@@ -170,13 +176,13 @@ class Manager(MiddlewareRegistry):
                       ImportKey.F_CREATION: time.asctime(),
                       ImportKey.F_STATUS: ImportKey.ST_PENDING}
 
-        self[self.STORAGE].put_element(new_status)
+        self.storage.put_element(new_status)
 
     def on_going_in_db(self):
         """Check if there is an import on going
         :return: True if an import is on going
         """
-        result = list(self[self.STORAGE].find_elements(
+        result = list(self.storage.find_elements(
             query={ImportKey.F_STATUS: ImportKey.ST_ONGOING}))
 
         return len(result) == 1
@@ -185,7 +191,7 @@ class Manager(MiddlewareRegistry):
         """Check if there is a pending import in database
         :return: True if a pending import in database
         """
-        result = list(self[self.STORAGE].find_elements(
+        result = list(self.storage.find_elements(
             query={ImportKey.F_STATUS: ImportKey.ST_PENDING}))
 
         return len(result) > 0
@@ -195,7 +201,7 @@ class Manager(MiddlewareRegistry):
         :param _id: the id to check
         :return: True if the id is in db. False otherwise
         """
-        result = list(self[self.STORAGE].get_elements(
+        result = list(self.storage.get_elements(
             query={ImportKey.F_ID: _id}))
 
         return len(result) == 1
@@ -205,7 +211,7 @@ class Manager(MiddlewareRegistry):
         :param _id: the id of the import
         :return dict: the report.
         """
-        status = list(self[self.STORAGE].get_elements(
+        status = list(self.storage.get_elements(
             query={ImportKey.F_ID: _id}))
 
         if len(status) > 0:
