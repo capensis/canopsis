@@ -227,7 +227,8 @@ class RouteHandlerPBehavior(object):
 def exports(ws):
 
     rhpb = RouteHandlerPBehavior(
-        pbm=PBehaviorManager(), watcher_manager=WatcherManager())
+        pb_manager = PBehaviorManager(), watcher_manager=WatcherManager()
+    )
 
     @route(
         ws.application.post,
