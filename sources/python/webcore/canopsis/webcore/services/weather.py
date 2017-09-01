@@ -400,7 +400,6 @@ def exports(ws):
         )
 
         watcher_eids = {}
-        entity_pb = {}
         for watcher in watcher_list:
             eids = watcher_manager.get_watcher_entities(watcher)
             watcher_eids[watcher['_id']] = eids
@@ -466,7 +465,8 @@ def exports(ws):
                 watcher['_id'],
                 []
             )
-            enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(watcher['depends'], alarm_dict)
+            enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
+                watcher['depends'], alarm_dict)
             truc = watcher_status(watcher, merged_pbehaviors_eids)
             enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
             enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
