@@ -27,14 +27,10 @@ from time import time
 from uuid import uuid4
 
 from canopsis.common.utils import singleton_per_scope
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths
-)
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 
-CONF_PATH = 'pbehavior/pbehavior.conf'
-CATEGORY = 'PBEHAVIOR'
+from canopsis.confng import Configuration, Ini
 
 
 class BasePBehavior(dict):
@@ -114,29 +110,40 @@ class Comment(BasePBehavior):
     _EDITABLE_FIELDS = (AUTHOR, MESSAGE)
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class PBehaviorManager(MiddlewareRegistry):
+class PBehaviorManager(object):
 
+    DEFAULT_PB_STORAGE_URI = 'mongodb-default-pbehavior://'
     PBEHAVIOR_STORAGE = 'pbehavior_storage'
+    CONF_PATH = 'etc/pbehavior/pbehavior.conf'
+    CONF_CATEGORY = 'PBEHAVIOR'
 
     _UPDATE_FLAG = 'updatedExisting'
     __TYPE_ERR = "id_ must be a list of string or a string"
 
-    def __init__(self, *args, **kwargs):
-        super(PBehaviorManager, self).__init__(*args, **kwargs)
+    def __init__(self, config=None, pb_storage=None):
+        super(PBehaviorManager, self).__init__()
         self.context = singleton_per_scope(ContextGraph)
 
-    @property
-    def pbehavior_storage(self):
-        return self[PBehaviorManager.PBEHAVIOR_STORAGE]
+        if config is None:
+            self.config = Configuration.load(self.CONF_PATH, Ini)
+        else:
+            self.config = None
+
+        self.config_pb = self.config.get(self.CONF_CATEGORY, {})
+
+        if pb_storage is None:
+            pb_storage_uri = self.config_pb.get(
+                'pbehavior_storage_uri', self.DEFAULT_PB_STORAGE_URI)
+            self.pb_storage = Middleware.get_middleware_by_uri(pb_storage_uri)
+        else:
+            self.pb_storage = pb_storage
 
     def get(self, _id, query=None):
         """Get pbehavior by id.
         :param str id: pbehavior id
         :param dict query: filtering options
         """
-        return self.pbehavior_storage.get_elements(ids=_id, query=query)
+        return self.pb_storage.get_elements(ids=_id, query=query)
 
     def create(
         self,
@@ -193,7 +200,7 @@ class PBehaviorManager(MiddlewareRegistry):
         else:
             for c in data.comments:
                 c.update({'_id': str(uuid4())})
-        result = self.pbehavior_storage.put_element(element=data.to_dict())
+        result = self.pb_storage.put_element(element=data.to_dict())
 
         return result
 
@@ -213,7 +220,7 @@ class PBehaviorManager(MiddlewareRegistry):
         else:
             id_ = [id_]
 
-        cursor = self.pbehavior_storage.get_elements(
+        cursor = self.pb_storage.get_elements(
             query={PBehavior.EIDS: {"$in": id_}}
         )
 
@@ -242,7 +249,7 @@ class PBehaviorManager(MiddlewareRegistry):
         new_data = {k: v for k, v in kwargs.iteritems() if v is not None}
         pbehavior.update(**new_data)
 
-        result = self.pbehavior_storage.put_element(
+        result = self.pb_storage.put_element(
             element=new_data, _id=_id
         )
 
@@ -257,14 +264,14 @@ class PBehaviorManager(MiddlewareRegistry):
         :param str _id: pbehavior id
         """
 
-        result = self.pbehavior_storage.remove_elements(
+        result = self.pb_storage.remove_elements(
             ids=_id, _filter=_filter
         )
 
         return self._check_response(result)
 
     def _update_pbehavior(self, pbehavior_id, query):
-        result = self.pbehavior_storage._update(
+        result = self.pb_storage._update(
             spec={'_id': pbehavior_id},
             document=query,
             multi=False, cache=False
@@ -329,7 +336,7 @@ class PBehaviorManager(MiddlewareRegistry):
         comment = Comment(**_comments[0])
         comment.update(**kwargs)
 
-        result = self.pbehavior_storage._update(
+        result = self.pb_storage._update(
             spec={'_id': pbehavior_id, 'comments._id': _id},
             document={'$set': {'comments.$': comment.to_dict()}},
             multi=False, cache=False
@@ -348,7 +355,7 @@ class PBehaviorManager(MiddlewareRegistry):
         :param str _id: comment id
         :return:
         """
-        result = self.pbehavior_storage._update(
+        result = self.pb_storage._update(
             spec={'_id': pbehavior_id},
             document={'$pull': {PBehavior.COMMENTS: {'_id': _id}}},
             multi=False, cache=False
@@ -366,7 +373,7 @@ class PBehaviorManager(MiddlewareRegistry):
         :return: pbehaviors, with name, tstart, tstop, rrule and enabled keys
         :rtype: list of dict
         """
-        pbehaviors = self.pbehavior_storage.get_elements(
+        pbehaviors = self.pb_storage.get_elements(
             query={PBehavior.EIDS: {'$in': [entity_id]}},
             sort={PBehavior.TSTART: -1}
         )
@@ -378,7 +385,7 @@ class PBehaviorManager(MiddlewareRegistry):
         """
         Compute all filters and update eids attributes.
         """
-        pbehaviors = self.pbehavior_storage.get_elements(
+        pbehaviors = self.pb_storage.get_elements(
             query={PBehavior.FILTER: {'$exists': True}}
         )
 
@@ -388,7 +395,7 @@ class PBehaviorManager(MiddlewareRegistry):
             )
 
             pb[PBehavior.EIDS] = [e['_id'] for e in entities]
-            self.pbehavior_storage.put_element(element=pb)
+            self.pb_storage.put_element(element=pb)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
@@ -416,7 +423,7 @@ class PBehaviorManager(MiddlewareRegistry):
             return None
         event = self.context.get_event(entity)
 
-        pbehaviors = self.pbehavior_storage.get_elements(
+        pbehaviors = self.pb_storage.get_elements(
             query={
                 PBehavior.NAME: {'$in': pb_names},
                 PBehavior.EIDS: {'$in': [entity_id]}
@@ -471,7 +478,7 @@ class PBehaviorManager(MiddlewareRegistry):
         now = int(time())
         query = {'$and': [{'tstop': {'$gt': now}}, {'tstart': {'$lt': now}}]}
 
-        ret_val = list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
+        ret_val = list(self.pb_storage.get_elements(
             query=query
         ))
         return ret_val

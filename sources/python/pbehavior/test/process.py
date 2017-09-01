@@ -64,13 +64,13 @@ class TestProcess(BaseTest):
         }
 
         event_processing(None, event, pbm=self.pbm, logger=Mock())
-        pbehavior = list(self.pbm.pbehavior_storage.get_elements(query=query))
+        pbehavior = list(self.pbm.pb_storage.get_elements(query=query))
         self.assertEqual(len(pbehavior), 1)
         self.assertDictContainsSubset(query, pbehavior[0])
 
         event.update({'action': PBEHAVIOR_DELETE})
         event_processing(None, event, pbm=self.pbm, logger=Mock())
-        pbehavior = list(self.pbm.pbehavior_storage.get_elements(query=query))
+        pbehavior = list(self.pbm.pb_storage.get_elements(query=query))
         self.assertEqual(len(pbehavior), 0)
 
     @patch('canopsis.pbehavior.manager.PBehaviorManager.compute_pbehaviors_filters')
@@ -79,7 +79,7 @@ class TestProcess(BaseTest):
         self.assertEqual(mock_compute.call_count, 1)
         # method compute_pbehaviors_filters is tested in method TestManager.test_compute_pbehaviors_filters
 
-    
+
 
 
 if __name__ == '__main__':
