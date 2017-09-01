@@ -27,7 +27,7 @@ from canopsis.context_graph.manager import ContextGraph
 from copy import deepcopy
 
 
-perfdatamgr = PerfData()
+perfdatamgr = PerfData(*PerfData.provide_default_basics())
 
 
 @register_task

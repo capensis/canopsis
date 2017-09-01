@@ -37,7 +37,8 @@ DEFAULT_START = 0
 
 def exports(ws):
 
-    manager = singleton_per_scope(PerfData)
+    perfdata_manager_args = PerfData.provide_default_basics()
+    manager = singleton_per_scope(PerfData, args=perfdata_manager_args)
 
     @route(ws.application.post, payload=['metric_id', 'timewindow', 'meta'])
     def perfdata_count(metric_id, timewindow=None, meta=None):

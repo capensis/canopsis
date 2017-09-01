@@ -11,7 +11,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.perfdata.manager import PerfData
 
 context_graph_manager = ContextGraph()
-pertfdata_manager = PerfData()
+pertfdata_manager = PerfData(*PerfData.provide_default_basics())
 
 cache = set()
 

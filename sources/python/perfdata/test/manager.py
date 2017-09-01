@@ -23,12 +23,15 @@ from unittest import TestCase, main
 
 from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, get_offset_timewindow
+from canopsis.logger import Logger, OutputNull
 
 
-class PerfDataTest(TestCase):
+class PerfDataManagerTest(TestCase):
 
-    def setUp(self):
-        self.perfdata = PerfData(data_scope='test')
+    def setUpClass(cls):
+        _, ctxgmanager, storage = PerfData.provide_default_basics()
+        logger = Logger.get('perfdatatest', None, output_cls=OutputNull)
+        cls.manager = PerfData(logger, ctxgmanager, storage)
 
     # TODO 4-01-2017
     #def test_put_get_data(self):
