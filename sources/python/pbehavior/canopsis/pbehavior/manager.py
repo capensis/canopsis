@@ -26,6 +26,7 @@ from json import loads, dumps
 from time import time
 from uuid import uuid4
 
+from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.configuration.configurable.decorator import (
@@ -45,6 +46,7 @@ class BasePBehavior(dict):
     _EDITABLE_FIELDS = ()
 
     def __init__(self, **kwargs):
+        super(dict, self).__init__()
         for key, value in kwargs.iteritems():
             if key in self._FIELDS:
                 self.__dict__[key] = value
@@ -142,12 +144,11 @@ class PBehaviorManager(MiddlewareRegistry):
         return self.pbehavior_storage.get_elements(ids=_id, query=query)
 
     def create(
-        self,
-        name, filter, author,
-        tstart, tstop, rrule='',
-        enabled=True, comments=None,
-        connector='canopsis', connector_name='canopsis'
-    ):
+            self,
+            name, filter, author,
+            tstart, tstop, rrule='',
+            enabled=True, comments=None,
+            connector='canopsis', connector_name='canopsis'):
         """
         Method creates pbehavior record
         :param str name: filtering options
@@ -158,8 +159,11 @@ class PBehaviorManager(MiddlewareRegistry):
         :param str rrule: reccurent rule that is compliant with rrule spec
         :param bool enabled: boolean to know if pbhevior is enabled or disabled
         :param list of dict comments: a list of comments made by users
-        :param str connector: a string representing the type of connector that has generated the pbehavior
-        :param str connector_name:  a string representing the name of connector that has generated the pbehavior
+        :param str connector: a string representing the type of connector that
+            has generated the pbehavior
+        :param str connector_name:  a string representing the name of connector
+            that has generated the pbehavior
+        :raises ValueError: invalid RRULE
         :return: created element eid
         :rtype: str
         """
@@ -170,6 +174,8 @@ class PBehaviorManager(MiddlewareRegistry):
             enabled = False
         else:
             raise ValueError("The enabled value does not match a boolean")
+
+        check_valid_rrule(rrule)
 
         if comments is not None:
             for comment in comments:
@@ -184,17 +190,17 @@ class PBehaviorManager(MiddlewareRegistry):
                 else:
                     raise ValueError("The message field is missing")
 
-        kw = locals()
-        kw.pop('self')
-        if PBehavior.EIDS not in kw:
-            kw[PBehavior.EIDS] = []
+        pb_kwargs = locals()
+        pb_kwargs.pop('self')
+        if PBehavior.EIDS not in pb_kwargs:
+            pb_kwargs[PBehavior.EIDS] = []
 
-        data = PBehavior(**kw)
+        data = PBehavior(**pb_kwargs)
         if not data.comments or not isinstance(data.comments, list):
             data.update(comments=[])
         else:
-            for c in data.comments:
-                c.update({'_id': str(uuid4())})
+            for comment in data.comments:
+                comment.update({'_id': str(uuid4())})
         result = self.pbehavior_storage.put_element(element=data.to_dict())
 
         return result
@@ -233,12 +239,16 @@ class PBehaviorManager(MiddlewareRegistry):
         """
         Update pbehavior record
         :param str _id: pbehavior id
-        :param dict kwargs: values pbehavior fields
+        :param dict kwargs: values pbehavior fields. If a field is None, it will
+            **not** be updated.
+        :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
         pb_value = self.get(_id)
 
         if pb_value is None:
             raise ValueError("The id does not match any pebahvior")
+
+        check_valid_rrule(kwargs.get('rrule', ''))
 
         pbehavior = PBehavior(**self.get(_id))
         new_data = {k: v for k, v in kwargs.iteritems() if v is not None}
@@ -384,13 +394,13 @@ class PBehaviorManager(MiddlewareRegistry):
             query={PBehavior.FILTER: {'$exists': True}}
         )
 
-        for pb in pbehaviors:
+        for pbehavior in pbehaviors:
             entities = self.context[ContextGraph.ENTITIES_STORAGE].get_elements(
-                query=loads(pb[PBehavior.FILTER])
+                query=loads(pbehavior[PBehavior.FILTER])
             )
 
-            pb[PBehavior.EIDS] = [e['_id'] for e in entities]
-            self.pbehavior_storage.put_element(element=pb)
+            pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
+            self.pbehavior_storage.put_element(element=pbehavior)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
@@ -440,8 +450,8 @@ class PBehaviorManager(MiddlewareRegistry):
                 )
 
             if (len(dt_list) >= 2 and
-                fromts(event['timestamp']) >= dt_list[0] and
-                fromts(event['timestamp']) <= dt_list[-1]):
+                    fromts(event['timestamp']) >= dt_list[0] and
+                    fromts(event['timestamp']) <= dt_list[-1]):
                 names.append(pb[PBehavior.NAME])
 
         result = set(pb_names).isdisjoint(set(names))
@@ -470,10 +480,13 @@ class PBehaviorManager(MiddlewareRegistry):
         return result
 
     def get_all_active_pbehaviors(self):
+        """
+        Return all pbehaviors currently active, using start and stop time.
+        """
         now = int(time())
-        query = {'$and': [{'tstop' : {'$gt': now}}, {'tstart': {'$lt': now}}]}
+        query = {'$and': [{'tstop': {'$gt': now}}, {'tstart': {'$lt': now}}]}
 
-        ret_val= list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
+        ret_val = list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
             query=query
         ))
         return ret_val

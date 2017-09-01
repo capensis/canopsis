@@ -30,7 +30,7 @@ from canopsis.pbehavior.process import (event_processing, beat_processing,
                                         get_entity_id,
                                         PBEHAVIOR_CREATE, PBEHAVIOR_DELETE)
 from canopsis.context_graph.manager import ContextGraph
-from base import BaseTest
+from test_base import BaseTest
 
 
 class TestProcess(BaseTest):
@@ -79,7 +79,7 @@ class TestProcess(BaseTest):
         self.assertEqual(mock_compute.call_count, 1)
         # method compute_pbehaviors_filters is tested in method TestManager.test_compute_pbehaviors_filters
 
-    
+
 
 
 if __name__ == '__main__':
