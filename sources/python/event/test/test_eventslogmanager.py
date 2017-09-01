@@ -44,7 +44,7 @@ class EventsLogTest(EventsLogManagerTest):
         def mock_find(query={}, limit=100, with_count=True):
             return None, 5
 
-        self.manager[EventsLog.EVENTSLOG_STORAGE].find_elements = mock_find
+        self.manager.el_storage.find_elements = mock_find
 
         result = self.manager.get_eventlog_count_by_period(
             1433113200,
