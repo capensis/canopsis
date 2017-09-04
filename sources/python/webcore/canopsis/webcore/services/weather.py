@@ -265,41 +265,63 @@ def get_pbehaviors_for_entitiy(entity_id, pbehaviors):
 
 def get_pb_range(pbehaviors):
     """
-    FIXIT:
-     * Implémentation "cône": trois entités indisponibles sur des plages horaires différentes, considérer le fait que les plages se touchent pour déclencher l’indispo. Exemple:
+    Compute the "biggest" date range from given pbehaviors.
 
-       Mongo: 9-10h
-       Rabbit: 10-11h
-       Webcore: 11-12h
+    Example:
 
-       -> range 9-12h
+    pb1: 8h-15h, Monday to Wednesday
+    pb2: 9h-16h, Tuesday to Friday
 
-     * Implémentation "union":
-
-       Mongo: 10-11h
-       Rabbit: 9-11h
-       Webcore: 10-14h
-
-       Les trois applis sont indispos en même temps de 9 à 11h.
-
-       -> range 9-11h
+    result: 8h-16h, Monday to Friday
 
     :param list pbehaviors: list of pbehavior objects.
-    :returns: tstart_min, tstop_max, rruleset
+    :returns: rruleset, datetime start, datetime stop
     """
 
-    ranges = []
-
+    # tod -> Time Of Day
+    tod_start = None
+    tod_stop = None
+    rset = rruleset()
+    rrules = []
     for pb in pbehaviors:
-        tstart = pb['tstart']
-        tstop = pb['tstop']
+        try:
+            rrules.append(rrulestr(pb.get('rrule')))
+        except KeyError:
+            pass
 
-        ranges.append((tstart, tstop))
+        try:
+            time_start = datetime.datetime.fromtimestamp(pb.get('tstart')).time()
+            time_stop = datetime.datetime.fromtimestamp(pb.get('tstop')).time()
 
-    return ranges
+            if tod_start is None:
+                tod_start = time_start
 
-def route_get_watchers(start, limit, sort, watcher_filter):
-    pass
+            elif time_start.hour < tod_start.hour:
+                tod_start = time_start
+
+            elif tod_start.hour == time_start.hour and \
+                time_start.minute < tod_start.minute:
+
+                tod_start = time_start
+
+            if tod_stop is None:
+                tod_stop = time_stop
+
+            elif time_stop.hour > tod_stop.hour:
+                tod_stop = time_stop
+
+            elif tod_stop.hour == time_stop.hour and \
+                time_stop.minute > tod_stop.minute:
+
+                tod_stop = time_stop
+
+        except KeyError:
+            pass
+
+    for rrule in rrules:
+        rset.rrule(rrule)
+
+    return rset, tod_start, tod_stop
 
 def check_baseline(merged_eids_tracer, watcher_depends):
     """
@@ -403,12 +425,20 @@ def exports(ws):
         for watcher in watcher_list:
             eids = watcher_manager.get_watcher_entities(watcher)
             watcher_eids[watcher['_id']] = eids
-            watcher_entity_pbs = []
+            watcher_available_pbs = []
             for eid in eids:
-                watcher_entity_pbs.extend(get_pbehaviors_for_entitiy(eid, raw_pbehaviors))
-            watcher_entity_pbs.extend(active_pbehaviors.get(watcher['_id'], []))
-            pb_range = get_pb_range(watcher_entity_pbs)
-            watcher['pb_range'] = pb_range[:2]
+                watcher_available_pbs.extend(get_pbehaviors_for_entitiy(eid, raw_pbehaviors))
+            watcher_available_pbs.extend(active_pbehaviors.get(watcher['_id'], []))
+            pb_range_rset, pb_range_start, pb_range_stop = get_pb_range(watcher_available_pbs)
+            # generate 7 dates for 7 days
+            pb_range_dates = pb_range_rset.xafter(datetime.datetime.now(), count=7)
+            watcher['pb_range'] = {
+                'rdates': pb_range_dates,
+                'start_hour': pb_range_start.hour,
+                'start_minute': pb_range_start.minute,
+                'stop_hour': pb_range_stop.hour,
+                'stop_minute': pb_range_stop.minute
+            }
 
         for eids_tab in active_pb_dict.values():
             for eid in eids_tab:

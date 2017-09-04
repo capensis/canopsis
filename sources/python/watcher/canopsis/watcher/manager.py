@@ -311,7 +311,7 @@ class Watcher(MiddlewareRegistry):
         else:
             return 0
 
-    def get_watcher_entities(watcher):
+    def get_watcher_entities(self, watcher):
         """
 
         Returns entity ids for a watcher.
