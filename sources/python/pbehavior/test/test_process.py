@@ -30,7 +30,7 @@ from canopsis.pbehavior.process import (event_processing, beat_processing,
                                         get_entity_id,
                                         PBEHAVIOR_CREATE, PBEHAVIOR_DELETE)
 from canopsis.context_graph.manager import ContextGraph
-from base import BaseTest
+from test_base import BaseTest
 
 
 class TestProcess(BaseTest):

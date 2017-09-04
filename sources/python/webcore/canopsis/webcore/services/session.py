@@ -54,6 +54,13 @@ def get_user(_id=None):
     return user
 
 
+def get():
+    """
+    get the beaker session
+    """
+    return request.environ.get('beaker.session')
+
+
 def create(user):
     """
     Create a user session.

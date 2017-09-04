@@ -18,14 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+pbehavior process
+"""
+
 from __future__ import unicode_literals
 
 from json import dumps
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 from canopsis.task.core import register_task
+from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 from canopsis.watcher.manager import Watcher
 
 EVENT_TYPE = 'pbehavior'
@@ -59,46 +63,65 @@ _pb_manager = init_managers()
 
 @register_task
 def event_processing(engine, event, pbm=_pb_manager, **kwargs):
+
     if event.get('event_type') == EVENT_TYPE:
         entity_id = ContextGraph.get_id(event)
         engine.logger.debug("Start processing event {}".format(event))
 
-        engine.logger.debug("entity_id: {}\naction: {}".format(
+        logger.debug("entity_id: {}\naction: {}".format(
             entity_id, event.get('action')))
 
-        filter_ = {'_id': entity_id}
-        if event.get('action') == PBEHAVIOR_CREATE:
-            result = pbm.create(
-                event['pbehavior_name'], filter_, event.get('author', DEFAULT_AUTHOR),
-                event['start'], event['end'],
-                connector=event['connector'],
-                comments=event.get('comments', None),
-                connector_name=event['connector_name'],
-                rrule=event.get('rrule', None)
-            )
-            if not result:
-                engine.logger.error(ERROR_MSG.format(event['action'], event))
+        try:
+            pb_start = event.get('start')
+            pb_end = event.get('end')
+            pb_connector = event.get('connector')
+            pb_name = event.get('pbehavior_name')
+            pb_connector_name = event.get('connector_name')
+        except KeyError as ex:
+            logger.error('missing key in event: {}'.format(ex))
+            return event
+
+        pb_rrule = event.get('rrule', None)
+        pb_comments = event.get('comments', None)
+        pb_author = event.get('author', DEFAULT_AUTHOR)
+
+        try:
+            filter_ = {'_id': entity_id}
+            if event.get('action') == PBEHAVIOR_CREATE:
+                result = pbm.create(
+                    pb_name, filter_, pb_author,
+                    pb_start, pb_end,
+                    connector=pb_connector,
+                    comments=pb_comments,
+                    connector_name=pb_connector_name,
+                    rrule=pb_rrule
+                )
+                if not result:
+                    logger.error(ERROR_MSG.format(event['action'], event))
+
+                else:
+                    watcher_manager.compute_watchers()
+
+            elif event.get('action') == PBEHAVIOR_DELETE:
+                result = pbm.delete(_filter={
+                    PBehavior.FILTER: dumps(filter_),
+                    PBehavior.NAME: pb_name,
+                    PBehavior.TSTART: pb_start,
+                    PBehavior.TSTOP: pb_end,
+                    PBehavior.RRULE: pb_rrule,
+                    PBehavior.CONNECTOR: pb_connector,
+                    PBehavior.CONNECTOR_NAME: pb_connector_name,
+                })
+                if not result:
+                    logger.error(ERROR_MSG.format(event['action'], event))
+                else:
+                    watcher_manager.compute_watchers()
 
             else:
-                watcher_manager.compute_watchers()
+                logger.error(ERROR_MSG.format(event['action'], event))
 
-        elif event.get('action') == PBEHAVIOR_DELETE:
-            result = pbm.delete(_filter={
-                PBehavior.FILTER: dumps(filter_),
-                PBehavior.NAME: event['pbehavior_name'],
-                PBehavior.TSTART: event['start'],
-                PBehavior.TSTOP: event['end'],
-                PBehavior.RRULE: event.get('rrule', None),
-                PBehavior.CONNECTOR: event['connector'],
-                PBehavior.CONNECTOR_NAME: event['connector_name'],
-            })
-            if not result:
-                engine.logger.error(ERROR_MSG.format(event['action'], event))
-            else:
-                watcher_manager.compute_watchers()
-
-        else:
-            engine.logger.error(ERROR_MSG.format(event['action'], event))
+        except ValueError as ex:
+            logger.error('cannot handle event: {}'.format(ex))
 
     return event
 

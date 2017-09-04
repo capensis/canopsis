@@ -31,7 +31,7 @@ from unittest import main
 
 from canopsis.pbehavior.manager import PBehavior
 
-from base import BaseTest
+from test_base import BaseTest
 
 
 class TestManager(BaseTest):
