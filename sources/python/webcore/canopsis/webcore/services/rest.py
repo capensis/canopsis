@@ -19,15 +19,15 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
+from base64 import b64decode
 from bottle import HTTPError, response
-from canopsis.common.ws import route
+from json import loads
 
 from canopsis.common.utils import ensure_iterable
+from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.old.record import Record
 
-from base64 import b64decode
-from json import loads
 
 def get_records(ws, namespace, ctype=None, _id=None, **params):
     options = {
@@ -369,5 +369,5 @@ def exports(ws):
 
         except ValueError:
             data = None
-        
+
         return delete_records(ws, namespace, ctype, _id, data)

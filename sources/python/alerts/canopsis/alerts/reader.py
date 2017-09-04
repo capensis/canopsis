@@ -29,9 +29,13 @@ from os.path import join
 from time import time
 
 from canopsis.alerts.enums import AlarmField
+from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
+from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.entitylink.manager import Entitylink
+from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
@@ -51,16 +55,25 @@ class AlertsReader(object):
     Used to retrieve events related to alarms in a TimedStorage.
     """
 
+    LOG_PATH = 'var/log/alertsreader.log'
     CONF_PATH = 'etc/alerts/manager.conf'
     CATEGORY = 'COUNT_CACHE'
+    GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
 
-    def __init__(self, config, storage):
+    def __init__(self, logger, config, storage,
+                 pbehavior_manager, entitylink_manager):
         """
+        :param logger: a logger object
         :param config: a confng instance
         :param storage: a storage instance
+        :param pbehavior_manager: a pbehavior manager instance
+        :param entitylink_manager: a entitylink manager instance
         """
+        self.logger = logger
         self.config = config
         self.alarm_storage = storage
+        self.pbehavior_manager = pbehavior_manager
+        self.entitylink_manager = entitylink_manager
 
         category = self.config.get(self.CATEGORY, {})
         self.expiration = int(category.get('expiration', DEFAULT_EXPIRATION))
@@ -75,12 +88,36 @@ class AlertsReader(object):
 
         _, pb_storage = PBehaviorManager.provide_default_basics()
 
-        self.pbm = PBehaviorManager(logger=self.logger, pb_storage=pb_storage)
-        self.llm = Entitylink()
-
         self.count_cache = {}
 
-        self.grammar = join(prefix, 'etc/alerts/search/grammar.bnf')
+        self.grammar = join(prefix, self.GRAMMAR_FILE)
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide logger, config, storages...
+
+        ! Do not use in tests !
+
+        :rtype: Union[logging.Logger,
+                      canospis.confng.simpleconf.Configuration,
+                      canopsis.storage.core.Storage,
+                      canopsis.pbehavior.manager.PBehaviorManager,
+                      canopsis.entitylink.manager.EntityLink]
+        """
+        logger = Logger.get('alertsreader', cls.LOG_PATH)
+        conf = Configuration.load(Alerts.CONF_PATH, Ini)
+        alerts_storage = Middleware.get_middleware_by_uri(
+            Alerts.ALERTS_STORAGE_URI
+        )
+        pb_storage = Middleware.get_middleware_by_uri(
+            PBehaviorManager.PB_STORAGE_URI
+        )
+
+        pbm = PBehaviorManager(logger=logger, pb_storage=pb_storage)
+        llm = Entitylink()
+
+        return (logger, conf, alerts_storage, pbm, llm)
 
     @property
     def alarm_fields(self):

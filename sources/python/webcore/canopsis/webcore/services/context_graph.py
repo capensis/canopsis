@@ -19,21 +19,17 @@
 # ---------------------------------
 
 from canopsis.common.ws import route
-from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.manager import Alerts
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.import_ctx import ImportKey, Manager
 from canopsis.engines.core import publish
-from canopsis.confng import Configuration, Ini
 
-from uuid import uuid4
 import json as j
 import os
+from uuid import uuid4
 
-manager = ContextGraph()
 import_col_man = Manager(Configuration.load(Manager.CONF_FILE, Ini))
-conf = Configuration.load(Alerts.CONF_PATH, Ini)
-alerts_manager = Alerts(config=conf)
+alerts_manager = Alerts(*Alerts.provide_default_basics())
 
 
 __IMPORT_ID = "import_id"
@@ -61,6 +57,8 @@ def get_uuid():
 
 
 def exports(ws):
+
+    manager = alerts_manager.context_manager
 
     @route(ws.application.get, name='contextgraph/all')
     def all():

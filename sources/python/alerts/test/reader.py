@@ -26,7 +26,10 @@ from time import sleep
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.confng import Configuration, Ini
+from canopsis.entitylink.manager import Entitylink
+from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
+from canopsis.pbehavior.manager import PBehaviorManager
 
 from base import BaseTest
 
@@ -34,11 +37,21 @@ from base import BaseTest
 class TestReader(BaseTest):
     def setUp(self):
         super(TestReader, self).setUp()
+        pb_storage = Middleware.get_middleware_by_uri(
+            PBehaviorManager.PB_STORAGE_URI
+        )
 
+        self.logger = Logger.get('alertsreader', '/tmp/null')
         conf = Configuration.load(Alerts.CONF_PATH, Ini)
+        self.pbehavior_manager = PBehaviorManager(logger=self.logger,
+                                                  pb_storage=pb_storage)
+        self.entitylink_manager = Entitylink()
 
         self.reader = AlertsReader(config=conf,
-                                   storage=self.manager[Alerts.ALARM_STORAGE])
+                                   logger=self.logger,
+                                   storage=self.manager.alerts_storage,
+                                   pbehavior_manager=self.pbehavior_manager,
+                                   entitylink_manager=self.entitylink_manager)
 
         self.reader._alarm_fields = {
             'properties': {
@@ -487,7 +500,7 @@ class TestReader(BaseTest):
             event0
         )
         alarm0 = self.manager.update_state(alarm0, 1, event0)
-        new_value0 = alarm0[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        new_value0 = alarm0[self.manager.alerts_storage.VALUE]
         self.manager.update_current_alarm(alarm0, new_value0)
 
         alarm1_id = '/fake/alarm/id1'
@@ -503,7 +516,7 @@ class TestReader(BaseTest):
             event1
         )
         alarm1 = self.manager.update_state(alarm1, 1, event1)
-        new_value1 = alarm1[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        new_value1 = alarm1[self.manager.alerts_storage.VALUE]
         self.manager.update_current_alarm(alarm1, new_value1)
 
         # Are subperiods well cut ?

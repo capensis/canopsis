@@ -21,12 +21,12 @@
 from canopsis.engines.core import Engine, DROP, publish
 
 from canopsis.alerts.manager import Alerts
-from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.utils import singleton_per_scope
-from canopsis.old.account import Account
-from canopsis.old.storage import get_storage
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger, get_routingkey
+from canopsis.old.account import Account
 from canopsis.old.mfilter import check
+from canopsis.old.storage import get_storage
 from canopsis.pbehavior.manager import PBehaviorManager
 
 from json import loads
@@ -273,7 +273,7 @@ class engine(Engine):
 
         # Alerts manager caching
         if not hasattr(self, 'am'):
-            self.am = Alerts()
+            self.am = Alerts(*Alerts.provide_default_basics())
 
         # Context manager caching
         if not hasattr(self, 'cm'):

@@ -29,10 +29,12 @@ from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.check import Check
+from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.utils import merge_two_dicts
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
+from canopsis.watcher.manager import Watcher
 
 
 class BaseTest(TestCase):
@@ -40,27 +42,12 @@ class BaseTest(TestCase):
     def setUp(self):
         self.logger = logging.getLogger('alerts')
 
-        self.alarm_storage = Middleware.get_middleware_by_uri(
+        self.alerts_storage = Middleware.get_middleware_by_uri(
             'storage-periodical-testalarm://'
         )
         self.config_storage = Middleware.get_middleware_by_uri(
             'storage-default-testconfig://'
         )
-        self.context_graph_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testentities://'
-        )
-        self.filter_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testalarmfilter://'
-        )
-        conf = Configuration.load(Alerts.CONF_PATH, Ini)
-
-        self.manager = Alerts(config=conf)
-        self.manager[Alerts.ALARM_STORAGE] = self.alarm_storage
-        self.manager[Alerts.CONFIG_STORAGE] = self.config_storage
-        self.manager.context_manager[
-            ContextGraph.ENTITIES_STORAGE] = self.context_graph_storage
-        self.manager[Alerts.FILTER_STORAGE] = self.filter_storage
-
         self.config_storage.put_element(
             element={
                 '_id': 'test_config',
@@ -75,10 +62,34 @@ class BaseTest(TestCase):
             },
             _id='test_config'
         )
+        self.filter_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testalarmfilter://'
+        )
+
+        self.context_graph_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testentities://'
+        )
+        self.cg_manager = ContextGraph()
+        self.cg_manager[ContextGraph.ENTITIES_STORAGE] = self.context_graph_storage
+        self.watcher_manager = Watcher()
+
+        conf = Configuration.load(Alerts.CONF_PATH, Ini)
+        filter_ = {'crecord_type': 'statusmanagement'}
+        self.config_data = EtherealData(collection=self.config_storage._backend,
+                                        filter_=filter_)
+
+        self.manager = Alerts(config=conf,
+                              logger=self.logger,
+                              alerts_storage=self.alerts_storage,
+                              config_data=self.config_data,
+                              filter_storage=self.filter_storage,
+                              context_graph=self.cg_manager,
+                              watcher=self.watcher_manager)
 
     def tearDown(self):
         """Teardown"""
-        self.alarm_storage.remove_elements()
+        self.alerts_storage.remove_elements()
+        self.config_storage.remove_elements()
         self.filter_storage.remove_elements()
         self.context_graph_storage.remove_elements()
 
@@ -101,7 +112,7 @@ class BaseTest(TestCase):
             }
         )
 
-        value = alarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        value = alarm[self.manager.alerts_storage.VALUE]
         value[AlarmField.state.value] = {
             't': moment,
             'val': Check.MINOR

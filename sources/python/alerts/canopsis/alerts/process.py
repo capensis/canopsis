@@ -23,7 +23,6 @@ from __future__ import unicode_literals
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.utils import singleton_per_scope
-from canopsis.confng import Configuration, Ini
 from canopsis.task.core import register_task
 
 
@@ -33,10 +32,8 @@ def event_processing(engine, event, alertsmgr=None, **kwargs):
     AMQP Event processing.
     """
     if alertsmgr is None:
-        kwargs = {
-            'config': Configuration.load(Alerts.CONF_PATH, Ini)
-        }
-        alertsmgr = singleton_per_scope(Alerts, kwargs=kwargs)
+        alertsmgr = singleton_per_scope(Alerts,
+                                        args=Alerts.provide_default_basics())
 
     encoded_event = {}
 
@@ -65,14 +62,11 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     Scheduled process.
     """
     if alertsmgr is None:
-        kwargs = {
-            'config': Configuration.load(Alerts.CONF_PATH, Ini)
-        }
-        alertsmgr = singleton_per_scope(Alerts, kwargs=kwargs)
+        alertsmgr = singleton_per_scope(Alerts,
+                                        args=Alerts.provide_default_basics())
 
-    alertsreader = singleton_per_scope(AlertsReader)
-
-    alertsmgr.config = alertsmgr.load_config()
+    alertsreader = singleton_per_scope(AlertsReader,
+                                       args=AlertsReader.provide_default_basics())
 
     alertsmgr.resolve_alarms()
 

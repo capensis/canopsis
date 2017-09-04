@@ -28,7 +28,6 @@ from unittest import main
 
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilter
-from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import OFF, STEALTHY, is_keeped_state
 from canopsis.alerts.tasks import snooze
 from canopsis.check import Check
@@ -62,7 +61,7 @@ class TestManager(BaseTest):
         self.assertTrue(alarm is not None)
 
     def test_get_alarms(self):
-        storage = self.manager[Alerts.ALARM_STORAGE]
+        storage = self.manager.alerts_storage
 
         alarm0_id = '/fake/alarm/id0'
         event0 = {
@@ -77,7 +76,7 @@ class TestManager(BaseTest):
             event0
         )
         alarm0 = self.manager.update_state(alarm0, 1, event0)
-        new_value0 = alarm0[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        new_value0 = alarm0[self.manager.alerts_storage.VALUE]
         self.manager.update_current_alarm(alarm0, new_value0)
 
         alarm1_id = '/fake/alarm/id1'
@@ -93,7 +92,7 @@ class TestManager(BaseTest):
             event1
         )
         alarm1 = self.manager.update_state(alarm1, 1, event1)
-        new_value1 = alarm1[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        new_value1 = alarm1[self.manager.alerts_storage.VALUE]
         self.manager.update_current_alarm(alarm1, new_value1)
 
         # Case 1: unresolved alarms
@@ -154,14 +153,14 @@ class TestManager(BaseTest):
             event
         )
         alarm = self.manager.update_state(alarm, 1, event)
-        new_value = alarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        new_value = alarm[self.manager.alerts_storage.VALUE]
         self.manager.update_current_alarm(alarm, new_value)
 
         got = self.manager.get_current_alarm(alarm_id)
         self.assertTrue(got is not None)
 
     def test_update_current_alarm(self):
-        storage = self.manager[Alerts.ALARM_STORAGE]
+        storage = self.manager.alerts_storage
 
         alarm_id = '/fake/alarm/id'
         alarm = self.manager.make_alarm(
@@ -187,7 +186,7 @@ class TestManager(BaseTest):
         self.assertTrue('test' in value[AlarmField.tags.value])
 
     def test_resolve_alarms(self):
-        storage = self.manager[Alerts.ALARM_STORAGE]
+        storage = self.manager.alerts_storage
 
         alarm_id = '/fake/alarm/id'
         alarm = self.manager.make_alarm(
@@ -230,7 +229,7 @@ class TestManager(BaseTest):
                          value[AlarmField.status.value]['t'])
 
     def test_resolve_snoozes(self):
-        storage = self.manager[Alerts.ALARM_STORAGE]
+        storage = self.manager.alerts_storage
 
         event = {
             'connector': 'ut-connector',
@@ -261,7 +260,7 @@ class TestManager(BaseTest):
         self.assertIsNone(value[AlarmField.snooze.value])
 
     def test_resolve_stealthy(self):
-        storage = self.manager[Alerts.ALARM_STORAGE]
+        storage = self.manager.alerts_storage
         now = int(time()) - self.manager.stealthy_show_duration - 1
 
         alarm_id = '/fake/alarm/id'
@@ -737,7 +736,7 @@ class TestManager(BaseTest):
 
         self.assertIsNot(docalarm, None)
 
-        alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        alarm = docalarm[self.manager.alerts_storage.VALUE]
 
         last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
 
@@ -778,7 +777,7 @@ class TestManager(BaseTest):
 
         self.assertIsNot(docalarm, None)
 
-        alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        alarm = docalarm[self.manager.alerts_storage.VALUE]
 
         last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
 
@@ -823,7 +822,7 @@ class TestManager(BaseTest):
 
         self.assertIsNot(docalarm, None)
 
-        alarm = docalarm[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        alarm = docalarm[self.manager.alerts_storage.VALUE]
 
         last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
 
@@ -1073,8 +1072,8 @@ class TestManager(BaseTest):
         # Apply a filter on a new alarm
         now_stamp = int(mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
-        alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
-        did = self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID
+        alarm_id = alarm[self.manager.alerts_storage.DATA_ID]
+        did = self.manager.alerts_storage.Key.DATA_ID
 
         lifter = self.gen_alarm_filter({
             AlarmFilter.FILTER: {did: {"$eq": alarm_id}},
@@ -1083,7 +1082,7 @@ class TestManager(BaseTest):
             AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
             AlarmFilter.FORMAT: '>> foo',
             AlarmFilter.REPEAT: 1
-        }, storage=self.manager[Alerts.FILTER_STORAGE])
+        }, storage=self.manager.filter_storage)
         lifter.save()
 
         self.manager.update_current_alarm(alarm, value)
@@ -1107,7 +1106,7 @@ class TestManager(BaseTest):
         # The filter has already been applied => alarm must not change
         now_stamp = int(mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
-        alarm_id2 = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
+        alarm_id2 = alarm[self.manager.alerts_storage.DATA_ID]
 
         self.manager.check_alarm_filters()
         result = self.manager.get_alarms(resolved=False)
@@ -1123,8 +1122,8 @@ class TestManager(BaseTest):
         # Testing keepstate flag on alarm filters
         now_stamp = int(mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
-        alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
-        did = self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID
+        alarm_id = alarm[self.manager.alerts_storage.DATA_ID]
+        did = self.manager.alerts_storage.Key.DATA_ID
 
         lifter = self.gen_alarm_filter({
             AlarmFilter.FILTER: {did: {"$eq": alarm_id}},
@@ -1132,7 +1131,7 @@ class TestManager(BaseTest):
             AlarmFilter.CONDITION: {},
             AlarmFilter.TASKS: ['alerts.systemaction.state_increase',
                                 'alerts.useraction.keepstate']
-        }, storage=self.manager[Alerts.FILTER_STORAGE])
+        }, storage=self.manager.filter_storage)
         lifter.save()
 
         self.manager.update_current_alarm(alarm, value)
@@ -1148,8 +1147,8 @@ class TestManager(BaseTest):
         # Testing repeat flag
         now_stamp = int(mktime(datetime.now().timetuple()))
         alarm, value = self.gen_fake_alarm(moment=now_stamp)
-        alarm_id = alarm[self.manager[Alerts.ALARM_STORAGE].DATA_ID]
-        did = self.manager[Alerts.ALARM_STORAGE].Key.DATA_ID
+        alarm_id = alarm[self.manager.alerts_storage.DATA_ID]
+        did = self.manager.alerts_storage.Key.DATA_ID
 
         lifter = self.gen_alarm_filter({
             AlarmFilter.FILTER: {did: {"$eq": alarm_id}},
@@ -1157,7 +1156,7 @@ class TestManager(BaseTest):
             AlarmFilter.CONDITION: {},
             AlarmFilter.TASKS: ['alerts.systemaction.state_increase'],
             AlarmFilter.REPEAT: 2
-        }, storage=self.manager[Alerts.FILTER_STORAGE])
+        }, storage=self.manager.filter_storage)
         lifter.save()
 
         self.manager.update_current_alarm(alarm, value)
