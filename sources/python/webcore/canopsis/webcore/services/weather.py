@@ -38,7 +38,7 @@ alarm_manager = Alerts(*Alerts.provide_default_basics())
 context_manager = alarm_manager.context_manager
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
-tracer_manager = TracerManager()
+tracer_manager = TracerManager(*TracerManager.provide_default_basics())
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'

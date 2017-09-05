@@ -4,7 +4,7 @@ from pymongo.errors import PyMongoError
 from bson.errors import BSONError
 
 from canopsis.confng import Configuration, Ini
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 
 from canopsis.common.enumerations import FastEnum
 
@@ -29,21 +29,25 @@ class Trace(FastEnum):
     IMPACT_ENTITIES = 'impact_entities'
 
 
-class TracerManager(MiddlewareRegistry):
+class TracerManager(object):
 
     CONF_PATH = 'etc/tracer/manager.conf'
     DEFAULT_STORAGE_URI = 'mongodb-default-tracer://'
 
-    def __init__(self, storage_uri=None, *args, **kwargs):
-        super(TracerManager, self).__init__(*args, **kwargs)
+    @classmethod
+    def provide_default_storage(cls):
+        return Middleware.get_middleware_by_uri(cls.DEFAULT_STORAGE_URI)
 
-        self.config = Configuration.load(self.CONF_PATH, Ini)
+    @classmethod
+    def provide_default_basics(cls):
+        return (cls.provide_default_storage(), )
 
-        if storage_uri is None:
-            storage_uri = self.DEFAULT_STORAGE_URI
-
-        storage_uri = self.config.get('tracer_storage', storage_uri)
-        self.storage = self.get_middleware_by_uri(storage_uri)
+    def __init__(self, storage):
+        """
+        :param storage: MongoDB Storage
+        """
+        super(TracerManager, self).__init__()
+        self.storage = storage
 
     def set_trace(self, _id, triggered_by, impact_entities=[], extra={}):
         """
