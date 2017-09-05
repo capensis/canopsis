@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 
-from copy import copy
-
 from pymongo.errors import PyMongoError
 from bson.errors import BSONError
 
@@ -51,8 +49,7 @@ class TracerManager(object):
         super(TracerManager, self).__init__()
         self.storage = storage
 
-    def set_trace(self, _id, triggered_by,
-                  impact_entities=copy([]), extra=copy({})):
+    def set_trace(self, _id, triggered_by, impact_entities=None, extra=None):
         """
         Creates a new trace or update existing one based on _id.
 
@@ -63,6 +60,10 @@ class TracerManager(object):
         :raises TraceSetError: on put_element error
         :return dict res: result mongo
         """
+
+        impact_entities = [] if impact_entities is None else impact_entities
+        extra = {} if extra is None else extra
+
         trace = {
             Trace.ID: _id,
             Trace.IMPACT_ENTITIES: impact_entities,

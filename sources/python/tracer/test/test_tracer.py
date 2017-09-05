@@ -23,7 +23,7 @@ class TestTracerManager(TestCase):
         cls.tracer_storage = Middleware.get_middleware_by_uri(storage_uri)
 
     def setUp(self):
-        self.manager = TracerManager(cls.tracer_storage)
+        self.manager = TracerManager(self.tracer_storage)
 
     def test_set_trace(self):
         r = self.manager.set_trace('test_trace', 'unittest')
