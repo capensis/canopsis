@@ -45,7 +45,7 @@ def event_processing(engine, event, alertsmgr=None, **kwargs):
 
         try:
             value = value.encode('utf-8')
-        except (UnicodeDecodeError, UnicodeEncodeError):
+        except (UnicodeDecodeError, UnicodeEncodeError, AttributeError):
             pass
 
         encoded_event[key] = value
