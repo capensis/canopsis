@@ -68,7 +68,9 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
         filter = {'_id': entity_id}
         if event.get('action') == PBEHAVIOR_CREATE:
             result = pbm.create(
-                event['pbehavior_name'], filter, event.get('author', DEFAULT_AUTHOR),
+                event['pbehavior_name'],
+                filter,
+                event.get('author', DEFAULT_AUTHOR),
                 event['start'], event['end'],
                 connector=event['connector'],
                 comments=event.get('comments', None),
@@ -77,10 +79,6 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
             )
             if not result:
                 logger.error(ERROR_MSG.format(event['action'], event))
-
-            else:
-                watcher_manager.compute_watchers()
-
 
         elif event.get('action') == PBEHAVIOR_DELETE:
             result = pbm.delete(_filter={
@@ -94,12 +92,8 @@ def event_processing(engine, event, pbm=None, logger=None, **kwargs):
             })
             if not result:
                 logger.error(ERROR_MSG.format(event['action'], event))
-            else:
-                watcher_manager.compute_watchers()
-
         else:
             logger.error(ERROR_MSG.format(event['action'], event))
-
 
     return event
 
@@ -114,3 +108,4 @@ def beat_processing(engine, pbm=None, logger=None, **kwargs):
         pbm.compute_pbehaviors_filters()
     except Exception as e:
         logger.error('Processing error {}'.format(str(e)))
+    pbm.launch_update_watcher(watcher_manager)

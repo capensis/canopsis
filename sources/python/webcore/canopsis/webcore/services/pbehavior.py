@@ -24,9 +24,6 @@ from six import string_types
 
 from canopsis.common.ws import route
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.watcher.manager import Watcher
-
-watcher_manager = Watcher()
 
 
 def check_values(data):
@@ -113,8 +110,6 @@ def exports(ws):
             enabled=enabled, comments=comments,
             connector=connector, connector_name=connector_name
         )
-
-        watcher_manager.compute_watchers()
 
         return result
 

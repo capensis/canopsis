@@ -129,6 +129,7 @@ class PBehaviorManager(MiddlewareRegistry):
     def __init__(self, *args, **kwargs):
         super(PBehaviorManager, self).__init__(*args, **kwargs)
         self.context = singleton_per_scope(ContextGraph)
+        self.currently_active_pb = set([])
 
     @property
     def pbehavior_storage(self):
@@ -441,7 +442,7 @@ class PBehaviorManager(MiddlewareRegistry):
 
             if (len(dt_list) >= 2 and
                 fromts(event['timestamp']) >= dt_list[0] and
-                fromts(event['timestamp']) <= dt_list[-1]):
+                    fromts(event['timestamp']) <= dt_list[-1]):
                 names.append(pb[PBehavior.NAME])
 
         result = set(pb_names).isdisjoint(set(names))
@@ -471,9 +472,62 @@ class PBehaviorManager(MiddlewareRegistry):
 
     def get_all_active_pbehaviors(self):
         now = int(time())
-        query = {'$and': [{'tstop' : {'$gt': now}}, {'tstart': {'$lt': now}}]}
+        query = {'$and': [{'tstop': {'$gt': now}}, {'tstart': {'$lt': now}}]}
 
-        ret_val= list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
+        ret_val = list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
             query=query
         ))
         return ret_val
+
+    def get_just_activated_pbehavior(self):
+        """
+            get_just_activated_pbehavior
+
+            :return list: list of PBehavior id activated since last check
+        """
+        active_pbehaviors = self.get_all_active_pbehaviors()
+        active_pbehaviors_ids = set([])
+        for pb in active_pbehaviors:
+            active_pbehaviors_ids.add(pb['_id'])
+        new_pbs = active_pbehaviors_ids.difference(self.currently_active_pb)
+        self.currently_active_pb = active_pbehaviors_ids
+        return list(new_pbs)
+
+    def launch_update_watcher(self, watcher_manager):
+        """
+            launch_update_watcher update watcher when an pbehavior is active
+
+            :param object watcher_manager: watcher manager
+            :return int: number of watcher updated
+
+        """
+        new_pbs = self.get_just_activated_pbehavior()
+        new_pbs_full = list(self[self.PBEHAVIOR_STORAGE]._backend.find(
+            {'_id': {'$in': new_pbs}}
+        ))
+        merged_eids = []
+        for pb in new_pbs_full:
+            merged_eids = merged_eids + pb['eids']
+        merged_eids = list(set(merged_eids))
+        watchers_ids = set([])
+        for watcher in self.get_wacher_on_entities(merged_eids):
+            watchers_ids.add(watcher['_id'])
+        for watcher_id in watchers_ids:
+            watcher_manager.calcul_state(watcher_id)
+
+        return len(list(watchers_ids))
+
+    def get_wacher_on_entities(self, entities_ids):
+        """
+            get_wacher_on_entities.
+
+            :param entities_ids: entity id
+            :return list: list of watchers
+
+        """
+        watchers = self.context.get_entities(
+            query={'$and': [
+                {'depends': {'$in':  entities_ids}},
+                {'type': 'watcher'}]}
+        )
+        return watchers
