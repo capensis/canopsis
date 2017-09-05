@@ -31,20 +31,14 @@ from dateutil.rrule import rruleset, rrulestr
 
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
-from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.tracer.manager import TracerManager
 from canopsis.watcher.manager import Watcher as WatcherManager
+from canopsis.alerts.reader import AlertsReader
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
-
-context_manager = ContextGraph()
-alarmreader_manager = AlertsReader()
-pbehavior_manager = PBehaviorManager()
-tracer_manager = TracerManager()
-watcher_manager = WatcherManager()
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
@@ -347,33 +341,11 @@ def check_baseline(merged_eids_tracer, watcher_depends):
     return False
 
 
-def exports(ws):
-    ws.application.router.add_filter('mongo_filter', mongo_filter)
-    ws.application.router.add_filter('id_filter', id_filter)
+class RouteHandlerWeather(object):
 
-    @ws.application.route(
-        '/api/v2/weather/watchers/<watcher_filter:mongo_filter>'
-    )
-    def get_watcher(watcher_filter):
-        """
-        Get a list of watchers from a mongo filter.
-
-        :param dict watcher_filter: a mongo filter to find watchers
-        :rtype: dict
-        """
-        limit = request.query.limit or DEFAULT_LIMIT
-        start = request.query.start or DEFAULT_START
-        sort = request.query.sort or DEFAULT_SORT
-
-        try:
-            start = int(start)
-        except ValueError:
-            start = int(DEFAULT_START)
-        try:
-            limit = int(limit)
-        except ValueError:
-            limit = int(DEFAULT_LIMIT)
-
+    def get_weather_watchers(self, watcher_filter, start, limit, sort,
+                             context_manager, tracer_manager, pbehavior_manager,
+                             watcher_manager, alarmreader_manager):
         watcher_filter['type'] = 'watcher'
         watcher_list = context_manager.get_entities(
             query=watcher_filter,
@@ -523,6 +495,49 @@ def exports(ws):
 
             watchers.append(enriched_entity)
 
+        return watchers
+
+
+def exports(ws):
+    ws.application.router.add_filter('mongo_filter', mongo_filter)
+    ws.application.router.add_filter('id_filter', id_filter)
+
+    rhw = RouteHandlerWeather()
+
+    context_manager = ContextGraph()
+    alarmreader_manager = AlertsReader()
+    pbehavior_manager = PBehaviorManager()
+    tracer_manager = TracerManager()
+    watcher_manager = WatcherManager()
+
+    @ws.application.route(
+        '/api/v2/weather/watchers/<watcher_filter:mongo_filter>'
+    )
+    def get_watcher(watcher_filter):
+        """
+        Get a list of watchers from a mongo filter.
+
+        :param dict watcher_filter: a mongo filter to find watchers
+        :rtype: dict
+        """
+        limit = request.query.limit or DEFAULT_LIMIT
+        start = request.query.start or DEFAULT_START
+        sort = request.query.sort or DEFAULT_SORT
+
+        try:
+            start = int(start)
+        except ValueError:
+            start = int(DEFAULT_START)
+        try:
+            limit = int(limit)
+        except ValueError:
+            limit = int(DEFAULT_LIMIT)
+
+        watchers = rhw.get_weather_watchers(
+            watcher_filter, start, limit, sort,
+            context_manager, tracer_manager, pbehavior_manager,
+            watcher_manager, alarmreader_manager
+        )
         return gen_json(watchers)
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
