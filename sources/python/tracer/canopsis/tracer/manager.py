@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from copy import copy
+
 from pymongo.errors import PyMongoError
 from bson.errors import BSONError
 
@@ -49,7 +51,8 @@ class TracerManager(object):
         super(TracerManager, self).__init__()
         self.storage = storage
 
-    def set_trace(self, _id, triggered_by, impact_entities=[], extra={}):
+    def set_trace(self, _id, triggered_by,
+                  impact_entities=copy([]), extra=copy({})):
         """
         Creates a new trace or update existing one based on _id.
 
@@ -69,9 +72,9 @@ class TracerManager(object):
 
         try:
             res = self.storage.put_element(trace)
-        except BSONError, ex:
+        except BSONError as ex:
             raise TraceSetError('document error: {}'.format(ex))
-        except PyMongoError, ex:
+        except PyMongoError as ex:
             raise TraceSetError('pymongo error: {}'.format(ex))
 
         if res.get('ok', 0) != 1.0:
