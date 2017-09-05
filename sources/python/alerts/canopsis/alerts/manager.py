@@ -37,6 +37,7 @@ from canopsis.alerts.status import (
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.utils import ensure_iterable
+from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event.manager import Event as EventManager
@@ -71,7 +72,8 @@ class Alerts(object):
     FILTER_CAT = 'FILTER'
 
     ALERTS_STORAGE_URI = 'mongodb-periodical-alarm://'
-    CONFIG_STORAGE_URI = 'mongodb-default-object://'
+    CONFIG_STORAGE_URI = 'mongodb-object://'
+    CONFIG_COLLECTION = 'object'
     FILTER_STORAGE_URI = 'mongodb-default-alarmfilter://'
 
     AUTHOR = 'author'
@@ -117,19 +119,21 @@ class Alerts(object):
 
         ! Do not use in tests !
 
-        :rtype: Union[EtherrealData,
+        :rtype: Union[canopsis.confng.simpleconf.Configuration
                       logging.Logger,
                       canopsis.storage.core.Storage,
-                      canopsis.storage.core.Storage,
+                      canopsis.common.ethereal_data.EtherealData,
                       canopsis.storage.core.Storage,
                       canopsis.context_graph.manager.ContextGraph,
                       canopsis.watcher.manager.Watcher]
         """
-        config_storage = Middleware.get_middleware_by_uri(
-            cls.CONFIG_STORAGE_URI
-        )
+        config = Configuration.load(Alerts.CONF_PATH, Ini)
+
+        from pymongo import MongoClient
+        config_collection = MongoClient()['canopsis'][cls.CONFIG_COLLECTION]
+        #config_collection = MongoManager(name=cls.CONFIG_COLLECTION)
         filter_ = {'crecord_type': 'statusmanagement'}
-        config_data = EtherealData(collection=config_storage._backend,
+        config_data = EtherealData(collection=config_collection,
                                    filter_=filter_)
         logger = Logger.get('alerts', cls.LOG_PATH)
         alerts_storage = Middleware.get_middleware_by_uri(
@@ -141,7 +145,7 @@ class Alerts(object):
         context_manager = ContextGraph()
         watcher_manager = Watcher()
 
-        return (config_data, logger, alerts_storage, config_data,
+        return (config, logger, alerts_storage, config_data,
                 filter_storage, context_manager, watcher_manager)
 
     @property
