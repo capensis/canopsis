@@ -4,16 +4,7 @@ from unittest import TestCase
 import time
 
 from datetime import datetime
-from canopsis.webcore.services.weather import get_pb_range
-
-def dt_to_ts(dt):
-    """
-    datetime to timestamp
-
-    :param datetime dt: datetime
-    :rtype: int
-    """
-    return int(time.mktime(dt.timetuple()))
+from canopsis.webcore.services.weather import get_pb_range, dt_to_ts
 
 class TestWeather(TestCase):
 
