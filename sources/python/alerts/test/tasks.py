@@ -328,14 +328,14 @@ class TestTasks(BaseTest):
         )
 
     def test_linklist(self):
-        self.llm = Entitylink()
+        self.entitylink_manager = Entitylink()
 
         eid0 = '/entity/id'
         linklist_eid0 = {
             'computed_links': [{'label': 'doc', 'url': 'http://path/to/doc'}],
             'entity_links': [{'label': 'support', 'url': 'http://path/to/sup'}]
         }
-        self.llm.put(_id=eid0, document=linklist_eid0)
+        self.entitylink_manager.put(_id=eid0, document=linklist_eid0)
 
         task = get_task('alerts.lookup.linklist')
 
@@ -352,7 +352,7 @@ class TestTasks(BaseTest):
         res = task(self, {'d': eid1})
         self.assertEqual(res, {'d': eid1, AlarmField.linklist.value: {}})
 
-        del self.llm
+        del self.entitylink_manager
 
 if __name__ == '__main__':
     main()

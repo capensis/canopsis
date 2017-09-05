@@ -469,16 +469,16 @@ class AlertsReader(object):
             if search_filter:
                 filter_ = {'$and': [filter_, search_filter]}
 
-        query = self.alarm_storage._backend.find(filter_)
+        result = self.alarm_storage._backend.find(filter_)
 
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
-        query = query.sort(sort_key, sort_dir)
+        result = result.sort(sort_key, sort_dir)
 
-        query = query.skip(skip)
+        result = result.skip(skip)
         if limit is not None:
-            query = query.limit(limit)
+            result = result.limit(limit)
 
-        alarms = list(query)
+        alarms = list(result)
         limited_total = len(alarms)  # Manual count is much faster than mongo's
 
         count_query = self.alarm_storage._backend.find(filter_)

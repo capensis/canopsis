@@ -391,7 +391,7 @@ def linklist(manager, alarm):
 
     entity_id = alarm['d']
 
-    linklist = list(manager.llm.find(ids=[entity_id]))
+    linklist = list(manager.entitylink_manager.find(ids=[entity_id]))
 
     if not linklist:
         alarm[AlarmField.linklist.value] = {}
@@ -413,6 +413,6 @@ def pbehaviors(manager, alarm):
 
     entity_id = alarm['d']
 
-    alarm['pbehaviors'] = manager.pbm.get_pbehaviors(entity_id)
+    alarm['pbehaviors'] = manager.pbehavior_manager.get_pbehaviors(entity_id)
 
     return alarm
