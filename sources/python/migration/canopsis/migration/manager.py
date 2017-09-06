@@ -18,49 +18,41 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import json
+from logging import StreamHandler
+import os
+import signal
+
+from canopsis.common.utils import lookup
+from canopsis.confng import Configuration, Json
+from canopsis.confng.helpers import cfg_to_array
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.model import Parameter
-
-from canopsis.common.utils import lookup
-
-from logging import StreamHandler
-import signal
-import json
-import os
-
+from canopsis.logger import Logger
 
 CONF_PATH = 'migration/manager.conf'
-CATEGORY = 'MIGRATION'
-CONTENT = [
-    Parameter('modules', parser=Parameter.array())
-]
+
+DEFAULT_MODULES = ''
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
-class MigrationTool(Configurable):
+class MigrationTool(object):
+    """
+    """
 
-    @property
-    def modules(self):
-        if not hasattr(self, '_modules'):
-            self.modules = None
+    CONF_PATH = 'etc/migration/manager.conf'
+    LOG_PATH = 'var/log/migrationtool.log'
+    CATEGORY = 'MIGRATION'
 
-        return self._modules
+    def __init__(self, modules=None):
 
-    @modules.setter
-    def modules(self, value):
-        if value is None:
-            value = []
-
-        self._modules = value
-
-    def __init__(self, modules=None, *args, **kwargs):
-        super(MigrationTool, self).__init__(*args, **kwargs)
+        self.logger = Logger.get('migrationtool', self.LOG_PATH)
+        self.config = Configuration.load(MigrationTool.CONF_PATH, Json)
+        conf = self.config.get(self.CATEGORY, {})
 
         if modules is not None:
-            self.modules = modules
+            self.modules = cfg_to_array(conf.get('modules', DEFAULT_MODULES))
 
         self.loghandler = StreamHandler()
         self.logger.addHandler(self.loghandler)
