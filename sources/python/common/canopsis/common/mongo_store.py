@@ -61,6 +61,7 @@ class MongoStore(object):
         """
         self.client = MongoClient(host=self.host,
                                   port=self.port)[self.db_name]
+        self.client.authenticate(self._user, self._pwd)
 
     def get_collection(self, name):
         """
