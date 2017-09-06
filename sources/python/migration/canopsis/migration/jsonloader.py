@@ -18,50 +18,28 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.migration.manager import MigrationModule
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.model import Parameter
-from canopsis.common.utils import ensure_iterable
+import json
+import os
+from socket import getfqdn
 
+from canopsis.common.utils import ensure_iterable
+from canopsis.logger import Logger
+from canopsis.migration.manager import MigrationModule
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
-from socket import getfqdn
-import json
-import os
+DEFAULT_JSON_PATH = '~/opt/mongodb/load.d'
 
 
-CONF_PATH = 'migration/jsonloader.conf'
-CATEGORY = 'JSONLOADER'
-CONTENT = [
-    Parameter('json_path')
-]
+class JSONLoaderModule(object):
 
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
-class JSONLoaderModule(MigrationModule):
-
-    @property
-    def json_path(self):
-        if not hasattr(self, '_json_path'):
-            self.json_path = None
-
-        return self._json_path
-
-    @json_path.setter
-    def json_path(self, value):
-        if value is None:
-            value = '~/opt/mongodb/load.d'
-
-        self._json_path = os.path.expanduser(value)
-
-    def __init__(self, json_path=None, *args, **kwargs):
-        super(JSONLoaderModule, self).__init__(*args, **kwargs)
+    def __init__(self, json_path=None):
+        self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
 
         if json_path is not None:
             self.json_path = json_path
+        else:
+            self.json_path = os.path.expanduser(DEFAULT_JSON_PATH)
 
         self.storage = get_storage(
             account=Account(user='root', group='root'),

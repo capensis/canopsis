@@ -20,21 +20,21 @@
 
 import json
 from logging import StreamHandler
-import os
 import signal
 
 from canopsis.common.utils import lookup
 from canopsis.confng import Configuration, Json
-from canopsis.confng.helpers import cfg_to_array
-from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.model import Parameter
 from canopsis.logger import Logger
 
-CONF_PATH = 'migration/manager.conf'
-
-DEFAULT_MODULES = ''
+DEFAULT_MODULES = ['canopsis.migration.purge.PurgeModule',
+                   'canopsis.migration.indexes.IndexesModule',
+                   'canopsis.migration.jsonloader.JSONLoaderModule',
+                   'canopsis.migration.rights.RightsModule',
+                   'canopsis.migration.views.ViewsModule',
+                   'canopsis.migration.serie.SerieModule',
+                   'canopsis.migration.perfdata.PerfdataModule']
+DEFAULT_ASK_TIMEOUT = 30
+DEFAULT_VERSION_INFO = '~/var/lib/canopsis/migration.json'
 
 
 class MigrationTool(object):
@@ -51,8 +51,8 @@ class MigrationTool(object):
         self.config = Configuration.load(MigrationTool.CONF_PATH, Json)
         conf = self.config.get(self.CATEGORY, {})
 
-        if modules is not None:
-            self.modules = cfg_to_array(conf.get('modules', DEFAULT_MODULES))
+        if modules is None:
+            self.modules = conf.get('modules', DEFAULT_MODULES)
 
         self.loghandler = StreamHandler()
         self.logger.addHandler(self.loghandler)
@@ -86,49 +86,23 @@ class MigrationTool(object):
                 tool.update()
 
 
-@conf_paths(CONF_PATH)
-@add_category('MODULE', content=[
-    Parameter('ask_timeout', parser=int),
-    Parameter('version_info')
-])
-class MigrationModule(Configurable):
+class MigrationModule(object):
 
-    @property
-    def ask_timeout(self):
-        if not hasattr(self, '_ask_timeout'):
-            self.ask_timeout = None
+    CONF_PATH = 'etc/migration/manager.conf'
+    LOG_PATH = 'var/log/migrationtool.log'
+    CATEGORY = 'module'
 
-        return self._ask_timeout
+    def __init__(self, ask_timeout=None, version_info=None):
+        self.logger = Logger.get('migrationmodule', self.LOG_PATH)
+        self.config = Configuration.load(MigrationModule.CONF_PATH, Json)
+        conf = self.config.get(self.CATEGORY, {})
 
-    @ask_timeout.setter
-    def ask_timeout(self, value):
-        if value is None:
-            value = 30
+        if ask_timeout is None:
+            self.ask_timeout = int(conf.get('ask_timeout',
+                                            DEFAULT_ASK_TIMEOUT))
 
-        self._ask_timeout = value
-
-    @property
-    def version_info(self):
-        if not hasattr(self, '_version_info'):
-            self.version_info = None
-
-        return self._version_info
-
-    @version_info.setter
-    def version_info(self, value):
-        if value is None:
-            value = '~/var/lib/canopsis/migration.json'
-
-        self._version_info = os.path.expanduser(value)
-
-    def __init__(self, ask_timeout=None, version_info=None, *args, **kwargs):
-        super(MigrationModule, self).__init__(*args, **kwargs)
-
-        if ask_timeout is not None:
-            self.ask_timeout = ask_timeout
-
-        if version_info is not None:
-            self.version_info = version_info
+        if version_info is None:
+            self.version_info = conf.get('version_info', DEFAULT_VERSION_INFO)
 
     def get_version(self, item):
         try:

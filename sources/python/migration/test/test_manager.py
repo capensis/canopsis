@@ -24,15 +24,24 @@ from unittest import main, TestCase
 from canopsis.migration.manager import MigrationTool, MigrationModule
 
 
-class TimeSerieTest(TestCase):
+class MigrationToolTest(TestCase):
 
     def setUp(self):
         self.migration_tool = MigrationTool()
-        self.migration_module = MigrationModule()
 
-    def test_tool_fill(self):
+    def test_fill(self):
         #self.migration_tool.fill()
         pass
+
+
+class MigrationModuleTest(TestCase):
+
+    def setUp(self):
+        self.migration_module = MigrationModule()
+
+    def test_get_version(self):
+        res = self.migration_module.get_version('perfdata')
+        self.assertEqual(res, 0)
 
 if __name__ == '__main__':
     main()

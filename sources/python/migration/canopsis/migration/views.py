@@ -18,29 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.migration.manager import MigrationModule
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
+import json
+import os
+import sys
+from time import time
+
+from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
+from canopsis.migration.manager import MigrationModule
 from canopsis.organisation.rights import Rights
 
-from time import time
-import json
-import sys
-import os
 
-
-CONF_PATH = 'migration/views.conf'
-CATEGORY = 'VIEWS'
-CONTENT = []
-
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
-class ViewsModule(MigrationModule):
-    def __init__(self, *args, **kwargs):
-        super(ViewsModule, self).__init__(*args, **kwargs)
-
+class ViewsModule(object):
+    def __init__(self):
+        self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
         self.storage = Middleware.get_middleware_by_uri(
             'storage-default://',
             table='object'
@@ -76,7 +67,7 @@ class ViewsModule(MigrationModule):
 
                 backup.append(view)
 
-            self.logger.info(u'Ensure rights for view: {0}'.format(view['_id']))
+            self.logger.info(u'Ensure rights for view: {}'.format(view['_id']))
 
             actions = self.rights.get_action([view['_id']])
 
