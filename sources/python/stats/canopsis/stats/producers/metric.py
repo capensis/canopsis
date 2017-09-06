@@ -46,7 +46,6 @@ class MetricProducer(MiddlewareRegistry):
     """
 
     FILTER_STORAGE = 'filter_storage'
-    SERIE_STORAGE = 'serie_storage'
     CONTEXT_MANAGER = 'context'
     PERFDATA_MANAGER = 'perfdata'
 
@@ -83,7 +82,6 @@ class MetricProducer(MiddlewareRegistry):
         default_aggregation_interval=None,
         round_time_interval=None,
         filter_storage=None,
-        serie_storage=None,
         context=None,
         perfdata=None,
         *args, **kwargs
@@ -98,9 +96,6 @@ class MetricProducer(MiddlewareRegistry):
 
         if filter_storage is not None:
             self[MetricProducer.FILTER_STORAGE] = filter_storage
-
-        if serie_storage is not None:
-            self[MetricProducer.SERIE_STORAGE] = serie_storage
 
         if context is not None:
             self[MetricProducer.CONTEXT_MANAGER] = context
@@ -140,57 +135,6 @@ class MetricProducer(MiddlewareRegistry):
         serie_id.update(metric_id)
         serie_id.update(operator)
         return serie_id.hexdigest()
-
-    def may_create_stats_serie(self, metric, operator):
-        """Create serie for metric and operator if not existing yet.
-
-        :param metric: Metric entity
-        :type metric: dict
-
-        :param operator: Aggregation operator used on metric
-        :type operator: str
-
-        :returns: the newly created, or existing, serie
-        """
-
-        storage = self[MetricProducer.SERIE_STORAGE]
-
-        metric_id = self[MetricProducer.CONTEXT_MANAGER].get_entity_id(metric)
-        serie_id = self.get_stats_serie_id(metric_id, operator)
-
-        result = storage.get_elements(ids=serie_id)
-
-        if result is None:
-            serie = {
-                'crecord_name': operator,
-                'component': metric['component'],
-                'resource': metric['resource'],
-                'metric_filter': 'co:{0} re:{1} me:{2}'.format(
-                    metric['component'],
-                    metric['resource'],
-                    metric['name']
-                ),
-                'aggregation_method': operator,
-                'aggregation_interval': self.default_aggregation_interval,
-                'round_time_interval': self.round_time_interval,
-                # only one metric selected, so SUM is the identity
-                'formula': 'SUM("me:.*")',
-                'last_computation': 0
-            }
-
-            _, tags = self[MetricProducer.PERFDATA_MANAGER].get(
-                metric_id, with_meta=True
-            )
-
-            if tags is not None:
-                serie.update(tags)
-
-            storage.put_element(serie, _id=serie_id)
-
-            serie[storage.DATA_ID] = serie_id
-            result = serie
-
-        return result
 
     def _count(
         self,
