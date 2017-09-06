@@ -116,8 +116,8 @@ def event_processing(engine, event, pbm=None, logger=None,
             else:
                 logger.error(ERROR_MSG.format(event['action'], event))
 
-        except ValueError as ex:
-            logger.error('cannot handle event: {}'.format(ex))
+        except ValueError as err:
+            logger.error('cannot handle event: {}'.format(err))
 
     return event
 
@@ -133,6 +133,6 @@ def beat_processing(engine, pbm=None, logger=None, **kwargs):
         pbm = singleton_per_scope(PBehaviorManager)
     try:
         pbm.compute_pbehaviors_filters()
-    except Exception as ex:
-        logger.error('Processing error {}'.format(str(ex)))
-    pbm.launch_update_watcher(watcher_manager)
+    except Exception as err:
+        logger.error('Processing error {}'.format(str(err)))
+    pbm.launch_update_watcher(WATCHER_MANAGER)
