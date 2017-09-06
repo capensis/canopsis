@@ -63,7 +63,7 @@ class PerfData(MiddlewareRegistry):
         if context is not None:
             self[PerfData.CONTEXT_MANAGER] = context
 
-    def _data_id_tags(self, metric_id, meta=None, event={}):
+    def _get_tags_metric_id(self, metric_id, meta=None, event={}):
 
         tags = {} if meta is None else meta.copy()
 
@@ -103,7 +103,7 @@ class PerfData(MiddlewareRegistry):
         :param timewindow: if None, get all perfdata values
         """
 
-        data_id, tags = self._data_id_tags(metric_id, meta)
+        data_id, tags = self._get_tags_metric_id(metric_id, meta)
 
         result = self[PerfData.PERFDATA_STORAGE].count(
             data_id=data_id, timewindow=timewindow, tags=tags
@@ -132,7 +132,7 @@ class PerfData(MiddlewareRegistry):
         If with_meta, result is a couple of (points, list of tags by timestamp)
         """
 
-        data_id, tags = self._data_id_tags(metric_id, meta)
+        data_id, tags = self._get_tags_metric_id(metric_id, meta)
 
         if sliding_time:  # apply sliding_time
 
@@ -179,7 +179,7 @@ class PerfData(MiddlewareRegistry):
         if with_tags.
         """
 
-        data_id, tags = self._data_id_tags(metric_id, meta)
+        data_id, tags = self._get_tags_metric_id(metric_id, meta)
 
         if timestamp is None:
             timestamp = time()
@@ -205,14 +205,14 @@ class PerfData(MiddlewareRegistry):
         """
 
         # do something only if there are points to put
-        if points:
+        if len(points) > 0:
             first_point = points[0]
             # if first_point is a timestamp, points is one point
             if isinstance(first_point, (Number, basestring)):
                 # transform points into a tuple
                 points = (points,)
 
-            data_id, tags = self._data_id_tags(metric_id, meta, event=event)
+            data_id, tags = self._get_tags_metric_id(metric_id, meta, event=event)
 
             # update data in a cache (a)synchronous way
             self[PerfData.PERFDATA_STORAGE].put(
@@ -224,7 +224,7 @@ class PerfData(MiddlewareRegistry):
     ):
         """Remove values and tags of one metric."""
 
-        data_id, tags = self._data_id_tags(metric_id, meta)
+        data_id, tags = self._get_tags_metric_id(metric_id, meta)
 
         self[PerfData.PERFDATA_STORAGE].remove(
             data_id=data_id,
