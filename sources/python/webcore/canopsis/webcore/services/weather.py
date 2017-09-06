@@ -27,8 +27,9 @@ import copy
 import datetime
 import time
 
-from dateutil.rrule import rruleset, rrulestr
+import arrow
 
+from dateutil.rrule import rruleset, rrulestr
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.common.converters import mongo_filter, id_filter
@@ -327,6 +328,36 @@ def get_pb_range(pbehaviors):
 
     return rset, tod_start, tod_stop
 
+def generate_pb_active_dates(rset, tod_start, tod_stop, ndates, tz='Europe/Paris'):
+    """
+    Generate dates where the pbehavior is disabled between those dates.
+    :param rruleset rset: rrule set
+    :param datetime tod_start: time of the day for pb start, ignoring date.
+    :param datetime tod_stop: time of the day for pb start, ignoring date.
+    :param str tz: time zone. ex: 'Europe/Paris'
+    :return: list of ISO8601 dates, as strings
+    :rtype: list
+    """
+    dates = rset[:ndates]
+
+    iso8601_dates = []
+
+    for date in dates:
+        date_start = datetime.datetime(
+            date.year, date.month, date.day,
+            tod_stop.hour, tod_stop.minute, 0)
+
+        date_stop = datetime.datetime(
+            date.year, date.month, date.day,
+            tod_start.hour, tod_start.minute, 0)
+
+        iso_date_start = arrow.get(date_start, tz).isoformat()
+        iso_date_stop = arrow.get(date_stop, tz).isoformat()
+
+        iso8601_dates.append([iso_date_start, iso_date_stop])
+
+    return iso8601_dates
+
 def check_baseline(merged_eids_tracer, watcher_depends):
     """
     cehck if the watcher has an entity with a baseline active
@@ -412,20 +443,16 @@ class RouteHandlerWeather(object):
                 watcher_available_pbs.extend(get_pbehaviors_for_entitiy(eid, raw_pbehaviors))
             watcher_available_pbs.extend(active_pbehaviors.get(watcher['_id'], []))
             pb_range_rset, pb_range_start, pb_range_stop = get_pb_range(watcher_available_pbs)
-            # generate 7 dates for 7 days
-            pb_range_dates = [dt_to_ts(date) for date in pb_range_rset[:7]]
             try:
                 watcher['pb_range'] = {
                     'valid_range': True,
-                    'rdates': pb_range_dates,
-                    'start_hour': pb_range_start.hour,
-                    'start_minute': pb_range_start.minute,
-                    'stop_hour': pb_range_stop.hour,
-                    'stop_minute': pb_range_stop.minute
+                    'active_watcher_dates': generate_pb_active_dates(
+                        pb_range_rset, pb_range_start, pb_range_stop, 7)
                 }
             except AttributeError:
                 watcher['pb_range'] = {
-                    'valid_range': False
+                    'valid_range': False,
+                    'active_watcher_dates': []
                 }
 
         for eids_tab in active_pb_dict.values():

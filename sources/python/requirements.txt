@@ -54,3 +54,4 @@ functools32==3.2.3-2
 ijson==2.3.0
 enum34==1.1.6
 configparser==3.5.0
+arrow==0.10.0
