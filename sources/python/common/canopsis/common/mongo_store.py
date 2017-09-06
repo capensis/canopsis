@@ -42,7 +42,11 @@ class MongoStore(object):
 
         conf = self.mid_config.get(self.MID_CONF_CAT, {})
         self.host = conf.get('host', DEFAULT_HOST)
-        self.port = conf.get('port', DEFAULT_PORT)
+        port = conf.get('port', DEFAULT_PORT)
+        try:
+            self.port = int(port)
+        except ValueError:
+            self.port = DEFAULT_PORT
         # missing: uri, protocol, data_type, data_scope, path, auto_connect=true, safe=true, conn_timeout=20000, in_timeout=20000, out_timeout=100, ssl=false, ssl_key, ssl_cert, user, pwd
 
         conf = self.cred_config.get(self.CRED_CAT, {})

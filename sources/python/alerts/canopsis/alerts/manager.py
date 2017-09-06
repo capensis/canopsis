@@ -36,6 +36,7 @@ from canopsis.alerts.status import (
 )
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
+from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import ensure_iterable
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
@@ -128,13 +129,19 @@ class Alerts(object):
                       canopsis.watcher.manager.Watcher]
         """
         config = Configuration.load(Alerts.CONF_PATH, Ini)
+        conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
+        conf_middleware = Configuration.load(MongoStore.MIDDLEWARE_CONF_PATH,
+                                             Ini)
+        conf_db_creds = Configuration.load(MongoStore.CRED_CONF_PATH, Ini)
 
-        from pymongo import MongoClient
-        config_collection = MongoClient()['canopsis'][cls.CONFIG_COLLECTION]
-        #config_collection = MongoManager(name=cls.CONFIG_COLLECTION)
+        mongo = MongoStore(config=conf_store,
+                           mid_config=conf_middleware,
+                           cred_config=conf_db_creds)
+        config_collection = mongo.get_collection(name=cls.CONFIG_COLLECTION)
         filter_ = {'crecord_type': 'statusmanagement'}
         config_data = EtherealData(collection=config_collection,
                                    filter_=filter_)
+
         logger = Logger.get('alerts', cls.LOG_PATH)
         alerts_storage = Middleware.get_middleware_by_uri(
             cls.ALERTS_STORAGE_URI

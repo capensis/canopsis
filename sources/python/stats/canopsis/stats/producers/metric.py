@@ -20,15 +20,13 @@
 
 from hashlib import sha1
 
-from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.influxdb.core import InfluxDBStorage
-
-from canopsis.timeserie.core import TimeSerie
+from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.old.mfilter import check
-
+from canopsis.timeserie.core import TimeSerie
 
 CONF_PATH = 'stats/producers/metric.conf'
 CATEGORY = 'METRIC_PRODUCER'
