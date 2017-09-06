@@ -89,7 +89,7 @@ def check_values(data):
         check_valid_rrule(data['rrule'])
 
     # useful when enabled doesn't exist in document
-    if "enabled" not in data or data["enabled"] is None or
+    if "enabled" not in data or data["enabled"] is None or\
         isinstance(data['enabled'], bool):
         return
 
