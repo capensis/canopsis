@@ -129,7 +129,7 @@ class PBehaviorManager(MiddlewareRegistry):
     def __init__(self, *args, **kwargs):
         super(PBehaviorManager, self).__init__(*args, **kwargs)
         self.context = singleton_per_scope(ContextGraph)
-        self.currently_active_pb = set([])
+        self.currently_active_pb = set()
 
     @property
     def pbehavior_storage(self):
@@ -486,7 +486,7 @@ class PBehaviorManager(MiddlewareRegistry):
             :return list: list of PBehavior id activated since last check
         """
         active_pbehaviors = self.get_all_active_pbehaviors()
-        active_pbehaviors_ids = set([])
+        active_pbehaviors_ids = set()
         for pb in active_pbehaviors:
             active_pbehaviors_ids.add(pb['_id'])
         new_pbs = active_pbehaviors_ids.difference(self.currently_active_pb)
@@ -509,11 +509,11 @@ class PBehaviorManager(MiddlewareRegistry):
         for pb in new_pbs_full:
             merged_eids = merged_eids + pb['eids']
         merged_eids = list(set(merged_eids))
-        watchers_ids = set([])
+        watchers_ids = set()
         for watcher in self.get_wacher_on_entities(merged_eids):
             watchers_ids.add(watcher['_id'])
         for watcher_id in watchers_ids:
-            watcher_manager.calcul_state(watcher_id)
+            watcher_manager.compute_state(watcher_id)
 
         return len(list(watchers_ids))
 

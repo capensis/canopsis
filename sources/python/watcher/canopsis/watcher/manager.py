@@ -98,7 +98,7 @@ class Watcher(MiddlewareRegistry):
             element={'_id': watcher_id,
                      'states': [0, 0, 0, 0, 0]})
         """
-        self.calcul_state(watcher_id)
+        self.compute_state(watcher_id)
 
         return True  # TODO: return really something
 
@@ -163,7 +163,7 @@ class Watcher(MiddlewareRegistry):
         watchers = self.context_graph.get_entities(query={'type': 'watcher'})
         for i in watchers:
             if alarm_id in i['depends']:
-                self.calcul_state(i['_id'])
+                self.compute_state(i['_id'])
 
     def compute_watchers(self):
         """
@@ -171,9 +171,9 @@ class Watcher(MiddlewareRegistry):
         """
         watchers = list(self[Watcher.WATCHER_STORAGE].get_elements(query={}))
         for watcher in watchers:
-            self.calcul_state(watcher['_id'])
+            self.compute_state(watcher['_id'])
 
-    def calcul_state(self, watcher_id):
+    def compute_state(self, watcher_id):
         """
         Send an event watcher with the new state of the watcher.
 
