@@ -102,13 +102,14 @@ def check_values(data):
 
 
 class RouteHandlerPBehavior(object):
+    """Passthrough class with few checks from the route to the pbehavior
+    manager."""
 
     def __init__(self, pb_manager, watcher_manager):
         """
         :param PBehaviorManager pb_manager: pbehavior manager
         :param WatcherManager watcher_manager: watcher manager
         """
-        super(RouteHandlerPBehavior, self).__init__()
         self.watcher_manager = watcher_manager
         self.pb_manager = pb_manager
 
@@ -130,8 +131,17 @@ class RouteHandlerPBehavior(object):
         :param str connector: connector
         :param str connector_name: connector name
         """
-        data = locals()
-        data.pop('self')
+        data = {"name": name,
+                "filter_": filter_,
+                "author": author,
+                "tstart": tstart,
+                "tstop": tstop,
+                "rrule": rrule,
+                "enabled": enabled,
+                "comments": comments,
+                "connector": connector,
+                "connector_name": connector_name}
+
         check_values(data)
 
         result = self.pb_manager.create(
@@ -153,16 +163,16 @@ class RouteHandlerPBehavior(object):
         :return: pbehavior
         :rtype: dict
         """
-        ok = False
+        is_ok = False
         if isinstance(_id, string_types):
-            ok = True
+            is_ok = True
         elif isinstance(_id, list):
-            ok = True
+            is_ok = True
             for elt in _id:
                 if not isinstance(elt, string_types):
-                    ok = False
+                    is_ok = False
 
-        if not ok:
+        if not is_ok:
             raise ValueError("_id should be str, a list, None (null) not"
                              "{0}".format(type(_id)))
 
@@ -176,9 +186,16 @@ class RouteHandlerPBehavior(object):
 
         :param str _id: pbehavior id
         """
-        params = locals()
-        params.pop('_id')
-        params.pop('self')
+        params = {"name": name,
+                  "filter_": filter_,
+                  "tstart": tstart,
+                  "tstop": tstop,
+                  "rrule": rrule,
+                  "enabled": enabled,
+                  "comments": comments,
+                  "connector": connector,
+                  "connector_name": connector_name,
+                  "author": author}
         check_values(params)
 
         return self.pb_manager.update(_id, **params)
@@ -292,6 +309,12 @@ def exports(ws):
         payload=['_id']
     )
     def delete(_id):
+        """/pbehavior/delete : delete the pbehaviour that match the _id
+        :param _id: the pbehaviour id
+        :return type: dict
+        :return: a dict with two field. "acknowledged" that True if the
+        delete is a sucess. False, otherwise.
+        """
         return rhpb.delete(_id)
 
     @route(
@@ -300,6 +323,12 @@ def exports(ws):
         payload=['pbehavior_id', 'author', 'message']
     )
     def create_comment(pbehavior_id, author, message):
+        """/pbehavior/comment/create : create a comment on the given pbehaviour.
+        :param _id: the pbehaviour id
+        :param author: author name
+        :param message: the message to store in the comment.
+        :return: In case of success, return the comment id. None otherwise.
+        """
         return rhpb.create_comment(pbehavior_id, author, message)
 
     @route(
@@ -308,6 +337,13 @@ def exports(ws):
         payload=['pbehavior_id', '_id', 'author', 'message']
     )
     def update_comment(pbehavior_id, _id, author=None, message=None):
+        """/pbehavior/comment/update : create a comment on the given pbehaviour.
+        :param pbehavior_id: the pbehaviour id
+        :param _id: the comment id
+        :param author: author name
+        :param message: the message to store in the comment.
+        :return: In case of success, return the updated comment. None otherwise.
+        """
         return rhpb.update_comment(pbehavior_id, _id, author, message)
 
     @route(
@@ -316,4 +352,11 @@ def exports(ws):
         payload=['pbehavior_id', '_id']
     )
     def delete_comment(pbehavior_id, _id):
+        """/pbehavior/comment/delete : delete a comment on the given pbehaviour.
+        :param pbehavior_id: the pbehaviour id
+        :param _id: the comment id
+        :return type: dict
+        :return: a dict with two field. "acknowledged" that contains True if the
+        delete is a sucess. False, otherwise.
+        """
         return rhpb.delete_comment(pbehavior_id, _id)
