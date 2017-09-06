@@ -63,8 +63,8 @@ class BaseTest(TestCase):
             self.entities_storage
         )
         self.manager.context_graph = self.context_graph_manager
-        self.manager[Watcher.WATCHER_STORAGE] = self.watcher_storage
-        self.manager[Watcher.ALERTS_STORAGE] = self.alerts_storage
+        self.manager.watcher_storage = self.watcher_storage
+        self.manager.alerts_storage = self.alerts_storage
 
     def tearDown(self):
         self.watcher_storage.remove_elements()
