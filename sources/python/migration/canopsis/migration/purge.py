@@ -27,12 +27,14 @@ from canopsis.old.storage import Storage
 DEFAULT_COLLECTIONS = ["cache", "events", "events_log", "object", "userpreferences"]
 
 
-class PurgeModule(object):
+class PurgeModule(MigrationModule):
 
     CONF_PATH = 'etc/migration/purge.conf'
     CATEGORY = 'PURGE'
 
-    def __init__(self, collections=None):
+    def __init__(self, collections=None, *args, **kwargs):
+        super(PurgeModule, self).__init__(*args, **kwargs)
+
         self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
         self.config = Configuration.load(PurgeModule.CONF_PATH, Json)
         conf = self.config.get(self.CATEGORY, {})

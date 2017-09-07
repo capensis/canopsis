@@ -31,9 +31,11 @@ from canopsis.old.storage import get_storage
 DEFAULT_JSON_PATH = '~/opt/mongodb/load.d'
 
 
-class JSONLoaderModule(object):
+class JSONLoaderModule(MigrationModule):
 
-    def __init__(self, json_path=None):
+    def __init__(self, json_path=None, *args, **kwargs):
+        super(JSONLoaderModule, self).__init__(*args, **kwargs)
+
         self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
 
         if json_path is not None:

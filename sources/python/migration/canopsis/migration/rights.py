@@ -33,19 +33,22 @@ DEFAULT_USERS_PATH = '~/opt/mongodb/load.d/rights/default_users'
 DEFAULT_ROLES_PATH = '~/opt/mongodb/load.d/rights/default_roles'
 
 
-class RightsModule(object):
+class RightsModule(MigrationModule):
 
     CONF_PATH = 'etc/migration/rights.conf'
     CATEGORY = 'RIGHTS'
 
     def __init__(
-        self,
-        actions_path=None,
-        users_path=None,
-        roles_path=None
+            self,
+            actions_path=None,
+            users_path=None,
+            roles_path=None,
+            *args, **kwargs
     ):
+        super(RightsModule, self).__init__(*args, **kwargs)
+
         self.logger = Logger.get('migrationtool', MigrationModule.LOG_PATH)
-        self.config = Configuration.load(MigrationModule.CONF_PATH, Ini)
+        self.config = Configuration.load(RightsModule.CONF_PATH, Ini)
         conf = self.config.get(self.CATEGORY, {})
 
         self.manager = Rights()
