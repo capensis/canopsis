@@ -44,7 +44,7 @@ class RightsModule(object):
         users_path=None,
         roles_path=None
     ):
-        self.logger = Logger.get('migrationtool', self.LOG_PATH)
+        self.logger = Logger.get('migrationtool', MigrationModule.LOG_PATH)
         self.config = Configuration.load(MigrationModule.CONF_PATH, Ini)
         conf = self.config.get(self.CATEGORY, {})
 
