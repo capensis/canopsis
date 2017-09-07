@@ -19,13 +19,12 @@
 # ---------------------------------
 
 from canopsis.confng import Configuration, Json
-from canopsis.confng.helpers import cfg_to_array
 from canopsis.logger import Logger
 from canopsis.migration.manager import MigrationModule
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
 
-DEFAULT_COLLECTIONS = "cache, events, events_log, object, userpreferences"
+DEFAULT_COLLECTIONS = ["cache", "events", "events_log", "object", "userpreferences"]
 
 
 class PurgeModule(object):
@@ -43,8 +42,7 @@ class PurgeModule(object):
         if collections is not None:
             self.collections = collections
         else:
-            self.collections = cfg_to_array(conf.get('collections',
-                                                     DEFAULT_COLLECTIONS))
+            self.collections = conf.get('collections', DEFAULT_COLLECTIONS)
 
     def init(self):
         for collection in self.collections:
