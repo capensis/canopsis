@@ -25,9 +25,11 @@ from canopsis.migration.manager import MigrationModule
 DEFAULT_STORAGE = 'storage://'
 
 
-class MongoOIDsModule(object):
+class MongoOIDsModule(MigrationModule):
 
-    def __init__(self, storage=DEFAULT_STORAGE):
+    def __init__(self, storage=DEFAULT_STORAGE, *args, **kwargs):
+        super(MongoOIDsModule, self).__init__(*args, **kwargs)
+
         self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
 
         self.storage = Middleware.get_middleware_by_uri(storage)

@@ -24,8 +24,10 @@ from canopsis.mongo.core import MongoStorage
 from canopsis.perfdata.manager import PerfData
 
 
-class PerfdataModule(object):
-    def __init__(self):
+class PerfdataModule(MigrationModule):
+    def __init__(self, *args, **kwargs):
+        super(PerfdataModule, self).__init__(*args, **kwargs)
+
         self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
         self.manager = PerfData(*PerfData.provide_default_basics())
 

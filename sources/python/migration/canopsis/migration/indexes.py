@@ -24,7 +24,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
 
-class IndexesModule(object):
+class IndexesModule(MigrationModule):
 
     INDEXES = {
         'object': [
@@ -92,7 +92,9 @@ class IndexesModule(object):
         ]
     }
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(IndexesModule, self).__init__(*args, **kwargs)
+
         self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
         self.storage = get_storage(
             account=Account(user='root', group='root'),

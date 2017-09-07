@@ -29,8 +29,10 @@ from canopsis.migration.manager import MigrationModule
 from canopsis.organisation.rights import Rights
 
 
-class ViewsModule(object):
-    def __init__(self):
+class ViewsModule(MigrationModule):
+    def __init__(self, *args, **kwargs):
+        super(ViewsModule, self).__init__(*args, **kwargs)
+
         self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
         self.storage = Middleware.get_middleware_by_uri(
             'storage-default://',

@@ -89,19 +89,20 @@ class MigrationModule(object):
 
     CONF_PATH = 'etc/migration/manager.conf'
     LOG_PATH = 'var/log/migrationtool.log'
-    CATEGORY = 'module'
+    CATEGORY = 'MODULE'
 
     def __init__(self, ask_timeout=None, version_info=None):
         self.logger = Logger.get('migrationmodule', self.LOG_PATH)
         self.config = Configuration.load(MigrationModule.CONF_PATH, Json)
         conf = self.config.get(self.CATEGORY, {})
 
-        if ask_timeout is None:
-            self.ask_timeout = int(conf.get('ask_timeout',
-                                            DEFAULT_ASK_TIMEOUT))
+        self.ask_timeout = int(conf.get('ask_timeout', DEFAULT_ASK_TIMEOUT))
+        if ask_timeout is not None:
+            self.ask_timeout = ask_timeout
 
-        if version_info is None:
-            self.version_info = conf.get('version_info', DEFAULT_VERSION_INFO)
+        self.version_info = conf.get('version_info', DEFAULT_VERSION_INFO)
+        if version_info is not None:
+            self.version_info = version_info
 
     def get_version(self, item):
         try:
