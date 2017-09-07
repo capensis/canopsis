@@ -18,6 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Webservice for pbehaviors.
+"""
+
 from __future__ import unicode_literals
 from json import loads
 from six import string_types
@@ -89,8 +93,9 @@ def check_values(data):
         check_valid_rrule(data['rrule'])
 
     # useful when enabled doesn't exist in document
-    if "enabled" not in data or data["enabled"] is None or\
-        isinstance(data['enabled'], bool):
+    if ("enabled" not in data
+            or data["enabled"] is None
+            or isinstance(data['enabled'], bool)):
         return
 
     if data["enabled"] in ["True", "true"]:
@@ -268,6 +273,9 @@ def exports(ws):
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis'
     ):
+        """
+        Create a pbehavior.
+        """
         return rhpb.create(
             name, filter, author, tstart, tstop,
             rrule, enabled, comments, connector, connector_name)
@@ -278,6 +286,9 @@ def exports(ws):
         payload=['_id']
     )
     def read(_id=None):
+        """
+        Get a pbehavior.
+        """
         return rhpb.read(_id)
 
     @route(
@@ -298,6 +309,9 @@ def exports(ws):
             connector=None, connector_name=None,
             author=None
     ):
+        """
+        Update a pbehavior.
+        """
         return rhpb.update(
             _id, name=name, filter_=filter, tstart=tstart, tstop=tstop,
             rrule=rrule, enabled=enabled, comments=comments,
@@ -310,6 +324,7 @@ def exports(ws):
     )
     def delete(_id):
         """/pbehavior/delete : delete the pbehaviour that match the _id
+
         :param _id: the pbehaviour id
         :return type: dict
         :return: a dict with two field. "acknowledged" that True if the
@@ -323,8 +338,9 @@ def exports(ws):
         payload=['pbehavior_id', 'author', 'message']
     )
     def create_comment(pbehavior_id, author, message):
-        """/pbehavior/comment/create : create a comment on the given pbehaviour.
-        :param _id: the pbehaviour id
+        """/pbehavior/comment/create : create a comment on the given pbehavior.
+
+        :param _id: the pbehavior id
         :param author: author name
         :param message: the message to store in the comment.
         :return: In case of success, return the comment id. None otherwise.
@@ -337,8 +353,9 @@ def exports(ws):
         payload=['pbehavior_id', '_id', 'author', 'message']
     )
     def update_comment(pbehavior_id, _id, author=None, message=None):
-        """/pbehavior/comment/update : create a comment on the given pbehaviour.
-        :param pbehavior_id: the pbehaviour id
+        """/pbehavior/comment/update : create a comment on the given pbehavior.
+
+        :param pbehavior_id: the pbehavior id
         :param _id: the comment id
         :param author: author name
         :param message: the message to store in the comment.
@@ -352,11 +369,12 @@ def exports(ws):
         payload=['pbehavior_id', '_id']
     )
     def delete_comment(pbehavior_id, _id):
-        """/pbehavior/comment/delete : delete a comment on the given pbehaviour.
-        :param pbehavior_id: the pbehaviour id
+        """/pbehavior/comment/delete : delete a comment on the given pbehavior.
+
+        :param pbehavior_id: the pbehavior id
         :param _id: the comment id
         :return type: dict
-        :return: a dict with two field. "acknowledged" that contains True if the
-        delete is a sucess. False, otherwise.
+        :return: a dict with two field. "acknowledged" that contains True if
+        delete has successed. False, otherwise.
         """
         return rhpb.delete_comment(pbehavior_id, _id)

@@ -1,17 +1,19 @@
 # -*- co ding: utf-8 -*-
-from __future__ import unicode_literals
 
+"""
+Manager for watcher.
+"""
+
+from __future__ import unicode_literals
 import json
 
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.middleware.core import Middleware
-
+from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.context_graph.process import create_entity
-
-from canopsis.check import Check
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
+from canopsis.middleware.core import Middleware
+from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.old.rabbitmq import Amqp
 from canopsis.pbehavior.manager import PBehaviorManager
 
@@ -92,9 +94,6 @@ class Watcher(MiddlewareRegistry):
         entity['state'] = 0
 
         self.context_graph.create_entity(entity)
-        # self.sla_storage.put_element(
-        #     element={'_id': watcher_id,
-        #              'states': [0, 0, 0, 0, 0]})
         self.compute_state(watcher_id)
 
         return True  # TODO: return really something
@@ -305,5 +304,5 @@ class Watcher(MiddlewareRegistry):
             return 2
         elif nb_minor > 0:
             return 1
-        else:
-            return 0
+
+        return 0
