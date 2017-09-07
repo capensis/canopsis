@@ -51,7 +51,7 @@ class Event(object):
         event_storage = Middleware.get_middleware_by_uri(
             cls.DEFAULT_EVENT_STORAGE_URI, table='events')
 
-        return event_storage
+        return (event_storage,)
 
     @staticmethod
     def get_rk(event):

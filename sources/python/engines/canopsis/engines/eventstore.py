@@ -45,7 +45,8 @@ class engine(Engine):
         self.comment_types = reader([CONFIG.get('events', 'comments')]).next()
 
         self.context = ContextGraph()
-        self.pbehavior = PBehaviorManager()
+
+        self.pbehavior = PBehaviorManager(*PBehaviorManager.provide_default_basics())
         self.beat()
 
         self.log_bulk_amount = 100
