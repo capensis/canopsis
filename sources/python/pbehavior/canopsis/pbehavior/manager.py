@@ -18,36 +18,40 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Managing PBehavior.
+"""
+
 from calendar import timegm
 from datetime import datetime
+from dateutil.rrule import rrulestr
 from json import loads, dumps
+from six import string_types
 from time import time
 from uuid import uuid4
 
-from dateutil.rrule import rrulestr
-from six import string_types
-
-from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
 from canopsis.middleware.registry import MiddlewareRegistry
-
-# Might be useful when dealing with rrules
-# from dateutil.rrule import rrulestr
+from canopsis.pbehavior.utils import check_valid_rrule
 
 CONF_PATH = 'pbehavior/pbehavior.conf'
 CATEGORY = 'PBEHAVIOR'
 
 
 class BasePBehavior(dict):
+    """
+    Base PBehaviorManager structure.
+    """
+
     _FIELDS = ()
     _EDITABLE_FIELDS = ()
 
     def __init__(self, **kwargs):
-        super(dict, self).__init__()
+        super(BasePBehavior, self).__init__()
         for key, value in kwargs.iteritems():
             if key in self._FIELDS:
                 self.__dict__[key] = value
@@ -90,6 +94,10 @@ class BasePBehavior(dict):
 
 
 class PBehavior(BasePBehavior):
+    """
+    PBehavior class.
+    """
+
     NAME = 'name'
     FILTER = 'filter'
     COMMENTS = 'comments'
@@ -120,6 +128,10 @@ class PBehavior(BasePBehavior):
 
 
 class Comment(BasePBehavior):
+    """
+    Comment class.
+    """
+
     ID = '_id'
     AUTHOR = 'author'
     TS = 'ts'
@@ -132,6 +144,9 @@ class Comment(BasePBehavior):
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
 class PBehaviorManager(MiddlewareRegistry):
+    """
+    PBehavior manager class.
+    """
 
     PBEHAVIOR_STORAGE = 'pbehavior_storage'
 
@@ -437,7 +452,7 @@ class PBehaviorManager(MiddlewareRegistry):
         """
         try:
             entity = self.context.get_entities_by_id(entity_id)[0]
-        except:
+        except Exception:
             self.logger.error('Unable to check_behavior on {} entity_id'
                               .format(entity_id))
             return None

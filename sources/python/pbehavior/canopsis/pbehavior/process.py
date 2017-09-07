@@ -54,7 +54,9 @@ WATCHER_MANAGER = WatcherManager()
 @register_task
 def event_processing(engine, event, pbm=None, logger=None,
                      watcher_manager=WATCHER_MANAGER, **kwargs):
-
+    """
+    Event processing.
+    """
     if pbm is None:
         pbm = singleton_per_scope(PBehaviorManager)
 
@@ -122,6 +124,9 @@ def event_processing(engine, event, pbm=None, logger=None,
 
 @register_task
 def beat_processing(engine, pbm=None, logger=None, **kwargs):
+    """
+    Beat processing.
+    """
     logger.debug("Start beat processing")
 
     if pbm is None:
