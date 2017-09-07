@@ -24,8 +24,6 @@ Task manager module.
 Permits to load and save dynamically tasks in a distributed environment.
 """
 
-from sys import path
-
 from shutil import copy
 
 from importlib import import_module
@@ -35,17 +33,11 @@ except ImportError:
     pass  # PYTHON2
 
 from canopsis.common.utils import lookup
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths)
-
-CONF_PATH = 'task/task.conf'
-CATEGORY = 'TASK'
+from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class TaskManager(MiddlewareRegistry):
+class TaskManager(object):
     """
     TaskManager manage dedicated to python tasks.
 
@@ -64,60 +56,32 @@ class TaskManager(MiddlewareRegistry):
     In order to load dynamically tasks from the file storage, it also manage a
     task directory which contains all task source files.
     """
+    LOG_PATH = 'var/log/taskmanager.log'
 
     NAME = 'task'  #: task field name
 
     STORAGE = 'task_storage'  #: storage item name
     FILE_STORAGE = 'task_file_storage'  #: file storage item name
 
-    def __init__(self, tasks=None, task_directory=None, *args, **kwargs):
+    TASK_STORAGE_URI = 'mongo-default-task://'
+    TASK_FILE_STORAGE_URI = 'mongo-file-task://'
 
-        super(TaskManager, self).__init__(*args, **kwargs)
+    def __init__(self, #task_storage, file_storage,
+                 tasks=None, task_directory=None):
+        """
+        """
+        # REMOVE : this manager doesnt seemes to be used anymore
+
+        self.logger = Logger.get('task', self.LOG_PATH)
+        self.task_storage = Middleware.get_middleware_by_uri(
+            self.TASK_STORAGE_URI
+        )
+        self.file_storage = Middleware.get_middleware_by_uri(
+            self.TASK_FILE_STORAGE_URI
+        )
 
         self.tasks = {} if tasks is None else tasks
         self.task_directory = task_directory
-
-    @property
-    def task_directory(self):
-        """
-        :return: self task directory which contains task files.
-        :rtype: str
-        """
-
-        return self._task_directory
-
-    @task_directory.setter
-    def task_directory(self, value):
-        """
-        Change of task directory.
-
-        :param str value: new task directory path to use.
-        """
-
-        if value is not None:
-            # add value in path if not None
-            if value not in path:
-                path.append(value)
-        self._task_directory = value
-
-    @property
-    def tasks(self):
-        """
-        :return: dictionary of tasks and task_info by name.
-        :rtype: dict
-        """
-
-        return self._tasks.copy()
-
-    @tasks.setter
-    def tasks(self, value):
-        """
-        Change of local dictionary of (task, task_info).
-
-        :param dict value: new dictionary of tasks to use.
-        """
-
-        self._tasks = value
 
     def get_task(self, _id):
         """
@@ -132,7 +96,7 @@ class TaskManager(MiddlewareRegistry):
         # if task is not already registered
         if _id not in self.tasks:
             # if file exists in DB
-            _file = self[TaskManager.FILE_STORAGE].get(_id=_id)
+            _file = self.file_storage.get(_id=_id)
             if _file is not None:
                 # copy _file in self task directory
                 copy(_file, self.task_directory)
@@ -141,7 +105,7 @@ class TaskManager(MiddlewareRegistry):
                 reload(module)
 
             # if task info exists in DB
-            task_info = self[TaskManager.STORAGE].get_elements(ids=_id)
+            task_info = self.task_storage.get_elements(ids=_id)
 
             # raises automatically an ImportError if task is not in runtime
             task = lookup(_id)
@@ -167,7 +131,7 @@ class TaskManager(MiddlewareRegistry):
         # save task file if necessary
         if _file is not None:
             # in storage
-            self[TaskManager.FILE_STORAGE].put(_id, _file)
+            self.file_storage.put(_id, _file)
             # and in directory
             copy(_file, self.task_directory)
             # and reload the module
@@ -175,7 +139,7 @@ class TaskManager(MiddlewareRegistry):
             reload(_file)
 
         # save task info
-        self[TaskManager.FILE_STORAGE].put_element(_id=_id, element=task_info)
+        self.file_storage.put_element(_id=_id, element=task_info)
 
         # get task if None
         if task is None:

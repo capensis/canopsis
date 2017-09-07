@@ -20,6 +20,7 @@
 
 from canopsis.middleware.core import Middleware
 
+
 class Event(object):
     """
     Manage events in Canopsis
