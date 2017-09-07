@@ -151,8 +151,6 @@ class RouteHandlerPBehavior(object):
             connector=connector, connector_name=connector_name
         )
 
-        self.watcher_manager.compute_watchers()
-
         return result
 
     def read(self, _id):
