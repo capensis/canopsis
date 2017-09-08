@@ -1,6 +1,7 @@
-from unittest import TestCase
+from unittest import TestCase, main
 
 from canopsis.pbehavior.utils import check_valid_rrule
+
 
 class UtilsTest(TestCase):
 
@@ -15,3 +16,6 @@ class UtilsTest(TestCase):
     def test_check_invalid_rrule(self):
         with self.assertRaises(ValueError):
             check_valid_rrule(self.INVALID_RRULE)
+
+if __name__ == '__main__':
+    main()
