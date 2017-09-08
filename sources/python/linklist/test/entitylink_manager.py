@@ -23,9 +23,10 @@ from __future__ import unicode_literals
 from unittest import TestCase, main
 from uuid import uuid4
 
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.entitylink.manager import Entitylink
 from canopsis.event import forger
-from canopsis.context_graph.manager import ContextGraph
+from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 
 
@@ -35,11 +36,21 @@ class CheckManagerTest(TestCase):
     """
 
     def setUp(self):
-        self.manager = Entitylink()
+        logger = Logger.get('linklist', Entitylink.LOG_PATH)
         self.entity_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentitylink://'
         )
-        self.manager[Entitylink.ENTITY_STORAGE] = self.entity_storage
+
+        # init a context
+        self.context_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testentities://'
+        )
+        self.context_graph = ContextGraph()
+        self.context_graph[ContextGraph.ENTITIES_STORAGE] = self.context_storage
+
+        self.manager = Entitylink(logger=logger,
+                                  storage=self.entity_storage,
+                                  context_graph=self.context_graph)
 
         self.name = 'testentitylink'
         self.id = str(uuid4())
@@ -56,12 +67,6 @@ class CheckManagerTest(TestCase):
             self.document_content
         )
 
-        # init a context
-        self.context_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testentities://'
-        )
-        self.manager.context[ContextGraph.ENTITIES_STORAGE] = self.context_storage
-
         entity = {
             '_id': "a_component",
             'type': 'component',
@@ -71,7 +76,7 @@ class CheckManagerTest(TestCase):
             'measurements': [],
             'infos': {}
         }
-        self.manager.context.create_entity(entity)
+        self.context_graph.create_entity(entity)
 
     def tearDown(self):
         self.entity_storage.remove_elements()
@@ -127,7 +132,6 @@ class LinkListTest(CheckManagerTest):
         res = self.manager.get_or_create_from_event(event=event)
         self.assertTrue(isinstance(res, dict))
         self.assertEqual(res['_id'], 'a_component')
-
 
 if __name__ == '__main__':
     main()

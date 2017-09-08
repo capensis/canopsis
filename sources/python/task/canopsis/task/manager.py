@@ -58,19 +58,11 @@ class TaskManager(object):
     """
     LOG_PATH = 'var/log/taskmanager.log'
 
-    NAME = 'task'  #: task field name
-
-    STORAGE = 'task_storage'  #: storage item name
-    FILE_STORAGE = 'task_file_storage'  #: file storage item name
-
     TASK_STORAGE_URI = 'mongo-default-task://'
     TASK_FILE_STORAGE_URI = 'mongo-file-task://'
 
-    def __init__(self, #task_storage, file_storage,
-                 tasks=None, task_directory=None):
-        """
-        """
-        # REMOVE : this manager doesnt seemes to be used anymore
+    def __init__(self, tasks=None, task_directory=None):
+        # TODO : remove this manager (doesnt seemes to be used anymore)
 
         self.logger = Logger.get('task', self.LOG_PATH)
         self.task_storage = Middleware.get_middleware_by_uri(

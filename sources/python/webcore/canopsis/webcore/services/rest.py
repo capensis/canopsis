@@ -126,9 +126,7 @@ def get_records(ws, namespace, ctype=None, _id=None, **params):
         elif isinstance(records, list):
             total = len(records)
 
-        else:
-            total = 0
-
+        # TODO: ne peut pas fonctionner
         if total == 0:
             return HTTPError(404, 'IDs not found: {0}'.format(ids))
 

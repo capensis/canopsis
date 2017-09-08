@@ -30,8 +30,6 @@ from canopsis.event.manager import Event as EventManager
 
 class engine(TaskHandler):
 
-    etype = 'tasklinklist'
-
     event_projection = {
         'resource': 1,
         'source_type': 1,
@@ -43,10 +41,10 @@ class engine(TaskHandler):
 
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
-        self.link_list_manager = Linklist()
+        self.link_list_manager = Linklist(*Linklist.provide_default_basics())
         self.context = ContextGraph()
         self.event = EventManager(*EventManager.provide_default_basics())
-        self.entity_link_manager = Entitylink()
+        self.entity_link_manager = Entitylink(*Entitylink.provide_default_basics())
 
     def handle_task(self, job):
         """

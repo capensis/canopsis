@@ -1,27 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
-from canopsis.middleware.registry import MiddlewareRegistry
-
-CONF_PATH = 'configuration/dbconfiguration.conf'
-CATEGORY = 'DBCONFIGURATION'
+from canopsis.linklist.manager import Linklist
+from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class DBConfiguration(MiddlewareRegistry):
-
-    DBCONFIGURATION_STORAGE = 'dbconfiguration_storage'
+class DBConfiguration(object):
 
     """Manage Canopsis database configuration information."""
 
-    def __init__(self, dbconfiguration_storage=None, *args, **kwargs):
+    DBCONFIGURATION_STORAGE_URI = 'mongodb-default-dbconfiguration://'
 
-        super(DBConfiguration, self).__init__(*args, **kwargs)
-
-        if dbconfiguration_storage is not None:
-            self[DBConfiguration.DBCONFIGURATION_STORAGE] = dbconfiguration_storage
+    def __init__(self):
+        self.logger = Logger.get('linklist', Linklist.LOG_PATH)
+        self.dbconfiguration_storage = Middleware.get_middleware_by_uri(
+            Linklist.LINKLIST_STORAGE_URI
+        )
 
     def get(self, _id, default=None):
         return self.find_one(query={'_id': _id}) or default
@@ -58,7 +52,6 @@ class DBConfiguration(MiddlewareRegistry):
         with_count=False,
         query={},
     ):
-
         """
         Retrieve information from data sources
 
@@ -68,7 +61,7 @@ class DBConfiguration(MiddlewareRegistry):
         :param with_count: compute selection count when True
         """
 
-        result = self[DBConfiguration.DBCONFIGURATION_STORAGE].get_elements(
+        result = self.dbconfiguration_storage.get_elements(
             ids=ids,
             skip=skip,
             sort=sort,
@@ -87,7 +80,7 @@ class DBConfiguration(MiddlewareRegistry):
         :param document: contains link information for entities
         """
 
-        self[DBConfiguration.DBCONFIGURATION_STORAGE].put_element(
+        self.dbconfiguration_storage.put_element(
             _id=_id, element=document
         )
 
@@ -99,4 +92,4 @@ class DBConfiguration(MiddlewareRegistry):
         :param element_id: identifier for the document to remove
         """
 
-        self[DBConfiguration.DBCONFIGURATION_STORAGE].remove_elements(ids=ids)
+        self.dbconfiguration_storage.remove_elements(ids=ids)
