@@ -37,15 +37,20 @@ from base import BaseTest
 class TestReader(BaseTest):
     def setUp(self):
         super(TestReader, self).setUp()
-        pb_storage = Middleware.get_middleware_by_uri(
+        self.pb_storage = Middleware.get_middleware_by_uri(
             PBehaviorManager.PB_STORAGE_URI
+        )
+        self.el_storage = Middleware.get_middleware_by_uri(
+            Entitylink.ENTITYLINK_STORAGE_URI
         )
 
         self.logger = Logger.get('alertsreader', '/tmp/null')
         conf = Configuration.load(Alerts.CONF_PATH, Ini)
         self.pbehavior_manager = PBehaviorManager(logger=self.logger,
-                                                  pb_storage=pb_storage)
-        self.entitylink_manager = Entitylink()
+                                                  pb_storage=self.pb_storage)
+        self.entitylink_manager = Entitylink(logger=self.logger,
+                                             storage=self.el_storage,
+                                             context_graph=self.cg_manager)
 
         self.reader = AlertsReader(config=conf,
                                    logger=self.logger,
@@ -60,6 +65,12 @@ class TestReader(BaseTest):
                 'entity_id': {'stored_name': 'd'}
             }
         }
+
+    def tearDown(self):
+        """Teardown"""
+        super(TestReader, self).setUp()
+        self.pb_storage.remove_elements()
+        self.el_storage.remove_elements()
 
     def test__translate_key(self):
         cases = [

@@ -115,7 +115,7 @@ class AlertsReader(object):
         )
 
         pbm = PBehaviorManager(logger=logger, pb_storage=pb_storage)
-        llm = Entitylink()
+        llm = Entitylink(*Entitylink.provide_default_basics())
 
         return (logger, conf, alerts_storage, pbm, llm)
 

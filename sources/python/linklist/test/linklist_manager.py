@@ -22,8 +22,9 @@
 from unittest import TestCase, main
 from uuid import uuid4
 
-from canopsis.middleware.core import Middleware
 from canopsis.linklist.manager import Linklist
+from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
 
 
 class CheckManagerTest(TestCase):
@@ -32,11 +33,12 @@ class CheckManagerTest(TestCase):
     """
 
     def setUp(self):
+        logger = Logger.get('linklist', Linklist.LOG_PATH)
         self.linklist_storage = Middleware.get_middleware_by_uri(
             'storage-default-testlinklist://'
         )
-        self.manager = Linklist()
-        self.manager[Linklist.LINKLIST_STORAGE] = self.linklist_storage
+        self.manager = Linklist(logger=logger,
+                                storage=self.linklist_storage)
 
         self.name = 'testlinklist'
         self.id = str(uuid4())

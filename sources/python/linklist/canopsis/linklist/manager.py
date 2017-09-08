@@ -18,23 +18,40 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
-from canopsis.middleware.registry import MiddlewareRegistry
 import uuid
 
-CONF_PATH = 'linklist/linklist.conf'
-CATEGORY = 'LINKLIST'
+from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class Linklist(MiddlewareRegistry):
+class Linklist(object):
     """
     Manage linklist information in Canopsis.
     """
 
-    LINKLIST_STORAGE = 'linklist_storage'  #: linklist storage name
+    LOG_PATH = 'var/log/linklist.log'
+    LINKLIST_STORAGE_URI = 'mongodb-default-linklist://'
+
+    def __init__(self, logger, storage):
+        self.logger = logger
+        self.linklist_storage = storage
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide logger, config, storages...
+
+        ! Do not use in tests !
+
+        :rtype: Union[logging.Logger,
+                      canopsis.storage.core.Storage]
+        """
+        logger = Logger.get('linklist', cls.LOG_PATH)
+        linklist_storage = Middleware.get_middleware_by_uri(
+            cls.LINKLIST_STORAGE_URI
+        )
+
+        return (logger, linklist_storage)
 
     def find(
         self,
@@ -59,7 +76,7 @@ class Linklist(MiddlewareRegistry):
         :rtype: Cursor or dict
         """
 
-        result = self[Linklist.LINKLIST_STORAGE].get_elements(
+        result = self.linklist_storage.get_elements(
             ids=ids,
             skip=skip,
             sort=sort,
@@ -83,7 +100,7 @@ class Linklist(MiddlewareRegistry):
         else:
             document['_id'] = document.pop('id')
 
-        return self[Linklist.LINKLIST_STORAGE].put_element(
+        return self.linklist_storage.put_element(
             _id=document['_id'], element=document, cache=cache
         )
 
@@ -94,4 +111,4 @@ class Linklist(MiddlewareRegistry):
         :type: ids: list
         """
 
-        self[Linklist.LINKLIST_STORAGE].remove_elements(ids=ids)
+        self.linklist_storage.remove_elements(ids=ids)
