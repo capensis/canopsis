@@ -42,6 +42,7 @@ class Watcher(MiddlewareRegistry):
 
         self.context_graph = ContextGraph()
         self.pbehavior_manager = PBehaviorManager()
+        self.amqp = Amqp()
 
     def get_watcher(self, watcher_id):
         """Retreive from database the watcher specified by is watcher id.
@@ -257,8 +258,7 @@ class Watcher(MiddlewareRegistry):
             display_name=display_name)
 
         rk = get_routingkey(event)
-        amqp = Amqp()
-        publish(event=event, publisher=amqp, rk=rk, logger=self.logger)
+        publish(event=event, publisher=self.amqp, rk=rk, logger=self.logger)
         #self.logger.critical('published {0}'.format(event))
 
     def sla_compute(self, watcher_id, state):
