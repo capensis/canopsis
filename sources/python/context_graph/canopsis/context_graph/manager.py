@@ -216,8 +216,6 @@ class ContextGraph:
 
     def __init__(self,
                  logger,
-                 event_types=None,
-                 extra_fields=None,
                  *args, **kwargs):
         """__init__
 
@@ -238,12 +236,6 @@ class ContextGraph:
             section.get(ConfName.ENT_STORAGE)
         )
 
-        if event_types is None:
-            self.event_types = event_types
-
-        if extra_fields is None:
-            self.extra_fields = extra_fields
-
         self.logger = logger
 
         # For links building
@@ -252,6 +244,8 @@ class ContextGraph:
                                                   self.at_storage._backend)
 
         hypertextlink_conf = section.get(ConfName.CTX_HYPERLINK, "")
+        self.event_types = section.get(ConfName.EVENT_TYPES, [])
+        self.extra_fields = section.get(ConfName.EXTRA_FIELDS, [])
 
         if hypertextlink_conf != "":
             atable = self.at_manager.get(hypertextlink_conf)
