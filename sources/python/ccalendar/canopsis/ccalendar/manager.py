@@ -29,8 +29,7 @@ CONF_PATH = 'calendar/calendar.conf'
 CATEGORY = 'CALENDAR'
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
+
 class CalendarManager(VEventManager):
     """Dedicated to manage calendar event.
 
@@ -40,7 +39,7 @@ class CalendarManager(VEventManager):
     A calendar document contains several values. Each value contains
     an icalendar expression (dtstart, rrule, duration)
     """
-
+    CALENDAR_COLL_URI = 'mongodb-default-calendar://'
     EVENTCATEGORIES = 'EVENTCATEGORIES'
     OUTPUT = 'OUTPUT'
 

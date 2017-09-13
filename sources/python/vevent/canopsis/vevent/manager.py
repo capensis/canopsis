@@ -18,29 +18,19 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from calendar import timegm
+import time
 from datetime import datetime, timedelta
 from icalendar import Event
 from uuid import uuid4 as uuid
 
 from canopsis.common.init import basestring
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.middleware.registry import MiddlewareRegistry
 
-import time
+
 
 
 MAXTS = 2147483647  #: maximal timestamp
 
-CONF_PATH = 'vevent/vevent.conf'
-CATEGORY = 'VEVENT'
-
-
-@add_category(CATEGORY)
-@conf_paths(CONF_PATH)
-class VEventManager(MiddlewareRegistry):
+class VEventManager:
     """Manage virtual event data.
 
     Such vevent are technically an expression which respects the icalendar
@@ -64,8 +54,7 @@ class VEventManager(MiddlewareRegistry):
         }.
     """
 
-    STORAGE = 'vevent_storage'  #: vevent storage name
-
+    VEVENT_COLL_URL = 'mongodb-default-vevent://'
     UID = 'uid'  #: document id
     SOURCE = 'source'  #: source field name
     DTSTART = 'dtstart'  #: dtstart field name
@@ -75,15 +64,11 @@ class VEventManager(MiddlewareRegistry):
 
     SOURCE_TYPE = 'X-Canopsis-SourceType'  #: source type field name
 
-    def __init__(self, vevent_storage=None, *args, **kwargs):
+    def __init__(self, storage, *args, **kwargs):
         """
         :param Storage vevent_storage: vevent storage.
         """
-
-        super(VEventManager, self).__init__(*args, **kwargs)
-        # set storage if given
-        if vevent_storage is not None:
-            self[VEventManager.STORAGE] = vevent_storage
+        self.storage = storage
 
     def _get_document_properties(self, document):
         """Get properties from a document.
@@ -186,7 +171,7 @@ class VEventManager(MiddlewareRegistry):
         :rtype: list
         """
 
-        documents = self[VEventManager.STORAGE].get_element(
+        documents = self.storage.get_element(
             ids=uids,
             limit=limit, skip=skip, sort=sort, projection=projection,
             with_count=with_count
@@ -238,7 +223,7 @@ class VEventManager(MiddlewareRegistry):
         query[VEventManager.DTSTART] = {'$lte': dtend}
         query[VEventManager.DTEND] = {'$gte': dtstart}
 
-        documents = self[VEventManager.STORAGE].find_elements(
+        documents = self.storage.find_elements(
             query=query,
             limit=limit, skip=skip, sort=sort, projection=projection,
             with_count=with_count
@@ -351,12 +336,10 @@ class VEventManager(MiddlewareRegistry):
                     VEventManager.RRULE: rrule
                 })
 
-            #self._update_element(element=document)
 
-            self[VEventManager.STORAGE].put_element(
+            self.storage.put_element(
                 _id=uid, element=document
             )
-            self.logger.info('put document: {}'.format(document))
             document['_id'] = uid
 
             result.append(document)
@@ -375,7 +358,7 @@ class VEventManager(MiddlewareRegistry):
         :param dict query: additional deletion query.
         """
 
-        result = self[VEventManager.STORAGE].remove_elements(
+        result = self.storage.remove_elements(
             ids=uids, cache=cache, _filter=query
         )
 
@@ -394,7 +377,7 @@ class VEventManager(MiddlewareRegistry):
         if sources is not None:
             _filter[VEventManager.SOURCE] = {'$in': sources}
 
-        result = self[VEventManager.STORAGE].remove_elements(
+        result = self.storage.remove_elements(
             _filter=_filter, cache=cache
         )
 
