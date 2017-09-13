@@ -33,7 +33,7 @@ class Watcher:
         self.sla_storage = Middleware.get_middleware_by_uri(
             'storage-default-sla://')
 
-        self.context_graph = ContextGraph()
+        self.context_graph = ContextGraph(self.logger)
         self.pbehavior_manager = PBehaviorManager(
             *PBehaviorManager.provide_default_basics()
         )

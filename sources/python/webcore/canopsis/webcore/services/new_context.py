@@ -23,10 +23,10 @@ from canopsis.context_graph.manager import ContextGraph
 from bottle import request
 from json import loads
 from canopsis.webcore.utils import gen_json_error, HTTP_ERROR, gen_json
-manager = ContextGraph()
 
 
 def exports(ws):
+    manager = ContextGraph(ws.logger)
 
     @ws.application.route(
         '/api/v2/context/<_filter>',

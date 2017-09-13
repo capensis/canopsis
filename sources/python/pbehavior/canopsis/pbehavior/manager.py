@@ -143,7 +143,8 @@ class PBehaviorManager(object):
         :param pb_storage: PBehavior Storage object
         """
         super(PBehaviorManager, self).__init__()
-        self.context = singleton_per_scope(ContextGraph)
+        kwargs = {"logger": logger}
+        self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
 

@@ -10,13 +10,12 @@ from canopsis.task.core import register_task
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.perfdata.manager import PerfData
 
-context_graph_manager = ContextGraph()
+context_graph_manager = None
 pertfdata_manager = PerfData(*PerfData.provide_default_basics())
 
 cache = set()
 
 LOGGER = None
-
 
 def update_cache():
     """Update the entity cache "cache"
@@ -550,6 +549,10 @@ def event_processing(engine,
     :param cm:
     :param **kwargs:
     """
+
+    global context_graph_manager
+    if context_graph_manager is None:
+        context_graph_manager = ContextGraph(logger)
 
     if event['event_type'] not in context_graph_manager.event_types:
         return None

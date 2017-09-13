@@ -277,7 +277,7 @@ class engine(Engine):
 
         # Context manager caching
         if not hasattr(self, 'cm'):
-            self.cm = ContextGraph()
+            self.cm = ContextGraph(self.logger)
 
         entity_id = self.cm.get_id(event)
 

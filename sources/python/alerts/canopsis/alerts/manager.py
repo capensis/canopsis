@@ -149,7 +149,7 @@ class Alerts(object):
         filter_storage = Middleware.get_middleware_by_uri(
             cls.FILTER_STORAGE_URI
         )
-        context_manager = ContextGraph()
+        context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
         return (config, logger, alerts_storage, config_data,

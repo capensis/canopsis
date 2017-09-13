@@ -254,7 +254,7 @@ def delete_records(ws, namespace, ctype, _id, data):
 
 
 def exports(ws):
-    ctxmgr = ContextGraph()
+    ctxmgr = ContextGraph(ws.logger)
 
     @route(ws.application.get, name='rest/indexes', response=lambda r, a: r)
     def indexes(collection):

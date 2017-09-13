@@ -39,7 +39,7 @@ class BaseTest(TestCase):
         logger = Logger.get('test_pb', None, output_cls=OutputNull)
 
         self.pbm = PBehaviorManager(logger=logger, pb_storage=pbehavior_storage)
-        self.context = ContextGraph()
+        self.context = ContextGraph(logger)
         self.context[ContextGraph.ENTITIES_STORAGE] = entities_storage
         self.pbm.context = self.context
 

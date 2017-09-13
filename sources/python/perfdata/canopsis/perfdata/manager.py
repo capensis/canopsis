@@ -69,7 +69,7 @@ class PerfData(object):
         perfdata_storage = Middleware.get_middleware_by_uri(
             cls.DEFAULT_PERFDATA_STORAGE_URI)
         logger = Logger.get('perfdatamanager', 'var/log/perfdatamanager.log')
-        context_manager = ContextGraph()
+        context_manager = ContextGraph(logger)
 
         return logger, context_manager, perfdata_storage
 

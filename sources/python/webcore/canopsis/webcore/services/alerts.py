@@ -34,7 +34,7 @@ def exports(ws):
 
     ws.application.router.add_filter('id_filter', id_filter)
 
-    context_manager = ContextGraph()
+    context_manager = ContextGraph(ws.logger)
     am = Alerts(*Alerts.provide_default_basics())
     ar = AlertsReader(*AlertsReader.provide_default_basics())
 

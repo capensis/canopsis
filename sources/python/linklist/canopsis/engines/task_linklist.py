@@ -42,7 +42,7 @@ class engine(TaskHandler):
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
         self.link_list_manager = Linklist(*Linklist.provide_default_basics())
-        self.context = ContextGraph()
+        self.context = ContextGraph(self.logger)
         self.event = EventManager(*EventManager.provide_default_basics())
         self.entity_link_manager = Entitylink(*Entitylink.provide_default_basics())
 

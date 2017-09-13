@@ -54,7 +54,7 @@ class Entitylink(object):
         entitylink_storage = Middleware.get_middleware_by_uri(
             cls.ENTITYLINK_STORAGE_URI
         )
-        context = ContextGraph()
+        context = ContextGraph(logger)
 
         return (logger, entitylink_storage, context)
 
