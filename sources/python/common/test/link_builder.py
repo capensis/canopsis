@@ -48,11 +48,15 @@ class LinkBuilderTest(TestCase):
         self.htl_manager = HypertextLinkManager(config=self.config.get_all(),
                                                 logger=self.logger)
 
-        self.entity = create_entity(
-            id='entity-one',
-            name='my-entity',
-            etype='resource'
-        )
+        self.entity = {
+            '_id': 'entity-one',
+            'type': 'resource',
+            'name': 'my-entity',
+            'depends': [],
+            'impact': [],
+            'measurements': {},
+            'infos': {}
+        }
 
     def tearDown(self):
         """Teardown"""

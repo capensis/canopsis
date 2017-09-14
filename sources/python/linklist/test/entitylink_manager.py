@@ -45,7 +45,7 @@ class CheckManagerTest(TestCase):
         self.context_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
-        self.context_graph = ContextGraph()
+        self.context_graph = ContextGraph(logger)
         self.context_graph[ContextGraph.ENTITIES_STORAGE] = self.context_storage
 
         self.manager = Entitylink(logger=logger,
