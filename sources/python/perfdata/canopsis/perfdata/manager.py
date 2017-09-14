@@ -85,7 +85,14 @@ class PerfData(MiddlewareRegistry):
         """
 
         if event is None:
-            event = {}
+            ids = metric_id.split('/')
+            event = {
+                'connector': ids[2],
+                'connector_name': ids[3],
+                'component': ids[4],
+                'resource': ids[5],
+                'perf_metric': ids[-1]
+            }
 
         tags = {} if meta is None else meta.copy()
 
