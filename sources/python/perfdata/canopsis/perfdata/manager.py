@@ -85,13 +85,13 @@ class PerfData(MiddlewareRegistry):
         """
 
         if event is None:
-            ids = metric_id.split('/')
+            _, _, conn, conn_name, comp, res, perf_m = metric_id.split('/')
             event = {
-                'connector': ids[2],
-                'connector_name': ids[3],
-                'component': ids[4],
-                'resource': ids[5],
-                'perf_metric': ids[-1]
+                'connector': conn,
+                'connector_name': conn_name,
+                'component': comp,
+                'resource': res,
+                'perf_metric': perf_m
             }
 
         tags = {} if meta is None else meta.copy()
@@ -107,7 +107,7 @@ class PerfData(MiddlewareRegistry):
         )
 
         entity = {
-            'connector':  event['connector'],
+            'connector': event['connector'],
             'connector_name': event['connector_name'],
             'component': event['component'],
             'resource': event['resource'],
@@ -176,8 +176,7 @@ class PerfData(MiddlewareRegistry):
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=data_id, timewindow=timewindow, limit=limit,
-            skip=skip, timeserie=timeserie, tags=tags, with_tags=with_meta,
-            sort=sort
+            tags=tags, with_tags=with_meta
         )
 
         if sliding_time:
@@ -188,10 +187,7 @@ class PerfData(MiddlewareRegistry):
             else:
                 points = result
 
-            points = [
-                (min(ts, _timewindow.stop()), val)
-                for (ts, val) in points
-            ]
+            points = [(min(ts, _timewindow.stop()), val) for (ts, val) in points]
 
             if with_meta:
                 result = points, result[1]
