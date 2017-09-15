@@ -27,7 +27,6 @@ from mock import Mock, patch
 from unittest import main
 
 from canopsis.pbehavior.process import (event_processing, beat_processing,
-                                        get_entity_id,
                                         PBEHAVIOR_CREATE, PBEHAVIOR_DELETE)
 from canopsis.context_graph.manager import ContextGraph
 from test_base import BaseTest

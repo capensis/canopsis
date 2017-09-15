@@ -18,6 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Webservice for pbehaviors.
+"""
+
 from __future__ import unicode_literals
 from json import loads
 from six import string_types
@@ -26,6 +30,7 @@ from canopsis.common.ws import route
 from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.manager import Watcher as WatcherManager
+
 
 def check(data, key, type_):
     """
@@ -39,6 +44,7 @@ def check(data, key, type_):
         if not isinstance(data[key], type_):
             raise ValueError("The {0} must be a {1} not {2}".format(
                 key, type_, type(data[key])))
+
 
 def check_values(data):
     """Check if the values present in data respect the specification. If
@@ -87,7 +93,9 @@ def check_values(data):
         check_valid_rrule(data['rrule'])
 
     # useful when enabled doesn't exist in document
-    if "enabled" not in data or data["enabled"] is None or isinstance(data['enabled'], bool):
+    if ("enabled" not in data
+            or data["enabled"] is None
+            or isinstance(data['enabled'], bool)):
         return
 
     if data["enabled"] in ["True", "true"]:
@@ -97,14 +105,16 @@ def check_values(data):
     else:
         raise ValueError("The enabled value does not match a boolean")
 
+
 class RouteHandlerPBehavior(object):
+    """Passthrough class with few checks from the route to the pbehavior
+    manager."""
 
     def __init__(self, pb_manager, watcher_manager):
         """
         :param PBehaviorManager pb_manager: pbehavior manager
         :param WatcherManager watcher_manager: watcher manager
         """
-        super(RouteHandlerPBehavior, self).__init__()
         self.watcher_manager = watcher_manager
         self.pb_manager = pb_manager
 
@@ -126,8 +136,17 @@ class RouteHandlerPBehavior(object):
         :param str connector: connector
         :param str connector_name: connector name
         """
-        data = locals()
-        data.pop('self')
+        data = {"name": name,
+                "filter_": filter_,
+                "author": author,
+                "tstart": tstart,
+                "tstop": tstop,
+                "rrule": rrule,
+                "enabled": enabled,
+                "comments": comments,
+                "connector": connector,
+                "connector_name": connector_name}
+
         check_values(data)
 
         result = self.pb_manager.create(
@@ -149,17 +168,17 @@ class RouteHandlerPBehavior(object):
         :return: pbehavior
         :rtype: dict
         """
-        ok = False
+        is_ok = False
         if isinstance(_id, string_types):
-            ok = True
+            is_ok = True
         elif isinstance(_id, list):
-            ok = True
+            is_ok = True
             for elt in _id:
                 if not isinstance(elt, string_types):
-                    ok = False
+                    is_ok = False
 
-        if not ok:
-            raise ValueError("_id should be str, a list, None (null) not"\
+        if not is_ok:
+            raise ValueError("_id should be str, a list, None (null) not"
                              "{0}".format(type(_id)))
 
         return self.pb_manager.read(_id)
@@ -172,9 +191,16 @@ class RouteHandlerPBehavior(object):
 
         :param str _id: pbehavior id
         """
-        params = locals()
-        params.pop('_id')
-        params.pop('self')
+        params = {"name": name,
+                  "filter_": filter_,
+                  "tstart": tstart,
+                  "tstop": tstop,
+                  "rrule": rrule,
+                  "enabled": enabled,
+                  "comments": comments,
+                  "connector": connector,
+                  "connector_name": connector_name,
+                  "author": author}
         check_values(params)
 
         return self.pb_manager.update(_id, **params)
@@ -224,6 +250,7 @@ class RouteHandlerPBehavior(object):
         """
         return self.pb_manager.delete_pbehavior_comment(pb_id, _id)
 
+
 def exports(ws):
 
     pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
@@ -247,7 +274,9 @@ def exports(ws):
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis'
     ):
-
+        """
+        Create a pbehavior.
+        """
         return rhpb.create(
             name, filter, author, tstart, tstop,
             rrule, enabled, comments, connector, connector_name)
@@ -258,6 +287,9 @@ def exports(ws):
         payload=['_id']
     )
     def read(_id=None):
+        """
+        Get a pbehavior.
+        """
         return rhpb.read(_id)
 
     @route(
@@ -278,11 +310,13 @@ def exports(ws):
             connector=None, connector_name=None,
             author=None
     ):
+        """
+        Update a pbehavior.
+        """
         return rhpb.update(
             _id, name=name, filter_=filter, tstart=tstart, tstop=tstop,
             rrule=rrule, enabled=enabled, comments=comments,
             connector=connector, connector_name=connector_name, author=author)
-
 
     @route(
         ws.application.delete,
@@ -290,6 +324,13 @@ def exports(ws):
         payload=['_id']
     )
     def delete(_id):
+        """/pbehavior/delete : delete the pbehaviour that match the _id
+
+        :param _id: the pbehaviour id
+        :return type: dict
+        :return: a dict with two field. "acknowledged" that True if the
+        delete is a sucess. False, otherwise.
+        """
         return rhpb.delete(_id)
 
     @route(
@@ -298,6 +339,13 @@ def exports(ws):
         payload=['pbehavior_id', 'author', 'message']
     )
     def create_comment(pbehavior_id, author, message):
+        """/pbehavior/comment/create : create a comment on the given pbehavior.
+
+        :param _id: the pbehavior id
+        :param author: author name
+        :param message: the message to store in the comment.
+        :return: In case of success, return the comment id. None otherwise.
+        """
         return rhpb.create_comment(pbehavior_id, author, message)
 
     @route(
@@ -306,6 +354,14 @@ def exports(ws):
         payload=['pbehavior_id', '_id', 'author', 'message']
     )
     def update_comment(pbehavior_id, _id, author=None, message=None):
+        """/pbehavior/comment/update : create a comment on the given pbehavior.
+
+        :param pbehavior_id: the pbehavior id
+        :param _id: the comment id
+        :param author: author name
+        :param message: the message to store in the comment.
+        :return: In case of success, return the updated comment. None otherwise.
+        """
         return rhpb.update_comment(pbehavior_id, _id, author, message)
 
     @route(
@@ -314,4 +370,12 @@ def exports(ws):
         payload=['pbehavior_id', '_id']
     )
     def delete_comment(pbehavior_id, _id):
+        """/pbehavior/comment/delete : delete a comment on the given pbehavior.
+
+        :param pbehavior_id: the pbehavior id
+        :param _id: the comment id
+        :return type: dict
+        :return: a dict with two field. "acknowledged" that contains True if
+        delete has successed. False, otherwise.
+        """
         return rhpb.delete_comment(pbehavior_id, _id)
