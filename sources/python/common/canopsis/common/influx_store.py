@@ -12,6 +12,8 @@ from influxdb.exceptions import InfluxDBClientError
 
 
 """
+TODO: use a generic class to modelize data
+
 class GenericSeriesHelper(SeriesHelper):
     # Meta class stores time series helper configuration.
     class Meta:
@@ -83,10 +85,5 @@ class InfluxStore(object):
                 'Raised {} during connection attempting to {}:{}.'.
                 format(ice, self.host, self.port, ice)
             )
-
-        try:
-            self.client.create_database(self.database)
-        except InfluxDBClientError:
-            pass
 
         #self.client.create_retention_policy('my_retention_policy', '3d', 3, default=True)
