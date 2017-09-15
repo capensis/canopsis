@@ -110,7 +110,7 @@ Ember.Application.initializer({
 
                 var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:timeline');
                 var encoded_query = JSON.stringify({'d': get(component, 'timelineData').entity_id});
-                var query =  {'filter': encoded_query, 'opened':true, 'resolved':true,'sort_key':'t','sort_dir':'ASC','limit':1,'with_steps':true};
+                var query =  {'filter': encoded_query, 'opened':true, 'resolved':true,'sort_key':'t','sort_dir':'DESC','limit':1,'with_steps':true};
 
 
                 adapter.findQuery('alarm', 'get-current-alarm', undefined, query).then(function (result) {
