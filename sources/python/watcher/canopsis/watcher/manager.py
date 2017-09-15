@@ -90,7 +90,7 @@ class Watcher(MiddlewareRegistry):
             depends=depend_list
         )
 
-        #adding the fields specific to the Watcher entities
+        # adding the fields specific to the Watcher entities
         entity['mfilter'] = body['mfilter']
         entity['state'] = 0
 
@@ -115,7 +115,6 @@ class Watcher(MiddlewareRegistry):
         if watcher is None:
             raise ValueError("No watcher found for the following"
                              " id: {}".format(watcher_id))
-
 
         if "mfilter" in watcher.keys() and "mfilter" in updated_field.keys():
             if updated_field['mfilter'] != watcher['mfilter']:
@@ -190,11 +189,10 @@ class Watcher(MiddlewareRegistry):
         states = []
         for alarm in alarm_list:
             if alarm['v']['resolved'] is None and alarm['d'] in entities:
-                if len(self.pbehavior_manager.get_active_pbehaviors([alarm['d']])) == 0:
-                    states.append(alarm['v']['state']['val'])
-        if states == []:
-            for alarm in alarm_list:
-                if alarm['v']['resolved'] is None and alarm['d'] in entities:
+                active_pb = self.pbehavior_manager.get_active_pbehaviors(
+                    [alarm['d']]
+                )
+                if len(active_pb) == 0:
                     states.append(alarm['v']['state']['val'])
 
         nb_entities = len(entities)
@@ -254,8 +252,8 @@ class Watcher(MiddlewareRegistry):
             display_name=display_name)
 
         routing_key = get_routingkey(event)
-        publish(event=event, publisher=self.amqp, rk=routing_key, logger=self.logger)
-
+        publish(event=event, publisher=self.amqp,
+                rk=routing_key, logger=self.logger)
 
     def sla_compute(self, watcher_id, state):
         """
@@ -272,7 +270,9 @@ class Watcher(MiddlewareRegistry):
         # self.sla_storage.put_element(sla_tab)
 
         # watcher_conf = list(
-        #     self[self.WATCHER_STORAGE].get_elements(query={'_id': watcher_id}))[0]
+        #     self[self.WATCHER_STORAGE].get_elements(
+        # query={'_id': watcher_id})
+        # )[0]
 
         # sla = Sla(self[self.WATCHER_STORAGE],
         #           'test/de/rk/on/verra/plus/tard',
