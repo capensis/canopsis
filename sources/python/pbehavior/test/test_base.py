@@ -24,7 +24,7 @@ from unittest import TestCase
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.logger import Logger, OutputNull
+from canopsis.logger.logger import Logger, OutputNull
 
 
 class BaseTest(TestCase):

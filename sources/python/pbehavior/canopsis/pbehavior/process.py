@@ -63,7 +63,9 @@ _pb_manager = init_managers()
 
 @register_task
 def event_processing(engine, event, pbm=_pb_manager, **kwargs):
-
+    """
+    Event processing.
+    """
     if event.get('event_type') == EVENT_TYPE:
         entity_id = ContextGraph.get_id(event)
         engine.logger.debug("Start processing event {}".format(event))
@@ -120,14 +122,17 @@ def event_processing(engine, event, pbm=_pb_manager, **kwargs):
             else:
                 logger.error(ERROR_MSG.format(event['action'], event))
 
-        except ValueError as ex:
-            logger.error('cannot handle event: {}'.format(ex))
+        except ValueError as err:
+            logger.error('cannot handle event: {}'.format(err))
 
     return event
 
 
 @register_task
 def beat_processing(engine, pbm=_pb_manager, **kwargs):
+    """
+    Beat processing.
+    """
     engine.logger.debug("Start beat processing")
 
     try:

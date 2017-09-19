@@ -1,17 +1,21 @@
 # -*- co ding: utf-8 -*-
-from __future__ import unicode_literals
 
+"""
+Manager for watcher.
+"""
+
+from __future__ import unicode_literals
 import json
 
+from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.context_graph.process import create_entity
-from canopsis.check import Check
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
 from canopsis.middleware.core import Middleware
+from canopsis.logger import Logger
 from canopsis.old.rabbitmq import Amqp
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.logger import Logger
 
 LOG_PATH = 'var/log/watcher'
 
@@ -37,6 +41,7 @@ class Watcher:
         self.pbehavior_manager = PBehaviorManager(
             *PBehaviorManager.provide_default_basics()
         )
+        self.amqp = Amqp()
 
     def get_watcher(self, watcher_id):
         """Retreive from database the watcher specified by is watcher id.
@@ -88,12 +93,7 @@ class Watcher:
         entity['state'] = 0
 
         self.context_graph.create_entity(entity)
-        """
-        self.sla_storage.put_element(
-            element={'_id': watcher_id,
-                     'states': [0, 0, 0, 0, 0]})
-        """
-        self.calcul_state(watcher_id)
+        self.compute_state(watcher_id)
 
         return True  # TODO: return really something
 
@@ -157,7 +157,7 @@ class Watcher:
         watchers = self.context_graph.get_entities(query={'type': 'watcher'})
         for i in watchers:
             if alarm_id in i['depends']:
-                self.calcul_state(i['_id'])
+                self.compute_state(i['_id'])
 
     def compute_watchers(self):
         """
@@ -165,9 +165,9 @@ class Watcher:
         """
         watchers = list(self.watcher_storage.get_elements(query={}))
         for watcher in watchers:
-            self.calcul_state(watcher['_id'])
+            self.compute_state(watcher['_id'])
 
-    def calcul_state(self, watcher_id):
+    def compute_state(self, watcher_id):
         """
         Send an event watcher with the new state of the watcher.
 
@@ -187,11 +187,10 @@ class Watcher:
         states = []
         for alarm in alarm_list:
             if alarm['v']['resolved'] is None and alarm['d'] in entities:
-                if len(self.pbehavior_manager.get_active_pbehaviors([alarm['d']])) == 0:
-                    states.append(alarm['v']['state']['val'])
-        if states == []:
-            for alarm in alarm_list:
-                if alarm['v']['resolved'] is None and alarm['d'] in entities:
+                active_pb = self.pbehavior_manager.get_active_pbehaviors(
+                    [alarm['d']]
+                )
+                if len(active_pb) == 0:
                     states.append(alarm['v']['state']['val'])
 
         nb_entities = len(entities)
@@ -250,10 +249,9 @@ class Watcher:
             perf_data_array=[],
             display_name=display_name)
 
-        rk = get_routingkey(event)
-        amqp = Amqp()
-        publish(event=event, publisher=amqp, rk=rk, logger=self.logger)
-        #self.logger.critical('published {0}'.format(event))
+        routing_key = get_routingkey(event)
+        publish(event=event, publisher=self.amqp,
+                rk=routing_key, logger=self.logger)
 
     def sla_compute(self, watcher_id, state):
         """
@@ -262,32 +260,35 @@ class Watcher:
         :param watcher_id: watcher id
         :param state: watcher state
         """
-        """
-        sla_tab = list(
-            self.sla_storage.get_elements(query={'_id': watcher_id}))[0]
-        sla_tab['states'][state] = sla_tab['states'][state] + 1
 
-        self.sla_storage.put_element(sla_tab)
+        # sla_tab = list(
+        #     self.sla_storage.get_elements(query={'_id': watcher_id}))[0]
+        # sla_tab['states'][state] = sla_tab['states'][state] + 1
 
-        watcher_conf = list(
-            self[self.WATCHER_STORAGE].get_elements(query={'_id': watcher_id}))[0]
+        # self.sla_storage.put_element(sla_tab)
 
-        sla = Sla(self[self.WATCHER_STORAGE],
-                  'test/de/rk/on/verra/plus/tard',
-                  watcher_conf['sla_output_tpl'],
-                  watcher_conf['sla_timewindow'],
-                  watcher_conf['sla_warning'],
-                  watcher_conf['alert_level'],
-                  watcher_conf['display_name'])
+        # watcher_conf = list(
+        #     self[self.WATCHER_STORAGE].get_elements(
+        # query={'_id': watcher_id})
+        # )[0]
+
+        # sla = Sla(self[self.WATCHER_STORAGE],
+        #           'test/de/rk/on/verra/plus/tard',
+        #           watcher_conf['sla_output_tpl'],
+        #           watcher_conf['sla_timewindow'],
+        #           watcher_conf['sla_warning'],
+        #           watcher_conf['alert_level'],
+        #           watcher_conf['display_name'])
 
         # self.logger.critical('{0}'.format((
         #     sla_tab['states']/
         #     (sla_tab['states'][1] +
         #      sla_tab['states'][2] +
         #      sla_tab['states'][3]))))
-        """
+        pass
 
-    def worst_state(self, nb_crit, nb_major, nb_minor):
+    @staticmethod
+    def worst_state(nb_crit, nb_major, nb_minor):
         """Calculate the worst state.
 
         :param int nb_crit: critical number
@@ -302,5 +303,5 @@ class Watcher:
             return 2
         elif nb_minor > 0:
             return 1
-        else:
-            return 0
+
+        return 0

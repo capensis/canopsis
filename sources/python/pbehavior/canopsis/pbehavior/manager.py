@@ -18,6 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Managing PBehavior.
+"""
+
 from calendar import timegm
 from datetime import datetime
 from dateutil.rrule import rrulestr
@@ -26,20 +30,24 @@ from six import string_types
 from time import time
 from uuid import uuid4
 
-from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 
 from canopsis.logger import Logger
+from canopsis.pbehavior.utils import check_valid_rrule
 
 
 class BasePBehavior(dict):
+    """
+    Base PBehaviorManager structure.
+    """
+
     _FIELDS = ()
     _EDITABLE_FIELDS = ()
 
     def __init__(self, **kwargs):
-        super(dict, self).__init__()
+        super(BasePBehavior, self).__init__()
         for key, value in kwargs.iteritems():
             if key in self._FIELDS:
                 self.__dict__[key] = value
@@ -63,16 +71,29 @@ class BasePBehavior(dict):
         return None
 
     def update(self, **kwargs):
+        """Update the current instance with every kwargs arguements
+        :param kwargs: the argument to use to update the instance
+        :return type: dict
+        :return: the updated representation of the current instance
+        """
         for key, value in kwargs.iteritems():
             if key in self._EDITABLE_FIELDS:
                 self.__dict__[key] = value
         return self.__dict__
 
     def to_dict(self):
+        """Return the dict representation of the current instance
+        :return type: dict
+        :return: return the dict representation of the current instance
+        """
         return self.__dict__
 
 
 class PBehavior(BasePBehavior):
+    """
+    PBehavior class.
+    """
+
     NAME = 'name'
     FILTER = 'filter'
     COMMENTS = 'comments'
@@ -103,6 +124,10 @@ class PBehavior(BasePBehavior):
 
 
 class Comment(BasePBehavior):
+    """
+    Comment class.
+    """
+
     ID = '_id'
     AUTHOR = 'author'
     TS = 'ts'
@@ -113,6 +138,9 @@ class Comment(BasePBehavior):
 
 
 class PBehaviorManager(object):
+    """
+    PBehavior manager class.
+    """
 
     PB_STORAGE_URI = 'mongodb-default-pbehavior://'
     LOG_PATH = 'var/log/pbehaviormanager.log'
@@ -165,10 +193,14 @@ class PBehaviorManager(object):
         Method creates pbehavior record
 
         :param str name: filtering options
-        :param dict filter: a mongo filter that match entities from canopsis context
-        :param str author: the name of the user/app that has generated the pbehavior
-        :param timestamp tstart: timestamp that correspond to the start of the pbehavior
-        :param timestamp tstop: timestamp that correspond to the end of the pbehavior
+        :param dict filter: a mongo filter that match entities from canopsis
+        context
+        :param str author: the name of the user/app that has generated the
+        pbehavior
+        :param timestamp tstart: timestamp that correspond to the start of the
+        pbehavior
+        :param timestamp tstop: timestamp that correspond to the end of the
+        pbehavior
         :param str rrule: reccurent rule that is compliant with rrule spec
         :param bool enabled: boolean to know if pbhevior is enabled or disabled
         :param list of dict comments: a list of comments made by users
@@ -435,7 +467,7 @@ class PBehaviorManager(object):
         """
         try:
             entity = self.context.get_entities_by_id(entity_id)[0]
-        except:
+        except Exception:
             self.logger.error('Unable to check_behavior on {} entity_id'
                               .format(entity_id))
             return None
@@ -450,14 +482,14 @@ class PBehaviorManager(object):
 
         names = []
         fromts = datetime.fromtimestamp
-        for pb in pbehaviors:
-            tstart = fromts(pb[PBehavior.TSTART])
-            tstop = fromts(pb[PBehavior.TSTOP])
+        for pbehavior in pbehaviors:
+            tstart = fromts(pbehavior[PBehavior.TSTART])
+            tstop = fromts(pbehavior[PBehavior.TSTOP])
 
             dt_list = [tstart, tstop]
-            if pb['rrule'] is not None:
+            if pbehavior['rrule'] is not None:
                 dt_list = list(
-                    rrulestr(pb['rrule'], dtstart=tstart).between(
+                    rrulestr(pbehavior['rrule'], dtstart=tstart).between(
                         tstart, tstop, inc=True
                     )
                 )
@@ -465,13 +497,14 @@ class PBehaviorManager(object):
             if (len(dt_list) >= 2
                and fromts(event['timestamp']) >= dt_list[0]
                and fromts(event['timestamp']) <= dt_list[-1]):
-                names.append(pb[PBehavior.NAME])
+                names.append(pbehavior[PBehavior.NAME])
 
         result = set(pb_names).isdisjoint(set(names))
 
         return not result
 
-    def _check_response(self, response):
+    @staticmethod
+    def _check_response(response):
         ack = True if "ok" in response and response["ok"] == 1 else False
         return {"acknowledged": ack,
                 "deletedCount": response["n"]}
@@ -503,3 +536,56 @@ class PBehaviorManager(object):
             query=query
         ))
         return ret_val
+
+    def get_just_activated_pbehavior(self):
+        """
+            get_just_activated_pbehavior
+
+            :return list: list of PBehavior id activated since last check
+        """
+        active_pbehaviors = self.get_all_active_pbehaviors()
+        active_pbehaviors_ids = set()
+        for active_pb in active_pbehaviors:
+            active_pbehaviors_ids.add(active_pb['_id'])
+        new_pbs = active_pbehaviors_ids.difference(self.currently_active_pb)
+        self.currently_active_pb = active_pbehaviors_ids
+        return list(new_pbs)
+
+    def launch_update_watcher(self, watcher_manager):
+        """
+            launch_update_watcher update watcher when an pbehavior is active
+
+            :param object watcher_manager: watcher manager
+            :return int: number of watcher updated
+
+        """
+        new_pbs = self.get_just_activated_pbehavior()
+        new_pbs_full = list(self[self.PBEHAVIOR_STORAGE]._backend.find(
+            {'_id': {'$in': new_pbs}}
+        ))
+        merged_eids = []
+        for pbehaviour in new_pbs_full:
+            merged_eids = merged_eids + pbehaviour['eids']
+        merged_eids = list(set(merged_eids))
+        watchers_ids = set()
+        for watcher in self.get_wacher_on_entities(merged_eids):
+            watchers_ids.add(watcher['_id'])
+        for watcher_id in watchers_ids:
+            watcher_manager.compute_state(watcher_id)
+
+        return len(list(watchers_ids))
+
+    def get_wacher_on_entities(self, entities_ids):
+        """
+            get_wacher_on_entities.
+
+            :param entities_ids: entity id
+            :return list: list of watchers
+
+        """
+        watchers = self.context.get_entities(
+            query={'$and': [
+                {'depends': {'$in':  entities_ids}},
+                {'type': 'watcher'}]}
+        )
+        return watchers
