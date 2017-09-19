@@ -18,6 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from datetime import datetime
+from operator import itemgetter
+from time import time, mktime
+
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_config
@@ -38,11 +42,6 @@ from canopsis.alerts.status import (
     get_last_state, get_last_status,
     OFF, STEALTHY, is_stealthy, is_keeped_state
 )
-
-from datetime import datetime
-from operator import itemgetter
-from time import time, mktime
-
 
 CONF_PATH = 'alerts/manager.conf'
 ALERTS = 'ALERTS'
@@ -702,8 +701,8 @@ class Alerts(MiddlewareRegistry):
                 # Disengaging 'keepstate' flag
                 alarm[storage_value][AlarmField.state.value]['_t'] = None
             else:
-                self.logger.info('Entity {} not allowed to change state: ignoring'
-                                 .format(alarm['data_id']))
+                self.logger.info('Entity {} not allowed to change state: '
+                                 'ignoring'.format(alarm['data_id']))
                 return alarm
 
         # Escalation
@@ -901,21 +900,19 @@ class Alerts(MiddlewareRegistry):
             task = get_task('alerts.check.hard_limit')
             return task(self, alarm)
 
-        else:
-            return alarm
+        return alarm
 
-    def resolve_alarms(self):
+    def resolve_alarms(self, alarms):
         """
         Loop over all unresolved alarms, and check if it can be resolved.
+
+        :param alarms: a list of unresolved alarms
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
-        result = self.get_alarms(resolved=False)
-
-        for data_id in result:
-            for docalarm in result[data_id]:
-                docalarm[storage.DATA_ID] = data_id
-                alarm = docalarm.get(storage.VALUE)
+        for data_id in alarms:
+            for docalarm in alarms[data_id]:
+                docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
+                alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
                 if get_last_status(alarm) == OFF:
                     t = alarm[AlarmField.status.value]['t']
@@ -925,21 +922,20 @@ class Alerts(MiddlewareRegistry):
                         alarm[AlarmField.resolved.value] = t
                         self.update_current_alarm(docalarm, alarm)
 
-    def resolve_cancels(self):
+    def resolve_cancels(self, alarms):
         """
         Loop over all canceled alarms, and resolve the ones that are in this
         status for too long.
-        """
 
-        storage = self[Alerts.ALARM_STORAGE]
-        result = self.get_alarms(resolved=False)
+        :param alarms: a list of unresolved alarms
+        """
 
         now = int(time())
 
-        for data_id in result:
-            for docalarm in result[data_id]:
-                docalarm[storage.DATA_ID] = data_id
-                alarm = docalarm.get(storage.VALUE)
+        for data_id in alarms:
+            for docalarm in alarms[data_id]:
+                docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
+                alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
                 if alarm[AlarmField.canceled.value] is not None:
                     canceled_ts = alarm[AlarmField.canceled.value]['t']
@@ -954,13 +950,12 @@ class Alerts(MiddlewareRegistry):
         """
 
         now = int(time())
-        storage = self[Alerts.ALARM_STORAGE]
         result = self.get_alarms(resolved=False, snoozed=True)
 
         for data_id in result:
             for docalarm in result[data_id]:
-                docalarm[storage.DATA_ID] = data_id
-                alarm = docalarm.get(storage.VALUE)
+                docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
+                alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
                 # if the alarm is snoozed...
                 if alarm is None or \
@@ -976,19 +971,18 @@ class Alerts(MiddlewareRegistry):
                                      .format(data_id))
                     self.update_current_alarm(docalarm, alarm)
 
-    def resolve_stealthy(self):
+    def resolve_stealthy(self, alarms):
         """
         Loop over all stealthy alarms, and check if it can be return to off
         status.
+
+        :param alarms: a list of unresolved alarms
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
-        result = self.get_alarms(resolved=False)
-
-        for data_id in result:
-            for docalarm in result[data_id]:
-                docalarm[storage.DATA_ID] = data_id
-                alarm = docalarm.get(storage.VALUE)
+        for data_id in alarms:
+            for docalarm in alarms[data_id]:
+                docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
+                alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
 
                 # Only look at stealthy status
                 if get_last_status(alarm) != STEALTHY:
