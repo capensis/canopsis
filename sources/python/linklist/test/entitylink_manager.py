@@ -46,7 +46,7 @@ class CheckManagerTest(TestCase):
             'storage-default-testentities://'
         )
         self.context_graph = ContextGraph(logger)
-        self.context_graph[ContextGraph.ENTITIES_STORAGE] = self.context_storage
+        self.context_graph.ent_storage = self.context_storage
 
         self.manager = Entitylink(logger=logger,
                                   storage=self.entity_storage,
