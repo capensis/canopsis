@@ -8,11 +8,6 @@ import canopsis.context_graph.process as process
 
 from canopsis.context_graph.manager import ContextGraph
 
-logger = Logger.get("", None, output_cls=OutputNull, level="debug")
-
-context_graph_manager = ContextGraph(logger)
-
-
 def create_event(conn, conn_name,  comp=None, res=None, event_type="check", timestamp=None):
 
     if timestamp is None:
@@ -68,11 +63,14 @@ class Test(TestCase):
         self.assertDictEqual(expected, result)
 
     def setUp(self):
-        setattr(process, 'LOGGER', Logger())
+        logger = Logger.get("", None, output_cls=OutputNull)
+        setattr(process, 'LOGGER', logger)
         self.conf_file = "etc/context_graph/manager.conf"
         self.category = "CONTEXTGRAPH"
         self.extra_fields = "extra_fields"
         self.authorized_info_keys = "authorized_info_keys"
+        self.gctx_man = ContextGraph(logger)
+        setattr(process, 'context_graph_manager', self.gctx_man)
 
     def tearDown(self):
         process.cache.clear()
@@ -782,9 +780,9 @@ class Test(TestCase):
                                [],
                                event)
 
-        result_re = context_graph_manager.get_entities_by_id(ids["re_id"])[0]
-        result_conn = context_graph_manager.get_entities_by_id(ids["conn_id"])[0]
-        result_comp = context_graph_manager.get_entities_by_id(ids["comp_id"])[0]
+        result_re = self.gctx_man.get_entities_by_id(ids["re_id"])[0]
+        result_conn = self.gctx_man.get_entities_by_id(ids["conn_id"])[0]
+        result_comp = self.gctx_man.get_entities_by_id(ids["comp_id"])[0]
 
         self.assertEqualEntities(expected_re, result_re)
         self.assertEqualEntities(expected_conn, result_conn)
