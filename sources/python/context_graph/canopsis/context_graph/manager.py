@@ -14,6 +14,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.confng import Configuration, Ini
+from canopsis.logger import Logger, OutputFile
 from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 
@@ -40,8 +41,18 @@ class InfosFilter:
 
     OBJ_STORAGE = "OBJECT_STORAGE"
     SCHEMA_ID = "schema_infos"
+    LOG_NAME = "InfosFilter"
+    LOG_PATH = "~/var/log/infos_filter.log"
 
     def __init__(self, config=None, logger=None):
+
+        if logger is None:
+            self.logger = Logger.get(self.LOG_NAME,
+                                     self.LOG_PATH,
+                                     output_cls=OutputFile)
+        else:
+            self.logger = logger
+
         if config is None:
             self.config = Configuration.load(CONF_PATH, Ini)
         else:
@@ -58,7 +69,6 @@ class InfosFilter:
         self._schema_id = section[ConfName.SCHEMA_ID]
 
         self.reload_schema()
-        self.logger = logger
 
     def reload_schema(self):
         """Reload the schema and regenerate the internal structure used to
