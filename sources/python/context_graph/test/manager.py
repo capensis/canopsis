@@ -7,9 +7,11 @@ from unittest import main, TestCase
 
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
+from canopsis.logger import Logger, OutputNull
 
 from infos_filter import Keys, SCHEMA, TEMPLATE_INFOS
 
+logger = Logger.get("", None, output_cls=OutputNull)
 
 def create_entity(
         id,
@@ -65,7 +67,7 @@ def create_re(id, name, depends=[], impact=[], measurements=[], infos={}):
 class BaseTest(TestCase):
 
     def setUp(self):
-        self.manager = ContextGraph()
+        self.manager = ContextGraph(logger)
         self.entities_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
@@ -76,10 +78,7 @@ class BaseTest(TestCase):
             'storage-default-testusers://'
         )
 
-        self.manager[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
-        self.manager[
-            ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
-        self.manager[ContextGraph.USERS_STORAGE] = self.users_storage
+        self.manager.ent_storage = self.entities_storage
 
         self.template = {'_id': None,
                          'type': 'connector',
@@ -137,14 +136,13 @@ class BaseTest(TestCase):
         self.assertEqualEntities(result, expected)
 
 
-class GetEvent(TestCase):
+class GetEvent(BaseTest):
     """Test get_event method.
     """
 
     def setUp(self):
         super(GetEvent, self).setUp()
-        self.context = ContextGraph(data_scope='test_context')
-        self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()
+        self.manager.ent_storage.remove_elements()
 
     def test_get_check_event(self):
 
@@ -160,7 +158,7 @@ class GetEvent(TestCase):
         entity = create_conn(entity_id, conn_name, depends=[],
                              impact=[])
 
-        event = self.context.get_event(
+        event = self.manager.get_event(
             entity, event_type='check', output='test'
         )
 
