@@ -921,7 +921,7 @@ class Alerts(MiddlewareRegistry):
                     if (now - t) > self.flapping_interval:
                         alarm[AlarmField.resolved.value] = t
                         self.update_current_alarm(docalarm, alarm)
-                        alarms.remove(docalarm)
+                        alarms[data_id].remove(docalarm)
 
         return alarms
 
@@ -946,7 +946,7 @@ class Alerts(MiddlewareRegistry):
                     if (now - canceled_ts) >= self.cancel_autosolve_delay:
                         alarm[AlarmField.resolved.value] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
-                        alarms.remove(docalarm)
+                        alarms[data_id].remove(docalarm)
 
         return alarms
 
@@ -1011,7 +1011,7 @@ class Alerts(MiddlewareRegistry):
                     event
                 )
                 self.update_current_alarm(docalarm, alarm_new['value'])
-                alarms.remove(docalarm)
+                alarms[data_id].remove(docalarm)
 
         return alarms
 
