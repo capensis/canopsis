@@ -49,13 +49,14 @@ class InfluxStore(object):
     #DEFAULT_SSL = False
     #DEFAULT_PROXIES = None
 
-    def __init__(self, config):
+    def __init__(self, logger, config):
         """
         :param config: a configuration object
         """
+        self.logger = logger
         self.config = config
 
-        conf = self.config.get(self.CONF_CAT, {})
+        conf = config.get(self.CONF_CAT, {})
         self.database = conf.get('database', self.DEFAULT_DB)
         self.host = conf.get('host', self.DEFAULT_HOST)
         self.port = int(conf.get('port', self.DEFAULT_PORT))
@@ -70,16 +71,15 @@ class InfluxStore(object):
         """
         Connect to the server and create the database if needed.
         """
-        kwargs = {
-            'host': self.host,
-            'udp_port': self.port,
-            'database': self.database,
-            'username': self._user,
-            'password': self._pwd,
-            'timeout': self.timeout
-        }
         try:
-            self.client = InfluxDBClient(**kwargs)
+            self.client = InfluxDBClient(
+                host=self.host,
+                udp_port=self.port,
+                database=self.database,
+                username=self._user,
+                password=self._pwd,
+                timeout=self.timeout
+            )
         except InfluxDBClientError as ice:
             self.logger.error(
                 'Raised {} during connection attempting to {}:{}.'.

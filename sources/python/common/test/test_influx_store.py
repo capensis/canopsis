@@ -6,7 +6,13 @@ from influxdb import InfluxDBClient
 from time import time
 import unittest
 
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
+
 from canopsis.common.influx_store import InfluxStore
+from canopsis.logger import Logger, OutputStream
 
 
 class TestInfluxStore(unittest.TestCase):
@@ -14,6 +20,7 @@ class TestInfluxStore(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.db = 'canopsis_test'
+        self.logger = Logger.get('test', StringIO(), OutputStream)
 
         self.conf = {
             InfluxStore.CONF_CAT: {
@@ -26,21 +33,22 @@ class TestInfluxStore(unittest.TestCase):
         }
 
         self.client = InfluxDBClient(**self.conf[InfluxStore.CONF_CAT])
+        self.client.create_database(self.db)
 
-        self.is_ = InfluxStore(config=self.conf).client
+        self.is_ = InfluxStore(logger=self.logger, config=self.conf).client
 
         self.points = [
             {
-                "measurement": "cpu_load_short",
-                #"time": "2017-09-15T10:00:00Z",
-                "time": int(time() * 1e9),
-                "fields": {
-                    "value": 0.42,
+                'measurement': 'cpu_load_short',
+                #'time': '2017-09-15T10:00:00Z',
+                'time': int(time() * 1e9),
+                'fields': {
+                    'value': 0.42,
                 }
             }
         ]
         self.tags = {
-           "duncan": "idaho"
+           'duncan': 'idaho'
         }
 
     @classmethod

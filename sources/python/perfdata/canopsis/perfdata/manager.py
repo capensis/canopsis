@@ -85,10 +85,10 @@ class PerfData(MiddlewareRegistry):
         """
 
         if event is None:
-            _, _, conn, conn_name, comp, res, perf_m = metric_id.split('/')
+            _, _, connex, connex_name, comp, res, perf_m = metric_id.split('/')
             event = {
-                'connector': conn,
-                'connector_name': conn_name,
+                'connector': connex,
+                'connector_name': connex_name,
                 'component': comp,
                 'resource': res,
                 'perf_metric': perf_m
