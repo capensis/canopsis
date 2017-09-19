@@ -1,35 +1,16 @@
 from __future__ import unicode_literals
 
+import time
+
+from canopsis.logger import Logger, OutputNull
 from unittest import main, TestCase
 import canopsis.context_graph.process as process
 
 from canopsis.context_graph.manager import ContextGraph
 
-import time
+logger = Logger.get("", None, output_cls=OutputNull, level="debug")
 
-context_graph_manager = ContextGraph()
-
-class Logger(object):
-
-    def debug(self, log):
-        # print("DEBUG : {0}".format(log))
-        pass
-
-    def info(self, log):
-        # print("INFO : {0}".format(log))
-        pass
-
-    def warning(self, log):
-        # print("WARNING : {0}".format(log))
-        pass
-
-    def critical(self, log):
-        # print("CRITICAL : {0}".format(log))
-        pass
-
-    def error(self, log):
-        # print("ERROR : {0}".format(log))
-        pass
+context_graph_manager = ContextGraph(logger)
 
 
 def create_event(conn, conn_name,  comp=None, res=None, event_type="check", timestamp=None):
