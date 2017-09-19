@@ -114,7 +114,7 @@ class InfosFilter:
             self.__clean(infos, copy.deepcopy(infos), schema)
 
 
-class ContextGraph:
+class ContextGraph(object):
     """ContextGraph"""
 
     NAME = 'name'

@@ -303,7 +303,7 @@ class ContextGraphImport(ContextGraph):
         :param *args:
         :param **kwargs:
         """
-        super(ContextGraphImport, self).__init__(*args, **kwargs)
+        super(ContextGraphImport, self).__init__(logger, *args, **kwargs)
 
         if logger is not None:
             self.logger = logger
