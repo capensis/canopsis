@@ -12,6 +12,9 @@ import json
 import os
 import time
 from jsonschema.exceptions import ValidationError
+from canopsis.logger import Logger, OutputNull
+
+logger = Logger.get("", None, output_cls=OutputNull)
 
 class Keys:
 
@@ -30,7 +33,7 @@ class Keys:
 class BaseTest(TestCase):
 
     def setUp(self):
-        self.ctx_import = ContextGraphImport()
+        self.ctx_import = ContextGraphImport(logger)
         self.entities_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
