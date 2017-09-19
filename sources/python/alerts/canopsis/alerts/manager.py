@@ -907,8 +907,8 @@ class Alerts(MiddlewareRegistry):
         Loop over all unresolved alarms, and check if it can be resolved.
 
         :param alarms: a list of unresolved alarms
+        :return: a list of unresolved alarms (excluding locally processed alarms)
         """
-
         for data_id in alarms:
             for docalarm in alarms[data_id]:
                 docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
@@ -921,6 +921,9 @@ class Alerts(MiddlewareRegistry):
                     if (now - t) > self.flapping_interval:
                         alarm[AlarmField.resolved.value] = t
                         self.update_current_alarm(docalarm, alarm)
+                        alarms.remove(docalarm)
+
+        return alarms
 
     def resolve_cancels(self, alarms):
         """
@@ -928,8 +931,8 @@ class Alerts(MiddlewareRegistry):
         status for too long.
 
         :param alarms: a list of unresolved alarms
+        :return: a list of unresolved alarms (excluding locally processed alarms)
         """
-
         now = int(time())
 
         for data_id in alarms:
@@ -943,12 +946,14 @@ class Alerts(MiddlewareRegistry):
                     if (now - canceled_ts) >= self.cancel_autosolve_delay:
                         alarm[AlarmField.resolved.value] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
+                        alarms.remove(docalarm)
+
+        return alarms
 
     def resolve_snoozes(self):
         """
         Loop over all snoozed alarms, and restore them if needed.
         """
-
         now = int(time())
         result = self.get_alarms(resolved=False, snoozed=True)
 
@@ -977,8 +982,8 @@ class Alerts(MiddlewareRegistry):
         status.
 
         :param alarms: a list of unresolved alarms
+        :return: a list of unresolved alarms (excluding locally processed alarms)
         """
-
         for data_id in alarms:
             for docalarm in alarms[data_id]:
                 docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
@@ -1006,6 +1011,9 @@ class Alerts(MiddlewareRegistry):
                     event
                 )
                 self.update_current_alarm(docalarm, alarm_new['value'])
+                alarms.remove(docalarm)
+
+        return alarms
 
     def check_alarm_filters(self):
         """
