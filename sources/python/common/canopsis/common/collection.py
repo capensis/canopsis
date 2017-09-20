@@ -52,6 +52,11 @@ class MongoCollection(object):
     """
 
     def __init__(self, collection, logger=None):
+        """
+        :param pymongo.collection.Collection collection: mongo Collection object
+        :param logging.Logger logger: python logger instance.
+            If None, a new logger is provided.
+        """
         self.collection = collection
 
         if logger is not None:
