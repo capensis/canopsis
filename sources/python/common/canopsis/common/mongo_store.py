@@ -19,35 +19,35 @@ class MongoStore(object):
     Distribute ready-to-use mongo collections.
     """
 
-    CONF_PATH = 'etc/storage/storage.conf'
-    MIDDLEWARE_CONF_PATH = 'etc/middleware/middleware.conf'
+    CONF_PATH = 'etc/common/mongo_store.conf'
     CRED_CONF_PATH = 'etc/mongo/storage.conf'
 
     CONF_CAT = 'DATABASE'
-    MID_CONF_CAT = 'MIDDLEWARE'
     CRED_CAT = 'DATABASE'
 
-    def __init__(self, config, mid_config, cred_config):
+    def __init__(self, config, cred_config):
         """
         :param config: a configuration object
         :param cred_config: a configuration object
         """
         self.config = config
-        self.mid_config = mid_config
         self.cred_config = cred_config
 
         conf = self.config.get(self.CONF_CAT, {})
         self.db_name = conf.get('db', DEFAULT_DB_NAME)
-        # missing: journaling, sharding, retention ;; cache_size, cache_autocommit, cache_ordered
-
-        conf = self.mid_config.get(self.MID_CONF_CAT, {})
         self.host = conf.get('host', DEFAULT_HOST)
         port = conf.get('port', DEFAULT_PORT)
         try:
             self.port = int(port)
         except ValueError:
             self.port = DEFAULT_PORT
-        # missing: uri, protocol, data_type, data_scope, path, auto_connect=true, safe=true, conn_timeout=20000, in_timeout=20000, out_timeout=100, ssl=false, ssl_key, ssl_cert, user, pwd
+
+        # missing from storage: journaling, sharding, retention ;;
+        # cache_size, cache_autocommit, cache_ordered
+
+        # missing from middleware: uri, protocol, data_type, data_scope, path,
+        # auto_connect=true, safe=true, conn_timeout=20000, in_timeout=20000,
+        # out_timeout=100, ssl=false, ssl_key, ssl_cert, user, pwd
 
         conf = self.cred_config.get(self.CRED_CAT, {})
         self._user = conf.get('user')
