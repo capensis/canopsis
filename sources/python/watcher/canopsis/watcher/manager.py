@@ -9,7 +9,6 @@ import json
 
 from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.context_graph.process import create_entity
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
 from canopsis.middleware.core import Middleware
@@ -80,7 +79,7 @@ class Watcher:
         for entity_id in depends_list:
             depend_list.append(entity_id['_id'])
 
-        entity = create_entity(
+        entity = ContextGraph.create_entity_dict(
             id=watcher_id,
             name=body['display_name'],
             etype='watcher',

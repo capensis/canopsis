@@ -224,6 +224,55 @@ class ContextGraph(object):
 
         return True
 
+    @classmethod
+    def create_entity_dict(cls,
+                      id,
+                      name,
+                      etype,
+                      depends=[],
+                      impact=[],
+                      measurements={},
+                      infos={},
+                      **kwargs):
+        """Create an entity with following information and put it state at enable.
+        :param id: the entity id
+        :type id: a string
+        :param name: the entity name
+        :type name: a string
+        :param etype: the entity type
+        :type etype: a string
+        :param depends: every entities that depends of the current entity
+        :type depends: a list
+        :param impact: every entities that depends of the current entity
+        :type impact: a list
+        :param measurements: measurements link to the current entity
+        :type measurements: a dict
+        :param infos: information related to the entity
+        :type infos: a dict
+
+        :return: a dict
+        """
+
+        ent = {
+            '_id': id,
+            'type': etype,
+            'name': name,
+            'depends': depends,
+            'impact': impact,
+            'measurements': measurements,
+            'infos': infos
+        }
+
+        for key in kwargs:
+            ent[key] = kwargs[key]
+
+        if etype == 'component':
+            ent.pop("measurements")
+
+        cls._enable_entity(ent)
+
+        return ent
+
     def __init__(self,
                  logger,
                  *args, **kwargs):

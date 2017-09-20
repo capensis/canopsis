@@ -135,6 +135,48 @@ class BaseTest(TestCase):
 
         self.assertEqualEntities(result, expected)
 
+class CreateEntityDict(BaseTest):
+
+    def test_create_entity(self):
+        id_ = "id_1"
+        name = "name_1"
+        etype = "resource"
+        depends = ["id_2", "id_3", "id_4", "id_5"]
+        impacts = ["id_6", "id_7", "id_8", "id_9"]
+        measurements = {"tag_1": "data_1", "tag_2": "data_2"}
+        infos = {"info_1": "foo_1", "info_2": "bar_2"}
+
+        ent = ContextGraph.create_entity_dict(id_, name, etype, depends,
+                                    impacts, measurements, infos)
+
+        self.assertEqual(id_, ent["_id"])
+        self.assertEqual(name, ent["name"])
+        self.assertEqual(etype, ent["type"])
+        self.assertEqual(depends, ent["depends"])
+        self.assertEqual(impacts, ent["impact"])
+        self.assertEqual(measurements, ent["measurements"])
+        self.assertEqual(infos, ent["infos"])
+
+    def test_create_component(self):
+        id_ = "id_1"
+        name = "name_1"
+        etype = "component"
+        depends = ["id_2", "id_3", "id_4", "id_5"]
+        impacts = ["id_6", "id_7", "id_8", "id_9"]
+        measurements = {"tag_1": "data_1", "tag_2": "data_2"}
+        infos = {"info_1": "foo_1", "info_2": "bar_2"}
+
+        ent = ContextGraph.create_entity_dict(id_, name, etype, depends,
+                                    impacts, measurements, infos)
+
+        self.assertEqual(id_, ent["_id"])
+        self.assertEqual(name, ent["name"])
+        self.assertEqual(etype, ent["type"])
+        self.assertEqual(depends, ent["depends"])
+        self.assertEqual(impacts, ent["impact"])
+        self.assertNotIn("measurements", ent.keys())
+        self.assertEqual(infos, ent["infos"])
+
 
 class GetEvent(BaseTest):
     """Test get_event method.

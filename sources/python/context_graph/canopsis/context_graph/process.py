@@ -24,54 +24,6 @@ def update_cache():
     cache = context_graph_manager.get_all_entities_id()
 
 
-def create_entity(id,
-                  name,
-                  etype,
-                  depends=[],
-                  impact=[],
-                  measurements={},
-                  infos={},
-                  **kwargs):
-    """Create an entity with following information and put it state at enable.
-    :param id: the entity id
-    :type id: a string
-    :param name: the entity name
-    :type name: a string
-    :param etype: the entity type
-    :type etype: a string
-    :param depends: every entities that depends of the current entity
-    :type depends: a list
-    :param impact: every entities that depends of the current entity
-    :type impact: a list
-    :param measurements: measurements link to the current entity
-    :type measurements: a dict
-    :param infos: information related to the entity
-    :type infos: a dict
-
-    :return: a dict
-    """
-
-    ent = {
-            '_id': id,
-            'type': etype,
-            'name': name,
-            'depends': depends,
-            'impact': impact,
-            'measurements': measurements,
-            'infos': infos
-        }
-
-    for key in kwargs:
-        ent[key] = kwargs[key]
-
-    if etype == 'component':
-        ent.pop("measurements")
-
-    context_graph_manager._enable_entity(ent)
-
-    return ent
-
-
 def check_type(entities, expected):
     """Raise TypeError if the type of the entities entities does not match
     the expected type.
@@ -201,7 +153,7 @@ def create_ent_metric(event):
         id_ = "/metric/{0}/{1}/{2}/{3}".format(
             event["connector"], event["connector_name"], event["component"],
             perf["metric"])
-        ent_metric = create_entity(
+        ent_metric = ContextGraph.create_entity_dict(
             id=id_,
             name=perf["metric"],
             etype="metric",
@@ -231,14 +183,14 @@ def update_context_case1(ids, event):
     result = []
 
     LOGGER.debug("Case 1.")
-    comp = create_entity(
+    comp = ContextGraph.create_entity_dict(
         ids['comp_id'],
         event['component'],
         'component',
         depends=[ids['conn_id'], ids['re_id']],
         impact=[])
 
-    conn = create_entity(
+    conn = ContextGraph.create_entity_dict(
         ids['conn_id'],
         event['connector_name'],
         'connector',
@@ -251,7 +203,7 @@ def update_context_case1(ids, event):
     if event["event_type"] == "perf":
         result += create_ent_metric(event)
 
-    re = create_entity(
+    re = ContextGraph.create_entity_dict(
         ids['re_id'],
         event['resource'],
         'resource',
@@ -271,13 +223,13 @@ def update_context_case1_re_none(ids, event):
     :return: a list of entities (as a dict)
     """
     LOGGER.debug("Case 1 re none.")
-    comp = create_entity(
+    comp = ContextGraph.create_entity_dict(
         ids['comp_id'],
         event['component'],
         'component',
         depends=[ids['conn_id']],
         impact=[])
-    conn = create_entity(
+    conn = ContextGraph.create_entity_dict(
         ids['conn_id'],
         event['connector_name'],
         'connector',
@@ -297,13 +249,13 @@ def update_context_case2(ids, in_db, event):
 
     LOGGER.debug("Case 2")
 
-    comp = create_entity(
+    comp = ContextGraph.create_entity_dict(
         ids['comp_id'],
         event['component'],
         'component',
         depends=[ids['re_id']],
         impact=[])
-    re = create_entity(
+    re = ContextGraph.create_entity_dict(
         ids['re_id'],
         event['resource'],
         'resource',
@@ -325,7 +277,7 @@ def update_context_case2_re_none(ids, in_db, event):
 
     LOGGER.debug("Case 2 re none ")
 
-    comp = create_entity(
+    comp = ContextGraph.create_entity_dict(
         ids['comp_id'], event['component'], 'component', depends=[], impact=[])
     update_links_conn_comp(in_db[0], comp)
     return [comp, in_db[0]]
@@ -348,7 +300,7 @@ def update_context_case3(ids, in_db, event):
             conn = i
         elif i['type'] == 'component':
             comp = i
-    re = create_entity(
+    re = ContextGraph.create_entity_dict(
         ids['re_id'], event['resource'], 'resource', depends=[], impact=[])
     update_links_res_comp(re, comp)
     update_links_conn_res(conn, re)
@@ -375,13 +327,13 @@ def update_context_case5(ids, in_db, event):
         elif entity["type"] == "component":
             component = entity
 
-    connector = create_entity(
+    connector = ContextGraph.create_entity_dict(
         ids["conn_id"], event["connector_name"], "connector", impact=[], depends=[])
 
     if ids["re_id"] is not None:
         #res_impact = [component["_id"]]
         #res_depends = [connector["_id"]]
-        resource = create_entity(
+        resource = ContextGraph.create_entity_dict(
             ids["re_id"], event["resource"], "resource", impact=[], depends=[])
         update_links_res_comp(resource, component)
         update_links_conn_res(connector, resource)
@@ -412,7 +364,7 @@ def update_context_case6(ids, in_db, event):
         elif entity["type"] == "component":
             component = entity
 
-    connector = create_entity(
+    connector = ContextGraph.create_entity_dict(
         ids["conn_id"], event["connector_name"], "connector", impact=[], depends=[])
     update_links_conn_comp(connector, component)
 
