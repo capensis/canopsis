@@ -24,17 +24,6 @@ Generic event object.
 """
 
 from __future__ import unicode_literals
-from time import time
-
-
-class StorageField(object):
-    """
-    Field names in mongo storage.
-    """
-    DATA_ID = '_id'
-    DATA = 'd'
-    TIMESTAMP = 't'
-    VALUE = 'v'
 
 
 class Event(object):
@@ -42,22 +31,30 @@ class Event(object):
     An event object.
     """
 
-    def __init__(self, connector, connector_name, component, resource=None):
+    _known_attributes = ['connector', 'connector_name', 'component']
+
+    def __init__(self, connector, connector_name, component, **kwargs):
         """
         :param str connector:
         :param str connector_name:
         :param str component:
-        :param str resource:
         """
         self.connector = connector
         self.connector_name = connector_name
         self.component = component
-        self.resource = resource
 
-        # TODO: handle all extra fields
+        self.set(kwargs)
 
-        self.timestamp = int(time())
-        self.data = '{}/{}'.format(self.resource, self.component)
+    def set(self, dico):
+        """
+        Update event values from a dict.
+
+        :param dict dico: a dict of attributes to update
+        """
+        for key, val in dico.items():
+            if key not in self._known_attributes:
+                self._known_attributes.append(key)
+            setattr(self, key, val)
 
     def to_dict(self):
         """
@@ -65,25 +62,9 @@ class Event(object):
 
         :rtype: dict
         """
-        return {
-            'connector': self.connector,
-            'connector_name': self.connector_name,
-            'component': self.component,
-            'resource': self.resource,
-        }
-
-    def to_mongo(self):
-        """
-        Return the event has inserted in mongo.
-
-        :rtype: dict
-        """
-        dico = {
-            StorageField.DATA: self.data,
-            StorageField.TIMESTAMP: self.timestamp,
-            StorageField.VALUE: self.to_dict()
-        }
-        if hasattr(self, 'data_id'):
-            dico[StorageField.DATA_ID] = self.data_id
+        dico = {}
+        for key in self._known_attributes:
+            if hasattr(self, key):
+                dico[key] = getattr(self, key)
 
         return dico

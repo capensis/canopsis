@@ -10,8 +10,7 @@ from canopsis.common.event import Event
 
 class TestEvent(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(self):
+    def setUp(self):
         self.connector = 'connector'
         self.connector_name = 'connector_name'
         self.component = 'component'
@@ -22,20 +21,26 @@ class TestEvent(unittest.TestCase):
                          component=self.component,
                          resource=self.resource)
 
-    @classmethod
-    def tearDownClass(self):
-        """Teardown"""
-
-    def test_to_dict(self):
-        res = self.ev_.to_dict()
-        expected = {
+        self.expected = {
             'component': 'component',
             'connector': 'connector',
             'connector_name': 'connector_name',
             'resource': 'resource'
         }
 
-        self.assertDictEqual(res, expected)
+    @classmethod
+    def tearDownClass(self):
+        """Teardown"""
+
+    def test_set(self):
+        self.ev_.set({'Fry': 'I.C. Wiener'})
+        self.assertTrue(hasattr(self.ev_, 'Fry'))
+        self.assertEqual(self.ev_.Fry, 'I.C. Wiener')
+
+    def test_to_dict(self):
+        res = self.ev_.to_dict()
+
+        self.assertDictEqual(res, self.expected)
 
 if __name__ == '__main__':
     unittest.main()
