@@ -335,7 +335,7 @@ class Alerts(MiddlewareRegistry):
 
         return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
 
-    def get_current_alarm(self, alarm_id):
+    def get_current_alarm(self, alarm_entity_id):
         """
         Get current unresolved alarm.
 
@@ -348,7 +348,7 @@ class Alerts(MiddlewareRegistry):
         storage = self[Alerts.ALARM_STORAGE]
 
         result = storage.get(
-            alarm_id,
+           alarm_entity_id,
             timewindow=get_offset_timewindow(),
             _filter={
                 AlarmField.resolved.value: None
@@ -358,7 +358,7 @@ class Alerts(MiddlewareRegistry):
 
         if result is not None:
             result = result[0]
-            result[storage.DATA_ID] = alarm_id
+            result[storage.DATA_ID] = alarm_entity_id
 
         return result
 
