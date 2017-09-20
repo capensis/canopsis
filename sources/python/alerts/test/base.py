@@ -69,8 +69,8 @@ class BaseTest(TestCase):
         self.context_graph_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
-        self.cg_manager = ContextGraph()
-        self.cg_manager[ContextGraph.ENTITIES_STORAGE] = self.context_graph_storage
+        self.cg_manager = ContextGraph(self.logger)
+        self.cg_manager.ent_storage = self.context_graph_storage
         self.watcher_manager = Watcher()
 
         conf = Configuration.load(Alerts.CONF_PATH, Ini)
