@@ -486,6 +486,24 @@ class Alerts(MiddlewareRegistry):
 
         return events
 
+    def check_if_the_entity_is_enabled(self, entity_id):
+        """
+        check if the entity is enabled
+        
+        :param str entity_id: entity_id
+        :return bool is active: return if the entity is active true by default
+        """
+        entity = self.context_manager.get_entities_by_id(entity_id)
+
+        if entity != []:
+            try:
+                return entity[0]['enabled']
+            except Exception:
+                self.logger.warning('entity not in context')
+
+        return True
+
+
     def archive(self, event):
         """
         Archive event in corresponding alarm history.
@@ -494,16 +512,6 @@ class Alerts(MiddlewareRegistry):
         :type event: dict
         """
         entity_id = self.context_manager.get_id(event)
-
-        entity = self.context_manager.get_entities_by_id(entity_id)
-        # Check if an entity is enabled
-        if entity != []:
-            try:
-                if not entity[0]['enabled']:
-                    return
-            except Exception:
-                self.logger.warning('entity not in context')
-                pass
 
         if (
             event['event_type'] == Check.EVENT_TYPE
@@ -515,7 +523,8 @@ class Alerts(MiddlewareRegistry):
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
                     return
-
+                if not self.check_if_the_entity_is_enabled(entity_id):
+                    return 
                 # Check is not OK
                 alarm = self.make_alarm(entity_id, event)
                 alarm = self.update_state(alarm, event[Check.STATE], event)
@@ -524,6 +533,8 @@ class Alerts(MiddlewareRegistry):
                 value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
                 if self.is_hard_limit_reached(value):
                     return
+                if not self.check_if_the_entity_is_enabled(entity_id):
+                    return 
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
