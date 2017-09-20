@@ -28,12 +28,13 @@ from __future__ import unicode_literals
 from numbers import Number
 from time import time
 
-from canopsis.monitoring.parser import PerfDataParser
+from canopsis.common.event import Event
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
-from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.monitoring.parser import PerfDataParser
+from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 
 
 CONF_PATH = 'perfdata/perfdata.conf'
@@ -86,31 +87,31 @@ class PerfData(MiddlewareRegistry):
 
         if event is None:
             _, _, connex, connex_name, comp, res, perf_m = metric_id.split('/')
-            event = {
-                'connector': connex,
-                'connector_name': connex_name,
-                'component': comp,
-                'resource': res,
-                'perf_metric': perf_m
-            }
+            event = Event(
+                connector=connex,
+                connector_name=connex_name,
+                component=comp,
+                resource=res,
+                perf_metric=perf_m
+            )
 
         tags = {} if meta is None else meta.copy()
 
         entity = {}
 
         eid = '/metric/{0}/{1}/{2}/{3}/{4}'.format(
-            event['connector'],
-            event['connector_name'],
-            event['component'],
-            event['resource'],
-            event['perf_metric']
+            event.connector,
+            event.connector_name,
+            event.component,
+            event.resource,
+            event.perf_metric
         )
 
         entity = {
-            'connector': event['connector'],
-            'connector_name': event['connector_name'],
-            'component': event['component'],
-            'resource': event['resource'],
+            'connector': event.connector,
+            'connector_name': event.connector_name,
+            'component': event.component,
+            'resource': event.resource,
             'eid': eid,
             'type': 'metric',
             # 'retention': meta['retention'],
