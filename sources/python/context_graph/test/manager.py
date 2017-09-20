@@ -100,38 +100,38 @@ class BaseTest(TestCase):
         sorted(entity2["impact"])
         self.assertDictEqual(entity1, entity2)
 
-    def _insertion_filter_test(self, function):
-        infos = TEMPLATE_INFOS.copy()
-
-        infos[Keys.F_ENABLED.value] = True
-        infos[Keys.F_DISABLED_HIST.value] = [1]
-        infos[Keys.F_ENABLED_HIST.value] = [1]
+    def _insertion_filter_test(self, function, expected=None):
+        infos = {}
 
         entity = create_entity("id", "a name", "resource", infos=infos)
-
-        expected = entity.copy()
-
-        infos["I am not allowed to be here"] = [1]
-        infos["me too"] = [1]
+        if expected is None:
+            expected = entity.copy()
 
         function(entity)
         result = self.manager.get_entities_by_id("id")[0]
+        # pop non predictable fields
+        try:
+            result.pop("enable_history")
+        except KeyError:
+            pass
 
         self.assertEqualEntities(result, expected)
 
-    def _insertion_filter_test_not_allowed_field(self, function):
-        infos = TEMPLATE_INFOS.copy()
+    def _insertion_filter_test_not_allowed_field(self, function, expected=None):
 
-        infos[Keys.F_ENABLED.value] = True
-        infos[Keys.F_DISABLED_HIST.value] = [1]
-        infos[Keys.F_ENABLED_HIST.value] = [1]
-
+        infos = {"I am not allowed to be here": [1],
+                 "me too": [1]}
         entity = create_entity("id", "a name", "resource", infos=infos)
-
-        expected = entity.copy()
+        if expected is None:
+            expected = entity.copy()
 
         function(entity)
         result = self.manager.get_entities_by_id("id")[0]
+        # pop non predictable fields
+        try:
+            result.pop("enable_history")
+        except KeyError:
+            pass
 
         self.assertEqualEntities(result, expected)
 
@@ -718,6 +718,14 @@ class DeleteEntity(BaseTest):
 
 class CreateEntity(BaseTest):
 
+    SCHEMA = {"schema": {
+        "properties": {
+            "disable_history": "string",
+            "enable_history": "string",
+            "enabled": "boolean"
+        }
+    }}
+
     def test_create_entity_entity_exists(self):
         entity = self.template.copy()
         entity['_id'] = "I am here"
@@ -773,10 +781,22 @@ class CreateEntity(BaseTest):
         self.__test("impact", "depends")
 
     def test_create_infos_filter(self):
-        self._insertion_filter_test(self.manager.create_entity)
+        self.manager.filter_._schema = self.SCHEMA
+        infos = {}
+        expected = create_entity("id", "a name", "resource", infos=infos)
+        expected["enabled"] = True
+        self._insertion_filter_test(
+            self.manager.create_entity, expected
+        )
 
     def test_create_infos_filter_not_allowed_field(self):
-        self._insertion_filter_test(self.manager.create_entity)
+        self.manager.filter_._schema = self.SCHEMA
+        infos = {}
+        expected = create_entity("id", "a name", "resource", infos=infos)
+        expected["enabled"] = True
+        self._insertion_filter_test_not_allowed_field(
+            self.manager.create_entity, expected
+        )
 
 
 class TestGraphRequests(BaseTest):
