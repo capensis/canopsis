@@ -2,17 +2,26 @@
 # -*- coding: utf-8  -*-
 from __future__ import unicode_literals
 
-from pymongo import MongoClient
 from time import sleep
 import unittest
 
 from canopsis.common.ethereal_data import EtherealData
+from canopsis.common.mongo_store import MongoStore, DEFAULT_DB_NAME
+from canopsis.confng import Configuration, Ini
 
 
 class TestEtherealData(unittest.TestCase):
 
     def setUp(self):
-        self.collection = MongoClient().test.any_collection
+        self.conf = {
+            MongoStore.CONF_CAT: {
+                'db': DEFAULT_DB_NAME
+            }
+        }
+        self.cred_conf = Configuration.load(MongoStore.CRED_CONF_PATH, Ini)
+        self.client = MongoStore(config=self.conf,
+                                 cred_config=self.cred_conf)
+        self.collection = self.client.get_collection('any_collection')
 
         self.ed = EtherealData(collection=self.collection,
                                filter_={},
