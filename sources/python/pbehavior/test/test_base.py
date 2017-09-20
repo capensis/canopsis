@@ -26,6 +26,10 @@ from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.logger.logger import Logger, OutputNull
 
+class MockEngine():
+
+    def __init__(self):
+        self.logger = Logger.get('', None, output_cls=OutputNull)
 
 class BaseTest(TestCase):
     def setUp(self):
@@ -40,9 +44,9 @@ class BaseTest(TestCase):
 
         self.pbm = PBehaviorManager(logger=logger, pb_storage=pbehavior_storage)
         self.context = ContextGraph(logger)
-        self.context[ContextGraph.ENTITIES_STORAGE] = entities_storage
+        self.context.ent_storage = entities_storage
         self.pbm.context = self.context
 
     def tearDown(self):
         self.pbm.pb_storage.remove_elements()
-        self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()
+        self.context.ent_storage.remove_elements()
