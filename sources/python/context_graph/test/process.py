@@ -324,19 +324,19 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(event)
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = CopntextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = CopntextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
-        expected_re = process.create_entity(ids["re_id"],
+        expected_re = CopntextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
@@ -358,12 +358,12 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id)
         ids = process.gen_ids(event)
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = CopntextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=[ids["comp_id"]])
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = CopntextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=[ids["conn_id"]])
@@ -383,25 +383,25 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = CopntextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = CopntextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
-        expected_re = process.create_entity(ids["re_id"],
+        expected_re = CopntextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
 
-        conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
+        conn = ContextGraph.create_entity_dict("{0}/{1}".format(conn_id, conn_name),
                                      conn_name,
                                      "connector",
                                      impact=[],
@@ -422,17 +422,17 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id))
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"]]))
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"]]))
 
-        conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
+        conn = ContextGraph.create_entity_dict("{0}/{1}".format(conn_id, conn_name),
                                      conn_name,
                                      "connector",
                                      impact=[],
@@ -454,31 +454,31 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
-        expected_re = process.create_entity(ids["re_id"],
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
 
-        conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
+        conn = ContextGraph.create_entity_dict("{0}/{1}".format(conn_id, conn_name),
                                      conn_name,
                                      "connector",
                                      impact=[comp_id],
                                      depends=[])
 
-        comp = process.create_entity(comp_id,
+        comp = ContextGraph.create_entity_dict(comp_id,
                                      comp_id,
                                      "component",
                                      impact=[],
@@ -638,26 +638,26 @@ class Test(TestCase):
 
 
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               impact=[],
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
-        expected_re = process.create_entity(ids["re_id"],
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
 
-        comp = process.create_entity(comp_id,
+        comp = ContextGraph.create_entity_dict(comp_id,
                                      comp_id,
                                      "component",
                                      impact=[],
@@ -678,18 +678,18 @@ class Test(TestCase):
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id))
         event = create_event(conn_id, conn_name, comp_id)
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=[ids["comp_id"]])
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               impact=[],
                                               depends=[ids["conn_id"]])
 
-        comp = process.create_entity(comp_id,
+        comp = ContextGraph.create_entity_dict(comp_id,
                                      comp_id,
                                      "component",
                                      impact=[],
@@ -714,21 +714,21 @@ class Test(TestCase):
 
         ids = process.gen_ids(event)
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]),
                                               infos={})
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]),
                                               infos={})
 
-        expected_re = process.create_entity(ids["re_id"],
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
