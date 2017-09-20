@@ -24,7 +24,6 @@ from unittest import TestCase, main
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
-from canopsis.context_graph.process import create_entity
 from canopsis.middleware.core import Middleware
 
 
