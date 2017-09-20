@@ -62,7 +62,7 @@ def get_entity_id(event):
 _pb_manager = init_managers()
 
 @register_task
-def event_processing(engine, event, pbm=_pb_manager, **kwargs):
+def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
     """
     Event processing.
     """

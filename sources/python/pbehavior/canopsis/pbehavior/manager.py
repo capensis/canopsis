@@ -440,7 +440,7 @@ class PBehaviorManager(object):
         )
 
         for pbehavior in pbehaviors:
-            entities = self.context[ContextGraph.ENTITIES_STORAGE].get_elements(
+            entities = self.context.ent_storage.get_elements(
                 query=loads(pbehavior[PBehavior.FILTER])
             )
 
