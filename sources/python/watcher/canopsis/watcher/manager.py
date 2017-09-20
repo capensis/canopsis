@@ -172,8 +172,11 @@ class Watcher:
 
         :param watcher_id: watcher id
         """
-        watcher_entity = self.context_graph.get_entities(
-            query={'_id': watcher_id})[0]
+        try:
+            watcher_entity = self.context_graph.get_entities(
+                query={'_id': watcher_id})[0]
+        except IndexError:
+            return None
 
         entities = watcher_entity['depends']
         display_name = watcher_entity['name']
