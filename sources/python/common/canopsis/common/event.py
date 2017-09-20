@@ -45,6 +45,11 @@ class Event(object):
 
         self.set(kwargs)
 
+    def __setattr__(self, key, value):
+        if key not in self._known_attributes:
+            self._known_attributes.append(key)
+        super(Event, self).__setattr__(key, value)
+
     def set(self, dico):
         """
         Update event values from a dict.
@@ -52,8 +57,6 @@ class Event(object):
         :param dict dico: a dict of attributes to update
         """
         for key, val in dico.items():
-            if key not in self._known_attributes:
-                self._known_attributes.append(key)
             setattr(self, key, val)
 
     def to_dict(self):
