@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 import copy
-import jsonschema
 import time
+import jsonschema
 
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.middleware.core import Middleware
@@ -490,9 +490,9 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         if dependancy_type == "depends":
-            to = "impact"
+            field = "impact"
         elif dependancy_type == "impact":
-            to = "depends"
+            field = "depends"
         else:
             raise ValueError(
                 "Dependancy_type should be depends or impact not {0}.".format(
@@ -510,10 +510,10 @@ class ContextGraph(MiddlewareRegistry):
         # update the related entities
         for entity in entities:
             try:
-                entity[to].remove(id_)
+                entity[field].remove(id_)
             except ValueError:
                 desc = "No {0} id in the {1} of the entity of id {2}.".format(
-                    id_, to, entity["_id"])
+                    id_, field, entity["_id"])
                 self.logger.debug(desc)
 
         updated_entities += entities
@@ -527,7 +527,7 @@ class ContextGraph(MiddlewareRegistry):
 
         # update the related entities
         for entity in entities:
-            entity[to].append(id_)
+            entity[field].append(id_)
 
         updated_entities += entities
 
@@ -625,7 +625,7 @@ class ContextGraph(MiddlewareRegistry):
         build_all_links(self)
 
     def get_entities(self,
-                     query={},
+                     query=None,
                      projection=None,
                      limit=0,
                      start=0,
@@ -647,7 +647,9 @@ class ContextGraph(MiddlewareRegistry):
         :rtype: list of dict elements
         """
 
-        if not isinstance(query, dict):
+        if query is None:
+            query = {}
+        elif not isinstance(query, dict):
             raise TypeError("Query must be a dict")
 
         result = self[ContextGraph.ENTITIES_STORAGE].get_elements(
@@ -717,13 +719,16 @@ class ContextGraph(MiddlewareRegistry):
         return result
 
     def get_graph_impact(self, _id, deepness=None):
-        """
+        """Return the impact graph of the entity design by _id.
+        :param _id: the _id of the entity from the graph start
+        :param deepness: the max depth of the graph.
+        :return dict: the graph.
         """
         col = self[ContextGraph.ENTITIES_STORAGE]._backend
-        ag = []
+        aggregate = []
 
         match = {'$match': {'_id': _id}}
-        ag.append(match)
+        aggregate.append(match)
 
         glookup = {
             '$graphLookup': {
@@ -737,19 +742,22 @@ class ContextGraph(MiddlewareRegistry):
         }
         if deepness is not None:
             glookup['$graphLookup']['maxDepth'] = deepness
-        ag.append(glookup)
+        aggregate.append(glookup)
 
-        res = col.aggregate(ag)
+        res = col.aggregate(aggregate)
         return res['result'][0]
 
     def get_graph_depends(self, _id, deepness=None):
-        """
+        """Return the depends graph from the entity design by _id.
+        :param _id: the _id of the entity from the graph start
+        :param deepness: the max depth of the graph.
+        :return dict: the graph.
         """
         col = self[ContextGraph.ENTITIES_STORAGE]._backend
-        ag = []
+        aggregate = []
 
         match = {'$match': {'_id': _id}}
-        ag.append(match)
+        aggregate.append(match)
 
         glookup = {
             '$graphLookup': {
@@ -763,13 +771,17 @@ class ContextGraph(MiddlewareRegistry):
         }
         if deepness is not None:
             glookup['$graphLookup']['maxDepth'] = deepness
-        ag.append(glookup)
+        aggregate.append(glookup)
 
-        res = col.aggregate(ag)
+        res = col.aggregate(aggregate)
         return res['result'][0]
 
     def get_leaves_impact(self, _id, deepness=None):
-        """
+        """Return the entities at the end of the impact graph from the entity
+        design by _id.
+        :param _id: the _id of the entity from the graph start
+        :param deepness: the max depth of the graph.
+        :return dict: the graph.
         """
         graph = self.get_graph_impact(_id, deepness)
         ret_val = []
@@ -785,7 +797,11 @@ class ContextGraph(MiddlewareRegistry):
         return ret_val
 
     def get_leaves_depends(self, _id, deepness=None):
-        """
+        """Return the entities at the end of the depends graph from the entity
+        design by _id.
+        :param _id: the _id of the entity from the graph start
+        :param deepness: the max depth of the graph.
+        :return dict: the graph.
         """
         graph = self.get_graph_depends(_id, deepness)
         ret_val = []
