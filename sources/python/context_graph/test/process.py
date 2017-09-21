@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
 
 import time
-
-from canopsis.logger import Logger, OutputNull
 from unittest import main, TestCase
-import canopsis.context_graph.process as process
 
+import canopsis.context_graph.process as process
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.logger import Logger, OutputNull
+
 
 def create_event(conn, conn_name,  comp=None, res=None, event_type="check", timestamp=None):
 
@@ -16,7 +16,7 @@ def create_event(conn, conn_name,  comp=None, res=None, event_type="check", time
     event = {"connector": conn,
              "connector_name": conn_name,
              "event_type": event_type,
-             "timestamp" : timestamp}
+             "timestamp": timestamp}
     if comp is not None:
         event["component"] = comp
 
@@ -42,6 +42,7 @@ def prepare_test_update_context(result):
         elif entity["type"] == "resource":
             re = entity
     return conn, comp, re
+
 
 class Test(TestCase):
 
@@ -324,23 +325,25 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(event)
 
-        expected_conn = CopntextGraph.create_entity_dict(ids["conn_id"],
-                                              conn_name,
-                                              "connector",
-                                              impact=sorted([ids["comp_id"],
-                                                             ids["re_id"]]))
+        impact = sorted([ids["comp_id"], ids["re_id"]])
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
+                                                        conn_name,
+                                                        "connector",
+                                                        impact=impact)
 
-        expected_comp = CopntextGraph.create_entity_dict(ids["comp_id"],
-                                              comp_id,
-                                              "component",
-                                              depends=sorted([ids["conn_id"],
-                                                              ids["re_id"]]))
+        depends = sorted([ids["conn_id"], ids["re_id"]])
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
+                                                        comp_id,
+                                                        "component",
+                                                        depends=depends)
 
-        expected_re = CopntextGraph.create_entity_dict(ids["re_id"],
-                                            re_id,
-                                            "resource",
-                                            impact=[ids["comp_id"]],
-                                            depends=[ids["conn_id"]])
+        impact = [ids["comp_id"]]
+        depends = [ids["conn_id"]]
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
+                                                      re_id,
+                                                      "resource",
+                                                      impact=impact,
+                                                      depends=depends)
 
         res = process.update_context_case1(ids, event)
 
@@ -358,12 +361,12 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id)
         ids = process.gen_ids(event)
 
-        expected_conn = CopntextGraph.create_entity_dict(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=[ids["comp_id"]])
 
-        expected_comp = CopntextGraph.create_entity_dict(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=[ids["conn_id"]])
@@ -383,19 +386,19 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
 
-        expected_conn = CopntextGraph.create_entity_dict(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
-        expected_comp = CopntextGraph.create_entity_dict(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
-        expected_re = CopntextGraph.create_entity_dict(ids["re_id"],
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
@@ -537,11 +540,11 @@ class Test(TestCase):
         re_res_2 = None
         for i in res_1:
             if i['type'] == 'component':
-                comp_res_1= i
+                comp_res_1 = i
             if i['type'] == 'resource':
-                re_res_1= i
+                re_res_1 = i
             if i['type'] == 'connector':
-                conn_res_1= i
+                conn_res_1 = i
         for i in res_2:
             if i['type'] == 'component':
                 comp_res_2 = i
@@ -624,7 +627,7 @@ class Test(TestCase):
                                           'impact': sorted(['comp_1']),
                                           'depends': [],
                                           'measurements': {},
-                                          'infos':{}})
+                                          'infos': {}})
 
 
     def test_update_context_case5(self):
@@ -702,8 +705,6 @@ class Test(TestCase):
         self.assertDictEqual(expected_comp, result_comp)
 
     def test_info_field(self):
-
-        authorized_info_keys = ["domain","perimeter","comment"]
 
         conn_id = "conn_id"
         conn_name = "conn_name"
