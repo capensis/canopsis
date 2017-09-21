@@ -660,11 +660,11 @@ class ContextGraph(MiddlewareRegistry):
         )
 
         if with_count:
-            result = list(result[0])
             count = result[1]
+            # Don't invert those two lines to avoid duplicate results
+            result = list(result[0])
         else:
             result = list(result)
-
 
         # Enrich each entity with http links
         for res in result:

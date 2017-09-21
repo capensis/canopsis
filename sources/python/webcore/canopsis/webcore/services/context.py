@@ -79,6 +79,7 @@ def exports(ws):
         )
         result = [count]
         result += data
+
         return result
 
     @route(ws.application.put, payload=[
