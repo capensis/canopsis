@@ -27,8 +27,6 @@ class BaseBackend(object):
     handle_logout = False
 
     def __init__(self, ws, *args, **kwargs):
-        # super(BaseBackend, self).__init__(*args, **kwargs)
-        super(BaseBackend, self).__init__()
 
         self.ws = ws
         self.auth = auth

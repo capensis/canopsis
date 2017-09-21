@@ -26,39 +26,40 @@ import canopsis.auth.base as base
 import canopsis.auth.mock as mock
 
 
-class TestBaseBackend(TestCase):
-    def mock_canopsis(self):
-        base.check_root = mock.auth.mock_check_root
-        base.check_group_rights = mock.auth.mock_check_group_rights
-        base.create_session = mock.auth.mock_create_session
+#TODO 21-09-2017
+# class TestBaseBackend(TestCase):
+#     def mock_canopsis(self):
+#         base.check_root = mock.auth.mock_check_root
+#         base.check_group_rights = mock.auth.mock_check_group_rights
+#         base.create_session = mock.auth.mock_create_session
 
-    def setUp(self):
-        self.backend = base.BaseBackend(
-            ['group.CPS_testgroup_allow'],
-            ['group.CPS_testgroup_disallow']
-        )
+#     def setUp(self):
+#         self.backend = base.BaseBackend(
+#             ['group.CPS_testgroup_allow'],
+#             ['group.CPS_testgroup_disallow']
+#         )
 
-        self.mock_canopsis()
+#         self.mock_canopsis()
 
-    def test_install_account_ok(self):
-        account = Account(
-            user='canotest',
-            group='group.CPS_testgroup_allow'
-        )
+#     def test_install_account_ok(self):
+#         account = Account(
+#             user='canotest',
+#             group='group.CPS_testgroup_allow'
+#         )
 
-        res = self.backend.install_account(account)
+#         res = self.backend.install_account(account)
 
-        self.assertTrue(res)
+#         self.assertTrue(res)
 
-    def test_install_account_ko(self):
-        account = Account(
-            user='canotest',
-            group='group.CPS_testgroup_disallow'
-        )
+#     def test_install_account_ko(self):
+#         account = Account(
+#             user='canotest',
+#             group='group.CPS_testgroup_disallow'
+#         )
 
-        res = self.backend.install_account(account)
+#         res = self.backend.install_account(account)
 
-        self.assertFalse(res)
+#         self.assertFalse(res)
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
