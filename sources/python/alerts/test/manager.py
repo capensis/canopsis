@@ -209,7 +209,8 @@ class TestManager(BaseTest):
         }
 
         self.manager.update_current_alarm(alarm, value)
-        self.manager.resolve_alarms()
+        unresolved_alarms = self.manager.get_alarms(resolved=False)
+        self.manager.resolve_alarms(unresolved_alarms)
 
         alarm = self.manager.get_current_alarm(alarm_id)
         self.assertIsNone(alarm)
@@ -303,8 +304,8 @@ class TestManager(BaseTest):
             }
         ]
         self.manager.update_current_alarm(alarm, value)
-
-        self.manager.resolve_stealthy()
+        unresolved_alarms = self.manager.get_alarms(resolved=False)
+        self.manager.resolve_stealthy(unresolved_alarms)
 
         alarm = storage.get(
             alarm_id,
