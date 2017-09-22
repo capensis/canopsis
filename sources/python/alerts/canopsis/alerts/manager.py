@@ -217,7 +217,7 @@ class Alerts(MiddlewareRegistry):
             self[Alerts.FILTER_STORAGE] = filter_storage
 
         if context is not None:
-            self[Alerts.CONTEXT_MANAGER]= context
+            self[Alerts.CONTEXT_MANAGER] = context
 
         self.context_manager = ContextGraph()
         self.watcher_manager = Watcher()
@@ -348,7 +348,7 @@ class Alerts(MiddlewareRegistry):
         storage = self[Alerts.ALARM_STORAGE]
 
         result = storage.get(
-           alarm_entity_id,
+            alarm_entity_id,
             timewindow=get_offset_timewindow(),
             _filter={
                 AlarmField.resolved.value: None
@@ -408,7 +408,7 @@ class Alerts(MiddlewareRegistry):
         try:
             entity = entity[0]
         except IndexError:
-                entity = {}
+            entity = {}
 
         no_author_types = ['stateinc', 'statedec', 'statusinc', 'statusdec']
         check_referer_types = [
@@ -489,7 +489,7 @@ class Alerts(MiddlewareRegistry):
     def check_if_the_entity_is_enabled(self, entity_id):
         """
         check if the entity is enabled
-        
+
         :param str entity_id: entity_id
         :return bool is active: return if the entity is active true by default
         """
@@ -502,7 +502,6 @@ class Alerts(MiddlewareRegistry):
                 self.logger.warning('entity not in context')
 
         return True
-
 
     def archive(self, event):
         """
@@ -524,7 +523,7 @@ class Alerts(MiddlewareRegistry):
                     # which no alarm is opened, there is no point continuing
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
-                    return 
+                    return
                 # Check is not OK
                 alarm = self.make_alarm(entity_id, event)
                 alarm = self.update_state(alarm, event[Check.STATE], event)
@@ -534,7 +533,7 @@ class Alerts(MiddlewareRegistry):
                 if self.is_hard_limit_reached(value):
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
-                    return 
+                    return
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
@@ -837,7 +836,8 @@ class Alerts(MiddlewareRegistry):
             )
             return alarm
 
-        last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
+        last_status_i = alarm[AlarmField.steps.value].index(
+            alarm[AlarmField.status.value])
 
         state_changes = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
