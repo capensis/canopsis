@@ -77,6 +77,7 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     alertsmgr.resolve_snoozes()
 
     unresolved_alarms = alertsmgr.resolve_stealthy(unresolved_alarms)
+    # unresolved_alarms not used actually but can be used for new actions
 
     alertsmgr.check_alarm_filters()
 
