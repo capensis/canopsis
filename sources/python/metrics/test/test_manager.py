@@ -15,7 +15,7 @@ class TestMetricsManager(unittest.TestCase):
     def setUpClass(self):
         self.logger = Logger.get('metrics', MetricsManager.LOG_PATH)
 
-        self.db = 'canopsis_test'
+        self.db = 'canopsis'
         self.conf = {
             InfluxStore.CONF_CAT: {
                 'database': self.db,
@@ -25,7 +25,7 @@ class TestMetricsManager(unittest.TestCase):
                 'password': InfluxStore.DEFAULT_PWD
             }
         }
-        self.store = InfluxStore(config=self.conf).client
+        self.store = InfluxStore(logger=self.logger, config=self.conf).client
 
         self.metrics = MetricsManager(logger=self.logger,
                                       store=self.store)

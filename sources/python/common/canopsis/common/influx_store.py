@@ -46,7 +46,7 @@ class InfluxStore(object):
     DEFAULT_PORT = 4444
     DEFAULT_USER = 'admin'
     DEFAULT_PWD = 'admin'
-    DEFAULT_DB = None
+    DEFAULT_DB = 'canopsis'
     DEFAULT_TIMEOUT = None
     #DEFAULT_SSL = False
     #DEFAULT_PROXIES = None

@@ -40,16 +40,18 @@ class MetricsManager(object):
 
     def __init__(self, logger, store):
         """
-        :param store: an <InfluxStore> object
+        :param Logger logger: a logger object
+        :param InfluxStore store: an <InfluxStore> object
         """
-        super(MetricsManager, self).__init__()
         self.logger = logger
         self.store = store
 
     def count(self, metric_id, timewindow=None, meta=None):
         """Get number of perfdata identified by metric_id in input timewindow
 
+        :param metric_id:
         :param timewindow: if None, get all perfdata values
+        :param meta:
         """
         pass
 
@@ -59,11 +61,10 @@ class MetricsManager(object):
     def get_all_metrics(self):
         """Get registered metric ids.
 
-        :return: list of registered metric ids.
+        :return: all registered metric ids.
         :rtype: list
         """
         self.store.get_list_measurements()
-        # TODO: upgrade python-influx to 4.1.1
 
     def get_metric_infos(self, limit, start, filter_):
         pass
