@@ -44,9 +44,7 @@ def exports(ws):
         payload=['ids', 'limit', 'start', 'sort', 'with_count'],
         name='context/ids'
     )
-    def context_by_id(
-        ids=None, limit=0, start=0, sort=None, with_count=False
-    ):
+    def context_by_id(ids=None, limit=0, start=0, sort=None, with_count=False):
         """
         result = manager.get(
             ids=ids,
@@ -61,10 +59,12 @@ def exports(ws):
         return result
 
     @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter'])
-    def context(
-        context=None, _filter=None, extended=False,
-        limit=0, start=0, sort=None
-    ):
+    def context(context=None,
+                _filter=None,
+                extended=False,
+                limit=0,
+                start=0,
+                sort=None):
 
         query = {}
         if _filter is not None:
@@ -79,6 +79,7 @@ def exports(ws):
         )
         result = [count]
         result += data
+
         return result
 
     @route(ws.application.put, payload=[
@@ -93,7 +94,7 @@ def exports(ws):
             extended_id=extended_id
         )
         """
-        manager.create_entity(entity=entity)
+        manager.update_entity(entity=entity)
         return entity
 
     @route(ws.application.delete, payload=[

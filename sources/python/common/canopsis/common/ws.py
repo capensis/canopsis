@@ -255,11 +255,8 @@ class route(object):
 
             if not self.nolog:
                 self.logger.info(
-                    'Request: {} - {} - {}, {} (params: {})'.format(
-                        self.op.__name__.upper(),
-                        self.url,
-                        dumps(args), dumps(kwargs),
-                        dumps(dict(params))
+                    'Request: {} - {}'.format(
+                        self.op.__name__.upper(), self.url
                     )
                 )
 
