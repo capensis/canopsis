@@ -16,6 +16,9 @@ from canopsis.logger import Logger, OutputStream
 
 
 class TestInfluxStore(unittest.TestCase):
+    """
+    Test case for InfluxStore.
+    """
 
     @classmethod
     def setUpClass(self):
@@ -48,7 +51,7 @@ class TestInfluxStore(unittest.TestCase):
             }
         ]
         self.tags = {
-           'duncan': 'idaho'
+            'duncan': 'idaho'
         }
 
     @classmethod

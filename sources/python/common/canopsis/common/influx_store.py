@@ -10,6 +10,8 @@ from __future__ import unicode_literals
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 
+# TODO: passer en tcp au lieu d'udp
+
 
 """
 TODO: use a generic class to modelize data
@@ -51,6 +53,7 @@ class InfluxStore(object):
 
     def __init__(self, logger, config):
         """
+        :param logger: a logger object
         :param config: a configuration object
         """
         self.logger = logger
