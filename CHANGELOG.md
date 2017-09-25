@@ -3,6 +3,48 @@
 This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
 
 
+##Canopsis 2.4.6 and CAT 1.1.0 (25/09/2017)
+
+
+Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
+
+
+
+### Functional changes - CAT
+
+
+- [#393](https://git.canopsis.net/canopsis/canopsis/issues/393) Feat(Auth) : Compatibilité SAMLV2 
+- [#375](https://git.canopsis.net/canopsis/canopsis/issues/375) Feat(SNMP) : Les traps SNMP anomalies ne remontent pas
+
+
+###Bug fixes - CAT
+
+- [#375](https://git.canopsis.net/canopsis/canopsis/issues/375) Fix(SNMP): Les traps SNMP anomalies ne remontent pas
+
+### Functional changes
+
+- [#394](https://git.canopsis.net/canopsis/canopsis/issues/394) feat(UI) : permettre l'ajout d'onglets dropdown dans la vue Header
+- [#392](https://git.canopsis.net/canopsis/canopsis/issues/392) feat(Context-graph) : création d'une route ws  pour update du  context
+
+###Bug fixes and other non-functional changes
+
+- [#391](https://git.canopsis.net/canopsis/canopsis/issues/391) fix(Context-Graph) : La route post retourne parfois des doublons
+- [#378](https://git.canopsis.net/canopsis/canopsis/issues/378) fix(web): Blocage appli 
+- [#377](https://git.canopsis.net/canopsis/canopsis/issues/377) fix(Météo de service) : Impossible de faire les actions sur les alarmes
+- [#376](https://git.canopsis.net/canopsis/canopsis/issues/376) fix(Météo de service) : La mise en pause d'un scénario en alarme ne remet pas en vert l'application
+- [#374](https://git.canopsis.net/canopsis/canopsis/issues/374) fix(Bac à Alarmes) : Désynchro entre une alarme et son historique & fermeture de l'alarme pas toujours prise en compte
+- [#349](https://git.canopsis.net/canopsis/canopsis/issues/349) fix(Météo de service) : Nouvelle desynchro entre entités sur 2.4.5
+- [#347](https://git.canopsis.net/canopsis/canopsis/issues/347) fix(Météo de service) : création de pbehavior depuis le service weather
+- [#371](https://git.canopsis.net/canopsis/canopsis/issues/371) fix(perfs) : Perf sur queue alerts en 2.4.5
+- [#364](https://git.canopsis.net/canopsis/canopsis/issues/364) fix(pbehavior) : Engine pbehavior, déconnection et reconnection en boucle
+- [#342](https://git.canopsis.net/canopsis/canopsis/issues/342) fix(pbehavior) : création lente
+- [#333](https://git.canopsis.net/canopsis/canopsis/issues/333) fix(Bac à Alarmes) : les boutons d'action de masse ne fonctionnent que si 1 alarme est sélectionnée
+- [#326](https://git.canopsis.net/canopsis/canopsis/issues/326) fix(métriques) : Route /api/context/metric et recherches par nom
+- [#320](https://git.canopsis.net/canopsis/canopsis/issues/320) fix(pbehavior): Modale pbehavior - pas de création de pbheavior
+- [#318](https://git.canopsis.net/canopsis/canopsis/issues/318) fix(pbehavior) : Il est possible de créer un pbehavior avec une rrule invalide
+- [#317](https://git.canopsis.net/canopsis/canopsis/issues/317) fix(pbehavior) : check des rrules avant insertion
+
+
 ## Canopsis 2.4.5 (25/08/2017)
 
 
