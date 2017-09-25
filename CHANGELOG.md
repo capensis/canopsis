@@ -3,7 +3,7 @@
 This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
 
 
-##Canopsis 2.4.6 and CAT 1.1.0 (25/09/2017)
+##Canopsis 2.4.6 and CAT 2.5.0 (25/09/2017)
 
 
 Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
