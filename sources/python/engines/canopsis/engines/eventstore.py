@@ -118,11 +118,9 @@ class engine(Engine):
 
         if event_type not in self.event_types:
             self.logger.warning(
-                "Unknown event type '{}', id: '{}', event:\n{}".format(
-                    event_type,
-                    event['rk'],
-                    event
-                ))
+                "Unknown event type '{}', id: '{}', event:\n{}"
+                .format(event_type, event['rk'], event)
+            )
             return event
 
         elif event_type in self.check_types:
