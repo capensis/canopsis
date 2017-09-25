@@ -17,6 +17,7 @@ from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.watcher.links import build_all_links
 
+
 CONF_PATH = 'context_graph/manager.conf'
 CONFNG_PATH = 'etc/{}'.format(CONF_PATH)
 CONTEXT_CAT = 'CONTEXTGRAPH'
@@ -215,8 +216,8 @@ class ContextGraph(MiddlewareRegistry):
         if source_type == cls.COMPONENT:
             try:
                 id_ = event["component"].encode('utf-8')
-            except UnicodeEncodeError:
-                id_ = event['component']
+            except (UnicodeEncodeError, UnicodeDecodeError):
+                id_ = event['component'].decode('utf-8')
 
         elif source_type == cls.RESOURCE:
             try:
@@ -224,10 +225,10 @@ class ContextGraph(MiddlewareRegistry):
                     event["resource"].encode('utf-8'),
                     event["component"].encode('utf-8')
                 )
-            except UnicodeEncodeError:
+            except (UnicodeEncodeError, UnicodeDecodeError):
                 id_ = "{0}/{1}".format(
-                    event["resource"],
-                    event["component"]
+                    event["resource"].decode('utf-8'),
+                    event["component"].decode('utf-8')
                 )
 
         elif source_type == cls.CONNECTOR:
@@ -236,10 +237,10 @@ class ContextGraph(MiddlewareRegistry):
                     event["connector"].encode('utf-8'),
                     event["connector_name"].encode('utf-8')
                 )
-            except UnicodeEncodeError:
+            except (UnicodeEncodeError, UnicodeDecodeError):
                 id_ = "{0}/{1}".format(
-                    event["connector"],
-                    event["connector_name"]
+                    event["connector"].decode('utf-8'),
+                    event["connector_name"].decode('utf-8')
                 )
 
         else:
