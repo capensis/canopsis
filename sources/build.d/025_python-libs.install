@@ -32,11 +32,15 @@ function easy_install_all_libs() {
 	easy_install_pylib greenlet
 	easy_install_pylib mock
 	easy_install_pylib lxml
-	easy_install_pylib requests
+	easy_install_pylib "python-certifi==2017.04.17"
+	easy_install_pylib "urllib3==1.21.1"
+	easy_install_pylib "chardet==3.0.4"
+	easy_install_pylib "requests==2.17.3"
 	easy_install_pylib supervisor-wildcards
 	easy_install_pylib RestrictedPython
 	easy_install_pylib six
-	easy_install_pylib influxdb
+	easy_install_pylib "dateutil==2.6.1"
+	easy_install_pylib "influxdb-python==4.1.1"
 	easy_install_pylib extras
 	easy_install_pylib fixtures
 	easy_install_pylib funcsigs
@@ -51,7 +55,6 @@ function easy_install_all_libs() {
 	easy_install_pylib testtools
 	easy_install_pylib traceback2
 	easy_install_pylib unittest2
-	easy_install_pylib chardet
 	easy_install_pylib "grako==3.18.1"
 	easy_install_pylib functools32
 	easy_install_pylib vcversioner
