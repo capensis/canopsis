@@ -92,7 +92,7 @@ def exports(ws):
             extended_id=extended_id
         )
         """
-        manager.create_entity(entity=entity)
+        manager.update_entity(entity=entity)
         return entity
 
     @route(ws.application.delete, payload=[

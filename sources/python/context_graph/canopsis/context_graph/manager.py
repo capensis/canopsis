@@ -3,24 +3,27 @@
 from __future__ import unicode_literals
 
 import copy
-import time
 import jsonschema
+import time
 
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.middleware.core import Middleware
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
+from canopsis.configuration.model import Parameter
 from canopsis.confng import Configuration, Ini
-from canopsis.logger import Logger, OutputFile
 from canopsis.event import forger
+from canopsis.logger import Logger, OutputFile
+from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 from canopsis.watcher.links import build_all_links
+
 
 CONF_PATH = 'etc/context_graph/manager.conf'
 
-class ConfName:
+
+class ConfName(object):
+    """List of values used for the configuration"""
 
     SECT_GCTX = "CONTEXTGRAPH"
     SECT_FILTER = "INFOS_FILTER"
@@ -35,6 +38,7 @@ class ConfName:
 
     SCHEMA_ID = "schema_id"
     CTX_HYPERLINK = "hypertextlink_conf"
+
 
 class InfosFilter:
     """Class use to clean the infos field of an entity"""
@@ -155,8 +159,8 @@ class ContextGraph(object):
         if source_type == cls.COMPONENT:
             try:
                 id_ = event["component"].encode('utf-8')
-            except UnicodeEncodeError:
-                id_ = event['component']
+            except (UnicodeEncodeError, UnicodeDecodeError):
+                id_ = event['component'].decode('utf-8')
 
         elif source_type == cls.RESOURCE:
             try:
@@ -164,10 +168,10 @@ class ContextGraph(object):
                     event["resource"].encode('utf-8'),
                     event["component"].encode('utf-8')
                 )
-            except UnicodeEncodeError:
+            except (UnicodeEncodeError, UnicodeDecodeError):
                 id_ = "{0}/{1}".format(
-                    event["resource"],
-                    event["component"]
+                    event["resource"].decode('utf-8'),
+                    event["component"].decode('utf-8')
                 )
 
         elif source_type == cls.CONNECTOR:
@@ -176,10 +180,10 @@ class ContextGraph(object):
                     event["connector"].encode('utf-8'),
                     event["connector_name"].encode('utf-8')
                 )
-            except UnicodeEncodeError:
+            except (UnicodeEncodeError, UnicodeDecodeError):
                 id_ = "{0}/{1}".format(
-                    event["connector"],
-                    event["connector_name"]
+                    event["connector"].decode('utf-8'),
+                    event["connector_name"].decode('utf-8')
                 )
 
         else:

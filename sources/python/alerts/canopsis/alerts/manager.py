@@ -19,6 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+
 """
 Alerts manager (also known as Alarm Manager).
 """
@@ -31,8 +32,7 @@ from time import time, mktime
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
-    get_last_state, get_last_status,
-    OFF, STEALTHY, is_stealthy, is_keeped_state
+    get_last_state, get_last_status, OFF, STEALTHY, is_stealthy, is_keeped_state
 )
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
@@ -217,6 +217,7 @@ class Alerts(object):
         return self.config_data.get('stealthy_show',
                                     DEFAULT_STEALTHY_SHOW_DURATION)
 
+
     def get_alarms(
             self,
             resolved=True,
@@ -323,7 +324,7 @@ class Alerts(object):
 
         return list(self.alerts_storage.get_elements(query=query))
 
-    def get_current_alarm(self, alarm_id):
+    def get_current_alarm(self, alarm_entity_id):
         """
         Get current unresolved alarm.
 
@@ -336,7 +337,7 @@ class Alerts(object):
         storage = self.alerts_storage
 
         result = storage.get(
-            alarm_id,
+            alarm_entity_id,
             timewindow=get_offset_timewindow(),
             _filter={
                 AlarmField.resolved.value: None
@@ -346,7 +347,7 @@ class Alerts(object):
 
         if result is not None:
             result = result[0]
-            result[storage.DATA_ID] = alarm_id
+            result[storage.DATA_ID] = alarm_entity_id
 
         return result
 
@@ -474,6 +475,23 @@ class Alerts(object):
 
         return events
 
+    def check_if_the_entity_is_enabled(self, entity_id):
+        """
+        check if the entity is enabled
+
+        :param str entity_id: entity_id
+        :return bool is active: return if the entity is active true by default
+        """
+        entity = self.context_manager.get_entities_by_id(entity_id)
+
+        if entity != []:
+            try:
+                return entity[0]['enabled']
+            except Exception:
+                self.logger.warning('entity not in context')
+
+        return True
+
     def archive(self, event):
         """
         Archive event in corresponding alarm history.
@@ -483,26 +501,16 @@ class Alerts(object):
         """
         entity_id = self.context_manager.get_id(event)
 
-        entity = self.context_manager.get_entities_by_id(entity_id)
-        # Check if an entity is enabled
-        if entity != []:
-            try:
-                if not entity[0]['enabled']:
-                    return
-            except Exception:
-                self.logger.warning('entity not in context')
-
-        if (
-                event['event_type'] == Check.EVENT_TYPE
-                or event['event_type'] == 'watcher'
-        ):
+        if (event['event_type'] == Check.EVENT_TYPE
+            or event['event_type'] == 'watcher'):
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
                     return
-
+                if not self.check_if_the_entity_is_enabled(entity_id):
+                    return
                 # Check is not OK
                 alarm = self.make_alarm(entity_id, event)
                 alarm = self.update_state(alarm, event[Check.STATE], event)
@@ -510,6 +518,8 @@ class Alerts(object):
             else:  # Alarm is already opened
                 value = alarm.get(self.alerts_storage.VALUE)
                 if self.is_hard_limit_reached(value):
+                    return
+                if not self.check_if_the_entity_is_enabled(entity_id):
                     return
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
@@ -688,8 +698,8 @@ class Alerts(object):
                 # Disengaging 'keepstate' flag
                 alarm[storage_value][AlarmField.state.value]['_t'] = None
             else:
-                self.logger.info('Entity {} not allowed to change state: ignoring'
-                                 .format(alarm['data_id']))
+                self.logger.info('Entity {} not allowed to change state: '
+                                 'ignoring'.format(alarm['data_id']))
                 return alarm
 
         # Escalation
@@ -813,7 +823,8 @@ class Alerts(object):
             )
             return alarm
 
-        last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
+        last_status_i = alarm[AlarmField.steps.value].index(
+            alarm[AlarmField.status.value])
 
         state_changes = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
@@ -889,15 +900,15 @@ class Alerts(object):
 
         return alarm
 
-    def resolve_alarms(self):
+    def resolve_alarms(self, alarms):
         """
         Loop over all unresolved alarms, and check if it can be resolved.
+
+        :param alarms: a list of unresolved alarms
+        :return: a list of unresolved alarms (excluding locally processed alarms)
         """
-
-        result = self.get_alarms(resolved=False)
-
-        for data_id in result:
-            for docalarm in result[data_id]:
+        for data_id in alarms:
+            for docalarm in alarms[data_id]:
                 docalarm[self.alerts_storage.DATA_ID] = data_id
                 alarm = docalarm.get(self.alerts_storage.VALUE)
 
@@ -908,18 +919,22 @@ class Alerts(object):
                     if (now - t) > self.flapping_interval:
                         alarm[AlarmField.resolved.value] = t
                         self.update_current_alarm(docalarm, alarm)
+                        alarms[data_id].remove(docalarm)
 
-    def resolve_cancels(self):
+        return alarms
+
+    def resolve_cancels(self, alarms):
         """
         Loop over all canceled alarms, and resolve the ones that are in this
         status for too long.
-        """
 
-        result = self.get_alarms(resolved=False)
+        :param alarms: a list of unresolved alarms
+        :return: a list of unresolved alarms (excluding locally processed alarms)
+        """
         now = int(time())
 
-        for data_id in result:
-            for docalarm in result[data_id]:
+        for data_id in alarms:
+            for docalarm in alarms[data_id]:
                 docalarm[self.alerts_storage.DATA_ID] = data_id
                 alarm = docalarm.get(self.alerts_storage.VALUE)
 
@@ -929,17 +944,20 @@ class Alerts(object):
                     if (now - canceled_ts) >= self.cancel_autosolve_delay:
                         alarm[AlarmField.resolved.value] = canceled_ts
                         self.update_current_alarm(docalarm, alarm)
+                        alarms[data_id].remove(docalarm)
+
+        return alarms
 
     def resolve_snoozes(self):
         """
         Loop over all snoozed alarms, and restore them if needed.
         """
-
         now = int(time())
         result = self.get_alarms(resolved=False, snoozed=True)
 
         for data_id in result:
             for docalarm in result[data_id]:
+
                 docalarm[self.alerts_storage.DATA_ID] = data_id
                 alarm = docalarm.get(self.alerts_storage.VALUE)
 
@@ -957,16 +975,16 @@ class Alerts(object):
                                      .format(data_id))
                     self.update_current_alarm(docalarm, alarm)
 
-    def resolve_stealthy(self):
+    def resolve_stealthy(self, alarms):
         """
         Loop over all stealthy alarms, and check if it can be return to off
         status.
+
+        :param alarms: a list of unresolved alarms
+        :return: a list of unresolved alarms (excluding locally processed alarms)
         """
-
-        result = self.get_alarms(resolved=False)
-
-        for data_id in result:
-            for docalarm in result[data_id]:
+        for data_id in alarms:
+            for docalarm in alarms[data_id]:
                 docalarm[self.alerts_storage.DATA_ID] = data_id
                 alarm = docalarm.get(self.alerts_storage.VALUE)
 
@@ -992,6 +1010,9 @@ class Alerts(object):
                     event
                 )
                 self.update_current_alarm(docalarm, alarm_new['value'])
+                alarms[data_id].remove(docalarm)
+
+        return alarms
 
     def check_alarm_filters(self):
         """
