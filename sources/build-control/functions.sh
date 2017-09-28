@@ -505,10 +505,10 @@ function export_env() {
     export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
 }
 
-function easy_install_pylib() {
+function pip_install() {
     echo "Easy install Python Library: $1 ..."
 
-    $PREFIX/bin/easy_install -Z --prefix=$PREFIX -H None -f $SRC_PATH/externals/python-libs $1 1>> $LOG 2>> $LOG
+    pip install --no-index --find-links=file://${SRC_PATH}/externals/python-libs $1
     check_code $? "Easy install failed ..."
 }
 

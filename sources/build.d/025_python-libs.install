@@ -10,17 +10,12 @@ function pip_install_requirements() {
 
 
 function install(){
-	pip_install_requirements
-
-	# Todo: Very dirty patch, see https://github.com/Supervisor/supervisor/issues/141
-	sed -i "156i\            if isinstance(value, bool):\n                value = xmlrpclib.boolean(value)" \
-		$PREFIX/lib/python2.7/site-packages/supervisor/xmlrpc.py
-	rm $PREFIX/lib/python2.7/site-packages/supervisor/xmlrpc.pyc
-
+	pip install -r ${SRC_PATH}/canopsis/requirements.txt --no-index --find-links=file://${SRC_PATH}/externals/python-libs
 	install_conf "supervisord.conf"
 }
 
 
 function update() {
+	pip install -r ${SRC_PATH}/canopsis/requirements.txt --upgrade --no-index --find-links=file://${SRC_PATH}/externals/python-libs
 	pip_install_requirements
 }

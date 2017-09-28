@@ -27,11 +27,11 @@ function update_documentation() {
 }
 
 function install() {
-    easy_install_pylib MarkupSafe
-    easy_install_pylib docutils
-    easy_install_pylib Pygments
-    easy_install_pylib jinja2
-    easy_install_pylib Sphinx
+    pip_install MarkupSafe
+    pip_install docutils
+    pip_install Pygments
+    pip_install jinja2
+    pip_install Sphinx
     update_documentation
 }
 

@@ -30,6 +30,6 @@ function install(){
 	cp -R plugins $PREFIX/opt/rabbitmq-server/plugins
 	check_code $?
 	
-	easy_install_pylib httplib2
-	easy_install_pylib pyrabbit
+	pip_install httplib2
+	pip_install pyrabbit
 }
