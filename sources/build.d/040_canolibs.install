@@ -11,7 +11,7 @@ function install() {
 
     rm -rf build canopsis.egg-info dist
 
-    launch_log $NAME 'python setup.py install'
+    launch_log $NAME 'python setup.py build install'
     check_code $? "Impossible to install canopsis"
 
     install_pytests "canopsis"
@@ -29,7 +29,7 @@ function update() {
 
     rm -rf build canopsis.egg-info dist
 
-    launch_log $NAME "python setup.py install --no-conf"
+    launch_log $NAME "python setup.py build install --no-conf"
     check_code $? "Impossible to update canopsis"
 
     install_pytests "canopsis"
