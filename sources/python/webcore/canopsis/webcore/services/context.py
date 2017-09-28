@@ -75,10 +75,8 @@ def exports(ws):
             sort=sort,
             with_count=True
         )
-        result = [count]
-        result += data
 
-        return result
+        return data, count
 
     @route(ws.application.put, payload=[
         '_type', 'entity', 'context', 'extended_id'
