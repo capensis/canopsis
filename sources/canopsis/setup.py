@@ -147,12 +147,9 @@ def setup_canopsis(pkgpath, embed_conf):
 
 if __name__ == '__main__':
     embed_conf = True
-
-    if '--no-conf' not in argv:
+    if '--no-conf' in argv:
         embed_conf = False
-    else:
         argv.remove('--no-conf')
 
-    pkgpath = get_pkgpath()
-    setuptools_args = setup_canopsis(pkgpath, embed_conf)
+    setuptools_args = setup_canopsis(get_pkgpath(), embed_conf)
     setup(**setuptools_args)
