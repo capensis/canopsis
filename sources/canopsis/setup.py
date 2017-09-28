@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -45,7 +45,7 @@ def get_pkgpath():
     return dirname(abspath(expanduser(filename)))
 
 
-def find_scripts(pkgpath):
+def get_scripts(pkgpath):
     """
     Get a list of scripts to install in canopsis env.
     """
@@ -141,6 +141,7 @@ def setup_canopsis(pkgpath, embed_conf):
     setuptools_args['long_description'] = get_description(pkgpath)
     setuptools_args['test_suite'] = get_test_suite(pkgpath)
     setuptools_args['data_files'] = get_data_files(pkgpath, embed_conf)
+    setuptools_args['scripts'] = get_scripts(pkgpath)
 
     return setuptools_args
 
