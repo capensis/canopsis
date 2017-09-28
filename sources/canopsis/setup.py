@@ -102,11 +102,18 @@ def setup(add_etc=True, **kwargs):
         packages = find_packages(where=_path, exclude=TEST_FOLDERS)
         kwargs['packages'] = packages
 
+    if 'install_requires' not in kwargs:
+        requires_path = join(_path, 'requirements.txt')
+        with open(requires_path) as f:
+            # remove new lines, extra spaces...
+            requirements = [r.strip() for r in f.readlines()]
+            kwargs['install_requires'] = requirements
+
     # add description
     if 'long_description' not in kwargs:
         readme_path = join(_path, 'README.md')
         if exists(readme_path):
-            with open(join(_path, 'README.md')) as f:
+            with open(readme_path) as f:
                 kwargs['long_description'] = f.read()
 
     # add test
