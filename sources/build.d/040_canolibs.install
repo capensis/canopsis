@@ -9,12 +9,14 @@ function install() {
     export CPS_PREFIX="$PREFIX/etc/"
     cd $SRC_PATH/canopsis
 
+    rm -rf build canopsis.egg-info dist
+
     launch_log $NAME 'python setup.py install'
     check_code $? "Impossible to install canopsis"
 
     install_pytests "canopsis"
 
-    chown $HUSER:$HGROUP -Rf build canopsis.egg-info dist
+    rm -rf build canopsis.egg-info dist
 
     install_init "canopsis"
 }
@@ -25,12 +27,14 @@ function update() {
     export CPS_PREFIX="$PREFIX/etc/"
     cd $SRC_PATH/canopsis
 
+    rm -rf build canopsis.egg-info dist
+
     launch_log $NAME "python setup.py install --no-conf"
     check_code $? "Impossible to update canopsis"
 
     install_pytests "canopsis"
 
-    chown $HUSER:$HGROUP -Rf build canopsis.egg-info dist
+    rm -rf build canopsis.egg-info dist
     update_conffiles ./etc
 
     install_init "canopsis"

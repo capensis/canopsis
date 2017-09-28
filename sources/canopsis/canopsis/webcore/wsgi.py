@@ -40,6 +40,8 @@ from canopsis.old.rabbitmq import Amqp
 # TODO: replace with canopsis.mongo.MongoStorage
 from canopsis.old.storage import get_storage
 
+from canopsis.webcore.services import session as session_module
+
 DEFAULT_DEBUG = False
 DEFAULT_ECSE = False
 DEFAULT_ROOT_DIR = '~/var/www/src/'
@@ -56,7 +58,7 @@ class EnsureAuthenticated(object):
         super(EnsureAuthenticated, self).__init__(*args, **kwargs)
 
         self.ws = ws
-        self.session = ws.require('session')
+        self.session = session_module
 
     def apply(self, callback, context):
         def decorated(*args, **kwargs):
@@ -146,32 +148,33 @@ class WebServer():
         self.logger.info('WSGI fully loaded.')
         return self
 
-    def _load_webservice(self, name):
-        modname = 'canopsis.webcore.services.{0}'.format(name)
-
-        if name in self.webmodules:
+    def _load_webservice(self, modname, alias):
+        if alias in self.webmodules:
             return True
 
-        self.logger.info('Loading webservice: {0}'.format(name))
+        if modname is None:
+            return False
+
+        self.logger.info('Loading webservice: {0}'.format(modname))
 
         try:
             mod = importlib.import_module(modname)
 
         except ImportError as err:
             self.logger.error(
-                'Impossible to load webservice {0}: {1}'.format(name, err)
+                'Impossible to load webservice {0}: {1}'.format(modname, err)
             )
 
             return False
 
         else:
             if hasattr(mod, 'exports'):
-                self.webmodules[name] = mod
+                self.webmodules[alias] = mod
                 mod.exports(self)
 
             else:
                 self.logger.error(
-                    'Invalid module {0}, no exports()'.format(name)
+                    'Invalid module {0}, no exports()'.format(modname)
                 )
 
                 return False
@@ -179,18 +182,15 @@ class WebServer():
         return True
 
     def load_webservices(self):
-        for webservice in self.webservices:
-            if self.webservices[webservice]:
-                self._load_webservice(webservice)
+        for module, alias in self.webservices.iteritems():
+            self._load_webservice(module, alias)
         self.logger.info(u'Service loading completed.')
 
-    def _load_auth_backend(self, name):
-        modname = 'canopsis.auth.{0}'.format(name)
-
-        if name in self.auth_backends:
+    def _load_auth_backend(self, modname):
+        if modname in self.auth_backends:
             return True
 
-        self.logger.info('Load authentication backend: {0}'.format(name))
+        self.logger.info('Load authentication backend: {0}'.format(modname))
 
         try:
             mod = importlib.import_module(modname)
@@ -198,7 +198,7 @@ class WebServer():
         except ImportError as err:
             self.logger.error(
                 'Impossible to load authentication backend {}: {}'.format(
-                    name, err
+                    modname, err
                 )
             )
 
@@ -250,14 +250,6 @@ class WebServer():
             # TODO: self.amqp.wait() not implemented
 
             sys.exit(0)
-
-    def require(self, modname):
-        if not self._load_webservice(modname):
-            raise ImportError(
-                'Impossible to import webservice: {0}'.format(modname)
-            )
-
-        return self.webmodules[modname]
 
     class Error(Exception):
         pass

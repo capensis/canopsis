@@ -24,7 +24,7 @@ from os.path import join, dirname, expanduser, abspath, exists
 from sys import argv
 from sys import prefix as sys_prefix
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 PACKAGE = 'canopsis'
 AUTHOR = 'Capensis'
@@ -134,7 +134,7 @@ def setup_canopsis(pkgpath, embed_conf):
     setuptools_args['license'] = LICENSE
     setuptools_args['zip_safe'] = ZIP_SAFE
     setuptools_args['url'] = URL
-    setuptools_args['packages'] = ['canopsis']
+    setuptools_args['packages'] = find_packages(exclude=['test.*'])
     setuptools_args['keywords'] = KEYWORDS
     setuptools_args['version'] = VERSION
     setuptools_args['install_requires'] = get_install_requires(pkgpath)

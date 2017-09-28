@@ -24,8 +24,8 @@ from bottle import redirect, response, HTTPError, urlencode
 from hashlib import sha1
 from time import time
 
-from . import session
-from . import rights
+from canopsis.webcore.services import session as session_module
+from canopsis.webcore.services import rights as rights_module
 
 
 def check(mode='authkey', user=None, password=None):
@@ -53,7 +53,7 @@ def check(mode='authkey', user=None, password=None):
         return None
 
     def _check_authkey(user, key):
-        manager = rights.get_manager()
+        manager = rights_module.get_manager()
 
         if not user:
             user = manager.user_storage.get_elements(
@@ -91,14 +91,14 @@ def autoLogin(key):
     if not user.get('enable', False):
         return HTTPError(403, 'Account is disabled')
 
-    session.create(user)
+    session_module.create(user)
 
     return user
 
 
 def exports(ws):
-    session = ws.require('session')
-    rights = ws.require('rights').get_manager()
+    session = session_module
+    rights = rights_module.get_manager()
 
     @route(
         ws.application.post,

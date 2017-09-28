@@ -24,10 +24,12 @@ import os
 
 from canopsis.common.template import Template
 
+from canopsis.webcore.services import auth as auth_module
+from canopsis.webcore.services import session as session_module
 
 def exports(ws):
-    session = ws.require('session')
-    auth = ws.require('auth')
+    session = session_module
+    auth = auth_module
 
     skip_login = ws.skip_login
 
