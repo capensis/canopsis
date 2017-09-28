@@ -26,17 +26,17 @@ from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
 def exports(ws):
 
     ws.application.router.add_filter('id_filter', id_filter)
 
-    am = Alerts()
-    ar = AlertsReader()
-    context_manager = ContextGraph()
+    context_manager = ContextGraph(ws.logger)
+    am = Alerts(*Alerts.provide_default_basics())
+    ar = AlertsReader(*AlertsReader.provide_default_basics())
 
     @route(
         ws.application.get,
@@ -124,7 +124,7 @@ def exports(ws):
         list_alarm = []
         for alarm in alarms['alarms']:
             tmp_entity_id = alarm['d']
-            
+
             if tmp_entity_id in entity_dict:
                 if alarm.get('infos'):
                     alarm['infos'].update(entity_dict[alarm['d']]['infos'])
@@ -132,7 +132,7 @@ def exports(ws):
                 else:
                     alarm['infos'] = entity_dict[alarm['d']]['infos']
                     list_alarm.append(alarm)
-            else: 
+            else:
                 list_alarm.append(alarm)
         alarms['alarms'] = list_alarm
 

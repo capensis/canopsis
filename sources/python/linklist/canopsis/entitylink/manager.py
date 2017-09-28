@@ -17,31 +17,46 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
 from __future__ import unicode_literals
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
-from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
 
-CONF_PATH = 'linklist/linklist.conf'
-CATEGORY = 'LINKLIST'
 
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class Entitylink(MiddlewareRegistry):
-
-    ENTITY_STORAGE = 'entitylink_storage'
+class Entitylink(object):
 
     """
     Manage entity link information in Canopsis
     """
 
-    def __init__(self, *args, **kwargs):
+    LOG_PATH = 'var/log/linklist.log'
+    ENTITYLINK_STORAGE_URI = 'mongodb-default-entitylink://'
 
-        super(Entitylink, self).__init__(*args, **kwargs)
-        self.context = ContextGraph()
+    def __init__(self, logger, storage, context_graph):
+        self.logger = logger
+        self.entitylink_storage = storage
+        self.context = context_graph
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide logger, config, storages...
+
+        ! Do not use in tests !
+
+        :rtype: Union[logging.Logger,
+                      canopsis.storage.core.Storage,
+                      canopsis.context_graph.manager.ContextGraph]
+        """
+        logger = Logger.get('linklist', cls.LOG_PATH)
+        entitylink_storage = Middleware.get_middleware_by_uri(
+            cls.ENTITYLINK_STORAGE_URI
+        )
+        context = ContextGraph(logger)
+
+        return (logger, entitylink_storage, context)
 
     def get_or_create_from_event(self, event):
         """
@@ -123,7 +138,7 @@ class Entitylink(MiddlewareRegistry):
         :param with_count: compute selection count when True
         """
 
-        result = self[Entitylink.ENTITY_STORAGE].get_elements(
+        result = self.entitylink_storage.get_elements(
             ids=ids,
             skip=skip,
             sort=sort,
@@ -141,7 +156,7 @@ class Entitylink(MiddlewareRegistry):
         :param document: contains link information for entities
         """
 
-        self[Entitylink.ENTITY_STORAGE].put_element(
+        self.entitylink_storage.put_element(
             _id=_id, element=document, cache=cache
         )
 
@@ -152,4 +167,4 @@ class Entitylink(MiddlewareRegistry):
         :param element_id: identifier for the document to remove
         """
 
-        self[Entitylink.ENTITY_STORAGE].remove_elements(ids=ids)
+        self.entitylink_storage.remove_elements(ids=ids)

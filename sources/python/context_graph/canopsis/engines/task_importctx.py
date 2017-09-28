@@ -9,12 +9,8 @@ from canopsis.configuration.configurable.decorator import conf_paths,\
     add_category
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.model import Parameter
-
-TASK_CONF = "TASK_IMPORTCTX"
-CONTENT = {
-    Parameter("thd_warn_min_per_import", parser=int), Parameter(
-        "thd_crit_min_per_import", parser=int)
-}
+from canopsis.confng import Configuration, Ini
+from canopsis.logger import Logger, OutputFile
 
 MSG_SUCCEED = "Import {0} succeed."
 MSG_FAILED = "Import {0} failed."
@@ -49,15 +45,38 @@ def human_exec_time(exec_time):
         str(hours).zfill(2), str(minutes).zfill(2), str(seconds).zfill(2))
 
 
-@conf_paths("context_graph/manager.conf")
-@add_category(TASK_CONF, content=CONTENT)
-class engine(TaskHandler, MiddlewareRegistry):
+class engine(TaskHandler):
 
     etype = "task_importctx"
 
     E_IMPORT_FAILED = "Error during the import of id {0} : {1}."
     I_IMPORT_DONE = "Import {0} done."
     I_START_IMPORT = "Start import {0}."
+    LOG_NAME = "Task_importctx"
+    LOG_PATH = "var/log/engines/task_importctx.log"
+
+    TASK_CONF = "TASK_IMPORTCTX"
+    CONF_PATH = "etc/context_graph/manager.conf"
+    THD_WARN_S = "thd_warn_min_per_import"
+    THD_CRIT_S = "thd_crit_min_per_import"
+
+    def __init__(self, config=None, *args, **kwargs):
+
+        super(engine, self).__init__(*args, **kwargs)
+
+        if config is None:
+            config = Configuration.load(self.CONF_PATH, Ini)
+
+        section = config.get(self.TASK_CONF)
+
+        self._thd_warn_s = section.get(self.THD_WARN_S) * 60
+        self._thd_crit_s = section.get(self.THD_CRIT_S) * 60
+
+        self.logger = Logger.get(self.LOG_NAME,
+                                 self.LOG_PATH,
+                                 output_cls=OutputFile)
+        self.importer = ContextGraphImport(logger=self.logger)
+        self.report_manager = Manager()
 
     def send_perfdata(self, uuid, time, updated, deleted):
         """Send stat about the import through a perfdata event.
@@ -70,14 +89,6 @@ class engine(TaskHandler, MiddlewareRegistry):
         :param deleted: the number of deleted entities during the import
         :type deleted: an integer
         """
-
-        if not hasattr(self, "thd_warn_s"):
-            values = values = self.conf.get(TASK_CONF)
-            self._thd_warn_s = values.get("thd_warn_min_per_import").value * 60
-
-        if not hasattr(self, "thd_crit_s"):
-            values = values = self.conf.get(TASK_CONF)
-            self._thd_crit_s = values.get("thd_crit_min_per_import").value * 60
 
         # define the state according to the duration of the import
         if time > self._thd_crit_s:
@@ -115,17 +126,13 @@ class engine(TaskHandler, MiddlewareRegistry):
         """Handlt the import.
         :param job: the event.
         :type job: a dict"""
-
-        importer = ContextGraphImport(logger=self.logger)
-        report_manager = Manager()
-
         self.logger.info(job)
 
         uuid = job[Keys.EVT_IMPORT_UUID]
 
         self.logger.info("Processing import {0}.".format(uuid))
 
-        report_manager.update_status(uuid, {Keys.F_STATUS: Keys.ST_ONGOING})
+        self.report_manager.update_status(uuid, {Keys.F_STATUS: Keys.ST_ONGOING})
 
         start = time.time()
         report = {}
@@ -133,13 +140,13 @@ class engine(TaskHandler, MiddlewareRegistry):
         deleted = 0
 
         try:
-            updated, deleted = importer.import_context(uuid)
+            updated, deleted = self.importer.import_context(uuid)
 
-        except Exception as e:
-            report = {Keys.F_STATUS: Keys.ST_FAILED, Keys.F_INFO: repr(e)}
+        except Exception as ex:
+            report = {Keys.F_STATUS: Keys.ST_FAILED, Keys.F_INFO: repr(ex)}
 
-            self.logger.error(self.E_IMPORT_FAILED.format(uuid, repr(e)))
-            self.logger.exception(e)
+            self.logger.error(self.E_IMPORT_FAILED.format(uuid, repr(ex)))
+            self.logger.exception(ex)
             msg = MSG_FAILED.format(uuid)
             state = ST_CRITICAL
 
@@ -158,15 +165,13 @@ class engine(TaskHandler, MiddlewareRegistry):
         end = time.time()
         delta = end - start
         report[Keys.F_EXECTIME] = human_exec_time(delta)
-        report_manager.update_status(uuid, report)
+        self.report_manager.update_status(uuid, report)
 
         self.send_perfdata(uuid, delta, updated, deleted)
 
         try:
             os.remove(Keys.IMPORT_FILE.format(uuid))
-        except Exception as e:
+        except Exception as ex:
             pass
-
-        del importer
 
         return (state, msg)

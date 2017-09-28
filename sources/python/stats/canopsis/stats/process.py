@@ -25,8 +25,8 @@ from canopsis.alerts.status import get_previous_step
 from canopsis.common.utils import singleton_per_scope
 from canopsis.middleware.core import Middleware
 from canopsis.session.manager import Session
-from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.stats.producers.event import EventMetricProducer
+from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.task.core import register_task
 
 
@@ -146,9 +146,8 @@ def beat_processing(
         usermgr = singleton_per_scope(UserMetricProducer)
 
     if alertsmgr is None:
-        alertsmgr = singleton_per_scope(Alerts)
-
-    storage = alertsmgr[alertsmgr.ALARM_STORAGE]
+        alertsmgr = singleton_per_scope(Alerts,
+                                        args=Alerts.provide_default_basics())
 
     session_stats(usermgr, sessionmgr, logger)
 
@@ -157,7 +156,7 @@ def beat_processing(
             opened_alarm_stats(
                 eventmgr,
                 alertsmgr,
-                storage,
+                alertsmgr.alerts_storage,
                 logger
             )
 
@@ -165,6 +164,6 @@ def beat_processing(
                 eventmgr,
                 usermgr,
                 alertsmgr,
-                storage,
+                alertsmgr.alerts_storage,
                 logger
             )

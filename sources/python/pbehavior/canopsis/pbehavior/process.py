@@ -26,12 +26,11 @@ from __future__ import unicode_literals
 
 from json import dumps
 
-from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.utils import singleton_per_scope
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.task.core import register_task
 from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
-from canopsis.watcher.manager import Watcher as WatcherManager
-
+from canopsis.watcher.manager import Watcher
 
 EVENT_TYPE = 'pbehavior'
 PBEHAVIOR_CREATE = 'create'
@@ -48,21 +47,28 @@ DEFAULT_AUTHOR = 'Default Author'
 TEMPLATE = '/{}/{}/{}/{}'
 TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
 
-WATCHER_MANAGER = WatcherManager()
+watcher_manager = Watcher()
 
+def init_managers():
+    pb_logger, pb_storage = PBehaviorManager.provide_default_basics()
+    pb_kwargs = {'logger': pb_logger, 'pb_storage': pb_storage}
+    pb_manager = singleton_per_scope(PBehaviorManager, kwargs=pb_kwargs)
+
+    return pb_manager
+
+def get_entity_id(event):
+    return ContextGraph.get_id(event)
+
+_pb_manager = init_managers()
 
 @register_task
-def event_processing(engine, event, pbm=None, logger=None,
-                     watcher_manager=WATCHER_MANAGER, **kwargs):
+def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
     """
     Event processing.
     """
-    if pbm is None:
-        pbm = singleton_per_scope(PBehaviorManager)
-
     if event.get('event_type') == EVENT_TYPE:
         entity_id = ContextGraph.get_id(event)
-        logger.debug("Start processing event {}".format(event))
+        engine.logger.debug("Start processing event {}".format(event))
 
         logger.debug("entity_id: {}\naction: {}".format(
             entity_id, event.get('action')))
@@ -123,16 +129,13 @@ def event_processing(engine, event, pbm=None, logger=None,
 
 
 @register_task
-def beat_processing(engine, pbm=None, logger=None, **kwargs):
+def beat_processing(engine, pbm=_pb_manager, **kwargs):
     """
     Beat processing.
     """
-    logger.debug("Start beat processing")
+    engine.logger.debug("Start beat processing")
 
-    if pbm is None:
-        pbm = singleton_per_scope(PBehaviorManager)
     try:
         pbm.compute_pbehaviors_filters()
-    except Exception as err:
-        logger.error('Processing error {}'.format(str(err)))
-    pbm.launch_update_watcher(WATCHER_MANAGER)
+    except Exception as ex:
+        engine.logger.error('Processing error {}'.format(str(ex)))

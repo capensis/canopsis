@@ -20,8 +20,9 @@
 
 from canopsis.common.ws import route
 from canopsis.vevent.manager import VEventManager
+from canopsis.middleware.core import Middleware
 
-vem = VEventManager()
+vem = VEventManager(storage=Middleware.get_middleware_by_uri(VEventManager.VEVENT_COLL_URL))
 
 DEFAULT_ROUTE = 'vevent'  #: route specifics to vevents document
 

@@ -7,9 +7,11 @@ from unittest import main, TestCase
 
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
+from canopsis.logger import Logger, OutputNull
 
 from infos_filter import Keys, SCHEMA, TEMPLATE_INFOS
 
+logger = Logger.get("", None, output_cls=OutputNull)
 
 def create_entity(
         id,
@@ -65,7 +67,7 @@ def create_re(id, name, depends=[], impact=[], measurements=[], infos={}):
 class BaseTest(TestCase):
 
     def setUp(self):
-        self.manager = ContextGraph()
+        self.manager = ContextGraph(logger)
         self.entities_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
@@ -76,10 +78,7 @@ class BaseTest(TestCase):
             'storage-default-testusers://'
         )
 
-        self.manager[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
-        self.manager[
-            ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
-        self.manager[ContextGraph.USERS_STORAGE] = self.users_storage
+        self.manager.ent_storage = self.entities_storage
 
         self.template = {'_id': None,
                          'type': 'connector',
@@ -101,50 +100,91 @@ class BaseTest(TestCase):
         sorted(entity2["impact"])
         self.assertDictEqual(entity1, entity2)
 
-    def _insertion_filter_test(self, function):
-        infos = TEMPLATE_INFOS.copy()
-
-        infos[Keys.F_ENABLED.value] = True
-        infos[Keys.F_DISABLED_HIST.value] = [1]
-        infos[Keys.F_ENABLED_HIST.value] = [1]
+    def _insertion_filter_test(self, function, expected=None):
+        infos = {}
 
         entity = create_entity("id", "a name", "resource", infos=infos)
-
-        expected = entity.copy()
-
-        infos["I am not allowed to be here"] = [1]
-        infos["me too"] = [1]
+        if expected is None:
+            expected = entity.copy()
 
         function(entity)
         result = self.manager.get_entities_by_id("id")[0]
+        # pop non predictable fields
+        try:
+            result.pop("enable_history")
+        except KeyError:
+            pass
 
         self.assertEqualEntities(result, expected)
 
-    def _insertion_filter_test_not_allowed_field(self, function):
-        infos = TEMPLATE_INFOS.copy()
+    def _insertion_filter_test_not_allowed_field(self, function, expected=None):
 
-        infos[Keys.F_ENABLED.value] = True
-        infos[Keys.F_DISABLED_HIST.value] = [1]
-        infos[Keys.F_ENABLED_HIST.value] = [1]
-
+        infos = {"I am not allowed to be here": [1],
+                 "me too": [1]}
         entity = create_entity("id", "a name", "resource", infos=infos)
-
-        expected = entity.copy()
+        if expected is None:
+            expected = entity.copy()
 
         function(entity)
         result = self.manager.get_entities_by_id("id")[0]
+        # pop non predictable fields
+        try:
+            result.pop("enable_history")
+        except KeyError:
+            pass
 
         self.assertEqualEntities(result, expected)
 
+class CreateEntityDict(BaseTest):
 
-class GetEvent(TestCase):
+    def test_create_entity(self):
+        id_ = "id_1"
+        name = "name_1"
+        etype = "resource"
+        depends = ["id_2", "id_3", "id_4", "id_5"]
+        impacts = ["id_6", "id_7", "id_8", "id_9"]
+        measurements = {"tag_1": "data_1", "tag_2": "data_2"}
+        infos = {"info_1": "foo_1", "info_2": "bar_2"}
+
+        ent = ContextGraph.create_entity_dict(id_, name, etype, depends,
+                                    impacts, measurements, infos)
+
+        self.assertEqual(id_, ent["_id"])
+        self.assertEqual(name, ent["name"])
+        self.assertEqual(etype, ent["type"])
+        self.assertEqual(depends, ent["depends"])
+        self.assertEqual(impacts, ent["impact"])
+        self.assertEqual(measurements, ent["measurements"])
+        self.assertEqual(infos, ent["infos"])
+
+    def test_create_component(self):
+        id_ = "id_1"
+        name = "name_1"
+        etype = "component"
+        depends = ["id_2", "id_3", "id_4", "id_5"]
+        impacts = ["id_6", "id_7", "id_8", "id_9"]
+        measurements = {"tag_1": "data_1", "tag_2": "data_2"}
+        infos = {"info_1": "foo_1", "info_2": "bar_2"}
+
+        ent = ContextGraph.create_entity_dict(id_, name, etype, depends,
+                                    impacts, measurements, infos)
+
+        self.assertEqual(id_, ent["_id"])
+        self.assertEqual(name, ent["name"])
+        self.assertEqual(etype, ent["type"])
+        self.assertEqual(depends, ent["depends"])
+        self.assertEqual(impacts, ent["impact"])
+        self.assertNotIn("measurements", ent.keys())
+        self.assertEqual(infos, ent["infos"])
+
+
+class GetEvent(BaseTest):
     """Test get_event method.
     """
 
     def setUp(self):
         super(GetEvent, self).setUp()
-        self.context = ContextGraph(data_scope='test_context')
-        self.context[ContextGraph.ENTITIES_STORAGE].remove_elements()
+        self.manager.ent_storage.remove_elements()
 
     def test_get_check_event(self):
 
@@ -160,7 +200,7 @@ class GetEvent(TestCase):
         entity = create_conn(entity_id, conn_name, depends=[],
                              impact=[])
 
-        event = self.context.get_event(
+        event = self.manager.get_event(
             entity, event_type='check', output='test'
         )
 
@@ -678,6 +718,14 @@ class DeleteEntity(BaseTest):
 
 class CreateEntity(BaseTest):
 
+    SCHEMA = {"schema": {
+        "properties": {
+            "disable_history": "string",
+            "enable_history": "string",
+            "enabled": "boolean"
+        }
+    }}
+
     def test_create_entity_entity_exists(self):
         entity = self.template.copy()
         entity['_id'] = "I am here"
@@ -733,10 +781,22 @@ class CreateEntity(BaseTest):
         self.__test("impact", "depends")
 
     def test_create_infos_filter(self):
-        self._insertion_filter_test(self.manager.create_entity)
+        self.manager.filter_._schema = self.SCHEMA
+        infos = {}
+        expected = create_entity("id", "a name", "resource", infos=infos)
+        expected["enabled"] = True
+        self._insertion_filter_test(
+            self.manager.create_entity, expected
+        )
 
     def test_create_infos_filter_not_allowed_field(self):
-        self._insertion_filter_test(self.manager.create_entity)
+        self.manager.filter_._schema = self.SCHEMA
+        infos = {}
+        expected = create_entity("id", "a name", "resource", infos=infos)
+        expected["enabled"] = True
+        self._insertion_filter_test_not_allowed_field(
+            self.manager.create_entity, expected
+        )
 
 
 class TestGraphRequests(BaseTest):

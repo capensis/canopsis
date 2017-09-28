@@ -18,49 +18,40 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.model import Parameter
-
-from canopsis.common.utils import lookup
-
+import json
 from logging import StreamHandler
 import signal
-import json
-import os
+
+from canopsis.common.utils import lookup
+from canopsis.confng import Configuration, Json
+from canopsis.logger import Logger
+
+DEFAULT_MODULES = ['canopsis.migration.purge.PurgeModule',
+                   'canopsis.migration.indexes.IndexesModule',
+                   'canopsis.migration.jsonloader.JSONLoaderModule',
+                   'canopsis.migration.rights.RightsModule',
+                   'canopsis.migration.views.ViewsModule',
+                   'canopsis.migration.perfdata.PerfdataModule']
+DEFAULT_ASK_TIMEOUT = 30
+DEFAULT_VERSION_INFO = '~/var/lib/canopsis/migration.json'
 
 
-CONF_PATH = 'migration/manager.conf'
-CATEGORY = 'MIGRATION'
-CONTENT = [
-    Parameter('modules', parser=Parameter.array())
-]
+class MigrationTool(object):
+    """
+    """
 
+    CONF_PATH = 'etc/migration/manager.conf'
+    LOG_PATH = 'var/log/migrationtool.log'
+    CATEGORY = 'MIGRATION'
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
-class MigrationTool(Configurable):
+    def __init__(self, modules=None):
 
-    @property
-    def modules(self):
-        if not hasattr(self, '_modules'):
-            self.modules = None
+        self.logger = Logger.get('migrationtool', self.LOG_PATH)
+        self.config = Configuration.load(MigrationTool.CONF_PATH, Json)
+        conf = self.config.get(self.CATEGORY, {})
 
-        return self._modules
-
-    @modules.setter
-    def modules(self, value):
-        if value is None:
-            value = []
-
-        self._modules = value
-
-    def __init__(self, modules=None, *args, **kwargs):
-        super(MigrationTool, self).__init__(*args, **kwargs)
-
-        if modules is not None:
-            self.modules = modules
+        if modules is None:
+            self.modules = conf.get('modules', DEFAULT_MODULES)
 
         self.loghandler = StreamHandler()
         self.logger.addHandler(self.loghandler)
@@ -94,47 +85,22 @@ class MigrationTool(Configurable):
                 tool.update()
 
 
-@conf_paths(CONF_PATH)
-@add_category('MODULE', content=[
-    Parameter('ask_timeout', parser=int),
-    Parameter('version_info')
-])
-class MigrationModule(Configurable):
+class MigrationModule(object):
 
-    @property
-    def ask_timeout(self):
-        if not hasattr(self, '_ask_timeout'):
-            self.ask_timeout = None
+    CONF_PATH = 'etc/migration/manager.conf'
+    LOG_PATH = 'var/log/migrationtool.log'
+    CATEGORY = 'MODULE'
 
-        return self._ask_timeout
+    def __init__(self, ask_timeout=None, version_info=None):
+        self.logger = Logger.get('migrationmodule', self.LOG_PATH)
+        self.config = Configuration.load(MigrationModule.CONF_PATH, Json)
+        conf = self.config.get(self.CATEGORY, {})
 
-    @ask_timeout.setter
-    def ask_timeout(self, value):
-        if value is None:
-            value = 30
-
-        self._ask_timeout = value
-
-    @property
-    def version_info(self):
-        if not hasattr(self, '_version_info'):
-            self.version_info = None
-
-        return self._version_info
-
-    @version_info.setter
-    def version_info(self, value):
-        if value is None:
-            value = '~/var/lib/canopsis/migration.json'
-
-        self._version_info = os.path.expanduser(value)
-
-    def __init__(self, ask_timeout=None, version_info=None, *args, **kwargs):
-        super(MigrationModule, self).__init__(*args, **kwargs)
-
+        self.ask_timeout = int(conf.get('ask_timeout', DEFAULT_ASK_TIMEOUT))
         if ask_timeout is not None:
             self.ask_timeout = ask_timeout
 
+        self.version_info = conf.get('version_info', DEFAULT_VERSION_INFO)
         if version_info is not None:
             self.version_info = version_info
 

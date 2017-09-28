@@ -23,10 +23,10 @@ from urlparse import urlparse
 from canopsis.middleware.loader import Loader
 from canopsis.common.utils import ensure_iterable
 from canopsis.configuration.configurable import Configurable
+from canopsis.configuration.configurable import MetaConfigurable
 from canopsis.configuration.model import (
     Parameter, Configuration, Category
 )
-from canopsis.configuration.configurable import MetaConfigurable
 
 
 SCHEME_SEPARATOR = '-'  #: char separator in uri to proto/data_type/data_scope

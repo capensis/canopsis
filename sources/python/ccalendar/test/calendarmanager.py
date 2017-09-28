@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 from canopsis.ccalendar.manager import CalendarManager
-
+from canopsis.middleware.core import Middleware
 
 class CalendarManagerTest(TestCase):
     """
@@ -37,7 +37,7 @@ class CalendarManagerTest(TestCase):
         initialize a manager.
         """
 
-        self.manager = CalendarManager()
+        self.manager = CalendarManager(storage=Middleware.get_middleware_by_uri('mongodb-default-calendar://'))
         self.document_content = self.manager.get_document(
             category="2", output="true date or not",
             dtstart=1434359519, dtend=1434705119

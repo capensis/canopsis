@@ -19,26 +19,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
+from math import isnan
+from random import random, randint
+from time import time, mktime
 from unittest import main, TestCase
 
+from canopsis.confng import Configuration, Ini
 from canopsis.timeserie.core import TimeSerie
 from canopsis.timeserie.timewindow import TimeWindow, Period
-
-from random import random, randint
-
-from time import time, mktime
-
-from dateutil.relativedelta import relativedelta
-
-from datetime import datetime
-
-from math import isnan
 
 
 class TimeSerieTest(TestCase):
 
     def setUp(self):
-        self.timeserie = TimeSerie()
+        self.conf = Configuration.load(TimeSerie.CONF_PATH, Ini)
+        self.timeserie = TimeSerie(self.conf)
         points = [
             (ts, 1) for ts in range(0, 24 * 3600, 3600)
         ]
@@ -97,10 +94,10 @@ class TimeSerieTest(TestCase):
 
         points = [
             # the first interval is empty
-            (rnow, nan), # the second interval contains nan at start
-            (rnow + oneday + 1, nan), # the third interval contains nan at start + 1
-            (rnow + 2 * oneday, 1), # the fourth interval contains 1 at start
-            (rnow + 3 * oneday + 1, 1), # the fourth interval contains 1 at start + 1
+            (rnow, nan),  # the second interval contains nan at start
+            (rnow + oneday + 1, nan),  # the third interval contains nan at start + 1
+            (rnow + 2 * oneday, 1),  # the fourth interval contains 1 at start
+            (rnow + 3 * oneday + 1, 1),  # the fourth interval contains 1 at start + 1
             (rnow + 4 * oneday, nan), (rnow + 4 * oneday + 1, 1),  # the fith interval contains 1 and nan
             (rnow + 5 * oneday, 1), (rnow + 5 * oneday + 1, 1),  # the sixth interval contains 1 and 1
             (rnow + 6 * oneday, 1), (rnow + 6 * oneday, 1),  # the sixth interval contains 1 and 1 at the same time
@@ -108,6 +105,7 @@ class TimeSerieTest(TestCase):
         ]
 
         timeserie = TimeSerie(
+            config=self.conf,
             aggregation='sum',
             period=period,
             round_time=True
@@ -162,7 +160,9 @@ class TimeSerieTest(TestCase):
                 kwargs = {'period': period}
                 period_length = unit_length * value
 
-                timeserie = TimeSerie(round_time=round_time, **kwargs)
+                timeserie = TimeSerie(config=self.conf,
+                                      round_time=round_time,
+                                      **kwargs)
 
                 timesteps = timeserie.timesteps(timewindow)
 

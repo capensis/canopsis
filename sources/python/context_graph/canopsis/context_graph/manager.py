@@ -3,96 +3,80 @@
 from __future__ import unicode_literals
 
 import copy
-import time
 import jsonschema
+import time
 
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.middleware.core import Middleware
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.model import Parameter
 from canopsis.configuration.configurable.decorator import add_category
+from canopsis.configuration.model import Parameter
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
+from canopsis.logger import Logger, OutputFile
+from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 from canopsis.watcher.links import build_all_links
 
 
-CONF_PATH = 'context_graph/manager.conf'
-CONFNG_PATH = 'etc/{}'.format(CONF_PATH)
-CONTEXT_CAT = 'CONTEXTGRAPH'
-CTX_HYPERLINK = "hypertextlink_conf"
-INFOSFILTER_CAT = "INFOS_FILTER"
-CONTEXT_CONTENT = [
-    Parameter('event_types', Parameter.array()),
-    Parameter('extra_fields', Parameter.array()),
-]
-
-DEFAULT_SCHEMA_ID = "context_graph.filter_infos"
+CONF_PATH = 'etc/context_graph/manager.conf'
 
 
-@conf_paths(CONF_PATH)
-@add_category(CONTEXT_CAT, content=CONTEXT_CONTENT)
-class InfosFilter(MiddlewareRegistry):
+class ConfName(object):
+    """List of values used for the configuration"""
+
+    SECT_GCTX = "CONTEXTGRAPH"
+    SECT_FILTER = "INFOS_FILTER"
+
+    ENT_STORAGE = "entities_storage_uri"
+    ORG_STORAGE = "organisations_storage_uri"
+    USR_STORAGE = "users_storage_uri"
+    MEASURMNT_STORAGE = "measurements_storage_uri"
+    IMPORT_STORAGE= "import_storage_uri"
+    EVENT_TYPES = "event_types"
+    EXTRA_FIELDS = "extra_fields"
+
+    SCHEMA_ID = "schema_id"
+    CTX_HYPERLINK = "hypertextlink_conf"
+
+
+class InfosFilter:
     """Class use to clean the infos field of an entity"""
 
     OBJ_STORAGE = "OBJECT_STORAGE"
+    SCHEMA_ID = "schema_infos"
+    LOG_NAME = "InfosFilter"
+    LOG_PATH = "~/var/log/infos_filter.log"
 
-    def __init__(self, logger=None):
-        super(InfosFilter, self).__init__()
+    def __init__(self, config=None, logger=None):
+
+        if logger is None:
+            self.logger = Logger.get(self.LOG_NAME,
+                                     self.LOG_PATH,
+                                     output_cls=OutputFile)
+        else:
+            self.logger = logger
+
+        if config is None:
+            self.config = Configuration.load(CONF_PATH, Ini)
+        else:
+            self.config = config
+
         self.obj_storage = Middleware.get_middleware_by_uri(
             'storage-default://', table='schemas')
 
+        section = self.config.get(ConfName.SECT_GCTX)
+        self._event_types = section[ConfName.EVENT_TYPES]
+        self._extra_fields = section[ConfName.EXTRA_FIELDS]
+
+        section = self.config.get(ConfName.SECT_FILTER)
+        self._schema_id = section[ConfName.SCHEMA_ID]
+
         self.reload_schema()
-        self.logger = logger
-
-    @property
-    def event_types(self):
-        """
-        Array of event_type
-        """
-        if not hasattr(self, '_event_types'):
-            self.event_types = None
-
-        return self._event_types
-
-    @event_types.setter
-    def event_types(self, value):
-        if value is None:
-            value = []
-
-        self._event_types = value
-
-    @property
-    def extra_fields(self):
-        """
-        Array of fields to save from event in entity.
-        """
-        if not hasattr(self, '_extra_fields'):
-            self.extra_fields = None
-
-        return self._extra_fields
-
-    @extra_fields.setter
-    def extra_fields(self, value):
-        if value is None:
-            value = []
-
-        self._extra_fields = value
 
     def reload_schema(self):
         """Reload the schema and regenerate the internal structure used to
         filter the infos dict."""
-
-        if not hasattr(self, "_schema_id"):
-            values = self.conf.get(CONTEXT_CAT)
-            id_ = values.get("_schema_id")
-            #  Ugly hack because we cannot retreive the value of schema_id in
-            # the manager.conf file
-            if id_ is None:
-                self._schema_id = DEFAULT_SCHEMA_ID
-            else:
-                self._schema_id = id_.value
 
         try:
             self._schema = self.obj_storage.get_elements(
@@ -144,55 +128,14 @@ class InfosFilter(MiddlewareRegistry):
             self.__clean(infos, copy.deepcopy(infos), schema)
 
 
-@conf_paths(CONF_PATH)
-@add_category(CONTEXT_CAT, content=CONTEXT_CONTENT)
-class ContextGraph(MiddlewareRegistry):
+class ContextGraph(object):
     """ContextGraph"""
 
-    ENTITIES_STORAGE = 'entities_storage'
-    ORGANISATIONS_STORAGE = 'organisations_storage'
-    USERS_STORAGE = 'measurements_storage'
     NAME = 'name'
 
     RESOURCE = "resource"
     COMPONENT = "component"
     CONNECTOR = "connector"
-
-    @property
-    def event_types(self):
-        """
-        Array of event_type
-        """
-
-        if not hasattr(self, '_event_types'):
-            self.event_types = None
-
-        return self._event_types
-
-    @event_types.setter
-    def event_types(self, value):
-        if value is None:
-            value = []
-
-        self._event_types = value
-
-    @property
-    def extra_fields(self):
-        """
-        Array of fields to save from event in entity.
-        """
-
-        if not hasattr(self, '_extra_fields'):
-            self.extra_fields = None
-
-        return self._extra_fields
-
-    @extra_fields.setter
-    def extra_fields(self, value):
-        if value is None:
-            value = []
-
-        self._extra_fields = value
 
     @classmethod
     def get_id(cls, event):
@@ -285,32 +228,90 @@ class ContextGraph(MiddlewareRegistry):
 
         return True
 
-    def __init__(self, event_types=None, extra_fields=None, *args, **kwargs):
+    @classmethod
+    def create_entity_dict(cls,
+                      id,
+                      name,
+                      etype,
+                      depends=[],
+                      impact=[],
+                      measurements={},
+                      infos={},
+                      **kwargs):
+        """Create an entity with following information and put it state at enable.
+        :param id: the entity id
+        :type id: a string
+        :param name: the entity name
+        :type name: a string
+        :param etype: the entity type
+        :type etype: a string
+        :param depends: every entities that depends of the current entity
+        :type depends: a list
+        :param impact: every entities that depends of the current entity
+        :type impact: a list
+        :param measurements: measurements link to the current entity
+        :type measurements: a dict
+        :param infos: information related to the entity
+        :type infos: a dict
+
+        :return: a dict
+        """
+
+        ent = {
+            '_id': id,
+            'type': etype,
+            'name': name,
+            'depends': depends,
+            'impact': impact,
+            'measurements': measurements,
+            'infos': infos
+        }
+
+        for key in kwargs:
+            ent[key] = kwargs[key]
+
+        if etype == 'component':
+            ent.pop("measurements")
+
+        cls._enable_entity(ent)
+
+        return ent
+
+    def __init__(self,
+                 logger,
+                 *args, **kwargs):
         """__init__
 
         :param *args:
         :param **kwargs:
         """
-        super(ContextGraph, self).__init__(*args, **kwargs)
+
+        parser = Configuration.load(CONF_PATH, Ini)
+        section = parser.get(ConfName.SECT_GCTX)
+
         self.collection_name = 'default_entities'
 
         self.at_storage = Middleware.get_middleware_by_uri(
             AssociativeTableManager.STORAGE_URI
         )
 
-        if event_types is None:
-            self.event_types = event_types
+        self.ent_storage = Middleware.get_middleware_by_uri(
+            section.get(ConfName.ENT_STORAGE)
+        )
 
-        if extra_fields is None:
-            self.extra_fields = extra_fields
+        self.logger = logger
 
         # For links building
         self.at_manager = AssociativeTableManager(logger=self.logger,
-                                                  collection=self.at_storage._backend)
-        parser = Configuration.load(CONFNG_PATH, Ini)
-        self.hypertextlink_conf = parser.get(CONTEXT_CAT, {}).get(CTX_HYPERLINK, "")
-        if self.hypertextlink_conf != "":
-            atable = self.at_manager.get(self.hypertextlink_conf)
+                                                  collection=\
+                                                  self.at_storage._backend)
+
+        hypertextlink_conf = section.get(ConfName.CTX_HYPERLINK, "")
+        self.event_types = section.get(ConfName.EVENT_TYPES, [])
+        self.extra_fields = section.get(ConfName.EXTRA_FIELDS, [])
+
+        if hypertextlink_conf != "":
+            atable = self.at_manager.get(hypertextlink_conf)
             if atable is not None:
                 conf = atable.get_all()
                 self.hlb_manager = HypertextLinkManager(conf, self.logger)
@@ -334,7 +335,7 @@ class ContextGraph(MiddlewareRegistry):
             query["_id"] = _id
 
         result = list(
-            self[ContextGraph.ENTITIES_STORAGE].get_elements(query=query))
+            self.ent_storage.get_elements(query=query))
 
         return result
 
@@ -354,7 +355,7 @@ class ContextGraph(MiddlewareRegistry):
         for entity in entities:
             self.filter_.filter(entity["infos"])
 
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(entities)
+        self.ent_storage.put_elements(entities)
 
         # rebuild selectors links
         build_all_links(self)
@@ -370,7 +371,7 @@ class ContextGraph(MiddlewareRegistry):
         """
         if not isinstance(entities, list):
             entities = [entities]
-        self[ContextGraph.ENTITIES_STORAGE].remove_elements(entities)
+        self.ent_storage.remove_elements(entities)
 
     def get_all_entities_id(self):
         """
@@ -380,7 +381,7 @@ class ContextGraph(MiddlewareRegistry):
         :return type: a set with every entities id.
         """
         entities = list(
-            self[ContextGraph.ENTITIES_STORAGE].get_elements(query={}))
+            self.ent_storage.get_elements(query={}))
         ret_val = set([])
         for i in entities:
             ret_val.add(i['_id'])
@@ -438,7 +439,7 @@ class ContextGraph(MiddlewareRegistry):
         # TODO add treatment to check if every required field are present
         self._enable_entity(entity)
 
-        entities = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+        entities = list(self.ent_storage.get_elements(
             query={'_id': entity["_id"]}))
 
         if len(entities) > 0:
@@ -449,7 +450,7 @@ class ContextGraph(MiddlewareRegistry):
         status = {"insertions": entity["depends"], "deletions": []}
         updated_entities = self.__update_dependancies(entity["_id"], status,
                                                       "depends")
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.ent_storage.put_elements(updated_entities)
 
         # update impact/depends links
         status = {"insertions": entity["impact"], "deletions": []}
@@ -460,7 +461,7 @@ class ContextGraph(MiddlewareRegistry):
         for entity in updated_entities:
             self.filter_.filter(entity["infos"])
 
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.ent_storage.put_elements(updated_entities)
 
         # rebuild selectors links
         if entity['type'] != 'watcher':
@@ -576,7 +577,7 @@ class ContextGraph(MiddlewareRegistry):
         status = compare_change(old_entity["depends"], entity["depends"])
         updated_entities = self.__update_dependancies(entity["_id"], status,
                                                       "depends")
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.ent_storage.put_elements(updated_entities)
 
         # update impact/depends links
         status = compare_change(old_entity["impact"], entity["impact"])
@@ -584,7 +585,7 @@ class ContextGraph(MiddlewareRegistry):
                                                       "impact")
 
         updated_entities.append(entity)
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.ent_storage.put_elements(updated_entities)
 
         # rebuild selectors links
         if entity['type'] != 'watcher':
@@ -605,7 +606,7 @@ class ContextGraph(MiddlewareRegistry):
         """
 
         try:
-            entity = list(self[ContextGraph.ENTITIES_STORAGE].get_elements(
+            entity = list(self.ent_storage.get_elements(
                 query={'_id': id_}))[0]
         except IndexError:
             desc = "No entity found for the following id : {0}".format(id_)
@@ -614,14 +615,14 @@ class ContextGraph(MiddlewareRegistry):
         # update depends/impact links
         status = {"deletions": entity["depends"], "insertions": []}
         updated_entities = self.__update_dependancies(id_, status, "depends")
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.ent_storage.put_elements(updated_entities)
 
         # update impact/depends links
         status = {"deletions": entity["impact"], "insertions": []}
         updated_entities = self.__update_dependancies(id_, status, "impact")
-        self[ContextGraph.ENTITIES_STORAGE].put_elements(updated_entities)
+        self.ent_storage.put_elements(updated_entities)
 
-        self[ContextGraph.ENTITIES_STORAGE].remove_elements(ids=[id_])
+        self.ent_storage.remove_elements(ids=[id_])
 
         build_all_links(self)
 
@@ -653,7 +654,7 @@ class ContextGraph(MiddlewareRegistry):
         elif not isinstance(query, dict):
             raise TypeError("Query must be a dict")
 
-        result = self[ContextGraph.ENTITIES_STORAGE].get_elements(
+        result = self.ent_storage.get_elements(
             query=query,
             limit=limit,
             skip=start,
@@ -725,7 +726,7 @@ class ContextGraph(MiddlewareRegistry):
         :param deepness: the max depth of the graph.
         :return dict: the graph.
         """
-        col = self[ContextGraph.ENTITIES_STORAGE]._backend
+        col = self.ent_storage._backend
         aggregate = []
 
         match = {'$match': {'_id': _id}}
@@ -754,7 +755,7 @@ class ContextGraph(MiddlewareRegistry):
         :param deepness: the max depth of the graph.
         :return dict: the graph.
         """
-        col = self[ContextGraph.ENTITIES_STORAGE]._backend
+        col = self.ent_storage._backend
         aggregate = []
 
         match = {'$match': {'_id': _id}}

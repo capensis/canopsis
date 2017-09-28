@@ -26,11 +26,9 @@ from canopsis.linklist.dbconfigurationmanager import DBConfiguration
 
 class engine(Engine):
 
-    etype = 'linklist'
-
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
-        self.entity_link_manager = Entitylink()
+        self.entity_link_manager = Entitylink(*Entitylink.provide_default_basics())
         self.db_configuration_manager = DBConfiguration()
         self.link_field = []
         self.reload_configuration()

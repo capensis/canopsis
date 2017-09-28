@@ -4,8 +4,8 @@ from canopsis.common.ws import route
 from canopsis.linklist.manager import Linklist
 from canopsis.entitylink.manager import Entitylink
 
-link_list_manager = Linklist()
-entity_link_manager = Entitylink()
+link_list_manager = Linklist(*Linklist.provide_default_basics())
+entity_link_manager = Entitylink(*Entitylink.provide_default_basics())
 
 DEFAULT_ROUTE = 'linklist'
 

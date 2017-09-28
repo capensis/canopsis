@@ -18,21 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.logger import Logger
 from canopsis.migration.manager import MigrationModule
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
 
-CONF_PATH = 'migration/indexes.conf'
-CATEGORY = 'INDEXES'
-CONTENT = []
-
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
 class IndexesModule(MigrationModule):
 
     INDEXES = {
@@ -104,6 +95,7 @@ class IndexesModule(MigrationModule):
     def __init__(self, *args, **kwargs):
         super(IndexesModule, self).__init__(*args, **kwargs)
 
+        self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
         self.storage = get_storage(
             account=Account(user='root', group='root'),
             namespace='object'

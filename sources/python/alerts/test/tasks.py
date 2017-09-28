@@ -21,12 +21,11 @@
 
 from unittest import main
 
-from canopsis.task.core import get_task
-
 from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.status import get_previous_step, CANCELED, is_keeped_state
-
 from canopsis.entitylink.manager import Entitylink
+from canopsis.middleware.core import Middleware
+from canopsis.task.core import get_task
 
 from base import BaseTest
 
@@ -330,14 +329,19 @@ class TestTasks(BaseTest):
         )
 
     def test_linklist(self):
-        self.llm = Entitylink()
+        self.el_storage = Middleware.get_middleware_by_uri(
+            Entitylink.ENTITYLINK_STORAGE_URI
+        )
+        self.entitylink_manager = Entitylink(logger=self.logger,
+                                             storage=self.el_storage,
+                                             context_graph=self.cg_manager)
 
         eid0 = '/entity/id'
         linklist_eid0 = {
             'computed_links': [{'label': 'doc', 'url': 'http://path/to/doc'}],
             'entity_links': [{'label': 'support', 'url': 'http://path/to/sup'}]
         }
-        self.llm.put(_id=eid0, document=linklist_eid0)
+        self.entitylink_manager.put(_id=eid0, document=linklist_eid0)
 
         task = get_task('alerts.lookup.linklist')
 
@@ -354,7 +358,8 @@ class TestTasks(BaseTest):
         res = task(self, {'d': eid1})
         self.assertEqual(res, {'d': eid1, AlarmField.linklist.value: {}})
 
-        del self.llm
+        self.el_storage.remove_elements()
+        del self.entitylink_manager
 
 if __name__ == '__main__':
     main()

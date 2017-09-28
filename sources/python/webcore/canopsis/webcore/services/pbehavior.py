@@ -251,8 +251,9 @@ class RouteHandlerPBehavior(object):
 
 def exports(ws):
 
+    pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
     rhpb = RouteHandlerPBehavior(
-        pb_manager=PBehaviorManager(), watcher_manager=WatcherManager()
+        pb_manager=pbm, watcher_manager=WatcherManager()
     )
 
     @route(

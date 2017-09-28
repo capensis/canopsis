@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2016 "Capensis" [http://www.capensis.com]
@@ -18,100 +19,147 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+
+"""
+Alerts manager (also known as Alarm Manager).
+"""
+
+from __future__ import unicode_literals
 from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_config
-from canopsis.configuration.model import Parameter
-
-from canopsis.timeserie.timewindow import get_offset_timewindow
-from canopsis.common.utils import ensure_iterable
-from canopsis.context_graph.manager import ContextGraph
-from canopsis.task.core import get_task
-
-from canopsis.event.manager import Event
-from canopsis.check import Check
-from canopsis.watcher.manager import Watcher
-
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
-    get_last_state, get_last_status,
-    OFF, STEALTHY, is_stealthy, is_keeped_state
+    get_last_state, get_last_status, OFF, STEALTHY, is_stealthy, is_keeped_state
 )
+from canopsis.check import Check
+from canopsis.common.ethereal_data import EtherealData
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.utils import ensure_iterable
+from canopsis.confng import Configuration, Ini
+from canopsis.confng.helpers import cfg_to_array
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.event.manager import Event as EventManager
+from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
+from canopsis.task.core import get_task
+from canopsis.timeserie.timewindow import get_offset_timewindow
+from canopsis.watcher.manager import Watcher
 
-CONF_PATH = 'alerts/manager.conf'
-ALERTS = 'ALERTS'
-ALERTS_CNT = [
-    Parameter('extra_fields', Parameter.array())
-]
-FILTER = 'FILTER'
-FILTER_CNT = [
-    Parameter('author', str),
-]
-TYPE_SELECTOR = 'selector'
+DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
+DEFAULT_FILTER_AUTHOR = 'system'
+
+DEFAULT_FLAPPING_INTERVAL = 0
+DEFAULT_FLAPPING_FREQ = 0
+DEFAULT_PERSISTANT_STEPS = 10
+DEFAULT_HARD_LIMIT = 100
+DEFAULT_STEALTHY_INTERVAL = 0
+DEFAULT_STEALTHY_SHOW_DURATION = 0
+DEFAULT_RESTORE_EVENT = False
+DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
 
 
-@conf_paths(CONF_PATH)
-@add_config({ALERTS: ALERTS_CNT, FILTER: FILTER_CNT})
-class Alerts(MiddlewareRegistry):
+class Alerts(object):
     """
     Alarm cycle managment.
 
     Used to archive events related to alarms in a TimedStorage.
     """
+    LOG_PATH = 'var/log/alerts.log'
+    CONF_PATH = 'etc/alerts/manager.conf'
+    ALERTS_CAT = 'ALERTS'
+    FILTER_CAT = 'FILTER'
 
-    CONFIG_STORAGE = 'config_storage'
-    ALARM_STORAGE = 'alarm_storage'
-    FILTER_STORAGE = 'filter_storage'
-    CONTEXT_MANAGER = 'context'
+    ALERTS_STORAGE_URI = 'mongodb-periodical-alarm://'
+    CONFIG_STORAGE_URI = 'mongodb-object://'
+    CONFIG_COLLECTION = 'object'
+    FILTER_STORAGE_URI = 'mongodb-default-alarmfilter://'
+
     AUTHOR = 'author'
 
     @property
-    def config(self):
-        """
-        Property computed from configuration storage.
-        """
-
-        if not hasattr(self, '_config'):
-            self.config = None
-
-        return self._config
-
-    @config.setter
-    def config(self, value):
-        if value is None:
-            value = self.load_config()
-
-        self._config = value
-
-    @property
-    def filter_config(self):
-        if not hasattr(self, '_filter_config'):
-            values = self.conf.get(FILTER)
-
-            self._filter_config = {
-                'author': values.get('author').value
-            }
-
-        return self._filter_config
-
-    @property
     def alarm_filters(self):
-        return AlarmFilters(storage=self[Alerts.FILTER_STORAGE],
-                            alarm_storage=self[Alerts.ALARM_STORAGE],
+        """
+        Automatic filters and actions for alarms.
+        """
+        return AlarmFilters(storage=self.filter_storage,
+                            alarm_storage=self.alerts_storage,
                             logger=self.logger)
 
-    @property
-    def flapping_interval(self):
-        """
-        Interval used to check for flapping alarm status.
-        """
+    def __init__(
+            self,
+            config,
+            logger,
+            alerts_storage,
+            config_data,
+            filter_storage,
+            context_graph,
+            watcher
+    ):
+        self.config = config
+        self.logger = logger
+        self.alerts_storage = alerts_storage
+        self.config_data = config_data
+        self.filter_storage = filter_storage
+        self.context_manager = context_graph
+        self.watcher_manager = watcher
 
-        return self.config.get('bagot_time', 0)
+        alerts_ = self.config.get(self.ALERTS_CAT, {})
+        self.extra_fields = cfg_to_array(alerts_.get('extra_fields',
+                                                     DEFAULT_EXTRA_FIELDS))
+
+        filter_ = self.config.get(self.FILTER_CAT, {})
+        self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide logger, config, storages...
+
+        ! Do not use in tests !
+
+        :rtype: Union[canopsis.confng.simpleconf.Configuration
+                      logging.Logger,
+                      canopsis.storage.core.Storage,
+                      canopsis.common.ethereal_data.EtherealData,
+                      canopsis.storage.core.Storage,
+                      canopsis.context_graph.manager.ContextGraph,
+                      canopsis.watcher.manager.Watcher]
+        """
+        config = Configuration.load(Alerts.CONF_PATH, Ini)
+        conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
+        conf_db_creds = Configuration.load(MongoStore.CRED_CONF_PATH, Ini)
+
+        mongo = MongoStore(config=conf_store,
+                           cred_config=conf_db_creds)
+        config_collection = mongo.get_collection(name=cls.CONFIG_COLLECTION)
+        filter_ = {'crecord_type': 'statusmanagement'}
+        config_data = EtherealData(collection=config_collection,
+                                   filter_=filter_)
+
+        logger = Logger.get('alerts', cls.LOG_PATH)
+        alerts_storage = Middleware.get_middleware_by_uri(
+            cls.ALERTS_STORAGE_URI
+        )
+        filter_storage = Middleware.get_middleware_by_uri(
+            cls.FILTER_STORAGE_URI
+        )
+        context_manager = ContextGraph(logger)
+        watcher_manager = Watcher()
+
+        return (config, logger, alerts_storage, config_data,
+                filter_storage, context_manager, watcher_manager)
+
+    @property
+    def cancel_autosolve_delay(self):
+        """
+        Once a canceled alarm is resolved, it cannot be uncanceled. This delay
+        allows users to uncancel an alarm if they made a mistake.
+        """
+        return self.config_data.get('cancel_autosolve_delay',
+                                    DEFAULT_CANCEL_AUTOSOLVE_DELAY)
 
     @property
     def flapping_freq(self):
@@ -119,8 +167,14 @@ class Alerts(MiddlewareRegistry):
         Number of alarm oscillation during flapping interval
         to consider an alarm as flapping.
         """
+        return self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
 
-        return self.config.get('bagot_freq', 0)
+    @property
+    def flapping_interval(self):
+        """
+        Interval used to check for flapping alarm status.
+        """
+        return self.config_data.get('bagot_time', DEFAULT_FLAPPING_INTERVAL)
 
     @property
     def flapping_persistant_steps(self):
@@ -128,8 +182,8 @@ class Alerts(MiddlewareRegistry):
         Number of state change steps to keep in case of long term flapping.
         Most recent steps are kept.
         """
-
-        return self.config.get('persistant_steps', 10)
+        return self.config_data.get('persistant_steps',
+                                    DEFAULT_PERSISTANT_STEPS)
 
     @property
     def hard_limit(self):
@@ -138,24 +192,7 @@ class Alerts(MiddlewareRegistry):
         hard limit extension are possible ways to interact with an alarm that
         has reached this point.
         """
-
-        return self.config.get('hard_limit', 100)
-
-    @property
-    def stealthy_interval(self):
-        """
-        Interval used to check for stealthy alarm status.
-        """
-
-        return self.config.get('stealthy_time', 0)
-
-    @property
-    def stealthy_show_duration(self):
-        """
-        Interval used to check if alarm is still in stealthy status.
-        """
-
-        return self.config.get('stealthy_show', 0)
+        return self.config_data.get('hard_limit', DEFAULT_HARD_LIMIT)
 
     @property
     def restore_event(self):
@@ -163,71 +200,23 @@ class Alerts(MiddlewareRegistry):
         When alarm is restored, reset the previous status if ``True``,
         recompute status with alarm history if ``False``.
         """
-
-        return self.config.get('restore_event', False)
-
-    @property
-    def cancel_autosolve_delay(self):
-        """
-        Once a canceled alarm is resolved, it cannot be uncanceled. This delay
-        allows users to uncancel an alarm if they made a mistake.
-        """
-
-        return self.config.get('cancel_autosolve_delay', 3600)
+        return self.config_data.get('restore_event', DEFAULT_RESTORE_EVENT)
 
     @property
-    def extra_fields(self):
+    def stealthy_interval(self):
         """
-        Array of fields to save from event in alarm.
+        Interval used to check for stealthy alarm status.
         """
+        return self.config_data.get('stealthy_time', DEFAULT_STEALTHY_INTERVAL)
 
-        if not hasattr(self, '_extra_fields'):
-            self.extra_fields = None
+    @property
+    def stealthy_show_duration(self):
+        """
+        Interval used to check if alarm is still in stealthy status.
+        """
+        return self.config_data.get('stealthy_show',
+                                    DEFAULT_STEALTHY_SHOW_DURATION)
 
-        return self._extra_fields
-
-    @extra_fields.setter
-    def extra_fields(self, value):
-        if value is None:
-            value = []
-
-        self._extra_fields = value
-
-    def __init__(
-            self,
-            extra_fields=None,
-            config_storage=None,
-            alarm_storage=None,
-            filter_storage=None,
-            context=None,
-            *args, **kwargs
-    ):
-        super(Alerts, self).__init__(*args, **kwargs)
-
-        if extra_fields is not None:
-            self.extra_fields = extra_fields
-
-        if config_storage is not None:
-            self[Alerts.CONFIG_STORAGE] = config_storage
-
-        if alarm_storage is not None:
-            self[Alerts.ALARM_STORAGE] = alarm_storage
-
-        if filter_storage is not None:
-            self[Alerts.FILTER_STORAGE] = filter_storage
-
-        if context is not None:
-            self[Alerts.CONTEXT_MANAGER] = context
-
-        self.context_manager = ContextGraph()
-        self.watcher_manager = Watcher()
-
-    def load_config(self):
-        value = self[Alerts.CONFIG_STORAGE].get_elements(
-            query={'crecord_type': 'statusmanagement'}
-        )
-
-        return {} if not value else value[0]
 
     def get_alarms(
             self,
@@ -300,7 +289,7 @@ class Alerts(MiddlewareRegistry):
             }
             query = {'$and': [query, no_snooze_cond]}
 
-        alarms_by_entity = self[Alerts.ALARM_STORAGE].find(
+        alarms_by_entity = self.alerts_storage.find(
             _filter=query,
             timewindow=timewindow
         )
@@ -333,7 +322,7 @@ class Alerts(MiddlewareRegistry):
         else:
             query['resolved'] = None
 
-        return list(self[Alerts.ALARM_STORAGE].get_elements(query=query))
+        return list(self.alerts_storage.get_elements(query=query))
 
     def get_current_alarm(self, alarm_entity_id):
         """
@@ -345,7 +334,7 @@ class Alerts(MiddlewareRegistry):
         :returns: Alarm as dict if found, else None
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.alerts_storage
 
         result = storage.get(
             alarm_entity_id,
@@ -376,7 +365,7 @@ class Alerts(MiddlewareRegistry):
         :type tags: str or list
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.alerts_storage
 
         alarm_id = alarm[storage.DATA_ID]
         alarm_ts = alarm[storage.TIMESTAMP]
@@ -400,7 +389,7 @@ class Alerts(MiddlewareRegistry):
         :returns: Array of events
         """
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.alerts_storage
         alarm_id = alarm[storage.DATA_ID]
         alarm = alarm[storage.VALUE]
 
@@ -471,7 +460,7 @@ class Alerts(MiddlewareRegistry):
 
             if step['_t'] in check_referer_types:
                 event['event_type'] = 'check'
-                event['ref_rk'] = Event.get_rk(event)
+                event['ref_rk'] = EventManager.get_rk(event)
 
             if Check.STATE not in event:
                 event[Check.STATE] = get_last_state(alarm)
@@ -527,7 +516,7 @@ class Alerts(MiddlewareRegistry):
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
             else:  # Alarm is already opened
-                value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                value = alarm.get(self.alerts_storage.VALUE)
                 if self.is_hard_limit_reached(value):
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
@@ -535,7 +524,7 @@ class Alerts(MiddlewareRegistry):
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
-            value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+            value = alarm.get(self.alerts_storage.VALUE)
 
             value = self.crop_flapping_steps(value)
 
@@ -587,7 +576,7 @@ class Alerts(MiddlewareRegistry):
             )
             return
 
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.alerts_storage.VALUE)
 
         if self.is_hard_limit_reached(value):
             # Only cancel is allowed when hard limit has been reached
@@ -620,7 +609,7 @@ class Alerts(MiddlewareRegistry):
         # If needed, update status
         if status is not None:
             alarm = self.update_status(alarm, status, event)
-            new_value = alarm[self[Alerts.ALARM_STORAGE].VALUE]
+            new_value = alarm[self.alerts_storage.VALUE]
 
             self.update_current_alarm(alarm, new_value)
 
@@ -643,7 +632,7 @@ class Alerts(MiddlewareRegistry):
         :rtype: dict
         """
 
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.alerts_storage.VALUE)
 
         old_state = get_last_state(value, ts=event['timestamp'])
         if state != old_state:
@@ -668,7 +657,7 @@ class Alerts(MiddlewareRegistry):
         :rtype: dict
         """
 
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.alerts_storage.VALUE)
 
         old_status = get_last_status(value, ts=event['timestamp'])
 
@@ -702,7 +691,7 @@ class Alerts(MiddlewareRegistry):
         :rtype: dict
         """
 
-        storage_value = self[Alerts.ALARM_STORAGE].VALUE
+        storage_value = self.alerts_storage.VALUE
         # Check for a forced state on this alarm
         if is_keeped_state(alarm['value']):
             if state == Check.OK:
@@ -725,7 +714,7 @@ class Alerts(MiddlewareRegistry):
             )
 
         # Executing task
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.alerts_storage.VALUE)
         new_value, status = task(self, value, state, event)
 
         alarm[storage_value] = new_value
@@ -763,10 +752,10 @@ class Alerts(MiddlewareRegistry):
                 'alerts.systemaction.status_decrease', cacheonly=True
             )
 
-        value = alarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+        value = alarm.get(self.alerts_storage.VALUE)
         new_value = task(self, value, status, event)
 
-        alarm[self[Alerts.ALARM_STORAGE].VALUE] = new_value
+        alarm[self.alerts_storage.VALUE] = new_value
         alarm['last_update_date'] = time()
 
         return alarm
@@ -786,9 +775,9 @@ class Alerts(MiddlewareRegistry):
         """
 
         return {
-            self[Alerts.ALARM_STORAGE].DATA_ID: alarm_id,
-            self[Alerts.ALARM_STORAGE].TIMESTAMP: event['timestamp'],
-            self[Alerts.ALARM_STORAGE].VALUE: {
+            self.alerts_storage.DATA_ID: alarm_id,
+            self.alerts_storage.TIMESTAMP: event['timestamp'],
+            self.alerts_storage.VALUE: {
                 'connector': event['connector'],
                 'connector_name': event['connector_name'],
                 'component': event['component'],
@@ -920,8 +909,8 @@ class Alerts(MiddlewareRegistry):
         """
         for data_id in alarms:
             for docalarm in alarms[data_id]:
-                docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
-                alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                docalarm[self.alerts_storage.DATA_ID] = data_id
+                alarm = docalarm.get(self.alerts_storage.VALUE)
 
                 if get_last_status(alarm) == OFF:
                     t = alarm[AlarmField.status.value]['t']
@@ -946,8 +935,8 @@ class Alerts(MiddlewareRegistry):
 
         for data_id in alarms:
             for docalarm in alarms[data_id]:
-                docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
-                alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                docalarm[self.alerts_storage.DATA_ID] = data_id
+                alarm = docalarm.get(self.alerts_storage.VALUE)
 
                 if alarm[AlarmField.canceled.value] is not None:
                     canceled_ts = alarm[AlarmField.canceled.value]['t']
@@ -968,8 +957,9 @@ class Alerts(MiddlewareRegistry):
 
         for data_id in result:
             for docalarm in result[data_id]:
-                docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
-                alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+
+                docalarm[self.alerts_storage.DATA_ID] = data_id
+                alarm = docalarm.get(self.alerts_storage.VALUE)
 
                 # if the alarm is snoozed...
                 if alarm is None or \
@@ -995,8 +985,8 @@ class Alerts(MiddlewareRegistry):
         """
         for data_id in alarms:
             for docalarm in alarms[data_id]:
-                docalarm[self[Alerts.ALARM_STORAGE].DATA_ID] = data_id
-                alarm = docalarm.get(self[Alerts.ALARM_STORAGE].VALUE)
+                docalarm[self.alerts_storage.DATA_ID] = data_id
+                alarm = docalarm.get(self.alerts_storage.VALUE)
 
                 # Only look at stealthy status
                 if get_last_status(alarm) != STEALTHY:
@@ -1035,7 +1025,7 @@ class Alerts(MiddlewareRegistry):
         RUNS = AlarmFilterField.runs.value
         NEXT = AlarmFilterField.next_run.value
 
-        storage = self[Alerts.ALARM_STORAGE]
+        storage = self.alerts_storage
 
         for lifter, docalarm in self.alarm_filters.get_filters():
             # Thanks to get_alarms(), we must renaming keys
@@ -1116,7 +1106,7 @@ class Alerts(MiddlewareRegistry):
                 new_value = self.execute_task(name=task,
                                               event=event,
                                               entity_id=alarm_id,
-                                              author=self.filter_config['author'],
+                                              author=self.filter_author,
                                               new_state=event[vstate])
 
                 if new_value is not None:

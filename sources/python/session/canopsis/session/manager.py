@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2017 "Capensis" [http://www.capensis.com]
@@ -53,7 +54,7 @@ class Session(object):
             perfdata_manager=None
     ):
         """
-        :param MongoCursor collcetion: the collection where user sessoins are located
+        :param MongoCursor collection: the collection where user sessoins are located
         :param metric_producer:
         :param perfdata_manager:
         """

@@ -23,9 +23,7 @@ from unittest import TestCase, main
 
 
 class TestEvent(TestCase):
-    """Test the event module.
-    """
-    raise NotImplementedError()
+    pass
 
 if __name__ == '__main__':
     main()

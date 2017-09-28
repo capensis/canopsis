@@ -20,13 +20,18 @@
 # ---------------------------------
 
 from unittest import TestCase, main
-from canopsis.event.manager import Event
+from canopsis.middleware.core import Middleware
+from canopsis.event.manager import Event as EventManager
 
 
 class EventManagerTest(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.event_storage = Middleware.get_middleware_by_uri('mongodb-default-testevent://')
+
     def setUp(self):
-        self.event_manager = Event()
+        self.event_manager = EventManager(event_storage=self.event_storage)
         self.fake_event = {
             'connector': 'fake_connector',
             'connector_name': 'fake_connector_name',
@@ -53,11 +58,11 @@ class EventTest(EventManagerTest):
             self.assertIsNone(alert)
 
     def test_get_last_state(self):
-
         test_value = 'X'
 
         def mockfind(*args, **kwargs):
             return [{'state': test_value}]
+
         self.event_manager.find = mockfind
         state = self.event_manager.get_last_state(self.fake_event)
         self.assertEqual(state, test_value)

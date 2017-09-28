@@ -9,40 +9,37 @@ import json
 
 from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.context_graph.process import create_entity
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
 from canopsis.middleware.core import Middleware
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.logger import Logger
 from canopsis.old.rabbitmq import Amqp
 from canopsis.pbehavior.manager import PBehaviorManager
 
+LOG_PATH = 'var/log/watcher'
 
-class Watcher(MiddlewareRegistry):
+class Watcher:
     """Watcher class"""
 
-    OBJECT_STORAGE = ''
-    ALERTS_STORAGE = ''
-    WATCHER_STORAGE = "WATCHER_STORAGE"
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         """__init__
 
         :param *args:
         :param **kwargs:
         """
-        super(Watcher, self).__init__(*args, **kwargs)
-
-        self[Watcher.WATCHER_STORAGE] = Middleware.get_middleware_by_uri(
+        self.logger = Logger.get('watcher', LOG_PATH)
+        self.watcher_storage = Middleware.get_middleware_by_uri(
             'mongodb-default-watcher://')
-        self[Watcher.ALERTS_STORAGE] = Middleware.get_middleware_by_uri(
+        self.alert_storage = Middleware.get_middleware_by_uri(
             'mongodb-periodical-alarm://')
 
         self.sla_storage = Middleware.get_middleware_by_uri(
             'storage-default-sla://')
 
-        self.context_graph = ContextGraph()
-        self.pbehavior_manager = PBehaviorManager()
+        self.context_graph = ContextGraph(self.logger)
+        self.pbehavior_manager = PBehaviorManager(
+            *PBehaviorManager.provide_default_basics()
+        )
         self.amqp = Amqp()
 
     def get_watcher(self, watcher_id):
@@ -75,14 +72,14 @@ class Watcher(MiddlewareRegistry):
             query=watcher_finder,
             projection={'_id': 1}
         )
-        self[self.WATCHER_STORAGE].put_element(body)
+        self.watcher_storage.put_element(body)
 
         depend_list = []
 
         for entity_id in depends_list:
             depend_list.append(entity_id['_id'])
 
-        entity = create_entity(
+        entity = ContextGraph.create_entity_dict(
             id=watcher_id,
             name=body['display_name'],
             etype='watcher',
@@ -148,7 +145,7 @@ class Watcher(MiddlewareRegistry):
 
         self.sla_storage.remove_elements(ids=[watcher_id])
 
-        return self[self.WATCHER_STORAGE].remove_elements(ids=[watcher_id])
+        return self.watcher_storage.remove_elements(ids=[watcher_id])
 
     def alarm_changed(self, alarm_id):
         """
@@ -165,7 +162,7 @@ class Watcher(MiddlewareRegistry):
         """
         Compute all watchers states.
         """
-        watchers = list(self[Watcher.WATCHER_STORAGE].get_elements(query={}))
+        watchers = list(self.watcher_storage.get_elements(query={}))
         for watcher in watchers:
             self.compute_state(watcher['_id'])
 
@@ -175,13 +172,16 @@ class Watcher(MiddlewareRegistry):
 
         :param watcher_id: watcher id
         """
-        watcher_entity = self.context_graph.get_entities(
-            query={'_id': watcher_id})[0]
+        try:
+            watcher_entity = self.context_graph.get_entities(
+                query={'_id': watcher_id})[0]
+        except IndexError:
+            return None
 
         entities = watcher_entity['depends']
         display_name = watcher_entity['name']
 
-        alarm_list = list(self[Watcher.ALERTS_STORAGE]._backend.find({
+        alarm_list = list(self.alert_storage._backend.find({
             'd': {
                 '$in': entities
             }
