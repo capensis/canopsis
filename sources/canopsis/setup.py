@@ -104,9 +104,9 @@ def setup(add_etc=True, **kwargs):
 
     # add description
     if 'long_description' not in kwargs:
-        readme_path = join(_path, 'README')
+        readme_path = join(_path, 'README.md')
         if exists(readme_path):
-            with open(join(_path, 'README')) as f:
+            with open(join(_path, 'README.md')) as f:
                 kwargs['long_description'] = f.read()
 
     # add test
