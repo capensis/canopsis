@@ -32,9 +32,6 @@ from canopsis.perfdata.manager import SLIDING_TIME
 pp = PrettyPrinter(indent=2)
 
 
-__version__ = '0.1'
-
-
 class Sla(object):
 
     """Enable Sla computation based on event's states history
