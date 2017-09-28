@@ -508,7 +508,7 @@ function export_env() {
 function pip_install() {
     echo "Easy install Python Library: $1 ..."
 
-    pip install --no-index --find-links=file://${SRC_PATH}/externals/python-libs $1
+    pip install --no-index --find-links=file://${SRC_PATH}/externals/python-libs "${1}"
     check_code $? "Easy install failed ..."
 }
 

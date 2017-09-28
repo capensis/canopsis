@@ -27,11 +27,11 @@ function update_documentation() {
 }
 
 function install() {
-    pip_install MarkupSafe
-    pip_install docutils
-    pip_install Pygments
-    pip_install jinja2
-    pip_install Sphinx
+    pip_install "MarkupSafe==0.23"
+    pip_install "docutils==0.12"
+    pip_install "Pygments==1.6"
+    pip_install "jinja2==2.7.3"
+    pip_install "Sphinx==1.2.3"
     update_documentation
 }
 
