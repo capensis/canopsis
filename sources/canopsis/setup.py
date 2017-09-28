@@ -26,10 +26,7 @@ from os.path import join, dirname, expanduser, abspath, basename, exists
 from sys import path, argv
 from sys import prefix as sys_prefix
 
-from canopsis.common.utils import lookup
-
-
-# TODO: set values in a dedicated configuration file
+PACKAGE = 'canopsis'
 AUTHOR = 'Capensis'
 AUTHOR_EMAIL = 'canopsis@capensis.fr'
 LICENSE = 'AGPL V3'
@@ -37,7 +34,7 @@ ZIP_SAFE = False
 URL = 'http://www.canopsis.org'
 KEYWORDS = ' Canopsis Hypervision Hypervisor Monitoring'
 
-DEFAULT_VERSION = '0.1'
+VERSION = '0.1'
 
 TEST_FOLDERS = ['tests', 'test']
 
@@ -61,27 +58,16 @@ def setup(add_etc=True, **kwargs):
     # add path to python path
     path.append(_path)
 
-    # extend canopsis path with new sub modules and packages
-    # canopsis.__path__ = extend_path(canopsis.__path__, canopsis.__name__)
-
-    # get package
-    package = lookup("canopsis.{0}".format(name))
-
     # set default parameters if not setted
-    kwargs.setdefault('name', package.__name__)
+    kwargs.setdefault('name', PACKAGE)
     kwargs.setdefault('author', AUTHOR)
     kwargs.setdefault('author_email', AUTHOR_EMAIL)
     kwargs.setdefault('license', LICENSE)
     kwargs.setdefault('zip_safe', ZIP_SAFE)
     kwargs.setdefault('url', URL)
     kwargs.setdefault('package_dir', {'': _path})
-
     kwargs.setdefault('keywords', kwargs.get('keywords', '') + KEYWORDS)
-
-    # set version
-    version = getattr(package, '__version__', DEFAULT_VERSION)
-    if version is not None:
-        kwargs.setdefault('version', version)
+    kwargs.setdefault('version', VERSION)
 
     if '--no-conf' not in argv:
         # add etc content if exist and if --no-conf
@@ -133,3 +119,5 @@ def setup(add_etc=True, **kwargs):
                 break
 
     _setup(**kwargs)
+
+setup()
