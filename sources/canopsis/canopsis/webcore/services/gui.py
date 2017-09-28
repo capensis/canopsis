@@ -27,17 +27,15 @@ from canopsis.common.template import Template
 from canopsis.webcore.services import auth as auth_module
 from canopsis.webcore.services import session as session_module
 
-def exports(ws):
-    session = session_module
-    auth = auth_module
 
+def exports(ws):
     skip_login = ws.skip_login
 
     @ws.application.get('/:lang/static/canopsis/index.html', skip=skip_login)
     @ws.application.get('/static/canopsis/index.html', skip=skip_login)
     def index(lang='en'):
         # Redirect user if not logged in
-        if not session.get_user():
+        if not session_module.get_user():
             redirect('/')
 
         return static_file('canopsis/index.html', root=ws.root_directory)
@@ -48,7 +46,7 @@ def exports(ws):
         key = request.params.get('authkey', default=None)
 
         if key:
-            auth.autoLogin(key)
+            auth_module.autoLogin(key)
 
         return static_file(filename, root=ws.root_directory)
 
@@ -80,7 +78,7 @@ def exports(ws):
             logmessage = None
 
         if key:
-            auth.autoLogin(key)
+            auth_module.autoLogin(key)
 
         ticket = request.params.get('ticket', default=None)
 
