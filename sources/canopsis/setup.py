@@ -24,7 +24,7 @@ from os.path import join, dirname, expanduser, abspath, exists
 from sys import path, argv
 from sys import prefix as sys_prefix
 
-from setuptools import setup as _setup
+from setuptools import setup
 
 PACKAGE = 'canopsis'
 AUTHOR = 'Capensis'
@@ -115,25 +115,19 @@ def get_test_suite(pkgpath):
     return test_folder
 
 
-def setup(add_etc=True):
+def setup_canopsis(pkgpath, embed_conf):
     """
+    :param no_conf:
     :param add_etc: add automatically etc files (default True)
     :type add_etc: bool
-    :param setuptools_args: enrich setuptools.setup method
+    :returns: dict of setup() arguments
     """
 
-    pkgpath = get_pkgpath()
     data_files = []
     setuptools_args = {}
 
-    # add path to python path
-    path.append(pkgpath)
-
-    if '--no-conf' not in argv:
-        if add_etc:
-            data_files = get_data_files(pkgpath)
-    else:
-        argv.remove('--no-conf')
+    if embed_conf:
+        data_files = get_data_files(pkgpath)
 
     # set default parameters if not setted
     setuptools_args['name'] = PACKAGE
@@ -150,7 +144,17 @@ def setup(add_etc=True):
     setuptools_args['test_suite'] = get_test_suite(pkgpath)
     setuptools_args['data_files'] = data_files
 
-    _setup(**setuptools_args)
+    return setuptools_args
 
 
-setup()
+if __name__ == '__main__':
+    embed_conf = True
+
+    if '--no-conf' not in argv:
+        embed_conf = False
+    else:
+        argv.remove('--no-conf')
+
+    pkgpath = get_pkgpath()
+    setuptools_args = setup_canopsis(pkgpath, embed_conf)
+    setup(**setuptools_args)
