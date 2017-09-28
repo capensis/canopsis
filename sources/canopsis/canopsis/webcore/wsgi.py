@@ -148,8 +148,8 @@ class WebServer():
         self.logger.info('WSGI fully loaded.')
         return self
 
-    def _load_webservice(self, modname, alias):
-        if alias in self.webmodules:
+    def _load_webservice(self, modname):
+        if modname in self.webmodules:
             return True
 
         if modname is None:
@@ -169,7 +169,7 @@ class WebServer():
 
         else:
             if hasattr(mod, 'exports'):
-                self.webmodules[alias] = mod
+                self.webmodules[modname] = mod
                 mod.exports(self)
 
             else:
@@ -182,8 +182,12 @@ class WebServer():
         return True
 
     def load_webservices(self):
-        for module, alias in self.webservices.iteritems():
-            self._load_webservice(module, alias)
+        for module, enable in self.webservices.iteritems():
+            if int(enable) == 1:
+                self._load_webservice(module)
+            else:
+                self.logger.info(
+                    u'Webservice {} skipped by configuration.'.format(module))
         self.logger.info(u'Service loading completed.')
 
     def _load_auth_backend(self, modname):
