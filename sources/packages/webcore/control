@@ -23,7 +23,6 @@ function post_install(){
     launch_cmd 0 supervisorctl update
     launch_cmd 0 service mongodb start
     launch_cmd 0 schema2db
-    launch_cmd 0 service mongodb stop
 }
 
 function pre_remove(){
@@ -60,7 +59,6 @@ function post_update(){
     echo "Post-update $NAME $VERSION-$RELEASE ..."
     launch_cmd 0 service mongodb start
     launch_cmd 0 schema2db
-    launch_cmd 0 service mongodb stop
 }
 
 function purge(){
