@@ -40,14 +40,15 @@ TEST_FOLDERS = ['tests', 'test']
 
 
 def get_pkgpath():
-    # get setup path which corresponds to first python argument
     filename = argv[0]
 
-    _path = dirname(abspath(expanduser(filename)))
+    return dirname(abspath(expanduser(filename)))
 
-    return _path
 
 def find_scripts(pkgpath):
+    """
+    Get a list of scripts to install in canopsis env.
+    """
     scripts_path = join(pkgpath, 'scripts')
     scripts = []
     for root, _, files in walk(scripts_path):
@@ -56,7 +57,11 @@ def find_scripts(pkgpath):
 
     return scripts
 
+
 def get_data_files(pkgpath):
+    """
+    Get a list of data files from the etc directory.
+    """
     etc_path = join(pkgpath, 'etc')
     data_files = []
 
@@ -69,7 +74,11 @@ def get_data_files(pkgpath):
 
     return data_files
 
+
 def get_install_requires(pkgpath):
+    """
+    Get a list of requirements from requirements.txt
+    """
     requirements = []
     requires_path = join(pkgpath, 'requirements.txt')
 
@@ -79,7 +88,11 @@ def get_install_requires(pkgpath):
 
     return requirements
 
+
 def get_description(pkgpath):
+    """
+    Get the long description from README.md
+    """
     readme_path = join(pkgpath, 'README.md')
     description = None
 
@@ -87,6 +100,7 @@ def get_description(pkgpath):
         description = f.read()
 
     return description
+
 
 def get_test_suite(pkgpath):
     test_folder = None
@@ -99,6 +113,7 @@ def get_test_suite(pkgpath):
             return test_folder
 
     return test_folder
+
 
 def setup(add_etc=True):
     """
