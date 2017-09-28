@@ -18,13 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from setuptools import setup as _setup, find_packages
-
 from os import walk, getenv
-from os.path import join, dirname, expanduser, abspath, basename, exists
+from os.path import join, dirname, expanduser, abspath, exists
 
 from sys import path, argv
 from sys import prefix as sys_prefix
+
+from setuptools import setup as _setup
 
 PACKAGE = 'canopsis'
 AUTHOR = 'Capensis'
@@ -39,92 +39,103 @@ VERSION = '0.1'
 TEST_FOLDERS = ['tests', 'test']
 
 
-def setup(add_etc=True, **kwargs):
-    """
-    Setup dedicated to canolibs projects.
-
-    :param add_etc: add automatically etc files (default True)
-    :type add_etc: bool
-
-    :param kwargs: enrich setuptools.setup method
-    """
-
+def get_pkgpath():
     # get setup path which corresponds to first python argument
     filename = argv[0]
 
     _path = dirname(abspath(expanduser(filename)))
-    name = basename(_path)
+
+    return _path
+
+def find_scripts(pkgpath):
+    scripts_path = join(pkgpath, 'scripts')
+    scripts = []
+    for root, _, files in walk(scripts_path):
+        for _file in files:
+            scripts.append(join(root, _file))
+
+    return scripts
+
+def get_data_files(pkgpath):
+    etc_path = join(pkgpath, 'etc')
+    data_files = []
+
+    target = getenv('CPS_PREFIX', join(sys_prefix, 'etc'))
+
+    for root, _, files in walk(etc_path):
+        files_to_copy = [join(root, _file) for _file in files]
+        final_target = join(target, root[len(etc_path) + 1:])
+        data_files.append((final_target, files_to_copy))
+
+    return data_files
+
+def get_install_requires(pkgpath):
+    requirements = []
+    requires_path = join(pkgpath, 'requirements.txt')
+
+    with open(requires_path) as f:
+        # remove new lines, extra spaces...
+        requirements = [r.strip() for r in f.readlines()]
+
+    return requirements
+
+def get_description(pkgpath):
+    readme_path = join(pkgpath, 'README.md')
+    description = None
+
+    with open(readme_path) as f:
+        description = f.read()
+
+    return description
+
+def get_test_suite(pkgpath):
+    test_folder = None
+
+    test_folders = \
+        [folder for folder in TEST_FOLDERS if exists(join(pkgpath, folder))]
+
+    if test_folders:
+        for test_folder in test_folders:
+            return test_folder
+
+    return test_folder
+
+def setup(add_etc=True):
+    """
+    :param add_etc: add automatically etc files (default True)
+    :type add_etc: bool
+    :param setuptools_args: enrich setuptools.setup method
+    """
+
+    pkgpath = get_pkgpath()
+    data_files = []
+    setuptools_args = {}
 
     # add path to python path
-    path.append(_path)
-
-    # set default parameters if not setted
-    kwargs.setdefault('name', PACKAGE)
-    kwargs.setdefault('author', AUTHOR)
-    kwargs.setdefault('author_email', AUTHOR_EMAIL)
-    kwargs.setdefault('license', LICENSE)
-    kwargs.setdefault('zip_safe', ZIP_SAFE)
-    kwargs.setdefault('url', URL)
-    kwargs.setdefault('package_dir', {'': _path})
-    kwargs.setdefault('keywords', kwargs.get('keywords', '') + KEYWORDS)
-    kwargs.setdefault('version', VERSION)
+    path.append(pkgpath)
 
     if '--no-conf' not in argv:
-        # add etc content if exist and if --no-conf
         if add_etc:
-            etc_path = join(_path, 'etc')
-
-            if exists(etc_path):
-                data_files = kwargs.get('data_files', [])
-                target = getenv('CPS_PREFIX', join(sys_prefix, 'etc'))
-
-                for root, dirs, files in walk(etc_path):
-                    files_to_copy = [join(root, _file) for _file in files]
-                    final_target = join(target, root[len(etc_path) + 1:])
-                    data_files.append((final_target, files_to_copy))
-                kwargs['data_files'] = data_files
-
+            data_files = get_data_files(pkgpath)
     else:
         argv.remove('--no-conf')
 
-    # add scripts if exist
-    if 'scripts' not in kwargs:
-        scripts_path = join(_path, 'scripts')
-        if exists(scripts_path):
-            scripts = []
-            for root, dirs, files in walk(scripts_path):
-                for _file in files:
-                    scripts.append(join(root, _file))
-            kwargs['scripts'] = scripts
+    # set default parameters if not setted
+    setuptools_args.setdefault('name', PACKAGE)
+    setuptools_args.setdefault('author', AUTHOR)
+    setuptools_args.setdefault('author_email', AUTHOR_EMAIL)
+    setuptools_args.setdefault('license', LICENSE)
+    setuptools_args.setdefault('zip_safe', ZIP_SAFE)
+    setuptools_args.setdefault('url', URL)
+    setuptools_args.setdefault('packages', ['canopsis'])
+    setuptools_args.setdefault('package_dir', {'': pkgpath})
+    setuptools_args.setdefault('keywords', setuptools_args.get('keywords', '') + KEYWORDS)
+    setuptools_args.setdefault('version', VERSION)
+    setuptools_args.setdefault('install_requires', get_install_requires(pkgpath))
+    setuptools_args.setdefault('long_description', get_description(pkgpath))
+    setuptools_args.setdefault('test_suite', get_test_suite(pkgpath))
+    setuptools_args.setdefault('data_files', data_files)
 
-    # add packages
-    if 'packages' not in kwargs:
-        packages = find_packages(where=_path, exclude=TEST_FOLDERS)
-        kwargs['packages'] = packages
-
-    if 'install_requires' not in kwargs:
-        requires_path = join(_path, 'requirements.txt')
-        with open(requires_path) as f:
-            # remove new lines, extra spaces...
-            requirements = [r.strip() for r in f.readlines()]
-            kwargs['install_requires'] = requirements
-
-    # add description
-    if 'long_description' not in kwargs:
-        readme_path = join(_path, 'README.md')
-        if exists(readme_path):
-            with open(readme_path) as f:
-                kwargs['long_description'] = f.read()
-
-    # add test
-    if 'test_suite' not in kwargs:
-        test_folders = \
-            [folder for folder in TEST_FOLDERS if exists(join(_path, folder))]
-        if test_folders:
-            for test_folder in test_folders:
-                kwargs['test_suite'] = test_folder
-                break
-
-    _setup(**kwargs)
+    _setup(**setuptools_args)
 
 setup()
