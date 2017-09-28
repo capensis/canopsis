@@ -21,7 +21,7 @@
 from os import walk, getenv
 from os.path import join, dirname, expanduser, abspath, exists
 
-from sys import path, argv
+from sys import argv
 from sys import prefix as sys_prefix
 
 from setuptools import setup
@@ -58,19 +58,21 @@ def find_scripts(pkgpath):
     return scripts
 
 
-def get_data_files(pkgpath):
+def get_data_files(pkgpath, embed_conf):
     """
     Get a list of data files from the etc directory.
     """
-    etc_path = join(pkgpath, 'etc')
+
     data_files = []
 
-    target = getenv('CPS_PREFIX', join(sys_prefix, 'etc'))
+    if embed_conf:
+        etc_path = join(pkgpath, 'etc')
+        target = getenv('CPS_PREFIX', join(sys_prefix, 'etc'))
 
-    for root, _, files in walk(etc_path):
-        files_to_copy = [join(root, _file) for _file in files]
-        final_target = join(target, root[len(etc_path) + 1:])
-        data_files.append((final_target, files_to_copy))
+        for root, _, files in walk(etc_path):
+            files_to_copy = [join(root, _file) for _file in files]
+            final_target = join(target, root[len(etc_path) + 1:])
+            data_files.append((final_target, files_to_copy))
 
     return data_files
 
@@ -123,11 +125,7 @@ def setup_canopsis(pkgpath, embed_conf):
     :returns: dict of setup() arguments
     """
 
-    data_files = []
     setuptools_args = {}
-
-    if embed_conf:
-        data_files = get_data_files(pkgpath)
 
     # set default parameters if not setted
     setuptools_args['name'] = PACKAGE
@@ -142,7 +140,7 @@ def setup_canopsis(pkgpath, embed_conf):
     setuptools_args['install_requires'] = get_install_requires(pkgpath)
     setuptools_args['long_description'] = get_description(pkgpath)
     setuptools_args['test_suite'] = get_test_suite(pkgpath)
-    setuptools_args['data_files'] = data_files
+    setuptools_args['data_files'] = get_data_files(pkgpath, embed_conf)
 
     return setuptools_args
 
