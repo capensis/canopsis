@@ -35,8 +35,6 @@ from canopsis.common.utils import isiterable
 from canopsis.configuration.model import Parameter
 from canopsis.middleware.core import Middleware
 
-__version__ = '0.1'
-
 __all__ = ['DataBase', 'Storage']
 
 
