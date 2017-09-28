@@ -143,7 +143,6 @@ def setup(add_etc=True):
     setuptools_args['zip_safe'] = ZIP_SAFE
     setuptools_args['url'] = URL
     setuptools_args['packages'] = ['canopsis']
-    setuptools_args['package_dir'] = {'': pkgpath}
     setuptools_args['keywords'] = KEYWORDS
     setuptools_args['version'] = VERSION
     setuptools_args['install_requires'] = get_install_requires(pkgpath)
