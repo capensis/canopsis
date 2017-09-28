@@ -19,8 +19,10 @@
 # ---------------------------------
 
 import json
-from logging import StreamHandler
+import os
 import signal
+
+from logging import StreamHandler
 
 from canopsis.common.utils import lookup
 from canopsis.confng import Configuration, Json
@@ -100,9 +102,10 @@ class MigrationModule(object):
         if ask_timeout is not None:
             self.ask_timeout = ask_timeout
 
-        self.version_info = conf.get('version_info', DEFAULT_VERSION_INFO)
+        self.version_info = os.path.expanduser(
+            conf.get('version_info', DEFAULT_VERSION_INFO))
         if version_info is not None:
-            self.version_info = version_info
+            self.version_info = os.path.expanduser(version_info)
 
     def get_version(self, item):
         try:
