@@ -32,7 +32,7 @@ AUTHOR_EMAIL = 'canopsis@capensis.fr'
 LICENSE = 'AGPL V3'
 ZIP_SAFE = False
 URL = 'http://www.canopsis.org'
-KEYWORDS = ' Canopsis Hypervision Hypervisor Monitoring'
+KEYWORDS = 'Canopsis Hypervision Hypervisor Monitoring'
 
 VERSION = '0.1'
 
@@ -121,21 +121,22 @@ def setup(add_etc=True):
         argv.remove('--no-conf')
 
     # set default parameters if not setted
-    setuptools_args.setdefault('name', PACKAGE)
-    setuptools_args.setdefault('author', AUTHOR)
-    setuptools_args.setdefault('author_email', AUTHOR_EMAIL)
-    setuptools_args.setdefault('license', LICENSE)
-    setuptools_args.setdefault('zip_safe', ZIP_SAFE)
-    setuptools_args.setdefault('url', URL)
-    setuptools_args.setdefault('packages', ['canopsis'])
-    setuptools_args.setdefault('package_dir', {'': pkgpath})
-    setuptools_args.setdefault('keywords', setuptools_args.get('keywords', '') + KEYWORDS)
-    setuptools_args.setdefault('version', VERSION)
-    setuptools_args.setdefault('install_requires', get_install_requires(pkgpath))
-    setuptools_args.setdefault('long_description', get_description(pkgpath))
-    setuptools_args.setdefault('test_suite', get_test_suite(pkgpath))
-    setuptools_args.setdefault('data_files', data_files)
+    setuptools_args['name'] = PACKAGE
+    setuptools_args['author'] = AUTHOR
+    setuptools_args['author_email'] = AUTHOR_EMAIL
+    setuptools_args['license'] = LICENSE
+    setuptools_args['zip_safe'] = ZIP_SAFE
+    setuptools_args['url'] = URL
+    setuptools_args['packages'] = ['canopsis']
+    setuptools_args['package_dir'] = {'': pkgpath}
+    setuptools_args['keywords'] = KEYWORDS
+    setuptools_args['version'] = VERSION
+    setuptools_args['install_requires'] = get_install_requires(pkgpath)
+    setuptools_args['long_description'] = get_description(pkgpath)
+    setuptools_args['test_suite'] = get_test_suite(pkgpath)
+    setuptools_args['data_files'] = data_files
 
     _setup(**setuptools_args)
+
 
 setup()
