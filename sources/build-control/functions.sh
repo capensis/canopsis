@@ -519,7 +519,8 @@ function build_pkg() {
 
     cd $SRC_PATH
 
-    export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
+    CPUS=$(get_cpu_cores)
+    export MAKEFLAGS="-j${CPUS}"
 
     NAME="x"
     VERSION="0.1"
