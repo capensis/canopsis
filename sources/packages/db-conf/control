@@ -85,7 +85,8 @@ function wait_for_influx_install() {
     influx_ready=false
     while ! $influx_ready
     do
-        echo "show databases" | $PREFIX/bin/influx >/dev/null 2>&1
+        # show database is not authorized without a created user
+        echo "show databases" | $PREFIX/bin/influx 2>&1 | grep "ensure 'influxd' is running" | wc -l
 
         if [ $? -eq 0 ]
         then
@@ -227,7 +228,8 @@ function post_install_influxdb() {
     launch_cmd 1 influx --execute "\"CREATE USER admin WITH PASSWORD '$adminpass' WITH ALL PRIVILEGES\""
 
     echo "  + Create $cpsuser user ..."
-    launch_cmd 1 influx --execute "\"CREATE USER $cpsuser WITH PASSWORD '$cpspass'\""
+    CREATE_USER="CREATE USER \"$cpsuser\" WITH PASSWORD '$cpspass'"
+    launch_cmd 1 influx --execute "\"${CREATE_USER}\""
     launch_cmd 1 influx --execute "\"GRANT ALL ON canopsis TO $cpsuser\""
 
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/influx/storage.conf DATABASE user $cpsuser

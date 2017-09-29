@@ -37,7 +37,7 @@ function install(){
 		launch_log $NAME "make DESTDIR=$PWD/build/ install"
 		check_code $? 'Impossible to install erlang ...'
 	fi
-	
+
 	launch_log $NAME "cp -Rf build/$PREFIX/* $PREFIX/"
 	check_code $? 'Impossible to copy binaries ...'
 }
