@@ -23,8 +23,8 @@ import argparse
 
 from ConfigParser import ConfigParser, ParsingError
 from importlib import import_module
-from logging import INFO, getLevelName
-from sys import stderr, exit, argv
+from logging import getLevelName
+from sys import stderr
 from sys import prefix as sys_prefix
 from csv import reader
 from os.path import join
@@ -104,9 +104,7 @@ class EngineLauncher(object):
         """
 
         try:
-            self.module = import_module(
-                'canopsis.engines.{0}'.format(self.etype)
-            )
+            self.module = import_module(self.etype)
 
         except ImportError as err:
             self.logger.error(
