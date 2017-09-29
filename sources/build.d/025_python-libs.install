@@ -4,18 +4,13 @@ function build(){
 	true
 }
 
-function pip_install_requirements() {
-	pip install -r ${SRC_PATH}/canopsis/requirements.txt --no-index --find-links=file://${SRC_PATH}/externals/python-libs
-}
-
 
 function install(){
-	pip install -r ${SRC_PATH}/canopsis/requirements.txt --no-index --find-links=file://${SRC_PATH}/externals/python-libs
+	pip install -r ${SRC_PATH}/canopsis/requirements.txt
 	install_conf "supervisord.conf"
 }
 
 
 function update() {
-	pip install -r ${SRC_PATH}/canopsis/requirements.txt --upgrade --no-index --find-links=file://${SRC_PATH}/externals/python-libs
-	pip_install_requirements
+	pip_install -r ${SRC_PATH}/canopsis/requirements.txt --upgrade
 }
