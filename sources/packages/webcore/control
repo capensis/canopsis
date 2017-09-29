@@ -21,6 +21,7 @@ function post_install(){
 
     echo "Post-install $NAME $VERSION-$RELEASE ..."
     launch_cmd 0 supervisorctl update
+    wait_for_mongo
     launch_cmd 0 service mongodb start
     launch_cmd 0 schema2db
 }
@@ -58,6 +59,7 @@ function post_update(){
 
     echo "Post-update $NAME $VERSION-$RELEASE ..."
     launch_cmd 0 service mongodb start
+    wait_for_mongo
     launch_cmd 0 schema2db
 }
 
