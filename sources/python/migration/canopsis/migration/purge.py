@@ -18,47 +18,33 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.confng import Configuration, Json
+from canopsis.logger import Logger
 from canopsis.migration.manager import MigrationModule
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.model import Parameter
-
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
 
-
-CONF_PATH = 'migration/purge.conf'
-CATEGORY = 'PURGE'
-CONTENT = [
-    Parameter('collections', parser=Parameter.array())
-]
+DEFAULT_COLLECTIONS = ["cache", "events", "events_log", "object", "userpreferences"]
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
 class PurgeModule(MigrationModule):
 
-    @property
-    def collections(self):
-        if not hasattr(self, '_collections'):
-            self.collections = None
-
-        return self._collections
-
-    @collections.setter
-    def collections(self, value):
-        if value is None:
-            value = []
-
-        self._collections = value
+    CONF_PATH = 'etc/migration/purge.conf'
+    CATEGORY = 'PURGE'
 
     def __init__(self, collections=None, *args, **kwargs):
         super(PurgeModule, self).__init__(*args, **kwargs)
+
+        self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
+        self.config = Configuration.load(PurgeModule.CONF_PATH, Json)
+        conf = self.config.get(self.CATEGORY, {})
 
         self.storage = Storage(account=Account(user='root', group='root'))
 
         if collections is not None:
             self.collections = collections
+        else:
+            self.collections = conf.get('collections', DEFAULT_COLLECTIONS)
 
     def init(self):
         for collection in self.collections:

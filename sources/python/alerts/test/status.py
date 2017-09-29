@@ -20,32 +20,22 @@
 # ---------------------------------
 
 from time import time
-from unittest import TestCase, main
-
-from canopsis.middleware.core import Middleware
-from canopsis.check import Check
+from unittest import main
 
 from canopsis.alerts.enums import AlarmField, States
-from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import (
     ONGOING, CANCELED, OFF,
     is_flapping, is_stealthy, compute_status, get_last_state, get_last_status,
     get_previous_step, is_keeped_state
 )
+from canopsis.check import Check
+
+from base import BaseTest
 
 
-class TestStatus(TestCase):
+class TestStatus(BaseTest):
     def setUp(self):
-        self.alarm_storage = Middleware.get_middleware_by_uri(
-            'storage-periodical-testalarm://'
-        )
-        self.config_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testconfig://'
-        )
-
-        self.manager = Alerts()
-        self.manager[Alerts.ALARM_STORAGE] = self.alarm_storage
-        self.manager[Alerts.CONFIG_STORAGE] = self.config_storage
+        super(TestStatus, self).setUp()
 
         self.config_storage.put_element(
             element={

@@ -25,12 +25,10 @@ from canopsis.linklist.manager import Linklist
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.engines.core import TaskHandler
 from canopsis.entitylink.manager import Entitylink
-from canopsis.event.manager import Event
+from canopsis.event.manager import Event as EventManager
 
 
 class engine(TaskHandler):
-
-    etype = 'tasklinklist'
 
     event_projection = {
         'resource': 1,
@@ -41,6 +39,13 @@ class engine(TaskHandler):
         'event_type': 1,
     }
 
+    def __init__(self, *args, **kwargs):
+        super(engine, self).__init__(*args, **kwargs)
+        self.link_list_manager = Linklist(*Linklist.provide_default_basics())
+        self.context = ContextGraph(self.logger)
+        self.event = EventManager(*EventManager.provide_default_basics())
+        self.entity_link_manager = Entitylink(*Entitylink.provide_default_basics())
+
     def handle_task(self, job):
         """
         This task computes all links associated to an entity.
@@ -48,10 +53,6 @@ class engine(TaskHandler):
 
         :param job: an entity
         """
-        self.link_list_manager = Linklist()
-        self.context = ContextGraph()
-        self.event = Event()
-        self.entity_link_manager = Entitylink()
         for entity_id in self.context.get_all_entities_id():
             self.entity_link_manager.put(entity_id, {
                 'computed_links': []

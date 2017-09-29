@@ -19,12 +19,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+from lxml.etree import parse, _ElementTree
 from mock import patch
 from os.path import join, abspath, dirname
-from lxml.etree import parse, _ElementTree
+from unittest import TestCase, main
 
-from canopsis.schema.utils import get_unique_key, get_xml, is_name_available
+from canopsis.schema.utils import (
+    get_schema_path, get_unique_key, get_xml, is_name_available
+)
 
 
 def mock_get_schema_path(*args):
@@ -33,6 +35,10 @@ def mock_get_schema_path(*args):
 
 
 class TestUtils(TestCase):
+
+    def test_get_schema_path(self):
+        r = get_schema_path()
+        self.assertEqual(r, '/opt/canopsis/share/canopsis/schema')
 
     def test_get_unique_key(self):
         supposed_schemas = [
@@ -66,4 +72,3 @@ class TestUtils(TestCase):
 
 if __name__ == '__main__':
     main()
-

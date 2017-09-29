@@ -18,32 +18,31 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-  )
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.core import Middleware
 from canopsis.timeserie.timewindow import Interval
 
-CONF_PATH = 'event/eventlog.conf'
-CATEGORY = 'EVENTSLOG'
 
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class EventsLog(MiddlewareRegistry):
-
-    EVENTSLOG_STORAGE = 'eventslog_storage'
+class EventsLog(object):
     """
     Manage events log in Canopsis
     """
 
-    def __init__(self, *args, **kwargs):
+    DEFAULT_EL_STORAGE_URI = 'mongodb-default-eventslog://'
 
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide default storage for EventsLog
+        """
+        return Middleware.get_middleware_by_uri(
+            cls.DEFAULT_EL_STORAGE_URI, table='events_log')
+
+    def __init__(self, el_storage, *args, **kwargs):
         super(EventsLog, self).__init__(*args, **kwargs)
+        self.el_storage = el_storage
 
     def get_eventlog_count_by_period(
-        self, tstart, tstop, limit=100, query={}
-    ):
+            self, tstart, tstop, limit=100, query={}.copy()):
         """Get an eventlog count for each interval found in the given period and
            with a given filter.
            This period is given by tstart and tstop.
@@ -74,7 +73,7 @@ class EventsLog(MiddlewareRegistry):
                 ]
             }
 
-            elements, count = self[EventsLog.EVENTSLOG_STORAGE].find_elements(
+            _, count = self.el_storage.find_elements(
                 query=eventfilter,
                 limit=limit,
                 with_count=True

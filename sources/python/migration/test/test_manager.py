@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,6 +19,29 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[PERFDATA]
-perfdata_storage_uri=influxdb-timed-perfdata://
-context_value=canopsis.context_graph.manager.ContextGraph
+from unittest import main, TestCase
+
+from canopsis.migration.manager import MigrationTool, MigrationModule
+
+
+class MigrationToolTest(TestCase):
+
+    def setUp(self):
+        self.migration_tool = MigrationTool()
+
+    def test_fill(self):
+        #self.migration_tool.fill()
+        pass
+
+
+class MigrationModuleTest(TestCase):
+
+    def setUp(self):
+        self.migration_module = MigrationModule()
+
+    def test_get_version(self):
+        res = self.migration_module.get_version('perfdata')
+        self.assertEqual(res, 0)
+
+if __name__ == '__main__':
+    main()

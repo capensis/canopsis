@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 from unittest import TestCase, main
 
+from canopsis.middleware.core import Middleware
 from canopsis.common.utils import is_mongo_successfull
 from canopsis.tracer.manager import (
     Trace, TraceSetError, TraceNotFound, TracerManager
@@ -16,8 +17,13 @@ class Unencodable(object):
 
 class TestTracerManager(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        storage_uri = 'mongodb-default-testtracer://'
+        cls.tracer_storage = Middleware.get_middleware_by_uri(storage_uri)
+
     def setUp(self):
-        self.manager = TracerManager('mongodb-default-testtracer://')
+        self.manager = TracerManager(self.tracer_storage)
 
     def test_set_trace(self):
         r = self.manager.set_trace('test_trace', 'unittest')

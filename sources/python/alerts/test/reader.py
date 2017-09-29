@@ -19,11 +19,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
 from unittest import main
 from time import sleep
 
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
+from canopsis.confng import Configuration, Ini
+from canopsis.entitylink.manager import Entitylink
+from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
+from canopsis.pbehavior.manager import PBehaviorManager
 
 from base import BaseTest
 
@@ -31,10 +37,26 @@ from base import BaseTest
 class TestReader(BaseTest):
     def setUp(self):
         super(TestReader, self).setUp()
+        self.pb_storage = Middleware.get_middleware_by_uri(
+            PBehaviorManager.PB_STORAGE_URI
+        )
+        self.el_storage = Middleware.get_middleware_by_uri(
+            Entitylink.ENTITYLINK_STORAGE_URI
+        )
 
-        self.reader = AlertsReader()
-        self.reader[AlertsReader.ALARM_STORAGE] = \
-            self.manager[Alerts.ALARM_STORAGE]
+        self.logger = Logger.get('alertsreader', '/tmp/null')
+        conf = Configuration.load(Alerts.CONF_PATH, Ini)
+        self.pbehavior_manager = PBehaviorManager(logger=self.logger,
+                                                  pb_storage=self.pb_storage)
+        self.entitylink_manager = Entitylink(logger=self.logger,
+                                             storage=self.el_storage,
+                                             context_graph=self.cg_manager)
+
+        self.reader = AlertsReader(config=conf,
+                                   logger=self.logger,
+                                   storage=self.manager.alerts_storage,
+                                   pbehavior_manager=self.pbehavior_manager,
+                                   entitylink_manager=self.entitylink_manager)
 
         self.reader._alarm_fields = {
             'properties': {
@@ -43,6 +65,12 @@ class TestReader(BaseTest):
                 'entity_id': {'stored_name': 'd'}
             }
         }
+
+    def tearDown(self):
+        """Teardown"""
+        super(TestReader, self).setUp()
+        self.pb_storage.remove_elements()
+        self.el_storage.remove_elements()
 
     def test__translate_key(self):
         cases = [
@@ -281,7 +309,7 @@ class TestReader(BaseTest):
             def limit(self, _):
                 return self
 
-        self.reader.cache_config = {'expiration': 1}
+        self.reader.expiration = 1
 
         query = MockQuery(count=11)
         count, truncated = self.reader._get_fast_count(
@@ -440,10 +468,8 @@ class TestReader(BaseTest):
         self.assertEqual(truncated, True)
 
         # 7) change configuration
-        self.reader.cache_config = {
-            'resolved_truncate': False,
-            'opened_truncate': False
-        }
+        self.reader.resolved_truncate = False
+        self.reader.opened_truncate = False
 
         query = MockQuery(count=200071)
 
@@ -485,7 +511,7 @@ class TestReader(BaseTest):
             event0
         )
         alarm0 = self.manager.update_state(alarm0, 1, event0)
-        new_value0 = alarm0[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        new_value0 = alarm0[self.manager.alerts_storage.VALUE]
         self.manager.update_current_alarm(alarm0, new_value0)
 
         alarm1_id = '/fake/alarm/id1'
@@ -501,7 +527,7 @@ class TestReader(BaseTest):
             event1
         )
         alarm1 = self.manager.update_state(alarm1, 1, event1)
-        new_value1 = alarm1[self.manager[Alerts.ALARM_STORAGE].VALUE]
+        new_value1 = alarm1[self.manager.alerts_storage.VALUE]
         self.manager.update_current_alarm(alarm1, new_value1)
 
         # Are subperiods well cut ?

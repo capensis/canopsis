@@ -24,7 +24,6 @@ from unittest import TestCase, main
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
-from canopsis.context_graph.process import create_entity
 from canopsis.middleware.core import Middleware
 
 
@@ -48,11 +47,15 @@ class LinkBuilderTest(TestCase):
         self.htl_manager = HypertextLinkManager(config=self.config.get_all(),
                                                 logger=self.logger)
 
-        self.entity = create_entity(
-            id='entity-one',
-            name='my-entity',
-            etype='resource'
-        )
+        self.entity = {
+            '_id': 'entity-one',
+            'type': 'resource',
+            'name': 'my-entity',
+            'depends': [],
+            'impact': [],
+            'measurements': {},
+            'infos': {}
+        }
 
     def tearDown(self):
         """Teardown"""

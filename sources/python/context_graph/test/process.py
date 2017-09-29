@@ -1,35 +1,11 @@
 from __future__ import unicode_literals
 
-from unittest import main, TestCase
-import canopsis.context_graph.process as process
-
-from canopsis.context_graph.manager import ContextGraph
-
 import time
+from unittest import main, TestCase
 
-context_graph_manager = ContextGraph()
-
-class Logger(object):
-
-    def debug(self, log):
-        # print("DEBUG : {0}".format(log))
-        pass
-
-    def info(self, log):
-        # print("INFO : {0}".format(log))
-        pass
-
-    def warning(self, log):
-        # print("WARNING : {0}".format(log))
-        pass
-
-    def critical(self, log):
-        # print("CRITICAL : {0}".format(log))
-        pass
-
-    def error(self, log):
-        # print("ERROR : {0}".format(log))
-        pass
+import canopsis.context_graph.process as process
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.logger import Logger, OutputNull
 
 
 def create_event(conn, conn_name,  comp=None, res=None, event_type="check", timestamp=None):
@@ -40,7 +16,7 @@ def create_event(conn, conn_name,  comp=None, res=None, event_type="check", time
     event = {"connector": conn,
              "connector_name": conn_name,
              "event_type": event_type,
-             "timestamp" : timestamp}
+             "timestamp": timestamp}
     if comp is not None:
         event["component"] = comp
 
@@ -67,6 +43,7 @@ def prepare_test_update_context(result):
             re = entity
     return conn, comp, re
 
+
 class Test(TestCase):
 
     GRACE_PERIOD = 3
@@ -87,54 +64,17 @@ class Test(TestCase):
         self.assertDictEqual(expected, result)
 
     def setUp(self):
-        setattr(process, 'LOGGER', Logger())
+        logger = Logger.get("", None, output_cls=OutputNull)
+        setattr(process, 'LOGGER', logger)
         self.conf_file = "etc/context_graph/manager.conf"
         self.category = "CONTEXTGRAPH"
         self.extra_fields = "extra_fields"
         self.authorized_info_keys = "authorized_info_keys"
+        self.gctx_man = ContextGraph(logger)
+        setattr(process, 'context_graph_manager', self.gctx_man)
 
     def tearDown(self):
         process.cache.clear()
-
-    def test_create_entity(self):
-        id_ = "id_1"
-        name = "name_1"
-        etype = "resource"
-        depends = ["id_2", "id_3", "id_4", "id_5"]
-        impacts = ["id_6", "id_7", "id_8", "id_9"]
-        measurements = {"tag_1": "data_1", "tag_2": "data_2"}
-        infos = {"info_1": "foo_1", "info_2": "bar_2"}
-
-        ent = process.create_entity(id_, name, etype, depends,
-                                    impacts, measurements, infos)
-
-        self.assertEqual(id_, ent["_id"])
-        self.assertEqual(name, ent["name"])
-        self.assertEqual(etype, ent["type"])
-        self.assertEqual(depends, ent["depends"])
-        self.assertEqual(impacts, ent["impact"])
-        self.assertEqual(measurements, ent["measurements"])
-        self.assertEqual(infos, ent["infos"])
-
-    def test_create_component(self):
-        id_ = "id_1"
-        name = "name_1"
-        etype = "component"
-        depends = ["id_2", "id_3", "id_4", "id_5"]
-        impacts = ["id_6", "id_7", "id_8", "id_9"]
-        measurements = {"tag_1": "data_1", "tag_2": "data_2"}
-        infos = {"info_1": "foo_1", "info_2": "bar_2"}
-
-        ent = process.create_entity(id_, name, etype, depends,
-                                    impacts, measurements, infos)
-
-        self.assertEqual(id_, ent["_id"])
-        self.assertEqual(name, ent["name"])
-        self.assertEqual(etype, ent["type"])
-        self.assertEqual(depends, ent["depends"])
-        self.assertEqual(impacts, ent["impact"])
-        self.assertNotIn("measurements", ent.keys())
-        self.assertEqual(infos, ent["infos"])
 
     def test_check_type(self):
         re_entity = {'_id': 'conn_1', 'type': 'resource'}
@@ -385,23 +325,25 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(event)
 
-        expected_conn = process.create_entity(ids["conn_id"],
-                                              conn_name,
-                                              "connector",
-                                              impact=sorted([ids["comp_id"],
-                                                             ids["re_id"]]))
+        impact = sorted([ids["comp_id"], ids["re_id"]])
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
+                                                        conn_name,
+                                                        "connector",
+                                                        impact=impact)
 
-        expected_comp = process.create_entity(ids["comp_id"],
-                                              comp_id,
-                                              "component",
-                                              depends=sorted([ids["conn_id"],
-                                                              ids["re_id"]]))
+        depends = sorted([ids["conn_id"], ids["re_id"]])
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
+                                                        comp_id,
+                                                        "component",
+                                                        depends=depends)
 
-        expected_re = process.create_entity(ids["re_id"],
-                                            re_id,
-                                            "resource",
-                                            impact=[ids["comp_id"]],
-                                            depends=[ids["conn_id"]])
+        impact = [ids["comp_id"]]
+        depends = [ids["conn_id"]]
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
+                                                      re_id,
+                                                      "resource",
+                                                      impact=impact,
+                                                      depends=depends)
 
         res = process.update_context_case1(ids, event)
 
@@ -419,12 +361,12 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id)
         ids = process.gen_ids(event)
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=[ids["comp_id"]])
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=[ids["conn_id"]])
@@ -444,25 +386,25 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
-        expected_re = process.create_entity(ids["re_id"],
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
 
-        conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
+        conn = ContextGraph.create_entity_dict("{0}/{1}".format(conn_id, conn_name),
                                      conn_name,
                                      "connector",
                                      impact=[],
@@ -483,17 +425,17 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id))
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"]]))
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"]]))
 
-        conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
+        conn = ContextGraph.create_entity_dict("{0}/{1}".format(conn_id, conn_name),
                                      conn_name,
                                      "connector",
                                      impact=[],
@@ -515,31 +457,31 @@ class Test(TestCase):
         event = create_event(conn_id, conn_name, comp_id, re_id)
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id, re_id))
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
-        expected_re = process.create_entity(ids["re_id"],
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
 
-        conn = process.create_entity("{0}/{1}".format(conn_id, conn_name),
+        conn = ContextGraph.create_entity_dict("{0}/{1}".format(conn_id, conn_name),
                                      conn_name,
                                      "connector",
                                      impact=[comp_id],
                                      depends=[])
 
-        comp = process.create_entity(comp_id,
+        comp = ContextGraph.create_entity_dict(comp_id,
                                      comp_id,
                                      "component",
                                      impact=[],
@@ -598,11 +540,11 @@ class Test(TestCase):
         re_res_2 = None
         for i in res_1:
             if i['type'] == 'component':
-                comp_res_1= i
+                comp_res_1 = i
             if i['type'] == 'resource':
-                re_res_1= i
+                re_res_1 = i
             if i['type'] == 'connector':
-                conn_res_1= i
+                conn_res_1 = i
         for i in res_2:
             if i['type'] == 'component':
                 comp_res_2 = i
@@ -685,7 +627,7 @@ class Test(TestCase):
                                           'impact': sorted(['comp_1']),
                                           'depends': [],
                                           'measurements': {},
-                                          'infos':{}})
+                                          'infos': {}})
 
 
     def test_update_context_case5(self):
@@ -699,26 +641,26 @@ class Test(TestCase):
 
 
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]))
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               impact=[],
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]))
 
-        expected_re = process.create_entity(ids["re_id"],
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
                                             depends=[ids["conn_id"]])
 
-        comp = process.create_entity(comp_id,
+        comp = ContextGraph.create_entity_dict(comp_id,
                                      comp_id,
                                      "component",
                                      impact=[],
@@ -739,18 +681,18 @@ class Test(TestCase):
         ids = process.gen_ids(create_event(conn_id, conn_name, comp_id))
         event = create_event(conn_id, conn_name, comp_id)
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=[ids["comp_id"]])
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               impact=[],
                                               depends=[ids["conn_id"]])
 
-        comp = process.create_entity(comp_id,
+        comp = ContextGraph.create_entity_dict(comp_id,
                                      comp_id,
                                      "component",
                                      impact=[],
@@ -764,8 +706,6 @@ class Test(TestCase):
 
     def test_info_field(self):
 
-        authorized_info_keys = ["domain","perimeter","comment"]
-
         conn_id = "conn_id"
         conn_name = "conn_name"
         comp_id = "comp_id"
@@ -775,21 +715,21 @@ class Test(TestCase):
 
         ids = process.gen_ids(event)
 
-        expected_conn = process.create_entity(ids["conn_id"],
+        expected_conn = ContextGraph.create_entity_dict(ids["conn_id"],
                                               conn_name,
                                               "connector",
                                               impact=sorted([ids["comp_id"],
                                                              ids["re_id"]]),
                                               infos={})
 
-        expected_comp = process.create_entity(ids["comp_id"],
+        expected_comp = ContextGraph.create_entity_dict(ids["comp_id"],
                                               comp_id,
                                               "component",
                                               depends=sorted([ids["conn_id"],
                                                               ids["re_id"]]),
                                               infos={})
 
-        expected_re = process.create_entity(ids["re_id"],
+        expected_re = ContextGraph.create_entity_dict(ids["re_id"],
                                             re_id,
                                             "resource",
                                             impact=[ids["comp_id"]],
@@ -801,9 +741,9 @@ class Test(TestCase):
                                [],
                                event)
 
-        result_re = context_graph_manager.get_entities_by_id(ids["re_id"])[0]
-        result_conn = context_graph_manager.get_entities_by_id(ids["conn_id"])[0]
-        result_comp = context_graph_manager.get_entities_by_id(ids["comp_id"])[0]
+        result_re = self.gctx_man.get_entities_by_id(ids["re_id"])[0]
+        result_conn = self.gctx_man.get_entities_by_id(ids["conn_id"])[0]
+        result_comp = self.gctx_man.get_entities_by_id(ids["comp_id"])[0]
 
         self.assertEqualEntities(expected_re, result_re)
         self.assertEqualEntities(expected_conn, result_conn)

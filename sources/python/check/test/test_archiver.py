@@ -20,16 +20,9 @@
 
 from unittest import TestCase, main
 
-from canopsis.check.archiver import Archiver
+from canopsis.check.archiver import Archiver, OFF, ONGOING, STEALTHY, BAGOT
 
 ARCHIVER = None
-
-# Statuses
-OFF = 0
-ONGOING = 1
-STEALTHY = 2
-BAGOT = 3
-CANCELED = 4
 
 
 def setFields(_map, **kwargs):

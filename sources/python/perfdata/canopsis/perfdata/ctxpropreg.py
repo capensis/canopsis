@@ -32,7 +32,7 @@ class CTXPerfDataRegistry(CTXPropRegistry):
 
         super(CTXPerfDataRegistry, self).__init__(*args, **kwargs)
 
-        self.manager = PerfData()
+        self.manager = PerfData(*PerfData.provide_default_basics())
 
     def _do(self, cmd, ids, *args, **kwargs):
 

@@ -18,47 +18,22 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.migration.manager import MigrationModule
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.model import Parameter
+from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
+from canopsis.migration.manager import MigrationModule
+
+DEFAULT_STORAGE = 'storage://'
 
 
-CONF_PATH = 'migration/mongo_oids.conf'
-CATEGORY = 'MONGO_OIDS'
-CONTENT = [
-    Parameter('storage')
-]
-
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
 class MongoOIDsModule(MigrationModule):
 
-    @property
-    def storage(self):
-        if not hasattr(self, '_storage'):
-            self.storage = None
-
-        return self._storage
-
-    @storage.setter
-    def storage(self, value):
-        if value is None:
-            value = 'storage://'
-
-        if isinstance(value, basestring):
-            value = Middleware.get_middleware_by_uri(value)
-            value.connect()
-
-        self._storage = value
-
-    def __init__(self, storage=None, *args, **kwargs):
+    def __init__(self, storage=DEFAULT_STORAGE, *args, **kwargs):
         super(MongoOIDsModule, self).__init__(*args, **kwargs)
 
-        if storage is not None:
-            self.storage = storage
+        self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
+
+        self.storage = Middleware.get_middleware_by_uri(storage)
+        self.storage.connect()
 
     def init(self):
         pass

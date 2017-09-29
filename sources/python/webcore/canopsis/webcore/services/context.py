@@ -21,10 +21,8 @@
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 
-manager = ContextGraph()
-
-
 def exports(ws):
+    manager = ContextGraph(ws.logger)
 
     @route(ws.application.get)
     def context(_type, names=None, context=None, extended=None):
@@ -44,9 +42,7 @@ def exports(ws):
         payload=['ids', 'limit', 'start', 'sort', 'with_count'],
         name='context/ids'
     )
-    def context_by_id(
-        ids=None, limit=0, start=0, sort=None, with_count=False
-    ):
+    def context_by_id(ids=None, limit=0, start=0, sort=None, with_count=False):
         """
         result = manager.get(
             ids=ids,
@@ -61,10 +57,12 @@ def exports(ws):
         return result
 
     @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter'])
-    def context(
-        context=None, _filter=None, extended=False,
-        limit=0, start=0, sort=None
-    ):
+    def context(context=None,
+                _filter=None,
+                extended=False,
+                limit=0,
+                start=0,
+                sort=None):
 
         query = {}
         if _filter is not None:
@@ -77,9 +75,8 @@ def exports(ws):
             sort=sort,
             with_count=True
         )
-        result = [count]
-        result += data
-        return result
+
+        return data, count
 
     @route(ws.application.put, payload=[
         '_type', 'entity', 'context', 'extended_id'
@@ -93,7 +90,7 @@ def exports(ws):
             extended_id=extended_id
         )
         """
-        manager.create_entity(entity=entity)
+        manager.update_entity(entity=entity)
         return entity
 
     @route(ws.application.delete, payload=[

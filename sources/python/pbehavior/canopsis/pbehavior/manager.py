@@ -32,14 +32,10 @@ from uuid import uuid4
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths
-)
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.pbehavior.utils import check_valid_rrule
+from canopsis.middleware.core import Middleware
 
-CONF_PATH = 'pbehavior/pbehavior.conf'
-CATEGORY = 'PBEHAVIOR'
+from canopsis.logger import Logger
+from canopsis.pbehavior.utils import check_valid_rrule
 
 
 class BasePBehavior(dict):
@@ -141,33 +137,51 @@ class Comment(BasePBehavior):
     _EDITABLE_FIELDS = (AUTHOR, MESSAGE)
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class PBehaviorManager(MiddlewareRegistry):
+class PBehaviorManager(object):
     """
     PBehavior manager class.
     """
 
-    PBEHAVIOR_STORAGE = 'pbehavior_storage'
+    PB_STORAGE_URI = 'mongodb-default-pbehavior://'
+    LOG_PATH = 'var/log/pbehaviormanager.log'
+    LOG_NAME = 'pbehaviormanager'
 
     _UPDATE_FLAG = 'updatedExisting'
     __TYPE_ERR = "id_ must be a list of string or a string"
 
-    def __init__(self, *args, **kwargs):
-        super(PBehaviorManager, self).__init__(*args, **kwargs)
-        self.context = singleton_per_scope(ContextGraph)
-        self.currently_active_pb = set()
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide the default configuration and logger objects
+        for PBehaviorManager.
 
-    @property
-    def pbehavior_storage(self):
-        return self[PBehaviorManager.PBEHAVIOR_STORAGE]
+        Do not use those defaults for tests.
+
+        :return: config, logger, storage
+        :rtype: Union[dict, logging.Logger, canopsis.storage.core.Storage]
+        """
+        logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
+        pb_storage = Middleware.get_middleware_by_uri(cls.PB_STORAGE_URI)
+
+        return logger, pb_storage
+
+    def __init__(self, logger, pb_storage):
+        """
+        :param dict config: configuration
+        :param pb_storage: PBehavior Storage object
+        """
+        super(PBehaviorManager, self).__init__()
+        kwargs = {"logger": logger}
+        self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
+        self.logger = logger
+        self.pb_storage = pb_storage
 
     def get(self, _id, query=None):
         """Get pbehavior by id.
         :param str id: pbehavior id
         :param dict query: filtering options
         """
-        return self.pbehavior_storage.get_elements(ids=_id, query=query)
+        return self.pb_storage.get_elements(ids=_id, query=query)
 
     def create(
             self,
@@ -177,6 +191,7 @@ class PBehaviorManager(MiddlewareRegistry):
             connector='canopsis', connector_name='canopsis'):
         """
         Method creates pbehavior record
+
         :param str name: filtering options
         :param dict filter: a mongo filter that match entities from canopsis
         context
@@ -231,7 +246,7 @@ class PBehaviorManager(MiddlewareRegistry):
         else:
             for comment in data.comments:
                 comment.update({'_id': str(uuid4())})
-        result = self.pbehavior_storage.put_element(element=data.to_dict())
+        result = self.pb_storage.put_element(element=data.to_dict())
 
         return result
 
@@ -241,17 +256,17 @@ class PBehaviorManager(MiddlewareRegistry):
         :return list: a list of pbehavior
         """
 
-        if not isinstance(id_, (list, str, unicode)):
+        if not isinstance(id_, (list, string_types)):
             raise TypeError(self.__TYPE_ERR)
 
         if isinstance(id_, list):
             for element in id_:
-                if not isinstance(element, (str, unicode)):
+                if not isinstance(element, string_types):
                     raise TypeError(self.__TYPE_ERR)
         else:
             id_ = [id_]
 
-        cursor = self.pbehavior_storage.get_elements(
+        cursor = self.pb_storage.get_elements(
             query={PBehavior.EIDS: {"$in": id_}}
         )
 
@@ -284,7 +299,7 @@ class PBehaviorManager(MiddlewareRegistry):
         new_data = {k: v for k, v in kwargs.iteritems() if v is not None}
         pbehavior.update(**new_data)
 
-        result = self.pbehavior_storage.put_element(
+        result = self.pb_storage.put_element(
             element=new_data, _id=_id
         )
 
@@ -299,14 +314,14 @@ class PBehaviorManager(MiddlewareRegistry):
         :param str _id: pbehavior id
         """
 
-        result = self.pbehavior_storage.remove_elements(
+        result = self.pb_storage.remove_elements(
             ids=_id, _filter=_filter
         )
 
         return self._check_response(result)
 
     def _update_pbehavior(self, pbehavior_id, query):
-        result = self.pbehavior_storage._update(
+        result = self.pb_storage._update(
             spec={'_id': pbehavior_id},
             document=query,
             multi=False, cache=False
@@ -371,7 +386,7 @@ class PBehaviorManager(MiddlewareRegistry):
         comment = Comment(**_comments[0])
         comment.update(**kwargs)
 
-        result = self.pbehavior_storage._update(
+        result = self.pb_storage._update(
             spec={'_id': pbehavior_id, 'comments._id': _id},
             document={'$set': {'comments.$': comment.to_dict()}},
             multi=False, cache=False
@@ -390,7 +405,7 @@ class PBehaviorManager(MiddlewareRegistry):
         :param str _id: comment id
         :return:
         """
-        result = self.pbehavior_storage._update(
+        result = self.pb_storage._update(
             spec={'_id': pbehavior_id},
             document={'$pull': {PBehavior.COMMENTS: {'_id': _id}}},
             multi=False, cache=False
@@ -408,7 +423,7 @@ class PBehaviorManager(MiddlewareRegistry):
         :return: pbehaviors, with name, tstart, tstop, rrule and enabled keys
         :rtype: list of dict
         """
-        pbehaviors = self.pbehavior_storage.get_elements(
+        pbehaviors = self.pb_storage.get_elements(
             query={PBehavior.EIDS: {'$in': [entity_id]}},
             sort={PBehavior.TSTART: -1}
         )
@@ -420,17 +435,17 @@ class PBehaviorManager(MiddlewareRegistry):
         """
         Compute all filters and update eids attributes.
         """
-        pbehaviors = self.pbehavior_storage.get_elements(
+        pbehaviors = self.pb_storage.get_elements(
             query={PBehavior.FILTER: {'$exists': True}}
         )
 
         for pbehavior in pbehaviors:
-            entities = self.context[ContextGraph.ENTITIES_STORAGE].get_elements(
+            entities = self.context.ent_storage.get_elements(
                 query=loads(pbehavior[PBehavior.FILTER])
             )
 
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
-            self.pbehavior_storage.put_element(element=pbehavior)
+            self.pb_storage.put_element(element=pbehavior)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
@@ -458,7 +473,7 @@ class PBehaviorManager(MiddlewareRegistry):
             return None
         event = self.context.get_event(entity)
 
-        pbehaviors = self.pbehavior_storage.get_elements(
+        pbehaviors = self.pb_storage.get_elements(
             query={
                 PBehavior.NAME: {'$in': pb_names},
                 PBehavior.EIDS: {'$in': [entity_id]}
@@ -479,9 +494,9 @@ class PBehaviorManager(MiddlewareRegistry):
                     )
                 )
 
-            if (len(dt_list) >= 2 and
-                    fromts(event['timestamp']) >= dt_list[0] and
-                    fromts(event['timestamp']) <= dt_list[-1]):
+            if (len(dt_list) >= 2
+               and fromts(event['timestamp']) >= dt_list[0]
+               and fromts(event['timestamp']) <= dt_list[-1]):
                 names.append(pbehavior[PBehavior.NAME])
 
         result = set(pb_names).isdisjoint(set(names))
@@ -517,7 +532,7 @@ class PBehaviorManager(MiddlewareRegistry):
         now = int(time())
         query = {'$and': [{'tstop': {'$gt': now}}, {'tstart': {'$lt': now}}]}
 
-        ret_val = list(self[PBehaviorManager.PBEHAVIOR_STORAGE].get_elements(
+        ret_val = list(self.pb_storage.get_elements(
             query=query
         ))
         return ret_val

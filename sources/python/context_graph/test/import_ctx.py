@@ -12,6 +12,9 @@ import json
 import os
 import time
 from jsonschema.exceptions import ValidationError
+from canopsis.logger import Logger, OutputNull
+
+logger = Logger.get("", None, output_cls=OutputNull)
 
 class Keys:
 
@@ -30,21 +33,12 @@ class Keys:
 class BaseTest(TestCase):
 
     def setUp(self):
-        self.ctx_import = ContextGraphImport()
+        self.ctx_import = ContextGraphImport(logger)
         self.entities_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
-        self.organisations_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testorganisations://'
-        )
-        self.users_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testusers://'
-        )
 
-        self.ctx_import[ContextGraph.ENTITIES_STORAGE] = self.entities_storage
-        self.ctx_import[
-            ContextGraph.ORGANISATIONS_STORAGE] = self.organisations_storage
-        self.ctx_import[ContextGraph.USERS_STORAGE] = self.users_storage
+        self.ctx_import.ent_storage = self.entities_storage
 
         self.uuid = "test"
 
@@ -74,11 +68,9 @@ class BaseTest(TestCase):
 
     def tearDown(self):
         self.entities_storage.remove_elements()
-        self.organisations_storage.remove_elements()
-        self.users_storage.remove_elements()
         try:
             os.remove(ImportKey.IMPORT_FILE.format(self.uuid))
-        except:
+        except Exception:
             pass
 
     def assertEqualEntities(self, entity1, entity2):
@@ -88,19 +80,19 @@ class BaseTest(TestCase):
         entity2[Keys.IMPACT] = sorted(entity2[Keys.IMPACT])
         try:
             entity1[Keys.DISABLE_HISTORY] = sorted(entity1[Keys.DISABLE_HISTORY])
-        except:
+        except KeyError:
             pass
         try:
             entity1[Keys.ENABLE_HISTORY] = sorted(entity1[Keys.ENABLE_HISTORY])
-        except:
+        except KeyError:
             pass
         try:
             entity2[Keys.DISABLE_HISTORY] = sorted(entity2[Keys.DISABLE_HISTORY])
-        except:
+        except KeyError:
             pass
         try:
             entity2[Keys.ENABLE_HISTORY] = sorted(entity2[Keys.ENABLE_HISTORY])
-        except:
+        except KeyError:
             pass
         self.assertDictEqual(entity1, entity2)
 
@@ -1434,7 +1426,7 @@ class ReportManager(TestCase):
                                     ImportKey.F_UPDATED: None}}
 
         self.manager = Manager()
-        self.manager[Manager.STORAGE] = self.import_storage
+        self.manager.storage = self.import_storage
 
         self.uuid = "i-am-an-uuid"
 

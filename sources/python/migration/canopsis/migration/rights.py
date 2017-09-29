@@ -18,93 +18,58 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.migration.manager import MigrationModule
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.model import Parameter
-
-from canopsis.common.utils import ensure_iterable
-from canopsis.organisation.rights import Rights
-
-from uuid import uuid1
 import json
 import os
+from uuid import uuid1
+
+from canopsis.common.utils import ensure_iterable
+from canopsis.confng import Configuration, Ini
+from canopsis.logger import Logger
+from canopsis.migration.manager import MigrationModule
+from canopsis.organisation.rights import Rights
+
+DEFAULT_ACTIONS_PATH = '~/opt/mongodb/load.d/rights/actions_ids'
+DEFAULT_USERS_PATH = '~/opt/mongodb/load.d/rights/default_users'
+DEFAULT_ROLES_PATH = '~/opt/mongodb/load.d/rights/default_roles'
 
 
-CONF_PATH = 'migration/rights.conf'
-CATEGORY = 'RIGHTS'
-CONTENT = [
-    Parameter('actions_path'),
-    Parameter('users_path'),
-    Parameter('roles_path')
-]
-
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
 class RightsModule(MigrationModule):
 
-    @property
-    def actions_path(self):
-        if not hasattr(self, '_actions_path'):
-            self.actions_path = None
-
-        return self._actions_path
-
-    @actions_path.setter
-    def actions_path(self, value):
-        if value is None:
-            value = '~/opt/mongodb/load.d/rights/actions_ids'
-
-        self._actions_path = os.path.expanduser(value)
-
-    @property
-    def users_path(self):
-        if not hasattr(self, '_users_path'):
-            self.users_path = None
-
-        return self._users_path
-
-    @users_path.setter
-    def users_path(self, value):
-        if value is None:
-            value = '~/opt/mongodb/load.d/rights/default_users'
-
-        self._users_path = os.path.expanduser(value)
-
-    @property
-    def roles_path(self):
-        if not hasattr(self, '_roles_path'):
-            self.roles_path = None
-
-        return self._roles_path
-
-    @roles_path.setter
-    def roles_path(self, value):
-        if value is None:
-            value = '~/opt/mongodb/load.d/rights/default_roles'
-
-        self._roles_path = os.path.expanduser(value)
+    CONF_PATH = 'etc/migration/rights.conf'
+    CATEGORY = 'RIGHTS'
 
     def __init__(
-        self,
-        actions_path=None,
-        users_path=None,
-        roles_path=None,
-        *args, **kwargs
+            self,
+            actions_path=None,
+            users_path=None,
+            roles_path=None,
+            *args, **kwargs
     ):
         super(RightsModule, self).__init__(*args, **kwargs)
+
+        self.logger = Logger.get('migrationtool', MigrationModule.LOG_PATH)
+        self.config = Configuration.load(RightsModule.CONF_PATH, Ini)
+        conf = self.config.get(self.CATEGORY, {})
 
         self.manager = Rights()
 
         if actions_path is not None:
-            self.actions_path = actions_path
+            actions_path = actions_path
+        else:
+            actions_path = conf.get('actions_path', DEFAULT_ACTIONS_PATH)
+        self.actions_path = os.path.expanduser(actions_path)
 
         if users_path is not None:
-            self.users_path = users_path
+            users_path = users_path
+        else:
+            users_path = conf.get('users_path', DEFAULT_USERS_PATH)
+        self.users_path = os.path.expanduser(users_path)
 
         if roles_path is not None:
-            self.roles_path = roles_path
+            roles_path = roles_path
+        else:
+            roles_path = conf.get('roles_path', DEFAULT_ROLES_PATH)
+        self.roles_path = os.path.expanduser(roles_path)
 
     def init(self, clear=True):
         self.add_actions(self.load(self.actions_path), clear)

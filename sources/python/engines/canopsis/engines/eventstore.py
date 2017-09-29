@@ -44,8 +44,9 @@ class engine(Engine):
         self.log_types = reader([CONFIG.get('events', 'logs')]).next()
         self.comment_types = reader([CONFIG.get('events', 'comments')]).next()
 
-        self.context = ContextGraph()
-        self.pbehavior = PBehaviorManager()
+        self.context = ContextGraph(self.logger)
+
+        self.pbehavior = PBehaviorManager(*PBehaviorManager.provide_default_basics())
         self.beat()
 
         self.log_bulk_amount = 100
@@ -118,11 +119,9 @@ class engine(Engine):
 
         if event_type not in self.event_types:
             self.logger.warning(
-                "Unknown event type '{}', id: '{}', event:\n{}".format(
-                    event_type,
-                    event['rk'],
-                    event
-                ))
+                "Unknown event type '{}', id: '{}', event:\n{}"
+                .format(event_type, event['rk'], event)
+            )
             return event
 
         elif event_type in self.check_types:

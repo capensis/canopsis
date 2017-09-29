@@ -5,10 +5,9 @@
 
 from __future__ import unicode_literals
 
+from configparser import ConfigParser, ExtendedInterpolation
 import json
 import os
-
-from configparser import ConfigParser, ExtendedInterpolation
 
 try:
     from io import StringIO
@@ -16,6 +15,7 @@ except ImportError:
     from StringIO import StringIO
 
 from canopsis.common import root_path
+
 
 class Driver(object):
     """
@@ -67,6 +67,7 @@ class FileDriver(Driver):
 
         else:
             raise ValueError('pass either a file path, a file handler or a string')
+
 
 class Ini(FileDriver):
     """

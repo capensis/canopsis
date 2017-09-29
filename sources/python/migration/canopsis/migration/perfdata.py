@@ -18,28 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.logger import Logger
 from canopsis.migration.manager import MigrationModule
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.perfdata.manager import PerfData
-
 from canopsis.mongo.core import MongoStorage
-
 from canopsis.perfdata.manager import PerfData
 
 
-CONF_PATH = 'migration/perfdata.conf'
-CATEGORY = 'PERFDATA'
-CONTENT = []
-
-
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
 class PerfdataModule(MigrationModule):
     def __init__(self, *args, **kwargs):
         super(PerfdataModule, self).__init__(*args, **kwargs)
 
-        self.manager = PerfData()
+        self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
+        self.manager = PerfData(*PerfData.provide_default_basics())
 
     def init(self):
         pass
@@ -77,7 +67,7 @@ class PerfdataModule(MigrationModule):
             self.set_version('perfdata', 2)
 
     def update_to_version_1(self):
-        storage = self.manager[PerfData.PERFDATA_STORAGE]
+        storage = self.manager.perfdata_storage
         nan = float('nan')
 
         oneweek = 3600 * 24 * 7

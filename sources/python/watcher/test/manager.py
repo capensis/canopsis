@@ -6,9 +6,10 @@ from collections import OrderedDict
 from unittest import main, TestCase
 
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.context_graph.process import create_entity
+#from canopsis.context_graph.process import create_entity
 from canopsis.middleware.core import Middleware
 from canopsis.watcher.manager import Watcher
+from canopsis.logger.logger import Logger, OutputNull
 
 watcher_one = "watcher-one"
 watcher_example = {
@@ -47,8 +48,9 @@ watcher_example = {
 class BaseTest(TestCase):
 
     def setUp(self):
+        logger = Logger.get('', None, output_cls=OutputNull)
         self.manager = Watcher()
-        self.context_graph_manager = ContextGraph()
+        self.context_graph_manager = ContextGraph(logger)
         self.watcher_storage = Middleware.get_middleware_by_uri(
             'storage-default-testwatcher://'
         )
@@ -59,12 +61,12 @@ class BaseTest(TestCase):
             'storage-default-testentities://'
         )
 
-        self.context_graph_manager[ContextGraph.ENTITIES_STORAGE] = (
+        self.context_graph_manager.ent_storage = (
             self.entities_storage
         )
         self.manager.context_graph = self.context_graph_manager
-        self.manager[Watcher.WATCHER_STORAGE] = self.watcher_storage
-        self.manager[Watcher.ALERTS_STORAGE] = self.alerts_storage
+        self.manager.watcher_storage = self.watcher_storage
+        self.manager.alerts_storage = self.alerts_storage
 
     def tearDown(self):
         self.watcher_storage.remove_elements()
@@ -76,7 +78,7 @@ class GetWatcher(BaseTest):
 
     def test_get_watcher(self):
         self.assertIsNone(self.manager.get_watcher('watcher-one'))
-        watcher_entity = create_entity(
+        watcher_entity = ContextGraph.create_entity_dict(
             'watcher-one',
             'one',
             'watcher'
@@ -141,7 +143,7 @@ class DeleteWatcher(BaseTest):
         self.assertEqual(get_w, None)
 
 
-class GetWatcher(BaseTest):
+class GetWatcher2(BaseTest):
 
     def test_get_watcher(self):
         self.manager.create_watcher(watcher_example)

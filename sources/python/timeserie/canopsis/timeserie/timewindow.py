@@ -18,20 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from time import time
-
+from calendar import timegm, monthcalendar
+from collections import Iterable
+from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta as rd
 from dateutil.tz import tzoffset
-
-from calendar import timegm, monthcalendar
-
-from collections import Iterable
-
-from operator import itemgetter
-
-from datetime import datetime as dt
-
 from numbers import Number
+from operator import itemgetter
+from time import time
 
 __all__ = ['Period', 'Interval', 'TimeWindow', 'get_offset_timewindow']
 

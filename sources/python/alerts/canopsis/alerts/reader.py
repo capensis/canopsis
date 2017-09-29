@@ -18,96 +18,116 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Alarm reader manager.
+
+TODO: replace the storage class parameter with a collection (=> rewriting count())
+"""
+
 from sys import prefix
 from os.path import join
 from time import time
 
 from canopsis.alerts.enums import AlarmField
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_config
-from canopsis.configuration.model import Parameter
-from canopsis.task.core import get_task
-
-from canopsis.timeserie.timewindow import Interval, TimeWindow
-
+from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
-
+from canopsis.confng import Configuration, Ini
+from canopsis.confng.helpers import cfg_to_bool
+from canopsis.entitylink.manager import Entitylink
+from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
+from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.task.core import get_task
+from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
 
-from canopsis.entitylink.manager import Entitylink
-from canopsis.pbehavior.manager import PBehaviorManager
+DEFAULT_EXPIRATION = 1800
+DEFAULT_OPENED_TRUNC = True
+DEFAULT_OPENED_LIMIT = 200000
+DEFAULT_RESOLVED_TRUNC = True
+DEFAULT_RESOLVED_LIMIT = 1000
 
 
-CONF_PATH = 'alerts/manager.conf'
-
-DEFAULT = 'ALERTS'
-DEFAULT_CNT = []
-
-CACHE = 'COUNT_CACHE'
-CACHE_CNT = [
-    Parameter('expiration', int),
-    Parameter('opened_truncate', Parameter.bool),
-    Parameter('opened_limit', int),
-    Parameter('resolved_truncate', Parameter.bool),
-    Parameter('resolved_limit', int)
-]
-
-
-@conf_paths(CONF_PATH)
-@add_config({DEFAULT: DEFAULT_CNT, CACHE: CACHE_CNT})
-class AlertsReader(MiddlewareRegistry):
+class AlertsReader(object):
     """
     Alarm cycle managment.
 
     Used to retrieve events related to alarms in a TimedStorage.
     """
 
-    CONFIG_STORAGE = 'config_storage'
-    ALARM_STORAGE = 'alarm_storage'
+    LOG_PATH = 'var/log/alertsreader.log'
+    CONF_PATH = 'etc/alerts/manager.conf'
+    CATEGORY = 'COUNT_CACHE'
+    GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
 
-    def __init__(self, alarm_storage=None, *args, **kwargs):
-        super(AlertsReader, self).__init__(*args, **kwargs)
+    def __init__(self, logger, config, storage,
+                 pbehavior_manager, entitylink_manager):
+        """
+        :param logger: a logger object
+        :param config: a confng instance
+        :param storage: a storage instance
+        :param pbehavior_manager: a pbehavior manager instance
+        :param entitylink_manager: a entitylink manager instance
+        """
+        self.logger = logger
+        self.config = config
+        self.alarm_storage = storage
+        self.pbehavior_manager = pbehavior_manager
+        self.entitylink_manager = entitylink_manager
 
-        if alarm_storage is not None:
-            self[AlertsReader.ALARM_STORAGE] = alarm_storage
+        category = self.config.get(self.CATEGORY, {})
+        self.expiration = int(category.get('expiration', DEFAULT_EXPIRATION))
+        self.opened_truncate = cfg_to_bool(category.get('opened_truncate',
+                                                        DEFAULT_OPENED_TRUNC))
+        self.opened_limit = int(category.get('opened_limit',
+                                             DEFAULT_OPENED_LIMIT))
+        self.resolved_truncate = cfg_to_bool(category.get('resolved_truncate',
+                                                          DEFAULT_RESOLVED_TRUNC))
+        self.resolved_limit = int(category.get('resolved_limit',
+                                               DEFAULT_RESOLVED_LIMIT))
 
-        self.pbm = PBehaviorManager()
-        self.llm = Entitylink()
+        _, pb_storage = PBehaviorManager.provide_default_basics()
 
         self.count_cache = {}
 
-        self.grammar = join(prefix, 'etc/alerts/search/grammar.bnf')
+        self.grammar = join(prefix, self.GRAMMAR_FILE)
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide logger, config, storages...
+
+        ! Do not use in tests !
+
+        :rtype: Union[logging.Logger,
+                      canospis.confng.simpleconf.Configuration,
+                      canopsis.storage.core.Storage,
+                      canopsis.pbehavior.manager.PBehaviorManager,
+                      canopsis.entitylink.manager.EntityLink]
+        """
+        logger = Logger.get('alertsreader', cls.LOG_PATH)
+        conf = Configuration.load(Alerts.CONF_PATH, Ini)
+        alerts_storage = Middleware.get_middleware_by_uri(
+            Alerts.ALERTS_STORAGE_URI
+        )
+        pb_storage = Middleware.get_middleware_by_uri(
+            PBehaviorManager.PB_STORAGE_URI
+        )
+
+        pbm = PBehaviorManager(logger=logger, pb_storage=pb_storage)
+        llm = Entitylink(*Entitylink.provide_default_basics())
+
+        return (logger, conf, alerts_storage, pbm, llm)
 
     @property
     def alarm_fields(self):
+        """
+        alarm_field parameter
+        """
         if not hasattr(self, '_alarm_fields'):
             self._alarm_fields = get_schema('alarm_fields')
 
         return self._alarm_fields
-
-    @property
-    def cache_config(self):
-        if not hasattr(self, '_cache_config'):
-            values = self.conf.get(CACHE)
-
-            self._cache_config = {
-                'expiration': values.get('expiration').value,
-                'resolved_truncate': values.get('resolved_truncate').value,
-                'resolved_limit': values.get('resolved_limit').value,
-                'opened_truncate': values.get('opened_truncate').value,
-                'opened_limit': values.get('opened_limit').value
-            }
-
-        return self._cache_config
-
-    @cache_config.setter
-    def cache_config(self, value):
-        if not hasattr(self, '_cache_config'):
-            self._cache_config = value
-
-        else:
-            self._cache_config.update(value)
 
     def _translate_key(self, key):
         if key in self.alarm_fields['properties']:
@@ -126,11 +146,11 @@ class AlertsReader(MiddlewareRegistry):
         :rtype: dict
         """
 
-        if type(filter_) is list:
-            for i, f in enumerate(filter_):
-                filter_[i] = self._translate_filter(f)
+        if isinstance(filter_, list):
+            for i, fil in enumerate(filter_):
+                filter_[i] = self._translate_filter(fil)
 
-        elif type(filter_) is dict:
+        elif isinstance(filter_, dict):
             for key, value in filter_.items():
                 new_value = self._translate_filter(value)
                 filter_[key] = new_value
@@ -187,13 +207,12 @@ class AlertsReader(MiddlewareRegistry):
             if tstart is None and tstop is None:
                 return {}
 
-            else:
-                return {
-                    '$or': [
-                        self._get_opened_time_filter(tstart, tstop),
-                        self._get_resolved_time_filter(tstart, tstop)
-                    ]
-                }
+            return {
+                '$or': [
+                    self._get_opened_time_filter(tstart, tstop),
+                    self._get_resolved_time_filter(tstart, tstop)
+                ]
+            }
 
         if opened:
             return self._get_opened_time_filter(tstart, tstop)
@@ -228,8 +247,7 @@ class AlertsReader(MiddlewareRegistry):
                 't': {'$lte': tstart}
             }
 
-        else:
-            return {'v.resolved': None}
+        return {'v.resolved': None}
 
     def _get_resolved_time_filter(self, tstart, tstop):
         """
@@ -263,8 +281,7 @@ class AlertsReader(MiddlewareRegistry):
                 't': {'$lte': tstop}
             }
 
-        else:
-            return {'v.resolved': {'$ne': None}}
+        return {'v.resolved': {'$ne': None}}
 
     def interpret_search(self, search):
         """
@@ -294,17 +311,17 @@ class AlertsReader(MiddlewareRegistry):
         :rtype: list
         """
 
-        for l in lookups:
+        for lookup in lookups:
             task = get_task(
-                'alerts.lookup.{}'.format(l),
+                'alerts.lookup.{}'.format(lookup),
                 cacheonly=True
             )
 
             if task is None:
-                raise ValueError('Unknown lookup "{}"'.format(l))
+                raise ValueError('Unknown lookup "{}"'.format(lookup))
 
-            for a in alarms:
-                a = task(self, a)
+            for alarm in alarms:
+                alarm = task(self, alarm)
 
         return alarms
 
@@ -324,12 +341,8 @@ class AlertsReader(MiddlewareRegistry):
         for key in to_clean:
             self.count_cache.pop(key)
 
-    def _get_fast_count(
-        self,
-        query,
-        tstart, tstop, opened, resolved,
-        filter_, search
-    ):
+    def _get_fast_count(self, query, tstart, tstop, opened, resolved, filter_,
+                        search):
         """
         Select the best way to count a query documents (try to avoid as much
         as possible mongo's .count()), and return a count as fast as possible.
@@ -358,51 +371,37 @@ class AlertsReader(MiddlewareRegistry):
 
             now = int(time())
 
-            truncate = self.cache_config.get('resolved_truncate')
-            limit = self.cache_config.get('resolved_limit')
+            truncate = self.resolved_truncate
+            limit = self.resolved_limit
 
             count_cache = self.count_cache.get(cache_key, None)
             if count_cache is not None:
                 if not now >= count_cache['expiration']:
                     count = count_cache['value']
-                    if truncate and count == limit:
-                        return count, True
-
-                    else:
-                        return count, False
+                    return count, truncate and count == limit
 
             # No cache entry found (or no up-to-date entry)
             if truncate:
                 count = query.limit(limit).count(True)
-
             else:
                 count = query.count(True)
 
             self.count_cache[cache_key] = {
                 'value': count,
-                'expiration': now + self.cache_config.get('expiration')
+                'expiration': now + self.expiration
             }
 
-            if truncate and count == limit:
-                return count, True
-
-            else:
-                return count, False
+            return count, truncate and count == limit
 
         # Opened alarms only
         else:
-            if self.cache_config.get('opened_truncate'):
-                limit = self.cache_config.get('opened_limit')
+            if self.opened_truncate:
+                limit = self.opened_limit
                 count = query.limit(limit).count(True)
 
-                if count == limit:
-                    return count, True
+                return count, count == limit
 
-                else:
-                    return count, False
-
-            else:
-                return query.count(True), False
+            return query.count(True), False
 
     def get(
             self,
@@ -470,19 +469,19 @@ class AlertsReader(MiddlewareRegistry):
             if search_filter:
                 filter_ = {'$and': [filter_, search_filter]}
 
-        query = self[AlertsReader.ALARM_STORAGE]._backend.find(filter_)
+        result = self.alarm_storage._backend.find(filter_)
 
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
-        query = query.sort(sort_key, sort_dir)
+        result = result.sort(sort_key, sort_dir)
 
-        query = query.skip(skip)
-        if limit is not None: 
-            query = query.limit(limit)
+        result = result.skip(skip)
+        if limit is not None:
+            result = result.limit(limit)
 
-        alarms = list(query)
+        alarms = list(result)
         limited_total = len(alarms)  # Manual count is much faster than mongo's
 
-        count_query = self[AlertsReader.ALARM_STORAGE]._backend.find(filter_)
+        count_query = self.alarm_storage._backend.find(filter_)
         total, truncated = self._get_fast_count(
             count_query,
             tstart, tstop, opened, resolved,
@@ -493,10 +492,10 @@ class AlertsReader(MiddlewareRegistry):
         last = 0 if limited_total == 0 else skip + limited_total
 
         alarms = self._lookup(alarms, lookups)
-        
+
         if not with_steps:
-            for a in alarms:
-                a['v'].pop(AlarmField.steps.value)
+            for alarm in alarms:
+                alarm['v'].pop(AlarmField.steps.value)
 
         res = {
             'alarms': alarms,
@@ -543,7 +542,7 @@ class AlertsReader(MiddlewareRegistry):
 
         results = []
         for date in intervals:
-            count = self[AlertsReader.ALARM_STORAGE].count(
+            count = self.alarm_storage.count(
                 data_ids=None,
                 timewindow=TimeWindow(start=date['begin'], stop=date['end']),
                 window_start_bind=True,

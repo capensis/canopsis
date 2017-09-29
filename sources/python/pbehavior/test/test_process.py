@@ -26,10 +26,10 @@ from json import dumps
 from mock import Mock, patch
 from unittest import main
 
-from canopsis.pbehavior.process import (event_processing, beat_processing,
-                                        PBEHAVIOR_CREATE, PBEHAVIOR_DELETE)
+from canopsis.pbehavior.process import event_processing, beat_processing,\
+    PBEHAVIOR_CREATE, PBEHAVIOR_DELETE
 from canopsis.context_graph.manager import ContextGraph
-from test_base import BaseTest
+from test_base import BaseTest, MockEngine
 
 
 class TestProcess(BaseTest):
@@ -62,19 +62,19 @@ class TestProcess(BaseTest):
             'author': event['author']
         }
 
-        event_processing(None, event, pbm=self.pbm, logger=Mock())
-        pbehavior = list(self.pbm.pbehavior_storage.get_elements(query=query))
+        event_processing(MockEngine(), event, pbm=self.pbm, logger=Mock())
+        pbehavior = list(self.pbm.pb_storage.get_elements(query=query))
         self.assertEqual(len(pbehavior), 1)
         self.assertDictContainsSubset(query, pbehavior[0])
 
         event.update({'action': PBEHAVIOR_DELETE})
-        event_processing(None, event, pbm=self.pbm, logger=Mock())
-        pbehavior = list(self.pbm.pbehavior_storage.get_elements(query=query))
+        event_processing(MockEngine(), event, pbm=self.pbm, logger=Mock())
+        pbehavior = list(self.pbm.pb_storage.get_elements(query=query))
         self.assertEqual(len(pbehavior), 0)
 
     @patch('canopsis.pbehavior.manager.PBehaviorManager.compute_pbehaviors_filters')
     def test_beat_processing(self, mock_compute):
-        beat_processing(None, logger=Mock())
+        beat_processing(MockEngine(), logger=Mock())
         self.assertEqual(mock_compute.call_count, 1)
         # method compute_pbehaviors_filters is tested in method TestManager.test_compute_pbehaviors_filters
 

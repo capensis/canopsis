@@ -61,7 +61,7 @@ class TestManager(BaseTest):
 
         data = deepcopy(self.pbehavior)
         data.update({'_id': self.pbehavior_id})
-        self.pbm.pbehavior_storage.put_element(element=data)
+        self.pbm.pb_storage.put_element(element=data)
 
         self.entity_id_1 = '/component/collectd/pbehavior/test1/'
         self.entity_id_2 = '/component/collectd/pbehavior/test2/'
@@ -176,7 +176,7 @@ class TestManager(BaseTest):
         pbehavior_2.update({'eids': [5, 6],
                             'tstart': timegm((datetime.utcnow() + timedelta(days=1)).timetuple())})
 
-        self.pbm.pbehavior_storage.put_elements(
+        self.pbm.pb_storage.put_elements(
             elements=(self.pbehavior, pbehavior_1, pbehavior_2)
         )
         pbs = self.pbm.get_pbehaviors(2)
@@ -244,7 +244,7 @@ class TestManager(BaseTest):
 
         pbehavior_4.update({'name': pb_name4})
 
-        self.pbm.pbehavior_storage.put_elements(
+        self.pbm.pb_storage.put_elements(
             elements=(pbehavior_1, pbehavior_2, pbehavior_3, pbehavior_4)
         )
 
@@ -276,7 +276,7 @@ class TestManager(BaseTest):
                 'tstop': timegm((now + timedelta(days=8)).timetuple())
             }
         )
-        self.pbm.pbehavior_storage.put_elements(
+        self.pbm.pb_storage.put_elements(
             elements=(pbehavior_1,)
         )
 
@@ -304,7 +304,7 @@ class TestManager(BaseTest):
                             'name': 'pb2',
                             'tstart': timegm(now.timetuple())})
 
-        self.pbm.pbehavior_storage.put_elements(
+        self.pbm.pb_storage.put_elements(
             elements=(pbehavior_1, pbehavior_2)
         )
 

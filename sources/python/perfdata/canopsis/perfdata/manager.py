@@ -29,26 +29,20 @@ from numbers import Number
 from time import time
 
 from canopsis.common.event import Event
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths
-)
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.common.init import basestring
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.logger import Logger
 from canopsis.monitoring.parser import PerfDataParser
 from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
-
-
-CONF_PATH = 'perfdata/perfdata.conf'
-CATEGORY = 'PERFDATA'
 
 SLIDING_TIME = 'sliding_time'
 SLIDING_TIME_UPPER_BOUND = 365 * 86400 * 3
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class PerfData(MiddlewareRegistry):
+class PerfData(object):
     """Dedicated to access to perfdata (via periodical and timed stores)."""
 
+    DEFAULT_PERFDATA_STORAGE_URI = 'influxdb-timed-perfdata://'
     PERFDATA_STORAGE = 'perfdata_storage'
     CONTEXT_MANAGER = 'context'
 
@@ -57,20 +51,33 @@ class PerfData(MiddlewareRegistry):
         """Return the context graph manager
         :rtype: an instance of the context graph manager"""
 
-        return self[PerfData.CONTEXT_MANAGER]
+        return self.context_manager
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide logger, context manager and perfdata storage.
+
+        Do not use in tests.
+
+        :rtype: Union[logging.Logger, ContextGraph, canopsis.storage.core.Storage]
+        """
+        perfdata_storage = Middleware.get_middleware_by_uri(
+            cls.DEFAULT_PERFDATA_STORAGE_URI)
+        logger = Logger.get('perfdatamanager', 'var/log/perfdatamanager.log')
+        context_manager = ContextGraph(logger)
+
+        return logger, context_manager, perfdata_storage
 
     def __init__(
-            self, perfdata_storage=None, context=None,
+            self, logger, context_manager, perfdata_storage,
             *args, **kwargs
     ):
 
         super(PerfData, self).__init__(*args, **kwargs)
-
-        if perfdata_storage is not None:
-            self[PerfData.PERFDATA_STORAGE] = perfdata_storage
-
-        if context is not None:
-            self[PerfData.CONTEXT_MANAGER] = context
+        self.perfdata_storage = perfdata_storage
+        self.context_manager = context_manager
+        self.logger = logger
 
     @staticmethod
     def _data_id_tags(metric_id, meta=None, event=None):
@@ -133,7 +140,7 @@ class PerfData(MiddlewareRegistry):
 
         data_id, tags = self._data_id_tags(metric_id, meta)
 
-        result = self[PerfData.PERFDATA_STORAGE].count(
+        result = self.perfdata_storage.count(
             data_id=data_id, timewindow=timewindow, tags=tags
         )
 
@@ -146,7 +153,7 @@ class PerfData(MiddlewareRegistry):
         :rtype: list
         """
 
-        return self[PerfData.CONTEXT_MANAGER].find(
+        return self.context_manager.find(
             _type='metric', _filter=query
         )
 
@@ -175,7 +182,7 @@ class PerfData(MiddlewareRegistry):
                 stop=timewindow.stop() + SLIDING_TIME_UPPER_BOUND
             )
 
-        result = self[PerfData.PERFDATA_STORAGE].get(
+        result = self.perfdata_storage.get(
             data_id=data_id, timewindow=timewindow, limit=limit,
             tags=tags, with_tags=with_meta
         )
@@ -210,7 +217,7 @@ class PerfData(MiddlewareRegistry):
 
         timewindow = get_offset_timewindow(timestamp)
 
-        result = self[PerfData.PERFDATA_STORAGE].get(
+        result = self.perfdata_storage.get(
             data_id=data_id, timewindow=timewindow,
             limit=1, tags=tags, with_tags=with_meta
         )
@@ -242,7 +249,7 @@ class PerfData(MiddlewareRegistry):
             data_id, tags = self._data_id_tags(metric_id, meta, event=event)
 
             # update data in a cache (a)synchronous way
-            self[PerfData.PERFDATA_STORAGE].put(
+            self.perfdata_storage.put(
                 data_id=data_id, points=points, tags=tags, cache=cache
             )
 
@@ -253,7 +260,7 @@ class PerfData(MiddlewareRegistry):
 
         data_id, tags = self._data_id_tags(metric_id, meta)
 
-        self[PerfData.PERFDATA_STORAGE].remove(
+        self.perfdata_storage.remove(
             data_id=data_id,
             timewindow=timewindow,
             cache=cache,
@@ -302,7 +309,7 @@ class PerfData(MiddlewareRegistry):
         else:
             query = 'SHOW SERIES where "eid" =~ /.*{0}.*/;'.format(filter_)
 
-        data = self[PerfData.PERFDATA_STORAGE]._conn.query(query).raw
+        data = self.perfdata_storage._conn.query(query).raw
 
         if "series" not in data:
             return []
@@ -335,3 +342,4 @@ class PerfData(MiddlewareRegistry):
             end = start + limit
 
         return metric_infos[start:end]
+

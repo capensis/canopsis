@@ -3,6 +3,7 @@
 
 from unittest import main, TestCase
 from canopsis.context_graph.manager import InfosFilter
+from canopsis.logger import Logger, OutputNull
 from enum import Enum
 
 
@@ -57,21 +58,11 @@ TEMPLATE_INFOS = {Keys.F_DISABLED_HIST.value: None,
                   Keys.F_DISABLED_HIST.value: None}
 
 
-class MockLogger:
-
-    def __init__(self, test_instance):
-        self.test_instance = test_instance
-        self.called = False
-
-    def warning(self, _):
-        self.called = True
-
-
 class BaseTest(TestCase):
 
     def setUp(self):
-        self.logger = MockLogger(self)
-        self.infosfilter = InfosFilter(self.logger)
+        self.logger = Logger.get("", None, output_cls=OutputNull)
+        self.infosfilter = InfosFilter(logger=self.logger)
         self.infosfilter._schema = SCHEMA
 
 

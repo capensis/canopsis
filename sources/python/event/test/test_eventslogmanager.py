@@ -19,23 +19,39 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main
-
-#TODO4-01-2017
-#from canopsis.serie.tasks import new_operator, operatorset
-#from manager import BaseTestSerieManager
+from unittest import TestCase, main
+from canopsis.event.eventslogmanager import EventsLog
+from canopsis.middleware.core import Middleware
 
 
-#class TestSerieTasks(BaseTestSerieManager):
-#    def test_new_operator(self):
-#        raise NotImplementedError()
-#
-#    def test_operator(self):
-#        raise NotImplementedError()
-#
-#    def test_operatorset(self):
-#        raise NotImplementedError()
-#
+class EventsLogManagerTest(TestCase):
+    """Base class for eventslogmanager tests
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        el_storage = Middleware.get_middleware_by_uri('mongodb-default-testeventslog://')
+        cls.manager = EventsLog(el_storage=el_storage)
+
+    def tearDown(self):
+        pass
+
+
+class EventsLogTest(EventsLogManagerTest):
+
+    def test_get_eventlog_count_by_period(self):
+
+        def mock_find(query={}, limit=100, with_count=True):
+            return None, 5
+
+        self.manager.el_storage.find_elements = mock_find
+
+        result = self.manager.get_eventlog_count_by_period(
+            1433113200,
+            1435705200
+        )
+
+        self.assertEquals(result[0].get('count'), 5)
 
 if __name__ == '__main__':
     main()
