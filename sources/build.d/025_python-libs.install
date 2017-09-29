@@ -6,7 +6,7 @@ function build(){
 
 
 function install(){
-	pip install -r ${SRC_PATH}/canopsis/requirements.txt
+	pip_install -r ${SRC_PATH}/canopsis/requirements.txt
 	install_conf "supervisord.conf"
 }
 
