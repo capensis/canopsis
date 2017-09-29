@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.init import Init
+import argparse
 
 from ConfigParser import ConfigParser, ParsingError
 from importlib import import_module
@@ -28,6 +28,8 @@ from sys import stderr, exit, argv
 from sys import prefix as sys_prefix
 from csv import reader
 from os.path import join
+
+from canopsis.common.init import Init
 
 
 class EngineLauncher(object):
@@ -203,44 +205,23 @@ class EngineLauncher(object):
 
         self.engine.run()
 
+
 if __name__ == '__main__':
-    import getopt
 
     def usage():
-        print >> stderr, "Usage: engine-launcher -e <engine type> -n <name> -w <process num> -l <loglevel>"
+        usage = "Usage: engine-launcher -e <engine type> -n <name> -w <process num> [-l <loglevel>]"
+        stderr.write('{}\n'.format(usage))
 
-    try:
-        opts, args = getopt.getopt(argv[1:], 'e:n:w:l:')
+    parser = argparse.ArgumentParser()
 
-    except getopt.GetoptError:
-        usage()
-        exit(1)
+    parser.add_argument('-e', '--type', dest='etype', help='engine type', required=True)
+    parser.add_argument('-n', '--name', help='engine name', required=True)
+    parser.add_argument('-w', '--procnum', help='run X process', required=True)
+    parser.add_argument('-l', '--loglevel', default='INFO')
 
-    etype = None
-    name = None
-    procnum = None
-    loglevel = INFO
-
-    for o, a in opts:
-        if o == '-e':
-            etype = a
-
-        elif o == '-n':
-            name = a
-
-        elif o == '-w':
-            procnum = a
-
-        elif o == '-l':
-            loglevel = a.upper()
-
-        else:
-            assert False, 'Unknown option: {0}'.format(o)
-
-    if not etype or not name or not procnum:
-        usage()
-        exit(1)
+    args = parser.parse_args()
 
     # Launch the engine
-    launcher = EngineLauncher(etype, name, procnum, loglevel)
+    launcher = EngineLauncher(
+        args.etype, args.name, args.procnum, args.loglevel.upper())
     launcher()
