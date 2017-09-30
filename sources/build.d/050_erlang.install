@@ -22,7 +22,7 @@ function build(){
 
 	echo "   + Build ..."
 	rm -Rf build/ &> /dev/null
-	launch_log $NAME "make -j4 ${MAKEFLAGS}"
+	launch_log $NAME "make ${MAKEFLAGS}"
 	check_code $?
 }
 
