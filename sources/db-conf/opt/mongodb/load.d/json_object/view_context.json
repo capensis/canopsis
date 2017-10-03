@@ -1,5 +1,8 @@
-d": "view.context",
+{  
+  "_id": "view.context",
+  "id": "view.context",
   "crecord_write_time": 1506610791,
+  "loader_id" : "view.context",
   "title":"Context",
   "enable": true,
   "description": null,
