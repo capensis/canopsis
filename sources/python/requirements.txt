@@ -14,7 +14,6 @@ gunicorn==19.2.1
 APScheduler==2.0.3
 msgpack-python==0.1.13
 supervisor==3.0a12
-isit==0.2.6
 icalendar==3.5
 pytz==2014.2
 kombu==3.0.33
