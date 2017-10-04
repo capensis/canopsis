@@ -109,7 +109,8 @@ def exports(ws):
             sort_dir=sort_dir,
             skip=skip,
             limit=limit,
-            with_steps=with_steps
+            with_steps=with_steps,
+            natural_search=True
         )
         alarms_ids = []
         for alarm in alarms['alarms']:
