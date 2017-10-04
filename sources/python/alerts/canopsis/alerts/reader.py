@@ -59,6 +59,9 @@ class AlertsReader(object):
     CONF_PATH = 'etc/alerts/manager.conf'
     CATEGORY = 'COUNT_CACHE'
     GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
+    GET_FILTER = {"$or": [{"v.component":{"$regex": None}},
+                          {"v.connector":{"$regex": None}},
+                          {"v.resource":{"$regex": None}}]}
 
     def __init__(self, logger, config, storage,
                  pbehavior_manager, entitylink_manager):
@@ -416,7 +419,8 @@ class AlertsReader(object):
             sort_dir='DESC',
             skip=0,
             limit=None,
-            with_steps=False
+            with_steps=False,
+            natural_search=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -443,6 +447,8 @@ class AlertsReader(object):
 
         :param bool with_steps: True if you want alarm steps in your alarm.
 
+        :param bool natural_search: True if you want to use a natural search
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
@@ -455,19 +461,27 @@ class AlertsReader(object):
         if time_filter is None:
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
-        search_context, search_filter = self.interpret_search(search)
-        search_filter = self._translate_filter(search_filter)
-
-        if search_context == 'all':
-            filter_ = {'$and': [time_filter, search_filter]}
+        filter_ = None
+        if natural_search:
+            filter_ = self.GET_FILTER.copy()
+            for sub_filter in filter_["$or"]:
+                key = sub_filter.keys()[0]
+                sub_filter[key]["$regex"] = search
 
         else:
-            filter_ = self._translate_filter(filter_)
+            search_context, search_filter = self.interpret_search(search)
+            search_filter = self._translate_filter(search_filter)
 
-            filter_ = {'$and': [time_filter, filter_]}
+            if search_context == 'all':
+                filter_ = {'$and': [time_filter, search_filter]}
 
-            if search_filter:
-                filter_ = {'$and': [filter_, search_filter]}
+            else:
+                filter_ = self._translate_filter(filter_)
+
+                filter_ = {'$and': [time_filter, filter_]}
+
+                if search_filter:
+                    filter_ = {'$and': [filter_, search_filter]}
 
         result = self.alarm_storage._backend.find(filter_)
 
