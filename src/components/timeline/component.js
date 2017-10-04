@@ -132,7 +132,7 @@ Ember.Application.initializer({
                             else
                                 step.showDate = false;
 
-                            step.time = moment(date).format('h:mm:ss a');
+                            step.time = moment(date).format('HH:mm:ss');
 
                             if (!(step._t in get(component, 'iconsAndColors'))) {
                                 console.warning('Unknown step "' + step._t + '" : skipping');
@@ -156,7 +156,7 @@ Ember.Application.initializer({
 
                             if (step._t === 'snooze') {
                                 var until = new Date(step.val * 1000);
-                                step.until = moment(until).format('h:mm:ss a');
+                                step.until = moment(until).format('HH:mm:ss');
                             }
 
                             if (step._t === 'statecounter') {
