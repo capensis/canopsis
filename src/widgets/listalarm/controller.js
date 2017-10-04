@@ -94,7 +94,7 @@ Ember.Application.initializer({
               'output': 'v.state.m',
               'pbehaviors': 'pbehaviors',
               'extra_details': 'v.extra_details',
-              'initial_output':'v.initial_output' 
+              'initial_output':'v.initial_output'
             },
 
 
@@ -490,36 +490,6 @@ Ember.Application.initializer({
             },
 
             /**
-             * Get the Alarms from the backend using the adapter
-             * @method valideExpression
-             */
-            isValidExpression: function (expression) {
-              var controller = this;
-              var query = {
-                expression: expression
-              };
-              var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alertexpression');
-
-              return DS.PromiseObject.create({
-                promise: adapter.findQuery('alertexpression', query).then(function (result) {
-                  if (result.success) {
-                    return result.data[0];
-                  } else {
-                    throw new Error(result.data.msg);
-                  }
-                }, function (reason) {
-                  console.error('ERROR in the adapter: ', reason);
-                  return false;
-                })
-                .catch(function (err) {
-                  console.error('unexpected error ', err);
-                  return false;
-                })
-              });
-
-            },
-
-            /**
              * @method parseFields
              */
             parseFields: function (columns) {
@@ -637,13 +607,9 @@ Ember.Application.initializer({
 
               search: function (text) {
                 var controller = this;
-                this.isValidExpression(text).then(function(result) {
-                  controller.set('isValidSearchText', result);
-                  if (result) {
-                    controller.set('alarmSearchOptions.search', text);
-                    controller.set('manualUpdateAlarms', new Date().getTime());
-                  }
-                })
+                controller.set('isValidSearchText', true);
+                controller.set('alarmSearchOptions.search', text);
+                controller.set('manualUpdateAlarms', new Date().getTime());
               },
 
             }
