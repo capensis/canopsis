@@ -303,6 +303,11 @@ Ember.Application.initializer({
               var controller = this;
               this.set('loaded', false);
               var options = this.get('alarmSearchOptions');
+
+              //don't touch this or the backend will explode
+              if(!options.filter)
+                options.filter = "{}";              
+
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
 
               return DS.PromiseArray.create({
