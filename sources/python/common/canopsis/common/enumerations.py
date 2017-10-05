@@ -24,7 +24,8 @@ from enum import Enum
 
 
 class DefaultEnum(Enum):
-    """Default simple Enum class
+    """
+    Default simple Enum class
 
     Extends:
         Enum
@@ -33,8 +34,11 @@ class DefaultEnum(Enum):
     def __str__(self):
         return str(self.value)
 
-# https://github.com/Leryan/leryan.types/blob/v0.0.18/leryan/types/fastenum.py
+
 class FastEnumMeta(type):
+    """
+    https://github.com/Leryan/leryan.types/blob/v0.0.18/leryan/types/fastenum.py
+    """
 
     def __new__(metacls, name, bases, attrs):
         slots = []
@@ -86,6 +90,7 @@ class FastEnumMeta(type):
     @property
     def values(cls):
         return cls._values
+
 
 class FastEnum:
     """
