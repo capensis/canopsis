@@ -55,7 +55,8 @@
               "name": "customfilterlist"
             },
             {
-              "name": "crud"
+              "name": "crud",
+              "hideDuplicate": true
             },
             {
               "name": "pagination"
