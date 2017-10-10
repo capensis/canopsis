@@ -476,6 +476,9 @@ class AlertsReader(object):
                 filter_ = {'$and': [time_filter, search_filter]}
 
             else:
+                if filter_ is None:
+                    filter_ = {}
+
                 filter_ = self._translate_filter(filter_)
 
                 filter_ = {'$and': [time_filter, filter_]}
