@@ -53,7 +53,8 @@ def exports(ws):
             'sort_dir',
             'skip',
             'limit',
-            'with_steps'
+            'with_steps',
+            'natural_search'
         ]
     )
     def get_alarms(
@@ -68,7 +69,8 @@ def exports(ws):
             sort_dir='DESC',
             skip=0,
             limit=50,
-            with_steps=False
+            with_steps=False,
+            natural_search=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -110,7 +112,7 @@ def exports(ws):
             skip=skip,
             limit=limit,
             with_steps=with_steps,
-            natural_search=True
+            natural_search=natural_search
         )
         alarms_ids = []
         for alarm in alarms['alarms']:
