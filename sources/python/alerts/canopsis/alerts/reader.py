@@ -461,7 +461,6 @@ class AlertsReader(object):
         if time_filter is None:
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
-        filter_ = None
         if natural_search:
             filter_ = self.GET_FILTER.copy()
             for sub_filter in filter_["$or"]:
@@ -476,9 +475,6 @@ class AlertsReader(object):
                 filter_ = {'$and': [time_filter, search_filter]}
 
             else:
-                if filter_ is None:
-                    filter_ = {}
-
                 filter_ = self._translate_filter(filter_)
 
                 filter_ = {'$and': [time_filter, filter_]}
