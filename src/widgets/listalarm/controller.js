@@ -307,8 +307,13 @@ Ember.Application.initializer({
               //don't touch this or the backend will explode
               if(!options.filter)
                   options.filter = "{}";
-                  options["natural_search"] = true;
-
+              if(controller.get('isNaturalSearch')){
+			      options['natural_search'] = true;
+                  controller.set('isNaturalSearch', false);
+              } else {
+                  options['natural_search'] = false;
+              }
+              
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
               return DS.PromiseArray.create({
                 promise: adapter.findQuery('alerts', options).then(function (alarms) {
@@ -609,6 +614,7 @@ Ember.Application.initializer({
                 var controller = this;
                 controller.set('isValidSearchText', true);
                 controller.set('alarmSearchOptions.search', text);
+                controller.set('isNaturalSearch', true);
                 controller.set('manualUpdateAlarms', new Date().getTime());
               },
 
