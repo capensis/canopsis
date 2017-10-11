@@ -306,10 +306,10 @@ Ember.Application.initializer({
 
               //don't touch this or the backend will explode
               if(!options.filter)
-                options.filter = "{}";              
+                  options.filter = "{}";
+                  options["natural_search"] = true;
 
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
-
               return DS.PromiseArray.create({
                 promise: adapter.findQuery('alerts', options).then(function (alarms) {
                   if (alarms.success) {
@@ -470,9 +470,9 @@ Ember.Application.initializer({
 
               var query = {
                 tstart: iParams['tstart'] || 0,
-                                tstop: iParams['tstop'] || 0,
-                                sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
-                        sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction'),
+                tstop: iParams['tstop'] || 0,
+                sort_key: iParams['sort_key'] || this.get('model.default_sort_column.property'),
+                sort_dir: iParams['sort_dir'] || this.get('model.default_sort_column.direction'),
                 // filter: iParams['filter'] || this.get('model.filter'),
                 search: iParams['search'] || '',
                 opened: filterState == 'opened',
@@ -480,7 +480,7 @@ Ember.Application.initializer({
                             };
 
 
-              var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+				var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
                 adapter.findQuery('alerts', query).then(function (result) {
                               var alerts = get(result, 'data');
                     controller.setAlarmsForShow(alerts[0]['alarms']);
@@ -549,7 +549,7 @@ Ember.Application.initializer({
               if (aa) {
                 var self = this;
                 var filterState = this.get('model.alarms_state_filter.state') || 'resolved';
-                var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+                  var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
                 var f = {
                   'd': aa.get('entity_id')
                 }
