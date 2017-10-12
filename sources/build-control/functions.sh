@@ -845,3 +845,8 @@ function show_messages() {
     cat $MESSAGES
     rm $MESSAGES
 }
+
+function get_cpu_cores() {
+    count=$(grep -iE '^processor.*[0-9]+$' /proc/cpuinfo | wc -l)
+    echo ${count}
+}
