@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import os
+
 from os import walk, getenv
 from os.path import join, dirname, expanduser, abspath, exists
 
@@ -40,9 +42,7 @@ TEST_FOLDERS = ['tests', 'test']
 
 
 def get_pkgpath():
-    filename = argv[0]
-
-    return dirname(abspath(expanduser(filename)))
+    return os.path.realpath(__file__)
 
 
 def get_scripts(pkgpath):
