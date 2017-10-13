@@ -461,7 +461,6 @@ class AlertsReader(object):
         if time_filter is None:
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
-        filter_ = None
         if natural_search:
             filter_ = self.GET_FILTER.copy()
             for sub_filter in filter_["$or"]:
