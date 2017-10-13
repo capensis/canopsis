@@ -22,20 +22,16 @@
 Python utility library.
 """
 
-from importlib import import_module
-from imp import load_source
-
-from inspect import ismodule
-
 from collections import Iterable
-
-from sys import version as PYVER
-
+from imp import load_source
+from importlib import import_module
+from inspect import ismodule
+from os import listdir
 from os.path import expanduser, splitext
 from os.path import join as joinpath
-from os import listdir
-
 import re
+from sys import version as PYVER
+import time
 
 from .init import basestring
 
@@ -491,6 +487,7 @@ def prototype(typed_args=None, typed_kwargs=None, typed_return=None):
 
     return decorator
 
+
 def get_rrule_freq(rrule):
     """Return the FREQ of a rrule as a string. Raise a ValueError if no
     FREQ are found.
@@ -588,3 +585,14 @@ def is_mongo_successfull(dico):
     :rtype: bool
     """
     return 'ok' in dico and dico['ok'] == 1.0
+
+
+def date_to_ts(date):
+    """
+    Convert a datetime to timestamp.
+
+    :param datetime date: a date
+    :returns: Unix timestamp
+    :rtype: int
+    """
+    return time.mktime(date.timetuple())
