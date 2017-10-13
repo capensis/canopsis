@@ -42,7 +42,7 @@ TEST_FOLDERS = ['tests', 'test']
 
 
 def get_pkgpath():
-    return os.path.realpath(__file__)
+    return dirname(os.path.realpath(__file__))
 
 
 def get_scripts(pkgpath):
