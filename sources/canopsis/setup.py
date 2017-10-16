@@ -21,7 +21,7 @@
 import os
 
 from os import walk, getenv
-from os.path import join, dirname, expanduser, abspath, exists
+from os.path import join, dirname, exists
 
 from sys import argv
 from sys import prefix as sys_prefix
