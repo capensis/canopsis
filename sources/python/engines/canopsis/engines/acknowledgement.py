@@ -134,6 +134,32 @@ class engine(Engine):
 
             rk = event.get('referer', event.get('ref_rk', None))
 
+            if event.get("ack_resources") in [True, "true", "True"]:
+                # fetch not ok component's resources
+                component = event.get("component")
+                sub_res_query = {"component": component,
+                                 "state": {"$ne": "0"},
+                                 "source_type": "resource"}
+                result_cur = self.events_collection.find(sub_res_query)
+
+                for resource in result_cur:
+                    sub_ack_event = {
+                        "ref_rk": resource.get("_id"),
+                        "author": event.get("author"),
+                        "output": event.get("output"),
+
+                        "connector": resource.get("connector"),
+                        "connector_name": resource.get("connector_name"),
+                        "event_type": "ack",
+                        "source_type": "resource",
+                        "component": component,
+                        "resource": resource.get("resource")
+                    }
+                    publish(
+                        publisher=self.amqp, event=sub_ack_event,
+                        exchange=self.acknowledge_on
+                    )
+
             author = event['author']
 
             self.logger.debug(dumps(event, indent=2))
