@@ -508,7 +508,13 @@ function export_env() {
 function pip_install() {
     echo "pip install $*"
 
-    pip install --no-index --find-links=file://${SRC_PATH}/externals/python-libs $*
+    # Support CAT buildinstall
+    pylibpath="${CPSPATH}/sources"
+    if [ "${CPSPATH}" = "" ];then
+        pylibpath="${SRC_PATH}"
+    fi
+
+    pip install --no-index --find-links=file://${pylibpath}/externals/python-libs $*
     check_code $? "Pip install failed ..."
 }
 
