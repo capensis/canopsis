@@ -14,14 +14,12 @@ class MockedWebServer(object):
     responses through an hadler class.
     """
 
-    def __init__(self, handler, port=None):
+    def __init__(self, handler, port):
         """
         :param SimpleHTTPRequestHandler handler: class to handle http requests
-        :param int port: a port number
+        :param int port: a usable port number
         """
         self.port = port
-        if self.port is None:
-            self.port = MockedWebServer.get_free_port()
 
         self._server = SocketServer.TCPServer(('localhost', port), handler)
         self._thread = Thread(target=self.run)
