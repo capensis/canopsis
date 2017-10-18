@@ -9,7 +9,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 from canopsis.logger import Logger, OutputNull
 
-from infos_filter import Keys, SCHEMA, TEMPLATE_INFOS
+from test_infos_filter import Keys, SCHEMA, TEMPLATE_INFOS
 
 logger = Logger.get("", None, output_cls=OutputNull)
 

@@ -23,6 +23,7 @@ from unittest import TestCase, main
 from canopsis.ccalendar.manager import CalendarManager
 from canopsis.middleware.core import Middleware
 
+
 class CalendarManagerTest(TestCase):
     """
     Base class for all calendar manager tests.
