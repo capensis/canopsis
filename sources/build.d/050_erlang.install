@@ -9,8 +9,6 @@ function build(){
 	fi
 	cd  $BASE
 
-	export MAKEFLAGS=""
-
 	if [ -e Makefile ]
 	then
 		echo "   + Clean ..."
