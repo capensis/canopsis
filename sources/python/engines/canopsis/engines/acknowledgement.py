@@ -134,7 +134,8 @@ class engine(Engine):
 
             rk = event.get('referer', event.get('ref_rk', None))
 
-            if event.get("ack_resources") in [True, "true", "True"]:
+            if event.get("source_type") == "component" and\
+                event.get("ack_resources") in [True, "true", "True"]:
                 # fetch not ok component's resources
                 component = event.get("component")
                 sub_res_query = {"component": component,

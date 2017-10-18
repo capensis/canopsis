@@ -4,7 +4,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["author", "connector", "component", "resource", "separator", "ticket", "output"]
+		"keys":["author", "connector", "component", "resource", "separator", "ticket", "output", "ack_resources"]
 	}],
 	"properties": {
 		"connector": {
@@ -65,6 +65,11 @@
 			"required": false,
 			"title": "Numéro de ticket",
 			"description": "Numéro de ticket"
-		}
+		},
+		"ack_resources": {
+            "type": "boolean",
+            "required": true,
+            "description": "Do you want to ack linked resources or not ?"
+        }
 	}
 }
