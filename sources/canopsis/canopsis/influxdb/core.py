@@ -22,8 +22,8 @@ from canopsis.common.init import basestring
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 
-from influxdb import InfluxDBClient, InfluxDBClusterClient
-from influxdb.exceptions import InfluxDBClientError
+#from influxdb import InfluxDBClient, InfluxDBClusterClient
+#from influxdb.exceptions import InfluxDBClientError
 
 from sys import getsizeof
 

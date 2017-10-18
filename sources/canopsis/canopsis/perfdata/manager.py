@@ -32,6 +32,7 @@ from canopsis.common.event import Event
 from canopsis.common.init import basestring
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
 from canopsis.monitoring.parser import PerfDataParser
 from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 
