@@ -69,7 +69,7 @@ class MongoCollection(object):
         Find elements in the collection.
 
         :param dict query: a query search
-        :rtype: MongoCursor
+        :rtype: pymongo.cursor.Cursor
         """
         return self.collection.find(query)
 
@@ -78,7 +78,7 @@ class MongoCollection(object):
         Find one element in the collection.
 
         :param dict query: a query search
-        :rtype: MongoCursor
+        :rtype: pymongo.cursor.Cursor
         """
         return self.collection.find_one(query)
 
