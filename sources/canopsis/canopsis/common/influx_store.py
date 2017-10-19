@@ -13,33 +13,12 @@ from influxdb.exceptions import InfluxDBClientError
 # TODO: passer en tcp au lieu d'udp
 
 
-"""
-TODO: use a generic class to modelize data
-
-class GenericSeriesHelper(SeriesHelper):
-    # Meta class stores time series helper configuration.
-    class Meta:
-        # The client should be an instance of InfluxDBClient.
-        client = myclient
-        # The series name must be a string. Add dependent fields/tags in curly brackets.
-        series_name = 'events.stats.{server_name}'
-        # Defines all the fields in this time series.
-        fields = ['some_stat', 'other_stat']
-        # Defines all the tags for the series.
-        tags = ['server_name']
-        # Defines the number of data points to store prior to writing on the wire.
-        bulk_size = 5
-        # autocommit must be set to True when using bulk_size
-        autocommit = True
-"""
-
-
 class InfluxStore(object):
     """
-    Distribute ready-to-use influx series.
+    Distribute ready-to-use influx store.
     """
 
-    CONF_PATH = 'etc/influx/storage.conf'
+    CONF_PATH = 'etc/common/influx_store.conf'
     CONF_CAT = 'DATABASE'
 
     DEFAULT_HOST = 'localhost'
@@ -48,8 +27,6 @@ class InfluxStore(object):
     DEFAULT_PWD = 'admin'
     DEFAULT_DB = 'canopsis'
     DEFAULT_TIMEOUT = None
-    #DEFAULT_SSL = False
-    #DEFAULT_PROXIES = None
 
     def __init__(self, logger, config):
         """
