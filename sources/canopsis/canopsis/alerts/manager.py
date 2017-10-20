@@ -534,6 +534,7 @@ class Alerts(object):
             self.update_current_alarm(alarm, value)
 
         else:
+            self.logger.critical("This is not a CHECK event. execuring task : {}".format(event['event_type']))
             self.execute_task('alerts.useraction.{}'
                               .format(event['event_type']),
                               event=event,
@@ -582,6 +583,9 @@ class Alerts(object):
         if self.is_hard_limit_reached(value):
             # Only cancel is allowed when hard limit has been reached
             if event['event_type'] != 'cancel':
+                self.logger.debug(
+                    'Hard limit reached. Cancelling')
+
                 return
 
         # Execute the desired task

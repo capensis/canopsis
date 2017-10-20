@@ -82,11 +82,8 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
 
 
     #unresolved_alarms = alertsmgr.get_alarms(resolved=False)
-    read_time_start = int(round(time.time() * 1000))
-    unresolved_alarms = alarms_service.find_active_alarms()
-    read_end_time = int(round(time.time() * 1000))
 
-    alertsmgr.logger.critical("DB read time : {} ms".format(read_end_time - read_time_start))
+    unresolved_alarms = alarms_service.find_active_alarms()
 
     resolve_start_time = int(round(time.time() * 1000))
     unresolved_alarms = alertsmgr.resolve_alarms(unresolved_alarms)
@@ -115,16 +112,10 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     alertsmgr.logger.critical("stealthy time : {} ms".format(stealthy_end_time- stealthy_start_time))
 
     # unresolved_alarms not used actually but can be used for new actions
-    check_start_time = int(round(time.time() * 1000))
+
     alertsmgr.check_alarm_filters()
-    check_end_time = int(round(time.time() * 1000))
-    alertsmgr.logger.critical("Check time : {} ms".format(check_end_time- check_start_time))
 
-
-    cache_start_time = int(round(time.time() * 1000))
     alertsreader.clean_fast_count_cache()
-    cache_end_time = int(round(time.time() * 1000))
-    alertsmgr.logger.critical("Cache time : {} ms".format(cache_end_time- cache_start_time))
 
 
     end_time = int(round(time.time() * 1000))

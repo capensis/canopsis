@@ -56,7 +56,7 @@ class AlarmIdentity:
 
     def display_name(self):
         if self.resource:
-            return '{0}/{1}'.format(self.component, self.resource)
+            return '{0}/{1}'.format(self.resource, self.component)
         return self.component
 
 

@@ -110,6 +110,7 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
                 where = {'$and': time_query}
 
         # do the query
+        self.logger.debug("Query : {}".format(where))
         result = self._find(document=where)
 
         # if timewindow is None or contains only one point, get only last

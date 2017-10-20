@@ -89,7 +89,7 @@ class AlarmService(object):
 
         for entity in entities_list:
             if entity.id_ in alarms_list:
-                for entity_id, alarm in alarms_list[entity.id_]:
+                for alarm in alarms_list[entity.id_]:
                     if use_old_school_dict is True:
                         alarm['entity'] = entity.to_dict()
                     else:
