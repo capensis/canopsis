@@ -505,11 +505,17 @@ function export_env() {
     export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
 }
 
-function easy_install_pylib() {
-    echo "Easy install Python Library: $1 ..."
+function pip_install() {
+    echo "pip install $*"
 
-    $PREFIX/bin/easy_install -Z --prefix=$PREFIX -H None -f $SRC_PATH/externals/python-libs $1 1>> $LOG 2>> $LOG
-    check_code $? "Easy install failed ..."
+    # Support CAT buildinstall
+    pylibpath="${CPSPATH}/sources"
+    if [ "${CPSPATH}" = "" ];then
+        pylibpath="${SRC_PATH}"
+    fi
+
+    pip install --no-index --find-links=file://${pylibpath}/externals/python-libs $*
+    check_code $? "Pip install failed ..."
 }
 
 function build_pkg() {
@@ -519,7 +525,8 @@ function build_pkg() {
 
     cd $SRC_PATH
 
-    export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
+    CPUS=$(get_cpu_cores)
+    export MAKEFLAGS="-j${CPUS}"
 
     NAME="x"
     VERSION="0.1"
