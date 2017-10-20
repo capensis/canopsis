@@ -144,5 +144,5 @@ def make_alarm_step_from_mongo(step_dict):
         step_dict.get('m'),
         step_dict.get('_t'),
         step_dict.get('t'),
-        step_dict.get('v')
+        step_dict.get('val')
     )
