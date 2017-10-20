@@ -192,6 +192,24 @@ class TimeSerieTest(TestCase):
 
                 unit_length *= max_value_unit
 
+    def test_timesteps(self):
+        timewindow = TimeWindow(start=1508420521, stop=1508506921, timezone=-120)
+
+        steps = self.timeserie.timesteps(timewindow=timewindow)
+
+        self.assertEqual(len(steps), 3)
+        self.assertEqual(steps[0], 1508371200)
+
+        # TODO: do more tests or rewrite perfdatas
+
+    def test__get_period(self):
+        timewindow = TimeWindow(start=1508420521, stop=1508506921, timezone=-120)
+
+        period = self.timeserie._get_period(timewindow=timewindow)
+
+        self.assertEqual(period.total_seconds(), 86400)
+
+        # TODO: do more tests or rewrite perfdatas
 
 if __name__ == '__main__':
     main()

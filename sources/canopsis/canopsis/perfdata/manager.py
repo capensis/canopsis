@@ -29,9 +29,6 @@ from numbers import Number
 from time import time
 
 from canopsis.common.init import basestring
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths
-)
 from canopsis.middleware.core import Middleware
 from canopsis.monitoring.parser import PerfDataParser
 from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
@@ -81,6 +78,18 @@ class PerfData(object):
         self.perfdata_storage = perfdata_storage
         self.context_manager = context_manager
         self.logger = logger
+
+    @staticmethod
+    def _metric_id_tags(data_id):
+        """
+        Convert a metric id to a measurement name.
+
+        :param str data_id: = /metric/connector/connector_name/component/resource/perf_metric
+        :rtype: str
+        """
+        _, _, conn, conn_name, comp, res, perf_m = data_id.split('/')
+
+        return '{}/{}'.format(res, comp)
 
     @staticmethod
     def _data_id_tags(metric_id, meta=None, event=None):
@@ -185,8 +194,9 @@ class PerfData(object):
                 stop=timewindow.stop() + SLIDING_TIME_UPPER_BOUND
             )
 
+        real_id = self._metric_id_tags(metric_id)
         result = self.perfdata_storage.get(
-            data_id=data_id, timewindow=timewindow, limit=limit,
+            data_id=real_id, timewindow=timewindow, limit=limit,
             tags=tags, with_tags=with_meta
         )
 
