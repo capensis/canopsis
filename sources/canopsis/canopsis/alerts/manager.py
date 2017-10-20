@@ -280,6 +280,7 @@ class Alerts(object):
                 {'tags': notags_cond}
             ]}
 
+        # used to fetch alarms that were never snoozed OR alarms for which the snooze has expired
         if not snoozed:
             no_snooze_cond = {
                 '$or': [
@@ -948,12 +949,16 @@ class Alerts(object):
 
         return alarms
 
-    def resolve_snoozes(self):
+    def resolve_snoozes(self, alarms = None):
         """
         Loop over all snoozed alarms, and restore them if needed.
+        :param alarms: a list of existing alarms (hack to bypass the self.getAlarms that is deprecated)
         """
         now = int(time())
-        result = self.get_alarms(resolved=False, snoozed=True)
+        if alarms is None:
+            result = self.get_alarms(resolved=False, snoozed=True)
+        else:
+            result = alarms
 
         for data_id in result:
             for docalarm in result[data_id]:
