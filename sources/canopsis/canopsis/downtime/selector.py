@@ -82,7 +82,8 @@ class Selector(Record):
 
         self.logger = getLogger('Selector')
         self.context = singleton_per_scope(Context)
-        self.pbehavior = singleton_per_scope(PBehaviorManager)
+        self.pbehavior = singleton_per_scope(
+            PBehaviorManager, args=PBehaviorManager.provide_default_basics())
         # Canopsis filter management for mongo
         self.cfilter = Filter()
 
