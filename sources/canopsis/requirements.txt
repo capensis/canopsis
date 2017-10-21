@@ -35,7 +35,7 @@ funcsigs==0.4
 fuzzywuzzy==0.9.0
 lettuce==0.2.21
 linecache2==1.0.0
-pbr==1.8.1
+pbr==3.1.1
 pyrsistent==0.11.12
 python-mimeparse==1.5.1
 python-subunit==1.2.0
