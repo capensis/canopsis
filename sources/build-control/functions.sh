@@ -514,6 +514,13 @@ function pip_install() {
         pylibpath="${SRC_PATH}"
     fi
 
+    cat > ~/.pydistutils.cfg << EOF
+[easy_install]
+allow_hosts = ''
+find_links = file://${pylibpath}/externals/python-libs/
+EOF
+    cat ~/.pydistutils.cfg > /opt/canopsis/.pydistutils.cfg
+    chown canopsis:canopsis /opt/canopsis/.pydistutils.cfg
     pip install --no-index --find-links=file://${pylibpath}/externals/python-libs $*
     check_code $? "Pip install failed ..."
 }
