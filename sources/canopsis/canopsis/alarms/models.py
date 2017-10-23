@@ -149,6 +149,21 @@ class Alarm:
 
         }
 
+    def resolve(self, flapping_interval):
+        if self.status is None:
+            self.resolved = time.time()
+            return True
+        else:
+            if self.status.value is not ALARM_STATUS_OFF:
+                return False
+            else:
+                if time.time() - self.status.timestamp > flapping_interval:
+                    self.resolved = self.status.timestamp
+                    return True
+                return False
+
+
+
     def resolve_snooze(self):
         """
             Checks if the snooze has expired.
@@ -167,6 +182,14 @@ class Alarm:
             self.snooze = None
             self.last_update_date = time.time()
             return True
+
+    def resolve_cancel(self, cancel_delay):
+        if self.canceled is not None:
+            canceled_date = self.canceled.timestamp
+            if (time.time() - canceled_date) >= cancel_delay:
+                self.resolved = canceled_date
+                return True
+        return False
 
     def get_last_status_value(self):
         if self.status:

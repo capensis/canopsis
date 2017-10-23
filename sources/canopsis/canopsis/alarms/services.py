@@ -57,11 +57,30 @@ class AlarmService(object):
 
 
 
-    def resolve_snoozed_alarms(self):
-        alarms = self.find_snoozed_alarms(False)
+    def resolve_snoozed_alarms(self, alarms=None):
+        if alarms is None:
+            alarms = self.find_snoozed_alarms(False)
         for alarm in alarms:
             if alarm.resolve_snooze() is True:
                 self.alarms_adapter.update(alarm)
+                alarms.remove(alarm)
+
+        return alarms
+
+
+    def resolved_canceled_alarms(self, alarms, cancel_delay=3600):
+        for alarm in alarms:
+            if alarm.resolve_cancel() is True:
+                self.alarms_adapter.update(alarm)
+                alarms.remove(alarm)
+        return alarms
+
+    def resolve_alarms(self, alarms, flapping_interval=60):
+        for alarm in alarms:
+            if alarm.resolve(flapping_interval) is True:
+                self.alarms_adapter.update(alarm)
+                alarms.remove(alarm)
+        return alarms
 
     def _build_old_school_format(self, alarms_list):
         """

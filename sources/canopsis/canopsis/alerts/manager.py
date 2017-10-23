@@ -953,7 +953,7 @@ class Alerts(object):
 
         return alarms
 
-    def resolve_snoozes(self, alarms = None):
+    def resolve_snoozes(self, alarms=None):
         """
         Loop over all snoozed alarms, and restore them if needed.
         :param alarms: a list of existing alarms (hack to bypass the self.getAlarms that is deprecated)
