@@ -25,11 +25,12 @@ __all__ = ['TimeSerie']
 
 from math import isnan
 
+from canopsis.confng.helpers import cfg_to_bool
 from canopsis.timeserie.timewindow import Period, TimeWindow
 from canopsis.timeserie.aggregation import get_aggregation, DELTA
 
 DEFAULT_AGGREGATION = 'MEAN'
-DEFAULT_PERIOD = None
+DEFAULT_PERIOD = Period(day=1)
 DEFAULT_FILL = False
 DEFAULT_ROUND_TIME = True
 DEFAULT_MAX_POINTS = 500
@@ -49,20 +50,13 @@ class TimeSerie():
     __slots__ = ('period', 'max_points', 'round_time', 'aggregation', 'fill')
 
     CONF_PATH = 'etc/timeserie/timeserie.conf'
+    CONF_CAT = 'TIMESERIE'
 
     MAX_POINTS = 'max_points'
     AGGREGATION = 'aggregation'
     FILL = 'fill'
     PERIOD = 'period'
     ROUND_TIME = 'round_time'
-
-    VMAX_POINTS = 500
-    VDEFAULT_AGGREGATION = 'MEAN'
-    VPERIOD = Period(day=1)
-    VFILL = False
-    VROUND_TIME = True
-
-    CATEGORY = 'TIMESERIE'
 
     def __init__(
             self,
@@ -81,17 +75,20 @@ class TimeSerie():
         self.round_time = round_time
         self.fill = fill
 
-        timeserie = self.config.get('TIMESERIE', {})
+        timeserie = self.config.get(self.CONF_CAT, {})
         if aggregation is None:
-            self.aggregation = timeserie.get('aggregation', DEFAULT_AGGREGATION).upper()
+            self.aggregation = timeserie.get(self.AGGREGATION,
+                                             DEFAULT_AGGREGATION).upper()
         if period is None:
-            self.period = timeserie.get('period', DEFAULT_PERIOD)
+            self.period = timeserie.get(self.PERIOD, DEFAULT_PERIOD)
         if fill is None:
-            self.fill = timeserie.get('fill', DEFAULT_FILL)
+            self.fill = cfg_to_bool(timeserie.get(self.FILL, DEFAULT_FILL))
         if round_time is None:
-            self.round_time = timeserie.get('round_time', DEFAULT_ROUND_TIME)
+            self.round_time = cfg_to_bool(timeserie.get(self.ROUND_TIME,
+                                                        DEFAULT_ROUND_TIME))
         if max_points is None:
-            self.max_points = timeserie.get('max_points', DEFAULT_MAX_POINTS)
+            self.max_points = int(timeserie.get(self.MAX_POINTS,
+                                                DEFAULT_MAX_POINTS))
 
     def __repr__(self):
 
@@ -148,10 +145,7 @@ class TimeSerie():
             input points of the form: [(T0, V0), ..., (Tn, Vn)]
             then the result is [(T0, func(V0, V1)), (T2, func(V2, V3), ...].
         """
-
         result = []
-
-        nan = float('nan')
 
         # start to exclude points not in timewindow
         # in taking care about round time
@@ -180,14 +174,9 @@ class TimeSerie():
 
         func = None
 
-        # if no period and max_points > len(points)
-        if (
-                get_aggregation(self.aggregation) is None or
-                (
-                    (not points) or self.period is None
-                    and self.max_points > points_len
-                )
-        ):
+        no_aggregation = get_aggregation(self.aggregation) is None
+        too_much = (not points) or self.period is None and self.max_points > points_len
+        if (no_aggregation or too_much):
             result = points  # result is points
 
         else:  # else calculate points with the right aggregation function
@@ -250,13 +239,12 @@ class TimeSerie():
                         last_point = aggregation_point[-1]
 
                 elif usenan:
-                    result.append((timestamp, nan))
+                    result.append((timestamp, float('nan')))
 
         return result
 
     def _get_period(self, timewindow):
         """Get a period related to input max_points or a period."""
-
         result = self.period
 
         if result is None:
