@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
+import requests
 import SocketServer
 import socket
 from threading import Thread
@@ -56,3 +59,4 @@ class MockedWebServer(object):
         Shutdown the HTTP server and then the thread.
         """
         self._server.running = False
+        requests.get('http://localhost:{}'.format(self.port))
