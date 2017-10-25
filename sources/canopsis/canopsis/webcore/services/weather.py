@@ -348,7 +348,9 @@ def exports(ws):
 
         for alert in alerts_list_on_depends:
             if 'alarmfilter' in alert['v']:
-                next_run_dict[alert['d']] = alert['v']['alarmfilter']['next_run']
+                alarmfilter = alert['v']['alarmfilter']
+                if isinstance(alarmfilter, dict) and "next_run" in alarmfilter:
+                    next_run_dict[alert['d']] = alarmfilter['next_run']
 
         for watcher in watcher_list:
             enriched_entity = {}
