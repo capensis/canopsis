@@ -59,7 +59,7 @@ class Adapter(object):
         query = {
             '$and': [
                 {
-                    'resolved': None
+                    'v.resolved': None
                 },
                 {
                     '$or': [  # include alarms that were never snoozed or alarms for which the snooze time has expired
@@ -134,7 +134,8 @@ def make_alarm_from_mongo(alarm_dict):
         snooze,
         ticket,
         al.get('hard_limit'),
-        al.get('extra')
+        al.get('extra'),
+        al.get('alarm_filter')
     )
 
 

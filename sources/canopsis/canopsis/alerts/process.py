@@ -27,12 +27,13 @@ from canopsis.alarms.services import AlarmService
 from canopsis.alarms.adapters import Adapter as AlarmAdapter
 from canopsis.entities.adapters import Adapter as EntityAdapter
 from canopsis.logger import Logger
+from canopsis.watcher.manager import Watcher
+import logging
 import time
 
 alerts_manager = Alerts(*Alerts.provide_default_basics())
 alertsreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 
-alarms_service = AlarmService(AlarmAdapter(alerts_manager.alerts_storage._backend.database), EntityAdapter(alerts_manager.alerts_storage._backend.database))
 
 @register_task
 def event_processing(engine, event, alertsmgr=None, **kwargs):
@@ -69,54 +70,53 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     Scheduled process.
 
     """
-    logger = Logger.get('alarms', '/opt/canopsis/var/log/alarms.log')
+    benj_logger = Logger.get('alarms_beat_proc', '/opt/canopsis/var/log/engines/alarms.log', level=logging.DEBUG)
+    benj_logger.critical("Starting beat processing.")
 
-    logger.critical("Starting beat processing.")
+
+    alarms_service = AlarmService(AlarmAdapter(alerts_manager.alerts_storage._backend.database),
+                                  EntityAdapter(alerts_manager.alerts_storage._backend.database), Watcher(), benj_logger)
+
     start_time = int(round(time.time() * 1000))
     if alertsmgr is None:
         alertsmgr = alerts_manager
 
     alertsreader = alertsreader_manager
 
-
-
-
-    #unresolved_alarms = alertsmgr.get_alarms(resolved=False)
-
+    fetch_start_time = int(round(time.time() * 1000))
     unresolved_alarms = alarms_service.find_active_alarms()
+    fetch_end_time = int(round(time.time() * 1000))
+    benj_logger.critical("DB fetch time : {} ms".format(fetch_end_time - fetch_start_time))
 
     resolve_start_time = int(round(time.time() * 1000))
-    unresolved_alarms = alertsmgr.resolve_alarms(unresolved_alarms)
+    unresolved_alarms = alarms_service.resolve_alarms(unresolved_alarms, 60)
     resolve_end_time = int(round(time.time() * 1000))
 
-    alertsmgr.logger.critical("DB resolve time : {} ms".format(resolve_end_time - resolve_start_time))
+    benj_logger.critical("DB resolve time : {} ms".format(resolve_end_time - resolve_start_time))
 
     cancel_start_time = int(round(time.time() * 1000))
-    unresolved_alarms = alertsmgr.resolve_cancels(unresolved_alarms)
+    unresolved_alarms = alarms_service.resolved_canceled_alarms(unresolved_alarms, 60)
+
     cancel_end_time = int(round(time.time() * 1000))
-    alertsmgr.logger.critical("DB cancel time : {} ms".format(cancel_end_time - cancel_start_time))
+    benj_logger.critical("DB cancel time : {} ms".format(cancel_end_time - cancel_start_time))
 
     snooze_start_time = int(round(time.time() * 1000))
-    # TODO : vérifier que l'alarme est présente ici et se snooze bien
+
+    # unresolved_alarms do not contain snoozed alarms. So we need to do a separate request for snoozed alarms.
     snoozed_alarms = alarms_service.find_snoozed_alarms()
-    alertsmgr.logger.critical('Found {} alarms'.format(len(snoozed_alarms)))
-    alarms_service.resolve_snoozed_alarms()
-    #alertsmgr.resolve_snoozes(snoozed_alarms)
+    alarms_service.resolve_snoozed_alarms(snoozed_alarms)
     snooze_end_time = int(round(time.time() * 1000))
 
-    alertsmgr.logger.critical("snooze time : {} ms".format(snooze_end_time- snooze_start_time))
+    benj_logger.critical("snooze time : {} ms".format(snooze_end_time- snooze_start_time))
 
     stealthy_start_time = int(round(time.time() * 1000))
-    unresolved_alarms = alertsmgr.resolve_stealthy(unresolved_alarms)
+    unresolved_alarms = alarms_service.resolve_stealthy_alarms(unresolved_alarms)
     stealthy_end_time = int(round(time.time() * 1000))
-    alertsmgr.logger.critical("stealthy time : {} ms".format(stealthy_end_time- stealthy_start_time))
+    benj_logger.critical("stealthy time : {} ms".format(stealthy_end_time- stealthy_start_time))
 
     # unresolved_alarms not used actually but can be used for new actions
 
     alertsmgr.check_alarm_filters()
-
     alertsreader.clean_fast_count_cache()
-
-
     end_time = int(round(time.time() * 1000))
-    logger.critical("End beat processing. Took : {} ms.".format(end_time - start_time))
+    benj_logger.critical("End beat processing. Took : {} ms.".format(end_time - start_time))

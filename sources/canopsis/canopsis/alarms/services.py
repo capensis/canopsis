@@ -19,11 +19,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-
+import logging
 
 class AlarmService(object):
 
-    def __init__(self, alarms_adapter, entities_adapter, logger=None):
+    def __init__(self, alarms_adapter, entities_adapter, watcher_manager, logger=None):
         """
         Alarm service constructor.
 
@@ -33,6 +33,22 @@ class AlarmService(object):
         """
         self.alarms_adapter = alarms_adapter
         self.entities_adapter = entities_adapter
+        self.watcher_manager = watcher_manager
+        self.logger = logger
+
+    def _log(self, level, message):
+        """
+        Logs 'message' according to 'level' if the logger is present. Does nothing otherwise.
+        :param int level: a level from logging package
+        :param string message: the log message
+        :return: None
+        """
+        if self.logger is not None:
+            self.logger.log(level, message)
+
+    def update_alarm(self, alarm):
+        self.alarms_adapter.update(alarm)
+        self.watcher_manager.alarm_changed(alarm.identity.get_data_id())
 
     def find_active_alarms(self):
         """
@@ -40,80 +56,64 @@ class AlarmService(object):
         :return: dict
         """
         alarms = self.alarms_adapter.find_unresolved_alarms()
-        entities = self.entities_adapter.find_all_enabled()
-        alarms_sorted_by_entity = self._build_old_school_format(alarms)
-        alarms_with_embedded_entities = self._match_alarms_with_entities(alarms_sorted_by_entity, entities)
-        return alarms_with_embedded_entities
+        self._log(logging.DEBUG, 'found {} active alarms'.format(len(alarms)))
+        return alarms
+        #entities = self.entities_adapter.find_all_enabled()
+        #self._log(logging.DEBUG, 'found {} enabled entities'.format(len(entities)))
+        #alarms_with_embedded_entities = self._match_alarms_with_entities(alarms, entities)
+        #return alarms_with_embedded_entities
 
-    def find_snoozed_alarms(self, use_old__school_format=True):
+    def find_snoozed_alarms(self):
         alarms = self.alarms_adapter.find_unresolved_snoozed_alarms()
-        entities = self.entities_adapter.find_all_enabled()
-        if use_old__school_format is True:
-            alarms_sorted_by_entity = self._build_old_school_format(alarms)
-        else:
-            alarms_sorted_by_entity = alarms
-        alarms_with_embedded_entities = self._match_alarms_with_entities(alarms_sorted_by_entity, entities, use_old__school_format)
-        return alarms_with_embedded_entities
-
-
+        return alarms
+        #entities = self.entities_adapter.find_all_enabled()
+        #alarms_with_embedded_entities = self._match_alarms_with_entities(alarms, entities)
+        #return alarms_with_embedded_entities
 
     def resolve_snoozed_alarms(self, alarms=None):
         if alarms is None:
             alarms = self.find_snoozed_alarms(False)
         for alarm in alarms:
             if alarm.resolve_snooze() is True:
-                self.alarms_adapter.update(alarm)
+                self._log(logging.DEBUG, "alarm : {} has been unsnoozed".format(alarm._id))
+                self.update_alarm(alarm)
                 alarms.remove(alarm)
 
         return alarms
 
 
+
     def resolved_canceled_alarms(self, alarms, cancel_delay=3600):
         for alarm in alarms:
-            if alarm.resolve_cancel() is True:
-                self.alarms_adapter.update(alarm)
+            if alarm.resolve_cancel(cancel_delay) is True:
+                self._log(logging.DEBUG, "alarm : {0} was cancelled on {1} and will now be resolved".format(alarm._id, alarm.canceled.timestamp))
+                self.update_alarm(alarm)
                 alarms.remove(alarm)
         return alarms
 
     def resolve_alarms(self, alarms, flapping_interval=60):
         for alarm in alarms:
             if alarm.resolve(flapping_interval) is True:
-                self.alarms_adapter.update(alarm)
+                self._log(logging.DEBUG, "alarm : {} has been resolved and will now be resolved".format(alarm._id))
+                self.update_alarm(alarm)
                 alarms.remove(alarm)
         return alarms
 
-    def _build_old_school_format(self, alarms_list):
-        """
-            Hack to make an alarm list compatible with the current storage system.
-            :param []Alarm alarms_list:
-            :return dict: a dict fomated agains mongo.periodicalstorage._cursor2periods
-        """
-        completed_alarms_list = {}
-        for a in alarms_list:
-            alarm_dict = a.to_dict()
-            old_school_alarm = {
-                'timestamp': a.creation_date,
-                'value': alarm_dict['v']
-            }
-            entity_id = alarm_dict['d']
-            if entity_id not in completed_alarms_list:
-                completed_alarms_list[entity_id] = [old_school_alarm]
-            else:
-                completed_alarms_list[entity_id].append(old_school_alarm)
+    def resolve_stealthy_alarms(self, alarms, stealthy_show_duration=120, stealthy_interval=0):
+        for alarm in alarms:
+            if alarm.resolve_stealthy(stealthy_show_duration, stealthy_interval) is True:
+                self._log(logging.DEBUG, "alarm : {} is not stealthy anymore and will now be resolved".format(alarm._id))
+                self.update_alarm(alarm)
+                alarms.remove(alarm)
+        return alarms
 
-        return completed_alarms_list
+    def _match_alarms_with_entities(self, alarms_list, entities_list):
 
-
-    def _match_alarms_with_entities(self, alarms_list, entities_list, use_old_school_dict=True):
 
         for entity in entities_list:
             if entity.id_ in alarms_list:
                 for alarm in alarms_list[entity.id_]:
-                    if use_old_school_dict is True:
-                        alarm['entity'] = entity.to_dict()
-                    else:
-                        alarm.entity = entity
-
+                    alarm.entity = entity
         return alarms_list
 
 
