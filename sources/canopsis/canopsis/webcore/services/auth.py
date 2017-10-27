@@ -18,12 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.ws import route
 from bottle import redirect, response, HTTPError, urlencode
-
 from hashlib import sha1
 from time import time
 
+from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module
 from canopsis.webcore.services import rights as rights_module
 
@@ -103,9 +102,7 @@ def exports(ws):
     @route(
         ws.application.post,
         name='auth',
-        wsgi_params={
-            'skip': ws.skip_login
-        },
+        wsgi_params={'skip': ws.skip_login},
         payload=[
             'username', 'password',
             'shadow', 'crypted'
@@ -114,8 +111,7 @@ def exports(ws):
         nolog=True
     )
     def auth_route(
-        username=None, password=None,
-        shadow=False, crypted=False
+        username=None, password=None, shadow=False, crypted=False
     ):
         ws.logger.info(u'/auth')
 

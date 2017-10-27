@@ -21,7 +21,7 @@
 
 from __future__ import unicode_literals
 
-from time import sleep
+#from time import sleep
 
 from test_base import BaseApiTest, Method, HTTP
 
@@ -193,8 +193,7 @@ class TestPbehaviorAPI(BaseApiTest):
         self.assertEqual(json['total'], 0)
 
         r = self._send(url=self.base + '/read',
-                       params={'_id': pbehavior_id},
-                       headers='')
+                       params={'_id': pbehavior_id})
         json = r.json()
         self.assertEqual(r.status_code, HTTP.OK.value)
         self.assertEqual(json['total'], 0)
@@ -221,10 +220,10 @@ class TestPbehaviorAPI(BaseApiTest):
                        data=EVENT,
                        method=Method.post)
         self.assertEqual(r.status_code, HTTP.OK.value)
-        print(r)
+        #print(r)
 
-        print("Waiting for the event to be handle by the engines")
-        sleep(5)
+        #print("Waiting for the event to be handle by the engines")
+        #sleep(5)
 
         #res = self.cm.get_entities_by_id(RESOURCE_ID)[0]
         #print(res)
