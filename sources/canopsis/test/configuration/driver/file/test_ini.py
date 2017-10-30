@@ -21,9 +21,8 @@
 
 from unittest import main
 
-from test.driver.file import ConfigurationDriverTest
-
 from canopsis.configuration.driver.file.ini import INIConfigurationDriver
+from test_file_driver import ConfigurationDriverTest
 
 
 class INIConfigurationDriverTest(ConfigurationDriverTest):

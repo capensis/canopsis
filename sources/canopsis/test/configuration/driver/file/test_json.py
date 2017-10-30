@@ -21,9 +21,8 @@
 
 from unittest import main
 
-from test.driver.file import ConfigurationDriverTest
-
 from canopsis.configuration.driver.file.json import JSONConfigurationDriver
+from test_file_driver import ConfigurationDriverTest
 
 
 class ConfigurationDriverTest(ConfigurationDriverTest):
