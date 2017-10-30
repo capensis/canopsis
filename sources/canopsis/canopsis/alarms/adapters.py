@@ -124,23 +124,23 @@ def make_alarm_from_mongo(alarm_dict):
         cancel = make_alarm_step_from_mongo(al['canceled'])
 
     return Alarm(
-        alarm_dict['_id'],
-        identity,
-        status,
-        al.get('resolved'),
-        ack,
-        al.get('tags'),
-        al.get('creation_date'),
-        cancel,
-        state,
-        steps,
-        al.get('initial_output'),
-        al.get('last_update_date'),
-        snooze,
-        ticket,
-        al.get('hard_limit'),
-        al.get('extra'),
-        al.get('alarm_filter')
+        _id=alarm_dict['_id'],
+        identity=identity,
+        status=status,
+        resolved=al.get('resolved'),
+        ack=ack,
+        tags=al.get('tags'),
+        creation_date=al.get('creation_date'),
+        canceled=cancel,
+        state=state,
+        steps=steps,
+        initial_output=al.get('initial_output'),
+        last_update_date=al.get('last_update_date'),
+        snooze=snooze,
+        ticket=ticket,
+        hard_limit=al.get('hard_limit'),
+        extra=al.get('extra'),
+        alarm_filter=al.get('alarm_filter')
     )
 
 

@@ -25,7 +25,7 @@ from unittest import TestCase, main
 
 from canopsis.alarms.models import (
     AlarmStep, AlarmIdentity, Alarm,
-    ALARM_STEP_TYPE_STATE_INCREASE, ALARM_STATE_MINOR
+    ALARM_STEP_TYPE_STATE_INCREASE
 )
 
 

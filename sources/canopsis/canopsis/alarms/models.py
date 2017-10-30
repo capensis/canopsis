@@ -106,21 +106,21 @@ class Alarm:
         self,
         _id,
         identity,
-        status,
-        resolved,
         ack,
-        tags,
-        creation_date,
+        alarm_filter=None,
         canceled,
-        state,
-        steps,
+        creation_date,
+        extra={},
+        hard_limit,
         initial_output,
         last_update_date,
+        resolved,
         snooze,
-        ticket,
-        hard_limit,
-        extra={},
-        alarm_filter=None
+        state,
+        status,
+        steps,
+        tags,
+        ticket
     ):
         """
         :param str _id: db ID of the alarm
