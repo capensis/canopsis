@@ -57,7 +57,7 @@ class AlarmStep:
     attributes
     """
 
-    def __init__(self, author, message, type_, timestamp, value):
+    def __init__(self, author, message, type_, timestamp, value=None):
         """
         :param string author: The author of the Step
         :param string message: The message (displayed in the UI)
@@ -221,6 +221,18 @@ class Alarm:
             't': self.creation_date
         }
 
+    def get_last_status_value(self):
+        """
+        Gets the last status of an alarm.
+
+        :returns: the last known status (check ALARM_STATUS_* constants)
+        :rtype: int
+        """
+        if self.status:
+            return self.status.value
+
+        return AlarmStatus.OFF.value
+
     def resolve(self, flapping_interval):
         """
         Resolves an alarm if the status is OFF and if the alarm is not flapping.
@@ -278,17 +290,32 @@ class Alarm:
 
         return False
 
-    def get_last_status_value(self):
+    def resolve_stealthy(self, stealthy_show_duration=0, stealthy_interval=0):
         """
-        Gets the last status of an alarm.
+        Resolves alarms that should not be stealthy anymore.
 
-        :returns: the last known status (check ALARM_STATUS_* constants)
-        :rtype: int
+        :param int stealthy_show_duration: duration (in seconds) where the alarm should be shown as stealthy
+        :param int stealthy_interval:
+        :returns: True if the alarm was resolved, False otherwise
+        :rtype: bool
         """
-        if self.status:
-            return self.status.value
+        if self.status is None \
+                or self.status.value != AlarmStatus.STEALTHY.value \
+                or self._is_stealthy(stealthy_show_duration,
+                                     stealthy_interval):
+            return False
 
-        return AlarmStatus.OFF.value
+        new_status = AlarmStep(
+            author='{}.{}'.format(self.identity.connector,
+                                  self.identity.connector_name),
+            message='automatically resolved after stealthy shown time',
+            type_=ALARM_STEP_TYPE_STATE_DECREASE,
+            timestamp=time(),
+            value=AlarmStatus.OFF.value
+        )
+        self.update_status(new_status)
+
+        return True
 
     def _is_stealthy(self, stealthy_show_duration, stealthy_interval):
         """
@@ -316,33 +343,6 @@ class Alarm:
                     return True
 
         return False
-
-    def resolve_stealthy(self, stealthy_show_duration=0, stealthy_interval=0):
-        """
-        Resolves alarms that should not be stealthy anymore.
-
-        :param int stealthy_show_duration: duration (in seconds) where the alarm should be shown as stealthy
-        :param int stealthy_interval:
-        :returns: True if the alarm was resolved, False otherwise
-        :rtype: bool
-        """
-        if self.status is None \
-                or self.status.value != AlarmStatus.STEALTHY.value \
-                or self._is_stealthy(stealthy_show_duration,
-                                     stealthy_interval):
-            return False
-
-        new_status = AlarmStep(
-            author='{}.{}'.format(self.identity.connector,
-                                  self.identity.connector_name),
-            message='automatically resolved after stealthy shown time',
-            type_=ALARM_STEP_TYPE_STATE_DECREASE,
-            timestamp=time(),
-            value=AlarmStatus.OFF.value
-        )
-        self.update_status(new_status)
-
-        return True
 
     def update_status(self, new_status):
         """

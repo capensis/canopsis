@@ -90,7 +90,20 @@ class AlarmsModelsTest(TestCase):
         self.assertEqual(res['v']['initial_output'], 'Come on Rick')
         self.assertEqual(res['v']['steps'][0]['val'], 'Shumshumschilpiddydah')
 
-    def test_alarm_resolve(self):
+    def test_get_last_status_value(self):
+        self.assertEqual(self.alarm.get_last_status_value(),
+                         AlarmStatus.OFF.value)
+
+        self.alarm.status = AlarmStep(
+            author='Rick',
+            message='Smith',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=1506808800
+        )
+        self.assertEqual(self.alarm.get_last_status_value(),
+                         self.alarm.status.value)
+
+    def test_resolve(self):
         self.assertTrue(self.alarm.resolve(0))
 
         self.alarm.status = AlarmStep(
@@ -107,7 +120,7 @@ class AlarmsModelsTest(TestCase):
         self.assertTrue(self.alarm.resolve(0))
         self.assertNotEqual(self.alarm.resolved, self.alarm_step.value)
 
-    def test_alarm_resolve_cancel(self):
+    def test_resolve_cancel(self):
         self.assertFalse(self.alarm.resolve_cancel(0))
 
         ts = 1506808800
@@ -115,13 +128,12 @@ class AlarmsModelsTest(TestCase):
             author='Beth',
             message='Smith',
             type_=ALARM_STEP_TYPE_STATE_INCREASE,
-            timestamp=ts,
-            value=AlarmStatus.ONGOING.value
+            timestamp=ts
         )
         self.assertTrue(self.alarm.resolve_cancel(0))
         self.assertEqual(self.alarm.resolved, ts)
 
-    def test_alarm_resolve_snooze(self):
+    def test_resolve_snooze(self):
         self.assertFalse(self.alarm.resolve_snooze())
 
         self.alarm.snooze = AlarmStep(
