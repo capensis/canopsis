@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2016 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 import time
 
 # Alarm statuses
@@ -34,6 +36,7 @@ ALARM_STATE_CRITICAL = 3
 # Alarm step types
 ALARM_STEP_TYPE_STATE_INCREASE = 'stateinc'
 ALARM_STEP_TYPE_STATE_DECREASE = 'statedec'
+
 
 class AlarmStep:
     """
@@ -86,7 +89,8 @@ class AlarmIdentity:
 
     def display_name(self):
         if self.resource:
-            return '{0}/{1}'.format(self.resource, self.component)
+            return '{}/{}'.format(self.resource, self.component)
+
         return self.component
 
     def get_data_id(self):
@@ -186,7 +190,6 @@ class Alarm:
             'v': value,
             'd': self.identity.display_name(),
             't': self.creation_date
-
         }
 
     def resolve(self, flapping_interval):
@@ -205,9 +208,8 @@ class Alarm:
                 if time.time() - self.status.timestamp > flapping_interval:
                     self.resolved = int(self.status.timestamp)
                     return True
-                return False
 
-
+        return False
 
     def resolve_snooze(self):
         """
@@ -227,6 +229,8 @@ class Alarm:
             self.last_update_date = time.time()
             return True
 
+        return False
+
     def resolve_cancel(self, cancel_delay):
         """
             Resolve an alarm if it has been canceled, after the cancel_delay
@@ -238,6 +242,7 @@ class Alarm:
             if (time.time() - canceled_date) >= cancel_delay:
                 self.resolved = canceled_date
                 return True
+
         return False
 
     def get_last_status_value(self):
@@ -247,6 +252,7 @@ class Alarm:
         """
         if self.status:
             return self.status.value
+
         return ALARM_STATUS_OFF
 
     def _is_stealthy(self, stealthy_show_duration, stealthy_interval):
@@ -269,6 +275,7 @@ class Alarm:
             if step.type in [ALARM_STEP_TYPE_STATE_DECREASE, ALARM_STEP_TYPE_STATE_INCREASE]:
                 if step.value != ALARM_STATE_OK and self.state.value == ALARM_STATE_OK:
                     return True
+
         return False
 
     def resolve_stealthy(self, stealthy_show_duration=0, stealthy_interval=0):
@@ -283,8 +290,8 @@ class Alarm:
         if self._is_stealthy(stealthy_show_duration, stealthy_interval):
             return False
 
-        new_status = AlarmStep(
-            '{0}.{1}'.format(self.identity.connector, self.identity.connector_name),
+        new_status = AlarmStep('{}.{}'.format(self.identity.connector,
+                                              self.identity.connector_name),
             'automatically resolved after stealthy shown time',
             ALARM_STEP_TYPE_STATE_DECREASE,
             time.time(),
@@ -301,7 +308,3 @@ class Alarm:
         """
         self.status = new_status
         self.steps.append(new_status)
-
-
-
-

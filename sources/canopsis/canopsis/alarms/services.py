@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2016 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -19,11 +19,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 import logging
+
 
 class AlarmService(object):
 
-    def __init__(self, alarms_adapter, entities_adapter, watcher_manager, logger=None):
+    def __init__(self, alarms_adapter, entities_adapter, watcher_manager,
+                 logger=None):
         """
         Alarm service constructor.
 
@@ -39,6 +43,7 @@ class AlarmService(object):
     def _log(self, level, message):
         """
         Logs 'message' according to 'level' if the logger is present. Does nothing otherwise.
+
         :param int level: a level from logging package
         :param string message: the log message
         :return: None
@@ -52,11 +57,13 @@ class AlarmService(object):
 
     def find_active_alarms(self):
         """
-        finds all active alarms and matches them with their owner entity
+        Finds all active alarms and matches them with their owner entity
+
         :return: dict
         """
         alarms = self.alarms_adapter.find_unresolved_alarms()
         self._log(logging.DEBUG, 'found {} active alarms'.format(len(alarms)))
+
         return alarms
         #entities = self.entities_adapter.find_all_enabled()
         #self._log(logging.DEBUG, 'found {} enabled entities'.format(len(entities)))
@@ -65,6 +72,7 @@ class AlarmService(object):
 
     def find_snoozed_alarms(self):
         alarms = self.alarms_adapter.find_unresolved_snoozed_alarms()
+
         return alarms
         #entities = self.entities_adapter.find_all_enabled()
         #alarms_with_embedded_entities = self._match_alarms_with_entities(alarms, entities)
@@ -75,13 +83,12 @@ class AlarmService(object):
             alarms = self.find_snoozed_alarms(False)
         for alarm in alarms:
             if alarm.resolve_snooze() is True:
-                self._log(logging.DEBUG, "alarm : {} has been unsnoozed".format(alarm._id))
+                self._log(logging.DEBUG, "alarm : {} has been unsnoozed"
+                                         .format(alarm._id))
                 self.update_alarm(alarm)
                 alarms.remove(alarm)
 
         return alarms
-
-
 
     def resolved_canceled_alarms(self, alarms, cancel_delay=3600):
         for alarm in alarms:
@@ -99,21 +106,21 @@ class AlarmService(object):
                 alarms.remove(alarm)
         return alarms
 
-    def resolve_stealthy_alarms(self, alarms, stealthy_show_duration=120, stealthy_interval=0):
+    def resolve_stealthy_alarms(self, alarms, stealthy_show_duration=120,
+                                stealthy_interval=0):
         for alarm in alarms:
             if alarm.resolve_stealthy(stealthy_show_duration, stealthy_interval) is True:
-                self._log(logging.DEBUG, "alarm : {} is not stealthy anymore and will now be resolved".format(alarm._id))
+                self._log(logging.DEBUG, "alarm : {} is not stealthy anymore "
+                                         "and will now be resolved".format(alarm._id))
                 self.update_alarm(alarm)
                 alarms.remove(alarm)
+
         return alarms
 
     def _match_alarms_with_entities(self, alarms_list, entities_list):
-
-
         for entity in entities_list:
             if entity.id_ in alarms_list:
                 for alarm in alarms_list[entity.id_]:
                     alarm.entity = entity
+
         return alarms_list
-
-

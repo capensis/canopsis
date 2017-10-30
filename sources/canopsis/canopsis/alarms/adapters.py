@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2016 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -19,8 +19,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 from time import time
 from .models import AlarmIdentity, AlarmStep, Alarm
+
 
 class Adapter(object):
 
@@ -84,7 +87,9 @@ class Adapter(object):
         }
         col_adapter = self.mongo_client[self.COLLECTION]
         col_adapter.update(selector, alarm.to_dict())
+
         return alarm
+
 
 def make_alarm_from_mongo(alarm_dict):
     al = alarm_dict['v']
