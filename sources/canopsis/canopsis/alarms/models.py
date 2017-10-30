@@ -21,21 +21,30 @@
 
 from __future__ import unicode_literals
 
-import time
+from time import time
 
-# Alarm statuses
-ALARM_STATUS_OFF = 0
-ALARM_STATUS_STEALTHY = 2
-
-# Alarm states
-ALARM_STATE_OK = 0
-ALARM_STATE_MINOR = 1
-ALARM_STATE_MAJOR = 2
-ALARM_STATE_CRITICAL = 3
+from canopsis.common.enumerations import DefaultEnum
 
 # Alarm step types
 ALARM_STEP_TYPE_STATE_INCREASE = 'stateinc'
 ALARM_STEP_TYPE_STATE_DECREASE = 'statedec'
+
+
+class AlarmState(DefaultEnum):
+    """Alarm states"""
+    OK = 0
+    MINOR = 1
+    MAJOR = 2
+    CRITICAL = 3
+
+
+class AlarmStatus(DefaultEnum):
+    """Alarm statuses"""
+    OFF = 0
+    ONGOING = 1
+    STEALTHY = 2
+    FLAPPING = 3
+    CANCELED = 4
 
 
 class AlarmStep:
@@ -221,15 +230,13 @@ class Alarm:
         :rtype: bool
         """
         if self.status is None:
-            self.resolved = time.time()
+            self.resolved = time()
             return True
         else:
-            if self.status.value is not ALARM_STATUS_OFF:
-                return False
-            else:
-                if time.time() - self.status.timestamp > flapping_interval:
-                    self.resolved = int(self.status.timestamp)
-                    return True
+            if self.status.value is AlarmStatus.OFF.value \
+                    and time() - self.status.timestamp > flapping_interval:
+                self.resolved = int(self.status.timestamp)
+                return True
 
         return False
 
@@ -247,9 +254,9 @@ class Alarm:
         if self.snooze is None:
             return False
 
-        if self.snooze.value < time.time():
+        if self.snooze.value < time():
             self.snooze = None
-            self.last_update_date = time.time()
+            self.last_update_date = time()
             return True
 
         return False
@@ -264,7 +271,7 @@ class Alarm:
         """
         if self.canceled is not None:
             canceled_date = self.canceled.timestamp
-            if (time.time() - canceled_date) >= cancel_delay:
+            if (time() - canceled_date) >= cancel_delay:
                 self.resolved = canceled_date
                 return True
 
@@ -280,7 +287,7 @@ class Alarm:
         if self.status:
             return self.status.value
 
-        return ALARM_STATUS_OFF
+        return AlarmStatus.OFF.value
 
     def _is_stealthy(self, stealthy_show_duration, stealthy_interval):
         """
@@ -294,15 +301,17 @@ class Alarm:
         last_state_ts = self.state.timestamp
         for step in self.steps:
             delta1 = last_state_ts - step.timestamp
-            delta2 = int(time.time()) - step.timestamp
+            delta2 = int(time()) - step.timestamp
             if delta1 > stealthy_show_duration or \
                     delta1 > stealthy_interval or \
                     delta2 > stealthy_show_duration or \
                     delta2 > stealthy_interval:
                 break
 
-            if step.type in [ALARM_STEP_TYPE_STATE_DECREASE, ALARM_STEP_TYPE_STATE_INCREASE]:
-                if step.value != ALARM_STATE_OK and self.state.value == ALARM_STATE_OK:
+            if step.type in [ALARM_STEP_TYPE_STATE_DECREASE,
+                             ALARM_STEP_TYPE_STATE_INCREASE]:
+                if step.value != AlarmState.OK.value \
+                        and self.state.value == AlarmState.OK.value:
                     return True
 
         return False
@@ -315,9 +324,10 @@ class Alarm:
         :returns: True if the alarm was resolved, False otherwise
         :rtype: bool
         """
-        if self.status is None or self.status.value != ALARM_STATUS_STEALTHY:
-            return False
-        if self._is_stealthy(stealthy_show_duration, stealthy_interval):
+        if self.status is None \
+                or self.status.value != AlarmStatus.STEALTHY.value \
+                or self._is_stealthy(stealthy_show_duration,
+                                     stealthy_interval):
             return False
 
         new_status = AlarmStep(
@@ -325,8 +335,8 @@ class Alarm:
                                   self.identity.connector_name),
             message='automatically resolved after stealthy shown time',
             type_=ALARM_STEP_TYPE_STATE_DECREASE,
-            timestamp=time.time(),
-            value=ALARM_STATUS_OFF
+            timestamp=time(),
+            value=AlarmStatus.OFF.value
         )
         self.update_status(new_status)
 
