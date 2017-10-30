@@ -221,7 +221,7 @@ class Amqp(Thread):
         if name:
             try:
                 return self.exchanges[name]
-            except:
+            except Exception:
                 if name == "amq.direct":
                     self.exchanges[name] = Exchange(
                         name, "direct", durable=True)
@@ -287,7 +287,7 @@ class Amqp(Thread):
                                     exchange=exchange,
                                     routing_key=routing_key
                                 )
-                            except:
+                            except Exception:
                                 self.logger.error(
                                     u"You need upgrade your Kombu version ({})"
                                     .format(__version__)
@@ -419,7 +419,7 @@ class Amqp(Thread):
                     )
                     try:
                         self.queues[queue_name]['consumer'].cancel()
-                    except:
+                    except Exception:
                         pass
 
                     del(self.queues[queue_name]['consumer'])
@@ -457,10 +457,7 @@ class Amqp(Thread):
     def wait_connection(self, timeout=5):
         i = 0
         while self.RUN and not self.connected and i < (timeout * 2):
-            try:
-                sleep(0.5)
-            except:
-                pass
+            sleep(0.5)
             i += 1
 
     def read_config(self, name):
