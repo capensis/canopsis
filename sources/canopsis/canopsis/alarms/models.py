@@ -121,26 +121,44 @@ class Alarm:
         hard_limit,
         extra={},
         alarm_filter=None
-
     ):
+        """
+        :param str _id: db ID of the alarm
+        :param AlarmIdentity identity: data to identify the alarm (resource, component...)
+        :param AlarmStep ack: acknoledgment step
+        :param dict alarm_filter: alarm filters informations
+        :param AlarmStep canceled: canceled step
+        :param int creation_date: alarm creation timestamp
+        :param dict extra: extra informations (domain, perimeter...)
+        :param bool hard_limit: hardlimit reached
+        :param str initial_output: first output message
+        :param int last_update_date: last update timestamp
+        :param timestamp resolved: the alarm resolve timestamp
+        :param AlarmStep snooze: the alarm snoozed step
+        :param AlarmStep state: state step
+        :param AlarmStep status: status step
+        :param list steps: all alarm steps
+        :param list tags: list of associated tags
+        :param AlarmStep ticket: declareticket step
+        """
         self._id = _id
         self.identity = identity
-        self.status = status
-        self.resolved = resolved
         self.ack = ack
-        self.tags = tags
-        self.creation_date = creation_date
+        self.alarm_filter = alarm_filter
         self.canceled = canceled
-        self.state = state
-        self.steps = steps
-        self.initial_output = initial_output
-        self.last_update_date = last_update_date
-        self.snooze = snooze
-        self.ticket = ticket
-        self.hard_limit = hard_limit
+        self.creation_date = creation_date
         self.entity = None
         self.extra = extra
-        self.alarm_filter = alarm_filter
+        self.hard_limit = hard_limit
+        self.initial_output = initial_output
+        self.last_update_date = last_update_date
+        self.resolved = resolved
+        self.snooze = snooze
+        self.state = state
+        self.status = status
+        self.steps = steps
+        self.tags = tags
+        self.ticket = ticket
 
     def to_dict(self):
         value = {
@@ -183,6 +201,7 @@ class Alarm:
 
         if self.alarm_filter is not None:
             value['alarm_filter'] = self.alarm_filter
+
         for s in self.steps:
             value['steps'].append(s.to_dict())
 

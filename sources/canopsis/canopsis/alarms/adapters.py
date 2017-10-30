@@ -106,20 +106,20 @@ def make_alarm_from_mongo(alarm_dict):
     steps = []
     for step in al['steps']:
         steps.append(make_alarm_step_from_mongo(step))
-    ack = None
 
+    ack = None
     if al['ack'] is not None:
         ack = make_alarm_step_from_mongo(al['ack'])
-    ticket = None
 
+    ticket = None
     if al['ticket'] is not None:
         ticket = make_alarm_step_from_mongo(al['ticket'])
-    snooze = None
 
+    snooze = None
     if al['snooze'] is not None:
         snooze = make_alarm_step_from_mongo(al['snooze'])
-    cancel = None
 
+    cancel = None
     if al['canceled'] is not None:
         cancel = make_alarm_step_from_mongo(al['canceled'])
 
