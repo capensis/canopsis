@@ -32,7 +32,7 @@ from canopsis.common.utils import ensure_iterable, isiterable
 
 from urlparse import parse_qs
 from gzip import GzipFile
-from json import loads, dumps
+from json import loads
 from math import isnan, isinf
 from bottle import request, HTTPError, HTTPResponse
 from bottle import response as BottleResponse
