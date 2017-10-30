@@ -240,27 +240,6 @@ class Alarm:
 
         return False
 
-    def resolve_snooze(self):
-        """
-        Checks if the snooze has expired.
-
-        if yes, this method removes the snooze object and returns True to tell the caller
-        that the snooze has been resolved and that the alarm needs to be updated in DB.
-        if not, this method returns false, no need to update the Alarm in DB.
-
-        :returns: True if snooze is resolved, False otherwise.
-        :rtype: bool
-        """
-        if self.snooze is None:
-            return False
-
-        if self.snooze.value < time():
-            self.snooze = None
-            self.last_update_date = time()
-            return True
-
-        return False
-
     def resolve_cancel(self, cancel_delay):
         """
         Resolve an alarm if it has been canceled, after the cancel_delay
@@ -274,6 +253,28 @@ class Alarm:
             if (time() - canceled_date) >= cancel_delay:
                 self.resolved = canceled_date
                 return True
+
+        return False
+
+    def resolve_snooze(self):
+        """
+        Checks if the snooze has expired.
+
+        If yes, this method removes the snooze object and returns True to
+        tell the caller that the snooze has been resolved and that the
+        alarm needs to be updated in DB.
+        If not, this method returns false, no need to update the Alarm in DB.
+
+        :returns: True if snooze is resolved, False otherwise.
+        :rtype: bool
+        """
+        if self.snooze is None:
+            return False
+
+        if self.snooze.value < time():
+            self.snooze = None
+            self.last_update_date = time()
+            return True
 
         return False
 
@@ -319,6 +320,7 @@ class Alarm:
     def resolve_stealthy(self, stealthy_show_duration=0, stealthy_interval=0):
         """
         Resolves alarms that should not be stealthy anymore.
+
         :param int stealthy_show_duration: duration (in seconds) where the alarm should be shown as stealthy
         :param int stealthy_interval:
         :returns: True if the alarm was resolved, False otherwise

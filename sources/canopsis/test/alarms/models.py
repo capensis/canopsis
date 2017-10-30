@@ -104,7 +104,37 @@ class AlarmsModelsTest(TestCase):
 
         self.alarm_step.value = AlarmStatus.OFF.value
         self.alarm.status = self.alarm_step
-        self.assertTrue(self.alarm.resolve(360))
+        self.assertTrue(self.alarm.resolve(0))
+        self.assertNotEqual(self.alarm.resolved, self.alarm_step.value)
+
+    def test_alarm_resolve_cancel(self):
+        self.assertFalse(self.alarm.resolve_cancel(0))
+
+        ts = 1506808800
+        self.alarm.canceled = AlarmStep(
+            author='Beth',
+            message='Smith',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=ts,
+            value=AlarmStatus.ONGOING.value
+        )
+        self.assertTrue(self.alarm.resolve_cancel(0))
+        self.assertEqual(self.alarm.resolved, ts)
+
+    def test_alarm_resolve_snooze(self):
+        self.assertFalse(self.alarm.resolve_snooze())
+
+        self.alarm.snooze = AlarmStep(
+            author='Summer',
+            message='Smith',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=1506808800,
+            value=AlarmStatus.ONGOING.value
+        )
+        last = self.alarm.last_update_date
+        self.assertTrue(self.alarm.resolve_snooze())
+        self.assertTrue(self.alarm.snooze is None)
+        self.assertNotEqual(self.alarm.last_update_date, last)
 
 if __name__ == '__main__':
     main()
