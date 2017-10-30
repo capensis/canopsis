@@ -107,10 +107,8 @@ class Alarm:
         _id,
         identity,
         ack,
-        alarm_filter=None,
         canceled,
         creation_date,
-        extra={},
         hard_limit,
         initial_output,
         last_update_date,
@@ -120,7 +118,9 @@ class Alarm:
         status,
         steps,
         tags,
-        ticket
+        ticket,
+        alarm_filter=None,
+        extra={}
     ):
         """
         :param str _id: db ID of the alarm
