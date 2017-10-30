@@ -47,12 +47,12 @@ class AlarmStep:
     - snooze
     attributes
     """
+
     def __init__(self, author, message, type_, timestamp, value):
         """
-        constructor
         :param string author: The author of the Step
         :param string message: The message (displayed in the UI)
-        :param string  type_: the Step type (defined in ALARM_STEP_TYPE_* constants)
+        :param string type_: the Step type (defined in ALARM_STEP_TYPE_* constants)
         :param float timestamp: The Step occurrence timestamp
         :param mixed value: a Value for the Step
         """
@@ -64,8 +64,7 @@ class AlarmStep:
 
     def to_dict(self):
         """
-
-        :return: dict
+        :rtype: dict
         """
         return {
             'a': self.author,
@@ -81,6 +80,7 @@ class AlarmIdentity:
     A value Object that contains the Alarm identity.
     Stores the information about the entity impacted by the alarm.
     """
+
     def __init__(self, connector, connector_name, component, resource=None):
         self.connector = connector
         self.connector_name = connector_name
@@ -101,6 +101,7 @@ class Alarm:
     """
     An Alarm representation in Canopsis.
     """
+
     def __init__(
         self,
         _id,
@@ -195,8 +196,10 @@ class Alarm:
     def resolve(self, flapping_interval):
         """
         Resolves an alarm if the status is OFF and if the alarm is not flapping.
+
         :param int flapping_interval: Interval in seconds to determine status flapping
-        :return Bool: True if the alarm is resolved, False otherwise
+        :returns: True if the alarm is resolved, False otherwise
+        :rtype: bool
         """
         if self.status is None:
             self.resolved = time.time()
@@ -213,13 +216,14 @@ class Alarm:
 
     def resolve_snooze(self):
         """
-            Checks if the snooze has expired.
+        Checks if the snooze has expired.
 
-            if yes, this method removes the snooze object and returns True to tell the caller
-            that the snooze has been resolved and that the alarm needs to be updated in DB.
-            if not, this method returns false, no need to update the Alarm in DB.
+        if yes, this method removes the snooze object and returns True to tell the caller
+        that the snooze has been resolved and that the alarm needs to be updated in DB.
+        if not, this method returns false, no need to update the Alarm in DB.
 
-            :return Bool: True if snooze is resolved, False otherwise.
+        :returns: True if snooze is resolved, False otherwise.
+        :rtype: bool
         """
         if self.snooze is None:
             return False
@@ -233,9 +237,11 @@ class Alarm:
 
     def resolve_cancel(self, cancel_delay):
         """
-            Resolve an alarm if it has been canceled, after the cancel_delay
+        Resolve an alarm if it has been canceled, after the cancel_delay
+
         :param cancel_delay: the delay where the alarm must stay in "canceled" state
-        :return Bool: True if the alarm has been canceled, False otherwise
+        :returns: True if the alarm has been canceled, False otherwise
+        :rtype: bool
         """
         if self.canceled is not None:
             canceled_date = self.canceled.timestamp
@@ -247,8 +253,10 @@ class Alarm:
 
     def get_last_status_value(self):
         """
-        Gets the last status of an alarm
-        :return int: the last known status (check ALARM_STATUS_* constants)
+        Gets the last status of an alarm.
+
+        :returns: the last known status (check ALARM_STATUS_* constants)
+        :rtype: int
         """
         if self.status:
             return self.status.value
@@ -258,9 +266,11 @@ class Alarm:
     def _is_stealthy(self, stealthy_show_duration, stealthy_interval):
         """
         Checks if an alarm is stealthy.
+
         :param int stealthy_show_duration:
         :param int stealthy_interval:
-        :return Bool: true if the alarm is still stealthy, False otherwise
+        :returns: true if the alarm is still stealthy, False otherwise
+        :rtype: bool
         """
         last_state_ts = self.state.timestamp
         for step in self.steps:
@@ -283,28 +293,31 @@ class Alarm:
         Resolves alarms that should not be stealthy anymore.
         :param int stealthy_show_duration: duration (in seconds) where the alarm should be shown as stealthy
         :param int stealthy_interval:
-        :return Bool: True if the alarm was resolved, False otherwise
+        :returns: True if the alarm was resolved, False otherwise
+        :rtype: bool
         """
         if self.status is None or self.status.value != ALARM_STATUS_STEALTHY:
             return False
         if self._is_stealthy(stealthy_show_duration, stealthy_interval):
             return False
 
-        new_status = AlarmStep('{}.{}'.format(self.identity.connector,
-                                              self.identity.connector_name),
-            'automatically resolved after stealthy shown time',
-            ALARM_STEP_TYPE_STATE_DECREASE,
-            time.time(),
-            ALARM_STATUS_OFF)
-
+        new_status = AlarmStep(
+            author='{}.{}'.format(self.identity.connector,
+                                  self.identity.connector_name),
+            message='automatically resolved after stealthy shown time',
+            type_=ALARM_STEP_TYPE_STATE_DECREASE,
+            timestamp=time.time(),
+            value=ALARM_STATUS_OFF
+        )
         self.update_status(new_status)
+
         return True
 
     def update_status(self, new_status):
         """
         Updates the alarm status and archives the new Step.
+
         :param AlarmStep new_status: the new alarm status
-        :return : None
         """
         self.status = new_status
         self.steps.append(new_status)

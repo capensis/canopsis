@@ -146,9 +146,9 @@ def make_alarm_from_mongo(alarm_dict):
 
 def make_alarm_step_from_mongo(step_dict):
     return AlarmStep(
-        step_dict.get('a'),
-        step_dict.get('m'),
-        step_dict.get('_t'),
-        step_dict.get('t'),
-        step_dict.get('val')
+        author=step_dict.get('a'),
+        message=step_dict.get('m'),
+        type_=step_dict.get('_t'),
+        timestamp=step_dict.get('t'),
+        value=step_dict.get('val')
     )

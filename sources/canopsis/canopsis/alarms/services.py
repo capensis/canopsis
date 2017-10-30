@@ -46,7 +46,6 @@ class AlarmService(object):
 
         :param int level: a level from logging package
         :param string message: the log message
-        :return: None
         """
         if self.logger is not None:
             self.logger.log(level, message)
@@ -59,7 +58,7 @@ class AlarmService(object):
         """
         Finds all active alarms and matches them with their owner entity
 
-        :return: dict
+        :rtype: dict
         """
         alarms = self.alarms_adapter.find_unresolved_alarms()
         self._log(logging.DEBUG, 'found {} active alarms'.format(len(alarms)))
