@@ -336,8 +336,8 @@ class Alarm:
                     delta2 > stealthy_interval:
                 break
 
-            if step.type in [ALARM_STEP_TYPE_STATE_DECREASE,
-                             ALARM_STEP_TYPE_STATE_INCREASE]:
+            if step.type_ in [ALARM_STEP_TYPE_STATE_DECREASE,
+                              ALARM_STEP_TYPE_STATE_INCREASE]:
                 if step.value != AlarmState.OK.value \
                         and self.state.value == AlarmState.OK.value:
                     return True

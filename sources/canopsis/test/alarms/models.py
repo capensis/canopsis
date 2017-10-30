@@ -20,12 +20,14 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+
+from copy import copy
 import logging
 from time import time
 from unittest import TestCase, main
 
 from canopsis.alarms.models import (
-    AlarmStep, AlarmIdentity, Alarm, AlarmStatus,
+    AlarmStep, AlarmIdentity, Alarm, AlarmStatus, AlarmState,
     ALARM_STEP_TYPE_STATE_INCREASE
 )
 
@@ -147,6 +149,44 @@ class AlarmsModelsTest(TestCase):
         self.assertTrue(self.alarm.resolve_snooze())
         self.assertTrue(self.alarm.snooze is None)
         self.assertNotEqual(self.alarm.last_update_date, last)
+
+    def test_is_stealthy(self):
+        self.alarm.state = AlarmStep(
+            author='Coach',
+            message='Feratu',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=int(time()) - 100,
+            value=AlarmState.OK.value
+        )
+        step = copy(self.alarm.state)
+        step.value = AlarmState.MAJOR.value
+        self.alarm.steps = [step]
+
+        self.assertFalse(self.alarm._is_stealthy(0, 0))
+
+        self.assertTrue(self.alarm._is_stealthy(9999, 9999))
+
+    def test_resolve_stealthy(self):
+        self.assertFalse(self.alarm.resolve_stealthy())
+
+        self.alarm.status = AlarmStep(
+            author='Bird',
+            message='person',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=int(time()) - 100,
+            value=AlarmStatus.STEALTHY.value
+        )
+        self.alarm.state = AlarmStep(
+            author='Xenon',
+            message='Bloom',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=int(time()) - 100,
+            value=AlarmState.OK.value
+        )
+        last = len(self.alarm.steps)
+        self.assertTrue(self.alarm.resolve_stealthy(9999, 9999))
+        self.assertEqual(self.alarm.status.author, 'LawnmowerDog.AnatomyPark')
+        self.assertEqual(len(self.alarm.steps), last + 1)
 
 if __name__ == '__main__':
     main()
