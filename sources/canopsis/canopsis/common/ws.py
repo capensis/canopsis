@@ -26,21 +26,22 @@ This module provides tools in order to ease the use of web services in python
 code.
 """
 
-from inspect import getargspec
+#from __future__ import unicode_literals
 
-from canopsis.common.utils import ensure_iterable, isiterable
-
-from urlparse import parse_qs
-from gzip import GzipFile
-from json import loads
-from math import isnan, isinf
 from bottle import request, HTTPError, HTTPResponse
 from bottle import response as BottleResponse
 from functools import wraps
-import traceback
+from gzip import GzipFile
+from inspect import getargspec
+from json import loads
 import logging
-
+from math import isnan, isinf
+import re
+import traceback
+from urlparse import parse_qs
 from uuid import uuid4 as uuid
+
+from canopsis.common.utils import ensure_iterable, isiterable
 
 
 def adapt_canopsis_data_to_ember(data):
@@ -254,9 +255,10 @@ class route(object):
                         kwargs[body_param] = param
 
             if not self.nolog:
+                url = make_url_human_readable(self.url, kwargs)
                 self.logger.info(
-                    'Request: {} - {}'.format(
-                        self.op.__name__.upper(), self.url
+                    u'Request: {} - {}'.format(
+                        self.op.__name__.upper(), url
                     )
                 )
 
@@ -380,3 +382,25 @@ def apply_routes(urls):
     for url in urls:
         decorator = route(url['method'], name=url['name'], **url['params'])
         decorator(url['handler'])
+
+
+def make_url_human_readable(url, params):
+    """
+    Convert templated url (/:param), with parameter values.
+
+    :param str url: the templated url
+    :param dict params: the parameters
+    :rtype: str
+    """
+    for key, param in params.items():
+        if 'body' in key:
+            # Because kwargs in route class is a dirty dict
+            # (body key is a dict as a string with all parameters in it!)
+            continue
+
+        try:
+            url = re.sub('/:{}'.format(key), '/{}'.format(param), url)
+        except Exception:
+            pass
+
+    return url
