@@ -47,7 +47,7 @@ class AmqpPublisher(object):
         if self.connection is None:
             return False
 
-        return self.connection.is_open()
+        return self.connection.is_open
 
     def connect(self):
         """
@@ -100,3 +100,4 @@ class AmqpPublisher(object):
             self.connection.close()
 
         self.connection = None
+        self.channel = None
