@@ -96,4 +96,7 @@ class AmqpPublisher(object):
         return self.publish_json(event, exchange_name, get_routingkey(event))
 
     def disconnect(self):
-        self.connection.close()
+        if self.connected:
+            self.connection.close()
+
+        self.connection = None
