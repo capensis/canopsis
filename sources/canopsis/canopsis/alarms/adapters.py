@@ -46,7 +46,6 @@ class Adapter(object):
                         {'v.snooze.val': {'$lte': int(time())}}
                     ]
                 },
-
             ]
         }
 
@@ -70,7 +69,6 @@ class Adapter(object):
                         {'v.snooze.val': {'$lte': int(time())}}
                     ]
                 },
-
             ]
         }
 
@@ -109,36 +107,36 @@ def make_alarm_from_mongo(alarm_dict):
     if al['ack'] is not None:
         ack = make_alarm_step_from_mongo(al['ack'])
 
-    ticket = None
-    if al['ticket'] is not None:
-        ticket = make_alarm_step_from_mongo(al['ticket'])
+    cancel = None
+    if al['canceled'] is not None:
+        cancel = make_alarm_step_from_mongo(al['canceled'])
 
     snooze = None
     if al['snooze'] is not None:
         snooze = make_alarm_step_from_mongo(al['snooze'])
 
-    cancel = None
-    if al['canceled'] is not None:
-        cancel = make_alarm_step_from_mongo(al['canceled'])
+    ticket = None
+    if al['ticket'] is not None:
+        ticket = make_alarm_step_from_mongo(al['ticket'])
 
     return Alarm(
         _id=alarm_dict['_id'],
         identity=identity,
-        status=status,
-        resolved=al.get('resolved'),
         ack=ack,
-        tags=al.get('tags'),
-        creation_date=al.get('creation_date'),
         canceled=cancel,
-        state=state,
-        steps=steps,
+        creation_date=al.get('creation_date'),
+        hard_limit=al.get('hard_limit'),
         initial_output=al.get('initial_output'),
         last_update_date=al.get('last_update_date'),
+        resolved=al.get('resolved'),
         snooze=snooze,
+        state=state,
+        status=status,
+        steps=steps,
+        tags=al.get('tags'),
         ticket=ticket,
-        hard_limit=al.get('hard_limit'),
-        extra=al.get('extra'),
-        alarm_filter=al.get('alarm_filter')
+        alarm_filter=al.get('alarm_filter'),
+        extra=al.get('extra')
     )
 
 
@@ -148,5 +146,5 @@ def make_alarm_step_from_mongo(step_dict):
         message=step_dict.get('m'),
         type_=step_dict.get('_t'),
         timestamp=step_dict.get('t'),
-        value=step_dict.get('val')
+        value=step_dict.get('val', None)
     )

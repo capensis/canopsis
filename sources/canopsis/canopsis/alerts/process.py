@@ -30,7 +30,7 @@ from canopsis.alarms.adapters import Adapter as AlarmAdapter
 from canopsis.entities.adapters import Adapter as EntityAdapter
 from canopsis.logger import Logger
 from canopsis.watcher.manager import Watcher
-from canopsis.common.ethereal_data import  EtherealData
+from canopsis.common.ethereal_data import EtherealData
 
 alerts_manager = Alerts(*Alerts.provide_default_basics())
 alertsreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
@@ -77,7 +77,6 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     filter_ = {'crecord_type': 'statusmanagement'}
     config_data = EtherealData(collection=mongo_client['object'],
                                filter_=filter_)
-
 
     benj_logger = Logger.get('alarms_beat_proc', '/opt/canopsis/var/log/engines/alarms.log', level=logging.DEBUG)
     benj_logger.debug("Starting beat processing.")
