@@ -22,6 +22,9 @@
 
 """
 Alerts manager (also known as Alarm Manager).
+
+Warning : this class is deprecated and will be replaced in a near future.
+Please see the canopsis.alarms package to add/edit features.
 """
 
 from __future__ import unicode_literals
@@ -911,7 +914,10 @@ class Alerts(object):
 
         :param alarms: a list of unresolved alarms
         :return: a list of unresolved alarms (excluding locally processed alarms)
+        :deprecated: see canopsis.alarms
         """
+        self.logger.debug("DEPRECATED: see the canopsis.alarms package instead.");
+
         for data_id in alarms:
             for docalarm in alarms[data_id]:
                 docalarm[self.alerts_storage.DATA_ID] = data_id
@@ -935,7 +941,10 @@ class Alerts(object):
 
         :param alarms: a list of unresolved alarms
         :return: a list of unresolved alarms (excluding locally processed alarms)
+        :deprecated: see canopsis.alarms
         """
+        self.logger.debug("DEPRECATED: see the canopsis.alarms package instead.");
+
         now = int(time())
 
         for data_id in alarms:
@@ -957,7 +966,10 @@ class Alerts(object):
         """
         Loop over all snoozed alarms, and restore them if needed.
         :param alarms: a list of existing alarms (hack to bypass the self.getAlarms that is deprecated)
+        :deprecated: see canopsis.alarms
         """
+
+        self.logger.debug("DEPRECATED: see the canopsis.alarms package instead.");
         now = int(time())
         if alarms is None:
             result = self.get_alarms(resolved=False, snoozed=True)
@@ -991,7 +1003,10 @@ class Alerts(object):
 
         :param alarms: a list of unresolved alarms
         :return: a list of unresolved alarms (excluding locally processed alarms)
+        :deprecated: see canopsis.alarms
         """
+        self.logger.debug("DEPRECATED: see the canopsis.alarms package instead.");
+
         for data_id in alarms:
             for docalarm in alarms[data_id]:
                 docalarm[self.alerts_storage.DATA_ID] = data_id
