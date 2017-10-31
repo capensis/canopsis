@@ -3,14 +3,14 @@ import unittest
 
 from unittest import TestCase
 
-from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import AmqpPublisher, AmqpConnection
 
 
 DEFAULT_AMQP_URL = 'amqp://guest:guest@localhost/'
 DEFAULT_AMQP_EXCHANGE = 'test'
 
 
-class TestAmqpPublisher(TestCase):
+class TestAmqp(TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -19,27 +19,33 @@ class TestAmqpPublisher(TestCase):
         cls.amqp_exname = os.environ.get(
             'TEST_AMQPPUBLISHER_EXCHANGE', DEFAULT_AMQP_EXCHANGE)
 
-    def test_connection_with_statement(self):
 
-        with AmqpPublisher(self.amqp_url) as amqp_pub:
-            self.assertIsNotNone(amqp_pub.connection)
-            self.assertIsNotNone(amqp_pub.channel)
+class TestAmqpConn(TestAmqp):
+
+    def test_connection_with_statement(self):
+        with AmqpConnection(self.amqp_url) as amqp_conn:
+            self.assertIsNotNone(amqp_conn.connection)
+            self.assertIsNotNone(amqp_conn.channel)
+            self.assertTrue(amqp_conn.connected)
 
     def test_connection_explicit(self):
+        amqp_conn = AmqpConnection(self.amqp_url)
+        amqp_conn.connect()
 
-        amqp_pub = AmqpPublisher(self.amqp_url)
-        amqp_pub.connect()
+        self.assertIsNotNone(amqp_conn.connection)
+        self.assertIsNotNone(amqp_conn.channel)
+        self.assertTrue(amqp_conn.connected)
 
-        self.assertIsNotNone(amqp_pub.connection)
-        self.assertIsNotNone(amqp_pub.channel)
+        amqp_conn.disconnect()
 
-        amqp_pub.disconnect()
+        self.assertIsNone(amqp_conn.connection)
+        self.assertIsNone(amqp_conn.channel)
+        self.assertFalse(amqp_conn.connected)
 
-        self.assertIsNone(amqp_pub.connection)
-        self.assertIsNone(amqp_pub.channel)
 
-    def test_publish_event(self):
+class TestAmqpPublisher(TestAmqp):
 
+    def test_canopsis_event(self):
         event = {
             'connector': 'test_amqp',
             'connector_name': 'test_amqp',
@@ -49,16 +55,24 @@ class TestAmqpPublisher(TestCase):
             'resource': 'test'
         }
 
-        with AmqpPublisher(self.amqp_url) as amqp_pub:
-            amqp_pub.publish_event(event, self.amqp_exname)
+        with AmqpConnection(self.amqp_url) as ac:
+            amqp_pub = AmqpPublisher(ac)
+            amqp_pub.canopsis_event(event, self.amqp_exname)
 
-    def test_publish_badevent_raises(self):
-
+    def test_bad_canopsis_event_raises(self):
         event = {}
 
-        with AmqpPublisher(self.amqp_url) as amqp_pub:
+        with AmqpConnection(self.amqp_url) as ac:
+            amqp_pub = AmqpPublisher(ac)
             with self.assertRaises(KeyError):
-                amqp_pub.publish_event(event, self.amqp_exname)
+                amqp_pub.canopsis_event(event, self.amqp_exname)
+
+    def test_json_document(self):
+        jdoc = {'bla': 'bla'}
+        with AmqpConnection(self.amqp_url) as ac:
+            amqp_pub = AmqpPublisher(ac)
+            amqp_pub.json_document(jdoc, self.amqp_exname, '#')
+
 
 if __name__ == '__main__':
     unittest.main()

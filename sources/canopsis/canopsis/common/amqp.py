@@ -4,26 +4,7 @@ import json
 from canopsis.event import get_routingkey
 
 
-class AmqpPublisher(object):
-    """
-    Easy to use synchronous AMQP publisher.
-
-    Example:
-
-    url = 'amqp://cpsrabbit:canopsis@localhost/canopsis'
-
-    evt = {...}
-    with AmqpPublisher(url) as ap:
-        ap.event_publish(evt, 'canopsis.events')
-
-    or:
-
-    ap = AmqpPublisher(url)
-    ap.connect()
-    ap.publish(evt)
-    ap.disconnect()
-
-    """
+class AmqpConnection(object):
 
     def __init__(self, url):
         """
@@ -60,7 +41,45 @@ class AmqpPublisher(object):
         self.connection = pika.BlockingConnection(parameters)
         self.channel = self.connection.channel()
 
-    def publish_json(self, document, exchange_name, routing_key):
+    def disconnect(self):
+        if self.connected:
+            self.connection.close()
+
+        self.connection = None
+        self.channel = None
+
+
+class AmqpPublisher(object):
+    """
+    Easy to use synchronous AMQP publisher.
+
+    Example:
+
+    url = 'amqp://cpsrabbit:canopsis@localhost/canopsis'
+
+    evt = {...}
+    with AmqpConnection(url) as apc:
+        pub = AmqpPublisher(apc)
+        pub.canopsis_event(evt, 'canopsis.events')
+
+    or:
+
+    apc = AmqpConnection(url)
+    apc.connect()
+
+    pub = AmqpPublisher(apc)
+    pub.canopsis_event(evt)
+
+    apc.disconnect()
+
+    """
+    def __init__(self, connection):
+        """
+        :type connection: AmqpConnection
+        """
+        self.connection = connection
+
+    def json_document(self, document, exchange_name, routing_key):
         """
         :param document: valid JSON document
         :type document: dict
@@ -71,13 +90,13 @@ class AmqpPublisher(object):
         """
         jdoc = json.dumps(document)
         props = pika.BasicProperties(content_type='application/json')
-        return self.channel.basic_publish(
+        return self.connection.channel.basic_publish(
             exchange_name, routing_key, jdoc, props
         )
 
-    def publish_event(self, event, exchange_name):
+    def canopsis_event(self, event, exchange_name):
         """
-        Shortcut to publish_json, builds the routing key
+        Shortcut to self.json_document, builds the routing key
         for you from the event.
 
         Event required keys:
@@ -93,11 +112,4 @@ class AmqpPublisher(object):
         :raises KeyError: on invalid event, if routing key cannot be built.
         :param canopsis_exchange: exchange to publish to
         """
-        return self.publish_json(event, exchange_name, get_routingkey(event))
-
-    def disconnect(self):
-        if self.connected:
-            self.connection.close()
-
-        self.connection = None
-        self.channel = None
+        return self.json_document(event, exchange_name, get_routingkey(event))
