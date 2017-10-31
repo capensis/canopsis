@@ -58,7 +58,7 @@ class Adapter(object):
 
         return alarms
 
-    def find_unresolved_alarms(self):
+    def stream_unresolved_alarms(self):
         query = {
             '$and': [
                 {
@@ -73,13 +73,11 @@ class Adapter(object):
 
             ]
         }
-        alarms = []
 
         col_adapter = self.mongo_client[self.COLLECTION]
-        for alarm in col_adapter.find(query):
-            alarms.append(make_alarm_from_mongo(alarm))
 
-        return alarms
+        for alarm in col_adapter.find(query):
+            yield make_alarm_from_mongo(alarm)
 
     def update(self, alarm):
         selector = {

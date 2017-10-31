@@ -23,11 +23,15 @@ from __future__ import unicode_literals
 
 import logging
 
+DEFAULT_FLAPPING_INTERVAL = 0
+DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
+DEFAULT_STEALTHY_SHOW_DURATION = 0
+DEFAULT_STEALTHY_INTERVAL = 0
 
 class AlarmService(object):
 
     def __init__(self, alarms_adapter, entities_adapter, watcher_manager,
-                 logger=None):
+                 logger=None, config=None):
         """
         Alarm service constructor.
 
@@ -39,6 +43,13 @@ class AlarmService(object):
         self.entities_adapter = entities_adapter
         self.watcher_manager = watcher_manager
         self.logger = logger
+        if config is None:
+            self.config = {}
+        else:
+            if not isinstance(config, dict):
+                raise ValueError("config must be a dict")
+
+            self.config = config
 
     def _log(self, level, message):
         """
@@ -54,32 +65,14 @@ class AlarmService(object):
         self.alarms_adapter.update(alarm)
         self.watcher_manager.alarm_changed(alarm.identity.get_data_id())
 
-    def find_active_alarms(self):
-        """
-        Finds all active alarms and matches them with their owner entity
-
-        :rtype: dict
-        """
-        alarms = self.alarms_adapter.find_unresolved_alarms()
-        self._log(logging.DEBUG, 'found {} active alarms'.format(len(alarms)))
-
-        return alarms
-        #entities = self.entities_adapter.find_all_enabled()
-        #self._log(logging.DEBUG, 'found {} enabled entities'.format(len(entities)))
-        #alarms_with_embedded_entities = self._match_alarms_with_entities(alarms, entities)
-        #return alarms_with_embedded_entities
-
     def find_snoozed_alarms(self):
         alarms = self.alarms_adapter.find_unresolved_snoozed_alarms()
 
         return alarms
-        #entities = self.entities_adapter.find_all_enabled()
-        #alarms_with_embedded_entities = self._match_alarms_with_entities(alarms, entities)
-        #return alarms_with_embedded_entities
 
     def resolve_snoozed_alarms(self, alarms=None):
         if alarms is None:
-            alarms = self.find_snoozed_alarms(False)
+            alarms = self.find_snoozed_alarms()
         for alarm in alarms:
             if alarm.resolve_snooze() is True:
                 self._log(logging.DEBUG, "alarm : {} has been unsnoozed"
@@ -89,37 +82,38 @@ class AlarmService(object):
 
         return alarms
 
-    def resolved_canceled_alarms(self, alarms, cancel_delay=3600):
-        for alarm in alarms:
-            if alarm.resolve_cancel(cancel_delay) is True:
-                self._log(logging.DEBUG, "alarm : {0} was cancelled on {1} and will now be resolved".format(alarm._id, alarm.canceled.timestamp))
-                self.update_alarm(alarm)
-                alarms.remove(alarm)
-        return alarms
+    def process_resolution_on_all_alarms(self):
+        """
+        This method processes all open alarms to check if they need to be resolved;
 
-    def resolve_alarms(self, alarms, flapping_interval=60):
-        for alarm in alarms:
-            if alarm.resolve(flapping_interval) is True:
-                self._log(logging.DEBUG, "alarm : {} has been resolved and will now be resolved".format(alarm._id))
-                self.update_alarm(alarm)
-                alarms.remove(alarm)
-        return alarms
+        This method is meant to be used in the Alarm Engine's beat processing.
+        :return:
+        """
+        alarm_counter = 0
+        updated_alarm_counter = 0
+        for alarm in self.alarms_adapter.stream_unresolved_alarms():
+            alarm_needs_update = False
 
-    def resolve_stealthy_alarms(self, alarms, stealthy_show_duration=120,
-                                stealthy_interval=0):
-        for alarm in alarms:
+            if alarm.resolve(self.config.get('bagot_time', DEFAULT_FLAPPING_INTERVAL)) is True:
+                alarm_needs_update = True
+
+            if alarm.resolve_cancel(self.config.get('cancel_autosolve_delay', DEFAULT_CANCEL_AUTOSOLVE_DELAY)) is True:
+                alarm_needs_update = True
+
+            stealthy_show_duration = self.config.get('stealthy_show', DEFAULT_STEALTHY_SHOW_DURATION)
+            stealthy_interval = self.config.get('stealthy_time', DEFAULT_STEALTHY_INTERVAL)
             if alarm.resolve_stealthy(stealthy_show_duration, stealthy_interval) is True:
-                self._log(logging.DEBUG, "alarm : {} is not stealthy anymore "
-                                         "and will now be resolved".format(alarm._id))
+                alarm_needs_update = True
+
+            alarm_counter += 1
+            if alarm_needs_update is True:
                 self.update_alarm(alarm)
-                alarms.remove(alarm)
+                updated_alarm_counter += 1
 
-        return alarms
-
-    def _match_alarms_with_entities(self, alarms_list, entities_list):
-        for entity in entities_list:
-            if entity.id_ in alarms_list:
-                for alarm in alarms_list[entity.id_]:
-                    alarm.entity = entity
-
-        return alarms_list
+        self._log(
+            logging.DEBUG,
+            "alarms resolution processing : {0} alarms processed. {1} updates. ".format(
+                alarm_counter,
+                updated_alarm_counter
+            )
+        )
