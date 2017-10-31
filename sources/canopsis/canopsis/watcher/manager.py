@@ -11,21 +11,19 @@ from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.engines.core import publish
 from canopsis.event import forger, get_routingkey
-from canopsis.middleware.core import Middleware
 from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
 from canopsis.old.rabbitmq import Amqp
 from canopsis.pbehavior.manager import PBehaviorManager
 
-LOG_PATH = 'var/log/watcher'
+LOG_PATH = 'var/log/watcher.log'
+
 
 class Watcher:
     """Watcher class"""
 
     def __init__(self):
         """__init__
-
-        :param *args:
-        :param **kwargs:
         """
         self.logger = Logger.get('watcher', LOG_PATH)
         self.watcher_storage = Middleware.get_middleware_by_uri(
@@ -182,9 +180,7 @@ class Watcher:
         display_name = watcher_entity['name']
 
         alarm_list = list(self.alert_storage._backend.find({
-            'd': {
-                '$in': entities
-            }
+            'd': {'$in': entities}
         }))
         states = []
         for alarm in alarm_list:

@@ -20,10 +20,10 @@
 
 from __future__ import unicode_literals
 
-from bottle import request
 from ast import literal_eval
-import json
+from bottle import request
 import copy
+import json
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
@@ -35,10 +35,10 @@ from canopsis.tracer.manager import TracerManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
-context_manager = alarm_manager.context_manager
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
-pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
+context_manager = alarm_manager.context_manager
 tracer_manager = TracerManager(*TracerManager.provide_default_basics())
+pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
@@ -241,6 +241,7 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
         tmp_alarm = alarm_dict.get(depend, {})
         if tmp_alarm != {} and tmp_alarm.get('ack', None) is None:
             return True
+
     return False
 
 
@@ -255,6 +256,7 @@ def check_baseline(merged_eids_tracer, watcher_depends):
     for entity_id in watcher_depends:
         if entity_id in merged_eids_tracer:
             return True
+
     return False
 
 
@@ -353,6 +355,7 @@ def exports(ws):
                     next_run_dict[alert['d']] = alarmfilter['next_run']
 
         for watcher in watcher_list:
+            ws.logger.debug(watcher)
             enriched_entity = {}
             tmp_alarm = alarm_dict.get(
                 '{0}/{1}'.format(watcher['_id'], watcher['name']),
@@ -368,8 +371,9 @@ def exports(ws):
             enriched_entity['org'] = watcher['infos'].get('org', '')
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
-            enriched_entity['state'] = {'val': 0}
             enriched_entity['linklist'] = tmp_linklist
+            enriched_entity['state'] = {'val': watcher.get('state', 0)}
+            ws.logger.debug(tmp_alarm)
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
                 enriched_entity['status'] = tmp_alarm['status']
@@ -482,7 +486,6 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-
             if current_alarm is not None:
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
