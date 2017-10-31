@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-listalarm/blob/mas
 
 ### Lint
 
-Tested on commit : 2aa5717.
+Tested on commit : 51a192e.
 
 | Target | Status | Log |
 | ------ | ------ | --- |

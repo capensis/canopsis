@@ -21,13 +21,21 @@ Ember.Application.initializer({
              */
             isSelected: 0,
 
+            checkedOpen: false,
+            checkedFalse: true,
+
             /**
              * @method init
              */
             init: function() {
                 this._super();
                 if (!isNone(this.get('content'))) {
-                    set(this, 'state', get(this, 'content.state'));
+                    var state =  get(this, 'content.state')
+                    set(this, 'state',state);
+                    if(state == "opened"){
+                        this.set("checkedOpen",true)
+                        this.set("checkedFalse",false)
+                    }
                 }
               },
 

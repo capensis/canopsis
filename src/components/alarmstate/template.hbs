@@ -1,14 +1,14 @@
 <div class="form-group">
     <div class="radio">
         <label>
-            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="opened"}}
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="opened" checked=checkedOpen}}
             {{/component-radio}}
             opened
         </label>
     </div>
     <div class="radio">
         <label>
-            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="resolved" checked=true}}
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="resolved" checked=checkedFalse}}
             {{/component-radio}}
             resolved
         </label>
