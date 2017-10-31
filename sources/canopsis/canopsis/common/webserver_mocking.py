@@ -8,7 +8,7 @@ import SocketServer
 import socket
 from threading import Thread
 
-ADDRESS = 'localhost'
+DEFAULT_ADDRESS = 'localhost'
 
 
 class MockedWebServer(object):
@@ -37,7 +37,7 @@ class MockedWebServer(object):
         Automatically find a free port to listen to.
         """
         s = socket.socket(socket.AF_INET, type=socket.SOCK_STREAM)
-        s.bind((ADDRESS, 0))
+        s.bind((DEFAULT_ADDRESS, 0))
         address, port = s.getsockname()
         s.close()
 
@@ -62,4 +62,4 @@ class MockedWebServer(object):
         Shutdown the HTTP server and then the thread.
         """
         self._server.running = False
-        requests.get('http://{}:{}'.format(ADDRESS, self.port))
+        requests.get('http://{}:{}'.format(DEFAULT_ADDRESS, self.port))
