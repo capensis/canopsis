@@ -32,8 +32,8 @@ class AmqpPublisher(object):
         """
 
         self._url = url
-        self._connection = None
-        self._channel = None
+        self.connection = None
+        self.channel = None
 
     def __enter__(self):
         self.connect()
@@ -43,27 +43,22 @@ class AmqpPublisher(object):
         self.disconnect()
 
     @property
-    def connection(self):
-        if self._connection is None:
-            raise ValueError('{} is not connected'.format(
-                self.__class__.__name__))
+    def connected(self):
+        if self.connection is None:
+            return False
 
-        return self._connection
-
-    @connection.setter
-    def connection(self, value):
-        self._connection = value
+        return self.connection.is_open()
 
     def connect(self):
         """
         If connection is already made, disconnect then connect.
         """
-        if self._connection is not None:
+        if self.connected:
             self.disconnect()
 
         parameters = pika.URLParameters(self._url)
         self.connection = pika.BlockingConnection(parameters)
-        self._channel = self.connection.channel()
+        self.channel = self.connection.channel()
 
     def publish_json(self, document, exchange_name, routing_key):
         """
@@ -76,7 +71,7 @@ class AmqpPublisher(object):
         """
         jdoc = json.dumps(document)
         props = pika.BasicProperties(content_type='application/json')
-        return self._channel.basic_publish(
+        return self.channel.basic_publish(
             exchange_name, routing_key, jdoc, props
         )
 
