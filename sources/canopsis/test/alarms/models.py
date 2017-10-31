@@ -20,19 +20,21 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+
+from copy import copy
 import logging
+from time import time
 from unittest import TestCase, main
 
 from canopsis.alarms.models import (
-    AlarmStep, AlarmIdentity, Alarm,
+    AlarmStep, AlarmIdentity, Alarm, AlarmStatus, AlarmState,
     ALARM_STEP_TYPE_STATE_INCREASE
 )
 
 
 class AlarmsModelsTest(TestCase):
 
-    @classmethod
-    def setUpClass(self):
+    def setUp(self):
         self.logger = logging.getLogger('alarms')
 
         self.alarm_step = AlarmStep(
@@ -53,21 +55,21 @@ class AlarmsModelsTest(TestCase):
         self.alarm = Alarm(
             _id='dim-35-c',
             identity=self.alarm_identity,
-            status=None,
-            resolved=None,
             ack=None,
-            tags=[],
-            creation_date=1385938800,
             canceled=None,
-            state=None,
-            steps=[self.alarm_step],
+            creation_date=1385938800,
+            hard_limit=None,
             initial_output='Come on Rick',
             last_update_date=1506808800,
+            resolved=None,
             snooze=None,
+            state=None,
+            status=None,
+            steps=[self.alarm_step],
+            tags=[],
             ticket=None,
-            hard_limit=None,
-            extra={},
-            alarm_filter=None
+            alarm_filter=None,
+            extra={}
         )
 
     def test_alarm_step(self):
@@ -89,6 +91,102 @@ class AlarmsModelsTest(TestCase):
         self.assertEqual(res['_id'], 'dim-35-c')
         self.assertEqual(res['v']['initial_output'], 'Come on Rick')
         self.assertEqual(res['v']['steps'][0]['val'], 'Shumshumschilpiddydah')
+
+    def test_get_last_status_value(self):
+        self.assertEqual(self.alarm.get_last_status_value(),
+                         AlarmStatus.OFF.value)
+
+        self.alarm.status = AlarmStep(
+            author='Rick',
+            message='Smith',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=1506808800
+        )
+        self.assertEqual(self.alarm.get_last_status_value(),
+                         self.alarm.status.value)
+
+    def test_resolve(self):
+        self.assertTrue(self.alarm.resolve(0))
+
+        self.alarm.status = AlarmStep(
+            author='Jerry',
+            message='Smith',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=1506808800,
+            value=AlarmStatus.ONGOING.value
+        )
+        self.assertFalse(self.alarm.resolve(0))
+
+        self.alarm_step.value = AlarmStatus.OFF.value
+        self.alarm.status = self.alarm_step
+        self.assertTrue(self.alarm.resolve(0))
+        self.assertNotEqual(self.alarm.resolved, self.alarm_step.value)
+
+    def test_resolve_cancel(self):
+        self.assertFalse(self.alarm.resolve_cancel(0))
+
+        ts = 1506808800
+        self.alarm.canceled = AlarmStep(
+            author='Beth',
+            message='Smith',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=ts
+        )
+        self.assertTrue(self.alarm.resolve_cancel(0))
+        self.assertEqual(self.alarm.resolved, ts)
+
+    def test_resolve_snooze(self):
+        self.assertFalse(self.alarm.resolve_snooze())
+
+        self.alarm.snooze = AlarmStep(
+            author='Summer',
+            message='Smith',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=1506808800,
+            value=AlarmStatus.ONGOING.value
+        )
+        last = self.alarm.last_update_date
+        self.assertTrue(self.alarm.resolve_snooze())
+        self.assertTrue(self.alarm.snooze is None)
+        self.assertNotEqual(self.alarm.last_update_date, last)
+
+    def test_is_stealthy(self):
+        self.alarm.state = AlarmStep(
+            author='Coach',
+            message='Feratu',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=int(time()) - 100,
+            value=AlarmState.OK.value
+        )
+        step = copy(self.alarm.state)
+        step.value = AlarmState.MAJOR.value
+        self.alarm.steps = [step]
+
+        self.assertFalse(self.alarm._is_stealthy(0, 0))
+
+        self.assertTrue(self.alarm._is_stealthy(9999, 9999))
+
+    def test_resolve_stealthy(self):
+        self.assertFalse(self.alarm.resolve_stealthy())
+
+        self.alarm.status = AlarmStep(
+            author='Bird',
+            message='person',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=int(time()) - 100,
+            value=AlarmStatus.STEALTHY.value
+        )
+        self.alarm.state = AlarmStep(
+            author='Xenon',
+            message='Bloom',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=int(time()) - 100,
+            value=AlarmState.OK.value
+        )
+        last = len(self.alarm.steps)
+        self.assertTrue(self.alarm.resolve_stealthy(9999, 9999))
+        self.assertEqual(self.alarm.status.author, 'LawnmowerDog.AnatomyPark')
+        self.assertEqual(len(self.alarm.steps), last + 1)
 
 if __name__ == '__main__':
     main()
