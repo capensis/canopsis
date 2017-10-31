@@ -81,6 +81,8 @@ class AmqpPublisher(object):
 
     def json_document(self, document, exchange_name, routing_key):
         """
+        Sends a JSON document with AMQP content_type application/json
+
         :param document: valid JSON document
         :type document: dict
         :param exchange_name: exchange to publish to
