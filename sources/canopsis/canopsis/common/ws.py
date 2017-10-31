@@ -405,7 +405,7 @@ def make_url_human_readable(url, params):
 
         try:
             url = re.sub('/:{}'.format(key), '/{}'.format(param), url)
-        except Exception:
+        except UnicodeError:
             pass
 
     return url
