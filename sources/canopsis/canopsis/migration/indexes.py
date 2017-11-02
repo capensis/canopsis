@@ -86,6 +86,7 @@ class IndexesModule(MigrationModule):
             [('status', 1)],
             [('state', 1)],
             [('ack', 1)],
+            [('timestamp', 1)]
         ],
         'ack': [
             [('rk', 1), ('solved', 1)]
