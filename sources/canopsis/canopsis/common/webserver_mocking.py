@@ -8,7 +8,7 @@ import SocketServer
 import socket
 from threading import Thread
 
-DEFAULT_ADDRESS = 'localhost'
+DEFAULT_ADDRESS = ''
 
 
 class MockedWebServer(object):
@@ -26,7 +26,7 @@ class MockedWebServer(object):
         """
         self.port = port
 
-        self._server = SocketServer.TCPServer(('', port), handler)
+        self._server = SocketServer.TCPServer((DEFAULT_ADDRESS, port), handler)
         self._server.timeout = 1
         self._thread = Thread(target=self.run)
         self._thread.deamon = True
