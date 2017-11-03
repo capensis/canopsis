@@ -66,9 +66,7 @@ class AlarmService(object):
         self.watcher_manager.alarm_changed(alarm.identity.get_data_id())
 
     def find_snoozed_alarms(self):
-        alarms = self.alarms_adapter.find_unresolved_snoozed_alarms()
-
-        return alarms
+        return self.alarms_adapter.find_unresolved_snoozed_alarms()
 
     def resolve_snoozed_alarms(self, alarms=None):
         if alarms is None:

@@ -94,7 +94,7 @@ class AlarmsModelsTest(TestCase):
 
     def test_alarm_get_last_status_value(self):
         self.assertEqual(self.alarm.get_last_status_value(),
-                         AlarmStatus.OFF.value)
+                         AlarmStatus.OFF)
 
         self.alarm.status = AlarmStep(
             author='Morty',
@@ -113,11 +113,11 @@ class AlarmsModelsTest(TestCase):
             message='Smith',
             type_=ALARM_STEP_TYPE_STATE_INCREASE,
             timestamp=1506808800,
-            value=AlarmStatus.ONGOING.value
+            value=AlarmStatus.ONGOING
         )
         self.assertFalse(self.alarm.resolve(0))
 
-        self.alarm_step.value = AlarmStatus.OFF.value
+        self.alarm_step.value = AlarmStatus.OFF
         self.alarm.status = self.alarm_step
         self.assertTrue(self.alarm.resolve(0))
         self.assertNotEqual(self.alarm.resolved, self.alarm_step.value)
@@ -143,7 +143,7 @@ class AlarmsModelsTest(TestCase):
             message='Smith',
             type_=ALARM_STEP_TYPE_STATE_INCREASE,
             timestamp=1506808800,
-            value=AlarmStatus.ONGOING.value
+            value=AlarmStatus.ONGOING
         )
         last = self.alarm.last_update_date
         self.assertTrue(self.alarm.resolve_snooze())
@@ -156,10 +156,10 @@ class AlarmsModelsTest(TestCase):
             message='Feratu',
             type_=ALARM_STEP_TYPE_STATE_INCREASE,
             timestamp=int(time()) - 100,
-            value=AlarmState.OK.value
+            value=AlarmState.OK
         )
         step = copy(self.alarm.state)
-        step.value = AlarmState.MAJOR.value
+        step.value = AlarmState.MAJOR
         self.alarm.steps = [step]
 
         self.assertFalse(self.alarm._is_stealthy(0, 0))
@@ -174,14 +174,14 @@ class AlarmsModelsTest(TestCase):
             message='person',
             type_=ALARM_STEP_TYPE_STATE_INCREASE,
             timestamp=int(time()) - 100,
-            value=AlarmStatus.STEALTHY.value
+            value=AlarmStatus.STEALTHY
         )
         self.alarm.state = AlarmStep(
             author='Xenon',
             message='Bloom',
             type_=ALARM_STEP_TYPE_STATE_INCREASE,
             timestamp=int(time()) - 100,
-            value=AlarmState.OK.value
+            value=AlarmState.OK
         )
         last = len(self.alarm.steps)
         self.assertTrue(self.alarm.resolve_stealthy(9999, 9999))

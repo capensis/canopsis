@@ -38,7 +38,7 @@ class Adapter(object):
         query = {
             '$and': [
                 {
-                    'resolved': None
+                    'v.resolved': None
                 },
                 {
                     '$and': [  # include alarms that were never snoozed or alarms for which the snooze time has expired
@@ -100,23 +100,24 @@ def make_alarm_from_mongo(alarm_dict):
     state = make_alarm_step_from_mongo(al['state'])
 
     steps = []
-    for step in al['steps']:
-        steps.append(make_alarm_step_from_mongo(step))
+    if al.get('steps') is not None:
+        for step in al['steps']:
+            steps.append(make_alarm_step_from_mongo(step))
 
     ack = None
-    if al['ack'] is not None:
+    if al.get('ack') is not None:
         ack = make_alarm_step_from_mongo(al['ack'])
 
     cancel = None
-    if al['canceled'] is not None:
+    if al.get('canceled') is not None:
         cancel = make_alarm_step_from_mongo(al['canceled'])
 
     snooze = None
-    if al['snooze'] is not None:
+    if al.get('snooze') is not None:
         snooze = make_alarm_step_from_mongo(al['snooze'])
 
     ticket = None
-    if al['ticket'] is not None:
+    if al.get('ticket') is not None:
         ticket = make_alarm_step_from_mongo(al['ticket'])
 
     return Alarm(
@@ -141,6 +142,8 @@ def make_alarm_from_mongo(alarm_dict):
 
 
 def make_alarm_step_from_mongo(step_dict):
+    if not isinstance(step_dict, dict):
+        raise TypeError("A dict is required.")
     return AlarmStep(
         author=step_dict.get('a'),
         message=step_dict.get('m'),

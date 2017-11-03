@@ -23,14 +23,14 @@ from __future__ import unicode_literals
 
 from time import time
 
-from canopsis.common.enumerations import DefaultEnum
+from canopsis.common.enumerations import FastEnum
 
 # Alarm step types
 ALARM_STEP_TYPE_STATE_INCREASE = 'stateinc'
 ALARM_STEP_TYPE_STATE_DECREASE = 'statedec'
 
 
-class AlarmState(DefaultEnum):
+class AlarmState(FastEnum):
     """Alarm states"""
     OK = 0
     MINOR = 1
@@ -38,7 +38,7 @@ class AlarmState(DefaultEnum):
     CRITICAL = 3
 
 
-class AlarmStatus(DefaultEnum):
+class AlarmStatus(FastEnum):
     """Alarm statuses"""
     OFF = 0
     ONGOING = 1
@@ -225,13 +225,13 @@ class Alarm:
         """
         Gets the last status of an alarm.
 
-        :returns: the last known status (check ALARM_STATUS_* constants)
+        :returns: the last known status (check the AlarmStatus enum)
         :rtype: int
         """
         if self.status:
             return self.status.value
 
-        return AlarmStatus.OFF.value
+        return AlarmStatus.OFF
 
     def resolve(self, flapping_interval):
         """
@@ -245,7 +245,7 @@ class Alarm:
             self.resolved = time()
             return True
         else:
-            if self.status.value is AlarmStatus.OFF.value \
+            if self.status.value is AlarmStatus.OFF \
                     and time() - self.status.timestamp > flapping_interval:
                 self.resolved = int(self.status.timestamp)
                 return True
@@ -256,7 +256,7 @@ class Alarm:
         """
         Resolve an alarm if it has been canceled, after the cancel_delay
 
-        :param cancel_delay: the delay where the alarm must stay in "canceled" state
+        :param int cancel_delay: the delay where the alarm must stay in "canceled" state
         :returns: True if the alarm has been canceled, False otherwise
         :rtype: bool
         """
@@ -300,7 +300,7 @@ class Alarm:
         :rtype: bool
         """
         if self.status is None \
-                or self.status.value != AlarmStatus.STEALTHY.value \
+                or self.status.value != AlarmStatus.STEALTHY \
                 or self._is_stealthy(stealthy_show_duration,
                                      stealthy_interval):
             return False
@@ -311,7 +311,7 @@ class Alarm:
             message='automatically resolved after stealthy shown time',
             type_=ALARM_STEP_TYPE_STATE_DECREASE,
             timestamp=time(),
-            value=AlarmStatus.OFF.value
+            value=AlarmStatus.OFF
         )
         self.update_status(new_status)
 
@@ -338,8 +338,8 @@ class Alarm:
 
             if step.type_ in [ALARM_STEP_TYPE_STATE_DECREASE,
                               ALARM_STEP_TYPE_STATE_INCREASE]:
-                if step.value != AlarmState.OK.value \
-                        and self.state.value == AlarmState.OK.value:
+                if step.value != AlarmState.OK \
+                        and self.state.value == AlarmState.OK:
                     return True
 
         return False
