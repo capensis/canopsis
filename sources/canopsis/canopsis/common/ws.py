@@ -275,6 +275,7 @@ class route(object):
 
             except Exception as exc:
                 # if an error occured, get a failure message
+                self.logger.exception("Exception while handling the request.")
                 result = {
                     'total': 0,
                     'success': False,
