@@ -18,3 +18,26 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
+from unittest import main
+
+from canopsis.configuration.driver.file.ini import INIConfigurationDriver
+from test_file_driver import ConfigurationDriverTest
+
+
+class INIConfigurationDriverTest(ConfigurationDriverTest):
+
+    def _get_configuration_manager(self):
+
+        return INIConfigurationDriver()
+
+    def _get_manager_path(self):
+
+        return 'canopsis.configuration.driver.file.ini.INIConfigurationDriver'
+
+    def _get_manager(self):
+
+        return INIConfigurationDriver
+
+if __name__ == '__main__':
+    main()

@@ -39,9 +39,9 @@ class MigrationModuleTest(TestCase):
     def setUp(self):
         self.migration_module = MigrationModule()
 
-    def test_get_version(self):
-        res = self.migration_module.get_version('perfdata')
-        self.assertEqual(res, 0)
+    #def test_get_version(self):
+    #    res = self.migration_module.get_version('perfdata')
+    #    self.assertEqual(res, 0)
 
 if __name__ == '__main__':
     main()

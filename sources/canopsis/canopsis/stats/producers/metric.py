@@ -26,7 +26,7 @@ from canopsis.configuration.model import Parameter
 from canopsis.influxdb.core import InfluxDBStorage
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.old.mfilter import check
-from canopsis.timeserie.core import TimeSerie
+from canopsis.timeserie.core import DEFAULT_ROUND_TIME, DEFAULT_PERIOD
 
 CONF_PATH = 'stats/producers/metric.conf'
 CATEGORY = 'METRIC_PRODUCER'
@@ -59,7 +59,7 @@ class MetricProducer(MiddlewareRegistry):
     @default_aggregation_interval.setter
     def default_aggregation_interval(self, value):
         if value is None:
-            value = TimeSerie.VPERIOD.total_seconds()
+            value = DEFAULT_PERIOD.total_seconds()
 
         self._default_aggregation_interval = value
 
@@ -73,7 +73,7 @@ class MetricProducer(MiddlewareRegistry):
     @round_time_interval.setter
     def round_time_interval(self, value):
         if value is None:
-            value = TimeSerie.VROUND_TIME
+            value = DEFAULT_ROUND_TIME
 
         self._round_time_interval = value
 

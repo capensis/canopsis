@@ -30,6 +30,8 @@ from canopsis.stats.producers.user import UserMetricProducer
 from canopsis.task.core import register_task
 
 
+# TODO: remove tags to query opened/resolved alarms,
+# instead use the "resolved" field (null -> opened, int -> resolved)
 def session_stats(usermgr, sessionmgr, logger):
     for expired in sessionmgr.sessions_close():
         duration = expired['session_stop'] - expired['session_start']

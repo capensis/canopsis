@@ -21,8 +21,10 @@
 import os
 import sys
 
+
 class CanopsisUnsupportedEnvironment(Exception):
     pass
+
 
 def _root_path():
     root = None

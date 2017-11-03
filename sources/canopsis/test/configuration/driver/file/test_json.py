@@ -18,3 +18,26 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
+from unittest import main
+
+from canopsis.configuration.driver.file.json import JSONConfigurationDriver
+from test_file_driver import ConfigurationDriverTest
+
+
+class ConfigurationDriverTest(ConfigurationDriverTest):
+
+    def _get_configuration_manager(self):
+
+        return JSONConfigurationDriver()
+
+    def _get_manager_path(self):
+
+        return 'canopsis.configuration.driver.file.json.JSONConfigurationDriver'
+
+    def _get_manager(self):
+
+        return JSONConfigurationDriver
+
+if __name__ == '__main__':
+    main()

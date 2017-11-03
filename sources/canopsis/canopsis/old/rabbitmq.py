@@ -20,11 +20,7 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
-from sys import stdout
-from sys import prefix as sys_prefix
-
 from kombu import Connection, Exchange, Queue, pools, __version__
-
 import traceback
 
 try:
@@ -33,12 +29,13 @@ try:
 except ImportError as IE:
     from amqp.exceptions import ConnectionError
 
-from socket import error, timeout
-
-from time import sleep
 from logging import INFO, getLogger
-from threading import Thread
 from os.path import join
+from socket import error, timeout
+from sys import stdout
+from sys import prefix as sys_prefix
+from threading import Thread
+from time import sleep
 from traceback import print_exc
 
 # Number of tries to re-publish an event before it is lost
@@ -47,19 +44,19 @@ from traceback import print_exc
 
 class Amqp(Thread):
     def __init__(
-        self,
-        host="localhost",
-        port=5672,
-        userid="guest",
-        password="guest",
-        virtual_host="canopsis",
-        exchange_name="canopsis",
-        logging_name="Amqp",
-        logging_level=INFO,
-        read_config_file=True,
-        auto_connect=True,
-        on_ready=None,
-        max_retries=5
+            self,
+            host="localhost",
+            port=5672,
+            userid="guest",
+            password="guest",
+            virtual_host="canopsis",
+            exchange_name="canopsis",
+            logging_name="Amqp",
+            logging_level=INFO,
+            read_config_file=True,
+            auto_connect=True,
+            on_ready=None,
+            max_retries=5
     ):
         super(Amqp, self).__init__()
 
@@ -73,7 +70,7 @@ class Amqp(Thread):
         self.exchange_name = exchange_name
         self.logging_level = logging_level
 
-        if (read_config_file):
+        if read_config_file:
             self.read_config("amqp")
 
         self.amqp_uri = "amqp://{0}:{1}@{2}:{3}/{4}".format(
@@ -221,7 +218,7 @@ class Amqp(Thread):
         if name:
             try:
                 return self.exchanges[name]
-            except:
+            except Exception:
                 if name == "amq.direct":
                     self.exchanges[name] = Exchange(
                         name, "direct", durable=True)
@@ -257,13 +254,14 @@ class Amqp(Thread):
                         routing_key = queue_name
 
                     self.logger.debug(
-                        (u"exchange: '{}', exclusive: {}," +
-                            " auto_delete: {},no_ack: {}")
+                        u"exchange: '{}', exclusive: {},"
+                        " auto_delete: {},no_ack: {}"
                         .format(
                             qsettings['exchange_name'],
                             qsettings['exclusive'],
                             qsettings['auto_delete'],
-                            qsettings['no_ack'])
+                            qsettings['no_ack']
+                        )
                     )
                     qsettings['queue'] = Queue(
                         queue_name,
@@ -287,7 +285,7 @@ class Amqp(Thread):
                                     exchange=exchange,
                                     routing_key=routing_key
                                 )
-                            except:
+                            except Exception:
                                 self.logger.error(
                                     u"You need upgrade your Kombu version ({})"
                                     .format(__version__)
@@ -305,14 +303,14 @@ class Amqp(Thread):
                 self.on_ready()
 
     def add_queue(
-        self,
-        queue_name,
-        routing_keys,
-        callback,
-        exchange_name=None,
-        no_ack=True,
-        exclusive=False,
-        auto_delete=True
+            self,
+            queue_name,
+            routing_keys,
+            callback,
+            exchange_name=None,
+            no_ack=True,
+            exclusive=False,
+            auto_delete=True
     ):
 
         c_routing_keys = []
@@ -339,14 +337,14 @@ class Amqp(Thread):
         }
 
     def publish(
-        self,
-        msg,
-        routing_key,
-        exchange_name=None,
-        serializer="json",
-        compression=None,
-        content_type=None,
-        content_encoding=None
+            self,
+            msg,
+            routing_key,
+            exchange_name=None,
+            serializer="json",
+            compression=None,
+            content_type=None,
+            content_encoding=None
     ):
 
         operation_success = False
@@ -419,7 +417,7 @@ class Amqp(Thread):
                     )
                     try:
                         self.queues[queue_name]['consumer'].cancel()
-                    except:
+                    except Exception:
                         pass
 
                     del(self.queues[queue_name]['consumer'])
@@ -457,10 +455,7 @@ class Amqp(Thread):
     def wait_connection(self, timeout=5):
         i = 0
         while self.RUN and not self.connected and i < (timeout * 2):
-            try:
-                sleep(0.5)
-            except:
-                pass
+            sleep(0.5)
             i += 1
 
     def read_config(self, name):

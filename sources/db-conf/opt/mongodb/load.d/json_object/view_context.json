@@ -60,6 +60,10 @@
             },
             {
               "name": "pagination"
+            },
+            {
+              "name": "listlinedetail",
+              "template": "{{component-crudentitydetails this=this._data}}"
             }
           ],
           "popup": [],

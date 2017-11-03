@@ -22,7 +22,6 @@
 from __future__ import unicode_literals
 
 from enum import Enum
-import re
 import requests
 import unittest
 
@@ -97,7 +96,8 @@ class BaseApiTest(unittest.TestCase):
         return self._send(self.URL_PLAIN,
                           data=form,
                           headers=headers,
-                          method=Method.post)
+                          method=Method.post,
+                          allow_redirects=False)
 
     def _authenticate(self):
         """
@@ -105,13 +105,14 @@ class BaseApiTest(unittest.TestCase):
         """
         self.session = requests.Session()
         response = self._authent_plain()
-        #print("Login on {}".format(response.request.path_url))
+        # print("Login on {}".format(response.request.path_url))
 
         # Auth validation
-        self.assertEqual(response.status_code, 200)
-        if re.search("<title>Canopsis | Login</title>", response.text)\
-           is not None:
-            self.fail("Authentication error.")
+        self.assertEqual(response.status_code, 303)
+        #search_title = re.search("<title>Canopsis | Login</title>",
+        #                         response.text)
+        #if search_title is not None:
+        #    self.fail("Authentication error.")
 
         self.cookies = response.cookies
 
@@ -120,7 +121,8 @@ class BaseApiTest(unittest.TestCase):
               data=None,
               headers=None,
               method=Method.get,
-              params=None
+              params=None,
+              allow_redirects=True
               ):
         """Send a http request.
 
@@ -142,7 +144,9 @@ class BaseApiTest(unittest.TestCase):
         if params is not None:
             kwargs['params'] = params
 
-        response = self.session.request(url=url, **kwargs)
+        response = self.session.request(url=url,
+                                        allow_redirects=allow_redirects,
+                                        **kwargs)
 
         return response
 
