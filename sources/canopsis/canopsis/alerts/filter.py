@@ -133,13 +133,13 @@ class AlarmFilters(object):
             if isinstance(mfilter, string_types) and mfilter != '':
                 try:
                     query = json.loads(mfilter)
-                except:
+                except Exception:
                     self.logger.warning('Cannot parse mfilter "{}"'
                                         .format(mfilter))
                     continue
 
             # Associate a filter with his matching alarm
-            for alarm in list(self.alarm_storage.get_elements(query=query)):
+            for alarm in self.alarm_storage._backend.find(query):
                 if new_filter is not None:
                     results.append((new_filter, alarm))
 
@@ -216,13 +216,13 @@ class AlarmFilter(object):
         """
         Check if a filter is valid for a specified alarm.
 
+        The alarm document MUST contain _id key.
+
         :param alarm: An alarm
         :type alarm: dict
         :rtype: bool
         """
-        alarm_id = alarm[self.alarm_storage.DATA_ID]
-
-        and_ = [{self.alarm_storage.Key.DATA_ID: {'$eq': alarm_id}}]
+        and_ = [{'_id': alarm['_id']}]
         if self[self.CONDITION] is not None:
             and_.append(self[self.CONDITION])
 
