@@ -25,6 +25,7 @@ pbehavior process
 from __future__ import unicode_literals
 
 from json import dumps
+from traceback import print_exc
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
@@ -49,17 +50,26 @@ TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
 
 watcher_manager = Watcher()
 
+
 def init_managers():
+    """
+    Init managers [sic].
+    """
     pb_logger, pb_storage = PBehaviorManager.provide_default_basics()
     pb_kwargs = {'logger': pb_logger, 'pb_storage': pb_storage}
     pb_manager = singleton_per_scope(PBehaviorManager, kwargs=pb_kwargs)
 
     return pb_manager
 
+_pb_manager = init_managers()
+
+
 def get_entity_id(event):
+    """
+    get entity id from event.
+    """
     return ContextGraph.get_id(event)
 
-_pb_manager = init_managers()
 
 @register_task
 def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
@@ -137,5 +147,7 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
 
     try:
         pbm.compute_pbehaviors_filters()
+        pbm.launch_update_watcher(watcher_manager)
     except Exception as ex:
+        print_exc()
         engine.logger.error('Processing error {}'.format(str(ex)))

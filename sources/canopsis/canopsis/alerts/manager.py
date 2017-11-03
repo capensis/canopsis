@@ -217,7 +217,6 @@ class Alerts(object):
         return self.config_data.get('stealthy_show',
                                     DEFAULT_STEALTHY_SHOW_DURATION)
 
-
     def get_alarms(
             self,
             resolved=True,

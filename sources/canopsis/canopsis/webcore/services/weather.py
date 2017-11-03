@@ -251,7 +251,7 @@ def check_baseline(merged_eids_tracer, watcher_depends):
 
     :param set merged_eids_tracer: all entities withan active baseline
     :param list watcher_depends: watcher entities
-    :return bool:true if the watcher has an entity with an active active_baseline
+    :return bool: true if the watcher has an entity with an active active_baseline
     """
     for entity_id in watcher_depends:
         if entity_id in merged_eids_tracer:

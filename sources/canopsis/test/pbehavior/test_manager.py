@@ -25,9 +25,8 @@ from calendar import timegm
 from copy import deepcopy
 from datetime import datetime, timedelta
 from json import dumps
-from uuid import uuid4
-
 from unittest import main
+from uuid import uuid4
 
 from canopsis.pbehavior.manager import PBehavior
 
@@ -294,12 +293,13 @@ class TestManager(BaseTest):
         now = datetime.utcnow()
         pbehavior_1 = deepcopy(self.pbehavior)
         pbehavior_2 = deepcopy(self.pbehavior)
-        pbehavior_1.update({'eids': [self.entity_id_1],
-                            'name': 'pb1',
-                            'tstart': timegm(now.timetuple()),
-                            'tstop': timegm((now + timedelta(days=2)).timetuple()),
-                            'rrule': None
-                            })
+        pbehavior_1.update({
+            'eids': [self.entity_id_1],
+            'name': 'pb1',
+            'tstart': timegm(now.timetuple()),
+            'tstop': timegm((now + timedelta(days=2)).timetuple()),
+            'rrule': None
+        })
         pbehavior_2.update({'eids': [self.entity_id_3],
                             'name': 'pb2',
                             'tstart': timegm(now.timetuple())})
@@ -310,7 +310,8 @@ class TestManager(BaseTest):
 
         self.pbm.context._put_entities(self.entities)
 
-        tab = self.pbm.get_active_pbehaviors([self.entity_id_1, self.entity_id_2])
+        tab = self.pbm.get_active_pbehaviors([self.entity_id_1,
+                                              self.entity_id_2])
         names = [x['name'] for x in tab]
         self.assertEqual(names, ['pb1'])
 
