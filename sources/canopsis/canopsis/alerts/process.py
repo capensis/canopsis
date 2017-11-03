@@ -78,15 +78,13 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     config_data = EtherealData(collection=mongo_client['object'],
                                filter_=filter_)
 
-    benj_logger = Logger.get('alarms_beat_proc', '/opt/canopsis/var/log/engines/alarms.log', level=logging.DEBUG)
-    benj_logger.debug("Starting beat processing.")
+
 
     alarms_service = AlarmService(
         AlarmAdapter(mongo_client),
         EntityAdapter(mongo_client),
-        Watcher(), benj_logger)
+        Watcher())
 
-    start_time = int(round(time.time() * 1000))
     if alertsmgr is None:
         alertsmgr = alerts_manager
 
@@ -101,5 +99,3 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
 
     alertsmgr.check_alarm_filters()
     alertsreader.clean_fast_count_cache()
-    end_time = int(round(time.time() * 1000))
-    benj_logger.debug("End beat processing. Took : {} ms.".format(end_time - start_time))

@@ -85,17 +85,17 @@ class AlarmsAdaptersTest(TestCase):
         self.assertEquals(0, len(alarm.steps))
         self.assertEquals("{}/{}".format(alarm_dict['v']['resource'], alarm_dict['v']['component']), alarm.identity.display_name() )
 
-        stp_dict = {
+        step_dict = {
             'a': 'Arthur Dent',
             'm': 'The answer to life, the universe and everything',
             '_t': 'ack',
             't': now,
             'val': 2
         }
-        alarm_dict['v']['ack'] = stp_dict
-        alarm_dict['v']['snooze'] = stp_dict
-        alarm_dict['v']['ticket'] = stp_dict
-        alarm_dict['v']['canceled'] = stp_dict
+        alarm_dict['v']['ack'] = step_dict
+        alarm_dict['v']['snooze'] = step_dict
+        alarm_dict['v']['ticket'] = step_dict
+        alarm_dict['v']['canceled'] = step_dict
         al2 = make_alarm_from_mongo(alarm_dict)
         self.assertIsInstance(al2.ack, AlarmStep)
         al2 = make_alarm_from_mongo(alarm_dict)
