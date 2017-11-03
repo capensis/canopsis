@@ -133,9 +133,9 @@ class AlarmFilters(object):
             if isinstance(mfilter, string_types) and mfilter != '':
                 try:
                     query = json.loads(mfilter)
-                except Exception:
-                    self.logger.warning('Cannot parse mfilter "{}"'
-                                        .format(mfilter))
+                except ValueError as exc:
+                    self.logger.warning('Cannot parse mfilter "{}": {}'
+                                        .format(mfilter, exc))
                     continue
 
             # Associate a filter with his matching alarm
