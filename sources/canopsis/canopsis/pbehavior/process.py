@@ -149,5 +149,4 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
         pbm.compute_pbehaviors_filters()
         pbm.launch_update_watcher(watcher_manager)
     except Exception as ex:
-        engine.logger.error(format_exc())
-        engine.logger.error('Processing error {}'.format(str(ex)))
+        engine.logger.exception('Processing error {}'.format(str(ex)))
