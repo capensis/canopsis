@@ -87,7 +87,9 @@ class TestFilter(BaseTest):
             AlarmFilter.LIMIT: 30.0,
             AlarmFilter.CONDITION: {},
             AlarmFilter.TASKS: ['alerts.useraction.comment'],
-            AlarmFilter.FILTER: {"d": {"$eq": alarm[self.alerts_storage.DATA_ID]}}
+            AlarmFilter.FILTER: {
+                "d": alarm[self.alerts_storage.DATA_ID]
+            }
         }
 
         # CREATE
@@ -108,7 +110,8 @@ class TestFilter(BaseTest):
 
         # UPDATE
         result = alarm_filters.update_filter(element['_id'], values=update)
-        self.assertEqual(result[AlarmFilter.CONDITION]['key']['$eq'], 'another')
+        self.assertEqual(
+            result[AlarmFilter.CONDITION]['key']['$eq'], 'another')
 
         update = {AlarmFilter.LIMIT: 666, AlarmFilter.REPEAT: 3}
         result = alarm_filters.update_filter(element['_id'], values=update)
@@ -117,7 +120,8 @@ class TestFilter(BaseTest):
 
         # GET
         result = alarm_filters.get_filters()
-        self.assertEqual(result[0][0][AlarmFilter.CONDITION]['key']['$eq'], 'another')
+        self.assertEqual(
+            result[0][0][AlarmFilter.CONDITION]['key']['$eq'], 'another')
 
         # DELETE
         result = alarm_filters.delete_filter(element['_id'])
@@ -131,41 +135,58 @@ class TestFilter(BaseTest):
         alarm, value = self.gen_fake_alarm()
         self.manager.update_current_alarm(alarm, value)
 
+        # get back the alert's MongoDB ID for AlarmFilter
+        doc = self.manager.alerts_storage._backend.find({})
+        alarm['_id'] = list(doc)[0]['_id']
+
         lifter = AlarmFilter(element={},
                              storage=self.filter_storage,
                              alarm_storage=self.alerts_storage,
                              logger=self.logger)
         self.assertTrue(lifter.check_alarm(alarm))
 
-        lifter = AlarmFilter(element={
+        lifter = AlarmFilter(
+            element={
                 AlarmFilter.CONDITION: {"cacao": {"$eq": 'maigre'}},
             },
-            storage=self.filter_storage, alarm_storage=self.alerts_storage, logger=self.logger)
+            storage=self.filter_storage,
+            alarm_storage=self.alerts_storage,
+            logger=self.logger)
         self.assertFalse(lifter.check_alarm(alarm))
 
-        lifter = AlarmFilter(element={
+        lifter = AlarmFilter(
+            element={
                 AlarmFilter.CONDITION: {"v.component": {"$eq": 'bb'}},
             },
-            storage=self.filter_storage, alarm_storage=self.alerts_storage, logger=self.logger)
+            storage=self.filter_storage,
+            alarm_storage=self.alerts_storage,
+            logger=self.logger)
         self.assertFalse(lifter.check_alarm(alarm))
 
-        lifter = AlarmFilter(element={
+        lifter = AlarmFilter(
+            element={
                 AlarmFilter.CONDITION: {"v.component": {"$eq": 'c'}},
             },
-            storage=self.filter_storage, alarm_storage=self.alerts_storage, logger=self.logger)
+            storage=self.filter_storage,
+            alarm_storage=self.alerts_storage,
+            logger=self.logger)
         self.assertTrue(lifter.check_alarm(alarm))
 
-        lifter = AlarmFilter(element={
+        lifter = AlarmFilter(
+            element={
                 AlarmFilter.CONDITION: {"v.state.val": {"$gte": 1}},
             },
-            storage=self.filter_storage, alarm_storage=self.alerts_storage, logger=self.logger)
+            storage=self.filter_storage,
+            alarm_storage=self.alerts_storage,
+            logger=self.logger)
         self.assertTrue(lifter.check_alarm(alarm))
 
     def test_next_run(self):
         delta = 100
         alarm, value = self.gen_fake_alarm(moment=0)
-        alarm['_id'] = alarm['data_id']
         self.manager.update_current_alarm(alarm, value)
+        doc_id = list(self.manager.alerts_storage._backend.find({}))[0]['_id']
+        alarm['_id'] = doc_id
 
         # Check no repeat
         lifter = AlarmFilter({AlarmFilter.REPEAT: 0},
@@ -187,10 +208,15 @@ class TestFilter(BaseTest):
             alarm['_id']: [666]
         }
         self.manager.update_current_alarm(alarm, value)
-        lifter = AlarmFilter({
-            AlarmFilter.LIMIT: delta,
-            AlarmFilter.REPEAT: 2
-        }, storage=self.filter_storage, alarm_storage=self.alerts_storage, logger=self.logger)
+        lifter = AlarmFilter(
+            {
+                AlarmFilter.LIMIT: delta,
+                AlarmFilter.REPEAT: 2
+            },
+            storage=self.filter_storage,
+            alarm_storage=self.alerts_storage,
+            logger=self.logger
+        )
         self.assertEqual(lifter.next_run(alarm), 666 + delta)
 
     def test_output(self):
@@ -210,6 +236,7 @@ class TestFilter(BaseTest):
                              logger=self.logger)
 
         self.assertEqual(lifter.output('toto'), "toto -- foo")
+
 
 if __name__ == '__main__':
     main()
