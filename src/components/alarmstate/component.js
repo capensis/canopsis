@@ -21,8 +21,8 @@ Ember.Application.initializer({
              */
             isSelected: 0,
 
-            checkedOpen: false,
-            checkedFalse: true,
+            CheckBoxAlarmStateOpen: false,
+            CheckBoxAlarmStateFalse: true,
 
             /**
              * @method init
@@ -33,8 +33,8 @@ Ember.Application.initializer({
                     var state =  get(this, 'content.state')
                     set(this, 'state',state);
                     if(state == "opened"){
-                        this.set("checkedOpen",true)
-                        this.set("checkedFalse",false)
+                        this.set("CheckBoxAlarmStateOpen",true)
+                        this.set("CheckBoxAlarmStateFalse",false)
                     }
                 }
               },
