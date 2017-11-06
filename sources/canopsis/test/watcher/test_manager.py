@@ -2,14 +2,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from collections import OrderedDict
+from calendar import timegm
+from datetime import datetime, timedelta
+from json import loads
+from time import sleep
 from unittest import main, TestCase
 
+from canopsis.alerts.manager import Alerts
+from canopsis.common.ethereal_data import EtherealData
+from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 #from canopsis.context_graph.process import create_entity
-from canopsis.middleware.core import Middleware
-from canopsis.watcher.manager import Watcher
 from canopsis.logger.logger import Logger, OutputNull
+from canopsis.middleware.core import Middleware
+from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.watcher.manager import Watcher
 
 watcher_one = "watcher-one"
 watcher_example = {
@@ -51,22 +58,20 @@ class BaseTest(TestCase):
         logger = Logger.get('', None, output_cls=OutputNull)
         self.manager = Watcher()
         self.context_graph_manager = ContextGraph(logger)
+        self.alerts_storage = Middleware.get_middleware_by_uri(
+            'mongodb-periodical-testalarm://'
+        )
         self.watcher_storage = Middleware.get_middleware_by_uri(
             'storage-default-testwatcher://'
-        )
-        self.alerts_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testalerts://'
         )
         self.entities_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
 
-        self.context_graph_manager.ent_storage = (
-            self.entities_storage
-        )
+        self.context_graph_manager.ent_storage = self.entities_storage
+        self.manager.alert_storage = self.alerts_storage
         self.manager.context_graph = self.context_graph_manager
         self.manager.watcher_storage = self.watcher_storage
-        self.manager.alerts_storage = self.alerts_storage
 
     def tearDown(self):
         self.watcher_storage.remove_elements()
@@ -161,6 +166,122 @@ class WorstState(BaseTest):
         self.assertEqual(self.manager.worst_state(0, 1, 0), 2)
         self.assertEqual(self.manager.worst_state(1, 0, 0), 3)
 
+
+class ComputeState(BaseTest):
+
+    def setUp(self):
+        super(ComputeState, self).setUp()
+        pbehavior_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testpbehavior://'
+        )
+        filter_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testalarmfilter://'
+        )
+        config_storage = Middleware.get_middleware_by_uri(
+            'storage-default-testconfig://'
+        )
+        config_storage.put_element(
+            element={
+                '_id': 'test_config',
+                'crecord_type': 'statusmanagement',
+                'bagot_time': 3600,
+                'bagot_freq': 10,
+                'stealthy_time': 300,
+                'stealthy_show': 600,
+                'restore_event': True,
+                'auto_snooze': False,
+                'snooze_default_time': 300,
+            },
+            _id='test_config'
+        )
+        logger = Logger.get('test_pb', None, output_cls=OutputNull)
+
+        self.pbm = PBehaviorManager(logger=logger,
+                                    pb_storage=pbehavior_storage)
+        self.pbm.context = self.context_graph_manager
+        self.manager.pbehavior_manager = self.pbm
+
+        conf = Configuration.load(Alerts.CONF_PATH, Ini)
+        filter_ = {'crecord_type': 'statusmanagement'}
+        config_data = EtherealData(collection=config_storage._backend,
+                                   filter_=filter_)
+
+        self.alert_manager = Alerts(config=conf,
+                                    logger=logger,
+                                    alerts_storage=self.alerts_storage,
+                                    config_data=config_data,
+                                    filter_storage=filter_storage,
+                                    context_graph=self.context_graph_manager,
+                                    watcher=self.manager)
+
+        # Creating entity
+        self.type_ = 'resource'
+        self.name = 'morticia'
+        entity = ContextGraph.create_entity_dict(
+            id=self.name,
+            etype=self.type_,
+            name=self.name
+        )
+        self.context_graph_manager.create_entity(entity)
+
+        # Creating coresponding alarm
+        event = {
+            'connector': self.type_,
+            'connector_name': 'connector_name',
+            'component': self.name,
+            'output': 'tadaTaDA tic tic',
+            'timestamp': 0
+        }
+        alarm = self.alert_manager.make_alarm(self.name, event)
+        self.state = 2
+        alarm = self.alert_manager.update_state(alarm, self.state, event)
+        new_value = alarm[self.alert_manager.alerts_storage.VALUE]
+        self.alert_manager.update_current_alarm(alarm, new_value)
+
+    def tearDown(self):
+        super(ComputeState, self).tearDown()
+        self.pbm.pb_storage.remove_elements()
+
+    def test_compute_state_issue427(self):
+        # Aka: state desyncro
+        watcher_id = 'addams'
+        watcher = {
+            '_id': watcher_id,
+            'mfilter': '{"name": {"$in": ["morticia"]}}',
+            'display_name': 'family'
+        }
+        self.assertTrue(self.manager.create_watcher(watcher))
+
+        res = self.manager.get_watcher(watcher_id)
+        self.assertEqual(res['state'], self.state)
+
+        # Creating pbehavior on it
+        now = datetime.utcnow()
+        self.pbm.create(
+            name='addam',
+            filter=loads('{"name": "morticia"}'),
+            author='addams',
+            tstart=timegm(now.timetuple()),
+            tstop=timegm((now + timedelta(seconds=2)).timetuple()),
+            rrule=None,
+            enabled=True
+        )
+        self.pbm.compute_pbehaviors_filters()
+
+        res = self.manager.get_watcher(watcher_id)
+        self.assertEqual(res['state'], self.state)
+
+        self.manager.compute_watchers()
+
+        res = self.manager.get_watcher(watcher_id)
+        self.assertEqual(res['state'], 0)
+
+        sleep(3)
+        self.pbm.compute_pbehaviors_filters()
+        self.manager.compute_watchers()
+
+        res = self.manager.get_watcher(watcher_id)
+        self.assertEqual(res['state'], self.state)
 
 if __name__ == "__main__":
     main()
