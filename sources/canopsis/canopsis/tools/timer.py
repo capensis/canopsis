@@ -12,7 +12,7 @@ class Timer:
     def start(self, action):
         self.action = action
         self.logger.info("Starting timing for action: {}".format(action))
-        self.start_time =  int(round(time.time() * 1000))
+        self.start_time = int(round(time.time() * 1000))
 
     def stop(self):
         stop_time = int(round(time.time() * 1000))
