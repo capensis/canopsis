@@ -40,19 +40,20 @@
 <script type="text/x-handlebars" data-template-name="components/component-alarmstate"><div class="form-group">
     <div class="radio">
         <label>
-            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="opened"}}
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="opened" checked=CheckBoxAlarmStateOpen}}
             {{/component-radio}}
             opened
         </label>
     </div>
     <div class="radio">
         <label>
-            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="resolved" checked=true}}
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="resolved" checked=CheckBoxAlarmStatusResolved}}
             {{/component-radio}}
             resolved
         </label>
     </div>
-</div></script>
+</div>
+</script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmtable">{{#each tmpl in Ember.columnTemplates}}
   {{#component-popupinfo columnName=tmpl.columnName clickedField=clickedField clickedAlarm=clickedAlarm updater=updater}}
   {{/component-popupinfo}}
