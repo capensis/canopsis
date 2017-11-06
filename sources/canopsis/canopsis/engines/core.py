@@ -449,11 +449,13 @@ class TaskHandler(Engine):
 
         except ValueError as err:
             output = 'Impossible to decode message: {0}'.format(err)
+            self.logger.warning(output)
             state = 2
 
         else:
             if not cschema.validate(job, 'task.{0}'.format(self.etype)):
                 output = 'Invalid job'
+                self.logger.warning(output)
                 state = 2
 
             else:
