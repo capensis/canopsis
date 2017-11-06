@@ -22,7 +22,7 @@ Ember.Application.initializer({
             isSelected: 0,
 
             CheckBoxAlarmStateOpen: false,
-            CheckBoxAlarmStateFalse: true,
+            CheckBoxAlarmStatusResolved: true,
 
             /**
              * @method init
@@ -34,7 +34,7 @@ Ember.Application.initializer({
                     set(this, 'state',state);
                     if(state == "opened"){
                         this.set("CheckBoxAlarmStateOpen",true)
-                        this.set("CheckBoxAlarmStateFalse",false)
+                        this.set("CheckBoxAlarmStatusResolved",false)
                     }
                 }
               },
