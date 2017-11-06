@@ -22,6 +22,9 @@
 
 """
 Alerts manager (also known as Alarm Manager).
+
+Warning : this class is deprecated and will be replaced in a near future.
+Please see the canopsis.alarms package to add/edit features.
 """
 
 from __future__ import unicode_literals
@@ -32,7 +35,8 @@ from time import time, mktime
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
-    get_last_state, get_last_status, OFF, STEALTHY, is_stealthy, is_keeped_state
+    get_last_state, get_last_status, OFF, STEALTHY,
+    is_stealthy, is_keeped_state
 )
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
@@ -279,6 +283,7 @@ class Alerts(object):
                 {'tags': notags_cond}
             ]}
 
+        # used to fetch alarms that were never snoozed OR alarms for which the snooze has expired
         if not snoozed:
             no_snooze_cond = {
                 '$or': [
@@ -580,6 +585,8 @@ class Alerts(object):
         if self.is_hard_limit_reached(value):
             # Only cancel is allowed when hard limit has been reached
             if event['event_type'] != 'cancel':
+                self.logger.debug('Hard limit reached. Cancelling')
+
                 return
 
         # Execute the desired task
@@ -905,7 +912,10 @@ class Alerts(object):
 
         :param alarms: a list of unresolved alarms
         :return: a list of unresolved alarms (excluding locally processed alarms)
+        :deprecated: see canopsis.alarms
         """
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+
         for data_id in alarms:
             for docalarm in alarms[data_id]:
                 docalarm[self.alerts_storage.DATA_ID] = data_id
@@ -929,7 +939,10 @@ class Alerts(object):
 
         :param alarms: a list of unresolved alarms
         :return: a list of unresolved alarms (excluding locally processed alarms)
+        :deprecated: see canopsis.alarms
         """
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+
         now = int(time())
 
         for data_id in alarms:
@@ -947,12 +960,19 @@ class Alerts(object):
 
         return alarms
 
-    def resolve_snoozes(self):
+    def resolve_snoozes(self, alarms=None):
         """
         Loop over all snoozed alarms, and restore them if needed.
+        :param alarms: a list of existing alarms (hack to bypass the self.getAlarms that is deprecated)
+        :deprecated: see canopsis.alarms
         """
+
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
         now = int(time())
-        result = self.get_alarms(resolved=False, snoozed=True)
+        if alarms is None:
+            result = self.get_alarms(resolved=False, snoozed=True)
+        else:
+            result = alarms
 
         for data_id in result:
             for docalarm in result[data_id]:
@@ -981,7 +1001,10 @@ class Alerts(object):
 
         :param alarms: a list of unresolved alarms
         :return: a list of unresolved alarms (excluding locally processed alarms)
+        :deprecated: see canopsis.alarms
         """
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+
         for data_id in alarms:
             for docalarm in alarms[data_id]:
                 docalarm[self.alerts_storage.DATA_ID] = data_id
