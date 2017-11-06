@@ -276,7 +276,7 @@ class TestFilter(BaseTest):
                 AlarmFilter.FORMAT: "{old} -- 2424",
                 AlarmFilter.LIMIT: 100,
                 AlarmFilter.REPEAT: 100,
-                AlarmFilter.CONDITION: {'v.resolved': None},
+                AlarmFilter.CONDITION: {'v.state.val': 1},
                 AlarmFilter.TASKS: [
                     'alerts.systemaction.state_increase',
                     'alerts.useraction.keepstate'
