@@ -21,22 +21,20 @@
 
 from __future__ import unicode_literals
 import time
-import logging
 from unittest import TestCase, main
 
 from canopsis.alarms.adapters import (
-    Adapter, make_alarm_from_mongo, make_alarm_step_from_mongo
+    AlarmAdapter, make_alarm_from_mongo, make_alarm_step_from_mongo
 )
-from canopsis.alarms.models import AlarmStep, Alarm, AlarmIdentity
-from canopsis.common.mongo_store import MongoStore
+from canopsis.alarms.models import AlarmStep, AlarmIdentity
 
 
-class AlarmsAdaptersTest(TestCase):
+class AlarmAdapterTest(TestCase):
 
     @classmethod
     def setUp(self):
 
-        self.adapter = Adapter(mongo_client={})
+        self.adapter = AlarmAdapter(mongo_client={})
 
     def test_make_alarm_from_mongo(self):
         now = time.time()
@@ -83,7 +81,9 @@ class AlarmsAdaptersTest(TestCase):
         self.assertIsNone(alarm.canceled)
         self.assertIsNone(alarm.alarm_filter)
         self.assertEquals(0, len(alarm.steps))
-        self.assertEquals("{}/{}".format(alarm_dict['v']['resource'], alarm_dict['v']['component']), alarm.identity.display_name() )
+        self.assertEquals("{}/{}".format(alarm_dict['v']['resource'],
+                                         alarm_dict['v']['component']),
+                          alarm.identity.display_name())
 
         step_dict = {
             'a': 'Arthur Dent',
@@ -126,11 +126,6 @@ class AlarmsAdaptersTest(TestCase):
         with self.assertRaises(TypeError) as context:
             make_alarm_step_from_mongo(test)
         self.assertTrue("A dict is required." in context.exception)
-
-
-
-
-
 
 if __name__ == '__main__':
     main()

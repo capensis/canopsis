@@ -19,13 +19,21 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Adapters for alarm object.
+"""
+
 from __future__ import unicode_literals
 
 from time import time
 from .models import AlarmIdentity, AlarmStep, Alarm
 
 
-class Adapter(object):
+class AlarmAdapter(object):
+
+    """
+    Adapter for Alarm collection.
+    """
 
     COLLECTION = 'periodical_alarm'
 
@@ -33,15 +41,20 @@ class Adapter(object):
         self.mongo_client = mongo_client
 
     def find_unresolved_snoozed_alarms(self):
-        """ Returns a list of all unresolved alarms. """
+        """
+        Returns a list of all unresolved alarms.
 
+        :rtype: [Alarm]
+        """
         query = {
             '$and': [
                 {
                     'v.resolved': None
                 },
                 {
-                    '$and': [  # include alarms that were never snoozed or alarms for which the snooze time has expired
+                    '$and': [
+                        # include alarms that were never snoozed or alarms
+                        # for which the snooze time has expired
                         {'v.snooze.val': {'$ne': None}},
                         {'v.snooze.val': {'$lte': int(time())}}
                     ]
@@ -58,13 +71,20 @@ class Adapter(object):
         return alarms
 
     def stream_unresolved_alarms(self):
+        """
+        Yield unresolved alarms.
+
+        :rtype: Alarm
+        """
         query = {
             '$and': [
                 {
                     'v.resolved': None
                 },
                 {
-                    '$or': [  # include alarms that were never snoozed or alarms for which the snooze time has expired
+                    '$or': [
+                        # include alarms that were never snoozed or alarms
+                        # for which the snooze time has expired
                         {'v.snooze.val': None},
                         {'v.snooze.val': {'$lte': int(time())}}
                     ]
@@ -78,6 +98,12 @@ class Adapter(object):
             yield make_alarm_from_mongo(alarm)
 
     def update(self, alarm):
+        """
+        Update an alarm in db.
+
+        :param Alarm alarm: an alarm object
+        :rtype: Alarm
+        """
         selector = {
             "_id": alarm._id
         }
@@ -88,62 +114,75 @@ class Adapter(object):
 
 
 def make_alarm_from_mongo(alarm_dict):
-    al = alarm_dict['v']
+    """
+    Build an alarm object from a mongo dict.
+
+    :param dict alarm_dict: an alarm document
+    :rtype: Alarm
+    """
+    ald = alarm_dict['v']
 
     identity = AlarmIdentity(
-        al.get('connector'),
-        al.get('connector_name'),
-        al.get('component'),
-        al.get('resource', None)
+        ald.get('connector'),
+        ald.get('connector_name'),
+        ald.get('component'),
+        ald.get('resource', None)
     )
-    status = make_alarm_step_from_mongo(al['status'])
-    state = make_alarm_step_from_mongo(al['state'])
+    status = make_alarm_step_from_mongo(ald['status'])
+    state = make_alarm_step_from_mongo(ald['state'])
 
     steps = []
-    if al.get('steps') is not None:
-        for step in al['steps']:
+    if ald.get('steps') is not None:
+        for step in ald['steps']:
             steps.append(make_alarm_step_from_mongo(step))
 
     ack = None
-    if al.get('ack') is not None:
-        ack = make_alarm_step_from_mongo(al['ack'])
+    if ald.get('ack') is not None:
+        ack = make_alarm_step_from_mongo(ald['ack'])
 
     cancel = None
-    if al.get('canceled') is not None:
-        cancel = make_alarm_step_from_mongo(al['canceled'])
+    if ald.get('canceled') is not None:
+        cancel = make_alarm_step_from_mongo(ald['canceled'])
 
     snooze = None
-    if al.get('snooze') is not None:
-        snooze = make_alarm_step_from_mongo(al['snooze'])
+    if ald.get('snooze') is not None:
+        snooze = make_alarm_step_from_mongo(ald['snooze'])
 
     ticket = None
-    if al.get('ticket') is not None:
-        ticket = make_alarm_step_from_mongo(al['ticket'])
+    if ald.get('ticket') is not None:
+        ticket = make_alarm_step_from_mongo(ald['ticket'])
 
     return Alarm(
         _id=alarm_dict['_id'],
         identity=identity,
         ack=ack,
         canceled=cancel,
-        creation_date=al.get('creation_date'),
-        hard_limit=al.get('hard_limit'),
-        initial_output=al.get('initial_output'),
-        last_update_date=al.get('last_update_date'),
-        resolved=al.get('resolved'),
+        creation_date=ald.get('creation_date'),
+        hard_limit=ald.get('hard_limit'),
+        initial_output=ald.get('initial_output'),
+        last_update_date=ald.get('last_update_date'),
+        resolved=ald.get('resolved'),
         snooze=snooze,
         state=state,
         status=status,
         steps=steps,
-        tags=al.get('tags'),
+        tags=ald.get('tags'),
         ticket=ticket,
-        alarm_filter=al.get('alarm_filter'),
-        extra=al.get('extra')
+        alarm_filter=ald.get('alarm_filter'),
+        extra=ald.get('extra')
     )
 
 
 def make_alarm_step_from_mongo(step_dict):
+    """
+    Build an AlarmStep from a mongo dict.
+
+    :param dict step_dict: an alarmstep document
+    :rtype: AlarmStep
+    """
     if not isinstance(step_dict, dict):
         raise TypeError("A dict is required.")
+
     return AlarmStep(
         author=step_dict.get('a'),
         message=step_dict.get('m'),

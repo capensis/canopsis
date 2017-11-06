@@ -19,28 +19,35 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Service for Alarm.
+"""
+
 from __future__ import unicode_literals
 
 import logging
 
-DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
+DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_STEALTHY_SHOW_DURATION = 0
 DEFAULT_STEALTHY_INTERVAL = 0
 
+
 class AlarmService(object):
 
-    def __init__(self, alarms_adapter, entities_adapter, watcher_manager,
+    """
+    Alarm Service class.
+    """
+
+    def __init__(self, alarms_adapter, watcher_manager,
                  logger=None, config=None):
         """
         Alarm service constructor.
 
-        :param canopsis.alarms.adapters.Adapter alarms_adapter: Alarms DB adapter
-        :param canopsis.entities.adapters.Adapter entities_adapter: Context-graph entities DB adapter
-        :param canopsis.logger.Logger: a logger instance
+        :param AlarmAdapter alarms_adapter: Alarms DB adapter
+        :param Logger: a logger instance
         """
         self.alarms_adapter = alarms_adapter
-        self.entities_adapter = entities_adapter
         self.watcher_manager = watcher_manager
         self.logger = logger
         if config is None:
@@ -53,7 +60,8 @@ class AlarmService(object):
 
     def _log(self, level, message):
         """
-        Logs 'message' according to 'level' if the logger is present. Does nothing otherwise.
+        Logs 'message' according to 'level' if the logger is present.
+        Does nothing otherwise.
 
         :param int level: a level from logging package
         :param string message: the log message
@@ -62,19 +70,35 @@ class AlarmService(object):
             self.logger.log(level, message)
 
     def update_alarm(self, alarm):
+        """
+        Update an alarm.
+
+        :param Alarm alarm: an alarm
+        """
         self.alarms_adapter.update(alarm)
         self.watcher_manager.alarm_changed(alarm.identity.get_data_id())
 
     def find_snoozed_alarms(self):
+        """
+        List all snoozed alarms.
+
+        :rtype: [Alarm]
+        """
         return self.alarms_adapter.find_unresolved_snoozed_alarms()
 
     def resolve_snoozed_alarms(self, alarms=None):
+        """
+        Resolve snooze on a list of alarms.
+
+        :param [Alarm] alarms: a list of Alarm
+        :rtype: [Alarm]
+        """
         if alarms is None:
             alarms = self.find_snoozed_alarms()
         for alarm in alarms:
             if alarm.resolve_snooze() is True:
-                self._log(logging.DEBUG, "alarm : {} has been unsnoozed"
-                                         .format(alarm._id))
+                self._log(logging.DEBUG,
+                          'alarm : {} has been unsnoozed'.format(alarm._id))
                 self.update_alarm(alarm)
                 alarms.remove(alarm)
 
@@ -82,25 +106,30 @@ class AlarmService(object):
 
     def process_resolution_on_all_alarms(self):
         """
-        This method processes all open alarms to check if they need to be resolved;
+        This method processes all open alarms to check if they need to be
+        resolved;
 
         This method is meant to be used in the Alarm Engine's beat processing.
-        :return:
         """
         alarm_counter = 0
         updated_alarm_counter = 0
         for alarm in self.alarms_adapter.stream_unresolved_alarms():
             alarm_needs_update = False
 
-            if alarm.resolve(self.config.get('bagot_time', DEFAULT_FLAPPING_INTERVAL)) is True:
+            if alarm.resolve(self.config.get('bagot_time',
+                                             DEFAULT_FLAPPING_INTERVAL)) is True:
                 alarm_needs_update = True
 
-            if alarm.resolve_cancel(self.config.get('cancel_autosolve_delay', DEFAULT_CANCEL_AUTOSOLVE_DELAY)) is True:
+            if alarm.resolve_cancel(self.config.get('cancel_autosolve_delay',
+                                                    DEFAULT_CANCEL_AUTOSOLVE_DELAY)) is True:
                 alarm_needs_update = True
 
-            stealthy_show_duration = self.config.get('stealthy_show', DEFAULT_STEALTHY_SHOW_DURATION)
-            stealthy_interval = self.config.get('stealthy_time', DEFAULT_STEALTHY_INTERVAL)
-            if alarm.resolve_stealthy(stealthy_show_duration, stealthy_interval) is True:
+            stealthy_show_duration = self.config.get('stealthy_show',
+                                                     DEFAULT_STEALTHY_SHOW_DURATION)
+            stealthy_interval = self.config.get('stealthy_time',
+                                                DEFAULT_STEALTHY_INTERVAL)
+            if alarm.resolve_stealthy(stealthy_show_duration,
+                                      stealthy_interval) is True:
                 alarm_needs_update = True
 
             alarm_counter += 1
@@ -110,8 +139,6 @@ class AlarmService(object):
 
         self._log(
             logging.DEBUG,
-            "alarms resolution processing : {0} alarms processed. {1} updates. ".format(
-                alarm_counter,
-                updated_alarm_counter
-            )
+            "alarms resolution processing : {} alarms processed. {} updates."
+            .format(alarm_counter, updated_alarm_counter)
         )

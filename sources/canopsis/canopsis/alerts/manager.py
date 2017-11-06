@@ -35,7 +35,8 @@ from time import time, mktime
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
-    get_last_state, get_last_status, OFF, STEALTHY, is_stealthy, is_keeped_state
+    get_last_state, get_last_status, OFF, STEALTHY,
+    is_stealthy, is_keeped_state
 )
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
@@ -585,8 +586,7 @@ class Alerts(object):
         if self.is_hard_limit_reached(value):
             # Only cancel is allowed when hard limit has been reached
             if event['event_type'] != 'cancel':
-                self.logger.debug(
-                    'Hard limit reached. Cancelling')
+                self.logger.debug('Hard limit reached. Cancelling')
 
                 return
 
