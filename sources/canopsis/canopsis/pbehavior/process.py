@@ -25,7 +25,7 @@ pbehavior process
 from __future__ import unicode_literals
 
 from json import dumps
-from traceback import print_exc
+from traceback import format_exc
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
@@ -149,5 +149,5 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
         pbm.compute_pbehaviors_filters()
         pbm.launch_update_watcher(watcher_manager)
     except Exception as ex:
-        print_exc()
+        engine.logger.error(format_exc())
         engine.logger.error('Processing error {}'.format(str(ex)))
