@@ -17,12 +17,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
+"""
+To apply filters and do automated actions on alerts.
+"""
+
 from __future__ import unicode_literals
-from six import string_types
 
 from datetime import timedelta
 import json
 from uuid import uuid4 as uuid
+from six import string_types
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.storage.exceptions import StorageUnavailable
@@ -60,12 +65,12 @@ class AlarmFilters(object):
                                   .format(key))
                 return None
 
-        af = AlarmFilter(element=element,
-                         storage=self.storage,
-                         alarm_storage=self.alarm_storage,
-                         logger=self.logger)
+        alarmfilter = AlarmFilter(element=element,
+                                  storage=self.storage,
+                                  alarm_storage=self.alarm_storage,
+                                  logger=self.logger)
 
-        return af
+        return alarmfilter
 
     def delete_filter(self, entity_id):
         """
@@ -184,8 +189,8 @@ class AlarmFilter(object):
         # Map and converter element parts as attribute
         if self.REPEAT not in self.element:
             self[self.REPEAT] = self.DEFAULT_REPEAT_NUMBER
-        for k, v in self.element.items():
-            self[k] = v
+        for k, value in self.element.items():
+            self[k] = value
 
     def __setitem__(self, key, item):
         value = item
@@ -196,7 +201,7 @@ class AlarmFilter(object):
         elif key == self.CONDITION and isinstance(item, string_types):
             try:
                 value = json.loads(item)
-            except:
+            except Exception:
                 self.logger.error('Cannot parse condition item "{}"'
                                   .format(item))
                 return
