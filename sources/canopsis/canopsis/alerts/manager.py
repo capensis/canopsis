@@ -35,7 +35,8 @@ from time import time, mktime
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
-    get_last_state, get_last_status, OFF, STEALTHY, is_stealthy, is_keeped_state
+    get_last_state, get_last_status, OFF, STEALTHY,
+    is_stealthy, is_keeped_state
 )
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
@@ -585,8 +586,7 @@ class Alerts(object):
         if self.is_hard_limit_reached(value):
             # Only cancel is allowed when hard limit has been reached
             if event['event_type'] != 'cancel':
-                self.logger.debug(
-                    'Hard limit reached. Cancelling')
+                self.logger.debug('Hard limit reached. Cancelling')
 
                 return
 
@@ -915,7 +915,7 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.debug("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
 
         for data_id in alarms:
             for docalarm in alarms[data_id]:
@@ -942,7 +942,7 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.debug("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
 
         now = int(time())
 
@@ -968,7 +968,7 @@ class Alerts(object):
         :deprecated: see canopsis.alarms
         """
 
-        self.logger.debug("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
         now = int(time())
         if alarms is None:
             result = self.get_alarms(resolved=False, snoozed=True)
@@ -1004,7 +1004,7 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.debug("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
 
         for data_id in alarms:
             for docalarm in alarms[data_id]:

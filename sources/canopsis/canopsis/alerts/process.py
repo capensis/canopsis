@@ -19,18 +19,13 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-import logging
-import time
 
+from canopsis.alarms.services import AlarmService
+from canopsis.alarms.adapters import AlarmAdapter
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.task.core import register_task
-from canopsis.alarms.services import AlarmService
-from canopsis.alarms.adapters import Adapter as AlarmAdapter
-from canopsis.entities.adapters import Adapter as EntityAdapter
-from canopsis.logger import Logger
 from canopsis.watcher.manager import Watcher
-from canopsis.common.ethereal_data import EtherealData
 
 alerts_manager = Alerts(*Alerts.provide_default_basics())
 alertsreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
@@ -71,19 +66,11 @@ def event_processing(engine, event, alertsmgr=None, **kwargs):
 def beat_processing(engine, alertsmgr=None, **kwargs):
     """
     Scheduled process.
-
     """
-
-    filter_ = {'crecord_type': 'statusmanagement'}
-    config_data = EtherealData(collection=mongo_client['object'],
-                               filter_=filter_)
-
-
-
     alarms_service = AlarmService(
-        AlarmAdapter(mongo_client),
-        EntityAdapter(mongo_client),
-        Watcher())
+        alarms_adapter=AlarmAdapter(mongo_client),
+        watcher_manager=Watcher()
+    )
 
     if alertsmgr is None:
         alertsmgr = alerts_manager

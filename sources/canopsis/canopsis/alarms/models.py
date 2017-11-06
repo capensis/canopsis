@@ -19,6 +19,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Models for Alarms.
+"""
+
 from __future__ import unicode_literals
 
 from time import time
@@ -97,12 +101,20 @@ class AlarmIdentity:
         self.resource = resource
 
     def display_name(self):
+        """
+        Printable AlarmIdentity name.
+
+        :rtype: str
+        """
         if self.resource:
             return '{}/{}'.format(self.resource, self.component)
 
         return self.component
 
     def get_data_id(self):
+        """
+        :rtype: str
+        """
         return self.display_name()
 
 
@@ -112,24 +124,24 @@ class Alarm:
     """
 
     def __init__(
-        self,
-        _id,
-        identity,
-        ack,
-        canceled,
-        creation_date,
-        hard_limit,
-        initial_output,
-        last_update_date,
-        resolved,
-        snooze,
-        state,
-        status,
-        steps,
-        tags,
-        ticket,
-        alarm_filter=None,
-        extra={}
+            self,
+            _id,
+            identity,
+            ack,
+            canceled,
+            creation_date,
+            hard_limit,
+            initial_output,
+            last_update_date,
+            resolved,
+            snooze,
+            state,
+            status,
+            steps,
+            tags,
+            ticket,
+            alarm_filter=None,
+            extra={}
     ):
         """
         :param str _id: db ID of the alarm
@@ -170,6 +182,11 @@ class Alarm:
         self.ticket = ticket
 
     def to_dict(self):
+        """
+        Give a dict representation of the Alarm.
+
+        :rtype: dict
+        """
         value = {
             'resource': self.identity.resource,
             'tags': self.tags,
@@ -211,8 +228,8 @@ class Alarm:
         if self.alarm_filter is not None:
             value['alarm_filter'] = self.alarm_filter
 
-        for s in self.steps:
-            value['steps'].append(s.to_dict())
+        for ste in self.steps:
+            value['steps'].append(ste.to_dict())
 
         return {
             '_id': self._id,
