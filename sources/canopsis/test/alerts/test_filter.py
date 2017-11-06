@@ -237,6 +237,66 @@ class TestFilter(BaseTest):
 
         self.assertEqual(lifter.output('toto'), "toto -- foo")
 
+    def test_update_correct_alarm(self):
+        """
+        This test ensures the AlarmFilter updates the right alarm and not old
+        ones that are already resolved.
+
+        For that we create two alarms with the same data, but the first one
+        will get resolved at a given timestamp.
+
+        The alarmfilter will gather every single alarm, not matter the state
+        or the resolved field, then apply the condition on them.
+        """
+        alarm, value = self.gen_fake_alarm(moment=42)
+        self.manager.update_current_alarm(alarm, value)
+
+        coll_alerts = self.manager.alerts_storage._backend
+
+        alarm_doc = list(coll_alerts.find({}))[0]
+        alarm['_id'] = alarm_doc['_id']
+        # set arbitrary resolution time
+        coll_alerts.update(
+            {'_id': alarm['_id']},
+            {'$set': {'v.resolved': 42, 'v.state.val': 0}}
+        )
+
+        alarm2, value2 = self.gen_fake_alarm(moment=4242)
+        self.manager.update_current_alarm(alarm2, value2)
+
+        all_alarms = list(coll_alerts.find({}))
+        self.assertEqual(all_alarms[0]['v']['resolved'], 42)
+        self.assertEqual(all_alarms[1]['v']['resolved'], None)
+        self.assertEqual(all_alarms[0]['v']['state']['val'], 0)
+        self.assertEqual(all_alarms[1]['v']['state']['val'], 1)
+
+        filter_ = AlarmFilter(
+            {
+                AlarmFilter.FILTER: {},
+                AlarmFilter.FORMAT: "{old} -- 2424",
+                AlarmFilter.LIMIT: 100,
+                AlarmFilter.REPEAT: 100,
+                AlarmFilter.CONDITION: {'v.resolved': None},
+                AlarmFilter.TASKS: [
+                    'alerts.systemaction.state_increase',
+                    'alerts.useraction.keepstate'
+                ]
+
+            },
+            storage=self.filter_storage,
+            alarm_storage=self.alerts_storage,
+            logger=self.logger
+        )
+        filter_.save()
+
+        self.manager.check_alarm_filters()
+        all_alarms = list(coll_alerts.find({}))
+
+        self.assertEqual(all_alarms[0]['v']['resolved'], 42)
+        self.assertEqual(all_alarms[1]['v']['resolved'], None)
+        self.assertEqual(all_alarms[0]['v']['state']['val'], 0)
+        self.assertEqual(all_alarms[1]['v']['state']['val'], 2)
+
 
 if __name__ == '__main__':
     main()
