@@ -281,7 +281,6 @@ class TestFilter(BaseTest):
                     'alerts.systemaction.state_increase',
                     'alerts.useraction.keepstate'
                 ]
-
             },
             storage=self.filter_storage,
             alarm_storage=self.alerts_storage,
