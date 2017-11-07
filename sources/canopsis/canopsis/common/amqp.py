@@ -1,5 +1,6 @@
-import pika
 import json
+
+import pika
 
 from canopsis.event import get_routingkey
 
@@ -20,11 +21,14 @@ class AmqpConnection(object):
         self.connect()
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, type_, value, traceback):
         self.disconnect()
 
     @property
     def connected(self):
+        """
+        Property checking for connection state.
+        """
         if self.connection is None:
             return False
 
@@ -42,6 +46,10 @@ class AmqpConnection(object):
         self.channel = self.connection.channel()
 
     def disconnect(self):
+        """
+        Close current connection, if connected, and resets
+        self.connection and self.channel to None.
+        """
         if self.connected:
             self.connection.close()
 
