@@ -21,11 +21,14 @@ class GenericAPI(object):
             'Content-Type': 'application/json'
         }
 
-    def _action(self, req):
+    def _action(self, response):
+        """
+        :type response: requests.Response
+        """
         try:
-            j = req.json()
+            j = response.json()
         except ValueError:
-            req.raise_for_status()
+            response.raise_for_status()
             j = {}
 
         if 'error' in j:
@@ -33,7 +36,7 @@ class GenericAPI(object):
             raise HTTPError('{}: {}'.format(error['message'], error))
 
         try:
-            req.raise_for_status()
+            response.raise_for_status()
         except HTTPError as err:
             raise HTTPError("{}: {}".format(err, j))
 
