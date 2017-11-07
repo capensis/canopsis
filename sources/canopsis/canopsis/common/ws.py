@@ -27,7 +27,6 @@ code.
 """
 
 import logging
-import re
 import traceback
 from bottle import request, HTTPError, HTTPResponse
 from bottle import response as BottleResponse
@@ -160,6 +159,23 @@ class route(object):
     #: field to set intercepted function from the interceptor function
     _INTERCEPTED = str(uuid())
 
+    @staticmethod
+    def get_request_path():
+        return request.urlparts[2]
+
+    @staticmethod
+    def log_request(logger, op, request_path):
+        """
+        :param logger: logger
+        :param op: HTTP Method
+        :param request_path: path of the url
+        """
+        logger.info(
+            u'Request: {} - {}'.format(
+                op.upper(), request_path
+            )
+        )
+
     def __init__(
         self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
         response=response, adapt=True, nolog=False
@@ -255,11 +271,10 @@ class route(object):
                         kwargs[body_param] = param
 
             if not self.nolog:
-                url = make_url_human_readable(self.url, kwargs)
-                self.logger.info(
-                    u'Request: {} - {}'.format(
-                        self.op.__name__.upper(), url
-                    )
+                route.log_request(
+                    self.logger,
+                    self.op.__name__,
+                    route.get_request_path()
                 )
 
             if self.adapt:
@@ -389,24 +404,3 @@ def apply_routes(urls):
         decorator = route(url['method'], name=url['name'], **url['params'])
         decorator(url['handler'])
 
-
-def make_url_human_readable(url, params):
-    """
-    Convert templated url (/:param), with parameter values.
-
-    :param str url: the templated url
-    :param dict params: the parameters
-    :rtype: str
-    """
-    for key, param in params.items():
-        if 'body' in key:
-            # Because kwargs in route class is a dirty dict
-            # (body key is a dict as a string with all parameters in it!)
-            continue
-
-        try:
-            url = re.sub('/:{}'.format(key), '/{}'.format(param), url)
-        except UnicodeError:
-            pass
-
-    return url
