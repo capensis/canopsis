@@ -113,11 +113,11 @@ def event_processing(
                 for k, v in entity.items():
                     try:
                         k = k.encode('utf-8')
-                    except:
+                    except Exception:
                         pass
                     try:
                         v = v.encode('utf-8')
-                    except:
+                    except Exception:
                         pass
                     encoded_entity[k] = v
 

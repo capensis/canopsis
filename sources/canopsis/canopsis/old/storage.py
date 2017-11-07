@@ -205,7 +205,7 @@ class Storage(object):
 
         try:
             self.gridfs_namespace = CONFIG.get("master", "gridfs_namespace")
-        except:
+        except Exception:
             pass
 
         self.fs = gridfs.GridFS(self.db, self.gridfs_namespace)
@@ -238,11 +238,10 @@ class Storage(object):
             self.logger.debug("Use %s collection" % namespace)
 
             return backend
-        except:
+        except Exception:
             self.backend[namespace] = self.db[namespace]
             self.logger.debug("Connected to %s collection." % namespace)
             return self.backend[namespace]
-
 
     def update(self, _id, data, namespace=None, account=None):
         self.check_connected()
@@ -295,7 +294,7 @@ class Storage(object):
                         account=self.root_account
                     )
                     new_record = False
-                except:
+                except Exception:
                     pass
 
             if not new_record:
@@ -694,7 +693,6 @@ class Storage(object):
 
         return output
 
-
     def drop_namespace(self, namespace):
         self.check_connected()
 
@@ -708,7 +706,7 @@ class Storage(object):
 
         try:
             return self.db.command("collstats", namespace)['size']
-        except:
+        except Exception:
             return 0
 
     def recursive_get(self, record, depth=0,account=None, namespace=None):
@@ -724,14 +722,13 @@ class Storage(object):
         for child in childs:
             # HACK: fix root_directory in UI !!!
             try:
-                rec = self.get(child,account=account,namespace=namespace)
-                self.recursive_get(rec, depth,account=account,namespace=namespace)
+                rec = self.get(child, account=account, namespace=namespace)
+                self.recursive_get(rec, depth, account=account, namespace=namespace)
                 record.children.append(rec)
             except Exception as err:
                 self.logger.debug(err)
 
-
-    def get_record_childs(self, record,account=None, namespace=None):
+    def get_record_childs(self, record, account=None, namespace=None):
         self.check_connected()
 
         child_ids = record.children
@@ -740,15 +737,14 @@ class Storage(object):
 
         records = []
         for _id in child_ids:
-            records.append(self.get(str(_id),account=account, namespace=namespace))
+            records.append(self.get(str(_id), account=account, namespace=namespace))
 
         return records
-
 
     def print_record_tree(self, record, depth=0):
         self.check_connected()
 
-        depth+=1
+        depth += 1
 
         childs = record.children_record
         if len(childs) == 0:
@@ -768,7 +764,6 @@ class Storage(object):
             print prefix + "> " + str(child.name)
 
             self.print_record_tree(child, depth)
-
 
     def get_childs_of_parent(self, record_or_id, rtype=None, account=None):
         self.check_connected()

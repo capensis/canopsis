@@ -19,13 +19,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from sys import argv, exit
-
-from getpass import getpass
-
 from argparse import ArgumentParser
-
+from getpass import getpass
 from logging import basicConfig, DEBUG, ERROR
+from sys import argv, exit
 
 from canopsis.old.account import Account, caccount_get, caccount_getall
 from canopsis.old.storage import Storage
@@ -63,7 +60,7 @@ my_storage = Storage(whoami, namespace='object', logging_level=verbosity)
 def user_exist(Storage, user_name):
     try:
         my_user = caccount_get(Storage, user_name)
-    except:
+    except Exception:
         my_user = None
     if (args.debug_output):
         print("DEBUG: my_user = %s \n" % my_user)

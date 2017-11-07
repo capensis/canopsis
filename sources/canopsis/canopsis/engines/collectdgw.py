@@ -18,14 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine, publish
-from canopsis.event import forger
 
+import re
 from time import time
 
 from canopsis.engines.collectd_utils import types
+from canopsis.engines.core import Engine, publish
+from canopsis.event import forger
 
-import re
 
 class engine(Engine):
     etype = 'collectdgw'
@@ -51,7 +51,7 @@ class engine(Engine):
                 cnode = match.group(3)
             else:
                 cnode = match.group(4)
-            collectd_info = [match.group(1),cnode,match.group(5),match.group(6)]
+            collectd_info = [match.group(1), cnode, match.group(5), match.group(6)]
             self.logger.debug(body)
             action = collectd_info[0]
             self.logger.debug(" + Action: %s" % action)
@@ -78,7 +78,7 @@ class engine(Engine):
                 try:
                     ## Know metric
                     ctype = types[metric]
-                except:
+                except Exception:
                     try:
                         ctype = types[metric.split('-')[0]]
                         metric = metric.split('-')[1]

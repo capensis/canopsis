@@ -19,15 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from logging import basicConfig, DEBUG, getLogger
+from signal import signal, SIGINT, SIGTERM
+from sys import argv
 from time import sleep
 
-from logging import basicConfig, DEBUG, getLogger
-
-from sys import argv
-
 from canopsis.old.rabbitmq import Amqp
-
-from signal import signal, SIGINT, SIGTERM
 
 DAEMON_NAME = "amqp2tty"
 DAEMON_TYPE = "logger"
@@ -63,7 +60,7 @@ amqp = Amqp()
 
 try:
     exchange = argv[1]
-except:
+except Exception:
     exchange = amqp.exchange_name_events
 
 amqp.add_queue(DAEMON_NAME, '#', on_message, exchange)

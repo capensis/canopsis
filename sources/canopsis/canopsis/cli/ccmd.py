@@ -134,7 +134,7 @@ class Browser(Cmd):
                 try:
                     if len(word) > max_ln[i]:
                         max_ln[i] = len(word)
-                except:
+                except Exception:
                     max_ln[i] = len(word)
 
                 i += 1

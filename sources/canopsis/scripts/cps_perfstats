@@ -35,7 +35,7 @@ from requests import Session
 
 try:
     from json import loads, dumps
-except:
+except Exception:
     from simplejson import loads, dumps
 
 
@@ -190,7 +190,7 @@ def main(argv):
     elif not stdin.isatty():
         try:
             event_filter = loads(stdin.read())
-        except:
+        except Exception:
             print('Error: Invalid json stream')
             exit()
 

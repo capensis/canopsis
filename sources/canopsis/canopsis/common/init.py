@@ -81,7 +81,7 @@ class Init(object):
             while self.RUN:
                 try:
                     sleep(1)
-                except:
+                except Exception:
                     break
             self.stop()
 

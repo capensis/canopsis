@@ -20,22 +20,16 @@
 # ---------------------------------
 
 from functools import reduce
-
-from sys import argv, exit, stdin, stdout
-
-from os.path import splitext, exists
-
 from getopt import getopt, GetoptError
-
-from traceback import print_exc
-
-from time import time, timezone, ctime
-
+from os.path import splitext, exists
 from requests import Session
+from sys import argv, exit, stdin, stdout
+from time import time, timezone, ctime
+from traceback import print_exc
 
 try:
     from json import loads, dumps
-except:
+except Exception:
     from simplejson import loads, dumps
 
 
@@ -190,7 +184,7 @@ def main(argv):
     elif not stdin.isatty():
         try:
             event_filter = loads(stdin.read())
-        except:
+        except Exception:
             print('Error: Invalid json stream')
             exit()
 
