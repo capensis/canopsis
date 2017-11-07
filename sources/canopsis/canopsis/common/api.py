@@ -24,7 +24,7 @@ class GenericAPI(object):
     def _action(self, req):
         try:
             j = req.json()
-        except Exception:
+        except ValueError:
             req.raise_for_status()
             j = {}
 
@@ -34,8 +34,8 @@ class GenericAPI(object):
 
         try:
             req.raise_for_status()
-        except Exception as e:
-            raise HTTPError("{}: {}".format(e, j))
+        except HTTPError as err:
+            raise HTTPError("{}: {}".format(err, j))
 
         return j
 

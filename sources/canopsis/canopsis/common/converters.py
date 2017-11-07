@@ -46,7 +46,7 @@ def mongo_filter(config):
         """
         try:
             return json.loads(match)
-        except Exception:
+        except ValueError:
             logger.error('Cannot parse url parameter: {}'.format(match))
             raise
 
