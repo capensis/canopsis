@@ -20,12 +20,17 @@
 
 from __future__ import unicode_literals
 
+from canopsis.alarms.services import AlarmService
+from canopsis.alarms.adapters import AlarmAdapter
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.task.core import register_task
+from canopsis.watcher.manager import Watcher
 
 alerts_manager = Alerts(*Alerts.provide_default_basics())
 alertsreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
+
+mongo_client = alerts_manager.alerts_storage._backend.database
 
 
 @register_task
@@ -62,22 +67,22 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     """
     Scheduled process.
     """
+    alarms_service = AlarmService(
+        alarms_adapter=AlarmAdapter(mongo_client),
+        watcher_manager=Watcher()
+    )
+
     if alertsmgr is None:
         alertsmgr = alerts_manager
 
     alertsreader = alertsreader_manager
 
-    unresolved_alarms = alertsmgr.get_alarms(resolved=False)
+    # process snoozed alarms first
+    snoozed_alarms = alarms_service.find_snoozed_alarms()
+    alarms_service.resolve_snoozed_alarms(snoozed_alarms)
 
-    unresolved_alarms = alertsmgr.resolve_alarms(unresolved_alarms)
-
-    unresolved_alarms = alertsmgr.resolve_cancels(unresolved_alarms)
-
-    alertsmgr.resolve_snoozes()
-
-    unresolved_alarms = alertsmgr.resolve_stealthy(unresolved_alarms)
-    # unresolved_alarms not used actually but can be used for new actions
+    # process all resolution checks on all alarms.
+    alarms_service.process_resolution_on_all_alarms()
 
     alertsmgr.check_alarm_filters()
-
     alertsreader.clean_fast_count_cache()

@@ -26,25 +26,24 @@ This module provides tools in order to ease the use of web services in python
 code.
 """
 
-from inspect import getargspec
-
-from canopsis.common.utils import ensure_iterable, isiterable
-
-from urlparse import parse_qs
-from gzip import GzipFile
-from json import loads
-from math import isnan, isinf
+import logging
+import traceback
 from bottle import request, HTTPError, HTTPResponse
 from bottle import response as BottleResponse
 from functools import wraps
-import traceback
-import logging
-
+from gzip import GzipFile
+from inspect import getargspec
+from json import loads
+from math import isnan, isinf
+from urlparse import parse_qs
 from uuid import uuid4 as uuid
+
+from canopsis.common.utils import ensure_iterable, isiterable
 
 
 def adapt_canopsis_data_to_ember(data):
-    """Transform canopsis data to ember data (in changing ``id`` to ``cid``).
+    """
+    Transform canopsis data to ember data (in changing ``id`` to ``cid``).
 
     :param data: data to transform
     """
@@ -91,7 +90,6 @@ def response(data, adapt=True):
     """Construct a REST response from input data.
 
     :param data: data to convert into a REST response.
-    :param kwargs: service function parameters.
     :param bool adapt: adapt Canopsis data to Ember (default: True)
     """
 
@@ -127,7 +125,8 @@ def response(data, adapt=True):
 
 
 def route_name(operation_name, *parameters):
-    """Get the right route related to input operation_name.
+    """
+    Get the right route related to input operation_name.
     """
 
     result = '/{0}'.format(operation_name.replace('_', '-'))
@@ -160,6 +159,23 @@ class route(object):
     #: field to set intercepted function from the interceptor function
     _INTERCEPTED = str(uuid())
 
+    @staticmethod
+    def get_request_path():
+        return request.urlparts[2]
+
+    @staticmethod
+    def log_request(logger, op, request_path):
+        """
+        :param logger: logger
+        :param op: HTTP Method
+        :param request_path: path of the url
+        """
+        logger.info(
+            u'Request: {} - {}'.format(
+                op.upper(), request_path
+            )
+        )
+
     def __init__(
         self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
         response=response, adapt=True, nolog=False
@@ -191,6 +207,7 @@ class route(object):
         self.wsgi_params = wsgi_params
         self.adapt = adapt
         self.nolog = nolog
+        self.url = ''
 
     def __call__(self, function):
 
@@ -254,10 +271,10 @@ class route(object):
                         kwargs[body_param] = param
 
             if not self.nolog:
-                self.logger.info(
-                    'Request: {} - {}'.format(
-                        self.op.__name__.upper(), self.url
-                    )
+                route.log_request(
+                    self.logger,
+                    self.op.__name__,
+                    route.get_request_path()
                 )
 
             if self.adapt:
@@ -268,18 +285,19 @@ class route(object):
             try:
                 result_function = function(*args, **kwargs)
 
-            except HTTPResponse as r:
-                raise r
+            except HTTPResponse as err:
+                raise err
 
-            except Exception as e:
+            except Exception as exc:
                 # if an error occured, get a failure message
+                self.logger.exception("Exception while handling the request.")
                 result = {
                     'total': 0,
                     'success': False,
                     'data': {
                         'traceback': traceback.format_exc(),
-                        'type': str(type(e)),
-                        'msg': str(e)
+                        'type': str(type(exc)),
+                        'msg': str(exc)
                     }
                 }
 
@@ -377,6 +395,12 @@ class route(object):
 
 
 def apply_routes(urls):
+    """
+    Apply routes
+
+    :param urls:
+    """
     for url in urls:
         decorator = route(url['method'], name=url['name'], **url['params'])
         decorator(url['handler'])
+

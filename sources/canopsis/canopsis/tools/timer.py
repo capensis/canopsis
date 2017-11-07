@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,27 +19,30 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import os
-import sys
+from __future__ import unicode_literals
+import time
 
 
-class CanopsisUnsupportedEnvironment(Exception):
-    pass
+class Timer:
 
+    def __init__(self, logger):
+        self.logger = logger
+        self.start_time = 0
+        self.action = ''
 
-def _root_path():
-    root = None
+    def start(self, action):
+        self.action = action
+        self.logger.info("Starting timing for action: {}".format(action))
 
-    if os.path.isdir(os.path.join(sys.prefix, 'etc')):
-        root = sys.prefix
+        self.start_time = int(round(time.time() * 1000))
 
-    elif os.path.isdir(os.path.join('opt', 'canopsis', 'etc')):
-        root = os.path.join(os.path.sep, 'opt', 'canopsis')
+    def stop(self):
+        stop_time = int(round(time.time() * 1000))
+        duration = stop_time - self.start_time
+        self.logger.info('Action : {} took {} ms to complete '
+                         .format(self.action, duration))
+        self.reset()
 
-    else:
-        msg = 'unsupported environment: cannot safely detect canopsis root path.'
-        raise CanopsisUnsupportedEnvironment(msg)
-
-    return root
-
-root_path = _root_path()
+    def reset(self):
+        self.start_time = 0
+        self.action = ''

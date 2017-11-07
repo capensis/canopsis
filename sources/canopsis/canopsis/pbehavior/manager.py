@@ -24,17 +24,16 @@ Managing PBehavior.
 
 from calendar import timegm
 from datetime import datetime
-from dateutil.rrule import rrulestr
 from json import loads, dumps
-from six import string_types
 from time import time
 from uuid import uuid4
+from six import string_types
+from dateutil.rrule import rrulestr
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.middleware.core import Middleware
-
 from canopsis.logger import Logger
+from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.utils import check_valid_rrule
 
 
@@ -48,7 +47,7 @@ class BasePBehavior(dict):
 
     def __init__(self, **kwargs):
         super(BasePBehavior, self).__init__()
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if key in self._FIELDS:
                 self.__dict__[key] = value
 
@@ -76,7 +75,7 @@ class BasePBehavior(dict):
         :return type: dict
         :return: the updated representation of the current instance
         """
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if key in self._EDITABLE_FIELDS:
                 self.__dict__[key] = value
         return self.__dict__
@@ -176,6 +175,8 @@ class PBehaviorManager(object):
         self.logger = logger
         self.pb_storage = pb_storage
 
+        self.currently_active_pb = set()
+
     def get(self, _id, query=None):
         """Get pbehavior by id.
         :param str id: pbehavior id
@@ -235,8 +236,18 @@ class PBehaviorManager(object):
                 else:
                     raise ValueError("The message field is missing")
 
-        pb_kwargs = locals()
-        pb_kwargs.pop('self')
+        pb_kwargs = {
+            'name': name,
+            'filter': filter,
+            'author': author,
+            'tstart': tstart,
+            'tstop': tstop,
+            'rrule': rrule,
+            'enabled': enabled,
+            'comments': comments,
+            'connector': connector,
+            'connector_name': connector_name
+        }
         if PBehavior.EIDS not in pb_kwargs:
             pb_kwargs[PBehavior.EIDS] = []
 
@@ -296,7 +307,7 @@ class PBehaviorManager(object):
         check_valid_rrule(kwargs.get('rrule', ''))
 
         pbehavior = PBehavior(**self.get(_id))
-        new_data = {k: v for k, v in kwargs.iteritems() if v is not None}
+        new_data = {k: v for k, v in kwargs.items() if v is not None}
         pbehavior.update(**new_data)
 
         result = self.pb_storage.put_element(
@@ -495,8 +506,8 @@ class PBehaviorManager(object):
                 )
 
             if (len(dt_list) >= 2
-               and fromts(event['timestamp']) >= dt_list[0]
-               and fromts(event['timestamp']) <= dt_list[-1]):
+                    and fromts(event['timestamp']) >= dt_list[0]
+                    and fromts(event['timestamp']) <= dt_list[-1]):
                 names.append(pbehavior[PBehavior.NAME])
 
         result = set(pb_names).isdisjoint(set(names))
@@ -505,9 +516,12 @@ class PBehaviorManager(object):
 
     @staticmethod
     def _check_response(response):
-        ack = True if "ok" in response and response["ok"] == 1 else False
-        return {"acknowledged": ack,
-                "deletedCount": response["n"]}
+        ack = True if 'ok' in response and response['ok'] == 1 else False
+
+        return {
+            'acknowledged': ack,
+            'deletedCount': response['n']
+        }
 
     def get_active_pbehaviors(self, eids):
         """
@@ -530,16 +544,22 @@ class PBehaviorManager(object):
         Return all pbehaviors currently active, using start and stop time.
         """
         now = int(time())
-        query = {'$and': [{'tstop': {'$gt': now}}, {'tstart': {'$lt': now}}]}
+        query = {
+            '$and': [
+                {'tstop': {'$gte': now}},
+                {'tstart': {'$lte': now}}
+            ]
+        }
 
         ret_val = list(self.pb_storage.get_elements(
             query=query
         ))
+
         return ret_val
 
-    def get_just_activated_pbehavior(self):
+    def get_varying_pbehavior_list(self):
         """
-            get_just_activated_pbehavior
+            get_varying_pbehavior_list
 
             :return list: list of PBehavior id activated since last check
         """
@@ -547,9 +567,11 @@ class PBehaviorManager(object):
         active_pbehaviors_ids = set()
         for active_pb in active_pbehaviors:
             active_pbehaviors_ids.add(active_pb['_id'])
-        new_pbs = active_pbehaviors_ids.difference(self.currently_active_pb)
+
+        varying_pbs = active_pbehaviors_ids.symmetric_difference(self.currently_active_pb)
         self.currently_active_pb = active_pbehaviors_ids
-        return list(new_pbs)
+
+        return list(varying_pbs)
 
     def launch_update_watcher(self, watcher_manager):
         """
@@ -557,16 +579,16 @@ class PBehaviorManager(object):
 
             :param object watcher_manager: watcher manager
             :return int: number of watcher updated
-
         """
-        new_pbs = self.get_just_activated_pbehavior()
-        new_pbs_full = list(self[self.PBEHAVIOR_STORAGE]._backend.find(
+        new_pbs = self.get_varying_pbehavior_list()
+        new_pbs_full = list(self.pb_storage._backend.find(
             {'_id': {'$in': new_pbs}}
         ))
+
         merged_eids = []
         for pbehaviour in new_pbs_full:
             merged_eids = merged_eids + pbehaviour['eids']
-        merged_eids = list(set(merged_eids))
+
         watchers_ids = set()
         for watcher in self.get_wacher_on_entities(merged_eids):
             watchers_ids.add(watcher['_id'])
@@ -581,11 +603,13 @@ class PBehaviorManager(object):
 
             :param entities_ids: entity id
             :return list: list of watchers
-
         """
-        watchers = self.context.get_entities(
-            query={'$and': [
-                {'depends': {'$in':  entities_ids}},
-                {'type': 'watcher'}]}
-        )
+        query = {
+            '$and': [
+                {'depends': {'$in': entities_ids}},
+                {'type': 'watcher'}
+            ]
+        }
+        watchers = self.context.get_entities(query=query)
+
         return watchers

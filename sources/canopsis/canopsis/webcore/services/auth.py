@@ -107,14 +107,11 @@ def exports(ws):
             'username', 'password',
             'shadow', 'crypted'
         ],
-        response=lambda data, adapt: data,
-        nolog=True
+        response=lambda data, adapt: data
     )
     def auth_route(
         username=None, password=None, shadow=False, crypted=False
     ):
-        ws.logger.info(u'/auth')
-
         if not username or not password:
             redirect('/?logerror=1')
 
@@ -159,10 +156,8 @@ def exports(ws):
         session.create(user)
         redirect('/')
 
-    @route(ws.application.post, name='auth/external', nolog=True)
+    @route(ws.application.post, name='auth/external')
     def auth_external(**kwargs):
-        ws.logger.info(u'/auth/external')
-
         # When we arrive here, the Bottle plugins in charge of authentication
         # have initialized the session, we just need to redirect to the index.
         redirect('/static/canopsis/index.html')
@@ -174,6 +169,7 @@ def exports(ws):
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_login}, nolog=True)
     def autologin(key):
+        route.log_request(ws.logger, 'get', '/autologin/**redacted**')
         return autoLogin(key)
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_logout})

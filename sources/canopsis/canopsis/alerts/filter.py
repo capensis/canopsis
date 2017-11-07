@@ -17,12 +17,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
+"""
+To apply filters and do automated actions on alerts.
+"""
+
 from __future__ import unicode_literals
-from six import string_types
 
 from datetime import timedelta
 import json
 from uuid import uuid4 as uuid
+from six import string_types
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.storage.exceptions import StorageUnavailable
@@ -60,12 +65,12 @@ class AlarmFilters(object):
                                   .format(key))
                 return None
 
-        af = AlarmFilter(element=element,
-                         storage=self.storage,
-                         alarm_storage=self.alarm_storage,
-                         logger=self.logger)
+        alarmfilter = AlarmFilter(element=element,
+                                  storage=self.storage,
+                                  alarm_storage=self.alarm_storage,
+                                  logger=self.logger)
 
-        return af
+        return alarmfilter
 
     def delete_filter(self, entity_id):
         """
@@ -133,13 +138,13 @@ class AlarmFilters(object):
             if isinstance(mfilter, string_types) and mfilter != '':
                 try:
                     query = json.loads(mfilter)
-                except:
-                    self.logger.warning('Cannot parse mfilter "{}"'
-                                        .format(mfilter))
+                except ValueError as exc:
+                    self.logger.warning('Cannot parse mfilter "{}": {}'
+                                        .format(mfilter, exc))
                     continue
 
             # Associate a filter with his matching alarm
-            for alarm in list(self.alarm_storage.get_elements(query=query)):
+            for alarm in self.alarm_storage._backend.find(query):
                 if new_filter is not None:
                     results.append((new_filter, alarm))
 
@@ -184,8 +189,8 @@ class AlarmFilter(object):
         # Map and converter element parts as attribute
         if self.REPEAT not in self.element:
             self[self.REPEAT] = self.DEFAULT_REPEAT_NUMBER
-        for k, v in self.element.items():
-            self[k] = v
+        for k, value in self.element.items():
+            self[k] = value
 
     def __setitem__(self, key, item):
         value = item
@@ -196,7 +201,7 @@ class AlarmFilter(object):
         elif key == self.CONDITION and isinstance(item, string_types):
             try:
                 value = json.loads(item)
-            except:
+            except Exception:
                 self.logger.error('Cannot parse condition item "{}"'
                                   .format(item))
                 return
@@ -216,13 +221,13 @@ class AlarmFilter(object):
         """
         Check if a filter is valid for a specified alarm.
 
+        The alarm document MUST contain _id key.
+
         :param alarm: An alarm
         :type alarm: dict
         :rtype: bool
         """
-        alarm_id = alarm[self.alarm_storage.DATA_ID]
-
-        and_ = [{self.alarm_storage.Key.DATA_ID: {'$eq': alarm_id}}]
+        and_ = [{'_id': alarm['_id']}]
         if self[self.CONDITION] is not None:
             and_.append(self[self.CONDITION])
 
