@@ -26,18 +26,12 @@ from requests import Session
 from sys import argv, exit, stdin, stdout
 from time import time, timezone, ctime
 from traceback import print_exc
-
-try:
-    from json import loads, dumps
-except Exception:
-    from simplejson import loads, dumps
+from json import loads, dumps
 
 
 def usage():
     print(" Usage: get_stats")
-    print
     print(" Get statistics from an event.")
-    print
     print(" Options:")
     print("  -s, --server=SERVER_ADDR")
     print("     webserver address (default : localhost:8082)")
@@ -63,7 +57,6 @@ def usage():
 separation characters")
     print("  -h, --help")
     print("     show help")
-    print
     print(" Example of mongo filters:")
     print(" {\"co\": \"component_name\", \"re\": \"resource_name\"}")
 
@@ -184,7 +177,7 @@ def main(argv):
     elif not stdin.isatty():
         try:
             event_filter = loads(stdin.read())
-        except Exception:
+        except ValueError:
             print('Error: Invalid json stream')
             exit()
 

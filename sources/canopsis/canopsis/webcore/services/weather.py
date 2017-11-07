@@ -428,7 +428,7 @@ def exports(ws):
         # Find entities with the watcher filter
         try:
             query = json.loads(watcher_entity['mfilter'])
-        except Exception:
+        except (ValueError, KeyError, TypeError):
             json_error = {
                 "name": "filter_not_found",
                 "description": "impossible to load the desired filter"

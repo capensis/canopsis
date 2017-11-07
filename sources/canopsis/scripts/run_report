@@ -26,11 +26,7 @@ from logging import basicConfig, getLogger
 from sys import exit, argv
 from time import time
 from urllib2 import build_opener, HTTPCookieProcessor, Request
-
-try:
-    from json import loads
-except Exception:
-    from simplejson import loads
+from json import loads
 
 
 def authentificate(server, authkey):

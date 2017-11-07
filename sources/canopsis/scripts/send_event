@@ -28,11 +28,7 @@ from sys import argv, exit, stdin, stdout
 from traceback import print_exc
 from urllib2 import build_opener, HTTPCookieProcessor, Request
 from urllib import urlencode
-
-try:
-    from json import loads, dumps
-except Exception:
-    from simplejson import loads, dumps
+from json import loads, dumps
 
 
 def usage():
@@ -85,8 +81,8 @@ def main(argv):
         if opt in ('--json', '-j'):
             try:
                 json_string = loads(arg)
-            except Exception:
-                print('Bad json string')
+            except ValueError as exc:
+                print('Bad json string: {}'.format(exc))
                 exit()
 
     if not authkey:

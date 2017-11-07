@@ -98,10 +98,11 @@ class engine(Engine):
 
         try:
             event['state'] = int(event.get('state', 0))
-        except Exception:
+        except ValueError:
             self.logger.error('state convertion failed: must be an int ({})'
                               .format(event))
             event['state'] = 0
+
         event['state_type'] = event.get('state_type', 1)
         event['event_type'] = event.get('event_type', 'check')
 

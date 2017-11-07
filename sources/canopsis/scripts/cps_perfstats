@@ -20,30 +20,18 @@
 # ---------------------------------
 
 from functools import reduce
-
 from sys import argv, exit, stdin, stdout
-
 from os.path import splitext, exists
-
 from getopt import getopt, GetoptError
-
 from traceback import print_exc
-
 from time import time, timezone, ctime
-
 from requests import Session
-
-try:
-    from json import loads, dumps
-except Exception:
-    from simplejson import loads, dumps
+from json import loads, dumps
 
 
 def usage():
     print(" Usage: get_stats")
-    print
     print(" Get statistics from an event.")
-    print
     print(" Options:")
     print("  -s, --server=SERVER_ADDR")
     print("     webserver address (default : localhost:8082)")
@@ -69,7 +57,6 @@ def usage():
 separation characters")
     print("  -h, --help")
     print("     show help")
-    print
     print(" Example of mongo filters:")
     print(" {\"co\": \"component_name\", \"re\": \"resource_name\"}")
 
@@ -120,7 +107,7 @@ def main(argv):
         elif opt in ('--json', '-j'):
             try:
                 json_string = loads(arg)
-            except Exception as e:
+            except ValueError as e:
                 print('Bad json string', e)
                 exit()
         elif opt in ('--component', '-c'):
@@ -154,7 +141,6 @@ def main(argv):
 
     try:
         response = r.json()
-        #response = loads(r.read())
     except Exception as err:
         print('Error: Bad response from server %s' % err)
         exit()
@@ -190,7 +176,7 @@ def main(argv):
     elif not stdin.isatty():
         try:
             event_filter = loads(stdin.read())
-        except Exception:
+        except ValueError:
             print('Error: Invalid json stream')
             exit()
 

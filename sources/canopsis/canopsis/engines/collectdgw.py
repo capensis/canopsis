@@ -78,7 +78,7 @@ class engine(Engine):
                 try:
                     ## Know metric
                     ctype = types[metric]
-                except Exception:
+                except KeyError:
                     try:
                         ctype = types[metric.split('-')[0]]
                         metric = metric.split('-')[1]
