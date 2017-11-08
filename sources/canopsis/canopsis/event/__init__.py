@@ -37,11 +37,14 @@ class Event(object):
     TYPE = 'event_type'  #: event type field name
     SOURCE_TYPE = 'source_type'  #: source type field name
     SOURCE = 'source'  #: source field name
+    EVENT_TYPE = 'event_type'
     DATA = 'data'  #: data field name
     META = 'meta'  #: meta field name
+    RESOURCE = 'resource'
+    COMPONENT = 'component'
 
-    CONNECTOR = 'canopsis'  #: default connector value
-    CONNECTOR_NAME = 'engine'  #: default connector name
+    CONNECTOR = 'connector'  #: connector field
+    CONNECTOR_NAME = 'connector_name'  #: connector_name field
 
     ENTITY = 'entity'  #: entity id item name
 
@@ -261,20 +264,20 @@ def get_routingkey(event):
 
     :raise KeyError: on missing required info
     """
-    event['source_type'] = 'component'
-    if 'resource' in event:
-        event['source_type'] = 'resource'
+    event[Event.SOURCE_TYPE] = 'component'
+    if Event.RESOURCE in event:
+        event[Event.SOURCE_TYPE] = 'resource'
 
     rk = u"{}.{}.{}.{}.{}".format(
-        event['connector'],
-        event['connector_name'],
-        event['event_type'],
-        event['source_type'],
-        event['component']
+        event[Event.CONNECTOR],
+        event[Event.CONNECTOR_NAME],
+        event[Event.EVENT_TYPE],
+        event[Event.SOURCE_TYPE],
+        event[Event.COMPONENT]
     )
 
-    if 'resource' in event and event['resource']:
-        rk = u"{}.{}".format(rk, event['resource'])
+    if event.get(Event.RESOURCE, None):
+        rk = u"{}.{}".format(rk, event[Event.RESOURCE])
 
     return rk
 
