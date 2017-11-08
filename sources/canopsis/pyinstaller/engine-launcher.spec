@@ -6,7 +6,7 @@ block_cipher = None
 datas = []
 datas.extend(collect_data_files('jsonschema'))
 
-a = Analysis(['scripts/engine-launcher'],
+a = Analysis(['../scripts/engine-launcher'],
             pathex=['.'],
             hiddenimports=[
                 "canopsis",
