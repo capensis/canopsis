@@ -113,8 +113,8 @@ class engine(TaskHandler):
             connector_name=self.etype,
             component=uuid,
             event_type="check",
-            source_type="task_importctx/report",
-            resource=self.amqp_queue,
+            source_type="resource",
+            resource="task_importctx/report",
             state=state,
             state_type=1,
             output=output,
@@ -132,7 +132,8 @@ class engine(TaskHandler):
 
         self.logger.info("Processing import {0}.".format(uuid))
 
-        self.report_manager.update_status(uuid, {Keys.F_STATUS: Keys.ST_ONGOING})
+        self.report_manager.update_status(
+            uuid, {Keys.F_STATUS: Keys.ST_ONGOING})
 
         start = time.time()
         report = {}

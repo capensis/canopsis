@@ -148,18 +148,21 @@ class ContextGraph(object):
         :param event: the event from which we extract the id.
         :return type: the id as a string
         """
+        source_field = ''
         source_type = ''
         if 'source_type' in event:
             source_type = event['source_type']
+            source_field = 'source_type'
         elif 'type' in event:
             source_type = event['type']
+            source_field = 'type'
 
         id_ = ""
 
         if source_type == cls.COMPONENT:
             try:
                 id_ = event["component"].encode('utf-8')
-            except (UnicodeEncodeError, UnicodeDecodeError):
+            except UnicodeError:
                 id_ = event['component'].decode('utf-8')
 
         elif source_type == cls.RESOURCE:
@@ -168,7 +171,7 @@ class ContextGraph(object):
                     event["resource"].encode('utf-8'),
                     event["component"].encode('utf-8')
                 )
-            except (UnicodeEncodeError, UnicodeDecodeError):
+            except UnicodeError:
                 id_ = "{0}/{1}".format(
                     event["resource"].decode('utf-8'),
                     event["component"].decode('utf-8')
@@ -180,15 +183,19 @@ class ContextGraph(object):
                     event["connector"].encode('utf-8'),
                     event["connector_name"].encode('utf-8')
                 )
-            except (UnicodeEncodeError, UnicodeDecodeError):
+            except UnicodeError:
                 id_ = "{0}/{1}".format(
                     event["connector"].decode('utf-8'),
                     event["connector_name"].decode('utf-8')
                 )
 
         else:
-            error_desc = ("Event type should be 'connector', 'resource' or "
-                          "'component' not {}.".format(source_type))
+            error_desc = (
+                "{} should be one of 'connector'"
+                ", 'resource' or 'component' not {}.".format(
+                    source_field, source_type
+                )
+            )
             raise ValueError(error_desc)
 
         return id_

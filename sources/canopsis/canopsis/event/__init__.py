@@ -251,12 +251,30 @@ def forger(
 
 
 def get_routingkey(event):
-    rk = "%s.%s.%s.%s.%s" % (
-        event['connector'], event['connector_name'], event['event_type'],
-        event['source_type'], event['component'])
+    """
+    Build the routing key from an event.
+
+    If the key 'resource' is present, 'source_type' is forced to
+    'resource', otherwise 'component'.
+
+    This function mutates the 'source_type' field if necessary.
+
+    :raise KeyError: on missing required info
+    """
+    event['source_type'] = 'component'
+    if 'resource' in event:
+        event['source_type'] = 'resource'
+
+    rk = u"{}.{}.{}.{}.{}".format(
+        event['connector'],
+        event['connector_name'],
+        event['event_type'],
+        event['source_type'],
+        event['component']
+    )
 
     if 'resource' in event and event['resource']:
-        rk += ".%s" % event['resource']
+        rk = u"{}.{}".format(rk, event['resource'])
 
     return rk
 
