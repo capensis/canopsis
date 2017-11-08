@@ -34,21 +34,18 @@ class Event(object):
     An event contains information and require a type and source_type.
     """
 
-    TYPE = 'event_type'  #: event type field name
-    SOURCE_TYPE = 'source_type'  #: source type field name
-    SOURCE = 'source'  #: source field name
+    SOURCE_TYPE = 'source_type'
+    SOURCE = 'source'
     EVENT_TYPE = 'event_type'
-    DATA = 'data'  #: data field name
-    META = 'meta'  #: meta field name
+    DATA = 'data'
+    META = 'meta'
     RESOURCE = 'resource'
     COMPONENT = 'component'
-
-    CONNECTOR = 'connector'  #: connector field
-    CONNECTOR_NAME = 'connector_name'  #: connector_name field
-
+    CONNECTOR = 'connector'
+    CONNECTOR_NAME = 'connector_name'
     ENTITY = 'entity'  #: entity id item name
 
-    __slots__ = (TYPE, SOURCE, DATA, META)
+    __slots__ = (EVENT_TYPE, SOURCE, DATA, META)
 
     def __init__(self, source, data, meta, _type=None):
 
