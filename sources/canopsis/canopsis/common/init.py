@@ -79,10 +79,7 @@ class Init(object):
 
         def wait(self):
             while self.RUN:
-                try:
-                    sleep(1)
-                except:
-                    break
+                sleep(1)
             self.stop()
 
     def getLogger(self, name, level="INFO", logging_level=None):

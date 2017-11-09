@@ -19,24 +19,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from sys import exit, argv
-
-from urllib2 import build_opener, HTTPCookieProcessor, Request
-
-from cookielib import CookieJar
-
 from argparse import ArgumentParser
-
-from logging import basicConfig, getLogger
-
-from time import time
-
+from cookielib import CookieJar
 from datetime import date
-
-try:
-    from json import loads
-except:
-    from simplejson import loads
+from logging import basicConfig, getLogger
+from sys import exit, argv
+from time import time
+from urllib2 import build_opener, HTTPCookieProcessor, Request
+from json import loads
 
 
 def authentificate(server, authkey):
@@ -66,13 +56,13 @@ unit = {
 parser = ArgumentParser(description='Launch canopsis report through cmd (type "run_report your_authkey -l" to list views)')
 parser.add_argument('authkey', help='The user auth key')
 parser.add_argument('view_id', help='Canopsis view id', nargs='?')
-parser.add_argument('-t', '--time_interval', help='int + char y/M/w/d/h/m/s  (optional)',default=None)
-parser.add_argument('-o', '--output-file', help='The output file full path',dest='output_file')
-parser.add_argument('-f', '--file-name', help='Auto generated if not provided',dest='filename')
-parser.add_argument('-s', '--server', help='The canopsis webserver',default="127.0.0.1:8082", dest='server')
-parser.add_argument('--no-file', help="Don't save file after reporting",action="count",dest='nofile')
-parser.add_argument('-l', '--list', help='list all views with their ids',action="count", dest='list')
-parser.add_argument('-d', '--delete', help='Delete file in breifcase after saving on hdd',action="count")
+parser.add_argument('-t', '--time_interval', help='int + char y/M/w/d/h/m/s  (optional)', default=None)
+parser.add_argument('-o', '--output-file', help='The output file full path', dest='output_file')
+parser.add_argument('-f', '--file-name', help='Auto generated if not provided', dest='filename')
+parser.add_argument('-s', '--server', help='The canopsis webserver', default="127.0.0.1:8082", dest='server')
+parser.add_argument('--no-file', help="Don't save file after reporting", action="count", dest='nofile')
+parser.add_argument('-l', '--list', help='list all views with their ids', action="count", dest='list')
+parser.add_argument('-d', '--delete', help='Delete file in breifcase after saving on hdd', action="count")
 
 args = parser.parse_args()
 if len(argv) == 1:

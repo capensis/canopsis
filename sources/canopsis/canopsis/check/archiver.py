@@ -561,7 +561,7 @@ class Archiver(Configurable):
 
             self.check_statuses(event, devent)
 
-        except:
+        except Exception:
             # No old record
             event['ts_first_stealthy'] = 0
             changed = True
