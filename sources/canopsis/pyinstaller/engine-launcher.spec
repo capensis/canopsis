@@ -31,6 +31,12 @@ exe = EXE(pyz,
           name='engine-launcher',
           debug=False,
           strip=False,
-          upx=False,
+          upx=True,
           console=True)
-
+coll = COLLECT(exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=True,
+               name='engine-launcher-dir')

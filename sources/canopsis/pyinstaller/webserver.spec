@@ -31,6 +31,12 @@ exe = EXE(pyz,
           name='webserver',
           debug=False,
           strip=False,
-          upx=False,
+          upx=True,
           console=True)
-
+coll = COLLECT(exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=True,
+               name='webserver-dir')

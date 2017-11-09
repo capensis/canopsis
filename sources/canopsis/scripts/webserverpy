@@ -2,26 +2,36 @@
 
 # https://github.com/benoitc/gunicorn/issues/669
 
-from gunicorn.app.base import Application, Config
 import gunicorn
+
+from gunicorn.app.base import Application, Config
 from gunicorn import glogging
-from gunicorn.workers import sync
+from gunicorn.workers import ggevent
 
-from canopsis.webcore.wsgi import app as wsgi_app
+from canopsis.webcore.wsgi import get_default_app
 
-class GUnicornFlaskApplication(Application):
-    def __init__(self, app):
-        self.usage, self.callable, self.prog, self.app = None, None, None, app
+class WebServerPy(Application):
 
-    def run(self, **options):
+    def __init__(self, app_func, options=None):
+        self.options = options or {}
+        self.app_func = app_func
+        super(Application, self).__init__()
+
+    def load_config(self):
         self.cfg = Config()
-        [self.cfg.set(key, value) for key, value in options.items()]
-        return Application.run(self)
 
-    load = lambda self:self.app
+        for key, value in options.items():
+            self.cfg.set(key, value)
+
+    def load(self):
+        self.app = self.app_func()
+        return self.app
 
 if __name__ == "__main__":
-    gunicorn_app = GUnicornFlaskApplication(wsgi_app)
-    gunicorn_app.run(
-        worker_class="gunicorn.workers.sync.SyncWorker",
-    )
+    options = {
+        'bind': '127.0.0.1:8082',
+        'workers': 2,
+        'worker_class': 'gevent',
+    }
+    gunicorn_app = WebServerPy(get_default_app, options)
+    gunicorn_app.run()

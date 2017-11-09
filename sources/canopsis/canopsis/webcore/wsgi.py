@@ -21,16 +21,18 @@
 from __future__ import unicode_literals
 
 import importlib
+import os
+import sys
+
 import gevent
 from gevent import monkey
 monkey.patch_all()
-import os
-from signal import SIGTERM, SIGINT
-import sys
 
+import mongodb_beaker  # needed by beaker
+
+from signal import SIGTERM, SIGINT
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
-import mongodb_beaker  # needed by beaker
 
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
@@ -130,7 +132,7 @@ class WebServer():
         self.webmodules = {}
         self.auth_backends = {}
 
-    def __call__(self):
+    def init_app(self):
         self.logger.info('Initialize gevent signal-handlers')
         gevent.signal(SIGTERM, self.exit)
         gevent.signal(SIGINT, self.exit)
@@ -259,8 +261,10 @@ class WebServer():
         pass
 
 
-conf = Configuration.load(WebServer.CONF_PATH, Ini)
-logger = Logger.get('webserver', WebServer.LOG_FILE)
-# Declare WSGI application
-ws = WebServer(config=conf, logger=logger).__call__()
-app = ws.application
+def get_default_app():
+    conf = Configuration.load(WebServer.CONF_PATH, Ini)
+    logger = Logger.get('webserver', WebServer.LOG_FILE)
+    # Declare WSGI application
+    ws = WebServer(config=conf, logger=logger).init_app()
+    app = ws.application
+    return app
