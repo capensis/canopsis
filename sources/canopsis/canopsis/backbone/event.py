@@ -1,4 +1,5 @@
 from time import time
+from six import string_types
 
 
 class EventUTF8Error(Exception):
@@ -10,6 +11,7 @@ class EventUTF8Error(Exception):
 
 
 class Event(object):
+
     _present_keys = {
         'connector',
         'connector_name',
@@ -17,6 +19,7 @@ class Event(object):
         'source_type',
         'event_type'
     }
+
     def __init__(
             self,
             connector,
@@ -63,13 +66,18 @@ class Event(object):
 
     def ensure_utf8_format(self):
         for key in self._present_keys:
-            try:
-                setattr(self, key, getattr(self, key).encode('utf-8'))
-            except UnicodeEncodeError, UnicodeDecodeError:
-                raise EventUTF8Error
+            attr = getattr(self, key)
+            if isinstance(attr, string_types):
+                try:
+                    setattr(self, key, attr.encode('utf-8'))
+                except UnicodeEncodeError, UnicodeDecodeError:
+                    raise EventUTF8Error
 
     def to_json(self):
         try:
             return loads({k:getattr(self, k) for k in self._present_keys})
         except ValueError:
+            pass
 
+    def __repr__(self):
+        return '<event {} {} {}>'.format(self.connector, self.connector_name, self.component) 
