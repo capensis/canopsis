@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
-import pika
-#from concurrent.futures import ThreadPoolExecutor
-import threading
-from canopsis.backbone.event import Event
 import json
+
+from canopsis.backbone.event import Event
+
 
 class Consumer(object):
     def __init__(self, connection, queue):
+        """
+        :param Connection connection:
+        :param str queue:
+        """
         self.connection = connection
         self.queue = queue
         self.channel = self.connection.channel()
@@ -14,10 +17,13 @@ class Consumer(object):
         self.callback = None
 
     def consume(self):
+        """
+        Start consuming events.
+        """
         self.channel.basic_consume(self._work, queue=self.queue, no_ack=True)
         self.channel.start_consuming()
 
     def _work(self, unused_channel, basic_deliver, properties, body):
-        truc = json.loads(body)
-        event = Event(**truc)
+        dico = json.loads(body)
+        event = Event(**dico)
         self.callback(event)
