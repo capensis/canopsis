@@ -1,22 +1,21 @@
 # -*- mode: python -*-
 
+import os
+
+from subprocess import check_output
+
 from PyInstaller.utils.hooks import collect_data_files
 
-block_cipher = None
+raw_imports = check_output("./find_imports.sh")
+imports = ["kombu.transport.pyamqp"]
+imports.extend(raw_imports.split('\n'))
 datas = []
 datas.extend(collect_data_files('jsonschema'))
 
+block_cipher = None
 a = Analysis(['../scripts/engine-launcher'],
             pathex=['.'],
-            hiddenimports=[
-                "canopsis",
-                "canopsis.engines.dynamic",
-                "canopsis.stats.process",
-                "canopsis.configuration.driver.file",
-                "canopsis.configuration.driver.file.json",
-                "canopsis.configuration.driver.file.ini",
-                "kombu.transport.pyamqp",
-            ],
+            hiddenimports=imports,
             hookspath=None,
             runtime_hooks=None,
             cipher=block_cipher,
