@@ -24,9 +24,10 @@ Alarm reader manager.
 TODO: replace the storage class parameter with a collection (=> rewriting count())
 """
 
-from sys import prefix
 from os.path import join
 from time import time
+
+from canopsis.common import root_path
 
 from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.manager import Alerts
@@ -93,7 +94,7 @@ class AlertsReader(object):
 
         self.count_cache = {}
 
-        self.grammar = join(prefix, self.GRAMMAR_FILE)
+        self.grammar = join(root_path, self.GRAMMAR_FILE)
 
     @classmethod
     def provide_default_basics(cls):

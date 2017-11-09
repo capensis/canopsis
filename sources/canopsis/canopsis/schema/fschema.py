@@ -48,7 +48,7 @@ class FSchema(object):
         """
 
         # For the moment only one location is allowed for schemas : in
-        # sys.prefix/share/canopsis/schema/xml
+        # root_path/share/canopsis/schema/xml
         for schema_file in listdir(get_schema_path()):
             try:
                 xschema = parse(get_schema_path(schema_file))

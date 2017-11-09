@@ -23,6 +23,8 @@
 import time
 import polib
 import sys
+
+from canopsis.common import root_path
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 
@@ -60,7 +62,7 @@ class i18n(object):
         existing_terms = {}
 
         # Update lang file with existing po file
-        base_lang_path = join(sys.prefix, 'locale', 'en', 'ui_lang.po')
+        base_lang_path = join(root_path, 'locale', 'en', 'ui_lang.po')
         if isfile(base_lang_path):
             po_base = polib.pofile(base_lang_path)
             for entry in po_base:
@@ -91,7 +93,7 @@ class i18n(object):
                 )
                 po.append(entry)
 
-        output = join(sys.prefix, 'tmp', 'todo.po')
+        output = join(root_path, 'tmp', 'todo.po')
         po.save(output)
         print (
             u'Database translation definitions updated into {} file.'.format(

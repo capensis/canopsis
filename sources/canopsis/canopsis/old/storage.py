@@ -20,7 +20,6 @@
 
 import logging
 import time
-import sys
 import os
 import ConfigParser
 
@@ -32,6 +31,7 @@ from pymongo import Connection
 from pymongo import ASCENDING
 from pymongo import DESCENDING
 
+from canopsis.common import root_path
 from canopsis.mongo.core import CanopsisSONManipulator
 from canopsis.old.account import Account
 from canopsis.old.record import Record
@@ -41,7 +41,7 @@ from operator import itemgetter
 from urlparse import urlparse
 
 CONFIG = ConfigParser.RawConfigParser()
-CONFIG.read(os.path.join(sys.prefix, 'etc', 'cstorage.conf'))
+CONFIG.read(os.path.join(root_path, 'etc', 'cstorage.conf'))
 
 
 class Storage(object):
