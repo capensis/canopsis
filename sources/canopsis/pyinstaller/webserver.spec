@@ -11,6 +11,7 @@ imports = [
   "gunicorn.workers.ggevent",
   "gunicorn.glogging",
   "kombu.transport.pyamqp",
+  "validictory",
 ]
 imports.extend(raw_imports.split('\n'))
 datas = []

@@ -11,7 +11,7 @@ functools32==3.2.3-2
 fuzzywuzzy==0.9.0
 gevent==1.2.2
 grako==3.18.1
-greenlet==0.4.7
+greenlet==0.4.12
 gunicorn==19.7.1
 icalendar==3.5
 ijson==2.3.0
@@ -49,3 +49,4 @@ sure==1.2.24
 testtools==2.0.0
 traceback2==1.4.0
 unittest2==1.1.0
+validictory=1.1.1
