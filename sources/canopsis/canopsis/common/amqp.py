@@ -1,9 +1,15 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import json
 import pika
 
 from canopsis.backbone.event import Event
 from canopsis.event import get_routingkey
+
+
+class AmqpNotCallableCallback(Exception):
+    pass
 
 
 class AmqpConnection(object):
@@ -13,7 +19,6 @@ class AmqpConnection(object):
         :param url: url of the form: amqp://[<user>:<pass>]@host:port/vhost
         :type url: str
         """
-
         self._url = url
         self.connection = None
         self.channel = None
@@ -134,9 +139,23 @@ class AmqpConsumer(object):
         """
         self.connection = connection
         self.queue = queue
-        self.channel = self.connection.channel()
+        self._on_message = None
+
+        self.channel = self.connection.channel
         self.channel.connection.process_data_events(time_limit=1)
-        self.callback = None
+
+    @property
+    def on_message(self):
+        """
+        Function to call when a message is consumed.
+
+        :raise: AmqpNotCallableCallback when the callback has not been set
+        """
+        if not callable(self._on_message):
+            raise AmqpNotCallableCallback('Callback cannot be called: {}'
+                                          .format(self._on_message))
+
+        return self._on_message
 
     def consume(self):
         """
@@ -145,7 +164,15 @@ class AmqpConsumer(object):
         self.channel.basic_consume(self._work, queue=self.queue, no_ack=True)
         self.channel.start_consuming()
 
-    def _work(self, unused_channel, basic_deliver, properties, body):
+    def _work(self, channel, method, properties, body):
+        """
+        Work wrapper. Convert a message to an Event object.
+
+        :param BlockingChannel channel: used channel
+        :param Deliver method: ?
+        :param BasicProperties properties: properties [sic]
+        :param str body: the readed message
+        """
         dico = json.loads(body)
         event = Event(**dico)
-        self.callback(event)
+        self.on_message(event)
