@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+
 from canopsis.common.pika_amqp import Consumer
 
 
