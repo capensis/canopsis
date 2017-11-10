@@ -49,4 +49,4 @@ sure==1.2.24
 testtools==2.0.0
 traceback2==1.4.0
 unittest2==1.1.0
-validictory=1.1.1
+validictory==1.1.1
