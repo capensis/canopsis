@@ -1,2 +1,3 @@
-pyinstaller --clean -D pyinstaller/engine-launcher.spec
-pyinstaller --clean -D pyinstaller/webserver.spec
+python setup.py build install
+pyinstaller -y --clean -D pyinstaller/engine-launcher.spec
+pyinstaller -y --clean -D pyinstaller/webserver.spec

@@ -12,31 +12,40 @@ imports.extend(raw_imports.split('\n'))
 datas = []
 datas.extend(collect_data_files('jsonschema'))
 
+app_entry_script='../scripts/engine-launcher'
+app_bin_name='engine-launcher'
+app_dir_name='engine-launcher-dir'
+
 block_cipher = None
-a = Analysis(['../scripts/engine-launcher'],
-            pathex=['.'],
-            hiddenimports=imports,
-            hookspath=None,
-            runtime_hooks=None,
-            cipher=block_cipher,
-            datas=datas
+a = Analysis(
+  [app_entry_script],
+  pathex=['.'],
+  hiddenimports=imports,
+  hookspath=None,
+  runtime_hooks=None,
+  cipher=block_cipher,
+  datas=datas
 )
 
 pyz = PYZ(a.pure, cipher=block_cipher)
 
-exe = EXE(pyz,
-          a.scripts,
-          a.binaries,
-          a.zipfiles,
-          name='engine-launcher',
-          debug=False,
-          strip=False,
-          upx=True,
-          console=True)
-coll = COLLECT(exe,
-               a.binaries,
-               a.zipfiles,
-               a.datas,
-               strip=False,
-               upx=True,
-               name='engine-launcher-dir')
+exe = EXE(
+  pyz,
+  a.scripts,
+  a.binaries,
+  a.zipfiles,
+  name=app_bin_name,
+  debug=False,
+  strip=True,
+  upx=True,
+  console=True
+)
+coll = COLLECT(
+  exe,
+  a.binaries,
+  a.zipfiles,
+  a.datas,
+  strip=True,
+  upx=True,
+  name=app_dir_name
+)

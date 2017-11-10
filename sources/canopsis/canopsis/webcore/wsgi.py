@@ -28,11 +28,14 @@ import gevent
 from gevent import monkey
 monkey.patch_all()
 
-import mongodb_beaker  # needed by beaker
 
+import beaker
+import beaker.cache
+import beaker.session
 from signal import SIGTERM, SIGINT
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
+import mongodb_beaker  # needed by beaker
 
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
@@ -227,6 +230,8 @@ class WebServer():
         self.app.install(backend)
 
     def load_session(self):
+        # FIXIT: pyinstaller removes entrypoints
+        beaker.cache.clsmap['mongodb'] = mongodb_beaker.MongoDBNamespaceManager
         self.app = SessionMiddleware(self.app, {
             'session.type': 'mongodb',
             'session.cookie_expires': self.cookie_expires,
