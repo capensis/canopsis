@@ -2,36 +2,28 @@
 
 # https://github.com/benoitc/gunicorn/issues/669
 
-import gunicorn
-
-from gunicorn.app.base import Application, Config
-from gunicorn import glogging
-from gunicorn.workers import ggevent
+from gunicorn.app.base import Application
 
 from canopsis.webcore.wsgi import get_default_app
 
+
 class WebServerPy(Application):
+    """
+    Transparently replace the usual gunicorn command so we can
+    package the Canopsis Web Server with PyInstaller.
+    """
 
-    def __init__(self, app_func, options=None):
-        self.options = options or {}
-        self.app_func = app_func
+    def __init__(self, wsgi_getter):
         super(Application, self).__init__()
+        self.wsgi_getter = wsgi_getter
 
-    def load_config(self):
-        self.cfg = Config()
-
-        for key, value in options.items():
-            self.cfg.set(key, value)
+    def init(self, parser, opts, args):
+        return {}
 
     def load(self):
-        self.app = self.app_func()
-        return self.app
+        return self.wsgi_getter()
+
 
 if __name__ == "__main__":
-    options = {
-        'bind': '0.0.0.0:8082',
-        'workers': 2,
-        'worker_class': 'gevent',
-    }
-    gunicorn_app = WebServerPy(get_default_app, options)
+    gunicorn_app = WebServerPy(get_default_app)
     gunicorn_app.run()
