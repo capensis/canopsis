@@ -7,7 +7,11 @@ from subprocess import check_output
 from PyInstaller.utils.hooks import collect_data_files
 
 raw_imports = check_output("./find_imports.sh")
-imports = ["kombu.transport.pyamqp"]
+imports = [
+  "gunicorn.workers.ggevent",
+  "gunicorn.glogging",
+  "kombu.transport.pyamqp",
+]
 imports.extend(raw_imports.split('\n'))
 datas = []
 datas.extend(collect_data_files('jsonschema'))
