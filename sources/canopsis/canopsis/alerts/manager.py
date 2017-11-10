@@ -337,7 +337,6 @@ class Alerts(object):
 
         :returns: Alarm as dict if found, else None
         """
-
         storage = self.alerts_storage
 
         result = storage.get(
@@ -368,7 +367,6 @@ class Alerts(object):
         :param tags: Tags to add on alarm (optional)
         :type tags: str or list
         """
-
         storage = self.alerts_storage
 
         alarm_id = alarm[storage.DATA_ID]
@@ -506,7 +504,7 @@ class Alerts(object):
         entity_id = self.context_manager.get_id(event)
 
         if (event['event_type'] == Check.EVENT_TYPE
-            or event['event_type'] == 'watcher'):
+                or event['event_type'] == 'watcher'):
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
                 if event[Check.STATE] == Check.OK:
@@ -641,6 +639,7 @@ class Alerts(object):
         value = alarm.get(self.alerts_storage.VALUE)
 
         old_state = get_last_state(value, ts=event['timestamp'])
+
         if state != old_state:
             return self.change_of_state(alarm, old_state, state, event)
 
@@ -722,6 +721,7 @@ class Alerts(object):
         # Executing task
         value = alarm.get(self.alerts_storage.VALUE)
         new_value, status = task(self, value, state, event)
+        new_value[AlarmField.last_update_date.value] = int(time())
 
         alarm[storage_value] = new_value
 
@@ -760,9 +760,9 @@ class Alerts(object):
 
         value = alarm.get(self.alerts_storage.VALUE)
         new_value = task(self, value, status, event)
+        new_value[AlarmField.last_update_date.value] = int(time())
 
         alarm[self.alerts_storage.VALUE] = new_value
-        alarm['last_update_date'] = time()
 
         return alarm
 
