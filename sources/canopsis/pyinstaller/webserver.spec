@@ -12,7 +12,7 @@ imports.extend(raw_imports.split('\n'))
 datas = []
 datas.extend(collect_data_files('jsonschema'))
 
-app_entry_script='../scripts/webserverpy'
+app_entry_script='../scripts/webserver'
 app_bin_name='webserver'
 app_dir_name='webserver-dir'
 
