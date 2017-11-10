@@ -299,7 +299,7 @@ sys.argv = [sys.argv[0]]
 #     CONFIG.read(join(sys.prefix, 'etc', 'amqp2engines.conf'))
 #     try:
 #         BEAT_INTERVAL = int(CONFIG.get('engine:eventstore', 'beat_interval'))
-#     except:
+#     except Exception:
 #         BEAT_INTERVAL = 60
 
 #     unittest.main(verbosity=2)

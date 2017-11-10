@@ -48,7 +48,7 @@ class Schema(object):
         for schema_file in listdir(get_schema_path()):
             try:
                 xschema = parse(get_schema_path(schema_file))
-            except:
+            except Exception:
                 # If we don't manage to parse it, it may be a non-xml
                 # file that we ignore
                 continue
@@ -175,19 +175,19 @@ class Schema(object):
         else:
             try:
                 xschema = parse(StringIO(schema))
-            except:
+            except Exception:
                 return [False, None]
 
         try:
             XMLSchema(xschema)
             return [True, 'XMLSchema']
-        except:
+        except Exception:
             pass
 
         try:
             XSLT(xschema)
             return [True, 'XSLT']
-        except:
+        except Exception:
             pass
 
         return [False, None]

@@ -52,7 +52,7 @@ class FSchema(object):
         for schema_file in listdir(get_schema_path()):
             try:
                 xschema = parse(get_schema_path(schema_file))
-            except:
+            except Exception:
                 # If we don't manage to parse it, it may be a non-xml
                 # file that we ignore
                 continue
@@ -78,7 +78,7 @@ class FSchema(object):
                     parser = XMLParser(target=xslt2py())
                     factorised_schema = XML(tostring(xslt.getroot()), parser)
                     self.factorisation_cache[uk] = factorised_schema
-                except:
+                except Exception:
                     pass
 
     def cache_schema(self, xschema):
@@ -197,19 +197,19 @@ class FSchema(object):
         else:
             try:
                 xschema = parse(StringIO(schema))
-            except:
+            except Exception:
                 return [False, None]
 
         try:
             XMLSchema(xschema)
             return [True, 'XMLSchema']
-        except:
+        except Exception:
             pass
 
         try:
             XSLT(xschema)
             return [True, 'XSLT']
-        except:
+        except Exception:
             pass
 
         return [False, None]
@@ -269,7 +269,7 @@ class FSchema(object):
 
         try:
             xml = parse(StringIO(data))
-        except:
+        except Exception:
             raise SyntaxError('Wrong xml syntax : {}'.format(data))
 
         return xmlschema.validate(xml)

@@ -16,6 +16,7 @@ from canopsis.logger import Logger, OutputNull
 
 logger = Logger.get("", None, output_cls=OutputNull)
 
+
 class Keys:
 
     ID = "_id"
@@ -1567,7 +1568,7 @@ class ReportManager(TestCase):
             self.manager.create_import_status(self.uuid)
         except ValueError as e:
             self.assertEqual(desc, e.message)
-        except:
+        except Exception:
             self.fail("An exception different of ValueError was raised")
 
     def _test_state_on_db(self, func, state, other_state):

@@ -19,15 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from logging import basicConfig, DEBUG, getLogger
+from signal import signal, SIGINT, SIGTERM
+from sys import argv
 from time import sleep
 
-from logging import basicConfig, DEBUG, getLogger
-
-from sys import argv
-
 from canopsis.old.rabbitmq import Amqp
-
-from signal import signal, SIGINT, SIGTERM
 
 DAEMON_NAME = "amqp2tty"
 DAEMON_TYPE = "logger"
@@ -47,6 +44,7 @@ def on_message(body, msg):
     text = "%s:\n\t%s\n" % (source, body)
     logger.debug("New message:\n%s" % text)
 
+
 #### Connect signals
 RUN = 1
 
@@ -56,6 +54,7 @@ def signal_handler(signum, frame):
     global RUN
     RUN = 0
 
+
 signal(SIGINT, signal_handler)
 signal(SIGTERM, signal_handler)
 
@@ -63,7 +62,7 @@ amqp = Amqp()
 
 try:
     exchange = argv[1]
-except:
+except IndexError:
     exchange = amqp.exchange_name_events
 
 amqp.add_queue(DAEMON_NAME, '#', on_message, exchange)

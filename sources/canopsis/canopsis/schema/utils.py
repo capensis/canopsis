@@ -80,7 +80,7 @@ def get_xml(unique_key):
     for schema_file in listdir(get_schema_path()):
         try:
             xschema = parse(get_schema_path(schema_file))
-        except:
+        except Exception:
             continue
 
         if unique_key == get_unique_key(xschema):
