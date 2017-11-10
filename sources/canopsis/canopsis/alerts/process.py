@@ -20,8 +20,8 @@
 
 from __future__ import unicode_literals
 
-from canopsis.alarms.services import AlarmService
 from canopsis.alarms.adapters import AlarmAdapter
+from canopsis.alarms.services import AlarmService
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.task.core import register_task
