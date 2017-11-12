@@ -24,7 +24,6 @@ hook_canopsis = import_hook()
 
 app_entry_script=os.environ['PYI_SCRIPT']
 app_bin_name=os.environ['PYI_BIN_NAME']
-app_dir_name=os.environ['PYI_DIR_NAME']
 
 app_debug=False
 if int(os.environ.get('PYI_DEBUG', 0)) == 1:
@@ -60,5 +59,5 @@ exe = EXE(pyz, a.scripts, a.binaries, a.zipfiles,
 coll = COLLECT(exe, a.binaries, a.zipfiles, a.datas,
     strip=app_strip,
     upx=app_upx,
-    name=app_dir_name
+    name=app_bin_name
 )

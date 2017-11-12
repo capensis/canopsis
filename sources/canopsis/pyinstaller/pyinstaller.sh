@@ -26,11 +26,9 @@ remove_hooks
 rm -rf ${workdir}/dist
 
 export PYI_BIN_NAME='engine-launcher'
-export PYI_DIR_NAME='engine-launcher-dir'
 export PYI_SCRIPT="${workdir}/../scripts/engine-launcher"
 pyinstaller -y --clean canopsis.spec || exit 1
 
 export PYI_BIN_NAME='webserver'
-export PYI_DIR_NAME='webserver-dir'
 export PYI_SCRIPT="${workdir}/../scripts/webserver"
 pyinstaller -y --clean canopsis.spec || exit 1
