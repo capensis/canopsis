@@ -8,21 +8,6 @@ if [ -z "${VIRTUAL_ENV}" ]; then
     exit 1
 fi
 
-function remove_hooks() {
-    find ${VIRTUAL_ENV} -name "hook-_tkinter.pyc" -delete
-    find ${VIRTUAL_ENV} -name "pyi_rth__tkinter.pyc" -delete
-    f=$(find ${VIRTUAL_ENV} -name "hook-_tkinter.py")
-    if [ ! "${f}" = "" ]; then
-        echo -n "" > "${f}"
-    fi
-    f=$(find ${VIRTUAL_ENV} -name "pyi_rth__tkinter.py")
-    if [ ! "${f}" = "" ]; then
-        echo -n "" > "${f}"
-    fi
-}
-
-remove_hooks
-
 rm -rf ${workdir}/dist
 
 export PYI_BIN_NAME='engine-launcher'

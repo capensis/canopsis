@@ -29,13 +29,13 @@ app_debug=False
 if int(os.environ.get('PYI_DEBUG', 0)) == 1:
     app_debug=True
 
-app_strip=False
-if int(os.environ.get('PYI_STRIP', 0)) == 1:
-    app_strip=True
+app_strip=True
+if int(os.environ.get('PYI_STRIP', 1)) != 1:
+    app_strip=False
 
-app_upx=False
-if int(os.environ.get('PYI_UPX', 0)) == 1:
-    app_upx=True
+app_upx=True
+if int(os.environ.get('PYI_UPX', 1)) != 1:
+    app_upx=False
 
 a = Analysis(
     [app_entry_script],

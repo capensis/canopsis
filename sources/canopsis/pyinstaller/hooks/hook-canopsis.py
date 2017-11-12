@@ -4,6 +4,10 @@ from PyInstaller.utils.hooks import collect_data_files
 from PyInstaller.compat import modname_tkinter
 
 
+datas = []
+hiddenimports = []
+
+
 def _find_canopsis_pyfiles(srcdir):
     olddir = os.path.abspath(os.curdir)
     os.chdir(srcdir)
@@ -35,22 +39,23 @@ def _find_canopsis_imports(srcdir):
     return imports
 
 
-def get_static_hidden_imports():
+def _get_static_hidden_imports():
     imports = [
         'gunicorn.workers.ggevent',
         'gunicorn.glogging',
         'kombu.transport.pyamqp',
-        'validictory',
     ]
 
     return imports
 
 
-def get_additional_data():
-    return collect_data_files('jsonschema')
+def _get_additional_data():
+    return []
 
 
-datas = get_additional_data()
-hiddenimports = get_static_hidden_imports()
+datas.extend(_get_additional_data())
+
+hiddenimports.extend(_get_static_hidden_imports())
 hiddenimports.extend(_find_canopsis_imports('../canopsis'))
+
 excludedimports = [modname_tkinter]
