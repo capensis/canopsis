@@ -1,7 +1,6 @@
 # -*- mode: python -*-
 
 import os
-import imp
 
 from subprocess import check_output
 
@@ -13,6 +12,7 @@ try:
     hook_canopsis = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(foo)
 except ImportError:
+    import imp
     hook_canopsis = imp.load_source('hook_canopsis', 'pyinstaller/hooks/hook-canopsis.py')
 
 app_entry_script=os.environ['PYI_SCRIPT']
