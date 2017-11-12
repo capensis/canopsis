@@ -6,6 +6,7 @@ from subprocess import check_output
 
 from PyInstaller.utils.hooks import collect_data_files
 
+"""
 def import_hook():
     try:
         import importlib.util
@@ -19,42 +20,45 @@ def import_hook():
     return hook_canopsis
 
 hook_canopsis = import_hook()
+"""
 
 app_entry_script=os.environ['PYI_SCRIPT']
 app_bin_name=os.environ['PYI_BIN_NAME']
 app_dir_name=os.environ['PYI_DIR_NAME']
+
+app_debug=False
+if int(os.environ.get('PYI_DEBUG', 0)) == 1:
+    app_debug=True
+
 app_strip=False
 if int(os.environ.get('PYI_STRIP', 0)) == 1:
     app_strip=True
 
+app_upx=False
+if int(os.environ.get('PYI_UPX', 0)) == 1:
+    app_upx=True
+
 a = Analysis(
     [app_entry_script],
-    pathex=['.'],
+    pathex=['./'],
     hookspath=['./hooks'],
-    datas=hook_canopsis.get_additional_data(),
-    #hiddenimports=hook_canopsis.get_static_hidden_imports(),
+    hiddenimports=[],
+    runtime_hooks=[],
+    excludes=[],
 )
 
-pyz = PYZ(a.pure)
+pyz = PYZ(a.pure, a.zipped_data)
 
-exe = EXE(
-    pyz,
-    a.scripts,
-    a.binaries,
-    a.zipfiles,
+exe = EXE(pyz, a.scripts, a.binaries, a.zipfiles,
+    exclude_binaries=True,
     name=app_bin_name,
-    debug=False,
+    debug=app_debug,
     strip=app_strip,
-    upx=True,
-    console=True,
-    append_pkg=False
+    upx=app_upx,
+    console=True
 )
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
+coll = COLLECT(exe, a.binaries, a.zipfiles, a.datas,
     strip=app_strip,
-    upx=True,
+    upx=app_upx,
     name=app_dir_name
 )

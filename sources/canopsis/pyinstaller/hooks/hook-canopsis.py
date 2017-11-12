@@ -40,7 +40,7 @@ def get_static_hidden_imports():
         'gunicorn.workers.ggevent',
         'gunicorn.glogging',
         'kombu.transport.pyamqp',
-        'validictory'
+        'validictory',
     ]
 
     return imports
