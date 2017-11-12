@@ -17,7 +17,6 @@ def _find_canopsis_imports(srcdir):
         if pyfile.endswith('__init__.py'):
             continue
 
-
         import_ = pyfile.replace(os.sep, '.').replace('.py', '')
 
         if '.cli.' in import_:
@@ -27,7 +26,7 @@ def _find_canopsis_imports(srcdir):
 
     return imports
 
-def _get_static_hidden_imports():
+def get_static_hidden_imports():
     imports = [
         "gunicorn.workers.ggevent",
         "gunicorn.glogging",
@@ -37,7 +36,10 @@ def _get_static_hidden_imports():
 
     return imports
 
+def get_additional_data():
+    return collect_data_files('jsonschema')
+
 def hook(hook_api):
-    hook_api.add_imports(*_find_canopsis_imports('canopsis'))
+    hook_api.add_datas(_get_additional_data())
     hook_api.add_imports(*_get_static_hidden_imports())
-    hook_api.add_datas(collect_data_files('jsonschema'))
+    hook_api.add_imports(*_find_canopsis_imports('canopsis'))
