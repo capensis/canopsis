@@ -14,7 +14,7 @@ class WebServerPy(Application):
     """
 
     def __init__(self, wsgi_getter):
-        super(Application, self).__init__()
+        super(WebServerPy, self).__init__()
         self.wsgi_getter = wsgi_getter
 
     def init(self, parser, opts, args):
