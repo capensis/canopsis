@@ -18,9 +18,15 @@ class WebServerPy(Application):
         self.wsgi_getter = wsgi_getter
 
     def init(self, parser, opts, args):
+        """
+        Implementation is required from the Application class.
+        """
         return {}
 
     def load(self):
+        """
+        Must return the final WSGI app object.
+        """
         return self.wsgi_getter()
 
 
