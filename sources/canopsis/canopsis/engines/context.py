@@ -136,7 +136,7 @@ class engine(Engine):
                 pass
             try:
                 v = v.encode('utf-8')
-            except UnicodeError:
+            except (UnicodeError, TypeError, AttributeError):
                 pass
             encoded_event[k] = v
 

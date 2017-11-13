@@ -117,7 +117,7 @@ def event_processing(
                         pass
                     try:
                         v = v.encode('utf-8')
-                    except UnicodeError:
+                    except (UnicodeError, TypeError, AttributeError):
                         pass
                     encoded_entity[k] = v
 
