@@ -45,11 +45,14 @@ class AlarmService(object):
         Alarm service constructor.
 
         :param AlarmAdapter alarms_adapter: Alarms DB adapter
-        :param Logger: a logger instance
+        :param WatcherManager watcher_manager: ref to a WatcherManager object
+        :param Logger logger: a logger instance
+        :param dict config: configuration dict
         """
         self.alarms_adapter = alarms_adapter
         self.watcher_manager = watcher_manager
         self.logger = logger
+
         if config is None:
             self.config = {}
         else:
@@ -57,6 +60,15 @@ class AlarmService(object):
                 raise ValueError("config must be a dict")
 
             self.config = config
+
+        self.bagot_time = self.config.get('bagot_time',
+                                          DEFAULT_FLAPPING_INTERVAL)
+        self.cancel_delay = self.config.get('cancel_autosolve_delay',
+                                            DEFAULT_CANCEL_AUTOSOLVE_DELAY)
+        self.stealthy_duration = self.config.get('stealthy_show',
+                                                 DEFAULT_STEALTHY_SHOW_DURATION)
+        self.stealthy_interval = self.config.get('stealthy_time',
+                                                 DEFAULT_STEALTHY_INTERVAL)
 
     def _log(self, level, message):
         """
@@ -96,7 +108,7 @@ class AlarmService(object):
         if alarms is None:
             alarms = self.find_snoozed_alarms()
         for alarm in alarms:
-            if alarm.resolve_snooze() is True:
+            if alarm.resolve_snooze():
                 self._log(logging.DEBUG,
                           'alarm : {} has been unsnoozed'.format(alarm._id))
                 self.update_alarm(alarm)
@@ -113,27 +125,15 @@ class AlarmService(object):
         """
         alarm_counter = 0
         updated_alarm_counter = 0
+
         for alarm in self.alarms_adapter.stream_unresolved_alarms():
-            alarm_needs_update = False
-
-            if alarm.resolve(self.config.get('bagot_time',
-                                             DEFAULT_FLAPPING_INTERVAL)) is True:
-                alarm_needs_update = True
-
-            if alarm.resolve_cancel(self.config.get('cancel_autosolve_delay',
-                                                    DEFAULT_CANCEL_AUTOSOLVE_DELAY)) is True:
-                alarm_needs_update = True
-
-            stealthy_show_duration = self.config.get('stealthy_show',
-                                                     DEFAULT_STEALTHY_SHOW_DURATION)
-            stealthy_interval = self.config.get('stealthy_time',
-                                                DEFAULT_STEALTHY_INTERVAL)
-            if alarm.resolve_stealthy(stealthy_show_duration,
-                                      stealthy_interval) is True:
-                alarm_needs_update = True
-
             alarm_counter += 1
-            if alarm_needs_update is True:
+
+            if (alarm.resolve(self.bagot_time)
+                    or alarm.resolve_cancel(self.cancel_delay)
+                    or alarm.resolve_stealthy(self.stealthy_duration,
+                                              self.stealthy_interval)
+                    ):
                 self.update_alarm(alarm)
                 updated_alarm_counter += 1
 
