@@ -49,7 +49,7 @@ logger = logging.getLogger('pyperfstore3')
 def get_arg(args, index):
     try:
         arg = args[index]
-    except:
+    except IndexError:
         logger.error(u'Missing parameters ...')
         sys.exit(1)
     return arg

@@ -1,11 +1,19 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import pika
+
 from canopsis.backbone.engine_cleaner import EngineCleaner
-from canopsis.common.pika_amqp import Consumer
 from canopsis.logger import Logger
 
 logger = Logger.get('cleaner2', 'cleaner2.log')
 credentials = pika.PlainCredentials('cpsrabbit', 'canopsis')
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost', 5672, 'canopsis', credentials))
+parameters = pika.ConnectionParameters('localhost',
+                                       5672,
+                                       'canopsis',
+                                       credentials)
+connection = pika.BlockingConnection(parameters)
 c = EngineCleaner(connection, 'Engine_cleaner_events', logger)
 c.consume()
-

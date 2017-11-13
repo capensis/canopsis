@@ -1,15 +1,21 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
+
 from canopsis.common.pika_amqp import Consumer
 
 
 class Engine(Consumer):
     def __init__(self, connection, queue, logger):
         """
-        :param AmqpConnection amqp_consumer:
+        :param AmqpConnection connection: a connection object to the Amqp
+        :param str queue: the queue to consume
+        :param Logger logger: a logger
         """
         super(Engine, self).__init__(connection, queue)
         self.logger = logger
-        self.callback = self.work
+        self._on_message = self.work
 
     def beat(self):
         raise NotImplementedError('Not implemented yet')
