@@ -463,9 +463,10 @@ class AlertsReader(object):
 
         if natural_search:
             filter_ = {'$and': [time_filter, self.GET_FILTER.copy()]}
-            for sub_filter in self.GET_FILTER.copy()["$or"]:
-                key = sub_filter.keys()[0]
-                sub_filter[key]["$regex"] = search
+            if '$or' in self.GET_FILTER.copy():
+                for sub_filter in self.GET_FILTER.copy()['$or']:
+                    key = sub_filter.keys()[0]
+                    sub_filter[key]['$regex'] = search
 
         else:
             search_context, search_filter = self.interpret_search(search)
