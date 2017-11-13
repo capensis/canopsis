@@ -461,10 +461,10 @@ class AlertsReader(object):
         if time_filter is None:
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
-        if natural_search:
-            filter_ = self.GET_FILTER.copy()
-            for sub_filter in filter_["$or"]:
-                key = sub_filter.keys()[0]
+        if natural_search:                                                                               │{'$and': [{'v.resolved': None}, {'$or': [{'v.component': {'$regex': None}}, {'v.connector': {'$regex': No
+            filter_ = {'$and': [time_filter, self.GET_FILTER.copy()]}                                    │ne}}, {'v.resource': {'$regex': None}}]}]}
+            for sub_filter in self.GET_FILTER.copy()["$or"]:                                             │{'$and': [{'v.resolved': None}, {}]}
+                key = sub_filter.keys()[0]                                                               │{'$and': [{'v.resolved': None}, {'$or': [{'v.component': {'$regex': 'res2'}}, {'v.connector': {'$regex': 
                 sub_filter[key]["$regex"] = search
 
         else:
