@@ -112,16 +112,7 @@ def exports(ws):
 
             for event in events:
                 try:
-                    rk = '{0}.{1}.{2}.{3}.{4}'.format(
-                        u'{0}'.format(event['connector']),
-                        u'{0}'.format(event['connector_name']),
-                        u'{0}'.format(event['event_type']),
-                        u'{0}'.format(event['source_type']),
-                        u'{0}'.format(event['component'])
-                    )
-
-                    if event['source_type'] == 'resource':
-                        rk = '{0}.{1}'.format(rk, event['resource'])
+                    rk = get_routingkey(event)
 
                 except KeyError as exc:
                     failed_events.append(event)
