@@ -1,4 +1,6 @@
+# pylint: skip-file
 # -*- mode: python -*-
+# vim: syntax=python
 
 import os
 
