@@ -62,5 +62,5 @@ class MockedWebServer(object):
         Shutdown the HTTP server and then the thread.
         """
         self._server.running = False
-        address = 'localhost'
+        address = 'localhost' if DEFAULT_ADDRESS == '' else DEFAULT_ADDRESS
         requests.get('http://{}:{}'.format(address, self.port))
