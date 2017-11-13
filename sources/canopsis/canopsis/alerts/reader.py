@@ -461,11 +461,19 @@ class AlertsReader(object):
         if time_filter is None:
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
+        result = None
+        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
+
         if natural_search:
             filter_ = self.GET_FILTER.copy()
             for sub_filter in filter_["$or"]:
                 key = sub_filter.keys()[0]
                 sub_filter[key]["$regex"] = search
+            result = self.alarm_storage._backend.find(filter_)
+            result = result.sort(sort_key, sort_dir)
+            result = result.skip(skip)
+            if limit is not None:
+                result = result.limit(limit)
 
         else:
             search_context, search_filter = self.interpret_search(search)
@@ -482,14 +490,20 @@ class AlertsReader(object):
                 if search_filter:
                     filter_ = {'$and': [filter_, search_filter]}
 
-        result = self.alarm_storage._backend.find(filter_)
+            pipeline = [{"$lookup":
+                  {"from":"default_entities",
+                   "localField":"d",
+                   "foreignField":"_id",
+                   "as":"entity"}},
+                 {"$unwind":"$entity"},
+                 {"$match":filter_},
+                 {"$sort":{sort_key:sort_dir}},
+                 {"$skip":skip}]
 
-        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
-        result = result.sort(sort_key, sort_dir)
+            if limit is not None:
+                pipeline.append({"$limit": limit})
 
-        result = result.skip(skip)
-        if limit is not None:
-            result = result.limit(limit)
+            result = self.alarm_storage._backend.aggregate(pipeline, cursor={})
 
         alarms = list(result)
         limited_total = len(alarms)  # Manual count is much faster than mongo's
