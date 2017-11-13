@@ -19,22 +19,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import traceback
-
-import getopt
-
-import sys
-
-import os
-
-import urllib
-
 import http.cookiejar
-
-try:
-    import json
-except:
-    import simplejson as json
+import getopt
+import os
+import sys
+import traceback
+import urllib
+import json
 
 
 def usage():
@@ -87,8 +78,8 @@ def main(argv):
         if opt in ('--json', '-j'):
             try:
                 json_string = json.loads(arg)
-            except:
-                print('Bad json string')
+            except ValueError as exc:
+                print('Bad json string: {}'.format(exc))
                 sys.exit()
 
     #---------------------------authenticate---------------------------
@@ -144,7 +135,7 @@ def main(argv):
     elif not sys.stdin.isatty():
         try:
             event = json.loads(sys.stdin.read())
-        except:
+        except Exception:
             print('Error: Invalid json stream')
             sys.exit()
 

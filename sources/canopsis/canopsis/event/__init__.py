@@ -156,7 +156,7 @@ def forger(
                         logger.info(" + Cache is too old")
                         del dns_cache[address.replace('.', '-')]
                         dns = None
-                except:
+                except Exception:
                     logger.info(" + '%s' not in cache" % address)
 
                 # reverse lookup
@@ -168,7 +168,7 @@ def forger(
                         logger.info(" + Succes: '%s'" % dns[0])
                         dns_cache[address.replace('.', '-')] = \
                             (int(time()), dns)
-                    except:
+                    except Exception:
                         logger.info(" + Failed")
 
                 # Dns ok
@@ -179,7 +179,7 @@ def forger(
                     if not domain:
                         try:
                             domain = fqdn.split('.', 1)[1]
-                        except:
+                        except Exception:
                             pass
 
                 if dns:
