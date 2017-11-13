@@ -59,9 +59,9 @@ class AlertsReader(object):
     CONF_PATH = 'etc/alerts/manager.conf'
     CATEGORY = 'COUNT_CACHE'
     GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
-    GET_FILTER = {"$or": [{"v.component":{"$regex": None}},
-                          {"v.connector":{"$regex": None}},
-                          {"v.resource":{"$regex": None}}]}
+    GET_FILTER = {"$or": [{"v.component": {"$regex": None}},
+                          {"v.connector": {"$regex": None}},
+                          {"v.resource": {"$regex": None}}]}
 
     def __init__(self, logger, config, storage,
                  pbehavior_manager, entitylink_manager):
@@ -462,10 +462,14 @@ class AlertsReader(object):
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
         if natural_search:
-            filter_ = {'$and': [time_filter, self.GET_FILTER.copy()]}
-            for sub_filter in self.GET_FILTER.copy().get('$or', ''):
+            res_filter = self.GET_FILTER.copy()
+            for sub_filter in res_filter.get('$or', []):
                 key = sub_filter.keys()[0]
                 sub_filter[key]['$regex'] = search
+
+            if filter_ not in [None, {}]:
+                filter_ = self._translate_filter(filter_)
+                filter_ = {'$and': [filter_, time_filter, res_filter]}
 
         else:
             search_context, search_filter = self.interpret_search(search)
