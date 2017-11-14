@@ -57,11 +57,9 @@ def main(argv):
         usage()
         sys.exit()
 
-    #---------------------------option processing----------------------
     authkey = None
     server = 'localhost:8082'
     file_path = None
-    input_stream = None
     json_string = None
 
     for opt, arg in opts:
@@ -82,7 +80,6 @@ def main(argv):
                 print('Bad json string: {}'.format(exc))
                 sys.exit()
 
-    #---------------------------authenticate---------------------------
     if not authkey:
         print('You must provide an authkey to access the webserver.\n \
             You can generate it from the Canopsis Web UI.')
@@ -92,8 +89,7 @@ def main(argv):
     cj = http.cookiejar.CookieJar()
     opener = urllib.request.build_opener(
         urllib.request.HTTPCookieProcessor(cj))
-    #print('http://%s/autoLogin/%s' % (server,authkey))
-    r = opener.open('http://%s/autologin/%s' % (server, authkey))
+    r = opener.open('http://%s/autologin?authkey=%s' % (server, authkey))
     r = opener.open('http://%s/account/me' % server)
 
     charset = r.info().get_param('charset', 'utf8')
@@ -108,7 +104,6 @@ def main(argv):
         print('Error: The provided authkey does not match any existing user')
         sys.exit()
 
-    #------------------------------find event source-----------------------
     event = None
 
     if json_string:
@@ -123,7 +118,6 @@ def main(argv):
             print(('Error: File not found (%s)' % file_path))
             sys.exit()
 
-        #------------------read file-------------------
         try:
             with open(file_path) as f:
                 event = json.load(f)
@@ -131,7 +125,6 @@ def main(argv):
             print(('Invalid json file: %s' % err))
             sys.exit()
 
-    #check if input stream
     elif not sys.stdin.isatty():
         try:
             event = json.loads(sys.stdin.read())
@@ -139,7 +132,6 @@ def main(argv):
             print('Error: Invalid json stream')
             sys.exit()
 
-    #-----------------------------prepare event-----------------------------
     if not event:
         print(
             'Error: No json media found, you must provide file/stream/command')
@@ -156,7 +148,6 @@ def main(argv):
     if not event.get('connector_name', None):
         event['connector_name'] = 'Send_event'
 
-    #-----------------------------send event-----------------------------
     clean_event = {}
     for k, v in event.items():
         clean_event[k] = str(v).encode('utf-8')

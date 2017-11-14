@@ -168,12 +168,8 @@ def exports(ws):
         redirect('/static/canopsis/index.html')
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_login})
-    def autologin():
-        """
-        GET params:
-          * authkey
-        """
-        return autoLogin(request.query.get('authkey', ''))
+    def autologin(authkey=''):
+        return autoLogin(authkey)
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_logout})
     def logout():
