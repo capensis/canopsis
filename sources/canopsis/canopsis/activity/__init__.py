@@ -15,6 +15,8 @@ et de récupérer l’information d’activité afin de l’afficher
 dans un calendrier par exemple.
 """
 
+from __future__ import unicode_literals
+
 import arrow
 import copy
 import re
@@ -318,7 +320,7 @@ class TimeDuration(object):
 
 class PBehaviorGenerator(object):
 
-    def __init__(self, tz='Europe/Paris'):
+    def __init__(self, tz='UTC'):
         self._tz = tz
 
     def _get_monday(self):
@@ -536,6 +538,14 @@ class ActivityManager(object):
         act.pop('_id')
 
         return Activity(**act)
+
+    def get_all(self):
+        cursor = self._coll.find({})
+        activities = []
+        for act in cursor:
+            activities.append(Activity(**act))
+
+        return activities
 
     def get_by_aggregate_name(self, aggregate_name):
         """
