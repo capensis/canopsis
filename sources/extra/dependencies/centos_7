@@ -1,4 +1,5 @@
+#!/bin/sh
 yum clean all
 yum update -y
 
-yum install -y xz-utils make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel wget libtool openssl openssl-devel bzip2-devel cyrus-sasl-devel openldap-devel libcurl-devel python-devel openldap-devel libxml2-devel libxslt-devel perl-ExtUtils-MakeMaker git erlang
+yum install -y xz-utils make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel wget libtool openssl openssl-devel bzip2-devel cyrus-sasl-devel openldap-devel libcurl-devel python-devel openldap-devel libxml2-devel libxslt-devel perl-ExtUtils-MakeMaker git erlang rsync
