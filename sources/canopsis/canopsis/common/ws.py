@@ -161,7 +161,7 @@ class route(object):
 
     def __init__(
         self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
-        response=response, adapt=True, nolog=False
+        response=response, adapt=True
     ):
         """
         :param op: ws operation for routing a function
@@ -174,7 +174,6 @@ class route(object):
         :param dict wsgi_params: wsgi parameters which will be given to the
             wsgi such as a keyword
         :param bool adapt: Adapt Canopsis<->Ember data (default: True)
-        :param bool nolog: Disable logging route access (default: False)
         """
 
         super(route, self).__init__()
@@ -189,7 +188,6 @@ class route(object):
         self.response = response
         self.wsgi_params = wsgi_params
         self.adapt = adapt
-        self.nolog = nolog
         self.url = ''
 
     def __call__(self, function):
