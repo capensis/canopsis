@@ -59,9 +59,9 @@ class AlertsReader(object):
     CONF_PATH = 'etc/alerts/manager.conf'
     CATEGORY = 'COUNT_CACHE'
     GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
-    GET_FILTER = {"$or": [{"v.component":{"$regex": None}},
-                          {"v.connector":{"$regex": None}},
-                          {"v.resource":{"$regex": None}}]}
+    GET_FILTER = {"$or": [{"v.component": {"$regex": None}},
+                          {"v.connector": {"$regex": None}},
+                          {"v.resource": {"$regex": None}}]}
 
     def __init__(self, logger, config, storage,
                  pbehavior_manager, entitylink_manager):
@@ -465,15 +465,25 @@ class AlertsReader(object):
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
         if natural_search:
-            filter_ = self.GET_FILTER.copy()
-            for sub_filter in filter_["$or"]:
+            res_filter = self.GET_FILTER.copy()
+            for sub_filter in res_filter.get('$or', []):
                 key = sub_filter.keys()[0]
-                sub_filter[key]["$regex"] = search
+                sub_filter[key]['$regex'] = search
+
+            if filter_ not in [None, {}]:
+                filter_ = self._translate_filter(filter_)
+                filter_ = {'$and': [filter_, time_filter, res_filter]}
+
+            else:
+                filter_ = {"$and": [{"d": {"$regex": search}}, time_filter]}
+
             result = self.alarm_storage._backend.find(filter_)
             result = result.sort(sort_key, sort_dir)
             result = result.skip(skip)
             if limit is not None:
                 result = result.limit(limit)
+
+
 
         else:
             search_context, search_filter = self.interpret_search(search)
