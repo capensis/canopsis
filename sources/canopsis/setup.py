@@ -20,11 +20,8 @@
 
 import os
 
-from os import walk, getenv
+from os import walk
 from os.path import join, dirname, exists
-
-from sys import argv
-from sys import prefix as sys_prefix
 
 from setuptools import setup, find_packages
 
@@ -58,13 +55,14 @@ def get_scripts(pkgpath):
     return scripts
 
 
-def get_data_files(pkgpath, embed_conf):
+def get_data_files(pkgpath):
     """
     Get a list of data files from the etc directory.
     """
 
     data_files = []
 
+    """
     if embed_conf:
         etc_path = join(pkgpath, 'etc')
         target = getenv('CPS_PREFIX', join(sys_prefix, 'etc'))
@@ -73,6 +71,7 @@ def get_data_files(pkgpath, embed_conf):
             files_to_copy = [join(root, _file) for _file in files]
             final_target = join(target, root[len(etc_path) + 1:])
             data_files.append((final_target, files_to_copy))
+    """
 
     return data_files
 
@@ -117,7 +116,7 @@ def get_test_suite(pkgpath):
     return test_folder
 
 
-def setup_canopsis(pkgpath, embed_conf):
+def setup_canopsis(pkgpath):
     """
     :param no_conf:
     :param add_etc: add automatically etc files (default True)
@@ -140,17 +139,12 @@ def setup_canopsis(pkgpath, embed_conf):
     setuptools_args['install_requires'] = get_install_requires(pkgpath)
     setuptools_args['long_description'] = get_description(pkgpath)
     setuptools_args['test_suite'] = get_test_suite(pkgpath)
-    setuptools_args['data_files'] = get_data_files(pkgpath, embed_conf)
+    setuptools_args['data_files'] = get_data_files(pkgpath)
     setuptools_args['scripts'] = get_scripts(pkgpath)
 
     return setuptools_args
 
 
 if __name__ == '__main__':
-    embed_conf = True
-    if '--no-conf' in argv:
-        embed_conf = False
-        argv.remove('--no-conf')
-
-    setuptools_args = setup_canopsis(get_pkgpath(), embed_conf)
+    setuptools_args = setup_canopsis(get_pkgpath())
     setup(**setuptools_args)
