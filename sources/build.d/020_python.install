@@ -41,12 +41,9 @@ function install_pylib(){
 
 function build(){
 	BASE="Python-$VERSION"
-	cd $SRC_PATH/externals
+	cd $SRC_PATH/externals/
 
-	if [ ! -e $BASE ]; then
-		extract_archive "$BASE.tar.xz"
-	fi
-	cd $BASE
+    rm -rf $BASE-build && cp -ar $BASE $BASE-build && cd $BASE-build
 
 	echo " + Fix env vars"
 	DEB_HOST_MULTIARCH=`dpkg-architecture -qDEB_HOST_MULTIARCH 2>> /dev/null`
@@ -74,7 +71,7 @@ function build(){
 
 function install(){
 	BASE="Python-$VERSION"
-	cd $SRC_PATH/externals/$BASE
+	cd $SRC_PATH/externals/$BASE-build
 
 	launch_log $NAME "make install"
 	check_code $?
