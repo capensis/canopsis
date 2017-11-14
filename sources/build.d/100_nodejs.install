@@ -1,21 +1,8 @@
 NAME="nodejs"
 
-function build() {
-    cd $SRC_PATH/externals
-    BASE="node-v$VERSION-$ARCH"
-
-    if [ ! -e $BASE ]
-    then
-        extract_archive "$BASE.tar.xz"
-    fi
-}
-
 function install() {
     BASE="node-v$VERSION-$ARCH"
-    cd $SRC_PATH/externals/$BASE
-    check_code $?
-
-    tar c . | tar xh -C $PREFIX
+    tar xf $BASE.tar.xz -C $PREFIX
     check_code $?
 }
 
