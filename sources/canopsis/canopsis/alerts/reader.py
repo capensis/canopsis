@@ -486,8 +486,12 @@ class AlertsReader(object):
 
 
         else:
-            search_context, search_filter = self.interpret_search(search)
-            search_filter = self._translate_filter(search_filter)
+            try:
+                search_context, search_filter = self.interpret_search(search)
+                search_filter = self._translate_filter(search_filter)
+            except ValueError:
+                search_filter = {}
+                search_context = None
 
             if search_context == 'all':
                 filter_ = {'$and': [time_filter, search_filter]}
