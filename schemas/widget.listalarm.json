@@ -26,7 +26,8 @@
     },
 		"alarms_state_filter": {
 			"type": "object",
-			"role": "radio"
+			"role": "radio",
+            "default": "opened"
 		},
 		"user_filters": {
 			"type": "boolean",
@@ -41,7 +42,8 @@
 			"items": {
 				"type": "string"
 			},
-			"reorderable": true
+			"reorderable": true,
+            "default": ["connector_name","component","resource","state","status","last_update_date"]
     },
 		"popup": {
 			"type": "array",
