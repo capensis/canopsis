@@ -506,7 +506,7 @@ function export_env() {
 }
 
 function pip_install() {
-    echo "pip install $*"
+    echo "pip install $@"
 
     # Support CAT buildinstall
     pylibpath="${CPSPATH}/sources"
@@ -521,7 +521,7 @@ find_links = file://${pylibpath}/externals/python-libs/
 EOF
     cat ~/.pydistutils.cfg > /opt/canopsis/.pydistutils.cfg
     chown $HUSER:$HGROUP /opt/canopsis/.pydistutils.cfg
-    pip install --no-index --find-links=file://${pylibpath}/externals/python-libs $*
+    pip install --no-index --find-links=file://${pylibpath}/externals/python-libs $@
     check_code $? "Pip install failed ..."
 }
 
