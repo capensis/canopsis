@@ -6,13 +6,15 @@ function build() {
 
 function install() {
     echo "-- Install Python Canopsis"
-    export CPS_PREFIX="$PREFIX/etc/"
+    export CPS_PREFIX_ETC="$PREFIX/etc/"
     cd $SRC_PATH/canopsis
 
     rm -rf build canopsis.egg-info dist
 
     pip_install .
     check_code $? "Impossible to install canopsis"
+
+    rsync -avKSH etc/ ${CPS_PREFIX_ETC}
 
     install_pytests "canopsis"
 
@@ -24,18 +26,19 @@ function install() {
 function update() {
     # install all projects
     echo "-- Update Python Canopsis"
-    export CPS_PREFIX="$PREFIX/etc/"
+
+    # absent final slash is important for backup
     cd $SRC_PATH/canopsis
 
     rm -rf build canopsis.egg-info dist
 
-    pip_install --upgrade --install-option="--no-conf" .
+    pip_install --upgrade .
     check_code $? "Impossible to update canopsis"
 
     install_pytests "canopsis"
 
     rm -rf build canopsis.egg-info dist
-    update_conffiles ./etc
+    #update_conffiles ./etc
 
     install_init "canopsis"
 }
