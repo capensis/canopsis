@@ -32,6 +32,8 @@ from os.path import join as joinpath
 import re
 from sys import version as PYVER
 import time
+from string import ascii_uppercase
+import random
 
 from .init import basestring
 
@@ -596,3 +598,13 @@ def date_to_ts(date):
     :rtype: int
     """
     return time.mktime(date.timetuple())
+
+def gen_id():
+    """
+    Generate a random id "XXX-XXX", where X is an uppercased letter.
+
+    :rtype: str
+    """
+    mii = ''.join(random.SystemRandom().choice(ascii_uppercase) for _ in range(6))
+
+    return '{}-{}-{}'.format(mii[0:2], mii[2:4], mii[4:6])

@@ -41,7 +41,7 @@ from canopsis.alerts.status import (
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.utils import ensure_iterable
+from canopsis.common.utils import ensure_iterable, gen_id
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.context_graph.manager import ContextGraph
@@ -371,6 +371,9 @@ class Alerts(object):
 
         alarm_id = alarm[storage.DATA_ID]
         alarm_ts = alarm[storage.TIMESTAMP]
+
+        if AlarmField.display_name.value not in new_value:
+            new_value[AlarmField.display_name.value] = gen_id()
 
         if tags is not None:
             for tag in ensure_iterable(tags):
@@ -784,6 +787,7 @@ class Alerts(object):
             self.alerts_storage.DATA_ID: alarm_id,
             self.alerts_storage.TIMESTAMP: event['timestamp'],
             self.alerts_storage.VALUE: {
+                AlarmField.display_name.value: gen_id(),
                 'connector': event['connector'],
                 'connector_name': event['connector_name'],
                 'component': event['component'],
