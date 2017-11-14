@@ -249,7 +249,8 @@ def exports(ws):
         element = request.json
 
         if element is None:
-            return gen_json_error({'description': 'nothing to insert'}, HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'nothing to insert'}, HTTP_ERROR)
 
         new = am.alarm_filters.create_filter(element=element)
         new.save()
@@ -271,7 +272,8 @@ def exports(ws):
         dico = request.json
 
         if dico is None or not isinstance(dico, dict) or len(dico) <= 0:
-            return gen_json_error({'description': 'wrong update dict'}, HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'wrong update dict'}, HTTP_ERROR)
 
         af = am.alarm_filters.update_filter(filter_id=entity_id, values=dico)
         if not isinstance(af, AlarmFilter):

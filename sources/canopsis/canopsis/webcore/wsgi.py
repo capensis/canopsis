@@ -41,6 +41,7 @@ from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
 
 from canopsis.webcore.services import session as session_module
+from canopsis.webcore.bottlelog import LoggingPlugin
 
 DEFAULT_DEBUG = False
 DEFAULT_ECSE = False
@@ -97,9 +98,10 @@ class WebServer():
             if not self.auth_backends[bname].handle_logout
         ]
 
-    def __init__(self, config, logger, *args, **kwargs):
+    def __init__(self, config, logger, logger_req, *args, **kwargs):
         self.config = config
         self.logger = logger
+        self.logger_req = logger_req
 
         server = self.config.get('server', {})
         self.debug = server.get('debug', DEFAULT_DEBUG)
@@ -140,6 +142,7 @@ class WebServer():
 
         self.logger.info('Initialize WSGI Application')
         self.app = BottleApplication()
+        self.app.install(LoggingPlugin(self.logger_req))
 
         self.load_auth_backends()
         self.load_webservices()
@@ -261,6 +264,7 @@ class WebServer():
 
 conf = Configuration.load(WebServer.CONF_PATH, Ini)
 logger = Logger.get('webserver', WebServer.LOG_FILE)
+logger_req = Logger.get('webserverreq', WebServer.LOG_FILE, fmt='%(message)s')
 # Declare WSGI application
-ws = WebServer(config=conf, logger=logger).__call__()
+ws = WebServer(config=conf, logger=logger, logger_req=logger_req).__call__()
 app = ws.application

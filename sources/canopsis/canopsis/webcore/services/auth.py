@@ -169,7 +169,6 @@ def exports(ws):
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_login}, nolog=True)
     def autologin(key):
-        route.log_request(ws.logger, 'get', '/autologin/**redacted**')
         return autoLogin(key)
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_logout})

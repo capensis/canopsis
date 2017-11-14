@@ -159,23 +159,6 @@ class route(object):
     #: field to set intercepted function from the interceptor function
     _INTERCEPTED = str(uuid())
 
-    @staticmethod
-    def get_request_path():
-        return request.urlparts[2]
-
-    @staticmethod
-    def log_request(logger, op, request_path):
-        """
-        :param logger: logger
-        :param op: HTTP Method
-        :param request_path: path of the url
-        """
-        logger.info(
-            u'Request: {} - {}'.format(
-                op.upper(), request_path
-            )
-        )
-
     def __init__(
         self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
         response=response, adapt=True, nolog=False
@@ -269,13 +252,6 @@ class route(object):
                     except (ValueError, TypeError):
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
-
-            if not self.nolog:
-                route.log_request(
-                    self.logger,
-                    self.op.__name__,
-                    route.get_request_path()
-                )
 
             if self.adapt:
                 # adapt ember data to canopsis data
