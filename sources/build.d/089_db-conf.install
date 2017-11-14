@@ -11,8 +11,6 @@ function install(){
     cd $SRC_PATH
     install_basic_source $NAME
 
-    sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
-
     install_conf "mongodb.conf"
     install_conf "influxdb.conf"
 }
@@ -22,8 +20,6 @@ function update(){
 
     cd $SRC_PATH
     update_basic_source $NAME
-
-    sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
 
     install_conf "mongodb.conf"
     install_conf "influxdb.conf"
