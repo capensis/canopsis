@@ -11,7 +11,9 @@ function install() {
 
     rm -rf build canopsis.egg-info dist
 
+    export CPS_OVERRIDE_CONF=1
     pip_install .
+    unset CPS_OVERRIDE_CONF
     check_code $? "Impossible to install canopsis"
 
     install_pytests "canopsis"
@@ -29,13 +31,14 @@ function update() {
 
     rm -rf build canopsis.egg-info dist
 
-    pip_install --upgrade --install-option="--no-conf" .
+    unset CPS_OVERRIDE_CONF
+    pip_install --upgrade .
     check_code $? "Impossible to update canopsis"
 
     install_pytests "canopsis"
 
     rm -rf build canopsis.egg-info dist
-    update_conffiles ./etc
+    #update_conffiles ./etc
 
     install_init "canopsis"
 }

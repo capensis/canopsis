@@ -147,10 +147,9 @@ def setup_canopsis(pkgpath, embed_conf):
 
 
 if __name__ == '__main__':
-    embed_conf = True
-    if '--no-conf' in argv:
-        embed_conf = False
-        argv.remove('--no-conf')
+    embed_conf = False
+    if 'CPS_OVERRIDE_CONF' in os.environ:
+        embed_conf = True
 
     setuptools_args = setup_canopsis(get_pkgpath(), embed_conf)
     setup(**setuptools_args)
