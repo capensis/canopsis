@@ -138,11 +138,11 @@ class engine(Engine):
         for k, v in _event.items():
             try:
                 k = k.encode('utf-8')
-            except:
+            except UnicodeError:
                 pass
             try:
                 v = v.encode('utf-8')
-            except:
+            except (UnicodeError, TypeError, AttributeError):
                 pass
             encoded_event[k] = v
 

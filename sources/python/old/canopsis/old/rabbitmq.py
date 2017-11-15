@@ -41,6 +41,8 @@ from threading import Thread
 from os.path import join
 from traceback import print_exc
 
+from kombu.exceptions import SerializationError as KombuSerializationError
+
 # Number of tries to re-publish an event before it is lost
 # when connection problems
 
@@ -153,6 +155,10 @@ class Amqp(Thread):
                             u"Connection error ! ({})".format(err)
                         )
                         break
+
+                    except KombuSerializationError as exc:
+                        self.logger.error(
+                            u"Kombu serialization error: invalid message received: {}".format(exc))
 
                     except Exception as err:
                         self.logger.error(u"Error: {} ({})".format(

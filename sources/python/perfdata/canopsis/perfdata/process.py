@@ -119,11 +119,11 @@ def event_processing(engine, event, manager=None, logger=None, **kwargs):
             for k, v in event_with_metric.items():
                 try:
                     k = k.encode('utf-8')
-                except:
+                except UnicodeError:
                     pass
                 try:
                     v = v.encode('utf-8')
-                except:
+                except (UnicodeError, TypeError, AttributeError):
                     pass
                 encoded_event_with_metric[k] = v
 
