@@ -55,6 +55,10 @@ class Activity(object):
         :param int day_of_week: 0: Monday to 6: Sunday
         :param int start_time_of_day: number of seconds after D-Day 00:00
         :param int stop_after_time: number of seconds after D-Day 00:00
+        :param aggregate_name: ?
+        :param valid_from: ?
+        :param valid_until: ?
+        :param pbehavior_ids: ?
         """
         self.aggregate_name = aggregate_name
 
@@ -147,7 +151,7 @@ class Activity(object):
         return (self.valid_from == obj.valid_from
                 and self.valid_until == obj.valid_until
                 and self.day_of_week == obj.day_of_week
-                and self.start_time_of_day == obj.startof_day
+                and self.start_time_of_day == obj.start_time_of_day
                 and self.stop_after_time == obj.stop_after_time
                 and self.entity_filter == self.entity_filter)
 
