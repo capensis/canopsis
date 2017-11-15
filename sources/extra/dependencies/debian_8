@@ -1,7 +1,16 @@
 #!/bin/sh
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main" > /etc/apt/sources.list.d/mongodb-org.list
+
 apt-get update
 
-apt-get install -y libssl1.0.0 libevent-dev bzip2 build-essential zlib1g-dev libreadline-gplv2-dev libdb5.3-dev libncurses5-dev libexpat1-dev libcurl4-gnutls-dev git-core libssl-dev libpcre3-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev xsltproc curl libbz2-dev xvfb libmysqlclient-dev libsasl2-dev python-dev python-ldap nettle-dev xz-utils libxml2-dev libxslt1-dev gcc libldap2-dev wget libgnutls28-dev
+apt-get install -y libssl1.0.0 libevent-dev bzip2 build-essential zlib1g-dev libreadline-gplv2-dev libdb5.3-dev libncurses5-dev libexpat1-dev libcurl4-gnutls-dev git-core libssl-dev libpcre3-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev xsltproc curl libbz2-dev xvfb libmysqlclient-dev libsasl2-dev python-dev python-ldap nettle-dev xz-utils libxml2-dev libxslt1-dev gcc libldap2-dev wget libgnutls28-dev rsync
+
+# erlang for rabbitmq-server
+apt-get install -y erlang-nox
+
+# mongodb
+apt-get install -y mongodb-org mongodb-org-tools
 
 # avoid pulling useless texlive
 apt-get install -y --no-install-recommends xmlto
