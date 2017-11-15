@@ -33,10 +33,11 @@ from logging import INFO, getLogger
 from os.path import join
 from socket import error, timeout
 from sys import stdout
-from sys import prefix as sys_prefix
 from threading import Thread
 from time import sleep
 from traceback import print_exc
+
+from canopsis.common import root_path
 
 # Number of tries to re-publish an event before it is lost
 # when connection problems
@@ -460,7 +461,7 @@ class Amqp(Thread):
 
     def read_config(self, name):
 
-        filename = join(sys_prefix, 'etc', u'{0}.conf'.format(name))
+        filename = join(root_path, 'etc', u'{0}.conf'.format(name))
 
         import ConfigParser
         self.config = ConfigParser.RawConfigParser()
