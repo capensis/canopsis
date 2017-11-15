@@ -129,11 +129,11 @@ class AlarmService(object):
         for alarm in self.alarms_adapter.stream_unresolved_alarms():
             alarm_counter += 1
 
-            riri = alarm.resolve(self.bagot_time)
-            fifi = alarm.resolve_cancel(self.cancel_delay)
-            loulou = alarm.resolve_stealthy(self.stealthy_duration,
-                                            self.stealthy_interval)
-            if riri or fifi or loulou:
+            resolved = alarm.resolve(self.bagot_time)
+            resolved_cancel = alarm.resolve_cancel(self.cancel_delay)
+            resolved_stealthy = alarm.resolve_stealthy(self.stealthy_duration,
+                                                       self.stealthy_interval)
+            if resolved or resolved_cancel or resolved_stealthy:
                 self.update_alarm(alarm)
                 updated_alarm_counter += 1
 
