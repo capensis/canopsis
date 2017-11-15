@@ -225,7 +225,7 @@ class AlertsReader(object):
 
         return None
 
-    def _get_opened_time_filter(self, tstart, tstop):
+    def _get_opened_time_filter(tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -252,7 +252,7 @@ class AlertsReader(object):
 
         return {'v.resolved': None}
 
-    def _get_resolved_time_filter(self, tstart, tstop):
+    def _get_resolved_time_filter(tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -412,8 +412,8 @@ class AlertsReader(object):
             tstop=None,
             opened=True,
             resolved=False,
-            lookups=[],
-            filter_={},
+            lookups=None,
+            filter_=None,
             search='',
             sort_key='opened',
             sort_dir='DESC',
@@ -453,6 +453,12 @@ class AlertsReader(object):
         :rtype: dict
         """
 
+        if lookups is None:
+            lookups = []
+
+        if lookups is None:
+            filter = {}
+
         time_filter = self._get_time_filter(
             opened=opened, resolved=resolved,
             tstart=tstart, tstop=tstop
@@ -483,8 +489,6 @@ class AlertsReader(object):
             if limit is not None:
                 result = result.limit(limit)
 
-
-
         else:
             try:
                 search_context, search_filter = self.interpret_search(search)
@@ -505,14 +509,14 @@ class AlertsReader(object):
                     filter_ = {'$and': [filter_, search_filter]}
 
             pipeline = [{"$lookup":
-                  {"from":"default_entities",
-                   "localField":"d",
-                   "foreignField":"_id",
-                   "as":"entity"}},
-                 {"$unwind":"$entity"},
-                 {"$match":filter_},
-                 {"$sort":{sort_key:sort_dir}},
-                 {"$skip":skip}]
+                         {"from":"default_entities",
+                          "localField":"d",
+                          "foreignField":"_id",
+                          "as":"entity"}},
+                        {"$unwind":"$entity"},
+                        {"$match":filter_},
+                        {"$sort":{sort_key:sort_dir}},
+                        {"$skip":skip}]
 
             if limit is not None:
                 pipeline.append({"$limit": limit})
