@@ -7,7 +7,11 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.confng.simpleconf import Configuration
 from canopsis.confng.vendor import Ini
 
-from canopsis.activity import *
+from canopsis.activity.activity import (
+    Activity, TimeUnits, DaysOfWeek, ActivityAggregate
+)
+from canopsis.activity.manager import ActivityManager, ActivityAggregateManager
+from canopsis.activity.pbehavior import PBehaviorGenerator
 
 
 class TestActivity(unittest.TestCase):
@@ -107,40 +111,6 @@ class TestActivity(unittest.TestCase):
 
         self.assertTrue(ac1.overlap(ac2))
         self.assertFalse(ac1.overlap(ac3))
-
-
-class TestTimeDuration(unittest.TestCase):
-
-    def test_eq(self):
-
-        td1 = TimeDuration(1, 2, 3, 10)
-        td2 = TimeDuration(1, 2, 3, 10)
-        td3 = TimeDuration(1, 2, 3, 9)
-        td4 = TimeDuration(1, 2, 4, 10)
-        td5 = TimeDuration(1, 3, 3, 10)
-        td6 = TimeDuration(2, 2, 3, 10)
-
-        self.assertEqual(td1, td2)
-        self.assertNotEqual(td1, td3)
-        self.assertNotEqual(td1, td4)
-        self.assertNotEqual(td1, td5)
-        self.assertNotEqual(td1, td6)
-
-    def test_str(self):
-
-        td = TimeDuration(1, 2, 3, 4)
-        tds = str(td)
-
-        self.assertEqual('1:2:3/4', tds)
-
-    def test_hash(self):
-
-        td = TimeDuration(1, 2, 3, 4)
-        tdS = set([td])
-
-        tdv = tdS.pop()
-
-        self.assertEqual(tdv, td)
 
 
 class TestActivityAggregate(unittest.TestCase):
