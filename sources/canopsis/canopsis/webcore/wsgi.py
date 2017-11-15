@@ -35,8 +35,8 @@ import beaker.session
 from signal import SIGTERM, SIGINT
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
-import mongodb_beaker  # needed by beaker
 
+from canopsis.vendor import mongodb_beaker
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.logger import Logger
@@ -230,7 +230,8 @@ class WebServer():
         self.app.install(backend)
 
     def load_session(self):
-        # FIXIT: pyinstaller removes entrypoints
+        # Since we vendor mongodb_beaker because of broken dep on pypi.python.org
+        # we need to setup the beaker class map manually.
         beaker.cache.clsmap['mongodb'] = mongodb_beaker.MongoDBNamespaceManager
         self.app = SessionMiddleware(self.app, {
             'session.type': 'mongodb',

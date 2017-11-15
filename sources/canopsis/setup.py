@@ -80,14 +80,17 @@ def get_install_requires(pkgpath):
     """
     Get a list of requirements from requirements.txt
     """
-    requirements = []
+    reqs = []
     requires_path = join(pkgpath, 'requirements.txt')
 
     with open(requires_path) as f:
         # remove new lines, extra spaces...
-        requirements = [r.strip() for r in f.readlines() if r.strip()]
+        reqs = f.readlines()
 
-    return requirements
+    reqs = filter(None, [r.strip() for r in reqs])
+    reqs = [r for r in reqs if not r.startswith('#')]
+
+    return reqs
 
 
 def get_description(pkgpath):
