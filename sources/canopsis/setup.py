@@ -85,7 +85,7 @@ def get_install_requires(pkgpath):
 
     with open(requires_path) as f:
         # remove new lines, extra spaces...
-        requirements = [r.strip() for r in f.readlines()]
+        requirements = [r.strip() for r in f.readlines() if r.strip()]
 
     return requirements
 
