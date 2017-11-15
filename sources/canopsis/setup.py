@@ -63,14 +63,11 @@ def get_data_files(pkgpath):
     data_files = []
 
     """
-    if embed_conf:
-        etc_path = join(pkgpath, 'etc')
-        target = getenv('CPS_PREFIX', join(sys_prefix, 'etc'))
+    Populate data files here.
 
-        for root, _, files in walk(etc_path):
-            files_to_copy = [join(root, _file) for _file in files]
-            final_target = join(target, root[len(etc_path) + 1:])
-            data_files.append((final_target, files_to_copy))
+    DO NOT PUSH CONFIGURATION. EVER.
+
+    You can bundle examples if you want.
     """
 
     return data_files
