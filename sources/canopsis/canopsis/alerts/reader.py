@@ -225,6 +225,7 @@ class AlertsReader(object):
 
         return None
 
+    @staticmethod
     def _get_opened_time_filter(tstart, tstop):
         """
         Get a specific mongo filter.
@@ -252,6 +253,7 @@ class AlertsReader(object):
 
         return {'v.resolved': None}
 
+    @staticmethod
     def _get_resolved_time_filter(tstart, tstop):
         """
         Get a specific mongo filter.
@@ -456,8 +458,8 @@ class AlertsReader(object):
         if lookups is None:
             lookups = []
 
-        if lookups is None:
-            filter = {}
+        if filter_ is None:
+            filter_ = {}
 
         time_filter = self._get_time_filter(
             opened=opened, resolved=resolved,
@@ -508,15 +510,24 @@ class AlertsReader(object):
                 if search_filter:
                     filter_ = {'$and': [filter_, search_filter]}
 
-            pipeline = [{"$lookup":
-                         {"from": "default_entities",
-                          "localField": "d",
-                          "foreignField": "_id",
-                          "as": "entity"}},
-                        {"$unwind": "$entity"},
-                        {"$match": filter_},
-                        {"$sort": {sort_key:sort_dir}},
-                        {"$skip": skip}]
+            pipeline = [{
+                "$lookup": {
+                    "from": "default_entities",
+                    "localField": "d",
+                    "foreignField": "_id",
+                    "as": "entity"
+                }
+            }, {
+                "$unwind": "$entity"
+            }, {
+                "$match": filter_
+            }, {
+                "$sort": {
+                    sort_key: sort_dir
+                }
+            }, {
+                "$skip": skip
+            }]
 
             if limit is not None:
                 pipeline.append({"$limit": limit})
