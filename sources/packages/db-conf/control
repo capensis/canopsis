@@ -171,6 +171,9 @@ function post_install_mongodb() {
 
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/mongo/storage.conf DATABASE user $cpsuser
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/mongo/storage.conf DATABASE pwd $cpspass
+
+    launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/common/mongo_store.conf DATABASE user $cpsuser
+    launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/common/mongo_store.conf DATABASE pwd $cpspass
 }
 
 function post_install_influxdb() {
