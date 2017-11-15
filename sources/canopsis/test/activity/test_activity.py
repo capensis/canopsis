@@ -233,6 +233,11 @@ class TestActivityAggregateManager(unittest.TestCase):
         self.assertEqual(ac1, res[0])
         self.assertEqual(ac2, res[1])
 
+        # Testing ActivityManager
+        res = acm.get_all()
+        self.assertEqual(len(res), 2)
+        res = acm.del_by_aggregate_name('agtest')
+        self.assertEqual(res['n'], 2)
 
 if __name__ == '__main__':
     unittest.main()

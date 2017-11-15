@@ -72,6 +72,7 @@ class ActivityManager(object):
         cursor = self._coll.find({})
         activities = []
         for act in cursor:
+            act.pop('_id')
             activities.append(Activity(**act))
 
         return activities
