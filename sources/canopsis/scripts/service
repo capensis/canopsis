@@ -25,7 +25,8 @@ from subprocess import call
 
 from os import listdir, kill, remove
 from os.path import join, exists, splitext
-from sys import prefix as sys_prefix
+
+from canopsis.common import root_path
 
 
 class Service(object):
@@ -33,8 +34,8 @@ class Service(object):
         Handle supervisord/internal services.
     """
 
-    internaldir = join(sys_prefix, 'etc', 'init.d')
-    supervisordir = join(sys_prefix, 'etc', 'supervisord.d')
+    internaldir = join(root_path, 'etc', 'init.d')
+    supervisordir = join(root_path, 'etc', 'supervisord.d')
 
     def __init__(self, name, *args, **kwargs):
         """
@@ -63,7 +64,7 @@ class Service(object):
             Make sure supervisord is running and updated.
         """
 
-        pidfile = join(sys_prefix, 'var', 'run', 'supervisord.pid')
+        pidfile = join(root_path, 'var', 'run', 'supervisord.pid')
         started = False
 
         if exists(pidfile):
@@ -94,7 +95,7 @@ class Service(object):
             Check if supervisord service is referring to a group of process.
         """
 
-        confpath = join(sys_prefix, 'etc', 'supervisord.d/{0}.conf'.format(
+        confpath = join(root_path, 'etc', 'supervisord.d/{0}.conf'.format(
             self.name)
         )
 
@@ -130,7 +131,7 @@ class Service(object):
 
         call(
             '/bin/bash -l -c "{0}/etc/init.d/{1} {2}"'.format(
-                sys_prefix, self.name, action
+                root_path, self.name, action
             ),
             shell=True
         )

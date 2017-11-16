@@ -27,18 +27,20 @@ class CanopsisUnsupportedEnvironment(Exception):
 
 
 def _root_path():
-    root = None
+    root = os.environ.get('CPS_PREFIX', sys.prefix)
 
-    if os.path.isdir(os.path.join(sys.prefix, 'etc')):
-        root = sys.prefix
+    if os.path.isdir(os.path.join(root, 'etc')):
+        pass
 
     elif os.path.isdir(os.path.join('opt', 'canopsis', 'etc')):
         root = os.path.join(os.path.sep, 'opt', 'canopsis')
 
     else:
-        msg = 'unsupported environment: cannot safely detect canopsis root path.'
+        msg = 'unsupported environment: '
+        'cannot safely detect canopsis root path.'
         raise CanopsisUnsupportedEnvironment(msg)
 
     return root
+
 
 root_path = _root_path()

@@ -1,21 +1,35 @@
-#!/bin/bash
+#!/usr/bin/env python
 
-# binding Address
-ABIND="0.0.0.0:8082"
+# https://github.com/benoitc/gunicorn/issues/669
 
-# Gunicorn Log level
-LL="error"
+from gunicorn.app.base import Application
 
-# Worker
-# GUNICORN_WORKER = 1
+from canopsis.webcore.wsgi import get_default_app
 
-# Pid file and log file
-PIDF="$HOME/var/run/webserver.pid"
-LOGF="$HOME/var/log/webserver.log"
 
-# Wsgi app
-DIR="$HOME/opt/webcore"
-APP="wsgi_webserver:app"
+class WebServerPy(Application):
+    """
+    Transparently replace the usual gunicorn command so we can
+    package the Canopsis Web Server with PyInstaller.
+    """
 
-cd $DIR
-exec gunicorn --debug --log-level debug -k gevent -w 1 -b $ABIND $APP 
+    def __init__(self, wsgi_getter):
+        super(WebServerPy, self).__init__()
+        self.wsgi_getter = wsgi_getter
+
+    def init(self, parser, opts, args):
+        """
+        Implementation is required from the Application class.
+        """
+        return {}
+
+    def load(self):
+        """
+        Must return the final WSGI app object.
+        """
+        return self.wsgi_getter()
+
+
+if __name__ == "__main__":
+    gunicorn_app = WebServerPy(get_default_app)
+    gunicorn_app.run()

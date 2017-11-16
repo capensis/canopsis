@@ -21,8 +21,8 @@
 from lxml.etree import parse
 from os import listdir
 from os.path import isfile, join
-from sys import prefix
 
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 
 DEFAULT_SCHEMA_LOC = 'share/canopsis/schema'
@@ -47,7 +47,7 @@ except IOError:
 
 def get_schema_path(*args):
     if _schema_manager is not None:
-        return join(prefix, _schema_manager.schema_location, *args)
+        return join(root_path, _schema_manager.schema_location, *args)
     else:
         return join('.', *args)
 

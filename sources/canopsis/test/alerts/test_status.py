@@ -298,6 +298,39 @@ class TestStatus(BaseTest):
 
         self.assertTrue(expected is step)
 
+    def test_bagot_issue_482(self):
+        """
+        With this issue, if the bagot_freq and bagot_time are both set to 1, the issue bagots
+        :return:
+        """
+        self.manager.config_data.set('bagot_freq', 1)
+        self.manager.config_data.set('bagot_time', 1)
+        self.alarm[AlarmField.steps.value] = [
+            {
+                '_t': 'stateinc',
+                't': 0,
+                'a': 'test',
+                'm': 'test',
+                'val': Check.CRITICAL
+            },
+            {
+                '_t': 'statedec',
+                't': 1,
+                'a': 'test',
+                'm': 'test',
+                'val': Check.OK
+            }]
+
+        self.alarm[AlarmField.state.value] = {
+                '_t': 'statedec',
+                't': 1,
+                'a': 'test',
+                'm': 'test',
+                'val': Check.OK
+            }
+
+        got = is_flapping(self.manager, self.alarm)
+        self.assertFalse(got)
 
 if __name__ == '__main__':
     main()

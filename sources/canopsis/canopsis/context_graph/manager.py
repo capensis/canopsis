@@ -159,7 +159,7 @@ class ContextGraph(object):
         if source_type == cls.COMPONENT:
             try:
                 id_ = event["component"].encode('utf-8')
-            except (UnicodeEncodeError, UnicodeDecodeError):
+            except UnicodeError:
                 id_ = event['component'].decode('utf-8')
 
         elif source_type == cls.RESOURCE:
@@ -168,7 +168,7 @@ class ContextGraph(object):
                     event["resource"].encode('utf-8'),
                     event["component"].encode('utf-8')
                 )
-            except (UnicodeEncodeError, UnicodeDecodeError):
+            except UnicodeError:
                 id_ = "{0}/{1}".format(
                     event["resource"].decode('utf-8'),
                     event["component"].decode('utf-8')
@@ -180,7 +180,7 @@ class ContextGraph(object):
                     event["connector"].encode('utf-8'),
                     event["connector_name"].encode('utf-8')
                 )
-            except (UnicodeEncodeError, UnicodeDecodeError):
+            except UnicodeError:
                 id_ = "{0}/{1}".format(
                     event["connector"].decode('utf-8'),
                     event["connector_name"].decode('utf-8')
