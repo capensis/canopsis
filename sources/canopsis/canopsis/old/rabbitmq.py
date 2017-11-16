@@ -39,6 +39,8 @@ from traceback import print_exc
 
 from canopsis.common import root_path
 
+from kombu.exceptions import SerializationError as KombuSerializationError
+
 # Number of tries to re-publish an event before it is lost
 # when connection problems
 
@@ -142,6 +144,10 @@ class Amqp(Thread):
                             self.conn.drain_events(timeout=0.5)
                         else:
                             sleep(0.5)
+
+                    except KombuSerializationError as exc:
+                        self.logger.error(
+                            u"Kombu serialization error: invalid message received: {}".format(exc))
 
                     except timeout:
                         pass
