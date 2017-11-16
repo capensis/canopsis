@@ -21,12 +21,26 @@ class RouteHandler(object):
 
         return map(Activity.to_dict, activities)
 
-    def set_activities(self, jactivities, aggregate_name):
+    def set_activities(self, document):
         """
         :raises ValueError: some activity is invalid
         """
+        if not isinstance(document, dict):
+            raise ValueError('document must be a dict')
+
+        if 'aggregate_name' not in document:
+            raise ValueError('missing aggregate_name parameter')
+
+        if 'activities' not in document:
+            raise ValueError('missing activities parameter')
+
+        aggregate_name = document['aggregate_name']
+        activities = document['activities']
+
+        if not isinstance(activities, list):
+            raise ValueError('activities is not an array')
         aggregate = ActivityAggregate(aggregate_name)
-        for doc in jactivities:
+        for doc in activities:
             aggregate.add(Activity(**doc))
 
         ids = self.acag_man.store(aggregate)
@@ -63,25 +77,7 @@ def exports(ws):
         You can pass an Array of Dicts and Activities will be inserted.
         """
         try:
-            document = request.json
-
-            if not isinstance(document, dict):
-                raise ValueError('document must be a dict')
-
-            if 'aggregate_name' not in document:
-                raise ValueError('missing aggregate_name parameter')
-
-            if 'activities' not in document:
-                raise ValueError('missing activities parameter')
-
-            aggregate_name = document['aggregate_name']
-            activities = document['activities']
-
-            if not isinstance(activities, list):
-                raise ValueError('activities is not an array')
-
-            return gen_json(route_handler.set_activities(
-                activities, aggregate_name))
+            return gen_json(route_handler.set_activities(request.json))
 
         except (ValueError, TypeError) as exc:
             return gen_json_error(str(exc), 400)
