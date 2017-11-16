@@ -1,6 +1,10 @@
 from __future__ import unicode_literals
 
+import arrow
+
 from bottle import request
+from six import string_types
+from time import time as now_ts
 
 from canopsis.confng import Configuration, Ini
 from canopsis.common.mongo_store import MongoStore
@@ -8,13 +12,15 @@ from canopsis.common.collection import MongoCollection
 from canopsis.webcore.utils import gen_json, gen_json_error
 from canopsis.activity.activity import Activity, ActivityAggregate
 from canopsis.activity.manager import ActivityManager, ActivityAggregateManager
+from canopsis.activity.pbehavior import PBehaviorGenerator
 
 
 class RouteHandler(object):
 
-    def __init__(self, ac_man, acag_man):
+    def __init__(self, ac_man, acag_man, pb_gen):
         self.ac_man = ac_man
         self.acag_man = acag_man
+        self.pb_gen = pb_gen
 
     def get_activities(self):
         activities = self.ac_man.get_all()
@@ -51,6 +57,25 @@ class RouteHandler(object):
 
         return result
 
+    def generate_pbs(self, document):
+        if not isinstance(document, list):
+            raise ValueError(
+                'document must be a list of string: [aggregate_name, ...]')
+
+        dict_pbs = {}
+
+        for agname in document:
+            if not isinstance(agname, string_types):
+                raise ValueError(
+                    'document must be a string: aggregate name')
+
+            acag = self.acag_man.get(agname)
+            now = arrow.get(int(now_ts()))
+            pbehaviors = self.pb_gen.activities_to_pbehaviors(acag, now)
+            dict_pbs[agname] = [pb.to_dict() for pb in pbehaviors]
+
+        return dict_pbs
+
 
 def exports(ws):
 
@@ -62,8 +87,9 @@ def exports(ws):
 
     ac_man = ActivityManager(ac_coll)
     acag_man = ActivityAggregateManager(ac_man)
+    pb_gen = PBehaviorGenerator()
 
-    route_handler = RouteHandler(ac_man, acag_man)
+    route_handler = RouteHandler(ac_man, acag_man, pb_gen)
 
     @ws.application.get('/api/v2/activity/activities')
     def get_activities():
@@ -80,4 +106,12 @@ def exports(ws):
             return gen_json(route_handler.set_activities(request.json))
 
         except (ValueError, TypeError) as exc:
+            return gen_json_error(str(exc), 400)
+
+    @ws.application.post('/api/v2/activity/generate_pbehaviors')
+    def generate_pbehaviors():
+        try:
+            return gen_json(route_handler.generate_pbs(request.json))
+
+        except (ValueError,) as exc:
             return gen_json_error(str(exc), 400)

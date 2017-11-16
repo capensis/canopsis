@@ -262,12 +262,14 @@ class PBehaviorGenerator(object):
             rrule=rrules
         )
 
-    def activities_to_pbehaviors(self, activities, start_date, days=7):
+    def activities_to_pbehaviors(self, activity_aggreg, start_date, days=7):
         """
+        :param activity_aggreg ActivityAggregate: aggregate with activities
+        :param start_date: arrow date object
         :rtype: list[PeriodicBehavior]
         """
         active_dates = self._merged_activities_dates(
-            activities, start_date, days=days)
+            activity_aggreg, start_date, days=days)
 
         inactive_dates = active_dates[1:]
         inactive_dates.append(active_dates[0].shift(days=days))
@@ -280,7 +282,7 @@ class PBehaviorGenerator(object):
         for i in range(0, _l_mid - _l_mid % 2, 2):
             pb_start_date = m_inactive_dates[i]
             pb_stop_date = m_inactive_dates[i + 1]
-            entity_filter = activities.activities[0].entity_filter
+            entity_filter = activity_aggreg.activities[0].entity_filter
             pb = self._generate_pbehavior(
                 entity_filter, pb_start_date, pb_stop_date
             )
