@@ -20,9 +20,9 @@
 
 import json
 import os
-import sys
 from time import time
 
+from canopsis.common import root_path
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.migration.manager import MigrationModule
@@ -80,7 +80,7 @@ class ViewsModule(MigrationModule):
 
         if backup:
             bakdir = os.path.join(
-                sys.prefix, 'var', 'cache', 'canopsis', 'migration'
+                root_path, 'var', 'cache', 'canopsis', 'migration'
             )
 
             filepath = os.path.join(bakdir, 'view.{0}.bak'.format(int(time())))

@@ -46,12 +46,12 @@ def event_processing(engine, event, alertsmgr=None, **kwargs):
     for key, value in event.items():
         try:
             key = key.encode('utf-8')
-        except (UnicodeDecodeError, UnicodeEncodeError):
+        except UnicodeError:
             pass
 
         try:
             value = value.encode('utf-8')
-        except (UnicodeDecodeError, UnicodeEncodeError, AttributeError):
+        except (UnicodeError, TypeError, AttributeError):
             pass
 
         encoded_event[key] = value

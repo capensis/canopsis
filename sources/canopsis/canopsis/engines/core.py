@@ -36,7 +36,7 @@ from time import time, sleep
 from json import loads
 from os import getpid
 from os.path import join
-from sys import prefix as sys_prefix
+from canopsis.common import root_path
 
 DROP = -1
 
@@ -93,7 +93,7 @@ class Engine(object):
 
         logHandler = FileHandler(
             filename=join(
-                sys_prefix, 'var', 'log', 'engines', '{0}.log'.format(name)
+                root_path, 'var', 'log', 'engines', '{0}.log'.format(name)
             )
         )
 

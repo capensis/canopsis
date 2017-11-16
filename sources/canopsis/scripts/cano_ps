@@ -26,11 +26,13 @@ import sys
 import os
 
 
+from canopsis.common import root_path
+
 class CanopsisProcessInfo(object):
     def __init__(self, *args, **kwargs):
         super(CanopsisProcessInfo, self).__init__(*args, **kwargs)
 
-        envpath = os.path.join(sys.prefix, 'etc', 'canopsis-env.json')
+        envpath = os.path.join(root_path, 'etc', 'canopsis-env.json')
 
         try:
             with open(envpath) as f:

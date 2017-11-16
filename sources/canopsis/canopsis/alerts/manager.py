@@ -170,8 +170,15 @@ class Alerts(object):
         """
         Number of alarm oscillation during flapping interval
         to consider an alarm as flapping.
+
         """
-        return self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
+
+        #  The minimum accepted frequency is 3 changes, otherwise all  alarms will bagot
+        freq = self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
+        if freq < 3:
+            return 3
+
+        return freq
 
     @property
     def flapping_interval(self):
