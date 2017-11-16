@@ -41,6 +41,12 @@ class TestActivity(unittest.TestCase):
         self.assertEqual(ac.start_time_of_day, startt)
         self.assertEqual(ac.stop_after_time, stopt)
 
+        with self.assertRaises(ValueError):
+            ac.stop_after_time = 1 * TimeUnits.Hour
+
+        with self.assertRaises(ValueError):
+            ac.stop_after_time = 80 * 24 * TimeUnits.Hour
+
     def test_eq(self):
 
         ac1 = Activity(
@@ -220,8 +226,9 @@ class TestActivityAggregateManager(unittest.TestCase):
         ac1 = Activity({}, DaysOfWeek.Monday, 0, 1)
         ac2 = Activity({}, DaysOfWeek.Saturday, 0, 1)
 
-        ag.add(ac1)
-        ag.add(ac2)
+        self.assertTrue(ag.add(ac1))
+        self.assertTrue(ag.add(ac2))
+        self.assertFalse(ag.add(ac1))
 
         agm.store(ag)
 
@@ -233,6 +240,11 @@ class TestActivityAggregateManager(unittest.TestCase):
         self.assertEqual(ac1, res[0])
         self.assertEqual(ac2, res[1])
 
+        # Testing ActivityManager
+        res = acm.get_all()
+        self.assertEqual(len(res), 2)
+        res = acm.del_by_aggregate_name('agtest')
+        self.assertEqual(res['n'], 2)
 
 if __name__ == '__main__':
     unittest.main()

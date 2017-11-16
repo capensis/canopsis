@@ -121,16 +121,18 @@ class PBehaviorGenerator(object):
     def _get_monday(self):
         """
         Get current week's monday date.
+        :rtype: datetime
         """
         today = arrow.now(tz=self._tz)
         monday = today.shift(days=-today.weekday())
+
         return monday
 
     def _dow_to_rruledays(self, day_of_week):
         """
         :param int day_of_week:
-        :rtype: list[str]
         :returns: list of days of week for BYDAY RRULE instruction
+        :rtype: list[str]
         """
         rruledow = []
 
@@ -140,6 +142,9 @@ class PBehaviorGenerator(object):
         return rruledow
 
     def _normalize_date(self, date, start_time, stop_time):
+        """
+        :rtype: (datetime, datetime)
+        """
         start_date = arrow.get(
             dt(date.year, date.month, date.day, 0, 0, 0), tzinfo=self._tz
         ).shift(seconds=start_time)
@@ -151,6 +156,9 @@ class PBehaviorGenerator(object):
         return start_date, stop_date
 
     def _merged_activities_dates(self, activity_aggreg, from_date, days):
+        """
+        :rtype: [(datetime, datetime)]
+        """
         activities = activity_aggreg.activities
         dts = from_date.shift(days=-1).datetime
         dtS = from_date.shift(days=days - 1).datetime
@@ -240,12 +248,19 @@ class PBehaviorGenerator(object):
         return dow_pb.values()
 
     def _generate_pbehavior(self, filter_, start_date, stop_date):
-        tstart = start_date.timestamp
-        tstop = stop_date.timestamp
+        """
+        :rtype: PeriodicBehavior
+        """
         weekday = DAY_OF_WEEK_RRULE_DAY[start_date.weekday()]
         rrules = 'FREQ=DAILY;BYDAY={}'.format(weekday)
+
         return PeriodicBehavior(
-            'downtime', filter_, tstart, tstop, rrule=rrules)
+            name='downtime',
+            filter_=filter_,
+            tstart=start_date.timestamp,
+            tstop=stop_date.timestamp,
+            rrule=rrules
+        )
 
     def activities_to_pbehaviors(self, activities, start_date, days=7):
         """

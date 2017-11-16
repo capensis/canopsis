@@ -55,6 +55,8 @@ class Activity(object):
         :param int day_of_week: 0: Monday to 6: Sunday
         :param int start_time_of_day: number of seconds after D-Day 00:00
         :param int stop_after_time: number of seconds after D-Day 00:00
+        :param string aggregate_name: aggregate name is the aggregate id
+        :param list pbehavior_ids: list of pbehavior ids
         :raises ValueError: initialisation failed
         """
         self.aggregate_name = aggregate_name
