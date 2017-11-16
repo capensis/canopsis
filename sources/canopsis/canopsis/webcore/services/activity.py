@@ -46,11 +46,8 @@ def exports(ws):
     ac_coll = MongoCollection(
         mdbstore.get_collection(ActivityManager.ACTIVITY_COLLECTION))
 
-    acag_coll = MongoCollection(
-        mdbstore.get_collection(ActivityAggregateManager.ACAGG_COLLECTION))
-
     ac_man = ActivityManager(ac_coll)
-    acag_man = ActivityAggregateManager(acag_coll, ac_man)
+    acag_man = ActivityAggregateManager(ac_man)
 
     route_handler = RouteHandler(ac_man, acag_man)
 

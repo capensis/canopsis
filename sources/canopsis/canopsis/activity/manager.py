@@ -1,21 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from canopsis.common.collection import CollectionError
-
-from .activity import Activity
+from .activity import Activity, ActivityAggregate
 
 
 class ActivityAggregateManager(object):
 
-    ACAGG_COLLECTION = 'default_activityaggregate'
-
-    def __init__(self, acag_collection, activity_manager):
+    def __init__(self, activity_manager):
         """
         :type activity_manager: ActivityManager
-        :type acag_collection: canopsis.common.collection.MongoCollection
         """
-        self._coll = acag_collection
         self._activity_manager = activity_manager
 
     def store(self, aggregate):
@@ -24,14 +18,19 @@ class ActivityAggregateManager(object):
 
         :type aggregate: ActivityAggregate
         """
-        try:
-            res = self._coll.insert(aggregate.to_dict())
-        except CollectionError:
-            self.delete(aggregate.name)
-            res = self._coll.insert(aggregate.to_dict())
+        self._activity_manager.del_by_aggregate_name(aggregate.name)
+        return self._activity_manager.store(aggregate.activities)
 
-        if res == aggregate.name:
-            return self._activity_manager.store(aggregate.activities)
+    def get(self, aggregate_name):
+        activities = self._activity_manager.get_by_aggregate_name(
+            aggregate_name
+        )
+
+        acag = ActivityAggregate(aggregate_name)
+        for ac in activities:
+            acag.add(ac)
+
+        return acag
 
     def delete(self, aggregate_name):
         return self._coll.remove({'_id': aggregate_name})
@@ -42,6 +41,9 @@ class ActivityManager(object):
     Store/get activities in/from database. Aggregates are never stored,
     they are only used to add a field in the activity so you can query
     activities grouped by aggregate.
+
+    Warning: prefer the use of ActivityAggregateManager to guarantee
+    consistency across activities.
     """
 
     ACTIVITY_COLLECTION = 'default_activity'
@@ -72,7 +74,7 @@ class ActivityManager(object):
         :rtype: Activity
         """
         act = self._coll.find_one({'_id': _id})
-        act.pop('_id')
+        act[Activity.DBID] = act.pop('_id')
 
         return Activity(**act)
 
@@ -83,7 +85,7 @@ class ActivityManager(object):
         cursor = self._coll.find({})
         activities = []
         for act in cursor:
-            act.pop('_id')
+            act[Activity.DBID] = act.pop('_id')
             activities.append(Activity(**act))
 
         return activities
@@ -96,8 +98,8 @@ class ActivityManager(object):
         activities = []
         res = self._coll.find({'aggregate_name': aggregate_name})
 
-        for r in list(res):
-            r.pop('_id')
-            activities.append(Activity(**r))
+        for act in list(res):
+            act[Activity.DBID] = act.pop('_id')
+            activities.append(Activity(**act))
 
         return activities

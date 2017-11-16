@@ -41,11 +41,12 @@ class Activity(object):
     ENTITY_FILTER = 'entity_filter'
     PBEHAVIOR_IDS = 'pbehavior_ids'
     AGGREGATE_NAME = 'aggregate_name'
+    DBID = '_id'
 
     def __init__(
         self, entity_filter, day_of_week, start_time_of_day,
         stop_after_time, aggregate_name=None, valid_from=None,
-        valid_until=None, pbehavior_ids=None
+        valid_until=None, pbehavior_ids=None, dbid=None
     ):
         """
         :param dict entity_filter: mongo filter
@@ -70,6 +71,7 @@ class Activity(object):
 
         self.entity_filter = entity_filter
         self.pbehavior_ids = [] if pbehavior_ids is None else pbehavior_ids
+        self.dbid = dbid
 
     @property
     def day_of_week(self):
