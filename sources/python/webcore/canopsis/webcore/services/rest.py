@@ -328,11 +328,11 @@ def exports(ws):
                 for k, v in entity.items():
                     try:
                         k = k.encode('utf-8')
-                    except:
+                    except UnicodeError:
                         pass
                     try:
                         v = v.encode('utf-8')
-                    except:
+                    except (UnicodeError, TypeError, AttributeError):
                         pass
                     encoded_entity[k] = v
 
