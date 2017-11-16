@@ -16,6 +16,8 @@ class ActivityAggregateManager(object):
         """
         Store an aggregate and attached activities.
 
+        All existing activities are dropped before insert.
+
         :type aggregate: ActivityAggregate
         """
         self._activity_manager.del_by_aggregate_name(aggregate.name)

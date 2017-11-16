@@ -241,5 +241,6 @@ class TestActivityAggregateManager(unittest.TestCase):
         res = acm.del_by_aggregate_name('agtest')
         self.assertEqual(res['n'], 2)
 
+
 if __name__ == '__main__':
     unittest.main()
