@@ -205,22 +205,17 @@ class TestActivityAggregateManager(unittest.TestCase):
 
         cls.col_activity = MongoCollection(
             cls.store.get_collection(ActivityManager.ACTIVITY_COLLECTION))
-        cls.col_acagg = MongoCollection(
-            cls.store.get_collection(ActivityAggregateManager.ACAGG_COLLECTION)
-        )
 
     @classmethod
     def tearDownClass(self):
         self.col_activity.collection.drop()
-        self.col_acagg.collection.drop()
 
     def setUp(self):
         self.col_activity.remove({})
-        self.col_acagg.remove({})
 
     def test_store_get_then_equals(self):
         acm = ActivityManager(self.col_activity)
-        agm = ActivityAggregateManager(self.col_acagg, acm)
+        agm = ActivityAggregateManager(acm)
         ag = ActivityAggregate('agtest')
 
         ac1 = Activity({}, DaysOfWeek.Monday, 0, 1)

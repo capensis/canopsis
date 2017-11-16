@@ -41,7 +41,7 @@ class Activity(object):
     ENTITY_FILTER = 'entity_filter'
     PBEHAVIOR_IDS = 'pbehavior_ids'
     AGGREGATE_NAME = 'aggregate_name'
-    DBID = '_id'
+    DBID = 'dbid'
 
     def __init__(
         self, entity_filter, day_of_week, start_time_of_day,
