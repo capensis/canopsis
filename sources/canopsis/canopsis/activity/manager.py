@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from canopsis.common.collection import CollectionError
+
 from .activity import Activity
 
 
@@ -22,8 +24,17 @@ class ActivityAggregateManager(object):
 
         :type aggregate: ActivityAggregate
         """
-        if self._coll.insert(aggregate.to_dict()) == aggregate.name:
-            self._activity_manager.store(aggregate.activities)
+        try:
+            res = self._coll.insert(aggregate.to_dict())
+        except CollectionError:
+            self.delete(aggregate.name)
+            res = self._coll.insert(aggregate.to_dict())
+
+        if res == aggregate.name:
+            return self._activity_manager.store(aggregate.activities)
+
+    def delete(self, aggregate_name):
+        return self._coll.remove({'_id': aggregate_name})
 
 
 class ActivityManager(object):
@@ -72,6 +83,7 @@ class ActivityManager(object):
         cursor = self._coll.find({})
         activities = []
         for act in cursor:
+            act.pop('_id')
             activities.append(Activity(**act))
 
         return activities
