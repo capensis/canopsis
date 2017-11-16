@@ -20,12 +20,11 @@
 from __future__ import unicode_literals
 
 from base64 import b64decode
-from bottle import HTTPError, response
 from json import loads
+from bottle import HTTPError, response
 
 from canopsis.common.utils import ensure_iterable
 from canopsis.common.ws import route
-from canopsis.context_graph.manager import ContextGraph
 from canopsis.old.record import Record
 
 
@@ -245,7 +244,6 @@ def delete_records(ws, namespace, ctype, _id, data):
 
 
 def exports(ws):
-    ctxmgr = ContextGraph(ws.logger)
 
     @route(ws.application.get, name='rest/indexes', response=lambda r, a: r)
     def indexes(collection):
