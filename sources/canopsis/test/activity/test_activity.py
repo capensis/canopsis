@@ -241,6 +241,25 @@ class TestActivityAggregateManager(unittest.TestCase):
         res = acm.del_by_aggregate_name('agtest')
         self.assertEqual(res['n'], 2)
 
+    def test_store_get_dbid(self):
+        acm = ActivityManager(self.col_activity)
+        agm = ActivityAggregateManager(acm)
+
+        ag = ActivityAggregate('agtest')
+
+        ac1 = Activity({}, DaysOfWeek.Monday, 0, 1)
+        ac2 = Activity({}, DaysOfWeek.Saturday, 0, 1)
+
+        ag.add(ac1)
+        ag.add(ac2)
+
+        store_ids = agm.store(ag)
+        activities = acm.get_by_aggregate_name(ag.name)
+
+        self.assertEqual(len(store_ids), len(activities))
+        self.assertEqual(str(store_ids[0]), str(activities[0].dbid))
+        self.assertEqual(str(store_ids[1]), str(activities[1].dbid))
+
 
 if __name__ == '__main__':
     unittest.main()
