@@ -21,6 +21,7 @@
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 
+
 def exports(ws):
     manager = ContextGraph(ws.logger)
 
