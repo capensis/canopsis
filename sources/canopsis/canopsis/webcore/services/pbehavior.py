@@ -23,13 +23,21 @@ Webservice for pbehaviors.
 """
 
 from __future__ import unicode_literals
+from bottle import request
 from json import loads
 from six import string_types
+from time import time
 
 from canopsis.common.ws import route
 from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.manager import Watcher as WatcherManager
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+
+last_pbehaviors_compute = 0
+
+VALID_PBEHAVIOR_PARAMS = ['name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
+                         'enabled', 'comments', 'connector', 'connector_name']
 
 
 def check(data, key, type_):
@@ -119,9 +127,9 @@ class RouteHandlerPBehavior(object):
         self.pb_manager = pb_manager
 
     def create(self, name, filter_, author,
-               tstart, tstop, rrule,
-               enabled, comments,
-               connector, connector_name):
+               tstart, tstop, rrule=None,
+               enabled=True, comments=None,
+               connector='canopsis', connector_name='canopsis'):
         """
         Create a pbehavior.
 
@@ -166,7 +174,7 @@ class RouteHandlerPBehavior(object):
         :return: pbehavior
         :rtype: dict
         """
-        is_ok = False
+        is_ok = _id is None
         if isinstance(_id, string_types):
             is_ok = True
         elif isinstance(_id, list):
@@ -176,8 +184,8 @@ class RouteHandlerPBehavior(object):
                     is_ok = False
 
         if not is_ok:
-            raise ValueError("_id should be str, a list, None (null) not"
-                             "{0}".format(type(_id)))
+            raise ValueError("_id should be str, a list, None (null) not {}"
+                             .format(type(_id)))
 
         return self.pb_manager.read(_id)
 
@@ -252,8 +260,9 @@ class RouteHandlerPBehavior(object):
 def exports(ws):
 
     pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
+    watcher_manager = WatcherManager()
     rhpb = RouteHandlerPBehavior(
-        pb_manager=pbm, watcher_manager=WatcherManager()
+        pb_manager=pbm, watcher_manager=watcher_manager
     )
 
     @route(
@@ -278,6 +287,23 @@ def exports(ws):
         return rhpb.create(
             name, filter, author, tstart, tstop,
             rrule, enabled, comments, connector, connector_name)
+
+    @ws.application.post('/api/v2/pbehavior')
+    def create_v2():
+        """
+        Create a pbehavior (with a real API).
+        """
+        elements = request.json
+
+        if elements is None:
+            return gen_json_error({'description': 'nothing to insert'},
+                                  HTTP_ERROR)
+
+        for key in elements.keys():
+            if key not in VALID_PBEHAVIOR_PARAMS:
+                elements.pop(key)
+
+        return gen_json(rhpb.create(**elements))
 
     @route(
         ws.application.get,
@@ -377,3 +403,24 @@ def exports(ws):
         delete has successed. False, otherwise.
         """
         return rhpb.delete_comment(pbehavior_id, _id)
+
+    @ws.application.get(
+        '/api/v2/compute-pbehaviors'
+    )
+    def compute_pbehaviors():
+        """
+        Force compute of all pbehaviors, once per minute max
+
+        :returns: bool
+        """
+        global last_pbehaviors_compute
+        now = int(time())
+        do_compute = last_pbehaviors_compute + 60 < now
+
+        if do_compute:
+            ws.logger.info('Force compute on all pbehaviors')
+            last_pbehaviors_compute = now
+            pbm.compute_pbehaviors_filters()
+            pbm.launch_update_watcher(watcher_manager)
+
+        return gen_json(do_compute)
