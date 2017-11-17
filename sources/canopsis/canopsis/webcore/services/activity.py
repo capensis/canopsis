@@ -57,22 +57,49 @@ class RouteHandler(object):
 
         return result
 
-    def generate_pbs(self, document):
-        if not isinstance(document, list):
-            raise ValueError(
-                'document must be a list of string: [aggregate_name, ...]')
+    def _generate_pbs_register(self, pbehaviors):
+        pass
 
+    def _generate_pbs_return(self, aggregate_names):
         dict_pbs = {}
 
-        for agname in document:
+        for agname in aggregate_names:
             if not isinstance(agname, string_types):
                 raise ValueError(
-                    'document must be a string: aggregate name')
+                    'aggregate name must be a string, got {}'.format(agname))
 
             acag = self.acag_man.get(agname)
             now = arrow.get(int(now_ts()))
             pbehaviors = self.pb_gen.activities_to_pbehaviors(acag, now)
             dict_pbs[agname] = [pb.to_dict() for pb in pbehaviors]
+
+        return dict_pbs
+
+    def generate_pbs(self, document):
+        """
+        :param document list[string]: list of aggregate names
+        :param register_pb bool: register pbehaviors
+        """
+
+        if not isinstance(document, dict):
+            raise ValueError('document must be a dict')
+
+        register_pb = request.json.get('register', False)
+        aggregate_names = request.json.get('aggregate_names')
+
+        if not isinstance(aggregate_names, list):
+            raise ValueError(
+                'aggregate_names must be a list of string'
+                ': [aggregate_name, ...]')
+
+        if not isinstance(register_pb, bool):
+            raise ValueError(
+                'register_pb must be a bool, got {}'.format(register_pb))
+
+        dict_pbs = self._generate_pbs_return(aggregate_names)
+
+        if register_pb:
+            self._generate_pbs_register(dict_pbs)
 
         return dict_pbs
 

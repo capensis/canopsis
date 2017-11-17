@@ -43,7 +43,7 @@ class PeriodicBehavior(object):
 
     def __init__(
         self, name, filter_, tstart, tstop,
-        tzinfo='Europe/Paris', rrule=""
+        tzinfo='UTC', rrule=""
     ):
         self.connector = "canopsis"
         self.name = name
