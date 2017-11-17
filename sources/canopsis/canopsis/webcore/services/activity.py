@@ -75,16 +75,16 @@ class RouteHandler(object):
             for pb in pbs:
                 res.append(
                     self.pb_man.create(
-                        name=pb['name'],
-                        filter=pb['filter'],
-                        author=pb['author'],
-                        tstart=pb['tstart'],
-                        tstop=pb['tstop'],
-                        rrule=pb['rrule'],
-                        enabled=pb['enabled'],
-                        comments=pb['comments'],
-                        connector=pb['connector'],
-                        connector_name=pb['connector_name']
+                        name=pb.name,
+                        filter=pb.filter_,
+                        author=pb.author,
+                        tstart=pb.tstart,
+                        tstop=pb.tstop,
+                        rrule=pb.rrule,
+                        enabled=pb.enabled,
+                        comments=pb.comments,
+                        connector=pb.connector,
+                        connector_name=pb.connector_name
                     )
                 )
 
@@ -101,7 +101,7 @@ class RouteHandler(object):
             acag = self.acag_man.get(agname)
             now = arrow.get(int(now_ts()))
             pbehaviors = self.pb_gen.activities_to_pbehaviors(acag, now)
-            dict_pbs[agname] = [pb.to_dict() for pb in pbehaviors]
+            dict_pbs[agname] = pbehaviors
 
         return dict_pbs
 
@@ -131,6 +131,9 @@ class RouteHandler(object):
         pb_ids = []
         if register_pb:
             pb_ids = self._generate_pbs_register(dict_pbs)
+
+        for agname, pbs in dict_pbs.items():
+            dict_pbs[agname] = [pb.to_dict() for pb in pbs]
 
         return dict_pbs, pb_ids
 
