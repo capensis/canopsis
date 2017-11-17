@@ -25,7 +25,6 @@ pbehavior process
 from __future__ import unicode_literals
 
 from json import dumps
-from traceback import format_exc
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
@@ -60,6 +59,7 @@ def init_managers():
     pb_manager = singleton_per_scope(PBehaviorManager, kwargs=pb_kwargs)
 
     return pb_manager
+
 
 _pb_manager = init_managers()
 
