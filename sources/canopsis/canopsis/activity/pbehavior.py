@@ -76,6 +76,7 @@ class PeriodicBehavior(object):
             'author': self.author,
             'enabled': self.enabled,
             'comments': self.comments,
+            'connector': self.connector,
             'connector_name': self.connector_name,
             'rrule': self.rrule,
             'tstart': self.tstart,

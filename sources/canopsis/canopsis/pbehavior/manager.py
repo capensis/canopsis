@@ -149,7 +149,7 @@ class PBehaviorManager(object):
     __TYPE_ERR = "id_ must be a list of string or a string"
 
     @classmethod
-    def provide_default_basics(cls):
+    def provide_default_basics(cls, logger=None):
         """
         Provide the default configuration and logger objects
         for PBehaviorManager.
@@ -159,7 +159,8 @@ class PBehaviorManager(object):
         :return: config, logger, storage
         :rtype: Union[dict, logging.Logger, canopsis.storage.core.Storage]
         """
-        logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
+        if logger is None:
+            logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
         pb_storage = Middleware.get_middleware_by_uri(cls.PB_STORAGE_URI)
 
         return logger, pb_storage
@@ -568,7 +569,8 @@ class PBehaviorManager(object):
         for active_pb in active_pbehaviors:
             active_pbehaviors_ids.add(active_pb['_id'])
 
-        varying_pbs = active_pbehaviors_ids.symmetric_difference(self.currently_active_pb)
+        varying_pbs = active_pbehaviors_ids.symmetric_difference(
+            self.currently_active_pb)
         self.currently_active_pb = active_pbehaviors_ids
 
         return list(varying_pbs)
