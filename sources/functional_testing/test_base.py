@@ -26,6 +26,22 @@ import requests
 import unittest
 
 
+class Event:
+
+    def __init__(self, connector, connector_name, component, state, state_type,
+                 status, resource=None):
+        self.event_type = "check"
+        self.connector = connector
+        self.connector_name = connector_name
+        self.component = component
+        self.resource = resource
+        self.state_type = state_type
+        self.status = status
+        if resource is None:
+            self.source_type = "component"
+        else:
+            self.source_type = "resource"
+
 class HTTP(Enum):
     """
     HTTP codes transcription.
@@ -65,21 +81,19 @@ class BaseApiTest(unittest.TestCase):
     URL_BASE = "http://{}:{}".format(WEB_HOST, WEB_PORT)
     URL_PLAIN = "{}/auth".format(URL_BASE)
 
-    """
-    URL_AUTHKEY = "{}/?authkey={}"
-    def _authent_with_authkey(self):
-        # Send authentification with a authkey by reading it in the database.
-        from canopsis.middleware.core import Middleware
+    # URL_AUTHKEY = "{}/?authkey={}"
+    # def _authent_with_authkey(self):
+    #     # Send authentification with a authkey by reading it in the database.
+    #     from canopsis.middleware.core import Middleware
 
-        user_storage = Middleware.get_middleware_by_uri(
-            'storage-default-rights://'
-        )
-        authkey = user_storage.find_elements(query={'_id': 'root'})
-        authkey = list(authkey)[0]['authkey']
-        url_auth = self.URL_AUTH.format(self.URL_BASE, authkey)
+    #     user_storage = Middleware.get_middleware_by_uri(
+    #         'storage-default-rights://'
+    #     )
+    #     authkey = user_storage.find_elements(query={'_id': 'root'})
+    #     authkey = list(authkey)[0]['authkey']
+    #     url_auth = self.URL_AUTH.format(self.URL_BASE, authkey)
 
-        return self._send(url_auth)
-    """
+    #     return self._send(url_auth)
 
     def _authent_plain(self):
         """
@@ -149,6 +163,12 @@ class BaseApiTest(unittest.TestCase):
                                         **kwargs)
 
         return response
+
+    def _send_event(self, event):
+        self._send(url=self.URL_BASE + "/event",
+                   method=Method.post,
+                   params={"event": event},
+                   allow_redirects=False)
 
     def setUp(self):
         self._authenticate()
