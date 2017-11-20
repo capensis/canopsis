@@ -921,7 +921,7 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
 
         for data_id in alarms:
             for docalarm in alarms[data_id]:
@@ -948,7 +948,7 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
 
         now = int(time())
 
@@ -974,7 +974,7 @@ class Alerts(object):
         :deprecated: see canopsis.alarms
         """
 
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
         now = int(time())
         if alarms is None:
             result = self.get_alarms(resolved=False, snoozed=True)
@@ -1010,7 +1010,7 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
 
         for data_id in alarms:
             for docalarm in alarms[data_id]:

@@ -67,15 +67,20 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     """
     Scheduled process.
     """
-    alarms_service = AlarmService(
-        alarms_adapter=AlarmAdapter(mongo_client),
-        watcher_manager=Watcher()
-    )
-
     if alertsmgr is None:
         alertsmgr = alerts_manager
 
     alertsreader = alertsreader_manager
+
+    alarms_service = AlarmService(
+        alarms_adapter=AlarmAdapter(mongo_client),
+        watcher_manager=Watcher(),
+        bagot_time=alertsmgr.flapping_interval,
+        cancel_autosolve_delay=alertsmgr.cancel_autosolve_delay,
+        stealthy_duration=alertsmgr.stealthy_show_duration,
+        stealthy_interval=alertsmgr.stealthy_interval,
+        logger=alertsmgr.logger
+    )
 
     # process snoozed alarms first
     snoozed_alarms = alarms_service.find_snoozed_alarms()

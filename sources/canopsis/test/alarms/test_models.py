@@ -150,6 +150,16 @@ class AlarmsModelsTest(TestCase):
         self.assertTrue(self.alarm.snooze is None)
         self.assertNotEqual(self.alarm.last_update_date, last)
 
+        self.alarm.snooze = AlarmStep(
+            author='Summer',
+            message='Smith',
+            type_=ALARM_STEP_TYPE_STATE_INCREASE,
+            timestamp=int(time()) + 10000,
+            value=AlarmStatus.ONGOING
+        )
+        self.alarm.snooze.value = int(time()) + 100
+        self.assertFalse(self.alarm.resolve_snooze())
+
     def test_alarm_is_stealthy(self):
         self.alarm.state = AlarmStep(
             author='Coach',
