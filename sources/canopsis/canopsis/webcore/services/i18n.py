@@ -22,14 +22,15 @@ from canopsis.common.ws import route
 from bottle import HTTPError
 
 import polib
-import sys
 import os
+
+from canopsis.common import root_path
 
 
 def exports(ws):
     @route(ws.application.get)
     def i18n(lang='en'):
-        lang_file = os.path.join(sys.prefix, 'locale', lang, 'ui_lang.po')
+        lang_file = os.path.join(root_path, 'locale', lang, 'ui_lang.po')
         translations = {}
 
         if os.path.isfile(lang_file):

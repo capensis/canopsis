@@ -22,8 +22,8 @@ from stat import ST_SIZE
 
 from os import stat
 from os.path import exists, join
-import sys
 
+from canopsis.common import root_path
 from canopsis.configuration.driver import ConfigurationDriver
 
 
@@ -32,7 +32,7 @@ class FileConfigurationDriver(ConfigurationDriver):
     Configuration Manager dedicated to files.
     """
 
-    CONF_DIR = join(sys.prefix, 'etc')
+    CONF_DIR = join(root_path, 'etc')
 
     def exists(self, conf_path, *args, **kwargs):
 

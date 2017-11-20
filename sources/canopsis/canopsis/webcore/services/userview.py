@@ -24,6 +24,7 @@ from canopsis.webcore.services.rest import delete_records
 
 manager = CheckManager()
 
+
 def exports(ws):
     @route(ws.application.delete, name='userview', payload=[])
     def remove_elements(

@@ -63,14 +63,11 @@ def get_data_files(pkgpath):
     data_files = []
 
     """
-    if embed_conf:
-        etc_path = join(pkgpath, 'etc')
-        target = getenv('CPS_PREFIX', join(sys_prefix, 'etc'))
+    Populate data files here.
 
-        for root, _, files in walk(etc_path):
-            files_to_copy = [join(root, _file) for _file in files]
-            final_target = join(target, root[len(etc_path) + 1:])
-            data_files.append((final_target, files_to_copy))
+    DO NOT PUSH CONFIGURATION. EVER.
+
+    You can bundle examples if you want.
     """
 
     return data_files
@@ -80,14 +77,17 @@ def get_install_requires(pkgpath):
     """
     Get a list of requirements from requirements.txt
     """
-    requirements = []
+    reqs = []
     requires_path = join(pkgpath, 'requirements.txt')
 
     with open(requires_path) as f:
         # remove new lines, extra spaces...
-        requirements = [r.strip() for r in f.readlines()]
+        reqs = f.readlines()
 
-    return requirements
+    reqs = filter(None, [r.strip() for r in reqs])
+    reqs = [r for r in reqs if not r.startswith('#')]
+
+    return reqs
 
 
 def get_description(pkgpath):

@@ -24,6 +24,7 @@ import json
 import requests
 from bottle import HTTPError, request
 
+from canopsis.event import get_routingkey
 from canopsis.common.utils import ensure_iterable
 from canopsis.common.ws import route
 from canopsis import schema
@@ -79,17 +80,7 @@ def exports(ws):
                                 HTTPError
                             )
 
-                    rk = '{0}.{1}.{2}.{3}.{4}'.format(
-                        u'{0}'.format(event['connector']),
-                        u'{0}'.format(event['connector_name']),
-                        u'{0}'.format(event['event_type']),
-                        u'{0}'.format(event['source_type']),
-                        u'{0}'.format(event['component'])
-                    )
-
-                    if event['source_type'] == 'resource':
-                        rk = '{0}.{1}'.format(rk, event['resource'])
-
+                    rk = get_routingkey(event)
                     ws.amqp.publish(event, rk, exchange)
 
         return gen_json(events)
@@ -116,33 +107,21 @@ def exports(ws):
             events = ensure_iterable(event)
             exchange = ws.amqp.exchange_name_events
 
+            sent_events = []
+            failed_events = []
+
             for event in events:
-                if schema.validate(event, 'cevent'):
-                    sname = 'cevent.{0}'.format(event['event_type'])
+                try:
+                    rk = get_routingkey(event)
 
-                    if schema.validate(event, sname):
-                        if event['event_type'] == 'eue':
-                            sname = 'cevent.eue.{0}'.format(
-                                event['type_message']
-                            )
+                except KeyError as exc:
+                    failed_events.append(event)
+                    continue
 
-                            if not schema.validate(event, sname):
-                                continue
+                ws.amqp.publish(event, rk, exchange)
+                sent_events.append(event)
 
-                        rk = '{0}.{1}.{2}.{3}.{4}'.format(
-                            u'{0}'.format(event['connector']),
-                            u'{0}'.format(event['connector_name']),
-                            u'{0}'.format(event['event_type']),
-                            u'{0}'.format(event['source_type']),
-                            u'{0}'.format(event['component'])
-                        )
-
-                        if event['source_type'] == 'resource':
-                            rk = '{0}.{1}'.format(rk, event['resource'])
-
-                        ws.amqp.publish(event, rk, exchange)
-
-            return events
+            return {'sent_events': sent_events, 'failed_events': failed_events}
 
     @route(ws.application.get,
            name='eventslog/count',

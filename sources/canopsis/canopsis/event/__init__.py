@@ -34,18 +34,18 @@ class Event(object):
     An event contains information and require a type and source_type.
     """
 
-    TYPE = 'event_type'  #: event type field name
-    SOURCE_TYPE = 'source_type'  #: source type field name
-    SOURCE = 'source'  #: source field name
-    DATA = 'data'  #: data field name
-    META = 'meta'  #: meta field name
-
-    CONNECTOR = 'canopsis'  #: default connector value
-    CONNECTOR_NAME = 'engine'  #: default connector name
-
+    SOURCE_TYPE = 'source_type'
+    SOURCE = 'source'
+    EVENT_TYPE = 'event_type'
+    DATA = 'data'
+    META = 'meta'
+    RESOURCE = 'resource'
+    COMPONENT = 'component'
+    CONNECTOR = 'connector'
+    CONNECTOR_NAME = 'connector_name'
     ENTITY = 'entity'  #: entity id item name
 
-    __slots__ = (TYPE, SOURCE, DATA, META)
+    __slots__ = (EVENT_TYPE, SOURCE, DATA, META)
 
     def __init__(self, source, data, meta, _type=None):
 
@@ -251,12 +251,30 @@ def forger(
 
 
 def get_routingkey(event):
-    rk = "%s.%s.%s.%s.%s" % (
-        event['connector'], event['connector_name'], event['event_type'],
-        event['source_type'], event['component'])
+    """
+    Build the routing key from an event.
 
-    if 'resource' in event and event['resource']:
-        rk += ".%s" % event['resource']
+    If the key 'resource' is present, 'source_type' is forced to
+    'resource', otherwise 'component'.
+
+    This function mutates the 'source_type' field if necessary.
+
+    :raise KeyError: on missing required info
+    """
+    event[Event.SOURCE_TYPE] = 'component'
+    if Event.RESOURCE in event:
+        event[Event.SOURCE_TYPE] = 'resource'
+
+    rk = u"{}.{}.{}.{}.{}".format(
+        event[Event.CONNECTOR],
+        event[Event.CONNECTOR_NAME],
+        event[Event.EVENT_TYPE],
+        event[Event.SOURCE_TYPE],
+        event[Event.COMPONENT]
+    )
+
+    if event.get(Event.RESOURCE, None):
+        rk = u"{}.{}".format(rk, event[Event.RESOURCE])
 
     return rk
 

@@ -27,7 +27,9 @@ code.
 """
 
 import logging
+import json
 import traceback
+
 from bottle import request, HTTPError, HTTPResponse
 from bottle import response as BottleResponse
 from functools import wraps
@@ -265,7 +267,7 @@ class route(object):
             except Exception as exc:
                 # if an error occured, get a failure message
                 self.logger.exception("Exception while handling the request.")
-                result = {
+                result = HTTPError(500, json.dumps({
                     'total': 0,
                     'success': False,
                     'data': {
@@ -273,7 +275,7 @@ class route(object):
                         'type': str(type(exc)),
                         'msg': str(exc)
                     }
-                }
+                }))
 
             else:
                 #TODO: move it globaly, and move this module in webcore project
