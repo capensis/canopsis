@@ -75,6 +75,8 @@ def validate(dictionary, schema_id):
     """
         Validate a dictionary using a schema.
 
+        !! DEPRECATED !! Always return True. It just log call stack to var/log/schema.log
+
         :param dictionary: Dictionary to validate.
         :type dictionary: dict
 
