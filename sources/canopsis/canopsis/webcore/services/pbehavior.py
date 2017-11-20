@@ -28,6 +28,7 @@ from json import loads
 from six import string_types
 from time import time
 
+from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
 from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -37,7 +38,7 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 last_pbehaviors_compute = 0
 
 VALID_PBEHAVIOR_PARAMS = ['name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
-                         'enabled', 'comments', 'connector', 'connector_name']
+                          'enabled', 'comments', 'connector', 'connector_name']
 
 
 def check(data, key, type_):
@@ -259,6 +260,8 @@ class RouteHandlerPBehavior(object):
 
 def exports(ws):
 
+    ws.application.router.add_filter('id_filter', id_filter)
+
     pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
     watcher_manager = WatcherManager()
     rhpb = RouteHandlerPBehavior(
@@ -356,6 +359,19 @@ def exports(ws):
         delete is a sucess. False, otherwise.
         """
         return rhpb.delete(_id)
+
+    @ws.application.delete('/api/v2/pbehavior/<pbehavior_id:id_filter>')
+    def delete_v2(pbehavior_id):
+        """Delete the pbehaviour that match the _id
+
+        :param pbehavior_id: the pbehaviour id
+        :return type: dict
+        :return: a dict with two field. "acknowledged" that True if the
+        delete is a sucess. False, otherwise.
+        """
+        ws.logger.info('Delete pbehavior : {}'.format(pbehavior_id))
+
+        return gen_json(rhpb.delete(pbehavior_id))
 
     @route(
         ws.application.post,
