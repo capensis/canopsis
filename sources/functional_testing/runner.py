@@ -40,7 +40,7 @@ def add_modules_from_folder(suite, folder):
     files = [f for f in listdir(folder) if isfile(join(folder, f)) and pyfile.match(f)]
 
     for f in files:
-        mod_name = 'apis.{}'.format('.'.join(f.split('.')[:-1]))
+        mod_name = '{}.{}'.format(folder, '.'.join(f.split('.')[:-1]))
         try:
             mod = importlib.import_module(mod_name)
         except ImportError as exc:
