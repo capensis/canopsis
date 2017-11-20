@@ -18,11 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.ws import route
 from canopsis.alerts.manager import Alerts
+from canopsis.common.converters import id_filter
+from canopsis.common.ws import route
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.import_ctx import ImportKey, Manager
 from canopsis.engines.core import publish
+from canopsis.webcore.utils import gen_json
 
 import json as j
 import os
@@ -57,6 +59,8 @@ def get_uuid():
 
 
 def exports(ws):
+
+    ws.application.router.add_filter('id_filter', id_filter)
 
     manager = alerts_manager.context_manager
 
@@ -246,3 +250,10 @@ def exports(ws):
     @ws.application.get('/api/contextgraph/import/status/<cid>')
     def get_status(cid):
         return import_col_man.get_import_status(cid)
+
+    @ws.application.delete('/api/v2/context/<entity_id:id_filter>')
+    def delete_entity_v2(entity_id):
+        """
+        Remove entity from context
+        """
+        return gen_json(manager.delete_entity(entity_id))

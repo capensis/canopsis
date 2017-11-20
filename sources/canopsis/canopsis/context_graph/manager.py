@@ -488,6 +488,7 @@ class ContextGraph(object):
         :param dependancy_type: a string. "depends" to update the depends/impact
         links and "impact" to update the impact/depends links
 
+        :raises: ValueError
         :return type: a list of entities.
         """
 
