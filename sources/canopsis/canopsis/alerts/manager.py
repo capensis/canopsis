@@ -45,7 +45,7 @@ from canopsis.common.utils import ensure_iterable
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.event.manager import Event as EventManager
+from canopsis.event import get_routingkey
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
@@ -469,7 +469,7 @@ class Alerts(object):
 
             if step['_t'] in check_referer_types:
                 event['event_type'] = 'check'
-                event['ref_rk'] = EventManager.get_rk(event)
+                event['ref_rk'] = get_routingkey(event)
 
             if Check.STATE not in event:
                 event[Check.STATE] = get_last_state(alarm)
