@@ -7,7 +7,7 @@ apt-get update
 
 apt-get install -y libssl1.1 libevent-dev bzip2 build-essential zlib1g-dev libreadline-gplv2-dev libdb5.3-dev libncurses5-dev libexpat1-dev libcurl4-gnutls-dev git-core libssl-dev libpcre3-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev xsltproc curl libbz2-dev xvfb libmariadb-dev libsasl2-dev python-dev python-ldap nettle-dev xz-utils libxml2-dev libxslt1-dev gcc libldap2-dev wget rsync libgnutls28-dev || exit 1
 
-
+# fix mongodb dep
 if [ "$(dpkg -l|grep libssl1.0.0)" = "" ]; then
     dpkg -i sources/externals/debian_9/libssl1.0.0*.deb || exit 1
 fi
