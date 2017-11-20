@@ -1,4 +1,6 @@
 NAME="mongodb"
 
 function install(){
+    # make bash happy...
+    echo "" > /dev/null
 }
