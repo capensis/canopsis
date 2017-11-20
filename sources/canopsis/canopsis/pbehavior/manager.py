@@ -238,16 +238,16 @@ class PBehaviorManager(object):
                     raise ValueError("The message field is missing")
 
         pb_kwargs = {
-            'name': name,
-            'filter': filter,
-            'author': author,
-            'tstart': tstart,
-            'tstop': tstop,
-            'rrule': rrule,
-            'enabled': enabled,
-            'comments': comments,
-            'connector': connector,
-            'connector_name': connector_name
+            PBehavior.NAME: name,
+            PBehavior.FILTER: filter,
+            PBehavior.AUTHOR: author,
+            PBehavior.TSTART: tstart,
+            PBehavior.TSTOP: tstop,
+            PBehavior.RRULE: rrule,
+            PBehavior.ENABLED: enabled,
+            PBehavior.COMMENTS: comments,
+            PBehavior.CONNECTOR: connector,
+            PBehavior.CONNECTOR_NAME: connector_name
         }
         if PBehavior.EIDS not in pb_kwargs:
             pb_kwargs[PBehavior.EIDS] = []

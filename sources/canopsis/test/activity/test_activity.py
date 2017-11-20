@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import copy
 
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
@@ -15,6 +16,13 @@ from canopsis.activity.pbehavior import PBehaviorGenerator
 
 
 class TestActivity(unittest.TestCase):
+
+    def test_copy(self):
+        aco = Activity({}, DaysOfWeek.Monday, 0, 1)
+        acc = copy.copy(aco)
+
+        self.assertEqual(aco, acc)
+        self.assertNotEqual(id(aco), id(acc))
 
     def test_invalid_day_of_week(self):
 
@@ -123,7 +131,7 @@ class TestActivityAggregate(unittest.TestCase):
 
     def test_aggregate(self):
 
-        ag = ActivityAggregate('agname')
+        ag = ActivityAggregate('agname', {'filter': 'from_aggregate'})
         self.assertEqual(ag.name, 'agname')
 
         ac = Activity({}, DaysOfWeek.Monday, 0, 1)
@@ -132,10 +140,17 @@ class TestActivityAggregate(unittest.TestCase):
 
         ag.add(ac)
 
-        self.assertEqual(ac.aggregate_name, ag.name)
+        self.assertEqual(
+            ag.activities[0].aggregate_name,
+            ag.name
+        )
+        self.assertEqual(
+            ag.activities[0].entity_filter,
+            {'filter': 'from_aggregate'}
+        )
 
     def test_aggregate_ac(self):
-        ag = ActivityAggregate('agname')
+        ag = ActivityAggregate('agname', {})
 
         dow = DaysOfWeek.Monday
         ac1 = Activity({}, dow, 8 * TimeUnits.Hour, 17 * TimeUnits.Hour)
@@ -146,7 +161,7 @@ class TestActivityAggregate(unittest.TestCase):
         self.assertEqual(ag.activities[0], ac1)
 
     def test_overlap(self):
-        ag = ActivityAggregate('agname')
+        ag = ActivityAggregate('agname', {})
 
         dow = DaysOfWeek.Monday
         ac1 = Activity({}, dow, 0 * TimeUnits.Hour, 2 * TimeUnits.Hour)
@@ -164,7 +179,7 @@ class TestActivityAggregateToPBehavior(unittest.TestCase):
         ac_pb_gen = PBehaviorGenerator()
         filter_ = {'_id': 'schtroumpf'}
 
-        acag = ActivityAggregate('testac')
+        acag = ActivityAggregate('testac', {})
 
         ts1 = 8 * TimeUnits.Hour
         tS1 = 17 * TimeUnits.Hour
@@ -204,19 +219,25 @@ class TestActivityAggregateManager(unittest.TestCase):
         cls.store = MongoStore(config=conf, cred_config=cred_conf)
 
         cls.col_activity = MongoCollection(
-            cls.store.get_collection(ActivityManager.ACTIVITY_COLLECTION))
+            cls.store.get_collection('test_activities'))
+        cls.col_ag = MongoCollection(
+            cls.store.get_collection('test_activity_aggregates'))
+        cls.col_pb = MongoCollection(
+            cls.store.get_collection('test_activities_pb'))
 
     @classmethod
     def tearDownClass(self):
         self.col_activity.collection.drop()
+        self.col_pb.collection.drop()
 
     def setUp(self):
         self.col_activity.remove({})
+        self.col_pb.remove({})
 
     def test_store_get_then_equals(self):
         acm = ActivityManager(self.col_activity)
-        agm = ActivityAggregateManager(acm)
-        ag = ActivityAggregate('agtest')
+        agm = ActivityAggregateManager(self.col_ag, self.col_pb, acm)
+        ag = ActivityAggregate('agtest', {})
 
         ac1 = Activity({}, DaysOfWeek.Monday, 0, 1)
         ac2 = Activity({}, DaysOfWeek.Saturday, 0, 1)
@@ -241,11 +262,24 @@ class TestActivityAggregateManager(unittest.TestCase):
         res = acm.del_by_aggregate_name('agtest')
         self.assertEqual(res['n'], 2)
 
+    def test_store_get_delete_with_pb(self):
+        acm = ActivityManager(self.col_activity)
+        agm = ActivityAggregateManager(self.col_ag, self.col_pb, acm)
+        ag = ActivityAggregate('agtest', {})
+
+        ac1 = Activity({}, DaysOfWeek.Monday, 0, 1)
+        ac2 = Activity({}, DaysOfWeek.Thursday, 0, 1)
+
+        self.assertTrue(ag.add(ac1))
+        self.assertTrue(ag.add(ac2))
+
+        agm.store(ag)
+
     def test_store_get_dbid(self):
         acm = ActivityManager(self.col_activity)
-        agm = ActivityAggregateManager(acm)
+        agm = ActivityAggregateManager(self.col_ag, self.col_pb, acm)
 
-        ag = ActivityAggregate('agtest')
+        ag = ActivityAggregate('agtest', {})
 
         ac1 = Activity({}, DaysOfWeek.Monday, 0, 1)
         ac2 = Activity({}, DaysOfWeek.Saturday, 0, 1)

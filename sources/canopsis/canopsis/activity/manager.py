@@ -6,11 +6,15 @@ from .activity import Activity, ActivityAggregate
 
 class ActivityAggregateManager(object):
 
-    def __init__(self, activity_manager):
+    def __init__(self, ag_coll, pb_coll, activity_manager):
         """
+        :param ag_coll MongoCollection: activity aggregate mongo collection
+        :param pb_coll MongoCollection: pbehavior mongo collection
         :type activity_manager: ActivityManager
         """
         self._activity_manager = activity_manager
+        self._ag_coll = ag_coll
+        self._pb_coll = pb_coll
 
     def store(self, aggregate):
         """
@@ -34,8 +38,16 @@ class ActivityAggregateManager(object):
 
         return acag
 
-    def delete(self, aggregate_name):
-        return self._coll.remove({'_id': aggregate_name})
+    def delete(self, aggregate):
+        """
+        Remove all activities linked to this aggregate and pbehaviors too.
+        :param aggregate ActivityAggregate:
+        """
+        self._pb_coll.remove({'_id': {'$in': aggregate.pb_ids}})
+        self._coll.remove({'_id': aggregate.name})
+
+    def attach_pbehaviors(self, pb_ids):
+        pass
 
 
 class ActivityManager(object):

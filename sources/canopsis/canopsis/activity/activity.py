@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from copy import copy
+
 from canopsis.common.enumerations import FastEnum
 
 
@@ -33,20 +35,19 @@ class TimeUnits(FastEnum):
 
 class Activity(object):
 
+    AGGREGATE_NAME = 'aggregate_name'
     VALID_FROM = 'valid_from'
     VALID_UNTIL = 'valid_until'
     DAYS_OF_WEEK = 'day_of_week'
     START_TIME_OF_DAY = 'start_time_of_day'
     STOP_TIME_OF_WEEK = 'stop_after_time'
     ENTITY_FILTER = 'entity_filter'
-    PBEHAVIOR_IDS = 'pbehavior_ids'
-    AGGREGATE_NAME = 'aggregate_name'
     DBID = 'dbid'
 
     def __init__(
         self, entity_filter, day_of_week, start_time_of_day,
         stop_after_time, aggregate_name=None, valid_from=None,
-        valid_until=None, pbehavior_ids=None, dbid=None
+        valid_until=None, dbid=None
     ):
         """
         :param dict entity_filter: mongo filter
@@ -57,7 +58,6 @@ class Activity(object):
         :param int start_time_of_day: number of seconds after D-Day 00:00
         :param int stop_after_time: number of seconds after D-Day 00:00
         :param string aggregate_name: aggregate name is the aggregate id
-        :param list pbehavior_ids: list of pbehavior ids
         :raises ValueError: initialisation failed
         """
         self.aggregate_name = aggregate_name
@@ -70,8 +70,20 @@ class Activity(object):
         self.stop_after_time = stop_after_time
 
         self.entity_filter = entity_filter
-        self.pbehavior_ids = [] if pbehavior_ids is None else pbehavior_ids
         self.dbid = dbid
+
+    @staticmethod
+    def __copy__(remote):
+        return Activity(
+            remote.entity_filter,
+            remote.day_of_week,
+            remote.start_time_of_day,
+            remote.stop_after_time,
+            aggregate_name=remote.aggregate_name,
+            valid_from=remote.valid_from,
+            valid_until=remote.valid_until,
+            dbid=remote.dbid
+        )
 
     @property
     def day_of_week(self):
@@ -164,17 +176,17 @@ class Activity(object):
             self.START_TIME_OF_DAY: self.start_time_of_day,
             self.STOP_TIME_OF_WEEK: self.stop_after_time,
             self.ENTITY_FILTER: self.entity_filter,
-            self.PBEHAVIOR_IDS: self.pbehavior_ids,
             self.AGGREGATE_NAME: self.aggregate_name
         }
 
 
 class ActivityAggregate(object):
 
-    def __init__(self, name):
+    def __init__(self, name, entity_filter):
         super(ActivityAggregate, self).__init__()
         self._activities = []
         self.name = name
+        self.entity_filter = entity_filter
 
     @property
     def activities(self):
@@ -185,13 +197,18 @@ class ActivityAggregate(object):
 
     def add(self, activity):
         """
-        Add a new activity.
+        Replace the activity (copy of) filter by the aggregate filter
+        then add the activity to the aggregate.
 
         :param Activity activity: sic
         :raises ValueError: another activity is set on a day of that week.
         :rtype: bool
         :returns: True if activity was added, False if activity is already in
         """
+        activity = copy(activity)
+        activity.entity_filter = self.entity_filter
+        activity.aggregate_name = self.name
+
         for ac in self.activities:
             if ac == activity:
                 return False
@@ -199,8 +216,6 @@ class ActivityAggregate(object):
         for m_activity in self.activities:
             if m_activity.overlap(activity):
                 raise ValueError('activity overlap')
-
-        activity.aggregate_name = self.name
 
         self._activities.append(activity)
         return True

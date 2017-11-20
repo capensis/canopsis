@@ -54,15 +54,13 @@ class RouteHandler(object):
 
         if not isinstance(activities, list):
             raise ValueError('activities is not an array')
+
         aggregate = ActivityAggregate(aggregate_name)
         for doc in activities:
             aggregate.add(Activity(**doc))
 
         ids = self.acag_man.store(aggregate)
-
-        result = {
-            'inserted': len(ids)
-        }
+        result = {'inserted': len(ids)}
 
         return result
 
@@ -131,6 +129,7 @@ class RouteHandler(object):
         pb_ids = []
         if register_pb:
             pb_ids = self._generate_pbs_register(dict_pbs)
+            self.acag_man.attach_pbehaviors(pb_ids)
 
         for agname, pbs in dict_pbs.items():
             dict_pbs[agname] = [pb.to_dict() for pb in pbs]
