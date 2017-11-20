@@ -227,12 +227,27 @@ class TestActivityAggregateManager(unittest.TestCase):
 
     @classmethod
     def tearDownClass(self):
+        self.col_ag.collection.drop()
         self.col_activity.collection.drop()
         self.col_pb.collection.drop()
 
     def setUp(self):
+        self.col_ag.remove({})
         self.col_activity.remove({})
         self.col_pb.remove({})
+
+    def test_pb_attach(self):
+        acm = ActivityManager(self.col_activity)
+        agm = ActivityAggregateManager(self.col_ag, self.col_pb, acm)
+        ag = ActivityAggregate('agtest', {})
+
+        ac1 = Activity({}, DaysOfWeek.Monday, 0, 1)
+
+        ag.add(ac1)
+
+        agm.attach_pbehaviors(
+            ag, ['je', 'ne', 'suis', 'pas', 'un', 'robot', 'robot']
+        )
 
     def test_store_get_then_equals(self):
         acm = ActivityManager(self.col_activity)

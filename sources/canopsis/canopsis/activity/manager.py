@@ -25,7 +25,8 @@ class ActivityAggregateManager(object):
         :type aggregate: ActivityAggregate
         """
         self._activity_manager.del_by_aggregate_name(aggregate.name)
-        return self._activity_manager.store(aggregate.activities)
+        self._activity_manager.store(aggregate.activities)
+        self._ag_coll.insert(aggregate.to_dict())
 
     def get(self, aggregate_name):
         activities = self._activity_manager.get_by_aggregate_name(
@@ -44,10 +45,17 @@ class ActivityAggregateManager(object):
         :param aggregate ActivityAggregate:
         """
         self._pb_coll.remove({'_id': {'$in': aggregate.pb_ids}})
-        self._coll.remove({'_id': aggregate.name})
+        self._ag_coll.remove({'_id': aggregate.name})
 
-    def attach_pbehaviors(self, pb_ids):
-        pass
+    def attach_pbehaviors(self, aggregate, pb_ids):
+        self._ag_coll.update(
+            {
+                '_id': aggregate.name,
+                '$addToSet': {
+                    'pb_ids': pb_ids
+                }
+            }
+        )
 
 
 class ActivityManager(object):

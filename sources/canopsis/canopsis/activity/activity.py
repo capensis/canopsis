@@ -221,4 +221,7 @@ class ActivityAggregate(object):
         return True
 
     def to_dict(self):
-        return {'_id': self.name}
+        return {
+            '_id': self.name,
+            'pb_ids': []
+        }
