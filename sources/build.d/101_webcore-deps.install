@@ -8,8 +8,6 @@ function install() {
     BASE="webcore_deps"
     cd $SRC_PATH/externals
 
-    tar -xf webcore_deps.tar.gz
-
     LIB="$PREFIX/lib/node_modules"
 
     if [ ! -e $LIB ]; then
