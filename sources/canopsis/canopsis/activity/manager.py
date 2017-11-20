@@ -25,15 +25,22 @@ class ActivityAggregateManager(object):
         :type aggregate: ActivityAggregate
         """
         self._activity_manager.del_by_aggregate_name(aggregate.name)
-        self._activity_manager.store(aggregate.activities)
         self._ag_coll.insert(aggregate.to_dict())
+        return self._activity_manager.store(aggregate.activities)
 
     def get(self, aggregate_name):
         activities = self._activity_manager.get_by_aggregate_name(
             aggregate_name
         )
 
-        acag = ActivityAggregate(aggregate_name)
+        aggregate = self._ag_coll.find_one({'_id': aggregate_name})
+
+        acag = ActivityAggregate(
+            aggregate['_id'],
+            aggregate['entity_filter'],
+            pb_ids=aggregate['pb_ids']
+        )
+
         for ac in activities:
             acag.add(ac)
 
@@ -48,11 +55,17 @@ class ActivityAggregateManager(object):
         self._ag_coll.remove({'_id': aggregate.name})
 
     def attach_pbehaviors(self, aggregate, pb_ids):
+        """
+        Replace all pb_ids in database with those from
+        the aggregate plus those in pb_ids parameter.
+        """
+        aggregate.pb_ids.extend(pb_ids)
+        aggregate.pb_ids = list(set(aggregate.pb_ids))
         self._ag_coll.update(
+            {'_id': aggregate.name},
             {
-                '_id': aggregate.name,
-                '$addToSet': {
-                    'pb_ids': pb_ids
+                '$set': {
+                    'pb_ids': aggregate.pb_ids
                 }
             }
         )

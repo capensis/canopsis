@@ -3,7 +3,7 @@
 import unittest
 import copy
 
-from canopsis.common.collection import MongoCollection
+from canopsis.common.collection import MongoCollection, CollectionError
 from canopsis.common.mongo_store import MongoStore
 from canopsis.confng.simpleconf import Configuration
 from canopsis.confng.vendor import Ini
@@ -242,11 +242,21 @@ class TestActivityAggregateManager(unittest.TestCase):
         ag = ActivityAggregate('agtest', {})
 
         ac1 = Activity({}, DaysOfWeek.Monday, 0, 1)
+        pb_ids = ['je', 'ne', 'suis', 'pas', 'un', 'robot', 'robot']
 
         ag.add(ac1)
 
-        agm.attach_pbehaviors(
-            ag, ['je', 'ne', 'suis', 'pas', 'un', 'robot', 'robot']
+        with self.assertRaises(CollectionError):
+            agm.attach_pbehaviors(ag, pb_ids)
+
+        agm.store(ag)
+        agm.attach_pbehaviors(ag, pb_ids)
+
+        agg = agm.get(ag.name)
+
+        self.assertSetEqual(
+            set(agg.pb_ids),
+            set(pb_ids)
         )
 
     def test_store_get_then_equals(self):

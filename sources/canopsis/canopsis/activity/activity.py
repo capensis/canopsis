@@ -182,11 +182,12 @@ class Activity(object):
 
 class ActivityAggregate(object):
 
-    def __init__(self, name, entity_filter):
+    def __init__(self, name, entity_filter, pb_ids=None):
         super(ActivityAggregate, self).__init__()
         self._activities = []
         self.name = name
         self.entity_filter = entity_filter
+        self.pb_ids = [] if pb_ids is None else list(set(pb_ids))
 
     @property
     def activities(self):
@@ -223,5 +224,6 @@ class ActivityAggregate(object):
     def to_dict(self):
         return {
             '_id': self.name,
-            'pb_ids': []
+            'pb_ids': self.pb_ids,
+            'entity_filter': self.entity_filter
         }

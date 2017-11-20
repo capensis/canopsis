@@ -116,7 +116,13 @@ class MongoCollection(object):
         :rtype: dict
         """
         try:
-            return self.collection.update(query, document, upsert=upsert)
+            res = self.collection.update(query, document, upsert=upsert)
+
+            if upsert is False and res['updatedExisting'] is False:
+                raise OperationFailure(
+                    'update absent document, use upsert=True')
+
+            return res
 
         except BSONError as ex:
             message = 'document error: {}'.format(ex)
