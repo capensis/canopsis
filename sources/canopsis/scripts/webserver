@@ -46,7 +46,7 @@ class WebServerPy(Application):
 if __name__ == "__main__":
     accesslog = os.path.join(
         root_path, 'var', 'log', 'webserver-access.log')
-    access_fmt = '%(h)s %(l)s %(U)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+    access_fmt = '%(h)s %(l)s %(t)s "%(m)s %(U)s %(H)s" %(s)s %(b)s "%(f)s" "%(a)s"'
     gunicorn_app = WebServerPy(
         get_default_app, accesslog, access_fmt)
     gunicorn_app.run()
