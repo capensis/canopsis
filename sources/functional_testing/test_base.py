@@ -22,6 +22,7 @@
 from __future__ import unicode_literals
 
 from enum import Enum
+from urllib import quote
 import requests
 import unittest
 
@@ -29,7 +30,7 @@ import unittest
 class Event:
 
     def __init__(self, connector, connector_name, component, state, state_type,
-                 status, resource=None):
+                 status, source_type, resource=None):
         self.event_type = "check"
         self.connector = connector
         self.connector_name = connector_name
@@ -37,10 +38,7 @@ class Event:
         self.resource = resource
         self.state_type = state_type
         self.status = status
-        if resource is None:
-            self.source_type = "component"
-        else:
-            self.source_type = "resource"
+        self.source_type = source_type
 
 class HTTP(Enum):
     """
@@ -75,7 +73,7 @@ class BaseApiTest(unittest.TestCase):
         'Accept': 'application/json'
     }
 
-    WEB_HOST = "localhost"
+    WEB_HOST = "192.168.0.74"
     WEB_PORT = "8082"
 
     URL_BASE = "http://{}:{}".format(WEB_HOST, WEB_PORT)
@@ -94,6 +92,26 @@ class BaseApiTest(unittest.TestCase):
     #     url_auth = self.URL_AUTH.format(self.URL_BASE, authkey)
 
     #     return self._send(url_auth)
+
+    def _build_url(self, url, params):
+        """add every key/value in at the end of the url.
+        url utr : the url
+        param dict : the parameters to add at the end of the url
+        return str : an url with every parameters concatenated
+        """
+
+        querystring  = ""
+
+        keys = params.keys()
+        for i in range(len(keys)):
+            key = keys[i]
+            if i != len(keys) - 1:
+                sep = "&"
+            else:
+                sep = ""
+
+            querystring += "{0}={1}{2}".format(key, params[key], sep)
+        return self.URL_BASE + url + "?" + quote(querystring)
 
     def _authent_plain(self):
         """
@@ -165,9 +183,9 @@ class BaseApiTest(unittest.TestCase):
         return response
 
     def _send_event(self, event):
-        self._send(url=self.URL_BASE + "/event",
+        return self._send(url=self.URL_BASE + "/event",
                    method=Method.post,
-                   params={"event": event},
+                   params={"event": event.__dict__},
                    allow_redirects=False)
 
     def setUp(self):
