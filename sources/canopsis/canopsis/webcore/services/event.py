@@ -62,25 +62,7 @@ def exports(ws):
             events = [events]
 
         for event in events:
-
-            if schema.validate(event, 'cevent'):
-                sname = 'cevent.{0}'.format(event['event_type'])
-
-                if schema.validate(event, sname):
-                    if event['event_type'] == 'eue':
-                        sname = 'cevent.eue.{0}'.format(
-                            event['type_message']
-                        )
-
-                        if not schema.validate(event, sname):
-                            return gen_json_error(
-                                {'description': 'invalid event: {0}'.format(
-                                    event
-                                )},
-                                HTTPError
-                            )
-
-                    ws.amqp_pub.canopsis_event(event, exchange)
+            ws.amqp_pub.canopsis_event(event, exchange)
 
         return gen_json(events)
 
