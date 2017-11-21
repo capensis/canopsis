@@ -188,12 +188,14 @@ class WebServer():
         return True
 
     def load_webservices(self):
-        for module, enable in self.webservices.iteritems():
-            if int(enable) == 1:
+        for module in sorted(self.webservices.keys()):
+            enable = int(self.webservices[module])
+            if enable == 1:
                 self._load_webservice(module)
             else:
                 self.logger.info(
                     u'Webservice {} skipped by configuration.'.format(module))
+
         self.logger.info(u'Service loading completed.')
 
     def _load_auth_backend(self, modname):
