@@ -24,15 +24,11 @@ import importlib
 import os
 import sys
 
-import gevent
-from gevent import monkey
-monkey.patch_all()
-
-
+import uwsgidecorators
 import beaker
 import beaker.cache
 import beaker.session
-from signal import SIGTERM, SIGINT
+
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
 
@@ -41,7 +37,6 @@ from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.logger import Logger
 from canopsis.old.account import Account
-from canopsis.old.rabbitmq import Amqp
 # TODO: replace with canopsis.mongo.MongoStorage
 from canopsis.old.storage import get_storage
 
@@ -102,17 +97,16 @@ class WebServer():
             if not self.auth_backends[bname].handle_logout
         ]
 
-    def __init__(self, config, logger, logger_req, *args, **kwargs):
+    def __init__(self, config, logger):
         self.config = config
         self.logger = logger
-        self.logger_req = logger_req
 
         server = self.config.get('server', {})
         self.debug = server.get('debug', DEFAULT_DEBUG)
-        self.enable_crossdomain_send_events = server.get('enable_crossdomain_send_events',
-                                                         DEFAULT_ECSE)
-        self.root_directory = os.path.expanduser(server.get('root_directory',
-                                                            DEFAULT_ROOT_DIR))
+        self.enable_crossdomain_send_events = server.get(
+            'enable_crossdomain_send_events', DEFAULT_ECSE)
+        self.root_directory = os.path.expanduser(
+            server.get('root_directory', DEFAULT_ROOT_DIR))
 
         auth = self.config.get('auth', {})
         self.providers = cfg_to_array(auth.get('providers', ''))
@@ -130,20 +124,12 @@ class WebServer():
 
         # TODO: Replace with MongoStorage
         self.db = get_storage(account=Account(user='root', group='root'))
-        self.amqp = Amqp()
         self.stopping = False
 
         self.webmodules = {}
         self.auth_backends = {}
 
     def init_app(self):
-        self.logger.info('Initialize gevent signal-handlers')
-        gevent.signal(SIGTERM, self.exit)
-        gevent.signal(SIGINT, self.exit)
-
-        self.logger.info('Start AMQP thread')
-        self.amqp.start()
-
         self.logger.info('Initialize WSGI Application')
         self.app = BottleApplication()
 
@@ -253,16 +239,15 @@ class WebServer():
     def unload_webservices(self):
         pass
 
-    def exit(self):
+    @uwsgidecorators.signal(9)
+    @uwsgidecorators.signal(15)
+    def exit(self, num):
         if not self.stopping:
             self.stopping = True
 
             self.unload_session()
             self.unload_webservices()
             self.unload_auth_backends()
-
-            self.amqp.stop()
-            # TODO: self.amqp.wait() not implemented
 
             sys.exit(0)
 
@@ -273,9 +258,7 @@ class WebServer():
 def get_default_app():
     conf = Configuration.load(WebServer.CONF_PATH, Ini)
     logger = Logger.get('webserver', WebServer.LOG_FILE)
-    logger_req = Logger.get('webserverreq', WebServer.LOG_FILE, fmt='%(message)s')
     # Declare WSGI application
-    ws = WebServer(config=conf, logger=logger, logger_req=logger_req).init_app()
+    ws = WebServer(config=conf, logger=logger).init_app()
     app = ws.application
     return app
-
