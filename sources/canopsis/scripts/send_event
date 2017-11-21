@@ -64,7 +64,6 @@ def main(argv):
     authkey = None
     server = 'localhost:8082'
     file_path, file_name, file_extension = None, None, None
-    #input_stream = None
     json_string = None
 
     for opt, arg in opts:
@@ -102,11 +101,9 @@ def send_event(
     file_name=None, file_extension=None
 ):
 
-    #---------------------------authenticate---------------------------
     cj = CookieJar()
     opener = build_opener(HTTPCookieProcessor(cj))
-    #print('http://%s/autoLogin/%s' % (server,authkey))
-    r = opener.open('http://%s/autologin/%s' % (server, authkey))
+    r = opener.open('http://%s/autologin?authkey=%s' % (server, authkey))
     r = opener.open('http://%s/account/me' % server)
 
     try:
@@ -118,7 +115,6 @@ def send_event(
         print('Error: The provided authkey does not match any existing user')
         exit()
 
-    #------------------------------find event source-----------------------
     event = None
 
     if json_str:
@@ -133,14 +129,12 @@ def send_event(
             print('Error: File not found (%s)' % file_path)
             exit()
 
-        #------------------read file-------------------
         try:
             event = loads(open(file_path, "r").read().decode('utf-8-sig'))
         except Exception as err:
             print('Invalid json file: %s' % err)
             exit()
 
-    #check if input stream
     elif not stdin.isatty():
         try:
             event = loads(stdin.read())
@@ -148,7 +142,6 @@ def send_event(
             print('Error: Invalid json stream')
             exit()
 
-    #-----------------------------prepare event-----------------------------
     if not event:
         print(
             'Error: No json media found, you must provide file/stream/command')
@@ -160,7 +153,6 @@ def send_event(
     if 'connector_name' not in event:
         event['connector_name'] = 'Send_event'
 
-    #-----------------------------send event-----------------------------
     clean_event = {}
     for k in event:
         v = event[k]
