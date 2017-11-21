@@ -261,16 +261,19 @@ def get_default_app(logger=None, amqpconf=None, webconf=None, amqp_conn=None, am
     if webconf is None:
         webconf = Configuration.load(WebServer.CONF_PATH, Ini)
 
+    if amqpconf is None:
+        amqpconf = Configuration.load(os.path.join('etc', 'amqp.conf'), Ini)
+
     if logger is None:
         logger = Logger.get('webserver', WebServer.LOG_FILE)
 
     if amqp_conn is None:
         amqp_url = 'amqp://{}:{}@{}:{}/{}'.format(
-            amqpconf['userid'],
-            amqpconf['password'],
-            amqpconf['host'],
-            amqpconf['port'],
-            amqpconf['virtual_host']
+            amqpconf['master']['userid'],
+            amqpconf['master']['password'],
+            amqpconf['master']['host'],
+            amqpconf['master']['port'],
+            amqpconf['master']['virtual_host']
         )
         amqp_conn = AmqpConnection(amqp_url)
 
