@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import redirect, response, HTTPError, urlencode
+from bottle import request, redirect, response, HTTPError, urlencode
 from hashlib import sha1
 from time import time
 
@@ -167,10 +167,9 @@ def exports(ws):
         # Route used when came back from auth backend
         redirect('/static/canopsis/index.html')
 
-    @route(ws.application.get, wsgi_params={'skip': ws.skip_login}, nolog=True)
-    def autologin(key):
-        route.log_request(ws.logger, 'get', '/autologin/**redacted**')
-        return autoLogin(key)
+    @route(ws.application.get, wsgi_params={'skip': ws.skip_login})
+    def autologin(authkey=''):
+        return autoLogin(authkey)
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_logout})
     def logout():

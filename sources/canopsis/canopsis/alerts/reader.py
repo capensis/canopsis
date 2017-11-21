@@ -24,9 +24,10 @@ Alarm reader manager.
 TODO: replace the storage class parameter with a collection (=> rewriting count())
 """
 
-from sys import prefix
 from os.path import join
 from time import time
+
+from canopsis.common import root_path
 
 from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.manager import Alerts
@@ -59,9 +60,9 @@ class AlertsReader(object):
     CONF_PATH = 'etc/alerts/manager.conf'
     CATEGORY = 'COUNT_CACHE'
     GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
-    GET_FILTER = {"$or": [{"v.component":{"$regex": None}},
-                          {"v.connector":{"$regex": None}},
-                          {"v.resource":{"$regex": None}}]}
+    GET_FILTER = {"$or": [{"v.component": {"$regex": None}},
+                          {"v.connector": {"$regex": None}},
+                          {"v.resource": {"$regex": None}}]}
 
     def __init__(self, logger, config, storage,
                  pbehavior_manager, entitylink_manager):
@@ -93,7 +94,7 @@ class AlertsReader(object):
 
         self.count_cache = {}
 
-        self.grammar = join(prefix, self.GRAMMAR_FILE)
+        self.grammar = join(root_path, self.GRAMMAR_FILE)
 
     @classmethod
     def provide_default_basics(cls):
@@ -225,7 +226,8 @@ class AlertsReader(object):
 
         return None
 
-    def _get_opened_time_filter(self, tstart, tstop):
+    @staticmethod
+    def _get_opened_time_filter(tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -252,7 +254,8 @@ class AlertsReader(object):
 
         return {'v.resolved': None}
 
-    def _get_resolved_time_filter(self, tstart, tstop):
+    @staticmethod
+    def _get_resolved_time_filter(tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -412,8 +415,8 @@ class AlertsReader(object):
             tstop=None,
             opened=True,
             resolved=False,
-            lookups=[],
-            filter_={},
+            lookups=None,
+            filter_=None,
             search='',
             sort_key='opened',
             sort_dir='DESC',
@@ -453,6 +456,12 @@ class AlertsReader(object):
         :rtype: dict
         """
 
+        if lookups is None:
+            lookups = []
+
+        if filter_ is None:
+            filter_ = {}
+
         time_filter = self._get_time_filter(
             opened=opened, resolved=resolved,
             tstart=tstart, tstop=tstop
@@ -461,15 +470,35 @@ class AlertsReader(object):
         if time_filter is None:
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
 
+        result = None
+        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
+
         if natural_search:
-            filter_ = self.GET_FILTER.copy()
-            for sub_filter in filter_["$or"]:
+            res_filter = self.GET_FILTER.copy()
+            for sub_filter in res_filter.get('$or', []):
                 key = sub_filter.keys()[0]
-                sub_filter[key]["$regex"] = search
+                sub_filter[key]['$regex'] = search
+
+            if filter_ not in [None, {}]:
+                filter_ = self._translate_filter(filter_)
+                filter_ = {'$and': [filter_, time_filter, res_filter]}
+
+            else:
+                filter_ = {"$and": [{"d": {"$regex": search}}, time_filter]}
+
+            result = self.alarm_storage._backend.find(filter_)
+            result = result.sort(sort_key, sort_dir)
+            result = result.skip(skip)
+            if limit is not None:
+                result = result.limit(limit)
 
         else:
-            search_context, search_filter = self.interpret_search(search)
-            search_filter = self._translate_filter(search_filter)
+            try:
+                search_context, search_filter = self.interpret_search(search)
+                search_filter = self._translate_filter(search_filter)
+            except ValueError:
+                search_filter = {}
+                search_context = None
 
             if search_context == 'all':
                 filter_ = {'$and': [time_filter, search_filter]}
@@ -482,14 +511,29 @@ class AlertsReader(object):
                 if search_filter:
                     filter_ = {'$and': [filter_, search_filter]}
 
-        result = self.alarm_storage._backend.find(filter_)
+            pipeline = [{
+                "$lookup": {
+                    "from": "default_entities",
+                    "localField": "d",
+                    "foreignField": "_id",
+                    "as": "entity"
+                }
+            }, {
+                "$unwind": "$entity"
+            }, {
+                "$match": filter_
+            }, {
+                "$sort": {
+                    sort_key: sort_dir
+                }
+            }, {
+                "$skip": skip
+            }]
 
-        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
-        result = result.sort(sort_key, sort_dir)
+            if limit is not None:
+                pipeline.append({"$limit": limit})
 
-        result = result.skip(skip)
-        if limit is not None:
-            result = result.limit(limit)
+            result = self.alarm_storage._backend.aggregate(pipeline, cursor={})
 
         alarms = list(result)
         limited_total = len(alarms)  # Manual count is much faster than mongo's

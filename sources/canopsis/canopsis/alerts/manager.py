@@ -45,7 +45,7 @@ from canopsis.common.utils import ensure_iterable
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.event.manager import Event as EventManager
+from canopsis.event import get_routingkey
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
@@ -170,8 +170,15 @@ class Alerts(object):
         """
         Number of alarm oscillation during flapping interval
         to consider an alarm as flapping.
+
         """
-        return self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
+
+        #  The minimum accepted frequency is 3 changes, otherwise all  alarms will bagot
+        freq = self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
+        if freq < 3:
+            return 3
+
+        return freq
 
     @property
     def flapping_interval(self):
@@ -337,7 +344,6 @@ class Alerts(object):
 
         :returns: Alarm as dict if found, else None
         """
-
         storage = self.alerts_storage
 
         result = storage.get(
@@ -368,7 +374,6 @@ class Alerts(object):
         :param tags: Tags to add on alarm (optional)
         :type tags: str or list
         """
-
         storage = self.alerts_storage
 
         alarm_id = alarm[storage.DATA_ID]
@@ -464,7 +469,7 @@ class Alerts(object):
 
             if step['_t'] in check_referer_types:
                 event['event_type'] = 'check'
-                event['ref_rk'] = EventManager.get_rk(event)
+                event['ref_rk'] = get_routingkey(event)
 
             if Check.STATE not in event:
                 event[Check.STATE] = get_last_state(alarm)
@@ -506,7 +511,7 @@ class Alerts(object):
         entity_id = self.context_manager.get_id(event)
 
         if (event['event_type'] == Check.EVENT_TYPE
-            or event['event_type'] == 'watcher'):
+                or event['event_type'] == 'watcher'):
             alarm = self.get_current_alarm(entity_id)
             if alarm is None:
                 if event[Check.STATE] == Check.OK:
@@ -641,6 +646,7 @@ class Alerts(object):
         value = alarm.get(self.alerts_storage.VALUE)
 
         old_state = get_last_state(value, ts=event['timestamp'])
+
         if state != old_state:
             return self.change_of_state(alarm, old_state, state, event)
 
@@ -722,6 +728,7 @@ class Alerts(object):
         # Executing task
         value = alarm.get(self.alerts_storage.VALUE)
         new_value, status = task(self, value, state, event)
+        new_value[AlarmField.last_update_date.value] = int(time())
 
         alarm[storage_value] = new_value
 
@@ -760,9 +767,9 @@ class Alerts(object):
 
         value = alarm.get(self.alerts_storage.VALUE)
         new_value = task(self, value, status, event)
+        new_value[AlarmField.last_update_date.value] = int(time())
 
         alarm[self.alerts_storage.VALUE] = new_value
-        alarm['last_update_date'] = time()
 
         return alarm
 
@@ -914,7 +921,7 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
 
         for data_id in alarms:
             for docalarm in alarms[data_id]:
@@ -941,7 +948,7 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
 
         now = int(time())
 
@@ -967,7 +974,7 @@ class Alerts(object):
         :deprecated: see canopsis.alarms
         """
 
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
         now = int(time())
         if alarms is None:
             result = self.get_alarms(resolved=False, snoozed=True)
@@ -1003,7 +1010,7 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.");
+        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
 
         for data_id in alarms:
             for docalarm in alarms[data_id]:

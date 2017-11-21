@@ -252,18 +252,20 @@ class Alarm:
 
     def resolve(self, flapping_interval):
         """
-        Resolves an alarm if the status is OFF and if the alarm is not flapping.
+        Resolves an alarm if the status is OFF and if the alarm is not
+        flapping.
 
         :param int flapping_interval: Interval in seconds to determine status flapping
         :returns: True if the alarm is resolved, False otherwise
         :rtype: bool
         """
+        now = int(time())
         if self.status is None:
-            self.resolved = time()
+            self.resolved = now
             return True
         else:
             if self.status.value is AlarmStatus.OFF \
-                    and time() - self.status.timestamp > flapping_interval:
+                    and now - self.status.timestamp > flapping_interval:
                 self.resolved = int(self.status.timestamp)
                 return True
 
@@ -279,7 +281,7 @@ class Alarm:
         """
         if self.canceled is not None:
             canceled_date = self.canceled.timestamp
-            if (time() - canceled_date) >= cancel_delay:
+            if (int(time()) - canceled_date) >= cancel_delay:
                 self.resolved = canceled_date
                 return True
 
@@ -300,9 +302,10 @@ class Alarm:
         if self.snooze is None:
             return False
 
-        if self.snooze.value < time():
+        now = int(time())
+        if self.snooze.value < now:
             self.snooze = None
-            self.last_update_date = time()
+            self.last_update_date = now
             return True
 
         return False
@@ -327,7 +330,7 @@ class Alarm:
                                   self.identity.connector_name),
             message='automatically resolved after stealthy shown time',
             type_=ALARM_STEP_TYPE_STATE_DECREASE,
-            timestamp=time(),
+            timestamp=int(time()),
             value=AlarmStatus.OFF
         )
         self.update_status(new_status)

@@ -113,7 +113,7 @@ class PeriodTest(TestCase):
                     if unit is Period.DAY:
 
                         roundday = unitval - (unitval % max(1, i))
-                        if roundday < 0:
+                        if roundday <= 0:
                             month = now.month - 1
 
                             if month == 0:

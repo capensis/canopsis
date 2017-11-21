@@ -20,8 +20,8 @@
 
 from __future__ import unicode_literals
 
-from canopsis.alarms.services import AlarmService
 from canopsis.alarms.adapters import AlarmAdapter
+from canopsis.alarms.services import AlarmService
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.task.core import register_task
@@ -46,12 +46,12 @@ def event_processing(engine, event, alertsmgr=None, **kwargs):
     for key, value in event.items():
         try:
             key = key.encode('utf-8')
-        except (UnicodeDecodeError, UnicodeEncodeError):
+        except UnicodeError:
             pass
 
         try:
             value = value.encode('utf-8')
-        except (UnicodeDecodeError, UnicodeEncodeError, AttributeError):
+        except (UnicodeError, TypeError, AttributeError):
             pass
 
         encoded_event[key] = value
@@ -67,15 +67,20 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     """
     Scheduled process.
     """
-    alarms_service = AlarmService(
-        alarms_adapter=AlarmAdapter(mongo_client),
-        watcher_manager=Watcher()
-    )
-
     if alertsmgr is None:
         alertsmgr = alerts_manager
 
     alertsreader = alertsreader_manager
+
+    alarms_service = AlarmService(
+        alarms_adapter=AlarmAdapter(mongo_client),
+        watcher_manager=Watcher(),
+        bagot_time=alertsmgr.flapping_interval,
+        cancel_autosolve_delay=alertsmgr.cancel_autosolve_delay,
+        stealthy_duration=alertsmgr.stealthy_show_duration,
+        stealthy_interval=alertsmgr.stealthy_interval,
+        logger=alertsmgr.logger
+    )
 
     # process snoozed alarms first
     snoozed_alarms = alarms_service.find_snoozed_alarms()
