@@ -39,6 +39,8 @@ def add_modules_from_folder(suite, folder):
     """
     files = [f for f in listdir(folder) if isfile(join(folder, f)) and pyfile.match(f)]
 
+    folder = folder.replace("/", ".")
+
     for f in files:
         mod_name = '{}.{}'.format(folder, '.'.join(f.split('.')[:-1]))
         try:
@@ -53,6 +55,7 @@ loader = unittest.TestLoader()
 suite = unittest.TestSuite()
 
 add_modules_from_folder(suite=suite, folder='apis')
+add_modules_from_folder(suite=suite, folder='apis/alerts')
 
 runner = unittest.TextTestRunner(verbosity=3)
 result = runner.run(suite)
