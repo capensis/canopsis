@@ -142,6 +142,7 @@ class PBehaviorManager(object):
     """
 
     PB_STORAGE_URI = 'mongodb-default-pbehavior://'
+    PB_COLLECTION = 'default_pbehavior'
     LOG_PATH = 'var/log/pbehaviormanager.log'
     LOG_NAME = 'pbehaviormanager'
 

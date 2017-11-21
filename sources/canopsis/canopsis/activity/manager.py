@@ -6,6 +6,8 @@ from .activity import Activity, ActivityAggregate
 
 class ActivityAggregateManager(object):
 
+    AG_COLLECTION = 'default_activity_aggregate'
+
     def __init__(self, ag_coll, pb_coll, activity_manager):
         """
         :param ag_coll MongoCollection: activity aggregate mongo collection

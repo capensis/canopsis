@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import traceback
+
 import arrow
 
 from bottle import request
@@ -46,17 +48,22 @@ class RouteHandler(object):
         if 'aggregate_name' not in document:
             raise ValueError('missing aggregate_name parameter')
 
+        if 'entity_filter' not in document:
+            raise ValueError('missing entity_filter parameter')
+
         if 'activities' not in document:
             raise ValueError('missing activities parameter')
 
         aggregate_name = document['aggregate_name']
         activities = document['activities']
+        entity_filter = document['entity_filter']
 
         if not isinstance(activities, list):
             raise ValueError('activities is not an array')
 
-        aggregate = ActivityAggregate(aggregate_name)
+        aggregate = ActivityAggregate(aggregate_name, entity_filter)
         for doc in activities:
+            doc['entity_filter'] = None
             aggregate.add(Activity(**doc))
 
         ids = self.acag_man.store(aggregate)
@@ -144,10 +151,14 @@ def exports(ws):
     mdbstore = MongoStore(config=conf_store, cred_config=conf_store)
     ac_coll = MongoCollection(
         mdbstore.get_collection(ActivityManager.ACTIVITY_COLLECTION))
+    ag_coll = MongoCollection(
+        mdbstore.get_collection(ActivityAggregateManager.AG_COLLECTION))
     _, pb_storage = PBehaviorManager.provide_default_basics(logger=ws.logger)
+    pb_coll = MongoCollection(
+        mdbstore.get_collection(PBehaviorManager.PB_COLLECTION))
 
     ac_man = ActivityManager(ac_coll)
-    acag_man = ActivityAggregateManager(ac_man)
+    acag_man = ActivityAggregateManager(ag_coll, pb_coll, ac_man)
     pb_gen = PBehaviorGenerator()
     pb_man = PBehaviorManager(ws.logger, pb_storage)
 
@@ -168,6 +179,7 @@ def exports(ws):
             return gen_json(route_handler.set_activities(request.json))
 
         except (ValueError, TypeError) as exc:
+            ws.logger.error(traceback.format_exc())
             return gen_json_error(str(exc), 400)
 
     @ws.application.post('/api/v2/activity/generate_pbehaviors')
@@ -181,5 +193,5 @@ def exports(ws):
             return gen_json(result)
 
         except ValueError as exc:
-            ws.logger.error(exc)
+            ws.logger.error(traceback.format_exc())
             return gen_json_error(str(exc), 400)
