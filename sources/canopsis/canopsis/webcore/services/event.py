@@ -56,7 +56,7 @@ def exports(ws):
                 HTTPError
             )
 
-        exchange = ws.amqp.exchange_name_events
+        exchange = 'canopsis.events'
 
         if isinstance(events, dict):
             events = [events]
@@ -80,8 +80,7 @@ def exports(ws):
                                 HTTPError
                             )
 
-                    rk = get_routingkey(event)
-                    ws.amqp.publish(event, rk, exchange)
+                    ws.amqp_pub.canopsis_event(event, exchange)
 
         return gen_json(events)
 

@@ -81,6 +81,7 @@ class AmqpPublisher(object):
     apc.disconnect()
 
     """
+
     def __init__(self, connection):
         """
         :type connection: AmqpConnection
