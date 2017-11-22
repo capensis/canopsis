@@ -221,9 +221,6 @@ class WebServer():
         self.app.install(backend)
 
     def load_session(self):
-        # Since we vendor mongodb_beaker because of broken dep on pypi.python.org
-        # we need to setup the beaker class map manually.
-        beaker.cache.clsmap['mongodb'] = mongodb_beaker.MongoDBNamespaceManager
         self.app = SessionMiddleware(self.app, {
             'session.type': 'mongodb',
             'session.cookie_expires': self.cookie_expires,

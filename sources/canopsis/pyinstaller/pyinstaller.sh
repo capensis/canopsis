@@ -14,6 +14,7 @@ export PYI_BIN_NAME='engine-launcher'
 export PYI_SCRIPT="${workdir}/../scripts/engine-launcher"
 pyinstaller -y --clean canopsis.spec || exit 1
 
-export PYI_BIN_NAME='webserver'
-export PYI_SCRIPT="${workdir}/../scripts/webserver"
-pyinstaller -y --clean canopsis.spec || exit 1
+# Webserver is not supported with uWSGI, so never build a binary for it.
+#export PYI_BIN_NAME='webserver'
+#export PYI_SCRIPT="${workdir}/../scripts/webserver"
+#pyinstaller -y --clean canopsis.spec || exit 1
