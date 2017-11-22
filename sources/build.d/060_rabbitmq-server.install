@@ -9,7 +9,7 @@ function install(){
 	cd $SRC_PATH/externals
 
 	if [ ! -e $BASE ]; then
-		extract_archive "$NAME-generic-unix-$VERSION.tar.gz"
+		extract_archive "$NAME-generic-unix-$VERSION.tar.xz"
 	fi
 	cd rabbitmq_server-$VERSION
 
