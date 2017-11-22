@@ -8,35 +8,31 @@ Event standardization.
 from __future__ import unicode_literals
 
 from json import dumps
-from six import string_types
 from time import time
 
+DEFAULT_RESOURCE = None
+DEFAULT_ALARM = None
+DEFAULT_CONTEXT = None
+DEFAULT_DISPLAY_NAME = ''
 DEFAULT_EVENT_TYPE = 'check'
+DEFAULT_LONG_OUTPUT = ''
 DEFAULT_OUTPUT = ''
+DEFAULT_PERF_DATA = ''
+DEFAULT_PERF_DATA_ARRAY = []
 DEFAULT_STATE = 0
-DEFAULT_STATE_TYPE = 1
+DEFAULT_TIMESTAMP = None
+DEFAULT_MORE = {}
 
 
 class EventUTF8Error(Exception):
     pass
 
 
-class Event(object):
+class MinimalisticEvent(object):
 
     """
-    Event representation.
+    Minimalistic Event representation.
     """
-
-    _present_keys = {
-        'connector',
-        'connector_name',
-        'component',
-        'source_type',
-        'event_type',
-        'state',
-        'state_type',
-        'output'
-    }
 
     def __init__(
             self,
@@ -44,27 +40,105 @@ class Event(object):
             connector_name,
             component,
             source_type,
-            event_type=DEFAULT_EVENT_TYPE,
-            state=DEFAULT_STATE,
-            state_type=DEFAULT_STATE_TYPE,
-            output=DEFAULT_OUTPUT,
-            **kwargs
+            resource=DEFAULT_RESOURCE
     ):
+        """
+        :param str connector: connector type
+        :param str connector_name: connector identifier
+        :param str component: component's name
+        :param str source_type: source of the event
+        :param str resource: resource name
+        """
         self.connector = connector
         self.connector_name = connector_name
         self.component = component
         self.source_type = source_type
+        if resource is not None:
+            self.resource = resource
+
+    def __repr__(self):
+        return '<Event {}.{}.{}>'.format(self.connector,
+                                         self.connector_name,
+                                         self.component)
+
+
+class Event(MinimalisticEvent):
+
+    """
+    General event representation.
+
+    Moved parameters from old spcs: tags, hostgroups, servicegroups, state_type
+    """
+
+    STR_PARAMETERS = [
+        'connector',
+        'connector_name',
+        'component',
+        'source_type',
+        'resource',
+        'display_name',
+        'event_type',
+        'long_output',
+        'output',
+        'perf_data'
+    ]
+
+    def __init__(
+            self,
+            connector,
+            connector_name,
+            component,
+            source_type,
+            resource=DEFAULT_RESOURCE,
+            alarm=DEFAULT_ALARM,
+            context=DEFAULT_CONTEXT,
+            display_name=DEFAULT_DISPLAY_NAME,
+            event_type=DEFAULT_EVENT_TYPE,
+            long_output=DEFAULT_LONG_OUTPUT,
+            output=DEFAULT_OUTPUT,
+            perf_data=DEFAULT_PERF_DATA,
+            perf_data_array=DEFAULT_PERF_DATA_ARRAY,
+            state=DEFAULT_STATE,
+            timestamp=DEFAULT_TIMESTAMP,
+            more=DEFAULT_MORE
+    ):
+        """
+        :param str connector: see MinimalisticEvent
+        :param str connector_name: see MinimalisticEvent
+        :param str component: see MinimalisticEvent
+        :param str source_type: see MinimalisticEvent
+        :param str resource: see MinimalisticEvent
+        :param Alarm alarm: alarm informations linked to the event
+        :param Context context: context informations linked to the event
+        :param str display_name: name displayed in Canopsis
+        :param str event_type: type of the event [sic]
+        :param str long_output: long description of the event
+        :param str output: short description of the event
+        :param str perf_data: formatted perfdata string
+        :param list perf_data_array: array of metrics
+        :param int state: state level
+        :param int timestamp: timestamp of the event
+        :param dict more: other informations liked to the event
+        """
+        super(Event, self).__init__(connector=connector,
+                                    connector_name=connector_name,
+                                    component=component,
+                                    source_type=source_type,
+                                    resource=resource)
+        self.alarm = alarm
+        self.context = context
+        self.display_name = display_name
         self.event_type = event_type
-        self.state = state
-        self.state_type = state_type
+        self.long_output = long_output
         self.output = output
+        self.perf_data = perf_data
+        self.perf_data_array = perf_data_array
+        self.timestamp = timestamp
+        self.state = state
+        self.more = more
 
-        if 'timestamp' not in kwargs:
-            kwargs['timestamp'] = int(time())
-
-        for key, val in kwargs.items():
-            self._present_keys.add(key)
-            setattr(self, key, val)
+        if timestamp is None:
+            self.timestamp = int(time())
 
     def is_valid(self):
         """
@@ -79,8 +153,8 @@ class Event(object):
             return False
 
         if (self.event_type == 'perf'
-                and ('perfdata' not in self._present_keys
-                     or 'perf_data_array' not in self._present_keys)):
+                and (not hasattr(self, 'perfdata')
+                     or not hasattr(self, 'perf_data_array'))):
             return False
 
         return True
@@ -91,9 +165,9 @@ class Event(object):
 
         :raises: EventUTF8Error
         """
-        for key in self._present_keys:
-            attr = getattr(self, key)
-            if isinstance(attr, string_types):
+        for key in self.STR_PARAMETERS:
+            if hasattr(self, key):
+                attr = getattr(self, key)
                 try:
                     setattr(self, key, attr.encode('utf-8'))
                 except (UnicodeEncodeError, UnicodeDecodeError):
@@ -105,12 +179,25 @@ class Event(object):
 
         :rtype: str
         """
+        dico = {
+            'connector': self.connector,
+            'connector_name': self.connector_name,
+            'component': self.component,
+            'source_type': self.source_type,
+            'resource': self.resource,
+            'alarm': self.alarm,
+            'context': self.context,
+            'display_name': self.display_name,
+            'event_type': self.event_type,
+            'long_output': self.long_output,
+            'output': self.output,
+            'perf_data': self.perf_data,
+            'perf_data_array': self.perf_data_array,
+            'state': self.state,
+            'timestamp': self.timestamp,
+            'more': self.more,
+        }
         try:
-            return dumps({k: getattr(self, k) for k in self._present_keys})
+            return dumps(dico)
         except ValueError:
             pass
-
-    def __repr__(self):
-        return '<Event {} {} {}>'.format(self.connector,
-                                         self.connector_name,
-                                         self.component)

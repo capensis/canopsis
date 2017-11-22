@@ -74,15 +74,21 @@ class BackboneEventTest(TestCase):
         json = loads(res)
         del json['timestamp']
         self.assertDictEqual(json, {
-            "connector": "cleese",
-            "resource": "palin",
-            "event_type": "check",
-            "component": "idle",
-            "state_type": 1,
-            "source_type": "resource",
-            "state": 0,
-            "connector_name": "chapman",
-            "output": "How Not to be seen"
+            'connector': 'cleese',
+            'resource': 'palin',
+            'event_type': 'check',
+            'component': 'idle',
+            'alarm': None,
+            'context': None,
+            'display_name': '',
+            'source_type': 'resource',
+            'state': 0,
+            'connector_name': 'chapman',
+            'output': 'How Not to be seen',
+            'long_output': '',
+            'perf_data': '',
+            'perf_data_array': [],
+            'more': {},
         })
 
 if __name__ == '__main__':
