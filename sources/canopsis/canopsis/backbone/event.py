@@ -10,6 +10,8 @@ from __future__ import unicode_literals
 from json import dumps
 from time import time
 
+from canopsis.common.utils import merge_two_dict
+
 DEFAULT_RESOURCE = None
 DEFAULT_ALARM = None
 DEFAULT_CONTEXT = None
@@ -55,6 +57,34 @@ class MinimalisticEvent(object):
         self.source_type = source_type
         if resource is not None:
             self.resource = resource
+
+    def to_dict(self):
+        """
+        Convert the Event to a dict format.
+
+        :rtype: dict
+        """
+        dico = {
+            'connector': self.connector,
+            'connector_name': self.connector_name,
+            'component': self.component,
+            'source_type': self.source_type
+        }
+        if hasattr(self, 'resource'):
+            dico['resource'] = self.resource
+
+        return dico
+
+    def to_json(self):
+        """
+        Convert the Event to a json format.
+
+        :rtype: str
+        """
+        try:
+            return dumps(self.to_dict())
+        except ValueError:
+            pass
 
     def __repr__(self):
         return '<Event {}.{}.{}>'.format(self.connector,
@@ -173,18 +203,13 @@ class Event(MinimalisticEvent):
                 except (UnicodeEncodeError, UnicodeDecodeError):
                     raise EventUTF8Error
 
-    def to_json(self):
+    def to_dict(self):
         """
         Convert the Event to a json format.
 
-        :rtype: str
+        :rtype: dict
         """
         dico = {
-            'connector': self.connector,
-            'connector_name': self.connector_name,
-            'component': self.component,
-            'source_type': self.source_type,
-            'resource': self.resource,
             'alarm': self.alarm,
             'context': self.context,
             'display_name': self.display_name,
@@ -197,7 +222,5 @@ class Event(MinimalisticEvent):
             'timestamp': self.timestamp,
             'more': self.more,
         }
-        try:
-            return dumps(dico)
-        except ValueError:
-            pass
+
+        return merge_two_dict(MinimalisticEvent.to_dict(), dico)
