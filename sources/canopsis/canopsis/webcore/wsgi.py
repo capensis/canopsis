@@ -25,15 +25,11 @@ import os
 import sys
 
 import uwsgidecorators
-import beaker
-import beaker.cache
-import beaker.session
 
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
 
 from canopsis.common.amqp import AmqpPublisher, AmqpConnection
-from canopsis.vendor import mongodb_beaker
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.logger import Logger
