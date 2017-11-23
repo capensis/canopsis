@@ -141,5 +141,6 @@ def get_default_connection():
         amqp_conf['master']['virtual_host']
     )
     amqp_conn = AmqpConnection(amqp_url)
+    amqp_conn.connect()
 
     return amqp_conn
