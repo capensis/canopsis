@@ -1,7 +1,9 @@
 import json
+import os
 
 import pika
 
+from canopsis.confng import Configuration, Ini
 from canopsis.event import get_routingkey
 
 
@@ -124,3 +126,17 @@ class AmqpPublisher(object):
         :param canopsis_exchange: exchange to publish to
         """
         return self.json_document(event, exchange_name, get_routingkey(event))
+
+
+def get_default_connection():
+    amqp_conf = Configuration.load(os.path.join('etc', 'amqp.conf'), Ini)
+    amqp_url = 'amqp://{}:{}@{}:{}/{}'.format(
+        amqp_conf['master']['userid'],
+        amqp_conf['master']['password'],
+        amqp_conf['master']['host'],
+        amqp_conf['master']['port'],
+        amqp_conf['master']['virtual_host']
+    )
+    amqp_conn = AmqpConnection(amqp_url)
+
+    return amqp_conn

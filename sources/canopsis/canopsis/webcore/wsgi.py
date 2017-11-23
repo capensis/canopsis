@@ -29,7 +29,8 @@ import uwsgidecorators
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
 
-from canopsis.common.amqp import AmqpPublisher, AmqpConnection
+from canopsis.common.amqp import get_default_connection as get_default_amqp_connection
+from canopsis.common.amqp import AmqpPublisher
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.logger import Logger
@@ -250,25 +251,15 @@ class WebServer():
         pass
 
 
-def get_default_app(logger=None, amqpconf=None, webconf=None, amqp_conn=None, amqp_pub=None):
+def get_default_app(logger=None, webconf=None, amqp_conn=None, amqp_pub=None):
     if webconf is None:
         webconf = Configuration.load(WebServer.CONF_PATH, Ini)
-
-    if amqpconf is None:
-        amqpconf = Configuration.load(os.path.join('etc', 'amqp.conf'), Ini)
 
     if logger is None:
         logger = Logger.get('webserver', WebServer.LOG_FILE)
 
     if amqp_conn is None:
-        amqp_url = 'amqp://{}:{}@{}:{}/{}'.format(
-            amqpconf['master']['userid'],
-            amqpconf['master']['password'],
-            amqpconf['master']['host'],
-            amqpconf['master']['port'],
-            amqpconf['master']['virtual_host']
-        )
-        amqp_conn = AmqpConnection(amqp_url)
+        amqp_conn = get_default_amqp_connection()
 
     if amqp_pub is None:
         amqp_pub = AmqpPublisher(amqp_conn)
