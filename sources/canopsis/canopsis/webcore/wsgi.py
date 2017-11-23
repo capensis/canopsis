@@ -244,6 +244,7 @@ class WebServer():
             self.unload_session()
             self.unload_webservices()
             self.unload_auth_backends()
+            self.amqp_pub.connection.disconnect()
 
             sys.exit(0)
 
