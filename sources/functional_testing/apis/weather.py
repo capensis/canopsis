@@ -29,6 +29,10 @@ from test_base import BaseApiTest, Method, HTTP
 
 class BasicWeatherAPITest(BaseApiTest):
 
+    """
+    Helper class wich initialize events, watchers and pbehavior for all tests.
+    """
+
     def init_tests(self):
         """
         Create basic objects that will be manipulated.
@@ -55,17 +59,16 @@ class BasicWeatherAPITest(BaseApiTest):
             output='NCC_1701-B'
         )
 
+        # Retrieve futur event id
         get_entity_id = '{}/api/v2/context_graph/get_id/'.format(self.URL_BASE)
         self.event1_id = self._send(url=get_entity_id,
                                     method=Method.post,
                                     data=dumps(self.event1)).json()
-        self.event1['_id'] = self.event1_id
         self.event2_id = self._send(url=get_entity_id,
                                     method=Method.post,
                                     data=dumps(self.event2)).json()
-        self.event2['_id'] = self.event2_id
 
-        # Sample watcher (to insert)
+        # Simple watcher (to insert)
         self.watcher_dict = {
             "description": "a_description",
             "display_name": "a_displayed_name",
@@ -117,7 +120,10 @@ class TestWeatherAPI_Empty(BasicWeatherAPITest):
 
 class TestWeatherAPI(BasicWeatherAPITest):
 
-    # Because of api/v2/compute-pbehaviors, tests can be runned once per minute
+    """
+    NB : Because of api/v2/compute-pbehaviors, tests can be runned once per
+         minute
+    """
 
     def setUp(self):
         self._authenticate()  # default setup
@@ -221,4 +227,4 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertTrue(json[0]['hasactivepbehaviorinentities'])
         self.assertFalse(json[0]['hasallactivepbehaviorinentities'])
 
-    #def test_weather_weatherwatchers(self):
+    # TODO: def test_weather_weatherwatchers(self):
