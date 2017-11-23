@@ -144,7 +144,8 @@ class AmqpPublisher(object):
             retry += 1
 
         raise AmqpPublishError(
-            'cannot publish after {} reconnect tries'.format(retries))
+            'cannot publish after {} reconnect tries'
+            ': cannot connect'.format(retries))
 
     def canopsis_event(self, event, exchange_name, retries=3, wait=1):
         """
