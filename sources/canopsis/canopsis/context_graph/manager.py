@@ -8,13 +8,9 @@ import time
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.model import Parameter
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
-from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.middleware.core import Middleware
 from canopsis.watcher.links import build_all_links
 
@@ -230,15 +226,17 @@ class ContextGraph(object):
 
     @classmethod
     def create_entity_dict(cls,
-                      id,
-                      name,
-                      etype,
-                      depends=[],
-                      impact=[],
-                      measurements={},
-                      infos={},
-                      **kwargs):
-        """Create an entity with following information and put it state at enable.
+                           id,
+                           name,
+                           etype,
+                           depends=[],
+                           impact=[],
+                           measurements={},
+                           infos={},
+                           **kwargs):
+        """
+        Create an entity with following information and put it state at enable.
+
         :param id: the entity id
         :type id: a string
         :param name: the entity name
@@ -256,7 +254,6 @@ class ContextGraph(object):
 
         :return: a dict
         """
-
         ent = {
             '_id': id,
             'type': etype,

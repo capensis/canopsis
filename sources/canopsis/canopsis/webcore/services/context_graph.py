@@ -18,13 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from bottle import request
+
 from canopsis.alerts.manager import Alerts
 from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.import_ctx import ImportKey, Manager
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.engines.core import publish
-from canopsis.webcore.utils import gen_json
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 import json as j
 import os
@@ -256,4 +259,22 @@ def exports(ws):
         """
         Remove entity from context
         """
-        return gen_json(manager.delete_entity(entity_id))
+        try:
+            res = manager.delete_entity(entity_id)
+        except ValueError as vale:
+            return gen_json_error({'description': str(vale)}, HTTP_ERROR)
+
+        return gen_json(res)
+
+    @ws.application.post('/api/v2/context_graph/get_id/')
+    def get_entity_id():
+        """
+        Get the generated id tfrom an event.
+        """
+        event = request.json
+
+        if event is None:
+            return gen_json_error({'description': 'no event givent'},
+                                  HTTP_ERROR)
+
+        return gen_json(ContextGraph.get_id(event))
