@@ -129,6 +129,9 @@ class AmqpPublisher(object):
 
 
 def get_default_connection():
+    """
+    Provide default connection with parameters from etc/amqp.conf
+    """
     amqp_conf = Configuration.load(os.path.join('etc', 'amqp.conf'), Ini)
     amqp_url = 'amqp://{}:{}@{}:{}/{}'.format(
         amqp_conf['master']['userid'],
