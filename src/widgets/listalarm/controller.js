@@ -191,9 +191,8 @@ Ember.Application.initializer({
                 } catch (err) {
                   var filter = undefined;
                 }
+
                 var filterState = this.get('model.alarms_state_filter.state') || 'resolved';
-
-
                 var timestamps = this.defultTimestamps(filterState);
 
                 this.set('alarmSearchOptions', {
@@ -213,7 +212,6 @@ Ember.Application.initializer({
             defultTimestamps: function (state) {
               var tstart = 0, tstop = 0;
               if (state == 'opened') {
-                tstart = 0;
                 tstop = new Date().getTime();
               } else {
                 var d = new Date();
@@ -313,7 +311,7 @@ Ember.Application.initializer({
               } else {
                   options['natural_search'] = false;
               }
-              
+
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
               return DS.PromiseArray.create({
                 promise: adapter.findQuery('alerts', options).then(function (alarms) {
@@ -451,7 +449,6 @@ Ember.Application.initializer({
 
             },
 
-
             /**
              * Set the reload to true in order to redraw events
              * extend the native refreshContent method
@@ -482,15 +479,15 @@ Ember.Application.initializer({
                 search: iParams['search'] || '',
                 opened: filterState == 'opened',
                 resolved: filterState == 'resolved'
-                            };
+              };
 
 
-				var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
-                adapter.findQuery('alerts', query).then(function (result) {
-                              var alerts = get(result, 'data');
-                    controller.setAlarmsForShow(alerts[0]['alarms']);
-              }, function (reason) {
-                    console.error('ERROR in the adapter: ', reason);
+				      var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+              adapter.findQuery('alerts', query).then(function (result) {
+                      var alerts = get(result, 'data');
+                      controller.setAlarmsForShow(alerts[0]['alarms']);
+                }, function (reason) {
+                      console.error('ERROR in the adapter: ', reason);
               });
             },
 
@@ -506,17 +503,17 @@ Ember.Application.initializer({
                 fields = columns.map(function(column) {
                     var obj = {};
                     if (column.startsWith('infos')){
-                        obj['name'] = column;
-                        obj['humanName'] = column;
-                        obj['isSortable'] = column == sortColumn;
-                        obj['isASC'] = order == 'ASC';
-                        obj['getValue'] = column;
+                      obj['name'] = column;
+                      obj['humanName'] = column;
+                      obj['isSortable'] = column == sortColumn;
+                      obj['isASC'] = order == 'ASC';
+                      obj['getValue'] = column;
                     } else {
-                        obj['name'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
-                        obj['humanName'] = column;
-                        obj['isSortable'] = column == sortColumn;
-                        obj['isASC'] = order == 'ASC';
-                        obj['getValue'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
+                      obj['name'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
+                      obj['humanName'] = column;
+                      obj['isSortable'] = column == sortColumn;
+                      obj['isASC'] = order == 'ASC';
+                      obj['getValue'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
                     }
                     return obj;
                 });
@@ -536,6 +533,7 @@ Ember.Application.initializer({
                   column['isSortable'] = true;
                   column['isASC'] = get(this, 'controller.default_sort_column.property');
                 } catch (err) {
+                  console.log("No defautl sort column property")
                 }
                 console.warn('the column "' + get(this, 'controller.default_sort_column.property') + '" was not found.');
                 return column;
@@ -550,24 +548,27 @@ Ember.Application.initializer({
              */
             updateRecord: function (alarmId) {
               var controller = this;
-              var aa = this.get('alarms').findBy('id', alarmId);
-              if (aa) {
+              var alarm_record = this.get('alarms').findBy('id', alarmId);
+              if (alarm_record) {
                 var self = this;
                 var filterState = this.get('model.alarms_state_filter.state') || 'resolved';
-                  var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+                var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
                 var f = {
-                  'd': aa.get('entity_id')
+                  'd': alarm_record.get('entity_id')
                 }
-                  adapter.findQuery('alarm', { lookups: JSON.stringify(["pbehaviors", "linklist"]), 'filter': ('{"$or":[{"_id":"'+ aa.get('id') +'"}]}') }).then(function (a) {
-
-                    if (a.success) {
+                adapter.findQuery('alarm',
+                  {
+                    lookups: JSON.stringify(["pbehaviors", "linklist"]),
+                    'filter': ('{"$or":[{"_id":"'+ alarm_record.get('id') +'"}]}')
+                  }).then(function (found_alarm) {
+                    if (found_alarm.success) {
                       var fields = self.get('fields');
-                      var alarm = a.data[0].alarms[0];
-                      aa.entity_id= alarm._id;
-                      aa.d= alarm._id;
-                      aa.set('extra_details', Ember.Object.create());
+                      var alarm = found_alarm.data[0].alarms[0];
+                      alarm_record.entity_id= alarm._id;
+                      alarm_record.d= alarm._id;
+                      alarm_record.set('extra_details', Ember.Object.create());
                       controller.get('extraDeatialsEntities').forEach(function(item) {
-                        aa.set('extra_details.' + item.name, Ember.Object.create(alarm).get(item.value));
+                        alarm_record.set('extra_details.' + item.name, Ember.Object.create(alarm).get(item.value));
                       })
 
                       var newAlarm = Ember.Object.create();
@@ -575,21 +576,20 @@ Ember.Application.initializer({
                       fields.forEach(function(field) {
                           if (field.humanName != 'extra_details') {
                             var val = get(Ember.Object.create(alarm), field.getValue);
-                            aa.set(field.humanName, val);
+                            alarm_record.set(field.humanName, val);
                           }
 
                       });
-                      aa.set('isSelected', false);
-                      aa.set('isExpanded', false);
-                      aa.set('canceled', get(Ember.Object.create(alarm), 'v.canceled'));
+                      alarm_record.set('isSelected', false);
+                      alarm_record.set('isExpanded', false);
+                      alarm_record.set('canceled', get(Ember.Object.create(alarm), 'v.canceled'));
 
-                      Ember.set(aa, 'changed', new Date().getTime());
+                      Ember.set(alarm_record, 'changed', new Date().getTime());
 
                     } else {
                       console.error('unsuccessful request');
                     }
-              })
-
+                  })
               } else {
                 console.error('alarm not found');
               }
