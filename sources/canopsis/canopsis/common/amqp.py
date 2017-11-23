@@ -1,10 +1,15 @@
 import json
 import os
+import time
 
 import pika
 
 from canopsis.confng import Configuration, Ini
 from canopsis.event import get_routingkey
+
+
+class AmqpPublishError(Exception):
+    pass
 
 
 class AmqpConnection(object):
@@ -16,8 +21,8 @@ class AmqpConnection(object):
         """
 
         self._url = url
-        self.connection = None
-        self.channel = None
+        self._connection = None
+        self._channel = None
 
     def __enter__(self):
         self.connect()
@@ -27,36 +32,51 @@ class AmqpConnection(object):
         self.disconnect()
 
     @property
-    def connected(self):
-        """
-        Property checking for connection state.
-        """
-        if self.connection is None:
-            return False
+    def channel(self):
+        if self._channel is None:
+            self.connect()
 
-        return self.connection.is_open
+        return self._channel
+
+    @property
+    def connection(self):
+        if self._connection is None:
+            self.connect()
+
+        return self._connection
 
     def connect(self):
         """
         If connection is already made, disconnect then connect.
         """
-        if self.connected:
-            self.disconnect()
-
+        self.disconnect()
         parameters = pika.URLParameters(self._url)
-        self.connection = pika.BlockingConnection(parameters)
-        self.channel = self.connection.channel()
+        self._connection = pika.BlockingConnection(parameters)
+        self._channel = self._connection.channel()
 
     def disconnect(self):
         """
         Close current connection, if connected, and resets
         self.connection and self.channel to None.
         """
-        if self.connected:
-            self.connection.close()
+        if self._channel is not None:
+            try:
+                self._channel.close()
+            except (
+                pika.exceptions.ChannelClosed,
+                pika.exceptions.ConnectionClosed
+            ):
+                pass
 
-        self.connection = None
-        self.channel = None
+            self._channel = None
+
+        if self._connection is not None:
+            try:
+                self._connection.close()
+            except pika.exceptions.ConnectionClosed:
+                pass
+
+            self._connection = None
 
 
 class AmqpPublisher(object):
@@ -89,8 +109,13 @@ class AmqpPublisher(object):
         :type connection: AmqpConnection
         """
         self.connection = connection
+        self._json_props = pika.BasicProperties(
+            content_type='application/json')
 
-    def json_document(self, document, exchange_name, routing_key):
+    def json_document(
+        self, document, exchange_name,
+        routing_key, retries=3, wait=1
+    ):
         """
         Sends a JSON document with AMQP content_type application/json
 
@@ -100,14 +125,31 @@ class AmqpPublisher(object):
         :type exchange_name: str
         :param routing_key: event's routing key
         :type routing_key: str
+        :raises AmqpPublishError: when all retries failed, raise this error.
         """
+        # just ensure the connection is alive, if not, reconnect
         jdoc = json.dumps(document)
-        props = pika.BasicProperties(content_type='application/json')
-        return self.connection.channel.basic_publish(
-            exchange_name, routing_key, jdoc, props
-        )
 
-    def canopsis_event(self, event, exchange_name):
+        retry = 0
+        while retry < retries:
+            try:
+                return self.connection.channel.basic_publish(
+                    exchange_name, routing_key, jdoc, self._json_props
+                )
+
+            except (
+                pika.exceptions.ConnectionClosed,
+                pika.exceptions.ChannelClosed
+            ):
+                time.sleep(wait)
+
+            retry += 1
+
+        raise AmqpPublishError(
+            'cannot publish after {} reconnect tries'
+            ': cannot connect'.format(retries))
+
+    def canopsis_event(self, event, exchange_name, retries=3, wait=1):
         """
         Shortcut to self.json_document, builds the routing key
         for you from the event.
@@ -125,7 +167,10 @@ class AmqpPublisher(object):
         :raises KeyError: on invalid event, if routing key cannot be built.
         :param canopsis_exchange: exchange to publish to
         """
-        return self.json_document(event, exchange_name, get_routingkey(event))
+        return self.json_document(
+            event, exchange_name, get_routingkey(event),
+            retries=retries, wait=wait
+        )
 
 
 def get_default_connection():
