@@ -200,7 +200,7 @@ class Event(MinimalisticEvent):
                 attr = getattr(self, key)
                 try:
                     setattr(self, key, attr.encode('utf-8'))
-                except (UnicodeEncodeError, UnicodeDecodeError):
+                except UnicodeError:
                     raise EventUTF8Error
 
     def to_dict(self):
