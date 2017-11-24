@@ -56,34 +56,26 @@ def exports(ws):
                 HTTPError
             )
 
-        exchange = ws.amqp.exchange_name_events
+        exchange = 'canopsis.events'
 
         if isinstance(events, dict):
             events = [events]
 
+        sent_events = []
+        failed_events = []
+
         for event in events:
+            try:
+                ws.amqp_pub.canopsis_event(event, exchange)
+                sent_events.append(event)
 
-            if schema.validate(event, 'cevent'):
-                sname = 'cevent.{0}'.format(event['event_type'])
+            except KeyError as exc:
+                failed_events.append(event)
+                continue
 
-                if schema.validate(event, sname):
-                    if event['event_type'] == 'eue':
-                        sname = 'cevent.eue.{0}'.format(
-                            event['type_message']
-                        )
-
-                        if not schema.validate(event, sname):
-                            return gen_json_error(
-                                {'description': 'invalid event: {0}'.format(
-                                    event
-                                )},
-                                HTTPError
-                            )
-
-                    rk = get_routingkey(event)
-                    ws.amqp.publish(event, rk, exchange)
-
-        return gen_json(events)
+        return gen_json(
+            {'sent_events': sent_events, 'failed_events': failed_events}
+        )
 
     @route(ws.application.post, name='event', payload=['event', 'url'])
     @route(ws.application.put, name='event', payload=['event', 'url'])
@@ -105,21 +97,19 @@ def exports(ws):
 
         else:
             events = ensure_iterable(event)
-            exchange = ws.amqp.exchange_name_events
+            exchange = 'canopsis.events'
 
             sent_events = []
             failed_events = []
 
             for event in events:
                 try:
-                    rk = get_routingkey(event)
+                    ws.amqp_pub.canopsis_event(event, exchange)
+                    sent_events.append(event)
 
                 except KeyError as exc:
                     failed_events.append(event)
                     continue
-
-                ws.amqp.publish(event, rk, exchange)
-                sent_events.append(event)
 
             return {'sent_events': sent_events, 'failed_events': failed_events}
 

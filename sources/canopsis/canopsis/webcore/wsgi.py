@@ -25,23 +25,20 @@ import os
 import sys
 
 import gevent
-from gevent import monkey
-monkey.patch_all()
 
-
-import beaker
-import beaker.cache
-import beaker.session
 from signal import SIGTERM, SIGINT
+from gevent import monkey
+
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
 
-from canopsis.vendor import mongodb_beaker
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_connection
+from canopsis.common.amqp import AmqpPublisher
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.logger import Logger
 from canopsis.old.account import Account
-from canopsis.old.rabbitmq import Amqp
 # TODO: replace with canopsis.mongo.MongoStorage
 from canopsis.old.storage import get_storage
 
@@ -53,6 +50,8 @@ DEFAULT_ROOT_DIR = '~/var/www/src/'
 DEFAULT_COOKIES_EXPIRE = 300
 DEFAULT_SECRET = 'canopsis'
 DEFAULT_DATA_DIR = '~/var/cache/canopsis/webcore/'
+
+monkey.patch_all()
 
 
 class EnsureAuthenticated(object):
@@ -102,22 +101,23 @@ class WebServer():
             if not self.auth_backends[bname].handle_logout
         ]
 
-    def __init__(self, config, logger, logger_req, *args, **kwargs):
+    def __init__(self, config, logger, amqp_pub):
         self.config = config
         self.logger = logger
-        self.logger_req = logger_req
+        self.amqp_pub = amqp_pub
 
         server = self.config.get('server', {})
         self.debug = server.get('debug', DEFAULT_DEBUG)
-        self.enable_crossdomain_send_events = server.get('enable_crossdomain_send_events',
-                                                         DEFAULT_ECSE)
-        self.root_directory = os.path.expanduser(server.get('root_directory',
-                                                            DEFAULT_ROOT_DIR))
+        self.enable_crossdomain_send_events = server.get(
+            'enable_crossdomain_send_events', DEFAULT_ECSE)
+        self.root_directory = os.path.expanduser(
+            server.get('root_directory', DEFAULT_ROOT_DIR))
 
         auth = self.config.get('auth', {})
         self.providers = cfg_to_array(auth.get('providers', ''))
         if len(self.providers) == 0:
-            self.logger.critical('Missing providers. Cannot launch webcore module.')
+            self.logger.critical(
+                'Missing providers. Cannot launch webcore module.')
             raise RuntimeError('Missing providers')
 
         session = self.config.get('session', {})
@@ -130,7 +130,6 @@ class WebServer():
 
         # TODO: Replace with MongoStorage
         self.db = get_storage(account=Account(user='root', group='root'))
-        self.amqp = Amqp()
         self.stopping = False
 
         self.webmodules = {}
@@ -140,10 +139,6 @@ class WebServer():
         self.logger.info('Initialize gevent signal-handlers')
         gevent.signal(SIGTERM, self.exit)
         gevent.signal(SIGINT, self.exit)
-
-        self.logger.info('Start AMQP thread')
-        self.amqp.start()
-
         self.logger.info('Initialize WSGI Application')
         self.app = BottleApplication()
 
@@ -233,9 +228,6 @@ class WebServer():
         self.app.install(backend)
 
     def load_session(self):
-        # Since we vendor mongodb_beaker because of broken dep on pypi.python.org
-        # we need to setup the beaker class map manually.
-        beaker.cache.clsmap['mongodb'] = mongodb_beaker.MongoDBNamespaceManager
         self.app = SessionMiddleware(self.app, {
             'session.type': 'mongodb',
             'session.cookie_expires': self.cookie_expires,
@@ -260,9 +252,7 @@ class WebServer():
             self.unload_session()
             self.unload_webservices()
             self.unload_auth_backends()
-
-            self.amqp.stop()
-            # TODO: self.amqp.wait() not implemented
+            self.amqp_pub.connection.disconnect()
 
             sys.exit(0)
 
@@ -270,12 +260,20 @@ class WebServer():
         pass
 
 
-def get_default_app():
-    conf = Configuration.load(WebServer.CONF_PATH, Ini)
-    logger = Logger.get('webserver', WebServer.LOG_FILE)
-    logger_req = Logger.get('webserverreq', WebServer.LOG_FILE, fmt='%(message)s')
+def get_default_app(logger=None, webconf=None, amqp_conn=None, amqp_pub=None):
+    if webconf is None:
+        webconf = Configuration.load(WebServer.CONF_PATH, Ini)
+
+    if logger is None:
+        logger = Logger.get('webserver', WebServer.LOG_FILE)
+
+    if amqp_conn is None:
+        amqp_conn = get_default_amqp_connection()
+
+    if amqp_pub is None:
+        amqp_pub = AmqpPublisher(amqp_conn)
+
     # Declare WSGI application
-    ws = WebServer(config=conf, logger=logger, logger_req=logger_req).init_app()
+    ws = WebServer(config=webconf, logger=logger, amqp_pub=amqp_pub).init_app()
     app = ws.application
     return app
-

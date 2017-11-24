@@ -1,8 +1,10 @@
 import json
+import os
 import time
 
 import pika
 
+from canopsis.confng import Configuration, Ini
 from canopsis.event import get_routingkey
 
 
@@ -169,3 +171,21 @@ class AmqpPublisher(object):
             event, exchange_name, get_routingkey(event),
             retries=retries, wait=wait
         )
+
+
+def get_default_connection():
+    """
+    Provide default connection with parameters from etc/amqp.conf
+    """
+    amqp_conf = Configuration.load(os.path.join('etc', 'amqp.conf'), Ini)
+    amqp_url = 'amqp://{}:{}@{}:{}/{}'.format(
+        amqp_conf['master']['userid'],
+        amqp_conf['master']['password'],
+        amqp_conf['master']['host'],
+        amqp_conf['master']['port'],
+        amqp_conf['master']['virtual_host']
+    )
+    amqp_conn = AmqpConnection(amqp_url)
+    amqp_conn.connect()
+
+    return amqp_conn

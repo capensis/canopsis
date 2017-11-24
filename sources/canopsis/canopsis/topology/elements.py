@@ -76,7 +76,6 @@ from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context
 from canopsis.topology.manager import TopologyManager
 from canopsis.graph.event import BaseTaskedVertice
-from canopsis.engines.core import publish
 from canopsis.common.utils import singleton_per_scope
 
 
@@ -149,8 +148,8 @@ class TopoVertice(BaseTaskedVertice):
             logger=None,
             **kwargs
     ):
-
         """
+        :param AmqpPublisher publisher:
         :param TopologyManager manager:
         """
 
@@ -180,7 +179,7 @@ class TopoVertice(BaseTaskedVertice):
             new_event = self.get_event(state=self.state, source=source)
             # publish a new event
             if publisher is not None:
-                publish(event=new_event, publisher=publisher)
+                publisher.canopsis_event(new_event, 'canopsis.events')
             # save self
             self.save(manager=manager)
 
