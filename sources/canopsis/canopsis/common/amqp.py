@@ -128,6 +128,7 @@ class AmqpPublisher(object):
         """
         Sends a JSON document with AMQP content_type application/json
 
+        :param retries: if the first try doesn't suceed, retry X times.
         :param document: valid JSON document
         :type document: dict
         :param exchange_name: exchange to publish to
@@ -140,7 +141,9 @@ class AmqpPublisher(object):
         jdoc = json.dumps(document)
 
         retry = 0
-        while retry < retries:
+        while retry <= retries:
+            retry += 1
+
             try:
                 return self.connection.channel.basic_publish(
                     exchange_name, routing_key, jdoc, self._json_props
@@ -153,13 +156,11 @@ class AmqpPublisher(object):
                 try:
                     self.connection.connect()
                 except pika.exceptions.ConnectionClosed:
-                    time.sleep(wait)
-
-            retry += 1
+                    if retry != retries:
+                        time.sleep(wait)
 
         raise AmqpPublishError(
-            'cannot publish after {} reconnect tries'
-            ': cannot connect'.format(retries))
+            'cannot publish ({} times): cannot connect'.format(retry))
 
     def canopsis_event(self, event, exchange_name, retries=3, wait=1):
         """

@@ -29,7 +29,7 @@ from canopsis.common.utils import ensure_iterable
 from canopsis.common.ws import route
 from canopsis.event.eventslogmanager import EventsLog
 from canopsis.common.utils import singleton_per_scope
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.webcore.utils import gen_json_error, HTTP_ERROR
 
 
 def send_events(ws, events, exchange):
@@ -41,13 +41,15 @@ def send_events(ws, events, exchange):
 
     for event in events:
         try:
-            ws.amqp_pub.canopsis_event(event, exchange, retries=1)
+            ws.amqp_pub.canopsis_event(event, exchange, retries=0)
             sent_events.append(event)
 
         except KeyError as exc:
+            ws.logger.error('bad event: {}'.format(exc))
             failed_events.append(event)
 
         except AmqpPublishError as exc:
+            ws.logger.error('publish error: {}'.format(exc))
             retry_events.append(event)
 
     return {
