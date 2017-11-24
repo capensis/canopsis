@@ -142,7 +142,6 @@ class AmqpPublisher(object):
 
         retry = 0
         while retry <= retries:
-            retry += 1
 
             try:
                 return self.connection.channel.basic_publish(
@@ -156,8 +155,10 @@ class AmqpPublisher(object):
                 try:
                     self.connection.connect()
                 except pika.exceptions.ConnectionClosed:
-                    if retry != retries:
+                    if retry < retries:
                         time.sleep(wait)
+
+            retry += 1
 
         raise AmqpPublishError(
             'cannot publish ({} times): cannot connect'.format(retry))
