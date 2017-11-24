@@ -288,6 +288,7 @@ class TestActivityAggregateManager(unittest.TestCase):
         self.assertEqual(res['n'], 2)
 
     def test_store_get_delete_with_pb(self):
+        ac_pb_gen = PBehaviorGenerator()
         acm = ActivityManager(self.col_activity)
         agm = ActivityAggregateManager(self.col_ag, self.col_pb, acm)
         ag = ActivityAggregate('agtest', {})
@@ -299,6 +300,17 @@ class TestActivityAggregateManager(unittest.TestCase):
         self.assertTrue(ag.add(ac2))
 
         agm.store(ag)
+
+        agc = agm.get(ag.name)
+
+        start_date = ac_pb_gen._get_monday()
+        pbehaviors = ac_pb_gen.activities_to_pbehaviors(agc, start_date)
+
+        self.assertTrue(agc.name, ag.name)
+        self.assertEqual(len(pbehaviors), 2)
+
+        pb_ids = []
+        agm.attach_pbehaviors(agc, pb_ids)
 
     def test_store_get_dbid(self):
         acm = ActivityManager(self.col_activity)
