@@ -21,14 +21,13 @@
 from canopsis.common.utils import get_first
 from canopsis.common.ws import route
 from canopsis.topology.manager import TopologyManager
-from canopsis.old.rabbitmq import Amqp
 from canopsis.check import Check
 
 
 def exports(ws):
 
     manager = TopologyManager()
-    publisher = Amqp()
+    publisher = ws.amqp_pub
 
     @route(ws.application.get, name='topology/graphelts')
     @route(
