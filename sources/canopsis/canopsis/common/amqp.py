@@ -33,6 +33,9 @@ class AmqpConnection(object):
 
     @property
     def channel(self):
+        """
+        If no channel is declared, try to reconnect to the bus.
+        """
         if self._channel is None:
             self.connect()
 
@@ -48,6 +51,12 @@ class AmqpConnection(object):
     def connect(self):
         """
         If connection is already made, disconnect then connect.
+
+        You don't need te connect yourself if you use the channel or connection
+        properties, is if they are None, AmqpConnection will
+        handle (re)connection for you.
+
+        :raises pika.exceptions.ConnectionClosed:
         """
         self.disconnect()
         parameters = pika.URLParameters(self._url)
@@ -178,7 +187,7 @@ class AmqpPublisher(object):
 
 def get_default_connection():
     """
-    Provide default connection with parameters from etc/amqp.conf
+    Provide default connection with parameters from etc/amqp.conf.
     """
     amqp_conf = Configuration.load(os.path.join('etc', 'amqp.conf'), Ini)
     amqp_url = 'amqp://{}:{}@{}:{}/{}'.format(
@@ -189,6 +198,5 @@ def get_default_connection():
         amqp_conf['master']['virtual_host']
     )
     amqp_conn = AmqpConnection(amqp_url)
-    amqp_conn.connect()
 
     return amqp_conn
