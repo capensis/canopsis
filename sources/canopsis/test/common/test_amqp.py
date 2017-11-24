@@ -26,7 +26,6 @@ class TestAmqpConn(TestAmqp):
         with AmqpConnection(self.amqp_url) as amqp_conn:
             self.assertIsNotNone(amqp_conn.connection)
             self.assertIsNotNone(amqp_conn.channel)
-            self.assertTrue(amqp_conn.connected)
 
     def test_connection_explicit(self):
         amqp_conn = AmqpConnection(self.amqp_url)
@@ -34,13 +33,11 @@ class TestAmqpConn(TestAmqp):
 
         self.assertIsNotNone(amqp_conn.connection)
         self.assertIsNotNone(amqp_conn.channel)
-        self.assertTrue(amqp_conn.connected)
 
         amqp_conn.disconnect()
 
         self.assertIsNone(amqp_conn.connection)
         self.assertIsNone(amqp_conn.channel)
-        self.assertFalse(amqp_conn.connected)
 
 
 class TestAmqpPublisher(TestAmqp):
