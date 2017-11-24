@@ -32,7 +32,7 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.webcore.utils import gen_json_error, HTTP_ERROR
 
 
-def send_events(ws, events, exchange):
+def send_events(ws, events, exchange='canopsis.events'):
     events = ensure_iterable(events)
 
     sent_events = []
@@ -82,7 +82,7 @@ def exports(ws):
                 HTTPError
             )
 
-        return send_events(ws, events, 'canopsis.events')
+        return send_events(ws, events)
 
     @route(ws.application.post, name='event', payload=['event', 'url'])
     @route(ws.application.put, name='event', payload=['event', 'url'])
@@ -103,7 +103,7 @@ def exports(ws):
                 return HTTPError(response.status_code, response.text)
 
         else:
-            return send_events(ws, event, 'canopsis.events')
+            return send_events(ws, event)
 
     @route(ws.application.get,
            name='eventslog/count',

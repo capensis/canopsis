@@ -31,7 +31,8 @@ from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.record import Record
 from canopsis.common.amqp import AmqpPublisher
-from canopsis.common.amqp import get_default_connection as get_default_amqp_connection
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_connection
 
 legend_type = ['soft', 'hard']
 OFF = 0
@@ -275,7 +276,7 @@ class Archiver(Configurable):
                 new_status = ONGOING if event['state'] else OFF
                 self.set_status(event, new_status)
                 event['pass_status'] = 1
-                self.amqp_pub.canopsis_event(event, 'canopsis.events')
+                self.amqp_pub.canopsis_event(event)
 
     def is_bagot(self, event):
         """

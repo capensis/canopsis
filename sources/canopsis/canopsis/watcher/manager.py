@@ -14,7 +14,8 @@ from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.common.amqp import AmqpPublisher
-from canopsis.common.amqp import get_default_connection as get_default_amqp_conn
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_conn
 
 LOG_PATH = 'var/log/watcher.log'
 
@@ -250,7 +251,7 @@ class Watcher:
             perf_data_array=[],
             display_name=display_name)
 
-        self.amqp_pub.canopsis_event(event, 'canopsis.events')
+        self.amqp_pub.canopsis_event(event)
 
     def sla_compute(self, watcher_id, state):
         """

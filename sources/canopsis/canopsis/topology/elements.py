@@ -179,7 +179,7 @@ class TopoVertice(BaseTaskedVertice):
             new_event = self.get_event(state=self.state, source=source)
             # publish a new event
             if publisher is not None:
-                publisher.canopsis_event(new_event, 'canopsis.events')
+                publisher.canopsis_event(new_event)
             # save self
             self.save(manager=manager)
 

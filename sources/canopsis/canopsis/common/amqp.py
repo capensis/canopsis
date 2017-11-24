@@ -99,7 +99,7 @@ class AmqpPublisher(object):
     evt = {...}
     with AmqpConnection(url) as apc:
         pub = AmqpPublisher(apc)
-        pub.canopsis_event(evt, 'canopsis.events')
+        pub.canopsis_event(evt)
 
     or:
 
@@ -122,8 +122,7 @@ class AmqpPublisher(object):
             content_type='application/json')
 
     def json_document(
-        self, document, exchange_name,
-        routing_key, retries=3, wait=1
+        self, document, exchange_name, routing_key, retries=3, wait=1
     ):
         """
         Sends a JSON document with AMQP content_type application/json
@@ -163,7 +162,9 @@ class AmqpPublisher(object):
         raise AmqpPublishError(
             'cannot publish ({} times): cannot connect'.format(retry))
 
-    def canopsis_event(self, event, exchange_name, retries=3, wait=1):
+    def canopsis_event(
+        self, event, exchange_name='canopsis.events', retries=3, wait=1
+    ):
         """
         Shortcut to self.json_document, builds the routing key
         for you from the event.
