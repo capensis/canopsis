@@ -379,8 +379,12 @@ class Alerts(object):
         alarm_id = alarm[storage.DATA_ID]
         alarm_ts = alarm[storage.TIMESTAMP]
 
+        display_name = gen_id()
+        while self.check_if_display_name_exists(display_name):
+            display_name = gen_id()
+
         if AlarmField.display_name.value not in new_value:
-            new_value[AlarmField.display_name.value] = gen_id()
+            new_value[AlarmField.display_name.value] = display_name
 
         if tags is not None:
             for tag in ensure_iterable(tags):
@@ -789,12 +793,15 @@ class Alerts(object):
         :return alarm document:
         :rtype: dict
         """
+        display_name = gen_id()
+        while self.check_if_display_name_exists(display_name):
+            display_name = gen_id()
 
         return {
             self.alerts_storage.DATA_ID: alarm_id,
             self.alerts_storage.TIMESTAMP: event['timestamp'],
             self.alerts_storage.VALUE: {
-                AlarmField.display_name.value: gen_id(),
+                AlarmField.display_name.value: display_name,
                 'connector': event['connector'],
                 'connector_name': event['connector_name'],
                 'component': event['component'],
@@ -819,6 +826,15 @@ class Alerts(object):
                 }
             }
         }
+
+    def check_if_display_name_exists(self, display_name):
+        tmp_alarms = self.alerts_storage.get_elements(
+                query={'v.display_name':display_name}
+        )
+        if tmp_alarms is None:
+            return False
+        return True
+
 
     def crop_flapping_steps(self, alarm):
         """
