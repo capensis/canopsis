@@ -24,13 +24,37 @@ import json
 import requests
 from bottle import HTTPError, request
 
-from canopsis.event import get_routingkey
+from canopsis.common.amqp import AmqpPublishError
 from canopsis.common.utils import ensure_iterable
 from canopsis.common.ws import route
-from canopsis import schema
 from canopsis.event.eventslogmanager import EventsLog
 from canopsis.common.utils import singleton_per_scope
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+
+
+def send_events(ws, events, exchange):
+    events = ensure_iterable(events)
+
+    sent_events = []
+    failed_events = []
+    retry_events = []
+
+    for event in events:
+        try:
+            ws.amqp_pub.canopsis_event(event, exchange, retries=1)
+            sent_events.append(event)
+
+        except KeyError as exc:
+            failed_events.append(event)
+
+        except AmqpPublishError as exc:
+            retry_events.append(event)
+
+    return {
+        'sent_events': sent_events,
+        'failed_events': failed_events,
+        'retry_events': retry_events
+    }
 
 
 def exports(ws):
@@ -56,26 +80,7 @@ def exports(ws):
                 HTTPError
             )
 
-        exchange = 'canopsis.events'
-
-        if isinstance(events, dict):
-            events = [events]
-
-        sent_events = []
-        failed_events = []
-
-        for event in events:
-            try:
-                ws.amqp_pub.canopsis_event(event, exchange)
-                sent_events.append(event)
-
-            except KeyError as exc:
-                failed_events.append(event)
-                continue
-
-        return gen_json(
-            {'sent_events': sent_events, 'failed_events': failed_events}
-        )
+        return send_events(ws, events, 'canopsis.events')
 
     @route(ws.application.post, name='event', payload=['event', 'url'])
     @route(ws.application.put, name='event', payload=['event', 'url'])
@@ -96,22 +101,7 @@ def exports(ws):
                 return HTTPError(response.status_code, response.text)
 
         else:
-            events = ensure_iterable(event)
-            exchange = 'canopsis.events'
-
-            sent_events = []
-            failed_events = []
-
-            for event in events:
-                try:
-                    ws.amqp_pub.canopsis_event(event, exchange)
-                    sent_events.append(event)
-
-                except KeyError as exc:
-                    failed_events.append(event)
-                    continue
-
-            return {'sent_events': sent_events, 'failed_events': failed_events}
+            return send_events(ws, event, 'canopsis.events')
 
     @route(ws.application.get,
            name='eventslog/count',
