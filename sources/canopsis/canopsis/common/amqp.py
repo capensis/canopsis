@@ -141,11 +141,11 @@ class AmqpPublisher(object):
                 pika.exceptions.ConnectionClosed,
                 pika.exceptions.ChannelClosed
             ):
-                time.sleep(wait)
                 try:
                     self.connection.connect()
                 except pika.exceptions.ConnectionClosed:
-                    pass
+                    time.sleep(wait)
+
             retry += 1
 
         raise AmqpPublishError(
