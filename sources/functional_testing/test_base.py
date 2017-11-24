@@ -25,7 +25,7 @@ from enum import Enum
 from urllib import quote
 import requests
 import unittest
-
+import json
 
 class Event:
 
@@ -39,6 +39,18 @@ class Event:
         self.state_type = state_type
         self.status = status
         self.source_type = source_type
+
+class Response(Enum):
+    """
+    Keys you can find in the response return by the webserver.
+    """
+    TOTAL = "total"
+    DATA = "data"
+    SUCCESS = "sucess"
+
+    ALARMS = "alarms"
+    FIRST = "first"
+    LAST = "last"
 
 class HTTP(Enum):
     """
@@ -110,8 +122,10 @@ class BaseApiTest(unittest.TestCase):
             else:
                 sep = ""
 
-            querystring += "{0}={1}{2}".format(key, params[key], sep)
-        return self.URL_BASE + url + "?" + quote(querystring)
+            querystring += "{0}={1}{2}".format(key,
+                                               json.dumps(params[key]),
+                                               sep)
+        return self.URL_BASE + url + "?" + querystring
 
     def _authent_plain(self):
         """
