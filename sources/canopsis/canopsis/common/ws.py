@@ -27,7 +27,9 @@ code.
 """
 
 import logging
+import json
 import traceback
+
 from bottle import request, HTTPError, HTTPResponse
 from bottle import response as BottleResponse
 from functools import wraps
@@ -159,26 +161,9 @@ class route(object):
     #: field to set intercepted function from the interceptor function
     _INTERCEPTED = str(uuid())
 
-    @staticmethod
-    def get_request_path():
-        return request.urlparts[2]
-
-    @staticmethod
-    def log_request(logger, op, request_path):
-        """
-        :param logger: logger
-        :param op: HTTP Method
-        :param request_path: path of the url
-        """
-        logger.info(
-            u'Request: {} - {}'.format(
-                op.upper(), request_path
-            )
-        )
-
     def __init__(
         self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
-        response=response, adapt=True, nolog=False
+        response=response, adapt=True
     ):
         """
         :param op: ws operation for routing a function
@@ -191,7 +176,6 @@ class route(object):
         :param dict wsgi_params: wsgi parameters which will be given to the
             wsgi such as a keyword
         :param bool adapt: Adapt Canopsis<->Ember data (default: True)
-        :param bool nolog: Disable logging route access (default: False)
         """
 
         super(route, self).__init__()
@@ -206,7 +190,6 @@ class route(object):
         self.response = response
         self.wsgi_params = wsgi_params
         self.adapt = adapt
-        self.nolog = nolog
         self.url = ''
 
     def __call__(self, function):
@@ -270,13 +253,6 @@ class route(object):
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
 
-            if not self.nolog:
-                route.log_request(
-                    self.logger,
-                    self.op.__name__,
-                    route.get_request_path()
-                )
-
             if self.adapt:
                 # adapt ember data to canopsis data
                 adapt_ember_data_to_canopsis(args)
@@ -291,7 +267,7 @@ class route(object):
             except Exception as exc:
                 # if an error occured, get a failure message
                 self.logger.exception("Exception while handling the request.")
-                result = {
+                result = HTTPError(500, json.dumps({
                     'total': 0,
                     'success': False,
                     'data': {
@@ -299,7 +275,7 @@ class route(object):
                         'type': str(type(exc)),
                         'msg': str(exc)
                     }
-                }
+                }))
 
             else:
                 #TODO: move it globaly, and move this module in webcore project

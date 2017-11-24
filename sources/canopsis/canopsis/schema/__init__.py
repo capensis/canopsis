@@ -20,9 +20,15 @@
 # ---------------------------------
 
 import validictory
+import traceback
+
+from canopsis.logger import Logger
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
+
+
+schema_logger = Logger.get('schema', 'var/log/schema.log')
 
 
 class NoSchemaError(Exception):
@@ -69,6 +75,8 @@ def validate(dictionary, schema_id):
     """
         Validate a dictionary using a schema.
 
+        !! DEPRECATED !! Always return True. It just log call stack to var/log/schema.log
+
         :param dictionary: Dictionary to validate.
         :type dictionary: dict
 
@@ -78,6 +86,13 @@ def validate(dictionary, schema_id):
         :returns: True if the validation succeed, False otherwise.
         WARNING: disabled, always returns True.
     """
+    call_stack = ''.join(traceback.format_stack())
+    schema_logger.critical(
+        'call to canopsis.schema.__init__.validate: {}\n'.format(call_stack))
+
+    # FIXIT: Look at the code under this one: we just avoid useless computation
+    # while we completely remove calls to this function.
+    return True
 
     schema = get(schema_id)
 

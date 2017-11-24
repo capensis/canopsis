@@ -21,17 +21,22 @@
 from __future__ import unicode_literals
 
 import importlib
+import os
+import sys
+
 import gevent
 from gevent import monkey
 monkey.patch_all()
-import os
-from signal import SIGTERM, SIGINT
-import sys
 
+
+import beaker
+import beaker.cache
+import beaker.session
+from signal import SIGTERM, SIGINT
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
-import mongodb_beaker  # needed by beaker
 
+from canopsis.vendor import mongodb_beaker
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.logger import Logger
@@ -97,9 +102,10 @@ class WebServer():
             if not self.auth_backends[bname].handle_logout
         ]
 
-    def __init__(self, config, logger, *args, **kwargs):
+    def __init__(self, config, logger, logger_req, *args, **kwargs):
         self.config = config
         self.logger = logger
+        self.logger_req = logger_req
 
         server = self.config.get('server', {})
         self.debug = server.get('debug', DEFAULT_DEBUG)
@@ -130,7 +136,7 @@ class WebServer():
         self.webmodules = {}
         self.auth_backends = {}
 
-    def __call__(self):
+    def init_app(self):
         self.logger.info('Initialize gevent signal-handlers')
         gevent.signal(SIGTERM, self.exit)
         gevent.signal(SIGINT, self.exit)
@@ -182,12 +188,14 @@ class WebServer():
         return True
 
     def load_webservices(self):
-        for module, enable in self.webservices.iteritems():
-            if int(enable) == 1:
+        for module in sorted(self.webservices.keys()):
+            enable = int(self.webservices[module])
+            if enable == 1:
                 self._load_webservice(module)
             else:
                 self.logger.info(
                     u'Webservice {} skipped by configuration.'.format(module))
+
         self.logger.info(u'Service loading completed.')
 
     def _load_auth_backend(self, modname):
@@ -225,6 +233,9 @@ class WebServer():
         self.app.install(backend)
 
     def load_session(self):
+        # Since we vendor mongodb_beaker because of broken dep on pypi.python.org
+        # we need to setup the beaker class map manually.
+        beaker.cache.clsmap['mongodb'] = mongodb_beaker.MongoDBNamespaceManager
         self.app = SessionMiddleware(self.app, {
             'session.type': 'mongodb',
             'session.cookie_expires': self.cookie_expires,
@@ -259,8 +270,12 @@ class WebServer():
         pass
 
 
-conf = Configuration.load(WebServer.CONF_PATH, Ini)
-logger = Logger.get('webserver', WebServer.LOG_FILE)
-# Declare WSGI application
-ws = WebServer(config=conf, logger=logger).__call__()
-app = ws.application
+def get_default_app():
+    conf = Configuration.load(WebServer.CONF_PATH, Ini)
+    logger = Logger.get('webserver', WebServer.LOG_FILE)
+    logger_req = Logger.get('webserverreq', WebServer.LOG_FILE, fmt='%(message)s')
+    # Declare WSGI application
+    ws = WebServer(config=conf, logger=logger, logger_req=logger_req).init_app()
+    app = ws.application
+    return app
+

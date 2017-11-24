@@ -62,7 +62,6 @@ class AlarmAdapterTest(TestCase):
                 'connector_name': 'snmp',
                 'component': 'comp1',
                 'resource': 'res1'
-
             },
             '_id': 'abc',
             'd': now,
@@ -96,12 +95,14 @@ class AlarmAdapterTest(TestCase):
         alarm_dict['v']['snooze'] = step_dict
         alarm_dict['v']['ticket'] = step_dict
         alarm_dict['v']['canceled'] = step_dict
+        alarm_dict['v']['steps'] = [step_dict]
         al2 = make_alarm_from_mongo(alarm_dict)
         self.assertIsInstance(al2.ack, AlarmStep)
         al2 = make_alarm_from_mongo(alarm_dict)
         self.assertIsInstance(al2.snooze, AlarmStep)
         self.assertIsInstance(al2.ticket, AlarmStep)
         self.assertIsInstance(al2.canceled, AlarmStep)
+        self.assertIsInstance(al2.steps, list)
 
     def test_make_alarm_step_from_mongo(self):
 

@@ -77,7 +77,7 @@ def event_processing(
     if cm is None:
         cm = singleton_per_scope(CheckManager)
 
-    event_type = event[Event.TYPE]
+    event_type = event[Event.EVENT_TYPE]
 
     # apply processing only in case of check event
     if event_type in cm.types:
@@ -117,7 +117,7 @@ def event_processing(
                         pass
                     try:
                         v = v.encode('utf-8')
-                    except UnicodeError:
+                    except (UnicodeError, TypeError, AttributeError):
                         pass
                     encoded_entity[k] = v
 

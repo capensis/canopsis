@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.event import get_routingkey
 from canopsis.middleware.core import Middleware
 
 
@@ -54,21 +55,6 @@ class Event(object):
 
         return (event_storage,)
 
-    @staticmethod
-    def get_rk(event):
-        rk = '{0}.{1}.{2}.{3}.{4}'.format(
-            event['connector'],
-            event['connector_name'],
-            event['event_type'],
-            event['source_type'],
-            event['component']
-        )
-
-        if event['source_type'] == 'resource':
-            rk = '{0}.{1}'.format(rk, event['resource'])
-
-        return rk
-
     def is_ack(self, event):
         """
         Define if an event is in ack state
@@ -94,7 +80,7 @@ class Event(object):
             This is a subset information of a find query focused on state
         """
 
-        existing_event = self.get(Event.get_rk(event), {})
+        existing_event = self.get(get_routingkey(event), {})
         return existing_event.get('state', self.default_state)
 
     def get(self, rk, projection=None, default=None):
