@@ -27,12 +27,12 @@ from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths
 )
-from canopsis.engines.core import publish
-from canopsis.event import get_routingkey
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.record import Record
-from canopsis.old.rabbitmq import Amqp
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_connection
 
 legend_type = ['soft', 'hard']
 OFF = 0
@@ -50,8 +50,8 @@ CATEGORY = 'ARCHIVER'
 class Archiver(Configurable):
 
     def __init__(
-        self, namespace, confnamespace='object', storage=None, autolog=False,
-        *args, **kwargs
+        self, namespace, confnamespace='object', storage=None,
+        autolog=False, amqp_pub=None, *args, **kwargs
     ):
 
         super(Archiver, self).__init__(*args, **kwargs)
@@ -89,10 +89,8 @@ class Archiver(Configurable):
         self.conf_collection = self.conf_storage.get_backend(confnamespace)
         self.collection = self.storage.get_backend(namespace)
 
-        self.amqp = Amqp(
-            logging_level=self.log_lvl,
-            logging_name='archiver-amqp'
-        )
+        if amqp_pub is None:
+            self.amqp_pub = AmqpPublisher(get_default_amqp_connection())
 
         self.reset_stealthy_event_duration = time()
         self.reset_stats()
@@ -237,15 +235,6 @@ class Archiver(Configurable):
         :param reset_type: event status to consider and change.
         :type int: This is en enum, can be either BAGOT or STEALTHY
         """
-
-        def _publish_event(event):
-            rk = event.get('rk', get_routingkey(event))
-            self.logger.info("Sending event {}".format(rk))
-            self.logger.debug(event)
-            publish(
-                event=event, rk=rk, publisher=self.amqp
-            )
-
         if reset_type not in [BAGOT, STEALTHY]:
             self.logger.info('wrong reset type given, will not process')
             return
@@ -287,7 +276,7 @@ class Archiver(Configurable):
                 new_status = ONGOING if event['state'] else OFF
                 self.set_status(event, new_status)
                 event['pass_status'] = 1
-                _publish_event(event)
+                self.amqp_pub.canopsis_event(event)
 
     def is_bagot(self, event):
         """

@@ -141,6 +141,10 @@ def setup_canopsis(pkgpath):
     setuptools_args['test_suite'] = get_test_suite(pkgpath)
     setuptools_args['data_files'] = get_data_files(pkgpath)
     setuptools_args['scripts'] = get_scripts(pkgpath)
+    setuptools_args['entry_points'] = """
+    [beaker.backends]
+    mongodb = canopsis.vendor.mongodb_beaker:MongoDBNamespaceManager
+    """
 
     return setuptools_args
 
