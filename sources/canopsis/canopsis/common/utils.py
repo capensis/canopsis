@@ -599,9 +599,10 @@ def date_to_ts(date):
     """
     return time.mktime(date.timetuple())
 
+
 def gen_id():
     """
-    Generate a random id "XX-XX-xX", where X is an uppercased letter.
+    Generate a random id "XX-XX-XX", where X is an uppercased letter.
 
     :rtype: str
     """

@@ -173,7 +173,7 @@ class Alerts(object):
 
         """
 
-        #  The minimum accepted frequency is 3 changes, otherwise all  alarms will bagot
+        #  The minimum accepted frequency is 3 changes, otherwise all alarms will bagot
         freq = self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
         if freq < 3:
             return 3
@@ -828,13 +828,19 @@ class Alerts(object):
         }
 
     def check_if_display_name_exists(self, display_name):
+        """
+        Check if a display_name is already associated.
+
+        :param str display_name: the name to check
+        :rtype: bool
+        """
         tmp_alarms = self.alerts_storage.get_elements(
-                query={'v.display_name':display_name}
+            query={'v.display_name': display_name}
         )
         if len(tmp_alarms) == 0:
             return False
-        return True
 
+        return True
 
     def crop_flapping_steps(self, alarm):
         """
