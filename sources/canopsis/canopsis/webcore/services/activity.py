@@ -138,17 +138,12 @@ class RouteHandler(object):
 
         dict_pbs = self._generate_pbs_return(aggregate_names)
 
-        self.logger.critical('{}'.format(register_pb))
-
         if register_pb:
             for agname, pb_ids in dict_pbs.items():
+                pb_ids_dict = self._generate_pbs_register(dict_pbs)
                 aggregate = self.acag_man.get(agname)
                 self.acag_man.delete(aggregate)
-                self.logger.critical('{}'.format(self.acag_man.get(agname)))
-                pb_ids = self._generate_pbs_register(dict_pbs)
-                aggregate.pb_ids = pb_ids
-                self.logger.critical('{}'.format(pb_ids))
-                self.logger.critical('{}'.format(aggregate.pb_ids))
+                aggregate.pb_ids = pb_ids_dict[agname]
                 self.acag_man.store(aggregate)
                 self.acag_man.attach_pbehaviors(aggregate)
 
