@@ -3,6 +3,7 @@
 import unittest
 import copy
 
+from canopsis.logger import Logger, OutputNull
 from canopsis.common.collection import MongoCollection, CollectionError
 from canopsis.common.mongo_store import MongoStore
 from canopsis.confng.simpleconf import Configuration
@@ -13,6 +14,8 @@ from canopsis.activity.activity import (
 )
 from canopsis.activity.manager import ActivityManager, ActivityAggregateManager
 from canopsis.activity.pbehavior import PBehaviorGenerator
+
+from canopsis.pbehavior.manager import PBehaviorManager
 
 
 class TestActivity(unittest.TestCase):
@@ -223,7 +226,7 @@ class TestActivityAggregateManager(unittest.TestCase):
         cls.col_ag = MongoCollection(
             cls.store.get_collection('test_activity_aggregates'))
         cls.col_pb = MongoCollection(
-            cls.store.get_collection('test_activities_pb'))
+            cls.store.get_collection('default_testactivitiespb'))
 
     @classmethod
     def tearDownClass(self):
@@ -288,10 +291,15 @@ class TestActivityAggregateManager(unittest.TestCase):
         self.assertEqual(res['n'], 2)
 
     def test_store_get_delete_with_pb(self):
+        from canopsis.middleware.core import Middleware
         ac_pb_gen = PBehaviorGenerator()
         acm = ActivityManager(self.col_activity)
         agm = ActivityAggregateManager(self.col_ag, self.col_pb, acm)
         ag = ActivityAggregate('agtest', {})
+        pb_man = PBehaviorManager(
+            Logger.get('test', None, output_cls=OutputNull),
+            Middleware.get_middleware_by_uri(
+                'mongodb-default-testactivitiespb://'))
 
         ac1 = Activity({}, DaysOfWeek.Monday, 0, 1)
         ac2 = Activity({}, DaysOfWeek.Thursday, 0, 1)
@@ -310,7 +318,30 @@ class TestActivityAggregateManager(unittest.TestCase):
         self.assertEqual(len(pbehaviors), 2)
 
         pb_ids = []
+        for pb in pbehaviors:
+            pb_id = pb_man.create(
+                name=pb.name,
+                filter=pb.filter_,
+                author=pb.author,
+                tstart=pb.tstart,
+                tstop=pb.tstop,
+                rrule=pb.rrule,
+                enabled=pb.enabled,
+                comments=pb.comments,
+            )
+            pb_ids.append(pb_id)
+
         agm.attach_pbehaviors(agc, pb_ids)
+
+        agc2 = agm.get(ag.name)
+        self.assertEqual(agc2.pb_ids, agc.pb_ids)
+
+        res = pb_man.pb_storage._backend.find({'_id': {'$in': pb_ids}})
+        self.assertEqual(len(list(res)), 2)
+
+        agm.delete(agc2)
+        res = pb_man.pb_storage._backend.find({'_id': {'$in': pb_ids}})
+        self.assertEqual(len(list(res)), 0)
 
     def test_store_get_dbid(self):
         acm = ActivityManager(self.col_activity)
