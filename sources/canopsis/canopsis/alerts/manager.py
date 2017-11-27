@@ -379,11 +379,11 @@ class Alerts(object):
         alarm_id = alarm[storage.DATA_ID]
         alarm_ts = alarm[storage.TIMESTAMP]
 
-        display_name = gen_id()
-        while self.check_if_display_name_exists(display_name):
-            display_name = gen_id()
 
         if AlarmField.display_name.value not in new_value:
+            display_name = gen_id()
+            while self.check_if_display_name_exists(display_name):
+                display_name = gen_id()
             new_value[AlarmField.display_name.value] = display_name
 
         if tags is not None:
