@@ -831,7 +831,7 @@ class Alerts(object):
         tmp_alarms = self.alerts_storage.get_elements(
                 query={'v.display_name':display_name}
         )
-        if tmp_alarms is None:
+        if len(tmp_alarms) == 0:
             return False
         return True
 
