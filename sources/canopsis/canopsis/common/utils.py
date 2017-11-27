@@ -601,7 +601,7 @@ def date_to_ts(date):
 
 def gen_id():
     """
-    Generate a random id "XXX-XXX", where X is an uppercased letter.
+    Generate a random id "XX-XX-xX", where X is an uppercased letter.
 
     :rtype: str
     """
