@@ -60,9 +60,11 @@ class AlertsReader(object):
     CONF_PATH = 'etc/alerts/manager.conf'
     CATEGORY = 'COUNT_CACHE'
     GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
-    GET_FILTER = {"$or": [{"v.component": {"$regex": None}},
-                          {"v.connector": {"$regex": None}},
-                          {"v.resource": {"$regex": None}}]}
+
+    DEFAULT_ACTIVE_COLUMNS = ["v.component",
+                             "v.connector",
+                             "v.resource",
+                             "v.connector_name"]
 
     def __init__(self, logger, config, storage,
                  pbehavior_manager, entitylink_manager):
@@ -423,7 +425,8 @@ class AlertsReader(object):
             skip=0,
             limit=None,
             with_steps=False,
-            natural_search=False
+            natural_search=False,
+            active_columns=None
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -452,6 +455,8 @@ class AlertsReader(object):
 
         :param bool natural_search: True if you want to use a natural search
 
+        :param list active_columns
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
@@ -461,6 +466,9 @@ class AlertsReader(object):
 
         if filter_ is None:
             filter_ = {}
+
+        if active_columns is None:
+            active_columns = self.DEFAULT_ACTIVE_COLUMNS
 
         time_filter = self._get_time_filter(
             opened=opened, resolved=resolved,
@@ -474,10 +482,9 @@ class AlertsReader(object):
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
         if natural_search:
-            res_filter = self.GET_FILTER.copy()
-            for sub_filter in res_filter.get('$or', []):
-                key = sub_filter.keys()[0]
-                sub_filter[key]['$regex'] = search
+            res_filter = {"$or": []}
+            for column in active_columns:
+                res_filter["$or"].append({column: {"$regex": search}})
 
             if filter_ not in [None, {}]:
                 filter_ = self._translate_filter(filter_)

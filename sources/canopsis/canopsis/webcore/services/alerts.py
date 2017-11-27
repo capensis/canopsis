@@ -70,7 +70,8 @@ def exports(ws):
             skip=0,
             limit=50,
             with_steps=False,
-            natural_search=False
+            natural_search=False,
+            active_columns=None
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -112,7 +113,8 @@ def exports(ws):
             skip=skip,
             limit=limit,
             with_steps=with_steps,
-            natural_search=natural_search
+            natural_search=natural_search,
+            active_columns=active_columns
         )
         alarms_ids = []
         for alarm in alarms['alarms']:
