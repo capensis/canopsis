@@ -187,7 +187,19 @@ class ActivityAggregate(object):
         self._activities = []
         self.name = name
         self.entity_filter = entity_filter
-        self.pb_ids = [] if pb_ids is None else list(set(pb_ids))
+        self.pb_ids = pb_ids
+
+    @property
+    def pb_ids(self):
+        return self._pb_ids
+
+    @pb_ids.setter
+    def pb_ids(self, value):
+        if value is None:
+            self._pb_ids = []
+
+        else:
+            self._pb_ids = list(set(value))
 
     @property
     def activities(self):

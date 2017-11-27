@@ -75,10 +75,11 @@ class RouteHandler(object):
         """
         :param dict_pbs dict: pbehaviors by aggregate name
         """
-        res = []
+        res = {}
         for agname, pbs in dict_pbs.items():
+            res[agname] = []
             for pb in pbs:
-                res.append(
+                res[agname].append(
                     self.pb_man.create(
                         name=pb.name,
                         filter=pb.filter_,
@@ -104,6 +105,10 @@ class RouteHandler(object):
                     'aggregate name must be a string, got {}'.format(agname))
 
             acag = self.acag_man.get(agname)
+
+            if acag is None:
+                continue
+
             now = arrow.get(int(now_ts()))
             pbehaviors = self.pb_gen.activities_to_pbehaviors(acag, now)
             dict_pbs[agname] = pbehaviors
@@ -133,15 +138,24 @@ class RouteHandler(object):
 
         dict_pbs = self._generate_pbs_return(aggregate_names)
 
-        pb_ids = []
+        self.logger.critical('{}'.format(register_pb))
+
         if register_pb:
-            pb_ids = self._generate_pbs_register(dict_pbs)
-            self.acag_man.attach_pbehaviors(pb_ids)
+            for agname, pb_ids in dict_pbs.items():
+                aggregate = self.acag_man.get(agname)
+                self.acag_man.delete(aggregate)
+                self.logger.critical('{}'.format(self.acag_man.get(agname)))
+                pb_ids = self._generate_pbs_register(dict_pbs)
+                aggregate.pb_ids = pb_ids
+                self.logger.critical('{}'.format(pb_ids))
+                self.logger.critical('{}'.format(aggregate.pb_ids))
+                self.acag_man.store(aggregate)
+                self.acag_man.attach_pbehaviors(aggregate)
 
         for agname, pbs in dict_pbs.items():
             dict_pbs[agname] = [pb.to_dict() for pb in pbs]
 
-        return dict_pbs, pb_ids
+        return dict_pbs
 
 
 def exports(ws):
@@ -185,12 +199,8 @@ def exports(ws):
     @ws.application.post('/api/v2/activity/generate_pbehaviors')
     def generate_pbehaviors():
         try:
-            pbs_dict, pb_ids = route_handler.generate_pbs(request.json)
-            result = {
-                'pbehaviors': pbs_dict,
-                'registered_pbs': len(pb_ids)
-            }
-            return gen_json(result)
+            pbs_dict = route_handler.generate_pbs(request.json)
+            return gen_json(pbs_dict)
 
         except ValueError as exc:
             ws.logger.error(traceback.format_exc())

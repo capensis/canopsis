@@ -28,7 +28,9 @@ class ActivityAggregateManager(object):
         """
         self._activity_manager.del_by_aggregate_name(aggregate.name)
         self._ag_coll.insert(aggregate.to_dict())
-        return self._activity_manager.store(aggregate.activities)
+        res = self._activity_manager.store(aggregate.activities)
+        self.attach_pbehaviors(aggregate)
+        return res
 
     def get(self, aggregate_name):
         activities = self._activity_manager.get_by_aggregate_name(
@@ -36,6 +38,9 @@ class ActivityAggregateManager(object):
         )
 
         aggregate = self._ag_coll.find_one({'_id': aggregate_name})
+
+        if aggregate is None:
+            return None
 
         acag = ActivityAggregate(
             aggregate['_id'],
@@ -56,13 +61,18 @@ class ActivityAggregateManager(object):
         self._pb_coll.remove({'_id': {'$in': aggregate.pb_ids}})
         self._ag_coll.remove({'_id': aggregate.name})
 
-    def attach_pbehaviors(self, aggregate, pb_ids):
+    def attach_pbehaviors(self, aggregate, pb_ids=None):
         """
         Replace all pb_ids in database with those from
         the aggregate plus those in pb_ids parameter.
+        :param pb_ids list: list of pb_ids to attach. They extend those already
+            in the aggregate object.
         """
-        aggregate.pb_ids.extend(pb_ids)
+        if pb_ids is not None:
+            aggregate.pb_ids.extend(pb_ids)
+
         aggregate.pb_ids = list(set(aggregate.pb_ids))
+
         self._ag_coll.update(
             {'_id': aggregate.name},
             {
