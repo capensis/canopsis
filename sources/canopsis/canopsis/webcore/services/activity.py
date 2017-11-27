@@ -142,10 +142,13 @@ class RouteHandler(object):
             for agname, pb_ids in dict_pbs.items():
                 pb_ids_dict = self._generate_pbs_register(dict_pbs)
                 aggregate = self.acag_man.get(agname)
+
+                # cleanup the aggregate and attached pbehaviors in one shot
                 self.acag_man.delete(aggregate)
+
+                # then re-create the aggregate with our pbehaviors
                 aggregate.pb_ids = pb_ids_dict[agname]
                 self.acag_man.store(aggregate)
-                self.acag_man.attach_pbehaviors(aggregate)
 
         for agname, pbs in dict_pbs.items():
             dict_pbs[agname] = [pb.to_dict() for pb in pbs]
