@@ -41,7 +41,7 @@ from canopsis.alerts.status import (
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.utils import ensure_iterable
+from canopsis.common.utils import ensure_iterable, gen_id
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.context_graph.manager import ContextGraph
@@ -173,7 +173,7 @@ class Alerts(object):
 
         """
 
-        #  The minimum accepted frequency is 3 changes, otherwise all  alarms will bagot
+        #  The minimum accepted frequency is 3 changes, otherwise all alarms will bagot
         freq = self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
         if freq < 3:
             return 3
@@ -378,6 +378,13 @@ class Alerts(object):
 
         alarm_id = alarm[storage.DATA_ID]
         alarm_ts = alarm[storage.TIMESTAMP]
+
+
+        if AlarmField.display_name.value not in new_value:
+            display_name = gen_id()
+            while self.check_if_display_name_exists(display_name):
+                display_name = gen_id()
+            new_value[AlarmField.display_name.value] = display_name
 
         if tags is not None:
             for tag in ensure_iterable(tags):
@@ -786,11 +793,15 @@ class Alerts(object):
         :return alarm document:
         :rtype: dict
         """
+        display_name = gen_id()
+        while self.check_if_display_name_exists(display_name):
+            display_name = gen_id()
 
         return {
             self.alerts_storage.DATA_ID: alarm_id,
             self.alerts_storage.TIMESTAMP: event['timestamp'],
             self.alerts_storage.VALUE: {
+                AlarmField.display_name.value: display_name,
                 'connector': event['connector'],
                 'connector_name': event['connector_name'],
                 'component': event['component'],
@@ -815,6 +826,21 @@ class Alerts(object):
                 }
             }
         }
+
+    def check_if_display_name_exists(self, display_name):
+        """
+        Check if a display_name is already associated.
+
+        :param str display_name: the name to check
+        :rtype: bool
+        """
+        tmp_alarms = self.alerts_storage.get_elements(
+            query={'v.display_name': display_name}
+        )
+        if len(tmp_alarms) == 0:
+            return False
+
+        return True
 
     def crop_flapping_steps(self, alarm):
         """
