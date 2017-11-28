@@ -130,33 +130,24 @@ function extract_archive() {
 
     if [ `echo $1 | grep 'tar.bz2$' | wc -l` -eq 1 ]
     then
-        EXTCMD="tar xfj"
+        EXTCMD="tar xf"
     elif [ `echo $1 | grep 'tar.gz$' | wc -l` -eq 1 ]
     then
-        EXTCMD="tar xfz"
+        EXTCMD="tar xf"
     elif [ `echo $1 | grep 'tgz$' | wc -l` -eq 1 ]
     then
-        EXTCMD="tar xfz"
+        EXTCMD="tar xf"
     elif [ `echo $1 | grep 'tar.xz$' | wc -l` -eq 1 ]
     then
-        EXTCMD="xz -d"
+        EXTCMD="tar xf"
     fi
 
     if [ "$EXTCMD" != "" ]
     then
-        if [ "$EXTCMD" != "xz -d" ]
-        then
-            echo " + Extract '$1' ('$EXTCMD') ..."
+        echo " + Extract '$1' ('$EXTCMD') ..."
 
-            $EXTCMD $1
-            check_code $? "Extract archive failure"
-        else
-            echo " + Extract '$1' ('$EXTCMD') ..."
-
-            $EXTCMD $1
-            tar xf $(echo "$1" | sed 's/.xz//')
-            check_code $? "Extract archive failure"
-        fi
+        $EXTCMD $1
+        check_code $? "Extract archive failure"
     else
         echo "Error: Impossible to extract '$1', no command found ..."
         exit 1
