@@ -161,12 +161,12 @@ class Activity(object):
             entity_filter
         """
 
-        return (self.valid_from == obj.valid_from
-                and self.valid_until == obj.valid_until
-                and self.day_of_week == obj.day_of_week
-                and self.start_time_of_day == obj.start_time_of_day
-                and self.stop_after_time == obj.stop_after_time
-                and self.entity_filter == self.entity_filter)
+        return (self.valid_from == obj.valid_from and
+                self.valid_until == obj.valid_until and
+                self.day_of_week == obj.day_of_week and
+                self.start_time_of_day == obj.start_time_of_day and
+                self.stop_after_time == obj.stop_after_time and
+                self.entity_filter == self.entity_filter)
 
     def to_dict(self):
         return {
