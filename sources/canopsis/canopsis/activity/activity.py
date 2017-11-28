@@ -106,7 +106,7 @@ class Activity(object):
     @start_time_of_day.setter
     def start_time_of_day(self, value):
         if value > 24 * TimeUnits.Hour:
-            raise ValueError('value > 24 hours: unsupported')
+            raise ValueError('start time of day > 24 hours: unsupported')
 
         self._start_time_of_day = value
 
@@ -120,7 +120,7 @@ class Activity(object):
             raise ValueError('stop is behind start')
 
         if value > 7 * TimeUnits.Day + self.start_time_of_day:
-            raise ValueError('value > 7 days + {}s: unsupported'.format(
+            raise ValueError('stop after time > 7 days + {}s: unsupported'.format(
                 self.start_time_of_day))
 
         self._stop_after_time = value
