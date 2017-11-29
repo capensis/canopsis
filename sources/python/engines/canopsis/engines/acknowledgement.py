@@ -116,9 +116,9 @@ class engine(Engine):
                             'comment': event['output'],
                             'timestamp': time()
                         }
+                        'ack': ''
                     },
                     '$unset': {
-                        'ack': '',
                         'ticket_declared_author': '',
                         'ticket_declared_date': '',
                         'ticket': '',
