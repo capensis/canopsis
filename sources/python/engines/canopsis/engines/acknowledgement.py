@@ -115,7 +115,7 @@ class engine(Engine):
                             'author': event['author'],
                             'comment': event['output'],
                             'timestamp': time()
-                        }
+                        },
                         'ack': ''
                     },
                     '$unset': {
@@ -148,6 +148,7 @@ class engine(Engine):
                         "ref_rk": resource.get("_id"),
                         "author": event.get("author"),
                         "output": event.get("output"),
+                        "authkey": event.get("authkey"),
 
                         "connector": resource.get("connector"),
                         "connector_name": resource.get("connector_name"),
