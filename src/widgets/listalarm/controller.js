@@ -97,6 +97,35 @@ Ember.Application.initializer({
               'initial_output':'v.initial_output'
             },
 
+			alarmDBColumn: ["status",
+							"resolved",
+							"resource",
+							"tags",
+							"ack",
+							"extra",
+							"component",
+							"creation_date",
+							"connector",
+							"canceled",
+							"state",
+							"connector_name",
+							"steps",
+							"initial_output",
+							"last_update_date",
+							"snooze",
+							"ticket",
+							"hard_limit"],
+
+			entityDBColumn: ["impact",
+							 "name",
+							 "measurements",
+							 "depends",
+							 "infos",
+							 "type",
+							 "disable_history",
+							 "enabled",
+							 "enable_history"],
+
 
             /**
              * @property mandatoryFields
@@ -300,7 +329,8 @@ Ember.Application.initializer({
              * @property originalAlarms
              */
             originalAlarms: function() {
-              var controller = this;
+				var controller = this;
+				console.log("COMPONENT", controller);
               this.set('loaded', false);
               var options = this.get('alarmSearchOptions');
 
@@ -308,12 +338,24 @@ Ember.Application.initializer({
               if(!options.filter)
                   options.filter = "{}";
               if(controller.get('isNaturalSearch')){
-			      options['natural_search'] = true;
+				  options['natural_search'] = true;
                   controller.set('isNaturalSearch', false);
+				  var columns = get(this, 'model.columns');
+				  var prefix_columns = [];
+				  for(idx = 0; idx < columns.length; idx++){
+					  depth_one = columns[idx].split(".", 1)[0];
+					  if(this.get("entityDBColumn").indexOf(depth_one) >= 0){
+						  prefix_columns.push("entity." + columns[idx]);
+					  }
+					  if(this.get("alarmDBColumn").indexOf(depth_one) >= 0){
+						  prefix_columns.push("v." + columns[idx]);
+					  }
+				  }
+				  options["active_columns"] = columns;
               } else {
                   options['natural_search'] = false;
               }
-              
+
               var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
               return DS.PromiseArray.create({
                 promise: adapter.findQuery('alerts', options).then(function (alarms) {
