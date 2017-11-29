@@ -115,10 +115,10 @@ class engine(Engine):
                             'author': event['author'],
                             'comment': event['output'],
                             'timestamp': time()
-                        }
+                        },
+                        'ack': ''
                     },
                     '$unset': {
-                        'ack': '',
                         'ticket_declared_author': '',
                         'ticket_declared_date': '',
                         'ticket': '',
