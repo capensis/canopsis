@@ -107,22 +107,23 @@ Ember.Application.initializer({
              */
             didInsertElement: function() {
                 var component = this;
-
+                var entityData = get(component, 'timelineData');
                 var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:timeline');
-                var encoded_query = JSON.stringify({'d': get(component, 'timelineData').entity_id});
+                var encoded_query = JSON.stringify({'d': entityData.entity_id,
+                                                    'v.creation_date': entityData["v.creation_date"]})
                 var query =  {'filter': encoded_query, 'opened':true, 'resolved':true,'sort_key':'t','sort_dir':'DESC','limit':1,'with_steps':true};
 
 
                 adapter.findQuery('alarm', 'get-current-alarm', undefined, query).then(function (result) {
                     // onfullfillment
-					var previousDate = undefined;
+                    var previousDate = undefined;
                     var steps = [];
                     if (result.data.length > 0 && result.data[0].alarms.length > 0){
 
                         for (var i = result.data[0].alarms[0].v.steps.length - 1 ; i >= 0 ; i--) {
                             var step = result.data[0].alarms[0].v.steps[i];
                             var index_state_check = 0
-                            var index_status_check = 0 
+                            var index_status_check = 0
 
                             //build time related information
                             var date = new Date(step.t*1000);
@@ -183,10 +184,10 @@ Ember.Application.initializer({
                             }
 
                             steps.push(step);
-                            
+
                             //stock previous date
                             previousDate = step.date;
-                        
+
                         }
 
                         /* steps can be null if entity has no current alarm. */
