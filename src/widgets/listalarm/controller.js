@@ -330,7 +330,6 @@ Ember.Application.initializer({
              */
             originalAlarms: function() {
 				var controller = this;
-				console.log("COMPONENT", controller);
               this.set('loaded', false);
               var options = this.get('alarmSearchOptions');
 
@@ -341,17 +340,17 @@ Ember.Application.initializer({
 				  options['natural_search'] = true;
                   controller.set('isNaturalSearch', false);
 				  var columns = get(this, 'model.columns');
-				  var prefix_columns = [];
+				  var prefixed_columns = [];
 				  for(idx = 0; idx < columns.length; idx++){
 					  depth_one = columns[idx].split(".", 1)[0];
 					  if(this.get("entityDBColumn").indexOf(depth_one) >= 0){
-						  prefix_columns.push("entity." + columns[idx]);
+						  prefixed_columns.push("entity." + columns[idx]);
 					  }
 					  if(this.get("alarmDBColumn").indexOf(depth_one) >= 0){
-						  prefix_columns.push("v." + columns[idx]);
+						  prefixed_columns.push("v." + columns[idx]);
 					  }
 				  }
-				  options["active_columns"] = columns;
+				  options["active_columns"] = prefixed_columns;
               } else {
                   options['natural_search'] = false;
               }
