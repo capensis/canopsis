@@ -18,7 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import request, redirect, response, HTTPError, urlencode
+from bottle import request, redirect, response, HTTPError
+from urllib import quote_plus
 from hashlib import sha1
 from time import time
 
@@ -134,9 +135,8 @@ def exports(ws):
                 response.set_header('Location', '/auth/external')
 
                 return 'username={0}&password={1}'.format(
-                    urlencode(username),
-                    urlencode(password)
-                )
+                    quote_plus(username),
+                    quote_plus(password))
 
             else:
                 #return HTTPError(403, 'Plain authentication required')
