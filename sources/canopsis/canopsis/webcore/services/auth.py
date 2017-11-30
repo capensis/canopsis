@@ -18,10 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import redirect, response, HTTPError
+from urllib import quote_plus
 from hashlib import sha1
 from time import time
 from urllib import quote_plus
+
+from bottle import redirect, response, HTTPError
 
 from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module
@@ -134,8 +136,9 @@ def exports(ws):
                 response.status = 307
                 response.set_header('Location', '/auth/external')
 
-                return quote_plus('username={}&password={}'.format(username,
-                                                                   password))
+                return 'username={0}&password={1}'.format(
+                    quote_plus(username),
+                    quote_plus(password))
 
             else:
                 #return HTTPError(403, 'Plain authentication required')
