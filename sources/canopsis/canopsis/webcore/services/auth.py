@@ -18,10 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import request, redirect, response, HTTPError
 from urllib import quote_plus
 from hashlib import sha1
 from time import time
+from urllib import quote_plus
+
+from bottle import redirect, response, HTTPError
 
 from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module

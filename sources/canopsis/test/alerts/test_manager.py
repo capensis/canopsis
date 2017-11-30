@@ -45,6 +45,7 @@ class TestManager(BaseTest):
         self.assertEqual(self.manager.stealthy_interval, 300)
         self.assertEqual(self.manager.stealthy_show_duration, 600)
         self.assertEqual(self.manager.restore_event, True)
+        self.assertEqual(self.manager.record_last_event_date, False)
 
     def test_make_alarm(self):
         alarm_id = '/fake/alarm/id'
@@ -1181,6 +1182,27 @@ class TestManager(BaseTest):
         state = result[alarm_id][0]['value']['state']
         self.assertEqual(state['_t'], 'stateinc')
         self.assertEqual(state['val'], Check.CRITICAL)
+
+    def test_record_last_event_date(self):
+        self.manager.record_last_event_date = True
+        alarm_id = 'ut-comp'
+
+        event0 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': Check.MINOR,
+        }
+        self.manager.archive(event0)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+        self.assertTrue(AlarmField.last_event_date.value in alarm['value'])
+        ts = alarm['value'][AlarmField.last_event_date.value]
+        self.assertTrue(int(time()) - ts < 10)
 
 if __name__ == '__main__':
     main()

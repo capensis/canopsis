@@ -231,15 +231,16 @@ def get_next_run_alert(watcher_depends, alert_next_run_dict):
 
 def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
     """
-        alert_not_ack_in_watcher check if an alert is not ack in watcher depends
+    alert_not_ack_in_watcher check if an alert is not ack in watcher depends
 
-        :param watcher_depends: list of depends
-        :param alarm_dict: alarm dict
-
+    :param watcher_depends: list of depends
+    :param alarm_dict: alarm dict
     """
     for depend in watcher_depends:
         tmp_alarm = alarm_dict.get(depend, {})
-        if tmp_alarm != {} and tmp_alarm.get('ack', None) is None:
+        if (tmp_alarm != {}
+                and tmp_alarm.get('ack', None) is None
+                and tmp_alarm.get('state', {}).get('val', 0) != 0):
             return True
 
     return False
@@ -398,7 +399,8 @@ def exports(ws):
             enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
             enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
             enriched_entity['has_baseline'] = check_baseline(merged_eids_tracer, watcher['depends'])
-            tmp_next_run = get_next_run_alert(watcher.get('depends', []), next_run_dict)
+            tmp_next_run = get_next_run_alert(watcher.get('depends', []),
+                                              next_run_dict)
             if tmp_next_run:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
