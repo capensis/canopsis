@@ -54,7 +54,8 @@ def exports(ws):
             'skip',
             'limit',
             'with_steps',
-            'natural_search'
+            'natural_search',
+            'active_columns'
         ]
     )
     def get_alarms(
