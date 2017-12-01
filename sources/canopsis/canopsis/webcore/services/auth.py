@@ -158,11 +158,12 @@ def exports(ws):
         session.create(user)
         redirect('/')
 
-    @route(ws.application.post, name='auth/external')
+    @route(ws.application.post, name='auth/external', wsgi_params={'skip': ws.skip_login})
     def auth_external(**kwargs):
         # When we arrive here, the Bottle plugins in charge of authentication
         # have initialized the session, we just need to redirect to the index.
-        redirect('/static/canopsis/index.html')
+        redirect('/?logerror=1')
+        #redirect('/static/canopsis/index.html')
 
     @ws.application.get('/logged_in')
     def logged_in():
