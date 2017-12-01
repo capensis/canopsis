@@ -144,11 +144,14 @@ class ContextGraph(object):
         :param event: the event from which we extract the id.
         :return type: the id as a string
         """
+        source_field = ''
         source_type = ''
         if 'source_type' in event:
             source_type = event['source_type']
+            source_field = 'source_type'
         elif 'type' in event:
             source_type = event['type']
+            source_field = 'type'
 
         id_ = ""
 
@@ -183,8 +186,12 @@ class ContextGraph(object):
                 )
 
         else:
-            error_desc = ("Event type should be 'connector', 'resource' or "
-                          "'component' not {}.".format(source_type))
+            error_desc = (
+                "{} should be one of 'connector'"
+                ", 'resource' or 'component' not {}.".format(
+                    source_field, source_type
+                )
+            )
             raise ValueError(error_desc)
 
         return id_

@@ -5,11 +5,11 @@ function build(){
 }
 
 function install(){
-	BASE="rabbitmq-server-$VERSION"
+	BASE="rabbitmq_server-$VERSION"
 	cd $SRC_PATH/externals
 
 	if [ ! -e $BASE ]; then
-		extract_archive "$NAME-generic-unix-$VERSION.tar.gz"
+		extract_archive "$NAME-generic-unix-$VERSION.tar.xz"
 	fi
 	cd rabbitmq_server-$VERSION
 
@@ -29,7 +29,7 @@ function install(){
 
 	cp -R plugins $PREFIX/opt/rabbitmq-server/plugins
 	check_code $?
-	
+
 	pip_install "httplib2==0.7.2"
 	pip_install "pyrabbit==0.9.7"
 }

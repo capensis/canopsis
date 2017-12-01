@@ -54,7 +54,8 @@ def exports(ws):
             'skip',
             'limit',
             'with_steps',
-            'natural_search'
+            'natural_search',
+            'active_columns'
         ]
     )
     def get_alarms(
@@ -70,7 +71,8 @@ def exports(ws):
             skip=0,
             limit=50,
             with_steps=False,
-            natural_search=False
+            natural_search=False,
+            active_columns=None
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -95,6 +97,9 @@ def exports(ws):
         :param int skip: Number of alarms to skip (pagination)
         :param int limit: Maximum number of alarms to return
 
+        :param list active_columns: list of active columns on the brick
+        listalarm .
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
@@ -112,7 +117,8 @@ def exports(ws):
             skip=skip,
             limit=limit,
             with_steps=with_steps,
-            natural_search=natural_search
+            natural_search=natural_search,
+            active_columns=active_columns
         )
         alarms_ids = []
         for alarm in alarms['alarms']:
@@ -249,7 +255,8 @@ def exports(ws):
         element = request.json
 
         if element is None:
-            return gen_json_error({'description': 'nothing to insert'}, HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'nothing to insert'}, HTTP_ERROR)
 
         new = am.alarm_filters.create_filter(element=element)
         new.save()
@@ -271,7 +278,8 @@ def exports(ws):
         dico = request.json
 
         if dico is None or not isinstance(dico, dict) or len(dico) <= 0:
-            return gen_json_error({'description': 'wrong update dict'}, HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'wrong update dict'}, HTTP_ERROR)
 
         af = am.alarm_filters.update_filter(filter_id=entity_id, values=dico)
         if not isinstance(af, AlarmFilter):

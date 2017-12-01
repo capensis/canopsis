@@ -2,8 +2,11 @@
 
 # https://github.com/benoitc/gunicorn/issues/669
 
+import os
+
 from gunicorn.app.base import Application
 
+from canopsis.common import root_path
 from canopsis.webcore.wsgi import get_default_app
 
 
@@ -13,15 +16,25 @@ class WebServerPy(Application):
     package the Canopsis Web Server with PyInstaller.
     """
 
-    def __init__(self, wsgi_getter):
-        super(WebServerPy, self).__init__()
+    def __init__(self, wsgi_getter, accesslog, access_log_format):
         self.wsgi_getter = wsgi_getter
+        self.accesslog = accesslog
+        self.access_log_format = access_log_format
+        super(WebServerPy, self).__init__()
 
     def init(self, parser, opts, args):
         """
         Implementation is required from the Application class.
         """
-        return {}
+        options = {}
+
+        if opts.accesslog is None:
+            options['accesslog'] = self.accesslog
+
+        if opts.access_log_format is None:
+            options['access_log_format'] = self.access_log_format
+
+        return options
 
     def load(self):
         """
@@ -31,5 +44,9 @@ class WebServerPy(Application):
 
 
 if __name__ == "__main__":
-    gunicorn_app = WebServerPy(get_default_app)
+    accesslog = os.path.join(
+        root_path, 'var', 'log', 'webserver-access.log')
+    access_fmt = '%(h)s %(l)s %(t)s "%(m)s %(U)s %(H)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+    gunicorn_app = WebServerPy(
+        get_default_app, accesslog, access_fmt)
     gunicorn_app.run()

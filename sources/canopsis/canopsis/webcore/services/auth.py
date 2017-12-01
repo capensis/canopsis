@@ -18,9 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import redirect, response, HTTPError, urlencode
+from urllib import quote_plus
 from hashlib import sha1
 from time import time
+from urllib import quote_plus
+
+from bottle import redirect, response, HTTPError
 
 from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module
@@ -134,9 +137,8 @@ def exports(ws):
                 response.set_header('Location', '/auth/external')
 
                 return 'username={0}&password={1}'.format(
-                    urlencode(username),
-                    urlencode(password)
-                )
+                    quote_plus(username),
+                    quote_plus(password))
 
             else:
                 #return HTTPError(403, 'Plain authentication required')
@@ -167,10 +169,9 @@ def exports(ws):
         # Route used when came back from auth backend
         redirect('/static/canopsis/index.html')
 
-    @route(ws.application.get, wsgi_params={'skip': ws.skip_login}, nolog=True)
-    def autologin(key):
-        route.log_request(ws.logger, 'get', '/autologin/**redacted**')
-        return autoLogin(key)
+    @route(ws.application.get, wsgi_params={'skip': ws.skip_login})
+    def autologin(authkey=''):
+        return autoLogin(authkey)
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_logout})
     def logout():

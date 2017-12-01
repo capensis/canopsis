@@ -54,5 +54,4 @@ def exports(ws):
         name='entitylink'
     )
     def get_entitylink(event):
-        ws.logger.debug({'received event': event})
         return entity_link_manager.get_links_from_event(event)

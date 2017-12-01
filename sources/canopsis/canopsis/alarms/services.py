@@ -39,24 +39,32 @@ class AlarmService(object):
     Alarm Service class.
     """
 
-    def __init__(self, alarms_adapter, watcher_manager,
-                 logger=None, config=None):
+    def __init__(self,
+                 alarms_adapter,
+                 watcher_manager,
+                 bagot_time=DEFAULT_FLAPPING_INTERVAL,
+                 cancel_autosolve_delay=DEFAULT_CANCEL_AUTOSOLVE_DELAY,
+                 stealthy_duration=DEFAULT_STEALTHY_SHOW_DURATION,
+                 stealthy_interval=DEFAULT_STEALTHY_INTERVAL,
+                 logger=None):
         """
         Alarm service constructor.
 
         :param AlarmAdapter alarms_adapter: Alarms DB adapter
-        :param Logger: a logger instance
+        :param WatcherManager watcher_manager: ref to a WatcherManager object
+        :param int bagot_time: period to consider status oscilations
+        :param int cancel_autosolve_delay: delay before validating a cancel
+        :param int stealthy_duration: period to consider an alarm as stealthy
+        :param int stealthy_interval: period to show an alarm as stealthy
+        :param Logger logger: a logger instance
         """
         self.alarms_adapter = alarms_adapter
         self.watcher_manager = watcher_manager
+        self.bagot_time = bagot_time
+        self.cancel_delay = cancel_autosolve_delay
+        self.stealthy_duration = stealthy_duration
+        self.stealthy_interval = stealthy_interval
         self.logger = logger
-        if config is None:
-            self.config = {}
-        else:
-            if not isinstance(config, dict):
-                raise ValueError("config must be a dict")
-
-            self.config = config
 
     def _log(self, level, message):
         """
@@ -96,7 +104,7 @@ class AlarmService(object):
         if alarms is None:
             alarms = self.find_snoozed_alarms()
         for alarm in alarms:
-            if alarm.resolve_snooze() is True:
+            if alarm.resolve_snooze():
                 self._log(logging.DEBUG,
                           'alarm : {} has been unsnoozed'.format(alarm._id))
                 self.update_alarm(alarm)
@@ -113,27 +121,15 @@ class AlarmService(object):
         """
         alarm_counter = 0
         updated_alarm_counter = 0
+
         for alarm in self.alarms_adapter.stream_unresolved_alarms():
-            alarm_needs_update = False
-
-            if alarm.resolve(self.config.get('bagot_time',
-                                             DEFAULT_FLAPPING_INTERVAL)) is True:
-                alarm_needs_update = True
-
-            if alarm.resolve_cancel(self.config.get('cancel_autosolve_delay',
-                                                    DEFAULT_CANCEL_AUTOSOLVE_DELAY)) is True:
-                alarm_needs_update = True
-
-            stealthy_show_duration = self.config.get('stealthy_show',
-                                                     DEFAULT_STEALTHY_SHOW_DURATION)
-            stealthy_interval = self.config.get('stealthy_time',
-                                                DEFAULT_STEALTHY_INTERVAL)
-            if alarm.resolve_stealthy(stealthy_show_duration,
-                                      stealthy_interval) is True:
-                alarm_needs_update = True
-
             alarm_counter += 1
-            if alarm_needs_update is True:
+
+            resolved = alarm.resolve(self.bagot_time)
+            resolved_cancel = alarm.resolve_cancel(self.cancel_delay)
+            resolved_stealthy = alarm.resolve_stealthy(self.stealthy_duration,
+                                                       self.stealthy_interval)
+            if resolved or resolved_cancel or resolved_stealthy:
                 self.update_alarm(alarm)
                 updated_alarm_counter += 1
 
