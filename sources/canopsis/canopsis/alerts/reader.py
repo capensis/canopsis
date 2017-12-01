@@ -455,7 +455,8 @@ class AlertsReader(object):
 
         :param bool natural_search: True if you want to use a natural search
 
-        :param list active_columns
+        :param list active_columns: the list of alarms columns on which to
+        apply the natural search filter.
 
         :returns: List of sorted alarms + pagination informations
         :rtype: dict

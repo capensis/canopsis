@@ -97,6 +97,9 @@ def exports(ws):
         :param int skip: Number of alarms to skip (pagination)
         :param int limit: Maximum number of alarms to return
 
+        :param list active_columns: list of active columns on the brick
+        listalarm .
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
