@@ -142,7 +142,6 @@ class TestWeatherAPI(BasicWeatherAPITest):
 
     def init_tests(self):
         super(TestWeatherAPI, self).init_tests()
-
         # Adding watcher and alarms to watch upon
         watcher_url = '{}/api/v2/watchers'.format(self.URL_BASE)
         r = self._send(url=watcher_url,
@@ -192,7 +191,10 @@ class TestWeatherAPI(BasicWeatherAPITest):
         r = self._send(url=self.base + '/' + watcher_filter,
                        method=Method.get)
         self.assertEqual(r.status_code, HTTP.OK.value)
+        sleep(1)
         json = r.json()
+
+        print(json)
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 1)
         self.assertEqual(json[0]['state']['val'], 2)
@@ -240,6 +242,7 @@ class TestWeatherAPI(BasicWeatherAPITest):
         r = self._send(url=self.base + '/' + self.watcher_id)
         self.assertEqual(r.status_code, HTTP.OK.value)
         json = r.json()
+        print(json)
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 1)
         self.assertEqual(json[0]['state']['val'], 2)
