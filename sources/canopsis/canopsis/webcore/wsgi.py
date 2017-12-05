@@ -20,15 +20,16 @@
 
 from __future__ import unicode_literals
 
+# DO NOT EVER MODIFY THOSE THREE LINES OR UNDESIRED BEHAVIOR ***WILL** HAPPEN.
+from gevent import monkey
+monkey.patch_all()
+
+import gevent
 import importlib
 import os
 import sys
 
-import gevent
-
 from signal import SIGTERM, SIGINT
-from gevent import monkey
-
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
 
@@ -51,7 +52,6 @@ DEFAULT_COOKIES_EXPIRE = 300
 DEFAULT_SECRET = 'canopsis'
 DEFAULT_DATA_DIR = '~/var/cache/canopsis/webcore/'
 
-monkey.patch_all()
 
 
 class EnsureAuthenticated(object):
