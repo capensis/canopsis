@@ -45,13 +45,12 @@ def exports(ws):
         """
         watcher_obj = watcher.get_watcher(watcher_id)
         if watcher_obj is None:
-            return gen_json_error({'description': 'nothing to return'}, HTTP_ERROR)
+            return gen_json_error({'description': 'nothing to return'},
+                                  HTTP_ERROR)
 
         return gen_json(watcher_obj)
 
-    @ws.application.post(
-        '/api/v2/watchers'
-    )
+    @ws.application.post('/api/v2/watchers')
     def create_watcher():
         """
         Create a new watcher.
@@ -72,16 +71,17 @@ def exports(ws):
         element = request.json
 
         if element is None:
-            return gen_json_error(
-                {'description': 'nothing to insert'},
-                HTTP_ERROR)
+            return gen_json_error({'description': 'nothing to insert'},
+                                  HTTP_ERROR)
 
         try:
             watcher_create = watcher.create_watcher(body=element)
-        except ValueError, ex:
-            return gen_json_error({'description': 'value error: {}'.format(ex)}, HTTP_ERROR)
+        except ValueError as ex:
+            return gen_json_error({'description': 'value error: {}'.format(ex)},
+                                  HTTP_ERROR)
         if watcher_create is None:
-            return gen_json_error({'description': 'can\'t decode mfilter'}, HTTP_ERROR)
+            return gen_json_error({'description': 'can\'t decode mfilter'},
+                                  HTTP_ERROR)
 
         return gen_json({})
 
@@ -99,7 +99,8 @@ def exports(ws):
         dico = request.json
 
         if dico is None or not isinstance(dico, dict) or len(dico) <= 0:
-            return gen_json_error({'description': 'wrong update dict'}, HTTP_ERROR)
+            return gen_json_error({'description': 'wrong update dict'},
+                                  HTTP_ERROR)
 
         watcher.update_watcher(watcher_id=watcher_id, updated_field=dico)
 
@@ -118,6 +119,11 @@ def exports(ws):
         """
         ws.logger.info('Delete watcher : {}'.format(watcher_id))
 
-        deletion_dict = watcher.delete_watcher(watcher_id=watcher_id)
+        try:
+            deletion_dict = watcher.delete_watcher(watcher_id=watcher_id)
+        except:
+            return gen_json_error({'description': 'cannot delete {}'
+                                                  .format(watcher_id)},
+                                  HTTP_ERROR)
 
         return gen_json(deletion_dict)

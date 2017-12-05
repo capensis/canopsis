@@ -17,16 +17,20 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
+from bottle import request
 import json as j
 import os
-
 from uuid import uuid4
 
 from canopsis.common import root_path
 from canopsis.common.ws import route
 from canopsis.alerts.manager import Alerts
+from canopsis.common.converters import id_filter
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.import_ctx import ImportKey, Manager
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 import_col_man = Manager(Configuration.load(Manager.CONF_FILE, Ini))
 alerts_manager = Alerts(*Alerts.provide_default_basics())
@@ -57,6 +61,8 @@ def get_uuid():
 
 
 def exports(ws):
+
+    ws.application.router.add_filter('id_filter', id_filter)
 
     manager = alerts_manager.context_manager
 
@@ -350,3 +356,28 @@ function dragended(d) {
     @ws.application.get('/api/contextgraph/import/status/<cid>')
     def get_status(cid):
         return import_col_man.get_import_status(cid)
+
+    @ws.application.delete('/api/v2/context/<entity_id:id_filter>')
+    def delete_entity_v2(entity_id):
+        """
+        Remove entity from context
+        """
+        try:
+            res = manager.delete_entity(entity_id)
+        except ValueError as vale:
+            return gen_json_error({'description': str(vale)}, HTTP_ERROR)
+
+        return gen_json(res)
+
+    @ws.application.post('/api/v2/context_graph/get_id/')
+    def get_entity_id():
+        """
+        Get the generated id tfrom an event.
+        """
+        event = request.json
+
+        if event is None:
+            return gen_json_error({'description': 'no event givent'},
+                                  HTTP_ERROR)
+
+        return gen_json(ContextGraph.get_id(event))
