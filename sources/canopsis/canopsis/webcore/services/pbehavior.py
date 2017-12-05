@@ -36,6 +36,7 @@ from canopsis.watcher.manager import Watcher as WatcherManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 last_pbehaviors_compute = 0
+PBEHAVIOR_COMPUTE_COOLDOWN = 10
 
 VALID_PBEHAVIOR_PARAMS = ['name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
                           'enabled', 'comments', 'connector', 'connector_name']
@@ -431,7 +432,7 @@ def exports(ws):
         """
         global last_pbehaviors_compute
         now = int(time())
-        do_compute = last_pbehaviors_compute + 60 < now
+        do_compute = last_pbehaviors_compute + PBEHAVIOR_COMPUTE_COOLDOWN < now
 
         if do_compute:
             ws.logger.info('Force compute on all pbehaviors')
