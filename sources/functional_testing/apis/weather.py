@@ -117,6 +117,15 @@ class TestWeatherAPI_Empty(BasicWeatherAPITest):
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 0)
 
+    def test_weather_weatherwatcher_empty(self):
+        # With bad id
+        r = self._send(url=self.base + '/' + 'scotty',
+                       method=Method.get)
+        self.assertEqual(r.status_code, HTTP.NOT_FOUND.value)
+        json = r.json()
+        self.assertTrue(isinstance(json, dict))
+        self.assertEqual(json['name'], 'resource_not_found')
+
 
 class TestWeatherAPI(BasicWeatherAPITest):
 
@@ -227,4 +236,11 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertTrue(json[0]['hasactivepbehaviorinentities'])
         self.assertFalse(json[0]['hasallactivepbehaviorinentities'])
 
-    # TODO: def test_weather_weatherwatchers(self):
+    def test_weather_weatherwatchers(self):
+        r = self._send(url=self.base + '/' + self.watcher_id)
+        self.assertEqual(r.status_code, HTTP.OK.value)
+        json = r.json()
+        self.assertTrue(isinstance(json, list))
+        self.assertEqual(len(json), 1)
+        self.assertEqual(json[0]['state']['val'], 2)
+        self.assertIsNone(json[0]['automatic_action_timer'])
