@@ -53,7 +53,6 @@ DEFAULT_SECRET = 'canopsis'
 DEFAULT_DATA_DIR = '~/var/cache/canopsis/webcore/'
 
 
-
 class EnsureAuthenticated(object):
     name = 'EnsureAuthenticated'
     handle_logout = False
