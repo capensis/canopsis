@@ -26,8 +26,8 @@ This module provides tools in order to ease the use of web services in python
 code.
 """
 
-import logging
 import json
+import logging
 import traceback
 
 from bottle import request, HTTPError, HTTPResponse
@@ -77,17 +77,6 @@ def adapt_canopsis_data_to_ember(data):
                 adapt_canopsis_data_to_ember(item)
 
 
-def adapt_ember_data_to_canopsis(data):
-
-    if isinstance(data, dict):
-        for key, item in data.iteritems():
-            adapt_ember_data_to_canopsis(item)
-
-    elif isiterable(data, is_str=False):
-        for item in data:
-            adapt_ember_data_to_canopsis(item)
-
-
 def response(data, adapt=True):
     """Construct a REST response from input data.
 
@@ -105,7 +94,6 @@ def response(data, adapt=True):
         total = 0 if result_data is None else len(result_data)
 
     if adapt:
-        # apply transformation for client
         adapt_canopsis_data_to_ember(result_data)
 
     result = {
@@ -131,10 +119,10 @@ def route_name(operation_name, *parameters):
     Get the right route related to input operation_name.
     """
 
-    result = '/{0}'.format(operation_name.replace('_', '-'))
+    result = '/{}'.format(operation_name.replace('_', '-'))
 
     for parameter in parameters:
-        result = '{0}/:{1}'.format(result, parameter)
+        result = '{}/:{}'.format(result, parameter)
 
     return result
 
@@ -253,11 +241,6 @@ class route(object):
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
 
-            if self.adapt:
-                # adapt ember data to canopsis data
-                adapt_ember_data_to_canopsis(args)
-                adapt_ember_data_to_canopsis(kwargs)
-
             try:
                 result_function = function(*args, **kwargs)
 
@@ -354,7 +337,7 @@ class route(object):
             header_params = required_header_params + optional_header_params[:i]
             url = route_name(function_name, *header_params).rstrip('/')
             function = self.op(url, **wsgi_params)(function)
-            function = self.op('{0}/'.format(url), **wsgi_params)(function)
+            function = self.op('{}/'.format(url), **wsgi_params)(function)
             self.url = url
 
         return function
@@ -365,7 +348,7 @@ class route(object):
         """
 
         in_payload = param in self.payload
-        in_route_name = ':{0}/'.format(param) in route_name
+        in_route_name = ':{}/'.format(param) in route_name
 
         return in_payload or in_route_name
 
@@ -379,4 +362,3 @@ def apply_routes(urls):
     for url in urls:
         decorator = route(url['method'], name=url['name'], **url['params'])
         decorator(url['handler'])
-
