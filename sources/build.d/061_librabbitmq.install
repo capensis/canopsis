@@ -3,6 +3,7 @@ NAME="librabbitmq"
 function build(){
 	cd $SRC_PATH/externals
 
+	rm -rf ${NAME}-build
 	cp -ar $NAME ${NAME}-build && cd ${NAME}-build
 
 	if [ -e Makefile ]
