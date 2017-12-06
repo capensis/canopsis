@@ -306,9 +306,9 @@ class ContextGraph(object):
         self.logger = logger
 
         # For links building
+        at_collection = self.at_storage._backend
         self.at_manager = AssociativeTableManager(logger=self.logger,
-                                                  collection=\
-                                                  self.at_storage._backend)
+                                                  collection=at_collection)
 
         hypertextlink_conf = section.get(ConfName.CTX_HYPERLINK, "")
         self.event_types = section.get(ConfName.EVENT_TYPES, [])
@@ -338,8 +338,7 @@ class ContextGraph(object):
         else:
             query["_id"] = _id
 
-        result = list(
-            self.ent_storage.get_elements(query=query))
+        result = self.get_entities(query=query)
 
         return result
 
@@ -389,6 +388,7 @@ class ContextGraph(object):
         ret_val = set([])
         for i in entities:
             ret_val.add(i['_id'])
+
         return ret_val
 
     @classmethod
