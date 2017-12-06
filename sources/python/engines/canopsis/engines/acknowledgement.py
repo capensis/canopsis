@@ -157,6 +157,9 @@ class engine(Engine):
                         "component": component,
                         "resource": resource.get("resource")
                     }
+                    if "ticket" in event:
+                        sub_ack_event["ticket"] = event.get("ticket")
+
                     publish(
                         publisher=self.amqp, event=sub_ack_event,
                         exchange=self.acknowledge_on
