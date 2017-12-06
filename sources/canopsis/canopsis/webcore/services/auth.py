@@ -134,7 +134,12 @@ def exports(ws):
             # Try to redirect authentication to the external backend
             if mode == 'plain':
                 response.status = 307
-                response.set_header('Location', '/auth/external')
+                # canopsis only use the default autsh backend
+                if ws.auth_backends.keys() == ['AuthKeyBackend', u'EnsureAuthenticated']:
+                    location = '/auth/internal'
+                else:
+                    location = '/auth/external'
+                response.set_header('Location', location)
 
                 return 'username={0}&password={1}'.format(
                     quote_plus(username),
@@ -158,7 +163,14 @@ def exports(ws):
         session.create(user)
         redirect('/')
 
-    @route(ws.application.post, name='auth/external', wsgi_params={'skip': ws.skip_login})
+    @route(ws.application.post, name='auth/internal', wsgi_params={'skip': ws.skip_login})
+    def auth_internal(**kwargs):
+        # When we arrive here, the Bottle plugins in charge of authentication
+        # have initialized the session, we just need to redirect to the index.
+        redirect('/?logerror=1')
+        #redirect('/static/canopsis/index.html')
+
+    @route(ws.application.post, name='auth/external')
     def auth_external(**kwargs):
         # When we arrive here, the Bottle plugins in charge of authentication
         # have initialized the session, we just need to redirect to the index.
