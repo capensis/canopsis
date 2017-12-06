@@ -36,7 +36,7 @@ class Sla(object):
 
     """Enable Sla computation based on event's states history
 
-    :param storage: topology ids from where find elts.
+    :param storage: canopsis storage
     :type storage: canopsis storage
     :param rk: the rk to build sla from in the event_log collection
     :type rk: string
