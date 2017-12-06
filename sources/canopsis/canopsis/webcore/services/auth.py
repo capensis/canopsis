@@ -134,7 +134,7 @@ def exports(ws):
             # Try to redirect authentication to the external backend
             if mode == 'plain':
                 response.status = 307
-                # canopsis only use the default autsh backend
+                # canopsis only use the default auth backend
                 if ws.auth_backends.keys() == ['AuthKeyBackend', u'EnsureAuthenticated']:
                     location = '/auth/internal'
                 else:
