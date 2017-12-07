@@ -21,9 +21,12 @@
 
 from __future__ import unicode_literals
 
-from enum import Enum
+import os
+
 import requests
 import unittest
+
+from enum import Enum
 
 
 class HTTP(Enum):
@@ -59,8 +62,8 @@ class BaseApiTest(unittest.TestCase):
         'Accept': 'application/json'
     }
 
-    WEB_HOST = "localhost"
-    WEB_PORT = "8082"
+    WEB_HOST = os.environ.get('CPS_FT_WEB_HOST', 'localhost')
+    WEB_PORT = int(os.environ.get('CPS_FT_WEB_PORT', 8082))
 
     URL_BASE = "http://{}:{}".format(WEB_HOST, WEB_PORT)
     URL_PLAIN = "{}/auth".format(URL_BASE)

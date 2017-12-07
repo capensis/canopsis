@@ -24,6 +24,7 @@ from __future__ import unicode_literals
 from gevent import monkey
 monkey.patch_all()
 
+import beaker
 import gevent
 import importlib
 import os
@@ -42,8 +43,9 @@ from canopsis.logger import Logger
 from canopsis.old.account import Account
 # TODO: replace with canopsis.mongo.MongoStorage
 from canopsis.old.storage import get_storage
-
 from canopsis.webcore.services import session as session_module
+
+from canopsis.vendor import mongodb_beaker
 
 DEFAULT_DEBUG = False
 DEFAULT_ECSE = False
@@ -227,6 +229,9 @@ class WebServer():
         self.app.install(backend)
 
     def load_session(self):
+        # Since we vendor mongodb_beaker because of broken dep on pypi.python.org
+        # we need to setup the beaker class map manually.
+        beaker.cache.clsmap['mongodb'] = mongodb_beaker.MongoDBNamespaceManager
         self.app = SessionMiddleware(self.app, {
             'session.type': 'mongodb',
             'session.cookie_expires': self.cookie_expires,
