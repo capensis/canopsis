@@ -70,6 +70,7 @@ class Watcher:
         except ValueError:
             self.logger.error('can t decode mfilter')
             return None
+
         depends_list = self.context_graph.get_entities(
             query=watcher_finder,
             projection={'_id': 1}
@@ -77,7 +78,6 @@ class Watcher:
         self.watcher_storage.put_element(body)
 
         depend_list = []
-
         for entity_id in depends_list:
             depend_list.append(entity_id['_id'])
 
