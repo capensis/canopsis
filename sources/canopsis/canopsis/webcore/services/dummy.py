@@ -7,8 +7,6 @@ from canopsis.webcore.services import session, rights
 
 from bottle import request, redirect
 
-import copy
-
 USERNAME = "username"
 PASSWORD = "password"
 
@@ -17,6 +15,7 @@ def exports(ws):
 
     @ws.application.get(DummyAuthBackend.DUMMY_LOGIN_URL, skip=ws.skip_login)
     def dummy_login():
+        """Display the login form."""
         page = """<html>
                    <body>
                        <form action=\"{0}\" method="post" >
@@ -33,12 +32,18 @@ def exports(ws):
 
     @ws.application.post(DummyAuthBackend.DUMMY_VALIDATE_URL, skip=ws.skip_login)
     def dummy_validate_login():
+        """If the user si not on the blacklist, create a session and redirect
+        him to the application."""
         try:
             username = request.forms.get(USERNAME)
             password = request.forms.get(PASSWORD)
         except KeyError:
             ws.logger.debug("Dummy auth : Missing username or password")
             redirect(DummyAuthBackend.DUMMY_LOGIN_URL)
+
+        ws.logger.debug("Dummy auth : User {0} try to log with {1}.".format(
+            username,
+            password))
 
         if username in DummyAuthBackend.BLACKLIST_USERS:
             redirect(DummyAuthBackend.DUMMY_LOGIN_URL)

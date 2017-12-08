@@ -1,8 +1,11 @@
+"""Dummy authentication backend"""
+
 from bottle import request, redirect, HTTPError
 
 from canopsis.auth.base import BaseBackend
 
 class DummyAuthBackend(BaseBackend):
+    """Handle dummy auth.XS"""
 
     BLACKLIST_USERS = ["davros", "mr.rabbit"]
     DUMMY_AUTH = "auth_dummy"
@@ -21,10 +24,10 @@ class DummyAuthBackend(BaseBackend):
         self.setup_config(context)
 
         def decorated(*args, **kwargs):
-            s = self.session.get()
-            if s.get('auth_on', False):
+            sess = self.session.get()
+            if sess.get('auth_on', False):
                 if request.path in ['/logout', '/disconnect']:
-                    self.undo_auth(s)
+                    self.undo_auth(sess)
 
                 return callback(*args, **kwargs)
 
@@ -45,7 +48,8 @@ class DummyAuthBackend(BaseBackend):
         """
         return redirect(self.DUMMY_LOGIN_URL)
 
-    def undo_auth(self, session):
+    @classmethod
+    def undo_auth(cls, session):
         """
         Handle SAML2 Dummy by destroying the session and redirecting the user to
         the login page.
@@ -55,4 +59,5 @@ class DummyAuthBackend(BaseBackend):
             return redirect("/")
 
 def get_backend(ws):
+    """Return an instance of DummyAuthBackend."""
     return DummyAuthBackend(ws)
