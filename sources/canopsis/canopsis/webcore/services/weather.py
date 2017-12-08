@@ -24,6 +24,7 @@ from ast import literal_eval
 from bottle import request
 import copy
 import json
+from operator import itemgetter
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
@@ -406,6 +407,8 @@ def exports(ws):
 
             watchers.append(enriched_entity)
 
+        watchers = sorted(watchers, key=itemgetter("display_name"))
+
         return gen_json(watchers)
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
@@ -505,5 +508,7 @@ def exports(ws):
                     enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entities.append(enriched_entity)
+
+        enriched_entities = sorted(enriched_entities, key=itemgetter("name"))
 
         return gen_json(enriched_entities)
