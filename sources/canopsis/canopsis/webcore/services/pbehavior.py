@@ -295,17 +295,29 @@ def exports(ws):
     @ws.application.post('/api/v2/pbehavior')
     def create_v2():
         """
-        Create a pbehavior (with a real API).
+        Create a pbehavior.
+
+        :raises ValueError: invalid keys sent.
         """
         elements = request.json
 
         if elements is None:
-            return gen_json_error({'description': 'nothing to insert'},
-                                  HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'nothing to insert'},
+                HTTP_ERROR
+            )
+
+        invalid_keys = []
 
         for key in elements.keys():
             if key not in VALID_PBEHAVIOR_PARAMS:
-                elements.pop(key)
+                invalid_keys.append(key)
+
+        if len(invalid_keys) != 0:
+            return gen_json_error(
+                {'description': 'Invalid keys: {}'.format(invalid_keys)},
+                HTTP_ERROR
+            )
 
         return gen_json(rhpb.create(**elements))
 
