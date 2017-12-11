@@ -24,8 +24,6 @@ Webservice for pbehaviors.
 
 from __future__ import unicode_literals
 
-import json
-
 from bottle import request
 from json import loads
 from six import string_types
