@@ -587,6 +587,7 @@ class Rights(MiddlewareRegistry):
         role = self.get_role(r_name)
         if not role:
             self.create_role(r_name, r_profile)
+            return True
 
         # retrieve the profile
         if role:
