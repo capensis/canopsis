@@ -18,12 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+
+"""Weather service routes"""
+
 from __future__ import unicode_literals
 
 from ast import literal_eval
-from bottle import request
 import copy
 import json
+from operator import itemgetter
+from bottle import request
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
@@ -183,11 +187,9 @@ def watcher_status(watcher, pbehavior_eids_merged):
     return ret_dict
 
 
-def get_active_pbehaviors_on_watchers(
-    watchers_ids,
-    active_pb_dict,
-    active_pb_dict_full
-):
+def get_active_pbehaviors_on_watchers(watchers_ids,
+                                      active_pb_dict,
+                                      active_pb_dict_full):
     """
     get_active_pbehaviors_on_watchers.
 
@@ -394,7 +396,8 @@ def exports(ws):
                 watcher['_id'],
                 []
             )
-            enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(watcher['depends'], alarm_dict)
+            enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
+                watcher['depends'], alarm_dict)
             truc = watcher_status(watcher, merged_pbehaviors_eids)
             enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
             enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
@@ -405,6 +408,8 @@ def exports(ws):
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
             watchers.append(enriched_entity)
+
+        watchers = sorted(watchers, key=itemgetter("display_name"))
 
         return gen_json(watchers)
 
@@ -505,5 +510,7 @@ def exports(ws):
                     enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entities.append(enriched_entity)
+
+        enriched_entities = sorted(enriched_entities, key=itemgetter("name"))
 
         return gen_json(enriched_entities)
