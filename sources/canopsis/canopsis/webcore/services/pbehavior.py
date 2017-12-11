@@ -23,6 +23,9 @@ Webservice for pbehaviors.
 """
 
 from __future__ import unicode_literals
+
+import json
+
 from bottle import request
 from json import loads
 from six import string_types
@@ -38,8 +41,10 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 last_pbehaviors_compute = 0
 PBEHAVIOR_COMPUTE_COOLDOWN = 10
 
-VALID_PBEHAVIOR_PARAMS = ['name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
-                          'enabled', 'comments', 'connector', 'connector_name']
+VALID_PBEHAVIOR_PARAMS = [
+    'name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
+    'enabled', 'comments', 'connector', 'connector_name'
+]
 
 
 def check(data, key, type_):
@@ -269,29 +274,7 @@ def exports(ws):
         pb_manager=pbm, watcher_manager=watcher_manager
     )
 
-    @route(
-        ws.application.post,
-        name='pbehavior/create',
-        payload=[
-            'name', 'filter', 'author',
-            'tstart', 'tstop', 'rrule',
-            'enabled', 'comments',
-            'connector', 'connector_name'
-        ]
-    )
-    def create(
-            name, filter, author,
-            tstart, tstop, rrule=None,
-            enabled=True, comments=None,
-            connector='canopsis', connector_name='canopsis'
-    ):
-        """
-        Create a pbehavior.
-        """
-        return rhpb.create(
-            name, filter, author, tstart, tstop,
-            rrule, enabled, comments, connector, connector_name)
-
+    @ws.application.post('/pbehavior/create')
     @ws.application.post('/api/v2/pbehavior')
     def create_v2():
         """
@@ -308,6 +291,10 @@ def exports(ws):
             )
 
         invalid_keys = []
+
+        # keep compatibility with APIv1
+        if 'filter' in elements:
+            elements['filter_'] = elements.pop('filter')
 
         for key in elements.keys():
             if key not in VALID_PBEHAVIOR_PARAMS:
