@@ -20,15 +20,17 @@
 
 from __future__ import unicode_literals
 
+# DO NOT EVER MODIFY THOSE THREE LINES OR UNDESIRED BEHAVIOR ***WILL** HAPPEN.
+from gevent import monkey
+monkey.patch_all()
+
+import beaker
+import gevent
 import importlib
 import os
 import sys
 
-import gevent
-
 from signal import SIGTERM, SIGINT
-from gevent import monkey
-
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
 
@@ -41,8 +43,9 @@ from canopsis.logger import Logger
 from canopsis.old.account import Account
 # TODO: replace with canopsis.mongo.MongoStorage
 from canopsis.old.storage import get_storage
-
 from canopsis.webcore.services import session as session_module
+
+from canopsis.vendor import mongodb_beaker
 
 DEFAULT_DEBUG = False
 DEFAULT_ECSE = False
@@ -50,8 +53,6 @@ DEFAULT_ROOT_DIR = '~/var/www/src/'
 DEFAULT_COOKIES_EXPIRE = 300
 DEFAULT_SECRET = 'canopsis'
 DEFAULT_DATA_DIR = '~/var/cache/canopsis/webcore/'
-
-monkey.patch_all()
 
 
 class EnsureAuthenticated(object):
@@ -228,6 +229,9 @@ class WebServer():
         self.app.install(backend)
 
     def load_session(self):
+        # Since we vendor mongodb_beaker because of broken dep on pypi.python.org
+        # we need to setup the beaker class map manually.
+        beaker.cache.clsmap['mongodb'] = mongodb_beaker.MongoDBNamespaceManager
         self.app = SessionMiddleware(self.app, {
             'session.type': 'mongodb',
             'session.cookie_expires': self.cookie_expires,

@@ -41,7 +41,7 @@ def send_events(ws, events, exchange='canopsis.events'):
 
     for event in events:
         try:
-            ws.amqp_pub.canopsis_event(event, exchange, retries=0)
+            ws.amqp_pub.canopsis_event(event, exchange)
             sent_events.append(event)
 
         except KeyError as exc:

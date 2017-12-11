@@ -18,12 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+
+"""Weather service routes"""
+
 from __future__ import unicode_literals
 
 from ast import literal_eval
-from bottle import request
 import copy
 import json
+from operator import itemgetter
+from bottle import request
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
@@ -184,11 +188,9 @@ def watcher_status(watcher, pbehavior_eids_merged):
     return ret_dict
 
 
-def get_active_pbehaviors_on_watchers(
-    watchers_ids,
-    active_pb_dict,
-    active_pb_dict_full
-):
+def get_active_pbehaviors_on_watchers(watchers_ids,
+                                      active_pb_dict,
+                                      active_pb_dict_full):
     """
     get_active_pbehaviors_on_watchers.
 
@@ -412,6 +414,8 @@ def exports(ws):
 
             watchers.append(enriched_entity)
 
+        watchers = sorted(watchers, key=itemgetter("display_name"))
+
         return gen_json(watchers)
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
@@ -511,5 +515,7 @@ def exports(ws):
                     enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entities.append(enriched_entity)
+
+        enriched_entities = sorted(enriched_entities, key=itemgetter("name"))
 
         return gen_json(enriched_entities)

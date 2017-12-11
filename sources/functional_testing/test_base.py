@@ -21,9 +21,14 @@
 
 from __future__ import unicode_literals
 
-from enum import Enum
+import os
+
 import requests
 import unittest
+
+from enum import Enum
+
+from canopsis.common.amqp import AmqpConnection, AmqpPublisher
 
 
 class HTTP(Enum):
@@ -59,8 +64,12 @@ class BaseApiTest(unittest.TestCase):
         'Accept': 'application/json'
     }
 
-    WEB_HOST = "localhost"
-    WEB_PORT = "8082"
+    WEB_HOST = os.environ.get('CPS_FT_WEB_HOST', 'localhost')
+    WEB_PORT = int(os.environ.get('CPS_FT_WEB_PORT', 8082))
+
+    AMQP_URL = os.environ.get(
+        'CPS_FT_AMQP_URL', 'amqp://cpsrabbit:canopsis@localhost/canopsis'
+    )
 
     URL_BASE = "http://{}:{}".format(WEB_HOST, WEB_PORT)
     URL_PLAIN = "{}/auth".format(URL_BASE)
@@ -81,20 +90,19 @@ class BaseApiTest(unittest.TestCase):
         return self._send(url_auth)
     """
 
+    def _amqp_setup(self):
+        self.amqp_conn = AmqpConnection(self.AMQP_URL)
+        self.amqp_pub = AmqpPublisher(self.amqp_conn)
+
     def _authent_plain(self):
         """
         Send authentification through clear login/passwd.
         """
-        form = {
-            'username': "root",
-            'password': "root"
-        }
-        headers = {
-            'Content-type': "application/x-www-form-urlencoded"
-        }
+        data = {'username': "root", 'password': "root"}
+        headers = {'Content-type': "application/x-www-form-urlencoded"}
 
         return self._send(self.URL_PLAIN,
-                          data=form,
+                          data=data,
                           headers=headers,
                           method=Method.post,
                           allow_redirects=False)
@@ -105,15 +113,7 @@ class BaseApiTest(unittest.TestCase):
         """
         self.session = requests.Session()
         response = self._authent_plain()
-        # print("Login on {}".format(response.request.path_url))
-
-        # Auth validation
         self.assertEqual(response.status_code, 303)
-        #search_title = re.search("<title>Canopsis | Login</title>",
-        #                         response.text)
-        #if search_title is not None:
-        #    self.fail("Authentication error.")
-
         self.cookies = response.cookies
 
     def _send(self,
@@ -151,4 +151,5 @@ class BaseApiTest(unittest.TestCase):
         return response
 
     def setUp(self):
+        self._amqp_setup()
         self._authenticate()
