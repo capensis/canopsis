@@ -169,7 +169,7 @@ Ember.Application.initializer({
              */
             isClosed: function () {
                 return this.get('alarm.state.val') == 0;
-            }.property('alarm.closed'),
+            }.property('alarm.state.val'),
 
             actions: {
                 /**
