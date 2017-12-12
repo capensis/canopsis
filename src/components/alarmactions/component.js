@@ -107,6 +107,9 @@ Ember.Application.initializer({
                 if (this.get('isChangedByUser')) {
                     actions.removeObject(actions.findBy('mixin_name', 'cancelack'))
                 }
+                if (this.get('isClosed')) {
+                    actions.removeObject(actions.findBy('mixin_name', 'pbehavior'))
+                }
                 return actions;
             }.property('internalState', 'isSnoozed', 'isChangedByUser'),
 
@@ -160,6 +163,13 @@ Ember.Application.initializer({
             isChangedByUser: function () {
                 return this.get('alarm.state._t') == 'changestate'
             }.property('alarm.state._t'),
+
+            /**
+             * @property isClosed
+             */
+            isClosed: function () {
+                return this.get('alarm.state.val') == 0;
+            }.property('alarm.closed'),
 
             actions: {
                 /**
