@@ -111,7 +111,7 @@ Ember.Application.initializer({
                     actions.removeObject(actions.findBy('mixin_name', 'pbehavior'))
                 }
                 return actions;
-            }.property('internalState', 'isSnoozed', 'isChangedByUser'),
+            }.property('internalState', 'isSnoozed', 'isChangedByUser', 'isClosed'),
 
             /**
              * @property internalState
