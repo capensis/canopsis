@@ -3,6 +3,7 @@
   "id": "view.context",
   "crecord_write_time": 1506610791,
   "loader_id" : "view.context",
+  "loader_no_update": false,
   "title":"Context",
   "enable": true,
   "description": null,
