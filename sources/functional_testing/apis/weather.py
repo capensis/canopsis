@@ -37,6 +37,8 @@ class BasicWeatherAPITest(BaseApiTest):
         """
         Create basic objects that will be manipulated.
         """
+        self.context_url = '{}/api/v2/context'.format(self.URL_BASE)
+
         self.event1 = forger(
             event_type='check',
             connector='cap_kirk',
@@ -59,6 +61,18 @@ class BasicWeatherAPITest(BaseApiTest):
             output='NCC_1701-B'
         )
 
+        # Unlinked event
+        self.event3 = forger(
+            event_type='check',
+            connector='picard',
+            connector_name='ricker',
+            source_type='resource',
+            component='laforge',
+            resource='worf',
+            state=1,
+            output='NCC_1701-D'
+        )
+
         # Retrieve futur event id
         get_entity_id = '{}/api/v2/context_graph/get_id/'.format(self.URL_BASE)
         self.event1_id = self._send(url=get_entity_id,
@@ -67,16 +81,35 @@ class BasicWeatherAPITest(BaseApiTest):
         self.event2_id = self._send(url=get_entity_id,
                                     method=Method.post,
                                     data=dumps(self.event2)).json()
+        self.event3_id = self._send(url=get_entity_id,
+                                    method=Method.post,
+                                    data=dumps(self.event3)).json()
 
         # Simple watcher (to insert)
-        self.watcher_dict = {
-            "description": "a_description",
-            "display_name": "a_displayed_name",
+        self.watcher_1 = {
+            "description": "first gen",
+            "display_name": "st 1",
             "enable": True,
             "mfilter": dumps({'_id': {'$in': [self.event1_id, self.event2_id]}}),
-            "_id": "watcher_id"
+            "_id": "watcher_first_gen"
         }
-        self.watcher_id = self.watcher_dict['_id']
+
+        # Simple watcher (to insert)
+        self.watcher_2 = {
+            "description": "pikes crew",
+            "display_name": "st 1 - pilot",
+            "enable": True,
+            "mfilter": dumps({'_id': self.event1_id}),
+            "_id": "watcher_pikes_crew"
+        }
+
+        self.watcher_3 = {
+            "description": "next gen",
+            "display_name": "st 2",
+            "enable": True,
+            "mfilter": dumps({'_id': {'$in': [self.event3_id]}}),
+            "_id": "watcher_next_gen"
+        }
 
         now = int(time())
         self.pbehavior1 = {
@@ -88,7 +121,30 @@ class BasicWeatherAPITest(BaseApiTest):
             'tstop': now + 60 * 60,
         }
 
+    def context_cleanup(self):
+        # Cleanup existing watchers
+        watcher_url = '{}/api/v2/watchers'.format(self.URL_BASE)
+        self._send(url=watcher_url + '/' + self.watcher_1['_id'],
+                   method=Method.delete)
+        self._send(url=watcher_url + '/' + self.watcher_2['_id'],
+                   method=Method.delete)
+        self._send(url=watcher_url + '/' + self.watcher_3['_id'],
+                   method=Method.delete)
 
+        # Cleanup whole entity graph
+        entity_ids = [
+            self.event1_id, self.event2_id, self.event3_id,
+            self.event1['component'], self.event2['component'], self.event3['component'],
+            '{}/{}'.format(self.event1['connector'],
+                           self.event1['connector_name']),
+            '{}/{}'.format(self.event3['connector'],
+                           self.event3['connector_name'])
+        ]
+        for entity_id in entity_ids:
+            self._send(url=self.context_url + '/' + entity_id,
+                       method=Method.delete)
+
+"""
 class TestWeatherAPI_Empty(BasicWeatherAPITest):
 
     def setUp(self):
@@ -97,12 +153,11 @@ class TestWeatherAPI_Empty(BasicWeatherAPITest):
 
         self.base = '{}/{}'.format(self.URL_BASE, '/api/v2/weather/watchers')
 
-    def test_weather_get_watcher_empty(self):
-        # Cleanup
-        watcher_url = '{}/api/v2/watchers/{}'.format(self.URL_BASE,
-                                                     self.watcher_id)
-        self._send(url=watcher_url,
-                   method=Method.delete)
+    def test_weather_service_empty(self):
+        # !! route get_watcher !!
+
+        # Safety cleanup
+        self.context_cleanup()
 
         # Without mongo filter
         r = self._send(url=self.base,
@@ -117,7 +172,8 @@ class TestWeatherAPI_Empty(BasicWeatherAPITest):
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 0)
 
-    def test_weather_weatherwatcher_empty(self):
+        # !! route weatherwatchers !!
+
         # With bad id
         r = self._send(url=self.base + '/scotty',
                        method=Method.get)
@@ -125,13 +181,13 @@ class TestWeatherAPI_Empty(BasicWeatherAPITest):
         json = r.json()
         self.assertTrue(isinstance(json, dict))
         self.assertEqual(json['name'], 'resource_not_found')
+"""
 
 
 class TestWeatherAPI(BasicWeatherAPITest):
 
     """
-    NB : Because of api/v2/compute-pbehaviors, tests can be runned once per
-         minute
+    NB : Because of api/v2/compute-pbehaviors, tests can be runned once per 10s
     """
 
     def setUp(self):
@@ -142,37 +198,49 @@ class TestWeatherAPI(BasicWeatherAPITest):
 
     def init_tests(self):
         super(TestWeatherAPI, self).init_tests()
-        # Adding watcher and alarms to watch upon
-        watcher_url = '{}/api/v2/watchers'.format(self.URL_BASE)
-        r = self._send(url=watcher_url,
-                       method=Method.post,
-                       data=dumps(self.watcher_dict))
-        self.assertEqual(r.status_code, HTTP.OK.value)
 
+        self.context_cleanup()
+
+        # Adding watcher and alarm to watch upon
         self.event_url = '{}/api/v2/event'.format(self.URL_BASE)
         r = self._send(url=self.event_url,
                        method=Method.post,
                        data=dumps(self.event1))
         self.assertEqual(r.status_code, HTTP.OK.value)
 
+        sleep(2)
+
+        watcher_url = '{}/api/v2/watchers'.format(self.URL_BASE)
+        r = self._send(url=watcher_url,
+                       method=Method.post,
+                       data=dumps(self.watcher_1))
+        self.assertEqual(r.status_code, HTTP.OK.value)
+
+        r = self._send(url=watcher_url,
+                       method=Method.post,
+                       data=dumps(self.watcher_2))
+        self.assertEqual(r.status_code, HTTP.OK.value)
+
+        # Sending unlinked event 3
+        r = self._send(url=self.event_url,
+                       method=Method.post,
+                       data=dumps(self.event3))
+        self.assertEqual(r.status_code, HTTP.OK.value)
+        # Adding outside watcher and alarm (should not affect computations)
+        r = self._send(url=watcher_url,
+                       method=Method.post,
+                       data=dumps(self.watcher_3))
+        self.assertEqual(r.status_code, HTTP.OK.value)
+
         self.pbheavior_url = '{}/api/v2/pbehavior'.format(self.URL_BASE)
         self.pbehavior_ids = []
 
-        self.context_url = '{}/api/v2/context'.format(self.URL_BASE)
-
     def tearDown(self):
         """Deleting contextual informations"""
-        watcher_url = '{}/api/v2/watchers/{}'.format(self.URL_BASE,
-                                                     self.watcher_id)
-        self._send(url=watcher_url,
-                   method=Method.delete)
+        self.context_cleanup()
 
         for pbehavior_id in self.pbehavior_ids:
             self._send(url=self.pbheavior_url + '/' + pbehavior_id,
-                       method=Method.delete)
-
-        for event_id in [self.event1_id, self.event2_id]:
-            self._send(url=self.context_url + '/' + event_id,
                        method=Method.delete)
 
     def get_watcher(self, watcher_filter):
@@ -185,13 +253,27 @@ class TestWeatherAPI(BasicWeatherAPITest):
 
         return r.json()
 
-    def test_weather_get_watcher(self):
+    def test_weather_all_routes(self):
+        """
+        Generic scenario:
+        To begin, we have 2 watchers and 2 events isolated.
+        After verifying base state, we verify that a pbehavior and a new
+        event correctly influence watcher state.
+        """
 
         sleep(1)
 
-        # Read base watcher
-        watcher_filter = dumps({'_id': self.watcher_id})
-        r = self._send(url=self.base + '/' + watcher_filter,
+        # Read all watchers
+        r = self._send(url=self.base + '/' + '{}',
+                       method=Method.get)
+        self.assertEqual(r.status_code, HTTP.OK.value)
+        json = r.json()
+        self.assertTrue(isinstance(json, list))
+        self.assertEqual(len(json), 3)
+
+        # Read base watcher 1
+        watcher_filter_1 = dumps({'_id': self.watcher_1['_id']})
+        r = self._send(url=self.base + '/' + watcher_filter_1,
                        method=Method.get)
         self.assertEqual(r.status_code, HTTP.OK.value)
         json = r.json()
@@ -201,8 +283,8 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertFalse(json[0]['hasactivepbehaviorinentities'])
         self.assertFalse(json[0]['hasallactivepbehaviorinentities'])
 
-        # Read specific watcher
-        r = self._send(url=self.base + '/' + self.watcher_id)
+        # Read specific watcher 1
+        r = self._send(url=self.base + '/' + self.watcher_1['_id'])
         self.assertEqual(r.status_code, HTTP.OK.value)
         json = r.json()
         self.assertTrue(isinstance(json, list))
@@ -210,7 +292,7 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertEqual(json[0]['state']['val'], 2)
         self.assertIsNone(json[0]['automatic_action_timer'])
 
-        # Adding a new pbehavior
+        # Adding a pbehavior on event 1
         r = self._send(url=self.pbheavior_url,
                        method=Method.post,
                        data=dumps(self.pbehavior1))
@@ -226,14 +308,14 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertTrue(json)
 
         # Verifying watcher state
-        json = self.get_watcher(watcher_filter)
+        json = self.get_watcher(watcher_filter_1)
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 1)
         self.assertFalse(json[0]['hasactivepbehaviorinentities'])
         self.assertTrue(json[0]['hasallactivepbehaviorinentities'])
 
         # Verifiyng specific watcher state
-        r = self._send(url=self.base + '/' + self.watcher_id)
+        r = self._send(url=self.base + '/' + self.watcher_1['_id'])
         self.assertEqual(r.status_code, HTTP.OK.value)
         json = r.json()
         self.assertTrue(isinstance(json, list))
@@ -244,7 +326,7 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertTrue(isinstance(pbehavior, list))
         self.assertTrue(pbehavior[0]['enabled'])
 
-        # Sending another event
+        # Sending another linked event 2
         r = self._send(url=self.event_url,
                        method=Method.post,
                        data=dumps(self.event2))
@@ -252,15 +334,15 @@ class TestWeatherAPI(BasicWeatherAPITest):
 
         sleep(1)
 
-        # Verifying watcher state after event2
-        json = self.get_watcher(watcher_filter)
+        # Verifying watcher state after event 2
+        json = self.get_watcher(watcher_filter_1)
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 1)
         self.assertTrue(json[0]['hasactivepbehaviorinentities'])
         self.assertFalse(json[0]['hasallactivepbehaviorinentities'])
 
-        # Verifiyng specific watcher state after event2
-        r = self._send(url=self.base + '/' + self.watcher_id)
+        # Verifying specific watcher state after event 2
+        r = self._send(url=self.base + '/' + self.watcher_1['_id'])
         self.assertEqual(r.status_code, HTTP.OK.value)
         json = r.json()
         self.assertTrue(isinstance(json, list))

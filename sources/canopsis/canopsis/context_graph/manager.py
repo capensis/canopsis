@@ -116,10 +116,11 @@ class InfosFilter:
             jsonschema.validate(infos, self._schema)
         except jsonschema.ValidationError as v_err:
             self.logger.warning(v_err.message)
+
         try:
             schema = self._schema["schema"]["properties"]
         except KeyError:
-            self.logger.warning("No properties field")
+            self.logger.info("No properties field")
         else:
             self.__clean(infos, copy.deepcopy(infos), schema)
 

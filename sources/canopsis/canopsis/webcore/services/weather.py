@@ -108,6 +108,7 @@ def add_pbehavior_status(watchers):
     database. Then remove the field "mfilter".
 
     :param list watchers: the watchers to parse
+    :returns:
     """
     for entity in watchers:
 
@@ -164,11 +165,11 @@ def add_pbehavior_status(watchers):
 
 def watcher_status(watcher, pbehavior_eids_merged):
     """
-        watcher_status
+    watcher_status
 
-        :param dict watcher: watcher entity document
-        :param set pbehavior_eids_merged: set with eids
-        :return dict pbhevahior: dict with pbehavior infos has active
+    :param dict watcher: watcher entity document
+    :param set pbehavior_eids_merged: set with eids
+    :return dict pbhevahior: dict with pbehavior infos has active
     """
     ret_dict = {
         'has_active_pbh': False,
@@ -196,7 +197,7 @@ def get_active_pbehaviors_on_watchers(watchers_ids,
     :param list watchers_ids:
     :param list active_pb_dict: list of dict with key: pbheavior_id value: set of eids
     :param list active_pb_dict_full: list of pbehavior dict
-    :return dict: dict of watcher with list of active pbehavior
+    :returns: dict of watcher with list of active pbehavior
     """
 
     active_pb_on_watchers = {}
@@ -237,6 +238,7 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
 
     :param watcher_depends: list of depends
     :param alarm_dict: alarm dict
+    :rtype: bool
     """
     for depend in watcher_depends:
         tmp_alarm = alarm_dict.get(depend, {})
@@ -340,9 +342,7 @@ def exports(ws):
             for eid in eids_tab:
                 merged_pbehaviors_eids.add(eid)
 
-        alarm_list = alarmreader_manager.get(
-            filter_={}
-        )['alarms']
+        alarm_list = alarmreader_manager.get(filter_={})['alarms']
 
         for alarm in alarm_list:
             alarm_dict[alarm['d']] = alarm['v']
@@ -397,11 +397,16 @@ def exports(ws):
                 []
             )
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
-                watcher['depends'], alarm_dict)
+                watcher['depends'],
+                alarm_dict
+            )
             truc = watcher_status(watcher, merged_pbehaviors_eids)
             enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
             enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
-            enriched_entity['has_baseline'] = check_baseline(merged_eids_tracer, watcher['depends'])
+            enriched_entity['has_baseline'] = check_baseline(
+                merged_eids_tracer,
+                watcher['depends']
+            )
             tmp_next_run = get_next_run_alert(watcher.get('depends', []),
                                               next_run_dict)
             if tmp_next_run:
