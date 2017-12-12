@@ -31,13 +31,13 @@ class TestAmqpConn(TestAmqp):
         amqp_conn = AmqpConnection(self.amqp_url)
         amqp_conn.connect()
 
-        self.assertIsNotNone(amqp_conn.connection)
-        self.assertIsNotNone(amqp_conn.channel)
+        self.assertIsNotNone(amqp_conn._connection)
+        self.assertIsNotNone(amqp_conn._channel)
 
         amqp_conn.disconnect()
 
-        self.assertIsNone(amqp_conn.connection)
-        self.assertIsNone(amqp_conn.channel)
+        self.assertIsNone(amqp_conn._connection)
+        self.assertIsNone(amqp_conn._channel)
 
 
 class TestAmqpPublisher(TestAmqp):
