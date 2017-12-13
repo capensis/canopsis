@@ -134,6 +134,8 @@ def exports(ws):
         for alarm in alarms['alarms']:
             tmp_entity_id = alarm['d']
 
+            alarms["linklist"] = entity_dict[alarm['d']]["links"]
+
             if tmp_entity_id in entity_dict:
                 if alarm.get('infos'):
                     alarm['infos'].update(entity_dict[alarm['d']]['infos'])
