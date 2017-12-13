@@ -413,6 +413,7 @@ def pbehaviors(manager, alarm):
 
     entity_id = alarm['d']
 
-    alarm['pbehaviors'] = manager.pbehavior_manager.get_pbehaviors(entity_id)
+    alarm['pbehaviors'] = manager.pbehavior_manager.get_active_pbehaviors(
+        [entity_id])
 
     return alarm
