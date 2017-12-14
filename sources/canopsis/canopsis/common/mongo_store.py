@@ -25,13 +25,15 @@ class MongoStore(object):
     CONF_CAT = 'DATABASE'
     CRED_CAT = 'DATABASE'
 
-    def __init__(self, config, cred_config):
+    def __init__(self, config, cred_config=None):
         """
-        :param config: a configuration object
-        :param cred_config: a configuration object
+        :param config dict: a configuration object
+        :param cred_config dict: a configuration object containing credentials.
+            If None, credentials will be sourced from the primary config dict.
         """
         self.config = config
-        self.cred_config = cred_config
+        if cred_config is None:
+            self.cred_config = self.config
 
         conf = self.config.get(self.CONF_CAT, {})
         self.db_name = conf.get('db', DEFAULT_DB_NAME)

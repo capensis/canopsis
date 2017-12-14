@@ -7,7 +7,6 @@ import unittest
 
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.mongo_store import MongoStore, DEFAULT_DB_NAME
-from canopsis.confng import Configuration, Ini
 
 
 class TestEtherealData(unittest.TestCase):
@@ -15,12 +14,12 @@ class TestEtherealData(unittest.TestCase):
     def setUp(self):
         self.conf = {
             MongoStore.CONF_CAT: {
-                'db': DEFAULT_DB_NAME
+                'db': DEFAULT_DB_NAME,
+                'user': 'cpsmongo',
+                'pwd': 'canopsis'
             }
         }
-        self.cred_conf = Configuration.load(MongoStore.CRED_CONF_PATH, Ini)
-        self.client = MongoStore(config=self.conf,
-                                 cred_config=self.cred_conf)
+        self.client = MongoStore(config=self.conf)
         self.collection = self.client.get_collection('any_collection')
 
         self.ed = EtherealData(collection=self.collection,

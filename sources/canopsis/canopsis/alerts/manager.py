@@ -137,10 +137,8 @@ class Alerts(object):
         """
         config = Configuration.load(Alerts.CONF_PATH, Ini)
         conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
-        conf_db_creds = Configuration.load(MongoStore.CRED_CONF_PATH, Ini)
 
-        mongo = MongoStore(config=conf_store,
-                           cred_config=conf_db_creds)
+        mongo = MongoStore(config=conf_store)
         config_collection = mongo.get_collection(name=cls.CONFIG_COLLECTION)
         filter_ = {'crecord_type': 'statusmanagement'}
         config_data = EtherealData(collection=config_collection,
