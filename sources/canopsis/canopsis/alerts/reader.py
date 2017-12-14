@@ -487,18 +487,16 @@ class AlertsReader(object):
             for column in active_columns:
                 res_filter["$or"].append({column: {"$regex": search}})
 
-            if filter_ not in [None, {}]:
+            if filter_ in [None, {}]:
+                filter_ = {
+                    '$or': [
+                        {'$and': [{"d": {"$regex": search}}, time_filter]},
+                        {'$and': [res_filter, time_filter]}
+                    ]
+                }
+            else:
                 filter_ = self._translate_filter(filter_)
                 filter_ = {'$and': [filter_, time_filter, res_filter]}
-
-            else:
-                filter_ = {"$and": [{"d": {"$regex": search}}, time_filter]}
-
-            result = self.alarm_storage._backend.find(filter_)
-            result = result.sort(sort_key, sort_dir)
-            result = result.skip(skip)
-            if limit is not None:
-                result = result.limit(limit)
 
         else:
             try:
@@ -519,29 +517,29 @@ class AlertsReader(object):
                 if search_filter:
                     filter_ = {'$and': [filter_, search_filter]}
 
-            pipeline = [{
-                "$lookup": {
-                    "from": "default_entities",
-                    "localField": "d",
-                    "foreignField": "_id",
-                    "as": "entity"
-                }
-            }, {
-                "$unwind": "$entity"
-            }, {
-                "$match": filter_
-            }, {
-                "$sort": {
-                    sort_key: sort_dir
-                }
-            }, {
-                "$skip": skip
-            }]
+        pipeline = [{
+            "$lookup": {
+                "from": "default_entities",
+                "localField": "d",
+                "foreignField": "_id",
+                "as": "entity"
+            }
+        }, {
+            "$unwind": "$entity"
+        }, {
+            "$match": filter_
+        }, {
+            "$sort": {
+                sort_key: sort_dir
+            }
+        }, {
+            "$skip": skip
+        }]
 
-            if limit is not None:
-                pipeline.append({"$limit": limit})
+        if limit is not None:
+            pipeline.append({"$limit": limit})
 
-            result = self.alarm_storage._backend.aggregate(pipeline, cursor={})
+        result = self.alarm_storage._backend.aggregate(pipeline, cursor={})
 
         alarms = list(result)
         limited_total = len(alarms)  # Manual count is much faster than mongo's
