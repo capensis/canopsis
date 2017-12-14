@@ -451,8 +451,15 @@ class PBehaviorManager(object):
         )
 
         for pbehavior in pbehaviors:
+
+            query = loads(pbehavior[PBehavior.FILTER])
+            if not isinstance(query, dict):
+                self.logger.error('compute_pbehaviors_filters(): filter is '
+                                  'not a dict !\n{}'.format(query))
+                continue
+
             entities = self.context.ent_storage.get_elements(
-                query=loads(pbehavior[PBehavior.FILTER])
+                query=query
             )
 
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]

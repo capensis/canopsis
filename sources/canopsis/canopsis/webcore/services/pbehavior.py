@@ -277,14 +277,13 @@ def exports(ws):
     def create_v2():
         """
         Create a pbehavior.
-        
-        required keys: name str, filter str. comments list of dict with author message
-        tstart int, tstop int, author str
-        
+
+        required keys: name str, filter dict, comments list of dict with
+        author message, tstart int, tstop int, author str
+
         optionnal keys: rrule str, enabled bool
 
         :raises ValueError: invalid keys sent.
-
         """
         elements = request.json
 
