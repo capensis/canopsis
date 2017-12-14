@@ -212,6 +212,15 @@ class TestManager(BaseTest):
         self.assertTrue('eids' in pb)
         self.assertTrue(isinstance(pb['eids'], list))
 
+        # A bad pbehavior filter does not crash compute()
+        pb = deepcopy(self.pbehavior)
+        pb.update({
+            'filter': "\"{\\\"_id\\\": \\\"Sc_aude_eid_02/scenario\\\"}\""
+        })
+        pb_id = self.pbm.create(**pb)
+        self.pbm.compute_pbehaviors_filters()
+        pb = self.pbm.get(pb_id)
+
     def test_check_pbehaviors(self):
         now = datetime.utcnow()
         pbehavior_1 = deepcopy(self.pbehavior)
