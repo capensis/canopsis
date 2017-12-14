@@ -1107,7 +1107,8 @@ class Alerts(object):
                 'timestamp': now_stamp,
                 'connector': value['connector'],
                 'connector_name': value['connector_name'],
-                'output': lifter.output(message)
+                'output': lifter.output(message),
+                'event_type': Check.EVENT_TYPE
             }
             vstate = AlarmField.state.value
 
@@ -1125,15 +1126,15 @@ class Alerts(object):
 
                 self.logger.info('Automatically execute {} on {}'
                                  .format(task, alarm_id))
-                new_value = self.execute_task(name=task,
+                updated_alarm_value = self.execute_task(name=task,
                                               event=event,
                                               entity_id=alarm_id,
                                               author=self.filter_author,
                                               new_state=event[vstate])
 
-                if new_value is not None:
+                if updated_alarm_value is not None:
                     updated_once = True
-                    self.update_current_alarm(docalarm, new_value)
+                    self.update_current_alarm(docalarm, updated_alarm_value)
 
             if not updated_once:
                 continue
