@@ -32,6 +32,9 @@ from canopsis.common.enumerations import FastEnum
 # Alarm step types
 ALARM_STEP_TYPE_STATE_INCREASE = 'stateinc'
 ALARM_STEP_TYPE_STATE_DECREASE = 'statedec'
+ALARM_STEP_TYPE_STATUS_DECREASE = 'statusdec'
+
+ALARM_STEP_AUTHOR = "canopsis.engine"
 
 
 class AlarmState(FastEnum):
@@ -51,7 +54,7 @@ class AlarmStatus(FastEnum):
     CANCELED = 4
 
 
-class AlarmStep:
+class AlarmStep(object):
     """
     An AlarmStep is a Step in the lifecycle of an alarm. They are used as :
     - state
@@ -88,7 +91,7 @@ class AlarmStep:
         }
 
 
-class AlarmIdentity:
+class AlarmIdentity(object):
     """
     A value Object that contains the Alarm identity.
     Stores the information about the entity impacted by the alarm.
@@ -118,7 +121,7 @@ class AlarmIdentity:
         return self.display_name()
 
 
-class Alarm:
+class Alarm(object):
     """
     An Alarm representation in Canopsis.
     """
@@ -269,6 +272,26 @@ class Alarm:
                 self.resolved = int(self.status.timestamp)
                 return True
 
+        return False
+
+    def resolve_flapping(self, flapping_interval):
+        """
+        Resolve an alarm if it has a FLAPPING status, an OK state and a
+        last state change > flapping_interval
+
+        :param int flapping_interval: the considered flapping interval, in seconds
+        :returns: True if the alarm has been resolved, False otherwise
+        :rtype: bool
+        """
+
+        if self.status is None or self.status.value is not AlarmStatus.FLAPPING:
+            return False
+
+        now = int(time())
+        if self.state.value == AlarmState.OK and (now - self.state.timestamp) > flapping_interval:
+            self.resolved = int(self.status.timestamp)
+            self.status.value = AlarmStatus.OFF
+            return True
         return False
 
     def resolve_cancel(self, cancel_delay):

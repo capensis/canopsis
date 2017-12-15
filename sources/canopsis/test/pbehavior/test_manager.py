@@ -298,6 +298,33 @@ class TestManager(BaseTest):
         )
         self.assertFalse(result)
 
+        # Check for bad tstart/stop values
+        pbehavior_2 = deepcopy(self.pbehavior)
+        pbehavior_2.update(
+            {
+                'name': pb_name1,
+                'eids': [self.entity_id_1, self.entity_id_2],
+                'tstart': None,
+                'tstop': None
+            }
+        )
+        self.pbm.pb_storage.put_elements(elements=(pbehavior_2,))
+        result = self.pbm._check_pbehavior(self.entity_id_1, [pb_name1])
+        self.assertFalse(result)
+
+        pbehavior_3 = deepcopy(self.pbehavior)
+        pbehavior_3.update(
+            {
+                'name': pb_name1,
+                'eids': [self.entity_id_1, self.entity_id_2],
+                'tstart': 'han',
+                'tstop': 'solo'
+            }
+        )
+        self.pbm.pb_storage.put_elements(elements=(pbehavior_3,))
+        result = self.pbm._check_pbehavior(self.entity_id_1, [pb_name1])
+        self.assertFalse(result)
+
     def test_get_active_pbheviors(self):
         now = datetime.utcnow()
         pbehavior_1 = deepcopy(self.pbehavior)

@@ -501,8 +501,18 @@ class PBehaviorManager(object):
         names = []
         fromts = datetime.fromtimestamp
         for pbehavior in pbehaviors:
-            tstart = fromts(pbehavior[PBehavior.TSTART])
-            tstop = fromts(pbehavior[PBehavior.TSTOP])
+            tstart = pbehavior[PBehavior.TSTART]
+            tstop = pbehavior[PBehavior.TSTOP]
+            if not isinstance(tstart, (int, float)):
+                self.logger.error('Cannot parse tstart value: {}'
+                                  .format(pbehavior))
+                continue
+            if not isinstance(tstop, (int, float)):
+                self.logger.error('Cannot parse tstop value: {}'
+                                  .format(pbehavior))
+                continue
+            tstart = fromts(tstart)
+            tstop = fromts(tstop)
 
             dt_list = [tstart, tstop]
             if pbehavior['rrule'] is not None:
