@@ -54,7 +54,7 @@ class AlarmStatus(FastEnum):
     CANCELED = 4
 
 
-class AlarmStep:
+class AlarmStep(object):
     """
     An AlarmStep is a Step in the lifecycle of an alarm. They are used as :
     - state
@@ -91,7 +91,7 @@ class AlarmStep:
         }
 
 
-class AlarmIdentity:
+class AlarmIdentity(object):
     """
     A value Object that contains the Alarm identity.
     Stores the information about the entity impacted by the alarm.
@@ -121,7 +121,7 @@ class AlarmIdentity:
         return self.display_name()
 
 
-class Alarm:
+class Alarm(object):
     """
     An Alarm representation in Canopsis.
     """
@@ -276,7 +276,9 @@ class Alarm:
 
     def resolve_flapping(self, flapping_interval):
         """
-        Resolve an alarm if it has a FLAPPING status, an OK state and a last state change > flapping_interval
+        Resolve an alarm if it has a FLAPPING status, an OK state and a
+        last state change > flapping_interval
+
         :param int flapping_interval: the considered flapping interval, in seconds
         :returns: True if the alarm has been resolved, False otherwise
         :rtype: bool
