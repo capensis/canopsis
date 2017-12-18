@@ -104,7 +104,8 @@
   {{component-renderer rendererType=renderer value=value}}
 {{else}}
   {{value}}
-{{/if}}</script>
+{{/if}}
+</script>
 <script type="text/x-handlebars" data-template-name="components/component-columntemplate"><div class="form-inline">
     <div class="form-group">
         Column name: {{input value=column class="form-control" type="text"}}
@@ -235,6 +236,12 @@
 {{/ if}}
   
   </script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererlinks"><ul>
+{{#each category in categories}}
+    <li><a href="{{unbound category.[1]}}" target="_blank">{{unbound category.[0]}}</a></li>
+{{/each}}
+</ul>
+</script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererpbehaviors">{{#each pbeh in pbehMap}}
     {{pbeh}}<br>
 {{/each}}</script>
@@ -487,6 +494,9 @@
 {{/component-rendererextradetails}}</script>
 <script type="text/x-handlebars" data-template-name="_v_last_update_date">{{timestamp value 'r'}}
 
+</script>
+<script type="text/x-handlebars" data-template-name="_v_links">{{#component-rendererlinks value=value}}
+{{/component-rendererlinks}}
 </script>
 <script type="text/x-handlebars" data-template-name="_v_pbehaviors">{{#component-rendererpbehaviors value=value}}
 {{/component-rendererpbehaviors}}</script>

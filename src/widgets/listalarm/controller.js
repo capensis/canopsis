@@ -427,7 +427,7 @@ Ember.Application.initializer({
                   newAlarm['entity_id'] = alarm.d;
                   newAlarm.set('state.canceled', alarm.v.canceled);
                   newAlarm['changed'] = new Date().getTime();
-                  newAlarm.linklist = alarm.linklist;
+                  newAlarm.links = alarm.links;
 
                   if (alarm.v.resource) {
                     newAlarm['source_type'] = 'resource';
