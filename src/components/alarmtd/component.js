@@ -46,7 +46,14 @@ Ember.Application.initializer({
              * @property hasRenderer
              */
             hasRenderer: function () {
-                return this.get('renderers').includes(this.get('field.name').replace(/\./g, "_"))
+                return this.get('renderers').includes(this.get('field.name').replace(/\./g, "_")) || (this.get('field.name') === 'v.links')
+            }.property('alarm'),
+
+            /**
+             * @property hasHelper
+             */
+            hasHelper: function () {
+                return ['links'].includes(this.get('field.name'))
             }.property('alarm'),
 
             /**
