@@ -114,7 +114,8 @@ Ember.Application.initializer({
 							"last_update_date",
 							"snooze",
 							"ticket",
-							"hard_limit"],
+							"hard_limit",
+							"display_name"],
 
 			entityDBColumn: ["impact",
 							 "name",
