@@ -679,7 +679,8 @@ class ContextGraph(object):
         for res in result:
             res['links'] = {}
             if hasattr(self, 'hlb_manager'):
-                res['links'] = self.hlb_manager.links_for_entity(res)
+                links = self.hlb_manager.links_for_entity(res)
+                res['links'] = links
 
         if with_count:
             return result, count
