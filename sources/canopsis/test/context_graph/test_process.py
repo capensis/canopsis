@@ -745,6 +745,14 @@ class Test(TestCase):
         result_conn = self.gctx_man.get_entities_by_id(ids["conn_id"])[0]
         result_comp = self.gctx_man.get_entities_by_id(ids["comp_id"])[0]
 
+        # A fields links is added in the entity returned  by the
+        # get_entities_by_id methods. It is not relievent to this test and his
+        # value fluctuate with specific configuration. So we delete it in the
+        # entity returned by get_entities_by_id
+        del result_comp["links"]
+        del result_conn["links"]
+        del result_re["links"]
+
         self.assertEqualEntities(expected_re, result_re)
         self.assertEqualEntities(expected_conn, result_conn)
         self.assertEqualEntities(expected_comp, result_comp)

@@ -29,6 +29,7 @@ class Keys:
     DISABLE_HISTORY = "disable_history"
     ENABLE_HISTORY = "enable_history"
     ENABLED = "enabled"
+    LINKS = "links"
 
 
 class BaseTest(TestCase):
@@ -49,7 +50,8 @@ class BaseTest(TestCase):
                              Keys.DEPENDS: [],
                              Keys.IMPACT: [],
                              Keys.MEASUREMENTS: [],
-                             Keys.INFOS: {}}
+                             Keys.INFOS: {},
+                             Keys.LINKS: {}}
         self.template_ci = {ContextGraphImport.K_ID: "id",
                             ContextGraphImport.K_NAME: "Name",
                             ContextGraphImport.K_TYPE: "resource",
@@ -301,6 +303,10 @@ class ACreateEntity(BaseTest):
             expected[ContextGraphImport.K_DEPENDS])
         expected[ContextGraphImport.K_IMPACT] = set(
             expected[ContextGraphImport.K_IMPACT])
+
+        # We delete links because he is dynamicaly created when
+        # get_entities_by_id and get_entities are used
+        del expected[Keys.LINKS]
 
         self.ctx_import._ContextGraphImport__a_create_entity(ci)
 

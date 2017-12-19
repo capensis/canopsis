@@ -1030,6 +1030,7 @@ class TestManager(BaseTest):
             'state': Check.MINOR,
             'state_type': 1,
             'timestamp': 0,
+            'links': {}
         }
 
         expected_event1 = {
@@ -1044,6 +1045,7 @@ class TestManager(BaseTest):
             'state_type': 1,
             'status': 1,
             'timestamp': 0,
+            'links': {}
         }
 
         expected_event2 = {
@@ -1059,6 +1061,7 @@ class TestManager(BaseTest):
             'state_type': 1,
             'state': Check.OK,
             'timestamp': 0,
+            'links': {}
         }
 
         self.assertEqual(len(events), 3)

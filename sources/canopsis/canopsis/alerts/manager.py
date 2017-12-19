@@ -1113,9 +1113,10 @@ class Alerts(object):
             vstate = AlarmField.state.value
 
             # Execute each defined action
-            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             updated_once = False
+            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             for task in lifter.tasks:
+
                 if vstate in new_value:
                     event[vstate] = new_value[vstate]['val']  # for changestate
 
@@ -1126,11 +1127,13 @@ class Alerts(object):
 
                 self.logger.info('Automatically execute {} on {}'
                                  .format(task, alarm_id))
+
                 updated_alarm_value = self.execute_task(name=task,
                                               event=event,
                                               entity_id=alarm_id,
                                               author=self.filter_author,
                                               new_state=event[vstate])
+                new_value = updated_alarm_value
 
                 if updated_alarm_value is not None:
                     updated_once = True
