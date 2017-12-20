@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+import re
+import unittest
+
+from canopsis.common import root_path
+
+DEFAULT_TEST_DIR = root_path + "/var/lib/canopsis/unittest/canopsis"
+
+pattern = re.compile("^(?!__).*(?!__)\.py$")
+
+def parse_args():
+    """Parse the command line arguments."""
+    parser = argparse.ArgumentParser(description="unit tests runner")
+    parser.add_argument("test_dir", nargs="?",
+                        help="Directory where the tests are stored",
+                        default=DEFAULT_TEST_DIR)
+    return parser.parse_args()
+
+def get_tests_list(dir_):
+    """Return the list with all unit test files in dir_ and his subdir.
+    :param dir_: the directory where the search start
+    return tupe: a list of string."""
+    files_ = []
+    for root, dirnames, filenames in os.walk(dir_):
+        print(dirnames)
+        for filename in filenames:
+            ok = False
+            if re.match(pattern, filename):
+                ok = True
+                files_.append("{0}, {1}".format(root, filename))
+            print("{0} -> {1}".format(filename, ok))
+
+    return files_
+
+if __name__ == "__main__":
+    args = parse_args()
+    print(args.test_dir)
+    files = get_tests_list(args.test_dir)
+
+    for f in files:
+        print(f)
