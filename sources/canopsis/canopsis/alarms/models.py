@@ -154,7 +154,7 @@ class Alarm(object):
         :param dict alarm_filter: alarm filters informations
         :param AlarmStep canceled: canceled step
         :param int creation_date: alarm creation timestamp
-        :param str display_name: status step
+        :param str display_name: displayed name of the alarm
         :param dict extra: extra informations (domain, perimeter...)
         :param bool hard_limit: hardlimit reached
         :param str initial_output: first output message
