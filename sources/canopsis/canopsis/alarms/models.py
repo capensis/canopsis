@@ -133,6 +133,7 @@ class Alarm(object):
             ack,
             canceled,
             creation_date,
+            display_name,
             hard_limit,
             initial_output,
             last_update_date,
@@ -144,7 +145,6 @@ class Alarm(object):
             tags,
             ticket,
             alarm_filter=None,
-            display_name='',
             extra={}
     ):
         """
