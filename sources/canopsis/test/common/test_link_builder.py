@@ -20,14 +20,15 @@
 # ---------------------------------
 
 import logging
-from unittest import TestCase, main
-
+import unittest
+from canopsis.common import root_path
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.middleware.core import Middleware
+import xmlrunner
 
 
-class LinkBuilderTest(TestCase):
+class LinkBuilderTest(unittest.TestCase):
     """Test the hyperlink table module.
     """
     def setUp(self):
@@ -96,4 +97,7 @@ class LinkBuilderTest(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

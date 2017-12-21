@@ -20,7 +20,8 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-
+import unittest
+from canopsis.common import root_path
 from calendar import timegm
 from copy import deepcopy
 from datetime import datetime, timedelta
@@ -31,6 +32,7 @@ from uuid import uuid4
 from canopsis.pbehavior.manager import PBehavior
 
 from test_base import BaseTest
+import xmlrunner
 
 
 class TestManager(BaseTest):
@@ -352,4 +354,7 @@ class TestManager(BaseTest):
         self.assertEqual(names, ['pb1'])
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

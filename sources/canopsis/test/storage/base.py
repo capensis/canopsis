@@ -21,15 +21,16 @@
 
 from __future__ import print_function
 
-from unittest import TestCase, main
+import unittest
 
 # from canopsis.storage.core import Storage
+from canopsis.common import root_path
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.configurable.decorator import add_category
 from canopsis.configuration.model import Parameter
 # from canopsis.common.utils import lookup
-
+import xmlrunner
 
 @conf_paths('storage/test.conf')
 @add_category(
@@ -46,7 +47,7 @@ class BaseTestConfiguration(Configurable):
     """Default test configuration."""
 
 
-class BaseStorageTest(TestCase):
+class BaseStorageTest(unittest.TestCase):
     """Class to override in order to load a set of storages depending on
     specific protocols, data_scopes and data_types.
     """
@@ -107,4 +108,7 @@ class BaseStorageTest(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

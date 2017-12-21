@@ -23,7 +23,9 @@ from unittest import TestCase, main
 from re import compile as compile_
 
 from canopsis.alerts.search.interpreter import interpret
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 class TestSearch(TestCase):
     grammar_file = '/opt/canopsis/etc/alerts/search/grammar.bnf'
@@ -252,6 +254,8 @@ class TestSearch(TestCase):
             self.assertEqual(scope, case.get('expected_scope', 'this'))
             self.assertEqual(filter_, case['expected_filter'])
 
-
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

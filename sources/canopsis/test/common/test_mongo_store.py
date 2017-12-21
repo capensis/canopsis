@@ -7,6 +7,8 @@ import unittest
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.confng import Configuration, Ini
+from canopsis.common import root_path
+import xmlrunner
 
 
 class TestMongoStore(unittest.TestCase):
@@ -42,4 +44,7 @@ class TestMongoStore(unittest.TestCase):
                                                         self.collection_name))
 
 if __name__ == '__main__':
-    unittest.main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

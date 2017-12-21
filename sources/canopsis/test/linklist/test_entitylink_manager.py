@@ -20,17 +20,19 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
-from unittest import TestCase, main
+import unittest
 from uuid import uuid4
 
+from canopsis.common import root_path
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.entitylink.manager import Entitylink
 from canopsis.event import forger
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
+import xmlrunner
 
 
-class CheckManagerTest(TestCase):
+class CheckManagerTest(unittest.TestCase):
     """
     Base class for all check manager tests.
     """
@@ -134,4 +136,7 @@ class LinkListTest(CheckManagerTest):
         self.assertEqual(res['_id'], 'a_component')
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

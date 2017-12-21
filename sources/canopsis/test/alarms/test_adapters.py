@@ -21,15 +21,16 @@
 
 from __future__ import unicode_literals
 import time
-from unittest import TestCase, main
-
+import unittest
 from canopsis.alarms.adapters import (
     AlarmAdapter, make_alarm_from_mongo, make_alarm_step_from_mongo
 )
 from canopsis.alarms.models import AlarmStep, AlarmIdentity
+from canopsis.common import root_path
+import xmlrunner
 
 
-class AlarmAdapterTest(TestCase):
+class AlarmAdapterTest(unittest.TestCase):
 
     @classmethod
     def setUp(self):
@@ -129,4 +130,7 @@ class AlarmAdapterTest(TestCase):
         self.assertTrue("A dict is required." in context.exception)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

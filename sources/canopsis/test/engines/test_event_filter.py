@@ -19,14 +19,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
 from mock import MagicMock, patch
 
 from copy import copy
 from logging import WARNING
-
+from canopsis.common import root_path
 from canopsis.engines.core import DROP
 from canopsis.engines.event_filter import engine
+import xmlrunner
 
 # TODO, reset theses tests because they are not accurate and not clean
 
@@ -246,7 +247,7 @@ conf = {
 }
 
 
-class KnownValues(TestCase):
+class KnownValues(unittest.TestCase):
 
     def setUp(self):
         self.engine = engine(
@@ -522,7 +523,7 @@ class KnownValues(TestCase):
         self.assertEqual(self.engine.work(event), event)
 
 
-class OverrideTest(TestCase):
+class OverrideTest(unittest.TestCase):
     """
     Extensive tests on event_filter specific operation `a_override`
     """
@@ -675,5 +676,8 @@ class OverrideTest(TestCase):
         self.assertEqual(self.expected_event, self.event)
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

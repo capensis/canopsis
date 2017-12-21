@@ -19,9 +19,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main
+import unittest
 
 from base import BaseStorageTest
+from canopsis.common import root_path
+import xmlrunner
 
 # from time import time
 
@@ -190,4 +192,7 @@ class Bench(BaseStorageTest):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

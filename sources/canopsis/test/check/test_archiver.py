@@ -18,9 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
-
+import unittest
 from canopsis.check.archiver import Archiver, OFF, ONGOING, STEALTHY, BAGOT
+from canopsis.common import root_path
+import xmlrunner
+
 
 ARCHIVER = None
 
@@ -100,5 +102,8 @@ def setFields(_map, **kwargs):
 #        devent = event.copy()
 #
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

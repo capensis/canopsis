@@ -1,8 +1,6 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
-from unittest import main, TestCase
-
 from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey,\
     Manager
 from canopsis.context_graph.manager import ContextGraph
@@ -13,6 +11,11 @@ import os
 import time
 from jsonschema.exceptions import ValidationError
 from canopsis.logger import Logger, OutputNull
+
+import unittest
+from canopsis.common import root_path
+import xmlrunner
+
 
 logger = Logger.get("", None, output_cls=OutputNull)
 
@@ -32,7 +35,7 @@ class Keys:
     LINKS = "links"
 
 
-class BaseTest(TestCase):
+class BaseTest(unittest.TestCase):
 
     def setUp(self):
         self.ctx_import = ContextGraphImport(logger)
@@ -1417,7 +1420,7 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-class ReportManager(TestCase):
+class ReportManager(unittest.TestCase):
 
     def setUp(self):
         self.import_storage = Middleware.get_middleware_by_uri(
@@ -1633,4 +1636,7 @@ class ReportManager(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

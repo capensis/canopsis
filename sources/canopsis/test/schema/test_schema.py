@@ -27,7 +27,9 @@ from lxml.etree import parse, tostring
 from StringIO import StringIO
 
 from canopsis.schema.schema import Schema
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 def mock_get_schema_path(*args):
     this_file_dir = dirname(abspath(__file__))
@@ -241,5 +243,7 @@ class TestSchema(TestCase):
         pass
 
 if __name__ == '__main__':
-    main()
-
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

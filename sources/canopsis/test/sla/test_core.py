@@ -20,6 +20,9 @@
 # ---------------------------------
 
 # TODO 4-01-2017
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 #from time import time
 #from unittest import main, TestCase
@@ -161,5 +164,8 @@
 #        self.assertEqual(event['connector_name'], 'engine')
 #
 #
-#if __name__ == "__main__":
-#    main(verbosity=2)
+if __name__ == '__main__':
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

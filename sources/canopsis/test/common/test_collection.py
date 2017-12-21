@@ -9,9 +9,11 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+from canopsis.common import root_path
 from canopsis.common.collection import MongoCollection
 from canopsis.logger import Logger, OutputStream
 from canopsis.middleware.core import Middleware
+import xmlrunner
 
 
 class TestMongoCollection(unittest.TestCase):
@@ -101,4 +103,7 @@ class TestMongoCollection(unittest.TestCase):
         self.assertFalse(MongoCollection.is_successfull(dico))
 
 if __name__ == '__main__':
-    unittest.main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

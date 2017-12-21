@@ -28,7 +28,9 @@ from canopsis.configuration.driver.file import FileConfigurationDriver
 from tempfile import NamedTemporaryFile
 
 from os import remove
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 class TestConfigurable(Configurable):
     pass
@@ -135,4 +137,7 @@ class ManagerTest(TestCase):
         self.assertEqual(len(driver.configurable_types), 1)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

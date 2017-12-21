@@ -3,13 +3,16 @@
 
 from __future__ import unicode_literals
 
+import unittest
 from unittest import main, TestCase
-
+from canopsis.common import root_path
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 from canopsis.logger import Logger, OutputNull
 
 from test_infos_filter import Keys, SCHEMA, TEMPLATE_INFOS
+
+import xmlrunner
 
 logger = Logger.get("", None, output_cls=OutputNull)
 
@@ -1293,5 +1296,9 @@ class TestLeavesRequests(BaseTest):
                              'type': 'component'
                          }])
 
+
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

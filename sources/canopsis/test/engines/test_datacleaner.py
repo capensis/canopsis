@@ -20,8 +20,11 @@
 # ---------------------------------
 
 # TODO 4-01-2017
+import unittest
+from canopsis.common import root_path
+import TestCase, main
 
-#from unittest import TestCase, main
+#from unittest import xmlrunner
 #from mock import MagicMock
 #from time import time
 #from logging import ERROR
@@ -151,5 +154,8 @@
 #            self.engine.beat()
 #
 #
-#if __name__ == "__main__":
-#    main()
+if __name__ == '__main__':
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

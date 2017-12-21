@@ -9,6 +9,9 @@ from canopsis.common.utils import is_mongo_successfull
 from canopsis.tracer.manager import (
     Trace, TraceSetError, TraceNotFound, TracerManager
 )
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class Unencodable(object):
@@ -72,4 +75,7 @@ class TestTracerManager(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

@@ -25,6 +25,9 @@ from json import dumps
 
 from canopsis.old.record import Record
 from canopsis.old.account import Account
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class KnownValues(TestCase):
@@ -83,5 +86,8 @@ class KnownValues(TestCase):
         if record.is_enable():
             raise Exception('Impossible to disable ...')
 
-if __name__ == "__main__":
-    main(verbosity=2)
+if __name__ == '__main__':
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

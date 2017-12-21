@@ -19,7 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main
+import unittest
+from canopsis.common import root_path
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters, AlarmFilter
@@ -27,6 +28,7 @@ from canopsis.alerts.filter import AlarmFilters, AlarmFilter
 from base import BaseTest
 from datetime import timedelta
 import logging
+import xmlrunner
 
 
 class TestFilter(BaseTest):
@@ -298,4 +300,7 @@ class TestFilter(BaseTest):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

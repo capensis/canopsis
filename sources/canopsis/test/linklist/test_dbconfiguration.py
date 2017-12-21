@@ -19,11 +19,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
+from canopsis.common import root_path
 from canopsis.linklist.dbconfigurationmanager import DBConfiguration
+import xmlrunner
 
 
-class DBConfigurationTest(TestCase):
+class DBConfigurationTest(unittest.TestCase):
     """
     Base class for all check manager tests.
     """
@@ -39,4 +41,7 @@ class DBTest(DBConfigurationTest):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

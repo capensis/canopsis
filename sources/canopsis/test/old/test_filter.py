@@ -19,7 +19,9 @@
 # ---------------------------------
 
 import unittest
+from canopsis.common import root_path
 from canopsis.old.cfilter import Filter
+import xmlrunner
 
 
 class KnownValues(unittest.TestCase):
@@ -104,5 +106,8 @@ class KnownValues(unittest.TestCase):
         self.assertEqual(cfilter, test)
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+if __name__ == '__main__':
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

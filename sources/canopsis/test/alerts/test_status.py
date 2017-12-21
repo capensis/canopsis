@@ -31,6 +31,9 @@ from canopsis.alerts.status import (
 from canopsis.check import Check
 
 from base import BaseTest
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class TestStatus(BaseTest):
@@ -333,4 +336,7 @@ class TestStatus(BaseTest):
         self.assertFalse(got)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)
