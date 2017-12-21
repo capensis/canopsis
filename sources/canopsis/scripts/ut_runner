@@ -57,22 +57,38 @@ def main():
     args = parse_args()
     modname_list = get_tests_list(args.test_dir)
 
-    os.makedirs(os.path.join(root_path, TESTS_REPORT_DIR))
+    result_dir = os.path.join(root_path, TESTS_REPORT_DIR)
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
+    else:
+        os.removedirs(result_dir)
+
+    cov_filename = os.path.join(root_path, COVERAGE_OUTPUT_FILE)
+    if os.path.exists(cov_filename):
+        os.remove(cov_filename)
 
     os.chdir(DEFAULT_TEST_DIR)
     subprocess.check_call(["coverage", "erase"])
     for modname in modname_list:
-        subprocess.call(["coverage",
-                         "run",
-                         "-p",
-                         "--source={}".format(CANOPSIS_PACKAGE),
-                         "-m",
-                         modname])
+        try:
+            output = subprocess.check_output(["coverage",
+                                              "run",
+                                              "-p",
+                                              "--source={}".format(
+                                                  CANOPSIS_PACKAGE),
+                                              "-m",
+                                              modname],
+                                             stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError:
+            print("{} -> FAIL".format(modname))
+            print(output)
+        else:
+            print("{} -> SUCESS".format(modname))
     subprocess.call(["coverage", "combine"])
     subprocess.call(["coverage",
                      "xml",
                      "-o",
-                     os.path.join(root_path, COVERAGE_OUTPUT_FILE)])
+                     cov_filename])
 
 if __name__ == "__main__":
     main()
