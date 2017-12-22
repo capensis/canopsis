@@ -69,6 +69,7 @@ class AlarmsModelsTest(TestCase):
             tags=[],
             ticket=None,
             alarm_filter=None,
+            display_name='',
             extra={}
         )
 
