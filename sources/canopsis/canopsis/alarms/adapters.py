@@ -27,7 +27,6 @@ from __future__ import unicode_literals
 
 from time import time
 from .models import AlarmIdentity, AlarmStep, Alarm
-from canopsis.common.utils import gen_id
 
 
 class AlarmAdapter(object):
@@ -110,31 +109,9 @@ class AlarmAdapter(object):
         }
         col_adapter = self.mongo_client[self.COLLECTION]
 
-        alarm_dict = alarm.to_dict()
-
-        # Enforce display_name calculation
-        if alarm_dict.get('display_name') in [None, '']:
-            display_name = gen_id()
-            while self.check_if_display_name_exists(display_name):
-                display_name = gen_id()
-            alarm_dict['display_name'] = display_name
-
-        col_adapter.update(selector, alarm_dict)
+        col_adapter.update(selector, alarm.to_dict())
 
         return alarm
-
-    def check_if_display_name_exists(self, display_name):
-        """
-        Check if a display_name is already associated.
-
-        :param str display_name: the name to check
-        :rtype: bool
-        """
-        alarms = self.mongo_client[self.COLLECTION].find(
-            {'v.display_name': display_name}
-        )
-
-        return alarms.count() != 0
 
 
 def make_alarm_from_mongo(alarm_dict):
