@@ -5,6 +5,7 @@ import importlib
 import os
 import re
 import subprocess
+import shutil
 import sys
 import unittest
 
@@ -61,7 +62,7 @@ def main():
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
     else:
-        os.removedirs(result_dir)
+        shutil.rmtree(result_dir)
 
     cov_filename = os.path.join(root_path, COVERAGE_OUTPUT_FILE)
     if os.path.exists(cov_filename):
@@ -69,26 +70,35 @@ def main():
 
     os.chdir(DEFAULT_TEST_DIR)
     subprocess.check_call(["coverage", "erase"])
+    total = 0
+    failed = 0
+    passed = 0
     for modname in modname_list:
+        total += 1
         try:
-            output = subprocess.check_output(["coverage",
-                                              "run",
-                                              "-p",
-                                              "--source={}".format(
-                                                  CANOPSIS_PACKAGE),
-                                              "-m",
-                                              modname],
-                                             stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError:
+            _ = subprocess.check_output(["coverage",
+                                         "run",
+                                         "-p",
+                                         "--source={}".format(
+                                             CANOPSIS_PACKAGE),
+                                         "-m",
+                                         modname],
+                                        stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as exc:
             print("{} -> FAIL".format(modname))
-            print(output)
+            print(exc.output)
+            failed += 1
         else:
             print("{} -> SUCESS".format(modname))
+            passed += 1
     subprocess.call(["coverage", "combine"])
     subprocess.call(["coverage",
                      "xml",
                      "-o",
                      cov_filename])
+
+    print("\n===============")
+    print("Total : {0}\tPassed : {1}\tFailed : {2}".format(total, passed, failed))
 
 if __name__ == "__main__":
     main()
