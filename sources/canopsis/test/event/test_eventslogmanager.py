@@ -55,7 +55,7 @@ class EventsLogTest(EventsLogManagerTest):
         self.assertEquals(result[0].get('count'), 5)
 
 if __name__ == '__main__':
-    output = root_path + "tests_report"
+    output = root_path + "/tests_report"
     unittest.main(
         testRunner=xmlrunner.XMLTestRunner(output=output),
         verbosity=3)

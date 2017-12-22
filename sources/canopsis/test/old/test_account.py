@@ -76,7 +76,7 @@ class KnownValues(unittest.TestCase):
 
 if __name__ == "__main__":
     STORAGE = Storage(Account(user="root", group="root"), namespace='unittest')
-    output = root_path + "tests_report"
+    output = root_path + "/tests_report"
     unittest.main(
         testRunner=xmlrunner.XMLTestRunner(output=output),
         verbosity=3)

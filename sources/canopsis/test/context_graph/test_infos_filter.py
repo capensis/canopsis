@@ -165,7 +165,7 @@ class TestClean(BaseTest):
         self.assertDictEqual(expected, infos)
 
 if __name__ == '__main__':
-    output = root_path + "tests_report"
+    output = root_path + "/tests_report"
     unittest.main(
         testRunner=xmlrunner.XMLTestRunner(output=output),
         verbosity=3)
