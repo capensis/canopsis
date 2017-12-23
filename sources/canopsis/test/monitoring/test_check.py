@@ -58,7 +58,7 @@ SCHEMA = {
 }
 
 
-class KnownValues(TestCase):
+class KnownValues(unittest.TestCase):
     def setUp(self):
         self.runner = CheckRunner(CONTEXT, 'test')
         self.runner.hostname = 'monitoring'

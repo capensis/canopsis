@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from unittest import TestCase, main
-
 from canopsis.middleware.core import Middleware
 from canopsis.common.utils import is_mongo_successfull
 from canopsis.tracer.manager import (
@@ -18,7 +16,7 @@ class Unencodable(object):
     pass
 
 
-class TestTracerManager(TestCase):
+class TestTracerManager(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):

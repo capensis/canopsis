@@ -111,7 +111,8 @@ class TestPbehaviorWebservice(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        pb_manager = PBehaviorManager()
+        logger, storage = PBehaviorManager.provide_default_basics()
+        pb_manager = PBehaviorManager(logger, storage)
         watcher_manager = WatcherManager()
         cls.rhpb = RouteHandlerPBehavior(pb_manager, watcher_manager)
 

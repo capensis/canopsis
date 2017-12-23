@@ -27,7 +27,8 @@ from canopsis.entitylink.manager import Entitylink
 from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
 
-from base import BaseTestimport unittest
+from base import BaseTest
+import unittest
 from canopsis.common import root_path
 import xmlrunner
 

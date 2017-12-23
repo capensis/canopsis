@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest
+import unittest
 from canopsis.common import root_path
 from canopsis.configuration.driver.file.json import JSONConfigurationDriver
 from test_file_driver import ConfigurationDriverTest

@@ -22,7 +22,7 @@
 # TODO 4-01-2017
 import unittest
 from canopsis.common import root_path
-import TestCase, main
+import xmlrunner
 
 #from unittest import xmlrunner
 #from mock import MagicMock

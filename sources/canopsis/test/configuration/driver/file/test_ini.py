@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest
+import unittest
 from canopsis.common import root_path
 import xmlrunner
 

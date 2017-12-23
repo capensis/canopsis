@@ -1,7 +1,7 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
-from unittest
+import unittest
 from canopsis.common import root_path
 from canopsis.context_graph.manager import InfosFilter
 from canopsis.logger import Logger, OutputNull

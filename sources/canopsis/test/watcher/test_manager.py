@@ -1,8 +1,9 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
-import unittest
+
 from __future__ import unicode_literals
 
+import unittest
 from calendar import timegm
 from datetime import datetime, timedelta
 from json import loads

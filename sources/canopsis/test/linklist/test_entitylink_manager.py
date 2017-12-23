@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 
 import unittest
 from uuid import uuid4
-
 from canopsis.common import root_path
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.entitylink.manager import Entitylink

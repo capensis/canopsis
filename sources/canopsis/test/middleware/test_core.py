@@ -41,7 +41,7 @@ class TestRegisteredWithDataTypeMiddleware(TestRegisteredMiddleware):
     __datatype__ = 'dttest1'
 
 
-class MiddlewareTest(TestCase):
+class MiddlewareTest(unittest.TestCase):
 
     def test_parse_scheme(self):
 
