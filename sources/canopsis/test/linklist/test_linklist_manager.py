@@ -43,10 +43,10 @@ class CheckManagerTest(unittest.TestCase):
                                 storage=self.linklist_storage)
 
         self.name = 'testlinklist'
-        self.id = str(uuid4())
-        self.ids = [self.id]
+        self.id_ = str(uuid4())
+        self.ids = [self.id_]
         self.document_content = {
-            'id': self.id,
+            'id': self.id_,
             'name': self.name,
             'linklist': ['http://canopsis.org'],
             'mfilter': '{"$and": [{"connector": "collectd"}]}'

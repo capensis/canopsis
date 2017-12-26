@@ -54,8 +54,8 @@ class CheckManagerTest(unittest.TestCase):
                                   context_graph=self.context_graph)
 
         self.name = 'testentitylink'
-        self.id = str(uuid4())
-        self.ids = [self.id]
+        self.id_ = str(uuid4())
+        self.ids = [self.id_]
         self.document_content = {
             'computed_links': [{
                 'label': 'link1',
@@ -64,7 +64,7 @@ class CheckManagerTest(unittest.TestCase):
         }
 
         self.manager.put(
-            self.id,
+            self.id_,
             self.document_content
         )
 
@@ -95,7 +95,7 @@ class LinkListTest(CheckManagerTest):
 
     def test_get(self):
         self.manager.put(
-            self.id + '1',
+            self.id_ + '1',
             self.document_content
         )
 
