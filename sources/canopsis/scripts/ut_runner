@@ -14,7 +14,7 @@ from canopsis.common import root_path
 
 DEFAULT_TEST_DIR = root_path + "/var/lib/canopsis/unittest/canopsis/"
 CANOPSIS_PACKAGE = "canopsis"
-COVERAGE_OUTPUT_FILE = "coverage.xml"
+COVERAGE_OUTPUT_FILE = "~/tests_report/coverage.xml"
 TESTS_REPORT_DIR = "tests_report"
 
 PATTERN = re.compile("^(?!__).*(?!__)\.py$")
