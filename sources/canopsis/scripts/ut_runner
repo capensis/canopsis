@@ -55,7 +55,8 @@ def main():
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
     else:
-        shutil.rmtree(result_dir)
+        for file_ in os.listdir(result_dir):
+            os.remove(os.path.join(result_dir, file_))
 
     cov_filename = os.path.join(root_path, COVERAGE_OUTPUT_FILE)
     if os.path.exists(cov_filename):
