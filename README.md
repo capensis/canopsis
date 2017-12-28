@@ -1,4 +1,6 @@
-# Idées
+# Makefile
+
+## Idées
 
 Des idées qui me semble intéressante à mettre en place dans le makefile.
 
@@ -16,3 +18,9 @@ Des idées qui me semble intéressante à mettre en place dans le makefile.
  - [ ] nettoyer le bordel (dépendance go, binaires, …)
  - [ ] afficher de l'aide
  - [ ] avoir la possibilité de compiler tous les projets en une commande
+ - [ ] lancer les build docker
+
+
+## Problèmes à résoudre
+ - comment installer canopsis
+ -
