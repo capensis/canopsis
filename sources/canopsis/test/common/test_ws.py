@@ -25,7 +25,9 @@
 from unittest import TestCase, main
 
 from canopsis.common.ws import route_name, route, response
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 class RouteNameTest(TestCase):
     """Test the route_name function.
@@ -239,4 +241,7 @@ class ResponseTest(TestCase):
         self.assertTrue(result['success'])
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

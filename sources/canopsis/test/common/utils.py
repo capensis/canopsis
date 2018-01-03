@@ -30,6 +30,9 @@ from canopsis.common.utils import (
 )
 
 from sys import version as PYVER
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class UtilsTest(TestCase):
@@ -158,4 +161,7 @@ class UtilsTest(TestCase):
         self.assertEqual(result, {utf8, 1})
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

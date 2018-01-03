@@ -6,6 +6,9 @@ from unittest import main, TestCase
 import canopsis.context_graph.process as process
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger, OutputNull
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 def create_event(conn, conn_name,  comp=None, res=None, event_type="check", timestamp=None):
@@ -759,4 +762,8 @@ class Test(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)
+

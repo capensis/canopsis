@@ -27,6 +27,9 @@ from unittest import TestCase, main
 from canopsis.schema.utils import (
     get_schema_path, get_unique_key, get_xml, is_name_available
 )
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 def mock_get_schema_path(*args):
@@ -71,4 +74,7 @@ class TestUtils(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

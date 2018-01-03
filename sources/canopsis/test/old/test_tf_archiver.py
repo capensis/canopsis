@@ -30,6 +30,9 @@ from canopsis.old.rabbitmq import Amqp
 from canopsis.old.record import Record
 
 import logging
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 import ConfigParser
 CONFIG = ConfigParser.ConfigParser()
@@ -311,3 +314,9 @@ sys.argv = [sys.argv[0]]
     #              if len(func) >= 4 and func[:4] == 'test']
     # for test in func_tests:
     #    test()
+
+if __name__ == '__main__':
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

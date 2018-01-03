@@ -19,9 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import unittest
 from unittest import TestCase, main
 import math
 from canopsis.common.math_parser import Formulas
+from canopsis.common import root_path
+import xmlrunner
 
 
 class FormulasTest(TestCase):
@@ -70,4 +73,7 @@ class FormulasTest(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

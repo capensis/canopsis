@@ -3,6 +3,7 @@ Beaker==1.5.4
 bottle==0.10.9
 chardet==2.3.0
 configparser==3.5.0
+coverage==4.4.2
 enum34==1.1.6
 extras==0.0.3
 fixtures==1.4.0
@@ -47,5 +48,6 @@ supervisor==3.0a12
 sure==1.2.24
 testtools==2.0.0
 traceback2==1.4.0
+unittest-xml-reporting==2.1.0
 unittest2==1.1.0
 validictory==1.1.1

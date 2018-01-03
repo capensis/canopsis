@@ -1,16 +1,17 @@
 import os
 import unittest
 
-from unittest import TestCase
-
+import unittest
+from canopsis.common import root_path
 from canopsis.common.amqp import AmqpPublisher, AmqpConnection
+import xmlrunner
 
 
 DEFAULT_AMQP_URL = 'amqp://guest:guest@localhost/'
 DEFAULT_AMQP_EXCHANGE = 'test'
 
 
-class TestAmqp(TestCase):
+class TestAmqp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -72,5 +73,7 @@ class TestAmqpPublisher(TestAmqp):
 
 
 if __name__ == '__main__':
-    unittest.main()
-
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

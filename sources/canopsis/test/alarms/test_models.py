@@ -30,6 +30,9 @@ from canopsis.alarms.models import (
     AlarmStep, AlarmIdentity, Alarm, AlarmStatus, AlarmState,
     ALARM_STEP_TYPE_STATE_INCREASE
 )
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class AlarmsModelsTest(TestCase):
@@ -200,4 +203,7 @@ class AlarmsModelsTest(TestCase):
         self.assertEqual(len(self.alarm.steps), last + 1)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

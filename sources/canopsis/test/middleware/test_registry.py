@@ -27,7 +27,9 @@ from canopsis.middleware.registry import MiddlewareRegistry
 from tempfile import NamedTemporaryFile
 
 from os import remove
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 class TestUnregisteredMiddleware(Middleware):
 
@@ -117,4 +119,7 @@ class MiddlewareRegistryTest(TestCase):
             type(middleware_wd) is TestRegisteredWithDataTypeMiddleware)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

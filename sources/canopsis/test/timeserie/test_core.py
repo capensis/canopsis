@@ -19,19 +19,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import unittest
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from math import isnan
 from random import random, randint
 from time import time, mktime
-from unittest import main, TestCase
-
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.timeserie.core import TimeSerie
 from canopsis.timeserie.timewindow import TimeWindow, Period
+import xmlrunner
 
 
-class TimeSerieTest(TestCase):
+class TimeSerieTest(unittest.TestCase):
 
     def setUp(self):
         self.conf = Configuration.load(TimeSerie.CONF_PATH, Ini)
@@ -212,4 +213,7 @@ class TimeSerieTest(TestCase):
         # TODO: do more tests or rewrite perfdatas
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

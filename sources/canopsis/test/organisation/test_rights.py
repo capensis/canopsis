@@ -23,7 +23,9 @@ from logging import getLogger
 from unittest import main, TestCase
 
 from canopsis.organisation.rights import Rights
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 class RightsTest(TestCase):
 
@@ -242,4 +244,7 @@ class RightsTest(TestCase):
         self.assertEqual(content['mail'], 'contact@example.com')
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

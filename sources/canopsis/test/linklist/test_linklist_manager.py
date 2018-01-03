@@ -19,15 +19,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
 from uuid import uuid4
+from canopsis.common import root_path
 
 from canopsis.linklist.manager import Linklist
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
+import xmlrunner
 
 
-class CheckManagerTest(TestCase):
+class CheckManagerTest(unittest.TestCase):
     """
     Base class for all check manager tests.
     """
@@ -41,10 +43,10 @@ class CheckManagerTest(TestCase):
                                 storage=self.linklist_storage)
 
         self.name = 'testlinklist'
-        self.id = str(uuid4())
-        self.ids = [self.id]
+        self.id_ = str(uuid4())
+        self.ids = [self.id_]
         self.document_content = {
-            'id': self.id,
+            'id': self.id_,
             'name': self.name,
             'linklist': ['http://canopsis.org'],
             'mfilter': '{"$and": [{"connector": "collectd"}]}'
@@ -101,4 +103,7 @@ class LinkListTest(CheckManagerTest):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

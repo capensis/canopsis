@@ -20,10 +20,11 @@
 # ---------------------------------
 
 import unittest
-
+from canopsis.common import root_path
 from canopsis.old.file import File, get_cfile
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
+import xmlrunner
 
 from gridfs.errors import NoFile
 import sys
@@ -120,5 +121,8 @@ class KnownValues(unittest.TestCase):
     #     self.assertFalse(myfile.check())
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+if __name__ == '__main__':
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

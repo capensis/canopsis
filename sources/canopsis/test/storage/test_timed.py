@@ -25,7 +25,9 @@ from canopsis.timeserie.timewindow import TimeWindow
 from canopsis.configuration.configurable.decorator import conf_paths
 
 from base import BaseTestConfiguration, BaseStorageTest
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 @conf_paths('storage/test-timed.conf')
 class TestConfiguration(BaseTestConfiguration):
@@ -110,4 +112,7 @@ class PeriodicStoreTest(BaseStorageTest):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)
