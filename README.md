@@ -23,4 +23,6 @@ Des idées qui me semble intéressante à mettre en place dans le makefile.
 
 ## Problèmes à résoudre
  - comment installer canopsis
- -
+ - si dans le makefile on utilise ssh pour clone les repos, on va bloquer les
+ utilisateur qui n'omt pas de clé ssh sur le repo. Ce que l'on peux toujours
+ faire comme [ça](https://stackoverflow.com/a/22027731)
