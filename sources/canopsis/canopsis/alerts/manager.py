@@ -1128,12 +1128,15 @@ class Alerts(object):
                 self.logger.info('Automatically execute {} on {}'
                                  .format(task, alarm_id))
 
-                updated_alarm_value = self.execute_task(name=task,
-                                              event=event,
-                                              entity_id=alarm_id,
-                                              author=self.filter_author,
-                                              new_state=event[vstate])
-                new_value = updated_alarm_value
+                updated_alarm_value = self.execute_task(
+                    name=task,
+                    event=event,
+                    entity_id=alarm_id,
+                    author=self.filter_author,
+                    new_state=event[vstate]
+                )
+                if updated_alarm_value is not None:
+                    new_value = updated_alarm_value
 
                 if updated_alarm_value is not None:
                     updated_once = True
