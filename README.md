@@ -4,19 +4,20 @@
 
 Des idées qui me semble intéressante à mettre en place dans le makefile.
 
- - [ ] Cloner des repo privée (cat) [workaround](https://stackoverflow.com/a/27501176)
- - [ ] Makefile récursif pour factoriser un max de variables et de targets, et
+ - [x] Cloner des repo privée (cat) [workaround](https://stackoverflow.com/a/27501176)
+ utilisation de glide
+ - [x] Makefile récursif pour factoriser un max de variables et de targets, et
  éviter un gros makefile de plusieurs centaines de ligne. Et pour offrir la
  possibité de recompiler un «sous-projet»
- - [ ] initialiser le projet
-   - [ ] télécharger les dépendances
-   - [ ] cloner, si besoin, les repo privée/autres repo public de canopsis.
-   > Je ne sais pas si c'est une bonne idée sauf peut être pour cat. Il
-   > faudra que l'on en parle
- - [ ] lancer les tests unitaires et fonctionnelles
- - [ ] faire des release
+ - [x] initialiser le projet
+   - [x] télécharger les dépendances
+   ~~- [ ] cloner, si besoin, les repo privée/autres repo public de canopsis.~~
+   ~~> Je ne sais pas si c'est une bonne idée sauf peut être pour cat. Il~~
+   ~~> faudra que l'on en parle~~
+ - [ ] lancer les tests unitaires et fonctionnels
+ - [ ] faire des releases
  - [ ] nettoyer le bordel (dépendance go, binaires, …)
- - [ ] afficher de l'aide
+ - [ ] afficher de l'aide (en cours)
  - [ ] avoir la possibilité de compiler tous les projets en une commande
  - [ ] lancer les build docker
 
