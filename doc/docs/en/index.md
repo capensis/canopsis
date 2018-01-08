@@ -3,6 +3,10 @@
 
 ## Getting started
 
+[Glossary](glossary.md)
+
+[Overview](overview.md)
+
 ## User guide
 
 ## Admin guide
