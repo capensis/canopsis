@@ -63,38 +63,37 @@ Configuration
 A `statusmanagement` crecord is needed for the configuration of the time intervals and frequencies, it has the following structure ::
 
 
+{
+"type": "object",
+"properties": {
+        "crecord_type": {
+                "enum": ["statusmanagement"],
+                "required": true
+        },
 
-  {
-        "type": "object",
-        "properties": {
-                "crecord_type": {
-                        "enum": ["statusmanagement"],
-                        "required": true
-                },
+        "restore_event": {
+                "type": "boolean",
+                "required": true,
+                "default": true
+        },
 
-                "restore_event": {
-                        "type": "boolean",
-                        "required": true,
-                        "default": true
-                },
+        "bagot_time": {
+                "type": "number",
+                "required": true
+        },
+        "bagot_show": {
+                "type": "number",
+                "required": true
+        },
 
-                "bagot_time": {
-                        "type": "number",
-                        "required": true
-                },
-                "bagot_show": {
-                        "type": "number",
-                        "required": true
-                },
-
-                "stealthy_time": {
-                        "type": "number",
-                        "required": true
-                },
-                "stealthy_show": {
-                        "type": "number",
-                        "required": true
-                }
+        "stealthy_time": {
+                "type": "number",
+                "required": true
+        },
+        "stealthy_show": {
+                "type": "number",
+                "required": true
         }
-  }
+}
+}
 
