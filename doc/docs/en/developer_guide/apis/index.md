@@ -3,10 +3,15 @@
 
 ## Legacy APIs
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs help` - Print this help message.
+[Account](v1/accound.md)
+
+[Auth login](v1/auth_login.md)
+
+[Calendar event](v1/calendar_event.md)
+
+[Generic Rest](v1/rest.md)
+
+[Send event](v1/send_event.md)
 
 ## New APIs
 
