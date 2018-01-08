@@ -22,7 +22,7 @@ from canopsis.common.init import Init
 from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.event import forger, get_routingkey
+from canopsis.event import get_routingkey
 from canopsis.task.core import register_task
 from canopsis.tools import schema as cschema
 
@@ -107,10 +107,6 @@ class Engine(object):
         self.logger.addHandler(logHandler)
 
         self.max_retries = max_retries
-
-        self.counter_error = 0
-        self.counter_event = 0
-        self.counter_worktime = 0
 
         self.thd_warn_sec_per_evt = 0.6
         self.thd_crit_sec_per_evt = 0.9
@@ -212,8 +208,6 @@ class Engine(object):
 
     def _work(self, event, msg=None, *args, **kargs):
         start = time()
-        error = False
-
         try:
             if self.debug:
                 if 'processing' not in event:
@@ -230,20 +224,13 @@ class Engine(object):
                 self.next_queue(event)
 
         except Exception as err:
-            error = True
             self.logger.error("Worker raise exception: {0}".format(err))
             self.logger.error(format_exc())
-
-        if error:
-            self.counter_error += 1
 
         elapsed = time() - start
 
         if elapsed > 3:
             self.logger.warning("Elapsed time %.2f seconds" % elapsed)
-
-        self.counter_event += 1
-        self.counter_worktime += elapsed
 
     def work(self, event, amqp_msg):
         return event
@@ -265,67 +252,6 @@ class Engine(object):
                 )
 
     def _beat(self):
-        now = int(time())
-
-        if self.last_stat + 60 <= now:
-            self.logger.debug(" + Send stats")
-            self.last_stat = now
-
-            evt_per_sec = 0
-            sec_per_evt = 0
-
-            if self.counter_event:
-                evt_per_sec = float(self.counter_event) / self.beat_interval
-                self.logger.debug(" + %0.2f event(s)/seconds" % evt_per_sec)
-
-            if self.counter_worktime and self.counter_event:
-                sec_per_evt = self.counter_worktime / self.counter_event
-                self.logger.debug(" + %0.5f seconds/event" % sec_per_evt)
-
-            # Submit event
-            if self.send_stats_event and self.counter_event != 0:
-                state = 0
-
-                if sec_per_evt > self.thd_warn_sec_per_evt:
-                    state = 1
-
-                if sec_per_evt > self.thd_crit_sec_per_evt:
-                    state = 2
-
-                perf_data_array = [
-                    {
-                        'retention': self.perfdata_retention,
-                        'metric': 'cps_evt_per_sec',
-                        'value': round(evt_per_sec, 2), 'unit': 'evt'},
-                    {
-                        'retention': self.perfdata_retention,
-                        'metric': 'cps_sec_per_evt',
-                        'value': round(sec_per_evt, 5), 'unit': 's',
-                        'warn': self.thd_warn_sec_per_evt,
-                        'crit': self.thd_crit_sec_per_evt}
-                ]
-
-                self.logger.debug(" + State: {0}".format(state))
-
-                event = forger(
-                    connector="Engine",
-                    connector_name="engine",
-                    event_type="check",
-                    source_type="resource",
-                    resource=self.amqp_queue,
-                    state=state,
-                    state_type=1,
-                    output="%0.2f evt/sec, %0.5f sec/evt" % (
-                        evt_per_sec, sec_per_evt),
-                    perf_data_array=perf_data_array
-                )
-
-                publish(event=event, publisher=self.amqp)
-
-            self.counter_error = 0
-            self.counter_event = 0
-            self.counter_worktime = 0
-
         try:
             self.beat()
 
