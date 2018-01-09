@@ -20,12 +20,9 @@ class MongoStore(object):
     """
 
     CONF_PATH = 'etc/common/mongo_store.conf'
-    CRED_CONF_PATH = 'etc/mongo/storage.conf'
-
     CONF_CAT = 'DATABASE'
-    CRED_CAT = 'DATABASE'
 
-    def __init__(self, config, cred_config):
+    def __init__(self, config):
         """
         To use a replicaset, just use a list of hosts in the configuration.
 
@@ -33,12 +30,9 @@ class MongoStore(object):
 
         host = host1:27017,host2:27017
 
-        :param config: a configuration object
-        :param cred_config: a configuration object
+        :param config dict: a configuration object
         """
         self.config = config
-        self.cred_config = cred_config
-
         conf = self.config.get(self.CONF_CAT, {})
         self.db_name = conf.get('db', DEFAULT_DB_NAME)
         self.host = conf.get('host', DEFAULT_HOST)
@@ -55,7 +49,6 @@ class MongoStore(object):
         # auto_connect=true, safe=true, conn_timeout=20000, in_timeout=20000,
         # out_timeout=100, ssl=false, ssl_key, ssl_cert, user, pwd
 
-        conf = self.cred_config.get(self.CRED_CAT, {})
         self._user = conf.get('user')
         self._pwd = conf.get('pwd')
 
