@@ -20,8 +20,6 @@ class MongoStore(object):
     """
 
     CONF_PATH = 'etc/common/mongo_store.conf'
-    CRED_CONF_PATH = 'etc/mongo/storage.conf'
-
     CONF_CAT = 'DATABASE'
 
     def __init__(self, config):
