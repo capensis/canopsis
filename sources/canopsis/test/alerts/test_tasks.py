@@ -28,6 +28,9 @@ from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
 
 from base import BaseTest
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class TestTasks(BaseTest):
@@ -362,4 +365,7 @@ class TestTasks(BaseTest):
         del self.entitylink_manager
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

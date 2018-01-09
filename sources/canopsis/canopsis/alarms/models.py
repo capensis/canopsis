@@ -133,6 +133,7 @@ class Alarm(object):
             ack,
             canceled,
             creation_date,
+            display_name,
             hard_limit,
             initial_output,
             last_update_date,
@@ -153,6 +154,7 @@ class Alarm(object):
         :param dict alarm_filter: alarm filters informations
         :param AlarmStep canceled: canceled step
         :param int creation_date: alarm creation timestamp
+        :param str display_name: displayed name of the alarm
         :param dict extra: extra informations (domain, perimeter...)
         :param bool hard_limit: hardlimit reached
         :param str initial_output: first output message
@@ -171,6 +173,7 @@ class Alarm(object):
         self.alarm_filter = alarm_filter
         self.canceled = canceled
         self.creation_date = creation_date
+        self.display_name = display_name
         self.entity = None
         self.extra = extra
         self.hard_limit = hard_limit
@@ -198,6 +201,7 @@ class Alarm(object):
             'creation_date': self.creation_date,
             'connector': self.identity.connector,
             'connector_name': self.identity.connector_name,
+            'display_name': self.display_name,
             'initial_output': self.initial_output,
             'last_update_date': self.last_update_date,
             'hard_limit': self.hard_limit,

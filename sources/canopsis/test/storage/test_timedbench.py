@@ -31,6 +31,9 @@ from canopsis.configuration.configurable.decorator import add_category
 from base import BaseTestConfiguration, BaseStorageTest
 
 from time import time
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 @conf_paths('storage/timedbench.conf')
@@ -98,6 +101,8 @@ class TimedBench(BaseStorageTest):
                     func=storage.remove, count=count, batch=batch_size
                 )
 
-
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

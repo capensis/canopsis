@@ -19,7 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
+from canopsis.common import root_path
 
 from canopsis.common.utils import path
 from canopsis.task.core import (
@@ -28,6 +29,7 @@ from canopsis.task.core import (
     run_task, register_tasks, register_task, unregister_tasks,
     tasks, RESULT, ERROR
 )
+import xmlrunner
 
 
 def test_exception(**kwargs):
@@ -38,7 +40,7 @@ def test_exception(**kwargs):
 COUNT = 'count'
 
 
-class TaskUnregisterTest(TestCase):
+class TaskUnregisterTest(unittest.TestCase):
     """
     Test unregister_tasks function
     """
@@ -82,7 +84,7 @@ class TaskUnregisterTest(TestCase):
         TASKS_BY_ID.update(_TASKS_BY_ID)
 
 
-class TaskRegistrationTest(TestCase):
+class TaskRegistrationTest(unittest.TestCase):
     """
     Test to register tasks.
     """
@@ -127,7 +129,7 @@ class TaskRegistrationTest(TestCase):
         self.assertEqual(old_tasks, self_tasks_wo_b)
 
 
-class GetTaskTest(TestCase):
+class GetTaskTest(unittest.TestCase):
     """
     Test get task function.
     """
@@ -152,7 +154,7 @@ class GetTaskTest(TestCase):
         self.assertEqual(task, GetTaskTest)
 
 
-class TaskRegistrationDecoratorTest(TestCase):
+class TaskRegistrationDecoratorTest(unittest.TestCase):
     """
     Test registration decorator
     """
@@ -191,7 +193,7 @@ class TaskRegistrationDecoratorTest(TestCase):
         self.assertRaises(TaskError, register_task, toto)
 
 
-class GetTaskWithParamsTest(TestCase):
+class GetTaskWithParamsTest(unittest.TestCase):
     """
     Test get task with params function.
     """
@@ -267,7 +269,7 @@ class GetTaskWithParamsTest(TestCase):
     #     self.assertTrue(task_cached_0 is task_cached_1)
 
 
-class RunTaskTest(TestCase):
+class RunTaskTest(unittest.TestCase):
     """
     Test run task.
     """
@@ -319,7 +321,7 @@ class RunTaskTest(TestCase):
         self.assertEqual(result, 5)
 
 
-class NewConfTest(TestCase):
+class NewConfTest(unittest.TestCase):
     """
     Test new conf.
     """
@@ -373,7 +375,7 @@ class NewConfTest(TestCase):
         self.assertEqual(conf[TASK_PARAMS], params)
 
 
-class TasksTest(TestCase):
+class TasksTest(unittest.TestCase):
     """
     Test tasks function.
     """
@@ -449,4 +451,7 @@ class TasksTest(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

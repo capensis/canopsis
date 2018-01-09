@@ -22,14 +22,15 @@
 """Test the MongoFileStorage.
 """
 
-from unittest import TestCase, main
-
+import unittest
+from canopsis.common import root_path
 from canopsis.mongo.file import MongoFileStorage
 from pymongo import version as pymongov
 from time import sleep
+import xmlrunner
 
 
-class MongoFileStorageTest(TestCase):
+class MongoFileStorageTest(unittest.TestCase):
     """Test MongoFileStream.
     """
     def setUp(self):
@@ -167,4 +168,7 @@ class MongoFileStorageTest(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

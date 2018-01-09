@@ -1030,6 +1030,7 @@ class TestManager(BaseTest):
             'state': Check.MINOR,
             'state_type': 1,
             'timestamp': 0,
+            'links': {}
         }
 
         expected_event1 = {
@@ -1044,6 +1045,7 @@ class TestManager(BaseTest):
             'state_type': 1,
             'status': 1,
             'timestamp': 0,
+            'links': {}
         }
 
         expected_event2 = {
@@ -1059,6 +1061,7 @@ class TestManager(BaseTest):
             'state_type': 1,
             'state': Check.OK,
             'timestamp': 0,
+            'links': {}
         }
 
         self.assertEqual(len(events), 3)
@@ -1203,6 +1206,24 @@ class TestManager(BaseTest):
         self.assertTrue(AlarmField.last_event_date.value in alarm['value'])
         ts = alarm['value'][AlarmField.last_event_date.value]
         self.assertTrue(int(time()) - ts < 10)
+
+    def test_check_if_display_name_exists(self):
+        self.assertFalse(self.manager.check_if_display_name_exists('toto'))
+
+        alarm_id = 'ut-comp'
+        alarm = self.manager.make_alarm(
+            alarm_id,
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': 0
+            }
+        )
+        self.manager.update_current_alarm(alarm, alarm['value'])
+
+        disp_name = alarm['value'][AlarmField.display_name.value]
+        self.assertTrue(self.manager.check_if_display_name_exists(disp_name))
 
 if __name__ == '__main__':
     main()

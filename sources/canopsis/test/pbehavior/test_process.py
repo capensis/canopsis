@@ -30,7 +30,9 @@ from canopsis.pbehavior.process import event_processing, beat_processing,\
     PBEHAVIOR_CREATE, PBEHAVIOR_DELETE
 from canopsis.context_graph.manager import ContextGraph
 from test_base import BaseTest, MockEngine
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 class TestProcess(BaseTest):
 
@@ -79,7 +81,8 @@ class TestProcess(BaseTest):
         # method compute_pbehaviors_filters is tested in method TestManager.test_compute_pbehaviors_filters
 
 
-
-
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

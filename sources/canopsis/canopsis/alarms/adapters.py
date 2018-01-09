@@ -108,6 +108,7 @@ class AlarmAdapter(object):
             "_id": alarm._id
         }
         col_adapter = self.mongo_client[self.COLLECTION]
+
         col_adapter.update(selector, alarm.to_dict())
 
         return alarm
@@ -158,6 +159,7 @@ def make_alarm_from_mongo(alarm_dict):
         ack=ack,
         canceled=cancel,
         creation_date=ald.get('creation_date'),
+        display_name=ald.get('display_name', None),
         hard_limit=ald.get('hard_limit'),
         initial_output=ald.get('initial_output'),
         last_update_date=ald.get('last_update_date'),

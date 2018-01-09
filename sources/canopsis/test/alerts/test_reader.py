@@ -30,7 +30,9 @@ from canopsis.entitylink.manager import Entitylink
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 from base import BaseTest
 
 
@@ -566,4 +568,8 @@ class TestReader(BaseTest):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)
+

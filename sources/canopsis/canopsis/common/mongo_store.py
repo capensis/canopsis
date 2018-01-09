@@ -25,16 +25,19 @@ class MongoStore(object):
     CONF_CAT = 'DATABASE'
     CRED_CAT = 'DATABASE'
 
-    def __init__(self, config, cred_config=None):
+    def __init__(self, config):
         """
+        To use a replicaset, just use a list of hosts in the configuration.
+
+        Example:
+
+        host = host1:27017,host2:27017
+
         :param config dict: a configuration object
         :param cred_config dict: a configuration object containing credentials.
             If None, credentials will be sourced from the primary config dict.
         """
         self.config = config
-        if cred_config is None:
-            self.cred_config = self.config
-
         conf = self.config.get(self.CONF_CAT, {})
         self.db_name = conf.get('db', DEFAULT_DB_NAME)
         self.host = conf.get('host', DEFAULT_HOST)
@@ -51,7 +54,6 @@ class MongoStore(object):
         # auto_connect=true, safe=true, conn_timeout=20000, in_timeout=20000,
         # out_timeout=100, ssl=false, ssl_key, ssl_cert, user, pwd
 
-        conf = self.cred_config.get(self.CRED_CAT, {})
         self._user = conf.get('user')
         self._pwd = conf.get('pwd')
 

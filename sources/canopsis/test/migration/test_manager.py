@@ -19,9 +19,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import unittest
 from unittest import main, TestCase
-
+from canopsis.common import root_path
 from canopsis.migration.manager import MigrationTool, MigrationModule
+import xmlrunner
 
 
 class MigrationToolTest(TestCase):
@@ -44,4 +46,7 @@ class MigrationModuleTest(TestCase):
     #    self.assertEqual(res, 0)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

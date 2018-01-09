@@ -20,6 +20,9 @@
 # ---------------------------------
 
 from unittest import TestCase, main
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 # from canopsis.mongo.periodical import PeriodicalStorage
 # from canopsis.timeserie.timewindow import TimeWindow
@@ -171,4 +174,7 @@ class PeriodicalStorageTest(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

@@ -4,9 +4,11 @@ from __future__ import unicode_literals
 
 from time import sleep
 import unittest
-
+from canopsis.common import root_path
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.mongo_store import MongoStore, DEFAULT_DB_NAME
+from canopsis.confng import Configuration, Ini
+import xmlrunner
 
 
 class TestEtherealData(unittest.TestCase):
@@ -46,4 +48,7 @@ class TestEtherealData(unittest.TestCase):
         self.assertEqual(self.ed.get('sonic'), 'tails')
 
 if __name__ == '__main__':
-    unittest.main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)
