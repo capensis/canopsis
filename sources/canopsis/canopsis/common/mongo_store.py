@@ -27,6 +27,12 @@ class MongoStore(object):
 
     def __init__(self, config, cred_config):
         """
+        To use a replicaset, just use a list of hosts in the configuration.
+
+        Example:
+
+        host = host1:27017,host2:27017
+
         :param config: a configuration object
         :param cred_config: a configuration object
         """
