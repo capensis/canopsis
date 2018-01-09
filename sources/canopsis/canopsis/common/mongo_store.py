@@ -23,7 +23,6 @@ class MongoStore(object):
     CRED_CONF_PATH = 'etc/mongo/storage.conf'
 
     CONF_CAT = 'DATABASE'
-    CRED_CAT = 'DATABASE'
 
     def __init__(self, config):
         """
@@ -34,8 +33,6 @@ class MongoStore(object):
         host = host1:27017,host2:27017
 
         :param config dict: a configuration object
-        :param cred_config dict: a configuration object containing credentials.
-            If None, credentials will be sourced from the primary config dict.
         """
         self.config = config
         conf = self.config.get(self.CONF_CAT, {})
