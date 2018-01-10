@@ -19,7 +19,7 @@ Des idées qui me semble intéressante à mettre en place dans le makefile.
  - [ ] nettoyer le bordel (dépendance go, binaires, …)
  - [ ] afficher de l'aide (en cours)
  - [ ] avoir la possibilité de compiler tous les projets en une commande
- - [ ] lancer les build docker
+ - [x] lancer les build docker
  - [ ] démarrer les images dockers en une seule fois. Docker-compose ?
  - [ ] exécuter des tests pour les images docker
 
