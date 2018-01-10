@@ -134,15 +134,17 @@ def exports(ws):
         for alarm in alarms['alarms']:
             tmp_entity_id = alarm['d']
 
-            alarm['links'] = entity_dict[alarm['d']]['links']
+            if alarm['d'] in entity_dict:
+                alarm['links'] = entity_dict[alarm['d']]['links']
 
-            # TODO: 'infos' is already present in entity. Remove this one if unused.
-            if tmp_entity_id in entity_dict:
-                data = entity_dict[alarm['d']]['infos']
-                if alarm.get('infos'):
-                    alarm['infos'].update(data)
-                else:
-                    alarm['infos'] = data
+                # TODO: 'infos' is already present in entity.
+                # Remove this one if unused.
+                if tmp_entity_id in entity_dict:
+                    data = entity_dict[alarm['d']]['infos']
+                    if alarm.get('infos'):
+                        alarm['infos'].update(data)
+                    else:
+                        alarm['infos'] = data
 
             list_alarm.append(alarm)
 
