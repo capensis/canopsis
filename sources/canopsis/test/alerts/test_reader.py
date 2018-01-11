@@ -302,7 +302,7 @@ class TestReader(BaseTest):
 
     def test__get_final_filter_bnf(self):
         view_filter = {'$and': [{'resource': 'companion cube'}]}
-        time_filter = {}
+        time_filter = {'glados': 'shell'}
         bnf_search = 'NOT resource="turret"'
         active_columns = ['resource', 'component']
 
@@ -312,7 +312,8 @@ class TestReader(BaseTest):
 
         ref_filter = {
             '$and': [
-                {'$and': [{'resource': 'companion cube'}]},
+                view_filter,
+                time_filter,
                 {'resource': {'$not': {'$eq': 'turret'}}}
             ]
         }
@@ -320,7 +321,7 @@ class TestReader(BaseTest):
 
     def test__get_final_filter_natural(self):
         view_filter = {'$and': [{'resource': 'companion cube'}]}
-        time_filter = {}
+        time_filter = {'glados': 'shell'}
         search = 'turret'
         active_columns = ['resource', 'component']
 
@@ -328,9 +329,11 @@ class TestReader(BaseTest):
             view_filter, time_filter, search, active_columns
         )
 
+        self.maxDiff = None
         ref_filter = {
             '$and': [
-                {'$and': [{'resource': 'companion cube'}]},
+                view_filter,
+                time_filter,
                 {
                     '$or': [
                         {'resource': {'$regex': 'turret'}},
