@@ -386,6 +386,9 @@ def exports(ws):
                 enriched_entity['connector_name'] = (
                     tmp_alarm['connector_name']
                 )
+                enriched_entity['last_update_date'] = tmp_alarm.get(
+                    'last_update_date', None
+                )
                 enriched_entity['component'] = tmp_alarm['component']
                 if 'resource' in tmp_alarm.keys():
                     enriched_entity['resource'] = tmp_alarm['resource']
@@ -506,6 +509,9 @@ def exports(ws):
                 enriched_entity['connector'] = current_alarm['connector']
                 enriched_entity['connector_name'] = (
                     current_alarm['connector_name']
+                )
+                enriched_entity['last_update_date'] = current_alarm.get(
+                    'last_update_date', None
                 )
                 enriched_entity['component'] = current_alarm['component']
                 next_run = (current_alarm.get(AlarmField.alarmfilter.value, {})
