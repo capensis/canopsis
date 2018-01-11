@@ -411,6 +411,62 @@ class AlertsReader(object):
 
             return query.count(True), False
 
+    def _get_final_filter(
+        self, view_filter, time_filter, search, active_columns
+    ):
+        """
+        Computes the real filter:
+
+        The view filter and time filter are always part of the final filter,
+        if not empty.
+
+        In the search matches the BNF grammar,
+        it is appended to the final filter.
+
+        Otherwise, regex on columns is made.
+
+
+        All filters are aggregated with $and.
+
+
+        {
+            '$and': [
+                view_filter,
+                time_filter,
+                bnf_filter | column_filter
+            ]
+        }
+        """
+        final_filter = {'$and': []}
+
+        t_view_filter = self._translate_filter(view_filter)
+        # add the view filter if not empty
+        if view_filter not in [None, {}]:
+            final_filter['$and'].append(t_view_filter)
+
+        if time_filter not in [None, {}]:
+            final_filter['$and'].append(time_filter)
+
+        # try grammar search
+        try:
+            _, bnf_search_filter = self.interpret_search(search)
+            bnf_search_filter = self._translate_filter(bnf_search_filter)
+        except ValueError:
+            bnf_search_filter = None
+
+        if bnf_search_filter is not None:
+            final_filter['$and'].append(bnf_search_filter)
+
+        else:
+            column_filter = {"$or": []}
+            for column in active_columns:
+                column_filter["$or"].append({column: {"$regex": search}})
+            column_filter['$or'].append({'d': {'$regex': search}})
+
+            final_filter['$and'].append(column_filter)
+
+        return final_filter
+
     def get(
             self,
             tstart=None,
@@ -482,40 +538,9 @@ class AlertsReader(object):
         result = None
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
-        if natural_search:
-            res_filter = {"$or": []}
-            for column in active_columns:
-                res_filter["$or"].append({column: {"$regex": search}})
-
-            if filter_ in [None, {}]:
-                filter_ = {
-                    '$or': [
-                        {'$and': [{"d": {"$regex": search}}, time_filter]},
-                        {'$and': [res_filter, time_filter]}
-                    ]
-                }
-            else:
-                filter_ = self._translate_filter(filter_)
-                filter_ = {'$and': [filter_, time_filter, res_filter]}
-
-        else:
-            try:
-                search_context, search_filter = self.interpret_search(search)
-                search_filter = self._translate_filter(search_filter)
-            except ValueError:
-                search_filter = {}
-                search_context = None
-
-            if search_context == 'all':
-                filter_ = {'$and': [time_filter, search_filter]}
-
-            else:
-                filter_ = self._translate_filter(filter_)
-
-                filter_ = {'$and': [time_filter, filter_]}
-
-                if search_filter:
-                    filter_ = {'$and': [filter_, search_filter]}
+        final_filter = self._get_final_filter(
+            filter_, time_filter, search, active_columns
+        )
 
         pipeline = [
             {
@@ -531,7 +556,7 @@ class AlertsReader(object):
                     "preserveNullAndEmptyArrays": True,
                 }
             }, {
-                "$match": filter_
+                "$match": final_filter
             }, {
                 "$sort": {
                     sort_key: sort_dir
@@ -549,11 +574,11 @@ class AlertsReader(object):
         alarms = list(result)
         limited_total = len(alarms)  # Manual count is much faster than mongo's
 
-        count_query = self.alarm_storage._backend.find(filter_)
+        count_query = self.alarm_storage._backend.find(final_filter)
         total, truncated = self._get_fast_count(
             count_query,
             tstart, tstop, opened, resolved,
-            filter_, search
+            final_filter, search
         )
 
         first = 0 if limited_total == 0 else skip + 1
