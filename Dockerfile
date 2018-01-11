@@ -6,11 +6,8 @@ RUN apt-get update \
   && apt-get -y install python \
     python-pip \
     build-essential \
-    ssh \
-    sudo \
     bash \
     bash-completion \
-    rsync \
     apt-transport-https \
     python2.7-dev \
     python-virtualenv \
@@ -22,12 +19,6 @@ RUN apt-get update \
     lsb-core \
     lsb \
     libssl-dev \
-    libldap-dev \
-    rsync \
-    snmp \
-    smitools \
-    smistrip \
-    wget \
     patch \
     ca-certificates \
     libffi6 \
@@ -44,11 +35,7 @@ RUN apt-get update \
     libtasn1-6 \
     libxmlsec1 \
     libxmlsec1-dev \
-    openssl \
-    vim \
-  && apt-get -y install -d snmp-mibs-downloader \
-  && dpkg -x /var/cache/apt/archives/snmp-mibs-downloader_1.1_all.deb / \
-  && download-mibs \
+    libldap2-dev \
   && apt-get clean
 
 FROM canopsis-base as canopsis-engines
@@ -69,14 +56,17 @@ RUN mkdir -p ${canopsis_install_dir}/var/log/engines \
   && mkdir -p ${canopsis_install_dir}/var/lib/canopsis/unittest \
   && mkdir -p ${canopsis_install_dir}/var/run \
   && mkdir -p ${canopsis_install_dir}/tmp \
-  && mkdir -p ${canopsis_install_dir}/etc/init.d \
   && mkdir -p ${canopsis_install_dir}/repo \
   && mkdir -p ${canopsis_install_dir}/repo/canopsis-externals/
 
 COPY sources/db-conf/opt/ ${canopsis_install_dir}/opt/
+
+
+COPY sources/externals/debian_9 ${canopsis_install_dir}/repo/canopsis-externals/debian_9
+
 COPY sources/externals/python-libs ${canopsis_install_dir}/repo/canopsis-externals/python-libs
 
-COPY sources/extra/conf/supervisord.conf ${canopsis_install_dir}/etc/supervisord.conf
+#COPY sources/extra/conf/supervisord.conf ${canopsis_install_dir}/etc/supervisord.conf
 RUN virtualenv ${canopsis_install_dir}/
 RUN echo "[easy_install]\nallow_hosts = ''\nfind_links = file://${canopsis_install_dir}/repo/canopsis-externals/python-libs/" > /root/.pydistutils.cfg
 
@@ -86,22 +76,29 @@ RUN . ${canopsis_install_dir}/bin/activate \
 COPY sources/canopsis ${canopsis_install_dir}/repo/canopsis
 
 # TODO modifier
-RUN . ${PREFIX}/bin/activate \
-  && pip install --no-index --find-links=file://${PREFIX}/repo/canopsis-externals/python-libs/ ${PREFIX}/repo/canopsis
+RUN . ${canopsis_install_dir}/bin/activate \
+  && pip install --no-index --find-links=file://${canopsis_install_dir}/repo/canopsis-externals/python-libs/ -r ${canopsis_install_dir}/repo/canopsis/requirements-engines.txt ${canopsis_install_dir}/repo/canopsis \
+  && rm -rf ${canopsis_install_dir}/repo/canopsis-externals
 
-RUN rsync -avKSH  ${PREFIX}/repo/canopsis/etc/ ${PREFIX}/etc/
 
-ADD files/amqp.conf ${PREFIX}/etc
-ADD files/cstorage.conf ${PREFIX}/etc
-ADD files/mongo/storage.conf ${PREFIX}/etc/mongo
-ADD files/mongo/mongo_store.conf ${PREFIX}/etc/common
-ADD files/influx/storage.conf ${PREFIX}/etc/influx
+COPY sources/canopsis/etc ${canopsis_install_dir}/etc
+#RUN rsync -avKSH  ${canopsis_install_dir}/repo/canopsis/etc/ ${canopsis_install_dir}/etc/
 
-RUN . ${PREFIX}/bin/activate \
-  && cd ${PREFIX}/repo/canopsis-cat/sources/canopsis_cat/ && pip install --no-index --find-links=file://${PREFIX}/repo/canopsis-externals/python-libs/ .
+COPY files/amqp.conf ${canopsis_install_dir}/etc
+RUN  mkdir -p ${canopsis_install_dir}/etc/init.d
 
-RUN rsync -avKSH  ${PREFIX}/repo/canopsis-cat/sources/canopsis_cat/etc/ ${PREFIX}/etc/
+COPY files/cstorage.conf ${canopsis_install_dir}/etc
+COPY files/mongo/storage.conf ${canopsis_install_dir}/etc/mongo
+COPY files/mongo/mongo_store.conf ${canopsis_install_dir}/etc/common
+#COPY sources/canopsis/etc/influx/storage.conf ${canopsis_install_dir}/etc/influx
 
-RUN rm -rf ${PREFIX}/repo/canopsis-externals/python-libs
+#RUN . ${canopsis_install_dir}/bin/activate \
+# && cd ${canopsis_install_dir}/repo/canopsis-cat/sources/canopsis_cat/ && pip install --no-index --find-links=file://${canopsis_install_dir}/repo/canopsis-externals/python-libs/ .
 
-RUN chown -R ${CANOPSIS_USER}:${CANOPSIS_GROUP} ${PREFIX}
+#RUN rsync -avKSH  ${canopsis_install_dir}/repo/canopsis-cat/sources/canopsis_cat/etc/ ${canopsis_install_dir}/etc/
+
+
+RUN chown -R ${canopsis_user}:${canopsis_group} ${canopsis_install_dir}
+
+ADD files/entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]
