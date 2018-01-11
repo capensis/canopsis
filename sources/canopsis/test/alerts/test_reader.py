@@ -300,6 +300,48 @@ class TestReader(BaseTest):
             self.assertEqual(tkey, case['tkey'])
             self.assertEqual(tdir, case['tdir'])
 
+    def test__get_final_filter_bnf(self):
+        view_filter = {'$and': [{'resource': 'companion cube'}]}
+        time_filter = {}
+        bnf_search = 'NOT resource="turret"'
+        active_columns = ['resource', 'component']
+
+        filter_ = self.reader._get_final_filter(
+            view_filter, time_filter, bnf_search, active_columns
+        )
+
+        ref_filter = {
+            '$and': [
+                {'$and': [{'resource': 'companion cube'}]},
+                {'resource': {'$not': {'$eq': 'turret'}}}
+            ]
+        }
+        self.assertEqual(ref_filter, filter_)
+
+    def test__get_final_filter_natural(self):
+        view_filter = {'$and': [{'resource': 'companion cube'}]}
+        time_filter = {}
+        search = 'turret'
+        active_columns = ['resource', 'component']
+
+        filter_ = self.reader._get_final_filter(
+            view_filter, time_filter, search, active_columns
+        )
+
+        ref_filter = {
+            '$and': [
+                {'$and': [{'resource': 'companion cube'}]},
+                {
+                    '$or': [
+                        {'resource': {'$regex': 'turret'}},
+                        {'component': {'$regex': 'turret'}},
+                        {'d': {'$regex': 'turret'}}
+                    ]
+                }
+            ]
+        }
+        self.assertEqual(ref_filter, filter_)
+
     def test_clean_fast_count_cache(self):
         class MockQuery(object):
             def __init__(self, count):
