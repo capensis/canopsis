@@ -517,24 +517,29 @@ class AlertsReader(object):
                 if search_filter:
                     filter_ = {'$and': [filter_, search_filter]}
 
-        pipeline = [{
-            "$lookup": {
-                "from": "default_entities",
-                "localField": "d",
-                "foreignField": "_id",
-                "as": "entity"
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "default_entities",
+                    "localField": "d",
+                    "foreignField": "_id",
+                    "as": "entity"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$entity",
+                    "preserveNullAndEmptyArrays": True,
+                }
+            }, {
+                "$match": filter_
+            }, {
+                "$sort": {
+                    sort_key: sort_dir
+                }
+            }, {
+                "$skip": skip
             }
-        }, {
-            "$unwind": "$entity"
-        }, {
-            "$match": filter_
-        }, {
-            "$sort": {
-                sort_key: sort_dir
-            }
-        }, {
-            "$skip": skip
-        }]
+        ]
 
         if limit is not None:
             pipeline.append({"$limit": limit})
