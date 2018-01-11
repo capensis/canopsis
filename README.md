@@ -14,9 +14,10 @@ Des idées qui me semble intéressante à mettre en place dans le makefile.
    ~~- [ ] cloner, si besoin, les repo privée/autres repo public de canopsis.~~
    ~~> Je ne sais pas si c'est une bonne idée sauf peut être pour cat. Il~~
    ~~> faudra que l'on en parle~~
- - [ ] lancer les tests unitaires et fonctionnels
+ - [x] lancer les tests unitaires
+ - [ ] lancer les tests  fonctionnels
  - [ ] faire des releases
- - [ ] nettoyer le bordel (dépendance go, binaires, …)
+ - [x] nettoyer le bordel (dépendance go, binaires, …)
  - [ ] afficher de l'aide (en cours)
  - [ ] avoir la possibilité de compiler tous les projets en une commande
  - [x] lancer les build docker
