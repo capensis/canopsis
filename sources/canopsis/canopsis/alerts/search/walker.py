@@ -20,7 +20,7 @@
 
 from __future__ import unicode_literals
 
-from re import compile as compile_
+import re
 
 from grako.model import NodeWalker
 
@@ -104,7 +104,7 @@ class Walker(NodeWalker):
 
         if not_ is None:
             if op == '$regex':
-                return {left: {op: compile_(right)}}
+                return {left: {op: re.compile(right, re.I)}}
 
             elif op == '$in':
                 return {left: {op: [right]}}
@@ -114,7 +114,7 @@ class Walker(NodeWalker):
 
         else:
             if op == '$regex':
-                return {left: {'$not': compile_(right)}}
+                return {left: {'$not': re.compile(right, re.I)}}
 
             elif op == '$in':
                 return {left: {'$nin': [right]}}
