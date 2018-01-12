@@ -451,7 +451,7 @@ class AlertsReader(object):
         try:
             _, bnf_search_filter = self.interpret_search(search)
             bnf_search_filter = self._translate_filter(bnf_search_filter)
-        except ValueError:
+        except ValueError as exc:
             bnf_search_filter = None
 
         if bnf_search_filter is not None:

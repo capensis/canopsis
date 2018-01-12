@@ -103,7 +103,10 @@ class Walker(NodeWalker):
         right = self.walk(node.right)
 
         if not_ is None:
-            if op == '$in':
+            if op == '$regex':
+                return {left: {op: compile_(right)}}
+
+            elif op == '$in':
                 return {left: {op: [right]}}
 
             else:
