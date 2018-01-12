@@ -460,8 +460,12 @@ class AlertsReader(object):
         else:
             column_filter = {"$or": []}
             for column in active_columns:
-                column_filter["$or"].append({column: {"$regex": search}})
-            column_filter['$or'].append({'d': {'$regex': search}})
+                column_filter["$or"].append(
+                    {column: {"$regex": search, '$options': 'i'}}
+                )
+            column_filter['$or'].append(
+                {'d': {'$regex': search, '$options': 'i'}}
+            )
 
             final_filter['$and'].append(column_filter)
 

@@ -336,9 +336,9 @@ class TestReader(BaseTest):
                 time_filter,
                 {
                     '$or': [
-                        {'resource': {'$regex': 'turret'}},
-                        {'component': {'$regex': 'turret'}},
-                        {'d': {'$regex': 'turret'}}
+                        {'resource': {'$regex': 'turret', '$options': 'i'}},
+                        {'component': {'$regex': 'turret', '$options': 'i'}},
+                        {'d': {'$regex': 'turret', '$options': 'i'}}
                     ]
                 }
             ]
