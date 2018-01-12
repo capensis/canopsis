@@ -27,3 +27,6 @@ Cette section couvre les informations utiles aux administrateurs de Canopsis
 
  - [SNMP](snmp.md)
 
+## Dépannage
+
+ - [Gestion d'un cas de disque plein sur Mongo 2](troubleshooting/fulldisk_mongo2.md)
