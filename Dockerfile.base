@@ -1,4 +1,4 @@
-FROM debian:jessie-slim
+FROM debian:jessie-slim as canopsis-base
 
 # define environment variables
 ENV canopsis_install_dir /opt/canopsis
@@ -57,10 +57,11 @@ RUN  mkdir -p ./etc/init.d
 COPY files/cstorage.conf ./etc
 COPY files/mongo/* ./etc/mongo/
 
-RUN chown -R ${canopsis_user}:${canopsis_group} .
 
-# Install Canopsis package
-USER canopsis:canopsis
+# Install Canopsis requirements
 COPY ./sources/canopsis/requirements.txt ./
 RUN virtualenv .
 RUN . bin/activate && pip install -r ./requirements.txt && rm ./requirements.txt
+
+# Set correct permission
+RUN chown -R ${canopsis_user}:${canopsis_group} *
