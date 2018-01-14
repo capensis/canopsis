@@ -1,0 +1,66 @@
+FROM debian:jessie-slim
+
+# define environment variables
+ENV canopsis_install_dir /opt/canopsis
+ENV canopsis_user canopsis
+ENV canopsis_group canopsis
+
+# install canopsis debian dependancies.
+RUN echo "deb http://ftp.fr.debian.org/debian/ jessie non-free" >> /etc/apt/sources.list
+
+RUN apt-get update \
+  && apt-get -y install python \
+    python-pip \
+    build-essential \
+    bash \
+    bash-completion \
+    apt-transport-https \
+    python2.7-dev \
+    python-virtualenv \
+    libcurl4-openssl-dev \
+    libsasl2-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    base-files \
+    lsb-core \
+    lsb \
+    libssl-dev \
+    patch \
+    ca-certificates \
+    libffi6 \
+    libffi-dev \
+    libgmp10 \
+    libgnutls-deb0-28 \
+    libhogweed2 \
+    libicu52 \
+    libidn11 \
+    libnettle4 \
+    libp11-kit0 \
+    libpsl0 \
+    libssl1.0.0 \
+    libtasn1-6 \
+    libxmlsec1 \
+    libxmlsec1-dev \
+    libldap2-dev \
+  && apt-get clean
+
+# Create canopsis environment
+RUN groupadd ${canopsis_group} && useradd -d ${canopsis_install_dir} -m -g ${canopsis_group} -s /bin/bash ${canopsis_user}
+RUN mkdir -p ${canopsis_install_dir}/{/var/log/engines,/var/cache/canopsis,/var/lib/canopsis/unittest,/var/run,/tmp,/repo}
+COPY ./files/sudoers /etc/sudoers.d/canopsis
+WORKDIR ${canopsis_install_dir}
+COPY files/bashrc .bashrc
+
+# Install docker specific configuration files
+COPY sources/canopsis/etc ./etc
+RUN  mkdir -p ./etc/init.d
+COPY files/cstorage.conf ./etc
+COPY files/mongo/* ./etc/mongo/
+
+RUN chown -R ${canopsis_user}:${canopsis_group} .
+
+# Install Canopsis package
+USER canopsis:canopsis
+COPY ./sources/canopsis/requirements.txt ./
+RUN virtualenv .
+RUN . bin/activate && pip install -r ./requirements.txt && rm ./requirements.txt
