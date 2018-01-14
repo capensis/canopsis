@@ -65,18 +65,3 @@ RUN . bin/activate && pip install -r ./requirements.txt && rm ./requirements.txt
 
 # Set correct permission
 RUN chown -R ${canopsis_user}:${canopsis_group} *
-
-
-
-from adewarumez/canopsis-base
-
-# define environment variables
-ENV canopsis_install_dir /opt/canopsis
-ENV canopsis_user canopsis
-ENV canopsis_group canopsis
-
-# Install canopsis package
-ENV SRC_DIR ./tmp/canopsis
-USER canopsis:canopsis
-COPY --chown=canopsis:canopsis ./sources/canopsis $SRC_DIR
-RUN . bin/activate && rm $SRC_DIR/etc/mongo/*.conf && rm $SRC_DIR/etc/amqp.conf && rm $SRC_DIR/etc/cstorage.conf && pip install -e $SRC_DIR # && rm $SRC_DIR -rf Does not work
