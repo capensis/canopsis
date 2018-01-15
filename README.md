@@ -38,10 +38,11 @@ import "git.canopsis.net/canopsis/go-revolution/canopsis"
 
 ## Go Dependencies
 
+In `canopsis`, use [glide](https://glide.sh/).
+
 ```
-go get "github.com/golang/glog"
-go get "github.com/google/uuid"
-go get "github.com/smartystreets/goconvey/convey"
+cd canopsis
+glide update
 ```
 
 ## GoConvey
