@@ -436,6 +436,18 @@ class AlertsReader(object):
                 bnf_filter | column_filter
             ]
         }
+
+        :param view_filter dict: the filter given by the canopsis view.
+        :param time_filter dict: hehe. dunno.
+        :param search str: text to search in columns, or a BNF valid search as
+            defined by the grammar in etc/search/grammar.bnf
+
+            The BNF grammar is tried first, if the string does not comply with
+            the grammar, column search is used instead.
+        :param active_columns list[str]: list of columns to search in.
+            in a column ends with '.' it will be ignored.
+
+            The 'd' column is always added.
         """
         final_filter = {'$and': []}
 
@@ -460,6 +472,9 @@ class AlertsReader(object):
         else:
             column_filter = {"$or": []}
             for column in active_columns:
+                if column[-1] == '.':
+                    continue
+
                 column_filter["$or"].append({column: {"$regex": search}})
             column_filter['$or'].append({'d': {'$regex': search}})
 
@@ -501,7 +516,8 @@ class AlertsReader(object):
         :param dict filter_: Mongo filter
         :param str search: Search expression in custom DSL
 
-        :param str sort_key: Name of the column to sort
+        :param str sort_key: Name of the column to sort. If the value ends with
+            a dot '.', sort_key is replaced with 'v.last_update_date'.
         :param str sort_dir: Either "ASC" or "DESC"
 
         :param int skip: Number of alarms to skip (pagination)
@@ -541,6 +557,9 @@ class AlertsReader(object):
         final_filter = self._get_final_filter(
             filter_, time_filter, search, active_columns
         )
+
+        if sort_key[-1] == '.':
+            sort_key = 'v.last_update_date'
 
         pipeline = [
             {
