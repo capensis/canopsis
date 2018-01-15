@@ -39,11 +39,10 @@ import "git.canopsis.net/canopsis/go-revolution/canopsis"
 
 ## Go Dependencies
 
-In `canopsis`, use [glide](https://glide.sh/).
+Use [glide](https://glide.sh/).
 
 ```
-cd canopsis
-glide update
+glide install
 ```
 
 ## GoConvey
