@@ -25,9 +25,10 @@ export CPS_REDIS_URL="redis://nouser:dbpassword@host:port/0"
 ```
 
 ```
-cd engines/axe && go build . && ./axe
-cd engines/che && go build . && ./che
-cd engines/feeder && go build . && ./feeder
+cd cmd/engines-axe && go build . && ./engine-axe
+cd cmd/engines-che && go build . && ./engine-che
+cd cmd/engines-lifeline && go build . && ./engine-lifeline
+cd cmd/feeder && go build . && ./feeder
 ```
 
 ## Canopsis Library
