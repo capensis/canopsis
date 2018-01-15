@@ -49,5 +49,5 @@ glide update
 ## GoConvey
 
 ```
-$GOPATH/bin/goconvey -workDir ~/go/src/git.canopsis.net/canopsis/go-revolution/
+goconvey -workDir ${GOPATH}/src/git.canopsis.net/canopsis/go-revolution/
 ```
