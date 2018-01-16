@@ -24,6 +24,8 @@ Alarm reader manager.
 TODO: replace the storage class parameter with a collection (=> rewriting count())
 """
 
+import re
+
 from os.path import join
 from time import time
 
@@ -463,7 +465,7 @@ class AlertsReader(object):
         try:
             _, bnf_search_filter = self.interpret_search(search)
             bnf_search_filter = self._translate_filter(bnf_search_filter)
-        except ValueError as exc:
+        except ValueError:
             bnf_search_filter = None
 
         if bnf_search_filter is not None:
@@ -475,7 +477,7 @@ class AlertsReader(object):
                 column_filter['$or'].append(
                     {
                         column: {
-                            '$regex': '.*{}.*'.format(search),
+                            '$regex': '.*{}.*'.format(re.escape(search)),
                             '$options': 'i'
                         }
                     }
@@ -483,7 +485,7 @@ class AlertsReader(object):
             column_filter['$or'].append(
                 {
                     'd': {
-                        '$regex': '.*{}.*'.format(search),
+                        '$regex': '.*{}.*'.format(re.escape(search)),
                         '$options': 'i'
                     }
                 }
