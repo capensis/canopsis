@@ -338,19 +338,17 @@ class Alarm(object):
 
         return False
 
-    def resolve_stealthy(self, stealthy_show_duration=0, stealthy_interval=0):
+    def resolve_stealthy(self, stealthy_interval=0):
         """
         Resolves alarms that should not be stealthy anymore.
 
-        :param int stealthy_show_duration: duration (in seconds) where the alarm should be shown as stealthy
         :param int stealthy_interval:
         :returns: True if the alarm was resolved, False otherwise
         :rtype: bool
         """
         if self.status is None \
                 or self.status.value != AlarmStatus.STEALTHY \
-                or self._is_stealthy(stealthy_show_duration,
-                                     stealthy_interval):
+                or self._is_stealthy(stealthy_interval):
             return False
 
         new_status = AlarmStep(
@@ -365,11 +363,10 @@ class Alarm(object):
 
         return True
 
-    def _is_stealthy(self, stealthy_show_duration, stealthy_interval):
+    def _is_stealthy(self, stealthy_interval):
         """
         Checks if an alarm is stealthy.
 
-        :param int stealthy_show_duration:
         :param int stealthy_interval:
         :returns: true if the alarm is still stealthy, False otherwise
         :rtype: bool

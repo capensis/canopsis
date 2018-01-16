@@ -221,14 +221,6 @@ class Alerts(object):
         """
         return self.config_data.get('stealthy_time', DEFAULT_STEALTHY_INTERVAL)
 
-    @property
-    def stealthy_show_duration(self):
-        """
-        Interval used to check if alarm is still in stealthy status.
-        """
-        return self.config_data.get('stealthy_show',
-                                    DEFAULT_STEALTHY_SHOW_DURATION)
-
     def get_alarms(
             self,
             resolved=True,

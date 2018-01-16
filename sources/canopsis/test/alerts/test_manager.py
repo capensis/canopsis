@@ -43,7 +43,6 @@ class TestManager(BaseTest):
         self.assertEqual(self.manager.flapping_persistant_steps, 10)
         self.assertEqual(self.manager.hard_limit, 100)
         self.assertEqual(self.manager.stealthy_interval, 300)
-        self.assertEqual(self.manager.stealthy_show_duration, 600)
         self.assertEqual(self.manager.restore_event, True)
         self.assertEqual(self.manager.record_last_event_date, False)
 
@@ -263,7 +262,7 @@ class TestManager(BaseTest):
 
     def test_resolve_stealthy(self):
         storage = self.manager.alerts_storage
-        now = int(time()) - self.manager.stealthy_show_duration - 1
+        now = int(time()) - self.manager.stealthy_interval - 1
 
         alarm_id = '/fake/alarm/id'
         alarm = self.manager.make_alarm(
