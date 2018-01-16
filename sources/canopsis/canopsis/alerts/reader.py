@@ -451,7 +451,7 @@ class AlertsReader(object):
         try:
             _, bnf_search_filter = self.interpret_search(search)
             bnf_search_filter = self._translate_filter(bnf_search_filter)
-        except ValueError:
+        except ValueError as exc:
             bnf_search_filter = None
 
         if bnf_search_filter is not None:
@@ -460,8 +460,12 @@ class AlertsReader(object):
         else:
             column_filter = {"$or": []}
             for column in active_columns:
-                column_filter["$or"].append({column: {"$regex": search}})
-            column_filter['$or'].append({'d': {'$regex': search}})
+                column_filter["$or"].append(
+                    {column: {"$regex": search, '$options': 'i'}}
+                )
+            column_filter['$or'].append(
+                {'d': {'$regex': search, '$options': 'i'}}
+            )
 
             final_filter['$and'].append(column_filter)
 

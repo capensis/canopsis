@@ -108,7 +108,7 @@ class Interpreter(object):
             model = self.parser.parse(condition, rule_name='start')
 
         except ParseError as e:
-            raise_from(ValueError("Failed to parse"), e)
+            raise_from(ValueError("Failed to parse: {}".format(e)), e)
 
         res = self.walker.walk(model)
 
