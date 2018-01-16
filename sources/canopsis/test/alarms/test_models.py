@@ -24,7 +24,7 @@ from __future__ import unicode_literals
 from copy import copy
 import logging
 from time import time
-from unittest import TestCase, main
+from unittest import TestCase
 
 from canopsis.alarms.models import (
     AlarmStep, AlarmIdentity, Alarm, AlarmStatus, AlarmState,

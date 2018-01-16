@@ -20,7 +20,6 @@
 # ---------------------------------
 
 from time import time
-from unittest import main
 
 from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.status import (
