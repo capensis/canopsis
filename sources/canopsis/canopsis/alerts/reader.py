@@ -472,12 +472,13 @@ class AlertsReader(object):
             final_filter['$and'].append(bnf_search_filter)
 
         else:
+            escaped_search = re.escape(search)
             column_filter = {'$or': []}
             for column in active_columns:
                 column_filter['$or'].append(
                     {
                         column: {
-                            '$regex': '.*{}.*'.format(re.escape(search)),
+                            '$regex': '.*{}.*'.format(escaped_search),
                             '$options': 'i'
                         }
                     }
@@ -485,7 +486,7 @@ class AlertsReader(object):
             column_filter['$or'].append(
                 {
                     'd': {
-                        '$regex': '.*{}.*'.format(re.escape(search)),
+                        '$regex': '.*{}.*'.format(escaped_search),
                         '$options': 'i'
                     }
                 }
