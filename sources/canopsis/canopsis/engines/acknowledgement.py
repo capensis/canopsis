@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.engines.core import Engine, publish
-from canopsis.event import get_routingkey, forger, is_host_acknowledged
+from canopsis.event import forger, is_host_acknowledged
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from copy import deepcopy
