@@ -336,14 +336,38 @@ class TestReader(BaseTest):
                 time_filter,
                 {
                     '$or': [
-                        {'resource': {'$regex': 'turret', '$options': 'i'}},
-                        {'component': {'$regex': 'turret', '$options': 'i'}},
-                        {'d': {'$regex': 'turret', '$options': 'i'}}
+                        {'resource': {
+                            '$regex': '.*turret.*', '$options': 'i'}},
+                        {'component': {
+                            '$regex': '.*turret.*', '$options': 'i'}},
+                        {'d': {
+                            '$regex': '.*turret.*', '$options': 'i'}}
                     ]
                 }
             ]
         }
         self.assertEqual(ref_filter, filter_)
+
+    def test__get_final_filter_natural_numonly(self):
+        view_filter = {}
+        time_filter = {}
+        search = 11111
+        active_columns = ['resource']
+
+        filter_ = self.reader._get_final_filter(
+            view_filter, time_filter, search, active_columns
+        )
+
+        self.maxDiff = None
+        res_filter = {
+            '$and': [
+                {'$or': [
+                    {'resource': {'$options': 'i', '$regex': '.*11111.*'}},
+                    {'d': {'$options': 'i', '$regex': '.*11111.*'}}
+                ]}
+            ]
+        }
+        self.assertEqual(res_filter, filter_)
 
     def test_clean_fast_count_cache(self):
         class MockQuery(object):
