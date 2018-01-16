@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 """
 Alarm reader manager.
 
@@ -472,7 +474,7 @@ class AlertsReader(object):
             final_filter['$and'].append(bnf_search_filter)
 
         else:
-            escaped_search = re.escape(search)
+            escaped_search = re.escape(str(search))
             column_filter = {'$or': []}
             for column in active_columns:
                 column_filter['$or'].append(
