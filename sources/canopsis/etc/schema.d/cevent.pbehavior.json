@@ -13,11 +13,13 @@
         },
         "start": {
             "required": true,
-            "type": "string"
+            "type": "string",
+            "role":"timestamp"
         },
         "end": {
             "required": true,
-            "type": "string"
+            "type": "string",
+            "role":"timestamp"
         },
         "author": {
             "required": true,
