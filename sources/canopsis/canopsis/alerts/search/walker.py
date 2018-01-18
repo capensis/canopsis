@@ -104,7 +104,7 @@ class Walker(NodeWalker):
 
         if not_ is None:
             if op == '$regex':
-                return {left: {op: re.compile(re.escape(right), re.I)}}
+                return {left: {op: re.compile(re.escape(str(right)), re.I)}}
 
             elif op == '$in':
                 return {left: {op: [right]}}
@@ -114,7 +114,7 @@ class Walker(NodeWalker):
 
         else:
             if op == '$regex':
-                return {left: {'$not': re.compile(re.escape(right), re.I)}}
+                return {left: {'$not': re.compile(re.escape(str(right)), re.I)}}
 
             elif op == '$in':
                 return {left: {'$nin': [right]}}
