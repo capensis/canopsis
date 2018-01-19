@@ -147,13 +147,13 @@ Donc si vous voulez apporter une modification de la configuration, pas besoin de
 
 ```ini
 [auth]
-; version post-monopackage
+; version pré-monopackage
 providers = saml2
 ; version monopackage
 providers = canopsis_cat.auth.saml2
 
 [webservices]
-; version post-monopackage
+; version pré-monopackage
 saml2 = 1
 ; version monopackage
 canopsis_cat.webcore.services.saml2 = 1
