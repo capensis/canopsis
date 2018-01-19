@@ -272,7 +272,29 @@ def exports(ws):
         pb_manager=pbm, watcher_manager=watcher_manager
     )
 
-    @ws.application.post('/pbehavior/create')
+    @route(
+        ws.application.post,
+        name='pbehavior/create',
+        payload=[
+            'name', 'filter', 'author',
+            'tstart', 'tstop', 'rrule',
+            'enabled', 'comments',
+            'connector', 'connector_name'
+        ]
+    )
+    def create(
+            name, filter, author,
+            tstart, tstop, rrule=None,
+            enabled=True, comments=None,
+            connector='canopsis', connector_name='canopsis'
+    ):
+        """
+        Create a pbehavior.
+        """
+        return rhpb.create(
+            name, filter, author, tstart, tstop,
+            rrule, enabled, comments, connector, connector_name)
+
     @ws.application.post('/api/v2/pbehavior')
     def create_v2():
         """
