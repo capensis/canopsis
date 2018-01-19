@@ -3,6 +3,89 @@
 This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
 
 
+## Canopsis 2.5.3 (Sprint 12.15) - Due date : 2017-12-15
+
+### Bug Fixes 
+
+ - [#543](https://git.canopsis.net/canopsis/canopsis/issues/543) - [Engine Alerts] Lorsqu'une alerte a atteint sa hard limit, le beat processing plante dans check_alarm_filters
+ - [#538](https://git.canopsis.net/canopsis/canopsis/issues/538) - [docker/CAT] La brique SNMP n'est pas installée
+ - [#537](https://git.canopsis.net/canopsis/canopsis/issues/537) - [CRUD Context] Le schéma d'édition d'une entité n'est pas bon
+ - [#556](https://git.canopsis.net/canopsis/canopsis/issues/556) - Declare ticket: missing number
+ - [#555](https://git.canopsis.net/canopsis/canopsis/issues/555) - DYsfonctionnement du workflow des alarmes filter
+ - [#553](https://git.canopsis.net/canopsis/canopsis/issues/553) - Missing display_name
+ - [#548](https://git.canopsis.net/canopsis/canopsis/issues/548) - Recherche naturelle non fonctionnel sur les display name
+ - [#546](https://git.canopsis.net/canopsis/canopsis/issues/546) - Probleme de couleur sur les tuiles en MAJOR
+ - [#545](https://git.canopsis.net/canopsis/canopsis/issues/545) - Pb de désynchronisation de statut entre scénario et Application
+ - [#544](https://git.canopsis.net/canopsis/canopsis/issues/544) - Pb de bagot sur les alarmes. Elles ne se cloturent plus.
+ - [#542](https://git.canopsis.net/canopsis/canopsis/issues/542) - Pbehavior crash when filter is in a bad format
+ - [#539](https://git.canopsis.net/canopsis/canopsis/issues/539) - [Bac à alarmes] Des pbehaviors expirés remontent sur les alarmes en cours
+ - [#531](https://git.canopsis.net/canopsis/canopsis/issues/531) - Problème avec la recherche naturelle
+
+
+### Functional and other changes
+
+ - [#540](https://git.canopsis.net/canopsis/canopsis/issues/540) - [doc] lancer un filldb update à chaque mise à jour de Canopsis
+ - [#536](https://git.canopsis.net/canopsis/canopsis/issues/536) - Ajouter le résutlat des tests dans le template
+ - [#516](https://git.canopsis.net/canopsis/canopsis/issues/516) - Dummy authentication
+ - [#541](https://git.canopsis.net/canopsis/canopsis/issues/541) - Nettoyage des test
+ - [#533](https://git.canopsis.net/canopsis/canopsis/issues/533) - Retirer le bouton PAUSE sur les alarmes CLOSED
+ - [#513](https://git.canopsis.net/canopsis/canopsis/issues/513) - le formulaire de login  doit catch le 401
+
+
+
+
+
+## 2.5.2(11.30) - Due date : 2017-12-05
+
+### Bug fixes 
+
+ - [#499](https://git.canopsis.net/canopsis/canopsis/issues/499) - [PE] la météo ne s'affiche pas pour les applications "standard"
+ - [#518](https://git.canopsis.net/canopsis/canopsis/issues/518) - Saml2 import error
+ - [#515](https://git.canopsis.net/canopsis/canopsis/issues/515) - Erreur 500 avec avec un identifiants inconnu
+ - [#509](https://git.canopsis.net/canopsis/canopsis/issues/509) - Erreur de login webserver
+ - [#497](https://git.canopsis.net/canopsis/canopsis/issues/497) - attribut creation_date  en avance par rapport aux dates des évènements sur certaines alarmes.
+ - [#450](https://git.canopsis.net/canopsis/canopsis/issues/450) - Probleme de fonctionnement sur la recherche dans la bac à alarmes
+
+
+### Functional and other changes
+
+  - [#510](https://git.canopsis.net/canopsis/canopsis/issues/510) - Ajouter une date de dernier événement reçu à chaque alarme.
+  - [#466](https://git.canopsis.net/canopsis/canopsis/issues/466) - Pouvoir disposer d'id d'alarmes exploitable dans le bac à alarmes
+
+
+
+## Canopsis 2.5.1 (11.03) - Due date : 2017-11-03
+
+
+### Bug fixes
+
+
+ - [#446](https://git.canopsis.net/canopsis/canopsis/issues/446) - Le paquet dm.xmlsec.binding-1.3.3.tar.gz ne s'installe pas sur CentOS 7
+ - [#427](https://git.canopsis.net/canopsis/canopsis/issues/427) - watcher ne se recalcule pas a la fin d'un pbehavior => desync
+ - [#383](https://git.canopsis.net/canopsis/canopsis/issues/383) - soucis utf-8 sur les trap laposte
+ - [#372](https://git.canopsis.net/canopsis/canopsis/issues/372) - Pas de données sur la route /perfdata
+ - [#470](https://git.canopsis.net/canopsis/canopsis/issues/470) - Problème de performance de la route trap
+ - [#451](https://git.canopsis.net/canopsis/canopsis/issues/451) - La configuration du popup du widget alarme ne conserve pas les données
+  - [#399](https://git.canopsis.net/canopsis/canopsis/issues/399) - probleme utf8  quand on met un display name avec un accent
+ - [#432](https://git.canopsis.net/canopsis/canopsis/issues/432) - UI ne charge pas
+ - [#430](https://git.canopsis.net/canopsis/canopsis/issues/430) - bug(CRUD context-graph): Crudcontext adapter en doublon
+ - [#413](https://git.canopsis.net/canopsis/canopsis/issues/413) - Probleme d'affichage sur le bac à alarmes
+ - [#412](https://git.canopsis.net/canopsis/canopsis/issues/412) - Formatage des heures dans l'historique du bac à alarmes
+
+ - [#401](https://git.canopsis.net/canopsis/canopsis/issues/401) - [Bac à alarmes] Lorsqu'un filtre est présent, le premier chargement de la vue échoue.
+
+
+### Functional and other changes
+
+ - [#472](https://git.canopsis.net/canopsis/canopsis/issues/472) - MAJ Image Docker MongoDB
+ - [#406](https://git.canopsis.net/canopsis/canopsis/issues/406) - Installation mono-package python
+ - [#478](https://git.canopsis.net/canopsis/canopsis/issues/478) - [Alarms] Optimisation des perfs du beat processing
+ - [#357](https://git.canopsis.net/canopsis/canopsis/issues/357) - feat(context-graph): Basic editing of an entity
+ - [#356](https://git.canopsis.net/canopsis/canopsis/issues/356) - feat(CRUD context-graph) : list entities
+ - [#336](https://git.canopsis.net/canopsis/canopsis/issues/336) - Remplacer les Configurable par confng
+ - [#403](https://git.canopsis.net/canopsis/canopsis/issues/403) - [Bac à alarmes] Recherche naturelle
+ - [#402](https://git.canopsis.net/canopsis/canopsis/issues/402) - [Météo de service] Ajouter un bouton FastACK sur la popup "scénario"
+
 ## Canopsis 2.4.6 and CAT 2.5.0 (25/09/2017)
 
 
@@ -21,7 +104,7 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 
 - [#375](https://git.canopsis.net/canopsis/canopsis/issues/375) Fix(SNMP): Les traps SNMP anomalies ne remontent pas
 
-### Functional changes
+### Functional  and other changes
 
 - [#394](https://git.canopsis.net/canopsis/canopsis/issues/394) feat(UI) : permettre l'ajout d'onglets dropdown dans la vue Header
 - [#392](https://git.canopsis.net/canopsis/canopsis/issues/392) feat(Context-graph) : création d'une route ws  pour update du  context
