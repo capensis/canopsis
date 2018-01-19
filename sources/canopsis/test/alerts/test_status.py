@@ -46,7 +46,6 @@ class TestStatus(BaseTest):
                 'bagot_time': 3600,
                 'bagot_freq': 10,
                 'stealthy_time': 300,
-                'stealthy_show': 600,
                 'restore_event': True
             },
             _id='test_config'
