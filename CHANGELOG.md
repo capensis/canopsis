@@ -3,43 +3,63 @@
 This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
 
 
-## Canopsis 2.5.3 (Sprint 12.15) - Due date : 2017-12-15
 
-### Bug Fixes 
+## Canopsis 2.5.5 (sprint 01.19) - Due date : 2018-01-19
 
+### Bug fixes 
+ - [#579](https://git.canopsis.net/canopsis/canopsis/issues/579) - Impossible de créer un pbehavior dans l'explorateur de context
+ - [#564](https://git.canopsis.net/canopsis/canopsis/issues/564) - [API] get-alarms ne remonte pas tous les résultats
+ - [#563](https://git.canopsis.net/canopsis/canopsis/issues/563) - [HardLimit] la hardlimit empêche toutes les actions sur une alarme
+ - [#485](https://git.canopsis.net/canopsis/canopsis/issues/485) - bac a alarme création de pbhavior pop up calendrier qui ne s'affiche pas
+
+ ### Functional and other changes
+ - [#573](https://git.canopsis.net/canopsis/canopsis/issues/573) - Bac à alarme - recherche insensible à la casse
+ - [#526](https://git.canopsis.net/canopsis/canopsis/issues/526) - Pouvoir trier les tuiles du widget service weather
+ - [#525](https://git.canopsis.net/canopsis/canopsis/issues/525) - [Météo] Remonter les statistiques d'un scénario
+ - [#524](https://git.canopsis.net/canopsis/canopsis/issues/524) - [Météo de service]Disposer d'une information sur la date de l'alarme
+
+
+
+## 2.5.4 (Sprint 01.6) - Due date : 2018-01-06
+
+### Bug fixes
  - [#543](https://git.canopsis.net/canopsis/canopsis/issues/543) - [Engine Alerts] Lorsqu'une alerte a atteint sa hard limit, le beat processing plante dans check_alarm_filters
+ - [#540](https://git.canopsis.net/canopsis/canopsis/issues/540) - [doc] lancer un filldb update à chaque mise à jour de Canopsis
  - [#538](https://git.canopsis.net/canopsis/canopsis/issues/538) - [docker/CAT] La brique SNMP n'est pas installée
  - [#537](https://git.canopsis.net/canopsis/canopsis/issues/537) - [CRUD Context] Le schéma d'édition d'une entité n'est pas bon
  - [#556](https://git.canopsis.net/canopsis/canopsis/issues/556) - Declare ticket: missing number
- - [#555](https://git.canopsis.net/canopsis/canopsis/issues/555) - DYsfonctionnement du workflow des alarmes filter
+ - [#555](https://git.canopsis.net/canopsis/canopsis/issues/555) - [PE] Dysfonctionnement du workflow des alarmes filter
  - [#553](https://git.canopsis.net/canopsis/canopsis/issues/553) - Missing display_name
- - [#548](https://git.canopsis.net/canopsis/canopsis/issues/548) - Recherche naturelle non fonctionnel sur les display name
+ - [#548](https://git.canopsis.net/canopsis/canopsis/issues/548) - Recherche naturelle non fonctionnelle sur les display name
  - [#546](https://git.canopsis.net/canopsis/canopsis/issues/546) - Probleme de couleur sur les tuiles en MAJOR
  - [#545](https://git.canopsis.net/canopsis/canopsis/issues/545) - Pb de désynchronisation de statut entre scénario et Application
  - [#544](https://git.canopsis.net/canopsis/canopsis/issues/544) - Pb de bagot sur les alarmes. Elles ne se cloturent plus.
  - [#542](https://git.canopsis.net/canopsis/canopsis/issues/542) - Pbehavior crash when filter is in a bad format
  - [#539](https://git.canopsis.net/canopsis/canopsis/issues/539) - [Bac à alarmes] Des pbehaviors expirés remontent sur les alarmes en cours
  - [#531](https://git.canopsis.net/canopsis/canopsis/issues/531) - Problème avec la recherche naturelle
-
-
-### Functional and other changes
-
- - [#540](https://git.canopsis.net/canopsis/canopsis/issues/540) - [doc] lancer un filldb update à chaque mise à jour de Canopsis
- - [#536](https://git.canopsis.net/canopsis/canopsis/issues/536) - Ajouter le résutlat des tests dans le template
- - [#516](https://git.canopsis.net/canopsis/canopsis/issues/516) - Dummy authentication
- - [#541](https://git.canopsis.net/canopsis/canopsis/issues/541) - Nettoyage des test
- - [#533](https://git.canopsis.net/canopsis/canopsis/issues/533) - Retirer le bouton PAUSE sur les alarmes CLOSED
  - [#513](https://git.canopsis.net/canopsis/canopsis/issues/513) - le formulaire de login  doit catch le 401
 
 
+### Functional and other changes
+ - [#516](https://git.canopsis.net/canopsis/canopsis/issues/516) - Dummy authentication
+ - [#536](https://git.canopsis.net/canopsis/canopsis/issues/536) - Ajouter le résutlat des tests dans le template
+ - [#535](https://git.canopsis.net/canopsis/canopsis/issues/535) - Ajouter prérequis dans le template
+ - [#533](https://git.canopsis.net/canopsis/canopsis/issues/533) - Retirer le bouton PAUSE sur les alarmes CLOSED
+ - [#541](https://git.canopsis.net/canopsis/canopsis/issues/541) - Nettoyage des test
 
+
+
+## Canopsis 2.5.3 (Sprint 12.15) Due date : 2017-12-15
+
+**Not released due to blocking issue. This release was tagged on gitlab but not distrubuted. All issues were reported in the 2.5.4 release**
 
 
 ## 2.5.2(11.30) - Due date : 2017-12-05
 
 ### Bug fixes 
 
- - [#499](https://git.canopsis.net/canopsis/canopsis/issues/499) - [PE] la météo ne s'affiche pas pour les applications "standard"
+ - [#499](https://git.canopsis.net/canNombre d'issues pour la milestone  "2.5.1 (11.03)" : 11
+opsis/canopsis/issues/499) - [PE] la météo ne s'affiche pas pour les applications "standard"
  - [#518](https://git.canopsis.net/canopsis/canopsis/issues/518) - Saml2 import error
  - [#515](https://git.canopsis.net/canopsis/canopsis/issues/515) - Erreur 500 avec avec un identifiants inconnu
  - [#509](https://git.canopsis.net/canopsis/canopsis/issues/509) - Erreur de login webserver
