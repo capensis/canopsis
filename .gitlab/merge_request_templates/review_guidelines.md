@@ -17,7 +17,7 @@ Indiquez ici les pré-requis (s'il y en a) pour que la merge request puisse êtr
 - [ ] Les messages de commits sont compatibles avec l' [angular spec](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit) ?
 - [ ] Les modifications apportées contiennent des tests unitaires
 - [ ] Les tests unitaires passent
-- [ ] (En cas de changement de comportement) : la documentation a été mise à jour
+- [ ] la documentation a été mise à jour (si changement de comportement)
 
 ## Tests
 
