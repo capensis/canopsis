@@ -35,7 +35,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 
 
-## 2.5.2(11.30) - Due date : 2017-12-05
+## Canopsis 2.5.2(11.30) - Due date : 2017-12-05
 
 ### Bug fixes 
 
