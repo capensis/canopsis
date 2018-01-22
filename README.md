@@ -22,6 +22,7 @@ db.periodical_alarm.createIndex({d:1})
 export CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost/canopsis"
 export CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost/canopsis"
 export CPS_REDIS_URL="redis://nouser:dbpassword@host:port/0"
+export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/canopsis/default_configuration.toml"
 ```
 
 ```
@@ -45,8 +46,20 @@ Use [glide](https://glide.sh/).
 glide install
 ```
 
-## GoConvey
+## Tests - GoConvey
+
+You will need engines environment variables.
+
+If you want to skip tests with long run times:
+
+```
+export CPS_TEST_SKIP_LONG=1
+```
+
+Then run `goconvey`:
 
 ```
 goconvey -workDir ${GOPATH}/src/git.canopsis.net/canopsis/go-revolution/
 ```
+
+Note: you can enable desktop notifications from the web UI to avoid checking manually.
