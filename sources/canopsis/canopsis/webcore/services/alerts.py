@@ -104,6 +104,7 @@ def exports(ws):
         :rtype: dict
         """
 
+
         alarms = ar.get(
             tstart=tstart,
             tstop=tstop,
@@ -111,7 +112,7 @@ def exports(ws):
             resolved=resolved,
             lookups=lookups,
             filter_=filter,
-            search=search,
+            search=search.strip(),
             sort_key=sort_key,
             sort_dir=sort_dir,
             skip=skip,
