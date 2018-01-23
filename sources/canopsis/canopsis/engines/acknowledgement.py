@@ -35,7 +35,6 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kargs)
 
         account = Account(user="root", group="root")
-        self.context_manager = ContextGraph(logger=self.logger)
         self.storage = get_storage(namespace='ack', account=account)
         self.events_collection = self.storage.get_backend('events')
         self.stbackend = self.storage.get_backend('ack')
