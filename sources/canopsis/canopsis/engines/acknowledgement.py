@@ -22,6 +22,7 @@ from canopsis.engines.core import Engine, publish
 from canopsis.event import forger, is_host_acknowledged
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
+from canopsis.context_graph.manager import ContextGraph
 from copy import deepcopy
 from time import time
 from json import dumps
@@ -34,7 +35,7 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kargs)
 
         account = Account(user="root", group="root")
-
+        self.context_manager = ContextGraph(logger=self.logger)
         self.storage = get_storage(namespace='ack', account=account)
         self.events_collection = self.storage.get_backend('events')
         self.stbackend = self.storage.get_backend('ack')
@@ -133,6 +134,36 @@ class engine(Engine):
             self.logger.debug(u'Ack event found, will proceed ack.')
 
             rk = event.get('referer', event.get('ref_rk', None))
+
+            if event.get("mass_ack", False) in [True, "True", "true"]:
+
+                component = event.get("component")
+                sub_res_query = {"component": component,
+                                 "state": {"$ne": "0"},
+                                 "source_type": "resource"}
+                result_cur = list(self.events_collection.find(sub_res_query))
+
+                if event.get("source_type") == "resource":
+                    comp = self.context_manager.get_entities_by_id(component)[0]
+                    result_cur.append(comp)
+
+                for resource in result_cur:
+                    sub_ack_event = {
+                        "ref_rk": resource.get("_id"),
+                        "author": event.get("author"),
+                        "output": event.get("output"),
+
+                        "connector": resource.get("connector"),
+                        "connector_name": resource.get("connector_name"),
+                        "event_type": "ack",
+                        "source_type": "resource",
+                        "component": component,
+                        "resource": resource.get("resource")
+                    }
+                    publish(
+                        publisher=self.amqp, event=sub_ack_event,
+                        exchange=self.acknowledge_on
+                    )
 
             author = event['author']
 
