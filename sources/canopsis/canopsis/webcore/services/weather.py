@@ -169,23 +169,21 @@ def watcher_status(watcher, pbehavior_eids_merged):
 
     :param dict watcher: watcher entity document
     :param set pbehavior_eids_merged: set with eids
-    :return dict pbhevahior: dict with pbehavior infos has active
+    :returns: has active pb status and has all active pb status
+    :rtype: (bool, bool)
     """
-    ret_dict = {
-        'has_active_pbh': False,
-        'has_all_active_pbh': False
-    }
     bool_set = set([])
     for entity_id in watcher['depends']:
         bool_set.add(entity_id in pbehavior_eids_merged)
 
     if True in bool_set and False in bool_set:
-        ret_dict['has_active_pbh'] = True
-        return ret_dict
+        # has_active_pbh
+        return True, False
     elif True in bool_set:
-        ret_dict['has_all_active_pbh'] = True
-        return ret_dict
-    return ret_dict
+        # has_all_active_pbh
+        return False, True
+
+    return False, False
 
 
 def get_active_pbehaviors_on_watchers(watchers_ids,
@@ -282,6 +280,8 @@ def exports(ws):
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
+        #hallpe = request.query.hasallactivepbehaviorinentities or DEFAULT_HASALLACTIVEPBEHAVIORINENTITIES
+        #hape = request.query.hasactivepbehaviorinentities or DEFAULT_HASACTIVEPBEHAVIORINENTITIES
         try:
             start = int(start)
         except ValueError:
@@ -403,9 +403,9 @@ def exports(ws):
                 watcher['depends'],
                 alarm_dict
             )
-            truc = watcher_status(watcher, merged_pbehaviors_eids)
-            enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
-            enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
+            wstatus = watcher_status(watcher, merged_pbehaviors_eids)
+            enriched_entity["hasactivepbehaviorinentities"] = wstatus[0]
+            enriched_entity["hasallactivepbehaviorinentities"] = wstatus[1]
             enriched_entity['has_baseline'] = check_baseline(
                 merged_eids_tracer,
                 watcher['depends']

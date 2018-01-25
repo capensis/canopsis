@@ -348,4 +348,5 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 2)
         states = [json[0]['state']['val'], json[1]['state']['val']]
+        states.sort()
         self.assertListEqual(states, [2, 3])
