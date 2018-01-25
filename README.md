@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/blob/
 
 ### Lint
 
-Tested on commit : 23b58f4.
+Tested on commit : 9f101a2.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -73,5 +73,5 @@ Tested on commit : 23b58f4.
 
 ## Additional-info
 
-Minified version : 4 files (size: 24K)
-Development version : 4 files (size: 28K)
+Minified version : 4 files (size: 36K)
+Development version : 4 files (size: 44K)
