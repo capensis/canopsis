@@ -31,8 +31,8 @@ from time import time
 
 from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
-from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.watcher.manager import Watcher as WatcherManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
@@ -48,6 +48,7 @@ VALID_PBEHAVIOR_PARAMS = [
 def check(data, key, type_):
     """
     If key exists in data and data[key] != None, check for type_
+
     :param dict data: data to check
     :param str key: key in data dict
     :param type type_: data[key] type to check
@@ -60,10 +61,13 @@ def check(data, key, type_):
 
 
 def check_values(data):
-    """Check if the values present in data respect the specification. If
+    """
+    Check if the values present in data respect the specification. If
     the values are correct do nothing. If not, raises an error.
+
+    :param dict data: the data.
     :raises ValueError: a value is invalid.
-    :param dict data: the data."""
+    """
 
     # check str values
     for k in ["name", "author", "rrule", "component", "connector",
@@ -120,8 +124,10 @@ def check_values(data):
 
 
 class RouteHandlerPBehavior(object):
-    """Passthrough class with few checks from the route to the pbehavior
-    manager."""
+    """
+    Passthrough class with few checks from the route to the pbehavior
+    manager.
+    """
 
     def __init__(self, pb_manager, watcher_manager):
         """
@@ -231,7 +237,7 @@ class RouteHandlerPBehavior(object):
         :param str pb_id: pbehavior id
         :param str author: author
         :param str message: message
-        :return: comment id
+        :returns: comment id
         :rtype: str
         """
         author = str(author)
@@ -379,9 +385,9 @@ def exports(ws):
         """/pbehavior/delete : delete the pbehaviour that match the _id
 
         :param _id: the pbehaviour id
-        :return type: dict
-        :return: a dict with two field. "acknowledged" that True if the
+        :returns: a dict with two field. "acknowledged" that True if the
         delete is a sucess. False, otherwise.
+        :rtype: dict
         """
         return rhpb.delete(_id)
 
@@ -390,9 +396,9 @@ def exports(ws):
         """Delete the pbehaviour that match the _id
 
         :param pbehavior_id: the pbehaviour id
-        :return type: dict
         :return: a dict with two field. "acknowledged" that True if the
         delete is a sucess. False, otherwise.
+        :rtype: dict
         """
         ws.logger.info('Delete pbehavior : {}'.format(pbehavior_id))
 
@@ -409,7 +415,7 @@ def exports(ws):
         :param _id: the pbehavior id
         :param author: author name
         :param message: the message to store in the comment.
-        :return: In case of success, return the comment id. None otherwise.
+        :returns: In case of success, return the comment id. None otherwise.
         """
         return rhpb.create_comment(pbehavior_id, author, message)
 
@@ -425,7 +431,7 @@ def exports(ws):
         :param _id: the comment id
         :param author: author name
         :param message: the message to store in the comment.
-        :return: In case of success, return the updated comment. None otherwise.
+        :returns: In case of success, return the updated comment. None otherwise.
         """
         return rhpb.update_comment(pbehavior_id, _id, author, message)
 
@@ -439,9 +445,9 @@ def exports(ws):
 
         :param pbehavior_id: the pbehavior id
         :param _id: the comment id
-        :return type: dict
-        :return: a dict with two field. "acknowledged" that contains True if
+        :returns: a dict with two field. "acknowledged" that contains True if
         delete has successed. False, otherwise.
+        :rtype: dict
         """
         return rhpb.delete_comment(pbehavior_id, _id)
 
@@ -452,7 +458,7 @@ def exports(ws):
         """
         Force compute of all pbehaviors, once per minute max
 
-        :returns: bool
+        :rtype: bool
         """
         global last_pbehaviors_compute
         now = int(time())

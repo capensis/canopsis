@@ -21,18 +21,17 @@
 
 from __future__ import unicode_literals
 import unittest
+import xmlrunner
+
 from canopsis.common import root_path
 from calendar import timegm
 from copy import deepcopy
 from datetime import datetime, timedelta
 from json import dumps
-from unittest import main
 from uuid import uuid4
 
 from canopsis.pbehavior.manager import PBehavior
-
 from test_base import BaseTest
-import xmlrunner
 
 
 class TestManager(BaseTest):

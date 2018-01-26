@@ -44,9 +44,6 @@ CONNECTOR = 'connector'
 CONNECTOR_NAME = 'connector_name'
 DEFAULT_AUTHOR = 'Default Author'
 
-TEMPLATE = '/{}/{}/{}/{}'
-TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
-
 watcher_manager = Watcher()
 
 

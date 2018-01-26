@@ -70,10 +70,12 @@ class BasePBehavior(dict):
         return None
 
     def update(self, **kwargs):
-        """Update the current instance with every kwargs arguements
+        """
+        Update the current instance with every kwargs arguements
+
         :param kwargs: the argument to use to update the instance
-        :return type: dict
-        :return: the updated representation of the current instance
+        :returns: the updated representation of the current instance
+        :rtype: dict
         """
         for key, value in kwargs.items():
             if key in self._EDITABLE_FIELDS:
@@ -81,9 +83,11 @@ class BasePBehavior(dict):
         return self.__dict__
 
     def to_dict(self):
-        """Return the dict representation of the current instance
-        :return type: dict
-        :return: return the dict representation of the current instance
+        """
+        Return the dict representation of the current instance
+
+        :returns: return the dict representation of the current instance
+        :rtype: dict
         """
         return self.__dict__
 
@@ -179,6 +183,7 @@ class PBehaviorManager(object):
 
     def get(self, _id, query=None):
         """Get pbehavior by id.
+
         :param str id: pbehavior id
         :param dict query: filtering options
         """
@@ -263,8 +268,10 @@ class PBehaviorManager(object):
 
     def get_pbehaviors_by_eid(self, id_):
         """Retreive from database every pbehavior that contains the given id_
+
         :param list,str: the id(s) as a str or a list of string
-        :return list: a list of pbehavior
+        :returns: a list of pbehavior
+        :rtype: list
         """
 
         if not isinstance(id_, (list, string_types)):
@@ -346,7 +353,6 @@ class PBehaviorManager(object):
         :param str pbehavior_id: pbehavior id
         :param str author: author of the comment
         :param str message: text of the comment
-        :return:
         """
         comment_id = str(uuid4())
         comment = {
@@ -381,7 +387,6 @@ class PBehaviorManager(object):
         :param str pbehavior_id: pbehavior id
         :param str_id: comment id
         :param dict kwargs: values comment fields
-        :return:
         """
         pbehavior = self.get(
             pbehavior_id,
@@ -414,7 +419,6 @@ class PBehaviorManager(object):
 
         :param str pbehavior_id: pbehavior id
         :param str _id: comment id
-        :return:
         """
         result = self.pb_storage._update(
             spec={'_id': pbehavior_id},
@@ -471,7 +475,7 @@ class PBehaviorManager(object):
         :param str entity_id:
         :param list list_in: list of pbehavior names
         :param list list_out: list of pbehavior names
-        :return: bool if the entity_id is currently in list_in arg and out list_out arg
+        :returns: bool if the entity_id is currently in list_in arg and out list_out arg
         """
         return (self._check_pbehavior(entity_id, list_in) and
                 not self._check_pbehavior(entity_id, list_out))
@@ -481,7 +485,7 @@ class PBehaviorManager(object):
 
         :param str entity_id:
         :param list pb_names: list of pbehavior names
-        :return: bool if the entity_id is currently in pb_names arg
+        :returns: bool if the entity_id is currently in pb_names arg
         """
         try:
             entity = self.context.get_entities_by_id(entity_id)[0]
@@ -545,7 +549,7 @@ class PBehaviorManager(object):
         Return a list of active pbehaviors linked to some entites.
 
         :param list eids: the desired entities id
-        :return: list of pbehaviors
+        :returns: list of pbehaviors
         """
         result = []
         for eid in eids:
@@ -576,9 +580,10 @@ class PBehaviorManager(object):
 
     def get_varying_pbehavior_list(self):
         """
-            get_varying_pbehavior_list
+        get_varying_pbehavior_list
 
-            :return list: list of PBehavior id activated since last check
+        :returns: list of PBehavior id activated since last check
+        :rtype: list
         """
         active_pbehaviors = self.get_all_active_pbehaviors()
         active_pbehaviors_ids = set()
@@ -592,10 +597,11 @@ class PBehaviorManager(object):
 
     def launch_update_watcher(self, watcher_manager):
         """
-            launch_update_watcher update watcher when an pbehavior is active
+        launch_update_watcher update watcher when an pbehavior is active
 
-            :param object watcher_manager: watcher manager
-            :return int: number of watcher updated
+        :param object watcher_manager: watcher manager
+        :returns: number of watcher updated
+        retype: int
         """
         new_pbs = self.get_varying_pbehavior_list()
         new_pbs_full = list(self.pb_storage._backend.find(
@@ -616,10 +622,11 @@ class PBehaviorManager(object):
 
     def get_wacher_on_entities(self, entities_ids):
         """
-            get_wacher_on_entities.
+        get_wacher_on_entities.
 
-            :param entities_ids: entity id
-            :return list: list of watchers
+        :param entities_ids: entity id
+        :returns: list of watchers
+        :rtype: list
         """
         query = {
             '$and': [
