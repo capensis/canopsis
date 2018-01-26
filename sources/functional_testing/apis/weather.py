@@ -324,6 +324,7 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertIsNone(json[0]['automatic_action_timer'])
         pbehavior = json[0]['pbehavior']
         self.assertTrue(isinstance(pbehavior, list))
+        self.assertTrue('_id' in pbehavior[0])
         self.assertTrue(pbehavior[0]['enabled'])
 
         # Sending another linked event 2
