@@ -1,12 +1,14 @@
+"""
+Trace activity on context graph entities.
+"""
+
 from __future__ import unicode_literals
 
-from pymongo.errors import PyMongoError
 from bson.errors import BSONError
-
-from canopsis.confng import Configuration, Ini
-from canopsis.middleware.core import Middleware
+from pymongo.errors import PyMongoError
 
 from canopsis.common.enumerations import FastEnum
+from canopsis.middleware.core import Middleware
 
 
 class TraceError(Exception):

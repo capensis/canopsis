@@ -98,72 +98,6 @@ def __format_pbehavior(pbehavior):
     return pbehavior
 
 
-def add_pbehavior_status(watchers):
-    """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
-    on every dict in data. Data must be a list of dict that contains a key
-    "pbehavior" in order to work properly.
-
-    If the field "mfilter" is present in the element of data, ignore
-    the pbehavior present in the element en retreive them directly from
-    database. Then remove the field "mfilter".
-
-    :param list watchers: the watchers to parse
-    :returns:
-    """
-    for entity in watchers:
-
-        has_active_pbh = False
-        has_all_active_pbh = False
-        active_eids = []
-        next_action_timers = []
-
-        if "mfilter" in entity:  # retreive pbehavior using the filter
-            entities = context_manager.get_entities(
-                literal_eval(entity["mfilter"])
-            )
-
-            eids = [ent["_id"] for ent in entities]
-
-            pbh_active_list = pbehavior_manager.get_active_pbehaviors(eids)
-
-            has_active_pbh = len(pbh_active_list) > 0
-
-            for p_eid in [x['eids'] for x in pbh_active_list]:
-                active_eids = active_eids + p_eid
-
-            # as many active entity as all entities and at least one pbehavior
-            has_all_active_pbh = set(eids) == set(active_eids) and len(active_eids) > 0
-
-            # Enumerate all next_run timers
-            for ent in entities:
-                alarms = alarmreader_manager.get(
-                    filter_={'d': '{}'.format(ent['name'])}
-                )['alarms']
-                if len(alarms) == 0:
-                    continue
-
-                alarmfilter = alarms[0]['v'].get(AlarmField.alarmfilter.value, {})
-                action_timer = alarmfilter.get(AlarmFilterField.next_run.value,
-                                               None)
-                if action_timer is not None:
-                    next_action_timers.append(action_timer)
-
-        # has_active and has_all_active are exclude each one anothers
-        has_active_pbh = has_active_pbh and not has_all_active_pbh
-
-        entity["hasallactivepbehaviorinentities"] = has_all_active_pbh
-        entity["hasactivepbehaviorinentities"] = has_active_pbh
-
-        if len(next_action_timers) > 0:
-            entity["automatic_action_timer"] = min(next_action_timers)
-
-        # cleaning entity
-        if "mfilter" in entity:
-            del entity["mfilter"]
-
-    return watchers
-
-
 def watcher_status(watcher, pbehavior_eids_merged):
     """
     watcher_status
@@ -250,7 +184,7 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
 
 def check_baseline(merged_eids_tracer, watcher_depends):
     """
-    cehck if the watcher has an entity with a baseline active
+    check if the watcher has an entity with a baseline active
 
     :param set merged_eids_tracer: all entities withan active baseline
     :param list watcher_depends: watcher entities
@@ -310,6 +244,7 @@ def exports(ws):
         watchers = []
         merged_eids_tracer = []
 
+        # Find all entites with an activated baseline
         active_baseline_tracer = tracer_manager.get(
             {
                 'triggered_by': 'baseline',
@@ -320,11 +255,13 @@ def exports(ws):
             merged_eids_tracer = merged_eids_tracer + tracer['impact_entities']
         merged_eids_tracer = set(merged_eids_tracer)
 
+        # List all activated pbh eids, ordered by pbh id
         actives_pb = pbehavior_manager.get_all_active_pbehaviors()
         for pbh in actives_pb:
             active_pb_dict[pbh['_id']] = set(pbh.get('eids', []))
             active_pb_dict_full[pbh['_id']] = pbh
 
+        # List all watcher ids on entities and alarms
         for watcher in watcher_list:
             for depends_id in watcher['depends']:
                 depends_merged.add(depends_id)
@@ -332,24 +269,26 @@ def exports(ws):
             alarm_watchers_ids.append(
                 '{}/{}'.format(watcher['_id'], watcher['name'])
             )
+
         active_pbehaviors = get_active_pbehaviors_on_watchers(
             entity_watchers_ids,
             active_pb_dict,
             active_pb_dict_full
         )
+        # List all actived pbh eids
         for eids_tab in active_pb_dict.values():
             for eid in eids_tab:
                 merged_pbehaviors_eids.add(eid)
 
+        # List alarm values has a dict
         alarm_list = alarmreader_manager.get(filter_={})['alarms']
-
         for alarm in alarm_list:
             alarm_dict[alarm['d']] = alarm['v']
 
+        # List all next_run timers, grouped by alarm
         alerts_list_on_depends = alarmreader_manager.get(
             filter_={'d': {'$in': list(depends_merged)}}
         )['alarms']
-
         for alert in alerts_list_on_depends:
             if 'alarmfilter' in alert['v']:
                 alarmfilter = alert['v']['alarmfilter']
@@ -393,7 +332,6 @@ def exports(ws):
                     enriched_entity['resource'] = tmp_alarm['resource']
 
             enriched_entity["mfilter"] = watcher["mfilter"]
-
             enriched_entity['pbehavior'] = active_pbehaviors.get(
                 watcher['_id'],
                 []
