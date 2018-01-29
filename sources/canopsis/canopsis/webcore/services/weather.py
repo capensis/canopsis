@@ -55,10 +55,9 @@ def __format_pbehavior(pbehavior):
     :param dict pbehavior: a pbehavior dict
     :return: a formatted pbehavior
     """
-    EVERY = "Every {0}"
+    EVERY = "Every {}"
     to_delete = [
-        "_id", "connector", "author", "comments", "filter", "connector_name",
-        "eids"
+        "connector", "author", "comments", "filter", "connector_name", "eids"
     ]
 
     pbehavior["behavior"] = pbehavior.pop("name")
