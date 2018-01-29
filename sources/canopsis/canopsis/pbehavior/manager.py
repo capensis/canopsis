@@ -71,7 +71,7 @@ class BasePBehavior(dict):
 
     def update(self, **kwargs):
         """
-        Update the current instance with every kwargs arguements
+        Update the current instance with every kwargs arguments.
 
         :param kwargs: the argument to use to update the instance
         :returns: the updated representation of the current instance
@@ -108,12 +108,16 @@ class PBehavior(BasePBehavior):
     CONNECTOR = 'connector'
     CONNECTOR_NAME = 'connector_name'
     AUTHOR = 'author'
+    CATEGORY = 'category'
+    REASON = 'reason'
+
+    DEFAULT_CATEGORY = 'generic'
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
-               CONNECTOR, CONNECTOR_NAME, AUTHOR)
+               CONNECTOR, CONNECTOR_NAME, AUTHOR, CATEGORY, REASON)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
-                        CONNECTOR, CONNECTOR_NAME, AUTHOR)
+                        CONNECTOR, CONNECTOR_NAME, AUTHOR, CATEGORY, REASON)
 
     def __init__(self, **kwargs):
         if PBehavior.FILTER in kwargs:
@@ -194,7 +198,8 @@ class PBehaviorManager(object):
             name, filter, author,
             tstart, tstop, rrule='',
             enabled=True, comments=None,
-            connector='canopsis', connector_name='canopsis'):
+            connector='canopsis', connector_name='canopsis',
+            category=PBehavior.DEFAULT_CATEGORY, reason=''):
         """
         Method creates pbehavior record
 
@@ -214,6 +219,8 @@ class PBehaviorManager(object):
             has generated the pbehavior
         :param str connector_name:  a string representing the name of connector
             that has generated the pbehavior
+        :param str category: associated category for this pbh
+        :param str reason: associated reason for this pbh
         :raises ValueError: invalid RRULE
         :return: created element eid
         :rtype: str
@@ -251,7 +258,9 @@ class PBehaviorManager(object):
             'enabled': enabled,
             'comments': comments,
             'connector': connector,
-            'connector_name': connector_name
+            'connector_name': connector_name,
+            'category': category,
+            'reason': reason
         }
         if PBehavior.EIDS not in pb_kwargs:
             pb_kwargs[PBehavior.EIDS] = []

@@ -119,6 +119,7 @@ class BasicWeatherAPITest(BaseApiTest):
             'rrule': None,
             'tstart': now,
             'tstop': now + 60 * 60,
+            'category': 'pause'
         }
 
     def context_cleanup(self):
@@ -326,6 +327,8 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertTrue(isinstance(pbehavior, list))
         self.assertTrue('_id' in pbehavior[0])
         self.assertTrue(pbehavior[0]['enabled'])
+        self.assertTrue('category' in pbehavior[0])
+        self.assertEqual(pbehavior[0]['category'], self.pbehavior1['category'])
 
         # Sending another linked event 2
         r = self._send(url=self.event_url,
@@ -349,4 +352,5 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 2)
         states = [json[0]['state']['val'], json[1]['state']['val']]
+        states.sort()
         self.assertListEqual(states, [2, 3])
