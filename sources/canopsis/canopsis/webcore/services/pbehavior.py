@@ -42,7 +42,7 @@ PBEHAVIOR_COMPUTE_COOLDOWN = 10
 
 VALID_PBEHAVIOR_PARAMS = [
     'name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
-    'enabled', 'comments', 'connector', 'connector_name', 'category', 'reason'
+    'enabled', 'comments', 'connector', 'connector_name', 'type_', 'reason'
 ]
 
 
@@ -72,7 +72,7 @@ def check_values(data):
 
     # check str values
     for k in ["name", "author", "rrule", "component", "connector",
-              "connector_name", 'category', 'reason']:
+              "connector_name", 'type_', 'reason']:
         check(data, k, string_types)
 
     # check int values
@@ -137,7 +137,7 @@ class RouteHandlerPBehavior(object):
                tstart, tstop, rrule=None,
                enabled=True, comments=None,
                connector='canopsis', connector_name='canopsis',
-               category=PBehavior.DEFAULT_CATEGORY, reason=''):
+               type_=PBehavior.DEFAULT_TYPE, reason=''):
         """
         Create a pbehavior.
 
@@ -151,7 +151,7 @@ class RouteHandlerPBehavior(object):
         :param list comments: list of comments: {'author': 'author', 'message': 'msg'}
         :param str connector: connector
         :param str connector_name: connector name
-        :param str category: an associated category
+        :param str type_: an associated type_
         :param str reason: a reason to apply this behavior
         """
         data = {
@@ -165,7 +165,7 @@ class RouteHandlerPBehavior(object):
             "comments": comments,
             "connector": connector,
             "connector_name": connector_name,
-            "category": category,
+            PBehavior.TYPE: type_,
             "reason": reason
         }
 
@@ -182,7 +182,7 @@ class RouteHandlerPBehavior(object):
             comments=comments,
             connector=connector,
             connector_name=connector_name,
-            category=category,
+            type_=type_,
             reason=reason
         )
 
@@ -213,7 +213,7 @@ class RouteHandlerPBehavior(object):
 
     def update(self, _id, name=None, filter_=None, tstart=None, tstop=None,
                rrule=None, enabled=None, comments=None, connector=None,
-               connector_name=None, author=None, category=None, reason=None):
+               connector_name=None, author=None, type_=None, reason=None):
         """
         Update pbehavior fields. Fields to None will **not** be updated.
 
@@ -230,7 +230,7 @@ class RouteHandlerPBehavior(object):
             "connector": connector,
             "connector_name": connector_name,
             "author": author,
-            "category": category,
+            PBehavior.TYPE: type_,
             "reason": reason
         }
         check_values(params)
@@ -304,7 +304,7 @@ def exports(ws):
             'tstart', 'tstop', 'rrule',
             'enabled', 'comments',
             'connector', 'connector_name',
-            'category', 'reason'
+            'type_', 'reason'
         ]
     )
     def create(
@@ -312,14 +312,14 @@ def exports(ws):
             tstart, tstop, rrule=None,
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
-            category=PBehavior.DEFAULT_CATEGORY, reason=''
+            type_=PBehavior.DEFAULT_TYPE, reason=''
     ):
         """
         Create a pbehavior.
         """
         return rhpb.create(
             name, filter, author, tstart, tstop, rrule,
-            enabled, comments, connector, connector_name, category, reason
+            enabled, comments, connector, connector_name, type_, reason
         )
 
     @ws.application.post('/api/v2/pbehavior')
@@ -387,7 +387,7 @@ def exports(ws):
             tstart=None, tstop=None, rrule=None,
             enabled=None, comments=None,
             connector=None, connector_name=None,
-            author=None, category=None, reason=None
+            author=None, type_=None, reason=None
     ):
         """
         Update a pbehavior.
@@ -404,7 +404,7 @@ def exports(ws):
             connector=connector,
             connector_name=connector_name,
             author=author,
-            category=category,
+            type_=type_,
             reason=reason
         )
 

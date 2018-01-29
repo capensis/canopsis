@@ -56,7 +56,9 @@ class TestManager(BaseTest):
             'enabled': True,
             'connector': 'test_connector',
             'connector_name': 'test_connector_name',
-            'author': 'test_author'
+            'author': 'test_author',
+            PBehavior.TYPE: 'pause',
+            'reason': 'reason is treason'
         }
 
         data = deepcopy(self.pbehavior)
@@ -102,6 +104,8 @@ class TestManager(BaseTest):
         self.assertTrue(pb is not None)
         self.assertTrue(isinstance(pbs, list))
         self.assertEqual(len(pbs), 1)
+        self.assertEqual(pbs[0][PBehavior.TYPE], self.pbehavior[PBehavior.TYPE])
+        self.assertEqual(pbs[0]['reason'], self.pbehavior['reason'])
 
     def test_update(self):
         self.pbm.update(self.pbehavior_id, name='test_name2',

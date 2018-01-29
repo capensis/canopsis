@@ -108,16 +108,16 @@ class PBehavior(BasePBehavior):
     CONNECTOR = 'connector'
     CONNECTOR_NAME = 'connector_name'
     AUTHOR = 'author'
-    CATEGORY = 'category'
+    TYPE = 'type_'
     REASON = 'reason'
 
-    DEFAULT_CATEGORY = 'generic'
+    DEFAULT_TYPE = 'generic'
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
-               CONNECTOR, CONNECTOR_NAME, AUTHOR, CATEGORY, REASON)
+               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
-                        CONNECTOR, CONNECTOR_NAME, AUTHOR, CATEGORY, REASON)
+                        CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
 
     def __init__(self, **kwargs):
         if PBehavior.FILTER in kwargs:
@@ -199,7 +199,7 @@ class PBehaviorManager(object):
             tstart, tstop, rrule='',
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
-            category=PBehavior.DEFAULT_CATEGORY, reason=''):
+            type_=PBehavior.DEFAULT_TYPE, reason=''):
         """
         Method creates pbehavior record
 
@@ -219,7 +219,7 @@ class PBehaviorManager(object):
             has generated the pbehavior
         :param str connector_name:  a string representing the name of connector
             that has generated the pbehavior
-        :param str category: associated category for this pbh
+        :param str type_: associated type_ for this pbh
         :param str reason: associated reason for this pbh
         :raises ValueError: invalid RRULE
         :return: created element eid
@@ -259,7 +259,7 @@ class PBehaviorManager(object):
             'comments': comments,
             'connector': connector,
             'connector_name': connector_name,
-            'category': category,
+            PBehavior.TYPE: type_,
             'reason': reason
         }
         if PBehavior.EIDS not in pb_kwargs:
