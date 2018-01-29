@@ -47,6 +47,7 @@ pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
+#DEFAULT_PB_TYPE = []
 
 
 def __format_pbehavior(pbehavior):
@@ -142,7 +143,8 @@ def add_pbehavior_status(watchers):
                     continue
 
                 alarmfilter = alarms[0]['v'].get(AlarmField.alarmfilter.value, {})
-                action_timer = alarmfilter.get(AlarmFilterField.next_run.value, None)
+                action_timer = alarmfilter.get(AlarmFilterField.next_run.value,
+                                               None)
                 if action_timer is not None:
                     next_action_timers.append(action_timer)
 
@@ -192,20 +194,19 @@ def get_active_pbehaviors_on_watchers(watchers_ids,
     get_active_pbehaviors_on_watchers.
 
     :param list watchers_ids:
-    :param list active_pb_dict: list of dict with key: pbheavior_id value: set of eids
+    :param list active_pb_dict:
     :param list active_pb_dict_full: list of pbehavior dict
     :returns: dict of watcher with list of active pbehavior
     """
-
     active_pb_on_watchers = {}
     for watcher_id in watchers_ids:
-        tmp_pb = []
+        tmp_pbh = []
         for key, eids in active_pb_dict.items():
             if watcher_id in eids:
-                tmp_pb.append(active_pb_dict_full[key])
-        for pb in tmp_pb:
-            pb['isActive'] = True
-        active_pb_on_watchers[watcher_id] = tmp_pb
+                tmp_pbh.append(active_pb_dict_full[key])
+        for pbh in tmp_pbh:
+            pbh['isActive'] = True
+        active_pb_on_watchers[watcher_id] = tmp_pbh
 
     return active_pb_on_watchers
 
@@ -216,7 +217,7 @@ def get_next_run_alert(watcher_depends, alert_next_run_dict):
 
     :param watcher_depends: list of eids
     :param alert_next_run_dict: dict with next run infos for alarm filter
-    :return: a timestamp with next alarm filter information or None
+    :returns: a timestamp with next alarm filter information or None
     """
     list_next_run = []
     for depend in watcher_depends:
@@ -225,8 +226,8 @@ def get_next_run_alert(watcher_depends, alert_next_run_dict):
             list_next_run.append(tmp_next_run)
     if list_next_run:
         return min(list_next_run)
-    else:
-        return None
+
+    return None
 
 
 def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
@@ -253,7 +254,8 @@ def check_baseline(merged_eids_tracer, watcher_depends):
 
     :param set merged_eids_tracer: all entities withan active baseline
     :param list watcher_depends: watcher entities
-    :return bool: true if the watcher has an entity with an active active_baseline
+    :returns: true if the watcher has an entity with an active active_baseline
+    :rtype: bool
     """
     for entity_id in watcher_depends:
         if entity_id in merged_eids_tracer:
@@ -279,8 +281,7 @@ def exports(ws):
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
-        #hallpe = request.query.hasallactivepbehaviorinentities or DEFAULT_HASALLACTIVEPBEHAVIORINENTITIES
-        #hape = request.query.hasactivepbehaviorinentities or DEFAULT_HASACTIVEPBEHAVIORINENTITIES
+        #pb_type = request.query.pb_type or DEFAULT_PB_TYPE
         try:
             start = int(start)
         except ValueError:
@@ -320,17 +321,16 @@ def exports(ws):
         merged_eids_tracer = set(merged_eids_tracer)
 
         actives_pb = pbehavior_manager.get_all_active_pbehaviors()
-        for pb in actives_pb:
-
-            active_pb_dict[pb['_id']] = set(pb.get('eids', []))
-            active_pb_dict_full[pb['_id']] = pb
+        for pbh in actives_pb:
+            active_pb_dict[pbh['_id']] = set(pbh.get('eids', []))
+            active_pb_dict_full[pbh['_id']] = pbh
 
         for watcher in watcher_list:
             for depends_id in watcher['depends']:
                 depends_merged.add(depends_id)
             entity_watchers_ids.append(watcher['_id'])
             alarm_watchers_ids.append(
-                '{0}/{1}'.format(watcher['_id'], watcher['name'])
+                '{}/{}'.format(watcher['_id'], watcher['name'])
             )
         active_pbehaviors = get_active_pbehaviors_on_watchers(
             entity_watchers_ids,
@@ -360,12 +360,12 @@ def exports(ws):
             ws.logger.debug(watcher)
             enriched_entity = {}
             tmp_alarm = alarm_dict.get(
-                '{0}/{1}'.format(watcher['_id'], watcher['name']),
+                '{}/{}'.format(watcher['_id'], watcher['name']),
                 []
             )
             tmp_linklist = []
-            for k, v in watcher['links'].items():
-                tmp_linklist.append({'cat_name': k, 'links': v})
+            for k, val in watcher['links'].items():
+                tmp_linklist.append({'cat_name': k, 'links': val})
 
             enriched_entity['entity_id'] = watcher['_id']
             enriched_entity['infos'] = watcher['infos']
@@ -411,7 +411,7 @@ def exports(ws):
             )
             tmp_next_run = get_next_run_alert(watcher.get('depends', []),
                                               next_run_dict)
-            if tmp_next_run:
+            if tmp_next_run is not None:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
             watchers.append(enriched_entity)
@@ -488,8 +488,8 @@ def exports(ws):
             raw_entity = entity['entity']
 
             tmp_linklist = []
-            for k, v in raw_entity['links'].items():
-                tmp_linklist.append({'cat_name': k, 'links': v})
+            for k, val in raw_entity['links'].items():
+                tmp_linklist.append({'cat_name': k, 'links': val})
 
             enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
