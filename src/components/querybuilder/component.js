@@ -135,6 +135,9 @@ Ember.Application.initializer({
          * @returns the cleaned filter
          */
         var cleanFilterEqOperators = function(filter) {
+			if (filter == null){
+				return filter
+			}
             var filterKeys = Ember.keys(filter);
             if(filter.$eq !== undefined) {
                 return filter.$eq;
@@ -359,12 +362,22 @@ Ember.Application.initializer({
                     additionnalKeys = $(additionnalKeys).not(existingFiltersKeys).get();
 
                     for (i = 0; i < additionnalKeys.length; i++) {
-                        filters.pushObject({
-                            id: additionnalKeys[i],
-                            label: additionnalKeys[i],
-                            type: 'string',
-                            optgroup: 'custom'
-                        });
+						var found = false
+						var it = 0
+						while (!found && it < filters.length){
+							if(filters[it]["id"] == additionnalKeys[i]){
+								found = true
+							}
+							it++
+						}
+						if (!found){
+							filters.pushObject({
+								id: additionnalKeys[i],
+								label: additionnalKeys[i],
+								type: 'string',
+								optgroup: 'custom'
+							})
+						}
                     }
                 }
 
@@ -400,4 +413,3 @@ Ember.Application.initializer({
         application.register('component:component-querybuilder', component);
     }
 });
-
