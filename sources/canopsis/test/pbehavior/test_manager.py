@@ -21,18 +21,17 @@
 
 from __future__ import unicode_literals
 import unittest
+import xmlrunner
+
 from canopsis.common import root_path
 from calendar import timegm
 from copy import deepcopy
 from datetime import datetime, timedelta
 from json import dumps
-from unittest import main
 from uuid import uuid4
 
 from canopsis.pbehavior.manager import PBehavior
-
 from test_base import BaseTest
-import xmlrunner
 
 
 class TestManager(BaseTest):
@@ -57,7 +56,9 @@ class TestManager(BaseTest):
             'enabled': True,
             'connector': 'test_connector',
             'connector_name': 'test_connector_name',
-            'author': 'test_author'
+            'author': 'test_author',
+            PBehavior.TYPE: 'pause',
+            'reason': 'reason is treason'
         }
 
         data = deepcopy(self.pbehavior)
@@ -103,6 +104,8 @@ class TestManager(BaseTest):
         self.assertTrue(pb is not None)
         self.assertTrue(isinstance(pbs, list))
         self.assertEqual(len(pbs), 1)
+        self.assertEqual(pbs[0][PBehavior.TYPE], self.pbehavior[PBehavior.TYPE])
+        self.assertEqual(pbs[0]['reason'], self.pbehavior['reason'])
 
     def test_update(self):
         self.pbm.update(self.pbehavior_id, name='test_name2',
