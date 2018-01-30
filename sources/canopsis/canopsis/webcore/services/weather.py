@@ -23,17 +23,18 @@
 
 from __future__ import unicode_literals
 
-from ast import literal_eval
 import copy
 import json
 from operator import itemgetter
 from bottle import request
+from six import string_types
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
+from canopsis.confng.helpers import cfg_to_array
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.tracer.manager import TracerManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
@@ -47,7 +48,7 @@ pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
-#DEFAULT_PB_TYPE = []
+DEFAULT_PB_TYPES = []
 
 
 def __format_pbehavior(pbehavior):
@@ -107,14 +108,13 @@ def watcher_status(watcher, pbehavior_eids_merged):
     :returns: has active pb status and has all active pb status
     :rtype: (bool, bool)
     """
-    bool_set = set([])
-    for entity_id in watcher['depends']:
-        bool_set.add(entity_id in pbehavior_eids_merged)
+    bool_set = set([e in pbehavior_eids_merged for e in watcher['depends']])
 
-    if True in bool_set and False in bool_set:
+    at_least_one = True in bool_set
+    if at_least_one and False in bool_set:
         # has_active_pbh
         return True, False
-    elif True in bool_set:
+    elif at_least_one:
         # has_all_active_pbh
         return False, True
 
@@ -215,7 +215,10 @@ def exports(ws):
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
-        #pb_type = request.query.pb_type or DEFAULT_PB_TYPE
+        pb_types = request.query.pb_types or DEFAULT_PB_TYPES
+        if isinstance(pb_types, string_types):
+            pb_types = cfg_to_array(pb_types)
+        filter_on_pb_type = len(pb_types) > 0
         try:
             start = int(start)
         except ValueError:
@@ -256,7 +259,10 @@ def exports(ws):
         merged_eids_tracer = set(merged_eids_tracer)
 
         # List all activated pbh eids, ordered by pbh id
-        actives_pb = pbehavior_manager.get_all_active_pbehaviors()
+        if filter_on_pb_type:
+            actives_pb = pbehavior_manager.get_active_pbehaviors_from_type(pb_types)
+        else:
+            actives_pb = pbehavior_manager.get_all_active_pbehaviors()
         for pbh in actives_pb:
             active_pb_dict[pbh['_id']] = set(pbh.get('eids', []))
             active_pb_dict_full[pbh['_id']] = pbh
@@ -331,11 +337,13 @@ def exports(ws):
                 if 'resource' in tmp_alarm.keys():
                     enriched_entity['resource'] = tmp_alarm['resource']
 
-            enriched_entity["mfilter"] = watcher["mfilter"]
             enriched_entity['pbehavior'] = active_pbehaviors.get(
                 watcher['_id'],
                 []
             )
+            if filter_on_pb_type and enriched_entity['pbehavior'] not in pb_types:
+                continue
+            enriched_entity["mfilter"] = watcher["mfilter"]
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
                 watcher['depends'],
                 alarm_dict
