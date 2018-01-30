@@ -1,3 +1,8 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import os
 import time
 
@@ -5,15 +10,11 @@ from canopsis.engines.core import TaskHandler, publish
 from canopsis.event import forger
 from canopsis.context_graph.import_ctx import ImportKey as Keys,\
     ContextGraphImport, Manager
-from canopsis.configuration.configurable.decorator import conf_paths,\
-    add_category
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.model import Parameter
 from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger, OutputFile
 
-MSG_SUCCEED = "Import {0} succeed."
-MSG_FAILED = "Import {0} failed."
+MSG_SUCCEED = "Import {} succeed."
+MSG_FAILED = "Import {} failed."
 ST_INFO = 0
 ST_MINOR = 1
 ST_WARNING = 2
@@ -50,8 +51,8 @@ class engine(TaskHandler):
     etype = "task_importctx"
 
     E_IMPORT_FAILED = "Error during the import of id {0} : {1}."
-    I_IMPORT_DONE = "Import {0} done."
-    I_START_IMPORT = "Start import {0}."
+    I_IMPORT_DONE = "Import {} done."
+    I_START_IMPORT = "Start import {}."
     LOG_NAME = "Task_importctx"
     LOG_PATH = "var/log/engines/task_importctx.log"
 
@@ -80,16 +81,12 @@ class engine(TaskHandler):
 
     def send_perfdata(self, uuid, time, updated, deleted):
         """Send stat about the import through a perfdata event.
-        :param uuid: the import uuid
-        :type uuid: a string
-        :param time: the execution time of the import
-        :type time: a float
-        :param updated: the number of updated entities during the import
-        :type updated: an integer
-        :param deleted: the number of deleted entities during the import
-        :type deleted: an integer
-        """
 
+        :param str uuid: the import uuid
+        :param float time: the execution time of the import
+        :param int updated: the number of updated entities during the import
+        :param int deleted: the number of deleted entities during the import
+        """
         # define the state according to the duration of the import
         if time > self._thd_crit_s:
             state = ST_WARNING
@@ -118,14 +115,18 @@ class engine(TaskHandler):
             state=state,
             state_type=1,
             output=output,
-            perf_data_array=perf_data_array)
+            perf_data_array=perf_data_array
+        )
 
         publish(event, self.amqp)
 
     def handle_task(self, job):
-        """Handlt the import.
-        :param job: the event.
-        :type job: a dict"""
+        """
+        Handle the import.
+
+        :param dict job: the event
+        :returns:
+        """
         self.logger.info(job)
 
         uuid = job[Keys.EVT_IMPORT_UUID]
