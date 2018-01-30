@@ -40,6 +40,7 @@ class engine(Engine):
         self.stbackend = self.storage.get_backend('ack')
         self.objects_backend = self.storage.get_backend('object')
         self.acknowledge_on = acknowledge_on
+        self.context_manager = ContextGraph(self.logger)
 
     def pre_run(self):
 
