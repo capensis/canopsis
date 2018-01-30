@@ -149,7 +149,7 @@ def exports(ws):
             event = event_body.copy()
             event[ImportKey.EVT_IMPORT_UUID] = uuid
             event[ImportKey.EVT_JOBID] = ImportKey.JOB_ID.format(uuid)
-            ws.amqp_pub.json_document(event, 'amq.direct', RK)
+            ws.amqp_pub.json_document(event, 'amqp.direct', RK)
         except Exception as e:
             ws.logger.error(e)
             return {__ERROR: __EVT_ERROR.format(repr(e))}
