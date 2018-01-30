@@ -360,5 +360,4 @@ class TestWeatherAPI(BasicWeatherAPITest):
         json = self.get_watcher("{}?pb_types=['{}']"
                                 .format(watcher_filter_1, 'wrong_type'))
         self.assertTrue(isinstance(json, list))
-        print(json)
         self.assertEqual(len(json), 0)
