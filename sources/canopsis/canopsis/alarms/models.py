@@ -296,6 +296,7 @@ class Alarm(object):
             self.resolved = int(self.status.timestamp)
             self.status.value = AlarmStatus.OFF
             return True
+
         return False
 
     def resolve_cancel(self, cancel_delay):
@@ -337,19 +338,17 @@ class Alarm(object):
 
         return False
 
-    def resolve_stealthy(self, stealthy_show_duration=0, stealthy_interval=0):
+    def resolve_stealthy(self, stealthy_interval=0):
         """
         Resolves alarms that should not be stealthy anymore.
 
-        :param int stealthy_show_duration: duration (in seconds) where the alarm should be shown as stealthy
         :param int stealthy_interval:
         :returns: True if the alarm was resolved, False otherwise
         :rtype: bool
         """
         if self.status is None \
                 or self.status.value != AlarmStatus.STEALTHY \
-                or self._is_stealthy(stealthy_show_duration,
-                                     stealthy_interval):
+                or self._is_stealthy(stealthy_interval):
             return False
 
         new_status = AlarmStep(
@@ -364,30 +363,26 @@ class Alarm(object):
 
         return True
 
-    def _is_stealthy(self, stealthy_show_duration, stealthy_interval):
+    def _is_stealthy(self, stealthy_interval):
         """
         Checks if an alarm is stealthy.
 
-        :param int stealthy_show_duration:
         :param int stealthy_interval:
         :returns: true if the alarm is still stealthy, False otherwise
         :rtype: bool
         """
-        last_state_ts = self.state.timestamp
+        if self.state.value != AlarmState.OK:
+            return False
+
         for step in self.steps:
-            delta1 = last_state_ts - step.timestamp
-            delta2 = int(time()) - step.timestamp
-            if delta1 > stealthy_show_duration or \
-                    delta1 > stealthy_interval or \
-                    delta2 > stealthy_show_duration or \
-                    delta2 > stealthy_interval:
+            delta = int(time()) - step.timestamp
+            if delta > stealthy_interval:
                 break
 
             if step.type_ in [ALARM_STEP_TYPE_STATE_DECREASE,
-                              ALARM_STEP_TYPE_STATE_INCREASE]:
-                if step.value != AlarmState.OK \
-                        and self.state.value == AlarmState.OK:
-                    return True
+                              ALARM_STEP_TYPE_STATE_INCREASE] \
+               and step.value != AlarmState.OK:
+                return True
 
         return False
 

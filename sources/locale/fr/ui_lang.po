@@ -1,4 +1,4 @@
-# 
+#
 # Translators:
 # eric regnier <eregnier@capensis.fr>, 2014-2015
 # Mourcia Mikael <mmourcia@yahoo.fr>, 2014-2015
@@ -1178,9 +1178,6 @@ msgstr "durée à considérer pour l'état bagot"
 
 msgid "stealthy_time"
 msgstr "durée à considérer pour l'état furtif"
-
-msgid "stealthy_show"
-msgstr "durée de prise en compte de l'état furtif"
 
 msgid "restore_event"
 msgstr "évènement restauré"
