@@ -31,8 +31,9 @@ from time import time
 
 from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
+from canopsis.confng.helpers import cfg_to_bool
+from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 from canopsis.pbehavior.utils import check_valid_rrule
-from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.manager import Watcher as WatcherManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
@@ -41,13 +42,14 @@ PBEHAVIOR_COMPUTE_COOLDOWN = 10
 
 VALID_PBEHAVIOR_PARAMS = [
     'name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
-    'enabled', 'comments', 'connector', 'connector_name'
+    'enabled', 'comments', 'connector', 'connector_name', 'type_', 'reason'
 ]
 
 
 def check(data, key, type_):
     """
     If key exists in data and data[key] != None, check for type_
+
     :param dict data: data to check
     :param str key: key in data dict
     :param type type_: data[key] type to check
@@ -60,14 +62,17 @@ def check(data, key, type_):
 
 
 def check_values(data):
-    """Check if the values present in data respect the specification. If
+    """
+    Check if the values present in data respect the specification. If
     the values are correct do nothing. If not, raises an error.
+
+    :param dict data: the data.
     :raises ValueError: a value is invalid.
-    :param dict data: the data."""
+    """
 
     # check str values
     for k in ["name", "author", "rrule", "component", "connector",
-              "connector_name"]:
+              "connector_name", 'type_', 'reason']:
         check(data, k, string_types)
 
     # check int values
@@ -111,17 +116,14 @@ def check_values(data):
             or isinstance(data['enabled'], bool)):
         return
 
-    if data["enabled"] in ["True", "true"]:
-        data["enabled"] = True
-    elif data["enabled"] in ["False", "false"]:
-        data["enabled"] = False
-    else:
-        raise ValueError("The enabled value does not match a boolean")
+    data["enabled"] = cfg_to_bool(data["enabled"])
 
 
 class RouteHandlerPBehavior(object):
-    """Passthrough class with few checks from the route to the pbehavior
-    manager."""
+    """
+    Passthrough class with few checks from the route to the pbehavior
+    manager.
+    """
 
     def __init__(self, pb_manager, watcher_manager):
         """
@@ -134,7 +136,8 @@ class RouteHandlerPBehavior(object):
     def create(self, name, filter_, author,
                tstart, tstop, rrule=None,
                enabled=True, comments=None,
-               connector='canopsis', connector_name='canopsis'):
+               connector='canopsis', connector_name='canopsis',
+               type_=PBehavior.DEFAULT_TYPE, reason=''):
         """
         Create a pbehavior.
 
@@ -148,25 +151,39 @@ class RouteHandlerPBehavior(object):
         :param list comments: list of comments: {'author': 'author', 'message': 'msg'}
         :param str connector: connector
         :param str connector_name: connector name
+        :param str type_: an associated type_
+        :param str reason: a reason to apply this behavior
         """
-        data = {"name": name,
-                "filter_": filter_,
-                "author": author,
-                "tstart": tstart,
-                "tstop": tstop,
-                "rrule": rrule,
-                "enabled": enabled,
-                "comments": comments,
-                "connector": connector,
-                "connector_name": connector_name}
+        data = {
+            "name": name,
+            "filter_": filter_,
+            "author": author,
+            "tstart": tstart,
+            "tstop": tstop,
+            "rrule": rrule,
+            "enabled": enabled,
+            "comments": comments,
+            "connector": connector,
+            "connector_name": connector_name,
+            PBehavior.TYPE: type_,
+            "reason": reason
+        }
 
         check_values(data)
 
         result = self.pb_manager.create(
-            name=name, filter=filter_, author=author,
-            tstart=tstart, tstop=tstop, rrule=rrule,
-            enabled=enabled, comments=comments,
-            connector=connector, connector_name=connector_name
+            name=name,
+            filter=filter_,
+            author=author,
+            tstart=tstart,
+            tstop=tstop,
+            rrule=rrule,
+            enabled=enabled,
+            comments=comments,
+            connector=connector,
+            connector_name=connector_name,
+            type_=type_,
+            reason=reason
         )
 
         return result
@@ -196,22 +213,26 @@ class RouteHandlerPBehavior(object):
 
     def update(self, _id, name=None, filter_=None, tstart=None, tstop=None,
                rrule=None, enabled=None, comments=None, connector=None,
-               connector_name=None, author=None):
+               connector_name=None, author=None, type_=None, reason=None):
         """
         Update pbehavior fields. Fields to None will **not** be updated.
 
         :param str _id: pbehavior id
         """
-        params = {"name": name,
-                  "filter_": filter_,
-                  "tstart": tstart,
-                  "tstop": tstop,
-                  "rrule": rrule,
-                  "enabled": enabled,
-                  "comments": comments,
-                  "connector": connector,
-                  "connector_name": connector_name,
-                  "author": author}
+        params = {
+            "name": name,
+            "filter_": filter_,
+            "tstart": tstart,
+            "tstop": tstop,
+            "rrule": rrule,
+            "enabled": enabled,
+            "comments": comments,
+            "connector": connector,
+            "connector_name": connector_name,
+            "author": author,
+            PBehavior.TYPE: type_,
+            "reason": reason
+        }
         check_values(params)
 
         return self.pb_manager.update(_id, **params)
@@ -231,11 +252,12 @@ class RouteHandlerPBehavior(object):
         :param str pb_id: pbehavior id
         :param str author: author
         :param str message: message
-        :return: comment id
+        :returns: comment id
         :rtype: str
         """
         author = str(author)
         message = str(message)
+
         return self.pb_manager.create_pbehavior_comment(pb_id, author, message)
 
     def update_comment(self, pb_id, _id, author, message):
@@ -249,8 +271,10 @@ class RouteHandlerPBehavior(object):
         """
         author = str(author)
         message = str(message)
+
         return self.pb_manager.update_pbehavior_comment(
-            pb_id, _id, author=author, message=message)
+            pb_id, _id, author=author, message=message
+        )
 
     def delete_comment(self, pb_id, _id):
         """
@@ -279,21 +303,24 @@ def exports(ws):
             'name', 'filter', 'author',
             'tstart', 'tstop', 'rrule',
             'enabled', 'comments',
-            'connector', 'connector_name'
+            'connector', 'connector_name',
+            'type_', 'reason'
         ]
     )
     def create(
             name, filter, author,
             tstart, tstop, rrule=None,
             enabled=True, comments=None,
-            connector='canopsis', connector_name='canopsis'
+            connector='canopsis', connector_name='canopsis',
+            type_=PBehavior.DEFAULT_TYPE, reason=''
     ):
         """
         Create a pbehavior.
         """
         return rhpb.create(
-            name, filter, author, tstart, tstop,
-            rrule, enabled, comments, connector, connector_name)
+            name, filter, author, tstart, tstop, rrule,
+            enabled, comments, connector, connector_name, type_, reason
+        )
 
     @ws.application.post('/api/v2/pbehavior')
     def create_v2():
@@ -360,15 +387,26 @@ def exports(ws):
             tstart=None, tstop=None, rrule=None,
             enabled=None, comments=None,
             connector=None, connector_name=None,
-            author=None
+            author=None, type_=None, reason=None
     ):
         """
         Update a pbehavior.
         """
         return rhpb.update(
-            _id, name=name, filter_=filter, tstart=tstart, tstop=tstop,
-            rrule=rrule, enabled=enabled, comments=comments,
-            connector=connector, connector_name=connector_name, author=author)
+            _id=_id,
+            name=name,
+            filter_=filter,
+            tstart=tstart,
+            tstop=tstop,
+            rrule=rrule,
+            enabled=enabled,
+            comments=comments,
+            connector=connector,
+            connector_name=connector_name,
+            author=author,
+            type_=type_,
+            reason=reason
+        )
 
     @route(
         ws.application.delete,
@@ -379,9 +417,9 @@ def exports(ws):
         """/pbehavior/delete : delete the pbehaviour that match the _id
 
         :param _id: the pbehaviour id
-        :return type: dict
-        :return: a dict with two field. "acknowledged" that True if the
+        :returns: a dict with two field. "acknowledged" that True if the
         delete is a sucess. False, otherwise.
+        :rtype: dict
         """
         return rhpb.delete(_id)
 
@@ -390,9 +428,9 @@ def exports(ws):
         """Delete the pbehaviour that match the _id
 
         :param pbehavior_id: the pbehaviour id
-        :return type: dict
         :return: a dict with two field. "acknowledged" that True if the
         delete is a sucess. False, otherwise.
+        :rtype: dict
         """
         ws.logger.info('Delete pbehavior : {}'.format(pbehavior_id))
 
@@ -409,7 +447,7 @@ def exports(ws):
         :param _id: the pbehavior id
         :param author: author name
         :param message: the message to store in the comment.
-        :return: In case of success, return the comment id. None otherwise.
+        :returns: In case of success, return the comment id. None otherwise.
         """
         return rhpb.create_comment(pbehavior_id, author, message)
 
@@ -425,7 +463,7 @@ def exports(ws):
         :param _id: the comment id
         :param author: author name
         :param message: the message to store in the comment.
-        :return: In case of success, return the updated comment. None otherwise.
+        :returns: In case of success, return the updated comment. None otherwise.
         """
         return rhpb.update_comment(pbehavior_id, _id, author, message)
 
@@ -439,9 +477,9 @@ def exports(ws):
 
         :param pbehavior_id: the pbehavior id
         :param _id: the comment id
-        :return type: dict
-        :return: a dict with two field. "acknowledged" that contains True if
+        :returns: a dict with two field. "acknowledged" that contains True if
         delete has successed. False, otherwise.
+        :rtype: dict
         """
         return rhpb.delete_comment(pbehavior_id, _id)
 
@@ -452,7 +490,7 @@ def exports(ws):
         """
         Force compute of all pbehaviors, once per minute max
 
-        :returns: bool
+        :rtype: bool
         """
         global last_pbehaviors_compute
         now = int(time())
