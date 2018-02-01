@@ -889,9 +889,8 @@ class Alerts(object):
 
         limit = alarm.get(AlarmField.hard_limit.value, None)
 
-        if limit is not None:
-            if limit['val'] >= self.hard_limit:
-                return alarm
+        if limit is not None and limit['val'] >= self.hard_limit:
+            return alarm
 
         if len(alarm[AlarmField.steps.value]) >= self.hard_limit:
             task = get_task('alerts.check.hard_limit')
