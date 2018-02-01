@@ -41,7 +41,7 @@ class TestManager(BaseTest):
         self.assertEqual(self.manager.flapping_interval, 3600)
         self.assertEqual(self.manager.flapping_freq, 10)
         self.assertEqual(self.manager.flapping_persistant_steps, 10)
-        self.assertEqual(self.manager.hard_limit, 100)
+        self.assertEqual(self.manager.hard_limit, 2000)
         self.assertEqual(self.manager.stealthy_interval, 300)
         self.assertEqual(self.manager.restore_event, True)
         self.assertEqual(self.manager.record_last_event_date, False)
@@ -857,11 +857,11 @@ class TestManager(BaseTest):
                 'expected': False
             },
             {
-                'alarm': {AlarmField.hard_limit.value: {'val': 100}},
+                'alarm': {AlarmField.hard_limit.value: {'val': 2000}},
                 'expected': True
             },
             {
-                'alarm': {AlarmField.hard_limit.value: {'val': 101}},
+                'alarm': {AlarmField.hard_limit.value: {'val': 2001}},
                 'expected': True
             }
         ]
@@ -898,31 +898,31 @@ class TestManager(BaseTest):
             {
                 'alarm': {
                     AlarmField.hard_limit.value: None,
-                    AlarmField.steps.value: [i for i in range(100)]
+                    AlarmField.steps.value: [i for i in range(2000)]
                 },
                 'expected': {
                     'type_hard_limit': dict,
-                    'len_steps': 101
+                    'len_steps': 2001
                 }
             },
             {
                 'alarm': {
-                    AlarmField.hard_limit.value: {'val': 101},
-                    AlarmField.steps.value: [i for i in range(200)]
+                    AlarmField.hard_limit.value: {'val': 2001},
+                    AlarmField.steps.value: [i for i in range(3000)]
                 },
                 'expected': {
                     'type_hard_limit': dict,
-                    'len_steps': 200
+                    'len_steps': 3000
                 }
             },
             {
                 'alarm': {
-                    AlarmField.hard_limit.value: {'val': 99},
-                    AlarmField.steps.value: [i for i in range(100)]
+                    AlarmField.hard_limit.value: {'val': 1999},
+                    AlarmField.steps.value: [i for i in range(2000)]
                 },
                 'expected': {
                     'type_hard_limit': dict,
-                    'len_steps': 101
+                    'len_steps': 2001
                 }
             }
         ]
