@@ -1,4 +1,6 @@
 {
+    "loader_id": "view.pbehavior_reasons",
+    "loader_no_update": true,
     "_id": "userview_3d9f018b-06c7-95e3-4b99-ae86e8452b0a",
     "crecord_write_time": 1517475345,
     "enable": true,
