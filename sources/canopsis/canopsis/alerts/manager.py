@@ -52,7 +52,10 @@ from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.watcher.manager import Watcher
 
+# Extra fields from the event that should be stored in the alarm
 DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
+
+# if set to True, the last_event_date will be updated on each event that triggers the alarm
 DEFAULT_RECORD_LAST_EVENT_DATE = False
 DEFAULT_FILTER_AUTHOR = 'system'
 
@@ -220,14 +223,6 @@ class Alerts(object):
         Interval used to check for stealthy alarm status.
         """
         return self.config_data.get('stealthy_time', DEFAULT_STEALTHY_INTERVAL)
-
-    @property
-    def stealthy_show_duration(self):
-        """
-        Interval used to check if alarm is still in stealthy status.
-        """
-        return self.config_data.get('stealthy_show',
-                                    DEFAULT_STEALTHY_SHOW_DURATION)
 
     def get_alarms(
             self,

@@ -24,7 +24,7 @@ from __future__ import unicode_literals
 from copy import copy
 import logging
 from time import time
-from unittest import TestCase, main
+from unittest import TestCase
 
 from canopsis.alarms.models import (
     AlarmStep, AlarmIdentity, Alarm, AlarmStatus, AlarmState,
@@ -176,9 +176,9 @@ class AlarmsModelsTest(TestCase):
         step.value = AlarmState.MAJOR
         self.alarm.steps = [step]
 
-        self.assertFalse(self.alarm._is_stealthy(0, 0))
+        self.assertFalse(self.alarm._is_stealthy(0))
 
-        self.assertTrue(self.alarm._is_stealthy(9999, 9999))
+        self.assertTrue(self.alarm._is_stealthy(9999))
 
     def test_alarm_resolve_stealthy(self):
         self.assertFalse(self.alarm.resolve_stealthy())
@@ -198,7 +198,7 @@ class AlarmsModelsTest(TestCase):
             value=AlarmState.OK
         )
         last = len(self.alarm.steps)
-        self.assertTrue(self.alarm.resolve_stealthy(9999, 9999))
+        self.assertTrue(self.alarm.resolve_stealthy(9999))
         self.assertEqual(self.alarm.status.author, 'LawnmowerDog.AnatomyPark')
         self.assertEqual(len(self.alarm.steps), last + 1)
 

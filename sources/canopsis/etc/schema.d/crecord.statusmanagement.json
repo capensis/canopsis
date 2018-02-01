@@ -5,7 +5,7 @@
 		"keys":["bagot_freq", "bagot_time"]
 	},{
 		"title": "Stealthy settings",
-		"keys":["stealthy_time", "stealthy_show"]
+		"keys":["stealthy_time"]
 	},{
 		"title": "Misc statuses",
 		"keys":["restore_event", "cancel_autosolve_delay"]
@@ -17,13 +17,6 @@
 			"default": 60,
 			"role": "duration",
 			"description": "How long elapsed between two event state change to consider a stealthy status."
-		},
-		"stealthy_show": {
-			"type": "number",
-			"required": true,
-			"default": 60,
-			"role": "duration",
-			"description": "How long an event remains in furtivity status before it changes again to another status."
 		},
 		"bagot_freq": {
 			"type": "number",

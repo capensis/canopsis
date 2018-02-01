@@ -55,7 +55,6 @@ class BaseTest(TestCase):
                 'bagot_time': 3600,
                 'bagot_freq': 10,
                 'stealthy_time': 300,
-                'stealthy_show': 600,
                 'restore_event': True,
                 'auto_snooze': False,
                 'snooze_default_time': 300,
