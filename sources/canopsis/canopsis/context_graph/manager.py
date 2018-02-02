@@ -120,7 +120,7 @@ class InfosFilter:
         try:
             schema = self._schema["schema"]["properties"]
         except KeyError:
-            self.logger.info("No properties field")
+            self.logger.debug("No properties field")
         else:
             self.__clean(infos, copy.deepcopy(infos), schema)
 
