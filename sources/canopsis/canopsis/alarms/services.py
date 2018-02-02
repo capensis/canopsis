@@ -128,8 +128,7 @@ class AlarmService(object):
             resolved = alarm.resolve(self.bagot_time)
             resolved_flapping = alarm.resolve_flapping(self.bagot_time)
             resolved_cancel = alarm.resolve_cancel(self.cancel_delay)
-            resolved_stealthy = alarm.resolve_stealthy(self.stealthy_duration,
-                                                       self.stealthy_interval)
+            resolved_stealthy = alarm.resolve_stealthy(self.stealthy_interval)
             if resolved or resolved_cancel or resolved_stealthy or resolved_flapping:
                 self.update_alarm(alarm)
                 updated_alarm_counter += 1
