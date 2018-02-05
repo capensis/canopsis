@@ -22,11 +22,11 @@
 """Test the canopsis.common.utils module.
 """
 
-from unittest import TestCase, main
+from unittest import TestCase
 
 from canopsis.common.utils import (
     lookup, path, isiterable, isunicode, ensure_unicode, ensure_iterable,
-    forceUTF8
+    forceUTF8, get_sub_key
 )
 
 from sys import version as PYVER
@@ -159,6 +159,30 @@ class UtilsTest(TestCase):
         data_to_check = {notutf8, utf8, 1}
         result = forceUTF8(data_to_check)
         self.assertEqual(result, {utf8, 1})
+
+    def test_get_sub_key(self):
+        dico = {
+            'virgule': {
+                'point': 1
+            }
+        }
+
+        value = get_sub_key(dico, 'virgule')
+        self.assertIsInstance(value, dict)
+        self.assertDictEqual(value, dico['virgule'])
+
+        value = get_sub_key(dico, 'virgule.point')
+        self.assertIsInstance(value, int)
+        self.assertEqual(value, dico['virgule']['point'])
+
+        value = get_sub_key(dico, 'virgule.point.quadratin')
+        self.assertIsNone(value)
+
+        value = get_sub_key(dico, 'point.virgule')
+        self.assertIsNone(value)
+
+        value = get_sub_key(dico, '.')
+        self.assertIsNone(value)
 
 if __name__ == '__main__':
     output = root_path + "/tests_report"
