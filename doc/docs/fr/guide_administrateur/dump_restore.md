@@ -1,4 +1,4 @@
-# Dump & Restore
+ Dump & Restore
 
 Commandes à exécuter afin d’effectuer des *dumps* de base de données, collections, séries…
 
@@ -40,6 +40,14 @@ Restore JSON :
 ```
 mongoimport -u cpsmongo -p canopsis -d canopsis -c <collection_name> /path/to/<collection_name>.json
 zcat /path/to/<collection_name>.json.gz | mongoimport -u cpsmongo -p canopsis -d canopsis -c <collection_name>
+```
+
+### Dump avec filtrage
+
+Exemple en récupérant tous les documents de la collection `periodical_alarm` de la BD Canopsis avec des documents ayant un champs `v.ack` :
+
+```
+mongodump -h <host> -u cpsmongo -p canopsis --db canopsis -c periodical_alarm -o bad_docs.json.gz --gzip -q '{"v.ack":{$exists: true}}'
 ```
 
 ## Session Web
