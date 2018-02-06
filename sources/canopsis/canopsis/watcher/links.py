@@ -11,10 +11,12 @@ def build_links(watcher_entity, context_graph):
     :param watcher_entity:
     :param context_graph:
     """
-    mfilter = loads(watcher_entity['mfilter'], None)
+    jmfilter = watcher_entity.get('mfilter', None)
 
-    if mfilter is None:
+    if jmfilter is None:
         return
+
+    mfilter = loads(jmfilter)
 
     dep = context_graph.get_entities(
         query=mfilter,
