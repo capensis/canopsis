@@ -609,3 +609,25 @@ def gen_id():
     mii = ''.join(random.SystemRandom().choice(ascii_uppercase) for _ in range(6))
 
     return '{}-{}-{}'.format(mii[0:2], mii[2:4], mii[4:6])
+
+
+def get_sub_key(dico, key, default=None):
+    """
+    Find a sub key (from a string) into a dict. Usefull with context_graph.
+
+    :param dict dico: a dict to search in
+    :param str key: a string describying the key to lookup
+    :param object default: default value returned
+    :returns: the corresponding value in dico
+    """
+    coid = dico
+    for k in key.split('.'):
+        if not isinstance(coid, dict):
+            return default
+
+        coid = coid.get(k, None)
+        if coid is None:
+            # print('Cannot find {}'.format(k))
+            return default
+
+    return coid
