@@ -23,7 +23,6 @@ Python utility library.
 """
 
 from collections import Iterable
-from datetime import datetime
 from imp import load_source
 from importlib import import_module
 from inspect import ismodule

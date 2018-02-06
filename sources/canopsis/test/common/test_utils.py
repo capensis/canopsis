@@ -184,6 +184,9 @@ class UtilsTest(TestCase):
         value = get_sub_key(dico, '.')
         self.assertIsNone(value)
 
+        value = get_sub_key(dico, 'virgule.virgule', default='#')
+        self.assertEqual(value, '#')
+
 if __name__ == '__main__':
     output = root_path + "/tests_report"
     unittest.main(
