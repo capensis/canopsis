@@ -82,7 +82,7 @@ def main():
             print(exc.output)
             failed += 1
         else:
-            print("{} -> SUCESS".format(modname))
+            print("{} -> SUCCESS".format(modname))
             passed += 1
     subprocess.call(["coverage", "combine"])
     subprocess.call(["coverage",
