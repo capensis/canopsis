@@ -6,10 +6,10 @@ traitement spécifique en passant par une classe python construite pour l'occasi
 
 ## Fonctionnement
 
-Le moteur de traitement custom pour les traps SNMP se déclanche lorsqu'aucunes
+Le moteur de traitement custom pour les traps SNMP se déclenche lorsqu'aucune
 rule ne correspond à la trap reçue.
 
-Le moteur va alors exécuter une fonction d'identification (match) dans chacunes
+Le moteur va alors exécuter une fonction d'identification (match) dans chacune
 des classes héritant de SnmpTrap présentes dans un dossier spécifique.
 
 Si l'identification réussie, une seconde fonction est exécutée ; celle-ci va
@@ -46,11 +46,16 @@ class MyRuleTrap(SnmpTrap):
 
 ### Outils inclus
 
+* `self.date_format(timestamp)`: converti le timestamp donné en chaîne de
+caractères formattée. Exemple: `self.date_format(62) == '1970-01-01 00:01:2'`
+* `self.trap_oid(trap)`: donne l'oid de la trap.
+Exemple : `self.trap_oid({ 'snmp_trap_oid': '6.2' }) == '6.2'`
+* `self.var_from_oid(trap, oid)`: retrouve un oid dans les variables snmp.
+Exemple: `self.var_from_oid({ 'snmp_vars': {'5.9': 0} }, '5.9') == 0`
 * `self.word(variable, index)`: permet de récupérer le i-ème élément d'une
 variable, en la découpant suivant un caractère de séparation (# par défaut).
 Exemple: `self.word('a#b#c', 2) == 'b'`
 
-TODO ? contains, var_from_oid, var, trim, format(date)
 
 ## Tester une classe custom
 
