@@ -11,14 +11,22 @@ def build_links(watcher_entity, context_graph):
     :param watcher_entity:
     :param context_graph:
     """
-    mfilter = loads(watcher_entity['mfilter'])
+    jmfilter = watcher_entity.get('mfilter', None)
+
+    if jmfilter is None:
+        return
+
+    mfilter = loads(jmfilter)
+
     dep = context_graph.get_entities(
         query=mfilter,
         projection={'_id': 1}
     )
+
     for i in dep:
-        if i['_id'] not in watcher_entity['depends']:
+        if i['_id'] not in watcher_entity.get('depends', []):
             watcher_entity['depends'].append(i['_id'])
+
     context_graph.update_entity(watcher_entity)
 
 

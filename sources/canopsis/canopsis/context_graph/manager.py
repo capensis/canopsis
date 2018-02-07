@@ -28,7 +28,7 @@ class ConfName(object):
     ORG_STORAGE = "organisations_storage_uri"
     USR_STORAGE = "users_storage_uri"
     MEASURMNT_STORAGE = "measurements_storage_uri"
-    IMPORT_STORAGE= "import_storage_uri"
+    IMPORT_STORAGE = "import_storage_uri"
     EVENT_TYPES = "event_types"
     EXTRA_FIELDS = "extra_fields"
 
@@ -120,7 +120,7 @@ class InfosFilter:
         try:
             schema = self._schema["schema"]["properties"]
         except KeyError:
-            self.logger.info("No properties field")
+            pass
         else:
             self.__clean(infos, copy.deepcopy(infos), schema)
 

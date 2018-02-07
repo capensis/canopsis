@@ -76,7 +76,7 @@ class engine(TaskHandler):
         self.logger = Logger.get(self.LOG_NAME,
                                  self.LOG_PATH,
                                  output_cls=OutputFile)
-        self.importer = ContextGraphImport(logger=self.logger)
+        # self.importer = ContextGraphImport(logger=self.logger)
         self.report_manager = Manager()
 
     def send_perfdata(self, uuid, time, updated, deleted):
@@ -141,8 +141,10 @@ class engine(TaskHandler):
         updated = 0
         deleted = 0
 
+        importer = ContextGraphImport(logger=self.logger)
+
         try:
-            updated, deleted = self.importer.import_context(uuid)
+            updated, deleted = importer.import_context(uuid)
 
         except Exception as ex:
             report = {Keys.F_STATUS: Keys.ST_FAILED, Keys.F_INFO: repr(ex)}
@@ -170,6 +172,7 @@ class engine(TaskHandler):
         self.report_manager.update_status(uuid, report)
 
         self.send_perfdata(uuid, delta, updated, deleted)
+        del importer
 
         try:
             os.remove(Keys.IMPORT_FILE.format(uuid))

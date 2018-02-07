@@ -4,15 +4,35 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 
 
+## Canopsis 2.5.6 (sprint 02.2) - Due date : 2018-02-02
+
+### Bug fixes
+ - [#598](https://git.canopsis.net/canopsis/canopsis/issues/598) - Certaines entités ne sont pas importées correctement
+ - [#593](https://git.canopsis.net/canopsis/canopsis/issues/593) - Pouvoir interroger les alarmes Resolved avec les dates des alarmes
+ - [#589](https://git.canopsis.net/canopsis/canopsis/issues/589) - Probleme Dataset sur widget ServiceWeather
+ - [#580](https://git.canopsis.net/canopsis/canopsis/issues/580) - Stealthy calculation
+ - [#568](https://git.canopsis.net/canopsis/canopsis/issues/568) - Modifier la couleur d’affichage de la plate-forme de pré-prod
+ - [#565](https://git.canopsis.net/canopsis/canopsis/issues/565) - Le bouton "Remove alarm (poubelle/corbeille)" n'apparaît pas sur les alarmes critiques
+ - [#558](https://git.canopsis.net/canopsis/canopsis/issues/558) - Recherche avec des int
+ - [#529](https://git.canopsis.net/canopsis/canopsis/issues/529) - Pouvoir supprimer des alarmes
+ - [#528](https://git.canopsis.net/canopsis/canopsis/issues/528) - Disposer d'une information sur la date de l'alarme
+
+### Functional and other changes
+ - [#599](https://git.canopsis.net/canopsis/canopsis/issues/599) - Nettoyage des engines
+ - [#566](https://git.canopsis.net/canopsis/canopsis/issues/566) - Remapper l'output "Lost 100%" en "Equipement injoignable"
+ - [#594](https://git.canopsis.net/canopsis/canopsis/issues/594) - Validation des actions dans le popup MDS
+
+
+
 ## Canopsis 2.5.5 (sprint 01.19) - Due date : 2018-01-19
 
-### Bug fixes 
+### Bug fixes
  - [#579](https://git.canopsis.net/canopsis/canopsis/issues/579) - Impossible de créer un pbehavior dans l'explorateur de context
  - [#564](https://git.canopsis.net/canopsis/canopsis/issues/564) - [API] get-alarms ne remonte pas tous les résultats
  - [#563](https://git.canopsis.net/canopsis/canopsis/issues/563) - [HardLimit] la hardlimit empêche toutes les actions sur une alarme
  - [#485](https://git.canopsis.net/canopsis/canopsis/issues/485) - bac a alarme création de pbhavior pop up calendrier qui ne s'affiche pas
 
- ### Functional and other changes
+### Functional and other changes
  - [#573](https://git.canopsis.net/canopsis/canopsis/issues/573) - Bac à alarme - recherche insensible à la casse
  - [#526](https://git.canopsis.net/canopsis/canopsis/issues/526) - Pouvoir trier les tuiles du widget service weather
  - [#525](https://git.canopsis.net/canopsis/canopsis/issues/525) - [Météo] Remonter les statistiques d'un scénario
@@ -56,7 +76,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Canopsis 2.5.2(11.30) - Due date : 2017-12-05
 
-### Bug fixes 
+### Bug fixes
 
  - [#499](https://git.canopsis.net/canNombre d'issues pour la milestone  "2.5.1 (11.03)" : 11
 opsis/canopsis/issues/499) - [PE] la météo ne s'affiche pas pour les applications "standard"
@@ -116,7 +136,7 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 ### Functional changes - CAT
 
 
-- [#393](https://git.canopsis.net/canopsis/canopsis/issues/393) Feat(Auth) : Compatibilité SAMLV2 
+- [#393](https://git.canopsis.net/canopsis/canopsis/issues/393) Feat(Auth) : Compatibilité SAMLV2
 - [#375](https://git.canopsis.net/canopsis/canopsis/issues/375) Feat(SNMP) : Les traps SNMP anomalies ne remontent pas
 
 
@@ -132,7 +152,7 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 ###Bug fixes and other non-functional changes
 
 - [#391](https://git.canopsis.net/canopsis/canopsis/issues/391) fix(Context-Graph) : La route post retourne parfois des doublons
-- [#378](https://git.canopsis.net/canopsis/canopsis/issues/378) fix(web): Blocage appli 
+- [#378](https://git.canopsis.net/canopsis/canopsis/issues/378) fix(web): Blocage appli
 - [#377](https://git.canopsis.net/canopsis/canopsis/issues/377) fix(Météo de service) : Impossible de faire les actions sur les alarmes
 - [#376](https://git.canopsis.net/canopsis/canopsis/issues/376) fix(Météo de service) : La mise en pause d'un scénario en alarme ne remet pas en vert l'application
 - [#374](https://git.canopsis.net/canopsis/canopsis/issues/374) fix(Bac à Alarmes) : Désynchro entre une alarme et son historique & fermeture de l'alarme pas toujours prise en compte
