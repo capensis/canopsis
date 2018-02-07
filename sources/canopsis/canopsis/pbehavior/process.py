@@ -140,6 +140,7 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
     Beat processing.
     """
     engine.logger.debug("Start beat processing")
+    engine.logger.critical("bite")
 
     try:
         pbm.compute_pbehaviors_filters()
