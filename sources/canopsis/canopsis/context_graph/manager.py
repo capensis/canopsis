@@ -28,7 +28,7 @@ class ConfName(object):
     ORG_STORAGE = "organisations_storage_uri"
     USR_STORAGE = "users_storage_uri"
     MEASURMNT_STORAGE = "measurements_storage_uri"
-    IMPORT_STORAGE= "import_storage_uri"
+    IMPORT_STORAGE = "import_storage_uri"
     EVENT_TYPES = "event_types"
     EXTRA_FIELDS = "extra_fields"
 
@@ -120,7 +120,7 @@ class InfosFilter:
         try:
             schema = self._schema["schema"]["properties"]
         except KeyError:
-            self.logger.info("No properties field")
+            pass
         else:
             self.__clean(infos, copy.deepcopy(infos), schema)
 
@@ -307,9 +307,9 @@ class ContextGraph(object):
         self.logger = logger
 
         # For links building
+        at_collection = self.at_storage._backend
         self.at_manager = AssociativeTableManager(logger=self.logger,
-                                                  collection=\
-                                                  self.at_storage._backend)
+                                                  collection=at_collection)
 
         hypertextlink_conf = section.get(ConfName.CTX_HYPERLINK, "")
         self.event_types = section.get(ConfName.EVENT_TYPES, [])
@@ -339,8 +339,7 @@ class ContextGraph(object):
         else:
             query["_id"] = _id
 
-        result = list(
-            self.ent_storage.get_elements(query=query))
+        result = self.get_entities(query=query)
 
         return result
 
@@ -390,6 +389,7 @@ class ContextGraph(object):
         ret_val = set([])
         for i in entities:
             ret_val.add(i['_id'])
+
         return ret_val
 
     @classmethod
@@ -680,7 +680,8 @@ class ContextGraph(object):
         for res in result:
             res['links'] = {}
             if hasattr(self, 'hlb_manager'):
-                res['links'] = self.hlb_manager.links_for_entity(res)
+                links = self.hlb_manager.links_for_entity(res)
+                res['links'] = links
 
         if with_count:
             return result, count

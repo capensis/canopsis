@@ -20,14 +20,14 @@
 # ---------------------------------
 
 import logging
-from unittest import TestCase, main
-
+import unittest
+from canopsis.common import root_path
 from canopsis.common.associative_table.associative_table import AssociativeTable
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.middleware.core import Middleware
+import xmlrunner
 
-
-class AssociativeTableTest(TestCase):
+class AssociativeTableTest(unittest.TestCase):
     """Test the associative table module.
     """
     def setUp(self):
@@ -83,4 +83,7 @@ class AssociativeTableTest(TestCase):
         self.assertTrue(res)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

@@ -119,6 +119,7 @@ class BasicWeatherAPITest(BaseApiTest):
             'rrule': None,
             'tstart': now,
             'tstop': now + 60 * 60,
+            'type_': 'pause'
         }
 
     def context_cleanup(self):
@@ -324,7 +325,11 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertIsNone(json[0]['automatic_action_timer'])
         pbehavior = json[0]['pbehavior']
         self.assertTrue(isinstance(pbehavior, list))
+        self.assertTrue('_id' in pbehavior[0])
         self.assertTrue(pbehavior[0]['enabled'])
+        self.assertTrue('type_' in pbehavior[0])
+        self.assertTrue('reason' in pbehavior[0])
+        self.assertEqual(pbehavior[0]['type_'], self.pbehavior1['type_'])
 
         # Sending another linked event 2
         r = self._send(url=self.event_url,
@@ -348,4 +353,11 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 2)
         states = [json[0]['state']['val'], json[1]['state']['val']]
+        states.sort()
         self.assertListEqual(states, [2, 3])
+
+        # Verifying watcher state on a wrong pbh type
+        json = self.get_watcher("{}?pb_types=['{}']"
+                                .format(watcher_filter_1, 'wrong_type'))
+        self.assertTrue(isinstance(json, list))
+        self.assertEqual(len(json), 0)

@@ -2,20 +2,21 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from unittest import TestCase, main
-
 from canopsis.middleware.core import Middleware
 from canopsis.common.utils import is_mongo_successfull
 from canopsis.tracer.manager import (
     Trace, TraceSetError, TraceNotFound, TracerManager
 )
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class Unencodable(object):
     pass
 
 
-class TestTracerManager(TestCase):
+class TestTracerManager(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -72,4 +73,7 @@ class TestTracerManager(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

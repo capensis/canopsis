@@ -28,6 +28,9 @@ from canopsis.old.account import Account
 from logging import DEBUG, basicConfig
 
 from json import dumps
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 STORAGE = None
 MYRECORD = None
@@ -281,5 +284,8 @@ class KnownValues(TestCase):
     def test_99_DropNamespace(self):
         STORAGE.drop_namespace('unittest')
 
-if __name__ == "__main__":
-    main(verbosity=2)
+if __name__ == '__main__':
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

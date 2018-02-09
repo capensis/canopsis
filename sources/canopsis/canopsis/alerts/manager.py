@@ -52,14 +52,17 @@ from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.watcher.manager import Watcher
 
+# Extra fields from the event that should be stored in the alarm
 DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
+
+# if set to True, the last_event_date will be updated on each event that triggers the alarm
 DEFAULT_RECORD_LAST_EVENT_DATE = False
 DEFAULT_FILTER_AUTHOR = 'system'
 
 DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_FLAPPING_FREQ = 0
 DEFAULT_PERSISTANT_STEPS = 10
-DEFAULT_HARD_LIMIT = 100
+DEFAULT_HARD_LIMIT = 2000
 DEFAULT_STEALTHY_INTERVAL = 0
 DEFAULT_STEALTHY_SHOW_DURATION = 0
 DEFAULT_RESTORE_EVENT = False
@@ -137,10 +140,8 @@ class Alerts(object):
         """
         config = Configuration.load(Alerts.CONF_PATH, Ini)
         conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
-        conf_db_creds = Configuration.load(MongoStore.CRED_CONF_PATH, Ini)
 
-        mongo = MongoStore(config=conf_store,
-                           cred_config=conf_db_creds)
+        mongo = MongoStore(config=conf_store)
         config_collection = mongo.get_collection(name=cls.CONFIG_COLLECTION)
         filter_ = {'crecord_type': 'statusmanagement'}
         config_data = EtherealData(collection=config_collection,
@@ -222,14 +223,6 @@ class Alerts(object):
         Interval used to check for stealthy alarm status.
         """
         return self.config_data.get('stealthy_time', DEFAULT_STEALTHY_INTERVAL)
-
-    @property
-    def stealthy_show_duration(self):
-        """
-        Interval used to check if alarm is still in stealthy status.
-        """
-        return self.config_data.get('stealthy_show',
-                                    DEFAULT_STEALTHY_SHOW_DURATION)
 
     def get_alarms(
             self,
@@ -896,9 +889,8 @@ class Alerts(object):
 
         limit = alarm.get(AlarmField.hard_limit.value, None)
 
-        if limit is not None:
-            if limit['val'] >= self.hard_limit:
-                return alarm
+        if limit is not None and limit['val'] >= self.hard_limit:
+            return alarm
 
         if len(alarm[AlarmField.steps.value]) >= self.hard_limit:
             task = get_task('alerts.check.hard_limit')
@@ -1107,14 +1099,16 @@ class Alerts(object):
                 'timestamp': now_stamp,
                 'connector': value['connector'],
                 'connector_name': value['connector_name'],
-                'output': lifter.output(message)
+                'output': lifter.output(message),
+                'event_type': Check.EVENT_TYPE
             }
             vstate = AlarmField.state.value
 
             # Execute each defined action
-            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             updated_once = False
+            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             for task in lifter.tasks:
+
                 if vstate in new_value:
                     event[vstate] = new_value[vstate]['val']  # for changestate
 
@@ -1125,15 +1119,20 @@ class Alerts(object):
 
                 self.logger.info('Automatically execute {} on {}'
                                  .format(task, alarm_id))
-                new_value = self.execute_task(name=task,
-                                              event=event,
-                                              entity_id=alarm_id,
-                                              author=self.filter_author,
-                                              new_state=event[vstate])
 
-                if new_value is not None:
+                updated_alarm_value = self.execute_task(
+                    name=task,
+                    event=event,
+                    entity_id=alarm_id,
+                    author=self.filter_author,
+                    new_state=event[vstate]
+                )
+                if updated_alarm_value is not None:
+                    new_value = updated_alarm_value
+
+                if updated_alarm_value is not None:
                     updated_once = True
-                    self.update_current_alarm(docalarm, new_value)
+                    self.update_current_alarm(docalarm, updated_alarm_value)
 
             if not updated_once:
                 continue

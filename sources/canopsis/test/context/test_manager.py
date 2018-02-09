@@ -19,11 +19,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
+from canopsis.common import root_path
 from canopsis.context.manager import Context
+import xmlrunner
 
 
-class BaseContextTest(TestCase):
+class BaseContextTest(unittest.TestCase):
     """Base class for context.
     """
 
@@ -787,4 +789,7 @@ class GetEvent(BaseContextTest):
         self.assertEqual(event['output'], 'test')
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

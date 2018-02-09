@@ -19,13 +19,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
+from canopsis.common import root_path
 
 from canopsis.timeserie.aggregation import get_aggregation_value
 from random import random
 
+import xmlrunner
 
-class AggregationTest(TestCase):
+class AggregationTest(unittest.TestCase):
 
 	def setUp(self):
 
@@ -61,5 +63,8 @@ class AggregationTest(TestCase):
 		self._test_aggregation('MIN', lambda points: min(points))
 
 
-if __name__ == "__main__":
-	main()
+if __name__ == '__main__':
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

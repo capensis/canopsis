@@ -2,35 +2,38 @@
 # -*- coding: utf-8  -*-
 from __future__ import unicode_literals
 
-from pymongo.collection import Collection
 import unittest
+
+from pymongo.collection import Collection
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.confng import Configuration, Ini
+from canopsis.common import root_path
+import xmlrunner
 
 
 class TestMongoStore(unittest.TestCase):
 
     @classmethod
-    def setUpClass(self):
-        self.db_name = 'canopsis'
-        self.collection_name = 'test_mongostorage'
+    def setUpClass(cls):
+        cls.db_name = 'canopsis'
+        cls.collection_name = 'test_mongostorage'
 
-        self.conf = {
+        cls.conf = {
             MongoStore.CONF_CAT: {
-                'db': self.db_name
+                'db': cls.db_name,
+                'user': 'cpsmongo',
+                'pwd': 'canopsis'
             }
         }
-        self.cred_conf = Configuration.load(MongoStore.CRED_CONF_PATH, Ini)
 
-        self.ms = MongoStore(config=self.conf,
-                             cred_config=self.cred_conf)
-        self.collection = self.ms.get_collection(self.collection_name)
+        cls.ms = MongoStore(config=cls.conf)
+        cls.collection = cls.ms.get_collection(cls.collection_name)
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         """Teardown"""
-        self.collection.drop()
+        cls.collection.drop()
 
     def tearDown(self):
         self.collection.remove()
@@ -42,4 +45,7 @@ class TestMongoStore(unittest.TestCase):
                                                         self.collection_name))
 
 if __name__ == '__main__':
-    unittest.main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

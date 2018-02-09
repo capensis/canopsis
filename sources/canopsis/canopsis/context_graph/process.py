@@ -4,18 +4,17 @@
 
 from __future__ import unicode_literals
 
-import time
-
 from canopsis.task.core import register_task
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.perfdata.manager import PerfData
+from canopsis.logger import Logger
 
-context_graph_manager = None
+LOGGER = Logger.get('context_graph', 'var/log/context_graph.log')
 pertfdata_manager = PerfData(*PerfData.provide_default_basics())
+context_graph_manager = ContextGraph(LOGGER)
 
 cache = set()
 
-LOGGER = None
 
 def update_cache():
     """Update the entity cache "cache"
@@ -210,7 +209,6 @@ def update_context_case1(ids, event):
         depends=[ids['conn_id']],
         impact=[ids['comp_id']])
     result.append(re)
-
 
     return result
 
@@ -503,14 +501,10 @@ def event_processing(engine,
     """
 
     global context_graph_manager
-    if context_graph_manager is None:
-        context_graph_manager = ContextGraph(logger)
 
     if event['event_type'] not in context_graph_manager.event_types:
         return None
 
-    global LOGGER
-    LOGGER = logger
     ids = gen_ids(event)
 
     presence = determine_presence(ids, cache)
@@ -532,7 +526,6 @@ def event_processing(engine,
         return None
 
     update_context(presence, ids, entities_in_db, event)
-    LOGGER.debug("*** The end. ***")
 
 
 @register_task

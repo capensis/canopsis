@@ -3,15 +3,19 @@
 
 from __future__ import unicode_literals
 
+import unittest
 from unittest import main, TestCase
-
+from canopsis.common import root_path
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 from canopsis.logger import Logger, OutputNull
 
 from test_infos_filter import Keys, SCHEMA, TEMPLATE_INFOS
 
+import xmlrunner
+
 logger = Logger.get("", None, output_cls=OutputNull)
+
 
 def create_entity(
         id,
@@ -20,6 +24,7 @@ def create_entity(
         depends=[],
         impact=[],
         measurements=[],
+        links={},
         infos={}):
     return {'_id': id,
             'type': etype,
@@ -27,6 +32,7 @@ def create_entity(
             'depends': depends,
             'impact': impact,
             'measurements': measurements,
+            'links': links,
             'infos': infos
             }
 
@@ -86,6 +92,7 @@ class BaseTest(TestCase):
                          'depends': [],
                          'impact': [],
                          'measurements': [],
+                         'links': {},
                          'infos': {}}
 
     def tearDown(self):
@@ -191,7 +198,7 @@ class GetEvent(BaseTest):
         # set of required field
         fields = sorted(['component', 'connector', 'connector_name',
                          'event_type', 'long_output', 'output', 'source_type',
-                         'state', 'state_type', 'timestamp'])
+                         'state', 'state_type', 'timestamp', 'links'])
 
         conn = "conn"
         conn_name = "conn-name"
@@ -247,8 +254,8 @@ class GetID(TestCase):
 
     def test_get_id_error(self):
         self.event["source_type"] = 'something_else'
-        error_desc = ("Event type should be 'connector', 'resource' or "
-                      "'component' not {0}.".format(self.event["source_type"]))
+        error_desc = ("source_type should be one of 'connector', 'resource' or "
+                      "'component' not {}.".format(self.event["source_type"]))
         with self.assertRaisesRegexp(ValueError, error_desc):
             ContextGraph.get_id(self.event)
 
@@ -851,6 +858,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': []
             }, {
                 'impact': ['e3'],
@@ -860,6 +868,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e1']
             }, {
                 'impact': ['e4'],
@@ -869,6 +878,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e2']
             }, {
                 'impact': [],
@@ -878,6 +888,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e3']
             }
         ])
@@ -892,6 +903,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e3']
         }])
 
@@ -906,6 +918,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e2']
             }, {
                 'impact': [],
@@ -915,6 +928,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e3']
             }
         ])
@@ -930,6 +944,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e1']
             }, {
                 'impact': ['e4'],
@@ -939,6 +954,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e2']
             }, {
                 'impact': [],
@@ -948,6 +964,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e3']
             }])
 
@@ -962,6 +979,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': []
             }, {
                 'impact': ['e3'],
@@ -971,6 +989,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e1']
             }, {
                 'impact': ['e4'],
@@ -980,6 +999,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e2']
             }, {
                 'impact': [],
@@ -989,6 +1009,7 @@ class TestGraphRequests(BaseTest):
                 'infos': {},
                 'measurements': [],
                 'type': 'component',
+                'links': {},
                 'depends': ['e3']
             }
         ])
@@ -1003,6 +1024,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': []
         }, {
             'impact': ['e3'],
@@ -1011,6 +1033,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e1']
         }, {
             'impact': ['e4'],
@@ -1020,6 +1043,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e2']
         }, {
             'impact': [],
@@ -1028,6 +1052,7 @@ class TestGraphRequests(BaseTest):
             'e4', 'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e3']
         }])
 
@@ -1041,12 +1066,13 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': []
         }])
 
         res = self.manager.get_graph_impact('e1', deepness=1)['graph']
         res.sort()
-        self.assertEqual(res,[{
+        self.assertEqual(res, [{
             'impact': ['e2'],
             'depth': 0L,
             '_id': 'e1',
@@ -1054,6 +1080,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': []
         }, {
             'impact': ['e3'],
@@ -1062,6 +1089,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e1']
         }])
 
@@ -1075,6 +1103,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': []
         }, {
             'impact': ['e3'],
@@ -1083,6 +1112,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e1']
         }, {
             'impact': ['e4'],
@@ -1092,6 +1122,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e2']
         }])
 
@@ -1105,6 +1136,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': []
         }, {
             'impact': ['e3'],
@@ -1113,6 +1145,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e1']
         }, {
             'impact': ['e4'],
@@ -1122,6 +1155,7 @@ class TestGraphRequests(BaseTest):
             'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e2']
         }, {
             'impact': [],
@@ -1130,6 +1164,7 @@ class TestGraphRequests(BaseTest):
             'e4', 'infos': {},
             'measurements': [],
             'type': 'component',
+            'links': {},
             'depends': ['e3']
         }])
 
@@ -1184,6 +1219,7 @@ class TestLeavesRequests(BaseTest):
                              'depth': 3L,
                              'depends': [],
                              'infos': {},
+                             'links': {},
                              '_id': 'e1',
                              'type': 'component'
                          }]
@@ -1198,6 +1234,7 @@ class TestLeavesRequests(BaseTest):
                              'depth': 0L,
                              'depends': ['e3'],
                              'infos': {},
+                             'links': {},
                              '_id': 'e4',
                              'type': 'component'
                          }])
@@ -1211,6 +1248,7 @@ class TestLeavesRequests(BaseTest):
                              'depth': 1L,
                              'depends': ['e2'],
                              'infos': {},
+                             'links': {},
                              '_id': 'e3',
                              'type': 'component'
                          }])
@@ -1224,6 +1262,7 @@ class TestLeavesRequests(BaseTest):
                              'depth': 2L,
                              'depends': ['e1'],
                              'infos': {},
+                             'links': {},
                              '_id': 'e2',
                              'type': 'component'
                          }])
@@ -1237,6 +1276,7 @@ class TestLeavesRequests(BaseTest):
                              'depth': 3L,
                              'depends': [],
                              'infos': {},
+                             'links': {},
                              '_id': 'e1',
                              'type': 'component'
                          }]
@@ -1251,9 +1291,14 @@ class TestLeavesRequests(BaseTest):
                              'depth': 3L,
                              'depends': ['e3'],
                              'infos': {},
+                             'links': {},
                              '_id': 'e4',
                              'type': 'component'
                          }])
 
+
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

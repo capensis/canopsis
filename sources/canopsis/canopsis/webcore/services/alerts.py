@@ -104,6 +104,7 @@ def exports(ws):
         :rtype: dict
         """
 
+
         alarms = ar.get(
             tstart=tstart,
             tstop=tstop,
@@ -111,7 +112,7 @@ def exports(ws):
             resolved=resolved,
             lookups=lookups,
             filter_=filter,
-            search=search,
+            search=search.strip(),
             sort_key=sort_key,
             sort_dir=sort_dir,
             skip=skip,
@@ -134,15 +135,20 @@ def exports(ws):
         for alarm in alarms['alarms']:
             tmp_entity_id = alarm['d']
 
-            if tmp_entity_id in entity_dict:
-                if alarm.get('infos'):
-                    alarm['infos'].update(entity_dict[alarm['d']]['infos'])
-                    list_alarm.append(alarm)
-                else:
-                    alarm['infos'] = entity_dict[alarm['d']]['infos']
-                    list_alarm.append(alarm)
-            else:
-                list_alarm.append(alarm)
+            if alarm['d'] in entity_dict:
+                alarm['links'] = entity_dict[alarm['d']]['links']
+
+                # TODO: 'infos' is already present in entity.
+                # Remove this one if unused.
+                if tmp_entity_id in entity_dict:
+                    data = entity_dict[alarm['d']]['infos']
+                    if alarm.get('infos'):
+                        alarm['infos'].update(data)
+                    else:
+                        alarm['infos'] = data
+
+            list_alarm.append(alarm)
+
         alarms['alarms'] = list_alarm
 
         return alarms

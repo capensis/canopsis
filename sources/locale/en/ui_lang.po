@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
@@ -1178,9 +1178,6 @@ msgstr "bagot consider time"
 
 msgid "stealthy_time"
 msgstr "stealthy consider time"
-
-msgid "stealthy_show"
-msgstr "stealthy shown duration"
 
 msgid "restore_event"
 msgstr "restore event"

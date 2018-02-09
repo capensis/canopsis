@@ -18,11 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 """
 Alarm reader manager.
 
 TODO: replace the storage class parameter with a collection (=> rewriting count())
 """
+
+import re
 
 from os.path import join
 from time import time
@@ -411,6 +415,89 @@ class AlertsReader(object):
 
             return query.count(True), False
 
+    def _get_final_filter(
+        self, view_filter, time_filter, search, active_columns
+    ):
+        """
+        Computes the real filter:
+
+        The view filter and time filter are always part of the final filter,
+        if not empty.
+
+        In the search matches the BNF grammar,
+        it is appended to the final filter.
+
+        Otherwise, regex on columns is made.
+
+
+        All filters are aggregated with $and.
+
+
+        {
+            '$and': [
+                view_filter,
+                time_filter,
+                bnf_filter | column_filter
+            ]
+        }
+
+        :param view_filter dict: the filter given by the canopsis view.
+        :param time_filter dict: hehe. dunno.
+        :param search str: text to search in columns, or a BNF valid search as
+            defined by the grammar in etc/search/grammar.bnf
+
+            The BNF grammar is tried first, if the string does not comply with
+            the grammar, column search is used instead.
+        :param active_columns list[str]: list of columns to search in.
+            in a column ends with '.' it will be ignored.
+
+            The 'd' column is always added.
+        """
+        final_filter = {'$and': []}
+
+        t_view_filter = self._translate_filter(view_filter)
+        # add the view filter if not empty
+        if view_filter not in [None, {}]:
+            final_filter['$and'].append(t_view_filter)
+
+        if time_filter not in [None, {}]:
+            final_filter['$and'].append(time_filter)
+
+        # try grammar search
+        try:
+            _, bnf_search_filter = self.interpret_search(search)
+            bnf_search_filter = self._translate_filter(bnf_search_filter)
+        except ValueError:
+            bnf_search_filter = None
+
+        if bnf_search_filter is not None:
+            final_filter['$and'].append(bnf_search_filter)
+
+        else:
+            escaped_search = re.escape(str(search))
+            column_filter = {'$or': []}
+            for column in active_columns:
+                column_filter['$or'].append(
+                    {
+                        column: {
+                            '$regex': '.*{}.*'.format(escaped_search),
+                            '$options': 'i'
+                        }
+                    }
+                )
+            column_filter['$or'].append(
+                {
+                    'd': {
+                        '$regex': '.*{}.*'.format(escaped_search),
+                        '$options': 'i'
+                    }
+                }
+            )
+
+            final_filter['$and'].append(column_filter)
+
+        return final_filter
+
     def get(
             self,
             tstart=None,
@@ -445,7 +532,8 @@ class AlertsReader(object):
         :param dict filter_: Mongo filter
         :param str search: Search expression in custom DSL
 
-        :param str sort_key: Name of the column to sort
+        :param str sort_key: Name of the column to sort. If the value ends with
+            a dot '.', sort_key is replaced with 'v.last_update_date'.
         :param str sort_dir: Either "ASC" or "DESC"
 
         :param int skip: Number of alarms to skip (pagination)
@@ -482,44 +570,15 @@ class AlertsReader(object):
         result = None
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
-        if natural_search:
-            res_filter = {"$or": []}
-            for column in active_columns:
-                res_filter["$or"].append({column: {"$regex": search}})
+        final_filter = self._get_final_filter(
+            filter_, time_filter, search, active_columns
+        )
 
-            if filter_ not in [None, {}]:
-                filter_ = self._translate_filter(filter_)
-                filter_ = {'$and': [filter_, time_filter, res_filter]}
+        if sort_key[-1] == '.':
+            sort_key = 'v.last_update_date'
 
-            else:
-                filter_ = {"$and": [{"d": {"$regex": search}}, time_filter]}
-
-            result = self.alarm_storage._backend.find(filter_)
-            result = result.sort(sort_key, sort_dir)
-            result = result.skip(skip)
-            if limit is not None:
-                result = result.limit(limit)
-
-        else:
-            try:
-                search_context, search_filter = self.interpret_search(search)
-                search_filter = self._translate_filter(search_filter)
-            except ValueError:
-                search_filter = {}
-                search_context = None
-
-            if search_context == 'all':
-                filter_ = {'$and': [time_filter, search_filter]}
-
-            else:
-                filter_ = self._translate_filter(filter_)
-
-                filter_ = {'$and': [time_filter, filter_]}
-
-                if search_filter:
-                    filter_ = {'$and': [filter_, search_filter]}
-
-            pipeline = [{
+        pipeline = [
+            {
                 "$lookup": {
                     "from": "default_entities",
                     "localField": "d",
@@ -527,30 +586,34 @@ class AlertsReader(object):
                     "as": "entity"
                 }
             }, {
-                "$unwind": "$entity"
+                "$unwind": {
+                    "path": "$entity",
+                    "preserveNullAndEmptyArrays": True,
+                }
             }, {
-                "$match": filter_
+                "$match": final_filter
             }, {
                 "$sort": {
                     sort_key: sort_dir
                 }
             }, {
                 "$skip": skip
-            }]
+            }
+        ]
 
-            if limit is not None:
-                pipeline.append({"$limit": limit})
+        if limit is not None:
+            pipeline.append({"$limit": limit})
 
-            result = self.alarm_storage._backend.aggregate(pipeline, cursor={})
+        result = self.alarm_storage._backend.aggregate(pipeline, cursor={})
 
         alarms = list(result)
         limited_total = len(alarms)  # Manual count is much faster than mongo's
 
-        count_query = self.alarm_storage._backend.find(filter_)
+        count_query = self.alarm_storage._backend.find(final_filter)
         total, truncated = self._get_fast_count(
             count_query,
             tstart, tstop, opened, resolved,
-            filter_, search
+            final_filter, search
         )
 
         first = 0 if limited_total == 0 else skip + 1

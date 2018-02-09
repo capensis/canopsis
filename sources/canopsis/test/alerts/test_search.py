@@ -19,10 +19,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import re
+
+from unittest import TestCase
 from re import compile as compile_
 
 from canopsis.alerts.search.interpreter import interpret
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class TestSearch(TestCase):
@@ -145,20 +150,12 @@ class TestSearch(TestCase):
                 'expected_filter': {'a': {'$in': [1]}}
             },
             {
-                'search': 'a LIKE 1',
-                'expected_filter': {'a': {'$regex': 1}}
-            },
-            {
                 'search': 'NOT a = 1',
                 'expected_filter': {'a': {'$not': {'$eq': 1}}}
             },
             {
                 'search': 'NOT a CONTAINS 1',
                 'expected_filter': {'a': {'$nin': [1]}}
-            },
-            {
-                'search': 'NOT a LIKE "1"',
-                'expected_filter': {'a': {'$not': compile_(u'1')}}
             }
         ]
 
@@ -169,6 +166,16 @@ class TestSearch(TestCase):
             )
 
             self.assertEqual(filter_, case['expected_filter'])
+
+        scope, filter_ = interpret(
+            'a LIKE 1', grammar_file=self.grammar_file
+        )
+        self.assertEqual(filter_['a']['$regex'].pattern, '1')
+
+        scope, filter_ = interpret(
+            'NOT a LIKE "1"', grammar_file=self.grammar_file
+        )
+        self.assertEqual(filter_['a']['$not'].pattern, '1')
 
     def test_interpret_condop(self):
         cases = [
@@ -211,38 +218,9 @@ class TestSearch(TestCase):
                     ]
                 }
             },
-            {
-                'search': (
-                    'ALL a LIKE 1 OR b <= 2 AND c = 3 AND d != 4 OR '
-                    'f > "five"'
-                ),
-                'expected_scope': 'all',
-
-                'expected_filter': {
-                    '$or': [
-                        {
-                            '$and': [
-                                {
-                                    '$and': [
-                                        {
-                                            '$or': [
-                                                {'a': {'$regex': 1}},
-                                                {'b': {'$lte': 2}}
-                                            ]
-                                        },
-                                        {'c': {'$eq': 3}}
-                                    ]
-                                },
-                                {'d': {'$ne': 4}}
-                            ]
-                        },
-                        {'f': {'$gt': 'five'}}
-                    ]
-                }
-
-            }
         ]
 
+        self.maxDiff = None
         for case in cases:
             scope, filter_ = interpret(
                 case['search'],
@@ -252,6 +230,39 @@ class TestSearch(TestCase):
             self.assertEqual(scope, case.get('expected_scope', 'this'))
             self.assertEqual(filter_, case['expected_filter'])
 
+        search = 'ALL a LIKE 1 OR b <= 2 AND c = 3 AND d != 4 OR f > "five"'
+        expected_filter = {
+            '$or': [
+                {
+                    '$and': [
+                        {
+                            '$and': [
+                                {
+                                    '$or': [
+                                        {'a': {'$regex': '1'}},
+                                        {'b': {'$lte': 2}}
+                                    ]
+                                },
+                                {'c': {'$eq': 3}}
+                            ]
+                        },
+                        {'d': {'$ne': 4}}
+                    ]
+                },
+                {'f': {'$gt': 'five'}}
+            ]
+        }
+
+        scope, filter_ = interpret(search, grammar_file=self.grammar_file)
+
+        regex = filter_['$or'][0]['$and'][0]['$and'][0]['$or'][0]['a']['$regex']
+        pattern = regex.pattern
+        filter_['$or'][0]['$and'][0]['$and'][0]['$or'][0]['a']['$regex'] = pattern
+
+        self.assertEqual(filter_, expected_filter)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

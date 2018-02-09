@@ -27,6 +27,9 @@ from unittest import TestCase, main
 from canopsis.common.collection import MongoCollection
 from canopsis.middleware.core import Middleware
 from canopsis.session.manager import Session
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class SessionManagerTest(TestCase):
@@ -86,4 +89,7 @@ class SessionManagerTest(TestCase):
         self.assertEqual(got, sessions[0]['last_check'])
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

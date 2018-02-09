@@ -1,9 +1,10 @@
-from unittest import main, TestCase
-
+import unittest
+from canopsis.common import root_path
 from canopsis.event import get_routingkey
+import xmlrunner
 
 
-class TestEventFunctions(TestCase):
+class TestEventFunctions(unittest.TestCase):
 
     refrk = 'keyboard.cherry.keypress.resource.mx.brown'
     refrk_component = 'keyboard.cherry.keypress.component.mx'
@@ -52,4 +53,7 @@ class TestEventFunctions(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

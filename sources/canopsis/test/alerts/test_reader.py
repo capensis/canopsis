@@ -30,7 +30,9 @@ from canopsis.entitylink.manager import Entitylink
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
-
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 from base import BaseTest
 
 
@@ -297,6 +299,75 @@ class TestReader(BaseTest):
 
             self.assertEqual(tkey, case['tkey'])
             self.assertEqual(tdir, case['tdir'])
+
+    def test__get_final_filter_bnf(self):
+        view_filter = {'$and': [{'resource': 'companion cube'}]}
+        time_filter = {'glados': 'shell'}
+        bnf_search = 'NOT resource="turret"'
+        active_columns = ['resource', 'component']
+
+        filter_ = self.reader._get_final_filter(
+            view_filter, time_filter, bnf_search, active_columns
+        )
+
+        ref_filter = {
+            '$and': [
+                view_filter,
+                time_filter,
+                {'resource': {'$not': {'$eq': 'turret'}}}
+            ]
+        }
+        self.assertEqual(ref_filter, filter_)
+
+    def test__get_final_filter_natural(self):
+        view_filter = {'$and': [{'resource': 'companion cube'}]}
+        time_filter = {'glados': 'shell'}
+        search = 'turret'
+        active_columns = ['resource', 'component']
+
+        filter_ = self.reader._get_final_filter(
+            view_filter, time_filter, search, active_columns
+        )
+
+        self.maxDiff = None
+        ref_filter = {
+            '$and': [
+                view_filter,
+                time_filter,
+                {
+                    '$or': [
+                        {'resource': {
+                            '$regex': '.*turret.*', '$options': 'i'}},
+                        {'component': {
+                            '$regex': '.*turret.*', '$options': 'i'}},
+                        {'d': {
+                            '$regex': '.*turret.*', '$options': 'i'}}
+                    ]
+                }
+            ]
+        }
+        self.assertEqual(ref_filter, filter_)
+
+    def test__get_final_filter_natural_numonly(self):
+        view_filter = {}
+        time_filter = {}
+        search = 11111
+        active_columns = ['resource']
+
+        filter_ = self.reader._get_final_filter(
+            view_filter, time_filter, search, active_columns
+        )
+
+        self.maxDiff = None
+        res_filter = {
+            '$and': [
+                {'$or': [
+                    {'resource': {'$options': 'i', '$regex': '.*11111.*'}},
+                    {'d': {'$options': 'i', '$regex': '.*11111.*'}}
+                ]}
+            ]
+        }
+        self.assertEqual(res_filter, filter_)
 
     def test_clean_fast_count_cache(self):
         class MockQuery(object):
@@ -566,4 +637,8 @@ class TestReader(BaseTest):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)
+

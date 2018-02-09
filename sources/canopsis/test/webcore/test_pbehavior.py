@@ -3,6 +3,10 @@ from unittest import TestCase
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.manager import Watcher as WatcherManager
 from canopsis.webcore.services.pbehavior import check_values, RouteHandlerPBehavior
+import unittest
+from canopsis.common import root_path
+import xmlrunner
+
 
 class TestPbehavior(TestCase):
 
@@ -107,7 +111,8 @@ class TestPbehaviorWebservice(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        pb_manager = PBehaviorManager()
+        logger, storage = PBehaviorManager.provide_default_basics()
+        pb_manager = PBehaviorManager(logger, storage)
         watcher_manager = WatcherManager()
         cls.rhpb = RouteHandlerPBehavior(pb_manager, watcher_manager)
 
@@ -240,3 +245,9 @@ class TestPbehaviorWebservice(TestCase):
         comments = pbehavior.get('comments')
 
         self.assertEquals(len(comments), 0)
+
+if __name__ == '__main__':
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

@@ -20,7 +20,7 @@
 
 from __future__ import unicode_literals
 
-# DO NOT EVER MODIFY THOSE THREE LINES OR UNDESIRED BEHAVIOR ***WILL** HAPPEN.
+# DO NOT EVER MODIFY THE 2 LINES BELOW OR UNDESIRED BEHAVIOR ***WILL** HAPPEN.
 from gevent import monkey
 monkey.patch_all()
 

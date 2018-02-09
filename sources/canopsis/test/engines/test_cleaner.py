@@ -21,12 +21,13 @@
 
 from __future__ import unicode_literals
 
-from unittest import main, TestCase
-
+import unittest
+from canopsis.common import root_path
 from canopsis.engines.cleaner import engine as Cleaner
+import xmlrunner
 
 
-class BaseTest(TestCase):
+class BaseTest(unittest.TestCase):
 
     def setUp(self):
         self.engine = Cleaner()
@@ -64,4 +65,7 @@ class TestManager(BaseTest):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

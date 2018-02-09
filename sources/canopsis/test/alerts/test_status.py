@@ -20,7 +20,6 @@
 # ---------------------------------
 
 from time import time
-from unittest import main
 
 from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.status import (
@@ -31,6 +30,9 @@ from canopsis.alerts.status import (
 from canopsis.check import Check
 
 from base import BaseTest
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class TestStatus(BaseTest):
@@ -44,7 +46,6 @@ class TestStatus(BaseTest):
                 'bagot_time': 3600,
                 'bagot_freq': 10,
                 'stealthy_time': 300,
-                'stealthy_show': 600,
                 'restore_event': True
             },
             _id='test_config'
@@ -333,4 +334,7 @@ class TestStatus(BaseTest):
         self.assertFalse(got)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)
