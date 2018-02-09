@@ -10,20 +10,10 @@ Cette route permet de récupérer tout ou partie de la météo.
 
 #### GET exemple
 
-/api/v2/weather/watchers/{}
+/api/v2/weather/watchers/{}?limit=30&start=0&stop=10&pb_types=["pause", "maintenance"]
 
-json body:
-```{json}
-{
-    "limit": 30,
-    "start": 0,
-    "stop": 10,
-    "pb_types": ["pause", "maintenance"]
-}
-```
-
-* `limit`, `start` et `stop` permettent de paginer la route.
-* `pb_types` est optionnel est permet de ne prendre en compte que les
+* `limit`, `start` et `stop` (optionel) permettent de paginer la réponse.
+* `pb_types` (optionnel) permet de ne prendre en compte que les
 pbehaviors d'un certain type (parmi une liste).
 
 Réponse: une liste des watchers correspondants, enrichi avec les entités
