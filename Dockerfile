@@ -5,6 +5,7 @@ RUN echo "deb http://ftp.fr.debian.org/debian/ jessie non-free" >> /etc/apt/sour
 RUN apt-get update \
   && apt-get -y install python \
     python-pip \
+    tmux \
     build-essential \
     bash \
     bash-completion \
@@ -50,6 +51,7 @@ COPY files/sudoers /etc/sudoers.d/canopsis
 RUN groupadd ${canopsis_group} && useradd -d ${canopsis_install_dir} -m -g ${canopsis_group} -s /bin/bash ${canopsis_user}
 
 COPY files/bashrc ${canopsis_install_dir}/.bashrc
+COPY files/vimrc ${canopsis_install_dir}/.vimrc
 
 RUN mkdir -p ${canopsis_install_dir}/var/log/engines \
   && mkdir -p ${canopsis_install_dir}/var/cache/canopsis \
