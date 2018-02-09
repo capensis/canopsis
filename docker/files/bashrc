@@ -2,12 +2,10 @@
 
 export PATH="$PATH:/usr/sbin"
 
-if [ -e $HOME/bin/activate ]
-then
-    export PS1="[\h]-[\w]\$ "
+export PS1='[\u@\h \W]\$ '
+
+if [ -e $HOME/bin/activate ]; then
     . $HOME/bin/activate
-else
-    export PS1="\[\033[31;01m\][\h]-[\w]\$\[033[00m\] "
 fi
 
 if [ -f ~/.bash_completion ]

@@ -7,7 +7,6 @@ RUN /bin/sh /debian-jessie-build.sh
 
 WORKDIR ${CPS_HOME}
 
-COPY sources/canopsis/requirements.txt /sources/
 COPY sources/canopsis /sources/canopsis
 COPY sources/externals/python-libs /sources/python-libs
 
@@ -32,6 +31,7 @@ COPY sources/canopsis/etc ./etc
 COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc
 COPY docker/files/cstorage.conf ./etc
+COPY docker/files/amqp.conf ./etc
 COPY docker/files/mongo/* ./etc/mongo/
 
 ADD docker/files/entrypoint-engine.sh /
