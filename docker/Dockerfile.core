@@ -60,7 +60,7 @@ RUN  mkdir -p ./etc/init.d
 RUN mkdir -p var/log/engines && \
     mkdir -p var/cache/canopsis && \
     mkdir -p var/lib/canopsis/unittest
-RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /usr/sbin/nologin ${CPS_USER}
+RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash ${CPS_USER}
 RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}
 
 EXPOSE 8082
