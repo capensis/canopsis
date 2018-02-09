@@ -4,6 +4,8 @@ Utilisation de SNMP avec Canopsis.
 
 Nécessite l’installation de la brique `CAT`.
 
+L’accès ne peut être direct, voici l’url à utiliser : `http://<canopsis_addr:port>/en/static/canopsis/index.html#/userview/view.snmprule`
+
 ### Installation
 
 Sur debian, ajouter les contrib et non-free, puis
