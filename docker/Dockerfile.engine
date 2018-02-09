@@ -1,16 +1,47 @@
-from adewarumez/canopsis-base
+FROM canopsis/canopsis-system:debian8 as build
 
-# define environment variables
-ENV canopsis_install_dir /opt/canopsis
-ENV canopsis_user canopsis
-ENV canopsis_group canopsis
+ENV CPS_HOME /opt/canopsis
 
-# Install canopsis package
-ENV SRC_DIR ./tmp/canopsis
-USER canopsis:canopsis
-COPY --chown=canopsis:canopsis ./sources/canopsis $SRC_DIR
-RUN . bin/activate && rm $SRC_DIR/etc/mongo/*.conf && rm $SRC_DIR/etc/amqp.conf && rm $SRC_DIR/etc/cstorage.conf && pip install -e $SRC_DIR # && rm $SRC_DIR -rf Does not work
+COPY docker/build/debian-jessie-build.sh /
+RUN /bin/sh /debian-jessie-build.sh
 
-COPY files/entrypoint-engine.sh /entrypoint.sh
+WORKDIR ${CPS_HOME}
 
-ENTRYPOINT ["/entrypoint.sh"]
+COPY sources/canopsis/requirements.txt /sources/
+COPY sources/canopsis /sources/canopsis
+COPY sources/externals/python-libs /sources/python-libs
+
+RUN echo "[easy_install]\nallow_hosts = ''\nfind_links = file:///sources/python-libs/" > /root/.pydistutils.cfg
+RUN virtualenv .
+RUN . bin/activate \
+    && pip install --no-index --find-links=file:///sources/python-libs --upgrade setuptools distribute pip \
+    && pip install --no-index --find-links=file:///sources/python-libs /sources/canopsis/
+
+## Canopsis Core Image
+FROM canopsis/canopsis-system:debian8
+
+ENV CPS_HOME /opt/canopsis
+ENV CPS_USER canopsis
+ENV CPS_GROUP canopsis
+
+COPY --from=build /${CPS_HOME} /${CPS_HOME}
+
+WORKDIR ${CPS_HOME}
+
+COPY sources/canopsis/etc ./etc
+COPY docker/files/sudoers /etc/sudoers.d/canopsis
+COPY docker/files/bashrc .bashrc
+COPY docker/files/cstorage.conf ./etc
+COPY docker/files/mongo/* ./etc/mongo/
+
+ADD docker/files/entrypoint-engine.sh /
+
+RUN  mkdir -p ./etc/init.d
+
+RUN mkdir -p var/log/engines && \
+	mkdir -p var/cache/canopsis && \
+	mkdir -p var/lib/canopsis/unittest
+RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /usr/sbin/nologin ${CPS_USER}
+RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}
+
+ENTRYPOINT /entrypoint-engine.sh

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -e
+set -o pipefail
 
 if [ "${1}" = "" ]; then
     echo "Usage: $0 <tag>"
@@ -7,4 +9,5 @@ fi
 
 tag="${1}"
 
-docker build -f docker/Dockerfile -t canopsis/canopsis-core:${tag} .
+docker build -f docker/Dockerfile.system -t canopsis/canopsis-system:debian8 .
+docker build -f docker/Dockerfile.engine -t canopsis/canopsis-engine:${tag} .

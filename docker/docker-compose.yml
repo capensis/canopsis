@@ -1,0 +1,59 @@
+version: '2'
+volumes:
+  mongodbdata:
+    driver: local
+  influxdbdata:
+    driver: local
+  rabbitmqdata:
+    driver: local
+  importctxdata:
+    driver: local
+  dumpdata:
+    driver: local
+
+services:
+  rabbitmq:
+    image: canopsis/canopsis-rabbitmq-server:${RABBIT_TAG}
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    restart: unless-stopped
+    mem_limit: 2g
+    mem_reservation: 2g
+    oom_score_adj: -1000
+  mongodb:
+    image: canopsis/canopsis-mongo-server:${MONGO_TAG}
+    ports:
+      - "27027:27017"
+    volumes:
+      - mongodbdata:/data/db
+      - dumpdata:/dump/dumpdata
+    restart: unless-stopped
+    mem_limit: 3g
+    mem_reservation: 3g
+    oom_score_adj: -1000
+    command: '--wiredTigerCacheSizeGB 2560'
+  influxdb:
+    image: canopsis/canopsis-influxdb-server:${INFLUX_TAG}
+    ports:
+      - "8086:8086"
+      - "4444:4444/udp"
+    volumes:
+      - influxdbdata:/var/lib/influxdb
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 1g
+    oom_score_adj: -1000
+  cleaner_events:
+    image: canopsis/canopsis-engine:${CANOPSIS_TAG}
+    depends_on:
+      - "mongodb"
+    environment:
+      - ENGINE_NAME=cleaner_events
+      - ENGINE_MODULE=canopsis.engines.cleaner
+    restart: unless-stopped
+    mem_limit: 200m
+    mem_reservation: 200m
+    entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]

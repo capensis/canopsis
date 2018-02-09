@@ -1,0 +1,7 @@
+FROM debian:jessie-slim
+
+COPY docker/build/debian-jessie-run.sh /
+RUN /bin/sh /debian-jessie-run.sh
+
+COPY docker/files/vimrc /root/.vimrc
+COPY docker/files/bashrc /root/.bashrc
