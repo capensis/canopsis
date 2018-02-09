@@ -2,7 +2,7 @@
 
 Cette section couvre les informations utiles aux administrateurs de Canopsis
 
-## Authentification 
+## Authentification
 
  - [SAML2](saml2.md)
 
@@ -26,6 +26,7 @@ Cette section couvre les informations utiles aux administrateurs de Canopsis
 ## CAT Only
 
  - [SNMP](snmp.md)
+ - [Custom SNMP trap handler](custom_snmp_trap.md)
 
 ## Dépannage
 

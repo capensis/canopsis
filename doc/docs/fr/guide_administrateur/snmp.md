@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 python2 setup.py install
 
-SNMP_DEBUG=1 snmp2canopsis
+SNMP_DEBUG=1 snmp2canopsis -c snmp2canopsis.conf
 ```
 
 SNMP_DEBUG=1 permet d'activer le mode verbeux du connecteur.
