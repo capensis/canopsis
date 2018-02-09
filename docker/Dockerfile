@@ -39,68 +39,60 @@ RUN apt-get update \
     libldap2-dev \
   && apt-get clean
 
+# CANOPSIS ENGINES
 FROM canopsis-base as canopsis-engines
 
-# define environment variables
-ENV canopsis_install_dir /opt/canopsis
-ENV canopsis_user canopsis
-ENV canopsis_group canopsis
+ENV CPS_HOME /opt/canopsis
+ENV CPS_USER canopsis
+ENV CPS_GROUP canopsis
 
-# create the canopsis environment
-COPY files/sudoers /etc/sudoers.d/canopsis
-RUN groupadd ${canopsis_group} && useradd -d ${canopsis_install_dir} -m -g ${canopsis_group} -s /bin/bash ${canopsis_user}
+RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -m -g ${CPS_GROUP} -s /bin/bash ${CPS_USER}
 
-COPY files/bashrc ${canopsis_install_dir}/.bashrc
-COPY files/vimrc ${canopsis_install_dir}/.vimrc
+RUN mkdir -p ${CPS_HOME}/var/log/engines \
+  && mkdir -p ${CPS_HOME}/var/cache/canopsis \
+  && mkdir -p ${CPS_HOME}/var/lib/canopsis/unittest \
+  && mkdir -p ${CPS_HOME}/var/run \
+  && mkdir -p ${CPS_HOME}/tmp \
+  && mkdir -p ${CPS_HOME}/repo/canopsis-externals/python-libs \
+  && mkdir -p ${CPS_HOME}/repo/canopsis
 
-RUN mkdir -p ${canopsis_install_dir}/var/log/engines \
-  && mkdir -p ${canopsis_install_dir}/var/cache/canopsis \
-  && mkdir -p ${canopsis_install_dir}/var/lib/canopsis/unittest \
-  && mkdir -p ${canopsis_install_dir}/var/run \
-  && mkdir -p ${canopsis_install_dir}/tmp \
-  && mkdir -p ${canopsis_install_dir}/repo \
-  && mkdir -p ${canopsis_install_dir}/repo/canopsis-externals/
+COPY docker/files/sudoers /etc/sudoers.d/canopsis
+COPY docker/files/bashrc ${CPS_HOME}/.bashrc
+COPY docker/files/vimrc ${CPS_HOME}/.vimrc
+COPY sources/db-conf/opt/ ${CPS_HOME}/opt/
+COPY sources/externals/python-libs/ ${CPS_HOME}/repo/canopsis-externals/python-libs/
+COPY sources/canopsis/ ${CPS_HOME}/repo/canopsis/
 
-COPY sources/db-conf/opt/ ${canopsis_install_dir}/opt/
+RUN virtualenv ${CPS_HOME}/
+RUN echo "[easy_install]\nallow_hosts = ''\nfind_links = file://${CPS_HOME}/repo/canopsis-externals/python-libs/" > /root/.pydistutils.cfg
 
-
-COPY sources/externals/debian_9 ${canopsis_install_dir}/repo/canopsis-externals/debian_9
-
-COPY sources/externals/python-libs ${canopsis_install_dir}/repo/canopsis-externals/python-libs
-
-#COPY sources/extra/conf/supervisord.conf ${canopsis_install_dir}/etc/supervisord.conf
-RUN virtualenv ${canopsis_install_dir}/
-RUN echo "[easy_install]\nallow_hosts = ''\nfind_links = file://${canopsis_install_dir}/repo/canopsis-externals/python-libs/" > /root/.pydistutils.cfg
-
-RUN . ${canopsis_install_dir}/bin/activate \
-  && pip install --no-index --find-links=file://${canopsis_install_dir}/repo/canopsis-externals/python-libs/ --upgrade setuptools distribute
-
-COPY sources/canopsis ${canopsis_install_dir}/repo/canopsis
+RUN . ${CPS_HOME}/bin/activate \
+  && pip install --no-index --find-links=file://${CPS_HOME}/repo/canopsis-externals/python-libs/ --upgrade setuptools distribute
 
 # TODO modifier
-RUN . ${canopsis_install_dir}/bin/activate \
-  && pip install --no-index --find-links=file://${canopsis_install_dir}/repo/canopsis-externals/python-libs/ -r ${canopsis_install_dir}/repo/canopsis/requirements-engines.txt ${canopsis_install_dir}/repo/canopsis \
-  && rm -rf ${canopsis_install_dir}/repo/canopsis-externals
+RUN . ${CPS_HOME}/bin/activate \
+  && pip install --no-index --find-links=file://${CPS_HOME}/repo/canopsis-externals/python-libs/ -r ${CPS_HOME}/repo/canopsis/requirements.txt ${CPS_HOME}/repo/canopsis \
+  && rm -rf ${CPS_HOME}/repo/canopsis-externals
 
 
-COPY sources/canopsis/etc ${canopsis_install_dir}/etc
-#RUN rsync -avKSH  ${canopsis_install_dir}/repo/canopsis/etc/ ${canopsis_install_dir}/etc/
+COPY sources/canopsis/etc ${CPS_HOME}/etc
+#RUN rsync -avKSH  ${CPS_HOME}/repo/canopsis/etc/ ${CPS_HOME}/etc/
 
-COPY files/amqp.conf ${canopsis_install_dir}/etc
-RUN  mkdir -p ${canopsis_install_dir}/etc/init.d
+COPY docker/files/amqp.conf ${CPS_HOME}/etc
+RUN  mkdir -p ${CPS_HOME}/etc/init.d
 
-COPY files/cstorage.conf ${canopsis_install_dir}/etc
-COPY files/mongo/storage.conf ${canopsis_install_dir}/etc/mongo
-COPY files/mongo/mongo_store.conf ${canopsis_install_dir}/etc/common
-#COPY sources/canopsis/etc/influx/storage.conf ${canopsis_install_dir}/etc/influx
+COPY docker/files/cstorage.conf ${CPS_HOME}/etc
+COPY docker/files/mongo/storage.conf ${CPS_HOME}/etc/mongo
+COPY docker/files/mongo/mongo_store.conf ${CPS_HOME}/etc/common
+#COPY sources/canopsis/etc/influx/storage.conf ${CPS_HOME}/etc/influx
 
-#RUN . ${canopsis_install_dir}/bin/activate \
-# && cd ${canopsis_install_dir}/repo/canopsis-cat/sources/canopsis_cat/ && pip install --no-index --find-links=file://${canopsis_install_dir}/repo/canopsis-externals/python-libs/ .
+#RUN . ${CPS_HOME}/bin/activate \
+# && cd ${CPS_HOME}/repo/canopsis-cat/sources/canopsis_cat/ && pip install --no-index --find-links=file://${CPS_HOME}/repo/canopsis-externals/python-libs/ .
 
-#RUN rsync -avKSH  ${canopsis_install_dir}/repo/canopsis-cat/sources/canopsis_cat/etc/ ${canopsis_install_dir}/etc/
+#RUN rsync -avKSH  ${CPS_HOME}/repo/canopsis-cat/sources/canopsis_cat/etc/ ${CPS_HOME}/etc/
 
 
-RUN chown -R ${canopsis_user}:${canopsis_group} ${canopsis_install_dir}
+RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}
 
-ADD files/entrypoint.sh /
+ADD docker/files/entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
