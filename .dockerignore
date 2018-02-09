@@ -1,4 +1,5 @@
 .git/
+sources/webcore/doc
 sources/externals
 !sources/externals/python-libs
 sources/extra

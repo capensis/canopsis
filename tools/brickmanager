@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import argparse
+import json
+import os
+import sys
+import logging
+
+def log_fatal(msg):
+    logging.fatal(msg)
+    sys.exit(1)
+
+def check_env():
+    cpshome = os.getenv('CPS_HOME')
+
+    if cpshome == '':
+        log_fatal('CPS_HOME is empty')
+
+    ebricks = os.path.join(cpshome, 'var', 'www', 'src', 'canopsis', 'enabled-bricks.json')
+    if not os.path.isfile(ebricks):
+        log_fatal('not a file: {}'.format(ebricks))
+
+    return ebricks
+
+def main():
+    ebricks = check_env()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('mode', help='mode: enable, disable, list')
+    parser.add_argument('brick', help='brick name')
+
+    args = parser.parse_args()
+
+    if args.mode == 'enable':
+        doc = []
+
+        with open(ebricks, 'r') as fh:
+            doc = json.load(fh)
+        
+        doc.append(args.brick)
+        doc = list(set(doc))
+
+        with open(ebricks, 'w') as fh:
+            json.dump(doc, fh)
+
+    if args.mode == 'disable':
+        doc = set([])
+
+        with open(ebricks, 'r') as fh:
+            doc = set(json.load(fh))
+        
+        try:
+            doc.remove(args.brick)
+            with open(ebricks, 'w') as fh:
+                json.dump(list(doc), fh)
+
+        except KeyError:
+            logging.info('brick {} is not enabled'.format(args.brick))
+
+    if args.mode == 'list':
+        with open(ebricks, 'r') as fh:
+            doc = json.load(fh)
+
+            for brick in doc:
+                print(brick)
+
+if __name__ == '__main__':
+    main()

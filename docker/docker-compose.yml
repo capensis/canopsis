@@ -47,7 +47,7 @@ services:
     mem_reservation: 1g
     oom_score_adj: -1000
   cleaner_events:
-    image: canopsis/canopsis-engine:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_TAG}
     depends_on:
       - "mongodb"
     environment:
@@ -56,4 +56,14 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
+    entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]
+  webserver:
+    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    depends_on:
+      - "mongodb"
+    ports:
+      - 28082:8082
+    environment:
+      - CPS_WEBSERVER=1
+    restart: unless-stopped
     entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]
