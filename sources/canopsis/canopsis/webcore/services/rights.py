@@ -183,7 +183,8 @@ def exports(ws):
 
     @ws.application.post('/account/user')
     def create_user():
-        user = request.body.read()
+        user = request.forms.get("user")
+        ws.logger.error(user)
         try:
             user = json.loads(user)
         except Exception as exc:
@@ -191,7 +192,7 @@ def exports(ws):
                             .format(exc))
             return
 
-        return save_user(ws, user.get('user'))
+        return save_user(ws, user)
 
     @route(ws.application.put, name='account/user', payload=['user'])
     def update_user(_id, user):
