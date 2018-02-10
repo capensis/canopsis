@@ -184,7 +184,6 @@ def exports(ws):
     @ws.application.post('/account/user')
     def create_user():
         user = request.forms.get("user")
-        ws.logger.error(user)
         try:
             user = json.loads(user)
         except Exception as exc:
