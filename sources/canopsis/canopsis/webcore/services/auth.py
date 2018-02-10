@@ -79,7 +79,7 @@ def check(mode='authkey', user=None, password=None):
     }
 
     if mode in handlers:
-        return handlers[mode](user, password)
+        return handlers[mode](user, str(password))
 
     return None
 
