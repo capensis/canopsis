@@ -11,5 +11,4 @@ tag="${1}"
 workdir=$(dirname $(readlink -e $0))
 cd $workdir
 
-docker build --build-arg PROXY=$http_proxy -f docker/Dockerfile.system -t canopsis/canopsis-system:debian8 .
-docker build --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile.core --rm=false -t canopsis/canopsis-core:${tag} .
+docker build --squash --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile -t canopsis/canopsis-core:${tag} .

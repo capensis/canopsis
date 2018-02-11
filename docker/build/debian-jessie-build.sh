@@ -8,7 +8,7 @@ echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.l
 ## Core and engines
 
 apt-get update
-apt-get -y install \
+apt-get -y --no-install-recommends install \
     build-essential \
     curl \
     git-core \

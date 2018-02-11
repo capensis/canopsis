@@ -6,7 +6,7 @@ echo "deb http://ftp.fr.debian.org/debian/ jessie main contrib non-free" > /etc/
 echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
 
 apt-get update
-apt-get -y install \
+apt-get -y --no-install-recommends install \
     apt-transport-https \
     base-files \
     bash \
@@ -34,6 +34,7 @@ apt-get -y install \
     python2.7 \
     python-pip \
     python-virtualenv \
+    virtualenv \
     tmux \
     vim
 

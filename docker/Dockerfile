@@ -1,4 +1,4 @@
-FROM canopsis/canopsis-system:debian8 as build
+FROM debian:jessie-slim as build
 
 ARG PROXY
 ARG TAG
@@ -7,7 +7,11 @@ ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 ENV CPS_HOME /opt/canopsis
 
+COPY docker/files/vimrc /root/.vimrc
+COPY docker/files/bashrc /root/.bashrc
 COPY docker/build/debian-jessie-build.sh /
+COPY docker/build/debian-jessie-run.sh /
+RUN /bin/bash /debian-jessie-run.sh
 RUN /bin/bash /debian-jessie-build.sh
 
 WORKDIR ${CPS_HOME}
@@ -36,14 +40,21 @@ COPY docker/build/bricks.sh /
 RUN /bin/bash /bricks.sh ${TAG} ${CPS_HOME}
 
 ## Canopsis Core Image
-FROM canopsis/canopsis-system:debian8
+FROM debian:jessie-slim
 
+ARG PROXY
+
+ENV http_proxy ${PROXY}
+ENV https_proxy ${PROXY}
 ENV CPS_HOME /opt/canopsis
 ENV CPS_USER canopsis
 ENV CPS_GROUP canopsis
 ENV CPS_WEBSERVER 0
 
 COPY --from=build /${CPS_HOME} /${CPS_HOME}
+
+COPY docker/build/debian-jessie-run.sh /
+RUN /bin/bash /debian-jessie-run.sh
 
 WORKDIR ${CPS_HOME}
 
