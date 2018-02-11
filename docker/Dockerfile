@@ -64,6 +64,6 @@ RUN mkdir -p var/log/engines && \
 
 RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}
 
+USER ${CPS_USER}:${CPS_GROUP}
 EXPOSE 8082
-
 ENTRYPOINT /entrypoint.sh
