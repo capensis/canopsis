@@ -1,5 +1,10 @@
 FROM canopsis/canopsis-system:debian8 as build
 
+ARG PROXY
+ARG TAG
+
+ENV http_proxy ${PROXY}
+ENV https_proxy ${PROXY}
 ENV CPS_HOME /opt/canopsis
 
 COPY docker/build/debian-jessie-build.sh /
@@ -9,7 +14,7 @@ WORKDIR ${CPS_HOME}
 
 ### Sources
 
-RUN mkdir -p ${CPS_HOME}/lib/node_modules
+RUN mkdir -p /sources/bricks/
 
 COPY sources/canopsis /sources/canopsis
 COPY sources/externals/python-libs /sources/python-libs
@@ -27,10 +32,8 @@ RUN . bin/activate \
 ### Webserver
 
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
-
-COPY docker/files/bricks/ ${CPS_HOME}/var/www/src/canopsis/
-
-RUN . bin/activate && python /sources/brickmanager enable brick-listalarm
+COPY docker/build/bricks.sh /
+RUN /bin/sh /bricks.sh ${TAG} ${CPS_HOME}
 
 ## Canopsis Core Image
 FROM canopsis/canopsis-system:debian8

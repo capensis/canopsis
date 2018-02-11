@@ -13,3 +13,4 @@ build_messages.txt
 \#*\#
 Vagrantfile
 *.vagrant
+docker/files/bricks/brick-*

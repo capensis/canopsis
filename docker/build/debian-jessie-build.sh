@@ -8,6 +8,7 @@ apt-get update || exit 1
 apt-get -qqy install \
     build-essential \
     curl \
+    git-core \
     libcurl4-openssl-dev \
     libsasl2-dev \
     libxml2-dev \

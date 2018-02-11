@@ -1,5 +1,10 @@
 FROM debian:jessie-slim
 
+ARG PROXY
+
+ENV http_proxy ${PROXY}
+ENV https_proxy ${PROXY}
+
 COPY docker/build/debian-jessie-run.sh /
 RUN /bin/sh /debian-jessie-run.sh
 
