@@ -12,10 +12,10 @@ ENV CPS_GROUP canopsis
 COPY docker/files/vimrc /root/.vimrc
 COPY docker/files/bashrc /root/.bashrc
 
-RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -m -g ${CPS_GROUP} -s /bin/bash ${CPS_USER}
+RUN mkdir /opt/canopsis
+RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash ${CPS_USER}
 
 COPY docker/files/vimrc ${CPS_HOME}/.vimrc
-RUN chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/.vimrc
 
 COPY docker/build/debian-jessie-run.sh /
 RUN /bin/bash /debian-jessie-run.sh

@@ -24,7 +24,7 @@ COPY sources/webcore /sources/webcore
 COPY tools/brickmanager /sources/brickmanager
 
 ### Canopsis Core and Engines
-RUN su ${CPS_USER} -c "virtualenv ${CPS_HOME} && /bin/bash /install.sh"
+RUN /bin/bash /install.sh
 
 ### Webserver
 
@@ -54,15 +54,16 @@ COPY docker/files/amqp.conf ./etc
 COPY docker/files/mongo/* ./etc/mongo/
 COPY docker/files/common/* ./etc/common/
 
+RUN sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf
+
 ADD docker/files/entrypoint.sh /
 
-RUN  mkdir -p ./etc/init.d
-
-RUN mkdir -p var/log/engines && \
+RUN mkdir -p ./etc/init.d && \
+    mkdir -p var/log/engines && \
     mkdir -p var/cache/canopsis && \
-    mkdir -p var/lib/canopsis/unittest
+    mkdir -p tmp
 
-RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}
+RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var ${CPS_HOME}/tmp
 
 USER ${CPS_USER}:${CPS_GROUP}
 EXPOSE 8082
