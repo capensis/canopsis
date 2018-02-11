@@ -1,17 +1,15 @@
-FROM debian:jessie-slim as build
-
-ARG PROXY
 ARG TAG
+
+FROM canopsis/canopsis-sysbase:${TAG} as build
+
+ARG TAG
+ARG PROXY
 
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
-ENV CPS_HOME /opt/canopsis
 
-COPY docker/files/vimrc /root/.vimrc
-COPY docker/files/bashrc /root/.bashrc
 COPY docker/build/debian-jessie-build.sh /
-COPY docker/build/debian-jessie-run.sh /
-RUN /bin/bash /debian-jessie-run.sh
+COPY docker/build/install.sh /
 RUN /bin/bash /debian-jessie-build.sh
 
 WORKDIR ${CPS_HOME}
@@ -26,12 +24,7 @@ COPY sources/webcore /sources/webcore
 COPY tools/brickmanager /sources/brickmanager
 
 ### Canopsis Core and Engines
-
-RUN echo "[easy_install]\nallow_hosts = ''\nfind_links = file:///sources/python-libs/" > /root/.pydistutils.cfg
-RUN virtualenv .
-RUN . bin/activate \
-    && pip install --no-index --find-links=file:///sources/python-libs --upgrade setuptools distribute pip \
-    && pip install --no-index --find-links=file:///sources/python-libs /sources/canopsis/
+RUN su ${CPS_USER} -c "virtualenv ${CPS_HOME} && /bin/bash /install.sh"
 
 ### Webserver
 
@@ -40,21 +33,15 @@ COPY docker/build/bricks.sh /
 RUN /bin/bash /bricks.sh ${TAG} ${CPS_HOME}
 
 ## Canopsis Core Image
-FROM debian:jessie-slim
+FROM canopsis/canopsis-sysbase:${TAG}
 
 ARG PROXY
 
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
-ENV CPS_HOME /opt/canopsis
-ENV CPS_USER canopsis
-ENV CPS_GROUP canopsis
 ENV CPS_WEBSERVER 0
 
 COPY --from=build /${CPS_HOME} /${CPS_HOME}
-
-COPY docker/build/debian-jessie-run.sh /
-RUN /bin/bash /debian-jessie-run.sh
 
 WORKDIR ${CPS_HOME}
 
@@ -74,7 +61,7 @@ RUN  mkdir -p ./etc/init.d
 RUN mkdir -p var/log/engines && \
     mkdir -p var/cache/canopsis && \
     mkdir -p var/lib/canopsis/unittest
-RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash ${CPS_USER}
+
 RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}
 
 EXPOSE 8082
