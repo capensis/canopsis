@@ -16,3 +16,8 @@ sources/webcore/src/canopsis/userpreferences/doc
 sources/externals
 !sources/externals/python-libs
 sources/extra
+sources/canopsis/build
+sources/canopsis/dist
+sources/canopsis/*.egg-info
+sources/canopsis/pyinstaller
+sources/canopsis/test
