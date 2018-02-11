@@ -15,8 +15,8 @@ apt-get -y --no-install-recommends install \
     libsasl2-2 \
     libxml2 \
     libxslt1.1 \
-    lsb-core \
-    lsb \
+    lsb-base \
+    lsb-release \
     libffi6 \
     libgmp10 \
     libgnutls-deb0-28 \
@@ -34,8 +34,9 @@ apt-get -y --no-install-recommends install \
     python2.7 \
     python-pip \
     python-virtualenv \
-    virtualenv \
+    rsync \
     tmux \
-    vim
+    vim \
+    virtualenv \
 
 apt-get clean
