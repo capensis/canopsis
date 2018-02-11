@@ -8,7 +8,7 @@ ENV https_proxy ${PROXY}
 ENV CPS_HOME /opt/canopsis
 
 COPY docker/build/debian-jessie-build.sh /
-RUN /bin/sh /debian-jessie-build.sh
+RUN /bin/bash /debian-jessie-build.sh
 
 WORKDIR ${CPS_HOME}
 
@@ -33,7 +33,7 @@ RUN . bin/activate \
 
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
 COPY docker/build/bricks.sh /
-RUN /bin/sh /bricks.sh ${TAG} ${CPS_HOME}
+RUN /bin/bash /bricks.sh ${TAG} ${CPS_HOME}
 
 ## Canopsis Core Image
 FROM canopsis/canopsis-system:debian8

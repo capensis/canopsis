@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 set -e
 set -o pipefail
 
@@ -7,8 +7,8 @@ echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.l
 
 ## Core and engines
 
-apt-get update || exit 1
-apt-get -qqy install \
+apt-get update
+apt-get -y install \
     build-essential \
     curl \
     git-core \
@@ -21,12 +21,6 @@ apt-get -qqy install \
     libxmlsec1-dev \
     libldap2-dev \
     patch \
-    python2.7-dev  || exit 2
+    python2.7-dev
 
-
-## Webserver
-#curl -sL https://deb.nodesource.com/setup_6.x | bash -
-
-#apt-get install -y nodejs wget
-
-apt-get clean || exit 4
+apt-get clean

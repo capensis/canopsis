@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/usr/bin/bash
 set -e
 set -o pipefail
 
 echo "deb http://ftp.fr.debian.org/debian/ jessie main contrib non-free" > /etc/apt/sources.list
 echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
 
-apt-get update || exit 1
-apt-get -qqy install \
+apt-get update
+apt-get -y install \
     apt-transport-https \
     base-files \
     bash \
@@ -35,6 +35,6 @@ apt-get -qqy install \
     python-pip \
     python-virtualenv \
     tmux \
-    vim || exit 2
+    vim
 
-apt-get clean || exit 3
+apt-get clean
