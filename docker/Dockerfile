@@ -58,10 +58,12 @@ RUN mkdir -p ./etc/init.d && \
     mkdir -p var/cache/canopsis && \
     mkdir -p tmp
 
-RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var ${CPS_HOME}/tmp
+RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
 
 # Copy UI bricks as root
 COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
+RUN . ${CPS_HOME}/bin/activate && \
+    python /brickmanager enable brick-querybuilder
 
 USER ${CPS_USER}:${CPS_GROUP}
 EXPOSE 8082
