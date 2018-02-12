@@ -35,6 +35,10 @@ def main():
     if args.mode == 'enable':
         doc = []
 
+        jsf = os.path.join(os.path.dirname(ebricks), args.brick, 'init.js')
+        if not os.path.isfile(jsf):
+            log_fatal('bad brick, missing file: {}'.format(jsf))
+
         with open(ebricks, 'r') as fh:
             doc = json.load(fh)
         

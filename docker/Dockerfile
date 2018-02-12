@@ -53,6 +53,7 @@ COPY docker/files/cstorage.conf ./etc
 COPY docker/files/amqp.conf ./etc
 COPY docker/files/mongo/* ./etc/mongo/
 COPY docker/files/common/* ./etc/common/
+COPY tools/brickmanager /brickmanager
 
 RUN sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf
 

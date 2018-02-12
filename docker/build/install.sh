@@ -4,7 +4,7 @@ set -o pipefail
 
 virtualenv ${CPS_HOME}
 
-echo "[easy_install]\nallow_hosts = ''\nfind_links = file:///sources/python-libs/" > /root/.pydistutils.cfg
+echo -e "[easy_install]\nallow_hosts = ''\nfind_links = file:///sources/python-libs/" > /root/.pydistutils.cfg
 
 source ${CPS_HOME}/bin/activate
 
