@@ -356,6 +356,32 @@ class TestManager(BaseTest):
         names = [x['name'] for x in tab]
         self.assertEqual(names, ['pb1'])
 
+    def test_get_active_pbehavior_from_type(self):
+        pbehavior_1 = deepcopy(self.pbehavior)
+        pbehavior_2 = deepcopy(self.pbehavior)
+        pb_name1, pb_name2, = 'cheerfull', 'blue'
+
+        pbehavior_1.update(
+            {
+                'name': pb_name1,
+                'eids': [self.entity_id_1, self.entity_id_2],
+                PBehavior.TYPE: 'maintenance'
+            }
+        )
+
+        pbehavior_2.update({'name': pb_name2})
+
+        self.pbm.pb_storage.put_elements(
+            elements=(pbehavior_1, pbehavior_2)
+        )
+
+        self.pbm.context._put_entities(self.entities)
+
+        result = self.pbm.get_active_pbehaviors_from_type(['maintenance'])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0][PBehavior.TYPE], 'maintenance')
+
+
 if __name__ == '__main__':
     output = root_path + "/tests_report"
     unittest.main(

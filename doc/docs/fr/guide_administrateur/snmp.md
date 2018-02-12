@@ -4,6 +4,8 @@ Utilisation de SNMP avec Canopsis.
 
 Nécessite l’installation de la brique `CAT`.
 
+L’accès ne peut être direct, voici l’url à utiliser : `http://<canopsis_addr:port>/en/static/canopsis/index.html#/userview/view.snmprule`
+
 ### Installation
 
 Sur debian, ajouter les contrib et non-free, puis
@@ -38,7 +40,7 @@ pip install -r requirements.txt
 
 python2 setup.py install
 
-SNMP_DEBUG=1 snmp2canopsis
+SNMP_DEBUG=1 snmp2canopsis -c snmp2canopsis.conf
 ```
 
 SNMP_DEBUG=1 permet d'activer le mode verbeux du connecteur.

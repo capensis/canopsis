@@ -355,3 +355,9 @@ class TestWeatherAPI(BasicWeatherAPITest):
         states = [json[0]['state']['val'], json[1]['state']['val']]
         states.sort()
         self.assertListEqual(states, [2, 3])
+
+        # Verifying watcher state on a wrong pbh type
+        json = self.get_watcher("{}?pb_types=['{}']"
+                                .format(watcher_filter_1, 'wrong_type'))
+        self.assertTrue(isinstance(json, list))
+        self.assertEqual(len(json), 0)

@@ -42,6 +42,14 @@ mongoimport -u cpsmongo -p canopsis -d canopsis -c <collection_name> /path/to/<c
 zcat /path/to/<collection_name>.json.gz | mongoimport -u cpsmongo -p canopsis -d canopsis -c <collection_name>
 ```
 
+### Dump avec filtrage
+
+Exemple en récupérant tous les documents de la collection `periodical_alarm` de la BD Canopsis avec des documents ayant un champs `v.ack` :
+
+```
+mongodump -h <host> -u cpsmongo -p canopsis --db canopsis -c periodical_alarm --archive=bad_docs.bson.gz --gzip -q '{"v.ack":{$exists: true}}'
+```
+
 ## Session Web
 
 Voir [debug front](../guide_developpeur/debug_front.md)

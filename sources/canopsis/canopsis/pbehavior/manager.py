@@ -589,6 +589,25 @@ class PBehaviorManager(object):
 
         return ret_val
 
+    def get_active_pbehaviors_from_type(self, types=[]):
+        """
+        Return pbehaviors currently active, with a specific type.
+        """
+        now = int(time())
+        query = {
+            '$and': [
+                {'tstop': {'$gte': now}},
+                {'tstart': {'$lte': now}},
+                {PBehavior.TYPE: {'$in': types}}
+            ]
+        }
+
+        ret_val = list(self.pb_storage.get_elements(
+            query=query
+        ))
+
+        return ret_val
+
     def get_varying_pbehavior_list(self):
         """
         get_varying_pbehavior_list
