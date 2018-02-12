@@ -35,6 +35,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.utils import check_valid_rrule
+from pymongo import DESCENDING
 
 
 class BasePBehavior(dict):
@@ -447,13 +448,14 @@ class PBehaviorManager(object):
         :return: pbehaviors, with name, tstart, tstop, rrule and enabled keys
         :rtype: list of dict
         """
-        pbehaviors = self.pb_storage.get_elements(
-            query={PBehavior.EIDS: {'$in': [entity_id]}},
-            sort={PBehavior.TSTART: -1}
-        )
-        result = [PBehavior(**pb).to_dict() for pb in pbehaviors]
 
-        return result
+        collection = self.pb_storage._backend
+        res = list(collection.find(
+            {PBehavior.EIDS:{'$in': [entity_id]}},
+            sort=[(PBehavior.TSTART, DESCENDING)])
+        )
+
+        return res
 
     def compute_pbehaviors_filters(self):
         """

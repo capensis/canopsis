@@ -24,6 +24,7 @@ from bottle import request
 
 from canopsis.common.converters import id_filter
 from canopsis.watcher.manager import Watcher
+from canopsis.watcher.links import build_all_links
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
@@ -127,3 +128,13 @@ def exports(ws):
                                   HTTP_ERROR)
 
         return gen_json(deletion_dict)
+
+    @ws.application.get(
+        '/api/v2/watchers/compute-watchers-links'
+    )
+    def compute_watchers_links():
+        """
+            force compute watchers links
+            :rtype: bool
+        """
+        build_all_links(watcher.context_graph)
