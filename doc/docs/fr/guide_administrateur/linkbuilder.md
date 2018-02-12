@@ -10,9 +10,8 @@ Présenter des URLs sur un bac à alarmes pour par exemple :
 * Rediriger vers un screenshot
 
 
-Le mécanisme de linkbuilder peut êter enrichi pour des besoins spécifiques.
-
-Voir [dev guide](../../en/developer_guide/canopsis_specs/link_generation/index.md)
+Le mécanisme de linkbuilder peut être enrichi pour des besoins spécifiques.
+Voir [la section du guide de développement associée](../../en/developer_guide/canopsis_specs/link_generation/index.md)
 
 ## Utilisation du basic builder
 
