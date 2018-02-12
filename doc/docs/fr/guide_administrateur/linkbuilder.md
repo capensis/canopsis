@@ -19,9 +19,9 @@ Voir [dev guide](../../en/developer_guide/canopsis_specs/link_generation/index.m
 Le basic builder permet d'enrichir les alarmes avec un lien pouvant contenir des variables.  
 Ces variables sont celles contenues à la racine d'une entité. 
 
-### Configuration simple
+### Configuration basique
 
-Construisez un fichier qui servira de payload à une requête POST.
+Soit la configuration suivante
 
 ````
 $ cat basic_link_builder.json 
@@ -33,7 +33,7 @@ $ cat basic_link_builder.json
 }
 ````
 
-En considérant l'entité suivante 
+En considérant l'entité associée 
 
 ```json
 "entity": {
@@ -56,3 +56,28 @@ l'URL qui sera générée à la volée sur un bac à alarmes sera
     "Ticketing": ["http://www.mesconsignes.fr/?q=PING+[u'nagios/Nagios4']+resource"]
     }
 ```
+
+### Mise en oeuvre backend
+
+La configuration préalablement établie doit être postée sur l'API de Canopsis
+
+**Phase d'authentification sur l'API**
+
+````
+curl -POST http://x.x.x.x:8082/auth -d 'username=root&password=root' -vL -c canopsis_cookie
+````
+
+**Post de la configuration**
+
+````
+curl -H "Content-Type: application/json" -X POST -d @basic_link_builder.json http://localhost:28082/api/v2/associativetable/link_builders_settings -b canopsis_cookie
+````
+
+Si une configuration existe déjà en base, remplacez **POST** par **PUT**
+
+
+Notez qu'un redémarrage du moteur **context-graph** ainsi que du **webserver** est nécessaire.
+
+### Visualisation frontend
+
+Dans un bac à alarmes, demandez l'affichage de la colonne **links**
