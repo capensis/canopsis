@@ -32,7 +32,9 @@ $ cat basic_link_builder.json
 }
 ```
 
-En considérant l'entité associée
+(« category » est le nom sous lequel apparaitra le lien généré ; à défaut, « links » apparaitra)
+
+En considérant l'entité associée :
 
 ```json
 "entity": {
@@ -48,7 +50,7 @@ En considérant l'entité associée
 }
 ```
 
-l'URL qui sera générée à la volée sur un bac à alarmes sera
+l'URL qui sera générée à la volée sur un bac à alarmes sera :
 
 ```json
 "links": {
