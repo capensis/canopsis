@@ -9,28 +9,22 @@ ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 
 COPY docker/build/debian-jessie-build.sh /
-COPY docker/build/install.sh /
 RUN /bin/bash /debian-jessie-build.sh
 
 WORKDIR ${CPS_HOME}
 
 ### Sources
-
-RUN mkdir -p /sources/bricks/
-
 COPY sources/canopsis /sources/canopsis
 COPY sources/externals/python-libs /sources/python-libs
 COPY sources/webcore /sources/webcore
 COPY tools/brickmanager /sources/brickmanager
 
 ### Canopsis Core and Engines
+COPY docker/build/install.sh /
 RUN /bin/bash /install.sh
 
 ### Webserver
-
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
-COPY docker/build/bricks.sh /
-RUN /bin/bash /bricks.sh ${TAG} ${CPS_HOME}
 
 ## Canopsis Core Image
 FROM canopsis/canopsis-sysbase:${TAG}
@@ -65,6 +59,9 @@ RUN mkdir -p ./etc/init.d && \
     mkdir -p tmp
 
 RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var ${CPS_HOME}/tmp
+
+# Copy UI bricks as root
+COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
 
 USER ${CPS_USER}:${CPS_GROUP}
 EXPOSE 8082

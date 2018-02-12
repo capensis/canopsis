@@ -11,7 +11,6 @@ apt-get update
 apt-get -y --no-install-recommends install \
     build-essential \
     curl \
-    git-core \
     libcurl4-openssl-dev \
     libsasl2-dev \
     libxml2-dev \
@@ -20,7 +19,6 @@ apt-get -y --no-install-recommends install \
     libffi-dev \
     libxmlsec1-dev \
     libldap2-dev \
-    patch \
     python2.7-dev
 
 apt-get clean

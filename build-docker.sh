@@ -12,5 +12,7 @@ tag="${1}"
 workdir=$(dirname $(readlink -e $0))
 cd $workdir
 
+./docker/build/bricks.sh "${tag}"
+
 docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile.sysbase -t canopsis/canopsis-sysbase:${tag} .
 docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile -t canopsis/canopsis-core:${tag} .
