@@ -153,12 +153,7 @@ def send_event(
     if 'connector_name' not in event:
         event['connector_name'] = 'Send_event'
 
-    clean_event = {}
-    for k in event:
-        v = event[k]
-        clean_event[k] = u'{0}'.format(v)
-
-    request_params = {'event': dumps(clean_event)}
+    request_params = {'event': dumps(event)}
     request = Request(
         'http://%s/event' % server, urlencode(request_params))
     r = opener.open(request)
