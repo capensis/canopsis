@@ -50,10 +50,7 @@ RUN sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf
 
 ADD docker/files/entrypoint.sh /
 
-RUN mkdir -p ./etc/init.d && \
-    mkdir -p var/log/engines && \
-    mkdir -p var/cache/canopsis && \
-    mkdir -p tmp
+RUN mkdir -p ./etc/init.d
 
 RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
 
