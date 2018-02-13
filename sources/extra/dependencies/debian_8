@@ -1,6 +1,8 @@
 #!/bin/sh
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6 || exit 1
 echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main" > /etc/apt/sources.list.d/mongodb-org.list
+sed -i -E "s/(^deb .*main\s*)$/\1 contrib non-free/" /etc/apt/sources.list
+
 
 apt-get update || exit 1
 
