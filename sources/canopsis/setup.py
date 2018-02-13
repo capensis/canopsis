@@ -42,8 +42,9 @@ TEST_FOLDERS = ['tests', 'test']
 class PostInstall(setup_install):
 
     def _makedirs(self, unix_path):
-        from os.path import join as pjoin
+        os.environ['CPS_BOOTSTRAP'] = '1'
 
+        from os.path import join as pjoin
         from canopsis.common import root_path
 
         abspath = '{}/{}'.format(root_path, unix_path)
@@ -62,6 +63,7 @@ class PostInstall(setup_install):
         self._makedirs('var/log/engines')
         self._makedirs('var/cache/canopsis')
         self._makedirs('tmp')
+        self._makedirs('etc')
 
         setup_install.run(self)
 

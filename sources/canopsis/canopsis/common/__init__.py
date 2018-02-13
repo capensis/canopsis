@@ -29,6 +29,12 @@ class CanopsisUnsupportedEnvironment(Exception):
 def _root_path():
     root = os.environ.get('CPS_PREFIX', sys.prefix)
 
+    if os.environ.get('CPS_BOOTSTRAP', '0') is '1':
+        if os.path.isdir(root):
+            return root
+        else:
+            raise CanopsisUnsupportedEnvironment('not a dir: {}'.format(root))
+
     if os.path.isdir(os.path.join(root, 'etc')):
         pass
 
