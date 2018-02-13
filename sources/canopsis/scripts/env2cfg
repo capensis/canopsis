@@ -3,8 +3,9 @@
 
 from __future__ import unicode_literals
 
-import os
 import logging
+import os
+import sys
 
 from os.path import join as pjoin
 
@@ -160,9 +161,11 @@ class Env2Cfg(object):
             app.check()
         except ValueError as ex:
             logging.error(ex)
-            return
+            return 1
 
         app.update()
+        return 0
 
 if __name__ == '__main__':
-    Env2Cfg.main()
+    rc = Env2Cfg.main()
+    sys.exit(rc)

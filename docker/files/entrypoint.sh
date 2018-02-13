@@ -1,4 +1,7 @@
 #!/bin/bash
+set -e
+set -o pipefail
+
 export HOME=/opt/canopsis
 
 if [ "x$1" == "xshell" ]; then

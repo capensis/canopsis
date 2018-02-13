@@ -48,6 +48,8 @@ services:
     oom_score_adj: -1000
   cleaner_events:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -59,6 +61,8 @@ services:
     #entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]
   event_filter:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -69,6 +73,8 @@ services:
     mem_reservation: 200m
   pbehavior:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -79,6 +85,8 @@ services:
     mem_reservation: 200m
   ticket:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -89,6 +97,8 @@ services:
     mem_reservation: 200m
   perfdata:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
       - "influxdb"
@@ -100,6 +110,8 @@ services:
     mem_reservation: 200m
   eventstore:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -110,6 +122,8 @@ services:
     mem_reservation: 200m
   context-graph:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -120,6 +134,8 @@ services:
     mem_reservation: 2g
   linklist:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -130,6 +146,8 @@ services:
     mem_reservation: 200m
   alerts:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -140,6 +158,8 @@ services:
     mem_reservation: 200m
   selector:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -150,6 +170,8 @@ services:
     mem_reservation: 200m
   scheduler:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -160,6 +182,8 @@ services:
     mem_reservation: 200m
   task_mail:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -170,6 +194,8 @@ services:
     mem_reservation: 200m
   task_linklist:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -180,6 +206,8 @@ services:
     mem_reservation: 200m
   task_importctx:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     environment:
@@ -192,6 +220,10 @@ services:
     mem_reservation: 200m
   webserver:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
+    environment:
+      - CPS_WEBSERVER=1
     depends_on:
       - "mongodb"
     ports:
@@ -199,8 +231,6 @@ services:
     volumes:
         - importctxdata:/opt/canopsis/tmp
         - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
-    environment:
-      - CPS_WEBSERVER=1
     links:
       - mongodb
       - rabbitmq

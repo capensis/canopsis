@@ -35,6 +35,7 @@ apt-get -y --no-install-recommends install \
     python-pip \
     python-virtualenv \
     rsync \
+    sudo \
     tmux \
     vim \
     virtualenv \
