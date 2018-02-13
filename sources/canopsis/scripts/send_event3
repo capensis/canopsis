@@ -148,13 +148,9 @@ def main(argv):
     if not event.get('connector_name', None):
         event['connector_name'] = 'Send_event'
 
-    clean_event = {}
-    for k, v in event.items():
-        clean_event[k] = str(v).encode('utf-8')
-
     request = urllib.request.Request(
         'http://%s/event/' % server,
-        urllib.parse.urlencode(clean_event).encode('ascii'))
+        urllib.parse.urlencode(event).encode('ascii'))
     r = opener.open(request)
     print('Webserver replied :')
     print((r.read()))
