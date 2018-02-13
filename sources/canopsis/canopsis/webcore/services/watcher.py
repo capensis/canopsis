@@ -147,7 +147,7 @@ def exports(ws):
         do_compute = last_watchers_compute + WATCHER_COMPUTE_COOLDOWN < now
 
         if do_compute:
-            ws.logger.info('Force compute on all pbehaviors')
+            ws.logger.info('Force compute of watcher links')
             last_watchers_compute = now
             build_all_links(watcher.context_graph)
 
