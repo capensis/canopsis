@@ -29,13 +29,13 @@ from time import time
 from uuid import uuid4
 from six import string_types
 from dateutil.rrule import rrulestr
+from pymongo import DESCENDING
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.utils import check_valid_rrule
-from pymongo import DESCENDING
 
 
 class BasePBehavior(dict):
@@ -448,11 +448,11 @@ class PBehaviorManager(object):
         :return: pbehaviors, with name, tstart, tstop, rrule and enabled keys
         :rtype: list of dict
         """
-
-        collection = self.pb_storage._backend
-        res = list(collection.find(
-            {PBehavior.EIDS:{'$in': [entity_id]}},
-            sort=[(PBehavior.TSTART, DESCENDING)])
+        res = list(
+            self.pb_storage._backend.find(
+                {PBehavior.EIDS: {'$in': [entity_id]}},
+                sort=[(PBehavior.TSTART, DESCENDING)]
+            )
         )
 
         return res
