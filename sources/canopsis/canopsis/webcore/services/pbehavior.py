@@ -488,7 +488,7 @@ def exports(ws):
     )
     def compute_pbehaviors():
         """
-        Force compute of all pbehaviors, once per minute max
+        Force compute of all pbehaviors, once per 10s
 
         :rtype: bool
         """
