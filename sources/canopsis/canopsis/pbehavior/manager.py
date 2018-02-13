@@ -29,6 +29,7 @@ from time import time
 from uuid import uuid4
 from six import string_types
 from dateutil.rrule import rrulestr
+from pymongo import DESCENDING
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
@@ -447,13 +448,14 @@ class PBehaviorManager(object):
         :return: pbehaviors, with name, tstart, tstop, rrule and enabled keys
         :rtype: list of dict
         """
-        pbehaviors = self.pb_storage.get_elements(
-            query={PBehavior.EIDS: {'$in': [entity_id]}},
-            sort={PBehavior.TSTART: -1}
+        res = list(
+            self.pb_storage._backend.find(
+                {PBehavior.EIDS: {'$in': [entity_id]}},
+                sort=[(PBehavior.TSTART, DESCENDING)]
+            )
         )
-        result = [PBehavior(**pb).to_dict() for pb in pbehaviors]
 
-        return result
+        return res
 
     def compute_pbehaviors_filters(self):
         """
