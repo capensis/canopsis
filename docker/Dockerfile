@@ -8,8 +8,8 @@ ARG PROXY
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 
-COPY docker/build/debian-jessie-build.sh /
-RUN /bin/bash /debian-jessie-build.sh
+COPY docker/build/debian-build.sh /
+RUN /bin/bash /debian-build.sh
 
 WORKDIR ${CPS_HOME}
 
