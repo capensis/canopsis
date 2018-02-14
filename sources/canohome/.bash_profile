@@ -11,4 +11,6 @@ export PYTHONPATH="$HOME/lib/canolibs:$HOME/lib:$HOME/etc:$HOME/etc/tasks.d:$HOM
 export NODE_PATH="$HOME/lib/node_modules"
 export UBIK_CONF="$HOME/etc/ubik.conf"
 
-source ~/bin/activate
+if [ -f ~/bin/activate ]; then
+    source ~/bin/activate
+fi
