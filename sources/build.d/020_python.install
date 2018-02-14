@@ -1,51 +1,8 @@
 NAME="python"
 
-function build(){
-	BASE="Python-$VERSION"
-	cd $SRC_PATH/externals/
-
-    rm -rf $BASE-build && cp -ar $BASE $BASE-build && cd $BASE-build
-
-	echo " + Fix env vars"
-	DEB_HOST_MULTIARCH=`dpkg-architecture -qDEB_HOST_MULTIARCH 2>> /dev/null`
-	if [ $? -eq 0 ]; then
-		export LDFLAGS="$LDFLAGS -L/usr/lib/$DEB_HOST_MULTIARCH"
-		check_code $?
-	fi
-
-	if [ -e Makefile ]; then
-		echo " + Clean ..."
-		launch_log $NAME "make clean"
-		check_code $?
-	fi
-
-	echo " + Configure ..."
-	launch_log $NAME "./configure --prefix=$PREFIX/py2714 --enable-shared --enable-unicode=ucs4"
-	check_code $?
-
-	echo " + Build ..."
-	launch_log $NAME "make ${MAKEFLAGS}"
-	check_code $?
-}
-
 function install(){
-	BASE="Python-$VERSION"
-	cd $SRC_PATH/externals/$BASE-build
-
-    echo " + Install ..."
-	launch_log $NAME "make altinstall"
-	check_code $?
-	cd $SRC_PATH
-
-    ln -sf ${PREFIX}/py2714 ${PREFIX}/python
-
-	echo " + Venv ..."
-	. /etc/os-release
-	if [ "${ID}" = "debian" ]; then
-		export LD_LIBRARY_PATH=${PREFIX}/python/lib
-	fi
-	virtualenv -p ${PREFIX}/python/bin/python2.7 ${PREFIX}
+	virtualenv -p /usr/bin/python2.7 ${PREFIX}
 	check_code $?
 
-	chown $HUSER:$HGROUP -R $PREFIX/python
+	chown $HUSER:$HGROUP -R $PREFIX
 }
