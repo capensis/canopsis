@@ -20,7 +20,7 @@ function build(){
 	fi
 
 	echo " + Configure ..."
-	launch_log $NAME "./configure --prefix=$PREFIX/py2714 --enable-shared"
+	launch_log $NAME "./configure --prefix=$PREFIX/py2714 --enable-shared --enable-unicode=ucs4"
 	check_code $?
 
 	echo " + Build ..."
