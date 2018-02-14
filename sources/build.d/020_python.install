@@ -40,10 +40,12 @@ function install(){
     ln -sf ${PREFIX}/py2714 ${PREFIX}/python
 
 	echo " + Venv ..."
-    virtualenv -p ${PREFIX}/python/bin/python2.7 ${PREFIX}
+	. /etc/os-release
+	if [ "${ID}" = "debian" ]; then
+		export LD_LIBRARY_PATH=${PREFIX}/python/lib
+	fi
+	virtualenv -p ${PREFIX}/python/bin/python2.7 ${PREFIX}
 	check_code $?
-
-	. ${PREFIX}/bin/activate
 
 	chown $HUSER:$HGROUP -R $PREFIX/python
 }
