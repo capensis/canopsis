@@ -23,6 +23,10 @@ Cette section couvre les informations utiles aux administrateurs de Canopsis
 
  - [Offline](install_offline.md)
 
+## Link builder
+
+ - [Link builder](linkbuilder.md)
+
 ## CAT Only
 
  - [SNMP](snmp.md)
