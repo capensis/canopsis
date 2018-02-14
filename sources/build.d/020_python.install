@@ -1,44 +1,5 @@
 NAME="python"
 
-function install_pylib(){
-	BASE="Python-$VERSION"
-	cd $SRC_PATH/externals/python-libs/
-	BASE=$1-$2
-	VERS=$2
-	echo "Install Python Library: $BASE ..."
-
-	#remplace '-' by '.'
-	FBASE=`echo "$BASE" | sed s#-#\.#g`
-
-	FCHECK=`ls $PREFIX/lib/python2.7/site-packages/ | grep "$FBASE-py2.7" | wc -l`
-	#echo " + Check $FCHEK ..."
-	if [ $FCHECK -eq 0 ]; then
-		if [ ! -e $BASE ]; then
-			if [ -e "$BASE.tar.gz" ]; then
-				extract_archive "$BASE.tar.gz"
-			elif [ -e "$BASE.tgz" ]; then
-				extract_archive "$BASE.tgz"
-			elif [ -e "$BASE.tar.bz2" ]; then
-				extract_archive "$BASE.tar.bz2"
-			elif [ -e "$BASE.tar.xz" ]; then
-				extract_archive "$BASE.tar.xz"
-			else
-				echo "Impossible to find archive ..."
-				exit 1
-			fi
-		fi
-		cd $BASE
-		echo " + Install $BASE ..."
-		launch_log $NAME "$PY_BIN setup.py install --prefix=$PREFIX"
-		check_code $? "Setup.py install failure"
-		cd ../
-		rm -Rf $BASE  &> /dev/null
-		cd $SRC_PATH
-	else
-		echo " + Already install"
-	fi
-}
-
 function build(){
 	BASE="Python-$VERSION"
 	cd $SRC_PATH/externals/
@@ -59,8 +20,6 @@ function build(){
 	fi
 
 	echo " + Configure ..."
-	mkdir -p $PREFIX/lib
-
 	launch_log $NAME "./configure --prefix=$PREFIX/py2714 --enable-shared"
 	check_code $?
 
@@ -74,11 +33,17 @@ function install(){
 	cd $SRC_PATH/externals/$BASE-build
 
     echo " + Install ..."
-	launch_log $NAME "make install"
+	launch_log $NAME "make altinstall"
 	check_code $?
 	cd $SRC_PATH
 
-    virtualenv -p ${PREFIX}/py2714/bin/python2.7 ${PREFIX}
+    ln -sf ${PREFIX}/py2714 ${PREFIX}/python
 
-	chown $HUSER:$HGROUP -R $PREFIX/py2714
+	echo " + Venv ..."
+    virtualenv -p ${PREFIX}/python/bin/python2.7 ${PREFIX}
+	check_code $?
+
+	. ${PREFIX}/bin/activate
+
+	chown $HUSER:$HGROUP -R $PREFIX/python
 }
