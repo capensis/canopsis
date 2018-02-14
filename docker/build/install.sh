@@ -14,3 +14,4 @@ pip install -b /tmp/pipbuild --no-index -f ${find_links} -U setuptools pip
 pip install -b /tmp/pipbuild --no-index -f ${find_links} /sources/canopsis/
 
 rm -rf /tmp/pipbuild
+rm -rf ~/.cache
