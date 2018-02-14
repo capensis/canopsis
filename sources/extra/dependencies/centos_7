@@ -20,3 +20,5 @@ yum install -y erlang
 
 # mongodb
 yum install -y mongodb-org mongodb-org-tools
+
+systemctl disable mongod
