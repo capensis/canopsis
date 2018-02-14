@@ -2,10 +2,11 @@
 
 Default bindings :
 
-Exchange        | Queue | Routing key
---------------- | ----- | -----------
-canopsis.events | axe   | #
-canopsis.alerts | che   | #
+Exchange        | Queue       | Routing key
+--------------- | ----------- | -----------
+canopsis.events | axe         | #
+canopsis.alerts | che         | #
+canopsis.events | engine_stat | #
 
 ## MongoDB
 
@@ -22,6 +23,7 @@ db.periodical_alarm.createIndex({d:1})
 export CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost/canopsis"
 export CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost/canopsis"
 export CPS_REDIS_URL="redis://nouser:dbpassword@host:port/0"
+export CPS_INFLUX_URL="http://cpsinflux:canopsis@host:8086"
 export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/canopsis/default_configuration.toml"
 ```
 
@@ -29,6 +31,7 @@ export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/cano
 cd cmd/engines-axe && go build . && ./engine-axe
 cd cmd/engines-che && go build . && ./engine-che
 cd cmd/engines-lifeline && go build . && ./engine-lifeline
+cd cmd/engines-stat && go build . && ./engine-stat
 cd cmd/feeder && go build . && ./feeder
 ```
 
