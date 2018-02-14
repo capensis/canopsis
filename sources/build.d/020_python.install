@@ -61,7 +61,7 @@ function build(){
 	echo " + Configure ..."
 	mkdir -p $PREFIX/lib
 
-	launch_log $NAME "./configure --prefix=$PREFIX --enable-shared"
+	launch_log $NAME "./configure --prefix=$PREFIX/py2714 --enable-shared"
 	check_code $?
 
 	echo " + Build ..."
@@ -73,10 +73,12 @@ function install(){
 	BASE="Python-$VERSION"
 	cd $SRC_PATH/externals/$BASE-build
 
+    echo " + Install ..."
 	launch_log $NAME "make install"
 	check_code $?
 	cd $SRC_PATH
-	install_pylib "setuptools" "36.5.0"
-	install_pylib "pip" "9.0.1"
-	chown $HUSER:$HGROUP -R $PREFIX/lib/python2.7
+
+    virtualenv -p ${PREFIX}/py2714/bin/python2.7 ${PREFIX}
+
+	chown $HUSER:$HGROUP -R $PREFIX/py2714
 }
