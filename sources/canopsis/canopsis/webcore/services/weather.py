@@ -127,33 +127,60 @@ class WatcherFilter(object):
             return True
         return False
 
-    def filter(self, doc):
-        if isinstance(doc, dict):
-            cdoc = copy.deepcopy(doc)
-            for k, v in doc.items():
-                if k == 'hasallactivepbehaviorinentities':
-                    self._all = self.to_bool(v)
-                    del cdoc['hasallactivepbehaviorinentities']
-                elif k == 'hasactivepbehaviorinentities':
-                    self._some = self.to_bool(v)
-                    del cdoc['hasactivepbehaviorinentities']
-                else:
-                    cdoc[k] = self.filter(v)
+    def _filter_dict(self, dictdoc):
+        cdoc = copy.deepcopy(dictdoc)
+        for k, v in dictdoc.items():
+            if k == 'hasallactivepbehaviorinentities':
+                self._all = self.to_bool(v)
+                del cdoc['hasallactivepbehaviorinentities']
 
-            return cdoc
+            elif k == 'hasactivepbehaviorinentities':
+                self._some = self.to_bool(v)
+                del cdoc['hasactivepbehaviorinentities']
+
+            else:
+                nv = self._filter(v)
+                if nv is not None:
+                    cdoc[k] = nv
+                else:
+                    del cdoc[k]
+
+        return cdoc
+
+    def _filter_list(self, listdoc):
+        cdoc = copy.deepcopy(listdoc)
+        j = 0
+        for i, item in enumerate(listdoc):
+            v = self._filter(item)
+            if v is not None:
+                cdoc[j] = v
+            else:
+                del cdoc[j]
+                j -= 1
+            j += 1
+
+        return cdoc
+
+    def _filter(self, doc):
+        if isinstance(doc, dict):
+            ndoc = self._filter_dict(doc)
+            if len(ndoc) == 0 and len(doc) != 0:
+                return None
+            return ndoc
 
         elif isinstance(doc, list):
-            cdoc = copy.deepcopy(doc)
-            for i, item in enumerate(doc):
-                v = self.filter(item)
-                if v is None:
-                    i -= 1
-                else:
-                    cdoc[i] = v
-
-            return cdoc
+            ndoc = self._filter_list(doc)
+            if len(ndoc) == 0 and len(doc) != 0:
+                return None
+            return ndoc
 
         return doc
+
+    def filter(self, doc):
+        res = self._filter(doc)
+        if res is None:
+            return {}
+        return res
 
     def appendable(self, allstatus, somestatus):
         if self.all() is None and self.some() is None:
