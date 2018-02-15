@@ -25,6 +25,8 @@ from __future__ import unicode_literals
 
 import copy
 import json
+
+from pprint import pprint
 from operator import itemgetter
 from bottle import request
 from six import string_types
@@ -97,6 +99,60 @@ def __format_pbehavior(pbehavior):
             pass
 
     return pbehavior
+
+
+class WatcherFilter(object):
+    """
+    Filter out hasallactivepbehaviorinentities and hasactivepbehaviorinentities.
+    """
+
+    def __init__(self):
+        self._param_container = {}
+
+    def all(self):
+        """
+        :returns: True, False or None
+        """
+        return self._param_container.get('all')
+
+    def some(self):
+        """
+        :returns: True, False or None
+        """
+        return self._param_container.get('some')
+
+    def to_bool(self, value):
+        if value in ['1', 1, "true", "True"]:
+            return True
+        return False
+
+    def filter(self, doc):
+        if isinstance(doc, dict):
+            cdoc = copy.deepcopy(doc)
+            for k, v in doc.items():
+                if k == 'hasallactivepbehaviorinentities':
+                    self._param_container['all'] = self.to_bool(v)
+                    del cdoc['hasallactivepbehaviorinentities']
+                elif k == 'hasactivepbehaviorinentities':
+                    self._param_container['some'] = self.to_bool(v)
+                    del cdoc['hasactivepbehaviorinentities']
+                else:
+                    cdoc[k] = self.filter(v)
+
+            return cdoc
+
+        elif isinstance(doc, list):
+            cdoc = copy.deepcopy(doc)
+            for i, item in enumerate(doc):
+                v = self.filter(item)
+                if v is None:
+                    i -= 1
+                else:
+                    cdoc[i] = v
+
+            return cdoc
+
+        return doc
 
 
 def watcher_status(watcher, pbehavior_eids_merged):
@@ -212,6 +268,7 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
+        wf = WatcherFilter()
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
@@ -229,6 +286,7 @@ def exports(ws):
             limit = int(DEFAULT_LIMIT)
 
         watcher_filter['type'] = 'watcher'
+        watcher_filter = wf.filter(watcher_filter)
         watcher_list = context_manager.get_entities(
             query=watcher_filter,
             limit=limit,
@@ -360,7 +418,29 @@ def exports(ws):
             if tmp_next_run is not None:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
-            watchers.append(enriched_entity)
+            flag_appendable = False
+
+            def appendable(wf, allstatus, somestatus):
+                if wf.all() is None and wf.some() is None:
+                    return True
+
+                elif wf.all() is not None and wf.some() is not None:
+                    if wf.all() == allstatus and wf.some() == somestatus:
+                        return True
+                    return False
+
+                elif wf.all() is allstatus and wf.all() is not None:
+                    return True
+
+                elif wf.some() is somestatus and wf.some() is not None:
+                    return True
+
+                return False
+
+            flag_appendable = appendable(wf, wstatus[1], wstatus[0])
+
+            if flag_appendable is True:
+                watchers.append(enriched_entity)
 
         watchers = sorted(watchers, key=itemgetter("display_name"))
 
