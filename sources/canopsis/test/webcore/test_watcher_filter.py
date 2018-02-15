@@ -60,15 +60,16 @@ class TestWatcherFilter(unittest.TestCase):
         fdoc3 = {'$and': [{}]}
 
         wf = WatcherFilter()
-
         self.assertDictEqual(wf.filter(doc1), fdoc1)
         self.assertTrue(wf.all())
         self.assertIsNone(wf.some())
 
+        wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc2), fdoc2)
         self.assertIsNone(wf.all())
         self.assertTrue(wf.some())
 
+        wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc3), fdoc3)
         self.assertIsNone(wf.all())
         self.assertIsNone(wf.some())
