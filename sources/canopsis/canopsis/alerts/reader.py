@@ -246,6 +246,12 @@ class AlertsReader(object):
         :rtype: dict
         """
 
+        if tstop is not None and tstart is not None:
+            return {
+                'v.resolved': None,
+                't': {'$lte': tstop, "$gte": tstart}
+            }
+
         if tstop is not None:
             return {
                 'v.resolved': None,
@@ -549,6 +555,10 @@ class AlertsReader(object):
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
+        import pprint
+        with open("/tmp/plop.log", "a") as fd:
+            fd.write("\n\n\n========== New request ==========")
+            fd.write("Params : \n\topened : {0}\n\tresolved : {1}\n\tstart : {2}\n\tstop : {3}\n".format(opened, resolved, tstart, tstop))
 
         if lookups is None:
             lookups = []
@@ -600,6 +610,8 @@ class AlertsReader(object):
                 "$skip": skip
             }
         ]
+        with open("/tmp/plop.log", "a") as fd:
+            fd.write("{}".format(pprint.pformat(pipeline)))
 
         if limit is not None:
             pipeline.append({"$limit": limit})

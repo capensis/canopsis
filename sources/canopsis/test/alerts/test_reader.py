@@ -139,7 +139,7 @@ class TestReader(BaseTest):
         )
 
         # opened=True, resolved=False
-        expected_opened = {'v.resolved': None, 't': {'$lte': 2}}
+        expected_opened = {'v.resolved': None, 't': {'$lte': 2, "$gte": 1}}
         self.assertEqual(
             self.reader._get_time_filter(
                 opened=True, resolved=False, tstart=1, tstop=2),
@@ -203,7 +203,7 @@ class TestReader(BaseTest):
             {
                 'tstart': 13,
                 'tstop': 42,
-                'expected': {'v.resolved': None, 't': {'$lte': 42}}
+                'expected': {'v.resolved': None, 't': {'$lte': 42, "$gte": 13}}
             }
         ]
 
@@ -641,4 +641,3 @@ if __name__ == '__main__':
     unittest.main(
         testRunner=xmlrunner.XMLTestRunner(output=output),
         verbosity=3)
-
