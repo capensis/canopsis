@@ -180,7 +180,9 @@ class Watcher:
         except IndexError:
             return None
 
-        entities = watcher_entity['depends']
+        #entities = watcher_entity['depends']
+        entities = self.context_graph.get_entities_with_pbehaviors(watcher_entity['depends'])
+        # TODO: not alarm_storage instead ?
         display_name = watcher_entity['name']
 
         alarm_list = list(self.alert_storage._backend.find({

@@ -7,11 +7,13 @@ import jsonschema
 import time
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
+from canopsis.common.entity import Entity
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
 from canopsis.middleware.core import Middleware
+from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.links import build_all_links
 
 
@@ -304,6 +306,10 @@ class ContextGraph(object):
             section.get(ConfName.ENT_STORAGE)
         )
 
+        self.pbh_storage = Middleware.get_middleware_by_uri(
+            section.get(PBehaviorManager.PB_STORAGE_URI)
+        )
+
         self.logger = logger
 
         # For links building
@@ -323,25 +329,6 @@ class ContextGraph(object):
 
         self.filter_ = InfosFilter(logger=self.logger)
 
-    def get_entities_by_id(self, _id):
-        """
-        Retreive the entity identified by an id. If id is a list of id,
-        get_entities_by_id return every entities who match the ids present
-        in the list
-
-        :param id: the id of an entity. id can be a list
-        :return type: a list of entity
-        """
-
-        query = {"_id": None}
-        if isinstance(_id, list):
-            query["_id"] = {"$in": _id}
-        else:
-            query["_id"] = _id
-
-        result = self.get_entities(query=query)
-
-        return result
 
     def _put_entities(self, entities):
         """
@@ -376,21 +363,6 @@ class ContextGraph(object):
         if not isinstance(entities, list):
             entities = [entities]
         self.ent_storage.remove_elements(entities)
-
-    def get_all_entities_id(self):
-        """
-        Get the ids of every stored entities.
-        TODO: use an iterator instead
-
-        :return type: a set with every entities id.
-        """
-        entities = list(
-            self.ent_storage.get_elements(query={}))
-        ret_val = set([])
-        for i in entities:
-            ret_val.add(i['_id'])
-
-        return ret_val
 
     @classmethod
     def _enable_entity(cls, entity, timestamp=None):
@@ -687,6 +659,60 @@ class ContextGraph(object):
             return result, count
         else:
             return result
+
+    def get_entities_by_id(self, _id):
+        """
+        Retreive the entity identified by an id. If id is a list of id,
+        get_entities_by_id return every entities who match the ids present
+        in the list
+
+        :param id: the id of an entity. id can be a list
+        :return type: a list of entity
+        """
+
+        query = {"_id": None}
+        if isinstance(_id, list):
+            query["_id"] = {"$in": _id}
+        else:
+            query["_id"] = _id
+
+        result = self.get_entities(query=query)
+
+        return result
+
+    def get_entities_with_pbehaviors(self, _id):
+        """
+        Retreive the entity identified by an id with linked pbehaviors.
+
+        :param id: the id of an entity. id can be a list
+        :returns: a list of entity with pbehaviors infos
+        :rtype: dict
+        """
+        entities = self.get_entities_by_id(_id=_id)
+        entities = [Entity(**Entity.convert_keys(e)) for e in entities]
+
+        for entity in entities:
+            query = {PBehaviorManager.EIDS: entity['_id']}
+            pbh = list(self.pbh_storage._backend.find(query))
+            #if isinstance(pbh, list):
+            #entity.pbheavior = PBehavior(**pbh)
+
+        return entities
+
+    def get_all_entities_id(self):
+        """
+        Get the ids of every stored entities.
+        TODO: use an iterator instead
+
+        :return type: a set with every entities id.
+        """
+        entities = list(
+            self.ent_storage.get_elements(query={}))
+        ret_val = set([])
+        for i in entities:
+            ret_val.add(i['_id'])
+
+        return ret_val
 
     def get_event(self, entity, event_type='check', **kwargs):
         """Get an event from an entity.
