@@ -81,6 +81,7 @@ class TestPbehavior(TestCase):
     def test_check_values_valid_pb(self):
         check_values(self.VALID_PB)
 
+
 class TestPbehaviorWebservice(TestCase):
 
     INVALID_PB = {
@@ -111,8 +112,7 @@ class TestPbehaviorWebservice(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        logger, storage = PBehaviorManager.provide_default_basics()
-        pb_manager = PBehaviorManager(logger, storage)
+        pb_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
         watcher_manager = WatcherManager()
         cls.rhpb = RouteHandlerPBehavior(pb_manager, watcher_manager)
 

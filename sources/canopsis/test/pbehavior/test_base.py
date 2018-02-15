@@ -21,9 +21,10 @@
 
 import unittest
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.logger.logger import Logger, OutputNull
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.logger.logger import Logger, OutputNull
+from canopsis.watcher.manager import Watcher
 
 
 class MockEngine():
@@ -40,10 +41,19 @@ class BaseTest(unittest.TestCase):
         entities_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
+        alarm_storage = Middleware.get_middleware_by_uri(
+            'storage-periodical-testalarm://'
+        )
+        watcher_manager = Watcher()
 
         logger = Logger.get('test_pb', None, output_cls=OutputNull)
 
-        self.pbm = PBehaviorManager(logger=logger, pb_storage=pbehavior_storage)
+        self.pbm = PBehaviorManager(
+            logger=logger,
+            pb_storage=pbehavior_storage,
+            alarm_storage=alarm_storage,
+            watcher_manager=watcher_manager,
+        )
         self.context = ContextGraph(logger)
         self.context.ent_storage = entities_storage
         self.pbm.context = self.context

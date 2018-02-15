@@ -120,11 +120,8 @@ class AlertsReader(object):
         alerts_storage = Middleware.get_middleware_by_uri(
             Alerts.ALERTS_STORAGE_URI
         )
-        pb_storage = Middleware.get_middleware_by_uri(
-            PBehaviorManager.PB_STORAGE_URI
-        )
 
-        pbm = PBehaviorManager(logger=logger, pb_storage=pb_storage)
+        pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
         llm = Entitylink(*Entitylink.provide_default_basics())
 
         return (logger, conf, alerts_storage, pbm, llm)

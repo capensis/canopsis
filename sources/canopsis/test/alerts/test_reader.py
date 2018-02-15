@@ -20,7 +20,9 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-from unittest import main
+
+import unittest
+import xmlrunner
 from time import sleep
 
 from canopsis.alerts.manager import Alerts
@@ -30,9 +32,7 @@ from canopsis.entitylink.manager import Entitylink
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
-import unittest
 from canopsis.common import root_path
-import xmlrunner
 from base import BaseTest
 
 
@@ -48,8 +48,9 @@ class TestReader(BaseTest):
 
         self.logger = Logger.get('alertsreader', '/tmp/null')
         conf = Configuration.load(Alerts.CONF_PATH, Ini)
-        self.pbehavior_manager = PBehaviorManager(logger=self.logger,
-                                                  pb_storage=self.pb_storage)
+        self.pbehavior_manager = PBehaviorManager(
+            *PBehaviorManager.provide_default_basics()
+        )
         self.entitylink_manager = Entitylink(logger=self.logger,
                                              storage=self.el_storage,
                                              context_graph=self.cg_manager)

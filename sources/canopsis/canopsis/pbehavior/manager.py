@@ -36,6 +36,8 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.utils import check_valid_rrule
+#from canopsis.alerts.manager import Alerts
+from canopsis.watcher.manager import Watcher
 
 
 class BasePBehavior(dict):
@@ -170,10 +172,15 @@ class PBehaviorManager(object):
         """
         logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
         pb_storage = Middleware.get_middleware_by_uri(cls.PB_STORAGE_URI)
+        alarm_storage = Middleware.get_middleware_by_uri(
+            'mongodb-periodical-alarm://'
+            #Alerts.ALERTS_STORAGE_URI
+        )
+        watcher_manager = Watcher()
 
-        return logger, pb_storage
+        return logger, pb_storage, alarm_storage, watcher_manager
 
-    def __init__(self, logger, pb_storage):
+    def __init__(self, logger, pb_storage, alarm_storage, watcher_manager):
         """
         :param dict config: configuration
         :param pb_storage: PBehavior Storage object
@@ -183,6 +190,8 @@ class PBehaviorManager(object):
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
+        self.alarm_storage = alarm_storage
+        self.watcher_manager = watcher_manager
 
         self.currently_active_pb = set()
 
@@ -310,10 +319,11 @@ class PBehaviorManager(object):
 
     def update(self, _id, **kwargs):
         """
-        Update pbehavior record
+        Update pbehavior record.
+
         :param str _id: pbehavior id
-        :param dict kwargs: values pbehavior fields. If a field is None, it will
-            **not** be updated.
+        :param dict kwargs: values pbehavior fields. If a field is None,
+            it will **not** be updated.
         :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
         pb_value = self.get(_id)
@@ -336,15 +346,29 @@ class PBehaviorManager(object):
             return pbehavior.to_dict()
         return None
 
-    def delete(self, _id=None, _filter=None):
+    def delete(self, alarm_manager, _id=None, _filter=None):
         """
-        Delete pbehavior record
+        Delete pbehavior record.
+
         :param str _id: pbehavior id
+        :param str _filter: pbehavior filter ?
         """
+        pbehaviors = self.pb_storage.get_elements(
+            ids=_id, _filter=_filter
+        )
+
+        entities = []
+        for pbehavior in pbehaviors:
+            entities = entities + self.resolve_filter(pbehavior)
 
         result = self.pb_storage.remove_elements(
             ids=_id, _filter=_filter
         )
+
+        entities = [e['_id'] for e in entities]
+        alarms = self.alarm_storage.get_elements(ids=entities)
+        for alarm in alarms:
+            self.watcher_manager.alarm_changed(alarm['_id'])
 
         return self._check_response(result)
 
@@ -457,6 +481,23 @@ class PBehaviorManager(object):
 
         return res
 
+    def resolve_filter(self, pbehavior):
+        """
+        Retrieve all entites matched by a specific pbehavior.
+
+        :param dict pbehavior: the pbehavior to search in
+        :returns: all matched entities
+        :rtype: list of dict
+        """
+        query = loads(pbehavior[PBehavior.FILTER])
+        if not isinstance(query, dict):
+            self.logger.error('filter is not a dict ! {}'.format(query))
+            return None
+
+        return list(self.context.ent_storage.get_elements(
+            query=query
+        ))
+
     def compute_pbehaviors_filters(self):
         """
         Compute all filters and update eids attributes.
@@ -466,16 +507,7 @@ class PBehaviorManager(object):
         )
 
         for pbehavior in pbehaviors:
-
-            query = loads(pbehavior[PBehavior.FILTER])
-            if not isinstance(query, dict):
-                self.logger.error('compute_pbehaviors_filters(): filter is '
-                                  'not a dict !\n{}'.format(query))
-                continue
-
-            entities = self.context.ent_storage.get_elements(
-                query=query
-            )
+            entities = self.resolve_filter(pbehavior)
 
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
             self.pb_storage.put_element(element=pbehavior)
@@ -557,7 +589,7 @@ class PBehaviorManager(object):
 
     def get_active_pbehaviors(self, eids):
         """
-        Return a list of active pbehaviors linked to some entites.
+        Return a list of active pbehaviors linked to some entities.
 
         :param list eids: the desired entities id
         :returns: list of pbehaviors

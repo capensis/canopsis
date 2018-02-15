@@ -200,7 +200,9 @@ class ComputeState(BaseTest):
         logger = Logger.get('test_pb', None, output_cls=OutputNull)
 
         self.pbm = PBehaviorManager(logger=logger,
-                                    pb_storage=pbehavior_storage)
+                                    pb_storage=pbehavior_storage,
+                                    alarm_storage=self.alerts_storage,
+                                    watcher_manager=self.manager)
         self.pbm.context = self.context_graph_manager
         self.manager.pbehavior_manager = self.pbm
 
