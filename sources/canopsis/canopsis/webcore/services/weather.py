@@ -107,19 +107,20 @@ class WatcherFilter(object):
     """
 
     def __init__(self):
-        self._param_container = {}
+        self._all = None
+        self._some = None
 
     def all(self):
         """
         :returns: True, False or None
         """
-        return self._param_container.get('all')
+        return self._all
 
     def some(self):
         """
         :returns: True, False or None
         """
-        return self._param_container.get('some')
+        return self._some
 
     def to_bool(self, value):
         if value in ['1', 1, "true", "True"]:
@@ -131,10 +132,10 @@ class WatcherFilter(object):
             cdoc = copy.deepcopy(doc)
             for k, v in doc.items():
                 if k == 'hasallactivepbehaviorinentities':
-                    self._param_container['all'] = self.to_bool(v)
+                    self._all = self.to_bool(v)
                     del cdoc['hasallactivepbehaviorinentities']
                 elif k == 'hasactivepbehaviorinentities':
-                    self._param_container['some'] = self.to_bool(v)
+                    self._some = self.to_bool(v)
                     del cdoc['hasactivepbehaviorinentities']
                 else:
                     cdoc[k] = self.filter(v)
@@ -154,6 +155,22 @@ class WatcherFilter(object):
 
         return doc
 
+    def appendable(self, allstatus, somestatus):
+        if self.all() is None and self.some() is None:
+            return True
+
+        elif self.all() is not None and self.some() is not None:
+            if self.all() == allstatus and self.some() == somestatus:
+                return True
+            return False
+
+        elif self.all() is allstatus and self.all() is not None:
+            return True
+
+        elif self.some() is somestatus and self.some() is not None:
+            return True
+
+        return False
 
 def watcher_status(watcher, pbehavior_eids_merged):
     """
@@ -418,28 +435,7 @@ def exports(ws):
             if tmp_next_run is not None:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
-            flag_appendable = False
-
-            def appendable(wf, allstatus, somestatus):
-                if wf.all() is None and wf.some() is None:
-                    return True
-
-                elif wf.all() is not None and wf.some() is not None:
-                    if wf.all() == allstatus and wf.some() == somestatus:
-                        return True
-                    return False
-
-                elif wf.all() is allstatus and wf.all() is not None:
-                    return True
-
-                elif wf.some() is somestatus and wf.some() is not None:
-                    return True
-
-                return False
-
-            flag_appendable = appendable(wf, wstatus[1], wstatus[0])
-
-            if flag_appendable is True:
+            if wf.appendable(wstatus[1], wstatus[0]) is True:
                 watchers.append(enriched_entity)
 
         watchers = sorted(watchers, key=itemgetter("display_name"))
