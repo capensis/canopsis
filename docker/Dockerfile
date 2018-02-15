@@ -20,8 +20,14 @@ COPY sources/webcore /sources/webcore
 COPY tools/brickmanager /sources/brickmanager
 
 ### Canopsis Core and Engines
-COPY docker/build/install.sh /
-RUN /bin/bash /install.sh
+COPY docker/build/pip-setup.sh /
+RUN /bin/bash /pip-setup.sh
+
+COPY docker/build/pip-deps.sh /
+RUN /bin/bash /pip-deps.sh
+
+COPY docker/build/pip-canopsis.sh /
+RUN /bin/bash /pip-canopsis.sh
 
 ### Webserver
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
