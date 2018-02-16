@@ -31,26 +31,26 @@ class TestWatcherFilter(unittest.TestCase):
                         {
                             "hasallactivepbehaviorinentities": False
                         },
-                        {"bla":1}
+                        {"IWillBeBack":2}
                     ],
                 },
                 {
-                    "bla": {
+                    "SarahConnor": {
                         "hasallactivepbehaviorinentities": True
                     },
                     "hasallactivepbehaviorinentities": True
                 }
             ]
         }
-        fdoc1 = {'$and': [{'$or': [{'bla': 1}]}]}
+        fdoc1 = {'$and': [{'$or': [{'IWillBeBack': 2}]}]}
 
         doc2 = {
             "$and": [
-                {"bla":{"$eq": 1}},
+                {"SarahConnor":{"$eq": 'Terminated'}},
                 {"hasactivepbehaviorinentities": True},
             ]
         }
-        fdoc2 = {'$and': [{'bla': {'$eq': 1}}]}
+        fdoc2 = {'$and': [{'SarahConnor': {'$eq': 'Terminated'}}]}
 
         doc3 = {
             "$and": [

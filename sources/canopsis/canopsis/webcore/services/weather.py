@@ -26,7 +26,6 @@ from __future__ import unicode_literals
 import copy
 import json
 
-from pprint import pprint
 from operator import itemgetter
 from bottle import request
 from six import string_types
