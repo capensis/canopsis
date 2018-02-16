@@ -15,3 +15,5 @@ Vagrantfile
 *.vagrant
 docker/files/bricks/brick-*
 docker/bricks
+tools/catag/catag
+tools/catag/vendor
