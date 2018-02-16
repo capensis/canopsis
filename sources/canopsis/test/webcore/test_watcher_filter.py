@@ -83,6 +83,8 @@ class TestWatcherFilter(unittest.TestCase):
 
         wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc4), fdoc4)
+        self.assertIsNone(wf.all())
+        self.assertIsNone(wf.some())
 
 if __name__ == '__main__':
     output = root_path + "/tests_report"
