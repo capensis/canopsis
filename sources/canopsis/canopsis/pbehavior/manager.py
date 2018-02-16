@@ -346,7 +346,7 @@ class PBehaviorManager(object):
             return pbehavior.to_dict()
         return None
 
-    def delete(self, alarm_manager, _id=None, _filter=None):
+    def delete(self, _id=None, _filter=None):
         """
         Delete pbehavior record.
 
@@ -366,9 +366,8 @@ class PBehaviorManager(object):
         )
 
         entities = [e['_id'] for e in entities]
-        alarms = self.alarm_storage.get_elements(ids=entities)
-        for alarm in alarms:
-            self.watcher_manager.alarm_changed(alarm['_id'])
+        for entity in entities:
+            self.watcher_manager.entity_changed(entity['_id'])
 
         return self._check_response(result)
 

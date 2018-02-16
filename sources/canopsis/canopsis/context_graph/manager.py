@@ -7,12 +7,13 @@ import jsonschema
 import time
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
-from canopsis.common.entity import Entity
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
 from canopsis.middleware.core import Middleware
+from canopsis.models.entity import Entity
+from canopsis.models.pbehavior import PBehavior
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.links import build_all_links
 
@@ -328,7 +329,6 @@ class ContextGraph(object):
                 self.hlb_manager = HypertextLinkManager(conf, self.logger)
 
         self.filter_ = InfosFilter(logger=self.logger)
-
 
     def _put_entities(self, entities):
         """
@@ -693,9 +693,9 @@ class ContextGraph(object):
 
         for entity in entities:
             query = {PBehaviorManager.EIDS: entity['_id']}
-            pbh = list(self.pbh_storage._backend.find(query))
-            #if isinstance(pbh, list):
-            #entity.pbheavior = PBehavior(**pbh)
+            pbh = self.pbh_storage._backend.find(query)
+            pbh = [PBehavior(**PBehavior.convert_keys(p)) for p in pbh]
+            entity.pbheavior = pbh
 
         return entities
 
@@ -707,7 +707,8 @@ class ContextGraph(object):
         :return type: a set with every entities id.
         """
         entities = list(
-            self.ent_storage.get_elements(query={}))
+            self.ent_storage.get_elements(query={})
+        )
         ret_val = set([])
         for i in entities:
             ret_val.add(i['_id'])

@@ -12,7 +12,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
-from canopsis.pbehavior.manager import PBehaviorManager
+#from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
@@ -37,9 +37,9 @@ class Watcher:
             'storage-default-sla://')
 
         self.context_graph = ContextGraph(self.logger)
-        self.pbehavior_manager = PBehaviorManager(
-            *PBehaviorManager.provide_default_basics()
-        )
+        #self.pbehavior_manager = PBehaviorManager(
+        #    *PBehaviorManager.provide_default_basics()
+        #)
         self.amqp_pub = amqp_pub
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
@@ -151,7 +151,7 @@ class Watcher:
 
     def alarm_changed(self, alarm_id):
         """
-        Launch a computation of a watcher state.
+        Launch a computation of a watcher state from alarm.
 
         :param alarm_id: alarm id
         """
@@ -159,6 +159,14 @@ class Watcher:
         for i in watchers:
             if alarm_id in i['depends']:
                 self.compute_state(i['_id'])
+
+    def entity_changed(self, entity_id):
+        """
+        Launch a computation of a watcher state from entity.
+
+        :param str entity_id: an entity id
+        """
+        pass
 
     def compute_watchers(self):
         """
@@ -180,9 +188,8 @@ class Watcher:
         except IndexError:
             return None
 
-        #entities = watcher_entity['depends']
-        entities = self.context_graph.get_entities_with_pbehaviors(watcher_entity['depends'])
-        # TODO: not alarm_storage instead ?
+        entities_id = watcher_entity['depends']
+        entities = self.context_graph.get_entities_with_pbehaviors(entities_id)
         display_name = watcher_entity['name']
 
         alarm_list = list(self.alert_storage._backend.find({
@@ -190,14 +197,12 @@ class Watcher:
         }))
         states = []
         for alarm in alarm_list:
-            if alarm['v']['resolved'] is None and alarm['d'] in entities:
-                active_pb = self.pbehavior_manager.get_active_pbehaviors(
-                    [alarm['d']]
-                )
+            if alarm['v']['resolved'] is None and alarm['d'] in entities_id:
+                active_pb = [e.pbehavior for e in entities]
                 if len(active_pb) == 0:
                     states.append(alarm['v']['state']['val'])
 
-        nb_entities = len(entities)
+        nb_entities = len(entities_id)
         nb_crit = states.count(Check.CRITICAL)
         nb_major = states.count(Check.MAJOR)
         nb_minor = states.count(Check.MINOR)

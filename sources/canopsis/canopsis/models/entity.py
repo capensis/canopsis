@@ -1,10 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+Entity object.
+"""
+
+from __future__ import unicode_literals
+
 import time
 
 
 class Entity(object):
+
+    """
+    Representation of an entity element.
+    """
+
+    # Keys as seen in db
+    _ID = '_id'
+    NAME = 'name'
+    TYPE = 'type'
+    DEPENDS = 'depends'
+    IMPACTS = 'impacts'
+    MEASUREMENTS = 'measurements'
+    INFOS = 'infos'
+    ENABLED = 'enabled'
+    ENABLED_HISTORY = 'enabled_history'
 
     def __init__(self, _id, name, type_,
                  depends=None, impacts=None, measurements=None, infos=None,
@@ -48,14 +69,14 @@ class Entity(object):
     @staticmethod
     def convert_keys(entity_dict):
         """
-        Convert keys from mongo entity dict, to object Entity names.
+        Convert keys from mongo entity dict, to Entity attribute names.
 
         :param dict entity_dict: a raw entity dict from mongo
         :rtype: dict
         """
-        if 'type' in entity_dict:
-            entity_dict['type_'] = entity_dict['type']
-            del entity_dict['type']
+        if Entity.TYPE in entity_dict:
+            entity_dict['type_'] = entity_dict[Entity.TYPE]
+            del entity_dict[Entity.TYPE]
 
         return entity_dict
 
@@ -75,15 +96,15 @@ class Entity(object):
         :rtype: dict
         """
         dico = {
-            '_id': self._id,
-            'type': self.type_,
-            'name': self.name,
-            'depends': self.depends,
-            'impact': self.impact,
-            'measurements': self.measurements,
-            'infos': self.infos,
-            'enabled': self.enabled,
-            'enabled_history': self.enabled_history
+            self._ID: self._id,
+            self.TYPE: self.type_,
+            self.NAME: self.name,
+            self.DEPENDS: self.depends,
+            self.IMPACT: self.impact,
+            self.MEASUREMENTS: self.measurements,
+            self.INFOS: self.infos,
+            self.ENABLED: self.enabled,
+            self.ENABLED_HISTORY: self.enabled_history
         }
 
         return dico
