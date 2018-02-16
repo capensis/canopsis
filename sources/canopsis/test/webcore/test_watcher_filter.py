@@ -59,6 +59,13 @@ class TestWatcherFilter(unittest.TestCase):
         }
         fdoc3 = {'$and': [{}]}
 
+        doc4 = {
+            "$and": [
+                {"T-800": {"$contains": None}}
+            ]
+        }
+        fdoc4 = {'$and': [{'T-800': {'$contains': None}}]}
+
         wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc1), fdoc1)
         self.assertTrue(wf.all())
@@ -74,6 +81,8 @@ class TestWatcherFilter(unittest.TestCase):
         self.assertIsNone(wf.all())
         self.assertIsNone(wf.some())
 
+        wf = WatcherFilter()
+        self.assertDictEqual(wf.filter(doc4), fdoc4)
 
 if __name__ == '__main__':
     output = root_path + "/tests_report"

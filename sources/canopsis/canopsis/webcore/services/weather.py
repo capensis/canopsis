@@ -139,7 +139,7 @@ class WatcherFilter(object):
 
             else:
                 nv = self._filter(v)
-                if nv is not None:
+                if nv is not None or v is None:
                     cdoc[k] = nv
                 else:
                     del cdoc[k]
