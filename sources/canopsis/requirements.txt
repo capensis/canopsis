@@ -60,7 +60,6 @@ RestrictedPython==3.6.0
 simplejson==2.1.6
 six==1.10.0
 supervisor==3.3.3
-supervisord-nagios==0.1.2
 supervisor-wildcards==0.1.3
 sure==1.2.24
 testtools==2.0.0

@@ -32,7 +32,7 @@ function update() {
 
     rm -rf build canopsis.egg-info dist
 
-    pip_install --upgrade .
+    pip_install -U .
     check_code $? "Impossible to update canopsis"
 
     install_pytests "canopsis"

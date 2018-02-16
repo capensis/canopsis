@@ -28,6 +28,10 @@ function launch_cmd() {
     shift
     MYCMD=$*
 
+    if [ -f $HOME/bin/activate ]; then
+        . $HOME/bin/activate
+    fi
+
     if [ "x$MYCMD" != "x" ];
     then
         if [ "x`id -un`" == "x$HUSER" ];
@@ -134,12 +138,12 @@ function vercomp() {
         then
             return 1
         fi
-    
+
         if ((10#${ver1[i]} < 10#${ver2[i]}))
         then
             return 2
         fi
     done
-    
+
     return 0
 }
