@@ -627,7 +627,7 @@ class PBehaviorManager(object):
 
     def launch_update_watcher(self, watcher_manager):
         """
-        launch_update_watcher update watcher when an pbehavior is active
+        launch_update_watcher update watcher when a pbehavior is active
 
         :param object watcher_manager: watcher manager
         :returns: number of watcher updated
