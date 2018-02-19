@@ -44,20 +44,22 @@ class Rights(MiddlewareRegistry):
         super(Rights, self).__init__(data_scope=data_scope, *args, **kwargs)
 
         from canopsis.confng import Configuration, Ini
+        from canopsis.logger import Logger
 
+        self.logger = Logger.get('rights', 'var/log/rights.log')
         cfg = Configuration.load('etc/organisation/rights.conf', Ini)
 
-        self.profile_storage = cfg['RIGHTS']['profile_storage_uri']
-        self.group_storage = cfg['RIGHTS']['group_storage_uri']
-        self.role_storage = cfg['RIGHTS']['role_storage_uri']
-        self.action_storage = cfg['RIGHTS']['action_storage_uri']
-        self.user_storage = cfg['RIGHTS']['user_storage_uri']
+        self['profile_storage'] = Middleware.get_middleware_by_uri(cfg['RIGHTS']['profile_storage_uri'])
+        self['group_storage'] = Middleware.get_middleware_by_uri(cfg['RIGHTS']['group_storage_uri'])
+        self['role_storage'] = Middleware.get_middleware_by_uri(cfg['RIGHTS']['role_storage_uri'])
+        self['action_storage'] = Middleware.get_middleware_by_uri(cfg['RIGHTS']['action_storage_uri'])
+        self['user_storage'] = Middleware.get_middleware_by_uri(cfg['RIGHTS']['user_storage_uri'])
 
-        self['profile_storage'] = Middleware.get_middleware_by_uri(self.profile_storage)
-        self['group_storage'] = Middleware.get_middleware_by_uri(self.group_storage)
-        self['role_storage'] = Middleware.get_middleware_by_uri(self.role_storage)
-        self['action_storage'] = Middleware.get_middleware_by_uri(self.action_storage)
-        self['user_storage'] = Middleware.get_middleware_by_uri(self.user_storage)
+        self.profile_storage = self['profile_storage']
+        self.group_storage = self['group_storage']
+        self.role_storage = self['role_storage']
+        self.action_storage = self['action_storage']
+        self.user_storage = self['user_storage']
 
         self.get_profile = self.get_from_storage('profile')
         self.get_action = self.get_from_storage('action')
