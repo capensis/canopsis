@@ -18,16 +18,22 @@ def build_links(watcher_entity, context_graph):
 
     mfilter = loads(jmfilter)
 
-    dep = context_graph.get_entities(
+    entities = context_graph.get_entities(
         query=mfilter,
         projection={'_id': 1}
     )
 
-    for i in dep:
-        if i['_id'] not in watcher_entity.get('depends', []):
-            watcher_entity['depends'].append(i['_id'])
+    watcher_updated = False
+    watcher_depends = set(watcher_entity.get('depends', []))
 
-    context_graph.update_entity(watcher_entity)
+    for entity in entities:
+        eid = entity['_id']
+        if eid not in watcher_depends:
+            watcher_updated = True
+            watcher_entity['depends'].append(eid)
+
+    if watcher_updated:
+        context_graph.update_entity(watcher_entity)
 
 
 def build_all_links(context_graph):
