@@ -56,7 +56,6 @@ class CanopsisSONManipulator(SONManipulator):
         return son
 
 
-@conf_paths(CONF_RESOURCE)
 class MongoDataBase(DataBase):
     """Manage access to a mongodb."""
 
@@ -120,6 +119,13 @@ class MongoDataBase(DataBase):
         self.logger.debug(u'Trying to connect to {0}'.format(connection_args))
 
         try:
+            import os
+            import logging
+            from canopsis.logger import Logger
+            from canopsis.common.callstack import log_stack
+            cslog = Logger.get('callstack', '/tmp/callstack.cps.py.log.pid{}'.format(os.getpid()), level=logging.DEBUG)
+            log_stack(logger=cslog)
+            cslog.info('{}'.format(connection_args))
             result = MongoClient(**connection_args)
         except ConnectionFailure as cfe:
             self.logger.error(
@@ -225,6 +231,18 @@ class MongoStorage(MongoDataBase, Storage):
 
     ID = '_id'  #: ID mongo
     TAGS = 'tags'  #: tags field name
+
+    def configure(self, conf):
+        from canopsis.logger import Logger
+        from canopsis.confng import Configuration, Ini
+        self.logger = Logger.get('mongo', '/tmp/mongo.log')
+        self.logger.info('{}'.format(conf))
+        cfg = Configuration.load('etc/common/mongo_store.conf', Ini)
+        self.host = cfg['DATABASE']['host']
+        self.port = int(cfg['DATABASE']['port'])
+        self.db = cfg['DATABASE']['db']
+        self.user = cfg['DATABASE']['user']
+        self.pwd = cfg['DATABASE']['pwd']
 
     def _connect(self, *args, **kwargs):
         result = super(MongoStorage, self)._connect(*args, **kwargs)

@@ -803,10 +803,25 @@ class Middleware(Configurable):
 
         protocol, data_type, data_scope = parse_scheme(uri)
 
+        from canopsis.mongo.core import MongoStorage
+        from canopsis.mongo.timed import MongoTimedStorage
+        from canopsis.influxdb.core import InfluxDBStorage
+        from canopsis.influxdb.timed import InfluxDBTimedStorage
+
+        middleware_class = None
+        if 'mongo' in protocol or 'storage' in protocol:
+            if 'time' in data_type:
+                middleware_class = MongoTimedStorage
+            else:
+                middleware_class = MongoStorage
+        elif 'influx' in protocol:
+            if 'time' in data_type:
+                middleware_class = InfluxDBTimedStorage
+            else:
+                middleware_class = InfluxDBStorage
+
         if data_scope:
             kwargs["data_scope"] = data_scope
-
-        middleware_class = Middleware.resolve_middleware_by_uri(uri)
 
         # if a new middleware class has been founded
         if middleware_class is not None:

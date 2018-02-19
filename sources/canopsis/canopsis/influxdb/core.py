@@ -180,6 +180,17 @@ class InfluxDBCursor(Cursor):
 class InfluxDBStorage(InfluxDBDataBase, Storage):
     """Influxdb Storage."""
 
+    def configure(self, *args, **kwargs):
+        from canopsis.logger import Logger
+        from canopsis.confng import Configuration, Ini
+        self.logger = Logger.get('influx', '/tmp/influx.log')
+        cfg = Configuration.load('etc/influx/storage.conf', Ini)
+        self.host = cfg['DATABASE']['host']
+        self.port = int(cfg['DATABASE']['port'])
+        self.db = cfg['DATABASE']['db']
+        self.user = cfg['DATABASE']['user']
+        self.pwd = cfg['DATABASE']['pwd']
+
     def raw_query(self, query):
         return self._conn.query(query)
 
