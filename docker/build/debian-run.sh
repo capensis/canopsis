@@ -12,6 +12,7 @@ apt-get -y --no-install-recommends install \
     bash \
     bash-completion \
     ca-certificates \
+    curl \
     libsasl2-2 \
     libxml2 \
     libxslt1.1 \
