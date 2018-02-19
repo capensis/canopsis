@@ -113,8 +113,7 @@ class TestPbehaviorWebservice(TestCase):
     @classmethod
     def setUpClass(cls):
         pb_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
-        watcher_manager = WatcherManager()
-        cls.rhpb = RouteHandlerPBehavior(pb_manager, watcher_manager)
+        cls.rhpb = RouteHandlerPBehavior(pb_manager)
 
     def test_create_bad_pb(self):
         with self.assertRaises(ValueError):

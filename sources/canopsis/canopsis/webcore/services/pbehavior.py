@@ -125,12 +125,10 @@ class RouteHandlerPBehavior(object):
     manager.
     """
 
-    def __init__(self, pb_manager, watcher_manager):
+    def __init__(self, pb_manager):
         """
         :param PBehaviorManager pb_manager: pbehavior manager
-        :param WatcherManager watcher_manager: watcher manager
         """
-        self.watcher_manager = watcher_manager
         self.pb_manager = pb_manager
 
     def create(self, name, filter_, author,
@@ -291,10 +289,7 @@ def exports(ws):
     ws.application.router.add_filter('id_filter', id_filter)
 
     pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
-    watcher_manager = WatcherManager()
-    rhpb = RouteHandlerPBehavior(
-        pb_manager=pbm, watcher_manager=watcher_manager
-    )
+    rhpb = RouteHandlerPBehavior(pb_manager=pbm)
 
     @route(
         ws.application.post,
@@ -500,6 +495,6 @@ def exports(ws):
             ws.logger.info('Force compute on all pbehaviors')
             last_pbehaviors_compute = now
             pbm.compute_pbehaviors_filters()
-            pbm.launch_update_watcher(watcher_manager)
+            pbm.launch_update_watcher(pbm.watcher_manager)
 
         return gen_json(do_compute)

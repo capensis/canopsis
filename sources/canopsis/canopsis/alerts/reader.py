@@ -66,9 +66,9 @@ class AlertsReader(object):
     GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
 
     DEFAULT_ACTIVE_COLUMNS = ["v.component",
-                             "v.connector",
-                             "v.resource",
-                             "v.connector_name"]
+                              "v.connector",
+                              "v.resource",
+                              "v.connector_name"]
 
     def __init__(self, logger, config, storage,
                  pbehavior_manager, entitylink_manager):
@@ -95,8 +95,6 @@ class AlertsReader(object):
                                                           DEFAULT_RESOLVED_TRUNC))
         self.resolved_limit = int(category.get('resolved_limit',
                                                DEFAULT_RESOLVED_LIMIT))
-
-        _, pb_storage = PBehaviorManager.provide_default_basics()
 
         self.count_cache = {}
 

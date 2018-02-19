@@ -12,7 +12,6 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
-#from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
@@ -23,13 +22,15 @@ LOG_PATH = 'var/log/watcher.log'
 class Watcher:
     """Watcher class"""
 
+    WATCHER_STORAGE_URI = 'mongodb-default-watcher://'
+
     def __init__(self, amqp_pub=None):
         """
         :param amqp_pub canopsis.common.amqp.AmqpPublisher:
         """
         self.logger = Logger.get('watcher', LOG_PATH)
         self.watcher_storage = Middleware.get_middleware_by_uri(
-            'mongodb-default-watcher://')
+            self.WATCHER_STORAGE_URI)
         self.alert_storage = Middleware.get_middleware_by_uri(
             'mongodb-periodical-alarm://')
 
@@ -37,9 +38,6 @@ class Watcher:
             'storage-default-sla://')
 
         self.context_graph = ContextGraph(self.logger)
-        #self.pbehavior_manager = PBehaviorManager(
-        #    *PBehaviorManager.provide_default_basics()
-        #)
         self.amqp_pub = amqp_pub
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
@@ -166,7 +164,11 @@ class Watcher:
 
         :param str entity_id: an entity id
         """
-        pass
+        self.alarm_changed(entity_id)
+        #watchers = self.context_graph.get_entities(query={'type': 'watcher'})
+        #for i in watchers:
+        #    if entity_id in i['depends']:
+        #        self.compute_state(i['_id'])
 
     def compute_watchers(self):
         """

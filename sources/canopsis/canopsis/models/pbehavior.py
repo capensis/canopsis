@@ -39,8 +39,7 @@ class PBehavior(object):
     def __init__(self, _id, name, filter_, tstart, tstop, rrule, author,
                  connector=DEFAULT_CONNECTOR_VALUE,
                  connector_name=DEFAULT_CONNECTOR_NAME_VALUE,
-                 comments=None, eids=None, enabled=True,
-                 type_=None, reason=None,
+                 comments=None, eids=None, type_=None, reason=None,
                  *args, **kwargs):
         """
         :param str _id: pbehavior id
@@ -54,7 +53,6 @@ class PBehavior(object):
         :param str author: creator's name
         :param list comments: list of comments
         :param list eids: impacted entity ids
-        :param bool enabled: his this pbehavior actived ?
         :param str type_: particuliar type (editable trough ui ; pause...)
         :param str reason: explanation on pbehavior creation
         """
@@ -64,9 +62,6 @@ class PBehavior(object):
             comments = []
         if eids is None or not isinstance(eids, list):
             eids = []
-        if not isinstance(enabled, bool):
-            now = int(time.now())
-            enabled = tstart <= now <= tstop
         if type_ is None or not isinstance(type_, string_types):
             type_ = ''
         if reason is None or not isinstance(reason, string_types):
@@ -83,10 +78,10 @@ class PBehavior(object):
         self.author = author
         self.comments = comments
         self.eids = eids
-        self.enabled = enabled
         self.type_ = type_
         self.reason = reason
 
+        kwargs.pop('resolved')
         if args is not None or kwargs is not None:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
 
@@ -119,6 +114,11 @@ class PBehavior(object):
         #    del new_pbh_dict[PBehavior.TYPE]
 
         return new_pbh_dict
+
+    @property
+    def enabled(self):
+        now = int(time.now())
+        return self.tstart <= now <= self.tstop
 
     def to_dict(self):
         """

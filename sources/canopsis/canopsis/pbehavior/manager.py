@@ -22,6 +22,8 @@
 Managing PBehavior.
 """
 
+from __future__ import unicode_literals
+
 from calendar import timegm
 from datetime import datetime
 from json import loads, dumps
@@ -36,7 +38,6 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.utils import check_valid_rrule
-#from canopsis.alerts.manager import Alerts
 from canopsis.watcher.manager import Watcher
 
 
@@ -172,15 +173,11 @@ class PBehaviorManager(object):
         """
         logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
         pb_storage = Middleware.get_middleware_by_uri(cls.PB_STORAGE_URI)
-        alarm_storage = Middleware.get_middleware_by_uri(
-            'mongodb-periodical-alarm://'
-            #Alerts.ALERTS_STORAGE_URI
-        )
         watcher_manager = Watcher()
 
-        return logger, pb_storage, alarm_storage, watcher_manager
+        return logger, pb_storage, watcher_manager
 
-    def __init__(self, logger, pb_storage, alarm_storage, watcher_manager):
+    def __init__(self, logger, pb_storage, watcher_manager):
         """
         :param dict config: configuration
         :param pb_storage: PBehavior Storage object
@@ -190,7 +187,6 @@ class PBehaviorManager(object):
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
-        self.alarm_storage = alarm_storage
         self.watcher_manager = watcher_manager
 
         self.currently_active_pb = set()
@@ -356,6 +352,8 @@ class PBehaviorManager(object):
         pbehaviors = self.pb_storage.get_elements(
             ids=_id, _filter=_filter
         )
+        if isinstance(pbehaviors, dict):
+            pbehaviors = [pbehaviors]
 
         entities = []
         for pbehavior in pbehaviors:

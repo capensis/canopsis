@@ -307,9 +307,9 @@ class ContextGraph(object):
             section.get(ConfName.ENT_STORAGE)
         )
 
-        self.pbh_storage = Middleware.get_middleware_by_uri(
-            section.get(PBehaviorManager.PB_STORAGE_URI)
-        )
+        #self.pbh_storage = Middleware.get_middleware_by_uri(
+        #    section.get(PBehaviorManager.PB_STORAGE_URI)
+        #)
 
         self.logger = logger
 
