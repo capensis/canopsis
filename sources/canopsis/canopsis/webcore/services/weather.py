@@ -374,7 +374,7 @@ def exports(ws):
                 depends_merged.add(depends_id)
             entity_watchers_ids.append(watcher['_id'])
             alarm_watchers_ids.append(
-                '{}/{}'.format(watcher['_id'], watcher['name'])
+                '{}'.format(watcher['_id'])
             )
 
         active_pbehaviors = get_active_pbehaviors_on_watchers(
@@ -406,7 +406,7 @@ def exports(ws):
             ws.logger.debug(watcher)
             enriched_entity = {}
             tmp_alarm = alarm_dict.get(
-                '{}/{}'.format(watcher['_id'], watcher['name']),
+                '{}'.format(watcher['_id']),
                 []
             )
             tmp_linklist = []
