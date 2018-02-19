@@ -24,14 +24,13 @@ from copy import deepcopy
 
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
+from canopsis.middleware.core import Middleware
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.mongo.core import MongoCursor
 
 CATEGORY = 'RIGHTS'
 
 
-@conf_paths('organisation/rights.conf')
-@add_category(CATEGORY)
 class Rights(MiddlewareRegistry):
 
     DATA_SCOPE = 'rights'
@@ -44,29 +43,21 @@ class Rights(MiddlewareRegistry):
 
         super(Rights, self).__init__(data_scope=data_scope, *args, **kwargs)
 
-    # Generic getter
-    def get_from_storage(self, s_type):
-        def get_from_storage_(elem):
-            return self[s_type + '_storage'].get_elements(
-                ids=elem, query={'crecord_type': s_type})
-        return get_from_storage_
+        from canopsis.confng import Configuration, Ini
 
-    def get_users(self, projection={'_id': 1}):
-        return self['user_storage'].get_elements(
-            query={'crecord_type': 'user'},
-            projection=projection
-        )
+        cfg = Configuration.load('etc/organisation/rights.conf', Ini)
 
-    def _configure(self, unified_conf, *args, **kwargs):
+        self.profile_storage = cfg['RIGHTS']['profile_storage_uri']
+        self.group_storage = cfg['RIGHTS']['group_storage_uri']
+        self.role_storage = cfg['RIGHTS']['role_storage_uri']
+        self.action_storage = cfg['RIGHTS']['action_storage_uri']
+        self.user_storage = cfg['RIGHTS']['user_storage_uri']
 
-        super(Rights, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        self.profile_storage = self['profile_storage']
-        self.group_storage = self['group_storage']
-        self.role_storage = self['role_storage']
-        self.action_storage = self['action_storage']
-        self.user_storage = self['user_storage']
+        self['profile_storage'] = Middleware.get_middleware_by_uri(self.profile_storage)
+        self['group_storage'] = Middleware.get_middleware_by_uri(self.group_storage)
+        self['role_storage'] = Middleware.get_middleware_by_uri(self.role_storage)
+        self['action_storage'] = Middleware.get_middleware_by_uri(self.action_storage)
+        self['user_storage'] = Middleware.get_middleware_by_uri(self.user_storage)
 
         self.get_profile = self.get_from_storage('profile')
         self.get_action = self.get_from_storage('action')
@@ -91,6 +82,19 @@ class Rights(MiddlewareRegistry):
                 'action': self.delete_action
                 }
             }
+
+    # Generic getter
+    def get_from_storage(self, s_type):
+        def get_from_storage_(elem):
+            return self[s_type + '_storage'].get_elements(
+                ids=elem, query={'crecord_type': s_type})
+        return get_from_storage_
+
+    def get_users(self, projection={'_id': 1}):
+        return self['user_storage'].get_elements(
+            query={'crecord_type': 'user'},
+            projection=projection
+        )
 
     # Add an action to the referenced action
     def add(self, a_id, a_desc):

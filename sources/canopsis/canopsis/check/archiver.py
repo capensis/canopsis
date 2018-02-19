@@ -34,6 +34,8 @@ from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_connection
 
+from canopsis.logger import Logger
+
 legend_type = ['soft', 'hard']
 OFF = 0
 ONGOING = 1
@@ -45,16 +47,15 @@ CONF_PATH = 'check/archiver.conf'
 CATEGORY = 'ARCHIVER'
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class Archiver(Configurable):
+class Archiver(object):
 
     def __init__(
         self, namespace, confnamespace='object', storage=None,
         autolog=False, amqp_pub=None, *args, **kwargs
     ):
 
-        super(Archiver, self).__init__(*args, **kwargs)
+        super(Archiver, self).__init__()
+        self.logger = Logger.get('eventstore_archiver', 'var/log/eventstore_archiver.log')
         self.namespace = namespace
         self.namespace_log = namespace + '_log'
 
@@ -77,14 +78,14 @@ class Archiver(Configurable):
             self.logger.debug(" + Get storage")
             self.storage = get_storage(
                 namespace=namespace,
-                logging_level=self.log_lvl
+                logging_level=self.logger.level
             )
         else:
             self.storage = storage
 
         self.conf_storage = get_storage(
             namespace=confnamespace,
-            logging_level=self.log_lvl
+            logging_level=self.logger.level
         )
         self.conf_collection = self.conf_storage.get_backend(confnamespace)
         self.collection = self.storage.get_backend(namespace)

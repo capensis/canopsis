@@ -31,7 +31,7 @@ rights = None
 def get_manager():
     global rights
 
-    if not rights:
+    if rights is None:
         rights = Rights()
 
     return rights
