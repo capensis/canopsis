@@ -20,10 +20,13 @@
 
 from __future__ import unicode_literals
 
+import pymongo
+
 from bson.errors import BSONError
 from pymongo.errors import PyMongoError, OperationFailure
 
 from canopsis.logger import Logger
+
 
 LOG_NAME = 'collection'
 LOG_PATH = 'var/log/collection.log'
@@ -57,6 +60,9 @@ class MongoCollection(object):
         :param logging.Logger logger: python logger instance.
             If None, a new logger is provided.
         """
+        if not isinstance(collection, pymongo.collection.Collection):
+            raise ValueError('collection param is not a pymongo Collection object')
+
         self.collection = collection
 
         if logger is not None:

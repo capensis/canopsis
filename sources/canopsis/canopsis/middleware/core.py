@@ -806,6 +806,7 @@ class Middleware(Configurable):
         from canopsis.mongo.core import MongoStorage
         from canopsis.mongo.composite import MongoCompositeStorage
         from canopsis.mongo.timed import MongoTimedStorage
+        from canopsis.mongo.file import MongoFileStorage
         from canopsis.mongo.periodical import MongoPeriodicalStorage
         from canopsis.influxdb.core import InfluxDBStorage
         from canopsis.influxdb.timed import InfluxDBTimedStorage
@@ -818,6 +819,8 @@ class Middleware(Configurable):
                 middleware_class = MongoPeriodicalStorage
             elif 'comp' in data_type:
                 middleware_class = MongoCompositeStorage
+            elif 'file' in data_type:
+                middleware_class = MongoFileStorage
             else:
                 middleware_class = MongoStorage
 
@@ -828,7 +831,7 @@ class Middleware(Configurable):
                 middleware_class = InfluxDBStorage
 
         else:
-            raise Exception('cannot get middleware: {}'.format(uri))
+            raise Middleware.Error('cannot get middleware: {}'.format(uri))
 
         if data_scope:
             kwargs["data_scope"] = data_scope

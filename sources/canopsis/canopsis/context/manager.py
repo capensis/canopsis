@@ -23,6 +23,7 @@ from canopsis.configuration.configurable.decorator import (
 )
 from canopsis.configuration.model import Parameter
 
+from canopsis.middleware.core import Middleware
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.event import Event, forger
 from canopsis.storage.composite import CompositeStorage
@@ -34,9 +35,6 @@ CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
 CONTENT = [Parameter('accept_event_types', Parameter.array())]
 
-
-@add_category(CATEGORY, content=CONTENT)
-@conf_paths(CONF_RESOURCE)
 class Context(MiddlewareRegistry):
     """
     Manage access to a context (connector, component, resource) elements
@@ -83,7 +81,11 @@ class Context(MiddlewareRegistry):
         self._context = context
 
         if ctx_storage is not None:
-            self[Context.CTX_STORAGE] = ctx_storage
+            self.ctx_storage = ctx_storage
+        else:
+            self.ctx_storage = Middleware.get_middleware_by_uri(
+                'mongodb-composite-context://'
+            )
 
     @property
     def context(self):
@@ -131,13 +133,13 @@ class Context(MiddlewareRegistry):
         :type ids: list or str
         """
 
-        return self[Context.CTX_STORAGE].get_elements(ids=ids)
+        return self.ctx_storage.get_elements(ids=ids)
 
     def iter_ids(self):
         """Returns a cursor on all context ids.
         """
 
-        cursor = self[Context.CTX_STORAGE].get_elements(projection={
+        cursor = self.ctx_storage.get_elements(projection={
             Context.DATA_ID: True
         })
 
@@ -181,7 +183,7 @@ class Context(MiddlewareRegistry):
                 break
 
         # execute query in order to get children
-        children = self[Context.CTX_STORAGE].find_elements(query=query)
+        children = self.ctx_storage.find_elements(query=query)
 
         return children
 
@@ -281,7 +283,7 @@ class Context(MiddlewareRegistry):
         result = {}
         # get ctx values from _id
 
-        result = self[Context.CTX_STORAGE].get_data_from_id(data_id=_id)
+        result = self.ctx_storage.get_data_from_id(data_id=_id)
 
         if _type is None:
             _type = result[self.TYPE]
@@ -348,7 +350,7 @@ class Context(MiddlewareRegistry):
         :rtype: Cursor of dict elements or dict or NoneType
         """
 
-        result = self[Context.CTX_STORAGE].get_elements(
+        result = self.ctx_storage.get_elements(
             ids=ids,
             limit=limit,
             skip=skip,
@@ -379,7 +381,7 @@ class Context(MiddlewareRegistry):
             path = context.copy()
             path[Context.TYPE] = _type
 
-        result = self[Context.CTX_STORAGE].get(
+        result = self.ctx_storage.get(
             path=path, names=names, shared=extended
         )
 
@@ -403,7 +405,7 @@ class Context(MiddlewareRegistry):
         if _type is not None:
             path[Context.TYPE] = _type
 
-        result = self[Context.CTX_STORAGE].get(
+        result = self.ctx_storage.get(
             path=path, _filter=_filter, shared=extended,
             limit=limit, skip=skip, sort=sort, with_count=with_count
         )
@@ -452,14 +454,14 @@ class Context(MiddlewareRegistry):
                 # parent name is path[key]
                 parent_name = parent_path.pop(key)
                 # get entity
-                parent_entity = self[Context.CTX_STORAGE].get(
+                parent_entity = self.ctx_storage.get(
                     path=parent_path, names=parent_name
                 )
                 # if entity does not exist
                 if parent_entity is None:
                     # put a new entity in DB
                     parent_entity = {Context.NAME: parent_name}
-                    self[Context.CTX_STORAGE].put(
+                    self.ctx_storage.put(
                         path=parent_path,
                         name=parent_name,
                         data=parent_entity,
@@ -483,7 +485,7 @@ class Context(MiddlewareRegistry):
 
         if to_update:
             # finally, put the entity if necessary
-            self[Context.CTX_STORAGE].put(
+            self.ctx_storage.put(
                 path=path,
                 name=name,
                 data=entity,
@@ -511,16 +513,16 @@ class Context(MiddlewareRegistry):
             path[Context.TYPE] = _type
 
         if path:
-            self[Context.CTX_STORAGE].remove(
+            self.ctx_storage.remove(
                 path=path, shared=extended, cache=cache
             )
 
         if ids is not None:
-            self[Context.CTX_STORAGE].remove_elements(ids=ids, cache=cache)
+            self.ctx_storage.remove_elements(ids=ids, cache=cache)
 
         # if all parameters are None, delete all elements
         elif (_type, context) == (None, None):
-            self[Context.CTX_STORAGE].remove_elements()
+            self.ctx_storage.remove_elements()
 
     def get_entity_context_and_name(self, entity):
         """Get the right context related to input entity.
@@ -539,7 +541,7 @@ class Context(MiddlewareRegistry):
                 break
         """
 
-        result = self[Context.CTX_STORAGE].get_path_with_name(_entity)
+        result = self.ctx_storage.get_path_with_name(_entity)
 
         return result
 
@@ -551,7 +553,7 @@ class Context(MiddlewareRegistry):
 
         path, name = self.get_entity_context_and_name(entity=entity)
 
-        result = self[Context.CTX_STORAGE].get_absolute_path(
+        result = self.ctx_storage.get_absolute_path(
             path=path, name=name
         )
 
@@ -562,7 +564,7 @@ class Context(MiddlewareRegistry):
 
         path, name = self.get_entity_context_and_name(entity=entity)
 
-        result = self[Context.CTX_STORAGE].get_absolute_path(
+        result = self.ctx_storage.get_absolute_path(
             path=path, name=name
         ), path, name
 
@@ -574,7 +576,7 @@ class Context(MiddlewareRegistry):
         :param bool cache: use query cache if True (False by default).
         """
 
-        self[Context.CTX_STORAGE].share_data(
+        self.ctx_storage.share_data(
             data=entities, shared=extended, cache=cache
         )
 
@@ -585,4 +587,4 @@ class Context(MiddlewareRegistry):
         )
 
         if Context.CTX_STORAGE in self:
-            self[Context.CTX_STORAGE].path = self.context
+            self.ctx_storage.path = self.context

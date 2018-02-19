@@ -45,7 +45,7 @@ class AlarmFilters(object):
         :param storage alarm_storage: where to find all alarms
         :param logger logger: where to log
         """
-        self.storage = storage  # A alarmfilter storage
+        self.storage = storage  # An alarmfilter storage
         self.alarm_storage = alarm_storage  # An alarm storage
         self.logger = logger
 
@@ -80,6 +80,7 @@ class AlarmFilters(object):
         :type entity_id: str
         :rtype: dict
         """
+        from canopsis.common.callstack import log_stack
         return self.storage.remove_elements(ids=[entity_id])
 
     def update_filter(self, filter_id, values):

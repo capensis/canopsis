@@ -47,7 +47,8 @@ def log_stack(logger=None, limit=None, start=0):
 
     # Use the default logger, if necessary.
     if not logger:
-        logger = logging.getLogger()
+        from canopsis.logger import Logger
+        logger = Logger.get('callstack', '/tmp/callstack.cps.log', level=logging.DEBUG)
 
     # The call stack.
     stack = inspect.stack()

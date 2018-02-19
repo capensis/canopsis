@@ -103,9 +103,8 @@ class MongoDataBase(DataBase):
             connection_args['replicaSet'] = self.replicaset
             connection_args['read_preference'] = self.read_preference
 
-        connection_args['w'] = 1 if self.safe else 0
-        if self.safe:
-            connection_args['j'] = self.journaling
+        connection_args['w'] = 1
+        connection_args['j'] = True
 
         if self.ssl:
             connection_args.update(
@@ -123,9 +122,9 @@ class MongoDataBase(DataBase):
             import logging
             from canopsis.logger import Logger
             from canopsis.common.callstack import log_stack
-            cslog = Logger.get('callstack', '/tmp/callstack.cps.py.log.pid{}'.format(os.getpid()), level=logging.DEBUG)
-            log_stack(logger=cslog)
-            cslog.info('{}'.format(connection_args))
+            #cslog = Logger.get('callstack', '/tmp/callstack.cps.py.log.pid{}'.format(os.getpid()), level=logging.DEBUG)
+            #log_stack(logger=cslog)
+            #cslog.info('{}'.format(connection_args))
             result = MongoClient(**connection_args)
         except ConnectionFailure as cfe:
             self.logger.error(
@@ -505,15 +504,8 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _insert(self, document=None, cache=False, **kwargs):
-
-        if cache and self._cache is None:
-            self._init_cache()
-
-        cache_op = self._cache.insert if cache else None
-
         result = self._process_query(
             query_op=self._run_command,
-            cache_op=cache_op,
             cache_kwargs={'document': document},
             query_kwargs={'command': 'insert', 'doc_or_docs': document},
             cache=cache,
@@ -526,23 +518,7 @@ class MongoStorage(MongoDataBase, Storage):
             self, spec, document, cache=False, multi=True, upsert=True,
             **kwargs
     ):
-
-        if cache and self._cache is None:
-            self._init_cache()
-
-        if cache:
-            cache_op = self._cache.find(selector=spec)
-            if upsert:
-                cache_op = cache_op.upsert()
-            if multi:
-                cache_op = cache_op.update
-            else:
-                cache_op = cache_op.update_one
-        else:
-            cache_op = None
-
         result = self._process_query(
-            cache_op=cache_op,
             query_op=self._run_command,
             cache_kwargs={'update': document},
             query_kwargs={
@@ -565,16 +541,8 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _remove(self, document, cache=False, **kwargs):
-
-        if cache and self._cache is None:
-            self._init_cache()
-
-        cache_op = self._cache.find(selector=document).remove if cache \
-            else None
-
         result = self._process_query(
             query_op=self._run_command,
-            cache_op=cache_op,
             cache_kwargs={},
             query_kwargs={'command': 'remove', 'spec_or_id': document},
             cache=cache,
@@ -584,7 +552,6 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _count(self, document=None, **kwargs):
-
         cursor = self._find(document=document, **kwargs)
 
         result = cursor.count(False)
@@ -594,7 +561,6 @@ class MongoStorage(MongoDataBase, Storage):
     def _process_query(self, *args, **kwargs):
 
         result = super(MongoStorage, self)._process_query(*args, **kwargs)
-
         result = self._manage_query_error(result)
 
         return result
@@ -612,14 +578,14 @@ class MongoStorage(MongoDataBase, Storage):
             error = result_query.get("writeConcernError", None)
 
             if error is not None:
-                self.logger.error(u' error in writing document: {0}'.format(
+                print(u' error in writing document: {0}'.format(
                     error))
                 result = None
 
             error = result_query.get("writeError")
 
             if error is not None:
-                self.logger.error(u' error in writing document: {0}'.format(
+                print(u' error in writing document: {0}'.format(
                     error))
                 result = None
 

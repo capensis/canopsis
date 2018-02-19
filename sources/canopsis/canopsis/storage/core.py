@@ -368,132 +368,22 @@ class Storage(DataBase):
         self._data = value
         self.reconnect()
 
-    @property
-    def cache_size(self):
-        return self._cache_size
-
-    @cache_size.setter
-    def cache_size(self, value):
-        self._lock.acquire()
-        try:
-            self.execute_cache()
-            self._cache_size = value
-        finally:
-            self._lock.release()
-
-    @property
-    def cache_ordered(self):
-        return self._cache_ordered
-
-    @cache_ordered.setter
-    def cache_ordered(self, value):
-        self._lock.acquire()
-        try:
-            self.execute_cache()
-            self._cache_ordered = value
-        finally:
-            self._lock.release()
-
-    @property
-    def cache_autocommit(self):
-        return self._cache_autocommit
-
-    @cache_autocommit.setter
-    def cache_autocommit(self, value):
-        self._lock.acquire()
-        try:
-            self.execute_cache()
-            self._cache_autocommit = value
-        finally:
-            self._lock.release()
-
-    def queries_in_cache(self):
-        """
-        :return: number of queries in cache to commit.
-        :rtype: int
-        """
-
-        return self._cache_count
-
-    def _init_cache(self):
-        """Initialize cache processing."""
-
-        # if cache size exists
-        if self._cache_size > 0:
-            self._parent_thread = current_thread()
-            # initialize all cache variables in order to process it
-            self._cache_count = 0  # cache count equals 0
-            self._cache = self._new_cache()  # (re)new cache
-            self._updated_cache = False  # set false to updated cache
-            # kill previous thread if it's alive
-            self.halt_cache_thread()
-            # start a new thread if self cache auto commit greater than 0
-            if self._cache_autocommit > 0:
-                self._cached_thread = Thread(
-                    target=self._cache_async_execution
-                )
-                self._cached_thread.start()
-        else:  # nullify _cache if it exists
-            if hasattr(self, '_cache'):
-                del self._cache
-            self._cache = None
-
-    def _new_cache(self):
-        """Get self cache for query."""
-
-        raise NotImplementedError()
-
-    def _process_query(
-            self,
-            query_op, cache_op,
-            query_kwargs=None, cache_kwargs=None, cache=False,
-            **kwargs
-    ):
+    def _process_query(self, query_op, query_kwargs=None, **kwargs):
         """Execute a query or the query cache depending on values of _cache_size
         and input cache parameter.
 
         :param function query_op: query operation.
-        :param function cache_op: query operation to cache.
         :param dict query_kwargs: query operation kwargs.
-        :param dict cache_kwargs: query operation kwargs to cache.
-        :param bool cache: avoid cache operation if False (True by default).
 
         :return: query/cache operation result.
         """
 
         result = None
 
-        if query_kwargs is None:
-            query_kwargs = {}
-        if cache_kwargs is None:
-            cache_kwargs = {}
+        if query_kwargs is not None:
+            kwargs.update(query_kwargs)
 
-        if cache and self._cache_size > 0:
-            # if self cache is None, that means thisd is the first use to cache
-            if (
-                    self._cached_thread is None or
-                    not self._cached_thread.isAlive()
-            ):
-                # init cache
-                self._init_cache()
-            self._lock.acquire()  # avoid concurrent calls to cache execution
-            try:
-                if cache_op is not None:
-                    cache_op(**cache_kwargs)
-                    # check for updating cache
-                    self._updated_cache = True
-                    # increment the counter
-                    self._cache_count += 1
-                    # if cache count is greater than cache size
-                    if self._cache_count >= self._cache_size:
-                        # execute the cache
-                        result = self.execute_cache()
-            finally:
-                self._lock.release()
-        else:  # process the query operation
-            if query_kwargs is not None:
-                kwargs.update(query_kwargs)
-            result = query_op(**kwargs)
+        result = query_op(**kwargs)
 
         return result
 

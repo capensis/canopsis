@@ -141,11 +141,11 @@ class DeleteWatcher(BaseTest):
     def test_delete_watcher(self):
         self.manager.create_watcher(watcher_example)
         get_w = self.manager.get_watcher('watcher-one')
-        self.assertTrue(isinstance(get_w, dict))
+        self.assertIsInstance(get_w, dict)
         self.assertEqual(get_w['_id'], watcher_one)
 
         del_w = self.manager.delete_watcher('watcher-one')
-        self.assertTrue(isinstance(del_w, dict))
+        self.assertIsInstance(del_w, dict)
         self.assertEqual(del_w['n'], 1)
 
         get_w = self.manager.get_watcher('watcher-one')
