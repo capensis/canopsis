@@ -32,6 +32,9 @@ def build_links(watcher_entity, context_graph):
             watcher_updated = True
             watcher_entity['depends'].append(eid)
 
+    # FIXIT: updating only when needed is required to avoid resetting
+    # the watcher entity impact field.
+    # Also it avoids useless updates in DB.
     if watcher_updated:
         context_graph.update_entity(watcher_entity)
 
