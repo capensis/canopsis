@@ -7,8 +7,12 @@ PBehavior object.
 
 from __future__ import unicode_literals
 
+import json
 import time
 from six import string_types
+
+DEFAULT_CONNECTOR_VALUE = 'canopsis'
+DEFAULT_CONNECTOR_NAME_VALUE = 'canopsis'
 
 
 class PBehavior(object):
@@ -29,19 +33,38 @@ class PBehavior(object):
     CONNECTOR = 'connector'
     CONNECTOR_NAME = 'connector_name'
     AUTHOR = 'author'
-    TYPE = 'type'
+    TYPE = 'type_'
     REASON = 'reason'
 
     def __init__(self, _id, name, filter_, tstart, tstop, rrule, author,
-                 connector, connector_name,
-                 comments=None, eids=None, enabled=None,
+                 connector=DEFAULT_CONNECTOR_VALUE,
+                 connector_name=DEFAULT_CONNECTOR_NAME_VALUE,
+                 comments=None, eids=None, enabled=True,
                  type_=None, reason=None,
                  *args, **kwargs):
+        """
+        :param str _id: pbehavior id
+        :param str name: pbehavior name
+        :param dict filter_: matched entites, as mongo filter dicts
+        :param int tstart: starting timestamp of the pbehavior
+        :param int tstop: stopping timestamp of the pbehavior
+        :param str rrule: reccurent rule that is compliant with rrule spec
+        :param str connector: connector that has generated the pbehavior
+        :param str connector_name: connector_name that has generated the pbehavior
+        :param str author: creator's name
+        :param list comments: list of comments
+        :param list eids: impacted entity ids
+        :param bool enabled: his this pbehavior actived ?
+        :param str type_: particuliar type (editable trough ui ; pause...)
+        :param str reason: explanation on pbehavior creation
+        """
+        if filter_ is None or not isinstance(filter_, dict):
+            filter_ = {}
         if comments is None or not isinstance(comments, list):
             comments = []
         if eids is None or not isinstance(eids, list):
             eids = []
-        if enabled is None or not isinstance(enabled, bool):
+        if not isinstance(enabled, bool):
             now = int(time.now())
             enabled = tstart <= now <= tstop
         if type_ is None or not isinstance(type_, string_types):
@@ -81,15 +104,21 @@ class PBehavior(object):
         :param dict pbehavior_dict: a raw pbehavior dict from mongo
         :rtype: dict
         """
-        if PBehavior.FILTER in pbehavior_dict:
-            pbehavior_dict['filter_'] = pbehavior_dict[PBehavior.FILTER]
-            del pbehavior_dict[PBehavior.FILTER]
+        new_pbh_dict = pbehavior_dict.copy()
 
-        if PBehavior.TYPE in pbehavior_dict:
-            pbehavior_dict['type_'] = pbehavior_dict[PBehavior.TYPE]
-            del pbehavior_dict[PBehavior.TYPE]
+        if isinstance(new_pbh_dict[PBehavior.FILTER], string_types):
+            filter_ = new_pbh_dict[PBehavior.FILTER]
+            new_pbh_dict[PBehavior.FILTER] = json.loads(filter_)
 
-        return pbehavior_dict
+        if PBehavior.FILTER in new_pbh_dict:
+            new_pbh_dict['filter_'] = new_pbh_dict[PBehavior.FILTER]
+            del new_pbh_dict[PBehavior.FILTER]
+
+        # if PBehavior.TYPE in new_pbh_dict:
+        #    new_pbh_dict['type_'] = new_pbh_dict[PBehavior.TYPE]
+        #    del new_pbh_dict[PBehavior.TYPE]
+
+        return new_pbh_dict
 
     def to_dict(self):
         """
@@ -100,7 +129,7 @@ class PBehavior(object):
         dico = {
             self._ID: self._id,
             self.NAME: self.name,
-            self.FILTER: self.filter_,
+            self.FILTER: json.dumps(self.filter_),
             self.TSTART: self.tstart,
             self.TSTOP: self.tstop,
             self.RRULE: self.rrule,

@@ -5,11 +5,27 @@ from __future__ import unicode_literals
 
 import unittest
 
+from canopsis.common import root_path
 from canopsis.models.pbehavior import PBehavior
 
 import xmlrunner
 
-db_pbehavior = {}
+db_pbehavior = {
+    "_id": "xxx",
+    "filter": "{\"_id\": \"Tanya/Adams\"}",
+    "name": "Albert",
+    "author": "Einstein",
+    "enabled": True,
+    "type_": "pause",
+    "comments": [],
+    "connector": "canopsis",
+    "reason": "no",
+    "connector_name": "canopsis",
+    "rrule": "",
+    "tstart": 0,
+    "tstop": 2147483647,
+    "eids": ["Tanya/Adams"]
+}
 
 
 class PBehaviorTest(unittest.TestCase):
