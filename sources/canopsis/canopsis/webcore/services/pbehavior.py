@@ -439,7 +439,7 @@ def exports(ws):
 
         return gen_json(rhpb.delete(pbehavior_id))
 
-    @ws.application.get('/api/v2/pbehavior/byeid/<entity_id:id_filter>')
+    @ws.application.get('/api/v2/pbehavior_byeid/<entity_id:id_filter>')
     def get_by_eid(entity_id):
         """
         Return pbehaviors that apply on entity entity_id.
