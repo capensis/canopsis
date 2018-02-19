@@ -32,6 +32,8 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
+# FIXIT: workaround task import
+from canopsis.alerts import tasks as __cps_alerts_tasks__
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
