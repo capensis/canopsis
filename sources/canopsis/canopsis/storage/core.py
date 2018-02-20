@@ -209,11 +209,6 @@ class Storage(DataBase):
         related to such data type structure thanks to the data attribute.
     And for better improvements, the indexes attribute permits to specify kind
         of indexes to use even if storages are data oriented.
-
-    For technical improvements, a storage manages a query cache for processing
-        multi queries at a time (reduce use of the network). Such feature is
-        enabled by the cache_size which specified the size of the cache. If 0,
-        cache is disabled.
     """
 
     __protocol__ = 'storage'
@@ -225,13 +220,6 @@ class Storage(DataBase):
     TABLE = 'table'  #: table field name
 
     INDEXES = 'indexes'  #: storage indexes
-    CACHE_SIZE = 'cache_size'  #: query cache size to send to the server
-    CACHE_ORDERED = 'cache_ordered'  #: order query if cache is used
-    CACHE_AUTOCOMMIT = 'cache_autocommit'  #: duration before auto-commit cache
-
-    DEFAULT_CACHE_SIZE = 1000  #: default cache size
-    DEFAULT_CACHE_AUTOCOMMIT = 1  #: default cache auto-commit in seconds
-    DEFAULT_CACHE_ORDERED = True  #: default cache ordered
 
     CATEGORY = 'STORAGE'  #: storage category
 
@@ -247,23 +235,12 @@ class Storage(DataBase):
     class StorageError(Exception):
         """Handle Storage errors"""
 
-    def __init__(
-            self,
-            indexes=None, data=None,
-            cache_size=DEFAULT_CACHE_SIZE, cache_ordered=DEFAULT_CACHE_ORDERED,
-            cache_autocommit=DEFAULT_CACHE_AUTOCOMMIT, table=None,
-            *args, **kwargs
-    ):
+    def __init__(self, indexes=None, data=None, table=None, *args, **kwargs):
         """
         :param str table: default table name.
         :param indexes: indexes to use.
         :type indexes: list or str
         :param dict data: data structure with expected fields, keys, etc.
-        :param int cache_size: (default 1000) query cache size.
-        :param bool cache_ordered: (default True) query cache order
-        :param float cache_autocommit: (default 1) duration in seconds before
-            auto-commit cache if no activity. If not greater than 0, auto
-            commit is deactivated.
         """
 
         super(Storage, self).__init__(*args, **kwargs)
@@ -272,14 +249,6 @@ class Storage(DataBase):
 
         self._data = data
         self._table = table
-
-        self._updated_cache = False
-        self._cache = None
-        self._cache_size = cache_size
-        self._cache_count = 0
-        self._cache_ordered = cache_ordered
-        self._cache_autocommit = cache_autocommit
-        self._cached_thread = self._parent_thread = None
         self._lock = Lock()  # lock for asynchronous autocommit
 
     @property
@@ -361,13 +330,12 @@ class Storage(DataBase):
         self._data = value
 
     def _process_query(self, query_op, query_kwargs=None, **kwargs):
-        """Execute a query or the query cache depending on values of _cache_size
-        and input cache parameter.
+        """Execute a query.
 
         :param function query_op: query operation.
         :param dict query_kwargs: query operation kwargs.
 
-        :return: query/cache operation result.
+        :return: query operation result.
         """
 
         result = None
@@ -376,74 +344,7 @@ class Storage(DataBase):
             kwargs.update(query_kwargs)
 
         result = query_op(**kwargs)
-
         return result
-
-    def _cache_async_execution(self):
-        """Threaded method which execute the cache."""
-
-        # while parent thread is alive and cache size is greater than 0
-        while (
-                self._parent_thread.isAlive()
-                and self._cache_autocommit > 0
-                and self._cache_size > 0
-        ):
-            # wait cache timeout before trying to executing it
-            sleep(self._cache_autocommit)
-            self._lock.acquire()  # avoid concurrent calls to cache execution
-            try:
-                # if cache has not been updated
-                if not self._updated_cache:
-                    # execute cache
-                    self.execute_cache()
-                else:  # mark the cache such as not updated
-                    self._updated_cache = False
-            finally:
-                self._lock.release()
-
-    def halt_cache_thread(self, timeout=None):
-        """Halt cache auto_commit. This method aims to wait cache at most
-        ``cache_autocommit`` or input timeout seconds before finishing.
-
-        :param float timeout: max time to wait before waiting for this halting
-            cache thread. Default value is self cache autocommit.
-        """
-
-        # change value of cache auto commit in order to stop thread
-        cache_autocommit, self._cache_autocommit = self._cache_autocommit, 0
-
-        if self._cached_thread is not None and self._cached_thread.isAlive():
-            try:  # wait for cache thread end
-                self._cached_thread.join(timeout)
-            except RuntimeError:
-                pass
-
-        # recover cache auto commit
-        self._cache_autocommit = cache_autocommit
-
-    def execute_cache(self):
-        """Execute the query cache and return execution processing."""
-
-        result = None
-        # do something only if there are cached query to execute
-        if self._cache_count > 0:
-            try:
-                result = self._execute_cache()
-            except Exception as ex:
-                self.logger.error(
-                    'Interruption of cache execution: {}'.format(ex)
-                )
-            else:  # if no error, renew the cache
-                self._cache = self._new_cache()
-            # initialize cache count
-            self._cache_count = 0
-
-        return result
-
-    def _execute_cache(self):
-        """Private cache execution. May be overriden."""
-
-        raise NotImplementedError()
 
     def _ensure_index(self, index):
         """Get a right index structure related to input index.
@@ -573,7 +474,7 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def remove_elements(self, ids=None, _filter=None, tags=None, cache=False):
+    def remove_elements(self, ids=None, _filter=None, tags=None):
         """Remove elements identified by the unique input ids.
 
         :param ids: ids of elements to delete.
@@ -581,7 +482,6 @@ class Storage(DataBase):
         :param dict _filter: removing filter.
         :param Filter _filter: additional filter to use if not None.
         :param list tags: element tags to remove.
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
@@ -596,15 +496,12 @@ class Storage(DataBase):
 
         self.remove_elements(ids=ids)
 
-    def put_element(
-        self, element, _id=None, tags=None, version=None, cache=False
-    ):
+    def put_element(self, element, _id=None, tags=None, version=None):
         """Put an element identified by input id.
 
         :param str _id: element id to update.
         :param dict element: element to put (couples of field (name,value)).
         :param list tags: element indexed tags.
-        :param bool cache: use query cache if True (False by default).
 
         :return: True if updated.
         :rtype: bool
@@ -626,12 +523,12 @@ class Storage(DataBase):
         else:
             self.put_element(element=element)
 
-    def put_elements(self, elements, tags=None, cache=False):
+    def put_elements(self, elements, tags=None):
         """Put list of elements at a time.
 
         :param list elements: elements to put.
         :param list tags: element indexed tags.
-        :param bool cache: use query cache if True (False by default)."""
+        """
 
         for element in elements:
             self.put_element(element)
@@ -661,26 +558,20 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def _update(self, cache=False, *args, **kwargs):
+    def _update(self, *args, **kwargs):
         """Update operation dedicated to technology implementation.
-
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def _remove(self, cache=False, *args, **kwargs):
+    def _remove(self, *args, **kwargs):
         """Remove operation dedicated to technology implementation.
-
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def _insert(self, cache=False, *args, **kwargs):
+    def _insert(self, *args, **kwargs):
         """Insert operation dedicated to technology implementation.
-
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
@@ -775,28 +666,6 @@ Storage types must be of the same type.'.format(self, target))
             prefix = reduce(lambda x, y: '%s_%s' % (x, y), prefix)
 
         result = '{0}_{1}'.format(prefix, self.data_scope).lower()
-
-        return result
-
-    def _conf(self, *args, **kwargs):
-
-        result = super(Storage, self)._conf(*args, **kwargs)
-
-        result.add_unified_category(
-            name=Storage.CATEGORY,
-            new_content=(
-                Parameter(Storage.INDEXES, parser=eval),
-                Parameter(Storage.DATA, parser=eval),
-                Parameter(Storage.TABLE),
-                Parameter(Storage.CACHE_SIZE, parser=int, critical=True),
-                Parameter(
-                    Storage.CACHE_ORDERED, parser=Parameter.bool, critical=True
-                ),
-                Parameter(
-                    Storage.CACHE_AUTOCOMMIT, parser=float, critical=True
-                )
-            )
-        )
 
         return result
 

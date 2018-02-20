@@ -117,7 +117,7 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
 
         return result
 
-    def put(self, data_id, points, tags=None, cache=False, *args, **kwargs):
+    def put(self, data_id, points, tags=None, *args, **kwargs):
 
         # initialize a dictionary of perfdata value by value field
         # and id_timestamp
@@ -172,13 +172,13 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
                 _set[MongoTimedStorage.Index.TAGS] = tags
 
             result = self._update(
-                spec={'_id': _id}, document={'$set': _set}, cache=cache
+                spec={'_id': _id}, document={'$set': _set}
             )
 
         return result
 
     def remove(
-        self, data_id, timewindow=None, tags=None, cache=False, *args, **kwargs
+        self, data_id, timewindow=None, tags=None, *args, **kwargs
     ):
 
         query = self._get_documents_query(
@@ -210,13 +210,12 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
                             '$set': {
                                 MongoTimedStorage.Index.VALUES:
                                 values_to_save}
-                        },
-                        cache=cache)
+                        })
                 else:
-                    self._remove(document=_id, cache=cache)
+                    self._remove(document=_id)
 
         else:
-            self._remove(document=query, cache=cache)
+            self._remove(document=query)
 
     def all_indexes(self, *args, **kwargs):
 

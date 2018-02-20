@@ -258,10 +258,6 @@ class MongoStorage(MongoDataBase, Storage):
                 CanopsisSONManipulator(MongoStorage.ID)
             )
 
-        # initialize cache
-        if not hasattr(self, '_cache'):
-            self._cache = None
-
         if result:
             table = self.get_table()
             self._backend = self._database[table]
@@ -285,23 +281,6 @@ class MongoStorage(MongoDataBase, Storage):
                     self.logger.error(ex)
 
         return result
-
-    def _disconnect(self, *args, **kwargs):
-
-        super(MongoStorage, self)._disconnect(*args, **kwargs)
-
-        self.halt_cache_thread()
-
-    def _new_cache(self, *args, **kwargs):
-
-        backend = self._get_backend(self.get_table())
-        result = BulkOperationBuilder(backend, self._cache_ordered)
-
-        return result
-
-    def _execute_cache(self, *args, **kwargs):
-
-        return self._cache.execute()
 
     def drop(self, *args, **kwargs):
 
@@ -419,10 +398,7 @@ class MongoStorage(MongoDataBase, Storage):
             *args, **kwargs
         )
 
-    def remove_elements(
-            self, ids=None, _filter=None, tags=None, cache=False,
-            *args, **kwargs
-    ):
+    def remove_elements(self, ids=None, _filter=None, tags=None, *args, **kwargs):
 
         query = {}
 
@@ -439,10 +415,10 @@ class MongoStorage(MongoDataBase, Storage):
         if _filter is not None:
             query.update(_filter)
 
-        return self._remove(query, cache=cache)
+        return self._remove(query)
 
     def put_element(
-        self, element, _id=None, tags=None, cache=False, *args, **kwargs
+        self, element, _id=None, tags=None, *args, **kwargs
     ):
 
         if tags is not None:
@@ -452,12 +428,13 @@ class MongoStorage(MongoDataBase, Storage):
             _id = self._element_id(element)
 
         if _id is None:
-            return self._insert(document=element, cache=cache)
+            return self._insert(document=element)
 
         else:
             return self._update(
-                spec={MongoStorage.ID: _id}, document={'$set': element},
-                multi=False, cache=cache
+                spec={MongoStorage.ID: _id},
+                document={'$set': element},
+                multi=False
             )
 
     def put_elements(self, elements, tags=None, *args, **kwargs):
@@ -503,30 +480,26 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _insert(self, document=None, cache=False, **kwargs):
+    def _insert(self, document=None, **kwargs):
         result = self._process_query(
             query_op=self._run_command,
-            cache_kwargs={'document': document},
             query_kwargs={'command': 'insert', 'doc_or_docs': document},
-            cache=cache,
             **kwargs
         )
 
         return result
 
     def _update(
-            self, spec, document, cache=False, multi=True, upsert=True,
+            self, spec, document, multi=True, upsert=True,
             **kwargs
     ):
         result = self._process_query(
             query_op=self._run_command,
-            cache_kwargs={'update': document},
             query_kwargs={
                 'command': 'update',
                 'spec': spec, 'document': document,
                 'upsert': upsert, 'multi': multi
             },
-            cache=cache,
             **kwargs
         )
 
@@ -540,12 +513,10 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _remove(self, document, cache=False, **kwargs):
+    def _remove(self, document, **kwargs):
         result = self._process_query(
             query_op=self._run_command,
-            cache_kwargs={},
             query_kwargs={'command': 'remove', 'spec_or_id': document},
-            cache=cache,
             **kwargs
         )
 
@@ -605,9 +576,8 @@ class MongoStorage(MongoDataBase, Storage):
                 table = self.get_table()
             backend = self._get_backend(backend=table)
             backend_command = getattr(backend, command)
-            w = 1 if self.safe else 0
             result = backend_command(
-                w=w, wtimeout=self.out_timeout, *args, **kwargs
+                w=1, wtimeout=self.out_timeout, *args, **kwargs
             )
 
         except TimeoutError:

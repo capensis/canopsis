@@ -220,7 +220,7 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
 
         return result
 
-    def put(self, data_id, value, timestamp, cache=False, *args, **kwargs):
+    def put(self, data_id, value, timestamp, *args, **kwargs):
 
         timewindow = get_offset_timewindow(offset=timestamp)
 
@@ -251,15 +251,14 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
                 self._update(
                     spec=spec,
                     document=document,
-                    cache=cache,
                     multi=False,
                     upsert=False
                 )
 
             else:
-                self._insert(document=document, cache=cache)
+                self._insert(document=document)
 
-    def remove(self, data_ids, timewindow=None, cache=False, *args, **kwargs):
+    def remove(self, data_ids, timewindow=None, *args, **kwargs):
 
         where = {}
 
@@ -273,7 +272,7 @@ class MongoPeriodicalStorage(MongoStorage, PeriodicalStorage):
                 '$gte': timewindow.start(), '$lte': timewindow.stop()
             }
 
-        self._remove(document=where, cache=cache)
+        self._remove(document=where)
 
     def all_indexes(self, *args, **kwargs):
 
