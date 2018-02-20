@@ -358,17 +358,11 @@ class Middleware(Configurable):
 
     @property
     def path(self):
-        from canopsis.logger import Logger
-        log = Logger.get('debug', '/tmp/debug.log')
-        log.info('{} {}'.format(self._path, type(self._path)))
         return self._path
 
     @path.setter
     def path(self, value):
         self._path = value
-        from canopsis.logger import Logger
-        log = Logger.get('debug', '/tmp/debug.log')
-        log.info('{} {}'.format(self._path, type(self._path)))
 
     @property
     def auto_connect(self):
