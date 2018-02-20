@@ -66,7 +66,7 @@ class Entity(object):
         self.enable_history = enable_history  # before enabled !!
         self.enabled = enabled
 
-        if args is not None or kwargs is not None:
+        if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
 
     def __str__(self):
@@ -111,7 +111,7 @@ class Entity(object):
 
         :rtype: dict
         """
-        dico = {
+        dictionnary = {
             self._ID: self._id,
             self.TYPE: self.type_,
             self.NAME: self.name,
@@ -123,4 +123,4 @@ class Entity(object):
             self.ENABLE_HISTORY: self.enable_history
         }
 
-        return dico
+        return dictionnary

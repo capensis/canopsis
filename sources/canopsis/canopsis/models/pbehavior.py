@@ -83,7 +83,7 @@ class PBehavior(object):
 
         if self.ENABLED in kwargs:
             del kwargs[self.ENABLED]  # calculated property
-        if args is not None or kwargs is not None:
+        if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
 
     def __str__(self):
@@ -130,7 +130,7 @@ class PBehavior(object):
 
         :rtype: dict
         """
-        dico = {
+        dictionnary = {
             self._ID: self._id,
             self.NAME: self.name,
             self.FILTER: json.dumps(self.filter_),
@@ -147,4 +147,4 @@ class PBehavior(object):
             self.REASON: self.reason
         }
 
-        return dico
+        return dictionnary
