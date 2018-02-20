@@ -49,4 +49,4 @@ def event_processing(event, veventmanager=None, **params):
     # get vevent from the event
     vevent = event[VEventManager.VEVENT]
     # add event information into veventmanager
-    veventmanager.put(source=source, vevents=[vevent], cache=True)
+    veventmanager.put(source=source, vevents=[vevent])

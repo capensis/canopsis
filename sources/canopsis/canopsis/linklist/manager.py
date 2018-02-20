@@ -87,11 +87,10 @@ class Linklist(object):
 
         return result
 
-    def put(self, document, cache=False):
+    def put(self, document):
         """Persistance layer for upsert operations.
 
         :param dict document: document to put
-        :param bool cache: if True (default false), use storage cache
         :return: put result
         :rtype: dict
         """
@@ -101,7 +100,7 @@ class Linklist(object):
             document['_id'] = document.pop('id')
 
         return self.linklist_storage.put_element(
-            _id=document['_id'], element=document, cache=cache
+            _id=document['_id'], element=document
         )
 
     def remove(self, ids):

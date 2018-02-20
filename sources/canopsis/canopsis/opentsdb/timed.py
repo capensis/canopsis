@@ -70,7 +70,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         return result
 
-    def put(self, data_id, points, cache=False, *args, **kwargs):
+    def put(self, data_id, points, *args, **kwargs):
 
         pointstoput = []
 
@@ -85,7 +85,7 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
         return self._conn.write_points(
             points=pointstoput, time_precision='s',
-            batch_size=self.cache_size if cache else 0
+            batch_size=0
         )
 
     def remove(self, data_id, timewindow=None, **_):

@@ -256,13 +256,12 @@ class VEventManager:
 
         return result
 
-    def put(self, vevents, source=None, cache=False):
+    def put(self, vevents, source=None):
         """Add vevents (and optionally data) related to input source.
 
         :param str source: vevent source if not None.
         :param list vevents: vevents (document, str or ical vevent).
         :param dict info: vevent info.
-        :param bool cache: if True (default False), use storage cache.
         :return: new documents.
         :rtype: list
         """
@@ -350,7 +349,7 @@ class VEventManager:
         """ Update or format an element before to put it on database
         """
 
-    def remove(self, uids=None, query=None, cache=False):
+    def remove(self, uids=None, query=None):
         """Remove elements from storage where uids are given.
 
         :param list uids: list of document uids to remove from storage
@@ -359,12 +358,12 @@ class VEventManager:
         """
 
         result = self.storage.remove_elements(
-            ids=uids, cache=cache, _filter=query
+            ids=uids, _filter=query
         )
 
         return result
 
-    def remove_by_source(self, sources=None, query=None, cache=False):
+    def remove_by_source(self, sources=None, query=None):
         """Remove vevent documents related to input sources.
 
         :param list sources: sources from where remove related vevent
@@ -378,7 +377,7 @@ class VEventManager:
             _filter[VEventManager.SOURCE] = {'$in': sources}
 
         result = self.storage.remove_elements(
-            _filter=_filter, cache=cache
+            _filter=_filter
         )
 
         return result

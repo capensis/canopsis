@@ -64,13 +64,13 @@ class Bench(BaseStorageTest):
         # initialize commands
         self.commands = (
             ("insert", lambda spec, document: self.storage._insert(
-                document=document, cache=True)),
+                document=document)),
             ("update", lambda spec, document: self.storage._update(
-                spec=spec, document=document, multi=False, cache=True)),
+                spec=spec, document=document, multi=False)),
             ("find", lambda spec, document: self.storage._find(
-                document=document, cache=True)),
+                document=document)),
             ("remove", lambda spec, document: self.storage._remove(
-                document=document, multi=True, cache=True))
+                document=document, multi=True))
         )
 
         self.max_connections = 1

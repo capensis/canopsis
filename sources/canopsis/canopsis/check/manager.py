@@ -102,7 +102,7 @@ class CheckManager(object):
             self.check_storage = check_storage
 
     def state(self, ids=None, state=None, criticity=HARD,
-              f=DEFAULT_F, query=None, cache=False):
+              f=DEFAULT_F, query=None):
         """Get/update entity state(s).
 
         :param ids: entity id(s). Default is all entity ids.
@@ -184,7 +184,7 @@ class CheckManager(object):
                     # save new state_document if old != new
                     if state_document != new_state_document:
                         self.check_storage.put_element(
-                            _id=_id, element=new_state_document, cache=cache
+                            _id=_id, element=new_state_document
                         )
 
                     # save state entity in result
@@ -206,7 +206,7 @@ class CheckManager(object):
 
                 # save it in storage
                 self.check_storage.put_element(
-                    _id=entity_id, element=new_state_document, cache=cache
+                    _id=entity_id, element=new_state_document
                 )
 
                 # and put entity state in the result
@@ -218,7 +218,7 @@ class CheckManager(object):
 
         return result
 
-    def del_state(self, ids=None, query=None, cache=False):
+    def del_state(self, ids=None, query=None):
         """Delete states related to input ids. If ids is None, delete all
         states.
 
@@ -229,10 +229,10 @@ class CheckManager(object):
         """
 
         return self.check_storage.remove_elements(
-            ids=ids, _filter=query, cache=cache
+            ids=ids, _filter=query
         )
 
-    def put_state(self, entity_id, state, cache=False):
+    def put_state(self, entity_id, state):
         """
         Allow persistance of a state
 
@@ -246,7 +246,6 @@ class CheckManager(object):
         return self.check_storage.put_element(
             _id=entity_id,
             element={'state': state},
-            cache=cache
         )
 
     def get_state(self, ids=None):

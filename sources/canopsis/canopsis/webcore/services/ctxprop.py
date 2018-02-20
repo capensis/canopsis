@@ -83,7 +83,7 @@ def exports(ws):
     @route(ws.application.delete)
     def delete(
             registries=None, ids=None, query=None, children=True,
-            force=False, cache=False
+            force=False
     ):
         """Delete property of registries and returns number of property
         deleted per registry and ctx id.
@@ -110,7 +110,7 @@ def exports(ws):
 
         result = manager.delete(
             registries=registries, ids=ids, query=query,
-            children=children, force=force, cache=cache
+            children=children, force=force
         )
 
         return result

@@ -114,7 +114,7 @@ class CTXPropManager(MiddlewareRegistry):
 
     def delete(
             self, registries=None, ids=None, query=None, children=True,
-            force=False, cache=False
+            force=False
     ):
         """Delete property of registries and returns number of property
         deleted per registry and ctx id.
@@ -142,7 +142,7 @@ class CTXPropManager(MiddlewareRegistry):
         result = self._process_providers(
             cmd='delete', registries=registries,
             ids=ids, query=query,
-            children=children, force=force, cache=cache
+            children=children, force=force
         )
 
         return result

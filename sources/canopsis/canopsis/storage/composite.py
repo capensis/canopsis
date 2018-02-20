@@ -113,7 +113,7 @@ class CompositeStorage(Storage):
         return result
 
     def share_data(
-            self, data, shared_id=None, share_extended=False, cache=False
+            self, data, shared_id=None, share_extended=False
     ):
         """Set input data as a shared data with input shared id.
 
@@ -121,7 +121,6 @@ class CompositeStorage(Storage):
         :param str shared_id: unique shared id. If None, the id is generated.
         :param bool share_extended: if True (False by default), set shared
             value to all shared data with input data
-        :param bool cache: use query cache if True (False by default).
 
         :return: shared_id value (generated if None)
         """
@@ -151,15 +150,14 @@ class CompositeStorage(Storage):
             for dt in dts:
                 path, name = self.get_path_with_name(dt)
                 dt[CompositeStorage.SHARED] = result
-                self.put(path=path, name=name, data=dt, cache=cache)
+                self.put(path=path, name=name, data=dt)
 
         return result
 
-    def unshare_data(self, data, cache=False):
+    def unshare_data(self, data):
         """Remove share property from input data.
 
         :param data: one or more data to unshare.
-        :param bool cache: use query cache if True (False by default).
         """
         data = ensure_iterable(data)
 
@@ -167,7 +165,7 @@ class CompositeStorage(Storage):
             if CompositeStorage.SHARED in d:
                 d[CompositeStorage.SHARED] = str(uuid())
                 path, name = self.get_path_with_name(d)
-                self.put(path=path, name=name, data=d, cache=cache)
+                self.put(path=path, name=name, data=d)
 
     def get(
             self,
@@ -223,7 +221,7 @@ class CompositeStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, path, name, data, shared_id=None, cache=False):
+    def put(self, path, name, data, shared_id=None):
         """Put a data related to an id and a path.
 
         :param path: path
@@ -231,12 +229,11 @@ class CompositeStorage(Storage):
         :param str name: data id
         :param dict data: data to update
         :param str shared_id: shared_id id not None
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def remove(self, path, names=None, shared=False, cache=False):
+    def remove(self, path, names=None, shared=False):
         """Remove data from ids or type.
 
         :param path: path to remove
@@ -246,7 +243,6 @@ class CompositeStorage(Storage):
 
         :param bool shared: remove shared data if data ids are related to
             shared data.
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()

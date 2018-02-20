@@ -105,7 +105,7 @@ class PeriodicalStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, data_id, value, timestamp, cache=False):
+    def put(self, data_id, value, timestamp):
         """Put a dictionary of value by name in collection.
 
         :param str data_id: related data_id.
@@ -114,16 +114,14 @@ class PeriodicalStorage(Storage):
             data_id. If timestamp already exists, update existing value with
             the same timestamp. Otherwise, check if value is different than the
             previous value and add a document if False.
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def remove(self, data_ids, timewindow=None, cache=False):
+    def remove(self, data_ids, timewindow=None):
         """Remove periodical data existing on input timewindow.
 
         :param str(s) data_ids: related data_id(s) to remove.
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()

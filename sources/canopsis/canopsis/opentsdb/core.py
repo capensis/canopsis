@@ -180,7 +180,7 @@ class OpenTSDBStorage(OpenTSDBDataBase, Storage):
             *args, **kwargs
         )
 
-    def put_element(self, element, _id=None, cache=False):
+    def put_element(self, element, _id=None):
 
         points = {
             'measurement': _id,
@@ -189,11 +189,11 @@ class OpenTSDBStorage(OpenTSDBDataBase, Storage):
         points.update(element)
 
         return self._conn.write_points(
-            points=points, batch_size=self.cache_size if cache else 0
+            points=points, batch_size=0
         )
 
     def remove_elements(
-            self, ids=None, _filter=None, cache=False, *args, **kwargs
+            self, ids=None, _filter=None*args, **kwargs
     ):
 
         self._conn.delete_series(measurement=ids)

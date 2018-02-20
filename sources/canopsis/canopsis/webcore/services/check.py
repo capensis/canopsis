@@ -40,7 +40,6 @@ def exports(ws):
         :type ids: str or list
         :param int state: state to update if not None.
         :param int criticity: state criticity level (HARD by default).
-        :param bool cache: storage cache when udpate state.
 
         :return: entity states by entity id or one state value if ids is a str.
             None if ids is a str, related entity does not exists and no update
@@ -49,7 +48,7 @@ def exports(ws):
         """
 
         result = manager.state(
-            ids=ids, state=state, criticity=criticity, cache=cache
+            ids=ids, state=state, criticity=criticity
         )
 
         return result
@@ -61,9 +60,8 @@ def exports(ws):
 
         :param ids: entity ids. Delete all states if ids is None (default).
         :type ids: str or list
-        :param bool cache: storage cache when udpate state.
         """
 
-        result = manager.del_state(ids=ids, cache=cache)
+        result = manager.del_state(ids=ids)
 
         return result

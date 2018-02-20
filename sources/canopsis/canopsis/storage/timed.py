@@ -49,22 +49,20 @@ class TimedStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, data_id, points, tags=None, cache=False):
+    def put(self, data_id, points, tags=None):
         """Put timed points in a timed collection with specific timed values.
 
         :param points: iterable of (timestamp, value).
         :param list tags: indexed tags of points.
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def remove(self, data_id, timewindow=None, cache=False, tags=None):
+    def remove(self, data_id, timewindow=None, tags=None):
         """Remove timed data related to data_id and timewindow.
 
         :param canopsis.timeserie.timewindow.TimeWindow timewindow: Default
             remove all timed data with input period.
-        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()

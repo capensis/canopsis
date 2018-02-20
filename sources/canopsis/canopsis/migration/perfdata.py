@@ -90,7 +90,7 @@ class PerfdataModule(MigrationModule):
             document['v'] = rightvalues
 
             storage.put_element(
-                element=document, cache=False
+                element=document
             )
 
-            self.manager.put(metric_id=metric_id, points=points, cache=False)
+            self.manager.put(metric_id=metric_id, points=points)

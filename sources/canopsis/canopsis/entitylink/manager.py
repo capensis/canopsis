@@ -148,7 +148,7 @@ class Entitylink(object):
         )
         return result
 
-    def put(self, _id, document, cache=False):
+    def put(self, _id, document):
         """
         Persistance layer for upsert operations.
 
@@ -157,7 +157,7 @@ class Entitylink(object):
         """
 
         self.entitylink_storage.put_element(
-            _id=_id, element=document, cache=cache
+            _id=_id, element=document
         )
 
     def remove(self, ids):

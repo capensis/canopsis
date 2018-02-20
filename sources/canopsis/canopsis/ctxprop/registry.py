@@ -132,7 +132,7 @@ class CTXPropRegistry(Middleware):
         return result
 
     def delete(
-            self, ids=None, query=None, cache=False, force=False,
+            self, ids=None, query=None, force=False,
             *args, **kwargs
     ):
         """Get ctx property count related to input ``ctx id(s)`` and
@@ -141,7 +141,6 @@ class CTXPropRegistry(Middleware):
         :param str(s) ids: ctx id(s) from where find property. If None
             (default), get all property of all ctxs.
         :param dict query: specific query to apply on the method execution.
-        :param bool cache: storage cache property.
         :return: couples of (ctx id, count).
         :rtype: dict
         """
@@ -153,7 +152,7 @@ class CTXPropRegistry(Middleware):
             )
 
         result = self._process(
-            cmd=self._delete, ids=ids, query=query, cache=cache,
+            cmd=self._delete, ids=ids, query=query,
             *args, **kwargs
         )
 
