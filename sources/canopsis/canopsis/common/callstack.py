@@ -7,6 +7,7 @@ from canopsis.logger import Logger
 import os
 import inspect
 import logging
+import pprint
 
 HEADER_FMT = "Call stack at %s, line %d in function %s, frames %d to %d of %d:"
 """The log header message formatter."""
@@ -76,7 +77,7 @@ def log_stack(logger=None, limit=None, start=0, msg=None):
     # Print the stack to the logger.
     file, line, func = here[1:4]
     if msg is not None:
-        logger.info(msg)
+        logger.info(pprint.pformat(msg))
     logger.info(HEADER_FMT % (file, line, func, start + 2, end - 1, len(stack) - 1))
     # Print the next frames up to the limit.
     for frame in stack[begin:end]:
