@@ -252,7 +252,7 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
             *args, **kwargs
         )
 
-    def put_element(self, element, _id=None, tags=None, cache=False):
+    def put_element(self, element, _id=None, tags=None):
 
         point = element
 
@@ -260,19 +260,17 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
             point['measurement'] = _id
 
         return self._conn.write_points(
-            points=[point], batch_size=self.cache_size if cache else 0,
-            tags=tags
+            points=[point], batch_size=0, tags=tags
         )
 
-    def put_elements(self, elements, tags=None, cache=False):
+    def put_elements(self, elements, tags=None):
 
         return self._conn.write_points(
-            points=elements, batch_size=self.cache_size if cache else 0,
-            tags=tags
+            points=elements, batch_size=0, tags=tags
         )
 
     def remove_elements(
-            self, ids=None, _filter=None, cache=False, tags=None,
+            self, ids=None, _filter=None, tags=None,
             *args, **kwargs
     ):
 
