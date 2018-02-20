@@ -1,6 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+env2cfg makes configuration in canopsis easier:
+
+# export CPS_MONGO_URL="<valid_mongodb_url>"
+# export CPS_REDIS_URL="redis://<ip>:<port>/<db>"
+# export CPS_INFLUX_URL="<valid_influxdb_url>"
+# export CPS_AMQP_URL="<valid_amqp_url>"
+# env2cfg
+
+Will write/update:
+
+${CPS_PREFIX}/etc/cstorage.conf
+${CPS_PREFIX}/etc/common/mongo_store.conf
+${CPS_PREFIX}/etc/mongo/storage.conf
+
+${CPS_PREFIX}/etc/influx/storage.conf
+
+${CPS_PREFIX}/etc/amqp.conf
+"""
+
 from __future__ import unicode_literals
 
 import logging
