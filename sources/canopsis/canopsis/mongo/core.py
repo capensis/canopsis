@@ -22,6 +22,8 @@ from canopsis.common.init import basestring
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
+from canopsis.logger import Logger
+from canopsis.confng import Configuration, Ini
 
 from pymongo import MongoClient
 from pymongo.cursor import Cursor as _Cursor
@@ -232,10 +234,7 @@ class MongoStorage(MongoDataBase, Storage):
     TAGS = 'tags'  #: tags field name
 
     def configure(self, conf):
-        from canopsis.logger import Logger
-        from canopsis.confng import Configuration, Ini
-        self.logger = Logger.get('mongo', '/tmp/mongo.log')
-        self.logger.info('{}'.format(conf))
+        self.logger = Logger.get('mongo_storage', 'var/log/mongo_storage.log')
         cfg = Configuration.load('etc/common/mongo_store.conf', Ini)
         self.host = cfg['DATABASE']['host']
         self.port = int(cfg['DATABASE']['port'])

@@ -21,6 +21,8 @@
 from canopsis.common.init import basestring
 from canopsis.logger import Logger
 from canopsis.storage.core import Storage, DataBase, Cursor
+from canopsis.logger import Logger
+from canopsis.confng import Configuration, Ini
 
 from influxdb import InfluxDBClient, InfluxDBClusterClient
 from influxdb.exceptions import InfluxDBClientError
@@ -184,9 +186,7 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
         self.connect()
 
     def configure(self, *args, **kwargs):
-        from canopsis.logger import Logger
-        from canopsis.confng import Configuration, Ini
-        self.logger = Logger.get('influx', '/tmp/influx.log')
+        self.logger = Logger.get('influx_storage', 'var/log/influx_storage.log')
         cfg = Configuration.load('etc/influx/storage.conf', Ini)
         self.host = cfg['DATABASE']['host']
         self.port = int(cfg['DATABASE']['port'])
