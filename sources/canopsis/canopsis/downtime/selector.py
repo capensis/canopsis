@@ -24,7 +24,6 @@ from canopsis.old.cfilter import Filter
 from canopsis.common.utils import singleton_per_scope
 
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.context.manager import Context
 
 from json import loads
 from logging import getLogger
@@ -81,7 +80,6 @@ class Selector(Record):
         }
 
         self.logger = getLogger('Selector')
-        self.context = singleton_per_scope(Context)
         self.pbehavior = singleton_per_scope(
             PBehaviorManager, args=PBehaviorManager.provide_default_basics())
         # Canopsis filter management for mongo
