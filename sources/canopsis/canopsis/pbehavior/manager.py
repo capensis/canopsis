@@ -353,7 +353,7 @@ class PBehaviorManager(object):
         result = self.pb_storage._update(
             spec={'_id': pbehavior_id},
             document=query,
-            multi=False, cache=False
+            multi=False
         )
         return result
 
@@ -416,8 +416,9 @@ class PBehaviorManager(object):
         result = self.pb_storage._update(
             spec={'_id': pbehavior_id, 'comments._id': _id},
             document={'$set': {'comments.$': comment.to_dict()}},
-            multi=False, cache=False
+            multi=False
         )
+
 
         if (PBehaviorManager._UPDATE_FLAG in result and
                 result[PBehaviorManager._UPDATE_FLAG]):
@@ -434,7 +435,7 @@ class PBehaviorManager(object):
         result = self.pb_storage._update(
             spec={'_id': pbehavior_id},
             document={'$pull': {PBehavior.COMMENTS: {'_id': _id}}},
-            multi=False, cache=False
+            multi=False
         )
 
         return self._check_response(result)

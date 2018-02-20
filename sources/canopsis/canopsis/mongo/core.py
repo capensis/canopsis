@@ -530,7 +530,6 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _process_query(self, *args, **kwargs):
-
         result = super(MongoStorage, self)._process_query(*args, **kwargs)
         result = self._manage_query_error(result)
 
@@ -574,6 +573,7 @@ class MongoStorage(MongoDataBase, Storage):
         try:
             if table is None:
                 table = self.get_table()
+
             backend = self._get_backend(backend=table)
             backend_command = getattr(backend, command)
             result = backend_command(
