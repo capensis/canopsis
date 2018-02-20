@@ -92,7 +92,6 @@ class DataBase(Middleware):
     @db.setter
     def db(self, value):
         self._db = value
-        self.reconnect()
 
     @property
     def journaling(self):
@@ -101,7 +100,6 @@ class DataBase(Middleware):
     @journaling.setter
     def journaling(self, value):
         self._journaling = value
-        self.reconnect()
 
     @property
     def retention(self):
@@ -118,7 +116,6 @@ class DataBase(Middleware):
         :param str value: new retention rule to apply."""
 
         self._retention = value
-        self.reconnect()
 
     @property
     def sharding(self):
@@ -127,7 +124,6 @@ class DataBase(Middleware):
     @sharding.setter
     def sharding(self, value):
         self._sharding = value
-        self.reconnect()
 
     @property
     def replicaset(self):
@@ -136,7 +132,6 @@ class DataBase(Middleware):
     @replicaset.setter
     def replicaset(self, value):
         self._replicaset = value
-        self.reconnect()
 
     def drop(self, table=None, *args, **kwargs):
         """Drop related all tables or one table if given.
@@ -347,7 +342,6 @@ class Storage(DataBase):
                 "wrong indexes value %s. str, tuple or list accepted" % value)
 
         self._indexes = indexes
-        self.reconnect()
 
     @property
     def table(self):
@@ -357,7 +351,6 @@ class Storage(DataBase):
     def table(self, value):
 
         self._table = value
-        self.reconnect()
 
     @property
     def data(self):
@@ -366,7 +359,6 @@ class Storage(DataBase):
     @data.setter
     def data(self, value):
         self._data = value
-        self.reconnect()
 
     def _process_query(self, query_op, query_kwargs=None, **kwargs):
         """Execute a query or the query cache depending on values of _cache_size

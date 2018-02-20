@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.common.init import basestring
-from canopsis.configuration.configurable.decorator import conf_paths
+from canopsis.logger import Logger
 from canopsis.storage.core import Storage, DataBase, Cursor
 
 from influxdb import InfluxDBClient, InfluxDBClusterClient
@@ -31,8 +31,7 @@ from sys import getsizeof
 CONF_RESOURCE = 'influx/storage.conf'
 
 
-@conf_paths(CONF_RESOURCE)
-class InfluxDBDataBase(DataBase):
+class InfluxDBDataBase(object):
     """Manage access to influxDB."""
 
     __protocol__ = 'influxdb'
@@ -53,12 +52,19 @@ class InfluxDBDataBase(DataBase):
             *args, **kwargs
     ):
 
-        super(InfluxDBDataBase, self).__init__(
-            host=host, port=port, user=user, pwd=pwd, db=db, ssl=ssl,
-            conn_timeout=conn_timeout, proxies=proxies, *args, **kwargs
-        )
+        self.host = host
+        self.port = port
+        self.user = user
+        self.pwd = pwd
+        self.db = db
+        self.ssl = ssl
+        self.conn_timeout = conn_timeout
+        self.proxies = proxies
+        self.logger = Logger.get('influxdb', 'var/log/cpsinlux.log')
+        self.replicaset = None
+        self.retention = None
 
-    def _connect(self, *args, **kwargs):
+    def connect(self, *args, **kwargs):
 
         result = None
 
@@ -66,8 +72,7 @@ class InfluxDBDataBase(DataBase):
 
         conncls = InfluxDBClient
 
-        if self.db:
-            connection_args['database'] = self.db
+        connection_args['database'] = self.db
 
         # if self host is given
         if self.host:
@@ -85,11 +90,8 @@ class InfluxDBDataBase(DataBase):
         if self.ssl:
             connection_args['ssl'] = True
 
-        if self.user:
-            connection_args['username'] = self.user
-
-        if self.pwd:
-            connection_args['password'] = self.pwd
+        connection_args['username'] = self.user
+        connection_args['password'] = self.pwd
 
         if self.conn_timeout:
             connection_args['timeout'] = self.conn_timeout
@@ -109,12 +111,6 @@ class InfluxDBDataBase(DataBase):
             )
 
         else:
-            try:
-                result.create_database(self.db)
-
-            except InfluxDBClientError:
-                pass
-
             if self.retention:
                 try:
                     result.create_retention_policy(
@@ -124,6 +120,8 @@ class InfluxDBDataBase(DataBase):
 
                 except InfluxDBClientError:
                     pass
+
+        self._conn = result
 
         return result
 
@@ -180,6 +178,11 @@ class InfluxDBCursor(Cursor):
 class InfluxDBStorage(InfluxDBDataBase, Storage):
     """Influxdb Storage."""
 
+    def __init__(self, *args, **kwargs):
+        super(InfluxDBStorage, self).__init__(*args, **kwargs)
+        self.configure()
+        self.connect()
+
     def configure(self, *args, **kwargs):
         from canopsis.logger import Logger
         from canopsis.confng import Configuration, Ini
@@ -188,8 +191,8 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
         self.host = cfg['DATABASE']['host']
         self.port = int(cfg['DATABASE']['port'])
         self.db = cfg['DATABASE']['db']
-        self.user = cfg['DATABASE']['user']
-        self.pwd = cfg['DATABASE']['pwd']
+        self.user = cfg['DATABASE']['user'].strip()
+        self.pwd = cfg['DATABASE']['pwd'].strip()
 
     def raw_query(self, query):
         return self._conn.query(query)

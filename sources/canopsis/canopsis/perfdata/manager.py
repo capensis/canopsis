@@ -237,7 +237,7 @@ class PerfData(object):
 
         return result
 
-    def put(self, metric_id, points, meta=None, cache=False, event=None):
+    def put(self, metric_id, points, meta=None, event=None):
         """Put a (list of) couple (timestamp, value), a tags into
         rated_documents.
 
@@ -261,13 +261,12 @@ class PerfData(object):
 
             data_id, tags = self._data_id_tags(metric_id, meta, event=event)
 
-            # update data in a cache (a)synchronous way
             self.perfdata_storage.put(
-                data_id=data_id, points=points, tags=tags, cache=cache
+                data_id=data_id, points=points, tags=tags
             )
 
     def remove(
-            self, metric_id, timewindow=None, meta=None, cache=False
+            self, metric_id, timewindow=None, meta=None
     ):
         """Remove values and tags of one metric."""
 
@@ -276,7 +275,6 @@ class PerfData(object):
         self.perfdata_storage.remove(
             data_id=data_id,
             timewindow=timewindow,
-            cache=cache,
             tags=tags
         )
 

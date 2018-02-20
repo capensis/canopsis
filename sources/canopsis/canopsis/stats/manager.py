@@ -20,7 +20,6 @@
 
 from re import escape
 
-from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.influxdb.core import InfluxDBStorage
@@ -31,18 +30,13 @@ CONF_PATH = 'stats/manager.conf'
 CATEGORY = 'STATS'
 CONTENT = []
 
-class Stats(MiddlewareRegistry):
+class Stats(object):
     """
     Stats management
     """
 
-    def __init__(
-        self,
-        influxdbstg=None,
-        *args,
-        **kwargs
-    ):
-        super(Stats, self).__init__(*args, **kwargs)
+    def __init__(self, influxdbstg=None):
+        super(Stats, self).__init__()
 
         if influxdbstg is not None:
             self.influxdbstg = influxdbstg
