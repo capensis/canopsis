@@ -270,31 +270,26 @@ class Middleware(Configurable):
 
     def _get_uri(self):
         """Get uri in constructing it from individual uri parameters."""
+        result = self.host
 
-        result = self._uri
+        if self.user:
+            if self.pwd:
+                result = '%s:%s@%s' % (self.user, self.pwd, result)
 
-        # if self._uri is not resolved, generate it related to other parameters
-        if not self._uri:
-            result = self.host
+            else:
+                result = '%s@%s' % (self.user, result)
 
-            if self.user:
-                if self.pwd:
-                    result = '%s:%s@%s' % (self.user, self.pwd, result)
+        if self.path:
+            result = '%s/%s' % (result, self.path)
 
-                else:
-                    result = '%s@%s' % (self.user, result)
+        if self.protocol:
+            data_type = self.data_type if self.data_type else ''
+            data_scope = self.data_scope if self.data_scope else ''
+            scheme = '{0}{1}{2}{1}{3}'.format(
+                self.protocol, SCHEME_SEPARATOR, data_type, data_scope
+            )
 
-            if self.path:
-                result = '%s/%s' % (result, self.path)
-
-            if self.protocol:
-                data_type = self.data_type if self.data_type else ''
-                data_scope = self.data_scope if self.data_scope else ''
-                scheme = '{0}{1}{2}{1}{3}'.format(
-                    self.protocol, SCHEME_SEPARATOR, data_type, data_scope
-                )
-
-                result = '%s://%s' % (scheme, result)
+            result = '%s://%s' % (scheme, result)
 
         return result
 

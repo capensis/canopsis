@@ -36,6 +36,10 @@ class InfluxDBTimedStorage(InfluxDBStorage, TimedStorage):
 
     __register__ = True  #: register this class to middleware.
 
+    def configure(self, *args, **kwargs):
+        super(InfluxDBTimedStorage, self).configure(*args, **kwargs)
+        self.data_type = self.__datatype__
+
     def count(self, data_id, timewindow=None, tags=None, *args, **kwargs):
 
         result = 0

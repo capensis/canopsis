@@ -191,8 +191,12 @@ class InfluxDBStorage(InfluxDBDataBase, Storage):
         self.host = cfg['DATABASE']['host']
         self.port = int(cfg['DATABASE']['port'])
         self.db = cfg['DATABASE']['db']
+        self.path = self.db
+        self.protocol = 'influxdb'
         self.user = cfg['DATABASE']['user'].strip()
         self.pwd = cfg['DATABASE']['pwd'].strip()
+        self.data_type = 'default'
+        self.data_scope = None
 
     def raw_query(self, query):
         return self._conn.query(query)
