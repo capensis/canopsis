@@ -246,6 +246,12 @@ class AlertsReader(object):
         :rtype: dict
         """
 
+        if tstop is not None and tstart is not None:
+            return {
+                'v.resolved': None,
+                't': {'$lte': tstop, "$gte": tstart}
+            }
+
         if tstop is not None:
             return {
                 'v.resolved': None,
@@ -277,11 +283,7 @@ class AlertsReader(object):
         if tstart is not None and tstop is not None:
             return {
                 'v.resolved': {'$ne': None},
-                '$or': [
-                    {'t': {'$gte': tstart, '$lte': tstop}},
-                    {'v.resolved': {'$gte': tstart, '$lte': tstop}},
-                    {'t': {'$lte': tstart}, 'v.resolved': {'$gte': tstop}}
-                ]
+                't': {'$gte': tstart, '$lte': tstop}
             }
 
         elif tstart is not None:

@@ -139,7 +139,7 @@ class TestReader(BaseTest):
         )
 
         # opened=True, resolved=False
-        expected_opened = {'v.resolved': None, 't': {'$lte': 2}}
+        expected_opened = {'v.resolved': None, 't': {'$lte': 2, "$gte": 1}}
         self.assertEqual(
             self.reader._get_time_filter(
                 opened=True, resolved=False, tstart=1, tstop=2),
@@ -149,11 +149,7 @@ class TestReader(BaseTest):
         # opened=False, resolved=True
         expected_resolved = {
             'v.resolved': {'$ne': None},
-            '$or': [
-                {'t': {'$gte': 1, '$lte': 2}},
-                {'v.resolved': {'$gte': 1, '$lte': 2}},
-                {'t': {'$lte': 1}, 'v.resolved': {'$gte': 2}}
-            ]
+            't': {'$gte': 1, '$lte': 2}
         }
         self.assertEqual(
             self.reader._get_time_filter(
@@ -203,7 +199,7 @@ class TestReader(BaseTest):
             {
                 'tstart': 13,
                 'tstop': 42,
-                'expected': {'v.resolved': None, 't': {'$lte': 42}}
+                'expected': {'v.resolved': None, 't': {'$lte': 42, "$gte": 13}}
             }
         ]
 
@@ -241,11 +237,7 @@ class TestReader(BaseTest):
                 'tstop': 0,
                 'expected': {
                     'v.resolved': {'$ne': None},
-                    '$or': [
-                        {'t': {'$gte': 0, '$lte': 0}},
-                        {'v.resolved': {'$gte': 0, '$lte': 0}},
-                        {'t': {'$lte': 0}, 'v.resolved': {'$gte': 0}}
-                    ]
+                    't': {'$gte': 0, '$lte': 0}
                 }
             },
             {
@@ -253,11 +245,7 @@ class TestReader(BaseTest):
                 'tstop': 2,
                 'expected': {
                     'v.resolved': {'$ne': None},
-                    '$or': [
-                        {'t': {'$gte': 1, '$lte': 2}},
-                        {'v.resolved': {'$gte': 1, '$lte': 2}},
-                        {'t': {'$lte': 1}, 'v.resolved': {'$gte': 2}}
-                    ]
+                    't': {'$gte': 1, '$lte': 2}
                 }
             }
         ]
@@ -641,4 +629,3 @@ if __name__ == '__main__':
     unittest.main(
         testRunner=xmlrunner.XMLTestRunner(output=output),
         verbosity=3)
-

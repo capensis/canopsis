@@ -25,6 +25,7 @@ from __future__ import unicode_literals
 
 import copy
 import json
+
 from operator import itemgetter
 from bottle import request
 from six import string_types
@@ -98,6 +99,104 @@ def __format_pbehavior(pbehavior):
 
     return pbehavior
 
+
+class WatcherFilter(object):
+    """
+    Filter out hasallactivepbehaviorinentities and hasactivepbehaviorinentities.
+    """
+
+    def __init__(self):
+        self._all = None
+        self._some = None
+
+    def all(self):
+        """
+        :returns: True, False or None
+        """
+        return self._all
+
+    def some(self):
+        """
+        :returns: True, False or None
+        """
+        return self._some
+
+    def to_bool(self, value):
+        if value in ['1', 1, "true", "True"]:
+            return True
+        return False
+
+    def _filter_dict(self, dictdoc):
+        cdoc = copy.deepcopy(dictdoc)
+        for k, v in dictdoc.items():
+            if k == 'hasallactivepbehaviorinentities':
+                self._all = self.to_bool(v)
+                del cdoc['hasallactivepbehaviorinentities']
+
+            elif k == 'hasactivepbehaviorinentities':
+                self._some = self.to_bool(v)
+                del cdoc['hasactivepbehaviorinentities']
+
+            else:
+                nv = self._filter(v)
+                if nv is not None or v is None:
+                    cdoc[k] = nv
+                else:
+                    del cdoc[k]
+
+        return cdoc
+
+    def _filter_list(self, listdoc):
+        cdoc = copy.deepcopy(listdoc)
+        j = 0
+        for i, item in enumerate(listdoc):
+            v = self._filter(item)
+            if v is not None:
+                cdoc[j] = v
+            else:
+                del cdoc[j]
+                j -= 1
+            j += 1
+
+        return cdoc
+
+    def _filter(self, doc):
+        if isinstance(doc, dict):
+            ndoc = self._filter_dict(doc)
+            if len(ndoc) == 0 and len(doc) != 0:
+                return None
+            return ndoc
+
+        elif isinstance(doc, list):
+            ndoc = self._filter_list(doc)
+            if len(ndoc) == 0 and len(doc) != 0:
+                return None
+            return ndoc
+
+        return doc
+
+    def filter(self, doc):
+        res = self._filter(doc)
+        if res is None:
+            return {}
+        return res
+
+    def appendable(self, allstatus, somestatus):
+        if self.all() is None and self.some() is None:
+            return True
+
+        elif self.all() is not None and self.some() is not None:
+            if self.all() == allstatus and self.some() == somestatus:
+                return True
+            return False
+
+        elif self.all() is allstatus and self.all() is not None:
+            return True
+
+        elif self.some() is somestatus and self.some() is not None:
+            return True
+
+        return False
 
 def watcher_status(watcher, pbehavior_eids_merged):
     """
@@ -212,6 +311,7 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
+        wf = WatcherFilter()
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
@@ -229,6 +329,7 @@ def exports(ws):
             limit = int(DEFAULT_LIMIT)
 
         watcher_filter['type'] = 'watcher'
+        watcher_filter = wf.filter(watcher_filter)
         watcher_list = context_manager.get_entities(
             query=watcher_filter,
             limit=limit,
@@ -273,7 +374,7 @@ def exports(ws):
                 depends_merged.add(depends_id)
             entity_watchers_ids.append(watcher['_id'])
             alarm_watchers_ids.append(
-                '{}/{}'.format(watcher['_id'], watcher['name'])
+                '{}'.format(watcher['_id'])
             )
 
         active_pbehaviors = get_active_pbehaviors_on_watchers(
@@ -305,7 +406,7 @@ def exports(ws):
             ws.logger.debug(watcher)
             enriched_entity = {}
             tmp_alarm = alarm_dict.get(
-                '{}/{}'.format(watcher['_id'], watcher['name']),
+                '{}'.format(watcher['_id']),
                 []
             )
             tmp_linklist = []
@@ -360,7 +461,8 @@ def exports(ws):
             if tmp_next_run is not None:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
-            watchers.append(enriched_entity)
+            if wf.appendable(wstatus[1], wstatus[0]) is True:
+                watchers.append(enriched_entity)
 
         watchers = sorted(watchers, key=itemgetter("display_name"))
 

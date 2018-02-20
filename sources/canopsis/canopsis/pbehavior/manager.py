@@ -277,7 +277,8 @@ class PBehaviorManager(object):
         return result
 
     def get_pbehaviors_by_eid(self, id_):
-        """Retreive from database every pbehavior that contains the given id_
+        """Retreive from database every pbehavior that contains
+        the given id_ in the PBehavior.EIDS field.
 
         :param list,str: the id(s) as a str or a list of string
         :returns: a list of pbehavior
@@ -627,7 +628,7 @@ class PBehaviorManager(object):
 
     def launch_update_watcher(self, watcher_manager):
         """
-        launch_update_watcher update watcher when an pbehavior is active
+        launch_update_watcher update watcher when a pbehavior is active
 
         :param object watcher_manager: watcher manager
         :returns: number of watcher updated

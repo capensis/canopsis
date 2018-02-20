@@ -512,7 +512,7 @@ find_links = file://${pylibpath}/externals/python-libs/
 EOF
     cat ~/.pydistutils.cfg > /opt/canopsis/.pydistutils.cfg
     chown $HUSER:$HGROUP /opt/canopsis/.pydistutils.cfg
-    pip install --no-index --find-links=file://${pylibpath}/externals/python-libs $@
+    . ${PREFIX}/bin/activate && pip install --no-index --find-links=file://${pylibpath}/externals/python-libs $@
     check_code $? "Pip install failed ..."
 }
 

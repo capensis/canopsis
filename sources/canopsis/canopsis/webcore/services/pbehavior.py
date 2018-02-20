@@ -188,6 +188,9 @@ class RouteHandlerPBehavior(object):
 
         return result
 
+    def get_by_eid(self, eid):
+        return self.pb_manager.get_pbehaviors_by_eid(eid)
+
     def read(self, _id):
         """
         Read a pbehavior.
@@ -435,6 +438,13 @@ def exports(ws):
         ws.logger.info('Delete pbehavior : {}'.format(pbehavior_id))
 
         return gen_json(rhpb.delete(pbehavior_id))
+
+    @ws.application.get('/api/v2/pbehavior_byeid/<entity_id:id_filter>')
+    def get_by_eid(entity_id):
+        """
+        Return pbehaviors that apply on entity entity_id.
+        """
+        return gen_json(rhpb.get_by_eid(entity_id))
 
     @route(
         ws.application.post,

@@ -103,7 +103,8 @@ def exports(ws):
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
-
+        if isinstance(search, int):
+            search = str(search)
 
         alarms = ar.get(
             tstart=tstart,
