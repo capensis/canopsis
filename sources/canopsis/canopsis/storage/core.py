@@ -19,6 +19,8 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
+from canopsis.common.callstack import log_stack
+
 from functools import reduce
 
 from time import sleep
@@ -467,6 +469,9 @@ class Storage(DataBase):
             query_kwargs = {}
         if cache_kwargs is None:
             cache_kwargs = {}
+
+        msg = '{}: {}\n{}: {}'.format(cache_op, cache_kwargs, query_op, query_kwargs)
+        log_stack(msg=msg)
 
         if cache and self._cache_size > 0:
             # if self cache is None, that means thisd is the first use to cache
