@@ -35,7 +35,6 @@ class PBehaviorTest(unittest.TestCase):
 
     def test_pbehavior(self):
         pbehavior = PBehavior(**PBehavior.convert_keys(db_pbehavior))
-        print(pbehavior)
         self.assertEqual(pbehavior._id, db_pbehavior['_id'])
         self.assertTrue(pbehavior.enabled)
 
