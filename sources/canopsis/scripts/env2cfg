@@ -70,7 +70,7 @@ class Env2Cfg(object):
 
         influx.read(p)
 
-        if not 'DATABASE' in influx.sections():
+        if 'DATABASE' not in influx.sections():
             influx.add_section('DATABASE')
 
         influx.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
@@ -93,7 +93,7 @@ class Env2Cfg(object):
 
         amqp.read(p)
 
-        if not 'master' in amqp.sections():
+        if 'master' not in amqp.sections():
             amqp.add_section('master')
 
         amqp.set('master', 'host', 'localhost' if pu.hostname is None else pu.hostname)
@@ -127,7 +127,7 @@ class Env2Cfg(object):
         cstorage.read(pcs)
         storage.read(ps)
 
-        if not 'DATABASE' in mongo_store.sections():
+        if 'DATABASE' not in mongo_store.sections():
             mongo_store.add_section('DATABASE')
 
         mongo_store.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
@@ -136,7 +136,7 @@ class Env2Cfg(object):
         mongo_store.set('DATABASE', 'user', 'cpsmongo' if pu.username is None else pu.username)
         mongo_store.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)
 
-        if not 'master' in cstorage.sections():
+        if 'master' not in cstorage.sections():
             cstorage.add_section('master')
 
         cstorage['master']['host'] = mongo_store['DATABASE']['host']
@@ -145,7 +145,7 @@ class Env2Cfg(object):
         cstorage['master']['password'] = mongo_store['DATABASE']['pwd']
         cstorage['master']['db'] = mongo_store['DATABASE']['db']
 
-        if not 'DATABASE' in storage.sections():
+        if 'DATABASE' not in storage.sections():
             storage.add_section('DATABASE')
 
         storage['DATABASE']['host'] = mongo_store['DATABASE']['host']
