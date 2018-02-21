@@ -5,5 +5,15 @@ log
 doc/locale
 /sources/packages/ssl-conf/blacklist
 build_messages.txt
+.idea
+.cache
+.coverage
+*~
+.\#*
+\#*\#
 Vagrantfile
-/.vagrant/
+*.vagrant
+docker/files/bricks/brick-*
+docker/bricks
+tools/catag/catag
+tools/catag/vendor

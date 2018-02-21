@@ -130,33 +130,24 @@ function extract_archive() {
 
     if [ `echo $1 | grep 'tar.bz2$' | wc -l` -eq 1 ]
     then
-        EXTCMD="tar xfj"
+        EXTCMD="tar xf"
     elif [ `echo $1 | grep 'tar.gz$' | wc -l` -eq 1 ]
     then
-        EXTCMD="tar xfz"
+        EXTCMD="tar xf"
     elif [ `echo $1 | grep 'tgz$' | wc -l` -eq 1 ]
     then
-        EXTCMD="tar xfz"
+        EXTCMD="tar xf"
     elif [ `echo $1 | grep 'tar.xz$' | wc -l` -eq 1 ]
     then
-        EXTCMD="xz -d"
+        EXTCMD="tar xf"
     fi
 
     if [ "$EXTCMD" != "" ]
     then
-        if [ "$EXTCMD" != "xz -d" ]
-        then
-            echo " + Extract '$1' ('$EXTCMD') ..."
+        echo " + Extract '$1' ('$EXTCMD') ..."
 
-            $EXTCMD $1
-            check_code $? "Extract archive failure"
-        else
-            echo " + Extract '$1' ('$EXTCMD') ..."
-
-            $EXTCMD $1
-            tar xf $(echo "$1" | sed 's/.xz//')
-            check_code $? "Extract archive failure"
-        fi
+        $EXTCMD $1
+        check_code $? "Extract archive failure"
     else
         echo "Error: Impossible to extract '$1', no command found ..."
         exit 1
@@ -505,11 +496,24 @@ function export_env() {
     export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
 }
 
-function easy_install_pylib() {
-    echo "Easy install Python Library: $1 ..."
+function pip_install() {
+    echo "pip install $@"
 
-    $PREFIX/bin/easy_install -Z --prefix=$PREFIX -H None -f $SRC_PATH/externals/python-libs $1 1>> $LOG 2>> $LOG
-    check_code $? "Easy install failed ..."
+    # Support CAT buildinstall
+    pylibpath="${CPSPATH}/sources"
+    if [ "${CPSPATH}" = "" ];then
+        pylibpath="${SRC_PATH}"
+    fi
+
+    cat > ~/.pydistutils.cfg << EOF
+[easy_install]
+allow_hosts = ''
+find_links = file://${pylibpath}/externals/python-libs/
+EOF
+    cat ~/.pydistutils.cfg > /opt/canopsis/.pydistutils.cfg
+    chown $HUSER:$HGROUP /opt/canopsis/.pydistutils.cfg
+    . ${PREFIX}/bin/activate && pip install --no-index --find-links=file://${pylibpath}/externals/python-libs $@
+    check_code $? "Pip install failed ..."
 }
 
 function build_pkg() {

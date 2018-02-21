@@ -1,79 +1,91 @@
-{
-    "loader_id": "view.context",
-    "_id" : "view.context",
-    "id": "view.context",
-    "crecord_write_time" : 1432797271,
-    "enable" : true,
-    "description" : "",
-    "tags" : [ ],
-    "containerwidget" : {
-        "widgetId" : null,
-        "xtype" : "widgetcontainer",
-        "title" : null,
-        "widgetslotTemplate" : null,
-        "mixins" : [
+{  
+  "_id": "view.context",
+  "id": "view.context",
+  "crecord_write_time": 1506610791,
+  "loader_id" : "view.context",
+  "loader_no_update": false,
+  "title":"Context",
+  "enable": true,
+  "description": null,
+  "author": "root",
+  "containerwidget": {
+    "widgetId": null,
+    "preference_id": null,
+    "xtype": "widgetcontainer",
+    "title": null,
+    "widgetslotTemplate": null,
+    "mixins": [
+      {
+        "name": "verticallayout"
+      }
+    ],
+    "tagName": null,
+    "items": [
+      {
+        "xtype": "widgetwrapper",
+        "widget": {
+          "widgetId": null,
+          "preference_id": "2a8f5dfb-1920-9e92-995c-d842fa112c1d",
+          "xtype": "crudcontext",
+          "title": null,
+          "default_sort_column": {
+            "direction": "ASC"
+          },
+          "mixins": [
             {
-                "name" : "verticallayout"
+              "name": "arraysearch",
+              "EmberClass": {
+                "mixins": [
+                  {
+                    "properties": {
+                      "partials": {
+                        "header": [
+                          "search"
+                        ]
+                      },
+                      "_actions": {}
+                    }
+                  }
+                ]
+              }
             },
-          { "name": "widgetrefresh" },
-          { "name": "widgetfullscreen" }
-        ],
-        "tagName" : null,
-        "items" : [
             {
-                "id" : "widgetwrapper_cd3b5449-67e2-2222-79d9-63bd5796e5a5",
-                "widget" : {
-                    "widgetId" : "widget_list_9cd47cab-d585-ed27-e84f-310eb914ba41",
-                    "xtype" : "list",
-                    "title" : "Entities",
-                    "listed_crecord_type" : "context",
-                    "mixins" : [
-                        {
-                            "name" : "crud"
-                        },
-                        {
-                            "name" : "pagination"
-                        },
-                        {
-                            "name" : "sortablearray"
-                        },
-                        {
-                            "name" : "arraysearch",
-                            "searchable_columns": [
-                                "type",
-                                "name",
-                                "_id"
-                            ]
-                        },
-                        {
-                            "name" : "listlinedetail",
-                            "template" : "{{component-periodicbehaviormanager contextId=_id}}"
-                        }
-                    ],
-                    "useRenderers" : true,
-                    "id" : "widget_list_9cd47cab-d585-ed27-e84f-310eb914ba41",
-                    "columnsOrder" : [ ],
-                    "tagName" : null,
-                    "displayed_columns" : [
-                        "type",
-                        "name",
-                        "_id"
-                    ],
-                    "default_column_sort" : {
-                        "direction" : "ASC",
-                        "property" : "type"
-                    },
-                    "contentTruncatedLength" : 150
-                },
-                "mixins" : [ ],
-                "xtype" : "widgetwrapper",
-                "title" : "wrapper"
+              "name": "sortablearray"
+            },
+            {
+              "name": "customfilterlist"
+            },
+            {
+              "name": "crud",
+              "hideDuplicate": true
+            },
+            {
+              "name": "pagination"
+            },
+            {
+              "name": "listlinedetail",
+              "template": "{{component-crudentitydetails this=this._data}}"
             }
-        ],
-        "id" : "container_169fea2c-f4fa-6a04-8bd2-5621f07de260"
-    },
-    "crecord_creation_time" : 0,
-    "crecord_type" : "view",
-    "internal" : false,
-    "crecord_name" : "Context"
+          ],
+          "popup": [],
+          "tagName": null,
+          "id": "widget_crudcontext_80baf579-d429-cd55-b340-8f24b4f3b82a",
+          "columns": [
+            "name",
+            "type"
+          ],
+          "name": "context"
+        },
+        "mixins": [],
+        "id": "widgetwrapper_07a7020a-1ce4-dd19-744a-c63244508748",
+        "title": "wrapper"
+      }
+    ],
+    "id": "container_37af5f37-40f7-a56f-37bb-5ad6ae30aff8"
+  },
+  "tags": [],
+  "crecord_creation_time": 0,
+  "crecord_type": "view",
+  "internal": true,
+  "crecord_name": "view.context"
 }

@@ -25,7 +25,7 @@ function wait_for_mongo() {
     mongo_ready=false
     while ! $mongo_ready
     do
-        echo "show collections" | $PREFIX/bin/mongo canopsis -u $mongo_user -p $mongo_pass >/dev/null 2>&1
+        echo "show collections" | /usr/bin/mongo canopsis -u $mongo_user -p $mongo_pass > /dev/null 2>&1
 
         if [ $? -eq 0 ]
         then
@@ -64,7 +64,7 @@ function wait_for_mongo_install() {
     mongo_ready=false
     while ! $mongo_ready
     do
-        echo "show collections" | $PREFIX/bin/mongo canopsis >/dev/null 2>&1
+        echo "show collections" | /usr/bin/mongo canopsis >/dev/null 2>&1
 
         if [ $? -eq 0 ]
         then
@@ -152,10 +152,19 @@ function post_install_mongodb() {
     fi
 
     echo "  + Create admin user ..."
-    launch_cmd 1 $PREFIX/bin/mongo admin --eval "\"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase', 'root']})\""
+    launch_cmd 1 /usr/bin/mongo admin --eval "\"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase', 'root']})\""
+
+    echo "  + Reconfigure mongodb"
+    launch_cmd 1 sed -i "\"s/disabled/enabled/\"" $PREFIX/etc/mongodb.conf
+
+    echo "  + Restart mongodb"
+    launch_cmd 1 service mongodb restart
+
+    echo " + Wait mongodb"
+    sleep 10
 
     echo "  + Create $cpsuser user ..."
-    launch_cmd 1 $PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval "\"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
+    launch_cmd 1 /usr/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval "\"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
 
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $cpsuser
     launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $cpspass
