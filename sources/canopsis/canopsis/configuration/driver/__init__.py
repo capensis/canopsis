@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)
 
 from canopsis.common.utils import lookup, path
 from canopsis.configuration.model import (

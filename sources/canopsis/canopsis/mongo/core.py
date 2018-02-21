@@ -259,13 +259,16 @@ class MongoStorage(MongoDataBase, Storage):
                     shardCollection=collection_full_name, key={'_id': 1}
                 )
 
-            for index in self.all_indexes():
+            
+            if self.all_indexes() is not None:
 
-                try:
-                    self._backend.ensure_index(index)
+                for index in self.all_indexes():
 
-                except Exception as ex:
-                    self.logger.error(ex)
+                    try:
+                        self._backend.ensure_index(index)
+
+                    except Exception as ex:
+                        self.logger.error(ex)
 
         return result
 
