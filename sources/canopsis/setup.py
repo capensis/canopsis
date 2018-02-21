@@ -24,6 +24,7 @@ from os import walk
 from os.path import join, dirname, exists
 
 from setuptools import setup, find_packages
+from setuptools.command.install import install as setup_install
 
 PACKAGE = 'canopsis'
 AUTHOR = 'Capensis'
@@ -36,6 +37,42 @@ KEYWORDS = 'Canopsis Hypervision Hypervisor Monitoring'
 VERSION = '0.1'
 
 TEST_FOLDERS = ['tests', 'test']
+
+
+class PostInstall(setup_install):
+
+    def _makedirs(self, unix_path):
+        os.environ['CPS_BOOTSTRAP'] = '1'
+
+        from os.path import join as pjoin
+        from canopsis.common import root_path
+
+        abspath = '{}/{}'.format(root_path, unix_path)
+
+        path = os.path.sep + pjoin(*abspath.split('/'))
+
+        if os.path.isdir(path):
+            return
+
+        if os.path.isfile(path):
+            os.unlink(path)
+
+        os.makedirs(path)
+
+    def run(self):
+        self._makedirs('var/log/engines')
+        self._makedirs('var/cache/canopsis')
+        self._makedirs('tmp')
+        self._makedirs('etc')
+
+        setup_install.run(self)
+
+
+def get_cmdclass():
+    cmdclass = {
+        'install': PostInstall
+    }
+    return cmdclass
 
 
 def get_pkgpath():
@@ -141,6 +178,7 @@ def setup_canopsis(pkgpath):
     setuptools_args['test_suite'] = get_test_suite(pkgpath)
     setuptools_args['data_files'] = get_data_files(pkgpath)
     setuptools_args['scripts'] = get_scripts(pkgpath)
+    setuptools_args['cmdclass'] = get_cmdclass()
 
     return setuptools_args
 

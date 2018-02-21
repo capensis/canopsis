@@ -40,6 +40,7 @@ apt-get -y --no-install-recommends install \
     python-virtualenv \
     python-wheel \
     rsync \
+    sudo \
     tmux \
     vim \
     virtualenv \
