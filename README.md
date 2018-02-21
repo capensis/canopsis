@@ -50,30 +50,3 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-listalarm/blob/mas
 
 
 ### Lint
-
-Tested on commit : 2cee35b.
-
-| Target | Status | Log |
-| ------ | ------ | --- |
-| Lint   | :negative_squared_cross_mark: ERROR |  |
-
-
-## Code-Notes
-
-### TODOS
-
-| File   | Note   |
-|--------|--------|
-| src/forms/snooze/controller.js | search this value into schema |
-| src/forms/snooze/controller.js | refactor the 20 lines below in an utility function "getEditorForAttr" |
-| src/forms/snooze/controller.js | use the real schema, not the dict used to create it |
-
-
-### FIXMES
-
-
-
-## Additional-info
-
-Minified version : 4 files (size: 120K)
-Development version : 65 files (size: 448K)
