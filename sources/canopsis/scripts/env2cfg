@@ -1,0 +1,189 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+env2cfg makes configuration in canopsis easier:
+
+# export CPS_MONGO_URL="<valid_mongodb_url>"
+# export CPS_REDIS_URL="redis://<ip>:<port>/<db>"
+# export CPS_INFLUX_URL="<valid_influxdb_url>"
+# export CPS_AMQP_URL="<valid_amqp_url>"
+# env2cfg
+
+Will write/update:
+
+${CPS_PREFIX}/etc/cstorage.conf
+${CPS_PREFIX}/etc/common/mongo_store.conf
+${CPS_PREFIX}/etc/mongo/storage.conf
+
+${CPS_PREFIX}/etc/influx/storage.conf
+
+${CPS_PREFIX}/etc/amqp.conf
+"""
+
+from __future__ import unicode_literals
+
+import logging
+import os
+import sys
+
+from os.path import join as pjoin
+
+from urlparse import urlparse
+
+from configparser import ConfigParser
+
+from canopsis.common import root_path
+
+class Env2Cfg(object):
+
+    CPS_AMQP_URL = 'CPS_AMQP_URL'
+    CPS_REDIS_URL = 'CPS_REDIS_URL'
+    CPS_MONGO_URL = 'CPS_MONGO_URL'
+    CPS_INFLUX_URL = 'CPS_INFLUX_URL'
+
+    def _check(self, varname):
+        varval = os.environ.get(varname, '')
+        if varval is '':
+            raise ValueError('env var {} is empty'.format(varname))
+
+    def check(self):
+        self._check(self.CPS_AMQP_URL)
+        self._check(self.CPS_MONGO_URL)
+        self._check(self.CPS_REDIS_URL)
+        self._check(self.CPS_INFLUX_URL)
+
+    def _makedirs(self, fpath):
+        dirs = os.path.dirname(fpath)
+
+        if not os.path.isdir(dirs):
+            os.makedirs(dirs)
+
+    def _update_influx(self):
+        pu = urlparse(os.environ.get(self.CPS_INFLUX_URL))
+
+        p = pjoin(root_path, 'etc', 'influx', 'storage.conf')
+
+        self._makedirs(p)
+
+        influx = ConfigParser()
+
+        influx.read(p)
+
+        if 'DATABASE' not in influx.sections():
+            influx.add_section('DATABASE')
+
+        influx.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
+        influx.set('DATABASE', 'port', '4444' if pu.port is None else str(pu.port))
+        influx.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
+        influx.set('DATABASE', 'user', 'cpsinflux' if pu.username is None else pu.username)
+        influx.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)
+
+        with open(p, 'w') as fh:
+            influx.write(fh)
+
+    def _update_amqp(self):
+        pu = urlparse(os.environ.get(self.CPS_AMQP_URL))
+
+        p = pjoin(root_path, 'etc', 'amqp.conf')
+
+        self._makedirs(p)
+
+        amqp = ConfigParser()
+
+        amqp.read(p)
+
+        if 'master' not in amqp.sections():
+            amqp.add_section('master')
+
+        amqp.set('master', 'host', 'localhost' if pu.hostname is None else pu.hostname)
+        amqp.set('master', 'port', '5672' if pu.port is None else str(pu.port))
+        amqp.set('master', 'userid', 'cpsrabbit' if pu.username is None else pu.username)
+        amqp.set('master', 'password', 'canopsis' if pu.password is None else pu.password)
+        amqp.set('master', 'virtual_host', 'canopsis' if pu.path is '' else pu.path[1:])
+
+        if amqp.get('master', 'exchange_name', fallback=None) is None:
+            amqp.set('master', 'exchange_name', 'canopsis')
+
+        with open(p, 'w') as fh:
+            amqp.write(fh)
+
+    def _update_mongo(self):
+        pu = urlparse(os.environ.get(self.CPS_MONGO_URL))
+
+        pms = pjoin(root_path, 'etc', 'common', 'mongo_store.conf')
+        pcs = pjoin(root_path, 'etc', 'cstorage.conf')
+        ps = pjoin(root_path, 'etc', 'mongo', 'storage.conf')
+
+        self._makedirs(pms)
+        self._makedirs(pcs)
+        self._makedirs(ps)
+
+        mongo_store = ConfigParser()
+        cstorage = ConfigParser()
+        storage = ConfigParser()
+
+        mongo_store.read(pms)
+        cstorage.read(pcs)
+        storage.read(ps)
+
+        if 'DATABASE' not in mongo_store.sections():
+            mongo_store.add_section('DATABASE')
+
+        mongo_store.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
+        mongo_store.set('DATABASE', 'port', '27017' if pu.port is None else str(pu.port))
+        mongo_store.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
+        mongo_store.set('DATABASE', 'user', 'cpsmongo' if pu.username is None else pu.username)
+        mongo_store.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)
+
+        if 'master' not in cstorage.sections():
+            cstorage.add_section('master')
+
+        cstorage['master']['host'] = mongo_store['DATABASE']['host']
+        cstorage['master']['port'] = mongo_store['DATABASE']['port']
+        cstorage['master']['userid'] = mongo_store['DATABASE']['user']
+        cstorage['master']['password'] = mongo_store['DATABASE']['pwd']
+        cstorage['master']['db'] = mongo_store['DATABASE']['db']
+
+        if 'DATABASE' not in storage.sections():
+            storage.add_section('DATABASE')
+
+        storage['DATABASE']['host'] = mongo_store['DATABASE']['host']
+        storage['DATABASE']['port'] = mongo_store['DATABASE']['port']
+        storage['DATABASE']['db'] = mongo_store['DATABASE']['db']
+        storage['DATABASE']['user'] = mongo_store['DATABASE']['user']
+        storage['DATABASE']['pwd'] = mongo_store['DATABASE']['pwd']
+
+        with open(pms, 'w') as fh:
+            mongo_store.write(fh)
+
+        with open(pcs, 'w') as fh:
+            cstorage.write(fh)
+
+        with open(ps, 'w') as fh:
+            storage.write(fh)
+
+    def _update_redis(self):
+        pass
+
+    def update(self):
+        self._update_amqp()
+        self._update_mongo()
+        self._update_redis()
+        self._update_influx()
+
+    @staticmethod
+    def main():
+        app = Env2Cfg()
+        try:
+            app.check()
+        except ValueError as ex:
+            logging.error(ex)
+            return 1
+
+        app.update()
+        return 0
+
+if __name__ == '__main__':
+    rc = Env2Cfg.main()
+    sys.exit(rc)
