@@ -1,0 +1,48 @@
+{
+  "title": "AlarmFilter",
+  "description": "Alarm Filter document as stored in storage-default-alarmfilter://",
+
+  "type": "object",
+  "properties": {
+    "entity_filter": {
+      "description": "A mongo filter to designate all entities on which to apply the filter",
+
+      "type": "string",
+      "required": true
+    },
+    "limit": {
+      "description": "The number of seconds since last state change or the last filter execution",
+
+      "type": "integer",
+      "required": true
+    },
+    "condition": {
+      "description": "A mongo filter wich describe when an entity activate the filter",
+
+      "type": "string",
+      "required": true
+    },
+    "tasks": {
+      "description": "A list of tasks to execute",
+
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "required": true
+    },
+    "output_format": {
+      "description": "To personnalize the output message of all tasks",
+
+      "type": "string",
+      "required": false
+    },
+    "repeat": {
+      "description": "To limit the number a repetition of the filter",
+
+      "type": "integer",
+      "required": false,
+      "default": 1
+    }
+  }
+}

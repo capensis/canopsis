@@ -19,7 +19,7 @@
 # ----------
 
 PATH=$HOME/bin:$HOME/sbin:$PATH
-DAEMON=$HOME/bin/mongod
+DAEMON=/usr/bin/mongod
 
 NAME=mongodb
 CONF=$HOME/etc/$NAME.conf

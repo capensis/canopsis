@@ -1,0 +1,13 @@
+.git
+**/.git
+sources/webcore
+!sources/webcore/src
+sources/webcore/src/canopsis/*/doc
+sources/externals
+!sources/externals/python-libs
+sources/extra
+sources/canopsis/build
+sources/canopsis/dist
+sources/canopsis/*.egg-info
+sources/canopsis/pyinstaller
+sources/canopsis/test
