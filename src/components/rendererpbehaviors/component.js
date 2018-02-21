@@ -5,9 +5,17 @@ Ember.Application.initializer({
             set = Ember.set,
             isNone = Ember.isNone;
             rRule = window.RRule;
+        /**
+         * This is the rendererpbehaviors component for the widget listalarm
+         *
+         * @class rendererpbehaviors component
+         */
 
         var component = Ember.Component.extend({
 
+            /**
+             * @property propertyMap
+             */
             propertyMap: {
                 'tstop': 'stop date',
                 'enabled': 'enabled',
@@ -16,8 +24,14 @@ Ember.Application.initializer({
                 'rrule': 'rule'
             },
 
+            /**
+             * @property properties
+             */
             properties: ['tstop', 'enabled', 'name', 'tstart', 'rrule'],
 
+            /**
+             * @property pbehMap
+             */
             pbehMap: function () {
                 var propertyMap = this.get('propertyMap');
                 var val = this.get('value');
@@ -28,17 +42,26 @@ Ember.Application.initializer({
                 })
             }.property('properties', 'propertyMap', 'value'),
 
+            /**
+             * @method dateFormat
+             */
             dateFormat: function (date) {
                 var dDate = new Date(date);
                 return moment(dDate).format('MM/DD/YY hh:mm:ss');
             },
 
+            /**
+             * @method rruleParse
+             */
             rruleParse: function (rrule) {
                 var params = rRule.parseString(rrule);
                 var rule = new rRule(params || {});
                 return rule.toText();
             },
 
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
               },

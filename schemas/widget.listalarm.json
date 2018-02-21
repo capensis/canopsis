@@ -23,10 +23,11 @@
 		"default_sort_column": {
 			"type": "object",
 			"role": "sortable"
-    },
+    	},
 		"alarms_state_filter": {
 			"type": "object",
-			"role": "radio"
+			"role": "radio",
+            "default": "opened"
 		},
 		"user_filters": {
 			"type": "boolean",
@@ -36,13 +37,14 @@
 			"type": "integer",
 			"isUserPreference": true
 		},
-    "columns": {
+    	"columns": {
 			"type": "array",
 			"items": {
 				"type": "string"
 			},
-			"reorderable": true
-    },
+			"reorderable": true,
+            "default": ["connector_name","component","resource","state","status","last_update_date", "extra_details"]
+    	},
 		"popup": {
 			"type": "array",
 			"items": {

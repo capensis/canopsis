@@ -1,31 +1,43 @@
-<div {{bind-attr class='hasAck::invisible'}}>
-  {{#component-tooltip content=acktooltip htmlEnabled=true noTranslation=true}}
-      <span class="badge bg-purple">
-          <i class="fa fa-check"></i>
+{{# if hasAck }}
+  <div>
+    {{#component-tooltip content=acktooltip htmlEnabled=true noTranslation=true}}
+        <span class="badge bg-purple">
+            <i class="fa fa-check"></i>
+        </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
+{{# if hasTicket }}
+  <div>
+    {{#component-tooltip content=tickettooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-blue">
+        <i class="fa fa-ticket"></i>
       </span>
-  {{/component-tooltip}}
-</div>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
 
-<div {{bind-attr class='hasTicket::invisible'}}>
-  {{#component-tooltip content=tickettooltip htmlEnabled=true noTranslation=true}}
-    <span class="badge bg-blue">
-      <i class="fa fa-ticket"></i>
-    </span>
-  {{/component-tooltip}}
-</div>
 
-<div {{bind-attr class='hasSnooze::invisible'}}>
-  {{#component-tooltip content=snoozetooltip htmlEnabled=true noTranslation=true}}
-    <span class="badge bg-red">
-      <i class="fa fa-clock-o"></i>
-    </span>
-  {{/component-tooltip}}
-</div>
+{{# if hasSnooze }}
+  <div>
+    {{#component-tooltip content=snoozetooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-red">
+        <i class="fa fa-clock-o"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
 
-<div {{bind-attr class='hasPBehavior::invisible'}}>
-  {{#component-tooltip content=pbehaviortooltip htmlEnabled=true noTranslation=true}}
-    <span class="badge bg-aqua">
-      <i class="fa fa-code-fork"></i>
-    </span>
-  {{/component-tooltip}}
-</div>
+{{# if hasPBehavior }}
+  <div>
+    {{#component-tooltip content=pbehaviortooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-aqua">
+        <i class="fa fa-code-fork"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+  
+  
