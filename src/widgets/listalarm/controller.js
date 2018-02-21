@@ -262,7 +262,6 @@ Ember.Application.initializer({
               this.set('alarmSearchOptions.filter', this.get('selected_filter.filter') || {});
             }.observes('selected_filter'),
 
-
             /**
              * @property totalPagess
              */
@@ -406,7 +405,6 @@ Ember.Application.initializer({
                   controller.get('extraDeatialsEntities').forEach(function(item) {
                     alarm['v']['extra_details'][item.name] = Ember.Object.create(alarm).get(item.value);
                   })
-
                   var newAlarm = Ember.Object.create();
 
                   controller.get('mandatoryFields').forEach(function(field) {
@@ -524,7 +522,7 @@ Ember.Application.initializer({
               };
 
 
-				      var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+		      var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
               adapter.findQuery('alerts', query).then(function (result) {
                       var alerts = get(result, 'data');
                       controller.setAlarmsForShow(alerts[0]['alarms']);
@@ -659,7 +657,6 @@ Ember.Application.initializer({
                 controller.set('isNaturalSearch', true);
                 controller.set('manualUpdateAlarms', new Date().getTime());
               },
-
             }
 
         }, listOptions);
