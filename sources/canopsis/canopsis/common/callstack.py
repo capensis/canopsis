@@ -2,12 +2,12 @@
 
 from __future__ import unicode_literals
 
-from canopsis.logger import Logger
-
-import os
 import inspect
 import logging
+import os
 import pprint
+
+from canopsis.logger import Logger
 
 HEADER_FMT = "Call stack at %s, line %d in function %s, frames %d to %d of %d:"
 """The log header message formatter."""
@@ -15,7 +15,10 @@ HEADER_FMT = "Call stack at %s, line %d in function %s, frames %d to %d of %d:"
 STACK_FMT = "%s, line %d in function %s."
 """The log stack message formatter."""
 
-default_logger = Logger.get('callstack', 'var/log/callstack.log', level=logging.INFO)
+default_logger = Logger.get(
+    'callstack', 'var/log/callstack.log', level=logging.INFO
+)
+
 
 def log_stack(logger=None, limit=None, start=0, msg=None):
     """
@@ -77,11 +80,11 @@ def log_stack(logger=None, limit=None, start=0, msg=None):
     # Print the stack to the logger.
     file, line, func = here[1:4]
     header_msg = HEADER_FMT % (file, line, func, start + 2, end - 1, len(stack) - 1)
-    logger.info('START {} START'.format(header_msg))
+    logger.info('****** START {} START ******'.format(header_msg))
     # Print the next frames up to the limit.
     for frame in stack[begin:end]:
         file, line, func = frame[1:4]
         logger.info(STACK_FMT % (file, line, func))
     if msg is not None:
-        logger.info(pprint.pformat(msg))
-    logger.info('END {} END'.format(header_msg))
+        logger.info('Message: \n{}'.format(pprint.pformat(msg, indent=2)))
+    logger.info('++++++ END {} END ++++++'.format(header_msg))
