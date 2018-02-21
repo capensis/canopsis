@@ -6,23 +6,42 @@ Ember.Application.initializer({
             isNone = Ember.isNone;
 
         /**
-         * This is the eventcategories component for the widget calendar
+         * This is the alarmstate component for the widget listalarm
          *
-         * @class eventcategories component
-         * @memberOf canopsis.frontend.brick-calendar
+         * @class alarmstate component
          */
         var component = Ember.Component.extend({
-
+            /**
+             * @property state
+             */
             state: undefined,
+
+            /**
+             * @property isSelected
+             */
             isSelected: 0,
 
+            CheckBoxAlarmStateOpen: false,
+            CheckBoxAlarmStatusResolved: true,
+
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
                 if (!isNone(this.get('content'))) {
-                    set(this, 'state', get(this, 'content.state'));
+                    var state =  get(this, 'content.state')
+                    set(this, 'state',state);
+                    if(state == "opened"){
+                        this.set("CheckBoxAlarmStateOpen",true)
+                        this.set("CheckBoxAlarmStatusResolved",false)
+                    }
                 }
               },
 
+            /**
+             * @method onUpdate
+             */
             onUpdate: function() {
                 this.set('content', {
                     state: get(this, 'state'),

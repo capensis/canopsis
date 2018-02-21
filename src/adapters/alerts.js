@@ -28,12 +28,14 @@ Ember.Application.initializer({
 
             // Method called in the controller to fetch data
             findQuery: function(store, query, q) {
-				        var url = '/alerts/get-alarms';
+                var url = '/alerts/get-alarms';
                 if (query == 'get-current-alarm') {
                     return this.ajax('/alerts/get-current-alarm', 'GET', {data: q});
                     // return this.ajax('/alerts/get-alarms', 'GET', {data: q});
-                    
                 } else {
+                    if (query["sort_key"] != undefined && query["sort_key"].substring(0, 2) != "v."){
+                        query["sort_key"] = "v." + query["sort_key"];
+                    }
                     return this.ajax(url, 'GET', {data: query});
                 };
             }

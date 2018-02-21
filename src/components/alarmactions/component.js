@@ -4,15 +4,20 @@ Ember.Application.initializer({
         var get = Ember.get,
             set = Ember.set,
             isNone = Ember.isNone;
+            __ = Ember.String.loc;
+
         /**
-         * This is the eventcategories component for the widget calendar
+         * This is the alarmactions component for the widget listalarm
          *
-         * @class eventcategories component
-         * @memberOf canopsis.frontend.brick-calendar
+         * @class alarmactions component
          */
         var component = Ember.Component.extend({
             tagName: 'td',
             classNames: ['action-cell'],
+
+            /**
+             * @property actionsMap
+             */
             actionsMap: Ember.A([
                 {
                     class: 'glyphicon glyphicon-saved',
@@ -44,19 +49,12 @@ Ember.Application.initializer({
                     name: 'assignticketnumber',
                     mixin_name: 'assocticket'
                 },
-                // teeeeeeeeeeeeeeeeeeeest
                 {
-                    class: 'fa fa-calendar-o',
+                    class: 'fa fa-pause',
                     internal_states: ['immutable' ,'unacked', 'acked', 'cancelled'],
                     name: 'pbehavior',
                     mixin_name: 'pbehavior'
                 },
-                // {
-                //     class: 'glyphicon glyphicon-trash',
-                //     internal_states: ['acked'],
-                //     name: 'cancelalarm',
-                //     mixin_name: 'cancel'
-                // },
                 {
                     class: 'glyphicon glyphicon-trash',
                     internal_states: ['acked'],
@@ -81,25 +79,40 @@ Ember.Application.initializer({
                     name: 'snoozealarm',
                     mixin_name: 'snooze'
                 }
-                // TODO declare incident
             ]),
+
+            /**
+             * @method init
+             */
             init: function() {
                 this._super();
+
+                // Translating tooltips
+                this.get('actionsMap').filter(function(item, index, enumerable) {
+                        Ember.set(item, 'translation', __(item.name));
+                });
               },
+
+            /**
+             * @property availableActions
+             */
             availableActions: function() {
                 var intState = this.get('internalState');
-                // return this.get('actionsMap');
                 var actions = this.get('actionsMap').filter(function(item, index, enumerable) {
                     return item.internal_states.includes(intState)
                 });
                 if (this.get('isSnoozed')) {
                     actions.removeObject(actions.findBy('mixin_name', 'snooze'))
                 };
-                if (this.get('isChangedByUser')) {
-                    actions.removeObject(actions.findBy('mixin_name', 'cancelack'))                    
+                if (this.get('isClosed')) {
+                    actions.removeObject(actions.findBy('mixin_name', 'pbehavior'))
                 }
                 return actions;
-            }.property('internalState', 'isSnoozed', 'isChangedByUser'),
+            }.property('internalState', 'isSnoozed', 'isChangedByUser', 'isClosed'),
+
+            /**
+             * @property internalState
+             */
             internalState: function() {
                 if (this.get('alarm.state.val') == 0) {
                     return 'immutable';
@@ -112,32 +125,53 @@ Ember.Application.initializer({
                 }
                 return 'unacked';
             }.property('alarm.state.val', 'isCanceled', 'isAcked'),
+
+            /**
+             * @property isAcked
+             */
             isAcked: function() {
                 return this.get('alarm.extra_details.ack') != undefined;
             }.property('alarm.changed', 'alarm.extra_details'),
-//             isRemoved: function() {
-//                 return false;
-// // TODO temporary solution
-//             }.property('alarm.ack._t'),
+
+            /**
+             * @property isCanceled
+             */
             isCanceled: function () {
                 return this.get('alarm.canceled') != undefined;
             }.property('alarm.canceled'),
-//             isRestored: function () {
-//                 return false;
-// // TODO temporary solution
-//             }.property('alarm.ack._t'),
+
+            /**
+             * @property isSnoozed
+             */
             isSnoozed: function () {
-                return this.get('alarm.extra_details.snooze') != undefined; 
+                return this.get('alarm.extra_details.snooze') != undefined;
             }.property('alarm.extra_details.snooze'),
+
+            /**
+             * @property hasLinks
+             */
             hasLinks: function() {
                 return this.get('alarm.linklist.event_links.length') > 0;
             }.property('alarm.linklist.event_links'),
 
+            /**
+             * @property isChangedByUser
+             */
             isChangedByUser: function () {
                 return this.get('alarm.state._t') == 'changestate'
             }.property('alarm.state._t'),
 
+            /**
+             * @property isClosed
+             */
+            isClosed: function () {
+                return this.get('alarm.state.val') == 0;
+            }.property('alarm.state.val'),
+
             actions: {
+                /**
+                 * @method sendAction
+                 */
                 sendAction: function (action) {
                     this.sendAction('action', action, this.get('alarm'));
                 }

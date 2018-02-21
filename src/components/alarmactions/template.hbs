@@ -2,7 +2,7 @@
   <div class="actions-parent" style="display:flex">
 
     {{#each action in availableActions}}
-      <button {{action 'sendAction' action}} {{bind-attr title=action.name}} type="button" class="btn btn-xs btn-default">
+      <button {{action 'sendAction' action}} {{bind-attr title=action.translation}} type="button" class="btn btn-xs btn-default">
           <i {{bind-attr class=action.class}}></i>
       </button>
     {{/each}}
@@ -11,7 +11,7 @@
               <i class="fa fa-info"></i>
               <span class="caret"></span>
           </button>
-          <ul class="dropdown-menu" role="menu" style="right:0; left:auto;">
+          <ul class="dropdown-menu" role="menu" style="right:0;">
             {{#each link in alarm.linklist.event_links}}
               <li>
                   <a target="_blank" {{bind-attr href=link.url}}>{{link.label}}</a>
@@ -21,3 +21,4 @@
     {{/if}}
   </div>
 </div>
+
