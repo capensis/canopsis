@@ -41,12 +41,39 @@ cd cmd/feeder && go build . && ./feeder
 import "git.canopsis.net/canopsis/go-revolution/canopsis"
 ```
 
-## Go Dependencies
+## Go setup
 
-Use [glide](https://glide.sh/).
+Fetch the latest release of Go: https://golang.org/dl/
 
 ```
-glide install
+wget https://dl.google.com/go/go1.9.4.linux-amd64.tar.gz
+rm -rf /usr/local/go && tar xf go1.9.4.linux-amd64.tar.gz -C /usr/local/
+export PATH=$PATH:/usr/local/go/bin
+```
+
+Setup Go environment:
+
+```
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
+mkdir -p $GOPATH/{bin,src}
+mkdir -p $GOPATH/src/git.canopsis.net/canopsis
+```
+
+Clone the project if not already done:
+
+```
+git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/
+```
+
+Install Glide: https://glide.sh/
+
+Build some binaries:
+
+```
+cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
+make
 ```
 
 ## Tests - GoConvey
