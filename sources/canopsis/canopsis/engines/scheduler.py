@@ -70,7 +70,6 @@ class engine(Engine):
 
         for job in jobs:
             job = job.dump()
-
             self.logger.debug(u'Job: {0}'.format(job))
 
             if job['last_execution'] <= 0:
@@ -92,6 +91,8 @@ class engine(Engine):
     def do_job(self, job):
         self.logger.info(u'Execute job: {0}'.format(job))
 
+        if "params" not in job:
+            job["params"] = {}
         job['params']['jobid'] = job['_id']
         job['params']['jobctx'] = job.get('context', {})
 
