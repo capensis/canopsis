@@ -20,6 +20,8 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+
+from copy import deepcopy
 from json import dumps
 from time import time, sleep
 
@@ -281,8 +283,8 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 1)
         self.assertEqual(json[0]['state']['val'], 2)
-        self.assertFalse(json[0]['hasactivepbehaviorinentities'])
-        self.assertFalse(json[0]['hasallactivepbehaviorinentities'])
+        self.assertFalse(json[0]['active_pb_some'])
+        self.assertFalse(json[0]['active_pb_all'])
 
         # Read specific watcher 1
         r = self._send(url=self.base + '/' + self.watcher_1['_id'])
@@ -312,8 +314,8 @@ class TestWeatherAPI(BasicWeatherAPITest):
         json = self.get_watcher(watcher_filter_1)
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 1)
-        self.assertFalse(json[0]['hasactivepbehaviorinentities'])
-        self.assertTrue(json[0]['hasallactivepbehaviorinentities'])
+        self.assertTrue(json[0]['active_pb_some'])
+        self.assertTrue(json[0]['active_pb_all'])
 
         # Verifiyng specific watcher state
         r = self._send(url=self.base + '/' + self.watcher_1['_id'])
@@ -343,8 +345,8 @@ class TestWeatherAPI(BasicWeatherAPITest):
         json = self.get_watcher(watcher_filter_1)
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 1)
-        self.assertTrue(json[0]['hasactivepbehaviorinentities'])
-        self.assertFalse(json[0]['hasallactivepbehaviorinentities'])
+        self.assertTrue(json[0]['active_pb_some'])
+        self.assertFalse(json[0]['active_pb_all'])
 
         # Verifying specific watcher state after event 2
         r = self._send(url=self.base + '/' + self.watcher_1['_id'])
@@ -357,7 +359,12 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertListEqual(states, [2, 3])
 
         # Verifying watcher state on a wrong pbh type
-        json = self.get_watcher("{}?pb_types=['{}']"
-                                .format(watcher_filter_1, 'wrong_type'))
+        pbtyped_wfilter_1 = dumps(
+            {
+                '_id': self.watcher_1['_id'],
+                'active_pb_type': 'wrong_type',
+            },
+        )
+        json = self.get_watcher("{}".format(pbtyped_wfilter_1))
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 0)
