@@ -224,7 +224,7 @@ class WatcherFilter(object):
         if pb_types is None:
             pb_types = list()
 
-        if not isinstance(pb_types, list):
+        if not (isinstance(pb_types, list) or isinstance(pb_types, set)):
             raise ValueError('wrong pb_types value: not a list')
 
         logic_some_all = False
@@ -244,6 +244,20 @@ class WatcherFilter(object):
             logic_some_all = True
 
         return logic_some_all and self._filter_pb_types(pb_types)
+
+def pbehavior_types(pbehaviors):
+    """
+    Return a set containing all type_ found in pbehaviors.
+    :param pbehaviors
+    """
+    pb_types = set()
+
+    for pb in pbehaviors:
+        pb_type = pb.get('type_', None)
+        if pb_type is not None:
+            pb_types.add(pb_type)
+
+    return pb_types
 
 def watcher_status(watcher, pbehavior_eids_merged):
     """
@@ -368,9 +382,6 @@ def exports(ws):
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
-        pb_types = request.query.pb_types or DEFAULT_PB_TYPES
-        if isinstance(pb_types, string_types):
-            pb_types = cfg_to_array(pb_types)
 
         try:
             start = int(start)
@@ -383,8 +394,7 @@ def exports(ws):
 
         watcher_filter['type'] = 'watcher'
         watcher_filter = wf.filter(watcher_filter)
-        pb_types = list(set(pb_types) | wf.types())
-        filter_on_pb_type = len(pb_types) > 0
+        pb_types = wf.types()
 
         watcher_list = context_manager.get_entities(
             query=watcher_filter,
@@ -416,10 +426,8 @@ def exports(ws):
         merged_eids_tracer = set(merged_eids_tracer)
 
         # List all activated pbh eids, ordered by pbh id
-        if filter_on_pb_type:
-            actives_pb = pbehavior_manager.get_active_pbehaviors_from_type(pb_types)
-        else:
-            actives_pb = pbehavior_manager.get_all_active_pbehaviors()
+        actives_pb = pbehavior_manager.get_all_active_pbehaviors()
+
         for pbh in actives_pb:
             active_pb_dict[pbh['_id']] = set(pbh.get('eids', []))
             active_pb_dict_full[pbh['_id']] = pbh
@@ -509,7 +517,9 @@ def exports(ws):
             if tmp_next_run is not None:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
-            if wf.appendable(wstatus[1], wstatus[0]) is True:
+            watcher_pb_types = pbehavior_types(enriched_entity['pbehavior'])
+
+            if wf.appendable(wstatus[1], wstatus[0], pb_types=watcher_pb_types) is True:
                 watchers.append(enriched_entity)
 
         watchers = sorted(watchers, key=itemgetter("display_name"))
