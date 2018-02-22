@@ -108,6 +108,7 @@ class WatcherFilter(object):
     def __init__(self):
         self._all = None
         self._some = None
+        self._types = set()
 
     def all(self):
         """
@@ -120,6 +121,13 @@ class WatcherFilter(object):
         :returns: True, False or None
         """
         return self._some
+
+    def types(self):
+        """
+        :returns: set of pbehavior types to filter on.
+        :rtype: set[str]
+        """
+        return self._types
 
     def to_bool(self, value):
         if value in ['1', 1, "true", "True"]:
@@ -136,6 +144,10 @@ class WatcherFilter(object):
             elif k == 'active_pb_some':
                 self._some = self.to_bool(v)
                 del cdoc['active_pb_some']
+
+            elif k == 'active_pb_type':
+                self._types.add(str(v).strip().lower())
+                del cdoc['active_pb_type']
 
             else:
                 nv = self._filter(v)
@@ -175,28 +187,61 @@ class WatcherFilter(object):
 
         return doc
 
+    def _filter_pb_types(self, pb_types):
+        # set flag to true if we are ok to take any pbehavior type
+        #   no pb_types   -> True
+        #   some pb_types -> False
+        logic_type_ok = len(pb_types) == 0
+
+        for pb_type in pb_types:
+            if pb_type.strip().lower() in self.types():
+                logic_type_ok = True
+                break
+
+        return logic_type_ok
+
     def filter(self, doc):
         res = self._filter(doc)
         if res is None:
             return {}
         return res
 
-    def appendable(self, allstatus, somestatus):
+    def appendable(self, allstatus, somestatus, pb_types=None):
+        """
+        Call WatcherFilter.filter(filter_) first before calling this function.
+
+        :param allstatus bool: watcher has all entities with an active pbehavior
+        :param somestatus bool: watcher has some or all entities with an active pbehavior
+        :param pb_types list[str]: list of pbehavior types to filter on. If None or empty, any types will be ok.
+        """
+        if not isinstance(allstatus, bool):
+            raise ValueError('wrong allstatus value: not a bool')
+        if not isinstance(somestatus, bool):
+            raise ValueError('wrong somestatus value: not a bool')
+
+        if pb_types is None:
+            pb_types = list()
+
+        if not isinstance(pb_types, list):
+            raise ValueError('wrong pb_types value: not a list')
+
+        logic_some_all = False
+
         if self.all() is None and self.some() is None:
-            return True
+            logic_some_all = True
 
         elif self.all() is not None and self.some() is not None:
+            # cannot be simplified as only this test.
             if self.all() == allstatus and self.some() == somestatus:
-                return True
-            return False
+                logic_some_all = True
 
         elif self.all() is allstatus and self.all() is not None:
-            return True
+            logic_some_all = True
 
         elif self.some() is somestatus and self.some() is not None:
-            return True
+            logic_some_all = True
 
-        return False
+        return logic_some_all and self._filter_pb_types(pb_types)
 
 def watcher_status(watcher, pbehavior_eids_merged):
     """

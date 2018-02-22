@@ -81,6 +81,14 @@ class TestWatcherFilter(unittest.TestCase):
 
         doc7 = {}
 
+        doc8 = {
+            "$and": [
+                {"active_pb_type": "cotcot"},
+                {"active_pb_type": "CooooT"} # case is important in this test, do not modify.
+            ]
+        }
+        fdoc8 = {}
+
         wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc1), fdoc1)
         self.assertTrue(wf.all())
@@ -121,6 +129,16 @@ class TestWatcherFilter(unittest.TestCase):
         self.assertTrue(wf.appendable(False, False))
         self.assertTrue(wf.appendable(True, False))
         self.assertTrue(wf.appendable(True, True))
+
+        wf = WatcherFilter()
+        self.assertDictEqual(wf.filter(doc8), fdoc8)
+        self.assertTrue(wf.appendable(True, True)) # no pb type given, all supported
+        self.assertTrue(wf.appendable(True, True, pb_types=["CooooT"]))
+        self.assertTrue(wf.appendable(True, True, pb_types=["cOOOOt"]))
+        self.assertTrue(wf.appendable(True, True, pb_types=[]))
+        self.assertFalse(wf.appendable(True, True, pb_types=["Courou"]))
+        with self.assertRaises(ValueError):
+            wf.appendable(True, True, "haha-nelson.com")
 
 if __name__ == '__main__':
     output = root_path + "/tests_report"
