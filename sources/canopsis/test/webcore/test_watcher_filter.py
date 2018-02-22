@@ -110,6 +110,8 @@ class TestWatcherFilter(unittest.TestCase):
         wf.filter(doc6)
         self.assertTrue(wf.appendable(False, True))
         self.assertFalse(wf.appendable(False, False))
+        self.assertFalse(wf.appendable(True, False))
+        self.assertFalse(wf.appendable(True, True))
 
 if __name__ == '__main__':
     output = root_path + "/tests_report"
