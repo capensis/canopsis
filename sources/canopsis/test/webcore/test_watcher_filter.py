@@ -133,9 +133,12 @@ class TestWatcherFilter(unittest.TestCase):
         wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc8), fdoc8)
         self.assertTrue(wf.appendable(True, True)) # no pb type given, all supported
+        self.assertTrue(wf.appendable(True, True, pb_types=[]))
         self.assertTrue(wf.appendable(True, True, pb_types=["CooooT"]))
         self.assertTrue(wf.appendable(True, True, pb_types=["cOOOOt"]))
-        self.assertTrue(wf.appendable(True, True, pb_types=[]))
+        self.assertTrue(wf.appendable(True, True, pb_types=["cOtcOt", "cOOOOt"]))
+        self.assertTrue(wf.appendable(True, True, pb_types=["cUtcUt", "cOtcOt", "cOOOOt"]))
+        self.assertFalse(wf.appendable(True, True, pb_types=["cUtcUt"]))
         self.assertFalse(wf.appendable(True, True, pb_types=["Courou"]))
         with self.assertRaises(ValueError):
             wf.appendable(True, True, "haha-nelson.com")
