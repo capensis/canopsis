@@ -204,7 +204,7 @@ def watcher_status(watcher, pbehavior_eids_merged):
 
     :param dict watcher: watcher entity document
     :param set pbehavior_eids_merged: set with eids
-    :returns: has active pb status and has all active pb status
+    :returns: has active pb status (or all), has all active pb status
     :rtype: (bool, bool)
     """
     bool_set = set([e in pbehavior_eids_merged for e in watcher['depends']])
@@ -215,7 +215,7 @@ def watcher_status(watcher, pbehavior_eids_merged):
         return True, False
     elif at_least_one:
         # has_all_active_pbh
-        return False, True
+        return True, True
 
     return False, False
 
@@ -450,8 +450,8 @@ def exports(ws):
                 alarm_dict
             )
             wstatus = watcher_status(watcher, merged_pbehaviors_eids)
-            enriched_entity["hasactivepbehaviorinentities"] = wstatus[0]
-            enriched_entity["hasallactivepbehaviorinentities"] = wstatus[1]
+            enriched_entity["active_pb_some"] = wstatus[0]
+            enriched_entity["active_pb_all"] = wstatus[1]
             enriched_entity['has_baseline'] = check_baseline(
                 merged_eids_tracer,
                 watcher['depends']
