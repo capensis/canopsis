@@ -17,28 +17,28 @@ class TestWatcherFilter(unittest.TestCase):
         doc1 = {
             "$and": [
                 {
-                    "hasallactivepbehaviorinentities": False
+                    "active_pb_all": False
                 },
                 {
                     "$or": [
                         {
-                            "hasallactivepbehaviorinentities": False
+                            "active_pb_all": False
                         },
                     ],
                 },
                 {
                     "$or": [
                         {
-                            "hasallactivepbehaviorinentities": False
+                            "active_pb_all": False
                         },
                         {"IWillBeBack":2}
                     ],
                 },
                 {
                     "SarahConnor": {
-                        "hasallactivepbehaviorinentities": True
+                        "active_pb_all": True
                     },
-                    "hasallactivepbehaviorinentities": True
+                    "active_pb_all": True
                 }
             ]
         }
@@ -47,7 +47,7 @@ class TestWatcherFilter(unittest.TestCase):
         doc2 = {
             "$and": [
                 {"SarahConnor":{"$eq": 'Terminated'}},
-                {"hasactivepbehaviorinentities": True},
+                {"active_pb_some": True},
             ]
         }
         fdoc2 = {'$and': [{'SarahConnor': {'$eq': 'Terminated'}}]}

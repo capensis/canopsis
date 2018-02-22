@@ -102,7 +102,7 @@ def __format_pbehavior(pbehavior):
 
 class WatcherFilter(object):
     """
-    Filter out hasallactivepbehaviorinentities and hasactivepbehaviorinentities.
+    Filter out active_pb_some and active_pb_all.
     """
 
     def __init__(self):
@@ -129,13 +129,13 @@ class WatcherFilter(object):
     def _filter_dict(self, dictdoc):
         cdoc = copy.deepcopy(dictdoc)
         for k, v in dictdoc.items():
-            if k == 'hasallactivepbehaviorinentities':
+            if k == 'active_pb_all':
                 self._all = self.to_bool(v)
-                del cdoc['hasallactivepbehaviorinentities']
+                del cdoc['active_pb_all']
 
-            elif k == 'hasactivepbehaviorinentities':
+            elif k == 'active_pb_some':
                 self._some = self.to_bool(v)
-                del cdoc['hasactivepbehaviorinentities']
+                del cdoc['active_pb_some']
 
             else:
                 nv = self._filter(v)
