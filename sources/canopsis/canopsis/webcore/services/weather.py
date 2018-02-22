@@ -23,6 +23,8 @@
 
 from __future__ import unicode_literals
 
+from pprint import pprint
+
 import copy
 import json
 
@@ -265,26 +267,32 @@ def watcher_status(watcher, pbehavior_eids_merged):
     return False, False
 
 
-def get_active_pbehaviors_on_watchers(watchers_ids,
+def get_active_pbehaviors_on_watchers(watchers,
                                       active_pb_dict,
                                       active_pb_dict_full):
     """
     get_active_pbehaviors_on_watchers.
 
-    :param list watchers_ids:
+    :param list watchers:
     :param list active_pb_dict:
     :param list active_pb_dict_full: list of pbehavior dict
     :returns: dict of watcher with list of active pbehavior
     """
     active_pb_on_watchers = {}
-    for watcher_id in watchers_ids:
+
+    for watcher in watchers:
         tmp_pbh = []
+        watcher_depends = set(watcher.get('depends', []))
+
         for key, eids in active_pb_dict.items():
-            if watcher_id in eids:
-                tmp_pbh.append(active_pb_dict_full[key])
+            for eid in eids:
+                if eid in watcher_depends:
+                    tmp_pbh.append(active_pb_dict_full[key])
+
         for pbh in tmp_pbh:
             pbh['isActive'] = True
-        active_pb_on_watchers[watcher_id] = tmp_pbh
+
+        active_pb_on_watchers[watcher['_id']] = tmp_pbh
 
     return active_pb_on_watchers
 
@@ -363,7 +371,7 @@ def exports(ws):
         pb_types = request.query.pb_types or DEFAULT_PB_TYPES
         if isinstance(pb_types, string_types):
             pb_types = cfg_to_array(pb_types)
-        filter_on_pb_type = len(pb_types) > 0
+
         try:
             start = int(start)
         except ValueError:
@@ -375,6 +383,9 @@ def exports(ws):
 
         watcher_filter['type'] = 'watcher'
         watcher_filter = wf.filter(watcher_filter)
+        pb_types = list(set(pb_types) | wf.types())
+        filter_on_pb_type = len(pb_types) > 0
+
         watcher_list = context_manager.get_entities(
             query=watcher_filter,
             limit=limit,
@@ -418,12 +429,10 @@ def exports(ws):
             for depends_id in watcher['depends']:
                 depends_merged.add(depends_id)
             entity_watchers_ids.append(watcher['_id'])
-            alarm_watchers_ids.append(
-                '{}'.format(watcher['_id'])
-            )
+            alarm_watchers_ids.append(watcher['_id'])
 
         active_pbehaviors = get_active_pbehaviors_on_watchers(
-            entity_watchers_ids,
+            watcher_list,
             active_pb_dict,
             active_pb_dict_full
         )
@@ -448,7 +457,6 @@ def exports(ws):
                     next_run_dict[alert['d']] = alarmfilter['next_run']
 
         for watcher in watcher_list:
-            ws.logger.debug(watcher)
             enriched_entity = {}
             tmp_alarm = alarm_dict.get(
                 '{}'.format(watcher['_id']),
@@ -483,12 +491,7 @@ def exports(ws):
                 if 'resource' in tmp_alarm.keys():
                     enriched_entity['resource'] = tmp_alarm['resource']
 
-            enriched_entity['pbehavior'] = active_pbehaviors.get(
-                watcher['_id'],
-                []
-            )
-            if filter_on_pb_type and enriched_entity['pbehavior'] not in pb_types:
-                continue
+            enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
             enriched_entity["mfilter"] = watcher["mfilter"]
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
                 watcher['depends'],
