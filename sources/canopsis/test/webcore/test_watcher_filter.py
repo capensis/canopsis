@@ -66,6 +66,19 @@ class TestWatcherFilter(unittest.TestCase):
         }
         fdoc4 = {'$and': [{'T-800': {'$contains': None}}]}
 
+        doc5 = {
+            "$and": [
+                {"active_pb_some": True}
+            ]
+        }
+
+        doc6 = {
+            "$and": [
+                {"active_pb_some": True},
+                {"active_pb_all": False}
+            ]
+        }
+
         wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc1), fdoc1)
         self.assertTrue(wf.all())
@@ -85,6 +98,18 @@ class TestWatcherFilter(unittest.TestCase):
         self.assertDictEqual(wf.filter(doc4), fdoc4)
         self.assertIsNone(wf.all())
         self.assertIsNone(wf.some())
+
+        wf = WatcherFilter()
+        wf.filter(doc5)
+        self.assertTrue(wf.appendable(False, True))
+        self.assertTrue(wf.appendable(True, True))
+        self.assertFalse(wf.appendable(True, False))
+        self.assertFalse(wf.appendable(False, False))
+
+        wf = WatcherFilter()
+        wf.filter(doc6)
+        self.assertTrue(wf.appendable(False, True))
+        self.assertFalse(wf.appendable(False, False))
 
 if __name__ == '__main__':
     output = root_path + "/tests_report"
