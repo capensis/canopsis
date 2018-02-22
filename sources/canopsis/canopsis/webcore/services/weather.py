@@ -23,8 +23,6 @@
 
 from __future__ import unicode_literals
 
-from pprint import pprint
-
 import copy
 import json
 
@@ -193,14 +191,14 @@ class WatcherFilter(object):
         # set flag to true if we are ok to take any pbehavior type
         #   no pb_types   -> True
         #   some pb_types -> False
-        logic_type_ok = len(pb_types) == 0
+        if len(pb_types) == 0 or len(self.types()) == 0:
+            return True
 
         for pb_type in pb_types:
             if pb_type.strip().lower() in self.types():
-                logic_type_ok = True
-                break
+                return True
 
-        return logic_type_ok
+        return False
 
     def filter(self, doc):
         res = self._filter(doc)
@@ -518,7 +516,6 @@ def exports(ws):
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
             watcher_pb_types = pbehavior_types(enriched_entity['pbehavior'])
-
             if wf.appendable(wstatus[1], wstatus[0], pb_types=watcher_pb_types) is True:
                 watchers.append(enriched_entity)
 
