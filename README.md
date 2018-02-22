@@ -19,7 +19,7 @@ db.periodical_alarm.createIndex({d:1})
 
 ## Engines
 
-```
+```bash
 export CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost/canopsis"
 export CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost/canopsis"
 export CPS_REDIS_URL="redis://nouser:dbpassword@host:port/0"
@@ -27,7 +27,7 @@ export CPS_INFLUX_URL="http://cpsinflux:canopsis@host:8086"
 export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/canopsis/default_configuration.toml"
 ```
 
-```
+```bash
 cd cmd/engines-axe && go build . && ./engine-axe
 cd cmd/engines-che && go build . && ./engine-che
 cd cmd/engines-lifeline && go build . && ./engine-lifeline
@@ -45,7 +45,7 @@ import "git.canopsis.net/canopsis/go-revolution/canopsis"
 
 Fetch the latest release of Go: https://golang.org/dl/
 
-```
+```bash
 wget https://dl.google.com/go/go1.9.4.linux-amd64.tar.gz
 rm -rf /usr/local/go && tar xf go1.9.4.linux-amd64.tar.gz -C /usr/local/
 export PATH=$PATH:/usr/local/go/bin
@@ -53,7 +53,7 @@ export PATH=$PATH:/usr/local/go/bin
 
 Setup Go environment:
 
-```
+```bash
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
@@ -63,7 +63,7 @@ mkdir -p $GOPATH/src/git.canopsis.net/canopsis
 
 Clone the project if not already done:
 
-```
+```bash
 git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/
 ```
 
@@ -71,7 +71,7 @@ Install Glide: https://glide.sh/
 
 Build some binaries:
 
-```
+```bash
 cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
 make
 ```
@@ -82,13 +82,13 @@ You will need engines environment variables.
 
 If you want to skip tests with long run times:
 
-```
+```bash
 export CPS_TEST_SKIP_LONG=1
 ```
 
 Then run `goconvey`:
 
-```
+```bash
 goconvey -workDir ${GOPATH}/src/git.canopsis.net/canopsis/go-revolution/
 ```
 
