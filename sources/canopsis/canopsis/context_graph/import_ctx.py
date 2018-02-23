@@ -216,7 +216,7 @@ class Manager():
         if len(status) > 0:
             return status[0]
 
-        return None
+        return {'status': 'not_found', '_id': _id}
 
 
 class ContextGraphImport(ContextGraph):
