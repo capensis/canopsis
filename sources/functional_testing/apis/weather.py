@@ -26,6 +26,7 @@ from json import dumps
 from time import time, sleep
 
 from canopsis.event import forger
+from canopsis.watcher.model import WatcherModel
 from test_base import BaseApiTest, Method, HTTP
 
 
@@ -186,6 +187,220 @@ class TestWeatherAPI_Empty(BasicWeatherAPITest):
         self.assertEqual(json['name'], 'resource_not_found')
 """
 
+class TestWeatherFilterAPI(BasicWeatherAPITest):
+
+    def init_tests(self):
+        self.evt_ok1 = forger(
+            event_type='check',
+            connector='gutamaya',
+            connector_name='imperial',
+            source_type='resource',
+            component='test_weatherfilter',
+            resource='ok1',
+            state=0,
+            output='cutter'
+        )
+
+        self.evt_ok2 = forger(
+            event_type='check',
+            connector='gutamaya',
+            connector_name='imperial',
+            source_type='resource',
+            component='test_weatherfilter',
+            resource='ok2',
+            state=0,
+            output='cutter'
+        )
+
+        self.evt_paused = forger(
+            event_type='check',
+            connector='gutamaya',
+            connector_name='imperial',
+            source_type='resource',
+            component='test_weatherfilter',
+            resource='paused',
+            state=0,
+            output='cutter'
+        )
+        self.evt_paused_id = 'paused/test_weatherfilter'
+
+        self.evt_maintenance = forger(
+            event_type='check',
+            connector='faulcon',
+            connector_name='delacy',
+            source_type='resource',
+            component='test_weatherfilter',
+            resource='maintenance',
+            state=0,
+            output='cobraMKIII'
+        )
+        self.evt_maintenance_id = 'maintenance/test_weatherfilter'
+
+        now = int(time())
+        self.pb_paused = {
+            'name': 'gutamaya_imperial_interdictor',
+            'author': 'cmdr',
+            'filter_': {'_id': self.evt_paused_id},
+            'rrule': None,
+            'tstart': now,
+            'tstop': now + 60 * 60,
+            'type_': 'pause'
+        }
+
+        self.pb_maintenance = {
+            'name': 'cobramkIII',
+            'author': 'cmdr',
+            'filter_': {'_id': self.evt_maintenance_id},
+            'rrule': None,
+            'tstart': now,
+            'tstop': now + 60 * 60,
+            'type_': 'maintenance'
+        }
+
+        self.watcher_ok = WatcherModel(
+            "weatherfilter_ok",
+            {
+                "_id": {
+                    "$in": [
+                        "ok1/test_weatherfilter",
+                        "ok2/test_weatherfilter"
+                    ]
+                }
+            },
+            "only_ok"
+        )
+
+        self.watcher_partial_pause = WatcherModel(
+            "weatherfilter_partial_pause",
+            {
+                "_id": {
+                    "$in": [
+                        "paused/test_weatherfilter",
+                        "ok1/test_weatherfilter"
+                    ]
+                }
+            },
+            "partialy_paused"
+        )
+
+        self.watcher_full_pause = WatcherModel(
+            "weatherfilter_full_pause",
+            {
+                "_id": {
+                    "$in": [
+                        "maintenance/test_weatherfilter",
+                        "paused/test_weatherfilter"
+                    ]
+                }
+            },
+            "paused_maintenance"
+        )
+
+        self.watcher_mixed = WatcherModel(
+            "weatherfilter_mixed",
+            {
+                "_id": {
+                    "$in": [
+                        "maintenance/test_weatherfilter",
+                        "paused/test_weatherfilter",
+                        "ok1/test_weatherfilter"
+                    ]
+                }
+            },
+            "mixed"
+        )
+
+    def setUp(self):
+        self._authenticate()
+        self.init_tests()
+        self.setup_tests()
+
+    def tearDown(self):
+        def delete_watcher(watcher_id):
+            self._send(
+                url='{}/api/v2/watchers/{}'.format(self.URL_BASE, watcher_id),
+                method=Method.delete
+            )
+
+        for wid in self.watcher_ids:
+            delete_watcher(wid)
+
+    def setup_tests(self):
+        self.watcher_ids = []
+
+        # send events
+        def send_event(evt):
+            url = '{}/api/v2/event'.format(self.URL_BASE)
+            r = self._send(url=url, method=Method.post, data=dumps(evt))
+            self.assertEqual(r.status_code, HTTP.OK.value)
+
+        send_event(self.evt_ok1)
+        send_event(self.evt_ok2)
+        send_event(self.evt_paused)
+        send_event(self.evt_maintenance)
+
+        # ensure context entities
+        sleep(1)
+        url = '{}/context'.format(self.URL_BASE)
+        ctx_filter = {
+            "impact":{"$in":["test_weatherfilter"]},
+            "type":{"$in":["resource", "component"]}
+        }
+        data={'_filter': ctx_filter}
+        r = self._send(url=url, method=Method.post, data=dumps(data))
+        self.assertEqual(r.status_code, HTTP.OK.value)
+        self.assertEqual(r.json()['total'], 4)
+
+        # send pbehaviors and force compute
+        r = self._send(
+            url='{}/api/v2/pbehavior'.format(self.URL_BASE),
+            method=Method.post,
+            data=dumps(self.pb_maintenance))
+        self.assertEqual(r.status_code, HTTP.OK.value)
+
+        r = self._send(
+            url='{}/api/v2/pbehavior'.format(self.URL_BASE),
+            method=Method.post,
+            data=dumps(self.pb_paused))
+        self.assertEqual(r.status_code, HTTP.OK.value)
+
+        r = self._send(
+            url='{}/api/v2/compute-pbehaviors'.format(self.URL_BASE),
+            method=Method.get)
+        self.assertEqual(r.status_code, HTTP.OK.value)
+        self.assertTrue(r.json())
+
+        # send watchers and force compute
+        def send_watcher(watcher):
+            r = self._send(
+                url='{}/api/v2/watchers'.format(self.URL_BASE),
+                method=Method.post,
+                data=dumps(watcher.to_dict()))
+            self.watcher_ids.append(watcher.id_)
+            self.assertEqual(r.status_code, HTTP.OK.value)
+
+        send_watcher(self.watcher_ok)
+        send_watcher(self.watcher_partial_pause)
+        send_watcher(self.watcher_full_pause)
+        send_watcher(self.watcher_mixed)
+
+        url = '{}/api/v2/watchers/compute-watchers-links'.format(self.URL_BASE)
+        r = self._send(url=url, method=Method.get)
+        self.assertTrue(r.json())
+
+    def test_watcher_filter(self):
+        pass
+
+        # test watcher OK
+
+
+        # test watcher PARTIALY PAUSED
+
+
+        # test watcher FULL PAUSED
+
+
+        # test watcher MIXED
 
 class TestWeatherAPI(BasicWeatherAPITest):
 
@@ -235,7 +450,7 @@ class TestWeatherAPI(BasicWeatherAPITest):
                        data=dumps(self.watcher_3))
         self.assertEqual(r.status_code, HTTP.OK.value)
 
-        self.pbheavior_url = '{}/api/v2/pbehavior'.format(self.URL_BASE)
+        self.pbehavior_url = '{}/api/v2/pbehavior'.format(self.URL_BASE)
         self.pbehavior_ids = []
 
     def tearDown(self):
@@ -243,7 +458,7 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.context_cleanup()
 
         for pbehavior_id in self.pbehavior_ids:
-            self._send(url=self.pbheavior_url + '/' + pbehavior_id,
+            self._send(url=self.pbehavior_url + '/' + pbehavior_id,
                        method=Method.delete)
 
     def get_watcher(self, watcher_filter):
@@ -296,15 +511,15 @@ class TestWeatherAPI(BasicWeatherAPITest):
         self.assertIsNone(json[0]['automatic_action_timer'])
 
         # Adding a pbehavior on event 1
-        r = self._send(url=self.pbheavior_url,
+        r = self._send(url=self.pbehavior_url,
                        method=Method.post,
                        data=dumps(self.pbehavior1))
         self.pbehavior_ids.append(r.json())
         self.assertEqual(r.status_code, HTTP.OK.value)
 
         # Force compute on pbehaviors
-        pbheavior_url = '{}/api/v2/compute-pbehaviors'.format(self.URL_BASE)
-        r = self._send(url=pbheavior_url,
+        pbehavior_url = '{}/api/v2/compute-pbehaviors'.format(self.URL_BASE)
+        r = self._send(url=pbehavior_url,
                        method=Method.get)
         self.assertEqual(r.status_code, HTTP.OK.value)
         json = r.json()

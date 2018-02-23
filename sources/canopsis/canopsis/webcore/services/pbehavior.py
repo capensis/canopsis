@@ -504,7 +504,8 @@ def exports(ws):
         """
         global last_pbehaviors_compute
         now = int(time())
-        do_compute = last_pbehaviors_compute + PBEHAVIOR_COMPUTE_COOLDOWN < now
+        #do_compute = last_pbehaviors_compute + PBEHAVIOR_COMPUTE_COOLDOWN < now
+        do_compute = True
 
         if do_compute:
             ws.logger.info('Force compute on all pbehaviors')

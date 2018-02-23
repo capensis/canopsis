@@ -84,6 +84,7 @@ def exports(ws):
         except ValueError as ex:
             return gen_json_error({'description': 'value error: {}'.format(ex)},
                                   HTTP_ERROR)
+
         if watcher_create is None:
             return gen_json_error({'description': 'can\'t decode mfilter'},
                                   HTTP_ERROR)
@@ -144,7 +145,8 @@ def exports(ws):
         """
         global last_watchers_compute
         now = int(time())
-        do_compute = last_watchers_compute + WATCHER_COMPUTE_COOLDOWN < now
+        #do_compute = last_watchers_compute + WATCHER_COMPUTE_COOLDOWN < now
+        do_compute = True
 
         if do_compute:
             ws.logger.info('Force compute of watcher links')

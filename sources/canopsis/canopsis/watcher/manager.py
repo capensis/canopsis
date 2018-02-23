@@ -70,6 +70,9 @@ class Watcher:
         except ValueError:
             self.logger.error('can t decode mfilter')
             return None
+        except KeyError:
+            self.logger.error('no filter')
+            return None
 
         depends_list = self.context_graph.get_entities(
             query=watcher_finder,
@@ -143,7 +146,7 @@ class Watcher:
         :param string watcher_id: watcher_id
         :returns: the mongodb dict response
         """
-        self.context_graph.delete_entity(watcher_id)
+        print(self.context_graph.delete_entity(watcher_id))
 
         self.sla_storage.remove_elements(ids=[watcher_id])
 
