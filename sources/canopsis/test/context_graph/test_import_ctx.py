@@ -1634,6 +1634,11 @@ class ReportManager(unittest.TestCase):
 
         self.assertDictEqual(result, expected)
 
+    def test_get_import_status_none(self):
+        id_ = 'C0t0cT0tAPWetPWETlPwetIsPwetBork'
+        res = self.manager.get_import_status(id_)
+
+        self.assertDictEqual(res, {'status': 'not_found', '_id': id_})
 
 if __name__ == '__main__':
     output = root_path + "/tests_report"
