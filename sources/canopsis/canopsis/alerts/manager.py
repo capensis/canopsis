@@ -475,7 +475,7 @@ class Alerts(object):
             if Check.STATE not in event:
                 event[Check.STATE] = get_last_state(alarm)
 
-            # set event_type to stop['_t'] if we don't have any valid mapping.
+            # set event_type to step['_t'] if we don't have any valid mapping.
             event['event_type'] = typemap.get(step['_t'], step['_t'])
 
             for field in self.extra_fields:
