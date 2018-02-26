@@ -595,6 +595,8 @@ class TestWeatherFilterAPI(BasicWeatherAPITest):
 
             watchers = sorted(r.json())
 
+            self.assertEqual(len(watchers), 2)
+
             self.assertEqual(watchers[0]['entity_id'], 'weatherfilter_mixed')
             self.assertEqual(len(watchers[0]['pbehavior']), 2)
 
