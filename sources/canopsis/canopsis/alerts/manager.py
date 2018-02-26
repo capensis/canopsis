@@ -470,13 +470,13 @@ class Alerts(object):
                 event[self.AUTHOR] = step['a']
 
             if step['_t'] in check_referer_types:
-                event['event_type'] = 'check'
                 event['ref_rk'] = get_routingkey(event)
 
             if Check.STATE not in event:
                 event[Check.STATE] = get_last_state(alarm)
 
-            event['event_type'] = typemap[step['_t']]
+            # set event_type to stop['_t'] if we don't have any valid mapping.
+            event['event_type'] = typemap.get(step['_t'], step['_t'])
 
             for field in self.extra_fields:
                 if field in alarm[AlarmField.extra.value]:
