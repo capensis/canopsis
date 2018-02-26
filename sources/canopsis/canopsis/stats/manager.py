@@ -700,7 +700,7 @@ class Stats(MiddlewareRegistry):
             else:
                 return 0
 
-    def get_ok_ko(self, connector, component, resource=None):
+    def get_ok_ko(self, entity_id):
         """For an entity defined by component, connector, resource return
         the number of OK check and KO check.
         :param connector: the connector of the entity
@@ -708,22 +708,12 @@ class Stats(MiddlewareRegistry):
         :param resource: the resource of the entity
         :return: a dict with two key ok and ko or none if no data are found for
         the given entity."""
-        template = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
-                   "event_state_history WHERE connector='{0}' and component=" \
-                   "'{1}' {2} GROUP BY component, connector {3}" \
 
-        if resource is not None:
-            query = template.format(connector,
-                                    component,
-                                    resource,
-                                    ", resource")
-        else:
-            query = template.format(connector, component, "", "")
+        query = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
+                "event_state_history WHERE eid='{0}'"
 
-        with open("/tmp/plop.log", 'a') as fd:
-            fd.write("{}\n".format(query))
+        result = self.influxdbstg.raw_query(query.format(entity_id))
 
-        result = self.influxdbstg.raw_query(query)
         data = list(result.get_points())
         if len(data) > 0:
             data = data[0]
