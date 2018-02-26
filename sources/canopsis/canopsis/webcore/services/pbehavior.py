@@ -37,8 +37,6 @@ from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.watcher.manager import Watcher as WatcherManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
-last_pbehaviors_compute = 0
-PBEHAVIOR_COMPUTE_COOLDOWN = 10
 
 VALID_PBEHAVIOR_PARAMS = [
     'name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
@@ -502,15 +500,8 @@ def exports(ws):
 
         :rtype: bool
         """
-        global last_pbehaviors_compute
-        now = int(time())
-        #do_compute = last_pbehaviors_compute + PBEHAVIOR_COMPUTE_COOLDOWN < now
-        do_compute = True
-
-        if do_compute:
-            ws.logger.info('Force compute on all pbehaviors')
-            last_pbehaviors_compute = now
-            pbm.compute_pbehaviors_filters()
-            pbm.launch_update_watcher(watcher_manager)
+        ws.logger.info('Force compute on all pbehaviors')
+        pbm.compute_pbehaviors_filters()
+        pbm.launch_update_watcher(watcher_manager)
 
         return gen_json(do_compute)
