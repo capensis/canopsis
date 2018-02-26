@@ -21,6 +21,8 @@
 
 from __future__ import unicode_literals
 
+import json
+
 from copy import deepcopy
 from json import dumps
 from time import time, sleep
@@ -296,6 +298,18 @@ class TestWeatherFilterAPI(BasicWeatherAPITest):
             "paused_maintenance"
         )
 
+        self.watcher_full_pause_maintenance = WatcherModel(
+            "watcherfilter_full_pause_maintenance",
+            {
+                "_id": {
+                    "$in": [
+                        "maintenance/test_weatherfilter",
+                    ]
+                }
+            },
+            "maintenance"
+        )
+
         self.watcher_mixed = WatcherModel(
             "weatherfilter_mixed",
             {
@@ -322,11 +336,21 @@ class TestWeatherFilterAPI(BasicWeatherAPITest):
                 method=Method.delete
             )
 
+        def delete_pbehavior(pb_id):
+            self._send(
+                url='{}/api/v2/pbehavior/{}'.format(self.URL_BASE, pb_id),
+                method=Method.delete
+            )
+
         for wid in self.watcher_ids:
             delete_watcher(wid)
 
+        for pb_id in self.pbehavior_ids:
+            delete_pbehavior(pb_id)
+
     def setup_tests(self):
         self.watcher_ids = []
+        self.pbehavior_ids = []
 
         # send events
         def send_event(evt):
@@ -357,12 +381,14 @@ class TestWeatherFilterAPI(BasicWeatherAPITest):
             method=Method.post,
             data=dumps(self.pb_maintenance))
         self.assertEqual(r.status_code, HTTP.OK.value)
+        self.pbehavior_ids.append(r.json())
 
         r = self._send(
             url='{}/api/v2/pbehavior'.format(self.URL_BASE),
             method=Method.post,
             data=dumps(self.pb_paused))
         self.assertEqual(r.status_code, HTTP.OK.value)
+        self.pbehavior_ids.append(r.json())
 
         r = self._send(
             url='{}/api/v2/compute-pbehaviors'.format(self.URL_BASE),
@@ -382,6 +408,7 @@ class TestWeatherFilterAPI(BasicWeatherAPITest):
         send_watcher(self.watcher_ok)
         send_watcher(self.watcher_partial_pause)
         send_watcher(self.watcher_full_pause)
+        send_watcher(self.watcher_full_pause_maintenance)
         send_watcher(self.watcher_mixed)
 
         url = '{}/api/v2/watchers/compute-watchers-links'.format(self.URL_BASE)
@@ -389,18 +416,207 @@ class TestWeatherFilterAPI(BasicWeatherAPITest):
         self.assertTrue(r.json())
 
     def test_watcher_filter(self):
-        pass
+        def test_watcher_all():
+            url = '{}/api/v2/weather/watchers/{}'.format(self.URL_BASE, '{}')
+            r = self._send(url)
+            watchers = r.json()
+            self.assertEqual(len(watchers), 5)
 
-        # test watcher OK
+        def test_watcher_ok():
+            filter_ = {
+                'active_pb_some': False
+            }
+            url = '{}/api/v2/weather/watchers/{}'.format(self.URL_BASE, json.dumps(filter_))
+            r = self._send(url)
 
+            self.assertEqual(r.status_code, HTTP.OK.value)
 
-        # test watcher PARTIALY PAUSED
+            watchers = r.json()
+            self.assertEqual(len(watchers), 1)
+            watcher = watchers[0]
 
+            self.assertFalse(watcher['active_pb_all'])
+            self.assertFalse(watcher['active_pb_some'])
+            self.assertEqual(watcher['state']['val'], 0)
+            self.assertEqual(watcher['display_name'], 'only_ok')
+            self.assertEqual(watcher['entity_id'], 'weatherfilter_ok')
+            self.assertEqual(len(watcher['pbehavior']), 0)
 
-        # test watcher FULL PAUSED
+        def test_watcher_partially_paused():
+            filter_ = {
+                'active_pb_some': True,
+                'active_pb_all': False
+            }
+            url = '{}/api/v2/weather/watchers/{}'.format(self.URL_BASE, json.dumps(filter_))
+            r = self._send(url)
+            self.assertEqual(r.status_code, HTTP.OK.value)
+            watchers = r.json()
 
+            self.assertEqual(len(watchers), 2)
 
-        # test watcher MIXED
+            self.assertFalse(watchers[0]['active_pb_all'])
+            self.assertTrue(watchers[0]['active_pb_some'])
+            self.assertEqual(watchers[0]['entity_id'], 'weatherfilter_mixed')
+            self.assertEqual(len(watchers[0]['pbehavior']), 2)
+            watcher0_pbehaviors = sorted(watchers[0]['pbehavior'])
+            self.assertEqual(watcher0_pbehaviors[0]['name'], 'cobramkIII')
+            self.assertEqual(watcher0_pbehaviors[0]['type_'], 'maintenance')
+            self.assertEqual(watcher0_pbehaviors[1]['name'], 'gutamaya_imperial_interdictor')
+            self.assertEqual(watcher0_pbehaviors[1]['type_'], 'pause')
+
+            self.assertFalse(watchers[1]['active_pb_all'])
+            self.assertTrue(watchers[1]['active_pb_some'])
+            self.assertEqual(watchers[1]['entity_id'], 'weatherfilter_partial_pause')
+            self.assertEqual(len(watchers[1]['pbehavior']), 1)
+            self.assertEqual(watchers[1]['pbehavior'][0]['name'], 'gutamaya_imperial_interdictor')
+            self.assertEqual(watchers[1]['pbehavior'][0]['type_'], 'pause')
+
+        def test_watcher_full_paused():
+            filter_ = {
+                'active_pb_some': True,
+                'active_pb_all': True,
+                'active_pb_type': 'pause'
+            }
+            url = '{}/api/v2/weather/watchers/{}'.format(self.URL_BASE, json.dumps(filter_))
+            r = self._send(url)
+            self.assertEqual(r.status_code, HTTP.OK.value)
+
+            watchers = r.json()
+
+            self.assertEqual(len(watchers), 1)
+            self.assertEqual(watchers[0]['entity_id'], 'weatherfilter_full_pause')
+            self.assertTrue(watchers[0]['active_pb_all'])
+            self.assertTrue(watchers[0]['active_pb_some'])
+            self.assertEqual(len(watchers[0]['pbehavior']), 2)
+
+            pbehaviors = sorted(watchers[0]['pbehavior'])
+
+            self.assertEqual(pbehaviors[0]['name'], 'cobramkIII')
+            self.assertEqual(pbehaviors[0]['type_'], 'maintenance')
+            self.assertEqual(pbehaviors[1]['name'], 'gutamaya_imperial_interdictor')
+            self.assertEqual(pbehaviors[1]['type_'], 'pause')
+
+        def test_watcher_full_paused_maintenance():
+            filter1 = {
+                'active_pb_some': True,
+                'active_pb_type': 'pause'
+            }
+            url = '{}/api/v2/weather/watchers/{}'.format(self.URL_BASE, json.dumps(filter1))
+            r = self._send(url)
+            self.assertEqual(r.status_code, HTTP.OK.value)
+
+            watchers = sorted(r.json())
+
+            self.assertEqual(watchers[0]['entity_id'], 'weatherfilter_mixed')
+            self.assertEqual(watchers[1]['entity_id'], 'weatherfilter_partial_pause')
+            self.assertEqual(watchers[2]['entity_id'], 'weatherfilter_full_pause')
+
+            self.assertEqual(len(watchers), 3)
+
+            pbehaviors = sorted(watchers[0]['pbehavior'])
+            self.assertEqual(len(pbehaviors), 2)
+            self.assertEqual(pbehaviors[0]['name'], 'cobramkIII')
+            self.assertEqual(pbehaviors[0]['type_'], 'maintenance')
+            self.assertEqual(pbehaviors[1]['name'], 'gutamaya_imperial_interdictor')
+            self.assertEqual(pbehaviors[1]['type_'], 'pause')
+
+            pbehaviors = sorted(watchers[1]['pbehavior'])
+            self.assertEqual(len(pbehaviors), 1)
+            self.assertEqual(pbehaviors[0]['name'], 'gutamaya_imperial_interdictor')
+            self.assertEqual(pbehaviors[0]['type_'], 'pause')
+
+            pbehaviors = sorted(watchers[2]['pbehavior'])
+            self.assertEqual(len(pbehaviors), 2)
+            self.assertEqual(pbehaviors[0]['name'], 'cobramkIII')
+            self.assertEqual(pbehaviors[0]['type_'], 'maintenance')
+            self.assertEqual(pbehaviors[1]['name'], 'gutamaya_imperial_interdictor')
+            self.assertEqual(pbehaviors[1]['type_'], 'pause')
+
+            # return two watchers, also one with a "pause" because this watchers also
+            # have a maintenance pbehavior.
+            filter2 = {
+                'active_pb_some': True,
+                'active_pb_all': True,
+                'active_pb_type': 'maintenance'
+            }
+            url = '{}/api/v2/weather/watchers/{}'.format(self.URL_BASE, json.dumps(filter2))
+            r = self._send(url)
+            self.assertEqual(r.status_code, HTTP.OK.value)
+
+            watchers = sorted(r.json())
+            self.assertEqual(len(watchers), 2)
+
+            self.assertEqual(watchers[0]['entity_id'], 'watcherfilter_full_pause_maintenance')
+            pbehaviors = sorted(watchers[0]['pbehavior'])
+            self.assertEqual(len(pbehaviors), 1)
+            self.assertEqual(pbehaviors[0]['name'], 'cobramkIII')
+            self.assertEqual(pbehaviors[0]['type_'], 'maintenance')
+
+            self.assertEqual(watchers[1]['entity_id'], 'weatherfilter_full_pause')
+            pbehaviors = sorted(watchers[1]['pbehavior'])
+            self.assertEqual(len(pbehaviors), 2)
+            self.assertEqual(pbehaviors[0]['name'], 'cobramkIII')
+            self.assertEqual(pbehaviors[0]['type_'], 'maintenance')
+            self.assertEqual(pbehaviors[1]['name'], 'gutamaya_imperial_interdictor')
+            self.assertEqual(pbehaviors[1]['type_'], 'pause')
+
+            # return no watcher as the only allowed pbehavior type is "YouDied" and we don't have any.
+            filter2 = {
+                'active_pb_some': True,
+                'active_pb_type': 'YouDied'
+            }
+            url = '{}/api/v2/weather/watchers/{}'.format(self.URL_BASE, json.dumps(filter2))
+            r = self._send(url)
+            self.assertEqual(r.status_code, HTTP.OK.value)
+
+            watchers = r.json()
+            self.assertEqual(len(watchers), 0)
+
+            # will return watchers without pbehavior
+            filter3 = {
+                'active_pb_type': 'YouDied'
+            }
+            url = '{}/api/v2/weather/watchers/{}'.format(self.URL_BASE, json.dumps(filter3))
+            r = self._send(url)
+            self.assertEqual(r.status_code, HTTP.OK.value)
+
+            watchers = r.json()
+            self.assertEqual(len(watchers), 1)
+            self.assertEqual(len(watchers[0]['pbehavior']), 0)
+
+        def test_watcher_mixed():
+            filter_ = {
+                'active_pb_some': True,
+                'active_pb_all': False
+            }
+            url = '{}/api/v2/weather/watchers/{}'.format(self.URL_BASE, json.dumps(filter_))
+            r = self._send(url)
+            self.assertEqual(r.status_code, HTTP.OK.value)
+
+            watchers = sorted(r.json())
+
+            self.assertEqual(watchers[0]['entity_id'], 'weatherfilter_mixed')
+            self.assertEqual(len(watchers[0]['pbehavior']), 2)
+
+            pbehaviors = sorted(watchers[0]['pbehavior'])
+            self.assertEqual(pbehaviors[0]['name'], 'cobramkIII')
+            self.assertEqual(pbehaviors[0]['type_'], 'maintenance')
+            self.assertEqual(pbehaviors[1]['name'], 'gutamaya_imperial_interdictor')
+            self.assertEqual(pbehaviors[1]['type_'], 'pause')
+
+            self.assertEqual(watchers[1]['entity_id'], 'weatherfilter_partial_pause')
+            self.assertEqual(len(watchers[1]['pbehavior']), 1)
+
+            pbehaviors = sorted(watchers[1]['pbehavior'])
+            self.assertEqual(pbehaviors[0]['name'], 'gutamaya_imperial_interdictor')
+            self.assertEqual(pbehaviors[0]['type_'], 'pause')
+
+        test_watcher_all()
+        test_watcher_ok()
+        test_watcher_partially_paused()
+        test_watcher_full_paused()
+        test_watcher_full_paused_maintenance()
+        test_watcher_mixed()
 
 class TestWeatherAPI(BasicWeatherAPITest):
 
