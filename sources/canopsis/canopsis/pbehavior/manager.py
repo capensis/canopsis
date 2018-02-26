@@ -305,7 +305,7 @@ class PBehaviorManager(object):
         now = int(time())
 
         for pb in cursor:
-            if pb['tstart'] <= now and pb['tstop'] >= now:
+            if pb['tstart'] <= now and (pb['tstop'] is None or pb['tstop'] >= now):
                 pb['isActive'] = True
             else:
                 pb['isActive'] = False
