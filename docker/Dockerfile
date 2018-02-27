@@ -35,6 +35,8 @@ COPY sources/webcore /sources/webcore
 COPY tools/brickmanager /sources/brickmanager
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
 
+
+
 ## Canopsis Core Image
 FROM canopsis/canopsis-sysbase:${TAG}
 
@@ -62,7 +64,7 @@ RUN mkdir -p ./etc/init.d && \
     mkdir -p var/cache/canopsis && \
     mkdir -p tmp && \
     sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \
-    chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
+    chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/
 
 # Copy UI bricks as root
 COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
@@ -70,5 +72,6 @@ RUN . ${CPS_HOME}/bin/activate && \
     python /brickmanager enable brick-querybuilder
 
 USER ${CPS_USER}:${CPS_GROUP}
+
 EXPOSE 8082
 ENTRYPOINT /entrypoint.sh
