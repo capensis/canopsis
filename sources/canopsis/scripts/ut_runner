@@ -19,7 +19,6 @@ TESTS_REPORT_DIR = "tests_report"
 
 PATTERN = re.compile("^(?!__).*(?!__)\.py$")
 
-sys.path.append(DEFAULT_TEST_DIR)
 
 def parse_args():
     """Parse the command line arguments."""
@@ -50,6 +49,10 @@ def load_test(modnames, test_suite):
 def main():
     args = parse_args()
     modname_list = get_tests_list(args.test_dir)
+
+    DEFAULT_TEST_DIR = args.test_dir
+
+    sys.path.append(DEFAULT_TEST_DIR)
 
     result_dir = os.path.join(root_path, TESTS_REPORT_DIR)
     if not os.path.exists(result_dir):
