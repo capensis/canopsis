@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 
 if [ "${2}" = "" ]; then
-    echo "Usage: $0 <tag> <brick_branch>"
+    echo "Usage: $0 <tag> <brick_branch> [test]"
     exit 1
 fi
 
@@ -17,3 +17,7 @@ cd $workdir
 
 docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile.sysbase -t canopsis/canopsis-sysbase:${tag} .
 docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile -t canopsis/canopsis-core:${tag} .
+
+if [ "${3}" == "test" ]; then
+    docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile.tests -t canopsis/canopsis-core:${tag}-test .
+fi
