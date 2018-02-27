@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 from canopsis.engines.core import Engine, publish
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
