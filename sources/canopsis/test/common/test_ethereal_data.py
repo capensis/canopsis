@@ -3,6 +3,8 @@
 from __future__ import unicode_literals
 
 from time import sleep
+import configparser
+import os
 import unittest
 from canopsis.common import root_path
 from canopsis.common.ethereal_data import EtherealData
@@ -10,15 +12,21 @@ from canopsis.common.mongo_store import MongoStore, DEFAULT_DB_NAME
 from canopsis.confng import Configuration, Ini
 import xmlrunner
 
+DEFAULT_CONF_FILE = "etc/common/mongo_store.conf"
+
 
 class TestEtherealData(unittest.TestCase):
 
     def setUp(self):
+        config = configparser.RawConfigParser()
+        config.read(os.path.join(root_path, DEFAULT_CONF_FILE))
         self.conf = {
             MongoStore.CONF_CAT: {
-                'db': DEFAULT_DB_NAME,
-                'user': 'cpsmongo',
-                'pwd': 'canopsis'
+                "host": config["DATABASE"]["host"],
+                "port": config["DATABASE"]["port"],
+                'db': config["DATABASE"]["db"],
+                'user': config["DATABASE"]["user"],
+                'pwd': config["DATABASE"]["pwd"]
             }
         }
         self.client = MongoStore(config=self.conf)
