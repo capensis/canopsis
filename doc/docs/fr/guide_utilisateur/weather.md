@@ -14,11 +14,11 @@ Ces options ne sont disponibles qu’au travers du filtre créé avec le `query 
 
 Voici un exemple de filtre créé sur une vue MdS :
 
-![weather_filter](weather_filter.png)
+![weather_filter](pics/weather_filter.png)
 
 Et le filtre généré correspondant (pour vérification) :
 
-![weather_generated_filter](weather_generated_filter.png)
+![weather_generated_filter](pics/weather_generated_filter.png)
 
 ### Comportement des filtres
 
