@@ -604,6 +604,7 @@ def exports(ws):
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
             if current_alarm is not None:
+                enriched_entity['ticket'] = current_alarm['ticket']
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
                 enriched_entity['snooze'] = current_alarm['snooze']
