@@ -40,13 +40,14 @@ class PBehavior(object):
                  connector=DEFAULT_CONNECTOR_VALUE,
                  connector_name=DEFAULT_CONNECTOR_NAME_VALUE,
                  comments=None, eids=None, type_=None, reason=None,
+                 enabled=True,
                  *args, **kwargs):
         """
         :param str _id: pbehavior id
         :param str name: pbehavior name
         :param dict filter_: matched entites, as mongo filter dicts
         :param int tstart: starting timestamp of the pbehavior
-        :param int tstop: stopping timestamp of the pbehavior
+        :param int tstop: stopping timestamp of the pbehavior. Can be None if this pbehavior does not expire
         :param str rrule: reccurent rule that is compliant with rrule spec
         :param str connector: connector that has generated the pbehavior
         :param str connector_name: connector_name that has generated the pbehavior
@@ -55,6 +56,7 @@ class PBehavior(object):
         :param list eids: impacted entity ids
         :param str type_: particuliar type (editable trough ui ; pause...)
         :param str reason: explanation on pbehavior creation
+        :param bool enabled: allow this pbehavior to be used. This is NOT the same as the is_active property.
         """
         if filter_ is None or not isinstance(filter_, dict):
             filter_ = {}
@@ -68,6 +70,7 @@ class PBehavior(object):
             reason = ''
 
         self._id = _id
+        self.enabled = enabled
         self.name = name
         self.filter_ = filter_
         self.tstart = tstart
@@ -81,8 +84,6 @@ class PBehavior(object):
         self.type_ = type_
         self.reason = reason
 
-        if self.ENABLED in kwargs:
-            del kwargs[self.ENABLED]  # calculated property
         if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
 
@@ -117,11 +118,16 @@ class PBehavior(object):
         return new_pbh_dict
 
     @property
-    def enabled(self):
+    def is_active(self):
         """
-        Is the pbehavior currently active ?
+        :returns: is this pbehavior currently active.
+        :rtype: bool
         """
         now = int(time.time())
+
+        if self.tstart <= now and self.tstop is None:
+            return True
+
         return self.tstart <= now <= self.tstop
 
     def to_dict(self):
