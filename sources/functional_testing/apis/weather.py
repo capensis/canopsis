@@ -28,7 +28,7 @@ from json import dumps
 from time import time, sleep
 
 from canopsis.event import forger
-from canopsis.watcher.model import WatcherModel
+from canopsis.models.watcher import WatcherModel
 from test_base import BaseApiTest, Method, HTTP
 
 
