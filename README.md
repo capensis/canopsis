@@ -86,13 +86,19 @@ Exchange canopsis.events -> CHE -> Event Filter -> Axe + Autres engines...
 
 ### Configuration
 
- * `etc/supervisord.d/amqp2engines.conf` : retirer `engine-cleaner-alerts`, `engine-cleaner-events` et `engine-alerts`
+ * `etc/supervisord.d/amqp2engines.conf` : retirer `engine-cleaner-alerts`, `engine-cleaner-events` et `engine-alerts`. Utile uniquement avec une installation `build-install`.
  * `etc/amqp2engines.conf` : retirer toute occurrence des engines précédents, et ajouter `axe` dans la liste `next` de l’engine `event filter`.
 
 ```ini
 [engine:event_filter]
 next = axe,...
 ```
+
+Dans le cas d’une installation en `build-install` :
+
+```
+su - canopsis -c "supervisorctl update"
+su - canopsis -c "hypcontrol start"
 
 ### RabbitMQ
 
