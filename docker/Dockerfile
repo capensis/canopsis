@@ -59,12 +59,15 @@ COPY tools/brickmanager /brickmanager
 
 ADD docker/files/entrypoint.sh /
 
+# Do NOT chown the entire CPS_HOME directory:
+#  * Security: the user must not be able to change runtime files.
+#  * Image size: docker is dumb, until --squash is stable.
 RUN mkdir -p ./etc/init.d && \
     mkdir -p var/log/engines && \
     mkdir -p var/cache/canopsis && \
     mkdir -p tmp && \
     sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \
-    chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/
+    chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
 
 # Copy UI bricks as root
 COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/

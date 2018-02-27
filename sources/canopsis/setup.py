@@ -170,7 +170,7 @@ def setup_canopsis(pkgpath):
     setuptools_args['license'] = LICENSE
     setuptools_args['zip_safe'] = ZIP_SAFE
     setuptools_args['url'] = URL
-    setuptools_args['packages'] = find_packages()
+    setuptools_args['packages'] = find_packages(exclude=['test.*'])
     setuptools_args['keywords'] = KEYWORDS
     setuptools_args['version'] = VERSION
     setuptools_args['install_requires'] = get_install_requires(pkgpath)
