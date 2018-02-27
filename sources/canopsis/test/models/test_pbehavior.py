@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 
+import time
 import unittest
 
 from canopsis.common import root_path
@@ -39,6 +40,17 @@ class PBehaviorTest(unittest.TestCase):
         self.assertTrue(pbehavior.enabled)
 
         self.assertDictEqual(pbehavior.to_dict(), db_pbehavior)
+
+    def test_pbehavior_is_active(self):
+        pb = PBehavior(**PBehavior.convert_keys(db_pbehavior))
+        pb.tstop = None
+        self.assertTrue(pb.is_active)
+
+        pb.tstop = pb.tstart
+        self.assertFalse(pb.is_active)
+
+        pb.tstop = int(time.time()) + 1000
+        self.assertTrue(pb.is_active)
 
 if __name__ == '__main__':
     output = root_path + "/tests_report"
