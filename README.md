@@ -78,6 +78,14 @@ make
 
 ## Compat - Python + Go Engines
 
+L’objectif est d’avoir le schéma suivant de communication entre les engines :
+
+```
+Exchange canopsis.events -> CHE -> Event Filter -> Axe + Autres engines...
+```
+
+### Configuration
+
  * `etc/supervisord.d/amqp2engines.conf` : retirer `engine-cleaner-alerts`, `engine-cleaner-events` et `engine-alerts`
  * `etc/amqp2engines.conf` : retirer toute occurrence des engines précédents, et ajouter `axe` dans la liste `next` de l’engine `event filter`.
 
@@ -86,7 +94,7 @@ make
 next = axe,...
 ```
 
-Dans RabbitMQ :
+### RabbitMQ
 
 Pour une installation complètement cloisonnée, retirer tous les bindings des queues suivantes :
 
