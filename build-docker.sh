@@ -9,7 +9,7 @@ fi
 
 opt_squash=""
 tag="${1}"
-brick_branch="{2}"
+brick_branch="${2}"
 workdir=$(dirname $(readlink -e $0))
 cd $workdir
 
