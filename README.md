@@ -76,6 +76,30 @@ cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
 make
 ```
 
+## Compat - Python + Go Engines
+
+ * `etc/supervisord.d/amqp2engines.conf` : retirer `engine-cleaner-alerts`, `engine-cleaner-events` et `engine-alerts`
+ * `etc/amqp2engines.conf` : retirer toute occurrence des engines précédents, et ajouter `axe` dans la liste `next` de l’engine `event filter`.
+
+```ini
+[engine:event_filter]
+next = axe,...
+```
+
+Dans RabbitMQ :
+
+Pour une installation complètement cloisonnée, retirer tous les bindings des queues suivantes :
+
+ * `Engine_alerts`
+ * `Engine_cleaner_alerts`
+ * `Engine_cleaner_events`
+
+Créer et binder les queues suivantes :
+
+ * `Engine_che` : `canopsis.events` sur rk `#`
+ * `Engine_lifeline` : `canopsis.events` sur rk `#`
+ * `Engine_axe` : `amq.direct` sur rk `#`
+
 ## Tests - GoConvey
 
 You will need engines environment variables.
