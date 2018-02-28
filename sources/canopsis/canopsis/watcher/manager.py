@@ -70,6 +70,9 @@ class Watcher:
         except ValueError:
             self.logger.error('can t decode mfilter')
             return None
+        except KeyError:
+            self.logger.error('no filter')
+            return None
 
         depends_list = self.context_graph.get_entities(
             query=watcher_finder,

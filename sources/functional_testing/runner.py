@@ -63,6 +63,11 @@ def add_modules_from_folder(suite, folder):
 
 
 if __name__ == "__main__":
+    """
+    To run only one test:
+
+    python -m unittest -q apis.<module>[.<class>[.<test]]'
+    """
 
     parser = argparse.ArgumentParser(prog='functionnal testing runner')
     parser.add_argument('module_names', nargs='*',
