@@ -99,6 +99,7 @@ Dans le cas d’une installation en `build-install` :
 ```
 su - canopsis -c "supervisorctl update"
 su - canopsis -c "hypcontrol start"
+```
 
 ### RabbitMQ
 
