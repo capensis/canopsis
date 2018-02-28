@@ -337,7 +337,13 @@ def exports(ws):
 
         :raises ValueError: invalid keys sent.
         """
-        elements = request.json
+        try:
+            elements = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
 
         if elements is None:
             return gen_json_error(
