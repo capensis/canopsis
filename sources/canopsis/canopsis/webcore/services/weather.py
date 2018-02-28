@@ -448,10 +448,7 @@ def exports(ws):
                 merged_pbehaviors_eids.add(eid)
 
         # List alarm values has a dict
-        alarm_list = alarmreader_manager.get(
-            filter_={'v.resolved': None}
-        )['alarms']
-
+        alarm_list = alarmreader_manager.get(filter_={})['alarms']
         for alarm in alarm_list:
             alarm_dict[alarm['d']] = alarm['v']
 
@@ -487,8 +484,8 @@ def exports(ws):
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
                 enriched_entity['status'] = tmp_alarm['status']
-                enriched_entity['snooze'] = tmp_alarm.get('snooze')
-                enriched_entity['ack'] = tmp_alarm.get('ack')
+                enriched_entity['snooze'] = tmp_alarm['snooze']
+                enriched_entity['ack'] = tmp_alarm['ack']
                 enriched_entity['connector'] = tmp_alarm['connector']
                 enriched_entity['connector_name'] = (
                     tmp_alarm['connector_name']
@@ -610,8 +607,8 @@ def exports(ws):
                 enriched_entity['ticket'] = current_alarm['ticket']
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
-                enriched_entity['snooze'] = current_alarm.get('snooze')
-                enriched_entity['ack'] = current_alarm.get('ack')
+                enriched_entity['snooze'] = current_alarm['snooze']
+                enriched_entity['ack'] = current_alarm['ack']
                 enriched_entity['connector'] = current_alarm['connector']
                 enriched_entity['connector_name'] = (
                     current_alarm['connector_name']
