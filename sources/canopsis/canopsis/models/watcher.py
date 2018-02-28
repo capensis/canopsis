@@ -12,6 +12,8 @@ def type_check(name, value, type_):
 
     return value
 
+WORSTSTATE = 'worststate'
+
 class WatcherModel(object):
     """
     Model to ease making Watchers.
@@ -30,7 +32,7 @@ class WatcherModel(object):
     def __init__(
         self, id_, entity_filter, display_name,
         description=None, enable=True, downtimes_as_ok=True, output_tpl='',
-        state_when_all_ack='worststate', state_algorithm=None
+        state_when_all_ack=WORSTSTATE, state_algorithm=None
     ):
         if description is None:
             description = display_name
