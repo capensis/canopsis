@@ -335,7 +335,13 @@ def exports(ws):
 
         :raises ValueError: invalid keys sent.
         """
-        elements = request.json
+        try:
+            elements = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
 
         if elements is None:
             return gen_json_error(
@@ -359,7 +365,21 @@ def exports(ws):
                 HTTP_ERROR
             )
 
-        return gen_json(rhpb.create(**elements))
+        result = None
+        try:
+            return rhpb.create(**elements)
+        except TypeError:
+            return gen_json_error(
+                {'description': 'The fields name, filter, author, tstart, tstop are required.'
+                },
+                HTTP_ERROR
+            )
+        except ValueError as exc :
+            return gen_json_error(
+                {'description': '{}'.format(exc.message)
+                },
+                HTTP_ERROR
+            )
 
     @route(
         ws.application.get,
