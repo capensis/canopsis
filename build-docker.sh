@@ -9,11 +9,11 @@ fi
 
 opt_squash=""
 tag="${1}"
-brick_branch="${2}"
+bricks_tag="${2}"
 workdir=$(dirname $(readlink -e $0))
 cd $workdir
 
-./docker/build/bricks.sh "${brick_branch}"
+./docker/build/bricks.sh "${bricks_tag}"
 
 docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile.sysbase -t canopsis/canopsis-sysbase:${tag} .
 docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile -t canopsis/canopsis-core:${tag} .

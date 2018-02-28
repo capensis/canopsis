@@ -14,6 +14,8 @@
 
 [MockedWebServer](mockedwebserver.md)
 
+[Models](models.md)
+
 [MongoStore](mongo_store.md)
 
 [Monopackage](monopackage.md)

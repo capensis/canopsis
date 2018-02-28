@@ -58,6 +58,23 @@ l'URL qui sera générée à la volée sur un bac à alarmes sera :
 }
 ```
 
+### Basic alarm link builder
+
+Une classe permettant de construire des liens à partir d'informations de
+l'alarmes lié à l'entité ciblée est disponible. Par exemple, avec la
+configuration suivante:
+
+```json
+{
+    "basic_alarm_link_builder" : {
+        "base_url" : "http://www.mesconsignes.local/?q={alarm.v.component}"
+    }
+}
+```
+
+On va rechercher la valeur `component`, dans `v` de l'`alarm`. Si l'on ne
+précise pas **alarm**, la valeur sera recherchée dans l'entité.
+
 ### Mise en oeuvre backend
 
 La configuration préalablement établie doit être postée sur l'API de Canopsis
@@ -74,7 +91,7 @@ curl -POST http://x.x.x.x:8082/auth -d 'username=root&password=root' -vL -c cano
 curl -H "Content-Type: application/json" -X POST -d @basic_link_builder.json http://localhost:28082/api/v2/associativetable/link_builders_settings -b canopsis_cookie
 ```
 
-Si une configuration existe déjà en base, remplacez **POST** par **PUT**
+Si une configuration existe déjà en base, remplacez **POST** par **PUT**.
 
 
 Notez qu'un redémarrage du moteur **context-graph** ainsi que du **webserver** est nécessaire.
