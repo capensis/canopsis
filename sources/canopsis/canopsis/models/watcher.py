@@ -13,6 +13,19 @@ def type_check(name, value, type_):
     return value
 
 class WatcherModel(object):
+    """
+    Model to ease making Watchers.
+    """
+
+    _ID = '_id'
+    MFILTER = 'mfilter'
+    DISPLAY_NAME = 'display_name'
+    DESCRIPTION = 'description'
+    ENABLE = 'enable'
+    DOWNTIMES_AS_OK = 'downtimes_as_ok'
+    OUTPUT_TPL = 'output_tpl'
+    STATE_WHEN_ALL_ACK = 'state_when_all_ack'
+    STATE_ALGORITHM = 'state_algorithm'
 
     def __init__(
         self, id_, entity_filter, display_name,
@@ -36,13 +49,13 @@ class WatcherModel(object):
 
     def to_dict(self):
         return {
-            '_id': self.id_,
-            'mfilter': json.dumps(self.entity_filter),
-            'display_name': self.display_name,
-            'description': self.description,
-            'enable': self.enable,
-            'downtimes_as_ok': self.downtimes_as_ok,
-            'output_tpl': self.output_tpl,
-            'state_when_all_ack': self.state_when_all_ack,
-            'state_algorithm': self.state_algorithm,
+            self._ID: self.id_,
+            self.MFILTER: json.dumps(self.entity_filter),
+            self.DISPLAY_NAME: self.display_name,
+            self.DESCRIPTION: self.description,
+            self.ENABLE: self.enable,
+            self.DOWNTIMES_AS_OK: self.downtimes_as_ok,
+            self.OUTPUT_TPL: self.output_tpl,
+            self.STATE_WHEN_ALL_ACK: self.state_when_all_ack,
+            self.STATE_ALGORITHM: self.state_algorithm,
         }
