@@ -287,7 +287,7 @@ class ComputeState(BaseTest):
         self.assertEqual(res['state'], self.state)
 
 if __name__ == '__main__':
-    output = root_path + "/tests_report"
+    output = root_path + "/tmp/tests_report"
     unittest.main(
         testRunner=xmlrunner.XMLTestRunner(output=output),
         verbosity=3)
