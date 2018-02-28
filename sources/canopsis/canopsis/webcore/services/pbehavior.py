@@ -37,8 +37,6 @@ from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.watcher.manager import Watcher as WatcherManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
-last_pbehaviors_compute = 0
-PBEHAVIOR_COMPUTE_COOLDOWN = 10
 
 VALID_PBEHAVIOR_PARAMS = [
     'name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
@@ -337,7 +335,13 @@ def exports(ws):
 
         :raises ValueError: invalid keys sent.
         """
-        elements = request.json
+        try:
+            elements = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
 
         if elements is None:
             return gen_json_error(
@@ -361,7 +365,21 @@ def exports(ws):
                 HTTP_ERROR
             )
 
-        return gen_json(rhpb.create(**elements))
+        result = None
+        try:
+            return rhpb.create(**elements)
+        except TypeError:
+            return gen_json_error(
+                {'description': 'The fields name, filter, author, tstart, tstop are required.'
+                },
+                HTTP_ERROR
+            )
+        except ValueError as exc :
+            return gen_json_error(
+                {'description': '{}'.format(exc.message)
+                },
+                HTTP_ERROR
+            )
 
     @route(
         ws.application.get,
@@ -502,14 +520,8 @@ def exports(ws):
 
         :rtype: bool
         """
-        global last_pbehaviors_compute
-        now = int(time())
-        do_compute = last_pbehaviors_compute + PBEHAVIOR_COMPUTE_COOLDOWN < now
-
-        if do_compute:
-            ws.logger.info('Force compute on all pbehaviors')
-            last_pbehaviors_compute = now
-            pbm.compute_pbehaviors_filters()
-            pbm.launch_update_watcher(watcher_manager)
+        ws.logger.info('Force compute on all pbehaviors')
+        pbm.compute_pbehaviors_filters()
+        pbm.launch_update_watcher(watcher_manager)
 
         return gen_json(do_compute)

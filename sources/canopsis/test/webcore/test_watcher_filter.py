@@ -17,28 +17,28 @@ class TestWatcherFilter(unittest.TestCase):
         doc1 = {
             "$and": [
                 {
-                    "hasallactivepbehaviorinentities": False
+                    "active_pb_all": False
                 },
                 {
                     "$or": [
                         {
-                            "hasallactivepbehaviorinentities": False
+                            "active_pb_all": False
                         },
                     ],
                 },
                 {
                     "$or": [
                         {
-                            "hasallactivepbehaviorinentities": False
+                            "active_pb_all": False
                         },
                         {"IWillBeBack":2}
                     ],
                 },
                 {
                     "SarahConnor": {
-                        "hasallactivepbehaviorinentities": True
+                        "active_pb_all": True
                     },
-                    "hasallactivepbehaviorinentities": True
+                    "active_pb_all": True
                 }
             ]
         }
@@ -47,7 +47,7 @@ class TestWatcherFilter(unittest.TestCase):
         doc2 = {
             "$and": [
                 {"SarahConnor":{"$eq": 'Terminated'}},
-                {"hasactivepbehaviorinentities": True},
+                {"active_pb_some": True},
             ]
         }
         fdoc2 = {'$and': [{'SarahConnor': {'$eq': 'Terminated'}}]}
@@ -65,6 +65,29 @@ class TestWatcherFilter(unittest.TestCase):
             ]
         }
         fdoc4 = {'$and': [{'T-800': {'$contains': None}}]}
+
+        doc5 = {
+            "$and": [
+                {"active_pb_some": True}
+            ]
+        }
+
+        doc6 = {
+            "$and": [
+                {"active_pb_some": True},
+                {"active_pb_all": False}
+            ]
+        }
+
+        doc7 = {}
+
+        doc8 = {
+            "$and": [
+                {"active_pb_type": "cotcot"},
+                {"active_pb_type": "CooooT"} # case is important in this test, do not modify.
+            ]
+        }
+        fdoc8 = {}
 
         wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc1), fdoc1)
@@ -86,8 +109,42 @@ class TestWatcherFilter(unittest.TestCase):
         self.assertIsNone(wf.all())
         self.assertIsNone(wf.some())
 
+        wf = WatcherFilter()
+        wf.filter(doc5)
+        self.assertTrue(wf.appendable(False, True))
+        self.assertTrue(wf.appendable(True, True))
+        self.assertFalse(wf.appendable(True, False))
+        self.assertFalse(wf.appendable(False, False))
+
+        wf = WatcherFilter()
+        wf.filter(doc6)
+        self.assertTrue(wf.appendable(False, True))
+        self.assertFalse(wf.appendable(False, False))
+        self.assertFalse(wf.appendable(True, False))
+        self.assertFalse(wf.appendable(True, True))
+
+        wf = WatcherFilter()
+        wf.filter(doc7)
+        self.assertTrue(wf.appendable(False, True))
+        self.assertTrue(wf.appendable(False, False))
+        self.assertTrue(wf.appendable(True, False))
+        self.assertTrue(wf.appendable(True, True))
+
+        wf = WatcherFilter()
+        self.assertDictEqual(wf.filter(doc8), fdoc8)
+        self.assertTrue(wf.appendable(True, True)) # no pb type given, all supported
+        self.assertTrue(wf.appendable(True, True, pb_types=[]))
+        self.assertTrue(wf.appendable(True, True, pb_types=["CooooT"]))
+        self.assertTrue(wf.appendable(True, True, pb_types=["cOOOOt"]))
+        self.assertTrue(wf.appendable(True, True, pb_types=["cOtcOt", "cOOOOt"]))
+        self.assertTrue(wf.appendable(True, True, pb_types=["cUtcUt", "cOtcOt", "cOOOOt"]))
+        self.assertFalse(wf.appendable(True, True, pb_types=["cUtcUt"]))
+        self.assertFalse(wf.appendable(True, True, pb_types=["Courou"]))
+        with self.assertRaises(ValueError):
+            wf.appendable(True, True, "haha-nelson.com")
+
 if __name__ == '__main__':
-    output = root_path + "/tests_report"
+    output = root_path + "/tmp/tests_report"
     unittest.main(
         testRunner=xmlrunner.XMLTestRunner(output=output),
         verbosity=3)
