@@ -2,8 +2,9 @@ ARG TAG
 
 FROM canopsis/canopsis-core:${TAG}
 
-RUN echo "${CPS_HOME}"
 COPY sources/canopsis/test/ ${CPS_HOME}/test
+
 USER 0
 RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/test
+
 USER ${CPS_USER}:${CPS_GROUP}
