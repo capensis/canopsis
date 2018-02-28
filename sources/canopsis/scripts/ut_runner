@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
 import argparse
-import importlib
 import os
 import re
 import subprocess
-import shutil
 import sys
 import unittest
 
-import xmlrunner
 from canopsis.common import root_path
 
 DEFAULT_TEST_DIR = root_path + "/var/lib/canopsis/unittest/canopsis/"
@@ -28,6 +25,7 @@ def parse_args():
                         default=DEFAULT_TEST_DIR)
     return parser.parse_args()
 
+
 def get_tests_list(dir_):
     """Return the list with all unit test files in dir_ and his subdir.
     :param dir_: the directory where the search start
@@ -41,10 +39,12 @@ def get_tests_list(dir_):
 
     return files_
 
+
 def load_test(modnames, test_suite):
     loader = unittest.TestLoader()
     for mod in modnames:
         test_suite.addTest(loader.loadTestsFromName(mod))
+
 
 def main():
     args = parse_args()
@@ -95,6 +95,7 @@ def main():
 
     print("\n===============")
     print("Total : {0}\tPassed : {1}\tFailed : {2}".format(total, passed, failed))
+
 
 if __name__ == "__main__":
     main()
