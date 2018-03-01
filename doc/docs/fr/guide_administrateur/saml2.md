@@ -20,7 +20,7 @@ Exemple de configuration OneLogin :
 
 ### Création des paramètres - Côté Canopsis
 
-**Travaillez dans un dossier temporaire accessible par l’utilisateur `canopsis`, par exemple `~/tmp/saml2_setup`.**
+**Travaillez dans un dossier temporaire accessible par l’utilisateur `canopsis`, par exemple `/opt/canopsis/tmp/saml2_setup`.**
 
 Vous pouvez suivre cette documentation : https://github.com/onelogin/python-saml#knowing-the-toolkit
 
@@ -141,14 +141,14 @@ saml2_setup/
     secret_key
 ```
 
-Le fichier `conf_path` devra contenir le chemin de destination de la configuration SAML2 lorsqu’elle sera utilisée par le webserver canopsis.
+Le fichier `conf_path` devra contenir le chemin de destination de la configuration SAML2 lorsqu’elle sera utilisée par le webserver canopsis. Exemple : `/opt/canopsis/tmp/saml2`.
 
 Le fichier `secret_key` permettra de déchiffrer les données SAML2 en cas de chiffrement. Si vous n’activez pas le chiffrement, créez quand même ce fichier.
 
 Ensuite, dans l’environnement Canopsis, exécutez ceci dans un shell Python :
 
-```
-python -c 'from canopsis_cat.saml2 import SAML2Conf; SAML2Conf.insert_conf("<path to saml2 source conf directory>", SAML2Conf.provide_default_collection())'
+```bash
+python -c 'from canopsis_cat.saml2 import SAML2Conf; SAML2Conf.insert_conf("/opt/canopsis/tmp/saml2_setup", SAML2Conf.provide_default_collection())'
 ```
 
 Vous pouvez relancer cette commande autant de fois que nécessaire : la configuration en place sera tout simplement écrasée intégralement.
@@ -161,15 +161,15 @@ Donc si vous voulez apporter une modification de la configuration, pas besoin de
 
 ```ini
 [auth]
-; version pré-monopackage
+; version pré-monopackage < 2.5.0
 providers = saml2
-; version monopackage
+; version monopackage >= 2.5.0
 providers = canopsis_cat.auth.saml2
 
 [webservices]
-; version pré-monopackage
+; version pré-monopackage < 2.5.0
 saml2 = 1
-; version monopackage
+; version monopackage >= 2.5.0
 canopsis_cat.webcore.services.saml2 = 1
 ```
 
