@@ -21,7 +21,6 @@
 from __future__ import unicode_literals
 
 from bottle import request
-from time import time
 
 from canopsis.common.converters import id_filter
 from canopsis.watcher.manager import Watcher
@@ -79,12 +78,16 @@ def exports(ws):
         try:
             watcher_create = watcher.create_watcher(body=element)
         except ValueError as ex:
-            return gen_json_error({'description': 'value error: {}'.format(ex)},
-                                  HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'value error: {}'.format(ex)},
+                HTTP_ERROR
+            )
 
         if watcher_create is None:
-            return gen_json_error({'description': 'can\'t decode mfilter'},
-                                  HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'can\'t decode mfilter'},
+                HTTP_ERROR
+            )
 
         return gen_json({})
 
@@ -143,4 +146,4 @@ def exports(ws):
         ws.logger.info('Force compute of watcher links')
         build_all_links(watcher.context_graph)
 
-        return gen_json(do_compute)
+        return gen_json(True)
