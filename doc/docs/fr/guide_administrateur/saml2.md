@@ -4,20 +4,6 @@ Intégration de l’authentification avec SAML2
 
 Nécessite l’installation de la brique `CAT`.
 
-<!-- MarkdownTOC -->
-
-- Paramétrage IdP
-- Création des paramètres - Côté Canopsis
-- Intégration des paramètres en base
-- Activation de l’authentification SAML2
-- Tests et log
-- Troubleshooting
-    - FQDN
-    - Désynchro de configuration
-
-<!-- /MarkdownTOC -->
-
-
 ### Paramétrage IdP
 
  * ACS Consumer URL : `http[s]://canopsis.fqdn.tld/auth/saml2/acs/`
@@ -26,13 +12,13 @@ Nécessite l’installation de la brique `CAT`.
  * Recipient : `http[s]://canopsis.fqdn.tld/auth/saml2/acs/`
  * RelayState : `http[s]://canopsis.fqdn.tld/`
 
-L’IdP doit impérativement fournir dans les réponses d’authentification une valeur normalisée `NameID`. Il suffit de créer un *mapping* entre ce champs normalisé et une information unique dans le backend utilisé par l’IdP. Dans le cas contraire l’authentification côté Canopsis ne **pourra pas fonctionner**.
+L’IdP doit impérativement fournir dans les réponses d’authentification une valeur normalisée `NameID`. Il suffit de créer un *mapping* entre ce champs normalisé et une information unique dans le backend utilisé par l’IdP. Dans le cas contraire l’authentification côté Canopsis **ne pourra pas fonctionner**.
 
 Exemple de configuration OneLogin :
 
 ![saml2_onelogin_conf](pics/saml2_onelogin_conf.png)
 
-### Création des paramètres - Côté Canopsis
+### Création du paramétrage - Côté Canopsis
 
 **Travaillez dans un dossier temporaire accessible par l’utilisateur `canopsis`, par exemple `/opt/canopsis/tmp/saml2_setup`.**
 
@@ -84,19 +70,19 @@ En prenant ici pour exemple la configuration OneLogin :
 
 ![saml2_onelogin_settings](pics/saml2_onelogin_settings.png)
 
-Remplacer les occurrences de :
+Remplacer les occurrences des paramètres suivants :
 
- * Les url `https://domain.onelogin.com...` sont à remplacer intégralement par les données de configuration de L'IdP sur lequel vous allez vous brancher.
- * `CANOPSIS_BASE_URL` : exemple : `https://canopsis.domain.tld/` **ATTENTION** Il faut **OBLIGATOIREMENT** que cette URL soit un `FQDN`.
- * `CONTENU_CERTIFICAT_X509_IDP` : le contenu au format PEM du certificat public de l’IdP.
+ * Les url `https://domain.onelogin.com...` sont à remplacer intégralement par les données de configuration de L'IdP sur lequel vous allez vous brancher ;
+ * `CANOPSIS_BASE_URL` ; exemple : `https://canopsis.domain.tld/` **ATTENTION** Il faut **OBLIGATOIREMENT** que cette URL soit un `FQDN` ;
+ * `CONTENU_CERTIFICAT_X509_IDP` avec le contenu au format PEM du certificat public de l’IdP.
 
 Exemple de certificat fourni par l’IdP OneLogin :
 
 ![saml2_onelogin_x509_pem](pics/saml2_onelogin_x509_pem.png)
 
-Pour le certificat de l’IdP, téléchargez le puis :
+Pour le certificat de l’IdP, télécharger le, puis :
 
-```
+```bash
 cat idp_cert.pem | grep -v "BEGIN CERTIFICATE" | grep -v "END CERTIFICATE" | tr '\n' ' ' | sed -e 's/ //g'
 ```
 
