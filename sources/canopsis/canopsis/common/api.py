@@ -58,7 +58,9 @@ class GenericAPI(object):
         :param str service: the service name
         :param dict params: parameters to put with the request
         """
-        req = self._session.get(self._build_url(service), params=params, proxies=self.proxies)
+        req = self._session.get(self._build_url(service),
+                                params=params,
+                                proxies=self.proxies)
         return self._action(req)
 
     def _post(self, service, data={}):
@@ -68,7 +70,9 @@ class GenericAPI(object):
         :param str service: the service name
         :param dict params: parameters to put with the request (body)
         """
-        req = self._session.post(self._build_url(service), data=data, proxies=self.proxies)
+        req = self._session.post(self._build_url(service),
+                                 data=data,
+                                 proxies=self.proxies)
         return self._action(req)
 
     def _put(self, service, data={}):
@@ -78,7 +82,9 @@ class GenericAPI(object):
         :param str service: the service name
         :param dict params: parameters to put with the request (body)
         """
-        req = self._session.put(self._build_url(service), data=data, proxies=self.proxies)
+        req = self._session.put(self._build_url(service),
+                                data=data,
+                                proxies=self.proxies)
         return self._action(req)
 
     def _delete(self, service):
@@ -87,5 +93,6 @@ class GenericAPI(object):
 
         :param str service: the service name
         """
-        req = self._session.delete(self._build_url(service), proxies=self.proxies)
+        req = self._session.delete(self._build_url(service),
+                                   proxies=self.proxies)
         return self._action(req)
