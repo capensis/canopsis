@@ -127,6 +127,16 @@ class BasicWeatherAPITest(BaseApiTest):
             'type_': 'pause'
         }
 
+        self.pbehavior_watcher1 = {
+            'name': 'buck',
+            'author': 'mira',
+            'filter_': {'_id': 'watcher_first_gen'},
+            'rrule': None,
+            'tstart': now,
+            'tstop': now + 60 * 60,
+            'type_': 'pause'
+        }
+
     def context_cleanup(self):
         # Cleanup existing watchers
         watcher_url = '{}/api/v2/watchers'.format(self.URL_BASE)
@@ -174,7 +184,6 @@ class TestWeatherAPI_Empty(BasicWeatherAPITest):
         r = self._send(url=self.base + '/' + '{}',
                        method=Method.get)
         self.assertEqual(r.status_code, HTTP.OK.value)
-        json = r.json()
         self.assertTrue(isinstance(json, list))
         self.assertEqual(len(json), 0)
 
@@ -184,7 +193,6 @@ class TestWeatherAPI_Empty(BasicWeatherAPITest):
         r = self._send(url=self.base + '/scotty',
                        method=Method.get)
         self.assertEqual(r.status_code, HTTP.NOT_FOUND.value)
-        json = r.json()
         self.assertTrue(isinstance(json, dict))
         self.assertEqual(json['name'], 'resource_not_found')
 """
@@ -381,14 +389,14 @@ class TestWeatherFilterAPI(BasicWeatherAPITest):
             method=Method.post,
             data=dumps(self.pb_maintenance))
         self.assertEqual(r.status_code, HTTP.OK.value)
-        self.pbehavior_ids.append(r.json())
+        self.pbehavior_ids.append(r.text)
 
         r = self._send(
             url='{}/api/v2/pbehavior'.format(self.URL_BASE),
             method=Method.post,
             data=dumps(self.pb_paused))
         self.assertEqual(r.status_code, HTTP.OK.value)
-        self.pbehavior_ids.append(r.json())
+        self.pbehavior_ids.append(r.text)
 
         r = self._send(
             url='{}/api/v2/compute-pbehaviors'.format(self.URL_BASE),
@@ -703,36 +711,34 @@ class TestWeatherAPI(BasicWeatherAPITest):
         r = self._send(url=self.base + '/' + '{}',
                        method=Method.get)
         self.assertEqual(r.status_code, HTTP.OK.value)
-        json = r.json()
-        self.assertTrue(isinstance(json, list))
-        self.assertEqual(len(json), 3)
+        self.assertTrue(isinstance(r.json(), list))
+        self.assertEqual(len(r.json()), 3)
 
         # Read base watcher 1
         watcher_filter_1 = dumps({'_id': self.watcher_1['_id']})
         r = self._send(url=self.base + '/' + watcher_filter_1,
                        method=Method.get)
+        watchers = sorted(r.json())
         self.assertEqual(r.status_code, HTTP.OK.value)
-        json = r.json()
-        self.assertTrue(isinstance(json, list))
-        self.assertEqual(len(json), 1)
-        self.assertEqual(json[0]['state']['val'], 2)
-        self.assertFalse(json[0]['active_pb_some'])
-        self.assertFalse(json[0]['active_pb_all'])
+        self.assertTrue(isinstance(watchers, list))
+        self.assertEqual(len(watchers), 1)
+        self.assertEqual(watchers[0]['state']['val'], 2)
+        self.assertFalse(watchers[0]['active_pb_some'])
+        self.assertFalse(watchers[0]['active_pb_all'])
 
         # Read specific watcher 1
         r = self._send(url=self.base + '/' + self.watcher_1['_id'])
         self.assertEqual(r.status_code, HTTP.OK.value)
-        json = r.json()
-        self.assertTrue(isinstance(json, list))
-        self.assertEqual(len(json), 1)
-        self.assertEqual(json[0]['state']['val'], 2)
-        self.assertIsNone(json[0]['automatic_action_timer'])
+        self.assertTrue(isinstance(r.json(), list))
+        self.assertEqual(len(r.json()), 1)
+        self.assertEqual(r.json()[0]['state']['val'], 2)
+        self.assertIsNone(r.json()[0]['automatic_action_timer'])
 
         # Adding a pbehavior on event 1
         r = self._send(url=self.pbehavior_url,
                        method=Method.post,
                        data=dumps(self.pbehavior1))
-        self.pbehavior_ids.append(r.json())
+        self.pbehavior_ids.append(r.text)
         self.assertEqual(r.status_code, HTTP.OK.value)
 
         # Force compute on pbehaviors
@@ -740,25 +746,23 @@ class TestWeatherAPI(BasicWeatherAPITest):
         r = self._send(url=pbehavior_url,
                        method=Method.get)
         self.assertEqual(r.status_code, HTTP.OK.value)
-        json = r.json()
-        self.assertTrue(json)
+        self.assertTrue(r.json())
 
         # Verifying watcher state
-        json = self.get_watcher(watcher_filter_1)
-        self.assertTrue(isinstance(json, list))
-        self.assertEqual(len(json), 1)
-        self.assertTrue(json[0]['active_pb_some'])
-        self.assertTrue(json[0]['active_pb_all'])
+        r = self.get_watcher(watcher_filter_1)
+        self.assertTrue(isinstance(r, list))
+        self.assertEqual(len(r), 1)
+        self.assertTrue(r[0]['active_pb_some'])
+        self.assertTrue(r[0]['active_pb_all'])
 
         # Verifiyng specific watcher state
         r = self._send(url=self.base + '/' + self.watcher_1['_id'])
         self.assertEqual(r.status_code, HTTP.OK.value)
-        json = r.json()
-        self.assertTrue(isinstance(json, list))
-        self.assertEqual(len(json), 1)
-        self.assertEqual(json[0]['state']['val'], 2)
-        self.assertIsNone(json[0]['automatic_action_timer'])
-        pbehavior = json[0]['pbehavior']
+        self.assertTrue(isinstance(r.json(), list))
+        self.assertEqual(len(r.json()), 1)
+        self.assertEqual(r.json()[0]['state']['val'], 2)
+        self.assertIsNone(r.json()[0]['automatic_action_timer'])
+        pbehavior = r.json()[0]['pbehavior']
         self.assertTrue(isinstance(pbehavior, list))
         self.assertTrue('_id' in pbehavior[0])
         self.assertTrue(pbehavior[0]['enabled'])
@@ -775,19 +779,18 @@ class TestWeatherAPI(BasicWeatherAPITest):
         sleep(1)
 
         # Verifying watcher state after event 2
-        json = self.get_watcher(watcher_filter_1)
-        self.assertTrue(isinstance(json, list))
-        self.assertEqual(len(json), 1)
-        self.assertTrue(json[0]['active_pb_some'])
-        self.assertFalse(json[0]['active_pb_all'])
+        r = self.get_watcher(watcher_filter_1)
+        self.assertTrue(isinstance(r, list))
+        self.assertEqual(len(r), 1)
+        self.assertTrue(r[0]['active_pb_some'])
+        self.assertFalse(r[0]['active_pb_all'])
 
         # Verifying specific watcher state after event 2
         r = self._send(url=self.base + '/' + self.watcher_1['_id'])
         self.assertEqual(r.status_code, HTTP.OK.value)
-        json = r.json()
-        self.assertTrue(isinstance(json, list))
-        self.assertEqual(len(json), 2)
-        states = [json[0]['state']['val'], json[1]['state']['val']]
+        self.assertTrue(isinstance(r.json(), list))
+        self.assertEqual(len(r.json()), 2)
+        states = [r.json()[0]['state']['val'], r.json()[1]['state']['val']]
         states.sort()
         self.assertListEqual(states, [2, 3])
 
@@ -798,6 +801,29 @@ class TestWeatherAPI(BasicWeatherAPITest):
                 'active_pb_type': 'wrong_type',
             },
         )
-        json = self.get_watcher("{}".format(pbtyped_wfilter_1))
-        self.assertTrue(isinstance(json, list))
-        self.assertEqual(len(json), 0)
+        r = self.get_watcher("{}".format(pbtyped_wfilter_1))
+        self.assertTrue(isinstance(r, list))
+        self.assertEqual(len(r), 0)
+
+        # Adding a pbehavior on watcher 1
+        r = self._send(url=self.pbehavior_url,
+                       method=Method.post,
+                       data=dumps(self.pbehavior_watcher1))
+        self.pbehavior_ids.append(r.text)
+        self.assertEqual(r.status_code, HTTP.OK.value)
+
+        # Force compute on pbehaviors
+        pbehavior_url = '{}/api/v2/compute-pbehaviors'.format(self.URL_BASE)
+        r = self._send(url=pbehavior_url,
+                       method=Method.get)
+        self.assertEqual(r.status_code, HTTP.OK.value)
+        self.assertTrue(r.json())
+
+        # check if watcher1 gets back it's pbehavior
+        filter_ = json.dumps({'_id': self.watcher_1['_id']})
+        watchers = self.get_watcher(filter_)
+        self.assertEqual(len(watchers), 1)
+        self.assertEqual(watchers[0]['entity_id'], 'watcher_first_gen')
+        pbehaviors = sorted(watchers[0]['pbehavior'])
+        self.assertEqual(len(pbehaviors), 2)
+        self.assertEqual(pbehaviors[1]['author'], 'mira')
