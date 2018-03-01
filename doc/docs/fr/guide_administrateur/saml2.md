@@ -73,7 +73,7 @@ En prenant ici pour exemple la configuration OneLogin :
 Remplacer les occurrences de :
 
  * Les url `https://domain.onelogin.com...` sont à remplacer intégralement par les données de configuration de L'IdP sur lequel vous allez vous brancher.
- * `CANOPSIS_BASE_URL` : exemple : `https://canopsis.domain.tld/`
+ * `CANOPSIS_BASE_URL` : exemple : `https://canopsis.domain.tld/` **ATTENTION** Il faut **OBLIGATOIREMENT** que cette URL soit un `FQDN`.
  * `CONTENU_CERTIFICAT_X509_IDP` : le contenu au format PEM du certificat public de l’IdP.
 
 Exemple de certificat fourni par l’IdP OneLogin :
@@ -189,3 +189,25 @@ Pour tester l’authentification :
  * Entrez un utilisateur autre que ceux présents dans Canopsis, et n’importe quoi en mot de passe (changements à venir)
  * Vous devez être redirigé vers la page de login de l’IdP SAML2
  * Une fois authentifié via l’IdP, vous devez être redirigé vers Canopsis sans erreur.
+
+### Troubleshooting
+
+Observer les logs `var/log/saml2.log` et `var/log/webserver.log`.
+
+#### FQDN
+
+```
+OneLogin_Saml2_Error: Invalid dict settings at the file: sp_acs_url_invalid,sp_sls_url_invalid
+```
+
+Vérifier que les URL `sp` sont toutes des FQDN.
+
+#### Désynchro de configuration
+
+```
+[2018-03-01 10:47:30,220] [ERROR] [saml2] SAML Authentication errors: ['invalid_response'] | The response was received at http://canopsis.local:8082/auth/saml2/acs/ instead of http://canopsis:8082/auth/saml2/acs/
+```
+
+Ici l’IdP est mal configurée. Assurez-vous que la configuration active dans le webserver est conforme à ce qu’attend l’IdP et inversement.
+
+Redémarrer le webserver si besoin afin d’être certain de la configuration actuellement utilisée.
