@@ -76,6 +76,10 @@ Remplacer les occurrences de :
  * `CANOPSIS_BASE_URL` : exemple : `https://canopsis.domain.tld/`
  * `CONTENU_CERTIFICAT_X509_IDP` : le contenu au format PEM du certificat public de l’IdP.
 
+Exemple de certificat fourni par l’IdP OneLogin :
+
+![saml2_onelogin_x509_pem](pics/saml2_onelogin_x509_pem.png)
+
 Pour le certificat de l’IdP, téléchargez le puis :
 
 ```
@@ -127,7 +131,7 @@ Ces fichiers de configuration sont à adapter, il n’existe pas de configuratio
 Créer cette structure :
 
 ```
-saml2/
+saml2_setup/
     certs/
         sp.crt
         sp.key
