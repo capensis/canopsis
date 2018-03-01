@@ -20,6 +20,8 @@ Exemple de configuration OneLogin :
 
 ### Création des paramètres - Côté Canopsis
 
+**Travaillez dans un dossier temporaire accessible par l’utilisateur `canopsis`, par exemple `~/tmp/saml2_setup`.**
+
 Vous pouvez suivre cette documentation : https://github.com/onelogin/python-saml#knowing-the-toolkit
 
 En particulier la génération des clefs et des paramètres :
@@ -36,13 +38,13 @@ openssl req -new -x509 -days 3652 -nodes -out certs/sp.crt -keyout certs/sp.key
     "strict": true,
     "debug": false,
     "sp": {
-        "entityId": "http://canopsis.fqdn:port/auth/saml2/metadata/",
+        "entityId": "CANOPSIS_BASE_URL/auth/saml2/metadata/",
         "assertionConsumerService": {
-            "url": "http://canopsis.fqdn:port/auth/saml2/acs/",
+            "url": "CANOPSIS_BASE_URL/auth/saml2/acs/",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
         },
         "singleLogoutService": {
-            "url": "http://canopsis.fqdn:port/auth/saml2/sls/",
+            "url": "CANOPSIS_BASE_URL/auth/saml2/sls/",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
         "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
@@ -50,27 +52,31 @@ openssl req -new -x509 -days 3652 -nodes -out certs/sp.crt -keyout certs/sp.key
         "privateKey": ""
     },
     "idp": {
-        "entityId": "https://app.onelogin.com/saml/metadata/<appid>",
+        "entityId": "https://app.onelogin.com/saml/metadata/appid",
         "singleSignOnService": {
-            "url": "https://app.onelogin.com/trust/saml2/http-post/sso/<appid>",
+            "url": "https://domain.onelogin.com/trust/saml2/http-post/sso/appid",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
         "singleLogoutService": {
-            "url": "https://app.onelogin.com/trust/saml2/http-redirect/slo/<appid>",
+            "url": "https://domain.onelogin.com/trust/saml2/http-redirect/slo/appid",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
-        "x509cert": "<certificat public de l'identity provider>"
+        "x509cert": "CONTENU_CERTIFICAT_X509_IDP"
     }
 }
 ```
 
+En prenant ici pour exemple la configuration OneLogin :
+
+![saml2_onelogin_settings](pics/saml2_onelogin_settings.png)
+
 Remplacer les occurrences de :
 
- * Les url "app.onelogin", elle sont a remplacer intégralement par les données de configuration de L'IdP sur lequel vous allez vous brancher.
- * `canopsis.fqdn:port`
- * `<certificat public de l'identity provider>`
+ * Les url `https://domain.onelogin.com...` sont à remplacer intégralement par les données de configuration de L'IdP sur lequel vous allez vous brancher.
+ * `CANOPSIS_BASE_URL` : exemple : `https://canopsis.domain.tld/`
+ * `CONTENU_CERTIFICAT_X509_IDP` : le contenu au format PEM du certificat public de l’IdP.
 
-Pour le certificat public, vous devrez le télécharger au format PEM et exécuter la commande suivante afin de récupérer le contenu :
+Pour le certificat de l’IdP, téléchargez le puis :
 
 ```
 cat idp_cert.pem | grep -v "BEGIN CERTIFICATE" | grep -v "END CERTIFICATE" | tr '\n' ' ' | sed -e 's/ //g'
@@ -114,7 +120,7 @@ cat idp_cert.pem | grep -v "BEGIN CERTIFICATE" | grep -v "END CERTIFICATE" | tr 
 }
 ```
 
-Ces fichiers de configuration sont à adapter.
+Ces fichiers de configuration sont à adapter, il n’existe pas de configuration générique, cela dépend des paramètres de sécurité de l’IdP.
 
 ### Intégration des paramètres en base
 
