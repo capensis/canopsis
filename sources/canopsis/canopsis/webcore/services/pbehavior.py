@@ -27,7 +27,6 @@ from __future__ import unicode_literals
 from bottle import request
 from json import loads
 from six import string_types
-from time import time
 
 from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
@@ -146,7 +145,7 @@ class RouteHandlerPBehavior(object):
         :param int tstop: end timestamp
         :param str rrule: RRULE
         :param bool enabled: enable/disable this pb
-        :param list comments: list of comments: {'author': 'author', 'message': 'msg'}
+        :param list comments: list of comments {'author': 'author', 'message': 'msg'}
         :param str connector: connector
         :param str connector_name: connector name
         :param str type_: an associated type_
@@ -365,19 +364,16 @@ def exports(ws):
                 HTTP_ERROR
             )
 
-        result = None
         try:
             return rhpb.create(**elements)
         except TypeError:
             return gen_json_error(
-                {'description': 'The fields name, filter, author, tstart, tstop are required.'
-                },
+                {'description': 'The fields name, filter, author, tstart, tstop are required.'},
                 HTTP_ERROR
             )
         except ValueError as exc :
             return gen_json_error(
-                {'description': '{}'.format(exc.message)
-                },
+                {'description': '{}'.format(exc.message)},
                 HTTP_ERROR
             )
 
@@ -524,4 +520,4 @@ def exports(ws):
         pbm.compute_pbehaviors_filters()
         pbm.launch_update_watcher(watcher_manager)
 
-        return gen_json(do_compute)
+        return gen_json(True)
