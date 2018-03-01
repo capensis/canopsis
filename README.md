@@ -32,3 +32,20 @@ To know more about Canopsis, have a look at <a href="https://canopsis.readthedoc
 
 * <a href="http://www.canopsis.org" target="_blank">Community</a>
 * <a href="http://forums.monitoring-fr.org/index.php?board=127.0" target="_blank">Forum (french)</a>
+
+## Tested dependencies
+
+The following software versions have been tested to play nice with Canopsis: 
+
+
+Software  | Canopsis 2.3 | Canopsis 2.5.7 |
+==========|==============|================|
+Rabbit    | 3.6.9        | 3.6.9          |
+Erlang    | 19.3         | 19.3           |
+MongoDB   | <= 3.4.10    | 3.4.10         |
+InfluxDB  | 1.2.2        | 1.2.2          |
+Python    | 2.7.13       | 2.7.13         |
+Gunicorn  | 19.7.1       | 19.7.1         |
+HAProxy   | 1.5.18       | 1.5.18         |
+
+

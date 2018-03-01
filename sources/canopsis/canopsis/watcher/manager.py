@@ -184,16 +184,23 @@ class Watcher:
         display_name = watcher_entity['name']
 
         alarm_list = list(self.alert_storage._backend.find({
-            'd': {'$in': entities}
+            '$and': [
+                {'d': {'$in': entities}},
+                {
+                    '$or': [
+                        {'v.resolved': None},
+                        {'v.resolved': {'$exists': False}}
+                    ]
+                }
+            ]
         }))
         states = []
         for alarm in alarm_list:
-            if alarm['v']['resolved'] is None and alarm['d'] in entities:
-                active_pb = self.pbehavior_manager.get_active_pbehaviors(
-                    [alarm['d']]
-                )
-                if len(active_pb) == 0:
-                    states.append(alarm['v']['state']['val'])
+            active_pb = self.pbehavior_manager.get_active_pbehaviors(
+                [alarm['d']]
+            )
+            if len(active_pb) == 0:
+                states.append(alarm['v']['state']['val'])
 
         nb_entities = len(entities)
         nb_crit = states.count(Check.CRITICAL)

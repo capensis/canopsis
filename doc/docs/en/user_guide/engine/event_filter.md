@@ -33,8 +33,8 @@ Handles whitelist / blacklist *(pass and drop actions)*
 
 Addition, modification and deletion of fields *(override and remove actions)* :
 
-> Events can have fields added at runtime (périm?tre, domaine, ...),
-> changed (status, criticité, ...), or deleted (whole fields, single
+> Events can have fields added at runtime (pÃ©rim?tre, domaine, ...),
+> changed (status, criticitÃ©, ...), or deleted (whole fields, single
 > tag, perfdata, ...).
 
 Route event to other engines *(route action)* :

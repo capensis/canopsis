@@ -13,7 +13,6 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	chmod u+w $PREFIX/lib/libpython*
 	check_code $?
 }
 
@@ -29,7 +28,6 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	chmod u+w $PREFIX/lib/libpython*
 }
 
 function post_update(){

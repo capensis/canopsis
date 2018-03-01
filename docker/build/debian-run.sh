@@ -2,8 +2,8 @@
 set -e
 set -o pipefail
 
-echo "deb http://ftp.fr.debian.org/debian/ jessie main contrib non-free" > /etc/apt/sources.list
-echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
+echo "deb http://ftp.fr.debian.org/debian/ stretch main contrib non-free" > /etc/apt/sources.list
+echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list
 
 apt-get update
 apt-get -y --no-install-recommends install \
@@ -12,6 +12,7 @@ apt-get -y --no-install-recommends install \
     bash \
     bash-completion \
     ca-certificates \
+    curl \
     libsasl2-2 \
     libxml2 \
     libxslt1.1 \
@@ -19,22 +20,27 @@ apt-get -y --no-install-recommends install \
     lsb-release \
     libffi6 \
     libgmp10 \
-    libgnutls-deb0-28 \
-    libhogweed2 \
-    libicu52 \
+    libgnutls30 \
+    libgnutlsxx28 \
+    libgnutls-openssl27 \
+    libhogweed4 \
+    libicu57 \
     libidn11 \
-    libnettle4 \
+    libnettle6 \
     libp11-kit0 \
-    libpsl0 \
-    libssl1.0.0 \
+    libpsl5 \
+    libssl1.1 \
     libtasn1-6 \
     libxmlsec1 \
     libldap-2.4-2 \
     python \
     python2.7 \
     python-pip \
+    python-pkg-resources \
     python-virtualenv \
+    python-wheel \
     rsync \
+    sudo \
     tmux \
     vim \
     virtualenv \
