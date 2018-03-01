@@ -4,6 +4,20 @@ Intégration de l’authentification avec SAML2
 
 Nécessite l’installation de la brique `CAT`.
 
+<!-- MarkdownTOC -->
+
+- Paramétrage IdP
+- Création des paramètres - Côté Canopsis
+- Intégration des paramètres en base
+- Activation de l’authentification SAML2
+- Tests et log
+- Troubleshooting
+    - FQDN
+    - Désynchro de configuration
+
+<!-- /MarkdownTOC -->
+
+
 ### Paramétrage IdP
 
  * ACS Consumer URL : `http[s]://canopsis.fqdn.tld/auth/saml2/acs/`
@@ -31,7 +45,7 @@ mkdir certs
 openssl req -new -x509 -days 3652 -nodes -out certs/sp.crt -keyout certs/sp.key
 ```
 
-`settings.json` :
+Écrire dans le fichier `settings.json` :
 
 ```json
 {
@@ -86,7 +100,7 @@ Pour le certificat de l’IdP, téléchargez le puis :
 cat idp_cert.pem | grep -v "BEGIN CERTIFICATE" | grep -v "END CERTIFICATE" | tr '\n' ' ' | sed -e 's/ //g'
 ```
 
-`advanced_settings.json` :
+Écrire dans le fichier `advanced_settings.json` :
 
 ```json
 {
@@ -153,7 +167,7 @@ python -c 'from canopsis_cat.saml2 import SAML2Conf; SAML2Conf.insert_conf("/opt
 
 Vous pouvez relancer cette commande autant de fois que nécessaire : la configuration en place sera tout simplement écrasée intégralement.
 
-Donc si vous voulez apporter une modification de la configuration, pas besoin de passer par la base de donnée : modifiez les fichiers "source" sur disque, exécutez la commande, c’est fini.
+Donc si vous voulez apporter une modification de la configuration, pas besoin de passer par la base de données : modifiez les fichiers "source" sur disque, exécutez la commande ; c’est fini.
 
 ### Activation de l’authentification SAML2
 
@@ -175,7 +189,7 @@ canopsis_cat.webcore.services.saml2 = 1
 
 Puis exécutez :
 
-```
+```bash
 su - canopsis -c "service webserver restart"
 ```
 
@@ -185,9 +199,9 @@ Le fichier de log `var/log/saml2.log` contiendra les erreurs SAML2 s’il y en a
 
 Pour tester l’authentification :
 
- * Rendez-vous sur la page de login de canopsis
- * Entrez un utilisateur autre que ceux présents dans Canopsis, et n’importe quoi en mot de passe (changements à venir)
- * Vous devez être redirigé vers la page de login de l’IdP SAML2
+ * Rendez-vous sur la page de login de canopsis ;
+ * Entrez un utilisateur autre que ceux présents dans Canopsis, et n’importe quoi en mot de passe (changements à venir) ;
+ * Vous devez être redirigé vers la page de login de l’IdP SAML2 ;
  * Une fois authentifié via l’IdP, vous devez être redirigé vers Canopsis sans erreur.
 
 ### Troubleshooting
