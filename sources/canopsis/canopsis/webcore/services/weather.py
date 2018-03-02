@@ -34,6 +34,8 @@ from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
+from canopsis.confng.helpers import cfg_to_array
+from canopsis.stats.manager import Stats
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.tracer.manager import TracerManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
@@ -43,6 +45,7 @@ alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 context_manager = alarm_manager.context_manager
 tracer_manager = TracerManager(*TracerManager.provide_default_basics())
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
+stats_manager = Stats()
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
@@ -611,6 +614,7 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
+            enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
             if current_alarm is not None:
                 enriched_entity['ticket'] = current_alarm['ticket']
                 enriched_entity['state'] = current_alarm['state']

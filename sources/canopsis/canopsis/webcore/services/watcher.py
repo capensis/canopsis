@@ -78,11 +78,15 @@ def exports(ws):
         try:
             watcher_create = watcher.create_watcher(body=element)
         except ValueError as ex:
-            return gen_json_error(
-                {'description': 'value error: {}'.format(ex)},
-                HTTP_ERROR
-            )
-
+            return gen_json_error({'description': 'value error: {}'.format(ex)},
+                                  HTTP_ERROR)
+        except KeyError as ex:
+            return gen_json_error({'description': 'key error: {}'.format(ex)},
+                                  HTTP_ERROR)
+        except TypeError:
+            return gen_json_error({'description': 'type error: mfilter '\
+                                   'should be a string'},
+                                  HTTP_ERROR)
         if watcher_create is None:
             return gen_json_error(
                 {'description': 'can\'t decode mfilter'},
