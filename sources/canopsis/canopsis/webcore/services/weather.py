@@ -291,9 +291,11 @@ def get_active_pbehaviors_on_watchers(watchers,
     :returns: dict of watcher with list of active pbehavior
     """
     active_pb_on_watchers = {}
+    active_watcher_pbehaviors = {}
 
     for watcher in watchers:
         tmp_pbh = []
+        tmp_wpbh = []
         watcher_depends = set(watcher.get('depends', []))
 
         for pb_id, eids in active_pb_dict.items():
@@ -304,14 +306,17 @@ def get_active_pbehaviors_on_watchers(watchers,
 
             # add pbehaviors linked to this watcher
             if watcher['_id'] in active_pb_dict[pb_id]:
-                tmp_pbh.append(active_pb_dict_full[pb_id])
+                wpb = active_pb_dict_full[pb_id]
+                wpb['isActive'] = True
+                tmp_wpbh.append(wpb)
 
         for pbh in tmp_pbh:
             pbh['isActive'] = True
 
         active_pb_on_watchers[watcher['_id']] = tmp_pbh
+        active_watcher_pbehaviors[watcher['_id']] = tmp_wpbh
 
-    return active_pb_on_watchers
+    return active_pb_on_watchers, active_watcher_pbehaviors
 
 
 def get_next_run_alert(watcher_depends, alert_next_run_dict):
@@ -442,7 +447,7 @@ def exports(ws):
             entity_watchers_ids.append(watcher['_id'])
             alarm_watchers_ids.append(watcher['_id'])
 
-        active_pbehaviors = get_active_pbehaviors_on_watchers(
+        active_pbehaviors, active_watchers_pbehaviors = get_active_pbehaviors_on_watchers(
             watcher_list,
             active_pb_dict,
             active_pb_dict_full
@@ -506,6 +511,7 @@ def exports(ws):
                     enriched_entity['resource'] = tmp_alarm['resource']
 
             enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
+            enriched_entity['watcher_pbehavior'] = active_watchers_pbehaviors.get(watcher['_id'], [])
             enriched_entity["mfilter"] = watcher["mfilter"]
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
                 watcher['depends'],
@@ -514,6 +520,7 @@ def exports(ws):
             wstatus = watcher_status(watcher, merged_pbehaviors_eids)
             enriched_entity["active_pb_some"] = wstatus[0]
             enriched_entity["active_pb_all"] = wstatus[1]
+            enriched_entity['active_pb_watcher'] = len(enriched_entity['watcher_pbehavior']) > 0
             enriched_entity['has_baseline'] = check_baseline(
                 merged_eids_tracer,
                 watcher['depends']
@@ -526,6 +533,7 @@ def exports(ws):
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
             watcher_pb_types = pbehavior_types(enriched_entity['pbehavior'])
+            watcher_pb_types |= pbehavior_types(enriched_entity['watcher_pbehavior'])
             if wf.appendable(wstatus[1], wstatus[0], pb_types=watcher_pb_types) is True:
                 watchers.append(enriched_entity)
 
