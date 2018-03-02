@@ -281,7 +281,8 @@ class PBehaviorManager(object):
         the given id_ in the PBehavior.EIDS field.
 
         :param list,str: the id(s) as a str or a list of string
-        :returns: a list of pbehavior
+        :returns: a list of pbehavior, with the isActive key in pbehavior is
+            active when queried.
         :rtype: list
         """
 
@@ -299,7 +300,19 @@ class PBehaviorManager(object):
             query={PBehavior.EIDS: {"$in": id_}}
         )
 
-        return list(cursor)
+        pbehaviors = []
+
+        now = int(time())
+
+        for pb in cursor:
+            if pb['tstart'] <= now and (pb['tstop'] is None or pb['tstop'] >= now):
+                pb['isActive'] = True
+            else:
+                pb['isActive'] = False
+
+            pbehaviors.append(pb)
+
+        return pbehaviors
 
     def read(self, _id=None):
         """Get pbehavior or list pbehaviors.

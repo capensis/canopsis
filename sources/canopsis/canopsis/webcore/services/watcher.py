@@ -21,15 +21,11 @@
 from __future__ import unicode_literals
 
 from bottle import request
-from time import time
 
 from canopsis.common.converters import id_filter
 from canopsis.watcher.manager import Watcher
 from canopsis.watcher.links import build_all_links
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
-
-last_watchers_compute = 0
-WATCHER_COMPUTE_COOLDOWN = 10
 
 
 def exports(ws):
@@ -92,8 +88,10 @@ def exports(ws):
                                    'should be a string'},
                                   HTTP_ERROR)
         if watcher_create is None:
-            return gen_json_error({'description': 'can\'t decode mfilter'},
-                                  HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'can\'t decode mfilter'},
+                HTTP_ERROR
+            )
 
         return gen_json({})
 
@@ -149,13 +147,7 @@ def exports(ws):
 
         :rtype: bool
         """
-        global last_watchers_compute
-        now = int(time())
-        do_compute = last_watchers_compute + WATCHER_COMPUTE_COOLDOWN < now
+        ws.logger.info('Force compute of watcher links')
+        build_all_links(watcher.context_graph)
 
-        if do_compute:
-            ws.logger.info('Force compute of watcher links')
-            last_watchers_compute = now
-            build_all_links(watcher.context_graph)
-
-        return gen_json(do_compute)
+        return gen_json(True)

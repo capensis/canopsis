@@ -35,6 +35,8 @@ COPY sources/webcore /sources/webcore
 COPY tools/brickmanager /sources/brickmanager
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
 
+
+
 ## Canopsis Core Image
 FROM canopsis/canopsis-sysbase:${TAG}
 
@@ -57,6 +59,9 @@ COPY tools/brickmanager /brickmanager
 
 ADD docker/files/entrypoint.sh /
 
+# Do NOT chown the entire CPS_HOME directory:
+#  * Security: the user must not be able to change runtime files.
+#  * Image size: docker is dumb, until --squash is stable.
 RUN mkdir -p ./etc/init.d && \
     mkdir -p var/log/engines && \
     mkdir -p var/cache/canopsis && \
@@ -70,5 +75,6 @@ RUN . ${CPS_HOME}/bin/activate && \
     python /brickmanager enable brick-querybuilder
 
 USER ${CPS_USER}:${CPS_GROUP}
+
 EXPOSE 8082
 ENTRYPOINT /entrypoint.sh

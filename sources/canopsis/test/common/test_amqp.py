@@ -1,7 +1,7 @@
 import os
+import canopsis.common
 import unittest
-
-import unittest
+import configparser
 from canopsis.common import root_path
 from canopsis.common.amqp import AmqpPublisher, AmqpConnection
 import xmlrunner
@@ -9,16 +9,23 @@ import xmlrunner
 
 DEFAULT_AMQP_URL = 'amqp://guest:guest@localhost/'
 DEFAULT_AMQP_EXCHANGE = 'test'
+DEFAULT_CONF_FILE = "etc/amqp.conf"
 
 
 class TestAmqp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.amqp_url = os.environ.get(
-            'TEST_AMQPPUBLISHER_URL', DEFAULT_AMQP_URL)
-        cls.amqp_exname = os.environ.get(
-            'TEST_AMQPPUBLISHER_EXCHANGE', DEFAULT_AMQP_EXCHANGE)
+        config = configparser.RawConfigParser()
+        config.read(os.path.join(canopsis.common.root_path, DEFAULT_CONF_FILE))
+
+        cls.amqp_url = "amqp://{0}:{1}@{2}:{3}/{4}".format(
+            config["master"]["userid"],
+            config["master"]["password"],
+            config["master"]["host"],
+            config["master"]["port"],
+            config["master"]["virtual_host"])
+        cls.amqp_exname = config["master"]["exchange_name"]
 
 
 class TestAmqpConn(TestAmqp):
@@ -73,7 +80,7 @@ class TestAmqpPublisher(TestAmqp):
 
 
 if __name__ == '__main__':
-    output = root_path + "/tests_report"
+    output = root_path + "/tmp/tests_report"
     unittest.main(
         testRunner=xmlrunner.XMLTestRunner(output=output),
         verbosity=3)

@@ -2,7 +2,7 @@
 
 ## Pour commencer
 
-## Guide utilisateur
+## [Guide utilisateur](guide_utilisateur/index.md)
 
 ## [Guide administrateur](guide_administrateur/index.md)
 
