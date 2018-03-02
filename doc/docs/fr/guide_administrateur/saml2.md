@@ -126,6 +126,30 @@ cat idp_cert.pem | grep -v "BEGIN CERTIFICATE" | grep -v "END CERTIFICATE" | tr 
 
 Ces fichiers de configuration sont à adapter, il n’existe pas de configuration générique, cela dépend des paramètres de sécurité de l’IdP.
 
+Créer le fichier de configuration de la correspondance Utilisateur Canopsis <-> Utilisateur IdP :
+
+```json
+{
+        "userid": null,
+        "firstname": null,
+        "lastname": null,
+        "mail": null
+}
+```
+
+Dans le cas où toutes les valeurs sont à `null` des paramètres par défaut seront appliqués.
+
+Si vous voulez paramétrer vous même la correspondance, mettez simplement une chaîne de caractère contenant le nom de l’attribut fourni par l’IdP. Exemple avec OneLogin :
+
+```json
+{
+        "userid": "User.email",
+        "firstname": "User.FirstName",
+        "lastname": "User.LastName",
+        "mail": "User.email"
+}
+```
+
 ### Intégration des paramètres en base
 
 Créer cette structure :
@@ -137,6 +161,7 @@ saml2_setup/
         sp.key
     settings.json
     advanced_settings.json
+    canopsis_user.json
     conf_path
     secret_key
 ```
