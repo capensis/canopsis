@@ -34,7 +34,6 @@ from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
-from canopsis.confng.helpers import cfg_to_array
 from canopsis.stats.manager import Stats
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.tracer.manager import TracerManager
@@ -614,7 +613,8 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
+            # enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
+            # FIXME: canopsis/canopsis#650 UTF-8 error
             if current_alarm is not None:
                 enriched_entity['ticket'] = current_alarm['ticket']
                 enriched_entity['state'] = current_alarm['state']

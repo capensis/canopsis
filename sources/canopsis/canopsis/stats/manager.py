@@ -701,14 +701,16 @@ class Stats(MiddlewareRegistry):
                 return 0
 
     def get_ok_ko(self, entity_id):
-        """For an entity defined by component, connector, resource return
+        """
+        For an entity defined by component, connector, resource return
         the number of OK check and KO check.
+
         :param connector: the connector of the entity
         :param component: the component of the entity
         :param resource: the resource of the entity
         :return: a dict with two key ok and ko or none if no data are found for
-        the given entity."""
-
+        the given entity.
+        """
         query = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
                 "event_state_history WHERE eid='{0}'"
 
