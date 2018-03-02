@@ -28,7 +28,6 @@ import json
 
 from operator import itemgetter
 from bottle import request
-from six import string_types
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
@@ -298,10 +297,15 @@ def get_active_pbehaviors_on_watchers(watchers,
         tmp_pbh = []
         watcher_depends = set(watcher.get('depends', []))
 
-        for key, eids in active_pb_dict.items():
+        for pb_id, eids in active_pb_dict.items():
+            # add pbehaviors linked to this watcher's entities
             for eid in eids:
                 if eid in watcher_depends:
-                    tmp_pbh.append(active_pb_dict_full[key])
+                    tmp_pbh.append(active_pb_dict_full[pb_id])
+
+            # add pbehaviors linked to this watcher
+            if watcher['_id'] in active_pb_dict[pb_id]:
+                tmp_pbh.append(active_pb_dict_full[pb_id])
 
         for pbh in tmp_pbh:
             pbh['isActive'] = True
@@ -378,7 +382,6 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
-        wf = WatcherFilter()
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
@@ -392,6 +395,7 @@ def exports(ws):
         except ValueError:
             limit = int(DEFAULT_LIMIT)
 
+        wf = WatcherFilter()
         watcher_filter['type'] = 'watcher'
         watcher_filter = wf.filter(watcher_filter)
         pb_types = wf.types()
@@ -485,7 +489,7 @@ def exports(ws):
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['linklist'] = tmp_linklist
             enriched_entity['state'] = {'val': watcher.get('state', 0)}
-            ws.logger.debug(tmp_alarm)
+
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
                 enriched_entity['status'] = tmp_alarm['status']
@@ -515,8 +519,10 @@ def exports(ws):
                 merged_eids_tracer,
                 watcher['depends']
             )
-            tmp_next_run = get_next_run_alert(watcher.get('depends', []),
-                                              next_run_dict)
+            tmp_next_run = get_next_run_alert(
+                watcher.get('depends', []),
+                next_run_dict
+            )
             if tmp_next_run is not None:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
