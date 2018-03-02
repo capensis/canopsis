@@ -7,7 +7,12 @@ Manage mongodb connections.
 
 from __future__ import unicode_literals
 
-from pymongo import MongoClient
+import time
+
+from canopsis.confng import Configuration, Ini
+
+from pymongo import MongoClient, MongoReplicaSetClient, ReadPreference
+from pymongo.errors import AutoReconnect
 
 DEFAULT_HOST = 'localhost'
 DEFAULT_PORT = 27017
@@ -21,6 +26,12 @@ class MongoStore(object):
 
     CONF_PATH = 'etc/common/mongo_store.conf'
     CONF_CAT = 'DATABASE'
+
+    @staticmethod
+    def get_default():
+        cfg = Configuration.load('etc/common/mongo_store.conf', Ini)
+        store = MongoStore(cfg)
+        return store
 
     def __init__(self, config):
         """
@@ -36,11 +47,17 @@ class MongoStore(object):
         conf = self.config.get(self.CONF_CAT, {})
         self.db_name = conf.get('db', DEFAULT_DB_NAME)
         self.host = conf.get('host', DEFAULT_HOST)
-        port = conf.get('port', DEFAULT_PORT)
         try:
-            self.port = int(port)
+            self.port = int(conf.get('port', DEFAULT_PORT))
         except ValueError:
             self.port = DEFAULT_PORT
+
+        self.replicaset = conf.get('replicaset')
+        self.read_preference = getattr(
+            ReadPreference,
+            conf.get('read_preference', 'SECONDARY_PREFERRED'),
+            ReadPreference.SECONDARY_PREFERRED
+        )
 
         # missing from storage: journaling, sharding, retention ;;
         # cache_size, cache_autocommit, cache_ordered
@@ -58,8 +75,19 @@ class MongoStore(object):
         """
         Connect to the desired database.
         """
-        self.client = MongoClient(host=self.host,
-                                  port=self.port)[self.db_name]
+        if self.replicaset is None:
+            self.conn = MongoClient(
+                host=self.host,
+                port=self.port,w=1,j=True
+            )
+
+        else:
+            self.conn = MongoClient(
+                'mongodb://{}:{}/?replicaSet={}'.format(self.host, self.port, self.replicaset),
+                w=1,j=True, read_preference=self.read_preference
+            )
+
+        self.client = self.conn[self.db_name]
         self.client.authenticate(self._user, self._pwd)
 
     def get_collection(self, name):
@@ -70,3 +98,14 @@ class MongoStore(object):
         :rtype: Collection
         """
         return self.client[name]
+
+    @staticmethod
+    def hr(func, *args, **kwargs):
+        """
+        hr means "Handle Reconnect"
+        """
+        while True:
+            try:
+                return func(*args, **kwargs)
+            except AutoReconnect as exc:
+                time.sleep(1)

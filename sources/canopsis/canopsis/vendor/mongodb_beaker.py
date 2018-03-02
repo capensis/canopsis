@@ -84,7 +84,7 @@ I have a few cache regions in one of my applications, some of which are memcache
     ... beaker.cache.navigation.type = mongodb
     ... beaker.cache.navigation.url = mongodb://localhost:27017/beaker.navigation
     ... beaker.cache.navigation.expire = 86400
- 
+
 The Beaker docs[1] contain detailed information on configuring regions.  The
 item we're interested in here is the **beaker.cache.navigation** keys.  Each
 beaker cache definition needs a *type* field, which defines which backend to
@@ -154,7 +154,7 @@ See the MongoDB CappedCollection_. docs for details.
 Sparse Collection Support
 =========================
 
-The default behavior of mongodb_beaker is to create a single MongoDB Document for each namespace, and store each 
+The default behavior of mongodb_beaker is to create a single MongoDB Document for each namespace, and store each
 cache key/value on that document.  In this case, the "_id" of the document will be the namespace, and each new cache entry
 will be attached to that document.
 
@@ -198,13 +198,14 @@ except ImportError:
     import pickle
 
 try:
-    from pymongo.connection import Connection
+    from canopsis.common.mongo_store import MongoStore
     import bson
     import bson.errors
 except ImportError:
     raise InvalidCacheBackendError("Unable to load the pymongo driver.")
 
 log = logging.getLogger(__name__)
+hr = MongoStore.hr
 
 class MongoDBNamespaceManager(NamespaceManager):
     clients = SyncDict()
@@ -213,7 +214,7 @@ class MongoDBNamespaceManager(NamespaceManager):
 
     # TODO _- support write concern / safe
     def __init__(self, namespace, url=None, data_dir=None,
-                 lock_dir=None, skip_pickle=False, 
+                 lock_dir=None, skip_pickle=False,
                  sparse_collection=False, **params):
         NamespaceManager.__init__(self, namespace)
 
@@ -245,18 +246,9 @@ class MongoDBNamespaceManager(NamespaceManager):
             verify_directory(self.lock_dir)
 
         def _create_mongo_conn():
-            host_uri = 'mongodb://'
-            host_uri_components = []
-
-            for x in host_list:
-                host_uri_components.append('%s:%s' % x)
-
-            host_uri += ','.join(host_uri_components)
-
-            log.info("Host URI: %s" % host_uri)
-            conn = Connection(host_uri, slave_okay=options.get('slaveok', False))
-
-            db = conn[database]
+            store = MongoStore.get_default()
+            conn = store.conn
+            db = store.client
 
             if username:
                 log.info("Attempting to authenticate %s/%s " % (username, password))
@@ -286,7 +278,7 @@ class MongoDBNamespaceManager(NamespaceManager):
             q = {'_id': self.namespace}
 
         log.debug("[MongoDB] Remove Query: %s" % q)
-        self.mongo.remove(q)
+        hr(self.mongo.remove, q)
 
 
     def __getitem__(self, key):
@@ -306,7 +298,7 @@ class MongoDBNamespaceManager(NamespaceManager):
             fields['data.' + key] = True
 
         log.debug("[MongoDB] Get Query: id == %s Fields: %s", _id, fields)
-        result = self.mongo.find_one({'_id': _id}, fields=fields)
+        result = hr(self.mongo.find_one, {'_id': _id}, fields=fields)
         log.debug("[MongoDB] Get Result: %s", result)
 
         if result:
@@ -404,7 +396,7 @@ class MongoDBNamespaceManager(NamespaceManager):
                 doc['$set']['valid_until'] = expiretime
 
         log.debug("Upserting Doc '%s' to _id '%s'" % (doc, _id))
-        self.mongo.update({"_id": _id}, doc, upsert=True, safe=True)
+        hr(self.mongo.update, {"_id": _id}, doc, upsert=True, safe=True)
 
     def __setitem__(self, key, value):
         self.set_value(key, value)
@@ -412,16 +404,16 @@ class MongoDBNamespaceManager(NamespaceManager):
     def __delitem__(self, key):
         """Delete JUST the key, by setting it to None."""
         if self._sparse:
-            self.mongo.remove({'_id.namespace': self.namespace})
+            hr(self.mongo.remove, {'_id.namespace': self.namespace})
         else:
-            self.mongo.update({'_id': self.namespace},
+            hr(self.mongo.update, {'_id': self.namespace},
                               {'$unset': {'data.' + key: True}}, upsert=False)
 
     def keys(self):
         if self._sparse:
-            return [row['_id']['field'] for row in self.mongo.find({'_id.namespace': self.namespace}, {'_id': True})]
+            return [row['_id']['field'] for row in hr(self.mongo.find, {'_id.namespace': self.namespace}, {'_id': True})]
         else:
-            return self.mongo.find_one({'_id': self.namespace}, {'data': True}).get('data', {})
+            return hr(self.mongo.find_one, {'_id': self.namespace}, {'data': True}).get('data', {})
 
 class MongoDBContainer(Container):
     namespace_class = MongoDBNamespaceManager

@@ -23,11 +23,12 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
 
-from pymongo import MongoClient
+from pymongo import MongoClient, MongoReplicaSetClient
 from pymongo.cursor import Cursor as _Cursor
 from pymongo.errors import (
-    TimeoutError, OperationFailure, ConnectionFailure, DuplicateKeyError
+    OperationFailure, ConnectionFailure, DuplicateKeyError
 )
+from pymongo.errors import TimeoutError as NetworkTimeout
 from pymongo.bulk import BulkOperationBuilder
 from pymongo.read_preferences import ReadPreference
 from pymongo.son_manipulator import SONManipulator
@@ -88,62 +89,73 @@ class MongoDataBase(DataBase):
         self._read_preference = value
 
     def _connect(self, *args, **kwargs):
-
         result = None
-
         connection_args = {}
 
-        # if self host is given
-        if self.host:
-            connection_args['host'] = self.host
-        # if self port is given
-        if self.port:
-            connection_args['port'] = self.port
-        # if self replica set is given
-        if self.replicaset:
-            connection_args['replicaSet'] = self.replicaset
-            connection_args['read_preference'] = self.read_preference
+        from canopsis.confng import Configuration, Ini
+        from canopsis.common.mongo_store import MongoStore
 
-        connection_args['w'] = 1 if self.safe else 0
-        if self.safe:
-            connection_args['j'] = self.journaling
+        mongo_cfg = Configuration.load('etc/common/mongo_store.conf', Ini)['DATABASE']
 
-        if self.ssl:
-            connection_args.update(
-                {
-                    'ssl': self.ssl,
-                    'ssl_keyfile': self.ssl_key,
-                    'ssl_certfile': self.ssl_cert
-                }
-            )
-
-        self.logger.debug(u'Trying to connect to {0}'.format(connection_args))
+        self._user = mongo_cfg['user']
+        self._pwd = mongo_cfg['pwd']
+        self._host = mongo_cfg['host']
+        self._db = mongo_cfg['db']
+        self._port = int(mongo_cfg['port'])
+        self._replicaset = mongo_cfg.get('replicaset')
+        self._read_preference = getattr(
+            ReadPreference,
+            mongo_cfg.get('read_preference', 'SECONDARY_PREFERRED'),
+            ReadPreference.SECONDARY_PREFERRED
+        )
 
         try:
-            result = MongoClient(**connection_args)
+            if self._replicaset is None:
+                connection_args['host'] = self._host
+                connection_args['port'] = self._port
+
+            else:
+                connection_args['replicaSet'] = self._replicaset
+                connection_args['read_preference'] = self._read_preference
+
+            connection_args['w'] = 1
+            connection_args['j'] = True
+
+            if mongo_cfg.get('ssl') == '1':
+                connection_args['ssl'] = '1'
+                connection_args['ssl_keyfile'] = mongo_cfg['ssl_key']
+                connection_args['ssl_certfile'] = mongo_cfg['ssl_cert']
+        except KeyError as ex:
+            self.logger.error('mongo conf error: {}'.format(ex))
+
+        except Exception as ex:
+            self.logger.error('mongo exception: {}'.format(ex))
+
+        try:
+            result = MongoStore.get_default().conn
         except ConnectionFailure as cfe:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
-                format(self.host, self.port, cfe)
+                format(self._host, self._port, cfe)
             )
         else:
-            self._database = result[self.db]
+            self._database = result[self._db]
 
-            if (self.user, self.pwd) != (None, None):
+            if (self._user, self._pwd) != (None, None):
 
-                authenticate = self._database.authenticate(self.user, self.pwd)
+                authenticate = self._database.authenticate(self._user, self._pwd)
 
                 if authenticate:
                     self.logger.debug(
                         "Connected on {0}:{1}".format(
-                            self.host, self.port
+                            self._host, self._port
                         )
                     )
 
                 else:
                     self.logger.error(
                         'Impossible to authenticate {0} on {1}:{2}'.format(
-                            self.host, self.port
+                            self._host, self._port
                         )
                     )
                     self.disconnect()
@@ -151,7 +163,7 @@ class MongoDataBase(DataBase):
 
             else:
                 self.logger.debug(
-                    "Connected on {0}:{1}".format(self.host, self.port)
+                    "Connected on {0}:{1}".format(self._host, self._port)
                 )
 
         return result
@@ -259,7 +271,7 @@ class MongoStorage(MongoDataBase, Storage):
                     shardCollection=collection_full_name, key={'_id': 1}
                 )
 
-            
+
             if self.all_indexes() is not None:
 
                 for index in self.all_indexes():
@@ -629,7 +641,7 @@ class MongoStorage(MongoDataBase, Storage):
                 w=w, wtimeout=self.out_timeout, *args, **kwargs
             )
 
-        except TimeoutError:
+        except NetworkTimeout:
             self.logger.warning(
                 'Try to run command {0}({1}) on {2} attempts left'
                 .format(command, kwargs, backend))

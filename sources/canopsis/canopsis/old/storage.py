@@ -27,7 +27,7 @@ import gridfs
 
 from bson import objectid
 
-from pymongo import Connection
+from canopsis.common.mongo_store import MongoStore
 from pymongo import ASCENDING
 from pymongo import DESCENDING
 
@@ -188,7 +188,7 @@ class Storage(object):
         if self.connected:
             return True
 
-        self.conn = Connection(self.uri, safe=True)
+        self.conn = MongoStore.get_default().conn
         self.db = self.conn[self.mongo_db]
 
         manipulators = self.db.incoming_manipulators
