@@ -28,14 +28,12 @@ import json
 
 from operator import itemgetter
 from bottle import request
-from six import string_types
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
-from canopsis.confng.helpers import cfg_to_array
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.tracer.manager import TracerManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
@@ -292,7 +290,6 @@ def get_active_pbehaviors_on_watchers(watchers,
     """
     active_pb_on_watchers = {}
 
-    print(active_pb_dict)
     for watcher in watchers:
         tmp_pbh = []
         watcher_depends = set(watcher.get('depends', []))
@@ -519,8 +516,10 @@ def exports(ws):
                 merged_eids_tracer,
                 watcher['depends']
             )
-            tmp_next_run = get_next_run_alert(watcher.get('depends', []),
-                                                next_run_dict)
+            tmp_next_run = get_next_run_alert(
+                watcher.get('depends', []),
+                next_run_dict
+            )
             if tmp_next_run is not None:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
