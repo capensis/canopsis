@@ -108,6 +108,7 @@ class WatcherFilter(object):
     def __init__(self):
         self._all = None
         self._some = None
+        self._watcher = None
         self._types = set()
 
     def all(self):
@@ -121,6 +122,12 @@ class WatcherFilter(object):
         :returns: True, False or None
         """
         return self._some
+
+    def watcher(self):
+        """
+        :returns: True, False or None if the watcher has an active pbehavior.
+        """
+        return self._watcher
 
     def types(self):
         """
@@ -148,6 +155,10 @@ class WatcherFilter(object):
             elif k == 'active_pb_type':
                 self._types.add(str(v).strip().lower())
                 del cdoc['active_pb_type']
+
+            elif k == 'active_pb_watcher':
+                self._watcher = self.to_bool(v)
+                del cdoc['active_pb_watcher']
 
             else:
                 nv = self._filter(v)
@@ -206,18 +217,21 @@ class WatcherFilter(object):
             return {}
         return res
 
-    def appendable(self, allstatus, somestatus, pb_types=None):
+    def appendable(self, allstatus, somestatus, watcherstatus, pb_types=None):
         """
         Call WatcherFilter.filter(filter_) first before calling this function.
 
         :param allstatus bool: watcher has all entities with an active pbehavior
         :param somestatus bool: watcher has some or all entities with an active pbehavior
+        :param watcherstatus bool: watcher has a pbehavior or not. If the filter contains a filter on that, it will be
         :param pb_types list[str]: list of pbehavior types to filter on. If None or empty, any types will be ok.
         """
         if not isinstance(allstatus, bool):
             raise ValueError('wrong allstatus value: not a bool')
         if not isinstance(somestatus, bool):
             raise ValueError('wrong somestatus value: not a bool')
+        if not isinstance(watcherstatus, bool):
+            raise ValueError('wrong watcherstatus value: not a bool')
 
         if pb_types is None:
             pb_types = list()
@@ -226,6 +240,16 @@ class WatcherFilter(object):
             raise ValueError('wrong pb_types value: not a list')
 
         logic_some_all = False
+        logic_watcher = False
+
+        if self.watcher() is None:
+            logic_watcher = True
+
+        elif self.watcher() is True and watcherstatus is True:
+            logic_watcher = True
+
+        elif self.watcher() is False and watcherstatus is False:
+            logic_watcher = True
 
         if self.all() is None and self.some() is None:
             logic_some_all = True
@@ -241,7 +265,7 @@ class WatcherFilter(object):
         elif self.some() is somestatus and self.some() is not None:
             logic_some_all = True
 
-        return logic_some_all and self._filter_pb_types(pb_types)
+        return logic_watcher and logic_some_all and self._filter_pb_types(pb_types)
 
 def pbehavior_types(pbehaviors):
     """
@@ -291,9 +315,11 @@ def get_active_pbehaviors_on_watchers(watchers,
     :returns: dict of watcher with list of active pbehavior
     """
     active_pb_on_watchers = {}
+    active_watcher_pbehaviors = {}
 
     for watcher in watchers:
         tmp_pbh = []
+        tmp_wpbh = []
         watcher_depends = set(watcher.get('depends', []))
 
         for pb_id, eids in active_pb_dict.items():
@@ -304,14 +330,17 @@ def get_active_pbehaviors_on_watchers(watchers,
 
             # add pbehaviors linked to this watcher
             if watcher['_id'] in active_pb_dict[pb_id]:
-                tmp_pbh.append(active_pb_dict_full[pb_id])
+                wpb = active_pb_dict_full[pb_id]
+                wpb['isActive'] = True
+                tmp_wpbh.append(wpb)
 
         for pbh in tmp_pbh:
             pbh['isActive'] = True
 
         active_pb_on_watchers[watcher['_id']] = tmp_pbh
+        active_watcher_pbehaviors[watcher['_id']] = tmp_wpbh
 
-    return active_pb_on_watchers
+    return active_pb_on_watchers, active_watcher_pbehaviors
 
 
 def get_next_run_alert(watcher_depends, alert_next_run_dict):
@@ -442,7 +471,7 @@ def exports(ws):
             entity_watchers_ids.append(watcher['_id'])
             alarm_watchers_ids.append(watcher['_id'])
 
-        active_pbehaviors = get_active_pbehaviors_on_watchers(
+        active_pbehaviors, active_watchers_pbehaviors = get_active_pbehaviors_on_watchers(
             watcher_list,
             active_pb_dict,
             active_pb_dict_full
@@ -506,6 +535,7 @@ def exports(ws):
                     enriched_entity['resource'] = tmp_alarm['resource']
 
             enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
+            enriched_entity['watcher_pbehavior'] = active_watchers_pbehaviors.get(watcher['_id'], [])
             enriched_entity["mfilter"] = watcher["mfilter"]
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
                 watcher['depends'],
@@ -514,6 +544,7 @@ def exports(ws):
             wstatus = watcher_status(watcher, merged_pbehaviors_eids)
             enriched_entity["active_pb_some"] = wstatus[0]
             enriched_entity["active_pb_all"] = wstatus[1]
+            enriched_entity['active_pb_watcher'] = len(enriched_entity['watcher_pbehavior']) > 0
             enriched_entity['has_baseline'] = check_baseline(
                 merged_eids_tracer,
                 watcher['depends']
@@ -526,7 +557,8 @@ def exports(ws):
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
             watcher_pb_types = pbehavior_types(enriched_entity['pbehavior'])
-            if wf.appendable(wstatus[1], wstatus[0], pb_types=watcher_pb_types) is True:
+            watcher_pb_types |= pbehavior_types(enriched_entity['watcher_pbehavior'])
+            if wf.appendable(wstatus[1], wstatus[0], enriched_entity['active_pb_watcher'], pb_types=watcher_pb_types) is True:
                 watchers.append(enriched_entity)
 
         watchers = sorted(watchers, key=itemgetter("display_name"))
