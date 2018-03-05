@@ -1,0 +1,16 @@
+{
+  "name": "kb-rrule",
+  "version": "1.0.2",
+  "main": "lib/rrule.js",
+  "homepage": "https://github.com/kbrs/rrule",
+  "_release": "1.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.2",
+    "commit": "42e344ee8c4d2d39a76ef32b82fbbe03416aeb3f"
+  },
+  "_source": "git://github.com/kbrs/rrule.git",
+  "_target": "~1.0.2",
+  "_originalSource": "kb-rrule",
+  "_direct": true
+}

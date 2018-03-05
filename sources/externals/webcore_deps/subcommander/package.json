@@ -1,0 +1,66 @@
+{
+  "name": "subcommander",
+  "version": "0.1.3",
+  "description": "Command-line argument parser with sub-command support",
+  "main": "subcommander.js",
+  "scripts": {
+    "lint": "jshint subcommander.js examples/ test/",
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec",
+    "test": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat coverage/lcov.info | coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gregpabian/subcommander.git"
+  },
+  "keywords": [
+    "command",
+    "sub-command",
+    "sub",
+    "cli",
+    "argument",
+    "option",
+    "parser"
+  ],
+  "author": {
+    "name": "Greg Pabian",
+    "email": "greg.pabian@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gregpabian/subcommander/issues"
+  },
+  "homepage": "https://github.com/gregpabian/subcommander",
+  "dependencies": {
+    "chalk": "^0.5.1"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.2",
+    "jshint": "^2.5.2",
+    "mocha": "^1.20.1",
+    "mocha-lcov-reporter": "0.0.1",
+    "rewire": "^2.1.0"
+  },
+  "gitHead": "e9047600f2e784cfeb5410f57fd28cd2b1b5a830",
+  "_id": "subcommander@0.1.3",
+  "_shasum": "5c83718321f2dc7997e1f93f8124969187915d8b",
+  "_from": "subcommander@>=0.1.3 <0.2.0",
+  "_npmVersion": "1.4.28",
+  "_npmUser": {
+    "name": "gregpabian",
+    "email": "greg.pabian@gmail.com"
+  },
+  "maintainers": [
+    {
+      "name": "gregpabian",
+      "email": "greg.pabian@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "5c83718321f2dc7997e1f93f8124969187915d8b",
+    "tarball": "https://registry.npmjs.org/subcommander/-/subcommander-0.1.3.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/subcommander/-/subcommander-0.1.3.tgz"
+}

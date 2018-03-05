@@ -1,0 +1,27 @@
+{
+  "name": "require-ember-handlebars-plugin",
+  "version": "0.0.5",
+  "description": "Require.js plugin for automatic, recursive Handlebars loading for Ember",
+  "main": "ehbs.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ralphholzmann/require-ember-handlebars-plugin.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "gitHead": "037b093573cf32c7842c2a49f8d21641fca97821",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/ralphholzmann/require-ember-handlebars-plugin/issues"
+  },
+  "devDependencies": {
+    "grunt-release": "~0.4.0",
+    "grunt": "~0.4.1"
+  }
+}

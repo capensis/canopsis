@@ -1,0 +1,82 @@
+{
+  "name": "command-line-commands",
+  "author": {
+    "name": "Lloyd Brookes",
+    "email": "75pound@gmail.com"
+  },
+  "version": "0.1.2",
+  "description": "Add a git-like command interface to your app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/75lb/command-line-commands.git"
+  },
+  "license": "MIT",
+  "main": "index",
+  "bin": {
+    "command-line-commands": "bin/cli.js"
+  },
+  "keywords": [
+    "argv",
+    "parse",
+    "argument",
+    "args",
+    "option",
+    "parser",
+    "parsing",
+    "cli",
+    "command",
+    "commands",
+    "line"
+  ],
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "tape test/*.js",
+    "docs": "jsdoc2md -t jsdoc2md/README.hbs lib/*.js > README.md; echo",
+    "es5": "babel --presets babel-preset-es2015 --no-comments lib --out-dir es5"
+  },
+  "dependencies": {
+    "array-back": "^1.0.2",
+    "command-line-args": "^2.1.4",
+    "core-js": "^2.0.2",
+    "feature-detect-es6": "^1.2.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "jsdoc-to-markdown": "^1.3.3",
+    "tape": "^4.4.0"
+  },
+  "standard": {
+    "ignore": [
+      "es5"
+    ]
+  },
+  "gitHead": "9053f5dc7995fd17ee5f2a029da1f4cbedbdd2a4",
+  "bugs": {
+    "url": "https://github.com/75lb/command-line-commands/issues"
+  },
+  "homepage": "https://github.com/75lb/command-line-commands#readme",
+  "_id": "command-line-commands@0.1.2",
+  "_shasum": "3fd1ac8db5cebfdc6c0910993673b55876b000bc",
+  "_from": "command-line-commands@>=0.1.2 <0.2.0",
+  "_npmVersion": "3.3.12",
+  "_nodeVersion": "5.4.0",
+  "_npmUser": {
+    "name": "75lb",
+    "email": "75pound@gmail.com"
+  },
+  "dist": {
+    "shasum": "3fd1ac8db5cebfdc6c0910993673b55876b000bc",
+    "tarball": "https://registry.npmjs.org/command-line-commands/-/command-line-commands-0.1.2.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "75lb",
+      "email": "75pound@gmail.com"
+    }
+  ],
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/command-line-commands/-/command-line-commands-0.1.2.tgz",
+  "readme": "ERROR: No README data found!"
+}

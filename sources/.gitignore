@@ -1,5 +1,4 @@
 log/
-externals/pylibs/*/
 packages/*/files.lst
 packages/*/files.tgz
 packages/influxdb/blacklist
@@ -7,9 +6,7 @@ packages/nodejs/blacklist
 packages/webcore-deps/blacklist
 */draft
 */drafts
-externals/*/
 *neb2socket.o
-!externals/rabbitmq-plugins
 packages/files.lst
 bootstrap/*.tgz
 webcore/var/www/canopsis/resources/lib

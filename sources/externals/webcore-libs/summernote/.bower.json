@@ -1,0 +1,31 @@
+{
+  "name": "summernote",
+  "version": "0.6.1",
+  "main": [
+    "./dist/summernote.js",
+    "./dist/summernote.css"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": ">= 1.9.0",
+    "bootstrap": ">= 3.0.1",
+    "font-awesome": ">=4.2.0"
+  },
+  "homepage": "https://github.com/summernote/summernote",
+  "_release": "0.6.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.6.1",
+    "commit": "ab6772d07073683b2c463ff765085e5d0ad575a0"
+  },
+  "_source": "git://github.com/summernote/summernote.git",
+  "_target": "~0.6.1",
+  "_originalSource": "summernote",
+  "_direct": true
+}

@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+var resolve = require('resolve')
+
+process.title = 'broccoli'
+
+try {
+  var broccoliPath = resolve.sync('broccoli', {
+    basedir: process.cwd()
+  })
+} catch (e) {
+  console.error('The main Broccoli library was not found.')
+  console.error('')
+  console.error('If this is an existing project, running `npm install` may solve this.')
+  console.error('Otherwise, running `npm install --save-dev broccoli` will install the Broccoli library.')
+  process.exit(1)
+}
+
+var broccoli = require(broccoliPath)
+broccoli.cli()

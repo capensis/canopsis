@@ -1,0 +1,55 @@
+{
+  "name": "broccoli-cli",
+  "description": "The broccoli command line interface",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jo Liss",
+    "email": "joliss42@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/broccolijs/broccoli-cli"
+  },
+  "license": "MIT",
+  "bin": {
+    "broccoli": "bin/broccoli"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "preferGlobal": true,
+  "keywords": [
+    "broccoli",
+    "cli"
+  ],
+  "dependencies": {
+    "resolve": "~0.6.1"
+  },
+  "gitHead": "428a5100fc7084b3b3f7c6c63a2614cecd961439",
+  "bugs": {
+    "url": "https://github.com/broccolijs/broccoli-cli/issues"
+  },
+  "homepage": "https://github.com/broccolijs/broccoli-cli",
+  "_id": "broccoli-cli@1.0.0",
+  "scripts": {},
+  "_shasum": "69444521a5e631569300fbc196e85e18097b22a4",
+  "_from": "broccoli-cli@latest",
+  "_npmVersion": "2.7.0",
+  "_nodeVersion": "1.5.1",
+  "_npmUser": {
+    "name": "joliss",
+    "email": "joliss42@gmail.com"
+  },
+  "maintainers": [
+    {
+      "name": "joliss",
+      "email": "joliss42@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "69444521a5e631569300fbc196e85e18097b22a4",
+    "tarball": "https://registry.npmjs.org/broccoli-cli/-/broccoli-cli-1.0.0.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/broccoli-cli/-/broccoli-cli-1.0.0.tgz"
+}

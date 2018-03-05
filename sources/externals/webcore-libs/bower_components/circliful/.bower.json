@@ -1,0 +1,15 @@
+{
+  "name": "circliful",
+  "homepage": "https://github.com/pguso/jquery-plugin-circliful",
+  "version": "0.1.5",
+  "_release": "0.1.5",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.5",
+    "commit": "05cb95856ad027533207232a1a61c6300f918c6b"
+  },
+  "_source": "git://github.com/pguso/jquery-plugin-circliful.git",
+  "_target": "~0.1.5",
+  "_originalSource": "circliful",
+  "_direct": true
+}

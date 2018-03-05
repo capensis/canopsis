@@ -1,0 +1,8 @@
+{
+  "name": "cytoscape",
+  "main": "index.js",
+  "_source": "/home/b3j0f/Development/canopsis/sources/externals/webcore-libs/dev/cytoscape.js",
+  "_target": "*",
+  "_originalSource": "./cytoscape.js",
+  "_direct": true
+}

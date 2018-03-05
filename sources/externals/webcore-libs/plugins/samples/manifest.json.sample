@@ -1,0 +1,5 @@
+[{ "name": "plugin_z",
+   "version": "1.0.0x",
+   "routes": "routes.json",
+   "files": "available_files.json",
+   "dependancies": ["plugin_x", "plugin_y"] }]

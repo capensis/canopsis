@@ -1,0 +1,10 @@
+{
+  "name": "require-ember-handlebars-plugin",
+  "version": "0.1.2",
+  "main": "ehbs.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}

@@ -1,0 +1,37 @@
+[{
+	"type": "route",
+	"name": "login",
+	"description": "Login",
+	"appears_on": [{"name": "login_menu"}]
+},{
+	"type": "",
+	"name": "build",
+	"icon": "cog",
+	"description": "Build",
+	"appears_on": [{"name": "main_menu"}],
+	"children": [{
+		"type": "route",
+		"name": "accounts",
+		"icon": "user",
+		"description": "accounts",
+		"appears_on": [{"name": "main_menu"}],
+		"children": [{
+			"type": "route",
+			"name": "AddAccounts",
+			"description": "AddAccounts",
+			"appears_on": [{"name": "main_menu"}]
+		}]
+	},{
+		"type": "route",
+		"name": "groups",
+		"icon": "book",
+		"description": "groups",
+		"appears_on": [{"name": "main_menu"}]
+	},{
+		"type": "route",
+		"name": "curves",
+		"icon": "picture",
+		"description": "curves",
+		"appears_on": [{"name": "main_menu"}]
+	}]
+}]

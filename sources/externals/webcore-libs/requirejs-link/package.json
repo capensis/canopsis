@@ -1,0 +1,23 @@
+{
+  "name": "requirejs-link",
+  "version": "0.1.1",
+  "description": "RequireJS plugin to insert LINK element on DOM, work with CSS and HTMLImport",
+  "main": "link.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gartz/requirejs-link.git"
+  },
+  "keywords": [
+    "requirejs",
+    "link"
+  ],
+  "author": "Gabriel Reitz Giannattasio <gartz@l6.com.br>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gartz/requirejs-link/issues"
+  },
+  "homepage": "https://github.com/gartz/requirejs-link"
+}

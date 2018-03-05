@@ -1,0 +1,32 @@
+[{
+	"type": "dir",
+	"name": "view",
+	"files": [{"name": "account.js"},
+		  {"name": "users.js"},
+		  {"name": "perfdatas.js"},
+		  {"name": "topologies.js"},
+		  {"name": "consolidations.js"},
+		  {"name": "eventnavigation.js"},
+		  {"name": "selectors.js"},
+		  {"name": "curves.js"},
+		  {"name": "groups.js"}]
+	},{
+	"type": "dir",
+	"name": "controller",
+	"files": [{"name": "account.js"},
+		  {"name": "users.js"},
+		  {"name": "perfdatas.js"},
+		  {"name": "topologies.js"},
+		  {"name": "consolidations.js"},
+		  {"name": "eventnavigation.js"},
+		  {"name": "selectors.js"},
+		  {"name": "curves.js"},
+		  {"name": "groups.js"},
+		  {"type": "dir",
+		   "name": "subDir",
+		   "files": [{"name": "file1.js"},
+		   	     {"name": "file2.js"},
+			     {"name": "file3.js"},
+			     {"name": "file4.js"}]
+			    }]
+}]

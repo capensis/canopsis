@@ -1,0 +1,6 @@
+language: node_js
+node_js:
+  - "0.11"
+  - "0.10"
+env:
+  - COVERALLS_SERVICE_NAME=travis-ci COVERALLS_REPO_TOKEN=rwvvviTCIHE5ALj9hpUuH3pkwDaS7ITrx

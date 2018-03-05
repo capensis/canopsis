@@ -1,0 +1,13 @@
+{
+  "name": "bootstrap-colorselector",
+  "homepage": "https://github.com/flaute/bootstrap-colorselector",
+  "_release": "c8ad850a2f",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "c8ad850a2f93543a8af1652c701b269332d2362d"
+  },
+  "_source": "git://github.com/flaute/bootstrap-colorselector.git",
+  "_target": "*",
+  "_originalSource": "bootstrap-colorselector"
+}

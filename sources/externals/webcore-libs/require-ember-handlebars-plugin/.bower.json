@@ -1,0 +1,21 @@
+{
+  "name": "require-ember-handlebars-plugin",
+  "version": "0.1.2",
+  "main": "ehbs.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "homepage": "https://github.com/ralphholzmann/require-ember-handlebars-plugin",
+  "_release": "0.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.2",
+    "commit": "4ca6d4cb6b62fff611c83efbfc6f157f91ee904a"
+  },
+  "_source": "git://github.com/ralphholzmann/require-ember-handlebars-plugin.git",
+  "_target": "~0.1.2",
+  "_originalSource": "require-ember-handlebars-plugin",
+  "_direct": true
+}

@@ -1,0 +1,15 @@
+{
+  "name": "jquery-upload-file",
+  "homepage": "https://github.com/hayageek/jquery-upload-file",
+  "version": "3.1.10",
+  "_release": "3.1.10",
+  "_resolution": {
+    "type": "version",
+    "tag": "3.1.10",
+    "commit": "57ac4f3a06ec54f34511cb78eb89f3b3ce62538b"
+  },
+  "_source": "git@github.com:hayageek/jquery-upload-file.git",
+  "_target": "~3.1.10",
+  "_originalSource": "git@github.com:hayageek/jquery-upload-file.git",
+  "_direct": true
+}

@@ -1,0 +1,60 @@
+{
+  "name": "subcommand",
+  "version": "2.0.3",
+  "description": "create CLI tools with subcommands",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxogden/subcommand.git"
+  },
+  "keywords": [
+    "minimist"
+  ],
+  "author": {
+    "name": "max ogden"
+  },
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/maxogden/subcommand/issues"
+  },
+  "homepage": "https://github.com/maxogden/subcommand",
+  "dependencies": {
+    "cliclopts": "^1.1.0",
+    "debug": "^2.1.3",
+    "minimist": "^1.2.0",
+    "xtend": "^4.0.0"
+  },
+  "devDependencies": {
+    "standard": "^3.3.2",
+    "tape": "^4.0.0"
+  },
+  "gitHead": "b7e2901afddec02ec2c9361a9d39bd785e10e329",
+  "_id": "subcommand@2.0.3",
+  "_shasum": "9b3fd1a753e3c441f00410cb44131d8655f52c32",
+  "_from": "subcommand@>=2.0.3 <3.0.0",
+  "_npmVersion": "2.11.3",
+  "_nodeVersion": "0.12.7",
+  "_npmUser": {
+    "name": "maxogden",
+    "email": "max@maxogden.com"
+  },
+  "dist": {
+    "shasum": "9b3fd1a753e3c441f00410cb44131d8655f52c32",
+    "tarball": "https://registry.npmjs.org/subcommand/-/subcommand-2.0.3.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "maxogden",
+      "email": "max@maxogden.com"
+    },
+    {
+      "name": "karissa",
+      "email": "krmckelv@gmail.com"
+    }
+  ],
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/subcommand/-/subcommand-2.0.3.tgz"
+}
