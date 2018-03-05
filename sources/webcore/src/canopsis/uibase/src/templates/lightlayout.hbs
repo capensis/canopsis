@@ -1,0 +1,32 @@
+{{#if controller.editMode}}
+    {{#if controller.isOnMainView}}
+        <div>
+            {{#each item in controller.items}}
+                <div {{bind-attr class="controller.itemCssClass"}} >
+                    {{widgetslot item=item}}
+                </div>
+            {{/each}}
+            <div style="clear:both"></div>
+        </div>
+    {{else}}
+        {{#each item in controller.items}}
+            {{#if controller.itemTagName}}
+                {{#view Ember.View tagName=controller.itemTagName classNames=controller.itemCssClassArray}}
+                    {{widgethelper widget=item.widget target=controller}}
+                {{/view}}
+            {{else}}
+                {{widgethelper widget=item.widget target=controller}}
+            {{/if}}
+        {{/each}}
+    {{/if}}
+{{else}}
+    {{#each item in controller.items}}
+        {{#if controller.itemTagName}}
+            {{#view Ember.View tagName=controller.itemTagName classNames=controller.itemCssClassArray}}
+                {{widgethelper widget=item.widget target=controller}}
+            {{/view}}
+        {{else}}
+            {{widgethelper widget=item.widget target=controller}}
+        {{/if}}
+    {{/each}}
+{{/if}}

@@ -1,0 +1,56 @@
+{{#if value.length}}
+    {{!#group}}
+        <table class="table table-striped" style="width:100%">
+            <thead></thead>
+            <tbody class="sortable">
+                {{#each item in arrayAttributes}}
+                    <tr style="width:100%">
+                        {{#if content.model.options.reorderable}}
+                            <td>
+                                <a {{action "move" "up" item}} class="btn btn-default">
+                                    <i class="fa fa-arrow-up"></i>
+                                </a>
+                                <a {{action "move" "down" item}} class="btn btn-default">
+                                    <i class="fa fa-arrow-down"></i>
+                                </a>
+                            </td>
+                        {{/if}}
+                        <td>
+                            <div>
+                                {{component-editor attr=item editorType=itemEditorType}}
+                            </div>
+
+                            <div>
+                                {{#each nestedItem in item.value.nestedViews}}
+                                    <div class='nested-view'>
+                                        {{component-editor attr=nestedItem editorType=itemEditorType}}
+                                        <a {{action "removeNestedItem" item nestedItem}} class="btn btn-danger pull-right">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </a>
+                                    </div>
+                                    <br>
+                                {{/each}}
+                            </div>
+                        </td>
+                        <td>
+                            <a {{action "removeItem" item}} class="btn btn-danger pull-right">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                            <br>
+                            <a {{action "addNestedItem" item}} class="btn btn-info pull-right add-nested-item">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </a>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{!/group}}
+{{else}}
+    <div class="well"><i>{{tr "No values"}}</i></div>
+
+{{/if}}
+<a {{action "addItem"}} class="btn btn-info">
+    <span class="glyphicon glyphicon-plus"></span>
+     Add
+</a>

@@ -1,0 +1,33 @@
+{{#each attr in parentController.shown_columns}}
+    <tr>
+        {{#if attr.options.show}}
+            <td class="grouped-cell-label">
+                {{even}}
+                {{#if attr.options.label}}
+                    {{tr attr.options.label}}
+                {{else}}
+                    {{tr attr.field}}
+                {{/if}}
+            </td>
+            <td {{bind-attr class=attr.field}}>
+                {{#if attr.options.canUseDisplayRecord}}
+                    <i class="handle underline" {{action "sendDisplayRecord" parentController.controllerInstance this}}>
+                        {{component-renderer attr=attr record=this}}
+                    </i>
+                {{else}}
+                    {{component-renderer attr=attr record=this}}
+                {{/if}}
+            </td>
+        {{/if}}
+    </tr>
+{{/each}}
+
+{{#if parentController._partials.itemactionbuttons}}
+    <tr>
+        <td class="grouped-cell-label">
+            <div style="display:flex">
+                {{partialslot slot=controller.parentController._partials.itemactionbuttons minified=true}}
+            </div>
+        </td>
+    </tr>
+{{/if}}

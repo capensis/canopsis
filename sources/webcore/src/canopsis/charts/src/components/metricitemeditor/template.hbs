@@ -1,0 +1,28 @@
+<p><b>{{tr "Metric"}}</b></p>
+
+{{component-metricselector
+    content=item.metric.value
+    multiselect=false
+}}
+
+<p><b>{{tr "Curve"}}</b></p>
+
+{{component-stringclassifiedcrecordselector
+    content=item.curve.value
+    crecordtype="curve"
+    modelfilter='{}'
+    selection=item.curve.value
+    valueKey="id"
+}}
+
+<p>{{tr "Metric's unit"}} :</p>
+<p>{{input value=item.unit.value class="form-control"}}</p>
+
+<p>{{tr "Choose metric's color"}} :</p>
+<p>{{input type="color" value=item.color.value class="form-control"}}</p>
+
+<p>{{tr "Choose axes"}} :</p>
+<p>
+    X : {{input type="number" value=item.xaxis.value}} - 
+    Y : {{input type="number" value=item.yaxis.value}}
+</p>

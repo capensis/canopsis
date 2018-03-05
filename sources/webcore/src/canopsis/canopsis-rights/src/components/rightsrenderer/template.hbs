@@ -1,0 +1,12 @@
+<ul class="list-group" style="margin-bottom:0px;">
+    <li class="list-group-item list-group-item-info">
+        <span class="badge">{{rightsArray.length}}</span>
+        {{tr ' Rights assigned'}}
+    </li>
+    {{#each right in rightsArray}}
+        <li class="list-group-item">
+            {{component-rights-action value=right.name}}
+        </li>
+    {{/each}}
+</ul>
+

@@ -1,0 +1,1 @@
+{"total": 1, "data": [{"loader_id": "cservice.ticket", "enable": "", "title": "Ticket Declaration", "crecord_write_time": "", "job": {"crecord_type": "job", "xtype": "job"}, "crecord_type": "", "_id": "cservice.ticket", "id": "cservice.ticket", "crecord_name": "ticket", "loader_no_update": true}], "success": true}

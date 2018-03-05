@@ -1,0 +1,10 @@
+<table class="logger">
+    {{#each request in controller.widgetData}}
+        <tr>
+            <td>{{request.state}}</td>
+            <td>{{request.promise.type}}</td>
+            <td>{{request.promise.url}}</td>
+            <td>{{request.promise.label}}</td>
+        </tr>
+    {{/each}}
+</table>

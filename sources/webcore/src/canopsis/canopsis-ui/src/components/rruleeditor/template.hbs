@@ -1,0 +1,209 @@
+{{#component-tabs}}
+    {{#component-tabsheadergroup}}
+        {{component-tabheader ref='default' label='Simple' active=true}}
+        {{component-tabheader ref='advanced' label='Advanced'}}
+        {{component-tabheader ref='input' label='Text input'}}
+    {{/component-tabsheadergroup}}
+    {{#component-tabscontentgroup}}
+        {{#component-tabcontent ref='default' active=true}}
+            <form class="form-horizontal rrule-form">
+                <div class="form-group">
+                    {{#component-tooltip content=""}}
+                        <label class="col-sm-2 control-label">{{tr 'Frequency'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-10">
+                        
+                            {{view "select" class="form-control" 
+                                content=frequencyList 
+                                optionValuePath="content.value"
+                                optionLabelPath="content.name"
+                                value=freq.value
+                                name="frequency"}}
+                        
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'The recurrence start. Besides being the base for the recurrence, missing parameters in the final recurrence instances will also be extracted from this date. If not given, current date will be used instead.')}}
+                        <label class="col-sm-2 control-label">{{tr 'Start'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-10">
+                        {{component-datetimepicker content=dtstart}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'If given, will specify the limit of the recurrence. If a recurrence instance happens to be the same as the stop date, this will be the last occurrence.')}}
+                        <label class="col-sm-2 control-label">{{tr 'Stop'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-10">
+                        {{component-datetimepicker content=until}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr "When given, these variables will define the weekdays where the recurrence will be applied. For example, with a monthly frequence, or with a yearly frequence and the 'bymonth' variable, using 'friday' in 'byweekday' will specify the first friday of the month where the recurrence happens.")}}
+                        <label class="col-sm-2 control-label">{{tr 'By week day'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-10">
+                        {{#each byweekdayList as |day|}}
+                            <label>
+                                {{input type="checkbox" checked=day.isChecked}}
+                                {{day.name}}
+                            </label>
+                        {{/each}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'How many occurrences will be generated.')}}
+                        <label class="col-sm-2 control-label">{{tr 'Repeat'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-10">
+                        {{input type="number" value=count name="count" class="form-control"}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{#component-tooltip content=(tr "The interval between each frequence iteration. For example, when using a year frequency, an interval of '2' means once every two years, but with a hour frequency, it means once every two hours. The default interval is '1'")}}
+                        <label class="col-sm-2 control-label">{{tr 'Interval'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-10">
+                        {{input type="number" value=interval name="interval" class="form-control"}}
+                    </div>
+                </div>
+            </form>
+        {{/component-tabcontent}}
+
+        {{#component-tabcontent ref="advanced"}}
+            <form class="form-horizontal rrule-form">
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'The week start day. This will affect recurrences based on weekly periods. The default week start is Monday')}}
+                        <label class="col-sm-3 control-label">{{tr 'Week start'}}</label>
+                    {{/component-tooltip}}                    
+                    <div class="col-sm-9">
+                        {{view "select" class="form-control"
+                            content=wkStartList
+                            optionValuePath="content.value"
+                            optionLabelPath="content.name"
+                            value=wkst.value
+                            name="wkst"}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'If given, it must be one or many integers, meaning the months to apply the recurrence to.')}}
+                        <label class="col-sm-3 control-label">{{tr 'By month'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-9">
+                        {{#each bymonthList as |month|}}
+                            <label>
+                                {{input type="checkbox" checked=month.isChecked}}
+                                {{month.name}}
+                            </label>
+                        {{/each}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr "If given, it must be one or many integers, positive or negative. Each given integer will specify an occurrence number, corresponding to the nth occurrence of the rule inside the frequency period. For example, a 'bysetpos' of -1 if combined with a monthly frequency, and a 'byweekday' of (Monday, Tuesday, Wednesday, Thursday, Friday), will result in the last work day of every month.")}}
+                        <label class="col-sm-3 control-label">{{tr 'By set position'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-9">
+                        {{input type="text" placeholder=(tr "Separate numbers with a comma")  name="bysetposInput" value=bysetposInput class="form-control"}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'If given, it must be one or many integers, meaning the month days to apply the recurrence to.')}}
+                        <label class="col-sm-3 control-label">{{tr 'By month day'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-9">
+                        {{input type="text" placeholder=(tr "Separate numbers with a comma") value=bymonthdayInput name="bymonthdayInput" class="form-control"}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'If given, it must be one or many integers, meaning the year days to apply the recurrence to.')}}
+                        <label class="col-sm-3 control-label">{{tr 'By year day'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-9">
+                        {{input type="text" placeholder=(tr "Separate numbers with a comma") value=byyeardayInput name="byyeardayInput" class="form-control"}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'If given, it must be on or many integers, meaning the week numbers to apply the recurrence to. Week numbers have the meaning described in ISO8601, that is, the first week of the year is that containing at least four days of the new year.')}}
+                        <label class="col-sm-3 control-label">{{tr 'By week n°'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-9">
+                        {{input type="text" placeholder=(tr "Separate numbers with a comma") value=byweeknoInput name="byweeknoInput" class="form-control"}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'If given, it must be one or many integers, meaning the hours to apply the recurrence to.')}}
+                        <label class="col-sm-3 control-label">{{tr 'By hour'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-9">
+                        {{input type="text" placeholder=(tr "Separate numbers with a comma") value=byhourInput name="byhourInput" class="form-control"}}
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'If given, it must be one or many integers, meaning the minutes to apply the recurrence to.')}}
+                        <label class="col-sm-3 control-label">{{tr 'By minute'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-9">
+                        {{input type="text" placeholder=(tr "Separate numbers with a comma") value=byminuteInput name="byminuteInput" class="form-control"}}
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    {{#component-tooltip content=(tr 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.')}}
+                        <label class="col-sm-3 control-label">{{tr 'By second'}}</label>
+                    {{/component-tooltip}}
+                    <div class="col-sm-9">
+                        {{input type="text" placeholder=(tr "Separate numbers with a comma") value=bysecondInput name="bysecondInput" class="form-control"}}
+                    </div>
+                </div>
+            </form>
+        {{/component-tabcontent}}
+
+        {{#component-tabcontent ref="input"}}
+            <form class="form-horizontal rrule-form">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">{{tr 'Rrule'}}</label>
+                    <div class="col-sm-10">
+                        {{textarea value=rruleText class="form-control"}}
+                    </div>
+                </div>
+            </form>
+        {{/component-tabcontent}}
+
+        <hr>
+
+        <div class="row">
+            <label class="col-sm-3 control-label">{{tr 'Rrule'}}</label>
+            <div class="col-sm-9" class="rrulebox" style="word-break: break-all;">
+                {{rruleValue}}
+            </div>
+        </div>
+
+        <div class="row">
+            {{#if isRruleValid}}
+                <label class="col-sm-3 control-label">{{tr 'Summary'}}</label>
+                <div class="col-sm-9" style="word-break: break-all;">
+                    {{rruleHuman}}
+                </div>
+            {{else}}
+                <div class="alert alert-danger" style="margin: 10px">
+                    <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+                    {{tr 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes to not causing trouble to Canopsis.'}}
+                </div>
+            {{/if}}
+        </div>
+
+    {{/component-tabscontentgroup}}
+{{/component-tabs}}
+
+
