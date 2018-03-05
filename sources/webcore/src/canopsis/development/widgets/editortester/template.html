@@ -1,0 +1,11 @@
+{{#if controller.inspectedObject}}
+    <h3>Object inspected</h3>
+    <i class="abstractType">
+        <i {{bindAttr class=controller.inspectedObject.abstractType}}>
+            {{controller.inspectedObject.abstractType}}
+        </i>
+    </i>
+    {{controller.inspectedObject}}
+{{else}}
+    No object currently inspected.
+{{/if}}

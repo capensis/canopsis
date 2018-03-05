@@ -1,0 +1,20 @@
+#######################
+# Configuration files
+#######################
+
+src/canopsis/enabled-bricks.json
+src/canopsis/test-settings.json
+
+#######################
+# External bricks
+#######################
+
+doc/api/bricks-documentation/brick-*
+doc/api/config.js
+
+#####################
+# Node 
+#####################
+
+node_modules
+bower.json

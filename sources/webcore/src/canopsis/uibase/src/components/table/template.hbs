@@ -1,0 +1,53 @@
+
+<table class="table table-bordered table-condensed table-striped table-hover">
+    <thead>
+        <tr>
+            {{#each column in columns}}
+                {{#if column.actionAll}}
+                    <th {{bind-attr style=column.style class=column.class}}>
+                        <a {{action "do" column.actionAll item}}>
+                            {{column.title}}
+                        </a>
+                    </th>
+                {{else}}
+                    <th {{bind-attr style=column.style class=column.class}}>
+                        {{column.title}}
+                    </th>
+                {{/if}}
+            {{/each}}
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#if items.length}}
+            {{#each item in items}}
+                <tr>
+                    {{#each column in columns}}
+                        {{#if column.action}}
+                            <td {{bind-attr style=column.style class=column.class}}>
+                                <a {{action "do" column.action item}}>
+                                    {{column.title}}
+                                </a>
+                            </td>
+                        {{else}}
+                            <td {{bind-attr style=column.style class=column.class}}>
+                                {{component-renderer attrName=column.name record=item}}
+                                <!--getfield item column.name-->
+                            </td>
+                        {{/if}}
+                    {{/each}}
+                </tr>
+            {{/each}}
+        {{else}}
+            <tr><td {{bind-attr colspan=columns.length}}>{{tr "No values"}}</td></tr>
+        {{/if}}
+    </tbody>
+</table>
+
+<button type="button" class="btn btn-small btn-default" {{action "prevPage"}}>
+    <span class="glyphicon glyphicon-chevron-left"></span>
+</button>
+Page {{input type="number" value=currentPage}} / {{totalPages}}
+<button type="button" class="btn btn-small btn-default" {{action "nextPage"}}>
+    <span class="glyphicon glyphicon-chevron-right"></span>
+</button>
