@@ -11,8 +11,6 @@ packages/files.lst
 bootstrap/*.tgz
 webcore/var/www/canopsis/resources/lib
 webcore/var/www/canopsis/commit.js
-build
-dist
 
 #####################
 # Python files

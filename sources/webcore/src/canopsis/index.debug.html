@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+      <meta content="utf-8" http-equiv="encoding">
+        <meta charset="utf-8" />
+        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Canopsis</title>
+        <link rel="icon" type="image/png" href="/static/canopsis/media/favicon.png" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+            <![endif]-->
+        <script type="application/javascript">
+            //TODO put this in canopsisConfiguration?
+            window.environment = 'debug';
+        </script>
+        <!-- RequireJS -->
+        <script
+            type="application/javascript"
+            src="/static/canopsis/brick-loader/externals/requirejs/require.js"
+            data-main="/static/canopsis/requirejs.conf">
+        </script>
+
+    </head>
+    <body class="skin-blue">
+    <center>
+        <div id="loadingInfo">Loading i18n definitions</div>
+        <div id="moduleList"></div>
+    </center>
+    <div id="loading">
+        <i class="fa fa-cog fa-spin fa-5x"></i><br/>
+        <i class="fa fa-flag"></i>
+    </div>
+    <div id="applicationdiv"></div>
+    </body>
+</html>
+

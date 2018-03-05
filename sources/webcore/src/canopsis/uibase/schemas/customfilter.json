@@ -1,0 +1,18 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "Filter edition",
+		"keys":["title", "filter"]
+	}],
+	"properties": {
+		"filter": {
+			"type": "string",
+			"role": "cfilter",
+			"required": true
+		},
+		"title": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

@@ -1,0 +1,12 @@
+{{!*
+ * @renderer timestamp
+}}
+{{#unless attr.options.hideDate}}
+    <div>{{timestamp value attr}}</div>
+{{/unless}}
+{{#if attr.options.canDisplayAgo}}
+    <small class="text-muted">
+        <span class="glyphicon glyphicon-time"></span>
+        {{timeSince value}}
+    </small>
+{{/if}}

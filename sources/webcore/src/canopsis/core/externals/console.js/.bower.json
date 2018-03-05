@@ -1,0 +1,14 @@
+{
+  "name": "console.js",
+  "homepage": "https://github.com/gwenaelp/console.js",
+  "_release": "20abf996a5",
+  "_resolution": {
+    "type": "branch",
+    "branch": "standalone-lib",
+    "commit": "20abf996a548ade28fe2e9dd4d3a1cd2d71de8eb"
+  },
+  "_source": "git@github.com:gwenaelp/console.js.git",
+  "_target": "standalone-lib",
+  "_originalSource": "git@github.com:gwenaelp/console.js.git",
+  "_direct": true
+}

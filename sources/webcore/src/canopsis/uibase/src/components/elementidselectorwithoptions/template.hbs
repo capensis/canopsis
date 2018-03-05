@@ -1,0 +1,35 @@
+<b>{{tr 'Available'}}:</b>
+
+{{#if searchMethod}}
+    <div style="float: right;">
+        {{#if helpModal.content}}
+            {{#component-tooltip content=helpModal.content htmlEnabled=true noTranslation=true}}
+                <i class="fa fa-info-circle"></i>
+            {{/component-tooltip}}
+        {{/if}}
+        {{tr 'Search'}}: {{input action="search"}}
+    </div>
+{{/if}}
+
+{{component-table items=listedAvailableItems model=content.model.options.source.schema modelfilter=searchPhrase columns=availableDataColumns targetObject=this queryStartOffsetKeyword="start"}}
+
+<hr/>
+<b>Selected:</b>
+
+{{#each selectionItem in content.value}}
+    {{#component-miniform style="margin-bottom:0"}}
+        {{#component-miniformheader}}
+            {{#component-miniformheaderbuttons}}
+                <button class="btn btn-default btn-xs" {{action 'unselect' selectionItem target=this}} >
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            {{/component-miniformheaderbuttons}}
+            {{#component-miniformtitle}}
+                {{component-renderer record=selectionItem content=selectedItemHeaderRendererAttr value=selectionItem rendererType=selectedItemHeaderRendererType}}
+            {{/component-miniformtitle}}
+        {{/component-miniformheader}}
+        {{#component-miniformcontent}}
+            {{component-objecteditor properties=content.model.options.items.properties value=selectionItem}}
+        {{/component-miniformcontent}}
+    {{/component-miniform}}
+{{/each}}

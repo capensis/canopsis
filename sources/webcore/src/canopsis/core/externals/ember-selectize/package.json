@@ -1,0 +1,31 @@
+{
+  "name": "ember-selectize",
+  "version": "0.1.0",
+  "description": "An Ember and Selectize integration. ",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "goat -e test/index.html bower_components/:/bower_components src/:/src",
+    "postinstall": "bower install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/miguelcobain/ember-selectize.git"
+  },
+  "keywords": [
+    "ember",
+    "selectize"
+  ],
+  "author": "Miguel Andrade <jmandrade0@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/miguelcobain/ember-selectize/issues"
+  },
+  "homepage": "https://github.com/miguelcobain/ember-selectize",
+  "devDependencies": {
+    "bower": "^1.3.5",
+    "goat": "^0.3.0"
+  }
+}

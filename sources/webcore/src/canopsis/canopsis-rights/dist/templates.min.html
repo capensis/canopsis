@@ -1,0 +1,117 @@
+<script type="text/x-handlebars" data-template-name="components/component-right-checksum"><div class="btn-group" role="group">
+	{{#if checksumIsRW}}
+		<a {{bind-attr class=checksum4Class}} {{action "toggleRightChecksum" 4}}><i class="fa fa-eye"></i> {{tr 'Read'}}</a>
+		<a {{bind-attr class=checksum2Class}} {{action "toggleRightChecksum" 2}}><i class="fa fa-pencil"></i> {{tr 'Write'}}</a>
+	{{/if}}
+	{{#if checksumIsCRUD}}
+		<a {{bind-attr class=checksum8Class}} {{action "toggleRightChecksum" 8}}><i class="fa fa-plus-circle"></i> {{tr 'Create'}}</a>
+		<a {{bind-attr class=checksum4Class}} {{action "toggleRightChecksum" 4}}><i class="fa fa-eye"></i> {{tr 'Read'}}</a>
+		<a {{bind-attr class=checksum2Class}} {{action "toggleRightChecksum" 2}}><i class="fa fa-pencil"></i> {{tr 'Update'}}</a>
+		<a {{bind-attr class=checksum1Class}} {{action "toggleRightChecksum" 1}}><i class="fa fa-trash"></i> {{tr 'Delete'}}</a>
+	{{/if}}
+</div>
+&nbsp;
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-rights-action">{{#if description}}
+    <div>
+        {{description}}
+
+        <span class="label label-default">
+            {{value}}
+        </span>
+    </div>
+{{else}}
+    <span class="label label-default">
+        {{value}}
+    </span>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-rightsrenderer"><ul class="list-group" style="margin-bottom:0px;">
+    <li class="list-group-item list-group-item-info">
+        <span class="badge">{{rightsArray.length}}</span>
+        {{tr ' Rights assigned'}}
+    </li>
+    {{#each right in rightsArray}}
+        <li class="list-group-item">
+            {{component-rights-action value=right.name}}
+        </li>
+    {{/each}}
+</ul>
+
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-rightsselector">{{#if loadingInitialContent}}
+    <i class="fa fa-refresh fa-spin"></i>
+{{else}}
+    {{component-classifieditemselector content=this.classifiedItems target=this multiselect=multiselect selection=selectionUnprepared templateForHeader='rightselector-itempartial' selectedItemPartial='rightselector-selecteditempartial' rightselector=this target=this}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-rights">{{component-rightsselector content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="viewrightsform">{{#if isLoading}}
+    loading
+{{else}}
+    <table class="table table-striped">
+        {{#each right in rightsArray}}
+            {{#if right.checksum}}
+                <tr>
+                    <td>
+                        <span class="label label-default">Role</span>
+                    </td>
+                    <td>
+                        {{right.role}}
+                    </td>
+                    <td>
+                        {{component-right-checksum right=right onChecksumChange="onRightChecksumChange" onChecksumChangeTarget=controller}}
+                    </td>
+                </tr>
+            {{/if}}
+        {{/each}}
+        {{#if rolesWithoutRights.length}}
+          <tr class="active">
+              <td></td>
+              <td>
+                  {{view "select"
+                     content=rolesWithoutRights
+                     optionValuePath="content._id"
+                     optionLabelPath="content._id"
+                     class="fright"
+                     class="inlineInput form-control input-sm"
+                     value=addedRole}}
+              </td>
+              <td>
+                  <button type="button" class="btn btn-success btn-xs" {{action "addNewRight"}}>
+                      <span class="glyphicon glyphicon-plus"></span> Create right
+                  </button>
+              </td>
+          </tr>
+        {{/if}}
+
+    </table>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-rights">{{#component-dropdownbutton}}
+	{{#component-dropdownbuttonheader}}
+		{{#component-dropdownbuttontitle}}
+			Rights
+		{{/component-dropdownbuttontitle}}
+	{{/component-dropdownbuttonheader}}
+	{{#component-dropdownbuttoncontent}}
+		{{component-rightsrenderer content=value}}
+	{{/component-dropdownbuttoncontent}}
+{{/component-dropdownbutton}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-viewrights"><button type="button" class="btn btn-xs btn-default" {{action 'editUserviewRights' this}}>
+    <span class="fa fa-lock"></span>
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="rightschecksumbuttons"><a class="btn btn-default" style="display:inline" {{action "toggleRightChecksum" "R" item}}>R</a>
+<a class="btn btn-default" style="display:inline" {{action "toggleRightChecksum" "W" item}}>W</a>
+<a class="btn btn-default" style="display:inline" {{action "toggleRightChecksum" "X" item}}>X</a>
+</script>
+<script type="text/x-handlebars" data-template-name="rightselector-itempartial">{{component-rights-action value=item.name}}
+</script>
+<script type="text/x-handlebars" data-template-name="rightselector-selecteditempartial">
+<div style="float:right">
+	{{component-right-checksum right=item rightselector=rightselector}}
+</div>
+</script>

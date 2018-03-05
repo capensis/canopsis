@@ -1,0 +1,7 @@
+[{
+	"name": "canopsis-ui",
+	"version": "0.1",
+	"routes": "routes.json",
+	"files": "files.json",
+	"description": "base for the canopsis theme and canopsis-related installations"
+}]

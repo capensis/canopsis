@@ -1,0 +1,7 @@
+{{#if controller.userCanDeleteRecord}}
+    <button class="btn btn-default btn-sm" {{action 'removeSelection'}} >
+        <span class="glyphicon glyphicon-trash"></span>
+        {{tr 'Remove selection'}}
+    </button>
+{{/if}}
+

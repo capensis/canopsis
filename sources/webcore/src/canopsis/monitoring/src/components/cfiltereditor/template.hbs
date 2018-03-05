@@ -1,0 +1,126 @@
+<style type="text/css">
+    .cfilter-active {
+        background-color: #CCCCCC;
+    }
+    .cfilter .filterclause .form-control{
+        display: inline;
+        width: auto;
+    }
+
+    .cfilter .filterclause .label{
+        height: 22px;
+    }
+    .cfilter .filterclause .form-control{
+        padding:0;
+        height: 20px;
+    }
+    .cfilter .filterclause .form-control.finalized{
+        display: inline-block;
+        background: #ccc;
+    }
+
+    .ui-sortable-helper {
+        background: white;
+        border: 1px solid #ccc;
+    }
+</style>
+<fieldset>
+    <div class="btn-group pull-right">
+        {{#if onlyAllowRegisteredIndexes}}
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-link"></i> {{selectedIndexName}} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                {{#each index in indexes.all}}
+                    <li><a {{action "selectIndexByName" index.name}}>{{index.name}}</a></li>
+                {{/each}}
+            </ul>
+
+            {{#component-tooltip content="Unlock indexes. This might lead to huge performance issues!"}}
+                <button class="btn btn-default" {{action "unlockIndexes"}}>
+                    <i class="fa fa-lock"></i>
+                </button>
+            {{/component-tooltip}}
+
+        {{else}}
+            {{#component-tooltip content="Lock indexes"}}
+                <button class="btn btn-default" {{action "lockIndexes"}}>
+                    <i class="fa fa-unlock"></i>
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+    </div>
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a {{bind-attr href=cfilterEditTabId}} role="tab" data-toggle="tab">
+                <span class="glyphicon glyphicon-edit"></span>
+            </a>
+        </li>
+        <li>
+            <a {{bind-attr href=cfilterRawTabId}} role="tab" data-toggle="tab">
+                <span class="glyphicon glyphicon-cog"></span>
+            </a>
+        </li>
+        <li>
+            <a {{bind-attr href=cfilterViewTabId}} role="tab" data-toggle="tab">
+                <span class="glyphicon glyphicon-eye-open"></span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active" {{bind-attr id=cfilterEditId}}>
+            <div {{bind-attr id=cfilterId}} class="container-fluid">
+                {{#if this.filterError}}
+                    <div style="padding:10px">
+                        <div class="callout callout-danger">
+                            <h4>Error</h4>
+                            <p>{{filterError}}</p>
+                        </div>
+                    </div>
+                {{/if}}
+                {{#each clause in clauses}}
+                    <div {{bind-attr class="clause.current:cfilter-active:cfilter-inactive :row-fluid"}} {{action "activate" clause}}>
+                        {{#each andClausePart in clause.and}}
+                            {{#if andClausePart.isFirst}}
+                                <div style="margin:3px">
+                                    <span class="label label-danger">
+                                        Or
+                                    </span><br/>
+                                    <span style="margin-right:54px"></span>
+                                </div>
+                            {{else}}
+                                <div style="padding-left:10px; margin:3px">
+                                    <span class="label label-info" style="margin-right:13px">
+                                        And
+                                    </span>
+                                </div>
+                            {{/if}}
+                            {{component-filterclause
+                                    content=andClausePart
+                                    clauses=clauses
+                                    clause=clause
+                                    currentClauseIndex=currentClauseIndex
+                                    parent=this
+                                    onlyAllowRegisteredIndexes=onlyAllowRegisteredIndexes
+                                    operators=operators
+                                }}
+                        {{/each}}
+                    </div>
+                {{/each}}
+                {{#unless orButtonHidden}}
+                    <a {{action "addOrClause"}} class="btn btn-danger btn-xs">Or</a>
+                {{/unless}}
+            </div>
+        </div>
+
+        <div class="tab-pane" {{bind-attr id=cfilterRawId}}>
+            {{textarea value=cfilter_serialized cols="40" rows="10"}}
+        </div>
+
+        <div class="tab-pane" {{bind-attr id=cfilterViewId}}>
+            {{component-table model="event" modelfilter=cfilter_serialized columns=viewTabColumns targetObject=this}}
+        </div>
+    </div>
+</fieldset>

@@ -1,0 +1,31 @@
+
+<li class="dropdown notifications-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-folder-open"></i>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="header">
+            Name : {{input value=presetName}}
+        </li>
+        <li class="footer">
+            <a >
+                {{tr 'Save preset'}}
+            </a>
+        </li>
+    </ul>
+</li>
+<li class="dropdown notifications-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-floppy-o"></i>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="header">
+            Name : {{input value=presetName}}
+        </li>
+        <li class="footer">
+            <button {{action "savePreset"}} class="btn btn-primary pull-right">
+                {{tr 'Save preset'}}
+            </button>
+        </li>
+    </ul>
+</li>

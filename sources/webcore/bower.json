@@ -1,0 +1,13 @@
+{
+  "name": "webcore",
+  "version": "1.0.0",
+  "authors": [],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "AGPL-3.0",
+  "homepage": "",
+  "private": true,
+  "dependencies": {
+  }
+}

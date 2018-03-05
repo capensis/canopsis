@@ -1,0 +1,15 @@
+<tr>
+    <th class="checkboxes">
+        {{component-checkbox checked=controller.isAllSelected class="toggle"}}
+    </th>
+
+    {{#each attr in controller.shown_columns}}
+        {{#if attr.options.show}}
+            {{view "tabledraggableth" attr=attr}}
+        {{/if}}
+    {{/each}}
+
+    {{#if controller._partials.itemactionbuttons}}
+        <th class="actions">{{tr 'Actions'}}</th>
+    {{/if}}
+</tr>

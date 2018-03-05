@@ -1,0 +1,11 @@
+<button {{bind-attr id="controller.id"}} class="btn btn-default">
+
+        <i class="fa fa-calendar"></i>
+        {{#if label}}
+            {{label}}
+        {{else}}
+            {{tr 'Select date interval'}}
+        {{/if}}
+        <i class="fa fa-caret-down"></i>
+
+</button>

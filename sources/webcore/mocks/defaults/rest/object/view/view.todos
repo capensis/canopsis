@@ -1,0 +1,64 @@
+{
+  "total": 1,
+  "data": [
+    {
+      "loader_id": "view.todos",
+      "enable": true,
+      "containerwidget": {
+        "items": [
+          {
+            "widget": {
+              "widgetId": "item_13019673-ebdf-6271-e595-6be7338aeb60",
+              "default_column_sort": {
+                "direction": "ASC",
+                "property": "last_state_change"
+              },
+              "xtype": "list",
+              "title": "Taches",
+              "mixins": [
+                {
+                  "itemsPerPage": 50,
+                  "name": "pagination"
+                },
+                {
+                  "name": "crud"
+                }
+              ],
+              "listed_crecord_type": "todo",
+              "display_record_field": "resource",
+              "displayed_columns": [
+                "done",
+                "crecord_name",
+                "due_date"
+              ],
+              "id": "item_13019673-ebdf-6271-e595-6be7338aeb60",
+              "record_template": "<div>Connecteur : {{connector}}</div><div>Composant : {{component}} / Adresse IP : {{address}}</div><div>Hostgroups : {{hostgroups}}</div><div>Ressource : {{resource}}</div><div>Message :&nbsp;<span style=\"line-height: 1.428571429;\">{{output}}</span></div>"
+            },
+            "xtype": "widgetwrapper",
+            "title": "wrapper"
+          }
+        ],
+        "mixins": [
+          {
+            "name": "verticallayout"
+          },
+          {
+            "name": "widgetrefresh"
+          },
+          {
+            "name": "widgetfullscreen"
+          }
+        ],
+        "xtype": "widgetcontainer",
+        "title": "container title vbox"
+      },
+      "crecord_write_time": 1400853201,
+      "crecord_type": "view",
+      "_id": "view.todos",
+      "id": "view.todos",
+      "crecord_name": "Todos",
+      "loader_no_update": true
+    }
+  ],
+  "success": true
+}
