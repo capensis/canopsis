@@ -1,4 +1,3 @@
-*.pyc
 _build/
 doc/logs
 log
@@ -18,3 +17,8 @@ docker/bricks
 tools/catag/catag
 tools/catag/vendor
 .vscode
+
+# python wheels
+*.whl
+# python bytecode
+*.pyc
