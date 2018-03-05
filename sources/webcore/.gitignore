@@ -10,11 +10,11 @@ src/canopsis/test-settings.json
 #######################
 
 doc/api/bricks-documentation/brick-*
-doc/api/config.js
+#doc/api/config.js
 
 #####################
 # Node 
 #####################
 
 node_modules
-bower.json
+#bower.json

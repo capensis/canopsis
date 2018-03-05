@@ -1,0 +1,14 @@
+{
+  "name": "charts",
+  "version": "0.0.0",
+  "authors": [
+    "utopman <eregnier@capensis.fr>"
+  ],
+  "description": "charts dependencies for canopsis",
+  "main": "../../init.js",
+  "license": "MIT",
+  "homepage": "http://canopsis.org",
+  "dependencies": {
+    "c3": "~0.4.10"
+  }
+}
