@@ -9,7 +9,7 @@ src/canopsis/test-settings.json
 # External bricks
 #######################
 
-doc/api/bricks-documentation/brick-*
+#doc/api/bricks-documentation/brick-*
 #doc/api/config.js
 
 #####################
