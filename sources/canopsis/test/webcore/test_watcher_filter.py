@@ -89,6 +89,13 @@ class TestWatcherFilter(unittest.TestCase):
         }
         fdoc8 = {}
 
+        doc9 = {
+            "$and": [
+                {"active_pb_watcher": True}
+            ]
+        }
+        fdoc9 = {}
+
         wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc1), fdoc1)
         self.assertTrue(wf.all())
@@ -111,37 +118,42 @@ class TestWatcherFilter(unittest.TestCase):
 
         wf = WatcherFilter()
         wf.filter(doc5)
-        self.assertTrue(wf.appendable(False, True))
-        self.assertTrue(wf.appendable(True, True))
-        self.assertFalse(wf.appendable(True, False))
-        self.assertFalse(wf.appendable(False, False))
+        self.assertTrue(wf.appendable(False, True, False))
+        self.assertTrue(wf.appendable(True, True, False))
+        self.assertFalse(wf.appendable(True, False, False))
+        self.assertFalse(wf.appendable(False, False, False))
 
         wf = WatcherFilter()
         wf.filter(doc6)
-        self.assertTrue(wf.appendable(False, True))
-        self.assertFalse(wf.appendable(False, False))
-        self.assertFalse(wf.appendable(True, False))
-        self.assertFalse(wf.appendable(True, True))
+        self.assertTrue(wf.appendable(False, True, False))
+        self.assertFalse(wf.appendable(False, False, False))
+        self.assertFalse(wf.appendable(True, False, False))
+        self.assertFalse(wf.appendable(True, True, False))
 
         wf = WatcherFilter()
         wf.filter(doc7)
-        self.assertTrue(wf.appendable(False, True))
-        self.assertTrue(wf.appendable(False, False))
-        self.assertTrue(wf.appendable(True, False))
-        self.assertTrue(wf.appendable(True, True))
+        self.assertTrue(wf.appendable(False, True, False))
+        self.assertTrue(wf.appendable(False, False, False))
+        self.assertTrue(wf.appendable(True, False, False))
+        self.assertTrue(wf.appendable(True, True, False))
 
         wf = WatcherFilter()
         self.assertDictEqual(wf.filter(doc8), fdoc8)
-        self.assertTrue(wf.appendable(True, True)) # no pb type given, all supported
-        self.assertTrue(wf.appendable(True, True, pb_types=[]))
-        self.assertTrue(wf.appendable(True, True, pb_types=["CooooT"]))
-        self.assertTrue(wf.appendable(True, True, pb_types=["cOOOOt"]))
-        self.assertTrue(wf.appendable(True, True, pb_types=["cOtcOt", "cOOOOt"]))
-        self.assertTrue(wf.appendable(True, True, pb_types=["cUtcUt", "cOtcOt", "cOOOOt"]))
-        self.assertFalse(wf.appendable(True, True, pb_types=["cUtcUt"]))
-        self.assertFalse(wf.appendable(True, True, pb_types=["Courou"]))
+        self.assertTrue(wf.appendable(True, True, False, )) # no pb type given, all supported
+        self.assertTrue(wf.appendable(True, True, False, pb_types=[]))
+        self.assertTrue(wf.appendable(True, True, False, pb_types=["CooooT"]))
+        self.assertTrue(wf.appendable(True, True, False, pb_types=["cOOOOt"]))
+        self.assertTrue(wf.appendable(True, True, False, pb_types=["cOtcOt", "cOOOOt"]))
+        self.assertTrue(wf.appendable(True, True, False, pb_types=["cUtcUt", "cOtcOt", "cOOOOt"]))
+        self.assertFalse(wf.appendable(True, True, False, pb_types=["cUtcUt"]))
+        self.assertFalse(wf.appendable(True, True, False, pb_types=["Courou"]))
         with self.assertRaises(ValueError):
             wf.appendable(True, True, "haha-nelson.com")
+
+        wf = WatcherFilter()
+        self.assertDictEqual(wf.filter(doc9), fdoc9)
+        self.assertTrue(wf.appendable(True, True, True))
+        self.assertFalse(wf.appendable(True, True, False))
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"
