@@ -24,6 +24,7 @@ from bson.errors import BSONError
 from pymongo.errors import PyMongoError, OperationFailure
 
 from canopsis.logger import Logger
+from canopsis.common.mongo_store import MongoStore
 
 LOG_NAME = 'collection'
 LOG_PATH = 'var/log/collection.log'
@@ -58,31 +59,32 @@ class MongoCollection(object):
             If None, a new logger is provided.
         """
         self.collection = collection
+        self._hr = MongoStore.hr
 
         if logger is not None:
             self.logger = logger
         else:
             self.logger = Logger.get(LOG_NAME, LOG_PATH)
 
-    def find(self, query):
+    def find(self, query, *args, **kwargs):
         """
         Find elements in the collection.
 
         :param dict query: a query search
         :rtype: pymongo.cursor.Cursor
         """
-        return self.collection.find(query)
+        return self._hr(self.collection.find, query, *args, **kwargs)
 
-    def find_one(self, query):
+    def find_one(self, query, *args, **kwargs):
         """
         Find one element in the collection.
 
         :param dict query: a query search
         :rtype: pymongo.cursor.Cursor
         """
-        return self.collection.find_one(query)
+        return self._hr(self.collection.find_one, query, *args, **kwargs)
 
-    def insert(self, document):
+    def insert(self, document, *args, **kwargs):
         """
         Update an element in the collection.
 
@@ -91,17 +93,17 @@ class MongoCollection(object):
         :rtype: str
         """
         try:
-            return self.collection.insert(document)
+            return self._hr(self.collection.insert, document, *args, **kwargs)
 
         except OperationFailure as of_err:
             message = 'Operation failure while doing insert: {}'.format(of_err)
-        except Exception:
-            message = 'Unknown exception on collection insert'
+        except Exception as ex:
+            message = 'Unknown exception on collection insert: {}'.format(ex)
 
         self.logger.error(message)
         raise CollectionError(message)
 
-    def update(self, query, document, upsert=False):
+    def update(self, query, document, upsert=False, *args, **kwargs):
         """
         Update an element in the collection.
 
@@ -116,7 +118,10 @@ class MongoCollection(object):
         :rtype: dict
         """
         try:
-            return self.collection.update(query, document, upsert=upsert)
+            return self._hr(
+                self.collection.update, query, document, upsert=upsert,
+                *args, **kwargs
+            )
 
         except BSONError as ex:
             message = 'document error: {}'.format(ex)
@@ -124,7 +129,7 @@ class MongoCollection(object):
             message = 'pymongo error: {}'.format(ex)
         except OperationFailure as of_err:
             message = 'Operation failure while doing update: {}'.format(of_err)
-        except TypeError:
+        except TypeError as ex:
             message = []
             if not isinstance(query, dict):
                 message.append('query is not a dict')
@@ -133,13 +138,14 @@ class MongoCollection(object):
             if not isinstance(upsert, bool):
                 message.append('upsert is not a boolean')
             message = ' ; '.join(message)
-        except Exception:
-            message = 'Unknown exception on collection update'
+            message = '{}: {}'.format(ex, message)
+        except Exception as ex:
+            message = 'Unknown exception on collection update: {}'.format(ex)
 
         self.logger.error(message)
         raise CollectionError(message)
 
-    def remove(self, query={}):
+    def remove(self, query={}, *args, **kwargs):
         """
         Remove an element in the collection.
 
@@ -148,15 +154,21 @@ class MongoCollection(object):
         :rtype: dict
         """
         try:
-            return self.collection.remove(query)
+            return self._hr(self.collection.remove, query, *args, **kwargs)
 
         except OperationFailure as of_err:
             message = 'Operation failure while doing remove: {}'.format(of_err)
-        except Exception:
-            message = 'Unknown error while doing remove'
+        except Exception as ex:
+            message = 'Unknown error while doing remove: {}'.format(ex)
 
         self.logger.error(message)
         raise CollectionError(message)
+
+    def count(self):
+        """
+        Counts the number of items in the current collection.
+        """
+        return self._hr(self.collection.count)
 
     @staticmethod
     def is_successfull(dico):

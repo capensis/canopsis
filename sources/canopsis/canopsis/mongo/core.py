@@ -22,6 +22,8 @@ from canopsis.common.init import basestring
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 
 from pymongo import MongoClient, MongoReplicaSetClient
 from pymongo.cursor import Cursor as _Cursor
@@ -93,7 +95,6 @@ class MongoDataBase(DataBase):
         connection_args = {}
 
         from canopsis.confng import Configuration, Ini
-        from canopsis.common.mongo_store import MongoStore
 
         mongo_cfg = Configuration.load('etc/common/mongo_store.conf', Ini)['DATABASE']
 
@@ -110,42 +111,16 @@ class MongoDataBase(DataBase):
         )
 
         try:
-            if self._replicaset is None:
-                connection_args['host'] = self._host
-                connection_args['port'] = self._port
-
-            else:
-                connection_args['replicaSet'] = self._replicaset
-                connection_args['read_preference'] = self._read_preference
-
-            connection_args['w'] = 1
-            connection_args['j'] = True
-
-            if mongo_cfg.get('ssl') == '1':
-                connection_args['ssl'] = '1'
-                connection_args['ssl_keyfile'] = mongo_cfg['ssl_key']
-                connection_args['ssl_certfile'] = mongo_cfg['ssl_cert']
-        except KeyError as ex:
-            self.logger.error('mongo conf error: {}'.format(ex))
-
-        except Exception as ex:
-            self.logger.error('mongo exception: {}'.format(ex))
-
-        try:
-            result = MongoStore.get_default().conn
+            result = MongoStore.get_default()
         except ConnectionFailure as cfe:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
                 format(self._host, self._port, cfe)
             )
         else:
-            self._database = result[self._db]
-
+            self._database = result.client
             if (self._user, self._pwd) != (None, None):
-
-                authenticate = self._database.authenticate(self._user, self._pwd)
-
-                if authenticate:
+                if result.authenticate():
                     self.logger.debug(
                         "Connected on {0}:{1}".format(
                             self._host, self._port
@@ -187,7 +162,7 @@ class MongoDataBase(DataBase):
         _backend = self._get_backend(backend=table)
 
         try:
-            result = self._database.command("collstats", _backend)['size']
+            result = MongoStore.hr(self._database.command, "collstats", _backend)['size']
 
         except Exception as ex:
             self.logger.warning(
@@ -199,8 +174,11 @@ class MongoDataBase(DataBase):
     def drop(self, table=None):
 
         if table is None:
-            for collection_name in self._database.collection_names(
-                    include_system_collections=False):
+            collections = MongoStore.hr(
+                self._database.collection_names,
+                include_system_collections=False
+            )
+            for collection_name in collections:
                 self.drop(table=collection_name)
 
         else:
@@ -219,15 +197,7 @@ class MongoDataBase(DataBase):
         :raises: NotImplementedError
         .. seealso: DataBase.set_backend(self, backend)
         """
-
-        if getattr(self, '_database', None) is None:
-            raise DataBase.DataBaseError(
-                '{0} is not connected'.format(self)
-            )
-
-        result = self._database[backend]
-
-        return result
+        return MongoCollection(self._conn.get_collection(backend))
 
 
 class MongoStorage(MongoDataBase, Storage):
@@ -543,8 +513,9 @@ class MongoStorage(MongoDataBase, Storage):
             query_op=self._run_command,
             cache_kwargs={'update': document},
             query_kwargs={
+                'query': spec,
                 'command': 'update',
-                'spec': spec, 'document': document,
+                'document': document,
                 'upsert': upsert, 'multi': multi
             },
             cache=cache,

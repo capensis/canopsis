@@ -18,7 +18,6 @@ DEFAULT_HOST = 'localhost'
 DEFAULT_PORT = 27017
 DEFAULT_DB_NAME = 'canopsis'
 
-
 class MongoStore(object):
     """
     Distribute ready-to-use mongo collections.
@@ -87,8 +86,8 @@ class MongoStore(object):
                 w=1,j=True, read_preference=self.read_preference
             )
 
-        self.client = self.conn[self.db_name]
-        self.client.authenticate(self._user, self._pwd)
+        self.client = self.get_database(self.db_name)
+        self.authenticate()
 
     def get_collection(self, name):
         """
@@ -97,12 +96,38 @@ class MongoStore(object):
         :param name: the name of the collection
         :rtype: Collection
         """
-        return self.client[name]
+        return MongoStore.hr(getattr, self.client, name)
+
+    def get_database(self, name):
+        """
+        Returns a raw pymongo Database object.
+        """
+        return MongoStore.hr(getattr, self.conn, name)
+
+    def authenticate(self):
+        """
+        Authenticate against the requested database.
+        """
+        return MongoStore.hr(self.client.authenticate, self._user, self._pwd)
+
+    def alive(self):
+        return self.conn.alive() and self.conn is not None
+
+    def close(self):
+        return MongoStore.hr(self.conn.close)
+
+    def fsync(self, **kwargs):
+        return MongoStore.hr(self.conn.fsync, **kwargs)
 
     @staticmethod
     def hr(func, *args, **kwargs):
         """
-        hr means "Handle Reconnect"
+        hr means "Handle Reconnect". This function will loop forever until
+        the pymongo driver has succeeded to reconnect to the database.
+
+        This works only when using a replicaset or sharding setup.
+
+        Reconnections are tried every second.
         """
         while True:
             try:
