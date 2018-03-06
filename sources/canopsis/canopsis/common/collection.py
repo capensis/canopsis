@@ -204,7 +204,7 @@ class MongoCollection(object):
                 res = None
                 _super = super(MongoCollection, self)
                 if hasattr(_super, name):
-                    res = _super.__getattribute__(name)
+                    res = getattr(_super, name)
                 else:
                     res = getattr(self.collection, name)
 
