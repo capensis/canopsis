@@ -21,7 +21,7 @@
 from __future__ import unicode_literals
 
 from bson.errors import BSONError
-from pymongo.errors import PyMongoError, OperationFailure, AutoReconnect
+from pymongo.errors import PyMongoError, OperationFailure
 
 from time import sleep
 
