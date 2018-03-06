@@ -29,6 +29,7 @@ from bson import objectid
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
+from pymongo.errors import PyMongoError
 from pymongo import ASCENDING
 from pymongo import DESCENDING
 
@@ -189,7 +190,12 @@ class Storage(object):
         if self.connected:
             return True
 
-        self.conn = MongoStore.get_default()
+        try:
+            self.conn = MongoStore.get_default()
+        except PyMongoError as exc:
+            self.logger.error('Old storage connection failure: {}'.format(exc))
+            return False
+
         self.db = self.conn.get_database(self.mongo_db)
 
         manipulators = self.db.incoming_manipulators

@@ -82,12 +82,14 @@ class MongoStore(object):
         self._user = conf.get('user')
         self._pwd = conf.get('pwd')
 
+        self._authenticated = False
         self._connect()
 
     def _connect(self):
         """
         Connect to the desired database.
         """
+        self._authenticated = False
         if self.replicaset is None:
             self.conn = MongoClient(
                 host=self.host,
@@ -122,7 +124,12 @@ class MongoStore(object):
         """
         Authenticate against the requested database.
         """
-        return MongoStore.hr(self.client.authenticate, self._user, self._pwd)
+        res = MongoStore.hr(self.client.authenticate, self._user, self._pwd)
+        self._authenticated = True
+
+    @property
+    def authenticated(self):
+        return self._authenticated
 
     def alive(self):
         return self.conn.alive() and self.conn is not None

@@ -30,7 +30,7 @@ from pymongo.cursor import Cursor as _Cursor
 from pymongo.errors import (
     OperationFailure, ConnectionFailure, DuplicateKeyError
 )
-from pymongo.errors import TimeoutError as NetworkTimeout
+from pymongo.errors import TimeoutError as NetworkTimeout, PyMongoError
 from pymongo.bulk import BulkOperationBuilder
 from pymongo.read_preferences import ReadPreference
 from pymongo.son_manipulator import SONManipulator
@@ -112,34 +112,35 @@ class MongoDataBase(DataBase):
 
         try:
             result = MongoStore.get_default()
-        except ConnectionFailure as cfe:
+        except PyMongoError as cfe:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
                 format(self._host, self._port, cfe)
             )
         else:
             self._database = result.client
-            if (self._user, self._pwd) != (None, None):
-                if result.authenticate():
-                    self.logger.debug(
-                        "Connected on {0}:{1}".format(
-                            self._host, self._port
+
+            if result.authenticated:
+                self.logger.debug('Already connected and authenticated on {}:{} /rs:{}'.format(
+                    self._host, self._port, self._replicaset
+                ))
+
+            else:
+                try:
+                    result.authenticate()
+                    self.logger.info(
+                        "Connected on {}:{} /rs:{}".format(
+                            self._host, self._port, self._replicaset
                         )
                     )
-
-                else:
+                except PyMongoError as ex:
                     self.logger.error(
-                        'Impossible to authenticate {0} on {1}:{2}'.format(
-                            self._host, self._port
+                        'Impossible to authenticate {} on {}:{} /rs:{}'.format(
+                            self._user, self._host, self._port, self._replicaset
                         )
                     )
                     self.disconnect()
                     result = None
-
-            else:
-                self.logger.debug(
-                    "Connected on {0}:{1}".format(self._host, self._port)
-                )
 
         return result
 
