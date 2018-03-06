@@ -59,7 +59,7 @@ class PeriodTest(TestCase):
         unit_values = {}
 
         for unit in Period.UNITS:
-            unit_values[unit] = random() * 10
+            unit_values[unit] = int(random() * 10)
 
         result = Period(**unit_values)
 
