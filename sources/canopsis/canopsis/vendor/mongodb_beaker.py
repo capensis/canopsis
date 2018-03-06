@@ -199,13 +199,13 @@ except ImportError:
 
 try:
     from canopsis.common.mongo_store import MongoStore
+    from canopsis.common.collection import MongoCollection
     import bson
     import bson.errors
 except ImportError:
     raise InvalidCacheBackendError("Unable to load the pymongo driver.")
 
 log = logging.getLogger(__name__)
-hr = MongoStore.hr
 
 class MongoDBNamespaceManager(NamespaceManager):
     clients = SyncDict()
@@ -247,15 +247,8 @@ class MongoDBNamespaceManager(NamespaceManager):
 
         def _create_mongo_conn():
             store = MongoStore.get_default()
-            conn = store.conn
-            db = store.client
-
-            if username:
-                log.info("Attempting to authenticate %s/%s " % (username, password))
-                if not db.authenticate(username, password):
-                    raise InvalidCacheBackendError('Cannot authenticate to '
-                                                   ' MongoDB.')
-            return db[collection]
+            store.authenticate()
+            return MongoCollection(store.get_collection(collection))
 
         self.mongo = MongoDBNamespaceManager.clients.get(data_key,
                     _create_mongo_conn)
@@ -278,7 +271,7 @@ class MongoDBNamespaceManager(NamespaceManager):
             q = {'_id': self.namespace}
 
         log.debug("[MongoDB] Remove Query: %s" % q)
-        hr(self.mongo.remove, q)
+        self.mongo.remove(q)
 
 
     def __getitem__(self, key):
@@ -298,7 +291,7 @@ class MongoDBNamespaceManager(NamespaceManager):
             fields['data.' + key] = True
 
         log.debug("[MongoDB] Get Query: id == %s Fields: %s", _id, fields)
-        result = hr(self.mongo.find_one, {'_id': _id}, fields=fields)
+        result = self.mongo.find_one({'_id': _id}, fields=fields)
         log.debug("[MongoDB] Get Result: %s", result)
 
         if result:
@@ -396,7 +389,7 @@ class MongoDBNamespaceManager(NamespaceManager):
                 doc['$set']['valid_until'] = expiretime
 
         log.debug("Upserting Doc '%s' to _id '%s'" % (doc, _id))
-        hr(self.mongo.update, {"_id": _id}, doc, upsert=True, safe=True)
+        self.mongo.update({"_id": _id}, doc, upsert=True, safe=True)
 
     def __setitem__(self, key, value):
         self.set_value(key, value)
@@ -404,16 +397,16 @@ class MongoDBNamespaceManager(NamespaceManager):
     def __delitem__(self, key):
         """Delete JUST the key, by setting it to None."""
         if self._sparse:
-            hr(self.mongo.remove, {'_id.namespace': self.namespace})
+            self.mongo.remove({'_id.namespace': self.namespace})
         else:
-            hr(self.mongo.update, {'_id': self.namespace},
+            self.mongo.update({'_id': self.namespace},
                               {'$unset': {'data.' + key: True}}, upsert=False)
 
     def keys(self):
         if self._sparse:
-            return [row['_id']['field'] for row in hr(self.mongo.find, {'_id.namespace': self.namespace}, {'_id': True})]
+            return [row['_id']['field'] for row in self.mongo.find({'_id.namespace': self.namespace}, {'_id': True})]
         else:
-            return hr(self.mongo.find_one, {'_id': self.namespace}, {'data': True}).get('data', {})
+            return self.mongo.find_one({'_id': self.namespace}, {'data': True}).get('data', {})
 
 class MongoDBContainer(Container):
     namespace_class = MongoDBNamespaceManager
