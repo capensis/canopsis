@@ -34,13 +34,17 @@ class MongoStore(object):
         global singletons_cache
 
         cfg = Configuration.load(MongoStore.CONF_PATH, Ini)
-        cfg_values = cfg.get(MongoStore.CONF_CAT, {}).values()
-        cfg_fingerprint = hashlib.md5('.'.join(sorted(cfg_values))).hexdigest()
 
-        if cfg_fingerprint not in singletons_cache:
-            singletons_cache[cfg_fingerprint] = MongoStore(cfg)
+        if from_singleton:
+            cfg_values = cfg.get(MongoStore.CONF_CAT, {}).values()
+            cfg_fingerprint = hashlib.md5('.'.join(sorted(cfg_values))).hexdigest()
 
-        return singletons_cache.get(cfg_fingerprint)
+            if cfg_fingerprint not in singletons_cache:
+                singletons_cache[cfg_fingerprint] = MongoStore(cfg)
+
+            return singletons_cache.get(cfg_fingerprint)
+
+        return MongoStore(cfg)
 
     def __init__(self, config):
         """
