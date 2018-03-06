@@ -101,6 +101,8 @@ Ember.Application.initializer({
                 'hardlimit': {'icon': 'fa-warning', 'color': 'bg-red'}
             },
 
+            addAuthor: ['stateinc', 'statedec', 'changestate', 'statusinc'],
+
             /**
              * @method didInsertElement
              * @description contains Rrule-editor initialisation and data binding
@@ -180,7 +182,7 @@ Ember.Application.initializer({
                             }
 
                             statusToName = get(component, 'statusToName')[step._t];
-                            if (step._t === 'changestate' || step._t === 'statusinc') {
+                            if (component.get('addAuthor').includes(step._t)) {
                                 step.name = statusToName + ' by ' + step.a;
                             } else {
                                 step.name = statusToName;
