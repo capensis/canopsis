@@ -189,7 +189,7 @@ class MongoCollection(object):
         return self._hr(self.collection.ensure_index, *args, **kwargs)
 
     def wrap_callable(self, func):
-        def wrapped(func, *args, **kwargs):
+        def wrapped(*args, **kwargs):
             while True:
                 try:
                     return func(*args, **kwargs)
