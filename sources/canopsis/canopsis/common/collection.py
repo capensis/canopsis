@@ -202,8 +202,9 @@ class MongoCollection(object):
         while True:
             try:
                 res = None
-                if hasattr(self, name):
-                    res = super(MongoCollection, self).__getattribute__(name)
+                _super = super(MongoCollection, self)
+                if hasattr(_super, name):
+                    res = _super.__getattribute__(name)
                 else:
                     res = getattr(self.collection, name)
 
