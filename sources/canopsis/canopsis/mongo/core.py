@@ -27,10 +27,8 @@ from canopsis.common.collection import MongoCollection, CollectionError
 
 from pymongo import MongoClient, MongoReplicaSetClient
 from pymongo.cursor import Cursor as _Cursor
-from pymongo.errors import (
-    OperationFailure, ConnectionFailure, DuplicateKeyError
-)
-from pymongo.errors import TimeoutError as NetworkTimeout, PyMongoError
+from pymongo.errors import OperationFailure, DuplicateKeyError, PyMongoError
+from pymongo.errors import TimeoutError as NetworkTimeout
 from pymongo.bulk import BulkOperationBuilder
 from pymongo.read_preferences import ReadPreference
 from pymongo.son_manipulator import SONManipulator

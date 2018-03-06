@@ -92,14 +92,14 @@ class MongoStore(object):
         self._authenticated = False
         if self.replicaset is None:
             self.conn = MongoClient(
-                host=self.host,
-                port=self.port,w=1,j=True
+                'mongodb://{}:{}'.format(self.host, self.port), w=1,j=True
             )
 
         else:
             self.conn = MongoClient(
-                'mongodb://{}:{}/?replicaSet={}'.format(self.host, self.port, self.replicaset),
-                w=1,j=True, read_preference=self.read_preference
+                'mongodb://{}:{}/?replicaSet={}'.format(
+                    self.host, self.port, self.replicaset
+                ), w=1,j=True, read_preference=self.read_preference
             )
 
         self.client = self.get_database(self.db_name)
@@ -150,8 +150,34 @@ class MongoStore(object):
 
         Reconnections are tried every second.
         """
-        while True:
+
+        # try to work
+        try:
+            return func(*args, **kwargs)
+        except AutoReconnect as exc:
+            pass
+
+        # fast retry
+        try:
+            return func(*args, **kwargs)
+        except AutoReconnect as exc:
+            pass
+
+        # slow retries
+        retries = 0
+        allowed_retries = int(Configuration.load(
+            MongoStore.CONF_PATH, Ini
+        ).get(
+            MongoStore.CONF_CAT, {}
+        ).get('autoreconnect_retries', 1))
+
+        while retries < allowed_retries:
             try:
                 return func(*args, **kwargs)
             except AutoReconnect as exc:
-                time.sleep(1)
+                pass
+
+            time.sleep(1)
+            retries += 1
+
+        raise AutoReconnect('failed to reconnect after {} retries, handle it yourself.'.format(retries))
