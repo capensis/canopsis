@@ -169,7 +169,7 @@ class MongoStore(object):
             MongoStore.CONF_PATH, Ini
         ).get(
             MongoStore.CONF_CAT, {}
-        ).get('autoreconnect_retries', 1))
+        ).get('autoreconnect_retries', 20))
 
         while retries < allowed_retries:
             try:
