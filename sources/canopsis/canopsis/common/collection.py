@@ -21,7 +21,9 @@
 from __future__ import unicode_literals
 
 from bson.errors import BSONError
-from pymongo.errors import PyMongoError, OperationFailure
+from pymongo.errors import PyMongoError, OperationFailure, AutoReconnect
+
+from time import sleep
 
 from canopsis.logger import Logger
 from canopsis.common.mongo_store import MongoStore
@@ -37,7 +39,7 @@ class CollectionError(Exception):
     pass
 
 
-class CollectionSetError(Exception):
+class CollectionSetError(CollectionError):
     """
     Error on a set in a MongoCollection.
     """
@@ -145,16 +147,6 @@ class MongoCollection(object):
         self.logger.error(message)
         raise CollectionError(message)
 
-    def find_and_modify(self, *args, **kwargs):
-        return self._hr(
-            self.collection.find_and_modify, *args, **kwargs
-        )
-
-    def save(self, *args, **kwargs):
-        return self._hr(
-            self.collection.save, *args, **kwargs
-        )
-
     def remove(self, query={}, *args, **kwargs):
         """
         Remove an element in the collection.
@@ -174,6 +166,16 @@ class MongoCollection(object):
         self.logger.error(message)
         raise CollectionError(message)
 
+    def find_and_modify(self, *args, **kwargs):
+        return self._hr(
+            self.collection.find_and_modify, *args, **kwargs
+        )
+
+    def save(self, *args, **kwargs):
+        return self._hr(
+            self.collection.save, *args, **kwargs
+        )
+
     def count(self):
         """
         Counts the number of items in the current collection.
@@ -185,6 +187,32 @@ class MongoCollection(object):
 
     def ensure_index(self, *args, **kwargs):
         return self._hr(self.collection.ensure_index, *args, **kwargs)
+
+    def wrap_callable(self, func):
+        def wrapped(func, *args, **kwargs):
+            while True:
+                try:
+                    return func(*args, **kwargs)
+                except AutoReconnect:
+                    sleep(1)
+
+        return wrapped
+
+    def __getattr__(self, name):
+        while True:
+            try:
+                res = None
+                if hasattr(self, name):
+                    res = super(MongoCollection, self).__getattribute__(name)
+                else:
+                    res = getattr(self.collection, name)
+
+                if callable(res):
+                    return self.wrap_callable(res)
+                return res
+
+            except AutoReconnect:
+                sleep(1)
 
     @staticmethod
     def is_successfull(dico):

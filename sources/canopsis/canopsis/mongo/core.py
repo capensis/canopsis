@@ -23,7 +23,7 @@ from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.collection import MongoCollection
+from canopsis.common.collection import MongoCollection, CollectionError
 
 from pymongo import MongoClient, MongoReplicaSetClient
 from pymongo.cursor import Cursor as _Cursor
@@ -482,7 +482,7 @@ class MongoStorage(MongoDataBase, Storage):
             query_op=self._run_command,
             cache_op=cache_op,
             cache_kwargs={'document': document},
-            query_kwargs={'command': 'insert', 'doc_or_docs': document},
+            query_kwargs={'command': 'insert', 'document': document},
             cache=cache,
             **kwargs
         )
@@ -544,7 +544,7 @@ class MongoStorage(MongoDataBase, Storage):
             query_op=self._run_command,
             cache_op=cache_op,
             cache_kwargs={},
-            query_kwargs={'command': 'remove', 'spec_or_id': document},
+            query_kwargs={'command': 'remove', 'query': document},
             cache=cache,
             **kwargs
         )
@@ -560,7 +560,6 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _process_query(self, *args, **kwargs):
-
         result = super(MongoStorage, self)._process_query(*args, **kwargs)
 
         result = self._manage_query_error(result)
@@ -617,7 +616,7 @@ class MongoStorage(MongoDataBase, Storage):
                 'Try to run command {0}({1}) on {2} attempts left'
                 .format(command, kwargs, backend))
 
-        except OperationFailure as of:
+        except (OperationFailure, CollectionError) as of:
             self.logger.error(u'{0} during running command {1}({2}) of in {3}'
                 .format(of, command, kwargs, backend))
 
