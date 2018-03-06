@@ -15,9 +15,9 @@ cd $workdir
 
 ./docker/build/bricks.sh "${bricks_tag}"
 
+docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile.sysbase -t canopsis/canopsis-sysbase:${tag} .
 docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile.wheel -t canopsis/wheel:${tag} .
 docker run -v $(pwd)/docker/wheels/:/root/wheelrep/ canopsis/wheel:${tag}
-docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile.sysbase -t canopsis/canopsis-sysbase:${tag} .
 docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile -t canopsis/canopsis-core:${tag} .
 
 if [ "${3}" == "test" ]; then
