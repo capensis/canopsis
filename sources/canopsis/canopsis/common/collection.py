@@ -170,6 +170,12 @@ class MongoCollection(object):
         """
         return self._hr(self.collection.count)
 
+    def drop_indexes(self):
+        return self._hr(self.collection.drop_indexes)
+
+    def ensure_index(self, *args, **kwargs):
+        return self._hr(self.collection.ensure_index, *args, **kwargs)
+
     @staticmethod
     def is_successfull(dico):
         """
