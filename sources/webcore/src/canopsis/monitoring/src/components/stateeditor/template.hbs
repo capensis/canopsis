@@ -1,0 +1,14 @@
+<form>
+    {{#unless previousIsInfo}}
+        <button {{bind-attr class=":btn :bg-green isInfo:active isInfo:emphasis"}} {{action "setState" 0}}>{{tr 'Info'}}</button>
+    {{/unless}}
+    {{#unless previousIsMinor}}
+        <button {{bind-attr class=":btn :bg-yellow isMinor:active isMinor:emphasis"}} {{action "setState" 1}}>{{tr 'Minor'}}</button>
+    {{/unless}}
+    {{#unless previousIsMajor}}
+        <button {{bind-attr class=":btn :bg-orange isMajor:active isMajor:emphasis"}} {{action "setState" 2}}>{{tr 'Major'}}</button>
+    {{/unless}}
+    {{#unless previousIsCritical}}
+        <button {{bind-attr class=":btn :bg-red isCritical:active isCritical:emphasis"}} {{action "setState" 3}}>{{tr 'Critical'}}</button>
+    {{/unless}}
+</form>

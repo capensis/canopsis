@@ -1,0 +1,13 @@
+<div class="btn-group" role="group">
+	{{#if checksumIsRW}}
+		<a {{bind-attr class=checksum4Class}} {{action "toggleRightChecksum" 4}}><i class="fa fa-eye"></i> {{tr 'Read'}}</a>
+		<a {{bind-attr class=checksum2Class}} {{action "toggleRightChecksum" 2}}><i class="fa fa-pencil"></i> {{tr 'Write'}}</a>
+	{{/if}}
+	{{#if checksumIsCRUD}}
+		<a {{bind-attr class=checksum8Class}} {{action "toggleRightChecksum" 8}}><i class="fa fa-plus-circle"></i> {{tr 'Create'}}</a>
+		<a {{bind-attr class=checksum4Class}} {{action "toggleRightChecksum" 4}}><i class="fa fa-eye"></i> {{tr 'Read'}}</a>
+		<a {{bind-attr class=checksum2Class}} {{action "toggleRightChecksum" 2}}><i class="fa fa-pencil"></i> {{tr 'Update'}}</a>
+		<a {{bind-attr class=checksum1Class}} {{action "toggleRightChecksum" 1}}><i class="fa fa-trash"></i> {{tr 'Delete'}}</a>
+	{{/if}}
+</div>
+&nbsp;

@@ -1,0 +1,25 @@
+{
+	"type": "object",
+	"properties": {
+		"widget": {
+			"relationship": "belongsTo",
+			"model": "widget",
+			"polymorphic":true,
+			"embedded": true
+		},
+		"title": {
+			"type": "string"
+		},
+		"xtype": {
+			"type": "string"
+		},
+		"mixins": {
+			"type": "array",
+			"role": "mixins",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
+		}
+	}
+}

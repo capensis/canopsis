@@ -1,0 +1,64 @@
+{{#if editionMode}}
+    <span style="display:inline-block">
+        {{#if content.isLast}}
+            {{input list=content.keyId class="defaultFocus" value=content.key class="form-control"}}
+            <datalist {{bind-attr id=content.keyId}}>
+                {{#each index in content.options.available_indexes}}
+                    <option {{bind-attr value=index.value}}>{{index.name}}</option>
+                {{/each}}
+            </datalist>
+        {{else}}
+            {{content.key}}
+        {{/if}}
+
+        {{view Ember.Select
+            content=operators
+            optionValuePath="content.label"
+            optionLabelPath="content.label"
+            value=content.operator
+            class="form-control"
+        }}
+
+        {{input value=content.value class="form-control"}}
+        <a {{action "validateClause" this}} class="btn btn-info btn-xs">
+            <span class="glyphicon glyphicon-ok"></span>
+        </a>
+    </span>
+{{else}}
+    {{#if finalized}}
+            <a {{action "editAndClause" clause content}} class="btn btn-warning btn-xs">
+                {{content.key}} {{content.operator}} {{content.value}}
+            </a>
+            <a {{action "removeAndClause" clause content}} class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+    {{else}}
+        <span style="display:inline-block">
+            {{#if content.filling}}
+                {{input list=content.keyId class="defaultFocus form-control" value=content.key }}
+                <datalist {{bind-attr id=content.keyId}}>
+                    {{#each index in content.options.available_indexes}}
+                        <option {{bind-attr value=index.value}}>{{index.name}}</option>
+                    {{/each}}
+                </datalist>
+
+                {{view Ember.Select
+                    content=operators
+                    optionValuePath="content.label"
+                    optionLabelPath="content.label"
+                    value=content.operator
+                    class="form-control"
+                }}
+
+                {{input value=content.value class="form-control"}}
+                <a {{action "validateClause" this}} class="btn btn-info btn-xs">
+                    <span class="glyphicon glyphicon-ok"></span>
+                </a>
+            {{else}}
+                <a {{action "startEditClause"}} class="btn btn-info btn-xs">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </a>
+            {{/if}}
+        </span>
+    {{/if}}
+{{/if}}

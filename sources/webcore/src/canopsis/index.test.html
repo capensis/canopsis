@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+      <meta content="utf-8" http-equiv="encoding">
+        <meta charset="utf-8" />
+        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Canopsis Unit tests</title>
+        <link rel="icon" type="image/png" href="/static/canopsis/media/favicon.png" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+            <![endif]-->
+
+        <!-- qunit must be availalbe before ember qunit loads -->
+        <script type="text/javascript" src="core/externals/qunit/qunit/qunit.js"></script>
+        <script type="text/javascript" src="brick-loader/externals/jquery/dist/jquery.min.js"></script>
+        <script type="application/javascript">
+            //TODO put this in canopsisConfiguration?
+            window.environment = 'test';
+            $.ajax({
+              url: "test-settings.json",
+              success: function(data) {
+                $.ajax({
+                    url: "http://localhost:7357/autologin/" + data.authkey,
+                    async: false
+                });
+              },
+              async: false
+            });
+            QUnit.config.autostart = false;
+        </script>
+
+        <!-- RequireJS -->
+        <script
+            type="application/javascript"
+            src="/static/canopsis/brick-loader/externals/requirejs/require.js"
+            data-main="/static/canopsis/requirejs.conf">
+        </script>
+
+    </head>
+    <body>
+        <script src="/testem.js"></script>
+        <div class="tab-content">
+            <div style="float: left; width:80%">
+                <div id="applicationdiv"></div>
+            </div>
+            <div style="float: left; width:20%">
+                <div id="qunit"></div>
+            </div>
+        </div>
+    </body>
+</html>
+

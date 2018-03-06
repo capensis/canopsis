@@ -1,0 +1,23 @@
+{
+  "name": "canopsis-frontend",
+  "version": "0.0.0",
+  "authors": [
+    "Capensis"
+  ],
+  "description": "Canopsis user interface",
+  "main": "index.html",
+  "moduleType": [
+    "amd"
+  ],
+  "license": "GNU Affero General Public License",
+  "homepage": "http://www.canopsis.org/",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    ".",
+    "test",
+    "tests"
+  ]
+}

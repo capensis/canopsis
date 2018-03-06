@@ -1,0 +1,28 @@
+<li class="dropdown tasks-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-code-fork"></i>
+        <span class="label label-success">{{requirejsmocksmanager.mocks.length}}</span>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="header">{{requirejsmocksmanager.mocks.length}} {{tr 'mocks applied'}}</li>
+        <li>
+            <ul class="list-group">
+            {{#each mock in requirejsmocksmanager.mocks}}
+                <li class="list-group-item">
+                    <span {{action 'editMock' mock}}>
+                        {{mock.modulePath}}
+                    </span>
+                    <span {{action 'deleteMock' mock.modulePath}} class="label label-danger">
+                        <i class="fa fa-remove"></i> 
+                    </span>
+                </li>
+            {{/each}}
+            </ul>
+        </li>
+        <li class="header">
+            <span {{action 'addMock'}}>
+                {{tr 'add mock'}}
+            </span>
+        </li>
+    </ul>
+</li>

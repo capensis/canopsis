@@ -8,6 +8,7 @@ Vous avez à disposition trois filtres spéciaux :
 
  * `active_pb_some` : un `booléen` valant `true`/`false`, `True`/`False`, ou `1`/`0`, indiquant si une tuile (un watcher) doit contenir au moins un `pbehavior` actif pour être affiché.
  * `active_pb_all` : même chose que pour `active_pb_some` sauf qu’il faut que **toutes** les entités liées aient un `pbehavior` actif pour être affiché.
+ * `active_pb_watcher` : sélectionner les tuiles disposant d’un `pbehavior` actif.
  * `active_pb_type` : ce filtre peut être utilisé plusieurs fois et va vous permettre de demander d’afficher les tuiles contenant des `pbehavior` d’un certain `type`. Par exemple si vous voulez filtrer sur les tuiles ayant des `pbehavior` en type `pause` ou `maintenance` ou les deux. Dans le cas où une tuile dispose de `pbehavior` d’autre type mais qu’au moins un d’entre eux est du type indiqué par ce filtre, la tuile sera affichée.
 
 Ces options ne sont disponibles qu’au travers du filtre créé avec le `query builder` :

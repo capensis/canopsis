@@ -1,0 +1,13 @@
+{
+	"type": "object",
+    "categories": [{
+        "title": "General",
+        "keys":[]
+    }],
+	"properties": {
+		"user_sortedAttribute": {
+			"isUserPreference": true,
+			"type": "string"
+		}
+	}
+}

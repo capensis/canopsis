@@ -1,0 +1,32 @@
+{
+	"type": "object",
+	"metadata": {
+        "icon": "fa fa-bar-chart"
+    },
+	"categories": [{
+		"title": "General",
+		"keys":["name", "type", "depends", "impact"]
+	}],
+	"properties": {
+		"name":{
+			"type": "string"
+		},
+		"type": {
+			"type": "string"
+        },
+        "depends": {
+		    "type": "array",
+		    "items": {
+			    "type": "string"
+			},
+			"reorderable": true
+        },
+        "impact": {
+		    "type": "array",
+		    "items": {
+			    "type": "string"
+			},
+			"reorderable": true
+		}
+	}
+}

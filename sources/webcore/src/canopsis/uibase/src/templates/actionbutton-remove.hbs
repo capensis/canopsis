@@ -1,0 +1,5 @@
+{{#if controller.userCanDeleteRecord}}
+    <button class="btn btn-default btn-xs" {{action 'remove' this}} >
+        <span class="glyphicon glyphicon-trash"></span>
+    </button>
+{{/if}}
