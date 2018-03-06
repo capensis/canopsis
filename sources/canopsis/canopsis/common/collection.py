@@ -145,6 +145,16 @@ class MongoCollection(object):
         self.logger.error(message)
         raise CollectionError(message)
 
+    def find_and_modify(self, *args, **kwargs):
+        return self._hr(
+            self.collection.find_and_modify, *args, **kwargs
+        )
+
+    def save(self, *args, **kwargs):
+        return self._hr(
+            self.collection.save, *args, **kwargs
+        )
+
     def remove(self, query={}, *args, **kwargs):
         """
         Remove an element in the collection.
