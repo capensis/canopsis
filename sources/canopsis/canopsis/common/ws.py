@@ -262,9 +262,8 @@ class route(object):
 
             else:
                 #TODO: move it globaly, and move this module in webcore project
-                from canopsis.storage.file import FileStream
 
-                classes = (HTTPError, FileStream)
+                classes = (HTTPError,)
 
                 if not isinstance(result_function, classes):
                     result = self.response(
