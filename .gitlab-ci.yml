@@ -1,7 +1,7 @@
-  stages:
-    - build
-    - test
-    - deploy
+stages:
+  - build
+  - test
+  - deploy
 
 before_script:
   - uname -a
@@ -30,9 +30,9 @@ test:
     - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "source ~/.bashrc && /opt/canopsis/bin/ut_runner /opt/canopsis/test"
     - docker cp test${CI_JOB_ID}_webserver_1:/opt/canopsis/tmp/tests_report/ tests_report
 
-    artifacts:
-      paths:
-        - unit_tests
+  artifacts:
+    paths:
+      - unit_tests
 
 after_script:
-  - docker-compose -p test-${CI_JOB_ID} down0;115;0c
+  - docker-compose -p test-${CI_JOB_ID} down
