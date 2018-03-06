@@ -101,6 +101,8 @@ Ember.Application.initializer({
                 'hardlimit': {'icon': 'fa-warning', 'color': 'bg-red'}
             },
 
+            addAuthor: ['stateinc', 'statedec', 'changestate', 'statusinc'],
+
             /**
              * @method didInsertElement
              * @description contains Rrule-editor initialisation and data binding
@@ -124,6 +126,7 @@ Ember.Application.initializer({
                             var step = result.data[0].alarms[0].v.steps[i];
                             var index_state_check = 0
                             var index_status_check = 0
+                            var statusToName = ''
 
                             //build time related information
                             var date = new Date(step.t*1000);
@@ -178,7 +181,13 @@ Ember.Application.initializer({
                                 step.m += '</tbody></table>';
                             }
 
-                            step.name = get(component, 'statusToName')[step._t];
+                            statusToName = get(component, 'statusToName')[step._t];
+                            if (component.get('addAuthor').includes(step._t)) {
+                                step.name = statusToName + ' by ' + step.a;
+                            } else {
+                                step.name = statusToName;
+                            }
+
                             if (get(component, 'authoredName').indexOf(step._t) != -1) {
                                 step.name += step.a;
                             }
