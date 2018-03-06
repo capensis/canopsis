@@ -327,28 +327,31 @@ Ember.Application.initializer({
              * @property originalAlarms
              */
             originalAlarms: function() {
-				var controller = this;
+              var controller = this;
               this.set('loaded', false);
               var options = this.get('alarmSearchOptions');
 
+              // fix for applying a filter after refreshing the widget
+              this.set('alarmSearchOptions.filter', this.get('selected_filter.filter') || {});
+              
               //don't touch this or the backend will explode
               if(!options.filter)
                   options.filter = "{}";
               if(controller.get('isNaturalSearch')){
-				  options['natural_search'] = true;
-                  controller.set('isNaturalSearch', false);
-				  var columns = get(this, 'model.columns');
-				  var prefixed_columns = [];
-				  for(idx = 0; idx < columns.length; idx++){
-					  depth_one = columns[idx].split(".", 1)[0];
-					  if(this.get("entityDBColumn").indexOf(depth_one) >= 0){
-						  prefixed_columns.push("entity." + columns[idx]);
-					  }
-					  if(this.get("alarmDBColumn").indexOf(depth_one) >= 0){
-						  prefixed_columns.push("v." + columns[idx]);
-					  }
-				  }
-				  options["active_columns"] = prefixed_columns;
+                options['natural_search'] = true;
+                controller.set('isNaturalSearch', false);
+                var columns = get(this, 'model.columns');
+                var prefixed_columns = [];
+                for(idx = 0; idx < columns.length; idx++){
+                  depth_one = columns[idx].split(".", 1)[0];
+                  if(this.get("entityDBColumn").indexOf(depth_one) >= 0){
+                    prefixed_columns.push("entity." + columns[idx]);
+                  }
+                  if(this.get("alarmDBColumn").indexOf(depth_one) >= 0){
+                    prefixed_columns.push("v." + columns[idx]);
+                  }
+                }
+                options["active_columns"] = prefixed_columns;
               } else {
                   options['natural_search'] = false;
               }
