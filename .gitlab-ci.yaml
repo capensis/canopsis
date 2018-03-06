@@ -34,6 +34,5 @@ test:
       paths:
         - unit_tests
 
-
 after_script:
   - docker-compose -p test-${CI_JOB_ID} down0;115;0c
