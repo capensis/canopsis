@@ -2,9 +2,11 @@
 set -e
 set -o pipefail
 
-source ${CPS_HOME}/bin/activate
+source /etc/os-release
+repver="${ID}-${VERSION_ID}"
 
-find_links="file:///sources/python-libs/"
+source ${CPS_HOME}/bin/activate
+find_links="file:///sources/wheels/${repver}"
 
 pip install -r /sources/canopsis/requirements.txt -b /tmp/pipbuild --no-index -f ${find_links}
 

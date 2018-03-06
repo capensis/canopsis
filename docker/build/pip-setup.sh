@@ -4,7 +4,9 @@ set -o pipefail
 
 virtualenv --no-download ${CPS_HOME}
 
-find_links="file:///sources/python-libs/"
+source /etc/os-release
+repver="${ID}-${VERSION_ID}"
+find_links="file:///sources/wheels/${repver}"
 
 echo -e "[easy_install]\nallow_hosts = ''\nfind_links = ${find_links}" > /root/.pydistutils.cfg
 
