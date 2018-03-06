@@ -188,32 +188,26 @@ class MongoCollection(object):
     def ensure_index(self, *args, **kwargs):
         return self._hr(self.collection.ensure_index, *args, **kwargs)
 
-    def wrap_callable(self, func):
+    @staticmethod
+    def wrap_callable(func):
         def wrapped(*args, **kwargs):
-            while True:
-                try:
-                    return func(*args, **kwargs)
-                except AutoReconnect:
-                    sleep(1)
-
+            return MongoStore.hr(func, *args, **kwargs)
         return wrapped
 
+    def __pymongo_getattr__(self, name):
+        res = None
+        _super = super(MongoCollection, self)
+        if hasattr(_super, name):
+            res = getattr(_super, name)
+        else:
+            res = getattr(self.collection, name)
+
+        if callable(res):
+            return MongoCollection.wrap_callable(res)
+        return res
+
     def __getattr__(self, name):
-        while True:
-            try:
-                res = None
-                _super = super(MongoCollection, self)
-                if hasattr(_super, name):
-                    res = getattr(_super, name)
-                else:
-                    res = getattr(self.collection, name)
-
-                if callable(res):
-                    return self.wrap_callable(res)
-                return res
-
-            except AutoReconnect:
-                sleep(1)
+        return MongoStore.hr(self.__pymongo_getattr__, name)
 
     @staticmethod
     def is_successfull(dico):

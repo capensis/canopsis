@@ -18,6 +18,8 @@ DEFAULT_HOST = 'localhost'
 DEFAULT_PORT = 27017
 DEFAULT_DB_NAME = 'canopsis'
 
+singletons_cache = {}
+
 class MongoStore(object):
     """
     Distribute ready-to-use mongo collections.
@@ -27,10 +29,17 @@ class MongoStore(object):
     CONF_CAT = 'DATABASE'
 
     @staticmethod
-    def get_default():
-        cfg = Configuration.load('etc/common/mongo_store.conf', Ini)
-        store = MongoStore(cfg)
-        return store
+    def get_default(from_singleton=True):
+        global singletons_cache
+
+        cfg = Configuration.load(MongoStore.CONF_PATH, Ini)
+        cfg_fingerprint = '.'.join(sorted(cfg.get(MongoStore.CONF_CAT, {}).values()))
+
+        if cfg_fingerprint not in singletons_cache:
+            print('NEW DB CONN')
+            singletons_cache[cfg_fingerprint] = MongoStore(cfg)
+
+        return singletons_cache.get(cfg_fingerprint)
 
     def __init__(self, config):
         """

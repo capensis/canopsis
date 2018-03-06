@@ -528,7 +528,7 @@ class Middleware(Configurable):
         :returns: True if this is connected.
         """
 
-        return False
+        raise NotImplementedError()
 
     def reconnect(self):
         """Try to reconnect and returns connection result.

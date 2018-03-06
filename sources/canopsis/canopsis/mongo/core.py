@@ -150,7 +150,6 @@ class MongoDataBase(DataBase):
             self._conn = None
 
     def connected(self, *args, **kwargs):
-
         result = self._conn is not None and self._conn.alive()
 
         return result
