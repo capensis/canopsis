@@ -8,6 +8,7 @@ Manage mongodb connections.
 from __future__ import unicode_literals
 
 import time
+import hashlib
 
 from canopsis.confng import Configuration, Ini
 
@@ -33,10 +34,10 @@ class MongoStore(object):
         global singletons_cache
 
         cfg = Configuration.load(MongoStore.CONF_PATH, Ini)
-        cfg_fingerprint = '.'.join(sorted(cfg.get(MongoStore.CONF_CAT, {}).values()))
+        cfg_values = cfg.get(MongoStore.CONF_CAT, {}).values()
+        cfg_fingerprint = hashlib.md5('.'.join(sorted(cfg_values))).hexdigest()
 
         if cfg_fingerprint not in singletons_cache:
-            print('NEW DB CONN')
             singletons_cache[cfg_fingerprint] = MongoStore(cfg)
 
         return singletons_cache.get(cfg_fingerprint)
