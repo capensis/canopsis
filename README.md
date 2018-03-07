@@ -6,6 +6,12 @@
     <img src="https://travis-ci.org/capensis/canopsis.svg?branch=master"/>
 </a>
 
+
+
+[![pipeline status](https://git.canopsis.net/canopsis/canopsis/badges/develop/pipeline.svg)](https://git.canopsis.net/canopsis/canopsis/commits/develop)
+
+
+
 ## What is Canopsis ?
 
 [Canopsis](http://canopsis.org) is an open-source [hypervisor](http://www.capensis.fr/solutions/hypervision/) whose goal is to <a href="https://github.com/capensis/canopsis/wiki/consolidation" target="_blank">aggregate/consolidate</a> information and events (containing <a href="https://github.com/capensis/canopsis/wiki/metrics">metrics</a> of different types such as performance, availability, etc.) coming from multiple sources to create a global solution for <a href="https://github.com/capensis/canopsis/wiki/Dashboard" target="_blank">monitoring</a> and <a href="https://github.com/capensis/canopsis/wiki/engines" target="_blank">administrating</a> resources.
