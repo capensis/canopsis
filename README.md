@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-timeline/blob/mast
 
 ### Lint
 
-Tested on commit : c4db6fc.
+Tested on commit : 9b82e14.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
