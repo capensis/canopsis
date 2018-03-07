@@ -20,9 +20,8 @@ test:
   tags: ["canopsis,docker"]
   script:
     - export COMPOSE_HTTP_TIMEOUT=180
-    - export WHEEL_DIR=/tmp/canopsis-wheelrep
     - git submodule update --init
-    - ./build-docker.sh ci develop test
+    - WHEEL_DIR=/tmp/canopsis-wheelrep ./build-docker.sh ci develop test
     - echo CANOPSIS_TAG=ci-test >> .env
     - docker-compose -p test${CI_JOB_ID} up -d
     - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "/opt/canopsis/bin/schema2db"
