@@ -103,6 +103,9 @@ def main():
     print("\n===============")
     print("Total : {0}\tPassed : {1}\tFailed : {2}".format(total, passed, failed))
 
+    if failed > 0:
+        sys.exit(1)
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
