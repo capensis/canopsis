@@ -183,7 +183,11 @@ Ember.Application.initializer({
 
                             statusToName = get(component, 'statusToName')[step._t];
                             if (component.get('addAuthor').includes(step._t)) {
-                                step.name = statusToName + ' by ' + step.a;
+                                if (step.a.indexOf('.') > -1){
+                                    step.name = statusToName + ' by system';
+                                } else {
+                                    step.name = statusToName + ' by ' + step.a;
+                                }
                             } else {
                                 step.name = statusToName;
                             }
