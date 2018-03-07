@@ -23,8 +23,6 @@ from __future__ import unicode_literals
 from bson.errors import BSONError
 from pymongo.errors import PyMongoError, OperationFailure
 
-from time import sleep
-
 from canopsis.logger import Logger
 from canopsis.common.mongo_store import MongoStore
 
@@ -56,7 +54,7 @@ class MongoCollection(object):
 
     def __init__(self, collection, logger=None):
         """
-        :param pymongo.collection.Collection collection: mongo Collection object
+        :param pymongo.collection.Collection collection: mongo Collection obj
         :param logging.Logger logger: python logger instance.
             If None, a new logger is provided.
         """
@@ -167,11 +165,22 @@ class MongoCollection(object):
         raise CollectionError(message)
 
     def find_and_modify(self, *args, **kwargs):
+        """
+        Update and return an object.
+        Wrapper around pymongo's find_and_modify method.
+        See https://api.mongodb.com/python/2.8/api/pymongo/collection.html
+        for allowed params
+        """
         return self._hr(
             self.collection.find_and_modify, *args, **kwargs
         )
 
     def save(self, *args, **kwargs):
+        """
+        save a document
+        Wrapper around pymongo's save method.
+        See https://api.mongodb.com/python/2.8/api/pymongo/collection.html
+        """
         return self._hr(
             self.collection.save, *args, **kwargs
         )
@@ -183,18 +192,36 @@ class MongoCollection(object):
         return self._hr(self.collection.count)
 
     def drop_indexes(self):
+        """
+        Drops all indexes on this collection.
+        """
         return self._hr(self.collection.drop_indexes)
 
     def ensure_index(self, *args, **kwargs):
+        """
+        Ensures that an index exists on this collection.
+        """
         return self._hr(self.collection.ensure_index, *args, **kwargs)
 
     @staticmethod
     def wrap_callable(func):
+        """
+        Wraps pymongo's calls that are not defined in this class
+        with a try/except to allow auto reconnection on a replicaset
+        """
         def wrapped(*args, **kwargs):
+            """
+            Wrapper implementation
+            """
             return MongoStore.hr(func, *args, **kwargs)
         return wrapped
 
     def __pymongo_getattr__(self, name):
+        """
+         tries to identify method calls that are not defined in this class
+         and class them with MongoCollection.wrap_callable to handle auto
+         reconnection on a replicaset
+        """
         res = None
         _super = super(MongoCollection, self)
         if hasattr(_super, name):

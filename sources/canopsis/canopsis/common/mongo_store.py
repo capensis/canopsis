@@ -12,7 +12,7 @@ import hashlib
 
 from canopsis.confng import Configuration, Ini
 
-from pymongo import MongoClient, MongoReplicaSetClient, ReadPreference
+from pymongo import MongoClient, ReadPreference
 from pymongo.errors import AutoReconnect
 
 DEFAULT_HOST = 'localhost'
@@ -20,6 +20,7 @@ DEFAULT_PORT = 27017
 DEFAULT_DB_NAME = 'canopsis'
 
 singletons_cache = {}
+
 
 class MongoStore(object):
     """
@@ -37,12 +38,12 @@ class MongoStore(object):
 
         if from_singleton:
             cfg_values = cfg.get(MongoStore.CONF_CAT, {}).values()
-            cfg_fingerprint = hashlib.md5('.'.join(sorted(cfg_values))).hexdigest()
+            fingerprint = hashlib.md5('.'.join(sorted(cfg_values))).hexdigest()
 
-            if cfg_fingerprint not in singletons_cache:
-                singletons_cache[cfg_fingerprint] = MongoStore(cfg)
+            if fingerprint not in singletons_cache:
+                singletons_cache[fingerprint] = MongoStore(cfg)
 
-            return singletons_cache.get(cfg_fingerprint)
+            return singletons_cache.get(fingerprint)
 
         return MongoStore(cfg)
 
@@ -92,14 +93,14 @@ class MongoStore(object):
         self._authenticated = False
         if self.replicaset is None:
             self.conn = MongoClient(
-                'mongodb://{}:{}'.format(self.host, self.port), w=1,j=True
+                'mongodb://{}:{}'.format(self.host, self.port), w=1, j=True
             )
 
         else:
             self.conn = MongoClient(
                 'mongodb://{}:{}/?replicaSet={}'.format(
                     self.host, self.port, self.replicaset
-                ), w=1,j=True, read_preference=self.read_preference
+                ), w=1, j=True, read_preference=self.read_preference
             )
 
         self.client = self.get_database(self.db_name)
@@ -124,7 +125,7 @@ class MongoStore(object):
         """
         Authenticate against the requested database.
         """
-        res = MongoStore.hr(self.client.authenticate, self._user, self._pwd)
+        MongoStore.hr(self.client.authenticate, self._user, self._pwd)
         self._authenticated = True
 
     @property
@@ -154,13 +155,13 @@ class MongoStore(object):
         # try to work
         try:
             return func(*args, **kwargs)
-        except AutoReconnect as exc:
+        except AutoReconnect:
             pass
 
         # fast retry
         try:
             return func(*args, **kwargs)
-        except AutoReconnect as exc:
+        except AutoReconnect:
             pass
 
         # slow retries
@@ -174,10 +175,12 @@ class MongoStore(object):
         while retries < allowed_retries:
             try:
                 return func(*args, **kwargs)
-            except AutoReconnect as exc:
+            except AutoReconnect:
                 pass
 
             time.sleep(1)
             retries += 1
 
-        raise AutoReconnect('failed to reconnect after {} retries, handle it yourself.'.format(retries))
+        raise AutoReconnect(
+            'failed to reconnect after {} tries, giving up.'.format(retries)
+        )

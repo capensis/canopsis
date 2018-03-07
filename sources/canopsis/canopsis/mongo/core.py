@@ -25,7 +25,7 @@ from canopsis.common.utils import isiterable
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection, CollectionError
 
-from pymongo import MongoClient, MongoReplicaSetClient
+from pymongo import MongoClient
 from pymongo.cursor import Cursor as _Cursor
 from pymongo.errors import OperationFailure, DuplicateKeyError, PyMongoError
 from pymongo.errors import TimeoutError as NetworkTimeout
