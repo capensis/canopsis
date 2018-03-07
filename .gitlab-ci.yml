@@ -24,19 +24,22 @@ test:
   tags: ["canopsis,docker"]
   script:
     - git submodule update --init
-    - ./build-docker.sh ci develop test
+    - ./build-docker.sh ci develop test-ci
     - echo CANOPSIS_TAG=ci-test >> .env
     - docker-compose -p test${CI_JOB_ID} up -d
     - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "/opt/canopsis/bin/schema2db"
-    - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "yes | /opt/canopsis/bin/canopsis-filldb --update"
+    - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "yes | /opt/canopsis/bin/canopsis-filldb --init"
     - docker-compose -p test${CI_JOB_ID} restart
+    - sleep 5
+    - docker-compose -p test${CI_JOB_ID} restart webserver
+    - sleep 5
     - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "source ~/.bashrc && /opt/canopsis/bin/ut_runner /opt/canopsis/test"
     - docker cp test${CI_JOB_ID}_webserver_1:/opt/canopsis/tmp/tests_report/ tests_report
+    - docker-compose -p test-${CI_JOB_ID} kill
 
   artifacts:
     paths:
       - tests_report
 
 after_script:
-  - docker-compose -p test-${CI_JOB_ID} kill
   - docker-compose -p test-${CI_JOB_ID} down
