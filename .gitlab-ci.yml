@@ -35,7 +35,7 @@ test:
 
   artifacts:
     paths:
-      - unit_tests
+      - tests_report
 
 after_script:
   - docker-compose -p test-${CI_JOB_ID} down
