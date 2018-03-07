@@ -16,6 +16,8 @@ cd $workdir
 fix_ownership="$(id -u):$(id -g)"
 wheel_dir=${WHEEL_DIR:-${workdir}/docker/wheelbuild/}
 
+echo "Wheeldir: ${wheel_dir}"
+
 ./docker/build/bricks.sh "${bricks_tag}"
 
 docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} -f docker/Dockerfile.sysbase -t canopsis/canopsis-sysbase:${tag} .
