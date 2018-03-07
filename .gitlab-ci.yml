@@ -38,4 +38,5 @@ test:
       - tests_report
 
 after_script:
+  - docker-compose -p test-${CI_JOB_ID} kill
   - docker-compose -p test-${CI_JOB_ID} down
