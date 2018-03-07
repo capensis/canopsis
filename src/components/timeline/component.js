@@ -101,7 +101,7 @@ Ember.Application.initializer({
                 'hardlimit': {'icon': 'fa-warning', 'color': 'bg-red'}
             },
 
-            addAuthor: ['stateinc', 'statedec', 'changestate', 'statusinc'],
+            addAuthor: ['stateinc', 'statedec', 'changestate', 'statusinc', 'statusdec'],
 
             /**
              * @method didInsertElement
