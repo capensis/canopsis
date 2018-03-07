@@ -12,6 +12,7 @@ build_messages.txt
 \#*\#
 Vagrantfile
 *.vagrant
+docker/wheels/requirements_control
 docker/files/bricks/brick-*
 docker/bricks
 tools/catag/catag
