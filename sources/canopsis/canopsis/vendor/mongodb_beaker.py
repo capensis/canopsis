@@ -84,7 +84,7 @@ I have a few cache regions in one of my applications, some of which are memcache
     ... beaker.cache.navigation.type = mongodb
     ... beaker.cache.navigation.url = mongodb://localhost:27017/beaker.navigation
     ... beaker.cache.navigation.expire = 86400
- 
+
 The Beaker docs[1] contain detailed information on configuring regions.  The
 item we're interested in here is the **beaker.cache.navigation** keys.  Each
 beaker cache definition needs a *type* field, which defines which backend to
@@ -154,7 +154,7 @@ See the MongoDB CappedCollection_. docs for details.
 Sparse Collection Support
 =========================
 
-The default behavior of mongodb_beaker is to create a single MongoDB Document for each namespace, and store each 
+The default behavior of mongodb_beaker is to create a single MongoDB Document for each namespace, and store each
 cache key/value on that document.  In this case, the "_id" of the document will be the namespace, and each new cache entry
 will be attached to that document.
 
@@ -198,7 +198,8 @@ except ImportError:
     import pickle
 
 try:
-    from pymongo.connection import Connection
+    from canopsis.common.mongo_store import MongoStore
+    from canopsis.common.collection import MongoCollection
     import bson
     import bson.errors
 except ImportError:
@@ -213,7 +214,7 @@ class MongoDBNamespaceManager(NamespaceManager):
 
     # TODO _- support write concern / safe
     def __init__(self, namespace, url=None, data_dir=None,
-                 lock_dir=None, skip_pickle=False, 
+                 lock_dir=None, skip_pickle=False,
                  sparse_collection=False, **params):
         NamespaceManager.__init__(self, namespace)
 
@@ -245,25 +246,9 @@ class MongoDBNamespaceManager(NamespaceManager):
             verify_directory(self.lock_dir)
 
         def _create_mongo_conn():
-            host_uri = 'mongodb://'
-            host_uri_components = []
-
-            for x in host_list:
-                host_uri_components.append('%s:%s' % x)
-
-            host_uri += ','.join(host_uri_components)
-
-            log.info("Host URI: %s" % host_uri)
-            conn = Connection(host_uri, slave_okay=options.get('slaveok', False))
-
-            db = conn[database]
-
-            if username:
-                log.info("Attempting to authenticate %s/%s " % (username, password))
-                if not db.authenticate(username, password):
-                    raise InvalidCacheBackendError('Cannot authenticate to '
-                                                   ' MongoDB.')
-            return db[collection]
+            store = MongoStore.get_default()
+            store.authenticate()
+            return MongoCollection(store.get_collection(collection))
 
         self.mongo = MongoDBNamespaceManager.clients.get(data_key,
                     _create_mongo_conn)

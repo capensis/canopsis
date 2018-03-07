@@ -131,7 +131,7 @@ def exports(ws):
 
         try:
             deletion_dict = watcher.delete_watcher(watcher_id=watcher_id)
-        except:
+        except Exception:
             return gen_json_error({'description': 'cannot delete {}'
                                                   .format(watcher_id)},
                                   HTTP_ERROR)

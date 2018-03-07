@@ -27,7 +27,9 @@ import gridfs
 
 from bson import objectid
 
-from pymongo import Connection
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
+from pymongo.errors import PyMongoError
 from pymongo import ASCENDING
 from pymongo import DESCENDING
 
@@ -188,8 +190,13 @@ class Storage(object):
         if self.connected:
             return True
 
-        self.conn = Connection(self.uri, safe=True)
-        self.db = self.conn[self.mongo_db]
+        try:
+            self.conn = MongoStore.get_default()
+        except PyMongoError as exc:
+            self.logger.error('Old storage connection failure: {}'.format(exc))
+            return False
+
+        self.db = self.conn.get_database(self.mongo_db)
 
         manipulators = self.db.incoming_manipulators
         manipulators += self.db.outgoing_manipulators
@@ -207,8 +214,6 @@ class Storage(object):
             self.gridfs_namespace = CONFIG.get("master", "gridfs_namespace")
         except Exception:
             pass
-
-        self.fs = gridfs.GridFS(self.db, self.gridfs_namespace)
 
         self.connected = True
 
@@ -239,7 +244,7 @@ class Storage(object):
 
             return backend
         except Exception:
-            self.backend[namespace] = self.db[namespace]
+            self.backend[namespace] = MongoCollection(self.conn.get_collection(namespace))
             self.logger.debug("Connected to %s collection." % namespace)
             return self.backend[namespace]
 
@@ -802,33 +807,6 @@ class Storage(object):
             return True
         else:
             return False
-
-    def put_binary(self, data, file_name, content_type):
-        self.check_connected()
-
-        bin_id = self.fs.put(data, filename=file_name, content_type=content_type)
-        return bin_id
-
-    def get_binary(self, _id):
-
-        self.check_connected()
-
-        cursor = self.fs.get(_id)
-
-        return cursor.read()
-
-    def remove_binary(self, _id):
-        self.check_connected()
-
-        try:
-            self.fs.delete(_id)
-        except Exception as err:
-            self.logger.error(u'Error when remove binarie', err)
-
-    def check_binary(self, _id):
-        self.check_connected()
-
-        return self.fs.exists(_id)
 
     def __del__(self):
         self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)

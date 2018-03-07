@@ -30,15 +30,15 @@ import json
 import logging
 import traceback
 
-from bottle import request, HTTPError, HTTPResponse
-from bottle import response as BottleResponse
+
 from functools import wraps
 from gzip import GzipFile
 from inspect import getargspec
-from json import loads
 from math import isnan, isinf
 from urlparse import parse_qs
 from uuid import uuid4 as uuid
+from bottle import request, HTTPError, HTTPResponse
+from bottle import response as BottleResponse
 
 from canopsis.common.utils import ensure_iterable, isiterable
 
@@ -150,8 +150,8 @@ class route(object):
     _INTERCEPTED = str(uuid())
 
     def __init__(
-        self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
-        response=response, adapt=True
+            self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
+            response=response, adapt=True
     ):
         """
         :param op: ws operation for routing a function
@@ -203,7 +203,7 @@ class route(object):
             else:
                 # params are request params
                 try:
-                    loaded_body = loads(body)
+                    loaded_body = json.loads(body)
                 except (ValueError, TypeError):
                     pass
                 else:
@@ -220,7 +220,7 @@ class route(object):
                     # try to convert all json param values to python
                     for i in range(len(param)):
                         try:
-                            p = loads(param[i])
+                            p = json.loads(param[i])
                         except (ValueError, TypeError):
                             pass
                         else:
@@ -235,7 +235,7 @@ class route(object):
                 # if param exists add it in kwargs in deserializing it
                 if param is not None:
                     try:
-                        kwargs[body_param] = loads(param)
+                        kwargs[body_param] = json.loads(param)
 
                     except (ValueError, TypeError):
                         # get the str value and cross fingers ...
@@ -262,9 +262,8 @@ class route(object):
 
             else:
                 #TODO: move it globaly, and move this module in webcore project
-                from canopsis.storage.file import FileStream
 
-                classes = (HTTPError, FileStream)
+                classes = (HTTPError,)
 
                 if not isinstance(result_function, classes):
                     result = self.response(
