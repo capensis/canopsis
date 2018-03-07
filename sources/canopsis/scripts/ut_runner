@@ -71,7 +71,7 @@ def main():
     failed = 0
     passed = 0
     current = 0
-    for modname in modname_list:
+    for modname in sorted(modname_list):
         current += 1
         try:
             _ = subprocess.check_output(["coverage",
