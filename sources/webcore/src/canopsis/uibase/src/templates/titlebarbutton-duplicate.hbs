@@ -1,0 +1,7 @@
+{{#unless view.isMainContainerWidget}}
+	{{#if controller.editMode}}
+	    <button type="button" class="btn btn-info btn-xs" {{action 'duplicateWidgetAndContent' item view.controller.model}} >
+	        <i class="fa fa-files-o"></i>
+	    </button>
+	{{/if}}
+{{/unless}}

@@ -1,0 +1,14 @@
+{
+  "name": "development",
+  "version": "0.0.0",
+  "authors": [
+    "Team Canopsis <maintainers@canopsis.org>"
+  ],
+  "description": "Developper tools for Canopsis frontend",
+  "main": "init.js",
+  "moduleType": [
+    "amd"
+  ],
+  "license": "GNU Affero General Public License",
+  "homepage": "http://www.canopsis.org/"
+}

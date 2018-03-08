@@ -1,0 +1,10 @@
+{{#unless view.isMainContainerWidget}}
+	{{#if controller.editMode}}
+	    <button type="button" class="btn btn-info btn-xs btn-move-up" {{action 'moveup' item}} >
+	        <span class="glyphicon glyphicon-arrow-up"></span>
+	        {{#unless view.minified}}
+	            Move up
+	        {{/unless}}
+	    </button>
+	{{/if}}
+{{/unless}}

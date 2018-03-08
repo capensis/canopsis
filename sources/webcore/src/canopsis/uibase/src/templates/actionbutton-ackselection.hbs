@@ -1,0 +1,20 @@
+{{#unless controller.findOptions.useLogCollection}}
+    {{#if controller.rights.actionbutton_ack.checksum}}
+        {{#if controller.rights.actionbutton_fastack.checksum}}
+            {{#component-tooltip content="Fast Ack"}}
+                <button class="btn btn-default btn-sm" {{action 'sendEvent' 'fastack'}} >
+                    <span class="glyphicon glyphicon-ok"></span>
+                    {{tr "Fast Ack"}}
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+        <button class="btn btn-default btn-sm" {{action 'sendEvent' 'ack'}} >
+            <span class="glyphicon glyphicon-saved"></span>
+            {{tr "Ack"}}
+        </button>
+        <button class="btn btn-default btn-sm" {{action 'sendEvent' 'ackremove'}} >
+            <span class="glyphicon glyphicon-ban-circle"></span>
+            {{tr "Cancel ack"}}
+        </button>
+    {{/if}}
+{{/unless}}

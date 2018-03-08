@@ -71,7 +71,7 @@ def main():
     failed = 0
     passed = 0
     current = 0
-    for modname in modname_list:
+    for modname in sorted(modname_list):
         current += 1
         try:
             _ = subprocess.check_output(["coverage",
@@ -103,6 +103,9 @@ def main():
     print("\n===============")
     print("Total : {0}\tPassed : {1}\tFailed : {2}".format(total, passed, failed))
 
+    if failed > 0:
+        sys.exit(1)
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()

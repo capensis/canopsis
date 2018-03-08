@@ -1,0 +1,16 @@
+<!--Displays schema list-->
+{{#if configuration.DISPLAY_SCHEMA_MANAGER}}
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <span class="glyphicon glyphicon-upload"></span>
+        </a>
+        <ul class="dropdown-menu">
+        <li>
+            {{input type="text" placeholder="Search for a schema..." value=schemaManagerSearchCriterion}}
+        </li>
+        {{#each type in displayedTypes}}
+            <li><a class="handle" {{action 'addModelInstance' type.name}}>{{type.name}}</a></li>
+        {{/each}}
+        </ul>
+    </li>
+{{/if}}

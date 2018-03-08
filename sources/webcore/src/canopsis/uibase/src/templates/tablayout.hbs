@@ -1,0 +1,26 @@
+<section class="nav-tabs-custom">
+    <ul class="nav nav-tabs ">
+        {{#each item in controller.items.content}}
+                <li {{bind-attr class="item.tabSelected:active"}}>
+                    <a href="#" data-toggle="tab" {{action 'selectTab' item.widget}}>
+                        <span>
+                            {{item.widget.title}}
+                        </span>
+
+                        {{#if controller.editMode}}
+                            <span class="badge" {{action 'editWidget' item.widget}}>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </span>
+                            <span class="badge" {{action 'removeWidget' item.widget}}>
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </span>
+                        {{/if}}
+                    </a>
+                </li>
+        {{/each}}
+    </ul>
+
+    {{#with controller.selectedItem}}
+        {{widgethelper widget=controller.selectedItem}}
+    {{/with}}
+</section>

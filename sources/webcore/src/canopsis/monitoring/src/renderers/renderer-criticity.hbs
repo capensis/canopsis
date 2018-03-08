@@ -1,0 +1,7 @@
+{{#if record.content.change_state_output}}
+    {{#component-tooltip content=record.content.change_state_output noTranslation=true}}
+        {{{criticity value this.record.keep_state}}}
+    {{/component-tooltip}}
+{{else}}
+    {{{criticity value this.record.keep_state}}}
+{{/if}}

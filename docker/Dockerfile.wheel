@@ -1,0 +1,19 @@
+FROM debian:stretch-slim
+
+ARG PROXY
+
+ENV http_proxy ${PROXY}
+ENV https_proxy ${PROXY}
+
+COPY docker/build/debian-run.sh /
+RUN /bin/bash /debian-run.sh
+
+COPY docker/build/debian-build.sh /
+RUN /bin/bash /debian-build.sh
+
+COPY sources/externals/python-libs /sources/python-libs
+COPY sources/canopsis /sources/canopsis
+
+COPY docker/build/pip-wheel.sh /
+
+ENTRYPOINT ["/bin/bash", "/pip-wheel.sh"]

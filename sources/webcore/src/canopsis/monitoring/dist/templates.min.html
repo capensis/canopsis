@@ -1,0 +1,444 @@
+<script type="text/x-handlebars" data-template-name="components/component-ack">{{#if value.author}}
+    {{#component-tooltip content=acktooltip htmlEnabled=true noTranslation=true}}
+        <span {{bind-attr class=":badge ackcolor"}} >
+            <i class="fa fa-check"></i>
+        </span>
+    {{/component-tooltip}}
+{{/if}}
+{{#if tickettooltip}}
+    {{#component-tooltip content=tickettooltip htmlEnabled=true noTranslation=true}}
+        <span class="badge bg-blue">
+            <i class="fa fa-ticket"></i>
+        </span>
+    {{/component-tooltip}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-cfiltereditor"><style type="text/css">
+    .cfilter-active {
+        background-color: #CCCCCC;
+    }
+    .cfilter .filterclause .form-control{
+        display: inline;
+        width: auto;
+    }
+
+    .cfilter .filterclause .label{
+        height: 22px;
+    }
+    .cfilter .filterclause .form-control{
+        padding:0;
+        height: 20px;
+    }
+    .cfilter .filterclause .form-control.finalized{
+        display: inline-block;
+        background: #ccc;
+    }
+
+    .ui-sortable-helper {
+        background: white;
+        border: 1px solid #ccc;
+    }
+</style>
+<fieldset>
+    <div class="btn-group pull-right">
+        {{#if onlyAllowRegisteredIndexes}}
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-link"></i> {{selectedIndexName}} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                {{#each index in indexes.all}}
+                    <li><a {{action "selectIndexByName" index.name}}>{{index.name}}</a></li>
+                {{/each}}
+            </ul>
+
+            {{#component-tooltip content="Unlock indexes. This might lead to huge performance issues!"}}
+                <button class="btn btn-default" {{action "unlockIndexes"}}>
+                    <i class="fa fa-lock"></i>
+                </button>
+            {{/component-tooltip}}
+
+        {{else}}
+            {{#component-tooltip content="Lock indexes"}}
+                <button class="btn btn-default" {{action "lockIndexes"}}>
+                    <i class="fa fa-unlock"></i>
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+    </div>
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a {{bind-attr href=cfilterEditTabId}} role="tab" data-toggle="tab">
+                <span class="glyphicon glyphicon-edit"></span>
+            </a>
+        </li>
+        <li>
+            <a {{bind-attr href=cfilterRawTabId}} role="tab" data-toggle="tab">
+                <span class="glyphicon glyphicon-cog"></span>
+            </a>
+        </li>
+        <li>
+            <a {{bind-attr href=cfilterViewTabId}} role="tab" data-toggle="tab">
+                <span class="glyphicon glyphicon-eye-open"></span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active" {{bind-attr id=cfilterEditId}}>
+            <div {{bind-attr id=cfilterId}} class="container-fluid">
+                {{#if this.filterError}}
+                    <div style="padding:10px">
+                        <div class="callout callout-danger">
+                            <h4>Error</h4>
+                            <p>{{filterError}}</p>
+                        </div>
+                    </div>
+                {{/if}}
+                {{#each clause in clauses}}
+                    <div {{bind-attr class="clause.current:cfilter-active:cfilter-inactive :row-fluid"}} {{action "activate" clause}}>
+                        {{#each andClausePart in clause.and}}
+                            {{#if andClausePart.isFirst}}
+                                <div style="margin:3px">
+                                    <span class="label label-danger">
+                                        Or
+                                    </span><br/>
+                                    <span style="margin-right:54px"></span>
+                                </div>
+                            {{else}}
+                                <div style="padding-left:10px; margin:3px">
+                                    <span class="label label-info" style="margin-right:13px">
+                                        And
+                                    </span>
+                                </div>
+                            {{/if}}
+                            {{component-filterclause
+                                    content=andClausePart
+                                    clauses=clauses
+                                    clause=clause
+                                    currentClauseIndex=currentClauseIndex
+                                    parent=this
+                                    onlyAllowRegisteredIndexes=onlyAllowRegisteredIndexes
+                                    operators=operators
+                                }}
+                        {{/each}}
+                    </div>
+                {{/each}}
+                {{#unless orButtonHidden}}
+                    <a {{action "addOrClause"}} class="btn btn-danger btn-xs">Or</a>
+                {{/unless}}
+            </div>
+        </div>
+
+        <div class="tab-pane" {{bind-attr id=cfilterRawId}}>
+            {{textarea value=cfilter_serialized cols="40" rows="10"}}
+        </div>
+
+        <div class="tab-pane" {{bind-attr id=cfilterViewId}}>
+            {{component-table model="event" modelfilter=cfilter_serialized columns=viewTabColumns targetObject=this}}
+        </div>
+    </div>
+</fieldset>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-eventselector"><form role="form" class="well">
+    <table class="table">
+        <tr>
+            <td><center>{{tr 'Selectors'}}</center></td>
+            <td><center>{{tr 'Topologies'}}</center></td>
+        </tr>
+        <tr>
+            <td>{{input class="form-control" type="checkbox" checked=selectors}}</td>
+            <td>{{input class="form-control" type="checkbox" checked=topologies}}</td>
+        </tr>
+    </table>
+    <div class="form-group">
+        <label>{{tr 'Component'}}</label>
+        {{input type="text" value=component class="form-control" placeholder=search_component}}
+    </div>
+    <div class="form-group">
+        <label>{{tr 'Resource'}}</label>
+        {{input type="text" value=resource class="form-control" placeholder=search_resource}}
+    </div>
+
+    <label>{{tr 'Event search'}}</label>
+    {{#unless events.length}}
+        <div class="well">No item selected</div>
+    {{/unless}}
+    <ul class="list-group">
+    {{#each event in events}}
+        <li class="list-group-item list-group-item-info">
+            <table>
+                <tr>
+                    <td>
+                        <button class="btn btn-default" {{action "add" event}}>
+                            <span class="glyphicon glyphicon-plus"></span>
+                            {{tr 'Add'}}
+                        </button>
+                    </td>
+                    <td style="padding-left:5px;padding-right:5px;overflow-y:hidden">
+                        {{component-propertiestopopup htmlOnly=true source=event properties='["connector", "component", "resource"]'}}
+                    </td>
+                </tr>
+            </table>
+        </li>
+    {{/each}}
+    </ul>
+
+    <label>{{tr 'Selected Events'}}</label>
+    {{#unless selectedEvents.length}}
+        <div class="well">No event selected</div>
+    {{/unless}}
+
+    {{#if labelled}}
+        <p><i>{{ tr 'Event labels aims to create shortcut in a templating system. They have to contains only chars, numbers or underscores.'}}</i></p>
+    {{/if}}
+    <ul class="list-group">
+    {{#each event in selectedEvents}}
+        <li class="list-group-item list-group-item-success">
+
+            <table>
+                <tr>
+                    <td>
+                        <button class="btn btn-default" {{action "delete" event}}>
+                            <span class="glyphicon glyphicon-minus"></span>
+                            {{tr 'Remove'}}
+                        </button>
+                    </td>
+                    <td style="padding-left:5px;padding-right:5px;overflow-y:hidden">
+                        {{component-propertiestopopup htmlOnly=true source=event properties='["connector", "component", "resource"]'}}
+                    </td>
+                    {{#if labelled}}
+                        <td>
+                            {{input type="text" value=event.label class="form-control" placeholder=type_label class="pull-right"}}
+                        </td>
+                    {{/if}}
+                </tr>
+            </table>
+        </li>
+    {{/each}}
+    </ul>
+    {{#if labelled}}
+        <center>
+            <button class="btn btn-default" {{action "saveLabels"}}>
+                <span class="glyphicon glyphicon-plus"></span>
+                {{tr 'Save labels'}}
+                {{#if saveLabelsDone}}
+                    {{tr 'done'}}
+                {{/if}}
+            </button>
+        </center>
+    {{/if}}
+</form>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-stateeditor"><form>
+    {{#unless previousIsInfo}}
+        <button {{bind-attr class=":btn :bg-green isInfo:active isInfo:emphasis"}} {{action "setState" 0}}>{{tr 'Info'}}</button>
+    {{/unless}}
+    {{#unless previousIsMinor}}
+        <button {{bind-attr class=":btn :bg-yellow isMinor:active isMinor:emphasis"}} {{action "setState" 1}}>{{tr 'Minor'}}</button>
+    {{/unless}}
+    {{#unless previousIsMajor}}
+        <button {{bind-attr class=":btn :bg-orange isMajor:active isMajor:emphasis"}} {{action "setState" 2}}>{{tr 'Major'}}</button>
+    {{/unless}}
+    {{#unless previousIsCritical}}
+        <button {{bind-attr class=":btn :bg-red isCritical:active isCritical:emphasis"}} {{action "setState" 3}}>{{tr 'Critical'}}</button>
+    {{/unless}}
+</form>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-statemapping"><div class="form-group">
+	<div class="col-md-2">
+	    <span class="badge bg-green">{{tr 'Info'}}</span>
+	</div>
+	<div class="col-md-10">
+		{{input class="form-control" value=info placeholder=placeholder}}
+	</div>
+</div>
+<div class="form-group">
+	<div class="col-md-2">
+	    <span class="badge bg-yellow">{{tr 'Minor'}}</span>
+	</div>
+	<div class="col-md-10">
+		{{input class="form-control" value=minor placeholder=placeholder}}
+	</div>
+</div>
+<div class="form-group">
+	<div class="col-md-2">
+	    <span class="badge bg-orange">{{tr 'Major'}}</span>
+	</div>
+	<div class="col-md-10">
+		{{input class="form-control" value=major placeholder=placeholder}}
+	</div>
+</div>
+<div class="form-group">
+	<div class="col-md-2">
+	    <span class="badge bg-red">{{tr 'Critical'}}</span>
+	</div>
+	<div class="col-md-10">
+		{{input class="form-control" value=critical placeholder=placeholder}}
+	</div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="editor-cfilter">{{!*
+ * @editor cfilter
+}}
+{{component-cfiltereditor content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-cfilterwithproperties">{{!*
+ * @editor cfilterwithproperties
+}}
+<span class="label" style="color:black">{{tr 'Title'}}</span>{{input type="text" class="form-control" value=attr.value.title}}
+<span class="label" style="color:black">{{tr 'Filter'}}</span>{{component-querybuilder filterValue=attr.value.filter}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-cmetric">{{!*
+ * @editor cmetric
+}}
+{{component-metricselector content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-eventselector">{{!*
+ * @editor eventselector
+}}
+{{component-eventselector content=attr.value title=attr.field labelled=attr.model.options.labelled}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-metricselector">{{component-metricselector2 content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-ack">{{component-ack crecord=this value=value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-cfilter">{{!*
+ * @renderer cfilter
+}}
+{{json2html value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-cfilterwithproperties">{{!*
+ * @renderer cfilterwithproperties
+}}
+{{json2html value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-crecord-type"><p class="text-center">
+    <span class="label label-info">{{value}}</span>
+</p>
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-criticity">{{#if record.content.change_state_output}}
+    {{#component-tooltip content=record.content.change_state_output noTranslation=true}}
+        {{{criticity value this.record.keep_state}}}
+    {{/component-tooltip}}
+{{else}}
+    {{{criticity value this.record.keep_state}}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-eventselector">{{json2html value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-eventtimestamp">{{component-timestamptooltiped
+    optionaltimestamp=value
+    eventstate=record.state
+    maintimestamp=record.timestamp
+    maintitle="Last event publication"
+    hidedata=attr.options.hideDate
+    agoformat=attr.options.canDisplayAgo
+}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-eventtype">{{{eventtype value}}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-state">{{stateview value this}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-stateConnector"><p class="text-center">
+  <span class="fa-stack fa-lg">
+  {{#if value}}
+    <i class="fa fa-circle color-green fa-stack-2x"></i>
+    <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+
+  {{else}}
+    <i class="fa fa-circle color-red fa-stack-2x"></i>
+    <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+  {{/if}}
+
+  </span>
+</p>
+{{#if controller.record.content._data.timeStampState }}
+    {{timestamp null attr  controller.record.content._data }}
+    {{#if attr.options.canDisplayAgo}}
+        <small class="text-muted">
+            <span class="glyphicon glyphicon-time"></span>
+            {{timeSince null controller.record.content._data}}
+        </small>
+    {{/if}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-status">{{statusview value this}}
+
+{{#if this.statushtml}}
+    <span>{{this.statusvalue}}</span>
+    {{#component-tooltip content=this.statushtml htmlEnabled=true}}
+        <span><i class="fa fa-male"></i></span>
+    {{/component-tooltip}}
+{{else}}
+    <span>{{this.statusvalue}}</span>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-editurlfield">{{#if controller.rights.actionbutton_canediturlfield.checksum}}
+    {{#component-tooltip content="Edit wich fields in event should contains links"}}
+        <button class="btn btn-default btn-sm" {{action 'editUrlField'}} >
+            <span class="glyphicon glyphicon-list-alt"></span>
+                {{tr 'Edit url fields'}}
+        </button>
+    {{/component-tooltip}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="weather">{{#if controller._partials.weatherTheme}}
+    {{#each theme in controller._partials.weatherTheme}}
+        {{partial theme}}
+    {{/each}}
+{{else}}
+    <div {{bind-attr class=":small-box controller.background"}}>
+        <div class="inner">
+
+        </div>
+        <div class="icon">
+            <i {{bind-attr class=":ion controller.icon"}}></i>
+        </div>
+
+        <!-- child -->
+        <div class="row unmarged weatherminsize">
+            {{#if controller.singleEvent}}
+                {{#each controller.sub_weather}}
+                    <div style="margin-right:55px;">
+                        <div class="inner text-center" style="overflow:hidden">
+                            {{#if controller.show_title}}
+                                <h4>
+                                    {{title}}
+                                </h4>
+                            {{/if}}
+                            <p>
+                                <a {{action "goToInfo" this}} class="small-box-footer full"></a>
+                            </p>
+                            {{#if controller.show_output}}
+                                <h5>
+                                    {{controller.singleEventOutput}}
+                                </h5>
+                            {{/if}}
+                        </div>
+                    </div>
+                {{/each}}
+            {{else}}
+                <div style="margin-right:55px;">
+                {{#each controller.sub_weather}}
+                    <div class="col-lg-3 col-xs-6">
+                        <div {{bind-attr class=":small-box custom_class"}}>
+                            <div class="inner text-center" style="overflow:hidden">
+                                {{#if controller.show_title}}
+                                    <h4>
+                                        {{title}}
+                                    </h4>
+                                {{/if}}
+                                <p>
+                                    <a {{action "goToInfo" this}} class="small-box-footer full"></a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+                </div>
+            {{/if}}
+        </div>
+    </div>
+{{/if}}
+</script>

@@ -1,0 +1,15 @@
+{{#if view.parentView.groupedColumns}}
+    <td></td>
+    <td {{bind-attr colspan="view.parentView.controller.shown_columns.length"}}>
+        {{#each attr in view.parentView.groupedColumns}}
+            {{#if attr.options.show}}
+                {{attr.field}} : {{component-renderer attr=attr record=this}}
+                <br/>
+            {{/if}}
+        {{/each}}
+    </td>
+
+    {{#each view.parentView.controller.shown_columns}}
+        <td style="display:none"></td>
+    {{/each}}
+{{/if}}

@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 from canopsis.engines.core import TaskHandler
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
-from canopsis.old.file import File
 from canopsis.common.utils import ensure_unicode
 from canopsis.common.template import Template
 
@@ -90,7 +89,7 @@ class engine(TaskHandler):
             or string).
         :param subject: str("My Subject").
         :param body: str("My Body").
-        :param attachments: File, list of File.
+        :param attachments: file or list of file.
         :param smtp_host: str("localhost").
         :param smtp_port: int(25).
         :param html: allow html into mail body (booleen).
@@ -182,9 +181,6 @@ class engine(TaskHandler):
         if attachments:
             for _file in attachments:
                 part = MIMEBase('application', "octet-stream")
-
-                if not isinstance(_file, File):
-                    _file.__class__ = File
 
                 #meta_file = _file.get(storage)
                 content_file = _file.get(storage)

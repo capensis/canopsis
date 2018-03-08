@@ -1,0 +1,464 @@
+{
+    "components": [
+        {
+            "name": "right-checksum",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "right-checksum",
+                "description": "<p>display buttons to edit rights checksums (&quot;read/write&quot;, &quot;chmod&quot;, etc...)</p>",
+                "parameters": [],
+                "examples": []
+            },
+            "properties": [
+                {
+                    "name": "right",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>the right on which the checksum is edited</p>",
+                    "type": {
+                        "names": [
+                            "object"
+                        ]
+                    }
+                },
+                {
+                    "name": "checksum1flag",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>The first binary flag (at the right side) of the checksum</p>",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "checksum2flag",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>The second binary flag of the checksum</p>",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "checksum4flag",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>The third binary flag of the checksum</p>",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "checksum8flag",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>The fourth binary flag of the checksum</p>",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "computedNumericChecksum",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": ""
+                },
+                {
+                    "name": "checksumType",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>computed property, dependant on &quot;right.name&quot;. Retreives the checksum type, based on the right. Values can be either &quot;RW&quot;, &quot;CRUD&quot;, or by default they are considered as boolean (no flags used)</p>",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "checksumIsRW",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>computed property, dependant on &quot;checksumType&quot;. True if the checksum type is &quot;RW&quot;</p>",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "checksumIsCRUD",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>computed property, dependant on &quot;checksumType&quot;. True if the checksum type is &quot;CRUD&quot;</p>",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "checksum8Class",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Computed property, dependant on &quot;checksum8flag&quot;. Css class for the fourth checksum</p>",
+                    "type": ""
+                },
+                {
+                    "name": "checksum4Class",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Computed property, dependant on &quot;checksum4flag&quot;. Css class for the third checksum</p>",
+                    "type": ""
+                },
+                {
+                    "name": "checksum2Class",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Computed property, dependant on &quot;checksum2flag&quot;. Css class for the second checksum</p>",
+                    "type": ""
+                },
+                {
+                    "name": "checksum1Class",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Computed property, dependant on &quot;checksum1flag&quot;. Css class for the first checksum</p>",
+                    "type": ""
+                }
+            ],
+            "functions": [
+                {
+                    "name": "init",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "actions_toggleRightChecksum",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Action handling checksum edition</p>",
+                    "parameters": [
+                        {
+                            "name": "flagNumber",
+                            "type": "integer",
+                            "description": "<p>the flag to toggle</p>",
+                            "default": "",
+                            "optional": "",
+                            "nullable": ""
+                        }
+                    ],
+                    "examples": []
+                },
+                {
+                    "name": "recomputeNumericChecksum",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Observer, dependant on &quot;checksum8flag&quot;, &quot;checksum4flag&quot;, &quot;checksum2flag&quot;, &quot;checksum1flag&quot;. assign the computed checksum into the &quot;right&quot; object</p>",
+                    "parameters": [],
+                    "examples": []
+                }
+            ]
+        },
+        {
+            "name": "right-action",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "right-action",
+                "description": "<p>Display a right properly, to embed into a right list</p>",
+                "parameters": [],
+                "examples": []
+            },
+            "properties": [
+                {
+                    "name": "value",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>the right value</p>",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "description",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Computed property, dependant on &quot;value&quot;. the right description</p>",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "rightselector",
+            "description": "",
+            "extends": [
+                "dictclassifiedcrecordselector"
+            ],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "rightselector",
+                "description": "<p>Allows to assign rights to a record, and to manage their checksums and options</p>\n<p><img src=\"../screenshots/component-rightselector.png\" alt=\"Component preview\"></p>",
+                "parameters": [],
+                "examples": []
+            },
+            "properties": [
+                {
+                    "name": "nameKey",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>the property of the right to use as the name key on the component</p>",
+                    "type": ""
+                },
+                {
+                    "name": "idKey",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>the property of the right to use as the id key on the component</p>",
+                    "type": ""
+                },
+                {
+                    "name": "classifiedItems",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Computed property dependant on &quot;items&quot; and &quot;items.@each&quot;. Compute a structure with classified item each time the 'items' property changed</p>",
+                    "type": ""
+                }
+            ],
+            "functions": [
+                {
+                    "name": "actions-selectItem",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>recomputes the generated rights dictionnary when an item is selected</p>",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "actions-selectItem",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>recomputes the generated rights dictionnary when an item is unselected</p>",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "recomputeValue",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Observer on &quot;selectionUnprepared&quot;, &quot;selectionUnprepared.@each&quot;, &quot;selectionUnprepared.@each.checksum&quot;. Recomputes the generated rights dictionnary</p>",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "findItems",
+                    "access": "",
+                    "virtual": false,
+                    "description": "<p>Retreives the rights list to display</p>",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "deserializeAdditionnalData",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [
+                        {
+                            "name": "item",
+                            "type": "",
+                            "description": "",
+                            "default": "",
+                            "optional": "",
+                            "nullable": ""
+                        }
+                    ],
+                    "examples": []
+                },
+                {
+                    "name": "serializeAdditionnalData",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [
+                        {
+                            "name": "item",
+                            "type": "",
+                            "description": "",
+                            "default": "",
+                            "optional": "",
+                            "nullable": ""
+                        }
+                    ],
+                    "examples": []
+                }
+            ]
+        }
+    ],
+    "functions": [
+        {
+            "name": "updateRecord",
+            "access": "",
+            "virtual": false,
+            "description": "",
+            "parameters": [
+                {
+                    "name": "store",
+                    "type": "DS.Store",
+                    "description": "",
+                    "default": "",
+                    "optional": "",
+                    "nullable": ""
+                },
+                {
+                    "name": "type",
+                    "type": "DS.Model",
+                    "description": "",
+                    "default": "",
+                    "optional": "",
+                    "nullable": ""
+                },
+                {
+                    "name": "userview",
+                    "type": "DS.Model",
+                    "description": "",
+                    "default": "",
+                    "optional": "",
+                    "nullable": ""
+                }
+            ],
+            "examples": [],
+            "returns": {
+                "type": "Promise",
+                "description": "<p>promise</p>\n<p>Manage right creation and modification on view creation or update.\nNote that the createRecord method is never used with the userview adapter.</p>"
+            }
+        },
+        {
+            "name": "beforeModel",
+            "access": "",
+            "virtual": false,
+            "description": "",
+            "parameters": [
+                {
+                    "name": "transition",
+                    "type": "Transition",
+                    "description": "",
+                    "default": "",
+                    "optional": "",
+                    "nullable": ""
+                }
+            ],
+            "examples": [],
+            "returns": {
+                "type": "Promise",
+                "description": "<p>Fetch all the registered rights in the backend and fill the rightsRegistry</p>"
+            }
+        },
+        {
+            "name": "beforeModel",
+            "access": "",
+            "virtual": false,
+            "description": "",
+            "parameters": [
+                {
+                    "name": "transition",
+                    "type": "Transition",
+                    "description": "",
+                    "default": "",
+                    "optional": "",
+                    "nullable": ""
+                }
+            ],
+            "examples": [],
+            "returns": {
+                "type": "Promise",
+                "description": "<p>Fetch all the registered rights in the backend and fill the rightsRegistry</p>"
+            }
+        },
+        {
+            "name": "beforeModel",
+            "access": "",
+            "virtual": false,
+            "description": "",
+            "parameters": [
+                {
+                    "name": "transition",
+                    "type": "Transition",
+                    "description": "",
+                    "default": "",
+                    "optional": "",
+                    "nullable": ""
+                }
+            ],
+            "examples": [],
+            "returns": {
+                "type": "Promise",
+                "description": "<p>Ensure the target view can be displayed.\nOtherwise, put a &quot;hasToBeRedirected&quot; flag into the transition, in order to handle the redirection in the &quot;afterModel&quot; method.</p>"
+            }
+        },
+        {
+            "name": "afterModel",
+            "access": "",
+            "virtual": false,
+            "description": "",
+            "parameters": [
+                {
+                    "name": "view",
+                    "type": "Userview",
+                    "description": "<p>The resolved model instance</p>",
+                    "default": "",
+                    "optional": "",
+                    "nullable": ""
+                },
+                {
+                    "name": "transition",
+                    "type": "Transition",
+                    "description": "",
+                    "default": "",
+                    "optional": "",
+                    "nullable": ""
+                }
+            ],
+            "examples": [],
+            "returns": {
+                "type": "Promise",
+                "description": "<p>If a &quot;hasToBeRedirected&quot; flag is present into the transition, handle the redirection.</p>"
+            }
+        }
+    ],
+    "events": [
+        {
+            "name": "toggleEditMode\nHandle rights management when toggling edit mode.",
+            "access": "",
+            "virtual": false,
+            "description": "",
+            "parameters": [],
+            "examples": []
+        }
+    ]
+}

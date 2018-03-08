@@ -1,0 +1,174 @@
+
+{{outlet "recordinfopopup"}}
+
+<!-- header logo: style can be found in heaader.less -->
+{{#unless controller.fullscreenMode}}
+    <header class="header">
+        <a {{action 'showView' controller.defaultView}} class="logo">
+            <!-- Add the class icon to your logo image or logo icon to add the margining -->
+            <img src="/static/canopsis/media/canopsis.png" alt="canopsis"/>
+        </a>
+
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button" id="togglenavigationtop">
+                <span class="sr-only">{{tr 'Toggle navigation'}}</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <div class="navbar-right">
+                {{partialslot slot=controller._partials.statusbar tagname="ul" classNames="nav navbar-nav"}}
+            </div>
+        </nav>
+    </header>
+{{/unless}}
+<div class="wrapper row-offcanvas row-offcanvas-left">
+    <!-- Left side column. contains the logo and sidebar -->
+    {{#unless controller.fullscreenMode}}
+        <aside class="left-side sidebar-offcanvas collapse-left">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+
+                <!-- /.search form -->
+                <!-- sidebar menu: : style can be found in sidebar.less -->
+                <ul class="sidebar-menu">
+                    <li class="toggle" id="togglenavigationbot">
+                        <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+                            <i class="fa fa-chevron-right pull-right"></i>
+                            <i class="fa fa-chevron-left pull-right"></i>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a {{action 'showView' controller.defaultView}}>
+                            <i class="fa fa-desktop"></i> <span>{{tr 'Dashboard'}}</span>
+                        </a>
+                    </li>
+                        {{#if controller.controllers.login.record.rights.menu_aclconfig.checksum}}
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-group"></i>
+                                    <span>{{tr 'Profiles'}}</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a {{action 'showView' 'view.accounts'}}><i class="fa fa-angle-double-right"></i> {{tr 'Users'}}</a></li>
+                                    <li><a {{action 'showView' 'view.permissions'}}><i class="fa fa-angle-double-right"></i> {{tr 'Permissions'}}</a></li>
+                                    <li><a {{action 'showView' 'view.rights'}}><i class="fa fa-angle-double-right"></i> {{tr 'Rights'}}</a></li>
+                                </ul>
+                            </li>
+                        {{/if}}
+                        {{#if controller.controllers.login.record.rights.menu_authsystems.checksum}}
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-key"></i>
+                                    <span>{{tr 'Authentification systems'}}</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a {{action 'editAuthConfiguration' 'ldapconfig'}}><i class="fa fa-list-alt"></i> LDAP</a></li>
+                                    <li><a {{action 'editAuthConfiguration' 'casconfig'}}><i class="fa fa-list-alt"></i> CAS</a></li>
+                                    <li><a {{action 'editAuthConfiguration' 'authconfiguration'}}><i class="fa fa-list-alt"></i> {{tr 'Auth systems'}}</a></li>
+                                </ul>
+                            </li>
+                        {{/if}}
+                        {{#if controller.controllers.login.record.rights.menu_enginesconfig.checksum}}
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-cogs"></i>
+                                    <span>{{tr 'Engines'}}</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class="treeview-menu">
+                                    {{#each engineview in controller.enginesviews}}
+                                        {{#if engineview.displayable}}
+                                            <li>
+                                                <a {{action 'showView' engineview.value}}>
+                                                    <i class="fa fa-angle-double-right"></i>
+                                                    {{engineview.label}}
+                                                </a>
+                                            </li>
+                                        {{/if}}
+                                    {{/each}}
+                                    <li>
+                                        <a {{action 'editEventSettings'}}>
+                                            <i class="fa fa-list-alt"></i>
+                                            {{tr 'Events statuses'}}
+                                        </a>
+                                    </li>
+                                     <li>
+                                        <a {{action 'editDataclean'}}>
+                                            <i class="fa fa-list-alt"></i>
+                                            {{tr 'Data cleaner'}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {{/if}}
+                        {{#if controller.controllers.login.record.rights.menu_pluginsconfig.checksum}}
+                            {{#each plugin in controller.plugins}}
+                                <li>
+                                    <a {{action plugin.action plugin.param}}>
+                                        <i {{bind-attr class=plugin.icon}}></i> <span>{{plugin.label}}</span>
+                                    </a>
+                                </li>
+                            {{/each}}
+                        {{/if}}
+                        {{#if controller.controllers.login.record.rights.menu_uisettings.checksum}}
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-wrench"></i>
+                                    <span>{{tr 'Settings'}}</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a {{action 'editConfig'}} class="btn frontend-config" style="display:inline-block">
+                                            <i class="fa fa-list-alt"></i>
+                                            {{tr 'User Interface'}}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a {{action 'editTicketJob'}} class="btn ticket" style="display:inline-block">
+                                            <i class="fa fa-list-alt"></i>
+                                            {{tr 'Ticket'}}
+                                        </a>
+                                    </li>
+                                    {{#if controller.debug}}
+                                        <li>
+                                            <a {{action 'editEnabledPlugins'}}>
+                                                <i class="fa fa-list-alt"></i>
+                                                {{tr 'Enabled plugins'}}
+                                            </a>
+                                        </li>
+                                    {{/if}}
+                                </ul>
+                            </li>
+                        {{/if}}
+                </ul>
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+    {{/unless}}
+    <!-- Right side column. Contains the navbar and content of the page -->
+    <aside class="right-side strech">
+        {{outlet "formwrapper"}}
+
+        {{#if headerUserview}}
+            {{render "userview" headerUserview}}
+        {{/if}}
+
+        <section class="content tab-content">
+            <div class="content">
+                {{outlet}}
+            </div>
+
+        </section>
+        {{#if footerUserview}}
+            {{render "userview" footerUserview}}
+        {{/if}}
+        <div style="clear:both"></div>
+    </aside>
+</div>
+{{partialslot slot=controller._partials.indicators}}

@@ -1,0 +1,50 @@
+{
+	"type": "object",
+	"metadata": {
+        "icon": "fa fa-bar-chart"
+    },
+	"categories": [{
+		"title": "General",
+		"keys":["name", "default_sort_column"]
+	},{
+		"title": "Columns",
+		"keys":["columns"]
+	},{
+		"title": "Info popup",
+		"keys":["popup"]
+	},{
+		"title": "Mixins",
+		"keys":["mixins"]
+	}],
+	"properties": {
+		"name":{
+			"type": "string"
+		},
+		"default_sort_column": {
+			"type": "object",
+			"role": "sortable"
+        },
+		"user_filters": {
+			"type": "boolean",
+			"isUserPreference": true
+		},
+		"itemsPerPage": {
+			"type": "integer",
+			"isUserPreference": true
+		},
+        "columns": {
+		    "type": "array",
+		    "items": {
+			    "type": "string"
+			},
+			"reorderable": true
+        },
+		"popup": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "pair"
+			}
+		}
+	}
+}

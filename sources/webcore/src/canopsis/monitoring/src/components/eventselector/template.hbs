@@ -1,0 +1,89 @@
+<form role="form" class="well">
+    <table class="table">
+        <tr>
+            <td><center>{{tr 'Selectors'}}</center></td>
+            <td><center>{{tr 'Topologies'}}</center></td>
+        </tr>
+        <tr>
+            <td>{{input class="form-control" type="checkbox" checked=selectors}}</td>
+            <td>{{input class="form-control" type="checkbox" checked=topologies}}</td>
+        </tr>
+    </table>
+    <div class="form-group">
+        <label>{{tr 'Component'}}</label>
+        {{input type="text" value=component class="form-control" placeholder=search_component}}
+    </div>
+    <div class="form-group">
+        <label>{{tr 'Resource'}}</label>
+        {{input type="text" value=resource class="form-control" placeholder=search_resource}}
+    </div>
+
+    <label>{{tr 'Event search'}}</label>
+    {{#unless events.length}}
+        <div class="well">No item selected</div>
+    {{/unless}}
+    <ul class="list-group">
+    {{#each event in events}}
+        <li class="list-group-item list-group-item-info">
+            <table>
+                <tr>
+                    <td>
+                        <button class="btn btn-default" {{action "add" event}}>
+                            <span class="glyphicon glyphicon-plus"></span>
+                            {{tr 'Add'}}
+                        </button>
+                    </td>
+                    <td style="padding-left:5px;padding-right:5px;overflow-y:hidden">
+                        {{component-propertiestopopup htmlOnly=true source=event properties='["connector", "component", "resource"]'}}
+                    </td>
+                </tr>
+            </table>
+        </li>
+    {{/each}}
+    </ul>
+
+    <label>{{tr 'Selected Events'}}</label>
+    {{#unless selectedEvents.length}}
+        <div class="well">No event selected</div>
+    {{/unless}}
+
+    {{#if labelled}}
+        <p><i>{{ tr 'Event labels aims to create shortcut in a templating system. They have to contains only chars, numbers or underscores.'}}</i></p>
+    {{/if}}
+    <ul class="list-group">
+    {{#each event in selectedEvents}}
+        <li class="list-group-item list-group-item-success">
+
+            <table>
+                <tr>
+                    <td>
+                        <button class="btn btn-default" {{action "delete" event}}>
+                            <span class="glyphicon glyphicon-minus"></span>
+                            {{tr 'Remove'}}
+                        </button>
+                    </td>
+                    <td style="padding-left:5px;padding-right:5px;overflow-y:hidden">
+                        {{component-propertiestopopup htmlOnly=true source=event properties='["connector", "component", "resource"]'}}
+                    </td>
+                    {{#if labelled}}
+                        <td>
+                            {{input type="text" value=event.label class="form-control" placeholder=type_label class="pull-right"}}
+                        </td>
+                    {{/if}}
+                </tr>
+            </table>
+        </li>
+    {{/each}}
+    </ul>
+    {{#if labelled}}
+        <center>
+            <button class="btn btn-default" {{action "saveLabels"}}>
+                <span class="glyphicon glyphicon-plus"></span>
+                {{tr 'Save labels'}}
+                {{#if saveLabelsDone}}
+                    {{tr 'done'}}
+                {{/if}}
+            </button>
+        </center>
+    {{/if}}
+</form>

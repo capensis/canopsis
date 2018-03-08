@@ -1,0 +1,6 @@
+<script type="text/x-handlebars" data-template-name="components/component-periodicbehaviormanager">{{component-table columns=tableColumns data=behaviors targetObject=this}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-periodicbehaviors">{{#each behavior in value}}
+    <p><span class="badge">{{behavior}}</span></p>
+{{/each}}
+</script>

@@ -1,0 +1,31 @@
+<div class="form-inline">
+    <div class="form-group">
+        {{view Ember.Select
+            content=valuesTypes
+            value=selectedValueType
+            class="form-control"
+        }}
+    </div>
+    <div class="form-group">
+        {{#if useTextField}}
+            {{input type="text" class="form-control" value=value placeholder=placeholder}}
+        {{/if}}
+        {{#if useBoolean}}
+            <button {{bind-attr class=":btn :btn-default value:active"}} {{action "switchContentValue"}}>
+                {{#if value}}
+                    True
+                {{else}}
+                    False
+                {{/if}}
+            </button>
+        {{/if}}
+    </div>
+
+    <br/>
+    <br/>
+
+</div>
+{{#if useArray}}
+    <!--TODO retrive array value to typed value content value-->
+    {{component-arrayeditor content=value}}
+{{/if}}

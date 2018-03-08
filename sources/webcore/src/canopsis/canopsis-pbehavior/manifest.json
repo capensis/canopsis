@@ -1,0 +1,11 @@
+{
+  "name": "canopsis-pbehavior",
+  "description": "Periodic Behavior interface for Canopsis",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://git.canopsis.net/canopsis/canopsis-webcore.git"
+  },
+  "author": "Team Canopsis <maintainers@canopsis.org>",
+  "license": "AGPL-3.0"
+}
