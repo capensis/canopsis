@@ -414,12 +414,15 @@ def exports(ws):
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
 
+        # FIXIT: service weather has no pagination capability at all.
         try:
-            start = int(start)
+            #start = int(start)
+            start = 0
         except ValueError:
             start = int(DEFAULT_START)
         try:
-            limit = int(limit)
+            #limit = int(limit)
+            limit = None
         except ValueError:
             limit = int(DEFAULT_LIMIT)
 
