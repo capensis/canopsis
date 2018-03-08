@@ -19,10 +19,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
 
 import canopsis.auth.cas as cas
 import canopsis.auth.mock as mock
+from canopsis.common import root_path
+
+import xmlrunner
 
 
 #TODO 21-09-2017
@@ -129,5 +132,8 @@ import canopsis.auth.mock as mock
 
 #         self.assertFalse(self.session.get('auth_on', False))
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

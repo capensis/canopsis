@@ -1,10 +1,12 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
-from unittest import main, TestCase
+import unittest
+from canopsis.common import root_path
 from canopsis.context_graph.manager import InfosFilter
 from canopsis.logger import Logger, OutputNull
 from enum import Enum
+import xmlrunner
 
 
 class Keys(Enum):
@@ -58,7 +60,7 @@ TEMPLATE_INFOS = {Keys.F_DISABLED_HIST.value: None,
                   Keys.F_DISABLED_HIST.value: None}
 
 
-class BaseTest(TestCase):
+class BaseTest(unittest.TestCase):
 
     def setUp(self):
         self.logger = Logger.get("", None, output_cls=OutputNull)
@@ -163,4 +165,7 @@ class TestClean(BaseTest):
         self.assertDictEqual(expected, infos)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

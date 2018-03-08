@@ -18,12 +18,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
+import unittest
 from unittest import TestCase, main
-
+from canopsis.common import root_path
 from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie.timewindow import TimeWindow, get_offset_timewindow
 from canopsis.logger import Logger, OutputNull
+import xmlrunner
 
 
 class PerfDataManagerTest(TestCase):
@@ -124,4 +125,7 @@ class PerfDataManagerTest(TestCase):
     #    self.assertEqual(len(data), 0)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

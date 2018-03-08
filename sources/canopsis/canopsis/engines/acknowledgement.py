@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.engines.core import Engine, publish
-from canopsis.event import get_routingkey, forger, is_host_acknowledged
+from canopsis.event import forger, is_host_acknowledged
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from copy import deepcopy
@@ -115,10 +115,10 @@ class engine(Engine):
                             'author': event['author'],
                             'comment': event['output'],
                             'timestamp': time()
-                        }
+                        },
+                        'ack': ''
                     },
                     '$unset': {
-                        'ack': '',
                         'ticket_declared_author': '',
                         'ticket_declared_date': '',
                         'ticket': '',
@@ -133,6 +133,37 @@ class engine(Engine):
             self.logger.debug(u'Ack event found, will proceed ack.')
 
             rk = event.get('referer', event.get('ref_rk', None))
+
+            if event.get("source_type") == "component" and\
+                event.get("ack_resources") in [True, "true", "True"]:
+                # fetch not ok component's resources
+                component = event.get("component")
+                sub_res_query = {"component": component,
+                                 "state": {"$ne": "0"},
+                                 "source_type": "resource"}
+                result_cur = self.events_collection.find(sub_res_query)
+
+                for resource in result_cur:
+                    sub_ack_event = {
+                        "ref_rk": resource.get("_id"),
+                        "author": event.get("author"),
+                        "output": event.get("output"),
+                        "authkey": event.get("authkey"),
+
+                        "connector": resource.get("connector"),
+                        "connector_name": resource.get("connector_name"),
+                        "event_type": "ack",
+                        "source_type": "resource",
+                        "component": component,
+                        "resource": resource.get("resource")
+                    }
+                    if "ticket" in event:
+                        sub_ack_event["ticket"] = event.get("ticket")
+
+                    publish(
+                        publisher=self.amqp, event=sub_ack_event,
+                        exchange=self.acknowledge_on
+                    )
 
             author = event['author']
 

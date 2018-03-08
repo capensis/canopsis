@@ -18,9 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from bottle import HTTPError, request
+import json
+
 from canopsis.organisation.rights import Rights
 from canopsis.common.ws import route
-from bottle import HTTPError
 
 
 rights = None
@@ -179,8 +181,16 @@ def exports(ws):
     def update_role(_id, role):
         return save_role(ws, role)
 
-    @route(ws.application.post, name='account/user', payload=['user'])
-    def create_user(user):
+    @ws.application.post('/account/user')
+    def create_user():
+        user = request.forms.get("user")
+        try:
+            user = json.loads(user)
+        except Exception as exc:
+            ws.logger.error('Cannot parse user account informations ({})'
+                            .format(exc))
+            return
+
         return save_user(ws, user)
 
     @route(ws.application.put, name='account/user', payload=['user'])

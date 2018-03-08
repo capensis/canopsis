@@ -18,13 +18,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
+import unittest
 from unittest import TestCase, main
+from canopsis.common import root_path
 from canopsis.middleware.core import Middleware
 from canopsis.event.manager import Event as EventManager
+import xmlrunner
 
 
-class EventManagerTest(TestCase):
+class EventManagerTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -86,6 +88,8 @@ class EventTest(EventManagerTest):
         self.assertTrue(is_ack)
 
 
-
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

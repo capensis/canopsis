@@ -19,14 +19,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main
-
+import unittest
+from canopsis.common import root_path
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage
 
 from base import BaseTestConfiguration, BaseStorageTest
 
 from tempfile import NamedTemporaryFile
+import xmlrunner
 
 
 @conf_paths('storage/test-core.conf')
@@ -233,6 +234,8 @@ class StorageTest(BaseStorageTest):
         storage.remove_elements(cache=True)
         self.assertTrue(storage._cached_thread.isAlive())
 
-
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

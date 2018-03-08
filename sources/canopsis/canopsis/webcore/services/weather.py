@@ -18,18 +18,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+
+"""Weather service routes"""
+
 from __future__ import unicode_literals
 
-from ast import literal_eval
-from bottle import request
 import copy
 import json
+
+from operator import itemgetter
+from bottle import request
 
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
+from canopsis.stats.manager import Stats
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.tracer.manager import TracerManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
@@ -39,10 +44,12 @@ alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 context_manager = alarm_manager.context_manager
 tracer_manager = TracerManager(*TracerManager.provide_default_basics())
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
+stats_manager = Stats()
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
+DEFAULT_PB_TYPES = []
 
 
 def __format_pbehavior(pbehavior):
@@ -51,10 +58,9 @@ def __format_pbehavior(pbehavior):
     :param dict pbehavior: a pbehavior dict
     :return: a formatted pbehavior
     """
-    EVERY = "Every {0}"
+    EVERY = "Every {}"
     to_delete = [
-        "_id", "connector", "author", "comments", "filter", "connector_name",
-        "eids"
+        "connector", "author", "comments", "filter", "connector_name", "eids"
     ]
 
     pbehavior["behavior"] = pbehavior.pop("name")
@@ -94,120 +100,247 @@ def __format_pbehavior(pbehavior):
     return pbehavior
 
 
-def add_pbehavior_status(watchers):
-    """Add "haspbehaviorinentities" and "hasallactivepbehaviorinentities" fields
-    on every dict in data. Data must be a list of dict that contains a key
-    "pbehavior" in order to work properly.
-
-    If the field "mfilter" is present in the element of data, ignore
-    the pbehavior present in the element en retreive them directly from
-    database. Then remove the field "mfilter".
-
-    :param list watchers: the watchers to parse
+class WatcherFilter(object):
     """
-    for entity in watchers:
+    Filter out active_pb_some and active_pb_all.
+    """
 
-        has_active_pbh = False
-        has_all_active_pbh = False
-        active_eids = []
-        next_action_timers = []
+    def __init__(self):
+        self._all = None
+        self._some = None
+        self._watcher = None
+        self._types = set()
 
-        if "mfilter" in entity:  # retreive pbehavior using the filter
-            entities = context_manager.get_entities(
-                literal_eval(entity["mfilter"])
-            )
+    def all(self):
+        """
+        :returns: True, False or None
+        """
+        return self._all
 
-            eids = [ent["_id"] for ent in entities]
+    def some(self):
+        """
+        :returns: True, False or None
+        """
+        return self._some
 
-            pbh_active_list = pbehavior_manager.get_active_pbehaviors(eids)
+    def watcher(self):
+        """
+        :returns: True, False or None if the watcher has an active pbehavior.
+        """
+        return self._watcher
 
-            has_active_pbh = len(pbh_active_list) > 0
+    def types(self):
+        """
+        :returns: set of pbehavior types to filter on.
+        :rtype: set[str]
+        """
+        return self._types
 
-            for p_eid in [x['eids'] for x in pbh_active_list]:
-                active_eids = active_eids + p_eid
+    def to_bool(self, value):
+        if value in ['1', 1, "true", "True"]:
+            return True
+        return False
 
-            # as many active entity as all entities and at least one pbehavior
-            has_all_active_pbh = set(eids) == set(active_eids) and len(active_eids) > 0
+    def _filter_dict(self, dictdoc):
+        cdoc = copy.deepcopy(dictdoc)
+        for k, v in dictdoc.items():
+            if k == 'active_pb_all':
+                self._all = self.to_bool(v)
+                del cdoc['active_pb_all']
 
-            # Enumerate all next_run timers
-            for ent in entities:
-                alarms = alarmreader_manager.get(
-                    filter_={'d': '{}'.format(ent['name'])}
-                )['alarms']
-                if len(alarms) == 0:
-                    continue
+            elif k == 'active_pb_some':
+                self._some = self.to_bool(v)
+                del cdoc['active_pb_some']
 
-                alarmfilter = alarms[0]['v'].get(AlarmField.alarmfilter.value, {})
-                action_timer = alarmfilter.get(AlarmFilterField.next_run.value, None)
-                if action_timer is not None:
-                    next_action_timers.append(action_timer)
+            elif k == 'active_pb_type':
+                self._types.add(str(v).strip().lower())
+                del cdoc['active_pb_type']
 
-        # has_active and has_all_active are exclude each one anothers
-        has_active_pbh = has_active_pbh and not has_all_active_pbh
+            elif k == 'active_pb_watcher':
+                self._watcher = self.to_bool(v)
+                del cdoc['active_pb_watcher']
 
-        entity["hasallactivepbehaviorinentities"] = has_all_active_pbh
-        entity["hasactivepbehaviorinentities"] = has_active_pbh
+            else:
+                nv = self._filter(v)
+                if nv is not None or v is None:
+                    cdoc[k] = nv
+                else:
+                    del cdoc[k]
 
-        if len(next_action_timers) > 0:
-            entity["automatic_action_timer"] = min(next_action_timers)
+        return cdoc
 
-        # cleaning entity
-        if "mfilter" in entity:
-            del entity["mfilter"]
+    def _filter_list(self, listdoc):
+        cdoc = copy.deepcopy(listdoc)
+        j = 0
+        for i, item in enumerate(listdoc):
+            v = self._filter(item)
+            if v is not None:
+                cdoc[j] = v
+            else:
+                del cdoc[j]
+                j -= 1
+            j += 1
 
-    return watchers
+        return cdoc
 
+    def _filter(self, doc):
+        if isinstance(doc, dict):
+            ndoc = self._filter_dict(doc)
+            if len(ndoc) == 0 and len(doc) != 0:
+                return None
+            return ndoc
+
+        elif isinstance(doc, list):
+            ndoc = self._filter_list(doc)
+            if len(ndoc) == 0 and len(doc) != 0:
+                return None
+            return ndoc
+
+        return doc
+
+    def _filter_pb_types(self, pb_types):
+        # set flag to true if we are ok to take any pbehavior type
+        #   no pb_types   -> True
+        #   some pb_types -> False
+        if len(pb_types) == 0 or len(self.types()) == 0:
+            return True
+
+        for pb_type in pb_types:
+            if pb_type.strip().lower() in self.types():
+                return True
+
+        return False
+
+    def filter(self, doc):
+        res = self._filter(doc)
+        if res is None:
+            return {}
+        return res
+
+    def appendable(self, allstatus, somestatus, watcherstatus, pb_types=None):
+        """
+        Call WatcherFilter.filter(filter_) first before calling this function.
+
+        :param allstatus bool: watcher has all entities with an active pbehavior
+        :param somestatus bool: watcher has some or all entities with an active pbehavior
+        :param watcherstatus bool: watcher has a pbehavior or not. If the filter contains a filter on that, it will be
+        :param pb_types list[str]: list of pbehavior types to filter on. If None or empty, any types will be ok.
+        """
+        if not isinstance(allstatus, bool):
+            raise ValueError('wrong allstatus value: not a bool')
+        if not isinstance(somestatus, bool):
+            raise ValueError('wrong somestatus value: not a bool')
+        if not isinstance(watcherstatus, bool):
+            raise ValueError('wrong watcherstatus value: not a bool')
+
+        if pb_types is None:
+            pb_types = list()
+
+        if not (isinstance(pb_types, list) or isinstance(pb_types, set)):
+            raise ValueError('wrong pb_types value: not a list')
+
+        logic_some_all = False
+        logic_watcher = False
+
+        if self.watcher() is None:
+            logic_watcher = True
+
+        elif self.watcher() is True and watcherstatus is True:
+            logic_watcher = True
+
+        elif self.watcher() is False and watcherstatus is False:
+            logic_watcher = True
+
+        if self.all() is None and self.some() is None:
+            logic_some_all = True
+
+        elif self.all() is not None and self.some() is not None:
+            # cannot be simplified as only this test.
+            if self.all() == allstatus and self.some() == somestatus:
+                logic_some_all = True
+
+        elif self.all() is allstatus and self.all() is not None:
+            logic_some_all = True
+
+        elif self.some() is somestatus and self.some() is not None:
+            logic_some_all = True
+
+        return logic_watcher and logic_some_all and self._filter_pb_types(pb_types)
+
+def pbehavior_types(pbehaviors):
+    """
+    Return a set containing all type_ found in pbehaviors.
+    :param pbehaviors
+    """
+    pb_types = set()
+
+    for pb in pbehaviors:
+        pb_type = pb.get('type_', None)
+        if pb_type is not None:
+            pb_types.add(pb_type)
+
+    return pb_types
 
 def watcher_status(watcher, pbehavior_eids_merged):
     """
-        watcher_status
+    watcher_status
 
-        :param dict watcher: watcher entity document
-        :param set pbehavior_eids_merged: set with eids
-        :return dict pbhevahior: dict with pbehavior infos has active
+    :param dict watcher: watcher entity document
+    :param set pbehavior_eids_merged: set with eids
+    :returns: has active pb status (or all), has all active pb status
+    :rtype: (bool, bool)
     """
-    ret_dict = {
-        'has_active_pbh': False,
-        'has_all_active_pbh': False
-    }
-    bool_set = set([])
-    for entity_id in watcher['depends']:
-        bool_set.add(entity_id in pbehavior_eids_merged)
+    bool_set = set([e in pbehavior_eids_merged for e in watcher['depends']])
 
-    if True in bool_set and False in bool_set:
-        ret_dict['has_active_pbh'] = True
-        return ret_dict
-    elif True in bool_set:
-        ret_dict['has_all_active_pbh'] = True
-        return ret_dict
-    return ret_dict
+    at_least_one = True in bool_set
+    if at_least_one and False in bool_set:
+        # has_active_pbh
+        return True, False
+    elif at_least_one:
+        # has_all_active_pbh
+        return True, True
+
+    return False, False
 
 
-def get_active_pbehaviors_on_watchers(
-    watchers_ids,
-    active_pb_dict,
-    active_pb_dict_full
-):
+def get_active_pbehaviors_on_watchers(watchers,
+                                      active_pb_dict,
+                                      active_pb_dict_full):
     """
     get_active_pbehaviors_on_watchers.
 
-    :param list watchers_ids:
-    :param list active_pb_dict: list of dict with key: pbheavior_id value: set of eids
+    :param list watchers:
+    :param list active_pb_dict:
     :param list active_pb_dict_full: list of pbehavior dict
-    :return dict: dict of watcher with list of active pbehavior
+    :returns: dict of watcher with list of active pbehavior
     """
-
     active_pb_on_watchers = {}
-    for watcher_id in watchers_ids:
-        tmp_pb = []
-        for key, eids in active_pb_dict.items():
-            if watcher_id in eids:
-                tmp_pb.append(active_pb_dict_full[key])
-        for pb in tmp_pb:
-            pb['isActive'] = True
-        active_pb_on_watchers[watcher_id] = tmp_pb
+    active_watcher_pbehaviors = {}
 
-    return active_pb_on_watchers
+    for watcher in watchers:
+        tmp_pbh = []
+        tmp_wpbh = []
+        watcher_depends = set(watcher.get('depends', []))
+
+        for pb_id, eids in active_pb_dict.items():
+            # add pbehaviors linked to this watcher's entities
+            for eid in eids:
+                if eid in watcher_depends:
+                    tmp_pbh.append(active_pb_dict_full[pb_id])
+
+            # add pbehaviors linked to this watcher
+            if watcher['_id'] in active_pb_dict[pb_id]:
+                wpb = active_pb_dict_full[pb_id]
+                wpb['isActive'] = True
+                tmp_wpbh.append(wpb)
+
+        for pbh in tmp_pbh:
+            pbh['isActive'] = True
+
+        active_pb_on_watchers[watcher['_id']] = tmp_pbh
+        active_watcher_pbehaviors[watcher['_id']] = tmp_wpbh
+
+    return active_pb_on_watchers, active_watcher_pbehaviors
 
 
 def get_next_run_alert(watcher_depends, alert_next_run_dict):
@@ -216,7 +349,7 @@ def get_next_run_alert(watcher_depends, alert_next_run_dict):
 
     :param watcher_depends: list of eids
     :param alert_next_run_dict: dict with next run infos for alarm filter
-    :return: a timestamp with next alarm filter information or None
+    :returns: a timestamp with next alarm filter information or None
     """
     list_next_run = []
     for depend in watcher_depends:
@@ -225,21 +358,23 @@ def get_next_run_alert(watcher_depends, alert_next_run_dict):
             list_next_run.append(tmp_next_run)
     if list_next_run:
         return min(list_next_run)
-    else:
-        return None
+
+    return None
 
 
 def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
     """
-        alert_not_ack_in_watcher check if an alert is not ack in watcher depends
+    alert_not_ack_in_watcher check if an alert is not ack in watcher depends
 
-        :param watcher_depends: list of depends
-        :param alarm_dict: alarm dict
-
+    :param watcher_depends: list of depends
+    :param alarm_dict: alarm dict
+    :rtype: bool
     """
     for depend in watcher_depends:
         tmp_alarm = alarm_dict.get(depend, {})
-        if tmp_alarm != {} and tmp_alarm.get('ack', None) is None:
+        if (tmp_alarm != {}
+                and tmp_alarm.get('ack', None) is None
+                and tmp_alarm.get('state', {}).get('val', 0) != 0):
             return True
 
     return False
@@ -247,11 +382,12 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
 
 def check_baseline(merged_eids_tracer, watcher_depends):
     """
-    cehck if the watcher has an entity with a baseline active
+    check if the watcher has an entity with a baseline active
 
     :param set merged_eids_tracer: all entities withan active baseline
     :param list watcher_depends: watcher entities
-    :return bool: true if the watcher has an entity with an active active_baseline
+    :returns: true if the watcher has an entity with an active active_baseline
+    :rtype: bool
     """
     for entity_id in watcher_depends:
         if entity_id in merged_eids_tracer:
@@ -277,6 +413,7 @@ def exports(ws):
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
         sort = request.query.sort or DEFAULT_SORT
+
         try:
             start = int(start)
         except ValueError:
@@ -286,7 +423,11 @@ def exports(ws):
         except ValueError:
             limit = int(DEFAULT_LIMIT)
 
+        wf = WatcherFilter()
         watcher_filter['type'] = 'watcher'
+        watcher_filter = wf.filter(watcher_filter)
+        pb_types = wf.types()
+
         watcher_list = context_manager.get_entities(
             query=watcher_filter,
             limit=limit,
@@ -305,6 +446,7 @@ def exports(ws):
         watchers = []
         merged_eids_tracer = []
 
+        # Find all entites with an activated baseline
         active_baseline_tracer = tracer_manager.get(
             {
                 'triggered_by': 'baseline',
@@ -315,39 +457,42 @@ def exports(ws):
             merged_eids_tracer = merged_eids_tracer + tracer['impact_entities']
         merged_eids_tracer = set(merged_eids_tracer)
 
+        # List all activated pbh eids, ordered by pbh id
         actives_pb = pbehavior_manager.get_all_active_pbehaviors()
-        for pb in actives_pb:
 
-            active_pb_dict[pb['_id']] = set(pb.get('eids', []))
-            active_pb_dict_full[pb['_id']] = pb
+        for pbh in actives_pb:
+            active_pb_dict[pbh['_id']] = set(pbh.get('eids', []))
+            active_pb_dict_full[pbh['_id']] = pbh
 
+        # List all watcher ids on entities and alarms
         for watcher in watcher_list:
             for depends_id in watcher['depends']:
                 depends_merged.add(depends_id)
             entity_watchers_ids.append(watcher['_id'])
-            alarm_watchers_ids.append(
-                '{0}/{1}'.format(watcher['_id'], watcher['name'])
-            )
-        active_pbehaviors = get_active_pbehaviors_on_watchers(
-            entity_watchers_ids,
+            alarm_watchers_ids.append(watcher['_id'])
+
+        active_pbehaviors, active_watchers_pbehaviors = get_active_pbehaviors_on_watchers(
+            watcher_list,
             active_pb_dict,
             active_pb_dict_full
         )
+        # List all actived pbh eids
         for eids_tab in active_pb_dict.values():
             for eid in eids_tab:
                 merged_pbehaviors_eids.add(eid)
 
+        # List alarm values has a dict
         alarm_list = alarmreader_manager.get(
-            filter_={}
+            filter_={'v.resolved': None}
         )['alarms']
 
         for alarm in alarm_list:
             alarm_dict[alarm['d']] = alarm['v']
 
+        # List all next_run timers, grouped by alarm
         alerts_list_on_depends = alarmreader_manager.get(
             filter_={'d': {'$in': list(depends_merged)}}
         )['alarms']
-
         for alert in alerts_list_on_depends:
             if 'alarmfilter' in alert['v']:
                 alarmfilter = alert['v']['alarmfilter']
@@ -355,15 +500,14 @@ def exports(ws):
                     next_run_dict[alert['d']] = alarmfilter['next_run']
 
         for watcher in watcher_list:
-            ws.logger.debug(watcher)
             enriched_entity = {}
             tmp_alarm = alarm_dict.get(
-                '{0}/{1}'.format(watcher['_id'], watcher['name']),
+                '{}'.format(watcher['_id']),
                 []
             )
             tmp_linklist = []
-            for k, v in watcher['links'].items():
-                tmp_linklist.append({'cat_name': k, 'links': v})
+            for k, val in watcher['links'].items():
+                tmp_linklist.append({'cat_name': k, 'links': val})
 
             enriched_entity['entity_id'] = watcher['_id']
             enriched_entity['infos'] = watcher['infos']
@@ -373,36 +517,51 @@ def exports(ws):
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['linklist'] = tmp_linklist
             enriched_entity['state'] = {'val': watcher.get('state', 0)}
-            ws.logger.debug(tmp_alarm)
+
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
                 enriched_entity['status'] = tmp_alarm['status']
-                enriched_entity['snooze'] = tmp_alarm['snooze']
-                enriched_entity['ack'] = tmp_alarm['ack']
+                enriched_entity['snooze'] = tmp_alarm.get('snooze')
+                enriched_entity['ack'] = tmp_alarm.get('ack')
                 enriched_entity['connector'] = tmp_alarm['connector']
                 enriched_entity['connector_name'] = (
                     tmp_alarm['connector_name']
+                )
+                enriched_entity['last_update_date'] = tmp_alarm.get(
+                    'last_update_date', None
                 )
                 enriched_entity['component'] = tmp_alarm['component']
                 if 'resource' in tmp_alarm.keys():
                     enriched_entity['resource'] = tmp_alarm['resource']
 
+            enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
+            enriched_entity['watcher_pbehavior'] = active_watchers_pbehaviors.get(watcher['_id'], [])
             enriched_entity["mfilter"] = watcher["mfilter"]
-
-            enriched_entity['pbehavior'] = active_pbehaviors.get(
-                watcher['_id'],
-                []
+            enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
+                watcher['depends'],
+                alarm_dict
             )
-            enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(watcher['depends'], alarm_dict)
-            truc = watcher_status(watcher, merged_pbehaviors_eids)
-            enriched_entity["hasallactivepbehaviorinentities"] = truc['has_all_active_pbh']
-            enriched_entity["hasactivepbehaviorinentities"] = truc['has_active_pbh']
-            enriched_entity['has_baseline'] = check_baseline(merged_eids_tracer, watcher['depends'])
-            tmp_next_run = get_next_run_alert(watcher.get('depends', []), next_run_dict)
-            if tmp_next_run:
+            wstatus = watcher_status(watcher, merged_pbehaviors_eids)
+            enriched_entity["active_pb_some"] = wstatus[0]
+            enriched_entity["active_pb_all"] = wstatus[1]
+            enriched_entity['active_pb_watcher'] = len(enriched_entity['watcher_pbehavior']) > 0
+            enriched_entity['has_baseline'] = check_baseline(
+                merged_eids_tracer,
+                watcher['depends']
+            )
+            tmp_next_run = get_next_run_alert(
+                watcher.get('depends', []),
+                next_run_dict
+            )
+            if tmp_next_run is not None:
                 enriched_entity['automatic_action_timer'] = tmp_next_run
 
-            watchers.append(enriched_entity)
+            watcher_pb_types = pbehavior_types(enriched_entity['pbehavior'])
+            watcher_pb_types |= pbehavior_types(enriched_entity['watcher_pbehavior'])
+            if wf.appendable(wstatus[1], wstatus[0], enriched_entity['active_pb_watcher'], pb_types=watcher_pb_types) is True:
+                watchers.append(enriched_entity)
+
+        watchers = sorted(watchers, key=itemgetter("display_name"))
 
         return gen_json(watchers)
 
@@ -474,8 +633,8 @@ def exports(ws):
             raw_entity = entity['entity']
 
             tmp_linklist = []
-            for k, v in raw_entity['links'].items():
-                tmp_linklist.append({'cat_name': k, 'links': v})
+            for k, val in raw_entity['links'].items():
+                tmp_linklist.append({'cat_name': k, 'links': val})
 
             enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
@@ -486,14 +645,20 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
+            # enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
+            # FIXME: canopsis/canopsis#650 UTF-8 error
             if current_alarm is not None:
+                enriched_entity['ticket'] = current_alarm['ticket']
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
-                enriched_entity['snooze'] = current_alarm['snooze']
-                enriched_entity['ack'] = current_alarm['ack']
+                enriched_entity['snooze'] = current_alarm.get('snooze')
+                enriched_entity['ack'] = current_alarm.get('ack')
                 enriched_entity['connector'] = current_alarm['connector']
                 enriched_entity['connector_name'] = (
                     current_alarm['connector_name']
+                )
+                enriched_entity['last_update_date'] = current_alarm.get(
+                    'last_update_date', None
                 )
                 enriched_entity['component'] = current_alarm['component']
                 next_run = (current_alarm.get(AlarmField.alarmfilter.value, {})
@@ -503,5 +668,7 @@ def exports(ws):
                     enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entities.append(enriched_entity)
+
+        enriched_entities = sorted(enriched_entities, key=itemgetter("name"))
 
         return gen_json(enriched_entities)

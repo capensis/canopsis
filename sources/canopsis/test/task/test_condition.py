@@ -19,17 +19,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
 
 from time import time
 
 from dateutil import rrule
 
 from datetime import datetime
+from canopsis.common import root_path
+
 from canopsis.task.core import register_task, TASK_ID, TASK_PARAMS
 from canopsis.task.condition import (
     _any, _all, during, _not, condition, switch, STATEMENT
 )
+import xmlrunner
 
 
 @register_task('error')
@@ -47,7 +50,7 @@ def condition_false(**kwargs):
     return False
 
 
-class DuringTest(TestCase):
+class DuringTest(unittest.TestCase):
     """
     Test during test.
     """
@@ -68,7 +71,7 @@ class DuringTest(TestCase):
         self.assertFalse(result)
 
 
-class AnyTest(TestCase):
+class AnyTest(unittest.TestCase):
     """
     Test _any function.
     """
@@ -102,7 +105,7 @@ class AnyTest(TestCase):
         self.assertRaises(Exception, _any, confs=confs)
 
 
-class AllTest(TestCase):
+class AllTest(unittest.TestCase):
     """
     Test _all function.
     """
@@ -131,7 +134,7 @@ class AllTest(TestCase):
         self.assertRaises(Exception, _all, confs=confs)
 
 
-class NotTest(TestCase):
+class NotTest(unittest.TestCase):
     """
     Test _not operator.
     """
@@ -168,7 +171,7 @@ class NotTest(TestCase):
         self.assertRaises(Exception, _not, condition='error')
 
 
-class ConditionTest(TestCase):
+class ConditionTest(unittest.TestCase):
     """
     Test condition task.
     """
@@ -272,7 +275,7 @@ class ConditionTest(TestCase):
         )
 
 
-class SwitchTest(TestCase):
+class SwitchTest(unittest.TestCase):
     """
     Test switch function.
     """
@@ -403,4 +406,7 @@ class SwitchTest(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

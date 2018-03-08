@@ -54,7 +54,8 @@ def exports(ws):
             'skip',
             'limit',
             'with_steps',
-            'natural_search'
+            'natural_search',
+            'active_columns'
         ]
     )
     def get_alarms(
@@ -70,7 +71,8 @@ def exports(ws):
             skip=0,
             limit=50,
             with_steps=False,
-            natural_search=False
+            natural_search=False,
+            active_columns=None
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -95,9 +97,14 @@ def exports(ws):
         :param int skip: Number of alarms to skip (pagination)
         :param int limit: Maximum number of alarms to return
 
+        :param list active_columns: list of active columns on the brick
+        listalarm .
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
+        if isinstance(search, int):
+            search = str(search)
 
         alarms = ar.get(
             tstart=tstart,
@@ -106,13 +113,14 @@ def exports(ws):
             resolved=resolved,
             lookups=lookups,
             filter_=filter,
-            search=search,
+            search=search.strip(),
             sort_key=sort_key,
             sort_dir=sort_dir,
             skip=skip,
             limit=limit,
             with_steps=with_steps,
-            natural_search=natural_search
+            natural_search=natural_search,
+            active_columns=active_columns
         )
         alarms_ids = []
         for alarm in alarms['alarms']:
@@ -128,15 +136,20 @@ def exports(ws):
         for alarm in alarms['alarms']:
             tmp_entity_id = alarm['d']
 
-            if tmp_entity_id in entity_dict:
-                if alarm.get('infos'):
-                    alarm['infos'].update(entity_dict[alarm['d']]['infos'])
-                    list_alarm.append(alarm)
-                else:
-                    alarm['infos'] = entity_dict[alarm['d']]['infos']
-                    list_alarm.append(alarm)
-            else:
-                list_alarm.append(alarm)
+            if alarm['d'] in entity_dict:
+                alarm['links'] = entity_dict[alarm['d']]['links']
+
+                # TODO: 'infos' is already present in entity.
+                # Remove this one if unused.
+                if tmp_entity_id in entity_dict:
+                    data = entity_dict[alarm['d']]['infos']
+                    if alarm.get('infos'):
+                        alarm['infos'].update(data)
+                    else:
+                        alarm['infos'] = data
+
+            list_alarm.append(alarm)
+
         alarms['alarms'] = list_alarm
 
         return alarms

@@ -25,7 +25,6 @@ pbehavior process
 from __future__ import unicode_literals
 
 from json import dumps
-from traceback import format_exc
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
@@ -44,9 +43,6 @@ SELECTOR = 'selector'
 CONNECTOR = 'connector'
 CONNECTOR_NAME = 'connector_name'
 DEFAULT_AUTHOR = 'Default Author'
-
-TEMPLATE = '/{}/{}/{}/{}'
-TEMPLATE_RESOURCE = '/{}/{}/{}/{}/{}'
 
 watcher_manager = Watcher()
 

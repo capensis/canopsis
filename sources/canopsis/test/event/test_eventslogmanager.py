@@ -19,12 +19,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
+from canopsis.common import root_path
 from canopsis.event.eventslogmanager import EventsLog
 from canopsis.middleware.core import Middleware
+import xmlrunner
 
-
-class EventsLogManagerTest(TestCase):
+class EventsLogManagerTest(unittest.TestCase):
     """Base class for eventslogmanager tests
     """
 
@@ -54,4 +55,7 @@ class EventsLogTest(EventsLogManagerTest):
         self.assertEquals(result[0].get('count'), 5)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

@@ -18,10 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
-
+import unittest
+from canopsis.common import root_path
 from canopsis.middleware.core import \
     Middleware, parse_scheme, SCHEME_SEPARATOR, DEFAULT_DATA_SCOPE
+import xmlrunner
 
 
 class TestUnregisteredMiddleware(Middleware):
@@ -40,7 +41,7 @@ class TestRegisteredWithDataTypeMiddleware(TestRegisteredMiddleware):
     __datatype__ = 'dttest1'
 
 
-class MiddlewareTest(TestCase):
+class MiddlewareTest(unittest.TestCase):
 
     def test_parse_scheme(self):
 
@@ -167,4 +168,7 @@ class MiddlewareTest(TestCase):
             TestRegisteredWithDataTypeMiddleware.__datatype__)
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

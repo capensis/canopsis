@@ -8,13 +8,9 @@ import time
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.model import Parameter
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
-from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.middleware.core import Middleware
 from canopsis.watcher.links import build_all_links
 
@@ -32,7 +28,7 @@ class ConfName(object):
     ORG_STORAGE = "organisations_storage_uri"
     USR_STORAGE = "users_storage_uri"
     MEASURMNT_STORAGE = "measurements_storage_uri"
-    IMPORT_STORAGE= "import_storage_uri"
+    IMPORT_STORAGE = "import_storage_uri"
     EVENT_TYPES = "event_types"
     EXTRA_FIELDS = "extra_fields"
 
@@ -120,10 +116,11 @@ class InfosFilter:
             jsonschema.validate(infos, self._schema)
         except jsonschema.ValidationError as v_err:
             self.logger.warning(v_err.message)
+
         try:
             schema = self._schema["schema"]["properties"]
         except KeyError:
-            self.logger.warning("No properties field")
+            pass
         else:
             self.__clean(infos, copy.deepcopy(infos), schema)
 
@@ -237,15 +234,17 @@ class ContextGraph(object):
 
     @classmethod
     def create_entity_dict(cls,
-                      id,
-                      name,
-                      etype,
-                      depends=[],
-                      impact=[],
-                      measurements={},
-                      infos={},
-                      **kwargs):
-        """Create an entity with following information and put it state at enable.
+                           id,
+                           name,
+                           etype,
+                           depends=[],
+                           impact=[],
+                           measurements={},
+                           infos={},
+                           **kwargs):
+        """
+        Create an entity with following information and put it state at enable.
+
         :param id: the entity id
         :type id: a string
         :param name: the entity name
@@ -263,7 +262,6 @@ class ContextGraph(object):
 
         :return: a dict
         """
-
         ent = {
             '_id': id,
             'type': etype,
@@ -309,9 +307,9 @@ class ContextGraph(object):
         self.logger = logger
 
         # For links building
+        at_collection = self.at_storage._backend
         self.at_manager = AssociativeTableManager(logger=self.logger,
-                                                  collection=\
-                                                  self.at_storage._backend)
+                                                  collection=at_collection)
 
         hypertextlink_conf = section.get(ConfName.CTX_HYPERLINK, "")
         self.event_types = section.get(ConfName.EVENT_TYPES, [])
@@ -341,8 +339,7 @@ class ContextGraph(object):
         else:
             query["_id"] = _id
 
-        result = list(
-            self.ent_storage.get_elements(query=query))
+        result = self.get_entities(query=query)
 
         return result
 
@@ -392,6 +389,7 @@ class ContextGraph(object):
         ret_val = set([])
         for i in entities:
             ret_val.add(i['_id'])
+
         return ret_val
 
     @classmethod
@@ -495,6 +493,7 @@ class ContextGraph(object):
         :param dependancy_type: a string. "depends" to update the depends/impact
         links and "impact" to update the impact/depends links
 
+        :raises: ValueError
         :return type: a list of entities.
         """
 
@@ -681,7 +680,8 @@ class ContextGraph(object):
         for res in result:
             res['links'] = {}
             if hasattr(self, 'hlb_manager'):
-                res['links'] = self.hlb_manager.links_for_entity(res)
+                links = self.hlb_manager.links_for_entity(res)
+                res['links'] = links
 
         if with_count:
             return result, count

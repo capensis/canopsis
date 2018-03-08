@@ -18,9 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import request, redirect, response, HTTPError, urlencode
+from urllib import quote_plus
 from hashlib import sha1
 from time import time
+from urllib import quote_plus
+
+from bottle import redirect, response, HTTPError
 
 from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module
@@ -76,7 +79,7 @@ def check(mode='authkey', user=None, password=None):
     }
 
     if mode in handlers:
-        return handlers[mode](user, password)
+        return handlers[mode](user, str(password))
 
     return None
 
@@ -131,12 +134,16 @@ def exports(ws):
             # Try to redirect authentication to the external backend
             if mode == 'plain':
                 response.status = 307
-                response.set_header('Location', '/auth/external')
+                # canopsis only use the default auth backend
+                if ws.auth_backends.keys() == ['AuthKeyBackend', u'EnsureAuthenticated']:
+                    location = '/auth/internal'
+                else:
+                    location = '/auth/external'
+                response.set_header('Location', location)
 
                 return 'username={0}&password={1}'.format(
-                    urlencode(username),
-                    urlencode(password)
-                )
+                    quote_plus(username),
+                    quote_plus(password))
 
             else:
                 #return HTTPError(403, 'Plain authentication required')
@@ -156,11 +163,19 @@ def exports(ws):
         session.create(user)
         redirect('/')
 
+    @route(ws.application.post,
+           name='auth/internal',
+           wsgi_params={'skip': ws.skip_login})
+    def auth_internal(**kwargs):
+        # When we arrive here, the Bottle plugins in charge of authentication
+        # have initialized the session, we just need to redirect to the index.
+        redirect('/?logerror=1')
+
     @route(ws.application.post, name='auth/external')
     def auth_external(**kwargs):
         # When we arrive here, the Bottle plugins in charge of authentication
         # have initialized the session, we just need to redirect to the index.
-        redirect('/static/canopsis/index.html')
+        redirect('/?logerror=1')
 
     @ws.application.get('/logged_in')
     def logged_in():

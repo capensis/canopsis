@@ -20,9 +20,10 @@
 # ---------------------------------
 
 import unittest
-
+from canopsis.common import root_path
 from canopsis.old.account import Account, caccount_get
 from canopsis.old.storage import Storage
+import xmlrunner
 
 STORAGE = None
 ACCOUNT = None
@@ -75,4 +76,7 @@ class KnownValues(unittest.TestCase):
 
 if __name__ == "__main__":
     STORAGE = Storage(Account(user="root", group="root"), namespace='unittest')
-    unittest.main(verbosity=2)
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

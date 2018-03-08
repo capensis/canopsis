@@ -32,6 +32,9 @@ from canopsis.common.enumerations import FastEnum
 # Alarm step types
 ALARM_STEP_TYPE_STATE_INCREASE = 'stateinc'
 ALARM_STEP_TYPE_STATE_DECREASE = 'statedec'
+ALARM_STEP_TYPE_STATUS_DECREASE = 'statusdec'
+
+ALARM_STEP_AUTHOR = "canopsis.engine"
 
 
 class AlarmState(FastEnum):
@@ -51,7 +54,7 @@ class AlarmStatus(FastEnum):
     CANCELED = 4
 
 
-class AlarmStep:
+class AlarmStep(object):
     """
     An AlarmStep is a Step in the lifecycle of an alarm. They are used as :
     - state
@@ -88,7 +91,7 @@ class AlarmStep:
         }
 
 
-class AlarmIdentity:
+class AlarmIdentity(object):
     """
     A value Object that contains the Alarm identity.
     Stores the information about the entity impacted by the alarm.
@@ -118,7 +121,7 @@ class AlarmIdentity:
         return self.display_name()
 
 
-class Alarm:
+class Alarm(object):
     """
     An Alarm representation in Canopsis.
     """
@@ -130,6 +133,7 @@ class Alarm:
             ack,
             canceled,
             creation_date,
+            display_name,
             hard_limit,
             initial_output,
             last_update_date,
@@ -150,6 +154,7 @@ class Alarm:
         :param dict alarm_filter: alarm filters informations
         :param AlarmStep canceled: canceled step
         :param int creation_date: alarm creation timestamp
+        :param str display_name: displayed name of the alarm
         :param dict extra: extra informations (domain, perimeter...)
         :param bool hard_limit: hardlimit reached
         :param str initial_output: first output message
@@ -168,6 +173,7 @@ class Alarm:
         self.alarm_filter = alarm_filter
         self.canceled = canceled
         self.creation_date = creation_date
+        self.display_name = display_name
         self.entity = None
         self.extra = extra
         self.hard_limit = hard_limit
@@ -195,6 +201,7 @@ class Alarm:
             'creation_date': self.creation_date,
             'connector': self.identity.connector,
             'connector_name': self.identity.connector_name,
+            'display_name': self.display_name,
             'initial_output': self.initial_output,
             'last_update_date': self.last_update_date,
             'hard_limit': self.hard_limit,
@@ -271,6 +278,27 @@ class Alarm:
 
         return False
 
+    def resolve_flapping(self, flapping_interval):
+        """
+        Resolve an alarm if it has a FLAPPING status, an OK state and a
+        last state change > flapping_interval
+
+        :param int flapping_interval: the considered flapping interval, in seconds
+        :returns: True if the alarm has been resolved, False otherwise
+        :rtype: bool
+        """
+
+        if self.status is None or self.status.value is not AlarmStatus.FLAPPING:
+            return False
+
+        now = int(time())
+        if self.state.value == AlarmState.OK and (now - self.state.timestamp) > flapping_interval:
+            self.resolved = int(self.status.timestamp)
+            self.status.value = AlarmStatus.OFF
+            return True
+
+        return False
+
     def resolve_cancel(self, cancel_delay):
         """
         Resolve an alarm if it has been canceled, after the cancel_delay
@@ -310,19 +338,17 @@ class Alarm:
 
         return False
 
-    def resolve_stealthy(self, stealthy_show_duration=0, stealthy_interval=0):
+    def resolve_stealthy(self, stealthy_interval=0):
         """
         Resolves alarms that should not be stealthy anymore.
 
-        :param int stealthy_show_duration: duration (in seconds) where the alarm should be shown as stealthy
         :param int stealthy_interval:
         :returns: True if the alarm was resolved, False otherwise
         :rtype: bool
         """
         if self.status is None \
                 or self.status.value != AlarmStatus.STEALTHY \
-                or self._is_stealthy(stealthy_show_duration,
-                                     stealthy_interval):
+                or self._is_stealthy(stealthy_interval):
             return False
 
         new_status = AlarmStep(
@@ -337,30 +363,26 @@ class Alarm:
 
         return True
 
-    def _is_stealthy(self, stealthy_show_duration, stealthy_interval):
+    def _is_stealthy(self, stealthy_interval):
         """
         Checks if an alarm is stealthy.
 
-        :param int stealthy_show_duration:
         :param int stealthy_interval:
         :returns: true if the alarm is still stealthy, False otherwise
         :rtype: bool
         """
-        last_state_ts = self.state.timestamp
+        if self.state.value != AlarmState.OK:
+            return False
+
         for step in self.steps:
-            delta1 = last_state_ts - step.timestamp
-            delta2 = int(time()) - step.timestamp
-            if delta1 > stealthy_show_duration or \
-                    delta1 > stealthy_interval or \
-                    delta2 > stealthy_show_duration or \
-                    delta2 > stealthy_interval:
+            delta = int(time()) - step.timestamp
+            if delta > stealthy_interval:
                 break
 
             if step.type_ in [ALARM_STEP_TYPE_STATE_DECREASE,
-                              ALARM_STEP_TYPE_STATE_INCREASE]:
-                if step.value != AlarmState.OK \
-                        and self.state.value == AlarmState.OK:
-                    return True
+                              ALARM_STEP_TYPE_STATE_INCREASE] \
+               and step.value != AlarmState.OK:
+                return True
 
         return False
 

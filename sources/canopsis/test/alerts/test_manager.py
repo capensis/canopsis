@@ -41,10 +41,10 @@ class TestManager(BaseTest):
         self.assertEqual(self.manager.flapping_interval, 3600)
         self.assertEqual(self.manager.flapping_freq, 10)
         self.assertEqual(self.manager.flapping_persistant_steps, 10)
-        self.assertEqual(self.manager.hard_limit, 100)
+        self.assertEqual(self.manager.hard_limit, 2000)
         self.assertEqual(self.manager.stealthy_interval, 300)
-        self.assertEqual(self.manager.stealthy_show_duration, 600)
         self.assertEqual(self.manager.restore_event, True)
+        self.assertEqual(self.manager.record_last_event_date, False)
 
     def test_make_alarm(self):
         alarm_id = '/fake/alarm/id'
@@ -262,7 +262,7 @@ class TestManager(BaseTest):
 
     def test_resolve_stealthy(self):
         storage = self.manager.alerts_storage
-        now = int(time()) - self.manager.stealthy_show_duration - 1
+        now = int(time()) - self.manager.stealthy_interval - 1
 
         alarm_id = '/fake/alarm/id'
         alarm = self.manager.make_alarm(
@@ -857,11 +857,11 @@ class TestManager(BaseTest):
                 'expected': False
             },
             {
-                'alarm': {AlarmField.hard_limit.value: {'val': 100}},
+                'alarm': {AlarmField.hard_limit.value: {'val': 2000}},
                 'expected': True
             },
             {
-                'alarm': {AlarmField.hard_limit.value: {'val': 101}},
+                'alarm': {AlarmField.hard_limit.value: {'val': 2001}},
                 'expected': True
             }
         ]
@@ -898,31 +898,31 @@ class TestManager(BaseTest):
             {
                 'alarm': {
                     AlarmField.hard_limit.value: None,
-                    AlarmField.steps.value: [i for i in range(100)]
+                    AlarmField.steps.value: [i for i in range(2000)]
                 },
                 'expected': {
                     'type_hard_limit': dict,
-                    'len_steps': 101
+                    'len_steps': 2001
                 }
             },
             {
                 'alarm': {
-                    AlarmField.hard_limit.value: {'val': 101},
-                    AlarmField.steps.value: [i for i in range(200)]
+                    AlarmField.hard_limit.value: {'val': 2001},
+                    AlarmField.steps.value: [i for i in range(3000)]
                 },
                 'expected': {
                     'type_hard_limit': dict,
-                    'len_steps': 200
+                    'len_steps': 3000
                 }
             },
             {
                 'alarm': {
-                    AlarmField.hard_limit.value: {'val': 99},
-                    AlarmField.steps.value: [i for i in range(100)]
+                    AlarmField.hard_limit.value: {'val': 1999},
+                    AlarmField.steps.value: [i for i in range(2000)]
                 },
                 'expected': {
                     'type_hard_limit': dict,
-                    'len_steps': 101
+                    'len_steps': 2001
                 }
             }
         ]
@@ -1029,6 +1029,7 @@ class TestManager(BaseTest):
             'state': Check.MINOR,
             'state_type': 1,
             'timestamp': 0,
+            'links': {}
         }
 
         expected_event1 = {
@@ -1043,6 +1044,7 @@ class TestManager(BaseTest):
             'state_type': 1,
             'status': 1,
             'timestamp': 0,
+            'links': {}
         }
 
         expected_event2 = {
@@ -1058,6 +1060,7 @@ class TestManager(BaseTest):
             'state_type': 1,
             'state': Check.OK,
             'timestamp': 0,
+            'links': {}
         }
 
         self.assertEqual(len(events), 3)
@@ -1181,6 +1184,45 @@ class TestManager(BaseTest):
         state = result[alarm_id][0]['value']['state']
         self.assertEqual(state['_t'], 'stateinc')
         self.assertEqual(state['val'], Check.CRITICAL)
+
+    def test_record_last_event_date(self):
+        self.manager.record_last_event_date = True
+        alarm_id = 'ut-comp'
+
+        event0 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'test message',
+            'event_type': 'check',
+            'state': Check.MINOR,
+        }
+        self.manager.archive(event0)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+        self.assertTrue(AlarmField.last_event_date.value in alarm['value'])
+        ts = alarm['value'][AlarmField.last_event_date.value]
+        self.assertTrue(int(time()) - ts < 10)
+
+    def test_check_if_display_name_exists(self):
+        self.assertFalse(self.manager.check_if_display_name_exists('toto'))
+
+        alarm_id = 'ut-comp'
+        alarm = self.manager.make_alarm(
+            alarm_id,
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': 0
+            }
+        )
+        self.manager.update_current_alarm(alarm, alarm['value'])
+
+        disp_name = alarm['value'][AlarmField.display_name.value]
+        self.assertTrue(self.manager.check_if_display_name_exists(disp_name))
 
 if __name__ == '__main__':
     main()

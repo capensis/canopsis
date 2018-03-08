@@ -19,15 +19,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main
+import unittest
 
 from functools import reduce
 
+from canopsis.common import root_path
 from canopsis.storage.composite import CompositeStorage
 
 from canopsis.configuration.configurable.decorator import conf_paths
 
 from base import BaseTestConfiguration, BaseStorageTest
+import xmlrunner
 
 
 @conf_paths('storage/test-composite.conf')
@@ -178,4 +180,7 @@ class CompositeStorageTest(BaseStorageTest):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

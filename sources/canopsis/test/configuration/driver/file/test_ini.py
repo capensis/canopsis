@@ -19,7 +19,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main
+import unittest
+from canopsis.common import root_path
+import xmlrunner
+
 
 from canopsis.configuration.driver.file.ini import INIConfigurationDriver
 from test_file_driver import ConfigurationDriverTest
@@ -40,4 +43,7 @@ class INIConfigurationDriverTest(ConfigurationDriverTest):
         return INIConfigurationDriver
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

@@ -19,12 +19,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+import unittest
+from canopsis.common import root_path
 from canopsis.ccalendar.manager import CalendarManager
 from canopsis.middleware.core import Middleware
+import xmlrunner
 
-
-class CalendarManagerTest(TestCase):
+class CalendarManagerTest(unittest.TestCase):
     """
     Base class for all calendar manager tests.
 
@@ -111,4 +112,7 @@ class CalendarTest(CalendarManagerTest):
         ])
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

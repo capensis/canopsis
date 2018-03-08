@@ -19,10 +19,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main
-
+import unittest
+from canopsis.common import root_path
 from canopsis.configuration.driver.file.json import JSONConfigurationDriver
 from test_file_driver import ConfigurationDriverTest
+import xmlrunner
 
 
 class ConfigurationDriverTest(ConfigurationDriverTest):
@@ -40,4 +41,7 @@ class ConfigurationDriverTest(ConfigurationDriverTest):
         return JSONConfigurationDriver
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

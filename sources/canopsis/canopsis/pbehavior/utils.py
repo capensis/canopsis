@@ -13,9 +13,9 @@ def check_valid_rrule(rrule):
     :param str rrule: rrule as string
     :raises ValueError: rrule is invalid
     :returns: True if ok, raises exception if invalid
-    :rtype bool:
+    :rtype: bool
     """
-    if rrule == '' or rrule == None:
+    if rrule == '' or rrule is None:
         return True
 
     try:

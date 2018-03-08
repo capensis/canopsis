@@ -1,8 +1,6 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
 
-from unittest import main, TestCase
-
 from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey,\
     Manager
 from canopsis.context_graph.manager import ContextGraph
@@ -13,6 +11,11 @@ import os
 import time
 from jsonschema.exceptions import ValidationError
 from canopsis.logger import Logger, OutputNull
+
+import unittest
+from canopsis.common import root_path
+import xmlrunner
+
 
 logger = Logger.get("", None, output_cls=OutputNull)
 
@@ -29,9 +32,10 @@ class Keys:
     DISABLE_HISTORY = "disable_history"
     ENABLE_HISTORY = "enable_history"
     ENABLED = "enabled"
+    LINKS = "links"
 
 
-class BaseTest(TestCase):
+class BaseTest(unittest.TestCase):
 
     def setUp(self):
         self.ctx_import = ContextGraphImport(logger)
@@ -49,7 +53,8 @@ class BaseTest(TestCase):
                              Keys.DEPENDS: [],
                              Keys.IMPACT: [],
                              Keys.MEASUREMENTS: [],
-                             Keys.INFOS: {}}
+                             Keys.INFOS: {},
+                             Keys.LINKS: {}}
         self.template_ci = {ContextGraphImport.K_ID: "id",
                             ContextGraphImport.K_NAME: "Name",
                             ContextGraphImport.K_TYPE: "resource",
@@ -301,6 +306,10 @@ class ACreateEntity(BaseTest):
             expected[ContextGraphImport.K_DEPENDS])
         expected[ContextGraphImport.K_IMPACT] = set(
             expected[ContextGraphImport.K_IMPACT])
+
+        # We delete links because he is dynamicaly created when
+        # get_entities_by_id and get_entities are used
+        del expected[Keys.LINKS]
 
         self.ctx_import._ContextGraphImport__a_create_entity(ci)
 
@@ -1411,7 +1420,7 @@ class ImportChecker(BaseTest):
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
-class ReportManager(TestCase):
+class ReportManager(unittest.TestCase):
 
     def setUp(self):
         self.import_storage = Middleware.get_middleware_by_uri(
@@ -1625,6 +1634,14 @@ class ReportManager(TestCase):
 
         self.assertDictEqual(result, expected)
 
+    def test_get_import_status_none(self):
+        id_ = 'C0t0cT0tAPWetPWETlPwetIsPwetBork'
+        res = self.manager.get_import_status(id_)
+
+        self.assertDictEqual(res, {'status': 'not_found', '_id': id_})
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

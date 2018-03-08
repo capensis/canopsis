@@ -18,13 +18,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
+import unittest
 from unittest import TestCase, main
-
+from canopsis.common import root_path
 from canopsis.stats.manager import Stats
+import xmlrunner
 
 
-class TestManager(TestCase):
+class TestManager(unittest.TestCase):
     def setUp(self):
         self.stats = Stats()
 
@@ -484,4 +485,7 @@ class TestManager(TestCase):
             self.assertEqual(res, case['expected'])
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

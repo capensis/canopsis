@@ -11,15 +11,32 @@ def build_links(watcher_entity, context_graph):
     :param watcher_entity:
     :param context_graph:
     """
-    mfilter = loads(watcher_entity['mfilter'])
-    dep = context_graph.get_entities(
+    jmfilter = watcher_entity.get('mfilter', None)
+
+    if jmfilter is None:
+        return
+
+    mfilter = loads(jmfilter)
+
+    entities = context_graph.get_entities(
         query=mfilter,
         projection={'_id': 1}
     )
-    for i in dep:
-        if i['_id'] not in watcher_entity['depends']:
-            watcher_entity['depends'].append(i['_id'])
-    context_graph.update_entity(watcher_entity)
+
+    watcher_updated = False
+    watcher_depends = set(watcher_entity.get('depends', []))
+
+    for entity in entities:
+        eid = entity['_id']
+        if eid not in watcher_depends:
+            watcher_updated = True
+            watcher_entity['depends'].append(eid)
+
+    # FIXIT: updating only when needed is required to avoid resetting
+    # the watcher entity impact field.
+    # Also it avoids useless updates in DB.
+    if watcher_updated:
+        context_graph.update_entity(watcher_entity)
 
 
 def build_all_links(context_graph):

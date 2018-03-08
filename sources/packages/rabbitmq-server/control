@@ -8,7 +8,7 @@ REQUIRES="canohome erlang"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
-	check_code $? 
+	check_code $?
 }
 
 function post_install(){
@@ -19,7 +19,7 @@ function post_install(){
 
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	launch_cmd 0 service rabbitmq-server stop 
+	launch_cmd 0 service rabbitmq-server stop
 }
 
 function post_remove(){

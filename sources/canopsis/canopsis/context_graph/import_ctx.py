@@ -216,7 +216,7 @@ class Manager():
         if len(status) > 0:
             return status[0]
 
-        return None
+        return {'status': 'not_found', '_id': _id}
 
 
 class ContextGraphImport(ContextGraph):
@@ -336,9 +336,13 @@ class ContextGraphImport(ContextGraph):
             element[ContextGraphImport.K_PROPERTIES][state]
 
     def clean_attributes(self):
-        self.entities_to_update.clear()
-        self.update.clear()
-        del self.delete[:]
+        del self.entities_to_update
+        del self.update
+        del self.delete
+
+        self.entities_to_update = dict()
+        self.update = dict()
+        self.delete = list()
 
     def __get_entities_to_update(self, file_):
         """Return every entities id required for the update

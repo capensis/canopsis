@@ -1,11 +1,17 @@
 #!/bin/sh
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+
+apt-get update || exit 1
+
+apt-get install -y dirmngr || exit 1
+
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6 || exit 1
 # install from jessie repository
 echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main" > /etc/apt/sources.list.d/mongodb-org.list
+sed -i -E "s/(^deb .*main\s*)$/\1 contrib non-free/" /etc/apt/sources.list
 
-apt-get update
+apt-get update || exit 1
 
-apt-get install -y libssl1.1 libevent-dev bzip2 build-essential zlib1g-dev libreadline-gplv2-dev libdb5.3-dev libncurses5-dev libexpat1-dev libcurl4-gnutls-dev git-core libssl-dev libpcre3-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev xsltproc curl libbz2-dev xvfb libmariadb-dev libsasl2-dev python-dev python-ldap nettle-dev xz-utils libxml2-dev libxslt1-dev gcc libldap2-dev wget rsync libgnutls28-dev || exit 1
+apt-get install -y --no-install-recommends libssl1.1 libevent-dev bzip2 build-essential zlib1g-dev libreadline-gplv2-dev libdb5.3-dev libncurses5-dev libexpat1-dev libcurl4-gnutls-dev git-core libssl-dev libpcre3-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev xsltproc curl libbz2-dev xvfb libmariadb-dev libsasl2-dev python-dev python-ldap nettle-dev xz-utils libxml2-dev libxslt1-dev gcc libldap2-dev wget libgnutls28-dev rsync librsync-dev libz-dev libssl-dev uthash-dev libyajl-dev snmp snmp-mibs-downloader smitools libxslt1-dev libxmlsec1-dev libffi-dev python-virtualenv virtualenv || exit 1
 
 # fix mongodb dep
 if [ "$(dpkg -l|grep libssl1.0.0)" = "" ]; then

@@ -35,12 +35,8 @@ def get_last_state(alarm, ts=None):
     """
     Get last alarm state.
 
-    :param alarm: Alarm history
-    :type alarm: dict
-
-    :param ts: Timestamp to look from (optional)
-    :type ts: int
-
+    :param dict alarm: Alarm history
+    :param int ts: Timestamp to look from (optional)
     :returns: Most recent state
     """
 
@@ -54,12 +50,8 @@ def get_last_status(alarm, ts=None):
     """
     Get last alarm status.
 
-    :param alarm: Alarm history
-    :type alarm: dict
-
-    :param ts: Timestamp to look from (optional)
-    :type ts: int
-
+    :param dict alarm: Alarm history
+    :param int ts: Timestamp to look from (optional)
     :returns: Most recent status
     """
 
@@ -102,12 +94,8 @@ def is_flapping(manager, alarm):
     """
     Check if alarm is flapping.
 
-    :param manager: Alerts manager
-    :type manager: canopsis.alerts.manager.Alerts
-
-    :param alarm: Alarm history
-    :type alarm: dict
-
+    :param canopsis.alerts.manager.Alerts manager: Alerts manager
+    :param dict alarm: Alarm history
     :returns: ``True`` if alarm is flapping, ``False`` otherwise
     :rtype: bool
     """
@@ -142,12 +130,7 @@ def is_keeped_state(alarm):
     """
     Check if an alarm state must be keeped.
 
-    :param manager: Alerts manager
-    :type manager: canopsis.alerts.manager.Alerts
-
-    :param alarm: Alarm history
-    :type alarm: dict
-
+    :param dict alarm: Alarm history
     :returns: ``True`` if alarm state is forced, ``False`` otherwise
     :rtype: bool
     """
@@ -160,30 +143,20 @@ def is_stealthy(manager, alarm):
     """
     Check if alarm is stealthy.
 
-    :param manager: Alerts manager
-    :type manager: canopsis.alerts.manager.Alerts
-
-    :param alarm: Alarm history
-    :type alarm: dict
-
+    :param canopsis.alerts.manager.Alerts manager: Alerts manager
+    :param dict alarm: Alarm history
     :returns: ``True`` if alarm is supposed to be stealthy, ``False`` otherwise
     :rtype: bool
     """
-
-    ts = alarm[AlarmField.state.value]['t']
+    if alarm[AlarmField.state.value]['val'] != Check.OK:
+        return False
 
     for step in reversed(alarm[AlarmField.steps.value]):
-        delta1 = ts - step['t']  # delta from last state change
-        delta2 = int(time()) - step['t']  # delta from now
-        if delta1 > manager.stealthy_show_duration or \
-           delta1 > manager.stealthy_interval or \
-           delta2 > manager.stealthy_show_duration or \
-           delta2 > manager.stealthy_interval:
+        if int(time()) - step['t'] > manager.stealthy_interval:
             break
 
-        if step['_t'] in ['stateinc', 'statedec']:
-            if step['val'] != Check.OK and alarm[AlarmField.state.value]['val'] == Check.OK:
-                return True
+        if step['_t'] in ['stateinc', 'statedec'] and step['val'] != Check.OK:
+            return True
 
     return False
 
@@ -192,11 +165,8 @@ def compute_status(manager, alarm):
     """
     Compute alarm status from its history.
 
-    :param manager: Alerts manager
-    :type manager: canopsis.alerts.manager.Alerts
-
-    :param alarm: Alarm history
-    :type alarm: dict
+    :param canopsis.alerts.manager.Alerts manager: Alerts manager
+    :param dict alarm: Alarm history
 
     :returns: Alarm status as int
     :rtype: int

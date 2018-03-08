@@ -9,12 +9,13 @@ import json
 
 from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.engines.core import publish
-from canopsis.event import forger, get_routingkey
+from canopsis.event import forger
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
-from canopsis.old.rabbitmq import Amqp
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_conn
 
 LOG_PATH = 'var/log/watcher.log'
 
@@ -22,8 +23,9 @@ LOG_PATH = 'var/log/watcher.log'
 class Watcher:
     """Watcher class"""
 
-    def __init__(self):
-        """__init__
+    def __init__(self, amqp_pub=None):
+        """
+        :param amqp_pub canopsis.common.amqp.AmqpPublisher:
         """
         self.logger = Logger.get('watcher', LOG_PATH)
         self.watcher_storage = Middleware.get_middleware_by_uri(
@@ -38,7 +40,9 @@ class Watcher:
         self.pbehavior_manager = PBehaviorManager(
             *PBehaviorManager.provide_default_basics()
         )
-        self.amqp = Amqp()
+        self.amqp_pub = amqp_pub
+        if amqp_pub is None:
+            self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
 
     def get_watcher(self, watcher_id):
         """Retreive from database the watcher specified by is watcher id.
@@ -66,6 +70,10 @@ class Watcher:
         except ValueError:
             self.logger.error('can t decode mfilter')
             return None
+        except KeyError:
+            self.logger.error('no filter')
+            return None
+
         depends_list = self.context_graph.get_entities(
             query=watcher_finder,
             projection={'_id': 1}
@@ -73,7 +81,6 @@ class Watcher:
         self.watcher_storage.put_element(body)
 
         depend_list = []
-
         for entity_id in depends_list:
             depend_list.append(entity_id['_id'])
 
@@ -180,16 +187,23 @@ class Watcher:
         display_name = watcher_entity['name']
 
         alarm_list = list(self.alert_storage._backend.find({
-            'd': {'$in': entities}
+            '$and': [
+                {'d': {'$in': entities}},
+                {
+                    '$or': [
+                        {'v.resolved': None},
+                        {'v.resolved': {'$exists': False}}
+                    ]
+                }
+            ]
         }))
         states = []
         for alarm in alarm_list:
-            if alarm['v']['resolved'] is None and alarm['d'] in entities:
-                active_pb = self.pbehavior_manager.get_active_pbehaviors(
-                    [alarm['d']]
-                )
-                if len(active_pb) == 0:
-                    states.append(alarm['v']['state']['val'])
+            active_pb = self.pbehavior_manager.get_active_pbehaviors(
+                [alarm['d']]
+            )
+            if len(active_pb) == 0:
+                states.append(alarm['v']['state']['val'])
 
         nb_entities = len(entities)
         nb_crit = states.count(Check.CRITICAL)
@@ -246,9 +260,7 @@ class Watcher:
             perf_data_array=[],
             display_name=display_name)
 
-        routing_key = get_routingkey(event)
-        publish(event=event, publisher=self.amqp,
-                rk=routing_key, logger=self.logger)
+        self.amqp_pub.canopsis_event(event)
 
     def sla_compute(self, watcher_id, state):
         """
