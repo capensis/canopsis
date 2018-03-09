@@ -486,9 +486,6 @@ class Archiver(Configurable):
                 devent = None
                 if _id in devents:
                     devent = devents[_id]
-                else:
-                    self.logger.info(
-                        'Previous event for rk {} not found'.format(_id))
 
                 # Effective archiver processing call
                 operations = self.process_an_event(_id, event, devent)
@@ -570,7 +567,6 @@ class Archiver(Configurable):
                 'event': event.copy(),
                 'collection': 'events'
             })
-            self.logger.info(' + New event, have to log {}'.format(_id))
 
         else:
             change = {}
