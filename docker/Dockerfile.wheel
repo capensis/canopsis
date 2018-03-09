@@ -1,6 +1,7 @@
 ARG SYSBASE
+ARG TAG
 
-FROM canopsis/canopsis-sysbase:${SYSBASE}
+FROM canopsis/canopsis-sysbase:${SYSBASE}-${TAG}
 
 ARG SYSBASE
 ARG PROXY
@@ -9,7 +10,7 @@ ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 
 COPY docker/build/run-${SYSBASE}.sh /run.sh
-RUN /bin/bash /run-${SYSBASE}.sh /run.sh
+RUN /bin/bash /run.sh
 
 COPY docker/build/build-${SYSBASE}.sh /build.sh
 RUN /bin/bash /build.sh
