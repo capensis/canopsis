@@ -51,7 +51,6 @@ if [ ! "${3}" == "test-ci" ]; then
     echo "BUILDING CORE ${sysbase}"
     docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg SYSBASE=${sysbase} --build-arg TAG=${tag} -f docker/Dockerfile -t canopsis/canopsis-core:${sysbase}-${tag} .
 
-
     if [ "${sysbase}" = "debian-9" ]; then
         echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
         docker tag canopsis/canopsis-core:${sysbase}-${tag} canopsis/canopsis-core:${tag}
