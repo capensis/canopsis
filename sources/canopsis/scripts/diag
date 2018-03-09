@@ -4,6 +4,8 @@
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 
+from canopsis.influxdb.core import InfluxDBStorage
+
 import unittest
 
 class CpsDiagTest(unittest.TestCase):
@@ -18,6 +20,10 @@ class CpsDiagTest(unittest.TestCase):
         self.assertEqual(len(r), 1)
 
         coll.remove()
+
+    def test_influx_connection(self):
+        store = InfluxDBStorage()
+        r = store.find_elements()
 
 def main():
     unittest.main()
