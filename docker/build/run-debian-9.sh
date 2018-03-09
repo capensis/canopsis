@@ -16,6 +16,7 @@ apt-get -y --no-install-recommends install \
     libsasl2-2 \
     libxml2 \
     libxslt1.1 \
+    locales \
     lsb-base \
     lsb-release \
     libffi6 \
@@ -47,3 +48,7 @@ apt-get -y --no-install-recommends install \
     virtualenv \
 
 apt-get clean
+
+echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
+
+locale-gen
