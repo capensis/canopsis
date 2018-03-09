@@ -466,21 +466,9 @@ class Middleware(Configurable):
         """
 
         if not self.connected():
-
-            self.logger.debug(u'Trying to connect to %s' % self.uri)
-
             self._conn = self._connect()
-
-            # initialize the environment if connection is connected
             if self.connected():
-                self.logger.debug(u'Initialize the environment')
                 self._init_env(self._conn)
-
-            else:
-                self.logger.error("Connection failure to %s" % self.uri)
-
-        else:
-            self.logger.debug(u'Already connected to %s' % self.uri)
 
         return self.connected()
 
@@ -528,7 +516,7 @@ class Middleware(Configurable):
         :returns: True if this is connected.
         """
 
-        return False
+        raise NotImplementedError()
 
     def reconnect(self):
         """Try to reconnect and returns connection result.
