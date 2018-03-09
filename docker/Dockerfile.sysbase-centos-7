@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM centos:centos7
 
 ARG PROXY
 ARG TAG
@@ -17,5 +17,5 @@ RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash
 
 COPY docker/files/vimrc ${CPS_HOME}/.vimrc
 
-COPY docker/build/debian-run.sh /
-RUN /bin/bash /debian-run.sh
+COPY docker/build/run-centos-7.sh /run.sh
+RUN /bin/bash /run.sh

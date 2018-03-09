@@ -1,15 +1,20 @@
 ARG TAG
+ARG SYSBASE
 
-FROM canopsis/canopsis-sysbase:${TAG} as build
+
+
+## Canopsis Build Image
+FROM canopsis/canopsis-sysbase:${SYSBASE}-${TAG} as build
 
 ARG TAG
+ARG SYSBASE
 ARG PROXY
 
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 
-COPY docker/build/debian-build.sh /
-RUN /bin/bash /debian-build.sh
+COPY docker/build/build-${SYSBASE}.sh /build.sh
+RUN /bin/bash /build.sh
 
 WORKDIR ${CPS_HOME}
 
@@ -38,7 +43,7 @@ RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sou
 
 
 ## Canopsis Core Image
-FROM canopsis/canopsis-sysbase:${TAG}
+FROM canopsis/canopsis-sysbase:${SYSBASE}-${TAG}
 
 ARG PROXY
 

@@ -1,6 +1,7 @@
+ARG SYSBASE
 ARG TAG
 
-FROM canopsis/canopsis-core:${TAG}
+FROM canopsis/canopsis-core:${SYSBASE}-${TAG}
 
 COPY sources/canopsis/test/ ${CPS_HOME}/test
 

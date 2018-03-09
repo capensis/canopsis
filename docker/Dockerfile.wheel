@@ -1,15 +1,19 @@
-FROM debian:stretch-slim
+ARG SYSBASE
+ARG TAG
 
+FROM canopsis/canopsis-sysbase:${SYSBASE}-${TAG}
+
+ARG SYSBASE
 ARG PROXY
 
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 
-COPY docker/build/debian-run.sh /
-RUN /bin/bash /debian-run.sh
+COPY docker/build/run-${SYSBASE}.sh /run.sh
+RUN /bin/bash /run.sh
 
-COPY docker/build/debian-build.sh /
-RUN /bin/bash /debian-build.sh
+COPY docker/build/build-${SYSBASE}.sh /build.sh
+RUN /bin/bash /build.sh
 
 COPY sources/externals/python-libs /sources/python-libs
 COPY sources/canopsis /sources/canopsis
