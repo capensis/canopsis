@@ -8,6 +8,8 @@ sed -i /etc/yum/pluginconf.d/fastestmirror.conf -e 's/enabled=.*/enabled=0/g'
 find /etc/yum.repos.d/ -name "CentOS*.repo" -exec sed -e '/^mirrorlist=/d' -i {} \;
 find /etc/yum.repos.d/ -name "CentOS*.repo" -exec sed -re 's/^#baseurl(.*)/baseurl\1/g' -i {} \;
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
+rm -f /etc/localtime
+ln -s /usr/share/zoneinfo/UTC /etc/localtime
 
 yum makecache
 yum install -y epel-release

@@ -5,7 +5,18 @@ set -o pipefail
 echo "deb http://ftp.fr.debian.org/debian/ stretch main contrib non-free" > /etc/apt/sources.list
 echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list
 
+rm -f /etc/localtime
+ln -s /usr/share/zoneinfo/UTC /etc/localtime
+
 apt-get update
+
+apt-get -y --no-install-recommends install locales
+
+echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
+locale-gen
+
+export LANG="en_US.UTF-8"
+
 apt-get -y --no-install-recommends install \
     apt-transport-https \
     base-files \
@@ -16,7 +27,6 @@ apt-get -y --no-install-recommends install \
     libsasl2-2 \
     libxml2 \
     libxslt1.1 \
-    locales \
     lsb-base \
     lsb-release \
     libffi6 \
@@ -48,7 +58,3 @@ apt-get -y --no-install-recommends install \
     virtualenv \
 
 apt-get clean
-
-echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
-
-locale-gen
