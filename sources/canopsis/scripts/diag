@@ -1,29 +1,47 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import unittest
+
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 
 from canopsis.influxdb.core import InfluxDBStorage
 
-import unittest
+from canopsis.common.amqp import get_default_connection as DefaultAMQPConnection
 
 class CpsDiagTest(unittest.TestCase):
 
+    def print_exc(self, exc):
+        self.fail('{}'.format(exc))
+
     def test_mongo_connection(self):
-        store = MongoStore.get_default()
-        coll = MongoCollection(store.get_collection('cpsdiag__'))
-        coll.remove()
-        coll.insert({'_id': 'diag', 'success': True})
-        r = list(coll.find({'_id': 'diag'}))
+        try:
+            store = MongoStore.get_default()
+            coll = MongoCollection(store.get_collection('cpsdiag__'))
+            coll.remove()
+            coll.insert({'_id': 'diag', 'success': True})
+            r = list(coll.find({'_id': 'diag'}))
 
-        self.assertEqual(len(r), 1)
+            self.assertEqual(len(r), 1)
 
-        coll.remove()
+            coll.remove()
+        except Exception as exc:
+            self.print_exc(exc)
 
     def test_influx_connection(self):
-        store = InfluxDBStorage()
-        r = store.find_elements()
+        try:
+            store = InfluxDBStorage()
+            r = store.find_elements()
+        except Exception as exc:
+            self.print_exc(exc)
+
+    def test_amqp_connection(self):
+        try:
+            bus = DefaultAMQPConnection()
+            bus.connect()
+        except Exception as exc:
+            self.print_exc(exc)
 
 def main():
     unittest.main()
