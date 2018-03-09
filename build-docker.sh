@@ -36,7 +36,7 @@ if [ ! "${3}" == "test-ci" ]; then
 
     current_requirements_control=$(md5sum sources/canopsis/requirements.txt | awk '{print $1}')
 
-    if [ "$(grep ${current_requirements_control} ${wheel_req_control})" = "" ]||[ ! -d ${workdir}/docker/wheels/${sysbase} ]; then
+    if [ "$(grep ${current_requirements_control} ${wheel_req_control})" = "" ]||[ ! -d ${wheel_dir}/${sysbase} ]; then
         echo -n "${current_requirements_control}" > ${wheel_req_control}
         echo "BUILDING WHEEL ${sysbase}"
         docker build ${opt_squash} --build-arg PROXY=$http_proxy --build-arg SYSBASE=${sysbase} --build-arg TAG=${tag} -f docker/Dockerfile.wheel -t canopsis/wheel-${sysbase}:latest .
