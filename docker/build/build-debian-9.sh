@@ -18,6 +18,7 @@ apt-get -y --no-install-recommends install \
     libssl-dev \
     libffi-dev \
     libxmlsec1-dev \
+    libxmlsec1-openssl \
     libldap2-dev \
     python2.7-dev
 
