@@ -9,29 +9,19 @@ yum install -y \
     cyrus-sasl-devel \
     gcc \
     gcc-c++ \
-    git \
-    libacl-devel \
-    libcurl-devel \
     libcurl-devel \
     libevent-devel \
     libffi-devel \
-    librsync-devel \
+    libtasn1 \
     libtool \
     libtool-ltdl-devel \
     libxml2-devel \
     libxslt-devel \
-    libxslt-devel \
     make \
-    ncurses-devel \
+    nettle-devel \
     openldap-devel \
-    openldap-devel \
-    openssl \
     openssl-devel \
-    perl-ExtUtils-MakeMaker \
     python-devel \
-    python-virtualenv
-    rsync \
-    wget \
     xmlsec1-devel \
     xmlsec1-openssl-devel \
     zlib-devel
