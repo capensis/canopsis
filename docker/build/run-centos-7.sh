@@ -15,6 +15,29 @@ yum makecache
 yum install -y epel-release
 yum makecache
 
-yum install -y xz zlib-devel libevent-devel libevent ncurses-devel libcurl-devel curl tmux htop libtool openssl openssl-devel bzip2-devel cyrus-sasl-devel openldap-devel libcurl-devel python-devel openldap-devel libxml2-devel libxslt-devel perl-ExtUtils-MakeMaker git rsync librsync-devel uthash-devel.noarch libacl-devel libxslt-devel libffi-devel xmlsec1-devel xmlsec1-openssl-devel libtool-ltdl-devel python-virtualenv
+yum install -y \
+    bzip2 \
+    curl \
+    cyrus-sasl \
+    htop \
+    libcurl \
+    libevent \
+    libffi \
+    libicu \
+    libtasn1 \
+    libxml2 \
+    libxslt \
+    nettle \
+    openldap \
+    openssl \
+    python \
+    python-virtualenv \
+    python-wheel \
+    redhat-lsb-core \
+    rsync \
+    tmux \
+    xmlsec1 \
+    xmlsec1-openssl \
+    zlib
 
 rm -rf /var/cache/yum
