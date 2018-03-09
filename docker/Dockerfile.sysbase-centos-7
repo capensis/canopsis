@@ -17,5 +17,5 @@ RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash
 
 COPY docker/files/vimrc ${CPS_HOME}/.vimrc
 
-COPY docker/build/run-centos-7.sh /
-RUN /bin/bash /run-centos-7.sh
+COPY docker/build/run-centos-7.sh /run.sh
+RUN /bin/bash /run.sh
