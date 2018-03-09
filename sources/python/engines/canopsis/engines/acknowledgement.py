@@ -194,6 +194,7 @@ class engine(Engine):
             ack_info = {
                 'timestamp': event['timestamp'],
                 'ackts': ackts,
+                'mail': event.get('ack', {}).get('mail', 0),
                 'rk': rk,
                 'author': author,
                 'comment': event['output']
