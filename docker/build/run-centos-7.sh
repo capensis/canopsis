@@ -37,8 +37,6 @@ yum install -y \
     openldap \
     openssl \
     python \
-    python-virtualenv \
-    python-wheel \
     redhat-lsb-core \
     rsync \
     tmux \

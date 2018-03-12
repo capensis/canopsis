@@ -22,6 +22,8 @@ yum install -y \
     openldap-devel \
     openssl-devel \
     python-devel \
+    python-virtualenv \
+    python-wheel \
     xmlsec1-devel \
     xmlsec1-openssl-devel \
     zlib-devel

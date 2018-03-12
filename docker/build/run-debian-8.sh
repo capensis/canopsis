@@ -28,7 +28,6 @@ apt-get -y --no-install-recommends install \
     libxml2 \
     libxslt1.1 \
     lsb-base \
-    lsb-release \
     libffi6 \
     libgmp10 \
     libgnutlsxx28 \
