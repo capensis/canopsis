@@ -190,6 +190,8 @@ systemctl enable canopsis-engine@task_linklist-task_linklist.service
 systemctl enable canopsis-engine@task_mail-task_mail.service
 systemctl enable canopsis-engine@ticket-ticket.service
 systemctl enable canopsis-engine@dynamic-watcher.service
+
+systemctl enable canopsis-webserver.service
 ```
 
 Le fichier `/opt/canopsis/etc/amqp2engines.conf` est toujours en vigeur.
