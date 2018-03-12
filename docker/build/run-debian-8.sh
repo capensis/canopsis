@@ -10,6 +10,8 @@ ln -s /usr/share/zoneinfo/UTC /etc/localtime
 
 apt-get update
 
+apt-get dist-upgrade -y
+
 apt-get -y --no-install-recommends install locales
 
 echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen

@@ -19,6 +19,8 @@ yum makecache
 yum install -y epel-release
 yum makecache
 
+yum update -y
+
 yum install -y \
     bzip2 \
     curl \
