@@ -27,6 +27,8 @@ Pour activer cette fonctionnalité, dans votre shell exécutez :
 export SYSBASE="centos-7"
 ```
 
+Si cette variable n’existe pas ou est vide, toutes les plateformes supportées seront alors construites.
+
 ## Build Docker
 
 *Cette documentation regroupe la construction de `core` et `cat`.*
