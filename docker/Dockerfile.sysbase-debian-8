@@ -1,6 +1,7 @@
 FROM debian:jessie-slim
 
 ARG PROXY
+ARG SYSBASE
 ARG TAG
 
 ENV http_proxy ${PROXY}
@@ -18,5 +19,5 @@ RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash
 
 COPY docker/files/vimrc ${CPS_HOME}/.vimrc
 
-COPY docker/build/run-debian-8.sh /run.sh
+COPY docker/build/run-${SYSBASE}.sh /run.sh
 RUN /bin/bash /run.sh
