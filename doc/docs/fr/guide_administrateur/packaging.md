@@ -195,3 +195,23 @@ systemctl enable canopsis-webserver.service
 ```
 
 Le fichier `/opt/canopsis/etc/amqp2engines.conf` est toujours en vigeur.
+
+### Nombre de process
+
+Pour le moment le nombre de processus lancés via `engine-launcher` est fixé dans les unités.
+
+Pour changer le nombre d’instances, désactivez l’unité fournie, copiez la dans `/etc/systemd/system/canopsis-engine-X@.service`.
+
+Changez la ligne `ExecStart` pour modifier `-w 1` par `-w X`.
+
+Dans le nom du fichier et la ligne `ExecStart`, remplacez `X` par le nombre de processus que vous voulez activer.
+
+Puis :
+
+```bash
+systemctl stop canopsis-engine@<module>-<name>.service
+systemctl disable canopsis-engine@<module>-<name>.service
+
+systemctl enable canopsis-engine-X@<module>-<name>.service
+systemctl start canopsis-engine-X@<module>-<name>.service
+```
