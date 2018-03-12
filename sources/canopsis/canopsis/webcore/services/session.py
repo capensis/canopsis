@@ -24,8 +24,8 @@ Webservice for session managment.
 
 from __future__ import unicode_literals
 import base64
-from bottle import request, HTTPError
-from canopsis.webcore.services.auth import check
+from bottle import request, abort
+from canopsis.auth.check import check
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.common.ws import route
@@ -66,26 +66,28 @@ def get():
 
     beaker_sess = request.environ.get('beaker.session', None)
 
-    if not "user" in beaker_sess:
+    if "user" not in beaker_sess:
         # Authorization: Basic
         auth_header = request.headers["Authorization"]
         auth_header = auth_header.replace("Basic ", "")
         auth_header = base64.b64decode(auth_header)
-        credential = auth_header.spilt(":", 1)
-        with open("/tmp/plop.log", "a") as fd:
-            fd.write("{}\n".format(credential))
+        credential = auth_header.split(":", 1)
 
         if len(credential) != 2:
             return beaker_sess
 
-        user = get_user(credential)
-        user = check(mode="plain", user=credential[0], password=credential[1])
+        username = credential[0]
+        password = credential[1]
+
+        user = get_user(username)
+
+        user = check(mode="plain", user=user, password=password)
 
         if not user:
-            return HTTPError(403, 'Forbidden')
+            abort(403, 'Forbidden')
 
         if not user.get('enable', False):
-            return HTTPError(403, 'Account is disabled')
+            abort(403, 'Account is disabled')
 
         beaker_sess["user"] = credential[0]
         beaker_sess["auth_on"] = True
