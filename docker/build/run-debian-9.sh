@@ -21,7 +21,6 @@ apt-get -y --no-install-recommends install \
     apt-transport-https \
     base-files \
     bash \
-    bash-completion \
     ca-certificates \
     curl \
     libsasl2-2 \
@@ -46,14 +45,9 @@ apt-get -y --no-install-recommends install \
     libldap-2.4-2 \
     python \
     python2.7 \
-    python-pip \
-    python-pkg-resources \
-    python-virtualenv \
-    python-wheel \
     rsync \
     sudo \
     tmux \
-    vim \
-    virtualenv \
+    vim
 
 apt-get clean
