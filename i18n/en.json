@@ -13,6 +13,8 @@
   "State changed": "State changed",
   "Snoozed by ": "Snoozed by ",
   "Cropped states (since last change of status)": "Cropped states (since last change of status)",
-  "Hard limit reached !": "Hard limit reached !"
+  "Hard limit reached !": "Hard limit reached !",
+  "by ": "by ",
+  "system": "system"
 }
 

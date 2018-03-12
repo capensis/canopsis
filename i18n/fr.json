@@ -13,5 +13,7 @@
   "State changed": "Etat modifié",
   "Snoozed by ": "Reporté par ",
   "Cropped states (since last change of status)": "Etats croisés (depuis le dernier changement de statut)",
-  "Hard limit reached !": "Limite physique atteinte !"
+  "Hard limit reached !": "Limite physique atteinte !",
+  "by ": "par ",
+  "system": "système"
 }
