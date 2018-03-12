@@ -29,6 +29,8 @@ Ember.Application.initializer({
             moment = window.moment;
             __ = Ember.String.loc;
 
+        var DEFAULT_AUTHOR = __('system');
+
         var component = Ember.Component.extend({
                         timelineData: undefined,
 
@@ -184,16 +186,15 @@ Ember.Application.initializer({
                             statusToName = get(component, 'statusToName')[step._t];
                             if (component.get('addAuthor').includes(step._t)) {
                                 if (step.a.indexOf('.') > -1){
-                                    step.name = statusToName + ' by system';
+                                    step.name = statusToName + ' ' + __('by ') + DEFAULT_AUTHOR;
                                 } else {
-                                    step.name = statusToName + ' by ' + step.a;
+                                    step.name = statusToName + ' ' + __('by ') + step.a;
                                 }
                             } else {
                                 step.name = statusToName;
-                            }
-
-                            if (get(component, 'authoredName').indexOf(step._t) != -1) {
-                                step.name += step.a;
+                                if (get(component, 'authoredName').indexOf(step._t) != -1) {
+                                    step.name += step.a;
+                                }
                             }
 
                             steps.push(step);
