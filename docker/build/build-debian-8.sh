@@ -19,6 +19,7 @@ apt-get -y --no-install-recommends install \
     python-pip \
     python-pkg-resources \
     python-virtualenv \
-    python-wheel
+    python-wheel \
+    virtualenv
 
 apt-get clean
