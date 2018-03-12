@@ -2,9 +2,9 @@
 
 La construction de paquets est supportée pour les distributions suivantes :
 
- * CentOS 7 x86_64
- * Debian 8 Jessie amd64
- * Debian 9 Stretch amd64
+ * `centos-7` : CentOS 7 x86_64
+ * `debian-8` : Debian 8 Jessie amd64
+ * `debian-9` : Debian 9 Stretch amd64
 
 La construction de ces paquets se repose sur Docker. Vous trouverez dans cette documentation le nécessaire pour effectuer un build Docker, nécessaire à la construction des paquets.
 
@@ -17,6 +17,15 @@ Le travail pour avoir un paquet `core` et un paquet `cat` sera fait plus tard.
 Les images Docker sont construites pour chaque plateforme supportée avec un tag `plateforme_id-id-tag`. Exemple : `centos-7-2.5.11`.
 
 L’image Docker "officielle" se repose sur Debian 9 et sera taggée simplement avec le numéro de version.
+
+Tous les scripts peuvent utiliser une variable d’environnement `SYSBASE` permettant de ne construire les images que sur un seul OS.
+
+Pour activer cette fonctionnalité, dans votre shell exécutez :
+
+```bash
+# export SYSBASE="platform-version"
+export SYSBASE="centos-7"
+```
 
 ## Build Docker
 
