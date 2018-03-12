@@ -60,6 +60,7 @@ COPY sources/db-conf/opt ./opt
 COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc
 COPY docker/files/etc/ ./etc/
+COPY docker/files/systemd/* /usr/lib/systemd/system/
 COPY tools/brickmanager /brickmanager
 
 ADD docker/files/entrypoint.sh /

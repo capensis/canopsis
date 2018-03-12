@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+set -o pipefail
+if [ "${1}" = "" ]; then
+    echo "Usage: $0 <engine_module>-<engine_name>"
+    echo "Example: $0 dynamic-alerts"
+    exit 1
+fi
+
+engine_module=$(sed -r 's/(.*)-.*/\1/g')
+engine_name=$(sed -r 's/.*-(.*)/\1/g')
+
+if [ "${engine_module}" = "" ]; then
+    echo "Invalid module: ${engine_module}"
+    exit 2
+fi
+
+if [ "${engine_name}" = "" ]; then
+    echo "Invalid name: ${engine_name}"
+    exit 3
+fi
+
+$HOME/bin/engine-launcher -e canopsis.engines.${engine_module} -n ${engine_name} $@
+exit $?
