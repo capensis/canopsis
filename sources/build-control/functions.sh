@@ -503,7 +503,7 @@ function pip_install() {
     source /etc/os-release
     pylibpath="${SRC_PATH}/../docker/wheels/${ID}-${VERSION_ID}/"
     if [ ! -d ${pylibpath} ]; then
-        pylibpath="${SRC_PATH}/externals/python-libs"
+        pylibpath="${SRC_PATH}/externals/python-libs/"
     fi
 
     cat > ~/.pydistutils.cfg << EOF
