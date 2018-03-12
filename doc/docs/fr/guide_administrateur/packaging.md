@@ -142,3 +142,54 @@ Se mettre à la racine du dépôt CAT puis :
 ```
 
 Les paquets sont alors disponibles dans le dossier `packages`.
+
+## Installation
+
+### CentOS / RedHat 7
+
+```
+yum localinstall canopsis-cat-<version>-1.el7.centos.x86_64.rpm
+```
+
+### Debian 8 / 9
+
+```
+dpkg -i canopsis-cat-1-<version>.amd64.<platform>.deb
+apt install -f
+```
+
+## Init
+
+Des unités `systemd` sont disponibles :
+
+ * `canopsis-engine@<module>-<name>.service`
+ * `canopsis-webserver.service`
+
+Voici tous les engines qui vous pouvez activer dans `core` et `cat` :
+
+```bash
+systemctl enable canopsis-engine@acknowledgement-acknowledgement.service
+systemctl enable canopsis-engine@dynamic-alerts.service
+systemctl enable canopsis-engine@cancel-cancel.service
+systemctl enable canopsis-engine@cleaner-cleaner_alerts.service
+systemctl enable canopsis-engine@cleaner-cleaner_events.service
+systemctl enable canopsis-engine@dynamic-context-graph.service
+systemctl enable canopsis-engine@eventduration-eventduration.service
+systemctl enable canopsis-engine@event_filter-event_filter.service
+systemctl enable canopsis-engine@eventstore-eventstore.service
+systemctl enable canopsis-engine@linklist-linklist.service
+systemctl enable canopsis-engine@dynamic-pbehavior.service
+systemctl enable canopsis-engine@dynamic-perfdata.service
+systemctl enable canopsis-engine@scheduler-scheduler.service
+systemctl enable canopsis-engine@selector-selector.service
+systemctl enable canopsis-engine@dynamic-serie.service
+systemctl enable canopsis-engine@dynamic-stats.service
+systemctl enable canopsis-engine@task_dataclean-task_dataclean.service
+systemctl enable canopsis-engine@task_importctx-task_importctx.service
+systemctl enable canopsis-engine@task_linklist-task_linklist.service
+systemctl enable canopsis-engine@task_mail-task_mail.service
+systemctl enable canopsis-engine@ticket-ticket.service
+systemctl enable canopsis-engine@dynamic-watcher.service
+```
+
+Le fichier `/opt/canopsis/etc/amqp2engines.conf` est toujours en vigeur.
