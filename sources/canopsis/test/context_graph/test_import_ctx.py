@@ -1557,10 +1557,10 @@ class ReportManager(unittest.TestCase):
 
     def test_create_import(self):
         expected = {ImportKey.F_ID: self.uuid,
-                    ImportKey.F_CREATION: time.asctime(),
                     ImportKey.F_STATUS: ImportKey.ST_PENDING}
         self.manager.create_import_status(self.uuid)
         result = self.manager.get_import_status(self.uuid)
+        del result[ImportKey.F_CREATION]
 
         self.assertDictEqual(result, expected)
 
