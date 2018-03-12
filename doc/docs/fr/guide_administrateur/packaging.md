@@ -216,3 +216,21 @@ Remplacer `X` par le nombre de workers désiré. Par défaut `1`.
 systemctl daemon-reload
 systemctl restart canopsis-engine@<module>-<name>.service
 ```
+
+## Erreurs connues
+
+### Failed to create image
+
+```
+failed to export image: failed to create image: failed to get layer sha256:51a946666f22f58babd6e3e642b9db0f262f761f7081997a1c2e71bcddcdf5d3: layer does not exist
+```
+
+Problème de synchronisation sur disque des données. Probablement BTRFS en système de fichier ?
+
+Dans tous les cas :
+
+```
+sudo sync
+```
+
+Relancer le build, le cache docker sera disponible.
