@@ -9,7 +9,7 @@ Group=canopsis
 WorkingDirectory=/opt/canopsis
 Environment=VIRTUAL_ENV=/opt/canopsis
 Environment=HOME=/opt/canopsis
-Environment=PATH=$VIRTUAL_ENV/bin:$PATH
+Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 Environment="OPTIONS=-k gevent -b 0.0.0.0:8082"
 ExecStart=/opt/canopsis/bin/webserver $OPTIONS
 PIDFile=/var/run/canopsis-webserver.pid

@@ -7,6 +7,8 @@ if [ "${1}" = "" ]; then
     exit 1
 fi
 
+shift
+
 engine_module=$(sed -r 's/(.*)-.*/\1/g')
 engine_name=$(sed -r 's/.*-(.*)/\1/g')
 
