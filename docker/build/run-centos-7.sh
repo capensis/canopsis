@@ -11,8 +11,6 @@ sed -i /etc/yum/pluginconf.d/fastestmirror.conf -e 's/enabled=.*/enabled=0/g'
 find /etc/yum.repos.d/ -name "CentOS*.repo" -exec sed -e '/^mirrorlist=/d' -i {} \;
 find /etc/yum.repos.d/ -name "*.repo" -exec sed -re "s@^#baseurl=http://mirror\.centos\.org/centos/(.*)\$@baseurl=${repo_baseurl}\1@g" -i {} \;
 
-cat /etc/yum.repos.d/CentOS-Base.repo
-
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 rm -f /etc/localtime
 ln -s /usr/share/zoneinfo/UTC /etc/localtime
