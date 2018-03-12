@@ -68,9 +68,15 @@ def get():
 
     if "user" not in beaker_sess:
         # Authorization: Basic
-        auth_header = request.headers["Authorization"]
+        try:
+            auth_header = request.headers["Authorization"]
+        except KeyError:
+            return beaker_sess
         auth_header = auth_header.replace("Basic ", "")
-        auth_header = base64.b64decode(auth_header)
+        try:
+            auth_header = base64.b64decode(auth_header)
+        except TypeError as exc:
+            abort(400, "Authorization headers " + exc.message)
         credential = auth_header.split(":", 1)
 
         if len(credential) != 2:
