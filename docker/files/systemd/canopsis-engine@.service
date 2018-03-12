@@ -10,7 +10,8 @@ WorkingDirectory=/opt/canopsis
 Environment=VIRTUAL_ENV=/opt/canopsis
 Environment=HOME=/opt/canopsis
 Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-ExecStart=/opt/canopsis/bin/engine-launcher-systemd %i -w 1 -l info
+Environment=WORKERS=1
+ExecStart=/opt/canopsis/bin/engine-launcher-systemd %i -w ${WORKERS} -l info
 PIDFile=/var/run/canopsis-engine-%i.pid
 
 [Install]

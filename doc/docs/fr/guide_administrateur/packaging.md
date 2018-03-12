@@ -200,18 +200,19 @@ Le fichier `/opt/canopsis/etc/amqp2engines.conf` est toujours en vigeur.
 
 Pour le moment le nombre de processus lancés via `engine-launcher` est fixé dans les unités.
 
-Pour changer le nombre d’instances, désactivez l’unité fournie, copiez la dans `/etc/systemd/system/canopsis-engine-X@.service`.
-
-Changez la ligne `ExecStart` pour modifier `-w 1` par `-w X`.
-
-Dans le nom du fichier et la ligne `ExecStart`, remplacez `X` par le nombre de processus que vous voulez activer.
-
-Puis :
+Pour changer le nombre d’instances :
 
 ```bash
-systemctl stop canopsis-engine@<module>-<name>.service
-systemctl disable canopsis-engine@<module>-<name>.service
+mkdir -p /etc/systemd/system/canopsis-engine@<module>-<name>
+cat > /etc/systemd/system/canopsis-engine@<module>-<name>/workers.conf << EOF
+[Service]
+Environment=WORKERS=X
+EOF
+```
 
-systemctl enable canopsis-engine-X@<module>-<name>.service
-systemctl start canopsis-engine-X@<module>-<name>.service
+Remplacer `X` par le nombre de workers désiré. Par défaut `1`.
+
+```bash
+systemctl daemon-reload
+systemctl restart canopsis-engine@<module>-<name>.service
 ```
