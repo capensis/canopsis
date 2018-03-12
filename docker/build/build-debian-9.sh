@@ -15,6 +15,7 @@ apt-get -y --no-install-recommends install \
     libxmlsec1-dev \
     libxmlsec1-openssl \
     libldap2-dev \
+    pkg-config \
     python2.7-dev \
     python-pip \
     python-pkg-resources \
