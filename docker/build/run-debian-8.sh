@@ -10,6 +10,8 @@ ln -s /usr/share/zoneinfo/UTC /etc/localtime
 
 apt-get update
 
+apt-get dist-upgrade -y
+
 apt-get -y --no-install-recommends install locales
 
 echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
@@ -21,14 +23,12 @@ apt-get -y --no-install-recommends install \
     apt-transport-https \
     base-files \
     bash \
-    bash-completion \
     ca-certificates \
     curl \
     libsasl2-2 \
     libxml2 \
     libxslt1.1 \
     lsb-base \
-    lsb-release \
     libffi6 \
     libgmp10 \
     libgnutlsxx28 \
@@ -44,18 +44,11 @@ apt-get -y --no-install-recommends install \
     libxmlsec1 \
     libxmlsec1-openssl \
     libldap-2.4-2 \
-    pkgconf \
-    pkg-config \
     python \
     python2.7 \
-    python-pip \
-    python-pkg-resources \
-    python-virtualenv \
-    python-wheel \
     rsync \
     sudo \
     tmux \
-    vim \
-    virtualenv \
+    vim
 
 apt-get clean
