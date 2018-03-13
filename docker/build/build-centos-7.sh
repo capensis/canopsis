@@ -4,6 +4,28 @@ set -o pipefail
 
 yum makecache
 
-yum install -y xz make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel wget libtool openssl openssl-devel bzip2-devel cyrus-sasl-devel openldap-devel libcurl-devel python-devel openldap-devel libxml2-devel libxslt-devel perl-ExtUtils-MakeMaker git rsync librsync-devel uthash-devel.noarch libacl-devel libxslt-devel libffi-devel xmlsec1-devel xmlsec1-openssl-devel libtool-ltdl-devel python-virtualenv
+yum install -y \
+    bzip2-devel \
+    cyrus-sasl-devel \
+    gcc \
+    gcc-c++ \
+    libcurl-devel \
+    libevent-devel \
+    libffi-devel \
+    libtasn1 \
+    libtool \
+    libtool-ltdl-devel \
+    libxml2-devel \
+    libxslt-devel \
+    make \
+    nettle-devel \
+    openldap-devel \
+    openssl-devel \
+    python-devel \
+    python-virtualenv \
+    python-wheel \
+    xmlsec1-devel \
+    xmlsec1-openssl-devel \
+    zlib-devel
 
 rm -rf /var/cache/yum
