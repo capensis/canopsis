@@ -29,7 +29,24 @@ export SYSBASE="centos-7"
 
 Si cette variable n’existe pas ou est vide, toutes les plateformes supportées seront alors construites.
 
-## Build Docker
+## Python Wheels
+
+Le script de build docker que vous allez utiliser créer et démarre une image qui va créer des `wheels` python et les mettre en cache. Cela permet de considérablement accélérer la construction des images lorsqu’on fait une nouvelle release.
+
+Les wheels sont reconstruites dans les cas suivants :
+
+ * Dépôt inexistant pour la plateforme en cours de construction
+ * Changement du contenu du fichier `requirements.txt` de canopsis
+
+L’emplacement du cache des wheels peut être modifié :
+
+```bash
+export WHEEL_DIR="/tmp/canopsis-wheelrep"
+```
+
+Par défaut les wheels seront entreposée dans `docker/wheelbuild` lors de la construction, puis copiées dans `docker/wheels`.
+
+## Docker
 
 *Cette documentation regroupe la construction de `core` et `cat`.*
 
