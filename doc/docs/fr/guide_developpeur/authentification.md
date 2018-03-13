@@ -3,10 +3,10 @@
 ### Utilisation de l'authentification
 
 Afin d'utiliser les API de canopsis, il est nécessaire de s'authentifier.
-Il existe 3 solutions :
+Il existe trois solutions :
 
-  - ouvrir une session canopsis dans son navigateur web
-  - utiliser un token d'authentification
+  - ouvrir une session canopsis dans son navigateur web ;
+  - utiliser un token d'authentification ;
   - utiliser le mécanisme d'authentification HTTP Basic.
 
 Nous ne détaillerons que les deux dernières méthodes.
@@ -15,13 +15,16 @@ Nous ne détaillerons que les deux dernières méthodes.
 
 Pour récupérer le token d'authentification associé à une session, il faut se
 connecter à canopsis et afficher la modale "profile" en cliquant sur l'icône
-avec le nom d'utilisateur.
+avec le nom d'utilisateur (en haut à droite).
 
 Avec ce dit token, vous pouvez ensuite vous créer une session canopsis en
 envoyant une requête HTTP GET à l'URL suivante :
 ```
 http://<host>:<port>/autologin?authkey=<authkey>
 ```
+
+La requête retourne un cookie d'authentification qui doit être stocké et
+utilisé pour les requêtes suivantes (l'option `-b` avec curl).
 
 Si votre client HTTP ne supporte pas les sessions HTTP, vous devrez
 utiliser l'authentification HTTP Basic.
@@ -33,19 +36,20 @@ dans l'URL interrogée, l'identifiant et le mot de passe associé en suivant
 l'exemple suivant :
 
 ```
-http:/user:password@<host>:<port>//api/v2/pbehavior_byeid/pbh_1
+http://user:password@<host>:<port>/api/v2/context
 ```
 
 En fonction du client, d'autres actions peuvent être nécessaire.
 
-Une fois la session crée, elle reste valide un certain temps. Vous n'avez
-pas besoin de mettre l'identifiant et son mot de passe à chaque nouvelle
+Une fois la session crée, elle reste valide pendant un certain temps. Vous
+n'avez pas besoin de mettre identifiant et mot de passe à chaque nouvelle
 requête. Néanmoins, certains clients HTTP ne permettent pas de gérer les
 sessions HTTP, vous devrez donc vous référer à la documentation pour savoir
 si vous pouvez utiliser cette fonctionnalité. Dans le cas contraire, vous
 devrez saisir l'identifiant et le mot de passe associé à chaque requête.
 
 #### Cloture d'une session
+
 Pour fermer une session canopsis en cours, il faut juste faire une
 requête HTTP GET à l'URL suivante :
 ```
@@ -57,9 +61,11 @@ ne gère pas les sessions HTTP.
 
 ### Création d’un nouveau backend
 
-Une nouvelle méthode d’authentification de Canopsis est relativement simple à mettre en place avec les outils actuels :
+Une nouvelle méthode d’authentification de Canopsis est relativement simple à
+mettre en place avec les outils actuels :
 
-Pour un backend nommé avec beaucoup d’imagination « NewBackend », voici le fichier que vous devrez déposer dans `sources/python/webcore/canopsis/webcore/auth/newbackend.py` :
+Pour un backend nommé avec beaucoup d’imagination « NewBackend », voici le
+fichier que vous devrez déposer dans `sources/python/webcore/canopsis/webcore/auth/newbackend.py` :
 
 ```python
 from copy import deepcopy
