@@ -154,6 +154,7 @@ yum localinstall canopsis-cat-<version>-1.el7.centos.x86_64.rpm
 ### Debian 8 / 9
 
 ```bash
+apt-get update
 dpkg -i canopsis-cat-1-<version>.amd64.<platform>.deb
 apt install -f
 ```
