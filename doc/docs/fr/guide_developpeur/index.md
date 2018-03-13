@@ -26,6 +26,8 @@
 
 [Dummy auth](dummy_auth.md)
 
+[Authentication](authentification.md)
+
 ## API
 
 [APIs](apis/index.md)
