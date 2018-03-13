@@ -1,5 +1,60 @@
 ## Authentification
 
+### Utilisation de l'authentification
+
+Afin d'utiliser les API de canopsis, il est nécessaire de s'authentifier.
+Il existe 3 solutions :
+
+  - ouvrir une session canopsis dans son navigateur web
+  - utiliser un token d'authentification
+  - utiliser le mécanisme d'authentification HTTP Basic.
+
+Nous ne détaillerons que les deux dernières méthodes.
+
+#### Token d'authentification
+
+Pour récupérer le token d'authentification associé à une session, il faut se
+connecter à canopsis et afficher la modale "profile" en cliquant sur l'icône
+avec le nom d'utilisateur.
+
+Avec ce dit token, vous pouvez ensuite vous créer une session canopsis en
+envoyant une requête HTTP GET à l'URL suivante :
+```
+http://<host>:<port>/autologin?authkey=<authkey>
+```
+
+Si votre client HTTP ne supporte pas les sessions HTTP, vous devrez
+utiliser l'authentification HTTP Basic.
+
+
+#### HTTP Basic authentication
+Pour utiliser l'authentification HTTP Basic, il suffit juste d'ajouter
+dans l'URL interrogée, l'identifiant et le mot de passe associé en suivant
+l'exemple suivant :
+
+```
+http:/user:password@<host>:<port>//api/v2/pbehavior_byeid/pbh_1
+```
+
+En fonction du client, d'autres actions peuvent être nécessaire.
+
+Une fois la session crée, elle reste valide un certain temps. Vous n'avez
+pas besoin de mettre l'identifiant et son mot de passe à chaque nouvelle
+requête. Néanmoins, certains clients HTTP ne permettent pas de gérer les
+sessions HTTP, vous devrez donc vous référer à la documentation pour savoir
+si vous pouvez utiliser cette fonctionnalité. Dans le cas contraire, vous
+devrez saisir l'identifiant et le mot de passe associé à chaque requête.
+
+#### Cloture d'une session
+Pour fermer une session canopsis en cours, il faut juste faire une
+requête HTTP GET à l'URL suivante :
+```
+http://<host>:<port>/logout
+```
+
+Vous n'avez pas besoin de fermer uns session canopsis si votre client HTTP
+ne gère pas les sessions HTTP.
+
 ### Création d’un nouveau backend
 
 Une nouvelle méthode d’authentification de Canopsis est relativement simple à mettre en place avec les outils actuels :
