@@ -1,6 +1,7 @@
-FROM debian:stretch-slim
+FROM centos:centos7
 
 ARG PROXY
+ARG SYSBASE
 ARG TAG
 
 ENV http_proxy ${PROXY}
@@ -9,6 +10,7 @@ ENV CPS_HOME /opt/canopsis
 ENV CPS_USER canopsis
 ENV CPS_GROUP canopsis
 
+COPY docker/files/systemd/* /usr/lib/systemd/system/
 COPY docker/files/vimrc /root/.vimrc
 COPY docker/files/bashrc /root/.bashrc
 
@@ -17,5 +19,5 @@ RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash
 
 COPY docker/files/vimrc ${CPS_HOME}/.vimrc
 
-COPY docker/build/debian-run.sh /
-RUN /bin/bash /debian-run.sh
+COPY docker/build/run-${SYSBASE}.sh /run.sh
+RUN /bin/bash /run.sh

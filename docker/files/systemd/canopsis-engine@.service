@@ -1,0 +1,18 @@
+[Unit]
+Description=Canopsis Engine %i
+After=network.target
+Documentation=http://www.canopsis.org/wp-content/themes/canopsis/doc/
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=VIRTUAL_ENV=/opt/canopsis
+Environment=HOME=/opt/canopsis
+Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+Environment=WORKERS=1
+ExecStart=/opt/canopsis/bin/engine-launcher-systemd %i -w ${WORKERS} -l info
+PIDFile=/var/run/canopsis-engine-%i.pid
+
+[Install]
+WantedBy=multi-user.target
