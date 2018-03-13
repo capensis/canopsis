@@ -58,16 +58,23 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
 mkdir -p $GOPATH/{bin,src}
-mkdir -p $GOPATH/src/git.canopsis.net/canopsis
+mkdir -p $GOPATH/src/git.canopsis.net/canopsis/go-revolution
 ```
 
 Clone the project if not already done:
 
 ```
-git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/
+git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/go-revolution
 ```
 
 Install Glide: https://glide.sh/
+
+Install the dependencies:
+
+```
+glide update
+glide install
+```
 
 Build some binaries:
 
