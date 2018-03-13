@@ -67,7 +67,7 @@ workdir="${HOME}/cps-docker"
 mkdir -p ${workdir} && cd ${workdir}
 ```
 
- * `<START_BRANCH>` doit correspondre à la branche du projet `canopsis/canopsis` que vous allez utiliser pour fabriquer les images. Cette valeur doit être égale à celle présente dans `catag.ini` pour ce projet.
+ * `<START_BRANCH>` doit correspondre à la branche du projet `canopsis/canopsis` que vous allez utiliser pour fabriquer les images. Cette valeur doit être égale à celle présente dans `catag.ini` pour ce projet (la branche doit être présente dans tous les dépots annexes, comme les différentes bricks).
  * `<TAG_CANOPSIS>` la version à publier.
  * Vous pouvez changer le `workdir` à votre convenance. Ce doit être un dossier dans lequel vous pourrez écrire. Aucune permission particulière n’est nécessaire.
 
@@ -137,8 +137,8 @@ ssh-agent -k
 
 Se mettre à la racine du dépôt CAT puis :
 
-```
-./build-packages.sh
+```bash
+./build-packages.sh ${tag}
 ```
 
 Les paquets sont alors disponibles dans le dossier `packages`.
@@ -147,13 +147,13 @@ Les paquets sont alors disponibles dans le dossier `packages`.
 
 ### CentOS / RedHat 7
 
-```
+```bash
 yum localinstall canopsis-cat-<version>-1.el7.centos.x86_64.rpm
 ```
 
 ### Debian 8 / 9
 
-```
+```bash
 dpkg -i canopsis-cat-1-<version>.amd64.<platform>.deb
 apt install -f
 ```
