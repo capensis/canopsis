@@ -34,6 +34,7 @@ yum install -y \
     libxml2 \
     libxslt \
     nettle \
+    net-snmp \
     openldap \
     openssl \
     python \
