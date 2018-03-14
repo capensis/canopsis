@@ -1,12 +1,16 @@
 #!/bin/bash
-set -e
-set -o pipefail
 
 if [ "${1}" = "" ]; then
-    echo "Usage: $0 start|status|restart|stop"
+    echo "Usage: $0 start|status|restart|stop [pattern]"
     exit 1
 fi
 
-for i in $(systemctl list-units -a --type=service "canopsis*" |sed -rn 's/^.*(canopsis-.*\.service).*/\1/pg'); do
+if [ "${2}" = "" ]; then
+    pattern="canopsis*"
+else
+    pattern="${2}"
+fi
+
+for i in $(systemctl list-units -a --type=service "${pattern}" |sed -rn 's/^.*(canopsis-.*\.service).*/\1/pg'); do
     systemctl status $i
 done

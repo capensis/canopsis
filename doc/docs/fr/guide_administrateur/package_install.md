@@ -101,9 +101,7 @@ Des unités `systemd` sont disponibles :
 Voici tous les engines qui vous pouvez activer dans `core` et `cat` :
 
 ```bash
-systemctl enable canopsis-engine@acknowledgement-acknowledgement.service
 systemctl enable canopsis-engine@dynamic-alerts.service
-systemctl enable canopsis-engine@cancel-cancel.service
 systemctl enable canopsis-engine@cleaner-cleaner_alerts.service
 systemctl enable canopsis-engine@cleaner-cleaner_events.service
 systemctl enable canopsis-engine@dynamic-context-graph.service
@@ -130,6 +128,9 @@ systemctl enable canopsis-webserver.service
 ```bash
 /opt/canopsis/bin/canopsis-systemd start
 /opt/canopsis/bin/canopsis-systemd status
+
+systemctl reset-failed
+
 /opt/canopsis/bin/canopsis-systemd restart
 /opt/canopsis/bin/canopsis-systemd stop
 ```
