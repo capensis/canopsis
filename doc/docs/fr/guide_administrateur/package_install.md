@@ -22,6 +22,12 @@ Les fichiers suivants doivent être modifiés :
  * `/opt/canopsis/etc/infux/storage.conf`
  * `/opt/canopsis/etc/amqp.conf`
 
+Ou a défaut vous pouvez insérer dans votre `/etc/hosts` si c’est une installation locale :
+
+```
+127.0.0.1 localhost mongodb influxdb rabbitmq
+```
+
 ## Intégrations externes
 
  * MongoDB
