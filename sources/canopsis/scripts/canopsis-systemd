@@ -12,5 +12,5 @@ else
 fi
 
 for i in $(systemctl list-units -a --type=service "${pattern}" |sed -rn 's/^.*(canopsis-.*\.service).*/\1/pg'); do
-    systemctl status $i
+    systemctl $1 $i
 done
