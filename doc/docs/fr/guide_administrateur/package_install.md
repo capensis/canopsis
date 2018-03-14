@@ -128,30 +128,10 @@ systemctl enable canopsis-webserver.service
 ```
 
 ```bash
-systemctl start canopsis-engine@acknowledgement-acknowledgement.service
-systemctl start canopsis-engine@dynamic-alerts.service
-systemctl start canopsis-engine@cancel-cancel.service
-systemctl start canopsis-engine@cleaner-cleaner_alerts.service
-systemctl start canopsis-engine@cleaner-cleaner_events.service
-systemctl start canopsis-engine@dynamic-context-graph.service
-systemctl start canopsis-engine@eventduration-eventduration.service
-systemctl start canopsis-engine@event_filter-event_filter.service
-systemctl start canopsis-engine@eventstore-eventstore.service
-systemctl start canopsis-engine@linklist-linklist.service
-systemctl start canopsis-engine@dynamic-pbehavior.service
-systemctl start canopsis-engine@dynamic-perfdata.service
-systemctl start canopsis-engine@scheduler-scheduler.service
-systemctl start canopsis-engine@selector-selector.service
-systemctl start canopsis-engine@dynamic-serie.service
-systemctl start canopsis-engine@dynamic-stats.service
-systemctl start canopsis-engine@task_dataclean-task_dataclean.service
-systemctl start canopsis-engine@task_importctx-task_importctx.service
-systemctl start canopsis-engine@task_linklist-task_linklist.service
-systemctl start canopsis-engine@task_mail-task_mail.service
-systemctl start canopsis-engine@ticket-ticket.service
-systemctl start canopsis-engine@dynamic-watcher.service
-
-systemctl start canopsis-webserver.service
+/opt/canopsis/bin/canopsis-systemd start
+/opt/canopsis/bin/canopsis-systemd status
+/opt/canopsis/bin/canopsis-systemd restart
+/opt/canopsis/bin/canopsis-systemd stop
 ```
 
 Le fichier `/opt/canopsis/etc/amqp2engines.conf` est toujours en vigeur.
