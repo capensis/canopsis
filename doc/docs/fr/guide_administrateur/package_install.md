@@ -105,7 +105,6 @@ systemctl enable canopsis-engine@dynamic-alerts.service
 systemctl enable canopsis-engine@cleaner-cleaner_alerts.service
 systemctl enable canopsis-engine@cleaner-cleaner_events.service
 systemctl enable canopsis-engine@dynamic-context-graph.service
-systemctl enable canopsis-engine@eventduration-eventduration.service
 systemctl enable canopsis-engine@event_filter-event_filter.service
 systemctl enable canopsis-engine@eventstore-eventstore.service
 systemctl enable canopsis-engine@linklist-linklist.service
@@ -113,8 +112,6 @@ systemctl enable canopsis-engine@dynamic-pbehavior.service
 systemctl enable canopsis-engine@dynamic-perfdata.service
 systemctl enable canopsis-engine@scheduler-scheduler.service
 systemctl enable canopsis-engine@selector-selector.service
-systemctl enable canopsis-engine@dynamic-serie.service
-systemctl enable canopsis-engine@dynamic-stats.service
 systemctl enable canopsis-engine@task_dataclean-task_dataclean.service
 systemctl enable canopsis-engine@task_importctx-task_importctx.service
 systemctl enable canopsis-engine@task_linklist-task_linklist.service
@@ -125,14 +122,32 @@ systemctl enable canopsis-engine@dynamic-watcher.service
 systemctl enable canopsis-webserver.service
 ```
 
+Quelques exemples de gestion des services avec systemd :
+
 ```bash
+# Démarrer tout canopsis
 /opt/canopsis/bin/canopsis-systemd start
+# Récupérer les status détaillés
 /opt/canopsis/bin/canopsis-systemd status
 
+# Désactiver un engine cassé et le supprimé des failures
+systemctl disable canopsis-engine@badinstance-badinstance
 systemctl reset-failed
 
+# Redémarrer tout canopsis
 /opt/canopsis/bin/canopsis-systemd restart
+
+# Arrêter tout canopsis
 /opt/canopsis/bin/canopsis-systemd stop
+
+# Lister toutes les unités canopsis avec un affichage compacte
+systemctl list-units -a "canopsis*"
+
+# Redémarrer le webserver
+systemctl restart canopsis-webserver
+
+# Redémarrer un engine
+systemctl restart canopsis-engine@cooleng-cooleng
 ```
 
 Le fichier `/opt/canopsis/etc/amqp2engines.conf` est toujours en vigeur.
