@@ -5,7 +5,7 @@
     },
 	"categories": [{
 		"title": "General",
-		"keys":["name", "type"]
+		"keys":["name", "type", "enabled", "time"]
 	},{
 		"title": "Depends",
 		"keys": ["depends"]
@@ -14,23 +14,30 @@
 		"keys": ["impact"]
 	}],
 	"properties": {
-		"name":{	
+		"name":{
 			"type": "string"
 		},
 		"type": {
 			"type": "string"
 		},
-        "depends": {
-		    "type": "array",
-		    "items": {
-			    "type": "string"
+		"enabled": {
+			"type": "boolean"
+		},
+		"time": {
+			"type": "timestamp",
+			"required":true
+		},
+		"depends": {
+			"type": "array",
+			"items": {
+				"type": "string"
 			},
 			"reorderable": true
-        },
-        "impact": {
-		    "type": "array",
-		    "items": {
-			    "type": "string"
+		},
+		"impact": {
+			"type": "array",
+			"items": {
+				"type": "string"
 			},
 			"reorderable": true
 		}
