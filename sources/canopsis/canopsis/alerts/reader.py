@@ -587,7 +587,11 @@ class AlertsReader(object):
                     "foreignField": "_id",
                     "as": "entity"
                 }
-            }, {
+            },
+                        {
+                "$match": {"entity.enabled": {"$in": ["True", "true", True]}}
+            },
+            {
                 "$unwind": {
                     "path": "$entity",
                     "preserveNullAndEmptyArrays": True,
