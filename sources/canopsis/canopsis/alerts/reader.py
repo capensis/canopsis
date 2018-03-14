@@ -588,7 +588,7 @@ class AlertsReader(object):
                     "as": "entity"
                 }
             },
-                        {
+            {
                 "$match": {"entity.enabled": {"$in": ["True", "true", True]}}
             },
             {
