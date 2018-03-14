@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 
 if [ "${1}" = "" ]; then
-    echo "Usage: $0 start|status|restart|stop
+    echo "Usage: $0 start|status|restart|stop"
     exit 1
 fi
 
