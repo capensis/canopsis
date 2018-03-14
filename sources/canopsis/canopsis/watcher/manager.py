@@ -184,6 +184,17 @@ class Watcher:
             return None
 
         entities = watcher_entity['depends']
+
+        query = {"_id": {"$in": entities},
+                 # "infos.scenario_displayed_to_user.value":
+                 "enabled": {"$in": ["True", "true", True]}}
+        cursor = self.context_graph.get_entities(query=query,
+                                                 projection={"_id": 1})
+
+        entities = []
+        for ent in cursor:
+            entities.append(ent["_id"])
+
         display_name = watcher_entity['name']
 
         alarm_list = list(self.alert_storage._backend.find({
