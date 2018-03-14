@@ -186,7 +186,6 @@ class Watcher:
         entities = watcher_entity['depends']
 
         query = {"_id": {"$in": entities},
-                 # "infos.scenario_displayed_to_user.value":
                  "enabled": {"$in": ["True", "true", True]}}
         cursor = self.context_graph.get_entities(query=query,
                                                  projection={"_id": 1})
