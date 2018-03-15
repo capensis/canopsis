@@ -41,10 +41,7 @@ use canopsis
 db.createUser({user:"cpsmongo",pwd:"canopsis",roles:["dbOwner"]})
 db.periodical_alarm.createIndex({t:1, d:1})
 db.periodical_alarm.createIndex({d:1})
-
 ```
-
-
 
 ### InfluxDB
 
@@ -67,25 +64,19 @@ db.periodical_alarm.createIndex({d:1})
   # realm = "InfluxDB"
 
   [...]
-
 ```
 
 - créer l'utilisateur : `$ influx`
 
 ```
 CREATE USER cplsinflux WITH PASSWORD 'canopsis' WITH ALL PRIVILEGES
-
-
 ```
-
 
 - redémarrer influx
 
 ```
 # systemctl restart influxdb
-
 ```
-
 
 ### redis
 
@@ -93,7 +84,6 @@ CREATE USER cplsinflux WITH PASSWORD 'canopsis' WITH ALL PRIVILEGES
 
 ``` 
 # apt-get install redis-server
-
 ```
 
 ### Go setup
@@ -104,7 +94,6 @@ Installer la dernière version de go : https://golang.org/dl/
 wget https://dl.google.com/go/go1.9.4.linux-amd64.tar.gz
 rm -rf /usr/local/go && tar xf go1.9.4.linux-amd64.tar.gz -C /usr/local/
 export PATH=$PATH:/usr/local/go/bin
-
 ```
 
 Définir l'environnement go :
@@ -115,38 +104,30 @@ export PATH=$PATH:$GOPATH/bin
 
 mkdir -p $GOPATH/{bin,src}
 mkdir -p $GOPATH/src/git.canopsis.net/canopsis/go-revolution
-
 ```
 
-Cloner le projet:
+Cloner le projet :
 
 ```
 git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/go-revolution
-
 ```
 
 Installer Glide: https://glide.sh/
 
 
-initialiser le projet
+Initialiser le projet :
 
 ```bash
 cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
 make init
-
 ```
 
-
-
-lancer le build:
+Lancer le build :
 
 ```bash
-
 cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
 make
-
 ```
-
 
 ### paramétrage des moteurs
 
@@ -156,12 +137,7 @@ export CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost/canopsis"
 export CPS_REDIS_URL="redis://nouser:dbpassword@host:port/0"
 export CPS_INFLUX_URL="http://cpsinflux:canopsis@host:8086"
 export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/canopsis/default_configuration.toml"
-
 ```
-
-
-
-
 
 ## Compat - Python + Go Engines
 
@@ -220,9 +196,7 @@ goconvey -workDir ${GOPATH}/src/git.canopsis.net/canopsis/go-revolution/
 
 Note: you can enable desktop notifications from the web UI to avoid checking manually.
 
-
 # Développement
-
 
 ## Utiliser la bibliothèque Canopsis
 
