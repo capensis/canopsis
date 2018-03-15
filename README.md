@@ -44,6 +44,7 @@ db.periodical_alarm.createIndex({d:1})
 ```
 
 
+
 ### InfluxDB
 
 - [Installer influxdb](https://portal.influxdata.com/downloads)
@@ -70,7 +71,9 @@ db.periodical_alarm.createIndex({d:1})
 
 ```
 CREATE USER cplsinflux WITH PASSWORD 'canopsis' WITH ALL PRIVILEGES
+
 ```
+
 
 - redémarrer influx
 
@@ -91,7 +94,7 @@ CREATE USER cplsinflux WITH PASSWORD 'canopsis' WITH ALL PRIVILEGES
 
 Installer la dernière version de go : https://golang.org/dl/
 
-```
+```bash
 wget https://dl.google.com/go/go1.9.4.linux-amd64.tar.gz
 rm -rf /usr/local/go && tar xf go1.9.4.linux-amd64.tar.gz -C /usr/local/
 export PATH=$PATH:/usr/local/go/bin
@@ -99,7 +102,7 @@ export PATH=$PATH:/usr/local/go/bin
 
 Définir l'environnement go :
 
-```
+```bash
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
@@ -109,7 +112,7 @@ mkdir -p $GOPATH/src/git.canopsis.net/canopsis
 
 Cloner le projet:
 
-```
+```bash
 git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/
 ```
 
@@ -117,7 +120,7 @@ Installer Glide: https://glide.sh/
 
 lancer le build:
 
-```
+```bash
 cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
 make
 ```
@@ -182,13 +185,13 @@ You will need engines environment variables.
 
 If you want to skip tests with long run times:
 
-```
+```bash
 export CPS_TEST_SKIP_LONG=1
 ```
 
 Then run `goconvey`:
 
-```
+```bash
 goconvey -workDir ${GOPATH}/src/git.canopsis.net/canopsis/go-revolution/
 ```
 
