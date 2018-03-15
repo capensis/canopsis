@@ -23,9 +23,11 @@ yum update -y
 
 yum install -y \
     bzip2 \
+    bind-utils \
     curl \
     cyrus-sasl \
     htop \
+    iputils \
     libcurl \
     libevent \
     libffi \

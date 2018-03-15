@@ -25,6 +25,8 @@ apt-get -y --no-install-recommends install \
     bash \
     ca-certificates \
     curl \
+    dnsutils \
+    iputils-ping \
     libsasl2-2 \
     libxml2 \
     libxslt1.1 \
