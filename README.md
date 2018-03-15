@@ -30,7 +30,7 @@ export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/cano
 ```bash
 cd cmd/engines-axe && go build . && ./engine-axe
 cd cmd/engines-che && go build . && ./engine-che
-cd cmd/engines-lifeline && go build . && ./engine-lifeline
+cd cmd/engines-heartbeat && go build . && ./engine-heartbeat
 cd cmd/engines-stat && go build . && ./engine-stat
 cd cmd/feeder && go build . && ./feeder
 ```
@@ -112,7 +112,7 @@ Pour une installation complètement cloisonnée, retirer tous les bindings des q
 Créer et binder les queues suivantes :
 
  * `Engine_che` : `canopsis.events` sur rk `#`
- * `Engine_lifeline` : `canopsis.events` sur rk `#`
+ * `Engine_heartbeat` : `canopsis.events` sur rk `#`
  * `Engine_axe` : `amq.direct` sur rk `#`
 
 ## Tests - GoConvey
