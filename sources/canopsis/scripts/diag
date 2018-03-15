@@ -39,7 +39,6 @@ class CpsDiagTest(unittest.TestCase):
     def test_influx_connection(self):
         try:
             store = InfluxDBStorage()
-            store.find_elements()
         except Exception as exc:
             self.print_exc(exc)
 
