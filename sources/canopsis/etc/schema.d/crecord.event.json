@@ -9,6 +9,9 @@
 	},{
 		"title": "Event",
 		"keys":["event_type", "status", "state", "ack.isAck"]
+	},{
+		"title": "Event filter",
+		"keys":["state", "state_type"]
 	}],
 	"showEditButton": true,
 	"properties": {
@@ -117,6 +120,9 @@
 			"type": "number",
 			"required": true,
 			"role": "criticity"
+		},
+		"state_type": {
+			"type": "number"
 		},
 		"perimeter": {
 			"type": "string"
