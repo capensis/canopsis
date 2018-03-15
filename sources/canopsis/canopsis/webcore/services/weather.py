@@ -53,14 +53,15 @@ DEFAULT_PB_TYPES = []
 
 
 def __format_pbehavior(pbehavior):
-    """Rewrite en pbehavior from db format to front format.
+    """
+    Rewrite a pbehavior from db format to front format.
 
     :param dict pbehavior: a pbehavior dict
     :return: a formatted pbehavior
     """
     EVERY = "Every {}"
     to_delete = [
-        "connector", "author", "comments", "filter", "connector_name", "eids"
+        "connector", "filter", "connector_name", "eids"
     ]
 
     pbehavior["behavior"] = pbehavior.pop("name")
@@ -221,10 +222,10 @@ class WatcherFilter(object):
         """
         Call WatcherFilter.filter(filter_) first before calling this function.
 
-        :param allstatus bool: watcher has all entities with an active pbehavior
-        :param somestatus bool: watcher has some or all entities with an active pbehavior
-        :param watcherstatus bool: watcher has a pbehavior or not. If the filter contains a filter on that, it will be
-        :param pb_types list[str]: list of pbehavior types to filter on. If None or empty, any types will be ok.
+        :param bool allstatus: watcher has all entities with an active pbehavior
+        :param bool somestatus: watcher has some or all entities with an active pbehavior
+        :param bool watcherstatus: watcher has a pbehavior or not. If the filter contains a filter on that, it will be
+        :param list[str] pb_types: list of pbehavior types to filter on. If None or empty, any types will be ok.
         """
         if not isinstance(allstatus, bool):
             raise ValueError('wrong allstatus value: not a bool')
@@ -267,6 +268,7 @@ class WatcherFilter(object):
 
         return logic_watcher and logic_some_all and self._filter_pb_types(pb_types)
 
+
 def pbehavior_types(pbehaviors):
     """
     Return a set containing all type_ found in pbehaviors.
@@ -280,6 +282,7 @@ def pbehavior_types(pbehaviors):
             pb_types.add(pb_type)
 
     return pb_types
+
 
 def watcher_status(watcher, pbehavior_eids_merged):
     """
