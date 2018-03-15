@@ -78,7 +78,6 @@ CREATE USER cplsinflux WITH PASSWORD 'canopsis' WITH ALL PRIVILEGES
 systemctl restart influxdb
 ```
 
-
 ### Redis
 
 - installer redis
@@ -104,24 +103,30 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
 mkdir -p $GOPATH/{bin,src}
-mkdir -p $GOPATH/src/git.canopsis.net/canopsis
+mkdir -p $GOPATH/src/git.canopsis.net/canopsis/go-revolution
 ```
 
-Cloner le projet:
+Cloner le projet :
 
-```bash
-git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/
+```
+git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/go-revolution
 ```
 
 Installer Glide: https://glide.sh/
 
-Lancer le build:
+Initialiser le projet :
+
+```bash
+cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
+make init
+```
+
+Lancer le build :
 
 ```bash
 cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
 make
 ```
-
 
 ### Paramétrage des moteurs
 
@@ -191,9 +196,7 @@ goconvey -workDir ${GOPATH}/src/git.canopsis.net/canopsis/go-revolution/
 
 Note: you can enable desktop notifications from the web UI to avoid checking manually.
 
-
 # Développement
-
 
 ## Utiliser la bibliothèque Canopsis
 
