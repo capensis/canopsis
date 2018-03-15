@@ -2,8 +2,8 @@
 set -e
 set -o pipefail
 
-echo "deb http://ftp.fr.debian.org/debian/ stretch main contrib non-free" > /etc/apt/sources.list
-echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list
+echo "deb http://ftp.fr.debian.org/debian/ jessie main contrib non-free" > /etc/apt/sources.list
+echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
 
 rm -f /etc/localtime
 ln -s /usr/share/zoneinfo/UTC /etc/localtime
@@ -33,16 +33,15 @@ apt-get -y --no-install-recommends install \
     lsb-base \
     libffi6 \
     libgmp10 \
-    libgnutls30 \
     libgnutlsxx28 \
     libgnutls-openssl27 \
-    libhogweed4 \
-    libicu57 \
+    libhogweed2 \
+    libicu52 \
     libidn11 \
-    libnettle6 \
+    libnettle4 \
     libp11-kit0 \
-    libpsl5 \
-    libssl1.1 \
+    libpsl0 \
+    libssl1.0.0 \
     libtasn1-6 \
     libxmlsec1 \
     libxmlsec1-openssl \

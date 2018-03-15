@@ -18,6 +18,7 @@ build_images:
 variables:
   WHEEL_DIR: "/tmp/canopsis-wheelrep"
   COMPOSE_HTTP_TIMEOUT: "180"
+  SYSBASE: "debian-9"
 
 test:
   stage: test

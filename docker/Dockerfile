@@ -59,8 +59,11 @@ COPY sources/canopsis/etc ./etc
 COPY sources/db-conf/opt ./opt
 COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc
+COPY docker/files/bash_profile .bash_profile
 COPY docker/files/etc/ ./etc/
 COPY tools/brickmanager /brickmanager
+
+RUN chmod +x /opt/canopsis/.bash_profile
 
 ADD docker/files/entrypoint.sh /
 
@@ -77,7 +80,9 @@ RUN mkdir -p ./etc/init.d && \
 # Copy UI bricks as root
 COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
 RUN . ${CPS_HOME}/bin/activate && \
-    python /brickmanager enable brick-querybuilder
+    python /brickmanager enable brick-querybuilder && \
+    python /brickmanager enable brick-listalarm && \
+    python /brickmanager enable brick-timeline
 
 USER ${CPS_USER}:${CPS_GROUP}
 
