@@ -45,6 +45,8 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
+from operator import itemgetter
+
 
 DEFAULT_EXPIRATION = 1800
 DEFAULT_OPENED_TRUNC = True
@@ -515,7 +517,8 @@ class AlertsReader(object):
             limit=None,
             with_steps=False,
             natural_search=False,
-            active_columns=None
+            active_columns=None,
+            hide_resources=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -548,9 +551,27 @@ class AlertsReader(object):
         :param list active_columns: the list of alarms columns on which to
         apply the natural search filter.
 
+        :param bool hide_resources: hide alarms on resources if an alarm is
+        on a parent's component
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
+        if hide_resources:
+            if resolved:
+                self.logger.error('you only can hide resources on current alarms')
+            return self.hide_resources(
+                tstart,
+                tstop,
+                filter_,
+                sort_key,
+                sort_dir,
+                skip,
+                limit,
+                search,
+                natural_search,
+                active_columns
+            )
 
         if lookups is None:
             lookups = []
@@ -636,6 +657,121 @@ class AlertsReader(object):
         }
 
         return res
+
+    def hide_resources(
+        self,
+        tstart=None,
+        tstop=None,
+        filter_={},
+        sort_key='opened',
+        sort_dir='DESC',
+        skip=0,
+        limit=None,
+        search='',
+        natural_search=False,
+        active_columns=None
+    ):
+        if filter_ is None:
+            filter_ = {}
+
+        if active_columns is None:
+            active_columns = self.DEFAULT_ACTIVE_COLUMNS
+
+        time_filter = self._get_time_filter(
+            opened=True, 
+            resolved=False,
+            tstart=tstart, 
+            tstop=tstop
+        )
+
+        if time_filter is None:
+            return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
+        
+        final_filter = self._get_final_filter(
+            filter_,
+            time_filter,
+            search,
+            active_columns          
+        )
+
+        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
+
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "default_entities",
+                    "localField": "d",
+                    "foreignField": "_id",
+                    "as": "entity"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$entity",
+                    "preserveNullAndEmptyArrays": True,
+                }
+            }, {
+                "$match": final_filter
+            }, {
+                "$sort": {
+                    sort_key: sort_dir
+                }
+            }
+        ]
+        alarms = self.alarm_storage._backend.aggregate(pipeline).get('result')
+
+        alarms_with_resources_hided = self.hide_resources_from_alarm_list(alarms)
+
+        len_before_truncate = len(alarms_with_resources_hided)
+        if limit is not None:
+            last = limit + skip
+            alarms_with_resources_hided = alarms_with_resources_hided[skip:last]
+        else:
+            alarms_with_resources_hided = alarms_with_resources_hided[skip:]
+            last = len(alarms_with_resources_hided)
+        len_after_truncate = len(alarms_with_resources_hided)
+        
+
+        #il manque la recherche
+
+        ret_val = {
+            'alarms': alarms_with_resources_hided,
+            'total': len_after_truncate,
+            'truncated': len_after_truncate < len_before_truncate,
+            'first': skip,
+            'last': last
+        }
+        return ret_val
+
+    def hide_resources_from_alarm_list(self, alarms):
+        alarm_dict = {}
+        res = []
+        for alarm in alarms:
+            if alarm.get('v').get('component') not in alarm_dict:
+                alarm_dict[alarm.get('v').get('component')] = [alarm]
+            else:
+                alarm_dict[alarm.get('v').get('component')].append(alarm)
+        
+        for component in alarm_dict:
+            if 'component' in [alarm_comp.get('entity', {}).get('type', '') for alarm_comp in alarm_dict[component]]:
+                res = sum([res, self.check_alarm_list_with_component(alarm_dict[component])],[])
+            else:
+                res = sum([res, alarm_dict[component]],[])
+
+        return res
+
+    def check_alarm_list_with_component(self, alarms):
+        state_comp = 0
+        states_list = []
+        alarm_comp = {}
+        for i in alarms:
+            states_list.append(i.get('v').get('state').get('val'))
+            if i.get('entity').get('type') == 'component':
+                state_comp = i.get('v').get('state').get('val')
+                alarm_comp = i
+        if state_comp >= max(states_list):
+            return [alarm_comp]
+
+        return alarms
 
     def count_alarms_by_period(
             self,

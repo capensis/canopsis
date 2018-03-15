@@ -73,7 +73,13 @@ class MongoCollection(object):
         :param dict query: a query search
         :rtype: pymongo.cursor.Cursor
         """
-        return self._hr(self.collection.find, query, *args, **kwargs)
+        try:
+            return self._hr(self.collection.find, query, *args, **kwargs)
+        except OperationFailure as of_err:
+            message = 'Operation failure while doing find: {}'.format(of_err)
+        except Exception as ex:
+            message = 'Unknown exception on collection find: {}'.format(ex)
+            
 
     def find_one(self, query, *args, **kwargs):
         """
