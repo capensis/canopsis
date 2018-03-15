@@ -44,13 +44,12 @@ db.periodical_alarm.createIndex({d:1})
 ```
 
 
-
 ### InfluxDB
 
 - [Installer influxdb](https://portal.influxdata.com/downloads)
 
 - configurer l'authentification : ouvrir le fichier `/etc/influxdb/influxdb.conf`
-```
+```ini
 [http]
   # Determines whether HTTP endpoint is enabled.
   # enabled = true
@@ -71,23 +70,21 @@ db.periodical_alarm.createIndex({d:1})
 
 ```
 CREATE USER cplsinflux WITH PASSWORD 'canopsis' WITH ALL PRIVILEGES
-
 ```
-
 
 - redémarrer influx
 
-```
-# systemctl restart influxdb
+```bash
+systemctl restart influxdb
 ```
 
 
-### redis
+### Redis
 
 - installer redis
 
-```
-# apt-get install redis-server
+```bash
+apt-get install redis-server
 ```
 
 ### Go setup
@@ -118,7 +115,7 @@ git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH
 
 Installer Glide: https://glide.sh/
 
-lancer le build:
+Lancer le build:
 
 ```bash
 cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
@@ -126,18 +123,15 @@ make
 ```
 
 
-### paramétrage des moteurs
+### Paramétrage des moteurs
 
-```
+```bash
 export CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost/canopsis"
 export CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost/canopsis"
 export CPS_REDIS_URL="redis://nouser:dbpassword@host:port/0"
 export CPS_INFLUX_URL="http://cpsinflux:canopsis@host:8086"
 export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/canopsis/default_configuration.toml"
 ```
-
-
-
 
 
 ## Compat - Python + Go Engines
@@ -160,7 +154,7 @@ next = axe,...
 
 Dans le cas d’une installation en `build-install` :
 
-```
+```bash
 su - canopsis -c "supervisorctl update"
 su - canopsis -c "hypcontrol start"
 ```
