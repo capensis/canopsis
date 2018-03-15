@@ -13,6 +13,7 @@ Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:
 Environment=WORKERS=1
 ExecStart=/opt/canopsis/bin/engine-launcher-systemd %i -w ${WORKERS} -l info
 PIDFile=/var/run/canopsis-engine-%i.pid
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

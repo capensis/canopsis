@@ -54,7 +54,7 @@ function build_for_sysbase() {
 
             echo "RUNNING WHEEL ${sysbase}"
 
-            docker run -v ${wheel_dir}:/root/wheelrep/ canopsis/wheel-${sysbase}:latest "${fix_ownership}"
+            docker run --rm -v ${wheel_dir}:/root/wheelrep/ canopsis/wheel-${sysbase}:latest "${fix_ownership}"
         fi
 
         rm -rf ${workdir}/docker/wheels/

@@ -29,7 +29,24 @@ export SYSBASE="centos-7"
 
 Si cette variable n’existe pas ou est vide, toutes les plateformes supportées seront alors construites.
 
-## Build Docker
+## Python Wheels
+
+Le script de build docker que vous allez utiliser créer et démarre une image qui va créer des `wheels` python et les mettre en cache. Cela permet de considérablement accélérer la construction des images lorsqu’on fait une nouvelle release.
+
+Les wheels sont reconstruites dans les cas suivants :
+
+ * Dépôt inexistant pour la plateforme en cours de construction
+ * Changement du contenu du fichier `requirements.txt` de canopsis
+
+L’emplacement du cache des wheels peut être modifié :
+
+```bash
+export WHEEL_DIR="/tmp/canopsis-wheelrep"
+```
+
+Par défaut les wheels seront entreposée dans `docker/wheelbuild` lors de la construction, puis copiées dans `docker/wheels`.
+
+## Docker
 
 *Cette documentation regroupe la construction de `core` et `cat`.*
 
@@ -142,81 +159,6 @@ Se mettre à la racine du dépôt CAT puis :
 ```
 
 Les paquets sont alors disponibles dans le dossier `packages`.
-
-## Installation
-
-### CentOS / RedHat 7
-
-```bash
-yum localinstall canopsis-cat-<version>-1.el7.centos.x86_64.rpm
-```
-
-### Debian 8 / 9
-
-```bash
-apt-get update
-dpkg -i canopsis-cat-1-<version>.amd64.<platform>.deb
-apt install -f
-```
-
-## Init
-
-Des unités `systemd` sont disponibles :
-
- * `canopsis-engine@<module>-<name>.service`
- * `canopsis-webserver.service`
-
-Voici tous les engines qui vous pouvez activer dans `core` et `cat` :
-
-```bash
-systemctl enable canopsis-engine@acknowledgement-acknowledgement.service
-systemctl enable canopsis-engine@dynamic-alerts.service
-systemctl enable canopsis-engine@cancel-cancel.service
-systemctl enable canopsis-engine@cleaner-cleaner_alerts.service
-systemctl enable canopsis-engine@cleaner-cleaner_events.service
-systemctl enable canopsis-engine@dynamic-context-graph.service
-systemctl enable canopsis-engine@eventduration-eventduration.service
-systemctl enable canopsis-engine@event_filter-event_filter.service
-systemctl enable canopsis-engine@eventstore-eventstore.service
-systemctl enable canopsis-engine@linklist-linklist.service
-systemctl enable canopsis-engine@dynamic-pbehavior.service
-systemctl enable canopsis-engine@dynamic-perfdata.service
-systemctl enable canopsis-engine@scheduler-scheduler.service
-systemctl enable canopsis-engine@selector-selector.service
-systemctl enable canopsis-engine@dynamic-serie.service
-systemctl enable canopsis-engine@dynamic-stats.service
-systemctl enable canopsis-engine@task_dataclean-task_dataclean.service
-systemctl enable canopsis-engine@task_importctx-task_importctx.service
-systemctl enable canopsis-engine@task_linklist-task_linklist.service
-systemctl enable canopsis-engine@task_mail-task_mail.service
-systemctl enable canopsis-engine@ticket-ticket.service
-systemctl enable canopsis-engine@dynamic-watcher.service
-
-systemctl enable canopsis-webserver.service
-```
-
-Le fichier `/opt/canopsis/etc/amqp2engines.conf` est toujours en vigeur.
-
-### Nombre de process
-
-Pour le moment le nombre de processus lancés via `engine-launcher` est fixé dans les unités.
-
-Pour changer le nombre d’instances :
-
-```bash
-mkdir -p /etc/systemd/system/canopsis-engine@<module>-<name>
-cat > /etc/systemd/system/canopsis-engine@<module>-<name>/workers.conf << EOF
-[Service]
-Environment=WORKERS=X
-EOF
-```
-
-Remplacer `X` par le nombre de workers désiré. Par défaut `1`.
-
-```bash
-systemctl daemon-reload
-systemctl restart canopsis-engine@<module>-<name>.service
-```
 
 ## Erreurs connues
 
