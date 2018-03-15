@@ -23,9 +23,11 @@ yum update -y
 
 yum install -y \
     bzip2 \
+    bind-utils \
     curl \
     cyrus-sasl \
     htop \
+    iputils \
     libcurl \
     libevent \
     libffi \
@@ -34,6 +36,7 @@ yum install -y \
     libxml2 \
     libxslt \
     nettle \
+    net-snmp \
     openldap \
     openssl \
     python \

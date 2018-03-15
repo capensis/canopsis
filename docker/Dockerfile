@@ -80,7 +80,9 @@ RUN mkdir -p ./etc/init.d && \
 # Copy UI bricks as root
 COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
 RUN . ${CPS_HOME}/bin/activate && \
-    python /brickmanager enable brick-querybuilder
+    python /brickmanager enable brick-querybuilder && \
+    python /brickmanager enable brick-listalarm && \
+    python /brickmanager enable brick-timeline
 
 USER ${CPS_USER}:${CPS_GROUP}
 

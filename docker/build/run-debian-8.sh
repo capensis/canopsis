@@ -25,6 +25,8 @@ apt-get -y --no-install-recommends install \
     bash \
     ca-certificates \
     curl \
+    dnsutils \
+    iputils-ping \
     libsasl2-2 \
     libxml2 \
     libxslt1.1 \
@@ -47,6 +49,9 @@ apt-get -y --no-install-recommends install \
     python \
     python2.7 \
     rsync \
+    snmp \
+    snmp-mibs-downloader \
+    smitools \
     sudo \
     tmux \
     vim
