@@ -2,6 +2,27 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
 
+## Canopsis 2.5.12 (Sprint 03.16) - Due date : 2018-03-16
+
+### Functional changes
+
+- [Service Weather] Added the Fast ACK action in the service Weather widget
+- [Service Weather] Added an ACK icon in the service weather titles, to identify entities that have acknowledged alarms
+- [Service Weather] Added OK/NOK events statistics in the info popup
+- [APIs] APIs can now be requested using Basic Auth, without having to request the authentication route first
+- [Timeline] automatic actions now have an Author: "system"
+- [list alarms] added "Cancel alarm" and "Change criticity" actions, with correct translation
+- [Event filter] added "state" and "state_type" fields in the usable fields list
+- [Installation] New Installation method based on RPM/deb packages
+
+### Bug fixes
+
+- [Service weather] Fixed an issue where the watcher state was incorrectly impacted by paused applications
+- [Service weather] Fixed a type issue that could prevent the UI to display correctly
+- [HA Tools] Fixed an issue of the High Performance engines when the RabbitMQ connection was lost
+- [HA Tools] Reduced the downtime of the Canopsis UI when the MongoDB primary instance changes
+- [CAT] Fixed an SAMLv2 installation issue on CentOS 7/RHEL 7
+- [CAT] FIxed an race condition where SNMP rules could be missing when a trap was received while the engine's rules update function was running
 
 
 ## Canopsis 2.5.6 (sprint 02.2) - Due date : 2018-02-02
