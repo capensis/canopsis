@@ -8,7 +8,7 @@
 		"keys":["component", "resource", "domain", "perimeter"]
 	},{
 		"title": "Event",
-		"keys":["event_type", "status", "state", "ack.isAck"]
+		"keys":["event_type", "status.val", "state.val", "ack.isAck"]
 	},{
 		"title": "Event filter",
 		"keys":["state", "state_type"]
@@ -17,7 +17,7 @@
 	"properties": {
 		"hostgroups": {
 			"type": "array",
-	   		"items": {
+			"items": {
 				"type": "string"
 			},
 			"role" : "tags"
@@ -119,7 +119,12 @@
 		"state": {
 			"type": "number",
 			"required": true,
-			"role": "criticity"
+			"role": "criticity",
+			"properties": {
+				"val": {
+					"type" : "number"
+				}
+			}
 		},
 		"state_type": {
 			"type": "number"
@@ -132,7 +137,12 @@
 		},
 		"status": {
 			"type": "number",
-			"role": "status"
+			"role": "status",
+			"properties": {
+				"val": {
+					"type" : "number"
+				}
+			}
 		},
 		"cancel": {
 			"type": "object",
