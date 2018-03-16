@@ -36,7 +36,7 @@
 		},
 		"crecord_type": {
 			"enum": ["event"],
-			"required": true,
+			"required": false,
 			"default": "event",
 			"icon": "flag"
 		},
@@ -93,11 +93,11 @@
 		},
 		"component_alias": {
 			"type": "string",
-			"required": true
+			"required": false
 		},
 		"resource": {
 			"type": "string",
-			"required": true,
+			"required": false,
 			"readOnly": true
 		},
 		"connector": {
@@ -118,7 +118,7 @@
 		},
 		"state": {
 			"type": "number",
-			"required": true,
+			"required": false,
 			"role": "criticity",
 			"properties": {
 				"val": {
