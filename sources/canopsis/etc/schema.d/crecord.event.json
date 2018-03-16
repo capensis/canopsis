@@ -8,13 +8,16 @@
 		"keys":["component", "resource", "domain", "perimeter"]
 	},{
 		"title": "Event",
-		"keys":["event_type", "status", "state", "ack.isAck"]
+		"keys":["event_type", "status.val", "state.val", "ack.isAck"]
+	},{
+		"title": "Event filter",
+		"keys":["state", "state_type"]
 	}],
 	"showEditButton": true,
 	"properties": {
 		"hostgroups": {
 			"type": "array",
-	   		"items": {
+			"items": {
 				"type": "string"
 			},
 			"role" : "tags"
@@ -33,7 +36,7 @@
 		},
 		"crecord_type": {
 			"enum": ["event"],
-			"required": true,
+			"required": false,
 			"default": "event",
 			"icon": "flag"
 		},
@@ -90,11 +93,11 @@
 		},
 		"component_alias": {
 			"type": "string",
-			"required": true
+			"required": false
 		},
 		"resource": {
 			"type": "string",
-			"required": true,
+			"required": false,
 			"readOnly": true
 		},
 		"connector": {
@@ -115,8 +118,16 @@
 		},
 		"state": {
 			"type": "number",
-			"required": true,
-			"role": "criticity"
+			"required": false,
+			"role": "criticity",
+			"properties": {
+				"val": {
+					"type" : "number"
+				}
+			}
+		},
+		"state_type": {
+			"type": "number"
 		},
 		"perimeter": {
 			"type": "string"
@@ -126,7 +137,12 @@
 		},
 		"status": {
 			"type": "number",
-			"role": "status"
+			"role": "status",
+			"properties": {
+				"val": {
+					"type" : "number"
+				}
+			}
 		},
 		"cancel": {
 			"type": "object",
