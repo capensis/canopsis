@@ -589,7 +589,7 @@ class AlertsReader(object):
                 }
             },
             {
-                "$match": {"entity.enabled": {"$in": ["True", "true", True]}}
+                "$match": {"entity.enabled": True}
             },
             {
                 "$unwind": {

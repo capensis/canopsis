@@ -1,4 +1,4 @@
-# -*- co ding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
 Manager for watcher.
@@ -186,7 +186,7 @@ class Watcher:
         entities = watcher_entity['depends']
 
         query = {"_id": {"$in": entities},
-                 "enabled": {"$in": ["True", "true", True]}}
+                 "enabled": True}
         cursor = self.context_graph.get_entities(query=query,
                                                  projection={"_id": 1})
 

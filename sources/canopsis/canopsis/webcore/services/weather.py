@@ -597,7 +597,7 @@ def exports(ws):
             }
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
-        query["enabled"] = {"$in": ["True", "true", True]}
+        query["enabled"] = True
 
         raw_entities = context_manager.get_entities(query=query)
         entity_ids = [entity['_id'] for entity in raw_entities]
