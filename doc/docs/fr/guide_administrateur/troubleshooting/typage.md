@@ -17,6 +17,7 @@ Cas général de la requête permettant de récupérer les documents ne correspo
         }}
     ]
 }
+```
 
 Exemple avec le champs `enabled` devant être de type `bool` :
 
