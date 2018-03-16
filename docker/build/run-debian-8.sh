@@ -14,10 +14,10 @@ apt-get dist-upgrade -y
 
 apt-get -y --no-install-recommends install locales
 
-echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
-locale-gen
-
 export LANG="en_US.UTF-8"
+echo "LANG=${LANG}" > /etc/locale.conf
+echo "${LANG} UTF-8" > /etc/locale.gen
+locale-gen
 
 apt-get -y --no-install-recommends install \
     apt-transport-https \
