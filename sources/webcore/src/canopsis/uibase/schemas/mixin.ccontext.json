@@ -5,7 +5,7 @@
     },
 	"categories": [{
 		"title": "General",
-		"keys":["name", "type", "enabled", "time"]
+		"keys":["name", "type", "enabled"]
 	},{
 		"title": "Depends",
 		"keys": ["depends"]
@@ -23,10 +23,6 @@
 		"enabled": {
 			"type": "boolean"
 		},
-		"time": {
-			"type": "timestamp",
-			"required":true
-		},
 		"depends": {
 			"type": "array",
 			"items": {
@@ -40,6 +36,26 @@
 				"type": "string"
 			},
 			"reorderable": true
+		},
+		"enable_history": {
+			"type": "array",
+			"items": {
+				"type": "integer"
+			},
+			"reorderable": true
+		},
+		"disable_history": {
+			"type": "array",
+			"items": {
+				"type": "integer"
+			},
+			"reorderable": true
+		},
+		"infos": {
+			"type": "object"
+		},
+		"measurements": {
+			"type": "object"
 		}
 	}
 }
