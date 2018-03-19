@@ -62,7 +62,7 @@ class MigrationTool(object):
         self.loghandler = StreamHandler()
         self.logger.addHandler(self.loghandler)
 
-    def fill(self, init=None):
+    def fill(self, init=None, yes=False):
         tools = []
 
         for module in self.modules:
@@ -83,13 +83,13 @@ class MigrationTool(object):
             migrationtool.logger.addHandler(self.loghandler)
             tools.append(migrationtool)
 
+        coll = None
         if init is None:
             store = MongoStore.get_default()
             store.authenticate()
             coll = MongoCollection(store.get_collection(self.FLAG_COLLECTION))
 
             data = coll.find_one({"_id": self.FLAG_COLLECTION})
-
             if data is None:
                 print("Database not intialized. Initializing...")
                 init = True
@@ -98,10 +98,10 @@ class MigrationTool(object):
 
         for tool in tools:
             if init:
-                tool.init()
+                tool.init(yes=yes)
 
             else:
-                tool.update()
+                tool.update(yes=yes)
 
         if init is True:
             coll.insert({"_id": self.FLAG_COLLECTION,

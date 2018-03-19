@@ -18,9 +18,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from argparse import ArgumentParser
 
 from canopsis.migration.manager import MigrationTool
 
 if __name__ == '__main__':
+    parser = ArgumentParser(description='Canopsis Migration Tool')
+    parser.add_argument('--yes', dest='yes', action='store_true')
+    args = parser.parse_args()
+
     mgr = MigrationTool()
-    mgr.fill()
+    mgr.fill(yes=args.yes)
