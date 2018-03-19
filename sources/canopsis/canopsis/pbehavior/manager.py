@@ -350,6 +350,25 @@ class PBehaviorManager(object):
             return pbehavior.to_dict()
         return None
 
+    def upsert(self, pbehavior):
+        """
+        :param dict _filter: pbehavior filter
+        :param canopsis.models.pbehavior.PBehavior pbehavior:
+        """
+        from canopsis.common.mongo_store import MongoStore
+        from canopsis.common.collection import MongoCollection
+
+        conn = MongoStore.get_default()
+        coll = MongoCollection(conn.get_collection('default_pbehavior'))
+        r = coll.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
+
+        if r.get('updatedExisting', False) and r.get('nModified') == 1:
+            return True, r
+        elif r.get('updatedExisting', None) is False and r.get('nModified') == 0 and r.get('ok') == 1.0:
+            return True, r
+        else:
+            return False, r
+
     def delete(self, _id=None, _filter=None):
         """
         Delete pbehavior record
