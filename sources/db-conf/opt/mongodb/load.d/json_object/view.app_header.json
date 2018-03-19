@@ -1,0 +1,72 @@
+{
+  "_id": "view.app_header",
+  "loader_id": "view.app_header",
+  "enable": true,
+  "description": null,
+  "author": null,
+  "containerwidget": {
+    "widgetId": null,
+    "preference_id": null,
+    "xtype": "widgetcontainer",
+    "title": "container title vbox",
+    "widgetslotTemplate": null,
+    "mixins": [
+      {
+        "name": "lightlayout"
+      }
+    ],
+    "tagName": null,
+    "items": [
+      {
+        "id": "item_aaaa17ed-7601-7af7-63c5-fdab170f6030",
+        "widget": {
+          "widgetId": "item_662e99fe-44da-6334-edf5-a398e54023b0",
+          "preference_id": null,
+          "xtype": "uimaintabcollection",
+          "title": "",
+          "tabs": [
+            {
+              "displayable": true,
+              "nestedViews": [
+                {
+                  "value": {
+                    "value": "view.current_alarms",
+                    "displayable": true,
+                    "isActive": false,
+                    "label": "En cours"
+                  }
+                },
+                {
+                  "value": {
+                    "value": "view.history_alarms",
+                    "displayable": true,
+                    "isActive": false,
+                    "label": "Résolues"
+                  }
+                }
+              ],
+              "isActive": false,
+              "value": "",
+              "label": "Alarmes"
+            }
+          ],
+          "mixins": [],
+          "tagName": null,
+          "id": "item_662e99fe-44da-6334-edf5-a398e54023b0"
+        },
+        "mixins": [],
+        "xtype": "widgetwrapper",
+        "title": "wrapper"
+      }
+    ],
+    "id": "item_31ae7bda-960b-4518-1cff-a7c9f8d124ed"
+  },
+  "tags": [],
+  "crecord_write_time": 1521017288,
+  "crecord_creation_time": 0,
+  "crecord_type": "view",
+  "internal": false,
+  "id": "view.app_header",
+  "crecord_name": "app_header.json",
+  "loader_no_update": true
+}

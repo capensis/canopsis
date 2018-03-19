@@ -23,7 +23,9 @@ Webservice for session managment.
 """
 
 from __future__ import unicode_literals
-from bottle import request
+import base64
+from bottle import request, abort
+from canopsis.auth.check import check
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.common.ws import route
@@ -56,9 +58,48 @@ def get_user(_id=None):
 
 def get():
     """
-    get the beaker session
+    get the beaker session. If a beaker session dis not exist, check if a basic
+    auth is present in the request. If the authentication succeed, return a
+    newly created beaker.session with all the info of the suer. If the
+    authentication header is invalid return a beaker session with no user.
     """
-    return request.environ.get('beaker.session')
+
+    beaker_sess = request.environ.get('beaker.session', None)
+
+    if "user" not in beaker_sess:
+        # Authorization: Basic
+        try:
+            auth_header = request.headers["Authorization"]
+        except KeyError:
+            return beaker_sess
+        auth_header = auth_header.replace("Basic ", "")
+        try:
+            auth_header = base64.b64decode(auth_header)
+        except TypeError as exc:
+            abort(400, "Authorization headers " + exc.message)
+        credential = auth_header.split(":", 1)
+
+        if len(credential) != 2:
+            return beaker_sess
+
+        username = credential[0]
+        password = credential[1]
+
+        user = get_user(username)
+
+        user = check(mode="plain", user=user, password=password)
+
+        if not user:
+            abort(403, 'Forbidden')
+
+        if not user.get('enable', False):
+            abort(403, 'Account is disabled')
+
+        beaker_sess["user"] = credential[0]
+        beaker_sess["auth_on"] = True
+        beaker_sess.save()
+
+    return beaker_sess
 
 
 def create(user):

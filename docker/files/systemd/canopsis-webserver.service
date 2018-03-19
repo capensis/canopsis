@@ -13,6 +13,7 @@ Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:
 Environment="OPTIONS=-k gevent -b 0.0.0.0:8082"
 ExecStart=/opt/canopsis/bin/webserver $OPTIONS
 PIDFile=/var/run/canopsis-webserver.pid
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

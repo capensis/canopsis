@@ -26,7 +26,7 @@ test:
   script:
     - git submodule update --init
     - ./build-docker.sh ci develop test-ci
-    - echo CANOPSIS_TAG=ci-test >> .env
+    - echo CANOPSIS_TAG=${SYSBASE}-ci-test >> .env
     - docker-compose -p test${CI_JOB_ID} up -d
     - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "/opt/canopsis/bin/schema2db"
     - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "yes | /opt/canopsis/bin/canopsis-filldb --init"
