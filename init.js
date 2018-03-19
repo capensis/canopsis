@@ -55,6 +55,7 @@
         '_v_state_t': 'canopsis/brick-listalarm/src/partials/_v_state_t',
         '_v_status': 'canopsis/brick-listalarm/src/partials/_v_status',
         '_v_status_val': 'canopsis/brick-listalarm/src/partials/_v_status_val',
+        'renderer-listalarm_ellipsis': 'canopsis/brick-listalarm/src/renderers/renderer-listalarm_ellipsis',
         'listalarm': 'canopsis/brick-listalarm/src/widgets/listalarm/listalarm',
 
     }
@@ -108,6 +109,7 @@ define([
     'canopsis/brick-listalarm/src/forms/snooze/controller',
     'ehbs!snoozeform',
     'canopsis/brick-listalarm/src/helpers/absoluteTimeSince',
+    'canopsis/brick-listalarm/src/helpers/listalarm_ellipsis',
     'canopsis/brick-listalarm/src/mixins/rinfopop',
     'ehbs!_v_ack',
     'ehbs!_v_creation_date',
@@ -122,6 +124,7 @@ define([
     'ehbs!_v_state_t',
     'ehbs!_v_status',
     'ehbs!_v_status_val',
+    'ehbs!renderer-listalarm_ellipsis',
     'canopsis/brick-listalarm/src/serializers/alertexpression',
     'canopsis/brick-listalarm/src/serializers/alerts',
     'link!canopsis/brick-listalarm/src/style.css',

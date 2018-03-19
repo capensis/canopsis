@@ -507,7 +507,7 @@
 <script type="text/x-handlebars" data-template-name="_v_state">{{#component-rendererstate value=value}}
 {{/component-rendererstate}}
 </script>
-<script type="text/x-handlebars" data-template-name="_v_state_m">{{ellipsis value 15}}</script>
+<script type="text/x-handlebars" data-template-name="_v_state_m">{{listalarm_ellipsis value 15}}</script>
 <script type="text/x-handlebars" data-template-name="_v_state_t">{{timestamp value 'r'}}
 
 </script>
@@ -515,6 +515,7 @@
 {{/component-rendererstatus}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
+<script type="text/x-handlebars" data-template-name="renderer-listalarm_ellipsis">{{!* * @renderer object }} {{listalarm_ellipsis value attr.options.nbChar}}</script>
 <script type="text/x-handlebars" data-template-name="listalarm">
 <div class="pull-left">
     {{#component-selectionactions action='massAction'}}
