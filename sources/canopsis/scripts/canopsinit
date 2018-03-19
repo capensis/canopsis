@@ -25,7 +25,7 @@ import time
 from canopsis.common.mongo_store import MongoStore
 from pymongo.errors import ConnectionFailure
 
-COMMANDS = ["canopsis-filldb", "schema2db"]
+COMMANDS = [["canopsis-filldb", "--yes"], "schema2db"]
 
 ENV_MAX_RETRY = "CPS_INIT_MAX_RETRY"
 ENV_RETRY_DELAY = "CPS_INIT_RETRY_DELAY"
