@@ -126,7 +126,7 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
                     watcher_manager.compute_watchers()
 
             else:
-                logger.error(ERROR_MSG.format(event['action'], event))
+                logger.error(ERROR_MSG.format(event.get('action', 'no_action'), event))
 
         except ValueError as err:
             logger.error('cannot handle event: {}'.format(err))
