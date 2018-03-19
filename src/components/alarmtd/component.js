@@ -37,9 +37,7 @@ Ember.Application.initializer({
              */
             value: function() {
                 var alarm = get(this, 'alarm');
-                console.error('alarm', alarm);
                 var field = get(this, 'field');
-                console.error('field', field);                
                 var val = alarm[field.humanName];
                 return val;
             }.property('alarm.changed', 'field'),
