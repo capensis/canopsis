@@ -27,6 +27,10 @@ Cette section couvre les informations utiles aux administrateurs de Canopsis
 
  - [Link builder](linkbuilder.md)
 
+## Packaging
+
+ - [Packaging](packaging.md)
+
 ## CAT Only
 
  - [SNMP](snmp.md)

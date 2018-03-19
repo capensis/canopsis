@@ -29,7 +29,4 @@ function install(){
 
 	cp -R plugins $PREFIX/opt/rabbitmq-server/plugins
 	check_code $?
-
-	pip_install "httplib2==0.7.2"
-	pip_install "pyrabbit==0.9.7"
 }

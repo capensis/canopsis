@@ -500,19 +500,20 @@ function pip_install() {
     echo "pip install $@"
 
     # Support CAT buildinstall
-    pylibpath="${CPSPATH}/sources"
-    if [ "${CPSPATH}" = "" ];then
-        pylibpath="${SRC_PATH}"
+    source /etc/os-release
+    pylibpath="${SRC_PATH}/../docker/wheels/${ID}-${VERSION_ID}/"
+    if [ ! -d ${pylibpath} ]; then
+        pylibpath="${SRC_PATH}/externals/python-libs/"
     fi
 
     cat > ~/.pydistutils.cfg << EOF
 [easy_install]
 allow_hosts = ''
-find_links = file://${pylibpath}/externals/python-libs/
+find_links = file://${pylibpath}
 EOF
     cat ~/.pydistutils.cfg > /opt/canopsis/.pydistutils.cfg
     chown $HUSER:$HGROUP /opt/canopsis/.pydistutils.cfg
-    . ${PREFIX}/bin/activate && pip install --no-index --find-links=file://${pylibpath}/externals/python-libs $@
+    . ${PREFIX}/bin/activate && pip install --no-index --find-links=file://${pylibpath} $@
     check_code $? "Pip install failed ..."
 }
 
