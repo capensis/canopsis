@@ -180,21 +180,12 @@ Créer et binder les queues suivantes :
 
 ## Tests - GoConvey
 
-You will need engines environment variables.
+[GoConvey](http://goconvey.co/) et `docker-compose` sont utilisés pour lancer les tests :
 
-If you want to skip tests with long run times:
-
-```bash
-export CPS_TEST_SKIP_LONG=1
 ```
-
-Then run `goconvey`:
-
-```bash
-goconvey -workDir ${GOPATH}/src/git.canopsis.net/canopsis/go-revolution/
+go get -u github.com/smartystreets/goconvey
+make test
 ```
-
-Note: you can enable desktop notifications from the web UI to avoid checking manually.
 
 # Développement
 
