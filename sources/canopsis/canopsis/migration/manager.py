@@ -21,10 +21,13 @@
 import json
 import os
 import signal
+import time
 
 from logging import StreamHandler
 
 from canopsis.common.utils import lookup
+from canopsis.common.collection import MongoCollection
+from canopsis.common.mongo_store import MongoStore
 from canopsis.confng import Configuration, Json
 from canopsis.logger import Logger
 
@@ -45,6 +48,7 @@ class MigrationTool(object):
     CONF_PATH = 'etc/migration/manager.conf'
     LOG_PATH = 'var/log/migrationtool.log'
     CATEGORY = 'MIGRATION'
+    FLAG_COLLECTION = "initialized"
 
     def __init__(self, modules=None):
 
@@ -58,7 +62,7 @@ class MigrationTool(object):
         self.loghandler = StreamHandler()
         self.logger.addHandler(self.loghandler)
 
-    def fill(self, init=True):
+    def fill(self, init=None):
         tools = []
 
         for module in self.modules:
@@ -79,12 +83,30 @@ class MigrationTool(object):
             migrationtool.logger.addHandler(self.loghandler)
             tools.append(migrationtool)
 
+        if init is None:
+            store = MongoStore.get_default()
+            store.authenticate()
+            coll = MongoCollection(store.get_collection(self.FLAG_COLLECTION))
+
+            data = coll.find_one({"_id": self.FLAG_COLLECTION})
+
+            if data is None:
+                print("Database not intialized. Initializing...")
+                init = True
+            else:
+                print("Database already intialized. Updating...")
+
         for tool in tools:
             if init:
                 tool.init()
 
             else:
                 tool.update()
+
+        if init is True:
+            coll.insert({"_id": self.FLAG_COLLECTION,
+                         "at": str(time.strftime("%a, %d %b %Y %H:%M:%S +0000"))})
+
 
 
 class MigrationModule(object):
