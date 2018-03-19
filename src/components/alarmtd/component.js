@@ -16,7 +16,7 @@ Ember.Application.initializer({
             /**
              * @property renderers
              */
-            renderers: ['v_state', 'v_state_t', 'v_status', 'v_extra_details', 'v_creation_date', 'v_last_update_date', 'v_last_event_date', 'v_resolved'],
+            renderers: ['v_state', 'v_state_t', 'v_status', 'v_extra_details', 'v_creation_date', 'v_last_update_date', 'v_last_event_date', 'v_resolved', 'v_state_m'],
 
             /**
              * @method init
@@ -37,7 +37,9 @@ Ember.Application.initializer({
              */
             value: function() {
                 var alarm = get(this, 'alarm');
+                console.error('alarm', alarm);
                 var field = get(this, 'field');
+                console.error('field', field);                
                 var val = alarm[field.humanName];
                 return val;
             }.property('alarm.changed', 'field'),
