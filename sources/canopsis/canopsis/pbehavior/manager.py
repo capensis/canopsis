@@ -361,6 +361,8 @@ class PBehaviorManager(object):
         This function uses MongoStore/MongoCollection instead of Storage.
 
         :param canopsis.models.pbehavior.PBehavior pbehavior:
+        :rtype: bool, dict
+        :returns: success, update result
         """
         r = self.pb_store.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
 
