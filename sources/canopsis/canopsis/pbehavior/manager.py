@@ -356,7 +356,10 @@ class PBehaviorManager(object):
 
     def upsert(self, pbehavior):
         """
-        :param dict _filter: pbehavior filter
+        Creates or update the given pbehavior.
+
+        This function uses MongoStore/MongoCollection instead of Storage.
+
         :param canopsis.models.pbehavior.PBehavior pbehavior:
         """
         r = self.pb_store.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
