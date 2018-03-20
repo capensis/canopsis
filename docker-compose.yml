@@ -47,7 +47,7 @@ services:
     mem_reservation: 1g
     oom_score_adj: -1000
   provisionning:
-    image: canopsis/canopsis-cat-prov:plop
+    image: canopsis/canopsis-cat-prov:${CANOPSIS_TAG}
     environment:
       - CPS_WAIT_FIRST_ATTEMPT=0
       - CPS_INIT_RETRY_DELAY=10
