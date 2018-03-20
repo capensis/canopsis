@@ -110,6 +110,10 @@ class MongoStore(object):
         """
         Return the desired collection.
 
+        This function returns the raw pymongo Collection object.
+
+        You must wrap it with MongoCollection if you want automatic AutoReconnect handling.
+
         :param name: the name of the collection
         :rtype: Collection
         """
