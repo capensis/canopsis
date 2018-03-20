@@ -20,7 +20,6 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-from unittest import main
 from time import sleep
 
 from canopsis.alerts.manager import Alerts

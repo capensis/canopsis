@@ -45,8 +45,6 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
-from operator import itemgetter
-
 
 DEFAULT_EXPIRATION = 1800
 DEFAULT_OPENED_TRUNC = True
@@ -67,10 +65,12 @@ class AlertsReader(object):
     CATEGORY = 'COUNT_CACHE'
     GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
 
-    DEFAULT_ACTIVE_COLUMNS = ["v.component",
-                             "v.connector",
-                             "v.resource",
-                             "v.connector_name"]
+    DEFAULT_ACTIVE_COLUMNS = [
+        "v.component",
+        "v.connector",
+        "v.resource",
+        "v.connector_name"
+    ]
 
     def __init__(self, logger, config, storage,
                  pbehavior_manager, entitylink_manager):
@@ -671,6 +671,9 @@ class AlertsReader(object):
         natural_search=False,
         active_columns=None
     ):
+        """
+        :rtype: dict
+        """
         if filter_ is None:
             filter_ = {}
 
@@ -678,20 +681,20 @@ class AlertsReader(object):
             active_columns = self.DEFAULT_ACTIVE_COLUMNS
 
         time_filter = self._get_time_filter(
-            opened=True, 
+            opened=True,
             resolved=False,
-            tstart=tstart, 
+            tstart=tstart,
             tstop=tstop
         )
 
         if time_filter is None:
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
-        
+
         final_filter = self._get_final_filter(
             filter_,
             time_filter,
             search,
-            active_columns          
+            active_columns
         )
 
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
@@ -729,10 +732,8 @@ class AlertsReader(object):
             alarms_with_resources_hided = alarms_with_resources_hided[skip:]
             last = len(alarms_with_resources_hided)
         len_after_truncate = len(alarms_with_resources_hided)
-        
 
         #il manque la recherche
-
         ret_val = {
             'alarms': alarms_with_resources_hided,
             'total': len_after_truncate,
@@ -743,31 +744,42 @@ class AlertsReader(object):
         return ret_val
 
     def hide_resources_from_alarm_list(self, alarms):
+        """
+        :rtype: list
+        """
         alarm_dict = {}
         res = []
         for alarm in alarms:
-            if alarm.get('v').get('component') not in alarm_dict:
-                alarm_dict[alarm.get('v').get('component')] = [alarm]
+            component = alarm.get('v').get('component')
+            if component not in alarm_dict:
+                alarm_dict[component] = [alarm]
             else:
-                alarm_dict[alarm.get('v').get('component')].append(alarm)
-        
+                alarm_dict[component].append(alarm)
+
         for component in alarm_dict:
-            if 'component' in [alarm_comp.get('entity', {}).get('type', '') for alarm_comp in alarm_dict[component]]:
-                res = sum([res, self.check_alarm_list_with_component(alarm_dict[component])],[])
-            else:
-                res = sum([res, alarm_dict[component]],[])
+            for alarm_comp in alarm_dict[component]:
+                if 'component' in [alarm_comp.get('entity', {}).get('type', '')]:
+                    alarms_with_component = self.check_alarm_list_with_component(alarm_dict[component])
+                    res = sum([res, alarms_with_component], [])
+                else:
+                    res = sum([res, alarm_dict[component]], [])
 
         return res
 
     def check_alarm_list_with_component(self, alarms):
+        """
+        :rtype: list
+        """
         state_comp = 0
         states_list = []
         alarm_comp = {}
         for i in alarms:
-            states_list.append(i.get('v').get('state').get('val'))
+            val = i.get('v').get('state').get('val')
+            states_list.append(val)
             if i.get('entity').get('type') == 'component':
-                state_comp = i.get('v').get('state').get('val')
+                state_comp = val
                 alarm_comp = i
+
         if state_comp >= max(states_list):
             return [alarm_comp]
 
@@ -784,21 +796,11 @@ class AlertsReader(object):
         """
         Count alarms that have been opened during (stop - start) period.
 
-        :param start: Beginning timestamp of period
-        :type start: int
-
-        :param stop: End timestamp of period
-        :type stop: int
-
-        :param subperiod: Cut (stop - start) in ``subperiod`` subperiods
-        :type subperiod: dict
-
-        :param limit: Counts cannot exceed this value
-        :type limit: int
-
-        :param query: Custom mongodb filter for alarms
-        :type query: dict
-
+        :param int start: Beginning timestamp of period
+        :param int stop: End timestamp of period
+        :param dict subperiod: Cut (stop - start) in ``subperiod`` subperiods
+        :param int limit: Counts cannot exceed this value
+        :param dict query: Custom mongodb filter for alarms
         :return: List in which each item contains an interval and the
                  related count
         :rtype: list
