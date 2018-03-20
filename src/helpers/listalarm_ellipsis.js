@@ -38,9 +38,6 @@
             style += 'white-space:nowrap;';
             style += 'overflow:hidden;"';
         }
-        var coucou = function () {
-            alert('YEAHHH');
-        }
 
         var html = '';
         html += '<p onclick=showOutput("';
@@ -50,9 +47,18 @@
         html += '>';
         html += txt;
         html += '</p>';
+
+        /*var html = '';
+        html += '<p data-toggle="tooltip" data-placement="top" data-html="true" title="';
+        html += txt;
+        html += '" ';
+        html += style;
+        html += '>';
+        html += txt;
+        html += '</p>';*/
+
         return new Ember.String.htmlSafe(html);
     };
-
     //declaring helper this way allow it to be used as simple function somewhere else.
     Handlebars.registerHelper('listalarm_ellipsis', helper);
     Ember.Handlebars.helper('listalarm_ellipsis', helper);
@@ -62,8 +68,8 @@
             hideOutput();
         }
         var modal = '';
-        modal += '<div class="modal fade in" id="modal-default-output" style="display: block; height: 30%; margin-left: 25%; padding-right: 15px;">';
-        modal += '  <div class="modal-dialog">';
+        modal += '<div class="modal fade in" id="modal-default-output" style="display: block; margin-left: 40%; width: 20%; padding-right: 15px;">';
+        modal += '  <div class="modal-dialog" style="width: auto;">';
         modal += '    <div class="modal-content">';
         modal += '      <div class="modal-header">';
         modal += '        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick=hideOutput()>';
@@ -71,25 +77,30 @@
         modal += '        <h4 class="modal-title">Output</h4>';
         modal += '      </div>';
         modal += '      <div class="modal-body">';
-        modal += '        <p>' + output + '</p>';
+        modal += '        <p style="margin: auto; word-wrap: break-word;">' + output + '</p>';
         modal += '      </div>';
         modal += '    </div>';
         modal += '  </div>';
         modal += '</div>';
         $('body').append(modal);
         //putTrigger()
-        /*$(window).click(function () {
-            //Hide the menus if visible
-            if ($("#modal-default-output").length) {
-                hideOutput();
-            }
-        });
-
-        $('#modal-default-output').click(function (event) {
-            event.stopPropagation();
-        });*/
     }
-    window.putTrigger= function (){
+    /*$(window).on("click", function (event) {
+        console.error('id', $('#modal-default-output'));
+        console.error(event.target);
+        if ($('#modal-default-output').has(event.target).length == 0 && !$('#modal-default-output').is(event.target)) {
+            console.error('YEAH  iam in the first if')
+            if ($("#modal-default-output").length) {
+                console.error('YEAH  iam in the second if')
+                hideOutput();
+                //event.stopPropagation();
+            }
+        } else {
+            console.log('i am in the modal')
+            //hideOutput();
+        }
+    });*/
+    /*window.putTrigger= function (){
          $(window).click(function () {
              //Hide the menus if visible
              if ($("#modal-default-output").length) {
@@ -100,7 +111,7 @@
          $('#modal-default-output').click(function (event) {
              event.stopPropagation();
          });
-    }
+    }*/
     window.hideOutput = function () {
         $('#modal-default-output').remove();
     }
