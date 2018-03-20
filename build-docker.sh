@@ -64,6 +64,9 @@ function build_for_sysbase() {
 
         docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile -t canopsis/canopsis-core:${sysbase}-${tag} .
 
+		echo "Building provisonning image"
+		docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${sysbase}-${tag} .
+
         if [ "${sysbase}" = "debian-9" ]; then
             echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
 

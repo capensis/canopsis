@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH="$PATH:/usr/sbin"
+export PATH="$PATH:/usr/sbin:$HOME/bin"
 
 export PS1='[\u@\h \W]\$ '
 
