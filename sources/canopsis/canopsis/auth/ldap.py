@@ -138,6 +138,7 @@ class LDAPBackend(BaseBackend):
                 val = val[0]
 
             info["contact"][field] = val
+            info[field] = val
 
         account = self.rights.save_user(self.ws, info)
         account['_id'] = user
