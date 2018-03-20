@@ -49,6 +49,7 @@ db.periodical_alarm.createIndex({d:1})
 - [Installer influxdb](https://portal.influxdata.com/downloads)
 
 - configurer l'authentification : ouvrir le fichier `/etc/influxdb/influxdb.conf`
+
 ```ini
 [http]
   # Determines whether HTTP endpoint is enabled.
