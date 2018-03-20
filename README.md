@@ -178,6 +178,22 @@ Créer et binder les queues suivantes :
  * `Engine_heartbeat` : `canopsis.events` sur rk `#`
  * `Engine_axe` : `amq.direct` sur rk `#`
 
+## Paramétrage de lancement
+
+Certains engines supportent des options au lancement :
+
+```
+$ ./engine-che -h
+Usage of ./engine-che:
+  -d    debug
+  -enrichContext
+        enable context graph enrichment. disabled by default.
+  -publishQueue string
+        Publish event to this queue. (default "Engine_event_filter")
+  -version
+        version infos
+```
+
 ## Tests - GoConvey
 
 [GoConvey](http://goconvey.co/) et `docker-compose` sont utilisés pour lancer les tests :
