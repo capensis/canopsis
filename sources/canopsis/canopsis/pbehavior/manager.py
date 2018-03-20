@@ -31,6 +31,8 @@ from six import string_types
 from dateutil.rrule import rrulestr
 from pymongo import DESCENDING
 
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
@@ -183,6 +185,8 @@ class PBehaviorManager(object):
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
+
+        self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
 
         self.currently_active_pb = set()
 
@@ -355,12 +359,7 @@ class PBehaviorManager(object):
         :param dict _filter: pbehavior filter
         :param canopsis.models.pbehavior.PBehavior pbehavior:
         """
-        from canopsis.common.mongo_store import MongoStore
-        from canopsis.common.collection import MongoCollection
-
-        conn = MongoStore.get_default()
-        coll = MongoCollection(conn.get_collection('default_pbehavior'))
-        r = coll.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
+        r = self.pb_store.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
 
         if r.get('updatedExisting', False) and r.get('nModified') == 1:
             return True, r
