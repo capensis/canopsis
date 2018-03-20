@@ -37,6 +37,8 @@ test:
     - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "source ~/.bashrc && /opt/canopsis/bin/ut_runner /opt/canopsis/test"
     - docker cp test${CI_JOB_ID}_webserver_1:/opt/canopsis/tmp/tests_report/ tests_report
     - docker-compose -p test-${CI_JOB_ID} kill
+    - docker-compose -p test-${CI_JOB_ID} rm -sf
+    - docker volume prune -f
 
   artifacts:
     paths:
