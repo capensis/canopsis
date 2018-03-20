@@ -71,19 +71,17 @@ def get_entity_id(event):
 def pb_id(event):
     """
     Build a pbehavior ID from event if applicable.
+
+    :returns: (None, None) if not applicable, (id, source) if applicable
     """
     did = event.get(DOWNTIME_ID)
     connector = event.get(CONNECTOR)
     connector_name = event.get(CONNECTOR_NAME)
 
     if did is not None and connector is not None and connector_name is not None:
-        return 'pb_downtime_{}-{}_{}'.format(
-            str(connector),
-            str(connector_name),
-            str(did)
-        )
+        return 'pb_downtime_{}-{}_{}'.format(connector, connector_name, did), 'nagioslike'
 
-    return None
+    return None, None
 
 @register_task
 def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
@@ -113,7 +111,8 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
 
         try:
             filter_ = {'_id': entity_id}
-            if event.get('action') == PBEHAVIOR_CREATE and pb_id(event) is None:
+            pbehavior_id, pb_source = pb_id(event)
+            if event.get('action') == PBEHAVIOR_CREATE and pbehavior_id is None and pb_source is None:
                 result = pbm.create(
                     pb_name, filter_, pb_author,
                     pb_start, pb_end,
@@ -128,11 +127,10 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
                 else:
                     watcher_manager.compute_watchers()
 
-            elif event.get('action') == PBEHAVIOR_CREATE and pb_id(event) is not None:
-                pbehavior_id = pb_id(event)
+            elif event.get('action') == PBEHAVIOR_CREATE and pbehavior_id is not None and pb_source is not None:
                 pbehavior = PBehaviorModel(
                     pbehavior_id, pb_name, filter_, pb_start, pb_end, pb_rrule, pb_author,
-                    connector=pb_connector, connector_name=pb_connector_name
+                    connector=pb_connector, connector_name=pb_connector_name, source=pb_source
                 )
                 success, result = pbm.upsert(pbehavior)
                 if not success:

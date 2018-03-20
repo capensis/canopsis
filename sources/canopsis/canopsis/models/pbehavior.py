@@ -35,12 +35,13 @@ class PBehavior(object):
     AUTHOR = 'author'
     TYPE = 'type_'
     REASON = 'reason'
+    SOURCE = 'source'
 
     def __init__(self, _id, name, filter_, tstart, tstop, rrule, author,
                  connector=DEFAULT_CONNECTOR_VALUE,
                  connector_name=DEFAULT_CONNECTOR_NAME_VALUE,
                  comments=None, eids=None, type_=None, reason=None,
-                 enabled=True,
+                 enabled=True, source=None,
                  *args, **kwargs):
         """
         :param str _id: pbehavior id
@@ -57,6 +58,7 @@ class PBehavior(object):
         :param str type_: particuliar type (editable trough ui ; pause...)
         :param str reason: explanation on pbehavior creation
         :param bool enabled: allow this pbehavior to be used. This is NOT the same as the is_active property.
+        :param str source: if None, pbehavior was created from canopsis. if anything else, it was created from an external data like an event from Nagios or so.
         """
         if filter_ is None:
             filter_ = {}
@@ -83,6 +85,9 @@ class PBehavior(object):
         elif not isinstance(reason, string_types):
             raise TypeError('reason must be a string_type, got {}'.format(type(reason)))
 
+        if source is not None and not isinstance(source, string_types):
+            raise TypeError('source must be None or a string, got {}'.format(type(source)))
+
         self._id = _id
         self.enabled = enabled
         self.name = name
@@ -97,6 +102,7 @@ class PBehavior(object):
         self.eids = eids
         self.type_ = type_
         self.reason = reason
+        self.source = source
 
         if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
@@ -164,7 +170,8 @@ class PBehavior(object):
             self.EIDS: self.eids,
             self.ENABLED: self.enabled,
             self.TYPE: self.type_,
-            self.REASON: self.reason
+            self.REASON: self.reason,
+            self.SOURCE: self.source
         }
 
         return dictionnary
