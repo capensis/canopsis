@@ -48,15 +48,6 @@
         html += txt;
         html += '</p>';
 
-        /*var html = '';
-        html += '<p data-toggle="tooltip" data-placement="top" data-html="true" title="';
-        html += txt;
-        html += '" ';
-        html += style;
-        html += '>';
-        html += txt;
-        html += '</p>';*/
-
         return new Ember.String.htmlSafe(html);
     };
     //declaring helper this way allow it to be used as simple function somewhere else.
@@ -83,35 +74,8 @@
         modal += '  </div>';
         modal += '</div>';
         $('body').append(modal);
-        //putTrigger()
     }
-    /*$(window).on("click", function (event) {
-        console.error('id', $('#modal-default-output'));
-        console.error(event.target);
-        if ($('#modal-default-output').has(event.target).length == 0 && !$('#modal-default-output').is(event.target)) {
-            console.error('YEAH  iam in the first if')
-            if ($("#modal-default-output").length) {
-                console.error('YEAH  iam in the second if')
-                hideOutput();
-                //event.stopPropagation();
-            }
-        } else {
-            console.log('i am in the modal')
-            //hideOutput();
-        }
-    });*/
-    /*window.putTrigger= function (){
-         $(window).click(function () {
-             //Hide the menus if visible
-             if ($("#modal-default-output").length) {
-                 hideOutput();
-             }
-         });
 
-         $('#modal-default-output').click(function (event) {
-             event.stopPropagation();
-         });
-    }*/
     window.hideOutput = function () {
         $('#modal-default-output').remove();
     }
