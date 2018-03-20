@@ -20,12 +20,14 @@
 # ---------------------------------
 import os
 import subprocess
+import sys
 import time
 
 from canopsis.common.mongo_store import MongoStore
 from pymongo.errors import ConnectionFailure
 
-COMMANDS = [["canopsis-filldb", "--yes"], "schema2db"]
+COMMANDS = ["/opt/canopsis/bin/schema2db",
+            ["/opt/canopsis/bin/canopsis-filldb", "--yes"]]
 
 ENV_MAX_RETRY = "CPS_INIT_MAX_RETRY"
 ENV_RETRY_DELAY = "CPS_INIT_RETRY_DELAY"
@@ -57,6 +59,8 @@ if __name__ == "__main__":
         else:
             print("\tSuccess")
             started = True
+
+    sys.stdout.flush()
 
     if started is True:
         for cmd in COMMANDS:
