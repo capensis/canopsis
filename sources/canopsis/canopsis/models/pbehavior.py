@@ -58,16 +58,30 @@ class PBehavior(object):
         :param str reason: explanation on pbehavior creation
         :param bool enabled: allow this pbehavior to be used. This is NOT the same as the is_active property.
         """
-        if filter_ is None or not isinstance(filter_, dict):
+        if filter_ is None:
             filter_ = {}
-        if comments is None or not isinstance(comments, list):
+        elif not isinstance(filter_, dict):
+            raise TypeError('filter_ must be a dict, got {}'.format(type(filter_)))
+
+        if comments is None:
             comments = []
-        if eids is None or not isinstance(eids, list):
+        elif not isinstance(comments, list):
+            raise TypeError('comments must be a list, got {}'.format(type(comments)))
+
+        if eids is None:
             eids = []
-        if type_ is None or not isinstance(type_, string_types):
+        elif not isinstance(eids, list):
+            raise TypeError('eids must be a list, got {}'.format(type(comments)))
+
+        if type_ is None:
             type_ = ''
-        if reason is None or not isinstance(reason, string_types):
+        elif not isinstance(type_, string_types):
+            raise TypeError('type_ must be a string_type, got {}'.format(type(type_)))
+
+        if reason is None:
             reason = ''
+        elif not isinstance(reason, string_types):
+            raise TypeError('reason must be a string_type, got {}'.format(type(reason)))
 
         self._id = _id
         self.enabled = enabled

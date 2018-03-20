@@ -130,7 +130,7 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
             elif event.get('action') == PBEHAVIOR_CREATE and pb_id(event) is not None:
                 pbehavior_id = pb_id(event)
                 pbehavior = PBehaviorModel(
-                    pbehavior_id, pb_name, dumps(filter_), pb_start, pb_end, pb_rrule, pb_author,
+                    pbehavior_id, pb_name, filter_, pb_start, pb_end, pb_rrule, pb_author,
                     connector=pb_connector, connector_name=pb_connector_name
                 )
                 success, result = pbm.upsert(pbehavior)
