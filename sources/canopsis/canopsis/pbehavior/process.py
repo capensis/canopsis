@@ -74,7 +74,8 @@ def pb_id(event):
     """
     did = event.get(DOWNTIME_ID)
     connector = event.get(CONNECTOR)
-    connector_name = event.get(CONNECTOR_NAME),
+    connector_name = event.get(CONNECTOR_NAME)
+
     if did is not None and connector is not None and connector_name is not None:
         return 'pb_downtime_{}-{}_{}'.format(
             str(connector),
