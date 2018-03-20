@@ -76,6 +76,7 @@ function build_for_sysbase() {
 
     if [ "${mode}" == "test" ]||[ "${mode}" == "test-ci" ]; then
         echo "BUILDING TEST ${sysbase}"
+        docker tag canopsis/canopsis-prov:${sysbase}-${tag} canopsis/canopsis-prov:${sysbase}-${tag}-test
         docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.tests -t canopsis/canopsis-core:${sysbase}-${tag}-test .
     fi
 }
