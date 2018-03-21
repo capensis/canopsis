@@ -515,9 +515,9 @@ class Alerts(object):
         if event_type in [Check.EVENT_TYPE, 'watcher']:
 
             alarm = self.get_current_alarm(entity_id)
-            check_alarm_filters = False
+            is_new_alarm = alarm is None
 
-            if alarm is None:
+            if is_new_alarm:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
@@ -527,8 +527,6 @@ class Alerts(object):
                 # Check is not OK
                 alarm = self.make_alarm(entity_id, event)
                 alarm = self.update_state(alarm, event[Check.STATE], event)
-
-                check_alarm_filters = True
 
             else:  # Alarm is already opened
                 value = alarm.get(self.alerts_storage.VALUE)
@@ -547,8 +545,7 @@ class Alerts(object):
 
             self.update_current_alarm(alarm, value)
 
-            # Force alarm filter evaluation on new alarm
-            if check_alarm_filters:
+            if is_new_alarm:
                 self.check_alarm_filters()
 
         else:
