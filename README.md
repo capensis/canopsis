@@ -195,6 +195,15 @@ Usage of ./engine-che:
         version infos
 ```
 
+## Procédures de purge
+
+Dans certains cas, purger ou modifier des collections MongoDB en dehors des engines Go entraîne une incohérence dans l’état du système et ne permet pas d’avoir un comportement attendu.
+
+Redémarrer Redis ou purger ses bases lorsque ces collections sont modifiées / purgée de manière externe :
+
+ * `periodical_alarm`
+ * `default_entities`
+
 ## Tests - GoConvey
 
 [GoConvey](http://goconvey.co/) et `docker-compose` sont utilisés pour lancer les tests :
