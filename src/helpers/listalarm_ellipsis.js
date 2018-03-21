@@ -23,14 +23,15 @@
         get = Ember.get,
         isNone = Ember.isNone,
         isArray = Ember.isArray;
-        
-        
+
+
     var helper = function (txt, nbChar) {
         var style = "";
-        
+
         if (typeof (nbChar) !== 'number')
-        nbChar = 0
-        
+			nbChar = 0
+
+
         if (nbChar > 0 && txt.length > nbChar) {
             style += 'style="';
             style += 'text-overflow:ellipsis;';
@@ -38,16 +39,17 @@
             style += 'white-space:nowrap;';
             style += 'overflow:hidden;"';
         }
-
+		txt = txt.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, "<br />")
         var html = '';
-        html += '<p onclick=showOutput("';
+        html += '<p onclick="showOutput(\'';
         html += txt;
-        html += '") ';
+        html += '\')" ';
         html += style;
         html += '>';
         html += txt;
         html += '</p>';
 
+		console.error("Plop : ", html)
         return new Ember.String.htmlSafe(html);
     };
     //declaring helper this way allow it to be used as simple function somewhere else.
