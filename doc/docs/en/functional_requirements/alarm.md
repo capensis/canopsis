@@ -116,7 +116,7 @@ An example of a alarm filter structure (stored in default_alarmfilter):
 
 ```javascript
 {
-    "entity_filter" : "{"d": {"$eq": "/fake/alarm/id"}}"
+    "entity_filter" : "{"d": {"$eq": "/fake/alarm/id"}}",
     "limit" : 180.0,
     "condition" : "{"v.state.val": {"$gte": 1}}",
     "tasks" : [
