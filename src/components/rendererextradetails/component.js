@@ -78,7 +78,7 @@ Ember.Application.initializer({
                         '<b>' + __('Periodic behavior') + '</b><br/>',
                         this.get('value.pbehaviors').map(function(pbeh) {
                             return pbeh.name + ' <br/>'
-                                + self.dateFormat(pbeh.dtstart) + ' - ' + self.dateFormat(pbeh.dtstop) + ' <br/>'
+                                + self.dateFormat(pbeh.tstart) + ' - ' + self.dateFormat(pbeh.tstop) + ' <br/>'
                                 + pbeh.rrule + ' <br/>'
                         }).join('') + ' <br/><br/> ',
                         '</center>'].join('');
