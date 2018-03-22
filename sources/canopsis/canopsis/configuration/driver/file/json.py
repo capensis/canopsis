@@ -20,10 +20,7 @@
 
 from . import FileConfigurationDriver
 
-try:
-    from json import loads, dump
-except ImportError:
-    from simplejson import loads, dump
+from json import loads, dump
 
 
 class JSONConfigurationDriver(FileConfigurationDriver):
