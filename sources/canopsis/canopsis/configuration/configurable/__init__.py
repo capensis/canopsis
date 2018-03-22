@@ -74,7 +74,7 @@ class Configurable(object):
     __metaclass__ = MetaConfigurable
 
     DEFAULT_DRIVERS = '{0},{1}'.format(
-        'canopsis.configuration.driver.file.json.JSONConfigurationDriver',
+        'canopsis.configuration.driver.file.json_.JSONConfigurationDriver',
         'canopsis.configuration.driver.file.ini.INIConfigurationDriver'
     )
 
