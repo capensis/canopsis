@@ -21,7 +21,7 @@
 
 import unittest
 from canopsis.common import root_path
-from canopsis.configuration.driver.file.json import JSONConfigurationDriver
+from canopsis.configuration.driver.file.json_ import JSONConfigurationDriver
 from test_file_driver import ConfigurationDriverTest
 import xmlrunner
 
