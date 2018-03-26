@@ -238,7 +238,7 @@ class PBehaviorManager(object):
         else:
             raise ValueError("The enabled value does not match a boolean")
 
-        check_valid_rrule(rrule)
+        check_valid_rrule(rrule, tstart)
 
         if comments is not None:
             for comment in comments:
