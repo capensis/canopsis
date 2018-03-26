@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/canopsis-ui/blob/master/
 
 ### Lint
 
-Tested on commit : [ERROR : The brick is not in a dedicated git repository].
+Tested on commit : b49ef43.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
