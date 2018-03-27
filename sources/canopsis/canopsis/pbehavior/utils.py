@@ -3,6 +3,7 @@ Utils for pbehaviors.
 """
 
 from dateutil.rrule import rrulestr
+from datetime import datetime
 from time import time
 
 def check_valid_rrule(rrule, tstart):
@@ -20,7 +21,9 @@ def check_valid_rrule(rrule, tstart):
         return True
     
     if tstart is None:
-        tstart = time.now()
+        tstart = datetime.now()
+    else:
+        tstart = datetime.fromtimestamp(tstart)
 
     try:
         rrulestr(rrule, dtstart=tstart)

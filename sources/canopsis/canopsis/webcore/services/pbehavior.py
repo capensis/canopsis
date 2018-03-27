@@ -105,7 +105,7 @@ def check_values(data):
                              .format(data["filter"]))
 
     if 'rrule' in data:
-        check_valid_rrule(data['rrule'])
+        check_valid_rrule(data['rrule'], data['tstart'])
 
     # useful when enabled doesn't exist in document
     if ("enabled" not in data
