@@ -515,7 +515,8 @@ class AlertsReader(object):
             limit=None,
             with_steps=False,
             natural_search=False,
-            active_columns=None
+            active_columns=None,
+            hide_pbehaviors=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -548,9 +549,28 @@ class AlertsReader(object):
         :param list active_columns: the list of alarms columns on which to
         apply the natural search filter.
 
+        :param bool hide_pbehaviors: true if you want to hide alarms with active
+        pbehaviors.
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
+
+        if hide_pbehaviors:
+            if resolved:
+                self.logger.error('you only can hide pbehaviors on current alarms')
+            return self.hide_pbehaviors(
+                tstart,
+                tstop,
+                filter_,
+                sort_key,
+                sort_dir,
+                skip,
+                limit,
+                search,
+                natural_search,
+                active_columns
+            )
 
         if lookups is None:
             lookups = []
@@ -636,6 +656,92 @@ class AlertsReader(object):
         }
 
         return res
+
+    def hide_pbehaviors(
+            self,
+            tstart=None,
+            tstop=None,
+            filter_={},
+            sort_key='opened',
+            sort_dir='DESC',
+            skip=0,
+            limit=None,
+            search='',
+            natural_search=False,
+            active_columns=None
+    ):
+         if filter_ is None:
+            filter_ = {}
+
+        if active_columns is None:
+            active_columns = self.DEFAULT_ACTIVE_COLUMNS
+
+        time_filter = self._get_time_filter(
+            opened=True,
+            resolved=False,
+            tstart=tstart,
+            tstop=tstop
+        )
+
+        if time_filter is None:
+            return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
+
+        final_filter = self._get_final_filter(
+            filter_,
+            time_filter,
+            search,
+            active_columns
+        )
+
+        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
+
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "default_entities",
+                    "localField": "d",
+                    "foreignField": "_id",
+                    "as": "entity"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$entity",
+                    "preserveNullAndEmptyArrays": True,
+                }
+            }, {
+                "$match": final_filter
+            }, {
+                "$sort": {
+                    sort_key: sort_dir
+                }
+            }
+        ]
+
+        alarms = self.alarm_storage._backend.aggregate(pipeline).get('result')
+
+        alarm_without_pbehavior = []
+
+        for alarm in alarms:
+            if alarm['pbehaviors'] != []:
+                alarm_without_pbehavior.append(alarm)
+
+        len_before_truncate = len(alarm_without_pbehavior)
+
+        if limit is not None:
+            last = limit + skip
+            alarm_without_pbehavior = alarm_without_pbehavior[skip:last]
+        else:
+            alarm_without_pbehavior = alarm_without_pbehavior[skip:]
+            last = len(alarm_without_pbehavior)
+        len_after_truncate = len(alarm_without_pbehavior) 
+
+        return {
+            'alarms': alarm_without_pbehavior,
+            'total': len_after_truncate,
+            'truncated': len_after_truncate < len_before_truncate,
+            'first': skip,
+            'last': last
+        }
 
     def count_alarms_by_period(
             self,
