@@ -11,7 +11,7 @@ Vous avez à disposition trois filtres spéciaux :
  * `active_pb_some` : un `booléen` valant `true`/`false`, `True`/`False`, ou `1`/`0`, indiquant si une tuile (un watcher) doit contenir au moins un `pbehavior` actif sur une entité ou un watcher (sauf si indication contraire) pour être affiché.
  * `active_pb_all` : même chose que pour `active_pb_some` sauf qu’il faut que **toutes** les entités liées aient un `pbehavior` actif pour être affiché.
  * `active_pb_watcher` : sélectionner les tuiles disposant d’un `pbehavior` actif sur un watcher.
- * `active_pb_include_type` : ce filtre peut être utilisé plusieurs fois et va vous permettre de demander d’afficher les tuiles contenant des `pbehavior` des types référencés. Les types inclues les pbehavior sur les entités et sur les watchers.
+ * `active_pb_include_type` ou `active_pb_type` : ce filtre peut être utilisé plusieurs fois et va vous permettre de demander d’afficher les tuiles contenant des `pbehavior` des types référencés. Les types inclues les pbehavior sur les entités et sur les watchers.
  * `active_pb_exclude_type` : ce filtre peut être utilisé plusieurs fois et va exclure les tuiles disposant d’au moins un pbehavior actif ayant un des types définis par cette valeur. Les types inclues les pbehavior sur les entités et sur les watchers.
 
 Les filtres `active_pb_include|exclude_type` sont exclusifs et l’exclusion l’importe sur l’inclusion.
