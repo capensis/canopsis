@@ -14,6 +14,8 @@ Vous avez à disposition trois filtres spéciaux :
  * `active_pb_include_type` : ce filtre peut être utilisé plusieurs fois et va vous permettre de demander d’afficher les tuiles contenant des `pbehavior` des types référencés. Les types inclues les pbehavior sur les entités et sur les watchers.
  * `active_pb_exclude_type` : ce filtre peut être utilisé plusieurs fois et va exclure les tuiles disposant d’au moins un pbehavior actif ayant un des types définis par cette valeur. Les types inclues les pbehavior sur les entités et sur les watchers.
 
+Les filtres `active_pb_include|exclude_type` sont exclusifs et l’exclusion l’importe sur l’inclusion.
+
 Ces options ne sont disponibles qu’au travers du filtre créé avec le `query builder` :
 
 Voici un exemple de filtre créé sur une vue MdS :
