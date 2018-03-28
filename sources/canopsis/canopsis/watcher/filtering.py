@@ -44,7 +44,7 @@ class WatcherFilter(object):
         return self._exclude_types
 
     def to_bool(self, value):
-        if value in ['1', 1, "true", "True"]:
+        if value in ['1', 1, "true", "True", True]:
             return True
         return False
 
@@ -87,10 +87,9 @@ class WatcherFilter(object):
             v = self._filter(item)
             if v is not None:
                 cdoc[j] = v
+                j += 1
             else:
                 del cdoc[j]
-                j -= 1
-            j += 1
 
         return cdoc
 
