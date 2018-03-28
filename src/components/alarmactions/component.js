@@ -4,7 +4,7 @@ Ember.Application.initializer({
         var get = Ember.get,
             set = Ember.set,
             isNone = Ember.isNone;
-            __ = Ember.String.loc;
+        __ = Ember.String.loc;
 
         /**
          * This is the alarmactions component for the widget listalarm
@@ -86,7 +86,7 @@ Ember.Application.initializer({
              */
             init: function() {
                 this._super();
-
+                this.set("rights", this.get("_parentView._parentView._parentView._parentView._parentView._controller.login.rights"))
                 // Translating tooltips
                 this.get('actionsMap').filter(function(item, index, enumerable) {
                         Ember.set(item, 'translation', __(item.name));
