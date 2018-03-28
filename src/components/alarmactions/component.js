@@ -91,7 +91,17 @@ Ember.Application.initializer({
                 this.get('actionsMap').filter(function(item, index, enumerable) {
                         Ember.set(item, 'translation', __(item.name));
                 });
-              },
+            },
+
+            cleanActionWithRights : function(actions, rights, name, right){
+                if (rights.hasOwnProperty(right)) {
+                    if (rights.get(right).checksum){
+                        return
+                    }
+                }
+                console.error("Cleaning ", name)
+                actions.removeObject(actions.findBy('name', name))
+            },
 
             /**
              * @property availableActions
@@ -110,8 +120,50 @@ Ember.Application.initializer({
                 if (this.get('isClosed')) {
                     actions.removeObject(actions.findBy('mixin_name', 'pbehavior'))
                 }
+
+                var rights = this.get("rights");
+                for (var i = 0; i < actions.length; i++) {
+                    var func = this.get("cleanActionWithRights")
+
+                    switch(actions[i]["name"]){
+                    case "ack":
+                        func(actions, rights, actions[i]["name"], "listalarm_ack")
+                        break;
+                    case "fastack":
+                        func(actions, rights, actions[i]["name"], "listalarm_fastAck")
+                        break;
+                    case "cancelack":
+                        func(actions, rights, actions[i]["name"], "listalarm_cancelAck")
+                        break;
+                    case "declareanincident":
+                        func(actions, rights, actions[i]["name"], "listalarm_declareanIncident")
+                        break;
+                    case "assignticketnumber":
+                        func(actions, rights, actions[i]["name"], "listalarm_assignTicketNumber")
+                        break;
+                    case "pbehavior":
+                        func(actions, rights, actions[i]["name"], "listalarm_pbehavior")
+                        break;
+                    case "removealarm":
+                        func(actions, rights, actions[i]["name"], "listalarm_removeAlarm")
+                        break;
+                    case "changestate":
+                        func(actions, rights, actions[i]["name"], "listalarm_changeState")
+                        break;
+                    case "changecriticity":
+                        func(actions, rights, actions[i]["name"], "listalarm_changeCriticity")
+                        break;
+                    case "restorealarm":
+                        func(actions, rights, actions[i]["name"], "listalarm_restoreAlarm")
+                        break;
+                    case "snoozealarm":
+                        func(actions, rights, actions[i]["name"], "listalarm_snoozeAlarm")
+                        break;
+                    }
+                }
+                console.error("actions", actions)
                 return actions;
-            }.property('internalState', 'isSnoozed', 'isChangedByUser', 'isClosed'),
+            }.property('internalState', 'isSnoozed', 'isChangedByUser', 'isClosed', "isAcked"),
 
             /**
              * @property internalState
