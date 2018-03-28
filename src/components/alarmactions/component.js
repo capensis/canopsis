@@ -168,13 +168,33 @@ Ember.Application.initializer({
                 return this.get('alarm.state.val') == 0;
             }.property('alarm.state.val'),
 
+
+            /**
+             * @property pBehaviorListActionId
+             * @description Forms a unique id for a modal form
+             */
+            pBehaviorListActionId: function() {
+                var alarmId = this.get('alarm.id').replaceAll("-", "");
+
+                return 'pBehaviorListAction' + alarmId;
+            }.property('alarm.id'),
+
+            /**
+             * @property pBehaviorListActionIdHash
+             * @description Adds a leading hash sing to pBehaviorListActionId
+             */
+
+            pBehaviorListActionIdHash: function() {
+                return '#' + this.get('pBehaviorListActionId');
+            }.property('pBehaviorListActionId'),
+
             actions: {
                 /**
                  * @method sendAction
                  */
                 sendAction: function (action) {
                     this.sendAction('action', action, this.get('alarm'));
-                }
+                },
             }
         });
         application.register('component:component-alarmactions', component);
