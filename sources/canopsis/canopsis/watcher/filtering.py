@@ -1,4 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Filter watchers.
+"""
+
+from __future__ import unicode_literals
+
 import copy
+
 
 class WatcherFilter(object):
     """
@@ -43,10 +53,12 @@ class WatcherFilter(object):
         """
         return self._exclude_types
 
-    def to_bool(self, value):
-        if value in ['1', 1, "true", "True", True]:
-            return True
-        return False
+    @staticmethod
+    def to_bool(value):
+        """
+        :rtype: bool
+        """
+        return value in ['1', 1, "true", "True", True]
 
     def _filter_dict(self, dictdoc):
         cdoc = copy.deepcopy(dictdoc)
@@ -127,6 +139,9 @@ class WatcherFilter(object):
         return False
 
     def filter(self, doc):
+        """
+        :rtype: dict
+        """
         res = self._filter(doc)
         if res is None:
             return {}
@@ -154,7 +169,7 @@ class WatcherFilter(object):
         if pb_types is None:
             pb_types = list()
 
-        if not (isinstance(pb_types, list) or isinstance(pb_types, set)):
+        if not isinstance(pb_types, (list, set)):
             raise TypeError('wrong pb_types value: not a list')
 
         logic_some_all = False
