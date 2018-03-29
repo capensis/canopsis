@@ -106,7 +106,6 @@ systemctl enable canopsis-engine@cleaner-cleaner_alerts.service
 systemctl enable canopsis-engine@cleaner-cleaner_events.service
 systemctl enable canopsis-engine@dynamic-context-graph.service
 systemctl enable canopsis-engine@event_filter-event_filter.service
-systemctl enable canopsis-engine@eventstore-eventstore.service
 systemctl enable canopsis-engine@linklist-linklist.service
 systemctl enable canopsis-engine@dynamic-pbehavior.service
 systemctl enable canopsis-engine@dynamic-perfdata.service
