@@ -51,7 +51,6 @@ def exports(ws):
         if 'listalarm' in filename or 'timeline' in filename:
             response.set_header("Cache-Control", "public, no-cache")
 
-
         return static_file(filename, root=ws.root_directory)
 
     @ws.application.get('/favicon.ico', skip=skip_login)
