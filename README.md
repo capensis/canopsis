@@ -189,6 +189,8 @@ Usage of ./engine-che:
   -d    debug
   -enrichContext
         enable context graph enrichment. disabled by default.
+  -processEvent
+      enable event processing. enabled by default. (default true)
   -publishQueue string
         Publish event to this queue. (default "Engine_event_filter")
   -version
