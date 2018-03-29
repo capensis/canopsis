@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/brick-listalarm/blob/mas
 
 ### Lint
 
-Tested on commit : e32c56c.
+Tested on commit : 2e9f6af.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -75,5 +75,5 @@ Tested on commit : e32c56c.
 
 ## Additional-info
 
-Minified version : 4 files (size: 124K)
-Development version : 71 files (size: 480K)
+Minified version : 4 files (size: 128K)
+Development version : 71 files (size: 484K)
