@@ -118,7 +118,7 @@ Ember.Application.initializer({
                     return false;
                 }
                 return this.get('value.pbehaviors').length != 0;
-            }.property('value.@each.pbihaviors.length'),
+            }.property('value.@each.pbehaviors.length'),
 
             /**
              * @property dateFormat
