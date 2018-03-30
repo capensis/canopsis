@@ -1,0 +1,14 @@
+{
+	"type": "object",
+	"metadata": {
+		"classes": ["container"]
+	},
+	"properties": {
+		"title": {"type": "string"},
+		"xtype": {"type": "string"},
+		"items": {
+			"relationship": "hasMany",
+			"model": "widgetwrapper"
+		}
+	}
+}

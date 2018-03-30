@@ -1,0 +1,27 @@
+{
+    "type": "object",
+    "properties": {
+        "retention_duration": {
+            "default": 31536000,
+            "type": "number",
+            "role": "duration",
+            "description": "Delay until when keep information into database. Data cleaning is applied once a day."
+        },
+        "use_secure_delay": {
+            "default": true,
+            "required": true,
+            "type": "boolean",
+            "description": "One year delay security to avoid too short delay data deletion. When false, security is disabled"
+        }
+    },
+    "categories": [
+        {
+            "keys": [
+                "retention_duration",
+                "use_secure_delay"
+            ],
+            "title": "General"
+        }
+    ]
+}
+

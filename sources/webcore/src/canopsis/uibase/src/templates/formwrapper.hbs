@@ -1,0 +1,26 @@
+<div id="formwrapper" class="modal fade">
+    <div class="modal-dialog form">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title handle" style="width:90%">
+                    {{{controller.form.title}}}
+
+                    {{#if controller.debug}}
+                        {{partialslot slot=controller.form._partials.debugButtons}}
+                    {{/if}}
+                </h4>
+            </div>
+            <div class="modal-body">
+                {{#if controller.form}}
+                    {{#with form}}
+                        {{formview templateName=controller.formName controller=this}}
+                    {{/with}}
+                {{/if}}
+            </div>
+            <div class="modal-footer">
+                {{partialslot slot=controller.form._partials.buttons}}
+            </div>
+        </div>
+    </div>
+</div>

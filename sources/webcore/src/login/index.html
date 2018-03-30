@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html class="bg-black">
+    <head>
+        <title>Canopsis | Login</title>
+
+        <meta charset="utf-8" />
+        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport' />
+
+        <link rel="icon" type="image/png" href="/static/canopsis/media/favicon.png" />
+
+        <link href="/static/login/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="/static/login/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="/static/login/css/AdminLTE.css" rel="stylesheet" type="text/css" />
+
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <style type="text/css">
+            #overlay {
+                position: fixed;
+                height: 100%;
+                width: 100%;
+            }
+
+            #login-box {
+                position: relative;
+            }
+        </style>
+
+
+    </head>
+
+    <body>
+        <div id="overlay">
+            <div class="form-box" id="login-box">
+                <div class="header">
+                    <img src="/static/canopsis/media/canopsis.png" alt="Canopsis" />
+                </div>
+                {{#if casconfig}}
+                    <div class="panel-group" id="loginboxes">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#loginboxes" href="#casbox">
+                                        {{casconfig.title}}
+                                    </a>
+                                </h4>
+                            </div>
+
+                            <div class="panel-collapse collapse in bg-gray" id="casbox">
+                                <div class="panel-body">
+                                    <a class="btn bg-olive btn-block" href="{{casconfig.server}}/login?service={{casconfig.service}}/logged_in">
+                                        Go to WebSSO
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#loginboxes" href="#normalbox">
+                                        Local authentication
+                                    </a>
+                                </h4>
+                            </div>
+
+                            <div class="panel-collapse collapse bg-gray" id="normalbox">
+                                <div class="panel-body">
+                {{/if}}
+
+                <form id="cpslogin" action="/auth" method="post">
+                    <div class="body bg-gray">
+                        {{#if logmessage}}
+                            <div class="alert alert-warning" role="alert">{{logmessage}}</div>
+                        {{/if}}
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            <input name="username" type="text" class="form-control" placeholder="Login" autofocus />
+                        </div>
+
+                        <br />
+
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                            <input name="password" type="password" class="form-control" placeholder="Password" />
+                        </div>
+
+                        <br />
+
+                        <div class="footer bg-gray">
+                            <button type="submit" class="btn bg-olive btn-block">Sign in</button>
+                        </div>
+                    </div>
+                </form>
+
+                {{#if casconfig}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{/if}}
+                {{#if login_footer}}
+                    <div class="footer bg-gray">
+                        {{{login_footer}}}
+                    </div>
+                {{/if}}
+
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,47 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys":["name","start","end","rrule", "reason", "type_"]
+    }],
+    "properties": {
+        "name":{
+            "type":"string",
+            "required":true
+        },
+        "start": {
+            "type": "timestamp",
+            "required":true
+        },
+        "end": {
+            "type": "timestamp",
+            "required":true
+        },
+        "rrule": {
+            "type": "rruleeditor"
+        },
+        "reason": {
+            "type": "string",
+            "enum": [
+                "Problème Habilitation",
+                "Problème Robot",
+                "Problème Scénario",
+                "Autre"
+            ],
+            "default": "group",
+            "role": "simplelist",
+            "required": true
+        },
+        "type_": {
+            "type": "string",
+            "enum": [
+                "Pause",
+                "Maintenance",
+                "Hors plage horaire de surveillance"
+            ],
+            "default": "group",
+            "role": "simplelist",
+            "required": true
+        }
+    }
+}

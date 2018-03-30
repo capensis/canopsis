@@ -1,0 +1,49 @@
+{{#if view.errorMessages}}
+    <div class="callout callout-danger">
+        <h4>
+            <span class="glyphicon glyphicon-warning-sign"></span>
+            {{tr 'An error occured'}}
+        </h4>
+        <p>
+            {{tr 'An error occured while Canopsis was trying to display this widget'}}.
+
+            {{tr 'Here\'s more information about the problem'}} : <br/>
+
+            <ul>
+                {{#each view.errorMessages}}
+                    <div class="alert alert-danger" role="alert">{{this}}</div>
+                {{/each}}
+            </ul>
+
+            {{tr 'These informations might help too'}} : <br/>
+
+            <ul>
+                <li>
+                    {{tr 'Parent'}} : <br/>
+                    <ul>
+                        <li><b>title:</b> {{title}}</li>
+                        <li><b>xtype:</b> {{xtype}}</li>
+                    </ul>
+                </li>
+            </ul>
+        </p>
+    </div>
+{{else}}
+    <div class="callout callout-warning">
+        <h4>
+            <span class="glyphicon glyphicon-warning-sign"></span>
+            {{tr 'Empty widget'}}
+        </h4>
+        <p>
+            {{tr 'This is an empty widget and might indicate a problem in the widget\'s xtype'}}. {{tr 'Please check the view document'}}.
+            <ul>
+                <li><b>title:</b> {{title}}</li>
+                <li><b>xtype:</b> {{xtype}}</li>
+            </ul>
+
+            {{#each view.errorMessages}}
+                {{this}}<br/>
+            {{/each}}
+        </p>
+    </div>
+{{/if}}

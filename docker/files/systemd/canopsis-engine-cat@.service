@@ -1,0 +1,20 @@
+[Unit]
+Description=Canopsis Engine CAT %i
+After=network.target
+Documentation=http://www.canopsis.org/wp-content/themes/canopsis/doc/
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=VIRTUAL_ENV=/opt/canopsis
+Environment=HOME=/opt/canopsis
+Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+Environment=WORKERS=1
+Environment=LOGLEVEL=info
+ExecStart=/opt/canopsis/bin/engine-launcher-systemd %i canopsis_cat.engines
+PIDFile=/var/run/canopsis-engine-cat-%i.pid
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

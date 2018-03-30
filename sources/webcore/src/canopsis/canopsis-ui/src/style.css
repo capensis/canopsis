@@ -1,0 +1,39 @@
+body {
+    background: url('/static/canopsis/media/background.jpg') no-repeat ;background-size: 100%;
+}
+
+.canopsis-toolbar {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.canopsis-icon {
+    display: inline-block;
+    margin: auto;
+    width: 48px;
+    height: 48px;
+}
+
+.canopsis-divicon {
+    display: block;
+    margin: auto;
+    width: 48px;
+    height: 48px;
+}
+
+.canopsis-toolbar {
+    margin:0 !important;
+}
+
+.canopsisDraggable:hover {
+    box-shadow: 0px 0px 10px #888888;
+    cursor:pointer;
+}
+
+.left-side {
+    z-index: 1039;
+}
+
+.rrule-form {
+    padding-top: 10px;
+}

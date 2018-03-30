@@ -1,0 +1,3117 @@
+<script type="text/x-handlebars" data-template-name="components/component-actionbutton"><a {{action "doAction" action param}}>{{yield}}</a>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-actionfilter"><form role="form" class="well">
+
+    <div class="form-group">
+        {{view Ember.Select
+            content=availableactions
+            value=selectedAction
+            class="form-control"
+        }}
+    </div>
+
+    <div class="form-group">
+        {{#if isOverride}}
+        <label>{{tr 'Field to override'}}</label>
+            {{component-eventkey content=field}}
+            <label>{{tr 'Value to set'}}</label>
+            {{component-typedvalue content=value}}
+        {{/if}}
+
+        {{#if isRemove}}
+            {{input class="form-control" value=key}}
+            <label>{{tr 'Key to remove'}}</label>
+        {{/if}}
+
+        {{#if isRoute}}
+            {{input class="form-control" value=send}}
+            <label>{{tr 'Target engine'}}</label>
+        {{/if}}
+
+        {{#if isSnooze}}
+            {{input class="form-control" value=duration type="number"}}
+            <label>{{tr 'Auto-snooze duration (seconds)'}}</label>
+        {{/if}}
+
+        {{#if isExecJob}}
+            <label>{{tr 'Target job'}}</label>
+            {{component-stringclassifiedcrecordselector crecordtype="job" modelfilter="{\"jtype\":\"notification\"}" valueKey="id" nameKey="crecord_name" selection=jobid}}
+        {{/if}}
+    </div>
+
+    <div class="form-group">
+        <button class="btn btn-default form-control" {{action "addAction"}}>
+            <span class="glyphicon glyphicon-plus"></span>
+            {{tr 'Add action'}}
+        </button>
+    </div>
+
+    <hr/>
+
+    <ul class="list-group">
+    {{#each action in contentUnprepared}}
+        <li class="list-group-item list-group-item-success">
+            <button class="btn btn-default" {{action "deleteAction" action}}>
+                <span class="glyphicon glyphicon-minus"></span>
+                {{tr 'Remove'}}
+            </button>&nbsp;
+            {{json2html action}}
+        </li>
+    {{/each}}
+    </ul>
+
+</form>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-arrayclassifiedcrecordselector">{{#if loadingInitialContent}}
+    <i class="fa fa-refresh fa-spin"></i>
+{{else}}
+    {{component-classifieditemselector content=this.classifiedItems target=this multiselect=multiselect selection=selectionUnprepared}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-arrayeditor">{{#if value.length}}
+    {{!#group}}
+        <table class="table table-striped" style="width:100%">
+            <thead></thead>
+            <tbody class="sortable">
+                {{#each item in arrayAttributes}}
+                    <tr style="width:100%">
+                        {{#if content.model.options.reorderable}}
+                            <td>
+                                <a {{action "move" "up" item}} class="btn btn-default">
+                                    <i class="fa fa-arrow-up"></i>
+                                </a>
+                                <a {{action "move" "down" item}} class="btn btn-default">
+                                    <i class="fa fa-arrow-down"></i>
+                                </a>
+                            </td>
+                        {{/if}}
+                        <td>
+                            <div>
+                                {{component-editor attr=item editorType=itemEditorType}}
+                            </div>
+                        </td>
+                        <td>
+                            <a {{action "removeItem" item}} class="btn btn-danger pull-right">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{!/group}}
+{{else}}
+    <div class="well"><i>{{tr "No values"}}</i></div>
+
+{{/if}}
+<a {{action "addItem"}} class="btn btn-info">
+    <span class="glyphicon glyphicon-plus"></span>
+     {{tr 'Add'}}
+</a>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-classifiedcrecordselector">{{component-classifieditemselector content=this.classifiedItems target=this multiselect=multiselect selection=selectionUnprepared}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-classifieditemselector"><style type="text/css">
+    .list-group a {
+        display: block;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .list-group.icon li {
+        float: left;
+        width: 25%;
+        height: 115px;
+        padding: 10px;
+        font-size: 14px;
+        line-height: 1.4;
+        text-align: center;
+        background-color: #F9F9F9;
+        border: 1px solid #FFF;
+    }
+
+    .list-group.icon li span.glyphicon {
+        margin-top: 5px;
+        margin-bottom: 10px;
+        font-size: 24px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+
+<div class="btn-group pull-right" style="margin-left:6px">
+    <button type="button" {{bind-attr class=listModeButtonCssClass}} {{action "setListMode"}}>
+        <span class="glyphicon glyphicon-list"></span>
+    </button>
+    <button type="button" {{bind-attr class=iconModeButtonCssClass}} {{action "setIconMode"}}>
+        <span class="glyphicon glyphicon-th-large"></span>
+    </button>
+</div>
+
+<div class="input-group">
+    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-search"></span>
+    </span>
+    {{input type="text" class="form-control" placeholder="Search" value=searchFilter}}
+</div>
+
+
+<div class="panel-group" style= "margin-top:4px">
+    {{#if showselection}}
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a {{action "collapse" "selection"}} style="cursor:pointer">
+                        selection ({{selection.length}})
+                    </a>
+                </h4>
+            </div>
+            {{#unless selectionCollapsed}}
+                <ul {{bind-attr class=listGroupClass}}>
+                    {{#each item in selection}}
+                        <li class="list-group-item">
+                            {{#if selectedItemPartial}}
+                                <span style="float:right;">
+
+                                    {{partial selectedItemPartial}}
+                                </span>
+                            {{/if}}
+                            <a {{action "unselectItem" item}}>
+                                {{#if templateForHeader}}
+                                    {{partial templateForHeader}}
+                                {{else}}
+                                    {{#if item.icon}}
+                                        <span {{bind-attr class=item.icon}}></span>
+                                    {{else}}
+                                        {{#if defaultIcon}}
+                                            {{{glyphicon defaultIcon}}}
+                                        {{/if}}
+                                    {{/if}}
+                                    {{item.name}} {{#if item.value}}({{item.value}}){{/if}}
+                                {{/if}}
+                            </a>
+                            <span style="clear:both"></span>
+                        </li>
+                    {{else}}
+                        <li><i>{{tr "No values"}}</i></li>
+                    {{/each}}
+                </ul>
+            {{/unless}}
+            <div style="clear:both"></div>
+        </div>
+    {{/if}}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a {{action "collapse" "all"}} style="cursor:pointer">
+                    All ({{allClasses.length}})
+                </a>
+            </h4>
+        </div>
+        {{#unless allCollapsed}}
+            <ul {{bind-attr class=listGroupClass}}>
+                {{#each item in allClasses}}
+                    <li class="list-group-item">
+                        <a {{action "selectItem" item}}>
+                            {{#if templateForHeader}}
+                                {{partial templateForHeader}}
+                            {{else}}
+                                {{#if item.icon}}
+                                    <span {{bind-attr class=item.icon}}></span>
+                                {{else}}
+                                    {{#if defaultIcon}}
+                                        {{{glyphicon defaultIcon}}}
+                                    {{/if}}
+                                {{/if}}
+                                {{item.name}}
+                            {{/if}}
+                        </a>
+                    </li>
+                {{/each}}
+            </ul>
+            <div style="clear:both"></div>
+        {{/unless}}
+    </div>
+    {{#each class in classesFiltered}}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a {{action "collapse" class}}>
+                        {{class.key}} ({{class.items.length}})
+                    </a>
+                </h4>
+            </div>
+            {{#unless class.isCollapsed}}
+                <ul {{bind-attr class=listGroupClass}}>
+                    {{#each item in class.items}}
+                        <li class="list-group-item">
+                            <a {{action "selectItem" item}}>
+                                {{#if templateForHeader}}
+                                    {{partial templateForHeader}}
+                                {{else}}
+                                    {{#if item.icon}}
+                                        <span {{bind-attr class=item.icon}}></span>
+                                    {{else}}
+                                        {{#if defaultIcon}}
+                                            {{{glyphicon defaultIcon}}}
+                                        {{/if}}
+                                    {{/if}}
+                                    {{item.name}}
+                                {{/if}}
+                            </a>
+                        </li>
+                    {{/each}}
+                </ul>
+            {{/unless}}
+            <div style="clear:both"></div>
+        </div>
+    {{/each}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-colorchooser">{{#component-dropdownbutton}}
+	{{#component-dropdownbuttonheader}}
+		{{#component-dropdownbuttontitle}}
+			Colors &nbsp;
+			<i class="fa fa-caret-square-o-down"></i>
+			{{component-dropdownbuttonoverview color=content}}
+		{{/component-dropdownbuttontitle}}
+	{{/component-dropdownbuttonheader}}
+	{{#component-dropdownbuttoncontent}}
+		{{component-colpick value=content}}
+	{{/component-dropdownbuttoncontent}}
+{{/component-dropdownbutton}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-colpick"><ul class="nav" id="colorSelectorList">
+    <li>
+        <a style="cursor:pointer" data-ember-action="2048" id="colorPicker">Color picker</a>
+    </li>
+    <li>
+        <a style="cursor:pointer" data-ember-action="2048" id="colorGrid">Color grid</a>
+    </li>
+</ul>
+<div class="colorGrid"><br/>
+    <div class="rangeBrowser">
+        {{#each range in ranges}}
+        <div class="rangeName">{{range.name}}</div>
+            <div class="rangeColorSelect">
+                {{#each color in range.colors}}
+                    {{#if color.selected}}
+                        <div class="colorElement selectedColorGrid" {{bind-attr style=color.style}} {{action "changeColor" color ranges}}></div>
+                    {{else}}
+                        <div class="colorElement unselectedColorGrid" {{bind-attr style=color.style}} {{action "changeColor" color ranges}}></div>
+                    {{/if}}
+                {{/each}}
+            </div>
+            <div style="clear:both;"></div>
+        {{/each}}
+    </div>
+</div>
+
+<div class="customcolor"></div></script>
+<script type="text/x-handlebars" data-template-name="components/component-contextselector"><div class="well">
+    {{view "select"
+       content=contexts
+       optionValuePath="content.modelName"
+       optionLabelPath="content.name"
+       value=contextType}}
+</div>
+<div style="float: right;">
+    {{#component-tooltip content=helpModal.content htmlEnabled=true noTranslation=true}}
+        <i class="fa fa-info-circle"></i>
+    {{/component-tooltip}}
+    {{tr 'Search'}}: {{input action="search"}}
+
+</div>
+{{#with contextType as contextType}}
+    {{component-table model=contextType columns=columns targetObject=this queryStartOffsetKeyword="start" modelfilter=contextSearch}}
+{{/with}}
+<h3>{{tr 'Selection'}} :</h3>
+<div class="well">
+    {{#if content}}
+        {{content}}
+        <a {{action 'clearselection'}} >
+            <span class="glyphicon glyphicon-trash" style="float:right"></span>
+        </a>
+    {{else}}
+        {{tr 'Nothing selected'}}.
+    {{/if}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-crudentitydetails"><div class="row">
+  <div class="col-md-12">
+      {{#if entity}}
+          <h1 style="font-size: 18px; font-weight: bold;">{{entity.name}}</h1>
+          <div class="box-body table-responsive no padding">
+          <table class="table table-hover">
+              <tbody>
+                  <tr>
+                      <th>
+                          Type
+                      </th>
+                      <th>
+                          Active
+                      </th>
+                      <th>
+                          Last date active
+                      </th>
+                      <th>
+                          Impacts
+                      </th>
+                      <th>
+                          Depends
+                      </th>
+                      <th>
+                          Pbehaviors
+                      </th>
+                      <th>
+                          Infos
+                      </th>
+                      <th>
+                          Links
+                      </th>
+                  </tr>
+                  <tr>
+                      <td>
+                          {{entity.type}}
+                      </td>
+                      <td>
+                          {{#if entity.enabled}}
+                              <span class="label label-success">Enabled</span>
+                          {{else}}
+                              <span class="label label-danger">Disabled</span>
+                          {{/if}}
+                      </td>
+                      <td>
+                          {{timestamp entity.enable_history}}
+                      </td>
+                      <td>
+                          <ul>
+                          {{#each entity.impact as |impact|}}
+                              <li>{{impact}}</li>
+                          {{/each}}
+                          </ul>
+                      </td>
+                      <td>
+                          <ul>
+                          {{#each entity.depends as |depend|}}
+                              <li>{{depend}}</li>
+                          {{/each}}
+                          </ul>
+                      </td>
+                      <td>
+                            <table class="table">
+                                <tr>
+                                    <th>
+                                        name
+                                    </th>
+                                    <th>
+                                        author
+                                    </th>
+                                    <th>
+                                        connector
+                                    </th>
+                                    <th>
+                                        connector_name
+                                    </th>
+                                    <th>
+                                        isEnabled
+                                    </th>
+                                    <th>
+                                        begins
+                                    </th>
+                                    <th>
+                                        ends
+                                    </th>
+                                    <th>
+                                        type
+                                    </th>
+                                    <th>
+                                        reason
+                                    </th>
+                                    <th>
+                                        rrule
+                                    </th>
+                                    <th>
+                                        actions
+                                    </th>
+                                </tr>
+                                 {{#each pbehaviors as |pbehavior|}}
+                                <tr>
+                                    <td>
+                                        {{pbehavior.name}}
+                                    </td>
+                                    <td>
+                                         {{pbehavior.author}}
+                                    </td>
+                                    <td>
+                                         {{pbehavior.connector}}
+                                    </td>
+                                    <td>
+                                         {{pbehavior.connector_name}}
+                                    </td>
+                                    <td>
+                                        {{#if pbehavior.enabled}}
+                                            <span class="label label-success">Enabled</span>
+                                        {{else}}
+                                            <span class="label label-danger">Disabled</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{timestamp pbehavior.tstart}}
+                                    </td>
+                                    <td>
+                                        {{timestamp pbehavior.tstop}}
+                                    </td>
+                                    <td>
+                                        {{pbehavior.type_}}
+                                    </td>
+                                    <td>
+                                        {{pbehavior.reason}}
+                                    </td>
+                                    <td>
+                                        {{pbehavior.rrule}}
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-box-tool btn-hover" {{action "removepbehavior" pbehavior._id}}>
+                                            <i class="fa fa-close"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </table>
+                            
+                      </td>
+                      <td>
+                          {{infosdetails entity.infos}}
+                      </td>
+                      <td>
+                          {{linksdetails entity.links}}
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+          </div>
+      {{/if}}
+  </div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-dateinterval"><button {{bind-attr id="controller.id"}} class="btn btn-default">
+
+        <i class="fa fa-calendar"></i>
+        {{#if label}}
+            {{label}}
+        {{else}}
+            {{tr 'Select date interval'}}
+        {{/if}}
+        <i class="fa fa-caret-down"></i>
+
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-dictclassifiedcrecordselector">{{#if loadingInitialContent}}
+    <i class="fa fa-refresh fa-spin"></i>
+{{else}}
+    {{component-classifieditemselector content=this.classifiedItems target=this multiselect=multiselect selection=selectionUnprepared target=this}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-dropdownbutton">{{yield}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-dropdownbuttoncontent"><div style="margin-top:-10px;">
+{{#if parentView.opened}}
+	{{yield}}
+{{/if}}
+</div></script>
+<script type="text/x-handlebars" data-template-name="components/component-dropdownbuttonheader">{{yield}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-dropdownbuttonoverview"></script>
+<script type="text/x-handlebars" data-template-name="components/component-dropdownbuttontitle">{{yield}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-elementidselectorwithoptions"><b>{{tr 'Available'}}:</b>
+
+{{#if searchMethod}}
+    <div style="float: right;">
+        {{#if helpModal.content}}
+            {{#component-tooltip content=helpModal.content htmlEnabled=true noTranslation=true}}
+                <i class="fa fa-info-circle"></i>
+            {{/component-tooltip}}
+        {{/if}}
+        {{tr 'Search'}}: {{input action="search"}}
+    </div>
+{{/if}}
+
+{{component-table items=listedAvailableItems model=content.model.options.source.schema modelfilter=searchPhrase columns=availableDataColumns targetObject=this queryStartOffsetKeyword="start"}}
+
+<hr/>
+<b>Selected:</b>
+
+{{#each selectionItem in content.value}}
+    {{#component-miniform style="margin-bottom:0"}}
+        {{#component-miniformheader}}
+            {{#component-miniformheaderbuttons}}
+                <button class="btn btn-default btn-xs" {{action 'unselect' selectionItem target=this}} >
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            {{/component-miniformheaderbuttons}}
+            {{#component-miniformtitle}}
+                {{component-renderer record=selectionItem content=selectedItemHeaderRendererAttr value=selectionItem rendererType=selectedItemHeaderRendererType}}
+            {{/component-miniformtitle}}
+        {{/component-miniformheader}}
+        {{#component-miniformcontent}}
+            {{component-objecteditor properties=content.model.options.items.properties value=selectionItem}}
+        {{/component-miniformcontent}}
+    {{/component-miniform}}
+{{/each}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-eventkey"><div class="form-group">
+    <div class="form-inline">
+        <div class="form-group">
+            {{view Ember.Select
+                content=modes
+                value=selectedMode
+                class="form-control"
+            }}
+        </div>
+        <div class="form-group">
+            {{#if useTextField}}
+                {{input type="text" class="form-control" value=content placeholder=placeholder}}
+            {{/if}}
+            {{#if useList}}
+                <div class="btn-group">
+                    {{#each field in selectableProperties}}
+                        <button type="button" {{bind-attr class=":btn :btn-default :btn-sm field.isActive:active"}} {{action 'setProperty' field.field}}>{{field.field}}</button>
+                    {{/each}}
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-filefield">{{input type="file" multiple=false class="btn btn-default"}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-filterclause">{{#if editionMode}}
+    <span style="display:inline-block">
+        {{#if content.isLast}}
+            {{input list=content.keyId class="defaultFocus" value=content.key class="form-control"}}
+            <datalist {{bind-attr id=content.keyId}}>
+                {{#each index in content.options.available_indexes}}
+                    <option {{bind-attr value=index.value}}>{{index.name}}</option>
+                {{/each}}
+            </datalist>
+        {{else}}
+            {{content.key}}
+        {{/if}}
+
+        {{view Ember.Select
+            content=operators
+            optionValuePath="content.label"
+            optionLabelPath="content.label"
+            value=content.operator
+            class="form-control"
+        }}
+
+        {{input value=content.value class="form-control"}}
+        <a {{action "validateClause" this}} class="btn btn-info btn-xs">
+            <span class="glyphicon glyphicon-ok"></span>
+        </a>
+    </span>
+{{else}}
+    {{#if finalized}}
+            <a {{action "editAndClause" clause content}} class="btn btn-warning btn-xs">
+                {{content.key}} {{content.operator}} {{content.value}}
+            </a>
+            <a {{action "removeAndClause" clause content}} class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+    {{else}}
+        <span style="display:inline-block">
+            {{#if content.filling}}
+                {{input list=content.keyId class="defaultFocus form-control" value=content.key }}
+                <datalist {{bind-attr id=content.keyId}}>
+                    {{#each index in content.options.available_indexes}}
+                        <option {{bind-attr value=index.value}}>{{index.name}}</option>
+                    {{/each}}
+                </datalist>
+
+                {{view Ember.Select
+                    content=operators
+                    optionValuePath="content.label"
+                    optionLabelPath="content.label"
+                    value=content.operator
+                    class="form-control"
+                }}
+
+                {{input value=content.value class="form-control"}}
+                <a {{action "validateClause" this}} class="btn btn-info btn-xs">
+                    <span class="glyphicon glyphicon-ok"></span>
+                </a>
+            {{else}}
+                <a {{action "startEditClause"}} class="btn btn-info btn-xs">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </a>
+            {{/if}}
+        </span>
+    {{/if}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-formulaeditor">{{component-table data=selectedMetrics columns=metrics_cols targetObject=this}}
+
+<p>{{tr "Select metrics above to insert them in the formula"}}</p>
+
+{{input value=content.value class="form-control"}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-ical"><div class="well">
+    <center>
+        <h1>{{title}}</h1>
+    </center>
+    <form class="form-horizontal" role="form">
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpFrequency}}
+                    {{tr 'Frequency'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+
+                {{view Ember.Select
+                    class="form-control"
+                    content=frequencyForm
+                    optionValuePath="content.value"
+                    optionLabelPath="content.label"
+                    value=frequencySelection
+                }}
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpRepetitionCount}}
+                    {{tr 'Repetition count'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+                {{input class="form-control" value=repetitionCount}}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpRepetitionInterval}}
+                    {{tr 'Repetition interval'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+                {{input class="form-control" value=repetitionInterval}}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpStartDate}}
+                    {{tr 'Start date'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+                {{component-datetimepicker content=startDate}}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpStopDate}}
+                    {{tr 'Stop date'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+                {{component-datetimepicker content=stopDate}}
+            </div>
+        </div>
+
+        <center>
+            <button class="btn btn-default" {{action "addRule"}}>{{tr 'Add rule'}}</button>
+        </center>
+
+    </form>
+
+    <hr />
+
+
+    <ul class="list-group">
+        {{#each rule in rules}}
+            <li  class="list-group-item list-group-item-success">
+                <button {{action "removeRule" rule}} class="btn btn-default">
+                    <span class="glyphicon glyphicon-minus"></span>
+                     {{tr 'Remove'}}
+                </button>
+                {{rule.value}}
+            </li>
+        {{/each}}
+    </ul>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-if_equal_component">{{#if isEqual}}
+    {{yield}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-labelledlink"><div class="form-group">
+    <label>{{tr 'Label'}}</label>
+    {{input type="text" value=content.label class="form-control" placeholder=label_placeholder}}
+    <label>{{tr 'Url'}}</label>
+    {{input type="text" value=content.url class="form-control" placeholder=url_placeholder}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-linklist">{{#if links.length}}
+    {{#component-tooltip content="External links"}}
+        <div class="btn-group">
+            <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-info"></i>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" style="right:0; left:auto">
+                {{#each linkInformation in links}}
+                    <li>
+                        <a target="_blank" {{bind-attr href=linkInformation.url}}>{{tr linkInformation.label}}</a>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+    {{/component-tooltip}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-mixinselector">{{#if loadingInitialContent}}
+    <i class="fa fa-refresh fa-spin"></i>
+{{else}}
+    {{component-classifieditemselector content=this.classifiedItems target=this multiselect=multiselect selection=selectionPrepared templateForHeader="mixinselector-itempartial"}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-modelselect"><p>Choose {{model}}:</p>
+<p>{{view Ember.Select
+        content=availableModels
+        optionValuePath="content"
+        optionLabelPath="content.crecord_name"
+        value=selectedModel
+        class="form-control"
+}}</p>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-nestedarrayeditor">{{#if value.length}}
+    {{!#group}}
+        <table class="table table-striped" style="width:100%">
+            <thead></thead>
+            <tbody class="sortable">
+                {{#each item in arrayAttributes}}
+                    <tr style="width:100%">
+                        {{#if content.model.options.reorderable}}
+                            <td>
+                                <a {{action "move" "up" item}} class="btn btn-default">
+                                    <i class="fa fa-arrow-up"></i>
+                                </a>
+                                <a {{action "move" "down" item}} class="btn btn-default">
+                                    <i class="fa fa-arrow-down"></i>
+                                </a>
+                            </td>
+                        {{/if}}
+                        <td>
+                            <div>
+                                {{component-editor attr=item editorType=itemEditorType}}
+                            </div>
+
+                            <div>
+                                {{#each nestedItem in item.value.nestedViews}}
+                                    <div class='nested-view'>
+                                        {{component-editor attr=nestedItem editorType=itemEditorType}}
+                                        <a {{action "removeNestedItem" item nestedItem}} class="btn btn-danger pull-right">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </a>
+                                    </div>
+                                    <br>
+                                {{/each}}
+                            </div>
+                        </td>
+                        <td>
+                            <a {{action "removeItem" item}} class="btn btn-danger pull-right">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                            <br>
+                            <a {{action "addNestedItem" item}} class="btn btn-info pull-right add-nested-item">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </a>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{!/group}}
+{{else}}
+    <div class="well"><i>{{tr "No values"}}</i></div>
+
+{{/if}}
+<a {{action "addItem"}} class="btn btn-info">
+    <span class="glyphicon glyphicon-plus"></span>
+     Add
+</a>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-password"><div class="form-group">
+    <div class="form-group">
+        {{input type="password" class="form-control" value=password}}
+    </div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-propertiestopopup">{{customText}}
+{{#if htmlOnly}}
+    {{propertiesAsHtml}}
+{{else}}
+    {{#component-tooltip content=propertiesAsHtml htmlEnabled=true noTranslation=true}}
+        <span {{bind-attr class=":handle :glyphicon icon" }}></span>
+    {{/component-tooltip}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-restobjectcombo">{{#if isLoading}}
+    <i class="fa fa-refresh fa-spin"></i>
+{{else}}
+    <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">
+            <i class="fa fa-search"></i>
+        </span>
+        {{input value=searchCriterion class="form-control"}}
+    </div>
+    <select class="form-control">
+        {{#each category in filteredElements}}
+            <optgroup {{bind-attr label=category.name}}>
+                <option selected="selected" value="">--</option>
+                {{#each item in category.content}}
+                    {{#if item.selected}}
+                        <option selected="selected" {{bind-attr value=item.value}}>{{item.label}}</option>
+                    {{else}}
+                        <option {{bind-attr value=item.value}}>{{item.label}}</option>
+                    {{/if}}
+                {{/each}}
+            </optgroup>
+        {{/each}}
+    </select>
+
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-searchbar">{{#if showSearchOptions}}
+    <span class="input-group">
+        <span class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-wrench"></span>
+                <span class="caret"></span>
+            </button>
+            <div class="dropdown-menu" role="menu" style="width:400px">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="active"><a {{bind-attr href="tabAllHref"}} role="tab" data-toggle="tab">All</a></li>
+                    <li><a {{bind-attr href="tabIndexedHref"}} role="tab" data-toggle="tab">Indexed</a></li>
+                    <li><a {{bind-attr href="tabFilterHref"}} role="tab" data-toggle="tab">Filter</a></li>
+                  </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" {{bind-attr id="tabAllId"}}>
+                        <div class="input-group">
+                            {{#each this.searchableAttributes}}
+                                <label class="checkbox-inline">
+                                    {{input type="checkbox"}}{{this}}
+                                </label><br/>
+
+                            {{/each}}
+                        </div>
+                    </div>
+                    <div class="tab-pane" {{bind-attr id="tabIndexedId"}}>blah2</div>
+                    <div class="tab-pane" {{bind-attr id="tabFilterId"}}>blah3</div>
+                </div>
+            </div>
+        </span>
+        {{input type="text" placeholder=placeholder action="searchInputAction" class="form-control inlineInput" value=value}}
+    </span>
+{{else}}
+
+    <div class="input-group input-group-sm">
+        {{input type="text" placeholder=placeholder action="searchInputAction" class="form-control inlineInput" value=value}}
+        <span class="input-group-btn">
+            <button class="btn btn-default btn-flat" {{action 'clearSearch'}}>
+                <span class="glyphicon glyphicon-remove-circle"></span>
+            </button>
+            <button class="btn btn-primary btn-flat" {{action 'searchInputAction'}}>
+                <span class="fa fa-search"></span>
+            </button>
+        </span>
+    </div>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-simpledicteditor">simpledict
+
+<table style="width:100%" class="table table-striped">
+    {{#each item in dictAsArray}}
+        <tr {{action "select" item on="click"}}>
+            <td>
+                <span class="label label-primary" style="float:right">
+                    {{item.key}}
+                </span>
+            </td>
+            <td>
+                <span class="glyphicon glyphicon-arrow-right"></span>
+            </td>
+            <td>
+                <span class="label label-warning">
+                    {{item.value}}
+                </span>
+            </td>
+            <td>
+                <a class="btn btn-danger btn-xs" {{action "removeKey" item.key}}>
+                    <i class="fa fa-minus"></i>
+                </a>
+            </td>
+        </tr>
+    {{/each}}
+    <tr>
+        <td>
+            {{input value=newKey class="fright"}}
+        </td>
+        <td>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+        </td>
+        <td>
+            {{input value=newValue}}
+        </td>
+        <td>
+            <a class="btn btn-success btn-xs" {{action "addKey"}}>
+                <i class="fa fa-plus"></i>
+            </a>
+        </td>
+    </tr>
+</table>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-slider"><input id="range_slider" class="slider"/>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-stringclassifiedcrecordselector">{{#if loadingInitialContent}}
+    <i class="fa fa-refresh fa-spin"></i>
+{{else}}
+    {{component-classifieditemselector content=this.classifiedItems target=this multiselect=multiselect selection=selectionUnprepared}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-tabcontent">{{yield}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-tabheader"><a {{bind-attr href=href}} aria-controls="output" role="tab" data-toggle="tab">
+	{{tr label}}
+</a>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-table">
+<table class="table table-bordered table-condensed table-striped table-hover">
+    <thead>
+        <tr>
+            {{#each column in columns}}
+                {{#if column.actionAll}}
+                    <th {{bind-attr style=column.style class=column.class}}>
+                        <a {{action "do" column.actionAll item}}>
+                            {{column.title}}
+                        </a>
+                    </th>
+                {{else}}
+                    <th {{bind-attr style=column.style class=column.class}}>
+                        {{column.title}}
+                    </th>
+                {{/if}}
+            {{/each}}
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#if items.length}}
+            {{#each item in items}}
+                <tr>
+                    {{#each column in columns}}
+                        {{#if column.action}}
+                            <td {{bind-attr style=column.style class=column.class}}>
+                                <a {{action "do" column.action item}}>
+                                    {{column.title}}
+                                </a>
+                            </td>
+                        {{else}}
+                            <td {{bind-attr style=column.style class=column.class}}>
+                                {{component-renderer attrName=column.name record=item}}
+                                <!--getfield item column.name-->
+                            </td>
+                        {{/if}}
+                    {{/each}}
+                </tr>
+            {{/each}}
+        {{else}}
+            <tr><td {{bind-attr colspan=columns.length}}>{{tr "No values"}}</td></tr>
+        {{/if}}
+    </tbody>
+</table>
+
+<button type="button" class="btn btn-small btn-default" {{action "prevPage"}}>
+    <span class="glyphicon glyphicon-chevron-left"></span>
+</button>
+Page {{input type="number" value=currentPage}} / {{totalPages}}
+<button type="button" class="btn btn-small btn-default" {{action "nextPage"}}>
+    <span class="glyphicon glyphicon-chevron-right"></span>
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-tabs">{{yield}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-tabscontentgroup">{{yield}}
+
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-tabsheadergroup">{{yield}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-textwithsortoption"><div class="form-inline">
+    <div class="form-group">
+        {{input value=property class="form-control" type="text"}}
+    </div>
+    <div class="form-group">
+        {{view Ember.Select
+            content=directionTypes
+            value=direction
+            class="form-control"
+        }}
+    </div>
+</div>
+
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-timestamptooltiped">{{#component-tooltip content=showMainTimestamp htmlEnabled=true noTranslation=true}}
+    <span class="handle">
+        {{showOptionalElapsed}}
+    </span>
+{{/component-tooltip}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-typedvalue"><div class="form-inline">
+    <div class="form-group">
+        {{view Ember.Select
+            content=valuesTypes
+            value=selectedValueType
+            class="form-control"
+        }}
+    </div>
+    <div class="form-group">
+        {{#if useTextField}}
+            {{input type="text" class="form-control" value=value placeholder=placeholder}}
+        {{/if}}
+        {{#if useBoolean}}
+            <button {{bind-attr class=":btn :btn-default value:active"}} {{action "switchContentValue"}}>
+                {{#if value}}
+                    True
+                {{else}}
+                    False
+                {{/if}}
+            </button>
+        {{/if}}
+    </div>
+
+    <br/>
+    <br/>
+
+</div>
+{{#if useArray}}
+    <!--TODO retrive array value to typed value content value-->
+    {{component-arrayeditor content=value}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-actionfilter">{{!*
+ * @editor actionfilter
+}}
+{{component-actionfilter content=attr.value title=attr.field}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-array">{{!*
+ * @editor array
+}}
+{{component-arrayeditor content=attr form=this.form}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-arrayclassifiedcrecordselector">{{!*
+ * @editor arrayclassifiedcrecordselector
+}}
+{{component-arrayclassifiedcrecordselector content=attr.value crecordtype=attr.model.options.crecordtype modelfilter='{}' valueKey=attr.model.options.valueKey}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-boolean">{{!*
+ * @editor boolean
+}}
+{{component-checkbox checked=attr.value class="toggle"}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-color">{{!*
+ * @editor color
+}}
+{{component-colorchooser content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-contextselector">{{!*
+ * @editor contextselector
+}}
+{{component-contextselector content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-dateinterval">{{!*
+ * @editor dateinterval
+}}
+{{component-dateinterval content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-defaultpropertyeditor">{{!*
+ * @editor defaultpropertyeditor
+}}
+{{component-validationtextfield formController=controller name=attr.field value=attr.value attrBinding="attr" class="form-control" placeholder=attr.model.options.description}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-dictclassifiedcrecordselector">{{!*
+ * @editor dictclassifiedcrecordselector
+}}
+{{component-dictclassifiedcrecordselector content=attr.value crecordtype=attr.model.options.crecordtype modelfilter='{}' selection=attr.value valueKey=attr.model.options.valueKey}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-duration">{{!*
+ * @editor duration
+}}
+{{component-durationcombo content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-durationWithUnits">{{!*
+ * @editor durationWithUnits
+}}
+{{component-durationcombo content=attr.value useFullPeriodInformation=true}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-elementidselectorwithoptions">{{!*
+ * @editor elementidselectorwithoptions
+ *
+ * @description A complex editor to manage an array of objects, by selecting model instances from a table, and generating new objects with some keys into the model instance.
+ *
+ * For each generated objects, a customizable sub form is presented to the user, allowing objects customization via usual "editors" principle.
+ * @property {string} type should be array
+ * @property {object} source refers to to available elements to be used by the user to generate the result value
+ * @property {string} source.schema the schema to be used to feed the available elements table
+ * @property {array} source.columns the columns to be used in the available elements table.
+ * @property {string} source.searchMethod the name of the method to perform a search on available elements. Refers to an element name in the search methods registry
+ * @property {array} sourceMappingKeys handles the list of keys to use to generate a new object when an user selects an available element.
+                Specified keys will be taken and be put on the destination object.
+ * @property {object} items
+ * @property {string} items.type should be object
+ * @property {string} items.role the item role is used to generate the header of each element's subform, by getting the appropriate renderer, if any
+ * @property {string} items.typeKeyName the key name of the generated object that contains type information. Usually set to "xtype"
+ * @property {object} items.properties the dict of properties of generated objects. Used to generate the sub form of each object.
+ * @property {object} items.model used to statically set a type to generated objects
+ *
+ *    @example
+ *
+ *    metrics: {
+ *        "type": "array",
+ *        "source": {
+ *            "schema": "ctxmetric",
+ *            "searchMethod": "metric",
+ *            "columns": [
+ *                {"name": "component", "title": "Component"},
+ *                {"name": "resource", "title": "Resource"},
+ *                {"name": "cid", "title": "Metric"}
+ *            ]
+ *        },
+ *        "sourceMappingKeys": [{
+ *            "sourceItemKey": "id",
+ *            "objectKey": "metric"
+ *        }],
+ *        "items": {
+ *            "type": "object",
+ *            "role": "stylizedmetric",
+ *            "typeKeyName": "xtype",
+ *            "properties": {
+ *                "color": {
+ *                    "type": "string",
+ *                    "role": "color"
+ *                },
+ *                "label": {
+ *                    "type": "string"
+ *                },
+ *                "xaxis": {
+ *                    "type": "string"
+ *                },
+ *                "yaxis": {
+ *                    "type": "string"
+ *                },
+ *                "unit": {
+ *                    "type": "string"
+ *                }
+ *            },
+ *            "relationship": "belongsTo",
+ *            "model": "stylizedmetric"
+ *        }
+ *    }
+ * @//TODO manage search in a dynamic way, as an editor property binding to a search method
+ * //TODO make this doc viewable on the generated doc
+ *}}
+
+
+
+{{component-elementidselectorwithoptions content=attr}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-error">{{!*
+ * @editor error
+}}
+<div class="alert alert-warning"><strong>{{attr.field}}:</strong> {{attr.error}}</div>
+</script>
+<script type="text/x-handlebars" data-template-name="editor-eventkey">{{!*
+ * @editor eventkey
+}}
+{{component-eventkey content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-integer">{{!*
+ * @editor integer
+}}
+{{input type="number" value=attr.value class="form-control"}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-json">{{!*
+ * @editor json
+}}
+{{json-editor json=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-labelandviewid">{{!*
+ * @editor labelandviewid
+}}
+<span class="label" style="color:black">{{tr 'Label'}}</span>{{input type="text" class="form-control" value=attr.value.label}}
+<span class="label" style="color:black">{{tr 'Value'}}</span>{{component-restobjectcombo attr=attr selectedValue=attr.value.value schemaType="userviewsimplemodel" valueField="id" labelField="crecord_name" valuePath="attr.value.value"}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-labelledlink">{{!*
+ * @editor labelledlink
+}}
+{{component-labelledlink content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-mail">{{!*
+ * @editor mail
+}}
+<div class="input-group">
+  <span class="input-group-addon">@</span>
+          {{component-validationtextfield formController=controller name=attr.field value=attr.value attrBinding="attr" class="form-control"}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="editor-mixins">{{!*
+ * @editor mixins
+}}
+{{component-mixinselector content=attr.value form=form}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-modelselect">{{!*
+ * @editor modelselect
+}}
+{{component-modelselect content=attr}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-nestedarray">{{!*
+ * @editor nestedarray
+}}
+{{component-nestedarrayeditor content=attr form=this.form}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-password">{{!*
+ * @editor password
+}}
+{{component-password content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-passwordmd5">{{!*
+ * @editor passwordmd5
+}}
+{{component-password content=attr.value method="md5"}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-passwordsha1">{{!*
+ * @editor passwordsha1
+}}
+{{component-password content=attr.value method="sha1"}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-restobject">{{!*
+ * @editor restobject
+}}
+{{component-restobjectcombo attr=attr selectedValue=attr.value schemaType=attr.model.options.schemaType valueField=attr.model.options.valueField labelField=attr.model.options.labelField}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-richtext">{{!*
+ * @editor richtext
+}}
+{{summernote-editor content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-separator">{{!*
+ * @editor separator
+}}
+<hr/>
+</script>
+<script type="text/x-handlebars" data-template-name="editor-serieformula">{{!*
+ * @editor serieformula
+}}
+{{component-formulaeditor content=attr}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-simpledict">{{!*
+ * @editor simpledict
+}}
+{{component-simpledicteditor content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-simplelist">{{!*
+ * @editor simplelist
+}}
+{{view Ember.Select
+       content=attr.model.options.enum
+       value=attr.value
+       class="form-control"
+}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-slider">{{!*
+ * @editor slider
+}}
+{{component-slider content=attr.value options=attr.model.options}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-sortable">{{!*
+ * @editor sortable
+}}
+{{component-textwithsortoption content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-source">{{!*
+ * @editor source
+}}
+{{view Ember.Select
+       content=attr.model.options.enum
+       value=attr.value
+       class="form-control"
+}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-state">{{!*
+ * @editor state
+}}
+{{component-stateeditor content=attr.value title=attr.field showAll=attr.model.options.showAll}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-stringclassifiedcrecordselector">{{!*
+ * @editor stringclassifiedcrecordselector
+}}
+{{component-stringclassifiedcrecordselector content=attr.value crecordtype=attr.model.options.crecordtype modelfilter='{}' selection=attr.value valueKey=attr.model.options.valueKey nameKey=attr.model.options.nameKey}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-stringpair">{{!*
+ * @editor stringpair
+}}
+<span class="label" style="color:black">{{tr 'Label'}}</span>{{input type="text" class="form-control" value=attr.value.label}}
+<span class="label" style="color:black">{{tr 'Value'}}</span>{{input type="text" class="form-control" value=attr.value.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-tags">{{!*
+ * @editor tags
+}}
+{{component-arrayeditor content=attr form=this.form}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-textarea">{{!*
+ * @editor textarea
+}}
+{{component-validationtextarea formController=controller name=attr.field value=attr.value attrBinding="attr" class="form-control" placeholder=attr.model.options.description}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-timestamp">{{!*
+ * @editor timestamp
+}}
+{{component-datetimepicker content=attr.value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-typedvalue">{{!*
+ * @editor typedvalue
+}}
+{{component-typedvalue content=value}}
+</script>
+<script type="text/x-handlebars" data-template-name="editor-userpreference">{{!*
+ * @editor userpreference
+}}
+{{component-userpreferencesmanager content=attr.value title=attr.field userId=parentView.controller.formContext._id}}
+</script>
+<script type="text/x-handlebars" data-template-name="pbehaviorform">{{#if controller.controllers.application.runtimeConfiguration.DEBUG}}
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">Debug informations</h3>
+        </div>
+        <div class="panel-body">
+            inspectedItemType: {{inspectedItemType}}
+        </div>
+    </div>
+{{/if}}
+<p>
+    {{#if controller.categories}}
+        {{partialslot slot=controller._partials.toolbar tagName="ul" classNames="nav navbar-nav pull-right"}}
+    {{else}}
+        <div class="callout callout-danger">
+            <h4>
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                 {{tr 'Schema not editable'}}
+            </h4>
+            <p>
+                {{tr 'This schema is not editable'}}.
+                {{#if controller.controllers.application.runtimeConfiguration.DEBUG}}
+                    <div>TODO warn administrators that the schema does not have categories.</div>
+                {{/if}}
+            </p>
+        </div>
+    {{/if}}
+    {{#unless controller.onePageDisplay}}
+        <ul class="nav nav-tabs">
+            {{#each category in controller.categories}}
+                {{#if category.keys.length}}
+                    <li {{bind-attr class="category.isDefault:active"}} id="{{unbound category.slug}}_tab"><a href="#{{unbound category.slug}}" data-toggle="tab">{{unbound tr category.title}}</a></li>
+                {{/if}}
+            {{/each}}
+        </ul>
+    {{/unless}}
+    <!-- Tab panes -->
+    <div class="tab-content">
+        {{#each category in controller.categories}}
+            {{#if category.keys.length}}
+                {{#if controller.onePageDisplay}}
+                    <center>
+                        <h4>{{tr category.title}}</h4>
+                    </center>
+                    {{#each attr in category.keys}}
+                        {{#if attr.model.options.readOnly}}
+                            <div>
+                                {{#if attr.model.options.title}}
+                                    <span class="label" style="color:black">
+                                        <b>
+                                            {{tr attr.model.options.title}}
+                                        </b>
+                                    </span>
+                                {{else}}
+                                    {{#if attr.field}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.field}}
+                                            </b>
+                                        </span>
+                                    {{/if}}
+                                {{/if}}
+                            {{component-renderer attr=attr record=controller.formContext value=attr.value}}
+                            </div>
+                        {{else}}
+                            {{#unless attr.model.options.hiddenInForm}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            {{tr attr.model.options.title}}
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                {{tr attr.field}}
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                    {{component-editor attr=attr form=this editorOverrides=controller.controllers.application.frontendConfig.editors}}
+                                </div>
+                            {{/unless}}
+                        {{/if}}
+                    {{/each}}
+                    <hr/>
+                {{else}}
+                    {{#if category.isDefault}}
+                        <div class="tab-pane active" id="{{unbound category.slug}}">
+                        {{#each attr in category.keys}}
+                            {{#if attr.model.options.readOnly}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.model.options.title}}
+                                            </b>
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                <b>
+                                                    {{tr attr.field}}
+                                                </b>
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                   {{component-renderer attr=attr record=controller.formContext value=attr.value}}
+                                </div>
+                            {{else}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.model.options.title}}
+                                            </b>
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                <b>
+                                                    {{tr attr.field}}
+                                                </b>
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                    {{component-editor attr=attr form=this editorOverrides=controller.controllers.application.frontendConfig.editors}}
+                                </div>
+                            {{/if}}
+                        {{/each}}
+                        </div>
+                    {{else}}
+                        <div class="tab-pane" id="{{unbound category.slug}}">
+                        {{#each attr in category.keys}}
+                            {{#if attr.model.options.readOnly}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.model.options.title}}
+                                            </b>
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                <b>
+                                                    {{tr attr.field}}
+                                                </b>
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                    {{component-renderer attr=attr record=controller.formContext}}
+                                </div>
+                            {{else}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.model.options.title}}
+                                            </b>
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                <b>
+                                                    {{tr attr.field}}
+                                                </b>
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                    {{component-editor attr=attr form=this editorOverrides=controller.controllers.application.frontendConfig.editors}}
+                                </div>
+                            {{/if}}
+                        {{/each}}
+                        </div>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+        {{/each}}
+    </div>
+</p></script>
+<script type="text/x-handlebars" data-template-name="renderer-actionfilter">{{!*
+ * @renderer actionfilter
+}}
+{{json2html value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-boolean">{{!*
+ * @renderer boolean
+}}
+{{#if value}}
+    <span class="label label-success">
+        <span class="glyphicon glyphicon-ok"></span>
+    </span>
+{{else}}
+    <span class="label label-default">
+        <span class="glyphicon glyphicon-remove"></span>
+    </span>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-color">{{!*
+ * @renderer color
+}}
+{{color value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-conf">{{!*
+ * @renderer conf
+}}
+{{conf this}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-ellipsis">{{!*
+ * @renderer object
+}}
+{{ellipsis value attr.options.nbChar}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-labelledlink">{{!*
+ * @renderer labelledlink
+}}
+{{json2html value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-mail">{{!*
+ * @renderer mail
+}}
+<span class="label label-default">
+    <span class="glyphicon glyphicon-envelope"></span>
+     {{value}}
+</span>
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-object">{{!*
+ * @renderer object
+}}
+{{json2html value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-percent">{{!*
+ * @renderer percent
+}}
+{{percent value}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-recordinfopopup">{{!*
+ * @renderer recordinfopopup
+}}
+<a {{action "do" "sendDisplayRecord" parentView.context}}>{{value}}</a>
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-richtext">{{!*
+ * @renderer richtext
+}}
+{{{value}}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-source">{{!*
+ * @renderer source
+}}
+{{{logo value}}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-subprocess">{{!*
+ * @renderer subprocess
+}}
+{{subprocess value }}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-tags">{{!*
+ * @renderer tags
+}}
+{{#each tag in value}}
+    <span class="label label-primary">{{tag}}</span>
+{{/each}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-timestamp">{{!*
+ * @renderer timestamp
+}}
+{{#unless attr.options.hideDate}}
+    <div>{{timestamp value attr}}</div>
+{{/unless}}
+{{#if attr.options.canDisplayAgo}}
+    <small class="text-muted">
+        <span class="glyphicon glyphicon-time"></span>
+        {{timeSince value}}
+    </small>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="renderer-translator">{{!*
+ * @renderer translator
+}}
+{{tr value}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-ack">{{#unless controller.findOptions.useLogCollection}}
+    {{#if controller.rights.actionbutton_ack.checksum}}
+        {{#if this.ack.author}}
+            {{#if this.ack.isAck}}
+                {{#component-tooltip content="Cancel ack"}}
+                    <button class="btn btn-default btn-xs" {{action 'sendEvent' 'ackremove' this}} >
+                        <span class="glyphicon glyphicon-ban-circle"></span>
+                    </button>
+                {{/component-tooltip}}
+            {{/if}}
+        {{else}}
+            {{recordcanbeack this}}
+            {{#if this.recordcanbeack}}
+                {{#if controller.rights.actionbutton_fastack.checksum}}
+                    {{#component-tooltip content="Fast Ack"}}
+                        <button class="btn btn-default btn-xs" {{action 'sendEvent' 'fastack' this}} >
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    {{/component-tooltip}}
+                {{/if}}
+                {{#component-tooltip content="Ack"}}
+                    <button class="btn btn-default btn-xs" {{action 'sendEvent' 'ack' this}} >
+                        <span class="glyphicon glyphicon-saved"></span>
+                    </button>
+                {{/component-tooltip}}
+            {{/if}}
+        {{/if}}
+    {{/if}}
+{{/unless}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-ackselection">{{#unless controller.findOptions.useLogCollection}}
+    {{#if controller.rights.actionbutton_ack.checksum}}
+        {{#if controller.rights.actionbutton_fastack.checksum}}
+            {{#component-tooltip content="Fast Ack"}}
+                <button class="btn btn-default btn-sm" {{action 'sendEvent' 'fastack'}} >
+                    <span class="glyphicon glyphicon-ok"></span>
+                    {{tr "Fast Ack"}}
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+        <button class="btn btn-default btn-sm" {{action 'sendEvent' 'ack'}} >
+            <span class="glyphicon glyphicon-saved"></span>
+            {{tr "Ack"}}
+        </button>
+        <button class="btn btn-default btn-sm" {{action 'sendEvent' 'ackremove'}} >
+            <span class="glyphicon glyphicon-ban-circle"></span>
+            {{tr "Cancel ack"}}
+        </button>
+    {{/if}}
+{{/unless}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-cancel">{{#unless controller.findOptions.useLogCollection}}
+    {{#if controller.rights.actionbutton_cancel.checksum}}
+        {{#if this.ack.isAck}}
+            {{#component-tooltip content="Remove alarm"}}
+                <button class="btn btn-default btn-xs" {{action 'sendEvent' 'cancel' this}} >
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+    {{/if}}
+    {{#if controller.rights.actionbutton_uncancel.checksum}}
+        {{#if this.ack.isCancel}}
+            {{#component-tooltip content="Restore alarm"}}
+                <button class="btn btn-default btn-xs" {{action 'sendEvent' 'uncancel' this}}>
+                    <span class="glyphicon glyphicon-share-alt"></span>
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+    {{/if}}
+{{/unless}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-cancelselection">{{#unless controller.findOptions.useLogCollection}}
+    {{#if controller.rights.actionbutton_cancel.checksum}}
+        <button class="btn btn-default btn-sm" {{action 'sendEvent' 'cancel'}} >
+            <span class="glyphicon glyphicon-trash"></span>
+            {{tr "Remove alarm"}}
+        </button>
+    {{/if}}
+    {{#if controller.rights.actionbutton_uncancel.checksum}}
+        <button class="btn btn-default btn-sm" {{action 'sendEvent' 'uncancel'}}>
+            <span class="glyphicon glyphicon-share-alt"></span>
+            {{tr "Restore alarm"}}
+        </button>
+    {{/if}}
+{{/unless}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-changestate">{{#if controller.rights.actionbutton_changestate.checksum}}
+    {{#unless controller.findOptions.useLogCollection}}
+        {{#if this.ack.isAck}}
+            {{#component-tooltip content="Change criticity"}}
+                <button class="btn btn-default btn-xs" {{action 'sendEvent' 'changestate' this}} >
+                    <i class="fa fa-exclamation-triangle"></i>
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+    {{/unless}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-create">{{#if controller.userCanCreateRecord}}
+    {{#if view.minified}}
+        {{#component-tooltip content="Add entry for current list"}}
+            <button class="btn btn-default btn-sm" {{action 'add' controller.itemType}} >
+                <span class="glyphicon glyphicon-plus-sign"></span>
+            </button>
+        {{/component-tooltip}}
+    {{else}}
+        {{#component-tooltip content="Add entry for current list"}}
+            <button class="btn btn-default btn-sm" {{action 'add' controller.itemType}} >
+                <span class="glyphicon glyphicon-plus-sign"></span>
+                    {{tr 'Create'}}
+            </button>
+        {{/component-tooltip}}
+    {{/if}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-createpbehavior">{{!-- {{#if controller.userCanDeleteRecord}} --}}
+    <button class="btn btn-default btn-sm" {{action 'createMultiplePBehaviors'}} >
+        {{tr 'Apply PBehavior'}}
+    </button>
+{{!-- {{/if}} --}}
+
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-duplicate">{{#if controller.userCanCreateRecord}}
+    {{#component-tooltip content="Duplicate entry"}}
+        <button type="button" class="btn btn-xs btn-default" {{action 'duplicate' this}}>
+            <i class="fa fa-files-o"></i>
+        </button>
+    {{/component-tooltip}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-edit">{{#if controller.userCanUpdateRecord}}
+    <button type="button" class="btn btn-xs btn-default" {{action 'edit' this}}>
+        <span class="glyphicon glyphicon-edit"></span>
+    </button>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-eventnavigation">{{#if controller.rights.actionbutton_eventnavigation.checksum}}
+    <button type="button" class="btn btn-default btn-sm" {{action 'showView' 'view.event'}}>
+        <i class="fa fa-list-alt"></i>
+        {{#unless view.minified}}
+            {{tr 'Event navigation'}}
+        {{/unless}}
+    </button>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-foldable"><span style="cursor:pointer;" {{action 'unfold' view}}>
+    {{#if view.unfolded}}
+        <span class="glyphicon glyphicon-minus"></span>
+    {{else}}
+        <span class="glyphicon glyphicon-plus"></span>
+    {{/if}}
+</span>
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-history">{{#if controller.rights.actionbutton_history.checksum}}
+    <button type="button" class="btn btn-default btn-sm" {{action 'showView' 'view.event-history'}}>
+        <span class="glyphicon glyphicon-time"></span>
+        {{#unless view.minified}}
+            {{tr 'History'}}
+        {{/unless}}
+    </button>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-incident">{{#if this.state}}
+    {{#if this.ack.author}}
+        {{#if controller.rights.actionbutton_incident.checksum}}
+            {{#component-tooltip content="Declare an incident"}}
+                <button type="button" class="btn btn-default btn-xs" {{action 'sendEvent' 'declareticket' this}} >
+                    <i class="fa fa-ticket"></i>
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+    {{/if}}
+{{else}}
+   {{#component-if_equal_component param1=this.status param2=3}} 
+        {{#if this.ack.author}}
+            {{#if controller.rights.actionbutton_incident.checksum}}
+                {{#component-tooltip content="Declare an incident"}}
+                    <button type="button" class="btn btn-default btn-xs" {{action 'sendEvent' 'declareticket' this}} >
+                        <i class="fa fa-ticket"></i>
+                    </button>
+                {{/component-tooltip}}
+            {{/if}}
+        {{/if}}
+    {{/component-if_equal_component}}
+{{/if}}
+
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-info">{{#if controller.rights.actionbutton_info.checksum}}
+    {{component-linklist record=this linkInfoPattern=controller.controllers.application.frontendConfig.list_info_button_pattern}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-remove">{{#if controller.userCanDeleteRecord}}
+    <button class="btn btn-default btn-xs" {{action 'remove' this}} >
+        <span class="glyphicon glyphicon-trash"></span>
+    </button>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-removeselection">{{#if controller.userCanDeleteRecord}}
+    <button class="btn btn-default btn-sm" {{action 'removeSelection'}} >
+        <span class="glyphicon glyphicon-trash"></span>
+        {{tr 'Remove selection'}}
+    </button>
+{{/if}}
+
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-show">{{!#if controller.parentController.userCanReadRecord}}
+    <button class="btn btn-default btn-xs" {{action 'show' this.id}} >
+        <span class="glyphicon glyphicon-eye-open"></span>
+    </button>
+{{!/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-ticketnumber">{{#if controller.rights.actionbutton_ticketnumber.checksum}}
+    {{#if this.state}}
+        {{#if this.ack.author}}
+            {{#component-tooltip content="Assign ticket number"}}
+                <button class="btn btn-default btn-xs" {{action 'sendEvent' 'assocticket' this}} >
+                    <i class="fa fa-thumb-tack"></i>
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+    {{/if}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="column-unfold"><th class="checkboxes"></th></script>
+<script type="text/x-handlebars" data-template-name="consolemanagerstatusmenu">{{#if configuration.DEBUG}}
+    <li class="dropdown notifications-menu">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-terminal"></i>
+            <i class="caret"></i>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="header">
+                <label class="control-label">{{tr 'client logging verbosity'}}</label>
+                {{verbosity_mode}}
+            </li>
+            <li class="footer"><a {{action 'showConsoleSettings'}}>{{tr 'JS runtime settings'}}</a></li>
+        </ul>
+    </li>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="crecordform">
+<div {{bind-attr id="modalId"}} class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">
+                    {{#if this.editedRecordController}}
+                        {{tr 'Edit'}}
+                    {{else}}
+                        {{tr 'New'}}
+                    {{/if}}
+                    {{crecord_type}}</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                <ul class="nav nav-tabs">
+                    {{#each category in controller.categorized_attributes}}
+                        <li><a href="#{{unbound category.title}}" data-toggle="tab">{{unbound category.title}}</a></li>
+                    {{/each}}
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    {{#each category in controller.categorized_attributes}}
+                        <div class="tab-pane" id="{{unbound category.title}}">
+                            {{#each attr in category.keys}}
+                                {{#if attr.model.options.hiddenInForm}}
+                                {{else}}
+                                     <div>
+                                            <span class="label" style="color:black">
+                                                {{#if attr.model.options.label}}
+                                                    {{attr.model.options.label}}
+                                                {{else}}
+                                                    {{attr.field}}
+                                                {{/if}}
+                                            </span>
+                                            {{editor "editorType"}}
+                                     </div>
+                                {{/if}}
+                            {{/each}}
+                        </div>
+                    {{/each}}
+                </div>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{tr 'Close'}}</button>
+                <button type="button" class="btn btn-primary" {{action "submit"}}>{{tr 'Save changes'}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="customfilters">{{#if controller.rights.list_filters.checksum}}
+    <div class="pull-right btn-group" data-toggle="btn-toggle">
+        {{#each filter in controller.filters_list}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active"}} data-col="all" {{action "setFilter" filter}}>
+                {{filter.title}}
+            </span>
+        {{/each}}
+        {{#each filter in controller.custom_filters_list}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "selectFilter" filter}}>
+                {{filter.title}}
+                <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+            </span>
+        {{/each}}
+        {{#each filter in controller.user_filters}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "setFilter" filter}}>
+                {{filter.title}}
+                <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+            </span>
+        {{/each}}
+        {{#if controller.mixinOptions.customfilterlist.can_mix_filters}}
+            {{#each operator in controller.customFilterOperators}}
+                <button {{bind-attr class=":btn operator.active:btn-primary:btn-default :btn-sm operator.active:active"}} {{action "setActiveOperator" operator}}>{{operator.display}}</button>
+            {{/each}}
+        {{/if}}
+        {{#if controller.canAddCustomFiltersInUserPreferences}}
+            <button type="button" class="btn btn-primary btn-sm btn-add-customfilter" {{action "addUserFilter"}} data-col="all">
+                <i class="fa fa-plus"></i> {{tr 'Add filter'}}
+            </button>
+        {{/if}}
+    </div>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="documentation"><!--Display a link to the canopsis documentation-->
+{{#if showDocumentationButton}}
+	<li class="dropdown notification-menu">
+	    <a href="/static/doc/index.html" target="_blank">
+	        <i class="fa fa-book"></i>
+	    </a>
+	</li>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="draggableheaders"><tr>
+    <th class="checkboxes">
+        {{component-checkbox checked=controller.isAllSelected class="toggle"}}
+    </th>
+
+    {{#each attr in controller.shown_columns}}
+        {{#if attr.options.show}}
+            {{view "tabledraggableth" attr=attr}}
+        {{/if}}
+    {{/each}}
+
+    {{#if controller._partials.itemactionbuttons}}
+        <th class="actions">{{tr 'Actions'}}</th>
+    {{/if}}
+</tr>
+</script>
+<script type="text/x-handlebars" data-template-name="formbutton-ack"><button type="button" class="btn btn-success" {{action "submit" target=form}}>
+    {{tr 'Acknowledge'}}
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="formbutton-ackandproblem"><button type="button" class="btn btn-warning" data-dismiss="modal" {{action "submit" "reportIncident" target=form}}>
+    <i class="fa fa-warning"></i>
+    {{tr 'Acknowledge and report an incident'}}
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="formbutton-cancel"><button type="button" class="btn btn-default" data-dismiss="modal">{{tr 'Close'}}</button>
+</script>
+<script type="text/x-handlebars" data-template-name="formbutton-delete"><button type="button" class="btn btn-danger" data-dismiss="modal" {{action "submit" target=form}}>
+    <i class="fa fa-warning"></i>
+    {{tr 'Delete'}}
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="formbutton-incident"><button type="button" class="btn btn-warning" data-dismiss="modal" {{action "submit" target=form}}>
+    <i class="fa fa-warning"></i>
+    {{tr 'Report an incident'}}
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="formbutton-inspectform"><code>
+    <a {{action "inspectForm" target=form}}>
+        >$E
+    </a>
+</code>
+</script>
+<script type="text/x-handlebars" data-template-name="formbutton-next"><button type="button" class="btn btn-primary" {{action "next" target=form}}>{{tr 'Next'}}</button>
+</script>
+<script type="text/x-handlebars" data-template-name="formbutton-previous"><button type="button" class="btn btn-primary" {{action "previousForm" target=form}}>{{tr 'Previous'}}</button>
+</script>
+<script type="text/x-handlebars" data-template-name="formbutton-submit"><button type="button" class="btn btn-primary btn-submit" {{action "submit" target=form}}>
+    {{tr 'Save changes'}}
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="formwrapper"><div id="formwrapper" class="modal fade">
+    <div class="modal-dialog form">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title handle" style="width:90%">
+                    {{{controller.form.title}}}
+
+                    {{#if controller.debug}}
+                        {{partialslot slot=controller.form._partials.debugButtons}}
+                    {{/if}}
+                </h4>
+            </div>
+            <div class="modal-body">
+                {{#if controller.form}}
+                    {{#with form}}
+                        {{formview templateName=controller.formName controller=this}}
+                    {{/with}}
+                {{/if}}
+            </div>
+            <div class="modal-footer">
+                {{partialslot slot=controller.form._partials.buttons}}
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="gridlayout"><div>
+    {{#each item in controller.items}}
+        {{#if item.classValue}}
+            <div {{bind-attr class="item.classValue"}} >
+                {{widgetslot item=item}}
+            </div>
+        {{else}}
+            <div {{bind-attr class="controller.defaultItemCssClass"}}>
+                {{widgetslot item=item}}
+            </div>
+        {{/if}}
+    {{/each}}
+    <div style="clear:both"></div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="groupedrowslistlayout"><table class="table table-bordered dataTable">
+    {{#eachIndexed controller.widgetData}}
+        {{#each columns in controller._partials.columnsLine}}
+            <tr>
+                <td></td>
+                <td>
+                    {{partial columns}}
+                </td>
+            </tr>
+        {{/each}}
+
+        {{render "groupedrowslistlinelayout" this
+            parentController=controller even=even}}
+
+        {{#if controller._partials.itemactionbuttons}}
+            <tr>
+                <td class="grouped-cell-label">
+                    {{tr 'Actions'}}
+                </td>
+                <td>
+                    <div style="display:flex">
+                        {{partialslot slot=controller._partials.itemactionbuttons minified=true}}
+                    </div>
+                </td>
+            </tr>
+        {{/if}}
+    {{/eachIndexed}}
+</table>
+</script>
+<script type="text/x-handlebars" data-template-name="groupedrowslistlinelayout">{{#each attr in parentController.shown_columns}}
+    <tr>
+        {{#if attr.options.show}}
+            <td class="grouped-cell-label">
+                {{even}}
+                {{#if attr.options.label}}
+                    {{tr attr.options.label}}
+                {{else}}
+                    {{tr attr.field}}
+                {{/if}}
+            </td>
+            <td {{bind-attr class=attr.field}}>
+                {{#if attr.options.canUseDisplayRecord}}
+                    <i class="handle underline" {{action "sendDisplayRecord" parentController.controllerInstance this}}>
+                        {{component-renderer attr=attr record=this}}
+                    </i>
+                {{else}}
+                    {{component-renderer attr=attr record=this}}
+                {{/if}}
+            </td>
+        {{/if}}
+    </tr>
+{{/each}}
+
+{{#if parentController._partials.itemactionbuttons}}
+    <tr>
+        <td class="grouped-cell-label">
+            <div style="display:flex">
+                {{partialslot slot=controller.parentController._partials.itemactionbuttons minified=true}}
+            </div>
+        </td>
+    </tr>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="horizontallayout"><div>
+    {{#each item in controller.items}}
+        <div {{bind-attr class="controller.section"}} >
+            {{widgetslot item=item}}
+        </div>
+    {{/each}}
+    <div style="clear:both"></div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="index"><h2 class="page-header">{{tr 'Empty index page'}}</h2>
+
+<h3><i class="fa fa-warning text-yellow"></i> {{tr 'Oops!'}} {{tr 'No default view configured!'}}</h3>
+
+<button class="btn btn-primary" {{action "showView" 'view.userviews'}}>{{tr 'Switch to view list'}}</button>
+</script>
+<script type="text/x-handlebars" data-template-name="itemsperpage"><div class="pull-left dataTables_filter">
+    {{view Ember.Select
+        content=controller.itemsPerPagePropositions
+        value=controller.itemsPerPagePropositionSelected
+        class="inlineInput form-control input-sm"
+    }}
+    {{tr 'records per page'}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="lightlayout">{{#if controller.editMode}}
+    {{#if controller.isOnMainView}}
+        <div>
+            {{#each item in controller.items}}
+                <div {{bind-attr class="controller.itemCssClass"}} >
+                    {{widgetslot item=item}}
+                </div>
+            {{/each}}
+            <div style="clear:both"></div>
+        </div>
+    {{else}}
+        {{#each item in controller.items}}
+            {{#if controller.itemTagName}}
+                {{#view Ember.View tagName=controller.itemTagName classNames=controller.itemCssClassArray}}
+                    {{widgethelper widget=item.widget target=controller}}
+                {{/view}}
+            {{else}}
+                {{widgethelper widget=item.widget target=controller}}
+            {{/if}}
+        {{/each}}
+    {{/if}}
+{{else}}
+    {{#each item in controller.items}}
+        {{#if controller.itemTagName}}
+            {{#view Ember.View tagName=controller.itemTagName classNames=controller.itemCssClassArray}}
+                {{widgethelper widget=item.widget target=controller}}
+            {{/view}}
+        {{else}}
+            {{widgethelper widget=item.widget target=controller}}
+        {{/if}}
+    {{/each}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="listline">listline
+
+{{partial parentController.listlineTemplate}}
+</script>
+<script type="text/x-handlebars" data-template-name="loading"><i class="fa fa-refresh fa-spin"></i>
+</script>
+<script type="text/x-handlebars" data-template-name="loadingindicator">{{#if controller.isLoading}}
+    <div class="loadtooltip">
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+    </div>
+{{/if}}</script>
+<script type="text/x-handlebars" data-template-name="menu"></script>
+<script type="text/x-handlebars" data-template-name="mixineditdropdown"><button type="button" {{bind-attr class=":btn view.buttonsColorClass view.buttonsColorClass::btn-info view.buttonsColorSize view.buttonsColorSize::btn-xs"}} {{action 'editWidget' widget}}>
+    <span class="glyphicon glyphicon-edit"></span>
+</button>
+{{#if view.hasEditableMixins}}
+    <button type="button" {{bind-attr class=":btn view.buttonsColorClass view.buttonsColorClass::btn-info view.buttonsColorSize view.buttonsColorSize::btn-xs :dropdown-toggle"}} data-toggle="dropdown" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu" role="menu" style="margin-left: -200%;">
+        {{#each mixin in view.editableEnabledMixins}}
+            <li><a {{action 'editMixin' widget mixin.name}}>{{mixin.name}}</a></li>
+        {{/each}}
+        {{#each mixin in view.wrapperMixins}}
+            <li><a {{action 'editMixin' this mixin.name}}>{{mixin.name}}</a></li>
+        {{/each}}
+    </ul>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="mixinselector-itempartial">{{item.name}}<br/>
+<small>{{item.description}}</small>
+</script>
+<script type="text/x-handlebars" data-template-name="notificationsstatusmenu">{{!--
+<!-- Notifications: style can be found in dropdown.less -->
+<li class="dropdown notifications-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-warning"></i>
+        <span class="label label-warning">{{notificationCount}}</span>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="header">{{tr 'You have'}} {{notificationCount}} {{tr 'notifications'}}</li>
+        <li>
+            <ul class="menu">
+                {{#each notifications}}
+                <li>
+                    <a href="#">
+                        <i {{bind-attr class=":fa level falevel"}}></i> {{message}}
+                    </a>
+                </li>
+                {{/each}}
+            </ul>
+        </li>
+    </ul>
+</li>
+--}}
+</script>
+<script type="text/x-handlebars" data-template-name="pagination-infos"><div class="pull-left">
+    {{tr 'Showing'}} {{controller.paginationFirstItemIndex}} {{tr 'to'}} {{controller.paginationLastItemIndex}} {{tr 'of'}} {{controller.itemsTotal}} {{tr 'entries'}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="pagination">{{#unless controller.hasOnePage}}
+    <div class="pull-left" style="padding-left:4px">
+        {{#unless controller.isFirstPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </button>
+            </span>
+        {{/unless}}
+
+        <span style="float:left; padding:4px">
+            {{controller.currentPage}} / {{controller.totalPages}}
+        </span>
+        {{#unless controller.isLastPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+            </span>
+        {{/unless}}
+    </div>
+{{/unless}}
+</script>
+<script type="text/x-handlebars" data-template-name="partialslot">{{#if view.showPartialslots}}
+    <div style="border:1px solid red; margin: 5px">
+        <code>
+            {{#each templateName in view.slot}}
+                {{templateName}}
+            {{/each}}
+        </code>
+        {{#each template in view.slot}}
+            {{partial template}}
+        {{/each}}
+        <div style="clear:both"></div>
+    </div>
+{{else}}
+    {{#each template in view.slot}}
+        {{partial template}}
+    {{/each}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="presettoolbar">
+<li class="dropdown notifications-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-folder-open"></i>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="header">
+            Name : {{input value=presetName}}
+        </li>
+        <li class="footer">
+            <a >
+                {{tr 'Save preset'}}
+            </a>
+        </li>
+    </ul>
+</li>
+<li class="dropdown notifications-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-floppy-o"></i>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="header">
+            Name : {{input value=presetName}}
+        </li>
+        <li class="footer">
+            <button {{action "savePreset"}} class="btn btn-primary pull-right">
+                {{tr 'Save preset'}}
+            </button>
+        </li>
+    </ul>
+</li>
+</script>
+<script type="text/x-handlebars" data-template-name="promisemanagerstatusmenu"><li class="dropdown tasks-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-tasks"></i>
+        <span class="label label-success">{{promises.pendingCount}}</span>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="header">{{promises.pendingCount}} {{tr 'requests pending'}}</li>
+        <li>
+            <ul class="list-group">
+            {{#each promise in promises.pending}}
+                <li class="list-group-item">
+                    {{promise.url}} 
+                    <span class="label label-warning">{{tr 'pending'}}</span>
+                </li>
+            {{/each}}
+            </ul>
+        </li>
+        <li class="header">{{promises.errorsCount}} {{tr 'requests errors'}}</li>
+        <li>
+            <ul class="list-group">
+            {{#each promise in promises.errors}}
+                <li class="list-group-item">
+                    {{promise.url}} 
+                    <span class="label label-danger">{{promise._detail.status}} {{promise._detail.statusText}}</span>
+                </li>
+            {{/each}}
+            </ul>
+        </li>
+    </ul>
+</li>
+</script>
+<script type="text/x-handlebars" data-template-name="recordinfopopup"><div id="recordinfopopup" class="text-center alert alert-info alert-dismissable" style="display:none">
+    <i class="fa fa-info"></i>
+    <button {{action 'hide'}} type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <div class="recordinfopopuphandle hand">
+        <b>{{title}}</b><hr/>
+    </div>
+    <div class="recordinfopopupcontent">
+        {{content}}
+    </div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="requirejsmockingstatusmenu"><li class="dropdown tasks-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-code-fork"></i>
+        <span class="label label-success">{{requirejsmocksmanager.mocks.length}}</span>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="header">{{requirejsmocksmanager.mocks.length}} {{tr 'mocks applied'}}</li>
+        <li>
+            <ul class="list-group">
+            {{#each mock in requirejsmocksmanager.mocks}}
+                <li class="list-group-item">
+                    <span {{action 'editMock' mock}}>
+                        {{mock.modulePath}}
+                    </span>
+                    <span {{action 'deleteMock' mock.modulePath}} class="label label-danger">
+                        <i class="fa fa-remove"></i> 
+                    </span>
+                </li>
+            {{/each}}
+            </ul>
+        </li>
+        <li class="header">
+            <span {{action 'addMock'}}>
+                {{tr 'add mock'}}
+            </span>
+        </li>
+    </ul>
+</li>
+</script>
+<script type="text/x-handlebars" data-template-name="schemamanagerstatusmenu"><!--Displays schema list-->
+{{#if configuration.DISPLAY_SCHEMA_MANAGER}}
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <span class="glyphicon glyphicon-upload"></span>
+        </a>
+        <ul class="dropdown-menu">
+        <li>
+            {{input type="text" placeholder="Search for a schema..." value=schemaManagerSearchCriterion}}
+        </li>
+        {{#each type in displayedTypes}}
+            <li><a class="handle" {{action 'addModelInstance' type.name}}>{{type.name}}</a></li>
+        {{/each}}
+        </ul>
+    </li>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="screentoolstatusmenu"><!--Displays screen tools to change how to display canopsis in screen-->
+{{#if configuration.DEBUG}}
+    <li class="dropdown notifications-menu">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-mobile"></i>
+            <i class="fa fa-tablet"></i>
+            <i class="fa fa-desktop"></i>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="header">
+                <a {{action 'changeScreenSize' 'small'}}>
+                    <i class="fa fa-mobile"></i>
+                    XS {{tr 'mobile'}}
+                </a>
+                <a {{action 'changeScreenSize' 'medium'}}>
+                    <i class="fa fa-tablet"></i>
+                    MD {{tr 'tablet'}}
+                </a>
+                <a {{action 'changeScreenSize' 'large'}}>
+                    <i class="fa fa-desktop"></i>
+                    XL {{tr 'desktop'}}
+                </a>
+            </li>
+        </ul>
+    </li>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="search">
+{{#if controller.rights.list_search.checksum}}
+    <div class="col-xs-3 search">
+        {{component-searchbar value=controller.searchFieldValue placeholder="Search" target=controller searchableAttributes=controller.searchableAttributes}}
+    </div>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="stackedcolumns">{{#if view.parentView.groupedColumns}}
+    <td></td>
+    <td {{bind-attr colspan="view.parentView.controller.shown_columns.length"}}>
+        {{#each attr in view.parentView.groupedColumns}}
+            {{#if attr.options.show}}
+                {{attr.field}} : {{component-renderer attr=attr record=this}}
+                <br/>
+            {{/if}}
+        {{/each}}
+    </td>
+
+    {{#each view.parentView.controller.shown_columns}}
+        <td style="display:none"></td>
+    {{/each}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="tablayout"><section class="nav-tabs-custom">
+    <ul class="nav nav-tabs ">
+        {{#each item in controller.items.content}}
+                <li {{bind-attr class="item.tabSelected:active"}}>
+                    <a href="#" data-toggle="tab" {{action 'selectTab' item.widget}}>
+                        <span>
+                            {{item.widget.title}}
+                        </span>
+
+                        {{#if controller.editMode}}
+                            <span class="badge" {{action 'editWidget' item.widget}}>
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </span>
+                            <span class="badge" {{action 'removeWidget' item.widget}}>
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </span>
+                        {{/if}}
+                    </a>
+                </li>
+        {{/each}}
+    </ul>
+
+    {{#with controller.selectedItem}}
+        {{widgethelper widget=controller.selectedItem}}
+    {{/with}}
+</section>
+</script>
+<script type="text/x-handlebars" data-template-name="tabledraggableth"><th>
+    {{#if attr.options.label}}
+        {{tr attr.options.label}}
+    {{else}}
+        {{tr attr.field}}
+    {{/if}}
+    {{{sorticon attr.headerClassName}}}
+</th>
+</script>
+<script type="text/x-handlebars" data-template-name="titlebarbutton-duplicate">{{#unless view.isMainContainerWidget}}
+	{{#if controller.editMode}}
+	    <button type="button" class="btn btn-info btn-xs" {{action 'duplicateWidgetAndContent' item view.controller.model}} >
+	        <i class="fa fa-files-o"></i>
+	    </button>
+	{{/if}}
+{{/unless}}
+</script>
+<script type="text/x-handlebars" data-template-name="titlebarbutton-minimize"><button type="button" class="btn btn-info btn-xs" {{action 'minimize' view target=view}} >
+    {{#if view.minimized}}
+        <span class="glyphicon glyphicon-plus"></span>
+    {{else}}
+        <span class="glyphicon glyphicon-minus"></span>
+    {{/if}}
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="titlebarbutton-movedown">{{#unless view.isMainContainerWidget}}
+	{{#if controller.editMode}}
+	    <button type="button" class="btn btn-info btn-xs btn-move-down" {{action 'movedown' item}} >
+	        <span class="glyphicon glyphicon-arrow-down"></span>
+	        {{#unless view.minified}}
+	            {{tr 'Move down'}}
+	        {{/unless}}
+	    </button>
+	{{/if}}
+{{/unless}}
+</script>
+<script type="text/x-handlebars" data-template-name="titlebarbutton-moveleft">{{#if controller.editMode}}
+    <button type="button" class="btn btn-info btn-xs" {{action 'moveup' item}} >
+        <span class="glyphicon glyphicon-arrow-left"></span>
+        {{#unless view.minified}}
+            {{tr 'Move left'}}
+        {{/unless}}
+    </button>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="titlebarbutton-moveright">{{#if controller.editMode}}
+    <button type="button" class="btn btn-info btn-xs" {{action 'movedown' item}} >
+        <span class="glyphicon glyphicon-arrow-right"></span>
+        {{#unless view.minified}}
+            {{tr 'Move right'}}
+        {{/unless}}
+    </button>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="titlebarbutton-moveup">{{#unless view.isMainContainerWidget}}
+	{{#if controller.editMode}}
+	    <button type="button" class="btn btn-info btn-xs btn-move-up" {{action 'moveup' item}} >
+	        <span class="glyphicon glyphicon-arrow-up"></span>
+	        {{#unless view.minified}}
+	            Move up
+	        {{/unless}}
+	    </button>
+	{{/if}}
+{{/unless}}
+</script>
+<script type="text/x-handlebars" data-template-name="titlebarbutton-widgeterrors">{{#each error in widget.displayedErrors}}
+    <span class="label label-danger">{{error}}</span>
+{{/each}}
+{{#if widget.displayedErrors}}
+    <button type="button" class="btn btn-danger btn-xs">
+        <i class="fa fa-bug"></i>
+    </button>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="titlebarbutton-widgetfullscreen"><button {{bind-attr class=":btn view.buttonsColorClass view.buttonsColorClass::btn-info view.buttonsColorSize view.buttonsColorSize::btn-xs"}} {{action 'toggleFullscreen' this}} >
+    <span class="glyphicon glyphicon-fullscreen"></span>
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="titlebarbutton-widgetrefresh">
+<button {{bind-attr class=":btn view.buttonsColorClass view.buttonsColorClass::btn-info view.buttonsColorSize view.buttonsColorSize::btn-xs"}} {{action 'refreshWidget' target=view.widget.controller}} >
+    <span class="glyphicon glyphicon-refresh"></span>
+</button>
+</script>
+<script type="text/x-handlebars" data-template-name="userstatusmenu"><!-- User Account: style can be found in dropdown.less -->
+<li class="dropdown user user-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="glyphicon glyphicon-user"></i>
+        {{#if controller.debug}}
+            <code style="background:#367fa9">
+                <a {{action "inspect" controller.controllers.login.record}} style="font-size:80%; font-weight: bold">&gt;$E</a>
+            </code>
+        {{/if}}
+        <span>{{controller.controllers.login.record._id}} <i class="caret"></i></span>
+    </a>
+    <ul class="dropdown-menu">
+        <!-- User image -->
+        <li class="user-header bg-light-blue">
+            <img src="/static/canopsis/media/images/avatar.png" class="img-circle" alt="User Image" />
+            <p>{{controller.controllers.login.record._id}}</p>
+        </li>
+        <!-- Menu Footer-->
+        <li class="user-footer">
+            <div class="pull-left">
+                <a {{action 'showUserProfile'}} href="#" id="userprofil" class="btn btn-default btn-flat">{{tr 'Profile'}}</a>
+                <a {{action 'showView' 'view.about'}} href="#" class="btn btn-default btn-flat">{{tr 'About'}}</a>
+            </div>
+            <div class="pull-right">
+                <a href="#" {{action 'logout'}} class="btn btn-default btn-flat"><i class="fa fa-power-off"></i></a>
+            </div>
+        </li>
+    </ul>
+</li>
+</script>
+<script type="text/x-handlebars" data-template-name="userview"><div class="userview">
+    {{#with containerwidget as cw}}
+        {{view "widget" widget=cw parentContainerWidget=this}}
+    {{/with}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="verticallayout">{{#each item in controller.model.items}}
+    <div>
+        {{widgetslot item=item}}
+    </div>
+{{/each}}
+</script>
+<script type="text/x-handlebars" data-template-name="widget">{{#if view.errorMessages}}
+    <div class="callout callout-danger">
+        <h4>
+            <span class="glyphicon glyphicon-warning-sign"></span>
+            {{tr 'An error occured'}}
+        </h4>
+        <p>
+            {{tr 'An error occured while Canopsis was trying to display this widget'}}.
+
+            {{tr 'Here\'s more information about the problem'}} : <br/>
+
+            <ul>
+                {{#each view.errorMessages}}
+                    <div class="alert alert-danger" role="alert">{{this}}</div>
+                {{/each}}
+            </ul>
+
+            {{tr 'These informations might help too'}} : <br/>
+
+            <ul>
+                <li>
+                    {{tr 'Parent'}} : <br/>
+                    <ul>
+                        <li><b>title:</b> {{title}}</li>
+                        <li><b>xtype:</b> {{xtype}}</li>
+                    </ul>
+                </li>
+            </ul>
+        </p>
+    </div>
+{{else}}
+    <div class="callout callout-warning">
+        <h4>
+            <span class="glyphicon glyphicon-warning-sign"></span>
+            {{tr 'Empty widget'}}
+        </h4>
+        <p>
+            {{tr 'This is an empty widget and might indicate a problem in the widget\'s xtype'}}. {{tr 'Please check the view document'}}.
+            <ul>
+                <li><b>title:</b> {{title}}</li>
+                <li><b>xtype:</b> {{xtype}}</li>
+            </ul>
+
+            {{#each view.errorMessages}}
+                {{this}}<br/>
+            {{/each}}
+        </p>
+    </div>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="widgetslot-default"><div class="box box-info noyscroll">
+    {{#with item}}
+        {{partial "widgettitlebar"}}
+    {{/with}}
+    <div {{bind-attr class="view.minimized:hidden"}}>
+        {{widgethelper widget=item.widget target=controller}}
+    </div>
+    {{#if view.minimized}}
+        <hr/>
+    {{/if}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="widgetslot-grey"><div class="bg-grey">
+    {{#with item}}
+        {{partial "widgettitlebar"}}
+    {{/with}}
+    <div {{bind-attr class="view.minimized:hidden"}}>
+        {{widgethelper widget=item.widget target=controller}}
+    </div>
+
+    {{#if view.minimized}}
+        <hr/>
+    {{/if}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="widgetslot-light">{{#with item}}
+    {{partial "widgettitlebar"}}
+{{/with}}
+<span {{bind-attr class="view.minimized:hidden"}}>
+    {{widgethelper widget=item.widget target=controller}}
+</span>
+</script>
+<script type="text/x-handlebars" data-template-name="widgettitlebar"><div class="box-header">
+    <div class="pull-right">
+        {{partialslot slot=this.widget.controller._partials.titlebarsbuttons minified=true class="btn-group" tagName="span" widget=widget}}
+        {{partialslot slot=widget.controller._partials.titlebarbuttons minified=true class="btn-group" tagName="span" widget=widget}}
+            {{#if controller.editMode}}
+                {{view "mixineditdropdown" isGridLayout=controller.isGridLayout mixins=widget.mixins wrappermixins=this.mixins class="btn-group"}}
+            {{/if}}
+        <div class="btn-group">
+            {{#if controller.editMode}}
+                <button type="button" class="btn btn-small btn-danger btn-xs" {{action 'removeWidget' widget}}>
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            {{/if}}
+
+            {{#if widget.rollbackable}}
+                {{#if widget.isDirty}}
+                    <button type="button" class="btn btn-small btn-danger btn-xs" {{action 'rollback' widget}}>
+                        {{widget.dirtyMessage}} <i class="fa fa-undo"></i>
+                    </button>
+                {{/if}}
+            {{/if}}
+        </div>
+    </div>
+    <!--
+    <div class="pull-right">
+        Here, widget is the model (this.config in the controller)
+        controller is the userview controller
+
+        TODO: add possibility for widget to add action buttons in titlebar
+        {partialslot slot=widgetController._partials.widgetActionButtons}
+    </div>
+    -->
+    {{#unless controller.hide_titles}}
+        {{#if widget.title}}
+            <h3 class="box-title">{{widget.title}}</h3>
+        {{/if}}
+        {{#if controller.editMode}}
+            {{#unless widget.title}}
+                <h3 class="box-title">&lt; {{tr 'Untitled'}} {{widget.xtype}} widget &gt;</h3>
+            {{/unless}}
+        {{/if}}
+    {{/unless}}
+    {{#if controller.debug}}
+        <code>
+            <a {{action "inspect" widget}} style="font-size:80%; font-weight: bold">&gt;$E</a>
+        </code>
+
+        <span class="label label-warning">{{xtype}} state: {{currentState.stateName}}</span>
+        <span class="label label-warning">{{widget.xtype}} state: {{widget.currentState.stateName}}</span>
+    {{/if}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="crudcontext">{{#if controller.loaded}}
+    <div class="btn-toolbar canopsis-toolbar" role="toolbar">
+        <div class="pull-left">
+            {{#if controller._partials.selectionToolbarButtons}}
+                {{tr 'Selection'}} :
+            {{/if}}
+            {{partialslot slot=controller._partials.selectionToolbarButtons}}
+        </div>
+        <div class="pull-right btn-group" data-toggle="btn-toggle">
+            {{partialslot slot=controller._partials.actionToolbarButtons}}
+        </div>
+        {{partialslot slot=controller._partials.header}}
+        <div style="clear:both; padding-top:4px"></div>
+        {{partialslot slot=controller._partials.subHeader}}
+    </div>
+    <div class="table-responsive">
+        {{#if controller.standardListDisplay}}
+            <table {{bind-attr id="controller.id"}} {{bind-attr class="controller.css"}} >
+                <thead>
+                    {{#if controller._partials.tableheader}}
+                        {{#each templateName in controller._partials.tableheader}}
+                            {{partial templateName}}
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <th class="checkboxes">
+                                {{component-checkbox checked=controller.isAllSelected class="toggle"}}
+                            </th>
+
+                            {{#each column in controller._partials.columnsLine}}
+                                <th></th>
+                            {{/each}}
+
+                            {{#each attr in controller.shown_columns}}
+                                {{#if attr.options.show}}
+                                    <th {{action "sort" attr}} {{bind-attr class=attr.field}}>
+                                        {{tr attr.display_title}}
+                                        {{{sorticon attr.headerClassName}}}
+                                    </th>
+                                {{/if}}
+                            {{/each}}
+                            {{#if controller._partials.itemactionbuttons}}
+                                <th class="actions">{{tr 'Actions'}}</th>
+                            {{/if}}
+                        </tr>
+                    {{/if}}
+                </thead>
+                <tbody>
+                    {{#each controller.widgetData}}
+                        {{view "listline" templateName=controller.dynamicTemplateName parentController=controller tagName="tr" unfolded=unfolded}}
+                        <!-- TODO: put in its own partial slot -->
+                        {{#if unfolded}}
+                            <tr>
+                                <td {{bind-attr colspan=controller.colspan}}>
+                                    {{partial controller.detailTemplate}}
+                                </td>
+                            </tr>
+                        {{/if}}
+                        <!-- End of TODO -->
+                    {{/each}}
+                </tbody>
+            </table>
+            {{#unless controller.widgetData.length}}
+                <div class="noRecordsFound">{{tr 'No matching records found'}}</div>
+            {{/unless}}
+        {{/if}}
+    </div>
+    <div class="btn-toolbar canopsis-toolbar" role="toolbar">
+        {{partialslot slot=controller._partials.footer}}
+        <div class="pull-right">
+            {{partialslot slot=controller._partials.rightFooter}}
+        </div>
+        <div style="clear:both"></div>
+        <div class="pull-left">
+            {{#if controller._partials.selectionToolbarButtons}}
+                {{tr 'For the selection'}} :
+                {{partialslot slot=controller._partials.selectionToolbarButtons}}
+            {{/if}}
+        </div>
+    </div>
+{{else}}
+    {{#if controller.dataError.statusText}}
+        <div class="callout callout-danger">
+            <h4><i class="fa fa-warning"></i>Error</h4>
+            <p>{{tr 'Error while loading data'}} ({{controller.dataError.statusText}})</p>
+        </div>
+    {{else}}
+        <i class="fa fa-refresh fa-spin"></i>
+    {{/if}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="list">{{#if controller.loaded}}
+    <div class="btn-toolbar canopsis-toolbar" role="toolbar">
+        <div class="pull-left">
+            {{#if controller._partials.selectionToolbarButtons}}
+                {{tr 'Selection'}} :
+            {{/if}}
+            {{partialslot slot=controller._partials.selectionToolbarButtons}}
+        </div>
+        <div class="pull-right btn-group" data-toggle="btn-toggle">
+            {{partialslot slot=controller._partials.actionToolbarButtons}}
+        </div>
+        {{partialslot slot=controller._partials.header}}
+        <div style="clear:both; padding-top:4px"></div>
+        {{partialslot slot=controller._partials.subHeader}}
+    </div>
+    <div class="table-responsive">
+        {{#if controller.standardListDisplay}}
+            <table {{bind-attr id="controller.id"}} {{bind-attr class="controller.css"}} >
+                <thead>
+                    {{#if controller._partials.tableheader}}
+                        {{#each templateName in controller._partials.tableheader}}
+                            {{partial templateName}}
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <th class="checkboxes">
+                                {{component-checkbox checked=controller.isAllSelected class="toggle"}}
+                            </th>
+
+                            {{#each column in controller._partials.columnsLine}}
+                                <th></th>
+                            {{/each}}
+
+                            {{#each attr in controller.shown_columns}}
+                                {{#if attr.options.show}}
+                                    <th {{action "sort" attr}} {{bind-attr class=attr.field}}>
+                                        {{tr attr.display_title}}
+                                        {{{sorticon attr.headerClassName}}}
+                                    </th>
+                                {{/if}}
+                            {{/each}}
+                            {{#if controller._partials.itemactionbuttons}}
+                                <th class="actions">{{tr 'Actions'}}</th>
+                            {{/if}}
+                        </tr>
+                    {{/if}}
+                </thead>
+                <tbody>
+                    {{#each controller.widgetData}}
+                        {{view "listline" templateName=controller.dynamicTemplateName parentController=controller tagName="tr" unfolded=unfolded}}
+                        <!-- TODO: put in its own partial slot -->
+                        {{#if unfolded}}
+                            <tr>
+                                <td {{bind-attr colspan=controller.colspan}}>
+                                    {{partial controller.detailTemplate}}
+                                </td>
+                            </tr>
+                        {{/if}}
+                        <!-- End of TODO -->
+                    {{/each}}
+                </tbody>
+            </table>
+            {{#unless controller.widgetData.content.length}}
+                <div class="noRecordsFound">{{tr 'No matching records found'}}</div>
+            {{/unless}}
+        {{/if}}
+    </div>
+    <div class="btn-toolbar canopsis-toolbar" role="toolbar">
+        {{partialslot slot=controller._partials.footer}}
+        <div class="pull-right">
+            {{partialslot slot=controller._partials.rightFooter}}
+        </div>
+        <div style="clear:both"></div>
+        <div class="pull-left">
+            {{#if controller._partials.selectionToolbarButtons}}
+                {{tr 'For the selection'}} :
+                {{partialslot slot=controller._partials.selectionToolbarButtons}}
+            {{/if}}
+        </div>
+    </div>
+{{else}}
+    {{#if controller.dataError.statusText}}
+        <div class="callout callout-danger">
+            <h4><i class="fa fa-warning"></i>Error</h4>
+            <p>{{tr 'Error while loading data'}} ({{controller.dataError.statusText}})</p>
+        </div>
+    {{else}}
+        <i class="fa fa-refresh fa-spin"></i>
+    {{/if}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="textwidget">{{controller.renderedTemplate}}
+</script>
+<script type="text/x-handlebars" data-template-name="topology"><div class="alert alert-danger alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+    Please note that this widget is deprecated. It will be removed at the next Canopsis version.
+    Unstead, you could use <a target='_blank' href='https://git.canopsis.net/canopsis-ui-bricks/brick-topology'>this one</a>
+</div>
+
+
+<div class="graph" {{bind-attr id=view.id}}>
+<svg>
+<defs>
+    <marker id="markerArrow" markerWidth="10" viewBox="0 0 10 10" markerHeight="10" refx="15" refy="5" orient="auto">
+        <path d="M0 0 L10 5 L0 10 Z" style="fill: #000000;"/>
+    </marker>
+</defs>
+</svg>
+
+<button type="button" {{action "showHideProperties" target="view"}}>Show/Hide Properties</button>
+{{#if view.showProperties}}
+Auto-Layout: {{input name="autoLayout" type="checkbox" target="view" checked=autoLayout}}
+Filter: {{input name="filter" target="view" type="text" value="filter" action="filter" on="key-press"}}
+Charge: {{component-slider content=view.charge options=view.optionsCharge}}
+Link strength: {{component-slider content=view.linkStrength options=view.linkStrengthCharge}}
+Link distance: {{component-slider content=view.linkDistance options=view.linkDistanceCharge}}
+Friction: {{component-slider content=view.friction options=view.frictionCharge}}
+Theta: {{component-slider content=view.theta options=view.thetaCharge}}
+Gravity: {{component-slider content=view.gravity options=view.gravityCharge}}
+{{/if}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="uimaintabcollection">{{#with controllers.application.currentViewId as currentViewId}}
+    <div class="btn-group pull-right" style="margin-top:5px; margin-bottom:5px">
+            {{!partialslot slot=currentViewModel._partials.titlebarsbuttons minified=true class="btn-group" tagName="span"}}
+            {{partialslot slot=controller.currentViewModel.containerwidget.controller._partials.titlebarsbuttons minified=true class="btn-group" tagName="span" widget=controller.currentViewModel.containerwidget isMainContainerWidget=true buttonsColorClass="btn-default" buttonsColorSize="btn-sm"}}
+        {{#if controller.editMode}}
+            {{#with controller.currentViewModel.containerwidget as widget}}
+                {{view "mixineditdropdown" isGridLayout=currentViewModel.containerwidget.isGridLayout mixins=controller.currentViewModel.containerwidget.mixins class="btn-group" buttonsColorClass="btn-default" buttonsColorSize="btn-sm"}}
+            {{/with}}
+        {{/if}}
+
+        {{#if controllers.application.interval}}
+            <div>
+                <button class="btn btn-default btn-sm btn-warning" {{action 'stopLiveReporting'}} >
+                    <span class="glyphicon glyphicon-remove"></span>
+                    {{interval2html controllers.application.interval.timestamp.$gte controllers.application.interval.timestamp.$lte}}
+                </button>
+            </div>
+        {{/if}}
+        <button class="btn btn-default btn-sm" {{action 'displayLiveReporting' this}} >
+            <span class="glyphicon glyphicon-time"></span>
+        </button>
+    </div>
+
+    <section class="content-header nav-tabs-custom main-tabs" style=" padding: 5px 0 0;margin-bottom:0px; ">
+        <ul class="nav nav-tabs">
+            <li>
+                {{#if controller.userCanShowEditionMenu}}
+                    <a class="dropdown-toggle cog-menu" data-toggle="dropdown" href="#">
+                        <h4> <i class="fa fa-gear"></i> <span class="caret"></span></h4>
+                    </a>
+                    <ul class="dropdown-menu">
+                        {{#if controller.userCanEditView}}
+                            <li role="presentation">
+                                <a role="menuitem" class="btn-toggle-edit-mode" tabindex="-1" href="#" {{action 'toggleEditMode'}}>
+                                    <i class="fa fa-pencil"></i>
+                                    {{#if controller.editMode}}
+                                        {{tr 'Leave edition mode'}}
+                                    {{else}}
+                                        {{tr 'Edit current view'}}
+                                    {{/if}}
+                                </a>
+                            </li>
+                        {{/if}}
+                        {{#if controller.userCanCreateView}}
+                            <li role="presentation">
+                                <a role="menuitem" class="btn-import-view" tabindex="-1" {{action 'importView'}}>
+                                    <i class="fa fa-upload"></i>
+                                    {{tr 'Import a view'}}
+                                </a>
+                            </li>
+                        {{/if}}
+                        <li role="presentation">
+                            <a role="menuitem" class="btn-export-view" tabindex="-1" {{action 'exportCurrentView'}}>
+                                <i class="fa fa-download"></i>
+                                {{tr 'Export current view'}}
+                            </a>
+                        </li>
+                        {{#if controller.userCanCreateView}}
+                            <li role="presentation">
+                                <a role="menuitem" class="btn-add-view" tabindex="-1" href="#" {{action 'addNewView'}}>
+                                    <i class="fa fa-plus"></i>
+                                    {{tr 'Add a view'}}
+                                </a>
+                            </li>
+                        {{/if}}
+                        <li role="presentation" class="divider"></li>
+                        <li role="presentation">
+                            <a role="menuitem" class="btn-manage-views" tabindex="-1" href="#" {{action 'showView' 'view.userviews'}}>
+                                <i class="fa fa-wrench"></i> {{tr 'Manage views'}}
+                            </a>
+                        </li>
+                    </ul>
+                {{/if}}
+            </li>
+            {{#each tab in controller.preparedTabs}}
+                <li {{bind-attr class="tab.isActive:active:"}}>
+                    {{#if tab.displayable}}
+
+                        {{#unless tab.nestedViews.length}}
+                            <a {{action "showView" tab.value}} style="cursor:pointer">
+                                {{tab.label}}
+                            </a>
+                        {{else}}
+                            <a class="dropdown-toggle" style="cursor:pointer" data-toggle="dropdown">
+                                {{tab.label}} <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                {{#each nestedView in tab.nestedViews}}                                
+                                    <li><a {{action "showView" nestedView.value.value tab}}>{{nestedView.value.label}}</a></li>
+                                {{/each}}
+                            </ul>
+                        {{/unless}}
+                    {{/if}}
+                </li>
+            {{/each}}
+        </ul>
+    </section>
+{{/with}}
+</script>
+<script type="text/x-handlebars" data-template-name="widgetcontainer">{{#if controller.editMode}}
+    {{#if controller.isOnMainView}}
+        <button type="button" class="btn btn-info btn-xs btn-add-widget" {{action 'insertWidget' controller}} >
+            <span class="glyphicon glyphicon-plus-sign"></span>
+             {{tr 'Insert widget'}}
+        </button>
+    {{/if}}
+{{/if}}
+{{partialslot slot=controller._partials.layout}}
+</script>

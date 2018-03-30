@@ -1,0 +1,1085 @@
+{
+    "adapters": [
+        {
+            "name": "profile",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "profile",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            },
+            "functions": [
+                {
+                    "name": "buildURL",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [
+                        {
+                            "name": "type",
+                            "type": "",
+                            "description": "",
+                            "default": "",
+                            "optional": "",
+                            "nullable": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "",
+                            "description": "",
+                            "default": "",
+                            "optional": "",
+                            "nullable": ""
+                        },
+                        {
+                            "name": "record_or_records",
+                            "type": "",
+                            "description": "",
+                            "default": "",
+                            "optional": "",
+                            "nullable": ""
+                        },
+                        {
+                            "name": "method",
+                            "type": "",
+                            "description": "",
+                            "default": "",
+                            "optional": "",
+                            "nullable": ""
+                        }
+                    ],
+                    "examples": [],
+                    "returns": {
+                        "type": "string",
+                        "description": "<p>the url of the query</p>"
+                    }
+                },
+                {
+                    "name": "find",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "findMany",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "findQuery",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "createRecord",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "updateRecord",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "deleteRecord",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                }
+            ]
+        },
+        {
+            "name": "action",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "action",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "baseadapter",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "baseadapter",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            },
+            "functions": [
+                {
+                    "name": "buildURL",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [
+                        {
+                            "name": "type",
+                            "type": "",
+                            "description": "",
+                            "default": "",
+                            "optional": "",
+                            "nullable": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "",
+                            "description": "",
+                            "default": "",
+                            "optional": "",
+                            "nullable": ""
+                        }
+                    ],
+                    "examples": [],
+                    "returns": {
+                        "type": "string",
+                        "description": "<p>the url of the query</p>"
+                    }
+                },
+                {
+                    "name": "findQuery",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "createRecord",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "updateRecord",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "deleteRecord",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                }
+            ]
+        },
+        {
+            "name": "cancel",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "cancel",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "context",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "context",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "crecord",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "crecord",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "cservice",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "cservice",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "entitylink",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "entitylink",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "eue",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "eue",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "event",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "event",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "eventlog",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "eventlog",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "filter",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "filter",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "linklist",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "linklist",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "loggedaccount",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "loggedaccount",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            },
+            "functions": [
+                {
+                    "name": "that tells the backend the user is still connected\ncalled periodically",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                },
+                {
+                    "name": "called at application statup\nallow user session start information to be registered",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                }
+            ]
+        },
+        {
+            "name": "pojo",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "pojo",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "Serie2",
+            "description": "",
+            "extends": [
+                "StorageDefaultAdapter"
+            ],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "Serie2",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "StatsFilter",
+            "description": "",
+            "extends": [
+                "StorageDefaultAdapter"
+            ],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "StatsFilter",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "Storage",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "Storage",
+                "description": "<p>Request REST API for backend storage.</p>",
+                "parameters": [],
+                "examples": []
+            },
+            "adapters": [
+                {
+                    "name": "StorageDefaultAdapter",
+                    "description": "",
+                    "extends": [
+                        "StorageAdapter"
+                    ],
+                    "access": "",
+                    "virtual": false,
+                    "fires": "",
+                    "constructor": {
+                        "name": "StorageDefaultAdapter",
+                        "description": "",
+                        "parameters": [],
+                        "examples": []
+                    },
+                    "adapters": [
+                        {
+                            "name": "StorageCompositeAdapter",
+                            "description": "",
+                            "extends": [
+                                "StorageAdapter"
+                            ],
+                            "access": "",
+                            "virtual": false,
+                            "fires": "",
+                            "constructor": {
+                                "name": "StorageCompositeAdapter",
+                                "description": "",
+                                "parameters": [],
+                                "examples": []
+                            },
+                            "adapters": [
+                                {
+                                    "name": "StorageTimedAdapter",
+                                    "description": "",
+                                    "extends": [
+                                        "StorageAdapter"
+                                    ],
+                                    "access": "",
+                                    "virtual": false,
+                                    "fires": "",
+                                    "constructor": {
+                                        "name": "StorageTimedAdapter",
+                                        "description": "",
+                                        "parameters": [],
+                                        "examples": []
+                                    },
+                                    "adapters": [
+                                        {
+                                            "name": "StoragePeriodicAdapter",
+                                            "description": "",
+                                            "extends": [
+                                                "StorageAdapter"
+                                            ],
+                                            "access": "",
+                                            "virtual": false,
+                                            "fires": "",
+                                            "constructor": {
+                                                "name": "StoragePeriodicAdapter",
+                                                "description": "",
+                                                "parameters": [],
+                                                "examples": []
+                                            },
+                                            "adapters": [
+                                                {
+                                                    "name": "StorageFileAdapter",
+                                                    "description": "",
+                                                    "extends": [
+                                                        "StorageAdapter"
+                                                    ],
+                                                    "access": "",
+                                                    "virtual": false,
+                                                    "fires": "",
+                                                    "constructor": {
+                                                        "name": "StorageFileAdapter",
+                                                        "description": "",
+                                                        "parameters": [],
+                                                        "examples": []
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "trap",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "trap",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "userview",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "userview",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            },
+            "functions": [
+                {
+                    "name": "deleteRecord",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "parameters": [],
+                    "examples": []
+                }
+            ]
+        },
+        {
+            "name": "userviewsimplemodel",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "userviewsimplemodel",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        }
+    ],
+    "serializers": [
+        {
+            "name": "ctx",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "ctx",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "ctxcomponent",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "ctxcomponent",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "ctxmetric",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "ctxmetric",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "ctxresource",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "ctxresource",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "ctxselector",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "ctxselector",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "ctxtopology",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "ctxtopology",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "job",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "job",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "linklist",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "linklist",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "taskmail",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "taskmail",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        },
+        {
+            "name": "ticket",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "ticket",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            }
+        }
+    ],
+    "schemas": [
+        {
+            "name": "schema-curve",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "schema-curve",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            },
+            "properties": [
+                {
+                    "name": "crecord_type",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": ""
+                },
+                {
+                    "name": "crecord_name",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "lines",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "areas",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "points",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "bars",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                },
+                {
+                    "name": "line_width",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "integer"
+                        ]
+                    }
+                },
+                {
+                    "name": "bar_width",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "integer"
+                        ]
+                    }
+                },
+                {
+                    "name": "line_style",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": ""
+                },
+                {
+                    "name": "point_shape",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": ""
+                },
+                {
+                    "name": "area_opacity",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "number"
+                        ]
+                    }
+                },
+                {
+                    "name": "valueLabels",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "boolean"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "schema-rangecolor",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "schema-rangecolor",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            },
+            "properties": [
+                {
+                    "name": "name",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "colors",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "array"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "schema-serie",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "schema-serie",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            },
+            "properties": [
+                {
+                    "name": "crecord_type",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": ""
+                },
+                {
+                    "name": "crecord_name",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "metrics",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "array"
+                        ]
+                    }
+                },
+                {
+                    "name": "formula",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "min",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "number"
+                        ]
+                    }
+                },
+                {
+                    "name": "max",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "number"
+                        ]
+                    }
+                },
+                {
+                    "name": "warn",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "number"
+                        ]
+                    }
+                },
+                {
+                    "name": "crit",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "number"
+                        ]
+                    }
+                },
+                {
+                    "name": "unit",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "aggregate_method",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": ""
+                },
+                {
+                    "name": "aggregate_interval",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "integer"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "schema-widgetpreferences",
+            "description": "",
+            "extends": [],
+            "access": "",
+            "virtual": false,
+            "fires": "",
+            "constructor": {
+                "name": "schema-widgetpreferences",
+                "description": "",
+                "parameters": [],
+                "examples": []
+            },
+            "properties": [
+                {
+                    "name": "user",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "widget_id",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "preferences_level",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "string"
+                        ]
+                    }
+                },
+                {
+                    "name": "widget_preferences",
+                    "access": "",
+                    "virtual": false,
+                    "description": "",
+                    "type": {
+                        "names": [
+                            "array"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

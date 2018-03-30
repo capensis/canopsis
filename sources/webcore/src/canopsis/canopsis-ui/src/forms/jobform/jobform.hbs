@@ -1,0 +1,9 @@
+{{#if controller.controllers.application.runtimeConfiguration.DEBUG}}
+    <div>parent form: {{controller.formParent}}</div>
+{{/if}}
+
+{{#each job in availableJobs}}
+    <button class="btn btn-default" {{action 'selectItem' job.value}}>
+        <span {{bind-attr class="job.icon"}}></span> {{tr job.name}}
+    </button>
+{{/each}}
