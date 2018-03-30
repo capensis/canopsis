@@ -25,7 +25,8 @@ db_pbehavior = {
     "rrule": "",
     "tstart": 0,
     "tstop": 2147483647,
-    "eids": ["Tanya/Adams"]
+    "eids": ["Tanya/Adams"],
+    "source": "nagioslike"
 }
 
 

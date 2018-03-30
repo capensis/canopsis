@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-from bottle import static_file, request, redirect
+from bottle import static_file, request, redirect, response
 import os
 
 from canopsis.common.template import Template
@@ -47,6 +47,9 @@ def exports(ws):
 
         if key:
             auth_module.autoLogin(key)
+
+        if 'listalarm' in filename or 'timeline' in filename:
+            response.set_header("Cache-Control", "public, no-cache")
 
         return static_file(filename, root=ws.root_directory)
 
