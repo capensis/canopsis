@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys":["fastackmsg"]
+    }],
+    "metadata": {
+        "description": "ACK Option"
+    },
+    "properties": {
+        "fastackmsg": {
+            "type": "string",
+            "description": "Comment for Fast ACK",
+            "default": "auto ack"
+        }
+    }
+}

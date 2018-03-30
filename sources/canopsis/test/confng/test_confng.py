@@ -7,15 +7,16 @@ from __future__ import unicode_literals
 
 import os
 import tempfile
-from unittest import TestCase, main
-
+import unittest
+from canopsis.common import root_path
 from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.confng.simpleconf import SimpleConf
 from canopsis.confng import Configuration
 from canopsis.confng import Ini, Json
+import xmlrunner
 
 
-class ConfigurationTest(TestCase):
+class ConfigurationTest(unittest.TestCase):
     """Test the configuration ng module.
     """
     def setUp(self):
@@ -121,4 +122,7 @@ blond = FALSE"""  # = superman
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

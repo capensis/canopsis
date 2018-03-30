@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from __future__ import unicode_literals
+
 from canopsis.engines.core import Engine, publish
 from canopsis.check.archiver import Archiver, BAGOT, STEALTHY
 from canopsis.context_graph.manager import ContextGraph
@@ -46,7 +48,9 @@ class engine(Engine):
 
         self.context = ContextGraph(self.logger)
 
-        self.pbehavior = PBehaviorManager(*PBehaviorManager.provide_default_basics())
+        self.pbehavior = PBehaviorManager(
+            *PBehaviorManager.provide_default_basics()
+        )
         self.beat()
 
         self.log_bulk_amount = 100
@@ -57,8 +61,8 @@ class engine(Engine):
     def beat(self):
         self.archiver.beat()
 
-        with self.Lock(self, 'eventstore_reset_status') as l:
-            if l.own():
+        with self.Lock(self, 'eventstore_reset_status') as lock:
+            if lock.own():
                 self.reset_stealthy_event_duration = time()
                 self.archiver.reload_configuration()
                 self.archiver.reset_status_event(BAGOT)
@@ -77,7 +81,6 @@ class engine(Engine):
             )
 
     def store_log(self, event, store_new_event=True):
-
         """
             Stores events in events_log collection
             Logged events are no more in event collection at the moment

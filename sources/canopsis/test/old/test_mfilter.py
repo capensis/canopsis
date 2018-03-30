@@ -20,8 +20,10 @@
 # ---------------------------------
 
 from unittest import TestCase, main
-
 from canopsis.old.mfilter import check
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 event = {
     'connector': 'Engine',
@@ -177,5 +179,8 @@ class KnownValues(TestCase):
         match = check(filter1, event)
         self.assertFalse(match, msg='Filter: %s' % filter1)
 
-if __name__ == "__main__":
-    main(verbosity=2)
+if __name__ == '__main__':
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

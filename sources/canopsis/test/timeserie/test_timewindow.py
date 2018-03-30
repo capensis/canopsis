@@ -28,6 +28,9 @@ from calendar import monthrange
 from random import random, randint
 
 from canopsis.timeserie.timewindow import Period, Interval, TimeWindow
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 class PeriodTest(TestCase):
@@ -56,7 +59,7 @@ class PeriodTest(TestCase):
         unit_values = {}
 
         for unit in Period.UNITS:
-            unit_values[unit] = random() * 10
+            unit_values[unit] = int(random() * 10)
 
         result = Period(**unit_values)
 
@@ -546,4 +549,7 @@ class TimeWindowTest(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

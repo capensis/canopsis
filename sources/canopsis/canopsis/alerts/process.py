@@ -70,14 +70,11 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     if alertsmgr is None:
         alertsmgr = alerts_manager
 
-    alertsreader = alertsreader_manager
-
     alarms_service = AlarmService(
         alarms_adapter=AlarmAdapter(mongo_client),
         watcher_manager=Watcher(),
         bagot_time=alertsmgr.flapping_interval,
         cancel_autosolve_delay=alertsmgr.cancel_autosolve_delay,
-        stealthy_duration=alertsmgr.stealthy_show_duration,
         stealthy_interval=alertsmgr.stealthy_interval,
         logger=alertsmgr.logger
     )
@@ -90,4 +87,7 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     alarms_service.process_resolution_on_all_alarms()
 
     alertsmgr.check_alarm_filters()
-    alertsreader.clean_fast_count_cache()
+    alertsreader_manager.clean_fast_count_cache()
+
+    # Recompute watcher states
+    alertsmgr.watcher_manager.compute_watchers()

@@ -1,22 +1,30 @@
-# Canopsis merge request
+# Merge Request Canopsis
 
 <message>
 
+## Pré-requis
 
-## For reviewers :
+``` 
+Indiquez ici les pré-requis (s'il y en a) pour que la merge request puisse être testée et validée
+
+```
+
+## Pour la validation
+
+- [ ] Le code respecte la PEP8
+- [ ] Chaque classe/fonction/méthode contient une docstring complète
+- [ ] Le code est revu, les modifications demandées sont appliquées
+- [ ] Les messages de commits sont compatibles avec l' [angular spec](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit) ?
+- [ ] Les modifications apportées contiennent des tests unitaires
+- [ ] Les tests unitaires passent
+- [ ] la documentation a été mise à jour (si changement de comportement)
+
+## Tests
 
 
-- [ ] Is the code pep8 compliant ?
-
-- [ ] Docstring on classes and methods ?
-
-- [ ] code review ?
-
-- [ ] Commit messages compatible with the [angular spec](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit) ?
-
-- [ ] Code tested and working ?
-
-- [ ] Has the documentation been written ?
-
-
-
+1. Installer la branche dans un environnement Canopsis
+2. se mettre dans l'environnement Canopsis :`su - canopsis`
+3. (re)démarrer Canopsis :`hypcontrol restart`
+4. lancer les tests unitaires :  `ut_runner`
+5. Retourner dans le dossier où les sources de canopsis sont installées :`cd /vagrant/canopsis`
+6. Exécuter les tests fonctionnels : `cd sources/functional_testing/ && python2 runner.py`

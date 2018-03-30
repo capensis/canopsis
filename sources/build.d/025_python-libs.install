@@ -6,11 +6,13 @@ function build(){
 
 
 function install(){
+	. ${PREFIX}/bin/activate && pip install -U setuptools pip wheel
 	pip_install -r ${SRC_PATH}/canopsis/requirements.txt
 	install_conf "supervisord.conf"
 }
 
 
 function update() {
+	. ${PREFIX}/bin/activate && pip install -U setuptools pip wheel
 	pip_install -r ${SRC_PATH}/canopsis/requirements.txt --upgrade
 }

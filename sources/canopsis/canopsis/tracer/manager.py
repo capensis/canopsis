@@ -1,12 +1,12 @@
+"""
+Trace activity on context graph entities.
+"""
+
 from __future__ import unicode_literals
 
-from pymongo.errors import PyMongoError
-from bson.errors import BSONError
-
-from canopsis.confng import Configuration, Ini
-from canopsis.middleware.core import Middleware
-
+from canopsis.common.collection import CollectionError
 from canopsis.common.enumerations import FastEnum
+from canopsis.middleware.core import Middleware
 
 
 class TraceError(Exception):
@@ -71,14 +71,8 @@ class TracerManager(object):
             Trace.TRIGGERED_BY: triggered_by
         }
 
-        try:
-            res = self.storage.put_element(trace)
-        except BSONError as ex:
-            raise TraceSetError('document error: {}'.format(ex))
-        except PyMongoError as ex:
-            raise TraceSetError('pymongo error: {}'.format(ex))
-
-        if res.get('ok', 0) != 1.0:
+        res = self.storage.put_element(trace)
+        if res is None or res.get('ok', 0) != 1.0:
             raise TraceSetError('put result: {}'.format(res))
 
         return res

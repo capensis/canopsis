@@ -24,13 +24,39 @@ import json
 import requests
 from bottle import HTTPError, request
 
-from canopsis.event import get_routingkey
+from canopsis.common.amqp import AmqpPublishError
 from canopsis.common.utils import ensure_iterable
 from canopsis.common.ws import route
-from canopsis import schema
 from canopsis.event.eventslogmanager import EventsLog
 from canopsis.common.utils import singleton_per_scope
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.webcore.utils import gen_json_error, HTTP_ERROR
+
+
+def send_events(ws, events, exchange='canopsis.events'):
+    events = ensure_iterable(events)
+
+    sent_events = []
+    failed_events = []
+    retry_events = []
+
+    for event in events:
+        try:
+            ws.amqp_pub.canopsis_event(event, exchange)
+            sent_events.append(event)
+
+        except KeyError as exc:
+            ws.logger.error('bad event: {}'.format(exc))
+            failed_events.append(event)
+
+        except AmqpPublishError as exc:
+            ws.logger.error('publish error: {}'.format(exc))
+            retry_events.append(event)
+
+    return {
+        'sent_events': sent_events,
+        'failed_events': failed_events,
+        'retry_events': retry_events
+    }
 
 
 def exports(ws):
@@ -56,34 +82,7 @@ def exports(ws):
                 HTTPError
             )
 
-        exchange = ws.amqp.exchange_name_events
-
-        if isinstance(events, dict):
-            events = [events]
-
-        for event in events:
-
-            if schema.validate(event, 'cevent'):
-                sname = 'cevent.{0}'.format(event['event_type'])
-
-                if schema.validate(event, sname):
-                    if event['event_type'] == 'eue':
-                        sname = 'cevent.eue.{0}'.format(
-                            event['type_message']
-                        )
-
-                        if not schema.validate(event, sname):
-                            return gen_json_error(
-                                {'description': 'invalid event: {0}'.format(
-                                    event
-                                )},
-                                HTTPError
-                            )
-
-                    rk = get_routingkey(event)
-                    ws.amqp.publish(event, rk, exchange)
-
-        return gen_json(events)
+        return send_events(ws, events)
 
     @route(ws.application.post, name='event', payload=['event', 'url'])
     @route(ws.application.put, name='event', payload=['event', 'url'])
@@ -104,24 +103,7 @@ def exports(ws):
                 return HTTPError(response.status_code, response.text)
 
         else:
-            events = ensure_iterable(event)
-            exchange = ws.amqp.exchange_name_events
-
-            sent_events = []
-            failed_events = []
-
-            for event in events:
-                try:
-                    rk = get_routingkey(event)
-
-                except KeyError as exc:
-                    failed_events.append(event)
-                    continue
-
-                ws.amqp.publish(event, rk, exchange)
-                sent_events.append(event)
-
-            return {'sent_events': sent_events, 'failed_events': failed_events}
+            return send_events(ws, event)
 
     @route(ws.application.get,
            name='eventslog/count',

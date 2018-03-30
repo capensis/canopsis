@@ -20,6 +20,7 @@
 
 from logging import ERROR
 from uuid import uuid4
+from copy import deepcopy
 
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
@@ -587,6 +588,7 @@ class Rights(MiddlewareRegistry):
         role = self.get_role(r_name)
         if not role:
             self.create_role(r_name, r_profile)
+            return True
 
         # retrieve the profile
         if role:
@@ -763,7 +765,8 @@ class Rights(MiddlewareRegistry):
         if groups and isinstance(groups, list):
             user['groups'] = groups
 
-        self.user_storage.put_element(_id=u_id, element=user)
+        # Sometime the storage seam to alter the data we gave him...
+        self.user_storage.put_element(_id=u_id, element=deepcopy(user))
         return user
 
     def set_user_fields(self, u_id, fields):

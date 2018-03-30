@@ -3,6 +3,7 @@
 
 from json import dumps
 import os
+import canopsis.common
 import unittest
 
 from canopsis.backbone.event import Event
@@ -11,21 +12,32 @@ from canopsis.common.amqp import (
     AmqpNotCallableCallback
 )
 
+import configparser
+from canopsis.common import root_path
+from canopsis.common.amqp import AmqpPublisher, AmqpConnection
+import xmlrunner
+
+
 DEFAULT_AMQP_URL = 'amqp://guest:guest@localhost/'
 DEFAULT_AMQP_EXCHANGE = 'test'
 DEFAULT_AMQP_QUEUE = 'test_queue'
+DEFAULT_CONF_FILE = "etc/amqp.conf"
 
 
 class TestAmqp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.amqp_url = os.environ.get(
-            'TEST_AMQPPUBLISHER_URL', DEFAULT_AMQP_URL)
-        cls.amqp_exname = os.environ.get(
-            'TEST_AMQPPUBLISHER_EXCHANGE', DEFAULT_AMQP_EXCHANGE)
-        cls.amqp_queue = os.environ.get(
-            'TEST_AMQPPUBLISHER_QUEUE', DEFAULT_AMQP_QUEUE)
+        config = configparser.RawConfigParser()
+        config.read(os.path.join(canopsis.common.root_path, DEFAULT_CONF_FILE))
+
+        cls.amqp_url = "amqp://{0}:{1}@{2}:{3}/{4}".format(
+            config["master"]["userid"],
+            config["master"]["password"],
+            config["master"]["host"],
+            config["master"]["port"],
+            config["master"]["virtual_host"])
+        cls.amqp_exname = config["master"]["exchange_name"]
 
 
 class TestAmqpConn(TestAmqp):
@@ -34,21 +46,18 @@ class TestAmqpConn(TestAmqp):
         with AmqpConnection(self.amqp_url) as amqp_conn:
             self.assertIsNotNone(amqp_conn.connection)
             self.assertIsNotNone(amqp_conn.channel)
-            self.assertTrue(amqp_conn.connected)
 
     def test_connection_explicit(self):
         amqp_conn = AmqpConnection(self.amqp_url)
         amqp_conn.connect()
 
-        self.assertIsNotNone(amqp_conn.connection)
-        self.assertIsNotNone(amqp_conn.channel)
-        self.assertTrue(amqp_conn.connected)
+        self.assertIsNotNone(amqp_conn._connection)
+        self.assertIsNotNone(amqp_conn._channel)
 
         amqp_conn.disconnect()
 
-        self.assertIsNone(amqp_conn.connection)
-        self.assertIsNone(amqp_conn.channel)
-        self.assertFalse(amqp_conn.connected)
+        self.assertIsNone(amqp_conn._connection)
+        self.assertIsNone(amqp_conn._channel)
 
 
 class TestAmqpPublisher(TestAmqp):
@@ -112,5 +121,7 @@ class TestAmqpConsumer(TestAmqp):
             amqp_cons._work(None, None, None, dumps(self.basic_event))
 
 if __name__ == '__main__':
-    unittest.main()
-
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

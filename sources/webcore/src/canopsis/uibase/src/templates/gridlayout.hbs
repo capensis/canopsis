@@ -1,0 +1,14 @@
+<div>
+    {{#each item in controller.items}}
+        {{#if item.classValue}}
+            <div {{bind-attr class="item.classValue"}} >
+                {{widgetslot item=item}}
+            </div>
+        {{else}}
+            <div {{bind-attr class="controller.defaultItemCssClass"}}>
+                {{widgetslot item=item}}
+            </div>
+        {{/if}}
+    {{/each}}
+    <div style="clear:both"></div>
+</div>

@@ -18,15 +18,19 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.ws import route
-from canopsis.alerts.manager import Alerts
-from canopsis.confng import Configuration, Ini
-from canopsis.context_graph.import_ctx import ImportKey, Manager
-from canopsis.engines.core import publish
-
+from bottle import request
 import json as j
 import os
 from uuid import uuid4
+
+from canopsis.common import root_path
+from canopsis.common.ws import route
+from canopsis.alerts.manager import Alerts
+from canopsis.common.converters import id_filter
+from canopsis.confng import Configuration, Ini
+from canopsis.context_graph.import_ctx import ImportKey, Manager
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 import_col_man = Manager(Configuration.load(Manager.CONF_FILE, Ini))
 alerts_manager = Alerts(*Alerts.provide_default_basics())
@@ -57,6 +61,8 @@ def get_uuid():
 
 
 def exports(ws):
+
+    ws.application.router.add_filter('id_filter', id_filter)
 
     manager = alerts_manager.context_manager
 
@@ -143,11 +149,7 @@ def exports(ws):
             event = event_body.copy()
             event[ImportKey.EVT_IMPORT_UUID] = uuid
             event[ImportKey.EVT_JOBID] = ImportKey.JOB_ID.format(uuid)
-            publish(event,
-                    ws.amqp,
-                    rk=RK,
-                    exchange='amq.direct',
-                    logger=ws.logger)
+            ws.amqp_pub.json_document(event, 'amq.direct', RK)
         except Exception as e:
             ws.logger.error(e)
             return {__ERROR: __EVT_ERROR.format(repr(e))}
@@ -156,7 +158,8 @@ def exports(ws):
 
     def get_state(_id):
         """
-            va chercher si il y a une alarme ouverte d'une entitée et si oui choppe l'etat si non return 0
+            va chercher si il y a une alarme ouverte d'une entitée
+            et si oui choppe l'etat si non return 0
         """
         al = alerts_manager.get_alarm_with_eid(_id, resolved=False)
         if al == []:
@@ -188,7 +191,8 @@ def exports(ws):
         for i in entities_list:
             source = i['_id']
             for target in i['impact']:
-                if entities_dico[source]['type'] == 'resource' and entities_dico[target]['type'] == 'connector':
+                if entities_dico[source]['type'] == 'resource' and \
+                   entities_dico[target]['type'] == 'connector':
                     pass
                 else:
                     ret_json['links'].append({
@@ -197,15 +201,121 @@ def exports(ws):
                         'target': target
                     })
 
-        directory = '/opt/canopsis/var/www/src/canopsis/d3graph'
+        directory = os.path.join(root_path, 'var/www/src/canopsis/d3graph')
         if not os.path.exists(directory):
             os.makedirs(directory)
-            l = ['<!DOCTYPE html>\n', '<meta charset="utf-8">\n', '<style>\n', '\n', '.links line {\n', '  stroke: #999;\n', '  stroke-opacity: 0.6;\n', '}\n', '\n', '.nodes circle {\n', '  stroke: #fff;\n', '  stroke-width: 0.5px;\n', '}\n', '\n', '</style>\n', '<svg width="1000" height="900"></svg>\n', '<script src="https://d3js.org/d3.v4.min.js"></script>\n', '<script>\n', '\n', 'var svg = d3.select("svg"),\n', '    width = +svg.attr("width"),\n', '    height = +svg.attr("height");\n', '\n', 'var color = d3.scaleOrdinal(d3.schemeCategory20);\n', '\n', 'var manybody = d3.forceManyBody()\n', '    .strength(-500)\n', '\n', 'var simulation = d3.forceSimulation()\n', '    .force("link", d3.forceLink().id(function(d) { return d.id; }))\n', '    .force("charge", manybody)\n', '    .force("center", d3.forceCenter(width / 2, height / 2));\n', '\n', 'd3.json("graph.json", function(error, graph) {\n', '  if (error) throw error;\n', '\n', '  var link = svg.append("g")\n', '      .attr("class", "links")\n', '    .selectAll("line")\n', '    .data(graph.links)\n', '    .enter().append("line")\n', '      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });\n', '\n', '  var node = svg.append("g")\n', '      .attr("class", "nodes")\n', '    .selectAll("circle")\n', '    .data(graph.nodes)\n', '    .enter().append("circle")\n', '      .attr("r", 5)\n', '      .attr("fill", function(d) {if(d.state == 0){return "#A1D490"}if(d.state == 1){return "#ffff1a"}if(d.state == 2){return "#ff9900"}if(d.state == 3){return "#E30B1A"}})\n', '      .call(d3.drag()\n', '          .on("start", dragstarted)\n', '          .on("drag", dragged)\n', '          .on("end", dragended));\n', '\n', '  var text = svg.append("g")\n', '      .attr("class", "text")\n', '    .selectAll("text")\n', '    .data(graph.nodes)\n', '    .enter().append("text")\n', '    .text(function(d) {return d.name});\n', '\n', '  node.append("title")\n', '      .text(function(d) { return d.id; });\n', '\n', '  simulation\n', '      .nodes(graph.nodes)\n', '      .on("tick", ticked);\n', '\n', '  simulation.force("link")\n', '      .links(graph.links);\n', '\n', '  function ticked() {\n', '    link\n', '        .attr("x1", function(d) { return d.source.x; })\n', '        .attr("y1", function(d) { return d.source.y; })\n', '        .attr("x2", function(d) { return d.target.x; })\n', '        .attr("y2", function(d) { return d.target.y; });\n', '\n', '    node\n', '        .attr("cx", function(d) { return d.x; })\n', '        .attr("cy", function(d) { return d.y; });\n', '    text\n', '        .attr("x", function(d) { return d.x + 5})\n', '        .attr("y", function(d) { return d.y})\n', '  }\n', '});\n', '\n', 'function dragstarted(d) {\n', '  if (!d3.event.active) simulation.alphaTarget(0.3).restart();\n', '  d.fx = d.x;\n', '  d.fy = d.y;\n', '}\n', '\n', 'function dragged(d) {\n', '  d.fx = d3.event.x;\n', '  d.fy = d3.event.y;\n', '}\n', '\n', 'function dragended(d) {\n', '  if (!d3.event.active) simulation.alphaTarget(0);\n', '  d.fx = null;\n', '  d.fy = null;\n', '}\n', '\n', '</script>\n', '\n']
-            a = open('/opt/canopsis/var/www/src/canopsis/d3graph/index.html', 'a')
-            for i in l:
-                a.write(i)
+            htmldoc = """<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 0.5px;
+}
+
+</style>
+<svg width="1000" height="900"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+var manybody = d3.forceManyBody()
+    .strength(-500)
+
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("charge", manybody)
+    .force("center", d3.forceCenter(width / 2, height / 2));
+
+d3.json("graph.json", function(error, graph) {
+  if (error) throw error;
+
+  var link = svg.append("g")
+      .attr("class", "links")
+    .selectAll("line")
+    .data(graph.links)
+    .enter().append("line")
+      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+  var node = svg.append("g")
+      .attr("class", "nodes")
+    .selectAll("circle")
+    .data(graph.nodes)
+    .enter().append("circle")
+      .attr("r", 5)
+      .attr("fill", function(d) {if(d.state == 0){return "#A1D490"}if(d.state == 1){return "#ffff1a"}if(d.state == 2){return "#ff9900"}if(d.state == 3){return "#E30B1A"}})
+      .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended));
+
+  var text = svg.append("g")
+      .attr("class", "text")
+    .selectAll("text")
+    .data(graph.nodes)
+    .enter().append("text")
+    .text(function(d) {return d.name});
+
+  node.append("title")
+      .text(function(d) { return d.id; });
+
+  simulation
+      .nodes(graph.nodes)
+      .on("tick", ticked);
+
+  simulation.force("link")
+      .links(graph.links);
+
+  function ticked() {
+    link
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+    text
+        .attr("x", function(d) { return d.x + 5})
+        .attr("y", function(d) { return d.y})
+  }
+});
+
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+</script>
+"""
+            a = open(os.path.join(directory, 'index.html', 'a'))
+            a.write(htmldoc)
             a.close()
-        f = open('/opt/canopsis/var/www/src/canopsis/d3graph/graph.json', 'w')
+
+        f = open(os.path.join(directory, 'graph.json', 'w'))
         f.write(j.dumps(ret_json))
         f.close()
 
@@ -246,3 +356,28 @@ def exports(ws):
     @ws.application.get('/api/contextgraph/import/status/<cid>')
     def get_status(cid):
         return import_col_man.get_import_status(cid)
+
+    @ws.application.delete('/api/v2/context/<entity_id:id_filter>')
+    def delete_entity_v2(entity_id):
+        """
+        Remove entity from context
+        """
+        try:
+            res = manager.delete_entity(entity_id)
+        except ValueError as vale:
+            return gen_json_error({'description': str(vale)}, HTTP_ERROR)
+
+        return gen_json(res)
+
+    @ws.application.post('/api/v2/context_graph/get_id/')
+    def get_entity_id():
+        """
+        Get the generated id tfrom an event.
+        """
+        event = request.json
+
+        if event is None:
+            return gen_json_error({'description': 'no event givent'},
+                                  HTTP_ERROR)
+
+        return gen_json(ContextGraph.get_id(event))

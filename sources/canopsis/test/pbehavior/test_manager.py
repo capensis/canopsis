@@ -20,16 +20,17 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+import unittest
+import xmlrunner
 
+from canopsis.common import root_path
 from calendar import timegm
 from copy import deepcopy
 from datetime import datetime, timedelta
 from json import dumps
-from unittest import main
 from uuid import uuid4
 
 from canopsis.pbehavior.manager import PBehavior
-
 from test_base import BaseTest
 
 
@@ -55,7 +56,9 @@ class TestManager(BaseTest):
             'enabled': True,
             'connector': 'test_connector',
             'connector_name': 'test_connector_name',
-            'author': 'test_author'
+            'author': 'test_author',
+            PBehavior.TYPE: 'pause',
+            'reason': 'reason is treason'
         }
 
         data = deepcopy(self.pbehavior)
@@ -101,6 +104,8 @@ class TestManager(BaseTest):
         self.assertTrue(pb is not None)
         self.assertTrue(isinstance(pbs, list))
         self.assertEqual(len(pbs), 1)
+        self.assertEqual(pbs[0][PBehavior.TYPE], self.pbehavior[PBehavior.TYPE])
+        self.assertEqual(pbs[0]['reason'], self.pbehavior['reason'])
 
     def test_update(self):
         self.pbm.update(self.pbehavior_id, name='test_name2',
@@ -212,6 +217,15 @@ class TestManager(BaseTest):
         self.assertTrue('eids' in pb)
         self.assertTrue(isinstance(pb['eids'], list))
 
+        # A bad pbehavior filter does not crash compute()
+        pb = deepcopy(self.pbehavior)
+        pb.update({
+            'filter': "\"{\\\"_id\\\": \\\"Sc_aude_eid_02/scenario\\\"}\""
+        })
+        pb_id = self.pbm.create(**pb)
+        self.pbm.compute_pbehaviors_filters()
+        pb = self.pbm.get(pb_id)
+
     def test_check_pbehaviors(self):
         now = datetime.utcnow()
         pbehavior_1 = deepcopy(self.pbehavior)
@@ -289,6 +303,33 @@ class TestManager(BaseTest):
         )
         self.assertFalse(result)
 
+        # Check for bad tstart/stop values
+        pbehavior_2 = deepcopy(self.pbehavior)
+        pbehavior_2.update(
+            {
+                'name': pb_name1,
+                'eids': [self.entity_id_1, self.entity_id_2],
+                'tstart': None,
+                'tstop': None
+            }
+        )
+        self.pbm.pb_storage.put_elements(elements=(pbehavior_2,))
+        result = self.pbm._check_pbehavior(self.entity_id_1, [pb_name1])
+        self.assertFalse(result)
+
+        pbehavior_3 = deepcopy(self.pbehavior)
+        pbehavior_3.update(
+            {
+                'name': pb_name1,
+                'eids': [self.entity_id_1, self.entity_id_2],
+                'tstart': 'han',
+                'tstop': 'solo'
+            }
+        )
+        self.pbm.pb_storage.put_elements(elements=(pbehavior_3,))
+        result = self.pbm._check_pbehavior(self.entity_id_1, [pb_name1])
+        self.assertFalse(result)
+
     def test_get_active_pbheviors(self):
         now = datetime.utcnow()
         pbehavior_1 = deepcopy(self.pbehavior)
@@ -315,5 +356,34 @@ class TestManager(BaseTest):
         names = [x['name'] for x in tab]
         self.assertEqual(names, ['pb1'])
 
+    def test_get_active_pbehavior_from_type(self):
+        pbehavior_1 = deepcopy(self.pbehavior)
+        pbehavior_2 = deepcopy(self.pbehavior)
+        pb_name1, pb_name2, = 'cheerfull', 'blue'
+
+        pbehavior_1.update(
+            {
+                'name': pb_name1,
+                'eids': [self.entity_id_1, self.entity_id_2],
+                PBehavior.TYPE: 'maintenance'
+            }
+        )
+
+        pbehavior_2.update({'name': pb_name2})
+
+        self.pbm.pb_storage.put_elements(
+            elements=(pbehavior_1, pbehavior_2)
+        )
+
+        self.pbm.context._put_entities(self.entities)
+
+        result = self.pbm.get_active_pbehaviors_from_type(['maintenance'])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0][PBehavior.TYPE], 'maintenance')
+
+
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

@@ -10,8 +10,9 @@ try:
     from io import StringIO
 except ImportError:
     from StringIO import StringIO
-
+from canopsis.common import root_path
 from canopsis.logger import Logger, OutputFile, OutputStream
+import xmlrunner
 
 
 class TestLogger(unittest.TestCase):
@@ -115,4 +116,7 @@ class TestLogger(unittest.TestCase):
         self.assertEqual(lines, 3)
 
 if __name__ == '__main__':
-    unittest.main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

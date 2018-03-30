@@ -1,0 +1,30 @@
+<li class="dropdown tasks-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-tasks"></i>
+        <span class="label label-success">{{promises.pendingCount}}</span>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="header">{{promises.pendingCount}} {{tr 'requests pending'}}</li>
+        <li>
+            <ul class="list-group">
+            {{#each promise in promises.pending}}
+                <li class="list-group-item">
+                    {{promise.url}} 
+                    <span class="label label-warning">{{tr 'pending'}}</span>
+                </li>
+            {{/each}}
+            </ul>
+        </li>
+        <li class="header">{{promises.errorsCount}} {{tr 'requests errors'}}</li>
+        <li>
+            <ul class="list-group">
+            {{#each promise in promises.errors}}
+                <li class="list-group-item">
+                    {{promise.url}} 
+                    <span class="label label-danger">{{promise._detail.status}} {{promise._detail.statusText}}</span>
+                </li>
+            {{/each}}
+            </ul>
+        </li>
+    </ul>
+</li>

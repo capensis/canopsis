@@ -158,6 +158,10 @@ class Amqp(Thread):
                         )
                         break
 
+                    except KombuSerializationError as exc:
+                        self.logger.error(
+                            u"Kombu serialization error: invalid message received: {}".format(exc))
+
                     except Exception as err:
                         self.logger.error(u"Error: {} ({})".format(
                             err,

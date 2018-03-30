@@ -19,16 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main, TestCase
+import unittest
 
+from canopsis.common import root_path
 from canopsis.configuration.model import Parameter, Category
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
+import xmlrunner
 
 
-class DecoratorTest(TestCase):
+class DecoratorTest(unittest.TestCase):
     """
     Configuration Manager unittest class.
     """
@@ -110,4 +112,7 @@ class DecoratorTest(TestCase):
         self.assertEqual(len(tc.conf[CATEGORY]), len(category))
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

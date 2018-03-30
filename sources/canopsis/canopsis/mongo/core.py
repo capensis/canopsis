@@ -22,12 +22,13 @@ from canopsis.common.init import basestring
 from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection, CollectionError
 
 from pymongo import MongoClient
 from pymongo.cursor import Cursor as _Cursor
-from pymongo.errors import (
-    TimeoutError, OperationFailure, ConnectionFailure, DuplicateKeyError
-)
+from pymongo.errors import OperationFailure, DuplicateKeyError, PyMongoError
+from pymongo.errors import TimeoutError as NetworkTimeout
 from pymongo.bulk import BulkOperationBuilder
 from pymongo.read_preferences import ReadPreference
 from pymongo.son_manipulator import SONManipulator
@@ -88,71 +89,56 @@ class MongoDataBase(DataBase):
         self._read_preference = value
 
     def _connect(self, *args, **kwargs):
-
         result = None
-
         connection_args = {}
 
-        # if self host is given
-        if self.host:
-            connection_args['host'] = self.host
-        # if self port is given
-        if self.port:
-            connection_args['port'] = self.port
-        # if self replica set is given
-        if self.replicaset:
-            connection_args['replicaSet'] = self.replicaset
-            connection_args['read_preference'] = self.read_preference
+        from canopsis.confng import Configuration, Ini
 
-        connection_args['w'] = 1 if self.safe else 0
-        if self.safe:
-            connection_args['j'] = self.journaling
+        mongo_cfg = Configuration.load('etc/common/mongo_store.conf', Ini)['DATABASE']
 
-        if self.ssl:
-            connection_args.update(
-                {
-                    'ssl': self.ssl,
-                    'ssl_keyfile': self.ssl_key,
-                    'ssl_certfile': self.ssl_cert
-                }
-            )
-
-        self.logger.debug(u'Trying to connect to {0}'.format(connection_args))
+        self._user = mongo_cfg['user']
+        self._pwd = mongo_cfg['pwd']
+        self._host = mongo_cfg['host']
+        self._db = mongo_cfg['db']
+        self._port = int(mongo_cfg['port'])
+        self._replicaset = mongo_cfg.get('replicaset')
+        self._read_preference = getattr(
+            ReadPreference,
+            mongo_cfg.get('read_preference', 'SECONDARY_PREFERRED'),
+            ReadPreference.SECONDARY_PREFERRED
+        )
 
         try:
-            result = MongoClient(**connection_args)
-        except ConnectionFailure as cfe:
+            result = MongoStore.get_default()
+        except PyMongoError as cfe:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
-                format(self.host, self.port, cfe)
+                format(self._host, self._port, cfe)
             )
         else:
-            self._database = result[self.db]
+            self._database = result.client
 
-            if (self.user, self.pwd) != (None, None):
+            if result.authenticated:
+                self.logger.debug('Already connected and authenticated on {}:{} /rs:{}'.format(
+                    self._host, self._port, self._replicaset
+                ))
 
-                authenticate = self._database.authenticate(self.user, self.pwd)
-
-                if authenticate:
-                    self.logger.debug(
-                        "Connected on {0}:{1}".format(
-                            self.host, self.port
+            else:
+                try:
+                    result.authenticate()
+                    self.logger.info(
+                        "Connected on {}:{} /rs:{}".format(
+                            self._host, self._port, self._replicaset
                         )
                     )
-
-                else:
+                except PyMongoError as ex:
                     self.logger.error(
-                        'Impossible to authenticate {0} on {1}:{2}'.format(
-                            self.host, self.port
+                        'Impossible to authenticate {} on {}:{} /rs:{}'.format(
+                            self._user, self._host, self._port, self._replicaset
                         )
                     )
                     self.disconnect()
                     result = None
-
-            else:
-                self.logger.debug(
-                    "Connected on {0}:{1}".format(self.host, self.port)
-                )
 
         return result
 
@@ -163,7 +149,6 @@ class MongoDataBase(DataBase):
             self._conn = None
 
     def connected(self, *args, **kwargs):
-
         result = self._conn is not None and self._conn.alive()
 
         return result
@@ -175,7 +160,7 @@ class MongoDataBase(DataBase):
         _backend = self._get_backend(backend=table)
 
         try:
-            result = self._database.command("collstats", _backend)['size']
+            result = MongoStore.hr(self._database.command, "collstats", _backend)['size']
 
         except Exception as ex:
             self.logger.warning(
@@ -187,8 +172,11 @@ class MongoDataBase(DataBase):
     def drop(self, table=None):
 
         if table is None:
-            for collection_name in self._database.collection_names(
-                    include_system_collections=False):
+            collections = MongoStore.hr(
+                self._database.collection_names,
+                include_system_collections=False
+            )
+            for collection_name in collections:
                 self.drop(table=collection_name)
 
         else:
@@ -207,15 +195,7 @@ class MongoDataBase(DataBase):
         :raises: NotImplementedError
         .. seealso: DataBase.set_backend(self, backend)
         """
-
-        if getattr(self, '_database', None) is None:
-            raise DataBase.DataBaseError(
-                '{0} is not connected'.format(self)
-            )
-
-        result = self._database[backend]
-
-        return result
+        return MongoCollection(self._conn.get_collection(backend))
 
 
 class MongoStorage(MongoDataBase, Storage):
@@ -259,13 +239,16 @@ class MongoStorage(MongoDataBase, Storage):
                     shardCollection=collection_full_name, key={'_id': 1}
                 )
 
-            for index in self.all_indexes():
 
-                try:
-                    self._backend.ensure_index(index)
+            if self.all_indexes() is not None:
 
-                except Exception as ex:
-                    self.logger.error(ex)
+                for index in self.all_indexes():
+
+                    try:
+                        self._backend.ensure_index(index)
+
+                    except Exception as ex:
+                        self.logger.error(ex)
 
         return result
 
@@ -497,7 +480,7 @@ class MongoStorage(MongoDataBase, Storage):
             query_op=self._run_command,
             cache_op=cache_op,
             cache_kwargs={'document': document},
-            query_kwargs={'command': 'insert', 'doc_or_docs': document},
+            query_kwargs={'command': 'insert', 'document': document},
             cache=cache,
             **kwargs
         )
@@ -528,8 +511,9 @@ class MongoStorage(MongoDataBase, Storage):
             query_op=self._run_command,
             cache_kwargs={'update': document},
             query_kwargs={
+                'query': spec,
                 'command': 'update',
-                'spec': spec, 'document': document,
+                'document': document,
                 'upsert': upsert, 'multi': multi
             },
             cache=cache,
@@ -558,7 +542,7 @@ class MongoStorage(MongoDataBase, Storage):
             query_op=self._run_command,
             cache_op=cache_op,
             cache_kwargs={},
-            query_kwargs={'command': 'remove', 'spec_or_id': document},
+            query_kwargs={'command': 'remove', 'query': document},
             cache=cache,
             **kwargs
         )
@@ -574,7 +558,6 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _process_query(self, *args, **kwargs):
-
         result = super(MongoStorage, self)._process_query(*args, **kwargs)
 
         result = self._manage_query_error(result)
@@ -626,12 +609,12 @@ class MongoStorage(MongoDataBase, Storage):
                 w=w, wtimeout=self.out_timeout, *args, **kwargs
             )
 
-        except TimeoutError:
+        except NetworkTimeout:
             self.logger.warning(
                 'Try to run command {0}({1}) on {2} attempts left'
                 .format(command, kwargs, backend))
 
-        except OperationFailure as of:
+        except (OperationFailure, CollectionError) as of:
             self.logger.error(u'{0} during running command {1}({2}) of in {3}'
                 .format(of, command, kwargs, backend))
 

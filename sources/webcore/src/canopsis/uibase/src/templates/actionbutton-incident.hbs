@@ -1,0 +1,24 @@
+{{#if this.state}}
+    {{#if this.ack.author}}
+        {{#if controller.rights.actionbutton_incident.checksum}}
+            {{#component-tooltip content="Declare an incident"}}
+                <button type="button" class="btn btn-default btn-xs" {{action 'sendEvent' 'declareticket' this}} >
+                    <i class="fa fa-ticket"></i>
+                </button>
+            {{/component-tooltip}}
+        {{/if}}
+    {{/if}}
+{{else}}
+   {{#component-if_equal_component param1=this.status param2=3}} 
+        {{#if this.ack.author}}
+            {{#if controller.rights.actionbutton_incident.checksum}}
+                {{#component-tooltip content="Declare an incident"}}
+                    <button type="button" class="btn btn-default btn-xs" {{action 'sendEvent' 'declareticket' this}} >
+                        <i class="fa fa-ticket"></i>
+                    </button>
+                {{/component-tooltip}}
+            {{/if}}
+        {{/if}}
+    {{/component-if_equal_component}}
+{{/if}}
+

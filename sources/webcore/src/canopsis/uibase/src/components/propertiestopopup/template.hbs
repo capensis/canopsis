@@ -1,0 +1,8 @@
+{{customText}}
+{{#if htmlOnly}}
+    {{propertiesAsHtml}}
+{{else}}
+    {{#component-tooltip content=propertiesAsHtml htmlEnabled=true noTranslation=true}}
+        <span {{bind-attr class=":handle :glyphicon icon" }}></span>
+    {{/component-tooltip}}
+{{/if}}

@@ -1,0 +1,17 @@
+<button type="button" {{bind-attr class=":btn view.buttonsColorClass view.buttonsColorClass::btn-info view.buttonsColorSize view.buttonsColorSize::btn-xs"}} {{action 'editWidget' widget}}>
+    <span class="glyphicon glyphicon-edit"></span>
+</button>
+{{#if view.hasEditableMixins}}
+    <button type="button" {{bind-attr class=":btn view.buttonsColorClass view.buttonsColorClass::btn-info view.buttonsColorSize view.buttonsColorSize::btn-xs :dropdown-toggle"}} data-toggle="dropdown" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu" role="menu" style="margin-left: -200%;">
+        {{#each mixin in view.editableEnabledMixins}}
+            <li><a {{action 'editMixin' widget mixin.name}}>{{mixin.name}}</a></li>
+        {{/each}}
+        {{#each mixin in view.wrapperMixins}}
+            <li><a {{action 'editMixin' this mixin.name}}>{{mixin.name}}</a></li>
+        {{/each}}
+    </ul>
+{{/if}}

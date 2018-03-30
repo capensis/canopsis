@@ -1,0 +1,7 @@
+{{#if controller.userCanCreateRecord}}
+    {{#component-tooltip content="Duplicate entry"}}
+        <button type="button" class="btn btn-xs btn-default" {{action 'duplicate' this}}>
+            <i class="fa fa-files-o"></i>
+        </button>
+    {{/component-tooltip}}
+{{/if}}

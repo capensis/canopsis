@@ -19,11 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
-
+import unittest
+from canopsis.common import root_path
 from canopsis.monitoring.check import CheckRunner
 from copy import deepcopy
 import socket
+import xmlrunner
 
 
 CONTEXT = {
@@ -57,7 +58,7 @@ SCHEMA = {
 }
 
 
-class KnownValues(TestCase):
+class KnownValues(unittest.TestCase):
     def setUp(self):
         self.runner = CheckRunner(CONTEXT, 'test')
         self.runner.hostname = 'monitoring'
@@ -173,4 +174,7 @@ class KnownValues(TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

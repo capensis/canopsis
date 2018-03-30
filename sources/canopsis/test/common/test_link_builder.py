@@ -20,14 +20,20 @@
 # ---------------------------------
 
 import logging
-from unittest import TestCase, main
+import unittest
 
+from canopsis.common import root_path
 from canopsis.common.associative_table.manager import AssociativeTableManager
+from canopsis.common.link_builder.basic_alarm_link_builder import ALERTS_COLLECTION
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
+from canopsis.common.mongo_store import MongoStore
+from canopsis.confng import Configuration, Ini
 from canopsis.middleware.core import Middleware
 
+import xmlrunner
 
-class LinkBuilderTest(TestCase):
+
+class LinkBuilderTest(unittest.TestCase):
     """Test the hyperlink table module.
     """
     def setUp(self):
@@ -37,8 +43,10 @@ class LinkBuilderTest(TestCase):
         self.at_storage = Middleware.get_middleware_by_uri(
             'storage-default-testassociativetable://'
         )
-        self.at_manager = AssociativeTableManager(collection=self.at_storage._backend,
-                                                  logger=self.logger)
+        self.at_manager = AssociativeTableManager(
+            collection=self.at_storage._backend,
+            logger=self.logger
+        )
 
         self.config = self.at_manager.create('test_hlm')
         self.config.set('basic_link_builder', {})
@@ -48,20 +56,50 @@ class LinkBuilderTest(TestCase):
                                                 logger=self.logger)
 
         self.entity = {
-            '_id': 'entity-one',
+            '_id': 'april/oneil',
             'type': 'resource',
-            'name': 'my-entity',
+            'name': 'ntm',
             'depends': [],
             'impact': [],
             'measurements': {},
-            'infos': {}
+            'infos': {
+                'location': 'technodrome'
+            }
         }
+
+        self.alarm = {
+            '_id': 'krang',
+            'd': 'april/oneil',
+            't': 0,
+            'v': {
+                'connector': 'Engine',
+                'connector_name': 'JENKINS',
+                'component': 'oneil',
+                'resource': 'april',
+                'state': {
+                    'a': 'Splinter',
+                    '_t': 'stateinc',
+                    'm': 'Possède la pensée juste, alors seulement tu pourras recevoir les dons de la force, du savoir et de la paix.',
+                    't': 1,
+                    'val': 0
+                },
+                'output': "Quatre tortues d'enfer, dans la ville",
+                'display_name': 'TN-TN-TN',
+            }
+        }
+
+        conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
+        mongo = MongoStore(config=conf_store)
+        self.alerts_collection = mongo.get_collection(name=ALERTS_COLLECTION)
+
+        self.alerts_collection.insert(self.alarm)
 
     def tearDown(self):
         """Teardown"""
         self.at_storage.remove_elements()
+        self.alerts_collection.remove({'_id': self.alarm['_id']})
 
-    def test_links_for_entity(self):
+    def test_empty_links_for_entity(self):
         res = self.htl_manager.links_for_entity(entity=self.entity)
         self.assertDictEqual(res, {})
 
@@ -69,6 +107,7 @@ class LinkBuilderTest(TestCase):
                                                 options={})
         self.assertDictEqual(res, {})
 
+    def test_links_for_entity(self):
         options = {
             'obiwan': 'jedi',
             'darthvader': 'sith'
@@ -94,6 +133,20 @@ class LinkBuilderTest(TestCase):
         res = htl_manager2.links_for_entity(entity=self.entity)
         self.assertDictEqual(res, {category: ['http://example.com/resource']})
 
+    def test_links_for_alarm(self):
+        # Build a link with entity and alarm informations
+        config = {
+            'base_url': 'http://example.com/{infos.location}/{alarm.v.component}',
+        }
+        conf = {'basic_alarm_link_builder': config}
+        htl_manager2 = HypertextLinkManager(config=conf, logger=self.logger)
+
+        res = htl_manager2.links_for_entity(entity=self.entity)
+        self.assertDictEqual(res, {'links': ['http://example.com/technodrome/oneil']})
+
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

@@ -1,0 +1,11 @@
+{
+  "name": "userpreferences",
+  "description": "User preferences brick for canopsis",
+  "version": "1.0.0",
+  "author": "",
+  "license": "AGPL",
+  "repository": {
+    "type": "git",
+    "url": "https://git.canopsis.net/canopsis/canopsis-webcore.git"
+  }
+}

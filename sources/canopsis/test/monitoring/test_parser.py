@@ -22,6 +22,9 @@
 from unittest import TestCase, main
 
 from canopsis.monitoring.parser import CheckParser, PerfDataParser
+import unittest
+from canopsis.common import root_path
+import xmlrunner
 
 
 TEST_CHECK_OUTPUT = """DISK OK - free space: / 3326 MB (56%); | /=2643MB;5948;5958;0;5968
@@ -29,7 +32,7 @@ TEST_CHECK_OUTPUT = """DISK OK - free space: / 3326 MB (56%); | /=2643MB;5948;59
 /boot 68 MB (69%);
 /home 69357 MB (27%);
 /var/log 819 MB (84%); | /boot=68MB;88;93;0;98
-/home=69357MB;253404;253409;0;253414 
+/home=69357MB;253404;253409;0;253414
 /var/log=818MB;970;975;0;980"""
 
 TEST_PERFDATA = "/=2643MB;5948;5958;0;5968,/boot=68MB;88;93;0;98,/home=69357MB;253404;253409;0;253414,/var/log=818MB;970;975;0;980"
@@ -95,5 +98,8 @@ class KnownValues(TestCase):
         self.assertEqual(expected, parser.perf_data_array)
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

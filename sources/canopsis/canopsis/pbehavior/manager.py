@@ -29,7 +29,10 @@ from time import time
 from uuid import uuid4
 from six import string_types
 from dateutil.rrule import rrulestr
+from pymongo import DESCENDING
 
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
@@ -70,10 +73,12 @@ class BasePBehavior(dict):
         return None
 
     def update(self, **kwargs):
-        """Update the current instance with every kwargs arguements
+        """
+        Update the current instance with every kwargs arguments.
+
         :param kwargs: the argument to use to update the instance
-        :return type: dict
-        :return: the updated representation of the current instance
+        :returns: the updated representation of the current instance
+        :rtype: dict
         """
         for key, value in kwargs.items():
             if key in self._EDITABLE_FIELDS:
@@ -81,9 +86,11 @@ class BasePBehavior(dict):
         return self.__dict__
 
     def to_dict(self):
-        """Return the dict representation of the current instance
-        :return type: dict
-        :return: return the dict representation of the current instance
+        """
+        Return the dict representation of the current instance
+
+        :returns: return the dict representation of the current instance
+        :rtype: dict
         """
         return self.__dict__
 
@@ -104,12 +111,16 @@ class PBehavior(BasePBehavior):
     CONNECTOR = 'connector'
     CONNECTOR_NAME = 'connector_name'
     AUTHOR = 'author'
+    TYPE = 'type_'
+    REASON = 'reason'
+
+    DEFAULT_TYPE = 'generic'
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
-               CONNECTOR, CONNECTOR_NAME, AUTHOR)
+               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
-                        CONNECTOR, CONNECTOR_NAME, AUTHOR)
+                        CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
 
     def __init__(self, **kwargs):
         if PBehavior.FILTER in kwargs:
@@ -175,10 +186,13 @@ class PBehaviorManager(object):
         self.logger = logger
         self.pb_storage = pb_storage
 
+        self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
+
         self.currently_active_pb = set()
 
     def get(self, _id, query=None):
         """Get pbehavior by id.
+
         :param str id: pbehavior id
         :param dict query: filtering options
         """
@@ -189,7 +203,8 @@ class PBehaviorManager(object):
             name, filter, author,
             tstart, tstop, rrule='',
             enabled=True, comments=None,
-            connector='canopsis', connector_name='canopsis'):
+            connector='canopsis', connector_name='canopsis',
+            type_=PBehavior.DEFAULT_TYPE, reason=''):
         """
         Method creates pbehavior record
 
@@ -209,6 +224,8 @@ class PBehaviorManager(object):
             has generated the pbehavior
         :param str connector_name:  a string representing the name of connector
             that has generated the pbehavior
+        :param str type_: associated type_ for this pbh
+        :param str reason: associated reason for this pbh
         :raises ValueError: invalid RRULE
         :return: created element eid
         :rtype: str
@@ -246,7 +263,9 @@ class PBehaviorManager(object):
             'enabled': enabled,
             'comments': comments,
             'connector': connector,
-            'connector_name': connector_name
+            'connector_name': connector_name,
+            PBehavior.TYPE: type_,
+            'reason': reason
         }
         if PBehavior.EIDS not in pb_kwargs:
             pb_kwargs[PBehavior.EIDS] = []
@@ -262,9 +281,13 @@ class PBehaviorManager(object):
         return result
 
     def get_pbehaviors_by_eid(self, id_):
-        """Retreive from database every pbehavior that contains the given id_
+        """Retreive from database every pbehavior that contains
+        the given id_ in the PBehavior.EIDS field.
+
         :param list,str: the id(s) as a str or a list of string
-        :return list: a list of pbehavior
+        :returns: a list of pbehavior, with the isActive key in pbehavior is
+            active when queried.
+        :rtype: list
         """
 
         if not isinstance(id_, (list, string_types)):
@@ -281,7 +304,19 @@ class PBehaviorManager(object):
             query={PBehavior.EIDS: {"$in": id_}}
         )
 
-        return list(cursor)
+        pbehaviors = []
+
+        now = int(time())
+
+        for pb in cursor:
+            if pb['tstart'] <= now and (pb['tstop'] is None or pb['tstop'] >= now):
+                pb['isActive'] = True
+            else:
+                pb['isActive'] = False
+
+            pbehaviors.append(pb)
+
+        return pbehaviors
 
     def read(self, _id=None):
         """Get pbehavior or list pbehaviors.
@@ -319,6 +354,25 @@ class PBehaviorManager(object):
             return pbehavior.to_dict()
         return None
 
+    def upsert(self, pbehavior):
+        """
+        Creates or update the given pbehavior.
+
+        This function uses MongoStore/MongoCollection instead of Storage.
+
+        :param canopsis.models.pbehavior.PBehavior pbehavior:
+        :rtype: bool, dict
+        :returns: success, update result
+        """
+        r = self.pb_store.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
+
+        if r.get('updatedExisting', False) and r.get('nModified') == 1:
+            return True, r
+        elif r.get('updatedExisting', None) is False and r.get('nModified') == 0 and r.get('ok') == 1.0:
+            return True, r
+        else:
+            return False, r
+
     def delete(self, _id=None, _filter=None):
         """
         Delete pbehavior record
@@ -346,7 +400,6 @@ class PBehaviorManager(object):
         :param str pbehavior_id: pbehavior id
         :param str author: author of the comment
         :param str message: text of the comment
-        :return:
         """
         comment_id = str(uuid4())
         comment = {
@@ -381,7 +434,6 @@ class PBehaviorManager(object):
         :param str pbehavior_id: pbehavior id
         :param str_id: comment id
         :param dict kwargs: values comment fields
-        :return:
         """
         pbehavior = self.get(
             pbehavior_id,
@@ -414,7 +466,6 @@ class PBehaviorManager(object):
 
         :param str pbehavior_id: pbehavior id
         :param str _id: comment id
-        :return:
         """
         result = self.pb_storage._update(
             spec={'_id': pbehavior_id},
@@ -434,13 +485,14 @@ class PBehaviorManager(object):
         :return: pbehaviors, with name, tstart, tstop, rrule and enabled keys
         :rtype: list of dict
         """
-        pbehaviors = self.pb_storage.get_elements(
-            query={PBehavior.EIDS: {'$in': [entity_id]}},
-            sort={PBehavior.TSTART: -1}
+        res = list(
+            self.pb_storage._backend.find(
+                {PBehavior.EIDS: {'$in': [entity_id]}},
+                sort=[(PBehavior.TSTART, DESCENDING)]
+            )
         )
-        result = [PBehavior(**pb).to_dict() for pb in pbehaviors]
 
-        return result
+        return res
 
     def compute_pbehaviors_filters(self):
         """
@@ -451,8 +503,15 @@ class PBehaviorManager(object):
         )
 
         for pbehavior in pbehaviors:
+
+            query = loads(pbehavior[PBehavior.FILTER])
+            if not isinstance(query, dict):
+                self.logger.error('compute_pbehaviors_filters(): filter is '
+                                  'not a dict !\n{}'.format(query))
+                continue
+
             entities = self.context.ent_storage.get_elements(
-                query=loads(pbehavior[PBehavior.FILTER])
+                query=query
             )
 
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
@@ -464,7 +523,7 @@ class PBehaviorManager(object):
         :param str entity_id:
         :param list list_in: list of pbehavior names
         :param list list_out: list of pbehavior names
-        :return: bool if the entity_id is currently in list_in arg and out list_out arg
+        :returns: bool if the entity_id is currently in list_in arg and out list_out arg
         """
         return (self._check_pbehavior(entity_id, list_in) and
                 not self._check_pbehavior(entity_id, list_out))
@@ -474,7 +533,7 @@ class PBehaviorManager(object):
 
         :param str entity_id:
         :param list pb_names: list of pbehavior names
-        :return: bool if the entity_id is currently in pb_names arg
+        :returns: bool if the entity_id is currently in pb_names arg
         """
         try:
             entity = self.context.get_entities_by_id(entity_id)[0]
@@ -494,8 +553,18 @@ class PBehaviorManager(object):
         names = []
         fromts = datetime.fromtimestamp
         for pbehavior in pbehaviors:
-            tstart = fromts(pbehavior[PBehavior.TSTART])
-            tstop = fromts(pbehavior[PBehavior.TSTOP])
+            tstart = pbehavior[PBehavior.TSTART]
+            tstop = pbehavior[PBehavior.TSTOP]
+            if not isinstance(tstart, (int, float)):
+                self.logger.error('Cannot parse tstart value: {}'
+                                  .format(pbehavior))
+                continue
+            if not isinstance(tstop, (int, float)):
+                self.logger.error('Cannot parse tstop value: {}'
+                                  .format(pbehavior))
+                continue
+            tstart = fromts(tstart)
+            tstop = fromts(tstop)
 
             dt_list = [tstart, tstop]
             if pbehavior['rrule'] is not None:
@@ -528,7 +597,7 @@ class PBehaviorManager(object):
         Return a list of active pbehaviors linked to some entites.
 
         :param list eids: the desired entities id
-        :return: list of pbehaviors
+        :returns: list of pbehaviors
         """
         result = []
         for eid in eids:
@@ -557,11 +626,31 @@ class PBehaviorManager(object):
 
         return ret_val
 
+    def get_active_pbehaviors_from_type(self, types=[]):
+        """
+        Return pbehaviors currently active, with a specific type.
+        """
+        now = int(time())
+        query = {
+            '$and': [
+                {'tstop': {'$gte': now}},
+                {'tstart': {'$lte': now}},
+                {PBehavior.TYPE: {'$in': types}}
+            ]
+        }
+
+        ret_val = list(self.pb_storage.get_elements(
+            query=query
+        ))
+
+        return ret_val
+
     def get_varying_pbehavior_list(self):
         """
-            get_varying_pbehavior_list
+        get_varying_pbehavior_list
 
-            :return list: list of PBehavior id activated since last check
+        :returns: list of PBehavior id activated since last check
+        :rtype: list
         """
         active_pbehaviors = self.get_all_active_pbehaviors()
         active_pbehaviors_ids = set()
@@ -575,10 +664,11 @@ class PBehaviorManager(object):
 
     def launch_update_watcher(self, watcher_manager):
         """
-            launch_update_watcher update watcher when an pbehavior is active
+        launch_update_watcher update watcher when a pbehavior is active
 
-            :param object watcher_manager: watcher manager
-            :return int: number of watcher updated
+        :param object watcher_manager: watcher manager
+        :returns: number of watcher updated
+        retype: int
         """
         new_pbs = self.get_varying_pbehavior_list()
         new_pbs_full = list(self.pb_storage._backend.find(
@@ -599,10 +689,11 @@ class PBehaviorManager(object):
 
     def get_wacher_on_entities(self, entities_ids):
         """
-            get_wacher_on_entities.
+        get_wacher_on_entities.
 
-            :param entities_ids: entity id
-            :return list: list of watchers
+        :param entities_ids: entity id
+        :returns: list of watchers
+        :rtype: list
         """
         query = {
             '$and': [

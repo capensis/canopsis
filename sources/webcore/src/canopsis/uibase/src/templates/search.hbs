@@ -1,0 +1,6 @@
+
+{{#if controller.rights.list_search.checksum}}
+    <div class="col-xs-3 search">
+        {{component-searchbar value=controller.searchFieldValue placeholder="Search" target=controller searchableAttributes=controller.searchableAttributes}}
+    </div>
+{{/if}}

@@ -21,7 +21,9 @@
 
 from logging import getLogger
 
-from unittest import main, TestCase
+import unittest
+
+from canopsis.common import root_path
 
 from canopsis.configuration.model import Configuration, Category, Parameter
 from canopsis.configuration.driver.file import FileConfigurationDriver
@@ -29,6 +31,7 @@ from canopsis.configuration.driver.file import FileConfigurationDriver
 from pickle import loads, dump
 
 from os import remove
+import xmlrunner
 
 
 class TestConfigurationDriver(FileConfigurationDriver):
@@ -109,7 +112,7 @@ class TestConfigurationDriver(FileConfigurationDriver):
                 pass
 
 
-class ConfigurationDriverTest(TestCase):
+class ConfigurationDriverTest(unittest.TestCase):
     """
     Configuration Manager unittest class.
     """
@@ -227,4 +230,7 @@ class ConfigurationDriverTest(TestCase):
         return TestConfigurationDriver
 
 if __name__ == '__main__':
-    main()
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

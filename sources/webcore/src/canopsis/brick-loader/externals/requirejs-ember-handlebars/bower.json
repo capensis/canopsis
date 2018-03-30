@@ -1,0 +1,27 @@
+{
+  "name": "requirejs-ember-handlebars",
+  "version": "0.0.5",
+  "main": [
+    "./ehbs.js"
+  ],
+  "dependencies": {
+    "requirejs-text": "~2.0.10"
+  },
+  "homepage": "https://github.com/gigafied/requirejs-ember-handlebars",
+  "authors": [
+    "Taka Kojima <taka@gigafied.com>"
+  ],
+  "description": "A requirejs plugin for using ember templates",
+  "keywords": [
+    "ember.js",
+    "handlebars.js"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

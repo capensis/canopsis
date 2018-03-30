@@ -19,8 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase
-
+import unittest
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -33,7 +32,7 @@ class MockEngine():
         self.logger = Logger.get('', None, output_cls=OutputNull)
 
 
-class BaseTest(TestCase):
+class BaseTest(unittest.TestCase):
     def setUp(self):
         pbehavior_storage = Middleware.get_middleware_by_uri(
             'storage-default-testpbehavior://'

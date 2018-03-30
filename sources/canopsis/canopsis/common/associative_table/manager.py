@@ -50,7 +50,8 @@ class AssociativeTableManager():
             NAME: table_name,
             CONTENT: {}
         }
-        self.logger.info('Creating associative table "{}".'.format(table_name))
+        self.logger.debug(
+            'Creating associative table "{}".'.format(table_name))
         self.collection.insert(base)
 
         return AssociativeTable(table_name=table_name, content={})
@@ -72,8 +73,8 @@ class AssociativeTableManager():
             return AssociativeTable(table_name=table_name,
                                     content=content)
 
-        self.logger.info('Impossible to find associative table "{}".'
-                         .format(table_name))
+        self.logger.debug(
+            'Impossible to find associative table "{}".'.format(table_name))
         return None
 
     def save(self, atable):
@@ -102,7 +103,7 @@ class AssociativeTableManager():
         query = {
             NAME: {"$eq": table_name}
         }
-        self.logger.info('Deleting associative table: {}'.format(table_name))
+        self.logger.debug('Deleting associative table: {}'.format(table_name))
         result = self.collection.remove(query)
 
         return is_mongo_successfull(result)

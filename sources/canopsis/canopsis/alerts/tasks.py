@@ -155,7 +155,7 @@ def declare_ticket(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': message,
-        'val': None
+        'val': event.get('ticket', None)
     }
 
     alarm[AlarmField.ticket.value] = step
@@ -413,6 +413,7 @@ def pbehaviors(manager, alarm):
 
     entity_id = alarm['d']
 
-    alarm['pbehaviors'] = manager.pbehavior_manager.get_pbehaviors(entity_id)
+    alarm['pbehaviors'] = manager.pbehavior_manager.get_active_pbehaviors(
+        [entity_id])
 
     return alarm

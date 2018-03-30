@@ -1,7 +1,9 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
+import unittest
 from calendar import timegm
 from datetime import datetime, timedelta
 from json import loads
@@ -9,6 +11,7 @@ from time import sleep
 from unittest import main, TestCase
 
 from canopsis.alerts.manager import Alerts
+from canopsis.common import root_path
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
@@ -17,6 +20,7 @@ from canopsis.logger.logger import Logger, OutputNull
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.manager import Watcher
+import xmlrunner
 
 watcher_one = "watcher-one"
 watcher_example = {
@@ -187,7 +191,6 @@ class ComputeState(BaseTest):
                 'bagot_time': 3600,
                 'bagot_freq': 10,
                 'stealthy_time': 300,
-                'stealthy_show': 600,
                 'restore_event': True,
                 'auto_snooze': False,
                 'snooze_default_time': 300,
@@ -283,5 +286,8 @@ class ComputeState(BaseTest):
         res = self.manager.get_watcher(watcher_id)
         self.assertEqual(res['state'], self.state)
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    output = root_path + "/tmp/tests_report"
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output=output),
+        verbosity=3)

@@ -41,9 +41,9 @@ from canopsis.alerts.status import (
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.utils import ensure_iterable
+from canopsis.common.utils import ensure_iterable, gen_id
 from canopsis.confng import Configuration, Ini
-from canopsis.confng.helpers import cfg_to_array
+from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
 from canopsis.logger import Logger
@@ -52,13 +52,17 @@ from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.watcher.manager import Watcher
 
+# Extra fields from the event that should be stored in the alarm
 DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
+
+# if set to True, the last_event_date will be updated on each event that triggers the alarm
+DEFAULT_RECORD_LAST_EVENT_DATE = False
 DEFAULT_FILTER_AUTHOR = 'system'
 
 DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_FLAPPING_FREQ = 0
 DEFAULT_PERSISTANT_STEPS = 10
-DEFAULT_HARD_LIMIT = 100
+DEFAULT_HARD_LIMIT = 2000
 DEFAULT_STEALTHY_INTERVAL = 0
 DEFAULT_STEALTHY_SHOW_DURATION = 0
 DEFAULT_RESTORE_EVENT = False
@@ -113,6 +117,8 @@ class Alerts(object):
         alerts_ = self.config.get(self.ALERTS_CAT, {})
         self.extra_fields = cfg_to_array(alerts_.get('extra_fields',
                                                      DEFAULT_EXTRA_FIELDS))
+        self.record_last_event_date = cfg_to_bool(alerts_.get('record_last_event_date',
+                                                              DEFAULT_RECORD_LAST_EVENT_DATE))
 
         filter_ = self.config.get(self.FILTER_CAT, {})
         self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
@@ -134,10 +140,8 @@ class Alerts(object):
         """
         config = Configuration.load(Alerts.CONF_PATH, Ini)
         conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
-        conf_db_creds = Configuration.load(MongoStore.CRED_CONF_PATH, Ini)
 
-        mongo = MongoStore(config=conf_store,
-                           cred_config=conf_db_creds)
+        mongo = MongoStore(config=conf_store)
         config_collection = mongo.get_collection(name=cls.CONFIG_COLLECTION)
         filter_ = {'crecord_type': 'statusmanagement'}
         config_data = EtherealData(collection=config_collection,
@@ -173,7 +177,7 @@ class Alerts(object):
 
         """
 
-        #  The minimum accepted frequency is 3 changes, otherwise all  alarms will bagot
+        #  The minimum accepted frequency is 3 changes, otherwise all alarms will bagot
         freq = self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
         if freq < 3:
             return 3
@@ -219,14 +223,6 @@ class Alerts(object):
         Interval used to check for stealthy alarm status.
         """
         return self.config_data.get('stealthy_time', DEFAULT_STEALTHY_INTERVAL)
-
-    @property
-    def stealthy_show_duration(self):
-        """
-        Interval used to check if alarm is still in stealthy status.
-        """
-        return self.config_data.get('stealthy_show',
-                                    DEFAULT_STEALTHY_SHOW_DURATION)
 
     def get_alarms(
             self,
@@ -379,6 +375,12 @@ class Alerts(object):
         alarm_id = alarm[storage.DATA_ID]
         alarm_ts = alarm[storage.TIMESTAMP]
 
+        if AlarmField.display_name.value not in new_value:
+            display_name = gen_id()
+            while self.check_if_display_name_exists(display_name):
+                display_name = gen_id()
+            new_value[AlarmField.display_name.value] = display_name
+
         if tags is not None:
             for tag in ensure_iterable(tags):
                 if tag not in new_value[AlarmField.tags.value]:
@@ -468,13 +470,13 @@ class Alerts(object):
                 event[self.AUTHOR] = step['a']
 
             if step['_t'] in check_referer_types:
-                event['event_type'] = 'check'
                 event['ref_rk'] = get_routingkey(event)
 
             if Check.STATE not in event:
                 event[Check.STATE] = get_last_state(alarm)
 
-            event['event_type'] = typemap[step['_t']]
+            # set event_type to step['_t'] if we don't have any valid mapping.
+            event['event_type'] = typemap.get(step['_t'], step['_t'])
 
             for field in self.extra_fields:
                 if field in alarm[AlarmField.extra.value]:
@@ -505,15 +507,17 @@ class Alerts(object):
         """
         Archive event in corresponding alarm history.
 
-        :param event: Event to archive
-        :type event: dict
+        :param dict event: Event to archive
         """
         entity_id = self.context_manager.get_id(event)
+        event_type = event['event_type']
 
-        if (event['event_type'] == Check.EVENT_TYPE
-                or event['event_type'] == 'watcher'):
+        if event_type in [Check.EVENT_TYPE, 'watcher']:
+
             alarm = self.get_current_alarm(entity_id)
-            if alarm is None:
+            is_new_alarm = alarm is None
+
+            if is_new_alarm:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
@@ -541,9 +545,11 @@ class Alerts(object):
 
             self.update_current_alarm(alarm, value)
 
+            if is_new_alarm:
+                self.check_alarm_filters()
+
         else:
-            self.execute_task('alerts.useraction.{}'
-                              .format(event['event_type']),
+            self.execute_task('alerts.useraction.{}'.format(event_type),
                               event=event,
                               author=event.get(self.AUTHOR, None),
                               entity_id=entity_id)
@@ -553,18 +559,12 @@ class Alerts(object):
         """
         Find and execute a task.
 
-        :param name: Name of the task to execute
-        :type name: str
-        :param event: Event to archive
-        :type event: dict
-        :param entity_id: Id of the alarm
-        :type entity_id: str
-        :param author: If needed, the author of the event
-        :type author: str
-        :param new_state: If needed, the new state in the event
-        :type new_state: int
-        :param diff_counter: For crop events, the new value of the counter
-        :type diff_counter: int
+        :param str name: Name of the task to execute
+        :param dict event: Event to archive
+        :param str entity_id: Id of the alarm
+        :param str author: If needed, the author of the event
+        :param int new_state: If needed, the new state in the event
+        :param int diff_counter: For crop events, the new value of the counter
         """
         # Find the corresponding task
         try:
@@ -630,20 +630,17 @@ class Alerts(object):
         """
         Update alarm state if needed.
 
-        :param alarm: Alarm associated to state change event
-        :type alarm: dict
-
-        :param state: New state to archive
-        :type state: int
-
-        :param event: Associated event
-        :type event: dict
-
+        :param dict alarm: Alarm associated to state change event
+        :param int state: New state to archive
+        :param dict event: Associated event
         :return: updated alarm
         :rtype: dict
         """
 
         value = alarm.get(self.alerts_storage.VALUE)
+
+        if self.record_last_event_date:
+            value[AlarmField.last_event_date.value] = int(time())
 
         old_state = get_last_state(value, ts=event['timestamp'])
 
@@ -656,15 +653,9 @@ class Alerts(object):
         """
         Update alarm status if needed.
 
-        :param alarm: Alarm associated to status change event
-        :type alarm: dict
-
-        :param status: New status to archive
-        :type status: int
-
-        :param event: Associated event
-        :type event: dict
-
+        :param dict alarm: Alarm associated to status change event
+        :param int status: New status to archive
+        :param dict event: Associated event
         :return: updated alarm
         :rtype: dict
         """
@@ -687,18 +678,10 @@ class Alerts(object):
         """
         Change state when ``update_state()`` detected a state change.
 
-        :param alarm: Associated alarm to state change event
-        :type alarm: dict
-
-        :param old_state: Previous state
-        :type old_state: int
-
-        :param state: New state
-        :type state: int
-
-        :param event: Associated event
-        :type event: dict
-
+        :param dict alarm: Associated alarm to state change event
+        :param int old_state: Previous state
+        :param int state: New state
+        :param dict event: Associated event
         :return: alarm with changed state
         :rtype: dict
         """
@@ -739,18 +722,10 @@ class Alerts(object):
         Change status when ``update_status()`` detected a status
         change.
 
-        :param alarm: Associated alarm to status change event
-        :type alarm: dict
-
-        :param old_status: Previous status
-        :type old_status: int
-
-        :param status: New status
-        :type status: int
-
-        :param event: Associated event
-        :type event: dict
-
+        :param dict alarm: Associated alarm to status change event
+        :param int old_status: Previous status
+        :param int status: New status
+        :param dict event: Associated event
         :return: alarm with changed status
         :rtype: dict
         """
@@ -777,20 +752,20 @@ class Alerts(object):
         """
         Create a new alarm from event if not already existing.
 
-        :param alarm_id: Alarm entity ID
-        :type alarm_id: str
-
-        :param event: Associated event
-        :type event: dict
-
+        :param str alarm_id: Alarm entity ID
+        :param dict event: Associated event
         :return alarm document:
         :rtype: dict
         """
+        display_name = gen_id()
+        while self.check_if_display_name_exists(display_name):
+            display_name = gen_id()
 
         return {
             self.alerts_storage.DATA_ID: alarm_id,
             self.alerts_storage.TIMESTAMP: event['timestamp'],
             self.alerts_storage.VALUE: {
+                AlarmField.display_name.value: display_name,
                 'connector': event['connector'],
                 'connector_name': event['connector_name'],
                 'component': event['component'],
@@ -815,6 +790,21 @@ class Alerts(object):
                 }
             }
         }
+
+    def check_if_display_name_exists(self, display_name):
+        """
+        Check if a display_name is already associated.
+
+        :param str display_name: the name to check
+        :rtype: bool
+        """
+        tmp_alarms = self.alerts_storage.get_elements(
+            query={'v.display_name': display_name}
+        )
+        if len(tmp_alarms) == 0:
+            return False
+
+        return True
 
     def crop_flapping_steps(self, alarm):
         """
@@ -903,9 +893,8 @@ class Alerts(object):
 
         limit = alarm.get(AlarmField.hard_limit.value, None)
 
-        if limit is not None:
-            if limit['val'] >= self.hard_limit:
-                return alarm
+        if limit is not None and limit['val'] >= self.hard_limit:
+            return alarm
 
         if len(alarm[AlarmField.steps.value]) >= self.hard_limit:
             task = get_task('alerts.check.hard_limit')
@@ -970,7 +959,7 @@ class Alerts(object):
     def resolve_snoozes(self, alarms=None):
         """
         Loop over all snoozed alarms, and restore them if needed.
-        :param alarms: a list of existing alarms (hack to bypass the self.getAlarms that is deprecated)
+        :param list alarms: existing alarms (hack to bypass the self.getAlarms that is deprecated)
         :deprecated: see canopsis.alarms
         """
 
@@ -1114,14 +1103,16 @@ class Alerts(object):
                 'timestamp': now_stamp,
                 'connector': value['connector'],
                 'connector_name': value['connector_name'],
-                'output': lifter.output(message)
+                'output': lifter.output(message),
+                'event_type': Check.EVENT_TYPE
             }
             vstate = AlarmField.state.value
 
             # Execute each defined action
-            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             updated_once = False
+            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             for task in lifter.tasks:
+
                 if vstate in new_value:
                     event[vstate] = new_value[vstate]['val']  # for changestate
 
@@ -1132,15 +1123,20 @@ class Alerts(object):
 
                 self.logger.info('Automatically execute {} on {}'
                                  .format(task, alarm_id))
-                new_value = self.execute_task(name=task,
-                                              event=event,
-                                              entity_id=alarm_id,
-                                              author=self.filter_author,
-                                              new_state=event[vstate])
 
-                if new_value is not None:
+                updated_alarm_value = self.execute_task(
+                    name=task,
+                    event=event,
+                    entity_id=alarm_id,
+                    author=self.filter_author,
+                    new_state=event[vstate]
+                )
+                if updated_alarm_value is not None:
+                    new_value = updated_alarm_value
+
+                if updated_alarm_value is not None:
                     updated_once = True
-                    self.update_current_alarm(docalarm, new_value)
+                    self.update_current_alarm(docalarm, updated_alarm_value)
 
             if not updated_once:
                 continue

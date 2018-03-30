@@ -1,0 +1,53 @@
+<b>{{tr 'Available'}}:</b>
+<div style="float: right;">
+    {{#component-tooltip content=helpModal.content htmlEnabled=true noTranslation=true}}
+        <i class="fa fa-info-circle"></i>
+    {{/component-tooltip}}
+    {{tr 'Search'}}: {{input action="search"}}
+
+</div>
+
+{{component-table items=metrics model="ctxmetric" modelfilter=metricSearch columns=select_cols targetObject=this queryStartOffsetKeyword="start"}}
+
+<hr/>
+<b>Selected:</b>
+
+{{#each selectionItem in content.value}}
+    {{#component-miniform style="margin-bottom:0"}}
+        {{#component-miniformheader}}
+            {{#component-miniformheaderbuttons}}
+                <button class="btn btn-default btn-xs" {{action 'unselect' selectionItem target=this}} >
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            {{/component-miniformheaderbuttons}}
+            {{#component-miniformtitle}}
+                {{component-selectedmetricheader rk=selectionItem.metric}}
+            {{/component-miniformtitle}}
+        {{/component-miniformheader}}
+        {{#component-miniformcontent}}
+            <table>
+                <tr>
+                    <td>Color</td>
+                    <td>{{input value=selectionItem.color type='color'}}</td>
+                </tr>
+                <tr>
+                    <td>Label</td>
+                    <td>{{input value=selectionItem.label}}</td>
+                </tr>
+                <tr>
+                    <td>X-axis</td>
+                    <td>{{input value=selectionItem.xaxis type="number"}}</td>
+                </tr>
+                <tr>
+                    <td>Y-axis</td>
+                    <td>{{input value=selectionItem.xaxis type="number"}}</td>
+                </tr>
+                <tr>
+                    <td>Unit</td>
+                    <td>{{input value=selectionItem.unit}}</td>
+                </tr>
+            </table>
+            {{!component-editor editorType='editor-color' value=selectionItem.color mode='standalone'}}
+        {{/component-miniformcontent}}
+    {{/component-miniform}}
+{{/each}}
