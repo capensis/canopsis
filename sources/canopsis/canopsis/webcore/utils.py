@@ -54,6 +54,8 @@ def __gen_json(result, status, allowed_keys=None):
     json_body = {}
 
     response.content_type = CONTENT_TYPE_JSON
+    response.set_header("Cache-Control", "public, no-cache")
+    
     if isinstance(status, int):
         response.status = status
 
