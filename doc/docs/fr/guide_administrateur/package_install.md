@@ -158,8 +158,8 @@ Pour le moment le nombre de processus lancés via `engine-launcher` est fixé da
 Pour changer le nombre d’instances :
 
 ```bash
-mkdir -p /etc/systemd/system/canopsis-engine@<module>-<name>
-cat > /etc/systemd/system/canopsis-engine@<module>-<name>/workers.conf << EOF
+mkdir -p /etc/systemd/system/canopsis-engine@<module>-<name>.service.d
+cat > /etc/systemd/system/canopsis-engine@<module>-<name>.service.d/workers.conf << EOF
 [Service]
 Environment=WORKERS=X
 EOF
