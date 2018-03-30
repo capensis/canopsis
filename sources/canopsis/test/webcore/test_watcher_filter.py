@@ -88,6 +88,15 @@ class TestWatcherFilter(unittest.TestCase):
         }
         fdoc9 = {}
 
+        doc = {
+            'active_pb_exclude_type': 'ti'
+        }
+        fdoc = {}
+        wf = WatcherFilter()
+        self.assertDictEqual(wf.filter(doc), fdoc)
+        # do not exclude unfiltered pb types
+        self.assertTrue(wf.match(False, True, False, pb_types=['ti_unknown']))
+
         doc10 = {
             '$and': [
                 {
@@ -102,14 +111,16 @@ class TestWatcherFilter(unittest.TestCase):
         self.assertDictEqual(wf.filter(doc10), fdoc10)
         # no type check
         self.assertTrue(wf.match(True, True, False))
-        # bad type
-        self.assertFalse(wf.match(True, True, False, pb_types=['bleurp']))
+        # unknown pb type
+        self.assertFalse(wf.match(False, True, False, pb_types=['pb_ti_unknown']))
         # type check
         self.assertTrue(wf.match(True, True, False, pb_types=['pb_ti1']))
         # type check 2
         self.assertTrue(wf.match(True, True, False, pb_types=['pb_ti2']))
         # type exclude and include, exclude prevails
         self.assertFalse(wf.match(True, True, False, pb_types=['pb_te1', 'pb_ti1']))
+        self.assertFalse(wf.match(False, True, False, pb_types=['pb_te1', 'pb_ti1']))
+        self.assertTrue(wf.match(True, True, False, pb_types=['pb_ti1']))
         # type with pbehavior watcher
         self.assertTrue(wf.match(False, False, True, pb_types=['pb_ti1']))
         # type with pbehavior entities

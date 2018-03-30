@@ -128,13 +128,16 @@ class WatcherFilter(object):
             return True
 
         for pb_type in pb_types:
-            normilized_pb = pb_type.strip().lower()
+            normalized_pb = pb_type.strip().lower()
 
-            if normilized_pb in self.exclude_types():
+            if normalized_pb in self.exclude_types():
                 return False
 
-            if normilized_pb in self.include_types():
+            if normalized_pb in self.include_types():
                 return True
+
+        if not self.include_types():
+            return True
 
         return False
 

@@ -396,6 +396,7 @@ def exports(ws):
 
             watcher_pb_types = pbehavior_types(enriched_entity['pbehavior'])
             watcher_pb_types |= pbehavior_types(enriched_entity['watcher_pbehavior'])
+
             if wf.match(wstatus[1], wstatus[0], enriched_entity['active_pb_watcher'], pb_types=watcher_pb_types) is True:
                 watchers.append(enriched_entity)
 
