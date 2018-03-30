@@ -48,14 +48,8 @@ services:
     oom_score_adj: -1000
   provisionning:
     image: canopsis/canopsis-prov:${CANOPSIS_TAG}
-    environment:
-      - CPS_WAIT_FIRST_ATTEMPT=0
-      - CPS_INIT_RETRY_DELAY=10
-      - CPS_INIT_MAX_RETRY=10
-      - CPS_AMQP_URL=amqp://cpsrabbit:canopsis@rabbitmq/canopsis
-      - CPS_MONGO_URL=mongodb://cpsmongo:canopsis@mongodb/canopsis
-      - CPS_REDIS_URL=redis://notused
-      - CPS_INFLUX_URL=influxdb://cpsinflux:canopsis@influxdb/canopsis
+    env_file:
+      - compose.env
     depends_on:
       - "mongodb"
     restart: "no"
