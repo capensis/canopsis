@@ -3,7 +3,6 @@
 
 from json import dumps
 import os
-import canopsis.common
 import unittest
 
 from canopsis.backbone.event import Event
@@ -29,7 +28,7 @@ class TestAmqp(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         config = configparser.RawConfigParser()
-        config.read(os.path.join(canopsis.common.root_path, DEFAULT_CONF_FILE))
+        config.read(os.path.join(root_path, DEFAULT_CONF_FILE))
 
         cls.amqp_url = "amqp://{0}:{1}@{2}:{3}/{4}".format(
             config["master"]["userid"],
