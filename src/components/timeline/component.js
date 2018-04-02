@@ -197,6 +197,11 @@ Ember.Application.initializer({
                                 }
                             }
 
+                            // add value to a ticket's message
+                            if (step._t === 'assocticket') {
+                                step.m += ' ' + step.val;
+                            }
+
                             steps.push(step);
 
                             //stock previous date
