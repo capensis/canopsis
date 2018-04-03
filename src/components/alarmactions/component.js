@@ -138,14 +138,12 @@ Ember.Application.initializer({
                         name = func(actions, rights, actions[i]["name"], "listalarm_cancelAck")
                         break;
                     case "declareanincident":
-						console.error("Case declareanincident")
                         name = func(actions, rights, actions[i]["name"], "listalarm_declareanIncident")
                         break;
                     case "assignticketnumber":
                         name = func(actions, rights, actions[i]["name"], "listalarm_assignTicketNumber")
                         break;
                     case "pbehavior":
-						console.error("Case pbehavior")
                         name = func(actions, rights, actions[i]["name"], "listalarm_pbehavior")
                         break;
                     case "removealarm":
