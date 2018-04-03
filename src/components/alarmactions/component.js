@@ -124,8 +124,6 @@ Ember.Application.initializer({
 				var toRemove = []
                 for (var i = 0; i < actions.length; i++) {
                     var func = this.get("genRemoveList")
-					console.error("Crt it ", actions[i]["name"])
-
 					var name = null
                     switch(actions[i]["name"]){
                     case "ack":
