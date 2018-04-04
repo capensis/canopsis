@@ -491,6 +491,9 @@
 </script>
 <script type="text/x-handlebars" data-template-name="_v_extra_details">{{#component-rendererextradetails value=value}}
 {{/component-rendererextradetails}}</script>
+<script type="text/x-handlebars" data-template-name="_v_last_event_date">{{timestamp value 'r'}}
+
+</script>
 <script type="text/x-handlebars" data-template-name="_v_last_update_date">{{timestamp value 'r'}}
 
 </script>
@@ -503,6 +506,7 @@
 <script type="text/x-handlebars" data-template-name="_v_state">{{#component-rendererstate value=value}}
 {{/component-rendererstate}}
 </script>
+<script type="text/x-handlebars" data-template-name="_v_state_m">{{listalarm_ellipsis value 100}}</script>
 <script type="text/x-handlebars" data-template-name="_v_state_t">{{timestamp value 'r'}}
 
 </script>
@@ -510,6 +514,7 @@
 {{/component-rendererstatus}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
+<script type="text/x-handlebars" data-template-name="renderer-listalarm_ellipsis">{{!* * @renderer object }} {{listalarm_ellipsis value attr.options.nbChar}}</script>
 <script type="text/x-handlebars" data-template-name="listalarm">
 <div class="pull-left">
     {{#component-selectionactions action='massAction'}}
@@ -553,7 +558,7 @@
 
     {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
     {{/component-search}}
-    
+
     <div class="pull-left dataTables_filter" style='margin-top:0'>
         {{view Ember.Select
             content=controller.itemsPerPagePropositions
@@ -638,4 +643,5 @@
     </div>
 {{/unless}}
 
-</div></script>
+</div>
+</script>

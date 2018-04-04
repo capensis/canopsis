@@ -113,9 +113,6 @@ Ember.Application.initializer({
                 if (this.get('isSnoozed')) {
                     actions.removeObject(actions.findBy('mixin_name', 'snooze'))
                 };
-                if (this.get('isChangedByUser')) {
-                    actions.removeObject(actions.findBy('mixin_name', 'cancelack'))
-                }
                 if (this.get('isClosed')) {
                     actions.removeObject(actions.findBy('mixin_name', 'pbehavior'))
                 }

@@ -114,7 +114,8 @@ Ember.Application.initializer({
 							"last_update_date",
 							"snooze",
 							"ticket",
-							"hard_limit"],
+							"hard_limit",
+							"display_name"],
 
 			entityDBColumn: ["impact",
 							 "name",
@@ -261,7 +262,6 @@ Ember.Application.initializer({
               this.set('alarmSearchOptions.filter', this.get('selected_filter.filter') || {});
             }.observes('selected_filter'),
 
-
             /**
              * @property totalPagess
              */
@@ -327,28 +327,31 @@ Ember.Application.initializer({
              * @property originalAlarms
              */
             originalAlarms: function() {
-				var controller = this;
+              var controller = this;
               this.set('loaded', false);
               var options = this.get('alarmSearchOptions');
 
+              // fix for applying a filter after refreshing the widget
+              this.set('alarmSearchOptions.filter', this.get('selected_filter.filter') || {});
+              
               //don't touch this or the backend will explode
               if(!options.filter)
                   options.filter = "{}";
               if(controller.get('isNaturalSearch')){
-				  options['natural_search'] = true;
-                  controller.set('isNaturalSearch', false);
-				  var columns = get(this, 'model.columns');
-				  var prefixed_columns = [];
-				  for(idx = 0; idx < columns.length; idx++){
-					  depth_one = columns[idx].split(".", 1)[0];
-					  if(this.get("entityDBColumn").indexOf(depth_one) >= 0){
-						  prefixed_columns.push("entity." + columns[idx]);
-					  }
-					  if(this.get("alarmDBColumn").indexOf(depth_one) >= 0){
-						  prefixed_columns.push("v." + columns[idx]);
-					  }
-				  }
-				  options["active_columns"] = prefixed_columns;
+                options['natural_search'] = true;
+                controller.set('isNaturalSearch', false);
+                var columns = get(this, 'model.columns');
+                var prefixed_columns = [];
+                for(idx = 0; idx < columns.length; idx++){
+                  depth_one = columns[idx].split(".", 1)[0];
+                  if(this.get("entityDBColumn").indexOf(depth_one) >= 0){
+                    prefixed_columns.push("entity." + columns[idx]);
+                  }
+                  if(this.get("alarmDBColumn").indexOf(depth_one) >= 0){
+                    prefixed_columns.push("v." + columns[idx]);
+                  }
+                }
+                options["active_columns"] = prefixed_columns;
               } else {
                   options['natural_search'] = false;
               }
@@ -405,7 +408,6 @@ Ember.Application.initializer({
                   controller.get('extraDeatialsEntities').forEach(function(item) {
                     alarm['v']['extra_details'][item.name] = Ember.Object.create(alarm).get(item.value);
                   })
-
                   var newAlarm = Ember.Object.create();
 
                   controller.get('mandatoryFields').forEach(function(field) {
@@ -523,7 +525,7 @@ Ember.Application.initializer({
               };
 
 
-				      var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
+		      var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
               adapter.findQuery('alerts', query).then(function (result) {
                       var alerts = get(result, 'data');
                       controller.setAlarmsForShow(alerts[0]['alarms']);
@@ -658,7 +660,6 @@ Ember.Application.initializer({
                 controller.set('isNaturalSearch', true);
                 controller.set('manualUpdateAlarms', new Date().getTime());
               },
-
             }
 
         }, listOptions);

@@ -10,7 +10,7 @@
   "declareanincident": "Declare incident",
   "assignticketnumber": "Assign ticket number",
   "pbehavior": "Periodical behavior",
-  "removealarm": "Remove alarm",
+  "removealarm": "Cancel alarm",
   "changecriticity": "Change criticity",
   "restorealarm": "Restore alarm",
   "snoozealarm": "Snooze alarm",
