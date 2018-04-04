@@ -371,7 +371,7 @@
         "loader_id" : "listalarm_cancelAck",
         "crecord_name" : "listalarm_cancelAck",
         "crecord_type" : "action",
-        "desc": "Rights on listalarm: fast ack"
+        "desc": "Rights on listalarm: cancel ack"
     },
     {
         "_id" : "listalarm_declareanIncident",
@@ -383,7 +383,7 @@
     {
         "_id" : "listalarm_assignTicketNumber",
         "loader_id" : "listalarm_assignTicketNumber",
-        "crecord_name" : "models_tasklinklist",
+        "crecord_name" : "listalarm_assignTicketNumber",
         "crecord_type" : "action",
         "desc": "Rights on listalarm: assign ticket number"
     },
