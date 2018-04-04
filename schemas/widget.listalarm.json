@@ -7,8 +7,8 @@
 		"title": "General",
 		"keys":["title", "default_sort_column", "alarms_state_filter"]
 	},{
-		"title": "Columns",
-		"keys":["columns"]
+		"title": "Widget columns",
+		"keys":["widget_columns"]
 	},{
 		"title": "Info popup",
 		"keys":["popup"]
@@ -43,8 +43,16 @@
 				"type": "string"
 			},
 			"reorderable": true,
-            "default": ["connector_name","component","resource","state","status","last_update_date", "extra_details"]
+			"default": ["connector_name","component","resource","state","status","last_update_date", "extra_details"]
     	},
+    	"widget_columns": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "stringpair"
+			},
+			"reorderable": true
+		},
 		"popup": {
 			"type": "array",
 			"items": {
