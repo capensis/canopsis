@@ -135,7 +135,8 @@ def exports(ws):
 
         list_alarm = []
         for alarm in alarms['alarms']:
-            alarm['duration'] = time() - alarm.get('v').get('creation_date')
+            now = int(time())
+            alarm["v"]['duration'] = now - alarm.get('v').get('creation_date')
             tmp_entity_id = alarm['d']
 
             if alarm['d'] in entity_dict:
