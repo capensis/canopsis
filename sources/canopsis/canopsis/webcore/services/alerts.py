@@ -20,6 +20,7 @@
 from __future__ import unicode_literals
 
 from bottle import request
+from time import time
 
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
@@ -134,6 +135,7 @@ def exports(ws):
 
         list_alarm = []
         for alarm in alarms['alarms']:
+            alarm['duration'] = time() - alarm.get('v').get('creation_date')
             tmp_entity_id = alarm['d']
 
             if alarm['d'] in entity_dict:
