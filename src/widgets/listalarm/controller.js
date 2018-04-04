@@ -164,6 +164,11 @@ Ember.Application.initializer({
                     getValue: 'v.extra_details',
                     name: 'extra_details',
                     humanName: 'extra details'
+                },
+                {
+                    getValue: 'd',
+                    name: 'd',
+                    humanName: 'd'
                 }
             ],
 
@@ -672,7 +677,7 @@ Ember.Application.initializer({
                     var listTampon = [];
 
                     for (var i = 0, l = selection.length; i < l; i++)
-                        listId.push(selection[i]['id']);
+                        listId.push(selection[i]['d']);
 
                     var payload = {
                         'tstart':form.get('formContext.start'),
