@@ -515,7 +515,8 @@ class AlertsReader(object):
             limit=None,
             with_steps=False,
             natural_search=False,
-            active_columns=None
+            active_columns=None,
+            hide_resources=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -548,9 +549,27 @@ class AlertsReader(object):
         :param list active_columns: the list of alarms columns on which to
         apply the natural search filter.
 
+        :param bool hide_resources: hide resources' alarms if the component has
+        an alarm
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
+        if hide_pbehaviors:
+           if resolved:
+               self.logger.error('you only can hide pbehaviors on current alarms')
+           return self.hide_resources(
+               tstart,
+               tstop,
+               filter_,
+               sort_key,
+               sort_dir,
+               skip,
+               limit,
+               search,
+               natural_search,
+               active_columns
+           )
 
         if lookups is None:
             lookups = []
@@ -636,6 +655,106 @@ class AlertsReader(object):
         }
 
         return res
+
+    def hide_resources(
+            self,
+            tstart=None,
+            tstop=None,
+            filter_={},
+            sort_key='opened',
+            sort_dir='DESC',
+            skip=0,
+            limit=None,
+            search='',
+            natural_search=False,
+            active_columns=None
+    ):
+        if filter_ is None:
+            filter_ = {}
+
+        if active_columns is None:
+            active_columns = self.DEFAULT_ACTIVE_COLUMNS
+
+        time_filter = self._get_time_filter(
+            opened=True,
+            resolved=False,
+            tstart=tstart,
+            tstop=tstop
+        )
+
+        if time_filter is None:
+            return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
+
+        final_filter = self._get_final_filter(
+            filter_,
+            time_filter,
+            search,
+            active_columns
+        )
+
+        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
+
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "default_entities",
+                    "localField": "d",
+                    "foreignField": "_id",
+                    "as": "entity"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$entity",
+                    "preserveNullAndEmptyArrays": True,
+                }
+            }, {
+                "$match": final_filter
+            }, {
+                "$sort": {
+                    sort_key: sort_dir
+                }
+            }
+        ]
+
+        alarms = self.alarm_storage._backend.aggregate(pipeline).get('result')
+        alarms = self._lookup(alarms, ['pbehaviors'])
+
+    def hide_resources(self, alarms):
+        alarm_dict = {}
+        res = []
+        for alarm in alarms:
+            component = alarm.get('v').get('component')
+            if component not in alarm_dict:
+                alarm_dict[component] = [alarm]
+            else:
+                alarm_dict[component].append(alarm)
+
+        for component in alarm_dict:
+            for alarm_comp in alarm_dict[component]:
+                if 'component' in [alarm_comp.get('entity', {}).get('type', '')]:
+                    check_alarm_list_with_component(alarm_dict[component])
+                else:
+                    res = sum([res, alarm_dict[component]], [])
+        return res
+
+    def check_alarm_list_with_component(self, alarms):
+        """
+        :rtype: list
+        """
+        state_comp = 0
+        states_list = []
+        alarm_comp = {}
+        for i in alarms:
+            val = i.get('v').get('state').get('val')
+            states_list.append(val)
+            if i.get('entity').get('type') == 'component':
+                state_comp = val
+                alarm_comp = i
+
+        if state_comp >= max(states_list):
+            return [alarm_comp]
+
+        return alarms
 
     def count_alarms_by_period(
             self,

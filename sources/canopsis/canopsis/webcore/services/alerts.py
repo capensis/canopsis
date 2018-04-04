@@ -55,7 +55,8 @@ def exports(ws):
             'limit',
             'with_steps',
             'natural_search',
-            'active_columns'
+            'active_columns',
+            'hide_resources'
         ]
     )
     def get_alarms(
@@ -72,7 +73,8 @@ def exports(ws):
             limit=50,
             with_steps=False,
             natural_search=False,
-            active_columns=None
+            active_columns=None,
+            hide_resources=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -100,6 +102,8 @@ def exports(ws):
         :param list active_columns: list of active columns on the brick
         listalarm .
 
+        :param bool hide_resources: hide_resources if component has an alarm
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
@@ -120,7 +124,8 @@ def exports(ws):
             limit=limit,
             with_steps=with_steps,
             natural_search=natural_search,
-            active_columns=active_columns
+            active_columns=active_columns,
+            hide_resources
         )
         alarms_ids = []
         for alarm in alarms['alarms']:
