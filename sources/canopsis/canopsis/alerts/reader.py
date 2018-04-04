@@ -670,7 +670,7 @@ class AlertsReader(object):
             natural_search=False,
             active_columns=None
     ):
-         if filter_ is None:
+        if filter_ is None:
             filter_ = {}
 
         if active_columns is None:
@@ -718,11 +718,12 @@ class AlertsReader(object):
         ]
 
         alarms = self.alarm_storage._backend.aggregate(pipeline).get('result')
+        alarms = self._lookup(alarms, ['pbehaviors'])
 
         alarm_without_pbehavior = []
 
         for alarm in alarms:
-            if alarm['pbehaviors'] != []:
+            if alarm['pbehaviors'] == []:
                 alarm_without_pbehavior.append(alarm)
 
         len_before_truncate = len(alarm_without_pbehavior)
