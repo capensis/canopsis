@@ -16,7 +16,7 @@ Ember.Application.initializer({
             /**
              * @property renderers
              */
-            renderers: ['v_state', 'v_state_t', 'v_status', 'v_extra_details', 'v_creation_date', 'v_last_update_date', 'v_last_event_date', 'v_resolved', 'v_state_m'],
+            renderers: ['v_state', 'v_state_t', 'v_status', 'v_extra_details', 'v_creation_date', 'v_last_update_date', 'v_last_event_date', 'v_resolved', 'v_state_m', 'v_duration'],
 
             /**
              * @method init
