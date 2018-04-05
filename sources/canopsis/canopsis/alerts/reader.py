@@ -66,9 +66,9 @@ class AlertsReader(object):
     GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
 
     DEFAULT_ACTIVE_COLUMNS = ["v.component",
-                             "v.connector",
-                             "v.resource",
-                             "v.connector_name"]
+                              "v.connector",
+                              "v.resource",
+                              "v.connector_name"]
 
     def __init__(self, logger, config, storage,
                  pbehavior_manager, entitylink_manager):
@@ -555,21 +555,22 @@ class AlertsReader(object):
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
-        if hide_pbehaviors:
-           if resolved:
-               self.logger.error('you only can hide pbehaviors on current alarms')
-           return self.hide_resources(
-               tstart,
-               tstop,
-               filter_,
-               sort_key,
-               sort_dir,
-               skip,
-               limit,
-               search,
-               natural_search,
-               active_columns
-           )
+        if hide_resources:
+            if resolved:
+                self.logger.error(
+                    'you only can hide pbehaviors on current alarms')
+            return self.hide_resources(
+                tstart,
+                tstop,
+                filter_,
+                sort_key,
+                sort_dir,
+                skip,
+                limit,
+                search,
+                natural_search,
+                active_columns
+            )
 
         if lookups is None:
             lookups = []
@@ -719,9 +720,7 @@ class AlertsReader(object):
         alarms = self.alarm_storage._backend.aggregate(pipeline).get('result')
         alarms = self._lookup(alarms, ['pbehaviors'])
 
-    def hide_resources(self, alarms):
         alarm_dict = {}
-        res = []
         for alarm in alarms:
             component = alarm.get('v').get('component')
             if component not in alarm_dict:
@@ -729,15 +728,36 @@ class AlertsReader(object):
             else:
                 alarm_dict[component].append(alarm)
 
+        filtred_alarms = []
         for component in alarm_dict:
+            entity_type = []
             for alarm_comp in alarm_dict[component]:
-                if 'component' in [alarm_comp.get('entity', {}).get('type', '')]:
-                    check_alarm_list_with_component(alarm_dict[component])
-                else:
-                    res = sum([res, alarm_dict[component]], [])
-        return res
+                entity_type.append(alarm_comp.get(
+                    'entity', {}).get('type', ''))
+            if component in entity_type:
+                filtred_alarms = filtred_alarms + \
+                    self.remove_resources_alarms(alarm_dict[component])
+            else:
+                filtred_alarms = filtred_alarms + alarm_dict[component]
 
-    def check_alarm_list_with_component(self, alarms):
+        len_before_truncate = len(filtred_alarms)
+        if limit is not None:
+            last = limit + skip
+            filtred_alarms = filtred_alarms[skip:last]
+        else:
+            filtred_alarms = filtred_alarms[skip:]
+            last = len(filtred_alarms)
+        len_after_truncate = len(filtred_alarms)
+        ret_val = {
+            'alarms': filtred_alarms,
+            'total': len_after_truncate,
+            'truncated': len_after_truncate < len_before_truncate,
+            'first': skip,
+            'last': last
+        }
+        return ret_val
+
+    def remove_resources_alarms(self, alarms):
         """
         :rtype: list
         """

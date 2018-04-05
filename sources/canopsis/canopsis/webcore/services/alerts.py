@@ -125,7 +125,7 @@ def exports(ws):
             with_steps=with_steps,
             natural_search=natural_search,
             active_columns=active_columns,
-            hide_resources
+            hide_resources=hide_resources
         )
         alarms_ids = []
         for alarm in alarms['alarms']:
