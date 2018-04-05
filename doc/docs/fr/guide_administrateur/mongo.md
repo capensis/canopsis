@@ -27,8 +27,8 @@ La valeur `PYMONGO_CONST` va prendre une des valeurs listée pour `MongoClient` 
 
 Voici l’extrait de la doc :
 
- * PRIMARY: Queries are sent to the primary of a shard.
- * PRIMARY_PREFERRED: Queries are sent to the primary if available, otherwise a secondary.
- * SECONDARY: Queries are distributed among shard secondaries. An error is raised if no secondaries are available.
- * SECONDARY_PREFERRED: Queries are distributed among shard secondaries, or the primary if no secondary is available.
- * NEAREST: Queries are distributed among all members of a shard.
+ * `PRIMARY`: Queries are sent to the primary of a shard.
+ * `PRIMARY_PREFERRED`: Queries are sent to the primary if available, otherwise a secondary.
+ * `SECONDARY`: Queries are distributed among shard secondaries. An error is raised if no secondaries are available.
+ * `SECONDARY_PREFERRED`: Queries are distributed among shard secondaries, or the primary if no secondary is available.
+ * `NEAREST`: Queries are distributed among all members of a shard.
