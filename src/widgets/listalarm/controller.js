@@ -223,11 +223,13 @@ Ember.Application.initializer({
                 }
 
                 var filterState = this.get('model.alarms_state_filter.state') || 'resolved';
+                var hide_resources = this.get('model.hide_resources')
                 var timestamps = this.defultTimestamps(filterState);
 
                 this.set('alarmSearchOptions', {
                   opened: filterState == 'opened',
                   resolved: filterState == 'resolved',
+                  hide_resources: hide_resources,
                   lookups: JSON.stringify(["pbehaviors", "linklist"]) ,
                   filter: filter,
                   sort_key: this.get('model.default_sort_column.property'),
