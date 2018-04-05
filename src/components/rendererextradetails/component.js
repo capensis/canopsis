@@ -61,6 +61,7 @@ Ember.Application.initializer({
                     return ['<center>',
                         '<b>' + __('Ticket declared') + '</b><br/>',
                         this.dateFormat(this.get('value.ticket.t')) +' <br/> ',
+                        'Ticket number: ' + this.get('value.ticket.val') +' <br/> ',
                         __('By') +' : ' + this.get('value.ticket.a') +' <br/><br/> ',
                         '</center>'].join('');
                 } else {
