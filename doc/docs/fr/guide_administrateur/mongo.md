@@ -2,7 +2,7 @@
 
 La configuration de l’accès à MongoDB se trouve dans `etc/common/mongo_store.conf` **uniquement**. Les fichiers `etc/mongo/storage.conf` et `etc/cstorage.conf`, même si remplis, ne sont plus utilisés.
 
-```
+```ini
 [DATABASE]
 host = HOST
 port = PORT
