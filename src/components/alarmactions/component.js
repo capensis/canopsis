@@ -4,7 +4,7 @@ Ember.Application.initializer({
         var get = Ember.get,
             set = Ember.set,
             isNone = Ember.isNone;
-            __ = Ember.String.loc;
+        __ = Ember.String.loc;
 
         /**
          * This is the alarmactions component for the widget listalarm
@@ -86,12 +86,21 @@ Ember.Application.initializer({
              */
             init: function() {
                 this._super();
-
+                this.set("rights", this.get("_parentView._parentView._parentView._parentView._parentView._controller.login.rights"))
                 // Translating tooltips
                 this.get('actionsMap').filter(function(item, index, enumerable) {
                         Ember.set(item, 'translation', __(item.name));
                 });
-              },
+            },
+
+            genRemoveList : function(actions, rights, name, right){
+                if (rights.hasOwnProperty(right)) {
+                    if (rights.get(right).checksum){
+                        return null
+                    }
+                }
+				return name
+            },
 
             /**
              * @property availableActions
@@ -107,8 +116,58 @@ Ember.Application.initializer({
                 if (this.get('isClosed')) {
                     actions.removeObject(actions.findBy('mixin_name', 'pbehavior'))
                 }
+
+                var rights = this.get("rights");
+				var toRemove = []
+                for (var i = 0; i < actions.length; i++) {
+                    var func = this.get("genRemoveList")
+					var name = null
+                    switch(actions[i]["name"]){
+                    case "ack":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_ack")
+                        break;
+                    case "fastack":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_fastAck")
+                        break;
+                    case "cancelack":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_cancelAck")
+                        break;
+                    case "declareanincident":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_declareanIncident")
+                        break;
+                    case "assignticketnumber":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_assignTicketNumber")
+                        break;
+                    case "pbehavior":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_pbehavior")
+                        break;
+                    case "removealarm":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_removeAlarm")
+                        break;
+                    case "changestate":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_changeState")
+                        break;
+                    case "changecriticity":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_changeCriticity")
+                        break;
+                    case "restorealarm":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_restoreAlarm")
+                        break;
+                    case "snoozealarm":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_snoozeAlarm")
+                        break;
+                    }
+
+					if (name != null) {
+						toRemove.push(name)
+					}
+                }
+				for(i = 0; i < toRemove.length; i++){
+						console.debug("Cleaning ", name)
+						actions.removeObject(actions.findBy('name', toRemove[i]))
+				}
                 return actions;
-            }.property('internalState', 'isSnoozed', 'isChangedByUser', 'isClosed'),
+            }.property('internalState', 'isSnoozed', 'isChangedByUser', 'isClosed', "isAcked"),
 
             /**
              * @property internalState
