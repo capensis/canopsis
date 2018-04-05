@@ -499,6 +499,8 @@ function export_env() {
 function pip_install() {
     echo "pip install $@"
 
+    # /etc/os-release can contain a NAME var too
+    OLD_NAME=$NAME
     # Support CAT buildinstall
     source /etc/os-release
     pylibpath="${SRC_PATH}/../docker/wheels/${ID}-${VERSION_ID}/"
@@ -515,6 +517,7 @@ EOF
     chown $HUSER:$HGROUP /opt/canopsis/.pydistutils.cfg
     . ${PREFIX}/bin/activate && pip install --no-index --find-links=file://${pylibpath} $@
     check_code $? "Pip install failed ..."
+    export NAME=$OLD_NAME
 }
 
 function build_pkg() {
