@@ -115,14 +115,12 @@ Ember.Application.initializer({
                 };
                 if (this.get('isClosed')) {
                     actions.removeObject(actions.findBy('mixin_name', 'pbehavior'))
-                })
+                }
 
                 var rights = this.get("rights");
 				var toRemove = []
                 for (var i = 0; i < actions.length; i++) {
                     var func = this.get("genRemoveList")
-					console.error("Crt it ", actions[i]["name"])
-
 					var name = null
                     switch(actions[i]["name"]){
                     case "ack":
@@ -150,7 +148,6 @@ Ember.Application.initializer({
                         name = func(actions, rights, actions[i]["name"], "listalarm_changeState")
                         break;
                     case "changecriticity":
-						console.error("Case changecriticity")
                         name = func(actions, rights, actions[i]["name"], "listalarm_changeCriticity")
                         break;
                     case "restorealarm":
