@@ -55,13 +55,14 @@ COPY --from=build /${CPS_HOME} /${CPS_HOME}
 
 WORKDIR ${CPS_HOME}
 
+
 COPY sources/canopsis/etc ./etc
 COPY sources/db-conf/opt ./opt
 COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc
 COPY docker/files/bash_profile .bash_profile
 COPY docker/files/etc/ ./etc/
-COPY tools/brickmanager /brickmanager
+COPY tools/brickmanager /${CPS_HOME}/bin/brickmanager
 
 RUN chmod +x /opt/canopsis/.bash_profile
 
@@ -80,9 +81,9 @@ RUN mkdir -p ./etc/init.d && \
 # Copy UI bricks as root
 COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
 RUN . ${CPS_HOME}/bin/activate && \
-    python /brickmanager enable brick-querybuilder && \
-    python /brickmanager enable brick-listalarm && \
-    python /brickmanager enable brick-timeline
+    python /${CPS_HOME}/bin/brickmanager enable brick-querybuilder && \
+    python /${CPS_HOME}/bin/brickmanager enable brick-listalarm && \
+    python /${CPS_HOME}/bin/brickmanager enable brick-timeline
 
 USER ${CPS_USER}:${CPS_GROUP}
 
