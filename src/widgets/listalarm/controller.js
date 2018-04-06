@@ -24,7 +24,7 @@ Ember.Application.initializer({
         var timeWindowUtils = container.lookupFactory('utility:timewindow'),
             dataUtils = container.lookupFactory('utility:data'),
             formsUtils = container.lookupFactory('utility:forms');
-            
+
             WidgetFactory = container.lookupFactory('factory:widget'),
             UserConfigurationMixin = container.lookupFactory('mixin:userconfiguration');
             SendeventMixin = container.lookupFactory('mixin:customsendevent');
@@ -400,9 +400,9 @@ Ember.Application.initializer({
              * @property fields
              * @description Stores choosen by user fileds
              */
-            fields: function () {
-                return this.parseFields(get(this, 'model.columns'));
-            }.property('model.columns'),
+            fields: function() {
+                return this.parseFields(get(this, 'model.widget_columns'));
+            }.property('model.widget_columns'),
 
             /**
              * @property widgetDataMetas
@@ -560,18 +560,18 @@ Ember.Application.initializer({
 
                 fields = columns.map(function (column) {
                     var obj = {};
-                    if (column.startsWith('infos')) {
-                        obj['name'] = column;
-                        obj['humanName'] = column;
-                        obj['isSortable'] = column == sortColumn;
-                        obj['isASC'] = order == 'ASC';
-                        obj['getValue'] = column;
+                    if (column.value.startsWith('infos')){
+                      obj['name'] = column.value;
+                      obj['humanName'] = column.label || column.value;
+                      obj['isSortable'] = column.value == sortColumn;
+                      obj['isASC'] = order == 'ASC';
+                      obj['getValue'] = column.value;
                     } else {
-                        obj['name'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
-                        obj['humanName'] = column;
-                        obj['isSortable'] = column == sortColumn;
-                        obj['isASC'] = order == 'ASC';
-                        obj['getValue'] = controller.get('humanReadableColumnNames')[column] || 'v.' + column;
+                      obj['name'] = controller.get('humanReadableColumnNames')[column.value] || 'v.' + column.value;
+                      obj['humanName'] = column.label || column.value;
+                      obj['isSortable'] = column.value == sortColumn;
+                      obj['isASC'] = order == 'ASC';
+                      obj['getValue'] = controller.get('humanReadableColumnNames')[column.value] || 'v.' + column.value;
                     }
                     return obj;
                 });
@@ -696,7 +696,7 @@ Ember.Application.initializer({
 
                     for (var i = listId.length - 1; i >= 0; i--)
                         listTampon.push(listId[i]);
-                    
+
                     filterTampon._id.$in.push(listTampon.join(','));
                     payload.filter = filterTampon;
 

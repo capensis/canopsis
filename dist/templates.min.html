@@ -2,9 +2,9 @@
   <div class="actions-parent" style="display:flex">
 
     {{#each action in availableActions}}
-      <button {{action 'sendAction' action}} {{bind-attr title=action.translation}} type="button" class="btn btn-xs btn-default">
-          <i {{bind-attr class=action.class}}></i>
-      </button>
+            <button {{action 'sendAction' action}} {{bind-attr title=action.translation}} type="button" class="btn btn-xs btn-default">
+                <i {{bind-attr class=action.class}}></i>
+            </button>
     {{/each}}
 
     {{!-- pbehavior list action --}}
@@ -48,9 +48,6 @@
   </div>
 </div>
 </div>
-
-
-
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-alarmraw"><td style='padding-left: 0;'>
     {{component-checkbox checked=alarm.isSelected class="toggle"}}
@@ -566,6 +563,7 @@
 {{/component-rendererack}}</script>
 <script type="text/x-handlebars" data-template-name="_v_creation_date">{{timestamp value 'f'}}
 </script>
+<script type="text/x-handlebars" data-template-name="_v_duration">{{durationFromTimestamp value}}</script>
 <script type="text/x-handlebars" data-template-name="_v_extra_details">{{#component-rendererextradetails value=value}}
 {{/component-rendererextradetails}}</script>
 <script type="text/x-handlebars" data-template-name="_v_last_event_date">{{timestamp value 'r'}}
