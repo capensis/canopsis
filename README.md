@@ -197,6 +197,41 @@ Usage of ./engine-che:
         version infos
 ```
 
+## Profiling intégré
+
+Les binaires suivants permettent de lancer un *profiling* Go :
+
+ * `engine-che`
+ * `engine-axe`
+ * `engine-heartbeat`
+ * `engine-stat`
+
+Pour l’activer/désactiver globalement :
+
+```bash
+# Activation
+export CPS_DEBUG_PPROF_ENABLE=1
+
+# Désactivation
+export CPS_DEBUG_PPROF_ENABLE=autrechose
+```
+
+Pour activer le profiling CPU :
+
+```bash
+export CPS_DEBUG_PPROF_CPU=/chemin/vers/trace.cpu.out
+```
+
+Pour activer le profiling Mémoire :
+
+```bash
+export CPS_DEBUG_PPROF_MEMORY=/chemin/vers/trace.mem.out
+```
+
+Ensuite lancer n’importe quel engine. Il devra être quitté proprement pour que les traces soient écrites.
+
+Le ou les fichiers de trace sont à envoyer tels quels pour analyse.
+
 ## Procédures de purge
 
 Dans certains cas, purger ou modifier des collections MongoDB en dehors des engines Go entraîne une incohérence dans l’état du système et ne permet pas d’avoir un comportement attendu.
