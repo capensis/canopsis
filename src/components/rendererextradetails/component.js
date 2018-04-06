@@ -1,10 +1,8 @@
 Ember.Application.initializer({
     name: 'component-rendererextradetails',
     initialize: function(container, application) {
-        var get = Ember.get,
-            set = Ember.set,
-            isNone = Ember.isNone;
-            __ = Ember.String.loc;
+        var __ = Ember.String.loc;
+
         /**
          * This is the rendererextradetails component for the widget listalarm
          *
@@ -18,6 +16,10 @@ Ember.Application.initializer({
              */
             init: function() {
                 this._super();
+
+                // set extraDetailsComponent to be able to rerender it later since
+                // property does not triggers
+                this.set('value.extraDetailsComponent', this);
             },
 
             /**
@@ -80,13 +82,13 @@ Ember.Application.initializer({
                         this.get('value.pbehaviors').map(function(pbeh) {
                             return pbeh.name + ' <br/>'
                                 + self.dateFormat(pbeh.tstart) + ' - ' + self.dateFormat(pbeh.tstop) + ' <br/>'
-                                + pbeh.rrule + ' <br/>'
+                                + pbeh.rrule + ' <br/>';
                         }).join('') + ' <br/><br/> ',
                         '</center>'].join('');
                 } else {
                     return '';
                 }
-            }.property('value.pbehaviors.@each.behavior', 'hasPBehavior'),
+            }.property('value.pbehaviors.@each', 'hasPBehavior'),
 
             /**
              * @property hasSnooze
@@ -114,10 +116,10 @@ Ember.Application.initializer({
              */
             hasPBehavior: function() {
                 if (this.get('value.pbehaviors') == null) {
-                    return false
+                    return false;
                 }
                 return this.get('value.pbehaviors').length != 0;
-            }.property('value.pbihaviors'),
+            }.property('value.@each.pbehaviors.length'),
 
             /**
              * @property dateFormat

@@ -19,6 +19,11 @@ Ember.Application.initializer({
              */
             actionsMap: Ember.A([
                 {
+                    class: '',
+                    mixin_name: 'bulk_pbehavior',
+                    caption: 'Apply PBehavior'
+                },
+                {
                     class: 'glyphicon glyphicon-ok',
                     mixin_name: 'fastack',
                     caption: 'Fast Ack'
