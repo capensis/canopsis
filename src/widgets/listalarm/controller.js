@@ -669,12 +669,6 @@ Ember.Application.initializer({
                     }
 
                     var listId = [];
-                    var filterTampon = {'_id':
-                        {
-                            '$in': []
-                        }
-                    };
-                    var listTampon = [];
 
                     for (var i = 0, l = selection.length; i < l; i++)
                         listId.push(selection[i]['d']);
@@ -694,11 +688,9 @@ Ember.Application.initializer({
                         delete(payload.rrule);
                     }
 
-                    for (var i = listId.length - 1; i >= 0; i--)
-                        listTampon.push(listId[i]);
-
-                    filterTampon._id.$in.push(listTampon.join(','));
-                    payload.filter = filterTampon;
+                    payload.filter = JSON.stringify({
+                        '$in': listId
+                    });
 
                     //$.post(url)
                     return $.ajax({
