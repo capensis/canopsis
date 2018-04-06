@@ -390,9 +390,9 @@ table.dataTable>thead>tr>th {
     }
 }
 
-.modal {
+/* .modal {
     right: auto !important;
-}
+} */
 
 .modal-dialog {
     margin-right: 0;
