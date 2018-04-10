@@ -40,6 +40,7 @@ from traceback import print_exc
 from canopsis.common import root_path
 
 from kombu.exceptions import SerializationError as KombuSerializationError
+from amqp.exceptions import FrameSyntaxError
 
 # Number of tries to re-publish an event before it is lost
 # when connection problems
@@ -357,7 +358,10 @@ class Amqp(Thread):
             content_type=None,
             content_encoding=None
     ):
-
+        """
+        :returns: operation success status
+        :rtype: bool
+        """
         operation_success = False
         retries = 0
 
@@ -390,9 +394,13 @@ class Amqp(Thread):
 
                         operation_success = True
 
-                    except Exception as e:
+                    except FrameSyntaxError:
+                        self.logger.warning(u'Malformed message: routing key is too long. Cancelling message')
+                        return False
+
+                    except Exception:
                         self.logger.error(
-                            u' + Impossible to send {}'.format(traceback.format_exc(e))
+                            u' + Impossible to send {}'.format(traceback.format_exc())
                         )
                         self.disconnect()
                         self.connect()
@@ -411,6 +419,8 @@ class Amqp(Thread):
             self.logger.error(u'Too much retries for event {}, give up'.format(
                 routing_key
             ))
+
+        return operation_success
 
     @staticmethod
     def _clean_msg_for_serialization(msg):
