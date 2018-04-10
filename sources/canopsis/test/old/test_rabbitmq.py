@@ -3,12 +3,14 @@
 
 from __future__ import unicode_literals
 
+import os
 import unittest
 from kombu import pools, Connection
 from amqp.exceptions import FrameSyntaxError
 from contextlib import contextmanager
 
 from canopsis.common import root_path
+from canopsis.confng import Configuration, Ini
 from canopsis.old.rabbitmq import Amqp
 
 import xmlrunner
@@ -18,7 +20,16 @@ class TestAmqp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.amqp_uri = "amqp://guest:guest@localhost/canopsis"
+
+        amqp_conf = Configuration.load(os.path.join('etc', 'amqp.conf'), Ini)
+        cls.amqp_uri = 'amqp://{}:{}@{}:{}/{}'.format(
+            amqp_conf['master']['userid'],
+            amqp_conf['master']['password'],
+            amqp_conf['master']['host'],
+            amqp_conf['master']['port'],
+            amqp_conf['master']['virtual_host']
+        )
+
         cls.conn = Connection(cls.amqp_uri)
         cls.producers = pools.Producers(limit=1)
         cls.exchange_name = "canopsis"
