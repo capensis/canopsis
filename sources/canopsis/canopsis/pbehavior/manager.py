@@ -22,6 +22,8 @@
 Managing PBehavior.
 """
 
+from __future__ import unicode_literals
+
 from calendar import timegm
 from datetime import datetime
 from json import loads, dumps
@@ -510,11 +512,16 @@ class PBehaviorManager(object):
                                   'not a dict !\n{}'.format(query))
                 continue
 
+            self.logger.critical('GREP query: {}\n'.format(query))
+
             entities = self.context.ent_storage.get_elements(
                 query=query
             )
 
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
+
+            self.logger.critical(pbehavior[PBehavior.EIDS]) 
+
             self.pb_storage.put_element(element=pbehavior)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
