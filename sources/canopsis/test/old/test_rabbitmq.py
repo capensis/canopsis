@@ -18,7 +18,7 @@ class TestAmqp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.amqp_uri = "amqp://cpsrabbit:canopsis@localhost/canopsis"
+        cls.amqp_uri = "amqp://guest:guest@localhost/canopsis"
         cls.conn = Connection(cls.amqp_uri)
         cls.producers = pools.Producers(limit=1)
         cls.exchange_name = "canopsis"
