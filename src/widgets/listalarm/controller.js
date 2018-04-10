@@ -688,9 +688,11 @@ Ember.Application.initializer({
                         delete(payload.rrule);
                     }
 
-                    payload.filter = JSON.stringify({
-                        '$in': listId
-                    });
+                    payload.filter = {
+                        '_id': {
+                            '$in': listId
+                        }
+                    }
 
                     //$.post(url)
                     return $.ajax({
