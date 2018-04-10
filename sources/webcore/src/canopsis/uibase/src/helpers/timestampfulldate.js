@@ -36,10 +36,6 @@ Ember.Application.initializer({
             
             format = 'r';
 
-            /*if (value && !isNone(attr)) {
-                format = get(attr, 'options.format');
-            }*/
-
             if (isNone(value)) {
                 return "";
             }
