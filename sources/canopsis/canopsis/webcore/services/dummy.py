@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Dummy auth routes."""
 
 import copy

@@ -119,6 +119,50 @@
         "models_tasklinklist": {
             "checksum": 1,
             "desc": ""
+        },
+        "listalarm_ack": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_fastAck": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_cancelAck": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_declareanIncident": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_assignTicketNumber": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_pbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_removeAlarm": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_changeState": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_changeCriticity": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_restoreAlarm": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_snoozeAlarm": {
+            "checksum": 1,
+            "desc": ""
         }
     }
 },{
@@ -141,6 +185,14 @@
         },
         "list_filters": {
             "checksum": 15,
+            "desc": ""
+        },
+        "listalarm_ack": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_fastAck": {
+            "checksum": 1,
             "desc": ""
         }
     }
@@ -219,6 +271,14 @@
         },
         "menu_authsystems": {
             "checksum": 15,
+            "desc": ""
+        },
+        "listalarm_cancelAck": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_changeState": {
+            "checksum": 1,
             "desc": ""
         }
     }
