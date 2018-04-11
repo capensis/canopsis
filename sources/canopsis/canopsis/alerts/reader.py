@@ -757,7 +757,7 @@ class AlertsReader(object):
             for alarm_comp in alarm_dict[component]:
                 entity_type.append(alarm_comp.get(
                     'entity', {}).get('type', ''))
-            if component in entity_type:
+            if 'component' in entity_type:
                 filtred_alarms = filtred_alarms + \
                     remove_resources_alarms(alarm_dict[component])
             else:
