@@ -18,24 +18,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from __future__ import unicode_literals
-
 """
 Alarm reader manager.
 
 TODO: replace the storage class parameter with a collection (=> rewriting count())
 """
 
+from __future__ import unicode_literals
+
 import re
 
 from os.path import join
 from time import time
 
-from canopsis.common import root_path
-
 from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.entitylink.manager import Entitylink
@@ -95,8 +94,6 @@ class AlertsReader(object):
                                                           DEFAULT_RESOLVED_TRUNC))
         self.resolved_limit = int(category.get('resolved_limit',
                                                DEFAULT_RESOLVED_LIMIT))
-
-        _, pb_storage = PBehaviorManager.provide_default_basics()
 
         self.count_cache = {}
 
@@ -418,7 +415,7 @@ class AlertsReader(object):
             return query.count(True), False
 
     def _get_final_filter(
-        self, view_filter, time_filter, search, active_columns
+            self, view_filter, time_filter, search, active_columns
     ):
         """
         Computes the real filter:
@@ -670,6 +667,32 @@ class AlertsReader(object):
             natural_search=False,
             active_columns=None
     ):
+        """
+        Return filtered, sorted and paginated alarms with resources sorted.
+
+        :param tstart: Beginning timestamp of requested period
+        :param tstop: End timestamp of requested period
+        :type tstart: int or None
+        :type tstop: int or None
+
+        :param dict filter_: Mongo filter
+        :param str search: Search expression in custom DSL
+
+        :param str sort_key: Name of the column to sort. If the value ends with
+            a dot '.', sort_key is replaced with 'v.last_update_date'.
+        :param str sort_dir: Either "ASC" or "DESC"
+
+        :param int skip: Number of alarms to skip (pagination)
+        :param int limit: Maximum number of alarms to return
+
+        :param bool natural_search: True if you want to use a natural search
+
+        :param list active_columns: the list of alarms columns on which to
+        apply the natural search filter.
+
+        :returns: List of sorted alarms + pagination informations
+        :rtype: dict
+        """
         if filter_ is None:
             filter_ = {}
 
@@ -736,7 +759,7 @@ class AlertsReader(object):
                     'entity', {}).get('type', ''))
             if component in entity_type:
                 filtred_alarms = filtred_alarms + \
-                    self.remove_resources_alarms(alarm_dict[component])
+                    remove_resources_alarms(alarm_dict[component])
             else:
                 filtred_alarms = filtred_alarms + alarm_dict[component]
 
@@ -756,25 +779,6 @@ class AlertsReader(object):
             'last': last
         }
         return ret_val
-
-    def remove_resources_alarms(self, alarms):
-        """
-        :rtype: list
-        """
-        state_comp = 0
-        states_list = []
-        alarm_comp = {}
-        for i in alarms:
-            val = i.get('v').get('state').get('val')
-            states_list.append(val)
-            if i.get('entity').get('type') == 'component':
-                state_comp = val
-                alarm_comp = i
-
-        if state_comp >= max(states_list):
-            return [alarm_comp]
-
-        return alarms
 
     def count_alarms_by_period(
             self,
@@ -826,3 +830,25 @@ class AlertsReader(object):
             )
 
         return results
+
+
+def remove_resources_alarms(alarms):
+    """
+    take a list of alarms on a component and remove resources' alarms if needed
+    :param list alarms: list of alarms
+    :rtype: list
+    """
+    state_comp = 0
+    states_list = []
+    alarm_comp = {}
+    for i in alarms:
+        val = i.get('v').get('state').get('val')
+        states_list.append(val)
+        if i.get('entity').get('type') == 'component':
+            state_comp = val
+            alarm_comp = i
+
+    if state_comp >= max(states_list):
+        return [alarm_comp]
+
+    return alarms
