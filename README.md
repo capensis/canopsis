@@ -150,12 +150,9 @@ Exchange canopsis.events -> CHE -> Event Filter -> Axe + Autres engines...
 
 ### Configuration
 
- * `etc/supervisord.d/amqp2engines.conf` : retirer `engine-cleaner-alerts`, `engine-cleaner-events` et `engine-alerts`. Utile uniquement avec une installation `build-install`.
- * `etc/amqp2engines.conf` : retirer toute occurrence des engines précédents, et ajouter `axe` dans la liste `next` de l’engine `event filter`.
+Prendre les fichiers de conf de docker/etc et les copier dans environnement
+canopsis.
 
-```ini
-[engine:event_filter]
-next = axe,...
 ```
 
 Dans le cas d’une installation en `build-install` :
@@ -164,6 +161,18 @@ Dans le cas d’une installation en `build-install` :
 su - canopsis -c "supervisorctl update"
 su - canopsis -c "hypcontrol start"
 ```
+
+### Docker
+
+Pour pouvoir utiliser docker compose, il faut préalablement construire
+l'image docker de compatibilité.
+
+```sh
+make engines_build
+```
+
+Vous pouvez définir le tag des images généré en ajoutant **TAG=develop** à la
+fin de la précédente commande.
 
 ### RabbitMQ
 
