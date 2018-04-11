@@ -289,7 +289,6 @@ class Watcher:
         #           watcher_conf['alert_level'],
         #           watcher_conf['display_name'])
 
-        # self.logger.critical('{0}'.format((
         #     sla_tab['states']/
         #     (sla_tab['states'][1] +
         #      sla_tab['states'][2] +

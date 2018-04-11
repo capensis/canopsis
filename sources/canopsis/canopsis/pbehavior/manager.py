@@ -512,15 +512,11 @@ class PBehaviorManager(object):
                                   'not a dict !\n{}'.format(query))
                 continue
 
-            self.logger.critical('GREP query: {}\n'.format(query))
-
             entities = self.context.ent_storage.get_elements(
                 query=query
             )
 
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
-
-            self.logger.critical(pbehavior[PBehavior.EIDS]) 
 
             self.pb_storage.put_element(element=pbehavior)
 
