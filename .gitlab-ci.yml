@@ -1,29 +1,22 @@
 stages:
-  - build
   - test
-  - deploy
 
 before_script:
   - uname -a
   - docker -v
   - git --no-pager show
 
-build_images:
-  stage: build
-  tags: ["canopsis,docker"]
-  script:
-    - git submodule update --init
-    - ./build-docker.sh ci develop
-
 variables:
   WHEEL_DIR: "/tmp/canopsis-wheelrep"
   COMPOSE_HTTP_TIMEOUT: "180"
   SYSBASE: "debian-9"
 
-test:
+stage_test:
   stage: test
   tags: ["canopsis,docker"]
   script:
+    - git submodule update --init
+    - ./build-docker.sh ci develop
     - git submodule update --init
     - ./build-docker.sh ci develop test-ci
     - echo CANOPSIS_TAG=${SYSBASE}-ci-test >> .env
