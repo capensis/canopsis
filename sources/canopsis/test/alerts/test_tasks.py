@@ -166,7 +166,7 @@ class TestTasks(BaseTest):
         self.assertEqual(alarm[AlarmField.ticket.value]['t'], 0)
         self.assertEqual(alarm[AlarmField.ticket.value]['a'], 'testauthor')
         self.assertEqual(alarm[AlarmField.ticket.value]['m'], 'test message')
-        self.assertEqual(alarm[AlarmField.ticket.value]['val'], None)
+        self.assertEqual(alarm[AlarmField.ticket.value]['val'], 'test message')
         self.assertTrue(
             alarm[AlarmField.ticket.value] is get_previous_step(alarm, 'declareticket')
         )
@@ -190,7 +190,7 @@ class TestTasks(BaseTest):
         self.assertEqual(alarm[AlarmField.ticket.value]['t'], 0)
         self.assertEqual(alarm[AlarmField.ticket.value]['a'], 'testauthor')
         self.assertEqual(alarm[AlarmField.ticket.value]['m'], 'test message')
-        self.assertEqual(alarm[AlarmField.ticket.value]['val'], 1234)
+        self.assertEqual(alarm[AlarmField.ticket.value]['val'], 'test message')
         self.assertTrue(
             alarm[AlarmField.ticket.value] is get_previous_step(alarm, 'assocticket')
         )
