@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 from canopsis.task.core import register_task
 from canopsis.watcher.manager import Watcher
 

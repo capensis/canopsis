@@ -48,7 +48,7 @@ class JSONLoaderModule(MigrationModule):
             namespace='object'
         )
 
-    def init(self):
+    def init(self, yes=False):
         substitutes = [
             ('[[HOSTNAME]]', getfqdn())
         ]
@@ -83,7 +83,7 @@ class JSONLoaderModule(MigrationModule):
 
                     self.load_documents(data, col, docname)
 
-    def update(self):
+    def update(self, yes=False):
         self.init()
 
     def load_documents(self, data, collection, filename):

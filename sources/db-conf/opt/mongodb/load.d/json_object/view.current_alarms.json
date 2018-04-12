@@ -130,6 +130,17 @@
             "status",
             "last_update_date",
             "extra_details"
+          ],
+          "widget_columns": [
+            {"label": "Connector", "value": "connector"},
+            {"label":"Connector name", "value":"connector_name"},
+            {"label":"Component", "value": "component"},
+            {"label": "Resource", "value":"resource"},
+            {"label": "Output", "value": "output"},
+            {"label": "State", "value":"state"},
+            {"label": "status", "value":"status"},
+            {"label": "Last udpate", "value": "last_update_date"},
+            {"label": "Extra details", "value": "extra_details"}
           ]
         },
         "mixins": [],

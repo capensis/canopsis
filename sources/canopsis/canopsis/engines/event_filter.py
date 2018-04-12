@@ -24,11 +24,10 @@ from canopsis.alerts.manager import Alerts
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger, get_routingkey
-from canopsis.old.account import Account
 from canopsis.old.mfilter import check
-from canopsis.old.storage import get_storage
 from canopsis.pbehavior.manager import PBehaviorManager
-
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from json import loads
 
 
@@ -38,9 +37,8 @@ class engine(Engine):
     def __init__(self, *args, **kargs):
         super(engine, self).__init__(*args, **kargs)
 
-        account = Account(user="root", group="root")
-        self.storage = get_storage(logging_level=self.logging_level,
-                                   account=account)
+        self.mg_store = MongoStore.get_default()
+        self.collection = MongoCollection(self.mg_store.get_collection("object"))
         self.name = kargs['name']
         self.drop_event_count = 0
         self.pass_event_count = 0
@@ -237,7 +235,7 @@ class engine(Engine):
         return None
 
     def a_exec_job(self, event, action, name):
-        records = self.storage.find(
+        records = self.collection.find(
             {'crecord_type': 'job', '_id': action['job']}
         )
         for record in records:
@@ -429,10 +427,9 @@ class engine(Engine):
         }
 
         self.logger.debug(u'Reload configuration rules')
-        records = self.storage.find(
-            {'crecord_type': 'filter', 'enable': True},
-            sort='priority'
-        )
+        records = self.collection.find(
+            {'crecord_type': 'filter', 'enable': True})
+        records.sort('priority', 1)
 
         for record in records:
 
@@ -460,7 +457,7 @@ class engine(Engine):
     def set_loaded(self, record):
 
         if 'run_once' in record and not record['run_once']:
-            self.storage.update(record['_id'], {'run_once': True})
+            self.collection.update(record['_id'], {"$set": {'run_once': True}})
             self.logger.info(
                 'record {} has been run once'.format(record['_id'])
             )
@@ -506,7 +503,7 @@ class engine(Engine):
         default action is pass.
         """
 
-        records = self.storage.find({'crecord_type': 'defaultrule'})
+        records = self.collection.find_one({'crecord_type': 'defaultrule'})
         if records:
             return records[0].dump()["action"]
 
