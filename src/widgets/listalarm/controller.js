@@ -337,7 +337,7 @@ Ember.Application.initializer({
             }.observes('controllers.application.interval.timestamp'),
 
 
-			replaceColumnsName: function (search, fields) {
+			replaceColumnsName: function (search, fields, columnMap) {
 				var conditions = search.split(/ OR | AND /)
 				var conditionOps = ["<=", "<", "=", "!=", ">=", ">", "CONTAINS", "LIKE"]
 
@@ -358,9 +358,9 @@ Ember.Application.initializer({
 							var itField = 0
 
 							while (!found && itField < fields.length){
-								// console.error("dir itfields ",fields[itField].humanName)
-								// console.error("itfields.HumanName ?",typeof(fields[itField].humanName))
-								// console.error("itfields.[humanName] ?",typeof(fields[itField]["humanName"]))
+								console.error("dir itfields ",fields[itField].humanName)
+								console.error("itfields.HumanName ?",typeof(fields[itField].humanName))
+								console.error("itfields.[humanName] ?",typeof(fields[itField]["humanName"]))
 
 								if(fields[itField]["humanName"] == humanName){
 									var technicalName = fields[itField].name
@@ -368,6 +368,8 @@ Ember.Application.initializer({
 								}
 								itField ++
 							}
+
+							technicalName = columnMap[humanName.toLowerCase()] || ""
 
 							console.error("    Technical field : ", technicalName)
 							if (technicalName !== "") {
@@ -403,7 +405,7 @@ Ember.Application.initializer({
 				if(options.search !== undefined && options.search.startsWith("- ")){
 					options.search = options.search.substring(2)
 					console.error("purest form", options.search)
-					options.search = this.get("replaceColumnsName")(options.search, this.get("fields"))
+					options.search = this.get("replaceColumnsName")(options.search, this.get("fields"), this.get('humanReadableColumnNames'))
 				}
 
                 options['natural_search'] = true;
