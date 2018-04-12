@@ -10,12 +10,13 @@
   "declareanincident": "Declarer un incident",
   "assignticketnumber": "Assigner un numéro de ticket",
   "pbehavior": "Comportement périodique",
-  "removealarm": "Supprimer une alarme",
+  "removealarm": "Annuler une alarme",
   "changecriticity": "Changer la criticité",
   "restorealarm": "Restaurer une alarme",
   "snoozealarm": "Reporter l'alarme",
   "Since": "Depuis",
   "Snooze": "Reporté",
   "Ticket declared": "Ticket déclaré",
-  "Periodic behavior": "Comportement périodique"
+  "Periodic behavior": "Comportement périodique",
+  "List periodic behaviors": "Lister les comportements périodiques"
 }

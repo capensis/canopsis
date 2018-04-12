@@ -10,12 +10,13 @@
   "declareanincident": "Declare incident",
   "assignticketnumber": "Assign ticket number",
   "pbehavior": "Periodical behavior",
-  "removealarm": "Remove alarm",
+  "removealarm": "Cancel alarm",
   "changecriticity": "Change criticity",
   "restorealarm": "Restore alarm",
   "snoozealarm": "Snooze alarm",
   "Since": "Since",
   "Snooze": "Snooze",
   "Ticket declared": "Ticket declared",
-  "Periodic behavior": "Periodic behavior"
+  "Periodic behavior": "Periodic behavior",
+  "List periodic behaviors": "List periodic behaviors"
 }
