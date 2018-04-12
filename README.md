@@ -164,15 +164,21 @@ su - canopsis -c "hypcontrol start"
 
 ### Docker
 
-Pour pouvoir utiliser docker compose, il faut préalablement construire
-l'image docker de compatibilité.
+Pour pouvoir utiliser docker compose, il faut préalablement construire l'image docker de compatibilité, ainsi que les images Docker des engines en Go.
 
-```sh
+```bash
+# engines go latest
+make docker_build
+
+# ou avec tag custom
+make docker_build TAG=develop
+
+# tag latest
 make engines_build
-```
 
-Vous pouvez définir le tag des images généré en ajoutant **TAG=develop** à la
-fin de la précédente commande.
+# ou avec tag custom
+make engines_build TAG=develop
+```
 
 ### RabbitMQ
 
