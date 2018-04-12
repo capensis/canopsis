@@ -46,10 +46,10 @@ class PurgeModule(MigrationModule):
         else:
             self.collections = conf.get('collections', DEFAULT_COLLECTIONS)
 
-    def init(self):
+    def init(self, yes=False):
         for collection in self.collections:
             self.logger.info(u'Drop collection: {0}'.format(collection))
             self.storage.drop_namespace(collection)
 
-    def update(self):
+    def update(self, yes=False):
         pass

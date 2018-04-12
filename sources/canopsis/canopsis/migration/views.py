@@ -40,10 +40,10 @@ class ViewsModule(MigrationModule):
         )
         self.rights = Rights()
 
-    def init(self):
+    def init(self, yes=False):
         pass
 
-    def update(self):
+    def update(self, yes=False):
         # Get views
         views = self.storage.find_elements(query={'crecord_type': 'view'})
         backup = []

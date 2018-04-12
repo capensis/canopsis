@@ -46,6 +46,13 @@ services:
     mem_limit: 1g
     mem_reservation: 1g
     oom_score_adj: -1000
+  provisionning:
+    image: canopsis/canopsis-prov:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
+    depends_on:
+      - "mongodb"
+    restart: "no"
   cleaner_events:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
     env_file:

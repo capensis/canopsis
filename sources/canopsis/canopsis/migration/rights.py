@@ -71,12 +71,12 @@ class RightsModule(MigrationModule):
             roles_path = conf.get('roles_path', DEFAULT_ROLES_PATH)
         self.roles_path = os.path.expanduser(roles_path)
 
-    def init(self, clear=True):
+    def init(self, clear=True, yes=False):
         self.add_actions(self.load(self.actions_path), clear)
         self.add_users(self.load(self.users_path), clear)
         self.add_roles(self.load(self.roles_path), clear)
 
-    def update(self):
+    def update(self, yes=False):
         self.init(clear=False)
 
     def load(self, path):
