@@ -261,7 +261,6 @@ Ember.Application.initializer({
                 }
             },
 
-
             /**
              * @method filtersObserver
              */
@@ -338,6 +337,52 @@ Ember.Application.initializer({
             }.observes('controllers.application.interval.timestamp'),
 
 
+			replaceColumnsName: function (search, fields) {
+				var conditions = search.split(/ OR | AND /)
+				var conditionOps = ["<=", "<", "=", "!=", ">=", ">", "CONTAINS", "LIKE"]
+
+				console.error("Fields", fields)
+
+				for (itCond = 0; itCond < conditions.length; itCond++) {
+					console.error("Handling condition : ", conditions[itCond])
+					for(itCondOp = 0; itCondOp < conditionOps.length; itCondOp++) {
+						console.error(conditions[itCond])
+						if (conditions[itCond].indexOf(conditionOps[itCondOp]) >= 0) {
+
+							console.error("    Found op : ", conditionOps[itCondOp])
+							humanName = conditions[itCond].split(conditionOps[itCondOp])[0]
+							console.error("    Human field : ", humanName)
+
+							var found = false
+							var technicalName = ""
+							var itField = 0
+
+							while (!found && itField < fields.length){
+								// console.error("dir itfields ",fields[itField].humanName)
+								// console.error("itfields.HumanName ?",typeof(fields[itField].humanName))
+								// console.error("itfields.[humanName] ?",typeof(fields[itField]["humanName"]))
+
+								if(fields[itField]["humanName"] == humanName){
+									var technicalName = fields[itField].name
+									found=true
+								}
+								itField ++
+							}
+
+							console.error("    Technical field : ", technicalName)
+							if (technicalName !== "") {
+								updatedCondition = conditions[itCond].replace(humanName, technicalName)
+								console.error("    Updated condition : ", updatedCondition)
+
+								search = search.replace(conditions[itCond], updatedCondition)
+							} else {console.error("   Pas d'update")}
+						}
+					}
+				}
+				console.error("Updated search : ", search)
+				return search
+			},
+
             /**
              * @property originalAlarms
              */
@@ -346,30 +391,35 @@ Ember.Application.initializer({
                 this.set('loaded', false);
                 var options = this.get('alarmSearchOptions');
 
+				console.error("Options : ", options)
                 // fix for applying a filter after refreshing the widget
                 this.set('alarmSearchOptions.filter', this.get('selected_filter.filter') || {});
 
                 //don't touch this or the backend will explode
-                if (!options.filter)
+                if (!options.filter){
                     options.filter = "{}";
-                if (controller.get('isNaturalSearch')) {
-                    options['natural_search'] = true;
-                    controller.set('isNaturalSearch', false);
-                    var columns = get(this, 'model.columns');
-                    var prefixed_columns = [];
-                    for (idx = 0; idx < columns.length; idx++) {
-                        depth_one = columns[idx].split(".", 1)[0];
-                        if (this.get("entityDBColumn").indexOf(depth_one) >= 0) {
-                            prefixed_columns.push("entity." + columns[idx]);
-                        }
-                        if (this.get("alarmDBColumn").indexOf(depth_one) >= 0) {
-                            prefixed_columns.push("v." + columns[idx]);
-                        }
+				}
+
+				if(options.search !== undefined && options.search.startsWith("- ")){
+					options.search = options.search.substring(2)
+					console.error("purest form", options.search)
+					options.search = this.get("replaceColumnsName")(options.search, this.get("fields"))
+				}
+
+                options['natural_search'] = true;
+                controller.set('isNaturalSearch', false);
+                var columns = get(this, 'model.columns');
+                var prefixed_columns = [];
+                for (idx = 0; idx < columns.length; idx++) {
+                    depth_one = columns[idx].split(".", 1)[0];
+                    if (this.get("entityDBColumn").indexOf(depth_one) >= 0) {
+                        prefixed_columns.push("entity." + columns[idx]);
                     }
-                    options["active_columns"] = prefixed_columns;
-                } else {
-                    options['natural_search'] = false;
+                    if (this.get("alarmDBColumn").indexOf(depth_one) >= 0) {
+                        prefixed_columns.push("v." + columns[idx]);
+                    }
                 }
+                options["active_columns"] = prefixed_columns;
 
                 var adapter = dataUtils.getEmberApplicationSingleton().__container__.lookup('adapter:alerts');
                 return DS.PromiseArray.create({
@@ -548,6 +598,8 @@ Ember.Application.initializer({
                     console.error('ERROR in the adapter: ', reason);
                 });
             },
+
+
 
             /**
              * @method parseFields
@@ -728,7 +780,6 @@ Ember.Application.initializer({
                     var controller = this;
                     controller.set('isValidSearchText', true);
                     controller.set('alarmSearchOptions.search', text);
-                    controller.set('isNaturalSearch', true);
                     controller.set('manualUpdateAlarms', new Date().getTime());
                 },
             }
