@@ -154,7 +154,7 @@ def declare_ticket(manager, alarm, author, message, event):
         '_t': 'declareticket',
         't': event['timestamp'],
         'a': author,
-        'm': message,
+        'm': event.get('ticket', None),
         'val': event.get('ticket', None)
     }
 
@@ -174,7 +174,7 @@ def associate_ticket(manager, alarm, author, message, event):
         '_t': 'assocticket',
         't': event['timestamp'],
         'a': author,
-        'm': message,
+        'm': event.get('ticket', None),
         'val': event['ticket']
     }
 
