@@ -362,6 +362,7 @@
     'canopsis/uibase/src/helpers/sorticon',
     'canopsis/uibase/src/helpers/timeSince',
     'canopsis/uibase/src/helpers/timestamp',
+    'canopsis/uibase/src/helpers/timestampfulldate',
     'canopsis/uibase/src/mixins/arraysearch',
     'canopsis/uibase/src/mixins/background',
     'canopsis/uibase/src/mixins/contextarraysearch',
