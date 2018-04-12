@@ -552,6 +552,9 @@ class AlertsReader(object):
         :rtype: dict
         """
 
+        if sort_key == 'v.duration':
+            sort_key = 'v.creation_date' 
+
         if lookups is None:
             lookups = []
 
