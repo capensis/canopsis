@@ -1,6 +1,7 @@
 Ember.Application.initializer({
     name: 'component-alarmactions',
     initialize: function(container, application) {
+        var formsUtils = container.lookupFactory('utility:forms');
         var get = Ember.get,
             set = Ember.set,
             isNone = Ember.isNone;
@@ -252,7 +253,54 @@ Ember.Application.initializer({
                  * @method sendAction
                  */
                 sendAction: function (action) {
-                    this.sendAction('action', action, this.get('alarm'));
+                    var me = this;
+                    if (action.name === 'pbehavior'){
+
+                        var obj = Ember.Object.create({ 'crecord_type': 'pbehaviorform' });
+                        var confirmform = formsUtils.showNew('modelform', obj, {
+                            title: 'Put a pbehavior on these elements ?'
+                        });
+
+                        confirmform.submit.then(function (form) {
+
+                            var payload = {
+                                'tstart': form.get('formContext.start'),
+                                'tstop': form.get('formContext.type_') === 'Pause' ? 2147483647 : form.get('formContext.end'),
+                                'rrule': form.get('formContext.rrule'),
+                                'name': form.get('formContext.name'),
+                                'type_': form.get('formContext.type_'),
+                                'reason': form.get('formContext.reason'),
+                                'author': window.username,
+                                'filter': {}
+                            };
+
+                            if (!payload.rrule) {
+                                delete (payload.rrule);
+                            }
+                            payload.filter = {
+                                '_id': {
+                                    '$in': [me.get('alarm.d')]
+                                }
+                            }
+
+                            //$.post(url)
+                            return $.ajax({
+                                type: 'POST',
+                                url: '/api/v2/pbehavior',
+                                data: JSON.stringify(payload),
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                success: function () {
+                                    console.log('pbehavior is sent');
+                                },
+                                error: function () { console.error('Failure to send pbehavior'); }
+                            });
+
+                        });
+                        return
+                    }
+                    var alarm = me.get('alarm');
+                    this.sendAction('action', action, alarm);
                 },
             }
         });
