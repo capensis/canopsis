@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import canopsis.common
 import unittest
@@ -27,6 +30,15 @@ class TestAmqp(unittest.TestCase):
             config["master"]["virtual_host"])
         cls.amqp_exname = config["master"]["exchange_name"]
 
+        cls.event = {
+            'connector': 'test_amqp',
+            'connector_name': 'test_amqp',
+            'source_type': 'resource',
+            'event_type': 'check',
+            'component': 'test',
+            'resource': 'test'
+        }
+
 
 class TestAmqpConn(TestAmqp):
 
@@ -51,18 +63,9 @@ class TestAmqpConn(TestAmqp):
 class TestAmqpPublisher(TestAmqp):
 
     def test_canopsis_event(self):
-        event = {
-            'connector': 'test_amqp',
-            'connector_name': 'test_amqp',
-            'source_type': 'resource',
-            'event_type': 'check',
-            'component': 'test',
-            'resource': 'test'
-        }
-
         with AmqpConnection(self.amqp_url) as ac:
             amqp_pub = AmqpPublisher(ac)
-            amqp_pub.canopsis_event(event, self.amqp_exname)
+            amqp_pub.canopsis_event(self.event, self.amqp_exname)
 
     def test_bad_canopsis_event_raises(self):
         event = {}
