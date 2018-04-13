@@ -5,7 +5,7 @@
     },
 	"categories": [{
 		"title": "General",
-		"keys":["title", "default_sort_column", "alarms_state_filter"]
+		"keys":["title", "default_sort_column", "alarms_state_filter", "hide_resources"]
 	},{
 		"title": "Widget columns",
 		"keys":["widget_columns"]
@@ -28,6 +28,10 @@
 			"type": "object",
 			"role": "radio",
             "default": "opened"
+		},
+		"hide_resources": {
+			"type": "boolean",
+            "default": false
 		},
 		"user_filters": {
 			"type": "boolean",
