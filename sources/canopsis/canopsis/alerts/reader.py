@@ -570,7 +570,7 @@ class AlertsReader(object):
             )
 
         if sort_key == 'v.duration':
-            sort_key = 'v.creation_date' 
+            sort_key = 'v.creation_date'
 
         if lookups is None:
             lookups = []
@@ -626,7 +626,8 @@ class AlertsReader(object):
         if limit is not None:
             pipeline.append({"$limit": limit})
 
-        result = self.alarm_storage._backend.aggregate(pipeline, cursor={})
+        result = self.alarm_storage._backend.aggregate(pipeline, cursor={},
+                                                       **{"allowDiskUse": True})
 
         alarms = list(result)
         limited_total = len(alarms)  # Manual count is much faster than mongo's
