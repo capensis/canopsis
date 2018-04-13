@@ -53,7 +53,8 @@
 				"userview",
 				"widgetpreferences",
 				"trap",
-				"reason"
+				"reason",
+                "logauthor"
 			],
 			"default": "group",
 			"role": "simplelist"

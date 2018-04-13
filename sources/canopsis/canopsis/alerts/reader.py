@@ -18,24 +18,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from __future__ import unicode_literals
-
 """
 Alarm reader manager.
 
 TODO: replace the storage class parameter with a collection (=> rewriting count())
 """
 
+from __future__ import unicode_literals
+
 import re
 
 from os.path import join
 from time import time
 
-from canopsis.common import root_path
-
 from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.entitylink.manager import Entitylink
@@ -66,9 +65,9 @@ class AlertsReader(object):
     GRAMMAR_FILE = 'etc/alerts/search/grammar.bnf'
 
     DEFAULT_ACTIVE_COLUMNS = ["v.component",
-                             "v.connector",
-                             "v.resource",
-                             "v.connector_name"]
+                              "v.connector",
+                              "v.resource",
+                              "v.connector_name"]
 
     def __init__(self, logger, config, storage,
                  pbehavior_manager, entitylink_manager):
@@ -95,8 +94,6 @@ class AlertsReader(object):
                                                           DEFAULT_RESOLVED_TRUNC))
         self.resolved_limit = int(category.get('resolved_limit',
                                                DEFAULT_RESOLVED_LIMIT))
-
-        _, pb_storage = PBehaviorManager.provide_default_basics()
 
         self.count_cache = {}
 
@@ -418,7 +415,7 @@ class AlertsReader(object):
             return query.count(True), False
 
     def _get_final_filter(
-        self, view_filter, time_filter, search, active_columns
+            self, view_filter, time_filter, search, active_columns
     ):
         """
         Computes the real filter:
@@ -515,7 +512,8 @@ class AlertsReader(object):
             limit=None,
             with_steps=False,
             natural_search=False,
-            active_columns=None
+            active_columns=None,
+            hide_resources=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -548,9 +546,28 @@ class AlertsReader(object):
         :param list active_columns: the list of alarms columns on which to
         apply the natural search filter.
 
+        :param bool hide_resources: hide resources' alarms if the component has
+        an alarm
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
+        if hide_resources:
+            if resolved:
+                self.logger.error(
+                    'you only can hide pbehaviors on current alarms')
+            return self.hide_resources(
+                tstart,
+                tstop,
+                filter_,
+                sort_key,
+                sort_dir,
+                skip,
+                limit,
+                search,
+                natural_search,
+                active_columns
+            )
 
         if sort_key == 'v.duration':
             sort_key = 'v.creation_date' 
@@ -640,6 +657,132 @@ class AlertsReader(object):
 
         return res
 
+    def hide_resources(
+            self,
+            tstart=None,
+            tstop=None,
+            filter_={},
+            sort_key='opened',
+            sort_dir='DESC',
+            skip=0,
+            limit=None,
+            search='',
+            natural_search=False,
+            active_columns=None
+    ):
+        """
+        Return filtered, sorted and paginated alarms with resources sorted.
+
+        :param tstart: Beginning timestamp of requested period
+        :param tstop: End timestamp of requested period
+        :type tstart: int or None
+        :type tstop: int or None
+
+        :param dict filter_: Mongo filter
+        :param str search: Search expression in custom DSL
+
+        :param str sort_key: Name of the column to sort. If the value ends with
+            a dot '.', sort_key is replaced with 'v.last_update_date'.
+        :param str sort_dir: Either "ASC" or "DESC"
+
+        :param int skip: Number of alarms to skip (pagination)
+        :param int limit: Maximum number of alarms to return
+
+        :param bool natural_search: True if you want to use a natural search
+
+        :param list active_columns: the list of alarms columns on which to
+        apply the natural search filter.
+
+        :returns: List of sorted alarms + pagination informations
+        :rtype: dict
+        """
+        if filter_ is None:
+            filter_ = {}
+
+        if active_columns is None:
+            active_columns = self.DEFAULT_ACTIVE_COLUMNS
+
+        time_filter = self._get_time_filter(
+            opened=True,
+            resolved=False,
+            tstart=tstart,
+            tstop=tstop
+        )
+
+        if time_filter is None:
+            return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
+
+        final_filter = self._get_final_filter(
+            filter_,
+            time_filter,
+            search,
+            active_columns
+        )
+
+        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
+
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "default_entities",
+                    "localField": "d",
+                    "foreignField": "_id",
+                    "as": "entity"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$entity",
+                    "preserveNullAndEmptyArrays": True,
+                }
+            }, {
+                "$match": final_filter
+            }, {
+                "$sort": {
+                    sort_key: sort_dir
+                }
+            }
+        ]
+
+        alarms = self.alarm_storage._backend.aggregate(pipeline).get('result')
+        alarms = self._lookup(alarms, ['pbehaviors'])
+
+        alarm_dict = {}
+        for alarm in alarms:
+            component = alarm.get('v').get('component')
+            if component not in alarm_dict:
+                alarm_dict[component] = [alarm]
+            else:
+                alarm_dict[component].append(alarm)
+
+        filtred_alarms = []
+        for component in alarm_dict:
+            entity_type = []
+            for alarm_comp in alarm_dict[component]:
+                entity_type.append(alarm_comp.get(
+                    'entity', {}).get('type', ''))
+            if 'component' in entity_type:
+                filtred_alarms = filtred_alarms + \
+                    remove_resources_alarms(alarm_dict[component])
+            else:
+                filtred_alarms = filtred_alarms + alarm_dict[component]
+
+        len_before_truncate = len(filtred_alarms)
+        if limit is not None:
+            last = limit + skip
+            filtred_alarms = filtred_alarms[skip:last]
+        else:
+            filtred_alarms = filtred_alarms[skip:]
+            last = len(filtred_alarms)
+        len_after_truncate = len(filtred_alarms)
+        ret_val = {
+            'alarms': filtred_alarms,
+            'total': len_before_truncate,
+            'truncated': len_after_truncate < len_before_truncate,
+            'first': skip,
+            'last': last
+        }
+        return ret_val
+
     def count_alarms_by_period(
             self,
             start,
@@ -690,3 +833,25 @@ class AlertsReader(object):
             )
 
         return results
+
+
+def remove_resources_alarms(alarms):
+    """
+    take a list of alarms on a component and remove resources' alarms if needed
+    :param list alarms: list of alarms
+    :rtype: list
+    """
+    state_comp = 0
+    states_list = []
+    alarm_comp = {}
+    for i in alarms:
+        val = i.get('v').get('state').get('val')
+        states_list.append(val)
+        if i.get('entity').get('type') == 'component':
+            state_comp = val
+            alarm_comp = i
+
+    if state_comp >= max(states_list):
+        return [alarm_comp]
+
+    return alarms
