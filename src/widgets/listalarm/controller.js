@@ -341,27 +341,17 @@ Ember.Application.initializer({
 				var conditions = search.split(/ OR | AND /)
 				var conditionOps = ["<=", "<", "=", "!=", ">=", ">", "CONTAINS", "LIKE"]
 
-				console.error("Fields", fields)
-
 				for (itCond = 0; itCond < conditions.length; itCond++) {
-					console.error("Handling condition : ", conditions[itCond])
 					for(itCondOp = 0; itCondOp < conditionOps.length; itCondOp++) {
-						console.error(conditions[itCond])
 						if (conditions[itCond].indexOf(conditionOps[itCondOp]) >= 0) {
 
-							console.error("    Found op : ", conditionOps[itCondOp])
-							humanName = conditions[itCond].split(conditionOps[itCondOp])[0]
-							console.error("    Human field : ", humanName)
+							humanName = conditions[itCond].split(conditionOps[itCondOp])[0].trim()
 
 							var found = false
 							var technicalName = ""
 							var itField = 0
 
 							while (!found && itField < fields.length){
-								console.error("dir itfields ",fields[itField].humanName)
-								console.error("itfields.HumanName ?",typeof(fields[itField].humanName))
-								console.error("itfields.[humanName] ?",typeof(fields[itField]["humanName"]))
-
 								if(fields[itField]["humanName"] == humanName){
 									var technicalName = fields[itField].name
 									found=true
@@ -369,19 +359,18 @@ Ember.Application.initializer({
 								itField ++
 							}
 
-							technicalName = columnMap[humanName.toLowerCase()] || ""
+							if(!found){
+								technicalName = columnMap[humanName.toLowerCase()] || ""
+							}
 
-							console.error("    Technical field : ", technicalName)
 							if (technicalName !== "") {
 								updatedCondition = conditions[itCond].replace(humanName, technicalName)
-								console.error("    Updated condition : ", updatedCondition)
 
 								search = search.replace(conditions[itCond], updatedCondition)
-							} else {console.error("   Pas d'update")}
+							}
 						}
 					}
 				}
-				console.error("Updated search : ", search)
 				return search
 			},
 
@@ -393,7 +382,6 @@ Ember.Application.initializer({
                 this.set('loaded', false);
                 var options = this.get('alarmSearchOptions');
 
-				console.error("Options : ", options)
                 // fix for applying a filter after refreshing the widget
                 this.set('alarmSearchOptions.filter', this.get('selected_filter.filter') || {});
 
@@ -401,10 +389,12 @@ Ember.Application.initializer({
                 if (!options.filter){
                     options.filter = "{}";
 				}
+				if(options.search !== undefined){
+					options.search = options.search.trim()
+				}
 
 				if(options.search !== undefined && options.search.startsWith("- ")){
 					options.search = options.search.substring(2)
-					console.error("purest form", options.search)
 					options.search = this.get("replaceColumnsName")(options.search, this.get("fields"), this.get('humanReadableColumnNames'))
 				}
 
