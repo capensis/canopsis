@@ -12,7 +12,7 @@ Ember.Application.initializer({
          */
 
         var component = Ember.Component.extend({
-
+            
             /**
              * @property propertyMap
              */
@@ -64,9 +64,9 @@ Ember.Application.initializer({
              */
             init: function() {
                 this._super();
-              },
+            },
             
-        });
+        }); 
 
         application.register('component:component-rendererpbehaviors', component);
     }
