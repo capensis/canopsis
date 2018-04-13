@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/uibase/blob/master/doc/i
 
 ### Lint
 
-Tested on commit : dbc4729.
+Tested on commit : f12bb7d.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
