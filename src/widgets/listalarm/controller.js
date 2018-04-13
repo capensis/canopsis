@@ -349,6 +349,13 @@ Ember.Application.initializer({
 
 							humanName = conditions[itCond].split(conditionOps[itCondOp])[0].trim()
 
+							var hasNot = false
+							if (humanName.indexOf("NOT") >= 0) {
+								hasNot = true
+								humanName = humanName.replace("NOT", "")
+								humanName = humanName.trim()
+							}
+
 							var found = false
 							var technicalName = ""
 							var itField = 0
@@ -365,9 +372,9 @@ Ember.Application.initializer({
 								technicalName = columnMap[humanName.toLowerCase()] || ""
 							}
 
+
 							if (technicalName !== "") {
 								updatedCondition = conditions[itCond].replace(humanName, technicalName)
-
 								search = search.replace(conditions[itCond], updatedCondition)
 							}
 						}
