@@ -773,7 +773,7 @@ class AlertsReader(object):
         len_after_truncate = len(filtred_alarms)
         ret_val = {
             'alarms': filtred_alarms,
-            'total': len_after_truncate,
+            'total': len_before_truncate,
             'truncated': len_after_truncate < len_before_truncate,
             'first': skip,
             'last': last
