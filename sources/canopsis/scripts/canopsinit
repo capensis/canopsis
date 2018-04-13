@@ -18,10 +18,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from argparse import ArgumentParser
 import os
 import subprocess
 import sys
 import time
+
 
 from canopsis.common.mongo_store import MongoStore
 from pymongo.errors import ConnectionFailure
@@ -36,8 +38,19 @@ ENV_WAIT_FIRST_ATTEMPT = "CPS_INIT_WAIT_FIRST_ATTEMPT"
 DFT_MAX_RETRY = 10
 DFT_RETRY_DELAY = 30
 DFT_WAIT_FIRST_ATTEMPT = 0
+AUTH_REINIT = '--authorize-reinit'
 
 if __name__ == "__main__":
+    parser = ArgumentParser(description='Canopsinit')
+    parser.add_argument(AUTH_REINIT, dest='reinit', action='store_true')
+    args = parser.parse_args()
+
+    print(args.reinit)
+    if args.reinit is True:
+        COMMANDS[1].append(AUTH_REINIT)
+
+    print(COMMANDS)
+
     max_retry = int(os.getenv(ENV_MAX_RETRY, DFT_MAX_RETRY))
     retry_delay = int(os.getenv(ENV_RETRY_DELAY, DFT_RETRY_DELAY))
     wait_first_time = int(os.getenv(ENV_WAIT_FIRST_ATTEMPT, DFT_WAIT_FIRST_ATTEMPT))
