@@ -165,8 +165,8 @@ class TestTasks(BaseTest):
         self.assertTrue(alarm[AlarmField.ticket.value] is not None)
         self.assertEqual(alarm[AlarmField.ticket.value]['t'], 0)
         self.assertEqual(alarm[AlarmField.ticket.value]['a'], 'testauthor')
-        self.assertEqual(alarm[AlarmField.ticket.value]['m'], 'test message')
-        self.assertEqual(alarm[AlarmField.ticket.value]['val'], 'test message')
+        self.assertEqual(alarm[AlarmField.ticket.value]['m'], None)
+        self.assertEqual(alarm[AlarmField.ticket.value]['val'], None)
         self.assertTrue(
             alarm[AlarmField.ticket.value] is get_previous_step(alarm, 'declareticket')
         )
@@ -174,7 +174,7 @@ class TestTasks(BaseTest):
     def test_assoc_ticket(self):
         event = {
             'timestamp': 0,
-            'ticket': 1234
+            'ticket': '1234'
         }
 
         task = get_task('alerts.useraction.assocticket')
@@ -189,8 +189,8 @@ class TestTasks(BaseTest):
         self.assertTrue(alarm[AlarmField.ticket.value] is not None)
         self.assertEqual(alarm[AlarmField.ticket.value]['t'], 0)
         self.assertEqual(alarm[AlarmField.ticket.value]['a'], 'testauthor')
-        self.assertEqual(alarm[AlarmField.ticket.value]['m'], 'test message')
-        self.assertEqual(alarm[AlarmField.ticket.value]['val'], 'test message')
+        self.assertEqual(alarm[AlarmField.ticket.value]['m'], '1234')
+        self.assertEqual(alarm[AlarmField.ticket.value]['val'], '1234')
         self.assertTrue(
             alarm[AlarmField.ticket.value] is get_previous_step(alarm, 'assocticket')
         )
