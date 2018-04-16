@@ -42,6 +42,10 @@ class engine(Engine):
         self.name = kargs['name']
         self.drop_event_count = 0
         self.pass_event_count = 0
+        self.configuration = {
+            'rules': [],
+            'default_action': self.find_default_action()
+        }
 
     def pre_run(self):
         self.beat()
@@ -421,12 +425,10 @@ class engine(Engine):
     def beat(self, *args, **kargs):
         """ Configuration reload for realtime ui changes handling """
 
-        # self.configuration = {
-        #     'rules': [],
-        #     'default_action': self.find_default_action()
-        # }
-
-        tmp_rules = []
+        self.configuration = {
+            'rules': [],
+            'default_action': self.find_default_action()
+        }
 
         self.logger.debug(u'Reload configuration rules')
         records = self.collection.find(
@@ -449,15 +451,9 @@ class engine(Engine):
 
             self.logger.debug(u'Loading record_dump:')
             self.logger.debug(record_dump)
-            # self.configuration['rules'].append(record_dump)
-            tmp_rules.append(record_dump)
+            self.configuration['rules'].append(record_dump)
 
-        self.configuration = {
-            'rules': tmp_rules,
-            'default_action': self.find_default_action()
-            }
-
-        self.logger.debug(
+        self.logger.info(
             'Loaded {} rules'.format(len(self.configuration['rules']))
         )
         self.send_stat_event()
