@@ -30,6 +30,8 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from json import loads
 
+import copy
+
 
 class engine(Engine):
     etype = 'event_filter'
@@ -419,15 +421,17 @@ class engine(Engine):
         event['rk'] = event['_id'] = get_routingkey(event)
         return event
 
+
     def __load_rules(self):
-        self.logger.debug(u'Reload configuration rules')
+
+        tmp_rules = []
         records = self.collection.find(
             {'crecord_type': 'filter', 'enable': True})
         records.sort('priority', 1)
 
         for record in records:
 
-            record_dump = record.dump()
+            record_dump = copy.deepcopy(record)
             self.set_loaded(record_dump)
 
             try:
@@ -441,17 +445,25 @@ class engine(Engine):
 
             self.logger.debug(u'Loading record_dump:')
             self.logger.debug(record_dump)
-            self.configuration['rules'].append(record_dump)
+            tmp_rules.append(record_dump)
+
+        self.configuration = {
+            'rules': tmp_rules,
+            'default_action': self.find_default_action()
+            }
 
     def beat(self, *args, **kargs):
         """ Configuration reload for realtime ui changes handling """
 
+        self.logger.debug(u'Reload configuration rules')
+
         self.__load_rules()
 
-        self.logger.info(
+        self.logger.debug(
             'Loaded {} rules'.format(len(self.configuration['rules']))
         )
         self.send_stat_event()
+
 
     def set_loaded(self, record):
 
