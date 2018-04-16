@@ -121,6 +121,11 @@ systemctl enable canopsis-engine@dynamic-watcher.service
 systemctl enable canopsis-webserver.service
 ```
 
+Pour un module CAT :
+```bash
+systemctl enable canopsis-engine-cat@task_blabla.service
+```
+
 Quelques exemples de gestion des services avec systemd :
 
 ```bash
