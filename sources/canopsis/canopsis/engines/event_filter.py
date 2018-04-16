@@ -446,11 +446,6 @@ class engine(Engine):
     def beat(self, *args, **kargs):
         """ Configuration reload for realtime ui changes handling """
 
-        self.configuration = {
-            'rules': [],
-            'default_action': self.find_default_action()
-        }
-
         self.__load_rules()
 
         self.logger.info(
