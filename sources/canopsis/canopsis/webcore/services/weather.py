@@ -504,7 +504,7 @@ def exports(ws):
                             .get(AlarmFilterField.next_run.value, None))
                 enriched_entity['automatic_action_timer'] = next_run
                 if 'resource' in current_alarm:
-                    enriched_entity['resource'] = current_alarm.get('resource')
+                    enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entities.append(enriched_entity)
 
