@@ -571,6 +571,8 @@ class AlertsReader(object):
 
         if sort_key == 'v.duration':
             sort_key = 'v.creation_date'
+        elif sort_key == 'v.current_state_duration':
+            sort_key = 'v.state.t'
 
         if lookups is None:
             lookups = []
