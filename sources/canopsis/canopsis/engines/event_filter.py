@@ -242,7 +242,7 @@ class engine(Engine):
             {'crecord_type': 'job', '_id': action['job']}
         )
         for record in records:
-            job = record.dump()
+            job = copy.deepcopy(record)
             job['context'] = event
             publish(
                 publisher=self.amqp,
@@ -468,7 +468,7 @@ class engine(Engine):
     def set_loaded(self, record):
 
         if 'run_once' in record and not record['run_once']:
-            self.collection.update(record['_id'], {"$set": {'run_once': True}})
+            self.collection.update({"_id": record['_id']}, {"$set": {'run_once': True}})
             self.logger.info(
                 'record {} has been run once'.format(record['_id'])
             )
@@ -516,7 +516,7 @@ class engine(Engine):
 
         records = self.collection.find_one({'crecord_type': 'defaultrule'})
         if records:
-            return records[0].dump()["action"]
+            return records[0]["action"]
 
         self.logger.debug(
             "No default action found. Assuming default action is pass"
