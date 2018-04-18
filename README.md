@@ -2,7 +2,6 @@
 
 Nouveaux moteurs pour Canopsis
 
-
 ## Mise en place d'un environnement d'exécution des tests
 
 ### Installation d'un serveur RabbitMQ
@@ -10,16 +9,12 @@ Nouveaux moteurs pour Canopsis
 - Installer RabbitMQ > 3.2
 - installer le management plugin : `rabbitmq-plugins enable rabbitmq_management`
 - [configurer rabbbitMQ pour Canopsis](https://git.canopsis.net/canopsis/canopsis/blob/develop/doc/docs/fr/guide_administrateur/package_install.md)
-
-
 - créer les exchanges :
-
 
 vhost    | name            | type   | Durability | auto delete | internal
 ---------|-----------------|--------|------------|-------------|----------
 canopsis | canopsis.events | fanout | durable    | no          | no
 canopsis | canopsis.alerts | fanout | durable    | no          | no
-
 
 - Ajouter les bindings :  bindings :
 
@@ -32,8 +27,6 @@ canopsis.events | Engine_stat | #
 ### MongoDB
 
 - [installer mongodb 3.4](https://docs.mongodb.com/v3.4/administration/install-on-linux/)
-
-
 - Configurer la base :
 
 ```
@@ -43,11 +36,9 @@ db.periodical_alarm.createIndex({t:1, d:1})
 db.periodical_alarm.createIndex({d:1})
 ```
 
-
 ### InfluxDB
 
 - [Installer influxdb](https://portal.influxdata.com/downloads)
-
 - configurer l'authentification : ouvrir le fichier `/etc/influxdb/influxdb.conf`
 
 ```ini
