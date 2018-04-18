@@ -487,7 +487,7 @@ def exports(ws):
             # enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
             # FIXME: canopsis/canopsis#650 UTF-8 error
             if current_alarm is not None:
-                enriched_entity['ticket'] = current_alarm['ticket']
+                enriched_entity['ticket'] = current_alarm.get('ticket')
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
                 enriched_entity['snooze'] = current_alarm.get('snooze')
