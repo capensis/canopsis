@@ -1,6 +1,6 @@
 <div class="pull-left">
     {{tr 'Selection'}} :
-    {{#each action in actionsMap}}
+    {{#each action in availableAction}}
       <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
           <span {{bind-attr class=action.class}}></span>
           {{tr action.caption}}
