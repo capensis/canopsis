@@ -586,6 +586,7 @@ class AlertsReader(object):
                 pbh_filter["$match"]["pbehaviors"] = {"$eq": []}
 
             pipeline.append(pbh_filter)
+        self.has_active_pbh = None
 
     def get(
             self,
