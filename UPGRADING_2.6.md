@@ -103,3 +103,8 @@ exécuter la commande :
 ```javascript
 db.getCollection('default_entities').ensureIndex({"type":1});
 ```
+
+## Création d'un filtre sur les pbehaviors
+
+- pour n'obtenir que les alarmes ayant un pbehavior actif, ajouter un filtre dans le bac à alarmes avec le champ `has_active_pb`: `true`
+- pour n'obtenir que les alarmes n'ayant pas de pbehavior actif, ajouter un filtre dans le bac à alarmes avec le champ `has_active_pb`: `false`
