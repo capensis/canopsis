@@ -545,6 +545,48 @@ class AlertsReader(object):
 
         return final_filter
 
+    def add_pbh_filter(self, pipeline, filter_):
+        """Add to the aggregation pipeline the stages to filter the alarm
+        with their pbehavior.
+        :param list pipeline: the aggregation pipeline
+        :param filter_ the filter received from the front."""
+        self.parse_filter(filter_)
+        pipeline.append({"$lookup": {
+            "from": "default_pbehavior",
+            "localField": "d",
+            "foreignField": "eids",
+            "as": "pbehavior"}})
+
+        if self.has_active_pbh is not None:
+            tnow = int(time())
+            stage = {
+                "$project": {
+                    "pbehavior": {
+                        "$filter": {
+                            "input": "$pbehavior",
+                            "as": "pbh",
+                            "cond": [{"$gte": ["$pbehavior.tstop", tnow]},
+                                     {"$lte": ["$pbehavior.tstart", tnow]}
+                            ]
+                        }
+                    },
+                    "_id": 1,
+                    "v": 1,
+                    "d": 1,
+                    "t": 1,
+                    "entity": 1
+                }
+            }
+            pipeline.append(stage)
+            pbh_filter = {"$match": {"pbehavior": None}}
+
+            if self.has_active_pbh is True:
+                pbh_filter["$match"]["pbehavior"] = {"$ne": []}
+            if self.has_active_pbh is False:
+                pbh_filter["$match"]["pbehavior"] = {"$eq": []}
+
+            pipeline.append(pbh_filter)
+
     def get(
             self,
             tstart=None,
@@ -625,8 +667,6 @@ class AlertsReader(object):
 
         if filter_ is None:
             filter_ = {}
-        else:
-            self.parse_filter(filter_)
 
         if active_columns is None:
             active_columns = self.DEFAULT_ACTIVE_COLUMNS
@@ -668,46 +708,10 @@ class AlertsReader(object):
                 "$sort": {
                     sort_key: sort_dir
                 }
-            },
-            {
-                "$lookup": {
-                    "from": "default_pbehavior",
-                    "localField": "d",
-                    "foreignField": "eids",
-                    "as": "pbehavior"
-                }
-            },
+            }
         ]
 
-        if self.has_active_pbh is not None:
-            tnow = int(time())
-            stage = {
-                "$project": {
-                    "pbehavior": {
-                        "$filter": {
-                            "input": "$pbehavior",
-                            "as": "pbh",
-                            "cond": [{"$gte": ["$pbehavior.tstop", tnow]},
-                                     {"$lte": ["$pbehavior.tstart", tnow]}
-                            ]
-                        }
-                    },
-                    "_id": 1,
-                    "v": 1,
-                    "d": 1,
-                    "t": 1,
-                    "entity": 1
-                }
-            }
-            pipeline.append(stage)
-            pbh_filter = {"$match": {"pbehavior": None}}
-
-            if self.has_active_pbh is True:
-                pbh_filter["$match"]["pbehavior"] = {"$ne": []}
-            if self.has_active_pbh is False:
-                pbh_filter["$match"]["pbehavior"] = {"$eq": []}
-
-            pipeline.append(pbh_filter)
+        self.add_pbh_filter(pipeline, filter_)
 
         pipeline.append({
                 "$skip": skip
@@ -832,7 +836,10 @@ class AlertsReader(object):
             }
         ]
 
-        alarms = self.alarm_storage._backend.aggregate(pipeline).get('result')
+        self.add_pbh_filter(pipeline, filter_)
+
+        alarms = self.alarm_storage._backend.aggregate(pipeline,
+                                                       **{"allowDiskUse": True}).get('result')
         alarms = self._lookup(alarms, ['pbehaviors'])
 
         alarm_dict = {}
