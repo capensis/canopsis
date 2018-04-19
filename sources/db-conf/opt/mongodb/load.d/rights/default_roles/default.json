@@ -163,6 +163,10 @@
         "listalarm_snoozeAlarm": {
             "checksum": 1,
             "desc": ""
+        },
+        "listalarm_listPbehavior": {
+            "checksum": 1,
+            "desc": ""
         }
     }
 },{
@@ -192,6 +196,10 @@
             "desc": ""
         },
         "listalarm_fastAck": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_listPbehavior": {
             "checksum": 1,
             "desc": ""
         }
@@ -278,6 +286,10 @@
             "desc": ""
         },
         "listalarm_changeState": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_listPbehavior": {
             "checksum": 1,
             "desc": ""
         }
