@@ -8,10 +8,10 @@
 		"keys":["component", "resource", "domain", "perimeter"]
 	},{
 		"title": "Event",
-		"keys":["event_type", "status.val", "state.val", "ack.isAck"]
+		"keys":["event_type", "status.val", "state.val", "v.ack"]
 	},{
 		"title": "Event filter",
-		"keys":["state", "state_type"]
+		"keys":["state", "state_type", "status"]
 	}],
 	"showEditButton": true,
 	"properties": {
@@ -39,15 +39,6 @@
 			"required": false,
 			"default": "event",
 			"icon": "flag"
-		},
-		"ack": {
-			"type": "object",
-			"role": "ack",
-			"properties": {
-				"isAck": {
-					"type" : "boolean"
-				}
-			}
 		},
 		"ack_remove": {
 			"type": "object"
