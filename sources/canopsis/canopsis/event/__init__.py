@@ -203,7 +203,7 @@ def forger(
     if entity:
         dump[Event.ENTITY] = entity
 
-    if resource:
+    if resource and resource != '':
         if source_type == 'component':
             dump['source_type'] = 'resource'
         dump['resource'] = resource
