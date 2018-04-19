@@ -79,6 +79,12 @@ Ember.Application.initializer({
                     internal_states: ['unacked', 'acked', 'cancelled'],
                     name: 'snoozealarm',
                     mixin_name: 'snooze'
+                },
+				{
+                    class: 'fa fa-list',
+                    internal_states: ['immutable' ,'unacked', 'acked', 'cancelled'],
+                    name: 'listpbehavior',
+                    mixin_name: 'listpbehavior'
                 }
             ]),
 
@@ -157,6 +163,12 @@ Ember.Application.initializer({
                     case "snoozealarm":
                         name = func(actions, rights, actions[i]["name"], "listalarm_snoozeAlarm")
                         break;
+					case "snoozealarm":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_snoozeAlarm")
+                        break;
+					case "listpbehavior":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_listPbehavior")
+                        break;
                     }
 
 					if (name != null) {
@@ -164,7 +176,6 @@ Ember.Application.initializer({
 					}
                 }
 				for(i = 0; i < toRemove.length; i++){
-						console.debug("Cleaning ", name)
 						actions.removeObject(actions.findBy('name', toRemove[i]))
 				}
                 return actions;

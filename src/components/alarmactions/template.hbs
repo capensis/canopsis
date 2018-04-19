@@ -7,15 +7,6 @@
             </button>
     {{/each}}
 
-    {{!-- pbehavior list action --}}
-    
-
-{{#component-tooltip content="List periodic behaviors"}}
-    <button {{bind-attr data-target=pBehaviorListActionIdHash}} data-toggle="modal" type="button" class="btn btn-xs btn-default">
-      <i class='fa fa-list'></i>
-    </button>
-{{/component-tooltip}}
-    
     {{#if hasLinks}}
           <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-info"></i>
