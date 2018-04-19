@@ -50,8 +50,6 @@ Ember.Application.initializer({
                 }
             ]),
 
-			availableAction: [],
-
 			canAction: function(rights, actionName){
 				console.error("Rights", rights)
 				console.error("ActionName", actionName)
@@ -64,15 +62,23 @@ Ember.Application.initializer({
 			},
 
 
-			genAvailableAction: function(rights) {
+			genAvailableAction: function() {
 				var actions = new Array()
 				for(i = 0; i < this.get("actionsMap").length; i++) {
-					if (this.get("canAction")(rights, this.actionsMap[i]["rightName"])) {
+					console.error("rigthName", this.actionsMap[i]["rightName"])
+					console.error("Can he do this", this.get("canAction")(this.get("rights"), this.actionsMap[i]["rightName"]))
+
+					if (this.get("canAction")(this.get("rights"), this.actionsMap[i]["rightName"])) {
 						actions.push(this.actionsMap[i])
 					}
 				}
+				console.error("ACTIONS", actions)
 				this.set("availableAction", actions)
 			},
+
+			rights: function() {
+				return this.get("_parentView._controller.login.rights")
+			}.property("rights"),
 
             /**
              * @method init
@@ -81,9 +87,7 @@ Ember.Application.initializer({
                 this._super();
 				this.set("rights", this.get("_parentView._controller.login.rights"))
 				console.error("Rights ", this.get("rights"))
-				var func = this.get("genAvailableAction")
-				console.error("genAvailable ", func)
-				func(this.get("rights"))
+				this.genAvailableAction()
             },
 
             actions: {
