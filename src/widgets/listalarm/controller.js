@@ -715,7 +715,7 @@ Ember.Application.initializer({
                 var confirmform = formsUtils.showNew('modelform', obj, {
                     title: 'Put a pbehavior on these elements ?'
                 });
-
+                this.stopRefresh();
                 confirmform.submit.then(function(form) {
                     if(!Array.isArray(selection)) {
                         selection = [selection];

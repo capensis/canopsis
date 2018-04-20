@@ -257,6 +257,9 @@ Ember.Application.initializer({
                     if (action.name === 'pbehavior'){
 
                         var obj = Ember.Object.create({ 'crecord_type': 'pbehaviorform' });
+                        console.error('COUCOU', this.get('_parentView._controller'));
+                        var test = this.get('_parentView._parentView._controller');
+                        test.stopRefresh();
                         var confirmform = formsUtils.showNew('modelform', obj, {
                             title: 'Put a pbehavior on these elements ?'
                         });
