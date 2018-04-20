@@ -353,8 +353,10 @@
 </div>
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-selectionactions"><div class="pull-left">
-    {{tr 'Selection'}} :
-    {{#each action in actionsMap}}
+	 {{#if availableAction}}
+	     {{tr 'Selection'}} :
+		 {{/if}}
+    {{#each action in availableAction}}
       <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
           <span {{bind-attr class=action.class}}></span>
           {{tr action.caption}}
