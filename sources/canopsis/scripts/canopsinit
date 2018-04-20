@@ -45,15 +45,13 @@ if __name__ == "__main__":
     parser.add_argument(AUTH_REINIT, dest='reinit', action='store_true')
     args = parser.parse_args()
 
-    print(args.reinit)
     if args.reinit is True:
         COMMANDS[1].append(AUTH_REINIT)
 
-    print(COMMANDS)
-
     max_retry = int(os.getenv(ENV_MAX_RETRY, DFT_MAX_RETRY))
     retry_delay = int(os.getenv(ENV_RETRY_DELAY, DFT_RETRY_DELAY))
-    wait_first_time = int(os.getenv(ENV_WAIT_FIRST_ATTEMPT, DFT_WAIT_FIRST_ATTEMPT))
+    wait_first_time = int(os.getenv(ENV_WAIT_FIRST_ATTEMPT,
+                                    DFT_WAIT_FIRST_ATTEMPT))
     print("Waiting {}s.".format(wait_first_time))
 
     time.sleep(wait_first_time)
