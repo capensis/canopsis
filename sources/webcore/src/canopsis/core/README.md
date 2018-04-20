@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/core/blob/master/doc/ind
 
 ### Lint
 
-Tested on commit : 21276ec.
+Tested on commit : 4e09104.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
