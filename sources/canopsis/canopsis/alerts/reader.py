@@ -83,6 +83,7 @@ class AlertsReader(object):
         self.alarm_storage = storage
         self.pbehavior_manager = pbehavior_manager
         self.entitylink_manager = entitylink_manager
+        self.pbh_filter = None
 
         category = self.config.get(self.CATEGORY, {})
         self.expiration = int(category.get('expiration', DEFAULT_EXPIRATION))
@@ -98,6 +99,7 @@ class AlertsReader(object):
         self.count_cache = {}
 
         self.grammar = join(root_path, self.GRAMMAR_FILE)
+        self.has_active_pbh = None
 
     @classmethod
     def provide_default_basics(cls):
@@ -293,6 +295,52 @@ class AlertsReader(object):
             }
 
         return {'v.resolved': {'$ne': None}}
+
+    @classmethod
+    def __convert_to_bool(cls, value):
+        """Take a string and return the corresponding boolean. This method is
+        case insensitive. Raise a a ValueError if the string can not be parsed.
+        :param str value: a string containing the following value true, false
+        : return bool: True or false"""
+        if isinstance(value, bool):
+            return value
+        if value.lower() == "true":
+            return True
+        if value.lower() == "false":
+            return False
+        msg_err = "Can not convert {} to a boolean. true or false (case insensitive)"
+        raise ValueError(msg_err.format(value))
+
+    def _filter_list(self, filter_):
+        for item in filter_:
+            self._filter(item)
+
+    def _filter_dict(self, filter_):
+        for key in filter_:
+            if key == "has_active_pb":
+                self.has_active_pbh = self.__convert_to_bool(filter_[key])
+                del filter_[key]
+                return
+            else:
+                self._filter(filter_[key])
+
+    def _filter(self, filter_):
+        if isinstance(filter_, dict):
+            self._filter_dict(filter_)
+
+        elif isinstance(filter_, list):
+            self._filter_list(filter_)
+
+
+    def parse_filter(self, filter_):
+        """Set self.has_active_pbh true if the filter contain a active_pb key
+        set to true or false if it set to false. If the key is not present or
+        set to None, None. This method store the first occurrence.
+        :param dict alarms: a filter from the brick listalarm
+        """
+
+        if filter_ is not None:
+            self._filter(filter_)
 
     def interpret_search(self, search):
         """
@@ -497,6 +545,49 @@ class AlertsReader(object):
 
         return final_filter
 
+    def add_pbh_filter(self, pipeline, filter_):
+        """Add to the aggregation pipeline the stages to filter the alarm
+        with their pbehavior.
+        :param list pipeline: the aggregation pipeline
+        :param filter_ the filter received from the front."""
+        self.parse_filter(filter_)
+        pipeline.append({"$lookup": {
+            "from": "default_pbehavior",
+            "localField": "d",
+            "foreignField": "eids",
+            "as": "pbehaviors"}})
+
+        if self.has_active_pbh is not None:
+            tnow = int(time())
+            stage = {
+                "$project": {
+                    "pbehaviors": {
+                        "$filter": {
+                            "input": "$pbehaviors",
+                            "as": "pbh",
+                            "cond": [{"$gte": ["$pbehaviors.tstop", tnow]},
+                                     {"$lte": ["$pbehaviors.tstart", tnow]}
+                            ]
+                        }
+                    },
+                    "_id": 1,
+                    "v": 1,
+                    "d": 1,
+                    "t": 1,
+                    "entity": 1
+                }
+            }
+            pipeline.append(stage)
+            pbh_filter = {"$match": {"pbehaviors": None}}
+
+            if self.has_active_pbh is True:
+                pbh_filter["$match"]["pbehaviors"] = {"$ne": []}
+            if self.has_active_pbh is False:
+                pbh_filter["$match"]["pbehaviors"] = {"$eq": []}
+
+            pipeline.append(pbh_filter)
+        self.has_active_pbh = None
+
     def get(
             self,
             tstart=None,
@@ -570,7 +661,9 @@ class AlertsReader(object):
             )
 
         if sort_key == 'v.duration':
-            sort_key = 'v.creation_date' 
+            sort_key = 'v.creation_date'
+        elif sort_key == 'v.current_state_duration':
+            sort_key = 'v.state.t'
 
         if lookups is None:
             lookups = []
@@ -618,15 +711,20 @@ class AlertsReader(object):
                 "$sort": {
                     sort_key: sort_dir
                 }
-            }, {
-                "$skip": skip
             }
         ]
+
+        self.add_pbh_filter(pipeline, filter_)
+
+        pipeline.append({
+                "$skip": skip
+            })
 
         if limit is not None:
             pipeline.append({"$limit": limit})
 
-        result = self.alarm_storage._backend.aggregate(pipeline, cursor={})
+        result = self.alarm_storage._backend.aggregate(pipeline, cursor={},
+                                                       **{"allowDiskUse": True})
 
         alarms = list(result)
         limited_total = len(alarms)  # Manual count is much faster than mongo's
@@ -640,8 +738,6 @@ class AlertsReader(object):
 
         first = 0 if limited_total == 0 else skip + 1
         last = 0 if limited_total == 0 else skip + limited_total
-
-        alarms = self._lookup(alarms, lookups)
 
         if not with_steps:
             for alarm in alarms:
@@ -743,7 +839,10 @@ class AlertsReader(object):
             }
         ]
 
-        alarms = self.alarm_storage._backend.aggregate(pipeline).get('result')
+        self.add_pbh_filter(pipeline, filter_)
+
+        alarms = self.alarm_storage._backend.aggregate(pipeline,
+                                                       **{"allowDiskUse": True}).get('result')
         alarms = self._lookup(alarms, ['pbehaviors'])
 
         alarm_dict = {}
