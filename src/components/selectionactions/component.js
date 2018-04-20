@@ -19,7 +19,7 @@ Ember.Application.initializer({
              */
             actionsMap: Ember.A([
                 {
-                    class: '',
+                    class: 'fa fa-pause',
                     mixin_name: 'bulk_pbehavior',
                     caption: 'Apply PBehavior',
 					rightName: "listalarm_pbehavior"
