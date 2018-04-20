@@ -1,18 +1,10 @@
-<template>
-
-  <div @click="onClick">
-    <transition name="reduce">
-      <div v-if="!isExpanded">
-        <slot name="reduced" :props="item"></slot>
-      </div>
-    </transition>
-    <transition name="expand">
-      <div v-if="!isExpanded">
-        <slot v-if="isExpanded" name="expanded" :props="item"></slot>
-      </div>
-    </transition>
-  </div>
-
+<template lang="pug">
+  div(id="content" @click="isExpanded = !isExpanded")
+    transition(name="expand" mode="out-in")
+      div(v-if="!isExpanded" key="reduced" id="b")
+        slot(name="reduced"  :props="item")
+      div(v-else key="expanded" id="a" )
+        slot(name="expanded" :props="item" )
 </template>
 
 <script>
@@ -24,31 +16,30 @@ export default {
     };
   },
   props: ['item'],
-  methods: {
-    onClick: () => {
-      console.log('lol');
-      this.isExpanded = !this.isExpanded;
-    },
-  },
 };
 </script>
 
 <style scoped>
-  .expand-enter-active {
-    animation: bounce-in .5s;
+  *, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
   }
-  .expand-leave-active {
-    animation: bounce-in .5s reverse;
+  .expand-enter-active, .expand-leave-active {
+    transition: opacity .01s ease;
   }
-  @keyframes bounce-in {
-    0% {
-      transform: scale(0);
-    }
-    50% {
-      transform: scale(1.5);
-    }
-    100% {
-      transform: scale(1);
-    }
+  #content {
+  }
+  #b{
+    border-bottom: 1px solid #eeeeee;
+  }
+  #a{
+    font-size: 100px;
+    box-sizing: border-box;
+    margin: 5px;
+    width: 100%;
+    box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
 </style>
