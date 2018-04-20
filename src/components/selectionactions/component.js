@@ -51,8 +51,6 @@ Ember.Application.initializer({
             ]),
 
 			canAction: function(rights, actionName){
-				console.error("Rights", rights)
-				console.error("ActionName", actionName)
 				if (rights.hasOwnProperty(actionName)) {
 					if (rights.get(actionName).checksum) {
 						return true
@@ -65,14 +63,10 @@ Ember.Application.initializer({
 			genAvailableAction: function() {
 				var actions = new Array()
 				for(i = 0; i < this.get("actionsMap").length; i++) {
-					console.error("rigthName", this.actionsMap[i]["rightName"])
-					console.error("Can he do this", this.get("canAction")(this.get("rights"), this.actionsMap[i]["rightName"]))
-
 					if (this.get("canAction")(this.get("rights"), this.actionsMap[i]["rightName"])) {
 						actions.push(this.actionsMap[i])
 					}
 				}
-				console.error("ACTIONS", actions)
 				this.set("availableAction", actions)
 			},
 
@@ -86,7 +80,6 @@ Ember.Application.initializer({
             init: function() {
                 this._super();
 				this.set("rights", this.get("_parentView._controller.login.rights"))
-				console.error("Rights ", this.get("rights"))
 				this.genAvailableAction()
             },
 
