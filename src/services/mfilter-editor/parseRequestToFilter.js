@@ -68,7 +68,7 @@ function ruleOperatorAndInput(rule) {
         break;
       }
       default: {
-        return null;
+        return parsedRule;
       }
     }
   }
@@ -105,7 +105,7 @@ export default function parseGroupToFilter(group) {
   parsedGroup.condition = condition;
 
   Object.values(group)[0].map((item) => {
-    if (Array.isArray(Object.values(item)[0].constructor)) {
+    if (Array.isArray(Object.values(item)[0])) {
       parsedGroup.groups.push(parseGroupToFilter(item));
     } else if (parseRuleToFilter(item) != null) {
       parsedGroup.rules.push(parseRuleToFilter(item));

@@ -26,7 +26,7 @@ export default {
     [types.CHANGE_TAB](state, payload) {
       state.activeTab = payload;
     },
-    [types.CHANGE_TAB](state, payload) {
+    [types.UPDATE_FILTER](state, payload) {
       state.filter = [parseGroupToFilter(payload)];
     },
   },
