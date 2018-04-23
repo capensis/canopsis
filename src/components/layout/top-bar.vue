@@ -1,7 +1,6 @@
 <template lang="pug">
     v-toolbar(
       dense
-      flat
       fixed
       clipped-left
       app

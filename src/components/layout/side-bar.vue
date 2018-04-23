@@ -5,31 +5,43 @@
     app
     :clipped="windowSize.x < 1264 ? false : true"
   )
-    v-list
-      v-list-tile
-        v-list-tile-action
-          v-icon home
-        v-list-tile-action
-          router-link(to='/') {{$t('common.home')}}
-      v-list-group(value='true')
-        v-list-tile(
-          slot='activator'
-        )
-          v-list-tile-title View Group 1
-        v-list-tile
-          v-list-tile-title SubView 1
-        v-list-tile
-          v-list-tile-title SubView 2
-      v-list-group(value='true')
-        v-list-tile(
-          slot='activator'
-        )
-          v-list-tile-title View Group 2
-        v-list-tile
-          v-list-tile-title SubView 1
-        v-list-tile
-          v-list-tile-title SubView 2
+    v-card
+      v-card-title
+        v-icon(
+          class='pr-2'
+        ) home
+        router-link(to='/') {{$t('common.home')}}
+    v-expansion-panel(
+      expand
+      focusable
+    )
+      v-expansion-panel-content
+        div(slot="header") View Group 1
+        v-card
+          v-card-text View 1
+        v-card
+          v-card-text View 2
+    v-expansion-panel(
+      expand
+      focusable
+    )
+      v-expansion-panel-content
+        div(slot="header") View Group 2
+        v-card
+          v-card-text View 1
+        v-card
+          v-card-text View 2
 
+      v-btn(
+        class='addBtn'
+        fab
+        dark
+        fixed
+        bottom
+        right
+        color="blue darken-4"
+      )
+        v-icon(dark) add
 </template>
 
 <script>
@@ -56,5 +68,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
