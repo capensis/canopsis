@@ -22,6 +22,7 @@
 from __future__ import unicode_literals
 from unittest import main
 from time import sleep
+import time
 
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
@@ -30,10 +31,21 @@ from canopsis.entitylink.manager import Entitylink
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.context_graph.manager import ContextGraph
 import unittest
 from canopsis.common import root_path
 import xmlrunner
 from base import BaseTest
+
+class LoggerMock():
+    def debug(self, *args, **kwargs):
+        pass
+    def info(self, *args, **kwargs):
+        pass
+    def warning(self, *args, **kwargs):
+        pass
+    def critical(self, *args, **kwargs):
+        pass
 
 
 class TestReader(BaseTest):
@@ -622,6 +634,35 @@ class TestReader(BaseTest):
         count = self.reader.count_alarms_by_period(day / 2, 3 * day / 2,
                                                    limit=1)
         self.assertEqual(count[0]['count'], 1)
+
+    def test__get_disable_entity(self):
+        event = {
+            'connector': '03-K64_Firefly',
+            'connector_name': 'serenity',
+            'component': 'Malcolm_Reynolds',
+            'output': 'the big red recall button',
+            'timestamp': int(time.time()) - 100,
+            "source_type": "component"
+        }
+        alarm_id = '/strawberry'
+        alarm = self.manager.make_alarm(
+            alarm_id,
+            event
+        )
+
+        context_manager = ContextGraph(logger=LoggerMock())
+        ent_id = context_manager.get_id(event)
+
+        entity = context_manager.create_entity_dict(ent_id,
+                                                    "inara",
+                                                    "component")
+        entity["enabled"] = False
+        context_manager._put_entities(entity)
+
+        alarms = self.reader.get(opened=True)
+        print(alarms)
+        self.assertEqual(len(alarms["alarms"]), 0)
+
 
 
 if __name__ == '__main__':
