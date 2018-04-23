@@ -1,19 +1,16 @@
 <template lang="pug">
   v-navigation-drawer(
-    :value='isOpen'
+    v-model='isOpen'
     absolute
     app
-    hide-overlay
-    temporary
-    stateless
-    clipped
+    :clipped="windowSize.x < 1264 ? false : true"
   )
     v-list
       v-list-tile
         v-list-tile-action
           v-icon home
         v-list-tile-action
-          router-link(to='/') Home
+          router-link(to='/') {{$t('common.home')}}
       v-list-group(value='true')
         v-list-tile(
           slot='activator'
@@ -39,9 +36,20 @@
 export default {
   name: 'SideBar',
   props: {
+    windowSize: {
+      type: Object,
+    },
+  },
+  computed: {
     isOpen: {
-      type: Boolean,
-      required: true,
+      get() {
+        return this.$store.state.app.isSideBarOpen;
+      },
+      set(state) {
+        if (state !== this.$store.state.app.isSideBarOpen) {
+          this.$store.dispatch('app/toggleSideBar');
+        }
+      },
     },
   },
 };

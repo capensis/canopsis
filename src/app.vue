@@ -1,14 +1,18 @@
 <template lang="pug">
   v-app#app
-    top-bar
-    side-bar(
-      :isOpen='isSideBarOpen'
+    v-layout(
+      v-resize='onResize'
     )
-    v-content
-      nav#nav
-        router-link(to="/") Home
-        router-link(to="/about") About
-      router-view
+      side-bar(
+        :windowSize='windowSize'
+      )
+      top-bar
+      v-content
+        //
+          v-btn(
+          @click='handleClick'
+          )
+        router-view
 </template>
 
 <script>
@@ -23,19 +27,25 @@ export default {
     SideBar,
   },
   data() {
-    const locales = [
-      { key: 'fr', text: 'Français' },
-      { key: 'en', text: 'English' },
-    ];
-
     return {
-      currentLocaleIndex: locales.find(({ key }) => key === this.$i18n.locale),
+      windowSize: {
+        x: 0,
+        y: 0,
+      },
     };
   },
   computed: {
     ...mapState({
       isSideBarOpen: state => state.app.isSideBarOpen,
     }),
+  },
+  methods: {
+    handleClick() {
+      // console.log(this.$store);
+    },
+    onResize() {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
+    },
   },
 };
 </script>

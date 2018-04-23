@@ -1,16 +1,20 @@
+const types = {
+  TOGGLE: 'TOGGLE',
+};
+
 export default {
   namespaced: true,
   state: {
     isSideBarOpen: false,
   },
   mutations: {
-    toggleSideBar(state) {
+    [types.TOGGLE](state) {
       state.isSideBarOpen = !state.isSideBarOpen;
     },
   },
   actions: {
-    toggleSideBar(context) {
-      context.commit('toggleSideBar');
+    toggleSideBar({ commit }) {
+      commit(types.TOGGLE);
     },
   },
 };
