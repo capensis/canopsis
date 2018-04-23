@@ -22,7 +22,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [APIs] the "enabled" flag on all entities is now active
 - [Engines] removed alarms caching in the Che engine to avoid  alarms duplication
 - [Rights management] : fixed a rights issue with the massive actions on a limited account
-
+- [Service weather] : fixed the components display to put long names on 2 lines instead of truncating it 
 
 ## Canopsis 2.6.1 - Due date: 2018-04-20
 **Not released due to regression**
