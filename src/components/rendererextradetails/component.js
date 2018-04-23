@@ -1,6 +1,8 @@
 Ember.Application.initializer({
     name: 'component-rendererextradetails',
+    after: ['DatesUtils'],
     initialize: function(container, application) {
+        var datesUtils = container.lookupFactory('utility:dates');
         var __ = Ember.String.loc;
 
         /**
@@ -80,6 +82,7 @@ Ember.Application.initializer({
                     return ['<center>',
                         '<b>' + __('Periodic behavior') + '</b><br/>',
                         this.get('value.pbehaviors').map(function(pbeh) {
+                            pbeh.rrule = pbeh.rrule || __('No reccurence');
                             return pbeh.name + ' <br/>'
                                 + self.dateFormat(pbeh.tstart) + ' - ' + self.dateFormat(pbeh.tstop) + ' <br/>'
                                 + pbeh.rrule + ' <br/>';
@@ -126,9 +129,7 @@ Ember.Application.initializer({
              */
             dateFormat: function (date) {
                 var mEpoch = parseInt(date);
-                if (mEpoch < 10000000000) mEpoch *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but JS uses milliseconds)
-                var dDate = new Date(mEpoch);
-                return moment(dDate).format('MM/DD/YY hh:mm:ss');
+                return datesUtils.timestamp2String(mEpoch,'f', true);
             },
         });
 

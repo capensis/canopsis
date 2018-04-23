@@ -757,7 +757,11 @@ Ember.Application.initializer({
                         success: function () {
                             console.log('pbehavior is sent');
                         },
-                        error: function () { console.error('Failure to send pbehavior'); }
+                        statusCode: {
+                            500: function () {
+                                console.error("Failure to send pbehavior");
+                            }
+                        }
                     });
 
                 });

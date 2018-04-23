@@ -18,5 +18,7 @@
   "Snooze": "Reporté",
   "Ticket declared": "Ticket déclaré",
   "Periodic behavior": "Comportement périodique",
-  "List periodic behaviors": "Lister les comportements périodiques"
+  "List periodic behaviors": "Lister les comportements périodiques",
+  "Apply PBehavior": "Appliquer un comportement périodique",
+  "No reccurence": "Pas de récurrence"
 }

@@ -344,8 +344,10 @@
 </div>
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-selectionactions"><div class="pull-left">
-    {{tr 'Selection'}} :
-    {{#each action in actionsMap}}
+	 {{#if availableAction}}
+	     {{tr 'Selection'}} :
+		 {{/if}}
+    {{#each action in availableAction}}
       <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
           <span {{bind-attr class=action.class}}></span>
           {{tr action.caption}}
@@ -557,6 +559,7 @@
 {{/component-rendererack}}</script>
 <script type="text/x-handlebars" data-template-name="_v_creation_date">{{timestamp value 'f'}}
 </script>
+<script type="text/x-handlebars" data-template-name="_v_current_state_duration">{{durationFromTimestamp value}}</script>
 <script type="text/x-handlebars" data-template-name="_v_duration">{{durationFromTimestamp value}}</script>
 <script type="text/x-handlebars" data-template-name="_v_extra_details">{{#component-rendererextradetails value=value}}
 {{/component-rendererextradetails}}</script>
