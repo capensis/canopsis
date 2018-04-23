@@ -1,7 +1,14 @@
 <template lang="pug">
   basic-list(:items="items")
-      h1(slot="row" slot-scope="item") {{item.props}}
-      p(slot="expandedRow" slot-scope="item") Bonjour
+    template(slot="header")
+      div B
+      div A
+    template(slot="row" scope="item")
+      div {{ item.props.a }}
+      div {{ item.props.b }}
+    template(slot="expandedRow" scope="item")
+      div {{ item.props.a }}
+      div {{ item.props.b }}
 </template>
 
 <script>
@@ -12,7 +19,7 @@ export default {
   components: { BasicList },
   data() {
     return {
-      items: ['a', 'b', 'c'],
+      items: [{ a: 1, b: 2 }, { a: 1, b: 2}],
     };
   },
 };
