@@ -254,12 +254,11 @@ Ember.Application.initializer({
                  */
                 sendAction: function (action) {
                     var me = this;
+					var alarm = Object.assign({}, me.get('alarm'));
+					console.error("ALARM = ", alarm)
                     if (action.name === 'pbehavior'){
 
                         var obj = Ember.Object.create({ 'crecord_type': 'pbehaviorform' });
-                        console.error('COUCOU', this.get('_parentView._controller'));
-                        var test = this.get('_parentView._parentView._controller');
-                        test.stopRefresh();
                         var confirmform = formsUtils.showNew('modelform', obj, {
                             title: 'Put a pbehavior on these elements ?'
                         });
@@ -282,7 +281,7 @@ Ember.Application.initializer({
                             }
                             payload.filter = {
                                 '_id': {
-                                    '$in': [me.get('alarm.d')]
+                                    '$in': [alarm.d]
                                 }
                             }
 
@@ -306,7 +305,7 @@ Ember.Application.initializer({
                         });
                         return
                     }
-                    var alarm = me.get('alarm');
+
                     this.sendAction('action', action, alarm);
                 },
             }
