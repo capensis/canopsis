@@ -192,13 +192,21 @@ Certains engines supportent des options au lancement :
 ```
 $ ./engine-che -h
 Usage of ./engine-che:
+  -createContext
+        enable context graph creation. disabled by default. WARNING: disable the old context-graph engine when using this.
   -d    debug
   -enrichContext
-        enable context graph enrichment. disabled by default.
+        enable context graph enrichment from event. disabled by default. WARNING: disable the old context-graph engine when using this.
+  -enrichExclude string
+        Coma separated list of fields that shall not be part of context enrichment.
+  -enrichInclude string
+        Coma separated list of the only fields that will be part of context enrichment. If present, -enrichExclude is ignored.
   -processEvent
-      enable event processing. enabled by default. (default true)
+        enable event processing. enabled by default. (default true)
   -publishQueue string
         Publish event to this queue. (default "Engine_event_filter")
+  -purge
+        purge consumer queue(s) before work
   -version
         version infos
 ```
