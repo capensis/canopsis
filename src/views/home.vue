@@ -1,6 +1,6 @@
 <template lang="pug">
   .home
-    img(src="../assets/logo.png")
+    //img(src="../assets/logo.png")
     hello-world(msg="Test props")
     MFilterEditor
 </template>

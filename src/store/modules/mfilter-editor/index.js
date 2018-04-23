@@ -1,9 +1,14 @@
-import { parseGroup2Filter, parseRule2Request, parseGroup2Request } from '@/services/mfilter-editor/parse';
+import parseFilterToRequest from '@/services/mfilter-editor/parseFilterToRequest';
+import parseGroupToFilter from '@/services/mfilter-editor/parseRequestToFilter';
+
+const types = {
+  CHANGE_TAB: 'CHANGE_TAB',
+  UPDATE_FILTER: 'UPDATE_FILTER',
+};
 
 export default {
   namespaced: true,
   state: {
-    request: {},
     filter: [{
       condition: '$or',
       groups: [],
@@ -14,36 +19,23 @@ export default {
   },
   getters: {
     filter2request(state) {
-      const request = {};
-
-      request[state.filter[0].condition] = [];
-
-      state.filter[0].rules.map((rule) => {
-        request[state.filter[0].condition].push(parseRule2Request(rule));
-        return request;
-      });
-      state.filter[0].groups.map((group) => {
-        request[state.filter[0].condition].push(parseGroup2Request(group));
-        return request;
-      });
-
-      return request;
+      return parseFilterToRequest(state.filter);
     },
   },
   mutations: {
-    changeActiveTab(state, payload) {
+    [types.CHANGE_TAB](state, payload) {
       state.activeTab = payload;
     },
-    updateFilter(state, payload) {
-      state.filter = [parseGroup2Filter(payload)];
+    [types.CHANGE_TAB](state, payload) {
+      state.filter = [parseGroupToFilter(payload)];
     },
   },
   actions: {
     changeActiveTab(context, activeTab) {
-      context.commit('changeActiveTab', activeTab);
+      context.commit(types.CHANGE_TAB, activeTab);
     },
     updateFilter(context, newRequest) {
-      context.commit('updateFilter', newRequest);
+      context.commit(types.UPDATE_FILTER, newRequest);
     },
   },
 };

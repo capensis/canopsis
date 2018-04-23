@@ -145,8 +145,4 @@ export default {
 </script>
 
 <style scoped>
-    .filterGroup {
-        min-width: 500px;
-        border: 1px solid lightgray;
-    }
 </style>

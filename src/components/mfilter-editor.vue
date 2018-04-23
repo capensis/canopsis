@@ -10,7 +10,7 @@
             @click='handleTabClick(1)'
           ) {{$t('m_filter_editor.tabs.advanced_editor')}}
 
-    template(v-if='activeTab == 0')
+    template(v-if='activeTab === 0')
       filter-group(
         initialGroup
         :index = 0
@@ -20,7 +20,7 @@
         :groups='filter[0].groups'
       )
 
-    template(v-if='activeTab == 1')
+    template(v-if='activeTab === 1')
       v-text-field(
         ref='input'
         v-model='inputValue'
@@ -71,12 +71,12 @@ export default {
       this.$store.dispatch('MFilterEditor/changeActiveTab', tab);
     },
     updateFilter() {
-      // TODO : BETTER ERROR MANAGEMENT
-      try {
-        this.$store.dispatch('MFilterEditor/updateFilter', JSON.parse(this.newRequest));
-      } catch (e) {
-        console.warn('parse error');
+      if (this.newRequest === '') {
+        this.$store.dispatch('MFilterEditor/updateFilter', JSON.parse(JSON.stringify(this.filter2request)));
+        return this;
       }
+      this.$store.dispatch('MFilterEditor/updateFilter', JSON.parse(this.newRequest));
+      return this;
     },
   },
 };
