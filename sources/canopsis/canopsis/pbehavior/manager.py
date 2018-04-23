@@ -31,6 +31,8 @@ from six import string_types
 from dateutil.rrule import rrulestr
 from pymongo import DESCENDING
 
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
@@ -183,6 +185,8 @@ class PBehaviorManager(object):
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
+
+        self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
 
         self.currently_active_pb = set()
 
@@ -349,6 +353,25 @@ class PBehaviorManager(object):
                 result[PBehaviorManager._UPDATE_FLAG]):
             return pbehavior.to_dict()
         return None
+
+    def upsert(self, pbehavior):
+        """
+        Creates or update the given pbehavior.
+
+        This function uses MongoStore/MongoCollection instead of Storage.
+
+        :param canopsis.models.pbehavior.PBehavior pbehavior:
+        :rtype: bool, dict
+        :returns: success, update result
+        """
+        r = self.pb_store.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
+
+        if r.get('updatedExisting', False) and r.get('nModified') == 1:
+            return True, r
+        elif r.get('updatedExisting', None) is False and r.get('nModified') == 0 and r.get('ok') == 1.0:
+            return True, r
+        else:
+            return False, r
 
     def delete(self, _id=None, _filter=None):
         """

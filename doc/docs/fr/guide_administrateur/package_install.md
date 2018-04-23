@@ -106,7 +106,6 @@ systemctl enable canopsis-engine@cleaner-cleaner_alerts.service
 systemctl enable canopsis-engine@cleaner-cleaner_events.service
 systemctl enable canopsis-engine@dynamic-context-graph.service
 systemctl enable canopsis-engine@event_filter-event_filter.service
-systemctl enable canopsis-engine@eventstore-eventstore.service
 systemctl enable canopsis-engine@linklist-linklist.service
 systemctl enable canopsis-engine@dynamic-pbehavior.service
 systemctl enable canopsis-engine@dynamic-perfdata.service
@@ -120,6 +119,11 @@ systemctl enable canopsis-engine@ticket-ticket.service
 systemctl enable canopsis-engine@dynamic-watcher.service
 
 systemctl enable canopsis-webserver.service
+```
+
+Pour un module CAT :
+```bash
+systemctl enable canopsis-engine-cat@task_blabla.service
 ```
 
 Quelques exemples de gestion des services avec systemd :
@@ -159,8 +163,8 @@ Pour le moment le nombre de processus lancés via `engine-launcher` est fixé da
 Pour changer le nombre d’instances :
 
 ```bash
-mkdir -p /etc/systemd/system/canopsis-engine@<module>-<name>
-cat > /etc/systemd/system/canopsis-engine@<module>-<name>/workers.conf << EOF
+mkdir -p /etc/systemd/system/canopsis-engine@<module>-<name>.service.d
+cat > /etc/systemd/system/canopsis-engine@<module>-<name>.service.d/workers.conf << EOF
 [Service]
 Environment=WORKERS=X
 EOF

@@ -2,6 +2,17 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
 
+## Canopsis 2.6.0 - Due date: 2018-04-18
+
+### Functional changes
+
+- [Alarms list] : columns can now be renamed by the user
+- [Alarms list] : pbehaviors can now be filtered
+- [Alarms list] : added rights management
+- [Alarms list] : Added "duration" and "current_state_duration" columns that display the total duration of the alarm and the duration of the current state of the alarm (respectively)
+- [setup] : replaced the `schema2db` and `canopsis-filldb` commands with the new Canopsinit command (**Warning: see UPGRADING_2.6.md document**)
+
+
 ## Canopsis 2.5.12 (Sprint 03.16) - Due date : 2018-03-16
 
 ### Functional changes

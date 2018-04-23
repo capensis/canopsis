@@ -41,6 +41,14 @@ Par défaut, les métriques sont processées au beat de l'engine Datametrie.
 
  * Ini : -> `etc/datametrie/datametrie.conf`
 
+ - *user* : datametrie user account
+ - *password* : datametrie password for previous user account
+ - *prefix* : begin of the datametrie url (before verb)
+ - *monitor_cache_length* : time in seconds before reloading the list of all known alarms
+ - *excluded_alarm_types* (optional) : comma separated list with AlarmType to ignore (in upper case)
+ - *http_proxy_url* (optional) : proxy url
+ - *https_proxy_url* (optional) : proxy url (for https)
+
 ### Fonctions
 
  - **process_metrics()**: récupère les infos par l'API et génère les events correspondants
@@ -50,7 +58,7 @@ Par défaut, les métriques sont processées au beat de l'engine Datametrie.
 
 #### Alarm_status example
 
-La description d'une alarme. Voila ce que peut donner l'api sur le service /Get_Current_Alarms_All_Monitors :
+La description d'une alarme. Voila ce que peut donner l'api sur le service `/Get_Current_Alarms_All_Monitors` :
 
 ```json
 {
@@ -69,7 +77,7 @@ La description d'une alarme. Voila ce que peut donner l'api sur le service /Get_
 
 #### Monitor example
 
-La description d'un moniteur. Voila ce que peut donner l'api sur le service /Get_Monitors :
+La description d'un moniteur. Voila ce que peut donner l'api sur le service `/Get_Monitors` :
 
 ```json
 {

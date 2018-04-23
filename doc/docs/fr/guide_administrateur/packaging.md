@@ -136,6 +136,8 @@ cd canopsis-cat
 
 ### Push
 
+(uniquement pour debian-9)
+
 ```bash
 docker push canopsis/canopsis-core:${tag}
 docker push canopsis/canopsis-cat:${tag}

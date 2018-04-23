@@ -125,10 +125,10 @@ class MongoCollection(object):
 
         except BSONError as ex:
             message = 'document error: {}'.format(ex)
-        except PyMongoError as ex:
-            message = 'pymongo error: {}'.format(ex)
         except OperationFailure as of_err:
             message = 'Operation failure while doing update: {}'.format(of_err)
+        except PyMongoError as ex:
+            message = 'pymongo error: {}'.format(ex)
         except TypeError as ex:
             message = []
             if not isinstance(query, dict):

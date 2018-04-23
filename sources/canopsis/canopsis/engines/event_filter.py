@@ -24,12 +24,13 @@ from canopsis.alerts.manager import Alerts
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger, get_routingkey
-from canopsis.old.account import Account
 from canopsis.old.mfilter import check
-from canopsis.old.storage import get_storage
 from canopsis.pbehavior.manager import PBehaviorManager
-
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from json import loads
+
+import copy
 
 
 class engine(Engine):
@@ -38,12 +39,12 @@ class engine(Engine):
     def __init__(self, *args, **kargs):
         super(engine, self).__init__(*args, **kargs)
 
-        account = Account(user="root", group="root")
-        self.storage = get_storage(logging_level=self.logging_level,
-                                   account=account)
+        self.mg_store = MongoStore.get_default()
+        self.collection = MongoCollection(self.mg_store.get_collection("object"))
         self.name = kargs['name']
         self.drop_event_count = 0
         self.pass_event_count = 0
+        self.__load_rules()
 
     def pre_run(self):
         self.beat()
@@ -237,11 +238,11 @@ class engine(Engine):
         return None
 
     def a_exec_job(self, event, action, name):
-        records = self.storage.find(
+        records = self.collection.find(
             {'crecord_type': 'job', '_id': action['job']}
         )
         for record in records:
-            job = record.dump()
+            job = copy.deepcopy(record)
             job['context'] = event
             publish(
                 publisher=self.amqp,
@@ -420,23 +421,17 @@ class engine(Engine):
         event['rk'] = event['_id'] = get_routingkey(event)
         return event
 
-    def beat(self, *args, **kargs):
-        """ Configuration reload for realtime ui changes handling """
 
-        self.configuration = {
-            'rules': [],
-            'default_action': self.find_default_action()
-        }
+    def __load_rules(self):
 
-        self.logger.debug(u'Reload configuration rules')
-        records = self.storage.find(
-            {'crecord_type': 'filter', 'enable': True},
-            sort='priority'
-        )
+        tmp_rules = []
+        records = self.collection.find(
+            {'crecord_type': 'filter', 'enable': True})
+        records.sort('priority', 1)
 
         for record in records:
 
-            record_dump = record.dump()
+            record_dump = copy.deepcopy(record)
             self.set_loaded(record_dump)
 
             try:
@@ -450,17 +445,30 @@ class engine(Engine):
 
             self.logger.debug(u'Loading record_dump:')
             self.logger.debug(record_dump)
-            self.configuration['rules'].append(record_dump)
+            tmp_rules.append(record_dump)
 
-        self.logger.info(
+        self.configuration = {
+            'rules': tmp_rules,
+            'default_action': self.find_default_action()
+            }
+
+    def beat(self, *args, **kargs):
+        """ Configuration reload for realtime ui changes handling """
+
+        self.logger.debug(u'Reload configuration rules')
+
+        self.__load_rules()
+
+        self.logger.debug(
             'Loaded {} rules'.format(len(self.configuration['rules']))
         )
         self.send_stat_event()
 
+
     def set_loaded(self, record):
 
         if 'run_once' in record and not record['run_once']:
-            self.storage.update(record['_id'], {'run_once': True})
+            self.collection.update({"_id": record['_id']}, {"$set": {'run_once': True}})
             self.logger.info(
                 'record {} has been run once'.format(record['_id'])
             )
@@ -506,9 +514,9 @@ class engine(Engine):
         default action is pass.
         """
 
-        records = self.storage.find({'crecord_type': 'defaultrule'})
+        records = self.collection.find_one({'crecord_type': 'defaultrule'})
         if records:
-            return records[0].dump()["action"]
+            return records[0]["action"]
 
         self.logger.debug(
             "No default action found. Assuming default action is pass"
