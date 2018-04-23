@@ -306,11 +306,11 @@
             "desc": ""
         },
         "view_current_alarms": {
-            "checksum": 15,
+            "checksum": 7,
             "desc": ""
         },
         "view_history_alarms": {
-            "checksum": 15,
+            "checksum": 7,
             "desc": ""
         }
     }
