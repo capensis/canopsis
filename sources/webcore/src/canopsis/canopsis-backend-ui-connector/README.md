@@ -95,7 +95,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/canopsis-backend-ui-conn
 
 ### Lint
 
-Tested on commit : [ERROR : The brick is not in a dedicated git repository].
+Tested on commit : 7acc10e.
 
 | Target | Status | Log |
 | ------ | ------ | --- |

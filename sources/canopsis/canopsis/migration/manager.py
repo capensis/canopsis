@@ -95,6 +95,7 @@ class MigrationTool(object):
                 init = True
             else:
                 print("Database already intialized. Updating...")
+                init = False
 
         if init is None and reinit_auth is False:
             data = {

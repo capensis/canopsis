@@ -29,7 +29,6 @@ Ember.Application.initializer({
         var adapter = ApplicationAdapter.extend({
 
             findQuery: function(store, model, query) {
-
                 return $.ajax({
                     method: "POST",
                     url: "/context",
@@ -41,7 +40,6 @@ Ember.Application.initializer({
                 var data = {};
                 var serializer = store.serializerFor(model.typeKey);
                 var url = '/context'
-
 
                 data = serializer.serializeIntoHash(
                     data, model, record, 'POST', { includeId: true }
@@ -68,7 +66,6 @@ Ember.Application.initializer({
 
             updateRecord: function(store, model, record) {
                 var id = record.get('_data._id');
-
                 var serializer = store.serializerFor(model.typeKey),
                     url = '/context',
                     data = {};
@@ -79,10 +76,21 @@ Ember.Application.initializer({
 
                 // rewrite id because it comes with 'genertedId' prefix
                 data._id = id
-                data.id = id
-                // set values that are not defind in the schima
-                data.infos = record._data.infos
-                data.links = record._data.links
+
+				var toUpdate = "disable_history"
+				if (data.enabled){
+					toUpdate = "enable_history"
+				}
+
+				if (data[toUpdate] === undefined) {
+					data[toUpdate] = []
+				}
+
+				data[toUpdate].push(Math.round(Date.now() / 1000))
+
+                // set values that are not defind in the schema
+                // data.infos = record._data.infos
+                // data.links = record._data.links
 
                 var query = {
                     _type: 'crudcontext',
