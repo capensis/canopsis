@@ -22,6 +22,7 @@
 from __future__ import unicode_literals
 
 import json
+import time
 
 from test_base import BaseApiTest, Method, HTTP
 
@@ -110,7 +111,7 @@ class TestAlertsAPI(BaseApiTest):
 
     def test_hide_resources(self):
         delete_all_alarms = self._send(
-            url=self.URL_BASE + '/api/v2/alerts/filters/{}',
+            url=self.URL_BASE + '/api/v2/alerts/{}',
             method=Method.delete
         )
         events = [
@@ -155,6 +156,7 @@ class TestAlertsAPI(BaseApiTest):
             data=json.dumps(events),
             method=Method.post
         )
+        time.sleep(0.2)
         alarms = self._send(
             url=self.URL_BASE + '/alerts/get-alarms?hide_resources=false',
             method=Method.get
@@ -165,6 +167,7 @@ class TestAlertsAPI(BaseApiTest):
             method=Method.get
         )
         self.assertEqual(alarms.json().get('data')[0].get('total'), 1)
+        self.assertEqual(alarms.json().get('data')[0].get('alarms')[0].get('d'), 'component')
         event_component_minor = {
                 "event_type": "check",
                 "connector": "connector",
@@ -178,7 +181,6 @@ class TestAlertsAPI(BaseApiTest):
             data=json.dumps(event_component_minor),
             method=Method.post
         )
-        import time
         time.sleep(0.2)
         alarms = self._send(
             url=self.URL_BASE + '/alerts/get-alarms?hide_resources=true',
