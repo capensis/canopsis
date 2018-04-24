@@ -19,9 +19,9 @@
             v-flex(xs12)
               v-toolbar(class='green darken-2 white--text')
                 v-toolbar-title {{ $t('common.login') }}
-            v-flex(xs12)
+            v-flex(xs12 py-2)
               v-form
-                v-flex(px-2)
+                v-flex(px-3)
                   v-text-field(
                     autofocus
                     clearable
@@ -29,7 +29,7 @@
                     name="username"
                     :label="$t('common.username')"
                   )
-                v-flex(px-2)
+                v-flex(px-3)
                   v-text-field(
                     clearable
                     color="blue darken-4"
@@ -37,7 +37,7 @@
                     name="password"
                     :label="$t('common.password')"
                   )
-                v-flex(xs2)
+                v-flex(xs2 px-2)
                   v-btn(
                     depressed
                     color="blue darken-4 white--text"
