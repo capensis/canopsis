@@ -163,6 +163,14 @@
         "listalarm_snoozeAlarm": {
             "checksum": 1,
             "desc": ""
+        },
+        "view_current_alarms": {
+            "checksum": 7,
+            "desc": ""
+        },
+        "view_history_alarms": {
+            "checksum": 7,
+            "desc": ""
         }
     }
 },{
@@ -192,6 +200,14 @@
             "desc": ""
         },
         "listalarm_fastAck": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "view_current_alarms": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "view_history_alarms": {
             "checksum": 1,
             "desc": ""
         }
@@ -228,6 +244,14 @@
         },
         "list_filters": {
             "checksum": 15,
+            "desc": ""
+        },
+        "view_current_alarms": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "view_history_alarms": {
+            "checksum": 1,
             "desc": ""
         }
     }
@@ -280,10 +304,26 @@
         "listalarm_changeState": {
             "checksum": 1,
             "desc": ""
+        },
+        "view_current_alarms": {
+            "checksum": 7,
+            "desc": ""
+        },
+        "view_history_alarms": {
+            "checksum": 7,
+            "desc": ""
         }
     }
 },{
     "_id": "Visualisation",
     "rights": {
+        "view_current_alarms": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "view_history_alarms": {
+            "checksum": 1,
+            "desc": ""
+        }
     }
 }]
