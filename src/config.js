@@ -6,6 +6,7 @@ export const DEFAULT_LOCALE = 'fr';
 
 export const API_ROUTES = {
   login: '/login',
+  alarmList: '/alerts/get-alarms',
 };
 
 export const NON_AUTH_API_ROUTES = [

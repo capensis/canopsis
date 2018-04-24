@@ -3,19 +3,16 @@
     h1.hello {{ $t('common.hello') }}
     h2 {{ msg }}
     v-container(fluid)
-      v-layout(row, wrap)
+      v-layout(row, wrap, v-for="item in items", :key="item._id")
         v-flex(xs6)
-          v-subheader Example
+          v-subheader {{item._id}}
         v-flex(xs6)
-          v-select(
-            :items="locales"
-            label="Select language"
-            v-model="currentLocaleIndex"
-            single-line
-          )
+          v-subheader {{item.v.display_name}}
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'HelloWorld',
   props: {
@@ -23,6 +20,9 @@ export default {
       type: String,
       required: true,
     },
+  },
+  mounted() {
+    this.$store.dispatch('entities/alarm/fetchList');
   },
   data() {
     const locales = [
@@ -34,6 +34,12 @@ export default {
       currentLocaleIndex: locales.find(({ key }) => key === this.$i18n.locale),
       locales,
     };
+  },
+  computed: {
+    ...mapGetters('entities/alarm', [
+      'items',
+      'meta',
+    ]),
   },
   watch: {
     currentLocaleIndex() {
