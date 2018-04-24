@@ -1,15 +1,15 @@
 <template lang="pug">
   div(id="content" @click="isExpanded = !isExpanded")
     transition(name="expand" mode="out-in")
-      div(v-if="!isExpanded" key="reduced" )
+      v-card(v-if="!isExpanded" key="reduced" )
         slot(name="reduced"  :props="item")
-      div(v-else key="expanded" :style="expandedStyle" )
+      v-card(v-else key="expanded" :style="expandedStyle" :raised="true" )
         slot(name="expanded" :props="item" )
 </template>
 
 <script>
 export default {
-  name: 'ListBrick',
+  name: 'BrickList',
   data() {
     return {
       isExpanded: false,

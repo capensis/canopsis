@@ -1,36 +1,66 @@
 <template lang="pug">
     ul
-        li
+        li(ref="header")
           slot(name="header")
         li(v-for="item in items" :item="item")
-          list-brick
-            div(slot="reduced")
+          brick-list
+            div(slot="reduced" :style="reducedStyle")
               slot(name="row" :props="item")
             div(slot="expanded")
               slot(name="expandedRow" :props="item")
 </template>
 
 <script>
-import ListBrick from './ListBrick.vue';
+import BrickList from './BrickList.vue';
 
 export default {
   name: 'BasicList',
-  components: { ListBrick },
+  components: { BrickList },
   props: ['items'],
+  data() {
+    return {
+      reducedStyle: {
+        overflow: 'auto',
+      },
+      headerStyle: {
+        marginBottom: '5px',
+        zIndex: '1',
+      },
+    };
+  },
+  created() {
+    document.addEventListener('scroll', this.stickyHeader);
+  },
+  destroyed() {
+    document.removeEventListener('scroll', this.stickyHeader);
+  },
+  methods: {
+    changePage() {
+      // On fait appel au store pour charger les nouvelles entités
+    },
+    stickyHeader() {
+      if (window.pageYOffset >= this.$refs.header.getBoundingClientRect().top) {
+        this.$refs.header.classList.add('sticky');
+      } else {
+        this.$refs.header.classList.remove('sticky');
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
+  * {
+    box-sizing:border-box;
+  }
   ul {
    position: relative;
-   text-align: center;
-   margin: 20%;
    list-style-type: none;
-   box-shadow:  0px 1px 5px 0px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-    0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+   height: 100%;
 }
-  ul:nth-child(2){
-    background: blue;
+  .sticky {
+    position: fixed;
+    top: 0;
+    z-index: 1;
   }
 </style>
