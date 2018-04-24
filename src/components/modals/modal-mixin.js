@@ -1,15 +1,9 @@
-import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-export default WrappedComponent => Vue.extend({
-  ...WrappedComponent,
-
+export default {
   data() {
-    const data = WrappedComponent.data ? WrappedComponent.data() : {};
-
     return {
       opened: false,
-      ...data,
     };
   },
 
@@ -22,8 +16,6 @@ export default WrappedComponent => Vue.extend({
       modalComponent: 'component',
       modalConfig: 'config',
     }),
-
-    ...WrappedComponent.computed,
   },
 
   methods: {
@@ -40,15 +32,11 @@ export default WrappedComponent => Vue.extend({
         }
       }, 300); // TODO: see it
     },
-
-    ...WrappedComponent.methods,
   },
 
   watch: {
     modalComponent(value) {
       this.opened = value === this.$options.name;
     },
-
-    ...WrappedComponent.watch,
   },
-});
+};

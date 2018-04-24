@@ -38,45 +38,21 @@
 <script>
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
 
-import ModalHOC from './modal-hoc';
+import ModalMixin from './modal-mixin';
 
-export default ModalHOC({
+export default {
   name: 'add-ack-event',
+  mixins: [ModalMixin],
   components: {
     AlarmGeneralTable,
   },
   data() {
     return {
+      showValidationErrors: false,
       form: {
         ticket: '',
         output: '',
         ack_resources: false,
-      },
-      showValidationErrors: false,
-      table: {
-        headers: [
-          {
-            text: 'author',
-            sortable: false,
-          },
-          {
-            text: 'connector',
-            sortable: false,
-          },
-          {
-            text: 'component',
-            sortable: false,
-          },
-          {
-            text: 'resource',
-            sortable: false,
-          },
-        ],
-        items: [
-          {
-            name: 'something',
-          },
-        ],
       },
     };
   },
@@ -105,5 +81,5 @@ export default ModalHOC({
       });
     },
   },
-});
+};
 </script>

@@ -26,10 +26,11 @@
 <script>
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
 
-import ModalHOC from './modal-hoc';
+import ModalMixin from './modal-mixin';
 
-export default ModalHOC({
+export default {
   name: 'add-cancel-event',
+  mixins: [ModalMixin],
   components: {
     AlarmGeneralTable,
   },
@@ -49,5 +50,5 @@ export default ModalHOC({
       }
     },
   },
-});
+};
 </script>

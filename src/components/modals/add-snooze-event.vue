@@ -29,10 +29,11 @@
 <script>
 import moment from 'moment';
 
-import ModalHOC from './modal-hoc';
+import ModalMixin from './modal-mixin';
 
-export default ModalHOC({
+export default {
   name: 'add-snooze-event',
+  mixins: [ModalMixin],
   data() {
     const availableTypes = [
       { key: 'seconds', text: 'common.times.second' },
@@ -66,5 +67,5 @@ export default ModalHOC({
       }
     },
   },
-});
+};
 </script>

@@ -24,10 +24,11 @@
 </template>
 
 <script>
-import ModalHOC from './modal-hoc';
+import ModalMixin from './modal-mixin';
 
-export default ModalHOC({
+export default {
   name: 'add-change-state-event',
+  mixins: [ModalMixin],
   data() {
     return {
       form: {
@@ -45,5 +46,5 @@ export default ModalHOC({
       }
     },
   },
-});
+};
 </script>
