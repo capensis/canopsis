@@ -127,7 +127,7 @@ export CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost/canopsis"
 export CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost/canopsis"
 export CPS_REDIS_URL="redis://nouser:dbpassword@host:port/0"
 export CPS_INFLUX_URL="http://cpsinflux:canopsis@host:8086"
-export CPS_FRONT_URL="http://host:8082"
+export CPS_FRONT_URL="http://root:root@host:8082"
 export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/default_configuration.toml"
 ```
 
