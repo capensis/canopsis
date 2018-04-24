@@ -1,22 +1,51 @@
 <template lang="pug">
-  v-dialog(:value="opened", @input="hideModal", max-width="700")
+  v-dialog(:value="opened", @input="hideModal", max-width="700", lazy)
     v-form(@submit.prevent="submit")
       v-card
         v-card-title
           span.headline {{ $t('modals.addChangeStateEvent.title') }}
         v-card-text
-          v-container
-            v-layout(row)
-              v-text-field(
-              :label="$t('modals.addChangeStateEvent.output')",
-              :error-messages="errors.collect('output')",
-              v-model="form.output",
-              v-validate="'required'",
-              data-vv-name="output"
-              )
-            v-layout(row)
-              date-time-picker(v-model="form.dateTime")
-
+          v-layout(row)
+            v-text-field(
+            :label="$t('modals.addChangeStateEvent.output')",
+            :error-messages="errors.collect('output')",
+            v-model="form.output",
+            v-validate="'required'",
+            data-vv-name="output"
+            )
+          v-layout(row)
+            date-time-picker(v-model="form.dateTimeStart")
+          v-layout(row)
+            date-time-picker(v-model="form.dateTimeEnd")
+          v-layout(row)
+            v-tabs(v-model="activeTab")
+              v-tab(href="#simple") Simple
+              v-tab(href="#advanced") Advanced
+              v-tab(href="#text-input") Text input
+              v-tab-item(id="simple")
+                div
+                  div
+                    v-select(
+                    :items="items",
+                    label="Select"
+                    )
+                  div
+                    date-time-picker(v-model="form.dateTimeEnd")
+                  div
+                    v-select(
+                    label="Select",
+                    :items="itemsSecond",
+                    multiple,
+                    chips
+                    )
+                  div
+                    v-text-field(type="number")
+                  div
+                    v-text-field(type="number")
+              v-tab-item(id="advanced")
+                div Advanced
+              v-tab-item(id="text-input")
+                div Text input
         v-card-actions
           v-btn(type="submit") {{ $t('common.actions.saveChanges') }}
 </template>
@@ -37,17 +66,31 @@ export default {
 
     return {
       menu: false,
+      activeTab: 'simple',
       form: {
         name: '',
-        dateTime: now,
+        dateTimeStart: now,
+        dateTimeEnd: now,
       },
-      value: 'date',
+      items: [
+        'Secondly',
+        'Minutely',
+        'Hourly',
+        'Daily',
+        'Weekly',
+        'Monthly',
+        'Yearly',
+      ],
+      itemsSecond: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
+      ],
     };
-  },
-  computed: {
-    fullDate() {
-      return `${this.form.date} ${this.form.time}`;
-    },
   },
   methods: {
     ok() {
@@ -60,23 +103,3 @@ export default {
   },
 };
 </script>
-
-<style>
-  .tabs__container--centered .tabs__div,
-  .tabs__container--fixed-tabs .tabs__div,
-  .tabs__container--icons-and-text .tabs__div {
-    min-width: 140px;
-  }
-
-  .menu__content {
-    max-width: 100%;
-  }
-
-  .dropdown-footer, .menu__content {
-    background-color: #fff;
-  }
-
-  .date-picker-table {
-    height: 246px;
-  }
-</style>

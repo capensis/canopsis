@@ -1,11 +1,13 @@
 <template lang="pug">
   v-menu(
-  left
-  right
-  transition="slide-y-transition"
-  ref="menu",
+  content-class="date-time-picker",
+  transition="slide-y-transition",
   v-model="opened",
+  ref="menu",
   :close-on-content-click="false",
+  left,
+  right,
+  lazy
   )
     v-text-field(
     readonly,
@@ -18,7 +20,7 @@
     )
     .picker__title.primary.text-xs-center
       span.subheading {{ dateTimeString }}
-    v-tabs(v-model="activeTab", centered, hide-slider)
+    v-tabs(v-model="activeTab", centered)
       v-tab(href="#date")
         v-icon date_range
       v-tab(href="#time")
@@ -92,3 +94,25 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .date-time-picker {
+    .tabs__container--centered .tabs__div,
+    .tabs__container--fixed-tabs .tabs__div,
+    .tabs__container--icons-and-text .tabs__div {
+      min-width: 140px;
+    }
+
+    .menu__content {
+      max-width: 100%;
+    }
+
+    .dropdown-footer, &.menu__content {
+      background-color: #fff;
+    }
+
+    .date-picker-table {
+      height: 246px;
+    }
+  }
+</style>
