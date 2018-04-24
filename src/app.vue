@@ -1,7 +1,19 @@
 <template lang="pug">
   v-app#app
-    #nav
+    //#nav
       router-link(to="/") Home
       router-link(to="/about") About
-    router-view
+    //router-view
+    login
 </template>
+
+<script>
+import Login from '@/views/login.vue';
+
+export default {
+  name: 'app',
+  components: {
+    Login,
+  },
+};
+</script>
