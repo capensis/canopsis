@@ -430,6 +430,13 @@
         "desc": "Rights on listalarm: snooze alarm"
     },
     {
+        "_id" : "listalarm_listPbehavior",
+        "loader_id" : "listalarm_listPbehavior",
+        "crecord_name" : "listalarm_listPbehavior",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: list pbehavior"
+    },
+    {
         "_id" : "view_current_alarms",
         "loader_id" : "view_current_alarms",
         "crecord_type" : "action",
