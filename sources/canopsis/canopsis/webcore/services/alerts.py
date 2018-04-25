@@ -29,6 +29,7 @@ from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+import json
 
 
 def exports(ws):
@@ -319,3 +320,13 @@ def exports(ws):
         ws.logger.info('Delete alarm-filter : {}'.format(entity_id))
 
         return gen_json(am.alarm_filters.delete_filter(entity_id))
+
+    @ws.application.delete(
+        '/api/v2/alerts/<mfilter>'
+    )
+    def delete_filter(mfilter):
+        """
+        :param str mfilter: mongo filter
+        :rtype: dict
+        """
+        return gen_json(ar.alarm_storage._backend.remove(json.loads(mfilter)))
