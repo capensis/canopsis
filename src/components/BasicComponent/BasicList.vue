@@ -1,7 +1,8 @@
 <template lang="pug">
     ul
         li(ref="header")
-          slot(name="header")
+          sticky-wrapper(keep-space)
+            slot(name="header")
         li(v-for="item in items" :item="item")
           brick-list
             div(slot="reduced" :style="reducedStyle")
@@ -11,11 +12,12 @@
 </template>
 
 <script>
+import StickyWrapper from './StickyWrapper.vue';
 import BrickList from './BrickList.vue';
 
 export default {
   name: 'BasicList',
-  components: { BrickList },
+  components: { BrickList, StickyWrapper },
   props: ['items'],
   data() {
     return {
@@ -28,22 +30,9 @@ export default {
       },
     };
   },
-  created() {
-    document.addEventListener('scroll', this.stickyHeader);
-  },
-  destroyed() {
-    document.removeEventListener('scroll', this.stickyHeader);
-  },
   methods: {
     changePage() {
       // On fait appel au store pour charger les nouvelles entités
-    },
-    stickyHeader() {
-      if (window.pageYOffset >= this.$refs.header.getBoundingClientRect().top) {
-        this.$refs.header.classList.add('sticky');
-      } else {
-        this.$refs.header.classList.remove('sticky');
-      }
     },
   },
 };
