@@ -2,9 +2,17 @@
   <div class="actions-parent" style="display:flex">
 
     {{#each action in availableActions}}
-            <button {{action 'sendAction' action}} {{bind-attr title=action.translation}} type="button" class="btn btn-xs btn-default">
-                <i {{bind-attr class=action.class}}></i>
-            </button>
+            {{#if action.isPbhList}}
+                  {{#component-tooltip content="List periodic behaviors"}}
+                      <button {{bind-attr data-target=pBehaviorListActionIdHash}} data-toggle="modal" type="button" class="btn btn-xs btn-default">
+                          <i class='fa fa-list'></i>
+                      </button>
+                  {{/component-tooltip}}
+            {{else}}
+                <button {{action 'sendAction' action}} {{bind-attr title=action.translation}} type="button" class="btn btn-xs btn-default">
+                    <i {{bind-attr class=action.class}}></i>
+                </button>
+            {{/if}}
     {{/each}}
 
     {{#if hasLinks}}
