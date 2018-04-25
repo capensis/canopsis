@@ -5,7 +5,7 @@
     },
 	"categories": [{
 		"title": "General",
-		"keys":["name", "type"]
+		"keys":["name", "type", "enabled"]
 	},{
 		"title": "Depends",
 		"keys": ["depends"]
@@ -14,25 +14,48 @@
 		"keys": ["impact"]
 	}],
 	"properties": {
-		"name":{	
+		"name":{
 			"type": "string"
 		},
 		"type": {
 			"type": "string"
 		},
-        "depends": {
-		    "type": "array",
-		    "items": {
-			    "type": "string"
+		"enabled": {
+			"type": "boolean"
+		},
+		"depends": {
+			"type": "array",
+			"items": {
+				"type": "string"
 			},
 			"reorderable": true
-        },
-        "impact": {
-		    "type": "array",
-		    "items": {
-			    "type": "string"
+		},
+		"impact": {
+			"type": "array",
+			"items": {
+				"type": "string"
 			},
 			"reorderable": true
+		},
+		"enable_history": {
+			"type": "array",
+			"items": {
+				"type": "integer"
+			},
+			"reorderable": true
+		},
+		"disable_history": {
+			"type": "array",
+			"items": {
+				"type": "integer"
+			},
+			"reorderable": true
+		},
+		"infos": {
+			"type": "object"
+		},
+		"measurements": {
+			"type": "object"
 		}
 	}
 }

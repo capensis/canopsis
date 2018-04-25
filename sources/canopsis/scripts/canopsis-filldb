@@ -25,7 +25,8 @@ from canopsis.migration.manager import MigrationTool
 if __name__ == '__main__':
     parser = ArgumentParser(description='Canopsis Migration Tool')
     parser.add_argument('--yes', dest='yes', action='store_true')
+    parser.add_argument('--authorize-reinit', dest='reinit', action='store_true')
     args = parser.parse_args()
 
     mgr = MigrationTool()
-    mgr.fill(yes=args.yes)
+    mgr.fill(yes=args.yes, reinit_auth=args.reinit)
