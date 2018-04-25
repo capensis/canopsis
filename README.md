@@ -284,3 +284,10 @@ import "git.canopsis.net/canopsis/go-revolution/canopsis"
 ```bash
 make build_docker TAG+[TAG]
 ```
+
+## Monter un environnement de développement sous docker
+
+A la racine du projet, exécuter : 
+
+
+`docker-compose up`
