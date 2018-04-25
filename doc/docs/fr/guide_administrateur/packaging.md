@@ -141,6 +141,8 @@ cd canopsis-cat
 ```bash
 docker push canopsis/canopsis-core:${tag}
 docker push canopsis/canopsis-cat:${tag}
+docker push canopsislcanopsis-prov:{tag}
+docker push canopsislcanopsis-cat-prov:{tag}
 ```
 
 ### Nettoyage
