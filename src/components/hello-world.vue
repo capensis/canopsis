@@ -11,7 +11,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
 
 export default {
   name: 'HelloWorld',
@@ -22,7 +24,7 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch('entities/alarm/fetchList');
+    this.fetchAlarmList();
   },
   data() {
     const locales = [
@@ -36,10 +38,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('entities/alarm', [
+    ...mapGetters([
       'items',
       'meta',
     ]),
+  },
+  methods: {
+    ...mapActions({
+      fetchAlarmList: 'fetchList',
+    }),
   },
   watch: {
     currentLocaleIndex() {
