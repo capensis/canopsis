@@ -3,12 +3,12 @@
         li(ref="header")
           sticky-wrapper(keep-space)
             slot(name="header")
-        li(v-for="item in items" :item="item")
+        li(v-for="item in items", :item="item")
           brick-list
-            div(slot="reduced" :style="reducedStyle")
-              slot(name="row" :props="item")
+            div(slot="reduced", :style="reducedStyle")
+              slot(name="row", :props="item")
             div(slot="expanded")
-              slot(name="expandedRow" :props="item")
+              slot(name="expandedRow", :props="item")
 </template>
 
 <script>
