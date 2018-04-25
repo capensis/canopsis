@@ -5,9 +5,10 @@ export const AUTH_TOKEN_KEY = 'access-token';
 export const DEFAULT_LOCALE = 'fr';
 
 export const API_ROUTES = {
-  login: '/login',
+  auth: '/auth',
+  currentUser: '/account/me',
 };
 
 export const NON_AUTH_API_ROUTES = [
-  API_ROUTES.login,
+  API_ROUTES.auth,
 ];

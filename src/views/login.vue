@@ -26,6 +26,7 @@
                     autofocus
                     clearable
                     color="blue darken-4"
+                    v-model='formData.username'
                     name="username"
                     :label="$t('common.username')"
                   )
@@ -33,12 +34,14 @@
                   v-text-field(
                     clearable
                     color="blue darken-4"
+                    v-model='formData.password'
                     type="password"
                     name="password"
                     :label="$t('common.password')"
                   )
                 v-flex(xs2 px-2)
                   v-btn(
+                    @click='handleSubmit'
                     depressed
                     color="blue darken-4 white--text"
                   ) {{ $t('common.submit') }}
@@ -47,6 +50,19 @@
 <script>
 export default {
   name: 'login-page',
+  data() {
+    return {
+      formData: {
+        username: '',
+        password: '',
+      },
+    };
+  },
+  methods: {
+    handleSubmit() {
+      this.$store.dispatch('auth/login', { username: this.formData.username, password: this.formData.password });
+    },
+  },
 };
 </script>
 
