@@ -1,14 +1,14 @@
 <template lang="pug">
     ul
-        li(ref="header")
-          sticky-wrapper(keep-space)
-            slot(name="header")
-        li(v-for="item in items", :item="item")
-          brick-list
-            div(slot="reduced", :style="reducedStyle")
-              slot(name="row", :props="item")
-            div(slot="expanded")
-              slot(name="expandedRow", :props="item")
+      li(ref="header" class='header')
+        sticky-wrapper()
+          slot(name="header")
+      li(v-for="item in items", :item="item")
+        brick-list
+          div(slot="reduced", :style="reducedStyle")
+            slot(name="row", :props="item")
+          div(slot="expanded")
+            slot(name="expandedRow", :props="item")
 </template>
 
 <script>
@@ -46,9 +46,11 @@ export default {
    position: relative;
    list-style-type: none;
   }
-  .sticky {
-    position: fixed;
-    top: 0;
-    z-index: 1;
+  .header {
+    border-bottom: 1px solid gray;
+    background-color: white;
+    position: sticky;
+    top: 50px;
+    z-index: 500;
   }
 </style>

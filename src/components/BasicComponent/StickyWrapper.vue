@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       height: 0,
-      hasSticky: false,
+      hasSticky: true,
     };
   },
 
@@ -35,9 +35,9 @@ export default {
     stickyStyle() {
       if (this.hasSticky) {
         return {
-          top: 0,
-          position: 'fixed',
-          'z-index': 100,
+          top: '50px',
+          position: 'sticky',
+          'z-index': 1,
         };
       }
 

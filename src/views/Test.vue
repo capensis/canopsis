@@ -1,29 +1,29 @@
 <template lang="pug">
   div
-      basic-list(:items="items")
-        template(slot="header")
-          tr(class="container")
-              th Connector
-              th Component
-              th Resource
-              th Output
-              th Last Update Date
-              th
-        template(slot="row" slot-scope="item")
-          tr(class="container")
-            td {{ item.props.v.connector}}
-            td {{ item.props.v.component }}
-            td {{ item.props.v.resource}}
-            td {{ item.props.v.initial_output}}
-            td {{ item.props.v.last_update_date }}
-            td
-              actions-panel(class="actions")
-        template(slot="expandedRow" slot-scope="item")
-          tr(class="container")
-            td {{ item.props.infos }}
-            td
-              actions-panel(class="actions")
-      //v-pagination(:length="nbEntitiesToDisplay" @input="changePage")
+    basic-list(:items="items")
+      template(slot="header")
+        tr(class="container")
+            th Connector
+            th Component
+            th Resource
+            th Output
+            th Last Update Date
+            th
+      template(slot="row" slot-scope="item")
+        tr(class="container")
+          td {{ item.props.v.connector}}
+          td {{ item.props.v.component }}
+          td {{ item.props.v.resource}}
+          td {{ item.props.v.initial_output}}
+          td {{ item.props.v.last_update_date }}
+          td
+            actions-panel(class="actions")
+      template(slot="expandedRow" slot-scope="item")
+        tr(class="container")
+          td {{ item.props.infos }}
+          td
+            actions-panel(class="actions")
+    //v-pagination(:length="nbEntitiesToDisplay" @input="changePage")
 </template>
 
 <script>
