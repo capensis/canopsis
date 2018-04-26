@@ -159,6 +159,8 @@ su - canopsis -c "hypcontrol start"
 Pour pouvoir utiliser docker compose, il faut préalablement construire l'image docker de compatibilité, ainsi que les images Docker des engines en Go.
 
 ```bash
+source .env
+
 # engines go latest
 make docker_build
 
@@ -170,6 +172,11 @@ make engines_build
 
 # ou avec tag custom
 make engines_build TAG=develop
+```
+
+Pour que le provisionning soit complet (reinit), il faut supprimer le volume mongo et perdre toutes les données:
+```bash
+docker volume rm go-revolution_mongodbdata
 ```
 
 ### RabbitMQ
@@ -278,3 +285,10 @@ import "git.canopsis.net/canopsis/go-revolution/canopsis"
 ```bash
 make build_docker TAG+[TAG]
 ```
+
+## Monter un environnement de développement sous docker
+
+A la racine du projet, exécuter : 
+
+
+`docker-compose up`
