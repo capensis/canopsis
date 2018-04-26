@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(id="content" @click="isExpanded = !isExpanded")
+  div(id="content" @click.prevent="onClick")
     transition(name="expand" mode="out-in")
       v-card(v-if="!isExpanded" key="reduced" )
         slot(name="reduced"  :props="item")
@@ -14,9 +14,15 @@ export default {
     return {
       isExpanded: false,
       expandedStyle: {
-        margin: '5px',
+        margin: '15px',
       },
     };
+  },
+  methods: {
+    onClick() {
+      const selection = window.getSelection();
+      if (selection.toString().length === 0) { this.isExpanded = !this.isExpanded; }
+    },
   },
   props: ['item'],
 };

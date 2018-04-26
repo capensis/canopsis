@@ -45,8 +45,7 @@ export default {
   ul {
    position: relative;
    list-style-type: none;
-   height: 100%;
-}
+  }
   .sticky {
     position: fixed;
     top: 0;
