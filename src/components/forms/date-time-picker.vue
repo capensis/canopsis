@@ -8,18 +8,22 @@
   left,
   right,
   lazy
+  max-width="290px"
   )
-    v-text-field(
-    readonly,
-    slot="activator",
-    :label="$t('modals.addChangeStateEvent.output')",
-    :error-messages="errors.collect('date')",
-    v-model="dateTimeString",
-    v-validate="'required'",
-    data-vv-name="date"
-    )
+    div(slot="activator")
+      v-text-field(
+      readonly,
+      :label="label",
+      :error-messages="name ? errors.collect(name) : []",
+      :value="dateTimeString",
+      v-validate="rules",
+      :data-vv-name="name",
+      data-vv-validate-on="none",
+      :append-icon="clearable ? 'close' : ''",
+      :append-icon-cb="clear"
+      )
     .picker__title.primary.text-xs-center
-      span.subheading {{ dateTimeString }}
+      span.subheading {{ dateTimeString || '--/--/---- --:--' }}
     v-tabs(v-model="activeTab", centered)
       v-tab(href="#date")
         v-icon date_range
@@ -47,40 +51,66 @@
 import moment from 'moment';
 
 export default {
+  inject: ['$validator'],
   props: {
-    value: {
-      type: Object,
-      default() {
-        return moment();
-      },
-    },
+    clearable: Boolean,
+    value: Date,
+    label: String,
+    name: String,
+    rules: String,
     format: {
       type: String,
       default: 'DD/MM/YYYY HH:mm',
     },
   },
   data() {
+    const value = this.value ? moment(this.value) : null;
+
     return {
       opened: false,
       activeTab: 'date',
-      dateTimeObject: this.value,
-      dateString: this.value.format('YYYY-MM-DD'),
-      timeString: this.value.format('HH:mm'),
+      dateTimeObject: value,
+      dateString: value ? value.format('YYYY-MM-DD') : '',
+      timeString: value ? value.format('HH:mm') : '',
     };
   },
   computed: {
     dateTimeString() {
-      return this.dateTimeObject.format(this.format);
+      return this.dateTimeObject ? this.dateTimeObject.format(this.format) : this.dateTimeObject;
     },
   },
   methods: {
     updateDateTimeObject() {
-      this.dateTimeObject = moment(`${this.dateString} ${this.timeString}`);
+      if (!this.timeString) {
+        this.timeString = '00:00';
+      }
+
+      this.dateTimeObject = moment(`${this.dateString} ${this.timeString}`, 'YYYY-MM-DD HH:mm');
+
+      this.$emit('input', this.dateTimeObject.toDate());
+
+      this.validate();
+    },
+    clear() {
+      this.dateTimeObject = null;
+      this.dateString = '';
+      this.timeString = '';
 
       this.$emit('input', this.dateTimeObject);
+
+      this.validate();
     },
     submit() {
-      this.$refs.menu.save('asd');
+      this.validate();
+
+      this.$refs.menu.save();
+    },
+    validate() {
+      if (this.name && this.rules) {
+        this.$nextTick(async () => {
+          await this.$validator.validate(this.name);
+        });
+      }
     },
   },
   watch: {
