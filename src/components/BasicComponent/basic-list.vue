@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import StickyWrapper from './StickyWrapper.vue';
-import BrickList from './BrickList.vue';
+import StickyWrapper from './sticky-wrapper.vue';
+import BrickList from './brick-list.vue';
 
 export default {
   name: 'BasicList',

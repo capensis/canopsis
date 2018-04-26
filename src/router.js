@@ -3,7 +3,7 @@ import Router from 'vue-router';
 
 import Home from './views/home.vue';
 import About from './views/about.vue';
-import Test from './views/Test.vue';
+import Context from './views/context.vue';
 
 Vue.use(Router);
 
@@ -21,9 +21,9 @@ export default new Router({
       component: About,
     },
     {
-      path: '/test',
-      name: 'test',
-      component: Test,
+      path: '/context',
+      name: 'context',
+      component: Context,
     },
   ],
 });

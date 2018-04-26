@@ -1,61 +1,14 @@
 <template lang="pug">
-  div
-    basic-list(:items="items")
-      template(slot="header")
-        tr(class="container")
-            th Connector
-            th Component
-            th Resource
-            th Output
-            th Last Update Date
-            th
-      template(slot="row" slot-scope="item")
-        tr(class="container")
-          td {{ item.props.v.connector}}
-          td {{ item.props.v.component }}
-          td {{ item.props.v.resource}}
-          td {{ item.props.v.initial_output}}
-          td {{ item.props.v.last_update_date }}
-          td
-            actions-panel(class="actions")
-      template(slot="expandedRow" slot-scope="item")
-        tr(class="container")
-          td {{ item.props.infos }}
-          td
-            actions-panel(class="actions")
+    context-table
     //v-pagination(:length="nbEntitiesToDisplay" @input="changePage")
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
-
-
-import BasicList from '../components/BasicComponent/BasicList.vue';
-import ActionsPanel from '../components/BasicComponent/ActionsPanel.vue';
+import ContextTable from '@/components/Context/context-table.vue';
 
 export default {
-  name: 'Test',
-  components: { ActionsPanel, BasicList },
-  mounted() {
-    this.fetchList();
-  },
-  data() {
-    return {
-      currentPage: 1,
-      actionPanelSize: 10,
-    };
-  },
-  computed: {
-    ...mapGetters([
-      'items',
-      'meta',
-    ]),
-  },
-  methods: {
-    ...mapActions(['fetchList']),
-  },
+  name: 'Context',
+  components: { ContextTable },
 };
 </script>
 
