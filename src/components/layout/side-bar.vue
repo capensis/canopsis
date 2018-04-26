@@ -1,17 +1,17 @@
 <template lang="pug">
   v-navigation-drawer(
-    v-model='isOpen'
-    absolute
-    app
+    v-model="isOpen",
+    absolute,
+    app,
     :clipped="windowSize.x < 1264 ? false : true"
   )
       v-card(
         flat
       )
       v-expansion-panel(
-        class='panel'
-        expand
-        focusable
+        class="panel",
+        expand,
+        focusable,
       )
         v-expansion-panel-content
           div(slot="header") View Group 1
@@ -21,9 +21,9 @@
             v-card-text View 2
       v-divider
       v-expansion-panel(
-        class='panel'
-        expand
-        focusable
+        class="panel",
+        expand,
+        focusable,
       )
         v-expansion-panel-content
           div(slot="header") View Group 2
@@ -33,12 +33,12 @@
             v-card-text View 2
       v-divider
         v-btn(
-          class='addBtn'
-          fab
-          dark
-          fixed
-          bottom
-          right
+          class="addBtn",
+          fab,
+          dark,
+          fixed,
+          bottom,
+          right,
           color="blue darken-4"
         )
           v-icon(dark) add
@@ -46,6 +46,9 @@
 
 <script>
 import VueContentLoading from 'vue-content-loading';
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapGetters, mapActions } = createNamespacedHelpers('app');
 
 export default {
   name: 'SideBar',
@@ -58,16 +61,21 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['isSideBarOpen']),
+
     isOpen: {
       get() {
-        return this.$store.state.app.isSideBarOpen;
+        return this.isSideBarOpen;
       },
       set(state) {
-        if (state !== this.$store.state.app.isSideBarOpen) {
-          this.$store.dispatch('app/toggleSideBar');
+        if (state !== this.isSideBarOpen) {
+          this.toggleSideBar();
         }
       },
     },
+  },
+  methods: {
+    ...mapActions(['toggleSideBar']),
   },
 };
 </script>
