@@ -12,3 +12,12 @@
          v-list-tile
          v-list-tile-title Click Me
 </template>
+
+<script>
+export default {
+  name: 'ActionsPanel',
+};
+</script>
+
+<style scoped>
+</style>

@@ -27,7 +27,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
+
+
 import BasicList from '../components/BasicComponent/BasicList.vue';
 import ActionsPanel from '../components/BasicComponent/ActionsPanel.vue';
 
@@ -35,7 +39,7 @@ export default {
   name: 'Test',
   components: { ActionsPanel, BasicList },
   mounted() {
-    this.$store.dispatch('entities/alarm/fetchList');
+    this.fetchList();
   },
   data() {
     return {
@@ -44,10 +48,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('entities/alarm', [
+    ...mapGetters([
       'items',
       'meta',
     ]),
+  },
+  methods: {
+    ...mapActions(['fetchList']),
   },
 };
 </script>
