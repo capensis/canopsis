@@ -6,23 +6,32 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Unreleased
 
-### Experimental features 
+### Experimental features
+
+- [Go]: New engine interface
+
+## Canopsis 2.6.3 - Maintenance release -  Due date : 2018-04-26
 
 - [Engines] : Added UNACK, Uncancel, keep state actions to the High performance engines
 - [Engines] : Added a default author in all alarms steps in the High performance engines
+- [Go]: gracefull initialization of docker env and fix amqp2engines.conf on docker
+- [Go]: Context and alarm creation performance improvements
+- [Go]: code refactoring, fix alarm duplication and preloading
+- [UI]: update rights on default view
+- Multiple fixes on Pbheavior and Event_filter
 
 ## Canopsis 2.6.2 - Maintenance release -  Due date : 2018-04-23
 
 ### Fixes
 
-- [Alarms list] Fixed a date formatting issue in the alarms list that made the `last_update_date` column appear with a 1 month delay 
+- [Alarms list] Fixed a date formatting issue in the alarms list that made the `last_update_date` column appear with a 1 month delay
 - [Service weather] reworked the Ticket action to fix a display issue caused by the new "save on exit" workflow
 - [Alarms list] Mass actions now correctly get their rights/permissions (inherited from the rights applied on the actions on the single alarm)
 - [setup] Canopsinit now requires a flag `--authorize-reinit` to perform any destructive modification to the database as an extra security
 - [APIs] the "enabled" flag on all entities is now active
 - [Engines] removed alarms caching in the Che engine to avoid  alarms duplication
 - [Rights management] : fixed a rights issue with the massive actions on a limited account
-- [Service weather] : fixed the components display to put long names on 2 lines instead of truncating it 
+- [Service weather] : fixed the components display to put long names on 2 lines instead of truncating it
 
 ## Canopsis 2.6.1 - Due date: 2018-04-20
 **Not released due to regression**
@@ -30,7 +39,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Canopsis 2.6.0 - Due date: 2018-04-18
 
-This release introduced the new High performance engines and allowed the renaming on the Alarms list columns. 
+This release introduced the new High performance engines and allowed the renaming on the Alarms list columns.
 
 
 ### Functional changes
