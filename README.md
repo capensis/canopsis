@@ -100,7 +100,7 @@ mkdir -p $GOPATH/src/git.canopsis.net/canopsis/go-revolution
 
 Cloner le projet :
 
-```
+```bash
 git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/go-revolution
 ```
 
@@ -145,8 +145,6 @@ Exchange canopsis.events -> CHE -> Event Filter -> Axe + Autres engines...
 Prendre les fichiers de conf de docker/etc et les copier dans environnement
 canopsis.
 
-```
-
 Dans le cas d’une installation en `build-install` :
 
 ```bash
@@ -189,9 +187,9 @@ Pour une installation complètement cloisonnée, retirer tous les bindings des q
 
 Créer et binder les queues suivantes :
 
- * `Engine_che` : `canopsis.events` sur rk `#`
- * `Engine_heartbeat` : `canopsis.events` sur rk `#`
- * `Engine_axe` : `amq.direct` sur rk `#`
+ * `Engine_che` sur `canopsis.events` avec la rk `#`
+ * `Engine_heartbeat` sur `canopsis.events` avec la rk `#`
+ * `Engine_axe` sur `amq.direct` avec la rk `#`
 
 ## Paramétrage de lancement
 
@@ -267,7 +265,7 @@ Redémarrer Redis ou purger ses bases lorsque ces collections sont modifiées / 
 
 [GoConvey](http://goconvey.co/) et `docker-compose` sont utilisés pour lancer les tests :
 
-```
+```bash
 go get -u github.com/smartystreets/goconvey
 make test
 ```
@@ -288,7 +286,6 @@ make build_docker TAG+[TAG]
 
 ## Monter un environnement de développement sous docker
 
-A la racine du projet, exécuter : 
-
+A la racine du projet, exécuter :
 
 `docker-compose up`
