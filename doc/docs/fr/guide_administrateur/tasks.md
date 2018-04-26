@@ -1,6 +1,6 @@
 # Tasks Canopsis
 
-Les `tasks` sont des engines un peu spéciaux qui ne recevront d’évènements que si s’ils sont explicitement envoyés via l’event filter.
+Les `tasks` sont des engines un peu spéciaux qui ne recevront d’évènements que s’ils sont explicitement envoyés via l’event filter.
 
 ## Configuration
 
