@@ -1,4 +1,6 @@
 <template lang="pug">
+  div
+    context-table
     context-table
     //v-pagination(:length="nbEntitiesToDisplay" @input="changePage")
 </template>

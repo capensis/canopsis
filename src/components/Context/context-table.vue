@@ -39,6 +39,12 @@ export default {
   mounted() {
     this.fetchList();
   },
+  props: {
+    showSettings: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       currentPage: 1,
