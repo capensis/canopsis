@@ -1,7 +1,9 @@
 function parseFilterRuleToRequest(rule) {
   const parsedRule = {};
 
-  // Determine the good syntax for the chosen operator
+  /**
+   * Determine the rule syntax based on the rule operator
+   */
   switch (rule.operator) {
     case ('equal'): {
       parsedRule[rule.field] = rule.input;
@@ -95,13 +97,17 @@ function parseFilterGroupToRequest(group) {
 
   parsedGroup[group.condition] = [];
 
-  // Parse each rule of a group and add it to the parsedGroup array
+  /**
+   * Parse each rule of a group and add it to the parsedGroup array
+   */
   group.rules.map((rule) => {
     parsedGroup[group.condition].push(parseFilterRuleToRequest(rule));
     return parsedGroup;
   });
 
-  // Parse each group of the group ans add it to the parsedGroup array
+  /**
+   * Parse each group of the group ans add it to the parsedGroup array
+   */
   group.groups.map((item) => {
     parsedGroup[group.condition].push(parseFilterGroupToRequest(item));
     return parsedGroup;
@@ -110,6 +116,11 @@ function parseFilterGroupToRequest(group) {
   return parsedGroup;
 }
 
+/**
+ * @param Array filter
+ * @description Take the filter data (from the form of the visual editor)
+ * , and return a JSON object representing the request
+ */
 export default function parseFilterToRequest(filter) {
   const request = {};
 
@@ -119,6 +130,11 @@ export default function parseFilterToRequest(filter) {
     request[filter[0].condition].push(parseFilterRuleToRequest(rule));
     return request[filter[0].condition];
   });
+
+  /**
+   * Map on the filter's group array, and call itself recursively
+   * to parse Groups, and group's groups, etc
+   */
   filter[0].groups.map((group) => {
     request[filter[0].condition].push(parseFilterGroupToRequest(group));
     return request[filter[0].condition];

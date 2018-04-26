@@ -2,13 +2,13 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import i18nModule from './modules/i18n';
-import MFilterEditorModule from './modules/mfilter-editor';
+import mFilterEditorModule from './modules/mfilter-editor';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
     i18n: i18nModule,
-    MFilterEditor : MFilterEditorModule,
+    MFilterEditor: mFilterEditorModule,
   },
 });

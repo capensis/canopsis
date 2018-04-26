@@ -8,6 +8,7 @@ const types = {
 
 export default {
   namespaced: true,
+
   state: {
     filter: [{
       condition: '$or',
@@ -17,11 +18,14 @@ export default {
     possibleFields: ['component_name', 'connector_name'],
     activeTab: 0,
   },
+
   getters: {
-    filter2request(state) {
-      return parseFilterToRequest(state.filter);
-    },
+    filter: state => state.filter,
+    possibleFields: state => state.possibleFields,
+    activeTab: state => state.activeTab,
+    filter2request: state => parseFilterToRequest(state.filter),
   },
+
   mutations: {
     [types.CHANGE_TAB](state, payload) {
       state.activeTab = payload;
@@ -30,6 +34,7 @@ export default {
       state.filter = [parseGroupToFilter(payload)];
     },
   },
+
   actions: {
     changeActiveTab(context, activeTab) {
       context.commit(types.CHANGE_TAB, activeTab);

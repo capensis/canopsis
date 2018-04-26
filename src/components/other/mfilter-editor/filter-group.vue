@@ -1,47 +1,47 @@
-<template lang='pug'>
+<template lang="pug">
     v-container(
-      class='filterGroup'
+      class="filterGroup"
     )
       v-radio-group(
-        :input-value='condition'
+        :input-value="condition",
         @change="$emit('update:condition', $event)"
       )
-        v-radio(label='AND' value='$and')
-        v-radio(label='OR' value='$or')
+        v-radio(label="AND", value="$and")
+        v-radio(label="OR", value="$or")
 
-      v-btn(@click='handleAddRuleClick') {{$t('m_filter_editor.buttons.add_rule')}}
-      v-btn(@click='handleAddGroupClick') {{$t('m_filter_editor.buttons.add_group')}}
+      v-btn(@click="handleAddRuleClick") {{$t("m_filter_editor.buttons.add_rule")}}
+      v-btn(@click="handleAddGroupClick") {{$t("m_filter_editor.buttons.add_group")}}
 
-      template(v-if='!initialGroup')
-        v-btn(@click='handleDeleteGroupClick') {{$t('m_filter_editor.buttons.delete_group')}}
+      template(v-if="!initialGroup")
+        v-btn(@click="handleDeleteGroupClick") {{$t("m_filter_editor.buttons.delete_group")}}
 
       div(
-        v-for='(group, index) in groups'
+        v-for="(group, index) in groups",
         :key="'group-' + index"
       )
         filter-group(
-          @deleteGroup='deleteGroup'
-          :index='index'
-          :condition.sync='group.condition'
-          :possibleFields='possibleFields'
-          :operators='operators'
-          :rules='group.rules'
-          :groups='group.groups'
+          @deleteGroup="deleteGroup",
+          :index="index",
+          :condition.sync="group.condition",
+          :possibleFields="possibleFields",
+          :operators="operators",
+          :rules="group.rules",
+          :groups="group.groups",
         )
 
       div(
-        v-for='(rule, index) in rules'
-        :key="'rule-' + index"
+        v-for="(rule, index) in rules",
+        :key="'rule-' + index",
       )
         filter-rule(
-          @deleteRuleClick='handleDeleteRuleClick'
-          :index='index'
-          :field.sync='rule.field'
-          :operator.sync='rule.operator'
-          :input.sync='rule.input'
-          :isValid.sync='rule.isValid'
-          :operators='operators'
-          :possibleFields='possibleFields'
+          @deleteRuleClick="handleDeleteRuleClick",
+          :index="index",
+          :field.sync="rule.field",
+          :operator.sync="rule.operator",
+          :input.sync="rule.input",
+          :isValid.sync="rule.isValid",
+          :operators="operators",
+          :possibleFields="possibleFields",
         )
 </template>
 

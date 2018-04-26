@@ -1,10 +1,16 @@
+/**
+ * @param Object
+ * @description Determine the operator and the input value of a rule
+ */
 function ruleOperatorAndInput(rule) {
   const parsedRule = {
     operator: '',
     input: '',
   };
 
-  // Switch to determine if it's a short syntax for '$eq' and '$eq:'''
+  /**
+   * Switch to determine if it's a short syntax for '$eq' and '$eq:'''
+   */
   if (typeof Object.values(rule)[0] === 'string') {
     if (Object.values(rule)[0] === '') {
       parsedRule.operator = 'is empty';
@@ -14,7 +20,9 @@ function ruleOperatorAndInput(rule) {
       parsedRule.operator = 'equal';
     }
   } else if (typeof Object.values(rule)[0] === 'object') {
-    // Handle the particular 'is null' case
+    /**
+     * Handle the particular 'is null' case
+     */
     if (Object.values(rule)[0] === null) {
       parsedRule.operator = 'is null';
     }
@@ -22,7 +30,9 @@ function ruleOperatorAndInput(rule) {
     const value = Object.values(rule)[0];
     const operator = Object.keys(value)[0];
 
-    // Switch to determine the right operator, and then assign the right input value
+    /**
+     * Switch to determine the right operator, and then assign the right input value
+     */
     switch (operator) {
       case ('$eq'): {
         const [input] = Object.values(rule);
@@ -32,7 +42,7 @@ function ruleOperatorAndInput(rule) {
       }
       case ('$ne'): {
         if (Object.values(value)[0] == null) {
-          // CAUSE UNE ERREUR
+          // TODO: CAUSE UNE ERREUR
           parsedRule.operator = 'is not null';
         } else if (Object.values(value)[0] === '') {
           parsedRule.operator = 'is not empty';
@@ -104,6 +114,11 @@ export default function parseGroupToFilter(group) {
   const [condition] = Object.keys(group);
   parsedGroup.condition = condition;
 
+  /**
+  * Map over the items of a group.
+  * If the item is an array -> It's a group.
+  * Else -> It's a rule.
+  */
   Object.values(group)[0].map((item) => {
     if (Array.isArray(Object.values(item)[0])) {
       parsedGroup.groups.push(parseGroupToFilter(item));
