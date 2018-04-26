@@ -1,8 +1,7 @@
 <template lang="pug">
     ul
-      li(ref="header" class='header')
-        sticky-wrapper()
-          slot(name="header")
+      li.header.sticky(ref="header")
+        slot(name="header")
       li(v-for="item in items", :item="item")
         brick-list
           div(slot="reduced", :style="reducedStyle")
@@ -12,12 +11,12 @@
 </template>
 
 <script>
-import StickyWrapper from './StickyWrapper.vue';
-import BrickList from './BrickList.vue';
+import StickyFill from 'stickyfilljs';
+import BrickList from './brick-list.vue';
 
 export default {
   name: 'BasicList',
-  components: { BrickList, StickyWrapper },
+  components: { BrickList },
   props: ['items'],
   data() {
     return {
@@ -29,6 +28,12 @@ export default {
         zIndex: '1',
       },
     };
+  },
+  mounted() {
+    StickyFill.addOne(this.$refs.header);
+  },
+  beforeDestroy() {
+    StickyFill.removeOne(this.$refs.header);
   },
   methods: {
     changePage() {
@@ -49,8 +54,11 @@ export default {
   .header {
     border-bottom: 1px solid gray;
     background-color: white;
+  }
+  .sticky {
+    position: -webkit-sticky;
     position: sticky;
-    top: 50px;
-    z-index: 500;
+    top: 48px;
+    z-index: 2;
   }
 </style>

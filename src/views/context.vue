@@ -3,12 +3,12 @@
     basic-list(:items="items")
       template(slot="header")
         tr(class="container")
-            th Connector
-            th Component
-            th Resource
-            th Output
-            th Last Update Date
-            th
+          th Connector
+          th Component
+          th Resource
+          th Output
+          th Last Update Date
+          th
       template(slot="row" slot-scope="item")
         tr(class="container")
           td {{ item.props.v.connector}}
@@ -29,11 +29,10 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import BasicList from '@/components/BasicComponent/basic-list.vue';
+import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
+
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
-
-
-import BasicList from '../components/BasicComponent/BasicList.vue';
-import ActionsPanel from '../components/BasicComponent/ActionsPanel.vue';
 
 export default {
   name: 'Test',
