@@ -29,6 +29,7 @@
         textarea
       )
       v-btn(@click='updateFilter') {{$t('common.parse')}}
+      p(v-if="error !== ''") Erreur
 </template>
 
 <script>
@@ -43,6 +44,7 @@ export default {
   data() {
     return {
       newRequest: '',
+      error: '',
     };
   },
   computed: {
@@ -75,8 +77,15 @@ export default {
         this.$store.dispatch('MFilterEditor/updateFilter', JSON.parse(JSON.stringify(this.filter2request)));
         return this;
       }
-      this.$store.dispatch('MFilterEditor/updateFilter', JSON.parse(this.newRequest));
-      return this;
+
+      try {
+        this.$store.dispatch('MFilterEditor/updateFilter', JSON.parse(this.newRequest));
+        this.error = '';
+        return this;
+      } catch (e) {
+        this.error = e.message;
+        return e;
+      }
     },
   },
 };
