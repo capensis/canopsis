@@ -73,12 +73,12 @@ export default {
       this.$store.dispatch('MFilterEditor/changeActiveTab', tab);
     },
     updateFilter() {
-      if (this.newRequest === '') {
-        this.$store.dispatch('MFilterEditor/updateFilter', JSON.parse(JSON.stringify(this.filter2request)));
-        return this;
-      }
-
       try {
+        if (this.newRequest === '') {
+          this.$store.dispatch('MFilterEditor/updateFilter', JSON.parse(JSON.stringify(this.filter2request)));
+          return this;
+        }
+
         this.$store.dispatch('MFilterEditor/updateFilter', JSON.parse(this.newRequest));
         this.error = '';
         return this;
