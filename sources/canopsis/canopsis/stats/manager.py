@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from __future__ import unicode_literals
 
 from re import escape
 
@@ -712,7 +713,7 @@ class Stats(MiddlewareRegistry):
         the given entity.
         """
         query = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
-                "event_state_history WHERE eid='{0}'"
+                "event_state_history WHERE eid='{0}'".encode("utf-8")
 
         result = self.influxdbstg.raw_query(query.format(entity_id))
 
