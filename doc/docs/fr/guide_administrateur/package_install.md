@@ -84,6 +84,7 @@ systemctl start influxdb
 
 influx --execute "CREATE USER admin WITH PASSWORD 'admin' WITH ALL PRIVILEGES"
 influx --execute "CREATE USER cpsinflux WITH PASSWORD 'canopsis'"
+influx --execute "CREATE DATABASE canopsis"
 influx --execute "GRANT ALL ON canopsis TO cpsinflux"
 
 sed -i "s/auth-enabled = false/auth-enabled = true/" /etc/influxdb/influxdb.conf
