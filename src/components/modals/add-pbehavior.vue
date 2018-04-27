@@ -28,85 +28,90 @@
             rules="required"
             )
           v-layout(row)
-            v-tabs.r-rule-tabs(v-model="activeTab", centered)
-              v-tab(href="#simple") Simple
-              v-tab(href="#advanced") Advanced
-              v-tab(href="#text-input") Text input
-              v-tab-item(id="simple")
-                div
+            v-switch(v-model="withRRule", label="Do you need rrule?")
+          template(v-if="withRRule")
+            v-layout(row)
+              v-tabs.r-rule-tabs(v-model="activeTab", centered)
+                v-tab(href="#simple") Simple
+                v-tab(href="#advanced") Advanced
+                v-tab(href="#text-input") Text input
+                v-tab-item(id="simple")
                   div
-                    v-select(
-                    label="Frequency",
-                    v-model="form.rRule.freq",
-                    :items="selectItems.frequencies"
-                    )
+                    div
+                      v-select(
+                      label="Frequency",
+                      v-model="form.rRule.freq",
+                      :items="selectItems.frequencies"
+                      )
+                    div
+                      date-time-picker(label="Until", v-model="form.rRule.until", clearable)
+                    div
+                      v-select(
+                      label="By week day",
+                      v-model="form.rRule.byweekday",
+                      :items="selectItems.weekDays",
+                      multiple,
+                      chips
+                      )
+                    div
+                      v-text-field(type="number", label="Repeat", v-model="form.rRule.count")
+                    div
+                      v-text-field(
+                      type="number",
+                      label="Interval",
+                      v-model="form.rRule.interval",
+                      @input="changeRRuleProp('interval')"
+                      )
+                v-tab-item(id="advanced")
                   div
-                    date-time-picker(label="Until", v-model="form.rRule.until", clearable)
-                  div
-                    v-select(
-                    label="By week day",
-                    v-model="form.rRule.byweekday",
-                    :items="selectItems.weekDays",
-                    multiple,
-                    chips
-                    )
-                  div
-                    v-text-field(type="number", label="Repeat", v-model="form.rRule.count")
+                    div
+                      v-select(
+                      label="Week start",
+                      v-model="form.rRule.wkst",
+                      :items="selectItems.weekDays",
+                      )
+                    div
+                      v-select(
+                      label="Select",
+                      v-model="form.rRule.bymonth",
+                      :items="selectItems.months",
+                      multiple,
+                      chips
+                      )
+                    div
+                      v-tooltip(right)
+                        div(slot="activator")
+                          v-text-field(type="number", label="By set position", v-model="form.rRule.bysetpos")
+                        span Something
+                    div
+                      v-text-field(type="number", label="By month day", v-model="form.rRule.bymonthday")
+                    div
+                      v-text-field(type="number", label="By year day", v-model="form.rRule.byyearday")
+                    div
+                      v-text-field(type="number", label="By week n°", v-model="form.rRule.byweekno")
+                    div
+                      v-text-field(type="number", label="By hour", v-model="form.rRule.byhour")
+                    div
+                      v-text-field(type="number", label="By minute", v-model="form.rRule.byminute")
+                    div
+                      v-text-field(type="number", label="By second", v-model="form.rRule.bysecond")
+                v-tab-item(id="text-input")
                   div
                     v-text-field(
-                    type="number",
-                    label="Interval",
-                    v-model="form.rRule.interval",
-                    @input="changeRRuleProp"
+                    label="Rrule",
+                    :value="form.rRuleObject.toString()",
+                    @input="changeRRuleString"
                     )
-              v-tab-item(id="advanced")
-                div
-                  div
-                    v-select(
-                    label="Week start",
-                    v-model="form.rRule.wkst",
-                    :items="selectItems.weekDays",
-                    )
-                  div
-                    v-select(
-                    label="Select",
-                    v-model="form.rRule.bymonth",
-                    :items="selectItems.months",
-                    multiple,
-                    chips
-                    )
-                  div
-                    v-tooltip(right)
-                      div(slot="activator")
-                        v-text-field(type="number", label="By set position", v-model="form.rRule.bysetpos")
-                      span Something
-                  div
-                    v-text-field(type="number", label="By month day", v-model="form.rRule.bymonthday")
-                  div
-                    v-text-field(type="number", label="By year day", v-model="form.rRule.byyearday")
-                  div
-                    v-text-field(type="number", label="By week n°", v-model="form.rRule.byweekno")
-                  div
-                    v-text-field(type="number", label="By hour", v-model="form.rRule.byhour")
-                  div
-                    v-text-field(type="number", label="By minute", v-model="form.rRule.byminute")
-                  div
-                    v-text-field(type="number", label="By second", v-model="form.rRule.bysecond")
-              v-tab-item(id="text-input")
-                div
-                  v-text-field(
-                  label="Rrule",
-                  :value="form.rRuleObject.toString()",
-                  @input="changeRRuleString"
-                  )
-          v-layout(row)
-            v-flex(xs2)
-              strong Rrule
-            v-flex(xs10) {{ form.rRuleObject.toString() }}
-          v-layout(row)
-            v-flex(xs2)
-              strong Summary
-            v-flex(xs10) {{ form.rRuleObject.toText() }}
+            v-layout(row)
+              v-flex(xs2)
+                strong Rrule
+              v-flex(xs10)
+                p {{ form.rRuleObject.toString() }}
+            v-layout(row)
+              v-flex(xs2)
+                strong Summary
+              v-flex(xs10)
+                p {{ form.rRuleObject.toText() }}
           v-layout(row)
             v-select(label="Reason")
           v-layout(row)
@@ -128,16 +133,12 @@ export default {
   components: { DateTimePicker },
   data() {
     const rRule = new RRule({
-      until: null,
-      freq: RRule.DAILY,
-      wkst: RRule.MO.weekday,
-      byweekday: [RRule.MO.weekday, RRule.TU.weekday, RRule.WE.weekday],
-      bymonth: [1],
-      interval: 1,
+      dtstart: new Date(),
     });
 
     return {
       activeTab: 'simple',
+      withRRule: false,
       form: {
         name: '',
         tstart: new Date(),
@@ -210,5 +211,9 @@ export default {
 <style scoped>
   .r-rule-tabs {
     width: 100%;
+  }
+  p {
+    -ms-word-break: break-all;
+    word-break: break-all;
   }
 </style>
