@@ -7,11 +7,13 @@ function ruleOperatorAndInput(rule) {
     operator: '',
     input: '',
   };
+  const ruleValue = Object.values(rule)[0];
+  const operator = Object.keys(ruleValue)[0];
 
   /**
    * Switch to determine if it's a short syntax for '$eq' and '$eq:'''
    */
-  if (typeof Object.values(rule)[0] === 'string') {
+  if (typeof ruleValue === 'string') {
     if (Object.values(rule)[0] === '') {
       parsedRule.operator = 'is empty';
     } else {
@@ -19,16 +21,13 @@ function ruleOperatorAndInput(rule) {
       parsedRule.input = input;
       parsedRule.operator = 'equal';
     }
-  } else if (typeof Object.values(rule)[0] === 'object') {
+  } else if (typeof ruleValue === 'object') {
     /**
      * Handle the particular 'is null' case
      */
-    if (Object.values(rule)[0] === null) {
+    if (ruleValue === null) {
       parsedRule.operator = 'is null';
     }
-
-    const value = Object.values(rule)[0];
-    const operator = Object.keys(value)[0];
 
     /**
      * Switch to determine the right operator, and then assign the right input value
@@ -41,10 +40,10 @@ function ruleOperatorAndInput(rule) {
         break;
       }
       case ('$ne'): {
-        if (Object.values(value)[0] == null) {
+        if (Object.values(ruleValue)[0] == null) {
           // TODO: CAUSE UNE ERREUR
           parsedRule.operator = 'is not null';
-        } else if (Object.values(value)[0] === '') {
+        } else if (Object.values(ruleValue)[0] === '') {
           parsedRule.operator = 'is not empty';
         } else {
           const [inputObject] = Object.values(rule);
@@ -55,30 +54,21 @@ function ruleOperatorAndInput(rule) {
         break;
       }
       case ('$in'): {
-        const [inputArray] = Object.values(value);
+        const [inputArray] = Object.values(ruleValue);
         const [input] = inputArray;
         parsedRule.input = input;
         parsedRule.operator = 'in';
         break;
       }
       case ('$nin'): {
-        const [inputArray] = Object.values(value);
+        const [inputArray] = Object.values(ruleValue);
         const [input] = inputArray;
         parsedRule.input = input;
         parsedRule.operator = 'not in';
         break;
       }
-      case ('$regex'): {
-        // TODO : Finish for all regexp cases
-        const beginsWith = /^\^/;
-        if (Object.values(value)[0].match(beginsWith) != null) {
-          parsedRule.operator = 'begins with';
-          parsedRule.input = Object.values(value)[0].replace('^', '');
-        }
-        break;
-      }
       default: {
-        return parsedRule;
+        throw new Error('Opérateur non pris en charge');
       }
     }
   }
@@ -95,7 +85,6 @@ function parseRuleToFilter(rule) {
 
   const [field] = Object.keys(rule);
   parsedRule.field = field;
-
   const { operator, input } = ruleOperatorAndInput(rule);
 
   parsedRule.operator = operator;
@@ -103,6 +92,7 @@ function parseRuleToFilter(rule) {
 
   return parsedRule;
 }
+
 
 export default function parseGroupToFilter(group) {
   const parsedGroup = {
@@ -119,13 +109,15 @@ export default function parseGroupToFilter(group) {
   * If the item is an array -> It's a group.
   * Else -> It's a rule.
   */
+
   Object.values(group)[0].map((item) => {
     if (Array.isArray(Object.values(item)[0])) {
       parsedGroup.groups.push(parseGroupToFilter(item));
-    } else if (parseRuleToFilter(item) != null) {
+    } else {
       parsedGroup.rules.push(parseRuleToFilter(item));
     }
     return group;
   });
+
   return parsedGroup;
 }

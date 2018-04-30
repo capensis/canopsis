@@ -5,6 +5,7 @@
         v-tabs
           v-tab(
             @click="handleTabClick(0)"
+            :disabled="parseError == '' ? false : true"
           ) {{$t('m_filter_editor.tabs.visual_editor')}}
           v-tab(
             @click="handleTabClick(1)"
@@ -29,7 +30,7 @@
         textarea
       )
       v-btn(@click="handleParseClick") {{$t('common.parse')}}
-      p(v-if="error !== ''") Erreur
+      p(v-if="parseError !== ''") {{ parseError }}
 </template>
 
 <script>
@@ -48,12 +49,11 @@ export default {
   data() {
     return {
       newRequest: '',
-      error: '',
     };
   },
 
   computed: {
-    ...mapGetters(['filter2request', 'filter', 'possibleFields', 'activeTab']),
+    ...mapGetters(['filter2request', 'filter', 'possibleFields', 'activeTab', 'parseError']),
 
     /**
      * @description Value of the input field of the advanced editor.
@@ -70,24 +70,23 @@ export default {
   },
 
   methods: {
-    ...mapActions(['changeActiveTab', 'updateFilter']),
+    ...mapActions(['changeActiveTab', 'updateFilter', 'onParseError', 'deleteParseError']),
 
     handleTabClick(tab) {
       this.changeActiveTab(tab);
     },
 
     handleParseClick() {
+      this.deleteParseError();
       try {
         if (this.newRequest === '') {
           this.updateFilter(JSON.parse(JSON.stringify(this.filter2request)));
           return this;
         }
-
         this.updateFilter(JSON.parse(this.newRequest));
-        this.error = '';
         return this;
       } catch (e) {
-        this.error = e.message;
+        this.onParseError(e.message);
         return e;
       }
     },

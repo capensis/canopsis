@@ -4,6 +4,8 @@ import parseGroupToFilter from '@/services/mfilter-editor/parseRequestToFilter';
 const types = {
   CHANGE_TAB: 'CHANGE_TAB',
   UPDATE_FILTER: 'UPDATE_FILTER',
+  ADD_PARSE_ERROR: 'ADD_PARSE_ERROR',
+  DELETE_PARSE_ERROR: 'DELETE_PARSE_ERROR',
 };
 
 export default {
@@ -17,6 +19,7 @@ export default {
     }],
     possibleFields: ['component_name', 'connector_name'],
     activeTab: 0,
+    parseError: '',
   },
 
   getters: {
@@ -24,6 +27,7 @@ export default {
     possibleFields: state => state.possibleFields,
     activeTab: state => state.activeTab,
     filter2request: state => parseFilterToRequest(state.filter),
+    parseError: state => state.parseError,
   },
 
   mutations: {
@@ -31,7 +35,18 @@ export default {
       state.activeTab = payload;
     },
     [types.UPDATE_FILTER](state, payload) {
-      state.filter = [parseGroupToFilter(payload)];
+      try {
+        const newFilter = parseGroupToFilter(payload);
+        state.filter = [newFilter];
+      } catch (error) {
+        state.parseError = error.message;
+      }
+    },
+    [types.ADD_PARSE_ERROR](state, payload) {
+      state.parseError = payload;
+    },
+    [types.DELETE_PARSE_ERROR](state) {
+      state.parseError = '';
     },
   },
 
@@ -41,6 +56,12 @@ export default {
     },
     updateFilter(context, newRequest) {
       context.commit(types.UPDATE_FILTER, newRequest);
+    },
+    onParseError(context, error) {
+      context.commit(types.ADD_PARSE_ERROR, error);
+    },
+    deleteParseError(context) {
+      context.commit(types.DELETE_PARSE_ERROR);
     },
   },
 };
