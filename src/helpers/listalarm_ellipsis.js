@@ -40,12 +40,8 @@
 			output = txt
 		}
         html += '<p onclick="showOutput(\'';
-        html += txt.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, "<br />");
-        html += '\')" ';
-        html += style;
-        html += '>';
-        html += output;
-        html += '</p>';
+        html += txt.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, "<br />").replace(/\"/g, "&quot;").replace(/'/g, "&rsquo;");
+        html += '\')" ' + style + '>' + output + '</p>';
 
         return new Ember.String.htmlSafe(html);
     };

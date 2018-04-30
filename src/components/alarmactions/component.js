@@ -79,6 +79,13 @@ Ember.Application.initializer({
                     internal_states: ['unacked', 'acked', 'cancelled'],
                     name: 'snoozealarm',
                     mixin_name: 'snooze'
+                },
+                {
+                    class: 'fa fa-list',
+                    internal_states: ['immutable' ,'unacked', 'acked', 'cancelled'],
+                    name: 'listpbehavior',
+                    mixin_name: 'listpbehavior',
+                    isPbhList: true
                 }
             ]),
 
@@ -157,16 +164,18 @@ Ember.Application.initializer({
                     case "snoozealarm":
                         name = func(actions, rights, actions[i]["name"], "listalarm_snoozeAlarm")
                         break;
+                    case "listpbehavior":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_listPbehavior")
+                        break;
                     }
 
-					if (name != null) {
-						toRemove.push(name)
-					}
+                    if (name != null) {
+                         toRemove.push(name)
+                    }
                 }
-				for(i = 0; i < toRemove.length; i++){
-						console.debug("Cleaning ", name)
-						actions.removeObject(actions.findBy('name', toRemove[i]))
-				}
+                for(i = 0; i < toRemove.length; i++){
+                    actions.removeObject(actions.findBy('name', toRemove[i]))
+                }
                 return actions;
             }.property('internalState', 'isSnoozed', 'isChangedByUser', 'isClosed', "isAcked"),
 
@@ -255,7 +264,6 @@ Ember.Application.initializer({
                 sendAction: function (action) {
                     var me = this;
 					var alarm = Object.assign({}, me.get('alarm'));
-					console.error("ALARM = ", alarm)
                     if (action.name === 'pbehavior'){
 
                         var obj = Ember.Object.create({ 'crecord_type': 'pbehaviorform' });
