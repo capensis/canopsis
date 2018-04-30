@@ -10,7 +10,6 @@ WorkingDirectory=/opt/canopsis
 Environment=VIRTUAL_ENV=/opt/canopsis
 Environment=HOME=/opt/canopsis
 Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-Environment=WORKERS=1
 Environment=LOGLEVEL=info
 ExecStart=/opt/canopsis/bin/engine-launcher-systemd %i
 PIDFile=/var/run/canopsis-engine-%i.pid
