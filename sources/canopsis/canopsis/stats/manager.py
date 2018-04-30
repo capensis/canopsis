@@ -1,3 +1,4 @@
+# coding: utf8
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2016 "Capensis" [http://www.capensis.com]
@@ -713,7 +714,9 @@ class Stats(MiddlewareRegistry):
         the given entity.
         """
         query = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
-                "event_state_history WHERE eid='{0}'".encode("utf-8")
+                "event_state_history WHERE eid=\"{}\""
+
+        # entity_id = entity_id.replace("'", "\'")
 
         result = self.influxdbstg.raw_query(query.format(entity_id))
 
