@@ -28,10 +28,17 @@ fi
 
 shift
 
+engine_pids=()
+
 for i in $(seq 1 ${WORKERS}); do
     $HOME/bin/engine-launcher \
     -e ${engine_mod_path}.${engine_module} \
     -n ${engine_name} \
     -w ${i} \
     -l ${LOGLEVEL} &
+    engine_pids+=("$!")
+done
+
+for engine_pid in "${engine_pids[@]}"; do
+    wait ${engine_pid}
 done

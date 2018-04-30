@@ -15,7 +15,7 @@ Environment=LOGLEVEL=info
 ExecStart=/opt/canopsis/bin/engine-launcher-systemd %i
 PIDFile=/var/run/canopsis-engine-%i.pid
 Restart=on-failure
-Type=forking
+Type=simple
 
 [Install]
 WantedBy=multi-user.target
