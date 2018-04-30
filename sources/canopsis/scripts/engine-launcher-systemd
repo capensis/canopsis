@@ -28,5 +28,10 @@ fi
 
 shift
 
-$HOME/bin/engine-launcher -e ${engine_mod_path}.${engine_module} -n ${engine_name} -w ${WORKERS} -l ${LOGLEVEL}
-exit $?
+for i in $(seq 1 ${WORKERS}); do
+    $HOME/bin/engine-launcher \
+    -e ${engine_mod_path}.${engine_module} \
+    -n ${engine_name} \
+    -w ${i} \
+    -l ${LOGLEVEL} &
+done
