@@ -3,7 +3,7 @@ import Router from 'vue-router';
 
 import Home from './views/home.vue';
 import About from './views/about.vue';
-import Context from './views/context.vue';
+import Context from './views/alarm.vue';
 
 Vue.use(Router);
 

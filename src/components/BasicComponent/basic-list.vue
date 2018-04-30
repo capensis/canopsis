@@ -1,6 +1,6 @@
 <template lang="pug">
     ul
-      li.header.sticky(ref="header")
+      li.header.sticky(ref="header" :style="headerStyle")
         slot(name="header")
       li(v-for="item in items", :item="item")
         brick-list
@@ -25,6 +25,7 @@ export default {
       },
       headerStyle: {
         marginBottom: '5px',
+        backgroundColor: 'rgb(251,247,247)  ',
         zIndex: '1',
       },
     };
@@ -50,10 +51,6 @@ export default {
   ul {
    position: relative;
    list-style-type: none;
-  }
-  .header {
-    border-bottom: 1px solid gray;
-    background-color: white;
   }
   .sticky {
     position: -webkit-sticky;

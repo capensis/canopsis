@@ -7,7 +7,7 @@ module.exports = {
       .url(process.env.VUE_DEV_SERVER_URL)
       .waitForElementVisible('#app', 5000)
       .assert.elementPresent('.hello')
-      .assert.containsText('h2', 'Context props')
+      .assert.containsText('h2', 'AlarmList props')
       .assert['element-count']('img', 1)
       .end();
   },
