@@ -716,8 +716,6 @@ class Stats(MiddlewareRegistry):
         query = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
                 "event_state_history WHERE eid=\"{}\""
 
-        # entity_id = entity_id.replace("'", "\'")
-
         result = self.influxdbstg.raw_query(query.format(entity_id))
 
         data = list(result.get_points())
