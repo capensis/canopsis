@@ -68,6 +68,7 @@ def get_entity_id(event):
     """
     return ContextGraph.get_id(event)
 
+
 def pb_id(event):
     """
     Build a pbehavior ID from event if applicable.
@@ -82,6 +83,7 @@ def pb_id(event):
         return 'pb_downtime_{}-{}_{}'.format(connector, connector_name, did), 'nagioslike'
 
     return None, None
+
 
 @register_task
 def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
@@ -130,7 +132,9 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
             elif event.get('action') == PBEHAVIOR_CREATE and pbehavior_id is not None and pb_source is not None:
                 pbehavior = PBehaviorModel(
                     pbehavior_id, pb_name, filter_, pb_start, pb_end, pb_rrule, pb_author,
-                    connector=pb_connector, connector_name=pb_connector_name, source=pb_source
+                    connector=pb_connector,
+                    connector_name=pb_connector_name,
+                    source=pb_source
                 )
                 success, result = pbm.upsert(pbehavior)
                 if not success:
