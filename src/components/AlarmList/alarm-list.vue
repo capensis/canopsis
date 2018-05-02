@@ -17,6 +17,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import ObjectsHelper from '@/helpers/objects-helpers';
 import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 
@@ -61,10 +62,8 @@ export default {
   },
   methods: {
     ...mapActions(['fetchList']),
-    getDescendantProp(item, stringProp) {
-      return stringProp.split('.').reduce((a, b) => a[b], item);
-    },
     changePage() {},
+    getDescendantProp: ObjectsHelper.getDescendantProp,
   },
 };
 </script>
