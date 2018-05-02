@@ -4,16 +4,14 @@
       tr(slot="header" class="container")
           th( class="box"
               v-for="columnName in Object.keys(alarmProperty)") {{ columnName }}
-          th
+          th( class="box" )
       tr(slot="row" slot-scope="item" class="container")
           td( class="box"
               v-for="property in Object.values(alarmProperty)") {{ getDescendantProp(item.props, property) }}
-          td
+          td( class="box" )
             actions-panel(class="actions")
       tr(slot="expandedRow" slot-scope="item" class="container" )
-          td(class="box") {{ item.props.infos }}
-          td
-            actions-panel(class="actions")
+          td( class="box" ) {{ item.props.infos }}
     v-pagination( :length="nPages" @input="changePage")
 </template>
 
@@ -84,18 +82,13 @@ export default {
   }
   .container {
     display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-around;
   }
   .container>td,.container>th{
   }
   .box{
     width: 10%;
-    flex: 5 5 auto;
+    flex: 1;
   }
   .actions{
-    flex: 0;
-    margin-left: auto;
-    align-self: center;
   }
 </style>
