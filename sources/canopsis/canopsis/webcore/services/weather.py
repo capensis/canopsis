@@ -486,8 +486,7 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            # enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
-            # FIXME: canopsis/canopsis#650 UTF-8 error
+            enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
             if current_alarm is not None:
                 enriched_entity['ticket'] = current_alarm.get('ticket')
                 enriched_entity['state'] = current_alarm['state']
