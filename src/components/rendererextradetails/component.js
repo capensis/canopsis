@@ -127,6 +127,23 @@ Ember.Application.initializer({
             }.property('value.@each.pbehaviors.length'),
 
             /**
+             * @property hasActivePBehavior
+             */
+            hasActivePBehavior: function() {
+                if (this.get('value.pbehaviors') == null) {
+                    return false;
+                }
+                for (i = 0; i < this.get('value.pbehaviors').length; i++){
+                    pb_stop = this.get('value.pbehaviors')[i].tstop * 1000
+                    pb_start = this.get('value.pbehaviors')[i].tstart * 1000
+                    if (Date.now() < pb_stop && Date.now() > pb_start) {
+                        return true;
+                    }
+                }
+                return false;
+            }.property('value.@each.pbehaviors.length'),
+
+            /**
              * @property dateFormat
              */
             dateFormat: function (date) {
