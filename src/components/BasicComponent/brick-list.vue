@@ -19,6 +19,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * A Function to prevent the expansion of a row when you highlight/select something in it
+     */
     onClick() {
       const selection = window.getSelection();
       if (selection.toString().length === 0) { this.isExpanded = !this.isExpanded; }

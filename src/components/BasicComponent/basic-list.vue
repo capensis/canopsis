@@ -36,11 +36,6 @@ export default {
   beforeDestroy() {
     StickyFill.removeOne(this.$refs.header);
   },
-  methods: {
-    changePage() {
-      // On fait appel au store pour charger les nouvelles entités
-    },
-  },
 };
 </script>
 

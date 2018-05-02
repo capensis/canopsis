@@ -1,10 +1,19 @@
+<!--
+      The Alarm List Component
+          Props :
+            - alarmProperty ( Object ) : Object that describe the columns names and the alarms attributes corresponding
+              e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
+              Default : {}
+            - nbDataToDisplay ( Integer ) : Number of Alarm to display per page
+              Default : 5
+-->
 <template lang="pug">
   div( v-if="fetchComplete" )
     basic-list( :items="items" )
       tr.container( slot="header" )
-          th.box(v-for="columnName in Object.keys(alarmProperty)" ) {{ columnName }}
+          th.box( v-for="columnName in Object.keys(alarmProperty)" ) {{ columnName }}
           th.box
-      tr.container(slot="row" slot-scope="item")
+      tr.container( slot="row" slot-scope="item" )
           td.box( v-for="property in Object.values(alarmProperty)" ) {{ getDescendantProp(item.props, property) }}
           td.box
             actions-panel.actions
@@ -27,11 +36,14 @@ export default {
   name: 'AlarmList',
   components: { ActionsPanel, BasicList, Loader },
   mounted() {
-    this.fetchList({ params: { limit: '5' } });
+    this.fetchList({ params: { limit: this.nbDataToDisplay } });
   },
   props: {
     alarmProperty: {
       type: Object,
+      default() {
+        return {};
+      },
     },
     nbDataToDisplay: {
       type: Number,
@@ -43,7 +55,6 @@ export default {
   data() {
     return {
       currentPage: 1,
-      actionPanelSize: 10,
     };
   },
   computed: {
@@ -91,7 +102,5 @@ export default {
   .box{
     width: 10%;
     flex: 1;
-  }
-  .actions{
   }
 </style>
