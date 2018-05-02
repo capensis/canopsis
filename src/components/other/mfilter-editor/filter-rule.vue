@@ -4,9 +4,10 @@
       v-layout
         v-flex(xs12)
           v-select(
-            @change="$emit('update:field', $event)",
+            @input="$emit('update:field', $event)",
             :items="possibleFields",
             :value="field"
+            combobox
           )
 
         v-flex(xs12)

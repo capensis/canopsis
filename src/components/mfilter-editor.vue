@@ -73,6 +73,7 @@ export default {
     ...mapActions(['changeActiveTab', 'updateFilter', 'onParseError', 'deleteParseError']),
 
     handleTabClick(tab) {
+      this.newRequest = '';
       this.changeActiveTab(tab);
     },
 

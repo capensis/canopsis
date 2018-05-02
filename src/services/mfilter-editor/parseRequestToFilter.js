@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash';
+
 /**
  * @param Object
  * @description Determine the operator and the input value of a rule
@@ -7,6 +9,7 @@ function ruleOperatorAndInput(rule) {
     operator: '',
     input: '',
   };
+
   const ruleValue = Object.values(rule)[0];
   const operator = Object.keys(ruleValue)[0];
 
@@ -23,13 +26,6 @@ function ruleOperatorAndInput(rule) {
     }
   } else if (typeof ruleValue === 'object') {
     /**
-     * Handle the particular 'is null' case
-     */
-    if (ruleValue === null) {
-      parsedRule.operator = 'is null';
-    }
-
-    /**
      * Switch to determine the right operator, and then assign the right input value
      */
     switch (operator) {
@@ -41,7 +37,6 @@ function ruleOperatorAndInput(rule) {
       }
       case ('$ne'): {
         if (Object.values(ruleValue)[0] == null) {
-          // TODO: CAUSE UNE ERREUR
           parsedRule.operator = 'is not null';
         } else if (Object.values(ruleValue)[0] === '') {
           parsedRule.operator = 'is not empty';
@@ -68,6 +63,9 @@ function ruleOperatorAndInput(rule) {
         break;
       }
       default: {
+        /**
+         * Throw an error if the operator was not found.
+         */
         throw new Error('Opérateur non pris en charge');
       }
     }
@@ -77,6 +75,10 @@ function ruleOperatorAndInput(rule) {
 }
 
 function parseRuleToFilter(rule) {
+  if (isEmpty(rule)) {
+    throw new Error('Empty rule');
+  }
+
   const parsedRule = {
     field: '',
     operator: '',
