@@ -1,18 +1,17 @@
 <template lang="pug">
-  div(:style="generalStyle")
-    basic-list(:items="items")
-      tr(slot="header" class="container")
-          th( class="box"
-              v-for="columnName in Object.keys(alarmProperty)") {{ columnName }}
-          th( class="box" )
-      tr(slot="row" slot-scope="item" class="container")
-          td( class="box"
-              v-for="property in Object.values(alarmProperty)") {{ getDescendantProp(item.props, property) }}
-          td( class="box" )
-            actions-panel(class="actions")
-      tr(slot="expandedRow" slot-scope="item" class="container" )
-          td( class="box" ) {{ item.props.infos }}
-    v-pagination( :length="nPages" @input="changePage")
+  div( v-if="fetchComplete" )
+    basic-list( :items="items" )
+      tr.container( slot="header" )
+          th.box(v-for="columnName in Object.keys(alarmProperty)" ) {{ columnName }}
+          th.box
+      tr.container(slot="row" slot-scope="item")
+          td.box( v-for="property in Object.values(alarmProperty)" ) {{ getDescendantProp(item.props, property) }}
+          td.box
+            actions-panel.actions
+      tr.container(slot="expandedRow" slot-scope="item")
+          td.box {{ item.props.infos }}
+    v-pagination( :length="nPages" @input="changePage" v-model="currentPage" v-if="fetchComplete")
+    loader(v-else)
 </template>
 
 <script>
@@ -20,14 +19,15 @@ import { createNamespacedHelpers } from 'vuex';
 import ObjectsHelper from '@/helpers/objects-helpers';
 import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
+import Loader from '../loaders/alarm-list-loader.vue';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
 
 export default {
   name: 'AlarmList',
-  components: { ActionsPanel, BasicList },
+  components: { ActionsPanel, BasicList, Loader },
   mounted() {
-    this.fetchList();
+    this.fetchList({ params: { limit: '5' } });
   },
   props: {
     alarmProperty: {
@@ -36,7 +36,7 @@ export default {
     nbDataToDisplay: {
       type: Number,
       default() {
-        return 10;
+        return 5;
       },
     },
   },
@@ -44,25 +44,31 @@ export default {
     return {
       currentPage: 1,
       actionPanelSize: 10,
-      generalStyle: {
-      },
     };
   },
   computed: {
     ...mapGetters([
       'items',
       'meta',
+      'fetchComplete',
     ]),
     nPages() {
       if (this.meta.total) {
-        return Math.trunc(this.meta.total / this.nbDataToDisplay);
+        return Math.ceil(this.meta.total / this.nbDataToDisplay);
       }
       return 0;
     },
   },
   methods: {
     ...mapActions(['fetchList']),
-    changePage() {},
+    changePage() {
+      this.fetchList({
+        params: {
+          skip: (this.currentPage - 1) * this.nbDataToDisplay,
+          limit: this.nbDataToDisplay,
+        },
+      });
+    },
     getDescendantProp: ObjectsHelper.getDescendantProp,
   },
 };
@@ -81,8 +87,6 @@ export default {
   }
   .container {
     display: flex;
-  }
-  .container>td,.container>th{
   }
   .box{
     width: 10%;

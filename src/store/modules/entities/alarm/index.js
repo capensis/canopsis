@@ -15,23 +15,27 @@ export default {
     byId: {},
     allIds: [],
     meta: {},
+    fetchComplete: false,
   },
   getters: {
     byId: state => state.byId,
     allIds: state => state.allIds,
     items: state => state.allIds.map(id => state.byId[id]),
     meta: state => state.meta,
+    fetchComplete: state => state.fetchComplete,
   },
   mutations: {
     [types.FETCH_LIST](state) {
       state.byId = {};
       state.allIds = [];
       state.meta = {};
+      state.fetchComplete = false;
     },
     [types.FETCH_LIST_COMPLETED](state, { byId, allIds, meta }) {
       state.byId = byId;
       state.allIds = allIds;
       state.meta = meta;
+      state.fetchComplete = true;
     },
   },
   actions: {
