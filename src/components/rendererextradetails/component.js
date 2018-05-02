@@ -50,6 +50,8 @@ Ember.Application.initializer({
                         '<b>' + __('Snooze') + '</b><br/>',
                         '<i>' + __('Since') + '</i> : <br/>',
                         this.dateFormat(this.get('value.snooze.t')) +' <br/> ',
+                        '<i>' + __('To') + '</i> : <br/>',
+                        this.dateFormat(this.get('value.snooze.val')) +' <br/> ',
                         __('By') +' : ' + this.get('value.snooze.a') +' <br/><br/> ',
                         '</center>'].join('');
                 } else {
