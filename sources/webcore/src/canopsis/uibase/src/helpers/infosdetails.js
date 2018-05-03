@@ -33,9 +33,11 @@ Ember.Application.initializer({
 
             var details = '';
             for (var prop in info) {
-                details = details + '<ul><li>' + prop + '</li>';
-                details = details + '<ul><li>' + prop["description"] + ' : ' + prop["value"] + '</li></ul>';
-                details = details + '</ul>';
+				if (info.hasOwnProperty(prop)) {
+					details = details + '<ul><li>' + prop + '</li>';
+					details = details + '<ul><li>' + info[prop]["description"] + ' : ' + info[prop]["value"] + '</li></ul>';
+					details = details + '</ul>';
+				}
             }
             return new Ember.Handlebars.SafeString(details);
         });
