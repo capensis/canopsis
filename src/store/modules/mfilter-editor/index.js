@@ -17,7 +17,7 @@ export default {
       groups: [],
       rules: [],
     }],
-    possibleFields: ['component_name', 'connector_name'],
+    possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
     activeTab: 0,
     parseError: '',
   },

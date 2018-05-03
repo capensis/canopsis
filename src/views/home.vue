@@ -1,8 +1,5 @@
 <template lang="pug">
-  .home
-    //img(src="../assets/logo.png")
-    hello-world(msg="Test props")
-    MFilterEditor
+  MFilterEditor
 </template>
 
 <script>

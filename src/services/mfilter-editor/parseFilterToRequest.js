@@ -94,7 +94,6 @@ function parseFilterRuleToRequest(rule) {
 
 function parseFilterGroupToRequest(group) {
   const parsedGroup = {};
-
   parsedGroup[group.condition] = [];
 
   /**

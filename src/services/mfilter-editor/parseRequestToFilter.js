@@ -106,6 +106,10 @@ export default function parseGroupToFilter(group) {
   const [condition] = Object.keys(group);
   parsedGroup.condition = condition;
 
+  if (isEmpty(Object.values(group)[0])) {
+    throw new Error('Empty group');
+  }
+
   /**
   * Map over the items of a group.
   * If the item is an array -> It's a group.
