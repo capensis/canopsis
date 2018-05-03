@@ -1,42 +1,48 @@
-<!--
-      The Alarm List Component
-          Props :
-            - alarmProperty ( Object ) : Object that describe the columns names and the alarms attributes corresponding
-              e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
-              Default : {}
-            - nbDataToDisplay ( Integer ) : Number of Alarm to display per page
-              Default : 5
--->
 <template lang="pug">
   div( v-if="fetchComplete" )
     basic-list( :items="items" )
       tr.container( slot="header" )
-          th.box( v-for="columnName in Object.keys(alarmProperty)" ) {{ columnName }}
+          th.box( v-for="columnName in Object.keys(alarmProperty)" @click="sortAlarms(columnName)" ) {{ columnName }}
           th.box
       tr.container( slot="row" slot-scope="item" )
-          td.box( v-for="property in Object.values(alarmProperty)" ) {{ getDescendantProp(item.props, property) }}
+          td.box( v-for="property in Object.values(alarmProperty)" ) {{ getProp(item.props, property) }}
           td.box
             actions-panel.actions
       tr.container(slot="expandedRow" slot-scope="item")
           td.box {{ item.props.infos }}
-    v-pagination( :length="nPages" @input="changePage" v-model="currentPage" v-if="fetchComplete")
+    alarm-list-pagination( :itemsPerPage="itemsPerPage" @changedPage="changePage" v-if="fetchComplete" )
     loader(v-else)
 </template>
 
 <script>
+import getProp from 'lodash/get';
+import merge from 'lodash/merge';
+
 import { createNamespacedHelpers } from 'vuex';
-import ObjectsHelper from '@/helpers/objects-helpers';
 import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 import Loader from '../loaders/alarm-list-loader.vue';
+import AlarmListPagination from './alarm-list-pagination.vue';
+
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
 
 export default {
+/**
+ * The Alarm List Component
+ *         Props :
+ *          - alarmProperty ( Object ) : Object that describe the columns names and the alarms attributes corresponding
+ *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
+ *            Default : {}
+ *          - itemsPerPage ( Integer ) : Number of Alarm to display per page
+ *            Default : 5
+ */
   name: 'AlarmList',
-  components: { ActionsPanel, BasicList, Loader },
+  components: {
+    AlarmListPagination, ActionsPanel, BasicList, Loader,
+  },
   mounted() {
-    this.fetchList({ params: { limit: this.nbDataToDisplay } });
+    this.fetchList(this.fetchingParams);
   },
   props: {
     alarmProperty: {
@@ -45,16 +51,19 @@ export default {
         return {};
       },
     },
-    nbDataToDisplay: {
+    itemsPerPage: {
       type: Number,
-      default() {
-        return 5;
-      },
+      default: 5,
     },
   },
   data() {
     return {
-      currentPage: 1,
+      columnSorted: 'opened',
+      fetchingParams: {
+        params: {
+          limit: this.itemsPerPage,
+        },
+      },
     };
   },
   computed: {
@@ -63,24 +72,19 @@ export default {
       'meta',
       'fetchComplete',
     ]),
-    nPages() {
-      if (this.meta.total) {
-        return Math.ceil(this.meta.total / this.nbDataToDisplay);
-      }
-      return 0;
-    },
   },
   methods: {
     ...mapActions(['fetchList']),
-    changePage() {
-      this.fetchList({
-        params: {
-          skip: (this.currentPage - 1) * this.nbDataToDisplay,
-          limit: this.nbDataToDisplay,
-        },
-      });
+    changePage(newFetchingParameters) {
+      merge(this.fetchingParams, newFetchingParameters);
+      this.fetchList(this.fetchingParams);
     },
-    getDescendantProp: ObjectsHelper.getDescendantProp,
+    getProp,
+    sortAlarms(columnToSort) {
+      this.fetchingParams.sort_key = this.alarmProperty[columnToSort];
+      this.fetchingParams.sort_dir = 'DESC';
+      this.fetchList(this.fetchingParams);
+    },
   },
 };
 </script>

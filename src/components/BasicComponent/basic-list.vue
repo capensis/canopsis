@@ -3,7 +3,7 @@
       li.header.sticky(ref="header" :style="headerStyle")
         slot(name="header")
       li(v-for="item in items", :item="item")
-        brick-list
+        list-item
           div(slot="reduced", :style="reducedStyle")
             slot(name="row", :props="item")
           div(slot="expanded")
@@ -12,11 +12,11 @@
 
 <script>
 import StickyFill from 'stickyfilljs';
-import BrickList from './brick-list.vue';
+import ListItem from './list-item.vue';
 
 export default {
   name: 'BasicList',
-  components: { BrickList },
+  components: { ListItem },
   props: ['items'],
   data() {
     return {

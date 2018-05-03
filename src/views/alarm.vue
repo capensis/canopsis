@@ -6,17 +6,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import VueMq from 'vue-mq';
 import AlarmList from '@/components/AlarmList/alarm-list.vue';
-
-Vue.use(VueMq, {
-  breakpoints: {
-    mobile: 450,
-    tablet: 900,
-    laptop: Infinity,
-  },
-});
 
 export default {
   name: 'Alarm',

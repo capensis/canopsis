@@ -16,6 +16,7 @@ export default {
     allIds: [],
     meta: {},
     fetchComplete: false,
+    fetchingParams: {},
   },
   getters: {
     byId: state => state.byId,
@@ -37,6 +38,7 @@ export default {
       state.meta = meta;
       state.fetchComplete = true;
     },
+
   },
   actions: {
     async fetchList({ commit }, params = {}) {
