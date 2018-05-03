@@ -10,6 +10,19 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Go]: New engine interface
 
+
+## Canopsis 2.6.4 - Maintenance release -  Due date : 2018-05-03
+
+- [Go]: pbehavior events are now correctly parsed by Che and passed to the pbehavior engine
+- [Go]: generation of an unique id on every alarm
+- [Go]: fix a crash when impacts and depends are not initialized in an entity object
+- [Heartbeat]: fix heartbeat never closed on special conditions
+- [Stat]: perfomance update on the engine
+- [Stat]: fix handling special character in requests
+- [UI]: fix presentation of pbehavior (in service-weather), ellipsis and snooze
+- [CAT]: fix a crash &with datametrie engine
+
+
 ## Canopsis 2.6.3 - Maintenance release -  Due date : 2018-04-26
 
 - [Engines] : Added UNACK, Uncancel, keep state actions to the High performance engines
@@ -19,6 +32,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [Go]: code refactoring, fix alarm duplication and preloading
 - [UI]: update rights on default view
 - Multiple fixes on Pbheavior and Event_filter
+
 
 ## Canopsis 2.6.2 - Maintenance release -  Due date : 2018-04-23
 
@@ -33,6 +47,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [Rights management] : fixed a rights issue with the massive actions on a limited account
 - [Service weather] : fixed the components display to put long names on 2 lines instead of truncating it
 
+
 ## Canopsis 2.6.1 - Due date: 2018-04-20
 **Not released due to regression**
 
@@ -40,7 +55,6 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 ## Canopsis 2.6.0 - Due date: 2018-04-18
 
 This release introduced the new High performance engines and allowed the renaming on the Alarms list columns.
-
 
 ### Functional changes
 
@@ -59,6 +73,7 @@ This release introduced the new High performance engines and allowed the renamin
 - [Engines] : New High Performance engines for heavily loaded environments (**experimental**)
 - [Engines] : reimplemented the last_event_date feature on the High performance engines
 - [engines] : The engine "stats" (High performance version) can now log the actions and their autors for audit purposes
+
 ### Bug fixes
 
 - [Alarms list] : fixed an issue where rights were not saved properly in the admin
