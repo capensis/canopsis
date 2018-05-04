@@ -10,6 +10,7 @@ export default {
     tabs: {
       visual_editor: 'Visual Editor',
       advanced_editor: 'Advanced Editor',
+      results: 'Results',
     },
     buttons: {
       add_rule: 'Add a rule',

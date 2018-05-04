@@ -10,6 +10,7 @@ export default {
     tabs: {
       visual_editor: 'Editeur visuel',
       advanced_editor: 'Editeur avancé',
+      results: 'Résultats',
     },
     buttons: {
       add_rule: 'Ajouter une règle',

@@ -2,7 +2,6 @@ import parseFilterToRequest from '@/services/mfilter-editor/parseFilterToRequest
 import parseGroupToFilter from '@/services/mfilter-editor/parseRequestToFilter';
 
 const types = {
-  CHANGE_TAB: 'CHANGE_TAB',
   UPDATE_FILTER: 'UPDATE_FILTER',
   ADD_PARSE_ERROR: 'ADD_PARSE_ERROR',
   DELETE_PARSE_ERROR: 'DELETE_PARSE_ERROR',
@@ -18,14 +17,12 @@ export default {
       rules: [],
     }],
     possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
-    activeTab: 0,
     parseError: '',
   },
 
   getters: {
     filter: state => state.filter,
     possibleFields: state => state.possibleFields,
-    activeTab: state => state.activeTab,
     request: (state) => {
       try {
         return parseFilterToRequest(state.filter);
@@ -37,9 +34,6 @@ export default {
   },
 
   mutations: {
-    [types.CHANGE_TAB](state, payload) {
-      state.activeTab = payload;
-    },
     [types.UPDATE_FILTER](state, payload) {
       try {
         const newFilter = parseGroupToFilter(payload);
@@ -57,9 +51,6 @@ export default {
   },
 
   actions: {
-    changeActiveTab(context, activeTab) {
-      context.commit(types.CHANGE_TAB, activeTab);
-    },
     updateFilter(context, newRequest) {
       context.commit(types.UPDATE_FILTER, newRequest);
     },

@@ -119,9 +119,15 @@ function parseFilterGroupToRequest(group) {
    */
   group.groups.map((item) => {
     try {
+      /*
+      if (isEmpty(item.groups)) {
+        throw new Error('Empty group');
+      }
+      */
       parsedGroup[group.condition].push(parseFilterGroupToRequest(item));
       return item;
     } catch (e) {
+      console.warn(e);
       return e;
     }
   });
@@ -158,13 +164,8 @@ export default function parseFilterToRequest(filter) {
    */
 
   filter[0].groups.map((group) => {
-    try {
-      request[filter[0].condition].push(parseFilterGroupToRequest(group));
-      return group;
-    } catch (e) {
-      console.warn(e);
-      return e;
-    }
+    request[filter[0].condition].push(parseFilterGroupToRequest(group));
+    return group;
   });
 
   return request;
