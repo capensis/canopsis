@@ -2,26 +2,36 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
 
-
-
 ## Unreleased
+
 
 ### Experimental features
 
 - [Go]: New engine interface
-
+- [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
 ## Canopsis 2.6.4 - Maintenance release -  Due date : 2018-05-03
 
+- [Setup] A version of the amqp2engines.conf file is provided for the High performance engines
+- [Go]: fix error code when an engine crashes
 - [Go]: pbehavior events are now correctly parsed by Che and passed to the pbehavior engine
 - [Go]: generation of an unique id on every alarm
 - [Go]: fix a crash when impacts and depends are not initialized in an entity object
+- [Go]: Removed some useless logs from the Context
+- [Event filter]: fixed an issue that blocked snooze events
 - [Heartbeat]: fix heartbeat never closed on special conditions
 - [Stat]: perfomance update on the engine
 - [Stat]: fix handling special character in requests
 - [UI]: fix presentation of pbehavior (in service-weather), ellipsis and snooze
-- [CAT]: fix a crash &with datametrie engine
-
+- [UI]: fix permissions on the "List pbehaviors" action
+- [CAT]: fix a crash with datametrie engine
+- [Alarms list]: the  'pbehavior' icon is now displayed only when a pbeheavior is active on the entity, not when it is configured
+- [Alarms list]: add the snooze End date on the Snooze tooltip
+- [Alarms list]: several fixes on the ACK and report ticket action
+- [Alarms list]: Pbehaviors can now be filtered.
+- [Alarms list]: fix an issue where a pbehavior id could become null with periodic refresh enabled
+- [Service weather]: Resources are now greyed out when a Component has a pbehavior
+- [Context Graph]: Fixed an issue that prevented the expansion of an item of the Context Graph explorer
 
 ## Canopsis 2.6.3 - Maintenance release -  Due date : 2018-04-26
 
