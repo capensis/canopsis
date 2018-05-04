@@ -34,8 +34,18 @@ Ember.Application.initializer({
             var details = '';
             for (var prop in info) {
 				if (info.hasOwnProperty(prop)) {
-					details = details + '<ul><li>' + prop + '</li>';
-					details = details + '<ul><li>' + info[prop]["description"] + ' : ' + info[prop]["value"] + '</li></ul>';
+
+					if (info[prop]["description"] === undefined){
+						if (info[prop]["value"] !== ""){
+							details = details + '<ul><li>' + prop +  " : " + info[prop]["value"] + '</li></ul>';
+						} else {
+							details = details + '<ul><li>' + prop + '</li>';
+						}
+					}
+					else{
+						details = details + '<ul><li>' + prop + '</li>';
+						details = details + '<ul><li>' + info[prop]["description"] + ' : ' + info[prop]["value"] + '</li></ul>';
+					}
 					details = details + '</ul>';
 				}
             }
