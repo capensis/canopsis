@@ -857,12 +857,16 @@ class AlertsReader(object):
             else:
                 alarm_dict[component].append(alarm)
 
+
+
+
         filtred_alarms = []
         for component in alarm_dict:
             entity_type = []
             for alarm_comp in alarm_dict[component]:
                 entity_type.append(alarm_comp.get(
                     'entity', {}).get('type', ''))
+
             if 'component' in entity_type:
                 filtred_alarms = filtred_alarms + \
                     remove_resources_alarms(alarm_dict[component])
@@ -957,4 +961,8 @@ def remove_resources_alarms(alarms):
     if state_comp >= max(states_list):
         return [alarm_comp]
 
-    return alarms
+    ret_val = [alarm_comp]
+    for alarm in alarms:
+        if alarm.get('v').get('state').get('val') > state_comp:
+            ret_val.append(alarm)
+    return ret_val
