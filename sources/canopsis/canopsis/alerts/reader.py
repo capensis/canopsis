@@ -857,9 +857,6 @@ class AlertsReader(object):
             else:
                 alarm_dict[component].append(alarm)
 
-
-
-
         filtred_alarms = []
         for component in alarm_dict:
             entity_type = []
