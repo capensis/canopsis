@@ -3,125 +3,222 @@
     v-form(@submit.prevent="submit")
       v-card
         v-card-title
-          span.headline {{ $t('modals.addChangeStateEvent.title') }}
+          span.headline {{ $t('modals.addPbehavior.title') }}
         v-card-text
           v-layout(row)
             v-text-field(
-            label="Name",
-            :error-messages="errors.collect('output')",
+            :label="$t('modals.addPbehavior.fields.name')",
+            :error-messages="errors.collect('name')",
             v-model="form.name",
             v-validate="'required'",
-            data-vv-name="output"
+            data-vv-name="name"
             )
           v-layout(row)
             date-time-picker(
+            :label="$t('modals.addPbehavior.fields.start')",
             v-model="form.tstart",
-            label="Start",
             name="tstart",
-            rules="required"
+            rules="required",
+            @input="changeTstart"
             )
           v-layout(row)
             date-time-picker(
+            :label="$t('modals.addPbehavior.fields.end')",
             v-model="form.tend",
-            label="End",
             name="tend",
             rules="required"
             )
           v-layout(row)
-            v-switch(v-model="withRRule", label="Do you need rrule?")
-          template(v-if="withRRule")
+            v-switch(v-model="showRRule", :label="$t('modals.addPbehavior.title')")
+          template(v-if="showRRule")
             v-layout(row)
               v-tabs.r-rule-tabs(v-model="activeTab", centered)
-                v-tab(href="#simple") Simple
-                v-tab(href="#advanced") Advanced
-                v-tab(href="#text-input") Text input
+                v-tab(href="#simple") {{ $t('rRule.tabs.simple') }}
+                v-tab(href="#advanced") {{ $t('rRule.tabs.advanced') }}
                 v-tab-item(id="simple")
                   div
                     div
                       v-select(
-                      label="Frequency",
+                      :label="$t('rRule.fields.freq')",
                       v-model="form.rRule.freq",
-                      :items="selectItems.frequencies"
+                      :items="selectItems.frequencies",
+                      @input="changeRRuleOption"
                       )
                     div
-                      date-time-picker(label="Until", v-model="form.rRule.until", clearable)
+                      date-time-picker(
+                      :label="$t('rRule.fields.until')",
+                      v-model="form.rRule.until",
+                      clearable,
+                      @input="changeRRuleOption"
+                      )
                     div
                       v-select(
-                      label="By week day",
+                      :label="$t('rRule.fields.byweekday')",
                       v-model="form.rRule.byweekday",
                       :items="selectItems.weekDays",
+                      @input="changeRRuleOption"
                       multiple,
                       chips
                       )
                     div
-                      v-text-field(type="number", label="Repeat", v-model="form.rRule.count")
+                      v-text-field(
+                      :label="$t('rRule.fields.count')",
+                      type="number",
+                      v-model="form.rRule.count",
+                      @input="changeRRuleOption"
+                      )
                     div
                       v-text-field(
+                      :label="$t('rRule.fields.interval')",
                       type="number",
-                      label="Interval",
                       v-model="form.rRule.interval",
-                      @input="changeRRuleProp('interval')"
+                      @input="changeRRuleOption"
                       )
                 v-tab-item(id="advanced")
                   div
                     div
                       v-select(
-                      label="Week start",
+                      :label="$t('rRule.fields.wkst')",
                       v-model="form.rRule.wkst",
                       :items="selectItems.weekDays",
+                      @input="changeRRuleOption"
                       )
                     div
                       v-select(
-                      label="Select",
+                      :label="$t('rRule.fields.bymonth')",
                       v-model="form.rRule.bymonth",
                       :items="selectItems.months",
+                      @input="changeRRuleOption"
                       multiple,
                       chips
                       )
                     div
-                      v-tooltip(right)
+                      v-tooltip(left, max-width="250")
                         div(slot="activator")
-                          v-text-field(type="number", label="By set position", v-model="form.rRule.bysetpos")
-                        span Something
+                          v-text-field(
+                          v-model="form.advancedRRule.bysetpos",
+                          :label="$t('rRule.fields.bysetpos.label')",
+                          :error-messages="errors.collect('bysetpos')",
+                          v-validate="{ regex: advancedFieldRegexp }",
+                          data-vv-name="bysetpos",
+                          :hint="$t('rRule.advancedHint')",
+                          persistent-hint,
+                          @input="changeRRuleAdvancedOption"
+                          )
+                        span {{ $t('rRule.fields.bysetpos.tooltip') }}
                     div
-                      v-text-field(type="number", label="By month day", v-model="form.rRule.bymonthday")
+                      v-tooltip(left, max-width="250")
+                        div(slot="activator")
+                          v-text-field(
+                          v-model="form.advancedRRule.bymonthday",
+                          :label="$t('rRule.fields.bymonthday.label')",
+                          :error-messages="errors.collect('bymonthday')",
+                          v-validate="{ regex: advancedFieldRegexp }",
+                          data-vv-name="bymonthday",
+                          :hint="$t('rRule.advancedHint')",
+                          persistent-hint
+                          @input="changeRRuleAdvancedOption"
+                          )
+                        span {{ $t('rRule.fields.bymonthday.tooltip') }}
                     div
-                      v-text-field(type="number", label="By year day", v-model="form.rRule.byyearday")
+                      v-tooltip(left, max-width="250")
+                        div(slot="activator")
+                          v-text-field(
+                          v-model="form.advancedRRule.byyearday",
+                          :label="$t('rRule.fields.byyearday.label')",
+                          :error-messages="errors.collect('byyearday')",
+                          v-validate="{ regex: advancedFieldRegexp }",
+                          data-vv-name="byyearday",
+                          :hint="$t('rRule.advancedHint')",
+                          persistent-hint
+                          @input="changeRRuleAdvancedOption"
+                          )
+                        span {{ $t('rRule.fields.byyearday.tooltip') }}
                     div
-                      v-text-field(type="number", label="By week n°", v-model="form.rRule.byweekno")
+                      v-tooltip(left, max-width="250")
+                        div(slot="activator")
+                          v-text-field(
+                          v-model="form.advancedRRule.byweekno",
+                          :label="$t('rRule.fields.byweekno.label')",
+                          :error-messages="errors.collect('byweekno')",
+                          v-validate="{ regex: advancedFieldRegexp }",
+                          data-vv-name="byweekno",
+                          :hint="$t('rRule.advancedHint')",
+                          persistent-hint
+                          @input="changeRRuleAdvancedOption"
+                          )
+                        span {{ $t('rRule.fields.byweekno.tooltip') }}
                     div
-                      v-text-field(type="number", label="By hour", v-model="form.rRule.byhour")
+                      v-tooltip(left, max-width="250")
+                        div(slot="activator")
+                          v-text-field(
+                          v-model="form.advancedRRule.byhour",
+                          :label="$t('rRule.fields.byhour.label')",
+                          :error-messages="errors.collect('byhour')",
+                          v-validate="{ regex: advancedFieldRegexp }",
+                          data-vv-name="byhour",
+                          :hint="$t('rRule.advancedHint')",
+                          persistent-hint
+                          @input="changeRRuleAdvancedOption"
+                          )
+                        span {{ $t('rRule.fields.byhour.tooltip') }}
                     div
-                      v-text-field(type="number", label="By minute", v-model="form.rRule.byminute")
+                      v-tooltip(left, max-width="250")
+                        div(slot="activator")
+                          v-text-field(
+                          v-model="form.advancedRRule.byminute",
+                          :label="$t('rRule.fields.byminute.label')",
+                          :error-messages="errors.collect('byminute')",
+                          v-validate="{ regex: advancedFieldRegexp }",
+                          data-vv-name="byminute",
+                          :hint="$t('rRule.advancedHint')",
+                          persistent-hint
+                          @input="changeRRuleAdvancedOption"
+                          )
+                        span {{ $t('rRule.fields.byminute.tooltip') }}
                     div
-                      v-text-field(type="number", label="By second", v-model="form.rRule.bysecond")
-                v-tab-item(id="text-input")
-                  div
-                    v-text-field(
-                    label="Rrule",
-                    :value="form.rRuleObject.toString()",
-                    @input="changeRRuleString"
-                    )
+                      v-tooltip(left, max-width="250")
+                        div(slot="activator")
+                          v-text-field(
+                          v-model="form.advancedRRule.bysecond",
+                          :label="$t('rRule.fields.bysecond.label')",
+                          :error-messages="errors.collect('bysecond')",
+                          v-validate="{ regex: advancedFieldRegexp }",
+                          data-vv-name="bysecond",
+                          :hint="$t('rRule.advancedHint')",
+                          persistent-hint
+                          @input="changeRRuleAdvancedOption"
+                          )
+                        span {{ $t('rRule.fields.bysecond.tooltip') }}
             v-layout(row)
               v-flex(xs2)
-                strong Rrule
+                strong {{ $t('rRule.stringLabel') }}
               v-flex(xs10)
-                p {{ form.rRuleObject.toString() }}
+                p {{ rRuleObject.toString() }}
             v-layout(row)
               v-flex(xs2)
-                strong Summary
+                strong {{ $t('rRule.textLabel') }}
               v-flex(xs10)
-                p {{ form.rRuleObject.toText() }}
+                p {{ rRuleObject.toText() }}
           v-layout(row)
-            v-select(label="Reason")
+            v-select(
+            label="Reason",
+            v-model="form.reason",
+            :items="selectItems.reasons"
+            )
           v-layout(row)
-            v-select(label="Type")
+            v-select(
+            label="Type",
+            v-model="form.type_",
+            :items="selectItems.types"
+            )
         v-card-actions
           v-btn(type="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
 import RRule from 'rrule';
+import mapValues from 'lodash/mapValues';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 
@@ -132,30 +229,42 @@ export default {
   mixins: [ModalMixin],
   components: { DateTimePicker },
   data() {
-    const rRule = new RRule({
-      dtstart: new Date(),
-    });
+    const now = new Date();
+    const reasons = ['Problème Habilitation', 'Problème Robot', 'Problème Scénario', 'Autre'];
+    const types = ['Pause', 'Maintenance', 'Hors plage horaire de surveillance'];
+    const frequencies = [
+      { text: 'Secondly', value: RRule.SECONDLY },
+      { text: 'Minutely', value: RRule.MINUTELY },
+      { text: 'Hourly', value: RRule.HOURLY },
+      { text: 'Daily', value: RRule.DAILY },
+      { text: 'Weekly', value: RRule.WEEKLY },
+      { text: 'Monthly', value: RRule.MONTHLY },
+      { text: 'Yearly', value: RRule.YEARLY },
+    ];
+    const rRuleOptions = {
+      dtstart: now,
+      freq: frequencies[3].value, // Daily
+    };
 
     return {
       activeTab: 'simple',
-      withRRule: false,
+      showRRule: false,
+      rRuleObject: new RRule(rRuleOptions),
+      advancedFieldRegexp:
+        /^(-?(?:[1-9]|[1-9]\d|[12]\d\d|3[0-6][0-6]?))(,-?(?:[1-9]|[1-9]\d|[12]\d\d|3[0-6][0-6]?))*,?$/,
       form: {
         name: '',
-        tstart: new Date(),
-        tend: new Date(),
-        rRule: { ...rRule.options },
-        rRuleObject: rRule,
+        tstart: now,
+        tend: now,
+        type_: types[0],
+        reason: reasons[0],
+        rRule: rRuleOptions,
+        advancedRRule: {},
       },
       selectItems: {
-        frequencies: [
-          { text: 'Secondly', value: RRule.SECONDLY },
-          { text: 'Minutely', value: RRule.MINUTELY },
-          { text: 'Hourly', value: RRule.HOURLY },
-          { text: 'Daily', value: RRule.DAILY },
-          { text: 'Weekly', value: RRule.WEEKLY },
-          { text: 'Monthly', value: RRule.MONTHLY },
-          { text: 'Yearly', value: RRule.YEARLY },
-        ],
+        reasons,
+        types,
+        frequencies,
         weekDays: [
           { text: 'Monday', value: RRule.MO.weekday },
           { text: 'Tuesday', value: RRule.TU.weekday },
@@ -183,19 +292,23 @@ export default {
     };
   },
   methods: {
-    changeRRuleProp() {
-      try {
-        this.form.rRuleObject = new RRule(this.form.rRule);
-      } catch (err) {
-        console.warn(err);
-      }
+    changeTstart(value) {
+      this.form.rRule.dtstart = value;
+
+      this.changeRRuleOption();
     },
-    changeRRuleString(value) {
+    changeRRuleAdvancedOption() {
+      this.form.rRule = {
+        ...this.form.rRule,
+        ...mapValues(this.form.advancedRRule, options => options.split(',').filter(v => v)),
+      };
+
+      this.changeRRuleOption();
+    },
+    changeRRuleOption() {
       try {
-        this.form.rRuleObject = RRule.fromString(value);
-        this.form.rRule = { ...this.form.rRuleObject.options };
+        this.rRuleObject = new RRule(this.form.rRule);
       } catch (err) {
-        // TODO: add error
         console.warn(err);
       }
     },

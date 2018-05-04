@@ -41,6 +41,17 @@ export default {
         critical: 'Critical',
       },
     },
+    addPbehavior: {
+      title: 'Put a pbehavior on these elements ?',
+      fields: {
+        name: 'Name',
+        start: 'Start',
+        end: 'End',
+        reason: 'Reason',
+        type: 'Type',
+        rRuleQuestion: 'Do you need rrule?',
+      },
+    },
   },
   tables: {
     alarmGeneral: {
@@ -49,6 +60,52 @@ export default {
       connector: 'Connector',
       component: 'Component',
       resource: 'Resource',
+    },
+  },
+  rRule: {
+    advancedHint: 'Separate numbers with a comma',
+    textLabel: 'Rrule',
+    stringLabel: 'Summary',
+    tabs: {
+      simple: 'Simple',
+      advanced: 'Advanced',
+    },
+    fields: {
+      freq: 'Frequency',
+      until: 'Until',
+      byweekday: 'By week day',
+      count: 'Repeat',
+      interval: 'Interval',
+      wkst: 'Week start',
+      bymonth: 'By month',
+      bysetpos: {
+        label: 'By set position',
+        tooltip: 'If given, it must be one or many integers, positive or negative. Each given integer will specify an occurrence number, corresponding to the nth occurrence of the rule inside the frequency period. For example, a \'bysetpos\' of -1 if combined with a monthly frequency, and a \'byweekday\' of (Monday, Tuesday, Wednesday, Thursday, Friday), will result in the last work day of every month.',
+      },
+      bymonthday: {
+        label: 'By month day',
+        tooltip: 'If given, it must be one or many integers, meaning the month days to apply the recurrence to.',
+      },
+      byyearday: {
+        label: 'By year day',
+        tooltip: 'If given, it must be one or many integers, meaning the year days to apply the recurrence to.',
+      },
+      byweekno: {
+        label: 'By week n°',
+        tooltip: 'If given, it must be on or many integers, meaning the week numbers to apply the recurrence to. Week numbers have the meaning described in ISO8601, that is, the first week of the year is that containing at least four days of the new year.',
+      },
+      byhour: {
+        label: 'By hour',
+        tooltip: 'If given, it must be one or many integers, meaning the hours to apply the recurrence to.',
+      },
+      byminute: {
+        label: 'By minute',
+        tooltip: 'If given, it must be one or many integers, meaning the minutes to apply the recurrence to.',
+      },
+      bysecond: {
+        label: 'By second',
+        tooltip: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
+      },
     },
   },
 };
