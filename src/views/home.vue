@@ -1,16 +1,14 @@
 <template lang="pug">
-  .home
-    img(src="../assets/logo.png")
-    hello-world(msg="Test props")
+  alarms-list-settings
 </template>
 
 <script>
-import HelloWorld from '@/components/hello-world.vue';
+import AlarmsListSettings from '@/components/alarms-list-settings.vue';
 
 export default {
   name: 'home',
   components: {
-    HelloWorld,
+    AlarmsListSettings,
   },
 };
 </script>
