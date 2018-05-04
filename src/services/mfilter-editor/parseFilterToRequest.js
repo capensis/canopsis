@@ -1,5 +1,11 @@
+import { isEmpty } from 'lodash';
+
 function parseFilterRuleToRequest(rule) {
   const parsedRule = {};
+
+  if (rule.operator === '' || rule.field === '') {
+    throw new Error('Invalid Rule');
+  }
 
   /**
    * Determine the rule syntax based on the rule operator
@@ -96,6 +102,10 @@ function parseFilterGroupToRequest(group) {
   const parsedGroup = {};
   parsedGroup[group.condition] = [];
 
+  if (isEmpty(group.groups) && isEmpty(group.rules)) {
+    throw new Error('Empty Group');
+  }
+
   /**
    * Parse each rule of a group and add it to the parsedGroup array
    */
@@ -108,8 +118,12 @@ function parseFilterGroupToRequest(group) {
    * Parse each group of the group ans add it to the parsedGroup array
    */
   group.groups.map((item) => {
-    parsedGroup[group.condition].push(parseFilterGroupToRequest(item));
-    return parsedGroup;
+    try {
+      parsedGroup[group.condition].push(parseFilterGroupToRequest(item));
+      return item;
+    } catch (e) {
+      return e;
+    }
   });
 
   return parsedGroup;
@@ -125,18 +139,32 @@ export default function parseFilterToRequest(filter) {
 
   request[filter[0].condition] = [];
 
+  if (isEmpty(filter[0].groups) && isEmpty(filter[0].rules)) {
+    throw new Error('Empty group');
+  }
+
   filter[0].rules.map((rule) => {
-    request[filter[0].condition].push(parseFilterRuleToRequest(rule));
-    return request[filter[0].condition];
+    try {
+      request[filter[0].condition].push(parseFilterRuleToRequest(rule));
+      return request[filter[0].condition];
+    } catch (e) {
+      return e;
+    }
   });
 
   /**
    * Map on the filter's group array, and call itself recursively
    * to parse Groups, and group's groups, etc
    */
+
   filter[0].groups.map((group) => {
-    request[filter[0].condition].push(parseFilterGroupToRequest(group));
-    return request[filter[0].condition];
+    try {
+      request[filter[0].condition].push(parseFilterGroupToRequest(group));
+      return group;
+    } catch (e) {
+      console.warn(e);
+      return e;
+    }
   });
 
   return request;

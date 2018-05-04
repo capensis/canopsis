@@ -8,6 +8,7 @@ import { eventSchema } from '@/store/schemas';
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_COMPLETED: 'FETCH_LIST_COMPLETED',
+  FETCH_ERROR: 'FETCH_ERROR',
 };
 
 export default {
@@ -19,6 +20,7 @@ export default {
     allIds: {},
     meta: {},
     fetchComplete: false,
+    fetchError: '',
   },
 
   getters: {
@@ -27,6 +29,7 @@ export default {
     allIds: state => state.allIds,
     meta: state => state.meta,
     fetchComplete: state => state.fetchComplete,
+    fetchError: state => state.fetchError,
   },
 
   mutations: {
@@ -41,6 +44,9 @@ export default {
       state.allIds = allIds;
       state.meta = meta;
     },
+    [types.FETCH_ERROR](state, error) {
+      state.fetchError = error.message;
+    },
   },
 
   actions: {
@@ -52,6 +58,7 @@ export default {
         if (isEmpty(data)) {
           return;
         }
+
         const normalizedData = normalize(data, [eventSchema]);
         commit(types.FETCH_COMPLETED, {
           byId: normalizedData.entities.event,
@@ -63,7 +70,7 @@ export default {
           },
         });
       } catch (error) {
-        console.warn(error);
+        commit(types.FETCH_ERROR, error);
       }
     },
   },

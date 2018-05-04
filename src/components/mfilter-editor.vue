@@ -96,16 +96,16 @@ export default {
   },
 
   computed: {
-    ...mFilterGetters(['filter2request', 'filter', 'possibleFields', 'activeTab', 'parseError']),
-    ...eventsGetters(['byId', 'allIds', 'meta', 'fetchComplete']),
+    ...mFilterGetters(['request', 'filter', 'possibleFields', 'activeTab', 'parseError']),
+    ...eventsGetters(['byId', 'allIds', 'meta', 'fetchComplete', 'fetchError']),
 
     /**
      * @description Value of the input field of the advanced editor.
-     * Prettify the value of the parsed filter ('filter2request')
+     * Prettify the value of the parsed filter
      */
     inputValue: {
       get() {
-        return JSON.stringify(this.filter2request, undefined, 4);
+        return JSON.stringify(this.request, undefined, 4);
       },
       set(newVal) {
         this.newRequest = newVal;
@@ -122,7 +122,7 @@ export default {
     },
 
     handleResultTabClick() {
-      this.fetchList({ start: 0, filter: JSON.stringify(this.filter2request), limit: 10 });
+      this.fetchList({ start: 0, filter: JSON.stringify(this.request), limit: 10 });
       this.changeActiveTab(2);
     },
 
@@ -130,7 +130,7 @@ export default {
       this.deleteParseError();
       try {
         if (this.newRequest === '') {
-          this.updateFilter(JSON.parse(JSON.stringify(this.filter2request)));
+          this.updateFilter(JSON.parse(JSON.stringify(this.request)));
           return this;
         }
         this.updateFilter(JSON.parse(this.newRequest));

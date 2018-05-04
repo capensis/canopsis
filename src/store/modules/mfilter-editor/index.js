@@ -26,7 +26,13 @@ export default {
     filter: state => state.filter,
     possibleFields: state => state.possibleFields,
     activeTab: state => state.activeTab,
-    filter2request: state => parseFilterToRequest(state.filter),
+    request: (state) => {
+      try {
+        return parseFilterToRequest(state.filter);
+      } catch (e) {
+        return e;
+      }
+    },
     parseError: state => state.parseError,
   },
 
