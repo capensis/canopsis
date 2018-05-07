@@ -9,7 +9,7 @@
           td.box
             actions-panel.actions
       tr.container(slot="expandedRow" slot-scope="item")
-          td.box {{ item.props.infos }}
+          time-line(:idAlarm="item.props.d")
     alarm-list-pagination( :itemsPerPage="itemsPerPage" @changedPage="changePage" v-if="fetchComplete" )
     loader(v-else)
 </template>
@@ -23,6 +23,7 @@ import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 import Loader from '../loaders/alarm-list-loader.vue';
 import AlarmListPagination from './alarm-list-pagination.vue';
+import TimeLine from "../time-line";
 
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
@@ -39,6 +40,7 @@ export default {
  */
   name: 'AlarmList',
   components: {
+    TimeLine,
     AlarmListPagination, ActionsPanel, BasicList, Loader,
   },
   mounted() {
