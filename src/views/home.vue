@@ -1,7 +1,7 @@
 <template lang="pug">
   .home
     img(src="../assets/logo.png")
-    hello-world(msg="Test props")
+    hello-world(msg="AlarmList props")
 </template>
 
 <script>

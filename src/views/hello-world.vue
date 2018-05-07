@@ -1,30 +1,21 @@
 <template lang="pug">
   div
     h1.hello {{ $t('common.hello') }}
-    h2 {{ msg }}
     v-container(fluid)
       v-layout(row, wrap, v-for="item in items", :key="item._id")
         v-flex(xs6)
-          v-subheader {{item._id}}
+          v-subheader {{Object.keys(item)}}
         v-flex(xs6)
           v-subheader {{item.v.display_name}}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: {
-      type: String,
-      required: true,
-    },
-  },
   mounted() {
-    this.fetchAlarmList();
+    this.$store.dispatch('entities/alarm/fetchList');
   },
   data() {
     const locales = [
@@ -37,15 +28,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('entities/alarm', [
       'items',
       'meta',
     ]),
-  },
-  methods: {
-    ...mapActions({
-      fetchAlarmList: 'fetchList',
-    }),
   },
   watch: {
     currentLocaleIndex() {
