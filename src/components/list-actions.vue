@@ -1,20 +1,20 @@
 <template lang="pug">
   v-flex
-    v-btn(flat, icon, @click="showAddAckEventModal")
+    v-btn(flat, icon, @click.stop="showAddAckEventModal")
       v-icon playlist_add_check
     v-btn(flat, icon)
       v-icon check
-    v-btn(flat, icon, @click="showAddChangeStateEventModal")
+    v-btn(flat, icon, @click.stop="showAddChangeStateEventModal")
       v-icon report_problem
-    v-btn(flat, icon, @click="showAddSnoozeEventModal")
+    v-btn(flat, icon, @click.stop="showAddSnoozeEventModal")
       v-icon alarm
-    v-btn(flat, icon, @click="showCancelEventModal")
+    v-btn(flat, icon, @click.stop="showCancelEventModal")
       v-icon delete
-    v-btn(flat, icon, @click="showAddPbehaviorModal")
+    v-btn(flat, icon, @click.stop="showAddPbehaviorModal")
       v-icon pause
-    v-btn(flat, icon, @click="showAddPbehaviorModal")
+    v-btn(flat, icon, @click.stop="showAddPbehaviorModal")
       v-icon local_play
-    v-btn(flat, icon, @click="showCancelEventModal")
+    v-btn(flat, icon, @click.stop="showCancelEventModal")
       v-icon list
     v-menu(bottom)
       v-btn(flat, icon, slot="activator")

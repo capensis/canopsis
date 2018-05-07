@@ -14,6 +14,7 @@ import i18n from './i18n';
 Vue.use(Vuetify);
 Vue.use(VeeValidate, {
   i18n,
+  inject: false,
   dictionary: {
     en: enValidationMessages,
     fr: frValidationMessages,

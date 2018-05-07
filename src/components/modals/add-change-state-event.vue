@@ -1,34 +1,32 @@
 <template lang="pug">
-  v-dialog(:value="opened", @input="hideModal", max-width="700")
-    v-form(@submit.prevent="submit")
-      v-card
-        v-card-title
-          span.headline {{ $t('modals.addChangeStateEvent.title') }}
-        v-card-text
-          v-container
-            v-layout(row)
-              v-btn-toggle(v-model="form.state")
-                v-btn(color="success", value="info", depressed) {{ $t('modals.addChangeStateEvent.states.info') }}
-                v-btn(color="warning", value="minor", depressed) {{ $t('modals.addChangeStateEvent.states.minor') }}
-                v-btn(color="error", value="critical", depressed) {{ $t('modals.addChangeStateEvent.states.critical') }}
-            v-layout(row)
-              v-text-field(
-              :label="$t('modals.addChangeStateEvent.output')",
-              :error-messages="errors.collect('output')",
-              v-model="form.output",
-              v-validate="'required'",
-              data-vv-name="output"
-              )
-        v-card-actions
-          v-btn(type="submit") {{ $t('common.actions.saveChanges') }}
+  v-form(@submit.prevent="submit")
+    v-card
+      v-card-title
+        span.headline {{ $t('modals.addChangeStateEvent.title') }}
+      v-card-text
+        v-container
+          v-layout(row)
+            v-btn-toggle(v-model="form.state")
+              v-btn(color="success", value="info", depressed) {{ $t('modals.addChangeStateEvent.states.info') }}
+              v-btn(color="warning", value="minor", depressed) {{ $t('modals.addChangeStateEvent.states.minor') }}
+              v-btn(color="error", value="critical", depressed) {{ $t('modals.addChangeStateEvent.states.critical') }}
+          v-layout(row)
+            v-text-field(
+            :label="$t('modals.addChangeStateEvent.output')",
+            :error-messages="errors.collect('output')",
+            v-model="form.output",
+            v-validate="'required'",
+            data-vv-name="output"
+            )
+      v-card-actions
+        v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
-import ModalMixin from './modal-mixin';
-
 export default {
-  name: 'add-change-state-event',
-  mixins: [ModalMixin],
+  $_veeValidate: {
+    validator: 'new',
+  },
   data() {
     return {
       form: {
