@@ -25,15 +25,12 @@
 
 <script>
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
+import Vue from 'vue';
 
 import ModalMixin from './modal-mixin';
+import AlarmMixin from '../mixins/alarm';
 
-export default {
-  name: 'add-cancel-event',
-  mixins: [ModalMixin],
-  components: {
-    AlarmGeneralTable,
-  },
+const component = Vue.extend({
   data() {
     return {
       form: {
@@ -41,15 +38,40 @@ export default {
       },
     };
   },
+  name: 'add-cancel-event',
+  mixins: [
+    ModalMixin,
+    AlarmMixin,
+  ],
+  components: {
+    AlarmGeneralTable,
+  },
   methods: {
     async submit() {
-      const testVar;
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        console.log('SUBMITTED');
+        try {
+          await this.cancelAlarmConfirmation({
+            comment: this.form.output,
+            alarmData: {
+              connector: 'toto',
+              connector_name: 'toto',
+              component: 'localhost',
+              state: 0,
+              state_type: 1,
+              resource: 'res99',
+            },
+          });
+          this.form.output = '';
+          this.hideModal();
+        } catch (e) {
+          console.log(e);
+        }
       }
     },
   },
-};
+});
+
+export default component;
 </script>
