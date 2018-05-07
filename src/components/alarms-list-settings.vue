@@ -10,11 +10,13 @@
         v-list-tile(slot="activator", active-class="activeHeader") Title
         v-container
           v-text-field(placeholder="Widget title")
+      v-divider
       v-list-group
         v-list-tile(slot="activator") Default Sort column
         v-container
           v-text-field(placeholder="Column name")
           v-select(:items="sortChoices", value="ASC")
+      v-divider
       v-list-group
         v-list-tile(slot="activator") Column names
         v-container
@@ -34,22 +36,8 @@
                 v-text-field(placeholder="Label")
               v-flex(xs11)
                 v-text-field(placeholder="Value")
-            //v-layout(align-center justify-space-between)
-              v-flex(xs2)
-                v-layout(justify-space-around class="text-xs-center")
-                  v-flex(xs5)
-                    v-icon(small) arrow_upward
-                  v-flex(xs5)
-                    v-icon(small) arrow_downward
-              v-flex(xs8)
-                v-layout(justify-space-around wrap)
-                  v-flex(xs6)
-                    v-text-field(placeholder="Label")
-                  v-flex(xs6)
-                    v-text-field(placeholder="Value")
-              v-flex(xs1)
-                v-icon(small color="red ") close
           v-divider
+      v-divider
       v-list-group
         v-list-tile(slot="activator") Periodic refresh
         v-container
@@ -66,6 +54,7 @@
                 hide-details,
                 type="number",
                 :disabled="!isPeriodicRefreshEnable")
+      v-divider
       v-list-group
         v-list-tile(slot="activator") Default number of elements/page
         v-container
@@ -73,6 +62,7 @@
             placeholder="Elements per page",
             type="number"
           )
+      v-divider
       v-list-group
         v-list-tile(slot="activator") Filter on Open/Resolve
         v-container
@@ -87,12 +77,15 @@
               v-model="resolveCheckbox",
               hide-details
             )
+      v-divider
       v-list-group
         v-list-tile(slot="activator") Filters
         v-container
           v-select(label="Select a filter")
-      v-list-group
+      v-divider
+      v-list-group(disabled)
         v-list-tile(slot="activator") Info popup
+      v-divider
     v-btn(
       color="green darken-4 white--text",
       depressed,
