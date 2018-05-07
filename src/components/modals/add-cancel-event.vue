@@ -43,7 +43,6 @@ export default {
   },
   methods: {
     async submit() {
-      const testVar;
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
