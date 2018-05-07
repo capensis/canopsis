@@ -16,6 +16,41 @@
           v-text-field(placeholder="Column name")
           v-select(:items="sortChoices", value="ASC")
       v-list-group
+        v-list-tile(slot="activator") Column names
+        v-container
+          v-card
+            v-layout(justify-space-between class="pt-2")
+              v-flex(xs3)
+                v-layout(justify-space-between class="text-xs-center pl-2")
+                  v-flex(xs1)
+                    v-icon arrow_upward
+                  v-flex(xs5)
+                    v-icon arrow_downward
+              v-flex(xs3 class="d-flex")
+                div(class="text-xs-right pr-2")
+                  v-icon(color="red") close
+            v-layout(justify-center wrap)
+              v-flex(xs11)
+                v-text-field(placeholder="Label")
+              v-flex(xs11)
+                v-text-field(placeholder="Value")
+            //v-layout(align-center justify-space-between)
+              v-flex(xs2)
+                v-layout(justify-space-around class="text-xs-center")
+                  v-flex(xs5)
+                    v-icon(small) arrow_upward
+                  v-flex(xs5)
+                    v-icon(small) arrow_downward
+              v-flex(xs8)
+                v-layout(justify-space-around wrap)
+                  v-flex(xs6)
+                    v-text-field(placeholder="Label")
+                  v-flex(xs6)
+                    v-text-field(placeholder="Value")
+              v-flex(xs1)
+                v-icon(small color="red ") close
+          v-divider
+      v-list-group
         v-list-tile(slot="activator") Periodic refresh
         v-container
           v-layout
