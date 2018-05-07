@@ -5,9 +5,7 @@
     app,
     :clipped="windowSize.x < 1264 ? false : true"
   )
-      v-card(
-        flat
-      )
+      v-card(flat)
       v-expansion-panel(
         class="panel",
         expand,
@@ -20,11 +18,7 @@
           v-card
             v-card-text View 2
       v-divider
-      v-expansion-panel(
-        class="panel",
-        expand,
-        focusable,
-      )
+      v-expansion-panel(class="panel", expand, focusable)
         v-expansion-panel-content
           div(slot="header") View Group 2
           v-card
@@ -32,16 +26,16 @@
           v-card
             v-card-text View 2
       v-divider
-        v-btn(
-          class="addBtn",
-          fab,
-          dark,
-          fixed,
-          bottom,
-          right,
-          color="blue darken-4"
-        )
-          v-icon(dark) add
+      v-btn(
+        class="addBtn",
+        fab,
+        dark,
+        fixed,
+        bottom,
+        right,
+        color="blue darken-4"
+      )
+        v-icon(dark) add
 </template>
 
 <script>
@@ -58,6 +52,7 @@ export default {
   props: {
     windowSize: {
       type: Object,
+      required: true,
     },
   },
   computed: {

@@ -6,10 +6,7 @@
       app,
       color="blue darken-4",
     )
-      v-toolbar-side-icon(
-        class="white--text",
-        @click="toggleSideBar",
-      )
+      v-toolbar-side-icon(class="white--text", @click="toggleSideBar")
 </template>
 
 <script>

@@ -1,24 +1,18 @@
 <template lang="pug">
   v-app#app
-    v-layout(
-      v-resize='onResize'
-    )
-      side-bar(
-        :windowSize='windowSize'
-      )
+    v-layout(v-resize='onResize')
+      side-bar(:windowSize='windowSize')
       top-bar
       v-content
-        //
-          v-btn(
-          @click='handleClick'
-          )
         router-view
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import TopBar from '@/components/layout/top-bar.vue';
 import SideBar from '@/components/layout/side-bar.vue';
-import { mapState } from 'vuex';
+
+const { mapState } = createNamespacedHelpers('app');
 
 export default {
   name: 'App',
@@ -40,9 +34,6 @@ export default {
     }),
   },
   methods: {
-    handleClick() {
-      // console.log(this.$store);
-    },
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight };
     },
