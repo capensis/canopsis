@@ -1,48 +1,48 @@
 <template lang="pug">
-  v-dialog(:value="opened", @input="hideModal", max-width="700")
-    v-card
-      v-card-title
-        span.headline {{ $t('modals.addAckEvent.title') }}
-      v-card-text
-        v-container
-          v-layout(row align-center)
-            v-flex.text-xs-center
-              alarm-general-table
-          v-layout(row)
-            v-divider.my-3
-          v-layout(row)
-            v-text-field(
-            :label="$t('modals.addAckEvent.ticket')",
-            :error-messages="errors.collect('ticket')",
-            v-model="form.ticket",
-            v-validate="rules",
-            data-vv-name="ticket"
-            )
-          v-layout(row)
-            v-text-field(
-            :label="$t('modals.addAckEvent.output')",
-            :error-messages="errors.collect('output')",
-            v-model="form.output",
-            v-validate="rules",
-            data-vv-name="output",
-            multi-line
-            )
-          v-layout(row)
-            v-checkbox(:label="$t('modals.addAckEvent.ackResources')", v-model="form.ack_resources")
-      v-card-actions
-        v-btn(@click.prevent="hideModal") {{ $t('common.actions.close') }}
-        v-btn(@click.prevent="submit") {{ $t('common.actions.acknowledge') }}
-        v-btn(@click.prevent="submitWithAdditions") {{ $t('common.actions.acknowledgeAndReport') }}
+  v-card
+    v-card-title
+      span.headline {{ $t('modals.addAckEvent.title') }}
+    v-card-text
+      v-container
+        v-layout(row align-center)
+          v-flex.text-xs-center
+            alarm-general-table
+        v-layout(row)
+          v-divider.my-3
+        v-layout(row)
+          v-text-field(
+          :label="$t('modals.addAckEvent.ticket')",
+          :error-messages="errors.collect('ticket')",
+          v-model="form.ticket",
+          v-validate="rules",
+          data-vv-name="ticket"
+          )
+        v-layout(row)
+          v-text-field(
+          :label="$t('modals.addAckEvent.output')",
+          :error-messages="errors.collect('output')",
+          v-model="form.output",
+          v-validate="rules",
+          data-vv-name="output",
+          multi-line
+          )
+        v-layout(row)
+          v-checkbox(:label="$t('modals.addAckEvent.ackResources')", v-model="form.ack_resources")
+    v-card-actions
+      v-btn(@click.prevent="submit", color="primary") {{ $t('common.actions.acknowledge') }}
+      v-btn(
+      @click.prevent="submitWithAdditions",
+      color="warning"
+      ) {{ $t('common.actions.acknowledgeAndReport') }}
 </template>
 
 <script>
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
 
-import ModalMixin from './modal-mixin';
-
 export default {
-  name: 'add-ack-event',
-  mixins: [ModalMixin],
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     AlarmGeneralTable,
   },

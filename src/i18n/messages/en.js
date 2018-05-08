@@ -49,7 +49,7 @@ export default {
         end: 'End',
         reason: 'Reason',
         type: 'Type',
-        rRuleQuestion: 'Do you need rrule?',
+        rRuleQuestion: 'Put a rrule on this pbehavior ?',
       },
     },
   },
@@ -69,6 +69,9 @@ export default {
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',
+    },
+    errors: {
+      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes to not causing trouble to Canopsis.',
     },
     fields: {
       freq: 'Frequency',

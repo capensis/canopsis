@@ -1,13 +1,19 @@
 <template lang="pug">
   div
-    add-ack-event
-    add-cancel-event
-    add-change-state-event
-    add-snooze-event
-    add-pbehavior
+    modal(name="add-ack-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      add-ack-event
+    modal(name="add-cancel-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      add-cancel-event
+    modal(name="add-change-state-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      add-change-state-event
+    modal(name="add-snooze-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      add-snooze-event
+    modal(name="add-pbehavior", :dialogProps="{ maxWidth: 700, lazy: true }")
+      add-pbehavior
 </template>
 
 <script>
+import Modal from './layouts/modal.vue';
 import AddAckEvent from './add-ack-event.vue';
 import AddCancelEvent from './add-cancel-event.vue';
 import AddChangeStateEvent from './add-change-state-event.vue';
@@ -16,6 +22,7 @@ import AddPbehavior from './add-pbehavior.vue';
 
 export default {
   components: {
+    Modal,
     AddAckEvent,
     AddCancelEvent,
     AddChangeStateEvent,

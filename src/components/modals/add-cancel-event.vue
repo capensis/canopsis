@@ -1,34 +1,32 @@
 <template lang="pug">
-  v-dialog(:value="opened", @input="hideModal", max-width="700")
-    v-form(@submit.prevent="submit")
-      v-card
-        v-card-title
-          span.headline {{ $t('modals.addCancelEvent.title') }}
-        v-card-text
-          v-container
-            v-layout(row)
-              v-flex.text-xs-center
-                alarm-general-table
-            v-layout(row)
-              v-divider.my-3
-            v-layout(row)
-              v-text-field(
-              :label="$t('modals.addCancelEvent.output')",
-              :error-messages="errors.collect('output')",
-              v-model="form.output",
-              v-validate="'required'",
-              data-vv-name="output"
-              )
-        v-card-actions
-          v-btn(type="submit") {{ $t('common.actions.saveChanges') }}
+  v-form(@submit.prevent="submit")
+    v-card
+      v-card-title
+        span.headline {{ $t('modals.addCancelEvent.title') }}
+      v-card-text
+        v-container
+          v-layout(row)
+            v-flex.text-xs-center
+              alarm-general-table
+          v-layout(row)
+            v-divider.my-3
+          v-layout(row)
+            v-text-field(
+            :label="$t('modals.addCancelEvent.output')",
+            :error-messages="errors.collect('output')",
+            v-model="form.output",
+            v-validate="'required'",
+            data-vv-name="output"
+            )
+      v-card-actions
+        v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
-import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
 import Vue from 'vue';
-
-import ModalMixin from './modal-mixin';
+import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
 import AlarmMixin from '../mixins/alarm';
+
 
 const component = Vue.extend({
   data() {
@@ -38,14 +36,17 @@ const component = Vue.extend({
       },
     };
   },
-  name: 'add-cancel-event',
-  mixins: [
-    ModalMixin,
-    AlarmMixin,
-  ],
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     AlarmGeneralTable,
   },
+  name: 'add-cancel-event',
+  mixins: [
+    AlarmMixin,
+  ],
+
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
@@ -64,7 +65,6 @@ const component = Vue.extend({
             },
           });
           this.form.output = '';
-          this.hideModal();
         } catch (e) {
           console.log(e);
         }
