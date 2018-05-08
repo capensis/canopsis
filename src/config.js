@@ -1,5 +1,7 @@
 export const API_HOST = process.env.VUE_APP_API_HOST;
 
+export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
+
 export const AUTH_TOKEN_KEY = 'access-token';
 
 export const DEFAULT_LOCALE = 'fr';
