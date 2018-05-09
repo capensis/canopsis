@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container(fluid)
+  v-container(class='filterRule py-0 px-4')
     v-form
       v-layout
         v-flex(xs12)
@@ -75,3 +75,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .filterRule {
+    border: 1px solid black;
+    margin: 0.2em 0;
+  }
+</style>

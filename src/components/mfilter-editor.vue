@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tabs(v-model="activeTab")
+  v-tabs(v-model="activeTab" centered)
     v-tab(:disabled="isSimpleTabDisabled") {{$t('m_filter_editor.tabs.visual_editor')}}
     v-tab-item
       filter-group(
@@ -21,7 +21,7 @@
         )
       v-btn(@click="handleParseClick") {{$t('common.parse')}}
       p(v-if="parseError !== ''") {{ parseError }}
-    v-tab(:disabled="isRequestChanged") {{$t('m_filter_editor.tabs.results')}}
+    v-tab(:disabled="isRequestChanged" @click='handleResultTabClick') {{$t('m_filter_editor.tabs.results')}}
     v-tab-item
       v-data-table(
           :headers='resultsTableHeaders',
