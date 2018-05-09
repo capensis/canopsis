@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-container
-    v-form(ref="ruleForm")
+  v-container(fluid)
+    v-form
       v-layout
         v-flex(xs12)
           v-select(
@@ -31,8 +31,8 @@
             @input="$emit('update:input', $event)",
           )
 
-        v-flex(xs2)
-          v-btn(@click="handleDeleteRuleClick") Delete
+        v-flex(xs2 class="d-flex")
+          v-icon(@click="handleDeleteRuleClick" color="red") close
 </template>
 
 <script>
@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     /**
-     * @description Invoked on a click on 'Delete' button. Emit a 'deleteRuleClick' event to the parent,
+     * Invoked on a click on 'Delete' button. Emit a 'deleteRuleClick' event to the parent,
      * that will actually delete the rule
      */
     handleDeleteRuleClick() {

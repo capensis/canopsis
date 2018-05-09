@@ -110,7 +110,12 @@ function parseFilterGroupToRequest(group) {
    * Parse each rule of a group and add it to the parsedGroup array
    */
   group.rules.map((rule) => {
-    parsedGroup[group.condition].push(parseFilterRuleToRequest(rule));
+    try {
+      parsedGroup[group.condition].push(parseFilterRuleToRequest(rule));
+    } catch (e) {
+      parsedGroup[group.condition].push({});
+    }
+
     return parsedGroup;
   });
 
@@ -118,17 +123,14 @@ function parseFilterGroupToRequest(group) {
    * Parse each group of the group ans add it to the parsedGroup array
    */
   group.groups.map((item) => {
+    if (isEmpty(group.groups) && isEmpty(group.rules)) {
+      throw new Error('Empty Group');
+    }
+
     try {
-      /*
-      if (isEmpty(item.groups)) {
-        throw new Error('Empty group');
-      }
-      */
-      parsedGroup[group.condition].push(parseFilterGroupToRequest(item));
-      return item;
+      return parsedGroup[group.condition].push(parseFilterGroupToRequest(item));
     } catch (e) {
-      console.warn(e);
-      return e;
+      return parsedGroup[group.condition].push({});
     }
   });
 
@@ -151,10 +153,9 @@ export default function parseFilterToRequest(filter) {
 
   filter[0].rules.map((rule) => {
     try {
-      request[filter[0].condition].push(parseFilterRuleToRequest(rule));
-      return request[filter[0].condition];
+      return request[filter[0].condition].push(parseFilterRuleToRequest(rule));
     } catch (e) {
-      return e;
+      return request[filter[0].condition].push({});
     }
   });
 
@@ -164,8 +165,11 @@ export default function parseFilterToRequest(filter) {
    */
 
   filter[0].groups.map((group) => {
-    request[filter[0].condition].push(parseFilterGroupToRequest(group));
-    return group;
+    try {
+      return request[filter[0].condition].push(parseFilterGroupToRequest(group));
+    } catch (e) {
+      return request[filter[0].condition].push({});
+    }
   });
 
   return request;

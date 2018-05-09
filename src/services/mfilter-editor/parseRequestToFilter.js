@@ -75,15 +75,15 @@ function ruleOperatorAndInput(rule) {
 }
 
 function parseRuleToFilter(rule) {
-  if (isEmpty(rule)) {
-    throw new Error('Empty rule');
-  }
-
   const parsedRule = {
     field: '',
     operator: '',
     input: '',
   };
+
+  if (isEmpty(rule)) {
+    return parsedRule;
+  }
 
   const [field] = Object.keys(rule);
   parsedRule.field = field;

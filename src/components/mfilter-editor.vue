@@ -1,15 +1,8 @@
 <template lang="pug">
-  v-stepper(v-model="e1" non-linear @input="handleResultTabClick")
-    v-stepper-header
-      v-stepper-step(step="1" editable) {{$t('m_filter_editor.tabs.visual_editor')}}
-      v-divider
-      v-stepper-step(step="2" editable) {{$t('m_filter_editor.tabs.advanced_editor')}}
-      v-divider
-      v-stepper-step(step="3" editable) {{$t('m_filter_editor.tabs.results')}}
-      v-divider
-    v-stepper-items
-      v-stepper-content(step="1")
-        filter-group(
+  v-tabs(v-model="activeTab")
+    v-tab(:disabled="isSimpleTabDisabled") {{$t('m_filter_editor.tabs.visual_editor')}}
+    v-tab-item
+      filter-group(
           initialGroup,
           :index = 0,
           :condition.sync="filter[0].condition",
@@ -17,18 +10,20 @@
           :rules="filter[0].rules",
           :groups="filter[0].groups",
         )
-      v-stepper-content(step="2")
-        v-text-field(
-          ref="input",
+    v-tab {{$t('m_filter_editor.tabs.advanced_editor')}}
+    v-tab-item
+      v-text-field(
           v-model="inputValue",
           rows="20",
           :label="$t('m_filter_editor.tabs.advanced_editor')",
           textarea
+          @input="handleInputChange"
         )
-        v-btn(@click="handleParseClick") {{$t('common.parse')}}
-        p(v-if="parseError !== ''") {{ parseError }}
-      v-stepper-content(step="3")
-        v-data-table(
+      v-btn(@click="handleParseClick") {{$t('common.parse')}}
+      p(v-if="parseError !== ''") {{ parseError }}
+    v-tab(:disabled="isRequestChanged") {{$t('m_filter_editor.tabs.results')}}
+    v-tab-item
+      v-data-table(
           :headers='resultsTableHeaders',
           :items="Object.values(byId)",
           hide-actions,
@@ -40,6 +35,7 @@
             td {{props.item.component}}
             td {{props.item.resource}}
 </template>
+
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
@@ -57,7 +53,7 @@ export default {
 
   data() {
     return {
-      e1: 0,
+      activeTab: 0,
       newRequest: '',
       resultsTableHeaders: [
         {
@@ -85,6 +81,7 @@ export default {
           value: 'resource',
         },
       ],
+      isRequestChanged: false,
     };
   },
 
@@ -104,6 +101,12 @@ export default {
         this.newRequest = newVal;
       },
     },
+    isSimpleTabDisabled() {
+      if (this.isRequestChanged || this.parseError !== '') {
+        return true;
+      }
+      return false;
+    },
   },
   methods: {
     ...mFilterActions(['deleteParseError', 'updateFilter', 'onParseError']),
@@ -114,18 +117,21 @@ export default {
       this.fetchList({ start: 0, filter: JSON.stringify(this.request), limit: 10 });
     },
 
+    handleInputChange() {
+      this.isRequestChanged = true;
+    },
+
     handleParseClick() {
       this.deleteParseError();
       try {
         if (this.newRequest === '') {
-          this.updateFilter(JSON.parse(JSON.stringify(this.request)));
-          return this;
+          this.isRequestChanged = false;
+          return this.updateFilter(JSON.parse(JSON.stringify(this.request)));
         }
-        this.updateFilter(JSON.parse(this.newRequest));
-        return this;
+        this.isRequestChanged = false;
+        return this.updateFilter(JSON.parse(this.newRequest));
       } catch (e) {
-        this.onParseError(e.message);
-        return e;
+        return this.isRequestChanged = true;
       }
     },
   },

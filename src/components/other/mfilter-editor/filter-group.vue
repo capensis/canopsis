@@ -1,5 +1,6 @@
 <template lang="pug">
     v-container(
+      fluid
       class="filterGroup"
     )
       v-radio-group(
@@ -16,20 +17,6 @@
         v-btn(@click="handleDeleteGroupClick") {{$t("m_filter_editor.buttons.delete_group")}}
 
       div(
-        v-for="(group, index) in groups",
-        :key="'group-' + index"
-      )
-        filter-group(
-          @deleteGroup="deleteGroup",
-          :index="index",
-          :condition.sync="group.condition",
-          :possibleFields="possibleFields",
-          :operators="operators",
-          :rules="group.rules",
-          :groups="group.groups",
-        )
-
-      div(
         v-for="(rule, index) in rules",
         :key="'rule-' + index",
       )
@@ -39,9 +26,23 @@
           :field.sync="rule.field",
           :operator.sync="rule.operator",
           :input.sync="rule.input",
-          :isValid.sync="rule.isValid",
           :operators="operators",
           :possibleFields="possibleFields",
+        )
+
+      div(
+        v-for="(group, index) in groups",
+        :key="'group-' + index"
+      )
+        filter-group(
+          class="filterGroup"
+          @deleteGroup="deleteGroup",
+          :index="index",
+          :condition.sync="group.condition",
+          :possibleFields="possibleFields",
+          :operators="operators",
+          :rules="group.rules",
+          :groups="group.groups",
         )
 </template>
 
@@ -145,4 +146,8 @@ export default {
 </script>
 
 <style scoped>
+  .filterGroup {
+    background-color: lightgray;
+    border: 1px solid gray;
+  }
 </style>
