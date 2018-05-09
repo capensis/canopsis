@@ -23,7 +23,7 @@ import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 import Loader from '../loaders/alarm-list-loader.vue';
 import AlarmListPagination from './alarm-list-pagination.vue';
-import TimeLine from "../time-line";
+import TimeLine from '../time-line.vue';
 
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
@@ -41,7 +41,10 @@ export default {
   name: 'AlarmList',
   components: {
     TimeLine,
-    AlarmListPagination, ActionsPanel, BasicList, Loader,
+    AlarmListPagination,
+    ActionsPanel,
+    BasicList,
+    Loader,
   },
   mounted() {
     this.fetchList(this.fetchingParams);
