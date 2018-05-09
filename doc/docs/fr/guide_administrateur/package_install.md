@@ -165,12 +165,96 @@ Pour changer le nombre d’instances :
 
 ```bash
 systemctl disable canopsis-engine@<module>-<name>.service
-systemctl enable canopsis-engine@<module>-<name>{1..X}.service
+systemctl enable canopsis-engine@<module>-<name>1.service
+systemctl enable canopsis-engine@<module>-<name>2.service
+systemctl enable canopsis-engine@<module>-<name>3.service
 ```
-
-Remplacer `X` par le nombre de workers désiré.
 
 ```bash
 systemctl daemon-reload
 systemctl restart canopsis-engine@<module>-<name>*
+```
+
+## Init (moteurs Go)
+
+Les moteurs Go (`axe`, `che`, `heartbeat`, `stat`…) peuvent être contrôlés depuis systemd avec le mécanisme suivant :
+
+Mise en place d'un service générique pour tous les moteurs Go :
+
+```bash
+cat > /lib/systemd/system/canopsis-engine-go\@.service << EOF
+[Unit]
+Description=Canopsis Go Engine %i
+After=network.target
+Documentation=http://www.canopsis.org/wp-content/themes/canopsis/doc/
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=HOME=/opt/canopsis
+Environment="CPS_AMQP_URL=amqp://cpsrabbit:canopsis@localhost/canopsis"
+Environment="CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost/canopsis"
+Environment="CPS_REDIS_URL=redis://localhost:6379"
+Environment="CPS_INFLUX_URL=http://cpsinflux:canopsis@host:8086/"
+Environment="CPS_DEFAULT_CFG=/opt/canopsis/etc/default_configuration.toml"
+ExecStart=/usr/bin/env /opt/canopsis/bin/%i
+PIDFile=/var/run/canopsis-engine-go-%i.pid
+RestartSec=1
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Adaptation de certaines variables d'environnement pour *tous* les moteurs Go (à modifier au cas par cas) :
+
+```bash
+mkdir -p /etc/systemd/system/canopsis-engine-go\@.service.d
+cat > /etc/systemd/system/canopsis-engine-go\@.service.d/all-go-engines.conf << EOF
+[Service]
+Environment="CPS_MONGO_URL=mongodb://cpsmongo:canopsis@mongo1.example.local:27017,cpsmongo:canopsis@mongo2.example.local:27017,cpsmongo:canopsis@mongo3.example.local:27017/canopsis?replicaSet=rs0"
+Environment="CPS_INFLUX_URL=http://cpsinflux:canopsis@influxdb.example.local:8086/"
+EOF
+```
+
+Changement des réglages *d'un* moteur en particulier (ici, `che`) :
+```bash
+mkdir -p /etc/systemd/system/canopsis-engine-go\@engine-che.service.d
+cat > /etc/systemd/system/canopsis-engine-go\@engine-che.service.d/che.conf << EOF
+[Service]
+Environment="CPS_FOOBAR=test"
+ExecStart=
+ExecStart=/usr/bin/env /opt/canopsis/bin/%i -enrichContext=true -enrichInclude "foo,bar" -createContext=true
+EOF
+```
+
+Chargement des nouveaux fichiers systemd :
+```bash
+systemctl daemon-reload
+```
+
+Activation des moteurs Go (attention à désactiver les moteurs Python qui rentreraient en conflit auparavant, à l'aide de `systemctl disable` et en les supprimant de `amqp2engines.conf`) :
+
+```bash
+systemctl enable canopsis-engine-go\@engine-che
+systemctl enable canopsis-engine-go\@engine-axe
+systemctl enable canopsis-engine-go\@engine-stat
+systemctl enable canopsis-engine-go\@engine-heartbeat
+```
+
+Lancement des moteurs Go :
+```bash
+systemctl start canopsis-engine-go\@\*
+```
+
+Vérification de leur bon lancement :
+```bash
+systemctl status canopsis-engine-go\@\* -l
+```
+
+Arrêt d'un moteur en particulier :
+```bash
+systemctl stop canopsis-engine-go\@engine-stat
 ```
