@@ -1,9 +1,10 @@
 <template lang="pug">
-  v-navigation-drawer(permanent, right, app)
+  v-navigation-drawer(:value="isPanelOpen", disable-resize-watcher, stateless, touchless, right, app)
     v-toolbar(color="blue darken-4")
       v-list
         v-list-tile
           v-list-tile-title(class="title white--text text-xs-center") Alarms list settings
+      v-icon(@click.stop="closePanel", color="white") close
     v-divider
     v-list(expand, class="pt-0")
       v-list-group
@@ -95,6 +96,10 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapGetters, mapActions } = createNamespacedHelpers('AlarmsListSettings');
+
 export default {
   name: 'AlarmsListSettings',
   data() {
@@ -104,6 +109,12 @@ export default {
       openCheckbox: true,
       resolveCheckbox: false,
     };
+  },
+  computed: {
+    ...mapGetters(['isPanelOpen']),
+  },
+  methods: {
+    ...mapActions(['closePanel']),
   },
 };
 </script>
