@@ -28,6 +28,7 @@ from __future__ import unicode_literals
 from time import time
 from .models import AlarmIdentity, AlarmStep, Alarm
 
+from canopsis.common.collection import MongoCollection
 
 class AlarmAdapter(object):
 
@@ -100,22 +101,26 @@ class AlarmAdapter(object):
         for alarm in col_adapter.find(query):
             yield make_alarm_from_mongo(alarm)
 
-    def get_current_alarm(self, eid):
+    def get_current_alarm(self, eid, connector_name=None):
         """
         :param str eid: entity ID
+        :param str connector_name: add filter on connector_name if not None
         :returns: alarm document or None if no alarm found
         """
 
-        collection = self.mongo_client[self.COLLECTION]
-        return collection.find_one(
-            {
-                "d": eid,
-                "$or": [
-                    {"v.resolved": None},
-                    {"v.resolved": {"$exists": False}},
-                ],
-            }
-        )
+        collection = MongoCollection(self.mongo_client[self.COLLECTION])
+        filter_ = {
+            "d": eid,
+            "$or": [
+                {"v.resolved": None},
+                {"v.resolved": {"$exists": False}},
+            ],
+        }
+
+        if connector_name is not None:
+            filter_['v.connector_name'] = connector_name
+
+        return collection.find_one(filter_)
 
     def update(self, alarm):
         """
