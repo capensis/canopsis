@@ -38,11 +38,13 @@ class AlarmAdapter(object):
 
     COLLECTION = 'periodical_alarm'
 
-    def __init__(self, mongo_client):
+    def __init__(self, mongo_client, mongo_store=None):
         """
-        :param canopsis.common.mongo_store.MongoStore mongo_client:
+        :param pymongo.MongoClient mongo_client: raw mongo client
+        :param canopsis.common.mongo_store.MongoStore mongo_store: optional MongoStore that handle HA
         """
         self.mongo_client = mongo_client
+        self.mongo_store = mongo_store
 
     def find_unresolved_snoozed_alarms(self):
         """
@@ -103,13 +105,17 @@ class AlarmAdapter(object):
 
     def get_current_alarm(self, eid, connector_name=None):
         """
+        Returns exactly one alarm or None.
+
+        This function uses the mongo_store attribute.
+
         :param str eid: entity ID
         :param str connector_name: add filter on connector_name if not None
         :returns: alarm document or None if no alarm found
         """
 
         collection = MongoCollection(
-            self.mongo_client.get_collection(self.COLLECTION)
+            self.mongo_store.get_collection(self.COLLECTION)
         )
         filter_ = {
             "d": eid,
