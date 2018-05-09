@@ -40,7 +40,7 @@ class AlarmAdapter(object):
 
     def __init__(self, mongo_client):
         """
-        :param pymongo.MongoClient mongo_client:
+        :param canopsis.common.mongo_store.MongoStore mongo_client:
         """
         self.mongo_client = mongo_client
 
@@ -108,7 +108,9 @@ class AlarmAdapter(object):
         :returns: alarm document or None if no alarm found
         """
 
-        collection = MongoCollection(self.mongo_client[self.COLLECTION])
+        collection = MongoCollection(
+            self.mongo_client.get_collection(self.COLLECTION)
+        )
         filter_ = {
             "d": eid,
             "$or": [
