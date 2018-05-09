@@ -12,10 +12,22 @@ export default {
   data() {
     return {
       correspondingColorAndText: {
-        0: ['grey', 'ongoing'],
-        1: ['yellow darken-1', 'minor'],
-        2: ['orange', 'major'],
-        3: ['red', 'critical'],
+        0: {
+          color: 'grey',
+          text: 'ongoing',
+        },
+        1: {
+          color: 'yellow darken-1',
+          text: 'minor',
+        },
+        2: {
+          color: 'orange',
+          text: 'major',
+        },
+        3: {
+          color: 'red',
+          text: 'critical',
+        },
       },
     };
   },
