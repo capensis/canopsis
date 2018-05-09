@@ -38,6 +38,9 @@ class AlarmAdapter(object):
     COLLECTION = 'periodical_alarm'
 
     def __init__(self, mongo_client):
+        """
+        :param pymongo.MongoClient mongo_client:
+        """
         self.mongo_client = mongo_client
 
     def find_unresolved_snoozed_alarms(self):
@@ -96,6 +99,23 @@ class AlarmAdapter(object):
 
         for alarm in col_adapter.find(query):
             yield make_alarm_from_mongo(alarm)
+
+    def get_current_alarm(self, eid):
+        """
+        :param str eid: entity ID
+        :returns: alarm document or None if no alarm found
+        """
+
+        collection = self.mongo_client[self.COLLECTION]
+        return collection.find_one(
+            {
+                "d": eid,
+                "$or": [
+                    {"v.resolved": None},
+                    {"v.resolved": {"$exists": False}},
+                ],
+            }
+        )
 
     def update(self, alarm):
         """
