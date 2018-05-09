@@ -1,12 +1,12 @@
 <template lang="pug">
-    ul.timeline(v-if="fetchComplete")
-      li.timeline-item(v-for= "step in steps")
-        time-item.time(:time="step.t")
-        state-flag.flag(:val="step.val")
-        .header
-          state-chips.chips(:val="step.val")
-          p {{ step._t }}
-        .content {{ step.m }}
+  ul.timeline(v-if="fetchComplete")
+    li.timeline-item(v-for= "step in steps")
+      time-item.time(:time="step.t")
+      state-flag.flag(:val="step.val")
+      .header
+        state-chips.chips(:val="step.val")
+        p {{ step._t }}
+      .content {{ step.m }}
 </template>
 
 <script>
@@ -32,13 +32,13 @@ export default {
   },
   data() {
     return {
-      datas: undefined,
+      dataAlarms: undefined,
       fetchComplete: false,
     };
   },
   computed: {
     steps() {
-      return Object.values(this.datas.entities.alarm)[0].v.steps;
+      return Object.values(this.dataAlarms.entities.alarm)[0].v.steps;
     },
   },
   methods: {
@@ -55,7 +55,7 @@ export default {
             with_steps: 'true',
           },
         });
-        this.datas = normalize(data.alarms, [alarmSchema]);
+        this.dataAlarms = normalize(data.alarms, [alarmSchema]);
         this.fetchComplete = true;
       } catch (err) {
         console.error(err);
