@@ -6,7 +6,8 @@
       .header
         state-chips.chips(:val="step.val")
         p {{ step._t }}
-      .content {{ step.m }}
+      .content
+        p {{ step.m }}
 </template>
 
 <script>
@@ -110,6 +111,8 @@ export default {
     color: #858585;
     padding-left: 20px;
     padding-top: 20px;
+    overflow-wrap: break-word;
+    width: 90%;
   }
 
   .header {
@@ -125,5 +128,12 @@ export default {
     p{
       font-size: 20px;
     }
+
+  }
+
+  p{
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+    width: 90%;
   }
 </style>
