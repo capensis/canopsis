@@ -13,8 +13,8 @@ function prepareData(data, eventType) {
       event_type: eventType,
       source_type: 'resource',
       component: 'localhost',
-      state: 0,
-      state_type: 1,
+      state: data.state ? data.state : 0,
+      state_type: data.state_type,
       crecord_type: eventType,
       timestamp: Date.now(),
       resource: data.resource,
@@ -34,8 +34,8 @@ function prepareData(data, eventType) {
         event_type: eventType,
         source_type: 'resource',
         component: 'localhost',
-        state: 0,
-        state_type: 1,
+        state: dataPortion.state ? dataPortion.state : 0,
+        state_type: dataPortion.state_type,
         crecord_type: eventType,
         timestamp: Date.now(),
         resource: dataPortion.resource,
@@ -59,9 +59,55 @@ export default {
         event: prepareData(data, 'ackremove'),
       });
     },
-    async fastAck(context, data) {
+    async ack(context, data) {
       return axios.post(`${API_HOST}/event`, {
         event: prepareData(data, 'ack'),
+      });
+    },
+    async declare(context, data) {
+      return axios.post(`${API_HOST}/event`, {
+        event: prepareData(data, 'declareticket'),
+      });
+    },
+    async snooze(context, data) {
+      const requestData = [];
+      if (typeof data === 'object') {
+        requestData.push({
+          author: 'root',
+          id: data.id,
+          connector: 'toto',
+          connector_name: 'toto',
+          event_type: 'snooze',
+          source_type: 'resource',
+          component: 'localhost',
+          state: 3,
+          crecord_type: 'snooze',
+          timestamp: Date.now(),
+          resource: data.resource,
+          duration: data.customAttributes.duration,
+        });
+      } else if (Array.isArray(data)) {
+        data.forEach((dataPortion) => {
+          requestData.push({
+            author: 'root',
+            id: dataPortion.id,
+            connector: 'toto',
+            connector_name: 'toto',
+            event_type: 'snooze',
+            source_type: 'resource',
+            component: 'localhost',
+            state: 3,
+            crecord_type: 'snooze',
+            timestamp: Date.now(),
+            resource: dataPortion.resource,
+            duration: dataPortion.customAttributes.duration,
+          });
+        });
+      }
+
+
+      return axios.post(`${API_HOST}/event`, {
+        event: requestData,
       });
     },
   },

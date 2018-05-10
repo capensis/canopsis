@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'fastAck',
+      'ack',
     ]),
     async submit() {
       this.showValidationErrors = false;
@@ -85,7 +85,7 @@ export default {
         requestData.customAttributes.output = this.form.output;
       }
 
-      this.fastAck(requestData);
+      this.ack(requestData);
     },
     async submitWithAdditions() {
       this.showValidationErrors = true;
