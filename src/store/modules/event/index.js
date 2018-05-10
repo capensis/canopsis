@@ -59,7 +59,7 @@ export default {
         event: prepareData(data, 'ackremove'),
       });
     },
-    async ack(context, data) {
+    async fastAck(context, data) {
       return axios.post(`${API_HOST}/event`, {
         event: prepareData(data, 'ack'),
       });
