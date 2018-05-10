@@ -26,7 +26,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
 
-const { mapActions } = createNamespacedHelpers('alarmEvents');
+const { mapActions } = createNamespacedHelpers('event');
 
 export default {
   data() {
@@ -54,9 +54,11 @@ export default {
       if (isFormValid) {
         try {
           await this.cancel({
-            comment: this.form.output,
             resource: 'res99',
             id: 'ac4f92ea-4eda-11e8-841e-0242ac12000a',
+            customAttributes: {
+              output: this.form.output,
+            },
           });
           this.form.output = '';
         } catch (e) {
