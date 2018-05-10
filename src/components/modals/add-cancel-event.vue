@@ -23,12 +23,12 @@
 </template>
 
 <script>
-import Vue from 'vue';
+import { createNamespacedHelpers } from 'vuex';
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
-import AlarmMixin from '../mixins/alarm';
 
+const { mapActions } = createNamespacedHelpers('alarmEvents');
 
-const component = Vue.extend({
+export default {
   data() {
     return {
       form: {
@@ -43,26 +43,20 @@ const component = Vue.extend({
     AlarmGeneralTable,
   },
   name: 'add-cancel-event',
-  mixins: [
-    AlarmMixin,
-  ],
 
   methods: {
+    ...mapActions([
+      'cancel',
+    ]),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
         try {
-          await this.cancelAlarmConfirmation({
+          await this.cancel({
             comment: this.form.output,
-            alarmData: {
-              connector: 'toto',
-              connector_name: 'toto',
-              component: 'localhost',
-              state: 0,
-              state_type: 1,
-              resource: 'res99',
-            },
+            resource: 'res99',
+            id: 'ac4f92ea-4eda-11e8-841e-0242ac12000a',
           });
           this.form.output = '';
         } catch (e) {
@@ -71,7 +65,5 @@ const component = Vue.extend({
       }
     },
   },
-});
-
-export default component;
+};
 </script>
