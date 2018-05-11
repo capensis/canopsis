@@ -1,12 +1,13 @@
 <template lang="pug">
   div
-    div( v-if="fetchComplete" )
-      basic-list( :items="items" )
-        tr.container( slot="header" )
-            th.box( v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)" ) {{ columnName }}
+    alarm-list-searching
+    div(v-if="fetchComplete")
+      basic-list(:items="items")
+        tr.container(slot="header")
+            th.box(v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)") {{ columnName }}
             th.box
-        tr.container( slot="row" slot-scope="item" )
-            td.box( v-for="property in Object.values(alarmProperty)" ) {{ getProp(item.props, property) }}
+        tr.container(slot="row" slot-scope="item")
+            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow" slot-scope="item")
@@ -26,6 +27,7 @@ import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 import Loader from '../loaders/alarm-list-loader.vue';
 import AlarmListPagination from './alarm-list-pagination.vue';
+import AlarmListSearching from './alarm-list-searching.vue';
 
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
@@ -42,6 +44,7 @@ export default {
  */
   name: 'AlarmList',
   components: {
+    AlarmListSearching,
     AlarmListPagination, ActionsPanel, BasicList, Loader,
   },
   props: {
