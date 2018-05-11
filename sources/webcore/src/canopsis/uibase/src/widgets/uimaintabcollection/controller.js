@@ -68,6 +68,22 @@ Ember.Application.initializer({
                 return true;
             },
 
+            computeProperties: function (uimaintabcollectionController, item, viewId){
+                if(item.value === get(uimaintabcollectionController, 'currentViewId')) {
+                    set(item, 'isActive', true);
+                } else {
+                    set(item, 'isActive', false);
+                }
+
+                viewId = viewId.replace('.', '_');
+                if (uimaintabcollectionController.isViewDisplayable(viewId)) {
+                    set(item, 'displayable', true);
+                } else {
+                    set(item, 'displayable', false);
+                }
+                return item
+            },
+
             /**
              * @property preparedTabs
              */
@@ -76,26 +92,48 @@ Ember.Application.initializer({
 
                 var res = Ember.A();
 
+				computeProperties = get(this, 'computeProperties')
+
                 get(this, 'tabs').forEach(function(item, index) {
                     void(index);
+					console.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+					console.error("@@@ Item before : ", item)
 
-                    if(item.value === get(uimaintabcollectionController, 'currentViewId')) {
-                        set(item, 'isActive', true);
-                    } else {
-                        set(item, 'isActive', false);
-                    }
+					if (item.hasOwnProperty("nestedViews") === true) {
+						console.error("@@@ Nested views :", item.nestedViews)
+						for (var i = 0; i < item.nestedViews.length; i++) {
 
-                    var viewId = item.value || '';
+							var viewId = item.nestedViews[i]["value"]["value"] || '';
+							console.error("@@@ viewid : ", viewId)
+							console.error("@@@ Nested view :", item.nestedViews[i])
+							computeProperties(uimaintabcollectionController, item.nestedViews[i], viewId)
 
-                    viewId = viewId.replace('.', '_');
-                    if (uimaintabcollectionController.isViewDisplayable(viewId)) {
-                        set(item, 'displayable', true);
-                    } else {
-                        set(item, 'displayable', false);
-                    }
+							console.error("@@@ Nested view displayable:", item.nestedViews[i].displayable)
+							console.error("@@@ Nested view isActive:", item.nestedViews[i].isActive)
 
+							if(item.nestedViews[i].isActive == true) {
+								console.error("@@@ isACtive flag")
+								set(item, "isActive", true)
+							}
+
+							if(item.nestedViews[i].displayable == true) {
+								set(item, "displayable", true)
+							}
+						}
+						set(item, "nestedViews", item.nestedViews.filterBy("displayable", true))
+					}
+					else{
+						var viewId = item.value || '';
+						computeProperties(uimaintabcollectionController, item, viewId)
+					}
+
+					console.error("@@@ Item after : ", item)
+					console.error("@@@ Item displayable : ", item.label, item.displayable)
+					console.error("@@@ Item active : ", item.label, item.isActive)
                     res.pushObject(item);
                 });
+
+				console.error("@@@ res", res)
 
                 return res;
             }.property('tabs', 'currentViewId'),

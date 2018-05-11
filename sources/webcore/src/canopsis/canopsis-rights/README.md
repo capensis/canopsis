@@ -66,11 +66,11 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/canopsis-rights/blob/mas
 
 ### Tests
 
-The last build was not a full build. Please use the "full-compile" npm script to make test results show up here.
+
 
 ### Lint
 
-Tested on commit : 8de79a4.
+Tested on commit : 5468d50.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -83,22 +83,22 @@ Tested on commit : 8de79a4.
 
 | File   | Note   |
 |--------|--------|
-| src/components/right-checksum/component.js | not used anymore? check and delete this property if possible |
 | src/reopens/adapters/userview.js | Add the correct right to the current user, to allow him to display the view |
 | src/reopens/adapters/userview.js | the right already exists, it's an update |
 | src/reopens/adapters/userview.js | replace the userview name if it has changed |
+| src/components/right-checksum/component.js | not used anymore? check and delete this property if possible |
 
 
 ### FIXMES
 
 | File   | Note   |
 |--------|--------|
-| src/components/right-checksum/component.js | don't use "_data"! |
-| src/components/rights-action/component.js | don't use _data, it might lead to unpredictable behaviours! |
 | src/reopens/routes/authenticated.js | use store#adapterFor |
+| src/components/rights-action/component.js | don't use _data, it might lead to unpredictable behaviours! |
+| src/components/right-checksum/component.js | don't use "_data"! |
 
 
 ## Additional-info
 
-Minified version : 2 files (size: 12K)
+Minified version : 4 files (size: 56K)
 Development version : 28 files (size: 204K)
