@@ -117,9 +117,6 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  td, th {
-    padding: 1%;
-  }
   td {
     overflow-wrap: break-word;
   }
