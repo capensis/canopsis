@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import getProp from 'lodash/get';
+
 export default {
   name: 'state-chips',
   props: {
@@ -33,10 +35,10 @@ export default {
   },
   computed: {
     color() {
-      return this.correspondingColorAndText[this.val][0];
+      return getProp(this.correspondingColorAndText, `${this.val}.color`);
     },
     text() {
-      return this.correspondingColorAndText[this.val][1];
+      return getProp(this.correspondingColorAndText, `${this.val}.text`);
     },
   },
 };
