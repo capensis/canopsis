@@ -13,7 +13,7 @@ function prepareData(data, eventType) {
       event_type: eventType,
       source_type: 'resource',
       component: 'localhost',
-      state: data.state ? data.state : 0,
+      state: Object.prototype.hasOwnProperty.call(data, 'state') ? data.state : 0,
       state_type: data.state_type,
       crecord_type: eventType,
       timestamp: Date.now(),
@@ -34,8 +34,8 @@ function prepareData(data, eventType) {
         event_type: eventType,
         source_type: 'resource',
         component: 'localhost',
-        state: dataPortion.state ? dataPortion.state : 0,
-        state_type: dataPortion.state_type,
+        state: Object.prototype.hasOwnProperty.call(data, 'state') ? dataPortion.state : 0,
+        state_type: dataPortion.state_type ? dataPortion.state_type : 1,
         crecord_type: eventType,
         timestamp: Date.now(),
         resource: dataPortion.resource,
@@ -67,6 +67,11 @@ export default {
     async declare(context, data) {
       return axios.post(`${API_HOST}/event`, {
         event: prepareData(data, 'declareticket'),
+      });
+    },
+    async changeState(context, data) {
+      return axios.post(`${API_HOST}/event`, {
+        event: prepareData(data, 'changestate'),
       });
     },
     async snooze(context, data) {

@@ -23,6 +23,10 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapActions } = createNamespacedHelpers('event');
+
 export default {
   $_veeValidate: {
     validator: 'new',
@@ -36,11 +40,34 @@ export default {
     };
   },
   methods: {
+    ...mapActions([
+      'changeState',
+    ]),
+    getStateId() {
+      switch (this.form.state) {
+        case 'info':
+          return 0;
+        case 'minor':
+          return 1;
+        case 'critical':
+          return 3;
+        default: {
+          throw new Error('Unknown alarm state');
+        }
+      }
+    },
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        console.log('SUBMITTED');
+        this.changeState({
+          id: 'a7ed1556-4eda-11e8-841e-0242ac12000a',
+          resource: 'res93',
+          state: this.getStateId(this.form.state),
+          customAttributes: {
+            output: this.form.output,
+          },
+        });
       }
     },
   },
