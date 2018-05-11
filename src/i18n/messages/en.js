@@ -1,6 +1,7 @@
 export default {
   common: {
 <<<<<<< HEAD
+<<<<<<< HEAD
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -114,5 +115,8 @@ export default {
         tooltip: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
       },
     },
+=======
+    hello: 'Hello',
+>>>>>>> parent of c7eef04... Add base modal structure and finish some modals
   },
 };
