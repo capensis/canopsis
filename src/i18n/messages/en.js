@@ -46,7 +46,7 @@ export default {
       fields: {
         name: 'Name',
         start: 'Start',
-        end: 'End',
+        stop: 'End',
         reason: 'Reason',
         type: 'Type',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
