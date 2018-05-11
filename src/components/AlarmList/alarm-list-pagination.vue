@@ -1,5 +1,7 @@
 <template lang="pug">
-  v-pagination(v-model="currentPage", :length="totalPages")
+  div.container
+    span Showing  {{ meta.first }} to {{ meta.last }} of {{ meta.total }} entries
+    v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>
@@ -45,3 +47,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .container{
+   flex-direction: column;
+  }
+  span {
+    padding-left: 1%;
+  }
+</style>
