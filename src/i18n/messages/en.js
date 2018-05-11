@@ -1,5 +1,6 @@
 export default {
   common: {
+<<<<<<< HEAD
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -61,6 +62,9 @@ export default {
       component: 'Component',
       resource: 'Resource',
     },
+=======
+    hello: 'Hello',
+>>>>>>> parent of c7eef04... Add base modal structure and finish some modals
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',

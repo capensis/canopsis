@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VeeValidate from 'vee-validate';
-import enValidationMessages from 'vee-validate/dist/locale/en';
-import frValidationMessages from 'vee-validate/dist/locale/fr';
 
 import 'vuetify/dist/vuetify.min.css';
 
@@ -12,6 +10,7 @@ import store from './store';
 import i18n from './i18n';
 
 Vue.use(Vuetify);
+<<<<<<< HEAD
 Vue.use(VeeValidate, {
   i18n,
   inject: false,
@@ -20,6 +19,9 @@ Vue.use(VeeValidate, {
     fr: frValidationMessages,
   },
 });
+=======
+Vue.use(VeeValidate);
+>>>>>>> parent of c7eef04... Add base modal structure and finish some modals
 
 Vue.config.productionTip = false;
 
