@@ -1,24 +1,27 @@
 <template lang="pug">
-  div(v-if="fetchComplete")
-    basic-list(:items="items")
-      tr.container(slot="header")
-          th.box(v-for="columnName in Object.keys(alarmProperty)" @click="sortAlarms(columnName)") {{ columnName }}
-          th.box
-      tr.container(slot="row" slot-scope="item")
-          td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
-          td.box
-            actions-panel.actions
-      tr.container(slot="expandedRow" slot-scope="item")
-          td.box {{ item.props.infos }}
-    alarm-list-pagination(:itemsPerPage="itemsPerPage" @changedPage="changePage" v-if="fetchComplete")
+  div
+    div( v-if="fetchComplete" )
+      basic-list( :items="items" )
+        tr.container( slot="header" )
+            th.box( v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)" ) {{ columnName }}
+            th.box
+        tr.container( slot="row" slot-scope="item" )
+            td.box( v-for="property in Object.values(alarmProperty)" ) {{ getProp(item.props, property) }}
+            td.box
+              actions-panel.actions
+        tr.container(slot="expandedRow" slot-scope="item")
+            td.box {{ item.props.infos }}
+      alarm-list-pagination(:meta="meta", :limit="limit", v-if="fetchComplete")
     loader(v-else)
 </template>
 
 <script>
-import getProp from 'lodash/get';
-import merge from 'lodash/merge';
-
 import { createNamespacedHelpers } from 'vuex';
+import getProp from 'lodash/get';
+import omit from 'lodash/omit';
+
+import { PAGINATION_LIMIT } from '@/config';
+
 import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 import Loader from '../loaders/alarm-list-loader.vue';
@@ -41,9 +44,6 @@ export default {
   components: {
     AlarmListPagination, ActionsPanel, BasicList, Loader,
   },
-  mounted() {
-    this.fetchList(this.fetchingParams);
-  },
   props: {
     alarmProperty: {
       type: Object,
@@ -51,20 +51,18 @@ export default {
         return {};
       },
     },
-    itemsPerPage: {
+    limit: {
       type: Number,
-      default: 5,
+      default: PAGINATION_LIMIT,
     },
   },
   data() {
     return {
       columnSorted: 'opened',
-      fetchingParams: {
-        params: {
-          limit: this.itemsPerPage,
-        },
-      },
     };
+  },
+  mounted() {
+    this.fetchList(this.fetchingParams);
   },
   computed: {
     ...mapGetters([
@@ -74,16 +72,41 @@ export default {
     ]),
   },
   methods: {
-    ...mapActions(['fetchList']),
-    changePage(newFetchingParameters) {
-      merge(this.fetchingParams, newFetchingParameters);
-      this.fetchList(this.fetchingParams);
-    },
     getProp,
+    ...mapActions({
+      fetchListAction: 'fetchList',
+    }),
     sortAlarms(columnToSort) {
-      this.fetchingParams.sort_key = this.alarmProperty[columnToSort];
-      this.fetchingParams.sort_dir = 'DESC';
-      this.fetchList(this.fetchingParams);
+      this.$router.push({
+        query: {
+          ...this.$route.query,
+          sort_key: this.alarmProperty[columnToSort],
+          sort_dir: 'DESC',
+        },
+      });
+    },
+    /**
+     * TODO: move this function into mixin or helper
+     *
+     * @returns {*}
+     */
+    getQuery() {
+      const query = omit(this.$route.query, ['page']);
+
+      query.limit = this.limit;
+      query.skip = ((this.$route.query.page - 1) * this.limit) || 0;
+
+      return query;
+    },
+    fetchList() {
+      this.fetchListAction({
+        params: this.getQuery(),
+      });
+    },
+  },
+  watch: {
+    $route() {
+      this.fetchList();
     },
   },
 };

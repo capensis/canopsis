@@ -1,6 +1,6 @@
 <template lang="pug">
     ul
-      li.header.sticky(ref="header" :style="headerStyle")
+      li.header.sticky(ref="header", :style="headerStyle")
         slot(name="header")
       li(v-for="item in items", :item="item")
         list-item
