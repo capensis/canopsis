@@ -1,48 +1,47 @@
 <template lang="pug">
-  v-pagination( @input="changePage"
-                :length="totalPages"
-                v-model="currentPage" )
+  v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapGetters } = createNamespacedHelpers('entities/alarm');
-
 export default {
   name: 'alarm-list-pagination',
-  data() {
-    return {
-      currentPage: 1,
-    };
-  },
   props: {
-    itemsPerPage: {
+    meta: {
+      type: Object,
+      default() {
+        return {
+          total: 0,
+          first: 0,
+          last: 0,
+        };
+      },
+    },
+    limit: {
       type: Number,
       required: true,
     },
   },
   computed: {
-    ...mapGetters(['meta']),
+    currentPage: {
+      get() {
+        return parseInt(this.$route.query.page, 10) || 1;
+      },
+      set(page) {
+        this.$router.push({
+          query: {
+            ...this.$route.query,
+            page,
+          },
+        });
+      },
+    },
     totalPages() {
       if (this.meta.total) {
-        return Math.ceil(this.meta.total / this.itemsPerPage);
+        return Math.ceil(this.meta.total / this.limit);
       }
+
       return 0;
-    },
-  },
-  methods: {
-    changePage() {
-      this.$emit('changedPage', {
-        params: {
-          skip: (this.currentPage - 1) * this.itemsPerPage,
-        },
-      });
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>
