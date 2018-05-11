@@ -10,7 +10,7 @@
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow" slot-scope="item")
-            td.box {{ item.props.infos }}
+            time-line(:idAlarm="item.props.d")
       alarm-list-pagination(:meta="meta", :limit="limit", v-if="fetchComplete")
     loader(v-else)
 </template>
@@ -67,7 +67,7 @@ export default {
     };
   },
   mounted() {
-    this.fetchList(this.fetchingParams);
+    this.fetchList();
   },
   computed: {
     ...mapGetters([
