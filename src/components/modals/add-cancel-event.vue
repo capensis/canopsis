@@ -46,18 +46,19 @@ export default {
 
   methods: {
     ...mapActions([
-      'cancel',
+      'cancelAlarm',
     ]),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
         try {
-          await this.cancel({
-            resource: 'res99',
-            id: 'ac4f92ea-4eda-11e8-841e-0242ac12000a',
+          await this.cancelAlarm({
+            resource: 'res97',
+            id: 'aadf7970-4eda-11e8-841e-0242ac12000a',
             customAttributes: {
               output: this.form.output,
+              cancel: 1,
             },
           });
           this.form.output = '';

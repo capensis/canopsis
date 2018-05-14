@@ -54,7 +54,7 @@ function prepareData(data, eventType) {
 export default {
   namespaced: true,
   actions: {
-    async cancel(context, data) {
+    async cancelAck(context, data) {
       return axios.post(`${API_HOST}/event`, {
         event: prepareData(data, 'ackremove'),
       });
@@ -72,6 +72,11 @@ export default {
     async changeState(context, data) {
       return axios.post(`${API_HOST}/event`, {
         event: prepareData(data, 'changestate'),
+      });
+    },
+    async cancelAlarm(context, data) {
+      return axios.post(`${API_HOST}/event`, {
+        event: prepareData(data, 'cancel'),
       });
     },
     async snooze(context, data) {
