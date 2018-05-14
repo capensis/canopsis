@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-dialog(v-model="opened", v-bind="dialogProps")
-    slot(v-if="opened")
+  v-dialog(v-model="isOpened", v-bind="dialogProps")
+    slot(v-if="isActive")
 </template>
 
 <script>
@@ -20,30 +20,22 @@ export default {
     },
   },
   computed: {
-    opened: {
+    ...mapGetters({
+      modalName: 'name',
+      modalConfig: 'config',
+      modalAnimationPending: 'animationPending',
+    }),
+    isActive() {
+      return this.modalName === this.name;
+    },
+    isOpened: {
       get() {
-        return this.modalComponent === this.name;
+        return this.modalName === this.name && !this.modalAnimationPending;
       },
-      /**
-       * setTimeout added for transition
-       *
-       * @param value
-       */
-      set(value) {
-        if (!value) {
-          setTimeout(() => {
-            if (this.modalComponent === this.name) {
-              this.hideModal();
-            }
-          }, 300);
-        }
+      set() {
+        this.hideModal();
       },
     },
-
-    ...mapGetters({
-      modalComponent: 'component',
-      modalConfig: 'config',
-    }),
   },
   methods: {
     ...mapActions({

@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(@submit.prevent="submit", slot-scope="slotProps")
     v-card
       v-card-title
         span.headline {{ $t('modals.addPbehavior.title') }}
@@ -21,9 +21,9 @@
           )
         v-layout(row)
           date-time-picker(
-          :label="$t('modals.addPbehavior.fields.end')",
-          v-model="form.tend",
-          name="tend",
+          :label="$t('modals.addPbehavior.fields.stop')",
+          v-model="form.tstop",
+          name="tstop",
           rules="required"
           )
         r-rule-form(:tstart="form.tstart", @input="changeRRule")
@@ -44,8 +44,13 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/other/rrule/rrule-form.vue';
+
+const { mapGetters: modalMapGetters, mapActions: modalMapActions } = createNamespacedHelpers('modal');
+const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('entities/pbehavior');
 
 export default {
   $_veeValidate: {
@@ -62,7 +67,7 @@ export default {
       form: {
         name: '',
         tstart: now,
-        tend: now,
+        tstop: now,
         type_: types[0],
         reason: reasons[0],
       },
@@ -72,13 +77,42 @@ export default {
       },
     };
   },
+  computed: {
+    ...modalMapGetters(['config']),
+  },
   methods: {
+    ...modalMapActions({ hideModal: 'hide' }),
+
+    ...pbehaviorMapActions({ createPbehavior: 'create' }),
+
     changeRRule(value) {
       this.rRuleObject = value;
     },
     async submit() {
       const isValid = await this.$validator.validateAll();
-      console.log(isValid);
+
+      if (isValid) {
+        const data = {
+          ...this.form,
+
+          author: 'Username of current user',
+          filter: {
+            _id: {
+              $in: [this.config.d],
+            },
+          },
+          tstart: this.form.tstart.getTime(),
+          tstop: this.form.tstop.getTime(),
+        };
+
+        if (this.rRuleObject) {
+          data.rrule = this.rRuleObject.toString();
+        }
+
+        await this.createPbehavior(data);
+
+        this.hideModal();
+      }
     },
   },
 };
