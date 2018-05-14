@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tabs(v-model="activeTab" centered)
+  v-tabs(v-model="activeTab" slider-color="blue darken-4" centered)
     v-tab(:disabled="isSimpleTabDisabled") {{$t('m_filter_editor.tabs.visual_editor')}}
     v-tab-item
       v-container

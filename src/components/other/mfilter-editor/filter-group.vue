@@ -172,7 +172,7 @@ export default {
 
 <style scoped lang="scss">
   .filterGroup {
-    border: 1px solid lightgray;
+    border: 1px solid gray;
   }
 
   button {
