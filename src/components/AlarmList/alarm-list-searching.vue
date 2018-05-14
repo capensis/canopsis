@@ -5,6 +5,8 @@
     v-model="searchingText"
     hide-details
     single-line
+    @keyup.enter="submit"
+    @keyup.delete="clear"
     )
     v-btn(icon @click="submit")
       v-icon search
