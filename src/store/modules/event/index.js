@@ -14,7 +14,7 @@ function prepareData(data, eventType) {
       source_type: 'resource',
       component: 'localhost',
       state: Object.prototype.hasOwnProperty.call(data, 'state') ? data.state : 0,
-      state_type: data.state_type,
+      state_type: data.state_type ? data.state_type : 1,
       crecord_type: eventType,
       timestamp: Date.now(),
       resource: data.resource,

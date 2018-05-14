@@ -67,13 +67,14 @@ export default {
   methods: {
     ...mapActions([
       'ack',
+      'declare',
     ]),
     async submit() {
       this.showValidationErrors = false;
       this.errors.clear();
       const requestData = {
-        id: 'ac4f92ea-4eda-11e8-841e-0242ac12000a',
-        resource: 'res99',
+        id: 'a5c06ddc-4eda-11e8-841e-0242ac12000a',
+        resource: 'res90',
         customAttributes: {},
       };
 
@@ -96,7 +97,13 @@ export default {
         if (formIsValid) {
           await this.submit();
 
-          // send request to add report
+          await this.declare({
+            id: 'a5c06ddc-4eda-11e8-841e-0242ac12000a',
+            resource: 'res90',
+            customAttributes: {
+              output: 'declare ticket',
+            },
+          });
         }
       });
     },
