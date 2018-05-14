@@ -16,9 +16,9 @@ import { normalize } from 'normalizr';
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
 import request from '@/services/request';
-import StateFlag from './BasicComponent/state-flag.vue';
-import StateChips from './BasicComponent/state-chips.vue';
-import TimeItem from './BasicComponent/time-item.vue';
+import StateFlag from '../BasicComponent/state-flag.vue';
+import StateChips from '../BasicComponent/state-chips.vue';
+import TimeItem from '../BasicComponent/time-item.vue';
 
 export default {
   name: 'time-line',
